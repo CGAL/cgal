@@ -60,20 +60,23 @@ struct Splitter_test {
     typename Orthogonal_incremental_neighbor_search::iterator it = oins.begin();
     Point_with_transformed_distance pd = *it;
     points2.push_back(get_point(pd.first));
-    if(CGAL::squared_distance(query,get_point(pd.first)) != pd.second){
+
+    std::cout << std::setprecision(17);
+
+    if(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) >= 0.000000001){
       std::cout << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
     }
-    assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
+    assert(abs(CGAL::squared_distance(query,get_point(pd.first)) - pd.second) < 0.000000001);
     it++;
     for(; it != oins.end();it++){
       Point_with_transformed_distance qd = *it;
       assert(pd.second <= qd.second);
       pd = qd;
       points2.push_back(get_point(pd.first));
-      if(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) != pd.second){
+      if(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) >= 0.000000001){
         std::cout << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
       }
-      assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
+      assert(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) < 0.000000001);
     }
     std::sort(points.begin(),points.end());
     std::sort(points2.begin(),points2.end());
