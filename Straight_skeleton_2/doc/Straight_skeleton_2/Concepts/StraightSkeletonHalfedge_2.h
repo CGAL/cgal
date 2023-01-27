@@ -44,6 +44,11 @@ StraightSkeletonHalfedge_2( int id );
 /// @{
 
 /*!
+The ID of the vertex
+*/
+int id() const;
+
+/*!
 
 */
 Halfedge_handle defining_contour_edge();
