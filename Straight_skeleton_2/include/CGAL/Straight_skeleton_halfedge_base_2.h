@@ -50,7 +50,27 @@ protected:
 
 public:
 
+  Halfedge_handle       opposite()       { return mOpp;}
+  Halfedge_const_handle opposite() const { return mOpp;}
+  Halfedge_handle       next    ()       { return mNxt;}
+  Halfedge_const_handle next    () const { return mNxt;}
+  Halfedge_handle       prev    ()       { return mPrv; }
+  Halfedge_const_handle prev    () const { return mPrv; }
+  Vertex_handle         vertex  ()       { return mV; }
+  Vertex_const_handle   vertex  () const { return mV; }
+  Face_handle           face    ()       { return mF; }
+  Face_const_handle     face    () const { return mF; }
+
+  bool is_border() const { return mF == Face_handle();}
+
+  void set_opposite( Halfedge_handle h) { mOpp = h; }
+  void set_next    ( Halfedge_handle h) { mNxt = h; }
+  void set_prev    ( Halfedge_handle h) { mPrv = h; }
+  void set_vertex  ( Vertex_handle   w) { mV   = w; }
+  void set_face    ( Face_handle     g) { mF   = g; }
+
   int id() const { return mID ; }
+  void reset_id ( int aID ) { mID = aID ; }
 
   bool is_bisector() const
   {
@@ -67,30 +87,10 @@ public:
   Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }
   Halfedge_handle       defining_contour_edge()       { return this->face()->halfedge() ; }
 
-  Halfedge_handle       opposite()       { return mOpp;}
-  Halfedge_const_handle opposite() const { return mOpp;}
-  Halfedge_handle       next    ()       { return mNxt;}
-  Halfedge_const_handle next    () const { return mNxt;}
-  Halfedge_handle       prev    ()       { return mPrv; }
-  Halfedge_const_handle prev    () const { return mPrv; }
-  Vertex_handle         vertex  ()       { return mV; }
-  Vertex_const_handle   vertex  () const { return mV; }
-  Face_handle           face    ()       { return mF; }
-  Face_const_handle     face    () const { return mF; }
-
+  // @fixme this isn't documented in the `StraightSkeletonHalfedge_2` concept
   Sign slope() const { return mSlope ; }
-
-  bool is_border() const { return mF == Face_handle();}
-
-  void set_opposite( Halfedge_handle h) { mOpp = h; }
-  void set_next    ( Halfedge_handle h) { mNxt = h; }
-  void set_prev    ( Halfedge_handle h) { mPrv = h; }
-  void set_vertex  ( Vertex_handle   w) { mV   = w; }
-  void set_face    ( Face_handle     g) { mF   = g; }
-
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 
-  void reset_id ( int aID ) { mID = aID ; }
 
 private:
 
