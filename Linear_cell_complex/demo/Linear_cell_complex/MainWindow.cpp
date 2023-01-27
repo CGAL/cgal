@@ -3261,7 +3261,7 @@ void MainWindow::sierpinski_triangle_split_face_in_four(Dart_descriptor dh, bool
     }
     else
     {
-      // we dupplicate all 0-embeddings to set them to the splitted vertices
+      // we duplicate all 0-embeddings to set them to the split vertices
       (scene.lcc)->set_dart_attribute<0>(scene.lcc->beta(d2,1),(scene.lcc)->create_vertex_attribute(scene.lcc->point(d1)));
       (scene.lcc)->set_dart_attribute<0>(scene.lcc->beta(d3,1),(scene.lcc)->create_vertex_attribute(scene.lcc->point(d2)));
       (scene.lcc)->set_dart_attribute<0>(scene.lcc->beta(d1,1),(scene.lcc)->create_vertex_attribute(scene.lcc->point(d3)));

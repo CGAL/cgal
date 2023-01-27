@@ -39,7 +39,7 @@ public:
 /// @{
 
 /*!
-Construction from a bouding polyhedral surface which must be closed, and free of intersections.
+Construction from a bounding polyhedral surface which must be closed, and free of intersections.
 The inside of `bounding_polyhedron` will be meshed.
 */
 Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron);

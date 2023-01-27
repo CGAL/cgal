@@ -281,7 +281,7 @@ public:
   double operator()(const Point_2& p, const X_monotone_curve_2& c) const;
 };
 
-// chcek if arrangement is a model of the concept ArrangementOpenBoundaryTraits_2
+// check if arrangement is a model of the concept ArrangementOpenBoundaryTraits_2
 template <typename ArrTraits>
 struct IsOpenBoundaryArrangement :
     public CGAL::Boolean_tag<

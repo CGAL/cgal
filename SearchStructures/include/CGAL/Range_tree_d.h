@@ -27,7 +27,7 @@
 // A d-dimensional Range Tree or a multilayer tree consisting of Range
 // and other trees that are derived public
 // Tree_base<C_Data, C_Window, C_Interface>
-// can be construced within this class.
+// can be constructed within this class.
 // C_Data: container class which contains the d-dimensional data the tree holds.
 // C_Window: Query window -- a d-dimensional interval
 // C_Interface: Interface for the class with functions that allow to
@@ -202,7 +202,7 @@ protected:
   // recursive function
   // (current,last) describe an interval of length n of sorted elements,
   // for this interval a tree is build containing these elements.
-  // the most left child is returend in prevchild.
+  // the most left child is returned in prevchild.
 
   template <class T>
   void build_range_tree(int n, link_type& leftchild,
@@ -268,7 +268,7 @@ protected:
       }
       else
       {
-        // recursiv call for the construction. the interval is devided.
+        // recursiv call for the construction. the interval is divided.
         T sublevel_left, sublevel_right;
         build_range_tree(n - (int)n/2, leftchild, rightchild,
                          prevchild, leftmostlink, current, last,

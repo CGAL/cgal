@@ -34,7 +34,7 @@
 /// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
 /// - Selecting points changes the order of the points in the
 ///   container. If selection is *not* empty, it becomes invalid after
-///   adding, moving or removing points, user is reponsible to call
+///   adding, moving or removing points, the user is responsible for calling
 ///   unselect_all() in those cases.
 ///
 /// @heading Parameters:

@@ -205,7 +205,7 @@ namespace CGAL {
 
   mutable Arr_point_location point_location;
 
-  /*! Stack of visibile points; manipulated when going through the sequence
+  /*! Stack of visible points; manipulated when going through the sequence
     of input vertices; contains the vertices of the visibility region after
     the run of the algorithm*/
   mutable std::stack<Point_2> stack;
@@ -340,7 +340,7 @@ namespace CGAL {
 
 
   /*! Main method of the algorithm - initializes the stack and variables
-    and calles the corresponding methods acc. to the algorithm's state;
+    and calls the corresponding methods acc. to the algorithm's state;
     'q' - query point;
     'i' - current vertex' index
     'w' - endpoint of ray shot from query point */
@@ -589,7 +589,7 @@ namespace CGAL {
     }
   }
 
-  /*! Find the first edge interecting the segment (v_0, s_t) */
+  /*! Find the first edge intersecting the segment (v_0, s_t) */
   void scanb(Size_type& i, Point_2& w) const {
     if ( i == vertices.size() - 1 ) {
       upcase = FINISH;

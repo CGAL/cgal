@@ -301,7 +301,7 @@ public:
   template <class Faces_level>
   friend class Refine_edges_visitor;
 protected:
-  /* --- protected datas --- */
+  /* --- protected data --- */
 
   Tr& tr; /**< The triangulation itself. */
 
@@ -632,7 +632,7 @@ protected:
                                                    // base class
   }
 
-private: /** \name DEBUGGING TYPES AND DATAS */
+private: /** \name DEBUGGING TYPES AND DATA */
   class From_pair_of_vertex_to_edge
     : public CGAL::cpp98::unary_function<Constrained_edge, Edge>
   {

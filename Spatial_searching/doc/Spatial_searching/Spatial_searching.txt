@@ -109,7 +109,7 @@ Orthogonal distance computation technique
 \cgalFigureEnd
 
 Assume we are searching the nearest neighbor, descending the kd-tree, with \f$ R_{p} \f$
-as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its childs in the current step.
+as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its children in the current step.
 Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let
 \f$cv\f$ denote the cutting value. At this point we already know the distance \f$rd_{p}\f$
 to the parent rectangle and need to check if \f$R_{hi}\f$ could contain
@@ -159,7 +159,7 @@ When using fuzzy items, queries are reported as follows:
 - Points that are within the inner approximation are always reported.
 - Points that are within the outer approximation but not within the inner approximation
 might or might not be reported.
-- Points thare not within the outer approximation are never reported.
+- Points that are not within the outer approximation are never reported.
 
 For exact range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
 

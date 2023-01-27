@@ -117,7 +117,6 @@ public:
     The Output simplex.
    */
   typedef OTR_2::Reconstruction_triangulation_2<Traits>  Triangulation;
-
   typedef typename Triangulation::Vertex                Vertex;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;
   typedef typename Triangulation::Vertex_iterator       Vertex_iterator;
@@ -159,6 +158,7 @@ public:
   /// @}
 
 protected:
+  std::vector<Sample_> m_samples;
   Triangulation m_dt;
   Traits const& m_traits;
   MultiIndex m_mindex;
@@ -175,7 +175,6 @@ protected:
   MassPMap  mass_pmap;
 
 public:
-
   /// \name Initialization
   /// @{
 
@@ -212,7 +211,8 @@ public:
     unsigned int relocation = 2,
     int verbose = 0,
     Traits traits = Traits())
-  : m_dt(traits),
+    : m_samples(),
+    m_dt(m_samples, traits),
     m_traits(m_dt.geom_traits()),
     m_ignore(0),
     m_verbose(verbose),
@@ -230,11 +230,11 @@ public:
 
   /// @}
 
-  /// \name Settting Parameters
+  /// \name Setting Parameters
   /// @{
   /*!
           If `sample_size == 0`, the simplification is performed using an exhaustive priority queue.
-          If `sample_size` is stricly positive the simplification is performed using a
+          If `sample_size` is strictly positive the simplification is performed using a
           multiple choice approach, ie, a best-choice selection in a random sample of
           edge collapse operators, of size `sample_size`. A typical value for the sample
           size is 15, but this value must be enlarged when targeting a very coarse simplification.
@@ -318,8 +318,9 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
+
   Optimal_transportation_reconstruction_2()
-  : m_traits(m_dt.geom_traits())
+    : m_samples(), m_dt(m_samples), m_traits(m_dt.geom_traits())
   {
     initialize_parameters();
   }
@@ -369,14 +370,18 @@ public:
     insert_loose_bbox(bbox);
     init(start, beyond);
 
-    std::vector<Sample_*> m_samples;
+    m_samples.reserve(std::distance(start,beyond));
     for (InputIterator it = start; it != beyond; it++) {
       Point point = get(point_pmap, *it);
       FT    mass  = get( mass_pmap, *it);
-      Sample_* s = new Sample_(point, mass);
+      Sample_ s(point, mass);
       m_samples.push_back(s);
     }
-    assign_samples(m_samples.begin(), m_samples.end());
+    Sample_vector sv(m_samples.size());
+    for(int i = 0; i < static_cast<int>(sv.size()); ++i){
+      sv[i] = i;
+    }
+    assign_samples(sv.begin(), sv.end());
   }
 
   template <class InputIterator>
@@ -398,7 +403,7 @@ public:
     insert_loose_bbox(bbox);
     init(vertices_start, vertices_beyond);
 
-    std::vector<Sample_*> m_samples;
+    m_samples.reserve(std::distance(samples_start, samples_beyond));
     for (InputIterator it = samples_start; it != samples_beyond; it++) {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point point = get(point_pmap, it);
@@ -407,10 +412,14 @@ public:
       Point point = get(point_pmap, *it);
       FT    mass  = get( mass_pmap, *it);
 #endif
-      Sample_* s = new Sample_(point, mass);
+      Sample_ s(point, mass);
       m_samples.push_back(s);
     }
-    assign_samples(m_samples.begin(), m_samples.end());
+    Sample_vector sv(m_samples.size());
+    for(int i = 0; i < static_cast<int>(sv.size()); ++i){
+      sv[i] = i;
+    }
+    assign_samples(sv.begin(), sv.end());
   }
 
 
@@ -422,16 +431,8 @@ public:
     return m_traits.construct_vector_2_object()(dx, dy);
   }
 
-  void clear() {
-    Sample_vector samples;
-    m_dt.collect_all_samples(samples);
-    // Deallocate samples
-    for (Sample_vector_const_iterator s_it = samples.begin();
-        s_it != samples.end(); ++s_it)
-    {
-      delete *s_it;
-    }
-  }
+  void clear()
+  {}
 
 
   // INIT //
@@ -494,7 +495,7 @@ public:
     m_dt.cleanup_assignments();
   }
 
-  template<class Iterator>  // value_type = Sample_*
+  template<class Iterator>  // value_type = int
   void assign_samples(Iterator begin, Iterator end) {
     CGAL::Real_timer timer;
     if (m_verbose > 0)
@@ -587,7 +588,7 @@ public:
         << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
-    Triangulation copy;
+    Triangulation copy(m_samples);
     Edge copy_edge = copy_star(edge, copy);
     Vertex_handle copy_source = copy.source_vertex(copy_edge);
 
@@ -632,7 +633,7 @@ public:
     copy.assign_samples_brute_force(samples.begin(), samples.end());
     copy.reset_all_costs();
     cost = copy.compute_total_cost();
-    cost.set_total_weight (samples);
+    cost.set_total_weight (m_samples, samples);
     restore_samples(samples.begin(), samples.end());
 
     if (m_verbose > 1) {
@@ -643,18 +644,18 @@ public:
   }
 
   template<class Iterator> // value_type = Sample_*
-  void backup_samples(Iterator begin, Iterator end) const {
+  void backup_samples(Iterator begin, Iterator end) {
     for (Iterator it = begin; it != end; ++it) {
-      Sample_* sample = *it;
-      sample->backup();
+      Sample_& sample = m_samples[* it];
+      sample.backup();
     }
   }
 
   template<class Iterator> // value_type = Sample_*
-  void restore_samples(Iterator begin, Iterator end) const {
+  void restore_samples(Iterator begin, Iterator end) {
     for (Iterator it = begin; it != end; ++it) {
-      Sample_* sample = *it;
-      sample->restore();
+      Sample_& sample = m_samples[* it];
+      sample.restore();
     }
   }
 
@@ -1089,7 +1090,7 @@ public:
       m_dt.collect_samples_from_edge(twin, samples);
       copy_twin.first->samples(copy_twin.second) = samples;
     }
-    copy_vertex->set_sample(nullptr);
+    copy_vertex->set_sample(-1);
   }
 
   Edge get_copy_edge(
@@ -1230,10 +1231,10 @@ public:
   void compute_relocation_for_vertex(
     Vertex_handle vertex, FT& coef, Vector& rhs) const
   {
-    Sample_* sample = vertex->sample();
-    if (sample) {
-      const FT m = sample->mass();
-      const Point& ps = sample->point();
+    if (vertex->sample() != -1) {
+      const Sample_& sample = m_samples[vertex->sample()];
+      const FT m = sample.mass();
+      const Point& ps = sample.point();
       rhs = m_traits.construct_sum_of_vectors_2_object()(rhs,
         m_traits.construct_scaled_vector_2_object()(
           m_traits.construct_vector_2_object()(CGAL::ORIGIN, ps), m));
@@ -1253,9 +1254,9 @@ public:
     Vector grad = m_traits.construct_vector_2_object()(FT(0), FT(0));
     Sample_vector_const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it) {
-      Sample_* sample = *it;
-      const FT m = sample->mass();
-      const Point& ps = sample->point();
+      const Sample_& sample = m_samples[* it];
+      const FT m = sample.mass();
+      const Point& ps = sample.point();
 
       FT Da = m_traits.compute_squared_distance_2_object()(ps, pa);
       FT Db = m_traits.compute_squared_distance_2_object()(ps, pb);
@@ -1281,9 +1282,9 @@ public:
 
     Sample_vector_const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it) {
-      Sample_* sample = *it;
-      const FT m = sample->mass();
-      const Point& ps = sample->point();
+      const Sample_& sample = m_samples[* it];
+      const FT m = sample.mass();
+      const Point& ps = sample.point();
 
       FT Da = m_traits.compute_squared_distance_2_object()(ps, pa);
       FT Db = m_traits.compute_squared_distance_2_object()(ps, pb);
@@ -1311,8 +1312,8 @@ public:
       PSample psample = queue.top();
       queue.pop();
 
-      const FT m = psample.sample()->mass();
-      const Point& ps = psample.sample()->point();
+      const FT m = this->m_samples[psample.sample()].mass();
+      const Point& ps = this->m_samples[psample.sample()].point();
 
       // normal + tangnetial
       const FT coord = psample.priority();
@@ -1357,8 +1358,8 @@ public:
       PSample psample = queue.top();
       queue.pop();
 
-      const FT m = psample.sample()->mass();
-      const Point& ps = psample.sample()->point();
+      const FT m = m_samples[psample.sample()].mass();
+      const Point& ps = m_samples[psample.sample()].point();
 
       const FT coord = psample.priority();
       const FT one_minus_coord = 1.0 - coord;

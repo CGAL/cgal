@@ -761,7 +761,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     d->soup->vcolors.reserve (vcolors.size());
     std::copy (vcolors.begin(), vcolors.end(), std::back_inserter (d->soup->vcolors));
 }
-// Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
+// Force the instantiation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<EPICK::Point_3, std::vector<int> >
 (const std::vector<EPICK::Point_3>& points, const std::vector<std::vector<int> >& polygons);

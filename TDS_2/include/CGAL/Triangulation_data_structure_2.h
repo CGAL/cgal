@@ -1084,7 +1084,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
         }
       }
 
-      // couldn't unify the code for reorientation mater
+      // couldn't unify the code for reorientation matter
       lfit = faces_list.begin() ;
       if (dim == 1){
         if (orient) {
@@ -1542,7 +1542,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
 {
   /*
-  // The following method preforms a split operation of the vertex v
+  // The following method performs a split operation of the vertex v
   // using the faces f1 and g1. The split operation is shown
   // below.
   // The names of the variables in the method correspond to the
@@ -1694,7 +1694,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   }
 
   /*
-  // The following drawing corrsponds to the variables
+  // The following drawing corresponds to the variables
   // used in this part...
   // The vertex v1 is returned...
   //
@@ -2107,7 +2107,7 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 {
-  // ouput to a file
+  // output to a file
   // if non nullptr, v is the vertex to be output first
   // if skip_first is true, the point in the first vertex is not output
   // (it may be for instance the infinite vertex of the triangulation)
@@ -2243,7 +2243,7 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
 {
-  // ouput to a vrml file style
+  // output to a vrml file style
   // Point are assumed to be 3d points with a stream oprator <<
   // if non nullptr, v is the vertex to be output first
   // if skip_inf is true, the point in the first vertex is not output

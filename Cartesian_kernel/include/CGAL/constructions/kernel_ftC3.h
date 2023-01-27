@@ -431,7 +431,7 @@ determinants_for_circumcenterC3(const FT &px, const FT &py, const FT &pz,
   FT rsy = psz*qsx - psx*qsz;
   FT rsz = psx*qsy - psy*qsx;
 
-  // The following determinants can be developped and simplified.
+  // The following determinants can be developed and simplified.
   //
   // FT num_x = determinant(psy,psz,ps2,
   //                        qsy,qsz,qs2,
@@ -681,7 +681,7 @@ determinants_for_weighted_circumcenterC3(
   FT sy = qpz*rpx - qpx*rpz;
   FT sz = qpx*rpy - qpy*rpx;
 
-  // The following determinants can be developped and simplified.
+// The following determinants can be developed and simplified.
 //
 //  FT num_x = determinant(qpy,qpz,qp2,
 //                         rpy,rpz,rp2,

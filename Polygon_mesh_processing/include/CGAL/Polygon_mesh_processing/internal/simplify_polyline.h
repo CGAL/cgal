@@ -103,7 +103,7 @@ void simplify_polyline(const PointRangeIn& input,
             ++ei; // we skip ei-1
           else
           {
-            bi=ei-1; // ei-1 shall not be skipt
+            bi=ei-1; // ei-1 shall not be skipped
             break;
           }
         }
@@ -178,7 +178,7 @@ void simplify_polyline(const PointRangeIn& input,
           output.push_back(input[i]);
           put(out_pm, output.back(), get(in_pm, input[i]));
         }
-      //TODO if is_closed-==true, shall we add en extra step to see if we can remove output.front() and output[output.size()-2] (inital endpoints)
+      //TODO if is_closed-==true, shall we add en extra step to see if we can remove output.front() and output[output.size()-2] (initial endpoints)
     }
   }
 }

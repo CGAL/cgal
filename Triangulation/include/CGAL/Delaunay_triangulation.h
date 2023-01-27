@@ -523,7 +523,7 @@ Delaunay_triangulation<DCTraits, TDS>
     // 2. Find corresponding Facet on boundary of dark zone
     // 3. stitch.
 
-    // 1. Build a facet on the boudary of the light zone:
+    // 1. Build a facet on the boundary of the light zone:
     Full_cell_handle light_s = *simps.begin();
     Facet light_ft(light_s, light_s->index(v));
 

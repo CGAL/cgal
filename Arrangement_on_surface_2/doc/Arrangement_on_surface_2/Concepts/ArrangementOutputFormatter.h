@@ -124,7 +124,7 @@ void write_halfedge_index (std::size_t idx);
 void write_x_monotone_curve (const X_monotone_curve_2& c);
 
 /*! writes the auxiliary data associated with the halfedge. */
-void write_halfegde_data (Halfedge_const_handle he);
+void write_halfedge_data (Halfedge_const_handle he);
 
 /*! writes a message indicating the beginning of a single face record. */
 void write_face_begin();

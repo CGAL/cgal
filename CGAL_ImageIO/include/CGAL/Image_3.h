@@ -87,7 +87,7 @@ public:
 protected:
   Image_shared_ptr image_ptr;
 
-   // implementation in src/CGAL_ImageIO/Image_3.cpp
+   // implementation in Image_3_impl.h
   bool private_read(_image* im, Own own_the_data = OWN_THE_DATA);
 
 public:

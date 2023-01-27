@@ -70,10 +70,10 @@ public:
   /** \name Clusters public types */
 
   /**
-   * `Cluster` register several informations about clusters.
+   * `Cluster` register information about clusters.
    * A cluster is a set of vertices v_i incident to one vertice
    * v_0, so that angles between segments [v_0, v_i] is less than 60
-   * degres.
+   * degrees.
    */
   struct Cluster {
     bool reduced ; /**< Is the cluster reduced? */
@@ -122,7 +122,7 @@ private:
   typedef typename Cluster::Vertices_map Cluster_vertices_map;
 
 private:
-  /* --- protected datas --- */
+  /* --- protected data --- */
 
   Tr& tr; /**< The triangulation itself. */
 
@@ -218,7 +218,7 @@ public:
   /** \name Auxiliary functions that return a boolean. */
 
   /**
-   * Tells if the angle <pleft, pmiddle, pright> is less than 60 degres.
+   * Tells if the angle <pleft, pmiddle, pright> is less than 60 degrees.
    * Uses squared_cosine_of_angle_times_4() and used by
    * create_clusters_of_vertex().
    */

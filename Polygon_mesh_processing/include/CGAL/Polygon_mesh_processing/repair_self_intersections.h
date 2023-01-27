@@ -529,6 +529,11 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
   TriangleMesh local_mesh;
   CGAL::copy_face_graph(ffg, local_mesh, CP::vertex_point_map(vpm));
 
+  // smoothing cannot be applied if the input has degenerate faces
+  for(face_descriptor fd : faces(local_mesh))
+    if(is_degenerate_triangle_face(fd, local_mesh))
+      return false;
+
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   CGAL::IO::write_polygon_mesh("results/local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
 #endif
@@ -811,7 +816,7 @@ void dump_cc(const std::string filename,
 // Similarly if the edge is an internal sharp edge, we don't really want to use the opposite face because
 // there is by definition a strong discontinuity and it might thus mislead the hole filling algorithm.
 //
-// Rather, we construct an artifical third point that is in the same plane as the face incident to `h`,
+// Rather, we construct an artificial third point that is in the same plane as the face incident to `h`,
 // defined as the third point of the imaginary equilateral triangle incident to opp(h, tmesh)
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 typename boost::property_traits<VertexPointMap>::value_type
@@ -1936,6 +1941,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
                                    const bool treat_all_CCs,
                                    const double strong_dihedral_angle,
                                    const double weak_dihedral_angle,
+                                   const bool use_smoothing,
                                    const double containment_epsilon,
                                    const Projector& projector,
                                    VertexPointMap vpm,
@@ -2180,7 +2186,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     //
     // Do not smooth if there are no self-intersections within the patch: this means the intersection
     // is with another CC and smoothing is unlikely to move the surface sufficiently
-    if(self_intersects)
+    if(use_smoothing && self_intersects)
     {
       bool fixed_by_smoothing = false;
 
@@ -2385,6 +2391,8 @@ bool remove_self_intersections(const FaceRange& face_range,
   // detect_feature_pp NP (unused for now)
   const double weak_dihedral_angle = 0.; // choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 20.);
 
+  const bool use_smoothing = choose_parameter(get_parameter(np, internal_np::use_smoothing), false);
+
   struct Return_false
   {
     bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
@@ -2483,7 +2491,7 @@ bool remove_self_intersections(const FaceRange& face_range,
       internal::remove_self_intersections_one_step(
           faces_to_treat, working_face_range, tmesh, step,
           preserve_genus, treat_all_CCs, strong_dihedral_angle, weak_dihedral_angle,
-          containment_epsilon, projector, vpm, gt, visitor);
+          use_smoothing, containment_epsilon, projector, vpm, gt, visitor);
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     if(all_fixed && topology_issue)

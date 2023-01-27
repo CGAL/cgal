@@ -101,7 +101,7 @@ Uncertain<bool> are_parallel_edges_equally_orientedC2( Segment_2_with_ID<K> cons
 }
 
 
-// Returns true IFF segments e0,e1 share the same supporting line but do not overlap except at the vetices, and have the same orientation.
+// Returns true IFF segments e0,e1 share the same supporting line but do not overlap except at the vertices, and have the same orientation.
 // NOTE: If e1 goes back over e0 (a degenerate antenna or alley) this returns false.
 template<class K>
 Uncertain<bool> are_edges_orderly_collinearC2( Segment_2_with_ID<K> const& e0, Segment_2_with_ID<K> const& e1 )
@@ -170,7 +170,7 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // is well defined, In that case, the degenerate vertex can be even a contour vertex or a skeleton node. If it is a skeleton
 // node, it is properly defined by the trisegment tree that corresponds to the node.
 // A trisegment tree stores not only the "current event" trisegment but also the trisegments for the left/right seed vertices,
-// recursivey in case the seed vertices are skeleton nodes as well.
+// recursively in case the seed vertices are skeleton nodes as well.
 // Those seeds are used to determine the actual position of the degenerate vertex in case of collinear edges (since that point is
 // not given by the collinear edges alone)
 //
@@ -363,18 +363,18 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 // Testing its validity amounts to determining if the split point is inside the closed offset segment instead of
 // the two open rays before and after the offset segment endpoints.
 // The offset edge is bounded by its previous and next adjacent edges at the time of the event. Thus, the bisectors
-// of this edge and its previous/next adjacent edges (at the time of the event) detemine the offset vertices that
+// of this edge and its previous/next adjacent edges (at the time of the event) determine the offset vertices that
 // bound the opposite edge.
 // If the opposite edge is 'e' and its previous/next edges are "preve"/"nexte" then the split point is inside the offset
 // edge if it is NOT to the positive side of [preve,e] *and* NOT to the negative side o [e,nexte].
-// (so this predicate answer half the question, at one and other side independenty).
-// If the split point is exacty over any of this bisectors then the split point ocurres exactly and one (or both) endpoints
-// of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halfeves)
+// (so this predicate answer half the question, at one and other side independently).
+// If the split point is exactly over any of this bisectors then the split point occurs exactly and one (or both) endpoints
+// of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halfedges)
 // When this predicate is called to test (prev,e), e is the primary edge but since it is  pass as e1, primary_is_0=false.
 // This causes the case of parallel but not collinear edges to return positive when the split point is before the source point of e*
 // (a positive result means invalid split).
 // Likewise, primary_is_0 must be true when testing (e,nexte) to return negative if the split point is past the target endpoint of e*.
-// (in the other cases there is no need to discrminate which is 'e' in the call since the edjes do not overlap).
+// (in the other cases there is no need to discriminate which is 'e' in the call since the edges do not overlap).
 //
 // An edge event is a collision of three *consecutive* edges, say, e1,e2 and e3.
 // The collision causes e2 (the edge in the middle) to collapse and e1,e3 to become consecutive and form a new vertex.
@@ -385,7 +385,7 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 //
 // PRECONDITIONS:
 //   There exists a single point 'p' corresponding to the event as given by the trisegment
-//   e0 and e1 are known to be consectuve at the time of the event (even if they are not consecutive in the input polygon)
+//   e0 and e1 are known to be consecutive at the time of the event (even if they are not consecutive in the input polygon)
 //   If e0 and e1 are not consecutive in the input, v01_event is the event that defined they very first offset vertex.
 //   If e0 and e1 are consecutive, v01_event is null.
 //
@@ -431,13 +431,13 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
 
       Point_2 v01 = v01_event ? validate( construct_offset_lines_isecC2(v01_event, aCoeff_cache) ) : e1.source() ;
 
-      CGAL_STSKEL_TRAITS_TRACE("v01=" << p2str(v01) << ( v01_event ? " (from skelton node)" : "" ) ) ;
+      CGAL_STSKEL_TRAITS_TRACE("v01=" << p2str(v01) << ( v01_event ? " (from skeleton node)" : "" ) ) ;
 
-      // (a,b,c) is a line perpedincular to the primary edge through v01.
+      // (a,b,c) is a line perpendicular to the primary edge through v01.
       // If e0 and e1 are collinear this line is the actual perpendicular bisector.
       //
-      // If e0 and e1 are parallel but not collinear (then neccesarrily facing each other) this line
-      // is NOT the bisector, but the serves to determine the side of the point (projected along the primary ege) w.r.t vertex v01.
+      // If e0 and e1 are parallel but not collinear (then necessarily facing each other) this line
+      // is NOT the bisector, but the serves to determine the side of the point (projected along the primary edge) w.r.t vertex v01.
 
       FT a, b, c ;
       perpendicular_through_pointC2( primary_is_0 ? l0.a() : l1.a()

@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
       std::vector<vertex_descriptor> patch_vertices;
       bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
                                                                        h,
-                                                                       std::back_inserter(patch_facets),
-                                                                       std::back_inserter(patch_vertices),
-                                                                       CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, mesh))
+                                                                       CGAL::parameters::face_output_iterator(std::back_inserter(patch_facets))
+                                                                                        .vertex_output_iterator(std::back_inserter(patch_vertices))
+                                                                                        .vertex_point_map(get(CGAL::vertex_point, mesh))
                                                                                         .geom_traits(Kernel())));
 
       std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;

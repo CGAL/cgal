@@ -36,7 +36,7 @@ return to the departure airfield. To score simply based on the total
 distance flown is not a good measure, since circling in thermals
 allows to increase it easily.
 
-\section Inscribed_areasLargest Largest Empty Rectange
+\section Inscribed_areasLargest Largest Empty Rectangle
 
 We further provide an algorithm for computing the maximal area
 inscribed axis parallel rectangle for a point set.

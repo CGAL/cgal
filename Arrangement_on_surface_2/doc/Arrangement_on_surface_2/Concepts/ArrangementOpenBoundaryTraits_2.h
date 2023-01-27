@@ -11,7 +11,7 @@
  * `ArrangementBasicTraits_2`. The arrangement template instantiated with a
  * traits class that models this concept can handle \f$ x\f$-monotone curves
  * that are unbounded in any direction. The concept
- * `ArrangementOpenBoundaryTraits_2`, nontheless, also supports planar \f$
+ * `ArrangementOpenBoundaryTraits_2`, nonetheless, also supports planar \f$
  * x\f$-monotone curves that reach the boundary of an open yet bounded parameter
  * space.
  *

@@ -427,7 +427,10 @@ bool build_triangulation_impl(Tr& tr,
   vertex_handle_vector.resize(points.size() + 1);
 
   if(finite_cells.empty())
-    std::cout << "WARNING: No finite cells were provided. Only the points will be loaded." << std::endl;
+  {
+    if (verbose)
+      std::cout << "WARNING: No finite cells were provided. Only the points will be loaded." << std::endl;
+  }
 
   tr.tds().clear(); // not tr.clear() since it calls tr.init(), which we don't want
 

@@ -207,7 +207,7 @@ public:
   }
 
   /**
-   * @brief Constructor. Contruction from a polyhedral surface
+   * @brief Constructor. Construction from a polyhedral surface
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
