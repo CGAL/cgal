@@ -1212,8 +1212,8 @@ gmon.*
 Polygonal_surface_reconstruction/examples/build*
 Polygonal_surface_reconstruction/test/build*
 Solver_interface/examples/build*
-dump-bug_point.xyz
-dump-bug.binary.cgal
-dump_region_with_size_2.polylines.txt
-dump_region.polylines.txt
+dump-*.xyz
+dump-*.binary.cgal
+dump_*.txt
+dump_*.off
 all_segments.polylines.txt
