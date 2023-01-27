@@ -307,11 +307,11 @@ public:
 
 #if 1
   template <class Segment_2>
-  static const Point& get_source(const Segment_2& segment){
+  static decltype(auto) get_source(const Segment_2& segment){
     return segment.source();
   }
   template <class Segment_2>
-  static const Point& get_target(const Segment_2& segment){
+  static decltype(auto) get_target(const Segment_2& segment){
     return segment.target();
   }
 
