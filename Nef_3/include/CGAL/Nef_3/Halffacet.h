@@ -59,37 +59,43 @@ class Halffacet_base  {
   Volume_handle        volume_;
   GenPtr               info_;
   Object_list          boundary_entry_objects_; // SEdges, SLoops
+  mutable bool         visited_;
 
  public:
 
-  Halffacet_base() : supporting_plane_(), mark_() {}
+      Halffacet_base() : supporting_plane_(), mark_(), visited_() {}
 
-    Halffacet_base(const Plane_3& h, Mark m) :
-      supporting_plane_(h), mark_(m) {}
+      Halffacet_base(const Plane_3& h, Mark m) :
+        supporting_plane_(h), mark_(m), visited_() {}
 
       ~Halffacet_base() {
         CGAL_NEF_TRACEN("  destroying Halffacet_base item "<<&*this);
       }
 
-      Halffacet_base(const Halffacet_base<Refs>& f)
-        { supporting_plane_ = f.supporting_plane_;
-          mark_ = f.mark_;
-          twin_ = f.twin_;
-          CGAL_NEF_TRACEN("VOLUME const");
-          volume_ = f.volume_;
-          boundary_entry_objects_ = f.boundary_entry_objects_;
-        }
+      Halffacet_base(const Halffacet_base<Refs>& f) :
+        supporting_plane_(f.supporting_plane_),
+        mark_(f.mark_),
+        twin_(f.twin_),
+        volume_(f.volume_),
+        info_(0),
+        boundary_entry_objects_(f.boundary_entry_objects_),
+        visited_(false)
+      {
+        CGAL_NEF_TRACEN("VOLUME const");
+      }
 
       Halffacet_base<Refs>& operator=(const Halffacet_base<Refs>& f)
-        { if (this == &f) return *this;
-          supporting_plane_ = f.supporting_plane_;
-          mark_ = f.mark_;
-          twin_ = f.twin_;
-          CGAL_NEF_TRACEN("VOLUME op=");
-          volume_ = f.volume_;
-          boundary_entry_objects_ = f.boundary_entry_objects_;
-          return *this;
-        }
+      { if (this == &f) return *this;
+        supporting_plane_ = f.supporting_plane_;
+        mark_ = f.mark_;
+        twin_ = f.twin_;
+        CGAL_NEF_TRACEN("VOLUME op=");
+        volume_ = f.volume_;
+        info_ = 0;
+        boundary_entry_objects_ = f.boundary_entry_objects_;
+        visited_ = false;
+        return *this;
+      }
 
       Mark& mark() { return mark_; }
       const Mark& mark() const { return mark_; }
@@ -108,6 +114,8 @@ class Halffacet_base  {
 
       GenPtr& info() { return info_; }
       const GenPtr& info() const { return info_; }
+
+      bool& visited() const { return visited_; }
 
       Halffacet_cycle_iterator facet_cycles_begin()
       { return boundary_entry_objects_.begin(); }
