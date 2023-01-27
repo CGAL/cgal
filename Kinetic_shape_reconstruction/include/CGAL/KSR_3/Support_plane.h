@@ -29,30 +29,30 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits, typename Intersection_Traits>
+template<typename Traits>
 class Support_plane {
 
 public:
-  using Kernel = GeomTraits;
-  using Intersection_Kernel = Intersection_Traits;
+  using Kernel = typename Traits::Kernel;
+  using Intersection_Kernel = typename Traits::Intersection_Kernel;
   using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_Kernel>;
   using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
-  using FT          = typename Kernel::FT;
-  using Point_2     = typename Kernel::Point_2;
-  using Point_3     = typename Kernel::Point_3;
-  using Vector_2    = typename Kernel::Vector_2;
-  using Vector_3    = typename Kernel::Vector_3;
-  using Direction_2 = typename Kernel::Direction_2;
-  using Segment_2   = typename Kernel::Segment_2;
-  using Segment_3   = typename Kernel::Segment_3;
-  using Line_2      = typename Kernel::Line_2;
-  using Line_3      = typename Kernel::Line_3;
-  using Plane_3     = typename Kernel::Plane_3;
-  using Triangle_2  = typename Kernel::Triangle_2;
+  using FT          = typename Traits::FT;
+  using Point_2     = typename Traits::Point_2;
+  using Point_3     = typename Traits::Point_3;
+  using Vector_2    = typename Traits::Vector_2;
+  using Vector_3    = typename Traits::Vector_3;
+  using Direction_2 = typename Traits::Direction_2;
+  using Segment_2   = typename Traits::Segment_2;
+  using Segment_3   = typename Traits::Segment_3;
+  using Line_2      = typename Traits::Line_2;
+  using Line_3      = typename Traits::Line_3;
+  using Plane_3     = typename Traits::Plane_3;
+  using Triangle_2  = typename Traits::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
-  using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_Kernel>;
+  using Intersection_graph = KSR_3::Intersection_graph<Traits>;
   using Bbox_2 = CGAL::Bbox_2;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
@@ -113,8 +113,11 @@ private:
     std::vector<Vector_2> original_vectors;
     std::vector<Direction_2> original_directions;
     std::vector<typename Intersection_Kernel::Ray_2> original_rays;
-    int k;
+
     FT distance_tolerance;
+    FT angle_tolerance;
+
+    int k;
   };
 
   std::shared_ptr<Data> m_data;
@@ -126,7 +129,7 @@ public:
   }
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance, std::size_t idx) :
+  Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance, const FT angle_tolerance, std::size_t idx) :
   m_data(std::make_shared<Data>()) {
     To_exact to_EK;
 
@@ -159,6 +162,7 @@ public:
     m_data->exact_plane = to_EK(m_data->plane);
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = distance_tolerance;
+    m_data->angle_tolerance = angle_tolerance;
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -277,6 +281,10 @@ public:
 
   FT distance_tolerance() const {
     return m_data->distance_tolerance;
+  }
+
+  FT angle_tolerance() const {
+    return m_data->angle_tolerance;
   }
 
   void clear_pfaces() {
@@ -756,14 +764,14 @@ public:
   }
 };
 
-template<typename Kernel, typename Intersection_Kernel>
-bool operator==(const Support_plane<Kernel, Intersection_Kernel>& a, const Support_plane<Kernel, Intersection_Kernel>& b) {
+template<typename Traits>
+bool operator==(const Support_plane<Traits>& a, const Support_plane<Traits>& b) {
 
   if (a.is_bbox() || b.is_bbox()) {
     return false;
   }
 
-  using FT = typename Kernel::FT;
+  using FT = typename Traits::FT;
   const auto& planea = a.plane();
   const auto& planeb = b.plane();
 
@@ -779,24 +787,15 @@ bool operator==(const Support_plane<Kernel, Intersection_Kernel>& a, const Suppo
   //   return false;
   // }
 
-  const FT vtol = FT(5); // degrees // TODO: We should put it as a parameter.
   FT aval = approximate_angle(va, vb);
   CGAL_assertion(aval >= FT(0) && aval <= FT(180));
-  if (aval >= FT(90)) aval = FT(180) - aval;
+  if (aval >= FT(90))
+    aval = FT(180) - aval;
 
-  // std::cout << "aval: " << aval << " : " << vtol << std::endl;
-  if (aval >= vtol) {
+  if (aval >= a.angle_tolerance()) {
     return false;
   }
 
-  // Are the planes coplanar?
-  // const FT ptol = KSR::point_tolerance<FT>();
-  // const auto pa = planea.point();
-  // const auto pb = planeb.projection(pa);
-  // const FT bval = KSR::distance(pa, pb);
-
-  // TODO: We should put it as a parameter.
-  const FT ptol = a.distance_tolerance();
   const auto pa1 = a.to_3d(a.centroid());
   const auto pb1 = planeb.projection(pa1);
   const auto pb2 = b.to_3d(b.centroid());
@@ -807,14 +806,9 @@ bool operator==(const Support_plane<Kernel, Intersection_Kernel>& a, const Suppo
   const FT bval = (CGAL::max)(bval1, bval2);
   CGAL_assertion(bval >= FT(0));
 
-  // if (bval < ptol) {
-  //   std::cout << "2 " << pa << " " << pb << std::endl;
-  //   std::cout << "bval: " << bval << " : " << ptol << std::endl;
-  // }
+  if (bval >= a.distance_tolerance())
+    return false;
 
-  // std::cout << "bval: " << bval << " : " << ptol << std::endl;
-  if (bval >= ptol) return false;
-  // std::cout << "- found coplanar planes" << std::endl;
   return true;
 }
 

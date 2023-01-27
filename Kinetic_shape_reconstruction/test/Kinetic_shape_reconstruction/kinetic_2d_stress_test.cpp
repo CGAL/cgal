@@ -1,20 +1,18 @@
 #include <CGAL/Simple_cartesian.h>
-using SC = CGAL::Simple_cartesian<double>;
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
-
 #include <CGAL/Cartesian_converter.h>
-using EPECK_to_EPICK = CGAL::Cartesian_converter<EPECK, EPICK>;
 
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
+
+using SC = CGAL::Simple_cartesian<double>;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK_to_EPICK = CGAL::Cartesian_converter<EPECK, EPICK>;
 
 using FT        = typename EPECK::FT;
 using Point_2   = typename EPECK::Point_2;

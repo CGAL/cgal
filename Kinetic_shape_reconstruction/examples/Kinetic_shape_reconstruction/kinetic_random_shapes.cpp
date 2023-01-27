@@ -6,7 +6,7 @@
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/Kinetic_shape_reconstruction_3.h>
+#include <CGAL/Kinetic_shape_partitioning_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2_algorithms.h>
@@ -36,7 +36,9 @@ using IPoint_3 = typename EPICK::Point_3;
 using IPolygon_3     = std::vector<IPoint_3>;
 using IPolygon_3_map = CGAL::Identity_property_map<IPolygon_3>;
 
-using KSR = CGAL::Kinetic_shape_reconstruction_3<EPICK>;
+using Traits = typename CGAL::Kinetic_shape_partitioning_Traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
+
+using KSP = CGAL::Kinetic_shape_partitioning_3<Traits>;
 
 const std::vector<int> box_vertices_to_faces(const int i) {
   const int _vertices_to_faces[8][3] = {
@@ -403,14 +405,19 @@ int main(const int argc, const char** argv) {
   assert(input_polygons.size() == rnd_polygons.size());
 
   // Algorithm.
-  KSR ksr(true, false);
+  KSP ksp(true, false);
   const IPolygon_3_map polygon_map;
   const unsigned int k = (argc > 3 ? std::atoi(argv[3]) : 1);
   std::cout << "* input k: " << k << std::endl;
-  const bool is_ksr_success = ksr.partition(
-    input_polygons, polygon_map, CGAL::parameters::k_intersections(k));
-  assert(is_ksr_success);
-  const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
+
+  bool is_ksp_success = ksp.initialize(
+    input_polygons, polygon_map);
+
+  if (is_ksp_success)
+    ksp.partition(k);
+
+  assert(is_ksp_success);
+  const std::string success = is_ksp_success ? "SUCCESS" : "FAILED";
 
   std::cout << std::endl << "3D KINETIC " << success << "!" << std::endl << std::endl;
   return EXIT_SUCCESS;

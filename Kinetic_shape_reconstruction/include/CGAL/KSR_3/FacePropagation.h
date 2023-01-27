@@ -29,21 +29,22 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits, typename Intersection_Kernel>
+template<typename Traits>
 class FacePropagation {
 
 public:
-  using Kernel = GeomTraits;
+  using Kernel = typename Traits::Kernel;
+  using Intersection_Kernel = typename Traits::Intersection_Kernel;
 
 private:
-  using FT          = typename Kernel::FT;
-  using Point_2     = typename Kernel::Point_2;
-  using Vector_2    = typename Kernel::Vector_2;
-  using Segment_2   = typename Kernel::Segment_2;
-  using Direction_2 = typename Kernel::Direction_2;
-  using Line_2      = typename Kernel::Line_2;
+  using FT          = typename Traits::FT;
+  using Point_2     = typename Traits::Point_2;
+  using Vector_2    = typename Traits::Vector_2;
+  using Segment_2   = typename Traits::Segment_2;
+  using Direction_2 = typename Traits::Direction_2;
+  using Line_2      = typename Traits::Line_2;
 
-  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
+  using Data_structure = KSR_3::Data_structure<Traits>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
@@ -57,7 +58,6 @@ private:
   using Face_index = typename Data_structure::Face_index;
 
   using Parameters     = KSR::Parameters_3<FT>;
-  using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
 
   using FaceEvent      = typename Data_structure::Support_plane::FaceEvent;
 
@@ -69,11 +69,11 @@ private:
 
 public:
   FacePropagation(Data_structure& data, const Parameters& parameters) :
-  m_data(data), m_parameters(parameters), m_kinetic_traits(),
+  m_data(data), m_parameters(parameters),
   m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 
-  const std::pair<std::size_t, std::size_t> propagate() {
+  const std::pair<std::size_t, std::size_t> propagate(std::size_t k) {
     std::size_t num_queue_calls = 0;
     std::size_t num_events = 0;
 
@@ -97,7 +97,6 @@ public:
 private:
   Data_structure& m_data;
   const Parameters& m_parameters;
-  Kinetic_traits m_kinetic_traits;
 
   FT m_min_time;
   FT m_max_time;

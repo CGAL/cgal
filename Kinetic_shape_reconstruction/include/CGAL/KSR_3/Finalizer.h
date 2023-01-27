@@ -20,7 +20,6 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
-#include <CGAL/KSR/conversions.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
 
@@ -30,11 +29,11 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits, typename Intersection_Kernel>
+template<typename Traits>
 class Finalizer {
 
 public:
-  using Kernel = GeomTraits;
+  using Kernel = typename Traits;
 
 private:
   using FT = typename Kernel::FT;
@@ -48,7 +47,7 @@ private:
   using Direction_2 = typename Kernel::Direction_2;
   using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
 
-  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
+  using Data_structure = KSR_3::Data_structure<Traits>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge = typename Data_structure::IEdge;
@@ -91,11 +90,10 @@ private:
   };
 
   using Parameters = KSR::Parameters_3<FT>;
-  using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
 
 public:
   Finalizer(Data_structure& data, const Parameters& parameters) :
-    m_data(data), m_parameters(parameters), m_kinetic_traits()
+    m_data(data), m_parameters(parameters)
   { }
 
   void create_polyhedra() {
@@ -124,7 +122,6 @@ public:
 private:
   Data_structure& m_data;
   const Parameters& m_parameters;
-  Kinetic_traits m_kinetic_traits;
 
   /*******************************
   **     EXTRACTING VOLUMES     **

@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Kinetic_shape_reconstruction_3.h>
+#include <CGAL/Kinetic_shape_partitioning_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/OFF.h>
 #include <CGAL/IO/PLY.h>
@@ -11,6 +11,8 @@ using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 using Timer = CGAL::Real_timer;
+
+using Traits = typename CGAL::Kinetic_shape_partitioning_Traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
 
 template<typename Point>
 struct Polygon_map {
@@ -48,11 +50,11 @@ bool run_test(
   std::vector< std::vector<double> >& all_times,
   std::size_t& num_tests) {
 
-  using Point_3   = typename Traits::Point_3;
-  using Segment_3 = typename Traits::Segment_3;
+  using Point_3   = typename Traits::Kernel::Point_3;
+  using Segment_3 = typename Traits::Kernel::Segment_3;
 
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
-  using KSR = CGAL::Kinetic_shape_reconstruction_3<Traits>;
+  using KSP = CGAL::Kinetic_shape_partitioning_3<Traits>;
 
   ++num_tests;
   std::string baseDir = "C:/dev/kinetic/Kinetic_shape_reconstruction/examples/Kinetic_shape_reconstruction/";
@@ -83,34 +85,35 @@ bool run_test(
     double time = 0.0;
     for (std::size_t iter = 0; iter < num_iters; ++iter) {
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " BEGIN!" << std::endl;
-       KSR ksr(true, true); // first verbose, second debug
+       KSP ksp(true, false); // first verbose, second debug
 
       // Running KSR.
       Timer timer;
       timer.start();
-      const bool is_ksr_success = ksr.partition(
-        input_faces, polygon_map, CGAL::parameters::k_intersections(k));
-      assert(is_ksr_success);
-      if (!is_ksr_success) return false;
+
+      bool is_ksp_success = ksp.initialize(
+        input_faces, polygon_map);
+
+      if (is_ksp_success)
+        ksp.partition(k);
+
+      assert(is_ksp_success);
+      if (!is_ksp_success) return false;
       timer.stop();
       time += timer.time();
 
       // Testing results.
-      const std::size_t num_events = ksr.number_of_events();
-      assert(num_events > 0);
 
-      const int num_support_planes = ksr.number_of_support_planes();
+      const int num_support_planes = ksp.number_of_support_planes();
 
-      const int num_vertices = static_cast<int>(ksr.number_of_vertices());
-      const int num_edges    = static_cast<int>(ksr.number_of_edges());
-      const int num_faces    = static_cast<int>(ksr.number_of_faces());
-      const int num_volumes  = static_cast<int>(ksr.number_of_volumes());
+      const int num_vertices = static_cast<int>(ksp.number_of_vertices());
+      const int num_faces = static_cast<int>(ksp.number_of_faces());
+      const int num_volumes  = static_cast<int>(ksp.number_of_volumes());
 
       std::cout << std::endl << "--RESULTS: ";
       std::cout << num_support_planes << ",";
 
       std::cout << num_vertices << ",";
-      std::cout << num_edges    << ",";
       std::cout << num_faces    << ",";
       std::cout << num_volumes  << std::endl;
 
@@ -136,14 +139,14 @@ bool run_test(
       if (num_volumes   < results[5]) return false;*/
 
       CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
-      ksr.get_linear_cell_complex(lcc);
-
+      ksp.get_linear_cell_complex(lcc);
+/*
       std::vector<Point_3> output_vertices;
-      ksr.output_partition_vertices(
+      ksp.output_partition_vertices(
         std::back_inserter(output_vertices));
       assert(static_cast<std::size_t>(num_vertices) == output_vertices.size());
       if (static_cast<std::size_t>(num_vertices) != output_vertices.size()) return false;
-      /*
+
 
       std::vector<Segment_3> output_edges;
       ksr.output_partition_edges(
@@ -163,18 +166,16 @@ bool run_test(
       assert(static_cast<std::size_t>(num_volumes) == output_volumes.size());
       if (static_cast<std::size_t>(num_volumes) != output_volumes.size()) return false;*/
 
-      ksr.clear();
-      assert(ksr.number_of_support_planes() == 0);
-      assert(ksr.number_of_vertices()       == 0);
-      assert(ksr.number_of_edges()          == 0);
-      assert(ksr.number_of_faces()          == 0);
-      assert(ksr.number_of_volumes()        == 0);
+      ksp.clear();
+      assert(ksp.number_of_support_planes() == 0);
+      assert(ksp.number_of_vertices()       == 0);
+      assert(ksp.number_of_faces()          == 0);
+      assert(ksp.number_of_volumes()        == 0);
 
-      if (ksr.number_of_support_planes() != 0) return false;
-      if (ksr.number_of_vertices()       != 0) return false;
-      if (ksr.number_of_edges()          != 0) return false;
-      if (ksr.number_of_faces()          != 0) return false;
-      if (ksr.number_of_volumes()        != 0) return false;
+      if (ksp.number_of_support_planes() != 0) return false;
+      if (ksp.number_of_vertices()       != 0) return false;
+      if (ksp.number_of_faces()          != 0) return false;
+      if (ksp.number_of_volumes()        != 0) return false;
 
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " END!" << std::endl;
     }
@@ -202,19 +203,18 @@ void run_all_tests() {
   // Number of allowed intersections k.
   std::vector<unsigned int> ks;
   for (unsigned int k = 1; k <= 6; ++k) {
-    //ks.push_back(k);
+    ks.push_back(k);
   }
-  ks.push_back(3);
-  //results = { 9,1,28,56,35,6 };
-  //run_test<Traits>("data/stress-test-1/test-8-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests);
-  //results = { 16,1,133,315,212,34 };
-  //run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests);
-  //results = { 10,1,37,77,46,6 };
-  //run_test<Traits>("data/stress-test-4/test-4-rnd-polygons-4-6.off", ks, num_iters, results, all_times, num_tests);
-  //results = { 10,1,37,77,46,6 };
-  //assert(run_test<Traits>("data/edge-case-test/test-box.off", ks, num_iters, results, all_times, num_tests));
-  //results = {7,1,12,20,11,2};
-  //assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy-split.off", ks, num_iters, results, all_times, num_tests));
+  results = { 9,1,28,56,35,6 };
+  run_test<Traits>("data/stress-test-1/test-8-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests);
+  results = { 16,1,133,315,212,34 };
+  run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests);
+  results = { 10,1,37,77,46,6 };
+  run_test<Traits>("data/stress-test-4/test-4-rnd-polygons-4-6.off", ks, num_iters, results, all_times, num_tests);
+  results = { 10,1,37,77,46,6 };
+  run_test<Traits>("data/edge-case-test/test-box.off", ks, num_iters, results, all_times, num_tests);
+  results = {7,1,12,20,11,2};
+  run_test<Traits>("data/edge-case-test/test-flat-bbox-xy-split.off", ks, num_iters, results, all_times, num_tests);
 
   // Edge case tests.
 
@@ -419,12 +419,14 @@ void run_all_tests() {
     }
   }
 
-  const auto kernel_name = boost::typeindex::type_id<Traits>().pretty_name();
+  const auto kernel_name = boost::typeindex::type_id<typename Traits::Kernel>().pretty_name();
+  const auto intersection_kernel_name = boost::typeindex::type_id<typename Traits::Intersection_Kernel>().pretty_name();
   if (num_tests != 0) {
-    std::cout << std::endl << kernel_name <<
+    std::cout << std::endl << kernel_name << " with " << intersection_kernel_name << " intersections" <<
     ": ALL " << num_tests << " TESTS SUCCESS!" << std::endl << std::endl;
-  } else {
-    std::cout << std::endl << kernel_name <<
+  }
+  else {
+    std::cout << std::endl << kernel_name << " with " << intersection_kernel_name << " intersections" <<
     ": ALL " << num_tests << " TESTS FAILED!" << std::endl << std::endl;
   }
 }
@@ -438,6 +440,6 @@ int main(const int /* argc */, const char** /* argv */) {
 
   // Passes all tests except for those when
   // intersections lead to accumulated errors.
-  run_all_tests<EPICK>();
+  run_all_tests<Traits>();
   return EXIT_SUCCESS;
 }

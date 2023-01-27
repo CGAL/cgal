@@ -38,20 +38,20 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-  template<typename GeomTraits, typename Intersection_Traits>
+  template<typename Traits>
   class Graphcut {
 
   public:
-    using Kernel = GeomTraits;
-    using Intersection_Kernel = Intersection_Traits;
+    using Kernel = typename Traits::Kernel;
+    using Intersection_Kernel = typename Traits::Intersection_Kernel;
 
-    using FT          = typename Kernel::FT;
-    using Point_3    = typename Kernel::Point_3;
-    using Triangle_2 = typename Kernel::Triangle_2;
-    using Triangle_3 = typename Kernel::Triangle_3;
+    using FT          = typename Traits::FT;
+    using Point_3    = typename Traits::Point_3;
+    using Triangle_2 = typename Traits::Triangle_2;
+    using Triangle_3 = typename Traits::Triangle_3;
     using Indices    = std::vector<std::size_t>;
 
-    using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
+    using Data_structure = KSR_3::Data_structure<Traits>;
     using Mesh           = typename Data_structure::Mesh;
     using Volume_cell    = typename Data_structure::Volume_cell;
     using PFace          = typename Data_structure::PFace;
@@ -60,8 +60,8 @@ namespace KSR_3 {
 
     using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel>;
     using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
-    //using Converter  = CGAL::Cartesian_converter<Kernel, IK>;
-    using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
+
+    using From_exact = typename Traits::From_exact;
 
     struct Wrapper {
       PFace pface;
@@ -333,7 +333,7 @@ namespace KSR_3 {
       for (std::size_t i = 0; i < 6; i++) {
         cost_matrix[0][i] = 100000000;
       }
-      cost_matrix[0][0] = -100000000;
+      //cost_matrix[0][0] = -100000000;
 
       for (std::size_t i = 0; i < 6; i++) {
         cost_matrix[1][i] = -cost_matrix[0][i];

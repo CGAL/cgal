@@ -10,6 +10,7 @@
 #include "include/Terminal_parser.h"
 
 using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 using FT        = typename Kernel::FT;
 using Point_3   = typename Kernel::Point_3;
 using Vector_3  = typename Kernel::Vector_3;
@@ -17,12 +18,14 @@ using Segment_3 = typename Kernel::Segment_3;
 
 using Point_set    = CGAL::Point_set_3<Point_3>;
 using Point_map    = typename Point_set::Point_map;
-using Vector_map   = typename Point_set::Vector_map;
+using Normal_map   = typename Point_set::Vector_map;
 using Label_map    = typename Point_set:: template Property_map<int>;
 using Semantic_map = CGAL::KSR::Semantic_from_label_map<Label_map>;
 using Region_map = typename Point_set:: template Property_map<int>;
 
-using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel, CGAL::Exact_predicates_exact_constructions_kernel>;
+using Traits = typename CGAL::Kinetic_shape_partitioning_Traits_3<Kernel, EPECK, Point_set, Point_map>;
+
+using KSR = CGAL::Kinetic_shape_reconstruction_3<Traits, Normal_map>;
 
 using Parameters      = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
@@ -111,7 +114,6 @@ int main(const int argc, const char** argv) {
   }
   else {
     std::ifstream input_file(parameters.data, std::ios_base::binary);
-    bool f = input_file.is_open();
     input_file >> point_set;
     input_file.close();
   }
@@ -129,18 +131,6 @@ int main(const int argc, const char** argv) {
   std::cout << "verbose " << parameters.verbose << std::endl;
   std::cout << "debug " << parameters.debug << std::endl;
 
-  // Define a map from a user-defined label to the semantic label.
-  const Label_map label_map = point_set. template property_map<int>("label").first;
-  const bool is_defined = point_set. template property_map<int>("label").second;
-  const Semantic_map semantic_map(
-    label_map,
-    is_defined,
-    parameters.gi,
-    parameters.bi,
-    parameters.ii,
-    parameters.vi,
-    parameters.verbose);
-
   // Algorithm.
   KSR ksr(parameters.verbose, parameters.debug);
 
@@ -149,13 +139,38 @@ int main(const int argc, const char** argv) {
 
   Timer timer;
   timer.start();
-  bool is_ksr_success;
+  std::size_t num_shapes = ksr.detect_planar_shapes(point_set,
+    CGAL::parameters::distance_threshold(parameters.distance_threshold)
+    .angle_threshold(parameters.angle_threshold)
+    .k_neighbors(parameters.k_neighbors)
+    .min_region_size(parameters.min_region_size));
+
+  std::cout << num_shapes << " detected planar shapes" << std::endl;
+
+  num_shapes = ksr.regularize_shapes(CGAL::parameters::regularize_parallelism(true).regularize_coplanarity(true).regularize_axis_symmetry(false).regularize_orthogonality(false));
+
+  std::cout << num_shapes << " detected planar shapes after regularization" << std::endl;
+
+  bool is_ksr_success = ksr.initialize_partitioning();
+
+  if (!is_ksr_success) {
+    std::cout << "Initializing kinetic partitioning failed!" << std::endl;
+    return 1;
+  }
+
+  is_ksr_success = ksr.partition(parameters.k_intersections);
+
+  if (!is_ksr_success) {
+    std::cout << "Initializing kinetic partitioning failed!" << std::endl;
+    return 2;
+  }
+
+  ksr.setup_energyterms();
+
+  ksr.reconstruct(parameters.graphcut_beta);
+/*
   if (is_segmented)
     is_ksr_success = ksr.reconstruct(
-      point_set,
-      point_set.point_map(),
-      point_set.normal_map(),
-      semantic_map,
       region_map,
       CGAL::parameters::
       k_neighbors(parameters.k_neighbors).
@@ -167,10 +182,6 @@ int main(const int argc, const char** argv) {
       graphcut_beta(parameters.graphcut_beta));
   else
     is_ksr_success = ksr.reconstruct(
-    point_set,
-    point_set.point_map(),
-    point_set.normal_map(),
-    semantic_map,
     base,
     CGAL::parameters::
     k_neighbors(parameters.k_neighbors).
@@ -179,35 +190,38 @@ int main(const int argc, const char** argv) {
     min_region_size(parameters.min_region_size).
     regularize(parameters.regularize).
     k_intersections(parameters.k_intersections).
-    graphcut_beta(parameters.graphcut_beta));
+    graphcut_beta(parameters.graphcut_beta));*/
   assert(is_ksr_success);
   const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
+  const KSR::KSP& ksp = ksr.partitioning();
+
   // Output.
   CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
-  ksr.get_linear_cell_complex(lcc);
+  ksp.get_linear_cell_complex(lcc);
+/*
 
   // Vertices.
   std::vector<Point_3> all_vertices;
-  ksr.output_partition_vertices(
+  ksp.output_partition_vertices(
     std::back_inserter(all_vertices), -1);
 
   // Edges.
   std::vector<Segment_3> all_edges;
-  ksr.output_partition_edges(
+  ksp.output_partition_edges(
     std::back_inserter(all_edges), -1);
 
   // Faces.
   std::vector< std::vector<std::size_t> > all_faces;
-  ksr.output_partition_faces(
+  ksp.output_partition_faces(
     std::back_inserter(all_faces), -1, 6);
 
   // Model.
   std::vector<Point_3> output_vertices;
   std::vector< std::vector<std::size_t> > output_faces;
-  ksr.output_reconstructed_model(
+  ksp.output_reconstructed_model(
     std::back_inserter(output_vertices),
     std::back_inserter(output_faces));
   const std::size_t num_vertices = output_vertices.size();
@@ -251,7 +265,7 @@ int main(const int argc, const char** argv) {
     return EXIT_FAILURE;
   }
   output_file_model.close();
-  std::cout << "* the reconstructed model exported successfully" << std::endl;
+  std::cout << "* the reconstructed model exported successfully" << std::endl;*/
 
   std::cout << std::endl << "3D KINETIC RECONSTRUCTION " << success <<
   " in " << time << " seconds!" << std::endl << std::endl;

@@ -28,7 +28,6 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
-#include <CGAL/KSR/conversions.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
 
@@ -40,25 +39,25 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits, typename Intersection_Traits>
+template<typename Traits>
 class Initializer {
 
 public:
-  using Kernel = GeomTraits;
-  using Intersection_Kernel = Intersection_Traits;
+  using Kernel = typename Traits::Kernel;
+  using Intersection_Kernel = typename Traits::Intersection_Kernel;
 
 private:
-  using FT          = typename Kernel::FT;
-  using Point_2     = typename Kernel::Point_2;
-  using Point_3     = typename Kernel::Point_3;
-  using Vector_2    = typename Kernel::Vector_2;
-  using Segment_2   = typename Kernel::Segment_2;
-  using Segment_3   = typename Kernel::Segment_3;
-  using Line_2      = typename Kernel::Line_2;
-  using Transform_3 = typename Kernel::Aff_transformation_3;
-  using Direction_2 = typename Kernel::Direction_2;
+  using FT          = typename Traits::FT;
+  using Point_2     = typename Traits::Point_2;
+  using Point_3     = typename Traits::Point_3;
+  using Vector_2    = typename Traits::Vector_2;
+  using Segment_2   = typename Traits::Segment_2;
+  using Segment_3   = typename Traits::Segment_3;
+  using Line_2      = typename Traits::Line_2;
+  using Transform_3 = typename Traits::Transform_3;
+  using Direction_2 = typename Traits::Direction_2;
 
-  using Data_structure     = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
+  using Data_structure     = KSR_3::Data_structure<Traits>;
   using Support_plane      = typename Data_structure::Support_plane;
   using IEdge              = typename Data_structure::IEdge;
   using IFace              = typename Data_structure::IFace;
@@ -68,23 +67,21 @@ private:
 
   using IVertex  = typename Data_structure::IVertex;
 
-  using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_Kernel>;
-  using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
+  using To_exact = typename Traits::To_exact;
+  using From_exact = typename Traits::From_exact;
 
   using Bbox_3     = CGAL::Bbox_3;
   using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
 
   using Planar_shape_type = KSR::Planar_shape_type;
   using Parameters        = KSR::Parameters_3<FT>;
-  using Kinetic_traits    = KSR::Kinetic_traits_3<Kernel>;
 
   using Timer = CGAL::Real_timer;
 
 public:
   Initializer(Data_structure& data, const Parameters& parameters) :
   m_data(data), m_parameters(parameters),
-  m_merge_type(Planar_shape_type::CONVEX_HULL),
-  m_kinetic_traits()
+  m_merge_type(Planar_shape_type::CONVEX_HULL)
   { }
 
   template<
@@ -98,8 +95,8 @@ public:
     std::array<Point_3, 8> bbox;
     create_bounding_box(
       input_range, polygon_map,
-      m_parameters.enlarge_bbox_ratio,
-      m_parameters.reorient, bbox);
+      m_parameters.bbox_dilation_ratio,
+      m_parameters.reorient_bbox, bbox);
 
     const double time_to_bbox = timer.time();
 
@@ -179,7 +176,6 @@ private:
   Data_structure& m_data;
   const Parameters& m_parameters;
   const Planar_shape_type m_merge_type;
-  Kinetic_traits m_kinetic_traits;
 
   template<
   typename InputRange,
@@ -1000,9 +996,9 @@ private:
         const auto& qj = merged[jp];
         const Segment_2 segment(pj, qj);
         Point_2 inter;
-        const bool is_intersected =
-          m_kinetic_traits.intersection(segment, edge, inter);
-        if (is_intersected) return false;
+        const bool is_intersected = intersection(segment, edge, inter);
+        if (is_intersected)
+          return false;
       }
     }
     return true;
@@ -1118,13 +1114,8 @@ private:
           typename Intersection_Kernel::Point_2 point;
           typename Intersection_Kernel::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
           typename Intersection_Kernel::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
-          if (!m_kinetic_traits.intersection(
-            m_data.to_2d(common_plane_idx, seg_a),
-            m_data.to_2d(common_plane_idx, seg_b),
-            point)) {
-
+          if (!intersection(m_data.to_2d(common_plane_idx, seg_a), m_data.to_2d(common_plane_idx, seg_b), point))
             continue;
-          }
 
           crossed_vertices.push_back(
             m_data.add_ivertex(m_data.to_3d(common_plane_idx, point), union_set));
@@ -1200,6 +1191,19 @@ private:
         m_data.k(pface) = k;
       }
     }
+  }
+
+  template<typename Type1, typename Type2, typename ResultType>
+  inline bool intersection(
+    const Type1& t1, const Type2& t2, ResultType& result) const {
+
+    const auto inter = CGAL::intersection(t1, t2);
+    if (!inter) return false;
+    if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
+      result = *typed_inter;
+      return true;
+    }
+    return false;
   }
 };
 

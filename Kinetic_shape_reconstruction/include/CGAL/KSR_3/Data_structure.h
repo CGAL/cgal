@@ -24,7 +24,6 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
-#include <CGAL/KSR/conversions.h>
 
 #include <CGAL/KSR_3/Support_plane.h>
 #include <CGAL/KSR_3/Intersection_graph.h>
@@ -35,40 +34,40 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits, typename Intersection_Traits>
+template<typename Traits>
 class Data_structure {
 
 public:
-  using Kernel = GeomTraits;
-  using Intersection_Kernel = Intersection_Traits;
+  using Kernel = typename Traits::Kernel;
+  using Intersection_Kernel = typename Traits::Intersection_Kernel;
 
-  using Support_plane = KSR_3::Support_plane<Kernel, Intersection_Kernel>;
-  using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_Kernel>;
+  using Support_plane = KSR_3::Support_plane<Traits>;
+  using Intersection_graph = KSR_3::Intersection_graph<Traits>;
   using FaceEvent = typename Support_plane::FaceEvent;
 
 private:
-  using FT = typename Kernel::FT;
-  using Point_2 = typename Kernel::Point_2;
+  using FT = typename Traits::FT;
+  using Point_2 = typename Traits::Point_2;
   using IkPoint_2 = typename Intersection_Kernel::Point_2;
-  using Point_3 = typename Kernel::Point_3;
+  using Point_3 = typename Traits::Point_3;
   using IkPoint_3 = typename Intersection_Kernel::Point_3;
-  using Segment_2 = typename Kernel::Segment_2;
+  using Segment_2 = typename Traits::Segment_2;
   using IkSegment_2 = typename Intersection_Kernel::Segment_2;
-  using Segment_3 = typename Kernel::Segment_3;
+  using Segment_3 = typename Traits::Segment_3;
   using IkSegment_3 = typename Intersection_Kernel::Segment_3;
-  using Vector_2 = typename Kernel::Vector_2;
-  using Direction_2 = typename Kernel::Direction_2;
+  using Vector_2 = typename Traits::Vector_2;
+  using Direction_2 = typename Traits::Direction_2;
   using IkDirection_2 = typename Intersection_Kernel::Direction_2;
   using Triangle_2  = typename Kernel::Triangle_2;
-  using Line_2      = typename Kernel::Line_2;
+  using Line_2      = typename Traits::Line_2;
   using IkLine_2    = typename Intersection_Kernel::Line_2;
-  using Plane_3     = typename Kernel::Plane_3;
+  using Plane_3     = typename Traits::Plane_3;
 
   using Polygon_2  = CGAL::Polygon_2<Kernel>;
   using Parameters = KSR::Parameters_3<FT>;
 
-  using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_Kernel>;
-  using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
+  using To_exact = typename Traits::To_exact;
+  using From_exact = typename Traits::From_exact;
 
 public:
   using Mesh           = typename Support_plane::Mesh;
@@ -185,6 +184,7 @@ public:
 
   struct Volume_cell {
     std::vector<PFace> pfaces;
+    std::vector<size_t> faces;// Indices into m_face2vertices in m_data.
     std::vector<bool> pface_oriented_outwards;
     std::vector<int> neighbors;
     std::set<PVertex> pvertices;
@@ -218,8 +218,6 @@ public:
     }
   };
 
-  using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
-
 private:
   std::map< std::pair<std::size_t, IEdge>, Point_2>  m_points;
   std::map< std::pair<std::size_t, IEdge>, Vector_2> m_directions;
@@ -230,18 +228,29 @@ private:
   From_exact from_exact;
 
   const Parameters& m_parameters;
-  Kinetic_traits m_kinetic_traits;
 
   std::vector<Volume_cell> m_volumes;
-  std::map<PFace, std::pair<int, int> > m_map_volumes;
+  std::vector<std::vector<std::size_t> > m_face2vertices;
+  std::map<PFace, std::pair<int, int> > m_face2volumes;
+  std::map<std::size_t, std::vector<std::size_t> > m_face2input_polygon;
   std::map<std::size_t, std::size_t> m_input_polygon_map;
   Reconstructed_model m_reconstructed_model;
 
+  template<typename Type1, typename Type2, typename ResultType>
+    inline bool intersection(
+      const Type1& t1, const Type2& t2, ResultType& result) const {
+
+    const auto inter = CGAL::intersection(t1, t2);
+    if (!inter) return false;
+    if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
+      result = *typed_inter;
+      return true;
+    }
+    return false;
+  }
+
 public:
-  Data_structure(const Parameters& parameters) :
-  m_parameters(parameters),
-  m_kinetic_traits()
-  { }
+  Data_structure(const Parameters& parameters) : m_parameters(parameters), to_exact(), from_exact() { }
 
   /*******************************
   **      INITIALIZATION        **
@@ -254,7 +263,7 @@ public:
     m_intersection_graph.clear();
 
     m_volumes.clear();
-    m_map_volumes.clear();
+    m_face2volumes.clear();
     m_input_polygon_map.clear();
     m_reconstructed_model.clear();
   }
@@ -299,8 +308,8 @@ public:
   **          GENERAL           **
   ********************************/
 
-  std::map<PFace, std::pair<int, int> >& pface_neighbors() { return m_map_volumes; }
-  const std::map<PFace, std::pair<int, int> >& pface_neighbors() const { return m_map_volumes; }
+  std::map<PFace, std::pair<int, int> >& pface_neighbors() { return m_face2volumes; }
+  const std::map<PFace, std::pair<int, int> >& pface_neighbors() const { return m_face2volumes; }
 
   const std::vector<Support_plane>& support_planes() const { return m_support_planes; }
   std::vector<Support_plane>& support_planes() { return m_support_planes; }
@@ -568,6 +577,9 @@ public:
   std::vector<Volume_cell>& volumes() { return m_volumes; }
   const std::vector<Volume_cell>& volumes() const { return m_volumes; }
 
+  const std::vector<std::size_t> face(std::size_t face_index) const { return &m_face2vertices[face_index]; }
+  const Point_3& vertex(std::size_t vertex_index) const { return &m_face2vertices[face_index]; }
+
   Reconstructed_model& reconstructed_model() { return m_reconstructed_model; }
   const Reconstructed_model& reconstructed_model() const { return m_reconstructed_model; }
 
@@ -604,7 +616,7 @@ public:
     const PointRange& polygon, const bool is_bbox) {
 
     const Support_plane new_support_plane(
-      polygon, is_bbox, m_parameters.distance_tolerance, number_of_support_planes());
+      polygon, is_bbox, m_parameters.distance_tolerance, m_parameters.angle_tolerance, number_of_support_planes());
     std::size_t support_plane_idx = KSR::no_element();
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
@@ -644,9 +656,8 @@ public:
     for (const auto iedge : all_iedges) {
       const auto segment = segment_3(iedge);
       typename Intersection_graph::Edge_property* p = (typename Intersection_graph::Edge_property*)iedge.get_property();
-      if (!m_kinetic_traits.intersection(plane, segment, point)) {
+      if (!intersection(plane, segment, point))
         continue;
-      }
 
       const auto isource = source(iedge);
       const auto itarget = target(iedge);

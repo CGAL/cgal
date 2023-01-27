@@ -46,8 +46,11 @@ namespace CGAL {
 
   \tparam IntersectionKernel
     must be a model of `Kernel`. Is used for the creation of the intersection graph. An exact kernel is suggested.
+
+  \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 */
-template<Kernel, Intersection_Kernel>
+template<Kernel, Intersection_Kernel, InputRange>
 class Kinetic_reconstruction_3 {
 public:
   /*!
@@ -267,34 +270,30 @@ public:
 #else
 
 namespace KSR_3 {
-template<
-typename InputRange,
-typename PointMap,
-typename VectorMap,
-typename SemanticMap,
-typename GeomTraits,
-typename Intersection_Kernel>
+template<typename Traits,
+typename SemanticMap>
 class Reconstruction {
 
 public:
-  using Input_range  = InputRange;
-  using Point_map    = PointMap;
-  using Vector_map   = VectorMap;
+  using Kernel = typename Traits::Kernel;
+  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Input_range  = typename Traits::Input_range;
+  using Point_map    = typename Traits::Point_map;
+  using Vector_map   = typename Traits::Normal_map;
   using Semantic_map = SemanticMap;
-  using Kernel       = GeomTraits;
 
 private:
-  using FT        = typename Kernel::FT;
-  using Point_2   = typename Kernel::Point_2;
-  using Line_2    = typename Kernel::Line_2;
-  using Point_3   = typename Kernel::Point_3;
-  using Plane_3   = typename Kernel::Plane_3;
-  using Vector_2  = typename Kernel::Vector_2;
-  using Vector_3  = typename Kernel::Vector_3;
-  using Segment_2 = typename Kernel::Segment_2;
-  using Segment_3 = typename Kernel::Segment_3;
+  using FT        = typename Traits::FT;
+  using Point_2   = typename Traits::Point_2;
+  using Line_2    = typename Traits::Line_2;
+  using Point_3   = typename Traits::Point_3;
+  using Plane_3   = typename Traits::Plane_3;
+  using Vector_2  = typename Traits::Vector_2;
+  using Vector_3  = typename Traits::Vector_3;
+  using Segment_2 = typename Traits::Segment_2;
+  using Segment_3 = typename Traits::Segment_3;
 
-  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
+  using Data_structure = KSR_3::Data_structure<Traits>;
   using PFace          = typename Data_structure::PFace;
 
   using Point_map_3        = KSR::Item_property_map<Input_range, Point_map>;
@@ -309,7 +308,7 @@ private:
   using Polygon_3   = std::vector<Point_3>;
   using Polygon_map = CGAL::Identity_property_map<Polygon_3>;
 
-  using From_EK = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
+  using From_EK = typename Traits::From_exact;
 
   struct Vertex_info { FT z = FT(0); };
   struct Face_info { };
@@ -360,8 +359,8 @@ private:
     Region_growing<Points_2, Neighbor_query_2, Linear_region, typename Linear_sorting::Seed_map>;
 
   using Visibility_label = KSR::Visibility_label;
-  using Visibility       = KSR_3::Visibility<Kernel, Intersection_Kernel, Point_map_3, Vector_map_3>;
-  using Graphcut         = KSR_3::Graphcut<Kernel, Intersection_Kernel>;
+  using Visibility       = KSR_3::Visibility<Traits>;
+  using Graphcut         = KSR_3::Graphcut<Traits>;
 
 public:
 
@@ -954,7 +953,7 @@ private:
     for (const auto& indices : result) {
       region.clear();
       for (const std::size_t index : indices) {
-        region.push_back(input_range[index]);
+        region.push_back(index);
       }
       regions.push_back(region);
     }

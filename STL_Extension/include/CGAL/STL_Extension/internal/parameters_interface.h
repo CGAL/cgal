@@ -251,12 +251,10 @@ CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
 
 // kinetic parameters
-CGAL_add_named_parameter(k_intersections_t, k_intersections, k_intersections)
-CGAL_add_named_parameter(n_subdivisions_t, n_subdivisions, n_subdivisions)
-CGAL_add_named_parameter(enlarge_bbox_ratio_t, enlarge_bbox_ratio, enlarge_bbox_ratio)
-CGAL_add_named_parameter(reorient_t, reorient, reorient)
-CGAL_add_named_parameter(use_hybrid_mode_t, use_hybrid_mode, use_hybrid_mode)
+CGAL_add_named_parameter(bbox_dilation_ratio_t, bbox_dilation_ratio, bbox_dilation_ratio)
+CGAL_add_named_parameter(reorient_bbox_t, reorient_bbox, reorient_bbox)
 CGAL_add_named_parameter(distance_tolerance_t, distance_tolerance, distance_tolerance)
+CGAL_add_named_parameter(angle_tolerance_t, angle_tolerance, angle_tolerance)
 
 // region growing
 CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)

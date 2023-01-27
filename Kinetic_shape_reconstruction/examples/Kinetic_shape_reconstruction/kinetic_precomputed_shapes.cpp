@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Kinetic_shape_reconstruction_3.h>
+#include <CGAL/Kinetic_shape_partitioning_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/OFF.h>
@@ -12,6 +12,8 @@ using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
+using Traits = typename CGAL::Kinetic_shape_partitioning_Traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
+
 using Kernel     = EPICK;
 using FT         = typename Kernel::FT;
 using Point_2    = typename Kernel::Point_2;
@@ -20,7 +22,7 @@ using Segment_3  = typename Kernel::Segment_3;
 using Triangle_2 = typename Kernel::Triangle_2;
 
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
-using KSR          = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
+using KSR          = CGAL::Kinetic_shape_partitioning_3<Traits>;
 using Timer        = CGAL::Real_timer;
 
 struct Polygon_map {
@@ -81,10 +83,8 @@ int main(const int argc, const char** argv) {
   const bool         verbose = true;
   const bool         debug   = false;
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1); // intersections
-  const unsigned int subdiv  = 0;
   const double       eratio  = 1.1;
   const bool         orient  = false;
-  const bool         use_hm  = false;
 
   // Algorithm.
   KSR ksr(verbose, debug);
@@ -92,24 +92,24 @@ int main(const int argc, const char** argv) {
 
   Timer timer;
   timer.start();
-  const bool is_ksr_success = ksr.partition(
+  bool is_ksr_success = ksr.initialize(
     input_faces, polygon_map, CGAL::parameters::
-    k_intersections(k).
-    n_subdivisions(subdiv).
-    enlarge_bbox_ratio(eratio).
-    reorient(orient).
-    use_hybrid_mode(use_hm));
+    bbox_dilation_ratio(eratio).
+    reorient_bbox(orient));
+
+  if (is_ksr_success)
+    is_ksr_success = ksr.partition(k);
+
   assert(is_ksr_success);
   const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
-  const std::size_t num_events = ksr.number_of_events();
 
   // Output.
   const int support_plane_idx = -1;
   const int num_support_planes = ksr.number_of_support_planes();
   assert(num_support_planes > 6);
-  assert(ksr.support_plane_index(0) == 6);
+  assert(ksr.support_plane_index(0) == 6);/*
 
   // Vertices.
   const std::size_t num_vertices = ksr.number_of_vertices(support_plane_idx);
@@ -218,7 +218,7 @@ int main(const int argc, const char** argv) {
   //   CGAL::IO::write_PLY(output_file_support_plane, support_planes[i]);
   //   output_file_support_plane.close();
   // }
-  // std::cout << "* partition support planes exported successfully" << std::endl;
+  // std::cout << "* partition support planes exported successfully" << std::endl;*/
 
   std::cout << std::endl << "3D KINETIC " << success <<
   " in " << time << " seconds!" << std::endl << std::endl;

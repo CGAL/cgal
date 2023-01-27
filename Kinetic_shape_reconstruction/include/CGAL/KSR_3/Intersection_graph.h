@@ -31,19 +31,18 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits, typename Intersection_Traits>
+template<typename Traits>
 class Intersection_graph {
 
 public:
-  using Kernel = GeomTraits;
-  using Interxsection_Kernel = Intersection_Traits;
+  using Kernel = typename Traits::Kernel;
+  using Intersection_Kernel = typename Traits::Intersection_Kernel;
 
-  using FT        = typename Intersection_Traits::FT;
-  using Point_2   = typename Intersection_Traits::Point_2;
-  using Point_3   = typename Intersection_Traits::Point_3;
-  using Segment_3 = typename Intersection_Traits::Segment_3;
-  using Line_3    = typename Intersection_Traits::Line_3;
-  using Polygon_2 = typename CGAL::Polygon_2<Intersection_Traits>;
+  using Point_2   = typename Traits::IK_Point_2;
+  using Point_3   = typename Traits::IK_Point_3;
+  using Segment_3 = typename Traits::IK_Segment_3;
+  using Line_3    = typename Traits::IK_Line_3;
+  using Polygon_2 = typename CGAL::Polygon_2<Point_2>;
 
   using Inexact_FT = typename Kernel::FT;
 
@@ -106,7 +105,7 @@ public:
     Face_property(std::size_t support_plane_idx) : support_plane(support_plane_idx), part_of_partition(false) {}
     std::size_t support_plane;
     bool part_of_partition;
-    CGAL::Polygon_2<Interxsection_Kernel> poly;
+    CGAL::Polygon_2<Intersection_Kernel> poly;
     std::vector<Point_2> pts;
     std::vector<Edge_descriptor> edges;
     std::vector<Vertex_descriptor> vertices;
@@ -371,7 +370,7 @@ public:
   void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) { m_graph[edge].crossed.insert(sp_idx); }
 };
 
-template<typename GeomTraits, typename Intersection_Traits> std::size_t Intersection_graph<GeomTraits, Intersection_Traits>::Edge_property::edge_counter = 0;
+template<typename Traits> std::size_t Intersection_graph<Traits>::Edge_property::edge_counter = 0;
 
 #endif //DOXYGEN_RUNNING
 

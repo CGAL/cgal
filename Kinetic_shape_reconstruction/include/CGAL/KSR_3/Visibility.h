@@ -36,47 +36,42 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-  template<
-  typename GeomTraits,
-  typename Intersection_Traits,
-  typename PointMap_3,
-  typename VectorMap_3>
+  template<typename Traits>
   class Visibility {
 
   public:
-    using Kernel       = GeomTraits;
-    using Intersection_Kernel = Intersection_Traits;
-    using Point_map_3  = PointMap_3;
-    using Vector_map_3 = VectorMap_3;
+    using Kernel       = typename Traits::Kernel;
+    using Intersection_Kernel = typename Traits::Intersection_Kernel;
+    using Point_map_3  = typename Traits::Point_map;
+    using Vector_map_3 = typename Traits::Normal_map;
 
-    using FT       = typename Kernel::FT;
-    using Point_3  = typename Kernel::Point_3;
-    using Vector_3 = typename Kernel::Vector_3;
+    using FT       = typename Traits::FT;
+    using Point_3  = typename Traits::Point_3;
+    using Vector_3 = typename Traits::Vector_3;
     using Indices  = std::vector<std::size_t>;
 
-    using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
+    using Data_structure = KSR_3::Data_structure<Traits>;
     using PFace          = typename Data_structure::PFace;
     using Volume_cell    = typename Data_structure::Volume_cell;
 
     using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
     using Generator  = CGAL::Random_points_in_tetrahedron_3<Point_3>;
 
-    using From_EK = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
+    using From_EK = typename Traits::From_exact;
 
     using Visibility_label = KSR::Visibility_label;
 
     Visibility(
       const Data_structure& data,
-      const std::map<PFace, Indices>& pface_points,
+      const std::map<std::size_t, Indices>& face2points,
       const Point_map_3& point_map_3,
       const Vector_map_3& normal_map_3) :
     m_data(data),
-    m_pface_points(pface_points),
+    m_face2points(face2points),
     m_point_map_3(point_map_3),
     m_normal_map_3(normal_map_3),
-    m_num_samples(0),
-    m_random(0) {
-      CGAL_assertion(m_pface_points.size() > 0);
+    m_num_samples(0) {
+      CGAL_assertion(m_face2points.size() > 0);
       m_inliers = 0;
       for (const auto pair : m_pface_points) {
         m_inliers += pair.second.size();
@@ -116,12 +111,11 @@ namespace KSR_3 {
 
   private:
     const Data_structure& m_data;
-    const std::map<PFace, Indices>& m_pface_points;
+    const std::map<std::size_t, Indices>& m_face2points;
     const Point_map_3& m_point_map_3;
     const Vector_map_3& m_normal_map_3;
     mutable std::size_t m_num_samples;
     mutable std::size_t m_inliers;
-    Random m_random;
 
     void estimate_volume_label(Volume_cell& volume) const {
 
