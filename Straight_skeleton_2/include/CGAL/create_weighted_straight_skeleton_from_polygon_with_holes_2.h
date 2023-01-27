@@ -45,11 +45,8 @@ create_interior_weighted_straight_skeleton_2(const Polygon& poly_with_holes,
                                                       k);
 }
 
-// create_exterior_straight_skeleton_2() for polygon with holes is simply in create_straight_skeleton_2.h
+// create_exterior_weightd_straight_skeleton_2() for polygon with holes is simply in create_straight_skeleton_2.h
 // as the holes do not matter: call create_exterior_straight_skeleton_2 for each boundary (outer & holes).
-
-// @fixme above should actually be a proper function that calls create_exterior_straight_skeleton_2
-// for all the boundaries (mind that holes do not need to be reversed).
 
 } // end namespace CGAL
 

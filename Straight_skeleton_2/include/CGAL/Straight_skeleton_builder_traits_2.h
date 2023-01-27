@@ -556,7 +556,7 @@ public:
     Segment_2 s1(lPrev->point(), aNode->point());
     Segment_2 s2(aNode->point(), lNext->point());
 
-    // @todo? These are not input segments, but it might still worth caching (just gotta assign them an ID)
+    // @todo? These are not input segments, but it might still worth caching (but they need an ID)
     boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
     boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
 

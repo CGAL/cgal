@@ -666,7 +666,7 @@ private :
     return K().construct_segment_2_object()(s,t);
   }
 
-  template <typename GT> // actually just equal to 'Traits', but gotta template for SFINAE to work
+  template <typename GT> // this is 'Traits', but templating is required for SFINAE
   Segment_2 CreateSegment ( Halfedge_const_handle aH,
                             std::enable_if_t<
                               ! CGAL_SS_i::has_Segment_2_with_ID<GT>::value>* = nullptr ) const
@@ -674,7 +674,7 @@ private :
     return Segment_2(CreateRawSegment(aH)) ;
   }
 
-  template <typename GT> // actually just equal to 'Traits', but gotta template for SFINAE to work
+  template <typename GT> // this is 'Traits', but templating is required for SFINAE
   Segment_2 CreateSegment ( Halfedge_const_handle aH,
                             std::enable_if_t<
                               CGAL_SS_i::has_Segment_2_with_ID<GT>::value>* = nullptr ) const

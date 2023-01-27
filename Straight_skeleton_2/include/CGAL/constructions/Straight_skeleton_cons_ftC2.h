@@ -192,8 +192,10 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
                                << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
                                ) ;
     }
-    else finite = false ;
-
+    else
+    {
+      finite = false ;
+    }
   }
 
   if ( finite )
@@ -507,11 +509,11 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   //     B1(t) = [x(t),y(t)]
   //
   //   (3)
-  //   These two bisecting lines B0(t) and B1(t) intersect (if they do) in a single point 'p' whose distance
+  //   These two bisecting lines B0(t) and B1(t) intersect (if they do) in a single point 'r' whose distance
   //   to the lines supporting the 3 edges is exactly 't' (since those expressions are precisely parametrized in a distance)
   //   Solving the following vectorial equation:
   //
-  //     [x(y),y(t)] = q + t*[l0.a,l0.b]
+  //     [x(y),y(t)] = p + t*[l0.a,l0.b]
   //
   //   for t gives the result we want.
   //
@@ -750,7 +752,6 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
       const FT& l2b = l2->b() ;
       const FT& l2c = l2->c() ;
 
-      // @todo check if the weight is not simply 1
       // the l0 speed is inverted for the orthogonal line (1 / (l0a^2 + l0b^2))
       FT sq_l0_norm_den = FT(1) / (square(l0a) + square(l0b));
       l0a *= sq_l0_norm_den;
@@ -806,8 +807,6 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
           x = ( l0b * (t - l2c) + l2b * lambda ) / den ;
           y = ( lambda - l0a * x ) / l0b ;
 
-          std::cout << "!!!!!!!!!!!!!!!!!! HERE" << std::endl;
-
           ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
         }
       }
@@ -818,8 +817,6 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
         {
           y = ( l0a * (t - l2c) + l2a * lambda ) / den ;
           x = ( lambda - l0b * y ) / l0a ;
-
-          std::cout << "!!!!!!!!!!!!!!!!!! HERE 2222222222" << std::endl;
 
           ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
         }
