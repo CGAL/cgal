@@ -17,7 +17,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
 typedef K::FT                                               FT;
-typedef K::Segment_2                                         Segment;
+typedef K::Segment_2                                        Segment;
 
 int main ()
 {
@@ -37,8 +37,14 @@ int main ()
     std::back_inserter(isolated_points), std::back_inserter(edges));
 
   std::cout << "Isolated_points: " << isolated_points.size() << std::endl;
-  std::cout << "Edges: " << edges.size() << std::endl;
+  for(Point p : isolated_points){
+    std::cout << p << std::endl;
+  }
 
+  std::cout << "Edges: " << edges.size() << std::endl;
+  for(Segment s : edges){
+    std::cout << s << std::endl;
+  }
   assert(isolated_points.size() == 0);
   assert(edges.size() == 8);
 }

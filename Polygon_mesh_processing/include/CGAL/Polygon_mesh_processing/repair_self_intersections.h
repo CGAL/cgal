@@ -1941,6 +1941,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
                                    const bool treat_all_CCs,
                                    const double strong_dihedral_angle,
                                    const double weak_dihedral_angle,
+                                   const bool use_smoothing,
                                    const double containment_epsilon,
                                    const Projector& projector,
                                    VertexPointMap vpm,
@@ -2185,7 +2186,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     //
     // Do not smooth if there are no self-intersections within the patch: this means the intersection
     // is with another CC and smoothing is unlikely to move the surface sufficiently
-    if(self_intersects)
+    if(use_smoothing && self_intersects)
     {
       bool fixed_by_smoothing = false;
 
@@ -2390,6 +2391,8 @@ bool remove_self_intersections(const FaceRange& face_range,
   // detect_feature_pp NP (unused for now)
   const double weak_dihedral_angle = 0.; // choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 20.);
 
+  const bool use_smoothing = choose_parameter(get_parameter(np, internal_np::use_smoothing), false);
+
   struct Return_false
   {
     bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
@@ -2488,7 +2491,7 @@ bool remove_self_intersections(const FaceRange& face_range,
       internal::remove_self_intersections_one_step(
           faces_to_treat, working_face_range, tmesh, step,
           preserve_genus, treat_all_CCs, strong_dihedral_angle, weak_dihedral_angle,
-          containment_epsilon, projector, vpm, gt, visitor);
+          use_smoothing, containment_epsilon, projector, vpm, gt, visitor);
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     if(all_fixed && topology_issue)

@@ -187,8 +187,8 @@ inline std::string e2str( E const& e )
     ss << "B" << e.id()
        << "[E" << e.defining_contour_edge()->id()
        << ",E" << e.opposite()->defining_contour_edge()->id() << "]"
-       << " (/" << ( e.slope() == CGAL::ZERO ? "·" : ( e.slope() == CGAL::NEGATIVE ? "-" : "+" ) )
-       << " " << e.opposite()->vertex()->time() << "->" << e.vertex()->time() << ")" ;
+       << " (S " << ( e.slope() == CGAL::ZERO ? "0" : ( e.slope() == CGAL::NEGATIVE ? "-" : "+" ) )
+       << "; T " << e.opposite()->vertex()->time() << " -> " << e.vertex()->time() << ")" ;
   }
   else
   {
@@ -263,7 +263,7 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-bool sEnableTraitsTrace = false;
+bool sEnableTraitsTrace = true;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond)) sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_DISABLE_TRACE sEnableTraitsTrace = false;
