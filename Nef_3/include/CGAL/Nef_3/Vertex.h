@@ -81,7 +81,7 @@ class Vertex_base {
         svertices_begin_(), svertices_last_(),
         shalfedges_begin_(), shalfedges_last_(),
         sfaces_begin_(), sfaces_last_(), shalfloop_(),
-        info_(), visited_()
+        info_(), visited_(false)
         // , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
           {}
 
@@ -90,7 +90,7 @@ class Vertex_base {
         svertices_begin_(), svertices_last_(),
         shalfedges_begin_(), shalfedges_last_(),
         sfaces_begin_(), sfaces_last_(), shalfloop_(),
-        info_(), visited_()
+        info_(), visited_(false)
         //    , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
         {}
 

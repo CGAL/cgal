@@ -70,11 +70,11 @@ class Halfedge_base
 
       Halfedge_base() : center_vertex_(), mark_(), twin_(),
         out_sedge_(), incident_sface_(),
-        info_(), point_(), visited_() {}
+        info_(), point_(), visited_(false) {}
 
       Halfedge_base(Mark m) :  center_vertex_(), mark_(m), twin_(),
         out_sedge_(), incident_sface_(),
-        info_(), point_(), visited_() {}
+        info_(), point_(), visited_(false) {}
 
       ~Halfedge_base() {
         CGAL_NEF_TRACEN("  destroying Halfedge item "<<&*this);

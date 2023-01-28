@@ -62,7 +62,7 @@ class SFace_base {
 
  public:
 
-    SFace_base() : center_vertex_(), volume_(), info_(), mark_(), visited_() {}
+    SFace_base() : center_vertex_(), volume_(), info_(), mark_(), visited_(false) {}
 
     ~SFace_base() {
       CGAL_NEF_TRACEN("  destroying SFace_base item "<<&*this);

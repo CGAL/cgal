@@ -63,10 +63,10 @@ class Halffacet_base  {
 
  public:
 
-      Halffacet_base() : supporting_plane_(), mark_(), visited_() {}
+      Halffacet_base() : supporting_plane_(), mark_(), visited_(false) {}
 
       Halffacet_base(const Plane_3& h, Mark m) :
-        supporting_plane_(h), mark_(m), visited_() {}
+        supporting_plane_(h), mark_(m), visited_(false) {}
 
       ~Halffacet_base() {
         CGAL_NEF_TRACEN("  destroying Halffacet_base item "<<&*this);
