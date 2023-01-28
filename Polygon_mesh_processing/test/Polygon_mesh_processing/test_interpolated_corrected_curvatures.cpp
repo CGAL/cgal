@@ -162,7 +162,7 @@ void test_average_curvatures(std::string mesh_path,
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-      PMP::interpolated_corrected_curvatures_at_vertex(
+      PMP::interpolated_corrected_curvatures_one_vertex(
         pmesh,
         v,
         CGAL::parameters::vertex_gaussian_curvature(&g)

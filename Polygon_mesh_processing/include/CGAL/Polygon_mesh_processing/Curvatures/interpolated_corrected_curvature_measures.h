@@ -1337,13 +1337,13 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
   * \cgalNamedParamsEnd
   *
   * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
-  * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_at_vertex()`
-  * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_at_vertex()`
-  * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_at_vertex()`
+  * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
+  * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_one_vertex()`
+  * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
 */
 template<typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
-  void interpolated_corrected_curvatures_at_vertex(const PolygonMesh& pmesh,
+  void interpolated_corrected_curvatures_one_vertex(const PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values())
 {
@@ -1399,20 +1399,20 @@ template<typename PolygonMesh,
   * @return the interpolated corrected mean curvature at the vertex `v`
   *
   * @see `interpolated_corrected_mean_curvature()`
-  * @see `interpolated_corrected_gaussian_curvature_at_vertex()`
-  * @see `interpolated_corrected_principal_curvatures_and_directions_at_vertex()`
-  * @see `interpolated_corrected_curvatures_at_vertex()`
+  * @see `interpolated_corrected_gaussian_curvature_one_vertex()`
+  * @see `interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
+  * @see `interpolated_corrected_curvatures_one_vertex()`
 */
 
 template<typename GT, typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
-  typename GT::FT interpolated_corrected_mean_curvature_at_vertex(const PolygonMesh& pmesh,
+  typename GT::FT interpolated_corrected_mean_curvature_one_vertex(const PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values())
 {
-  // use interpolated_corrected_curvatures_at_vertex to compute mean curvature
+  // use interpolated_corrected_curvatures_one_vertex to compute mean curvature
   typename GT::FT mean_curvature;
-  interpolated_corrected_curvatures_at_vertex(pmesh, v, np.vertex_mean_curvature(&mean_curvature));
+  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_mean_curvature(&mean_curvature));
   return mean_curvature;
 }
 
@@ -1465,20 +1465,20 @@ template<typename GT, typename PolygonMesh,
   * @return the interpolated corrected Gaussian curvature at the vertex `v`
   *
   * @see `interpolated_corrected_gaussian_curvature()`
-  * @see `interpolated_corrected_mean_curvature_at_vertex()`
-  * @see `interpolated_corrected_principal_curvatures_and_directions_at_vertex()`
-  * @see `interpolated_corrected_curvatures_at_vertex()`
+  * @see `interpolated_corrected_mean_curvature_one_vertex()`
+  * @see `interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
+  * @see `interpolated_corrected_curvatures_one_vertex()`
 */
 
 template<typename GT, typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
-  typename GT::FT interpolated_corrected_gaussian_curvature_at_vertex(const PolygonMesh& pmesh,
+  typename GT::FT interpolated_corrected_gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values())
 {
-  // use interpolated_corrected_curvatures_at_vertex to compute gaussian curvature
+  // use interpolated_corrected_curvatures_one_vertex to compute gaussian curvature
   typename GT::FT gc;
-  interpolated_corrected_curvatures_at_vertex(pmesh, v, np.vertex_gaussian_curvature(&gc));
+  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_gaussian_curvature(&gc));
   return gc;
 }
 
@@ -1530,20 +1530,20 @@ template<typename GT, typename PolygonMesh,
   * @return the interpolated corrected principal curvatures and directions at the vertex `v`
   *
   * @see `interpolated_corrected_principal_curvatures_and_directions()`
-  * @see `interpolated_corrected_mean_curvature_at_vertex()`
-  * @see `interpolated_corrected_gaussian_curvature_at_vertex()`
-  * @see `interpolated_corrected_curvatures_at_vertex()`
+  * @see `interpolated_corrected_mean_curvature_one_vertex()`
+  * @see `interpolated_corrected_gaussian_curvature_one_vertex()`
+  * @see `interpolated_corrected_curvatures_one_vertex()`
 */
 
 template<typename GT, typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
-  Principal_curvatures_and_directions<GT> interpolated_corrected_principal_curvatures_and_directions_at_vertex(const PolygonMesh& pmesh,
+  Principal_curvatures_and_directions<GT> interpolated_corrected_principal_curvatures_and_directions_one_vertex(const PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values())
 {
-  // use interpolated_corrected_curvatures_at_vertex to compute principal curvatures
+  // use interpolated_corrected_curvatures_one_vertex to compute principal curvatures
   Principal_curvatures_and_directions<GT> pcd;
-  interpolated_corrected_curvatures_at_vertex(pmesh, v, np.vertex_principal_curvatures_and_directions(&pcd));
+  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_principal_curvatures_and_directions(&pcd));
   return pcd;
 }
 

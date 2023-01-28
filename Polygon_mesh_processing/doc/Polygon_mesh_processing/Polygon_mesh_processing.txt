@@ -909,10 +909,10 @@ Where it is recommended to use the last function for computing multiple curvatur
 as the implementation performs the shared computations only once, making it more efficient.
 
 Similarly, we can use the following functions to compute curvatures on a specific vertex:
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_at_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_at_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_at_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_at_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_one_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_one_vertex()`
 
 
 \cgalFigureRef{icc_diff_radius} shows how the mean curvature changes depending on
@@ -940,7 +940,7 @@ The following example illustrates how to
 compute the curvatures on vertices
 and store them in property maps provided by the class `Surface_mesh`.
 
-\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example.cpp}
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example_SM.cpp}
 
 \subsection ICCExamplePH Interpolated Corrected Curvatures on a Polyhedron Example
 
@@ -949,14 +949,14 @@ compute the curvatures on vertices
 and store them in dynamic property maps as the class `Polyhedron_3` does
 not provide storage for the curvatures.
 
-\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_polyhedron_example.cpp}
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example_PH.cpp}
 
 \subsection ICCExampleSV Interpolated Corrected Curvatures on a Vertex Example
 
 The following example illustrates how to
 compute the curvatures on a specific vertex
 
-\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_at_vertex_example.cpp}
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex_example.cpp}
 
 ****************************************
 \section PMPSlicer Slicer
