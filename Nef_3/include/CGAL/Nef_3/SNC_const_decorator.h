@@ -26,6 +26,8 @@
 #include <CGAL/Nef_3/SNC_decorator_traits.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <deque>
+#include <initializer_list>
+#include <tuple>
 #include <vector>
 
 #undef CGAL_NEF_DEBUG
@@ -437,12 +439,39 @@ public:
     }
 };
 
-template <typename H>
-inline void set_visited(const H& h, std::vector<H>& modified)
+template <typename ...T>
+class Visitor_context
 {
-  h->visited() = true;
-  modified.push_back(h);
-}
+  std::tuple<std::vector<T>...> modified;
+
+#if __cplusplus < 201703L
+  template <typename H>
+  inline void for_all(const std::initializer_list<H>&){}
+#endif
+
+  template <typename H>
+  int clear_visited(const H& handles)
+  {
+    for(const auto& h: handles)
+      h->visited() = false;
+    return 0;
+  }
+
+public:
+  template <typename H>
+  void visit(const H& h) {
+    h->visited() = true;
+    std::get<std::vector<H>>(modified).push_back(h);
+  }
+
+  void clear_visited() {
+#if __cplusplus >= 201703L
+    (clear_visited(std::get<std::vector<T>>(modified)),...);
+#else
+    for_all({clear_visited(std::get<std::vector<T>>(modified))...});
+#endif
+  }
+};
 
 /* visiting shell objects:
 
@@ -486,14 +515,10 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
 
   std::deque<SFace_handle> SFaceCandidates;
   std::deque<Halffacet_handle> FacetCandidates;
-
-  std::vector<SFace_handle> sf_modified;
-  std::vector<SVertex_handle> sv_modified;
-  std::vector<Vertex_handle> v_modified;
-  std::vector<Halffacet_handle> hf_modified;
+  Visitor_context<SFace_handle,SVertex_handle,Vertex_handle,Halffacet_handle> Done;
 
   SFaceCandidates.push_back(f);
-  set_visited(f, sf_modified);
+  Done.visit(f);
 
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
@@ -510,14 +535,14 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           CGAL_For_all(ec,ee) { she = ec->twin();
             if(she->incident_sface()->visited()) continue;
             SFaceCandidates.push_back(she->incident_sface());
-            set_visited(she->incident_sface(), sf_modified);
+            Done.visit(she->incident_sface());
           }
         } else if (fc.is_shalfloop() ) {
           SHalfloop_handle l(fc);
           SHalfloop_handle ll = l->twin();
           if(ll->incident_sface()->visited()) continue;
           SFaceCandidates.push_back(ll->incident_sface());
-          set_visited(ll->incident_sface(), sf_modified);
+          Done.visit(ll->incident_sface());
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
@@ -527,7 +552,7 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
       V.visit(sf);
       if ( !sf->center_vertex()->visited() )
         V.visit(sf->center_vertex()); // report vertex
-      set_visited(sf->center_vertex(), v_modified);
+      Done.visit(sf->center_vertex());
       //      SVertex_const_handle sv;
       SM_decorator SD(&*sf->center_vertex());
       /*
@@ -546,24 +571,24 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
             SVertex_handle vv = ec->twin()->source();
             if ( !SD.is_isolated(vv) && !vv->visited() ) {
               V.visit(vv); // report edge
-              set_visited(vv, sv_modified);
-              set_visited(vv->twin(), sv_modified);
+              Done.visit(vv);
+              Done.visit(vv->twin());
             }
             Halffacet_handle f = ec->twin()->facet();
             if ( f->visited() ) continue;
             FacetCandidates.push_back(f);
-            set_visited(f, hf_modified);
+            Done.visit(f);
           }
         } else if (fc.is_svertex() ) {
           SVertex_handle v(fc);
           if ( v->visited() ) continue;
           V.visit(v); // report edge
           V.visit(v->twin());
-          set_visited(v, sv_modified);
-          set_visited(v->twin(), sv_modified);
+          Done.visit(v);
+          Done.visit(v->twin());
           CGAL_assertion(SD.is_isolated(v));
           SFaceCandidates.push_back(v->twin()->incident_sface());
-          set_visited(v->twin()->incident_sface(), sf_modified);
+          Done.visit(v->twin()->incident_sface());
           // note that v is isolated, thus twin(v) is isolated too
           //          SM_const_decorator SD;
           //          SFace_const_handle fo;
@@ -580,16 +605,13 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           Halffacet_handle f = l->twin()->facet();
           if ( f->visited() ) continue;
           FacetCandidates.push_back(f);
-          set_visited(f, hf_modified);
+          Done.visit(f);
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
   }
 
-  for(SFace_handle sf: sf_modified) { sf->visited() = false; }
-  for(SVertex_handle sv: sv_modified) { sv->visited() = false; }
-  for(Vertex_handle v: v_modified) { v->visited() = false; }
-  for(Halffacet_handle hf: hf_modified) { hf->visited() = false; }
+  Done.clear_visited();
 }
 
 
