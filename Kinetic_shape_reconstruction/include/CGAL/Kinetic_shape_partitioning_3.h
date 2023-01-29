@@ -15,8 +15,6 @@
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
-#include"Kinetic_shape_partitioning_Traits.h"
-
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>

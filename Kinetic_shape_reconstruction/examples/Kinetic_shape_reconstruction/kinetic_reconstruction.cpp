@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
+#include <CGAL/Kinetic_shape_partitioning_Traits.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
