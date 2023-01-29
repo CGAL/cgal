@@ -307,11 +307,11 @@ public:
 
 #if 1
   template <class Segment_2>
-  static const Point& get_source(const Segment_2& segment){
+  static decltype(auto) get_source(const Segment_2& segment){
     return segment.source();
   }
   template <class Segment_2>
-  static const Point& get_target(const Segment_2& segment){
+  static decltype(auto) get_target(const Segment_2& segment){
     return segment.target();
   }
 
@@ -428,12 +428,14 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     const Point& p0 = *first;
     Point p = p0;
     Vertex_handle v0 = insert(p0), v(v0), w(v0);
+    Face_handle hint = v0->face();
     ++first;
     for(; first!=last; ++first){
       const Point& q = *first;
       if(p != q){
-        w = insert(q);
+        w = insert(q,hint);
         insert_constraint(v,w);
+        hint = w->face();
         v = w;
         p = q;
       }

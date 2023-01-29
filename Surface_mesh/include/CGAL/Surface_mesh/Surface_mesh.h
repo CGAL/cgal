@@ -2718,6 +2718,7 @@ collect_garbage(Visitor &visitor)
     garbage_ = false;
 }
 
+#ifndef DOXYGEN_RUNNING
 namespace collect_garbage_internal {
 struct Dummy_visitor{
   template<typename A, typename B, typename C>
@@ -2726,6 +2727,7 @@ struct Dummy_visitor{
 };
 
 }
+#endif
 
 template <typename P>
 void

@@ -153,14 +153,19 @@ public:
   Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
   /*! Initialize the trapezoid's neighbors. */
-  CGAL_TD_INLINE void init_neighbours(Self* lb_ = 0, Self* lt_ = 0,
-                                      Self* rb_ = 0, Self* rt_ = 0)
+  CGAL_TD_INLINE void init_neighbors(Self* lb_ = 0, Self* lt_ = 0,
+                                     Self* rb_ = 0, Self* rt_ = 0)
   {
     set_lb(lb_);
     set_lt(lt_);
     set_rb(rb_);
     set_rt(rt_);
   }
+  /*! \copydoc init_neighbors
+   *  \deprecated please use #init_neighbors */
+  CGAL_DEPRECATED CGAL_TD_INLINE void init_neighbours(Self* lb_ = 0, Self* lt_ = 0,
+                                                      Self* rb_ = 0, Self* rt_ = 0)
+  { init_neighbors(lb_, lt_, rb_, rt_); }
 
   /*! Set the DAG node. */
   CGAL_TD_INLINE void set_dag_node(Dag_node* p)

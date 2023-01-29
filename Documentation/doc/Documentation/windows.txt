@@ -45,11 +45,11 @@ of `vcpkg` if you want to compile for an older version of a compiler.
 
 Because of a bug with gmp in vcpkg for windows, you need to install `yasm-tool` in 32 bits to be able to correctly build gmp 64bits, needed for cgal:
 
-    C:\dev\vcpkg> ./vcpkg.exe install yasm-tool:x86-windows
+    C:\dev\vcpkg> .\vcpkg.exe install yasm-tool:x86-windows
 
 You are now ready to install \cgal:
 
-    C:\dev\vcpkg> ./vcpkg.exe install cgal
+    C:\dev\vcpkg> .\vcpkg.exe install cgal
 
 This will take several minutes as it downloads  \gmp,
 \mpfr, all boost header files, and it will compile \gmp and \mpfr, as well
@@ -114,14 +114,14 @@ not depend on `Qt`. However, one of the examples in the Triangulation_2 package 
 for visualization purposes. If you already have `Qt` installed, you can simply fill in the requested
 CMake variables and paths. Otherwise, you can also install it using `vcpkg`:
 
-    C:\dev\vcpkg> ./vcpkg.exe install qt5
+    C:\dev\vcpkg> .\vcpkg.exe install qt5
 
 Remember to specify `--triplet` or the related environment variable in case you target 64-bit applications.
 
 As Qt5 is modular and as the \cgal examples and demos use only some of these modules
 you can save download and compilation time by specifying an *installation option*:
 
-    C:\dev\vcpkg> ./vcpkg.exe install cgal[qt]
+    C:\dev\vcpkg> .\vcpkg.exe install cgal[qt]
 
 In both cases, when you start `cmake-gui` again and hit the *Configure* button,
 the CMake variables and paths concerning Qt should now be filled.

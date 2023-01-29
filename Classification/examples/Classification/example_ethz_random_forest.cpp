@@ -140,7 +140,7 @@ int main (int argc, char** argv)
   classifier.save_configuration(fconfig);
 
   // Write result
-  std::ofstream f ("classification.ply");
+  std::ofstream f ("classification_ethz_random_forest.ply");
   f.precision(18);
   f << pts;
 

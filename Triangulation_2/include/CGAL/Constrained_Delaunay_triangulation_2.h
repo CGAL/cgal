@@ -269,12 +269,14 @@ public:
     const Point& p0 = *first;
     Point p = p0;
     Vertex_handle v0 = insert(p0), v(v0), w(v0);
+    Face_handle hint = v0->face();
     ++first;
     for(; first!=last; ++first){
       const Point& q = *first;
       if(p != q){
-        w = insert(q);
+        w = insert(q,hint);
         insert_constraint(v,w);
+        hint = w->face();
         v = w;
         p = q;
       }

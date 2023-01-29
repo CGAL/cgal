@@ -113,9 +113,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
 
       if ( GetEdgeEndingAt(lPrevNode) == lTriedge.e2() )
       {
-        // Note that this can be a contour node and in that case GetTrisegment is null and we get
-        // the middle point, but in that case e2 and e0 are consecutive in the input
-        // and the middle point is the common extremity and things are fine.
+        // Note that this can be a contour node and in that case GetTrisegment returns null
+        // and we get the middle point as a seed, but in that case e2 and e0 are consecutive
+        // in the input and the middle point is the common extremity thus things are fine.
         lTrisegment->set_child_t( GetTrisegment(lPrevNode) ) ;
       }
       else
@@ -581,7 +581,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CreateContourBisectors()
 
     Vertex_handle lInfNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++ ) ) ;
     InitVertexData(lInfNode);
-    CGAL_assertion(lInfNode->has_null_point());
+    CGAL_assertion(lInfNode->has_infinite_time());
 
     lRBisector->HBase_base::set_next( lLBisector  );
     lLBisector->HBase_base::set_prev( lRBisector );
@@ -1045,10 +1045,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
     Halfedge_handle lDefiningBorderB = lNewNode->halfedge()->opposite()->prev()->opposite()->defining_contour_edge();
     Halfedge_handle lDefiningBorderC = lNewNode->halfedge()->opposite()->prev()->defining_contour_edge();
 
-    lNewNode->VBase::set_event_triedge( lEvent.triedge() ) ;
-
     Triedge lTri(lDefiningBorderA,lDefiningBorderB,lDefiningBorderC);
-
     SetVertexTriedge( lNewNode, lTri ) ;
 
     SetBisectorSlope(lLSeed,lNewNode);
@@ -1212,7 +1209,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Vertex_handle lNewFicNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++ ) ) ;
 
     InitVertexData(lNewFicNode);
-    CGAL_assertion(lNewFicNode->has_null_point());
+    CGAL_assertion(lNewFicNode->has_infinite_time());
     CrossLink(lNOBisector_R,lNewFicNode);
 
     SetBisectorSlope(lNOBisector_L,POSITIVE);
@@ -1228,9 +1225,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Halfedge_handle lNewNode_R_DefiningBorderA = lNewNode_R->halfedge()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderB = lNewNode_R->halfedge()->opposite()->prev()->opposite()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderC = lNewNode_R->halfedge()->opposite()->prev()->defining_contour_edge();
-
-    lNewNode_L->VBase::set_event_triedge( lEvent.triedge() ) ;
-    lNewNode_R->VBase::set_event_triedge( lEvent.triedge() ) ;
 
     Triedge lTriL( lNewNode_L_DefiningBorderA,lNewNode_L_DefiningBorderB,lNewNode_L_DefiningBorderC ) ;
     Triedge lTriR( lNewNode_R_DefiningBorderA,lNewNode_R_DefiningBorderB,lNewNode_R_DefiningBorderC ) ;
@@ -1456,9 +1450,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandlePseudoSplitEvent( EventPtr aEve
     Halfedge_handle lNewNode_R_DefiningBorderA = lNewNode_R->halfedge()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderB = lNewNode_R->halfedge()->next()->opposite()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderC = lNewNode_R->halfedge()->opposite()->prev()->defining_contour_edge();
-
-    lNewNode_L->VBase::set_event_triedge( lEvent.triedge() ) ;
-    lNewNode_R->VBase::set_event_triedge( lEvent.triedge() ) ;
 
     Triedge lTriL( lNewNode_L_DefiningBorderA, lNewNode_L_DefiningBorderB, lNewNode_L_DefiningBorderC ) ;
     Triedge lTriR( lNewNode_R_DefiningBorderA, lNewNode_R_DefiningBorderB, lNewNode_R_DefiningBorderC ) ;

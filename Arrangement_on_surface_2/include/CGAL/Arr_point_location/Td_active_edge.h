@@ -145,10 +145,14 @@ public:
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
   /*! Initialize the trapezoid's neighbors. */
-  inline void init_neighbours(boost::optional<Td_map_item&> next)
+  inline void init_neighbors(boost::optional<Td_map_item&> next)
   {
     set_next((next) ? *next : Td_map_item(0));
   }
+  /*! \copydoc init_neighbors
+   *  \deprecated please use #init_neighbors */
+  CGAL_DEPRECATED inline void init_neighbours(boost::optional<Td_map_item&> next)
+  { init_neighbors(next); }
 
   /*! Set the DAG node. */
   CGAL_TD_INLINE void set_dag_node(Dag_node* p)

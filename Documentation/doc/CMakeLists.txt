@@ -26,7 +26,7 @@ else()
   set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
 
-find_package(Doxygen)
+find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 if (NOT Python3_EXECUTABLE)
@@ -137,6 +137,10 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
         endforeach()
       endif()
     endif()
+  endif()
+  if(EXISTS "${CGAL_PACKAGE_DIR}/include/CGAL/${CGAL_PACKAGE_NAME}/internal")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
+        "EXCLUDE += ${CGAL_PACKAGE_DIR}/include/CGAL/${CGAL_PACKAGE_NAME}/internal\n")
   endif()
 
   # IMAGE_PATH is set by default. For Documentation, we generate the extra path using packages.txt

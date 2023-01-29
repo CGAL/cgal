@@ -3,6 +3,7 @@ name: Documentation
 on:
   issue_comment:
       types: [created]
+  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -47,7 +48,7 @@ jobs:
            //get pullrequest url
            const pr_number = context.payload.issue.number
            return pr_number
-           
+
       - name: Emoji-comment
         uses: actions/github-script@v6
         if: steps.get_round.outputs.result != 'stop'
@@ -59,7 +60,7 @@ jobs:
               repo: context.repo.repo,
               content: 'rocket'
             })
-            
+
       - uses: actions/checkout@v3
         name: "checkout branch"
         if: steps.get_round.outputs.result != 'stop'
@@ -74,7 +75,7 @@ jobs:
         run: |
           set -x
           sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
-          sudo pip install lxml==4.6.3
+          sudo pip install lxml
           sudo pip install pyquery
           wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_8_13_patched/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
