@@ -179,7 +179,7 @@ public:
       \cgalParamType{FT}
       \cgalParamDefault{0.01}
     \cgalParamNEnd
-    \cgalParamNBegin{regularize_parallelity}
+    \cgalParamNBegin{regularize_parallelism}
       \cgalParamDescription{indicates whether parallelism should be regularized or not}
       \cgalParamType{bool}
       \cgalParamDefault{true}
