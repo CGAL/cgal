@@ -11,7 +11,7 @@ For the purpose of the distance computations it is more efficient to compute
 the transformed distance \f$ {\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}\f$ instead of the actual distance.
 
 \note As this distance involves the computation of a power it is not
-done exact but with floaring point arithmetic.
+done exact but with floating point arithmetic.
 
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `Search_traits_2`.
