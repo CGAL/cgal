@@ -89,7 +89,7 @@ typename GT::FT average_edge_length(const PolygonMesh& pmesh) {
   for (auto e : edges(pmesh))
     avg_edge_length += edge_length(e, pmesh);
 
-  avg_edge_length /= n;
+  avg_edge_length /= static_cast<typename GT::FT>(n);
   return avg_edge_length;
 }
 
@@ -145,7 +145,7 @@ typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typen
     // getting center of points
     typename GT::Vector_3 xc =
       std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
-    xc /= n;
+    xc /= static_cast<typename GT::FT>(n);
 
     // getting unit average normal of points
     typename GT::Vector_3 uc =
@@ -211,7 +211,7 @@ typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::ve
     // getting center of points
     typename GT::Vector_3 xc =
       std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
-    xc /= n;
+    xc /= static_cast<typename GT::FT>(n);
 
     // getting unit average normal of points
     typename GT::Vector_3 uc =
@@ -297,7 +297,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
     const typename GT::Vector_3 x02 = x[2] - x[0];
     const typename GT::Vector_3 um = (u[0] + u[1] + u[2]) / 3.0;
 
-    for (std::size_t ix = 0; ix < 3; ix++)
+    for (unsigned int ix = 0; ix < 3; ix++)
     {
       typename GT::Vector_3 X;
       if (ix == 0)
@@ -307,7 +307,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
       if (ix == 2)
         X = typename GT::Vector_3(0, 0, 1);
 
-      for (std::size_t iy = 0; iy < 3; iy++)
+      for (unsigned int iy = 0; iy < 3; iy++)
         muXY[ix * 3 + iy] = 0.5 * um * (cross_product(u02[iy] * X, x01) - cross_product(u01[iy] * X, x02));
     }
   }
@@ -316,7 +316,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
   {
     // for the formulas below, values of verices 2 & 3 are swapped (compared to paper) to correct order.
     // the indices in paper vs in here are: 00 = 0, 10 = 1, 11 = 2, 01 = 3
-    for (std::size_t ix = 0; ix < 3; ix++)
+    for (unsigned int ix = 0; ix < 3; ix++)
     {
       typename GT::Vector_3 X;
       if (ix == 0)
@@ -331,7 +331,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
       const typename GT::Vector_3 u2xX = cross_product(u[2], X);
       const typename GT::Vector_3 u3xX = cross_product(u[3], X);
 
-      for (std::size_t iy = 0; iy < 3; iy++)
+      for (unsigned int iy = 0; iy < 3; iy++)
         muXY[ix * 3 + iy] = (1.0 / 72.0) * (
 
           u[0][iy] * (u0xX * (-x[0] - 11 * x[1] + 13 * x[3] - x[2])
@@ -364,7 +364,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
     // getting center of points
     typename GT::Vector_3 xc =
       std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
-    xc /= n;
+    xc /= static_cast<typename GT::FT>(n);
 
     // getting unit average normal of points
     typename GT::Vector_3 uc =
@@ -418,7 +418,7 @@ typename GT::FT face_in_ball_ratio(const std::vector<typename GT::Vector_3>& x,
   // getting center of points
   typename GT::Vector_3 xm =
     std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
-  xm /= n;
+  xm /= static_cast<typename GT::FT>(n);
 
   typename GT::FT d_min = (xm - c).squared_length();
   typename GT::FT d_max = d_min;
