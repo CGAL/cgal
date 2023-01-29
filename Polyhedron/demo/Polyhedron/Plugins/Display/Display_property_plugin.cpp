@@ -16,7 +16,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
-#include <CGAL/Polygon_mesh_processing/Curvatures/interpolated_corrected_curvature_measures.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include "Scene_points_with_normal_item.h"
 

@@ -11,10 +11,10 @@
 // Author(s)     : Hossam Saeed
 //
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERPOLATED_CORRECTED_CURVATURE_MEASURES_H
-#define CGAL_POLYGON_MESH_PROCESSING_INTERPOLATED_CORRECTED_CURVATURE_MEASURES_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERPOLATED_CORRECTED_CURVATURES_H
+#define CGAL_POLYGON_MESH_PROCESSING_INTERPOLATED_CORRECTED_CURVATURES_H
 
-#include <CGAL/license/Polygon_mesh_processing/interpolated_corrected_curvature_measures.h>
+#include <CGAL/license/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -1550,4 +1550,4 @@ template<typename GT, typename PolygonMesh,
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_INTERPOLATED_CORRECTED_CURVATURE_MEASURES_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_INTERPOLATED_CORRECTED_CURVATURES_H

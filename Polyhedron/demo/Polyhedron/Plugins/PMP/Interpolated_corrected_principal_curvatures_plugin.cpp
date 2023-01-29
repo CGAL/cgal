@@ -11,7 +11,7 @@
 #include <QMainWindow>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Polygon_mesh_processing/Curvatures/interpolated_corrected_curvature_measures.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_interpolated_corrected_principal_curvatures_and_directions_plugin :
