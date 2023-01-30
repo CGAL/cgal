@@ -10,7 +10,7 @@ int main()
 {
   LCC_3 lcc;
   CGAL::Linear_cell_complex_incremental_builder_3<LCC_3> ib(lcc);
-  
+
   ib.add_vertex(Point(0,0,0)); // vertex 0
   ib.add_vertex(Point(1,0,0)); // vertex 1
   ib.add_vertex(Point(1,1,0)); // vertex 2
@@ -34,13 +34,13 @@ int main()
   ib.add_vertex_to_facet(4);
   ib.add_vertex_to_facet(5);
   ib.end_facet(); // end facet
-  
+
   ib.add_facet({5,4,7,6});
-  
+
   ib.end_surface();
 
   ib.add_vertex(Point(-1, 0.5, 0.5)); // vertex 8
-  
+
   // Create a pyramid, sharing one of its face with the cube
   ib.begin_surface();
   ib.add_facet({3,0,5,4});
@@ -48,11 +48,11 @@ int main()
   ib.add_facet({3,4,8});
   ib.add_facet({4,5,8});
   ib.add_facet({5,0,8});
-  ib.end_surface();  
+  ib.end_surface();
 
   // Draw the lcc and display its characteristics
   lcc.display_characteristics(std::cout)<<std::endl;
   CGAL::draw(lcc);
-  
+
   return EXIT_SUCCESS;
 }
