@@ -598,6 +598,11 @@ public:
         return parray_ != nullptr;
     }
 #endif
+
+    bool operator!=(const Property_map_base& pm) const {
+      return parray_ != pm.parray_;
+    }
+
     /// Access the property associated with the key \c i.
     reference operator[](const I& i)
     {
