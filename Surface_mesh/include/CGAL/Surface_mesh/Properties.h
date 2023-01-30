@@ -599,6 +599,10 @@ public:
     }
 #endif
 
+    bool operator==(const Property_map_base& pm) const {
+      return parray_ == pm.parray_;
+    }
+
     bool operator!=(const Property_map_base& pm) const {
       return parray_ != pm.parray_;
     }
