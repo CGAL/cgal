@@ -1775,6 +1775,8 @@ protected:
   {
     CGAL_precondition(c != Cell_handle());
 
+    // @fixme this might run into an issue if the intermediate construction does not preserve
+    // the orientation... See Robust_periodic_weighted_circumcenter_traits_3.h
     Point_3 p = construct_circumcenter(c->vertex(0)->point(), c->vertex(1)->point(),
                                        c->vertex(2)->point(), c->vertex(3)->point(),
                                        get_offset(c, 0), get_offset(c, 1),

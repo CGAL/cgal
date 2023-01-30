@@ -614,6 +614,8 @@ public:
     return geom_traits().compare_power_distance_3_object()(p, q, r, o1, o2, o3) == SMALLER;
   }
 
+  // @fixme the overloads with offset might run into an issue if the intermediate construction
+  // does not preserve the orientation... See Robust_periodic_weighted_circumcenter_traits_3.h
   Bare_point construct_weighted_circumcenter(const Weighted_point &p, const Weighted_point &q,
                                              const Weighted_point &r) const
   {
