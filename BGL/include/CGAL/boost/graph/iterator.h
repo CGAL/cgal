@@ -213,16 +213,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_source_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_source_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base() == nullptr));
   }
 
   bool operator==( const Self& i) const {
@@ -313,16 +307,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_target_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_target_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base() == nullptr));
   }
 
   bool operator==( const Self& i) const {
@@ -412,16 +400,9 @@ public:
   pointer           operator -> ( )       { return &pos; }
   const value_type* operator -> ( ) const { return &pos; }
 
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_face_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_face_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base() == nullptr));
   }
 
   bool operator==( const Self& i) const {
@@ -522,16 +503,10 @@ public:
   Halfedge_around_source_circulator(vertex_descriptor vd, const Graph& g)
     : Halfedge_around_source_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g)), opp(g)
   {}
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_source_circulator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Halfedge_around_source_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
@@ -580,16 +555,9 @@ public:
 #ifndef DOXYGEN_RUNNING
   typedef std::size_t size_type;
 
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Face_around_target_circulator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Face_around_target_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
@@ -654,17 +622,9 @@ public:
   bool       operator == ( const Self& other) const { return  g == other.g && pos == other.pos; }
   bool       operator != ( const Self& other) const { return  g != other.g || pos != other.pos; }
 
-
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_target_circulator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (g == nullptr)) ?
-      &Halfedge_around_target_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (g == nullptr));
   }
 
 
@@ -751,17 +711,9 @@ public:
   bool       operator == ( const Self& other) const { return  g == other.g && pos == other.pos; }
   bool       operator != ( const Self& other) const { return  g != other.g || pos != other.pos; }
 
-
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_face_circulator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (g == nullptr)) ?
-      &Halfedge_around_face_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (g == nullptr));
   }
 
   bool operator== (void* ) const
@@ -1008,16 +960,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_face_circulator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_face_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
@@ -1062,16 +1008,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_face_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_face_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
@@ -1192,16 +1132,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_target_circulator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_target_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
@@ -1250,16 +1184,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_target_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_target_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 private:
   friend class boost::iterator_core_access;
@@ -1337,16 +1265,9 @@ public:
   Out_edge_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
     : Out_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), opp(g) {}
 
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Out_edge_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Out_edge_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
 
@@ -1379,16 +1300,9 @@ public:
     : In_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
 
-  // design pattern: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (In_edge_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &In_edge_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
  private:

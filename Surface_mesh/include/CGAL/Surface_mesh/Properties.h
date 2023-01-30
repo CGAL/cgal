@@ -538,8 +538,6 @@ class Property_map_base
            CRTP_derived_class>
 /// @endcond
 {
-    typedef void (Property_map_base::*bool_type)() const;
-    void this_type_does_not_support_comparisons() const {}
 public:
     typedef I key_type;
     typedef T value_type;
@@ -596,9 +594,8 @@ public:
     /// can be used, and \c false otherwise.
   operator bool () const;
 #else
-    operator bool_type() const {
-        return parray_ != nullptr ?
-            &Property_map_base::this_type_does_not_support_comparisons : 0;
+    explicit operator bool() const {
+        return parray_ != nullptr;
     }
 #endif
     /// Access the property associated with the key \c i.
