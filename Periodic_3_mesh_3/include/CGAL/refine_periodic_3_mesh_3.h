@@ -72,7 +72,6 @@ bool project_points(C3T3& c3t3,
                     InputIterator vertex_end)
 {
   typedef typename C3T3::Vertex_handle         Vertex_handle;
-  typedef typename C3T3::Cell_handle           Cell_handle;
 
   typedef typename C3T3::Triangulation         Tr;
 

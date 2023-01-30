@@ -955,7 +955,7 @@ public:
     typedef Cartesian_converter<EKernel, Kernel>                      Back_from_exact;
 
     typedef CGAL::Periodic_3_regular_triangulation_traits_3<EKernel>  Exact_Rt;
-    typedef typename Exact_Rt::Point_3                                EPoint_3;
+    typedef typename Exact_Rt::Weighted_point_3                       EWeighted_point_3;
 
     To_exact to_exact;
     Back_from_exact back_from_exact;
@@ -963,20 +963,17 @@ public:
     Exact_Rt etraits(to_exact(domain()));
     Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
       etraits.construct_weighted_circumcenter_3_object();
-    Exact_Rt::Construct_point_3 exact_construct_point =
-      etraits.construct_point_3_object();
 
-    const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex((i+1)%4)->point());
-    const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex((i+2)%4)->point());
-    const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex((i+3)%4)->point());
-    const typename Exact_Rt::Weighted_point_3& cs = to_exact(ws);
+    const EWeighted_point_3& cp = to_exact(c->vertex((i+1)%4)->point());
+    const EWeighted_point_3& cq = to_exact(c->vertex((i+2)%4)->point());
+    const EWeighted_point_3& cr = to_exact(c->vertex((i+3)%4)->point());
+    const EWeighted_point_3& cs = to_exact(ws);
 
-    cc = back_from_exact(
-           exact_weighted_circumcenter(cp, cq, cr, cs,
-                                       pp_fcc.second + get_offset(c, (i+1)%4),
-                                       pp_fcc.second + get_offset(c, (i+2)%4),
-                                       pp_fcc.second + get_offset(c, (i+3)%4),
-                                       pp_s.second + min_off));
+    cc = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs,
+                                                     pp_fcc.second + get_offset(c, (i+1)%4),
+                                                     pp_fcc.second + get_offset(c, (i+2)%4),
+                                                     pp_fcc.second + get_offset(c, (i+3)%4),
+                                                     pp_s.second + min_off));
   }
 
   void dual_segment(const Facet& facet, Bare_point& p, Bare_point& q) const

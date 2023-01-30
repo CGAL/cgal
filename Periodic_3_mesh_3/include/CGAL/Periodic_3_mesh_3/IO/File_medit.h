@@ -89,7 +89,7 @@ void output_to_medit(std::ostream& os,
                      const Vertex_index_property_map& vertex_pmap,
                      const Facet_index_property_map& facet_pmap,
                      const Cell_index_property_map& cell_pmap,
-                     const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice())
+                     const Facet_index_property_map_twice& = Facet_index_property_map_twice())
 {
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cout << "Output to medit;\n"
@@ -119,7 +119,6 @@ void output_to_medit(std::ostream& os,
   typedef typename C3T3::Cell_handle             Cell_handle;
 
   typedef typename Tr::Vertex_iterator           Vertex_iterator;
-  typedef typename C3T3::Facet_iterator          Facet_iterator;
 
   typedef typename Tr::Offset                    Offset;
 
