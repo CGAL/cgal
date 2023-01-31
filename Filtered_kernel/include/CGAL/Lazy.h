@@ -2128,8 +2128,6 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
     return result_type( Handle() );
   }
 
-#undef CGAL_CONSTRUCTION_OPERATOR
-
 };
 
 
