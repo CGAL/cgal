@@ -679,7 +679,7 @@ private:
     return std::pair<Vertex_handle, Vertex_handle>{c->vertex(i), c->vertex(j)};
   }
 
-  void restore_subface_region(CDT_3_face_index face_index, const CDT_2& cdt_2, const auto& fh_region) {
+  void restore_subface_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2, const auto& fh_region) {
     const auto border_edges = brute_force_border_3_of_region(fh_region);
     const auto border_vertices = [&]() {
       std::set<Vertex_handle> vertices;
@@ -698,7 +698,7 @@ private:
       std::cerr << "ERROR: No segment found\n";
       {
         dump_triangulation();
-        dump_region(face_index, cdt_2);
+        dump_region(face_index, region_count, cdt_2);
       }
       throw Next_face{};
     }
@@ -788,7 +788,7 @@ private:
            !test_edge(v_below, index_v_below, vc, index_vc, -1))
         {
           dump_triangulation();
-          dump_region(face_index, cdt_2);
+          dump_region(face_index, region_count, cdt_2);
           {
             std::ofstream out(std::string("dump_two_edges_") + std::to_string(face_index) + ".polylines.txt");
             write_segment(out, Edge{cell, index_v_above, index_vc});
@@ -808,9 +808,10 @@ private:
                              vertices_of_lower_cavity.size());
     if(intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
       std::cerr << "!! Interesting case !!\n";
-      dump_region(face_index, cdt_2);
+      dump_region(face_index, region_count, cdt_2);
       {
-        std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + ".polylines.txt");
+        std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + "_" +
+                          std::to_string(region_count) + ".polylines.txt");
         out.precision(17);
         for(auto edge: intersecting_edges) {
           write_segment(out, edge);
@@ -843,6 +844,7 @@ private:
       reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
     }
     std::set<CDT_2_face_handle> processed_faces;
+    int region_count = 0;
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) continue;
@@ -850,7 +852,7 @@ private:
       const auto fh_region = region(cdt_2, fh);
       processed_faces.insert(fh_region.begin(), fh_region.end());
       try {
-        restore_subface_region(face_index, cdt_2, fh_region);
+        restore_subface_region(face_index, ++region_count, cdt_2, fh_region);
       }
       catch(Next_face&) {
       }
@@ -899,8 +901,9 @@ public:
     CGAL::Mesh_3::save_binary_file(dump, *this);
   }
 
-  void dump_region(CDT_3_face_index face_index, const CDT_2& cdt_2) {
-    std::ofstream dump_region(std::string("dump_region") + std::to_string(face_index) + ".off");
+  void dump_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2) {
+    std::ofstream dump_region(std::string("dump_region_") + std::to_string(face_index) + "_" +
+                              std::to_string(region_count) + ".off");
     write_region_to_OFF(dump_region, cdt_2);
   }
 
