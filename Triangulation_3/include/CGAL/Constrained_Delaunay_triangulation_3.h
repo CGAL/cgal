@@ -732,7 +732,8 @@ private:
     };
 
     intersecting_edges.push_back(first_intersecting_edge);
-
+    const auto [v0, v1] = vertex_pair(first_intersecting_edge);
+    (void)new_edge(v0, v1);
     for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
       const auto intersecting_edge = intersecting_edges[i];
       const auto [v_above, v_below] = vertex_pair(intersecting_edge);
