@@ -518,7 +518,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
         vertex_measures.mean_curvature_measure += interpolated_corrected_mean_curvature_measure_face<GT>(u, x);
 
       if (is_gaussian_curvature_selected)
-        vertex_measures.gaussian_curvature_measure += interpolated_corrected_gaussian_curvature_measure_face<GT>(u, x);
+        vertex_measures.gaussian_curvature_measure += interpolated_corrected_gaussian_curvature_measure_face<GT>(u);
 
       if (is_principal_curvatures_and_directions_selected)
       {
@@ -594,7 +594,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
         vertex_measures.mean_curvature_measure += f_ratio * interpolated_corrected_mean_curvature_measure_face<GT>(u, x);
 
       if (is_gaussian_curvature_selected)
-        vertex_measures.gaussian_curvature_measure += f_ratio * interpolated_corrected_gaussian_curvature_measure_face<GT>(u, x);
+        vertex_measures.gaussian_curvature_measure += f_ratio * interpolated_corrected_gaussian_curvature_measure_face<GT>(u);
 
       if (is_principal_curvatures_and_directions_selected)
       {
