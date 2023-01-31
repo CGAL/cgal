@@ -326,18 +326,16 @@ namespace Point_set {
       \pre `region.size() > 0`
     */
     bool update(const Region& region) {
-
       // Fit a sphere.
       CGAL_precondition(region.size() > 0);
       FT radius; Point_3 center;
       std::tie(radius, center) = internal::create_sphere(
         region, m_point_map, m_traits, false).first;
-      if (radius >= FT(0)) {
+      if (radius > FT(0)) {
         m_radius = radius;
         m_center = center;
-        return true;
       }
-      return false;
+      return true;
     }
 
     /// @}

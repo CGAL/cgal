@@ -343,7 +343,7 @@ namespace Point_set {
       FT radius; Point_2 center;
       std::tie(radius, center) = internal::create_circle_2(
         region, m_point_map, m_traits, false).first;
-      if (radius >= FT(0)) {
+      if (radius > FT(0)) {
         m_radius = radius;
         m_center = center;
       }
