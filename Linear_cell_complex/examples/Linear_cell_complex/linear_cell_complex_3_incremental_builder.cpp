@@ -1,5 +1,5 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/draw_linear_cell_complex.h>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> LCC_3;

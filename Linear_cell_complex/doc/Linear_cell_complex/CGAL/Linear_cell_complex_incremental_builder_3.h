@@ -4,14 +4,14 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexClasses
 
-The auxiliary class `Linear_cell_complex_incremental_builder` supports the incremental
+The auxiliary class `Linear_cell_complex_incremental_builder_3` supports the incremental
 construction of linear cell complexes.
 
 \tparam LCC a linear cell complex
 */
 
 template < class LCC >
-class Linear_cell_complex_incremental_builder
+class Linear_cell_complex_incremental_builder_3
 {
  public:
   typedef LCC_ LCC;
@@ -26,7 +26,7 @@ class Linear_cell_complex_incremental_builder
   /*!
    * Constructor
    */
-  Linear_cell_complex_incremental_builder(LCC & alcc);
+  Linear_cell_complex_incremental_builder_3(LCC & alcc);
 
 /// @}
 
