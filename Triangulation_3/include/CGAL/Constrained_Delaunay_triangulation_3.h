@@ -167,6 +167,7 @@ public:
   using Vertex_handle = typename T_3::Vertex_handle;
   using Cell_handle = typename T_3::Cell_handle;
   using Edge = typename T_3::Edge;
+  using Facet = typename T_3::Facet;
   using Point_3 = typename T_3::Point;
   using Segment_3 = typename T_3::Geom_traits::Segment_3;
   using Vector_3 = typename T_3::Geom_traits::Vector_3;
@@ -711,6 +712,8 @@ private:
     std::vector<Cell_handle> intersecting_cells;
     std::vector<Vertex_handle> vertices_of_upper_cavity(border_vertices.begin(), border_vertices.end());
     std::vector<Vertex_handle> vertices_of_lower_cavity(border_vertices.begin(), border_vertices.end());
+    std::vector<Facet> facets_of_upper_cavity;
+    std::vector<Facet> facets_of_lower_cavity;
 
     // marker for already visited elements
     std::set<Vertex_handle> visited_vertices;
@@ -800,13 +803,37 @@ private:
       } while(++facet_circ != facet_circ_end);
       std::cerr << "intersecting_edges.size() = " << intersecting_edges.size() << '\n';
     }
+    std::ranges::sort(intersecting_cells);
+    const std::set<Cell_handle> intersecting_cells_set{intersecting_cells.begin(), intersecting_cells.end()};
+    visited_cells.clear();
+    for(auto edge: intersecting_edges) {
+      const auto cell = edge.first;
+      if(!new_cell(cell)) {
+        continue;
+      }
+      const auto [v_above, v_below] = vertex_pair(edge);
+      const auto index_v_above = cell->index(v_above);
+      const auto index_v_below = cell->index(v_below);
+      const auto cell_above = cell->neighbor(index_v_below);
+      const auto cell_below = cell->neighbor(index_v_above);
+      if(!intersecting_cells_set.contains(cell_above)) {
+        facets_of_upper_cavity.push_back({cell_above, cell_above->index(cell)});
+      }
+      if(!intersecting_cells_set.contains(cell_below)) {
+        facets_of_lower_cavity.push_back({cell_below, cell_below->index(cell)});
+      }
+    }
 
 #if CGAL_DEBUG_CDT_3
-    std::cerr << std::format("Cavity has {} cells and {} edges, {} vertices in upper cavity and {} in lower\n",
+    std::cerr << std::format("Cavity has {} cells and {} edges, "
+                             "{} vertices in upper cavity and {} in lower, "
+                             "{} facets in upper cavity and {} in lower\n",
                              intersecting_cells.size(),
                              intersecting_edges.size(),
                              vertices_of_upper_cavity.size(),
-                             vertices_of_lower_cavity.size());
+                             vertices_of_lower_cavity.size(),
+                             facets_of_upper_cavity.size(),
+                             facets_of_lower_cavity.size());
     if(intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
       std::cerr << "!! Interesting case !!\n";
       dump_region(face_index, region_count, cdt_2);
