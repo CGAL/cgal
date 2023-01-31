@@ -839,7 +839,7 @@ private Q_SLOTS:
 
     }
 
-    double outMin = 0, outMax = 5 * maxEdgeLength, base = 1.2;
+    double outMax = 5 * maxEdgeLength, base = 1.2;
 
     expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
     dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
