@@ -361,7 +361,7 @@ protected:
   /// - compute w_ii = - sum of w_ijs.
   ///
   /// \pre Vertices must be indexed.
-  /// \pre Vertex i musn't be already parameterized.
+  /// \pre Vertex i mustn't be already parameterized.
   /// \pre Line i of A must contain only zeros.
   // TODO: check if this must be virtual
   // virtual

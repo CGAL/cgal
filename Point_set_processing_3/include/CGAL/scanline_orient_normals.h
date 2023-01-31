@@ -373,7 +373,7 @@ void orient_scanline (Iterator begin, Iterator end,
    iterating on `points`:
 
    - if the named parameter `scanline_id_map` is provided, the range
-     is cutted everytime the id changes.
+     is cut everytime the id changes.
 
    - if no scanline ID map is provided, a fallback method simply cuts
      the range everytime 3 consecutive points form an acute angle on
@@ -479,7 +479,7 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np = pa
     <internal_np::scanline_id_t, NamedParameters, No_map>::type;
   using Fallback_scanline_ID = Boolean_tag<std::is_same<ScanlineIDMap, No_map>::value>;
 
-  CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
+  CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
 
   PointMap point_map = NP_helper::get_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);

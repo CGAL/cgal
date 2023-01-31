@@ -13,12 +13,14 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/Straight_skeleton_2.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Trisegment_2.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 #include <vector>
 
@@ -40,6 +42,22 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
 
   typedef typename Source_skeleton::Traits Source_traits ;
   typedef typename Target_skeleton::Traits Target_traits ;
+
+  typedef CGAL_SS_i::Segment_2_with_ID<Source_traits> Source_segment_2_with_ID;
+  typedef CGAL_SS_i::Segment_2_with_ID<Target_traits> Target_segment_2_with_ID;
+
+  typedef typename Source_traits::Segment_2 Source_segment_2;
+  typedef typename Target_traits::Segment_2 Target_segment_2;
+  typedef Trisegment_2<Source_traits, Source_segment_2> Source_trisegment_2;
+  typedef Trisegment_2<Target_traits, Target_segment_2> Target_trisegment_2;
+  typedef boost::intrusive_ptr<Source_trisegment_2> Source_trisegment_2_ptr;
+  typedef boost::intrusive_ptr<Target_trisegment_2> Target_trisegment_2_ptr;
+
+  // Same as above, but for Segment with IDs...
+  typedef Trisegment_2<Source_traits, Source_segment_2_with_ID> Source_trisegment_2_with_ID;
+  typedef Trisegment_2<Target_traits, Target_segment_2_with_ID> Target_trisegment_2_with_ID;
+  typedef boost::intrusive_ptr<Source_trisegment_2_with_ID> Source_trisegment_2_with_ID_ptr;
+  typedef boost::intrusive_ptr<Target_trisegment_2_with_ID> Target_trisegment_2_with_ID_ptr;
 
   typedef Cartesian_converter<Source_traits,Target_traits> Base ;
 
@@ -76,6 +94,63 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
 
     return Target_face( aF->id() );
   }
+
+  Target_segment_2_with_ID operator() ( const Source_segment_2_with_ID& aS ) const
+  {
+    return Target_segment_2_with_ID(this->Base::operator()(
+      static_cast<const typename Source_segment_2_with_ID::Base&>(aS)), aS.mID);
+  }
+
+  Target_trisegment_2_ptr operator() ( const Source_trisegment_2_ptr& aT ) const
+  {
+    const auto& lSe0 = aT->e0();
+    const auto& lSe1 = aT->e1();
+    const auto& lSe2 = aT->e2();
+
+    Trisegment_collinearity lCollinearity = aT->collinearity();
+    std::size_t lId = aT->id();
+
+    Target_trisegment_2_ptr rT = Target_trisegment_2_ptr(
+                                   new Target_trisegment_2(this->operator()(lSe0),
+                                                           this->operator()(lSe1),
+                                                           this->operator()(lSe2),
+                                                           lCollinearity, lId));
+
+    if ( aT->child_l() )
+      rT->set_child_l(this->operator()(aT->child_l()));
+    if ( aT->child_r() )
+      rT->set_child_r(this->operator()(aT->child_r()));
+    if ( aT->child_t() )
+      rT->set_child_t(this->operator()(aT->child_t()));
+
+    return rT;
+  }
+
+  Target_trisegment_2_with_ID_ptr operator() ( const Source_trisegment_2_with_ID_ptr& aT ) const
+  {
+    const auto& lSe0 = aT->e0();
+    const auto& lSe1 = aT->e1();
+    const auto& lSe2 = aT->e2();
+
+    Trisegment_collinearity lCollinearity = aT->collinearity();
+    std::size_t lId = aT->id();
+
+    Target_trisegment_2_with_ID_ptr rT = Target_trisegment_2_with_ID_ptr(
+                                           new Target_trisegment_2_with_ID(this->operator()(lSe0),
+                                                                           this->operator()(lSe1),
+                                                                           this->operator()(lSe2),
+                                                                           lCollinearity, lId));
+
+    if ( aT->child_l() )
+      rT->set_child_l(this->operator()(aT->child_l()));
+    if ( aT->child_r() )
+      rT->set_child_r(this->operator()(aT->child_r()));
+    if ( aT->child_t() )
+      rT->set_child_t(this->operator()(aT->child_t()));
+
+    return rT;
+  }
+
 } ;
 
 template<class Source_skeleton_, class Target_skeleton_, class Items_converter_>
@@ -201,20 +276,8 @@ private :
       CGAL_assertion( handle_assigned(tgt_halfedge) ) ;
       tvit->VBase::set_halfedge(tgt_halfedge);
 
-      Target_halfedge_handle tgt_striedge_e0, tgt_striedge_e1, tgt_striedge_e2 ;
-
-      Source_triedge const& stri = svit->event_triedge() ;
-
-      if ( handle_assigned(stri.e0()) )
-        tgt_striedge_e0 = Target_halfedges.at(stri.e0()->id());
-
-      if ( handle_assigned(stri.e1()) )
-        tgt_striedge_e1 = Target_halfedges.at(stri.e1()->id());
-
-      if ( handle_assigned(stri.e2()) )
-        tgt_striedge_e2 = Target_halfedges.at(stri.e2()->id());
-
-      tvit->VBase::set_event_triedge( Target_triedge(tgt_striedge_e0, tgt_striedge_e1, tgt_striedge_e2) ) ;
+      if(svit->trisegment()) // contour nodes do not have trisegments
+        tvit->set_trisegment(cvt(svit->trisegment()));
     }
 
     Target_halfedge_iterator thit = aTarget.halfedges_begin();

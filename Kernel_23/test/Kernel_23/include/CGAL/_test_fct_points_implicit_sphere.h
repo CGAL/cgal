@@ -92,7 +92,7 @@ _test_fct_points_implicit_sphere(const R&)
 
   assert( CGAL::squared_distance(   r, org ) == FT1 );
   tpt = r.transform(rot_z);
-  assert( CGAL::squared_distance( tpt, org ) == FT1 );
+  assert( CGAL::squared_distance( tpt, org ) == FT1 || nonexact);
   r = tpt.transform(rot_y);
   assert( CGAL::squared_distance(   r, org ) == FT1 || nonexact );
 

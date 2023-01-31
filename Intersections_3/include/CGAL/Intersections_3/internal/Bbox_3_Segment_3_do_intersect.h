@@ -22,7 +22,7 @@
 
 #include <type_traits>
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 // This algorithm intersects the line with the x-, y-, and z-slabs of the
 // bounding box, and computes the interval [t1, t2], in the
@@ -224,10 +224,10 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
 
   CGAL_assertion(! is_negative(dmin));
   CGAL_assertion(! is_negative(dmax));
-  if(bounded_0) {
+  CGAL_assertion_code(if(bounded_0) {)
     CGAL_assertion(! is_negative(tmin));
     CGAL_assertion(! is_negative(tmax));
-  }
+  CGAL_assertion_code(})
 
   // -----------------------------------
   // treat y coord
@@ -365,11 +365,10 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
 
   CGAL_assertion(! is_negative(dzmin));
   CGAL_assertion(! is_negative(dzmax));
-  if(bounded_0)
-  {
+  CGAL_assertion_code(if(bounded_0) {)
     CGAL_assertion(! is_negative(tzmin));
     CGAL_assertion(! is_negative(tzmax));
-  }
+  CGAL_assertion_code(})
 
   typedef Do_intersect_bbox_segment_aux_is_greater<CFT, bounded_0, use_static_filters> Is_greater;
   typedef typename Is_greater::result_type Is_greater_value;
@@ -454,10 +453,9 @@ template <typename FT,
           bool use_static_filters>
 inline
 typename Do_intersect_bbox_segment_aux_is_greater<FT, bounded_0, use_static_filters>::result_type
-do_intersect_bbox_segment_aux(
-    const FT& px, const FT& py, const FT& pz,
-    const FT& qx, const FT& qy, const FT& qz,
-    const Bbox_3& bb)
+do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
+                              const FT& qx, const FT& qy, const FT& qz,
+                              const Bbox_3& bb)
 
 {
   return do_intersect_bbox_segment_aux<FT,double,bounded_0,bounded_1,use_static_filters>(px, py, pz,
@@ -467,9 +465,10 @@ do_intersect_bbox_segment_aux(
 }
 
 template <class K>
-bool do_intersect(const typename K::Segment_3& segment,
-                  const CGAL::Bbox_3& bbox,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Segment_3& segment,
+             const CGAL::Bbox_3& bbox,
+             const K&)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
@@ -483,9 +482,10 @@ bool do_intersect(const typename K::Segment_3& segment,
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-                  const typename K::Segment_3& segment,
-                  const K& k)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& bbox,
+             const typename K::Segment_3& segment,
+             const K& k)
 {
   return do_intersect(segment, bbox, k);
 }

@@ -152,7 +152,7 @@ public:
 protected:
   /*!
    * Locate the arrangement feature which a vertical ray emanating from the
-   * given point hits (not inculding isolated vertices).
+   * given point hits (not including isolated vertices).
    * \param p The query point.
    * \param shoot_up Indicates whether the ray is directed upward or downward.
    * \return An object representing the arrangement feature the ray hits.

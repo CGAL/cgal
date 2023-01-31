@@ -88,11 +88,11 @@ _test_cls_sphere_3(const R& )
  assert( cc != c8 );
  assert( cc == c7 );
 
- assert( c5.center() == p3 );
+ assert( c5.center() == p3 || nonexact);
  assert( cc.center() == p3 );
  assert( c5.squared_radius() == FT( n9 ) );
  assert( c4.squared_radius() == cc.squared_radius() );
- assert( c4 == c5 );
+ assert( c4 == c5 || nonexact);
  assert( c4 == c7 );
  assert( c4 != c8 );
  assert( cn == cp.opposite() );
@@ -114,7 +114,7 @@ _test_cls_sphere_3(const R& )
  std::cout << '.';
 
  assert( c4.center() == p3 );
- assert( c5.center() == p3 );
+ assert( c5.center() == p3 || nonexact);
  assert( c4.squared_radius() == FT( n9 ) );
  assert( c5.squared_radius() == FT( n9 ) );
  assert( c8.squared_radius() == FT( n9 ) );

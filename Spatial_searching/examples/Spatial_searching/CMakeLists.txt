@@ -28,6 +28,8 @@ create_single_source_cgal_program("distance_browsing.cpp")
 
 create_single_source_cgal_program("iso_rectangle_2_query.cpp")
 
+create_single_source_cgal_program("iso_rectangle_2_query_projection.cpp")
+
 create_single_source_cgal_program("nearest_neighbor_searching.cpp")
 
 create_single_source_cgal_program("searching_with_circular_query.cpp")

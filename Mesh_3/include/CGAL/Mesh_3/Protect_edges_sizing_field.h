@@ -947,7 +947,7 @@ insert_balls_on_edges()
   Input_features input_features;
   domain_.get_curves(std::back_inserter(input_features));
 
-  // Interate on edges
+  // Iterate on edges
   for ( typename Input_features::iterator fit = input_features.begin(),
        end = input_features.end() ; fit != end ; ++fit )
   {

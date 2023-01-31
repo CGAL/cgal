@@ -289,10 +289,22 @@ public:
 
     if(m_vcolors == 3)
     {
-      unsigned char r, g, b;
-      element.assign(r, "red");
-      element.assign(g, "green");
-      element.assign(b, "blue");
+      unsigned char r=0, g=0, b=0;
+      float rf=0, gf=0, bf=0;
+      if(element.has_property("red",r))
+      {
+        element.assign(r, "red");
+        element.assign(g, "green");
+        element.assign(b, "blue");
+      }else if(element.has_property("red", rf))
+      {
+        element.assign(rf, "red");
+        element.assign(gf, "green");
+        element.assign(bf, "blue");
+        r = static_cast<unsigned char>(std::floor(rf*255));
+        g = static_cast<unsigned char>(std::floor(gf*255));
+        b = static_cast<unsigned char>(std::floor(bf*255));
+      }
       m_vcolor_map[vi] = CGAL::IO::Color(r, g, b);
     }
   }
@@ -331,10 +343,22 @@ public:
 
     if(m_fcolors == 3)
     {
-      unsigned char r, g, b;
-      element.assign(r, "red");
-      element.assign(g, "green");
-      element.assign(b, "blue");
+      unsigned char r=0, g=0, b=0;
+      float rf=0, gf=0, bf=0;
+      if(element.has_property("red",r))
+      {
+        element.assign(r, "red");
+        element.assign(g, "green");
+        element.assign(b, "blue");
+      } else if(element.has_property("red", rf))
+      {
+        element.assign(rf, "red");
+        element.assign(gf, "green");
+        element.assign(bf, "blue");
+        r = static_cast<unsigned char>(std::floor(rf*255));
+        g = static_cast<unsigned char>(std::floor(gf*255));
+        b = static_cast<unsigned char>(std::floor(bf*255));
+      }
       m_fcolor_map[fi] = CGAL::IO::Color(r, g, b);
     }
   }

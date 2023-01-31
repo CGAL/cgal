@@ -58,29 +58,20 @@ public:
 template<typename Tr>
 struct All_cells_selected
 {
-  typedef typename Tr::Cell_handle argument_type;
-  typedef typename Tr::Cell::Subdomain_index Subdomain_index;
+  using key_type = typename Tr::Cell_handle;
+  using value_type = bool;
+  using reference = bool;
+  using category = boost::read_write_property_map_tag;
 
-  typedef bool                     result_type;
-
-  result_type operator()(const argument_type c) const
+  friend value_type get(const All_cells_selected&, const key_type& c)
   {
-    return c->subdomain_index() != Subdomain_index();
+    using SI = typename Tr::Cell::Subdomain_index;
+    return c->subdomain_index() != SI();
   }
+  friend void put(All_cells_selected&, const key_type&, const value_type)
+  {} //nothing to do : subdomain indices are updated in remeshing};
 };
 
-template<typename Primitive>
-struct No_constraint_pmap
-{
-public:
-  typedef Primitive                           key_type;
-  typedef bool                                value_type;
-  typedef value_type                          reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  friend value_type get(No_constraint_pmap, key_type) { return false; }
-  friend void put(No_constraint_pmap, key_type, value_type) {}
-};
 
 template<typename Triangulation
          , typename SizingFunction
@@ -198,6 +189,7 @@ public:
       "1-facets_in_complex_after_split.off");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
+    CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
@@ -219,6 +211,7 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
+    CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "2-collapse");
@@ -235,6 +228,7 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
+    CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "3-flip");
@@ -250,6 +244,7 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
+    CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "4-smooth");
@@ -407,12 +402,13 @@ private:
     //tag cells
     for (Cell_handle cit : tr().finite_cell_handles())
     {
-      if (m_cell_selector(cit))
+      if (get(m_cell_selector, cit))
       {
         const Subdomain_index index = cit->subdomain_index();
         if(!input_is_c3t3())
           m_c3t3.remove_from_complex(cit);
-        m_c3t3.add_to_complex(cit, index);
+        if(Subdomain_index() != index)
+          m_c3t3.add_to_complex(cit, index);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbc;
@@ -535,6 +531,7 @@ private:
 
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "c3t3_vertices_");
+    CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
   }
 

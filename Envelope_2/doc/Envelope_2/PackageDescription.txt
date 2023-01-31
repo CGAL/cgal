@@ -8,7 +8,7 @@
 \cgalPkgPicture{Envelope_2/fig/Envelope_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Ron Wein}
-\cgalPkgDesc{This package consits of functions that computes the lower (or upper) envelope of a set of arbitrary curves in 2D. The output is represented as an envelope diagram, namely a subdivision of the \f$ x\f$-axis into intervals, such that the identity of the curves that induce the envelope on each interval is unique.}
+\cgalPkgDesc{This package consists of functions that computes the lower (or upper) envelope of a set of arbitrary curves in 2D. The output is represented as an envelope diagram, namely a subdivision of the \f$ x\f$-axis into intervals, such that the identity of the curves that induce the envelope on each interval is unique.}
 \cgalPkgManuals{Chapter_Envelopes_of_Curves_in_2D,PkgEnvelope2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

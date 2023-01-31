@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-// [Sylvain] This was originaly written in the Exacus library.
+// [Sylvain] This was originally written in the Exacus library.
 // I kept most doxygen comments.
 
 

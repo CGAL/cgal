@@ -167,7 +167,7 @@ struct AABB_tree_splitter_traits
   // The input face ID serves when traversing the tree, to avoid doing the same intersection()
   // on the same datum seen from different primitives.
   //
-  // Technically, FPM could type-erase the mesh and the VPM, as it currently forces all independant
+  // Technically, FPM could type-erase the mesh and the VPM, as it currently forces all independent
   // inputs to have the same types. This is not such much of an issue for the mesh type,
   // but it can be annoying for the VPM type.
   using ID = std::pair<std::size_t /*primitive ID*/, std::size_t /*input face ID*/>;

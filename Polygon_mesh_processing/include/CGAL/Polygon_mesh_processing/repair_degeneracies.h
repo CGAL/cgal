@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_DEGENERACIES_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_DEGENERACIES_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
@@ -535,7 +535,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_geometric_repair_grp
 ///
 /// removes almost degenerate faces in a range of faces from a triangulated surface mesh.
 /// Almost degenerated triangle faces are classified as caps or needles: a triangle is said to be a <i>needle</i>
@@ -1034,7 +1034,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   return false;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_geometric_repair_grp
 /// removes all almost degenerate faces from a triangulated surface mesh.
 /// Equivalent to `remove_almost_degenerate_faces(faces(tmesh), tmesh, np)`
 template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -1326,7 +1326,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   return remove_a_border_edge(ed, tm, input_range, edge_set, face_set);
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_geometric_repair_grp
 //
 // removes the degenerate edges from a triangulated surface mesh.
 // An edge is considered degenerate if its two extremities share the same location.
@@ -1410,7 +1410,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
     std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
 #endif
 
-    // first try to remove all collapsable edges
+    // first try to remove all collapsible edges
     typename std::set<edge_descriptor>::iterator it = degenerate_edges_to_remove.begin();
     while(it != degenerate_edges_to_remove.end())
     {
@@ -1741,7 +1741,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           while(true);
 
           // @todo use the area criteria? this means maybe continue exploration of larger cc
-          // mark faces of completetly explored cc
+          // mark faces of completely explored cc
           for(index=0; index<nb_cc; ++index)
           {
             if(exploration_finished[index])
@@ -1880,7 +1880,7 @@ bool remove_degenerate_edges(TriangleMesh& tmesh,
   return remove_degenerate_edges(edges(tmesh), tmesh, face_set, np);
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_geometric_repair_grp
 //
 // removes the degenerate faces from a triangulated surface mesh.
 // A face is considered degenerate if two of its vertices share the same location,
@@ -2611,7 +2611,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           put(vpmap, target(Euler::split_edge(side_one[hi], tmesh), tmesh), *it);
 
           // split_edge updates the halfedge of the source vertex of h,
-          // since we reuse later the halfedge of the first refernce vertex
+          // since we reuse later the halfedge of the first reference vertex
           // we must set it as we need.
           if(source(h1, tmesh) == *ref_vertices.first)
             set_halfedge(*ref_vertices.first, prev(prev(side_one[hi], tmesh), tmesh), tmesh);
@@ -2639,7 +2639,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           put(vpmap, target(h2, tmesh), *it);
 
           // split_edge updates the halfedge of the source vertex of h,
-          // since we reuse later the halfedge of the first refernce vertex
+          // since we reuse later the halfedge of the first reference vertex
           // we must set it as we need.
           if(source(h2, tmesh) == *ref_vertices.first)
             set_halfedge(*ref_vertices.first, opposite(h2, tmesh), tmesh);

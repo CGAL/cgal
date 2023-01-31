@@ -223,7 +223,7 @@ jet_smooth_point_set(
   // precondition: at least 2 nearest neighbors
   CGAL_precondition(k >= 2);
 
-  // Instanciate a KD-tree search.
+  // Instantiate a KD-tree search.
   Neighbor_query neighbor_query (points, point_map);
 
   // Iterates over input points and mutates them.

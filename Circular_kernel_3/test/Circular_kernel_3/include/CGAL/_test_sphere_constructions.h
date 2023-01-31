@@ -1921,7 +1921,7 @@ void _test_intersection_construct(SK sk) {
               Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
               assert(theEqual_3(cres, conf));
             } else {
-              // This case sould never happen, because it already happen before
+              // This case should never happen, because it already happen before
               assert(intersection_1.size() == 2);
               assert(theDo_intersect_3(ca, cb));
               assert(assign(cres,intersection_1[0]));
@@ -2076,7 +2076,7 @@ void _test_intersection_construct(SK sk) {
               Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
               assert(theEqual_3(cres, conf));
             } else {
-              // This case sould never happen, because it already happen before
+              // This case should never happen, because it already happen before
               assert(intersection_1.size() == 2);
               assert(CGAL::do_intersect(ca, cb));
               assert(assign(cres,intersection_1[0]));

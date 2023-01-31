@@ -60,12 +60,10 @@
 #include <vtkAppendFilter.h>
 #include <vtkSphereSource.h>
 #include <vtkVersion.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
 #include <vtkCommand.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>

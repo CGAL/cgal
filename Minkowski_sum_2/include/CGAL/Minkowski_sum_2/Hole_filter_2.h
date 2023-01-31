@@ -41,7 +41,7 @@ public:
   /*! Filter out holes of a polygon with holes.
    * \param[in] pgn1 The polygon with holes to filter.
    * \param[in] pgn2 The reference polygon with holes.
-   * \param[out] filtered_pgn1 the filterd polygon.
+   * \param[out] filtered_pgn1 the filtered polygon.
    */
   void operator()(const Polygon_with_holes_2& pgn1,
                   const Polygon_2& pgn2,
@@ -73,7 +73,7 @@ public:
   /*! Filter out holes of a polygon with holes.
    * \param[in] pgn1 The polygon with holes to filter.
    * \param[in] pgn2 The reference polygon polygon with holes.
-   * \param[out] filtered_pgn1 the filterd polygon.
+   * \param[out] filtered_pgn1 the filtered polygon.
    */
   void operator()(const Polygon_with_holes_2& pgn1,
                   const Polygon_with_holes_2& pgn2,

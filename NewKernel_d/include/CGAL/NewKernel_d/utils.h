@@ -46,7 +46,7 @@ struct Has_type_different_from <T, No, true>
         // tell a function f(a,b,c) that its real argument is a(b,c)
         struct Eval_functor {};
 
-        // forget the first argument. Useful to make something dependant
+        // forget the first argument. Useful to make something dependent
         // (and thus usable in SFINAE), although that's not a great design.
         template<class A,class B> struct Second_arg {
                 typedef B type;

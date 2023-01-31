@@ -699,7 +699,7 @@ void reflectYchar(char *image, int width, int height)
  * start of a BITMAPARRAYHEADER.  These functions will leave the file pointer
  * on the byte after the image's color table.
  *
- * The coordinate speaces in the returned arrays will have an upper-left
+ * The coordinate spaces in the returned arrays will have an upper-left
  * origin.   As before, a non-zero return value indicates that something went
  * wrong.
  *

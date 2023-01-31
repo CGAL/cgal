@@ -1,9 +1,9 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project(Polygonal_surface_reconstruction_Examples)
-
 cmake_minimum_required(VERSION 3.1...3.23)
+
+project(Polygonal_surface_reconstruction_Examples)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
@@ -51,13 +51,13 @@ endif()
 
 create_single_source_cgal_program("polyfit_example_without_input_planes.cpp")
 create_single_source_cgal_program("polyfit_example_user_provided_planes.cpp")
-create_single_source_cgal_program("polyfit_example_model_complexty_control.cpp")
+create_single_source_cgal_program("polyfit_example_model_complexity_control.cpp")
 create_single_source_cgal_program("polyfit_example_with_region_growing.cpp")
 
 foreach(
   target
   polyfit_example_without_input_planes polyfit_example_user_provided_planes
-  polyfit_example_model_complexty_control polyfit_example_with_region_growing)
+  polyfit_example_model_complexity_control polyfit_example_with_region_growing)
   target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   if(TARGET CGAL::SCIP_support)
     target_link_libraries(${target} PUBLIC CGAL::SCIP_support)

@@ -86,7 +86,7 @@ protected:
   }
 
 public:
-  /* Overriden functions of this level: */
+  /* Overridden functions of this level: */
   /* we override all methods that call test_if_cell_is_bad() */
 
   void scan_triangulation_impl()
@@ -130,7 +130,7 @@ public:
 
 
 private:
-  /* --- private datas --- */
+  /* --- private data --- */
   unsigned int max_vertices; ///< number of vertices bound (ignored if zero)
 
 }; // end Poisson_mesher_level_impl_base

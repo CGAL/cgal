@@ -278,7 +278,7 @@ public Q_SLOTS:
     filter_operations();
   }
   // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
-  // set the k-ring_selector as currently selected. (A k-ring_selector tha tis not "currently selected" will
+  // set the k-ring_selector as currently selected. (A k-ring_selector that is not "currently selected" will
   // not process selection events)
   void isCurrentlySelected(Scene_facegraph_item_k_ring_selection* item)
   {
@@ -1067,7 +1067,7 @@ public Q_SLOTS:
     selection_item->set_is_insert(is_insert);
     selection_item->set_k_ring(k_ring);
     selection_item->setRenderingMode(Flat);
-    if(selection_item->name() == "unamed") {
+    if(selection_item->name() == "unnamed") {
       selection_item->setName(tr("%1 (selection)").arg(poly_item->name()));
     }
 

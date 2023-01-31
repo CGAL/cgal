@@ -2544,7 +2544,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::recenterScene()
 {
-  //force the recomputaion of the bbox
+  //force the recomputation of the bbox
   bbox_need_update = true;
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
@@ -2621,7 +2621,7 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
   if(id.isValid())
   {
     // mapFromSource is necessary to convert the QModelIndex received
-    // from the Scene into a valid QModelIndex in the view, beacause of
+    // from the Scene into a valid QModelIndex in the view, because of
     // the proxymodel
     sceneView->scrollTo(proxyModel->mapFromSource(id));
   }

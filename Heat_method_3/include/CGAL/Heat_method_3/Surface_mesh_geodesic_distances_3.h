@@ -529,22 +529,19 @@ private:
       pj = p_j;
       pk = p_k;
 
-      const double cotan_i = CGAL::to_double(
-        CGAL::Weights::cotangent(pk, pi, pj, traits));
+      const double cotan_i = CGAL::to_double(CGAL::Weights::cotangent(pk, pi, pj, traits));
       m_cotan_matrix.add_coef(j, k, -(1./2) * cotan_i);
       m_cotan_matrix.add_coef(k, j, -(1./2) * cotan_i);
       m_cotan_matrix.add_coef(j, j,  (1./2) * cotan_i);
       m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_i);
 
-      const double cotan_j = CGAL::to_double(
-        CGAL::Weights::cotangent(pk, pj, pi, traits));
+      const double cotan_j = CGAL::to_double(CGAL::Weights::cotangent(pk, pj, pi, traits));
       m_cotan_matrix.add_coef(i, k, -(1./2) * cotan_j);
       m_cotan_matrix.add_coef(k, i, -(1./2) * cotan_j);
       m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_j);
       m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_j);
 
-      const double cotan_k = CGAL::to_double(
-        CGAL::Weights::cotangent(pj, pk, pi, traits));
+      const double cotan_k = CGAL::to_double(CGAL::Weights::cotangent(pj, pk, pi, traits));
       m_cotan_matrix.add_coef(i, j, -(1./2) * cotan_k);
       m_cotan_matrix.add_coef(j, i, -(1./2) * cotan_k);
       m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_k);
@@ -553,8 +550,7 @@ private:
       const Vector_3 v_ij = construct_vector(p_i, p_j);
       const Vector_3 v_ik = construct_vector(p_i, p_k);
       const Vector_3 cross = cross_product(v_ij, v_ik);
-      const double norm_cross = CGAL::sqrt(
-        CGAL::to_double(scalar_product(cross, cross)));
+      const double norm_cross = CGAL::sqrt(CGAL::to_double(scalar_product(cross, cross)));
 
       //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
       //cross is 2*area

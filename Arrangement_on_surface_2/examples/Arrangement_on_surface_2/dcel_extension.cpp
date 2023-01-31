@@ -32,7 +32,7 @@ int main() {
 
   auto equal = traits.equal_2_object();
   for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
-    // Check whether the halfegde has the same direction as its segment.
+    // Check whether the halfedge has the same direction as its segment.
     bool flag = equal(eit->source()->point(),eit->curve().source());
     eit->set_data(flag);
     eit->twin()->set_data(!flag);

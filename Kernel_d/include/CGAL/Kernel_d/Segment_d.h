@@ -45,7 +45,7 @@ class Segment_d : public Handle_for< Pair_d<p_R> > {
 
 /*{\Mdefinition
 An instance $s$ of the data type |Segment_d| is a directed straight
-line segment in $d$-dimensional Euclidian space connecting two points
+line segment in $d$-dimensional Euclidean space connecting two points
 $p$ and $q$. $p$ is called the source point and $q$ is called
 the target point of $s$, both points are called endpoints of $s$. A
 segment whose endpoints are equal is called \emph{degenerate}.}*/

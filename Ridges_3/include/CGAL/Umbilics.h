@@ -31,7 +31,7 @@ enum Umbilic_type { NON_GENERIC_UMBILIC = 0, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILI
 
 //-------------------------------------------------------------------
 //Umbilic : stores umbilic data, its location given by a vertex, its
-//type and a circle of edges bording a disk containing the vertex
+//type and a circle of edges bordering a disk containing the vertex
 //------------------------------------------------------------------
 template < class TriangleMesh >
 class Umbilic
@@ -192,7 +192,7 @@ compute(OutputIterator umbilics_it, FT size)
     vces.clear();
     contour.clear();
     is_umbilic = true;
-    //the size of neighbourhood is (size * OneRingSize)
+    //the size of neighborhood is (size * OneRingSize)
     poly_neighbors->compute_neighbors(vh, vces, contour, size);
 
 
