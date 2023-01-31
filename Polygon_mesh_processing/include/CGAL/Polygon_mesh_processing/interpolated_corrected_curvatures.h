@@ -1273,11 +1273,11 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
   * The user is responsible for the memory management of the pointers.
   *
   * @tparam PolygonMesh a model of `FaceListGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh
   * @param v the vertex of `pmesh` to compute the curvatures at
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -1354,11 +1354,11 @@ template<typename PolygonMesh,
   *
   * @tparam GT a geometric traits class that provides the nested type `FT`,
   * @tparam PolygonMesh a model of `FaceListGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh
   * @param v the vertex of `pmesh` to compute the mean curvature at
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -1420,11 +1420,11 @@ template<typename GT, typename PolygonMesh,
   *
   * @tparam GT a geometric traits class that provides the nested type `FT`,
   * @tparam PolygonMesh a model of `FaceListGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh
   * @param v the vertex of `pmesh` to compute the Gaussian curvature at
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -1486,11 +1486,11 @@ template<typename GT, typename PolygonMesh,
   *
   * @tparam GT the geometric traits class,
   * @tparam PolygonMesh a model of `FaceListGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh
   * @param v the vertex of `pmesh` to compute the principal curvatures and directions at
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
