@@ -706,10 +706,30 @@ private:
     const auto first_intersecting_edge = *found_edge_opt;
 
 
+    // outputs
     std::vector<Edge> intersecting_edges;
     std::vector<Cell_handle> intersecting_cells;
+    std::vector<Vertex_handle> vertices_of_upper_cavity(border_vertices.begin(), border_vertices.end());
+    std::vector<Vertex_handle> vertices_of_lower_cavity(border_vertices.begin(), border_vertices.end());
+
+    // marker for already visited elements
+    std::set<Vertex_handle> visited_vertices;
     std::set<std::pair<Vertex_handle, Vertex_handle>> visited_edges;
     std::set<Cell_handle> visited_cells;
+
+    auto make__new_element_functor = [](auto& visited_set) {
+      return [&visited_set](auto e) {
+        const auto [_, not_already_visited] = visited_set.insert(e);
+        return not_already_visited;
+      };
+    };
+
+    auto new_vertex = make__new_element_functor(visited_vertices);
+    auto new_cell = make__new_element_functor(visited_cells);
+    auto new_pair_of_vertices = make__new_element_functor(visited_edges);
+    auto new_edge = [&new_pair_of_vertices](Vertex_handle v0, Vertex_handle v1) {
+      return new_pair_of_vertices(CGAL::make_sorted_pair(v0, v1));
+    };
 
     intersecting_edges.push_back(first_intersecting_edge);
 
@@ -724,14 +744,19 @@ private:
 #endif
       CGAL_assertion(false == border_vertices.contains(v_above));
       CGAL_assertion(false == border_vertices.contains(v_below));
+      if(new_vertex(v_above)) {
+        vertices_of_upper_cavity.push_back(v_above);
+      }
+      if(new_vertex(v_below)) {
+        vertices_of_lower_cavity.push_back(v_below);
+      }
       auto facet_circ = this->incident_facets(intersecting_edge);
       const auto facet_circ_end = facet_circ;
       do { // loop facets around [v_above, v_below]
         CGAL_assertion(false == this->is_infinite(*facet_circ));
         const auto cell = facet_circ->first;
         const auto facet_index = facet_circ->second;
-        const auto [_, cell_not_already_visited] = visited_cells.insert(cell);
-        if(cell_not_already_visited) {
+        if(new_cell(cell)) {
           intersecting_cells.push_back(cell);
         }
         const auto index_v_above = cell->index(v_above);
@@ -741,8 +766,7 @@ private:
         if(border_vertices.contains(vc)) continue; // intersecting edges cannot touch the border
 
         auto test_edge = [&](Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1, int expected) {
-          const auto [_, edge_not_already_visited] = visited_edges.insert(CGAL::make_sorted_pair(v0, v1));
-          if(false == edge_not_already_visited) return true;
+          if(!new_edge(v0, v1)) return true;
           int v0v1_intersects_region = does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
           if(v0v1_intersects_region != 0) {
             if(v0v1_intersects_region != expected) {
@@ -775,10 +799,13 @@ private:
       } while(++facet_circ != facet_circ_end);
       std::cerr << "intersecting_edges.size() = " << intersecting_edges.size() << '\n';
     }
+
 #if CGAL_DEBUG_CDT_3
-    std::cerr << std::format("Cavity has {} cells and {} edges\n",
+    std::cerr << std::format("Cavity has {} cells and {} edges, {} vertices in upper cavity and {} in lower\n",
                              intersecting_cells.size(),
-                             intersecting_edges.size());
+                             intersecting_edges.size(),
+                             vertices_of_upper_cavity.size(),
+                             vertices_of_lower_cavity.size());
     if(intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
       std::cerr << "!! Interesting case !!\n";
       dump_region(face_index, cdt_2);
