@@ -707,7 +707,6 @@ public:
     \sa `number_of_removed_points()`
   */
   std::size_t garbage_size () const { return number_of_removed_points(); }
-  /// \endcond
 
   /*!  \brief returns `true` if there are elements marked as removed,
     `false` otherwise.
