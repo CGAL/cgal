@@ -34,7 +34,7 @@ struct Parameters_3 {
   bool verbose    =  true; // print basic verbose information
   bool debug      = false; // print all steps and substeps + export initial and final configurations
 
-  // See also global tolerance inside utils.h!
+  // See also global tolerance inside utils.h! (set to 0)
   Parameters_3(const bool v = true, const bool d = false) :
   verbose(v), debug(d) { }
 };

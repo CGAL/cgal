@@ -33,19 +33,21 @@ template<typename Traits>
 class Finalizer {
 
 public:
-  using Kernel = typename Traits;
+  using Kernel = typename Traits::Kernel;
 
 private:
-  using FT = typename Kernel::FT;
-  using Point_2 = typename Kernel::Point_2;
-  using Point_3 = typename Kernel::Point_3;
-  using Vector_2 = typename Kernel::Vector_2;
-  using Vector_3 = typename Kernel::Vector_3;
-  using Segment_3 = typename Kernel::Segment_3;
-  using Line_3 = typename Kernel::Line_3;
-  using Plane_3 = typename Kernel::Plane_3;
-  using Direction_2 = typename Kernel::Direction_2;
-  using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
+  using FT = typename Traits::FT;
+  using Point_2 = typename Traits::Point_2;
+  using Point_3 = typename Traits::Point_3;
+  using Vector_2 = typename Traits::Vector_2;
+  using Vector_3 = typename Traits::Vector_3;
+  using Segment_3 = typename Traits::Segment_3;
+  using Line_3 = typename Traits::Line_3;
+  using Plane_3 = typename Traits::Plane_3;
+  using Direction_2 = typename Traits::Direction_2;
+  using Tetrahedron_3 = typename Traits::Tetrahedron_3;
+
+  using From_exact = typename Traits::From_exact;
 
   using Data_structure = KSR_3::Data_structure<Traits>;
 
@@ -190,14 +192,38 @@ private:
       }
     }
 
+    std::map<PFace, std::size_t>& face2index = m_data.face_to_index();
+    std::vector<std::pair<std::size_t, std::size_t> >& face2volumes = m_data.face_to_volumes();
+    std::size_t num_faces = 0;
+
     // Adjust neighbor information in volumes
     for (std::size_t i = 0; i < volumes.size(); i++) {
-      volumes[i].index = i;
+      auto& v = volumes[i];
+      v.index = i;
+      v.faces.resize(v.pfaces.size());
+      for (std::size_t f = 0; f < volumes[i].pfaces.size(); f++) {
+        auto& pf = volumes[i].pfaces[f];
+        auto it = face2index.find(pf);
+        if (it == face2index.end()) {
+          face2index[pf] = num_faces;
+          v.faces[f] = num_faces++;
+        }
+        else
+          v.faces[f] = it->second;
+      }
+      if (face2volumes.size() < num_faces)
+        face2volumes.resize(num_faces);
+
+      face to sp
+
       for (std::size_t j = 0; j < volumes[i].neighbors.size(); j++) {
         const auto& pair = map_volumes.at(volumes[i].pfaces[j]);
         volumes[i].neighbors[j] = (pair.first == i) ? pair.second : pair.first;
+        face2volumes[v.faces[j]] = pair;
       }
     }
+
+    m_data.face_to_vertices().resize(num_faces);
 
     for (auto& volume : volumes) {
       create_cell_pvertices(volume);
@@ -718,10 +744,26 @@ private:
   }
 
   void create_cell_pvertices(Volume_cell& cell) {
+    From_exact from_exact;
+    std::vector<int>& ivertex2vertex = m_data.ivertex_to_index();
+    std::vector<Point_3>& vertices = m_data.vertices();
+    std::vector<std::vector<std::size_t> >& face2vertices = m_data.face_to_vertices();
     cell.pvertices.clear();
-    for (const auto& pface : cell.pfaces) {
+    for (std::size_t f = 0; f < cell.pfaces.size();f++) {
+      const auto& pface = cell.pfaces[f];
+      face2vertices[cell.faces[f]].reserve(m_data.pvertices_of_pface(pface).size());
+
       for (const auto pvertex : m_data.pvertices_of_pface(pface)) {
+        CGAL_assertion(m_data.has_ivertex(pvertex));
         cell.pvertices.insert(pvertex);
+
+        IVertex ivertex = m_data.ivertex(pvertex);
+        if (ivertex2vertex[ivertex] == -1) {
+          ivertex2vertex[ivertex] = vertices.size();
+          face2vertices[cell.faces[f]].push_back(vertices.size());
+          vertices.push_back(from_exact(m_data.point_3(ivertex)));
+        }
+        else face2vertices[cell.faces[f]].push_back(ivertex2vertex[ivertex]);
       }
     }
   }

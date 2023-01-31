@@ -47,8 +47,8 @@ namespace CGAL {
 * \ingroup PkgKineticPartition
   \brief Creates the kinetic partitioning of the bounding box.
 
-  \tparam GeomTraits
-    must be a model of `Kinetic_shape_partition_trais_3`.
+  \tparam Traits
+    must be a model of `KineticShapePartitionTraits_3`.
 */
 template<typename Traits>
 class Kinetic_shape_partitioning_3 {
@@ -86,25 +86,33 @@ public:
   /// \name Initialization
   /// @{
   /*!
-  \brief Constructs an empty kinetic shape partitioning object.
+  \brief Constructs an empty kinetic shape partitioning object. Use insert afterwards to insert polygons into the partition and initialize() to create the partition.
 
-  \param verbose
-    prints information about the creation into std::cout.
+  \tparam NamedParameters
+  a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param debug
-    writes intermediate results into files.
+  \param np
+  a sequence of \ref bgl_namedparameters "Named Parameters"
+  among the ones listed below
 
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{Write timing and internal information to std::cout.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
   */
+  template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partitioning_3(
-    const bool verbose = true,
-    const bool debug = false) :
-    m_parameters(verbose, debug), // use true here to export all steps
+    const NamedParameters& np = CGAL::parameters::default_values()) :
+    m_parameters(np, false), // use true here to export all steps
     m_data(m_parameters),
     m_num_events(0)
   { }
 
   /*!
-  \brief Initializes the kinetic partitioning of the bounding box.
+  \brief Constructs an kinetic shape partitioning object and initializes it.
 
   \tparam InputRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -116,7 +124,93 @@ public:
   a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param input_range
+  an instance of `InputRange` with 3D points and corresponding 3D normal vectors
+
+  \param polygon_map
+  a range of polygons defined by a range of indices into input_range
+
+  \param np
+  a sequence of \ref bgl_namedparameters "Named Parameters"
+  among the ones listed below
+
+   \pre `!input_range.empty() and !polygon_map.empty`
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{Write timing and internal information to std::cout.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{reorient_bbox}
+      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{bbox_dilation_ratio}
+      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partitioning.}
+      \cgalParamType{FT}
+      \cgalParamDefault{1.1}
+    \cgalParamNEnd
+    \cgalParamNBegin{angle_tolerance}
+      \cgalParamDescription{The tolerance angle to snap the planes of two input polygons into one plane.}
+      \cgalParamType{FT}
+      \cgalParamDefault{5}
+    \cgalParamNEnd
+    \cgalParamNBegin{distance_tolerance}
+      \cgalParamDescription{The tolerance distance to snap the planes of two input polygons into one plane.}
+      \cgalParamType{FT}
+      \cgalParamDefault{0.5}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+  */
+  template<
+    typename InputRange,
+    typename PolygonMap
+    typename NamedParameters = parameters::Default_named_parameters>
+  Kinetic_shape_partitioning_3(
+    const InputRange& input_range,
+    const PolygonMap polygon_map,
+    const NamedParameters & np = CGAL::parameters::default_values()) :
+    m_parameters(np, false), // use true here to export all steps
+    m_data(m_parameters),
+    m_num_events(0)
+  {
+    initialize(input_range, polygon_map, np);
+  }
+
+  /*!
+  \brief Inserts polygons. Does not recreate or change an existing partitioning.
+
+  \tparam PolygonMap
+  contains index ranges to form polygons from InputRange
+
+  \param input_range
    an instance of `InputRange` with 3D points and corresponding 3D normal vectors
+
+  \param polygon_map
+  a range of polygons defined by a range of indices into input_range
+  */
+
+  template<
+    typename PolygonMap>
+  bool insert(
+    const InputRange& input_range,
+    const PolygonMap polygon_map) {}
+
+  /*!
+  \brief Initializes the kinetic partitioning of the bounding box.
+
+  \tparam InputRange
+  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `Point_3`.
+
+  \tparam PolygonMap
+  contains index ranges to form polygons from InputRange
+
+  \tparam NamedParameters
+  a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param input_range
+   an instance of `InputRange` with 3D points
 
   \param polygon_map
   a range of polygons defined by a range of indices into input_range
@@ -128,7 +222,7 @@ public:
   @return
   success. The initialization fails if the input data is empty.
 
-  \pre `input_range.size() > 0 and polygon_map.size() > 0`
+  \pre `!input_range.empty() and !polygon_map.empty`
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{reorient_bbox}
@@ -213,74 +307,6 @@ public:
       const double time_to_initialize = timer.time();
       std::cout << "* initialization time: " << time_to_initialize << std::endl;
     }
-    /*
-
-    if (m_parameters.k == 0) { // for k = 0, we skip propagation
-      CGAL_warning_msg(m_parameters.k > 0,
-        "WARNING: YOU SET K TO 0! THAT MEANS NO PROPAGATION! THE VALID VALUES ARE {1,2,...}. INTERSECT AND RETURN!");
-      return false;
-    }
-
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
-      std::cout << "* propagation started" << std::endl;
-    }
-
-    // Propagation.
-    timer.reset();
-    timer.start();
-    std::size_t num_queue_calls = 0;
-
-    Propagation propagation(m_data, m_parameters);
-    std::tie(num_queue_calls, m_num_events) = propagation.propagate();
-
-    timer.stop();
-    const double time_to_propagate = timer.time();
-
-    if (m_parameters.verbose) {
-      std::cout << "* propagation finished" << std::endl;
-      std::cout << "* number of queue calls: " << num_queue_calls << std::endl;
-      std::cout << "* number of events handled: " << m_num_events << std::endl;
-    }
-
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
-    }
-
-    // Finalization.
-    timer.reset();
-    timer.start();
-    if (m_parameters.debug)
-      dump(m_data, "final-" + m_parameters.k);
-
-    Finalizer finalizer(m_data, m_parameters);
-
-    if (m_parameters.verbose)
-      std::cout << "* checking final mesh integrity ...";
-
-    CGAL_assertion(m_data.check_integrity(true, true, true));
-
-    if (m_parameters.verbose)
-      std::cout << " done" << std::endl;
-
-    if (m_parameters.verbose)
-      std::cout << "* getting volumes ..." << std::endl;
-
-    finalizer.create_polyhedra();
-    timer.stop();
-    const double time_to_finalize = timer.time();
-
-    if (m_parameters.verbose) {
-      std::cout << "* found all together " << m_data.number_of_volumes() << " volumes" << std::endl;
-
-      for (std::size_t i = 0; i < m_data.number_of_support_planes(); i++) {
-        dump_2d_surface_mesh(m_data, i, "final-surface-mesh-" + std::to_string(i));
-      }
-    }*/
-
-    //std::cout << "* propagation: " << time_to_propagate << std::endl;
-    //std::cout << "* finalization: " << time_to_finalize << std::endl;
-    //std::cout << "* total time: " << total_time << std::endl;
 
     return true;
   }
@@ -380,108 +406,6 @@ public:
   }
 
   /// @}
-  /*
-  template<
-    typename InputRange,
-    typename PointMap,
-    typename VectorMap,
-    typename SemanticMap,
-    typename NamedParameters>
-  bool reconstruct(
-    const InputRange& input_range,
-    const PointMap point_map,
-    const VectorMap normal_map,
-    const SemanticMap semantic_map,
-    const std::string file_name,
-    const NamedParameters& np) {
-
-    using Reconstruction = KSR_3::Reconstruction<
-      InputRange, PointMap, VectorMap, SemanticMap, Kernel, Intersection_Kernel>;
-
-    Reconstruction reconstruction(
-      input_range, point_map, normal_map, semantic_map, m_data, m_parameters.verbose, m_parameters.debug);
-
-    bool success = reconstruction.detect_planar_shapes(file_name, np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
-      return false;
-    }
-    // exit(EXIT_SUCCESS);
-
-    success = reconstruction.regularize_planar_shapes(np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, REGULARIZATION FAILED!");
-      return false;
-    }
-    // exit(EXIT_SUCCESS);
-
-    success = partition(
-      reconstruction.planar_shapes(), reconstruction.polygon_map(), np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, PARTITION FAILED!");
-      return false;
-    }
-    // exit(EXIT_SUCCESS);
-
-    success = reconstruction.compute_model(np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, COMPUTING MODEL FAILED!");
-      return false;
-    }
-    return success;
-  }
-
-  template<
-    typename InputRange,
-    typename PointMap,
-    typename VectorMap,
-    typename SemanticMap,
-    typename RegionMap,
-    typename NamedParameters>
-  bool reconstruct(
-    const InputRange& input_range,
-    const PointMap point_map,
-    const VectorMap normal_map,
-    const SemanticMap semantic_map,
-    const RegionMap region_map,
-    const NamedParameters& np) {
-
-    using Reconstruction = KSR_3::Reconstruction<
-      InputRange, PointMap, VectorMap, SemanticMap, Kernel, Intersection_Kernel>;
-
-    Reconstruction reconstruction(
-      input_range, point_map, normal_map, semantic_map, m_data, m_parameters.verbose, m_parameters.debug);
-
-    bool success = reconstruction.planar_shapes_from_map(region_map, np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
-      return false;
-    }
-    // exit(EXIT_SUCCESS);
-
-    //success = reconstruction.regularize_planar_shapes(np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, REGULARIZATION FAILED!");
-      return false;
-    }
-    // exit(EXIT_SUCCESS);
-
-    success = partition(
-      reconstruction.planar_shapes(), reconstruction.polygon_map(), np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, PARTITION FAILED!");
-      return false;
-    }
-    // exit(EXIT_SUCCESS);
-
-    success = reconstruction.compute_model(np);
-    if (!success) {
-      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, COMPUTING MODEL FAILED!");
-      return false;
-    }
-    return success;
-  }
-*/
 
   /*******************************
   **         Access         **
@@ -518,7 +442,7 @@ public:
   \brief Number of convex faces in the kinetic partitioning.
 
     @return
-    number of convex faces.
+    number of faces.
 
     \pre `successful partitioning`
   */
@@ -530,7 +454,7 @@ public:
   \brief Number of convex volumes created by the kinetic partitioning.
 
     @return
-    number of convex volumes.
+    number of volumes.
 
     \pre `successful partitioning`
   */
@@ -538,6 +462,7 @@ public:
     return m_data.volumes().size();
   }
 
+#ifndef DOXYGEN_RUNNING
   /*!
   \brief Point vector for mapping vertex indices to positions.
 
@@ -549,7 +474,7 @@ public:
   const std::vector<Point_3>& vertices() const;
 
   /*!
-  \brief Vertex indices of convex face.
+  \brief Vertex indices of face.
 
     \param face_index
     index of the query face.
@@ -562,7 +487,7 @@ public:
   const std::vector<std::size_t>& vertices(std::size_t face_index) const;
 
   /*!
-  \brief Face indices of the convex volume.
+  \brief Face indices of the volume.
 
     \param volume_index
     index of the query volume.
@@ -616,6 +541,8 @@ public:
       CGAL_assertion(support_plane_idx >= 6);
       return support_plane_idx;
   }
+
+#endif
 
   /*!
    \brief Creates a linear cell complex from the kinetic partitioning.

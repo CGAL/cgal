@@ -45,7 +45,6 @@ public:
   using Intersection_graph = KSR_3::Intersection_graph<Traits>;
   using FaceEvent = typename Support_plane::FaceEvent;
 
-private:
   using FT = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
   using IkPoint_2 = typename Intersection_Kernel::Point_2;
@@ -58,7 +57,7 @@ private:
   using Vector_2 = typename Traits::Vector_2;
   using Direction_2 = typename Traits::Direction_2;
   using IkDirection_2 = typename Intersection_Kernel::Direction_2;
-  using Triangle_2  = typename Kernel::Triangle_2;
+  using Triangle_2  = typename Traits::Triangle_2;
   using Line_2      = typename Traits::Line_2;
   using IkLine_2    = typename Intersection_Kernel::Line_2;
   using Plane_3     = typename Traits::Plane_3;
@@ -230,10 +229,16 @@ private:
   const Parameters& m_parameters;
 
   std::vector<Volume_cell> m_volumes;
+  std::vector<Point_3> m_vertices;
+  std::vector<int> m_ivertex2vertex; // Used to map ivertices to m_vertices which only contain vertices of the finalized kinetic partition.
+  std::vector<std::pair<std::size_t, std::size_t> > m_face2volumes;
+
+  std::map<PFace, std::size_t> m_face2index;
   std::vector<std::vector<std::size_t> > m_face2vertices;
-  std::map<PFace, std::pair<int, int> > m_face2volumes;
-  std::map<std::size_t, std::vector<std::size_t> > m_face2input_polygon;
-  std::map<std::size_t, std::size_t> m_input_polygon_map;
+  std::map<PFace, std::pair<int, int> > m_pface_neighbors;
+  std::vector<std::size_t> m_face2sp;
+  std::vector<std::set<std::size_t> > m_sp2input_polygon;
+  std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices. Todo: This should not be a map.
   Reconstructed_model m_reconstructed_model;
 
   template<typename Type1, typename Type2, typename ResultType>
@@ -263,7 +268,7 @@ public:
     m_intersection_graph.clear();
 
     m_volumes.clear();
-    m_face2volumes.clear();
+    m_pface_neighbors.clear();
     m_input_polygon_map.clear();
     m_reconstructed_model.clear();
   }
@@ -293,6 +298,10 @@ public:
     m_input_polygon_map = input_polygon_map;
   }
 
+  std::map<std::size_t, std::size_t>& input_polygon_map() {
+    return m_input_polygon_map;
+  }
+
   int support_plane_index(const std::size_t polygon_index) const {
 
     CGAL_assertion(m_input_polygon_map.find(polygon_index) != m_input_polygon_map.end());
@@ -308,8 +317,23 @@ public:
   **          GENERAL           **
   ********************************/
 
-  std::map<PFace, std::pair<int, int> >& pface_neighbors() { return m_face2volumes; }
-  const std::map<PFace, std::pair<int, int> >& pface_neighbors() const { return m_face2volumes; }
+  std::map<PFace, std::pair<int, int> >& pface_neighbors() { return m_pface_neighbors; }
+  const std::map<PFace, std::pair<int, int> >& pface_neighbors() const { return m_pface_neighbors; }
+  std::map<PFace, std::size_t> &face_to_index() { return m_face2index; }
+  std::vector<int>& ivertex_to_index() {
+    if (m_ivertex2vertex.size() == 0)
+      m_ivertex2vertex.resize(m_intersection_graph.number_of_vertices(), -1);
+
+    return m_ivertex2vertex;
+  }
+  std::vector<std::pair<std::size_t, std::size_t> >& face_to_volumes() { return m_face2volumes; }
+  std::vector<Point_3>& vertices() { return m_vertices; }
+  std::vector<std::vector<std::size_t> >& face_to_vertices() { return m_face2vertices; }
+
+  std::vector<std::size_t>& face_to_support_plane() { return m_face2sp; }
+  std::vector<std::vector<std::size_t> >& support_plane_to_input_polygon() { return m_sp2input_polygon; }
+
+  std::vector<std::vector<std::size_t> >& face_to_input_polygon() { return m_face2input_polygon; }
 
   const std::vector<Support_plane>& support_planes() const { return m_support_planes; }
   std::vector<Support_plane>& support_planes() { return m_support_planes; }
@@ -632,6 +656,10 @@ public:
     }
 
     intersect_with_bbox(support_plane_idx);
+
+    if (m_sp2input_polygon.size() <= number_of_support_planes())
+      m_sp2input_polygon.resize(number_of_support_planes());
+
     return std::make_pair(support_plane_idx, true);
   }
 
@@ -691,7 +719,6 @@ public:
         polygon.push_back(std::make_pair(point, std::make_pair(null_ivertex(), iedges)));
       }
     }
-    // std::cout << "num intersections: " << polygon.size() << std::endl;
 
     // Sort the points to get an oriented polygon.
     boost::function<IkPoint_3(Pair&)> f = boost::bind(&Pair::first, _1);
@@ -878,6 +905,7 @@ public:
       add_input_polygon(points, input_indices, support_plane_idx);
     for (const std::size_t input_index : input_indices) {
       m_input_polygon_map[input_index] = support_plane_idx;
+      m_sp2input_polygon[support_plane_idx].insert(input_index);
     }
   }
 

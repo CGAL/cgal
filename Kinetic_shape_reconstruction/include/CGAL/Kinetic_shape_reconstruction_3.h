@@ -24,10 +24,10 @@ namespace CGAL
   \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
-    must be a model of `Kinetic_shape_partition_trais_3`.
+    must be a model of `KineticShapePartitionTraits_3`.
 
   \tparam NormalMap
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`. It must map the elements in `KineticShapePartitionTraits_3::Input_range` to `Vector_3`.
 */
 template<typename Traits, typename NormalMap>
 class Kinetic_shape_reconstruction_3 {
@@ -66,8 +66,7 @@ public:
   writes intermediate results into ply files. The default is false.
 
   */
-  Kinetic_shape_reconstruction_3(bool verbose = false, bool debug = false) : m_kinetic_partition(verbose, debug) {
-  }
+  Kinetic_shape_reconstruction_3(const Input_range &input_range, bool verbose = false, bool debug = false) : m_kinetic_partition(verbose, debug), m_points(input_range) {}
 
   /*!
     \brief Detects shapes in the provided point cloud
@@ -138,15 +137,7 @@ public:
     CGAL_assertion(m_planes.size() == m_polygons.size());
     CGAL_assertion(m_polygons.size() == m_region_map.size());
 
-//     if (m_debug)
-//       KSR_3::dump_polygons("detected-planar-shapes");
-
-    if (m_polygons.size() == 0) {
-      if (m_verbose)
-        std::cout << "* no planar shapes found" << std::endl;
-      return false;
-    }
-    return true;
+    return m_polygons.size();
   }
 
   /*!
@@ -447,7 +438,7 @@ private:
   bool m_verbose;
   bool m_debug;
 
-  Input_range m_points;
+  const Input_range &m_points;
   Point_map m_point_map;
   Normal_map m_normal_map;
 

@@ -157,7 +157,7 @@ void dump_2d_surface_mesh(
 template<typename DS>
 void dump_polygons(const DS& data, const std::string tag = std::string()) {
 
-  using Point_3      = typename DS::Kernel::Point_3;
+  using Point_3      = typename DS::Point_3;
   using Mesh         = CGAL::Surface_mesh<Point_3>;
   using Face_index   = typename Mesh::Face_index;
   using Vertex_index = typename Mesh::Vertex_index;

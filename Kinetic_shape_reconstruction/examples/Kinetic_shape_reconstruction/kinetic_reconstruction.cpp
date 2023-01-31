@@ -133,7 +133,7 @@ int main(const int argc, const char** argv) {
   std::cout << "debug " << parameters.debug << std::endl;
 
   // Algorithm.
-  KSR ksr(parameters.verbose, parameters.debug);
+  KSR ksr(point_set, parameters.verbose, parameters.debug);
 
   const Region_map region_map = point_set. template property_map<int>("region").first;
   const bool is_segmented = point_set. template property_map<int>("region").second;
