@@ -462,14 +462,16 @@ private:
       if(dim == 0) msg << "corner (";
       else msg << "point (";
       msg << p << ")";
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
       CGAL_error_msg(([this, str = msg.str()]()
                       {
                         CGAL_USE(this);
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
                         dump_c3t3(this->c3t3_, "dump-bug");
-#endif
                         return str.c_str();
                       }()));
+#else
+      CGAL_error_msg(msg.str().c_str());
+#endif
     }
     return s;
   }
@@ -2193,16 +2195,18 @@ insert_balls(const Vertex_handle& vp,
   else
   {
     CGAL_assertion_code(using boost::math::float_prior);
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
     CGAL_assertion_msg(n==0 ||
                        dleft_frac >= float_prior(float_prior(1.)),
                        ([this]()
                         {
                           CGAL_USE(this);
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
                           dump_c3t3(this->c3t3_, "dump-bug");
-#endif
                           return "the sampling of protecting balls is not possible";
                         }()));
+#else
+    CGAL_assertion(n==0 || dleft_frac >= float_prior(float_prior(1.)));
+#endif
   }
 
   // Launch balls
