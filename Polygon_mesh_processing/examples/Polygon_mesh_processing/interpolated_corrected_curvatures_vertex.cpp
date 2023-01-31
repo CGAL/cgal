@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
       PMP::interpolated_corrected_principal_curvatures_and_directions_one_vertex<Epic_kernel>(smesh, v);
 
     // we can also specify a ball radius for expansion and a user defined vertex normals map using
-    // named parameters. Refer to interpolated_corrected_curvatures_example_SM.cpp to see example usage.
+    // named parameters. Refer to interpolated_corrected_curvatures_SM.cpp to see example usage.
 
     // Can also use interpolated_corrected_curvatures_one_vertex() to compute multiple curvatures
     // on the vertex at the same time. This is more efficient than computing each one separately.

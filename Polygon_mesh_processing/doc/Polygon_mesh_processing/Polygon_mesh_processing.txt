@@ -940,7 +940,7 @@ The following example illustrates how to
 compute the curvatures on vertices
 and store them in property maps provided by the class `Surface_mesh`.
 
-\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example_SM.cpp}
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_SM.cpp}
 
 \subsection ICCExamplePH Interpolated Corrected Curvatures on a Polyhedron Example
 
@@ -949,14 +949,14 @@ compute the curvatures on vertices
 and store them in dynamic property maps as the class `Polyhedron_3` does
 not provide storage for the curvatures.
 
-\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example_PH.cpp}
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_PH.cpp}
 
 \subsection ICCExampleSV Interpolated Corrected Curvatures on a Vertex Example
 
 The following example illustrates how to
 compute the curvatures on a specific vertex
 
-\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex_example.cpp}
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp}
 
 ****************************************
 \section PMPSlicer Slicer
