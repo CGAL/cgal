@@ -27,7 +27,6 @@
 #include <numeric>
 #include <queue>
 #include <unordered_set>
-#include <functional>
 
 #define EXPANDING_RADIUS_EPSILON 1e-6
 
@@ -231,8 +230,7 @@ typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::ve
 }
 
 template<typename GT>
-typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std::vector<typename GT::Vector_3>& u,
-  const std::vector<typename GT::Vector_3>& x = {})
+typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std::vector<typename GT::Vector_3>& u)
 {
   const std::size_t n = u.size();
   CGAL_precondition(n >= 3);
