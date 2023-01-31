@@ -65,20 +65,17 @@ public:
   \param debug
   writes intermediate results into ply files. The default is false.
 
+  \param input_range
+  an instance of `InputRange` with 3D points and corresponding 3D normal vectors.
+
   */
   Kinetic_shape_reconstruction_3(const Input_range &input_range, bool verbose = false, bool debug = false) : m_kinetic_partition(verbose, debug), m_points(input_range) {}
 
   /*!
     \brief Detects shapes in the provided point cloud
 
-    \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
-
-    \param input_range
-    an instance of `InputRange` with 3D points and corresponding 3D normal vectors
 
     \param np
     an instance of `NamedParameters`.
@@ -116,10 +113,8 @@ public:
 
   */
   template<
-    typename InputRange,
     typename CGAL_NP_TEMPLATE_PARAMETERS>
   std::size_t detect_planar_shapes(
-    InputRange input_range,
     const CGAL_NP_CLASS& np = parameters::default_values()) {
 
     if (m_verbose)
@@ -129,8 +124,8 @@ public:
     m_polygons.clear();
     m_region_map.clear();
 
-    m_point_map = Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, Point_map>::get_point_map(input_range, np);
-    m_normal_map = Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, Normal_map>::get_normal_map(input_range, np);
+    m_point_map = Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, Point_map>::get_point_map(m_input_range, np);
+    m_normal_map = Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_input_range, np);
 
     create_planar_shapes(np);
 
