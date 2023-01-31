@@ -167,6 +167,8 @@ insert_generic_dummy_points()
     return { coords[0], coords[1], coords[2] };
   };
 
+  CGAL_USE(construct_point_from_lattice_offset);
+
   // Create the dummy points -----------------------------------------------------------------------
 
   std::vector<Point_3> dummy_points;
@@ -447,6 +449,7 @@ insert_generic_dummy_points()
           }
 
           const std::pair<Facet, Facet>& fp = insertion_result.first->second;
+          CGAL_USE(fp);
           CGAL_assertion(fp.first.first != Cell_handle()); // properly set up
         };
 
