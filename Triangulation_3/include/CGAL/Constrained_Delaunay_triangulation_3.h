@@ -681,40 +681,30 @@ private:
     return std::pair<Vertex_handle, Vertex_handle>{c->vertex(i), c->vertex(j)};
   }
 
-  void restore_subface_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2, const auto& fh_region) {
-    const auto border_edges = brute_force_border_3_of_region(fh_region);
-    const auto border_vertices = [&]() {
-      std::set<Vertex_handle> vertices;
-      for(const auto& [c, i, j]: border_edges) {
-        vertices.insert(c->vertex(i));
-        vertices.insert(c->vertex(j));
-      }
-      return vertices;
-    }();
-#if CGAL_DEBUG_CDT_3
-    std::cerr << "border_vertices.size() = " << border_vertices.size() << "\n";
-#endif
-    const Edge first_border_edge{border_edges[0]};
-    const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, first_border_edge);
-    if(!found_edge_opt) {
-      std::cerr << "ERROR: No segment found\n";
-      {
-        dump_triangulation();
-        dump_region(face_index, region_count, cdt_2);
-      }
-      throw Next_face{};
-    }
-    CGAL_assertion(found_edge_opt != std::nullopt);
-    const auto first_intersecting_edge = *found_edge_opt;
-
-
+  auto construct_cavities(CDT_3_face_index face_index,
+                          int region_count,
+                          const CDT_2& cdt_2,
+                          const auto& fh_region,
+                          const auto& border_vertices,
+                          Edge first_intersecting_edge)
+  {
     // outputs
-    std::vector<Edge> intersecting_edges;
-    std::vector<Cell_handle> intersecting_cells;
-    std::vector<Vertex_handle> vertices_of_upper_cavity(border_vertices.begin(), border_vertices.end());
-    std::vector<Vertex_handle> vertices_of_lower_cavity(border_vertices.begin(), border_vertices.end());
-    std::vector<Facet> facets_of_upper_cavity;
-    std::vector<Facet> facets_of_lower_cavity;
+    struct Outputs
+    {
+      std::vector<Edge> intersecting_edges;
+      std::vector<Cell_handle> intersecting_cells;
+      std::vector<Vertex_handle> vertices_of_upper_cavity;
+      std::vector<Vertex_handle> vertices_of_lower_cavity;
+      std::vector<Facet> facets_of_upper_cavity;
+      std::vector<Facet> facets_of_lower_cavity;
+    } outputs{
+        {}, {}, {border_vertices.begin(), border_vertices.end()}, {border_vertices.begin(), border_vertices.end()},
+        {}, {}};
+
+    auto& [_, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
+           facets_of_upper_cavity, facets_of_lower_cavity] = outputs;
+
+    auto& intersecting_edges = outputs.intersecting_edges;
 
     // marker for already visited elements
     std::set<Vertex_handle> visited_vertices;
@@ -826,6 +816,40 @@ private:
         }
       } while(++cell_circ != end);
     }
+    return outputs;
+  }
+
+  void restore_subface_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2, const auto& fh_region)
+  {
+    const auto border_edges = brute_force_border_3_of_region(fh_region);
+    const auto border_vertices = [&]() {
+      std::set<Vertex_handle> vertices;
+      for(const auto& [c, i, j]: border_edges) {
+        vertices.insert(c->vertex(i));
+        vertices.insert(c->vertex(j));
+      }
+      return vertices;
+    }();
+#if CGAL_DEBUG_CDT_3
+    std::cerr << "border_vertices.size() = " << border_vertices.size() << "\n";
+#endif
+    const Edge first_border_edge{border_edges[0]};
+    const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, first_border_edge);
+    if(!found_edge_opt) {
+      std::cerr << "ERROR: No segment found\n";
+      {
+        dump_triangulation();
+        dump_region(face_index, region_count, cdt_2);
+      }
+      throw Next_face{};
+    }
+    CGAL_assertion(found_edge_opt != std::nullopt);
+
+    const auto first_intersecting_edge = *found_edge_opt;
+    const auto cavities =
+        construct_cavities(face_index, region_count, cdt_2, fh_region, border_vertices, first_intersecting_edge);
+    const auto& [intersecting_edges, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
+           facets_of_upper_cavity, facets_of_lower_cavity] = cavities;
 
 #if CGAL_DEBUG_CDT_3
     std::cerr << std::format("Cavity has {} cells and {} edges, "
