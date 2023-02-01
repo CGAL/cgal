@@ -794,7 +794,6 @@ private:
       } while(++facet_circ != facet_circ_end);
       std::cerr << "intersecting_edges.size() = " << intersecting_edges.size() << '\n';
     }
-    std::ranges::sort(intersecting_cells);
     const std::set<Cell_handle> intersecting_cells_set{intersecting_cells.begin(), intersecting_cells.end()};
     visited_cells.clear();
     for(auto intersecting_edge: intersecting_edges) {
