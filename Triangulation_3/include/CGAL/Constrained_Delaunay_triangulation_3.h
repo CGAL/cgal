@@ -34,6 +34,7 @@
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
 
@@ -806,22 +807,24 @@ private:
     std::ranges::sort(intersecting_cells);
     const std::set<Cell_handle> intersecting_cells_set{intersecting_cells.begin(), intersecting_cells.end()};
     visited_cells.clear();
-    for(auto edge: intersecting_edges) {
-      const auto cell = edge.first;
-      if(!new_cell(cell)) {
-        continue;
-      }
-      const auto [v_above, v_below] = vertex_pair(edge);
-      const auto index_v_above = cell->index(v_above);
-      const auto index_v_below = cell->index(v_below);
-      const auto cell_above = cell->neighbor(index_v_below);
-      const auto cell_below = cell->neighbor(index_v_above);
-      if(!intersecting_cells_set.contains(cell_above)) {
-        facets_of_upper_cavity.push_back({cell_above, cell_above->index(cell)});
-      }
-      if(!intersecting_cells_set.contains(cell_below)) {
-        facets_of_lower_cavity.push_back({cell_below, cell_below->index(cell)});
-      }
+    for(auto intersecting_edge: intersecting_edges) {
+      const auto [v_above, v_below] = vertex_pair(intersecting_edge);
+
+      auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
+      CGAL_assume(cell_circ != nullptr);
+      do {
+        const Cell_handle cell = cell_circ;
+        const auto index_v_above = cell->index(v_above);
+        const auto index_v_below = cell->index(v_below);
+        const auto cell_above = cell->neighbor(index_v_below);
+        const auto cell_below = cell->neighbor(index_v_above);
+        if(new_cell(cell_above) && !intersecting_cells_set.contains(cell_above)) {
+          facets_of_upper_cavity.push_back({cell_above, cell_above->index(cell)});
+        }
+        if(new_cell(cell_below) && !intersecting_cells_set.contains(cell_below)) {
+          facets_of_lower_cavity.push_back({cell_below, cell_below->index(cell)});
+        }
+      } while(++cell_circ != end);
     }
 
 #if CGAL_DEBUG_CDT_3
@@ -845,6 +848,8 @@ private:
           write_segment(out, edge);
         }
       }
+      dump_facets_of_cavity(face_index, region_count, "lower", facets_of_lower_cavity);
+      dump_facets_of_cavity(face_index, region_count, "upper", facets_of_upper_cavity);
     }
 #endif
   }
@@ -970,6 +975,34 @@ public:
     std::ofstream out(filename);
     out.precision(17);
     write_segment(out, std::forward<Args>(args)...);
+  }
+
+  void write_facets(std::string filename, const auto& facets_range) {
+    std::vector<typename Geom_traits::Point_3> points;
+    points.reserve(facets_range.size() * 3);
+    std::vector<std::array<int, 3>> facets;
+    facets.reserve(facets_range.size());
+
+    for(std::size_t i = 0; const auto [cell, facet_index] : facets_range) {
+      const auto v0 = cell->vertex(this->vertex_triple_index(facet_index, 0));
+      const auto v1 = cell->vertex(this->vertex_triple_index(facet_index, 1));
+      const auto v2 = cell->vertex(this->vertex_triple_index(facet_index, 2));
+      points.push_back(tr.point(v0));
+      points.push_back(tr.point(v1));
+      points.push_back(tr.point(v2));
+      facets.push_back({i, i+1, i+2});
+      i += 3;
+    }
+    CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, facets);
+    std::ofstream out(filename);
+    out.precision(17);
+    CGAL::IO::write_OFF(out, points, facets);
+  }
+
+  void dump_facets_of_cavity(CDT_3_face_index face_index, int region_count, std::string type, const auto& facets_range)
+  {
+    write_facets(std::string("dump_facets_of_region_") + std::to_string(face_index) + "_" +
+                 std::to_string(region_count) + "_" + type + ".off", facets_range);
   }
 
   void write_2d_triangle(std::ostream &out, const CDT_2_face_handle fh)
