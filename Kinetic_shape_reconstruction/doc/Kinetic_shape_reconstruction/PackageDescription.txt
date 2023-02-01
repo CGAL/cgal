@@ -6,7 +6,7 @@ Reference Manual for the Kinetic Shape Partition component
 \defgroup PkgKineticShapePartitionConcepts Concepts
 \ingroup PkgKineticShapeReconstructionRef
 
-Concepts used for the parameters of the `CGAL::Kinetic_Shape_Partitioning`
+Concepts used for the parameters of the `CGAL::Kinetic_shape_partitioning_3`
 
 \defgroup PkgKineticShapePartition Kinetic Shape Partitioning
 \ingroup PkgKineticShapeReconstructionRef

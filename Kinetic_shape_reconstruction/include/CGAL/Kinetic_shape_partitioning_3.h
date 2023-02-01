@@ -120,7 +120,7 @@ public:
   { }
 
   /*!
-  \brief Constructs an kinetic shape partitioning object and initializes it.
+  \brief Constructs a kinetic shape partitioning object and initializes it.
 
   \tparam InputRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -141,7 +141,7 @@ public:
   a sequence of \ref bgl_namedparameters "Named Parameters"
   among the ones listed below
 
-   \pre `!input_range.empty() and !polygon_map.empty`
+   \pre `!input_range.empty() and !polygon_map.empty()`
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{verbose}
@@ -150,7 +150,7 @@ public:
       \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{reorient_bbox}
-      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
+      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box. While the z direction is maintained, the x axis is aligned with the largest variation in the horizontal plane.}
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
@@ -187,13 +187,13 @@ public:
   }
 
   /*!
-  \brief Inserts polygons. Does not recreate or change an existing partitioning.
+  \brief Inserts polygons. Does not recreate or change an existing partitioning and should only be called before initialize.
 
   \tparam PolygonMap
   contains index ranges to form polygons from InputRange
 
   \param input_range
-   an instance of `InputRange` with 3D points and corresponding 3D normal vectors
+  an instance of `InputRange` with 3D points and corresponding 3D normal vectors
 
   \param polygon_map
   a range of polygons defined by a range of indices into input_range
@@ -217,7 +217,7 @@ public:
   a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param input_range
-   an instance of `InputRange` with 3D points
+  an instance of `InputRange` with 3D points
 
   \param polygon_map
   a range of polygons defined by a range of indices into input_range
@@ -552,7 +552,7 @@ public:
    \brief Creates a linear cell complex from the kinetic partitioning.
 
     \tparam LCC
-    most be a model of `Linear_cell_complex`
+    most be a model of `LinearCellComplex`
     The dimension of the combinatorial map and the dimension of the ambient space have to be 3.
 
     \param lcc

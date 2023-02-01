@@ -8,7 +8,7 @@ A concept that describes the set of types required by the `CGAL::Kinetic_shape_p
 
 \sa `CGAL::Kinetic_shape_partitioning_3`
 */
-class KineticShapePartitioningTraits_3{
+class KineticShapePartitionTraits_3{
 
 public:
 
@@ -171,7 +171,7 @@ public:
    * `Vector_3 operator()(Plane_3 h, Point_3 p)
    * returns the orthogonal projection of `p` onto `h`.
    */
-  typedef unspecified_type Construct_projected_point_3
+  typedef unspecified_type Construct_projected_point_3;
 
   /*!
    * Function object type that provides
