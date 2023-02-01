@@ -1,5 +1,5 @@
 /*!
-\defgroup PkgKineticShapePartitionRef Kinetic Shape Partition Reference
+\defgroup PkgKineticShapePartitionRef Kinetic Shape Reconstruction Reference
 
 Reference Manual for the Kinetic Shape Partition component
 
