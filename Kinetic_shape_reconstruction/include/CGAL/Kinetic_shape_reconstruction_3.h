@@ -20,7 +20,7 @@
 namespace CGAL
 {
 /*!
-* \ingroup PkgKineticPartition
+* \ingroup PkgKineticShapePartition
   \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
@@ -29,26 +29,26 @@ namespace CGAL
   \tparam NormalMap
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`. It must map the elements in `KineticShapePartitionTraits_3::Input_range` to `Vector_3`.
 */
-template<typename Traits, typename NormalMap>
+template<typename GeomTraits, typename PointMap, typename NormalMap, typename IntersectionKernel = CGAL::Exact_predicates_exact_constructions_kernel>
 class Kinetic_shape_reconstruction_3 {
 public:
   using Input_range = typename Traits::Input_range;
-  using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Kernel = typename GeomTraits;
+  using Intersection_kernel = typename IntersectionKernel;
 
   using FT = typename Kernel::FT;
 
-  using Point_2 = typename Traits::Point_2;
-  using Point_3 = typename Traits::Point_3;
-  using Plane_3 = typename Traits::Plane_3;
-
-  using Point_map = typename Traits::Point_map;
-  using Normal_map = NormalMap;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
+  using Plane_3 = typename Kernel::Plane_3;
 
   using Indices = std::vector<std::size_t>;
   using Polygon_3 = std::vector<Point_3>;
 
-  using KSP = Kinetic_shape_partitioning_3<Traits>;
+  using KSP = Kinetic_shape_partitioning_3<Kernel, Intersection_kernel>;
+
+  using Point_map = typename PointMap;
+  using Normal_map = typename NormalMap;
 
   using Mesh = Surface_mesh<Point_3>;
 

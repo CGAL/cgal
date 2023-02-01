@@ -256,6 +256,7 @@ CGAL_add_named_parameter(bbox_dilation_ratio_t, bbox_dilation_ratio, bbox_dilati
 CGAL_add_named_parameter(reorient_bbox_t, reorient_bbox, reorient_bbox)
 CGAL_add_named_parameter(distance_tolerance_t, distance_tolerance, distance_tolerance)
 CGAL_add_named_parameter(angle_tolerance_t, angle_tolerance, angle_tolerance)
+CGAL_add_named_parameter(debug_t, debug, debug)
 
 // region growing
 CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)

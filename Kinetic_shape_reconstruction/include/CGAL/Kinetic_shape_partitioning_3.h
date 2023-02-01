@@ -44,34 +44,37 @@
 namespace CGAL {
 
 /*!
-* \ingroup PkgKineticPartition
+* \ingroup PkgKineticShapePartition
   \brief Creates the kinetic partitioning of the bounding box.
 
-  \tparam Traits
+  \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
+
+  \tparam IntersectionTraits
+    must be a model of `Kernel` using exact computations. Defaults to `CGAL::Exact_predicates_exact_constructions_kernel`.
 */
-template<typename Traits>
+template<typename GeomTraits, typename IntersectionTraits = CGAL::Exact_predicates_exact_constructions_kernel>
 class Kinetic_shape_partitioning_3 {
 
 public:
-  using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Kernel = typename GeomTraits;
+  using Intersection_Kernel = IntersectionTraits;
 
-  using Point_3 = typename Traits::Point_3;
+  using Point_3 = typename GeomTraits::Point_3;
 
 private:
-  using FT      = typename Traits::FT;
+  using FT      = typename GeomTraits::FT;
 
   using Data_structure = KSR_3::Data_structure<Traits>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
 
-  using From_exact = typename Traits::From_exact;
+  using From_exact = typename CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
-  using Initializer = KSR_3::Initializer<Traits>;
-  using Propagation = KSR_3::FacePropagation<Traits>;
-  using Finalizer   = KSR_3::Finalizer<Traits>;
+  using Initializer = KSR_3::Initializer<Kernel, Intersection_Kernel>;
+  using Propagation = KSR_3::FacePropagation<Kernel, Intersection_Kernel>;
+  using Finalizer   = KSR_3::Finalizer<Kernel, Intersection_Kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Timer        = CGAL::Real_timer;
@@ -98,6 +101,11 @@ public:
   \cgalNamedParamsBegin
     \cgalParamNBegin{verbose}
       \cgalParamDescription{Write timing and internal information to std::cout.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{debug}
+      \cgalParamDescription{Export of intermediate results.}
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
@@ -165,7 +173,7 @@ public:
   */
   template<
     typename InputRange,
-    typename PolygonMap
+    typename PolygonMap,
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partitioning_3(
     const InputRange& input_range,
@@ -191,9 +199,8 @@ public:
   a range of polygons defined by a range of indices into input_range
   */
 
-  template<
-    typename PolygonMap>
-  bool insert(
+  template<typename PolygonMap>
+  void insert(
     const InputRange& input_range,
     const PolygonMap polygon_map) {}
 
@@ -252,7 +259,7 @@ public:
     typename InputRange,
     typename PolygonMap,
     typename NamedParameters = parameters::Default_named_parameters>
-  bool initialize(
+  void initialize(
     const InputRange& input_range,
     const PolygonMap polygon_map,
     const NamedParameters& np = CGAL::parameters::default_values()) {
@@ -316,12 +323,9 @@ public:
     \param k
     maximum number of allowed intersections for each input polygon before its expansion stops.
 
-    @return
-    success of kinetic partitioning. It can fail if the input data is empty, the partitioning has not been initialized or k is 0.
-
-    \pre `successful initialization`
+    \pre `successful initialization and k != 0`
   */
-  bool partition(std::size_t k) {
+  void partition(std::size_t k) {
     Timer timer;
     std::cout.precision(20);
 
@@ -329,13 +333,13 @@ public:
     if (m_data.number_of_support_planes() < 6) {
       std::cout << "Kinetic partitioning not initialized or empty. Number of support planes: " << m_data.number_of_support_planes() << std::endl;
 
-      return false;
+      return;
     }
 
     if (k == 0) { // for k = 0, we skip propagation
       std::cout << "k needs to be a positive number" << std::endl;
 
-      return false;
+      return;
     }
 
     if (m_parameters.verbose) {
@@ -402,7 +406,7 @@ public:
       std::cout << "* finalization: " << time_to_finalize << std::endl;
     }
 
-    return true;
+    return;
   }
 
   /// @}
@@ -417,7 +421,7 @@ public:
   \brief Number of support planes in the kinetic partitioning. They originate from the planes of the input polygons and the bounding box.
 
   @return
-  number of vertices.
+  number of support planes.
 
   \pre `successful partitioning`
   */
@@ -439,7 +443,7 @@ public:
   }
 
   /*!
-  \brief Number of convex faces in the kinetic partitioning.
+  \brief Number of faces in the kinetic partitioning.
 
     @return
     number of faces.
@@ -451,7 +455,7 @@ public:
   }
 
   /*!
-  \brief Number of convex volumes created by the kinetic partitioning.
+  \brief Number of volumes created by the kinetic partitioning.
 
     @return
     number of volumes.
@@ -548,7 +552,7 @@ public:
    \brief Creates a linear cell complex from the kinetic partitioning.
 
     \tparam LCC
-    Linear_cell_complex_for_combinatorial_map<3, 3,...>
+    most be a model of `Linear_cell_complex`
     The dimension of the combinatorial map and the dimension of the ambient space have to be 3.
 
     \param lcc

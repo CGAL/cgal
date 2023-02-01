@@ -250,7 +250,7 @@ private:
     // Start new volume cell
     // First of pair is positive side, second is negative
     if (pair.first == -1) {
-      volume_indices[0] = volumes.size();
+      volume_indices[0] = volumes.size();222
       pair.first = static_cast<int>(volumes.size());
       volumes.push_back(Volume_cell());
       volumes.back().add_pface(pface, pair.second);
@@ -485,29 +485,6 @@ private:
           }
           else CGAL_assertion(false);
         }
-/*
-        else if (im_side == COPLANAR) {
-          if (ip_side == ON_POSITIVE_SIDE) {
-            positive_side = dir_edges[ip].second;
-            negative_side = dir_edges[im].second;
-          }
-          else {
-            positive_side = dir_edges[im].second;
-            negative_side = dir_edges[ip].second;
-          }
-          else CGAL_assertion(false);
-        }
-        else if (ip_side == COPLANAR) {
-          if (im_side == ON_POSITIVE_SIDE) {
-            positive_side = dir_edges[im].second;
-            negative_side = dir_edges[ip].second;
-          }
-          else {
-            positive_side = dir_edges[ip].second;
-            negative_side = dir_edges[im].second;
-          }
-         else CGAL_assertion(false);
-        }*/
         else if (ip_side == ON_POSITIVE_SIDE || im_side == ON_NEGATIVE_SIDE) {
           positive_side = dir_edges[ip].second;
           negative_side = dir_edges[im].second;
@@ -617,7 +594,7 @@ private:
       Halfedge first = h;
       do {
         Halfedge n = h;
-        Point_3 tn = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
+        //Point_3 tn = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
 
         do {
           if (n == h)
@@ -625,7 +602,7 @@ private:
           else
             n = mesh.next(mesh.opposite(n));
 
-          Point_3 tn2 = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
+          //Point_3 tn2 = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
           visited_halfedges[n] = true;
 
           f_other = mesh.face(mesh.opposite(n));
