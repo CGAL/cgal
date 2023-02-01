@@ -1,4 +1,4 @@
-// Copyright (c) 2019  GeometryFactory Sarl (France).
+// Copyright (c) 2019-2023  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).

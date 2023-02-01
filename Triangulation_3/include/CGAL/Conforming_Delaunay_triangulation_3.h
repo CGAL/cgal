@@ -141,7 +141,7 @@ protected:
   void add_to_subconstraints_to_conform(Vertex_handle va, Vertex_handle vb,
                                         Constraint_id id) {
     const auto pair = make_subconstraint(va, vb);
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 > 32
     std::cerr << "tr.subconstraints_to_conform.push("
               << display_subcstr(pair) << ")\n";
 #endif // CGAL_DEBUG_CDT_3
@@ -303,7 +303,7 @@ protected:
                                                       pair.first.second)) {
         continue;
       }
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 > 32
       std::cerr << "tr.subconstraints_to_conform.pop()="
                 << display_subcstr(pair.first) << "\n";
 #endif // CGAL_DEBUG_CDT_3
