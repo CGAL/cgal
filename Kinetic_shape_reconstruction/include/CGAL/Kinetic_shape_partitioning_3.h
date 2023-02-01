@@ -141,7 +141,7 @@ public:
   a sequence of \ref bgl_namedparameters "Named Parameters"
   among the ones listed below
 
-   \pre `!input_range.empty() and !polygon_map.empty()`
+   \pre !input_range.empty() and !polygon_map.empty()
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{verbose}
@@ -229,7 +229,7 @@ public:
   @return
   success. The initialization fails if the input data is empty.
 
-  \pre `!input_range.empty() and !polygon_map.empty`
+  \pre !input_range.empty() and !polygon_map.empty()
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{reorient_bbox}
@@ -323,7 +323,7 @@ public:
     \param k
     maximum number of allowed intersections for each input polygon before its expansion stops.
 
-    \pre `successful initialization and k != 0`
+    \pre successful initialization and k != 0
   */
   void partition(std::size_t k) {
     Timer timer;
@@ -423,7 +423,7 @@ public:
   @return
   number of support planes.
 
-  \pre `successful partitioning`
+  \pre successful partitioning
   */
 
   int number_of_support_planes() const {
@@ -448,7 +448,7 @@ public:
     @return
     number of faces.
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
   std::size_t number_of_faces() const {
     return 0;
@@ -460,7 +460,7 @@ public:
     @return
     number of volumes.
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
   std::size_t number_of_volumes() const {
     return m_data.volumes().size();
@@ -473,7 +473,7 @@ public:
     @return
     vector of points.
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
   const std::vector<Point_3>& vertices() const;
 
@@ -486,7 +486,7 @@ public:
     @return
     vector of vertex indices.
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
   const std::vector<std::size_t>& vertices(std::size_t face_index) const;
 
@@ -499,7 +499,7 @@ public:
     @return
     vector of face indices.
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
   const std::vector<std::size_t>& face(std::size_t volume_index) const {
     CGAL_assertion(m_data.number_of_volumes() > volume_index);
@@ -522,7 +522,7 @@ public:
     -5 xmin
     -6 zmax
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
   const std::pair<int, int>& neighbors(std::size_t face_index) const {
     CGAL_assertion(m_data.number_of_volumes() > volume_index);
@@ -538,7 +538,7 @@ public:
     @return
     index into polygon_map provided on initialization.
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
   std::size_t support_plane_index(const std::size_t input_polygon_index) const {
       const int support_plane_idx = m_data.support_plane_index(input_polygon_index);
@@ -558,7 +558,7 @@ public:
     \param lcc
     an instance of LCC
 
-    \pre `successful partitioning`
+    \pre successful partitioning
   */
 
   template<typename LCC>

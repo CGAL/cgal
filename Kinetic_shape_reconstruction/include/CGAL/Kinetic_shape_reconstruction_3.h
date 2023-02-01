@@ -24,7 +24,7 @@ namespace CGAL
   \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
-    must be a model of `KineticShapePartitionTraits_3`.
+    must be a model of `KineticPartitionTraits`.
 
   \tparam NormalMap
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`. It must map the elements in `KineticShapePartitionTraits_3::Input_range` to `Vector_3`.
