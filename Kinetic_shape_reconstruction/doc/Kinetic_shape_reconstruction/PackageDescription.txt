@@ -1,15 +1,15 @@
 /*!
-\defgroup PkgKineticShapePartitionRef Kinetic Shape Reconstruction Reference
+\defgroup PkgKineticShapeReconstructionRef Kinetic Shape Reconstruction Reference
 
 Reference Manual for the Kinetic Shape Partition component
 
 \defgroup PkgKineticShapePartitionConcepts Concepts
-\ingroup PkgKineticShapePartitionRef
+\ingroup PkgKineticShapeReconstructionRef
 
 Concepts used for the parameters of the `CGAL::Kinetic_Shape_Partitioning`
 
 \defgroup PkgKineticShapePartition Kinetic Shape Partitioning
-\ingroup PkgKineticShapePartitionRef
+\ingroup PkgKineticShapeReconstructionRef
 
 \cgalPkgDescriptionBegin{Kinetic Shape Reconstruction, PkgKineticShapeReconstruction}
 \cgalPkgPicture{kinetic_logo.png}
