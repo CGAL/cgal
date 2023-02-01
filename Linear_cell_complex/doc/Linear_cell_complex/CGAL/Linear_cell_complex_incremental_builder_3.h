@@ -61,18 +61,18 @@ begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) 
   void begin_facet();
 
   /*!
-   * add vertex `i` at the end of the current facet.
+   * adds vertex `i` at the end of the current facet.
    */
   void add_vertex_to_facet(size_type i);
 
   /*!
-   *  end of the facet. Returns the first dart of this facet.
+   *  ends the construction of the facet and returns the first dart of this facet.
    */
   DH end_facet();
 
 
   /*!
-   * end of the surface construction. Returns one dart of the created surface.
+   * ends the construction of the surface and returns one dart of the created surface.
    */
   DH end_surface();
 
