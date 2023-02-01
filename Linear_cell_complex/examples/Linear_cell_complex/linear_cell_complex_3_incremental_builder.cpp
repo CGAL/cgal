@@ -50,6 +50,20 @@ int main()
   ib.add_facet({5,0,8});
   ib.end_surface();
 
+
+  LCC_3::One_dart_per_cell_range<3,3> cells = lcc.one_dart_per_cell<3>();
+  for (auto c = cells.begin(); c != cells.end(); ++c) {
+    std::cout << "a cell"<< std::endl;
+    LCC_3::One_dart_per_incident_cell_range<2,3> faces = lcc.one_dart_per_incident_cell<2,3>(c);
+    for (auto f = faces.begin(); f != faces.end(); ++f) {
+      std::cout << "  a face"<< std::endl;
+      LCC_3::One_dart_per_incident_cell_range<0,2> vertices = lcc.one_dart_per_incident_cell<0,2>(f);
+      for(auto v = vertices.begin(); v!= vertices.end(); ++v){
+        std::cout << "    " << lcc.point(v) << std::endl;
+      }
+    }
+  }
+
   // Draw the lcc and display its characteristics
   lcc.display_characteristics(std::cout)<<std::endl;
   CGAL::draw(lcc);
