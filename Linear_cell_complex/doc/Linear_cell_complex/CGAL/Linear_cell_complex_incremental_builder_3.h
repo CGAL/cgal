@@ -45,7 +45,7 @@ begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) 
 
 
   /*!
-   *
+   * starts a new surface.
    */
   void begin_surface();
 
@@ -56,23 +56,23 @@ begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) 
   VAH add_vertex(const Point_3& p);
 
   /*
-   * starts a new facet and returns its handle.
+   * starts a new facet.
    */
   void begin_facet();
 
   /*!
-   *
+   * add vertex `i` at the end of the current facet.
    */
   void add_vertex_to_facet(size_type i);
 
   /*!
-   *  End of the facet. Returns the first dart of this facet.
+   *  end of the facet. Returns the first dart of this facet.
    */
   DH end_facet();
 
 
   /*!
-   * End of the surface construction. Returns one dart of the created surface.
+   * end of the surface construction. Returns one dart of the created surface.
    */
   DH end_surface();
 
