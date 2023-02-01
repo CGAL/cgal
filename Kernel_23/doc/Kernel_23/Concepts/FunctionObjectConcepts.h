@@ -103,7 +103,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `are_ordered_along_line_grp`
 
@@ -133,7 +133,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `are_ordered_along_line_grp`
 
@@ -163,7 +163,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `parallel_grp`
 
@@ -204,7 +204,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `parallel_grp`
 
@@ -253,7 +253,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `are_strictly_ordered_along_line_grp`
 
@@ -285,7 +285,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
 \sa `are_strictly_ordered_along_line_grp`
 
@@ -317,7 +317,7 @@ public:
 
  \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Object`
   \sa `Kernel::Object_2`
@@ -348,7 +348,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
  \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
   \sa `CGAL::Object`
@@ -379,7 +379,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Triangle_2<Kernel>`
@@ -428,7 +428,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Iso_cuboid_3<Kernel>`
   \sa `CGAL::Sphere_3<Kernel>`
@@ -481,9 +481,7 @@ public:
   A type representing an iterator to the Cartesian coordinates of a point
   in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
   \sa `Kernel::ConstructCartesianConstIterator_2`
 
@@ -500,9 +498,7 @@ public:
   A type representing an iterator to the Cartesian coordinates of a point
   in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
   \sa `Kernel::ConstructCartesianConstIterator_3`
 
@@ -516,7 +512,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `collinear_are_ordered_along_line_grp`
 
@@ -545,7 +541,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `collinear_are_ordered_along_line_grp`
 
@@ -573,7 +569,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `collinear_are_strictly_ordered_along_line_grp`
 
@@ -602,7 +598,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `collinear_are_strictly_ordered_along_line_grp`
 
@@ -631,7 +627,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Ray_2<Kernel>`
   \sa `CGAL::Segment_2<Kernel>`
@@ -666,7 +662,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `collinear_grp`
 
@@ -693,7 +689,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `collinear_grp`
 
@@ -720,7 +716,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
 */
 class CompareAngleWithXAxis_2 {
@@ -825,7 +821,7 @@ public:
   \sa `compare_distance_to_point_grp`
   \sa `compare_squared_distance_grp`
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
 */
 class CompareDistance_2 {
@@ -876,7 +872,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `Kernel::CompareSquaredDistance_3`
   \sa `compare_distance_to_point_grp`
@@ -927,7 +923,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Weighted_point_2<Kernel>`
   \sa `ComputePowerProduct_2` for the definition of power distance.
@@ -954,7 +950,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Weighted_point_3<Kernel>`
   \sa `ComputePowerProduct_3` for the definition of power distance.
@@ -983,7 +979,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 */
 class CompareSignedDistanceToLine_2 {
 public:
@@ -1014,7 +1010,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_slopes_grp`
 
@@ -1060,7 +1056,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_slopes_grp`
 
@@ -1095,7 +1091,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `compare_distance_to_point_grp`
   \sa `compare_squared_distance_grp`
@@ -1131,7 +1127,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `Kernel::CompareDistance_3`
   \sa `compare_distance_to_point_grp`
@@ -1167,7 +1163,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `compare_squared_radius_grp`
 
@@ -1223,7 +1219,7 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor`
+\cgalRefines{AdaptableFunctor}
 
 \sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
 
@@ -1268,7 +1264,7 @@ public:
   \image html compare_x_at_y.png
   \image latex compare_x_at_y.png
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `compare_x_at_y_grp`
 
@@ -1329,7 +1325,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_xyz_grp`
 
@@ -1358,7 +1354,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_xy_grp`
   \sa `Kernel::CompareYX_2`
@@ -1388,7 +1384,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_xy_grp`
 
@@ -1422,7 +1418,7 @@ public:
   \image html compare1.png
   \image latex compare1.png
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_x_grp`
 
@@ -1478,7 +1474,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_x_grp`
 
@@ -1509,7 +1505,7 @@ public:
   \image html compare2.png
   \image latex compare2.png
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \anchor fig-compare2
   \sa `compare_y_at_x_grp`
@@ -1596,7 +1592,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_yx_grp`
   \sa `Kernel::CompareXY_2`
@@ -1630,7 +1626,7 @@ public:
   \image html compare1.png
   \image latex compare1.png
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_y_grp`
 
@@ -1689,7 +1685,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_y_grp`
 
@@ -1716,7 +1712,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_z_grp`
 
@@ -1744,7 +1740,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeA_2 {
@@ -1767,7 +1763,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeA_3 {
@@ -1792,7 +1788,7 @@ public:
 
   \sa `CGAL::Circle_3<Kernel>`
 
-  \cgalRefines AdaptableFunctor
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeApproximateArea_3 {
@@ -1816,7 +1812,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeApproximateAngle_3 {
@@ -1852,7 +1848,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeApproximateDihedralAngle_3 {
@@ -1882,7 +1878,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Circle_3<Kernel>`
 
@@ -1907,7 +1903,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Circle_3<Kernel>`
 
@@ -1932,7 +1928,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Iso_rectangle_2<Kernel>`
 \sa `CGAL::Triangle_2<Kernel>`
@@ -1971,7 +1967,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Triangle_3<Kernel>`
 
@@ -2005,7 +2001,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeB_2 {
@@ -2029,7 +2025,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeB_3 {
@@ -2053,7 +2049,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeC_2 {
@@ -2077,7 +2073,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeC_3 {
@@ -2101,7 +2097,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeD_3 {
@@ -2125,7 +2121,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_2<Kernel>`
   \sa `determinant_grp`
@@ -2152,7 +2148,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Vector_3<Kernel>`
   \sa `determinant_grp`
@@ -2183,7 +2179,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeDx_2 {
@@ -2207,7 +2203,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeDx_3 {
@@ -2231,7 +2227,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeDy_2 {
@@ -2254,7 +2250,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeDy_3 {
@@ -2277,7 +2273,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeDz_3 {
@@ -2300,7 +2296,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeHx_2 {
@@ -2328,7 +2324,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeHx_3 {
@@ -2356,7 +2352,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeHy_2 {
@@ -2384,7 +2380,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeHy_3 {
@@ -2412,7 +2408,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeHw_2 {
@@ -2441,7 +2437,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeHw_3 {
@@ -2469,7 +2465,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeHz_3 {
@@ -2497,7 +2493,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with five arguments)
+  \cgalRefines{AdaptableFunctor (with five arguments)}
 
   \sa `CGAL::Weighted_point_3<Kernel>`
   \sa `ComputePowerProduct_3` for the definitions of power distance and orthogonality.
@@ -2526,7 +2522,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Weighted_point_2<Kernel>`
   \sa `ComputePowerProduct_3`
@@ -2567,7 +2563,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Weighted_point_3<Kernel>`
   \sa `ComputePowerProduct_2`
@@ -2611,7 +2607,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with 2 arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
 */
 class ComputeLInfinityDistance_2 {
@@ -2634,7 +2630,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeLInfinityDistance_3 {
@@ -2662,7 +2658,7 @@ public:
   \sa `CGAL::Vector_2<Kernel>`
   \sa scalar_product_grp
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
 */
 class ComputeScalarProduct_2 {
@@ -2686,7 +2682,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_3<Kernel>`
   \sa scalar_product_grp
@@ -2714,7 +2710,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Triangle_3<Kernel>`
 
@@ -2746,7 +2742,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `squared_distance_grp`
 
@@ -2781,7 +2777,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `squared_distance_grp`
 
@@ -2817,7 +2813,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Circle_3<Kernel>`
 
@@ -2843,7 +2839,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Vector_2<Kernel>`
   \sa `CGAL::Segment_2<Kernel>`
@@ -2874,7 +2870,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Vector_3<Kernel>`
   \sa `CGAL::Segment_3<Kernel>`
@@ -2905,7 +2901,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `squared_radius_grp`
@@ -2952,7 +2948,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Sphere_3<Kernel>`
   \sa `CGAL::Circle_3<Kernel>`
@@ -3018,7 +3014,7 @@ public:
 \sa `CGAL::Weighted_point_2<Kernel>`
 \sa `ComputePowerProduct_2` for the definition of orthogonality for power distances.
 
-\cgalRefines `AdaptableFunctor`
+\cgalRefines{AdaptableFunctor}
 
 */
 class ComputeSquaredRadiusSmallestOrthogonalCircle_2
@@ -3051,7 +3047,7 @@ public:
 \sa `CGAL::Weighted_point_3<Kernel>`
 \sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
 
-\cgalRefines `AdaptableFunctor`
+\cgalRefines{AdaptableFunctor}
 
 */
 class ComputeSquaredRadiusSmallestOrthogonalSphere_3
@@ -3086,7 +3082,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Iso_cuboid_3<Kernel>`
   \sa `CGAL::Tetrahedron_3<Kernel>`
@@ -3130,7 +3126,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeWeight_2 {
@@ -3152,7 +3148,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeWeight_3 {
@@ -3177,7 +3173,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeX_2 {
@@ -3206,7 +3202,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeX_3 {
@@ -3234,7 +3230,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeXmax_2 {
@@ -3257,7 +3253,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeXmax_3 {
@@ -3280,7 +3276,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeXmin_2 {
@@ -3303,7 +3299,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeXmin_3 {
@@ -3328,7 +3324,7 @@ public:
 
   \sa `compare_y_at_x_grp`
 
-  \cgalRefines AdaptableFunctor
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeYAtX_2 {
@@ -3354,7 +3350,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeY_2 {
@@ -3382,7 +3378,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeY_3 {
@@ -3410,7 +3406,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeYmax_2 {
@@ -3433,7 +3429,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeYmax_3 {
@@ -3456,7 +3452,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeYmin_2 {
@@ -3479,7 +3475,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeYmin_3 {
@@ -3502,7 +3498,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeZ_3 {
@@ -3530,7 +3526,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeZmax_3 {
@@ -3550,7 +3546,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`
+  \cgalRefines{AdaptableFunctor}
 
 */
 class ComputeZmin_3 {
@@ -3571,7 +3567,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `Kernel::ConstructCentroid_2`
   \sa `centroid_grp`
@@ -3648,7 +3644,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `Kernel::ConstructCentroid_3`
   \sa `centroid_grp`
@@ -3726,7 +3722,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
 
@@ -3756,7 +3752,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
 */
 class ConstructBbox_2 {
@@ -3804,7 +3800,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
 */
 class ConstructBbox_3 {
@@ -3864,7 +3860,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines AdaptableFunctor
+  \cgalRefines{AdaptableFunctor}
 
   \sa `bisector_grp`
 
@@ -3904,7 +3900,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `bisector_grp`
 
@@ -3946,7 +3942,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `Kernel::CartesianConstIterator_2`
 
@@ -3992,7 +3988,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `Kernel::CartesianConstIterator_3`
 
@@ -4036,7 +4032,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with one argument)
+\cgalRefines{AdaptableFunctor (with one argument)}
 
 \sa `CGAL::Circle_2<Kernel>`
 
@@ -4061,7 +4057,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Sphere_3<Kernel>`
   \sa `CGAL::Circle_3<Kernel>`
@@ -4093,7 +4089,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `Kernel::ConstructBarycenter_2`
   \sa `centroid_grp`
@@ -4135,7 +4131,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `Kernel::ConstructBarycenter_3`
   \sa `centroid_grp`
@@ -4182,7 +4178,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
 
@@ -4253,7 +4249,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Circle_3<Kernel>`
 
@@ -4335,7 +4331,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `circumcenter_grp`
 
@@ -4375,7 +4371,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `circumcenter_grp`
 
@@ -4431,7 +4427,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `cross_product_grp`
   \sa `determinant_grp`
@@ -4458,7 +4454,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_2<Kernel>`
 
@@ -4484,7 +4480,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_3<Kernel>`
 
@@ -4511,7 +4507,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Direction_2<Kernel>`
 
@@ -4552,7 +4548,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Direction_3<Kernel>`
 
@@ -4593,7 +4589,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_2<Kernel>`
 
@@ -4619,7 +4615,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_3<Kernel>`
 
@@ -4645,7 +4641,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `equidistant_line_grp`
 
@@ -4674,7 +4670,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with two arguments)
+\cgalRefines{AdaptableFunctor (with two arguments)}
 
 \sa `CGAL::Iso_cuboid_3<Kernel>`
 
@@ -4729,7 +4725,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Iso_rectangle_2<Kernel>`
 
@@ -4782,7 +4778,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
   \sa `ConstructProjectedXYPoint_2`
@@ -4811,7 +4807,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_2<Kernel>`
 
@@ -4864,7 +4860,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_3<Kernel>`
 
@@ -4918,7 +4914,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Iso_rectangle_2<Kernel>`
   \sa `CGAL::Segment_2<Kernel>`
@@ -4953,7 +4949,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Iso_cuboid_3<Kernel>`
   \sa `CGAL::Segment_3<Kernel>`
@@ -4989,7 +4985,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `midpoint_grp`
 
@@ -5019,7 +5015,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `midpoint_grp`
 
@@ -5051,7 +5047,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Iso_rectangle_2<Kernel>`
   \sa `CGAL::Segment_2<Kernel>`
@@ -5086,7 +5082,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Iso_cuboid_3<Kernel>`
   \sa `CGAL::Segment_3<Kernel>`
@@ -5121,7 +5117,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `normal_grp`
   \sa `unit_normal_grp`
@@ -5151,7 +5147,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
 
@@ -5183,7 +5179,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
  \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
   \sa `CGAL::Object`
@@ -5215,7 +5211,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Circle_2<Kernel>`
 
@@ -5241,7 +5237,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
 \sa `CGAL::Direction_2<Kernel>`
 
@@ -5268,7 +5264,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Direction_3<Kernel>`
 
@@ -5295,7 +5291,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Line_2<Kernel>`
 
@@ -5323,7 +5319,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Line_3<Kernel>`
 
@@ -5349,7 +5345,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Plane_3<Kernel>`
 
@@ -5375,7 +5371,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Ray_2<Kernel>`
 
@@ -5400,7 +5396,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Ray_3<Kernel>`
 
@@ -5426,7 +5422,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Segment_2<Kernel>`
 
@@ -5452,7 +5448,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Segment_3<Kernel>`
 
@@ -5480,7 +5476,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Sphere_3<Kernel>`
 
@@ -5506,7 +5502,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Triangle_2<Kernel>`
 
@@ -5534,7 +5530,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Vector_2<Kernel>`
 
@@ -5559,7 +5555,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with one argument)
+\cgalRefines{AdaptableFunctor (with one argument)}
 
 \sa `CGAL::Vector_3<Kernel>`
 
@@ -5585,7 +5581,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Plane_3<Kernel>`
   \sa `Kernel::ConstructCrossProductVector_3`
@@ -5621,7 +5617,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Direction_2<Kernel>`
 
@@ -5651,7 +5647,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_2<Kernel>`
 
@@ -5679,7 +5675,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
 
@@ -5709,7 +5705,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
 
@@ -5737,7 +5733,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_2<Kernel>`
 
@@ -5768,7 +5764,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
 
@@ -5849,7 +5845,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_2<Kernel>`
   \sa `CGAL::Ray_2<Kernel>`
@@ -5898,7 +5894,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_3<Kernel>`
   \sa `CGAL::Plane_3<Kernel>`
@@ -5952,7 +5948,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Point_2<Kernel>`
 
@@ -5993,7 +5989,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Point_3<Kernel>`
 
@@ -6033,7 +6029,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_2<Kernel>`
 
@@ -6059,7 +6055,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_3<Kernel>`
   \sa `CGAL::Plane_3<Kernel>`
@@ -6110,7 +6106,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
   \sa `ConstructLiftedPoint_3`
@@ -6142,7 +6138,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Weighted_point_2<Kernel>`
 
@@ -6167,7 +6163,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
 
@@ -6196,7 +6192,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two argument)
+  \cgalRefines{AdaptableFunctor (with two argument)}
 
   \sa `CGAL::Sphere_3<Kernel>`
 
@@ -6224,7 +6220,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Ray_2<Kernel>`
 
@@ -6272,7 +6268,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Ray_3<Kernel>`
 
@@ -6320,7 +6316,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_2<Kernel>`
 */
@@ -6349,7 +6345,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_3<Kernel>`
 
@@ -6382,7 +6378,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Ray_2<Kernel>`
 
@@ -6410,7 +6406,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Ray_3<Kernel>`
 
@@ -6438,7 +6434,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Segment_2<Kernel>`
 
@@ -6465,7 +6461,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Segment_3<Kernel>`
 
@@ -6492,7 +6488,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Segment_2<Kernel>`
   \sa `CGAL::Ray_2<Kernel>`
@@ -6528,7 +6524,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Segment_3<Kernel>`
   \sa `CGAL::Ray_3<Kernel>`
@@ -6564,7 +6560,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `CGAL::Sphere_3<Kernel>`
 
@@ -6640,7 +6636,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_2<Kernel>`
 
@@ -6668,7 +6664,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_3<Kernel>`
 
@@ -6694,7 +6690,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Triangle_3<Kernel>`
 
@@ -6719,7 +6715,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Segment_2<Kernel>`
 
@@ -6746,7 +6742,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Segment_3<Kernel>`
 
@@ -6773,7 +6769,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `CGAL::Tetrahedron_3<Kernel>`
 
@@ -6801,7 +6797,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Point_2<Kernel>`
 
@@ -6837,7 +6833,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Point_3<Kernel>`
 
@@ -6873,7 +6869,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Triangle_2<Kernel>`
 
@@ -6900,7 +6896,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Triangle_3<Kernel>`
 
@@ -6929,7 +6925,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with three arguments)
+\cgalRefines{AdaptableFunctor (with three arguments)}
 
 \sa `normal_grp`
 \sa `unit_normal_grp`
@@ -6959,7 +6955,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_2<Kernel>`
   \sa `Kernel::ConstructScaledVector_2`
@@ -7019,7 +7015,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Vector_3<Kernel>`
   \sa `Kernel::ConstructScaledVector_3`
@@ -7079,7 +7075,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Iso_rectangle_2<Kernel>`
   \sa `CGAL::Segment_2<Kernel>`
@@ -7128,7 +7124,7 @@ public:
 \image html IsoCuboid.png
 \image latex IsoCuboid.png
 
-\cgalRefines `AdaptableFunctor` (with two arguments)
+\cgalRefines{AdaptableFunctor (with two arguments)}
 
 \sa `CGAL::Iso_cuboid_3<Kernel>`
 \sa `CGAL::Segment_3<Kernel>`
@@ -7182,7 +7178,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with two arguments)
+\cgalRefines{AdaptableFunctor (with two arguments)}
 
 \sa `CGAL::Weighted_point_2<Kernel>`
 
@@ -7208,7 +7204,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with two arguments)
+\cgalRefines{AdaptableFunctor (with two arguments)}
 
 \sa `CGAL::Weighted_point_3<Kernel>`
 
@@ -7234,7 +7230,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Weighted_point_2<Kernel>`
 */
@@ -7270,7 +7266,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Weighted_point_3<Kernel>`
 
@@ -7309,7 +7305,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `coplanar_orientation_grp`
 
@@ -7364,7 +7360,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `coplanar_side_of_bounded_circle_grp`
 
@@ -7394,7 +7390,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `coplanar_grp`
 
@@ -7422,7 +7418,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `CGAL::Direction_2<Kernel>`
 
@@ -7455,7 +7451,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `do_intersect_grp`
 
@@ -7492,7 +7488,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `do_intersect_grp`
 
@@ -7535,7 +7531,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_xy_grp`
 
@@ -7563,7 +7559,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `x_equal_grp`
 
@@ -7589,7 +7585,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
 \sa `x_equal_grp`
 
@@ -7615,7 +7611,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `y_equal_grp`
 
@@ -7641,7 +7637,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `y_equal_grp`
 
@@ -7667,7 +7663,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `z_equal_grp`
 
@@ -7693,7 +7689,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Direction_2<Kernel>`
@@ -7776,7 +7772,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Direction_3<Kernel>`
   \sa `CGAL::Iso_cuboid_3<Kernel>`
@@ -7880,7 +7876,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Iso_rectangle_2<Kernel>`
@@ -7924,7 +7920,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Iso_cuboid_3<Kernel>`
   \sa `CGAL::Sphere_3<Kernel>`
@@ -7967,7 +7963,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Iso_rectangle_2<Kernel>`
@@ -8010,7 +8006,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Iso_cuboid_3<Kernel>`
   \sa `CGAL::Sphere_3<Kernel>`
@@ -8062,7 +8058,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Line_2<Kernel>`
@@ -8104,7 +8100,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
   \sa `CGAL::Sphere_3<Kernel>`
@@ -8145,7 +8141,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Line_2<Kernel>`
@@ -8186,7 +8182,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
   \sa `CGAL::Sphere_3<Kernel>`
@@ -8227,7 +8223,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Iso_rectangle_2<Kernel>`
@@ -8272,7 +8268,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Iso_cuboid_3<Kernel>`
   \sa `CGAL::Sphere_3<Kernel>`
@@ -8316,7 +8312,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Line_2<Kernel>`
   \sa `CGAL::Ray_2<Kernel>`
@@ -8357,7 +8353,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_3<Kernel>`
   \sa `CGAL::Line_3<Kernel>`
@@ -8444,7 +8440,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa \link intersection_grp `CGAL::intersection()` \endlink
 */
@@ -8471,7 +8467,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two or three arguments)
+  \cgalRefines{AdaptableFunctor (with two or three arguments)}
 
   \sa intersection_linear_grp
 */
@@ -8500,7 +8496,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Iso_rectangle_2<Kernel>`
@@ -8555,7 +8551,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Circle_3<Kernel>`
   \sa `CGAL::Iso_cuboid_3<Kernel>`
@@ -8629,7 +8625,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Line_2<Kernel>`
   \sa `CGAL::Ray_2<Kernel>`
@@ -8666,7 +8662,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one argument)
+  \cgalRefines{AdaptableFunctor (with one argument)}
 
   \sa `CGAL::Line_2<Kernel>`
   \sa `CGAL::Ray_2<Kernel>`
@@ -8705,7 +8701,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `left_turn_grp`
 
@@ -8733,7 +8729,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `has_smaller_distance_to_point_grp`
 
@@ -8762,7 +8758,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `has_smaller_distance_to_point_grp`
 
@@ -8790,7 +8786,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
 */
 class LessRotateCCW_2 {
@@ -8821,7 +8817,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `has_smaller_signed_distance_to_line_grp`
 
@@ -8863,7 +8859,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `has_smaller_signed_distance_to_plane_grp`
 
@@ -8903,7 +8899,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `lexicographically_xyz_smaller_grp`
 
@@ -8933,7 +8929,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `lexicographically_xy_smaller_grp`
 
@@ -8962,7 +8958,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_xy_grp`
 
@@ -8990,7 +8986,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_x_grp`
 
@@ -9018,7 +9014,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_x_grp`
 
@@ -9045,7 +9041,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_yx_grp`
 
@@ -9073,7 +9069,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_y_grp`
 
@@ -9100,7 +9096,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `compare_y_grp`
 
@@ -9155,7 +9151,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with one arguments)
+  \cgalRefines{AdaptableFunctor (with one arguments)}
 */
 class NonZeroCoordinateIndex_3
 {
@@ -9180,7 +9176,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments)
+  \cgalRefines{AdaptableFunctor (with three arguments)}
 
   \sa `orientation_grp`
 
@@ -9219,7 +9215,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `orientation_grp`
 
@@ -9265,7 +9261,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Line_2<Kernel>`
@@ -9322,7 +9318,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments)
+  \cgalRefines{AdaptableFunctor (with two arguments)}
 
   \sa `CGAL::Plane_3<Kernel>`
   \sa `CGAL::Sphere_3<Kernel>`
@@ -9380,7 +9376,7 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with four arguments)
+\cgalRefines{AdaptableFunctor (with four arguments)}
 
 \sa `CGAL::Weighted_point_2<Kernel>`
 \sa `ComputePowerProduct_2` for the definition of orthogonality for power distances.
@@ -9446,7 +9442,7 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with five arguments)
+\cgalRefines{AdaptableFunctor (with five arguments)}
 
 \sa `CGAL::Weighted_point_3<Kernel>`
 \sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
@@ -9527,7 +9523,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `CGAL::Weighted_point_2<Kernel>`
   \sa `ComputePowerProduct_2` for the definition of power distance.
@@ -9564,7 +9560,7 @@ class PowerSideOfOrientedPowerCircle_2
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with five arguments)
+\cgalRefines{AdaptableFunctor (with five arguments)}
 
 \sa `CGAL::Weighted_point_3<Kernel>`
 \sa `ComputePowerProduct_3` for the definition of power distance.
@@ -9613,7 +9609,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `side_of_bounded_circle_grp`
 
@@ -9653,7 +9649,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with five arguments)
+  \cgalRefines{AdaptableFunctor (with five arguments)}
 
   \sa `side_of_bounded_sphere_grp`
 
@@ -9705,7 +9701,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with four arguments)
+  \cgalRefines{AdaptableFunctor (with four arguments)}
 
   \sa `side_of_oriented_circle_grp`
 
@@ -9745,7 +9741,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with five arguments)
+  \cgalRefines{AdaptableFunctor (with five arguments)}
 
   \sa `side_of_oriented_sphere_grp`
 
