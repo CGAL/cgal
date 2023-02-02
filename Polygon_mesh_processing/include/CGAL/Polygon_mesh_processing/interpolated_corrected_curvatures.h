@@ -118,7 +118,7 @@ typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typen
     const typename GT::Vector_3 um = (u[0] + u[1] + u[2]) / 3.0;
     return 0.5 * um * cross_product(x[1] - x[0], x[2] - x[0]);
   }
-  // Quad: use bilinear interpolation formula
+  // Quad: use the bilinear interpolation formula
   else if (n == 4)
   {
     // for the formulas below, values of verices 2 & 3 are swapped (compared to paper) to correct order.
@@ -176,7 +176,7 @@ typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::ve
       + cross_product(u[0] - u[2], x[1])
       + cross_product(u[1] - u[0], x[2]));
   }
-  // Quad: use bilinear interpolation formula
+  // Quad: use the bilinear interpolation formula
   else if (n == 4)
   {
     // for the formulas below, values of verices 2 & 3 are swapped (compared to paper) to correct order.
@@ -236,7 +236,7 @@ typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std
   {
     return 0.5 * u[0] * cross_product(u[1], u[2]);
   }
-  // Quad: use bilinear interpolation formula
+  // Quad: use the bilinear interpolation formula
   else if (n == 4)
   {
     // for the formulas below, values of verices 2 & 3 are swapped (compared to paper) to correct order.
@@ -303,7 +303,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
         muXY[ix * 3 + iy] = 0.5 * um * (cross_product(u02[iy] * X, x01) - cross_product(u01[iy] * X, x02));
     }
   }
-  // Quad: use bilinear interpolation formula
+  // Quad: use the bilinear interpolation formula
   else if (n == 4)
   {
     // for the formulas below, values of verices 2 & 3 are swapped (compared to paper) to correct order.
@@ -412,6 +412,7 @@ typename GT::FT face_in_ball_ratio(const std::vector<typename GT::Vector_3>& x,
     std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
   xm /= static_cast<typename GT::FT>(n);
 
+  // computing squared distance of furthest and closest point to ball center
   typename GT::FT d_min = (xm - c).squared_length();
   typename GT::FT d_max = d_min;
 
@@ -422,12 +423,14 @@ typename GT::FT face_in_ball_ratio(const std::vector<typename GT::Vector_3>& x,
     d_min = (std::min)(d_sq, d_min);
   }
 
+  // if the furthest point is inside ball, return 1
   if (d_max <= r * r) return 1.0;
+  // if the closest point is outside ball, return 0
   else if (r * r <= d_min) return 0.0;
 
+  // else, approximate inclusion ratio of the triangle:
   d_max = sqrt(d_max);
   d_min = sqrt(d_min);
-
   return (r - d_min) / (d_max - d_min);
 }
 
@@ -438,17 +441,22 @@ Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from
   const typename GT::Vector_3 u_GT
 )
 {
+  // putting anisotropic measure in matrix form
   Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = Eigen::Matrix<typename GT::FT, 3, 3>::Zero();
 
   for (std::size_t ix = 0; ix < 3; ix++)
     for (std::size_t iy = 0; iy < 3; iy++)
       v_muXY(ix, iy) = anisotropic_measure[ix * 3 + iy];
 
+  // constant factor K to force the principal direction eigenvectors to be tangential to the surface
   Eigen::Matrix<typename GT::FT, 3, 1> u(u_GT.x(), u_GT.y(), u_GT.z());
   const typename GT::FT K = 1000 * v_mu0;
 
+  // symmetrizing and adding the constant term
   v_muXY = 0.5 * (v_muXY + v_muXY.transpose()) + K * u * u.transpose();
 
+
+  // computing eigenvalues and eigenvectors
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix <typename GT::FT, 3, 3>> eigensolver;
 
   eigensolver.computeDirect(v_muXY);
@@ -462,6 +470,7 @@ Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from
   const typename GT::Vector_3 min_eig_vec(eig_vecs(0, 1), eig_vecs(1, 1), eig_vecs(2, 1));
   const typename GT::Vector_3 max_eig_vec(eig_vecs(0, 0), eig_vecs(1, 0), eig_vecs(2, 0));
 
+  // returning principal curvatures and directions (with the correct sign)
   return Principal_curvatures_and_directions<GT>(
     (v_mu0 != 0.0) ? -eig_vals[1] / v_mu0 : 0.0,
     (v_mu0 != 0.0) ? -eig_vals[0] / v_mu0 : 0.0,
@@ -470,6 +479,7 @@ Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from
     );
 }
 
+// measures are computed for faces only if they are adjacent to the vertex
 template<typename GT, typename PolygonMesh, typename VPM, typename VNM>
 Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
   const PolygonMesh& pmesh,
@@ -495,9 +505,11 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
   std::vector<Vector_3> x;
   std::vector<Vector_3> u;
 
+  // compute for each face around the vertex (except the null (boundary) face)
   for (Face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
     if (f != boost::graph_traits<PolygonMesh>::null_face())
     {
+      // looping over vertices in face to get point coordinates and normal vectors
       for (Vertex_descriptor vi : vertices_around_face(halfedge(f, pmesh), pmesh))
       {
         Point_3 pi = get(vpm, vi);
@@ -506,6 +518,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
         u.push_back(ui);
       }
 
+      // compute measures for selected curvatures (area is always computed)
       vertex_measures.area_measure += interpolated_corrected_area_measure_face<GT>(u, x);
 
       if (is_mean_curvature_selected)
@@ -528,7 +541,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
   return vertex_measures;
 }
 
-
+// measures are computed for faces only if they are in the ball of radius 'radius' centered at the vertex
 template<typename GT, typename PolygonMesh, typename VPM, typename VNM>
 Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
   const PolygonMesh& pmesh,
@@ -547,6 +560,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
   typedef typename GT::Vector_3 Vector_3;
   typedef typename GT::FT FT;
 
+  // the ball expansion is done using a BFS traversal from the vertex
   std::queue<Face_descriptor> bfs_queue;
   std::unordered_set<Face_descriptor> bfs_visited;
 
@@ -568,8 +582,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
     Face_descriptor fi = bfs_queue.front();
     bfs_queue.pop();
 
-    // looping over vertices in face to get point coordinates
-
+    // looping over vertices in face to get point coordinates and normal vectors
     for (Vertex_descriptor vi : vertices_around_face(halfedge(fi, pmesh), pmesh))
     {
       Point_3 pi = get(vpm, vi);
@@ -578,8 +591,11 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
       u.push_back(ui);
     }
 
+    // approximate inclusion ratio of the face in the ball
     const FT f_ratio = face_in_ball_ratio<GT>(x, radius, c);
 
+    // if it is not 0 (not completely outside), compute measures for selected curvatures (area is always computed)
+    // and add neighboring faces to the bfs queue
     if (f_ratio != 0.0)
     {
       vertex_measures.area_measure += f_ratio * interpolated_corrected_area_measure_face<GT>(u, x);
@@ -613,6 +629,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
   return vertex_measures;
 }
 
+// computes selected curvatures for one specific vertex
 template<typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
   void interpolated_corrected_curvatures_one_vertex(
@@ -640,23 +657,29 @@ template<typename PolygonMesh,
   Vertex_normal_map vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
     get(Vector_map_tag(), pmesh));
 
+  // if the normal map is not provided, compute it
   if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
     compute_vertex_normals(pmesh, vnm, np);
 
+  // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
   typename GT::FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
+  // if the radius is 0, we use a small epsilon to expand the ball (scaled with the average edge length)
   if (radius == 0)
     radius = average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
 
+  // get parameters (pointers) for curvatures
   typename GT::FT* vertex_mean_curvature = choose_parameter(get_parameter(np, internal_np::vertex_mean_curvature), nullptr);
   typename GT::FT* vertex_gaussian_curvature = choose_parameter(get_parameter(np, internal_np::vertex_gaussian_curvature), nullptr);
   Principal_curvatures_and_directions<GT>* vertex_principal_curvatures_and_directions = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions), nullptr);
 
+  // determine which curvatures are selected (by checking if the pointers are not null)
   const bool is_mean_curvature_selected = (vertex_mean_curvature != nullptr);
   const bool is_gaussian_curvature_selected = (vertex_gaussian_curvature != nullptr);
   const bool is_principal_curvatures_and_directions_selected = (vertex_principal_curvatures_and_directions != nullptr);
 
   Vertex_measures<GT> vertex_measures;
 
+  // if the radius is negative, we do not expand the ball (only the incident faces)
   if (radius < 0)
   {
     vertex_measures = interpolated_corrected_measures_one_vertex_no_radius<GT>(
@@ -683,6 +706,7 @@ template<typename PolygonMesh,
       );
   }
 
+  // compute the selected curvatures from expanded measures
   if (is_mean_curvature_selected) {
     *vertex_mean_curvature = vertex_measures.area_measure != 0 ?
       0.5 * vertex_measures.mean_curvature_measure / vertex_measures.area_measure : 0;
@@ -694,6 +718,7 @@ template<typename PolygonMesh,
   }
 
   if (is_principal_curvatures_and_directions_selected) {
+    // compute the principal curvatures and directions from the anisotropic measures
     const typename GT::Vector_3  v_normal = get(vnm, v);
     const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
       vertex_measures.anisotropic_measure,
@@ -783,11 +808,14 @@ private:
     vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
       get(Vector_map_tag(), pmesh));
 
+    // if no normal map is given, compute normals
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
       compute_vertex_normals(pmesh, vnm, np);
 
+    // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
     const FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
 
+    // check which curvature maps are provided by the user (determines which curvatures are computed)
     is_mean_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_mean_curvature_map_t>::value;
     is_gaussian_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_gaussian_curvature_map_t>::value;
     is_principal_curvatures_and_directions_selected = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value;
@@ -800,6 +828,7 @@ private:
   }
 
   void set_ball_radius(const FT radius) {
+    // if given radius is 0, we use a small epsilon to expand the ball (scaled by the average edge length)
     if (radius == 0)
       ball_radius = average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
     else
@@ -825,6 +854,8 @@ public:
 
 private:
 
+  // Computes the (selected) interpolated corrected measures for all faces
+  // and stores them in the property maps
   void interpolated_corrected_selected_measures_all_faces()
   {
     std::vector<Vector_3> x;
@@ -854,14 +885,17 @@ private:
     }
   }
 
+  // expand the measures of the faces incident to v
   Vertex_measures<GT> expand_interpolated_corrected_measure_vertex_no_radius(Vertex_descriptor v)
   {
     Vertex_measures<GT> vertex_measures;
 
+    // add the measures of the faces incident to v (excluding the null (boundary) face)
     for (Face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
       if (f == boost::graph_traits<PolygonMesh>::null_face())
         continue;
 
+      // only add the measures for the selected curvatures (area measure is always added)
       vertex_measures.area_measure += get(mu0_map, f);
 
       if (is_mean_curvature_selected)
@@ -881,8 +915,10 @@ private:
     return vertex_measures;
   }
 
+  // expand the measures of the faces inside the ball of radius r around v
   Vertex_measures<GT> expand_interpolated_corrected_measure_vertex(Vertex_descriptor v)
   {
+    // the ball expansion is done using a BFS traversal from the vertex
     std::queue<Face_descriptor> bfs_queue;
     std::unordered_set<Face_descriptor> bfs_visited;
 
@@ -891,6 +927,7 @@ private:
 
     Vertex_measures<GT> vertex_measures;
 
+    // add the measures of the faces incident to v (excluding the null (boundary) face)
     for (Face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
       if (f != boost::graph_traits<PolygonMesh>::null_face())
       {
@@ -910,8 +947,11 @@ private:
         x.push_back(Vector_3(pi.x(), pi.y(), pi.z()));
       }
 
+      // compute the inclusion ratio of the face in the ball
       const FT f_ratio = face_in_ball_ratio<GT>(x, ball_radius, c);
 
+      // if the face is inside the ball, add the measures
+      // only add the measures for the selected curvatures (area measure is always added)
       if (f_ratio != 0.0)
       {
         vertex_measures.area_measure += f_ratio * get(mu0_map, fi);
@@ -947,10 +987,13 @@ private:
 
     for (Vertex_descriptor v : vertices(pmesh))
     {
+      // expand the computed measures (on faces) to the vertices
       Vertex_measures<GT> vertex_measures = (ball_radius < 0) ?
         expand_interpolated_corrected_measure_vertex_no_radius(v) :
         expand_interpolated_corrected_measure_vertex(v);
 
+      // compute the selected curvatures from the expanded measures and store them in the property maps
+      // if the area measure is zero, the curvature is set to zero
       if (is_mean_curvature_selected) {
         vertex_measures.area_measure != 0 ?
           put(mean_curvature_map, v, 0.5 * vertex_measures.mean_curvature_measure / vertex_measures.area_measure) :
@@ -964,6 +1007,7 @@ private:
       }
 
       if (is_principal_curvatures_and_directions_selected) {
+        // compute the principal curvatures and directions from the anisotropic measure
         const Vector_3  v_normal = get(vnm, v);
         const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
           vertex_measures.anisotropic_measure,
@@ -1402,7 +1446,6 @@ template<typename GT, typename PolygonMesh,
     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values())
 {
-  // use interpolated_corrected_curvatures_one_vertex to compute mean curvature
   typename GT::FT mean_curvature;
   interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_mean_curvature(&mean_curvature));
   return mean_curvature;
@@ -1468,7 +1511,6 @@ template<typename GT, typename PolygonMesh,
     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values())
 {
-  // use interpolated_corrected_curvatures_one_vertex to compute gaussian curvature
   typename GT::FT gc;
   interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_gaussian_curvature(&gc));
   return gc;
@@ -1533,7 +1575,6 @@ template<typename GT, typename PolygonMesh,
     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values())
 {
-  // use interpolated_corrected_curvatures_one_vertex to compute principal curvatures
   Principal_curvatures_and_directions<GT> pcd;
   interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_principal_curvatures_and_directions(&pcd));
   return pcd;
