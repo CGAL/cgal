@@ -23,13 +23,13 @@ int main()
 
   // Create a cube
   ib.begin_surface();
-  ib.add_facet({0,1,2,3}); // Create a new facet v1: given all of its indices
+  ib.add_facet({0,1,2,3}); // Create a new facet version 1: given all of its indices
   ib.add_facet({1,0,5,6});
   ib.add_facet({2,1,6,7});
   ib.add_facet({3,2,7,4});
 
-  ib.begin_facet(); // Create a new facet v2: begin facet
-  ib.add_vertex_to_facet(0); // all incrementally its indices
+  ib.begin_facet(); // Create a new facet version 2: begin facet
+  ib.add_vertex_to_facet(0); // add sucessively its indices
   ib.add_vertex_to_facet(3);
   ib.add_vertex_to_facet(4);
   ib.add_vertex_to_facet(5);
