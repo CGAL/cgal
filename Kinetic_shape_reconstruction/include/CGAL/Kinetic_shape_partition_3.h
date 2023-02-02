@@ -212,10 +212,10 @@ public:
   an instance of `PointMap`
   */
 
-  template<typename PolygonMap, typename InputRange>
+  template<typename PolygonMap, typename InputRange, typename PointMap>
   void insert(
     const InputRange& input_range,
-    const PolygonMap polygon_map
+    const PolygonMap polygon_map,
     const PointMap point_map) {}
 
   /*!
