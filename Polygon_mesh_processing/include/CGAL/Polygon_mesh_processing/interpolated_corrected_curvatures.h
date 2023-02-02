@@ -497,9 +497,6 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
   typedef typename GT::Vector_3 Vector_3;
   typedef typename GT::FT FT;
 
-  std::queue<Face_descriptor> bfs_queue;
-  std::unordered_set<Face_descriptor> bfs_visited;
-
   Vertex_measures<GT> vertex_measures;
 
   std::vector<Vector_3> x;
@@ -814,6 +811,7 @@ private:
 
     // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
     const FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
+    set_ball_radius(radius);
 
     // check which curvature maps are provided by the user (determines which curvatures are computed)
     is_mean_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_mean_curvature_map_t>::value;
@@ -823,8 +821,6 @@ private:
     mean_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_mean_curvature_map), Default_scalar_map());
     gaussian_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_gaussian_curvature_map), Default_scalar_map());
     principal_curvatures_and_directions_map = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map), Default_principal_map());
-
-    set_ball_radius(radius);
   }
 
   void set_ball_radius(const FT radius) {
