@@ -298,7 +298,9 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalFigureCaptionEnd=\htmlonly </div> <br> \endhtmlonly" \
                          "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief" \
                          "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief" \
-                         "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\"" \
+                         "cgalRefines=<b>Refines</b>:" \
+                         "cgalRefines{1}=@cgalRefines @c \1." \
+                         "cgalRefines{3}=@cgalRefines @c \1, @c \2 and @c \3." \
                          "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\"" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
                          "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\"" \

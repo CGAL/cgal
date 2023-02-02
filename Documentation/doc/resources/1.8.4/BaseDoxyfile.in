@@ -281,7 +281,9 @@ ALIASES += "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly <br>"
 ALIASES += "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief"
 ALIASES += "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief"
 
-ALIASES += "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
+ALIASES += "cgalRefines=<b>Refines</b>:" \
+ALIASES += "cgalRefines{1}=@cgalRefines @c \1." \
+ALIASES += "cgalRefines{3}=@cgalRefines @c \1, @c \2 and @c \3." \
 ALIASES += "cgalRequires=\xrefitem requires \"Requires\" \"Type Requirements\""
 ALIASES += "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\""
 ALIASES += "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
