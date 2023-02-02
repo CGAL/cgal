@@ -17,6 +17,7 @@
 
 #include <CGAL/Nef_3/Nef_box.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <vector>
 #include <iostream>
 #include <CGAL/Timer.h>
