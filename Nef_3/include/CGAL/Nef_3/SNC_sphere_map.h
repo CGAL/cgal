@@ -319,6 +319,12 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
     return number_of_sfaces_;
   }
 
+  void update_number_of_items() {
+    number_of_svertices_ = Base::number_of_svertices();
+    number_of_shalfedges_ = Base::number_of_shalfedges();
+    number_of_sfaces_ = Base::number_of_sfaces();
+  }
+
   template <typename H>
   void make_twins(H h1, H h2) {
     h1->twin() = h2;
