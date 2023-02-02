@@ -39,27 +39,27 @@ class Data_structure {
 
 public:
   using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Intersection_kernel = typename Traits::Intersection_Kernel;
 
   using Support_plane = KSR_3::Support_plane<Traits>;
   using Intersection_graph = KSR_3::Intersection_graph<Traits>;
-  using FaceEvent = typename Support_plane::FaceEvent;
+  using Face_event = typename Support_plane::FaceEvent;
 
   using FT = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
-  using IkPoint_2 = typename Intersection_Kernel::Point_2;
+  using IkPoint_2 = typename Intersection_kernel::Point_2;
   using Point_3 = typename Traits::Point_3;
-  using IkPoint_3 = typename Intersection_Kernel::Point_3;
+  using IkPoint_3 = typename Intersection_kernel::Point_3;
   using Segment_2 = typename Traits::Segment_2;
-  using IkSegment_2 = typename Intersection_Kernel::Segment_2;
+  using IkSegment_2 = typename Intersection_kernel::Segment_2;
   using Segment_3 = typename Traits::Segment_3;
-  using IkSegment_3 = typename Intersection_Kernel::Segment_3;
+  using IkSegment_3 = typename Intersection_kernel::Segment_3;
   using Vector_2 = typename Traits::Vector_2;
   using Direction_2 = typename Traits::Direction_2;
-  using IkDirection_2 = typename Intersection_Kernel::Direction_2;
+  using IkDirection_2 = typename Intersection_kernel::Direction_2;
   using Triangle_2  = typename Traits::Triangle_2;
   using Line_2      = typename Traits::Line_2;
-  using IkLine_2    = typename Intersection_Kernel::Line_2;
+  using IkLine_2    = typename Intersection_kernel::Line_2;
   using Plane_3     = typename Traits::Plane_3;
 
   using Polygon_2  = CGAL::Polygon_2<Kernel>;
@@ -349,7 +349,7 @@ public:
     m_support_planes.reserve(number_of_polygons + 6);
   }
 
-  FT calculate_edge_intersection_time(std::size_t sp_idx, IEdge edge, FaceEvent &event) {
+  FT calculate_edge_intersection_time(std::size_t sp_idx, IEdge edge, Face_event &event) {
     // Not need to calculate for border edges.
     if (m_intersection_graph.iedge_is_on_bbox(edge))
       return 0;
@@ -407,7 +407,7 @@ public:
     // Shooting rays to find intersection with line of IEdge
     Line_2 ln = sp.to_2d(from_exact(m_intersection_graph.line_3(edge)));
     //std::cout << sp.to_3d(ln.point(0)) << " " << sp.to_3d(ln.point(5)) << std::endl;
-    typename Intersection_Kernel::Line_2 l = sp.to_2d(m_intersection_graph.line_3(edge));
+    typename Intersection_kernel::Line_2 l = sp.to_2d(m_intersection_graph.line_3(edge));
     for (std::size_t i = 0; i < num; i++) {
       std::size_t idx = (i + lower) % sp.data().original_directions.size();
       const auto result = CGAL::intersection(l, sp.data().original_rays[idx]);
@@ -590,7 +590,7 @@ public:
         if (m_intersection_graph.has_crossed(edge, sp_idx))
           continue;
 
-        FaceEvent fe;
+        Face_event fe;
         FT t = calculate_edge_intersection_time(sp_idx, edge, fe);
         if (t > 0)
           queue.push(fe);

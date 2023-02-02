@@ -14,11 +14,12 @@
 #define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
-#include <CGAL/Kinetic_shape_partitioning_3.h>
+#include <CGAL/Kinetic_shape_partition_3.h>
 #include <CGAL/KSR/debug.h>
 
 namespace CGAL
 {
+#ifndef DOXYGEN_RUNNING
 /*!
 * \ingroup PkgKineticShapePartition
   \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
@@ -45,7 +46,7 @@ public:
   using Indices = std::vector<std::size_t>;
   using Polygon_3 = std::vector<Point_3>;
 
-  using KSP = Kinetic_shape_partitioning_3<Kernel, Intersection_kernel>;
+  using KSP = Kinetic_shape_partition_3<Kernel, Intersection_kernel>;
 
   using Point_map = typename PointMap;
   using Normal_map = typename NormalMap;
@@ -274,7 +275,7 @@ public:
   }
 
   /*!
-  \brief initializes the kinetic partitioning.
+  \brief initializes the kinetic partition.
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -287,7 +288,7 @@ public:
       \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{bbox_dilation_ratio}
-      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partitioning.}
+      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
     \cgalParamNEnd
@@ -306,9 +307,9 @@ public:
     \pre `successful shape detection`
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  bool initialize_partitioning(const CGAL_NP_CLASS& np = parameters::default_values()) {
+  bool initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values()) {
     if (m_polygons.size() == 0) {
-      std::cout << "No planar shapes available to create kinetic partitioning." << std::endl;
+      std::cout << "No planar shapes available to create kinetic partition." << std::endl;
       return false;
     }
 
@@ -325,7 +326,7 @@ public:
   maximum number of allowed intersections for each input polygon before its expansion stops.
 
   @return
-  success of kinetic partitioning.
+  success of kinetic partition.
 
   \pre `successful initialization`
   */
@@ -334,19 +335,19 @@ public:
   }
 
   /*!
-  \brief Access to the kinetic partitioning.
+  \brief Access to the kinetic partition.
 
   @return
-  created kinetic partitioning data structure
+  created kinetic partition data structure
 
-  \pre `successful partitioning`
+  \pre `successful partition`
   */
-  const Kinetic_shape_partitioning_3<Traits>& partitioning() const {
+  const Kinetic_shape_partition_3<Traits>& partition() const {
     return m_kinetic_partition;
   }
 
   /*!
-  \brief Creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partitioning.
+  \brief Creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partition.
 
   @return
   success.
@@ -394,7 +395,7 @@ public:
   provides the cost of a label for each volume cell. The first index corresponds to the label and the second index corresponds to the volume index.
 
   @return
-  fails if the dimensions of parameters does not match the kinetic partitioning.
+  fails if the dimensions of parameters does not match the kinetic partition.
 
   \pre `successful initialization`
   */
@@ -555,6 +556,8 @@ private:
     return plane;
   }
 };
+
+#endif
 
 
 } // namespace CGAL

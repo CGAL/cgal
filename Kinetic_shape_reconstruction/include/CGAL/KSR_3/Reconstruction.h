@@ -47,7 +47,7 @@ class Reconstruction {
 
 public:
   using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Intersection_kernel = typename Traits::Intersection_Kernel;
   using Input_range  = typename Traits::Input_range;
   using Point_map    = typename Traits::Point_map;
   using Vector_map   = typename Traits::Normal_map;

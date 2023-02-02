@@ -41,7 +41,7 @@ namespace KSR_3 {
 
   public:
     using Kernel       = typename Traits::Kernel;
-    using Intersection_Kernel = typename Traits::Intersection_Kernel;
+    using Intersection_kernel = typename Traits::Intersection_Kernel;
     using Point_map_3  = typename Traits::Point_map;
     using Vector_map_3 = typename Traits::Normal_map;
 

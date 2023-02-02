@@ -10,8 +10,8 @@
 //
 // Author(s)     : Simon Giraudot, Dmitry Anisimov, Sven Oesau
 
-#ifndef CGAL_KINETIC_SHAPE_PARTITIONING_3_H
-#define CGAL_KINETIC_SHAPE_PARTITIONING_3_H
+#ifndef CGAL_KINETIC_SHAPE_PARTITION_3_H
+#define CGAL_KINETIC_SHAPE_PARTITION_3_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
@@ -45,7 +45,7 @@ namespace CGAL {
 
 /*!
 * \ingroup PkgKineticShapePartition
-  \brief Creates the kinetic partitioning of the bounding box.
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data.
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -54,11 +54,11 @@ namespace CGAL {
     must be a model of `Kernel` using exact computations. Defaults to `CGAL::Exact_predicates_exact_constructions_kernel`.
 */
 template<typename GeomTraits, typename IntersectionTraits = CGAL::Exact_predicates_exact_constructions_kernel>
-class Kinetic_shape_partitioning_3 {
+class Kinetic_shape_partition_3 {
 
 public:
   using Kernel = typename GeomTraits;
-  using Intersection_Kernel = IntersectionTraits;
+  using Intersection_kernel = IntersectionTraits;
 
   using Point_3 = typename GeomTraits::Point_3;
 
@@ -70,11 +70,11 @@ private:
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
 
-  using From_exact = typename CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
+  using From_exact = typename CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
-  using Initializer = KSR_3::Initializer<Kernel, Intersection_Kernel>;
-  using Propagation = KSR_3::FacePropagation<Kernel, Intersection_Kernel>;
-  using Finalizer   = KSR_3::Finalizer<Kernel, Intersection_Kernel>;
+  using Initializer = KSR_3::Initializer<Kernel, Intersection_kernel>;
+  using Propagation = KSR_3::FacePropagation<Kernel, Intersection_kernel>;
+  using Finalizer   = KSR_3::Finalizer<Kernel, Intersection_kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Timer        = CGAL::Real_timer;
@@ -89,7 +89,7 @@ public:
   /// \name Initialization
   /// @{
   /*!
-  \brief Constructs an empty kinetic shape partitioning object. Use insert afterwards to insert polygons into the partition and initialize() to create the partition.
+  \brief constructs an empty kinetic shape partition object. Use insert afterwards to insert polygons into the partition and initialize() to create the partition.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -112,7 +112,7 @@ public:
   \cgalNamedParamsEnd
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
-  Kinetic_shape_partitioning_3(
+  Kinetic_shape_partition_3(
     const NamedParameters& np = CGAL::parameters::default_values()) :
     m_parameters(np, false), // use true here to export all steps
     m_data(m_parameters),
@@ -120,13 +120,13 @@ public:
   { }
 
   /*!
-  \brief Constructs a kinetic shape partitioning object and initializes it.
+  \brief constructs a kinetic shape partition object and initializes it.
 
   \tparam InputRange
-  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
 
   \tparam PolygonMap
-  contains index ranges to form polygons from InputRange
+  contains index ranges to form polygons by providing indices into InputRange
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -141,9 +141,13 @@ public:
   a sequence of \ref bgl_namedparameters "Named Parameters"
   among the ones listed below
 
-   \pre !input_range.empty() and !polygon_map.empty()
+  \pre !input_range.empty() and !polygon_map.empty()
 
   \cgalNamedParamsBegin
+    \cgalParamNBegin{point_map}
+      \cgalParamDescription{a property map associating points to the elements of `input_range`}
+      \cgalParamDefault{`PointMap()`}
+    \cgalParamNEnd
     \cgalParamNBegin{verbose}
       \cgalParamDescription{Write timing and internal information to std::cout.}
       \cgalParamType{bool}
@@ -155,7 +159,7 @@ public:
       \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{bbox_dilation_ratio}
-      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partitioning.}
+      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
     \cgalParamNEnd
@@ -175,7 +179,7 @@ public:
     typename InputRange,
     typename PolygonMap,
     typename NamedParameters = parameters::Default_named_parameters>
-  Kinetic_shape_partitioning_3(
+  Kinetic_shape_partition_3(
     const InputRange& input_range,
     const PolygonMap polygon_map,
     const NamedParameters & np = CGAL::parameters::default_values()) :
@@ -187,49 +191,37 @@ public:
   }
 
   /*!
-  \brief Inserts polygons. Does not recreate or change an existing partitioning and should only be called before initialize.
-
-  \tparam PolygonMap
-  contains index ranges to form polygons from InputRange
-
-  \param input_range
-  an instance of `InputRange` with 3D points and corresponding 3D normal vectors
-
-  \param polygon_map
-  a range of polygons defined by a range of indices into input_range
-  */
-
-  template<typename PolygonMap>
-  void insert(
-    const InputRange& input_range,
-    const PolygonMap polygon_map) {}
-
-  /*!
-  \brief Initializes the kinetic partitioning of the bounding box.
+  \brief inserts polygons, but does not recreate or change an existing partition and should only be called before initialize.
 
   \tparam InputRange
-  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `Point_3`.
+  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
 
   \tparam PolygonMap
-  contains index ranges to form polygons from InputRange
-
-  \tparam NamedParameters
-  a sequence of \ref bgl_namedparameters "Named Parameters"
+  contains index ranges to form polygons by providing indices into InputRange
 
   \param input_range
   an instance of `InputRange` with 3D points
 
   \param polygon_map
   a range of polygons defined by a range of indices into input_range
+  */
+
+  template<typename PolygonMap, typename InputRange>
+  void insert(
+    const InputRange& input_range,
+    const PolygonMap polygon_map) {}
+
+  /*!
+  \brief initializes the kinetic partition of the bounding box.
+
+  \tparam NamedParameters
+  a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters"
   among the ones listed below
 
-  @return
-  success. The initialization fails if the input data is empty.
-
-  \pre !input_range.empty() and !polygon_map.empty()
+  \pre Input data has been provided via `insert()`.
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{reorient_bbox}
@@ -238,7 +230,7 @@ public:
       \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{bbox_dilation_ratio}
-      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partitioning.}
+      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
     \cgalParamNEnd
@@ -256,12 +248,8 @@ public:
   */
 
   template<
-    typename InputRange,
-    typename PolygonMap,
     typename NamedParameters = parameters::Default_named_parameters>
   void initialize(
-    const InputRange& input_range,
-    const PolygonMap polygon_map,
     const NamedParameters& np = CGAL::parameters::default_values()) {
 
     Timer timer;
@@ -317,13 +305,14 @@ public:
 
     return true;
   }
+
   /*!
-  \brief Propagates the kinetic polygons in the initialized partition.
+  \brief propagates the kinetic polygons in the initialized partition.
 
-    \param k
-    maximum number of allowed intersections for each input polygon before its expansion stops.
+  \param k
+   maximum number of allowed intersections for each input polygon before its expansion stops.
 
-    \pre successful initialization and k != 0
+  \pre successful initialization and k != 0
   */
   void partition(std::size_t k) {
     Timer timer;
@@ -331,7 +320,7 @@ public:
 
     // Already initialized?
     if (m_data.number_of_support_planes() < 6) {
-      std::cout << "Kinetic partitioning not initialized or empty. Number of support planes: " << m_data.number_of_support_planes() << std::endl;
+      std::cout << "Kinetic partition not initialized or empty. Number of support planes: " << m_data.number_of_support_planes() << std::endl;
 
       return;
     }
@@ -418,12 +407,9 @@ public:
   /// \name Access
   /// @{
   /*!
-  \brief Number of support planes in the kinetic partitioning. They originate from the planes of the input polygons and the bounding box.
+  \brief returns number of support planes in the kinetic partition. They originate from the planes of the input polygons and the bounding box.
 
-  @return
-  number of support planes.
-
-  \pre successful partitioning
+  \pre successful partition
   */
 
   int number_of_support_planes() const {
@@ -431,36 +417,27 @@ public:
   }
 
   /*!
-  \brief Number of vertices in the kinetic partitioning.
+  \brief returns number of vertices in the kinetic partition.
 
-    @return
-    number of vertices.
-
-    \pre `successful partitioning`
+  \pre successful partition
   */
   std::size_t number_of_vertices() const {
     return 0;
   }
 
   /*!
-  \brief Number of faces in the kinetic partitioning.
+  \brief returns number of faces in the kinetic partition.
 
-    @return
-    number of faces.
-
-    \pre successful partitioning
+  \pre successful partition
   */
   std::size_t number_of_faces() const {
     return 0;
   }
 
   /*!
-  \brief Number of volumes created by the kinetic partitioning.
+  \brief returns number of volumes created by the kinetic partition.
 
-    @return
-    number of volumes.
-
-    \pre successful partitioning
+  \pre successful partition
   */
   std::size_t number_of_volumes() const {
     return m_data.volumes().size();
@@ -470,36 +447,36 @@ public:
   /*!
   \brief Point vector for mapping vertex indices to positions.
 
-    @return
-    vector of points.
+  @return
+   vector of points.
 
-    \pre successful partitioning
+    \pre successful partition
   */
   const std::vector<Point_3>& vertices() const;
 
   /*!
   \brief Vertex indices of face.
 
-    \param face_index
-    index of the query face.
+  \param face_index
+   index of the query face.
 
-    @return
-    vector of vertex indices.
+  @return
+   vector of vertex indices.
 
-    \pre successful partitioning
+  \pre successful partition
   */
   const std::vector<std::size_t>& vertices(std::size_t face_index) const;
 
   /*!
   \brief Face indices of the volume.
 
-    \param volume_index
-    index of the query volume.
+  \param volume_index
+   index of the query volume.
 
-    @return
-    vector of face indices.
+  @return
+   vector of face indices.
 
-    \pre successful partitioning
+  \pre successful partition
   */
   const std::vector<std::size_t>& face(std::size_t volume_index) const {
     CGAL_assertion(m_data.number_of_volumes() > volume_index);
@@ -522,7 +499,7 @@ public:
     -5 xmin
     -6 zmax
 
-    \pre successful partitioning
+    \pre successful partition
   */
   const std::pair<int, int>& neighbors(std::size_t face_index) const {
     CGAL_assertion(m_data.number_of_volumes() > volume_index);
@@ -532,13 +509,13 @@ public:
   /*!
   \brief Retrieves the support plane generated from the input polygon.
 
-    \param input_polygon_index
-    index of the input polygon.
+  \param input_polygon_index
+   index of the input polygon.
 
-    @return
-    index into polygon_map provided on initialization.
+  @return
+   index into polygon_map provided on initialization.
 
-    \pre successful partitioning
+  \pre successful partition
   */
   std::size_t support_plane_index(const std::size_t input_polygon_index) const {
       const int support_plane_idx = m_data.support_plane_index(input_polygon_index);
@@ -549,22 +526,22 @@ public:
 #endif
 
   /*!
-   \brief Creates a linear cell complex from the kinetic partitioning.
+   \brief creates a linear cell complex from the kinetic partition.
 
-    \tparam LCC
+   \tparam LCC
     most be a model of `LinearCellComplex`
     The dimension of the combinatorial map and the dimension of the ambient space have to be 3.
 
-    \param lcc
+   \param lcc
     an instance of LCC
 
-    \pre successful partitioning
+   \pre successful partition
   */
 
   template<typename LCC>
   void get_linear_cell_complex(LCC& lcc) const {
     using LCC_Kernel = typename LCC::Traits;
-    CGAL::Cartesian_converter<Intersection_Kernel, LCC_Kernel> conv;
+    CGAL::Cartesian_converter<Intersection_kernel, LCC_Kernel> conv;
     lcc.clear();
 
     std::vector<bool> used_vertices(m_data.igraph().number_of_vertices(), false);
@@ -854,7 +831,9 @@ public:
   /*******************************
   **           MEMORY           **
   ********************************/
-
+  /*!
+   \brief Clears all input data and the kinetic partition.
+   */
   void clear() {
     m_data.clear();
     m_num_events = 0;
@@ -887,4 +866,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_KINETIC_SHAPE_PARTITIONING_3_H
+#endif // CGAL_KINETIC_SHAPE_PARTITION_3_H

@@ -43,7 +43,7 @@ namespace KSR_3 {
 
   public:
     using Kernel = typename Traits::Kernel;
-    using Intersection_Kernel = typename Traits::Intersection_Kernel;
+    using Intersection_kernel = typename Traits::Intersection_Kernel;
 
     using FT          = typename Traits::FT;
     using Point_3    = typename Traits::Point_3;

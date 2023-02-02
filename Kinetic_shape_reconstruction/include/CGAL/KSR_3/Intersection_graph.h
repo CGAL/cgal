@@ -36,7 +36,7 @@ class Intersection_graph {
 
 public:
   using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Intersection_kernel = typename Traits::Intersection_Kernel;
 
   using Point_2   = typename Traits::IK_Point_2;
   using Point_3   = typename Traits::IK_Point_3;
@@ -105,7 +105,7 @@ public:
     Face_property(std::size_t support_plane_idx) : support_plane(support_plane_idx), part_of_partition(false) {}
     std::size_t support_plane;
     bool part_of_partition;
-    CGAL::Polygon_2<Intersection_Kernel> poly;
+    CGAL::Polygon_2<Intersection_kernel> poly;
     std::vector<Point_2> pts;
     std::vector<Edge_descriptor> edges;
     std::vector<Vertex_descriptor> vertices;

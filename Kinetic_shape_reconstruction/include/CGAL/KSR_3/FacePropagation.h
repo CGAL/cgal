@@ -34,7 +34,7 @@ class FacePropagation {
 
 public:
   using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Intersection_kernel = typename Traits::Intersection_Kernel;
 
 private:
   using FT          = typename Traits::FT;
@@ -59,10 +59,10 @@ private:
 
   using Parameters     = KSR::Parameters_3<FT>;
 
-  using FaceEvent      = typename Data_structure::Support_plane::FaceEvent;
+  using Face_event      = typename Data_structure::Support_plane::Face_Event;
 
-  struct FaceEventOrder {
-    bool operator()(const FaceEvent &a, const FaceEvent &b) {
+  struct Face_event_order {
+    bool operator()(const Face_event &a, const Face_event &b) {
       return a.time > b.time;
     }
   };
@@ -101,7 +101,7 @@ private:
   FT m_min_time;
   FT m_max_time;
 
-  std::priority_queue<typename Data_structure::Support_plane::FaceEvent, std::vector<FaceEvent>, FaceEventOrder> m_face_queue;
+  std::priority_queue<typename Data_structure::Support_plane::FaceEvent, std::vector<Face_event>, Face_event_order> m_face_queue;
 
   /*******************************
   **       IDENTIFY EVENTS      **
@@ -132,7 +132,7 @@ private:
     while (!m_face_queue.empty()) {
       // m_queue.print();
 
-      const FaceEvent event = m_face_queue.top();
+      const Face_event event = m_face_queue.top();
       m_face_queue.pop();
       const FT current_time = event.time;
 
@@ -147,7 +147,7 @@ private:
   **        HANDLE EVENTS       **
   ********************************/
 
-  void apply(const FaceEvent& event) {
+  void apply(const Face_event& event) {
     //std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
     if (m_data.igraph().face(event.face).part_of_partition) {
       //std::cout << " face already crossed, skipping event" << std::endl;
@@ -206,7 +206,7 @@ private:
     m_data.support_plane(event.support_plane).get_border(m_data.igraph(), f.second, border);
 
     for (IEdge edge : border) {
-      FaceEvent fe;
+      Face_event fe;
       FT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
       if (t > 0)
         m_face_queue.push(fe);

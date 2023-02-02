@@ -44,7 +44,7 @@ class Initializer {
 
 public:
   using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
+  using Intersection_kernel = typename Traits::Intersection_Kernel;
 
 private:
   using FT          = typename Traits::FT;
@@ -265,12 +265,12 @@ private:
       CGAL_assertion(f1 == face_idx || f2 == face_idx);
     }
 
-    std::vector<typename Intersection_Kernel::Point_2> pts;
+    std::vector<typename Intersection_kernel::Point_2> pts;
     pts.reserve(face.pts.size());
     for (auto p : face.pts)
       pts.push_back(p);
 
-    face.poly = Polygon_2<Intersection_Kernel>(pts.begin(), pts.end());
+    face.poly = Polygon_2<Intersection_kernel>(pts.begin(), pts.end());
 
     if (face.poly.orientation() != CGAL::COUNTERCLOCKWISE) {
       face.poly.reverse_orientation();
@@ -476,14 +476,14 @@ private:
         // Get line
         //Line_2 l(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))),sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
 
-        typename Intersection_Kernel::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
-        typename Intersection_Kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
-        typename Intersection_Kernel::Line_2 exact_line(a, b);
+        typename Intersection_kernel::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
+        typename Intersection_kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
+        typename Intersection_kernel::Line_2 exact_line(a, b);
         Line_2 l = to_inexact(exact_line);
         Vector_2 dir = l.to_vector();
         dir = (1.0 / CGAL::sqrt(dir * dir)) * dir;
 
-        std::vector<typename Intersection_Kernel::Segment_2> crossing_polygon_segments;
+        std::vector<typename Intersection_kernel::Segment_2> crossing_polygon_segments;
         std::vector<IEdge> crossing_iedges;
         FT min = std::numeric_limits<double>::max();
         FT max = -std::numeric_limits<double>::max();
@@ -500,10 +500,10 @@ private:
             // Fetch former point to add segment.
             const Point_2& prev = sp.data().original_vertices[(v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()];
             const Vector_2 edge_dir = sp.original_edge_direction((v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size(), v);
-            typename Intersection_Kernel::Segment_2 seg(to_exact(prev), to_exact(p));
+            typename Intersection_kernel::Segment_2 seg(to_exact(prev), to_exact(p));
             const auto result = CGAL::intersection(seg, exact_line);
             if (result) {
-              const typename Intersection_Kernel::Point_2* intersection = boost::get<typename Intersection_Kernel::Point_2>(&*result);
+              const typename Intersection_kernel::Point_2* intersection = boost::get<typename Intersection_kernel::Point_2>(&*result);
               if (intersection) {
                 FT proj = to_inexact((*intersection - exact_line.point()) * exact_line.to_vector());
                 if (proj < min) {
@@ -1111,9 +1111,9 @@ private:
             continue;
           }
 
-          typename Intersection_Kernel::Point_2 point;
-          typename Intersection_Kernel::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
-          typename Intersection_Kernel::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
+          typename Intersection_kernel::Point_2 point;
+          typename Intersection_kernel::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
+          typename Intersection_kernel::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
           if (!intersection(m_data.to_2d(common_plane_idx, seg_a), m_data.to_2d(common_plane_idx, seg_b), point))
             continue;
 
@@ -1143,14 +1143,14 @@ private:
       CGAL_assertion(sp.mesh().faces().size() == 1);
 
       // Turn single PFace into Polygon_2
-      std::vector<typename Intersection_Kernel::Point_2> pts2d;
+      std::vector<typename Intersection_kernel::Point_2> pts2d;
       pts2d.reserve(sp.mesh().vertices().size());
 
       for (auto v : sp.mesh().vertices()) {
         pts2d.push_back(to_exact(sp.mesh().point(v)));
       }
 
-      Polygon_2<Intersection_Kernel> p(pts2d.begin(), pts2d.end());
+      Polygon_2<Intersection_kernel> p(pts2d.begin(), pts2d.end());
 
       if (p.orientation() != CGAL::COUNTERCLOCKWISE)
         p.reverse_orientation();

@@ -29,14 +29,14 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename Traits>
+template<typename GeomTraits, typename IntersectionKernel>
 class Support_plane {
 
 public:
-  using Kernel = typename Traits::Kernel;
-  using Intersection_Kernel = typename Traits::Intersection_Kernel;
-  using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_Kernel>;
-  using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
+  using Kernel = typename GeomTraits;
+  using Intersection_kernel = typename IntersectionKernel;
+  using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
+  using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
   using FT          = typename Traits::FT;
   using Point_2     = typename Traits::Point_2;
@@ -76,9 +76,9 @@ public:
   using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
   using V_time_map     = typename Mesh::template Property_map<Vertex_index, std::vector<FT> >;
 
-  struct FaceEvent {
-    FaceEvent() {}
-    FaceEvent(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
+  struct Face_event {
+    Face_event() {}
+    Face_event(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
     std::size_t support_plane;
     FT time;
     FT intersection_bary;
@@ -91,7 +91,7 @@ private:
     bool is_bbox;
     Point_2 centroid;
     Plane_3 plane;
-    typename Intersection_Kernel::Plane_3 exact_plane;
+    typename Intersection_kernel::Plane_3 exact_plane;
     Mesh mesh;
     V_vector_map direction; // needed?
     V_ivertex_map v_ivertex_map;
@@ -112,7 +112,7 @@ private:
     std::vector<Point_2> original_vertices;
     std::vector<Vector_2> original_vectors;
     std::vector<Direction_2> original_directions;
-    std::vector<typename Intersection_Kernel::Ray_2> original_rays;
+    std::vector<typename Intersection_kernel::Ray_2> original_rays;
 
     FT distance_tolerance;
     FT angle_tolerance;
@@ -375,7 +375,7 @@ public:
       m_data->original_vertices[i] = point;
       m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
       m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[i] = Intersection_Kernel::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
+      m_data->original_rays[i] = Intersection_kernel::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
@@ -442,7 +442,7 @@ public:
   }
 
   const Plane_3& plane() const { return m_data->plane; }
-  const typename Intersection_Kernel::Plane_3& exact_plane() const { return m_data->exact_plane; }
+  const typename Intersection_kernel::Plane_3& exact_plane() const { return m_data->exact_plane; }
   const Point_2& centroid() const { return m_data->centroid; }
   bool is_bbox() const { return m_data->is_bbox; }
   std::map<IVertex, Vertex_index> &ivertex2pvertex() { return m_data->ivertex2pvertex; }
@@ -671,7 +671,7 @@ public:
     return m_data->plane.to_2d(point);
   }
 
-  const typename Intersection_Kernel::Point_2 to_2d(const typename Intersection_Kernel::Point_3& point) const {
+  const typename Intersection_kernel::Point_2 to_2d(const typename Intersection_kernel::Point_3& point) const {
     return m_data->exact_plane.to_2d(point);
   }
 
@@ -681,8 +681,8 @@ public:
       m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
-  const typename Intersection_Kernel::Line_2 to_2d(const typename Intersection_Kernel::Line_3& line) const {
-    return Intersection_Kernel::Line_2(
+  const typename Intersection_kernel::Line_2 to_2d(const typename Intersection_kernel::Line_3& line) const {
+    return Intersection_kernel::Line_2(
       m_data->exact_plane.to_2d(line.point()),
       m_data->exact_plane.to_2d(line.point() + line.to_vector()));
   }
@@ -693,8 +693,8 @@ public:
       m_data->plane.to_2d(segment.target()));
   }
 
-  const typename Intersection_Kernel::Segment_2 to_2d(const typename Intersection_Kernel::Segment_3& segment) const {
-    return typename Intersection_Kernel::Segment_2(
+  const typename Intersection_kernel::Segment_2 to_2d(const typename Intersection_kernel::Segment_3& segment) const {
+    return typename Intersection_kernel::Segment_2(
       m_data->exact_plane.to_2d(segment.source()),
       m_data->exact_plane.to_2d(segment.target()));
   }
@@ -709,7 +709,7 @@ public:
     return m_data->plane.to_3d(point);
   }
 
-  const typename Intersection_Kernel::Point_3 to_3d(const typename Intersection_Kernel::Point_2& point) const {
+  const typename Intersection_kernel::Point_3 to_3d(const typename Intersection_kernel::Point_2& point) const {
     return m_data->exact_plane.to_3d(point);
   }
 

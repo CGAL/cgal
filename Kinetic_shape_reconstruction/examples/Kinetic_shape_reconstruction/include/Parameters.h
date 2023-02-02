@@ -64,7 +64,7 @@ namespace KSR {
     angle_threshold(FT(25)),
     min_region_size(100),
     regularize(false),
-    // partitioning
+    // partition
     k_intersections(1),
     n_subdivisions(0),
     enlarge_bbox_ratio(FT(11) / FT(10)),
