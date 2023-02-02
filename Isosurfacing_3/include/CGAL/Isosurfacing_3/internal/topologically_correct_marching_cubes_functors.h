@@ -283,7 +283,7 @@ private:
 
     // In order to compute oriented segments, the hexahedron must be flattened.
     // The inside of the faces of the hexahedron must be all on the same
-    // side of the flattened hexahedron. This requires changing the order of 
+    // side of the flattened hexahedron. This requires changing the order of
     // the edges when reading from the faces
     // code edges at face
     // unsigned short face_e_[6] = { 12816, 30292, 33936, 46754, 34739, 38305 };
