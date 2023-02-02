@@ -1643,6 +1643,8 @@ read_vertex(Vertex_handle vh) {
   OK = OK && test_string("}");
   in >> vh->mark();
 
+  vh->update_number_of_items();
+
   return OK;
 }
 
