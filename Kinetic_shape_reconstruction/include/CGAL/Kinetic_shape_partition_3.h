@@ -128,6 +128,9 @@ public:
   \tparam PolygonMap
   contains index ranges to form polygons by providing indices into InputRange
 
+  \tparam PointMap
+  a model of `ReadablePropertyMap` whose key type is the value type of the input range and value type is `Kernel::Point_3`
+
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -144,10 +147,6 @@ public:
   \pre !input_range.empty() and !polygon_map.empty()
 
   \cgalNamedParamsBegin
-    \cgalParamNBegin{point_map}
-      \cgalParamDescription{a property map associating points to the elements of `input_range`}
-      \cgalParamDefault{`PointMap()`}
-    \cgalParamNEnd
     \cgalParamNBegin{verbose}
       \cgalParamDescription{Write timing and internal information to std::cout.}
       \cgalParamType{bool}
@@ -171,13 +170,14 @@ public:
     \cgalParamNBegin{distance_tolerance}
       \cgalParamDescription{The tolerance distance to snap the planes of two input polygons into one plane.}
       \cgalParamType{FT}
-      \cgalParamDefault{0.5}
+      \cgalParamDefault{1% of the bounding box diagonale}
     \cgalParamNEnd
   \cgalNamedParamsEnd
   */
   template<
     typename InputRange,
     typename PolygonMap,
+    typename PointMap,
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
     const InputRange& input_range,
@@ -199,17 +199,24 @@ public:
   \tparam PolygonMap
   contains index ranges to form polygons by providing indices into InputRange
 
+  \tparam PointMap
+  a model of `ReadablePropertyMap` whose key type is the value type of the input range and value type is `Kernel::Point_3`
+
   \param input_range
   an instance of `InputRange` with 3D points
 
   \param polygon_map
   a range of polygons defined by a range of indices into input_range
+
+  \param point_map
+  an instance of `PointMap`
   */
 
   template<typename PolygonMap, typename InputRange>
   void insert(
     const InputRange& input_range,
-    const PolygonMap polygon_map) {}
+    const PolygonMap polygon_map
+    const PointMap point_map) {}
 
   /*!
   \brief initializes the kinetic partition of the bounding box.
