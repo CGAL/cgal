@@ -59,7 +59,7 @@ When a facet is added, if the same facet exists in another surface, the two surf
    */
   VAH add_vertex(const Point_3& p);
 
-  /*
+  /*!
    * starts a new facet.
    */
   void begin_facet();
