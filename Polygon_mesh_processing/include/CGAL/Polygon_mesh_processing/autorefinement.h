@@ -36,8 +36,8 @@
 
 #include <vector>
 
-// #define TEST_RESOLVE_INTERSECTION
-// #define DEDUPLICATE_SEGMENTS
+//#define TEST_RESOLVE_INTERSECTION
+//#define DEDUPLICATE_SEGMENTS
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -259,6 +259,9 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   if (ori[0]== COPLANAR && ori[1]==COPLANAR && ori[2]==COPLANAR)
   {
     coplanar_intersections<K>(t1, t2, inter_pts);
+    for (auto p : inter_pts)
+      if (depth(p)>2) throw std::runtime_error("Depth is not 2: "+std::to_string(depth(p)));
+
     return;
   }
 
@@ -283,6 +286,11 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   std::sort(inter_pts.begin(), inter_pts.end());
   auto last = std::unique(inter_pts.begin(), inter_pts.end());
   inter_pts.erase(last, inter_pts.end());
+
+
+  for (auto p : inter_pts)
+    if (depth(p)>2) throw std::runtime_error("Depth is not 2: "+std::to_string(depth(p)));
+
 }
 
 //////////////////////////////////
@@ -300,6 +308,10 @@ void generate_subtriangles(std::size_t ti,
                            const std::vector<std::array<typename EK::Point_3,3>>& triangles,
                            std::vector<std::array<typename EK::Point_3,3>>& new_triangles)
 {
+  //~ std::cout << "generate_subtriangles()\n";
+  std::cout << std::setprecision(17);
+
+
   typedef CGAL::Projection_traits_3<EK> P_traits;
   typedef CGAL::Exact_intersections_tag Itag;
 
@@ -395,7 +407,7 @@ void generate_subtriangles(std::size_t ti,
                 points_on_segments[i].push_back(*pt_ptr);
                 points_on_segments[j].push_back(*pt_ptr);
 
-                //~ std::cout << "new inter " << *pt_ptr << "\n";
+                //~ std::cout << "new inter " << *pt_ptr << " (" << depth(points_on_segments[i].back()) << ")" << "\n";
 
               }
             }
@@ -417,7 +429,7 @@ void generate_subtriangles(std::size_t ti,
                 points_on_segments[i].push_back(*pt_ptr);
                 points_on_segments[j].push_back(*pt_ptr);
 
-                //~ std::cout << "new inter bis" << *pt_ptr << "\n";
+                //~ std::cout << "new inter bis " << *pt_ptr << " (" << depth(points_on_segments[i].back()) << ")" <<  "\n";
               }
               else
               {
@@ -427,6 +439,8 @@ void generate_subtriangles(std::size_t ti,
                   points_on_segments[j].push_back(seg_ptr->source());
                   points_on_segments[i].push_back(seg_ptr->target());
                   points_on_segments[j].push_back(seg_ptr->target());
+
+                  //~ std::cout << "new inter seg " << *seg_ptr << " (" << depth(*seg_ptr) << ")" <<  "\n";
 
                 }
                 else
@@ -536,6 +550,20 @@ void generate_subtriangles(std::size_t ti,
           csts.emplace_back(src_id+k, src_id+k+1);
       }
     }
+
+    //~ int max_degree = 0;
+    //~ for (const auto p : cst_points)
+      //~ max_degree = std::max(max_degree, depth(p));
+    //~ std::cout << "max_degree " << max_degree << "\n";
+
+    //~ if (max_degree > 10){
+      //~ for (const auto p : cst_points)
+        //~ std::cout << " -- " << p << "(" << depth(p) << ")\n";
+      //~ std::cout << "segments:\n";
+      //~ for (auto s : segments)
+        //~ std::cout << "  " << depth(s[0]) << " " << depth(s[1]) << "\n";
+      //~ exit(1);
+    //~ }
 
     cdt.insert_constraints(cst_points.begin(), cst_points.end(), csts.begin(), csts.end());
 

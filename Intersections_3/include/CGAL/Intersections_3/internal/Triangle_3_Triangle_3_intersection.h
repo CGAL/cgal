@@ -31,54 +31,257 @@ namespace CGAL {
 namespace Intersections {
 namespace internal{
 
-template <class Kernel>
-void intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& p,
-                                            const typename Kernel::Point_3& q,
-                                            const typename Kernel::Point_3& r,
-                                            const Kernel& k,
-                                            std::list<typename Kernel::Point_3>& inter_pts)
+template <class K>
+typename K::FT
+coplanar_segment_segment_alpha_intersection(const typename K::Point_3& p1, const typename K::Point_3& p2, // segment 1
+                                            const typename K::Point_3& p3, const typename K::Point_3& p4, // segment 2
+                                            const K& k)
 {
-  typedef typename std::list<typename Kernel::Point_3>::iterator Iterator;
+  const typename K::Vector_3 v1 = p2-p1;
+  const typename K::Vector_3 v2 = p4-p3;
+
+  CGAL_assertion(k.coplanar_3_object()(p1,p2,p3,p4));
+
+  const typename K::Vector_3 v3 = p3 - p1;
+  const typename K::Vector_3 v3v2 = cross_product(v3,v2);
+  const typename K::Vector_3 v1v2 = cross_product(v1,v2);
+  const typename K::FT sl = v1v2.squared_length();
+  CGAL_assertion(!certainly(is_zero(sl)));
+
+  const typename K::FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
+  return t; // p1 + (p2-p1) * t
+}
+
+template <class Kernel>
+struct Point_on_triangle
+{
+  static
+  inline
+  const typename Kernel::Point_3&
+  point_from_id(const typename Kernel::Point_3& p,
+                const typename Kernel::Point_3& q,
+                const typename Kernel::Point_3& r,
+                int id)
+  {
+    switch(id)
+    {
+      case 0:
+        return p;
+      case 1:
+        return q;
+      default:
+        return r;
+    }
+  }
+
+  Point_on_triangle(int i1, int i2=-1, int sign=0, typename Kernel::FT alpha = 0.) // TODO add global zero()?
+    : t1_t2_ids(i1,i2)
+    , sign(sign)
+  {}
+
+  // (id, -1) point on t1
+  // (-1, id) point on t2
+  // (id1, id2) intersection of edges
+  std::pair<int, int> t1_t2_ids;
+  int sign;
+  typename Kernel::FT alpha;
+
+  Orientation
+  orientation (const typename Kernel::Point_3& p1, // source of edge edge_ids1
+               const typename Kernel::Point_3& q1, // target of edge edge_ids1
+               const typename Kernel::Point_3& r1,
+               int edge_id1,
+               const typename Kernel::Point_3& p2,
+               const typename Kernel::Point_3& q2,
+               const typename Kernel::Point_3& r2,
+               const Kernel& k) const
+  {
+    if (t1_t2_ids.first!=-1)
+    {
+      if (t1_t2_ids.second==-1) return ZERO; // it is a point on t1
+      // this is an intersection point
+      if (sign == 0)
+        return POSITIVE;
+      if (sign == -1)
+        return edge_id1==t1_t2_ids.first+1?POSITIVE:NEGATIVE;
+      else
+        return edge_id1==t1_t2_ids.first+1?NEGATIVE:POSITIVE;
+    }
+    else
+    {
+      //this is an input point of t2
+      typename Kernel::Coplanar_orientation_3 orient = k.coplanar_orientation_3_object();
+      const typename Kernel::Point_3& query = point_from_id(p2,q2,r2,t1_t2_ids.second);
+      return orient(p1,q1,r1,query);
+    }
+  }
+
+  int id1() const { return t1_t2_ids.first; }
+  int id2() const { return t1_t2_ids.second; }
+
+  typename Kernel::Point_3
+  point(const typename Kernel::Point_3& p1,
+        const typename Kernel::Point_3& q1,
+        const typename Kernel::Point_3& r1,
+        const typename Kernel::Point_3& p2,
+        const typename Kernel::Point_3& q2,
+        const typename Kernel::Point_3& r2,
+        const Kernel& k) const
+  {
+    if (t1_t2_ids.first==-1)
+      return point_from_id(p2,q2,r2,t1_t2_ids.second);
+    if (t1_t2_ids.second==-1)
+      return point_from_id(p1,q1,r1,t1_t2_ids.first);
+
+    return k.construct_barycenter_3_object()(point_from_id(p2,q2,r2,(t1_t2_ids.second+1)%3), alpha, point_from_id(p2,q2,r2,t1_t2_ids.second)) ;
+  }
+};
+
+template <class Kernel>
+Point_on_triangle<Kernel>
+intersection(const Point_on_triangle<Kernel>& p,
+             const Point_on_triangle<Kernel>& q,
+             int edge_id_t1,
+             const typename Kernel::Point_3& p1,
+             const typename Kernel::Point_3& q1,
+//             const typename Kernel::Point_3& r1,
+             const typename Kernel::Point_3& p2,
+             const typename Kernel::Point_3& q2,
+             const typename Kernel::Point_3& r2,
+             const Kernel& k)
+{
+  typedef Point_on_triangle<Kernel> Pot;
+  switch(p.id1())
+  {
+    case -1:
+    {
+      switch(q.id1())
+      {
+        case -1: // (-1, ip2) - (-1, iq2)
+        {
+          typename Kernel::FT alpha =
+            coplanar_segment_segment_alpha_intersection(p1, q1,
+                                                        Pot::point_from_id(p2, q2, r2, p.id2()),
+                                                        Pot::point_from_id(p2, q2, r2, q.id2()), k);
+          int sgn = sign(alpha);
+          return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), sgn, alpha); // intersection with an original edge of t2
+        }
+        default:
+          if (q.id2()!=-1) // (-1, ip2) - (iq1, iq2)
+          {
+            // we shorten an already cut edge
+            CGAL_assertion((p.id2()+1)%3 == q.id2());
+
+            typename Kernel::FT alpha =
+              coplanar_segment_segment_alpha_intersection(p1, q1,
+                                                          Pot::point_from_id(p2, q2, r2, p.id2()),
+                                                          Pot::point_from_id(p2, q2, r2, q.id2()), k);
+            int sgn = sign(alpha);
+            return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), sgn, alpha);
+          }
+          // (-1, ip2) - (iq1, -1)
+          //vertex of t1, special case t1 edge passed thru a vertex of t2
+          CGAL_assertion(edge_id_t1 == 2);
+          return  Point_on_triangle<Kernel>(2, -1); // point on t1 has to be created from the intersection of edge 0 and edge 1
+      }
+    }
+    default:
+    {
+      switch(p.id2())
+      {
+        case -1:
+        {
+          switch(q.id1())
+          {
+            case -1: // (ip1, -1) - (-1, iq2)
+              //vertex of t1, special case t1 edge passed thru a vertex of t2
+              return  Point_on_triangle<Kernel>(0, -1);
+            default:
+            {
+              CGAL_assertion(q.id2()!=-1); // (ip1, -1) - (iq2, -1)
+              //(ip1,-1), (iq1, iq2)
+              CGAL_assertion(edge_id_t1==2 && p.id1()==1);
+              return  Point_on_triangle<Kernel>(q.id1()==1?2:0,-1); // vertex of t1
+            }
+          }
+        }
+        default:
+        {
+          switch(q.id1())
+          {
+            case -1: // (ip1, ip2) - (-1, iq2)
+            {
+              // we shorten an already cut edge
+              CGAL_assertion((q.id2()+1)%3 == p.id2());
+
+              typename Kernel::FT alpha =
+                coplanar_segment_segment_alpha_intersection(p1, q1,
+                                                            Pot::point_from_id(p2, q2, r2, q.id2()),
+                                                            Pot::point_from_id(p2, q2, r2, p.id2()), k);
+              int sgn = sign(alpha);
+              return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), sgn, alpha);
+            }
+            default:
+            {
+              switch(q.id2())
+              {
+                case -1: // (ip1, ip2) - (iq1, -1)
+                {
+                  CGAL_assertion(edge_id_t1==2 && q.id1()==1);
+                  return  Point_on_triangle<Kernel>(p.id1()==1?2:0); // vertex of t1
+                }
+                default: // (ip1, ip2) - (iq1, iq2)
+                  return  Point_on_triangle<Kernel>((p.id1()+1)%3==q.id1()?q.id1():p.id1(), -1); // vertex of t1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+template <class Kernel>
+void intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& p1,
+                                            const typename Kernel::Point_3& q1,
+                                            const typename Kernel::Point_3& r1,
+                                            int edge_id,
+                                            const typename Kernel::Point_3& p2,
+                                            const typename Kernel::Point_3& q2,
+                                            const typename Kernel::Point_3& r2,
+                                            const Kernel& k,
+                                            std::list<Point_on_triangle<Kernel>>& inter_pts)
+{
+  typedef typename std::list<Point_on_triangle<Kernel>>::iterator Iterator;
 
   if(inter_pts.empty())
     return;
 
-  typename Kernel::Coplanar_orientation_3 orient = k.coplanar_orientation_3_object();
-  typename Kernel::Construct_line_3 line = k.construct_line_3_object();
+  //orient(p1,q1,r1,r1) is POSITIVE
+  std::map<const Point_on_triangle<Kernel>*,Orientation> orientations; // TODO skip map
+  for (const Point_on_triangle<Kernel>& pot : inter_pts)
+    orientations[ &pot ]=pot.orientation(p1,q1,r1,edge_id,p2,q2,r2,k);
 
-  //orient(p,q,r,r) is POSITIVE
-  std::map<const typename Kernel::Point_3*,Orientation> orientations;
-  for (Iterator it=inter_pts.begin();it!=inter_pts.end();++it)
-    orientations[ &(*it) ]=orient(p,q,r,*it);
+  CGAL_kernel_assertion_code(int pt_added = 0);
 
-  CGAL_kernel_assertion_code(int pt_added = 0;)
-
-  const typename Kernel::Point_3* prev = &(*boost::prior(inter_pts.end()));
-  Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : boost::prior(inter_pts.end());
+  Iterator prev = std::prev(inter_pts.end());
+  Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : std::prev(inter_pts.end());
   for(Iterator it=inter_pts.begin(); it!=stop; ++it)
   {
-    const typename Kernel::Point_3& curr = *it;
-    Orientation or_prev = orientations[prev],
-                or_curr = orientations[&curr];
+    Orientation or_prev = orientations[&(*prev)],
+                or_curr = orientations[&(*it)];
 
     if((or_prev == POSITIVE && or_curr == NEGATIVE) ||
        (or_prev == NEGATIVE && or_curr == POSITIVE))
     {
-      typename Intersection_traits<Kernel, typename Kernel::Line_3, typename Kernel::Line_3>::result_type
-        obj = intersection(line(p,q), line(*prev,curr), k);
+      Point_on_triangle<Kernel> new_pt = intersection(*prev, *it, edge_id, p1, q1, p2, q2, r2, k);
 
-      // assert "not empty"
-      CGAL_kernel_assertion(bool(obj));
-
-      const typename Kernel::Point_3* inter = intersect_get<typename Kernel::Point_3>(obj);
-      CGAL_kernel_assertion(inter != nullptr);
-
-      prev = &(*inter_pts.insert(it,*inter));
-      orientations[prev] = COLLINEAR;
-      CGAL_kernel_assertion_code(++pt_added;)
+      prev = inter_pts.insert(it,new_pt);
+      orientations[&(*prev)] = COLLINEAR;
+      CGAL_assertion_code(++pt_added);
     }
 
-    prev = &(*it);
+    prev = it;
   }
 
   CGAL_kernel_assertion(pt_added<3);
@@ -98,35 +301,41 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
                                 const typename K::Triangle_3& t2,
                                 const K& k)
 {
-  const typename K::Point_3& p = t1.vertex(0),
-                             q = t1.vertex(1),
-                             r = t1.vertex(2);
+  const typename K::Point_3& p1 = t1.vertex(0),
+                             q1 = t1.vertex(1),
+                             r1 = t1.vertex(2);
 
-  std::list<typename K::Point_3> inter_pts;
-  inter_pts.push_back(t2.vertex(0));
-  inter_pts.push_back(t2.vertex(1));
-  inter_pts.push_back(t2.vertex(2));
+  const typename K::Point_3& p2 = t2.vertex(0),
+                             q2 = t2.vertex(1),
+                             r2 = t2.vertex(2);
+
+  std::list<Point_on_triangle<K>> inter_pts;
+  inter_pts.push_back(Point_on_triangle<K>(-1,0));
+  inter_pts.push_back(Point_on_triangle<K>(-1,1));
+  inter_pts.push_back(Point_on_triangle<K>(-1,2));
 
   //intersect t2 with the three half planes which intersection defines t1
-  intersection_coplanar_triangles_cutoff(p,q,r,k,inter_pts); //line pq
-  intersection_coplanar_triangles_cutoff(q,r,p,k,inter_pts); //line qr
-  intersection_coplanar_triangles_cutoff(r,p,q,k,inter_pts); //line rp
+  intersection_coplanar_triangles_cutoff(p1,q1,r1,0,p2,q2,r2,k,inter_pts); //line pq
+  intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,inter_pts); //line qr
+  intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,inter_pts); //line rp
 
+  auto point = [&](const Point_on_triangle<K>& pot){ return pot.point(p1,q1,r1,p2,q2,r2,k); };
   switch(inter_pts.size())
   {
     case 0:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
     case 1:
-      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(*inter_pts.begin());
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(point(*inter_pts.begin()));
     case 2:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
-            k.construct_segment_3_object()(*inter_pts.begin(), *boost::next(inter_pts.begin())) );
+            k.construct_segment_3_object()(point(*inter_pts.begin()), point(*std::next(inter_pts.begin()))) );
     case 3:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
-            k.construct_triangle_3_object()(*inter_pts.begin(), *boost::next(inter_pts.begin()), *boost::prior(inter_pts.end())) );
+            k.construct_triangle_3_object()(point(*inter_pts.begin()), point(*std::next(inter_pts.begin())), point(*std::prev(inter_pts.end()))) );
     default:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
-            std::vector<typename K::Point_3>(inter_pts.begin(),inter_pts.end()));
+            std::vector<typename K::Point_3>(boost::make_transform_iterator(inter_pts.begin(), point),
+                                             boost::make_transform_iterator(inter_pts.end(), point)));
   }
 }
 
