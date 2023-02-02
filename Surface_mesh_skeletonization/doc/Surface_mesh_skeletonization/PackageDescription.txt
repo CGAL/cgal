@@ -7,7 +7,7 @@
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgSurfaceMeshSkeletonization}
 \cgalPkgPicture{mcfskel-small.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi}
+\cgalPkgAuthors{Xiang Gao, Sébastien Loriot, and Andrea Tagliasacchi}
 \cgalPkgDesc{This package provides a (1D) curve skeleton extraction algorithm for a triangulated polygonal mesh without borders based on the mean curvature flow.
         The particularity of this skeleton is that it captures the topology of the input.
         For each skeleton vertex one can obtain its location and its corresponding vertices from the input mesh.

@@ -7,7 +7,7 @@
 \cgalPkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations,PkgConvexHullD}
 \cgalPkgPicture{convex_hull_d-teaser.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Susan Hert and Michael Seel}
+\cgalPkgAuthors{Susan Hert, and Michael Seel}
 \cgalPkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
 \cgalPkgManuals{Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations,PkgConvexHullDRef}
 \cgalPkgSummaryEnd

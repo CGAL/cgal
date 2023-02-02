@@ -21,7 +21,7 @@
 \cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSorting}
 \cgalPkgPicture{hilbert.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Christophe Delage and Olivier Devillers}
+\cgalPkgAuthors{Christophe Delage, and Olivier Devillers}
 \cgalPkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, including on a sphere, in order to improve efficiency of incremental geometric algorithms.}
 \cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSortingRef}
 \cgalPkgSummaryEnd
