@@ -1673,6 +1673,9 @@ private:
   template < class VertexRemover >
   void fill_hole_2D(std::list<Edge_2D>& hole, VertexRemover& remover);
 
+  void make_hole_3D_impl(Vertex_handle v,
+                         const std::vector<Cell_handle>& incident_cells,
+                         Vertex_triple_Facet_map& outer_map);
   void make_hole_3D(Vertex_handle v,
                     Vertex_triple_Facet_map& outer_map,
                     std::vector<Cell_handle>& hole);
@@ -4909,16 +4912,11 @@ fill_hole_2D(std::list<Edge_2D>& first_hole, VertexRemover& remover, OutputItCel
 template < class Gt, class Tds, class Lds >
 void
 Triangulation_3<Gt,Tds,Lds>::
-make_hole_3D(Vertex_handle v,
-             Vertex_triple_Facet_map& outer_map,
-             std::vector<Cell_handle>& hole)
+make_hole_3D_impl(Vertex_handle v,
+                  const std::vector<Cell_handle>& incident_cells,
+                  Vertex_triple_Facet_map& outer_map)
 {
-  CGAL_expensive_precondition(! test_dim_down(v));
-
-  incident_cells(v, std::back_inserter(hole));
-
-  for(typename std::vector<Cell_handle>::iterator cit = hole.begin(),
-                                                  end = hole.end();
+  for(auto cit = incident_cells.begin(), end = incident_cells.end();
       cit != end; ++cit)
   {
     int indv = (*cit)->index(v);
@@ -4935,6 +4933,20 @@ make_hole_3D(Vertex_handle v,
   }
 }
 
+template < class Gt, class Tds, class Lds >
+void
+Triangulation_3<Gt,Tds,Lds>::
+make_hole_3D(Vertex_handle v,
+             Vertex_triple_Facet_map& outer_map,
+             std::vector<Cell_handle>& hole)
+{
+  CGAL_expensive_precondition(! test_dim_down(v));
+
+  incident_cells(v, std::back_inserter(hole));
+
+  make_hole_3D_impl(v, hole, outer_map);
+}
+
 // When the incident cells are already known
 template < class Gt, class Tds, class Lds >
 void
@@ -4945,21 +4957,7 @@ make_hole_3D(Vertex_handle v,
 {
   CGAL_expensive_precondition(! test_dim_down(v));
 
-  for(typename std::vector<Cell_handle>::const_iterator cit = incident_cells.begin(),
-       end = incident_cells.end(); cit != end; ++cit)
-  {
-    int indv = (*cit)->index(v);
-    Cell_handle opp_cit = (*cit)->neighbor(indv);
-    Facet f(opp_cit, opp_cit->index(*cit));
-    Vertex_triple vt = make_vertex_triple(f);
-    make_canonical_oriented_triple(vt);
-    outer_map[vt] = f;
-    for(int i=0; i<4; i++)
-    {
-      if(i != indv)
-        (*cit)->vertex(i)->set_cell(opp_cit);
-    }
-  }
+  make_hole_3D_impl(v, incident_cells, outer_map);
 }
 
 template < class Gt, class Tds, class Lds >
