@@ -5,7 +5,7 @@
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> LCC_3;
 using Point=LCC_3::Point;
 
-//==============================================================================
+
 int main()
 {
   LCC_3 lcc;
@@ -23,25 +23,24 @@ int main()
 
   // Create a cube
   ib.begin_surface();
-  ib.add_facet({0,1,2,3}); // Create a new facet version 1: given all of its indices
+  ib.add_facet({0,1,2,3});   // Create a new facet version 1: given all of its indices
   ib.add_facet({1,0,5,6});
   ib.add_facet({2,1,6,7});
   ib.add_facet({3,2,7,4});
+  ib.add_facet({5,4,7,6});
 
-  ib.begin_facet(); // Create a new facet version 2: begin facet
+  ib.begin_facet();          // Create a new facet version 2: begin facet
   ib.add_vertex_to_facet(0); // add sucessively its indices
   ib.add_vertex_to_facet(3);
   ib.add_vertex_to_facet(4);
   ib.add_vertex_to_facet(5);
-  ib.end_facet(); // end facet
-
-  ib.add_facet({5,4,7,6});
+  ib.end_facet();
 
   ib.end_surface();
 
   ib.add_vertex(Point(-1, 0.5, 0.5)); // vertex 8
 
-  // Create a pyramid, sharing one of its face with the cube
+  // Create a pyramid, sharing one of its facets with a facet of the cube
   ib.begin_surface();
   ib.add_facet({3,0,5,4});
   ib.add_facet({0,3,8});
