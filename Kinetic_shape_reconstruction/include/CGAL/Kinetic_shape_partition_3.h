@@ -147,6 +147,10 @@ public:
   \pre !input_range.empty() and !polygon_map.empty()
 
   \cgalNamedParamsBegin
+    \cgalParamNBegin{point_map}
+      \cgalParamDescription{a property map associating points to the elements of `input_range`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input range and value type is `Kernel::Point_3`}
+    \cgalParamNEnd
     \cgalParamNBegin{verbose}
       \cgalParamDescription{Write timing and internal information to std::cout.}
       \cgalParamType{bool}
