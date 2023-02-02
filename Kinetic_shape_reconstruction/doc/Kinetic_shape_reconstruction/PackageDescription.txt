@@ -1,23 +1,23 @@
 /*!
-\defgroup PkgKineticShapeReconstructionRef Kinetic Shape Reconstruction Reference
+\defgroup PkgKineticShapeReconstructionRef Kinetic Shape Partition Reference
 
 Reference Manual for the Kinetic Shape Partition component
 
 \defgroup PkgKineticShapePartitionConcepts Concepts
 \ingroup PkgKineticShapeReconstructionRef
 
-Concepts used for the parameters of the `CGAL::Kinetic_shape_partitioning_3`
+Concepts used for the parameters of the `CGAL::Kinetic_shape_partition_3`
 
 \defgroup PkgKineticShapePartition Kinetic Shape Partitioning
 \ingroup PkgKineticShapeReconstructionRef
 
-\cgalPkgDescriptionBegin{Kinetic Shape Reconstruction, PkgKineticShapeReconstruction}
+\cgalPkgDescriptionBegin{Kinetic Shape Partition, PkgKineticShapeReconstruction}
 \cgalPkgPicture{kinetic_logo.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Simon Giraudot, Dmitry Anisimov and Sven Oesau}
 \cgalPkgDesc{Empty}
-\cgalPkgManuals{Chapter_Kinetic_Shape_Reconstruction, PkgKineticShapeReconstructionRef}
+\cgalPkgManuals{Chapter_Kinetic_Shape_Partition, PkgKineticShapeReconstructionRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
@@ -31,6 +31,6 @@ Concepts used for the parameters of the `CGAL::Kinetic_shape_partitioning_3`
 
 \cgalClassifedRefPages
 
-## Kinetic Shape Reconstruction ##
+## Kinetic Shape Partition ##
 
 */

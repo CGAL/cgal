@@ -60,7 +60,7 @@ public:
   using Kernel = typename GeomTraits;
   using Intersection_kernel = IntersectionTraits;
 
-  using Point_3 = typename GeomTraits::Point_3;
+  //using Point_3 = typename GeomTraits::Point_3;
 
 private:
   using FT      = typename GeomTraits::FT;
@@ -89,7 +89,7 @@ public:
   /// \name Initialization
   /// @{
   /*!
-  \brief constructs an empty kinetic shape partition object. Use insert afterwards to insert polygons into the partition and initialize() to create the partition.
+  \brief constructs an empty kinetic shape partition object. Use `insert()` afterwards to insert polygons into the partition and `initialize()` to create the partition.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -191,7 +191,7 @@ public:
   }
 
   /*!
-  \brief inserts polygons, but does not recreate or change an existing partition and should only be called before initialize.
+  \brief inserts polygons, requires initialize() afterwards to have effect.
 
   \tparam InputRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
@@ -361,7 +361,7 @@ public:
     timer.reset();
     timer.start();
     if (m_parameters.debug)
-      dump(m_data, "final-" + m_parameters.k);
+      dump(m_data, "final-" + std::to_string(m_parameters.k));
 
     Finalizer finalizer(m_data, m_parameters);
 
@@ -407,7 +407,7 @@ public:
   /// \name Access
   /// @{
   /*!
-  \brief returns number of support planes in the kinetic partition. They originate from the planes of the input polygons and the bounding box.
+  \brief returns the number of support planes in the kinetic partition. They originate from the planes of the input polygons and the bounding box.
 
   \pre successful partition
   */
@@ -417,7 +417,7 @@ public:
   }
 
   /*!
-  \brief returns number of vertices in the kinetic partition.
+  \brief returns the number of vertices in the kinetic partition.
 
   \pre successful partition
   */
@@ -426,7 +426,7 @@ public:
   }
 
   /*!
-  \brief returns number of faces in the kinetic partition.
+  \brief returns the number of faces in the kinetic partition.
 
   \pre successful partition
   */
@@ -435,7 +435,7 @@ public:
   }
 
   /*!
-  \brief returns number of volumes created by the kinetic partition.
+  \brief returns the number of volumes created by the kinetic partition.
 
   \pre successful partition
   */
