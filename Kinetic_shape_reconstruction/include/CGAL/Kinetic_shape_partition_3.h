@@ -170,7 +170,7 @@ public:
     \cgalParamNBegin{distance_tolerance}
       \cgalParamDescription{The tolerance distance to snap the planes of two input polygons into one plane.}
       \cgalParamType{FT}
-      \cgalParamDefault{1% of the bounding box diagonale}
+      \cgalParamDefault{1% of the bounding box diagonal}
     \cgalParamNEnd
   \cgalNamedParamsEnd
   */
