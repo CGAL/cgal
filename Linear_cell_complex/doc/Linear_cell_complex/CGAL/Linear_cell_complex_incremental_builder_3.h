@@ -7,7 +7,7 @@ namespace CGAL {
 The auxiliary class `Linear_cell_complex_incremental_builder_3` supports the incremental
 construction of linear cell complexes.
 
-\tparam LCC a linear cell complex
+\tparam LCC must be a model of the concept  `LinearCellComplex`
 */
 
 template < class LCC >
@@ -40,6 +40,10 @@ section:
 \code
 begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) end_surface
 \endcode
+
+When an edge is added in a facet, if the same edge exists in another facet of the same surface, then the two facets are glued along this edge.
+
+When a facet is added, if the same facet exists in another surface, the two surfaces are glued along this facet.
 */
 /// @{
 
