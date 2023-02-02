@@ -274,7 +274,7 @@ Result of the run of the draw_linear_cell_complex program. A window shows two 3D
 
 \subsection Linear_cell_complexIncrementalBuilderExample Incremental Builder
 
-The following example shows the incremental builder
+The following example shows the incremental builder.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_3_incremental_builder.cpp}
 
