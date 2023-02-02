@@ -1659,8 +1659,8 @@ private:
   typedef typename Base::template Vertex_handle_unique_hash_map_generator<
   Vertex_handle>::type Vertex_handle_unique_hash_map;
 
-  Vertex_triple make_vertex_triple(const Facet& f) const;
-  void make_canonical_oriented_triple(Vertex_triple& t) const;
+  static Vertex_triple make_vertex_triple(const Facet& f);
+  static void make_canonical_oriented_triple(Vertex_triple& t);
 
   template < class VertexRemover >
   VertexRemover& make_hole_2D(Vertex_handle v, std::list<Edge_2D>& hole,
@@ -4359,7 +4359,7 @@ Triangulation_3<GT,Tds,Lds>::insert_and_give_new_cells(const Point& p,
 template < class Gt, class Tds, class Lds >
 typename Triangulation_3<Gt,Tds,Lds>::Vertex_triple
 Triangulation_3<Gt,Tds,Lds>::
-make_vertex_triple(const Facet& f) const
+make_vertex_triple(const Facet& f)
 {
   Cell_handle ch = f.first;
   int i = f.second;
@@ -4372,7 +4372,7 @@ make_vertex_triple(const Facet& f) const
 template < class Gt, class Tds, class Lds >
 void
 Triangulation_3<Gt,Tds,Lds>::
-make_canonical_oriented_triple(Vertex_triple& t) const
+make_canonical_oriented_triple(Vertex_triple& t)
 {
   int i = (t.first < t.second) ? 0 : 1;
   if(i==0)
