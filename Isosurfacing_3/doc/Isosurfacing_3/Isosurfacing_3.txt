@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Julian Stahl, Daniel Zint, and Pierre Alliez
 
-% [PA] : I recommend to select a more complex example (medical?), use a white background instead 
+% [PA] : I recommend to select a more complex example (medical?), use a white background instead
 % of default Meshlab one and superimpose the mesh edges in black.
 
 \cgalFigureAnchor{isosurfacing_bunny_offset}
@@ -47,7 +47,7 @@ MC creates a vertex for each grid edge with a sign change, i.e. where the edge i
 More specifically, the vertex position is computed via linear interpolation of the scalar field values
 evaluated at the cell corners forming the edge. Depending on the configuration of signs at the cell corners,
 the resulting vertices are connected to form triangles within the cell. The figure below illustrates
-the configurations in 2D. 
+the configurations in 2D.
 [ it would be better to show a subset of 3D cases, too, even if the figure is taken from a paper - it
  is probably possible to contact the authors and add a statement - figure courtesy from xxx]
 
@@ -69,10 +69,10 @@ In case of a conforming grid, MC generates as output a surface triangle mesh tha
 As MC only proceeds by linear interpolation of the sampled scalar field along the grid edges,
 it can miss details or components that are not captured by the said sampling and interpolation.
 
-Compared to other approaches such as Delaunay refinement, and depending on the parameters, 
+Compared to other approaches such as Delaunay refinement, and depending on the parameters,
 the MC algorithm often generates more triangles, and more skinny triangles with small or large angles.
 [The statement is too strong - I would largely reformulate it as this depends too much on the parameters.
-I recommend to add instead a figure with different parameters and methods, 
+I recommend to add instead a figure with different parameters and methods,
 depicting the mesh edges in black in addition to the shaded facets]
 MC does not preserve the sharp features present in the isovalue of the input scalar field [TODO add a figure].
 
@@ -83,7 +83,7 @@ It generates as output a mesh that is homeomorphic to the trilinear interpolant 
 This means that the output mesh can accurately represent small complex features.
 For example, a tunnel of the isosurface within a single cell is topologically resolved.
 Furthermore, the mesh is guaranteed to be 2-manifold and watertight, as long as the isosurface does
-not intersect the domain boundaries. 
+not intersect the domain boundaries.
 [add a figure comparing without and with the option activated]
 
 [TODO: add following to CGAL list of references]
@@ -107,9 +107,9 @@ Some variants do not require the gradient and therefore run successfully even wh
 
 Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh.
 It generates fewer faces than Marching Cubes, in general.
-Its advantage over MC is its ability to recover sharp creases and corners. 
+Its advantage over MC is its ability to recover sharp creases and corners.
 [TODO: add a figure.]
-[what about tips, darts, cusps and corners? respectively adjacent to 0, 1, 2 and 3+ creases] 
+[what about tips, darts, cusps and corners? respectively adjacent to 0, 1, 2 and 3+ creases]
 
 \cgalFigureAnchor{isosurfacing_iwp_dc}
 <center>
@@ -165,8 +165,8 @@ To enable parallelism, CGAL must be linked with the Intel TBB library.
 When the parallel version is not available due to unsuccessful link with the TBB library, then the sequential version is utilized as a fallback.
 
 \section secmydomains Domains
-A domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient. 
-[I fail to understand how you specify the topology - for me the domain is the support of the scalar field, whose 
+A domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient.
+[I fail to understand how you specify the topology - for me the domain is the support of the scalar field, whose
 sampling/interpolation will yield the output mesh topology]
 For common representations, we offer a set of predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
 Users can also define new domains by implementing the `IsosurfacingDomain_3` or `IsosurfacingDomainWithGradient_3` concepts.
