@@ -92,12 +92,6 @@ typename GT::FT average_edge_length(const PolygonMesh& pmesh) {
   return avg_edge_length;
 }
 
-enum Curvature_measure_index {
-  MU0_AREA_MEASURE, ///< corrected area density
-  MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density
-  MU2_GAUSSIAN_CURVATURE_MEASURE ///< corrected gaussian curvature density
-};
-
 template<typename GT>
 struct Vertex_measures {
   typename GT::FT area_measure = 0;
