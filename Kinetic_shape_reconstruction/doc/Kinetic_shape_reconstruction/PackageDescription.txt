@@ -12,8 +12,8 @@
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.6}
-\cgalPkgDependsOn{\ref PkgSurface_mesh, \ref PkgPolygonMeshProcessing, \ref PkgLinearCellComplexRef, \ref PkgConvexHull2 and \ref PkgPrincipalComponentAnalysisD}
-\cgalPkgBib{cgal:olga-kinetic}
+\cgalPkgDependsOn{\ref PkgSurfaceMesh, \ref PkgPolygonMeshProcessing, \ref PkgLinearCellComplex, \ref PkgConvexHull2 and \ref PkgPrincipalComponentAnalysisD}
+\cgalPkgBib{cgal:olag-kinetic}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 
