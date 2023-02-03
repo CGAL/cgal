@@ -125,11 +125,8 @@ public:
   \tparam InputRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
 
-  \tparam PolygonMap
+  \tparam PolygonRange
   contains index ranges to form polygons by providing indices into InputRange
-
-  \tparam PointMap
-  a model of `ReadablePropertyMap` whose key type is the value type of the input range and value type is `Kernel::Point_3`
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -137,20 +134,20 @@ public:
   \param input_range
   an instance of `InputRange` with 3D points and corresponding 3D normal vectors
 
-  \param polygon_map
-  a range of polygons defined by a range of indices into input_range
+  \param polygon_range
+  a range of polygons defined by a range of indices into `input_range`
 
   \param np
-  a sequence of \ref bgl_namedparameters "Named Parameters"
-  among the ones listed below
+  a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \pre !input_range.empty() and !polygon_map.empty()
 
   \cgalNamedParamsBegin
-    \cgalParamNBegin{point_map}
-      \cgalParamDescription{a property map associating points to the elements of `input_range`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input range and value type is `Kernel::Point_3`}
-    \cgalParamNEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the `input_range`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `InputRange` and whose value type is `GeomTraits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<GeomTraits::Point_3>`}
+     \cgalParamNEnd
     \cgalParamNBegin{verbose}
       \cgalParamDescription{Write timing and internal information to std::cout.}
       \cgalParamType{bool}
@@ -180,18 +177,17 @@ public:
   */
   template<
     typename InputRange,
-    typename PolygonMap,
-    typename PointMap,
+    typename PolygonRange,
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
     const InputRange& input_range,
-    const PolygonMap polygon_map,
+    const PolygonRange polygon_range,
     const NamedParameters & np = CGAL::parameters::default_values()) :
     m_parameters(np, false), // use true here to export all steps
     m_data(m_parameters),
     m_num_events(0)
   {
-    initialize(input_range, polygon_map, np);
+    initialize(input_range, polygon_range, np);
   }
 
   /*!
@@ -200,27 +196,35 @@ public:
   \tparam InputRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
 
-  \tparam PolygonMap
+  \tparam PolygonRange
   contains index ranges to form polygons by providing indices into InputRange
 
-  \tparam PointMap
-  a model of `ReadablePropertyMap` whose key type is the value type of the input range and value type is `Kernel::Point_3`
+  \tparam NamedParameters
+  a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param input_range
   an instance of `InputRange` with 3D points
 
-  \param polygon_map
-  a range of polygons defined by a range of indices into input_range
+  \param polygon_range
+  a range of polygons defined by a range of indices into `input_range`
 
-  \param point_map
-  an instance of `PointMap`
+  \param np
+  a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the `input_range`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `InputRange` and whose value type is `GeomTraits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<GeomTraits::Point_3>`}
+     \cgalParamNEnd
+  \cgalNamedParamsEnd
   */
 
-  template<typename PolygonMap, typename InputRange, typename PointMap>
+  template<typename InputRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
   void insert(
     const InputRange& input_range,
-    const PolygonMap polygon_map,
-    const PointMap point_map) {}
+    const PolygonRange polygon_range,
+    const NamedParameters& np = CGAL::parameters::default_values()) {}
 
   /*!
   \brief initializes the kinetic partition of the bounding box.
