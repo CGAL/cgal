@@ -24,7 +24,7 @@
 \cgalPkgDescriptionBegin{2D Convex Hulls and Extreme Points,PkgConvexHull2}
 \cgalPkgPicture{Convex_hull_2/fig/convex_hull.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Susan Hert, and Stefan Schirra}
+\cgalPkgAuthors{Susan Hert and Stefan Schirra}
 \cgalPkgDesc{This package provides functions for computing convex hulls in two dimensions as well as functions for checking if sets of points are strongly convex are not. There are also a number of functions described for computing particular extreme points and subsequences of hull points, such as the lower and upper hull of a set of points.}
 \cgalPkgManuals{Chapter_2D_Convex_Hulls_and_Extreme_Points,PkgConvexHull2Ref}
 \cgalPkgSummaryEnd

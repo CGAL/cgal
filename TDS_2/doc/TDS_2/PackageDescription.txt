@@ -7,7 +7,7 @@
 \cgalPkgDescriptionBegin{2D Triangulation Data Structure,PkgTDS2}
 \cgalPkgPicture{tds_small.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Sylvain Pion, and Mariette Yvinec}
+\cgalPkgAuthors{Sylvain Pion and Mariette Yvinec}
 \cgalPkgDesc{This package provides a data structure to store a two-dimensional triangulation that has the  topology of a two-dimensional sphere.  The package acts as a container for the vertices and faces of the triangulation  and provides basic  combinatorial operation on the triangulation. }
 \cgalPkgManuals{Chapter_2D_Triangulation_Data_Structure,PkgTDS2Ref}
 \cgalPkgSummaryEnd
