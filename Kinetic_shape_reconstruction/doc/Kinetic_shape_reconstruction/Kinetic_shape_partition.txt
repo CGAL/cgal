@@ -6,11 +6,11 @@ namespace CGAL {
 \anchor Chapter_Kinetic_Shape_Partition
 \cgalAutoToc
 
-\authors Simon Giraudot, Dmitry Anisimov and Sven Oesau
+\authors Sven Oesau, Florent Lafarge, Dmitry Anisimov and Simon Giraudot
 
 \section Ksp_introduction Introduction
 
-This \cgal component implements the kinetic shape partition proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. It takes as input a set of planar shapes, e.g. polygons, and partitions the bounding box of the input into polyhedra, whereas each polyhedron and its facets are convex. Each facet of the partition is part of the 2D convex hull of an input polygon or an extension of it.
+This \cgal component implements the kinetic shape partition proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. It takes as input a set of planar shapes, e.g. polygons, and partitions the bounding box of the input into polyhedra, where each polyhedron and its facets are convex. Each facet of the partition is part of the 2D convex hull of an input polygon or an extension of it.
 
 The kinetic partition homogeneously expands the convex hull of each input polygon until collisions occur between them. At each collision, their expansion may stop, they may restrict the propagation along an intersection line or they may continue beyond the intersection line. The polygons are split at the start of the partition and at each collision along the intersection line to be intersection-free.
 
@@ -49,7 +49,7 @@ By default the size bounding box of the input data is increased by 10% to avoid 
 The input polygons can be clustered to reduce the number of very thin and very small cells. Two polygons are clustered into one if the deviation between their plane normals is below `angle_tolerance` and the maximum distance of one polygons centroid to the others plane is less than `distance_tolerance`. The default values are 5 degrees for the `angle_tolerance` and a distance of 0.5 for `distance_tolerance`.
 
 \section Ksp_result Result
-The kinetic partition can be accessed as a `Linear Cell Complex` via `CGAL::Kinetic_shape_partition_3::get_linear_cell_complex()`.
+The kinetic partition can be accessed as a `LinearCellComplex` via `CGAL::Kinetic_shape_partition_3::get_linear_cell_complex()`.
 
 */
 

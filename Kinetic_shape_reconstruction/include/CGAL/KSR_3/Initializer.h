@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory SARL (France).
+// Copyright (c) 2023 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Simon Giraudot, Dmitry Anisimov
+// Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
 #ifndef CGAL_KSR_3_INITIALIZER_H
 #define CGAL_KSR_3_INITIALIZER_H
@@ -17,8 +17,8 @@
 
 // CGAL includes.
 #include <CGAL/Timer.h>
-#include <CGAL/optimal_bounding_box.h>
-#include <CGAL/Boolean_set_operations_2.h>
+//#include <CGAL/optimal_bounding_box.h>
+//#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/intersections.h>

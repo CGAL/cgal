@@ -1,5 +1,17 @@
+// Copyright (c) 2023 GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
+
 /*!
-\ingroup PkgKineticShapePartitionConcepts
+\ingroup PkgKineticShapeReconstructionRef
 \cgalConcept
 
 A concept that describes the set of types required by the `CGAL::Kinetic_shape_partition_3`.

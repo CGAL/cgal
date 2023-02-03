@@ -1,35 +1,26 @@
 /*!
 \defgroup PkgKineticShapeReconstructionRef Kinetic Shape Partition Reference
 
-Reference Manual for the Kinetic Shape Partition component
-
-\defgroup PkgKineticShapePartitionConcepts Concepts
-\ingroup PkgKineticShapeReconstructionRef
-
-Concepts used for the parameters of the `CGAL::Kinetic_shape_partition_3`
-
-\defgroup PkgKineticShapePartition Kinetic Shape Partitioning
-\ingroup PkgKineticShapeReconstructionRef
-
 \cgalPkgDescriptionBegin{Kinetic Shape Partition, PkgKineticShapeReconstruction}
 \cgalPkgPicture{kinetic_logo.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot, Dmitry Anisimov and Sven Oesau}
-\cgalPkgDesc{Empty}
+\cgalPkgAuthors{Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot}
+\cgalPkgDesc{This package implements kinetic shape partition. Based on a set of planar input shapes the bounding box of the input data is split into convex volumes. The complexity of the partition can be adjusted with a single parameter.}
 \cgalPkgManuals{Chapter_Kinetic_Shape_Partition, PkgKineticShapeReconstructionRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.6}
+\cgalPkgDependsOn{\ref PkgSurface_mesh, \ref PkgPolygonMeshProcessing, \ref PkgLinearCellComplexRef, \ref PkgConvexHull2 and \ref PkgPrincipalComponentAnalysisD}
 \cgalPkgBib{cgal:bla-bla}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
+
 
 ## Kinetic Shape Partition ##
 

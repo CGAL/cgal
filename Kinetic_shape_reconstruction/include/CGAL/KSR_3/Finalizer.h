@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory SARL (France).
+// Copyright (c) 2023 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,13 +8,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Simon Giraudot, Dmitry Anisimov
+// Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
 #ifndef CGAL_KSR_3_FINALIZER_H
 #define CGAL_KSR_3_FINALIZER_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+//#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>

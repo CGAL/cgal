@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2023 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Simon Giraudot, Dmitry Anisimov, Sven Oesau
+// Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
 #ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 #define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H

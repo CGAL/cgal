@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory SARL (France).
+// Copyright (c) 2023 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Simon Giraudot, Dmitry Anisimov, Sven Oesau
+// Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
 #ifndef CGAL_KINETIC_SHAPE_PARTITION_3_H
 #define CGAL_KINETIC_SHAPE_PARTITION_3_H
@@ -21,14 +21,14 @@
 
 // CGAL includes.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
+//#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+//#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+//#include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Real_timer.h>
 
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_incremental_builder.h>
-#include <CGAL/draw_linear_cell_complex.h>
+//#include <CGAL/draw_linear_cell_complex.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -36,7 +36,7 @@
 #include <CGAL/KSR/parameters.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
-#include <CGAL/KSR_3/Reconstruction.h>
+//#include <CGAL/KSR_3/Reconstruction.h>
 #include <CGAL/KSR_3/Initializer.h>
 #include <CGAL/KSR_3/FacePropagation.h>
 #include <CGAL/KSR_3/Finalizer.h>
@@ -44,8 +44,8 @@
 namespace CGAL {
 
 /*!
-* \ingroup PkgKineticShapePartition
-  \brief creates the kinetic partition of the bounding box of the polygons given as input data.
+* \ingroup PkgKineticShapeReconstructionRef
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()` to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use `Kinetic_shape_partition_3()`
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -89,7 +89,7 @@ public:
   /// \name Initialization
   /// @{
   /*!
-  \brief constructs an empty kinetic shape partition object. Use `insert()` afterwards to insert polygons into the partition and `initialize()` to create the partition.
+  \brief constructs an empty kinetic shape partition object. Use `insert()` afterwards to insert polygons into the partition and `initialize()` to initialize the partition.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -847,7 +847,7 @@ public:
   **           MEMORY           **
   ********************************/
   /*!
-   \brief Clears all input data and the kinetic partition.
+   \brief clears all input data and the kinetic partition.
    */
   void clear() {
     m_data.clear();
