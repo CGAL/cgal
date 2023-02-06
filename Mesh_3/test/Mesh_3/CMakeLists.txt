@@ -112,21 +112,21 @@ if ( CGAL_FOUND )
 
     if(BUILD_TESTING)
       set_property(TEST
-        execution___of__test_meshing_verbose
-        execution___of__test_meshing_polyhedron_with_features
-        execution___of__test_meshing_implicit_function
-        execution___of__test_meshing_unit_tetrahedron
-        execution___of__test_meshing_polyhedron
-        execution___of__test_meshing_polyhedral_complex
-        execution___of__test_mesh_capsule_var_distance_bound
-        execution___of__test_mesh_3_issue_1554
-        execution___of__test_mesh_polyhedral_domain_with_features_deprecated
-        execution___of__test_mesh_cell_base_3
+        "execution   of  test_meshing_verbose"
+        "execution   of  test_meshing_polyhedron_with_features"
+        "execution   of  test_meshing_implicit_function"
+        "execution   of  test_meshing_unit_tetrahedron"
+        "execution   of  test_meshing_polyhedron"
+        "execution   of  test_meshing_polyhedral_complex"
+        "execution   of  test_mesh_capsule_var_distance_bound"
+        "execution   of  test_mesh_3_issue_1554"
+        "execution   of  test_mesh_polyhedral_domain_with_features_deprecated"
+        "execution   of  test_mesh_cell_base_3"
         PROPERTY RUN_SERIAL 1)
       if(TARGET test_meshing_3D_image)
         set_property(TEST
-          execution___of__test_meshing_3D_image
-          execution___of__test_meshing_3D_gray_image
+          "execution   of  test_meshing_3D_image"
+          "execution   of  test_meshing_3D_gray_image"
           PROPERTY RUN_SERIAL 1)
       endif()
     endif()
@@ -140,8 +140,8 @@ if ( CGAL_FOUND )
 
   if(BUILD_TESTING)
     set_tests_properties(
-      execution___of__test_meshing_polyhedron_with_features
-      execution___of__test_meshing_verbose
+      "execution   of  test_meshing_polyhedron_with_features"
+      "execution   of  test_meshing_verbose"
       PROPERTIES RESOURCE_LOCK Mesh_3_Tests_IO)
   endif()
 else()

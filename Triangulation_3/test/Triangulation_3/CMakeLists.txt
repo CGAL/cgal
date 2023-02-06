@@ -61,19 +61,19 @@ if(TARGET CGAL::TBB_support)
   endforeach()
   if(BUILD_TESTING)
     set_property(TEST
-      execution___of__test_delaunay_3
-      execution___of__test_regular_3
-      execution___of__test_regular_insert_range_with_info
+      "execution   of  test_delaunay_3"
+      "execution   of  test_regular_3"
+      "execution   of  test_regular_insert_range_with_info"
       PROPERTY RUN_SERIAL 1)
   endif()
 endif()
 
 if(BUILD_TESTING)
   set_tests_properties(
-    execution___of__test_delaunay_hierarchy_3
-    execution___of__test_delaunay_hierarchy_3_old
-    execution___of__test_regular_as_delaunay_3
-    execution___of__test_triangulation_3
-    execution___of__test_delaunay_3
+    "execution   of  test_delaunay_hierarchy_3"
+    "execution   of  test_delaunay_hierarchy_3_old"
+    "execution   of  test_regular_as_delaunay_3"
+    "execution   of  test_triangulation_3"
+    "execution   of  test_delaunay_3"
     PROPERTIES RESOURCE_LOCK Triangulation_3_Tests_IO)
 endif()

@@ -49,7 +49,7 @@ if(TARGET CGAL::Eigen3_support)
 
     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
-        compilation_of__classification_plugin
+        "compilation of  classification_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
 
