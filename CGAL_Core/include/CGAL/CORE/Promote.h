@@ -26,8 +26,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
-#ifndef __PROMOTE_H__
-#define __PROMOTE_H__
+#ifndef _CORE_PROMOTE_H__
+#define _COEE_PROMOTE_H__
 
 #include <CGAL/CORE/Impl.h>
 #include <CGAL/CORE/BigInt.h>
@@ -147,4 +147,4 @@ CORE_DEFINE_MAX_TYPE(BigRat, Expr, Expr)
 
 } //namespace CORE
 
-#endif //__PROMOTE_H__
+#endif //_CORE_PROMOTE_H__

@@ -143,78 +143,6 @@ void read_string(std::istream& in, char* &buffer, int sz) {
   append_char(buffer, sz, pos, '\0');
 }
 
-CGAL_INLINE_FUNCTION
-void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
-  char *buffer;
-  int size, offset;
-  int base;
-  bool is_negate;
-
-  char c;
-  int pos = 0;
-  skip_comment_line(in);
-
-  // read sign
-  in.get(c);
-  if (c == '-') {
-    is_negate = true;
-    in.get(c);
-  } else
-    is_negate = false;
-
-  // read base and compute digits
-  if (c == '0') {
-      assert(false); // no longer supported
-    in.get(c);
-    if (c == 'b') {
-      base = 2;
-      size = (maxBits == 0 || maxBits > length) ? length : maxBits;
-      offset = length - size;
-    } else if (c == 'x') {
-      base = 16;
-      size = (maxBits == 0) ? length : (maxBits+3) >> 2;
-      size = (size > length) ? length : size;
-      offset = (length - size) << 2;
-    } else {
-      base = 8;
-      size = (maxBits == 0) ? length : (maxBits+2) / 3;
-      size = (size > length) ? length : size;
-      offset = (length - size) * 3;
-      in.putback(c);
-    }
-  } else {
-    base = 10;
-    size = (maxBits == 0) ? length : (int)std::ceil(maxBits*std::log(2.0)/std::log(10.0));
-    size = (size > length) ? length : size;
-    offset = length - size;
-    in.putback(c);
-  }
-
-  buffer = new char[size+2];
-  // read digits
-  for (int i=0; (i<size)&&((c=skip_backslash_new_line(in)) != EOF ); i++) {
-    if (c != ' ' && c != '\t' && c != '\n')
-      append_char(buffer, size, pos++, c);
-  }
-  if (base == 10) {
-    for(int j=0; j<offset; j++)
-      append_char(buffer, size, pos++, '0');
-  }
-  append_char(buffer, size, pos, '\0');
-
-  // convert string to bigint.
-  if (set_str(m, buffer) < 0)
-    core_io_error_handler("CoreIO::read_from_file()","bad big number format.");
-  delete[] buffer;
-
-  // shift left if necessary
-  if (offset > 0 && base != 10) {
-    m <<= offset;
-  }
-
-  if (is_negate)
-    negate(m);
-}
 
 
 CGAL_INLINE_FUNCTION
@@ -245,53 +173,6 @@ void write_base_number(std::ostream& out, char* buffer, std::size_t length, int 
   }
 }
 
-CGAL_INLINE_FUNCTION
-void readFromFile(BigInt& z, std::istream& in, long maxLength) {
-  char *buffer;
-  long length;
-
-  // check type name whether it is Integer or not.
-  buffer = new char[8];
-  read_string(in, buffer, sizeof(buffer));
-  if ( std::strcmp(buffer, "Integer") != 0)
-    core_io_error_handler("BigInt::read_from_file()","type name expected.");
-  delete[] buffer;
-
-  // read the bit length field.
-  buffer = new char[100];
-  read_string(in, buffer, sizeof(buffer));
-  length = std::atol(buffer);
-  delete[] buffer;
-
-  // read bigint
-  read_base_number(in, z, length, maxLength);
-}
-
-CGAL_INLINE_FUNCTION
-void writeToFile(const BigInt& z, std::ostream& out, int base, int charsPerLine) {
-
-    assert(false);
-    /*
-  BigInt c = abs(z);
-
-  // get the absoulte value string
-  char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
-  mpz_get_str(buffer, base, c.get_mp());
-  std::size_t length = std::strlen(buffer);
-
-  // write type name of big number and length
-  //out << "# This is an experimental big number format.\n";
-  out << "Integer " << length << "\n";
-
-  // if bigint is negative, then write an sign '-'.
-  if ( sign(z) < 0  )
-    out << '-';
-
-  write_base_number(out, buffer, length, base, charsPerLine);
-  out << "\n";
-  delete[] buffer;
-  */
-}
 
 CGAL_INLINE_FUNCTION
 void readFromFile(BigFloat& bf, std::istream& in, long maxLength) {
