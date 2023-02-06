@@ -18,7 +18,7 @@ if(NOT CGAL_DISABLE_GMP)
 
     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
-        compilation_of__parameterization_plugin
+        "compilation of  parameterization_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
 
@@ -36,7 +36,7 @@ if(NOT CGAL_DISABLE_GMP)
 
   if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     set_tests_properties(
-      compilation_of__mesh_segmentation_plugin
+      "compilation of  mesh_segmentation_plugin"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 

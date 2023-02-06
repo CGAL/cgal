@@ -7,7 +7,7 @@ if(EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
 
   if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     set_tests_properties(
-      compilation_of__edit_plugin
+      "compilation of  edit_plugin"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 

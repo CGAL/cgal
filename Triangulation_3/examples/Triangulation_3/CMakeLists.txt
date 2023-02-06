@@ -43,9 +43,9 @@ if(TARGET CGAL::TBB_support)
 
   if(BUILD_TESTING)
     set_property(TEST
-      execution___of__parallel_insertion_and_removal_in_regular_3
-      execution___of__parallel_insertion_in_delaunay_3
-      execution___of__sequential_parallel
+      "execution   of  parallel_insertion_and_removal_in_regular_3"
+      "execution   of  parallel_insertion_in_delaunay_3"
+      "execution   of  sequential_parallel"
       PROPERTY RUN_SERIAL 1)
   endif()
 else()
