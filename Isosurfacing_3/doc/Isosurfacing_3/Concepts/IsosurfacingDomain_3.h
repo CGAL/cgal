@@ -91,37 +91,37 @@ public:
   Geom_traits geom_traits();
 
   /*!
-  gets the position of a vertex in 3D space
+  gets the 3D position of the vertex `v`
   */
   Point_3 point(const Vertex_descriptor& v) const;
 
   /*!
-  gets the value of the implicit field at a vertex
+  gets the value of the implicit field at the vertex `v`
   */
   FT value(const Vertex_descriptor& v) const;
 
   /*!
-  gets the two vertices incident to an edge
+  gets the two vertices incident to the edge `e`
   */
   Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const;
 
   /*!
-  gets all cells incident to an edge
+  gets all cells incident to the edge `e`
   */
   Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const;
 
   /*!
-  gets all vertices of the a cell
+  gets all vertices of the cell `c`
   */
   Cell_vertices cell_vertices(const Cell_descriptor& c) const;
 
   /*!
-  gets all edges of the cell c
+  gets all edges of the cell `c`
   */
   Cell_edges cell_edges(const Cell_descriptor& c) const;
 
   /*!
-  iterates over all vertices and call a functor on each one
+  iterates over all vertices and calls the functor `f` on each one
 
   \tparam ConcurrencyTag decides if the vertices are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
@@ -134,7 +134,7 @@ public:
   void iterate_vertices(Functor& f) const;
 
   /*!
-  iterates over all edges and call a functor f on each one
+  iterates over all edges and calls the functor `f` on each one
 
   \tparam ConcurrencyTag decides if the edges are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
@@ -145,7 +145,7 @@ public:
   void iterate_edges(Functor& f) const;
 
   /*!
-  iterates over all cells and call a functor f on each one
+  iterates over all cells and calls the functor `f` on each one
 
   \tparam ConcurrencyTag decides if the cells are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.

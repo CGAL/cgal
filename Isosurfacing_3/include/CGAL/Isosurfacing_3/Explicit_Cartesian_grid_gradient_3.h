@@ -37,6 +37,9 @@ class Explicit_Cartesian_grid_gradient_3
 #endif
 {
 public:
+#ifdef DOXYGEN_RUNNING
+  using Grid = Cartesian_grid_3<GeomTraits>;
+#endif
   using Geom_traits = typename Grid::Geom_traits;
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;

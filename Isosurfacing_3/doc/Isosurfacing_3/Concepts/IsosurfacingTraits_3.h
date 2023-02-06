@@ -76,7 +76,7 @@ public:
 
   `Point_3 operator()(FT x, FT y, FT z)`
 
-  which constructs a 3D point from a set of coordinates.
+  which constructs a 3D point from its three coordinates.
   */
   typedef unspecified_type Construct_point_3;
 
@@ -85,7 +85,7 @@ public:
 
   `Vector_3 operator()(FT x, FT y, FT z)`
 
-  which constructs a 3D vector from a set of coordinates.
+  which constructs a 3D vector from its three coordinates.
   */
   typedef unspecified_type Construct_vector_3;
 

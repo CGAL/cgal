@@ -82,7 +82,7 @@ using Implicit_Cartesian_grid_domain_3 =
  * \param grad a function that describes the gradient of the data
  * \param gt an instance of geometric traits
  *
- * \return a new `Implicit_Cartesian_grid_domain_3`
+ * \return a new `CGAL::Implicit_Cartesian_grid_domain_3`
  */
 template <typename GeomTraits,
           typename ImplicitFunction,
