@@ -66,7 +66,7 @@ using Implicit_octree_domain =
  * \param point_function the function with a point as argument
  * \param gradient a function that describes the gradient of the data
  *
- * \return a new `Implicit_octree_domain`
+ * \return a new `CGAL::Implicit_octree_domain`
  */
 #ifdef DOXYGEN_RUNNING // Allow more than the Octree_wrapper
 template <typename GeomTraits,

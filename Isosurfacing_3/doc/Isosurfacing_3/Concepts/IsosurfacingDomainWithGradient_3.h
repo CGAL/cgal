@@ -38,7 +38,7 @@ public:
   /// @{
 
   /*!
-  gets the gradient at a position
+  gets the gradient at the position `p`
   */
   Vector_3 gradient(const Geom_traits::Point_3& p) const;
 
