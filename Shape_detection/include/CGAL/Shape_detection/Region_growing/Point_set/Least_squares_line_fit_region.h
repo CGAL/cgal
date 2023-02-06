@@ -362,7 +362,7 @@ namespace Point_set {
   };
 
   /*!
-      \ingroup PkgShapeDetectionRGOnPoints
+      \ingroup PkgShapeDetectionRGOnPointSet3
       shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
       To be used together with `make_least_squares_line_fit_region()`.
    */
@@ -374,7 +374,7 @@ namespace Point_set {
                                   typename PointSet3::Vector_map>;
 
   /*!
-      \ingroup PkgShapeDetectionRGOnPoints
+      \ingroup PkgShapeDetectionRGOnPointSet3
       returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
    */
   template <class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>

@@ -14,6 +14,9 @@ Concepts used for the parameters of the `CGAL::Shape_detection::Region_growing`.
 \defgroup PkgShapeDetectionRGOnPoints Point Set
 \ingroup PkgShapeDetectionRG
 
+\defgroup PkgShapeDetectionRGOnPointSet3 Convenience Aliases and Functions for Point_Set_3
+\ingroup PkgShapeDetectionRG
+
 Models that can be used with the `CGAL::Shape_detection::Region_growing`
 for shape detection in a point set.
 
@@ -78,7 +81,7 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 
 \cgalClassifedRefPages
 
-## Efficient RANSAC ##
+## (I) Efficient RANSAC ##
 
 ### Concepts ###
 - `EfficientRANSACTraits`
@@ -101,7 +104,7 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 - `CGAL::Shape_detection::Plane_map<Traits>`
 - `CGAL::Shape_detection::Point_to_shape_index_map<Traits>`
 
-## Region Growing ##
+## (II) Region Growing ##
 
 ### Concepts ###
 - `NeighborQuery`
@@ -111,20 +114,57 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 - `CGAL::Shape_detection::Region_growing<%NeighborQuery, %RegionType>`
 
 ### Point Set ###
+#### Neighbord Query Classes ####
 - `CGAL::Shape_detection::Point_set::K_neighbor_query<GeomTraits, Item, PointMap>`
 - `CGAL::Shape_detection::Point_set::Sphere_neighbor_query<GeomTraits, Item, PointMap>`
 
+#### Sorting and Fitting Classes ####
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<GeomTraits, Item, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<GeomTraits, Item, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<GeomTraits, Item, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region<GeomTraits, Item, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<GeomTraits, Item, PointMap, NormalMap>`
-
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<GeomTraits, Item, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<GeomTraits, Item, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region<GeomTraits, Item, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<GeomTraits, Item, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap, NormalMap>`
+
+#### Convenience Aliases and Functions for `CGAL::Point_set_3` ####
+
+- `CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_k_neighbor_query()`
+- `CGAL::Shape_detection::Point_set::Sphere_neighbor_query_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_sphere_neighbor_query()`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_region()`
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_sorting()`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_cylinder_fit_region()`
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_cylinder_fit_sorting()`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_line_fit_region()`
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_line_fit_sorting()`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region()`
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_sorting()`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_sphere_fit_region()`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting_for_point_set`
+- `CGAL::Shape_detection::Point_set::make_least_squares_sphere_fit_sorting()`
 
 ### Segment Set ###
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<GeomTraits, Item, SegmentMap>`
