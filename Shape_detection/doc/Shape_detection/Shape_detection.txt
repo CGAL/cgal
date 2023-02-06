@@ -517,13 +517,8 @@ as the one explained in Section \ref Shape_detection_RegionGrowingPoints_paramet
 \subsubsection Shape_detection_RegionGrowingMesh_examples Examples
 
 In the example below, we show how to use region growing to detect planes on a polygon mesh that can be either stored as `CGAL::Surface_mesh` or `CGAL::Polyhedron_3`.
-If it is a surface mesh, this example also provides a way to save the result in a file (see Figure \cgalFigureRef{Region_growing_on_surface_mesh}).
-The used `Kernel` here is `CGAL::Exact_predicates_exact_constructions_kernel`. Though this exact kernel provides better quality results,
-please note that it may significantly slow down the execution of the program, so if you need a faster version of region growing,
-use a floating type based kernel.
 
-We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets")
-that is why in this example we also sort the input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting`
+We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets") that is why in this example we also sort the input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting`
 and only then detect regions.
 
 \cgalExample{Shape_detection/region_growing_planes_on_polygon_mesh.cpp}

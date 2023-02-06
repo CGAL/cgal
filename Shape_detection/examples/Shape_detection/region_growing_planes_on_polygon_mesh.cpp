@@ -1,34 +1,28 @@
-#include <CGAL/IO/PLY.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#ifdef USE_POLYHEDRON
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Iterator_range.h>
-#include <CGAL/HalfedgeDS_vector.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#else
+#include <CGAL/Surface_mesh.h>
+#endif
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include "include/utils.h"
 
 // Typedefs.
-using Kernel  = CGAL::Exact_predicates_exact_constructions_kernel;
+using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT      = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 
-// Choose the type of a container for a polygon mesh.
-#define USE_SURFACE_MESH
-#if defined(USE_SURFACE_MESH)
-    using Polygon_mesh   = CGAL::Surface_mesh<Point_3>;
-    using Face_range     = typename Polygon_mesh::Face_range;
-    using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
-    using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
-    using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
+#ifdef USE_POLYHEDRON
+using Polygon_mesh   = CGAL::Polyhedron_3<Kernel>;
 #else
-    using Polygon_mesh   = CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
-    using Face_range     = typename CGAL::Iterator_range<typename boost::graph_traits<Polygon_mesh>::face_iterator>;
-    using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
-    using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
-    using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
+using Polygon_mesh   = CGAL::Surface_mesh<Point_3>;
 #endif
+
+using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
+using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
+using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
@@ -44,7 +38,7 @@ int main(int argc, char *argv[]) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
-  const Face_range face_range = faces(polygon_mesh);
+  const auto& face_range = faces(polygon_mesh);
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
   assert(!is_default_input || face_range.size() == 32245);
 

@@ -20,8 +20,11 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("region_growing_planes_on_point_set_3.cpp")
   create_single_source_cgal_program("region_growing_spheres_on_point_set_3.cpp")
   create_single_source_cgal_program("region_growing_cylinders_on_point_set_3.cpp")
-  create_single_source_cgal_program("region_growing_planes_on_polygon_mesh.cpp")
   create_single_source_cgal_program("region_growing_lines_on_segment_set.cpp")
+  create_single_source_cgal_program("region_growing_planes_on_polygon_mesh.cpp")
+  add_executable(region_growing_planes_on_polyhedron region_growing_planes_on_polygon_mesh.cpp)
+  target_compile_definitions(region_growing_planes_on_polyhedron PUBLIC -DUSE_POLYHEDRON)
+  target_link_libraries(region_growing_planes_on_polyhedron PUBLIC CGAL::CGAL CGAL::Eigen3_support)
 
   foreach(
     target
