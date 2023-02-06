@@ -403,9 +403,9 @@ public:
     {
       IpeSegmentSubPath* SSP_ipe = new IpeSegmentSubPath;
       IpeVector ipeS=IpeVector( CGAL::to_double(std::get<1>(arc).x()),
-                                CGAL::to_double(std::get<1>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<1>(arc).y()));//convert to ipe format
       IpeVector ipeT=IpeVector( CGAL::to_double(std::get<2>(arc).x()),
-                                CGAL::to_double(std::get<2>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<2>(arc).y()));//convert to ipe format
       SSP_ipe->AppendArc(IpeMatrix(sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),0,
                                    0,(std::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
                                      sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),
@@ -945,7 +945,7 @@ public:
               //retrieve circle arcs
               if(SSP_ipe -> Segment(j).Type()==IpePathSegment::EArc &&
                  is_only_rotated_or_scaled(object->AsPath()->Matrix()))
-              {//retreve circle arcs
+              {//retrieve circle arcs
                 if ( !CGAL::Is_in_tuple<Circular_arc_2,typename multi_output_iterator::Value_type_tuple>::value ){
                   to_deselect=true;
                   continue;

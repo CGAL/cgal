@@ -194,7 +194,7 @@ _test_cls_point_3(const R& )
  assert(bb.zmin() <= -20.0);
  assert(bb.zmax() >= -20.0);
 
-  // test compound assignement operator
+  // test compound assignment operator
   CGAL::Point_3<R>  p_1(1,2,3);
   const CGAL::Point_3<R>  p_1_const = p_1;
   CGAL::Vector_3<R> v_1(4,5,6);

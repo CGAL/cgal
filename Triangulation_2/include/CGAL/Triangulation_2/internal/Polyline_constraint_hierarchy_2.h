@@ -25,7 +25,9 @@
 #include <CGAL/assertions.h>
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#  include <CGAL/IO/io.h>
 #  include <CGAL/Constrained_triangulation_2.h>
+#  include <iostream>
 #endif
 
 namespace CGAL {
@@ -871,11 +873,8 @@ insert_constraint(T va, T vb){
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.insert_constraint( #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ")\n";
+            << "C_hierachy.insert_constraint( "
+            << oformat(va) << ", " << oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -908,11 +907,8 @@ insert_constraint_old_API(T va, T vb){
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.insert_constraint_old_API( #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ")\n";
+            << "C_hierachy.insert_constraint_old_API( "
+            << oformat(va) << ", " << oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -943,11 +939,8 @@ append_constraint(Constraint_id cid, T va, T vb){
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.append_constraint( ..., #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ")\n";
+            << "C_hierachy.append_constraint( ..., "
+            << oformat(va) << ", " << oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -1062,13 +1055,9 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::
 add_Steiner(T va, T vb, T vc){
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.add_Steinter( #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ", #"
-              << vc->time_stamp()
-              << ")\n";
+            << "C_hierachy.add_Steinter( "
+            << oformat(va) << ", " << oformat(vb) << ", " << oformat(vc)
+            << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Context_list* hcl=nullptr;
   if(!get_contexts(va,vb,hcl)) {

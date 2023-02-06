@@ -198,7 +198,7 @@ void tetrahedral_isotropic_remeshing(
   const SizingFunction& sizing,
   const NamedParameters& np)
 {
-  CGAL_assertion(tr.is_valid(true));
+  CGAL_assertion(tr.is_valid());
 
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Tr;
 
@@ -378,7 +378,7 @@ void tetrahedral_isotropic_remeshing(
   const SizingFunction& sizing,
   const NamedParameters& np = parameters::default_values())
 {
-  CGAL_assertion(c3t3.triangulation().tds().is_valid(true));
+  CGAL_assertion(c3t3.triangulation().tds().is_valid());
 
   using parameters::get_parameter;
   using parameters::choose_parameter;

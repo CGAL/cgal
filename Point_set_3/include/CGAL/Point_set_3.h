@@ -966,8 +966,8 @@ public:
     - `geom_traits`: contains the kernel `typename Kernel_traits<Point>`::`Kernel`
 
     \warning this method does not check if the normal map was
-    instanciated or not. The normal map named parameter should not be
-    used if this property was not instanciated first.
+    instantiated or not. The normal map named parameter should not be
+    used if this property was not instantiated first.
   */
 #ifdef DOXYGEN_RUNNING
   unspecified_type

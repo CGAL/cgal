@@ -953,7 +953,7 @@ volume_connected_components(const TriangleMesh& tm,
 
   // init the main loop
     // similar as above but exclusively contains cc ids included by more that one CC.
-    // The result will be then merged with nested_cc_per_cc but temporarilly we need
+    // The result will be then merged with nested_cc_per_cc but temporarily we need
     // another container to not more than once the inclusion testing (in case a CC is
     // included by more than 2 CC) + associate such CC to only one volume
     std::vector<std::vector<std::size_t> > nested_cc_per_cc_shared(nb_cc);
@@ -1145,7 +1145,7 @@ volume_connected_components(const TriangleMesh& tm,
             if (is_cc_outward_oriented[cc_id]==is_cc_outward_oriented[ncc_id])
             {
               // the surface component has an incorrect orientation wrt to its parent:
-              // we dump it and all included surface components as independant volumes.
+              // we dump it and all included surface components as independent volumes.
               cc_volume_ids[ncc_id] = next_volume_id++;
               error_codes.push_back(INCOMPATIBLE_ORIENTATION);
               if (used_as_a_predicate) return 0;

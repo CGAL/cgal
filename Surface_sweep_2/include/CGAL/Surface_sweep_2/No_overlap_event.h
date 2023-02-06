@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the No_overlap_event class.
+ * Definition of the No_overlap_event class.
  */
 
 #include <CGAL/Surface_sweep_2/No_overlap_event_base.h>
@@ -45,7 +45,7 @@ namespace Surface_sweep_2 {
  * parameters of the surface-sweep visitor class templates. It enables the
  * definition of these two types, which refer one to another; (the curves to the
  * right of an event and the curves to its left are data members of the event,
- * and the two events associated with the endpoints of a curve are data memebrs
+ * and the two events associated with the endpoints of a curve are data members
  * of the curve.)
  *
  * If you need to represent an event with additional data members, introduce a

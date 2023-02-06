@@ -95,7 +95,7 @@ protected:
 
 public:
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!
@@ -339,7 +339,7 @@ public:
     if (! valid)
       return;
 
-    // Analyze the bahaviour of the rational function at x = -oo (the source).
+    // Analyze the behaviour of the rational function at x = -oo (the source).
     Algebraic           y0;
     const Arr_parameter_space inf_s =
       _analyze_at_minus_infinity (_numer, _denom, y0);
@@ -351,7 +351,7 @@ public:
     else // if (inf_s == ARR_INTERIOR)
       _ps = Point_2 (0, y0);
 
-    // Analyze the bahaviour of the rational function at x = +oo (the target).
+    // Analyze the behaviour of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t =
       _analyze_at_plus_infinity (_numer, _denom, y0);
 
@@ -989,7 +989,7 @@ public:
 
     // Both arcs are defined to the same side (left or right) of the vertical
     // asymptote. If one is defined at y = -oo and the other at y = +oo, we
-    // preform a "lexicographic" comparison.
+    // perform a "lexicographic" comparison.
     const Arr_parameter_space  inf_y1 =
       (ind1 == ARR_MIN_END ? left_infinite_in_y() : right_infinite_in_y());
     const Arr_parameter_space  inf_y2 = (ind2 == ARR_MIN_END) ?
@@ -1833,7 +1833,7 @@ public:
   typedef std::pair<Point_2,Multiplicity>        Intersection_point;
 
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!
@@ -1844,7 +1844,7 @@ public:
   {}
 
   /*!
-   * Constrcutor from a base arc.
+   * Constructor from a base arc.
    */
   _Continuous_rational_arc_2 (const Base& arc) :
     Base (arc)
@@ -2346,7 +2346,7 @@ public:
   typedef typename Base::Rat_vector                     Rat_vector;
   typedef typename Base::Polynomial                     Polynomial;
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!

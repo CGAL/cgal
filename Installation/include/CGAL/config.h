@@ -555,7 +555,7 @@ namespace cpp11{
 namespace CGAL {
 
 // Returns filename prefixed by the directory of CGAL containing data.
-// This directory is either defined in the environement variable CGAL_DATA_DIR,
+// This directory is either defined in the environment variable CGAL_DATA_DIR,
 // otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
 // otherwise it is empty (and thus returns filename unmodified).
 inline std::string data_file_path(const std::string& filename)

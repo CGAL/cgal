@@ -329,7 +329,7 @@ launch()
   std::cerr << "Full refinement time (without fix_c3t3): " << t.time() << " seconds." << std::endl;
 #endif
 
-  // Ensure c3t3 is ok (usefull if process has been stop by the user)
+  // Ensure c3t3 is ok (useful if process has been stop by the user)
   mesher_->fix_c3t3();
   std::cerr<<"Done."<<std::endl;
 }

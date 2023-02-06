@@ -39,7 +39,7 @@ const Point_3<Kernel> &q);
 introduces an iso-oriented cuboid `c` with diagonal
 opposite vertices `p` and `q`. The `int` argument value
 is only used to distinguish the two overloaded functions.
-\pre `p.x()<=q.x()`, `p.y()<=q.y()`and `p.z()<=q.z()`.
+\pre `p.x()<=q.x()`, `p.y()<=q.y()` and `p.z()<=q.z()`.
 */
 Iso_cuboid_3(const Point_3<Kernel> &p,
 const Point_3<Kernel> &q, int);
@@ -65,7 +65,7 @@ introduces an iso-oriented cuboid `c` with diagonal
 opposite vertices
 (`min_hx/hw`, `min_hy/hw`, `min_hz/hw`) and
 (`max_hx/hw`, `max_hy/hw`, `max_hz/hw`).
-\pre `hw` \f$ \neq\f$ 0.
+\pre `hw != 0`.
 */
 Iso_cuboid_3(
 const Kernel::RT& min_hx, const Kernel::RT& min_hy, const Kernel::RT& min_hz,
@@ -156,14 +156,14 @@ Kernel::FT zmax() const;
 /*!
 returns `i`-th %Cartesian coordinate of
 the smallest vertex of `c`.
-\pre \f$ 0 \leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::FT min_coord(int i) const;
 
 /*!
 returns `i`-th %Cartesian coordinate of
 the largest vertex of `c`.
-\pre \f$ 0 \leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::FT max_coord(int i) const;
 

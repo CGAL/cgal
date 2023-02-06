@@ -213,7 +213,7 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Halfedge_around_source_iterator::*bool_type)() const;
 
@@ -313,7 +313,7 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Halfedge_around_target_iterator::*bool_type)() const;
 
@@ -412,7 +412,7 @@ public:
   pointer           operator -> ( )       { return &pos; }
   const value_type* operator -> ( ) const { return &pos; }
 
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Halfedge_around_face_iterator::*bool_type)() const;
 
@@ -522,7 +522,7 @@ public:
   Halfedge_around_source_circulator(vertex_descriptor vd, const Graph& g)
     : Halfedge_around_source_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g)), opp(g)
   {}
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Halfedge_around_source_circulator::*bool_type)() const;
 
@@ -580,7 +580,7 @@ public:
 #ifndef DOXYGEN_RUNNING
   typedef std::size_t size_type;
 
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Face_around_target_circulator::*bool_type)() const;
 
@@ -655,7 +655,7 @@ public:
   bool       operator != ( const Self& other) const { return  g != other.g || pos != other.pos; }
 
 
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Halfedge_around_target_circulator::*bool_type)() const;
 
@@ -752,7 +752,7 @@ public:
   bool       operator != ( const Self& other) const { return  g != other.g || pos != other.pos; }
 
 
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Halfedge_around_face_circulator::*bool_type)() const;
 
@@ -1008,7 +1008,7 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Vertex_around_face_circulator::*bool_type)() const;
 
@@ -1062,7 +1062,7 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Vertex_around_face_iterator::*bool_type)() const;
 
@@ -1192,7 +1192,7 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Vertex_around_target_circulator::*bool_type)() const;
 
@@ -1250,7 +1250,7 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Vertex_around_target_iterator::*bool_type)() const;
 
@@ -1337,7 +1337,7 @@ public:
   Out_edge_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
     : Out_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), opp(g) {}
 
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Out_edge_iterator::*bool_type)() const;
 
@@ -1379,7 +1379,7 @@ public:
     : In_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
 
-  // design patter: "safe bool"
+  // design pattern: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (In_edge_iterator::*bool_type)() const;
 

@@ -50,7 +50,7 @@ int main()
   Tree tree(boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin())),
             boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end())));
 
-  // search K nearest neighbours
+  // search K nearest neighbors
   Point_3 query(0.0, 0.0, 0.0);
   Distance tr_dist;
 

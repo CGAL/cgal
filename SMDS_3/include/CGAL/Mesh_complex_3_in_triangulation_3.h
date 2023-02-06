@@ -131,7 +131,7 @@ namespace CGAL {
       }; // end class template C3t3_helper_class
 
     } // end namespace SMDS_3::details
-  } //end namesapce SMDS_3
+  } //end namespace SMDS_3
 
 /*!
   \ingroup PkgSMDS3Classes
@@ -299,7 +299,7 @@ public:
   Mesh_complex_3_in_triangulation_3(Self&& rhs);
 
   /**
-  * Assignement operator, also serves as move-assignement
+  * Assignment operator, also serves as move-assignment
   */
   Self& operator=(Self rhs)
   {
@@ -1730,7 +1730,7 @@ Mesh_complex_3_in_triangulation_3()
   , manifold_info_initialized_(false) //TODO: parallel!
 {
   // We don't put it in the initialization list because
-  // std::atomic has no contructors
+  // std::atomic has no constructors
   number_of_facets_ = 0;
   number_of_cells_ = 0;
 }

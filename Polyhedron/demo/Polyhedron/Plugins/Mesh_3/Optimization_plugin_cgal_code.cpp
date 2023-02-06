@@ -42,7 +42,7 @@ class Optimization_function_base
 {
 public:
   /// Constructor
-  /// Takes the responsability of d
+  /// Takes the responsibility of d
   explicit
   Optimization_function_base(C3t3& c3t3, Domain* d)
     : c3t3_(c3t3), domain_(d) {}

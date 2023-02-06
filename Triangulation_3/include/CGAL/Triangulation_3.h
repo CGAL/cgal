@@ -1471,7 +1471,7 @@ protected:
   }
 
 private:
-  // Here are the conflit tester function objects passed to
+  // Here are the conflict tester function objects passed to
   // insert_conflict_[23]() by insert_outside_convex_hull().
   class Conflict_tester_outside_convex_hull_3
   {

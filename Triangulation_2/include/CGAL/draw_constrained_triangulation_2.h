@@ -40,7 +40,7 @@ public:
   /// @param at2 the t2 to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big object where this time could be long)
   SimpleConstrainedTriangulation2ViewerQt(QWidget* parent, const T2& at2,
                                           InDomainPmap ipm,
                                           const char* title="Basic CDT2 Viewer",

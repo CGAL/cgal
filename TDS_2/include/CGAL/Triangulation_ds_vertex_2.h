@@ -68,7 +68,7 @@ public:
   bool is_valid(bool verbose = false, int level = 0);
 
 private:
-  // used to implement deprected access to circulators
+  // used to implement deprecated access to circulators
   Vertex_handle handle();
 };
 

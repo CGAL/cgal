@@ -572,7 +572,7 @@ _test_cls_delaunay_3(const Triangulation &)
     size_type m = Tdel.remove(vertices.begin(), vertices.end());
     assert(m == n - Tdel.number_of_vertices());
     assert(Tdel.is_valid(false));
-    std::cout << "    successfull" << std::endl;
+    std::cout << "    successful" << std::endl;
   }
 
 
@@ -640,7 +640,7 @@ _test_cls_delaunay_3(const Triangulation &)
     std::cout << "    Testing nearest_vertex()" << std::endl;
     // We do a nearest_vertex() and two nearest_vertex_in_cell()
     // queries on all points with integer coordinate
-    // in the cube [-1;6]^3. In each case we check explicitely that the
+    // in the cube [-1;6]^3. In each case we check explicitly that the
     // output is correct by comparing distance to other vertices.
     Cell_handle c1 = T3_13.finite_cells_begin();
     Cell_handle c2 = T3_13.infinite_vertex()->cell();

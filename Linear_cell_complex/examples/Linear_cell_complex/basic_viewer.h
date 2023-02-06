@@ -419,7 +419,7 @@ public:
                                                         SMOOTH_NORMAL_MONO_FACES]);
         }
         else
-        { // Here user does not provide all vertex normals: we use face normal istead
+        { // Here user does not provide all vertex normals: we use face normal instead
           // and thus we will not be able to use Gourod
          add_normal(normal, arrays[m_started_face_is_colored?
                                    SMOOTH_NORMAL_COLORED_FACES:
@@ -438,7 +438,7 @@ public:
 
         bool with_vertex_normal=(vertex_normals_for_face.size()==points_of_face.size());
 
-        // (1) We insert all the edges as contraint in the CDT.
+        // (1) We insert all the edges as constraint in the CDT.
         typename CDT::Vertex_descriptor previous=NULL, first=NULL;
         for (int i=0; i<points_of_face.size(); ++i)
         {

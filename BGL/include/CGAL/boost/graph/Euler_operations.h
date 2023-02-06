@@ -437,7 +437,7 @@ split_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
         internal::insert_tip( opposite(inew, g), hnew, g);
         internal::insert_tip( opposite(jnew, g), inew, g);
         internal::insert_tip( opposite(hnew, g), jnew, g);
-        // Make the new incidences with the old stucture.
+        // Make the new incidences with the old structure.
         CGAL_assertion_code( std::size_t termination_count = 0;)
           if ( next(h,g) != i) {
             halfedge_descriptor nh = next(h, g);
@@ -983,7 +983,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   // disconnect hand-fans (umbrellas being not affected) at non-manifold vertices
   // in case the location on the boundary of the mesh where they are attached is closed.
   // Note that we link the boundary of the hand fans together, making them
-  // independant boundary cycles (even if the non-manifold vertex is not duplicated)
+  // independent boundary cycles (even if the non-manifold vertex is not duplicated)
   if ( !former_border_hedges.empty() )
   {
     std::sort(former_border_hedges.begin(), former_border_hedges.end()); // TODO: is it better to use a dynamic pmap?

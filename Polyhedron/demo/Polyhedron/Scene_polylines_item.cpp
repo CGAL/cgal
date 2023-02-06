@@ -248,7 +248,7 @@ Scene_polylines_item_private::computeSpheres()
               colors[2] = 0;
               break;
           default:
-              colors[0] = 200; //fuschia
+              colors[0] = 200; //fuchsia
               colors[1] = 0;
               colors[2] = 200;
           }
@@ -637,7 +637,7 @@ void Scene_polylines_item::split_at_sharp_angles()
                     std::cerr << "Split polyline (small angle) "
                               <<  std::acos(sqrt(CGAL::square(sc_prod) /
                                                  ((av*av) * (bv*bv)))) * 180 /CGAL_PI
-                               << " degres\n";
+                               << " degrees\n";
 #endif
                     Bare_polyline new_polyline;
                     std::copy(it, bare_polyline.end(),

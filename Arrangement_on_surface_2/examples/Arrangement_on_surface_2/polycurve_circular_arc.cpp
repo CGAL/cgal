@@ -103,12 +103,12 @@ int main() {
   X_monotone_polycurve x_polycurve_1 =
     ctr_xcurve(x_curves.begin(), x_curves.end());
 
-  // Insert polycurves to Arangment and print.
+  // Insert polycurves to Arrangement and print.
   Polycurve_circ_arc_arrangment polycurve_arrangment(&traits);
   insert(polycurve_arrangment, polycurve_1);
   insert(polycurve_arrangment, polycurve_2);
   insert(polycurve_arrangment, x_polycurve_1);
-  std::cout << "Arrangment Statistics:\n";
+  std::cout << "Arrangement Statistics:\n";
   print_arrangement(polycurve_arrangment);
 
   return 0;

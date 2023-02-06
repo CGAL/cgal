@@ -103,7 +103,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
         topol_traits->erase_redundant_vertex(&(*v_temp));
 
         // Merge the edges into a single one, and delete the vertex from the
-        // DCEL. (By default, the merge_edge() funtion deletes the vertex.)
+        // DCEL. (By default, the merge_edge() function deletes the vertex.)
         arr.merge_edge(havc, havc_next->twin() , merged_cv);
       }
     }
@@ -158,7 +158,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
       // The curve that its left vertex lies on the identification curve
       const auto* sub_cv1 = boost::get<X_monotone_curve_2>(&(*it));
       ++it;
-      //The curve that its rigth vertex lies on the identification curve
+      //The curve that its right vertex lies on the identification curve
       const auto* sub_cv2 = boost::get<X_monotone_curve_2>(&(*it));
 
       bool eq1 = (*sub_cv1).source() == hei1->source()->point();

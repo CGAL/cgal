@@ -70,19 +70,25 @@ namespace Polygon_mesh_processing {
   must not intersect the surface. Otherwise, additionally, the boundary
   of the hole must not contain any non-manifold vertex. The patch generated does not
   introduce non-manifold edges nor degenerate triangles. If a hole cannot be triangulated,
-  `pmesh` is not modified and nothing is recorded in `out`.
+  `pmesh` is not modified and nothing is recorded in the face output
+  iterator.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
-  @tparam OutputIterator a model of `OutputIterator`
-    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
-  @param out iterator over patch faces
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
+
+    \cgalParamNBegin{face_output_iterator}
+      \cgalParamDescription{iterator over patch faces}
+      \cgalParamType{a model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces}
+      \cgalParamDefault{`Emptyset_iterator`}
+    \cgalParamNEnd
+
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -145,7 +151,7 @@ namespace Polygon_mesh_processing {
 
   \cgalNamedParamsEnd
 
-  @return `out`
+  @return the face output iterator
 
   \todo handle islands
   @todo Replace border_halfedge by a range of border halfedges.
@@ -156,19 +162,23 @@ namespace Polygon_mesh_processing {
   @todo handle the case where an island is reduced to a point
   */
   template<typename PolygonMesh,
-           typename OutputIterator,
-           typename NamedParameters = parameters::Default_named_parameters>
-  OutputIterator
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+  auto
   triangulate_hole(PolygonMesh& pmesh,
               typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-              OutputIterator out,
-              const NamedParameters& np = parameters::default_values())
+              const CGAL_NP_CLASS& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
 
-    typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type         GeomTraits;
+    typedef typename GetGeomTraits<PolygonMesh,CGAL_NP_CLASS>::type         GeomTraits;
+
+    typedef typename internal_np::Lookup_named_param_def<internal_np::face_output_iterator_t,
+                                                         CGAL_NP_CLASS,
+                                                         Emptyset_iterator>::type Face_output_iterator;
+
+    Face_output_iterator out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::face_output_iterator));
 
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -210,37 +220,77 @@ namespace Polygon_mesh_processing {
 
     Hole_filling::Default_visitor default_visitor;
 
-    return internal::triangulate_hole_polygon_mesh(
-      pmesh,
-      border_halfedge,
-      out,
-      choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
-      use_dt3,
-      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
-      use_cdt,
-      choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
-      choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
-      max_squared_distance).first;
+    return
+      internal::triangulate_hole_polygon_mesh(
+        pmesh,
+        border_halfedge,
+        out,
+        choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
+        use_dt3,
+        choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
+        use_cdt,
+        choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
+        choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
+        max_squared_distance).first;
   }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  /*!
+  \ingroup PMP_hole_filling_grp
+
+  \deprecated This function is deprecated since \cgal 5.6 and the
+  overload with the named parameter `face_output_iterator` should be
+  used instead.
+
+  \brief triangulates a hole in a polygon mesh.
+
+
+  @tparam PolygonMesh a model of `MutableFaceGraph`
+  @tparam OutputIterator a model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  */
+  template<typename PolygonMesh,
+           typename OutputIterator,
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+  CGAL_DEPRECATED
+  OutputIterator
+  triangulate_hole(PolygonMesh& pmesh,
+              typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+              OutputIterator out,
+              const CGAL_NP_CLASS& np = parameters::default_values())
+  {
+    return triangulate_hole(pmesh, border_halfedge,np.face_output_iterator(out));
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /*!
   \ingroup PMP_hole_filling_grp
   @brief triangulates and refines a hole in a polygon mesh.
 
   @tparam PolygonMesh must be model of `MutableFaceGraph`
-  @tparam FacetOutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam VertexOutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
-  @param face_out output iterator over patch faces
-  @param vertex_out output iterator over patch vertices without including the boundary
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
+
+    \cgalParamNBegin{face_output_iterator}
+      \cgalParamDescription{iterator over patch faces}
+      \cgalParamType{a model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces}
+      \cgalParamDefault{`Emptyset_iterator`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_output_iterator}
+      \cgalParamDescription{iterator over patch vertices}
+      \cgalParamType{a model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices}
+      \cgalParamDefault{`Emptyset_iterator`}
+    \cgalParamNEnd
+
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -296,7 +346,7 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{factor to control density of the ouput mesh,
+      \cgalParamDescription{factor to control density of the output mesh,
                             where larger values cause denser refinements, as in `refine()`}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
@@ -309,7 +359,7 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  @return pair of `face_out` and `vertex_out`
+  @return pair of face and vertex output iterator
 
   \sa CGAL::Polygon_mesh_processing::triangulate_hole()
   \sa CGAL::Polygon_mesh_processing::refine()
@@ -317,53 +367,108 @@ namespace Polygon_mesh_processing {
   \todo handle islands
   */
   template<typename PolygonMesh,
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+  auto
+  triangulate_and_refine_hole(PolygonMesh& pmesh,
+      typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+      const CGAL_NP_CLASS& np = parameters::default_values())
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    using parameters::get_parameter_reference;
+
+    typedef typename internal_np::Lookup_named_param_def<internal_np::face_output_iterator_t,
+                                                         CGAL_NP_CLASS,
+                                                         Emptyset_iterator>::type Face_output_iterator;
+
+    Face_output_iterator face_out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::face_output_iterator));
+
+    typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_output_iterator_t,
+                                                         CGAL_NP_CLASS,
+                                                         Emptyset_iterator>::type Vertex_output_iterator;
+
+    Vertex_output_iterator vertex_out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::vertex_output_iterator));
+
+    std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
+    triangulate_hole(pmesh, border_halfedge, np.face_output_iterator(std::back_inserter(patch)));
+    face_out = std::copy(patch.begin(), patch.end(), face_out);
+
+    Hole_filling::Default_visitor default_visitor;
+    typedef typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
+                                                         CGAL_NP_CLASS,
+                                                         Hole_filling::Default_visitor>::reference Visitor;
+
+    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+    visitor.start_refine_phase();
+    std::pair<Face_output_iterator, Vertex_output_iterator> res = refine(pmesh, patch, face_out, vertex_out, np);
+    visitor.end_refine_phase();
+    return res;
+  }
+
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+ /*!
+  \ingroup PMP_hole_filling_grp
+
+  \deprecated This function is deprecated since \cgal 5.6 and the
+  overload with the named parameters `face_output_iterator` and
+  `vertex_output_iterator` should be used instead.
+
+ @brief triangulates and refines a hole in a polygon mesh.
+
+  @tparam PolygonMesh must be model of `MutableFaceGraph`
+  @tparam FaceOutputIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam VertexOutputIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ */
+
+  template<typename PolygonMesh,
            typename FaceOutputIterator,
            typename VertexOutputIterator,
-           typename NamedParameters = parameters::Default_named_parameters>
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+  CGAL_DEPRECATED
   std::pair<FaceOutputIterator, VertexOutputIterator>
     triangulate_and_refine_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
-      const NamedParameters& np = parameters::default_values())
+      const CGAL_NP_CLASS& np = parameters::default_values())
   {
-    using parameters::choose_parameter;
-    using parameters::get_parameter_reference;
-
-    std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
-    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
-    face_out = std::copy(patch.begin(), patch.end(), face_out);
-
-    Hole_filling::Default_visitor default_visitor;
-    typedef typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
-                                                         NamedParameters,
-                                                         Hole_filling::Default_visitor>::reference Visitor;
-
-    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
-    visitor.start_refine_phase();
-    std::pair<FaceOutputIterator, VertexOutputIterator> res = refine(pmesh, patch, face_out, vertex_out, np);
-    visitor.end_refine_phase();
-    return res;
+    return triangulate_and_refine_hole(pmesh, border_halfedge,
+                                       np.face_output_iterator(face_out).vertex_output_iterator(vertex_out));
   }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /*!
   \ingroup PMP_hole_filling_grp
   @brief triangulates, refines and fairs a hole in a polygon mesh.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
-  @tparam FaceOutputIterator model of `OutputIterator`
-      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
-  @tparam VertexOutputIterator model of `OutputIterator`
-      holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
-  @param face_out output iterator over patch faces
-  @param vertex_out output iterator over patch vertices without including the boundary
+
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
+
+    \cgalParamNBegin{face_output_iterator}
+      \cgalParamDescription{iterator over patch faces}
+      \cgalParamType{a model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces}
+      \cgalParamDefault{`Emptyset_iterator`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_output_iterator}
+      \cgalParamDescription{iterator over patch vertices}
+      \cgalParamType{a model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices}
+      \cgalParamDefault{`Emptyset_iterator`}
+    \cgalParamNEnd
+
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -410,15 +515,15 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{factor to control density of the ouput mesh,
+      \cgalParamDescription{factor to control density of the output mesh,
                             where larger values cause denser refinements, as in `refine()`}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
     \cgalParamNEnd
 
     \cgalParamNBegin{fairing_continuity}
-      \cgalParamDescription{A value controling the tangential continuity of the output surface patch.
-                            The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+      \cgalParamDescription{A value controlling the tangential continuity of the output surface patch.
+                            The possible values are 0, 1 and 2, referring to the  C<sup>0</sup>, C<sup>1</sup>
                             and C<sup>2</sup> continuity.}
       \cgalParamType{unsigned int}
       \cgalParamDefault{`1`}
@@ -441,10 +546,8 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  @return tuple of
-  - `bool`: `true` if fairing is successful
-  - `face_out`
-  - `vertex_out`
+  @return tuple of `bool` with `true` if fairing is successful, and
+  the face and vertex output iterator
 
   \sa CGAL::Polygon_mesh_processing::triangulate_hole()
   \sa CGAL::Polygon_mesh_processing::refine()
@@ -453,32 +556,41 @@ namespace Polygon_mesh_processing {
   \todo handle islands
   */
   template<typename PolygonMesh,
-           typename FaceOutputIterator,
-           typename VertexOutputIterator,
-           typename NamedParameters = parameters::Default_named_parameters>
-  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+  auto
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-    FaceOutputIterator face_out,
-    VertexOutputIterator vertex_out,
-    const NamedParameters& np = parameters::default_values())
+    const CGAL_NP_CLASS& np = parameters::default_values())
   {
     CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
     using parameters::choose_parameter;
+    using parameters::get_parameter;
     using parameters::get_parameter_reference;
 
     CGAL_precondition(is_valid_halfedge_descriptor(border_halfedge, pmesh));
 
+    typedef typename internal_np::Lookup_named_param_def<internal_np::face_output_iterator_t,
+                                                         CGAL_NP_CLASS,
+                                                         Emptyset_iterator>::type Face_output_iterator;
+
+    Face_output_iterator face_out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::face_output_iterator));
+
+    typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_output_iterator_t,
+                                                         CGAL_NP_CLASS,
+                                                         Emptyset_iterator>::type Vertex_output_iterator;
+
+    Vertex_output_iterator vertex_out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::vertex_output_iterator));
+
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
     face_out = triangulate_and_refine_hole
-      (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
+      (pmesh, border_halfedge, np.face_output_iterator(face_out).vertex_output_iterator(std::back_inserter(patch))).first;
 
     CGAL_postcondition(CGAL::is_triangle_mesh(pmesh));
 
     Hole_filling::Default_visitor default_visitor;
     typedef typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
-                                                         NamedParameters,
+                                                         CGAL_NP_CLASS,
                                                          Hole_filling::Default_visitor>::reference Visitor;
 
     Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -489,6 +601,39 @@ namespace Polygon_mesh_processing {
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return std::make_tuple(fair_success, face_out, vertex_out);
   }
+
+  #ifndef CGAL_NO_DEPRECATED_CODE
+  /*!
+  \ingroup PMP_hole_filling_grp
+
+  \deprecated This function is deprecated since \cgal 5.6 and the
+  overload with the named parameters `face_output_iterator` and
+  `vertex_output_iterator` should be used instead.
+
+  \brief triangulates, refines, and fairs a hole in a polygon mesh.
+
+  @tparam PolygonMesh a model of `MutableFaceGraph`
+  @tparam FaceOutputIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam VertexOutputIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  */
+  template<typename PolygonMesh,
+           typename FaceOutputIterator,
+           typename VertexOutputIterator,
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+  CGAL_DEPRECATED
+  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+    FaceOutputIterator face_out,
+    VertexOutputIterator vertex_out,
+    const CGAL_NP_CLASS& np = parameters::default_values())
+  {
+    return triangulate_refine_and_fair_hole(pmesh, border_halfedge, np.face_output_iterator(face_out).vertex_output_iterator(vertex_out));
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /*!
   \ingroup PMP_hole_filling_grp

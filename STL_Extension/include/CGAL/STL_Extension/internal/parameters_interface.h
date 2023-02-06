@@ -29,6 +29,9 @@ CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
 CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_id_map)
 
+CGAL_add_named_parameter(vertex_output_iterator_t, vertex_output_iterator, vertex_output_iterator)
+CGAL_add_named_parameter(face_output_iterator_t, face_output_iterator, face_output_iterator)
+
 CGAL_add_named_parameter(vertex_to_vertex_output_iterator_t, vertex_to_vertex_output_iterator, vertex_to_vertex_output_iterator)
 CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_halfedge_output_iterator, halfedge_to_halfedge_output_iterator)
 CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
@@ -156,6 +159,7 @@ CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
 CGAL_add_named_parameter(do_lock_mesh_t, do_lock_mesh, do_lock_mesh)
 CGAL_add_named_parameter(do_simplify_border_t, do_simplify_border, do_simplify_border)
 CGAL_add_named_parameter(algorithm_t, algorithm, algorithm)
+CGAL_add_named_parameter(use_smoothing_t, use_smoothing, use_smoothing)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
@@ -327,4 +331,3 @@ CGAL_add_named_parameter_with_compatibility_ref_only(sizing_field_param_t, sizin
 
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
-

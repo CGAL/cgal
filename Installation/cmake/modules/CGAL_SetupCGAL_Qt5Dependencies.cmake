@@ -2,7 +2,7 @@
 # CGAL_SetupCGAL_Qt5Dependencies
 # ------------------------------
 #
-# The module searchs for the dependencies of the `CGAL_Qt5` library:
+# The module searches for the dependencies of the `CGAL_Qt5` library:
 #   - the `Qt5` libraries
 #
 # by calling
