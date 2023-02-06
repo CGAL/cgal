@@ -46,7 +46,7 @@ software.
 
 If you want to cite the \cgal Library or project as a whole, please
 
-- cite: \cgal, Computational Geometry Algorithms Library, https://www.cgal.org 
+- cite: \cgal, Computational Geometry Algorithms Library, https://www.cgal.org
 - use the first bibtex entry from the file <a href="how_to_cite_cgal.bib">how_to_cite_cgal.bib</a>.
 
 ## Citing the User and Reference Manual ##
@@ -65,7 +65,7 @@ If you want to refer to \cgal manual, please cite the appropriate
 The \cgal Project.
  <em>\cgal User and Reference Manual</em>.
  \cgal Editorial Board, ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.
-[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;| 
+[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;|
 <a href="packages.html">http</a>&nbsp;]
 
 </td>
@@ -80,7 +80,7 @@ result_txt_footer=r"""</td>
 """
 
 pre_html=r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="https://www.w3.org/1999/xhtml">
 <head>
 <link rel="icon" type="image/png" href="../Manual/g-196x196-doc.png"/>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>

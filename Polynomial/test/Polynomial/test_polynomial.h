@@ -445,7 +445,7 @@ void unigcdres(CGAL::Integral_domain_tag) {
     assert( v*d == (-c)*a*fh + c*b*gh );
 
     // Michael Kerber's example for the hgdelta_update() bug:
-    // These polynomials cretate a situation where h does not divide g,
+    // These polynomials create a situation where h does not divide g,
     // but h^(delta-1) divides g^delta (as predicted by subresultant theory).
     // TODO: Uncomment following code
     /*CGAL::Creator_1<int, NT> int2nt;

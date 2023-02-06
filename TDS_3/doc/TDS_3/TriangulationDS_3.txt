@@ -38,7 +38,7 @@ Following the standard vocabulary of simplicial complexes, an \f$ i\f$-face
 \f$ f_i\f$ and a \f$ j\f$-face \f$ f_j\f$ \f$ (0 \leq j < i \leq 3)\f$ are said to be
 <I>incident</I> in the triangulation if \f$ f_j\f$ is a (sub)face of \f$ f_i\f$, and
 two \f$ i\f$-faces \f$ (0 \leq i \leq 3)\f$ are said to be <I>adjacent</I> if
-they share a commun incident (sub)face.
+they share a common incident (sub)face.
 
 Each cell gives access to its four incident vertices and to its four
 adjacent cells. Each vertex gives direct access to one of its incident

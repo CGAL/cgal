@@ -383,9 +383,9 @@ class Weight_incomplete
 private:
   template<class Point_3, class LookupTable>
   Weight_incomplete(const std::vector<Point_3>& P,
-    const std::vector<Point_3>& Q,
-    int i, int j, int k,
-    const LookupTable& lambda)
+                    const std::vector<Point_3>& Q,
+                    int i, int j, int k,
+                    const LookupTable& lambda)
     : weight(P,Q,i,j,k,lambda), patch_size(1)
   { }
 
@@ -442,9 +442,9 @@ struct Weight_calculator
 
   template<class Point_3, class LookupTable>
   Weight operator()(const std::vector<Point_3>& P,
-    const std::vector<Point_3>& Q,
-    int i, int j, int k,
-    const LookupTable& lambda) const
+                    const std::vector<Point_3>& Q,
+                    int i, int j, int k,
+                    const LookupTable& lambda) const
   {
     if( !is_valid(P,i,j,k) )
     { return Weight::NOT_VALID(); }
@@ -1270,7 +1270,7 @@ bool is_planar_2(
 
   const double n = static_cast<double>(points.size() - 1); // the first equals to the last
   if (n < 3) {
-    return false; // cant be a plane!
+    return false; // can't be a plane!
   }
 
   // Compute centroid.

@@ -11,7 +11,7 @@
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -103,7 +103,7 @@ int skip_comment_line (std::istream & in) {
     }
   } while (c == ' ' || c == '\t' || c == '\n');
 
-  if (c == EOF)
+  if (in.eof())
     core_io_error_handler("CoreIO::read_from_file()","unexpected end of file.");
 
   in.putback(c);
@@ -225,7 +225,7 @@ void writeToFile(const BigFloat& bf, std::ostream& out, int base, int charsPerLi
     /*
   BigInt c(CORE::abs(bf.m()));
 
-  // get the absoulte value string
+  // get the absolute value string
   char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
   mpz_get_str(buffer, base, c.get_mp());
   std::size_t length = std::strlen(buffer);

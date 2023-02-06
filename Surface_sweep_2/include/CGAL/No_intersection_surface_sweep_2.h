@@ -278,7 +278,7 @@ public:
     m_visitor->after_sweep();
   }
 
-  /*! Run the sweep-line alogrithm on a range of x-monotone curves, a range
+  /*! Run the sweep-line algorithm on a range of x-monotone curves, a range
    * of action event points (if a curve passed through an action point, it will
    * be split) and a range of query points (if a curve passed through a
    * query point,it will not be split).
@@ -476,7 +476,7 @@ protected:
     }
   }
 
-  /*! Initiliaze the sweep algorithm. */
+  /*! Initialize the sweep algorithm. */
   template <typename CurveInputIterator>
   void _init_sweep(CurveInputIterator curves_begin,
                    CurveInputIterator curves_end)
@@ -487,7 +487,7 @@ protected:
     _init_curves(curves_begin, curves_end);     // initialize the curves
   }
 
-  /*! Initiliaze the sweep algorithm. */
+  /*! Initialize the sweep algorithm. */
   template <typename EdgeRange, typename Accessor>
   void _init_indexed_sweep(const EdgeRange& edges,
                            const Accessor& accessor)

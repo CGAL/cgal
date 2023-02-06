@@ -16,8 +16,7 @@
 // (ACS -- Algorithms for Complex Shapes)
 
 // Descriptions of the file format can be found at
-// http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
-// http://www.tnt.uni-hannover.de/soft/compgraph/fileformats/docs/DXF.ascii
+// https://images.autodesk.com/adsk/files/autocad_2012_pdf_dxf-reference_enu.pdf
 
 #ifndef CGAL_IO_DXF_READER_DOUBLES_H
 #define CGAL_IO_DXF_READER_DOUBLES_H

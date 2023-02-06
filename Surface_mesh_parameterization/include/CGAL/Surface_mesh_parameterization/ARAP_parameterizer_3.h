@@ -458,6 +458,7 @@ private:
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
   {
+    // Since we loop faces, we are implicitely defining the weight of border halfedges as 0...
     for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
@@ -504,7 +505,7 @@ private:
   // - compute w_ii = - sum of w_ijs.
   //
   // \pre Vertices must be indexed.
-  // \pre Vertex i musn't be already parameterized.
+  // \pre Vertex i mustn't be already parameterized.
   // \pre Line i of A must contain only zeros.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_matrix(Matrix& A,
@@ -560,7 +561,6 @@ private:
     Error_code status = OK;
 
     // compute A
-    unsigned int count = 0;
     for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the line i of the matrix A
@@ -570,7 +570,6 @@ private:
       } else { // fixed vertices
         int index = get(vimap, vd);
         A.set_coef(index, index, 1, true /*new*/);
-        ++count;
       }
     }
     return status;
@@ -1018,7 +1017,7 @@ private:
   // - call compute_b_ij() for each neighbor v_j to compute the B coefficient b_i
   //
   // \pre Vertices must be indexed.
-  // \pre Vertex i musn't be already parameterized.
+  // \pre Vertex i mustn't be already parameterized.
   // \pre Lines i of Bu and Bv must be zero.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_rhs(const Triangle_mesh& mesh,
@@ -1079,7 +1078,6 @@ private:
     // Initialize the right hand side B in the linear system "A*X = B"
     Error_code status = OK;
 
-    unsigned int count = 0;
     for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the lines i of the vectors Bu and Bv
@@ -1092,7 +1090,6 @@ private:
         const Point_2& uv = get(uvmap, vd);
         Bu.set(index, uv.x());
         Bv.set(index, uv.y());
-        ++count;
       }
     }
     return status;

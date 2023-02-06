@@ -32,10 +32,10 @@ protected:
   typedef Curve_with_halfedge<Arrangement_>        Base;
 
   const Arrangement* m_arr; // pointer to the arrangement containing the edge.
-  unsigned int m_bc;        // the boudary counter of the halfedge with the same
+  unsigned int m_bc;        // the boundary counter of the halfedge with the same
                             // direction as the curve
 
-  unsigned int m_twin_bc;   // the boudary counter of the halfedge with the same
+  unsigned int m_twin_bc;   // the boundary counter of the halfedge with the same
                             // direction as the curve
 
 public:

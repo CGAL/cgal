@@ -13,7 +13,7 @@ An instance of this class represents an extension of the type `NT` by *one* squa
 
 For example, let `Integer` be some type representing \f$ \mathbb{Z}\f$, then
 `Sqrt_extension<Integer,Integer>` is able to represent \f$ \mathbb{Z}[\sqrt{\mathrm{root}}]\f$
-for some arbitrary Integer \f$\mathrm{root}\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="http://mathworld.wolfram.com/ExtensionRing.html">\cgalFootnoteCode{http://mathworld.wolfram.com/ExtensionRing.html}</A>}
+for some arbitrary Integer \f$\mathrm{root}\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="https://mathworld.wolfram.com/ExtensionRing.html">\cgalFootnoteCode{https://mathworld.wolfram.com/ExtensionRing.html}</A>}
 The value of \f$\mathrm{root}\f$ is set at
 construction time, or set to zero if it is not specified.
 

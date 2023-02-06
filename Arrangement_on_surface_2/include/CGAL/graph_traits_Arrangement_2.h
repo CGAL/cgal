@@ -37,7 +37,7 @@ namespace boost {
 
 /*! \class
  * Specialization of the BGL graph-traits template, which serves as a (primal)
- * adapter for Arrangment_on_surface_2, where the valid arrangement vertices
+ * adapter for Arrangement_on_surface_2, where the valid arrangement vertices
  * correspond to graph verices and arrangement halfedges correspond to
  * arrangement edges.
  * Note that non-fictitious vertices at infinity are also considered as graph
@@ -83,7 +83,7 @@ private:
   /*! \class
    * Iteratator over all outgoing halfedges around a given vertex., skipping
    * fictitious halfedges.
-   * This is by adapting the Halfegde_around_vertex_circulator type to an
+   * This is by adapting the Halfedge_around_vertex_circulator type to an
    * iterator. Moreover, as the circulator goes over all ingoing halfedges
    * of the vertex, the iterator adapter may return their twin halfedges, if
    * we need the outgoing halfedges.
@@ -119,7 +119,7 @@ public:
 
     /*!
      * Constructor.
-     * \param circ A ciruclator for the halfedges around a vertex.
+     * \param circ A circulator for the halfedges around a vertex.
      * \param out_edges Do we need the outgoing or the ingoing halfedges.
      * \param counter A counter associated with the iterator.
      * \param cend The past-the-end counter value.
@@ -333,7 +333,7 @@ public:
 
 /*! \class
  * Specialization of the BGL graph-traits template, which serves as a (primal)
- * adapter for Arrangment_2, where the arrangement vertices correspond to graph
+ * adapter for Arrangement_2, where the arrangement vertices correspond to graph
  * verices and arrangement halfedges correspond to arrangement edges.
  */
 template <class Traits_, class Dcel_>

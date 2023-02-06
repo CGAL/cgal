@@ -115,7 +115,7 @@ To answer this need, a combinatorial map allows to create <I>attributes</I> whic
 <LI>an <I>i</I>-cell may have no associated <I>i</I>-attribute.
 </UL>
 
-Since <I>i</I>-cells are not explicitely represented in combinatorial maps, the association between <I>i</I>-cells and <I>i</I>-attributes is transferred to darts: if attribute <I>a</I> is associated to <I>i</I>-cell <I>c</I>, all the darts belonging to <I>c</I> are associated to <I>a</I>.
+Since <I>i</I>-cells are not explicitly represented in combinatorial maps, the association between <I>i</I>-cells and <I>i</I>-attributes is transferred to darts: if attribute <I>a</I> is associated to <I>i</I>-cell <I>c</I>, all the darts belonging to <I>c</I> are associated to <I>a</I>.
 
 We can see two examples of combinatorial maps having some attributes in \cgalFigureRef{fig_cmap_with_attribs}. In the first example (Left), a 2D combinatorial map has 1-attributes containing a float, for example corresponding to the length of the associated 1-cell, and 2-attributes containing a color in RGB format. In the second example (Right), a 3D combinatorial map has 2-attributes containing a color in RGB format.
 
@@ -542,7 +542,7 @@ Let <I>d0</I>\f$ \in \f$ <I>D</I> be a dart. Given <I>i</I>, 1 \f$ \leq \f$ <I>i
 
 \section Combinatorial_mapDesign Design and Implementation History
 
-The code of this package is inspired by Moka, a 3D topological modeler mainly developed by Fr&eacute;d&eacute;ric Vidil and Guillaume Damiand (<A HREF="http://moka-modeller.sourceforge.net/">http://moka-modeller.sourceforge.net/</A>). However, Moka was based on Generalized maps (and not Combinatorial maps), and the design was not \cgal "compatible". Thus, Guillaume Damiand started to develop a totally new package by mixing ideas taken from Moka with the design of the Halfedge data structure package of \cgal. Andreas Fabri and S&eacute;bastien Loriot contributed to the design, the coding, and to the documentation of the package, and Laurent Rineau helped for the design. Emma Michel contributed to the manual. Monique Teillaud and Bernd G&auml;rtner contributed to the manual by giving useful remarks, really numerous and detailed for Monique. Ken Arroyo Ohori contributed to the two reverse orientation functions.
+The code of this package is inspired by Moka, a 3D topological modeler mainly developed by Fr&eacute;d&eacute;ric Vidil and Guillaume Damiand (<A HREF="https://moka-modeller.sourceforge.net/">https://moka-modeller.sourceforge.net/</A>). However, Moka was based on Generalized maps (and not Combinatorial maps), and the design was not \cgal "compatible". Thus, Guillaume Damiand started to develop a totally new package by mixing ideas taken from Moka with the design of the Halfedge data structure package of \cgal. Andreas Fabri and S&eacute;bastien Loriot contributed to the design, the coding, and to the documentation of the package, and Laurent Rineau helped for the design. Emma Michel contributed to the manual. Monique Teillaud and Bernd G&auml;rtner contributed to the manual by giving useful remarks, really numerous and detailed for Monique. Ken Arroyo Ohori contributed to the two reverse orientation functions.
 
 */
 } /* namespace CGAL */

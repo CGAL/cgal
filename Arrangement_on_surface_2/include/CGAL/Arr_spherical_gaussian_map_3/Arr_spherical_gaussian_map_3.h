@@ -21,7 +21,7 @@
  * embedded on the sphere.
  *
  * This file consists of the definition of the main type, namely
- * Arr_spherical_gaussian_map_2 and a service tye,
+ * Arr_spherical_gaussian_map_2 and a service type,
  * namely Arr_sgm_initializer, that initializes an object of the main type.
  */
 
@@ -89,7 +89,7 @@ public:
 };
 #endif
 
-/*! Arr_sgm_initializer is an algorothmic framework that initializes a
+/*! Arr_sgm_initializer is an algorithmic framework that initializes a
  * Arr_spherical_gaussian_map_3 structure. It is parameterized by the SGM to
  * be initialized and by a visitor class.
  */
@@ -115,7 +115,7 @@ public:
   virtual ~Arr_sgm_initializer() {}
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    */
@@ -143,7 +143,7 @@ public:
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \return the handle for the halfedge directed from the endpoint
@@ -183,7 +183,7 @@ public:
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \return the handle for the halfedge directed from the endpoint
@@ -227,7 +227,7 @@ public:
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \param vertex the handle of the vertex that is the source of the arc
@@ -281,7 +281,7 @@ public:
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \param vertex1 the handle of the vertex that is the source of the arc

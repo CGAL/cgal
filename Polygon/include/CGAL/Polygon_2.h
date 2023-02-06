@@ -27,6 +27,7 @@
 #include <list>
 #include <iterator>
 
+#include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
@@ -370,7 +371,7 @@ class Polygon_2 {
     /// `p.is_simple()`.
     Bounded_side bounded_side(const Point_2& value) const
     {
-      CGAL_polygon_precondition(is_simple());
+      CGAL_precondition(is_simple());
       return bounded_side_2(d_container.begin(), d_container.end(),
                                  value, traits);
     }

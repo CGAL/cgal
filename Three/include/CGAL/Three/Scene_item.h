@@ -301,13 +301,13 @@ public:
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void newViewer(CGAL::Three::Viewer_interface* viewer) = 0;
   //!
-  //! \brief removeViewer removes the Vaos fo `viewer`.
+  //! \brief removeViewer removes the Vaos of `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void removeViewer(CGAL::Three::Viewer_interface* viewer) = 0;
 
@@ -375,16 +375,16 @@ public Q_SLOTS:
 
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.
-  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
+  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause simply a
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
   //!Returns the alpha value for the item.
     //! Must be called within a valid openGl context.
     virtual float alpha() const;
 
-    //! Sets the value of the aplha Slider for this item.
+    //! Sets the value of the alpha Slider for this item.
     //!
-    //! Must be overriden;
+    //! Must be overridden;
     //! \param alpha must be between 0 and 255
     virtual void setAlpha(int alpha);
   //!Selects a point through raycasting.

@@ -135,7 +135,7 @@ namespace CGAL {
    *
    * @param alcc the linear cell complex where the graph will be imported.
    * @param ais the istream where read the graph.
-   * @return A dart created during the convertion.
+   * @return A dart created during the conversion.
    */
   template< class LCC >
   typename LCC::Dart_descriptor import_from_plane_graph(LCC& alcc,

@@ -2,7 +2,7 @@
 # CGAL_SetupCGAL_CoreDependencies
 # -------------------------------
 #
-# The module searchs for the dependencies of the `CGAL_Core` library:
+# The module searches for the dependencies of the `CGAL_Core` library:
 #   - the `GMP/MPFR` couple,
 #
 # and defines the variable :variable:`CGAL_Core_FOUND` and the function

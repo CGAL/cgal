@@ -39,7 +39,7 @@ void test_with_empty_interval(CGAL::Tag_false) {
     CGAL_static_assertion(
             (::std::is_same< Empty, CGAL::Null_functor>::value));
 
-    // this part chages in case we allow empty intersection
+    // this part changes in case we allow empty intersection
     // which seems to be not possible for CORE::BigFloat as Interval
     try{
         try{

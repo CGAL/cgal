@@ -39,7 +39,7 @@
  *    valid (all its darts are linked to the same attribute, no other dart is
  *    linked with this attribute).
  *
- * internal::Count_cell_functor<CMap> to count the nuber of i-cells.
+ * internal::Count_cell_functor<CMap> to count the number of i-cells.
  *
  * internal::Count_bytes_one_attribute_functor<CMap> to count the memory
  *    occupied by i-attributes.
@@ -66,7 +66,7 @@
  * internal::Test_is_same_attribute_functor<Map1, Map2> to test if two
  *   i-attributes of two darts are isomorphic (ie they have the same info).
  *
- * inernal::Test_is_same_attribute_point_functor<Map1, Map2, i> to test if
+ * internal::Test_is_same_attribute_point_functor<Map1, Map2, i> to test if
  *   the point of two i-attributes are equal.
  *
  * internal::Reverse_orientation_of_map_functor<CMap> to reverse the

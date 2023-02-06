@@ -374,7 +374,7 @@ Arrangement_type_2 arrangement_type_2_object();
 
 /// @}
 
-/// \name Access to contructor objects
+/// \name Access to constructor objects
 /// @{
 
 /*!

@@ -376,7 +376,7 @@ public:
      */
     Point_2(const typename Alg_kernel::Point_2& p);
 
-    /*! constructs from homegeneous coordinates.
+    /*! constructs from homogeneous coordinates.
      */
     Point_2(const Algebraic& hx, const Algebraic& hy, const Algebraic& hz);
 

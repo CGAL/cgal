@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/array.h>
 #include <CGAL/iterator.h>
 
@@ -86,7 +86,7 @@ public:
       increment_domain();
       break;
     default:
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
     };
     return *this;
   }
@@ -122,7 +122,7 @@ public:
 
   bool operator==(const Periodic_tetrahedron_iterator& ti) const
   {
-    CGAL_triangulation_assertion(_it == ti._it);
+    CGAL_assertion(_it == ti._it);
     return _t == ti._t && pos == ti.pos && _off == ti._off;
   }
 
@@ -196,7 +196,7 @@ private:
   // copies into account.
   void increment_domain() {
     int off = get_drawing_offsets();
-    CGAL_triangulation_assertion(_off <= off);
+    CGAL_assertion(_off <= off);
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
@@ -264,25 +264,25 @@ private:
     if (_it == T::UNIQUE_COVER_DOMAIN)
       get_edge_offsets(off0,off1,off2,off3);
     else {
-      CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
+      CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
       off0 = _t->int_to_off(pos->offset(0));
       off1 = _t->int_to_off(pos->offset(1));
       off2 = _t->int_to_off(pos->offset(2));
       off3 = _t->int_to_off(pos->offset(3));
     }
 
-    CGAL_triangulation_assertion(off0.x() == 0 || off0.x() == 1);
-    CGAL_triangulation_assertion(off0.y() == 0 || off0.y() == 1);
-    CGAL_triangulation_assertion(off0.z() == 0 || off0.z() == 1);
-    CGAL_triangulation_assertion(off1.x() == 0 || off1.x() == 1);
-    CGAL_triangulation_assertion(off1.y() == 0 || off1.y() == 1);
-    CGAL_triangulation_assertion(off1.z() == 0 || off1.z() == 1);
-    CGAL_triangulation_assertion(off2.x() == 0 || off2.x() == 1);
-    CGAL_triangulation_assertion(off2.y() == 0 || off2.y() == 1);
-    CGAL_triangulation_assertion(off2.z() == 0 || off2.z() == 1);
-    CGAL_triangulation_assertion(off3.x() == 0 || off3.x() == 1);
-    CGAL_triangulation_assertion(off3.y() == 0 || off3.y() == 1);
-    CGAL_triangulation_assertion(off3.z() == 0 || off3.z() == 1);
+    CGAL_assertion(off0.x() == 0 || off0.x() == 1);
+    CGAL_assertion(off0.y() == 0 || off0.y() == 1);
+    CGAL_assertion(off0.z() == 0 || off0.z() == 1);
+    CGAL_assertion(off1.x() == 0 || off1.x() == 1);
+    CGAL_assertion(off1.y() == 0 || off1.y() == 1);
+    CGAL_assertion(off1.z() == 0 || off1.z() == 1);
+    CGAL_assertion(off2.x() == 0 || off2.x() == 1);
+    CGAL_assertion(off2.y() == 0 || off2.y() == 1);
+    CGAL_assertion(off2.z() == 0 || off2.z() == 1);
+    CGAL_assertion(off3.x() == 0 || off3.x() == 1);
+    CGAL_assertion(off3.y() == 0 || off3.y() == 1);
+    CGAL_assertion(off3.z() == 0 || off3.z() == 1);
 
     int offx = ( ((off0.x() == 0 && off1.x() == 0
                    && off2.x() == 0 && off3.x() == 0)
@@ -301,7 +301,7 @@ private:
   }
 
   Periodic_tetrahedron construct_periodic_tetrahedron() const {
-    CGAL_triangulation_assertion(pos != typename T::Cell_handle());
+    CGAL_assertion(pos != typename T::Cell_handle());
     Offset off0, off1, off2, off3;
     get_edge_offsets(off0, off1, off2, off3);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
@@ -392,7 +392,7 @@ public:
       increment_domain();
       break;
     default:
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
     };
     return *this;
   }
@@ -428,7 +428,7 @@ public:
 
   bool operator==(const Periodic_triangle_iterator& ti) const
   {
-    CGAL_triangulation_assertion(_it == ti._it);
+    CGAL_assertion(_it == ti._it);
     return _t == ti._t && pos == ti.pos && _off == ti._off;
   }
 
@@ -499,7 +499,7 @@ private:
   // copies into account.
   void increment_domain() {
     int off = get_drawing_offsets();
-    CGAL_triangulation_assertion(_off <= off);
+    CGAL_assertion(_off <= off);
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
@@ -567,21 +567,21 @@ private:
     if (_it == T::UNIQUE_COVER_DOMAIN)
       get_edge_offsets(off0,off1,off2);
     else {
-      CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
+      CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
       off0 = _t->int_to_off(pos->first->offset((pos->second+1)&3));
       off1 = _t->int_to_off(pos->first->offset((pos->second+2)&3));
       off2 = _t->int_to_off(pos->first->offset((pos->second+3)&3));
     }
 
-    CGAL_triangulation_assertion(off0.x() == 0 || off0.x() == 1);
-    CGAL_triangulation_assertion(off0.y() == 0 || off0.y() == 1);
-    CGAL_triangulation_assertion(off0.z() == 0 || off0.z() == 1);
-    CGAL_triangulation_assertion(off1.x() == 0 || off1.x() == 1);
-    CGAL_triangulation_assertion(off1.y() == 0 || off1.y() == 1);
-    CGAL_triangulation_assertion(off1.z() == 0 || off1.z() == 1);
-    CGAL_triangulation_assertion(off2.x() == 0 || off2.x() == 1);
-    CGAL_triangulation_assertion(off2.y() == 0 || off2.y() == 1);
-    CGAL_triangulation_assertion(off2.z() == 0 || off2.z() == 1);
+    CGAL_assertion(off0.x() == 0 || off0.x() == 1);
+    CGAL_assertion(off0.y() == 0 || off0.y() == 1);
+    CGAL_assertion(off0.z() == 0 || off0.z() == 1);
+    CGAL_assertion(off1.x() == 0 || off1.x() == 1);
+    CGAL_assertion(off1.y() == 0 || off1.y() == 1);
+    CGAL_assertion(off1.z() == 0 || off1.z() == 1);
+    CGAL_assertion(off2.x() == 0 || off2.x() == 1);
+    CGAL_assertion(off2.y() == 0 || off2.y() == 1);
+    CGAL_assertion(off2.z() == 0 || off2.z() == 1);
 
     int offx = ( ((off0.x() == 0 && off1.x() == 0 && off2.x() == 0)
                   || (off0.x() == 1 && off1.x() == 1 && off2.x() == 1)) ? 0 : 1);
@@ -594,7 +594,7 @@ private:
   }
 
   Periodic_triangle construct_periodic_triangle() const {
-    CGAL_triangulation_assertion(pos->first != typename T::Cell_handle());
+    CGAL_assertion(pos->first != typename T::Cell_handle());
     Offset off0, off1, off2;
     get_edge_offsets(off0, off1, off2);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
@@ -682,7 +682,7 @@ public:
       increment_domain();
       break;
     default:
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
     };
     return *this;
   }
@@ -718,7 +718,7 @@ public:
 
   bool operator==(const Periodic_segment_iterator& ti) const
   {
-    CGAL_triangulation_assertion(_it == ti._it);
+    CGAL_assertion(_it == ti._it);
     return _t == ti._t && pos == ti.pos && _off == ti._off;
   }
 
@@ -785,7 +785,7 @@ private:
   // copies into account.
   void increment_domain() {
     int off = get_drawing_offsets();
-    CGAL_triangulation_assertion(_off <= off);
+    CGAL_assertion(_off <= off);
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
@@ -841,15 +841,15 @@ private:
     if (_it == T::UNIQUE_COVER_DOMAIN)
       get_edge_offsets(off0,off1);
     else {
-      CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
+      CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
       off0 = _t->int_to_off(pos->first->offset(pos->second));
       off1 = _t->int_to_off(pos->first->offset(pos->third));
     }
     Offset diff_off = off0 - off1;
 
-    CGAL_triangulation_assertion(diff_off.x() >= -1 || diff_off.x() <= 1);
-    CGAL_triangulation_assertion(diff_off.y() >= -1 || diff_off.y() <= 1);
-    CGAL_triangulation_assertion(diff_off.z() >= -1 || diff_off.z() <= 1);
+    CGAL_assertion(diff_off.x() >= -1 || diff_off.x() <= 1);
+    CGAL_assertion(diff_off.y() >= -1 || diff_off.y() <= 1);
+    CGAL_assertion(diff_off.z() >= -1 || diff_off.z() <= 1);
 
     return( 4*(diff_off.x() == 0 ? 0:1)
             + 2*(diff_off.y() == 0 ? 0:1)
@@ -857,7 +857,7 @@ private:
   }
 
   Periodic_segment construct_periodic_segment() const {
-    CGAL_triangulation_assertion(pos->first != typename T::Cell_handle());
+    CGAL_assertion(pos->first != typename T::Cell_handle());
     Offset off0, off1;
     get_edge_offsets(off0, off1);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
@@ -939,7 +939,7 @@ public:
       do { ++pos; } while (pos != _t->vertices_end() && !is_canonical());
       break;
     default:
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
     };
     return *this;
   }
@@ -955,7 +955,7 @@ public:
       do { --pos; } while (pos != _t->vertices_begin() && !is_canonical());
       break;
     default:
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
     };
     return *this;
   }
@@ -976,7 +976,7 @@ public:
 
   bool operator==(const Periodic_point_iterator& pi) const
   {
-    CGAL_triangulation_assertion(_it == pi._it);
+    CGAL_assertion(_it == pi._it);
     return _t == pi._t && pos == pi.pos;
   }
 
@@ -1017,7 +1017,7 @@ private:
   }
 
   Periodic_point construct_periodic_point() const {
-    CGAL_triangulation_assertion(pos != typename T::Vertex_handle());
+    CGAL_assertion(pos != typename T::Vertex_handle());
     Offset off = _t->get_offset(pos);
     return std::make_pair(pos->point(),off);
   }
