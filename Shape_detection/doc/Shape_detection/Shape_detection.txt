@@ -271,7 +271,7 @@ The `Region_type` class defines the necessary types and functions:
 - `Region_type::Primitive` This type represents the parameters of the primitive, e.g., in case of a sphere it could be a struct containing a `Point_3` for the center and a floating point number for the radius.
 
 - `Region_type::Item` - a `const_iterator` of `std::vector<Object>`
-- `Region_type::Region_index_map` - an unordered map from `Region_type::Item` to `std::size_t` encapsuled in a `boost::associative_property_map`.
+- `Region_type::Region_index_map` - an unordered map from `Region_type::Item` to `std::size_t` encapsulated in a `boost::associative_property_map`.
 - `Region_type::Primitive` - a `std::size_t`
 - `Region_type::is_part_of_region()` - `true` if the first and second objects are neighbors,
 - `Region_type::is_valid_region()` - always `true` after the first call to the function `update()`,
@@ -409,7 +409,7 @@ A point set with normals is stored in `std::vector`.
 
 \paragraph Shape_detection_RegionGrowingPoints_example_2D_circles Detecting 2D Circles
 
-The following example shows a similar example, this time detecting circles instead of lines. In that case, we also preprocess points so that they are sorted according to their likelyhood of belonging to a circle:
+The following example shows a similar example, this time detecting circles instead of lines. In that case, we also preprocess points so that they are sorted according to their likelihood of belonging to a circle:
 
 \cgalExample{Shape_detection/region_growing_circles_on_point_set_2.cpp}
 
