@@ -102,10 +102,29 @@ make_OR_property_map(const PM1& pm1, const PM2& pm2)
   return OR_property_map<PM1, PM2>(pm1, pm2);
 }
 
+/// Property map that accesses a value from an iterator
+///
+/// \cgalModels `ReadablePropertyMap`
+///
+/// \tparam InputIterator an input iterator
+/// \endcond
+template<class InputIterator>
+struct Input_iterator_property_map{
+  typedef InputIterator key_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+  typedef typename std::iterator_traits<InputIterator>::reference reference;
+  typedef boost::readable_property_map_tag category;
+
+  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
+  inline friend
+  reference
+  get(Input_iterator_property_map<InputIterator>, const InputIterator& it){ return *it; }
+};
+
 #ifdef DOXYGEN_RUNNING
 /// \ingroup PkgPropertyMapRef
 /// Property map that composes two property maps,
-/// that is `get(compose_property_map, k)` returns `get(value_map, get(key_map, k))`.
+/// that is a call on an instance `Compose_property_map compose_property_map(key_map, value_map)` of `get(compose_property_map, k)` returns `get(value_map, get(key_map, k))`.
 template <class KeyMap, class ValueMap>
 struct Compose_property_map
 {
@@ -115,15 +134,16 @@ struct Compose_property_map
   typedef typename boost::property_traits<ValueMap>::value_type value_type;
   ///< Use the reference type of `ValueMap` as reference
   typedef typename boost::property_traits<ValueMap>::reference reference;
+  ///< Use the category of the `ValueMap`
   typedef typename boost::property_traits<ValueMap>::category category;
+
+  /// Constructor
+  Compose_property_map(KeyMap key_map = KeyMap(),
+                       ValueMap value_map = ValueMap());
 };
 #else
-/// \ingroup PkgPropertyMapRef
-/// Property map that composes two property maps,
-/// that is `get(compose_property_map, k)` returns `get(value_map, get(key_map, k))`.
 template <class KeyMap, class ValueMap, class Category = typename boost::property_traits<ValueMap>::category>
 struct Compose_property_map;
-
 
 template <class KeyMap, class ValueMap>
 struct Compose_property_map<KeyMap, ValueMap, boost::readable_property_map_tag>
@@ -254,35 +274,16 @@ struct Compose_property_map<KeyMap, ValueMap, boost::lvalue_property_map_tag>
     return value_map[get(key_map, k)];
   }
 };
-
+#endif
 /// \ingroup PkgPropertyMapRef
+/// \relates Compose_property_map
 /// returns `Compose_property_maps<KeyMap, ValueMap>(km,vm)`
 template <class KeyMap, class ValueMap>
 Compose_property_map<KeyMap, ValueMap>
-make_compose_property_maps(const KeyMap& km, const ValueMap& vm)
+make_compose_property_map(const KeyMap& km, const ValueMap& vm)
 {
   return Compose_property_map<KeyMap, ValueMap>(km, vm);
 }
-#endif
-
-/// Property map that accesses a value from an iterator
-///
-/// \cgalModels `ReadablePropertyMap`
-///
-/// \tparam InputIterator an input iterator
-/// \endcond
-template<class InputIterator>
-struct Input_iterator_property_map{
-  typedef InputIterator key_type;
-  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
-  typedef typename std::iterator_traits<InputIterator>::reference reference;
-  typedef boost::readable_property_map_tag category;
-
-  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
-  inline friend
-  reference
-  get(Input_iterator_property_map<InputIterator>, const InputIterator& it){ return *it; }
-};
 
 /// \ingroup PkgPropertyMapRef
 /// Property map that converts a `T*` pointer (or in general an iterator
@@ -727,17 +728,16 @@ make_cartesian_converter_property_map(Vpm vpm)
 /// \ingroup PkgPropertyMapRef
 /// A property map with `std::size_t` as key-type that can be used
 /// to access the i'th element in a container with random access.
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels `LvaluePropertyMap`, constness being than of `Container`.
 template<typename Container>
 class Random_access_property_map
 {
-  using Iterator =  std::conditional_t<std::is_const<Container>::value,
-                                       typename Container::const_iterator,
-                                       typename Container::iterator>;
-
   Container& m_container;
 
 public:
+  using Iterator =  std::conditional_t<std::is_const<Container>::value,
+                                       typename Container::const_iterator,
+                                       typename Container::iterator>;
   typedef std::size_t key_type;
   typedef typename std::iterator_traits<Iterator>::value_type value_type;
   typedef typename std::iterator_traits<Iterator>::reference reference;
@@ -767,6 +767,7 @@ public:
 };
 
 /// \ingroup PkgPropertyMapRef
+/// \relates Random_access_property_map
 /// returns `Random_access_property_map<Container>(container)`
 template <class Container>
 Random_access_property_map<Container>

@@ -594,7 +594,7 @@ struct Face_filtered_graph
     is_imap_in_use.set(0);
     initialize_face_indices();
 
-    return make_compose_property_maps(fimap, make_property_map(face_indices));
+    return make_compose_property_map(fimap, make_property_map(face_indices));
   }
 
   Compose_property_map<VIM, typename Pointer_property_map<typename boost::property_traits<VIM>::value_type>::type>
@@ -603,7 +603,7 @@ struct Face_filtered_graph
     is_imap_in_use.set(1);
     initialize_vertex_indices();
 
-    return make_compose_property_maps(vimap, make_property_map(vertex_indices) );
+    return make_compose_property_map(vimap, make_property_map(vertex_indices) );
   }
 
   Compose_property_map<HIM, typename Pointer_property_map<typename boost::property_traits<HIM>::value_type >::type>
@@ -612,7 +612,7 @@ struct Face_filtered_graph
     is_imap_in_use.set(2);
     initialize_halfedge_indices();
 
-    return make_compose_property_maps(himap, make_property_map(halfedge_indices) );
+    return make_compose_property_map(himap, make_property_map(halfedge_indices) );
   }
 
   /// returns `true` if around any vertex of a selected face there is at most a single umbrella
