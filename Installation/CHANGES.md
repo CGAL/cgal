@@ -21,7 +21,7 @@ Release date: June 2023
   which have output iterators for vertices and faces as parameter. They are replaced by overloads with two additional named parameters.
 
 -   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
-CGAL tetrahedral Delaunay refinement algorithm.
+CGAL tetrahedral Delaunay refinement algorithm, using the 3D mesh generation package.
 
 -   Added the function `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` to remove badly shaped triangles faces in a mesh.
 
