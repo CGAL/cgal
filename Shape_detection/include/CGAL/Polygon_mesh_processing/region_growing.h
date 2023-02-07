@@ -30,9 +30,8 @@ namespace Polygon_mesh_processing {
   applies the region growing algorithm to fit planes on faces of `mesh`.
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
 
-  @tparam PolygonMesh
-    a model of `FaceListGraph`
-  @tparam RegionMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_iterator` as key type and `std::size_t` as value_type.
+  @tparam PolygonMesh a model of `FaceListGraph`
+  @tparam RegionMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value_type.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param mesh polygon mesh for region growing.
@@ -60,13 +59,13 @@ namespace Polygon_mesh_processing {
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_distance}
-      \cgalParamDescription{the maximum distance from a point to a line}
+      \cgalParamDescription{the maximum distance from a point to a plane}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{1}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
       \cgalParamDescription{the maximum angle in degrees between
-      the normal of a point and the normal of a line}
+      the normal of the supporting planes of adjacent faces}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
@@ -125,13 +124,28 @@ region_growing_of_planes_on_faces(
 }
 
 /*!
- @TODO add doc + update np doc text
- doc: requires a partition + consecutive ids
+  \ingroup PkgPolygonMeshProcessingRef
+  detects corners on the boundary of (almost) planar regions by appling the region growing algorithm fitting lines on segment edges of
+  a partition of `mesh`. More precisely, a corner on the boundary of the region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
+  See Section \ref Shape_detection_RegionGrowing for more details on the method.
+  @tparam PolygonMesh a model of `FaceListGraph` and `EdgeListGaph`
+  @tparam RegionMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value_type.
+  @tparam CornerIdMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `std::size_t` as value_type.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  @param mesh polygon mesh for region growing.
+  @param region_map property map providing the region index of each face, values must be in `[0, nb_regions-1`].
+  @param corner_id_map property map storing the corner index of each vertex. Values start at `0` up to the value returned minus 1.
+         `std::size_t(-1)` is put for vertices that are not corners.
+  @param nb_regions the number of patches in the partition of `mesh` defined by `region_map`
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  @return the number of corners detected
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{edge_is_constrained_map}
       \cgalParamDescription{a property map filled by this function such that an edge is marked as constrained
-                            if it is at the interface of two different regions}
+                            if it is at the interface of two different regions or on the boundary of the mesh}
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
                      as key type and `bool` as value type}
       \cgalParamDefault{If not provided an internal dynamic map will be created and removed when leaving the function}
@@ -156,8 +170,7 @@ region_growing_of_planes_on_faces(
       \cgalParamDefault{1}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
-      \cgalParamDescription{the maximum angle in degrees between
-      the normal of a point and the normal of a line}
+      \cgalParamDescription{the maximum angle in degrees between two adjacent segments}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
@@ -167,22 +180,15 @@ region_growing_of_planes_on_faces(
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{`cos(25 * PI / 180)`}
     \cgalParamNEnd
-    \cgalParamNBegin{minimum_region_size}
-      \cgalParamDescription{the minimum number of points a region must have}
-      \cgalParamType{`std::size_t`}
-      \cgalParamDefault{1}
-    \cgalParamNEnd
   \cgalNamedParamsEnd
-
  */
-
-template <class TriangleMesh,
+template <class PolygonMesh,
           class RegionMap,
           class CornerIdMap,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t
 detect_corners_of_regions(
-  const TriangleMesh& tm,
+  const PolygonMesh& mesh,
   RegionMap region_map,
   std::size_t nb_regions,
   CornerIdMap corner_id_map,
