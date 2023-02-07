@@ -128,7 +128,11 @@ namespace internal {
   struct Detect_features_in_domain {
     std::vector<std::vector<Point>>
     operator()(const CGAL::Image_3& image, DetectFunctor functor) const {
+#if defined(BOOST_MSVC) && (BOOST_MSVC < 1910) //before msvc2017
+      return functor.operator()<Point>(image);
+#else
       return functor.template operator()<Point>(image);
+#endif
     }
   };
   // specialization for `Null_functor`: create the default functor
