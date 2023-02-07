@@ -691,8 +691,12 @@ public:
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+
+    using Image_ref_type = typename internal_np::Lookup_named_param_def<internal_np::weights_param_t,
+                                                                        CGAL_NP_CLASS,
+                                                                        CGAL::Image_3>::reference;
     CGAL::Image_3 no_weights;
-    const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
+    const Image_ref_type weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
     auto features_detector_ = choose_parameter(get_parameter(np, internal_np::features_detector_param), Null_functor());
 
     using Default_input_features = std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>>;
