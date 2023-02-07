@@ -223,6 +223,7 @@ namespace Point_set {
       \ingroup PkgShapeDetectionRGOnPointSet3
       shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
       To be used together with `make_least_squares_cylinder_fit_sorting()`.
+      \relates Least_squares_cylinder_fit_sorting
    */
   template <class PointSet3, class NeighborQuery>
   using Least_squares_cylinder_fit_sorting_for_point_set =
@@ -235,6 +236,7 @@ namespace Point_set {
   /*!
       \ingroup PkgShapeDetectionRGOnPointSet3
       returns an instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+      \relates Least_squares_cylinder_fit_sorting
    */
   template <class PointSet3, class NeighborQuery, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Least_squares_cylinder_fit_sorting_for_point_set<PointSet3,NeighborQuery>

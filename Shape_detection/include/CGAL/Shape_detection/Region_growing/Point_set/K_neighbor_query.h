@@ -217,6 +217,7 @@ namespace Point_set {
       \ingroup PkgShapeDetectionRGOnPointSet3
       shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
       To be used together with `make_k_neighbor_query()`.
+      \relates K_neighbor_query
    */
   template <class PointSet3>
   using K_neighbor_query_for_point_set =
@@ -227,6 +228,7 @@ namespace Point_set {
   /*!
       \ingroup PkgShapeDetectionRGOnPointSet3
       returns an instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+      \relates K_neighbor_query
    */
   template <class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
   K_neighbor_query_for_point_set<PointSet3>
