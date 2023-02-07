@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sebastien Loriot
+// Author(s)     : Sébastien Loriot
 
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REGION_GROWING_H

@@ -583,38 +583,6 @@ Bottom right: the output of the region growing, \f$100\%\f$ of the shapes detect
 Unassigned points are in black in both output images.
 \cgalFigureEnd
 
-
-\section Shape_detection_DeprecatedComponents Deprecated Components
-
-This version of Region Growing deprecates the old way to specify parameters. Now, all parameters
-are provided as \ref bgl_namedparameters "Named Parameters". That means the old constructors are deprecated.
-
-\code{.cpp}
-  // Old API.
-  Least_squares_line_fit_region region_type(
-    input_range, distance_threshold, angle_threshold, min_region_size);
-
-  // New API.
-  Least_squares_line_fit_region region_type(
-    input_range, CGAL::parameters::
-    maximum_distance(distance_threshold).
-    maximum_angle(angle_threshold).
-    minimum_region_size(min_region_size));
-\endcode
-
-Second, the method `update` of the `RegionType` concept
-now returns a Boolean flag. When it is `true`, the new region is further propagated, otherwise, it is rejected.
-The reason behind this change is to provide users with control for early rejection of non-valid regions.
-
-\code{.cpp}
-  // Old API.
-  void update(const std::vector<std::size_t>& indices) { };
-
-  // New API.
-  bool update(const Region& region) { };
-\endcode
-
-
 \section Shape_detection_History History
 
 The Efficient RANSAC component was developed by Sven Oesau based on the prototype version created by Yannick Verdie,
