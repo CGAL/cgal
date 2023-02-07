@@ -166,7 +166,7 @@ namespace internal {
     {
       using P = typename MeshDomain::Point_3;
       auto detected_feature_range
-        = std::move(CGAL::Mesh_3::internal::detect_features<P>(image, functor));
+        = CGAL::Mesh_3::internal::detect_features<P>(image, functor);
 
       CGAL::merge_and_snap_polylines(image, detected_feature_range, input_features);
 
