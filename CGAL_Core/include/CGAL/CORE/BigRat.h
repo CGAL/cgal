@@ -35,6 +35,15 @@ namespace CORE {
 #endif
 
 
+  BigInt numerator(const BigRat& q)
+  {
+    return boost::multiprecision::numerator(q);
+  }
+
+  BigInt denominator(const BigRat& q)
+  {
+    return boost::multiprecision::denominator(q);
+  }
   /// BigIntValue
 inline BigInt BigIntValue(const BigRat& br)
 {

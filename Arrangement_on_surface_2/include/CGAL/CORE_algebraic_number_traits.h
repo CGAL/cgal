@@ -106,7 +106,7 @@ public:
       ix1 = scaled_x1.BigIntValue();
       ix2 = scaled_x2.BigIntValue();
 
-      if (CORE::abs (ix2 - ix1) > one)
+      if (CGAL::abs (ix2 - ix1) > one)
         break;
 
       // Scale the values by a factor of 2.
@@ -179,9 +179,9 @@ public:
         temp_gcd = numer_gcd;
 
         denom_lcm *= denom;
-        denom_lcm /= CORE::gcd (temp_lcm, denom);
+        denom_lcm /= CGAL::gcd (temp_lcm, denom);
 
-        numer_gcd = CORE::gcd (temp_gcd, numer);
+        numer_gcd = CGAL::gcd (temp_gcd, numer);
       }
 
       ++q_iter;
@@ -334,7 +334,7 @@ public:
         temp_lcm = denom_lcm;
 
         denom_lcm *= denom;
-        denom_lcm /= CORE::gcd (temp_lcm, denom);
+        denom_lcm /= CGAL::gcd (temp_lcm, denom);
       }
 
       index--;
