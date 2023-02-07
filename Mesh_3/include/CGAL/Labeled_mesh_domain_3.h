@@ -1024,9 +1024,9 @@ public:
       // null(f(p)) means p is outside the domain
       Subdomain_index index = (r_domain_.function_)(p);
       if ( r_domain_.null(index) )
-        return Subdomain();
+        return Subdomain{};
       else
-        return Subdomain(index);
+        return Subdomain{ index };
     }
   private:
     const Labeled_mesh_domain_3& r_domain_;
