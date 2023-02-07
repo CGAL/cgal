@@ -224,7 +224,7 @@ using Sphere_neighbor_query_for_point_set =
 
 /*!
   \ingroup PkgShapeDetectionRGOnPointSet3
-  returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+  returns an instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
  */
 template <class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Sphere_neighbor_query_for_point_set<PointSet3>

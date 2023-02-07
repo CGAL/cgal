@@ -223,7 +223,7 @@ using Least_squares_sphere_fit_sorting_for_point_set =
 
 /*!
   \ingroup PkgShapeDetectionRGOnPointSet3
-  returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+  returns an instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
  */
 template <class PointSet3, class NeighborQuery, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Least_squares_sphere_fit_sorting_for_point_set<PointSet3,NeighborQuery>
