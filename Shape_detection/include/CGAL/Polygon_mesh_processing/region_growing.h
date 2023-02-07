@@ -31,7 +31,7 @@ namespace Polygon_mesh_processing {
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
 
   @tparam PolygonMesh a model of `FaceListGraph`
-  @tparam RegionMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value_type.
+  @tparam RegionMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param mesh polygon mesh for region growing.
@@ -125,16 +125,16 @@ region_growing_of_planes_on_faces(
 
 /*!
   \ingroup PkgPolygonMeshProcessingRef
-  detects corners on the boundary of (almost) planar regions by appling the region growing algorithm fitting lines on segment edges of
+  detects corners on the boundary of (almost) planar regions by applying the region growing algorithm fitting lines on segment edges of
   a partition of `mesh`. More precisely, a corner on the boundary of the region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
   @tparam PolygonMesh a model of `FaceListGraph` and `EdgeListGaph`
-  @tparam RegionMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value_type.
-  @tparam CornerIdMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `std::size_t` as value_type.
+  @tparam RegionMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type.
+  @tparam CornerIdMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `std::size_t` as value type.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param mesh polygon mesh for region growing.
-  @param region_map property map providing the region index of each face, values must be in `[0, nb_regions-1`].
+  @param region_map property map providing the region index of each face, values must be in `[0, nb_regions-1]`.
   @param corner_id_map property map storing the corner index of each vertex. Values start at `0` up to the value returned minus 1.
          `std::size_t(-1)` is put for vertices that are not corners.
   @param nb_regions the number of patches in the partition of `mesh` defined by `region_map`
@@ -146,7 +146,7 @@ region_growing_of_planes_on_faces(
     \cgalParamNBegin{edge_is_constrained_map}
       \cgalParamDescription{a property map filled by this function such that an edge is marked as constrained
                             if it is at the interface of two different regions or on the boundary of the mesh}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
                      as key type and `bool` as value type}
       \cgalParamDefault{If not provided an internal dynamic map will be created and removed when leaving the function}
     \cgalParamNEnd
@@ -198,15 +198,15 @@ detect_corners_of_regions(
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type  Traits;
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type  Traits;
 
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
+  typedef boost::graph_traits<PolygonMesh> Graph_traits;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::edge_descriptor edge_descriptor;
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
 
-  typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Default_ecm;
+  typedef typename boost::template property_map<PolygonMesh, CGAL::dynamic_edge_property_t<bool> >::type Default_ecm;
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     CGAL_NP_CLASS,
@@ -215,10 +215,10 @@ detect_corners_of_regions(
 
   Default_ecm dynamic_ecm;
   if(!(is_default_parameter<CGAL_NP_CLASS, internal_np::edge_is_constrained_t>::value))
-    dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), tm);
+    dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 
-  using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<TriangleMesh>;
+  using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh>;
   using Segment_map        = typename Polyline_graph::Segment_map;
   using Item               = typename Polyline_graph::Item;
 
@@ -227,11 +227,11 @@ detect_corners_of_regions(
   using RG_lines     = CGAL::Shape_detection::Region_growing<Polyline_graph, Line_region>;
 
   // mark as constrained edges at the interface of two regions
-  for (edge_descriptor e : edges(tm))
+  for (edge_descriptor e : edges(mesh))
   {
-    halfedge_descriptor h = halfedge(e, tm);
-    face_descriptor f1 = face(h, tm);
-    face_descriptor f2 = face(opposite(h, tm), tm);
+    halfedge_descriptor h = halfedge(e, mesh);
+    face_descriptor f1 = face(h, mesh);
+    face_descriptor f2 = face(opposite(h, mesh), mesh);
     if (f1 == Graph_traits::null_face() || f2 == Graph_traits::null_face() || get(region_map,f1)!=get(region_map,f2))
       put(ecm, e, true);
   }
@@ -239,19 +239,19 @@ detect_corners_of_regions(
   // filter trivial edges: incident to a plane with only one face
   // such an edge cannot be removed and its vertices are corners
   std::vector<int> nb_faces_per_patch(nb_regions,0);
-  for(face_descriptor f : faces(tm))
+  for(face_descriptor f : faces(mesh))
   {
     std::size_t pid = get(region_map, f);
     nb_faces_per_patch[pid]+=1;
   }
 
   std::vector<edge_descriptor> filtered_edges, trivial_edges;
-  for (edge_descriptor e : edges(tm))
+  for (edge_descriptor e : edges(mesh))
   {
-    halfedge_descriptor h=halfedge(e,tm);
-    std::size_t r1 = is_border(h, tm)?std::size_t(-1):get(region_map, face(h, tm));
-    h=opposite(h, tm);
-    std::size_t r2 = is_border(h, tm)?std::size_t(-1):get(region_map, face(h, tm));
+    halfedge_descriptor h=halfedge(e,mesh);
+    std::size_t r1 = is_border(h, mesh)?std::size_t(-1):get(region_map, face(h, mesh));
+    h=opposite(h, mesh);
+    std::size_t r2 = is_border(h, mesh)?std::size_t(-1):get(region_map, face(h, mesh));
     if ( (r1!=std::size_t(-1) && nb_faces_per_patch[r1]==1) || (r2!=std::size_t(-1) && nb_faces_per_patch[r2]==1) )
     {
       trivial_edges.push_back(e);
@@ -261,7 +261,7 @@ detect_corners_of_regions(
       filtered_edges.push_back(e);
   }
 
-  Polyline_graph pgraph(tm, filtered_edges, region_map);
+  Polyline_graph pgraph(mesh, filtered_edges, region_map);
   const auto& segment_range = pgraph.segment_range();
 
   Line_region line_region(np.segment_map(pgraph.segment_map()));
@@ -287,7 +287,7 @@ detect_corners_of_regions(
   std::size_t cid=0;
   for (const std::pair<typename Line_region::Primitive, std::vector<edge_descriptor>>& r : subregions)
   {
-    std::vector<std::size_t> vertex_count(num_vertices(tm), 0);
+    std::vector<std::size_t> vertex_count(num_vertices(mesh), 0);
     std::vector<vertex_descriptor> line_vertices;
     auto register_vertex = [&vertex_count, &line_vertices]
                            (vertex_descriptor v)
@@ -299,10 +299,10 @@ detect_corners_of_regions(
     for (edge_descriptor e : r.second)
     {
       put(ecm, e, true);
-      register_vertex(source(e, tm));
-      register_vertex(target(e, tm));
+      register_vertex(source(e, mesh));
+      register_vertex(target(e, mesh));
 #ifdef DEBUG_EXAMPLE
-      debug_edges << "2 " << tm.point(source(e, tm)) << " " << tm.point(target(e, tm)) << "\n";
+      debug_edges << "2 " << mesh.point(source(e, mesh)) << " " << mesh.point(target(e, mesh)) << "\n";
 #endif
     }
 
@@ -310,7 +310,7 @@ detect_corners_of_regions(
       if (vertex_count[v]==1)
       {
 #ifdef DEBUG_EXAMPLE
-        debug_corners << tm.point(v) << "\n";
+        debug_corners << mesh.point(v) << "\n";
 #endif
         if (get(corner_id_map, v) == std::size_t(-1))
           put(corner_id_map, v, cid++);
@@ -321,13 +321,13 @@ detect_corners_of_regions(
   for(edge_descriptor e : trivial_edges)
   {
 #ifdef DEBUG_EXAMPLE
-    debug_edges << "2 " << tm.point(source(e, tm)) << " " << tm.point(target(e, tm)) << "\n";
+    debug_edges << "2 " << mesh.point(source(e, mesh)) << " " << mesh.point(target(e, mesh)) << "\n";
 #endif
     put(ecm, e, true);
-    if (get(corner_id_map, source(e, tm))==std::size_t(-1))
-      put(corner_id_map, source(e, tm), cid++);
-    if (get(corner_id_map, target(e, tm))==std::size_t(-1))
-      put(corner_id_map, target(e, tm), cid++);
+    if (get(corner_id_map, source(e, mesh))==std::size_t(-1))
+      put(corner_id_map, source(e, mesh), cid++);
+    if (get(corner_id_map, target(e, mesh))==std::size_t(-1))
+      put(corner_id_map, target(e, mesh), cid++);
   }
 
   return cid;
