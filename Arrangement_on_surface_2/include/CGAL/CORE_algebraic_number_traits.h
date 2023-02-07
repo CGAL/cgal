@@ -246,8 +246,8 @@ public:
 
     if (sign_disc == ZERO)
     {
-      // We have one real root with mutliplicity 2.
-      *oi = -Algebraic (b) / Algebraic (2*a);
+      // We have one real root with multiplicity 2.
+      *oi = -Algebraic (b) / Algebraic (NT(2*a));
       ++oi;
     }
     else if (sign_disc == POSITIVE)
@@ -255,7 +255,7 @@ public:
       // We have two distinct real roots. We return them in ascending order.
       const Algebraic      sqrt_disc = CGAL::sqrt (Algebraic (disc));
       const Algebraic      alg_b = b;
-      const Algebraic      alg_2a = 2*a;
+      const Algebraic      alg_2a = NT(2*a);
 
       if (sign_a == POSITIVE)
       {

@@ -28,7 +28,7 @@
 #include <vector>
 
 #if CGAL_USE_CORE
-namespace CORE { class BigInt; }
+#include <CGAL/CORE/BigInt.h>
 #endif
 
 namespace CGAL {

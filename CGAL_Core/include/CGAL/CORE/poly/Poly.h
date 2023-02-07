@@ -48,6 +48,7 @@
 #define CORE_POLY_H
 
 #include <CGAL/CORE/BigFloat.h>
+#include <CGAL/CORE/BigRat.h>
 #include <CGAL/CORE/Promote.h>
 #include <vector>
 #include <CGAL/assertions.h>

@@ -892,10 +892,10 @@ BigFloat Polynomial<NT>::CauchyUpperBound() const {
   NT mx = 0;
   int deg = getTrueDegree();
   for (int i = 0; i < deg; ++i) {
-    mx = core_max(mx, abs(coeff[i]));
+    mx = core_max(mx, NT(abs(coeff[i])));
   }
   Expr e = mx;
-  e /= Expr(abs(coeff[deg]));
+  e /= Expr(NT(abs(coeff[deg])));
   e.approx(CORE_INFTY, 2);
   // get an absolute approximate value with error < 1/4
   return (e.BigFloatValue().makeExact() + 2);
@@ -975,9 +975,9 @@ BigFloat Polynomial<NT>::CauchyLowerBound() const {
   NT mx = 0;
   int deg = getTrueDegree();
   for (int i = 1; i <= deg; ++i) {
-    mx = core_max(mx, abs(coeff[i]));
+    mx = core_max(mx, NT(abs(coeff[i])));
   }
-  Expr e = Expr(abs(coeff[0]))/ Expr(abs(coeff[0]) + mx);
+  Expr e = Expr(NT(abs(coeff[0])))/ Expr(NT(abs(coeff[0])) + mx);
   e.approx(2, CORE_INFTY);
   // get an relative approximate value with error < 1/4
   return (e.BigFloatValue().makeExact().div2());
@@ -1018,8 +1018,8 @@ BigFloat Polynomial<NT>::height() const {
   int deg = getTrueDegree();
   NT ht = 0;
   for (int i = 0; i< deg; i++)
-    if (ht < abs(coeff[i]))
-      ht = abs(coeff[i]);
+    if (ht < NT(abs(coeff[i])))
+      ht = NT(abs(coeff[i]));
   return BigFloat(ht);
 }
 

@@ -151,6 +151,9 @@ inline long div_exact(long x, long y) {
   return x/y;  // precondition: isDivisible(x,y)
 }
 
+inline BigInt gcd(const BigInt& a, const BigInt& b){
+  return boost::multiprecision::gcd(a,b);
+}
 
 /// ceilLg -- ceiling of log_2(a) where a=BigInt, int or long
 /** Convention: a=0, ceilLg(a) returns -1.

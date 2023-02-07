@@ -72,13 +72,14 @@ int
   unsigned int                       degree = 4;
   typename Nt_traits::Algebraic     *xs_end;
 
+  typedef typename Nt_traits::Integer Integer;
   if (deg1 == 1)
   {
     // The first curve has no quadratic coefficients, and represents a line.
     if (CGAL::sign (v1) == ZERO)
     {
       // The first line is u1*x + w1 = 0, therefore:
-      xs[0] = nt_traits.convert(-w1) / nt_traits.convert(u1);
+      xs[0] = nt_traits.convert(Integer(-w1)) / nt_traits.convert(u1);
       return (1);
     }
 
@@ -94,7 +95,7 @@ int
         // The two lines are parallel:
         return (0);
 
-      xs[0] =  nt_traits.convert(-c[0]) /  nt_traits.convert(c[1]);
+      xs[0] =  nt_traits.convert(Integer(-c[0])) /  nt_traits.convert(c[1]);
       return (1);
     }
 

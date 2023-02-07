@@ -44,6 +44,43 @@ namespace CORE {
   {
     return boost::multiprecision::denominator(q);
   }
+
+  // Chee (3/19/2004):
+//   The following definitions of div_exact(x,y) and gcd(x,y)
+//   ensures that in Polynomial<NT>
+/// divisible(x,y) = "x | y"
+  inline BigRat div_exact(const BigRat& x, const BigRat& y) {
+    BigRat z = x / y;
+    return z;
+  }
+
+  inline BigRat gcd(const BigRat& x , const BigRat& y)
+  {
+    //        return BigRat(1);  // Remark: we may want replace this by
+                           // the definition of gcd of a quotient field
+                           // of a UFD [Yap's book, Chap.3]
+  //Here is one possible definition: gcd of x and y is just the
+  //gcd of the numerators of x and y divided by the gcd of the
+  //denominators of x and y.
+  BigInt n = gcd(numerator(x), numerator(y));
+  BigInt d = gcd(denominator(x), denominator(y));
+  return BigRat(n,d);
+  }
+
+  // Chee: 8/8/2004: need isDivisible to compile Polynomial<BigRat>
+  // A trivial implementation is to return true always. But this
+  // caused tPolyRat to fail.
+  // So we follow the definition of
+  // Expr::isDivisible(e1, e2) which checks if e1/e2 is an integer.
+  inline bool isInteger(const BigRat& x) {
+    return denominator(x) == 1; // AF: does that need canonicalize?
+  }
+  inline bool isDivisible(const BigRat& x, const BigRat& y) {
+    BigRat r;
+    r = x/y;
+    return isInteger(r);
+  }
+
   /// BigIntValue
 inline BigInt BigIntValue(const BigRat& br)
 {

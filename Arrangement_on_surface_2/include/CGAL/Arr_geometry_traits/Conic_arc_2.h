@@ -1389,9 +1389,9 @@ private:
     //
     Nt_traits        nt_traits;
     const int        or_fact = (_orient == CLOCKWISE) ? -1 : 1;
-    const Algebraic  r = nt_traits.convert (or_fact * _r);
-    const Algebraic  s = nt_traits.convert (or_fact * _s);
-    const Algebraic  t = nt_traits.convert (or_fact * _t);
+    const Algebraic  r = nt_traits.convert (Integer(or_fact * _r));
+    const Algebraic  s = nt_traits.convert (Integer(or_fact * _s));
+    const Algebraic  t = nt_traits.convert (Integer(or_fact * _t));
     const Algebraic  cos_2phi = (r - s) / nt_traits.sqrt((r-s)*(r-s) + t*t);
     const Algebraic  _zero = 0;
     const Algebraic  _one = 1;
@@ -1441,8 +1441,8 @@ private:
     //        4*r*s - t^2                4*r*s - t^2
     //
     // The denominator (4*r*s - t^2) must be negative for hyperbolas.
-    const Algebraic  u = nt_traits.convert (or_fact * _u);
-    const Algebraic  v = nt_traits.convert (or_fact * _v);
+    const Algebraic  u = nt_traits.convert (Integer(or_fact * _u));
+    const Algebraic  v = nt_traits.convert (Integer(or_fact * _v));
     const Algebraic  det = 4*r*s - t*t;
     Algebraic        x0, y0;
 
@@ -1650,9 +1650,9 @@ protected:
     int           n_xs;
     Nt_traits     nt_traits;
 
-    xs_end = nt_traits.solve_quadratic_equation (_t*_t - _four*_r*_s,
-                                                 _two*_t*_v - _four*_s*_u,
-                                                 _v*_v - _four*_s*_w,
+    xs_end = nt_traits.solve_quadratic_equation (Integer(_t*_t - _four*_r*_s),
+                                                 Integer(_two*_t*_v - _four*_s*_u),
+                                                 Integer(_v*_v - _four*_s*_w),
                                                  xs);
     n_xs = static_cast<int>(xs_end - xs);
 
@@ -1664,15 +1664,15 @@ protected:
     if (CGAL::sign (_t) == ZERO)
     {
       // The two vertical tangency points have the same y coordinate:
-      ys[0] = nt_traits.convert (-_v) /nt_traits.convert (_two*_s);
+      ys[0] = nt_traits.convert (Integer(-_v)) /nt_traits.convert (Integer(_two*_s));
       n_ys = 1;
     }
     else
     {
       ys_end =
-        nt_traits.solve_quadratic_equation (_four*_r*_s*_s - _s*_t*_t,
-                                            _four*_r*_s*_v - _two*_s*_t*_u,
-                                            _r*_v*_v - _t*_u*_v + _t*_t*_w,
+        nt_traits.solve_quadratic_equation (Integer(_four*_r*_s*_s - _s*_t*_t),
+                                            Integer(_four*_r*_s*_v - _two*_s*_t*_u),
+                                            Integer(_r*_v*_v - _t*_u*_v + _t*_t*_w),
                                             ys);
       n_ys = static_cast<int>(ys_end - ys);
     }
@@ -1692,7 +1692,7 @@ protected:
       {
         for (j = 0; j < n_ys; j++)
         {
-          if (CGAL::compare (nt_traits.convert(_two*_s) * ys[j],
+          if (CGAL::compare (nt_traits.convert(Integer(_two*_s)) * ys[j],
                              -(nt_traits.convert(_t) * xs[i] +
                                nt_traits.convert(_v))) == EQUAL)
           {
@@ -1735,9 +1735,9 @@ protected:
     Algebraic    *ys_end;
     Nt_traits     nt_traits;
 
-    ys_end = nt_traits.solve_quadratic_equation (_t*_t - _four*_r*_s,
-                                                 _two*_t*_u - _four*_r*_v,
-                                                 _u*_u - _four*_r*_w,
+    ys_end = nt_traits.solve_quadratic_equation (Integer(_t*_t - _four*_r*_s),
+                                                 Integer(_two*_t*_u - _four*_r*_v),
+                                                 Integer(_u*_u - _four*_r*_w),
                                                  ys);
     n = static_cast<int>(ys_end - ys);
 

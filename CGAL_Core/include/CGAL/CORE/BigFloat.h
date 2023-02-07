@@ -614,7 +614,10 @@ inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
   //mpz_tdiv_qr(q.get_mp(), r.get_mp(), a.get_mp(), b.get_mp());
 //}//
 
-/* AF
+/*
+
+// AF: As BigRat is just a boost::mp type we cannot have this
+// constructor
 // constructor BigRat from BigFloat
 inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
   *this = f.BigRatValue();
