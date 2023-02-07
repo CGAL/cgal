@@ -5,5 +5,3 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Tetrahedral Remeshing"
 EXTRACT_ALL          = false
 HIDE_UNDOC_CLASSES   = true
 WARN_IF_UNDOCUMENTED = false
-
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Tetrahedral_remeshing/internal

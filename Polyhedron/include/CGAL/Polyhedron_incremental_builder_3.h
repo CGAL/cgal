@@ -162,7 +162,7 @@ protected:
 //
 // Polyhedron_incremental_builder_3<HDS> is an auxiliary class that
 // supports the incremental construction of polyhedral surfaces. This is
-// for example convinient when constructing polyhedral surfaces from
+// for example convenient when constructing polyhedral surfaces from
 // files. The incremental construction starts with a list of all point
 // coordinates and concludes with a list of all facet polygons. Edges are
 // not explicitly specified. They are derived from the incidence
@@ -205,7 +205,7 @@ public:
         // starts the construction. v is the number of new
         // vertices to expect, f the number of new facets, and h the number of
         // new halfedges. If h is unspecified (`== 0') it is estimated using
-        // Euler equations (plus 5% for the so far unkown holes and genus
+        // Euler equations (plus 5% for the so far unknown holes and genus
         // of the object). These values are used to reserve space in the
         // polyhedron representation `HDS'. If the representation
         // supports insertion these values do not restrict the class of

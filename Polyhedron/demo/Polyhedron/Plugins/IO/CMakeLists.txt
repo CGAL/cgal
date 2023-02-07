@@ -4,7 +4,7 @@ find_package(LASLIB)
 set_package_properties(
   LASLIB PROPERTIES
   DESCRIPTION "A library for some I/O."
-  PURPOSE "Requiered for reading or writing LAS files.")
+  PURPOSE "Required for reading or writing LAS files.")
 
 include(CGAL_LASLIB_support)
 

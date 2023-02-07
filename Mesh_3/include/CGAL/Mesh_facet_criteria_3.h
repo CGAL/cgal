@@ -74,8 +74,8 @@ public:
   ~Mesh_facet_criteria_3() { }
 
    /**
-   * @brief returns whether the facet \c facet is bad or not.
-   * @param tr the triangulation within which \c facet lives
+   * @brief returns whether the facet `facet` is bad or not.
+   * @param tr the triangulation within which `facet` lives
    * @param facet the facet
    */
   Is_facet_bad operator()(const Tr& tr, const Facet& facet) const

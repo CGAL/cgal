@@ -24,7 +24,6 @@
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
-#include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <vector>

@@ -55,7 +55,7 @@ else()
 
   add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
               CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
 

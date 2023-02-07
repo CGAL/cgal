@@ -180,7 +180,7 @@ class Gaussian_map :
         CGAL_NEF_TRACEN( "first+current:" << first << "+" << current );
         typename Nef_polyhedron_3::SHalfedge_around_sface_const_circulator sfc(sec), send(sfc);
         CGAL_For_all(sfc, send) {
-          CGAL_NEF_TRACEN( "sedge->cirlce() " << sfc->circle() );
+          CGAL_NEF_TRACEN( "sedge->circle() " << sfc->circle() );
           if(sfc->circle() != current) {
             if(sfc->circle() != first)
               ++circles;

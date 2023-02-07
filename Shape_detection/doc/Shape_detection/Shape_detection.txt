@@ -410,7 +410,7 @@ A point set with normals is stored in `std::vector`.
 
 \paragraph Shape_detection_RegionGrowingPoints_example_2D_circles Detecting 2D Circles
 
-The following example shows a similar example, this time detecting circles instead of lines. In that case, we also preprocess points so that they are sorted according to their likelyhood of belonging to a circle:
+The following example shows a similar example, this time detecting circles instead of lines. In that case, we also preprocess points so that they are sorted according to their likelihood of belonging to a circle:
 
 \cgalExample{Shape_detection/region_growing_circles_on_point_set_2.cpp}
 

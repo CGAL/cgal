@@ -195,7 +195,7 @@ compare(const Result_type& expected, Vert_type actual)
   if (! actual) return false;
 
   auto obj = *actual;
-  // Assign object to a fase.
+  // Assign object to a face.
   if (const auto* fh_expected = boost::get<Face_const_handle>(&(expected))) {
     if (boost::get<Vertex_const_handle>(&obj)) {
       std::cout << "Error: vertical decomposition!" << std::endl;

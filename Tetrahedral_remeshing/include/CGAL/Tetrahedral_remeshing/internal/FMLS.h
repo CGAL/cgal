@@ -228,8 +228,8 @@ public:
   }
 
 //  // Compute the MLS projection of the list of point stored in pv and store the resulting
-//  // positions and normal in qv. qv must be preallocated to stroe 6*pvSize float32.
-//  // The strid indicates the offsets in qv (the defautl value of 3 means that the qv
+//  // positions and normal in qv. qv must be preallocated to store 6*pvSize float32.
+//  // The strid indicates the offsets in qv (the default value of 3 means that the qv
 //  // is compact: pv={x0,y0,z0,x1,y1,z1...}. If pv contains also normals for instance,
 //  // the stride should be set to 6.
 //  void fastProjectionCPU(const std::vector<float>& pv,
@@ -297,7 +297,7 @@ public:
   //  Accessors
   // --------------------------------------------------------------
 
-  // Number of elements of the PN. One elemnt is a 6-float32 chunk.
+  // Number of elements of the PN. One element is a 6-float32 chunk.
   inline std::size_t getPNSize() const { return PNSize; }
   inline std::vector<double>& getPN() { return PN; }
   inline const std::vector<double>& getPN() const { return PN; }
@@ -508,7 +508,7 @@ private:
 
 
   // --------------------------------------------------------------
-  //  Memory Managment
+  //  Memory Management
   // --------------------------------------------------------------
 
   void freeCPUMemory()
@@ -773,7 +773,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   std::size_t nb_of_mls_to_create = 0;
   double average_point_spacing = 0;
 
-  //Cretaing the actual MLS surfaces
+  //Creating the actual MLS surfaces
   for (typename SurfaceIndexMap::iterator it = current_subdomain_FMLS_indices.begin();
        it != current_subdomain_FMLS_indices.end(); ++it)
   {

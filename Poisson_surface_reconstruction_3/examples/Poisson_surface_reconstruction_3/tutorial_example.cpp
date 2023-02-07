@@ -74,7 +74,7 @@ int main(int argc, char*argv[])
 
   // Applying point set processing algorithm to a CGAL::Point_set_3
   // object does not erase the points from memory but place them in
-  // the garbage of the object: memory can be freeed by the user.
+  // the garbage of the object: memory can be freed by the user.
   points.collect_garbage();
 
   //! [Outlier removal]

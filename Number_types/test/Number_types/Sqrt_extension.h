@@ -311,7 +311,7 @@ void to_double_test(){
     }
 }
 
-//This test is dedicated to the comaprison of numbers from different extensions
+//This test is dedicated to the comparison of numbers from different extensions
 template <class EXT>
 void test_compare(){
   typedef typename EXT::NT NT;

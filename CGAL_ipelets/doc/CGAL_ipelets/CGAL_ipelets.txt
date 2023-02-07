@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section CGAL_ipeletsIntroduction Introduction
 
-The Ipe extensible drawing editor (<A HREF="http://ipe.otfried.org">http://ipe.otfried.org</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
+The Ipe extensible drawing editor (<A HREF="https://ipe.otfried.org/">https://ipe.otfried.org/</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
 is a tool used by computational geometry researchers to produce 2D figures for inclusion in articles or presentations.
 The extensible adjective sheds a light on an important feature:
 the possibility for users to write small extensions (called <I>ipelets</I>)
@@ -123,7 +123,7 @@ Draws an half-Yao-graph with the even of k cones.
 Draws an half-theta-graph with the odd of k cones.
 <li><b>Half-Yao-k-graph with odd cones:</b>
 Draws an half-Yao-graph with the odd of k cones.
-<li><b>k cones:</b> For earch selected point.
+<li><b>k cones:</b> For each selected point.
 Draws the k cones around the point.
 </ul>
 

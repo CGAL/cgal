@@ -169,7 +169,7 @@ std::size_t cluster_point_set (PointRange& points,
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   // If no radius is given, init with 1% of bbox diagonal
   if (neighbor_radius < 0)

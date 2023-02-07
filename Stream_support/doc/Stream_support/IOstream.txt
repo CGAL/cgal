@@ -10,7 +10,7 @@ namespace CGAL {
 
 \section IOstreamIntro Introduction
 
-An algorithm is the application of a serie of steps to convert some input data into output data.
+An algorithm is the application of a series of steps to convert some input data into output data.
 As such, it is necessary to have a way to input and output external data into \cgal data structures.
 This is achieved using <em>input/output (I/O) streams</em> of data, which enables reading and writing
 to and from files, the console, or other custom structures.

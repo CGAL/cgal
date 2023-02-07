@@ -111,12 +111,12 @@ private:
     Base()
   {}
 
-  /*! Constrcutor from the base class. */
+  /*! Constructor from the base class. */
   _Conic_point_2 (const Base& p) :
     Base (p)
   {}
 
-  /*! Constructor with homegeneous coordinates. */
+  /*! Constructor with homogeneous coordinates. */
   _Conic_point_2 (const Algebraic& hx,
                   const Algebraic& hy,
                   const Algebraic& hz) :

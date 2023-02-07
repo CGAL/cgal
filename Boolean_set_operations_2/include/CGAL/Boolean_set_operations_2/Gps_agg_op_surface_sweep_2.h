@@ -110,7 +110,7 @@ public:
 
       event = this->_allocate_event(vh->point(), event_type,
                                     ARR_INTERIOR, ARR_INTERIOR);
-      // \todo When the boolean set operations are exteneded to support
+      // \todo When the boolean set operations are extended to support
       //       unbounded curves, we will need here a special treatment.
 
       #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
@@ -150,7 +150,7 @@ public:
         if (res == SMALLER || q_iter == q_end) {
           event = this->_allocate_event(vh->point(), event_type,
                                         ARR_INTERIOR, ARR_INTERIOR);
-          // \todo When the boolean set operations are exteneded to support
+          // \todo When the boolean set operations are extended to support
           //       unbounded curves, we will need here a special treatment.
 
           #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H

@@ -38,7 +38,7 @@ public :
    */
     TextItem() {}
     /*!
-     * \brief The construtor for the TextItem
+     * \brief The constructor for the TextItem
      * \param p_x, p_y, p_z the coordinates of the TextItem.
      * \param p_text the text to render.
      * \param p_3D
@@ -183,7 +183,7 @@ protected:
     QList<TextListItem*> textItems;
     //!\brief List of `TextItem`s
     //!
-    //! Usually fed by the viewer, it holds the text informations from the
+    //! Usually fed by the viewer, it holds the text information from the
     //! viewer that are displayed directly on the screen, like the fps,
     //! the distances, etc.
     QList<TextItem*> local_textItems;

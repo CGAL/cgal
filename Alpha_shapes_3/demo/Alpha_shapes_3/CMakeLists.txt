@@ -27,7 +27,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   # include(${QT_USE_FILE})
   include_directories(BEFORE ./)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)

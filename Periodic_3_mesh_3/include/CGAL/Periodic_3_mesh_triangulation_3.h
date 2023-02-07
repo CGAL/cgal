@@ -49,7 +49,7 @@
 
 namespace CGAL {
 
-/// This class currently provides an interface between the classe
+/// This class currently provides an interface between the class
 /// `CGAL::Periodic_3_regular_triangulation_3` and the mesher `Mesh_3`.
 /// As periodic triangulations are parallelized, a lot of these functions will
 /// become obsolete.
@@ -715,8 +715,8 @@ public:
                  const Facet* /* this_facet_must_be_in_the_cz */ = nullptr,
                  bool* /* the_facet_is_in_its_cz */ = nullptr) const
   {
-    CGAL_triangulation_precondition(could_lock_zone == nullptr);
-    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_precondition(could_lock_zone == nullptr);
+    CGAL_precondition(number_of_vertices() != 0);
 
     clear_v_offsets();
 

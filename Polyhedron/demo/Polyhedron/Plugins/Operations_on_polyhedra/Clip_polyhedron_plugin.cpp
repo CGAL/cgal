@@ -439,7 +439,7 @@ public Q_SLOTS:
         }
 
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pos_side);
-        new_item->setName(QString("Splitted %1").arg(sm_item->name()));
+        new_item->setName(QString("Split %1").arg(sm_item->name()));
         new_item->setColor(sm_item->color());
         new_item->setRenderingMode(sm_item->renderingMode());
         new_item->setVisible(sm_item->visible());

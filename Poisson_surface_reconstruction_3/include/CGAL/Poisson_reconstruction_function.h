@@ -38,7 +38,7 @@
 #endif
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/poisson_refine_triangulation.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 #include <CGAL/compute_average_spacing.h>
@@ -823,7 +823,7 @@ private:
     double D;
     if(!solver.linear_solver(A, B, X, D))
       return false;
-    CGAL_surface_reconstruction_points_assertion(D == 1.0);
+    CGAL_assertion(D == 1.0);
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
     CGAL_TRACE_STREAM << "  Solve sparse linear system: done (" << duration_solve << "sec.)\n";
@@ -1129,7 +1129,7 @@ private:
 
     if(voronoi_points.size() < 3)
     {
-      CGAL_surface_reconstruction_points_assertion(false);
+      CGAL_assertion(false);
       return 0.0;
     }
 

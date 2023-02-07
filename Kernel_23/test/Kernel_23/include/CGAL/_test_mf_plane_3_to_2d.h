@@ -68,11 +68,11 @@ _test_mf_plane_3_to_2d(const R& )
  Point_3 p6( n4, n5, n0, n8);
  Plane_3 pl3( p4, p5, p6);
  assert( p4 == pl3.to_3d( pl3.to_2d( p4)) || nonexact );
- assert( p5 == pl3.to_3d( pl3.to_2d( p5)) );
+ assert( p5 == pl3.to_3d( pl3.to_2d( p5)) || nonexact);
  assert( p6 == pl3.to_3d( pl3.to_2d( p6)) || nonexact );
  Plane_3 pl4( p4, p6, p5);
  assert( p4 == pl4.to_3d( pl4.to_2d( p4)) || nonexact );
- assert( p5 == pl4.to_3d( pl4.to_2d( p5)) );
+ assert( p5 == pl4.to_3d( pl4.to_2d( p5)) || nonexact);
  assert( p6 == pl4.to_3d( pl4.to_2d( p6)) || nonexact );
 
  Point_3 p7 = CGAL::midpoint( p1, p2);

@@ -101,7 +101,7 @@ namespace CGAL
             // find a point inside the intersection
             origin = halfspace_intersection_interior_point_3(pbegin, pend);
 
-            CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_with_constructions_3: problem when determing a point inside the intersection");
+            CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_with_constructions_3: problem when determining a point inside the intersection");
             if (origin==boost::none)
               return;
           }

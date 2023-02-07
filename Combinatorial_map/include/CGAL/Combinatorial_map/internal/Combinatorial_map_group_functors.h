@@ -33,7 +33,7 @@
  * Group_attribute_functor<CMap> to group the <i>-attributes of two
  *    given i-cells (except for j-adim). If one i-attribute is nullptr, we set the
  *    darts of its i-cell to the second attribute. If both i-attributes are
- *    non nullptr, we overide all the i-attribute of the second i-cell to the
+ *    non nullptr, we override all the i-attribute of the second i-cell to the
  *    first i-attribute.
  *
  * Degroup_attribute_functor_run<CMap> to degroup one i-attributes in two

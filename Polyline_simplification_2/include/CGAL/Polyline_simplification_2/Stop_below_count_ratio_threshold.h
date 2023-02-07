@@ -25,7 +25,7 @@ namespace Polyline_simplification_2
 /// \ingroup PkgPolylineSimplification2Classes
 
 /// This class is a stop predicate returning `true` when the percentage
-/// of remaning vertices is smaller than a certain threshold.
+/// of remaining vertices is smaller than a certain threshold.
 ///
 /// \cgalModels `PolylineSimplificationStopPredicate`.
 class Stop_below_count_ratio_threshold

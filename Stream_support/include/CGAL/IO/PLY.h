@@ -41,7 +41,7 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-// HEdgesRange" = range of std::pair<unsigned int, unsigned int>
+// HEdgesRange = range of std::pair<unsigned int, unsigned int>
 // HUVRange = range of std::pair<float, float>
 template <class PointRange, class PolygonRange, class ColorOutputIterator, class HEdgesOutputIterator, class HUVOutputIterator>
 bool read_PLY(std::istream& is,

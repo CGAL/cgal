@@ -32,7 +32,11 @@
 /// Functions to test if there are self intersections, and to report faces that do intersect.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_repairing_grp Combinatorial Repairing
+/// \defgroup PMP_combinatorial_repair_grp Combinatorial Repair
+/// Functions to repair polygon soups and polygon meshes.
+/// \ingroup PkgPolygonMeshProcessingRef
+
+/// \defgroup PMP_geometric_repair_grp Geometric Repair
 /// Functions to repair polygon soups and polygon meshes.
 /// \ingroup PkgPolygonMeshProcessingRef
 
@@ -162,7 +166,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polyhedral_envelope`
 - `CGAL::Side_of_triangle_mesh`
 
-\cgalCRPSection{Combinatorial Repairing Functions}
+\cgalCRPSection{Combinatorial Repair Functions}
 - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`
@@ -179,6 +183,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+
+\cgalCRPSection{Geometric Repair Functions}
 - `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()`
 
 \cgalCRPSection{Connected Components}
