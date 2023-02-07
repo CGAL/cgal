@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   if (!read_polylines(lines_fname, features_inside)) // see file "read_polylines.h"
   {
     std::cerr << "Error: Cannot read file " << lines_fname << std::endl;
-    return false;
+    return EXIT_FAILURE;
   }
 
   /// [Domain creation]
@@ -81,5 +81,5 @@ int main(int argc, char* argv[])
   CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
