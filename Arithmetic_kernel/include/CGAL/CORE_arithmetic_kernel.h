@@ -66,6 +66,7 @@ struct Get_arithmetic_kernel<CORE::BigFloat>{
 
 } //namespace CGAL
 
+#include <CGAL/BOOST_MP_arithmetic_kernel.h>
 
 #endif // CGAL_USE_CORE
 
