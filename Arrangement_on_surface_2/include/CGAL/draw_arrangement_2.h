@@ -46,19 +46,33 @@
 
 namespace CGAL {
 
+struct Default_color_generator {
+  /*! Obtain color
+   */
+  template <typename HalfedgeHandle>
+  CGAL::IO::Color operator()(HalfedgeHandle /* h */) {
+    static std::random_device rd;
+    static std::mt19937 rng(rd());
+    static std::uniform_int_distribution<int> uni(0, 255);
+    return CGAL::IO::Color(uni(rng), uni(rng), uni(rng));
+  }
+};
+
 // Viewer class for`< Polygon_2
-template <typename GeometryTraits_2, typename Dcel>
+template <typename Arrangement_2_,
+          typename ColorGenerator = Default_color_generator>
 class Arr_2_basic_viewer_qt : public Basic_viewer_qt {
-  typedef GeometryTraits_2                      Gt;
-  typedef CGAL::Arrangement_2<Gt, Dcel>         Arr;
-  typedef Basic_viewer_qt                       Base;
-  typedef typename Arr::Point_2                 Point;
-  typedef typename Arr::X_monotone_curve_2      X_monotone_curve;
-  typedef typename Arr::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arr::Face_const_handle       Face_const_handle;
-  typedef typename Arr::Ccb_halfedge_const_circulator
-                                                Ccb_halfedge_const_circulator;
+  using Arr = Arrangement_2_;
+  using Color_generator = ColorGenerator;
+  using Base = Basic_viewer_qt;
+  using Gt = typename Arr::Geometry_traits_2;
+  using Point = typename Arr::Point_2;
+  using X_monotone_curve = typename Arr::X_monotone_curve_2;
+  using Vertex_const_handle = typename Arr::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arr::Halfedge_const_handle;
+  using Face_const_handle = typename Arr::Face_const_handle;
+  using Ccb_halfedge_const_circulator =
+    typename Arr::Ccb_halfedge_const_circulator;
 
   template <typename T>
   using approximate_2_object_t =
@@ -69,11 +83,13 @@ public:
   /// @param arr the arrangement to view
   /// @param title the title of the window
   Arr_2_basic_viewer_qt(QWidget* parent, const Arr& arr,
-                        const char* title = "2D Arrangement Basic Viewer") :
+                        Color_generator color_generator,
+                        const char* title = "2D Arrangement Basic Viewer",
+                        bool draw_vertices = false) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false),
+    Base(parent, title, draw_vertices, true, true, false, false),
     m_arr(arr),
-    m_uni(0, 255)
+    m_color_generator(color_generator)
   {
     // mimic the computation of Camera::pixelGLRatio()
     auto bbox = bounding_box();
@@ -156,9 +172,6 @@ public:
     // std::cout << "ratio: " << this->pixel_ratio() << std::endl;
     clear();
     m_visited.clear();
-
-    std::random_device rd;
-    m_rng.seed(rd());
 
     if (m_arr.is_empty()) return;
     for (auto it = m_arr.unbounded_faces_begin();
@@ -289,7 +302,7 @@ protected:
     auto has_approximate_2_object =
       bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
 
-    CGAL::IO::Color color(m_uni(m_rng), m_uni(m_rng), m_uni(m_rng));
+    auto color = m_color_generator(circ->face());
     this->face_begin(color);
 
     const auto* traits = this->m_arr.geometry_traits();
@@ -464,32 +477,35 @@ protected:
   //! The arrangement to draw.
   const Arr& m_arr;
 
-  std::unordered_map<Face_const_handle, bool> m_visited;
+  //! The color generator.
+  Color_generator& m_color_generator;
 
-  std::mt19937 m_rng;
-  std::uniform_int_distribution<int> m_uni;     // guaranteed unbiased
+  std::unordered_map<Face_const_handle, bool> m_visited;
 };
 
 //! Basic viewer of a 2D arrangement.
-template <typename GeometryTraits_2, typename Dcel>
-class Arr_2_viewer_qt : public Arr_2_basic_viewer_qt<GeometryTraits_2, Dcel> {
+template <typename Arrangement_2_,
+          typename ColorGenerator = Default_color_generator>
+class Arr_2_viewer_qt : public Arr_2_basic_viewer_qt<Arrangement_2_,
+                                                     ColorGenerator> {
 public:
-  typedef GeometryTraits_2                      Gt;
-  typedef CGAL::Arrangement_2<Gt, Dcel>         Arr;
-  typedef Arr_2_basic_viewer_qt<Gt, Dcel>       Base;
-  typedef typename Arr::Point_2                 Point;
-  typedef typename Arr::X_monotone_curve_2      X_monotone_curve;
-  typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arr::Face_const_handle       Face_const_handle;
-  typedef typename Arr::Ccb_halfedge_const_circulator
-                                                Ccb_halfedge_const_circulator;
+  using Arr = Arrangement_2_;
+  using Color_generator = ColorGenerator;
+  using Base = Arr_2_basic_viewer_qt<Arr, Color_generator>;
+  using Point = typename Arr::Point_2;
+  using X_monotone_curve = typename Arr::X_monotone_curve_2;
+  using Halfedge_const_handle = typename Arr::Halfedge_const_handle;
+  using Face_const_handle = typename Arr::Face_const_handle;
+  using Ccb_halfedge_const_circulator =
+    typename Arr::Ccb_halfedge_const_circulator;
 
   /// Construct the viewer.
   /// @param arr the arrangement to view
   /// @param title the title of the window
   Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
+                  Color_generator color_generator,
                   const char* title = "2D Arrangement Basic Viewer") :
-    Base(parent, arr, title)
+    Base(parent, arr, color_generator, title)
   {}
 };
 
@@ -500,22 +516,54 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
-  if (!cgal_test_suite) {
-    typedef GeometryTraits_2            Gt;
+  if (cgal_test_suite) return;
+  using Gt = GeometryTraits_2;
+  using Arr = CGAL::Arrangement_2<Gt, Dcel>;
+  using Viewer = Arr_2_viewer_qt<Arr, Default_color_generator>;
 
-    CGAL::Qt::init_ogl_context(4,3);
+  CGAL::Qt::init_ogl_context(4,3);
 
-    int argc = 1;
-    const char* argv[2] = {"t2_viewer", nullptr};
-    QApplication app(argc, const_cast<char**>(argv));
-    Arr_2_viewer_qt<Gt, Dcel> mainwindow(app.activeWindow(), arr, title);
-    mainwindow.add_elements();
-    mainwindow.show();
-    app.exec();
-  }
+  int argc = 1;
+  const char* argv[2] = {"t2_viewer", nullptr};
+  QApplication app(argc, const_cast<char**>(argv));
+  Default_color_generator color_generator;
+  Viewer mainwindow(app.activeWindow(), arr, color_generator, title);
+  mainwindow.add_elements();
+  mainwindow.show();
+  app.exec();
+}
+
+//!
+template <typename GeometryTraits_2, typename Dcel,
+          typename ColorGenerator>
+void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
+          ColorGenerator color_generator,
+          const char* title = "2D Arrangement Basic Viewer") {
+#if defined(CGAL_TEST_SUITE)
+  bool cgal_test_suite=true;
+#else
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+#endif
+
+  if (cgal_test_suite) return;
+
+  using Color_generator = ColorGenerator;
+  using Gt = GeometryTraits_2;
+  using Arr = CGAL::Arrangement_2<Gt, Dcel>;
+  using Viewer = Arr_2_viewer_qt<Arr, Color_generator>;
+
+  CGAL::Qt::init_ogl_context(4,3);
+
+  int argc = 1;
+  const char* argv[2] = {"t2_viewer", nullptr};
+  QApplication app(argc, const_cast<char**>(argv));
+  Viewer mainwindow(app.activeWindow(), arr, color_generator, title);
+  mainwindow.add_elements();
+  mainwindow.show();
+  app.exec();
 }
 
 }
