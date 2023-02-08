@@ -8,7 +8,7 @@
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point;
 typedef CGAL::Polygon_2<K> Polygon_2;
-typedef Polygon::Vertex_circulator Vertex_circulator;
+typedef Polygon_2::Vertex_circulator Vertex_circulator;
 
 int main()
 {
