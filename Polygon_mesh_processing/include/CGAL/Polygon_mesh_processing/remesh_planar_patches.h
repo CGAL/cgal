@@ -30,8 +30,8 @@
 
 #include <algorithm>
 
-/// @TODO remove Kernel_traits
-/// @TODO function to move in PMP: retriangulate_planar_patches(in, out, vci, ecm, fccid, np) (pca is a np option)
+/// @todo remove Kernel_traits
+/// @todo function to move in PMP: retriangulate_planar_patches(in, out, vci, ecm, fccid, np) (pca is a np option)
 
 
 namespace CGAL{
@@ -1061,14 +1061,108 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 } //end of namespace Planar_segmentation
 
 
-/// @TODO: Add doc
-/// @TODO: with the current implementation, if the input contains
-///        a non-manifold vertex patches will be simplified but in the end writing will fail
-///        because of polygon_soup_to_polygon_mesh
-template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
-bool remesh_planar_patches(TriangleMesh& tm,
-                           const NamedParameters& np = parameters::default_values())
+/*!
+ *  \ingroup PMP_meshing_grp
+ *  generates a new triangle mesh `tm_out` with the minimal number of triangles while preserving the shape as `tm_in`.
+ *  In practice, this means that connected components of edge incident faces belonging the same plane are
+ *  first extracted (each such connected component is called a *patch*). Then the connected components of vertex
+ *  connected patch border edge belonging to the same line are extracted. Endpoints of such components and
+ *  vertices incident to more that two patches (or two patches + one mesh boundary) are called *corners*.
+ *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch with bounder defined by
+ *  only corner vertices.
+ *
+ *  \warning if `tm_in` contains a non-manifold vertex, `tm_out` will always be empty. Those vertices must be
+ *           duplicated with `duplicate_non_manifold_vertices()` to get an output.
+ *
+ *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
+ *  \tparam TriangleMeshOut a model of `MutableFaceGraph`
+ *  \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
+ *  \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ *  \param tm_in input triangulated surface mesh
+ *  \param tm_out output mesh
+ *  \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ *
+ *  \cgalNamedParamsBegin
+ *    \cgalParamNBegin{vertex_point_map}
+ *      \cgalParamDescription{a property map associating points to the vertices of `tm_in`}
+ *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                     as key type and `%Point_3` as value type}
+ *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_in)`}
+ *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                      must be available in `TriangleMeshIn`.}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{geom_traits}
+ *      \cgalParamDescription{an instance of a geometric traits class}
+ *      \cgalParamType{a class model of `Kernel`}
+ *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{edge_is_constrained_map}
+ *      \cgalParamDescription{a property map filled by this function and that will contain `true` if an edge is on the border of a patch and `false` otherwise.}
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%edge_descriptor`
+ *                     as key type and `bool` as value type}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{face_patch_map}
+ *      \cgalParamDescription{a property map filled by this function and that will contain for each face the id
+ *                            of its patch in the range `[0, number of patches - 1]`}
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%face_descriptor`
+ *                     as key type and `std::size_t` as value type}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{vertex_corner_map}
+ *      \cgalParamDescription{a property map filled by this function and that will contain for each vertex that is a corner
+ *                            an id in the range `[0, number of corners - 1]`, and `std::size_t(-1)` otherwise.}
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                     as key type and `std::size_t` as value type}
+ *      \cgalParamDefault{None}
+ *   \cgalParamNEnd
+ *    \cgalParamNBegin{cosinus_threshold}
+ *      \cgalParamDescription{the cosinus an angle that is used as the lower bound of both the dihedral angle between two adjacent
+                              triangles to consider then as coplanar, and the angle betweem adjacent segments to consider then as collinear.}
+ *      \cgalParamType{`FT` type from the `geom_traits` parameter}
+ *      \cgalParamDefault{-1, which means exact coplanarity and collinearity}
+ *   \cgalParamNEnd
+ *  \cgalNamedParamsEnd
+ *
+ *  \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ *
+ *  \cgalNamedParamsBegin
+ *    \cgalParamNBegin{vertex_point_map}
+ *      \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
+ *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *                     as key type and `%Point_3` as value type}
+ *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_out)`}
+ *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                      must be available in `TriangleMeshOut`.}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{face_patch_map}
+ *      \cgalParamDescription{a property map filled by this function and that will contain for each face the id
+ *                            of its patch in the range `[0, number of patches - 1]`}
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%face_descriptor`
+ *                     as key type and `std::size_t` as value type}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{vertex_corner_map}
+ *      \cgalParamDescription{a property map filled by this function and that will contain for each vertex its corner
+ *                            an id in the range `[0, number of corners - 1]`}
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *                     as key type and `std::size_t` as value type}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
+ *  \cgalNamedParamsEnd
+ */
+template <typename TriangleMeshIn,
+          typename TriangleMeshOut,
+          typename NamedParametersIn = parameters::Default_named_parameters,
+          typename NamedParametersOut = parameters::Default_named_parameters>
+void remesh_planar_patches(const TriangleMeshIn& tm_in,
+                                 TriangleMeshOut& tm_out,
+                           const NamedParametersIn& np_in = parameters::default_values(),
+                           const NamedParametersOut& np_out = parameters::default_values())
 {
+/*
   // typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type  Traits;
   typedef typename GetVertexPointMap <TriangleMesh, NamedParameters>::type VPM;
   using parameters::choose_parameter;
@@ -1100,16 +1194,119 @@ bool remesh_planar_patches(TriangleMesh& tm,
 
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
     Planar_segmentation::tag_corners_and_constrained_edges(tm, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm);
-  bool res=Planar_segmentation::decimate_impl(tm,
-                                              nb_corners_and_nb_cc,
-                                              vertex_corner_id,
-                                              edge_is_constrained,
-                                              face_cc_ids,
-                                              vpm);
-
-  return res;
+  Planar_segmentation::decimate_impl(tm,
+                                     nb_corners_and_nb_cc,
+                                     vertex_corner_id,
+                                     edge_is_constrained,
+                                     face_cc_ids,
+                                     vpm);
+*/
 }
 
+/*!
+ *  \ingroup PMP_meshing_grp
+ *  generates a new triangle mesh `tm_out` with the minimal number of triangles from a partition of `tm_in`.
+ *  The terminology used here and the global idea is very similar to what is done by `remesh_planar_patches()`
+ *  except that here the partition into patches and corner identification is provided by the user.
+ *  It allows to have a remeshing of almost coplanar regiond, detected for example using the region growing algorithm
+ *  with the functions `region_growing_of_planes_on_faces()` and `detect_corners_of_regions()`.
+ *  If a patch cannot be triangulated, it is left untouched in the output and all its vertices becomes corners
+ *  so that the output is still a valid conformal triangle mesh.
+ *  \todo: define how triangulation normals are estimated and maybe ask for them?
+ *  \returns `true` if all patches could be triangulated and `false` otherwise.
+ *
+ *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
+ *  \tparam TriangleMeshOut a model of `MutableFaceGraph`
+ *
+ *  \tparam FacePatchMap a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%face_descriptor`
+ *                       as key type and `std::size_t` as value type
+ *  \tparam EdgeIsConstrainedMap a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%edge_descriptor`
+ *                               as key type and `bool` as value type
+ *  \tparam VertexCornerMap a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                          as key type and `std::size_t` as value type
+ *  \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
+ *  \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ *  \param tm_in input triangulated surface mesh
+ *  \param tm_out output mesh
+ *  \param nb_patches the number of patches in the partition
+ *  \param nb_corners the number of corners
+ *  \param face_patch_map a property map that contains for each face the id of its patch in the range `[0, nb_patches]`
+ *  \param vertex_corner_map a property map that contains for each vertex that is a corner an id in the range `[0, nb_corners - 1]`,
+                             and `std::size_t(-1)` otherwise.
+ *  \param ecm a property map that contains `true` if an edge is on the border of a patch and `false` otherwise.
+ *  \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ *
+ *  \cgalNamedParamsBegin
+ *    \cgalParamNBegin{vertex_point_map}
+ *      \cgalParamDescription{a property map associating points to the vertices of `tm_in`}
+ *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                     as key type and `%Point_3` as value type}
+ *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_in)`}
+ *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                      must be available in `TriangleMeshIn`.}
+ *    \cgalParamNEnd
+ *  \cgalNamedParamsEnd
+ *
+ *  \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ *
+ *  \cgalNamedParamsBegin
+ *    \cgalParamNBegin{vertex_point_map}
+ *      \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
+ *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *                     as key type and `%Point_3` as value type}
+ *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_out)`}
+ *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                      must be available in `TriangleMeshOut`.}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{face_patch_map}
+ *      \cgalParamDescription{a property map filled by this function and that will contain for each face the id
+ *                            of its patch in the range `[0, number of patches - 1]`}
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%face_descriptor`
+ *                     as key type and `std::size_t` as value type}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{vertex_corner_map}
+ *      \cgalParamDescription{a property map filled by this function and that will contain for each vertex its corner
+ *                            an id in the range `[0, number of corners - 1]`}
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *                     as key type and `std::size_t` as value type}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
+ *  \cgalNamedParamsEnd
+ */
+template <typename TriangleMeshIn,
+          typename TriangleMeshOut,
+          typename FacePatchMap,
+          typename EdgeIsConstrainedMap,
+          typename VertexCornerMap,
+          typename NamedParameters = parameters::Default_named_parameters>
+bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
+                                        TriangleMeshOut& tm_out,
+                                   std::size_t nb_patches,
+                                   std::size_t nb_corners,
+                                   FacePatchMap face_patch_map,
+                                   VertexCornerMap vertex_corner_map,
+                                   EdgeIsConstrainedMap ecm,
+                                   const NamedParametersIn& np_in = parameters::default_values(),
+                                   const NamedParametersOut& np_out = parameters::default_values())
+{
+/*
+  typedef typename GetVertexPointMap <TriangleMesh, NamedParameters>::type VPM;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_property_map(vertex_point, tm));
+
+  return Planar_segmentation::decimate_impl(tm,
+                                            std::make_pair(nb_corners, nb_patches),
+                                            vertex_corner_map, ecm, face_patch_map, vpm);
+*/
+}
+
+
+#ifndef DOXYGEN_RUNNING
 // MeshMap must be a mutable lvalue pmap with Triangle_mesh as value_type
 template <typename TriangleMeshRange, typename MeshMap>
 bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double coplanar_cos_threshold, MeshMap mesh_map)
@@ -1132,6 +1329,7 @@ bool decimate_meshes_with_common_interfaces(std::vector<TriangleMesh>& meshes, d
 {
   return decimate_meshes_with_common_interfaces(meshes, coplanar_cos_threshold, CGAL::Identity_property_map<TriangleMesh>());
 }
+#endif
 
 } } // end of CGAL::Polygon_mesh_processing
 
