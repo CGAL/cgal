@@ -33,7 +33,6 @@ void test_io(){
         std::stringstream ss;
         CGAL::IO::set_pretty_mode(ss);
         ss << CGAL::IO::oformat(NT(1), CGAL::Parens_as_product_tag());
-        std::cout << ss.str() << std::endl;
         assert( ss.str() == "1");
     }{
         std::stringstream ss;
@@ -73,4 +72,3 @@ int main() { return 0; }
 #endif // CGAL_USE_CORE
 
 //EOF
-
