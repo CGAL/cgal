@@ -182,17 +182,18 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
   // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
   boost::optional<IFT> margin = compute_outer_frame_margin(vertices_begin,
                                                            vertices_end,
+                                                           weights[0],
                                                            offset);
 
   if(margin)
   {
-    const double lm = CGAL::to_double(*margin);
-    Bbox_2 bbox = bbox_2(vertices_begin, vertices_end);
+    const IFT lm = *margin;
+    const Bbox_2 bbox = bbox_2(vertices_begin, vertices_end);
 
-    FT fxmin = bbox.xmin() - lm;
-    FT fxmax = bbox.xmax() + lm;
-    FT fymin = bbox.ymin() - lm;
-    FT fymax = bbox.ymax() + lm;
+    const IFT fxmin = IFT(bbox.xmin()) - lm;
+    const IFT fxmax = IFT(bbox.xmax()) + lm;
+    const IFT fymin = IFT(bbox.ymin()) - lm;
+    const IFT fymax = IFT(bbox.ymax()) + lm;
 
     Point_2 frame[4];
     frame[0] = Point_2(fxmin,fymin);
