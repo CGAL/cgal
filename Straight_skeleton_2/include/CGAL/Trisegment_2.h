@@ -156,10 +156,10 @@ public:
 
   friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
   {
-    return os << "[" << s2str(aTrisegment.e0())
-              << " " << s2str(aTrisegment.e1())
-              << " " << s2str(aTrisegment.e2())
-              << " " << trisegment_collinearity_to_string(aTrisegment.collinearity())
+    return os << "[e0 " << s2str(aTrisegment.e0())
+              << "; e1 " << s2str(aTrisegment.e1())
+              << "; e2 " << s2str(aTrisegment.e2())
+              << "; Collinearity: " << trisegment_collinearity_to_string(aTrisegment.collinearity())
               << "]";
   }
 

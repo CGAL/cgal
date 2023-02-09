@@ -66,7 +66,8 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
     Halfedge_const_handle lNext = aBisector->next();
 
     CGAL_POLYOFFSET_TRACE(2,"Testing hook on " << e2str(*aBisector) ) ;
-    CGAL_POLYOFFSET_TRACE(4, "Next: " << e2str(*lNext) << " ; Prev: " << e2str(*lPrev) ) ;
+    CGAL_POLYOFFSET_TRACE(4, "Next: " << e2str(*lNext) ) ;
+    CGAL_POLYOFFSET_TRACE(4, "Prev: " << e2str(*lPrev) ) ;
 
     if ( !IsVisited(aBisector) )
     {

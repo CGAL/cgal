@@ -195,6 +195,8 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
     frame[2] = Point_2(fxmax,fymax);
     frame[3] = Point_2(fxmin,fymax);
 
+    CGAL_STSKEL_BUILDER_TRACE(2, "Frame:\n" << frame[0] << "\n" << frame[1] << "\n" << frame[2] << "\n" << frame[3]);
+
     typedef std::vector<Point_2> Hole;
 
     Hole poly(vertices_begin, vertices_end);

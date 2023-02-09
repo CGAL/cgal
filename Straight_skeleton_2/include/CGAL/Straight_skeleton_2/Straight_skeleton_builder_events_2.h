@@ -178,7 +178,7 @@ private :
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (Split Event, Seed=" << mSeed->id() << " (" << mSeed->point() << ") OppBorder=" << this->triedge().e2()->id() << ')' ;
+    ss << " (Split Event, Seed=" << mSeed->id() << "pos: (" << mSeed->point() << ") OppBorder=" << this->triedge().e2()->id() << ')' ;
   }
 
 private :

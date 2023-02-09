@@ -187,6 +187,8 @@ Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K,
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
+  CGAL_STSKEL_TRAITS_TRACE( "Checking existence of an event for E" << tri->e0().mID << " E" << tri->e1().mID << " E" << tri->e2().mID ) ;
+
   if ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL )
   {
     CGAL_STSKEL_TRAITS_TRACE( ( tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? " normal edges" : " collinear edges" ) ) ;
@@ -206,25 +208,27 @@ Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K,
           if ( aMaxTime && CGAL_NTS certainly(rResult) )
             rResult = CGAL_NTS certified_is_smaller_or_equal(tq,Quotient(*aMaxTime));
 
-          CGAL_STSKEL_TRAITS_TRACE("\nEvent time: " << *t << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
+          CGAL_STSKEL_TRAITS_TRACE("Event time: " << *t << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
         }
         else
         {
-          CGAL_STSKEL_TRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." ) ;
+          CGAL_STSKEL_TRAITS_TRACE("Denominator exactly zero, Event doesn't exist." ) ;
           rResult = false;
         }
       }
-      else{
-        CGAL_STSKEL_TRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existence is indeterminate." ) ;
+      else
+      {
+        CGAL_STSKEL_TRAITS_TRACE("Denominator is probably zero (but not exactly), event existence is indeterminate." ) ;
       }
     }
-    else{
-      CGAL_STSKEL_TRAITS_TRACE("\nEvent time overflowed, event existence is indeterminate." ) ;
+    else
+    {
+      CGAL_STSKEL_TRAITS_TRACE("Event time overflowed, event existence is indeterminate." ) ;
     }
   }
   else
   {
-    CGAL_STSKEL_TRAITS_TRACE("\nAll the edges are collinear. Event doesn't exist." ) ;
+    CGAL_STSKEL_TRAITS_TRACE("All the edges are collinear. Event doesn't exist." ) ;
     rResult = false;
   }
 

@@ -447,7 +447,7 @@ private :
     }
   }
 
-  // @todo Should split events always have lower priority than split events?
+  // @todo Should split events always have lower priority than edge events?
   Comparison_result CompareEventsSupportAngles ( EventPtr const& aA, EventPtr const& aB )
   {
     CGAL_precondition ( aA->type() != Event::cEdgeEvent && aB->type() != Event::cEdgeEvent ) ;
@@ -1404,8 +1404,6 @@ public:
       }
     }
 
-    CGAL_assertion_code(std::cout << "lFaceCountThroughWeights = " << lFaceCountThroughWeights << std::endl;)
-    CGAL_assertion_code(std::cout << "mSSkel->SSkel::Base::size_of_faces() = " << mSSkel->SSkel::Base::size_of_faces() << std::endl;)
     CGAL_assertion( lFaceCountThroughWeights == mSSkel->SSkel::Base::size_of_faces() ) ;
 
     return *this;

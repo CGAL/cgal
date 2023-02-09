@@ -89,7 +89,7 @@ public:
   Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }
   Halfedge_handle       defining_contour_edge()       { return this->face()->halfedge() ; }
 
-  // @fixme this isn't documented in the `StraightSkeletonHalfedge_2` concept
+  // @fixme below is not documented in the `StraightSkeletonHalfedge_2` concept
   Sign slope() const { return mSlope ; }
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 

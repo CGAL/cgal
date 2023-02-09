@@ -142,8 +142,7 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
       c = e.source().y();
     }
 
-    CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for HORIZONTAL line:\n"
-                            << s2str(e)
+    CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for HORIZONTAL line: " << s2str(e)
                             << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
                            ) ;
   }
@@ -166,8 +165,7 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
       c = -e.source().x();
     }
 
-    CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for VERTICAL line:\n"
-                            << s2str(e)
+    CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for VERTICAL line: " << s2str(e)
                             << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
                            ) ;
   }
@@ -186,8 +184,7 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
 
       c = -e.source().x()*a - e.source().y()*b;
 
-      CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for line:\n"
-                               << s2str(e)
+      CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for line: " << s2str(e)
                                << "\nsa="<< n2str(sa) << "\nsb=" << n2str(sb) << "\nl2=" << n2str(l2) << "\nl=" << n2str(l)
                                << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
                                ) ;
@@ -211,9 +208,8 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
   CGAL_precondition( CGAL_NTS is_finite(b) ) ;
   CGAL_precondition( CGAL_NTS is_finite(c) ) ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Weighted line coefficients for line:\n"
-                            << s2str(e)
-                            << "\nscaling=" << n2str(lScale)
+  CGAL_STSKEL_TRAITS_TRACE("Weighted line coefficients for line: " << s2str(e)
+                            << "\nweight=" << n2str(aWeight)
                             << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
                             ) ;
 
@@ -312,8 +308,8 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
   // The result is :
   //
-  //  t = a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 + b1*a0*c2 - b0*a1*c2
-  //      ---------------------------------------------------------------
+  //      a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 + b1*a0*c2 - b0*a1*c2
+  //  t = ---------------------------------------------------------------
   //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
 
   bool ok = false ;
@@ -368,8 +364,9 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
   if ( CGAL_NTS is_finite(delta01) &&  CGAL_NTS is_finite(delta10) )
   {
     if ( delta01 <= delta10 )
-         mp = CGAL::midpoint(e0.target(),e1.source());
-    else mp = CGAL::midpoint(e1.target(),e0.source());
+      mp = CGAL::midpoint(e0.target(),e1.source());
+    else
+      mp = CGAL::midpoint(e1.target(),e0.source());
 
     CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
                              << "\ne0: " << s2str(e0)
@@ -668,7 +665,7 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
   {
     FT den = l0->a()*l2->b() - l0->a()*l1->b() - l1->a()*l2->b() + l2->a()*l1->b() + l0->b()*l1->a() - l0->b()*l2->a();
 
-    CGAL_STSKEL_TRAITS_TRACE("den=" << n2str(den) )
+    CGAL_STSKEL_TRAITS_TRACE("\tden=" << n2str(den) )
 
     if ( ! CGAL_NTS certified_is_zero(den) )
     {
@@ -682,9 +679,8 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
         x =  numX / den ;
         y = -numY / den ;
 
-       CGAL_STSKEL_TRAITS_TRACE("numX=" << n2str(numX) << "\nnumY=" << n2str(numY)
-                               << "\nx=" << n2str(x) << "\ny=" << n2str(y)
-                               )
+       CGAL_STSKEL_TRAITS_TRACE("\tnumX=" << n2str(numX) << "\n\tnumY=" << n2str(numY)
+                                << "\n\tx=" << n2str(x) << "\n\ty=" << n2str(y) ) ;
       }
     }
   }
@@ -704,6 +700,7 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
+// See detailed computations in compute_degenerate_offset_lines_isec_timeC2()
 template <class K, class CoeffCache>
 boost::optional< Point_2<K> >
 construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
@@ -717,7 +714,9 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec point for: " << tri )  ;
+  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec point for:"
+                           << " E" << tri->e0().mID << ",E" << tri->e1().mID << ",E" << tri->e2().mID << std::endl
+                           << tri ) ;
 
   FT x(0.0),y(0.0) ;
 
@@ -824,7 +823,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
     }
   }
 
-  CGAL_STSKEL_TRAITS_TRACE("\nDegenerate " << (CGAL_NTS is_zero(l0->b()) ? "(vertical)" : "") << " event point:  x=" << n2str(x) << " y=" << n2str(y) )
+  CGAL_STSKEL_TRAITS_TRACE("\nDegenerate" << (CGAL_NTS is_zero(l0->b()) ? " (vertical)" : "") << " event point:  x=" << n2str(x) << " y=" << n2str(y) )
 
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }

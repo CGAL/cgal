@@ -22,7 +22,7 @@
 #if    defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) \
     || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE) \
     || defined(CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE) \
-    || defined(CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE) \
+    || defined(CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE) \
     || defined(CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING)
 #
 #  define CGAL_STSKEL_TRACE_ON
@@ -231,6 +231,7 @@ template<class VH, class Triedge>
 inline std::string newn2str( char const* name, VH const& v, Triedge const& aTriedge )
 {
   std::ostringstream ss ;
+  ss.precision(17);
 
   ss << "New Node " << name <<" is N" << v->id() << " at " << v->point()
      << " [E" << aTriedge.e0()->id()
@@ -283,7 +284,7 @@ bool sEnableTraitsTrace = true;
 #endif
 
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
+#ifdef CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
 #  define CGAL_STSKEL_VALIDITY_TRACE(m) CGAL_STSKEL_TRACE(m)
 #  define CGAL_STSKEL_VALIDITY_TRACE_IF(cond,m) if ( cond ) CGAL_STSKEL_VALIDITY_TRACE(m)
 #else

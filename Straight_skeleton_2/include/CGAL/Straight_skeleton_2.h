@@ -213,7 +213,7 @@ public :
           if ( begin->is_border())
               ++nb;
       }
-      CGAL_STSKEL_VALIDITY_TRACE("summe border halfedges (2*nb) = " << 2 * nb );
+      CGAL_STSKEL_VALIDITY_TRACE("sum of border halfedges (2*nb) = " << 2 * nb );
 
       bool nvalid = ( n == this->size_of_halfedges());
 

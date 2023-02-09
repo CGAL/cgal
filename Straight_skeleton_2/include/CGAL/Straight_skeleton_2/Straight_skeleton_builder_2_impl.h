@@ -46,6 +46,8 @@ Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( boost::optio
  ,mPQ(mEventCompare)
  ,mSSkel( new SSkel() )
 {
+  if( mMaxTime )
+    CGAL_STSKEL_BUILDER_TRACE(4, "Init with mMaxTime = " << *mMaxTime)
 }
 
 template<class Gt, class Ss, class V>
@@ -97,6 +99,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
   if ( lTriedge.is_valid() && lTriedge != aPrevEventTriedge )
   {
     Trisegment_2_ptr lTrisegment = CreateTrisegment(lTriedge,aLNode,aRNode);
+
+    CGAL_STSKEL_BUILDER_TRACE(4, "\n[] Considering E" << lTrisegment->e0().mID << " E" << lTrisegment->e1().mID << " E" << lTrisegment->e2().mID
+                                << " Collinearity: " << trisegment_collinearity_to_string(lTrisegment->collinearity()) ) ;
 
     // The 02 collinearity configuration is problematic: 01 or 12 collinearity has a seed position
     // giving the point through which the bisector passes. However, for 02, it is not a given.
@@ -163,7 +168,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
       }
       else
       {
-        CGAL_STSKEL_BUILDER_TRACE(4, "Edge event: " << lTriedge << " is in the past. Compared to L=" << lLNodeD << " to R=" << lRNodeD ) ;
+        CGAL_STSKEL_BUILDER_TRACE(4, "Edge event: " << lTriedge << " is in the past." ) ;
+        CGAL_STSKEL_BUILDER_TRACE(4, "\tCompared to L=" << aLNode->id() << " (" << lLNodeD << ")" ) ;
+        CGAL_STSKEL_BUILDER_TRACE(4, "\tCompared to R=" << aRNode->id() << " (" << lRNodeD << ")" ) ;
       }
     }
   }
@@ -605,6 +612,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CreateContourBisectors()
 template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<true>)
 {
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "Harmonize speeds..." ) ;
+
   // Collinear input edges might not have the exact same speed if an inexact square root is used.
   // This might cause some inconsistencies in time, resulting in invalid skeletons. Therefore,
   // if the square root is not exact, we enforce that collinear input edges have the same speed,
@@ -1058,7 +1067,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
     SetBisectorSlope(lLSeed,lNewNode);
     SetBisectorSlope(lRSeed,lNewNode);
 
-    CGAL_STSKEL_BUILDER_TRACE( 1, "E" << e2str(*(lRSeed->halfedge()->defining_contour_edge())) << " collapsed." );
+    CGAL_STSKEL_BUILDER_TRACE( 1, e2str(*(lRSeed->halfedge()->defining_contour_edge())) << " collapsed." );
     CGAL_STSKEL_BUILDER_TRACE( 3, "fictitious node along collapsed face is N" << lRIFicNode->id()
                                << " between " << e2str(*lROBisector) << " and " << e2str(*lLIBisector) ) ;
 
@@ -1539,16 +1548,16 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
     if ( !mPQ.empty() )
     {
 #ifdef CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
-      std::cout << "MAIN QUEUE -------------------------------------------------- " << std::endl;
-      std::cout << "Queue size: " << mPQ.size() << std::endl;
+      CGAL_STSKEL_BUILDER_TRACE(4, "MAIN QUEUE -------------------------------------------------- ");
+      CGAL_STSKEL_BUILDER_TRACE(4, "Queue size: " << mPQ.size());
       auto mpq = mPQ;
       while(!mpq.empty())
       {
         EventPtr event = mpq.top();
         mpq.pop();
-        std::cout << *event << std::endl;
+        CGAL_STSKEL_BUILDER_TRACE(4, *event);
       }
-      std::cout << "END MAIN QUEUE --------------------------------------------- " << std::endl;
+      CGAL_STSKEL_BUILDER_TRACE(4, "END MAIN QUEUE --------------------------------------------- ");
 #endif
 
       EventPtr lEvent = PopEventFromPQ();
@@ -2031,7 +2040,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 
   mVisitor.on_cleanup_finished();
 
-  // @todo if 'mMaxTime' is sufficiently large, it will be a full skeleton and should be validated as such
+  // If 'mMaxTime' is sufficiently large, it will be a full skeleton and could be validated as such...
   if(mMaxTime) // might be a partial skeleton
     return mSSkel->is_valid(true);
   else
