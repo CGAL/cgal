@@ -39,7 +39,7 @@ struct Default_polygon_offset_builder_2_visitor
 
   void on_offset_contour_started() const {}
 
-  void on_offset_point ( Point_2 const& ) const {}
+  void on_offset_point ( Point_2 const&, Halfedge_const_handle ) const {}
 
   Point_2 on_offset_point_overflowed( Halfedge_const_handle aBisector ) const
   {
