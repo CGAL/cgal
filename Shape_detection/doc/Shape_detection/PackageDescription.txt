@@ -107,7 +107,7 @@ Concepts used for the parameters of the `CGAL::Shape_detection::Region_growing`.
 \defgroup PkgShapeDetectionRGOnPoints Point Set
 \ingroup PkgShapeDetectionRG
 
-\defgroup PkgShapeDetectionRGOnPointSet3 Convenience Aliases and Functions for Point_Set_3
+\defgroup PkgShapeDetectionRGOnPointSet3 Convenience Aliases and Functions for Point_set_3
 \ingroup PkgShapeDetectionRG
 
 Models that can be used with the `CGAL::Shape_detection::Region_growing`
