@@ -1207,7 +1207,7 @@ private :
     InputPointIterator lCurr = aBegin ;
     // InputPointIterator lPrev = aBegin ;
 
-    int c = 0 ;
+    CGAL_precondition_code(int c = 0 ;)
 
     while ( lCurr != aEnd )
     {
@@ -1223,7 +1223,7 @@ private :
 
       Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face(mFaceID++) ) ;
 
-      ++ c ;
+      CGAL_precondition_code(++ c ;)
 
       lCCWBorder->HBase_base::set_face(lFace);
       lFace     ->FBase     ::set_halfedge(lCCWBorder);
