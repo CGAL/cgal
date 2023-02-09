@@ -553,7 +553,6 @@ MainWindow::on_actionLoadConstraints_triggered()
 void
 MainWindow::loadWKT(QString filename)
 {
-  //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
   do
   {
