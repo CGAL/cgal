@@ -51,7 +51,7 @@ From the perspective of a dynamic system of moving edges, such a distance can be
 <I>instant</I> (in time). Therefore, every distinct position along a bisector corresponds
 to a distinct instant in the offsetting process.
 
-As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex.
+As they move inward, edges can expand or contract w.r.t. to the endpoints sharing a vertex.
 If a vertex has an internal angle \f$ <\pi\f$, its incident edges will contract
 but if its internal angle \f$ >\pi\f$, they will expand. The movement of the edges,
 along with their extent change, result in collisions between non-adjacent edges.

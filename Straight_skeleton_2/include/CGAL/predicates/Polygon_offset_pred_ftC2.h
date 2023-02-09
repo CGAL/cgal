@@ -26,7 +26,7 @@ namespace CGAL_SS_i {
 
 // Given a triple of oriented straight line segments: (e0,e1,e2) such that
 // there exists a distance 'et' for which the offsets lines at 'et' (e0',e1',e2') intersect in a single point;
-// returns the relative order of 't' w.r.t 'et'.
+// returns the relative order of 't' w.r.t. 'et'.
 // PRECONDITION: There exists a positive distance et for which the offset triple intersect at a single point.
 template<class K>
 Uncertain<Comparison_result>

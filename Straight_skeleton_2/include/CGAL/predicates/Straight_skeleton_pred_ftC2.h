@@ -237,7 +237,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K,
 
 // Given 2 triples of oriented straight line segments: (m0,m1,m2) and (n0,n1,n2), such that
 // for each triple there exists distances 'mt' and 'nt' for which the offsets lines (at mt and nt resp.),
-// (m0',m1',m2') and (n0',n1',n2') intersect each in a single point; returns the relative order of mt w.r.t nt.
+// (m0',m1',m2') and (n0',n1',n2') intersect each in a single point; returns the relative order of mt w.r.t. nt.
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exists distances mt and nt for which each offset triple intersect at a single point.
 template<class K, class TimeCache, class CoeffCache>
@@ -333,7 +333,7 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 }
 
 // Given an event trisegment and two oriented straight line segments e0 and e1, returns the oriented side of the event point
-// w.r.t the (positive) bisector [e0,e1].
+// w.r.t. the (positive) bisector [e0,e1].
 //
 // The (positive) bisector [e0,e1] is a ray starting at the vertex (e0,e1) (called "v01")
 //
@@ -419,7 +419,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
     Line_2 l1 = validate(compute_weighted_line_coeffC2(e1, w1, aCoeff_cache)) ;
 
     CGAL_STSKEL_TRAITS_TRACE("Getting oriented side of point " << p2str(p)
-                            << " w.r.t bisector ["
+                            << " w.r.t. bisector ["
                             << s2str(e0) << ( primary_is_0 ? "*" : "" )
                             << ","
                             << s2str(e1) << ( primary_is_0 ? "" : "*" )
@@ -443,7 +443,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
       // If e0 and e1 are collinear this line is the actual perpendicular bisector.
       //
       // If e0 and e1 are parallel but not collinear (then neccesarrily facing each other) this line
-      // is NOT the bisector, but the serves to determine the side of the point (projected along the primary edge) w.r.t vertex v01.
+      // is NOT the bisector, but the serves to determine the side of the point (projected along the primary edge) w.r.t. vertex v01.
 
       FT a, b, c ;
       perpendicular_through_pointC2( primary_is_0 ? l0.a() : l1.a()
