@@ -153,15 +153,20 @@ create_interior_weighted_straight_skeleton_2(const Polygon& out_contour,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// EXTERIOR
 
-#if 0
-template <typename FT, typename PointIterator, typename K>
+template <typename FT,
+          typename PointIterator,
+          typename Weights,
+          typename K>
 boost::shared_ptr<Straight_skeleton_2<K> >
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
-                                    PointIterator vertices_begin,
-                                    PointIterator vertices_end,
-                                    const K& k)
+                                             PointIterator vertices_begin,
+                                             PointIterator vertices_end,
+                                             Weights& weights,
+                                             const K& k)
 {
   CGAL_precondition(max_offset > 0);
+  CGAL_precondition(weights.size() == 1); // single (external) contour
+  CGAL_precondition(weights[0].size() == std::distance(vertices_begin, vertices_end));
 
   using Point_2 = typename std::iterator_traits<PointIterator>::value_type;
   using IK = typename Kernel_traits<Point_2>::Kernel;
@@ -205,49 +210,71 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
     std::vector<Hole> holes;
     holes.push_back(poly);
 
-    skeleton = create_interior_weighted_straight_skeleton_2(frame, frame+4, holes.begin(), holes.end(), k);
+    // put a weight large enough such that frame edges are not relevant
+    const FT frame_weight = *(std::max_element(weights[0].begin(), weights[0].end()));
+    std::cout << "Frame weight = " << frame_weight << std::endl;
+    CGAL_STSKEL_BUILDER_TRACE(4, "Frame weight = " << frame_weight);
+
+    const Weights lWeights = { std::vector<FT>(4, frame_weight),
+                               std::vector<FT>(std::rbegin(weights[0]), std::rend(weights[0])) };
+
+    skeleton = create_interior_weighted_straight_skeleton_2(frame, frame+4,
+                                                            holes.begin(), holes.end(),
+                                                            lWeights, k);
   }
 
   return skeleton;
 }
 
-template <typename FT, typename PointIterator>
+template <typename FT,
+          typename PointIterator,
+          typename Weights>
 boost::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              PointIterator vertices_begin,
-                                             PointIterator vertices_end)
+                                             PointIterator vertices_end,
+                                             Weights& weights)
 {
   return create_exterior_weighted_straight_skeleton_2(max_offset,
-                                             vertices_begin,
-                                             vertices_end,
-                                             Exact_predicates_inexact_constructions_kernel());
+                                                      vertices_begin,
+                                                      vertices_end,
+                                                      weights,
+                                                      Exact_predicates_inexact_constructions_kernel());
 }
 
-template <typename FT, typename Polygon, typename K>
+template <typename FT,
+          typename Polygon,
+          typename Weights,
+          typename K>
 boost::shared_ptr<Straight_skeleton_2<K> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              const Polygon& aPoly,
+                                             Weights& weights,
                                              const K& k)
 {
   return create_exterior_weighted_straight_skeleton_2(max_offset,
-                                            CGAL_SS_i::vertices_begin(aPoly),
-                                            CGAL_SS_i::vertices_end(aPoly),
-                                            k);
+                                                      CGAL_SS_i::vertices_begin(aPoly),
+                                                      CGAL_SS_i::vertices_end(aPoly),
+                                                      weights,
+                                                      k);
 }
 
-template <typename FT, typename Polygon>
+template <typename FT,
+          typename Weights,
+          typename Polygon>
 boost::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
+                                             Weights& weights,
                                              const Polygon& aPoly)
 {
   return create_exterior_weighted_straight_skeleton_2(max_offset,
-                                             aPoly,
-                                             Exact_predicates_inexact_constructions_kernel());
+                                                      aPoly,
+                                                      weights,
+                                                      Exact_predicates_inexact_constructions_kernel());
 }
-#endif
 
 } // end namespace CGAL
 

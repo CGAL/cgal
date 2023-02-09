@@ -53,17 +53,18 @@ struct Construct_offset_point_2 : Functor_base_2<K>
 
   typedef boost::optional<Point_2> result_type ;
 
-
   result_type operator() ( FT                const& aT
                          , Segment_2_with_ID const& aE0
+                         , FT                const& aWeight0
                          , Segment_2_with_ID const& aE1
+                         , FT                const& aWeight1
                          , Trisegment_2_ptr  const& aNode
                          ) const
   {
     typedef boost::optional< Line_2<K> > Optional_line;
     No_cache<Optional_line> lCoeff_cache;
 
-    result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode,lCoeff_cache);
+    result_type p = construct_offset_pointC2(aT,aE0,aWeight0,aE1,aWeight1,aNode,lCoeff_cache);
 
     CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
 

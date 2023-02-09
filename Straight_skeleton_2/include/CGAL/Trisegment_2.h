@@ -70,10 +70,14 @@ class Trisegment_2
 
 public:
   typedef boost::intrusive_ptr<Trisegment_2> Self_ptr ;
+  typedef typename K::FT                     FT ;
 
   Trisegment_2 ( Segment const&        aE0
+               , FT const&             aW0
                , Segment const&        aE1
+               , FT const&             aW1
                , Segment const&        aE2
+               , FT const&             aW2
                , Trisegment_collinearity aCollinearity
                , std::size_t aID
                )
@@ -84,6 +88,10 @@ public:
     mE[0] = aE0 ;
     mE[1] = aE1 ;
     mE[2] = aE2 ;
+
+    mW[0] = aW0 ;
+    mW[1] = aW1 ;
+    mW[2] = aW2 ;
 
     switch ( mCollinearity )
     {
@@ -117,6 +125,12 @@ public:
   Segment const& e1() const { return e(1) ; }
   Segment const& e2() const { return e(2) ; }
 
+  FT const& w( unsigned idx ) const { CGAL_precondition(idx<3) ; return mW[idx] ; }
+
+  FT const& w0() const { return w(0) ; }
+  FT const& w1() const { return w(1) ; }
+  FT const& w2() const { return w(2) ; }
+
   // If 2 out of the 3 edges are collinear they can be reclassified as 1 collinear edge (any of the 2) and 1 non-collinear.
   // These methods returns the edges according to that classification.
   // PRECONDITION: Exactly 2 out of 3 edges are collinear
@@ -132,6 +146,21 @@ public:
         return e(2);
       case TRISEGMENT_COLLINEARITY_02:
         return e(2);
+    }
+  }
+
+  FT const& collinear_edge_weight() const { return w(mCSIdx) ; }
+  FT const& non_collinear_edge_weight() const { return w(mNCSIdx) ; }
+  FT const& other_collinear_edge_weight() const
+  {
+    switch ( mCollinearity )
+    {
+      case TRISEGMENT_COLLINEARITY_01:
+        return w(1);
+      case TRISEGMENT_COLLINEARITY_12:
+        return w(2);
+      case TRISEGMENT_COLLINEARITY_02:
+        return w(2);
     }
   }
 
@@ -207,6 +236,7 @@ public:
 private :
   std::size_t             mID;
   Segment                 mE[3];
+  FT                      mW[3];
   Trisegment_collinearity mCollinearity ;
   unsigned                mCSIdx, mNCSIdx ;
 

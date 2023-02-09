@@ -39,6 +39,7 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
 
   typedef typename Base::Segment_2_with_ID        Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
+  typedef typename Base::FT               FT ;
 
   typedef Trisegment_2_ptr result_type ;
 
@@ -47,9 +48,14 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
     : mNext_ID(traits.trisegment_ID())
   {}
 
-  result_type operator() ( Segment_2_with_ID const& aS0, Segment_2_with_ID const& aS1, Segment_2_with_ID const& aS2 ) const
+  result_type operator() ( Segment_2_with_ID const& aS0,
+                           FT const& aW0,
+                           Segment_2_with_ID const& aS1,
+                           FT const& aW1,
+                           Segment_2_with_ID const& aS2,
+                           FT const& aW2 ) const
   {
-    return construct_trisegment(aS0,aS1,aS2,mNext_ID++) ;
+    return construct_trisegment(aS0,aW0,aS1,aW1,aS2,aW2,mNext_ID++) ;
   }
 
   std::size_t& mNext_ID ;
@@ -170,6 +176,7 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
   typedef typename Base::Segment_2_with_ID        Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
   typedef typename Base::Point_2          Point_2 ;
+  typedef typename Base::FT               FT;
 
   typedef Uncertain<Oriented_side> result_type ;
 
@@ -179,12 +186,14 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
 
   Uncertain<Oriented_side> operator() ( Trisegment_2_ptr const& aEvent
                                       , Segment_2_with_ID        const& aE0
+                                      , FT               const& aW0
                                       , Segment_2_with_ID        const& aE1
+                                      , FT               const& aW1
                                       , Trisegment_2_ptr const& aE01Event
                                       , bool                    aE0isPrimary
                                       ) const
   {
-    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aE1,aE01Event,aE0isPrimary,mCoeff_cache) ;
+    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aW0,aE1,aW1,aE01Event,aE0isPrimary,mCoeff_cache) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Oriented_side_of_event_point_wrt_bisector_2","Event=" << aEvent << " E0=" << aE0 << " E1=" << aE1 );
 
@@ -502,7 +511,7 @@ public:
   void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS,
                               typename K::FT const& aWeight )
   {
-    CGAL_SS_i::compute_normalized_line_ceoffC2 ( aBorderS, aWeight, mCoeff_cache ) ;
+    CGAL_SS_i::compute_weighted_line_coeffC2( aBorderS, aWeight, mCoeff_cache ) ;
   }
 
   void InitializeLineCoeffs ( std::size_t aID, std::size_t aOtherID )

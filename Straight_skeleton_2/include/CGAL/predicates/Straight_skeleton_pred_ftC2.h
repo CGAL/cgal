@@ -397,7 +397,9 @@ template<class K, class CoeffCache>
 Uncertain<Oriented_side>
 oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& event,
                                               Segment_2_with_ID<K> const& e0,
+                                              typename K::FT const& w0,
                                               Segment_2_with_ID<K> const& e1,
+                                              typename K::FT const& w1,
                                               boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& v01_event, // can be null
                                               bool primary_is_0,
                                               CoeffCache& aCoeff_cache )
@@ -413,8 +415,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
   {
     Point_2 p = validate(construct_offset_lines_isecC2(event, aCoeff_cache));
 
-    Line_2 l0 = validate(compute_normalized_line_ceoffC2(e0, aCoeff_cache)) ;
-    Line_2 l1 = validate(compute_normalized_line_ceoffC2(e1, aCoeff_cache)) ;
+    Line_2 l0 = validate(compute_weighted_line_coeffC2(e0, w0, aCoeff_cache)) ;
+    Line_2 l1 = validate(compute_weighted_line_coeffC2(e1, w1, aCoeff_cache)) ;
 
     CGAL_STSKEL_TRAITS_TRACE("Getting oriented side of point " << p2str(p)
                             << " w.r.t bisector ["

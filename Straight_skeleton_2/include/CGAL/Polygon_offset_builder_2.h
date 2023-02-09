@@ -178,7 +178,9 @@ public:
 
     OptionalPoint_2 p = Construct_offset_point_2(mTraits)(aT
                                                          ,CreateSegment(lBorderA)
+                                                         ,lBorderA->weight()
                                                          ,CreateSegment(lBorderB)
+                                                         ,lBorderB->weight()
                                                          ,lSeedEvent
                                                          );
     CGAL_stskel_intrinsic_test_assertion

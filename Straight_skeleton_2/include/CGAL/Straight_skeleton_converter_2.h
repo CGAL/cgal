@@ -46,6 +46,7 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
   typedef CGAL_SS_i::Segment_2_with_ID<Source_traits> Source_segment_2_with_ID;
   typedef CGAL_SS_i::Segment_2_with_ID<Target_traits> Target_segment_2_with_ID;
 
+  typedef typename Source_traits::FT Source_FT;
   typedef typename Source_traits::Segment_2 Source_segment_2;
   typedef typename Target_traits::Segment_2 Target_segment_2;
   typedef Trisegment_2<Source_traits, Source_segment_2> Source_trisegment_2;
@@ -107,13 +108,20 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
     const auto& lSe1 = aT->e1();
     const auto& lSe2 = aT->e2();
 
+    const Source_FT& lW0 = aT->w0();
+    const Source_FT& lW1 = aT->w1();
+    const Source_FT& lW2 = aT->w2();
+
     Trisegment_collinearity lCollinearity = aT->collinearity();
     std::size_t lId = aT->id();
 
     Target_trisegment_2_ptr rT = Target_trisegment_2_ptr(
                                    new Target_trisegment_2(this->operator()(lSe0),
+                                                           this->operator()(lW0),
                                                            this->operator()(lSe1),
+                                                           this->operator()(lW1),
                                                            this->operator()(lSe2),
+                                                           this->operator()(lW2),
                                                            lCollinearity, lId));
 
     if ( aT->child_l() )

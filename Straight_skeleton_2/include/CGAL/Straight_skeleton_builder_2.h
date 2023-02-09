@@ -699,8 +699,11 @@ private :
     CGAL_precondition(aTriedge.is_valid() && aTriedge.is_skeleton());
 
     Trisegment_2_ptr r = Construct_ss_trisegment_2(mTraits)(CreateSegment<Traits>(aTriedge.e0())
+                                                           ,aTriedge.e0()->weight()
                                                            ,CreateSegment<Traits>(aTriedge.e1())
+                                                           ,aTriedge.e1()->weight()
                                                            ,CreateSegment<Traits>(aTriedge.e2())
+                                                           ,aTriedge.e2()->weight()
                                                            );
 
     CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":" << r ) ;
@@ -879,7 +882,9 @@ private :
   {
     return Oriented_side_of_event_point_wrt_bisector_2(mTraits)( aEvent.trisegment()
                                                                , CreateSegment<Traits>(aE0)
+                                                               , aE0->weight()
                                                                , CreateSegment<Traits>(aE1)
+                                                               , aE1->weight()
                                                                , GetTrisegment(aV01) // Can be null
                                                                , aE0isPrimary
                                                                ) ;

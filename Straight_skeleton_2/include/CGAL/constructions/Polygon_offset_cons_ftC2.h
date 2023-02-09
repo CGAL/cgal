@@ -34,7 +34,9 @@ namespace CGAL_SS_i {
 template<class K, class CoeffCache>
 boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t,
                                                          Segment_2_with_ID<K> const& e0,
+                                                         typename K::FT const& weight0,
                                                          Segment_2_with_ID<K> const& e1,
+                                                         typename K::FT const& weight1,
                                                          boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                                          CoeffCache& aCoeff_cache)
 {
@@ -52,8 +54,8 @@ boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t
   CGAL_STSKEL_TRAITS_TRACE("Edges " << " e0=" << s2str(e0) << " w = " << weight0 ) ;
   CGAL_STSKEL_TRAITS_TRACE(            " e1=" << s2str(e1) << " w = " << weight1 << " tri=" << tri ) ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(e0, aCoeff_cache) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(e1, aCoeff_cache) ;
+  Optional_line_2 l0 = compute_weighted_line_coeffC2(e0, weight0, aCoeff_cache) ;
+  Optional_line_2 l1 = compute_weighted_line_coeffC2(e1, weight1, aCoeff_cache) ;
 
   bool ok = false ;
 

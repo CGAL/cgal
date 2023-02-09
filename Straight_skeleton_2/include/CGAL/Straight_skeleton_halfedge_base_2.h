@@ -44,11 +44,17 @@ public:
 
 protected:
 
-  Straight_skeleton_halfedge_base_base_2() : mF(Face_handle()), mID(-1), mSlope(ZERO), mWeight(1) {}
+  Straight_skeleton_halfedge_base_base_2()
+    : mF(Face_handle()), mID(-1), mSlope(ZERO), mWeight(std::numeric_limits<FT>::infinity())
+  {}
 
-  Straight_skeleton_halfedge_base_base_2( int aID ) : mF(Face_handle()), mID(aID), mSlope(ZERO), mWeight(1) {}
+  Straight_skeleton_halfedge_base_base_2( int aID )
+    : mF(Face_handle()), mID(aID), mSlope(ZERO), mWeight(std::numeric_limits<FT>::infinity())
+  {}
 
-  Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope ) : mF(Face_handle()), mID(aID), mSlope(aSlope), mWeight(1) {}
+  Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope )
+    : mF(Face_handle()), mID(aID), mSlope(aSlope), mWeight(std::numeric_limits<FT>::infinity())
+  {}
 
 public:
 
@@ -71,7 +77,7 @@ public:
   void set_vertex  ( Vertex_handle   w) { mV   = w; }
   void set_face    ( Face_handle     g) { mF   = g; }
 
-  int id() const { return mID ; }
+  int id() const { CGAL_assertion(mID != -1); return mID ; }
   void reset_id ( int aID ) { mID = aID ; }
 
   bool is_bisector() const
@@ -93,8 +99,8 @@ public:
   Sign slope() const { return mSlope ; }
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 
-  FT weight() const { return mWeight ; }
-  void set_weight( FT aWeight ) { mWeight = aWeight ; }
+  FT weight() const { CGAL_assertion(mWeight != std::numeric_limits<FT>::infinity()); return mWeight ; }
+  void set_weight( FT aWeight ) { std::cout << "set_weight(H" <<  id() << " W=" << aWeight << ")" << std::endl; mWeight = aWeight ; }
 
 private:
 

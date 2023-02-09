@@ -368,8 +368,11 @@ struct SS_converter : Converter
     CGAL_precondition( tri!= Source_trisegment_2_ptr() ) ;
 
     return Target_trisegment_2_ptr ( new Target_trisegment_2(cvt_s(tri->e0())
+                                                            ,cvt_n(tri->w0())
                                                             ,cvt_s(tri->e1())
+                                                            ,cvt_n(tri->w1())
                                                             ,cvt_s(tri->e2())
+                                                            ,cvt_n(tri->w2())
                                                             ,tri->collinearity()
                                                             ,tri->id()
                                                             )

@@ -106,14 +106,14 @@ inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& lz)
   return inexact_sqrt( exact(lz) );
 }
 
-
-// Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
-// supporting line.
-// POSTCONDITION: [a,b] is the leftward normal _unit_ (a²+b²=1) vector.
+// Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c)
+// of the supporting line, and weights them with 'aWeight'.
+//
+// POSTCONDITION: [a,b] is the leftward normal vector.
 // POSTCONDITION: In case of overflow, an empty optional<> is returned.
 template<class K>
-boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e,
-                                                              typename K::FT const& aWeight )
+boost::optional< Line_2<K> > compute_weighted_line_coeffC2( Segment_2<K> const& e,
+                                                            typename K::FT const& aWeight )
 {
   CGAL_precondition( CGAL_NTS is_finite(aWeight) && CGAL_NTS is_positive(aWeight) ) ;
 
@@ -199,10 +199,9 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
     if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) )
       finite = false ;
 
-  const FT lScale = aWeight ;
-  a = a * lScale ;
-  b = b * lScale ;
-  c = c * lScale ;
+  a = a * aWeight ;
+  b = b * aWeight ;
+  c = c * aWeight ;
 
   CGAL_precondition( CGAL_NTS is_finite(a) ) ;
   CGAL_precondition( CGAL_NTS is_finite(b) ) ;
@@ -217,14 +216,14 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
 }
 
 template<class K, class CoeffCache>
-boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2_with_ID<K> const& e,
-                                                              typename K::FT const& aWeight,
-                                                              CoeffCache& aCoeff_cache )
+boost::optional< Line_2<K> > compute_weighted_line_coeffC2( Segment_2_with_ID<K> const& e,
+                                                            typename K::FT const& aWeight,
+                                                            CoeffCache& aCoeff_cache )
 {
   if ( aCoeff_cache.IsCached(e.mID) )
     return aCoeff_cache.Get(e.mID) ;
 
-  boost::optional< Line_2<K> > rRes = compute_normalized_line_ceoffC2 ( static_cast<Segment_2<K> const&>(e), aWeight ) ;
+  boost::optional< Line_2<K> > rRes = compute_weighted_line_coeffC2 ( static_cast<Segment_2<K> const&>(e), aWeight ) ;
 
   aCoeff_cache.Set(e.mID, rRes) ;
 
@@ -253,8 +252,11 @@ Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, 
 template<class K>
 boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > >
 construct_trisegment ( Segment_2_with_ID<K> const& e0,
+                       typename K::FT const& w0,
                        Segment_2_with_ID<K> const& e1,
+                       typename K::FT const& w1,
                        Segment_2_with_ID<K> const& e2,
+                       typename K::FT const& w2,
                        std::size_t id )
 {
   typedef Trisegment_2<K, Segment_2_with_ID<K> >Trisegment_2 ;
@@ -262,7 +264,7 @@ construct_trisegment ( Segment_2_with_ID<K> const& e0,
 
   Trisegment_collinearity lCollinearity = trisegment_collinearity_no_exact_constructions(e0,e1,e2);
 
-  return Trisegment_2_ptr( new Trisegment_2(e0, e1, e2, lCollinearity, id) ) ;
+  return Trisegment_2_ptr( new Trisegment_2(e0, w0, e1, w1, e2, w2, lCollinearity, id) ) ;
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2
@@ -311,12 +313,11 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
   //      a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 + b1*a0*c2 - b0*a1*c2
   //  t = ---------------------------------------------------------------
   //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
-
   bool ok = false ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->e0(), aCoeff_cache) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->e1(), aCoeff_cache) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->e2(), aCoeff_cache) ;
+  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCoeff_cache) ;
+  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->e1(), tri->w1(), aCoeff_cache) ;
+  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->e2(), tri->w2(), aCoeff_cache) ;
 
   if ( l0 && l1 && l2 )
   {
@@ -498,8 +499,8 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   //   (2)
   //   The bisecting line of e0 and e2 is given by the following SEL
   //
-  //    l0.a*x(t) + l0.b*y(t) + l0.c + t = 0
-  //    l2.a*x(t) + l2.b*y(t) + l2.c + t = 0
+  //    l0.a*x(t) + l0.b*y(t) + l0.c - t = 0
+  //    l2.a*x(t) + l2.b*y(t) + l2.c - t = 0
   //
   //   where (l0.a,l0.b,l0.c) and (l2.a,l2.b,l2.c) are the normalized line coefficientes of e0 and e2, resp.
   //
@@ -515,9 +516,29 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   //   for t gives the result we want.
   //
   //
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge(), aCoeff_cache) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->other_collinear_edge(), aCoeff_cache) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->non_collinear_edge(), aCoeff_cache) ;
+  //   (4)
+  //   With weights, the above equations become:
+  //
+  //   sage: eq0 = w0*a0*x + w0*b0*y + w0*c0 - t == 0
+  //   sage: eq2 = w2*a2*x + w2*b2*y + w2*c2 - t == 0
+  //
+  //   sage: solve([eq0,eq2], x,y)
+  //     [[x == -(b2*t*w2 - (b2*c0*w2 - b0*c2*w2 + b0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0),
+  //       y ==  (a2*t*w2 - (a2*c0*w2 - a0*c2*w2 + a0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0) ]]
+  //
+  //   sage: x0 = -(b2*t*w2 - (b2*c0*w2 - b0*c2*w2 + b0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0)
+  //   sage: eqb0 = qx + t * a0 / w0 - x0 == 0
+  //   sage: solve(eqb0, t)
+  //     [t == -(b2*c0 - b0*c2 - (a2*b0 - a0*b2)*qx)*w0*w2/(b0*w0 - (a0*a2*b0 - (a0^2 - 1)*b2)*w2) ]
+  //
+  //   sage: y0 = (a2*t*w2 - (a2*c0*w2 - a0*c2*w2 + a0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0)
+  //   sage: eqb1 = qy + t * b0 / w0 - y0 == 0
+  //   sage: solve(eqb1, t)
+  //     [t == -(a2*c0 - a0*c2 + (a2*b0 - a0*b2)*qy)*w0*w2/(a0*w0 + (a2*b0^2 - a0*b0*b2 - a2)*w2)]
+
+  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCoeff_cache) ;
+  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->other_collinear_edge(), tri->other_collinear_edge_weight(), aCoeff_cache) ;
+  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->non_collinear_edge(), tri->non_collinear_edge_weight(), aCoeff_cache) ;
 
   Optional_point_2 q = compute_degenerate_seed_pointC2(tri, aCoeff_cache);
 
@@ -525,85 +546,66 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
 
   if ( l0 && l1 && l2 && q )
   {
-    CGAL_STSKEL_TRAITS_TRACE("l0 ID: " << tri->collinear_edge().mID ) ;
-    CGAL_STSKEL_TRAITS_TRACE("l1 ID: " << tri->other_collinear_edge().mID );
-    CGAL_STSKEL_TRAITS_TRACE("l2 ID: " << tri->non_collinear_edge().mID ) ;
-    CGAL_STSKEL_TRAITS_TRACE("Labc " << l0->a() << " " << l0->b() << " "
-                                     << l1->a() << " " << l1->b() << " "
-                                     << l2->a() << " " << l2->b() ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tl0 ID: " << tri->collinear_edge().mID << " w: " << tri->collinear_edge_weight() ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tl1 ID: " << tri->other_collinear_edge().mID << " w: " << tri->other_collinear_edge_weight() );
+    CGAL_STSKEL_TRAITS_TRACE("\tl2 ID: " << tri->non_collinear_edge().mID << " w: " << tri->non_collinear_edge_weight() ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tLabc [" << l0->a() << "; " << l0->b() << "; " << l0->c() << "]"
+                                 << "[" << l1->a() << "; " << l1->b() << "; " << l1->c() << "]"
+                                 << "[" << l2->a() << "; " << l2->b() << "; " << l2->c() << "]") ;
 
-    // If the norm (aka speeds) are equal, keep both alive and the bissector is orthogonal to l0 and l1
-    // If one is larger than the other, kill the one with lower speed
-    const FT l0_square_norm = square( l0->a()) + square(l0->b() ) ;
-    const FT l1_square_norm = square( l1->a()) + square(l1->b() ) ;
-    CGAL_STSKEL_TRAITS_TRACE("Norms " << l0_square_norm << " " << l1_square_norm ) ;
+    FT px, py ;
+    line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(), px,py);
+    CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ".\nProjected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
 
-    const Comparison_result res = compare(l0_square_norm, l1_square_norm);
+    const Comparison_result res = compare(tri->collinear_edge_weight(), tri->other_collinear_edge_weight());
     if ( res == EQUAL )
     {
-      FT px, py ;
-      line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(), px,py);
-      CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ".\nProjected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
-
-      FT l0a = l0->a() ;
-      FT l0b = l0->b() ;
+      const FT& l0a = l0->a() ;
+      const FT& l0b = l0->b() ;
       const FT& l0c = l0->c() ;
+      const FT sq_w0 = square(tri->collinear_edge_weight());
       const FT& l2a = l2->a() ;
       const FT& l2b = l2->b() ;
       const FT& l2c = l2->c() ;
-
-      // the l0 speed is inverted for the orthogonal line (1 / (l0a^2 + l0b^2))
-      FT sq_l0_norm_den = FT(1) / l0_square_norm;
-      l0a *= sq_l0_norm_den;
-      l0b *= sq_l0_norm_den;
+      const FT sq_w2 = square(tri->non_collinear_edge_weight());
 
       FT num(0), den(0) ;
       if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
       {
-        num = (l2a * l0b - l0a * l2b ) * px + l0b * l2c - l2b * l0c ;
-        den = (l0a * l0a - 1) * l2b + ( 1 - l2a * l0a ) * l0b ;
+        num = ((l2a*l0b - l0a*l2b) * px - l2b*l0c + l0b*l2c) * sq_w0 ;
+        den = l0a*l0a*l2b - l2b*sq_w0 + l0b*sq_w0 - l0a*l2a*l0b ;
 
         CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, non-vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
       }
       else
       {
-        num = (l2a * l0b - l0a * l2b ) * py - l0a * l2c + l2a * l0c ;
-        den = l0a * l0b * l2b - l0b * l0b * l2a + l2a - l0a ;
+        num = ((l2a*l0b - l0a*l2b) * py - l0a*l2c + l2a*l0c) * sq_w0 ;
+        den = l0a*l0b*l2b - l0b*l0b*l2a + l2a*sq_w0 - l0a*sq_w0;
 
         CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
       }
 
-      ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);
-
+      ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den) && !CGAL_NTS certified_is_zero(den);
       return cgal_make_optional(ok, Rational<FT>(num,den)) ;
     }
     else
     {
-      // A larger norm means that the front moves slower!
-      if(res == LARGER)
-        l0 = l1;
+      // l0 and l2 are collinear and are meeting up: (arbitrarily) kill one instantly.
+      // The time is the time at 'q' since we are instantly killing the slower front.
+      FT t;
+      if(res == LARGER) // weight l0 > weight l1 @fixme choose arbitrarily
+        t = l1->a() * q->x() + l1->b() * q->y() + l1->c() ;
+      else
+        t = l0->a() * q->x() + l0->b() * q->y() + l0->c() ;
 
-      const FT& l0a = l0->a() ; const FT& l0b = l0->b() ; const FT& l0c = l0->c() ;
-      const FT& l2a = l2->a() ; const FT& l2b = l2->b() ; const FT& l2c = l2->c() ;
+      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, inequal norms) t=" << t )
 
-      // The line parallel to l0 (and l1) passing through q is: l0a*x + l0b*y + lambda = 0, with
-      const FT lambda = -l0a*q->x() - l0b*q->y();
-
-      // The bisector between l0 (l1) and l2 is:
-      //  l0a*x + l0b*y + l0c - t = 0
-      //  l2a*x + l2b*y + l2c - t = 0
-
-      // The intersection point is thus:
-      //  l0a*x + l0b*y + l0c - t = 0
-      //  l2a*x + l2b*y + l2c - t = 0
-      //  l0a*x + l0b*y + lambda = 0
-
-      const FT t = l0c - lambda ; // (3) - (1)
-      ok = CGAL_NTS is_finite(t) ;
-
+      ok = CGAL_NTS is_finite(t);
       return cgal_make_optional(ok, Rational<FT>(t,FT(1))) ;
     }
   }
+
+  return boost::none;
 }
 
 //
@@ -655,9 +657,9 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 
   FT x(0), y(0) ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->e0(), aCoeff_cache) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->e1(), aCoeff_cache) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->e2(), aCoeff_cache) ;
+  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCoeff_cache) ;
+  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->e1(), tri->w1(), aCoeff_cache) ;
+  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->e2(), tri->w2(), aCoeff_cache) ;
 
   bool ok = false ;
 
@@ -720,9 +722,9 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
 
   FT x(0.0),y(0.0) ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge(), aCoeff_cache) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->other_collinear_edge(), aCoeff_cache) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->non_collinear_edge(), aCoeff_cache) ;
+  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCoeff_cache) ;
+  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->other_collinear_edge(), tri->other_collinear_edge_weight(), aCoeff_cache) ;
+  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->non_collinear_edge(), tri->non_collinear_edge_weight(), aCoeff_cache) ;
 
   Optional_point_2 q = compute_degenerate_seed_pointC2(tri, aCoeff_cache);
 
@@ -744,28 +746,31 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
 
       CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ". Projected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
 
-      FT l0a = l0->a() ;
-      FT l0b = l0->b() ;
+      const FT& l0a = l0->a() ;
+      const FT& l0b = l0->b() ;
       const FT& l0c = l0->c() ;
+      const FT sq_w0 = square(tri->collinear_edge_weight());
       const FT& l2a = l2->a() ;
       const FT& l2b = l2->b() ;
       const FT& l2c = l2->c() ;
+      const FT sq_w2 = square(tri->non_collinear_edge_weight());
 
-      // the l0 speed is inverted for the orthogonal line (1 / (l0a^2 + l0b^2))
-      FT sq_l0_norm_den = FT(1) / (square(l0a) + square(l0b));
-      l0a *= sq_l0_norm_den;
-      l0b *= sq_l0_norm_den;
-
+      // Note that "* sq_w0" is removed from the numerator expression.
+      //
+      // This is because the speed is inverted while representing the front
+      // progression with the orthogonal [l0a, l0b] vector: P = Q + t/w * V with V normalized.
+      // Since here l0a & l0b are not normalized but *weighted* coeff, we need to divide by w0²,
+      // hence we can just avoid multiplying by w0² in the numerator in the first place.
       FT num, den ;
       if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
       {
-        num = (l2a * l0b - l0a * l2b ) * px + l0b * l2c - l2b * l0c ;
-        den = (l0a * l0a - 1) * l2b + ( 1 - l2a * l0a ) * l0b ;
+        num = ((l2a*l0b - l0a*l2b) * px - l2b*l0c + l0b*l2c) /* * sq_w0 */ ;
+        den = l0a*l0a*l2b - l2b*sq_w0 + l0b*sq_w0 - l0a*l2a*l0b ;
       }
       else
       {
-        num = (l2a * l0b - l0a * l2b ) * py - l0a * l2c + l2a * l0c ;
-        den = l0a * l0b * l2b - l0b * l0b * l2a + l2a - l0a ;
+        num = ((l2a*l0b - l0a*l2b) * py - l0a*l2c + l2a*l0c) /* * sq_w0 */ ;
+        den = l0a*l0b*l2b - l0b*l0b*l2a + l2a*sq_w0 - l0a*sq_w0;
       }
 
       if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
@@ -778,7 +783,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
     }
     else
     {
-      // A larger norm means that the front moves slower!
+      // A larger norm means that the front grows higher
       if(res == LARGER)
         l0 = l1;
 
