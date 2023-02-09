@@ -112,9 +112,8 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
   std::set<halfedge_descriptor> edges_to_test(halfedge_range.begin(), halfedge_range.end());
 
-#ifdef CGAL_PMP_SNAP_DEBUG
   int collapsed_n = 0;
-#endif
+
   while(!edges_to_test.empty())
   {
     const halfedge_descriptor h = *(edges_to_test.begin());
@@ -167,13 +166,11 @@ void simplify_range(HalfedgeRange& halfedge_range,
           edges_to_test.insert(prev_h);
         if(next_h!=opoh && get(range_halfedges, next_h))
           edges_to_test.insert(next_h);
-#ifdef CGAL_PMP_SNAP_DEBUG
         ++collapsed_n;
-#endif
       }
     }
   }
-
+  CGAL_USE(collapsed_n);
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "collapsed " << collapsed_n << " edges" << std::endl;
 #endif
