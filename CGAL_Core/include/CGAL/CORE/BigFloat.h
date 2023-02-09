@@ -632,7 +632,6 @@ inline long longValue(const BigFloat& bf)
 
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/CORE/BigFloat_impl.h>
-#include <CGAL/CORE/CoreIO_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #include <CGAL/enable_warnings.h>
