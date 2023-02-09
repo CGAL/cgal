@@ -139,6 +139,7 @@ private:
 
   Trisegment_2_ptr GetTrisegment ( Vertex_const_handle aNode ) const ;
 
+public:
   Comparison_result Compare_offset_against_event_time( FT aT, Vertex_const_handle aNode ) const
   {
     CGAL_precondition( aNode->is_skeleton() ) ;
@@ -148,7 +149,7 @@ private:
 
     return r ;
   }
-public:
+
   boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
