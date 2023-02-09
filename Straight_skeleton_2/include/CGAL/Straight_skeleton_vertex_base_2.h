@@ -263,7 +263,6 @@ private:
 
   int              mID ;
   Halfedge_handle  mHE ;
-  Triedge          mEventTriedge ;
   Trisegment_2_ptr mTrisegment ;
   Point_2          mP;
   FT               mTime ;
