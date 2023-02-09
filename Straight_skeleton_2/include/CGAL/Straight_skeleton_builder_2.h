@@ -661,8 +661,8 @@ private :
 
   typename K::Segment_2 CreateRawSegment ( Halfedge_const_handle aH ) const
   {
-    Point_2 s = aH->opposite()->vertex()->point() ;
-    Point_2 t = aH->vertex()->point() ;
+    const Point_2& s = aH->opposite()->vertex()->point() ;
+    const Point_2& t = aH->vertex()->point() ;
     return K().construct_segment_2_object()(s,t);
   }
 
