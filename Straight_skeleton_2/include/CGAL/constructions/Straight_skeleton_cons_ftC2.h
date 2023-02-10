@@ -590,18 +590,26 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
     }
     else
     {
-      // l0 and l2 are collinear and are meeting up: (arbitrarily) kill one instantly.
-      // The time is the time at 'q' since we are instantly killing the slower front.
-      FT t;
-      if(res == LARGER) // weight l0 > weight l1 @fixme choose arbitrarily
-        t = l1->a() * q->x() + l1->b() * q->y() + l1->c() ;
+      // l0 and l1 are collinear and are meeting up, the time is simply the time at Q,
+      // and the event only exists if the two times are identical
+      //
+      // @todo, which direction the horizontal line uses is likely dictated by the order
+      // of the input segments in the triedge, maybe we would like more control over this.
+      const FT t0 = l0->a() * q->x() + l0->b() * q->y() + l0->c();
+      const FT t1 = l1->a() * q->x() + l1->b() * q->y() + l1->c();
+
+      if( CGAL_NTS is_finite(t0) && CGAL_NTS is_finite(t1) && t0 == t1 )
+      {
+        CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, inequal norms) t:" << t0 )
+        return cgal_make_optional(true, Rational<FT>(t0,FT(1))) ;
+      }
       else
-        t = l0->a() * q->x() + l0->b() * q->y() + l0->c() ;
-
-      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, inequal norms) t=" << t )
-
-      ok = CGAL_NTS is_finite(t);
-      return cgal_make_optional(ok, Rational<FT>(t,FT(1))) ;
+      {
+        CGAL_STSKEL_TRAITS_TRACE("Event times (degenerate, inequal norms) t0:" << t0 << " != t1:" << t1 )
+        CGAL_STSKEL_TRAITS_TRACE("--> Returning 0/0 (no event)");
+        // if we return boost::none, exist_offset_lines_isec2() will think it's a numerical error
+        return cgal_make_optional(true, Rational<FT>(FT(0),FT(0))) ;
+      }
     }
   }
 
@@ -732,7 +740,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
 
   if ( l0 && l1 && l2 && q )
   {
-    // If the norm (aka speeds) are equal, keep both alive and the bissector is orthogonal to l0 and l1
+    // If the norm (aka speeds) are equal, keep both alive and the bisector is orthogonal to l0 and l1
     // If one is larger than the other, kill the one with lower speed
     const FT l0_square_norm = square(l0->a()) + square(l0->b());
     const FT l1_square_norm = square(l1->a()) + square(l1->b());
@@ -758,9 +766,9 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
       // Note that "* sq_w0" is removed from the numerator expression.
       //
       // This is because the speed is inverted while representing the front
-      // progression with the orthogonal [l0a, l0b] vector: P = Q + t/w * V with V normalized.
-      // Since here l0a & l0b are not normalized but *weighted* coeff, we need to divide by w0²,
-      // hence we can just avoid multiplying by w0² in the numerator in the first place.
+      // progression using the orthogonal normalized vector [l0a, l0b]: P = Q + t/w * V with V normalized.
+      // However, here l0a & l0b are not normalized but *weighted* coeff, so we need to divide by w0².
+      // Hence we can just avoid multiplying by w0² in the numerator in the first place.
       FT num, den ;
       if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
       {
@@ -783,10 +791,6 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
     }
     else
     {
-      // A larger norm means that the front grows higher
-      if(res == LARGER)
-        l0 = l1;
-
       const FT& l0a = l0->a() ; const FT& l0b = l0->b() ; const FT& l0c = l0->c() ;
       const FT& l2a = l2->a() ; const FT& l2b = l2->b() ; const FT& l2c = l2->c() ;
 
@@ -803,28 +807,12 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
       //  l0a*x + l0b*y + lambda = 0
 
       const FT t = l0c - lambda ; // (3) - (1)
-      if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
-      {
-        const FT den = l2a * l0b - l0a;
-        if( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) )
-        {
-          x = ( l0b * (t - l2c) + l2b * lambda ) / den ;
-          y = ( lambda - l0a * x ) / l0b ;
+      const FT den = l2a*l0b - l0a*l2b;
 
-          ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
-        }
-      }
-      else
-      {
-        const FT den = l0a * l2b - l0b ;
-        if( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) )
-        {
-          y = ( l0a * (t - l2c) + l2a * lambda ) / den ;
-          x = ( lambda - l0b * y ) / l0a ;
+      if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) )
 
-          ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
-        }
-      }
+      x =  (l0b*l0c - l0b*(l2c + lambda) + l2b*lambda) / den;
+      y = -(l0a*l0c - l0a*(l2c + lambda) + l2a*lambda) / den;
     }
   }
 
