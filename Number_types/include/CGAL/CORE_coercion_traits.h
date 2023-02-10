@@ -57,12 +57,14 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::BigInt>{
         typedef Type result_type;
         Type operator()(const CORE::BigFloat& x)  const { return x;}
         Type operator()(const ::CORE::BigInt x) const {
-            CORE::BigFloat result;
-            result.approx(x,CORE::get_static_defRelPrec().toLong(),LONG_MAX);
-            // Do not use MakeFloorExact as it changes the Bigfloat
-            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
-            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
-            return result;
+          CORE::BigFloat result;
+          result.approx(x,CORE::get_static_defRelPrec().toLong(),LONG_MAX);
+          // Do not use MakeFloorExact as it changes the Bigfloat
+          CGAL_postcondition_code(::CORE::BigRat r = ::CORE::BigFloat(result.m()-result.err(),0,result.exp()));
+          CGAL_postcondition( r <= x );
+          CGAL_postcondition_code(r = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
+          CGAL_postcondition( r  >= x );
+          return result;
         }
     };
 };
@@ -77,12 +79,13 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::BigRat>{
         typedef Type result_type;
         Type operator()(const CORE::BigFloat& x)  const { return x;}
         Type operator()(const ::CORE::BigRat x) const {
-
           CORE::BigFloat result(x,CORE::get_static_defRelPrec().toLong(),LONG_MAX);
-            // Do not use MakeFloorExact as it changes the Bigfloat
-            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
-            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
-            return result;
+          // Do not use MakeFloorExact as it changes the Bigfloat
+          CGAL_postcondition_code(::CORE::BigRat r = ::CORE::BigFloat(result.m()-result.err(),0,result.exp()));
+          CGAL_postcondition( r <= x );
+          CGAL_postcondition_code( r = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
+          CGAL_postcondition( r >= x );
+          return result;
         }
     };
 };
@@ -97,11 +100,13 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::Expr>{
         typedef Type result_type;
         Type operator()(const CORE::BigFloat& x)  const { return x;}
         Type operator()(const ::CORE::Expr x) const {
-            CORE::BigFloat result(x, CORE::get_static_defRelPrec().toLong(),LONG_MAX);
-            // Do not use MakeFloorExact as it changes the Bigfloat
-            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
-            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
-            return result;
+          CORE::BigFloat result(x, CORE::get_static_defRelPrec().toLong(),LONG_MAX);
+          // Do not use MakeFloorExact as it changes the Bigfloat
+          CGAL_postcondition_code(::CORE::BigRat r = ::CORE::BigFloat(result.m()-result.err(),0,result.exp()));
+          CGAL_postcondition( r <= x );
+          CGAL_postcondition_code( r = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
+          CGAL_postcondition( r >= x );
+          return result;
         }
     };
 };

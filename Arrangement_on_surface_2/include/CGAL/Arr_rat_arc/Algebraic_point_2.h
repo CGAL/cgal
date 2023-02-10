@@ -289,7 +289,6 @@ private:
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
         if (CGAL::width(y_bfi) < eps ){
-          assert(false) ; // AF fix
           return std::make_pair(
               Bound(CGAL::lower(y_bfi)),
               Bound(CGAL::upper(y_bfi)));
