@@ -15,12 +15,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
-
-#include <cmath>
-#include <map>
-#include <set>
-#include <list>
-
 #include <CGAL/assertions.h>
 #ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
@@ -30,7 +24,13 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/property_map.h>
+
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
 
 namespace CGAL {
 
@@ -49,15 +49,28 @@ class Refine_Polyhedron_3 {
   typedef Halfedge_around_face_circulator<PolygonMesh>    Halfedge_around_facet_circulator;
   typedef Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
+  typedef typename CGAL::Kernel_traits<Point_3>::type                     Traits;
+
 private:
   PolygonMesh& pmesh;
   VertexPointMap vpmap;
+  Traits traits = {};
 
-  bool flippable(halfedge_descriptor h) {
+  bool flippable(halfedge_descriptor h)
+  {
     // this check is added so that edge flip does not break manifoldness
     // it might happen when there is an edge where flip_edge(h) will be placed (i.e. two edges collide after flip)
     vertex_descriptor v_tip_0 = target(next(h,pmesh),pmesh);
     vertex_descriptor v_tip_1 = target(next(opposite(h,pmesh),pmesh),pmesh);
+
+#ifdef CGAL_PMP_REFINE_DEBUG_PP
+    std::cout << "flippable() " << h << std::endl;
+    std::cout << "\t" << source(h, pmesh) << ": " << pmesh.point(source(h, pmesh)) << std::endl;
+    std::cout << "\t" << target(h, pmesh) << ": " << pmesh.point(target(h, pmesh)) << std::endl;
+    std::cout << "\t" << v_tip_0 << ": " << pmesh.point(v_tip_0) << std::endl;
+    std::cout << "\t" << v_tip_1 << ": " << pmesh.point(v_tip_1) << std::endl;
+#endif
+
     Halfedge_around_vertex_circulator v_cir(next(h,pmesh), pmesh), v_end(v_cir);
     do {
       if(target(opposite(*v_cir, pmesh),pmesh) == v_tip_1) { return false; }
@@ -74,13 +87,21 @@ private:
 
   bool relax(halfedge_descriptor h)
   {
+#ifdef CGAL_PMP_REFINE_DEBUG_PP
     typedef typename boost::property_traits<VertexPointMap>::reference Point_3_ref;
-    Point_3_ref p = get(vpmap, target(h,pmesh));
-    Point_3_ref q = get(vpmap, target(opposite(h,pmesh),pmesh));
+    Point_3_ref p = get(vpmap, source(h,pmesh));
+    Point_3_ref q = get(vpmap, target(h,pmesh));
     Point_3_ref r = get(vpmap, target(next(h,pmesh),pmesh));
     Point_3_ref s = get(vpmap, target(next(opposite(h,pmesh),pmesh),pmesh));
-    if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
-        (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) )
+
+    std::cout << "relax() " << h << std::endl;
+    std::cout << "\t" << source(h, pmesh) << ": " << p << std::endl;
+    std::cout << "\t" << target(h, pmesh) << ": " << q << std::endl;
+    std::cout << "\t" << target(next(h,pmesh),pmesh) << ": " << r << std::endl;
+    std::cout << "\t" << target(next(opposite(h,pmesh),pmesh),pmesh) << ": " << s << std::endl;
+#endif
+
+    if(internal::should_flip(edge(h, pmesh), pmesh, vpmap, traits))
     {
       if(flippable(h)) {
         Euler::flip_edge(h,pmesh);
@@ -238,8 +259,7 @@ private:
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
         vertex_descriptor v = target(*circ,pmesh);
-        std::pair<typename std::map<vertex_descriptor, double>::iterator, bool> v_insert
-          = scale_attribute.insert(std::make_pair(v, 0));
+        auto v_insert = scale_attribute.emplace(v, 0);
         if(!v_insert.second) { continue; } // already calculated
         v_insert.first->second = average_length(v, interior_map, accept_internal_facets);
       } while(++circ != done);
