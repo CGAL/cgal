@@ -212,10 +212,9 @@ void Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::AddOffsetVertex( FT          
 
   CGAL_POLYOFFSET_TRACE(1,"Found offset point p=" << p2str(*lP) << " at offset " << aTime << " along bisector " << e2str(*aHook) << " reaching " << v2str(*aHook->vertex()) ) ;
 
-  mVisitor.on_offset_point(*lP,aHook);
-
   if ( lP != mLastPoint )
   {
+    mVisitor.on_offset_point(*lP,aHook);
     aPoly->push_back(*lP);
     mLastPoint = lP ;
   }

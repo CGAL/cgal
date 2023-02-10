@@ -232,20 +232,23 @@ public:
   { }
 
 public:
+  void on_offset_contour_started() const
+  {
+    std::cout << "~~ new contour ~~" << std::endl;
+  }
+
   // can't modify the position yet because we need arrange_polygons() to still work properly
   void on_offset_point(const Point_2& op,
                        SS_Halfedge_const_handle hook) const
   {
     CGAL_assertion(hook->is_bisector());
 
-    HDS_Halfedge_const_handle canonical_hook = (hook < hook->opposite()) ? hook : hook->opposite();
-    CGAL_assertion(m_offset_points.count(canonical_hook) == 0);
-    m_offset_points[canonical_hook] = op;
-
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
    // @fixme technically, one could create a polygon thin-enough w.r.t. the max weight value such that
    // there is a skeleton vertex that wants to be snapped to two different sides...
     CGAL_assertion(m_snapped_positions.count(op) == 0);
+
+    HDS_Halfedge_const_handle canonical_hook = (hook < hook->opposite()) ? hook : hook->opposite();
 
     SS_Halfedge_const_handle contour_h1 = hook->defining_contour_edge();
     CGAL_assertion(contour_h1->opposite()->is_border());
@@ -255,9 +258,13 @@ public:
     const bool is_h1_vertical = (contour_h1->weight() == m_vertical_weight);
     const bool is_h2_vertical = (contour_h2->weight() == m_vertical_weight);
 
-    std::cout << "offset point: " << op << " on hook " << hook->id() << std::endl;
+    std::cout << "-- offset point: " << op << " on hook " << hook->id() << std::endl;
+    std::cout << "canonical hook: " << canonical_hook->id() << std::endl;
     std::cout << "defining contours: " << contour_h1->id() << " " << contour_h2->id() << std::endl;
     std::cout << "verticality " << is_h1_vertical << " " << is_h2_vertical << std::endl;
+
+    // this can happen when the offset is passing through vertices
+    m_offset_points[canonical_hook] = op;
 
     // if both are vertical, it's the common vertex (which has to exist)
     if(is_h1_vertical && is_h2_vertical)
