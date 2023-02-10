@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
@@ -17,8 +18,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main()
 {
   Surface_mesh sm;
-  std::ifstream in("data/cube_quad.off");
-  in >> sm;
+  CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/cube_quad.off"), sm);
 
   // triangulate faces;
   PMP::triangulate_faces(sm);
@@ -36,11 +36,12 @@ int main()
   assert(faces(sm).size()>100);
 
   // decimate the mesh
-  PMP::remesh_planar_patches(sm);
-  std::ofstream("cube_decimated.off") << sm;
+  Surface_mesh out;
+  PMP::remesh_planar_patches(sm, out);
+  std::ofstream("cube_decimated.off") << out;
 
   // we should be back to 12 faces
-  assert(faces(sm).size()==12);
+  assert(faces(out).size()==12);
 
   return 0;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2018 GeometryFactory (France).
+// Copyright (c) 2018-2023 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sebastien Loriot
+// Author(s)     : Sébastien Loriot
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_PLANAR_PATCHES_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_PLANAR_PATCHES_H
@@ -27,18 +27,97 @@
 #include <CGAL/boost/graph/properties.h>
 #include <unordered_map>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <algorithm>
-
-/// @todo remove Kernel_traits
-/// @todo function to move in PMP: retriangulate_planar_patches(in, out, vci, ecm, fccid, np) (pca is a np option)
-
 
 namespace CGAL{
 
 namespace Polygon_mesh_processing {
 
 namespace Planar_segmentation{
+
+template <class TriangleMeshOut, class VertexCornerMapOut>
+struct Triangle_index_tracker_base
+{
+  typedef boost::graph_traits<TriangleMeshOut> GT;
+
+  Triangle_index_tracker_base(VertexCornerMapOut vertex_corner_map)
+    : vertex_corner_map(vertex_corner_map)
+  {}
+
+  decltype(auto)
+  v2v_oi()
+  {
+    auto l = [this](const std::pair<std::size_t, typename GT::vertex_descriptor>& p)
+    {
+      put(vertex_corner_map, p.second, p.first);
+    };
+    return boost::make_function_output_iterator(l);
+  }
+
+  VertexCornerMapOut vertex_corner_map;
+};
+
+template <class TriangleMeshOut>
+struct Triangle_index_tracker_base<TriangleMeshOut, internal_np::Param_not_found>
+{
+  typedef boost::graph_traits<TriangleMeshOut> GT;
+
+  Triangle_index_tracker_base(internal_np::Param_not_found) {}
+  Emptyset_iterator v2v_oi() { return Emptyset_iterator(); }
+};
+
+template <class TriangleMeshOut, class VertexCornerMapOut, class FacePatchMapOut>
+struct Triangle_index_tracker
+  : public Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
+{
+  typedef boost::graph_traits<TriangleMeshOut> GT;
+
+  Triangle_index_tracker(VertexCornerMapOut vertex_corner_map, FacePatchMapOut face_patch_map)
+    : Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
+    , face_patch_map(face_patch_map)
+  {}
+
+  std::vector<std::size_t> triangle_ids;
+  void new_triangle_added_to_patch(std::size_t i)
+  {
+    triangle_ids.push_back(i);
+  }
+
+  void new_triangles_added_to_patch(std::size_t nb_triangles, std::size_t i)
+  {
+    triangle_ids.resize(triangle_ids.size()+nb_triangles, i);
+  }
+
+  decltype(auto)
+  f2f_oi()
+  {
+    auto l = [this](const std::pair<std::size_t, typename GT::face_descriptor>& p)
+    {
+      put(face_patch_map, p.second, triangle_ids[p.first]);
+    };
+    return boost::make_function_output_iterator(l);
+  }
+
+  FacePatchMapOut face_patch_map;
+};
+
+
+template <class TriangleMeshOut, class VertexCornerMapOut>
+struct Triangle_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::Param_not_found>
+  : public Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
+{
+  Triangle_index_tracker(VertexCornerMapOut vertex_corner_map,internal_np::Param_not_found)
+    : Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
+  {}
+
+  void new_triangle_added_to_patch(std::size_t /*in_patch_id*/) {}
+  void new_triangles_added_to_patch(std::size_t /*nb_triangles*/, std::size_t /*in_patch_id*/) {}
+
+  Emptyset_iterator f2f_oi() { return Emptyset_iterator(); }
+};
+
 
 inline std::size_t init_id()
 {
@@ -85,7 +164,8 @@ struct FaceInfo2
   bool in_domain() const { return m_in_domain==1; }
 };
 
-template <typename TriangleMesh,
+template <typename Kernel,
+          typename TriangleMesh,
           typename VertexPointMap,
           typename edge_descriptor>
 bool is_edge_between_coplanar_faces(edge_descriptor e,
@@ -93,8 +173,7 @@ bool is_edge_between_coplanar_faces(edge_descriptor e,
                                     double coplanar_cos_threshold,
                                     const VertexPointMap& vpm)
 {
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-  typedef typename Kernel_traits<Point_3>::type K;
+  typedef typename Kernel::Point_3 Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref_3;
   if (is_border(e, tm)) return false;
   typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
@@ -108,12 +187,13 @@ bool is_edge_between_coplanar_faces(edge_descriptor e,
     return coplanar(p, q, r, s);
   else
   {
-    typename K::Compare_dihedral_angle_3 pred;
-    return pred(p, q, r, s, typename K::FT(coplanar_cos_threshold)) == CGAL::LARGER;
+    typename Kernel::Compare_dihedral_angle_3 pred;
+    return pred(p, q, r, s, typename Kernel::FT(coplanar_cos_threshold)) == CGAL::LARGER;
   }
 }
 
-template <typename TriangleMesh,
+template <typename Kernel,
+          typename TriangleMesh,
           typename VertexPointMap,
           typename halfedge_descriptor,
           typename EdgeIsConstrainedMap>
@@ -123,8 +203,7 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
                                double coplanar_cos_threshold,
                                const VertexPointMap& vpm)
 {
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-  typedef typename Kernel_traits<Point_3>::type K;
+  typedef typename Kernel::Point_3 Point_3;
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
 
   halfedge_descriptor h2 = graph_traits::null_halfedge();
@@ -150,12 +229,13 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
     return !collinear(p, q, r);
   else
   {
-    typename K::Compare_angle_3 pred;
-    return pred(p, q, r, typename K::FT(coplanar_cos_threshold))==CGAL::SMALLER;
+    typename Kernel::Compare_angle_3 pred;
+    return pred(p, q, r, typename Kernel::FT(coplanar_cos_threshold))==CGAL::SMALLER;
   }
 }
 
-template <typename TriangleMesh,
+template <typename Kernel,
+          typename TriangleMesh,
           typename EdgeIsConstrainedMap,
           typename VertexPointMap>
 void
@@ -168,12 +248,13 @@ mark_constrained_edges(
   for(typename boost::graph_traits<TriangleMesh>::edge_descriptor e : edges(tm))
   {
     if (!get(edge_is_constrained,e))
-      if (!is_edge_between_coplanar_faces(e, tm, coplanar_cos_threshold, vpm))
+      if (!is_edge_between_coplanar_faces<Kernel>(e, tm, coplanar_cos_threshold, vpm))
         put(edge_is_constrained, e, true);
   }
 }
 
-template <typename TriangleMesh,
+template <typename Kernel,
+          typename TriangleMesh,
           typename VertexPointMap,
           typename EdgeIsConstrainedMap,
           typename VertexCornerIdMap>
@@ -194,14 +275,14 @@ mark_corner_vertices(
 
     if (is_init_id(get(vertex_corner_id, target(h, tm))))
     {
-      if (is_target_vertex_a_corner(h, edge_is_constrained, tm, coplanar_cos_threshold, vpm))
+      if (is_target_vertex_a_corner<Kernel>(h, edge_is_constrained, tm, coplanar_cos_threshold, vpm))
         put(vertex_corner_id, target(h, tm), corner_id++);
       else
         put(vertex_corner_id, target(h, tm), default_id());
     }
     if (is_init_id(get(vertex_corner_id, source(h, tm))))
     {
-      if (is_target_vertex_a_corner(opposite(h, tm), edge_is_constrained, tm, coplanar_cos_threshold, vpm))
+      if (is_target_vertex_a_corner<Kernel>(opposite(h, tm), edge_is_constrained, tm, coplanar_cos_threshold, vpm))
         put(vertex_corner_id, source(h, tm), corner_id++);
       else
         put(vertex_corner_id, source(h, tm), default_id());
@@ -301,7 +382,7 @@ template <typename Kernel>
 bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >& csts,
                         typename Kernel::Vector_3 normal,
                         const std::vector<typename Kernel::Point_3>& corners,
-                        std::vector<cpp11::array<std::size_t, 3> >& triangles)
+                        std::vector<std::array<std::size_t, 3> >& triangles)
 {
   typedef Projection_traits_3<Kernel>                            P_traits;
   typedef Triangulation_vertex_base_with_id_2<P_traits>                Vb;
@@ -400,7 +481,8 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   return true;
 }
 
-template <typename TriangleMesh,
+template <typename Kernel,
+          typename TriangleMesh,
           typename VertexCornerIdMap,
           typename EdgeIsConstrainedMap,
           typename FaceCCIdMap,
@@ -415,7 +497,7 @@ tag_corners_and_constrained_edges(TriangleMesh& tm,
 {
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   // mark constrained edges
-  mark_constrained_edges(tm, edge_is_constrained, coplanar_cos_threshold, vpm);
+  mark_constrained_edges<Kernel>(tm, edge_is_constrained, coplanar_cos_threshold, vpm);
 
   // mark connected components (cc) delimited by constrained edges
   std::size_t nb_cc = Polygon_mesh_processing::connected_components(
@@ -435,40 +517,39 @@ tag_corners_and_constrained_edges(TriangleMesh& tm,
   }
 
   std::size_t nb_corners =
-    mark_corner_vertices(tm, edge_is_constrained, vertex_corner_id, coplanar_cos_threshold, vpm);
+    mark_corner_vertices<Kernel>(tm, edge_is_constrained, vertex_corner_id, coplanar_cos_threshold, vpm);
 
   return std::make_pair(nb_corners, nb_cc);
 }
 
-template <typename TriangleMesh,
+template <typename Kernel,
+          typename TriangleMesh,
           typename VertexCornerIdMap,
           typename EdgeIsConstrainedMap,
           typename FaceCCIdMap,
           typename VertexPointMap,
-          typename Point_3>
+          typename IndexTracking>
 bool decimate_impl(const TriangleMesh& tm,
                    std::pair<std::size_t, std::size_t>& nb_corners_and_nb_cc,
                    VertexCornerIdMap& vertex_corner_id,
                    EdgeIsConstrainedMap& edge_is_constrained,
                    FaceCCIdMap& face_cc_ids,
                    const VertexPointMap& vpm,
-                   std::vector< Point_3 >& corners,
-                   std::vector< cpp11::array<std::size_t, 3> >& out_triangles)
+                   std::vector< typename Kernel::Point_3 >& corners,
+                   std::vector< std::array<std::size_t, 3> >& out_triangles,
+                   IndexTracking& t_id_tracker)
 {
-  typedef typename Kernel_traits<Point_3>::type K;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Vector_3 Vector_3;
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
   typedef std::pair<std::size_t, std::size_t> Id_pair;
-  std::vector< typename K::Vector_3 > face_normals(nb_corners_and_nb_cc.second, NULL_VECTOR);
-
-
-  /// @TODO this is rather drastic in particular if the mesh has almost none simplified faces
-/// TODO use add_faces?
+  std::vector< Vector_3 > face_normals(nb_corners_and_nb_cc.second, NULL_VECTOR);
 
   // compute the new mesh
-  std::vector< std::vector< cpp11::array<std::size_t, 3> > > triangles_per_cc(nb_corners_and_nb_cc.second);
+  std::vector< std::vector< std::array<std::size_t, 3> > > triangles_per_cc(nb_corners_and_nb_cc.second);
   boost::dynamic_bitset<> cc_to_handle(nb_corners_and_nb_cc.second);
   cc_to_handle.set();
 
@@ -526,7 +607,7 @@ bool decimate_impl(const TriangleMesh& tm,
                          cc_id < cc_to_handle.npos;
                          cc_id = cc_to_handle.find_next(cc_id))
     {
-      std::vector< cpp11::array<std::size_t, 3> >& triangles = triangles_per_cc[cc_id];
+      std::vector< std::array<std::size_t, 3> >& triangles = triangles_per_cc[cc_id];
       triangles.clear();
 
       std::vector< Id_pair >& csts = face_boundaries[cc_id];
@@ -551,10 +632,12 @@ bool decimate_impl(const TriangleMesh& tm,
                                         csts[0].second==csts[1].first ?
                                         csts[1].second:csts[1].first) );
         cc_to_handle.set(cc_id, 0);
+        t_id_tracker.new_triangle_added_to_patch(cc_id);
       }
       else
       {
-        if (csts.size() > 3 && add_triangle_faces<K>(csts, face_normals[cc_id], corners, triangles))
+        std::size_t prev_triangles_size=triangles.size();
+        if (csts.size() > 3 && add_triangle_faces<Kernel>(csts, face_normals[cc_id], corners, triangles))
           cc_to_handle.set(cc_id, 0);
         else
         {
@@ -571,7 +654,8 @@ bool decimate_impl(const TriangleMesh& tm,
             std::size_t i = get(vertex_corner_id, v);
             if ( !is_corner_id(i) )
             {
-              put(vertex_corner_id, v, nb_corners_and_nb_cc.first++);
+              i = nb_corners_and_nb_cc.first++;
+              put(vertex_corner_id, v, i);
               corners.push_back(get(vpm, v));
               new_corners.push_back(v);
             }
@@ -583,6 +667,7 @@ bool decimate_impl(const TriangleMesh& tm,
             triangles.push_back({ get(vertex_corner_id, source(h,tm)),
                                   get(vertex_corner_id, target(h,tm)),
                                   get(vertex_corner_id, target(next(h,tm), tm)) });
+            t_id_tracker.new_triangle_added_to_patch(cc_id);
           }
           // reset flag for neighbor connected components only if interface has changed
           for (vertex_descriptor v : new_corners)
@@ -599,58 +684,75 @@ bool decimate_impl(const TriangleMesh& tm,
           }
           cc_to_handle.set(cc_id, 0);
         }
+        t_id_tracker.new_triangles_added_to_patch(triangles.size()-prev_triangles_size, cc_id);
       }
     }
   }
   while(cc_to_handle.any());
 
-  for (const std::vector<cpp11::array<std::size_t, 3>>& cc_trs : triangles_per_cc)
+  for (const std::vector<std::array<std::size_t, 3>>& cc_trs : triangles_per_cc)
     out_triangles.insert(out_triangles.end(), cc_trs.begin(), cc_trs.end());
 
   return all_patches_successfully_remeshed;
 }
 
-template <typename TriangleMesh,
+template <typename Kernel,
+          typename TriangleMeshIn,
+          typename TriangleMeshOut,
           typename VertexCornerIdMap,
           typename EdgeIsConstrainedMap,
           typename FaceCCIdMap,
-          typename VertexPointMap>
-bool decimate_impl(TriangleMesh& tm,
+          typename VertexPointMapIn,
+          typename VertexPointMapOut,
+          typename VertexCornerMapOut,
+          typename FacePatchMapOut>
+bool decimate_impl(const TriangleMeshIn& tm_in,
+                   TriangleMeshOut& tm_out,
                    std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc,
                    VertexCornerIdMap& vertex_corner_id,
                    EdgeIsConstrainedMap& edge_is_constrained,
                    FaceCCIdMap& face_cc_ids,
-                   const VertexPointMap& vpm)
+                   const VertexPointMapIn& vpm_in,
+                   const VertexPointMapOut& vpm_out,
+                   VertexCornerMapOut vcorner_map_out,
+                   FacePatchMapOut fpatch_map_out)
 {
-  typedef typename boost::graph_traits<TriangleMesh> graph_traits;
+  typedef typename boost::graph_traits<TriangleMeshIn> graph_traits;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+  typedef typename Kernel::Point_3 Point_3;
+
+  Triangle_index_tracker<TriangleMeshOut, VertexCornerMapOut, FacePatchMapOut>
+    t_id_tracker(vcorner_map_out, fpatch_map_out);
 
   //collect corners
   std::vector< Point_3 > corners(nb_corners_and_nb_cc.first);
-  for(vertex_descriptor v : vertices(tm))
+  for(vertex_descriptor v : vertices(tm_in))
   {
     std::size_t i = get(vertex_corner_id, v);
     if ( is_corner_id(i) )
-      corners[i]=get(vpm, v);
+    {
+      corners[i]=get(vpm_in, v);
+    }
   }
 
-  std::vector< cpp11::array<std::size_t, 3> > triangles;
-  bool remeshing_failed = decimate_impl(tm,
-                                        nb_corners_and_nb_cc,
-                                        vertex_corner_id,
-                                        edge_is_constrained,
-                                        face_cc_ids,
-                                        vpm,
-                                        corners,
-                                        triangles);
+  std::vector< std::array<std::size_t, 3> > triangles;
+  bool remeshing_failed = decimate_impl<Kernel>(tm_in,
+                                                nb_corners_and_nb_cc,
+                                                vertex_corner_id,
+                                                edge_is_constrained,
+                                                face_cc_ids,
+                                                vpm_in,
+                                                corners,
+                                                triangles,
+                                                t_id_tracker);
 
   if (!is_polygon_soup_a_polygon_mesh(triangles))
     return false;
 
-  //clear(tm);
-  tm.clear_without_removing_property_maps();
-  polygon_soup_to_polygon_mesh(corners, triangles, tm, parameters::all_default(), parameters::vertex_point_map(vpm));
+  polygon_soup_to_polygon_mesh(corners, triangles, tm_out,
+                               parameters::vertex_to_vertex_output_iterator(t_id_tracker.v2v_oi()).
+                                           face_to_face_output_iterator(t_id_tracker.f2f_oi()),
+                               parameters::vertex_point_map(vpm_out));
   return remeshing_failed;
 }
 
@@ -811,7 +913,8 @@ void propagate_corner_status(
   }
 }
 
-template <typename TriangleMeshRange,
+template <typename Kernel,
+          typename TriangleMeshRange,
           typename MeshMap,
           typename VertexPointMap>
 bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
@@ -922,12 +1025,12 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
     if (!mesh_has_non_manifold_vertices[mesh_id])
       nb_corners_and_nb_cc_all[mesh_id] =
-        tag_corners_and_constrained_edges(tm,
-                                          coplanar_cos_threshold,
-                                          vertex_corner_id_maps[mesh_id],
-                                          edge_is_constrained_maps[mesh_id],
-                                          face_cc_ids_maps[mesh_id],
-                                          vpms[mesh_id]);
+        tag_corners_and_constrained_edges<Kernel>(tm,
+                                                  coplanar_cos_threshold,
+                                                  vertex_corner_id_maps[mesh_id],
+                                                  edge_is_constrained_maps[mesh_id],
+                                                  face_cc_ids_maps[mesh_id],
+                                                  vpms[mesh_id]);
     else
     {
       nb_corners_and_nb_cc_all[mesh_id]={0,1};
@@ -951,7 +1054,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 // now call the decimation
   // storage of all new triangles and all corners
   std::vector< std::vector< Point_3 > > all_corners(nb_meshes);
-  std::vector< std::vector< cpp11::array<std::size_t, 3> > > all_triangles(nb_meshes);
+  std::vector< std::vector< std::array<std::size_t, 3> > > all_triangles(nb_meshes);
   bool res = true;
   std::vector<bool> to_be_processed(nb_meshes, true);
   bool loop_again;
@@ -1162,45 +1265,68 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                            const NamedParametersIn& np_in = parameters::default_values(),
                            const NamedParametersOut& np_out = parameters::default_values())
 {
-/*
-  // typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type  Traits;
-  typedef typename GetVertexPointMap <TriangleMesh, NamedParameters>::type VPM;
+  //TODO: demo plugin
+
+  typedef typename GetGeomTraits<TriangleMeshIn, NamedParametersIn>::type  Traits;
+  typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersIn>::const_type VPM_in;
+  typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersOut>::type VPM_out;
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename boost::graph_traits<TriangleMesh> graph_traits;
+  typedef typename boost::graph_traits<TriangleMeshIn> graph_traits;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
 
-  double coplanar_cos_threshold = choose_parameter(get_parameter(np, internal_np::cosinus_threshold), -1);
+  double coplanar_cos_threshold = choose_parameter(get_parameter(np_in, internal_np::cosinus_threshold), -1);
   CGAL_precondition(coplanar_cos_threshold<0);
 
-  // initialize property maps
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type edge_is_constrained = get(CGAL::dynamic_edge_property_t<bool>(), tm);
-  for(edge_descriptor e : edges(tm))
-    put(edge_is_constrained, e, false);
+  // initialize property maps (fill user provided or user internal ones)
+  typedef typename boost::property_map<TriangleMeshIn,
+                                       dynamic_edge_property_t<bool> >::const_type Default_ECM;
+  typedef typename boost::property_map<TriangleMeshIn,
+                                       dynamic_vertex_property_t<std::size_t> >::const_type Default_VCM;
+  typedef typename boost::property_map<TriangleMeshIn,
+                                       dynamic_face_property_t<std::size_t> >::const_type Default_FCM;
 
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<std::size_t> >::type vertex_corner_id = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm);
-  for(vertex_descriptor v : vertices(tm))
-    put(vertex_corner_id, v, Planar_segmentation::init_id());
+  typename internal_np::Lookup_named_param_def< internal_np::edge_is_constrained_t,
+                                                NamedParametersIn,
+                                                Default_ECM>::type
+    edge_is_constrained = choose_parameter<Default_ECM>(get_parameter(np_in, internal_np::edge_is_constrained),
+                                                        dynamic_edge_property_t<bool>(), tm_in);
 
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t> >::type face_cc_ids = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
-  for(face_descriptor f : faces(tm))
-    put(face_cc_ids, f, -1);
+  typename internal_np::Lookup_named_param_def< internal_np::vertex_corner_map_t,
+                                                NamedParametersIn,
+                                                Default_VCM>::type
+    vertex_corner_id = choose_parameter<Default_VCM>(get_parameter(np_in, internal_np::vertex_corner_map),
+                                                     dynamic_vertex_property_t<std::size_t>(), tm_in);
 
-  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, tm));
+  typename internal_np::Lookup_named_param_def< internal_np::face_patch_t,
+                                                NamedParametersIn,
+                                                Default_FCM>::type
+    face_cc_ids = choose_parameter<Default_FCM>(get_parameter(np_in, internal_np::face_patch),
+                                                dynamic_face_property_t<std::size_t>(), tm_in);
+
+  for(edge_descriptor e : edges(tm_in)) put(edge_is_constrained, e, false);
+  for(vertex_descriptor v : vertices(tm_in)) put(vertex_corner_id, v, Planar_segmentation::init_id());
+  for(face_descriptor f : faces(tm_in)) put(face_cc_ids, f, -1);
+
+  VPM_in vpm_in = choose_parameter(get_parameter(np_in, internal_np::vertex_point),
+                                   get_const_property_map(vertex_point, tm_in));
+
+  VPM_out vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
+                                     get_property_map(vertex_point, tm_out));
 
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
-    Planar_segmentation::tag_corners_and_constrained_edges(tm, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm);
-  Planar_segmentation::decimate_impl(tm,
-                                     nb_corners_and_nb_cc,
-                                     vertex_corner_id,
-                                     edge_is_constrained,
-                                     face_cc_ids,
-                                     vpm);
-*/
+    Planar_segmentation::tag_corners_and_constrained_edges<Traits>(tm_in, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm_in);
+  Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
+                                             nb_corners_and_nb_cc,
+                                             vertex_corner_id,
+                                             edge_is_constrained,
+                                             face_cc_ids,
+                                             vpm_in, vpm_out,
+                                             get_parameter(np_out, internal_np::vertex_corner_map),
+                                             get_parameter(np_out, internal_np::face_patch));
 }
 
 /*!
@@ -1280,7 +1406,8 @@ template <typename TriangleMeshIn,
           typename FacePatchMap,
           typename EdgeIsConstrainedMap,
           typename VertexCornerMap,
-          typename NamedParameters = parameters::Default_named_parameters>
+          typename NamedParametersIn = parameters::Default_named_parameters,
+          typename NamedParametersOut = parameters::Default_named_parameters>
 bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
                                         TriangleMeshOut& tm_out,
                                    std::size_t nb_patches,
@@ -1291,20 +1418,24 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
                                    const NamedParametersIn& np_in = parameters::default_values(),
                                    const NamedParametersOut& np_out = parameters::default_values())
 {
-/*
-  typedef typename GetVertexPointMap <TriangleMesh, NamedParameters>::type VPM;
+  typedef typename GetGeomTraits<TriangleMeshIn, NamedParametersIn>::type  Traits;
+  typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersIn>::const_type VPM_in;
+  typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersOut>::type VPM_out;
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, tm));
+  VPM_in vpm_in = choose_parameter(get_parameter(np_in, internal_np::vertex_point),
+                                   get_const_property_map(vertex_point, tm_in));
 
-  return Planar_segmentation::decimate_impl(tm,
-                                            std::make_pair(nb_corners, nb_patches),
-                                            vertex_corner_map, ecm, face_patch_map, vpm);
-*/
+  VPM_out vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
+                                     get_property_map(vertex_point, tm_out));
+
+  return Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
+                                                    std::make_pair(nb_corners, nb_patches),
+                                                    vertex_corner_map, ecm, face_patch_map, vpm_in, vpm_out,
+                                                    get_parameter(np_out, internal_np::vertex_corner_map),
+                                                    get_parameter(np_out, internal_np::face_patch));
 }
-
 
 #ifndef DOXYGEN_RUNNING
 // MeshMap must be a mutable lvalue pmap with Triangle_mesh as value_type
