@@ -47,7 +47,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( boost::optio
  ,mSSkel( new SSkel() )
 {
   if( mMaxTime )
-    CGAL_STSKEL_BUILDER_TRACE(4, "Init with mMaxTime = " << *mMaxTime)
+    CGAL_STSKEL_BUILDER_TRACE(4, "Init with mMaxTime = " << *mMaxTime);
 }
 
 template<class Gt, class Ss, class V>
