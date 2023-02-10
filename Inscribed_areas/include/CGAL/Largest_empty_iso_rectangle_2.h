@@ -762,7 +762,7 @@ bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p)
 {
   // check that the point is inside the bounding box
-  if(bbox_p.has_on_unbounded_side(_p)) {
+  if(! bbox_p.has_on_bounded_side(_p)) {
     return(false);
   }
 
