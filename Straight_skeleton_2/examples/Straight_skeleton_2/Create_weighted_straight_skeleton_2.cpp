@@ -513,6 +513,7 @@ void construct_horizontal_faces(const Polygon_with_holes_2& p,
     if(!get(in_domain, f))
       continue;
 
+    // invert faces for the z=0 plane (bottom face)
     if(invert_faces)
       faces.push_back({f->vertex(0)->info(), f->vertex(2)->info(), f->vertex(1)->info()});
     else
@@ -531,13 +532,19 @@ void construct_horizontal_faces(const Offset_polygons_with_holes& p_ptrs,
 }
 
 template <typename SLSFacePoints, typename PointRange, typename FaceRange>
-void triangulate_skeleton_face(const SLSFacePoints& face_points,
+void triangulate_skeleton_face(SLSFacePoints& face_points,
+                               const bool invert_faces,
                                PointRange& points,
                                FaceRange& faces)
 {
   CGAL_precondition(face_points.size() >= 3);
 
-  Vector_3 n = CGAL::cross_product(face_points[1] - face_points[0], face_points[2] - face_points[0]);
+  // shift once to ensure that face_points[0] and face_points[1] are at z=0 and thus the normal is correct
+  std::rotate(face_points.rbegin(), face_points.rbegin() + 1, face_points.rend());
+  CGAL_assertion(face_points[0][2] == 0 && face_points[1][2] == 0);
+
+  std::cout << face_points[0] << " " << face_points[1] << " " << face_points[2] << std::endl;
+  const Vector_3 n = CGAL::cross_product(face_points[1] - face_points[0], face_points[2] - face_points[0]);
   PK traits(n);
   PCDT pcdt(traits);
   pcdt.insert_constraint(face_points.begin(), face_points.end(), true /*close*/);
@@ -561,7 +568,11 @@ void triangulate_skeleton_face(const SLSFacePoints& face_points,
     if(!get(in_domain, f))
       continue;
 
-    faces.push_back({f->vertex(0)->info(), f->vertex(1)->info(), f->vertex(2)->info()});
+    // invert faces for exterior skeletons
+    if(invert_faces)
+      faces.push_back({f->vertex(0)->info(), f->vertex(2)->info(), f->vertex(1)->info()});
+    else
+      faces.push_back({f->vertex(0)->info(), f->vertex(1)->info(), f->vertex(2)->info()});
   }
 }
 
@@ -569,12 +580,13 @@ void triangulate_skeleton_face(const SLSFacePoints& face_points,
 // @todo this doesn't not support holes in SLS faces
 void construct_lateral_faces(const Straight_skeleton_2& ss,
                              std::vector<Point_3>& points,
-                             std::vector<std::vector<std::size_t> >& faces
+                             std::vector<std::vector<std::size_t> >& faces,
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-                           , const FT& vertical_weight
-                           , std::map<Point_2, Point_2>& snapped_positions
+                             const FT& vertical_weight,
+                             std::map<Point_2, Point_2>& snapped_positions,
 #endif
-                            )
+                             const bool ignore_frame_faces = false,
+                             const bool invert_faces = false)
 {
   const HDS& hds = const_cast<const HDS&>(static_cast<const HDS&>(ss));
 
@@ -585,6 +597,7 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
     HDS_Halfedge_const_handle hds_h = hds_f->halfedge(), done = hds_h;
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
     HDS_Halfedge_const_handle contour_h = hds_h->defining_contour_edge();
+    CGAL_assertion(hds_h == contour_h);
     const bool is_vertical = (contour_h->weight() == vertical_weight);
 #endif
 
@@ -613,7 +626,7 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
       continue;
     }
 
-    triangulate_skeleton_face(face_points, points, faces);
+    triangulate_skeleton_face(face_points, invert_faces, points, faces);
   }
 }
 
@@ -623,12 +636,13 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
                              const FT offset,
                              std::vector<Point_3>& points,
                              std::vector<std::vector<std::size_t> >& faces,
-                             const std::unordered_map<HDS_Halfedge_const_handle, Point_2>& offset_points
+                             const std::unordered_map<HDS_Halfedge_const_handle, Point_2>& offset_points,
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-                           , const FT& vertical_weight
-                           , std::map<Point_2, Point_2>& snapped_positions
+                             const FT& vertical_weight,
+                             std::map<Point_2, Point_2>& snapped_positions,
 #endif
-                             )
+                             const bool ignore_frame_faces = false,
+                             const bool invert_faces = false)
 {
   CGAL_precondition(offset != default_offset);
 
@@ -642,6 +656,7 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
     HDS_Halfedge_const_handle contour_h = hds_h->defining_contour_edge();
+    CGAL_assertion(hds_h == contour_h);
     const bool is_vertical = (contour_h->weight() == vertical_weight);
     // std::cout << hds_h->id() << " vertical? " << is_vertical << std::endl;
 #endif
@@ -711,7 +726,7 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
       continue;
     }
 
-    triangulate_skeleton_face(face_points, points, faces);
+    triangulate_skeleton_face(face_points, invert_faces, points, faces);
   }
 }
 
@@ -950,6 +965,7 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
   // Start with the outer boundary
   {
     std::vector<std::vector<FT> > outer_speeds = { speeds[0] };
+
 #if 0
     Straight_skeleton_2_ptr ss_ptr = SS::create_partial_exterior_weighted_straight_skeleton_2(
                                         offset,
@@ -1008,9 +1024,12 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
     raw_output.pop_back();
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points, vertical_weight, snapped_positions);
+    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points,
+                            vertical_weight, snapped_positions,
+                            true /*ignore frame faces*/, true /*invert faces*/);
 #else
-    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points);
+    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points,
+                            true /*ignore frame faces*/, true /*invert faces*/);
 #endif
   }
 
@@ -1051,9 +1070,12 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
     ob.construct_offset_contours(offset, std::back_inserter(raw_output));
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points, vertical_weight, snapped_positions);
+    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points,
+                            vertical_weight, snapped_positions,
+                            false /*no outer frame*/, true /*invert faces*/);
 #else
-    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points);
+    construct_lateral_faces(*ss_ptr, ob, offset, points, faces, offset_points,
+                            false /*no outer frame*/, true /*invert faces*/);
 #endif
   }
 
