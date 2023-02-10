@@ -590,9 +590,16 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
 {
   const HDS& hds = const_cast<const HDS&>(static_cast<const HDS&>(ss));
 
+  std::size_t fc = 0;
+
   for(const HDS_Face_handle hds_f : CGAL::faces(hds))
   {
     std::vector<Point_3> face_points;
+
+    // If they exist (exterior skeleton), the first four faces of the SLS correspond
+    // to the outer frame, and should be ignored.
+    if(ignore_frame_faces && fc++ < 4)
+      continue;
 
     HDS_Halfedge_const_handle hds_h = hds_f->halfedge(), done = hds_h;
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
@@ -648,8 +655,15 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
 
   const HDS& hds = const_cast<const HDS&>(static_cast<const HDS&>(ss));
 
+  std::size_t fc = 0;
+
   for(const HDS_Face_handle hds_f : CGAL::faces(hds))
   {
+    // If they exist (exterior skeleton), the first four faces of the SLS correspond
+    // to the outer frame, and should be ignored.
+    if(ignore_frame_faces && fc++ < 4)
+      continue;
+
     std::vector<Point_3> face_points;
 
     HDS_Halfedge_const_handle hds_h = hds_f->halfedge(), done = hds_h;
