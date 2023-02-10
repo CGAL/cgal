@@ -104,7 +104,8 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 }
 
 
-template<class ForwardPointIterator, class Traits>
+// `Traits` first is to help overload resolution in the 3-argument version (see below)
+template<class Traits, class ForwardPointIterator>
 boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
                                                                   , ForwardPointIterator aEnd
                                                                   , typename Traits::FT  aOffset
@@ -139,10 +140,10 @@ boost::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
   typedef typename std::iterator_traits<ForwardPointIterator>::value_type Point_2 ;
 
   typedef typename Kernel_traits<Point_2>::Kernel K;
+  typedef Polygon_offset_builder_traits_2<K> Builder_traits;
+  Builder_traits traits ;
 
-  Polygon_offset_builder_traits_2<K> traits ;
-
-  return compute_outer_frame_margin(aBegin,aEnd,aOffset,traits);
+  return compute_outer_frame_margin<Builder_traits>(aBegin,aEnd,aOffset,traits);
 }
 
 } // end namespace CGAL
