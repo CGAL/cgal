@@ -1238,10 +1238,13 @@ int main(int argc, char** argv)
   // End of preprocessing, start the actual skeleton computation
   // -----------------------------------------------------------------------------------------------
 
-  // build a soup, to be converted a mesh afterwards
-  // @todo this duplicates points... NM issues...?
+  // build a soup, to be converted to a mesh afterwards
+  // @todo NM issues...?
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > faces;
+
+  points.reserve(2 * pwh.outer_boundary().size());
+  faces.reserve(2 * pwh.outer_boundary().size() + 2*pwh.number_of_holes());
 
   construct_horizontal_faces(pwh, 0 /*altitude*/, points, faces, true /*invert faces*/);
 
