@@ -62,8 +62,8 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::BigInt>{
           // Do not use MakeFloorExact as it changes the Bigfloat
           CGAL_postcondition_code(::CORE::BigRat r = ::CORE::BigFloat(result.m()-result.err(),0,result.exp()));
           CGAL_postcondition( r <= x );
-          CGAL_postcondition_code(r = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
-          CGAL_postcondition( r  >= x );
+          CGAL_postcondition_code(::CORE::BigRat r2 = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
+          CGAL_postcondition( r2  >= x );
           return result;
         }
     };
@@ -83,8 +83,8 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::BigRat>{
           // Do not use MakeFloorExact as it changes the Bigfloat
           CGAL_postcondition_code(::CORE::BigRat r = ::CORE::BigFloat(result.m()-result.err(),0,result.exp()));
           CGAL_postcondition( r <= x );
-          CGAL_postcondition_code( r = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
-          CGAL_postcondition( r >= x );
+          CGAL_postcondition_code(::CORE::BigRat r2 = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
+          CGAL_postcondition( r2 >= x );
           return result;
         }
     };
@@ -104,8 +104,8 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::Expr>{
           // Do not use MakeFloorExact as it changes the Bigfloat
           CGAL_postcondition_code(::CORE::BigRat r = ::CORE::BigFloat(result.m()-result.err(),0,result.exp()));
           CGAL_postcondition( r <= x );
-          CGAL_postcondition_code( r = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
-          CGAL_postcondition( r >= x );
+          CGAL_postcondition_code(::CORE::BigRat r2 = ::CORE::BigFloat(result.m()+result.err(),0,result.exp()));
+          CGAL_postcondition( r2 >= x );
           return result;
         }
     };
