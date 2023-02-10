@@ -37,15 +37,6 @@ namespace KSR {
 
   };
 
-  enum class Planar_shape_type {
-
-    // Convex hull shape type.
-    CONVEX_HULL = 0,
-
-    // Rectangle shape type.
-    RECTANGLE = 1
-  };
-
   enum class Visibility_label {
 
     /// Outside the object.

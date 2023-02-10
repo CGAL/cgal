@@ -31,26 +31,25 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename Traits>
+template<typename GeomTraits, typename IntersectionKernel>
 class Intersection_graph {
 
 public:
-  using Kernel = typename Traits::Kernel;
-  using Intersection_kernel = typename Traits::Intersection_Kernel;
+  using Kernel = GeomTraits;
+  using Intersection_kernel = IntersectionKernel;
 
-  using Point_2   = typename Traits::IK_Point_2;
-  using Point_3   = typename Traits::IK_Point_3;
-  using Segment_3 = typename Traits::IK_Segment_3;
-  using Line_3    = typename Traits::IK_Line_3;
+  using Point_2   = typename Intersection_kernel::Point_2;
+  using Point_3   = typename Intersection_kernel::Point_3;
+  using Segment_3 = typename Intersection_kernel::Segment_3;
+  using Line_3    = typename Intersection_kernel::Line_3;
   using Polygon_2 = typename CGAL::Polygon_2<Point_2>;
 
   using Inexact_FT = typename Kernel::FT;
 
   struct Vertex_property {
     Point_3 point;
-    bool active;
-    Vertex_property() : active(true) {}
-    Vertex_property(const Point_3& point) : point(point), active(true) {}
+    Vertex_property() {}
+    Vertex_property(const Point_3& point) : point(point) {}
   };
 
   using Kinetic_interval = std::vector<std::pair<Inexact_FT, Inexact_FT> >;
@@ -62,8 +61,7 @@ public:
     std::set<std::size_t> planes;
     std::set<std::size_t> crossed;
     std::map<std::size_t, Kinetic_interval> intervals; // Maps support plane index to the kinetic interval. std::pair<FT, FT> is the barycentric coordinate and intersection time.
-    bool active;
-    Edge_property() : line(KSR::no_element()), active(true), order(edge_counter++) { }
+    Edge_property() : line(KSR::no_element()), order(edge_counter++) { }
 
     const Edge_property& operator=(const Edge_property& other) {
       line = other.line;
@@ -71,7 +69,6 @@ public:
       planes = other.planes;
       crossed = other.crossed;
       intervals = other.intervals;
-      active = other.active;
 
       return *this;
     }
@@ -130,7 +127,7 @@ public:
 
 private:
   Graph m_graph;
-  std::size_t m_nb_lines;
+  std::vector<Line_3> m_lines;
   std::size_t m_nb_lines_on_bbox;
   std::map<Point_3, Vertex_descriptor> m_map_points;
   std::map<std::vector<std::size_t>, Vertex_descriptor> m_map_vertices;
@@ -138,9 +135,12 @@ private:
   std::map<Edge_descriptor, Edge_descriptor> m_emap;
   std::vector<Face_property> m_ifaces;
 
+  std::vector<bool> m_initial_part_of_partition;
+  std::vector<std::map<std::size_t, Kinetic_interval> > m_initial_intervals;
+  std::vector<std::set<std::size_t> > m_initial_crossed;
+
 public:
   Intersection_graph() :
-  m_nb_lines(0),
   m_nb_lines_on_bbox(0)
   { }
 
@@ -153,10 +153,6 @@ public:
 
   std::size_t number_of_vertices() const {
     return static_cast<std::size_t>(boost::num_vertices(m_graph));
-  }
-
-  std::size_t number_of_edges() const {
-    return static_cast<std::size_t>(boost::num_edges(m_graph));
   }
 
   const std::map<Vertex_descriptor, Vertex_descriptor>& vmap() const {
@@ -179,9 +175,12 @@ public:
     return std::size_t(-1);
   }
 
-  std::size_t add_line() { return ( m_nb_lines++ ); }
-  std::size_t nb_lines() const { return m_nb_lines; }
-  void set_nb_lines(const std::size_t value) { m_nb_lines = value; }
+  std::size_t add_line(const Line_3& line) {
+    m_lines.push_back(line);
+    return m_lines.size() - 1;
+  }
+
+  std::size_t nb_lines() const { return m_lines.size(); }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
 
@@ -277,6 +276,8 @@ public:
 
   std::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
 
+  const Line_3& line(std::size_t line_idx) const { return m_lines[line_idx]; }
+
   bool line_is_on_bbox(std::size_t line_idx) const {
     return line_idx < m_nb_lines_on_bbox;
   }
@@ -290,7 +291,39 @@ public:
   }
 
   void finished_bbox() {
-    m_nb_lines_on_bbox = m_nb_lines;
+    m_nb_lines_on_bbox = m_lines.size();
+  }
+
+  void initialization_done() {
+    auto e = edges();
+    m_initial_crossed.resize(e.size());
+    m_initial_intervals.resize(e.size());
+
+    std::size_t idx = 0;
+    for (const auto& edge : e) {
+      m_initial_intervals[idx] = m_graph[edge].intervals;
+      m_initial_crossed[idx++] = m_graph[edge].crossed;
+    }
+
+    m_initial_part_of_partition.resize(m_ifaces.size());
+    for (idx = 0; idx < m_ifaces.size(); idx++)
+      m_initial_part_of_partition[idx] = m_ifaces[idx].part_of_partition;
+  }
+
+  void reset_to_initialization() {
+    auto e = edges();
+    CGAL_assertion(e.size() == m_initial_crossed.size());
+    CGAL_assertion(e.size() == m_initial_intervals.size());
+    std::size_t idx = 0;
+
+    for (auto& edge : e) {
+      m_graph[edge].intervals = m_initial_intervals[idx];
+      m_graph[edge].crossed = m_initial_crossed[idx++];
+    }
+
+    CGAL_assertion(m_ifaces.size() == m_initial_part_of_partition.size());
+    for (idx = 0; idx < m_ifaces.size(); idx++)
+      m_ifaces[idx].part_of_partition = m_initial_part_of_partition[idx];
   }
 
   const std::pair<Edge_descriptor, Edge_descriptor>
@@ -367,10 +400,12 @@ public:
   }
 
   bool has_crossed(const Edge_descriptor& edge, std::size_t sp_idx) { return m_graph[edge].crossed.count(sp_idx) == 1; }
-  void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) { m_graph[edge].crossed.insert(sp_idx); }
+  void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) {
+    CGAL_assertion(false);
+    m_graph[edge].crossed.insert(sp_idx); }
 };
 
-template<typename Traits> std::size_t Intersection_graph<Traits>::Edge_property::edge_counter = 0;
+template<typename GeomTraits, typename IntersectionKernel> std::size_t Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter = 0;
 
 #endif //DOXYGEN_RUNNING
 

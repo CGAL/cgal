@@ -36,28 +36,28 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-  template<typename Traits>
+  template<typename GeomTraits, typename IntersectionKernel, typename PointMap, typename NormalMap>
   class Visibility {
 
   public:
-    using Kernel       = typename Traits::Kernel;
-    using Intersection_kernel = typename Traits::Intersection_Kernel;
-    using Point_map_3  = typename Traits::Point_map;
-    using Vector_map_3 = typename Traits::Normal_map;
+    using Kernel       = typename GeomTraits;
+    using Intersection_kernel = typename IntersectionKernel;
+    using Point_map_3  = PointMap;
+    using Vector_map_3 = NormalMap;
 
-    using FT       = typename Traits::FT;
-    using Point_3  = typename Traits::Point_3;
-    using Vector_3 = typename Traits::Vector_3;
+    using FT       = typename Kernel::FT;
+    using Point_3  = typename Kernel::Point_3;
+    using Vector_3 = typename Kernel::Vector_3;
     using Indices  = std::vector<std::size_t>;
 
-    using Data_structure = KSR_3::Data_structure<Traits>;
+    using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
     using PFace          = typename Data_structure::PFace;
     using Volume_cell    = typename Data_structure::Volume_cell;
 
     using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
     using Generator  = CGAL::Random_points_in_tetrahedron_3<Point_3>;
 
-    using From_EK = typename Traits::From_exact;
+    using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
     using Visibility_label = KSR::Visibility_label;
 

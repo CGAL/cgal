@@ -29,22 +29,22 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename Traits>
+template<typename GeomTraits, typename IntersectionKernel>
 class FacePropagation {
 
 public:
-  using Kernel = typename Traits::Kernel;
-  using Intersection_kernel = typename Traits::Intersection_Kernel;
+  using Kernel = GeomTraits;
+  using Intersection_kernel = IntersectionKernel;
 
 private:
-  using FT          = typename Traits::FT;
-  using Point_2     = typename Traits::Point_2;
-  using Vector_2    = typename Traits::Vector_2;
-  using Segment_2   = typename Traits::Segment_2;
-  using Direction_2 = typename Traits::Direction_2;
-  using Line_2      = typename Traits::Line_2;
+  using FT          = typename Kernel::FT;
+  using Point_2     = typename Kernel::Point_2;
+  using Vector_2    = typename Kernel::Vector_2;
+  using Segment_2   = typename Kernel::Segment_2;
+  using Direction_2 = typename Kernel::Direction_2;
+  using Line_2      = typename Kernel::Line_2;
 
-  using Data_structure = KSR_3::Data_structure<Traits>;
+  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
@@ -59,7 +59,7 @@ private:
 
   using Parameters     = KSR::Parameters_3<FT>;
 
-  using Face_event      = typename Data_structure::Support_plane::Face_Event;
+  using Face_event      = typename Data_structure::Support_plane::Face_event;
 
   struct Face_event_order {
     bool operator()(const Face_event &a, const Face_event &b) {
@@ -76,6 +76,11 @@ public:
   const std::pair<std::size_t, std::size_t> propagate(std::size_t k) {
     std::size_t num_queue_calls = 0;
     std::size_t num_events = 0;
+
+    m_data.reset_to_initialization();
+
+    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i)
+      m_data.k(i) = k;
 
     initialize_queue();
 
@@ -101,7 +106,7 @@ private:
   FT m_min_time;
   FT m_max_time;
 
-  std::priority_queue<typename Data_structure::Support_plane::FaceEvent, std::vector<Face_event>, Face_event_order> m_face_queue;
+  std::priority_queue<typename Data_structure::Support_plane::Face_event, std::vector<Face_event>, Face_event_order> m_face_queue;
 
   /*******************************
   **       IDENTIFY EVENTS      **

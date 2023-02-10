@@ -14,7 +14,7 @@
 #define CGAL_KSR_3_FINALIZER_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
-//#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -29,27 +29,27 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename Traits>
+template<typename GeomTraits, typename IntersectionKernel>
 class Finalizer {
 
 public:
-  using Kernel = typename Traits::Kernel;
+  using Kernel = GeomTraits;
 
 private:
-  using FT = typename Traits::FT;
-  using Point_2 = typename Traits::Point_2;
-  using Point_3 = typename Traits::Point_3;
-  using Vector_2 = typename Traits::Vector_2;
-  using Vector_3 = typename Traits::Vector_3;
-  using Segment_3 = typename Traits::Segment_3;
-  using Line_3 = typename Traits::Line_3;
-  using Plane_3 = typename Traits::Plane_3;
-  using Direction_2 = typename Traits::Direction_2;
-  using Tetrahedron_3 = typename Traits::Tetrahedron_3;
+  using FT = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
+  using Vector_2 = typename Kernel::Vector_2;
+  using Vector_3 = typename Kernel::Vector_3;
+  using Segment_3 = typename Kernel::Segment_3;
+  using Line_3 = typename Kernel::Line_3;
+  using Plane_3 = typename Kernel::Plane_3;
+  using Direction_2 = typename Kernel::Direction_2;
+  using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
 
-  using From_exact = typename Traits::From_exact;
+  using From_exact = CGAL::Cartesian_converter<IntersectionKernel, Kernel>;
 
-  using Data_structure = KSR_3::Data_structure<Traits>;
+  using Data_structure = KSR_3::Data_structure<Kernel, IntersectionKernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge = typename Data_structure::IEdge;
@@ -211,10 +211,10 @@ private:
         else
           v.faces[f] = it->second;
       }
+
       if (face2volumes.size() < num_faces)
         face2volumes.resize(num_faces);
 
-      face to sp
 
       for (std::size_t j = 0; j < volumes[i].neighbors.size(); j++) {
         const auto& pair = map_volumes.at(volumes[i].pfaces[j]);
@@ -224,6 +224,7 @@ private:
     }
 
     m_data.face_to_vertices().resize(num_faces);
+    m_data.face_to_support_plane().resize(num_faces);
 
     for (auto& volume : volumes) {
       create_cell_pvertices(volume);
@@ -250,7 +251,7 @@ private:
     // Start new volume cell
     // First of pair is positive side, second is negative
     if (pair.first == -1) {
-      volume_indices[0] = volumes.size();222
+      volume_indices[0] = volumes.size();
       pair.first = static_cast<int>(volumes.size());
       volumes.push_back(Volume_cell());
       volumes.back().add_pface(pface, pair.second);
@@ -440,8 +441,30 @@ private:
     for (const PFace& face : neighbor_faces) {
       if (face == pface)
         continue;
-      Point_2 v2d = plane.to_2d(m_data.centroid_of_pface(face));
-      dir_edges.push_back(std::make_pair(Direction_2(source2d - v2d), face));
+
+      // Taking just the direction of the line instead of the point? (Still need to take care of the sign)
+      auto &sp = m_data.support_plane(face.first);
+      auto &mesh = sp.mesh();
+      auto h = mesh.halfedge(face.second);
+      auto first = h;
+
+      Point_3 point;
+      FT dist = 0;
+      do {
+        Point_3 p = sp.to_3d(mesh.point(mesh.target(h)));
+        Vector_3 dist_in_plane = (p - segment.source());
+        dist_in_plane -= norm * (dist_in_plane * norm);
+        FT d = dist_in_plane.squared_length();
+        if (d > dist) {
+          dist = d;
+          point = p;
+        }
+        h = mesh.next(h);
+      } while (first != h);
+
+      Point_2 p = plane.to_2d(point);
+
+      dir_edges.push_back(std::make_pair(Direction_2(source2d - p), face));
     }
 
     CGAL_assertion(dir_edges.size() == neighbor_faces.size());
@@ -725,10 +748,12 @@ private:
     std::vector<int>& ivertex2vertex = m_data.ivertex_to_index();
     std::vector<Point_3>& vertices = m_data.vertices();
     std::vector<std::vector<std::size_t> >& face2vertices = m_data.face_to_vertices();
+    std::vector<std::size_t>& face2sp = m_data.face_to_support_plane();
     cell.pvertices.clear();
     for (std::size_t f = 0; f < cell.pfaces.size();f++) {
       const auto& pface = cell.pfaces[f];
       face2vertices[cell.faces[f]].reserve(m_data.pvertices_of_pface(pface).size());
+      face2sp[cell.faces[f]] = pface.first;
 
       for (const auto pvertex : m_data.pvertices_of_pface(pface)) {
         CGAL_assertion(m_data.has_ivertex(pvertex));

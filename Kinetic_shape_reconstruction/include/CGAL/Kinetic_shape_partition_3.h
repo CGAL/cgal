@@ -60,12 +60,12 @@ public:
   using Kernel = typename GeomTraits;
   using Intersection_kernel = IntersectionTraits;
 
-  //using Point_3 = typename GeomTraits::Point_3;
+  using Point_3 = typename Kernel::Point_3;
 
 private:
-  using FT      = typename GeomTraits::FT;
+  using FT      = typename Kernel::FT;
 
-  using Data_structure = KSR_3::Data_structure<Traits>;
+  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
@@ -114,7 +114,9 @@ public:
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
     const NamedParameters& np = CGAL::parameters::default_values()) :
-    m_parameters(np, false), // use true here to export all steps
+    m_parameters(
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_data(m_parameters),
     m_num_events(0)
   { }
@@ -183,11 +185,14 @@ public:
     const InputRange& input_range,
     const PolygonRange polygon_range,
     const NamedParameters & np = CGAL::parameters::default_values()) :
-    m_parameters(np, false), // use true here to export all steps
+    m_parameters(
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_data(m_parameters),
     m_num_events(0)
   {
-    initialize(input_range, polygon_range, np);
+    insert(input_range, polygon_range, np);
+    initialize(np);
   }
 
   /*!
@@ -224,7 +229,9 @@ public:
   void insert(
     const InputRange& input_range,
     const PolygonRange polygon_range,
-    const NamedParameters& np = CGAL::parameters::default_values()) {}
+    const NamedParameters& np = CGAL::parameters::default_values()) {
+    m_data.add_input_shape(input_range, polygon_range);
+  }
 
   /*!
   \brief initializes the kinetic partition of the bounding box.
@@ -278,10 +285,9 @@ public:
       parameters::get_parameter(np, internal_np::reorient_bbox), false);
 
     std::cout.precision(20);
-    if (input_range.size() == 0) {
-      CGAL_warning_msg(input_range.size() > 0,
-        "Warning: Your input is empty!");
-      return false;
+    if (m_data.input_polygons().size() == 0) {
+      std::cout << "Warning: Your input is empty!";
+      return;
     }
 
     if (m_parameters.bbox_dilation_ratio < FT(1)) {
@@ -306,10 +312,8 @@ public:
       timer.start();
     }
 
-    m_data.clear();
-
     Initializer initializer(m_data, m_parameters);
-    initializer.initialize(input_range, polygon_map);
+    initializer.initialize();
 
     // Timing.
     if (m_parameters.verbose) {
@@ -317,8 +321,6 @@ public:
       const double time_to_initialize = timer.time();
       std::cout << "* initialization time: " << time_to_initialize << std::endl;
     }
-
-    return true;
   }
 
   /*!
@@ -437,7 +439,7 @@ public:
   \pre successful partition
   */
   std::size_t number_of_vertices() const {
-    return 0;
+    return m_data.vertices().size();
   }
 
   /*!
@@ -446,7 +448,7 @@ public:
   \pre successful partition
   */
   std::size_t number_of_faces() const {
-    return 0;
+    return m_data.face_to_vertices().size();
   }
 
   /*!
@@ -608,8 +610,6 @@ public:
       }
       ib.end_surface();
     }
-
-    lcc.display_characteristics(std::cout) << std::endl;
   }
 
   /// @}

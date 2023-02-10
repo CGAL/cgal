@@ -38,21 +38,21 @@ public:
   using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
-  using FT          = typename Traits::FT;
-  using Point_2     = typename Traits::Point_2;
-  using Point_3     = typename Traits::Point_3;
-  using Vector_2    = typename Traits::Vector_2;
-  using Vector_3    = typename Traits::Vector_3;
-  using Direction_2 = typename Traits::Direction_2;
-  using Segment_2   = typename Traits::Segment_2;
-  using Segment_3   = typename Traits::Segment_3;
-  using Line_2      = typename Traits::Line_2;
-  using Line_3      = typename Traits::Line_3;
-  using Plane_3     = typename Traits::Plane_3;
-  using Triangle_2  = typename Traits::Triangle_2;
+  using FT          = typename Kernel::FT;
+  using Point_2     = typename Kernel::Point_2;
+  using Point_3     = typename Kernel::Point_3;
+  using Vector_2    = typename Kernel::Vector_2;
+  using Vector_3    = typename Kernel::Vector_3;
+  using Direction_2 = typename Kernel::Direction_2;
+  using Segment_2   = typename Kernel::Segment_2;
+  using Segment_3   = typename Kernel::Segment_3;
+  using Line_2      = typename Kernel::Line_2;
+  using Line_3      = typename Kernel::Line_3;
+  using Plane_3     = typename Kernel::Plane_3;
+  using Triangle_2  = typename Kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
-  using Intersection_graph = KSR_3::Intersection_graph<Traits>;
+  using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_kernel>;
   using Bbox_2 = CGAL::Bbox_2;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
@@ -86,22 +86,18 @@ public:
     IFace face;
   };
 
-private:
   struct Data {
     bool is_bbox;
     Point_2 centroid;
     Plane_3 plane;
     typename Intersection_kernel::Plane_3 exact_plane;
     Mesh mesh;
-    V_vector_map direction; // needed?
+
     V_ivertex_map v_ivertex_map;
     V_iedge_map v_iedge_map;
-    V_bool_map v_active_map; // not needed?
     E_iedge_map e_iedge_map;
     F_index_map input_map;
-    F_uint_map k_map; // not needed?
     V_original_map v_original_map;
-    V_time_map v_time_map; // not needed?
     std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
     std::set<IFace> ifaces;
     std::map<IVertex, Vertex_index> ivertex2pvertex;
@@ -119,6 +115,8 @@ private:
 
     int k;
   };
+
+private:
 
   std::shared_ptr<Data> m_data;
 
@@ -176,35 +174,27 @@ public:
 
   void add_property_maps() {
 
-    m_data->direction      = m_data->mesh.template add_property_map<Vertex_index, Vector_2>(
-      "v:direction", CGAL::NULL_VECTOR).first;
+    m_data->v_ivertex_map  = m_data->mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first;
 
-    m_data->v_ivertex_map  = m_data->mesh.template add_property_map<Vertex_index, IVertex>(
-      "v:ivertex", Intersection_graph::null_ivertex()).first;
+    m_data->v_iedge_map    = m_data->mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first;
 
-    m_data->v_iedge_map    = m_data->mesh.template add_property_map<Vertex_index, IEdge>(
-      "v:iedge", Intersection_graph::null_iedge()).first;
+    m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first;
 
-    m_data->v_active_map   = m_data->mesh.template add_property_map<Vertex_index, bool>(
-      "v:active", true).first;
+    m_data->input_map      = m_data->mesh.template add_property_map<Face_index, std::vector<std::size_t> >("f:input", std::vector<std::size_t>()).first;
 
-    m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>(
-      "e:iedge", Intersection_graph::null_iedge()).first;
+    m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>("v:original", false).first;
+  }
 
-    m_data->input_map      = m_data->mesh.template add_property_map<Face_index, std::vector<std::size_t> >(
-      "f:input", std::vector<std::size_t>()).first;
+  void link_property_maps() {
+    m_data->v_ivertex_map = m_data->mesh.property_map<Vertex_index, IVertex>("v:ivertex").first;
 
-    m_data->k_map          = m_data->mesh.template add_property_map<Face_index, unsigned int>(
-      "f:k", 0).first;
+    m_data->v_iedge_map = m_data->mesh.property_map<Vertex_index, IEdge>("v:iedge").first;
 
-    m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>(
-      "v:original", false).first;
+    m_data->e_iedge_map = m_data->mesh.property_map<Edge_index, IEdge>("e:iedge").first;
 
-    // TODO: I can have a similar vector to push all ivertices/events of the polygon vertex
-    // to keep track of the path it traversed. Later, we can return this path.
-    std::vector<FT> time_vector(1, FT(0));
-    m_data->v_time_map     = m_data->mesh.template add_property_map<Vertex_index, std::vector<FT> >(
-      "v:time", time_vector).first;
+    m_data->input_map = m_data->mesh.property_map<Face_index, std::vector<std::size_t> >("f:input").first;
+
+    m_data->v_original_map = m_data->mesh.property_map<Vertex_index, bool>("v:original").first;
   }
 
   void centroid(Point_2& c) {
@@ -371,7 +361,6 @@ public:
     for (std::size_t i = 0; i < n; ++i) {
       const auto& point = points[dir_vec[i].first].first;
       const auto vi = m_data->mesh.add_vertex(point);
-      m_data->direction[vi] = directions[dir_vec[i].first] / sum_length;
       m_data->original_vertices[i] = point;
       m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
       m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
@@ -620,9 +609,6 @@ public:
     return (m_data->v_ivertex_map[vi] != Intersection_graph::null_ivertex());
   }
 
-  const Vector_2& direction(const Vertex_index& vi) const { return m_data->direction[vi]; }
-  Vector_2& direction(const Vertex_index& vi) { return m_data->direction[vi]; }
-
   const Vector_2 original_edge_direction(std::size_t v1, std::size_t v2) const {
     const Vector_2 edge = m_data->original_vertices[v1] - m_data->original_vertices[v2];
     Vector_2 orth = Vector_2(-edge.y(), edge.x());
@@ -649,20 +635,10 @@ public:
   const int& k() const { return m_data->k; }
   int& k() { return m_data->k; }
 
-  const int& k(const Face_index& /* fi */) const {
-    return m_data->k;
-    // return m_data->k_map[fi];
-  }
-  int& k(const Face_index& /* fi */) {
-    return m_data->k;
-    // return m_data->k_map[fi];
-  }
-
   const std::set<IFace>& ifaces() const { return m_data->ifaces; }
 
   const IEdge_set& unique_iedges() const { return m_data->unique_iedges; }
   IEdge_set& unique_iedges() { return m_data->unique_iedges; }
-
 
   const std::vector<IEdge>& iedges() const { return m_data->iedges; }
   std::vector<IEdge>& iedges() { return m_data->iedges; }
@@ -764,14 +740,14 @@ public:
   }
 };
 
-template<typename Traits>
-bool operator==(const Support_plane<Traits>& a, const Support_plane<Traits>& b) {
+template<typename GeomTraits, typename IntersectionKernel>
+bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Support_plane<GeomTraits, IntersectionKernel>& b) {
 
   if (a.is_bbox() || b.is_bbox()) {
     return false;
   }
 
-  using FT = typename Traits::FT;
+  using FT = typename GeomTraits::FT;
   const auto& planea = a.plane();
   const auto& planeb = b.plane();
 
