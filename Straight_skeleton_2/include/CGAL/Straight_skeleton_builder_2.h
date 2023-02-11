@@ -1402,7 +1402,7 @@ public:
 
         Halfedge_handle lBorder = fit->halfedge() ;
         CGAL_assertion( lBorder->opposite()->is_border() ) ;
-        std::cout << "Assign " << lWeight << " to " << lBorder->id() << std::endl;
+        CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << lWeight << " to " << lBorder->id());
         lBorder->set_weight ( lWeight ) ;
         CGAL_assertion_code( ++lFaceCountThroughWeights ) ;
         ++fit ;

@@ -41,7 +41,7 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
                                              HoleIterator holes_begin,
                                              HoleIterator holes_end,
                                              const Weights& weights,
-                                             const K&) // @fixme ought to be passed to the builder
+                                             const K&)
 {
   using Skeleton = Straight_skeleton_2<K>;
 
@@ -213,7 +213,6 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
 
     // put a weight large enough such that frame edges are not relevant
     const FT frame_weight = *(std::max_element(weights[0].begin(), weights[0].end()));
-    std::cout << "Frame weight = " << frame_weight << std::endl;
     CGAL_STSKEL_BUILDER_TRACE(4, "Frame weight = " << frame_weight);
 
     const Weights lWeights = { std::vector<FT>(4, frame_weight),

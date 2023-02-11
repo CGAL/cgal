@@ -96,6 +96,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
     FT lDist = CGAL_SS_i::inexact_sqrt(lMaxSDist) ;
 
     // Add a %5 gap, and ceil to get simpler values
+    CGAL_STSKEL_BUILDER_TRACE(4, "outer frame margin: " << ceil(lDist + ( aOffset * FT(1.05) ) ) );
     return boost::optional<FT>( ceil(lDist + ( aOffset * FT(1.05) ) ) ) ;
   }
   else

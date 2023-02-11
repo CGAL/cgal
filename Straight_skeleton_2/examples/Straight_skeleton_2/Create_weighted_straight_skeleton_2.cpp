@@ -162,13 +162,13 @@ Point_2 snap_point_to_contour_halfedge_plane(const Point_2& op,
   if(sv->point().x() == tv->point().x())
   {
     // vertical edge
-    std::cout << "vertical edge, snapping " << op << " to " << sv->point().x() << " "  << op.y() << std::endl;
+    // std::cout << "vertical edge, snapping " << op << " to " << sv->point().x() << " "  << op.y() << std::endl;
     return { sv->point().x(), op.y() };
   }
   else if(sv->point().y() == tv->point().y())
   {
     // horizontal edge
-    std::cout << "horizontal edge, snapping " << op << " to " << op.x() << " " << sv->point().y() << std::endl;
+    // std::cout << "horizontal edge, snapping " << op << " to " << op.x() << " " << sv->point().y() << std::endl;
     return { op.x(), sv->point().y() };
   }
   else
@@ -181,7 +181,7 @@ Point_2 snap_point_to_contour_halfedge_plane(const Point_2& op,
 
     FT px, py;
     CGAL::line_project_pointC2(line->a(),line->b(),line->c(), op.x(),op.y(), px,py);
-    std::cout << "snapping " << op << " to " << px << " " << py << std::endl;
+    // std::cout << "snapping " << op << " to " << px << " " << py << std::endl;
     return { px, py };
   }
 };
@@ -237,7 +237,7 @@ public:
 public:
   void on_offset_contour_started() const
   {
-    std::cout << "~~ new contour ~~" << std::endl;
+    // std::cout << "~~ new contour ~~" << std::endl;
   }
 
   // can't modify the position yet because we need arrange_polygons() to still work properly
@@ -261,10 +261,10 @@ public:
     const bool is_h1_vertical = (contour_h1->weight() == m_vertical_weight);
     const bool is_h2_vertical = (contour_h2->weight() == m_vertical_weight);
 
-    std::cout << "-- offset point: " << op << " on hook " << hook->id() << std::endl;
-    std::cout << "canonical hook: " << canonical_hook->id() << std::endl;
-    std::cout << "defining contours: " << contour_h1->id() << " " << contour_h2->id() << std::endl;
-    std::cout << "verticality " << is_h1_vertical << " " << is_h2_vertical << std::endl;
+    // std::cout << "-- offset point: " << op << " on hook " << hook->id() << std::endl;
+    // std::cout << "canonical hook: " << canonical_hook->id() << std::endl;
+    // std::cout << "defining contours: " << contour_h1->id() << " " << contour_h2->id() << std::endl;
+    // std::cout << "verticality " << is_h1_vertical << " " << is_h2_vertical << std::endl;
 
     // this can happen when the offset is passing through vertices
     m_offset_points[canonical_hook] = op;
@@ -276,12 +276,12 @@ public:
                      contour_h2->vertex() == contour_h1->opposite()->vertex());
       if(contour_h1->vertex() == contour_h2->opposite()->vertex())
       {
-        std::cout << "snapping " << op << " to " << contour_h1->vertex()->point() << std::endl;
+        // std::cout << "snapping " << op << " to " << contour_h1->vertex()->point() << std::endl;
         m_snapped_positions[op] = contour_h1->vertex()->point();
       }
       else
       {
-        std::cout << "snapping " << op << " to " << contour_h2->vertex()->point() << std::endl;
+        // std::cout << "snapping " << op << " to " << contour_h2->vertex()->point() << std::endl;
         m_snapped_positions[op] = contour_h2->vertex()->point();
       }
     }
@@ -396,8 +396,6 @@ bool read_input_polygon(const char* filename,
   for(std::size_t i=0; i<polys.size()-1; ++i)
     p.add_hole(polys[i+1]);
 
-  std::cout << p.outer_boundary().size() << " outer vertices" << std::endl;
-
   return true;
 }
 
@@ -490,7 +488,9 @@ void construct_horizontal_faces(const Polygon_with_holes_2& p,
                                 FaceRange& faces,
                                 const bool invert_faces = false)
 {
+#ifdef CGAL_SLS_DEBUG_DRAW
   CGAL::draw(p);
+#endif
 
   CDT cdt;
   cdt.insert_constraint(p.outer_boundary().begin(), p.outer_boundary().end(), true /*close*/);
@@ -504,7 +504,9 @@ void construct_horizontal_faces(const Polygon_with_holes_2& p,
     vh->info() = id++;
   }
 
+#ifdef CGAL_SLS_DEBUG_DRAW
   // CGAL::draw(cdt);
+#endif
 
   std::unordered_map<CDT_Face_handle, bool> in_domain_map;
   boost::associative_property_map< std::unordered_map<CDT_Face_handle, bool> > in_domain(in_domain_map);
@@ -546,7 +548,6 @@ void triangulate_skeleton_face(SLSFacePoints& face_points,
   std::rotate(face_points.rbegin(), face_points.rbegin() + 1, face_points.rend());
   CGAL_assertion(face_points[0][2] == 0 && face_points[1][2] == 0);
 
-  std::cout << face_points[0] << " " << face_points[1] << " " << face_points[2] << std::endl;
   const Vector_3 n = CGAL::cross_product(face_points[1] - face_points[0], face_points[2] - face_points[0]);
   PK traits(n);
   PCDT pcdt(traits);
@@ -559,7 +560,9 @@ void triangulate_skeleton_face(SLSFacePoints& face_points,
     vh->info() = id++;
   }
 
+#ifdef CGAL_SLS_DEBUG_DRAW
   // CGAL::draw(pcdt);
+#endif
 
   std::unordered_map<PCDT_Face_handle, bool> in_domain_map;
   boost::associative_property_map< std::unordered_map<PCDT_Face_handle, bool> > in_domain(in_domain_map);
@@ -914,8 +917,10 @@ bool inward_construction(const Polygon_with_holes_2& pwh,
     return false;
   }
 
+#ifdef CGAL_SLS_DEBUG_DRAW
   // print_straight_skeleton(*ss_ptr);
   CGAL::draw(*ss_ptr);
+#endif
 
   if(offset == default_offset)
   {
@@ -982,24 +987,12 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
   // Start with the outer boundary
   {
     std::vector<std::vector<FT> > outer_speeds = { speeds[0] };
-
-#if 0
     Straight_skeleton_2_ptr ss_ptr = SS::create_partial_exterior_weighted_straight_skeleton_2(
                                         offset,
                                         SS::vertices_begin(pwh.outer_boundary()),
                                         SS::vertices_end(pwh.outer_boundary()),
                                         outer_speeds,
                                         K());
-#else // debug
-    Straight_skeleton_2_ptr ss_ptr = CGAL::create_exterior_weighted_straight_skeleton_2(
-                                        offset,
-                                        SS::vertices_begin(pwh.outer_boundary()),
-                                        SS::vertices_end(pwh.outer_boundary()),
-                                        outer_speeds,
-                                        K());
-#endif
-
-    std::cout << typeid(Point_2).name() << std::endl;
 
     if(!ss_ptr)
     {
@@ -1007,8 +1000,10 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
       return false;
     }
 
+#ifdef CGAL_SLS_DEBUG_DRAW
     // print_straight_skeleton(*ss_ptr);
     CGAL::draw(*ss_ptr);
+#endif
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
     Skeleton_offset_correspondence_builder_visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);
@@ -1050,7 +1045,8 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
 #endif
   }
 
-  // now, the holes
+  // now, deal with the holes
+
   std::size_t hole_id = 1;
   for(auto hit=pwh.holes_begin(); hit!=pwh.holes_end(); ++hit, ++hole_id)
   {
@@ -1075,8 +1071,10 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
       return EXIT_FAILURE;
     }
 
+#ifdef CGAL_SLS_DEBUG_DRAW
     // print_straight_skeleton(*ss_ptr);
     CGAL::draw(*ss_ptr);
+#endif
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
     Skeleton_offset_correspondence_builder_visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);

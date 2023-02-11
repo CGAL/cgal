@@ -100,7 +100,7 @@ public:
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 
   FT weight() const { CGAL_assertion(mWeight != std::numeric_limits<FT>::infinity()); return mWeight ; }
-  void set_weight( FT aWeight ) { std::cout << "set_weight(H" <<  id() << " W=" << aWeight << ")" << std::endl; mWeight = aWeight ; }
+  void set_weight( FT aWeight ) { mWeight = aWeight ; }
 
 private:
 
