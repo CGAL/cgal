@@ -71,7 +71,10 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 #include <CGAL/mark_domain_in_triangulation.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/repair.h> // for remove_isolated_vertices()
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h> // could be avoided
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
@@ -1271,14 +1274,24 @@ int main(int argc, char** argv)
   if(!res)
     return EXIT_FAILURE;
 
-  CGAL::IO::write_polygon_soup("sm_3D.off", points, faces, CGAL::parameters::stream_precision(17));
+  // CGAL::IO::write_polygon_soup("sm_3D_soup.off", points, faces, CGAL::parameters::stream_precision(17));
+
+  // Switch to a mesh
+
+  PMP::merge_duplicate_points_in_polygon_soup(points, faces);
+  if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
+    PMP::orient_polygon_soup(points, faces);
+  CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
+
+  Mesh sm;
+  PMP::polygon_soup_to_polygon_mesh(points, faces, sm);
 
   timer.stop();
   std::cout << "Offset computation took " << timer.time() << " s." << std::endl;
 
-  // Mesh sm;
-  // PMP::polygon_soup_to_polygon_mesh(points, faces, sm);
   // CGAL::IO::write_polygon_mesh("sm_3D.off", sm, CGAL::parameters::stream_precision(17));
+  CGAL_assertion(is_valid_polygon_mesh(sm) && is_closed(sm));
+  CGAL_warning(!PMP::does_self_intersect(sm)); // no other way if there is non-manifoldness
 
   return EXIT_SUCCESS;
 }
