@@ -1100,15 +1100,19 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
       }
       std::size_t ncid=corners.size();
 
+      typedef internal_np::Param_not_found PNF;
+      PNF pnf;
+      Triangle_index_tracker<Triangle_mesh, PNF, PNF> tracker(pnf, pnf);
       bool all_patches_successfully_remeshed =
-        decimate_impl(tm,
-                      nb_corners_and_nb_cc_all[mesh_id],
-                      vertex_corner_id_maps[mesh_id],
-                      edge_is_constrained_maps[mesh_id],
-                      face_cc_ids_maps[mesh_id],
-                      vpms[mesh_id],
-                      corners,
-                      all_triangles[mesh_id]) &&
+        decimate_impl<Kernel>(tm,
+                              nb_corners_and_nb_cc_all[mesh_id],
+                              vertex_corner_id_maps[mesh_id],
+                              edge_is_constrained_maps[mesh_id],
+                              face_cc_ids_maps[mesh_id],
+                              vpms[mesh_id],
+                              corners,
+                              all_triangles[mesh_id],
+                              tracker) &&
         is_polygon_soup_a_polygon_mesh(all_triangles[mesh_id]);
 #ifdef CGAL_DEBUG_DECIMATION
       std::cout << "all_patches_successfully_remeshed? " << all_patches_successfully_remeshed << "\n";
@@ -1466,6 +1470,9 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
   CGAL_assertion(coplanar_cos_threshold<0);
   typedef typename boost::property_traits<MeshMap>::value_type Triangle_mesh;
   typedef typename std::iterator_traits<typename TriangleMeshRange::iterator>::value_type Mesh_descriptor;
+  typedef typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::type Kernel;
 
   /// @TODO turn into a range of named parameter
   std::vector<typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type > vpms;
@@ -1473,7 +1480,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
 
   for(Mesh_descriptor& md : meshes)
     vpms.push_back( get(boost::vertex_point, mesh_map[md]) );
-  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl(meshes, mesh_map, coplanar_cos_threshold, vpms);
+  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms);
 }
 
 template <class TriangleMesh>

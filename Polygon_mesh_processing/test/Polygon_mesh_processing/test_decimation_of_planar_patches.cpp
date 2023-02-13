@@ -38,18 +38,14 @@ int main()
     in >> sm;
 
     // call the decimation function
-    Surface_mesh out;
-    if (!PMP::remesh_planar_patches(sm, out))
-    {
-      std::cerr << "ERROR: decimate failed to remesh some patches\n";
-      OK=false;
-    }
+    Surface_mesh sm_out;
+    PMP::remesh_planar_patches(sm, sm_out);
     ss=std::stringstream();
     ss << "out" << i << ".off";
     std::ofstream out(ss.str().c_str());
-    out << out;
+    out << sm_out;
     std::cout << "  output written to out" << i << ".off\n";
-    assert(is_valid_polygon_mesh(out));
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
 // testing border non-manifold vertex: not working for now, test kept
 /*
@@ -68,7 +64,7 @@ int main()
       std::cerr << "ERROR: decimate failed to remesh some patches\n";
     }
     std::ofstream("nm_m1.off") << std::setprecision(17) << sm;
-    assert(is_valid_polygon_mesh(sm));
+    assert(CGAL::is_valid_polygon_mesh(sm));
   }
 */
 // test duplicated vertex
@@ -82,12 +78,11 @@ int main()
     CGAL::Euler::remove_face(halfedge(f2, sm), sm);
     PMP::duplicate_non_manifold_vertices(sm);
     std::size_t nbv_before = vertices(sm).size();
-    Surface_mesh out;
-    if (!PMP::remesh_planar_patches(sm, out))
-      std::cerr << "decimate failed to remesh some patches (expected)\n";
-    assert(vertices(out).size()<nbv_before);
-    std::ofstream("nmd_m1.off") << std::setprecision(17) << out;
-    assert(is_valid_polygon_mesh(out));
+    Surface_mesh sm_out;
+    PMP::remesh_planar_patches(sm, sm_out);
+    assert(vertices(sm_out).size()<nbv_before);
+    std::ofstream("nmd_m1.off") << std::setprecision(17) << sm_out;
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
   // test duplicated vertex at patch interface
   {
@@ -100,12 +95,11 @@ int main()
     CGAL::Euler::remove_face(halfedge(f2, sm), sm);
     PMP::duplicate_non_manifold_vertices(sm);
     std::size_t nbv_before = vertices(sm).size();
-    Surface_mesh out;
-    if (!PMP::remesh_planar_patches(sm, out))
-      std::cerr << "decimate failed to remesh some patches (expected)\n";
-    assert(vertices(out).size()<nbv_before);
-    std::ofstream("nmdi_m1.off") << std::setprecision(17) << out;
-    assert(is_valid_polygon_mesh(out));
+    Surface_mesh sm_out;
+    PMP::remesh_planar_patches(sm, sm_out);
+    assert(vertices(sm_out).size()<nbv_before);
+    std::ofstream("nmdi_m1.off") << std::setprecision(17) << sm_out;
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
   assert(OK);
 
@@ -120,18 +114,14 @@ int main()
     in >> sm;
 
     // call the decimation function
-    Surface_mesh out;
-    if (!PMP::remesh_planar_patches(sm, out, CGAL::parameters::cosinus_threshold(-0.99)))
-    {
-      OK=false;
-      std::cerr << "ERROR: decimate failed to remesh some patches\n";
-    }
+    Surface_mesh sm_out;
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosinus_threshold(-0.99));
     ss=std::stringstream();
     ss << "out_a" << i << ".off";
     std::ofstream out(ss.str().c_str());
-    out << out;
+    out << sm_out;
     std::cout << "  output written to out_a" << i << ".off\n";
-    assert(is_valid_polygon_mesh(out));
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
 
 //testing decimation of meshes, preserving common interface
@@ -162,7 +152,7 @@ int main()
   }
   std::cout << "\n";
   for (int i=0; i<nb_meshes_range; ++i)
-    assert(is_valid_polygon_mesh(meshes[i]));
+    assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
   //testing decimation of meshes, preserving common interface and a patch that fails to simplify at the interface
   meshes.clear();
@@ -204,7 +194,7 @@ int main()
   }
   std::cout << "\n";
   for (int i=0; i<nb_meshes_range; ++i)
-    assert(is_valid_polygon_mesh(meshes[i]));
+    assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
   //testing decimation of meshes, preserving common interface with almost coplanar/collinear tests
   meshes.clear();
@@ -234,7 +224,7 @@ int main()
   }
   std::cout << "\n";
   for (int i=0; i<nb_meshes_range; ++i)
-    assert(is_valid_polygon_mesh(meshes[i]));
+    assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
 #if 0 // tests to be re-enable when using region growing
 // testing decimate function with almost coplanar/collinear tests using PCA
@@ -259,7 +249,7 @@ int main()
     std::ofstream out(ss.str().c_str());
     out << sm;
     std::cout << "  output written to out_a_pca" << i << ".off\n";
-    assert(is_valid_polygon_mesh(sm));
+    assert(CGAL::is_valid_polygon_mesh(sm));
   }
 
 // testing decimation of meshes,  preserving common interface with almost coplanar/collinear tests using PCA
@@ -277,7 +267,7 @@ int main()
   }
   std::cout << "\n";
   for (int i=0; i<nb_meshes_range; ++i)
-    assert(is_valid_polygon_mesh(meshes[i]));
+    assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
 // two examples that fails with approximate but works with PCA
   //PCA first
@@ -293,7 +283,7 @@ int main()
     std::ofstream out("sphere_pca.off");
     out << sm;
     std::cout << "output written to sphere_pca.off\n";
-    assert(is_valid_polygon_mesh(sm));
+    assert(CGAL::is_valid_polygon_mesh(sm));
   }
   {
     Surface_mesh sm;
@@ -305,7 +295,7 @@ int main()
     std::ofstream out("sphere_selection_pca.off");
     out << sm;
     std::cout << "output written to sphere_selection_pca.off\n";
-    assert(is_valid_polygon_mesh(sm));
+    assert(CGAL::is_valid_polygon_mesh(sm));
   }
 #endif
   // Approximation then
@@ -314,22 +304,20 @@ int main()
     std::cout << "decimate of data/decimation/sphere.off using approximate predicates\n";
     std::ifstream in("data/decimation/sphere.off");
     in >> sm;
-    Surface_mesh out;
-    if (!PMP::remesh_planar_patches(sm, out, CGAL::parameters::cosinus_threshold(-0.99)))
-      std::cerr << "decimate failed to remesh some patches\n";
+    Surface_mesh sm_out;
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosinus_threshold(-0.99));
   }
   {
     Surface_mesh sm;
     std::cout << "decimate of data/decimation/sphere_selection.off using approximate predicates\n";
     std::ifstream in("data/decimation/sphere_selection.off");
     in >> sm;
-    Surface_mesh out;
-    if (!PMP::remesh_planar_patches(sm, out, CGAL::parameters::cosinus_threshold(-0.99)))
-      std::cout << "decimate failed to remesh some patches (this is the expected behavior)\n";
+    Surface_mesh sm_out;
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosinus_threshold(-0.99));
     std::ofstream out("sphere_selection_app.off");
-    out << out;
+    out << sm_out;
     std::cout << "output written to sphere_selection_app.off\n";
-    assert(is_valid_polygon_mesh(out));
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
 
   assert(OK);
