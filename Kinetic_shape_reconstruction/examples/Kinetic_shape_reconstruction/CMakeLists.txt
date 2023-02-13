@@ -25,7 +25,7 @@ if(Boost_FOUND)
     kinetic_precomputed_shapes
 #    kinetic_reconstruction
 #    kinetic_random_shapes
-	)
+)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)
