@@ -317,8 +317,11 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
+
   bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Trisegment_2_ptr const& aTrisegment ) const
   {
+    return false; // @tmp disabled for now: needs to handle weights
+
     bool rR = false ;
 
     if ( is_possibly_inexact_time_clearly_not_zero(t) )
@@ -522,8 +525,9 @@ public:
       mCoeff_cache.Set( aID, boost::none ) ;
   }
 
+  // @tmp disabled what weights to give to non input segments used in this optimization?
   // functions and tag for filtering split events
-  struct Filters_split_events_tag{};
+  // struct Filters_split_events_tag{};
 
   template <class EventPtr>
   bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent) const
@@ -552,8 +556,11 @@ public:
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
+    CGAL_assertion(false); // @fixme fix weights
+
     mFilteringBound = boost::none;
 
+#if 0
     if ( ! aNode->is_contour() )
       return ;
 
@@ -566,8 +573,8 @@ public:
     Segment_2 s2(aNode->point(), lNext->point());
 
     // @todo? These are not input segments, but it might still worth caching (but they need an ID)
-    boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
-    boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
+    boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_coeffC2(s1);
+    boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_coeffC2(s2);
 
     Vector_2 lV1(l1->a(), l1->b()) ;
     Vector_2 lV2(l2->a(), l2->b()) ;
@@ -591,7 +598,7 @@ public:
         continue;
 
       // Note that we don't need the normalization
-      boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
+      boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(s_h);
 
       typename K::FT lBound = ( - lh->c() - lh->a()*aNode->point().x() - lh->b()*aNode->point().y() ) /
                                 ( lh->a()*lV12.x() + lh->b()*lV12.y() );
@@ -602,6 +609,7 @@ public:
       if ( ! mFilteringBound || *mFilteringBound > lBound )
         mFilteringBound = lBound;
     }
+#endif
   }
 
 public:
@@ -799,8 +807,8 @@ public:
     mExact_traits.InitializeLineCoeffs(aID, aOtherID) ;
   }
 
-// functions and tag for filtering split events
-  struct Filters_split_events_tag{};
+  // functions and tag for filtering split events
+  // struct Filters_split_events_tag{}; // @tmp, what weights to give to non input segments used in this optimization?
 
   // The kernel is filtered, and only the filtered part is used in the check (to avoid computing
   // exact stuff and losing time in a check that is there to gain speed)
@@ -851,8 +859,11 @@ public:
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
+    CGAL_assertion(false); // @fixme fix weights
+
     mApproximate_traits.mFilteringBound = boost::none;
 
+#if 0
     if ( ! aNode->is_contour() )
       return ;
 
@@ -871,8 +882,8 @@ public:
     Target_Segment_2 s2(laP, to_FK(lNext->point()));
 
     // @todo? These are not input segments, but it might still worth caching (just gotta assign them an ID)
-    boost::optional< Target_Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
-    boost::optional< Target_Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
+    boost::optional< Target_Line_2 > l1 = CGAL_SS_i::compute_normalized_line_coeffC2(s1);
+    boost::optional< Target_Line_2 > l2 = CGAL_SS_i::compute_normalized_line_coeffC2(s2);
 
     Target_Vector_2 lV1(l1->a(), l1->b()) ;
     Target_Vector_2 lV2(l2->a(), l2->b()) ;
@@ -898,7 +909,7 @@ public:
           continue;
 
         // Note that we don't need the normalization
-        boost::optional< Target_Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
+        boost::optional< Target_Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(s_h);
 
         typename FK::FT lBound = ( - lh->c() - lh->a()*laP.x() - lh->b()*laP.y() ) /
                                    ( lh->a()*lV12.x() + lh->b()*lV12.y() );
@@ -912,6 +923,7 @@ public:
       catch(CGAL::Uncertain_conversion_exception&)
       {}
     }
+#endif
   }
 
 public:

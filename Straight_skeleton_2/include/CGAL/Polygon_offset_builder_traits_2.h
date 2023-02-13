@@ -74,6 +74,8 @@ struct Construct_offset_point_2 : Functor_base_2<K>
   bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p,
                                            Segment_2_with_ID const& aE0, Segment_2_with_ID const& aE1 ) const
   {
+    return false; // @tmp disabled for now: needs to handle weights
+
     bool rR = false ;
 
     if ( is_possibly_inexact_time_clearly_not_zero(t) )
