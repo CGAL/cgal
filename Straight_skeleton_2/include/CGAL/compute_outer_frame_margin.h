@@ -49,6 +49,8 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
   typedef boost::optional<Point_2> OptionalPoint_2 ;
 
+  CGAL_STSKEL_BUILDER_TRACE(2, "Computing outer frame margin..." );
+
   FT lMaxSDist(0) ;
 
   ForwardPointIterator lLast = std::prev(aEnd) ;

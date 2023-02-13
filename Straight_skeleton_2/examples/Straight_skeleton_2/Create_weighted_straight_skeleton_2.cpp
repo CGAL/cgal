@@ -38,11 +38,10 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
   std::exit(1);
 }
 
-#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 4
+#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 5
 #define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
 #define CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
 #define CGAL_POLYGON_OFFSET_ENABLE_TRACE 4
-#define CGAL_STSKEL_BUILDER_TRACE 4
 #define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
 
 #endif // if 0|1 debug
@@ -492,10 +491,8 @@ void generate_random_weights(const Polygon_with_holes_2& p,
       auto prev_2 = prev(prev(it, c), c);
       auto prev_1 = prev(it, c);
       Segment_2 s0 {*prev_2, *prev_1}, s1 {*prev_1, *it};
-      std::cout << "Collinear? " << s0 << " " << s1 << std::endl;
       if(SS::are_edges_orderly_collinear(s0, s1))
       {
-        std::cout << "Collinear!" << std::endl;
         CGAL_assertion(weight.count(prev_1) != 0);
         weight[it] = weight[prev_1];
       }
@@ -503,6 +500,8 @@ void generate_random_weights(const Polygon_with_holes_2& p,
       {
         weight[it] = rnd.get_int(1, max_weight);
       }
+
+      // std::cout << s1 << " gets " << weight[it] << std::endl;
 
       it = next(it, c);
     }
@@ -661,8 +660,8 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
     {
       HDS_Vertex_const_handle hds_tv = hds_h->vertex();
 
-//      std::cout << "check halfedge\n"
-//                << "\t" << hds_tv->point() << " t: " << hds_tv->time() << std::endl;
+      // std::cout << "check halfedge\n"
+      //           << "\t" << hds_tv->point() << " t: " << hds_tv->time() << std::endl;
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       // this computes the snapped position but does not change the geometry of the skeleton
@@ -981,7 +980,6 @@ bool inward_construction(const Polygon_with_holes_2& pwh,
     Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
     Offset_polygons raw_output;
     ob.construct_offset_contours(offset, std::back_inserter(raw_output));
-    std::cout << raw_output.size() << " raw_outputs" << std::endl;
 
     Offset_polygons_with_holes output = CGAL::arrange_offset_polygons_2<Polygon_with_holes_2>(raw_output);
     construct_horizontal_faces(output, offset, points, faces);
@@ -1186,8 +1184,8 @@ int main(int argc, char** argv)
         "Options:\n"
         "   -i <input_filename>: input polygon filename.\n"
         "   -t <value>: time (== height). Must be strictly positive.\n"
-        "   -w <weights_filename>: weights. Format: one weight per line, a space to separate borders.\n"
         "   -a <angles_filename>: angles. Format: one angle per line, a space to separate borders.\n"
+        "   -w <weights_filename>: weights. Format: one weight per line, a space to separate borders.\n"
         " Note: -w and -a are exclusive.\n"
                 << std::endl;
 
@@ -1234,7 +1232,7 @@ int main(int argc, char** argv)
   {
     pwh = generate_square_polygon();
   }
-  else if(!read_input_polygon(poly_filename, pwh))
+  else if(!read_input_polygon(poly_filename, pwh) || pwh.outer_boundary().is_empty())
   {
     std::cerr << "Error: failure during polygon read" << std::endl;
     return EXIT_FAILURE;
@@ -1246,13 +1244,6 @@ int main(int argc, char** argv)
   out_poly << pwh;
   out_poly.close();
 #endif
-
-  // the algorithm can handle strictly simple polygon, so "is_simple" is too strong
-  if(pwh.outer_boundary().is_empty() || !pwh.outer_boundary().is_simple())
-  {
-    std::cerr << "Error: invalid input" << std::endl;
-    return EXIT_FAILURE;
-  }
 
   // read segment speeds (angles or weights)
   std::vector<std::vector<FT> > speeds;
@@ -1278,9 +1269,9 @@ int main(int argc, char** argv)
   }
 
   timer.stop();
-  std::cout << "Reading inputs took " << timer.time() << " s." << std::endl;
+  std::cout << "Reading input(s) took " << timer.time() << " s." << std::endl;
 
-  // End of I/O, do some slope preprocessing and check validity of the input
+  // End of I/O, do some slope preprocessing and check the validity of the input(s)
   // -----------------------------------------------------------------------------------------------
 
   timer.reset();
@@ -1303,7 +1294,7 @@ int main(int argc, char** argv)
 
   switch(slope)
   {
-    case Slope::UNKNOWN: std::cout << "Slope is UNKNOWN ??" << std::endl; break;
+    case Slope::UNKNOWN: std::cout << "Slope is UNKNOWN??" << std::endl; break;
     case Slope::INWARD: std::cout << "Slope is INWARD" << std::endl; break;
     case Slope::OUTWARD: std::cout << "Slope is OUTWARD" << std::endl; break;
     case Slope::VERTICAL: std::cout << "Slope is VERTICAL" << std::endl; break;
@@ -1311,7 +1302,7 @@ int main(int argc, char** argv)
 
   if(slope != Slope::INWARD && offset == default_offset)
   {
-    std::cerr << "Error: offset cannot be infinity with an outward or vertical slope" << std::endl;
+    std::cerr << "Error: offset must be specified when using an outward (or vertical) slope" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -1319,13 +1310,14 @@ int main(int argc, char** argv)
   // -----------------------------------------------------------------------------------------------
 
   // build a soup, to be converted to a mesh afterwards
-  // @todo NM issues...?
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > faces;
 
+  // just a reasonnable guess
   points.reserve(2 * pwh.outer_boundary().size());
   faces.reserve(2 * pwh.outer_boundary().size() + 2*pwh.number_of_holes());
 
+  // bottom face (z=0)
   construct_horizontal_faces(pwh, 0 /*altitude*/, points, faces, true /*invert faces*/);
 
   bool res;
@@ -1337,9 +1329,11 @@ int main(int argc, char** argv)
   if(!res)
     return EXIT_FAILURE;
 
-  // CGAL::IO::write_polygon_soup("sm_3D_soup.off", points, faces, CGAL::parameters::stream_precision(17));
+#ifdef CGAL_SLS_OUTPUT_FILES
+   CGAL::IO::write_polygon_soup("sm_3D_soup.off", points, faces, CGAL::parameters::stream_precision(17));
+#endif
 
-  // Switch to a mesh
+  // Convert the triangle soup to a triangle mesh
 
   PMP::merge_duplicate_points_in_polygon_soup(points, faces);
   if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
@@ -1352,7 +1346,10 @@ int main(int argc, char** argv)
   timer.stop();
   std::cout << "Offset computation took " << timer.time() << " s." << std::endl;
 
-  // CGAL::IO::write_polygon_mesh("sm_3D.off", sm, CGAL::parameters::stream_precision(17));
+#ifdef CGAL_SLS_OUTPUT_FILES
+  CGAL::IO::write_polygon_mesh("sm_3D.off", sm, CGAL::parameters::stream_precision(17));
+#endif
+
   CGAL_assertion(is_valid_polygon_mesh(sm) && is_closed(sm));
   CGAL_warning(!PMP::does_self_intersect(sm)); // no other way if there is non-manifoldness
 
