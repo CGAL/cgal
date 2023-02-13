@@ -512,7 +512,17 @@ private:
       }
       std::cerr << counter << " triangles(s) in the face\n";
 #endif // CGAL_DEBUG_CDT_3
-    }  // end of the construction of the CDT_2
+      CGAL_warning_msg(
+          !Algebraic_structure_traits<typename Geom_traits::FT>::Is_exact::value ||
+          std::all_of(cdt_2.finite_face_handles().begin(), cdt_2.finite_face_handles().end(), [=](const auto fh) {
+            const auto p0 = cdt_2.point(fh->vertex(0));
+            const auto v1 = cdt_2.point(fh->vertex(1)) - p0;
+            const auto v2 = cdt_2.point(fh->vertex(2)) - p0;
+            return cross_product(cdt_2.geom_traits().normal(), cross_product(v1, v2)) == NULL_VECTOR;
+          }),
+          (std::string("Polygon #" + std::to_string(polygon_contraint_id) +
+                       " is not coplanar.")).c_str());
+    } // end of the construction of the CDT_2
   }
 
   void search_for_missing_subfaces(CDT_3_face_index polygon_contraint_id)
