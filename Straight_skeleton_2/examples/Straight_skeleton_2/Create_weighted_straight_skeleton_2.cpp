@@ -828,8 +828,8 @@ std::tuple<Slope, bool, FT> preprocess_weights(WeightRange& weights)
         return {Slope::UNKNOWN, false, FT(-1)};
       }
 
-      // infinity means a vertical slab, aka 90° angle (see preprocess_angles())
-      if(w == std::numeric_limits<FT>::infinity() || -w == std::numeric_limits<FT>::infinity())
+      // '0' means a vertical slab, aka 90° angle (see preprocess_angles())
+      if(w == 0)
         continue;
 
       // determine whether weights indicate all inward or all outward
@@ -873,7 +873,7 @@ std::tuple<Slope, bool, FT> preprocess_weights(WeightRange& weights)
   {
     for(FT& w : contour_weights)
     {
-      if(w == std::numeric_limits<FT>::infinity() || -w == std::numeric_limits<FT>::infinity())
+      if(w == FT(0))
         w = scaled_max;
     }
   }
@@ -894,7 +894,7 @@ std::tuple<Slope, bool, FT> preprocess_angles(AngleRange& angles)
     // @todo should this be an epsilon around 90°? As theta goes to 90°, tan(theta) goes to infinity
     // and thus we could get numerical issues (overlfows) if the kernel is not exact
     if(angle == 90)
-      return std::numeric_limits<FT>::infinity();
+      return 0;
     else
       return std::tan(CGAL::to_double(angle * CGAL_PI / 180));
   };
