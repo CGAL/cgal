@@ -70,13 +70,15 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
   typedef typename Target_skeleton::Halfedge  Target_halfedge ;
   typedef typename Target_skeleton::Face      Target_face ;
 
+  using Base::operator();
+
   Target_vertex operator() ( Source_vertex_const_handle aV ) const
   {
     CGAL_assertion( handle_assigned(aV) ) ;
 
     return Target_vertex( aV->id()
-                        , this->Base::operator()(aV->point())
-                        , this->Base::operator()(aV->time ())
+                        , this->operator()(aV->point())
+                        , this->operator()(aV->time ())
                         , aV->is_split()
                         , aV->has_infinite_time()
                         ) ;
@@ -98,7 +100,7 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
 
   Target_segment_2_with_ID operator() ( const Source_segment_2_with_ID& aS ) const
   {
-    return Target_segment_2_with_ID(this->Base::operator()(
+    return Target_segment_2_with_ID(this->operator()(
       static_cast<const typename Source_segment_2_with_ID::Base&>(aS)), aS.mID);
   }
 
@@ -140,13 +142,20 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
     const auto& lSe1 = aT->e1();
     const auto& lSe2 = aT->e2();
 
+    const Source_FT& lW0 = aT->w0();
+    const Source_FT& lW1 = aT->w1();
+    const Source_FT& lW2 = aT->w2();
+
     Trisegment_collinearity lCollinearity = aT->collinearity();
     std::size_t lId = aT->id();
 
     Target_trisegment_2_with_ID_ptr rT = Target_trisegment_2_with_ID_ptr(
                                            new Target_trisegment_2_with_ID(this->operator()(lSe0),
+                                                                           this->operator()(lW0),
                                                                            this->operator()(lSe1),
+                                                                           this->operator()(lW1),
                                                                            this->operator()(lSe2),
+                                                                           this->operator()(lW2),
                                                                            lCollinearity, lId));
 
     if ( aT->child_l() )

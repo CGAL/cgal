@@ -185,11 +185,12 @@ public:
 
   friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
   {
-    return os << "[e0 " << s2str(aTrisegment.e0())
-              << "; e1 " << s2str(aTrisegment.e1())
-              << "; e2 " << s2str(aTrisegment.e2())
-              << "; Collinearity: " << trisegment_collinearity_to_string(aTrisegment.collinearity())
-              << "]";
+    return os << "["
+              << "\n\te0 " << s2str(aTrisegment.e0()) << " weight = " << n2str(aTrisegment.w0()) << ";"
+              << "\n\te1 " << s2str(aTrisegment.e1()) << " weight = " << n2str(aTrisegment.w1()) << ";"
+              << "\n\te2 " << s2str(aTrisegment.e2()) << " weight = " << n2str(aTrisegment.w2()) << ";"
+              << "\n\tCollinearity: " << trisegment_collinearity_to_string(aTrisegment.collinearity())
+              << "\n]";
   }
 
   friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
