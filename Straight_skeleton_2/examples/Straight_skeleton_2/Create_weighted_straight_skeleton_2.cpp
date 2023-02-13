@@ -89,8 +89,13 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 namespace SS = CGAL::CGAL_SS_i;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+// Kernel choice:
+// EPICK: Robust and fast
+// EPECK_with_sqrt: Exact and slow
+// EPECK: More robust, and less slow than EPECK_with_sqrt
+
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-// using K = CGAL::Exact_predicates_exact_constructions_kernel;
+// using K = CGAL::Exact_predicates_exact_constructions_kernel; // @fixme need to implement ceil(Lazy_exact_NT first)
 // using K = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
 
 using FT = K::FT;
@@ -445,7 +450,8 @@ Polygon_with_holes_2 generate_square_polygon()
 }
 
 void generate_random_weights(const Polygon_with_holes_2& p,
-                             const int max_weight,
+                             const double min_weight,
+                             const double max_weight,
                              const unsigned int seed,
                              std::vector<std::vector<FT> >& speeds)
 {
@@ -464,7 +470,7 @@ void generate_random_weights(const Polygon_with_holes_2& p,
     return (it == std::prev(container.end())) ? container.begin() : std::next(it);
   };
 
-  auto generate_range_weights = [prev, next, max_weight, &rnd](const auto& c)
+  auto generate_range_weights = [prev, next, min_weight, max_weight, &rnd](const auto& c)
   {
     using Container = typename std::remove_reference<decltype(c)>::type;
     using Iterator = typename Container::const_iterator;
@@ -498,7 +504,8 @@ void generate_random_weights(const Polygon_with_holes_2& p,
       }
       else
       {
-        weight[it] = rnd.get_int(1, max_weight);
+        CGAL_assertion(weight.count(it) == 0);
+        weight[it] = rnd.get_double(min_weight, max_weight);
       }
 
       // std::cout << s1 << " gets " << weight[it] << std::endl;
@@ -1171,9 +1178,11 @@ int main(int argc, char** argv)
   char* speeds_filename = nullptr;
 
   FT offset = default_offset;
-  bool use_angles = false;
-  int max_weight = 10;
-  bool flip_weights = false;
+  bool use_angles = false; // whether the input is SLS edge weights, or taper angles
+  bool flip_weights = false; // takes the opposite for weights, and the complement for angles
+
+  // below is only used for random weight generation
+  double min_weight = 1., max_weight = 10.;
   std::size_t seed = std::time(nullptr);
 
   for(int i = 1; i < argc; ++i)
@@ -1210,8 +1219,10 @@ int main(int argc, char** argv)
     } else if(!strcmp("-t", argv[i]) && i < argc_check) {
       offset = std::stod(argv[++i]);
     } else if(!strcmp("-mw", argv[i]) && i < argc_check) {
-      max_weight = std::stoi(argv[++i]);
-    }else if(!strcmp("-f", argv[i]) && i < argc) {
+      min_weight = std::stod(argv[++i]);
+    } else if(!strcmp("-Mw", argv[i]) && i < argc_check) {
+      max_weight = std::stod(argv[++i]);
+    } else if(!strcmp("-f", argv[i]) && i < argc) {
       flip_weights = true;
     } else if(!strcmp("-s", argv[i]) && i < argc_check) {
       seed = std::stoi(argv[++i]);
@@ -1248,7 +1259,7 @@ int main(int argc, char** argv)
   // read segment speeds (angles or weights)
   std::vector<std::vector<FT> > speeds;
   if(speeds_filename == nullptr)
-    generate_random_weights(pwh, max_weight, seed, speeds);
+    generate_random_weights(pwh, min_weight, max_weight, seed, speeds);
   else
     read_segment_speeds(speeds_filename, speeds);
 
