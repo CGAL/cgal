@@ -201,7 +201,7 @@ private:
     }
 
     std::map<PFace, std::size_t>& face2index = m_data.face_to_index();
-    std::vector<std::pair<std::size_t, std::size_t> >& face2volumes = m_data.face_to_volumes();
+    std::vector<std::pair<int, int> >& face2volumes = m_data.face_to_volumes();
     std::size_t num_faces = 0;
 
     // Adjust neighbor information in volumes
@@ -221,7 +221,7 @@ private:
       }
 
       if (face2volumes.size() < num_faces)
-        face2volumes.resize(num_faces);
+        face2volumes.resize(num_faces, std::pair<int, int>(-1, -1));
 
 
       for (std::size_t j = 0; j < volumes[i].neighbors.size(); j++) {

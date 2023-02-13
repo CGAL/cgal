@@ -231,7 +231,7 @@ private:
   std::vector<Volume_cell> m_volumes;
   std::vector<Point_3> m_vertices;
   std::vector<int> m_ivertex2vertex; // Used to map ivertices to m_vertices which only contain vertices of the finalized kinetic partition.
-  std::vector<std::pair<std::size_t, std::size_t> > m_face2volumes;
+  std::vector<std::pair<int, int> > m_face2volumes;
 
   std::map<PFace, std::size_t> m_face2index;
   std::vector<std::vector<std::size_t> > m_face2vertices;
@@ -382,9 +382,7 @@ public:
   const std::vector<std::vector<std::size_t> >& face_to_vertices() const { return m_face2vertices; }
 
   std::vector<std::size_t>& face_to_support_plane() { return m_face2sp; }
-  std::vector<std::vector<std::size_t> >& support_plane_to_input_polygon() { return m_sp2input_polygon; }
-
-  std::vector<std::vector<std::size_t> >& face_to_input_polygon() { return m_face2input_polygon; }
+  std::vector<std::set<std::size_t> >& support_plane_to_input_polygon() { return m_sp2input_polygon; }
 
   const std::vector<Support_plane>& support_planes() const { return m_support_planes; }
   std::vector<Support_plane>& support_planes() { return m_support_planes; }
@@ -627,8 +625,8 @@ public:
     return m_volumes[volume_index].faces;
   }
 
-  const std::vector<std::size_t> face(std::size_t face_index) const { return &m_face2vertices[face_index]; }
-  const Point_3& vertex(std::size_t vertex_index) const { return &m_face2vertices[face_index]; }
+  const std::vector<std::size_t> &face(std::size_t face_index) const { return m_face2vertices[face_index]; }
+  const Point_3& vertex(std::size_t vertex_index) const { return m_vertices[vertex_index]; }
 
   Reconstructed_model& reconstructed_model() { return m_reconstructed_model; }
   const Reconstructed_model& reconstructed_model() const { return m_reconstructed_model; }

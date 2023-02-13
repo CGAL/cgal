@@ -508,8 +508,7 @@ public:
     \pre successful partition
   */
   const std::pair<int, int>& neighbors(std::size_t face_index) const {
-    CGAL_assertion(m_data.number_of_volumes() > volume_index);
-    return m_data.
+    return m_data.face_to_volumes()[face_index];
   }
 
   /*!

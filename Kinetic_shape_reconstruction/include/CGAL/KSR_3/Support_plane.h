@@ -543,7 +543,7 @@ public:
   }
 
   const Segment_2 segment_2(const Edge_index& ei) const {
-    return Segment_2(m_data->mesh.point(mesh.source(m_data->mesh.halfedge(ei))), m_data->mesh.point(mesh.target(m_data->mesh.halfedge(ei))));
+    return Segment_2(m_data->mesh.point(m_data->mesh.source(m_data->mesh.halfedge(ei))), m_data->mesh.point(m_data->mesh.target(m_data->mesh.halfedge(ei))));
   }
 
   const Segment_3 segment_3(const Edge_index& ei) const {

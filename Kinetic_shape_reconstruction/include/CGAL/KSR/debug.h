@@ -985,8 +985,8 @@ void dump(const InputRange input_range, PointMap point_map, NormalMap normal_map
     }
   }
 
-  std::vector<boost::property_traits<PointMap>::value_type> pts(input_range.size());
-  std::vector<boost::property_traits<NormalMap>::value_type> normals(input_range.size());
+  std::vector<typename boost::property_traits<PointMap>::value_type> pts(input_range.size());
+  std::vector<typename boost::property_traits<NormalMap>::value_type> normals(input_range.size());
 
   for (std::size_t i = 0; i < input_range.size(); i++) {
     pts[i] = get(point_map, i);

@@ -146,7 +146,6 @@ public:
 
   void clear() {
     m_graph.clear();
-    m_nb_lines = 0;
     m_map_points.clear();
     m_map_vertices.clear();
   }

@@ -94,7 +94,7 @@ public:
   }
 
   void clear() {
-    m_queue.clear();
+    m_face_queue.clear();
     m_min_time = -FT(1);
     m_max_time = -FT(1);
   }
@@ -113,7 +113,6 @@ private:
   ********************************/
 
   void initialize_queue() {
-    //m_face_queue.clear();
 
     if (m_parameters.debug) {
       std::cout << "initializing queue" << std::endl;
