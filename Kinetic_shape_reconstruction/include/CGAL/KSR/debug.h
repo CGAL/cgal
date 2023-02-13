@@ -976,6 +976,7 @@ void dump_cdt(
 
 template<typename InputRange, typename PointMap, typename NormalMap, typename Regions>
 void dump(const InputRange input_range, PointMap point_map, NormalMap normal_map, Regions regions, const std::string &file_name) {
+/*
   std::vector<int> region_index(input_range.size(), -1);
 
   for (std::size_t r = 0; r < regions.size(); r++) {
@@ -994,7 +995,7 @@ void dump(const InputRange input_range, PointMap point_map, NormalMap normal_map
   }
 
   Saver<boost::property_traits<PointMap>::value_type::R> saver;
-  saver.export_regions_3(pts, normals, region_index, file_name);
+  saver.export_regions_3(pts, normals, region_index, file_name);*/
 }
 
 } // namespace KSR_3
