@@ -845,10 +845,16 @@ private:
     CGAL_assertion(found_edge_opt != std::nullopt);
 
     const auto first_intersecting_edge = *found_edge_opt;
-    const auto cavities =
+    auto cavities =
         construct_cavities(face_index, region_count, cdt_2, fh_region, border_vertices, first_intersecting_edge);
-    const auto& [intersecting_edges, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
+    auto& [intersecting_edges, intersecting_cells_vector, vertices_of_upper_cavity_vector, vertices_of_lower_cavity_vector,
            facets_of_upper_cavity, facets_of_lower_cavity] = cavities;
+
+    std::set<Cell_handle> intersecting_cells{intersecting_cells_vector.begin(), intersecting_cells_vector.end()};
+    std::set<Vertex_handle> vertices_of_upper_cavity{vertices_of_upper_cavity_vector.begin(),
+                                                        vertices_of_upper_cavity_vector.end()};
+    std::set<Vertex_handle> vertices_of_lower_cavity{vertices_of_lower_cavity_vector.begin(),
+                                                        vertices_of_lower_cavity_vector.end()};
 
 #if CGAL_DEBUG_CDT_3
     std::cerr << std::format("Cavity has {} cells and {} edges, "
@@ -874,7 +880,89 @@ private:
       dump_facets_of_cavity(face_index, region_count, "lower", facets_of_lower_cavity);
       dump_facets_of_cavity(face_index, region_count, "upper", facets_of_upper_cavity);
     }
-#endif
+#endif // CGAL_DEBUG_CDT_3
+    const auto upper_cavity_triangulation = triangulate_cavity(intersecting_cells, facets_of_upper_cavity, vertices_of_upper_cavity);
+    const auto lower_cavity_triangulation = triangulate_cavity(intersecting_cells, facets_of_lower_cavity, vertices_of_lower_cavity);
+#if CGAL_DEBUG_CDT_3
+    if(vertices_of_upper_cavity.size() != vertices_of_upper_cavity_vector.size() ||
+       vertices_of_lower_cavity.size() != vertices_of_lower_cavity_vector.size())
+    {
+      std::cerr << std::format("!! Cavity has grown and not has {} cells and {} edges, "
+                               "{} vertices in upper cavity and {} in lower, "
+                               "{} facets in upper cavity and {} in lower\n",
+                               intersecting_cells.size(),
+                               intersecting_edges.size(),
+                               vertices_of_upper_cavity.size(),
+                               vertices_of_lower_cavity.size(),
+                               facets_of_upper_cavity.size(),
+                               facets_of_lower_cavity.size());
+    }
+#endif // CGAL_DEBUG_CDT_3
+    CGAL_assertion(std::all_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
+      const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
+      const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
+      const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
+      Cell_handle c;
+      int i, j, k;
+      const bool test = upper_cavity_triangulation.is_facet(v0, v1, v2, c, i, j, k) &&
+                        lower_cavity_triangulation.is_facet(v0, v1, v2, c, i, j, k);
+      if(!test) {
+        std::cerr << "ERROR: missing facet in polygon #" << face_index << '\n';
+        dump_3d_triangulation(face_index, region_count, "lower", lower_cavity_triangulation);
+        dump_3d_triangulation(face_index, region_count, "upper", upper_cavity_triangulation);
+        throw Next_face{};
+      }
+      return test;
+    }));
+  }
+
+  auto triangulate_cavity(std::set<Cell_handle> cells_of_cavity,
+                          std::vector<Facet>& facets_of_cavity,
+                          std::set<Vertex_handle> vertices_of_cavity)
+  {
+    CGAL::Unique_hash_map<Vertex_handle, Vertex_handle> vertex_map;
+    Constrained_Delaunay_triangulation_3 cavity_triangulation;
+    for(auto v: vertices_of_cavity) {
+      vertex_map[v] = cavity_triangulation.insert(this->point(v));
+    }
+
+    std::vector<Facet> missing_faces;
+    while(true) {
+      missing_faces.clear();
+      for(auto f: facets_of_cavity) {
+        if(cells_of_cavity.contains(f.first)) {
+          // internal facet, due to cavity growing
+          continue;
+        }
+        const auto [v0, v1, v2] = this->make_vertex_triple(f);
+        Cell_handle c; int i, j, k;
+        if(!cavity_triangulation.is_facet(vertex_map[v0], vertex_map[v1], vertex_map[v2], c, i, j, k)) {
+          missing_faces.push_back(f);
+        }
+      }
+      if(missing_faces.empty()) {
+        break;
+      }
+      for(auto [cell, facet_index]: missing_faces) {
+        {
+          auto [_, is_new_cell] = cells_of_cavity.insert(cell);
+          if(!is_new_cell) continue;
+        }
+        const auto v3 = cell->vertex(facet_index);
+        auto [_, v3_is_new_vertex] = vertices_of_cavity.insert(v3);
+        if(v3_is_new_vertex) {
+          vertex_map[v3] = cavity_triangulation.insert(this->point(v3));
+        }
+        for(int i = 0; i < 3; ++i) {
+          Facet other_f{cell, this->vertex_triple_index(facet_index, i)};
+          Facet mirror_f = this->mirror_facet(other_f);
+          if(!cells_of_cavity.contains(mirror_f.first)) {
+            facets_of_cavity.push_back(mirror_f);
+          }
+        }
+      }
+    }
+    return cavity_triangulation;
   }
 
   void restore_face(CDT_3_face_index face_index) {
@@ -952,6 +1040,21 @@ public:
     }
   }
 
+  void write_3d_triangulation_to_OFF(std::ostream& out, const Constrained_Delaunay_triangulation_3& tr) {
+    write_facets(out, tr.finite_facets());
+  }
+
+  void dump_3d_triangulation(CDT_3_face_index face_index,
+                             int region_count,
+                             std::string type,
+                             const Constrained_Delaunay_triangulation_3& tr)
+  {
+    std::ofstream dump(std::string("dump_") + type + "_cavity_" + std::to_string(face_index) + "_" +
+                       std::to_string(region_count) + ".off");
+    dump.precision(17);
+    write_3d_triangulation_to_OFF(dump, tr);
+  }
+
   void dump_triangulation() const {
     std::ofstream dump("dump.binary.cgal");
     CGAL::Mesh_3::save_binary_file(dump, *this);
@@ -1000,10 +1103,10 @@ public:
     write_segment(out, std::forward<Args>(args)...);
   }
 
-  void write_facets(std::string filename, const auto& facets_range) {
+  void write_facets(std::ostream& out, const auto& facets_range) {
     std::vector<typename Geom_traits::Point_3> points;
     points.reserve(facets_range.size() * 3);
-    std::vector<std::array<int, 3>> facets;
+    std::vector<std::array<std::size_t, 3>> facets;
     facets.reserve(facets_range.size());
 
     for(std::size_t i = 0; const auto [cell, facet_index] : facets_range) {
@@ -1017,15 +1120,15 @@ public:
       i += 3;
     }
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, facets);
-    std::ofstream out(filename);
-    out.precision(17);
     CGAL::IO::write_OFF(out, points, facets);
   }
 
   void dump_facets_of_cavity(CDT_3_face_index face_index, int region_count, std::string type, const auto& facets_range)
   {
-    write_facets(std::string("dump_facets_of_region_") + std::to_string(face_index) + "_" +
-                 std::to_string(region_count) + "_" + type + ".off", facets_range);
+    std::ofstream out(std::string("dump_facets_of_region_") + std::to_string(face_index) + "_" +
+                      std::to_string(region_count) + "_" + type + ".off");
+    out.precision(17);
+    write_facets(out, facets_range);
   }
 
   void write_2d_triangle(std::ostream &out, const CDT_2_face_handle fh)
