@@ -27,23 +27,23 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
-template<class K>
-bool are_edges_collinear( Segment_2_with_ID<K> const& e0, Segment_2_with_ID<K> const& e1 )
+template<class S>
+bool are_edges_collinear( S const& e0, S const& e1 )
 {
   return   ((e1.source() == e0.source()) || (e1.source() == e0.target()) || collinear(e0.source(),e0.target(),e1.source()))
     && ( (e1.target() == e0.source()) || (e1.target() == e0.target()) || (collinear(e0.source(),e0.target(),e1.target()))) ;
 }
 
-template<class K>
+template<class S>
 inline
-bool are_parallel_edges_equally_oriented( Segment_2_with_ID<K> const& e0, Segment_2_with_ID<K> const& e1 )
+bool are_parallel_edges_equally_oriented( S const& e0, S const& e1 )
 {
   return angle(e0.source(), e0.target(),
                e1.source(), e1.target()) == ACUTE;
 }
 
-template<class K>
-bool are_edges_orderly_collinear( Segment_2_with_ID<K> const& e0, Segment_2_with_ID<K> const& e1 )
+template<class S>
+bool are_edges_orderly_collinear( S const& e0, S const& e1 )
 {
   return are_edges_collinear(e0,e1) && are_parallel_edges_equally_oriented(e0,e1);
 }

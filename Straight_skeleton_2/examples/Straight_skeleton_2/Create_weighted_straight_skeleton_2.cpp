@@ -446,35 +446,78 @@ Polygon_with_holes_2 generate_square_polygon()
 }
 
 void generate_random_weights(const Polygon_with_holes_2& p,
-                             std::vector<std::vector<FT> >& speeds,
-                             unsigned int seed)
+                             const int max_weight,
+                             const unsigned int seed,
+                             std::vector<std::vector<FT> >& speeds)
 {
   CGAL::Random rnd(seed);
   std::cout << "Seed is " << rnd.get_seed() << std::endl;
 
-  std::vector<FT> border_weights;
-  for(std::size_t i=0; i<p.outer_boundary().size(); ++i)
-  {
-    border_weights.push_back(rnd.get_int(1, 10));
-    std::cout << border_weights.back() << std::endl;
-  }
+  CGAL_assertion(max_weight > 1);
 
-  std::cout << border_weights.size() << " outer contour speeds" << std::endl;
-  speeds.push_back(border_weights);
-  border_weights.clear();
-
-  for(auto hit=p.holes_begin(); hit!=p.holes_end(); ++hit)
+  auto prev = [](const auto& it, const auto& container)
   {
-    for(std::size_t i=0; i<hit->size(); ++i)
+    return it == container.begin() ? std::prev(container.end()) : std::prev(it);
+  };
+
+  auto next = [](const auto& it, const auto& container)
+  {
+    return (it == std::prev(container.end())) ? container.begin() : std::next(it);
+  };
+
+  auto generate_range_weights = [prev, next, max_weight, &rnd](const auto& c)
+  {
+    using Container = typename std::remove_reference<decltype(c)>::type;
+    using Iterator = typename Container::const_iterator;
+
+    std::map<Iterator, std::size_t /*rnd weight*/> weight;
+
+    // start somewhere not collinear
+    Iterator start_it;
+    for(Iterator it=c.begin(); it<c.end(); ++it)
     {
-      border_weights.push_back(rnd.get_int(1, 10));
-      std::cout << border_weights.back() << std::endl;
+      // the edge is [prev_1 ; it], check for collinearity with the previous edge [prev_2; prev_1]
+      auto prev_2 = prev(prev(it, c), c);
+      auto prev_1 = prev(it, c);
+      Segment_2 s0 {*prev_2, *prev_1}, s1 {*prev_1, *it};
+      if(!SS::are_edges_orderly_collinear(s0, s1))
+        start_it = it;
     }
 
-    std::cout << border_weights.size() << " hole speeds" << std::endl;
-    speeds.push_back(border_weights);
-    border_weights.clear();
-  }
+    CGAL_assertion(start_it != Iterator()); // all collinear is impossible
+
+    Iterator it=start_it, end=start_it;
+    do
+    {
+      auto prev_2 = prev(prev(it, c), c);
+      auto prev_1 = prev(it, c);
+      Segment_2 s0 {*prev_2, *prev_1}, s1 {*prev_1, *it};
+      std::cout << "Collinear? " << s0 << " " << s1 << std::endl;
+      if(SS::are_edges_orderly_collinear(s0, s1))
+      {
+        std::cout << "Collinear!" << std::endl;
+        CGAL_assertion(weight.count(prev_1) != 0);
+        weight[it] = weight[prev_1];
+      }
+      else
+      {
+        weight[it] = rnd.get_int(1, max_weight);
+      }
+
+      it = next(it, c);
+    }
+    while(it != end);
+
+    std::vector<FT> weights;
+    for(auto it=c.begin(); it<c.end(); ++it)
+      weights.push_back(weight[it]);
+
+    return weights;
+  };
+
+  speeds.push_back(generate_range_weights(p.outer_boundary()));
+  for(auto hit=p.holes_begin(); hit!=p.holes_end(); ++hit)
+    speeds.push_back(generate_range_weights(*hit));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1128,10 +1171,12 @@ int main(int argc, char** argv)
 
   char* poly_filename = nullptr;
   char* speeds_filename = nullptr;
+
   FT offset = default_offset;
-  std::size_t seed = std::time(nullptr);
   bool use_angles = false;
+  int max_weight = 10;
   bool flip_weights = false;
+  std::size_t seed = std::time(nullptr);
 
   for(int i = 1; i < argc; ++i)
   {
@@ -1166,10 +1211,12 @@ int main(int argc, char** argv)
       use_angles = true;
     } else if(!strcmp("-t", argv[i]) && i < argc_check) {
       offset = std::stod(argv[++i]);
+    } else if(!strcmp("-mw", argv[i]) && i < argc_check) {
+      max_weight = std::stoi(argv[++i]);
+    }else if(!strcmp("-f", argv[i]) && i < argc) {
+      flip_weights = true;
     } else if(!strcmp("-s", argv[i]) && i < argc_check) {
       seed = std::stoi(argv[++i]);
-    } else if(!strcmp("-f", argv[i]) && i < argc) {
-      flip_weights = true;
     }
   }
 
@@ -1193,10 +1240,24 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+#ifdef CGAL_SLS_OUTPUT_FILES
+  std::ofstream out_poly("input.dat");
+  out_poly.precision(17);
+  out_poly << pwh;
+  out_poly.close();
+#endif
+
+  // the algorithm can handle strictly simple polygon, so "is_simple" is too strong
+  if(pwh.outer_boundary().is_empty() || !pwh.outer_boundary().is_simple())
+  {
+    std::cerr << "Error: invalid input" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // read segment speeds (angles or weights)
   std::vector<std::vector<FT> > speeds;
   if(speeds_filename == nullptr)
-    generate_random_weights(pwh, speeds, seed);
+    generate_random_weights(pwh, max_weight, seed, speeds);
   else
     read_segment_speeds(speeds_filename, speeds);
 
