@@ -15,11 +15,13 @@
 #include <CGAL/license/Straight_skeleton_2.h>
 
 #include <CGAL/compute_outer_frame_margin.h>
+#include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Polygon_2.h>
 
 #include <boost/optional/optional.hpp>
 #include <boost/shared_ptr.hpp>

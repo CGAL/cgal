@@ -927,8 +927,8 @@ public:
   }
 
 public:
-  // TODO: as soon as an exact value we could refine the interval one. Not sure if it is worth it
-  Exact mExact_traits ;
+  // @todo as soon as an exact value we could refine the interval one. Not sure if it is worth it
+  Straight_skeleton_builder_traits_2_impl<Tag_false, EK> mExact_traits ;
 
   // Below is only used for the cached variables not the functor types
   Straight_skeleton_builder_traits_2_impl<Tag_false, FK> mApproximate_traits ;

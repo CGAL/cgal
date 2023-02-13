@@ -36,7 +36,7 @@ exterior_offset_of_disjoint_polygons_with_holes(double lOffset, const std::vecto
 
   if ( margin )
   {
-    double lm = CGAL::to_double(*margin);
+    double lm = *margin;
     CGAL::Bbox_2 bbox = bbox_2(outer_vertices.begin(), outer_vertices.end());
 
     double fxmin = bbox.xmin() - lm ;
@@ -110,6 +110,7 @@ int main()
   double lOffset = 1.1 ;
 
   PolygonWithHolesPtrVector offset_poly_with_holes = exterior_offset_of_disjoint_polygons_with_holes(lOffset,pwhs);
+  std::cout << offset_poly_with_holes.size() << " offset polygons" << std::endl;
 
   for (PolygonWithHolesPtr ptr : offset_poly_with_holes)
     CGAL::draw(*ptr);
