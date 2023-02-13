@@ -143,8 +143,12 @@ create_partial_exterior_weighted_straight_skeleton_2 ( FT const&      aMaxOffset
     const FT frame_weight = *(std::max_element(aWeights[0].begin(), aWeights[0].end()));
     CGAL_STSKEL_BUILDER_TRACE(4, "Frame weight = " << frame_weight);
 
-    const Weights lWeights = { std::vector<FT>(4, frame_weight),
-                               std::vector<FT>(std::rbegin(aWeights[0]), std::rend(aWeights[0])) };
+    Weights lWeights = { std::vector<FT>(4, frame_weight),
+                         std::vector<FT>(std::rbegin(aWeights[0]), std::rend(aWeights[0])) };
+
+    // If w[0] pointed to v_0, then when we reverse the polygon, the last polygon is pointing to v_{n-1}
+    // but it is the edge v_0 v_{n-1}, which has the weight w_0.
+    std::rotate(lWeights[1].rbegin(), lWeights[1].rbegin()+1, lWeights[1].rend());
 
     rSkeleton = create_partial_interior_weighted_straight_skeleton_2(aMaxOffset,
                                                                      frame, frame+4,
