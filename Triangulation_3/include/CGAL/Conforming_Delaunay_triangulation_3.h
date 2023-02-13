@@ -365,7 +365,7 @@ protected:
                                this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
                      this->constraint_hierarchy.vertices_in_constraint_end(c_id));
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 > 64
       std::cerr << "constraint " << (void*) c_id.vl_ptr() << " has "
                 << c_id.vl_ptr()->skip_size() << " vertices\n";
 #endif

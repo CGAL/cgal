@@ -802,7 +802,9 @@ private:
           throw PLC_error{};
         }
       } while(++facet_circ != facet_circ_end);
+#if CGAL_DEBUG_CDT_3
       std::cerr << "intersecting_edges.size() = " << intersecting_edges.size() << '\n';
+#endif
     }
     const std::set<Cell_handle> intersecting_cells_set{intersecting_cells.begin(), intersecting_cells.end()};
     visited_cells.clear();
@@ -977,7 +979,7 @@ private:
 
   void restore_face(CDT_3_face_index face_index) {
     const CDT_2& cdt_2 = face_cdt_2[face_index];
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 > 64 && __has_include(<format>)
     std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
 #endif // CGAL_DEBUG_CDT_3
     for(const auto edge : cdt_2.finite_edges()) {
