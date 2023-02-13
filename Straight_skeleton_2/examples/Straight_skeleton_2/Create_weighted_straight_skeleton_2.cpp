@@ -1060,25 +1060,7 @@ bool outward_construction(const Polygon_with_holes_2& pwh,
     ob.construct_offset_contours(offset, std::back_inserter(raw_output));
 
     // Manually filter the offset of the outer frame
-    Point_2 xtrm_pt = *(raw_output[0]->begin());
-    std::size_t outer_id = 0;
-    for(std::size_t i=0; i<raw_output.size(); ++i)
-    {
-      if(raw_output[i]->orientation() == CGAL::COUNTERCLOCKWISE)
-      {
-        for(const Point_2& p : raw_output[i]->container())
-        {
-          if(p < xtrm_pt)
-          {
-            xtrm_pt = p;
-            outer_id = i;
-          }
-        }
-      }
-    }
-
-    if(outer_id != (raw_output.size()-1))
-      std::swap(raw_output[outer_id], raw_output.back());
+    std::swap(raw_output[0], raw_output.back());
     raw_output.pop_back();
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS

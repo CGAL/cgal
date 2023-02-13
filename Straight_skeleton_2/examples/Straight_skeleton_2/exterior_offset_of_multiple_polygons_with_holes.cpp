@@ -3,10 +3,9 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 
-#include <boost/shared_ptr.hpp>
-
 #include <CGAL/draw_polygon_with_holes_2.h>
 
+#include <boost/shared_ptr.hpp>
 
 #include <vector>
 #include <cassert>
@@ -61,21 +60,9 @@ exterior_offset_of_disjoint_polygons_with_holes(double lOffset, const std::vecto
     PolygonPtrVector off_polys = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,pwh);
 
     // filter outer frame
-    Point xtrm_pt = *(off_polys[0]->begin());
-    std::size_t outer_id=0;
-    for(std::size_t i=0; i<off_polys.size(); ++i)
-      if (off_polys[i]->orientation() == CGAL::COUNTERCLOCKWISE)
-      {
-        for (const Point& p : off_polys[i]->container())
-          if (p < xtrm_pt)
-          {
-            xtrm_pt=p;
-            outer_id=i;
-          }
-      }
-    if (outer_id != (off_polys.size()-1))
-      std::swap(off_polys[outer_id], off_polys.back());
+    std::swap(off_polys[0], off_polys.back());
     off_polys.pop_back();
+
     for (PolygonPtr ptr : off_polys)
       ptr->reverse_orientation();
 
