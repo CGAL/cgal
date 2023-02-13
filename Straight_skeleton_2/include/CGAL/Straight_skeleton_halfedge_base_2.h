@@ -45,15 +45,15 @@ public:
 protected:
 
   Straight_skeleton_halfedge_base_base_2()
-    : mF(Face_handle()), mID(-1), mSlope(ZERO), mWeight(std::numeric_limits<FT>::infinity())
+    : mF(Face_handle()), mID(-1), mSlope(ZERO), mWeight(1)
   {}
 
   Straight_skeleton_halfedge_base_base_2( int aID )
-    : mF(Face_handle()), mID(aID), mSlope(ZERO), mWeight(std::numeric_limits<FT>::infinity())
+    : mF(Face_handle()), mID(aID), mSlope(ZERO), mWeight(1)
   {}
 
   Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope )
-    : mF(Face_handle()), mID(aID), mSlope(aSlope), mWeight(std::numeric_limits<FT>::infinity())
+    : mF(Face_handle()), mID(aID), mSlope(aSlope), mWeight(1)
   {}
 
 public:
@@ -99,7 +99,7 @@ public:
   Sign slope() const { return mSlope ; }
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 
-  FT weight() const { CGAL_assertion(mWeight != std::numeric_limits<FT>::infinity()); return mWeight ; }
+  FT weight() const { return mWeight ; }
   void set_weight( FT aWeight ) { mWeight = aWeight ; }
 
 private:
