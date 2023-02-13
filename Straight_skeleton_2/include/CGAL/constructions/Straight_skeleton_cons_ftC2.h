@@ -297,7 +297,7 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 
   CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec time for: " << tri ) ;
 
-  FT num(0.0), den(0.0) ;
+  FT num(0), den(0) ;
 
   // DETAILS:
   //
@@ -310,9 +310,18 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
   // The result is :
   //
-  //      a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 + b1*a0*c2 - b0*a1*c2
-  //  t = ---------------------------------------------------------------
-  //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
+  // sage: var('a0 b0 c0 a1 b1 c1 a2 b2 c2 x y t w0 w1 w2')
+  // (a0, b0, c0, a1, b1, c1, a2, b2, c2, x, y, t, w0, w1, w2)
+  // sage:
+  // sage: eqw0 = w0*a0*x + w0*b0*y + w0*c0 - t == 0
+  // sage: eqw1 = w1*a1*x + w1*b1*y + w1*c1 - t == 0
+  // sage: eqw2 = w2*a2*x + w2*b2*y + w2*c2 - t == 0
+  // sage:
+  // sage: solve([eqw0,eqw1,eqw2], x,y,t)
+  //   x ==  (((c1*w1 - c2*w2)*b0 - (b1*w1 - b2*w2)*c0)*w0 - (b2*c1*w2 - b1*c2*w2)*w1) / (((b1*w1 - b2*w2)*a0 - (a1*w1 - a2*w2)*b0)*w0 - (a2*b1*w2 - a1*b2*w2)*w1),
+  //   y == -(((c1*w1 - c2*w2)*a0 - (a1*w1 - a2*w2)*c0)*w0 - (a2*c1*w2 - a1*c2*w2)*w1) / (((b1*w1 - b2*w2)*a0 - (a1*w1 - a2*w2)*b0)*w0 - (a2*b1*w2 - a1*b2*w2)*w1),
+  //   t == -((b2*c1*w2 - b1*c2*w2)*a0*w1 - (a2*c1*w2 - a1*c2*w2)*b0*w1 + (a2*b1*w2 - a1*b2*w2)*c0*w1)*w0/(((b1*w1 - b2*w2)*a0 - (a1*w1 - a2*w2)*b0)*w0 - (a2*b1*w2 - a1*b2*w2)*w1)
+
   bool ok = false ;
 
   Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCoeff_cache) ;
@@ -321,6 +330,13 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 
   if ( l0 && l1 && l2 )
   {
+    CGAL_STSKEL_TRAITS_TRACE("\tl0 ID: " << tri->e0().mID << " w: " << n2str(tri->w0()) ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tl1 ID: " << tri->e1().mID << " w: " << n2str(tri->w1()) );
+    CGAL_STSKEL_TRAITS_TRACE("\tl2 ID: " << tri->e2().mID << " w: " << n2str(tri->w2()) ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tLabc [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
+                                 << "[" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
+                                 << "[" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
+
     num = (l2->a()*l0->b()*l1->c())
          -(l2->a()*l1->b()*l0->c())
          -(l2->b()*l0->a()*l1->c())
@@ -546,12 +562,12 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
 
   if ( l0 && l1 && l2 && q )
   {
-    CGAL_STSKEL_TRAITS_TRACE("\tl0 ID: " << tri->collinear_edge().mID << " w: " << tri->collinear_edge_weight() ) ;
-    CGAL_STSKEL_TRAITS_TRACE("\tl1 ID: " << tri->other_collinear_edge().mID << " w: " << tri->other_collinear_edge_weight() );
-    CGAL_STSKEL_TRAITS_TRACE("\tl2 ID: " << tri->non_collinear_edge().mID << " w: " << tri->non_collinear_edge_weight() ) ;
-    CGAL_STSKEL_TRAITS_TRACE("\tLabc [" << l0->a() << "; " << l0->b() << "; " << l0->c() << "]"
-                                 << "[" << l1->a() << "; " << l1->b() << "; " << l1->c() << "]"
-                                 << "[" << l2->a() << "; " << l2->b() << "; " << l2->c() << "]") ;
+    CGAL_STSKEL_TRAITS_TRACE("\tl0 ID: " << tri->collinear_edge().mID << " w: " << n2str(tri->collinear_edge_weight()) ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tl1 ID: " << tri->other_collinear_edge().mID << " w: " << n2str(tri->other_collinear_edge_weight()) );
+    CGAL_STSKEL_TRAITS_TRACE("\tl2 ID: " << tri->non_collinear_edge().mID << " w: " << n2str(tri->non_collinear_edge_weight()) ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tLabc [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
+                                 << "[" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
+                                 << "[" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
 
     FT px, py ;
     line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(), px,py);
@@ -728,7 +744,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
                            << " E" << tri->e0().mID << ",E" << tri->e1().mID << ",E" << tri->e2().mID << std::endl
                            << tri ) ;
 
-  FT x(0.0),y(0.0) ;
+  FT x(0),y(0) ;
 
   Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCoeff_cache) ;
   Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->other_collinear_edge(), tri->other_collinear_edge_weight(), aCoeff_cache) ;

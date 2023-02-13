@@ -664,9 +664,14 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
 
     std::pair<typename Ordered_halfedges::iterator, bool> rRes = lOrdered_halfedges.insert ( lBorder ) ;
     if ( ! rRes.second ) // some collinear edge is already in the set
+    {
+      CGAL_STSKEL_BUILDER_TRACE ( 4, "Harmonize " << lBorder->id() << " with " << (*rRes.first)->id() ) ;
       mTraits.InitializeLineCoeffs ( lBorder->id(), (*rRes.first)->id() );
+    }
     else
+    {
       mTraits.InitializeLineCoeffs ( lS, lBorder->weight() );
+    }
   }
 }
 

@@ -196,8 +196,8 @@ void snap_skeleton_vertex(HDS_Halfedge_const_handle hds_h,
   auto insert_result = snapped_positions.emplace(hds_tv->point(), hds_tv->point());
   insert_result.first->second = snap_point_to_contour_halfedge_plane(insert_result.first->second, contour_h);
 
-  std::cout << "snap_skeleton_vertex(V" << hds_tv->id() << " pt: " << hds_h->vertex()->point() << ")"
-            << " to " << insert_result.first->second << std::endl;
+  // std::cout << "snap_skeleton_vertex(V" << hds_tv->id() << " pt: " << hds_h->vertex()->point() << ")"
+  //           << " to " << insert_result.first->second << std::endl;
 };
 
 template <typename PointRange>
@@ -779,8 +779,6 @@ std::tuple<Slope, bool, FT> preprocess_weights(WeightRange& weights)
   {
     for(FT& w : contour_weights)
     {
-      std::cout << "w = " << w << std::endl;
-
       if(w == 0)
       {
         std::cerr << "Error: null weight (null angle) is not a valid input" << std::endl;
@@ -1171,7 +1169,7 @@ int main(int argc, char** argv)
 
   if(offset <= FT(0))
   {
-    std::cerr << "Error: height/offset/time must be strictly positive" << std::endl;
+    std::cerr << "Error: height/offset/time must be strictly positive; it is " << offset << std::endl;
     return EXIT_FAILURE;
   }
 
