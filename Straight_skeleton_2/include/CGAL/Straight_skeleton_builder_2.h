@@ -710,19 +710,45 @@ private :
 
     // Consecutive collinear segments must not have the same weight
     CGAL_assertion_code(if(r->collinearity() == TRISEGMENT_COLLINEARITY_01))
-    CGAL_assertion_code(if(aTriedge.e0()->weight() != aTriedge.e1()->weight()))
+    CGAL_assertion_code(if(aTriedge.e0()->weight() != aTriedge.e1()->weight()) {)
+    CGAL_STSKEL_BUILDER_TRACE(5, "Collinear check: " << CGAL_SS_i::are_edges_orderly_collinear(r->e0(), r->e1()));
     CGAL_assertion(aTriedge.e1() != aTriedge.e0()->opposite()->prev()->opposite() &&
-                   aTriedge.e0() != aTriedge.e1()->opposite()->next()->opposite());
+                   aTriedge.e0() != aTriedge.e1()->opposite()->prev()->opposite());
+    CGAL_assertion_code(})
 
     CGAL_assertion_code(if(r->collinearity() == TRISEGMENT_COLLINEARITY_12))
-    CGAL_assertion_code(if(aTriedge.e1()->weight() != aTriedge.e2()->weight()))
+    CGAL_assertion_code(if(aTriedge.e1()->weight() != aTriedge.e2()->weight()) {)
+    CGAL_STSKEL_BUILDER_TRACE(5, "Collinear check: " << CGAL_SS_i::are_edges_orderly_collinear(r->e1(), r->e2()));
     CGAL_assertion(aTriedge.e2() != aTriedge.e1()->opposite()->prev()->opposite() &&
-                   aTriedge.e1() != aTriedge.e2()->opposite()->next()->opposite());
+                   aTriedge.e1() != aTriedge.e2()->opposite()->prev()->opposite());
+    CGAL_assertion_code(})
 
     CGAL_assertion_code(if(r->collinearity() == TRISEGMENT_COLLINEARITY_02))
-    CGAL_assertion_code(if(aTriedge.e0()->weight() != aTriedge.e2()->weight()))
+    CGAL_assertion_code(if(aTriedge.e0()->weight() != aTriedge.e2()->weight()) {)
+    CGAL_STSKEL_BUILDER_TRACE(5, "Collinear check: " << CGAL_SS_i::are_edges_orderly_collinear(r->e0(), r->e2()));
     CGAL_assertion(aTriedge.e2() != aTriedge.e0()->opposite()->prev()->opposite() &&
-                   aTriedge.e0() != aTriedge.e2()->opposite()->next()->opposite());
+                   aTriedge.e0() != aTriedge.e2()->opposite()->prev()->opposite());
+    CGAL_assertion_code(})
+
+    CGAL_assertion_code(if(r->collinearity() == TRISEGMENT_COLLINEARITY_ALL) {)
+    CGAL_assertion_code(if(aTriedge.e0()->weight() != aTriedge.e1()->weight()) {)
+    CGAL_STSKEL_BUILDER_TRACE(5, "Collinear check: " << CGAL_SS_i::are_edges_orderly_collinear(r->e0(), r->e1()));
+    CGAL_assertion(aTriedge.e1() != aTriedge.e0()->opposite()->prev()->opposite() &&
+                   aTriedge.e0() != aTriedge.e1()->opposite()->prev()->opposite());
+    CGAL_assertion_code(})
+
+    CGAL_assertion_code(if(aTriedge.e1()->weight() != aTriedge.e2()->weight()) {)
+    CGAL_STSKEL_BUILDER_TRACE(5, "Collinear check: " << CGAL_SS_i::are_edges_orderly_collinear(r->e1(), r->e2()));
+    CGAL_assertion(aTriedge.e2() != aTriedge.e1()->opposite()->prev()->opposite() &&
+                   aTriedge.e1() != aTriedge.e2()->opposite()->prev()->opposite());
+    CGAL_assertion_code(})
+
+    CGAL_assertion_code(if(aTriedge.e0()->weight() != aTriedge.e2()->weight()) {)
+    CGAL_STSKEL_BUILDER_TRACE(5, "Collinear check: " << CGAL_SS_i::are_edges_orderly_collinear(r->e0(), r->e2()));
+    CGAL_assertion(aTriedge.e2() != aTriedge.e0()->opposite()->prev()->opposite() &&
+                   aTriedge.e0() != aTriedge.e2()->opposite()->prev()->opposite());
+    CGAL_assertion_code(})
+    CGAL_assertion_code(})
 
     CGAL_postcondition_msg((r!= Trisegment_2_ptr()), "Unable to determine edges collinearity");
 
