@@ -10,6 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
+// Disable file for now
+#define CGAL_KSR_3_GRAPHCUT_H
 #ifndef CGAL_KSR_3_GRAPHCUT_H
 #define CGAL_KSR_3_GRAPHCUT_H
 

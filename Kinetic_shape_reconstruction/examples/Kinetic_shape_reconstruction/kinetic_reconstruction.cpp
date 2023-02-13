@@ -7,6 +7,8 @@
 #include <CGAL/IO/PLY.h>
 #include <sstream>
 
+#ifdef DISABLED
+
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
 
@@ -272,3 +274,5 @@ int main(const int argc, const char** argv) {
   " in " << time << " seconds!" << std::endl << std::endl;
   return EXIT_SUCCESS;
 }
+
+#endif

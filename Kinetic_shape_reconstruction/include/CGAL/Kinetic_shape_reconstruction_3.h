@@ -10,6 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
+// Disable file for now
+#define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 #ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 #define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 
