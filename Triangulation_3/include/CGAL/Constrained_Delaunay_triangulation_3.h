@@ -638,7 +638,7 @@ private:
   // Given a region and a border edge of it, returns an edge in the link of the
   // border edge that intersects the region.
   // The returned edge has its first vertex above the region.
-  std::optional<Edge> search_first_intersection(CDT_3_face_index face_index,
+  std::optional<Edge> search_first_intersection(CDT_3_face_index /*face_index*/,
                                                 const CDT_2& cdt_2,
                                                 const auto& fh_region,
                                                 const Edge border_edge)
