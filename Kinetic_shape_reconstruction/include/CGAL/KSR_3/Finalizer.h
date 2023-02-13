@@ -15,6 +15,7 @@
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <boost/filesystem.hpp>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -111,6 +112,12 @@ public:
     create_volumes();
 
     if (m_parameters.debug) {
+      boost::filesystem::path dir("volumes");
+
+      if (!boost::filesystem::exists(dir) && !boost::filesystem::create_directory(dir)) {
+        std::cout << "Could not create volumes folder to export volumes from partition!" << std::endl;
+      }
+
       for (const auto& v : m_data.volumes())
         dump_volume(m_data, v.pfaces, "volumes/" + std::to_string(v.index), true, v.index);
     }
@@ -328,7 +335,6 @@ private:
         while (!queue[i].empty()) {
           propagate_volume(queue[i], volume_indices[i], volumes, map_volumes);
         }
-        //dump_volume(m_data, volumes[volume_indices[i]].pfaces, "volumes/" + std::to_string(volume_indices[i]), true, volume_indices[i]);
       }
     }
   }

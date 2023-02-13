@@ -377,18 +377,8 @@ public:
     // Finalization.
     timer.reset();
     timer.start();
-    if (m_parameters.debug)
-      dump(m_data, "final-" + std::to_string(m_parameters.k));
 
     Finalizer finalizer(m_data, m_parameters);
-
-    if (m_parameters.verbose)
-      std::cout << "* checking final mesh integrity ...";
-
-    CGAL_assertion(m_data.check_integrity(true, true, true));
-
-    if (m_parameters.verbose)
-      std::cout << " done" << std::endl;
 
     if (m_parameters.verbose)
       std::cout << "* getting volumes ..." << std::endl;

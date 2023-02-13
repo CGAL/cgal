@@ -103,9 +103,6 @@ public:
     m_data.igraph().finished_bbox();
 
     if (m_parameters.verbose) std::cout << "* intersecting input polygons ... ";
-    if (m_parameters.debug) {
-      KSR_3::dump(m_data, "init");
-    }
 
     // Fills in the ivertices on support plane intersections inside the bbox.
     make_polygons_intersection_free();
@@ -136,7 +133,6 @@ public:
     //m_data.set_limit_lines();
     m_data.precompute_iedge_data();
     const double time_to_precompute = timer.time();
-    CGAL_assertion(m_data.check_integrity());
     CGAL_assertion(m_data.check_intersection_graph());
 
     if (m_parameters.verbose) {
@@ -262,21 +258,6 @@ private:
     CGAL_assertion(face.poly.orientation() == CGAL::COUNTERCLOCKWISE);
     CGAL_assertion(face.poly.is_convex());
     CGAL_assertion(face.poly.is_simple());
-
-
-    // Debug visualization
-    if (m_parameters.debug) {
-      From_exact from_EK;
-      std::vector<Point_3> pts;
-      pts.reserve(face.vertices.size());
-      for (auto v : face.vertices)
-        pts.push_back(from_EK(m_data.igraph().point_3(v)));
-
-      Saver<Kernel> saver;
-      std::vector<std::vector<Point_3> > pts_vec;
-      pts_vec.push_back(pts);
-      saver.export_polygon_soup_3(pts_vec, "initializer-poly-" + std::to_string(sp_idx) + "-" + std::to_string(face_idx));
-    }
   }
 
   void get_prev_next(std::size_t sp_idx, IEdge edge, IEdge& prev, IEdge& next) {

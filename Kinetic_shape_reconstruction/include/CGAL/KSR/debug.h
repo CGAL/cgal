@@ -308,9 +308,6 @@ void dump(const DS& data, const std::string tag = std::string()) {
 
   dump_polygons(data, tag);
   dump_intersection_edges(data, tag);
-
-  // dump_polygon_borders(data, tag);
-  // dump_constrained_edges(data, tag);
 }
 
 template<typename GeomTraits>

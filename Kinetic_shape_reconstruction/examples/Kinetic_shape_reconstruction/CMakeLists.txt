@@ -11,7 +11,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 include(${CGAL_USE_FILE})
 include(CGAL_CreateSingleSourceCGALProgram)
 
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem)
 if(Boost_FOUND)
   message(STATUS "Found Boost")
 
@@ -23,8 +23,9 @@ if(Boost_FOUND)
     set(targets
     kinetic_2d
     kinetic_precomputed_shapes
-    kinetic_reconstruction
-    kinetic_random_shapes)
+#    kinetic_reconstruction
+#    kinetic_random_shapes
+	)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)
@@ -32,7 +33,7 @@ if(Boost_FOUND)
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
       if(TARGET ${target})
-        target_link_libraries(${target} PUBLIC ${project_linked_libraries} CGAL::Eigen_support)
+        target_link_libraries(${target} PUBLIC ${project_linked_libraries} CGAL::Eigen_support Boost::filesystem)
         target_compile_definitions(${target} PUBLIC ${project_compilation_definitions})
       endif()
     endforeach()

@@ -6,8 +6,7 @@
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/Kinetic_shape_partitioning_3.h>
-#include <CGAL/Kinetic_shape_partitioning_Traits.h>
+#include <CGAL/Kinetic_shape_partition_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2_algorithms.h>
@@ -37,9 +36,7 @@ using IPoint_3 = typename EPICK::Point_3;
 using IPolygon_3     = std::vector<IPoint_3>;
 using IPolygon_3_map = CGAL::Identity_property_map<IPolygon_3>;
 
-using Traits = typename CGAL::Kinetic_shape_partitioning_traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
-
-using KSP = CGAL::Kinetic_shape_partitioning_3<Traits>;
+using KSP = CGAL::Kinetic_shape_partition_3<EPICK>;
 
 const std::vector<int> box_vertices_to_faces(const int i) {
   const int _vertices_to_faces[8][3] = {
@@ -406,20 +403,27 @@ int main(const int argc, const char** argv) {
   assert(input_polygons.size() == rnd_polygons.size());
 
   // Algorithm.
-  KSP ksp(true, false);
+  KSP ksp(CGAL::parameters::verbose(true).debug(false));
   const IPolygon_3_map polygon_map;
   const unsigned int k = (argc > 3 ? std::atoi(argv[3]) : 1);
   std::cout << "* input k: " << k << std::endl;
 
-  bool is_ksp_success = ksp.initialize(
-    input_polygons, polygon_map);
+  ksp.insert(input_polygons, polygon_map);
 
-  if (is_ksp_success)
-    ksp.partition(k);
+  ksp.initialize();
 
-  assert(is_ksp_success);
-  const std::string success = is_ksp_success ? "SUCCESS" : "FAILED";
+  ksp.partition(k);
 
-  std::cout << std::endl << "3D KINETIC " << success << "!" << std::endl << std::endl;
+  // Output.
+  CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
+  ksp.get_linear_cell_complex(lcc);
+
+  std::vector<unsigned int> cells = { 0, 2, 3 }, count;
+  count = lcc.count_cells(cells);
+
+  std::cout << "For k = " << k << ":" << std::endl << " vertices: " << count[0] << std::endl << " faces: " << count[2] << std::endl << " volumes: " << count[3] << std::endl;
+
+  std::cout << std::endl << "3D kinetic partition created in " << time << " seconds!" << std::endl << std::endl;
+
   return EXIT_SUCCESS;
 }
