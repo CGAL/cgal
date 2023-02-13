@@ -16,7 +16,6 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 #include <boost/iterator/transform_iterator.hpp>
-#include <boost/bind.hpp>
 #include <boost/function.hpp>
 
 // Internal includes.
@@ -38,8 +37,8 @@ template<typename GeomTraits, typename IntersectionKernel>
 class Data_structure {
 
 public:
-  using Kernel = typename GeomTraits;
-  using Intersection_kernel = typename IntersectionKernel;
+  using Kernel = GeomTraits;
+  using Intersection_kernel = IntersectionKernel;
 
   using Support_plane = KSR_3::Support_plane<Kernel, Intersection_kernel>;
   using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_kernel>;
@@ -256,7 +255,7 @@ private:
   }
 
 public:
-  Data_structure(const Parameters& parameters) : m_parameters(parameters), to_exact(), from_exact() { }
+  Data_structure(const Parameters& parameters) : to_exact(), from_exact(), m_parameters(parameters) { }
 
   /*******************************
   **      INITIALIZATION        **
@@ -406,7 +405,7 @@ public:
 
     Point_2 centroid = sp.data().centroid;
 
-    Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
+    typename Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
 
     Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
     Point_2 t = sp.to_2d(from_exact(point_3(m_intersection_graph.target(edge))));
@@ -432,8 +431,6 @@ public:
       event.face = faces.first;
 
     for (std::size_t i = 0; i < sp.data().original_directions.size(); i++) {
-      Vector_2 tmp = sp.data().original_directions[i].vector();
-
       if (source_idx == -1 && sp.data().original_directions[i] > to_source)
         source_idx = i;
 
@@ -453,8 +450,6 @@ public:
     std::vector<FT> intersections_bary(num);
 
     // Shooting rays to find intersection with line of IEdge
-    Line_2 ln = sp.to_2d(from_exact(m_intersection_graph.line_3(edge)));
-    //std::cout << sp.to_3d(ln.point(0)) << " " << sp.to_3d(ln.point(5)) << std::endl;
     typename Intersection_kernel::Line_2 l = sp.to_2d(m_intersection_graph.line_3(edge));
     for (std::size_t i = 0; i < num; i++) {
       std::size_t idx = (i + lower) % sp.data().original_directions.size();
@@ -464,15 +459,15 @@ public:
         continue;
       }
       const IkPoint_2* p = nullptr;
-      if (p = boost::get<IkPoint_2>(&*result)) {
+      if ((p = boost::get<IkPoint_2>(&*result))) {
         FT l = CGAL::sqrt(sp.data().original_vectors[idx].squared_length());
-        //std::cout << "i " << sp.to_3d(to_inexact(sp.data().original_rays[idx].point(0))) << " " << sp.to_3d(to_inexact(*p)) << std::endl;
+
         double l2 = CGAL::to_double((*p - sp.data().original_rays[idx].point(0)).squared_length());
         time[i] = l2 / l;
         CGAL_assertion(0 <= time[i]);
         intersections[i] = from_exact(*p);
         intersections_bary[i] = ((from_exact(*p) - s) * segment) / segment_length;
-        //std::cout << "intersection t:" << time[i] << " at " << intersections_bary[i] << " p: " << sp.to_3d(intersections[i]) << std::endl;
+
       }
       // If the intersection is a segment, it can be safely ignored as there are also two intersections with the adjacent edges.
     }
@@ -484,10 +479,7 @@ public:
     if (source_idx == upper) {
       // Moving direction of pedges is orthogonal to their direction
       // Direction of pedge 1
-      //std::cout << "lower for source_idx == upper:" << std::endl;
-      //std::cout << sp.to_3d(sp.data().original_vertices[lower]) << " ";
-      //std::cout << sp.to_3d(sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()]) << std::endl;
-      //std::cout << "target: " << point_3(m_intersection_graph.target(edge)) << " ";
+
       Vector_2 dir = sp.data().original_vertices[lower] - sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -502,16 +494,11 @@ public:
       // Distance from edge to endpoint of iedge
       FT dist = (t - sp.data().original_vertices[lower]) * dir;
       Point_3 vis = sp.to_3d(t - (dist * dir));
-      //std::cout << vis << std::endl;
+
       edge_time[0] = dist / speed;
       CGAL_assertion(0 <= edge_time[0]);
-      //std::cout << "time: " << edge_time[0] << std::endl;
 
       // Same for the upper boundary edge.
-      //std::cout << "upper for source_idx == upper:" << std::endl;
-      //std::cout << sp.to_3d(sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()]) << " ";
-      //std::cout << sp.to_3d(sp.data().original_vertices[upper]) << std::endl;
-      //std::cout << "source: " << point_3(m_intersection_graph.source(edge)) << " ";
       dir = sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()] - sp.data().original_vertices[upper];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -526,10 +513,9 @@ public:
       // Distance from edge to endpoint of iedge
       dist = (s - sp.data().original_vertices[upper]) * dir;
       vis = sp.to_3d(s - (dist * dir));
-      //std::cout << vis << std::endl;
+
       edge_time[1] = dist / speed;
       CGAL_assertion(0 <= edge_time[1]);
-      //std::cout << "time: " << edge_time[1] << std::endl;
 
       event.time = edge_time[1];
       event.intersection_bary = 0;
@@ -553,10 +539,6 @@ public:
     }
     else {
       // Moving direction of pedges is orthogonal to their direction
-      //std::cout << "lower for source_idx == lower:" << std::endl;
-      //std::cout << sp.to_3d(sp.data().original_vertices[lower]) << " ";
-      //std::cout << sp.to_3d(sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()]) << std::endl;
-      //std::cout << "source: " << point_3(m_intersection_graph.source(edge)) << " ";
       Vector_2 dir = sp.data().original_vertices[lower] - sp.data().original_vertices[(lower + 1) % sp.data().original_directions.size()];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -571,16 +553,11 @@ public:
       // Distance from edge to endpoint of iedge
       FT dist = (s - sp.data().original_vertices[lower]) * dir;
       Point_3 vis = sp.to_3d(s - (dist * dir));
-      //std::cout << vis << std::endl;
+
       edge_time[0] = dist / speed;
       CGAL_assertion(0 <= edge_time[0]);
-      //std::cout << "time: " << edge_time[0] << std::endl;
 
       // Same for the upper boundary edge.
-      //std::cout << "upper for source_idx == lower:" << std::endl;
-      //std::cout << sp.to_3d(sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()]) << " ";
-      //std::cout << sp.to_3d(sp.data().original_vertices[upper]) << std::endl;
-      //std::cout << "target: " << point_3(m_intersection_graph.target(edge)) << " ";
       dir = sp.data().original_vertices[(upper + sp.data().original_directions.size() - 1) % sp.data().original_directions.size()] - sp.data().original_vertices[upper];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -595,10 +572,9 @@ public:
       // Distance from edge to endpoint of iedge
       dist = (t - sp.data().original_vertices[upper]) * dir;
       vis = sp.to_3d(t - (dist * dir));
-      //std::cout << vis << std::endl;
+
       edge_time[1] = dist / speed;
       CGAL_assertion(0 <= edge_time[1]);
-      //std::cout << "time: " << edge_time[1] << std::endl;
 
       event.time = edge_time[0];
       event.intersection_bary = 0;
@@ -620,8 +596,6 @@ public:
         event.intersection_bary = 1;
       }
     }
-
-    //std::cout << "new event: sp " << event.support_plane << " f " << event.face << " edge " << event.crossed_edge << " t " << event.time << std::endl;
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);
 
@@ -718,6 +692,16 @@ public:
   void intersect_with_bbox(const std::size_t sp_idx) {
     if (is_bbox_support_plane(sp_idx)) return;
 
+    typename Intersection_kernel::FT bbox_center_x = 0, bbox_center_y = 0, bbox_center_z = 0;
+    for (std::size_t i = 0; i < 8; i++) {
+      IkPoint_3 tmp = point_3(IVertex(i));
+      bbox_center_x += tmp.x();
+      bbox_center_y += tmp.y();
+      bbox_center_z += tmp.z();
+    }
+
+    IkPoint_3 bbox_center(bbox_center_x * 0.125, bbox_center_y * 0.125, bbox_center_z * 0.125);
+
     // Intersect current plane with all bbox iedges.
     IkPoint_3 point;
     Point_3 p1;
@@ -732,10 +716,9 @@ public:
     polygon.reserve(3);
     const FT ptol = KSR::point_tolerance<FT>();
     const auto all_iedges = m_intersection_graph.edges();
-    std::size_t num_edges = all_iedges.size();
     for (const auto iedge : all_iedges) {
       const auto segment = segment_3(iedge);
-      typename Intersection_graph::Edge_property* p = (typename Intersection_graph::Edge_property*)iedge.get_property();
+
       if (!intersection(plane, segment, point))
         continue;
 
@@ -773,8 +756,17 @@ public:
     }
 
     // Sort the points to get an oriented polygon.
-    boost::function<IkPoint_3(Pair&)> f = boost::bind(&Pair::first, _1);
-    IkPoint_2 mid = sp.to_2d(CGAL::centroid(boost::make_transform_iterator(polygon.begin(), f), boost::make_transform_iterator(polygon.end(), f), CGAL::Dimension_tag<0>()));
+    typename Intersection_kernel::FT x = 0, y = 0, z = 0, f = 1.0 / polygon.size();
+    for (const auto& p : polygon) {
+      x += p.first.x();
+      y += p.first.y();
+      z += p.first.z();
+    }
+    x *= f;
+    y *= f;
+    z *= f;
+    IkPoint_2 mid = sp.to_2d(IkPoint_3(x, y, z));
+
     std::sort(polygon.begin(), polygon.end(),
     [&](const Pair& a, const Pair& b) {
       const auto a2 = sp.to_2d(a.first);
@@ -875,8 +867,6 @@ public:
       const std::size_t common_bbox_plane_idx = common_bbox_planes_idx[i];
       const auto new_iedge = m_intersection_graph.add_edge(vertices[i], vertices[ip], sp_idx).first;
 
-      typename Intersection_graph::Edge_property* p = (typename Intersection_graph::Edge_property*)new_iedge.get_property();
-
       m_intersection_graph.intersected_planes(new_iedge).insert(common_bbox_plane_idx);
       CGAL_assertion(map_lines_idx.find(common_bbox_plane_idx) != map_lines_idx.end());
       m_intersection_graph.set_line(new_iedge, map_lines_idx.at(common_bbox_plane_idx));
@@ -935,8 +925,6 @@ public:
         typename Intersection_kernel::Line_3 line(to_exact(polygon[i]), to_exact(polygon[(i + 1) % 4]));
         m_intersection_graph.set_line(iedge, m_intersection_graph.add_line(line));
       }
-
-      typename Data_structure::Intersection_graph::Edge_property* p = (Data_structure::Intersection_graph::Edge_property*)iedge.get_property();
 
       support_plane(support_plane_idx).set_iedge(vertices[i], vertices[(i + 1) % 4], iedge);
       support_plane(support_plane_idx).unique_iedges().insert(iedge);
@@ -1186,9 +1174,8 @@ public:
 
     for (auto v : f.vertices) {
       auto& m = sp.ivertex2pvertex();
-      std::pair<int, int> x(1, 2);
       std::pair<IVertex, Vertex_index> p(v, Vertex_index());
-      auto& pair = m.insert(p);
+      auto pair = m.insert(p);
       if (pair.second) {
         pair.first->second = sp.mesh().add_vertex(point_2(support_plane, v));
       }

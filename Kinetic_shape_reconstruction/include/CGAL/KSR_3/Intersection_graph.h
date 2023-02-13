@@ -42,7 +42,7 @@ public:
   using Point_3   = typename Intersection_kernel::Point_3;
   using Segment_3 = typename Intersection_kernel::Segment_3;
   using Line_3    = typename Intersection_kernel::Line_3;
-  using Polygon_2 = typename CGAL::Polygon_2<Point_2>;
+  using Polygon_2 = typename CGAL::Polygon_2<Intersection_kernel>;
 
   using Inexact_FT = typename Kernel::FT;
 
@@ -238,7 +238,7 @@ public:
   }
 
   bool add_face(std::size_t sp_idx, const Edge_descriptor& edge, const Face_descriptor& idx) {
-    auto &pair = m_graph[edge].faces.insert(std::make_pair(sp_idx, std::pair<Face_descriptor, Face_descriptor>(-1, -1)));
+    auto pair = m_graph[edge].faces.insert(std::make_pair(sp_idx, std::pair<Face_descriptor, Face_descriptor>(-1, -1)));
     if (pair.first->second.first == -1) {
       pair.first->second.first = idx;
       return true;
@@ -316,7 +316,7 @@ public:
     CGAL_assertion(e.size() == m_initial_intervals.size());
     std::size_t idx = 0;
 
-    for (auto& edge : e) {
+    for (auto edge : e) {
       m_graph[edge].intervals = m_initial_intervals[idx];
       m_graph[edge].crossed = m_initial_crossed[idx++];
     }

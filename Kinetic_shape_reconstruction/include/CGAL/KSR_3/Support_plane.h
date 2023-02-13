@@ -33,8 +33,8 @@ template<typename GeomTraits, typename IntersectionKernel>
 class Support_plane {
 
 public:
-  using Kernel = typename GeomTraits;
-  using Intersection_kernel = typename IntersectionKernel;
+  using Kernel = GeomTraits;
+  using Intersection_kernel = IntersectionKernel;
   using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
@@ -186,15 +186,15 @@ public:
   }
 
   void link_property_maps() {
-    m_data->v_ivertex_map = m_data->mesh.property_map<Vertex_index, IVertex>("v:ivertex").first;
+    m_data->v_ivertex_map = m_data->mesh.template property_map<Vertex_index, IVertex>("v:ivertex").first;
 
-    m_data->v_iedge_map = m_data->mesh.property_map<Vertex_index, IEdge>("v:iedge").first;
+    m_data->v_iedge_map = m_data->mesh.template property_map<Vertex_index, IEdge>("v:iedge").first;
 
-    m_data->e_iedge_map = m_data->mesh.property_map<Edge_index, IEdge>("e:iedge").first;
+    m_data->e_iedge_map = m_data->mesh.template property_map<Edge_index, IEdge>("e:iedge").first;
 
-    m_data->input_map = m_data->mesh.property_map<Face_index, std::vector<std::size_t> >("f:input").first;
+    m_data->input_map = m_data->mesh.template property_map<Face_index, std::vector<std::size_t> >("f:input").first;
 
-    m_data->v_original_map = m_data->mesh.property_map<Vertex_index, bool>("v:original").first;
+    m_data->v_original_map = m_data->mesh.template property_map<Vertex_index, bool>("v:original").first;
   }
 
   void centroid(Point_2& c) {
@@ -364,7 +364,7 @@ public:
       m_data->original_vertices[i] = point;
       m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
       m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[i] = Intersection_kernel::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
+      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
@@ -445,35 +445,21 @@ public:
 
   void set_point(const Vertex_index& vi, const Point_2& point) {
     m_data->mesh.point(vi) = point;
-  }
+  }/*
 
   void set_last_event_time(const Vertex_index& vi, const FT time) {
     // TODO: If we do not need the full vector, remove it.
     m_data->v_time_map[vi].push_back(time);
   }
 
-  const FT last_event_time(const Vertex_index& vi, const FT /* curr_time */) const {
-
-    // FT last_time = FT(-1);
-    // const FT tol = KSR::tolerance<FT>();
-    // CGAL_assertion(m_data->v_time_map[vi].size() > 0);
-
-    // // std::cout << "----" << std::endl;
-    // for (const FT vtime : m_data->v_time_map[vi]) {
-    //   // std::cout << "vtime: " << vtime << std::endl;
-    //   const FT time_diff = CGAL::abs(curr_time - vtime);
-    //   if (time_diff < tol) continue;
-    //   last_time = vtime;
-    // }
-    // CGAL_assertion(last_time >= FT(0));
-    // return last_time;
+  const FT last_event_time(const Vertex_index& vi, const FT / * curr_time * /) const {
 
     return m_data->v_time_map[vi].back();
-  }
+  }*/
 
   void add_neighbor(IEdge edge, IFace face) {
     std::pair<IEdge, std::pair<IFace, IFace>> neighbor(edge, std::pair<IFace, IFace>(face, Intersection_graph::null_iface()));
-    auto& pair = m_data->iedge2ifaces.insert(neighbor);
+    auto pair = m_data->iedge2ifaces.insert(neighbor);
     m_data->ifaces.insert(face);
     if (!pair.second) {
       CGAL_assertion(pair.first->second.first != Intersection_graph::null_iface());
@@ -483,14 +469,14 @@ public:
   }
 
   IFace iface(IEdge edge) {
-    auto& it = m_data->iedge2ifaces.find(edge);
+    auto it = m_data->iedge2ifaces.find(edge);
     if (it == m_data->iedge2ifaces.end())
       return Intersection_graph::null_iface();
     else return it->second.first;
   }
 
   IFace other(IEdge edge, IFace face) {
-    auto& it = m_data->iedge2ifaces.find(edge);
+    auto it = m_data->iedge2ifaces.find(edge);
     if (it == m_data->iedge2ifaces.end())
       return Intersection_graph::null_iface();
     if (it->second.first == face)
@@ -500,7 +486,7 @@ public:
   }
 
   std::size_t has_ifaces(IEdge edge) const {
-    auto& it = m_data->iedge2ifaces.find(edge);
+    auto it = m_data->iedge2ifaces.find(edge);
     if (it == m_data->iedge2ifaces.end())
       return 0;
     if (it->second.second != Intersection_graph::null_iface())
@@ -658,7 +644,7 @@ public:
   }
 
   const typename Intersection_kernel::Line_2 to_2d(const typename Intersection_kernel::Line_3& line) const {
-    return Intersection_kernel::Line_2(
+    return typename Intersection_kernel::Line_2(
       m_data->exact_plane.to_2d(line.point()),
       m_data->exact_plane.to_2d(line.point() + line.to_vector()));
   }

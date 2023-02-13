@@ -139,7 +139,6 @@ private:
 
       const Face_event event = m_face_queue.top();
       m_face_queue.pop();
-      const FT current_time = event.time;
 
       ++iteration;
 

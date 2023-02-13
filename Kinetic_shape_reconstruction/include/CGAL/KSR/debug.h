@@ -118,8 +118,6 @@ void dump_2d_surface_mesh(
   std::vector<Vertex_index> map_vertices;
 
   map_vertices.clear();
-  auto pvertices = data.pvertices(support_plane_idx);
-  //std::vector<Point_3> pts;
 
   for (const auto pvertex : data.pvertices(support_plane_idx)) {
     if (map_vertices.size() <= pvertex.second) {
@@ -129,10 +127,8 @@ void dump_2d_surface_mesh(
     map_vertices[pvertex.second] = mesh.add_vertex(data.point_3(pvertex));
   }
 
-  auto pfaces = data.pfaces(support_plane_idx);
   for (const auto pface : data.pfaces(support_plane_idx)) {
     vertices.clear();
-    auto pvertices_of_pface = data.pvertices_of_pface(pface);
     for (const auto pvertex : data.pvertices_of_pface(pface)) {
       vertices.push_back(map_vertices[pvertex.second]);
     }
@@ -690,7 +686,6 @@ void dump_volume(
   polygons.reserve(pfaces.size());
 
   Saver<typename DS::Kernel> saver;
-  std::size_t i = 1;
   for (const auto& pface : pfaces) {
     const auto pvertices = data.pvertices_of_pface(pface);
     const auto color = saver.get_idx_color(volume_index);

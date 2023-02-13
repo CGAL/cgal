@@ -69,7 +69,7 @@ private:
   using Edge_index = typename Data_structure::Edge_index;
   using Halfedge_index = typename Data_structure::Halfedge_index;
 
-  using F_component_map = typename Mesh::template Property_map<typename Support_plane::Face_index, boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>;
+  using F_component_map = typename Mesh::template Property_map<typename Support_plane::Face_index, typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>;
   using E_constraint_map = typename Mesh::template Property_map<typename Support_plane::Edge_index, bool>;
 
   struct Vertex_info {
@@ -245,7 +245,7 @@ private:
   }
 
   void segment_adjacent_volumes(const PFace& pface,
-    std::vector<typename Volume_cell>& volumes,
+    std::vector<Volume_cell>& volumes,
     std::map<PFace, std::pair<int, int> >& map_volumes) {
 
     // Check whether this face is already part of one or two volumes
@@ -286,7 +286,7 @@ private:
     std::vector<PFace> neighbor_faces, adjacent_faces;
     for (const auto pedge : pedges) {
       CGAL_assertion(m_data.has_iedge(pedge));
-      IEdge edge = m_data.iedge(pedge);
+
       m_data.incident_faces(m_data.iedge(pedge), neighbor_faces);
 
       if (neighbor_faces.size() == 2) {
@@ -314,8 +314,6 @@ private:
       find_adjacent_faces(pface, pedge, neighbor_faces, positive_side, negative_side);
       CGAL_assertion(positive_side != negative_side);
 
-      Oriented_side ni = oriented_side(negative_side, pface);
-
       if (volume_indices[0] != -1) {
         Oriented_side inverse_side = (positive_side.first == pface.first) ? ON_POSITIVE_SIDE : oriented_side(positive_side, pface);
         if (associate(positive_side, volume_indices[0], inverse_side, volumes, map_volumes))
@@ -342,7 +340,7 @@ private:
   void propagate_volume(
     std::queue<std::pair<PFace, Oriented_side> >& queue,
     std::size_t volume_index,
-    std::vector<typename Volume_cell>& volumes,
+    std::vector<Volume_cell>& volumes,
     std::map<PFace, std::pair<int, int> >& map_volumes) {
     PFace pface;
     Oriented_side seed_side;
@@ -392,7 +390,7 @@ private:
   }
 
   bool associate(const PFace& pface, std::size_t volume_index, Oriented_side side,
-    std::vector<typename Volume_cell>& volumes,
+    std::vector<Volume_cell>& volumes,
     std::map<PFace, std::pair<int, int> >& map_volumes) {
     auto& pair = map_volumes.at(pface);
 
@@ -559,7 +557,7 @@ private:
       typename Support_plane::Mesh& mesh = m_data.support_plane(sp).mesh();
 
       edge_constraint_maps[sp] = mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first;
-      F_component_map fcm = mesh.template add_property_map<typename Support_plane::Face_index, boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>("f:component", 0).first;
+      F_component_map fcm = mesh.template add_property_map<typename Support_plane::Face_index, typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>("f:component", 0).first;
 
       for (auto e : mesh.edges()) {
         IEdge iedge = m_data.iedge(PEdge(sp, e));
@@ -579,7 +577,6 @@ private:
 
   void merge_connected_components(std::size_t sp, typename Support_plane::Mesh& mesh, F_component_map& fcm, E_constraint_map ecm) {
     using Halfedge = typename Support_plane::Halfedge_index;
-    using Vertex = typename Support_plane::Vertex_index;
     using Face = typename Support_plane::Face_index;
 
     //std::vector<Halfedge> remove_edges;
@@ -603,7 +600,7 @@ private:
 
       Face f0 = mesh.face(h);
 
-      boost::graph_traits<typename Support_plane::Mesh>::faces_size_type c0 = fcm[f0], c_other;
+      typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type c0 = fcm[f0], c_other;
       Face f_other = mesh.face(mesh.opposite(h));
 
       // Check whether the edge is between different components.

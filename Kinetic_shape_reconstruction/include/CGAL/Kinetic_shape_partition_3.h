@@ -57,7 +57,7 @@ template<typename GeomTraits, typename IntersectionTraits = CGAL::Exact_predicat
 class Kinetic_shape_partition_3 {
 
 public:
-  using Kernel = typename GeomTraits;
+  using Kernel = GeomTraits;
   using Intersection_kernel = IntersectionTraits;
 
   using Point_3 = typename Kernel::Point_3;
@@ -297,7 +297,6 @@ public:
     }
 
     if (m_parameters.verbose) {
-      const unsigned int num_blocks = static_cast<unsigned int>(std::pow(m_parameters.n + 1, 3));
       //const std::string is_reorient = (m_parameters.reorient ? "true" : "false");
 
       std::cout << std::endl << "--- PARTITION OPTIONS: " << std::endl;

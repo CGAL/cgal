@@ -285,7 +285,6 @@ private:
   void create_ifaces() {
     for (std::size_t sp_idx = 0; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
       const IEdge_set& uiedges = m_data.support_plane(sp_idx).unique_iedges();
-      const std::vector<IEdge>& iedges = m_data.support_plane(sp_idx).iedges();
 
       // Special case bbox without splits
       if (sp_idx < 6 && uiedges.size() == 4) {
@@ -502,7 +501,7 @@ private:
 
             if (s < t) {
               if (s < max && min < t) {
-                Intersection_graph::Kinetic_interval &kinetic_interval = m_data.igraph().kinetic_interval(e, idx);
+                typename Intersection_graph::Kinetic_interval &kinetic_interval = m_data.igraph().kinetic_interval(e, idx);
                 crossing_iedges.push_back(e);
                 if (min > s) {
                   FT bary_edge = (min - s) / (t - s);
@@ -527,7 +526,7 @@ private:
               }
             }
             else if (t < max && min < s) {
-              Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, idx);
+              typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, idx);
               crossing_iedges.push_back(e);
               if (s > max) {
                 FT bary_edge = (s - max) / (s - t);
@@ -971,9 +970,9 @@ private:
     for (std::size_t i = 0; i < 6; i++) {
       m_data.clear_pfaces(i);
       std::set<IFace> ifaces = m_data.support_plane(i).ifaces();
-      std::size_t num = ifaces.size();
+
       for (auto iface : ifaces) {
-        auto pface = m_data.add_iface_to_mesh(i, iface);
+        m_data.add_iface_to_mesh(i, iface);
       }
     }
   }
@@ -1054,7 +1053,6 @@ private:
   void map_polygon_to_ifaces() {
     using Face_property = typename Data_structure::Intersection_graph::Face_property;
     using IFace = typename Data_structure::Intersection_graph::Face_descriptor;
-    using IEdge = typename Data_structure::Intersection_graph::Edge_descriptor;
     To_exact to_exact;
 
     for (std::size_t i = 6; i < m_data.support_planes().size(); i++) {

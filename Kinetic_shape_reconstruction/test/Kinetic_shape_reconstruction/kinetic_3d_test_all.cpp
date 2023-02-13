@@ -122,7 +122,6 @@ void run_all_tests() {
   results[2] = { 67, 109, 26 };
   run_test<Kernel>("data/stress-test-0/test-6-polygons.off", { 1, 2, 3 }, results);
 
-
   // Stress tests 1.
 
   results[0] = { 14, 13, 2 };
@@ -141,7 +140,6 @@ void run_all_tests() {
   run_test<Kernel>("data/stress-test-1/test-6-rnd-polygons-2-4.off", { 1, 2 }, results);
   results[0] = { 20, 22, 4 };
   run_test<Kernel>("data/stress-test-1/test-7-rnd-polygons-2-4.off", { 1 }, results);
-
 
   // Stress tests 2.
 
