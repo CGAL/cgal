@@ -37,6 +37,12 @@ namespace Polygon_mesh_processing {
 
 namespace Planar_segmentation{
 
+template <class TriangleMesh>
+struct Default_visitor
+{
+  void operator()(TriangleMesh&) const {}
+};
+
 template <class TriangleMeshOut, class VertexCornerMapOut>
 struct Triangle_index_tracker_base
 {
@@ -705,7 +711,8 @@ template <typename Kernel,
           typename VertexPointMapIn,
           typename VertexPointMapOut,
           typename VertexCornerMapOut,
-          typename FacePatchMapOut>
+          typename FacePatchMapOut,
+          typename Visitor>
 bool decimate_impl(const TriangleMeshIn& tm_in,
                    TriangleMeshOut& tm_out,
                    std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc,
@@ -715,7 +722,8 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                    const VertexPointMapIn& vpm_in,
                    const VertexPointMapOut& vpm_out,
                    VertexCornerMapOut vcorner_map_out,
-                   FacePatchMapOut fpatch_map_out)
+                   FacePatchMapOut fpatch_map_out,
+                   Visitor& visitor)
 {
   typedef typename boost::graph_traits<TriangleMeshIn> graph_traits;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
@@ -749,6 +757,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
   if (!is_polygon_soup_a_polygon_mesh(triangles))
     return false;
 
+  visitor(tm_out);
   polygon_soup_to_polygon_mesh(corners, triangles, tm_out,
                                parameters::vertex_to_vertex_output_iterator(t_id_tracker.v2v_oi()).
                                            face_to_face_output_iterator(t_id_tracker.f2f_oi()),
@@ -1254,6 +1263,13 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
+ *    \cgalParamNBegin{visitor}
+ *      \cgalParamDescription{a callable with `visitor(tm_out)` being called once `tm_in` is no longer needed
+ *                            and `tm_out` is not already modified. It can be used in the case when `tm_in` and `tm_out` are the same mesh,
+ *                            so that `tm_out` can be cleared before being filled.}
+ *      \cgalParamType{`visitor(tm_out)` must be a valid expression.}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  */
 template <typename TriangleMeshIn,
@@ -1266,7 +1282,6 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                            const NamedParametersOut& np_out = parameters::default_values())
 {
   //TODO: demo plugin
-
   typedef typename GetGeomTraits<TriangleMeshIn, NamedParametersIn>::type  Traits;
   typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersIn>::const_type VPM_in;
   typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersOut>::type VPM_out;
@@ -1317,6 +1332,11 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
   VPM_out vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
                                      get_property_map(vertex_point, tm_out));
 
+  typename internal_np::Lookup_named_param_def< internal_np::visitor_t,
+                                                NamedParametersOut,
+                                                Planar_segmentation::Default_visitor<TriangleMeshOut>>::type
+    visitor = choose_parameter<Planar_segmentation::Default_visitor<TriangleMeshOut>>(get_parameter(np_out, internal_np::visitor));
+
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
     Planar_segmentation::tag_corners_and_constrained_edges<Traits>(tm_in, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm_in);
   Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
@@ -1326,7 +1346,8 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                                              face_cc_ids,
                                              vpm_in, vpm_out,
                                              get_parameter(np_out, internal_np::vertex_corner_map),
-                                             get_parameter(np_out, internal_np::face_patch));
+                                             get_parameter(np_out, internal_np::face_patch),
+                                             visitor);
 }
 
 /*!
