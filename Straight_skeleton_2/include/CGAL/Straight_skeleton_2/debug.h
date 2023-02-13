@@ -37,7 +37,7 @@ bool sEnableTrace = true ;
      if ( sEnableTrace ) \
      { \
        std::ostringstream ss ; \
-       ss << std::setprecision(19) << m ; \
+       ss << std::setprecision(17) << m ; \
        std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
@@ -48,7 +48,7 @@ bool sEnableTrace = true ;
 template<class T>
 inline std::string o2str( boost::optional<T> const& o )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ; ss << std::setprecision(17)  ;
   if ( o )
        ss << *o ;
   else ss << "·NONE·" ;
@@ -58,7 +58,7 @@ inline std::string o2str( boost::optional<T> const& o )
 template<class T>
 inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ; ss << std::setprecision(17)  ;
   if ( ptr )
        ss << *ptr ;
   else ss << "·nullptr·" ;
@@ -69,7 +69,7 @@ template<class N>
 inline std::string n2str( N const& n )
 {
   std::ostringstream ss ;
-  ss << std::setprecision(19);
+  ss << std::setprecision(17);
   ss << CGAL_NTS to_double(n);
   return ss.str();
 }
@@ -114,14 +114,14 @@ inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 #else
 inline std::string n2str( CGAL::MP_Float const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(19) ;
+  std::ostringstream ss ; ss << std::setprecision(17) ;
   ss << CGAL_NTS to_double(n) ;
   return ss.str();
 }
 
 inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ; ss << std::setprecision(17)  ;
   ss << CGAL_NTS to_double(n) ;
   return ss.str();
 }
@@ -156,7 +156,7 @@ inline std::string op2str( OP const& op )
 template<class V>
 inline std::string v2str( V const& v )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ; ss << std::setprecision(17)  ;
   ss << "V" << v.id() << " " << p2str(v.point()) << " [" << v.time() << "]" ;
   return ss.str();
 }
@@ -181,7 +181,7 @@ inline std::string s2str( S const& seg ) { return s2str(seg.source(),seg.target(
 template<class E>
 inline std::string e2str( E const& e )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ; ss << std::setprecision(17)  ;
   if ( e.is_bisector() )
   {
     ss << "B" << e.id()

@@ -1653,7 +1653,7 @@ template<class Halfedge_handle>
 void TraceMultinode( char const* t, Halfedge_handle b, Halfedge_handle e )
 {
   std::ostringstream ss ;
-  ss.precision(19);
+  ss.precision(17);
   ss << t ;
 
   ss << "before: B" << b->prev()->id() << " N" << b->prev()->vertex()->id() << " Pt: " << b->prev()->vertex()->point() << "\n" ;

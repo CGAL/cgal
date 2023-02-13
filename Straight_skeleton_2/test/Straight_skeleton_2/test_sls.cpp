@@ -68,13 +68,13 @@ bool lAppToLog = false ;
 void Straight_skeleton_external_trace ( std::string m )
 {
   std::ofstream out("sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) );
-  out << std::setprecision(19) << m << std::endl << std::flush ;
+  out << std::setprecision(17) << m << std::endl << std::flush ;
   lAppToLog = true ;
 }
 void Straight_skeleton_traits_external_trace ( std::string m )
 {
   std::ofstream out("sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) ) ;
-  out << std::setprecision(19) << m << std::endl << std::flush ;
+  out << std::setprecision(17) << m << std::endl << std::flush ;
   lAppToLog = true ;
 }
 
@@ -1065,8 +1065,8 @@ int test( TestCase& rCase )
 int main( int argc, char const* argv[] )
 {
   cout << "Straight skeleton test program" << endl ;
-  cout << setprecision(19);
-  cerr << setprecision(19);
+  cout << setprecision(17);
+  cerr << setprecision(17);
 
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
