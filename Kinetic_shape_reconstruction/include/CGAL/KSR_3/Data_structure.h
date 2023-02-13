@@ -374,8 +374,8 @@ public:
 
     return m_ivertex2vertex;
   }
-  std::vector<std::pair<std::size_t, std::size_t> >& face_to_volumes() { return m_face2volumes; }
-  const std::vector<std::pair<std::size_t, std::size_t> >& face_to_volumes() const { return m_face2volumes; }
+  std::vector<std::pair<int, int> >& face_to_volumes() { return m_face2volumes; }
+  const std::vector<std::pair<int, int> >& face_to_volumes() const { return m_face2volumes; }
   std::vector<Point_3>& vertices() { return m_vertices; }
   const std::vector<Point_3>& vertices() const { return m_vertices; }
   std::vector<std::vector<std::size_t> >& face_to_vertices() { return m_face2vertices; }
