@@ -313,7 +313,7 @@ using Offset_builder = CGAL::Polygon_offset_builder_2<Straight_skeleton_2,
 
 using HDS = Straight_skeleton_2::Base;
 
-const FT default_offset = std::numeric_limits<FT>::infinity();
+FT default_offset = std::numeric_limits<FT>::infinity();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1117,6 +1117,12 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
   std::cerr.precision(17);
+
+  if(!std::numeric_limits<FT>::has_infinity)
+  {
+    std::cerr << "Warning: number type has no infinity, using double's max()" << std::endl;
+    default_offset = FT{std::numeric_limits<double>::max()};
+  }
 
   const int argc_check = argc - 1;
 
