@@ -67,7 +67,7 @@ using Explicit_Cartesian_grid_domain_3 =
  *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \param grid the %Cartesian grid containing input data
- * \param grad a function that describes the gradient of the data
+ * \param grad a function giving the value of the gradient of the implicit function at each discretization point
  *
  * \return a new `CGAL::Explicit_Cartesian_grid_domain_3`
  */

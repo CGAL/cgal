@@ -66,9 +66,9 @@ using Implicit_Cartesian_grid_domain_3 =
  *
  * \brief creates a domain from an implicit function that can be used as input for isosurfacing algorithms.
  *
- * \details The implicit function is evaluated on the grid vertices of the virtual grid
- * defined by the bounding box and the spacing value. By not storing any function values implicitly,
- * fewer memory accesses are required in comparison to an `Explicit_Cartesian_grid_domain_3`.
+ * \details The implicit function is evaluated at the vertices of the virtual grid
+ * defined by the bounding box and the spacing value. By not storing any function values explicitely,
+ * less overall memory is required in comparison to an `Explicit_Cartesian_grid_domain_3`.
  *
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
  * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible` and implement
@@ -78,11 +78,13 @@ using Implicit_Cartesian_grid_domain_3 =
  *
  * \param bbox a bounding box that specifies the dimensions of the implicit function's domain
  * \param spacing the distance between discretization points
- * \param point_function the implicit function
- * \param grad a function that describes the gradient of the data
+ * \param point_function the implicit function giving the value of the implicit function at each discretization point
+ * \param grad a function giving the value of the gradient of the implicit function at each discretization point
  * \param gt an instance of geometric traits
  *
- * \return a new `CGAL::Implicit_Cartesian_grid_domain_3`
+ * \return a new object of type `CGAL::Implicit_Cartesian_grid_domain_3`
+ *
+ * \pre `spacing != CGAL::NULL_VECTOR`
  */
 template <typename GeomTraits,
           typename ImplicitFunction,

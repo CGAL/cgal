@@ -28,6 +28,11 @@ public:
   typedef unspecified_type Geom_traits;
 
   /*!
+  The point type.
+  */
+  typedef Geom_traits::Point_3 Point_3;
+
+  /*!
   The vector type.
   */
   typedef Geom_traits::Vector_3 Vector_3;
@@ -40,7 +45,7 @@ public:
   /*!
   gets the gradient at the position `p`
   */
-  Vector_3 gradient(const Geom_traits::Point_3& p) const;
+  Vector_3 gradient(const Point_3& p) const;
 
   /// @}
 };
