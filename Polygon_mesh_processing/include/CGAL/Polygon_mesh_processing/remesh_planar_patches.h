@@ -1058,7 +1058,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   // extra step to propagate is_corner to all meshes to make sure shared vertices are kept
   propagate_corner_status(vertex_corner_id_maps, point_to_vertex_maps, nb_corners_and_nb_cc_all);
 
-  /// @TODO: make identical patches normal identical (up to the sign). Needed only in the approximate case
+  /// @todo: make identical patches normal identical (up to the sign). Needed only in the approximate case
 
 // now call the decimation
   // storage of all new triangles and all corners
@@ -1285,7 +1285,6 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                            const NamedParametersIn& np_in = parameters::default_values(),
                            const NamedParametersOut& np_out = parameters::default_values())
 {
-  //TODO: demo plugin
   typedef typename GetGeomTraits<TriangleMeshIn, NamedParametersIn>::type  Traits;
   typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersIn>::const_type VPM_in;
   typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersOut>::type VPM_out;
@@ -1474,7 +1473,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::type Kernel;
 
-  /// @TODO turn into a range of named parameter
+  /// @todo turn into a range of named parameter
   std::vector<typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type > vpms;
   vpms.reserve(meshes.size());
 
