@@ -46,7 +46,7 @@ public:
 
     // TODO MT improve
 
-    // The cirle belongs to the pencil with limit points p and q
+    // The circle belongs to the pencil with limit points p and q
     // p, q are zero-circles
     // (x, y, xˆ2 + yˆ2 - rˆ2) = alpha*(xp, yp, xpˆ2 + ypˆ2) + (1-alpha)*(xq, yq, xqˆ2 + yqˆ2)
     // xˆ2 + yˆ2 - rˆ2 = 1 (= radius of the Poincare disc)

@@ -559,6 +559,8 @@ private:
   Oriented_side side_of_hyperbolic_triangle(const Point& p, const Point& q, const Point& r,
                                             const Point& query, Locate_type &lt, int& li) const
   {
+
+    // The triangle (p,q,r) must be Delaunay hyperbolic
     CGAL_precondition(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r));
     CGAL_precondition(query != p && query != q && query != r);
 

@@ -138,14 +138,14 @@ public:
     typedef typename boost::property_traits<PointPropertyMap>::value_type
     Point;
 
-    std::shared_ptr<Point> point;
-    std::size_t idx;
+    Point point;
+    std::size_t idx = 0;
 
   public:
 
-    No_lvalue_iterator() : point(NULL), idx(0) { }
-    No_lvalue_iterator(const Point& point) : point(new Point(point)), idx(0) { }
-    No_lvalue_iterator(const Point& point, int) : point(new Point(point)), idx(Base::Dimension::value) { }
+    No_lvalue_iterator() : point() { }
+    No_lvalue_iterator(const Point& point) : point(point) { }
+    No_lvalue_iterator(const Point& point, int) : point(point), idx(Base::Dimension::value) { }
 
   private:
 
@@ -153,18 +153,15 @@ public:
     void increment()
     {
       ++idx;
-      CGAL_assertion(point != std::shared_ptr<Point>());
     }
     void decrement()
     {
       --idx;
-      CGAL_assertion(point != std::shared_ptr<Point>());
     }
 
     void advance(std::ptrdiff_t n)
     {
       idx += n;
-      CGAL_assertion(point != std::shared_ptr<Point>());
     }
 
     std::ptrdiff_t distance_to(const No_lvalue_iterator& other) const
@@ -181,7 +178,7 @@ public:
     dereference() const
     {
       // Point::operator[] takes an int as parameter...
-      return const_cast<Dereference_type&>((*point)[static_cast<int>(idx)]);
+      return const_cast<Dereference_type&>(point[static_cast<int>(idx)]);
     }
 
   };

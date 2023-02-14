@@ -1575,7 +1575,7 @@ struct Mesh_callback
  *
  * detects and reports all the pairs of meshes intersecting in a range of triangulated surface meshes.
  * A pair of meshes intersecting is put in the output iterator `out` as a `std::pair<std::size_t, std::size_t>`,
- * each index refering to the index of the triangle mesh in the input range.
+ * each index referring to the index of the triangle mesh in the input range.
  * If `do_overlap_test_of_bounded_sides` is `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *

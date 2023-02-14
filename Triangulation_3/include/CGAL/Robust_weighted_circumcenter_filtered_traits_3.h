@@ -54,7 +54,7 @@ public:
 
     if(! force_exact)
     {
-      // Compute denominator to swith to exact if it is 0
+      // Compute denominator to switch to exact if it is 0
       FT num_x, num_y, num_z, den;
       determinants_for_circumcenterC3(p.x(), p.y(), p.z(),
                                       q.x(), q.y(), q.z(),
@@ -86,7 +86,7 @@ public:
   {
     CGAL_precondition(! traits.collinear_3_object()(p, q, r));
 
-    // Compute denominator to swith to exact if it is 0
+    // Compute denominator to switch to exact if it is 0
     FT num_x, num_y, num_z, den;
     determinants_for_circumcenterC3(p.x(), p.y(), p.z(),
                                     q.x(), q.y(), q.z(),
@@ -171,7 +171,7 @@ public:
     typename Kernel::Compute_squared_radius_3 sq_radius =
       traits.compute_squared_radius_3_object();
 
-    // Compute denominator to swith to exact if it is 0
+    // Compute denominator to switch to exact if it is 0
     const FT denom = compute_denom(p,q,r,s);
     if( ! CGAL_NTS is_zero(denom) )
     {
@@ -265,7 +265,7 @@ public:
 
     if(! force_exact)
     {
-      // Compute denominator to swith to exact if it is 0
+      // Compute denominator to switch to exact if it is 0
       FT num_x, num_y, num_z, den;
       bool unweighted = (p.weight() == 0) && (q.weight() == 0) &&
                         (r.weight() == 0) && (s.weight() == 0);
@@ -333,7 +333,7 @@ public:
     typename Kernel::Side_of_bounded_sphere_3 side_of_bounded_sphere =
       traits.side_of_bounded_sphere_3_object();
 
-    // Compute denominator to swith to exact if it is 0
+    // Compute denominator to switch to exact if it is 0
     FT num_x, num_y, num_z, den;
     determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
                                              q.x(), q.y(), q.z(), q.weight(),
@@ -417,7 +417,7 @@ public:
                 const Weighted_point_3& r,
                 const Weighted_point_3& s) const
   {
-    // Compute denominator to swith to exact if it is 0
+    // Compute denominator to switch to exact if it is 0
     FT num_x, num_y, num_z, den;
     determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
                                              q.x(), q.y(), q.z(), q.weight(),
@@ -447,7 +447,7 @@ public:
                 const Weighted_point_3& q,
                 const Weighted_point_3& r) const
   {
-    // Compute denominator to swith to exact if it is 0
+    // Compute denominator to switch to exact if it is 0
     FT num_x, num_y, num_z, den;
     determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
                                              q.x(), q.y(), q.z(), q.weight(),
@@ -475,7 +475,7 @@ public:
   FT operator()(const Weighted_point_3& p,
                 const Weighted_point_3& q) const
   {
-    // Compute denominator to swith to exact if it is 0
+    // Compute denominator to switch to exact if it is 0
     FT qpx = q.x() - p.x();
     FT qpy = q.y() - p.y();
     FT qpz = q.z() - p.z();

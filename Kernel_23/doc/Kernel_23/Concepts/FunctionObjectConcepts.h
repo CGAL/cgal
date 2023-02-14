@@ -3906,7 +3906,7 @@ public:
   /*!
     constructs the bisector of `p` and `q`.
     The bisector is oriented in such a way that `p` lies on its
-    positive side. \pre `p` and `q` are not equal.
+    positive side. \pre `p != q`.
   */
   Kernel::Line_2 operator()(const Kernel::Point_2&p,
                             const Kernel::Point_2&q );
@@ -3947,7 +3947,7 @@ public:
   /*!
     constructs the bisector plane of `p` and `q`.
     The bisector is oriented in such a way that `p` lies on its
-    positive side. \pre `p` and `q` are not equal.
+    positive side. \pre `p != q`.
   */
   Kernel::Plane_3 operator()(const Kernel::Point_3&p,
                              const Kernel::Point_3&q );
@@ -4227,7 +4227,7 @@ public:
     It is initialized to the circle with center `center`,
     squared radius `squared_radius` and orientation
     `orientation`.
-    \pre `orientation` \f$ \neq\f$ \ref CGAL::COLLINEAR, and further, `squared_radius` \f$ \geq\f$ 0.
+    \pre `orientation != CGAL::COLLINEAR` and `squared_radius >= 0`.
   */
   Kernel::Circle_2 operator()( Kernel::Point_2 const& center,
                                Kernel::FT const& squared_radius,
@@ -4252,7 +4252,7 @@ public:
     introduces a variable of type `Kernel::Circle_2`.
     It is initialized to the circle with diameter `pq`
     and orientation `orientation`.
-    \pre `orientation` \f$ \neq\f$ \ref CGAL::COLLINEAR.
+    \pre `orientation != CGAL::COLLINEAR`.
   */
   Kernel::Circle_2 operator()( Kernel::Point_2 const& p,
                                Kernel::Point_2 const& q,
@@ -4264,7 +4264,7 @@ public:
     introduces a variable of type `Kernel::Circle_2`.
     It is initialized to the circle with center `center`, squared
     radius zero and orientation `orientation`.
-    \pre `orientation` \f$ \neq\f$ \ref CGAL::COLLINEAR.
+    \pre `orientation != CGAL::COLLINEAR`.
     \post .`is_degenerate()` = `true`.
   */
   Kernel::Circle_2 operator()( Kernel::Point_2 const& center,
@@ -4296,7 +4296,7 @@ public:
     introduces a variable of type `Kernel::Circle_3`.
     It is initialized to the circle with center `center`,
     and squared radius `sq_r` in the plane `plane`.
-    \pre `center` lies in `plane` and                 `sq_r` \f$ \geq\f$ 0.
+    \pre `center` lies in `plane` and  `sq_r >= 0`.
   */
   Kernel::Circle_3 operator()
   ( Kernel::Point_3 const& center,
@@ -4308,7 +4308,7 @@ public:
     It is initialized to the circle with center `center`,
     and squared radius `sq_r` in the plane
     containing `center` and normal to `n`.
-    \pre `sq_r` \f$ \geq\f$ 0.
+    \pre `sq_r >= 0`.
   */
   Kernel::Circle_3 operator()
   ( Kernel::Point_3 const& center,
@@ -5664,7 +5664,7 @@ public:
     introduces a direction orthogonal to `d`. If `o` is
     \ref CGAL::CLOCKWISE, `d` is rotated clockwise; if `o` is
     \ref CGAL::COUNTERCLOCKWISE, `d` is rotated counterclockwise.
-    \pre `o` is not \ref CGAL::COLLINEAR.
+    \pre `o != CGAL::COLLINEAR.`
   */
   Kernel::Direction_2 operator()(const Kernel::Direction_2& d,
                                  Orientation o);
@@ -5780,8 +5780,7 @@ public:
   /*!
     returns `v` rotated clockwise by 90 degrees, if `o` is
     \ref CGAL::CLOCKWISE, and rotated counterclockwise otherwise.
-    \pre `o` is not \ref CGAL::COLLINEAR.
-
+    \pre `o != CGAL::COLLINEAR`.
   */
   Kernel::Vector_2 operator()(const Kernel::Vector_2& v,
                               Orientation o);
@@ -5991,12 +5990,21 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-
   /*!
     introduces a variable with Cartesian coordinates
     \f$ (0,0)\f$.
   */
   Kernel::Point_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+  /*!
+    returns `p`.
+
+    \note It is advised to return a const reference to `p` to avoid useless copies.
+
+    \note This peculiar requirement is necessary because some \cgal structures such as triangulations
+    internally manipulate points whose type might be `Point_2` or `Weighted_point_2`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Point_2& p);
 
  /*!
     extracts the bare point from the weighted point.
@@ -6027,6 +6035,16 @@ public:
     introduces a point with Cartesian coordinates\f$ (0,0,0)\f$.
   */
   Kernel::Point_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+  /*!
+    returns `p`.
+
+    \note It is advised to return a const reference to `p` to avoid useless copies.
+
+    \note This peculiar requirement is necessary because some \cgal structures such as triangulations
+    internally manipulate points whose type might be `Point_3` or `Weighted_point_3`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Point_3& p);
 
  /*!
     extracts the bare point from the weighted point.
@@ -6588,7 +6606,7 @@ public:
     introduces a sphere initialized to the sphere with center `center`,
     squared radius `squared_radius` and orientation
     `orientation`.
-    \pre `orientation` \f$ \neq\f$ \ref CGAL::COPLANAR, and furthermore, `squared_radius` \f$ \geq\f$ 0.
+    \pre `orientation != CGAL::COPLANAR` and `squared_radius >= 0`.
   */
   Kernel::Sphere_3 operator()(const Kernel::Point_3 & center,
                               const Kernel::FT & squared_radius,
@@ -6609,7 +6627,7 @@ public:
   /*!
     introduces a sphere initialized to the smallest sphere which passes
     through the points `p`, `q`, and `r`. The orientation of
-    the sphere is `o`. \pre `o` is not \ref CGAL::COPLANAR.
+    the sphere is `o`. \pre `o != CGAL::COPLANAR`.
   */
   Kernel::Sphere_3 operator()(const Kernel::Point_3 & p,
                               const Kernel::Point_3 & q,
@@ -6619,7 +6637,7 @@ public:
   /*!
     introduces a sphere initialized to the smallest sphere which passes
     through the points `p` and `q`. The orientation of
-    the sphere is `o`. \pre `o` is not \ref CGAL::COPLANAR.
+    the sphere is `o`. \pre `o != CGAL::COPLANAR`.
   */
   Kernel::Sphere_3 operator()(const Kernel::Point_3 & p,
                               const Kernel::Point_3 & q,
@@ -6628,7 +6646,7 @@ public:
   /*!
     introduces a sphere `s` initialized to the sphere with center
     `center`, squared radius zero and orientation `orientation`.
-    \pre `orientation` \f$ \neq\f$ \ref CGAL::COPLANAR.
+    \pre `orientation != CGAL::COPLANAR`.
     \post `s.is_degenerate()` = `true`.
   */
   Kernel::Sphere_3 operator()( const Kernel::Point_3 & center,

@@ -67,7 +67,7 @@ side_of_plane_centered_sphereC3(const RT &ax, const RT &ay, const RT &az,
   //  return:   sign( (c-p)(c-p) - (c-t)(c-t))
   //
   //method:
-  // - tranlation of p to the origin.
+  // - translation of p to the origin.
   // - separate computation of det and norm of the expression
 
   return side_of_plane_centered_sphere_translateC3<RT>(ax-px, ay-py, az-pz,
@@ -136,7 +136,7 @@ side_of_plane_centered_sphereC3(const RT &ax, const RT &ay, const RT &az,
   //  return:   sign( (c-p)(c-p) - (c-r)(c-r))
   //
   //method:
-  // - tranlation of p to the origin.
+  // - translation of p to the origin.
   // - separate computation of det and nom of the expression
 
   return side_of_plane_centered_sphere_translateC3<RT>(ax-px, ay-py, az-pz,

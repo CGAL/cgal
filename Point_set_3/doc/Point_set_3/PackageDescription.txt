@@ -11,13 +11,13 @@
 /// \defgroup PkgPointSet3IO Input/Output
 /// \ingroup PkgPointSet3Ref
 ///
-/// This module offers convenience overloads of input/ouput
+/// This module offers convenience overloads of input/output
 /// functions available in the \ref PkgPointSetProcessing3 package.
 /// These overloads, available after including `CGAL/Point_set_3/IO.h`,
 /// allow the user to call point set processing algorithms without having
 /// to handle manually property maps and iterators.
 ///
-/// Input functions instanciate all the necessary property maps:
+/// Input functions instantiate all the necessary property maps:
 ///
 /// - if found in the input, normal vectors are stored in the usual
 /// `CGAL::Point_set_3` property `normal` with template type `Vector`
@@ -77,7 +77,7 @@
 
 \cgalCRPSection{I/O Functions}
 This package offers convenience overloads for the class `CGAL::Point_set_3`
-of the input/ouput functions available in the \ref PkgPointSetProcessing3 package.
+of the input/output functions available in the \ref PkgPointSetProcessing3 package.
 These overloads, available after including `CGAL/Point_set_3/IO.h`,
 allow the user to call point set processing algorithms without having
 to handle manually property maps and iterators.

@@ -132,7 +132,7 @@ public:
     halfedge_descriptor h = halfedge(a->info(), mesh);
     halfedge_descriptor g = halfedge(b->info(), mesh);
 
-    // check for shared egde
+    // check for shared edge
     if(face(opposite(h, mesh), mesh) == b->info() ||
        face(opposite(prev(h, mesh), mesh), mesh) == b->info() ||
        face(opposite(next(h, mesh), mesh), mesh) == b->info()) {

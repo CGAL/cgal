@@ -93,7 +93,7 @@ double Compute_squared_distance_2<
   CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 operator()(const Point_2& p, const X_monotone_curve_2& c) const
 {
-  // Get the co-ordinates of the curve's source and target.
+  // Get the coordinates of the curve's source and target.
   // double sx = CGAL::to_double( c.source( ).x( ) );
   // double sy = CGAL::to_double( c.source( ).y( ) );
   // double tx = CGAL::to_double( c.target( ).x( ) );
@@ -111,7 +111,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& c) const
   else
   {
     // If the curve is monotone, than its source and its target has the
-    // extreme x co-ordinates on this curve.
+    // extreme x coordinates on this curve.
     // bool is_source_left = (sx < tx);
     // int  x_min = is_source_left ? (*w).x_pixel(sx) : (*w).x_pixel(tx);
     // int  x_max = is_source_left ? (*w).x_pixel(tx) : (*w).x_pixel(sx);

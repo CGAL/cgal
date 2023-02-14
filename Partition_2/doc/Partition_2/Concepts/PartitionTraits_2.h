@@ -77,7 +77,7 @@ typedef unspecified_type Orientation_2;
 
 /*!
 Predicate object type that provides
-`CGAL::Comparision_result operator()(Point_2 p, Point_2 q)` to compare
+`CGAL::Comparison_result operator()(Point_2 p, Point_2 q)` to compare
 the \f$ y\f$ values of two points. The operator must return
 `CGAL::SMALLER` if \f$ p_y < q_y\f$, `CGAL::LARGER` if \f$ p_y > q_y\f$ and
 `CGAL::EQUAL` if \f$ p_y = q_y\f$.

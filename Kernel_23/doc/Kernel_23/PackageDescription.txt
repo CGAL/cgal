@@ -27,7 +27,7 @@
 /// \defgroup kernel_enums Enumerations and Related Functions
 /// \ingroup PkgKernel23Ref
 
-/// \defgroup kernel_conversion Cartesian/Homogenous Conversion
+/// \defgroup kernel_conversion Cartesian/Homogeneous Conversion
 /// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_dimension Dimension Handling Tools

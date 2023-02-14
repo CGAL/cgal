@@ -16,7 +16,6 @@
 #include <CGAL/license/Hyperbolic_triangulation_2.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/Object.h>
 

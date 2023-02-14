@@ -17,6 +17,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/use.h>
 #include <CGAL/Nef_2/Constrained_triang_traits.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Circulator_project.h>
@@ -665,6 +666,7 @@ protected:
 
 
     }
+    CGAL_USE(flip_count);
     CGAL_NEF_TRACEN("  flipped "<<flip_count);
   }
 

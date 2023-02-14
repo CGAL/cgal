@@ -29,7 +29,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>
 
@@ -358,8 +358,8 @@ public:
   template < typename InputIterator >
   size_type remove_cluster(InputIterator first, InputIterator beyond)
   {
-    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
-    CGAL_triangulation_precondition(!this->infinite_vertex_in_range(first, beyond));
+    CGAL_precondition(!this->does_repeat_in_range(first, beyond));
+    CGAL_precondition(!this->infinite_vertex_in_range(first, beyond));
     size_type n = this->number_of_vertices();
     std::vector<Vertex_handle> vo(first, beyond), vc;
     int l=0;
@@ -686,7 +686,7 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     hierarchy[l]->remove(v);
@@ -702,8 +702,8 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!is_infinite(v));
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     if(l) hierarchy[l]->remove(v);
@@ -719,7 +719,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move_if_no_collision(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
@@ -739,7 +739,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
@@ -756,7 +756,7 @@ Triangulation_hierarchy_3<Tr>::
 move_if_no_collision_and_give_new_cells(
   Vertex_handle v, const Point & p, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {

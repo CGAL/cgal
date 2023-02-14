@@ -87,7 +87,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     Halfedge_const_handle he = (eit->direction() == ARR_RIGHT_TO_LEFT) ?
       eit : eit->twin();
     //attempt to solve compile problem in one of the tests. created the
-    // tmp_curve instead of passing eit->curve() as a parmeter to the function
+    // tmp_curve instead of passing eit->curve() as a parameter to the function
     X_monotone_curve_2 tmp_curve = eit->curve();
     xcurves_vec[i++] = Vd_x_monotone_curve_2(tmp_curve, he);
   }
@@ -102,7 +102,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     if (vit->is_isolated()) {
       Vertex_const_handle iso_v = vit;
       //attempt to solve compile problem in one of the tests. created the
-      // tmp_curve instead of passing eit->curve() as a parmeter to the
+      // tmp_curve instead of passing eit->curve() as a parameter to the
       // function
       Point_2 tmp_point = vit->point();
       iso_pts_vec[i++] = Vd_point_2(tmp_point, iso_v);

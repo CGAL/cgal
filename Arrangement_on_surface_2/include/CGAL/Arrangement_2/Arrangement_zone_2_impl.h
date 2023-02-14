@@ -76,7 +76,7 @@ init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj)
 }
 
 //-----------------------------------------------------------------------------
-// Compute the zone of the given curve and issue the apporpriate
+// Compute the zone of the given curve and issue the appropriate
 // notifications for the visitor.
 //
 template <typename Arrangement, typename ZoneVisitor>
@@ -289,7 +289,7 @@ do_overlap_impl(const X_monotone_curve_2& cv1,
   // vertical, they completely lie on the right boundary, and they overlap.
   if (psx1 == ARR_RIGHT_BOUNDARY) return true;
 
-  // If the curves are not vertical, we can safly call the standard function.
+  // If the curves are not vertical, we can safely call the standard function.
   // Observe that this case covers the case where (psy == ARR_TOP_BOUNDARY).
   if (! vertical1) return (cmp_right(cv1, cv2, p) == EQUAL);
 
@@ -595,7 +595,7 @@ _compute_next_intersection(Halfedge_handle he,
 
   // The intersections with the curve have not been computed yet, so we
   // have to compute them now. Note that the first curve we intersect is
-  // always the subcurve associated with the given halfegde and the second
+  // always the subcurve associated with the given halfedge and the second
   // curve is the one we insert. Even though the order seems unimportant, we
   // exploit this fact in some of the traits classes in order to optimize
   // computations.
@@ -687,7 +687,7 @@ _remove_next_intersection(Halfedge_handle he)
 }
 
 //-----------------------------------------------------------------------------
-// Check if the given point lies completely to the left of the given egde.
+// Check if the given point lies completely to the left of the given edge.
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
@@ -984,7 +984,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
     m_visitor->found_subcurve(m_cv, face, m_left_v, m_left_he,
                               m_invalid_v, m_invalid_he);
 
-    // Inidicate that we are done with the zone-computation process.
+    // Indicate that we are done with the zone-computation process.
     return true;
   }
 
@@ -1152,7 +1152,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
         m_left_he = (m_right_he->direction() == ARR_LEFT_TO_RIGHT) ?
           inserted_he : m_right_he;
       else {
-        // Mutliplicity is unkown:
+        // Mutliplicity is unknown:
         m_left_he = m_invalid_he;
       }
     }

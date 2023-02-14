@@ -255,7 +255,6 @@ public:
       main_border.insert(v);
     }
 
-    int count = 0;
     for(vertex_descriptor v : vertices){
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
@@ -263,8 +262,6 @@ public:
         status = setup_inner_vertex_relations(A, Bu, Bv, mesh, v, vimap);
         if(status != OK)
           return status;
-      } else {
-        count++;
       }
     }
 
@@ -364,7 +361,7 @@ protected:
   /// - compute w_ii = - sum of w_ijs.
   ///
   /// \pre Vertices must be indexed.
-  /// \pre Vertex i musn't be already parameterized.
+  /// \pre Vertex i mustn't be already parameterized.
   /// \pre Line i of A must contain only zeros.
   // TODO: check if this must be virtual
   // virtual

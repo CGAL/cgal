@@ -546,7 +546,7 @@ public:
 
         if (!Base::_ckva()->may_have_intersection_2_object()(cv1, cv2)) {
             // return no one
-            CKvA_CERR("\nfilter: sucessfull\n");
+            CKvA_CERR("\nfilter: successful\n");
 
             CGAL_assertion_code(
             {

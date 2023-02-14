@@ -144,7 +144,7 @@ class Lazy_alpha_nt_2
   typedef typename Types::Exact_point                                      Exact_point;
   typedef typename Types::Input_point                                      Input_point;
 
-  //Convertion functions
+  //Conversion functions
   Approx_point to_approx(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter

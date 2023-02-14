@@ -61,7 +61,7 @@ public:
   {
     // The behaviour if m_os == nullptr could be changed to return
     // cerr or a file handle to /dev/null. The latter one would
-    // mimick the behaviour that one can still use a stream with
+    // mimic the behaviour that one can still use a stream with
     // an invalid stream, but without producing any output.
     CGAL_assertion( m_os != nullptr );
     return *m_os;

@@ -62,8 +62,6 @@ public:
     return !this->vertex()->is_contour() && !this->opposite()->vertex()->is_contour();
   }
 
-  bool has_null_segment() const { return this->vertex()->has_null_point() ; }
-
   bool has_infinite_time() const { return this->vertex()->has_infinite_time() ; }
 
   Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }

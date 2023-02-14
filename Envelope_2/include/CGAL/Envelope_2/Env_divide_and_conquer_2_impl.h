@@ -507,7 +507,7 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
 
   if (ps_y1 != ARR_INTERIOR) {
     if (ps_y2 != ARR_INTERIOR) {
-      // The curve ends have boundary conditions with oposite signs in y,
+      // The curve ends have boundary conditions with opposite signs in y,
       // we readily know their relative position (recall that they do not
       // instersect).
       if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY))
@@ -678,7 +678,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
           break;
       }
 
-      // Create a new vertex in the output diagram that corrsponds to the
+      // Create a new vertex in the output diagram that corresponds to the
       // current intersection point.
       if (is_in_x_range) {
         CGAL_assertion(current_res != EQUAL);
@@ -903,7 +903,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
 
   // origin_of_v could be EQUAL but the curves do not intersect.
   // This is because of the fact that v could be the endpoint of the NEXT
-  // curve (which is lower than the currrent curve. The second diagram, however,
+  // curve (which is lower than the current curve. The second diagram, however,
   // has a curve that ends at v.
   // For example:
   // First diagram is the segment: [(0, -1), (1, 0)]

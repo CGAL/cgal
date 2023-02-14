@@ -133,7 +133,7 @@ public:
         std::array<Vector3, 3> triangle = { vecp, vecv, vecw};
 
         if(m_fast_envelope->is_outside(triangle)){
-          // the triange intersects the envelope
+          // the triangle intersects the envelope
           return boost::none;
         }
         vecv = vecw;

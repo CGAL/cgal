@@ -51,5 +51,5 @@ void traverse_resources(const QString& name, const QString& dirname, int indent)
   }
 }
 
-} // namesapce Qt
+} // namespace Qt
 } // namespace CGAL

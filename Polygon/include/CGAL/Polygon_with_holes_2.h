@@ -136,7 +136,7 @@ std::ostream& operator<<(std::ostream &os,
     default:
       os << "Polygon_with_holes_2(" << std::endl;
       if(p.is_unbounded())
-        os << "No outer bounary" << std::endl;
+        os << "No outer boundary" << std::endl;
       else
       {
         os << "Boundary(" << std::endl;

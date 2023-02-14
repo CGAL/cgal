@@ -41,7 +41,6 @@ bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
     return true;
   typedef typename Traits_P::Equal_2 Equal_2;
   typedef typename Traits_P::Point_2 Point_2;
-//  CGAL_polygon_precondition( (x.size() != 0) || (y.size() != 0));
   if ((x.size() == 0) && (y.size() == 0)) return true;
 
   if (x.size() != y.size()) return false;

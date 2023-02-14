@@ -190,23 +190,6 @@ class Rational
     NT mN, mD ;
 } ;
 
-template <class K>
-struct Segment_2_with_ID
-  : public Segment_2<K>
-{
-  typedef Segment_2<K> Base;
-  typedef typename K::Point_2 Point_2;
-
-public:
-  Segment_2_with_ID() : Base(), mID(-1) { }
-  Segment_2_with_ID(Base const& aS) : Base(aS), mID(-1) { }
-  Segment_2_with_ID(Base const& aS, const std::size_t aID) : Base(aS), mID(aID) { }
-  Segment_2_with_ID(Point_2 const& aP, Point_2 const& aQ, const std::size_t aID) : Base(aP, aQ), mID(aID) { }
-
-public:
-  std::size_t mID;
-};
-
 template <class Info>
 struct No_cache
 {
@@ -482,7 +465,7 @@ struct Get_protector<GT, true>
 
 
 //
-// This macro defines a global functor adapter which allows users to use it in the followig ways:
+// This macro defines a global functor adapter which allows users to use it in the following ways:
 //
 // Given a 'Functor' provided by a given 'Traits' (or Kernel):
 //

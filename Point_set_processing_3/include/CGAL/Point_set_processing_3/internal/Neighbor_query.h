@@ -18,7 +18,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/point_set_processing_assertions.h>
 
 #include <CGAL/iterator.h>
 

@@ -286,8 +286,8 @@ SMesh* cgal_off_meshing(QWidget*,
 
   Mesh_domain domain =
     Mesh_domain::create_implicit_mesh_domain
-    (offset_function(tm_ptr, offset_value),
-     Sphere_3(center, sqrad),
+    (p::function = offset_function(tm_ptr, offset_value),
+     p::bounding_object = Sphere_3(center, sqrad),
      p::relative_error_bound = 1e-7,
      p::construct_surface_patch_index = [](int i, int j) { return (i * 1000 + j); });
 
