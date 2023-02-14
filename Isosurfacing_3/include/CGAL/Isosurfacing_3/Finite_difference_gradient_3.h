@@ -51,7 +51,7 @@ public:
   /**
    * \brief creates a new instance of this gradient.
    *
-   * \param func the function with a point as argument
+   * \param func the implicit function giving the value of the implicit function at each discretization point
    * \param delta the distance for calculating the finite differences
    * \param gt the geometric traits class
    */

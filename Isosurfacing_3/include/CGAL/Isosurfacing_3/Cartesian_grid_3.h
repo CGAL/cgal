@@ -45,7 +45,7 @@ public:
 
 private:
   Bbox_3 m_bbox;
-  Vector_3 m_spacing;
+  std::array<FT,3> m_spacing;
   std::array<std::size_t, 3> m_sizes;
 
   std::vector<FT> m_values;
@@ -80,8 +80,6 @@ public:
     CGAL_precondition(ydim > 0);
     CGAL_precondition(zdim > 0);
 
-    auto vector = m_gt.construct_vector_3_object();
-
     // pre-allocate memory
     const std::size_t nv = xdim * ydim * zdim;
     m_values.resize(nv);
@@ -91,7 +89,7 @@ public:
     const FT d_x = FT{bbox.x_span()} / (xdim - 1);
     const FT d_y = FT{bbox.y_span()} / (ydim - 1);
     const FT d_z = FT{bbox.z_span()} / (zdim - 1);
-    m_spacing = vector(d_x, d_y, d_z);
+    m_spacing = make_array(d_x, d_y, d_z);
   }
 
   /**
@@ -107,7 +105,21 @@ public:
     from_image(image);
   }
 
+  /**
+  * \brief creates a Cartesian_grid_3 object from a `CGAL::Image_3`.
+  *
+  * The dimensions and bounding box are read from the image. The values stored
+  * in the image must be of type `Geom_traits::FT` or implicitly convertible to it.
+  *
+  * \param image the image providing the data
+  */
   void from_image(const Image_3& image);
+
+   /**
+  * \brief creates a `CGAL::Image_3` from the Cartesian grid.
+  *
+  * \param image the image providing the data
+  */
   Image_3 to_image() const;
 
 public:
@@ -155,7 +167,7 @@ public:
    * \return the spacing of the %Cartesian grid, that is a vector whose coordinates are
    *         the grid steps in the `x`, `y`, and `z` directions, respectively
    */
-  const Vector_3& spacing() const
+  const std::array<FT, 3>& spacing() const
   {
     return m_spacing;
   }
@@ -165,40 +177,41 @@ public:
    *
    * Positions are not stored but calculated from an offset and grid spacing.
    *
-   * \param x the index in the `x` direction
-   * \param y the index in the `y` direction
-   * \param z the index in the `z` direction
+   * \param i the index in the `x` direction
+   * \param j the index in the `y` direction
+   * \param k the index in the `z` direction
    *
    * \return the stored value
+   *
+   * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
-  const Point_3& point(const std::size_t x,
-                       const std::size_t y,
-                       const std::size_t z) const
+  const Point_3& point(const std::size_t i,
+                       const std::size_t j,
+                       const std::size_t k) const
   {
-    typename Geom_traits::Compute_x_3 x_coord = m_gt.compute_x_3_object();
-    typename Geom_traits::Compute_y_3 y_coord = m_gt.compute_y_3_object();
-    typename Geom_traits::Compute_z_3 z_coord = m_gt.compute_z_3_object();
     typename Geom_traits::Construct_point_3 cp = m_gt.construct_point_3_object();
 
-    return cp(m_bbox.xmin() + x * x_coord(m_spacing),
-              m_bbox.ymin() + y * x_coord(m_spacing),
-              m_bbox.zmin() + z * x_coord(m_spacing));
+    return cp(m_bbox.xmin() + i * m_spacing[0],
+              m_bbox.ymin() + j * m_spacing[1],
+              m_bbox.zmin() + k * m_spacing[2]);
   }
 
   /**
    * \brief gets the scalar value stored at the grid vertex described by a set of indices.
    *
-   * \param x the index in the `x` direction
-   * \param y the index in the `y` direction
-   * \param z the index in the `z` direction
+   * \param i the index in the `x` direction
+   * \param j the index in the `y` direction
+   * \param k the index in the `z` direction
    *
    * \return the stored value
+   *
+   * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
-  FT value(const std::size_t x,
-           const std::size_t y,
-           const std::size_t z) const
+  FT value(const std::size_t i,
+           const std::size_t j,
+           const std::size_t k) const
   {
-    return m_values[linear_index(x, y, z)];
+    return m_values[linear_index(i, j, k)];
   }
 
   /**
@@ -206,31 +219,35 @@ public:
    *
    * \note This function can be used to set the value at a grid vertex.
    *
-   * \param x the index in the `x` direction
-   * \param y the index in the `y` direction
-   * \param z the index in the `z` direction
+   * \param i the index in the `x` direction
+   * \param j the index in the `y` direction
+   * \param k the index in the `z` direction
    *
    * \return a reference to the stored value
+   *
+   * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
-  FT& value(const std::size_t x,
-            const std::size_t y,
-            const std::size_t z)
+  FT& value(const std::size_t i,
+            const std::size_t j,
+            const std::size_t k)
   {
-    return m_values[linear_index(x, y, z)];
+    return m_values[linear_index(i, j, k)];
   }
 
   /**
    * \brief gets the gradient stored at the grid vertex described by a set of indices.
    *
-   * \param x the index in the `x` direction
-   * \param y the index in the `y` direction
-   * \param z the index in the `z` direction
+   * \param i the index in the `x` direction
+   * \param j the index in the `y` direction
+   * \param k the index in the `z` direction
+   *
+   * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
-  const Vector_3& gradient(const std::size_t x,
-                           const std::size_t y,
-                           const std::size_t z) const
+  const Vector_3& gradient(const std::size_t i,
+                           const std::size_t j,
+                           const std::size_t k) const
   {
-    return m_gradients[linear_index(x, y, z)];
+    return m_gradients[linear_index(i, j, k)];
   }
 
   /**
@@ -238,28 +255,30 @@ public:
    *
    * \note This function can be used to set the gradient at a grid vertex.
    *
-   * \param x the index in the `x` direction
-   * \param y the index in the `y` direction
-   * \param z the index in the `z` direction
+   * \param i the index in the `x` direction
+   * \param j the index in the `y` direction
+   * \param k the index in the `z` direction
    *
    * \return a reference to the stored gradient
+   *
+   * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
-  Vector_3& gradient(const std::size_t x,
-                     const std::size_t y,
-                     const std::size_t z)
+  Vector_3& gradient(const std::size_t i,
+                     const std::size_t j,
+                     const std::size_t k)
   {
-    return m_gradients[linear_index(x, y, z)];
+    return m_gradients[linear_index(i, j, k)];
   }
 
 private:
-  std::size_t linear_index(const std::size_t x,
-                           const std::size_t y,
-                           const std::size_t z) const
+  std::size_t linear_index(const std::size_t i,
+                           const std::size_t j,
+                           const std::size_t k) const
   {
-    CGAL_precondition(x < xdim() && y < ydim() && z < zdim());
+    CGAL_precondition(i < xdim() && j < ydim() && k < zdim());
 
-    // convert (x, y, z) into a linear index to access the scalar values / gradient vectors
-    return (z * ydim() + y) * xdim() + x;
+    // convert (i, j, k) into a linear index to access the scalar values / gradient vectors
+    return (k * ydim() + j) * xdim() + i;
   }
 };
 
@@ -268,8 +287,6 @@ void
 Cartesian_grid_3<GeomTraits>::
 from_image(const Image_3& image)
 {
-  auto vector = m_gt.construct_vector_3_object();
-
   // compute bounding box
   const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
   const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
@@ -277,7 +294,7 @@ from_image(const Image_3& image)
   m_bbox = Bbox_3{image.tx(), image.ty(), image.tz(), max_x, max_y, max_z};
 
   // get spacing
-  m_spacing = vector(image.vx(), image.vy(), image.vz());
+  m_spacing = make_array(image.vx(), image.vy(), image.vz());
 
   // get sizes
   m_sizes[0] = image.xdim();

@@ -24,6 +24,8 @@ namespace Isosurfacing {
  *
  * \brief Class template for a gradient that equates zero everywhere.
  *
+ * \tparam P the point type
+ *
  * \details This gradient function can be used for Marching Cubes that does not require a gradient.
  */
 struct Zero_gradient
@@ -32,9 +34,9 @@ struct Zero_gradient
    * \return the null vector
    */
   template <typename P>
-  Null_vector operator()(const P&) const
+  CGAL::Null_vector operator()(const P&) const
   {
-    return NULL_VECTOR;
+    return CGAL::NULL_VECTOR;
   }
 };
 

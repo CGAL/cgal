@@ -72,12 +72,12 @@ public:
 
     // trilinear interpolation of stored gradients
     const Bbox_3& bbox = m_grid.bbox();
-    const Vector_3& spacing = m_grid.spacing();
+    const std::array<FT, 3>& spacing = m_grid.spacing();
 
     // calculate min index including border case
-    std::size_t min_i = (x_coord(p) - bbox.xmin()) / x_coord(spacing);
-    std::size_t min_j = (y_coord(p) - bbox.ymin()) / y_coord(spacing);
-    std::size_t min_k = (z_coord(p) - bbox.zmin()) / z_coord(spacing);
+    std::size_t min_i = (x_coord(p) - bbox.xmin()) / spacing[0];
+    std::size_t min_j = (y_coord(p) - bbox.ymin()) / spacing[1];
+    std::size_t min_k = (z_coord(p) - bbox.zmin()) / spacing[2];
 
     if(min_i == m_grid.xdim() - 1)
       --min_i;
@@ -89,14 +89,14 @@ public:
       --min_k;
 
     // calculate coordinates of min index
-    const FT min_x = min_i * x_coord(spacing) + bbox.xmin();
-    const FT min_y = min_j * y_coord(spacing) + bbox.ymin();
-    const FT min_z = min_k * z_coord(spacing) + bbox.zmin();
+    const FT min_x = min_i * spacing[0] + bbox.xmin();
+    const FT min_y = min_j * spacing[1] + bbox.ymin();
+    const FT min_z = min_k * spacing[2] + bbox.zmin();
 
     // interpolation factors between 0 and 1
-    const FT f_i = (x_coord(p) - min_x) / x_coord(spacing);
-    const FT f_j = (y_coord(p) - min_y) / y_coord(spacing);
-    const FT f_k = (z_coord(p) - min_z) / z_coord(spacing);
+    const FT f_i = (x_coord(p) - min_x) / spacing[0];
+    const FT f_j = (y_coord(p) - min_y) / spacing[1];
+    const FT f_k = (z_coord(p) - min_z) / spacing[2];
 
     // read the gradient at all 8 corner points
     const Vector_3& g000 = m_grid.gradient(min_i + 0, min_j + 0, min_k + 0);

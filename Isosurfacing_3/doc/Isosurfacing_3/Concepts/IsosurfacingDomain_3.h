@@ -125,10 +125,9 @@ public:
 
   \tparam ConcurrencyTag decides if the vertices are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-
   \tparam Functor must implement `void operator()(const Vertex_descriptor& vertex)`
 
-  \param f the functor called with every vertex
+  \param f the functor called on every vertex
   */
   template <typename ConcurrencyTag, typename Functor>
   void iterate_vertices(Functor& f) const;
@@ -138,8 +137,9 @@ public:
 
   \tparam ConcurrencyTag decides if the edges are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-
   \tparam Functor must implement `void operator()(const Edge_descriptor& edge)`.
+
+  \param f the functor called on every edge
   */
   template <typename ConcurrencyTag, typename Functor>
   void iterate_edges(Functor& f) const;
@@ -149,8 +149,9 @@ public:
 
   \tparam ConcurrencyTag decides if the cells are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-
   \tparam Functor must implement `void operator()(const Cell_descriptor& cell)`.
+
+  \param f the functor called on every face
   */
   template <typename ConcurrencyTag, typename Functor>
   void iterate_cells(Functor& f) const;
