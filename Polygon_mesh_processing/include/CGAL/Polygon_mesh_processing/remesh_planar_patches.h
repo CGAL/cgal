@@ -1058,7 +1058,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   // extra step to propagate is_corner to all meshes to make sure shared vertices are kept
   propagate_corner_status(vertex_corner_id_maps, point_to_vertex_maps, nb_corners_and_nb_cc_all);
 
-  /// @todo: make identical patches normal identical (up to the sign). Needed only in the approximate case
+  // TODO: make identical patches normal identical (up to the sign). Needed only in the approximate case
 
 // now call the decimation
   // storage of all new triangles and all corners
@@ -1362,7 +1362,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  with the functions `region_growing_of_planes_on_faces()` and `detect_corners_of_regions()`.
  *  If a patch cannot be triangulated, it is left untouched in the output and all its vertices becomes corners
  *  so that the output is still a valid conformal triangle mesh.
- *  \todo: define how triangulation normals are estimated and maybe ask for them?
+ *  \todo define how triangulation normals are estimated and maybe ask for them?
  *  \returns `true` if all patches could be triangulated and `false` otherwise.
  *
  *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
@@ -1473,7 +1473,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::type Kernel;
 
-  /// @todo turn into a range of named parameter
+  // todo turn into a range of named parameter
   std::vector<typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type > vpms;
   vpms.reserve(meshes.size());
 
