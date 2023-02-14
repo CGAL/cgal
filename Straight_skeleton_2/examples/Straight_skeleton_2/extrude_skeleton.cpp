@@ -771,12 +771,6 @@ std::tuple<Slope, bool, FT> preprocess_weights(WeightRange& weights)
   {
     for(FT& w : contour_weights)
     {
-      if(w == 0)
-      {
-        std::cerr << "Error: null weight (null angle) is not a valid input" << std::endl;
-        return {Slope::UNKNOWN, false, FT(-1)};
-      }
-
       // '0' means a vertical slab, aka 90° angle (see preprocess_angles())
       if(w == 0)
         continue;
