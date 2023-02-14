@@ -862,6 +862,7 @@ insert_constraint(T va, T vb){
   Context_list* fathers;
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.insert_constraint( "
             << oformat(va) << ", " << oformat(vb) << ")\n";
@@ -896,6 +897,7 @@ insert_constraint_old_API(T va, T vb){
   Context_list* fathers;
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.insert_constraint_old_API( "
             << oformat(va) << ", " << oformat(vb) << ")\n";
@@ -928,6 +930,7 @@ append_constraint(Constraint_id cid, T va, T vb){
   Context_list* fathers;
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.append_constraint( ..., "
             << oformat(va) << ", " << oformat(vb) << ")\n";
@@ -1044,6 +1047,7 @@ void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 add_Steiner(T va, T vb, T vc){
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.add_Steinter( "
             << oformat(va) << ", " << oformat(vb) << ", " << oformat(vc)
