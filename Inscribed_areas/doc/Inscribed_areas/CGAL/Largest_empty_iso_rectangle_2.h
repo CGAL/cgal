@@ -142,9 +142,11 @@ Iso_rectangle_2 get_bounding_box();
 /// @{
 
 /*!
-Inserts point `p` in the point set, if it is not already in the set.
+Inserts point `p` in the point set, if it is not already in the set
+and on the bounded side of the bounding rectangle.
+\note Points on the boundary can be ignored as they lead to the same result.
 */
-void
+bool
 insert(const Point_2& p);
 
 /*!

@@ -1393,10 +1393,13 @@ public:
             }
           }
           if (inconsistent_classification()) return;
-          CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
-          CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
-          CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
-          CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
+          if (!used_to_clip_a_surface && !used_to_classify_patches)
+          {
+            CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
+            CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
+            CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
+            CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
+          }
         }
     }
 

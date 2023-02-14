@@ -89,7 +89,7 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
 /*!
 returns an approximation of the angle between `p-q` and `r-q`.
 The angle is given in degrees.
-\pre `p` and `r` are not equal to `q`.
+\pre `p != q` and `r != q`.
 */
 template <typename Kernel>
 Kernel::FT approximate_angle(const CGAL::Point_3<Kernel>& p,
@@ -341,7 +341,7 @@ const CGAL::Point_3<Kernel>& p4, const Kernel::FT&w4);
 /*!
 constructs the bisector line of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p` and `q` are not equal.
+positive side. \pre `p != q`.
 */
 template <typename Kernel>
 CGAL::Line_2<Kernel> bisector(const CGAL::Point_2<Kernel> &p,
@@ -367,7 +367,7 @@ const CGAL::Line_2<Kernel> &l2);
 /*!
 constructs the bisector plane of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p` and `q` are not equal.
+positive side. \pre `p != q'.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Point_3<Kernel> &p,

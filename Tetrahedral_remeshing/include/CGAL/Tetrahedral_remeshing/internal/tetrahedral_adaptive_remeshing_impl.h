@@ -417,7 +417,10 @@ private:
       if (!input_is_c3t3())
       {
         for (int i = 0; i < 4; ++i)
-          cit->vertex(i)->set_dimension(3);
+        {
+          if (cit->vertex(i)->in_dimension() == -1)
+            cit->vertex(i)->set_dimension(3);
+        }
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       else if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
@@ -446,7 +449,8 @@ private:
         for (int j = 0; j < 3; ++j)
         {
           Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
-          vij->set_dimension(2);
+          if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
+            vij->set_dimension(2);
         }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbf;
@@ -478,10 +482,12 @@ private:
         m_c3t3.add_to_complex(e, 1);
 
         Vertex_handle v = e.first->vertex(e.second);
-        v->set_dimension(1);
+        if (v->in_dimension() == -1 || v->in_dimension() > 1)
+          v->set_dimension(1);
 
         v = e.first->vertex(e.third);
-        v->set_dimension(1);
+        if (v->in_dimension() == -1 || v->in_dimension() > 1)
+          v->set_dimension(1);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbe;
@@ -502,7 +508,8 @@ private:
         if(!m_c3t3.is_in_complex(vit))
           m_c3t3.add_to_complex(vit, ++corner_id);
 
-        vit->set_dimension(0);
+        if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
+          vit->set_dimension(0);
 
         vit->set_index(corner_id);
 
