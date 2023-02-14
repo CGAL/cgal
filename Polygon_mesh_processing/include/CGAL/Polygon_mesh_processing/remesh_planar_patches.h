@@ -1182,7 +1182,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *  generates a new triangle mesh `tm_out` with the minimal number of triangles while preserving the shape as `tm_in`.
  *  In practice, this means that connected components of edge incident faces belonging to the same plane are
  *  first extracted (each such connected component is called a *patch*). Then the connected components of vertex
- *  connected patch border edge belonging to the same line are extracted. Endpoints of such components and
+ *  connected patch border edges belonging to the same line are extracted. Endpoints of such components and
  *  vertices incident to more than two patches (or two patches + one mesh boundary) are called *corners*.
  *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch with bounder defined by
  *  only corner vertices.
