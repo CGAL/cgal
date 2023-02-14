@@ -14,8 +14,8 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/create_straight_skeleton_2.h>
-#include <CGAL/create_weighted_offset_polygons_2.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/create_offset_polygons_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_converter_2.h>

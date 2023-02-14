@@ -13,16 +13,14 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <boost/mpl/has_xxx.hpp>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <type_traits>
 
 namespace CGAL {
 namespace CGAL_SS_i {
-
-// to distinguish between SequenceContainers of points, and GeneralPolygonWithHoles_2
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Hole_const_iterator)
 
 // Polygon_2-type container
 template <typename Poly>

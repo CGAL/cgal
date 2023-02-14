@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_offset_builder_2.h>
@@ -41,66 +42,6 @@
 namespace CGAL {
 
 namespace CGAL_SS_i {
-
-template<class U, class V>
-struct Is_same_type { typedef Tag_false type ; } ;
-
-template<class U>
-struct Is_same_type<U,U> { typedef Tag_true type ; } ;
-
-// The return type of create_interior/exterior_skeleton_and_offset_polygons_2:
-// - if polygon input is a model of 'GeneralPolygonWithHoles_2', the return type
-//   should be the internal (hole-less) polygon type GeneralPolygonWithHoles_2::Polygon_2
-// - if polygon input is just a sequence container of points (e.g. Polygon_2), then the same type
-//   is expected in output
-template <typename Polygon, typename OfK,
-          bool has_holes = CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>
-struct Default_return_polygon_type // Polygon type supports holes
-{
-  typedef typename std::conditional<std::is_same<
-                                      typename Kernel_traits<typename boost::range_value<
-                                        typename Polygon::Polygon_2>::type>::Kernel,
-                                      OfK>::value,
-                                    typename Polygon::Polygon_2, // correct kernel
-                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
-};
-
-template <typename Polygon, typename OfK>
-struct Default_return_polygon_type<Polygon, OfK, false> // Polygon type does NOT support holes
-{
-  typedef typename std::conditional<std::is_same<
-                                      typename Kernel_traits<typename boost::range_value<Polygon>::type>::Kernel,
-                                      OfK>::value,
-                                    Polygon, // correct kernel
-                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
-};
-
-// The return type of create_interior/exterior_skeleton_and_offset_polygons_with_holes_2:
-// - if polygon input is a model of 'GeneralPolygonWithHoles_2', the return type should be the same
-// - if polygon input is just a sequence container of points (e.g. Polygon_2), then use
-//   General_polygon_with_holes_2<Polygon>
-template <typename Polygon, typename OfK,
-          bool has_holes = CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>
-struct Default_return_polygon_with_holes_type // Polygon type supports holes
-{
-  typedef typename std::conditional<std::is_same<
-                                      typename Kernel_traits<typename boost::range_value<
-                                        typename Polygon::Polygon_2>::type>::Kernel,
-                                      OfK>::value,
-                                    Polygon, // correct kernel
-                                    CGAL::Polygon_with_holes_2<OfK> /*incorrect kernel*/ >::type type;
-};
-
-template <typename Polygon, typename OfK>
-struct Default_return_polygon_with_holes_type<Polygon, OfK, false> // Polygon type does NOT support holes
-{
-  // Maybe on paper the `conditional<true>` should be `General_polygon_with_holes_2<Polygon>`...
-  typedef typename std::conditional<std::is_same<
-                                      typename Kernel_traits<typename boost::range_value<Polygon>::type>::Kernel,
-                                      OfK>::value,
-                                    CGAL::Polygon_with_holes_2<OfK>, // correct kernel but no holes
-                                    CGAL::Polygon_with_holes_2<OfK> /*incorrect kernel*/ >::type type;
-};
 
 template<class FT, class PointIterator, class HoleIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
