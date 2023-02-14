@@ -44,9 +44,14 @@ StraightSkeletonHalfedge_2( int id );
 /// @{
 
 /*!
-The ID of the vertex
+returns the ID of the halfedge
 */
 int id() const;
+
+/*!
+resets the ID of the halfedge to `aID`
+*/
+void reset_id ( int aID );
 
 /*!
 returns the weight of the halfedge
