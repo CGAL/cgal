@@ -100,8 +100,11 @@ struct triple
 
     return CGAL::Construct_ss_trisegment_2(sTraits)(
              Segment(Point(mP[0].x(),mP[0].y()), Point(mP[1].x(),mP[1].y()), sid0),
+             FT(1),
              Segment(Point(mP[2].x(),mP[2].y()), Point(mP[3].x(),mP[3].y()), sid1),
-             Segment(Point(mP[4].x(),mP[4].y()), Point(mP[5].x(),mP[5].y()), sid2));
+             FT(1),
+             Segment(Point(mP[4].x(),mP[4].y()), Point(mP[5].x(),mP[5].y()), sid2),
+             FT(1));
   }
 
   friend std::ostream& operator<<( std::ostream& os, Point const& aP )
