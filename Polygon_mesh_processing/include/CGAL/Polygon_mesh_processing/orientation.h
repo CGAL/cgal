@@ -1364,6 +1364,9 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
+  std::size_t nbf = num_faces(tm);
+  if (nbf == 0) return;
+
   CGAL_precondition(is_closed(tm));
   CGAL_precondition(is_triangle_mesh(tm));
 
@@ -1377,7 +1380,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
-  std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
+  std::vector<std::size_t> face_cc(nbf, std::size_t(-1));
   std::vector<std::size_t> nesting_levels;
   std::vector<bool> is_cc_outward_oriented;
   Constant_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
