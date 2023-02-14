@@ -19,7 +19,7 @@
 
 namespace CGAL {
 
-template < class Refs, class Traits >
+template < class Refs, class FT >
 class Straight_skeleton_halfedge_base_base_2
 {
 public:
@@ -38,9 +38,7 @@ public:
   typedef typename Refs::Vertex                Vertex;
   typedef typename Refs::Face                  Face;
 
-  typedef typename Traits::FT                  FT;
-
-  typedef Straight_skeleton_halfedge_base_base_2<Refs, Traits> Base_base ;
+  typedef Straight_skeleton_halfedge_base_base_2<Refs, FT> Base_base ;
 
 protected:
 
@@ -95,7 +93,6 @@ public:
   Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }
   Halfedge_handle       defining_contour_edge()       { return this->face()->halfedge() ; }
 
-  // @fixme below is not documented in the `StraightSkeletonHalfedge_2` concept
   Sign slope() const { return mSlope ; }
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 
@@ -114,8 +111,8 @@ private:
   FT               mWeight ;
 };
 
-template < class Refs, class Traits >
-class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs, Traits>
+template < class Refs, class FT >
+class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs, FT>
 {
 public:
 
@@ -123,8 +120,8 @@ public:
   typedef typename Refs::Halfedge_handle Halfedge_handle;
   typedef typename Refs::Face_handle     Face_handle;
 
-  typedef Straight_skeleton_halfedge_base_base_2<Refs, Traits> Base_base ;
-  typedef Straight_skeleton_halfedge_base_2<Refs, Traits>      Base ;
+  typedef Straight_skeleton_halfedge_base_base_2<Refs, FT> Base_base ;
+  typedef Straight_skeleton_halfedge_base_2<Refs, FT>      Base ;
 
   Straight_skeleton_halfedge_base_2() {}
 
