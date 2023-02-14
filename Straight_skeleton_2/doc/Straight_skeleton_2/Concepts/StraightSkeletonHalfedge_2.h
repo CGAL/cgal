@@ -49,6 +49,16 @@ The ID of the vertex
 int id() const;
 
 /*!
+returns the weight of the halfedge
+*/
+FT weight() const;
+
+/*!
+sets the weight of the halfedge to `aWeight`
+*/
+void set_weight( FT aWeight );
+
+/*!
 
 */
 Halfedge_handle defining_contour_edge();
