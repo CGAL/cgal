@@ -1180,14 +1180,14 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 /*!
  *  \ingroup PMP_meshing_grp
  *  generates a new triangle mesh `tm_out` with the minimal number of triangles while preserving the shape as `tm_in`.
- *  In practice, this means that connected components of edge incident faces belonging the same plane are
+ *  In practice, this means that connected components of edge incident faces belonging to the same plane are
  *  first extracted (each such connected component is called a *patch*). Then the connected components of vertex
  *  connected patch border edge belonging to the same line are extracted. Endpoints of such components and
- *  vertices incident to more that two patches (or two patches + one mesh boundary) are called *corners*.
+ *  vertices incident to more than two patches (or two patches + one mesh boundary) are called *corners*.
  *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch with bounder defined by
  *  only corner vertices.
  *
- *  \warning if `tm_in` contains a non-manifold vertex, `tm_out` will always be empty. Those vertices must be
+ *  \warning if `tm_in` contains a non-manifold vertex, `tm_out` will be empty. Those vertices must be
  *           duplicated with `duplicate_non_manifold_vertices()` to get an output.
  *
  *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
@@ -1195,8 +1195,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *  \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
  *  \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- *  \param tm_in input triangulated surface mesh
- *  \param tm_out output mesh
+ *  \param tm_in input triangle mesh
+ *  \param tm_out output triangle mesh
  *  \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  *  \cgalNamedParamsBegin
@@ -1360,7 +1360,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  except that here the partition into patches and corner identification is provided by the user.
  *  It allows to have a remeshing of almost coplanar regiond, detected for example using the region growing algorithm
  *  with the functions `region_growing_of_planes_on_faces()` and `detect_corners_of_regions()`.
- *  If a patch cannot be triangulated, it is left untouched in the output and all its vertices becomes corners
+ *  If a patch cannot be triangulated, it is left untouched in the output and all its vertices become corners
  *  so that the output is still a valid conformal triangle mesh.
  *  \todo define how triangulation normals are estimated and maybe ask for them?
  *  \returns `true` if all patches could be triangulated and `false` otherwise.
@@ -1377,8 +1377,8 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
  *  \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- *  \param tm_in input triangulated surface mesh
- *  \param tm_out output mesh
+ *  \param tm_in input triangle mesh
+ *  \param tm_out output triangle mesh
  *  \param nb_patches the number of patches in the partition
  *  \param nb_corners the number of corners
  *  \param face_patch_map a property map that contains for each face the id of its patch in the range `[0, nb_patches]`
