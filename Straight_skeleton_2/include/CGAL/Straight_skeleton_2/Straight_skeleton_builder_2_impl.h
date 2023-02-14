@@ -2081,8 +2081,10 @@ typename Straight_skeleton_builder_2<Gt,Ss,V>::SSkelPtr Straight_skeleton_builde
   if ( !ok )
   {
     CGAL_STSKEL_BUILDER_TRACE(0,"Invalid result.");
-    if ( aNull_if_failed )
-      mSSkel = SSkelPtr() ;
+
+    CGAL::draw(*mSSkel);
+    // if ( aNull_if_failed )
+    //   mSSkel = SSkelPtr() ;
   }
 
   mVisitor.on_algorithm_finished(ok);
