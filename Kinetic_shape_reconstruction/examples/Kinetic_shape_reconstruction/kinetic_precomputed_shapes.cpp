@@ -23,36 +23,9 @@ using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using KSP          = CGAL::Kinetic_shape_partition_3<EPICK>;
 using Timer        = CGAL::Real_timer;
 
-struct Polygon_map {
-
-  using key_type   = std::vector<std::size_t>;
-  using value_type = std::vector<Point_3>;
-  using reference  = value_type;
-  using category   = boost::readable_property_map_tag;
-
-  const std::vector<Point_3>& points;
-  Polygon_map(
-    const std::vector<Point_3>& vertices) :
-  points(vertices)
-  { }
-
-  friend reference get(const Polygon_map& map, const key_type& face) {
-    reference polygon;
-    polygon.reserve(face.size());
-    std::transform(
-      face.begin(), face.end(),
-      std::back_inserter(polygon),
-      [&](const std::size_t vertex_index) -> Point_3 {
-        return map.points[vertex_index];
-      });
-    return polygon;
-  }
-};
-
 int main(const int argc, const char** argv) {
 
-  // Input.
-  std::cout.precision(20);
+  // Reading polygons from file
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
   std::string input_filename = (argc > 1 ? argv[1] : "../data/test-4-rnd-polygons-4-6.off");
   std::ifstream input_file_off(input_filename);
@@ -78,23 +51,29 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of polygons: " << input_faces.size() << std::endl;
 
   // Parameters.
-  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1); // intersections
+  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
 
-  // Algorithm.
+  // Initialization of Kinetic_shape_partition_3 object.
+  // 'debug' set to true exports intermediate results into files in the working directory.
+  // The resulting volumes are exported into a volumes folder, if the folder already exists.
   KSP ksp(CGAL::parameters::verbose(true).debug(true));
 
+  // Providing input polygons.
   ksp.insert(input_vertices, input_faces);
 
   Timer timer;
   timer.start();
+
+  // 'initialize' creates the intersection graph that is used for the partition.
   ksp.initialize(CGAL::parameters::bbox_dilation_ratio(1.1).reorient_bbox(false));
 
+  // Creating the partition with allowing up to 'k' intersections for each kinetic polygon.
   ksp.partition(k);
 
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
-  // Output.
+  // Access the kinetic partition via linear cell complex.
   CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
   ksp.get_linear_cell_complex(lcc);
 
