@@ -1184,7 +1184,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *  first extracted (each such connected component is called a *patch*). Then the connected components of vertex
  *  connected patch border edges belonging to the same line are extracted. Endpoints of such components and
  *  vertices incident to more than two patches (or two patches + one mesh boundary) are called *corners*.
- *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch with bounder defined by
+ *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch with border defined by
  *  only corner vertices.
  *
  *  \warning if `tm_in` contains a non-manifold vertex, `tm_out` will be empty. Those vertices must be
@@ -1236,7 +1236,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *   \cgalParamNEnd
  *    \cgalParamNBegin{cosinus_threshold}
  *      \cgalParamDescription{the cosinus an angle that is used as the lower bound of both the dihedral angle between two adjacent
-                              triangles to consider then as coplanar, and the angle betweem adjacent segments to consider then as collinear.}
+                              triangles to consider then as coplanar, and the angle between adjacent segments to consider then as collinear.}
  *      \cgalParamType{`FT` type from the `geom_traits` parameter}
  *      \cgalParamDefault{-1, which means exact coplanarity and collinearity}
  *   \cgalParamNEnd
@@ -1358,7 +1358,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  generates a new triangle mesh `tm_out` with the minimal number of triangles from a partition of `tm_in`.
  *  The terminology used here and the global idea is very similar to what is done by `remesh_planar_patches()`
  *  except that here the partition into patches and corner identification is provided by the user.
- *  It allows to have a remeshing of almost coplanar regiond, detected for example using the region growing algorithm
+ *  It allows to have a remeshing of almost coplanar regions, detected for example using the region growing algorithm
  *  with the functions `region_growing_of_planes_on_faces()` and `detect_corners_of_regions()`.
  *  If a patch cannot be triangulated, it is left untouched in the output and all its vertices become corners
  *  so that the output is still a valid conformal triangle mesh.
