@@ -146,6 +146,9 @@ public:
         return e(2);
       case TRISEGMENT_COLLINEARITY_02:
         return e(2);
+      default:
+        CGAL_assertion(false);
+        return e(0); // arbitrary, meaningless value because a const& is expected
     }
   }
 
@@ -161,6 +164,9 @@ public:
         return w(2);
       case TRISEGMENT_COLLINEARITY_02:
         return w(2);
+      default:
+        CGAL_assertion(false);
+        return w(0); // arbitrary, meaningless value because a const& is expected
     }
   }
 
