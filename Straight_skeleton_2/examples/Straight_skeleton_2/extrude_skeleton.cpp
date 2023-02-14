@@ -1,51 +1,3 @@
-// @todo convert taper angle to edge weight
-// @todo convert height to offset
-// @todo exterior skeleton
-// @todo filtering optimization with weights
-// @todo extracting tops with holes
-
-#if 1
-
-#include <string>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-
-bool lAppToLog = false ;
-
-void Straight_skeleton_external_trace ( std::string m )
-{
-  std::ofstream out("/home/mrouxell/sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) );
-  out << std::setprecision(17) << m << std::endl << std::flush ;
-  lAppToLog = true ;
-}
-void Straight_skeleton_traits_external_trace ( std::string m )
-{
-  std::ofstream out("/home/mrouxell/sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) ) ;
-  out << std::setprecision(17) << m << std::endl << std::flush ;
-  lAppToLog = true ;
-}
-
-void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
-{
-  std::cerr << "CGAL error: " << what << " violation!" << std::endl
-       << "Expr: " << expr << std::endl
-       << "File: " << file << std::endl
-       << "Line: " << line << std::endl;
-  if ( msg != nullptr)
-      std::cerr << "Explanation:" << msg << std::endl;
-
-  std::exit(1);
-}
-
-#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 5
-#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-#define CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
-#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 4
-#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
-
-#endif // if 0|1 debug
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
@@ -265,11 +217,6 @@ public:
     const bool is_h1_vertical = (contour_h1->weight() == m_vertical_weight);
     const bool is_h2_vertical = (contour_h2->weight() == m_vertical_weight);
 
-    // std::cout << "-- offset point: " << op << " on hook " << hook->id() << std::endl;
-    // std::cout << "canonical hook: " << canonical_hook->id() << std::endl;
-    // std::cout << "defining contours: " << contour_h1->id() << " " << contour_h2->id() << std::endl;
-    // std::cout << "verticality " << is_h1_vertical << " " << is_h2_vertical << std::endl;
-
     // this can happen when the offset is passing through vertices
     m_offset_points[canonical_hook] = op;
 
@@ -279,15 +226,9 @@ public:
       CGAL_assertion(contour_h1->vertex() == contour_h2->opposite()->vertex() ||
                      contour_h2->vertex() == contour_h1->opposite()->vertex());
       if(contour_h1->vertex() == contour_h2->opposite()->vertex())
-      {
-        // std::cout << "snapping " << op << " to " << contour_h1->vertex()->point() << std::endl;
         m_snapped_positions[op] = contour_h1->vertex()->point();
-      }
       else
-      {
-        // std::cout << "snapping " << op << " to " << contour_h2->vertex()->point() << std::endl;
         m_snapped_positions[op] = contour_h2->vertex()->point();
-      }
     }
     else if(is_h1_vertical)
     {
@@ -323,13 +264,13 @@ FT default_offset = std::numeric_limits<FT>::infinity();
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool read_input_polygon(const char* filename,
-                        Polygon_with_holes_2& p)
+bool read_dat_polygon(const char* filename,
+                      Polygon_with_holes_2& p)
 {
   std::ifstream in(filename);
   if(!in)
   {
-    std::cerr << "Error: Count not read " << filename << std::endl;
+    std::cerr << "Error: Could not read " << filename << std::endl;
     return false;
   }
 
@@ -401,6 +342,21 @@ bool read_input_polygon(const char* filename,
     p.add_hole(polys[i+1]);
 
   return true;
+}
+
+bool read_input_polygon(const char* filename,
+                        Polygon_with_holes_2& p)
+{
+  std::string ext = CGAL::IO::internal::get_file_extension(filename);
+  if(ext == "dat")
+  {
+    return read_dat_polygon(filename, p);
+  }
+  else
+  {
+    std::cerr << "Error: unknown file extension: " << ext << std::endl;
+    return false;
+  }
 }
 
 bool read_segment_speeds(const char* filename,
@@ -508,8 +464,6 @@ void generate_random_weights(const Polygon_with_holes_2& p,
         weight[it] = rnd.get_double(min_weight, max_weight);
       }
 
-      // std::cout << s1 << " gets " << weight[it] << std::endl;
-
       it = next(it, c);
     }
     while(it != end);
@@ -554,7 +508,7 @@ void construct_horizontal_faces(const Polygon_with_holes_2& p,
   }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-  // CGAL::draw(cdt);
+  CGAL::draw(cdt);
 #endif
 
   std::unordered_map<CDT_Face_handle, bool> in_domain_map;
@@ -610,7 +564,7 @@ void triangulate_skeleton_face(SLSFacePoints& face_points,
   }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-  // CGAL::draw(pcdt);
+  CGAL::draw(pcdt);
 #endif
 
   std::unordered_map<PCDT_Face_handle, bool> in_domain_map;
@@ -666,9 +620,6 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
     do
     {
       HDS_Vertex_const_handle hds_tv = hds_h->vertex();
-
-      // std::cout << "check halfedge\n"
-      //           << "\t" << hds_tv->point() << " t: " << hds_tv->time() << std::endl;
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       // this computes the snapped position but does not change the geometry of the skeleton
@@ -727,17 +678,12 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
     HDS_Halfedge_const_handle contour_h = hds_h->defining_contour_edge();
     CGAL_assertion(hds_h == contour_h);
     const bool is_vertical = (contour_h->weight() == vertical_weight);
-    // std::cout << hds_h->id() << " vertical? " << is_vertical << std::endl;
 #endif
 
     do
     {
       HDS_Vertex_const_handle hds_sv = hds_h->opposite()->vertex();
       HDS_Vertex_const_handle hds_tv = hds_h->vertex();
-
-      //  std::cout << "check halfedge\n"
-      //            << "\t" << hds_sv->point() << " t: " << hds_sv->time() << "\n"
-      //            << "\t" << hds_tv->point() << " t: " << hds_tv->time() << std::endl;
 
       // Compare_offset_against_event_time compares offset to node->time(),
       // so when the offset is greater or equal than the node->time(), the node is the face
@@ -751,9 +697,6 @@ void construct_lateral_faces(const Straight_skeleton_2& ss,
 
       const CGAL::Comparison_result sc = compare_time_to_offset(hds_sv);
       const CGAL::Comparison_result tc = compare_time_to_offset(hds_tv);
-
-      // std::cout << "offset = " << offset << std::endl;
-      // std::cout << "sc/tc " << sc << " " << tc << std::endl;
 
       // if the offset is crossing at the source, it will be added when seen as a target
       // from the previous halfedge
@@ -1323,7 +1266,8 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
 
 #ifdef CGAL_SLS_OUTPUT_FILES
-   CGAL::IO::write_polygon_soup("sm_3D_soup.off", points, faces, CGAL::parameters::stream_precision(17));
+  // This soup provides one connected component per edge of the input polygon
+  CGAL::IO::write_polygon_soup("extruded_skeleton_soup.off", points, faces, CGAL::parameters::stream_precision(17));
 #endif
 
   // Convert the triangle soup to a triangle mesh
@@ -1339,12 +1283,10 @@ int main(int argc, char** argv)
   timer.stop();
   std::cout << "Offset computation took " << timer.time() << " s." << std::endl;
 
-#ifdef CGAL_SLS_OUTPUT_FILES
-  CGAL::IO::write_polygon_mesh("sm_3D.off", sm, CGAL::parameters::stream_precision(17));
-#endif
+  CGAL::IO::write_polygon_mesh("extruded_skeleton.off", sm, CGAL::parameters::stream_precision(17));
 
   CGAL_assertion(is_valid_polygon_mesh(sm) && is_closed(sm));
-  CGAL_warning(!PMP::does_self_intersect(sm)); // no other way if there is non-manifoldness
+  CGAL_warning(!PMP::does_self_intersect(sm)); // cannot be otherwise if there is non-manifoldness
 
   return EXIT_SUCCESS;
 }
