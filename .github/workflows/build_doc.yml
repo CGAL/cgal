@@ -3,7 +3,6 @@ name: Documentation
 on:
   issue_comment:
       types: [created]
-  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -67,7 +66,6 @@ jobs:
         with:
            repository: ${{ github.repository }}
            ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
-           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
            fetch-depth: 2
 
       - name: install dependencies

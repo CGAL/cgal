@@ -20,8 +20,8 @@ Release date: June 2023
   `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
   which have output iterators for vertices and faces as parameter. They are replaced by overloads with two additional named parameters.
 
--   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
-CGAL tetrahedral Delaunay refinement algorithm.
+-   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh using
+  the Delaunay refinement algorithm from the 3D Mesh Generation package.
 
 -   Added the function `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` to remove badly shaped triangles faces in a mesh.
 
