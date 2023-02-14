@@ -2082,7 +2082,7 @@ typename Straight_skeleton_builder_2<Gt,Ss,V>::SSkelPtr Straight_skeleton_builde
   {
     CGAL_STSKEL_BUILDER_TRACE(0,"Invalid result.");
 
-    CGAL::draw(*mSSkel);
+    // CGAL::draw(*mSSkel);
     // if ( aNull_if_failed )
     //   mSSkel = SSkelPtr() ;
   }

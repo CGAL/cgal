@@ -13,6 +13,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <boost/mpl/has_xxx.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <type_traits>
