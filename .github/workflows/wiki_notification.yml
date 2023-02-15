@@ -1,0 +1,45 @@
+name: Wiki Notification
+
+on: [gollum,workflow_dispatch]
+  
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: get informations from api and prepare email messages
+      run: |
+        response=$(curl -s https://api.github.com/repos/saillantnicolas/cgal/events)
+        eventcount=$(echo "$response" | jq '. | length')
+        for ((i=eventcount; i>=0; i--))
+        do
+            if [ "$(echo "$response" | jq -r '.['$i'].type')" == "GollumEvent" ];
+            then
+                event=$(echo "$response" | jq '.['$i']')
+            fi
+        done
+        actor=$(echo "$event" | jq '.actor.login' | tr -d '"')
+        count=$(echo "$event" | jq  '.payload.pages | length')
+        date=$(echo "$event" | jq '.created_at' | tr -d '"')
+        echo -e "Subject:Cgal wiki has been updated \n" >> messages.txt
+        for ((i=0; i<count; i++)); do
+          action=$(echo "$event" | jq '.payload.pages['$i'].action' | tr -d '"')
+          wiki_page=$(echo "$event" | jq '.payload.pages['$i'].title' | tr -d '"')
+          page_url=$(echo "$event" | jq '.payload.pages['$i'].html_url' | tr -d '"')
+          echo "Page $i" >> messages.txt
+          echo "Actor : $actor" >> messages.txt
+          echo "Action : $action" >> messages.txt
+          echo "Wiki Page : $wiki_page" >> messages.txt
+          echo "Page URL : $page_url" >> messages.txt
+          echo "History : $page_url/_history" >> messages.txt
+          echo "Date : $date" >> messages.txt
+        done
+    - name: install ssh keys
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ vars.SSH_HOST }} > ~/.ssh/known_hosts
+    - name: send email via ssh
+      run: |
+        cat messages.txt | ssh ${{ secrets.SSH_USER }}@${{ vars.SSH_HOST }} "/sbin/sendmail -t ${{ vars.SEND_EMAIL_TO }}"
