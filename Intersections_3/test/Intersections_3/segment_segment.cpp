@@ -123,18 +123,18 @@ void _test_intersection_construct(K)
   objs[7] = CGAL::intersection(s[2],s[1].supporting_line()); //s[2]
   for (int k=0;k<5;++k){
     const Point_3* p=CGAL::object_cast<Point_3>(&(objs[k]));
-    assert(p!=NULL);
+    assert(p!=nullptr);
     assert(*p==Point_3(0,0,0));
   }
 
   const Segment_3* seg=CGAL::object_cast<Segment_3>(&(objs[5]));
-  assert(seg!=NULL);
+  assert(seg!=nullptr);
   assert(*seg==s[1]);
   seg=CGAL::object_cast<Segment_3>(&(objs[7]));
   assert(*seg==s[2]);
 
   seg=CGAL::object_cast<Segment_3>(&(objs[6]));
-  assert(seg!=NULL);
+  assert(seg!=nullptr);
   assert(*seg==Segment_3( Point_3(0,0,0),Point_3(-1,0,0) ) || *seg==Segment_3( Point_3(-1,0,0),Point_3(0,0,0) ));
 
 

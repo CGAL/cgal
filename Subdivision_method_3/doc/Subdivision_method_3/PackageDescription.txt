@@ -30,8 +30,7 @@
 
 Optional parameters of the functions of this package
 are implemented as \ref BGLNamedParameters.
-The page \ref sm_namedparameters describes their usage
-and provides a list of the parameters that are used in this package.
+The page \ref bgl_namedparameters describes their usage.
 
 \cgalCRPSection{Concepts}
 - `SubdivisionMask_3`

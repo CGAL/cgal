@@ -59,7 +59,7 @@ class Polyhedron_demo_surface_reconstruction_plugin_dialog : public QDialog, pri
 {
   Q_OBJECT
 public:
-  Polyhedron_demo_surface_reconstruction_plugin_dialog(QWidget* /*parent*/ = 0)
+  Polyhedron_demo_surface_reconstruction_plugin_dialog(QWidget* /*parent*/ = nullptr)
   {
     setupUi(this);
 #if !defined(CGAL_USE_GLPK) && !defined(CGAL_USE_SCIP)
@@ -226,7 +226,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
         polygonal_reconstruction (dialog);
         break;
       default:
-        std::cerr << "Error: unkown method." << std::endl;
+        std::cerr << "Error: unknown method." << std::endl;
         return;
     }
     std::cerr << "Reconstruction achieved in " << t.time() << "s" << std::endl;

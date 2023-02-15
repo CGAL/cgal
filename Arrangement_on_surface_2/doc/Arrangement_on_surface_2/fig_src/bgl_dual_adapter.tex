@@ -1,0 +1,54 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \pspicture[](-1,-1)(10,8)
+  \arraxes(0,0)(-1,-1)(10,8)
+  \pnode(1,1){0}
+  \pnode(1,4){1}
+  \pnode(2,2){2}
+  \pnode(3,7){4}
+  \pnode(4,4){6}
+  \pnode(7,1){8}
+  \pnode(9,3){9}
+  %
+  \ncline[linewidth=0.5pt,linecolor=blue]{0}{4}
+  \ncline[linewidth=0.5pt,linecolor=blue]{2}{6}
+  \ncline[linewidth=0.5pt,linecolor=blue]{1}{8}
+  \ncline[linewidth=0.5pt,linecolor=blue]{2}{9}
+  \ncline[linewidth=0.5pt,linecolor=blue]{0}{8}
+  \ncline[linewidth=0.5pt,linecolor=blue]{8}{9}
+  \ncline[linewidth=0.5pt,linecolor=blue]{4}{9}
+  %
+  \pscircle*[linecolor=lightyellow](7,7){7pt}
+  \cnode[linewidth=0.5pt](7,7){7pt}{0}
+  \rput(7,7){$f_0$}
+  %
+  \pscircle*[linecolor=lightyellow](7,2){7pt}
+  \cnode[linewidth=0.5pt](7,2){7pt}{3}
+  \rput(7,2){$f_1$}
+  %
+  \pscircle*[linecolor=lightyellow](4.3,1.65){7pt}
+  \cnode[linewidth=0.5pt](4.3,1.65){7pt}{4}
+  \rput(4.3,1.65){$f_2$}
+  %
+  \pscircle*[linecolor=lightyellow](4,5){7pt}
+  \cnode[linewidth=0.5pt](4,5){7pt}{1}
+  \rput(4,5){$f_3$}
+  %
+  \pscircle*[linecolor=lightyellow](3,2.5){7pt}
+  \cnode[linewidth=0.5pt](3,2.5){7pt}{2}
+  \rput(3,2.5){$f_4$}
+  %
+  \ncline[linewidth=1pt]{0}{1}
+  \ncline[linewidth=1pt]{0}{3}
+  \ncline[linewidth=1pt]{1}{3}
+  \ncline[linewidth=1pt]{2}{1}
+  \ncline[linewidth=1pt]{2}{4}
+  \ncline[linewidth=1pt]{4}{3}
+  \nccurve[linewidth=1pt,angleA=-45,angleB=-30,ncurv=1.8]{0}{4}
+  \nccurve[linewidth=1pt,angleA=190,angleB=225,ncurv=2]{4}{1}
+  \endpspicture
+}
+\end{document}

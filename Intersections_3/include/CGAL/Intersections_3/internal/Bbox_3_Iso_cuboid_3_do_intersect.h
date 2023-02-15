@@ -14,31 +14,41 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H
 
-#include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/enum.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bb,
-                  const typename K::Iso_cuboid_3& ic,
-                  const K& /* k */)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& bb,
+             const typename K::Iso_cuboid_3& ic,
+             const K& /* k */)
 {
-  if (bb.xmax() < ic.xmin() || ic.xmax() < bb.xmin())
+  // use CGAL::compare to access the Coercion_traits between K::FT and double
+  if(compare(bb.xmax(), ic.xmin()) == SMALLER || compare(ic.xmax(), bb.xmin()) == SMALLER)
     return false;
-  if (bb.ymax() < ic.ymin() || ic.ymax() < bb.ymin())
+  if(compare(bb.ymax(), ic.ymin()) == SMALLER || compare(ic.ymax(), bb.ymin()) == SMALLER)
     return false;
-  if (bb.zmax() < ic.zmin() || ic.zmax() < bb.zmin())
+  if(compare(bb.zmax(), ic.zmin()) == SMALLER || compare(ic.zmax(), bb.zmin()) == SMALLER)
     return false;
   return true;
 }
 
+template <class K>
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& ic,
+             const CGAL::Bbox_3& bb,
+             const K& k)
+{
+  return do_intersect(bb, ic, k);
+}
+
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H

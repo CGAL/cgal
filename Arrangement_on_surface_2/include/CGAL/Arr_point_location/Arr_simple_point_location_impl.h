@@ -44,10 +44,8 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
 
   // Go over arrangement halfedges and check whether one of them contains
   // the query point in its interior.
-  typename Traits_adaptor_2::Is_in_x_range_2  is_in_x_range =
-    m_geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x =
-    m_geom_traits->compare_y_at_x_2_object();
+  auto is_in_x_range = m_geom_traits->is_in_x_range_2_object();
+  auto cmp_y_at_x = m_geom_traits->compare_y_at_x_2_object();
 
   typename Arrangement::Edge_const_iterator   eit;
   for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) {
@@ -71,14 +69,14 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   // In case the ray-shooting returned a vertex, we have to locate the first
   // halfedge whose source vertex is v, rotating clockwise around the vertex
   // from "6 o'clock", and to return its incident face.
-  const Vertex_const_handle* vh = Result().template assign<Vertex_const_handle>(obj);
+  const auto* vh = Result::template assign<Vertex_const_handle>(&obj);
   if (vh) {
     Halfedge_const_handle hh = _first_around_vertex(*vh);
     Face_const_handle fh = hh->face();
     return make_result(fh);
   }
 
-  const Halfedge_const_handle* hh = Result().template assign<Halfedge_const_handle>(obj);
+  const auto* hh = Result::template assign<Halfedge_const_handle>(&obj);
   if (hh) {
     // Make sure that the edge is directed from right to left, so that p
     // (which lies below it) is contained in its incident face. If necessary,
@@ -94,7 +92,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature which a vertical ray emanating from the
-// given point hits (not inculding isolated vertices).
+// given point hits (not including isolated vertices).
 //
 template <class Arrangement>
 typename Arr_simple_point_location<Arrangement>::Optional_result_type
@@ -157,7 +155,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
         cl_vt = vt;
       }
       else {
-        // Compare with the vertically closest curve so far and detemine the
+        // Compare with the vertically closest curve so far and determine the
         // curve closest to p. We first check the case that the two curves
         // have a common endpoint (note that the two curves do not intersect
         // in their interiors). Observe that if such a common vertex exists,
@@ -194,7 +192,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
           // In case the two curves do not have a common endpoint, but overlap
           // in their x-range (both contain p), just compare their positions.
           // Note that in this case one of the edges may be fictitious, so we
-          // preform the comparsion symbolically in this case.
+          // perform the comparison symbolically in this case.
           y_res = (closest_he->has_null_curve()) ? curve_above_under :
             ((eit->has_null_curve()) ? point_above_under :
              compare_y_position(closest_he->curve(), eit->curve()));
@@ -288,14 +286,13 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
 
   if (! optional_empty(optional_obj)) {
     const Result_type& obj = optional_assign(optional_obj);
-    const Vertex_const_handle* p_vh = Result().template assign<Vertex_const_handle>(obj);
+    const auto* p_vh = Result::template assign<Vertex_const_handle>(&obj);
     if (p_vh) {
       found_vertex = true;
       closest_v = *p_vh;
     }
     else {
-      const Halfedge_const_handle* p_hh =
-        Result().template assign<Halfedge_const_handle>(obj);
+      const auto* p_hh = Result::template assign<Halfedge_const_handle>(&obj);
       CGAL_assertion(p_hh != nullptr);
       found_halfedge = true;
       closest_he = *p_hh;

@@ -7,7 +7,7 @@
 GlViewer::GlViewer(QWidget *pParent)
 : QOpenGLWidget(pParent)
 {
-  m_scene = NULL;
+  m_scene = nullptr;
 
   m_view_points         = true;
   m_view_tolerance      = false;
@@ -87,7 +87,7 @@ void GlViewer::paintGL()
 void GlViewer::wheelEvent(QWheelEvent *event)
 {
   if (!m_scene) return;
-  m_scale += 0.05 * (event->delta() / 120);
+  m_scale += 0.05 * (event->angleDelta().y() / 120);
   if (m_scale <= 0.0) m_scale = 0.0;
   update();
 }

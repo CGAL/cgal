@@ -4,7 +4,7 @@ namespace Surface_mesh_topology {
 /*!
 \ingroup PkgSurfaceMeshTopologyClasses
 
-The class `Polygonal_schema_min_items` defines a struct with a std::string as the information associated with darts, and no attribute is enabled.
+The class `Polygonal_schema_min_items` defines a struct with a `std::string` as the information associated with darts, and no attribute is enabled.
 
 \cgalModels `PolygonalSchemaItems`
 

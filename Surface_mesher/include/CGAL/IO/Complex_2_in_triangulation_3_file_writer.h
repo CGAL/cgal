@@ -19,7 +19,7 @@
 
 #define CGAL_C2T3_USE_FILE_WRITER_OFF
 
-#include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/IO/OFF.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>

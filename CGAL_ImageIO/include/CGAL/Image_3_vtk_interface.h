@@ -84,6 +84,7 @@ struct VTK_type_generator<boost::uint32_t> {
   typedef vtkUnsignedIntArray ArrayType;
 };
 
+inline
 ::vtkImageData* vtk_image_sharing_same_data_pointer(Image_3& image)
 {
   vtkImageData* vtk_image = vtkImageData::New();
@@ -110,6 +111,9 @@ struct VTK_type_generator<boost::uint32_t> {
   vtk_image->SetSpacing(image.vx(),
                         image.vy(),
                         image.vz());
+  vtk_image->SetOrigin(image.tx(),
+                       image.ty(),
+                       image.tz());
   vtk_image->AllocateScalars(type, 1);
   vtk_image->GetPointData()->SetScalars(data_array);
   return vtk_image;

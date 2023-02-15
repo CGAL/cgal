@@ -19,7 +19,7 @@
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 
 #include <boost/mpl/if.hpp>
@@ -132,7 +132,7 @@ public:
       return *weighted_circumcenter_;
   }
 
-  void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw()
+  void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) noexcept
   {
     std::swap(static_cast<Cb&>(*this), static_cast<Cb&>(other));
     std::swap(weighted_circumcenter_, other.weighted_circumcenter_);

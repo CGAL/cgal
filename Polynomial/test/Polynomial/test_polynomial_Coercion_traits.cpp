@@ -15,7 +15,7 @@ template<class A, class B> void test_coercion_from_to(A, B){
 
 template <typename AK>
 void test_coercion_traits(){
-  //CGAL::set_pretty_mode(std::cout);
+  //CGAL::IO::set_pretty_mode(std::cout);
 
   typedef typename AK::Integer  Integer;
   typedef typename AK::Rational Rational;
@@ -148,7 +148,7 @@ void test_coercion_traits(){
     {
     typedef CGAL::Coercion_traits<POLY_RAT_1,CGAL::Null_functor> CT;
     CGAL_static_assertion((
-    ::boost::is_same< typename CT::Are_implicit_interoperable,
+    ::std::is_same< typename CT::Are_implicit_interoperable,
     CGAL::Tag_false>::value));
     }
   */

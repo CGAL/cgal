@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceMeshParameterization}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, Mael Rouxel-Labbé, and Andreas Fabri}
+\cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, Mael Rouxel-Labbé, Andreas Fabri, and Hardik Jain}
 \cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from
 a suitable domain to the surface. In this package, we focus on triangulated surfaces
 that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.
@@ -49,9 +49,10 @@ This \cgal package implements several parameterization methods:
      Conditionally guaranteed if all weights are positive and border is convex.
   - Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03} :
      One-to-one mapping is guaranteed for convex border.
+  - Iterative Authalic Parameterization \cgalCite{cgal:j-lrsspp-19}.
 - Free border:
   - As Rigid As Possible Parameterization \cgalCite{liu2008local}
-  - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
+  - Least Squares Conformal Maps (LSCM) \cgalCite{cgal:lprm-lscm-02}.
 - Borderless:
   - Orbifold Tutte Embeddings \cgalCite{aigerman2015orbifold}.
 
@@ -60,6 +61,7 @@ The following classes implement the methods listed above:
 - `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 - `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 - `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+- `CGAL::Surface_mesh_parameterization::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 - `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer>`
 - `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 - `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<TriangleMesh, SolverTraits>`

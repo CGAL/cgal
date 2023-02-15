@@ -8,7 +8,7 @@ The class `Segment_Delaunay_graph_filtered_traits_2` provides a model for the
 `SegmentDelaunayGraphTraits_2` concept.
 
 The class `Segment_Delaunay_graph_filtered_traits_2` uses the filtering technique \cgalCite{cgal:bbp-iayed-01}
-to achieve traits for the `Segment_Delaunay_graph_2<Gt,DS>`
+to achieve traits for the `Segment_Delaunay_graph_2<Gt,St,DS>`
 class with efficient and exact predicates given an exact
 kernel `EK` and a filtering kernel `FK`. The geometric
 constructions associated provided by this class are equivalent
@@ -50,7 +50,7 @@ The default values for the template parameters are as follows:
  <li> `EM = Field_tag`,
  <li> `FK = Simple_cartesian<Interval_nt<false> >`,
  <li> `FM = Field_with_sqrt_tag`.
- <li> If the \sc{Gmp} package is  installed with \cgal, the template parameter `EK` has the default   value: `EK = Simple_cartesian<Gmpq>`, otherwise its   default value is   `EK = Simple_cartesian<Quotient<MP_Float> >`.
+ <li> If the \gmp package is  installed with \cgal, the template parameter `EK` has the default   value: `EK = Simple_cartesian<Gmpq>`, otherwise its   default value is   `EK = Simple_cartesian<Quotient<MP_Float> >`.
 </ul>
 
 \cgalModels `SegmentDelaunayGraphTraits_2`
@@ -58,12 +58,11 @@ The default values for the template parameters are as follows:
 \cgalModels `CopyConstructible`
 \cgalModels `Assignable`
 
-\sa `Kernel`
 \sa `SegmentDelaunayGraphTraits_2`
 \sa `CGAL::Field_tag`
 \sa `CGAL::Field_with_sqrt_tag`
-\sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
-\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>`
+\sa `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
+\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
@@ -156,7 +155,7 @@ The class `Segment_Delaunay_graph_filtered_traits_without_intersections_2` provi
 `SegmentDelaunayGraphTraits_2` concept.
 
 The class `Segment_Delaunay_graph_filtered_traits_without_intersections_2` uses the filtering technique \cgalCite{cgal:bbp-iayed-01}
-to achieve traits for the `Segment_Delaunay_graph_2<Gt,DS>`
+to achieve traits for the `Segment_Delaunay_graph_2<Gt,St,DS>`
 class with efficient and exact predicates given an exact
 kernel `EK` and a filtering kernel `FK`. The geometric
 constructions associated provided by this class are equivalent
@@ -205,7 +204,7 @@ will be the entry for the template parameter `CK`),
 <li> `EM = CGAL::Euclidean_ring_tag`,
 <li> `FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`,
 <li> `FM = CGAL::Field_with_sqrt_tag`.
-<li> If the \sc{Gmp} package is
+<li> If the \gmp package is
 installed with \cgal, the template parameter `EK` has the default
 value: `EK = CGAL::Simple_cartesian<CGAL::Gmpq>`, otherwise its
 default value is
@@ -221,8 +220,8 @@ default value is
 \sa `SegmentDelaunayGraphTraits_2`
 \sa `CGAL::Euclidean_ring_tag`
 \sa `CGAL::Field_with_sqrt_tag`
-\sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
-\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>`
+\sa `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
+\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`

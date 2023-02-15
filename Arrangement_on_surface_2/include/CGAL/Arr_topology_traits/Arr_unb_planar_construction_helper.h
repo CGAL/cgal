@@ -165,7 +165,7 @@ public:
   {
     // If we insert an edge whose right end lies on the top edge of the
     // ficititous bounding rectangle, we have to flip the order of predecessor
-    // halfegdes.
+    // halfedges.
     return ((event->parameter_space_in_x() == ARR_INTERIOR) &&
             (event->parameter_space_in_y() == ARR_TOP_BOUNDARY));
   }
@@ -176,7 +176,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

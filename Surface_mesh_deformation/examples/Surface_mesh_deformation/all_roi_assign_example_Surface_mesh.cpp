@@ -13,11 +13,17 @@ typedef boost::graph_traits<Mesh>::halfedge_iterator    halfedge_iterator;
 
 typedef CGAL::Surface_mesh_deformation<Mesh> Surface_mesh_deformation;
 
-int main()
+int main(int argc, char** argv)
 {
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/plane.off");
+
   Mesh mesh;
-  std::ifstream in("data/plane.off");
-  in >>mesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // Create a deformation object
   Surface_mesh_deformation deform_mesh(mesh);
 
@@ -41,7 +47,7 @@ int main()
     return 1;
   }
 
-  // Use set_target_position() to set the constained position
+  // Use set_target_position() to set the constrained position
   // of control_1. control_2 remains at the last assigned positions
   Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
@@ -51,7 +57,7 @@ int main()
   // The function deform() can be called several times if the convergence has not been reached yet
   deform_mesh.deform();
 
-  // Set the constained position of control_2
+  // Set the constrained position of control_2
   Surface_mesh_deformation::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 

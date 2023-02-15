@@ -32,8 +32,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 /// [Add 1D features]
 #include "read_polylines.h"
@@ -44,7 +43,7 @@ using namespace CGAL::parameters;
 // not documented.
 bool add_1D_features(const CGAL::Image_3& image,
                      Mesh_domain& domain,
-                     const char* lines_fname)
+                     const std::string lines_fname)
 {
   typedef K::Point_3 Point_3;
   typedef unsigned char Word_type;
@@ -72,7 +71,7 @@ bool add_1D_features(const CGAL::Image_3& image,
 
 int main(int argc, char* argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/420.inr";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/420.inr");
   // Loads image
   CGAL::Image_3 image;
   if(!image.read(fname)){
@@ -84,7 +83,7 @@ int main(int argc, char* argv[])
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
   /// Declare 1D-features, see above [Call add_1D_features]
-  const char* lines_fname = (argc>2)?argv[2]:"data/420.polylines.txt";
+  const std::string lines_fname = (argc>2)?argv[2]:CGAL::data_file_path("images/420.polylines.txt");
 
   if(!add_1D_features(image, domain, lines_fname)) {
     return EXIT_FAILURE;
@@ -92,9 +91,9 @@ int main(int argc, char* argv[])
   /// [Call add_1D_features]
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(edge_size=6,
-                         facet_angle=30, facet_size=6, facet_distance=4,
-                         cell_radius_edge_ratio=3, cell_size=8);
+  Mesh_criteria criteria(params::edge_size(6).
+                                 facet_angle(30).facet_size(6).facet_distance(4).
+                                 cell_radius_edge_ratio(3).cell_size(8));
   /// [Mesh criteria]
 
   // Meshing
@@ -102,7 +101,8 @@ int main(int argc, char* argv[])
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

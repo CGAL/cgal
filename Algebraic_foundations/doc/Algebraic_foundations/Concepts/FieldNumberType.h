@@ -14,7 +14,7 @@ for Cartesian kernels.
 \cgalHasModel double
 \cgalHasModel `CGAL::Gmpq`
 \cgalHasModel `CGAL::Interval_nt`
-\cgalHasModel \ref CGAL::Interval_nt_advanced
+\cgalHasModel `CGAL::Interval_nt_advanced`
 \cgalHasModel `CGAL::Lazy_exact_nt<FieldNumberType>`
 \cgalHasModel `CGAL::Quotient<RingNumberType>`
 \cgalHasModel `leda_rational`

@@ -1,18 +1,14 @@
-cmake_minimum_required(VERSION 3.1...3.15)
-project( TDS_3_Tests )
+cmake_minimum_required(VERSION 3.1...3.23)
+project(TDS_3_Tests)
 
+find_package(CGAL REQUIRED)
 
-find_package(CGAL QUIET)
+include_directories(BEFORE "./include")
 
-if ( CGAL_FOUND )
-
-  include_directories (BEFORE "./include")
-
-  find_package( TBB QUIET )
-  create_single_source_cgal_program( "test_triangulation_tds_3.cpp" )
-  if(TBB_FOUND)
-    CGAL_target_use_TBB(test_triangulation_tds_3)
-  endif()
-else()
-  message(STATUS "This program requires the CGAL library, and will not be compiled.")
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+create_single_source_cgal_program("test_triangulation_tds_3.cpp")
+create_single_source_cgal_program("test_io_tds3.cpp")
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(test_triangulation_tds_3 PUBLIC CGAL::TBB_support)
 endif()

@@ -1,1 +1,0 @@
-labschedule --for='2 4 6 8 10' -for='2 4 6 8 10' --nesting=0 -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_BOX_INTERSECTION_CUTOFF=10 -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS'./tetrahedra_and_grid cube.nef3 %1 %2 %3

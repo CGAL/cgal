@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>928</height>
+    <width>568</width>
+    <height>1049</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -342,10 +342,10 @@
       <item row="3" column="1">
        <widget class="DoubleEdit" name="facetAngle">
         <property name="inputMask">
-         <string>25,00</string>
+         <string/>
         </property>
         <property name="text">
-         <string>25,00</string>
+         <string>25.00</string>
         </property>
        </widget>
       </item>
@@ -516,27 +516,69 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="labeledImgGroup">
+     <property name="title">
+      <string>Labeled Images</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <widget class="QLabel" name="useWeights_label">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Use Weighted Image</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="useWeights_checkbox">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="tristate">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="weightsSigma_label">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>standard deviation parameter of the internal Gaussian filter</string>
+        </property>
+        <property name="text">
+         <string>Sigma </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="weightsSigma">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QCheckBox" name="facegraphCheckBox">
      <property name="text">
       <string>Create as FaceGraph</string>
      </property>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::MinimumExpanding</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -558,13 +600,31 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>detectComponents</tabstop>
+  <tabstop>protectEdges</tabstop>
+  <tabstop>protect</tabstop>
+  <tabstop>sharpEdgesAngle</tabstop>
+  <tabstop>edgeSizing</tabstop>
+  <tabstop>noEdgeSizing</tabstop>
+  <tabstop>approx</tabstop>
   <tabstop>noApprox</tabstop>
+  <tabstop>facetSizing</tabstop>
   <tabstop>noFacetSizing</tabstop>
+  <tabstop>facetAngle</tabstop>
   <tabstop>noAngle</tabstop>
+  <tabstop>tetSizing</tabstop>
   <tabstop>noTetSizing</tabstop>
+  <tabstop>tetShape</tabstop>
   <tabstop>noTetShape</tabstop>
+  <tabstop>value_outside_spinBox</tabstop>
+  <tabstop>iso_value_spinBox</tabstop>
+  <tabstop>inside_is_less_checkBox</tabstop>
+  <tabstop>useWeights_checkbox</tabstop>
+  <tabstop>weightsSigma</tabstop>
+  <tabstop>facegraphCheckBox</tabstop>
   <tabstop>checkBox</tabstop>
   <tabstop>manifoldCheckBox</tabstop>
+  <tabstop>facetTopology</tabstop>
  </tabstops>
  <resources/>
  <connections>

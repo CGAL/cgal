@@ -23,6 +23,7 @@
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
@@ -74,6 +75,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
   typedef typename SNC_structure::Items                Items;
   typedef typename Map::Sphere_map                     Sphere_map;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
+  typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
   typedef SNC_decorator                                Base;
   typedef CGAL::SNC_constructor<Items, SNC_structure>  SNC_constructor;
   typedef CGAL::SNC_external_structure<Items, SNC_structure>
@@ -82,10 +84,13 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
   typedef CGAL::SNC_SM_overlayer<Items, SM_decorator>  SM_overlayer;
   typedef CGAL::SM_point_locator<SM_decorator>         SM_point_locator;
   typedef CGAL::SNC_point_locator<SNC_decorator>       SNC_point_locator;
+  typedef CGAL::SNC_point_locator<SNC_const_decorator> SNC_const_point_locator;
 
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
   typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
   typedef typename SNC_structure::Volume_handle Volume_handle;
   typedef typename SNC_structure::SVertex_handle SVertex_handle;
   typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
@@ -144,12 +149,12 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     return v01;
   }
 
-  Vertex_handle create_local_view_on( const Point_3& p, Halfedge_handle e) {
+  Vertex_handle create_local_view_on( const Point_3& p, Halfedge_const_handle e) {
     SNC_constructor C(*this->sncp());
     return C.create_from_edge( e, p);
   }
 
-  Vertex_handle create_local_view_on( const Point_3& p, Halffacet_handle f) {
+  Vertex_handle create_local_view_on( const Point_3& p, Halffacet_const_handle f) {
     SNC_constructor C(*this->sncp());
     return C.create_from_facet( f, p);
   }
@@ -167,51 +172,22 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
             typename Selection,
             typename Association>
   class Intersection_call_back :
-    public SNC_point_locator::Intersection_call_back
+    public SNC_const_point_locator::Intersection_call_back
   {
     typedef typename SNC_decorator::Decorator_traits Decorator_traits;
     typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
     typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 
   public:
-    Intersection_call_back( SNC_structure& s0, SNC_structure& s1,
+    Intersection_call_back( const SNC_structure& s0, const SNC_structure& s1,
                             const Selection& _bop, SNC_structure& r,
                             bool invert_order, Association& Ain) :
       snc0(s0), snc1(s1), bop(_bop), result(r),
       inverse_order(invert_order), A(Ain) {}
 
-      void operator()(Halfedge_handle e0, Object_handle o1, const Point_3& ip)
-      const {
-
-#ifdef CGAL_NEF3_DUMP_STATISTICS
-      ++number_of_intersections;
-#endif
-
-      Halfedge_handle e;
-      Halffacet_handle f;
-
-      Point_3 p(normalized(ip));
-
-      CGAL_NEF_TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
-#ifdef CGAL_NEF_DEBUG
-      CGAL_NEF_TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
-      if( CGAL::assign( e, o1)) {
-        CGAL_NEF_TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());
-      }
-      else if( CGAL::assign( f, o1)) {
-        CGAL_NEF_TRACEN("face 1 has plane equation " << f->plane());
-      }
-      else
-              CGAL_error_msg( "wrong handle");
-#endif
-
-#if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
-      timer_overlay.start();
-#endif
-
-      if( CGAL::assign( e, o1)) {
-        //        std::cerr << "inverse order " << inverse_order << std::endl;
-
+      void operator()(Halfedge_handle e0, Halfedge_handle e, const Point_3& ip) const override
+      {
+        Point_3 p(normalized(ip));
 #ifdef CGAL_NEF_EXPERIMENTAL_CODE
         typename CGAL::Edge_edge_overlay<SNC_structure> eeo(result, e0, e);
         Sphere_map* M0 = eeo.create_edge_edge_overlay(p, bop, inverse_order, A);
@@ -229,7 +205,10 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
         result.delete_vertex(v1);
 #endif
       }
-      else if( CGAL::assign( f, o1)) {
+
+      void operator()(Halfedge_handle e0, Halffacet_handle f, const Point_3& ip) const override
+      {
+        Point_3 p(normalized(ip));
 #ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
         Binary_operation D(result);
         Vertex_handle v0, v1;
@@ -247,14 +226,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
         O.simplify(A);
 #endif // CGAL_NEF3_OVERLAY_BY_HAND_OFF
       }
-      else
-        CGAL_error_msg( "wrong handle");
 
-#if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
-      timer_overlay.stop();
-#endif
-
-    }
   private:
     const SNC_structure& snc0;
     const SNC_structure& snc1;
@@ -307,18 +279,12 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       number_of_intersection_candidates=0;
 #endif
 
-    Unique_hash_map<Vertex_const_handle, bool> ignore(false);
+    Unique_hash_map<Vertex_const_handle, bool> ignore(false, snc1.number_of_vertices());
     Vertex_const_iterator v0;
 
     //    CGAL_NEF_SETDTHREAD(19*43*131);
     CGAL_NEF_TRACEN("=> binary operation");
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-    SNC_constructor C1(snc1);
-    C1.create_box();
-    SNC_constructor C2(snc2);
-    C2.create_box();
-#endif
 
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "
                     << this->sncp()->number_of_vertices());
@@ -326,6 +292,9 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     CGAL_NEF_TRACEN("=> for all v0 in snc1, qualify v0 with respect snc2");
     //    int i=2;
     Association A;
+    A.reserve(snc1.number_of_shalfedges() + snc1.number_of_shalfloops() +
+              snc2.number_of_shalfedges() + snc2.number_of_shalfloops());
+
     SHalfedge_const_iterator sei;
     CGAL_forall_shalfedges(sei, snc1)
       A.initialize_hash(sei);
@@ -486,18 +455,16 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     // SNC structure finds an intersection between the segment defined
     // by an edge on the other SNC structure, the call back method is
     // called with the intersecting objects and the intersection point.
-    // The responsability of the call back functor is to construct the
+    // The responsibility of the call back functor is to construct the
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
 
     // CGAL_NEF_SETDTHREAD(19*509*43*131);
 
-    Intersection_call_back<SNC_decorator, Selection, Association> call_back0
-      ( const_cast<SNC_structure&>(snc1), const_cast<SNC_structure&>(snc2),
-        BOP, *this->sncp(), false, A);
-    Intersection_call_back<SNC_decorator, Selection, Association> call_back1
-      ( const_cast<SNC_structure&>(snc2), const_cast<SNC_structure&>(snc2),
-        BOP, *this->sncp(), true, A);
+    Intersection_call_back<SNC_const_decorator, Selection, Association> call_back0
+      ( snc1, snc2, BOP, *this->sncp(), false, A);
+    Intersection_call_back<SNC_const_decorator, Selection, Association> call_back1
+      ( snc2, snc2, BOP, *this->sncp(), true, A);
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
     double split_intersection = timer_overlay.time();
@@ -537,24 +504,10 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     }
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "
                     << this->sncp()->number_of_vertices());
-#elif defined CGAL_NEF3_INTERSECTION_NAIVE
-
-    CGAL::SNC_point_locator_naive<SNC_decorator> pln1;
-    CGAL::SNC_point_locator_naive<SNC_decorator> pln2;
-    pln1.initialize(const_cast<SNC_structure*>(&snc1));
-    pln2.initialize(const_cast<SNC_structure*>(&snc2));
-    Halfedge_iterator e0;
-    CGAL_forall_edges(e0,const_cast<SNC_structure&>(snc1))
-      pln2.intersect_with_edges_and_facets(e0,call_back0);
-    CGAL_forall_edges(e0,const_cast<SNC_structure&>(snc2))
-      pln1.intersect_with_facets( e0, call_back1);
-
 #else
     CGAL_NEF_TRACEN("intersection by fast box intersection");
-        binop_intersection_test_segment_tree<SNC_decorator> binop_box_intersection;
-        binop_box_intersection(call_back0, call_back1,
-                               const_cast<SNC_structure&>(snc1),
-                               const_cast<SNC_structure&>(snc2));
+        binop_intersection_test_segment_tree<SNC_const_decorator> binop_box_intersection;
+        binop_box_intersection(call_back0, call_back1, snc1, snc2);
 #endif
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION

@@ -1,13 +1,4 @@
 #include <CGAL/config.h>
-#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
-#include <iostream>
-int main()
-{
-  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
-}
-
-#else
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Epeck_d.h>
@@ -19,6 +10,7 @@ int main()
 #include <fstream>
 #include <cstdlib>
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -27,7 +19,7 @@ void test(const int d, const string & type, const int N)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that DC contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename DC::Full_cell_handle Full_cell_handle;
     typedef typename DC::Face Face;
     typedef typename DC::Point Point;
@@ -67,7 +59,7 @@ void test(const int d, const string & type, const int N)
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << dt.number_of_full_cells();
     cerr << "\nThe triangulation has current dimension " << dt.current_dimension();
-    CGAL_assertion( dt.number_of_full_cells() == nbis+nbfs);
+    assert( dt.number_of_full_cells() == nbis+nbfs);
 
     cerr << "\nTraversing finite vertices... ";
     size_t nbfv(0);
@@ -132,7 +124,7 @@ void go(const int N)
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(NULL)));
+    srand(static_cast<unsigned int>(time(nullptr)));
     int N = 10;
     if( argc > 1 )
         N = atoi(argv[1]);
@@ -145,5 +137,3 @@ int main(int argc, char **argv)
     cerr << endl;
     return 0;
 }
-
-#endif

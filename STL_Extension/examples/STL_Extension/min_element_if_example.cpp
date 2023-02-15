@@ -14,8 +14,7 @@ int main()
   std::cout << "min_odd = "
             << *CGAL::min_element_if(v.begin(),
                                      v.end(),
-                                     CGAL::compose1_1(boost::bind2nd(std::greater< int >(), 0),
-                                                      boost::bind2nd(std::modulus< int >(), 2)))
+                                     [](int i){ return (i%2) > 0; })
             << std::endl;
   return 0;
 }

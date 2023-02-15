@@ -197,7 +197,7 @@ void create_flat_and_wire_sphere(FLOAT R,
   const float sectors=float(prec);
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
-  create_flat_sphere(R, positions_spheres, normals_spheres);
+  create_flat_sphere(R, positions_spheres, normals_spheres, prec);
 
   float T, P;
   float x[4],y[4],z[4];

@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/io.h>
 
 #include <iostream>
@@ -21,6 +22,7 @@ int main()
 
   std::ofstream out("out.inp");
   out.precision(17);
-  CGAL::write_inp(out, sm, "out.inp", "S4R");
-  return 0;
+  CGAL::IO::write_INP(out, "out.inp", "S4R", sm);
+
+  return EXIT_SUCCESS;
 }

@@ -23,7 +23,6 @@
 #include <algorithm>
 #include <numeric>
 #include <CGAL/Random_convex_set_traits_2.h>
-#include <boost/functional.hpp>
 
 namespace CGAL {
 
@@ -80,7 +79,7 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     points.begin(),
-    boost::bind2nd( Sum(), scale( centroid, FT( -1))));
+    [&centroid, &sum, &scale](const Point_2& p) { return sum(p, scale(centroid, FT( -1))); });
 
   // sort them according to their direction's angle
   // w.r.t. the positive x-axis:
@@ -102,8 +101,9 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     points.begin(),
-    boost::bind2nd( Sum(), sum( centroid,
-                         scale( new_centroid, FT( -1)))));
+    [&centroid, &new_centroid, &sum, &scale](const Point_2& p)
+    {return sum(p, sum( centroid, scale(new_centroid, FT( -1)))); }
+  );
 
   // compute maximal coordinate:
   FT maxcoord( max_coordinate(
@@ -118,7 +118,7 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     o,
-    boost::bind2nd( Scale(), FT( pg.range()) / maxcoord));
+    [&pg, &maxcoord, &scale](const Point_2& p){ return scale(p, FT( pg.range()) / maxcoord); });
 
 } // random_convex_set_2( n, o, pg, t)
 

@@ -39,7 +39,7 @@ void read(Points& points, char* argv)
 
 #else
  std::ifstream data(argv, std::ios::in | std::ios::binary);
-  CGAL::set_binary_mode(data);
+  CGAL::IO::set_binary_mode(data);
   CGAL::read(data,d);
   CGAL::read(data,n);
 

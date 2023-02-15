@@ -19,7 +19,7 @@ int main() {
 
   Vertex_circulator vc = t.incident_vertices(t.infinite_vertex()),
     done(vc);
-  if (vc != 0) {
+  if (vc != nullptr) {
     do { std::cout << vc->point() << std::endl;
     }while(++vc != done);
   }

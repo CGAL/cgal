@@ -1061,7 +1061,7 @@ private:
   template<typename NumberType>
   bool number(NumberType& entry) {
     // whitespace(); the following >> should care for this
-    from >> CGAL::iformat(entry);
+    from >> CGAL::IO::iformat(entry);
     return from.good();
   }
 
@@ -1514,7 +1514,7 @@ private:
         return this->err2("expected number after '%' in section '%'",
                           t, D_section);
 
-      // multiply by two if approriate:
+      // multiply by two if appropriate:
       if (multiply_by_two)
         val *= NT(2);
 

@@ -72,16 +72,16 @@ private:
   QMenu* getHelpMenu();
 
 protected:
-  DemosMainWindow (QWidget * parent = 0, ::Qt::WindowFlags flags = 0 );
+  DemosMainWindow (QWidget * parent = nullptr, ::Qt::WindowFlags flags = ::Qt::WindowType(0) );
   ~DemosMainWindow();
   void setupStatusBar();
   void addNavigation(QGraphicsView*);
-  void setupOptionsMenu(QMenu* menu  = 0);
-  void addAboutCGAL(QMenu* menu  = 0);
-  void addAboutDemo(QString htmlResourceName, QMenu* menu  = 0);
+  void setupOptionsMenu(QMenu* menu  = nullptr);
+  void addAboutCGAL(QMenu* menu  = nullptr);
+  void addAboutDemo(QString htmlResourceName, QMenu* menu  = nullptr);
   void setupExportSVG(QAction*, QGraphicsView*);
 
-  void addRecentFiles(QMenu* menu, QAction* insertBefore = 0);
+  void addRecentFiles(QMenu* menu, QAction* insertBefore = nullptr);
 
   void writeState(QString groupname = "MainWindow");
   void readState(QString groupname = "MainWindow",

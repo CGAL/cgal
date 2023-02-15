@@ -52,10 +52,10 @@ public:
   { *this = l.rep().direction(); }
 
   explicit DirectionC3(const Ray_3 &r)
-  { *this = r.direction(); }
+  { *this = r.rep().direction(); }
 
   explicit DirectionC3(const Segment_3 &s)
-  { *this = s.direction(); }
+  { *this = s.rep().direction(); }
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
     : base(CGAL::make_array(x, y, z)) {}

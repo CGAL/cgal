@@ -65,14 +65,12 @@ typedef Delaunay_graph::Edge Delaunay_edge;
 /*!
 
 */
-typedef Delaunay_graph::All_edges_iterator
-All_Delaunay_edges_iterator;
+typedef Delaunay_graph::All_edges_iterator All_Delaunay_edges_iterator;
 
 /*!
 
 */
-typedef Delaunay_graph::Finite_edges_iterator
-Finite_Delaunay_edges_iterator;
+typedef Delaunay_graph::Finite_edges_iterator Finite_Delaunay_edges_iterator;
 
 /*!
 
@@ -93,13 +91,9 @@ model of the concepts `DefaultConstructible`,
 
 `bool operator()(Delaunay_graph dg, Delaunay_edge_circulator ec)`
 
-`bool operator()(Delaunay_graph dg,`
+`bool operator()(Delaunay_graph dg, All_Delaunay_edges_iterator eit)`
 
-`All_Delaunay_edges_iterator eit)`
-
-`bool operator()(Delaunay_graph dg,`
-
-`Finite_Delaunay_edges_iterator eit)`
+`bool operator()(Delaunay_graph dg, Finite_Delaunay_edges_iterator eit)`
 
 The functor returns `true` iff the edge is rejected.
 */

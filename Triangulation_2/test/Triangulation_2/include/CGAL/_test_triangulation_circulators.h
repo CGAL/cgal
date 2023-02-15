@@ -48,7 +48,7 @@ _test_circulators( const Tr &T )
     {
       vc0 = vc = T.incident_vertices( vit, vit->face() );
       if( !vc.is_empty()){
-        if( vc != NULL){
+        if( vc != nullptr){
           do {
             vc++; nvi++;
           } while (vc != vc0);
@@ -57,7 +57,7 @@ _test_circulators( const Tr &T )
       //test operator --()
        vc0 = vc = T.incident_vertices( vit, vit->face() );
       if( !vc.is_empty()){
-        if( vc != NULL){
+        if( vc != nullptr){
           do {
             vc--; nvi_r++;
           } while (vc != vc0);

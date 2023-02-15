@@ -15,13 +15,13 @@ typedef Edge_container Ec;
 typedef Point_container Pc;
 typedef Viewer_interface Vi;
 
-typedef Scene_lcc_item::LCC::Dart_const_handle Dart_const_handle;
-typedef Scene_lcc_item::LCC::Dart_handle Dart_handle;
+typedef Scene_lcc_item::LCC::Dart_const_descriptor Dart_const_descriptor;
+typedef Scene_lcc_item::LCC::Dart_descriptor Dart_descriptor;
 typedef Scene_lcc_item::LCC::Point Point;
 
 struct Facet{
   Facet():normal(Scene_lcc_item::LCC::Vector(0,0,0)){}
-  Dart_const_handle f_handle;
+  Dart_const_descriptor f_handle;
   std::vector<Point> points;
   Scene_lcc_item::LCC::Vector normal;
   std::size_t volume_id;
@@ -46,13 +46,13 @@ struct lcc_priv{
   lcc_priv(const Scene_lcc_item::LCC& lcc)
     :lcc(lcc), is_mono_color(true){}
 
-  bool compute_face(Dart_const_handle dh, Facet& f)
+  bool compute_face(Dart_const_descriptor dh, Facet& f)
   {
     f.f_handle = dh;
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
+    Dart_const_descriptor cur=dh;
+    Dart_const_descriptor min=dh;
     do
     {
       if (!lcc.is_next_exist(cur)) return false; // open face=>not filled
@@ -154,7 +154,7 @@ struct lcc_priv{
         bool is_process;
       };
 
-      typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+      typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
       typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
       typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits>     Fb1;
       typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>         Fb;
@@ -164,21 +164,21 @@ struct lcc_priv{
 
       P_traits cdt_traits(f.normal);
       CDT cdt(cdt_traits);
-        // (1) We insert all the edges as contraint in the CDT.
-        typename CDT::Vertex_handle previous=NULL, first=NULL;
+        // (1) We insert all the edges as constraint in the CDT.
+        typename CDT::Vertex_handle previous=nullptr, first=nullptr;
         for (unsigned int i=0; i<f.size(); ++i)
         {
           typename CDT::Vertex_handle vh = cdt.insert(f.points[i]);
-          if(first==NULL)
+          if(first==nullptr)
           { first=vh; }
           vh->info().v=f.normal;
 
-          if(previous!=NULL && previous!=vh)
+          if(previous!=nullptr && previous!=vh)
           { cdt.insert_constraint(previous, vh); }
           previous=vh;
         }
 
-        if (previous!=NULL && previous!=first)
+        if (previous!=nullptr && previous!=first)
         { cdt.insert_constraint(previous, first); }
 
         // (2) We mark all external triangles
@@ -191,8 +191,8 @@ struct lcc_priv{
         }
         // (2.2) We check if the facet is external or internal
         std::queue<typename CDT::Face_handle> face_queue;
-        typename CDT::Face_handle face_internal = NULL;
-        if (cdt.infinite_vertex()->face()!=NULL)
+        typename CDT::Face_handle face_internal = nullptr;
+        if (cdt.infinite_vertex()->face()!=nullptr)
         { face_queue.push(cdt.infinite_vertex()->face()); }
         while(!face_queue.empty())
         {
@@ -205,10 +205,10 @@ struct lcc_priv{
             {
               if(!cdt.is_constrained(std::make_pair(fh, i)))
               {
-                if (fh->neighbor(i)!=NULL)
+                if (fh->neighbor(i)!=nullptr)
                 { face_queue.push(fh->neighbor(i)); }
               }
-              else if (face_internal==NULL)
+              else if (face_internal==nullptr)
               {
                 face_internal = fh->neighbor(i);
               }
@@ -216,7 +216,7 @@ struct lcc_priv{
           }
         }
 
-        if ( face_internal!=NULL )
+        if ( face_internal!=nullptr )
         { face_queue.push(face_internal); }
 
         while(!face_queue.empty())
@@ -231,7 +231,7 @@ struct lcc_priv{
             {
               if(!cdt.is_constrained(std::make_pair(fh, i)))
               {
-                if (fh->neighbor(i)!=NULL)
+                if (fh->neighbor(i)!=nullptr)
                 { face_queue.push(fh->neighbor(i)); }
               }
             }
@@ -428,7 +428,7 @@ void Scene_lcc_item::computeElements() const
             if ( !d->lcc.is_marked(itf, markedges))
             {
               Point p1 = d->lcc.point(itf);
-              LCC::Dart_const_handle d2 = d->lcc.other_extremity(itf);
+              LCC::Dart_const_descriptor d2 = d->lcc.other_extremity(itf);
               Point p2 = d->lcc.point(d2);
               d->lines.push_back(p1.x() + offset.x);
               d->lines.push_back(p1.y() + offset.y);
@@ -485,7 +485,7 @@ void Scene_lcc_item::computeElements() const
                                             static_cast<int>(d->colors.size()*sizeof(float)));
   }
   else
-    getTriangleContainer(0)->allocate(Tri::FColors, 0, 0);
+    getTriangleContainer(0)->allocate(Tri::FColors, nullptr, 0);
 
   getEdgeContainer(0)->allocate(
         Ec::Vertices, d->lines.data(),

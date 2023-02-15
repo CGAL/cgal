@@ -35,8 +35,7 @@ public:
   template<class Refs, class Traits>
   struct Halfedge_wrapper
   {
-    typedef typename Traits::Segment_2 Segment ;
-    typedef Straight_skeleton_halfedge_base_2 < Refs, Segment > Halfedge;
+    typedef Straight_skeleton_halfedge_base_2 < Refs > Halfedge;
   };
 
   template<class Refs, class Traits>

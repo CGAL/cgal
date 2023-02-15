@@ -1,4 +1,10 @@
-// Copyright (c) 2010 GeometryFactory (France).
+// Copyright (c) 1997-2021
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).
+// GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -14,25 +20,29 @@
 #ifndef CGAL_INTERSECTIONS_3_BBOX_3_SPHERE_3_H
 #define CGAL_INTERSECTIONS_3_BBOX_3_SPHERE_3_H
 
+#include <CGAL/Intersections_3/internal/Bbox_3_Sphere_3_do_intersect.h>
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Sphere_3.h>
-
-#include <CGAL/Intersections_3/internal/Bbox_3_Sphere_3_do_intersect.h>
 
 namespace CGAL {
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_3& a,
-                  const Sphere_3<K>& b) {
-  return K().do_intersect_3_object()(a, b);
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& box,
+             const Sphere_3<K>& s)
+{
+  return K().do_intersect_3_object()(box, s);
 }
 
 template<typename K>
-bool do_intersect(const Sphere_3<K>& a,
-                  const CGAL::Bbox_3& b) {
-  return K().do_intersect_3_object()(a, b);
+typename K::Boolean
+do_intersect(const Sphere_3<K>& s,
+             const CGAL::Bbox_3& box)
+{
+  return K().do_intersect_3_object()(s, box);
 }
 
-}
+} // namespace CGAL
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_SPHERE_3_H

@@ -23,7 +23,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 #include <CGAL/representation_tags.h>
 #include <CGAL/Cartesian_converter.h>
@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-template <class CK, class Rep = typename CK::Rep_tag /* Cartesian_tag */>
+template <class CK, class Rep = typename CK::Rep_tag /* (Cartesian_tag) */>
 struct Exact_kernel_selector
 {
   typedef typename internal::Exact_field_selector<typename CK::RT>::Type  Exact_nt;

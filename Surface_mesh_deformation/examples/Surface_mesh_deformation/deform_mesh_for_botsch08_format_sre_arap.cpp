@@ -16,15 +16,25 @@ typedef CGAL::Surface_mesh_deformation<Polyhedron,CGAL::Default, CGAL::Default, 
 
 int main(int argc,char** argv)
 {
+  std::string off_name=CGAL::data_file_path("meshes/cactus.off"),
+              sel_name="data/cactus.sel",
+              def_name="data/cactus.def";
   if  ( argc!=4){
     std::cerr <<"Usage " << argv[0] << " input.off input.sel input.def\n";
-    return 1;
+    std::cerr <<"Using default values: " << off_name << " " << sel_name << " " << def_name << "\n";
   }
+  else
+  {
+    off_name=argv[1];
+    sel_name=argv[2];
+    def_name=argv[3];
+  }
+
   Polyhedron mesh;
-  std::ifstream input(argv[1]);
+  std::ifstream input(off_name);
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
-    std::cerr<< argv[1] << " is not a valid off file" << std::endl;
+    std::cerr<< off_name << " is not a valid off file" << std::endl;
     return 1;
   }
   input.close();
@@ -44,7 +54,7 @@ int main(int argc,char** argv)
   boost::tie(vb, ve) = vertices(mesh);
 
   //the selection is set by a file
-  input.open(argv[2]);
+  input.open(sel_name);
   std::string line;
   std::vector<vertex_descriptor> control_vertices;
   while(getline(input, line))
@@ -69,7 +79,7 @@ int main(int argc,char** argv)
   }
 
   //define the transformation
-  input.open(argv[3]);
+  input.open(def_name);
   double m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, hw, sink;
   getline(input, line); // skip first comment line
   input >> m00 >> m01 >> m02 >> m03;

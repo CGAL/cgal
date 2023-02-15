@@ -20,11 +20,9 @@
 #include <CGAL/Origin.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/Point_2.h>
 
 namespace CGAL {
@@ -36,7 +34,7 @@ class Weighted_point_2 : public R_::Kernel_base::Weighted_point_2
   typedef typename R_::FT                             RT;
 
   typedef Weighted_point_2<R_>                        Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Weighted_point_2>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Weighted_point_2>::value));
 
 public:
   typedef Dimension_tag<2>                            Ambient_dimension;
@@ -70,6 +68,9 @@ public:
   Weighted_point_2(const Rep& p)
       : Rep(p) {}
 
+  Weighted_point_2(Rep&& p)
+      : Rep(std::move(p)) {}
+
   explicit
   Weighted_point_2(const Point_2& p)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, 0))
@@ -83,50 +84,50 @@ public:
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), x, y))
   {}
 
-  typename cpp11::result_of<typename R::Construct_point_2( Weighted_point_2)>::type
+  decltype(auto)
   point() const
   {
     return typename R::Construct_point_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_weight_2( Weighted_point_2)>::type
+  decltype(auto)
   weight() const
   {
     return typename R::Compute_weight_2()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_x_2( Point_2)>::type
+  decltype(auto)
   x() const
   {
     return typename R::Compute_x_2()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2( Point_2)>::type
+  decltype(auto)
   y() const
   {
     return typename R::Compute_y_2()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2( Point_2)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_2( Point_2)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2( Point_2)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2( Point_2)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
@@ -143,7 +144,7 @@ public:
     return hw();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -171,7 +172,7 @@ public:
 
   Weighted_point_2 transform(const Aff_transformation_2 &t) const
   {
-    return Weighted_point_2(t.transform(point(),weight()));
+    return Weighted_point_2(t.transform(point()),weight());
   }
 
 };
@@ -237,7 +238,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Weighted_point_2<R>& p,const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.point() << ' ' << p.weight();
     case IO::BINARY :
@@ -254,7 +255,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Weighted_point_2<R>& p,const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
       return os << p.point() << ' ' << p.weight();
@@ -284,9 +285,9 @@ std::istream&
 extract(std::istream& is, Weighted_point_2<R>& p, const Cartesian_tag&)
 {
   typename R::FT x, y, weight;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-      is >> iformat(x) >> iformat(y) >> iformat(weight);
+      is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(weight);
         break;
     case IO::BINARY :
         read(is, x);
@@ -295,7 +296,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Cartesian_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -310,7 +311,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hw;
   typename R::FT weight;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
       is >> hx >> hy >> hw >> weight;
@@ -323,7 +324,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Homogeneous_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

@@ -11,7 +11,7 @@
 #endif
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 
-#include <CGAL/Polygon_mesh_slicer_3.h>
+#include <CGAL/Polygon_mesh_slicer.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/bounding_box.h>
@@ -50,21 +50,17 @@ public:
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor value_type;
   typedef typename Ppmap::value_type result_type;
 private:
-  Ppmap* ppmap;
+  Ppmap ppmap;
 
 public:
-  Point_projector()
-    : ppmap(NULL)
-  {}
 
   Point_projector(PolygonMesh& pm)
-    : ppmap(&get(CGAL::vertex_point, pm))
+    : ppmap(get(CGAL::vertex_point, pm))
   {}
 
   result_type operator()(const value_type& v) const
   {
-    assert(ppmap != NULL);
-    return (*ppmap)[v];
+    return ppmap[v];
   }
 };
 
@@ -106,13 +102,13 @@ int main(int argc, char* argv[])
   t.start();
   std::cerr << "bbox"<< std::endl;
   Iso_cuboid_3 ic = CGAL::bounding_box(points(m).begin(), points(m).end());
-  Point_3 p = midpoint(ic.min(), ic.max());
-  double zmin = ic.min().z();
-  double zmax = ic.max().z();
+  Point_3 p = midpoint((ic.min)(), (ic.max)());
+  double zmin = (ic.min)().z();
+  double zmax = (ic.max)().z();
   double delta = (zmax - zmin)/N;
 
   std::cerr << "slicer"<< std::endl;
-  CGAL::Polygon_mesh_slicer_3<Mesh, K> slicer(m);
+  CGAL::Polygon_mesh_slicer<Mesh, K> slicer(m);
 
 
   std::ofstream out("out.off");

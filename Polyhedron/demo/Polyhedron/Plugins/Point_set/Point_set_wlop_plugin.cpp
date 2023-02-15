@@ -107,7 +107,7 @@ class Point_set_demo_point_set_wlop_simplification_and_regularization_dialog : p
 {
   Q_OBJECT
   public:
-    Point_set_demo_point_set_wlop_simplification_and_regularization_dialog(QWidget * /*parent*/ = 0)
+    Point_set_demo_point_set_wlop_simplification_and_regularization_dialog(QWidget * /*parent*/ = nullptr)
     {
       setupUi(this);
     }
@@ -127,7 +127,7 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     // Gets options

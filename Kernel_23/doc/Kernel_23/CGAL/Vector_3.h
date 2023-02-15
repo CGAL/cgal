@@ -68,12 +68,12 @@ introduces a vector `v` initialized to `(x, y, z)`.
 Vector_3(int x, int y, int z);
 
 /*!
-introduces a vector `v` initialized to `(x, y, z).
+introduces a vector `v` initialized to `(x, y, z)`.
 */
 Vector_3(double x, double y, double z);
 
 /*!
-introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw).
+introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw)`.
 */
 Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));
 
@@ -137,19 +137,19 @@ Kernel::FT z() const;
 
 /*!
 returns the i'th homogeneous coordinate of `v`.
-\pre \f$ 0\leq i \leq3\f$.
+\pre `0 <= i <= 3`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `v`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre  `0 <= i <= 2`
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre  `0 <= i <= 2`
 */
 Kernel::FT operator[](int i) const;
 

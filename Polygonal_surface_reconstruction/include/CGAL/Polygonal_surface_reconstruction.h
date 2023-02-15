@@ -4,7 +4,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Liangliang Nan
 
@@ -15,9 +15,9 @@
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/property_map.h>
-#include <CGAL/internal/hypothesis.h>
-#include <CGAL/internal/compute_confidences.h>
-#include <CGAL/internal/point_set_with_planes.h>
+#include <CGAL/Polygonal_surface_reconstruction/internal/hypothesis.h>
+#include <CGAL/Polygonal_surface_reconstruction/internal/compute_confidences.h>
+#include <CGAL/Polygonal_surface_reconstruction/internal/point_set_with_planes.h>
 
 #include <unordered_map>
 

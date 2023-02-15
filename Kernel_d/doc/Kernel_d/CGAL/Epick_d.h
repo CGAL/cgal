@@ -138,9 +138,26 @@ public:
 template<class ForwardIterator>
 Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Weighted_point_d&p);
 };
+class Construct_power_sphere_d {
+public:
+/*! returns a weighted point on the affine hull of the weighted points of `A=tuple[first,last)` at power distance 0 of each of them. In other words, this returns the smallest sphere orthogonal to the spheres of A.
+    \pre A is affinely independent.
+    \tparam ForwardIterator has `Epick_d::Weighted_point_d` as value type.
+    */
+template<class ForwardIterator>
+Weighted_point_d operator()(ForwardIterator first, ForwardIterator last);
+};
+class Compute_power_product_d {
+public:
+/*! returns the power product (aka power distance) of the weighted points `pw` and `qw`, that is, the squared Euclidean distance between the points minus their weights.
+ */
+FT operator()(Weighted_point_d pw, Weighted_point_d qw);
+};
 Construct_circumcenter_d construct_circumcenter_d_object();
+Compute_power_product_d compute_power_product_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
 Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object();
+Construct_power_sphere_d construct_power_sphere_d_object();
 Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */

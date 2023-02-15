@@ -24,8 +24,8 @@
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_triangulator.h>
 
-#define CGAL_NEF3_LGREY CGAL::Color(170,170,200)
-#define CGAL_NEF3_DGREY CGAL::Color(30,30,50)
+#define CGAL_NEF3_LGREY CGAL::IO::Color(170,170,200)
+#define CGAL_NEF3_DGREY CGAL::IO::Color(30,30,50)
 
 namespace CGAL {
 

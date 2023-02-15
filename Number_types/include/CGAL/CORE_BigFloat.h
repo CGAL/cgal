@@ -16,7 +16,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/Interval_traits.h>
 #include <CGAL/Bigfloat_interval_traits.h>
@@ -513,7 +512,6 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
-#include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 
 namespace Eigen {

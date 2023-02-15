@@ -109,7 +109,7 @@ public:
 
     public:
     std::string debug() const
-    { std::ostringstream os; set_pretty_mode(os);
+    { std::ostringstream os; CGAL::IO::set_pretty_mode(os);
       os<<"V"<<point_
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
         <<' '<<info_
@@ -210,7 +210,7 @@ public:
     const GenPtr& info() const { return info_; }
 
     std::string debug() const
-    { std::ostringstream os; set_pretty_mode(os);
+    { std::ostringstream os; CGAL::IO::set_pretty_mode(os);
       os <<"e["<<source_->debug()<<", "
          <<twin_->source_->debug()<<
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -289,7 +289,7 @@ public:
     const GenPtr& info() const { return info_; }
 
     std::string debug() const
-    { std::ostringstream os; set_pretty_mode(os);
+    { std::ostringstream os; CGAL::IO::set_pretty_mode(os);
       os<<"l"<<circle_
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
         <<' '<<info_

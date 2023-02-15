@@ -136,7 +136,7 @@ _test_circulator( const Triangulation &T )
   }
 
    Facet_circulator fc, fc0, fc1;
-   assert(fc1 == 0);
+   assert(fc1 == nullptr);
    int i,j;
    //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
    eit=T.edges_begin(); // test (edge)

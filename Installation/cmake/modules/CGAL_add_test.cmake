@@ -5,27 +5,10 @@ set(CGAL_add_test_included TRUE)
 
 option(BUILD_TESTING "Build the testing tree." OFF)
 
-if(NOT POLICY CMP0064)
-  # CMake <= 3.3
-  if(BUILD_TESTING)
-    message(WARNING
-      "CGAL CTest support requires CMake 3.4 or later.\n"
-      "You must either disable BUILD_TESTING or upgrade CMake.")
-  endif()
-
-  # Add a fake function to avoid CMake errors
-  function(cgal_add_compilation_test)
-  endfunction()
-
-  # Then return, to exit the file
-  return()
-endif()
-
 if(BUILD_TESTING)
   enable_testing()
 endif()
 
-cmake_policy(SET CMP0064 NEW)
 
 include(CMakeParseArguments)
 
@@ -91,33 +74,68 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_compilation_test exe_name)
-  if(NOT POLICY CMP0064 OR TEST compilation_of__${exe_name})
-    return()
-  endif()
-  add_test(NAME "compilation_of__${exe_name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
-  set_property(TEST "compilation_of__${exe_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  cmake_policy(SET CMP0064 NEW)
+  if(NOT CMAKE_VS_MSBUILD_COMMAND)
+    if(TEST compilation_of__${exe_name})
+      return()
+    endif()
+    add_test(NAME "compilation_of__${exe_name}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  elseif(NOT TARGET compilation_of__${PROJECT_NAME})#CMAKE_VS_MSBUILD_COMMAND
+    #this target is just a flag, to deal with the scope problem with the tests
+    add_custom_target(compilation_of__${PROJECT_NAME})
+    add_test(NAME "compilation_of__${PROJECT_NAME}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
+    set_property(TEST "compilation_of__${PROJECT_NAME}"
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    set_property(TEST "compilation_of__${PROJECT_NAME}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+    set_tests_properties("compilation_of__${PROJECT_NAME}"
+      PROPERTIES RUN_SERIAL TRUE)
+    #because of the scope of the tests, this part cannot go in the relevant CMakeLists
+    if("${PROJECT_NAME}" STREQUAL "Polyhedron_Demo")
+      set_tests_properties(compilation_of__Polyhedron_Demo PROPERTIES TIMEOUT 2400)
+    elseif("${PROJECT_NAME}" STREQUAL "Mesh_3_Tests" OR "${PROJECT_NAME}" STREQUAL "Mesh_3_Examples")
+      set_tests_properties(compilation_of__${PROJECT_NAME} PROPERTIES TIMEOUT 1600)
+    endif()
+
+  endif()#CMAKE_VS_MSBUILD_COMMAND
   if(NOT TARGET ALL_CGAL_TARGETS)
     add_custom_target( ALL_CGAL_TARGETS )
   endif()
   if(NOT TARGET cgal_check_build_system)
     add_custom_target(cgal_check_build_system)
     add_dependencies( ALL_CGAL_TARGETS cgal_check_build_system )
-  endif()
-  if(NOT TEST check_build_system)
     add_test(NAME "check_build_system"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
     set_property(TEST "check_build_system"
-      APPEND PROPERTY LABELS "Installation")
-    if(POLICY CMP0066) # cmake 3.7 or later
-      set_property(TEST "check_build_system"
-        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
-    endif()
+      APPEND PROPERTY LABELS "CGAL_build_system")
+    set_property(TEST "check_build_system"
+       PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
   endif()
-  if(POLICY CMP0066) # cmake 3.7 or later
-    set_property(TEST "compilation_of__${exe_name}"
-      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  if(TARGET CGAL_Qt5_moc_and_resources) # if CGAL_Qt5 was searched, and is header-only
+    get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
+    #  message(STATUS "${exe_name} depends on ${linked_libraries}")
+    string(FIND "${linked_libraries}" "CGAL::CGAL_Qt5" link_with_CGAL_Qt5)
+    if(link_with_CGAL_Qt5 STRGREATER "-1" AND
+        NOT TARGET compilation_of__CGAL_Qt5_moc_and_resources)
+      # This custom target is useless. It is used only as a flag to
+      # detect that the test has already been created.
+      add_custom_target(compilation_of__CGAL_Qt5_moc_and_resources)
+      add_dependencies( compilation_of__CGAL_Qt5_moc_and_resources CGAL_Qt5_moc_and_resources )
+      add_test(NAME "compilation_of__CGAL_Qt5_moc_and_resources"
+        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt5_moc_and_resources" --config "$<CONFIG>")
+      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
+        APPEND PROPERTY LABELS "CGAL_build_system")
+      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
+        PROPERTY FIXTURES_SETUP "CGAL_Qt5_moc_and_resources_Fixture")
+      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
+        APPEND PROPERTY DEPENDS "check_build_system")
+    endif()
   endif()
 endfunction(cgal_add_compilation_test)
 
@@ -138,16 +156,20 @@ function(cgal_setup_test_properties test_name)
   endif()
 
   if(exe_name)
-    set_property(TEST "${test_name}"
-      APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+    if(NOT CMAKE_VS_MSBUILD_COMMAND)
+      set_property(TEST "${test_name}"
+        APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+    else()#CMAKE_VS_MSBUILD_COMMAND
+      set_property(TEST "${test_name}"
+        APPEND PROPERTY DEPENDS "compilation_of__${PROJECT_NAME}")
+    endif()#CMAKE_VS_MSBUILD_COMMAND
   endif()
 
   get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
   get_filename_component(_binary_dir_abs ${CMAKE_CURRENT_BINARY_DIR} ABSOLUTE)
   string(FIND "${_binary_dir_abs}" "${_source_dir_abs}" _search_binary_in_source)
 
-  if(_search_binary_in_source EQUAL "-1"
-     AND POLICY CMP0066) # CMake 3.7 or later
+  if(_search_binary_in_source EQUAL "-1")
     if(NOT TEST ${PROJECT_NAME}_SetupFixture)
       if(ANDROID)
         add_test(NAME ${PROJECT_NAME}_SetupFixture
@@ -215,14 +237,19 @@ function(cgal_setup_test_properties test_name)
         PROPERTY
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir)
     endif()
-    
+
     set_property(TEST "${test_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
     if(exe_name)
       set_property(TEST ${test_name}
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
-      set_property(TEST "compilation_of__${exe_name}"
-        PROPERTY FIXTURES_SETUP "${exe_name}")
+      if(NOT CMAKE_VS_MSBUILD_COMMAND)
+        set_property(TEST "compilation_of__${exe_name}"
+          PROPERTY FIXTURES_SETUP "${exe_name}")
+      else()#CMAKE_VS_MSBUILD_COMMAND
+        set_property(TEST "compilation_of__${PROJECT_NAME}"
+          PROPERTY FIXTURES_SETUP "${exe_name}")
+      endif()#CMAKE_VS_MSBUILD_COMMAND
       if((ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH) AND NOT TEST push_of__${exe_name})
         if(ANDROID)
           add_test(NAME "push_of__${exe_name}"
@@ -259,7 +286,7 @@ function(cgal_add_test exe_name)
     set(test_name "execution___of__${exe_name}")
   endif()
 #  message("  test_name: ${test_name}")
-  if(cgal_add_test_NO_EXECUTION OR NOT POLICY CMP0064 OR TEST ${test_name})
+  if(cgal_add_test_NO_EXECUTION OR TEST ${test_name})
     return()
   endif()
 #  message("Add test ${test_name}")
@@ -299,14 +326,15 @@ function(cgal_add_test exe_name)
       endif()
       if(EXISTS ${cmd_file})
         file(STRINGS "${cmd_file}" CMD_LINES)
+        string(CONFIGURE "${CMD_LINES}" CMD_LINES)
         set(ARGS)
         #	  message(STATUS "DEBUG test ${exe_name}")
         foreach(CMD_LINE ${CMD_LINES})
-	  #	    message(STATUS "  command line: ${CMD_LINE}")
+    #	    message(STATUS "  command line: ${CMD_LINE}")
           string(REGEX REPLACE "\#.*" "" CMD_LINE "${CMD_LINE}")
-	  separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
-	  #	    message(STATUS "  args: ${CMD_LINE_ARGS}")
-	  list(APPEND ARGS ${CMD_LINE_ARGS})
+          separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
+    #	    message(STATUS "  args: ${CMD_LINE_ARGS}")
+          list(APPEND ARGS ${CMD_LINE_ARGS})
         endforeach()
         expand_list_with_globbing(ARGS)
         set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

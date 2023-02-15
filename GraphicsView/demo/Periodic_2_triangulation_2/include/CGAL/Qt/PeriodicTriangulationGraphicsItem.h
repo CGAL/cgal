@@ -150,7 +150,7 @@ namespace CGAL {
 
     template <typename T>
     PeriodicTriangulationGraphicsItem<T>::PeriodicTriangulationGraphicsItem(T * t_)
-    :  t(t_), painterostream(0),
+    :  t(t_), painterostream(nullptr),
        visible_edges(true), visible_vertices(true),
        type(NONE)
     {

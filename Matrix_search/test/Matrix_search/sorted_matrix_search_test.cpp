@@ -181,7 +181,7 @@ main( int argc, char* argv[])
       matrices.begin(),
       matrices.end(),
       sorted_matrix_search_traits_adaptor(
-        boost::bind( greater_equal< Value >(), _1, bound),
+        [&bound](const auto& m){ return greater_equal< Value >()(m, bound); },
         *(matrices.begin()))));
 
   #ifdef OUTPUT

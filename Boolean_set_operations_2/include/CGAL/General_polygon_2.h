@@ -20,7 +20,9 @@
 #include <list>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Object.h>
 
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -31,6 +33,7 @@ public:
 
   typedef Arr_traits                                 Traits_2;
   typedef typename Traits_2::Point_2                 Point_2;
+  typedef typename Traits_2::Curve_2                 Curve_2;
   typedef typename Traits_2::X_monotone_curve_2      X_monotone_curve_2;
   typedef std::list<X_monotone_curve_2>              Containter;
   typedef typename Containter::iterator              Curve_iterator;
@@ -40,12 +43,15 @@ protected:
   std::list<X_monotone_curve_2>    m_xcurves;
 
 public:
+  /*! Default constructor.
+   */
+  General_polygon_2() {}
 
-  General_polygon_2(){}
-
-  template <class CurveIterator>
-  General_polygon_2(CurveIterator begin,
-                    CurveIterator end) : m_xcurves (begin, end)
+  /*! Construct from a range of \f$X\f$-monotone curve.
+   */
+  template <typename CurveIterator>
+  General_polygon_2(CurveIterator begin, CurveIterator end) :
+    m_xcurves(begin, end)
   {}
 
   template <class CurveIterator>
@@ -187,7 +193,7 @@ std::ostream
 {
   typename General_polygon_2<Traits>::Curve_const_iterator i;
 
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       os << p.size() << ' ';
       for (i = p.curves_begin(); i != p.curves_end(); ++i) {

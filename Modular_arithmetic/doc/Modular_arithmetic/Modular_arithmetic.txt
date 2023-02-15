@@ -80,7 +80,7 @@ The class `Residue` is based on the C-code of Sylvain Pion et. al.
 as it was presented in \cgalCite{bepp-sdrns-99}.
 
 The remaining part of the package is the result of the integration process
-of the NumeriX library of <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05} into \cgal.
+of the NumeriX library of \exacus \cgalCite{beh-eeeafcs-05} into \cgal.
 
 */
 } /* namespace CGAL */

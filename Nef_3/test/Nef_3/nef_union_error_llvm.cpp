@@ -17,9 +17,9 @@ int main(int, char**) {
     Polyhedron P2;
     Polyhedron P3;
 
-    std::ifstream f1("data/icosahedron.off");
+    std::ifstream f1(CGAL::data_file_path("meshes/icosahedron.off"));
     f1 >> P1;
-    std::ifstream f2("data/icosahedron.off");
+    std::ifstream f2(CGAL::data_file_path("meshes/icosahedron.off"));
     f2 >> P2;
     Nef_polyhedron N1(P1);
     Nef_polyhedron N2(P2);

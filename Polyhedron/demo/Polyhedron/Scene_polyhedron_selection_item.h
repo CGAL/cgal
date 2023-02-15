@@ -21,11 +21,10 @@
 #include <CGAL/Three/Viewer_interface.h>
 
 #include <fstream>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 #include <boost/property_map/vector_property_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
 #include <CGAL/Qt/manipulatedFrame.h>
@@ -206,6 +205,13 @@ public:
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
 
+  enum SelectionType{
+    Vertex=0x1,
+    Edge=0x2,
+    Facet=0x4,
+    None=0x8
+  };
+  Q_DECLARE_FLAGS(SelectionTypes, SelectionType)
   void common_constructor();
   Scene_polyhedron_selection_item() ;
   Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw);
@@ -228,6 +234,7 @@ public:
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void computeElements() const;
+  void setKeepSelectionValid(SelectionTypes type);
 
 protected:
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);
@@ -245,9 +252,9 @@ protected:
   void set_is_insert(bool i) { is_insert = i; }
 
 public:
-  typedef boost::unordered_set<fg_vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
-  typedef boost::unordered_set<fg_face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
-  typedef boost::unordered_set<fg_edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
+  typedef std::unordered_set<fg_vertex_descriptor>    Selection_set_vertex;
+  typedef std::unordered_set<fg_face_descriptor>      Selection_set_facet;
+  typedef std::unordered_set<fg_edge_descriptor>    Selection_set_edge;
 
   Vertex_selection_map vertex_selection_map()
   {
@@ -276,10 +283,12 @@ public:
     return selected_vertices.empty() && selected_edges.empty() && selected_facets.empty();
   }
 
+  void reset_numbers();
+
   void compute_bbox() const
   {
     // Workaround a bug in g++-4.8.3:
-    //   http://stackoverflow.com/a/21755207/1728537
+    //   https://stackoverflow.com/a/21755207/1728537
     // Using boost::make_optional to copy-initialize 'item_bbox' hides the
     //   warning about '*item_bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
@@ -565,7 +574,7 @@ public:
     std::vector<bool>* is_selected_ptr;
     IDmap idmap;
     Is_selected_property_map()
-      : is_selected_ptr(NULL) {}
+      : is_selected_ptr(nullptr) {}
     Is_selected_property_map(std::vector<bool>& is_selected, IDmap idmap)
       : is_selected_ptr( &is_selected), idmap(idmap) {}
 
@@ -574,13 +583,13 @@ public:
 
     friend bool get(Is_selected_property_map map, Handle h)
     {
-      CGAL_assertion(map.is_selected_ptr!=NULL);
+      CGAL_assertion(map.is_selected_ptr!=nullptr);
       return (*map.is_selected_ptr)[map.id(h)];
     }
 
     friend void put(Is_selected_property_map map, Handle h, bool b)
     {
-      CGAL_assertion(map.is_selected_ptr!=NULL);
+      CGAL_assertion(map.is_selected_ptr!=nullptr);
       (*map.is_selected_ptr)[map.id(h)]=b;
     }
   };
@@ -601,9 +610,10 @@ public:
     Is_constrained_map(SelectionSet* set_)
       : m_set_ptr(set_)
     {}
-    friend bool get(const Is_constrained_map& map, const key_type& k)
+
+    friend value_type get(const Is_constrained_map& map, const key_type& k)
     {
-      CGAL_assertion(map.m_set_ptr != NULL);
+      CGAL_assertion(map.m_set_ptr != nullptr);
       return map.m_set_ptr->count(k);
     }
     friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
@@ -619,7 +629,7 @@ public:
   {
     typedef Handle                             key_type;
     typedef std::size_t                        value_type;
-    typedef value_type&                        reference;
+    typedef value_type                         reference;
     typedef boost::read_write_property_map_tag category;
 
     friend value_type get(Index_map, Handle h)
@@ -799,6 +809,7 @@ public:
   }
 
   void selection_changed(bool);
+  void updateDisplayedIds(QEvent *e);
 
 Q_SIGNALS:
   void updateInstructions(QString);
@@ -836,12 +847,7 @@ public Q_SLOTS:
   void selected_HL(const std::set<fg_vertex_descriptor>& m);
   void selected_HL(const std::set<fg_face_descriptor>& m);
   void selected_HL(const std::set<fg_edge_descriptor>& m);
-  void poly_item_changed() {
-    remove_erased_handles<fg_vertex_descriptor>();
-    remove_erased_handles<fg_edge_descriptor>();
-    remove_erased_handles<fg_face_descriptor>();
-    compute_normal_maps();
-  }
+  void poly_item_changed();
   void endSelection(){
     Q_EMIT simplicesSelected(this);
   }
@@ -874,6 +880,8 @@ protected:
         return true;
       }
     }
+
+    updateDisplayedIds(gen_event);
 
     if(!visible() || !k_ring_selector.state.shift_pressing) { return false; }
     if(gen_event->type() == QEvent::Wheel)
@@ -958,8 +966,8 @@ template<typename HandleRange>
         get_face(*selection.begin()),
         *polyhedron(),
         std::back_inserter(selected_cc),
-        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-                                                                           Is_selected_property_map<fg_edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
+        CGAL::parameters::edge_is_constrained_map(
+                            Is_selected_property_map<fg_edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
        treat_selection(selected_cc);
     }
     else
@@ -1022,20 +1030,79 @@ protected :
   friend struct Scene_polyhedron_selection_item_priv;
   Scene_polyhedron_selection_item_priv *d;
 
+  struct Update_indices_visitor
+  {
+    Selection_set_vertex& m_vertices;
+    Selection_set_edge&   m_edges;
+    Selection_set_facet&  m_facets;
+    FaceGraph& m_mesh;
+
+    Update_indices_visitor(Selection_set_vertex& vertices,
+                           Selection_set_edge&   edges,
+                           Selection_set_facet&  facets,
+                           FaceGraph& mesh)
+      : m_vertices(vertices), m_edges(edges), m_facets(facets), m_mesh(mesh)
+    {}
+
+    template<typename V2V, typename E2E, typename F2F>
+    void operator()(const V2V& v2v, const E2E& e2e, const F2F& f2f)
+    {
+      //in *2* maps,
+      //left is old simplex, right is new simplex
+
+      Selection_set_vertex new_vertices;
+      Selection_set_edge   new_edges;
+      Selection_set_facet  new_facets;
+
+      for(vertex_descriptor v : m_vertices)
+      {
+        if(v2v[v] != boost::graph_traits<SMesh>::null_vertex()
+           && int(v2v[v])  < static_cast<int>(m_mesh.number_of_vertices()))
+          new_vertices.insert(v2v[v]);
+      }
+      m_vertices.clear();
+      m_vertices.insert(new_vertices.begin(), new_vertices.end());
+
+      for (fg_edge_descriptor e : m_edges)
+      {
+        halfedge_descriptor h = halfedge(e, m_mesh);
+        if(e2e[h] != boost::graph_traits<SMesh>::null_halfedge()
+           && int(e2e[h])  < static_cast<int>(m_mesh.number_of_halfedges()))
+          new_edges.insert(edge(e2e[h], m_mesh));
+      }
+      m_edges.clear();
+      m_edges.insert(new_edges.begin(), new_edges.end());
+
+      for (face_descriptor f : m_facets)
+        if(f2f[f] != boost::graph_traits<SMesh>::null_face()
+           && int(f2f[f])  < static_cast<int>(m_mesh.number_of_faces()))
+          new_facets.insert(f2f[f]);
+      m_facets.clear();
+      m_facets.insert(new_facets.begin(), new_facets.end());
+    }
+  };
+
+
 public:
   //statistics
-  enum STATS {
-    NB_VERTICES = 0,
-    NB_CONNECTED_COMPOS,
-    NB_BORDER_EDGES,
+  enum STATS
+  {
+    // Properties
+    NB_CONNECTED_COMPOS = 0,
+    NB_HOLES,
+    GENUS,
     IS_PURE_TRIANGLE,
     IS_PURE_QUAD,
-    NB_DEGENERATED_FACES,
-    HOLES,
     AREA,
     VOLUME,
     SELFINTER,
+
+    // Vertices
+    NB_VERTICES,
+
+    // Facets
     NB_FACETS,
+    NB_DEGENERATE_FACES,
     MIN_AREA,
     MAX_AREA,
     MED_AREA,
@@ -1044,13 +1111,17 @@ public:
     MIN_ASPECT_RATIO,
     MAX_ASPECT_RATIO,
     MEAN_ASPECT_RATIO,
-    GENUS,
+
+    // Edges
     NB_EDGES,
+    NB_BORDER_EDGES,
+    NB_DEGENERATE_EDGES,
     MIN_LENGTH,
     MAX_LENGTH,
-    MID_LENGTH,
+    MED_LENGTH,
     MEAN_LENGTH,
-    NB_NULL_LENGTH,
+
+    // Angles
     MIN_ANGLE,
     MAX_ANGLE,
     MEAN_ANGLE
@@ -1059,6 +1130,8 @@ public:
   bool has_stats()const {return true;}
   QString computeStats(int type);
   CGAL::Three::Scene_item::Header_data header() const ;
+
+  void set_num_faces(const std::size_t n);
 };
 
 #endif

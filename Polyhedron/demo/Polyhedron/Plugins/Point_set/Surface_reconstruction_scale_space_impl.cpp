@@ -61,7 +61,7 @@ void scale_space (const Point_set& points,
     new_item->setRenderingMode(FlatPlusEdges);
     new_item->init_polygon_soup(points.size(), reconstruct.number_of_facets ());
 
-    Scene_polygon_soup_item* smooth_item = NULL;
+    Scene_polygon_soup_item* smooth_item = nullptr;
     if (generate_smooth)
     {
       smooth_item = new Scene_polygon_soup_item ();
@@ -118,7 +118,7 @@ void scale_space (const Point_set& points,
       new_item->setRenderingMode(FlatPlusEdges);
       new_item->init_polygon_soup(points.size(), mesher.number_of_triangles ());
 
-      Scene_polygon_soup_item* smooth_item = NULL;
+      Scene_polygon_soup_item* smooth_item = nullptr;
       if (generate_smooth)
       {
         smooth_item = new Scene_polygon_soup_item ();
@@ -174,7 +174,7 @@ void scale_space (const Point_set& points,
       new_item->setRenderingMode(FlatPlusEdges);
       new_item->init_polygon_soup(points.size(), num);
 
-      Scene_polygon_soup_item* smooth_item = NULL;
+      Scene_polygon_soup_item* smooth_item = nullptr;
       if (generate_smooth)
       {
         smooth_item = new Scene_polygon_soup_item ();

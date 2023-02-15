@@ -310,7 +310,7 @@ that does not follow the generic programming paradigm, by avoiding
 interfaces between layers. Specifically, working with
 only one number type allows to optimize some polynomial operations
 as well as memory handling. The implementation of these kernels
-make heavy use of the <span class="textsc">Mpfr</span> \cgalCite{cgal:mt-mpfr} and <span class="textsc">Mpfi</span> \cgalCite{cgal:r-mpfi}
+make heavy use of the \mpfr \cgalCite{cgal:mt-mpfr} and \mpfi \cgalCite{cgal:r-mpfi}
 libraries, and of their \cgal interfaces, `Gmpfr` and `Gmpfi`.
 The algebraic numbers (roots of the polynomials) are represented
 in the two RS kernels by a `Gmpfi` interval and a pointer to
@@ -368,12 +368,12 @@ ideas that was brought to them throughout the last years. In particular,
 they want to thank Menelaos Karavelas and Elias Tsigaridas for their
 initial contributions.
 
-The two generic models where initially developed as part of the <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05} project.
+The two generic models where initially developed as part of the \exacus \cgalCite{beh-eeeafcs-05} project.
 However, the models are now fully integrated into the \cgal library,
-since also the relevant layers of <span class="textsc">Exacus</span> are now part of \cgal.
+since also the relevant layers of \exacus are now part of \cgal.
 The main authors for `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>` are
 Michael Hemmer and Michael Kerber, respectively. Notwithstanding, the authors also want to emphasize the
-contribution of all authors of the <span class="textsc">Exacus</span> project,
+contribution of all authors of the \exacus project,
 particularly the contribution of Arno Eigenwillig, Sebastian Limbach and Pavel Emeliyanenko.
 
 The two univariate kernels that interface the library RS \cgalCite{cgal:r-rs} were

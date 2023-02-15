@@ -46,7 +46,7 @@ class Arrangement_2 :
 
 protected:
 
-  typedef Default_planar_topology<GeomTraits_, Dcel_ >    Default_topology;
+  typedef Default_planar_topology<GeomTraits_, Dcel_>     Default_topology;
 
 public:
   typedef Arrangement_on_surface_2<GeomTraits_,
@@ -162,13 +162,13 @@ public:
   //@{
 
   /*! Obtain the geometry-traits class. */
-  const Traits_2* traits () const
+  const Traits_2* traits() const
   {
     return (this->geometry_traits());
   }
 
   /*! Obtain the number of vertices at infinity. */
-  Size number_of_vertices_at_infinity () const
+  Size number_of_vertices_at_infinity() const
   {
     // The vertices at infinity are valid, but not concrete:
     return (this->topology_traits()->number_of_valid_vertices() -

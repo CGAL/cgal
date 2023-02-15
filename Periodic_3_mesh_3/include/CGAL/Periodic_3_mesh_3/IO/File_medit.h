@@ -43,9 +43,9 @@ canonicalize_triangle(const typename Triangulation::Periodic_triangle& pt)
   Offset o0 = pt[0].second;
   Offset o1 = pt[1].second;
   Offset o2 = pt[2].second;
-  int diffx = std::min(o0.x(), std::min(o1.x(), o2.x()));
-  int diffy = std::min(o0.y(), std::min(o1.y(), o2.y()));
-  int diffz = std::min(o0.z(), std::min(o1.z(), o2.z()));
+  int diffx = (std::min)(o0.x(), (std::min)(o1.x(), o2.x()));
+  int diffy = (std::min)(o0.y(), (std::min)(o1.y(), o2.y()));
+  int diffz = (std::min)(o0.z(), (std::min)(o1.z(), o2.z()));
   Offset diff_off(diffx, diffy, diffz);
 
   return CGAL::make_array(std::make_pair(pt[0].first, o0 - diff_off),
@@ -64,9 +64,9 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
   Offset o2 = pt[2].second;
   Offset o3 = pt[3].second;
 
-  int diffx = std::min(std::min(o0.x(), o1.x()), std::min(o2.x(), o3.x()));
-  int diffy = std::min(std::min(o0.y(), o1.y()), std::min(o2.y(), o3.y()));
-  int diffz = std::min(std::min(o0.z(), o1.z()), std::min(o2.z(), o3.z()));
+  int diffx = (std::min)((std::min)(o0.x(), o1.x()), (std::min)(o2.x(), o3.x()));
+  int diffy = (std::min)((std::min)(o0.y(), o1.y()), (std::min)(o2.y(), o3.y()));
+  int diffz = (std::min)((std::min)(o0.z(), o1.z()), (std::min)(o2.z(), o3.z()));
   Offset diff_off(diffx, diffy, diffz);
 
   return CGAL::make_array(std::make_pair(pt[0].first, o0 - diff_off),
@@ -308,7 +308,7 @@ void output_to_medit(std::ostream& os,
 #endif
   CGAL_precondition(c3t3.triangulation().is_1_cover());
 
-  typedef CGAL::Mesh_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
+  typedef CGAL::SMDS_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
   typedef typename Generator::Cell_pmap                               Cell_pmap;
   typedef typename Generator::Facet_pmap                              Facet_pmap;
   typedef typename Generator::Facet_pmap_twice                        Facet_pmap_twice;
@@ -330,8 +330,10 @@ void output_to_medit(std::ostream& os,
 
 } // namespace Periodic_3_mesh_3
 
+namespace IO {
+
 /**
- * \brief Outputs a periodic mesh to the .mesh file format, which can be visualized
+ * \brief outputs a periodic mesh to the .mesh file format, which can be visualized
  *        using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
  * \param os the stream
  * \param c3t3 the mesh
@@ -366,6 +368,12 @@ void output_periodic_mesh_to_medit(std::ostream& os,
       Periodic_3_mesh_3::output_to_medit<C3T3, false, true>(os, c3t3, occurrence_count, distinguish_copies);
   }
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_periodic_mesh_to_medit;
+#endif
 
 } // namespace CGAL
 

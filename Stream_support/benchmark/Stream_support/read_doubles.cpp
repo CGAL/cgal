@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     std::cerr << "iformat"<< std::endl;
     t.start();
     for(int i=0; i<n; i++){
-      in >> CGAL::iformat(d);
+      in >> CGAL::IO::iformat(d);
       sum+= d;
     }
     t.stop();

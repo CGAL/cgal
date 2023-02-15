@@ -1,8 +1,5 @@
 #include <CGAL/config.h>
 #include <iostream>
-
-#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
-
 #include <iomanip>
 #include <fstream>
 #include <utility>
@@ -73,6 +70,12 @@ struct TestMeshProgramInstance
     randomizer = nullptr;
     numVertices = 0;
     numIterations = 1;
+  }
+
+  ~TestMeshProgramInstance()
+  {
+    if (randomizer)
+      delete randomizer;
   }
 
   size_t numIterations;
@@ -267,7 +270,7 @@ void run_program_instance(po::variables_map& vm)
 
   if (vm.count("randomseed"))
   {
-    programInstance.randomizer = new CGAL::Random(vm["randomSeed"].as<unsigned int>());
+    programInstance.randomizer = new CGAL::Random(vm["randomseed"].as<unsigned int>());
   }
 
   programInstance.debugMode = vm["debugmode"].as<bool>();
@@ -311,9 +314,9 @@ int main(int argc, char** argv)
 
   options.add_options()
     ("help,h", "Display help message")
-    ("polyhedron,p", po::value<std::string>(), "Polyhedron input file")
+    ("polyhedron,p", po::value<std::string>()->default_value("./data/test_mesh_6.off"), "Polyhedron input file")
     ("debugmode,d", po::value<bool>()->default_value(false), "Enable debug output")
-    ("randomseed,r", po::value<unsigned int>(), "Randomization seed value")
+    ("randomseed,r", po::value<unsigned int>()->default_value(0), "Randomization seed value")
     ("trials,t", po::value<size_t>()->default_value(1), "Number of trials to run")
     ("kernel,k", po::value<std::string>()->default_value("epick"), "Kernel to use.  One of \'ipick\', \'epick\', \'epeck\'")
     ;
@@ -350,12 +353,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-
-#else
- int main()
- {
-   std::cout << "TestMesh.cpp needs Boost Program Options" << std::endl;
-   return 0;
- }
-#endif

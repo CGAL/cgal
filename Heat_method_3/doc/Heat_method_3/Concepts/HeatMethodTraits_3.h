@@ -49,6 +49,8 @@ public:
   ///  Functor with operator: `FT operator()(const Point_3& p, const Point_3& q) const` which computes the squared distance between `p` and `q`.
   typedef unspecified_type Compute_squared_distance_3;
 
+  ///  Functor with operator: `FT operator()(const Vector_3& v) const` which computes the squared length of `v`.
+  typedef unspecified_type Compute_squared_length_3;
 
 /// @}
 

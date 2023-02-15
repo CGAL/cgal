@@ -9,6 +9,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -26,8 +27,9 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
   QAction* actionDetectBorders;
   QAction* actionStitchBorders;
   QAction* actionStitchByCC;
+  QAction* actionMergeReversibleCCs;
 public:
-  QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders << actionStitchByCC; }
+  QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders << actionStitchByCC << actionMergeReversibleCCs; }
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     scene = scene_interface;
@@ -41,6 +43,10 @@ public:
     actionStitchByCC= new QAction(tr("Stitch Borders Per Connected Components"), mainWindow);
     actionStitchByCC->setObjectName("actionStitchByCC");
     actionStitchByCC->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
+
+    actionMergeReversibleCCs = new QAction(tr("Merge Reversible Connected Components"), mainWindow);
+    actionMergeReversibleCCs->setObjectName("actionMergeReversibleCCs");
+    actionMergeReversibleCCs->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
 
     autoConnectActions();
   }
@@ -63,10 +69,14 @@ public:
   template <typename Item>
   void on_actionStitchByCC_triggered(Scene_interface::Item_id index);
 
+  template <typename Item>
+  void on_actionMergeReversibleCCs_triggered(Scene_interface::Item_id index);
+
 public Q_SLOTS:
   void on_actionDetectBorders_triggered();
   void on_actionStitchBorders_triggered();
   void on_actionStitchByCC_triggered();
+  void on_actionMergeReversibleCCs_triggered();
 
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
@@ -146,16 +156,36 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(
   if(!item)
     return;
   CGAL::Polygon_mesh_processing::stitch_borders(*item->polyhedron(),
-                                                CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
+                                                CGAL::parameters::apply_per_connected_component(true));
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
 }
 
+template <typename Item>
+void Polyhedron_demo_polyhedron_stitching_plugin::on_actionMergeReversibleCCs_triggered(Scene_interface::Item_id index)
+{
+  Item* item =
+      qobject_cast<Item*>(scene->item(index));
+
+  if(!item)
+    return;
+  CGAL::Polygon_mesh_processing::merge_reversible_connected_components(*item->polyhedron());
+  CGAL::Polygon_mesh_processing::orient(*item->polyhedron());
+  item->invalidateOpenGLBuffers();
+  scene->itemChanged(item);
+}
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()){
     on_actionStitchByCC_triggered<Scene_surface_mesh_item>(index);
+  }
+}
+
+void Polyhedron_demo_polyhedron_stitching_plugin::on_actionMergeReversibleCCs_triggered()
+{
+  Q_FOREACH(int index, scene->selectionIndices()){
+    on_actionMergeReversibleCCs_triggered<Scene_surface_mesh_item>(index);
   }
 }
 #include "Polyhedron_stitching_plugin.moc"

@@ -26,7 +26,7 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 /*{\Manpage {Convex_hull_d}{R}{Convex Hulls}{C}}*/
 
@@ -322,7 +322,7 @@ typedef Hull_vertex_iterator_<Self*,Vertex_handle,Facet_iterator>
 can be used as handles. Note also that all iterator and handle types
 come also in a const flavor, e.g., |Vertex_const_iterator| is the
 constant version of |Vertex_iterator|. Thus use the const version
-whenever the the convex hull object is referenced as constant.}*/
+whenever the convex hull object is referenced as constant.}*/
 
 #define CGAL_USING(t) typedef typename Base::t t
 CGAL_USING(Simplex_const_iterator);CGAL_USING(Vertex_const_iterator);
@@ -396,7 +396,7 @@ protected:
   /*{\Xop adds all unmarked unbounded simplices with $x$-visible base
           facet to |visible_simplices| and marks them. In |location| the
           procedure returns the position of |x| with respect to the
-          current hull: $-1$ for inside, $0$ for on the the boundary,
+          current hull: $-1$ for inside, $0$ for on the boundary,
           and $+1$ for outside; the initial value of |location| for the
           outermost call must be $-1$. If $x$ is contained in the
           boundary of |\Mvar| then a facet incident to $x$ is returned
@@ -627,7 +627,7 @@ public:
 
   bool is_valid(bool throw_exceptions = false) const;
   /*{\Mop checks the validity of the data structure.
-  If |throw_exceptions == thrue| then the program throws
+  If |throw_exceptions == true| then the program throws
   the following exceptions to inform about the problem.\\
   [[chull_has_center_on_wrong_side_of_hull_facet]] the hyperplane
   supporting a facet has the wrong orientation.\\
@@ -1304,7 +1304,7 @@ std::list< typename Convex_hull_d<R>::Simplex_handle >
 Convex_hull_d<R>::facets_visible_from(const Point_d& x)
 {
   std::list<Simplex_handle> visible_simplices;
-  int location = -1;                       // intialization is important
+  int location = -1;                       // initialization is important
   std::size_t num_of_visited_simplices = 0;     // irrelevant
   Facet_handle f;                          // irrelevant
 
@@ -1319,7 +1319,7 @@ Bounded_side Convex_hull_d<R>::bounded_side(const Point_d& x)
 {
   if ( is_dimension_jump(x) ) return ON_UNBOUNDED_SIDE;
   std::list<Simplex_handle> visible_simplices;
-  int location = -1;                       // intialization is important
+  int location = -1;                       // initialization is important
   std::size_t num_of_visited_simplices = 0;     // irrelevant
   Facet_handle f;
 

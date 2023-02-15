@@ -427,7 +427,7 @@ public:
         insert_tip( inew->opposite(), hnew);
         insert_tip( jnew->opposite(), inew);
         insert_tip( hnew->opposite(), jnew);
-        // Make the new incidences with the old stucture.
+        // Make the new incidences with the old structure.
         CGAL_assertion_code( std::size_t termination_count = 0;)
         if ( h->next() != i) {
             Halfedge_handle g = h->next();
@@ -695,7 +695,7 @@ public:
   protected:                               // Supports_halfedge_vertices
       void erase_connected_component_vertex( Halfedge_handle  ,Tag_false){}
       void erase_connected_component_vertex( Halfedge_handle h, Tag_true) {
-          // Erases the the vertex incident to h and sets all references
+          // Erases the vertex incident to h and sets all references
           // from halfedges around this vertex to Halfedge_handle(),
           // if the incident vertex handle is not already equal to
           // Halfedge_handle(). It is used to erase vertices as soon
@@ -795,8 +795,7 @@ public:
         Assert_compile_time_tag(Supports_vertex_halfedge(), Tag_true());
         Assert_compile_time_tag(Supports_halfedge_vertex(), Tag_true());
 
-        unsigned int nb_erased_components = 0,
-                     nb_isolated_vertices = 0;
+        unsigned int nb_erased_components = 0;
 
         // Gets list of connected components, ordered by size (i.e. number of vertices)
         std::vector<Vertex_handle> components;
@@ -818,12 +817,8 @@ public:
           else // if isolated vertex
           {
             vertices_erase(vertex);
-            nb_isolated_vertices++;
           }
         }
-
-//         if (nb_isolated_vertices > 0)
-//           std::cerr << "  Erased " << nb_isolated_vertices << " isolated vertices\n";
 
         return nb_erased_components;
     }

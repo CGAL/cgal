@@ -18,12 +18,12 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Iterator_range.h>
 #include <functional>
 #include <boost/functional/hash.hpp>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <cmath>
 #include <unordered_set>
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -65,7 +66,7 @@ public:
     Hash_epsilon_points_3 (double epsilon, PointMap p_map)
         : m_epsilon (epsilon), point_map(p_map)
     {
-        CGAL_point_set_processing_precondition(epsilon > 0);
+        CGAL_precondition(epsilon > 0);
     }
 
   std::size_t operator() (const Point_3& a) const
@@ -95,7 +96,7 @@ public:
     Equal_epsilon_points_3 (const double& epsilon, PointMap p_map)
         : m_epsilon (epsilon), point_map(p_map)
     {
-        CGAL_point_set_processing_precondition(epsilon > 0);
+        CGAL_precondition(epsilon > 0);
     }
 
     bool operator() (const Point_3& a, const Point_3& b) const
@@ -117,42 +118,67 @@ public:
     }
 };
 
-
-} /* namespace internal */
-
+template <typename Point_3, typename PointMap, typename UseMap>
+using Epsilon_point_set_3_base
+= typename std::conditional
+  <UseMap::value,
+   std::unordered_map<Point_3, std::size_t,
+                      internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                      internal::Equal_epsilon_points_3<Point_3, PointMap> >,
+   std::unordered_set<Point_3,
+                      internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                      internal::Equal_epsilon_points_3<Point_3, PointMap> > >::type;
 
 /// Utility class for grid_simplify_point_set():
-/// 3D points set which allows at most 1 point per cell
+/// 3D points set which allows at most 1 (or N) point per cell
 /// of a grid of cell size = epsilon.
 ///
 /// Warning:
 /// This class is a container sorted wrt points position
 /// => you should not modify directly the order or the position of points.
 
-template <class Point_3, class PointMap>
-class Epsilon_point_set_3
-  : public std::unordered_set<Point_3,
-                                internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                                internal::Equal_epsilon_points_3<Point_3, PointMap> >
+template <class Point_3, class PointMap, class UseMap>
+class Epsilon_point_set_3 : public internal::Epsilon_point_set_3_base<Point_3, PointMap, UseMap>
+
 {
 private:
 
-    // superclass
-    typedef std::unordered_set<Point_3,
-                                internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                                internal::Equal_epsilon_points_3<Point_3, PointMap> > Base;
+  // superclass
+  using Base = internal::Epsilon_point_set_3_base<Point_3, PointMap, UseMap>;
+
+  unsigned int min_points_per_cell;
 
 public:
 
-    Epsilon_point_set_3 (double epsilon, PointMap point_map)
-        : Base(10, internal::Hash_epsilon_points_3<Point_3, PointMap>(epsilon, point_map),
-               internal::Equal_epsilon_points_3<Point_3, PointMap>(epsilon, point_map))
-    {
-        CGAL_point_set_processing_precondition(epsilon > 0);
-    }
+  Epsilon_point_set_3 (double epsilon, PointMap point_map, unsigned int min_points_per_cell = 1)
+    : Base(10, internal::Hash_epsilon_points_3<Point_3, PointMap>(epsilon, point_map),
+           internal::Equal_epsilon_points_3<Point_3, PointMap>(epsilon, point_map))
+    , min_points_per_cell (min_points_per_cell)
+  {
+    CGAL_precondition(epsilon > 0);
+  }
 
-    // default copy constructor, operator =() and destructor are fine.
+  bool insert (const Point_3& p)
+  {
+    return insert (p, UseMap());
+  }
+
+private:
+
+  bool insert (const Point_3& p, const Tag_true&)
+  {
+    auto iter = Base::insert(std::make_pair (p, 0));
+    iter.first->second ++;
+    return iter.first->second == min_points_per_cell;
+  }
+
+  bool insert (const Point_3& p, const Tag_false&)
+  {
+    return Base::insert (p).second;
+  }
 };
+
+} /* namespace internal */
 
 /// \endcond
 
@@ -173,79 +199,71 @@ public:
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param epsilon tolerance value when merging 3D points.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped and simplification stops with
-      no guarantee on the output.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{min_points_per_cell}
+       \cgalParamDescription{minimum number of points in a cell such
+       that a point in this cell is kept after simplification}
+       \cgalParamType{unsigned int}
+       \cgalParamDefault{1}
+       \cgalParamExtra{If a value greater than 1 is used, the
+       algorithm also acts as an outlier filtering algorithm, by removing
+       low-density areas.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return iterator over the first point to remove.
 */
-template <typename PointRange, typename NamedParameters>
+template <typename PointRange, typename NamedParameters = parameters::Default_named_parameters>
 typename PointRange::iterator
 grid_simplify_point_set(
   PointRange& points,
   double epsilon,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                                 std::function<bool(double)>());
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  PointMap point_map = NP_helper::get_point_map(points, np);
+
+  unsigned int min_points_per_cell = choose_parameter(get_parameter(np, internal_np::min_points_per_cell), 1);
 
   // actual type of input points
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
 
-  CGAL_point_set_processing_precondition(epsilon > 0);
+  CGAL_precondition(epsilon > 0);
 
-  // Merges points which belong to the same cell of a grid of cell size = epsilon.
-  // points_to_keep[] will contain 1 point per cell; the others will be in points_to_remove[].
-  Epsilon_point_set_3<Enriched_point, PointMap> points_to_keep(epsilon, point_map);
-  std::deque<Enriched_point> points_to_remove;
-  std::size_t nb = 0, nb_points = points.size();
-  for (typename PointRange::iterator it = points.begin(); it != points.end(); it++, ++ nb)
+  if (min_points_per_cell == 1)
   {
-    std::pair<typename Epsilon_point_set_3<Enriched_point, PointMap>::iterator,bool> result;
-    result = points_to_keep.insert(*it);
-    if (!result.second) // if not inserted
-      points_to_remove.push_back(*it);
-    if (callback && !callback ((nb+1) / double(nb_points)))
-      break;
+    // Merges points which belong to the same cell of a grid of cell size = epsilon.
+    // Keep 1 point per occupied cell
+    internal::Epsilon_point_set_3<Enriched_point, PointMap, Tag_false> point_set(epsilon, point_map);
+    return std::partition (points.begin(), points.end(), [&](const auto& p) -> bool { return point_set.insert(p); });
   }
-
-  // Replaces `[first, beyond)` range by the content of points_to_keep, then points_to_remove.
-  typename PointRange::iterator first_point_to_remove =
-    std::copy(points_to_keep.begin(), points_to_keep.end(), points.begin());
-    std::copy(points_to_remove.begin(), points_to_remove.end(), first_point_to_remove);
-
-  return first_point_to_remove;
+  // else
+  // Merges points which belong to the same cell of a grid of cell size = epsilon.
+  // Keep 1 point per cell occupied by at least `min_points_per_cell` points
+  internal::Epsilon_point_set_3<Enriched_point, PointMap, Tag_true> point_set(epsilon, point_map, min_points_per_cell);
+  return std::partition (points.begin(), points.end(), [&](const auto& p) -> bool { return point_set.insert(p); });
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-typename PointRange::iterator
-grid_simplify_point_set(PointRange& points, double epsilon)
-{
-  return grid_simplify_point_set
-    (points, epsilon, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

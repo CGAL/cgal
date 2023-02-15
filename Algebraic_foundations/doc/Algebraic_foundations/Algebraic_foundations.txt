@@ -267,7 +267,7 @@ compute the <i>least</i> common multiple of the denominators.
 
 The package is part of \cgal since release 3.3. Of course the package is based
 on the former Number type support of CGAL. This goes back to Stefan Schirra and Andreas Fabri. But on the other hand the package is to a large extend influenced
-by the experience with the number type support in <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05},
+by the experience with the number type support in \exacus \cgalCite{beh-eeeafcs-05},
 which in the main goes back to
 Lutz Kettner, Susan Hert, Arno Eigenwillig and Michael Hemmer.
 However, the package abstracts from the pure support for

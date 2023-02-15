@@ -2,11 +2,15 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <boost/function_output_iterator.hpp>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
+
 #include <iostream>
-#include <fstream>
+#include <iterator>
 #include <map>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
@@ -17,7 +21,7 @@ typedef CGAL::Surface_mesh<Point>                           Mesh;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename G>
-struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
+struct Constraint
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   typedef boost::readable_property_map_tag      category;
@@ -33,7 +37,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
     : g_(&g), bound_(bound)
   {}
 
-  bool operator[](edge_descriptor e) const
+  value_type operator[](edge_descriptor e) const
   {
     const G& g = *g_;
     return compare_(g.point(source(e, g)),
@@ -41,6 +45,12 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
                     g.point(target(next(halfedge(e, g), g), g)),
                     g.point(target(next(opposite(halfedge(e, g), g), g), g)),
                    bound_) == CGAL::SMALLER;
+  }
+
+  friend inline
+  value_type get(const Constraint& m, const key_type k)
+  {
+    return m[k];
   }
 
   const G* g_;
@@ -68,12 +78,12 @@ struct Put_true
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
-  std::ifstream input(filename);
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
@@ -103,7 +113,7 @@ int main(int argc, char* argv[])
     mesh.add_property_map<face_descriptor, std::size_t>("f:CC").first;
   std::size_t num = PMP::connected_components(mesh,
       fccmap,
-      PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
+      CGAL::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
   typedef std::map<std::size_t/*index of CC*/, unsigned int/*nb*/> Components_size;
@@ -119,12 +129,12 @@ int main(int argc, char* argv[])
   std::cerr << "- We keep only components which have at least 4 faces" << std::endl;
   PMP::keep_large_connected_components(mesh,
       4,
-      PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
+      CGAL::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
   std::cerr << "- We keep the two largest components" << std::endl;
   PMP::keep_largest_connected_components(mesh,
       2,
-      PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
+      CGAL::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
   return 0;
 }

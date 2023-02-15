@@ -84,7 +84,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
        << "Expr: " << expr << std::endl
        << "File: " << file << std::endl
        << "Line: " << line << std::endl;
-  if ( msg != 0)
+  if ( msg != nullptr)
       std::cerr << "Explanation:" << msg << std::endl;
 
   if ( sAbortOnError )
@@ -121,6 +121,7 @@ typedef CGAL::Dxf_stream<IK> DxfStream ;
 
 using namespace std ;
 using namespace CGAL ;
+using namespace CGAL::IO ;
 
 inline string to_string( double n ) { ostringstream ss ; ss << n ; return ss.str(); }
 inline bool   is_even ( int n ) { return n % 2 == 0 ; }
@@ -222,7 +223,7 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
     ifstream in(file.c_str());
     if ( in )
     {
-      CGAL::set_ascii_mode(in);
+      CGAL::IO::set_ascii_mode(in);
 
       rRegion = IRegionPtr( new IRegion() ) ;
 
@@ -458,7 +459,7 @@ void dump_to_eps ( TestCase const& aCase )
 
 }
 template<class Polygon>
-void dump_polygon_to_dxf( Polygon const& aPolygon, Color aColor, string aLayer, DxfStream& rDXF )
+void dump_polygon_to_dxf( Polygon const& aPolygon, IO::Color aColor, string aLayer, DxfStream& rDXF )
 {
   rDXF << aColor << Dxf_layer(aLayer) ;
 
@@ -467,7 +468,7 @@ void dump_polygon_to_dxf( Polygon const& aPolygon, Color aColor, string aLayer, 
 
 
 template<class Region>
-void dump_region_to_dxf( Region const& aRegion, Color aColor, string aBaseLayer, DxfStream& rDXF )
+void dump_region_to_dxf( Region const& aRegion, IO::Color aColor, string aBaseLayer, DxfStream& rDXF )
 {
   int lN = 0 ;
   for ( typename Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() ; ++ bit )
@@ -480,10 +481,10 @@ void dump_region_to_dxf( Region const& aRegion, Color aColor, string aBaseLayer,
 }
 
 void dump_skeleton_to_dxf( ISls const& aSkeleton
-                         , Color      aContourBisectorColor
-                         , Color      aSkeletonBisectorColor
-                         , Color      aPeakBisectorColor
-                         , Color      /*aInfiniteBisectorColor*/
+                         , IO::Color      aContourBisectorColor
+                         , IO::Color      aSkeletonBisectorColor
+                         , IO::Color      aPeakBisectorColor
+                         , IO::Color      /*aInfiniteBisectorColor*/
                          , string     aLayer
                          , DxfStream& rDXF
                          )
@@ -633,9 +634,9 @@ bool is_point_inside_region( Region const& aRegion, Point const& aP )
   return rR ;
 }
 
-bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
+bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton, bool is_partial )
 {
-  bool rValid = aSkeleton.is_valid() ;
+  bool rValid = aSkeleton.is_valid(is_partial) ;
 
   if ( !rValid )
   {
@@ -713,7 +714,7 @@ int create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost:
     rStatus = cTimedOut ;
 
   if ( rStatus == cUnknown )
-    rStatus = lSls && is_skeleton_valid(*rZone.Input,*lSls) ? cOK : cFailed ;
+    rStatus = lSls && is_skeleton_valid(*rZone.Input,*lSls, (bool) aMaxTime) ? cOK : cFailed ;
 
   double lEllapsedTime = t.time();
 
@@ -821,7 +822,7 @@ int test_zone ( Zone& rZone )
 
         OSlsPtr lOSkeleton = CvtSls(*rZone.PartialSkeleton) ;
 
-        assert( lOSkeleton->is_valid() ) ;
+        assert( lOSkeleton->is_valid(true) ) ;
 
         IOffsetBuilderVisitor lWatchdog(check_timeout);
 
@@ -1207,7 +1208,7 @@ int main( int argc, char const* argv[] )
 
                     if ( soptr != "*" )
                     {
-                      sOffsetCount = strtoul(soptr.c_str(),NULL,10) ;
+                      sOffsetCount = strtoul(soptr.c_str(),nullptr,10) ;
                       cout << "Repeared Offset set at " << sOffset << " " << sOffsetCount << " times." << endl ;
                     }
                     else

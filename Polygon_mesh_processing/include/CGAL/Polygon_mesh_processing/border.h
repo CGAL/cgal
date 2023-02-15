@@ -13,19 +13,19 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 #define CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 
-#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
+#include <CGAL/license/Polygon_mesh_processing/core.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <set>
+#include <type_traits>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -144,8 +144,10 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   }//end namespace internal
 
   /*!
-  \ingroup PkgPolygonMeshProcessingRef
-  * collects the border halfedges of a surface patch defined as a face range.
+  * \ingroup PkgPolygonMeshProcessingRef
+  *
+  * \brief collects the border halfedges of a surface patch defined as a face range.
+  *
   * For each returned halfedge `h`, `opposite(h, pmesh)` belongs to a face of the patch,
   * but `face(h, pmesh)` does not belong to the patch.
   *
@@ -154,29 +156,36 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   * @tparam HalfedgeOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
      for patch border
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh to which the faces in `face_range` belong
   * @param face_range the range of faces defining the patch whose border halfedges
   *                   are collected
   * @param out the output iterator that collects the border halfedges of the patch,
   *            seen from outside.
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   * \cgalNamedParamsBegin
-      \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
-    \cgalNamedParamsEnd
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+  *                    as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
   *
   * @returns `out`
+  *
+  * @see `extract_boundary_cycles()`
   */
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator
-         , typename NamedParameters>
+         , typename NamedParameters = parameters::Default_named_parameters>
   HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
                                   , const PolygonMesh& pmesh
                                   , HalfedgeOutputIterator out
-                                  , const NamedParameters& np)
+                                  , const NamedParameters& np = parameters::default_values())
   {
     if (face_range.empty())
       return out;
@@ -200,18 +209,6 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
     return out;
   }
 
-  template<typename PolygonMesh
-         , typename FaceRange
-         , typename HalfedgeOutputIterator>
-  HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
-                                        , const PolygonMesh& pmesh
-                                        , HalfedgeOutputIterator out)
-  {
-    return border_halfedges(face_range, pmesh, out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-  }
-
-
   // counts the number of connected components of the boundary of the mesh.
   //
   // @tparam PolygonMesh model of `HalfedgeGraph`.
@@ -224,7 +221,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
     unsigned int border_counter = 0;
-    boost::unordered_set<halfedge_descriptor> visited;
+    std::unordered_set<halfedge_descriptor> visited;
     for(halfedge_descriptor h : halfedges(pmesh)){
       if(visited.find(h)== visited.end()){
         if(is_border(h,pmesh)){
@@ -240,6 +237,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   }
 
   /// @ingroup PkgPolygonMeshProcessingRef
+  ///
   /// extracts boundary cycles as a list of halfedges, with one halfedge per border.
   ///
   /// @tparam PolygonMesh a model of `HalfedgeListGraph`
@@ -249,6 +247,8 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   /// @param pm a polygon mesh
   /// @param out an output iterator where the border halfedges will be put
   ///
+  /// @see `border_halfedges()`
+  ///
   /// @todo It could make sense to also return the length of each cycle.
   /// @todo It should probably go into BGL package (like the rest of this file).
   template <typename PolygonMesh, typename OutputIterator>
@@ -257,7 +257,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   {
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-    boost::unordered_set<halfedge_descriptor> hedge_handled;
+    std::unordered_set<halfedge_descriptor> hedge_handled;
     for(halfedge_descriptor h : halfedges(pm))
     {
       if(is_border(h, pm) && hedge_handled.insert(h).second)

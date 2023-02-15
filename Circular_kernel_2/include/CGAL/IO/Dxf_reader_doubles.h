@@ -16,8 +16,7 @@
 // (ACS -- Algorithms for Complex Shapes)
 
 // Descriptions of the file format can be found at
-// http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
-// http://www.tnt.uni-hannover.de/soft/compgraph/fileformats/docs/DXF.ascii
+// https://images.autodesk.com/adsk/files/autocad_2012_pdf_dxf-reference_enu.pdf
 
 #ifndef CGAL_IO_DXF_READER_DOUBLES_H
 #define CGAL_IO_DXF_READER_DOUBLES_H
@@ -124,13 +123,13 @@ private:
 
   is >> n;
   CGAL_assertion(n == 10);
-  is >> iformat(cx);
+  is >> IO::iformat(cx);
   is >> n;
   CGAL_assertion(n == 20);
-  is >> iformat(cy);
+  is >> IO::iformat(cy);
   is >> n;
   CGAL_assertion(n == 40);
-  is >> iformat(r);
+  is >> IO::iformat(r);
   FT sqr_ft(r*r);
   circ = CGAL::make_array(cx,cy,sqr_ft);
 }
@@ -160,10 +159,10 @@ read_polygon(std::istream& is, Polygon& poly)
       CGAL_assertion(n == 0);
       is >> n;
       CGAL_assertion(n == 10);
-      is >> iformat(x);
+      is >> IO::iformat(x);
       is >> n;
       CGAL_assertion(n == 20);
-      is >> iformat(y);
+      is >> IO::iformat(y);
       is >> n;
       len = 0;
       if(n == 42){

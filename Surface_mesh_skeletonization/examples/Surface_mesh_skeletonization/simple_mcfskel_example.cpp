@@ -46,7 +46,7 @@ struct Display_polylines{
 // This example extracts a medially centered skeleton from a given mesh.
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
+  std::ifstream input((argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off"));
   Polyhedron tmesh;
   input >> tmesh;
   if (!CGAL::is_triangle_mesh(tmesh))
@@ -63,13 +63,13 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
-  std::ofstream output("skel-poly.cgal");
+  std::ofstream output("skel-poly.polylines.txt");
   Display_polylines display(skeleton,output);
   CGAL::split_graph_into_polylines(skeleton, display);
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance-poly.cgal");
+  output.open("correspondance-poly.polylines.txt");
   for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << " "

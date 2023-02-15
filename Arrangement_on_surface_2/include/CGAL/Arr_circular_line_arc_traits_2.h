@@ -22,71 +22,55 @@
 
 #include <CGAL/disable_warnings.h>
 
-
 /*! \file
  * This file was developed at Inria, France, and copied over to the
  * Arrangement_2 package, which it is now part of. It contains a traits
  * class for the arrangement package that handles circular and linear curves.
  * It is based on the circular kernel.
+ *
+ * \todo Fix the circular-kernel make-x-monotone functor to use modern variant
+ *       instead of the legacy CGAL::Object. Then, eliminate the special
+ *       implementation here and directly use the kernel functor instead.
  */
 
-#include <CGAL/basic.h>
-#include <boost/variant.hpp>
-#include <CGAL/Arr_tags.h>
-
 #include <vector>
+
+#include <boost/variant.hpp>
+
+#include <CGAL/basic.h>
+#include <CGAL/Arr_tags.h>
 
 namespace CGAL {
   namespace VariantFunctors{
 
-    // Takes an iterator range of Object(Line/Circular_arc),
-    // returns an Object(Variant(Line/Circular_arc)).
-    // Do nothing for Object(Endpoint).
+    // Takes an iterator range of Object(Line/Circular_arc/Point),
+    // returns a variant of Line, Circular_arc, and Point_2.
     template <class CK, class Arc1, class Arc2, class OutputIterator>
     OutputIterator
     object_to_object_variant(const std::vector<CGAL::Object>& res1,
                              OutputIterator res2)
     {
-      for(std::vector<CGAL::Object>::const_iterator it = res1.begin();
-          it != res1.end(); ++it ){
-        if(const Arc1 *arc = CGAL::object_cast< Arc1 >(&*it)){
-          boost::variant< Arc1, Arc2 > v =  *arc;
-          *res2++ = make_object(v);
+      typedef typename CK::Circular_arc_point_2         Point_2;
+      typedef boost::variant<Arc1, Arc2>                X_monotone_curve_2;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
+      for (auto it = res1.begin(); it != res1.end(); ++it) {
+        if (const Arc1* arc = CGAL::object_cast<Arc1>(&*it)) {
+          boost::variant<Arc1, Arc2> v =  *arc;
+          *res2++ = Make_x_monotone_result(v);
         }
-        else if (const Arc2 *line = CGAL::object_cast< Arc2 >(&*it)){
-          boost::variant< Arc1, Arc2 > v =  *line;
-          *res2++ = make_object(v);
+        else if (const Arc2* line = CGAL::object_cast<Arc2>(&*it)) {
+          boost::variant<Arc1, Arc2> v =  *line;
+          *res2++ = Make_x_monotone_result(v);
         }
-        else{
-          *res2++ = *it;
+        else if (const Point_2* p = CGAL::object_cast<Point_2>(&*it)) {
+          *res2++ = Make_x_monotone_result(*p);
         }
+        else CGAL_error();
       }
       return res2;
     }
-
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class In_x_range_2
-    {
-    public:
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-      typedef bool result_type;
-
-      result_type
-        operator()(const boost::variant< Arc1, Arc2 > &a,
-                   const Circular_arc_point_2 &p) const
-      {
-        if ( const Arc1* arc1 = boost::get<Arc1>( &a ) ){
-          return CircularKernel().in_x_range_2_object()(*arc1, p);
-        }
-        else {
-          const Arc2* arc2 = boost::get<Arc2>( &a );
-          return CircularKernel().in_x_range_2_object()(*arc2, p);
-        }
-      }
-    };
-
 
     template <class CircularKernel, class Arc1, class Arc2>
     class Compare_y_to_right_2
@@ -149,17 +133,12 @@ namespace CGAL {
 
     template <class CircularKernel, class Arc1, class Arc2>
     class Equal_2
-#ifndef CGAL_CFG_MATCHING_BUG_6
-      : public
-      CircularKernel::Equal_2
-#endif
+      : public CircularKernel::Equal_2
     {
     public:
       typedef boost::variant< Arc1, Arc2 >  Curve_2;
       typedef bool result_type;
-#ifndef CGAL_CFG_MATCHING_BUG_6
       using CircularKernel::Equal_2::operator();
-#else
       typedef typename CircularKernel::Circular_arc_point_2
                                                   Circular_arc_point_2;
       typedef typename CircularKernel::Line_arc_2     Line_arc_2;
@@ -180,14 +159,12 @@ namespace CGAL {
     { return CK_Equal_2()(a0, a1); }
 
     result_type
-    operator() ( const Line_arc_2 &a0, const Circular_arc_2 &a1) const
+    operator() ( const Line_arc_2 &/*a0*/, const Circular_arc_2 &/*a1*/) const
     { return false; }
 
     result_type
-    operator() ( const Circular_arc_2 &a0, const Line_arc_2 &a1) const
+    operator() ( const Circular_arc_2 &/*a0*/, const Line_arc_2 &/*a1*/) const
     { return false; }
-
-#endif
 
       result_type
       operator()(const Curve_2 &a0, const Curve_2 &a1) const
@@ -261,6 +238,7 @@ namespace CGAL {
     };
 
 
+    //! A functor for subdividing curves into x-monotone curves.
     template <class CircularKernel, class Arc1, class Arc2>
     class Make_x_monotone_2
     {
@@ -270,79 +248,57 @@ namespace CGAL {
 
       template < class OutputIterator,class Not_X_Monotone >
       OutputIterator
-      operator()(const boost::variant<Arc1, Arc2, Not_X_Monotone> &A, OutputIterator res) const
+      operator()(const boost::variant<Arc1, Arc2, Not_X_Monotone> &A,
+                 OutputIterator res) const
       {
-        if ( const Arc1* arc1 = boost::get<Arc1>( &A ) ){
+        if ( const Arc1* arc1 = boost::get<Arc1>( &A ) ) {
           std::vector<CGAL::Object> container;
-          CircularKernel()
-            .make_x_monotone_2_object()(*arc1,std::back_inserter(container));
+          CircularKernel().
+            make_x_monotone_2_object()(*arc1,std::back_inserter(container));
           return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                         (container, res);
+                                          (container, res);
         }
         else {
           const Arc2* arc2 = boost::get<Arc2>( &A );
           std::vector<CGAL::Object> container;
-          CircularKernel()
-            .make_x_monotone_2_object()(*arc2,std::back_inserter(container));
+          CircularKernel().
+            make_x_monotone_2_object()(*arc2,std::back_inserter(container));
           return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                         (container, res);
+                                          (container, res);
         }
       }
     };
-
-
 
     template <class CircularKernel, class Arc1, class Arc2>
     class Intersect_2
     {
     public:
-    typedef typename CircularKernel::Circular_arc_point_2
-                                                Circular_arc_point_2;
+      typedef typename CircularKernel::Circular_arc_point_2
+                                                        Circular_arc_point_2;
 
       template < class OutputIterator >
         OutputIterator
         operator()(const boost::variant< Arc1, Arc2 > &c1,
                    const boost::variant< Arc1, Arc2 > &c2,
-                   OutputIterator res) const
+                   OutputIterator oi) const
       {
         if ( const Arc1* arc1 = boost::get<Arc1>( &c1 ) ){
           if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
-            std::vector<CGAL::Object> container;
-            CircularKernel()
-              .intersect_2_object()(*arc1,*arc2,std::back_inserter(container));
-            return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                           (container, res);
-          }
-          else if ( const Arc2* arc2 = boost::get<Arc2>( &c2 ) ){
-            std::vector<CGAL::Object> container;
-            CircularKernel()
-              .intersect_2_object()(*arc1,*arc2,std::back_inserter(container));
-            return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                           (container, res);
-          }
-        }
-        else {
-          const Arc2* arc1e = boost::get<Arc2>( &c1 );
-          if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
-            std::vector<CGAL::Object> container;
-            CircularKernel()
-              .intersect_2_object()(*arc1e,*arc2,std::back_inserter(container));
-            return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                           (container, res);
+            return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
           }
           const Arc2* arc2 = boost::get<Arc2>( &c2 );
-          std::vector<CGAL::Object> container;
-          CircularKernel()
-            .intersect_2_object()(*arc1e,*arc2,std::back_inserter(container));
-          return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                         (container, res);
+          return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
         }
-        CGAL_error();
-        return res;//for no warning
+
+        const Arc2* arc1e = boost::get<Arc2>( &c1 );
+        if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
+          return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
+        }
+        const Arc2* arc2 = boost::get<Arc2>( &c2 );
+        return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
       }
 
     };
-
 
     template <class CircularKernel, class Arc1, class Arc2>
     class Split_2
@@ -533,7 +489,7 @@ namespace CGAL {
     typedef unsigned int                           Multiplicity;
 
     typedef CGAL::Tag_false                        Has_left_category;
-    typedef CGAL::Tag_false                            Has_merge_category;
+    typedef CGAL::Tag_false                        Has_merge_category;
     typedef CGAL::Tag_false                        Has_do_intersect_category;
 
     typedef Arr_oblivious_side_tag                 Left_side_category;

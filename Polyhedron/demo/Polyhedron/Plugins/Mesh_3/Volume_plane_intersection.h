@@ -24,7 +24,7 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }
   bool manipulatable() const { return false; }
-  Volume_plane_intersection* clone() const { return 0; }
+  Volume_plane_intersection* clone() const { return nullptr; }
   bool supportsRenderingMode(RenderingMode) const { return true; }
   QString toolTip() const { return "Tooling"; }
   void compute_bbox() const{}

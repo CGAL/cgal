@@ -5,18 +5,6 @@
 
 A model of `LinearProgram` describes a linear program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
 \f{eqnarray*}{
 \mbox{(QP)}& \mbox{minimize}
 & \qpc^{T}\qpx+c_0 \\
@@ -94,7 +82,7 @@ The value type of `FL_iterator` is `bool`.
 typedef unspecified_type FL_iterator;
 
 /*!
-A random acess iterator type to go over
+A random access iterator type to go over
 the entries of the lower bound vector \f$ \qpl\f$.
 */
 typedef unspecified_type L_iterator;
@@ -107,7 +95,7 @@ The value type of `UL_iterator` is `bool`.
 typedef unspecified_type UL_iterator;
 
 /*!
-A random acess iterator type to go over
+A random access iterator type to go over
 the entries of the upper bound vector \f$ \qpu\f$.
 */
 typedef unspecified_type U_iterator;

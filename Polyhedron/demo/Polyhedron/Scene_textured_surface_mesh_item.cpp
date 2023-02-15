@@ -1,6 +1,5 @@
 #include "Scene_textured_surface_mesh_item.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
@@ -295,7 +294,7 @@ Scene_textured_surface_mesh_item::textured_face_graph() const { return d->sm; }
 
 bool
 Scene_textured_surface_mesh_item::isEmpty() const {
-  return (d->sm == 0) || d->sm->is_empty();
+  return (d->sm == nullptr) || d->sm->is_empty();
 }
 
 void

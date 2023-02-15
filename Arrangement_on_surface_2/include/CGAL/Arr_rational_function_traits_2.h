@@ -808,45 +808,41 @@ public:
     return Equal_2(this);
   }
 
-  /*! A functor that divides a curve into continues (x-monotone) curves. */
-  class Make_x_monotone_2
-  {
-  public:
+  //! \name Intersections & subdivisions
+  //@{
 
-    /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves
-     * and insert them to the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects is a wrapper for an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing a curve into continues x-monotone curves.
+   */
+  class Make_x_monotone_2 {
+  public:
+    /*! Subdivide a given rational-function curve into x-monotone subcurves
+     * and insert them to a given output iterator.
+     * \param cv the curve.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
+     * \return the past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
-      // Make the rational arc continuous.
-      std::list<X_monotone_curve_2>                           arcs;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
 
+      // Make the rational arc continuous.
+      std::list<X_monotone_curve_2> arcs;
       cv.make_continuous(std::back_inserter(arcs));
 
       // Create objects.
-      typename std::list<X_monotone_curve_2>::const_iterator  iter;
-
-      for (iter = arcs.begin(); iter != arcs.end(); ++iter)
-      {
-        *oi = make_object (*iter);
-        ++oi;
-      }
-
-      return (oi);
+      for (const auto& arc : arcs) *oi++ = Make_x_monotone_result(arc);
+      return oi;
     }
   };
 
   /*! Obtain a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
-  {
-    return Make_x_monotone_2();
-  }
+  { return Make_x_monotone_2(); }
 
   /*! A functor that splits a curve at a point. */
   class Split_2
@@ -975,6 +971,8 @@ public:
     return Merge_2(this);
   }
 
+  //@}
+
   /// \name Functor definitions to handle boundaries
   //@{
 
@@ -1059,6 +1057,7 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
+#if 0
   /*! A function object that compares the x-coordinates of arc ends near the
    * boundary of the parameter space
    */
@@ -1117,7 +1116,7 @@ public:
   /*! Obtain a Compare_x_near_boundary_2 function object */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(); }
-
+#endif
 
   /*! A function object that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
@@ -1156,7 +1155,7 @@ public:
   /*! A function object that compares at limit
    */
   //new functor
-  class Compare_x_at_limit_2
+  class Compare_x_on_boundary_2
   {
    public:
     /*! Compares the x coordinate of p with the curve end
@@ -1191,24 +1190,24 @@ public:
                            (ce2 == ARR_MIN_END) ? xcv2.left_x() : xcv2.right_x());
     }
 
-  }; //Compare_x_at_limit_2
+  }; //Compare_x_on_boundary_2
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(); }
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
 
   //new functor
-  class Compare_x_near_limit_2
+  class Compare_x_near_boundary_2
   {
   private:
     Cache& _cache;
 
   public:
-    Compare_x_near_limit_2(Cache& cache) : _cache(cache) {}
+    Compare_x_near_boundary_2(Cache& cache) : _cache(cache) {}
     /*! Compares the curve end of  xcv1 that is defined by ce1
      *  with the curve end of xcv2 that is defined by ce2
      * at their limits in x.
@@ -1220,11 +1219,11 @@ public:
     {
       return xcv1.compare_near_end(xcv2,ce,_cache);
     }
-  }; //Compare_x_near_limit_2
+  }; //Compare_x_near_boundary_2
 
-  /*! Obtain a Compare_x_near_limit_2 function object */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(_cache); }
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(_cache); }
 
   class Compare_endpoints_xy_2
   {

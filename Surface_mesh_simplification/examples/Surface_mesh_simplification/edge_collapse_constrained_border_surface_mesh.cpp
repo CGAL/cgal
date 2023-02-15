@@ -11,7 +11,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 
 #include <iostream>
 #include <fstream>
@@ -36,7 +36,7 @@ struct Border_is_constrained_edge_map
 
   Border_is_constrained_edge_map(const Surface_mesh& sm) : sm_ptr(&sm) {}
 
-  friend bool get(Border_is_constrained_edge_map m, const key_type& edge) {
+  friend value_type get(const Border_is_constrained_edge_map& m, const key_type& edge) {
     return CGAL::is_border(edge, *m.sm_ptr);
   }
 };
@@ -48,7 +48,7 @@ typedef SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/mesh_with_border.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mesh_with_border.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
   }
 
   // Contract the surface mesh as much as possible
-  SMS::Count_stop_predicate<Surface_mesh> stop(0);
+  SMS::Edge_count_stop_predicate<Surface_mesh> stop(0);
   Border_is_constrained_edge_map bem(surface_mesh);
 
   // This the actual call to the simplification algorithm.
@@ -90,9 +90,7 @@ int main(int argc, char** argv)
   std::cout << "\nFinished!\n" << r << " edges removed.\n"
             << surface_mesh.number_of_edges() << " final edges.\n";
 
-  std::ofstream os(argc > 2 ? argv[2] : "out.off");
-  os.precision(17);
-  os << surface_mesh;
+  CGAL::IO::write_polygon_mesh((argc > 2) ? argv[2] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   // now check!
   for(halfedge_descriptor hd : halfedges(surface_mesh))

@@ -15,7 +15,7 @@
 
 // This package
 #include <CGAL/bilateral_smooth_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <deque>
 #include <cstdlib>
@@ -103,26 +103,21 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // File name is:
-    std::string input_filename  = argv[i];
-
     // Reads the point set file in points[].
     std::deque<PointVectorPair> points;
-    std::cerr << "Opening " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Opening " << argv[i] << " for reading..." << std::endl;
 
     // If XYZ file format:
-    std::ifstream stream(input_filename.c_str());
-    if(stream &&
-       CGAL::read_xyz_points(stream,
+    if(CGAL::IO::read_points(argv[i],
                              std::back_inserter(points),
-                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-                             normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                              .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
     else
     {
-      std::cerr << "Error: cannot read file " << input_filename << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }

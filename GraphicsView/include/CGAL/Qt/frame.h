@@ -106,7 +106,7 @@ class Constraint;
   the Frame. The default constraint() is \c nullptr resulting in no filtering. Use
   setConstraint() to attach a Constraint to a frame.
 
-  Constraints are especially usefull for the ManipulatedFrame instances, in
+  Constraints are especially useful for the ManipulatedFrame instances, in
   order to forbid some mouse motions. See the <a
   href="../examples/constrainedFrame.html">constrainedFrame</a>, <a
   href="../examples/constrainedCamera.html">constrainedCamera</a> and <a
@@ -119,7 +119,7 @@ class Constraint;
   <h3>Derived classes</h3>
 
   The ManipulatedFrame class inherits Frame and implements a mouse motion
-  convertion, so that a Frame (and hence an object) can be manipulated in the
+  conversion, so that a Frame (and hence an object) can be manipulated in the
   scene with the mouse.
 
   \nosubgrouping */
@@ -425,14 +425,6 @@ public:
   }
   //@}
 
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-  //@}
 
 private:
   // P o s i t i o n   a n d   o r i e n t a t i o n

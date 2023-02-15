@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>215</height>
+    <height>249</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>381</width>
-     <height>197</height>
+     <height>230</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -44,13 +44,41 @@
      </widget>
     </item>
     <item row="2" column="0">
+     <widget class="QRadioButton" name="linearRadioButton">
+      <property name="text">
+       <string>Linear</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
      <widget class="QRadioButton" name="conicRadioButton">
       <property name="text">
        <string>Conic</string>
       </property>
      </widget>
     </item>
+    <item row="4" column="0">
+     <widget class="QRadioButton" name="algebraicRadioButton">
+      <property name="text">
+       <string>Algebraic</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QRadioButton" name="bezierRadioButton">
+      <property name="text">
+       <string>Bezier</string>
+      </property>
+     </widget>
+    </item>
     <item row="6" column="0">
+     <widget class="QRadioButton" name="rationalFunctionRadioButton">
+      <property name="text">
+       <string>Rational Functions</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
      <widget class="QDialogButtonBox" name="buttonBox">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -60,27 +88,6 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QRadioButton" name="linearRadioButton">
-      <property name="text">
-       <string>Linear</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QRadioButton" name="circularArcRadioButton">
-      <property name="text">
-       <string>Circular Arc</string>
-      </property>
-     </widget>
-    </item>
-    <!-- <item row="5" column="0"> -->
-    <!--  <widget class="QRadioButton" name="algebraicRadioButton"> -->
-    <!--   <property name="text"> -->
-    <!--    <string>Algebraic</string> -->
-    <!--   </property> -->
-    <!--  </widget> -->
-    <!-- </item> -->
    </layout>
   </widget>
  </widget>

@@ -102,7 +102,7 @@ The type generalizes |Vertex_handle|.}*/
 
 /* note: originally I had the mhavs, mhafs hardwired to Halfedge
    in this class scope. egcs 290.60 reacted with an internal compiler
-   error; this recursive instatiation scheme works however!
+   error; this recursive instantiation scheme works however!
    what a shitty world */
 
 enum { BEFORE = -1, AFTER = 1 };
@@ -352,7 +352,7 @@ void link_as_isolated_vertex(Face_handle f, Vertex_handle v) const
 
 void clear_face_cycle_entries(Face_handle f) const
 /*{\Mop removes all isolated vertices and halfedges that
-are entrie points into face cycles from the lists of |f|.}*/
+are entry points into face cycles from the lists of |f|.}*/
 { f->clear_all_entries(); }
 
 
@@ -608,7 +608,7 @@ void make_first_out_edge(Halfedge_handle e) const
 
 void set_adjacency_at_source_between(Halfedge_handle e, Halfedge_handle en)
   const
-/*{\Mop makes |e| and |en| neigbors in the cyclic ordered adjacency list
+/*{\Mop makes |e| and |en| neighbors in the cyclic ordered adjacency list
   around |v=source(e)|. \precond |source(e)==source(en)|.}*/
 { CGAL_assertion(source(e)==source(en));
   link_as_prev_next_pair(en->opposite(),e);
@@ -800,7 +800,7 @@ void PM_decorator<HDS>::clone(const HDS& H) const
   CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
   CGAL::Unique_hash_map<Face_const_iterator,Face_handle>         Fnew;
 
-  /* First clone all objects and store correspondance in three maps.*/
+  /* First clone all objects and store correspondence in three maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
   for (vit = H.vertices_begin(); vit!=vend; ++vit)
     Vnew[vit] = this->phds->vertices_push_back(Vertex_base());
@@ -867,7 +867,7 @@ clone_skeleton(const HDS& H, const LINKDA& L) const
   CGAL::Unique_hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
   CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
 
-  /* First clone all objects and store correspondance in the two maps.*/
+  /* First clone all objects and store correspondence in the two maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
   for (vit = H.vertices_begin(); vit!=vend; ++vit) {
     Vertex_handle v = this->phds->vertices_push_back(Vertex_base());

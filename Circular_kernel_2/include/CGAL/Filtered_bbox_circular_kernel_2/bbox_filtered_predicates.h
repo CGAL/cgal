@@ -43,31 +43,7 @@ public:
 
   typedef typename CK_Compare_x_2::result_type result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
- template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-  template <typename T1, typename T2, typename T3>
-  result_type
-  operator()(const T1& t1, const T2& t2, const T3& t3) const
-  {
-    return Base()(t1,t2,t3);
-  }
-
-  template <typename T1, typename T2, typename T3, typename T4>
-  result_type
-  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
-  {
-    return Base()(t1,t2,t3,t4);
-  }
-
-#endif
-
 
   result_type
   operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
@@ -105,29 +81,7 @@ public:
     return CK_Compare_y_2()(p0, p1);
   }
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
-  template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-  template <typename T1, typename T2, typename T3>
-  result_type
-  operator()(const T1& t1, const T2& t2, const T3& t3) const
-  {
-    return Base()(t1,t2,t3);
-  }
-
-  template <typename T1, typename T2, typename T3, typename T4>
-  result_type
-  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
-  {
-    return Base()(t1,t2,t3,t4);
-  }
-#endif
 
   result_type
   operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
@@ -158,17 +112,7 @@ public:
 
   typedef typename Base::result_type result_type;
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
- template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif
 public:
 
   result_type
@@ -201,16 +145,8 @@ public:
 
   typedef typename CK_In_x_range_2::result_type result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
- template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif
+
 private:
 
   template <class Arc_2>
@@ -273,37 +209,8 @@ public:
 
   typedef typename CK_Compare_y_at_x_2::result_type result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
-  template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
 
-  template <typename T1, typename T2, typename T3>
-  result_type
-  operator()(const T1& t1, const T2& t2, const T3& t3) const
-  {
-    return Base()(t1,t2,t3);
-  }
-
-  template <typename T1, typename T2, typename T3, typename T4>
-  result_type
-  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
-  {
-    return Base()(t1,t2,t3,t4);
-  }
-
-  template <typename T1, typename T2, typename T3, typename T4, typename T5>
-  result_type
-  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4, const T5& t5) const
-  {
-    return Base()(t1,t2,t3,t4,t5);
-  }
-#endif
 private:
 
   template <class Arc_2>
@@ -353,16 +260,9 @@ class Has_on_2 : public BK::Circular_kernel:: template Base< BK >::Type::Has_on_
 public:
 
   typedef typename CK_Has_on_2::result_type result_type;
-  #ifndef CGAL_CFG_MATCHING_BUG_6
+
   using Base::operator();
-#else
- template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif
+
 private:
 
   template <class Arc_2>
@@ -395,9 +295,7 @@ public:
 
 template <class BK>
 class Equal_2
-#ifndef CGAL_CFG_MATCHING_BUG_6
   : public BK::Circular_kernel:: template Base< BK >::Type::Equal_2
-#endif
 {
   typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Equal_2                                  CK_Equal_2;
@@ -420,16 +318,7 @@ public:
 
   typedef typename CK_Equal_2::result_type result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
- template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif
 
 private:
 
@@ -519,16 +408,7 @@ public:
 
   typedef typename CK_Do_overlap_2::result_type result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
- template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif
 
 private:
 

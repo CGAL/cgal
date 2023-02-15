@@ -72,7 +72,7 @@ struct Scene_implicit_function_item_priv
   Scene_implicit_function_item* item;
 };
 
-void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
+void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer = nullptr) const
 {
     item->getTriangleContainer(0)->initializeBuffers(viewer);
     item->getTriangleContainer(0)->setFlatDataSize(nb_quad);
@@ -102,9 +102,9 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
 
     const CGAL::Three::Scene_item::Bbox& b = item->bbox();
     float x,y,z;
-    z = (b.zmax()+b.zmin())/2.0;
-    x = (b.xmax()+b.xmin())/2.0;
-    y = (b.ymax()+b.ymin())/2.0;
+    z = static_cast<float>(b.zmax()+b.zmin())/2.0f;
+    x = static_cast<float>(b.xmax()+b.xmin())/2.0f;
+    y = static_cast<float>(b.ymax()+b.ymin())/2.0f;
     // The Quad
     {
 

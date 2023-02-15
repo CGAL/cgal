@@ -127,7 +127,7 @@ template <class R_> struct Hyperplane_translation {
   CGAL_FUNCTOR_INIT_IGNORE(Hyperplane_translation)
   typedef typename Get_type<R_, Hyperplane_tag>::type        Hyperplane;
   typedef typename Get_type<R_, FT_tag>::type result_type;
-  // TODO: Is_exact?
+  // TODO: Uses_no_arithmetic?
   result_type operator()(Hyperplane const&s)const{
     return s.translation();
   }

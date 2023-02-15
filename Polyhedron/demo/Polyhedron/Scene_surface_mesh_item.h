@@ -48,7 +48,8 @@ public:
   Scene_surface_mesh_item();
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);
-  Scene_surface_mesh_item(SMesh);
+  Scene_surface_mesh_item(const SMesh&);
+    Scene_surface_mesh_item(SMesh&&);
   Scene_surface_mesh_item(const Scene_surface_mesh_item& other);
 
   ~Scene_surface_mesh_item();
@@ -73,7 +74,7 @@ public:
   //of the colors_ vector to scale on min_patch value.
   // For example, the Mesh_segmentation_plugin computes the colors_
   // vector itself, so it must set recompute_colors to false to avoid
-  // having it ovewritten
+  // having it overwritten
   // in the code of this item.
   void computeItemColorVectorAutomatically(bool);
   bool isItemMulticolor();
@@ -103,20 +104,28 @@ public:
   bool save(std::ostream& out) const;
   bool save_obj(std::ostream& out) const;
   bool load_obj(std::istream& in);
+
   //statistics
-  enum STATS {
-    NB_VERTICES = 0,
-    HAS_NM_VERTICES,
-    NB_CONNECTED_COMPOS,
-    NB_BORDER_EDGES,
+  enum STATS
+  {
+    // Properties
+    NB_CONNECTED_COMPOS = 0,
+    NB_HOLES,
+    GENUS,
     IS_PURE_TRIANGLE,
     IS_PURE_QUAD,
-    NB_DEGENERATED_FACES,
-    HOLES,
     AREA,
     VOLUME,
     SELFINTER,
+    HAS_NM_VERTICES,
+
+    // Vertices
+    NB_VERTICES,
+    NB_ISOLATED_VERTICES,
+
+    // Facets
     NB_FACETS,
+    NB_DEGENERATE_FACES,
     MIN_AREA,
     MAX_AREA,
     MED_AREA,
@@ -125,13 +134,17 @@ public:
     MIN_ASPECT_RATIO,
     MAX_ASPECT_RATIO,
     MEAN_ASPECT_RATIO,
-    GENUS,
+
+    // Edges
     NB_EDGES,
+    NB_BORDER_EDGES,
+    NB_DEGENERATE_EDGES,
     MIN_LENGTH,
     MAX_LENGTH,
-    MID_LENGTH,
+    MED_LENGTH,
     MEAN_LENGTH,
-    NB_NULL_LENGTH,
+
+    // Angles
     MIN_ANGLE,
     MAX_ANGLE,
     MEAN_ANGLE
@@ -156,7 +169,8 @@ public:
   void computeElements() const Q_DECL_OVERRIDE;
   void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
   void updateVertex(vertex_descriptor vh);
-  void switchToGouraudPlusEdge(bool b); //replace flatPlusEdge by gouraudPlusEdge and ban Flat.
+  void fill_flat_vertex_map();
+  void updateIds(vertex_descriptor vh);
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();

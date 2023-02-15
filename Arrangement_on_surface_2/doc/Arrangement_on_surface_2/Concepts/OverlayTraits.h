@@ -4,11 +4,11 @@
 \cgalConcept
 
 A model for the `OverlayTraits` should be able to operate on records (namely,
-vertices, halfedges and faces) of two input <span class="textsc">Dcel</span> classes, named
-`Dcel_A` and `Dcel_B`, and construct the records of an output <span class="textsc">Dcel</span> class, referred to as `Dcel_R`.
+vertices, halfedges and faces) of two input \dcel classes, named
+`Dcel_A` and `Dcel_B`, and construct the records of an output \dcel class, referred to as `Dcel_R`.
 
 Models for the concept are used by the global `overlay()` function to
-maintain the auxiliary data stored with the <span class="textsc">Dcel</span> records of the resulting
+maintain the auxiliary data stored with the \dcel records of the resulting
 overlaid arrangement, based on the contents of the input records.
 
 \cgalHasModel `CGAL::Arr_default_overlay_traits<Arrangement>`

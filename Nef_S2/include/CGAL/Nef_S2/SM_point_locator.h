@@ -257,7 +257,7 @@ public:
     Unique_hash_map<SHalfedge_handle,bool> visited(false);
     CGAL_forall_svertices(v,*this) {
       Sphere_point vp = v->point();
-      if ( s.has_on(vp) ) {
+      if ( (v == v_res) || s.has_on(vp) ) {
         CGAL_NEF_TRACEN(" location via vertex at "<<vp);
         s = Sphere_segment(p,vp,s.sphere_circle()); // we shrink the segment
         if ( is_isolated(v) ) {

@@ -21,7 +21,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 
 namespace CGAL {
@@ -63,11 +63,25 @@ public:
     : Cb(c), circumcenter_(c.circumcenter_ != nullptr ? new Point(*(c.circumcenter_)) : nullptr)
   {}
 
+  Delaunay_triangulation_cell_base_with_circumcenter_3
+        (Delaunay_triangulation_cell_base_with_circumcenter_3 &&c)
+    : Cb(std::move(c)), circumcenter_(std::exchange(c.circumcenter_, nullptr))
+  {
+  }
+
   Delaunay_triangulation_cell_base_with_circumcenter_3&
   operator=(const Delaunay_triangulation_cell_base_with_circumcenter_3 &c)
   {
       Delaunay_triangulation_cell_base_with_circumcenter_3 tmp=c;
       std::swap(tmp, *this);
+      return *this;
+  }
+
+  Delaunay_triangulation_cell_base_with_circumcenter_3&
+  operator=(Delaunay_triangulation_cell_base_with_circumcenter_3 &&c)
+  {
+      Cb::operator=(std::move(c));
+      circumcenter_ = std::exchange(c.circumcenter_, nullptr);
       return *this;
   }
 
@@ -108,6 +122,15 @@ public:
   {
       invalidate_circumcenter();
       Cb::set_vertices(v0, v1, v2, v3);
+  }
+
+  void set_circumcenter(const Point& p) const
+  {
+      if (circumcenter_ == nullptr) {
+        circumcenter_ = new Point(p);
+      } else {
+        *circumcenter_ = p;
+      }
   }
 
   const Point& circumcenter(const Geom_traits& gt = Geom_traits()) const

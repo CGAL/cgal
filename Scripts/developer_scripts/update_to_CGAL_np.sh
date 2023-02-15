@@ -15,4 +15,4 @@ ack -l --cpp is_default_param | xargs sed -i -E 's/is_default_param[ ]*\(/is_def
 ack vertex_index_t | grep get_param
 
 git checkout BGL/include/CGAL/boost/graph/dijkstra_shortest_paths.hpp
-git checkout BGL/include/CGAL/boost/graph/Named_function_parameters.h
+git checkout STL_Extension/include/CGAL/Named_function_parameters.h

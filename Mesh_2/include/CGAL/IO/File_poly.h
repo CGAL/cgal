@@ -14,17 +14,11 @@
 #define CGAL_FILE_POLY_H
 
 #include <CGAL/license/Mesh_2.h>
-
+#include <CGAL/IO/OFF/File_scanner_OFF.h>
 
 namespace CGAL {
 
-template <class CDT>
-inline
-void
-read_triangle_poly_file(CDT& t, std::istream &f)
-{
-  read_triangle_poly_file(t, f, Emptyset_iterator());
-}
+namespace IO {
 
 //the function that reads a Shewchuk Triangle .poly file
 template <class CDT, class OutputIterator>
@@ -78,6 +72,14 @@ read_triangle_poly_file(CDT& t, std::istream &f,
       skip_until_EOL(f); skip_comment_OFF(f);
       *seeds++ = p;
     }
+}
+
+template <class CDT>
+inline
+void
+read_triangle_poly_file(CDT& t, std::istream &f)
+{
+  read_triangle_poly_file(t, f, Emptyset_iterator());
 }
 
 //the function that write a Shewchuk Triangle .poly file
@@ -155,6 +157,13 @@ write_triangle_poly_file(const CDT& t, std::ostream &f)
 
   write_triangle_poly_file(t, f, l.begin(), l.end());
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::read_triangle_poly_file;
+using IO::write_triangle_poly_file;
+#endif
 
 } // end namespace CGAL
 

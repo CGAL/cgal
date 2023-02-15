@@ -1,13 +1,13 @@
 namespace CGAL {
 
-/*!
-  \ingroup PkgArrangementOnSurface2Enums
-  The enumeration `Arr_curve_end` is used to indicate one of the two ends
-  of an \f$ x\f$-monotone curve. It is used by models of the
-  `ArrangementOpenBoundaryTraits_2` concept.
-
-  \sa `ArrangementOpenBoundaryTraits_2`
-*/
+/*! \ingroup PkgArrangementOnSurface2Enums
+ *
+ * The enumeration `Arr_curve_end` is used to indicate one of the two ends of an
+ * \f$x\f$-monotone curve. It is used by models geometry traits concept that
+ * handle boundary conditions.
+ *
+ * \sa `ArrangementOpenBoundaryTraits_2`
+ */
 enum Arr_curve_end { ARR_MIN_END, ARR_MAX_END };
 
 /*!

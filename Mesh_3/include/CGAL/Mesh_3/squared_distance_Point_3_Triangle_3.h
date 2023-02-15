@@ -16,7 +16,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-#include <CGAL/squared_distance_3_2.h>
+#include <CGAL/Distance_3/Point_3_Triangle_3.h>
 
 #endif // CGAL_SQUARED_DISTANCE_POINT_3_TRIANGLE_3_H

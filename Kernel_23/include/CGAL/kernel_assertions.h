@@ -14,12 +14,9 @@
 //
 // Author(s)     : Geert-Jan Giezeman, Sven Schoenherr
 //
-// Generated from script create_assertions.sh
 
-
-// Note that this header file is intentionnaly not protected with a
-// macro (as <cassert>). Calling it a second time with another value
-// for NDEBUG for example must make a difference.
+#ifndef CGAL_KERNEL_ASSERTIONS_H
+#define CGAL_KERNEL_ASSERTIONS_H
 
 #include <CGAL/assertions.h>
 
@@ -28,12 +25,8 @@
 // assertions
 // ----------
 
-#undef CGAL_kernel_assertion
-#undef CGAL_kernel_assertion_msg
-#undef CGAL_kernel_assertion_code
 
-#if defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS)
 #  define CGAL_kernel_assertion(EX) (static_cast<void>(0))
 #  define CGAL_kernel_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_assertion_code(CODE)
@@ -47,13 +40,9 @@
 #endif // CGAL_KERNEL_NO_ASSERTIONS
 
 
-#undef CGAL_kernel_exactness_assertion
-#undef CGAL_kernel_exactness_assertion_msg
-#undef CGAL_kernel_exactness_assertion_code
 
 #if defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_kernel_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_assertion_code(CODE)
@@ -67,14 +56,10 @@
 #endif // CGAL_KERNEL_NO_ASSERTIONS
 
 
-#undef CGAL_kernel_expensive_assertion
-#undef CGAL_kernel_expensive_assertion_msg
-#undef CGAL_kernel_expensive_assertion_code
 
 #if defined(CGAL_KERNEL_NO_ASSERTIONS) \
   || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_assertion(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_assertion_code(CODE)
@@ -88,14 +73,10 @@
 #endif // CGAL_KERNEL_NO_ASSERTIONS
 
 
-#undef CGAL_kernel_expensive_exactness_assertion
-#undef CGAL_kernel_expensive_exactness_assertion_msg
-#undef CGAL_kernel_expensive_exactness_assertion_code
 
 #if defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_assertion_code(CODE)
@@ -112,12 +93,8 @@
 // preconditions
 // -------------
 
-#undef CGAL_kernel_precondition
-#undef CGAL_kernel_precondition_msg
-#undef CGAL_kernel_precondition_code
 
-#if defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS)
 #  define CGAL_kernel_precondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_precondition_code(CODE)
@@ -131,13 +108,9 @@
 #endif // CGAL_KERNEL_NO_PRECONDITIONS
 
 
-#undef CGAL_kernel_exactness_precondition
-#undef CGAL_kernel_exactness_precondition_msg
-#undef CGAL_kernel_exactness_precondition_code
 
 #if defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_kernel_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_precondition_code(CODE)
@@ -151,13 +124,9 @@
 #endif // CGAL_KERNEL_NO_PRECONDITIONS
 
 
-#undef CGAL_kernel_expensive_precondition
-#undef CGAL_kernel_expensive_precondition_msg
-#undef CGAL_kernel_expensive_precondition_code
 
 #if defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_precondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_precondition_code(CODE)
@@ -171,14 +140,10 @@
 #endif // CGAL_KERNEL_NO_PRECONDITIONS
 
 
-#undef CGAL_kernel_expensive_exactness_precondition
-#undef CGAL_kernel_expensive_exactness_precondition_msg
-#undef CGAL_kernel_expensive_exactness_precondition_code
 
 #if defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
   || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_precondition_code(CODE)
@@ -195,12 +160,8 @@
 // postconditions
 // --------------
 
-#undef CGAL_kernel_postcondition
-#undef CGAL_kernel_postcondition_msg
-#undef CGAL_kernel_postcondition_code
 
-#if defined(CGAL_KERNEL_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_KERNEL_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
 #  define CGAL_kernel_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_postcondition_code(CODE)
@@ -214,13 +175,9 @@
 #endif // CGAL_KERNEL_NO_POSTCONDITIONS
 
 
-#undef CGAL_kernel_exactness_postcondition
-#undef CGAL_kernel_exactness_postcondition_msg
-#undef CGAL_kernel_exactness_postcondition_code
 
 #if defined(CGAL_KERNEL_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_kernel_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_postcondition_code(CODE)
@@ -234,13 +191,9 @@
 #endif // CGAL_KERNEL_NO_POSTCONDITIONS
 
 
-#undef CGAL_kernel_expensive_postcondition
-#undef CGAL_kernel_expensive_postcondition_msg
-#undef CGAL_kernel_expensive_postcondition_code
 
 #if defined(CGAL_KERNEL_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_postcondition_code(CODE)
@@ -254,14 +207,10 @@
 #endif // CGAL_KERNEL_NO_POSTCONDITIONS
 
 
-#undef CGAL_kernel_expensive_exactness_postcondition
-#undef CGAL_kernel_expensive_exactness_postcondition_msg
-#undef CGAL_kernel_expensive_exactness_postcondition_code
 
 #if defined(CGAL_KERNEL_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
   || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_postcondition_code(CODE)
@@ -278,12 +227,8 @@
 // warnings
 // --------
 
-#undef CGAL_kernel_warning
-#undef CGAL_kernel_warning_msg
-#undef CGAL_kernel_warning_code
 
-#if defined(CGAL_KERNEL_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || defined(NDEBUG)
+#if defined(CGAL_KERNEL_NO_WARNINGS) || defined(CGAL_NO_WARNINGS)
 #  define CGAL_kernel_warning(EX) (static_cast<void>(0))
 #  define CGAL_kernel_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_warning_code(CODE)
@@ -297,13 +242,9 @@
 #endif // CGAL_KERNEL_NO_WARNINGS
 
 
-#undef CGAL_kernel_exactness_warning
-#undef CGAL_kernel_exactness_warning_msg
-#undef CGAL_kernel_exactness_warning_code
 
 #if defined(CGAL_KERNEL_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_kernel_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_exactness_warning_code(CODE)
@@ -317,13 +258,9 @@
 #endif // CGAL_KERNEL_NO_WARNINGS
 
 
-#undef CGAL_kernel_expensive_warning
-#undef CGAL_kernel_expensive_warning_msg
-#undef CGAL_kernel_expensive_warning_code
 
 #if defined(CGAL_KERNEL_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_warning(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_warning_code(CODE)
@@ -337,14 +274,10 @@
 #endif // CGAL_KERNEL_NO_WARNINGS
 
 
-#undef CGAL_kernel_expensive_exactness_warning
-#undef CGAL_kernel_expensive_exactness_warning_msg
-#undef CGAL_kernel_expensive_exactness_warning_code
 
 #if defined(CGAL_KERNEL_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
   || (!defined(CGAL_KERNEL_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_kernel_expensive_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_kernel_expensive_exactness_warning_code(CODE)
@@ -356,3 +289,5 @@
 #  define CGAL_kernel_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_kernel_expensive_exactness_warnings 1
 #endif // CGAL_KERNEL_NO_WARNINGS
+
+#endif // CGAL_KERNEL_ASSERTIONS_H

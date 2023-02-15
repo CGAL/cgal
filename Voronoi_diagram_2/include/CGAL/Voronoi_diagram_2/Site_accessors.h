@@ -15,12 +15,11 @@
 
 #include <CGAL/license/Voronoi_diagram_2.h>
 
-
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
 namespace CGAL {
-
-namespace VoronoiDiagram_2 { namespace Internal {
+namespace VoronoiDiagram_2 {
+namespace Internal {
 
 //=========================================================================
 //=========================================================================
@@ -71,10 +70,9 @@ struct Point_accessor
 };
 
 //=========================================================================
-//=========================================================================
 
-} } //namespace VoronoiDiagram_2::Internal
-
-} //namespace CGAL
+} // namespace Internal
+} // namespace VoronoiDiagram_2
+} // namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_SITE_ACCESSORS_H

@@ -16,12 +16,14 @@ The class `Periodic_2_Delaunay_triangulation_2` has two template parameters. The
 \tparam Traits is the geometric traits, it is to be instantiated by a
 model of the concept `Periodic_2DelaunayTriangulationTraits_2`.
 
-The second parameter is the triangulation data structure, it has to be
-instantiated by a model of the concept
-`TriangulationDataStructure_2` with some additional functionality
-in faces. By default, the triangulation data structure is instantiated
-by
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
+\tparam Tds is the triangulation data data structure and must be a model of `TriangulationDataStructure_2`
+whose vertex and face are models of `Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
+It defaults to:
+\code
+CGAL::Triangulation_data_structure_2<
+  CGAL::Periodic_2_triangulation_vertex_base_2<Gt>,
+  CGAL::Periodic_2_triangulation_face_base_2<Gt> > >
+\endcode
 
 \cgalHeading{Implementation}
 
@@ -42,11 +44,8 @@ After a point location step, the nearest neighbor is found in time
 vertices distributed uniformly at random and any query point.
 
 \sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`
-\sa `CGAL::Delaunay_triangulation_2<Traits,Tds>`
-\sa `TriangulationDataStructure_2`
-\sa `Periodic_2DelaunayTriangulationTraits_2`
 \sa `CGAL::Periodic_2_triangulation_hierarchy_2<Tr>`
-
+\sa `CGAL::Delaunay_triangulation_2<Traits,Tds>`
 */
 template< typename Traits, typename Tds >
 class Periodic_2_Delaunay_triangulation_2 : public Periodic_2_triangulation_2<Traits, Tds>

@@ -32,8 +32,6 @@ int& code_to_call_before_creation_of_QCoreApplication(int& i) {
   QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 #endif
 
-  //We set the locale to avoid any trouble with VTK
-  std::setlocale(LC_ALL, "C");
   return i;
 }
 
@@ -49,6 +47,8 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   , d_ptr_is_initialized(false)
   , d_ptr(new Polyhedron_demo_impl)
 {
+  //We set the locale to avoid any trouble with VTK
+  std::setlocale(LC_ALL, "C");
   d_ptr_is_initialized = true;
   std::cerr.precision(17);
   std::cout.precision(17);
@@ -104,7 +104,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   // On Apple, the first time the application is launched, the menus are unclicable, and
   // the only way you can fix it is to unfocus and re-focus the application.
   // This is a hack that makes the application lose the focus after it is started, to force the user
-  // to re-focus it. (source : http://www.alecjacobson.com/weblog/?p=3910)
+  // to re-focus it. (source: https://www.alecjacobson.com/weblog/?p=3910)
 #ifdef __APPLE__
     system("osascript -e 'tell application \"System Events\" "
       "to keystroke tab using {command down, shift down}'");

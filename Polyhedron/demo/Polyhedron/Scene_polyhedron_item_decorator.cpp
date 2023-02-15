@@ -13,7 +13,7 @@ Scene_polyhedron_item_decorator::~Scene_polyhedron_item_decorator()
 
 Scene_polyhedron_item_decorator*
 Scene_polyhedron_item_decorator::clone() const {
-  return 0;
+  return nullptr;
 }
 
 QString

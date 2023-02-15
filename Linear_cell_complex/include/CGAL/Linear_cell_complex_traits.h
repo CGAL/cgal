@@ -12,6 +12,7 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_TRAITS_H
 #define CGAL_LINEAR_CELL_COMPLEX_TRAITS_H 1
 
+#include <CGAL/Linear_cell_complex_fwd.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/predicates_d.h>
@@ -32,8 +33,7 @@ namespace CGAL {
   /** Trait class for Linear_cell_complex class.
    *  dD version (for the moment there is only one dD kernel in CGAL).
    */
-  template <unsigned int d_,
-            class Kernel=typename LCC_default_kernel<d_>::type >
+  template <unsigned int d_, class Kernel>
   struct Linear_cell_complex_traits : public Kernel
   {
     static const unsigned int ambient_dimension = d_;

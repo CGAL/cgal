@@ -1,4 +1,3 @@
-//=============================================================================
 // Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
 // Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
 // Copyright (C) 2014 GeometryFactory
@@ -10,7 +9,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
-
 #ifndef CGAL_SURFACE_MESH_PROPERTY_H
 #define CGAL_SURFACE_MESH_PROPERTY_H
 
@@ -18,13 +16,13 @@
 
 #ifndef DOXYGEN_RUNNING
 
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <typeinfo>
-
-#include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
+#include <CGAL/property_map.h>
+
+#include <algorithm>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 namespace CGAL {
 
@@ -236,13 +234,18 @@ class Property_container
 public:
 
     // default constructor
-    Property_container() : size_(0), capacity_(0) {}
+    Property_container() = default;
 
     // destructor (deletes all property arrays)
     virtual ~Property_container() { clear(); }
 
     // copy constructor: performs deep copy of property arrays
     Property_container(const Property_container& _rhs) { operator=(_rhs); }
+
+    Property_container(Property_container&& c) noexcept
+    {
+      c.swap(*this);
+    }
 
     // assignment: performs deep copy of property arrays
     Property_container& operator=(const Property_container& _rhs)
@@ -258,6 +261,14 @@ public:
         }
         return *this;
     }
+
+    Property_container& operator=(Property_container&& c) noexcept
+    {
+      Property_container tmp(std::move(c));
+      tmp.swap(*this);
+      return *this;
+    }
+
 
     void transfer(const Property_container& _rhs)
     {
@@ -440,7 +451,7 @@ public:
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->reserve(n);
-        capacity_ = std::max(n, capacity_);
+        capacity_ = (std::max)(n, capacity_);
     }
 
     // resize all arrays to size n
@@ -449,6 +460,16 @@ public:
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->resize(n);
         size_ = n;
+    }
+
+    // resize the vector of properties to n, deleting all other properties
+    void resize_property_array(size_t n)
+    {
+        if (parrays_.size()<=n)
+          return;
+        for (std::size_t i=n; i<parrays_.size(); ++i)
+            delete parrays_[i];
+        parrays_.resize(n);
     }
 
     // free unused space in all arrays
@@ -465,7 +486,7 @@ public:
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->push_back();
         ++size_;
-        capacity_ = (std::max(size_, capacity_));
+        capacity_ = ((std::max)(size_, capacity_));
     }
 
     // reset element to its default property values
@@ -487,12 +508,13 @@ public:
     {
       this->parrays_.swap (other.parrays_);
       std::swap(this->size_, other.size_);
+      std::swap(this->capacity_, other.capacity_);
     }
 
 private:
     std::vector<Base_property_array*>  parrays_;
-    size_t  size_;
-    size_t  capacity_;
+    size_t  size_ = 0;
+    size_t  capacity_ = 0;
 };
 
   /// @endcond
@@ -545,6 +567,20 @@ public:
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
     Property_map_base(Property_array<T>* p=nullptr) : parray_(p) {}
+
+    Property_map_base(Property_map_base&& pm) noexcept
+      : parray_(std::exchange(pm.parray_, nullptr))
+    {}
+
+    Property_map_base(const Property_map_base& pm)
+      : parray_(pm.parray_)
+    {}
+
+    Property_map_base& operator=(const Property_map_base& pm)
+    {
+      parray_ = pm.parray_;
+      return *this;
+    }
 
     void reset()
     {
@@ -607,7 +643,9 @@ public:
     }
 
     //@}
+#ifndef CGAL_TEST_SURFACE_MESH
 private:
+#endif
 
     Property_array<T>& array()
     {

@@ -1,0 +1,1 @@
+This CGAL package enables to regularize 2D segments, 2D contours, and 3D planes.

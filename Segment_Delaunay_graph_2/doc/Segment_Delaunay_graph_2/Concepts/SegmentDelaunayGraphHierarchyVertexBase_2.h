@@ -6,10 +6,10 @@
 The vertex of a segment Delaunay graph
 included in a segment Delaunay graph hierarchy has to provide
 some pointers to the corresponding vertices in the
-graphs of the next and preceeding levels.
+graphs of the next and preceding levels.
 Therefore, the concept `SegmentDelaunayGraphHierarchyVertexBase_2`
 refines the concept `SegmentDelaunayGraphVertexBase_2`, by
-adding two vertex handles to the correponding vertices for the
+adding two vertex handles to the corresponding vertices for the
 next and previous level graphs.
 
 \cgalRefines `SegmentDelaunayGraphVertexBase_2`
@@ -26,13 +26,13 @@ The `SegmentDelaunayGraphHierarchyVertexBase_2` concept does not
 introduce any constructors in addition to those of the
 `SegmentDelaunayGraphVertexBase_2` concept.
 
-\cgalHasModel CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag> >
+\cgalHasModel CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<CGAL::Segment_Delaunay_graph_vertex_base_2<St> >
 
 \sa `SegmentDelaunayGraphDataStructure_2`
 \sa `SegmentDelaunayGraphVertexBase_2`
-\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,DS>`
+\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,SSTag,DS>`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>`
+\sa `CGAL::Segment_Delaunay_graph_vertex_base_2<St,Vb>`
 \sa `CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>`
 
 */

@@ -19,7 +19,8 @@
 
 #include <CGAL/auto_link/ImageIO.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
 #include <boost/format.hpp>
@@ -44,7 +45,7 @@ public:
   {
   }
 
-  Gray_level_image_3(const char* file, float isoval, bool positive_inside_=true, float value_outside = 0.f)
+  Gray_level_image_3(const std::string& file, float isoval, bool positive_inside_=true, float value_outside = 0.f)
     : Image_3(),
       isovalue(isoval),
       positive_inside(positive_inside_),

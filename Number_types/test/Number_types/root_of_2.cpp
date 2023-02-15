@@ -136,7 +136,7 @@ CGAL::Sqrt_extension<T,T,Tag1,Tag2> create_root_helper(RT a, RT b, CGAL::Sqrt_ex
 template < class Root, class RT >
 Root create_root(RT a, RT b)
 {
-   return create_root_helper(a, b, (Root*) 0);
+   return create_root_helper(a, b, (Root*) nullptr);
 }
 
 // Generate random Root_of_2 of degree 1

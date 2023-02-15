@@ -1,7 +1,9 @@
-#include <iostream>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+
+#include <iostream>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
@@ -16,26 +18,9 @@ namespace My {
 } // namespace My
 
 
-namespace boost {
-
-  template <>
-  struct graph_traits<My::Mesh>
-    : public boost::graph_traits<My::Mesh::Base>
-  {};
-
-  template <typename T>
-  struct property_map<My::Mesh, T>
-    : public boost::property_map<My::Mesh::Base, T>
-  {};
-
-}
-
-namespace CGAL{
-  template <typename T>
-  struct graph_has_property<My::Mesh, T>
-      : public CGAL::graph_has_property<My::Mesh::Base, T>
-  {};
-}
+#define CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME My::Mesh
+#define CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME CGAL::Surface_mesh<::Point_3>
+#include <CGAL/boost/graph/graph_traits_inheritance_macros.h>
 
 int main()
 {

@@ -17,7 +17,7 @@
 //         they may be wrong now.
 
 /*! \file CGAL/Polynomial.h
- *  \brief Defines class CGAL::Polynomial.
+ *  \brief defines class CGAL::Polynomial.
  *
  *  Polynomials in one variable (or more, by recursion)
  */

@@ -60,7 +60,15 @@ public:
     sizing_info_ = s;
   }
   const FT& sizing_info() const { return sizing_info_; }
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+  typedef Tag_true Has_timestamp;
 
+  std::size_t time_stamp() const { return time_stamp_; }
+
+  void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
+
+  std::size_t time_stamp_;
+#endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
 };
 
 } // namespace CGAL

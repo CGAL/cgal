@@ -113,7 +113,6 @@ namespace Polygon_mesh {
 
       neighbors.clear();
 
-      CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_face_range.size());
 
       const auto query_face = *(m_face_range.begin() + query_index);

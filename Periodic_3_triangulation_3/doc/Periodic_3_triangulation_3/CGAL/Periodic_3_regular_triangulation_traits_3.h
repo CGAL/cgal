@@ -8,7 +8,7 @@ The class `Periodic_3_regular_triangulation_traits_3` is designed as a default t
 class `Periodic_3_regular_triangulation_3<Periodic_3RegularTriangulationTraits_3,TriangulationDataStructure_3>`.
 
 \tparam Traits must be a model of the `RegularTriangulationTraits_3` concept.
-\tparam Offset must be a model of the concept `Periodic_3Offset_3` and defaults to `Periodic_3_offset_3`.
+\tparam Offset must be a model of the concept `Periodic_3Offset_3` and defaults to `CGAL::Periodic_3_offset_3`.
 
 If `Traits` is a `CGAL::Filtered_kernel` (detected when `Traits::Has_filtered_predicates` exists
 and is `true`), this class automatically provides filtered predicates.

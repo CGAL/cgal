@@ -8,6 +8,24 @@
 /// \defgroup PkgDrawSurfaceMesh Draw a Surface Mesh
 /// \ingroup PkgSurface_mesh
 
+/// \defgroup PkgSurfaceMeshIOFunc I/O Functions
+/// \ingroup PkgSurface_mesh
+
+/// \defgroup PkgSurfaceMeshIOFuncOFF I/O Functions (OFF)
+/// I/O Functions for the \ref IOStreamOFF
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFuncPLY I/O Functions (PLY)
+/// I/O Functions for the \ref IOStreamPLY
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFunc3MF I/O Functions (3MF)
+/// I/O Functions for the \ref IOStream3MF
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFuncDeprecated I/O Functions (Deprecated)
+/// \ingroup PkgSurfaceMeshIOFunc
+
 /*!
 \addtogroup PkgSurface_mesh
 \cgalPkgDescriptionBegin{Surface Mesh,PkgSurfaceMesh}
@@ -29,10 +47,7 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-
 \cgalClassifedRefPages
-
-
 
 \cgalCRPSection{Classes}
 
@@ -42,5 +57,9 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 
 - \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
 
+\cgalCRPSection{I/O Functions}
+- \link PkgSurfaceMeshIOFuncOFF I/O for `OFF` files \endlink
+- \link PkgSurfaceMeshIOFuncPLY I/O for `PLY` files \endlink
+- `read_3MF()`
 */
 

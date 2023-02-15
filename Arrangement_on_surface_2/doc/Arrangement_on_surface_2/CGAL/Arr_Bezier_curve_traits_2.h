@@ -43,7 +43,7 @@ geometric kernels templated with the `NtTraits::Rational` and
 instantiate the `CORE_algebraic_number_traits` class as the `NtTraits`
 parameter, with `Cartesian<NtTraits::Rational>` and
 `Cartesian<NtTraits::Algebraic>` instantiating the two kernel types,
-respectively. The number types in this case are provided by the <span class="textsc">Core</span>
+respectively. The number types in this case are provided by the \core
 library, with its ability to exactly represent simple algebraic numbers.
 
 While `Arr_Bezier_curve_traits_2` models the concept

@@ -145,64 +145,19 @@ To disable all checks in the library, the flag `CGAL_NDEBUG` can be set.
 Note that the standard flag `NDEBUG` sets `CGAL_NDEBUG`,
 but it also affects the `assert` macro.
 
-To enable expensive and exactness checks, respectively, the compile-time
-flags `CGAL_CHECK_EXPENSIVE`
-
-and `CGAL_CHECK_EXACTNESS`
-
-have to be supplied. However, exactness checks should only be turned on if
+To enable expensive and exactness checks, respectively, the preprocessor macros
+`CGAL_CHECK_EXPENSIVE` and `CGAL_CHECK_EXACTNESS`
+have to be defined. However, exactness checks should only be turned on if
 the computation is done with some exact number type.
 
 \section secchecks_controlling Controlling checks at a finer granularity
 
 The macros and related compile-time flags described so far all operate
-on the whole library. Sometimes the user may want to have a more
-selective control.  \cgal offers the possibility to turn checks on
-and off on a per-package basis. Therefore a package-specific term is
-inserted in the macro names directly after the \cgal prefix,
-<I>e.g.</I>, `CGAL_kernel_assertion(<Cond>)`. Similarly, the uppercase
-term is used for the compile-time flags;
-<I>e.g.</I>, `CGAL_KERNEL_NO_WARNINGS` switches off the warnings
-in <I>only</I> the kernel. Other packages have their own specific
-terms as documented in the corresponding chapters of the
-reference manual.
-
-For a new package you will first have to create a suitable header file
-with all macro definitions.  This is done with the shell script
-<TT>cgal_create_assertions.sh</TT>, to be found in the
-<TT>scripts</TT> directory.
-
-The following command will create a file <TT>optimisation_assertions.h</TT>:
-
-<CENTER>
-  <TT>sh cgal_create_assertions.sh optimisation</TT>
-
-</CENTER>
-
-You should place the generated file in the proper directory (and possibly
-rename it).  Then you can use the checks in the following fashion.
-
-\code{.cpp}
- #include <CGAL/optimisation\_assertions.h>
-
- void optimisation\_foo( int i)
- {
-   CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
-   // ...
- }
-\endcode
-
-The documentation of your new package has to name the term chosen to be
-part of the package-specific macros in
-order to enable the user to selectively turn off and on the checks of
-your package. For example, in the documentation of the optimisation
-package you can find a sentence similar to the following.
-<BLOCKQUOTE>
-  The optimisation code uses the term OPTIMISATION for the checks;
-  <I>e.g.</I>, setting the compile time flag
-  `CGAL_OPTIMISATION_NO_PRECONDITIONS` switches off precondition
-  checking in the optimisation code.
-</BLOCKQUOTE>
+on the whole library.  \cgal offers the possibility to turn checks on
+and off just for the kernel. Kernel assertions are stated using the
+macro `CGAL_kernel_assertion(<Cond>)`, and they can be disabled by defining
+the macros `CGAL_KERNEL_NO_ASSERTIONS` or `CGAL_NO_ASSERTIONS`.
+See \ref secchecks "the section Checks in STL Extensions", for details.
 
 \section secchecks_cgal_assume Suppress warnings using CGAL_assume.
 
@@ -230,7 +185,7 @@ MSVC][msvc-assume], or [`__builtin_unreachable`][builtin-unreachable]
 recognized by both clang and g++.
 
 [msvc-assume]: https://msdn.microsoft.com/en-us/library/1b3fsfxw.aspx
-[builtin-unreachable]: http://clang.llvm.org/docs/LanguageExtensions.html#builtin-unreachable
+[builtin-unreachable]: https://clang.llvm.org/docs/LanguageExtensions.html#builtin-unreachable
 
 \section secexception_handling Exception handling
 
@@ -238,13 +193,12 @@ Some parts of the library use exceptions, but there is no general specific
 policy concerning exception handling in \cgal.  It is nevertheless good to
 target exception safety, as much as possible.  Good references on exception
 safety are: Appendix E of \cgalCite{cgal:s-cpl-97} (also available at
-<A HREF="http://www.stroustrup.com/3rd_safe0.html"><TT>http://www.stroustrup.com/3rd_safe0.html</TT></A>),
+<A HREF="https://www.stroustrup.com/3rd_safe0.html"><TT>https://www.stroustrup.com/3rd_safe0.html</TT></A>),
 and \cgalCite{cgal:a-esgc-98} (also available at
 <A HREF="https://www.boost.org/community/exception_safety.html"><TT>https://www.boost.org/community/exception_safety.html</TT></A>).
 Any destructor which might throw an exception, including a destructor which
 uses the `CGAL_destructor_assertion` macro, should be marked with the
-`CGAL_NOEXCEPT(false)` macro. This macro provides future compatibility with
-C++11 and above, which provides the `noexcept` keyword.
+`noexcept(!CGAL_ASSERTIONS_ENABLED)`.
 
 \section secchecks_req_and_rec Requirements and recommendations
 

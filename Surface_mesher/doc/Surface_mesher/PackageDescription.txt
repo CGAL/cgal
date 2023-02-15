@@ -38,7 +38,6 @@
 \cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:ry-smg}
 \cgalPkgLicense{\ref licensesGPL}
-\cgalPkgDemo{Surface Mesh Generator,surface_mesher.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

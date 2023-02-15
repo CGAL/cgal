@@ -23,7 +23,7 @@ namespace Ui
 class NewTabDialog : public QDialog
 {
 public:
-  NewTabDialog( QWidget* parent = 0, Qt::WindowFlags f = 0 );
+  NewTabDialog( QWidget* parent = nullptr );
   int checkedId( ) const;
 
 protected:

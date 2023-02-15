@@ -1,0 +1,63 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \pspicture[](-1,-1)(7,7)
+  \arraxes(0,0)(-1,-1)(7,7)
+  \arrMainVertex(0,0){1}
+  \arrMainVertex(0,2){2}
+  \arrEmptyVertex(0.5,1){3}
+  \pnode(1,0){4}
+  \arrEmptyVertex(1,2){5}
+  \arrMainVertex(1,3){6}
+  \pnode(2,1){7}
+  \arrEmptyVertex(2,4){8}
+  \arrEmptyVertex(3,0){9}
+  \pnode(3,6){10}
+  \pnode(4,1){11}
+  \arrMainVertex(4,2){12}
+  \arrEmptyVertex(4,4){13}
+  \arrEmptyVertex(4.67,2.67){14}
+  \pnode(5,0){15}
+  \arrEmptyVertex(5,2){16}
+  \pnode(5,3){17}
+  \arrEmptyVertex(5.5,1){18}
+  \arrMainVertex(6,0){19}
+  \arrMainVertex(6,2){20}
+  %
+  %
+  \arrMainVertex(0,2){c1}
+  %
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{1}{3}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{3}{5}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{5}{8}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{8}{9}\Aput[1pt]{$\pi_1$}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{9}{13}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{13}{14}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{14}{16}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{16}{18}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{18}{19}
+  %
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{6}{2}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{2}{3}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{3}{4}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{4}{7}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{7}{9}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{9}{11}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{11}{15}\Aput[1pt]{$\pi_2$}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{15}{18}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{18}{20}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{20}{17}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{17}{14}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{14}{12}
+  %
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{2}{5}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{5}{8}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{8}{10}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{10}{13}\Aput[1pt]{$\pi_3$}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{13}{14}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{14}{16}
+  \endpspicture
+}
+\end{document}

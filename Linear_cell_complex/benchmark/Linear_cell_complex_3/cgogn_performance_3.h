@@ -63,7 +63,7 @@ private:
 
   Dart getShortestEdge()
   {
-    double weight = std::numeric_limits<double>::max();
+    double weight = (std::numeric_limits<double>::max)();
     Dart dart = NIL;
     bool boundary=false;
 

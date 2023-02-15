@@ -24,7 +24,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 // Used for the triangulated mixed complex / Voronoi diagram
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -40,7 +40,7 @@
 #include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
@@ -93,7 +93,7 @@ private:
 
 public:
   typedef Anchor_point                                               Vertex_info;
-  typedef std::pair<Simplex, boost::shared_ptr<Quadratic_surface> >  Cell_info;
+  typedef std::pair<Simplex, std::shared_ptr<Quadratic_surface> >  Cell_info;
 
 private:
   // Triangulated_mixed_complex:
@@ -313,7 +313,7 @@ sign(TMC_Vertex_handle vit) const
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   typedef Exact_predicates_exact_constructions_kernel    EK;
   typedef Skin_surface_traits_3<EK>                      Exact_skin_surface_traits;
   typedef Skin_surface_base_3<Exact_skin_surface_traits> Exact_skin_surface_base;
@@ -355,6 +355,7 @@ sign(const Bare_point &p, const Cell_info &info) const
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   return construct_surface(info.first,
                            Exact_predicates_exact_constructions_kernel()).sign(p);
 }
@@ -630,7 +631,7 @@ compare(Cell_info &info1, const Bare_point &p1,
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   return CGAL_NTS sign(
     construct_surface(info1.first,
                       Exact_predicates_exact_constructions_kernel()).value(p1) -
@@ -654,8 +655,8 @@ locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
   if (start->has_vertex(_tmc.infinite_vertex(), ind_inf) )
     start = start->neighbor(ind_inf);
 
-  CGAL_triangulation_precondition(start != TMC_Cell_handle());
-  CGAL_triangulation_precondition(!start->has_vertex(_tmc.infinite_vertex()));
+  CGAL_precondition(start != TMC_Cell_handle());
+  CGAL_precondition(!start->has_vertex(_tmc.infinite_vertex()));
 
   // We implement the remembering visibility/stochastic walk.
 
@@ -689,33 +690,37 @@ locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
     // We temporarily put p at i's place in pts.
     const TMC_Point* backup = pts[i];
     pts[i] = &p_inexact;
+    bool run_exact=false;
     {
       Protect_FPU_rounding<true> P;
       try {
         o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1],
                                                      *pts[2], *pts[3]);
-      } catch (Uncertain_conversion_exception&) {
-        Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-        typedef Exact_predicates_exact_constructions_kernel EK;
-        Cartesian_converter<typename Bare_point::R, EK> converter_ek;
+      } catch (Uncertain_conversion_exception&) { run_exact=true; }
+    }
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+    if (run_exact)
+    {
+      Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+      typedef Exact_predicates_exact_constructions_kernel EK;
+      Cartesian_converter<typename Bare_point::R, EK> converter_ek;
 
-        Skin_surface_traits_3<EK> exact_traits(shrink_factor());
+      Skin_surface_traits_3<EK> exact_traits(shrink_factor());
 
-        typename EK::Point_3 e_pts[4];
+      typename EK::Point_3 e_pts[4];
 
-        // We know that the 4 vertices of c are positively oriented.
-        // So, in order to test if p is seen outside from one of c's facets,
-        // we just replace the corresponding point by p in the orientation
-        // test.  We do this using the array below.
-        for (int k=0; k<4; k++) {
-          if (k != i) {
-            e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
-          } else {
-            e_pts[k] = converter_ek(p0);
-          }
+      // We know that the 4 vertices of c are positively oriented.
+      // So, in order to test if p is seen outside from one of c's facets,
+      // we just replace the corresponding point by p in the orientation
+      // test.  We do this using the array below.
+      for (int k=0; k<4; k++) {
+        if (k != i) {
+          e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
+        } else {
+          e_pts[k] = converter_ek(p0);
         }
-        o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
       }
+      o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
     }
 
     if ( o != NEGATIVE ) {

@@ -17,7 +17,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
@@ -79,6 +79,7 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   // a dual edge between elements exists if they share 'nparts' vertices
   idx_t ncommon = 2;
+  idx_t nparts_as_idx_t = nparts;
 
   // either the edgecut or the total communication volume of the dual graph’s partitioning
   idx_t objval;
@@ -98,7 +99,7 @@ void partition_dual_graph(const TriangleMesh& tm,
   CGAL_assertion_code(int ret =)
     METIS_PartMeshDual(&ne, &nn, eptr, eind,
                        nullptr /* elements weights*/, nullptr /*elements sizes*/,
-                       &ncommon, &nparts,
+                       &ncommon, &nparts_as_idx_t,
                        nullptr /* partitions weights */,
                        *options,
                        &objval, epart, npart);
@@ -129,51 +130,66 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 
 /// \ingroup PkgBGLPartition
 ///
-/// Computes a partition of the input triangular mesh into `nparts` parts,
+/// computes a partition of the input triangular mesh into `nparts` parts,
 /// based on the mesh's dual graph. The resulting partition is stored in the vertex and/or face
 /// property maps that are passed as parameters using \ref bgl_namedparameters "Named Parameters".
 ///
 /// \param tm a triangle mesh
 /// \param nparts the number of parts in the final partition
-/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
-/// \tparam TriangleMesh is a model of the `FaceListGraph` concept.
+/// \tparam TriangleMesh is a model of the `FaceListGraph` concept
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_index_map}
-///     is a property map containing for each vertex of `tm` a unique index between `0` and `num_vertices(tm)-1`.
-///   \cgalParamEnd
-///   \cgalParamBegin{METIS_options}
-///     is a parameter used in to pass options to the METIS mesh
-///     partitioner. The many options of METIS are not described here. Instead, users
-///     should refer to the <a href="http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf">documentation</a>
-///     of METIS directly.
-///   \cgalParamEnd
-///   \cgalParamBegin{vertex_partition_id_map}
-///     is a property map that contains (after the function has been run)
-///     the ID of the subpart for each vertex of `tm`.
-///   \cgalParamEnd
-///   \cgalParamBegin{face_partition_id_map}
-///     is a property map that contains (after the function has been run)
-///     the ID of the subpart for each face of `tm`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_index_map}
+///     \cgalParamDescription{a property map associating to each vertex of `tm` a unique index between `0` and `num_vertices(tm) - 1`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `std::size_t` as value type}
+///     \cgalParamDefault{an automatically indexed internal map}
+///     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+///                     a face index property map, either using the internal property map if it exists
+///                     or using an external map. The latter might result in  - slightly - worsened performance
+///                     in case of non-constant complexity for index access.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{METIS_options}
+///     \cgalParamDescription{a parameter used in to pass options to the METIS mesh partitioner}
+///     \cgalParamType{an array of size `METIS_NOPTIONS` with value type `idx_t` (an integer type defined by METIS)}
+///     \cgalParamDefault{an array of size `METIS_NOPTIONS` with value type `idx_t`,
+///                       initialized using the function `METIS_SetDefaultOptions()`}
+///     \cgalParamExtra{The many options of METIS are not described here. Instead, users should refer
+///                     to the <a href="http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf">documentation</a>
+///                     of METIS directly.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{vertex_partition_id_map}
+///     \cgalParamDescription{a property map that contains (after the function has been run)
+///                           the ID of the subpart for each vertex of `tm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with
+///                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+///                    `int` as value type}
+///     \cgalParamDefault{unused}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{face_partition_id_map}
+///     \cgalParamDescription{a property map that contains (after the function has been run)
+///                           the ID of the subpart for each face of `tm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with
+///                    `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and
+///                    `int` as value type}
+///     \cgalParamDefault{unused}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \pre `tm` is a pure triangular surface mesh: there are no edges
 ///       without at least one incident face
-template<typename TriangleMesh, typename NamedParameters>
-void partition_dual_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np)
+template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
+void partition_dual_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
 
   return partition_dual_graph(tm, nparts, get_parameter(np, internal_np::METIS_options), np);
-}
-
-template<typename TriangleMesh>
-void partition_dual_graph(const TriangleMesh& tm, const int nparts)
-{
-  return partition_dual_graph(tm, nparts, CGAL::parameters::all_default());
 }
 
 } // end namespace METIS

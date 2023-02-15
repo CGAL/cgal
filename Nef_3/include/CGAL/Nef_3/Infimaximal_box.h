@@ -24,6 +24,7 @@
 #include <CGAL/Extended_homogeneous.h>
 
 #include <CGAL/Nef_3/SNC_intersection.h>
+#include <CGAL/Nef_3/SNC_iteration.h>
 
 namespace CGAL {
 
@@ -151,7 +152,7 @@ class Infimaximal_box {
     create_vertices_on_infibox(SNC_constructor&,
                                const Plane_3&, const std::list<Point_3>&,
                                const Mark&, const Mark&, const Mark&) {
-    // TODO: warning oder assertion einbauen
+    // TODO: create warning or assertion
     return std::list<typename SNC_constructor::Vertex_handle>();
   }
 
@@ -375,24 +376,24 @@ class Infimaximal_box<Tag_true, Kernel> {
     C.create_vertices_of_box_with_plane(h, b);
   }
 
-  static void compute_min_max(const Plane_3& h, NT orth_coords[3], int& min, int& max) {
+  static void compute_min_max(const Plane_3& h, NT orth_coords[3], int& cmin, int& cmax) {
     Vector_3 orth = h.orthogonal_vector();
 
     orth_coords[0] = CGAL_NTS abs(orth.hx()[0]);
     orth_coords[1] = CGAL_NTS abs(orth.hy()[0]);
     orth_coords[2] = CGAL_NTS abs(orth.hz()[0]);
 
-    max = 0;
+    cmax = 0;
     if(orth_coords[1] > orth_coords[0])
-      max = 1;
-    if(orth_coords[2] > orth_coords[max])
-      max = 2;
+      cmax = 1;
+    if(orth_coords[2] > orth_coords[cmax])
+      cmax = 2;
 
-    min = 0;
+    cmin = 0;
     if(orth_coords[1] < orth_coords[0])
-      min = 1;
-    if(orth_coords[2] < orth_coords[min])
-      min = 2;
+      cmin = 1;
+    if(orth_coords[2] < orth_coords[cmin])
+      cmin = 2;
   }
 
   template<typename SNC_structure>

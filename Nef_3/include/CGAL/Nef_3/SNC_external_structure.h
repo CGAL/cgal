@@ -25,11 +25,12 @@
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_FM_decorator.h>
-#include <CGAL/Nef_3/SNC_io_parser.h>
+#include <CGAL/Nef_3/SNC_halfedge_key.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Nef_3/SNC_simplify.h>
 #include <map>
 #include <list>
+#include <unordered_map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 43
@@ -38,77 +39,6 @@
 #include <CGAL/use.h>
 
 namespace CGAL {
-
-struct int_lt {
-  bool operator()(const int& i1, const int& i2) const { return i1<i2; }
-};
-template <typename Edge_handle>
-struct Halfedge_key_lt4 {
-
-  bool operator()(const Edge_handle& e1, const Edge_handle& e2) const {
-    if(CGAL::sign(e1->point().x()) != 0) {
-      if(e1->source() != e2->source())
-        return CGAL::compare_x(e1->source()->point(), e2->source()->point()) < 0;
-      else
-        return e1->point().x() < 0;
-    }
-    if(CGAL::sign(e1->point().y()) != 0) {
-      if(e1->source() != e2->source())
-        return CGAL::compare_y(e1->source()->point(), e2->source()->point()) < 0;
-      else
-        return e1->point().y() < 0;
-    }
-    if(e1->source() != e2->source())
-      return CGAL::compare_z(e1->source()->point(), e2->source()->point()) < 0;
-    return e1->point().z() < 0;
-  }
-};
-
-template <typename Edge_handle>
-struct Halfedge_key_lt3 {
-
-  bool operator()(const Edge_handle& e1, const Edge_handle& e2) const {
-    if(e1->source() != e2->source())
-      return CGAL::lexicographically_xyz_smaller(e1->source()->point(), e2->source()->point());
-    if(CGAL::sign(e1->point().x()) != 0)
-      return e1->point().x() < 0;
-    if(CGAL::sign(e1->point().y()) != 0)
-      return e1->point().y() < 0;
-    return e1->point().z() < 0;
-  }
-};
-
-template <typename Point, typename Edge>
-struct Halfedge_key {
-  typedef Halfedge_key<Point,Edge> Self;
-  Point p; int i; Edge e;
-  Halfedge_key(Point pi, int ii, Edge ei) :
-    p(pi), i(ii), e(ei) {}
-  Halfedge_key(const Self& k) : p(k.p), i(k.i), e(k.e) {}
-  Self& operator=(const Self& k) { p=k.p; i=k.i; e=k.e; return *this; }
-  bool operator==(const Self& k) const { return p==k.p && i==k.i; }
-  bool operator!=(const Self& k) const { return !operator==(k); }
-};
-
-template <typename Point, typename Edge, class Decorator>
-struct Halfedge_key_lt {
-  typedef Halfedge_key<Point,Edge> Key;
-  typedef typename Point::R R;
-  typedef typename R::Vector_3 Vector;
-  typedef typename R::Direction_3 Direction;
-  bool operator()( const Key& k1, const Key& k2) const {
-    if( k1.e->source() == k2.e->source())
-      return (k1.i < k2.i);
-    Direction l(k1.e->vector());
-    if( k1.i < 0) l = -l;
-    return (Direction( k2.p - k1.p) == l);
-  }
-};
-
-template <typename Point, typename Edge>
-std::ostream& operator<<(std::ostream& os,
-                         const Halfedge_key<Point,Edge>& k )
-{ os << k.p << " " << k.i; return os; }
 
 template <typename R>
 int sign_of(const CGAL::Plane_3<R>& h)
@@ -660,7 +590,7 @@ public:
                cet->source()->twin() == ce->source() )
             break;
 
-#ifndef NDEBUG
+#ifdef CGAL_USE_TRACE
       if( cet->circle() != ce->circle().opposite() )
         CGAL_NEF_TRACEN("assertion failed!");
 
@@ -796,9 +726,11 @@ public:
     //    CGAL_NEF_SETDTHREAD(37*43*503*509);
 
     CGAL_NEF_TRACEN(">>>>>create_volumes");
-    Sface_shell_hash     ShellSf(0);
-    Face_shell_hash      ShellF(0);
-    SFace_visited_hash Done(false);
+    auto face_count = this->sncp()->number_of_halffacets();
+    auto sface_count = this->sncp()->number_of_sfaces();
+    Sface_shell_hash     ShellSf(0, sface_count);
+    Face_shell_hash      ShellF(0, face_count);
+    SFace_visited_hash Done(false, sface_count);
     Shell_explorer V(*this,ShellSf,ShellF,Done);
     std::vector<SFace_handle> MinimalSFace;
     std::vector<SFace_handle> EntrySFace;
@@ -806,7 +738,7 @@ public:
 
     SFace_iterator f;
     // First, we classify all the Shere Faces per Shell.  For each Shell we
-    //     determine its minimum lexicographyly vertex and we check wheter the
+    //     determine its minimum lexicographyly vertex and we check whether the
     //     Shell encloses a region (closed surface) or not.
     CGAL_forall_sfaces(f,*this->sncp()) {
       //    progress++;
@@ -828,11 +760,14 @@ public:
       Closed.push_back(false);
 
     Halffacet_iterator hf;
-    CGAL_forall_facets(hf,*this)
-      if(ShellF[hf] != ShellF[hf->twin()]) {
-        Closed[ShellF[hf]] = true;
-        Closed[ShellF[hf->twin()]] = true;
+    CGAL_forall_facets(hf,*this) {
+      unsigned int shf = ShellF[hf];
+      unsigned int shf_twin = ShellF[hf->twin()];
+      if(shf != shf_twin) {
+        Closed[shf] = true;
+        Closed[shf_twin] = true;
       }
+    }
 
     CGAL_assertion( pl != nullptr);
 
@@ -883,17 +818,16 @@ public:
       }
     }
 
-    // finaly, we go through all the Shells which do not correspond to a Volume
-    //     and we assign them to its enclosing Volume determined via a facet below
-    //     check.
+    // finally, we go through all the Shells which do not correspond to a Volume
+    // and we assign them to its enclosing Volume determined via a facet below
+    // check.
 
     CGAL_forall_sfaces(f,*this->sncp()) {
       //    progress3++;
       if ( f->volume() != Volume_handle() )
         continue;
       CGAL_NEF_TRACEN( "Outer shell #" << ShellSf[f] << " volume?");
-      Volume_handle c = determine_volume( MinimalSFace[ShellSf[f]],
-                                          MinimalSFace, ShellSf );
+      Volume_handle c = determine_volume( f, MinimalSFace, ShellSf );
       c->mark() = f->mark();
       link_as_outer_shell( f, c );
     }
@@ -914,14 +848,14 @@ public:
     number_of_ray_shooting_queries++;
     timer_ray_shooting.start();
 #endif
-    Object_handle o = pl->shoot(ray);
+    Object_handle o = pl->shoot(ray, vi);
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
     timer_ray_shooting.stop();
 #endif
     // The ray here has an special property since it is shooted from the lowest
     // vertex in a shell, so it would be expected that the ray goes along the
     // interior of a volume before it hits a 2-skeleton element.
-    // Unfortunatelly, it seems to be possible that several shells are incident
+    // Unfortunately, it seems to be possible that several shells are incident
     // to this lowest vertex, and in consequence, the ray could also go along
     // an edge or a facet belonging to a different shell.
     // This fact invalidates the precondition of the get_visible_facet method,
@@ -1303,8 +1237,9 @@ public:
      //     O0.print();
     link_shalfedges_to_facet_cycles();
 
-    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false);
+    std::size_t num_shalfedges = this->sncp()->number_of_shalfedges();
+    std::unordered_map<int, int> hash(num_shalfedges);
+    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false, num_shalfedges);
 
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {
@@ -1381,17 +1316,7 @@ public:
     SNC_simplify simp(*this->sncp());
     simp.vertex_simplificationI();
 
-    //    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool>
-      done(false);
 
-    /*
-    SHalfedge_iterator sei;
-    CGAL_forall_shalfedges(sei, *this->sncp()) {
-      hash[sei->get_forward_index()] = sei->get_forward_index();
-      hash[sei->get_backward_index()] = sei->get_backward_index();
-    }
-    */
 
     categorize_facet_cycles_and_create_facets();
     create_volumes();

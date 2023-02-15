@@ -19,6 +19,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <type_traits>
 
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
@@ -29,7 +30,8 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -169,6 +171,11 @@ void
 _test_cls_delaunay_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
+
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
 
   typedef typename Test_location_policy<Cls>::Location_policy Location_policy;
 
@@ -415,7 +422,8 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1.number_of_vertices() == 0);
   assert(T1.is_valid());
 
-
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T0);
 
    // Affectation :
   T1=T0;
@@ -448,6 +456,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1_0.dimension()==1);
   assert(T1_0.number_of_vertices()==n);
   assert(T1_0.is_valid());
+  test_tr_23::test_move_semantic(T1_0);
   std::cout << "    Constructor7 " << std::endl;
   Cls T1_1;
   n = T1_1.insert(l2.begin(),l2.end());
@@ -508,6 +517,8 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
 
+  test_tr_23::test_move_semantic(T2_0);
+
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
@@ -556,6 +567,8 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
 
+  test_tr_23::test_move_semantic(T3_0);
+
   if (del) {
     std::cout << "    deletion in Delaunay - grid case - (dim 3) " <<
       std::endl;
@@ -570,7 +583,7 @@ _test_cls_delaunay_3(const Triangulation &)
     size_type m = Tdel.remove(vertices.begin(), vertices.end());
     assert(m == n - Tdel.number_of_vertices());
     assert(Tdel.is_valid(false));
-    std::cout << "    successfull" << std::endl;
+    std::cout << "    successful" << std::endl;
   }
 
 
@@ -638,7 +651,7 @@ _test_cls_delaunay_3(const Triangulation &)
     std::cout << "    Testing nearest_vertex()" << std::endl;
     // We do a nearest_vertex() and two nearest_vertex_in_cell()
     // queries on all points with integer coordinate
-    // in the cube [-1;6]^3. In each case we check explicitely that the
+    // in the cube [-1;6]^3. In each case we check explicitly that the
     // output is correct by comparing distance to other vertices.
     Cell_handle c1 = T3_13.finite_cells_begin();
     Cell_handle c2 = T3_13.infinite_vertex()->cell();
@@ -1188,6 +1201,19 @@ _test_cls_delaunay_3(const Triangulation &)
                 _test_remove_cluster<Triangulation>();
   }
 
+  // Test from issue https://github.com/CGAL/cgal/issues/5396
+  {
+    auto Triangulate = []() -> Triangulation
+    {
+      Triangulation tri;
+      for (int i=0; i<10; i++)
+        tri.insert(Point(i+1, i+2, i+3));
+
+      return tri;
+    };
+    auto t = Triangulate();
+    auto t2 = std::move(t);
+  }
 }
 
 #endif // CGAL_TEST_CLS_DELAUNAY_C

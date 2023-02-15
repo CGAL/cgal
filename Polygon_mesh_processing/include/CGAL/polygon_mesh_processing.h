@@ -33,6 +33,8 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
+#include <CGAL/Polygon_mesh_processing/repair_self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
@@ -46,7 +48,7 @@
 #include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
-#include <CGAL/Polygon_mesh_processing/internal/remove_degeneracies.h>
+#include <CGAL/Polygon_mesh_processing/manifoldness.h>
 
 // the named parameter header being not documented the doc is put here for now
 #ifdef DOXYGEN_RUNNING
@@ -55,6 +57,7 @@ namespace Polygon_mesh_processing {
 namespace parameters {
 
 /*! \ingroup namedparameters
+\deprecated This function is deprecated and `default_values()` should be used instead.
 This function can be used to indicate that all optional named parameters
 to be used are the default ones. This is particularly useful when a function
 requires more than one sequence of named parameters and default values is

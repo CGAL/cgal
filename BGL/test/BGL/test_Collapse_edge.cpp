@@ -1,6 +1,11 @@
 #include "test_Prefix.h"
-#include <boost/range/distance.hpp>
+
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/IO/OFF.h>
+
+#include <boost/range/distance.hpp>
+
+#include <string>
 
 template < typename Mesh>
 typename boost::graph_traits<Mesh>::
@@ -38,9 +43,9 @@ collapse_edge_test()
 
   const std::string fname = "data/flat_hexahedron.off";
   Mesh m;
-  if(!CGAL::read_off(fname, m)) {
+  if(!CGAL::IO::read_OFF(fname, m))
     std::cout << "Error reading file: " << fname << std::endl;
-  }
+
   bool m_is_valid = CGAL::is_valid(m);
   assert(m_is_valid);
 

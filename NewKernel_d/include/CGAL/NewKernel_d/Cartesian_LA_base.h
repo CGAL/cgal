@@ -34,16 +34,18 @@
 namespace CGAL {
 
 template < typename FT_, typename Dim_,
-#if 1
+#ifndef CGAL_NEWKERNEL_D_USE_EIGEN_VECTOR
+# if 1
          typename Vec_=Mix_vector<Array_vector<FT_, Dim_>,
                                   Vector_vector<FT_, Dim_>,
                                   FT_, Dim_>,
-#elif 0
+# elif 0
          typename Vec_=Array_vector<FT_, Dim_>,
-#elif 0
+# else
          typename Vec_=Vector_vector<FT_, Dim_>,
+# endif
 #else
-         // Dangerous because of alignment. Ok on x86_64 without AVX.
+         // Dangerous before C++17 because of alignment. Ok on x86_64 without AVX.
          typename Vec_=LA_eigen<FT_, Dim_>,
 #endif
          typename LA_=LA_eigen<FT_,Dim_> >

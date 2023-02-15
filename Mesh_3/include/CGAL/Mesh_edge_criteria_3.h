@@ -111,7 +111,7 @@ public:
   Mesh_edge_criteria_3
   (
    const Sizing_field& size,
-   typename std::enable_if<Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>::value>::type* = 0
+   std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>::value>* = 0
    )
   {
     p_size_ = new Mesh_3::internal::Sizing_field_container<Sizing_field,

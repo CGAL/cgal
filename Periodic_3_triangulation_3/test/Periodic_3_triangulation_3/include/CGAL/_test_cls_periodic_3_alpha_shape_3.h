@@ -19,7 +19,7 @@ template <class Point>
 bool
 file_input(std::ifstream& is, std::list<Point>& L, int nb=0)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   int n;
   is >> n;
   if(nb != 0 && nb <= n) n=nb;
@@ -49,7 +49,7 @@ _test_cls_alpha_shape_3()
   bool verbose = false;
 
   // test a bigger alpha_shapes
-  std::ifstream is("./data/P3DT3_alpha_shape_test.pts", std::ios::in);
+  std::ifstream is("data/P3DT3_alpha_shape_test.pts", std::ios::in);
   assert(is);
   file_input(is, L);
 
@@ -71,10 +71,10 @@ _test_cls_alpha_shape_3()
 
   if(verbose) {
     std::cerr << " optimal de 1 " << *opt
-              << "nb of componants " << a1.number_of_solid_components(*opt)
+              << "nb of components " << a1.number_of_solid_components(*opt)
               << std::endl;
     std::cerr << " previous " << *previous
-              << "nb of componants "
+              << "nb of components "
               << a1.number_of_solid_components(*previous) << std::endl;
   }
   assert(a1.number_of_solid_components(*opt) == 1);
@@ -191,7 +191,7 @@ _test_cls_alpha_shape_3_exact()
   test_filtration(a1, verbose);
 
   std::cout << std::endl;
-  std::cout << "test additionnal creators and set mode" << std::endl;
+  std::cout << "test additional creators and set mode" << std::endl;
 
   Triangulation dt2(Lc.begin(), Lc.end());
   Alpha_shape_3 a2(dt2, 0, Alpha_shape_3::REGULARIZED);

@@ -59,7 +59,7 @@ void AxisPlaneConstraint::setTranslationConstraintDirection(
   if ((translationConstraintType() != AxisPlaneConstraint::FREE) &&
       (translationConstraintType() != AxisPlaneConstraint::FORBIDDEN)) {
     const qreal norm = direction.norm();
-    if (norm < 1E-8) {
+    if (norm == 0) {
       qWarning("AxisPlaneConstraint::setTranslationConstraintDir: null vector "
                "for translation constraint");
       translationConstraintType_ = AxisPlaneConstraint::FREE;

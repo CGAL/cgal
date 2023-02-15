@@ -30,7 +30,7 @@ public:
   bool isEmpty() const { return false; }
   void compute_bbox() const;
 
-  Scene_implicit_function_item* clone() const { return NULL; }
+  Scene_implicit_function_item* clone() const { return nullptr; }
 
   // rendering mode
   virtual bool supportsRenderingMode(RenderingMode m) const;

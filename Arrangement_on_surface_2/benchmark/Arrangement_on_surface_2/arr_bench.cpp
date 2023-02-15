@@ -277,11 +277,11 @@ inline std::ostream & operator<<(std::ostream & os, const Arr::Vertex & vertex)
 inline Window_stream & operator<<(Window_stream & ws, Arr & arr)
 {
   Arr::Edge_iterator ei;
-  ws << CGAL::blue();
+  ws << CGAL::IO::blue();
   for (ei = arr.edges_begin(); ei != arr.edges_end(); ++ei)
     ws << (*ei).curve();
   Arr::Vertex_iterator vi;
-  ws << CGAL::red();
+  ws << CGAL::IO::red();
   for (vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi)
     ws << (*vi).point();
   return ws;
@@ -590,7 +590,7 @@ void run_bench(Bench_inst & bench_inst, Benchable & benchable,
   if (samples > 0) bench_inst.set_samples(samples);
   else if (iterations > 0) bench_inst.set_iterations(iterations);
 
-  //opertor () in the Bench - does all the work !
+  //operator () in the Bench - does all the work !
   bench_inst();
 }
 
@@ -648,7 +648,7 @@ int main(int argc, char * argv[])
     std::cout << "strategy_mask = " << strategy_mask  << std::endl;
   }
 
-  // Construct Incrementaly  (only if type_code == incremental)
+  // Construct Incrementally  (only if type_code == incremental)
   type_code = Option_parser::TYPE_INCREMENT;
   if (type_mask & (0x1 << type_code)) {
     if (verbose_level > 0) std::cout << "TYPE_INCREMENT " << std::endl;

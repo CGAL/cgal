@@ -99,28 +99,10 @@ enum Box_parameter_space_2
         EXTERIOR
      };
 
-
-
-#ifdef CGAL_CFG_MATCHING_BUG_5
-
-template < typename T, typename U >
-inline
-T enum_cast_bug(const U& u, const T*)
-{ return static_cast<T>(u); }
-
-template < typename T, typename U >
-inline
-typename Same_uncertainty<T,U>::type enum_cast(const U& u)
-{ return enum_cast_bug(u, (const T*)0); }
-
-#else
-
 template < typename T, typename U >
 inline
 T enum_cast(const U& u)
 { return static_cast<T>(u); }
-
-#endif
 
 } //namespace CGAL
 

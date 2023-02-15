@@ -147,6 +147,11 @@ typedef typename CGAL::Line_2<R>                 Line_2;
     return true;
   }
 
+ virtual bool is_reflection() const
+  {
+    return true;
+  }
+
   FT cartesian(int i, int j) const
   {
     switch (i)

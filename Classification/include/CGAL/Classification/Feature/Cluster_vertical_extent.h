@@ -40,7 +40,7 @@ class Cluster_vertical_extent : public CGAL::Classification::Feature_base
 public:
 
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \tparam ClusterRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator` and its value type is the key type of
@@ -58,8 +58,8 @@ public:
     m_values.reserve (clusters.size());
     for (std::size_t i = 0; i < clusters.size(); ++ i)
     {
-      float min_z = std::numeric_limits<float>::max();
-      float max_z = -std::numeric_limits<float>::min();
+      float min_z = (std::numeric_limits<float>::max)();
+      float max_z = -(std::numeric_limits<float>::min)();
 
       for (std::size_t j = 0; j < clusters[i].size(); ++ j)
       {

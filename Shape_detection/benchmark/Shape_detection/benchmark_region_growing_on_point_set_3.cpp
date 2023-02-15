@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
 
   // Load xyz data either from a local folder or a user-provided file.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   if (!in) {
     std::cout <<

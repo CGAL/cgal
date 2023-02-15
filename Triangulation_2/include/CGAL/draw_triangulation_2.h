@@ -15,9 +15,13 @@
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/draw_constrained_triangulation_2.h>
 
 #include <CGAL/Triangulation_2.h>
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -27,7 +31,7 @@ namespace CGAL
 struct DefaultColorFunctorT2
 {
   template<typename T2>
-  static CGAL::Color run(const T2&,
+  static CGAL::IO::Color run(const T2&,
                          const typename T2::Finite_faces_iterator fh)
   {
     CGAL::Random random((unsigned int)(std::size_t)(&*fh));
@@ -50,7 +54,7 @@ public:
   /// @param at2 the t2 to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big object where this time could be long)
   SimpleTriangulation2ViewerQt(QWidget* parent, const T2& at2,
                                const char* title="Basic T2 Viewer",
                                bool anofaces=false,
@@ -67,7 +71,7 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=m_fcolor.run(t2, fh);
+    CGAL::IO::Color c=m_fcolor.run(t2, fh);
     face_begin(c);
 
     add_point_in_face(fh->vertex(0)->point());
@@ -132,10 +136,10 @@ protected:
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
 
 template<class Gt, class Tds>
-void draw(const CGAL_T2_TYPE& at2,
-          const char* title="Triangulation_2 Basic Viewer",
-          bool nofill=false)
+void draw(const CGAL_T2_TYPE& at2)
 {
+  const char* title="Triangulation_2 Basic Viewer";
+  bool nofill=false;
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
@@ -144,8 +148,9 @@ void draw(const CGAL_T2_TYPE& at2,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"t2_viewer","\0"};
+    const char* argv[2]={"t2_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorT2 fcolor;
     SimpleTriangulation2ViewerQt<CGAL_T2_TYPE, DefaultColorFunctorT2>

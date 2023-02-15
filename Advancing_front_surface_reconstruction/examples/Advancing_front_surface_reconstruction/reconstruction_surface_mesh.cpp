@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <array>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/array.h>
 #include <CGAL/disable_warnings.h>
 
 typedef std::array<std::size_t,3> Facet;
@@ -51,9 +51,8 @@ struct Construct{
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
   std::vector<Point_3> points;
-  std::vector<Facet> facets;
   Mesh m;
 
   std::copy(std::istream_iterator<Point_3>(in),

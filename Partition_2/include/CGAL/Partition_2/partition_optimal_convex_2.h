@@ -67,7 +67,7 @@
 #include<CGAL/Partition_2/Partitioned_polygon_2.h>
 #include<CGAL/partition_is_valid_2.h>
 #include<CGAL/Partition_traits_2.h>
-#include<CGAL/Partition_2/partition_assertions.h>
+#include<CGAL/assertions.h>
 #include<CGAL/Partition_2/Vertex_visibility_graph_2.h>
 #include<utility>
 #include<vector>
@@ -512,7 +512,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
 
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)   || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    OutputIterator res(result);
 #else
    typedef typename Traits::Polygon_2                      Polygon_2;
@@ -520,7 +520,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
 #endif // no postconditions
 
    P_Polygon_2 polygon(first, beyond,traits);
-   CGAL_partition_precondition(
+   CGAL_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
@@ -559,7 +559,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
       // be pruned away.  These crop up when there are collinear vertices.
       // See explanation at top of file.
       polygon.partition(res, 1);
-      CGAL_partition_postcondition(
+      CGAL_postcondition(
              convex_partition_is_valid_2(polygon.begin(), polygon.end(),
                                       res.output_so_far_begin(),
                                       res.output_so_far_end(), traits)
@@ -567,7 +567,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
    }
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    return res;
 #else
    return res.to_output_iterator();

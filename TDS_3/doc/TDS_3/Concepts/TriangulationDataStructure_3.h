@@ -254,10 +254,10 @@ otherwise `Vertex_handle()` is returned.
 
  - A model of `ConvertVertex` must provide two operator()'s that are responsible for converting the source vertex `v_src` into the target vertex:
   - `Vertex operator()(const TDS_src::Vertex& v_src) const;` This operator is used to create the vertex from `v_src`.
-  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt) const;` This operator is meant to be used in case heavy data should transferred to `v_tgt`.
+  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt) const;` This operator is meant to be used in case heavy data should be transferred to `v_tgt`.
  - A model of ConvertCell must provide two operator()'s that are responsible for converting the source cell `c_src` into the target cell:
   - `Cell operator()(const TDS_src::Cell& c_src) const;` This operator is used to create the cell from `c_src`.
-  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt) const;` This operator is meant to be used in case heavy data should transferred to `c_tgt`.
+  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt) const;` This operator is meant to be used in case heavy data should be transferred to `c_tgt`.
 
 \pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
 */
@@ -1024,16 +1024,51 @@ a precise indication on the kind of invalidity encountered.
 \cgalDebugEnd
 */
 bool is_valid(Cell_handle c, bool verbose = false) const;
+/// @}
 
+
+/// \name I/O
+/// @{
 /*!
+  \ingroup PkgIOTDS3
 Reads a combinatorial triangulation from `is` and assigns it to `tds`
 */
 istream& operator>> (istream& is, TriangulationDataStructure_3 & tds);
 
-/*!
+/*! \ingroup PkgIOTDS3
 Writes `tds` into the stream `os`
 */
 ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds);
+
+/*! \ingroup PkgIOTDS3
+The tds streamed in `is`, of original type `TDS_src`, is written into the triangulation data structure. As the vertex and cell
+ types might be different and incompatible, the creation of new cells and vertices
+is made thanks to the functors `convert_vertex` and `convert_cell`, that convert
+vertex and cell types. For each vertex `v_src` in `is`, the corresponding
+vertex `v_tgt` in the triangulation data structure is a copy of the vertex returned by `convert_vertex(v_src)`.
+The same operations are done for cells with the functor convert_cell, except cells
+in the triangulation data structure are created using the default constructor, and then filled with the data
+contained in the stream.
+
+ - A model of `ConvertVertex` must provide two `operator()`s that are responsible
+ for converting the source vertex `v_src` into the target vertex:
+  - `Vertex operator()(const TDS_src::Vertex& v_src) const;` This operator is
+used to create the vertex from `v_src`.
+  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt) const;` This
+ operator is meant to be used in case heavy data should be transferred to `v_tgt`.
+ - A model of ConvertCell must provide an operator() that is responsible for
+converting the source cell `c_src` into the target cell:
+  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt) const;` This operator
+ is meant to be used in case heavy data should be transferred to `c_tgt`.
+
+\note The triangulation data structure contained in `is` can be obtained with the `operator>>` of a `TriangulationDataStructure_3`.
+*/
+template <typename TDS_src,
+          typename ConvertVertex,
+          typename ConvertCell>
+std::istream& file_input(std::istream& is,
+                         ConvertVertex convert_vertex,
+                         ConvertCell convert_cell);
 
 /// @}
 

@@ -12,7 +12,6 @@
 #ifndef CGAL_TRANSFORMING_ITERATOR_H
 #define CGAL_TRANSFORMING_ITERATOR_H
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/utility/result_of.hpp>
 #include <boost/type_traits/is_empty.hpp>
 #include <boost/type_traits/is_reference.hpp>
 #include <boost/type_traits/is_integral.hpp>
@@ -94,8 +93,8 @@ private internal::Functor_as_base<F>
         template<class F2,class I2,class R2,class V2>
         transforming_iterator(
                 transforming_iterator<F2,I2,R2,V2> const&i,
-                typename boost::enable_if_convertible<I2, Iter>::type* = 0,
-                typename boost::enable_if_convertible<F2, F>::type* = 0)
+                std::enable_if_t<boost::is_convertible<I2, Iter>::value>* = 0,
+                std::enable_if_t<boost::is_convertible<F2, F>::value>* = 0)
                 : Base(i.base()),Functor_base(i.functor()) {}
 
 };

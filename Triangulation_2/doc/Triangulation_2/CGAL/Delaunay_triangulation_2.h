@@ -236,7 +236,7 @@ std::pair<OutputItFaces,OutputItBoundaryEdges>
 get_conflicts_and_boundary(const Point &p,
 OutputItFaces fit,
 OutputItBoundaryEdges eit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /*!
 outputs the faces of the conflict zone of point `p` into an output iterator.
@@ -248,7 +248,7 @@ template <class OutputItFaces>
 OutputItFaces
 get_conflicts (const Point &p,
 OutputItFaces fit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /*!
 outputs the boundary edges of the conflict zone of point `p` into an output iterator.
@@ -266,7 +266,7 @@ template <class OutputItBoundaryEdges>
 OutputItBoundaryEdges
 get_boundary_of_conflicts(const Point &p,
 OutputItBoundaryEdges eit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /// @}
 
@@ -330,8 +330,7 @@ Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
 /*!
 tests the validity of the triangulation as a
 `Triangulation_2` and additionally tests the Delaunay property. This
-method is mainly useful for debugging Delaunay triangulation
-algorithms designed by the user.
+method is mainly useful for debugging Delaunay triangulation algorithms.
 */
 bool is_valid(bool verbose = false, int level = 0) const;
 

@@ -1,0 +1,6 @@
+/*!
+
+\example Optimal_bounding_box/obb_example.cpp
+\example Optimal_bounding_box/obb_with_point_maps_example.cpp
+\example Optimal_bounding_box/rotated_aabb_tree_example.cpp
+*/

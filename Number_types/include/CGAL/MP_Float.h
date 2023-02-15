@@ -27,6 +27,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <boost/operators.hpp>
 
 // MP_Float : multiprecision scaled integers.
 
@@ -106,7 +107,13 @@ MP_Float operator*(const MP_Float &a, const MP_Float &b);
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
 
-class MP_Float
+class MP_Float : boost::totally_ordered1<MP_Float
+#ifdef _MSC_VER
+                 , boost::ordered_ring_operators2<MP_Float, int
+                 , boost::ordered_ring_operators2<MP_Float, double
+                 > >
+#endif
+                 >
 {
 public:
   typedef short          limb;
@@ -223,6 +230,22 @@ public:
   MP_Float& operator*=(const MP_Float &a) { return *this = *this * a; }
   MP_Float& operator%=(const MP_Float &a) { return *this = *this % a; }
 
+  friend bool operator<(const MP_Float &a, const MP_Float &b)
+  { return INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
+
+  friend bool operator==(const MP_Float &a, const MP_Float &b)
+  { return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
+
+#ifdef _MSC_VER
+  // Needed because without /permissive-, it makes hidden friends visible (from Quotient)
+  friend bool operator==(const MP_Float &a, int    b) { return a == MP_Float(b); }
+  friend bool operator==(const MP_Float &a, double b) { return a == MP_Float(b); }
+  friend bool operator< (const MP_Float &a, int    b) { return a <  MP_Float(b); }
+  friend bool operator< (const MP_Float &a, double b) { return a <  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, int    b) { return a >  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, double b) { return a >  MP_Float(b); }
+#endif
+
   exponent_type max_exp() const
   {
     return exponent_type(v.size()) + exp;
@@ -301,7 +324,7 @@ public:
     return exp + exponent_type(v.size());
   }
 
-  // Rescale the value by some factor (in limbs).  (substract the exponent)
+  // Rescale the value by some factor (in limbs).  (subtract the exponent)
   void rescale(exponent_type scale)
   {
     if (v.size() != 0)
@@ -364,30 +387,6 @@ division(const MP_Float & n, const MP_Float & d);
 inline
 void swap(MP_Float &m, MP_Float &n)
 { m.swap(n); }
-
-inline
-bool operator<(const MP_Float &a, const MP_Float &b)
-{ return INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
-
-inline
-bool operator>(const MP_Float &a, const MP_Float &b)
-{ return b < a; }
-
-inline
-bool operator>=(const MP_Float &a, const MP_Float &b)
-{ return ! (a < b); }
-
-inline
-bool operator<=(const MP_Float &a, const MP_Float &b)
-{ return ! (a > b); }
-
-inline
-bool operator==(const MP_Float &a, const MP_Float &b)
-{ return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
-
-inline
-bool operator!=(const MP_Float &a, const MP_Float &b)
-{ return ! (a == b); }
 
 MP_Float
 approximate_sqrt(const MP_Float &d);
@@ -618,7 +617,7 @@ division(const MP_Float & n, const MP_Float & d)
 
   CGAL_precondition(divisor != 0);
 
-  // Rescale d to have a to_double() value with reasonnable exponent.
+  // Rescale d to have a to_double() value with reasonable exponent.
   exponent_type scale_d = divisor.find_scale();
   divisor.rescale(scale_d);
   const double dd = INTERN_MP_FLOAT::to_double(divisor);
@@ -763,7 +762,7 @@ namespace INTERN_MP_FLOAT {
     while (true) {
       x = x % y;
       if (x == 0) {
-        CGAL_postcondition(internal::divides(y, a) & internal::divides(y, b));
+        CGAL_postcondition(internal::divides(y, a) && internal::divides(y, b));
         y.gcd_normalize();
         return y;
       }

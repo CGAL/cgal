@@ -39,6 +39,9 @@ int main()
                              -3000000000000001.,
                              5000000.0000000019,
                              7.0000000000000026e+20) );
+  CGAL::Bbox_2 span{1,2,5,8};
+  assert( span.x_span() == 4);
+  assert( span.y_span() == 6);
   }
 
   {
@@ -70,5 +73,9 @@ int main()
                              5000000.000000014,
                              7.0000000000000197e+20,
                              15.000000000000027) );
+  CGAL::Bbox_3 span{1,2,3,5,8,11};
+  assert( span.x_span() == 4);
+  assert( span.y_span() == 6);
+  assert( span.z_span() == 8);
   }
 }

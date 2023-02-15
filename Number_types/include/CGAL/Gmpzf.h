@@ -171,7 +171,6 @@ public:
 //since types are included by Gmp_coercion_traits.h:
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Gmpzf.h>
 
 #endif // CGAL_GMPZF_H
 

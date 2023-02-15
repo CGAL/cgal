@@ -5,7 +5,7 @@
 
 The concept `RectangularPCenterTraits_2` defines types and operations
 needed to compute rectilinear \f$ p\f$-centers of a planar point set
-using the function `CGAL::rectangular_p_center_2`.
+using the function `CGAL::rectangular_p_center_2()`.
 
 \cgalHasModel `CGAL::Rectangular_p_center_default_traits_2<K>`
 
@@ -193,4 +193,3 @@ construct_iso_rectangle_2_above_right_point_2_object() const;
 /// @}
 
 }; /* end RectangularPCenterTraits_2 */
-

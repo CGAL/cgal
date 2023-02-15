@@ -4,7 +4,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/property_map.h>
 
@@ -25,7 +25,6 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 // BGL property map which indicates whether an edge is marked as non-removable
 struct Constrained_edge_map
-  : public boost::put_get_helper<bool, Constrained_edge_map>
 {
   typedef boost::readable_property_map_tag      category;
   typedef bool                                  value_type;
@@ -36,7 +35,9 @@ struct Constrained_edge_map
     : mConstraints(aConstraints)
   {}
 
-  reference operator[](const key_type& e) const { return  is_constrained(e); }
+  value_type operator[](const key_type& e) const { return is_constrained(e); }
+
+  friend inline value_type get(const Constrained_edge_map& m, const key_type& k) { return m[k]; }
 
   bool is_constrained(const key_type& e) const { return mConstraints.is_defined(e); }
 
@@ -58,7 +59,7 @@ Point_3 point(vertex_descriptor vd,  const Surface_mesh& sm)
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/cube-meshed.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {
@@ -86,7 +87,7 @@ int main(int argc, char** argv)
   std::size_t nb_sharp_edges = 0;
 
   // detect sharp edges
-  std::ofstream cst_output("constrained_edges.cgal");
+  std::ofstream cst_output("constrained_edges.polylines.txt");
   for(edge_descriptor ed : edges(surface_mesh))
   {
     halfedge_descriptor hd = halfedge(ed, surface_mesh);
@@ -120,7 +121,7 @@ int main(int argc, char** argv)
   std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   // Contract the surface mesh as much as possible
-  SMS::Count_stop_predicate<Surface_mesh> stop(0);
+  SMS::Edge_count_stop_predicate<Surface_mesh> stop(0);
 
   std::cout << "Collapsing as many non-sharp edges of mesh: " << filename << " as possible..." << std::endl;
   int r = SMS::edge_collapse(surface_mesh, stop,

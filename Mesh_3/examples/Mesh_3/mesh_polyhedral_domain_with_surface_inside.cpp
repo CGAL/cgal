@@ -26,16 +26,15 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
   std::cout.precision(17);
   std::cerr.precision(17);
-  const char* fname = (argc>1)?argv[1]:"data/horizons.off";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/horizons.off");
   std::ifstream input(fname);
-  const char* fname2 = (argc>2)?argv[2]:"data/horizons-domain.off";
+  const std::string fname2 = (argc>2)?argv[2]:CGAL::data_file_path("meshes/horizons-domain.off");
   std::ifstream input2(fname2);
   Polyhedron sm, smbounding;
   input >> sm;
@@ -53,13 +52,16 @@ int main(int argc, char*argv[])
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.025,
-                         facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
-                         cell_radius_edge_ratio = 3, cell_size = 0.05);
+  Mesh_criteria criteria(params::edge_size(0.025).
+                                 facet_angle(25).
+                                 facet_size(0.05).
+                                 facet_distance(0.005).
+                                 cell_radius_edge_ratio(3).
+                                 cell_size(0.05));
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      no_perturb(), no_exude());
+                                      params::no_perturb().no_exude());
 
   std::cerr << t.time() << " sec." << std::endl;
   // Output

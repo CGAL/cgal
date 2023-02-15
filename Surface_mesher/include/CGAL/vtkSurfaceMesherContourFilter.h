@@ -107,7 +107,7 @@ int vtkCGALSurfaceMesherContourFilter::RequestData(
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  // get the input and ouptut
+  // get the input and output
   vtkImageData *inData = vtkImageData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPolyData *output = vtkPolyData::SafeDownCast(
@@ -130,8 +130,8 @@ int vtkCGALSurfaceMesherContourFilter::RequestData(
     return 0;
   Gray_level_image gray_level_image(image, Value);
 
-  GT::FT radius = std::max(image.xdim() * image.vx(),
-                           std::max(image.ydim() * image.vy(),
+  GT::FT radius = (std::max)(image.xdim() * image.vx(),
+                           (std::max)(image.ydim() * image.vy(),
                                     image.zdim() * image.vz())
                            );
   GT::Sphere_3 bounding_sphere(GT::Point_3(image.xdim() * image.vx()/2.,

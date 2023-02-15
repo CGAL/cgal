@@ -278,7 +278,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 set_face(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
   , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor f
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
+  , CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
   // set_face has become private in the halfedge provided by
   // polyhedron for unknown reasons, although it used to be public
@@ -304,7 +304,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 set_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
   , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
+  , CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
   typedef typename CGAL::Polyhedron_3<Gt,I,HDS,A>::Vertex::Base Sneak;
   static_cast<Sneak&>(*v).set_halfedge(h);
@@ -491,8 +491,9 @@ namespace boost {
 
 #endif //CGAL_NO_DEPRECATED_CODE
 
-#undef CGAL_HDS_PARAM_
-
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3_time_stamp.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3_features.h>
+#undef CGAL_HDS_PARAM_
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYHEDRON_3_H

@@ -58,8 +58,8 @@ if [ "$HAS_REF" -ne "1" ]; then
   echo "Building reference documentation..."
   mkdir -p ./build_doc
   cd ./build_doc
-  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
-  make -j$NB_CORES doc  &> /dev/null
+  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1>> ./build_logs
+  make -j$NB_CORES doc  &>> ./build_logs
   echo "done."
   cd ../ #scripts
   echo "Creating text files for diff...."
@@ -78,8 +78,8 @@ fi
 echo "Building second documentation..."
 mkdir -p build_doc
 cd ./build_doc
-cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
-make -j$NB_CORES doc  &> /dev/null
+cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1>> ./build_logs
+make -j$NB_CORES doc  &>> ./build_logs
 echo "done."
 cd ../ #scripts
 DOXYGEN_1=$($PATH_TO_1 --version)
@@ -94,7 +94,7 @@ echo "done."
 #add post-processing
 cd ./build_doc
 echo "Adding postprocessing..."
-make -j$NB_CORES doc_with_postprocessing  &> /dev/null
+make -j$NB_CORES doc_with_postprocessing  &>> ./build_logs
 echo "done."
 cd .. #scripts
 mv ./build_doc/* $BUILD_DIR_2
@@ -108,16 +108,16 @@ if [ "$HAS_REF" -ne "1" ]; then
   #######################################################################################################################
   rm -rf ./doc_dir
   cd $BUILD_DIR_1
-  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
+  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1>> ./build_logs
   echo "Building reference documentation with postprocessing..."
-  make -j$NB_CORES doc  &> /dev/null
-  make -j$NB_CORES doc  &> /dev/null
-  make -j$NB_CORES doc_with_postprocessing &> /dev/null
+  make -j$NB_CORES doc  &>> ./build_logs
+  make -j$NB_CORES doc  &>> ./build_logs
+  make -j$NB_CORES doc_with_postprocessing &>> ./build_logs
   echo "done."
   if [ $IS_RELEASE = 0 ]; then
     cd $ROOT
     mkdir -p ./build && cd ./build
-    cmake -DWITH_CGAL_Core=false -DWITH_CGAL_ImageIO=false -DWITH_CGAL_Qt5=false .. 1> /dev/null
+    cmake -DWITH_CGAL_Core=false -DWITH_CGAL_ImageIO=false -DWITH_CGAL_Qt5=false .. 1>> ./build_logs
     CGAL_NAME="$(cat $PWD/VERSION)"
     cd $ROOT
     rm -rf ./build
@@ -132,11 +132,11 @@ else
   rm -rf ./first_doc_ref
 fi
   cd $BUILD_DIR_2
-  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
+  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1>> ./build_logs
   echo "Building reference documentation with postprocessing..."
-  make -j$NB_CORES doc  &> /dev/null
-  make -j$NB_CORES doc  &> /dev/null
-  make -j$NB_CORES doc_with_postprocessing &> /dev/null
+  make -j$NB_CORES doc  &>> ./build_logs
+  make -j$NB_CORES doc  &>> ./build_logs
+  make -j$NB_CORES doc_with_postprocessing &>> ./build_logs
   echo "done."
   cd .. #scripts
   #get VERSION's content

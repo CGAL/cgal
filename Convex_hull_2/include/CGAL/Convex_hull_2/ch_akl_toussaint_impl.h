@@ -20,12 +20,11 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
-#include <boost/bind.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/utility.h>
 #include <iterator>
@@ -221,8 +220,6 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                  OutputIterator  result,
                  const Traits&   ch_traits)
 {
-  using namespace boost;
-
   typedef  typename Traits::Point_2                    Point_2;
   typedef  typename Traits::Left_turn_2                Left_of_line;
   // added
@@ -255,7 +252,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   region3.push_back( *e);
   region4.push_back( *n);
 
-  CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
+  CGAL_postcondition_code( ForwardIterator save_first = first; )
 
   int duplicated_exteme_points =  (std::get<0>(ranges)==std::get<1>(ranges)?1:0) +
                                   (std::get<1>(ranges)==std::get<2>(ranges)?1:0) +
@@ -285,8 +282,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
     internal::ch_akl_toussaint_assign_points_to_regions(std::next(std::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
   }
 
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
@@ -296,9 +292,11 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   std::sort( std::next(region2.begin() ), region2.end(),
              ch_traits.less_xy_2_object() );
   std::sort( std::next(region3.begin() ), region3.end(),
-             boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
+             [&ch_traits](const Point_2& p1, const Point_2& p2)
+             { return ch_traits.less_xy_2_object()(p2, p1); });
   std::sort( std::next(region4.begin() ), region4.end(),
-             boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
+             [&ch_traits](const Point_2& p1, const Point_2& p2)
+             { return ch_traits.less_xy_2_object()(p2, p1); });
 
   if (! equal_points(*w,*s) )
   {
@@ -325,19 +323,18 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                                        res, ch_traits);
   }
 
-  CGAL_ch_postcondition_code( first = save_first; )
-  CGAL_ch_postcondition( \
+  CGAL_postcondition_code( first = save_first; )
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( \
           first, last, \
           res.output_so_far_begin(), res.output_so_far_end(), \
           ch_traits)
   );
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();

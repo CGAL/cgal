@@ -39,6 +39,8 @@
 #include <CGAL/Surface_mesher/Profile_counter.h>
 #include <CGAL/Surface_mesher/Profile_timer.h>
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
   namespace Surface_mesher {
@@ -298,6 +300,7 @@ namespace CGAL {
 
           for(bool exit = false; ; exit = true)
           {
+            CGAL_USE(exit);
             // this for loop is a trick to pass in the following "if" once
             // with center="surface center", and once with
             // center="circumcenter"
@@ -384,7 +387,7 @@ namespace CGAL {
           error_msg <<
             boost::format("Surface_mesher ERROR: "
                           "A facet is not in conflict with its refinement point!\n"
-                          "Debugging informations:\n"
+                          "Debugging information:\n"
                           "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
                           "  Dual: (%3%, %4%)\n"
                           "  Refinement point: %5%\n")
@@ -479,11 +482,15 @@ namespace CGAL {
       // On enleve la facette de la liste des mauvaises facettes
 #ifdef CGAL_SURFACE_MESHER_TAG_BAD
       if(f.first->is_bad(f.second))
+      {
 #endif // CGAL_SURFACE_MESHER_TAG_BAD
-        if(f.first < other_side.first)
-          facets_to_refine.erase(f);
-        else
-          facets_to_refine.erase(other_side);
+      if(f.first < other_side.first)
+        facets_to_refine.erase(f);
+      else
+        facets_to_refine.erase(other_side);
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      }
+#endif // CGAL_SURFACE_MESHER_TAG_BAD
       // Le compteur des visites est remis a zero
        reset_visited(f);
        reset_visited(other_side);

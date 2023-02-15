@@ -20,13 +20,12 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/algorithm.h>
 #include <list>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 template <class InputIterator, class OutputIterator, class Traits>
@@ -35,16 +34,16 @@ ch_bykat(InputIterator first, InputIterator last,
               OutputIterator  result,
               const Traits& ch_traits)
 {
-  using namespace boost;
+  typedef typename Traits::Point_2                            Point_2;
 
-  typedef typename Traits::Point_2                         Point_2;
-  typedef typename Traits::Left_turn_2                     Left_turn_2;
-  typedef typename Traits::Less_signed_distance_to_line_2  Less_dist;
-  typedef typename Traits::Equal_2                         Equal_2;
+  typedef typename Traits::Compare_signed_distance_to_line_2  Compare_dist_2;
+  typedef typename Traits::Equal_2                            Equal_2;
+  typedef typename Traits::Left_turn_2                        Left_turn_2;
+  typedef typename Traits::Less_xy_2                          Less_xy_2;
 
-  Left_turn_2 left_turn    = ch_traits.left_turn_2_object();
-  Less_dist   less_dist    = ch_traits.less_signed_distance_to_line_2_object();
-  Equal_2     equal_points = ch_traits.equal_2_object();
+  Equal_2 equal_points = ch_traits.equal_2_object();
+  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
+  Less_xy_2 less_xy = ch_traits.less_xy_2_object();
 
   if (first == last) return result;
 
@@ -68,8 +67,7 @@ ch_bykat(InputIterator first, InputIterator last,
       *result = a;  ++result;
       return result;
   }
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
@@ -77,18 +75,35 @@ ch_bykat(InputIterator first, InputIterator last,
   H.push_back( a );
   L.push_back( P.begin() );
   R.push_back( l = std::partition(P.begin(), P.end(),
-                                  boost::bind(left_turn, boost::cref(a), boost::cref(b), _1)));
-  r = std::partition( l, P.end(), boost::bind(left_turn, boost::cref(b), boost::cref(a), _1));
+                                  [&left_turn, &a, &b](const Point_2& p){ return left_turn(a,b,p); }) );
+  r = std::partition( l, P.end(), [&left_turn, &a, &b](const Point_2& p){ return left_turn(b,a,p); });
 
   for (;;)
   {
+      // This functor must be in the for loop so that the Convex_hull_constructive traits_2 works correctly
+      Compare_dist_2 cmp_dist = ch_traits.compare_signed_distance_to_line_2_object();
+
       if ( l != r)
       {
-        Point_2 c = *std::min_element( l, r, boost::bind(less_dist, boost::cref(a), boost::cref(b), _1, _2));
+          // We need the farthest point, but since we are on the right side of the line,
+          // signed distances are negative. Hence std::min_element.
+          auto less_dist = [&a, &b, &cmp_dist, &less_xy](const Point_2&p1, const Point_2& p2) -> bool
+          {
+            CGAL::Comparison_result res = cmp_dist(a, b, p1, p2);
+            if(res == CGAL::EQUAL)
+              return less_xy(p1, p2);
+
+            return (res == CGAL::SMALLER);
+          };
+
+          Point_2 c = *std::min_element( l, r, less_dist);
+
           H.push_back( b );
           L.push_back( l );
-          R.push_back( l = std::partition(l, r, boost::bind(left_turn, boost::cref(b), boost::cref(c), _1)));
-          r = std::partition(l, r, boost::bind(left_turn, boost::cref(c), boost::cref(a), _1));
+          R.push_back( l = std::partition(l, r, [&left_turn,&c,&b](const Point_2&p)
+                                                { return left_turn(b, c, p); }));
+          r = std::partition(l, r, [&left_turn,&c,&a](const Point_2&p)
+                                   { return left_turn(c, a, p); });
           b = c;
       }
       else
@@ -101,17 +116,16 @@ ch_bykat(InputIterator first, InputIterator last,
           r = R.back(); R.pop_back();
       }
   }
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( \
           P.begin(), P.end(), \
           res.output_so_far_begin(), res.output_so_far_end(), \
           ch_traits));
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();
@@ -125,17 +139,18 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
                              OutputIterator  result,
                              const Traits&   ch_traits)
 {
-  using namespace boost;
+  typedef typename Traits::Point_2                            Point_2;
 
-  typedef typename Traits::Point_2               Point_2;
-  typedef typename Traits::Left_turn_2            Left_turn_2;
-  typedef typename Traits::Less_signed_distance_to_line_2
-                                                 Less_dist;
-  typedef typename std::vector< Point_2 >::iterator
-                                                 PointIterator;
-  typedef typename Traits::Equal_2                         Equal_2;
+  typedef typename Traits::Compare_signed_distance_to_line_2  Compare_dist_2;
+  typedef typename Traits::Equal_2                            Equal_2;
+  typedef typename Traits::Left_turn_2                        Left_turn_2;
+  typedef typename Traits::Less_xy_2                          Less_xy_2;
 
-  Equal_2     equal_points = ch_traits.equal_2_object();
+  typedef typename std::vector< Point_2 >::iterator           PointIterator;
+
+  Equal_2 equal_points = ch_traits.equal_2_object();
+  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
+  Less_xy_2 less_xy = ch_traits.less_xy_2_object();
 
   if (first == last) return result;
 
@@ -164,45 +179,60 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
       *result = a;  ++result;
       return result;
   }
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
   #endif // no postconditions ...
   H.push_back( a );
   L.push_back( Pbegin );
-  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
-  R.push_back( l = std::partition( Pbegin, Pend,  boost::bind(left_turn, boost::cref(a), boost::cref(b), _1)));
-  r = std::partition( l, Pend, boost::bind(left_turn, boost::cref(b), boost::cref(a), _1));
+  R.push_back( l = std::partition( Pbegin, Pend,  [&left_turn,&a,&b](const Point_2&p)
+                                                  { return left_turn(a, b, p); }));
+  r = std::partition( l, Pend, [&left_turn,&a,&b](const Point_2&p)
+                               { return left_turn(b, a, p); });
 
-  Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   for (;;)
   {
+      // This functor must be in the for loop so that the Convex_hull_constructive traits_2 works correctly
+      Compare_dist_2 cmp_dist = ch_traits.compare_signed_distance_to_line_2_object();
+
       if ( l != r)
       {
           if ( r-l > CGAL_ch_THRESHOLD )
           {
-              Point_2 c = *std::min_element( l, r, boost::bind(less_dist, boost::cref(a), boost::cref(b), _1, _2));
+              // We need the farthest point, but since we are on the right side of the line,
+              // signed distances are negative. Hence std::min_element.
+              auto less_dist = [&a, &b, &cmp_dist, &less_xy](const Point_2&p1, const Point_2& p2) -> bool
+              {
+                CGAL::Comparison_result res = cmp_dist(a, b, p1, p2);
+                if(res == CGAL::EQUAL)
+                  return less_xy(p1, p2);
+
+                return (res == CGAL::SMALLER);
+              };
+
+              Point_2 c = *std::min_element( l, r, less_dist);
+
               H.push_back( b );
               L.push_back( l );
-              R.push_back( l = std::partition(l, r, boost::bind(left_turn, boost::cref(b), boost::cref(c), _1)));
-              r = std::partition(l, r, boost::bind(left_turn, boost::cref(c), boost::cref(a), _1));
+              R.push_back( l = std::partition(l, r, [&left_turn,&c,&b](const Point_2&p)
+                                                    { return left_turn(b, c, p); }));
+              r = std::partition(l, r, [&left_turn,&a,&c](const Point_2&p)
+                                       { return left_turn(c, a, p); });
               b = c;
           }
           else
           {
               std::swap( a, *--l);
               std::swap( b, *++r);
-              if ( ch_traits.less_xy_2_object()(*l,*r) )
+              if ( less_xy(*l,*r) )
               {
-                std::sort(std::next(l), r,
-                          ch_traits.less_xy_2_object() );
+                std::sort(std::next(l), r, less_xy);
               }
               else
               {
-                std::sort(std::next(l), r,
-                            boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
+                std::sort(std::next(l), r, [&less_xy](const Point_2&p1, const Point_2& p2)
+                                           { return less_xy(p2, p1); });
               }
               ch__ref_graham_andrew_scan(l, std::next(r), res, ch_traits);
               std::swap( a, *l);
@@ -225,17 +255,16 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
           r = R.back(); R.pop_back();
       }
   }
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( \
           Pbegin, Pend, \
           res.output_so_far_begin(), res.output_so_far_end(), \
           ch_traits));
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();

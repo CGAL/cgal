@@ -27,8 +27,10 @@
 #include <list>
 #include <iterator>
 
+#include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/circulator.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/enum.h>
 
 #include <CGAL/Aff_transformation_2.h>
@@ -41,11 +43,11 @@
 namespace CGAL {
 
 /// \ingroup PkgPolygon2Ref
-/// The class Polygon_2 implements polygons. The Polygon_2 is
+/// The class `Polygon_2` implements polygons. The `Polygon_2` is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL
-/// container, and has a function `resize()` that takes an std::size_t as argument
-///  . It defaults to the std::vector class.
+/// container, and has a function `resize()` that takes an `std::size_t` as argument.
+/// It defaults to the `std::vector` class.
 ///
 /// \cgalHeading{Implementation}
 ///
@@ -117,21 +119,35 @@ class Polygon_2 {
     /// vertex iterator type
     typedef typename Container::iterator       Vertex_iterator;
 
+  /// a range type to iterate over the vertices
+    typedef Container Vertices;
 
     //typedef typename Container::const_iterator Vertex_const_iterator; ??
 
 #ifdef DOXYGEN_RUNNING
   /// vertex circulator type
   typedef unspecified_type Vertex_circulator;
-  /// edge circulator type
+
+  /// edge iterator type
   typedef unspecified_type Edge_const_iterator;
+
+  /// a range type to iterate over the vertices
+  typedef unspecified_type Edges;
+
   /// edge circular type
   typedef unspecified_type Edge_const_circulator;
+
+  //
 #else
     typedef Vertex_const_circulator Vertex_circulator;
     typedef Polygon_2_edge_iterator<Traits_P,Container_P> Edge_const_iterator;
     typedef Polygon_2_const_edge_circulator<Traits_P,
                                             Container_P> Edge_const_circulator;
+
+    typedef Polygon_2_edge_iterator<Traits_P,Container_P,
+                                    Tag_false> Vertex_pair_iterator;
+
+  typedef Iterator_range<Edge_const_iterator> Edges;
 #endif // DOXYGEN_RUNNING
     /// @}
 
@@ -139,14 +155,16 @@ class Polygon_2 {
     /// @{
 
     /// Creates an empty polygon.
-    Polygon_2() : traits() {}
+    Polygon_2() = default;
 
     /// Creates an empty polygon.
     Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
     /// Copy constructor.
-    Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
-      : d_container(polygon.d_container), traits(polygon.traits) {}
+    Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon) = default;
+
+    /// Move constructor
+    Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon) = default;
 
     /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).
@@ -154,14 +172,12 @@ class Polygon_2 {
     template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last,
               Traits p_traits = Traits())
-        : d_container(), traits(p_traits)
-    {
-      // Sun STL switches off member templates for binary backward compat.
-      std::copy(first, last, std::back_inserter(d_container));
-    }
+      : d_container(first,last), traits(p_traits)
+    {}
 
 #ifndef DOXYGEN_RUNNING
-  Polygon_2& operator=(const Polygon_2&)=default;
+  Polygon_2& operator=(const Polygon_2&) = default;
+  Polygon_2& operator=(Polygon_2&& p) = default;
 #endif
 
     /// @}
@@ -226,8 +242,11 @@ class Polygon_2 {
     /// Erases the vertex pointed to by `i`.
     Vertex_circulator erase(Vertex_circulator i)
       {
-        return Vertex_circulator(&d_container,
-                                 d_container.erase(i.mod_iterator()));
+        auto it = d_container.erase(i.mod_iterator());
+        if(it == d_container.end()){
+          it = d_container.begin();
+        }
+        return Vertex_circulator(&d_container, it);
       }
 
     /// Erases the vertices in the range `[first, last)`.
@@ -262,22 +281,28 @@ class Polygon_2 {
 
     /// Returns a constant iterator that allows to traverse the
     /// vertices of the polygon.
-    Vertex_const_iterator vertices_begin() const
+    Vertex_iterator vertices_begin() const
       { return const_cast<Polygon_2&>(*this).d_container.begin(); }
 
     /// Returns the corresponding past-the-end iterator.
-    Vertex_const_iterator vertices_end() const
+    Vertex_iterator vertices_end() const
       { return const_cast<Polygon_2&>(*this).d_container.end(); }
+
+    /// returns the range of vertices.
+    const Vertices& vertices() const
+    {
+      return d_container;
+    }
 
 //    Vertex_const_circulator vertices_circulator() const
 //      { return Vertex_const_circulator(&d_container, d_container.begin()); }
 
-    /// Returns a mutable circulator that allows to traverse the
+    /// Returns a constant circulator that allows to traverse the
     /// vertices of the polygon.
-    Vertex_const_circulator vertices_circulator() const
+    Vertex_circulator vertices_circulator() const
       {
         Polygon_2& self = const_cast<Polygon_2&>(*this);
-        return Vertex_const_circulator(&self.d_container,
+        return Vertex_circulator(&self.d_container,
                self.d_container.begin());
       }
 
@@ -290,12 +315,25 @@ class Polygon_2 {
     Edge_const_iterator edges_end() const
       { return Edge_const_iterator(&d_container, d_container.end()); }
 
+    /// returns the range of edges.
+    Edges edges() const
+    {
+      return make_range(edges_begin(),edges_end());
+    }
+
     /// Returns a non-mutable circulator that allows to traverse the
     /// edges of the polygon.
     Edge_const_circulator edges_circulator() const
       { return Edge_const_circulator(vertices_circulator()); }
 
     /// @}
+
+    /// \cond SKIP_IN_MANUAL
+    Vertex_pair_iterator vertex_pairs_begin() const
+    { return Vertex_pair_iterator(&d_container, d_container.begin()); }
+    Vertex_pair_iterator vertex_pairs_end() const
+    { return Vertex_pair_iterator(&d_container, d_container.end()); }
+    /// \endcond
 
     /// \name Predicates
     /// @{
@@ -336,7 +374,7 @@ class Polygon_2 {
     /// `p.is_simple()`.
     Bounded_side bounded_side(const Point_2& value) const
     {
-      CGAL_polygon_precondition(is_simple());
+      CGAL_precondition(is_simple());
       return bounded_side_2(d_container.begin(), d_container.end(),
                                  value, traits);
     }
@@ -373,7 +411,7 @@ class Polygon_2 {
                              self.d_container.end(), traits);
     }
 
-    /// Returns topmost vertex of the polygon with the largest
+    /// Returns the topmost vertex of the polygon with the largest
     /// `y`-coordinate.
     Vertex_const_iterator top_vertex() const
     {
@@ -539,7 +577,7 @@ operator!=(const Polygon_2<Traits_P,Container1_P> &p1,
            const Polygon_2<Traits_P,Container2_P> &p2);
 
 /// Returns the image of the polygon \c p under the transformation \c t.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Transformation, class Traits_P, class Container_P>
 Polygon_2<Traits_P,Container_P>
 transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
@@ -553,13 +591,13 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
 
 /// Reads a polygon from stream `is` and assigns it to `p`.
 /// \pre The extract operator must be defined for `Point_2`.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Traits_P, class Container_P>
 std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p);
 
 /// Inserts the polygon `p` into the stream `os`.
 /// \pre The insert operator must be defined for `Point_2`.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Traits_P, class Container_P>
 std::ostream &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
 

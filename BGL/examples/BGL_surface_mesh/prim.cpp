@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/graph/prim_minimum_spanning_tree.hpp>
+#include <CGAL/boost/graph/prim_minimum_spanning_tree.h>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -14,10 +14,15 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
 int main(int argc, char* argv[])
 {
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
+
   Mesh P;
-  //std::cin >> P;
-  std::ifstream in((argc>1)?argv[1]:"data/prim.off");
-  in >> P;
+  if(!CGAL::IO::read_polygon_mesh(filename, P))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
+
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = P.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
 

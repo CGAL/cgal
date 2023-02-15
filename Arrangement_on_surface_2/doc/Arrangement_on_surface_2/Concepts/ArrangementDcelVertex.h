@@ -3,13 +3,13 @@
 \ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
-A vertex record in a <span class="textsc">Dcel</span> data structure. A vertex is always associated
+A vertex record in a \dcel data structure. A vertex is always associated
 with a point. However, the vertex record only stores a pointer to the
 associated point, and the actual `Point` object is stored elsewhere.
 
 A vertex usually has several halfedges incident to it, such that it is
 possible to access one of these halfedges directly and to traverse all
-incident halfedges around the vertex. However, the <span class="textsc">Dcel</span> may also contain
+incident halfedges around the vertex. However, the \dcel may also contain
 isolated vertices that have no incident halfedges. In this case, the vertex
 stores an isolated vertex-information record, indicating the face that
 contains this vertex in its interior.
@@ -27,12 +27,12 @@ public:
 /// @{
 
 /*!
-the corresponding <span class="textsc">Dcel</span> halfedge type.
+the corresponding \dcel halfedge type.
 */
 typedef unspecified_type Halfedge;
 
 /*!
-the corresponding <span class="textsc">Dcel</span> isolated
+the corresponding \dcel isolated
 vertex-information type.
 */
 typedef unspecified_type Isolated_vertex;

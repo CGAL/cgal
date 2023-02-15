@@ -33,6 +33,9 @@
 #include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
+#ifdef CGAL_USE_BOOST_MP
+#include <boost/multiprecision/cpp_int.hpp>
+#endif // CGAL_USE_BOOST_MP
 
 namespace CGAL {
 
@@ -45,6 +48,15 @@ namespace CGAL {
 template < typename NT >
 inline void
 simplify_quotient(NT &, NT &) {}
+
+#ifdef CGAL_USE_BOOST_MP
+inline void
+simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
+  const boost::multiprecision::cpp_int r = boost::multiprecision::gcd(a, b);
+  a /= r;
+  b /= r;
+}
+#endif // CGAL_USE_BOOST_MP
 
 // This one should be replaced by some functor or tag.
 // Meanwhile, the class is specialized for Gmpz, mpz_class, leda_integer.
@@ -129,6 +141,15 @@ class Quotient
   Quotient<NT>& operator*= (const CGAL_double(NT)& r);
   Quotient<NT>& operator/= (const CGAL_double(NT)& r);
 
+  friend bool operator==(const Quotient& x, const Quotient& y)
+  { return x.num * y.den == x.den * y.num; }
+  friend bool operator==(const Quotient& x, const NT& y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_int(NT) & y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_double(NT) & y)
+  { return x.den * y == x.num; } // Uh?
+
   Quotient<NT>&    normalize();
 
   const NT&   numerator()   const { return num; }
@@ -142,7 +163,7 @@ class Quotient
   }
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
-  int tam() const { return std::max(num.tam(), den.tam()); }
+  int tam() const { return (std::max)(num.tam(), den.tam()); }
 #endif
 
  public:
@@ -438,31 +459,6 @@ quotient_truncation(const Quotient<NT>& r)
 
 
 
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return x.num * y.den == x.den * y.num; }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const NT& y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_int(NT) & y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_double(NT) & y)
-{ return x.den * y == x.num; }
-
-
 
 template <class NT>
 CGAL_MEDIUM_INLINE
@@ -581,7 +577,7 @@ namespace INTERN_QUOTIENT {
         public:
           NT operator()( const NT& x ) const {
             CGAL_precondition(x > 0);
-            return NT(CGAL_NTS sqrt(x.numerator()*x.denominator()),
+            return NT(CGAL_NTS sqrt(typename NT::NT(x.numerator()*x.denominator())),
                       x.denominator());
           }
       };
@@ -632,7 +628,7 @@ public:
     };
 
     typedef typename boost::mpl::if_c<
-        !boost::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
+        !std::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
                          Null_functor >::value,
          typename INTERN_QUOTIENT::Sqrt_selector< Type,
                                                   Is_exact >::Sqrt,
@@ -703,7 +699,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-          Interval_nt<> quot =
+          const Interval_nt<> quot =
                           Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
                           Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
           return std::make_pair(quot.inf(), quot.sup());

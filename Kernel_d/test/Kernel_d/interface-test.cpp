@@ -24,7 +24,7 @@ typedef double FT_;
 
 int main()
 { CGAL_KD_SETDTHREAD(2);
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
 { // Homogeneous Kernel
   typedef CGAL::Homogeneous_d<RT_> Kernel;

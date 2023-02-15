@@ -21,8 +21,8 @@
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 #include <vector>
 #include <list>
@@ -54,43 +54,70 @@ enum Deformation_algorithm_tag
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
-template<class TriangleMesh, Deformation_algorithm_tag deformation_algorithm_tag>
+
+// property map that create a Simple_cartesian<double>::Point_3
+// on the fly in order the deformation class to be used
+// with points with minimal requirements
+template <class Vertex_point_map>
+struct SC_on_the_fly_pmap
+  : public Vertex_point_map
+{
+  typedef boost::readable_property_map_tag category;
+  typedef CGAL::Simple_cartesian<double>::Point_3 value_type;
+  typedef value_type reference;
+  typedef typename boost::property_traits<Vertex_point_map>::key_type key_type;
+
+  SC_on_the_fly_pmap(Vertex_point_map base):
+    Vertex_point_map(base) {}
+
+  friend value_type
+  get(const SC_on_the_fly_pmap map, key_type k)
+  {
+    typename boost::property_traits<Vertex_point_map>::reference base=
+      get(static_cast<const Vertex_point_map&>(map), k);
+    return value_type(base[0], base[1], base[2]);
+  }
+};
+
+template<typename TriangleMesh, typename VertexPointMap,
+         Deformation_algorithm_tag deformation_algorithm_tag>
 struct Types_selectors;
 
-template<class TriangleMesh>
-struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
-  typedef internal::Single_cotangent_weight_impl<TriangleMesh> Weight_calculator;
+template<typename TriangleMesh, typename VertexPointMap>
+struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SPOKES_AND_RIMS>
+{
+  typedef CGAL::Weights::Single_cotangent_weight<TriangleMesh> Weight_calculator;
 
-  struct ARAP_visitor{
-    template <class VertexPointMap>
+  struct ARAP_visitor
+  {
     void init(TriangleMesh, VertexPointMap){}
 
-    void rotation_matrix_pre(
-      typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
-      TriangleMesh&){}
+    void rotation_matrix_pre(typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
+                             TriangleMesh&){}
 
     template <class Square_matrix_3>
-    void update_covariance_matrix(
-      Square_matrix_3&,
-      const Square_matrix_3&){}
+    void update_covariance_matrix(Square_matrix_3&,
+                                  const Square_matrix_3&){}
 
     void set_sre_arap_alpha(double){}
   };
 };
 
-template<class TriangleMesh>
-struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+template<class TriangleMesh, typename VertexPointMap>
+struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::ORIGINAL_ARAP>
+{
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
-  typedef typename Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS>
-    ::ARAP_visitor ARAP_visitor;
+  typedef typename Types_selectors<TriangleMesh, VertexPointMap, CGAL::SPOKES_AND_RIMS>::ARAP_visitor ARAP_visitor;
 };
 
-template<class TriangleMesh>
-struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+template<class TriangleMesh, typename VertexPointMap>
+struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SRE_ARAP>
+{
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
-  class ARAP_visitor{
+  class ARAP_visitor
+  {
     double m_nb_edges_incident;
     double m_area;
     double m_alpha;
@@ -98,7 +125,6 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
   public:
     ARAP_visitor(): m_alpha(0.02) {}
 
-    template<class VertexPointMap>
     void init(TriangleMesh triangle_mesh, const VertexPointMap& vpmap)
     {
       // calculate area
@@ -136,29 +162,6 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
     void set_sre_arap_alpha(double a){ m_alpha=a; }
   };
 };
-
-// property map that create a Simple_cartesian<double>::Point_3
-// on the fly in order the deformation class to be used
-// with points with minimal requirements
-template <class Vertex_point_map>
-struct SC_on_the_fly_pmap: public Vertex_point_map{
-  typedef boost::readable_property_map_tag category;
-  typedef CGAL::Simple_cartesian<double>::Point_3 value_type;
-  typedef value_type reference;
-  typedef typename boost::property_traits<Vertex_point_map>::key_type key_type;
-
-  SC_on_the_fly_pmap(Vertex_point_map base):
-    Vertex_point_map(base) {}
-
-  friend value_type
-  get(const SC_on_the_fly_pmap map, key_type k)
-  {
-    typename boost::property_traits<Vertex_point_map>::reference base=
-      get(static_cast<const Vertex_point_map&>(map), k);
-    return value_type(base[0], base[1], base[2]);
-  }
-};
-
 
 }//namespace internal
 /// @endcond
@@ -226,17 +229,6 @@ public:
   typedef HIM Hedge_index_map;
 #endif
 
-// weight calculator
-#ifndef DOXYGEN_RUNNING
-  typedef typename Default::Get<
-    WC,
-    typename internal::Types_selectors<TM, TAG>::Weight_calculator
-  >::type Weight_calculator;
-#else
-  /// weight calculator functor type
-  typedef WC Weight_calculator;
-#endif
-
 // sparse linear solver
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
@@ -281,6 +273,17 @@ public:
   typedef VPM Vertex_point_map;
 #endif
 
+// weight calculator
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    WC,
+    typename internal::Types_selectors<Triangle_mesh, Vertex_point_map, TAG>::Weight_calculator
+  >::type Weight_calculator;
+#else
+  /// weight calculator functor type
+  typedef WC Weight_calculator;
+#endif
+
   /// The type for vertex descriptor
   typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex_descriptor;
   /// The type for halfedge descriptor
@@ -295,8 +298,6 @@ public:
 private:
   typedef Surface_mesh_deformation<TM, VIM, HIM, TAG, WC, ST, CR> Self;
   // Repeat Triangle_mesh types
-  typedef typename boost::graph_traits<Triangle_mesh>::vertex_iterator     vertex_iterator;
-  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<Triangle_mesh>::in_edge_iterator    in_edge_iterator;
   typedef typename boost::graph_traits<Triangle_mesh>::out_edge_iterator   out_edge_iterator;
 
@@ -331,12 +332,11 @@ private:
 
   bool last_preprocess_successful;                    ///< stores the result of last call to preprocess()
 
+  Vertex_point_map vertex_point_map;
   Weight_calculator weight_calculator;
 
-  Vertex_point_map vertex_point_map;
-
 public:
-  typename internal::Types_selectors<TM, TAG>::ARAP_visitor arap_visitor;
+  typename internal::Types_selectors<Triangle_mesh, Vertex_point_map, TAG>::ARAP_visitor arap_visitor;
 private:
 
 #ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
@@ -350,68 +350,13 @@ public:
 public:
 
   /// \cond SKIP_FROM_MANUAL
-  //vertex_point_map set by default
-  Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
-                           Vertex_index_map vertex_index_map,
-                           Hedge_index_map hedge_index_map)
-    : m_triangle_mesh(triangle_mesh),
-      vertex_index_map(vertex_index_map),
-      hedge_index_map(hedge_index_map),
-      ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
-      is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-      is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-      m_iterations(5), m_tolerance(1e-4),
-      need_preprocess_factorization(true),
-      need_preprocess_region_of_solution(true),
-      last_preprocess_successful(false),
-      weight_calculator(Weight_calculator()),
-      vertex_point_map(get(vertex_point, triangle_mesh))
-  {
-    init();
-  }
-
-  //vertex_point_map and hedge_index_map set by default
-  Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
-                           Vertex_index_map vertex_index_map)
-    : m_triangle_mesh(triangle_mesh),
-      vertex_index_map(vertex_index_map),
-      hedge_index_map(CGAL::get_initialized_halfedge_index_map(triangle_mesh)),
-      ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
-      is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-      is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-      m_iterations(5), m_tolerance(1e-4),
-      need_preprocess_factorization(true),
-      need_preprocess_region_of_solution(true),
-      last_preprocess_successful(false),
-      weight_calculator(Weight_calculator()),
-      vertex_point_map(get(vertex_point, triangle_mesh))
-  {
-    init();
-  }
-  //vertex_point_map, hedge_index_map and vertex_index_map set by default
-  Surface_mesh_deformation(Triangle_mesh& triangle_mesh)
-    : m_triangle_mesh(triangle_mesh),
-      vertex_index_map(CGAL::get_initialized_vertex_index_map(triangle_mesh)),
-      hedge_index_map(CGAL::get_initialized_halfedge_index_map(triangle_mesh)),
-      ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
-      is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-      is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-      m_iterations(5), m_tolerance(1e-4),
-      need_preprocess_factorization(true),
-      need_preprocess_region_of_solution(true),
-      last_preprocess_successful(false),
-      weight_calculator(Weight_calculator()),
-      vertex_point_map(get(vertex_point, triangle_mesh))
-  {
-    init();
-  }
 
   // Constructor with all the parameters provided
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
                            Vertex_index_map vertex_index_map,
                            Hedge_index_map hedge_index_map,
                            Vertex_point_map vertex_point_map,
-                           Weight_calculator weight_calculator = Weight_calculator())
+                           Weight_calculator weight_calculator)
     : m_triangle_mesh(triangle_mesh),
       vertex_index_map(vertex_index_map),
       hedge_index_map(hedge_index_map),
@@ -422,13 +367,47 @@ public:
       need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
-      weight_calculator(weight_calculator),
-      vertex_point_map(vertex_point_map)
+      vertex_point_map(vertex_point_map),
+      weight_calculator(weight_calculator)
   {
     init();
   }
+
+  Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
+                           Vertex_index_map vertex_index_map,
+                           Hedge_index_map hedge_index_map,
+                           Vertex_point_map vertex_point_map)
+    : Surface_mesh_deformation(triangle_mesh,
+                               vertex_index_map,
+                               hedge_index_map,
+                               vertex_point_map,
+                               Weight_calculator())
+  { }
+
+  Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
+                           Vertex_index_map vertex_index_map,
+                           Hedge_index_map hedge_index_map)
+    : Surface_mesh_deformation(triangle_mesh,
+                               vertex_index_map,
+                               hedge_index_map,
+                               get(vertex_point, triangle_mesh))
+  { }
+
+  Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
+                           Vertex_index_map vertex_index_map)
+    : Surface_mesh_deformation(triangle_mesh,
+                               vertex_index_map,
+                               CGAL::get_initialized_halfedge_index_map(triangle_mesh))
+  { }
+
+  Surface_mesh_deformation(Triangle_mesh& triangle_mesh)
+    : Surface_mesh_deformation(triangle_mesh,
+                               CGAL::get_initialized_vertex_index_map(triangle_mesh))
+  { }
+
   /// \endcond
-  #if DOXYGEN_RUNNING
+
+#if DOXYGEN_RUNNING
 /// \name Construction
 /// @{
     /**
@@ -448,21 +427,18 @@ public:
                            Vertex_index_map vertex_index_map = unspecified_internal_vertex_index_map,
                            Hedge_index_map hedge_index_map = unspecified_internal_halfedge_index_map,
                            Vertex_point_map vertex_point_map = get(boost::vertex_point, triangle_mesh),
-                           Weight_calculator weight_calculator = Weight_calculator());
+                           Weight_calculator weight_calculator = Weight_calculator(triangle_mesh, vertex_point_map));
 /// @}
   #endif
 
 private:
-  void init() {
+  void init()
+  {
     typedef internal::SC_on_the_fly_pmap<Vertex_point_map> Wrapper;
-    // compute halfedge weights
-    halfedge_iterator eb, ee;
-    hedge_weight.reserve(2*num_edges(m_triangle_mesh));
-    for(std::tie(eb, ee) = halfedges(m_triangle_mesh); eb != ee; ++eb)
-    {
-      hedge_weight.push_back(
-        this->weight_calculator(*eb, m_triangle_mesh, Wrapper(vertex_point_map)));
-    }
+    hedge_weight.reserve(num_halfedges(m_triangle_mesh));
+    for(halfedge_descriptor he : halfedges(m_triangle_mesh))
+      hedge_weight.push_back(this->weight_calculator(he, m_triangle_mesh, Wrapper(vertex_point_map)));
+
     arap_visitor.init(m_triangle_mesh, vertex_point_map);
   }
 

@@ -206,9 +206,8 @@ functor followed by the suffix `_object`.For example, the function that returns 
       all the platforms the library supports.  In particular, it should not
       contain the characters ':', '*', or ' '.
 <LI>Internal header files - which are not documented to the user - should
-      have <TT>/internal/</TT> as a directory higher up in their hierarchy.
-      For example <TT>CGAL/internal/foo.h</TT> or
-      <TT>CGAL/Package/internal/predicates/my_pred.h</TT>.
+      have <TT>Package/internal/</TT> as a directory higher up in their hierarchy.
+      For example <TT>CGAL/Triangulation_2/internal/predicates/my_pred.h</TT>.
 </UL>
 
 \section secprogramming_conventions Programming conventions
@@ -244,42 +243,19 @@ The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
   modify the object to which it is applied,
   <I>e.g.</I>, `class A { int f( void) const; };`. This should also be
   done when it is only conceptually `const`.
-  This means that the member function `f()` is `c`onst as seen from
+  This means that the member function `f()` is `const` as seen from
   the outside, but internally it may modify some data members
-  that are declared `m`utable. An example
+  that are declared `mutable`. An example
   is the caching of results from expensive computations.  For more
-  information about conceptually `c`onst functions and mutable data
+  information about conceptually `const` functions and `mutable` data
   members see \cgalCite{cgal:m-ec-97}.
-- Prefer \cpp-style to C-style casts, <I>e.g.</I>, use `static_cast<double>( i)` instead of `(`double)i.
+- Prefer \cpp-style to C-style casts, <I>e.g.</I>, use `static_cast<double>( i)` instead of `(double)i`.
 - Protect header files against multiple inclusion, <I>e.g.</I> the file <TT>This_is_an_example.h</TT> should begin/end with
   \code{.cpp}
   #ifndef CGAL_THIS_IS_AN_EXAMPLE_H
   #define CGAL_THIS_IS_AN_EXAMPLE_H
   ...
   #endif // CGAL_THIS_IS_AN_EXAMPLE_H
-  \endcode
-- Support the
-  <A HREF="https://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
-  protocol whenever your functors have more than one return type
-  otherwise provide a `result_type` member typedef.
-  An example for this is a C++03 style `identity` functor:
-  \code{.cpp}
-        struct Identity {
-          template<typename T>
-          T& operator()(T& t) { return t; }
-          template<typename T>
-          const T& operator()(const T& t) { return t; }
-          template<typename>
-          struct result;
-          template<typename F, typename T>
-          struct result<F(T&)> {
-            typedef T& type;
-          };
-          template<typename F, typename T>
-          struct result<F(const T&)> {
-            typedef const T& type;
-          };
-        };
   \endcode
 
 The following items can be seen as recommendations
@@ -292,12 +268,6 @@ in contrast to the rules of previous paragraph.
   explicit casting if necessary.
 <LI>Do not call global functions unqualified, that is, always
   specify explicitly the namespace where the function is defined.
-<LI>Do not give private types or typedefs a name likely to be used as
-  a public interface by an other class, <I>e.g.</I> prefer `Point_3_`
-  to `Point_3` (in general, add an underscore as suffix). The reason for this convention is that
-  <A HREF="https://sympa.inria.fr/sympa/arc/cgal-develop/2010-10/msg00118.html">SFINAE
-  does not extend to access control before C++11</A> (meaning that the existence of a
-  private type can break overloading for other classes).
 </UL>
 
 \section seccode_format Code format
@@ -322,7 +292,7 @@ employing the authors) of this work, a pointer to the file containing its text i
 <LI>\$URL\$ : canonical path to the file on github,
 <LI>\$Id\$ : the release version the file is from.
 </UL>
-<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial`,
+<LI> Then [SPDX license identifier](https://spdx.dev/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial`,
 and  `SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial` for LGPL-3+.
 <LI>Then the authors of (non-negligible parts of) this file are listed, with
 optional affiliation or e-mail address.

@@ -25,7 +25,7 @@ using namespace CGAL;
 
 int main()
 {
-  //CGAL_NEF_SETDTHREAD(3); CGAL::set_pretty_mode ( std::cerr );
+  //CGAL_NEF_SETDTHREAD(3); CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
 
   { PRT(Integer,Integer);

@@ -13,7 +13,7 @@ typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-void mesh_with_id(const char* argv1, const bool save_output)
+void mesh_with_id(const std::string argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -38,30 +38,55 @@ void mesh_with_id(const char* argv1, const bool save_output)
 
   boost::vector_property_map<int,
     boost::property_map<Mesh_with_id, CGAL::face_index_t>::type>
-      fccmap(get(CGAL::face_index,sm));
+      fccmap(static_cast<unsigned>(num_faces(sm)), get(CGAL::face_index,sm));
 
-  std::size_t num = PMP::connected_components(sm, fccmap);
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  const std::size_t num = PMP::connected_components(sm, fccmap);
+
+  if(argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
     assert(num == 3);
+  }
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
-  std::size_t nb_faces = num_faces(sm);
-  std::vector<face_descriptor> faces_to_remove; // faces that would be removed but are not because we're doing a dry run
-  std::size_t nb_to_remove =   PMP::keep_large_connected_components(sm, 1000,
-                                                                      CGAL::parameters::face_size_map(
-                                                                        CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
-                                                                                       .dry_run(true)
-                                                                                       .output_iterator(std::back_inserter(faces_to_remove)));
-  assert(!faces_to_remove.empty());
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  const std::size_t nb_faces = num_faces(sm);
+
+  std::vector<face_descriptor> faces_to_remove;
+  std::size_t nb_to_remove = PMP::keep_large_connected_components(
+                               sm, 1000,
+                               CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
+                                                .dry_run(true)
+                                                .output_iterator(std::back_inserter(faces_to_remove)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
   {
     assert(nb_to_remove == 1);
+    assert(faces_to_remove.size() == 680);
     assert(num_faces(sm) == nb_faces);
   }
 
-  PMP::keep_largest_connected_components(sm, 2,
-                                         CGAL::parameters::face_size_map(
-                                           CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
+  faces_to_remove.clear();
+  nb_to_remove = PMP::keep_largest_connected_components(
+                   sm, 2,
+                   CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
+                                    .dry_run(true)
+                                    .output_iterator(std::back_inserter(faces_to_remove)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
+    assert(nb_to_remove == 1);
+    assert(faces_to_remove.size() == 680);
+    assert(num_faces(sm) == nb_faces);
+  }
+
+  nb_to_remove = PMP::keep_largest_connected_components(
+                   sm, 2,
+                   CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
+    assert(nb_to_remove == 1);
+    assert(faces(sm).size() == 2737);
+  }
 
   if (!save_output)
     return;
@@ -71,7 +96,7 @@ void mesh_with_id(const char* argv1, const bool save_output)
   ofile.close();
 }
 
-void mesh_no_id(const char* argv1, const bool save_output)
+void mesh_no_id(const std::string argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
@@ -92,11 +117,11 @@ void mesh_no_id(const char* argv1, const bool save_output)
 
   boost::vector_property_map<int,
     boost::property_map<Mesh, boost::face_external_index_t>::type>
-      fccmap(fim);
+      fccmap(static_cast<unsigned>(num_faces(sm)), fim);
 
   std::size_t num = PMP::connected_components(sm, fccmap);
 
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
     assert(num == 3);
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
@@ -104,7 +129,7 @@ void mesh_no_id(const char* argv1, const bool save_output)
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
-  PMP::keep_largest_connected_components(sm, 2, PMP::parameters::vertex_index_map(vim));
+  PMP::keep_largest_connected_components(sm, 2, CGAL::parameters::vertex_index_map(vim));
   if (save_output)
     return;
 
@@ -119,7 +144,7 @@ void test_border_cases()
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
 
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   Mesh_with_id sm;
   input >> sm;
 
@@ -133,7 +158,7 @@ void test_border_cases()
 
   boost::vector_property_map<int,
     boost::property_map<Mesh_with_id, boost::face_index_t>::type>
-      fccmap(get(boost::face_index,sm));
+      fccmap(static_cast<unsigned>(num_faces(sm)), get(boost::face_index,sm));
 
   PMP::connected_components(sm, fccmap);
   std::size_t nb_faces=num_faces(sm);
@@ -160,7 +185,7 @@ void test_border_cases()
   assert(num_vertices(copy)==0);
 }
 
-void keep_nothing(const char* argv1)
+void keep_nothing(const std::string argv1)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -187,8 +212,8 @@ void keep_nothing(const char* argv1)
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
-  const bool save_output = (argc > 2) ? true : false;
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
+  const bool save_output = (argc > 2);
 
   mesh_with_id(filename, save_output);
   mesh_no_id(filename, save_output);

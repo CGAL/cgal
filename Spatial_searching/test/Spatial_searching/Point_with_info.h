@@ -22,12 +22,12 @@ template <class Point>
 struct Point_property_map{
   typedef Point value_type;
   typedef const value_type& reference;
-  typedef const My_point_with_info<Point>& key_type;
+  typedef My_point_with_info<Point> key_type;
   typedef boost::lvalue_property_map_tag category;
 
-  reference operator[](key_type k) const {return k.point();}
+  reference operator[](const key_type& k) const { return k.point(); }
 
-  friend reference get(const Point_property_map& ppmap, key_type i)
+  friend reference get(const Point_property_map& ppmap, const key_type& i)
   {return ppmap[i];}
 };
 

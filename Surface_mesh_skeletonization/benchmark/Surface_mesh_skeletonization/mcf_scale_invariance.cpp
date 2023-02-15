@@ -22,7 +22,7 @@ typedef Skeleton::edge_descriptor                             Skeleton_edge;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
+  std::ifstream input((argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off"));
   Polyhedron tmesh;
   input >> tmesh;
 
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
 
-//scale skelton
+//scale skeleton
   for(Skeleton_vertex v : vertices(skeleton))
   {
     Point new_point = skeleton[v].point+to_origin;

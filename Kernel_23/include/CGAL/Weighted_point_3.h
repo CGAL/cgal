@@ -20,7 +20,6 @@
 #include <CGAL/Origin.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
@@ -35,7 +34,7 @@ class Weighted_point_3 : public R_::Kernel_base::Weighted_point_3
   typedef typename R_::FT                    FT;
 
   typedef Weighted_point_3                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Weighted_point_3>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Weighted_point_3>::value));
 
 public:
 
@@ -71,6 +70,9 @@ public:
   Weighted_point_3(const Rep& p)
       : Rep(p) {}
 
+  Weighted_point_3(Rep&& p)
+      : Rep(std::move(p)) {}
+
   explicit
   Weighted_point_3(const Point_3& p)
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), p, 0))
@@ -84,62 +86,62 @@ public:
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), x, y, z))
   {}
 
-  typename cpp11::result_of<typename R::Construct_point_3(Weighted_point_3)>::type
+  decltype(auto)
   point() const
   {
     return typename R::Construct_point_3()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_weight_3(Weighted_point_3)>::type
+  decltype(auto)
   weight() const
   {
     return typename R::Compute_weight_3()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_x_3(Point_3)>::type
+  decltype(auto)
   x() const
   {
     return typename R::Compute_x_3()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_y_3(Point_3)>::type
+  decltype(auto)
   y() const
   {
     return typename R::Compute_y_3()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_z_3(Point_3)>::type
+  decltype(auto)
   z() const
   {
     return typename R::Compute_z_3()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_3(Point_3)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_3(Point_3)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hz_3(Point_3)>::type
+  decltype(auto)
   hz() const
   {
     return R().compute_hz_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_3(Point_3)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Point_3)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
@@ -158,7 +160,7 @@ public:
     return hw();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Point_3)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -186,7 +188,7 @@ public:
 
   Weighted_point_3 transform(const Aff_transformation_3 &t) const
   {
-    return Weighted_point_3(t.transform(point(),weight()));
+    return Weighted_point_3(t.transform(point()),weight());
   }
 
 };
@@ -251,7 +253,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Weighted_point_3<R>& p,const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.point() << ' ' << p.weight();
     case IO::BINARY :
@@ -270,7 +272,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Weighted_point_3<R>& p,const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << p.hx() << ' ' << p.hy() << ' ' << p.hz() << ' ' << p.hw() << ' ' << p.weight();
@@ -303,9 +305,9 @@ std::istream&
 extract(std::istream& is, Weighted_point_3<R>& p, const Cartesian_tag&)
 {
   typename R::FT x, y, z, weight;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-      is >> iformat(x) >> iformat(y) >> iformat(z) >> iformat(weight);
+      is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z) >> IO::iformat(weight);
         break;
     case IO::BINARY :
         read(is, x);
@@ -315,7 +317,7 @@ extract(std::istream& is, Weighted_point_3<R>& p, const Cartesian_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -330,7 +332,7 @@ extract(std::istream& is, Weighted_point_3<R>& p, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
   typename R::FT weight;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
       is >> hx >> hy >> hz >> hw >> weight;
@@ -344,7 +346,7 @@ extract(std::istream& is, Weighted_point_3<R>& p, const Homogeneous_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

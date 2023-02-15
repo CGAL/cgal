@@ -88,7 +88,7 @@ private:
     unsigned int        _xid;       /*!< Serial number of the originating
                                          x-monotone curve. */
     Bez_point_bound     _bpb;       /*!< Bounding information for the
-                                         point: bouding control polygon,
+                                         point: bounding control polygon,
                                          point type, etc. */
     Algebraic          *p_t;        /*!< The algebraic parameter for the
                                          point (if available). */
@@ -240,7 +240,7 @@ private:
      * Set the serial number of the originating x-monotone curve.
      * \param xid the new serial number of the originating x-monotone curve.
      * \pre The current xid() is 0.
-     * \pre xid is possitive.
+     * \pre xid is positive.
      */
     void set_xid (unsigned int xid)
     {
@@ -253,7 +253,7 @@ private:
   };
 
   /*! \struct Subcurve
-   * Auxilary structure for the vertical_position() function.
+   * Auxiliary structure for the vertical_position() function.
    */
   typedef typename Bounding_traits::Control_points   Control_points;
   typedef typename Bounding_traits::NT               BoundNT;
@@ -751,7 +751,7 @@ public:
   }
 
   /*!
-   * Compare the the two points xy-lexicographically.
+   * Compare the two points xy-lexicographically.
    * \param pt The other point.
    * \param cache A cache for the vertical tangency points and the
    *              intersection points.
@@ -1421,7 +1421,7 @@ bool _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_refine ()
     CGAL_assertion(_origs.size() == 2);
 
     // Obtain the other curve that originates the intersection point and use
-    // it to refine its reprsentation.
+    // it to refine its representation.
     Orig_iter    org_it = _origs.begin();
     ++org_it;
     Originator&  orig2 = *org_it;
@@ -1641,17 +1641,43 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
   const Algebraic      t_min = nt_traits.convert (orig2.point_bound().t_min);
   const Algebraic      t_max = nt_traits.convert (orig2.point_bound().t_max);
 
+  bool self_intersecting = (org_it1->curve().id() == org_it2->curve().id());
+
   for (intr_it = intr_list.begin(); intr_it != intr_list.end(); ++intr_it)
   {
-    if (CGAL::compare (intr_it->s, s_min) != SMALLER &&
-        CGAL::compare (intr_it->s, s_max) != LARGER &&
-        CGAL::compare (intr_it->t, t_min) != SMALLER &&
-        CGAL::compare (intr_it->t, t_max) != LARGER)
+    auto in_bounding_interval =
+      [](const auto& s_, const auto& s_min_, const auto& s_max_) -> bool {
+      return CGAL::compare(s_, s_min_) != SMALLER &&
+             CGAL::compare(s_, s_max_) != LARGER;
+    };
+
+    bool st_in_st_range = in_bounding_interval(intr_it->s, s_min, s_max) &&
+                          in_bounding_interval(intr_it->t, t_min, t_max);
+    bool ts_in_st_range = false;
+
+    if (st_in_st_range)
     {
       // Update the originators.
-      orig1.set_parameter (intr_it->s);
-      orig2.set_parameter (intr_it->t);
+      orig1.set_parameter(intr_it->s);
+      orig2.set_parameter(intr_it->t);
+    }
+    else if (self_intersecting)
+    {
+      // check whether s is in t range, and t is in s range
+      // s and t can be interchanged in case of self intersections
+      ts_in_st_range = in_bounding_interval(intr_it->t, s_min, s_max) &&
+                       in_bounding_interval(intr_it->s, t_min, t_max);
 
+      if (ts_in_st_range)
+      {
+        // Update the originators.
+        orig1.set_parameter(intr_it->t);
+        orig2.set_parameter(intr_it->s);
+      }
+    }
+
+    if (st_in_st_range || ts_in_st_range)
+    {
       // Set the exact point coordinates.
       p_alg_x = new Algebraic (intr_it->x);
       p_alg_y = new Algebraic (intr_it->y);

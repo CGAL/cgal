@@ -40,7 +40,7 @@ class Point_set_demo_register_dialog : public QDialog, private Ui::RegisterPoint
   Q_OBJECT
 public:
   Point_set_demo_register_dialog(const std::vector<Scene_points_with_normal_item*>& items,
-                                 QWidget* /*parent*/ = 0)
+                                 QWidget* /*parent*/ = nullptr)
   {
     setupUi(this);
 

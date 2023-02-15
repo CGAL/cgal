@@ -39,7 +39,7 @@ typedef unspecified_type template <class T> rebind;
 /// @{
 
 /*!
-constructs an empty <span class="textsc">Dcel</span> with one unbouned face.
+constructs an empty \dcel with one unbounded face.
 */
 Arr_dcel();
 

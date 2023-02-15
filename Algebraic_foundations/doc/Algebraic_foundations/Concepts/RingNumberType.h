@@ -14,8 +14,8 @@ for Homogeneous kernels.
 \cgalHasModel \cpp built-in number types
 \cgalHasModel `CGAL::Gmpq`
 \cgalHasModel `CGAL::Gmpz`
-\cgalHasModel` CGAL::Interval_nt`
-\cgalHasModel \ref CGAL::Interval_nt_advanced
+\cgalHasModel `CGAL::Interval_nt`
+\cgalHasModel `CGAL::Interval_nt_advanced`
 \cgalHasModel `CGAL::Lazy_exact_nt<RingNumberType>`
 \cgalHasModel `CGAL::MP_Float`
 \cgalHasModel `CGAL::Gmpzf`

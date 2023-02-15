@@ -3,7 +3,7 @@
 #include <cassert>
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 

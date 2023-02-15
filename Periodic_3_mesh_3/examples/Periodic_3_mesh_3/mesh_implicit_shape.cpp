@@ -34,7 +34,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Implicit function
 FT schwarz_p(const Point& p)
@@ -57,17 +57,17 @@ int main(int argc, char** argv)
   Periodic_mesh_domain domain =
     Periodic_mesh_domain::create_implicit_mesh_domain(schwarz_p, canonical_cube);
 
-  Periodic_mesh_criteria criteria(facet_angle = 30,
-                                  facet_size = 0.05 * domain_size,
-                                  facet_distance = 0.025 * domain_size,
-                                  cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.05);
+  Periodic_mesh_criteria criteria(params::facet_angle(30).
+                                          facet_size(0.035 * domain_size).
+                                          facet_distance(0.025 * domain_size).
+                                          cell_radius_edge_ratio(2.).
+                                          cell_size(0.05));
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
   std::ofstream medit_file("output_implicit_shape.mesh");
-  CGAL::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
+  CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

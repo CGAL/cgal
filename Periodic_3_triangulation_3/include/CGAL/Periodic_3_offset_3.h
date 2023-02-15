@@ -17,7 +17,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian.h>
 
 namespace CGAL {
@@ -46,13 +46,13 @@ public:
   int &operator[](int i) {
     if (i==0) return _offx;
     if (i==1) return _offy;
-    CGAL_triangulation_assertion(i==2);
+    CGAL_assertion(i==2);
     return _offz;
   }
   int operator[](int i) const {
     if (i==0) return _offx;
     if (i==1) return _offy;
-    CGAL_triangulation_assertion(i==2);
+    CGAL_assertion(i==2);
     return _offz;
   }
   void operator+=(const Periodic_3_offset_3 &other) {
@@ -108,7 +108,7 @@ inline Point_3<K> operator+(const Point_3<K> &p, const Periodic_3_offset_3 &off)
 
 inline std::ostream
 &operator<<(std::ostream &os, const Periodic_3_offset_3 &off) {
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
     os << off.x() << " " << off.y() << " " << off.z();
   else {
     write(os,off.x());
@@ -121,7 +121,7 @@ inline std::ostream
 inline std::istream
 &operator>>(std::istream &is, Periodic_3_offset_3 &off) {
   int x=0,y=0,z=0;
-  if (is_ascii(is))
+  if (IO::is_ascii(is))
     is >> x >> y >> z;
   else {
     read(is,x);

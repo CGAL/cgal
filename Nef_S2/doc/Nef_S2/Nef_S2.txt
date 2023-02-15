@@ -78,7 +78,7 @@ qualified as being positively or negatively oriented.
 
 \subsection Nef_S2FirstExample First Example
 
-In this first example `Nef_polyhedron_S2` is parametrized with a %CGAL
+In this first example `Nef_polyhedron_S2` is parametrized with a \cgal
 Kernel as traits class. The types comprising the spherical geometry can be
 retrieved from the type `Nef_polyhedron_S2<Traits>` as is done in the example
 with the type

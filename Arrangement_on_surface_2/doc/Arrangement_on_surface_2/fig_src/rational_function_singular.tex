@@ -1,0 +1,16 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.8}%
+  \begin{pspicture}(-5.5,-2)(5.5,9)
+    \arraxes(0,0)(-1,-4)(4,6)
+    \psframe(-1,-4)(4,6)
+    \psplot[linecolor=blue]{0}{0.79}{1 x 1 sub 2 x sub mul div}
+    \psplot[linecolor=blue]{1.21}{1.79}{1 x 1 sub 2 x sub mul div}
+    \psplot[linecolor=blue]{2.21}{3}{1 x 1 sub 2 x sub mul div}
+    \arrMainVertex(0,-0.5){1}
+    \arrMainVertex(3,-0.5){3}
+  \end{pspicture}
+}
+\end{document}

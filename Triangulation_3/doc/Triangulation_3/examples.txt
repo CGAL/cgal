@@ -8,6 +8,8 @@
 \example Triangulation_3/info_insert_with_transform_iterator.cpp
 \example Triangulation_3/simplex.cpp
 \example Triangulation_3/fast_location_3.cpp
+\example Triangulation_3/segment_cell_traverser_3.cpp
+\example Triangulation_3/segment_simplex_traverser_3.cpp
 \example Triangulation_3/find_conflicts_3.cpp
 \example Triangulation_3/regular_3.cpp
 \example Triangulation_3/regular_with_info_3.cpp

@@ -41,11 +41,9 @@ namespace Ss2 = Surface_sweep_2;
  * \param oi Output: An output iterator for the query results.
  * \pre The value-type of PointsIterator is Arrangement::Point_2,
  *      and the value-type of OutputIterator is is pair<Point_2, Result>,
- *      where Result is either
- *       (i) Object or
- *      (ii) boost::optional<boost::variant<Vertex_const_handle,
- *                                          Halfedge_const_handle,
- *                                          Face_const_handle> >.
+ *      where Result is boost::optional<boost::variant<Vertex_const_handle,
+ *                                      Halfedge_const_handle,
+ *                                      Face_const_handle> >.
  *      It represents the arrangement feature containing the point.
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -122,7 +120,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Bgt2>, const Bgt2&, Bgt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Bgt2>, const Bgt2&, Bgt2>::type
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.

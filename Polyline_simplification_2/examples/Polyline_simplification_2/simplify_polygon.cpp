@@ -1,6 +1,3 @@
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <iostream>
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -21,18 +18,12 @@ int main(int argc, char* argv[])
 {
   std::ifstream ifs( (argc==1)?"data/polygon.wkt":argv[1]);
   Polygon_with_holes_2 polygon;
-  CGAL::read_polygon_WKT(ifs, polygon);
+  CGAL::IO::read_polygon_WKT(ifs, polygon);
   Cost cost;
   polygon = PS::simplify(polygon, cost, Stop(0.5));
 
   std::cout.precision(12);
-  CGAL::write_polygon_WKT(std::cout, polygon) << std::endl;
+  CGAL::IO::write_polygon_WKT(std::cout, polygon) << std::endl;
 
   return 0;
 }
-#else
-int main()
-{
-  return 0;
-}
-#endif

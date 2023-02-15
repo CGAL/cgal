@@ -91,6 +91,10 @@ class Vector_d : public pR::Vector_d_base
   { return Base::operator==(w); }
   bool operator!=(const Self& w) const
   { return Base::operator!=(w); }
+  bool operator==(const Base& w) const
+  { return Base::operator==(w); }
+  bool operator!=(const Base& w) const
+  { return Base::operator!=(w); }
 
 };
 

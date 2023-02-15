@@ -246,11 +246,11 @@ public:
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-        this->register_input_site(t.source(), t.target());
+        this->register_input_site(t.source_of_supporting_site(), t.target_of_supporting_site());
       Storage_site_2 ss =
         this->st_.construct_storage_site_2_object()(php.first, php.second);
       Vertex_handle v =
-        insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+        insert_segment(t.source_of_supporting_site(), t.target_of_supporting_site(), ss, UNDEFINED_LEVEL);
       if ( v == Vertex_handle() ) {
         this->unregister_input_site( php.first, php.second );
       }
@@ -282,12 +282,12 @@ public:
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-        this->register_input_site(t.source(), t.target());
+        this->register_input_site(t.source_of_supporting_site(), t.target_of_supporting_site());
       Storage_site_2 ss =
         this->st_.construct_storage_site_2_object()(php.first, php.second);
       ss.set_info(info);
       Vertex_handle v =
-        insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+        insert_segment(t.source_of_supporting_site(), t.target_of_supporting_site(), ss, UNDEFINED_LEVEL);
       if ( v == Vertex_handle() ) {
         this->unregister_input_site( php.first, php.second );
       }

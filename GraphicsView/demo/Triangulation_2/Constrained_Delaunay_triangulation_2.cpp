@@ -24,10 +24,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
-#include <CGAL/IO/write_vtu.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/write_VTU.h>
 #include <CGAL/IO/WKT.h>
-#endif
 
 // Qt headers
 #include <QtGui>
@@ -124,7 +122,7 @@ discoverComponents(const CDT & ct,
   {
     typename CDT::Face_handle fh_loc = ct.locate(*sit);
 
-    if(fh_loc == NULL || !fh_loc->is_in_domain())
+    if(fh_loc == nullptr || !fh_loc->is_in_domain())
       continue;
 
     std::list<typename CDT::Face_handle> queue;
@@ -528,9 +526,7 @@ MainWindow::open(QString fileName)
     } else if(fileName.endsWith(".poly")){
       loadPolyConstraints(fileName);
     } else if(fileName.endsWith(".wkt")){
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       loadWKT(fileName);
-#endif
     }
     this->addToRecentFiles(fileName);
   }
@@ -549,109 +545,46 @@ MainWindow::on_actionLoadConstraints_triggered()
                                                      "Poly files (*.poly);;"
                                                      "Plg files (*.plg);;"
                                                      "CGAL files (*.cpts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.WKT *.wkt);;"
-                                                   #endif
                                                      "All (*)"));
   open(fileName);
 }
 
 void
-MainWindow::loadWKT(QString
-                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-                    filename
-                    #endif
-                    )
+MainWindow::loadWKT(QString filename)
 {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
   //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
-  do
-  {
-    typedef CGAL::Polygon_with_holes_2<K> Polygon;
-    typedef CGAL::Point_2<K> Point;
-    std::vector<Polygon> mps;
-    CGAL::read_multi_polygon_WKT(ifs, mps);
-    for(const Polygon& p : mps)
-    {
-      if(p.outer_boundary().is_empty())
-        continue;
 
-      for(Point point : p.outer_boundary().container())
-          cdt.insert(point);
-      for(Polygon::General_polygon_2::Edge_const_iterator
-          e_it=p.outer_boundary().edges_begin(); e_it != p.outer_boundary().edges_end(); ++e_it)
-        cdt.insert_constraint(e_it->source(), e_it->target());
+  typedef CGAL::Polygon_with_holes_2<K> Polygon;
+  typedef CGAL::Point_2<K> Point;
 
-      for(Polygon::Hole_const_iterator h_it =
-          p.holes_begin(); h_it != p.holes_end(); ++h_it)
-      {
-        for(Point point : h_it->container())
-            cdt.insert(point);
-        for(Polygon::General_polygon_2::Edge_const_iterator
-            e_it=h_it->edges_begin(); e_it != h_it->edges_end(); ++e_it)
-        {
-          cdt.insert_constraint(e_it->source(), e_it->target());
-        }
-      }
-    }
-  }while(ifs.good() && !ifs.eof());
-  //Edges
-  ifs.clear();
-  ifs.seekg(0, ifs.beg);
-  do
-  {
-    typedef std::vector<K::Point_2> LineString;
-    std::vector<LineString> mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
-    for(const LineString& ls : mls)
-    {
-      if(ls.empty())
-        continue;
-      K::Point_2 p,q, qold(0,0); // initialize to avoid maybe-uninitialized warning from GCC6
-      bool first = true;
-      CDT::Vertex_handle vp, vq, vqold;
-      LineString::const_iterator it =
-          ls.begin();
-      for(; it != ls.end(); ++it) {
-        p = *it++;
-        q = *it;
-        if(p == q){
-          continue;
-        }
-        if((!first) && (p == qold)){
-          vp = vqold;
-        } else {
-          vp = cdt.insert(p);
-        }
-        vq = cdt.insert(q, vp->face());
-        if(vp != vq) {
-          cdt.insert_constraint(vp,vq);
-        }
-        qold = q;
-        vqold = vq;
-        first = false;
-      }
-    }
-  }while(ifs.good() && !ifs.eof());
+  std::deque<Point> points;
+  std::deque<std::vector<Point>> linestrings;
+  std::deque<Polygon> polygons;
 
-  //Points
-  ifs.clear();
-  ifs.seekg(0, ifs.beg);
-  do
-  {
-    std::vector<K::Point_2> mpts;
-    CGAL::read_multi_point_WKT(ifs, mpts);
-    for(const K::Point_2& p : mpts)
-    {
-      cdt.insert(p);
+  CGAL::IO::read_WKT(ifs, points, linestrings, polygons);
+
+  cdt.insert(points.begin(),points.end());
+
+  for(const std::vector<Point>& line : linestrings){
+    cdt.insert_constraint(line.begin(), line.end());
+  }
+
+  for(const Polygon& p : polygons){
+    if(p.outer_boundary().is_empty())
+      continue;
+
+    cdt.insert_constraint(p.outer_boundary().vertices_begin(), p.outer_boundary().vertices_end(),true);
+
+    for(Polygon::Hole_const_iterator h_it = p.holes_begin(); h_it != p.holes_end(); ++h_it){
+      cdt.insert_constraint(h_it->vertices_begin(), h_it->vertices_end(),true);
     }
-  }while(ifs.good() && !ifs.eof());
+  }
 
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
   actionRecenter->trigger();
-#endif
 }
 
 void
@@ -669,7 +602,7 @@ void
 MainWindow::loadPolyConstraints(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
-  read_triangle_poly_file(cdt,ifs);
+  CGAL::IO::read_triangle_poly_file(cdt,ifs);
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
   actionRecenter->trigger();
@@ -788,7 +721,7 @@ MainWindow::saveConstraints(QString fileName)
     output << cdt;
   else if (output)
   {
-    CGAL::write_vtu(output, cdt);
+    CGAL::IO::write_VTU(output, cdt);
   }
 }
 
@@ -850,9 +783,9 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   timer.start();
 
   CGAL::refine_Delaunay_mesh_2(cdt,
-      m_seeds.begin(), m_seeds.end(),
-      Criteria(shape, edge_len),
-      false);//mesh the subdomains including NO seed
+                               CGAL::parameters::seeds(m_seeds)
+                               .criteria(Criteria(shape, edge_len))
+                               .seeds_are_in_domain(false));//mesh the subdomains including NO seed
 
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
@@ -973,9 +906,7 @@ MainWindow::on_actionLloyd_optimization_triggered()
   }
 
   CGAL::lloyd_optimize_mesh_2(cdt,
-      max_iteration_number = nb,
-      seeds_begin = m_seeds.begin(),
-      seeds_end = m_seeds.end());
+      CGAL::parameters::number_of_iterations(nb).seeds(m_seeds));
 
   // default cursor
   QApplication::restoreOverrideCursor();

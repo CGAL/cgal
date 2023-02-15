@@ -1,12 +1,13 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Linear_cell_complex_for_generalized_map<4,5> LCC_4;
-typedef LCC_4::Dart_handle                                 Dart_handle;
-typedef LCC_4::Point                                       Point;
-typedef LCC_4::Vector                                      Vector;
-typedef LCC_4::FT                                          FT;
+typedef LCC_4::Dart_descriptor Dart_descriptor;
+typedef LCC_4::Point           Point;
+typedef LCC_4::Vector          Vector;
+typedef LCC_4::FT              FT;
 
 int main()
 {
@@ -22,12 +23,12 @@ int main()
   FT p7[5]={-1, 1, 2, 0, 0}; std::vector<FT> v7(p7,p7+5);
   FT p8[5]={-3, 1, 2, 0, 0}; std::vector<FT> v8(p8,p8+5);
 
-  Dart_handle d1 = lcc.make_tetrahedron(Point(5, v1.begin(), v1.end()),
+  Dart_descriptor d1 = lcc.make_tetrahedron(Point(5, v1.begin(), v1.end()),
                                         Point(5, v2.begin(), v2.end()),
                                         Point(5, v3.begin(), v3.end()),
                                         Point(5, v4.begin(), v4.end()));
 
-  Dart_handle d2 = lcc.make_tetrahedron(Point(5, v5.begin(), v5.end()),
+  Dart_descriptor d2 = lcc.make_tetrahedron(Point(5, v5.begin(), v5.end()),
                                         Point(5, v6.begin(), v6.end()),
                                         Point(5, v7.begin(), v7.end()),
                                         Point(5, v8.begin(), v8.end()));
@@ -41,25 +42,25 @@ int main()
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // Add one vertex on the middle of the edge containing dart d1.
-  Dart_handle d3 = lcc.insert_barycenter_in_cell<1>(d1);
-  CGAL_assertion( lcc.is_valid() );
+  Dart_descriptor d3 = lcc.insert_barycenter_in_cell<1>(d1);
+  assert( lcc.is_valid() );
 
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // Add one edge to cut the face containing dart d3 in two.
-  Dart_handle d4 = lcc.insert_cell_1_in_cell_2(d3, lcc.alpha(d1, 1, 0, 1));
-  CGAL_assertion( lcc.is_valid() );
+  Dart_descriptor d4 = lcc.insert_cell_1_in_cell_2(d3, lcc.alpha(d1, 1, 0, 1));
+  assert( lcc.is_valid() );
 
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // We use removal operations to get back to the initial configuration.
   lcc.remove_cell<1>(d4);
-  CGAL_assertion( lcc.is_valid() );
+  assert( lcc.is_valid() );
 
   lcc.remove_cell<0>(d3);
-  CGAL_assertion( lcc.is_valid() );
+  assert( lcc.is_valid() );
 
   lcc.unsew<4>(d1);
 
@@ -68,4 +69,3 @@ int main()
 
   return EXIT_SUCCESS;
 }
-

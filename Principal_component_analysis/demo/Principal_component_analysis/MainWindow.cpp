@@ -25,9 +25,6 @@ MainWindow::MainWindow(QWidget* parent)
         // saves some pointers from ui, for latter use.
         m_pViewer = ui->viewer;
 
-        // does not save the state of the viewer
-        m_pViewer->setStateFileName(QString());
-
         // accepts drop events
         setAcceptDrops(true);
 
@@ -48,6 +45,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
+        m_pViewer->makeCurrent();
         delete ui;
 }
 

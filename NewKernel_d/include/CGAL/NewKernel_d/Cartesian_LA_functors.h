@@ -13,7 +13,7 @@
 #define CGAL_CARTESIAN_LA_FUNCTORS_H
 
 #include <CGAL/NewKernel_d/utils.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/argument_swaps.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/transforming_iterator.h>
@@ -50,35 +50,35 @@ template<class R_,class Zero_> struct Construct_LA_vector
           // Makes no sense for an unknown dimension.
                 return typename Constructor::Dimension()(this->kernel().dimension());
         }
-        result_type operator()(result_type const& v)const{
+        result_type const& operator()(result_type const& v)const{
                 return v;
         }
         result_type operator()(result_type&& v)const{
                 return std::move(v);
         }
         template<class...U>
-        typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-                std::is_same<Dimension_tag<sizeof...(U)>, Dimension>::value,
-          result_type>::type
+        std::enable_if_t<Constructible_from_each<RT,U...>::value &&
+                std::is_same<Dimension_tag<int(sizeof...(U))>, Dimension>::value,
+          result_type>
         operator()(U&&...u)const{
                 return typename Constructor::Values()(std::forward<U>(u)...);
         }
-        //template<class...U,class=typename std::enable_if<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==static_dim+1)>::type,class=void>
+        //template<class...U,class=std::enable_if_t<Constructible_from_each<RT,U...>::value>,class=typename std::enable_if_t<(sizeof...(U)==static_dim+1)>,class=void>
         template<class...U>
-        typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-                std::is_same<Dimension_tag<sizeof...(U)-1>, Dimension>::value,
-          result_type>::type
+        std::enable_if_t<Constructible_from_each<RT,U...>::value &&
+                std::is_same<Dimension_tag<int(sizeof...(U)-1)>, Dimension>::value,
+          result_type>
         operator()(U&&...u)const{
                 return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);
         }
         template<class Iter> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
                 (Iter f,Iter g,Cartesian_tag t)const
         {
                 return this->operator()((int)std::distance(f,g),f,g,t);
         }
         template<class Iter> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
                 (int d,Iter f,Iter g,Cartesian_tag)const
         {
                 CGAL_assertion(d==std::distance(f,g));
@@ -86,28 +86,28 @@ template<class R_,class Zero_> struct Construct_LA_vector
                 return typename Constructor::Iterator()(d,f,g);
         }
         template<class Iter> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::bidirectional_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::bidirectional_iterator_tag>::value,result_type> operator()
                 (Iter f,Iter g,Homogeneous_tag)const
         {
                 --g;
                 return this->operator()((int)std::distance(f,g),f,g,*g);
         }
         template<class Iter> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::bidirectional_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::bidirectional_iterator_tag>::value,result_type> operator()
                 (int d,Iter f,Iter g,Homogeneous_tag)const
         {
                 --g;
                 return this->operator()(d,f,g,*g);
         }
         template<class Iter> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
                 (Iter f,Iter g)const
         {
           // Shouldn't it try comparing dist(f,g) to the dimension if it is known?
                 return this->operator()(f,g,typename R::Rep_tag());
         }
         template<class Iter> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
                 (int d,Iter f,Iter g)const
         {
                 return this->operator()(d,f,g,typename R::Rep_tag());
@@ -115,7 +115,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 
         // Last homogeneous coordinate given separately
         template<class Iter,class NT> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
                 (int d,Iter f,Iter g,NT const&l)const
         {
                 CGAL_assertion(d==std::distance(f,g));
@@ -124,7 +124,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
                 return typename Constructor::Iterator()(d,CGAL::make_transforming_iterator(f,Divide<FT,NT>(l)),CGAL::make_transforming_iterator(g,Divide<FT,NT>(l)));
         }
         template<class Iter,class NT> inline
-          typename std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
                 (Iter f,Iter g,NT const&l)const
         {
                 return this->operator()((int)std::distance(f,g),f,g,l);
@@ -137,7 +137,7 @@ template<class R_> struct Compute_cartesian_coordinate {
         typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename R::Vector_ first_argument_type;
         typedef int second_argument_type;
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
         typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 
         template <typename index_type>
@@ -153,7 +153,7 @@ template<class R_> struct Construct_cartesian_const_iterator {
         typedef typename R::LA_vector S_;
         typedef typename R::Point_cartesian_const_iterator result_type;
         // same as Vector
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
 
         result_type operator()(argument_type const& v,Begin_tag)const{
                 return S_::vector_begin(v);
@@ -224,6 +224,7 @@ template<class R_> struct Scalar_product {
 };
 
 template<class R_> struct Squared_distance_to_origin_stored {
+        // What about weighted points, should they store sdo-w?
         CGAL_FUNCTOR_INIT_IGNORE(Squared_distance_to_origin_stored)
         typedef R_ R;
         typedef typename R::LA_vector LA;
@@ -281,7 +282,7 @@ template<class R_> struct PV_dimension {
         typedef typename R::Vector_ argument_type;
         typedef int result_type;
         typedef typename R::LA_vector LA;
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
 
         template<class T>
         result_type operator()(T const& v) const {

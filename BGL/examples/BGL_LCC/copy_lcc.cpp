@@ -6,11 +6,12 @@
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <iostream>
 #include <fstream>
 #include <iterator>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -29,7 +30,7 @@ int main(int argc, char* argv[])
 {
   Source S;
 
-  std::ifstream in((argc>1)?argv[1]:"cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   in >> S;
 
   // Note that the vertex_point property of the Source and Target1
@@ -38,7 +39,7 @@ int main(int argc, char* argv[])
   Target1 T1;
   {
     CGAL::copy_face_graph(S, T1);
-    CGAL::write_off("lcc.off", T1);
+    CGAL::IO::write_OFF("lcc.off", T1);
   }
 
   S.clear();
@@ -49,8 +50,8 @@ int main(int argc, char* argv[])
     typedef boost::graph_traits<Source>::vertex_descriptor   tm_vertex_descriptor;
     typedef boost::graph_traits<Source>::halfedge_descriptor tm_halfedge_descriptor;
 
-    boost::unordered_map<source_vertex_descriptor, tm_vertex_descriptor> v2v;
-    boost::unordered_map<source_halfedge_descriptor, tm_halfedge_descriptor> h2h;
+    std::unordered_map<source_vertex_descriptor, tm_vertex_descriptor> v2v;
+    std::unordered_map<source_halfedge_descriptor, tm_halfedge_descriptor> h2h;
 
     CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_output_iterator(std::inserter(v2v, v2v.end()))
                                                   .halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end())));

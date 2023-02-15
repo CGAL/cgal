@@ -20,7 +20,6 @@
 #include <CGAL/Bbox_3.h>
 
 #include <boost/format.hpp>
-#include <boost/bind.hpp>
 #include <boost/ref.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -144,7 +143,6 @@ public:
 
   void create_data_structure()
   {
-    using boost::bind;
     using boost::make_transform_iterator;
 
     max_width = CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION

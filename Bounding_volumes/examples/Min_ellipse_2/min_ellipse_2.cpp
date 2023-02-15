@@ -39,7 +39,7 @@ main( int, char**)
     assert(me2.number_of_support_points()==2);
 
     // prettyprinting
-    CGAL::set_pretty_mode( std::cout);
+    CGAL::IO::set_pretty_mode( std::cout);
     std::cout << me2;
 
     // in general, the ellipse is not explicitly representable

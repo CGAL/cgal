@@ -22,6 +22,7 @@
 #include <CGAL/linear_least_squares_fitting_points_3.h>
 #include <CGAL/linear_least_squares_fitting_segments_3.h>
 #include <CGAL/linear_least_squares_fitting_triangles_3.h>
+#include <CGAL/Subiterator.h>
 
 #include <iterator>
 
@@ -75,26 +76,17 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
+  auto converter = [](const Tetrahedron& t, int idx) -> Triangle
+    { return Triangle(t[idx], t[(idx+1)%4], t[(idx+2)%4]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Triangle> triangles;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Tetrahedron& t = *it;
-    triangles.push_back(Triangle(t[0],t[1],t[2]));
-    triangles.push_back(Triangle(t[0],t[2],t[3]));
-    triangles.push_back(Triangle(t[0],t[3],t[1]));
-    triangles.push_back(Triangle(t[3],t[1],t[2]));
- }
-
-  // compute fitting plane
-  return linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,(Triangle*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Triangle, 4> (first, converter),
+     make_subiterator<Triangle, 4> (beyond),
+     plane,c,(Triangle*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a plane to a 3D tetrahedron set
@@ -113,28 +105,21 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
+  auto converter = [](const Tetrahedron& t, int idx) -> Segment
+    {
+      if (idx < 4)
+        return Segment (t[idx], t[(idx+1)%4]);
+      return Segment (t[idx-4], t[idx-2]);
+    };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment> segments;
-
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Tetrahedron& t = *it;
-    segments.push_back(Segment(t[0],t[1]));
-    segments.push_back(Segment(t[1],t[2]));
-    segments.push_back(Segment(t[1],t[3]));
-    segments.push_back(Segment(t[2],t[3]));
-    segments.push_back(Segment(t[0],t[2]));
-    segments.push_back(Segment(t[0],t[3]));
- }
-
-  // compute fitting plane
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)nullptr,k,tag,
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_3
+    (make_subiterator<Segment, 6> (first, converter),
+     make_subiterator<Segment, 6> (beyond),
+     plane,c,(Segment*)nullptr,k,tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_tetrahedrons_3
 
@@ -154,26 +139,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
+  auto converter = [](const Tetrahedron& t, int idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Tetrahedron& t = *it;
-    points.push_back(t[0]);
-    points.push_back(t[1]);
-    points.push_back(t[2]);
-    points.push_back(t[3]);
- }
-
-  // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Point, 4> (first, converter),
+     make_subiterator<Point, 4> (beyond),
+     plane,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a line to a 3D tetrahedron set
@@ -223,26 +198,17 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
+  auto converter = [](const Tetrahedron& t, int idx) -> Triangle
+    { return Triangle(t[idx], t[(idx+1)%4], t[(idx+2)%4]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Triangle> triangles;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Tetrahedron& t = *it;
-    triangles.push_back(Triangle(t[0],t[1],t[2]));
-    triangles.push_back(Triangle(t[0],t[2],t[3]));
-    triangles.push_back(Triangle(t[0],t[3],t[1]));
-    triangles.push_back(Triangle(t[3],t[1],t[2]));
- }
-
-  // compute fitting line
-  return linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,(Triangle*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Triangle, 4> (first, converter),
+     make_subiterator<Triangle, 4> (beyond),
+     line,c,(Triangle*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a line to a 3D tetrahedron set
@@ -261,28 +227,21 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
+  auto converter = [](const Tetrahedron& t, int idx) -> Segment
+    {
+      if (idx < 4)
+        return Segment (t[idx], t[(idx+1)%4]);
+      return Segment (t[idx-4], t[idx-2]);
+    };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment> segments;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Tetrahedron& t = *it;
-    segments.push_back(Segment(t[0],t[1]));
-    segments.push_back(Segment(t[1],t[2]));
-    segments.push_back(Segment(t[1],t[3]));
-    segments.push_back(Segment(t[2],t[3]));
-    segments.push_back(Segment(t[0],t[2]));
-    segments.push_back(Segment(t[0],t[3]));
- }
-
-  // compute fitting line
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Segment, 6> (first, converter),
+     make_subiterator<Segment, 6> (beyond),
+     line,c,(Segment*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a line to a 3D tetrahedron set
@@ -301,26 +260,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
+  auto converter = [](const Tetrahedron& t, int idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Tetrahedron& t = *it;
-    points.push_back(t[0]);
-    points.push_back(t[1]);
-    points.push_back(t[2]);
-    points.push_back(t[3]);
- }
-
-  // compute fitting line
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Point, 4> (first, converter),
+     make_subiterator<Point, 4> (beyond),
+     line,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_tetrahedra_3
 
 } // end namespace internal

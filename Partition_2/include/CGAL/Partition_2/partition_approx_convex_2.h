@@ -17,7 +17,7 @@
 
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 40800)
+#if defined(BOOST_GCC)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 #endif
@@ -29,7 +29,7 @@ _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_is_valid_2.h>
-#include <CGAL/Partition_2/partition_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Circulator/Safe_circulator_from_iterator.h>
 #include <utility>
 #include <iterator>
@@ -138,7 +138,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 
    P_Polygon_2 polygon(first, beyond,traits);
 
-   CGAL_partition_precondition(
+   CGAL_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
    Circulator first_c(polygon.begin(), polygon.end(), polygon.begin());
@@ -230,7 +230,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    }
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    OutputIterator res(result);
 #else
    typedef typename Traits::Polygon_2                  Polygon_2;
@@ -238,13 +238,13 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 #endif // no postconditions
 
    polygon.partition(res, 0);
-   CGAL_partition_postcondition(
+   CGAL_postcondition(
        convex_partition_is_valid_2(polygon.begin(), polygon.end(),
                                    res.output_so_far_begin(),
                                    res.output_so_far_end(), traits));
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    return res;
 #else
    return res.to_output_iterator();
@@ -264,7 +264,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 }
 
 }
-#if  (BOOST_GCC >= 40800)
+#if defined(BOOST_GCC)
  _Pragma("GCC diagnostic pop")
 #endif
 #endif // CGAL_PARTITION_APPROX_CONVEX_H

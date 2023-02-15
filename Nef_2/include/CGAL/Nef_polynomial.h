@@ -69,6 +69,41 @@ class Nef_polynomial
       CGAL_STATIC_THREAD_LOCAL_VARIABLE(NT, R_, 1);
       return R_;
     }
+
+  friend bool operator==(const Nef_polynomial<NT> &a, const Nef_polynomial<NT> &b)
+  {
+    return a.polynomial() == b.polynomial();
+  }
+
+  friend bool operator==(const Nef_polynomial<NT> &a, const NT& b)
+  {
+    return a.polynomial() == b;
+  }
+
+  friend bool operator==(const Nef_polynomial<NT> &a, int b)
+  {
+    return a.polynomial() == b;
+  }
+
+  friend bool operator<(const Nef_polynomial<NT> &a, const Nef_polynomial<NT> &b)
+  {
+    return a.polynomial() < b.polynomial();
+  }
+
+  friend bool operator<(const Nef_polynomial<NT> &a, const NT& b)
+  {
+    return a.polynomial() < b;
+  }
+
+  friend bool operator<(const Nef_polynomial<NT> &a, int b)
+  {
+    return a.polynomial() < b;
+  }
+
+  friend bool operator>(const Nef_polynomial<NT> &a, int b)
+  {
+    return a.polynomial() > b;
+  }
 };
 
 template <class NT>
@@ -84,42 +119,6 @@ Nef_polynomial<NT> operator-(const Nef_polynomial<NT> &a)
 {
   return - a.polynomial();
 }
-
-template <class NT>
-inline
-bool operator<(const Nef_polynomial<NT> &a, const Nef_polynomial<NT> &b)
-{
-  return a.polynomial() < b.polynomial();
-}
-
-template <class NT>
-inline
-bool operator==(const Nef_polynomial<NT> &a, const Nef_polynomial<NT> &b)
-{
-  return a.polynomial() == b.polynomial();
-}
-
-template <class NT>
-inline
-bool operator==(const Nef_polynomial<NT> &a, int b)
-{
-  return a.polynomial() == b;
-}
-
-template <class NT>
-inline
-bool operator<(const Nef_polynomial<NT> &a, int b)
-{
-  return a.polynomial() < b;
-}
-
-template <class NT>
-inline
-bool operator>(const Nef_polynomial<NT> &a, int b)
-{
-  return a.polynomial() > b;
-}
-
 
 #undef CGAL_double
 #undef CGAL_int

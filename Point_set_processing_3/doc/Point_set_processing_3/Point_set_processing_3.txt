@@ -68,8 +68,7 @@ on how to upgrade from the outdated API.
 
 Named parameters are used to deal with optional parameters. The page
 \ref BGLNamedParameters explains the rationale and API in general.
-The page \ref psp_namedparameters describes their usage
-and provides a list of the parameters that are used in this package.
+The page \ref bgl_namedparameters describes their usage.
 
 \subsection Point_set_processing_3PropertyMaps Property Maps
 
@@ -148,34 +147,21 @@ the detailed API of the Point Set Processing functions.
 
 \subsection Point_set_processing_3Points_io Points And Normals
 
-\cgal provides functions to read and write sets of points or sets of
-points with normals from the following file formats:
+\cgal provides functions to read and write sets of points (possibly with normals)
+from the following file formats:
 
-- XYZ (ASCII file three point coordinates `x y z` per line or three
+- \link IOStreamXYZ XYZ \endlink (\ascii file three point coordinates `x y z` per line or three
 point coordinates and three normal vector coordinates `x y z nx ny nz`
 per line)
-- OFF (%Object File Format) \cgalCite{cgal:p-gmgv16-96}
-- %PLY (Polygon File Format) \cgalCite{cgal:b-ply-11}
-- %LAS (Lidar Format). \cgalCite{cgal:asprs-lasf-13} This format does
+- \link IOStreamOFF OFF (%Object File Format) \endlink -- \cgalCite{cgal:p-gmgv16-96}
+- \link IOStreamPLY PLY (Polygon File Format) \endlink -- \cgalCite{cgal:b-ply-11}
+- \link IOStreamLAS LAS (Lidar Format) \endlink -- \cgalCite{cgal:asprs-lasf-13} This format does
 not handle normals and requires the \ref thirdpartyLASlib library.
 
-The following functions are available:
-
-- `read_xyz_points()`
-- `read_off_points()`
-- `read_ply_points()`
-- `read_las_points()`
-- `write_xyz_points()`
-- `write_off_points()`
-- `write_ply_points()`
-- `write_las_points()`
-
-All of these functions (with the exception of the LAS format) can read
-and write either points alone or points with normals (depending on
-whether the [normal_map](@ref PSP_normal_map) is provided by the user
-or not).
-
-Note that the %PLY format handles both ASCII and binary formats. In
+All of the functions in \ref PkgPointSetProcessing3IO (with the exception of the LAS format)
+can read and write either points alone or points with normals (depending on
+whether the `normal_map` named parameter is used by the user or not).
+Note that the %PLY format handles both \ascii and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
 properties. These can also be read by \cgal (see Section \ref
 Point_set_processing_3Properties_io).
@@ -198,8 +184,8 @@ any structure the user needs. Handling of %LAS files works similarly
 with the difference that the property names and types are fixed and
 defined by the %LAS standard.
 
-Functions `read_ply_points_with_properties()` and
-`read_las_points_with_properties()` allow the user to read any
+Functions `read_PLY_with_properties()` and
+`read_LAS_with_properties()` allow the user to read any
 property needed. The user must provide a set of property handlers that
 are used to instantiate number types and complex objects from %PLY/%LAS
 properties. This handlers are either:
@@ -210,13 +196,13 @@ descriptor
 - a tuple consisting of a property map, a functor to construct the
 objects wanted and multiple %PLY/%LAS property descriptors
 
-Output functions `write_ply_points_with_properties()` and
-`write_las_points_with_properties()` work similarly.
+Output functions `write_PLY_with_properties()` and
+`write_LAS_with_properties()` work similarly.
 
 \subsubsection Point_set_processing_3Example_ply_write PLY Writing Example
 
 The following example shows how to call
-`write_ply_points_with_properties()` to write a point set with points,
+`write_PLY_with_properties()` to write a point set with points,
 RGB colors and intensity. Notice that in order to write a complex
 object, users need to provide an overload of `CGAL::Output_rep`.
 
@@ -225,7 +211,7 @@ object, users need to provide an overload of `CGAL::Output_rep`.
 \subsubsection Point_set_processing_3Example_ply_read PLY Reading Example
 
 The following example shows how to call
-`read_ply_points_with_properties()` to read a point set with points,
+`read_PLY_with_properties()` to read a point set with points,
 normals, RGB colors and intensity and stores these attributes in a
 user-defined container.
 
@@ -234,11 +220,13 @@ user-defined container.
 \subsubsection Point_set_processing_3Example_las_read LAS Reading Example
 
 The following example shows how to call
-`read_las_points_with_properties()` to read a point set with points
+`read_LAS_with_properties()` to read a point set with points
 and RGBI colors and stores these attributes in a user-defined
 container.
 
 \cgalExample{Point_set_processing_3/read_las_example.cpp}
+
+\sa \ref IOstreamPointSetIO
 
 \section Point_set_processing_3Spacing Average Spacing
 
@@ -267,7 +255,7 @@ found in other \cgal components:
 
 Point sets are often used to sample objects with a higher dimension,
 typically a curve in 2D or a surface in 3D. In such cases, finding the
-scale of the objet is crucial, that is to say finding the minimal
+scale of the object is crucial, that is to say finding the minimal
 number of points (or the minimal local range) such that the subset of
 points has the appearance of a curve in 2D or a surface in 3D
 \cgalCite{cgal:gcsa-nasr-13}.
@@ -612,15 +600,43 @@ individually.
 \cgalFigureCaptionEnd
 
 
+\section Point_set_processing_3Clustering Clustering
 
+If an input point set represents several objects which are spatially
+separated, a clustering algorithm can be applied to identify connected
+components on a nearest neighbor graph built using a query sphere of
+fixed radius centered on each point.
+
+The clustering is stored in a cluster map which associates each input
+point with the index of the cluster it belongs to: users can then use
+this map however they find it relevant to their use case, for example
+segmenting the input point set into one point set per
+cluster. \cgalFigureRef{Point_set_processing_3figclustering} shows
+different clustering outputs.
+
+\cgalFigureBegin{Point_set_processing_3figclustering,clustering.png}
+Point Set Clustering outputs (one color per cluster). Top: input point
+set and clustering using a neighbor radius of 1.5 (147 clusters
+extracted). Bottom: clustering with neighbor radius 3.0 (37 clusters
+extracted), and with neighbor radius 6.0 (5 clusters extracted).
+\cgalFigureEnd
+
+
+\subsection Point_set_processing_3Example_clustering Example
+
+In the following example, clusters (and adjacencies between them) are
+computed and stored as colors in a PLY file:
+
+\cgalExample{Point_set_processing_3/clustering_example.cpp}
 
 \section Point_set_processing_3OutlierRemoval Outlier Removal
 
-Function `remove_outliers()` deletes a user-specified fraction
-of outliers from an input point set. More specifically, it sorts the
-input points in increasing order of average squared distances to their
-nearest neighbors and deletes the points with largest value. The user
-can either specify a fixed number of nearest neighbors or a fixed
+Function `remove_outliers()` deletes a user-specified fraction of
+outliers from an input point set. More specifically, it partitions the
+input points with respect to the average squared distances to their
+nearest neighbors and deletes the points with largest value, either
+partitioning with a threshold or removing a fixed percentage. The
+user can either specify a fixed number of nearest neighbors or a fixed
 spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_outlier_removal Example
@@ -638,13 +654,15 @@ Four simplification functions are devised to reduce an input point set.
 
 Function `random_simplify_point_set()` randomly deletes a
 user-specified fraction of points from the input point set. This
-algorithm is fast.
+algorithm is the fastest.
 
-Function `grid_simplify_point_set()` considers a regular grid
-covering the bounding box of the input point set, and clusters all
-points sharing the same cell of the grid by picking as representant
-one arbitrarily chosen point. This algorithm is slower than
-`random_simplify_point_set()`.
+Function `grid_simplify_point_set()` considers a regular grid covering
+the bounding box of the input point set, and clusters all points
+sharing the same cell of the grid by picking as representative one
+arbitrarily chosen point: representatives may only be retained in cells
+that have more than a user-defined minimum number of points in order
+to also filter out low density areas and outliers. This algorithm is
+still fast, although slower than `random_simplify_point_set()`.
 
 Function `hierarchy_simplify_point_set()` provides an adaptive
 simplification of the point set through local clusters
@@ -659,7 +677,9 @@ the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
 \subsection Point_set_processing_3Example_grid_simplification Grid Simplification Example
 
-The following example reads a point set and simplifies it by clustering.
+The following example reads a point set and simplifies it by
+clustering. To filter out outliers, at least 3 points must lie in a
+cell so that a point from this cell is kept.
 \cgalExample{Point_set_processing_3/grid_simplification_example.cpp}
 
 \cgalFigureBegin{Point_set_processing_3figgrid_simplification,grid_simplification.jpg}
@@ -726,9 +746,9 @@ Comparison between different sizes of neighbor radius.
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the
-<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
 for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
@@ -771,9 +791,9 @@ Comparison for two smoothing methods: Left: Input, 250K points, normal-color map
 
 Performance:
 A parallel version of bilateral smoothing is provided and requires the executable to be linked against the
-<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
 Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm.
@@ -806,6 +826,8 @@ of nearest neighbors or a fixed spherical neighborhood radius.
 
 \section Point_set_processing_3NormalOrientation Normal Orientation
 
+\subsection Point_set_processing_3Mst_orient_normals Minimum Spanning Tree
+
 Function `mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
 al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}.
@@ -820,7 +842,7 @@ the normals which cannot be successfully oriented.
 Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_normals Example
+\subsubsection Point_set_processing_3Example_normals Example
 
 The following example reads a point set from a file, estimates the
 normals through PCA (either over the 18 nearest neighbors or using a
@@ -828,8 +850,31 @@ spherical neighborhood radius of twice the average spacing) and
 orients the normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
 
+\subsection Point_set_processing_3Scanline_orient_normals Scanline
 
+The minimum spanning tree results can give suboptimal results on point
+clouds with many sharp features and occlusions, which typically
+happens on airborne acquired urban datasets.
 
+`scanline_orient_normals()` is an alternative method specialized for
+point sets which are ordered in scanline aligned on the XY-plane. It
+can take advantage of LAS properties provided by some LIDAR scanner
+and is the best choice of normal orientation when dealing with 2.5D
+urban scenes.
+
+\cgalFigureBegin{Point_set_processing_3figmst_scanline_orient_normals,scanline_orient_normals.png}
+Normal orientation of a LIDAR scanline. The point cloud is a typical
+airborne LIDAR input, sampling a building without normal information
+and with many occlusions (especially on vertical walls).
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3Example_scanline_normals Example
+
+The following example reads a point set from a LAS file, estimates the
+normals through Jet Fitting and outputs in PLY format the orientation
+results of all the variants of `scanline_orient_normals()`:
+
+\cgalExample{Point_set_processing_3/orient_scanlines_example.cpp}
 
 \section Point_set_processing_3Upsampling Upsampling
 
@@ -968,4 +1013,3 @@ libraries that perform registration on two point sets.
 
 */
 } /* namespace CGAL */
-

@@ -53,7 +53,7 @@ test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
     CGAL::Verbose_ostream verr ( verbose >= 0);
     CGAL::Verbose_ostream verr0( verbose == 0);
     CGAL::Verbose_ostream verrX( verbose >  0);
-    CGAL::set_pretty_mode( verr.out());
+    CGAL::IO::set_pretty_mode( verr.out());
 
     bool  is_valid_verbose = ( verbose > 0);
 

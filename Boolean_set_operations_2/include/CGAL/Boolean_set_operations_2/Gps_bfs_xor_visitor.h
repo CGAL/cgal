@@ -56,7 +56,7 @@ public:
 /*! The function fixes some of the curves, to be in the same direction as the
     half-edges.
 
-  \param arr The given arrangment.
+  \param arr The given arrangement.
 */
   void after_scan(Arrangement& arr)
   {

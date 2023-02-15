@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the No_overlap_event_base class.
+ * Definition of the No_overlap_event_base class.
  */
 
 #include <list>
@@ -27,10 +27,64 @@
 namespace CGAL {
 namespace Surface_sweep_2 {
 
+// This class is used to test if `void* T::for_compact_container()`
+// exists, to avoid adding a void* pointer to the Event_base structure
+// if Point_2 can already be used as a handle for this
+template<typename T>
+struct has_for_compact_container
+{
+private:
+
+  template<typename U> static
+  auto test(void*) -> decltype(std::declval<U>().for_compact_container() == nullptr, Tag_true());
+
+  template<typename> static Tag_false test(...);
+
+public:
+
+  static constexpr bool value = std::is_same<decltype(test<T>(nullptr)),Tag_true>::value;
+};
+
+template <typename Point_2, bool HasFor>
+class Event_base_for_compact_container { };
+
+template <typename Point_2>
+class Event_base_for_compact_container<Point_2, false>
+{
+  void* p = nullptr;
+public:
+
+  void* operator()(const Point_2&) const
+  {
+    return p;
+  }
+  void operator() (Point_2&, void* ptr)
+  {
+    p = ptr;
+  }
+};
+
+template <typename Point_2>
+class Event_base_for_compact_container<Point_2, true>
+{
+
+public:
+
+  void* operator()(const Point_2& p) const
+  {
+    return p.for_compact_container();
+  }
+  void operator() (Point_2& p, void* ptr)
+  {
+    p.for_compact_container(ptr);
+  }
+};
+
+
 /*! \class No_overlap_event_base
  *
  * A class associated with an event in a surface-sweep algorithm.
- * An intersection point in the sweep line algorithm is refered to as an event.
+ * An intersection point in the sweep line algorithm is referred to as an event.
  * This class contains the information that is associated with any given
  * event point. This information contains the following:
  * - the actual point
@@ -71,6 +125,9 @@ public:
   typedef typename Subcurve_container::reverse_iterator
     Subcurve_reverse_iterator;
 
+  typedef Event_base_for_compact_container
+  <Point_2, has_for_compact_container<Point_2>::value>    For_compact_container;
+
   /*! \enum The event type (with other information bits). */
 
   enum Attribute {
@@ -102,6 +159,10 @@ protected:
   char m_closed;                    // Is the event closed (associated with
                                     // a valid point.
 
+  // A handle for the compact container (either using the functions of
+  // `m_point` if available, or an additional pointer)
+  For_compact_container m_for_compact_container;
+
 public:
   /*! Default constructor. */
   No_overlap_event_base() :
@@ -110,6 +171,16 @@ public:
     m_ps_y(static_cast<char>(ARR_INTERIOR)),
     m_closed(1)
   {}
+
+  /*! Squat the content of Point_2 for the pointer of Compact Container */
+  void* for_compact_container() const
+  {
+    return m_for_compact_container(m_point);
+  }
+  void for_compact_container (void* p)
+  {
+    m_for_compact_container(m_point, p);
+  }
 
   /*! Initialize an event that is associated with a valid point. */
   void init(const Point_2& point, Attribute type,
@@ -275,16 +346,19 @@ public:
   { return m_left_curves.rend(); }
 
   /*! Return the number of curves defined to the left of the event. */
-  size_t number_of_left_curves() { return m_left_curves.size(); }
+  size_t number_of_left_curves() const { return m_left_curves.size(); }
 
   /*! Return the number of curves defined to the right of the event. */
-  size_t number_of_right_curves() { return (m_right_curves.size()); }
+  size_t number_of_right_curves() const { return (m_right_curves.size()); }
 
   /*! Check whether at least one curve is defined to the left of the event. */
   bool has_left_curves() const { return (! m_left_curves.empty()); }
 
   /*! Checks if at least one curve is defined to the right of the event. */
   bool has_right_curves() const { return (! m_right_curves.empty()); }
+
+  /*! Returns whether an event has no incident curves */
+  bool is_isolated() const { return m_left_curves.empty() && m_right_curves.empty(); }
 
   /*! Obtain the actual event point (const version).
    * \pre The event is associated with a valid point.
@@ -305,14 +379,42 @@ public:
   }
 
   /*! Obtain a curve associated with the event (const version).
-   * \pre The event has incident curves.
+   *
+   * \pre The event does not lie on the boundary.
+   * \pre The event is not isolated.
    */
-  const X_monotone_curve_2& curve() const
-  {
-    if (has_left_curves()) return (m_left_curves.front()->last_curve());
+  const X_monotone_curve_2& curve() const {
+    // Use a right curve if exists first. A left curve might be the result of
+    // an overlap. In this case, the event currently being processed is not an
+    // endpoint of the (left) curve.
+    CGAL_precondition(! this->is_on_boundary());
+    CGAL_precondition(! this->is_isolated());
+    if (has_right_curves()) return (m_right_curves.front()->last_curve());
 
-    CGAL_assertion(has_right_curves());
-    return (m_right_curves.front()->last_curve());
+    CGAL_assertion(has_left_curves());
+    return (m_left_curves.front()->last_curve());
+  }
+
+  /*! Obtain a curve associated with the event and returns as a side-effect the
+   * respective end to `ce` (const version).
+   * \param ce reference to a curve-end that is returned as a side-effect.
+   * \pre The event lies on the boundary.
+   * \pre The event is not isolated.
+   */
+  const X_monotone_curve_2& boundary_touching_curve(Arr_curve_end& ce) const {
+    // Use a right curve if exists first. A left curve might be the result of
+    // an overlap. In this case, the event currently being processed is not an
+    // endpoint of the (left) curve.
+    CGAL_precondition(this->is_on_boundary());
+    CGAL_precondition(! this->is_isolated());
+    if (has_right_curves()) {
+      ce = ARR_MIN_END;
+      return m_right_curves.front()->last_curve();
+    }
+
+    CGAL_assertion(has_left_curves());
+    ce = ARR_MAX_END;
+    return m_left_curves.front()->last_curve();
   }
 
   /*! Set the event point. */
@@ -383,7 +485,7 @@ public:
   }
 
   /*! Check if the two curves are negihbors to the left of the event. */
-  bool are_left_neighbours(Subcurve* c1, Subcurve* c2)
+  bool are_left_neighbors(Subcurve* c1, Subcurve* c2)
   {
     Subcurve_iterator left_iter = m_left_curves.begin();
     for (; left_iter != m_left_curves.end(); ++left_iter) {
@@ -404,15 +506,19 @@ public:
 
     return false;
   }
+  /*! \copydoc are_left_neighbors
+   *  \deprecated please use #are_left_neighbors */
+  CGAL_DEPRECATED bool are_left_neighbours(Subcurve* c1, Subcurve* c2)
+  { return are_left_neighbors(c1, c2); }
 
 #ifdef CGAL_SS_VERBOSE
-  void Print();
+  void Print() const;
 #endif
 };
 
 #ifdef CGAL_SS_VERBOSE
 template <typename Traits, typename Subcurve>
-void No_overlap_event_base<Traits, Subcurve>::Print()
+void No_overlap_event_base<Traits, Subcurve>::Print() const
 {
   std::cout << "\tEvent info: "  << "\n" ;
   if (this->is_closed()) std::cout << "\t" << m_point << "\n" ;

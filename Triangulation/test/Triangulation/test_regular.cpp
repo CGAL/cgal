@@ -10,6 +10,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -54,7 +55,7 @@ void test(const int d, const string & type, const int N)
   cerr << nbis << " = " << (nbis+nbfs)
   << " = " << rt.number_of_full_cells();
   cerr << "\nThe triangulation has current dimension " << rt.current_dimension();
-  CGAL_assertion( rt.number_of_full_cells() == nbis+nbfs);
+  assert( rt.number_of_full_cells() == nbis+nbfs);
 
   cerr << "\nTraversing finite vertices... ";
   size_t nbfv(0);
@@ -264,7 +265,7 @@ void test_inserting_points_at_the_same_position()
 
 int main(int argc, char **argv)
 {
-  srand(static_cast<unsigned int>(time(NULL)));
+  srand(static_cast<unsigned int>(time(nullptr)));
   int N = 10;
   if( argc > 1 )
     N = atoi(argv[1]);

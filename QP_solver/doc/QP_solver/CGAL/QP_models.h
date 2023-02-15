@@ -6,18 +6,6 @@ namespace CGAL {
 
   An object of class `Linear_program_from_iterators` describes a linear program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpc^{T}\qpx+c_0 \\
@@ -66,7 +54,7 @@ namespace CGAL {
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -277,18 +265,6 @@ make_quadratic_program_from_iterators (
 
   An object of class `Nonnegative_linear_program_from_iterators` describes a linear program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   &\qpc^{T}\qpx+c_0 \\
@@ -329,7 +305,7 @@ make_quadratic_program_from_iterators (
 
   \ref QP_solver/first_nonnegative_lp_from_iterators.cpp
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -368,17 +344,6 @@ public:
 
   An object of class `Nonnegative_quadratic_program_from_iterators` describes a convex quadratic program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\
@@ -425,7 +390,7 @@ public:
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -463,17 +428,6 @@ public:
 
   An object of class `Quadratic_program_from_iterators` describes a convex quadratic program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\
@@ -524,7 +478,7 @@ public:
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -567,17 +521,6 @@ public:
   An object of class `Quadratic_program_from_mps` describes a convex quadratic program of the
   general form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\
@@ -780,18 +723,6 @@ namespace CGAL {
 
 /*!
   \ingroup PkgQPSolverClasses
-
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
 
   An object of class `Quadratic_program` describes a convex quadratic program of the form
   \f{eqnarray*}{

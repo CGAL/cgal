@@ -15,7 +15,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/boost/graph/graph_traits_Polyhedron_3.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 

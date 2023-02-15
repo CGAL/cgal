@@ -10,7 +10,7 @@ namespace CGAL {
    * or line segments. We call such a compound curve a polycurve.  A polycurve
    * is a chain of subcurves, where each two neighboring subcurves in the chain
    * share a common endpoint; that is, the polycurve is continuous. Furthermore,
-   * the target of the \f$i\f$th segement of a polycurve has to coincide with
+   * the target of the \f$i\f$th segment of a polycurve has to coincide with
    * the source of the \f$i+1\f$st segment; that is, the polycurve has to be
    * \a well-oriented. Note that it is possible to construct general polycurves
    * that are neither continuous nor well-oriented, as it is impossible to
@@ -231,7 +231,7 @@ namespace CGAL {
     public:
       /*! Obtain a trimmed version of the polycurve with src and tgt as end
         * vertices.
-        * Src and tgt will be swaped if they do not conform to the direction of
+        * Src and tgt will be swapped if they do not conform to the direction of
         * the polycurve.
         */
       X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
@@ -239,19 +239,17 @@ namespace CGAL {
                                     const Point_2& tgt) const;
     };
 
-    /*! Subdivide the given subcurve into x-monotone subcurves and insert them
-     * into the given output iterator. Since the subcurves that
-     * constitute a general polycurve are not necessarily
-     * \f$x\f$-monotone, this functor may break them.
+    /*! Subdivide a given subcurve into x-monotone subcurves and insert them
+     * into a given output iterator.
      */
     class Make_x_monotone_2 {
     public:
       /*!
       * \pre if `cv` is not empty then it must be continuous and well-oriented.
-      * \param cv The subcurve.
-      * \param oi The output iterator, whose value-type is Object. The output
-      *           object is a wrapper of a X_monotone_curve_2 objects.
-      * \return The past-the-end iterator.
+      * \param cv the subcurve.
+      * \param oi an output iterator for the result. Its value type is a variant
+      *           that wraps Point_2 or an X_monotone_curve_2 objects.
+      * \return the past-the-end iterator.
       */
       template <typename OutputIterator>
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const;
@@ -357,7 +355,7 @@ namespace CGAL {
       /*! \deprecated
        * Obtain the number of subcurve end-points that comprise the polycurve.
        * Note that for a bounded polycurve, if there are \f$ n\f$ points in the
-       * polycurve, it is comprised of \f$ (n - 1)\f$ subcurves.
+       * polycurve, it comprises \f$ (n - 1)\f$ subcurves.
        * Currently, only bounded polycurves are supported.
        */
       unsigned_int points() const;
@@ -410,7 +408,7 @@ namespace CGAL {
       size_type number_of_subcurves() const;
 
       /*! Obtain the \f$ k\f$th subcurve of the polycurve.
-       * \pre \f$k\f$ is not greater then or equal to \f$n-1\f$, where
+       * \pre \f$k\f$ is not greater than or equal to \f$n-1\f$, where
        *      \f$n\f$ is the number of subcurves.
        */
       typename SubcurveTraits_2::X_monotone_curve_2
@@ -426,7 +424,7 @@ namespace CGAL {
       /// @{
 
       /*! Append a subcurve to the polycurve at the back.
-       * \a Warning: This function does not preform the precondition test
+       * \a Warning: This function does not perform the precondition test
        *             that the `Push_back_2` functor does. Thus, it is
        *             recommended to use the latter.
        * \param subcurve The new subcurve to be appended to the polycurve.
@@ -450,8 +448,6 @@ namespace CGAL {
       /*! \deprecated
        * Add a new point to the polycurvs, which becomes the new target point
        * of `pi`.
-       * \pre SubcurveTraits_2 is a model of
-       * ArrangementConstructXMonotoneCurveTraits_2.
        */
       void push_back(const Point_2 & p);
 

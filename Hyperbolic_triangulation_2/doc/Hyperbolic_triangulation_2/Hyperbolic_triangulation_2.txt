@@ -93,7 +93,7 @@ Moreover, it is connected&nbsp;\cgalCite{cgal:bdt-hdcvd-14}.
 From what was said above, it is natural that the class
 `Hyperbolic_Delaunay_triangulation_2` privately inherits from the class
 `Delaunay_triangulation_2`. Consequently, users are encouraged to look at Chapter
-\ref Chapter_2D_Triangulations "2D Triangulation" of the %CGAL manual to
+\ref Chapter_2D_Triangulations "2D Triangulation" of the \cgal manual to
 know more in particular about the representation of triangulations in
 CGAL and the flexibility of the design.
 
@@ -104,11 +104,11 @@ parameters:
         primitives. The requirements on this first template parameter
         are described by the concept
         `HyperbolicDelaunayTriangulationTraits_2`, which refines
-        `DelaunayTriangulationTraits_2`.
+        `DelaunayTriangulationTraits_2`.</li>
         <li> A <b>triangulation data structure</b> parameter, for which the
-        requirements are described by the concept
-        `TriangulationDataStructure_2`. The default for this second template parameter
-        is `Triangulation_data_structure_2< Triangulation_vertex_base_2<Gt>, Hyperbolic_triangulation_face_base_2<Gt> >`.
+        requirements are described by the concept `TriangulationDataStructure_2`.
+        The vertex and face of this triangulation data structure must be models of
+        the concepts `TriangulationVertexBase_2` and `HyperbolicTriangulationFaceBase_2`, respectively.</li>
 </ul>
 
 Two models of the concept `HyperbolicDelaunayTriangulationTraits_2`

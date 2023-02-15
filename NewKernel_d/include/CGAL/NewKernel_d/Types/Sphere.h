@@ -83,7 +83,7 @@ template <class R_> struct Squared_radius {
   CGAL_FUNCTOR_INIT_IGNORE(Squared_radius)
   typedef typename Get_type<R_, Sphere_tag>::type        Sphere;
   typedef typename Get_type<R_, FT_tag>::type const&        result_type;
-  // TODO: Is_exact?
+  // TODO: Uses_no_arithmetic?
   result_type operator()(Sphere const&s)const{
     return s.squared_radius();
   }

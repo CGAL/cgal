@@ -1,18 +1,48 @@
-/// \defgroup PkgBarycentricCoordinates2Ref 2D Generalized Barycentric Coordinates Reference
-
-/// \defgroup PkgBarycentricCoordinates2Concepts Concepts
-/// \ingroup PkgBarycentricCoordinates2Ref
+namespace CGAL {
+namespace Barycentric_coordinates {
 
 /*!
+\defgroup PkgBarycentricCoordinates2Ref 2D Generalized Barycentric Coordinates Reference
+
+\defgroup PkgBarycentricCoordinates2RefConcepts Concepts
+\ingroup PkgBarycentricCoordinates2Ref
+
+Generalized barycentric concepts.
+
+\defgroup PkgBarycentricCoordinates2RefAnalytic Analytic Coordinates
+\ingroup PkgBarycentricCoordinates2Ref
+
+Analytic coordinates and related classes.
+
+\defgroup PkgBarycentricCoordinates2RefHarmonic Harmonic Coordinates
+\ingroup PkgBarycentricCoordinates2Ref
+
+Harmonic coordinates and related classes.
+
+\defgroup PkgBarycentricCoordinates2RefFunctions Free Functions
+\ingroup PkgBarycentricCoordinates2Ref
+
+Free functions to compute barycentric weights and coordinates.
+
+\defgroup PkgBarycentricCoordinates2RefDeprecated Deprecated
+\ingroup PkgBarycentricCoordinates2Ref
+
+Deprecated classes and functions.
 
 \addtogroup PkgBarycentricCoordinates2Ref
+
 \cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentricCoordinates2}
 \cgalPkgPicture{barcoord_thumb.png}
+
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez}
-\cgalPkgDesc{The package 2D Generalized Barycentric Coordinates offers an efficient and robust implementation of two-dimensional closed-form generalized barycentric coordinates defined for simple two-dimensional polygons. If coordinates with respect to multivariate scattered points instead of a polygon are required, please refer to natural neighbor coordinates from the Package \ref PkgInterpolation2.}
+\cgalPkgDesc{This package offers an efficient and robust implementation of 2D generalized barycentric
+coordinates defined for simple polygons in the plane. If coordinates with respect to multivariate
+scattered points instead of a polygon are required, please refer to natural neighbor
+coordinates from the Package \ref PkgInterpolation2.}
 \cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates2Ref}
 \cgalPkgSummaryEnd
+
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.6}
 \cgalPkgBib{cgal:abha-gbc}
@@ -22,30 +52,31 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `BarycentricTraits_2`
+- `DiscretizedDomain_2`
 - `BarycentricCoordinates_2`
 
-\cgalCRPSection{Namespaces}
-- `CGAL::Barycentric_coordinates`
+## Analytic Coordinates ##
+- `Wachspress_coordinates_2<VertexRange, GeomTraits, PointMap>`
+- `Mean_value_coordinates_2<VertexRange, GeomTraits, PointMap>`
+- `Discrete_harmonic_coordinates_2<VertexRange, GeomTraits, PointMap>`
 
-\cgalCRPSection{General Classes}
-- `CGAL::Barycentric_coordinates::Segment_coordinates_2<Traits>`
-- `CGAL::Barycentric_coordinates::Triangle_coordinates_2<Traits>`
-- `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Coordinate_2, Traits>`
+## Harmonic Coordinates ##
+- `Delaunay_domain_2<VertexRange, GeomTraits, PointMap>`
+- `Harmonic_coordinates_2<VertexRange, DiscretizedDomain, GeomTraits, PointMap>`
 
-\cgalCRPSection{Models of `BarycentricCoordinates_2`}
-- `CGAL::Barycentric_coordinates::Wachspress_2<Traits>`
-- `CGAL::Barycentric_coordinates::Mean_value_2<Traits>`
-- `CGAL::Barycentric_coordinates::Discrete_harmonic_2<Traits>`
-
-\cgalCRPSection{Enumerations}
-- `CGAL::Barycentric_coordinates::Query_point_location`
-- `CGAL::Barycentric_coordinates::Type_of_algorithm`
-
-@todo To make the code parallel. Get iteration number from the thread. Add parallel class to each type of the coordinate functions. Use begin() + offset. Resize vector. Parallel class takes as parameters list of points and polygon. Use random access iterator. - Done but we have problems with it.
-
-@todo Add hard tests with epsilon distance away from the polygon’s boundary, which we have discussed during our first group meeting, to current test suit.
-
-
+## Free Functions ##
+- `segment_coordinates_2()`
+- `triangle_coordinates_2()`
+- `wachspress_weights_2()`
+- `wachspress_coordinates_2()`
+- `mean_value_weights_2()`
+- `mean_value_coordinates_2()`
+- `discrete_harmonic_weights_2()`
+- `discrete_harmonic_coordinates_2()`
+- `boundary_coordinates_2()`
 */
+
+} /* namespace Barycentric_coordinates */
+} /* namespace CGAL */

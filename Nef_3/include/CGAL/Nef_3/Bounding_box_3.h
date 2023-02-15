@@ -73,17 +73,13 @@ public:
   }
 
   void extend(const Point_3& p) {
-    FT q[3];
-    q[0] = p.x();
-    q[1] = p.y();
-    q[2] = p.z();
+    FT q[3] = { p.x(), p.y(), p.z() };
 
     if(initialized)
       Base::extend(q);
     else {
       initialized = true;
-      std::copy( q, q + 3, Base::lo );
-      std::copy( q, q + 3, Base::hi );
+      *this = Bounding_box_3(q);
     }
   }
 };

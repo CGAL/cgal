@@ -10,6 +10,9 @@ following constants, types, predicates and operations.
 \cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>`
 \cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
 
+\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>`
+\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>`
+\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
 */
 
 class MinSphereOfSpheresTraits {
@@ -39,7 +42,7 @@ typedef unspecified_type Sphere;
 /*!
 is a (exact or inexact) field number type.
 
-\tparam FT must either be `double` or `float`, or an exact field number type. (An <I>exact</I> number type is one which evaluates arithmetic expressions involving the four basic operations and comparisions with infinite precision, that is, like in \f$ \mathbb{R}\f$.)
+\tparam FT must either be `double` or `float`, or an exact field number type. (An <I>exact</I> number type is one which evaluates arithmetic expressions involving the four basic operations and comparisons with infinite precision, that is, like in \f$ \mathbb{R}\f$.)
 */
 typedef unspecified_type FT;
 
@@ -112,4 +115,3 @@ Cartesian_const_iterator center_cartesian_begin(const Sphere& s);
 /// @}
 
 }; /* end MinSphereOfSpheresTraits */
-

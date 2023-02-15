@@ -17,22 +17,9 @@
 #ifndef CGAL__TEST_FCT_PLANE_3_H
 #define CGAL__TEST_FCT_PLANE_3_H
 
-// Accessory function testing functions that require sqrt().
-// Doesn't instantiate anything if RT doesn't support sqrt().
 template <class R>
 bool
-_test_fct_plane_sqrt_3(const R&, CGAL::Tag_false)
-{
-//  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
-  std::cout << std::endl
-            << "NOTE : FT doesn't support sqrt(),"
-               " hence some functions are not tested." << std::endl;
-  return true;
-}
-
-template <class R>
-bool
-_test_fct_plane_sqrt_3(const R&, CGAL::Tag_true)
+_test_fct_plane_sqrt_3(const R&)
 {
  typedef typename  R::Point_3  Point_3;
  typedef typename  R::Plane_3  Plane_3;
@@ -66,7 +53,6 @@ _test_fct_plane_3(const R& )
  std::cout << "Testing functions Plane_3" ;
 
  typedef typename  R::RT       RT;
- typedef typename  R::FT       FT;
  typedef typename  R::Point_3  Point_3;
  typedef typename  R::Plane_3  Plane_3;
 
@@ -97,11 +83,8 @@ _test_fct_plane_3(const R& )
  assert(   CGAL::parallel(h1, h2) );
  assert( ! CGAL::parallel(h1, h5) );
 
- // More tests, that require sqrt().
- typedef ::CGAL::Algebraic_structure_traits<FT> AST;
- static const bool has_sqrt =
-     ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
- _test_fct_plane_sqrt_3(R(), ::CGAL::Boolean_tag<has_sqrt>());
+ // More tests, that require sqrt() or use approx.
+ _test_fct_plane_sqrt_3(R());
 
  std::cout << "done" << std::endl;
  return true;

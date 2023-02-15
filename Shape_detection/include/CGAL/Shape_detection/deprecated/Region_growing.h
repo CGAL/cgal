@@ -45,7 +45,7 @@
   "CGAL::Shape_detection_3::Region_growing<> has been replaced by the class "\
   "CGAL::Shape_detection::Region_growing<>."
 
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -688,7 +688,10 @@ namespace Shape_detection {
           p->m_indices.clear();
           std::copy (index_container.begin(), index_container.end(),
                      std::back_inserter (p->m_indices));
-          dynamic_cast<Plane_shape*>(p)->update (optimal_plane);
+
+          Plane_shape* ps = dynamic_cast<Plane_shape*>(p);
+          CGAL_assume (ps != nullptr);
+          ps->update (optimal_plane);
           m_extracted_shapes->push_back (boost::shared_ptr<Shape>(p));
         }
         else

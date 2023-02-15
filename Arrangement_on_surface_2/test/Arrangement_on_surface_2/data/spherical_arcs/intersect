@@ -288,3 +288,22 @@ intersect 89 90 1 0 22 1
 intersect 90 89 1 0 22 1
 intersect 93 94 1 0 23 1
 intersect 94 93 1 0 23 1
+#
+intersect 96 96 1 1 96
+intersect 97 97 1 1 97
+intersect 98 98 1 1 98
+intersect 99 99 1 1 99
+#
+intersect 96 97 2 0 24 1 0 25 1
+intersect 96 98 2 0 25 1 0 24 1
+intersect 96 99 2 0 24 1 0 25 1
+intersect 97 98 2 0 25 1 0 24 1
+intersect 97 99 2 0 25 1 0 24 1
+intersect 98 99 2 0 24 1 0 25 1
+#
+intersect 97 96 2 0 25 1 0 24 1
+intersect 98 96 2 0 24 1 0 25 1
+intersect 99 96 2 0 25 1 0 24 1
+intersect 98 97 2 0 24 1 0 25 1
+intersect 99 97 2 0 24 1 0 25 1
+intersect 99 98 2 0 25 1 0 24 1

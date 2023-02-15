@@ -17,9 +17,8 @@
 #include <CGAL/license/Spatial_searching.h>
 
 
-#include <CGAL/result_of.h>
 #include <CGAL/Kd_tree_rectangle.h>
-#include <CGAL/internal/Get_dimension_tag.h>
+#include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 #include <vector>
 
 namespace CGAL {
@@ -34,6 +33,7 @@ namespace CGAL {
     typedef typename SearchTraits::FT    FT;
     typedef Iso_box_d                  Query_item;
     typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension Dimension;
+    typedef typename CGAL::cpp11::result_of<typename SearchTraits::Construct_min_vertex_d(Query_item)>::type Min_vertex;
     typedef typename CGAL::cpp11::result_of<typename SearchTraits::Construct_max_vertex_d(Query_item)>::type Max_vertex;
 
     Manhattan_distance_iso_box_point(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
@@ -47,9 +47,10 @@ namespace CGAL {
                   traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
                 typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
+                Min_vertex minv = construct_min_vertex(q);
                 Max_vertex maxv = construct_max_vertex(q);
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(maxv),
-                  qe = construct_it(maxv,1), qminit = construct_it(construct_min_vertex(q)),
+                  qe = construct_it(maxv,1), qminit = construct_it(minv),
                   pit = construct_it(p);
                 for (; qmaxit != qe; ++pit,++qmaxit,++qminit) {
                         if ((*pit)>(*qmaxit)) distance +=
@@ -68,9 +69,10 @@ namespace CGAL {
                   traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
                 typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
+                Min_vertex minv = construct_min_vertex(q);
                 Max_vertex maxv = construct_max_vertex(q);
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(maxv),
-                  qe = construct_it(maxv,1), qminit = construct_it(construct_min_vertex(q));
+                  qe = construct_it(maxv,1), qminit = construct_it(minv);
                 for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++qminit, ++i)  {
                         if (r.min_coord(i)>(*qmaxit))
                           distance +=(r.min_coord(i)-(*qmaxit));
@@ -87,9 +89,10 @@ namespace CGAL {
                   traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
                 typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
+                Min_vertex minv = construct_min_vertex(q);
                 Max_vertex maxv = construct_max_vertex(q);
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(maxv),
-                  qe = construct_it(maxv,1), qminit = construct_it(construct_min_vertex(q));
+                  qe = construct_it(maxv,1), qminit = construct_it(minv);
                 for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++qminit, ++i)  {
                         if (r.min_coord(i)>(*qmaxit)) {
                           dists[i]=(r.min_coord(i)-(*qmaxit));
@@ -112,9 +115,10 @@ namespace CGAL {
         traits.construct_cartesian_const_iterator_d_object();
       typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
       typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
+      Min_vertex minv = construct_min_vertex(q);
       Max_vertex maxv = construct_max_vertex(q);
       typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(maxv),
-        qe = construct_it(maxv,1), qminit = construct_it(construct_min_vertex(q));
+        qe = construct_it(maxv,1), qminit = construct_it(minv);
       for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++qminit, ++i)  {
         if ( r.max_coord(i)-(*qminit) >(*qmaxit)-r.min_coord(i) )
           distance += (r.max_coord(i)-(*qminit));
@@ -133,9 +137,10 @@ namespace CGAL {
         traits.construct_cartesian_const_iterator_d_object();
       typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
       typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
+      Min_vertex minv = construct_min_vertex(q);
       Max_vertex maxv = construct_max_vertex(q);
       typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(maxv),
-        qe = construct_it(maxv,1), qminit = construct_it(construct_min_vertex(q));
+        qe = construct_it(maxv,1), qminit = construct_it(minv);
       for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++qminit, ++i)  {
         if ( r.max_coord(i)-(*qminit) >(*qmaxit)-r.min_coord(i) )  {
           dists[i]=(r.max_coord(i)-(*qminit));

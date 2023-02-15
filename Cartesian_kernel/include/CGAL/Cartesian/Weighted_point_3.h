@@ -79,7 +79,7 @@ template < class R_ >
 std::ostream &
 operator<<(std::ostream &os, const Weighted_pointC3<R_> &p)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
   case IO::ASCII :
     return os << p.point() <<  " " << p.weight();
@@ -100,7 +100,7 @@ operator>>(std::istream &is, Weighted_pointC3<R_> &wp)
   typename Weighted_pointC3<R_>::Point_3 p;
   is >> p;
   if(!is) return is;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
     is >> w;
   else
     read(is, w);

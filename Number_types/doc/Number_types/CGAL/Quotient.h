@@ -8,8 +8,7 @@ An object of the class `Quotient<NT>` is an element of the
 field of quotients of the integral domain type `NT`.
 If `NT` behaves like an integer, `Quotient<NT>`
 behaves like a rational number.
-\leda's class `rational` (see Section \ref ledant)
-has been the basis for `Quotient<NT>`.
+
 A `Quotient<NT>` `q` is represented as a pair of
 `NT`s, representing numerator and denominator.
 

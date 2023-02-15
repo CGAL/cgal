@@ -20,13 +20,13 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Cartesian_converter.h>
-#include <boost/unordered_map.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
+#include <unordered_map>
 
 namespace CGAL{
 
@@ -36,7 +36,7 @@ namespace nef_to_pm{
 template<class Nef_polyhedron, class PointRange, class Converter>
 struct Shell_vertex_index_visitor
 {
-  typedef boost::unordered_map<
+  typedef std::unordered_map<
     typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
   typedef typename PointRange::value_type Point_3;
   PointRange& points;
@@ -76,7 +76,7 @@ struct FaceInfo2
 template <class Nef_polyhedron, typename PolygonRange>
 struct Shell_polygons_visitor
 {
-  typedef boost::unordered_map<typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
+  typedef std::unordered_map<typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
   typedef typename PolygonRange::value_type Polygon;
   Vertex_index_map& vertex_indices;
   PolygonRange& polygons;
@@ -210,8 +210,8 @@ struct Shell_polygons_visitor
     }
 
     // cases where a cdt is needed
-    typedef typename Nef_polyhedron::Kernel Kernel;
-    typedef Triangulation_2_projection_traits_3<Kernel>            P_traits;
+    typedef typename Nef_polyhedron::Kernel                              Kernel;
+    typedef Projection_traits_3<Kernel>                                  P_traits;
     typedef Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
     typedef Triangulation_face_base_with_info_2<FaceInfo2,P_traits>     Fbb;
     typedef Constrained_triangulation_face_base_2<P_traits,Fbb>          Fb;

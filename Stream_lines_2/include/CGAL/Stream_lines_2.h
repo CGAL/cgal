@@ -26,13 +26,13 @@
 
 #include <CGAL/squared_distance_2.h>
 
-#include <CGAL/streamlines_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/uniform_real.hpp> // undocumented class
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -96,8 +96,8 @@ protected:
   Point_2                                                        seed_point;
   int                                                            samp_step;
   unsigned int _number_of_lines;
-  boost::shared_ptr<Vector_field_2> vf_2;
-  boost::shared_ptr<Integrator_2> int_2;
+  std::shared_ptr<Vector_field_2> vf_2;
+  std::shared_ptr<Integrator_2> int_2;
 public:
   void set_separating_distance(FT new_value){separating_distance = new_value;}
   void set_saturation_ratio(FT new_value){ saturation_ratio = new_value;}
@@ -241,8 +241,8 @@ vector_field_2, const Integrator_2 & m_integrator, const FT & m_separating_dista
       m_DT.insert(pPoint);
     }
   _number_of_lines = 0;
-  vf_2 = boost::shared_ptr<Vector_field_2>(new Vector_field_2(vector_field_2));
-  int_2 = boost::shared_ptr<Integrator_2>(new Integrator_2(m_integrator));
+  vf_2 = std::shared_ptr<Vector_field_2>(new Vector_field_2(vector_field_2));
+  int_2 = std::shared_ptr<Integrator_2>(new Integrator_2(m_integrator));
   samp_step = sampling_step;
   stl_container.clear();
   place_stream_lines(vector_field_2, m_integrator,
@@ -392,7 +392,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
     {
       Point_2 ex_old_point = old_point;
       old_point = new_point;
-      CGAL_streamlines_precondition(vector_field_2.is_in_domain(old_point));
+      CGAL_precondition(vector_field_2.is_in_domain(old_point));
       new_point = integrator(old_point,vector_field_2,true);
       bEnd = !vector_field_2.is_in_domain(new_point);
       bEnd = bEnd || (new_point == old_point);/* to review */
@@ -521,7 +521,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
       Point_2 ex_old_point = old_point;
       old_point = new_point;
       std::pair<Vector_2, FT> field_vector;
-      CGAL_streamlines_precondition(vector_field_2.is_in_domain(old_point));
+      CGAL_precondition(vector_field_2.is_in_domain(old_point));
       new_point = integrator(old_point,vector_field_2,false);
       bEnd = !vector_field_2.is_in_domain(new_point);
       FT dist_ = distance(ex_old_point,new_point);

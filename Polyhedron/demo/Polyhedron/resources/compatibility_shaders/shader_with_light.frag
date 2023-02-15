@@ -23,9 +23,9 @@ uniform bool back_front_shading;
 uniform sampler2D sampler;
 uniform highp float alpha;
 
-highp float depth(float z)
+highp float depth(highp float z)
 {
-  return (2 * near) / (far + near - z * (far - near));
+  return (2.0 * near) / (far + near - z * (far - near));
 }
 
 void main(void) {
@@ -53,7 +53,7 @@ void main(void) {
     highp vec4 my_color = highp vec4(color.xyz, 1.0);
     if(fN ==  vec3(0.0,0.0,0.0))
     {
-      out_color = my_color;
+      gl_FragColor = my_color;
       return;
     }
     N = normalize(fN);
@@ -61,16 +61,16 @@ void main(void) {
     V = normalize(V);
     highp vec3 R = reflect(-L, N);
     highp vec4 diffuse;
-    float dot_prod = dot(N,L);
-    
+    highp float dot_prod = dot(N,L);
+
     if(back_front_shading)
     {
-      if (dot_prod > 0)
+      if (dot_prod > 0.0)
         my_color = front_color;
       else
         my_color = back_color;
     }
-    
+
     if(is_two_side == 1)
       diffuse = abs(dot(N,L)) * light_diff * color;
     else

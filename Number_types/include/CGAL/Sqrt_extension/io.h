@@ -38,15 +38,15 @@ input_ascii(std::istream& is , Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& result){
     swallow(is, 'X');
     swallow(is, 'T');
     swallow(is, '[');
-    is >> iformat(a0);
+    is >> IO::iformat(a0);
     do is.get(c); while (isspace(c));
     if (c != ',') CGAL_error_msg( "input error: , expected" );
 
-    is >> iformat(a1);
+    is >> IO::iformat(a1);
     do is.get(c); while (isspace(c));
     if (c != ',') CGAL_error_msg( "input error: , expected" );
 
-    is >> iformat(root);
+    is >> IO::iformat(root);
     do is.get(c); while (isspace(c));
     if (c != ']') CGAL_error_msg( "input error: ] expected" );
 
@@ -61,13 +61,13 @@ input_ascii(std::istream& is , Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& result){
 template<class NT, class ROOT, class ACDE_TAG, class FP_TAG>
 void
 output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x){
-    CGAL::IO::Mode o_mode=::CGAL::get_mode(os);
-    ::CGAL::set_mode(os,CGAL::IO::PRETTY);
+    CGAL::IO::Mode o_mode=::CGAL::IO::get_mode(os);
+    ::CGAL::IO::set_mode(os,CGAL::IO::PRETTY);
 
     if ( x.a0() != NT(0)){
         if ( x.a1() != NT(0)){
             os << x.a0()
-               << "+" << CGAL::oformat(x.a1(),CGAL::Parens_as_product_tag())
+               << "+" << CGAL::IO::oformat(x.a1(),CGAL::Parens_as_product_tag())
                << "*sqrt(" << x.root() << ")";
         }else{
             os << x.a0();
@@ -75,13 +75,13 @@ output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x)
     }
     else{
         if (x.a1() != NT(0)){
-            os << CGAL::oformat(x.a1(),CGAL::Parens_as_product_tag())
+            os << CGAL::IO::oformat(x.a1(),CGAL::Parens_as_product_tag())
                << "*sqrt(" << x.root() << ")";
         }else{
             os << 0;
         }
     }
-    ::CGAL::set_mode(os,o_mode);
+    ::CGAL::IO::set_mode(os,o_mode);
     return;
 }
 
@@ -133,7 +133,7 @@ public:
 template <class NT,class ROOT, class ACDE_TAG,class FP_TAG>
 std::ostream& operator << (std::ostream& os,
         const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& ext){
-    switch(CGAL::get_mode(os)) {
+    switch(CGAL::IO::get_mode(os)) {
     case CGAL::IO::PRETTY:
         output_maple(os,ext); break;
     default:
@@ -151,7 +151,7 @@ std::ostream& operator << (std::ostream& os,
  */
 template <class NT,class ROOT, class ACDE_TAG, class FP_TAG>
 std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& ext) {
-    CGAL_precondition(!CGAL::is_pretty(is));
+    CGAL_precondition(!CGAL::IO::is_pretty(is));
     input_ascii(is,ext);
     return is;
 }

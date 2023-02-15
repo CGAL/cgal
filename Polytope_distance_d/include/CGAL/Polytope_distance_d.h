@@ -473,7 +473,7 @@ public:
   // NOTE: an implicit conversion from ET to RT must be available!
   Point
   realizing_point_p( ) const
-  { CGAL_optimisation_precondition( is_finite());
+  { CGAL_precondition( is_finite());
   return tco.construct_point_d_object()
     ( ambient_dimension(),
       realizing_point_p_coordinates_begin(),
@@ -481,7 +481,7 @@ public:
 
   Point
   realizing_point_q( ) const
-  { CGAL_optimisation_precondition( is_finite());
+  { CGAL_precondition( is_finite());
   return tco.construct_point_d_object()
     ( ambient_dimension(),
       realizing_point_q_coordinates_begin(),
@@ -512,7 +512,7 @@ public:
     std::copy( p_first, p_last, std::back_inserter( p_points));
     std::copy( q_first, q_last, std::back_inserter( q_points));
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin(), p_points.end())
        && check_dimension( q_points.begin(), q_points.end()),
        "Not all points have the same dimension.");
@@ -527,7 +527,7 @@ public:
     p_points.clear();
     std::copy( p_first, p_last, std::back_inserter( p_points));
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin(), p_points.end()),
        "Not all points have the same dimension.");
 
@@ -541,7 +541,7 @@ public:
     q_points.clear();
     std::copy( q_first, q_last, std::back_inserter( q_points));
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( q_points.begin(), q_points.end()),
        "Not all points have the same dimension.");
 
@@ -551,7 +551,7 @@ public:
   void
   insert_p( const Point& p)
   {
-    CGAL_optimisation_precondition
+    CGAL_precondition
       ( ( ! is_finite()) ||
         ( tco.access_dimension_d_object()( p) == d));
     p_points.push_back( p);
@@ -562,7 +562,7 @@ public:
   void
   insert_q( const Point& q)
   {
-    CGAL_optimisation_precondition
+    CGAL_precondition
       ( ( ! is_finite()) ||
         ( tco.access_dimension_d_object()( q) == d));
     q_points.push_back( q);
@@ -575,12 +575,12 @@ public:
   insert( InputIterator1 p_first, InputIterator1 p_last,
           InputIterator2 q_first, InputIterator2 q_last)
   {
-    CGAL_optimisation_precondition_code(int old_r = static_cast<int>(p_points.size()));
-    CGAL_optimisation_precondition_code(int old_s = static_cast<int>(q_points.size()));
+    CGAL_precondition_code(int old_r = static_cast<int>(p_points.size()));
+    CGAL_precondition_code(int old_s = static_cast<int>(q_points.size()));
     p_points.insert( p_points.end(), p_first, p_last);
     q_points.insert( q_points.end(), q_first, q_last);
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin()+old_r, p_points.end())
        && check_dimension( q_points.begin()+old_s, q_points.end()),
        "Not all points have the same dimension.");
@@ -591,10 +591,10 @@ public:
   void
   insert_p( InputIterator p_first, InputIterator p_last)
   {
-    CGAL_optimisation_precondition_code(int old_r = static_cast<int>(p_points.size()));
+    CGAL_precondition_code(int old_r = static_cast<int>(p_points.size()));
     p_points.insert( p_points.end(), p_first, p_last);
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin()+old_r, p_points.end()),
        "Not all points have the same dimension.");
     compute_distance();
@@ -604,10 +604,10 @@ public:
   void
   insert_q( InputIterator q_first, InputIterator q_last)
   {
-    CGAL_optimisation_precondition_code( int old_s = static_cast<int>(q_points.size()));
+    CGAL_precondition_code( int old_s = static_cast<int>(q_points.size()));
     q_points.insert( q_points.end(), q_first, q_last);
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( q_points.begin()+old_s, q_points.end()),
        "Not all points have the same dimension.");
     compute_distance();
@@ -665,9 +665,8 @@ private:
   check_dimension( InputIterator first, InputIterator last)
   { return ( std::find_if
              ( first, last,
-               CGAL::compose1_1
-               ( boost::bind2nd(std::not_equal_to<int>(), d),
-                 tco.access_dimension_d_object()))
+               [this](const auto& o)
+               { return this->tco.access_dimension_d_object()(o) != this->d; })
              == last); }
 
   // compute (squared) distance
@@ -682,7 +681,7 @@ private:
     // construct program
     int n = 2 * d + static_cast<int>(p_points.size() + q_points.size());
     int m = d + 2;
-    CGAL_optimisation_precondition (p_points.size() > 0);
+    CGAL_precondition (p_points.size() > 0);
     QP qp (n, m,
            A_iterator
            (boost::counting_iterator<int>(0),
@@ -697,7 +696,7 @@ private:
     Quadratic_program_options options;
     options.set_pricing_strategy(pricing_strategy(NT()));
     solver = new Solver(qp, options);
-    CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
+    CGAL_assertion(solver->status() == QP_OPTIMAL);
     // compute support and realizing points
     ET  et_0 = 0;
     int r = static_cast<int>(p_points.size());
@@ -774,8 +773,8 @@ is_valid( bool verbose, int level) const
     // compute normal vector
     ET_vector  normal( d), diff( d);
     ET  et_0 = 0, den = p_coords[d];
-    CGAL_optimisation_assertion (den > et_0);
-    CGAL_optimisation_assertion (den == q_coords[d]);
+    CGAL_assertion (den > et_0);
+    CGAL_assertion (den == q_coords[d]);
     int i, j;
     for ( j = 0; j < d; ++j) normal[ j] = p_coords[ j] - q_coords[ j];
 
@@ -850,7 +849,7 @@ operator << ( std::ostream& os,
   typedef  typename Traits_::ET          ET;
   typedef  ostream_iterator<ET>          Et_it;
 
-  switch ( CGAL::get_mode( os)) {
+  switch ( CGAL::IO::get_mode( os)) {
 
   case CGAL::IO::PRETTY:
     os << "CGAL::Polytope_distance_d( |P+Q| = "
@@ -918,8 +917,8 @@ operator << ( std::ostream& os,
     break;
 
   default:
-    CGAL_optimisation_assertion_msg( false,
-                                     "CGAL::get_mode( os) invalid!");
+    CGAL_assertion_msg( false,
+                                     "CGAL::IO::get_mode( os) invalid!");
     break; }
 
   return( os);

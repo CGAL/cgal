@@ -37,15 +37,15 @@ int main()
   std::list<Weighted_point> pts;
 
   // read input
-  std::ifstream is("./data/bunny_1000");
+  std::ifstream is("data/bunny_1000");
   int n;
   is >> n;
   std::cout << "Reading " << n << " points " << std::endl;
-  Bare_point bp;
-  for( ; n>0 ; n--) {
-    is >> bp;
-    Weighted_point p(bp, 0.0001 * random.get_double(0., 0.015625)); // arbitrary weights
-    pts.push_back(p);
+  for( ; n>0 ; n--)
+  {
+    Bare_point bp;
+    if(is >> bp)
+      pts.emplace_back(bp, 0.0001 * random.get_double(0., 0.015625)); // arbitrary weights
   }
 
   // Define the periodic cube

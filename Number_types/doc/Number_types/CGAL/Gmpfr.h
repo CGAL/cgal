@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup nt_gmp
 
 An object of the class `Gmpfr` is a fixed precision floating-point
-number, based on the <span class="textsc">Mpfr</span> library. This type is inexact, due to the fact
+number, based on the \mpfr library. This type is inexact, due to the fact
 that the mantissa of each number is represented by a fixed amount of bits
 (this amount is called <I>precision</I>). If an operation needs more bits
 than the precision of the result number, the results are rounded following
@@ -38,7 +38,7 @@ the compared numbers is `NaN`, the `erange` flag is set.
 
 \cgalHeading{Implementation}
 
-Since the <span class="textsc">Mpfr</span> library can be compiled to be thread-safe, this interface
+Since the \mpfr library can be compiled to be thread-safe, this interface
 is designed to keep the thread-safety.
 
 `Gmpfr`s are reference counted. This behavior may be changed, by
@@ -144,7 +144,7 @@ creation by default.
 static Precision_type get_default_precision();
 
 /*!
-This function sets the default <span class="textsc">Mpfr</span> precision to p, and returns
+This function sets the default \mpfr precision to p, and returns
 the old one.
 */
 static Precision_type set_default_precision(Precision_type p);
@@ -154,8 +154,8 @@ static Precision_type set_default_precision(Precision_type p);
 /*! \name Controlling the Precision
 
 Each Gmpfr object has a precision associated to it. The precision is
-the amount of bits needed to represent the mantissa. <span
-class="textsc">Mpfr</span> has a default precision value, which can be
+the amount of bits needed to represent the mantissa.
+\mpfr has a default precision value, which can be
 controlled by static functions of the Gmpfr class (in practice, this
 default value is a variable local to each execution thread). There are
 also functions to get and set the precision of each Gmpfr object.
@@ -175,12 +175,12 @@ in the direction `r`.
 Gmpfr round(Precision_type p, std::float_round_style r)const;
 
 /*!
-This function returns the current rounding mode used by <span class="textsc">Mpfr</span>.
+This function returns the current rounding mode used by \mpfr.
 */
 static std::float_round_style get_default_rndmode();
 
 /*!
-This function sets the <span class="textsc">Mpfr</span> rounding mode to `r` and returns
+This function sets the \mpfr rounding mode to `r` and returns
 the old one.
 */
 static std::float_round_style set_default_rndmode(std::float_round_style r);
@@ -189,7 +189,7 @@ static std::float_round_style set_default_rndmode(std::float_round_style r);
 
 /*! \name Flags
 
-\sc{Mpfr} provides some flags to know whether
+\mpfr provides some flags to know whether
 performed operations were exact or not, or they incurred in overflow
 or underflow, if the exponent is out of range, or the result was `NaN`
 (not-a-number). One can clear the flags before a set of operations and
@@ -200,7 +200,7 @@ flags are:
 
 /// @{
 /*!
-Clears all the flags set by <span class="textsc">Mpfr</span>(they are not cleared
+Clears all the flags set by \mpfr(they are not cleared
 automatically).
 */
 static void clear_flags();

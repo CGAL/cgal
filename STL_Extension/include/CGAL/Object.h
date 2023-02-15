@@ -24,18 +24,19 @@
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 
+#include <iterator>
 #include <typeinfo>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 #include <boost/any.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 
 class Object
 {
-    boost::shared_ptr<boost::any> obj;
+    std::shared_ptr<boost::any> obj;
 
     // returns an any pointer from a variant
     struct Any_from_variant : public boost::static_visitor<boost::any*> {
@@ -75,25 +76,10 @@ class Object
     template <class T>
     bool assign(T &t) const
     {
-      if(obj) {
-        #ifdef CGAL_USE_ANY_BAD_CAST
-        try {
-          t = boost::any_cast<T>(*obj);
-          return true;
-        } catch(...) {
-          return false;
-        }
-        #else
-        const T* res =  boost::any_cast<T>(&(*obj));
-        if (res){
-          t=*res;
-          return true;
-        }
-        return false;
-        #endif
-      } else {
-        return false;
-      }
+      const T* res = boost::any_cast<T>(obj.get());
+      if (!res) return false;
+      t = *res;
+      return true;
     }
 
     bool
@@ -132,10 +118,10 @@ class Object
 
 #ifndef CGAL_NO_DEPRECATED_CODE
     // The comparisons with nullptr are only there for Nef...
-    bool operator==(std::nullptr_t CGAL_assertion_code(n)) const
-    { CGAL_assertion(n == 0); return empty(); }
-    bool operator!=(std::nullptr_t CGAL_assertion_code(n)) const
-    { CGAL_assertion(n == 0); return !empty(); }
+  bool operator==(std::nullptr_t /*CGAL_assertion_code(n)*/) const
+  { /*CGAL_assertion(n == 0);*/ return empty(); }
+  bool operator!=(std::nullptr_t /*CGAL_assertion_code(n)*/) const
+  { /*CGAL_assertion(n == 0);*/ return !empty(); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
 };
@@ -161,7 +147,7 @@ assign(T& t, const Object& o)
 struct Bad_object_cast
   : public std::bad_cast
 {
-    virtual const char * what() const throw()
+    virtual const char * what() const noexcept
     {
         return "CGAL::bad_object_cast: "
                "failed conversion using CGAL::object_cast";
@@ -173,19 +159,13 @@ template <class T>
 inline
 const T * object_cast(const Object * o)
 {
-  if(o->obj)
-    return boost::any_cast<T>((o->obj).get());
-  else
-    return nullptr;
+  return boost::any_cast<T>((o->obj).get());
 }
 
 template <class T>
 inline
 T object_cast(const Object & o)
 {
-  if(!o.obj)
-    throw Bad_object_cast();
-
   const T * result = boost::any_cast<T>((o.obj).get());
   if (!result)
     throw Bad_object_cast();

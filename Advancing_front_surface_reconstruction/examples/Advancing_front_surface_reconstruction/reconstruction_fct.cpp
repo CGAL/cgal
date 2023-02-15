@@ -58,7 +58,7 @@ struct Perimeter {
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
   double per = (argc>2)?boost::lexical_cast<double>(argv[2]):0;
   double radius_ratio_bound = (argc>3)?boost::lexical_cast<double>(argv[3]):5.0;
 

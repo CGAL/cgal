@@ -16,18 +16,17 @@ typedef Traits_2::Point_2                                     Point_2;
 typedef Traits_2::X_monotone_curve_2                          Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                         Arrangement_2;
 
-int main (int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default
   // Europe.dat file if no command-line parameters are given.
-  const char * filename = (argc > 1) ? argv[1] : "Europe.dat";
+  const char* filename = (argc > 1) ? argv[1] : "Europe.dat";
 
   // Open the input file.
-  std::ifstream     in_file (filename);
+  std::ifstream in_file(filename);
 
   if (! in_file.is_open()) {
-    std::cerr << "Failed to open " << filename << " ..." << std::endl;
-    return (1);
+    std::cerr << "Failed to open " << filename << " ...\n";
+    return 1;
   }
 
   // Read the segments from the file.
@@ -52,11 +51,10 @@ int main (int argc, char *argv[])
   in_file.close();
 
   // Construct the arrangement by aggregately inserting all segments.
-  Arrangement_2                  arr;
-  CGAL::Timer                    timer;
+  Arrangement_2 arr;
+  CGAL::Timer timer;
 
-  std::cout << "Performing aggregated insertion of "
-            << n << " segments." << std::endl;
+  std::cout << "Performing aggregated insertion of " << n << " segments.\n";
 
   timer.start();
   insert_non_intersecting_curves (arr, segments.begin(), segments.end());
@@ -67,8 +65,7 @@ int main (int argc, char *argv[])
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
-  std::cout << "Construction took " << timer.time()
-            << " seconds." << std::endl;
+  std::cout << "Construction took " << timer.time() << " seconds.\n";
 
   return 0;
 }

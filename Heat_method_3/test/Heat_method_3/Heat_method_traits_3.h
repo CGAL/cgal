@@ -59,6 +59,11 @@ struct Heat_method_traits_3
     { return 0;}
   };
 
+  struct Compute_squared_length_3 {
+
+    double operator()(const Vector_3&) const
+    { return 0;}
+  };
 
   Construct_vector_3 construct_vector_3_object() const
   {
@@ -77,6 +82,11 @@ struct Heat_method_traits_3
   Compute_squared_distance_3 compute_squared_distance_3_object() const
   {
     return Compute_squared_distance_3();
+  }
+
+  Compute_squared_length_3 compute_squared_length_3_object() const
+  {
+    return Compute_squared_length_3();
   }
 
   Compute_scalar_product_3 compute_scalar_product_3_object() const

@@ -16,12 +16,12 @@
 
 #include <CGAL/Interpolation/internal/helpers.h>
 
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/iterator.h>
 #include <CGAL/utility.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/Polygon_2_algorithms.h>
 
-#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
 #include <iterator>
@@ -29,6 +29,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -306,9 +307,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                OutputIterator out,
                                OutputIteratorVorVertices vor_vertices,
                                typename Rt::Face_handle start,
-                               typename boost::enable_if_c<
-                                          is_iterator<OutputIteratorVorVertices>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               is_iterator<OutputIteratorVorVertices>::value
+                                        >* = 0)
 {
   // Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
   typedef typename Rt::Geom_traits::FT                            FT;
@@ -326,9 +327,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                OutputIterator out,
                                OutputFunctor fct,
                                typename Rt::Face_handle start,
-                               typename boost::disable_if_c<
-                                          is_iterator<OutputFunctor>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               !is_iterator<OutputFunctor>::value
+                                        >* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(), start);
 }
@@ -341,10 +342,10 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
                                OutputFunctor fct,
-                               typename boost::disable_if_c<
-                                 boost::is_convertible<OutputFunctor,
+                               std::enable_if_t<
+                                 !boost::is_convertible<OutputFunctor,
                                                        typename Rt::Face_handle>::value
-                               >::type* = 0)
+                               >* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out, fct, typename Rt::Face_handle());
 }
@@ -423,9 +424,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                EdgeIterator hole_end,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end,
-                               typename boost::disable_if_c<
-                                          is_iterator<OutputFunctor>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               !is_iterator<OutputFunctor>::value
+                                        >* = 0)
 {
    return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(),
                                          hole_begin, hole_end,
@@ -446,9 +447,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                EdgeIterator hole_end,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end,
-                               typename boost::enable_if_c<
-                                          is_iterator<OutputIteratorVorVertices>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               is_iterator<OutputIteratorVorVertices>::value
+                                        >* = 0)
 {
   typedef typename Rt::Geom_traits::FT                            FT;
   typedef Interpolation::internal::Extract_point_in_pair<Rt, FT>  OutputFunctor;

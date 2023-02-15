@@ -52,13 +52,11 @@ points in is strongly convex or not.  This chapter describes the functions
 available for three dimensions.
 
 \cgalCRPSection{Assertions}
-The assertion flags for the convex hull and extreme point algorithms
-use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
 For the convex hull algorithms, the postcondition
 check tests only convexity (if not disabled), but not containment of the
 input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
-defining `CGAL_CH_CHECK_EXPENSIVE`.
+defining `CGAL_CHECK_EXPENSIVE`.
 
 \cgalClassifedRefPages
 
@@ -84,7 +82,8 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 \cgalCRPSection{Halfspace Intersection Functions}
 
-- `CGAL::halfspace_intersection_3`
-- `CGAL::halfspace_intersection_with_constructions_3`
+- `CGAL::halfspace_intersection_3()`
+- `CGAL::halfspace_intersection_with_constructions_3()`
+- `CGAL::halfspace_intersection_interior_point_3()`
 
 */

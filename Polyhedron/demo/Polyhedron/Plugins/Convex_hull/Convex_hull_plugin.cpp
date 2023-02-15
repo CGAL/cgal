@@ -82,8 +82,29 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     SMesh *pConvex_hull  = new SMesh;
     if(selection_item) {
       SMesh* pMesh = selection_item->polyhedron();
+      boost::property_map<Face_graph,CGAL::vertex_point_t>::const_type
+          vpm = get(CGAL::vertex_point, *pMesh);
+      std::vector<Kernel::Point_3> all_points;
+      all_points.reserve( pMesh->number_of_vertices() );
+
+      for(const auto& v_it : selection_item->selected_vertices) {
+        all_points.push_back(get(vpm,v_it));
+      }
+
+      for(const auto& e_it : selection_item->selected_edges) {
+        all_points.push_back(get(vpm,target(halfedge(e_it,*pMesh),*pMesh)));
+        all_points.push_back(get(vpm,target(opposite(halfedge(e_it,*pMesh),*pMesh),*pMesh)));
+      }
+
+      for(const auto& fd : selection_item->selected_facets) {
+        for(fg_halfedge_descriptor he : halfedges_around_face(halfedge(fd,*pMesh),*pMesh)){
+          all_points.push_back(get(vpm,target(he,*pMesh)));
+        }
+      }
+      all_points.shrink_to_fit();
       CGAL::convex_hull_3(
-            *pMesh,
+            all_points.begin(),
+            all_points.end(),
             *pConvex_hull);
     }
     else if ( sm_item ){

@@ -1,5 +1,5 @@
 
-#include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
+#include <CGAL/Surface_mesh_segmentation/internal/Expectation_maximization.h>
 
 #include <boost/random.hpp>
 #include <boost/random/normal_distribution.hpp>

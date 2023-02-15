@@ -23,7 +23,7 @@ namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement{
 
-enum Intersection_type {ON_FACE,ON_EDGE,ON_VERTEX,EMPTY,COPLANAR_TRIANGLES};
+enum Intersection_type {ON_VERTEX, ON_EDGE, ON_FACE, EMPTY, COPLANAR_TRIANGLES};
 
 template <class TriangleMesh, class Exact_kernel>
 struct Coplanar_intersection{

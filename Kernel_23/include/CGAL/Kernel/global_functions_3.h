@@ -739,6 +739,12 @@ midpoint(const Point_3<K> &p, const Point_3<K> &q)
 }
 
 template < class K >
+inline typename K::Point_3 midpoint(const Segment_3<K> &s)
+{
+  return internal::midpoint(s, K());
+}
+
+template < class K >
 inline
 typename K::Point_3
 max_vertex(const Iso_cuboid_3<K> &ic)

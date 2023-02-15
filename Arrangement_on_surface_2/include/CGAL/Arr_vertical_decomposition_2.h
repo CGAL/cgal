@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+// Author(s): Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_VERTICAL_DECOMPOSITION_2_H
 #define CGAL_ARR_VERTICAL_DECOMPOSITION_2_H
@@ -34,14 +34,13 @@ namespace Ss2 = Surface_sweep_2;
 /*! Perform a vertical decomposition of an arrangement, by performing a
  * "batched vertical ray-shooting" query from all arrangement vertices.
  * \param arr The arrangement.
- * \param oi Output: An output iterator of the vertices, each paired with
- *                   a pair of arrangement features that lie below and above
- *                   it, respectively.
- *                   The vertices are sorted by increasing xy-order.
+ * \param oi An output iterator of the vertices, each paired with a pair of
+ *           arrangement features that lie below and above it, respectively.
+ *           The vertices are sorted by increasing xy-order.
+ *           The OutputIterator dereferences the type \c
+ *           pair<Vertex_const_handle, pair<Vert_type, Vert_type> >, where
+ *           \c Vert_type is an optional handle to an arrangement feature.
  * \return A past-the-end iterator for the ordered arrangement vertices.
- * \pre The value-type of OutputIterator is
- *      pair<Vertex_const_handle, pair<Object, Object> >, where
- *      the Object represents a handle to an arrangement feature.
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename OutputIterator>
@@ -88,7 +87,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     Halfedge_const_handle he = (eit->direction() == ARR_RIGHT_TO_LEFT) ?
       eit : eit->twin();
     //attempt to solve compile problem in one of the tests. created the
-    // tmp_curve instead of passing eit->curve() as a parmeter to the function
+    // tmp_curve instead of passing eit->curve() as a parameter to the function
     X_monotone_curve_2 tmp_curve = eit->curve();
     xcurves_vec[i++] = Vd_x_monotone_curve_2(tmp_curve, he);
   }
@@ -103,7 +102,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     if (vit->is_isolated()) {
       Vertex_const_handle iso_v = vit;
       //attempt to solve compile problem in one of the tests. created the
-      // tmp_curve instead of passing eit->curve() as a parmeter to the
+      // tmp_curve instead of passing eit->curve() as a parameter to the
       // function
       Point_2 tmp_point = vit->point();
       iso_pts_vec[i++] = Vd_point_2(tmp_point, iso_v);
@@ -125,7 +124,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Vgt2>, const Vgt2&, Vgt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Vgt2>, const Vgt2&, Vgt2>::type
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.

@@ -15,7 +15,7 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>

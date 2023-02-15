@@ -37,7 +37,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   typedef boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Face_id_map;
-  struct Patch_id_pmap : public boost::put_get_helper<std::size_t, Patch_id_pmap>
+  struct Patch_id_pmap
   {
   public:
     typedef boost::read_write_property_map_tag category;
@@ -64,7 +64,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
 
 public:
   Polyhedron_demo_surface_mesh_approximation_plugin() {
-    std::srand(time(0));
+    std::srand(time(nullptr));
   }
 
   void init(QMainWindow *main_window,
@@ -201,7 +201,7 @@ public:
         !(boost::math::isfinite)(fit_plane.d())) {
         // PCA may return plane with NaN efficients
         // we replace it with an inaccurate plane
-        std::cout << "WARNING: Replacing invalide plane." << std::endl;
+        std::cout << "WARNING: Replacing invalid plane." << std::endl;
         fit_plane = EPICK::Plane_3(
           tris.front().vertex(0),
           EPICK::Vector_3(0.0, 0.0, 1.0));
@@ -254,10 +254,10 @@ public:
         cvx_hull_points.push_back(origin + p.x() * base1 + p.y() * base2);
       }
     }
-    std::vector<CGAL::Color> fcolors;
+    std::vector<CGAL::IO::Color> fcolors;
     for(const QColor& c : approx.proxy_colors())
-      fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
-    approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
+      fcolors.push_back(CGAL::IO::Color(c.red(), c.green(), c.blue()));
+    approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::IO::Color>());
   }
 
 public Q_SLOTS:
@@ -332,10 +332,10 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.visual_items().group = group;
   approx.visual_items().seeds = seeds_item;
   approx.visual_items().has_meshing_items = false;
-  approx.visual_items().triangles = NULL;
-  approx.visual_items().polygons = NULL;
-  approx.visual_items().anchors = NULL;
-  approx.visual_items().planes = NULL;
+  approx.visual_items().triangles = nullptr;
+  approx.visual_items().polygons = nullptr;
+  approx.visual_items().anchors = nullptr;
+  approx.visual_items().planes = nullptr;
 
   update_seeds_item(approx, pmesh);
 
@@ -525,11 +525,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   if (!approx.split(ui_widget.split_proxy_idx->value(),
     ui_widget.split_nb_sections->value(),
     ui_widget.split_nb_relaxations->value())) {
-    CGAL::Three::Three::information(QString("No proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
+    CGAL::Three::Three::information(QString("No proxy split, #proxies = %1.").arg(approx.number_of_proxies()));
     QApplication::restoreOverrideCursor();
     return;
   }
-  CGAL::Three::Three::information(QString("One proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
+  CGAL::Three::Three::information(QString("One proxy split, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *pmesh));
   approx.output(CGAL::parameters::face_proxy_map(pidmap));

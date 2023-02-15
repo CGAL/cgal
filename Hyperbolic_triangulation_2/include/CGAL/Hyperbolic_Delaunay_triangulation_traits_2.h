@@ -21,10 +21,10 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/determinant.h>
 #include <CGAL/distance_predicates_2.h>
-#include <CGAL/internal/Exact_complex.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Exact_complex.h>
 #include <CGAL/Origin.h>
 #include <CGAL/predicates_on_points_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/utility.h>
 
 #include <boost/tuple/tuple.hpp>
@@ -32,7 +32,7 @@
 
 #include <utility>
 
-#include <CGAL/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
 
 namespace CGAL {
 
@@ -365,9 +365,9 @@ public:
                                   const Hyperbolic_point_2& r,
                                   const Hyperbolic_point_2& s) const
   {
-    CGAL_triangulation_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
+    CGAL_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
                                     (_gt.orientation_2_object()(p, s, q) == ON_POSITIVE_SIDE));
-    CGAL_triangulation_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
+    CGAL_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
                                     (_gt.side_of_oriented_circle_2_object()(p, s, q, r) == ON_NEGATIVE_SIDE));
 
     Construct_hyperbolic_circumcenter_2<Traits> chc(_gt);
@@ -405,7 +405,7 @@ public:
                                   const Hyperbolic_point_2& q,
                                   const Hyperbolic_point_2& r) const
   {
-    CGAL_triangulation_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
+    CGAL_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
 
     Construct_circle_or_line_supporting_bisector<Traits> cclsb(_gt);
     Construct_hyperbolic_circumcenter_2<Traits> chc(_gt);

@@ -1,5 +1,5 @@
 //
-#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
+#include <CGAL/Surface_mesh_segmentation/internal/K_means_clustering.h>
 
 #include <boost/random.hpp>
 #include <boost/random/normal_distribution.hpp>

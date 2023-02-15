@@ -116,7 +116,7 @@ public :
     if(event->type() == QEvent::Wheel && ctrl_pressing)
     {
       QWheelEvent *mouseEvent = static_cast<QWheelEvent*>(event);
-      int steps = mouseEvent->delta() / 120;
+      int steps = mouseEvent->angleDelta().y() / 120;
       if (steps > 0)
         length_+=tick;
       else

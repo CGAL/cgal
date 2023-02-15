@@ -17,11 +17,11 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/intersection_3.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Skin_surface_polyhedral_items_3.h>
 
-#include <CGAL/intersection_3_1.h>
 namespace CGAL {
 
 template <class SkinSurface_3, class Polyhedron_3>

@@ -1,13 +1,13 @@
 #include "MainWindow.h"
 
 #include <QApplication>
+#include <CGAL/Qt/init_ogl_context.h>
 
 int main(int argc, char *argv[])
 {
+  CGAL::Qt::init_ogl_context(2,1);
   QApplication a(argc, argv);
   MainWindow w;
-  //w.ui->setupUi(w);
-  w.ui->viewer->restoreStateFromFile();
 
   w.show();
 

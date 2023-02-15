@@ -22,7 +22,7 @@ types `T` to make them usable with the default `Concurrent_compact_container`.
 
 `T` is any type providing the following member functions:
 `void * t.for_compact_container() const;`
-`void *& t.for_compact_container();`.
+`void t.for_compact_container(void *);`.
 */
 template< typename T >
 struct Concurrent_compact_container_traits {
@@ -40,11 +40,11 @@ struct Concurrent_compact_container_traits {
 /// \name Operations
 /// @{
   /*!
-  Returns a reference to the pointer held by `t`.
-  The template version defines this function as: `return t.for_compact_container();`
+  Sets the pointer held by `t` to `p`.
+  The template version defines this function as: `t.for_compact_container(p);`
 
   */
-  static void * & pointer(T &t);
+  static void set_pointer(T &t, void* p);
 
 /// @}
 
@@ -293,8 +293,8 @@ complexity. No exception is thrown.
 /// @{
   /// returns whether `pos` is in the range `[ccc.begin(),  ccc.end()]` (`ccc.end()` included).
   bool owns(const_iterator pos);
-  /// returns whether `pos` is in the range `[ccc.begin(), ccc`.end())` (`ccc.end()` excluded).
-  bool owns_dereferencable(const_iterator pos);
+  /// returns whether `pos` is in the range `[ccc.begin(), ccc.end())` (`ccc.end()` excluded).
+  bool owns_dereferenceable(const_iterator pos);
 
 /// @}
 

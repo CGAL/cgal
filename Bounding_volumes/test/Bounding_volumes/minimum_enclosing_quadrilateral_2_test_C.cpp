@@ -54,7 +54,7 @@ void compute(ForwardIterator f, ForwardIterator l)
 
 int main()
 {
-  CGAL::set_pretty_mode(cout);
+  CGAL::IO::set_pretty_mode(cout);
 
   // build a random convex 20-gon p
   {

@@ -20,7 +20,6 @@
 #include <CGAL/license/Circular_kernel_3.h>
 
 
-#include <CGAL/result_of.h>
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 
@@ -196,15 +195,15 @@ public:
 
 
 
-  typename cpp11::result_of<typename R::Compute_circular_x_3(Circular_arc_point_3)>::type
+  decltype(auto)
   x() const
   { return typename R::Compute_circular_x_3()(*this);}
 
-  typename cpp11::result_of<typename R::Compute_circular_y_3(Circular_arc_point_3)>::type
+  decltype(auto)
   y() const
   { return typename R::Compute_circular_y_3()(*this);}
 
-  typename cpp11::result_of<typename R::Compute_circular_z_3(Circular_arc_point_3)>::type
+  decltype(auto)
   z() const
   { return typename R::Compute_circular_z_3()(*this);}
 

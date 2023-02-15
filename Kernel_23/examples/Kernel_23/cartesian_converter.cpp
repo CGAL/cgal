@@ -25,8 +25,7 @@ int main(){
   EK::Triangle_3 t2=to_exact(t1);
   EK::Line_3     l2=to_exact(l1);
 
-  CGAL::cpp11::result_of<EK::Intersect_3(EK::Triangle_3, EK::Line_3)>::type
-    inter = CGAL::intersection(t2,l2);
+  const auto inter = CGAL::intersection(t2,l2);
 
   // As we are sure that there IS an intersection
   // and that the intersection IS a point

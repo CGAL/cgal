@@ -17,12 +17,12 @@
 
 #include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -43,15 +43,15 @@ typedef Local_kernel::Vector_3 Local_vector;
 //Vertex source code
 const char vertex_source_mono[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 normal;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 normal;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
 
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
+    "out highp vec4 fP; \n"
+    "out highp vec3 fN; \n"
     "void main(void)\n"
     "{\n"
     "   fP = mv_matrix * vertex; \n"
@@ -62,17 +62,17 @@ const char vertex_source_mono[] =
 
 const char vertex_source_color[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 normal;\n"
-    "attribute highp vec3 color;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 normal;\n"
+    "in highp vec3 color;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
 
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+    "out highp vec4 fP; \n"
+    "out highp vec3 fN; \n"
+    "out highp vec4 fColor; \n"
     "void main(void)\n"
     "{\n"
     "   fP = mv_matrix * vertex; \n"
@@ -85,15 +85,16 @@ const char vertex_source_color[] =
 //Vertex source code
 const char fragment_source_mono[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
+    "#version 150 \n"
+    "in highp vec4 fP; \n"
+    "in highp vec3 fN; \n"
     "uniform highp vec4 color; \n"
     "uniform highp vec4 light_pos;  \n"
     "uniform highp vec4 light_diff; \n"
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
+    "out highp vec4 out_color; \n"
 
     "void main(void) { \n"
 
@@ -108,22 +109,23 @@ const char fragment_source_mono[] =
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-    "gl_FragColor = light_amb*color + diffuse  ; \n"
+    "out_color = light_amb*color + diffuse  ; \n"
     "} \n"
     "\n"
   };
 
 const char fragment_source_color[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+    "#version 150 \n"
+    "in highp vec4 fP; \n"
+    "in highp vec3 fN; \n"
+    "in highp vec4 fColor; \n"
     "uniform highp vec4 light_pos;  \n"
     "uniform highp vec4 light_diff; \n"
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
+    "out highp vec4 out_color; \n"
 
     "void main(void) { \n"
 
@@ -138,7 +140,7 @@ const char fragment_source_color[] =
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "out_color = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
   };
@@ -146,8 +148,8 @@ const char fragment_source_color[] =
 //Vertex source code
 const char vertex_source_p_l[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
     "uniform highp mat4 mvp_matrix;\n"
     "void main(void)\n"
     "{\n"
@@ -157,10 +159,11 @@ const char vertex_source_p_l[] =
 //Vertex source code
 const char fragment_source_p_l[] =
   {
-    "#version 120 \n"
+    "#version 150 \n"
     "uniform highp vec4 color; \n"
+    "out highp vec4 out_color; \n"
     "void main(void) { \n"
-    "gl_FragColor = color; \n"
+    "out_color = color; \n"
     "} \n"
     "\n"
   };
@@ -194,7 +197,7 @@ typename K::Vector_3 compute_normal_of_face(const std::vector<typename K::Point_
   return (typename K::Construct_scaled_vector_3()(normal, 1.0/nb));
 }
 
-class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions_2_1
+class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions
 {
   struct Vertex_info
   {
@@ -208,7 +211,7 @@ class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions_2_1
     bool is_process;
   };
 
-  typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+  typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
   typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
   typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits> Fb1;
@@ -283,7 +286,7 @@ public:
     { bb=bb+p.bbox(); }
   }
 
-  void add_color(const CGAL::Color& acolor, std::vector<float>& color_vector)
+  void add_color(const CGAL::IO::Color& acolor, std::vector<float>& color_vector)
   {
     color_vector.push_back((double)color_of_face.red()/(double)255);
     color_vector.push_back((double)color_of_face.green()/(double)255);
@@ -300,7 +303,7 @@ public:
   void add_mono_point(const Local_point& p)
   { add_point(p, arrays[POS_MONO_POINTS]); }
 
-  void add_colored_point(const Local_point& p, const CGAL::Color& acolor)
+  void add_colored_point(const Local_point& p, const CGAL::IO::Color& acolor)
   {
     add_point(p, arrays[POS_COLORED_POINTS]);
     add_color(acolor, arrays[COLOR_POINTS]);
@@ -313,7 +316,7 @@ public:
   }
 
   void add_colored_segment(const Local_point& p1, const Local_point& p2,
-                           const CGAL::Color& acolor)
+                           const CGAL::IO::Color& acolor)
   {
     add_point(p1, arrays[POS_COLORED_SEGMENTS]);
     add_point(p2, arrays[POS_COLORED_SEGMENTS]);
@@ -338,7 +341,7 @@ public:
   }
 
   /// Start a new face, with a given color.
-  void colored_face_begin(const CGAL::Color& acolor)
+  void colored_face_begin(const CGAL::IO::Color& acolor)
   {
     color_of_face=acolor;
     m_started_face_is_colored=true;
@@ -416,7 +419,7 @@ public:
                                                         SMOOTH_NORMAL_MONO_FACES]);
         }
         else
-        { // Here user does not provide all vertex normals: we use face normal istead
+        { // Here user does not provide all vertex normals: we use face normal instead
           // and thus we will not be able to use Gourod
          add_normal(normal, arrays[m_started_face_is_colored?
                                    SMOOTH_NORMAL_COLORED_FACES:
@@ -435,11 +438,11 @@ public:
 
         bool with_vertex_normal=(vertex_normals_for_face.size()==points_of_face.size());
 
-        // (1) We insert all the edges as contraint in the CDT.
-        typename CDT::Vertex_handle previous=NULL, first=NULL;
+        // (1) We insert all the edges as constraint in the CDT.
+        typename CDT::Vertex_descriptor previous=NULL, first=NULL;
         for (int i=0; i<points_of_face.size(); ++i)
         {
-          typename CDT::Vertex_handle vh = cdt.insert(points_of_face[i]);
+          typename CDT::Vertex_descriptor vh = cdt.insert(points_of_face[i]);
           if(first==NULL)
           { first=vh; }
 
@@ -465,13 +468,13 @@ public:
           fit->info().is_process = false;
         }
         // (2.2) We check if the facet is external or internal
-        std::queue<typename CDT::Face_handle> face_queue;
-        typename CDT::Face_handle face_internal = NULL;
+        std::queue<typename CDT::Face_descriptor> face_queue;
+        typename CDT::Face_descriptor face_internal = NULL;
         if (cdt.infinite_vertex()->face()!=NULL)
           face_queue.push(cdt.infinite_vertex()->face());
         while(! face_queue.empty() )
         {
-          typename CDT::Face_handle fh = face_queue.front();
+          typename CDT::Face_descriptor fh = face_queue.front();
           face_queue.pop();
           if(!fh->info().is_process)
           {
@@ -496,7 +499,7 @@ public:
 
         while(! face_queue.empty() )
         {
-          typename CDT::Face_handle fh = face_queue.front();
+          typename CDT::Face_descriptor fh = face_queue.front();
           face_queue.pop();
           if(!fh->info().is_process)
           {
@@ -884,7 +887,6 @@ protected:
   virtual void init()
   {
     // Restore previous viewer state.
-    restoreStateFromFile();
     initializeOpenGLFunctions();
 
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
@@ -1130,9 +1132,9 @@ private:
   double m_size_points;
   double m_size_edges;
 
-  CGAL::Color m_vertices_mono_color;
-  CGAL::Color m_edges_mono_color;
-  CGAL::Color m_faces_mono_color;
+  CGAL::IO::Color m_vertices_mono_color;
+  CGAL::IO::Color m_edges_mono_color;
+  CGAL::IO::Color m_faces_mono_color;
   QVector4D   m_ambient_color;
 
   bool m_are_buffers_initialized;
@@ -1182,7 +1184,7 @@ private:
   bool m_started_face_is_colored;
   std::vector<Local_point> points_of_face;
   std::vector<Local_vector> vertex_normals_for_face;
-  CGAL::Color color_of_face;
+  CGAL::IO::Color color_of_face;
 };
 
 #endif // CGAL_BASIC_VIEWER_H

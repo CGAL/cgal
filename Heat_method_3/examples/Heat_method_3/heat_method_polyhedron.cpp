@@ -2,10 +2,9 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
+#include <unordered_map>
 #include <fstream>
 #include <iostream>
-
-#include <boost/unordered_map.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -16,14 +15,14 @@ typedef boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex_descriptor;
 int main(int argc, char* argv[])
 {
   Triangle_mesh tm;
-  const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   std::ifstream input(filename);
   if (!input || !(input >> tm) || tm.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
   }
   // map for the distance values to the source set
-  boost::unordered_map<vertex_descriptor, double> vertex_distance;
+  std::unordered_map<vertex_descriptor, double> vertex_distance;
 
   vertex_descriptor source = *(vertices(tm).first);
 

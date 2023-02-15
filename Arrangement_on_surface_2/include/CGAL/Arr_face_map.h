@@ -17,7 +17,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Arr_face_map.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_face_index_map.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Arr_face_index_map.h>
 

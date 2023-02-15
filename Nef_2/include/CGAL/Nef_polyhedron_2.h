@@ -1031,7 +1031,7 @@ public:
   dictionaries are present or if not then the point location time is
   worst-case linear, but experiments show often sublinear runtimes.  Ray
   shooting equals point location plus a walk in the constrained
-  triangulation overlayed on the plane map representation. The cost of
+  triangulation overlaid on the plane map representation. The cost of
   the walk is proportional to the number of triangles passed in
   direction |d| until an obstacle is met. In a minimum weight
   triangulation of the obstacles (the plane map representing the
@@ -1112,6 +1112,8 @@ std::istream& operator>>
     std::cerr << "Nef_polyhedron_2 input corrupted." << std::endl;
     NP = Nef_polyhedron_2<T,Items,Mark>();
   }
+  if(!is)
+    return is;
   typename Nef_polyhedron_2<T,Items,Mark>::Topological_explorer D(NP.explorer());
   D.check_integrity_and_topological_planarity();
   return is;

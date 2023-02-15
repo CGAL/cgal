@@ -14,8 +14,8 @@
 
 #include <CGAL/license/Classification.h>
 
-#include <boost/shared_ptr.hpp>
-
+#include <memory>
+#include <string>
 #include <vector>
 
 namespace CGAL {
@@ -42,18 +42,18 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the name of the feature (initialized to
+    \brief returns the name of the feature (initialized to
     `abstract_feature` for `Feature_base`).
   */
   const std::string& name() const { return m_name; }
 
   /*!
-    \brief Changes the name of the feature.
+    \brief changes the name of the feature.
   */
   void set_name (const std::string& name) { m_name = name; }
 
   /*!
-    \brief Returns the value taken by the feature for at the item for
+    \brief returns the value taken by the feature for at the item for
     the item at position `index`. This method must be implemented by
     inherited classes.
   */
@@ -72,7 +72,6 @@ public:
 */
 class Feature_handle { };
 #else
-//typedef boost::shared_ptr<Feature_base> Feature_handle;
 
 class Feature_set;
 
@@ -80,19 +79,23 @@ class Feature_handle
 {
   friend Feature_set;
 
-  boost::shared_ptr<boost::shared_ptr<Feature_base> > m_base;
+  using Feature_base_ptr = std::unique_ptr<Feature_base>;
+  std::shared_ptr<Feature_base_ptr> m_base;
 
-  template <typename Feature>
-  Feature_handle (Feature* f) : m_base (new boost::shared_ptr<Feature_base>(f)) { }
-
-  template <typename Feature>
-  void attach (Feature* f) const
+  template <typename Feature_ptr>
+  Feature_handle (Feature_ptr f)
+    : m_base (std::make_shared<Feature_base_ptr>(std::move(f)))
   {
-    *m_base = boost::shared_ptr<Feature_base>(f);
+  }
+
+  template <typename Feature_ptr>
+  void attach (Feature_ptr f)
+  {
+    *m_base = std::move(f);
   }
 public:
 
-  Feature_handle() : m_base (new boost::shared_ptr<Feature_base>()) { }
+  Feature_handle() : m_base (std::make_shared<Feature_base_ptr>()) { }
 
   Feature_base& operator*() { return **m_base; }
 
@@ -106,6 +109,17 @@ public:
 };
 
 #endif
+
+/*!
+  \ingroup PkgClassificationFeature
+
+  \brief casts a feature handle to a specialized feature pointer.
+*/
+template <typename FeatureType>
+FeatureType* feature_cast (Feature_handle fh)
+{
+  return dynamic_cast<FeatureType*>(&*(fh));
+}
 
 
 } // namespace Classification

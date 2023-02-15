@@ -21,8 +21,7 @@ typedef Traits_2::Polygon_2                        Polygon_2;
 typedef Traits_2::Polygon_with_holes_2             Polygon_with_holes_2;
 
 /* test files:
- *  1.  test1.dat---invalid polygon with holes. The hole is relatively simple
- *                  instead of strictly simple.
+ *  1.  test1.dat---valid polygon with holes. The hole is relatively simple.
  *  2.  test2.dat---invalid polygon with holes. The hole overlaps the outer
  *                  boundary (the intersection results in a polygon).
  *  3.  test3.dat---invalid polygon with holes. Two holes intersect (the
@@ -45,7 +44,7 @@ typedef Traits_2::Polygon_with_holes_2             Polygon_with_holes_2;
  *                  simple, case 2.
  *
  * test an input file. is_valid indicates the input polygon is valid. ErrorMsg
- * is displayed if the validation result does't equal is_valid.
+ * is displayed if the validation result doesn't equal is_valid.
  */
 
 bool test(const std::string& filename, std::ofstream& outfile)

@@ -56,9 +56,9 @@ library.
 // A face type with a color member variable.
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-CGAL::Color color;
+CGAL::IO::Color color;
 My_face() {}
-My_face( CGAL::Color c) : color(c) {}
+My_face( CGAL::IO::Color c) : color(c) {}
 };
 
 // An items type using my face.

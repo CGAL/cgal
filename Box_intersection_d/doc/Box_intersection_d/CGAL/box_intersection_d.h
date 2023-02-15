@@ -246,7 +246,7 @@ void box_intersection_all_pairs_d(
 
   The first template parameter of the function enables to choose whether
   the algorithm is to be run in parallel, if `CGAL::Parallel_tag` is specified
-  and %CGAL has been linked with the Intel TBB library, or sequentially,
+  and \cgal has been linked with the Intel TBB library, or sequentially,
   if `CGAL::Sequential_tag` - the default value - is specified.
   The parallelization of the algorithm is based on a divide-and-conquer
   approach: the two ranges are split in a number of smaller ranges, and

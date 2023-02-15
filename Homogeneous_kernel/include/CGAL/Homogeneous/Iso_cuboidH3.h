@@ -360,10 +360,7 @@ CGAL_KERNEL_INLINE
 bool
 Iso_cuboidH3<R>::
 has_on_unbounded_side(const typename Iso_cuboidH3<R>::Point_3& p) const
-{
-  return (   ( lexicographically_xyz_smaller(p,(this->min)() ))
-           ||( lexicographically_xyz_smaller((this->max)(),p ))  );
-}
+{ return ( bounded_side(p) == ON_UNBOUNDED_SIDE ); }
 
 template < class R >
 CGAL_KERNEL_INLINE

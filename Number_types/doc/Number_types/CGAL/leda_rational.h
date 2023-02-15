@@ -5,7 +5,7 @@
 The class `leda_rational` provides exact computation in \f$ \mathbb{Q}\f$.
 The class `leda_rational` is a wrapper class that provides the functions
 needed to use the number type `rational`, representing exact
-multiprecision rational numbers provided by <span class="textsc">LEDA</span>.
+multiprecision rational numbers provided by \leda.
 
 \cgalModels `Field`
 \cgalModels `RealEmbeddable`

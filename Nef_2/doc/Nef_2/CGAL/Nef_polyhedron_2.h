@@ -45,7 +45,7 @@ point location time is either logarithmic when LEDA's persistent
 dictionaries are present or if not then the point location time is
 worst-case linear, but experiments show often sublinear runtimes. Ray
 shooting equals point location plus a walk in the constrained
-triangulation overlayed on the plane map representation. The cost of
+triangulation overlaid on the plane map representation. The cost of
 the walk is proportional to the number of triangles passed in
 direction `d` until an obstacle is met. In a minimum weight
 triangulation of the obstacles (the plane map representing the
@@ -297,7 +297,7 @@ is a pair of vertices `(v,w)` with incidence operations `v = source(e)`, `w = ta
 `v` is called the adjacency list `A(v)`.
 
 Edges are paired into twins. For each edge `e = (v,w)` there's an
-edge `twin(e) = (w,v)` and `twin(twin(e)) == e`\cgalFootnote{The existence of the edge pairs makes `P` a bidirected graph, the `twin` links make `P` a map.}.
+edge `twin(e) = (w,v)` and `twin(twin(e)) == e`\cgalFootnote{The existence of the edge pairs makes  \cgalFootnoteCode{P} a bidirected graph, the  \cgalFootnoteCode{twin} links make  \cgalFootnoteCode{P} a map.}.
 
 An edge `e = (v,w)` knows two adjacent edges `en = next(e)`
 and `ep = previous(e)` where `source(en) = w`,

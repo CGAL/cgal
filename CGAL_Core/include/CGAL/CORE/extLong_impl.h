@@ -21,7 +21,7 @@
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -125,9 +125,9 @@ extLong& extLong::operator*= (const extLong& y) {
     if (std::fabs(d - p) <= std::fabs(d) * relEps) {
       val = p;
       flag = 0;
-    } else if (d > EXTLONG_MAX) {
+    } else if (d > static_cast<double>(EXTLONG_MAX)) {
       *this = CORE_posInfty;
-    } else if (d < EXTLONG_MIN) {
+    } else if (d < static_cast<double>(EXTLONG_MIN)) {
       *this = CORE_negInfty;
     } else {
 #ifdef CORE_DEBUG
@@ -177,7 +177,7 @@ extLong extLong::operator- () const {
 
 // sign
 //    You should check "flag" before calling this, otherwise
-//    you cannot interprete the returned value!
+//    you cannot interpret the returned value!
 CGAL_INLINE_FUNCTION
 int extLong::sign() const {
   if (flag == 2)

@@ -218,7 +218,7 @@ private:
     //! returns \c true when the precision limit for a specified number type is
     //! reached
     typename Renderer_traits::Precision_limit limit;
-    //! maximum level of subdivision dependending on speficied number type
+    //! maximum level of subdivision dependending on specified number type
     static const unsigned MAX_SUBDIVISION_LEVEL =
             Renderer_traits::MAX_SUBDIVISION_LEVEL;
 
@@ -238,7 +238,8 @@ private:
     typedef std::vector<int> index_vector;
 
     //! map container element's type for maintaining a list of cache instances
-    typedef std::pair<int, int> LRU_entry;
+    typedef std::pair<int, std::size_t> LRU_entry;
+
     //! LRU list used for cache switching
     typedef std::vector< LRU_entry > Cache_list;
 
@@ -256,8 +257,9 @@ public:
     //!@{
 
     //! default constructor: a curve segment is undefined
-    Curve_renderer_2() : cache_id(-1), IA_method(0), initialized(false),
-       one(1) {
+    Curve_renderer_2() :
+      cache_id(INVALID_CACHE_ID), IA_method(0), initialized(false), one(1)
+    {
         arcno = -1;
         setup(Bbox_2(-1.0, -1.0, 1.0, 1.0), 640, 480);
     }
@@ -381,8 +383,10 @@ private:
     Clip_points btm_clip, top_clip;  //! a set of bottom and top clip points
     Poly_dst_1 btm_poly, top_poly;   //! bottom and top polynomials
 
-    int cache_id;        //! index of currently used cache instance
+    std::size_t cache_id;  //! index of currently used cache instance
     Cache_list cache_list; //! list of indices of cache instances
+
+    static constexpr std::size_t INVALID_CACHE_ID = CGAL_N_CACHES;
 
     Seed_stack s_stack;      //! a stack of seed points
     Seed_point current_seed; //! current seed point
@@ -393,7 +397,7 @@ private:
                        //! with correct parameters
     const Integer one; //! just "one"
     bool branches_coincide; //! indicates that there are several branches
-                           //! passing through one neighbourhood pixel
+                           //! passing through one neighborhood pixel
     int direction_taken;  //! stores a direction taken from the seed point
                           //! during tracking, if it's possible to determine
                           //! 0 - towards lower point, 1 - towards upper
@@ -572,7 +576,7 @@ void draw(const Arc_2& arc,
         ref_bound = engine.pixel_h_r/CGAL_REFINE_X;
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+        ref_bound = (std::min)(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
         Gfx_OUT("computing y-coordinates\n");
 
@@ -912,7 +916,7 @@ bool draw(const Point_2& pt, Coord_2& coord) {
     const Coordinate_1& x0 = pt.x();
     Rational ref_bound = engine.pixel_w_r / 2;
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+        ref_bound = (std::min)(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
 
     typename Curve_kernel_2::Algebraic_kernel_d_1::Approximate_relative_1
@@ -932,7 +936,7 @@ bool draw(const Point_2& pt, Coord_2& coord) {
     ref_bound = engine.pixel_h_r / CGAL_REFINE_X;
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-    ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+    ref_bound = (std::min)(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
 
     Coordinate_2 xy(x0, pt.curve(), pt.arcno());
@@ -1061,7 +1065,7 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
         if(set_ready)
             ready = true;
 
-        if(!test_neighbourhood(pix, back_dir, new_dir)) {
+        if(!test_neighborhood(pix, back_dir, new_dir)) {
             ux = pix.x;
             uy = pix.y;
             if(witness == pix) { // witness subpixel is a pixel itself
@@ -1091,7 +1095,7 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
                     stored_prev = prev_pix;
                 }
 
-                if(!test_neighbourhood(pix, back_dir, new_dir)) {
+                if(!test_neighborhood(pix, back_dir, new_dir)) {
                     if(stored_dir != -1) {
                         pix = stored_pix;
                         prev_pix = stored_prev;
@@ -1192,7 +1196,7 @@ Lexit:
 
     std::reverse(rev_points.begin(), rev_points.end());
     // resize rev_points to accommodate the size of points vector
-    unsigned rsize = rev_points.size();
+    std::size_t rsize = rev_points.size();
     rev_points.resize(rsize + points.size());
     std::copy(points.begin(), points.end(), rev_points.begin() + rsize);
 }
@@ -1219,7 +1223,7 @@ bool subdivide(Pixel_2& pix, int back_dir, int& new_dir) {
         throw internal::Insufficient_rasterize_precision_exception();
     }
 
-    // if several branches coincide withing this pixel we cannot perform
+    // if several branches coincide within this pixel we cannot perform
     // a subdivision
     if(branches_coincide)
         return false;
@@ -1253,7 +1257,7 @@ bool subdivide(Pixel_2& pix, int back_dir, int& new_dir) {
     pix.sub_y = (pix.sub_y<<1) + (idx>>1);
     //Gfx_DETAILED_OUT("subpixel index: " << idx << " (" << pix.sub_x << "; "
         // << pix.sub_y << ")" << std::endl);
-    if(!test_neighbourhood(pix, back_dir, new_dir))
+    if(!test_neighborhood(pix, back_dir, new_dir))
         return subdivide(pix,back_dir,new_dir);
     //Gfx_DETAILED_OUT("new direction found: " << new_dir << " at a pixel:" <<
         //pix << std::endl);
@@ -1309,7 +1313,7 @@ bool get_seed_point(const Rational& seed, Pixel_2& start, int *dir,
                 << start.level << std::endl;
             throw internal::Insufficient_rasterize_precision_exception();
         }
-        //dump_neighbourhood(start);
+        //dump_neighborhood(start);
 
         if(limit(engine.pixel_w/NT(lvl))||limit(engine.pixel_h/NT(lvl))) {
             std::cerr << "get_seed_point: too small subpixel size: " <<
@@ -1421,7 +1425,7 @@ bool test_pixel(const Pixel_2& pix, int *dir, int *b_taken, bool& b_coincide)
 
 /*
     Gfx_OUT("test pixel: " << pix << "--------------------------------\n");
-    dump_neighbourhood(pix);
+    dump_neighborhood(pix);
     Gfx_OUT("----------------------------------------------\n\n");*/
 
     b_coincide = false;
@@ -1750,7 +1754,7 @@ void segment_clip_points(const Rational& x_lower, const Rational& x_upper,
 //                     high = ubound_y(xy);
     //TODO: no need to refine y-intervals: you need only to check whether
     // polynomial vanishes at y_clip, since algebraic real you specify is exact
-                    if((_.first < y_clip && _.second > y_clip)||
+                    if(( (_.first < y_clip) && (_.second > y_clip) ) ||
                             _.first == y_clip || _.second == y_clip) {
                         //event.refine_to(i, engine.pixel_h_r/CGAL_REFINE_Y);
                         Rational _1, _2;
@@ -1859,7 +1863,7 @@ bool recursive_check(int var, const NT& beg_, const NT& end_,
     return recursive_check(var, key_2, mid, key, poly, depth+1);
 }
 
-//! computes lower/upper boundaries for pixel's neighbourhood
+//! computes lower/upper boundaries for pixel's neighborhood
 void get_boundaries(int var, const Pixel_2& pix, Stripe& stripe) {
 
     int level = pix.level, val = pix.y;
@@ -1902,14 +1906,14 @@ inline void get_polynomials(int var, Stripe& stripe) {
 }
 
 /*!
- * checks 8-pixel neighbourhood of a pixel, returns \c true if
- * only one curve branch intersects pixel's neighbourhood, \c dir
+ * checks 8-pixel neighborhood of a pixel, returns \c true if
+ * only one curve branch intersects pixel's neighborhood, \c dir
  * defines backward direction, \c new_dir is a new tracking direction
  *
  * if \c CGAL_CKVA_RENDER_WITH_REFINEMENT is set, in case of success \c pix
  * receives double approximations of intersection point
  */
-bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
+bool test_neighborhood(Pixel_2& pix, int dir, int& new_dir)
 {
     NT lvl = NT(one << pix.level);
     NT inv = NT(1.0) / lvl;
@@ -2254,6 +2258,11 @@ Lexit:
     pix.yv = CGAL::to_double(engine.y_min + y*engine.pixel_h);
     return ret;
 }
+/*! \copydoc test_neighborhood
+ *  \deprecated please use #test_neighborhood */
+CGAL_DEPRECATED bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
+{ return test_neighborhood(pix, new_dir); }
+
 #endif // CGAL_CKVA_RENDER_WITH_REFINEMENT
 
 //! \brief returns whether a polynomial has zero over an interval,
@@ -2312,7 +2321,8 @@ void select_cache_entry(const Arc_2& arc) {
         it++;
     }
 
-    int new_id, new_entry = (it == cache_list.end());
+    std::size_t new_id;
+    bool new_entry = (it == cache_list.end());
     if(new_entry) {
         new_id = cache_list.size();
         if(new_id >= CGAL_N_CACHES) {
@@ -2579,10 +2589,10 @@ inline bool is_isolated_pixel(const Pixel_2& /* pix */) {
 }
 
 // DEBUG ONLY
-void dump_neighbourhood(const Pixel_2& pix) {
 #ifdef Gfx_USE_OUT
-    CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
-    CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
+void dump_neighborhood(const Pixel_2& pix) {
+    CGAL::IO::set_mode(std::cerr, CGAL::IO::PRETTY);
+    CGAL::IO::set_mode(std::cout, CGAL::IO::PRETTY);
 
     Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
     //NT inv = NT(1) / NT(one << pix.level);
@@ -2757,8 +2767,12 @@ void dump_neighbourhood(const Pixel_2& pix) {
     Gfx_OUT("val = " << b << std::endl);
     if(a*b < 0)
         Gfx_OUT("sign change at segment 2" << std::endl);
-#endif // Gfx_USE_OUT
 }
+#else
+void dump_neighborhood(const Pixel_2&) { }
+#endif // Gfx_USE_OUT
+CGAL_DEPRECATED void dump_neighbourhood(const Pixel_2& pix)
+{ dump_neighborhood(pix); }
 
 //!@}
 }; // class Curve_renderer_2<>

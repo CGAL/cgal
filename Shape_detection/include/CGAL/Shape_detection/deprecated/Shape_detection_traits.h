@@ -27,7 +27,7 @@
   "CGAL::Shape_detection_3::Shape_detection_traits<> has been replaced by the class "\
   "CGAL::Shape_detection::Efficient_RANSAC_traits<>."
 
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 namespace CGAL {
 namespace Shape_detection {

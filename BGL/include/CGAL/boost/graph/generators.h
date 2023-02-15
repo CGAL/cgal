@@ -19,6 +19,10 @@
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 
+#include <array>
+#include <iterator>
+#include <vector>
+
 namespace CGAL {
 namespace Euler {
 
@@ -124,7 +128,7 @@ random_face_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates an isolated triangle
+ * \brief creates an isolated triangle
  * with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`.
  *
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
@@ -191,6 +195,11 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
           typename boost::graph_traits<Graph>::vertex_descriptor v3,
           Graph& g)
 {
+  CGAL_precondition(is_valid_vertex_descriptor(v0, g) &&
+                    is_valid_vertex_descriptor(v1, g) &&
+                    is_valid_vertex_descriptor(v2, g) &&
+                    is_valid_vertex_descriptor(v3, g));
+
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
   halfedge_descriptor h0 = halfedge(add_edge(g), g);
@@ -249,7 +258,7 @@ struct Default_grid_maker
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates an isolated quad with
+ * \brief creates an isolated quad with
  * its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  *
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
@@ -279,7 +288,7 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates an isolated hexahedron
+ * \brief creates an isolated hexahedron
  * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
  * \image html hexahedron.png
  * \image latex hexahedron.png
@@ -341,7 +350,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates an isolated tetrahedron
+ * \brief creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \image html tetrahedron.png
  * \image latex tetrahedron.png
@@ -440,7 +449,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates a triangulated regular prism, outward oriented,
+ * \brief creates a triangulated regular prism, outward oriented,
  * having `nb_vertices` vertices in each of its bases and adds it to the graph `g`.
  * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, `height`, 0)
  *
@@ -483,15 +492,15 @@ make_regular_prism(typename boost::graph_traits<Graph>::vertices_size_type nb_ve
   for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i < nb_vertices; ++i)
   {
     put(vpmap, vertices[i],
-        P(0.5*diameter * cos(i*precision*to_rad) + base_center.x(),
+        P(0.5*diameter * cos(to_double(FT(i)*precision*to_rad)) + base_center.x(),
           height+base_center.y(),
-          -0.5*diameter * sin(i*precision*to_rad) + base_center.z()));
+          -0.5*diameter * sin(to_double(FT(i)*precision*to_rad)) + base_center.z()));
 
     put(vpmap,
         vertices[i+nb_vertices],
-        P(0.5*diameter * cos(i*precision*to_rad) + base_center.x(),
+        P(0.5*diameter * cos(to_double(FT(i)*precision*to_rad)) + base_center.x(),
           base_center.y(),
-          -0.5*diameter * sin(i*precision*to_rad) + base_center.z()));
+          -0.5*diameter * sin(to_double(FT(i)*precision*to_rad)) + base_center.z()));
   }
 
   //fill faces
@@ -539,7 +548,7 @@ make_regular_prism(typename boost::graph_traits<Graph>::vertices_size_type nb_ve
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
+ * \brief creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
  * If `center` is `(0, 0, 0)`, then the first point of the base is `(radius, 0, 0)`
  *
@@ -589,9 +598,9 @@ make_pyramid(typename boost::graph_traits<Graph>::vertices_size_type nb_vertices
   for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i<nb_vertices; ++i)
   {
     put(vpmap, vertices[i],
-        P(0.5*diameter*cos(i*precision*to_rad)+base_center.x(),
+        P(0.5*diameter*cos(to_double(FT(i)*precision*to_rad))+base_center.x(),
           base_center.y(),
-          -0.5*diameter*sin(i*precision*to_rad)+base_center.z()));
+          -0.5*diameter*sin(to_double(FT(i)*precision*to_rad))+base_center.z()));
   }
 
   //fill faces
@@ -628,7 +637,7 @@ make_pyramid(typename boost::graph_traits<Graph>::vertices_size_type nb_vertices
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates an icosahedron, outward oriented, centered in `center` and adds it to the graph `g`.
+ * \brief creates an icosahedron, outward oriented, centered in `center` and adds it to the graph `g`.
  *
  * \param g the graph in which the icosahedron will be created.
  * \param center the center of the sphere in which the icosahedron is inscribed.
@@ -640,8 +649,9 @@ template<class Graph, class P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_icosahedron(Graph& g,
                  const P& center = P(0,0,0),
-                 typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1.0)
+                 typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1)
 {
+  typedef typename CGAL::Kernel_traits<P>::Kernel::FT FT;
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   Point_property_map vpmap = get(CGAL::vertex_point, g);
@@ -652,76 +662,77 @@ make_icosahedron(Graph& g,
   for(int i=0; i<12; ++i)
     v_vertices[i] = add_vertex(g);
 
-  typename CGAL::Kernel_traits<P>::Kernel::FT t = radius * (1.0 + CGAL::approximate_sqrt(5.0)) / 2.0;
+  const FT phi = (FT(1) + CGAL::approximate_sqrt(FT(5))) / FT(2);
+  const FT t = radius / CGAL::approximate_sqrt(1 + square(phi));
+  const FT t_phi = t * phi;
 
-  put(vpmap, v_vertices[0], P(-radius + center.x(),  t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[1], P( radius + center.x(),  t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[2], P(-radius + center.x(), -t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[3], P( radius + center.x(), -t + center.y(), 0.0 + center.z()));
+  put(vpmap, v_vertices[0], P(center.x(), center.y() + t, center.z() + t_phi));
+  put(vpmap, v_vertices[1], P(center.x(), center.y() + t, center.z() - t_phi));
+  put(vpmap, v_vertices[2], P(center.x(), center.y() - t, center.z() + t_phi));
+  put(vpmap, v_vertices[3], P(center.x(), center.y() - t, center.z() - t_phi));
 
-  put(vpmap, v_vertices[4], P( 0.0 + center.x(), -radius + center.y(),  t + center.z()));
-  put(vpmap, v_vertices[5], P( 0.0 + center.x(),  radius + center.y(),  t + center.z()));
-  put(vpmap, v_vertices[6], P( 0.0 + center.x(), -radius + center.y(), -t + center.z()));
-  put(vpmap, v_vertices[7], P( 0.0 + center.x(),  radius + center.y(), -t + center.z()));
+  put(vpmap, v_vertices[4], P(center.x() + t,  center.y() + t_phi, center.z()));
+  put(vpmap, v_vertices[5], P(center.x() + t,  center.y() - t_phi, center.z()));
+  put(vpmap, v_vertices[6], P(center.x() - t,  center.y() + t_phi, center.z()));
+  put(vpmap, v_vertices[7], P(center.x() - t,  center.y() - t_phi, center.z()));
 
-  put(vpmap, v_vertices[8], P(  t + center.x(), 0.0 + center.y(), -radius + center.z()));
-  put(vpmap, v_vertices[9], P(  t + center.x(), 0.0 + center.y(),  radius + center.z()));
-  put(vpmap, v_vertices[10], P(-t + center.x(), 0.0 + center.y(), -radius + center.z()));
-  put(vpmap, v_vertices[11], P(-t + center.x(), 0.0 + center.y(),  radius + center.z()));
+  put(vpmap, v_vertices[8],  P(center.x() + t_phi, center.y(), center.z() + t));
+  put(vpmap, v_vertices[9],  P(center.x() + t_phi, center.y(), center.z() - t));
+  put(vpmap, v_vertices[10], P(center.x() - t_phi, center.y(), center.z() + t));
+  put(vpmap, v_vertices[11], P(center.x() - t_phi, center.y(), center.z() - t));
 
-  std::vector<vertex_descriptor> face;
-  face.resize(3);
-  face[1] = v_vertices[0]; face[0] = v_vertices[5]; face[2] = v_vertices[11];
+  std::array<vertex_descriptor, 3> face;
+  face[0] = v_vertices[0]; face[1] = v_vertices[2]; face[2] = v_vertices[8];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[1]; face[2] = v_vertices[5];
+  face[0] = v_vertices[0]; face[1] = v_vertices[8]; face[2] = v_vertices[4];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[7]; face[2] = v_vertices[1];
+  face[0] = v_vertices[0]; face[1] = v_vertices[4]; face[2] = v_vertices[6];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[10]; face[2] = v_vertices[7];
+  face[0] = v_vertices[0]; face[1] = v_vertices[6]; face[2] = v_vertices[10];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[11]; face[2] = v_vertices[10];
-  Euler::add_face(face, g);
-
-  face[1] = v_vertices[1]; face[0] = v_vertices[9]; face[2] = v_vertices[5];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[5]; face[0] = v_vertices[4]; face[2] = v_vertices[11];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[11]; face[0] = v_vertices[2]; face[2] = v_vertices[10];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[10]; face[0] = v_vertices[6]; face[2] = v_vertices[7];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[7]; face[0] = v_vertices[8]; face[2] = v_vertices[1];
+  face[0] = v_vertices[0]; face[1] = v_vertices[10]; face[2] = v_vertices[2];
   Euler::add_face(face, g);
 
-  face[1] = v_vertices[3]; face[0] = v_vertices[4]; face[2] = v_vertices[9];
+  face[0] = v_vertices[1]; face[1] = v_vertices[9]; face[2] = v_vertices[3];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[2]; face[2] = v_vertices[4];
+  face[0] = v_vertices[1]; face[1] = v_vertices[3]; face[2] = v_vertices[11];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[6]; face[2] = v_vertices[2];
+  face[0] = v_vertices[1]; face[1] = v_vertices[11]; face[2] = v_vertices[6];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[8]; face[2] = v_vertices[6];
+  face[0] = v_vertices[1]; face[1] = v_vertices[6]; face[2] = v_vertices[4];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[9]; face[2] = v_vertices[8];
-  Euler::add_face(face, g);
-
-  face[1] = v_vertices[4]; face[0] = v_vertices[5]; face[2] = v_vertices[9];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[2]; face[0] = v_vertices[11]; face[2] = v_vertices[4];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[6]; face[0] = v_vertices[10]; face[2] = v_vertices[2];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[8]; face[0] = v_vertices[7]; face[2] = v_vertices[6];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[9]; face[0] = v_vertices[1]; face[2] = v_vertices[8];
+  face[0] = v_vertices[1]; face[1] = v_vertices[4]; face[2] = v_vertices[9];
   Euler::add_face(face, g);
 
-  return halfedge(v_vertices[1], v_vertices[0], g).first;
+  face[0] = v_vertices[5]; face[1] = v_vertices[8]; face[2] = v_vertices[2];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[2]; face[2] = v_vertices[7];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[7]; face[2] = v_vertices[3];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[3]; face[2] = v_vertices[9];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[9]; face[2] = v_vertices[8];
+  Euler::add_face(face, g);
+
+  face[0] = v_vertices[8]; face[1] = v_vertices[9]; face[2] = v_vertices[4];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[3]; face[1] = v_vertices[7]; face[2] = v_vertices[11];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[11]; face[1] = v_vertices[7]; face[2] = v_vertices[10];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[10]; face[1] = v_vertices[7]; face[2] = v_vertices[2];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[6]; face[1] = v_vertices[11]; face[2] = v_vertices[10];
+  Euler::add_face(face, g);
+
+  return halfedge(v_vertices[5], v_vertices[0], g).first;
 }
 
 /*!
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates a row major ordered grid with `i` cells along the width and `j` cells
+ * \brief creates a row major ordered grid with `i` cells along the width and `j` cells
  * along the height and adds it to the graph `g`.
  * An internal property map for `CGAL::vertex_point_t` must be available in `Graph`.
  *

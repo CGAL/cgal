@@ -22,7 +22,7 @@ class GetCost
 {
 public:
 
-  /// The class Edge_profile regroups useful information about an edge, such as its incident vertices and faces.
+  /// The class `Edge_profile` regroups useful information about an edge, such as its incident vertices and faces.
   typedef CGAL::Surface_mesh_simplification::Edge_profile Edge_profile;
 
   /// \name Operations
@@ -38,4 +38,3 @@ public:
 /// @}
 
 }; /* end GetCost */
-

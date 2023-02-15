@@ -18,17 +18,18 @@
 
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Iterator_range.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/range/iterator_range.hpp>
 
 #include <gr/algorithms/FunctorSuper4pcs.h>
 #include <gr/algorithms/PointPairFilter.h>
 
 #include <Eigen/Dense>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -169,84 +170,117 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
 
    \param point_set_1 input point range used as reference.
    \param point_set_2 input point range whose registration w.r.t. `point_set_1` will be computed.
-   \param np1 optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` whose key type
-     is the value type of the iterator of `PointRange1` and whose value type is
-     `geom_traits::Point_3`.  If this parameter is omitted,
-     `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` whose key
-     type is the value type of the iterator of `PointRange1` and whose value
-     type `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `point_set_1`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange1` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
 
-     \cgalParamBegin{number_of_samples} size of the subset of input points used
-     to compute registration. Input clouds are sub-sampled prior exploration,
-     to ensure fast computations. Super4PCS has a linear complexity w.r.t. the
-     number of input samples, allowing to use larger values than 4PCS. Simple
-     geometry with large overlap can be matched with only 200 samples. However,
-     with Super4PCS, smaller details can be used during the process by using up
-     to thousands of points. There is no theoretical limit to this parameter,
-     however using too large values leads to very a large congruent set, which
-     requires more time and memory to be explored. Using a large number of
-     samples is recommended when: geometrical details are required to perform
-     the matching, for instance to disambiguate between several similar
-     configurations; the clouds have a very low overlap: using a too sparse
-     sampling can prevent to have samples in the overlapping area, causing the
-     algorithm to fail; the clouds are very noisy, and require a dense
-     sampling. Note that Super4PCS is a global registration algorithm, which
-     finds a good approximate of the rigid transformation aligning too
-     clouds. Increasing the number of samples in order to get a fine
-     registration is not optimal: it is usually faster to use less samples, and
-     refine the transformation using a local algorithm, like the ICP, or its
-     variant SparseICP.\cgalParamEnd
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `point_set_1`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange1` and whose value type is `geom_traits::Vector_3`}
+       \cgalParamDefault{Normals are computed and stored internally.}
+     \cgalParamNEnd
 
-     \cgalParamBegin{maximum_normal_deviation} angle threshold (in
-     degrees) used to filter pairs of points according to their normal
-     consistency. Small values decrease computation time but may also
-     decrease the quality if pairs of points that should match have
-     a normal deviation higher than the threshold.\cgalParamEnd
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
 
-     \cgalParamBegin{accuracy} registration accuracy (delta in the
-     paper). Setting a small value means that the two clouds needs to be very
-     close to be considered as well aligned. It is expressed in scene units. A
-     simple way to understand its impact is to consider the computation of the
-     Largest Common Pointset (LCP), the metric used to verify how much the
-     clouds are aligned. For each transformation matrix produced by Super4PCS,
-     we compute the LCP measure by considering a shell around the reference
-     cloud, and count the percentage of points of the target cloud lying in the
-     shell. The thickness of the shell is defined by the parameter
-     delta.\cgalParamEnd
+     \cgalParamNBegin{number_of_samples}
+       \cgalParamDescription{size of the subset of input points used to compute registration}
+       \cgalParamType{unsigned int}
+       \cgalParamDefault{`200`}
+       \cgalParamExtra{Input clouds are sub-sampled prior exploration, to ensure fast computations.
+                       Super4PCS has a linear complexity w.r.t. the number of input samples,
+                       allowing to use larger values than 4PCS. Simple geometry with large overlap
+                       can be matched with only 200 samples. However, with Super4PCS, smaller details
+                       can be used during the process by using up to thousands of points.
+                       There is no theoretical limit to this parameter, however using too large values
+                       leads to very a large congruent set, which requires more time and memory
+                       to be explored. Using a large number of samples is recommended when:
+                       geometrical details are required to perform the matching, for instance
+                       to disambiguate between several similar configurations; the clouds
+                       have a very low overlap: using a too sparse sampling can prevent
+                       to have samples in the overlapping area, causing the algorithm to fail;
+                       the clouds are very noisy, and require a dense sampling.
+                       Note that Super4PCS is a global registration algorithm, which
+                       finds a good approximate of the rigid transformation aligning too
+                       clouds. Increasing the number of samples in order to get a fine
+                       registration is not optimal: it is usually faster to use less samples, and
+                       refine the transformation using a local algorithm, like the ICP, or its
+                       variant SparseICP.}
+     \cgalParamNEnd
 
-     \cgalParamBegin{overlap} ratio of expected overlap between the two point
-     sets: it is ranging between 0 (no overlap) to 1 (100% overlap). The
-     overlap parameter controls the size of the basis used for
-     registration. Usually, the larger the overlap, the faster the
-     algorithm. When the overlap is unknown, a simple way to set this parameter
-     is to start from 100% overlap, and decrease the value until obtaining a
-     good result. Using too small values will slow down the algorithm, and
-     reduce the accuracy of the result.\cgalParamEnd
+     \cgalParamNBegin{maximum_normal_deviation}
+       \cgalParamDescription{angle threshold (in degrees) used to filter pairs of points
+                             according to their normal consistency}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`90.00`}
+       \cgalParamExtra{Small values decrease computation time but may also decrease the quality
+                       if pairs of points that should match have a normal deviation higher than the threshold.}
+     \cgalParamNEnd
 
-     \cgalParamBegin{maximum_running_time} maximum number of seconds after
-     which the algorithm stops. Super4PCS explores the transformation space to
-     align the two input clouds. Since the exploration is performed randomly,
-     it is recommended to use a large time value to explore the whole space.
-     \cgalParamEnd
+     \cgalParamNBegin{accuracy}
+       \cgalParamDescription{registration accuracy (delta in the paper)}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`5.00`}
+       \cgalParamExtra{Setting a small value means that the two clouds needs to be very
+                       close to be considered as well aligned. It is expressed in scene units. A
+                       simple way to understand its impact is to consider the computation of the
+                       Largest Common Pointset (LCP), the metric used to verify how much the
+                       clouds are aligned. For each transformation matrix produced by Super4PCS,
+                       we compute the LCP measure by considering a shell around the reference
+                       cloud, and count the percentage of points of the target cloud lying in the
+                       shell. The thickness of the shell is defined by the parameter
+                       delta.}
+     \cgalParamNEnd
 
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class,
-     model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{overlap}
+       \cgalParamDescription{ratio of expected overlap between the two point sets:
+                             it is ranging between `0` (no overlap) to `1` (100% overlap)}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`0.20`}
+       \cgalParamExtra{The overlap parameter controls the size of the basis used for
+                       registration. Usually, the larger the overlap, the faster the
+                       algorithm. When the overlap is unknown, a simple way to set this parameter
+                       is to start from 100% overlap, and decrease the value until obtaining a
+                       good result. Using too small values will slow down the algorithm, and
+                       reduce the accuracy of the result.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{maximum_running_time}
+       \cgalParamDescription{maximum number of seconds after which the algorithm terminates.}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`1000`}
+       \cgalParamExtra{Super4PCS explores the transformation space to align the two input clouds.
+                       Since the exploration is performed randomly, it is recommended
+                       to use a large time value to explore the whole space.}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \param np2 optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` whose key type
-     is the value type of the iterator of `PointRange2` and whose value type is
-     `geom_traits::Point_3`.  If this parameter is omitted,
-     `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` whose key
-     type is the value type of the iterator of `PointRange2` and whose value
-     type `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `point_set_2`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange2` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `point_set_2`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange2` and whose value type is `geom_traits::Vector_3`}
+       \cgalParamDefault{Normals are computed and stored internally.}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return a pair containing the affine transformation that should be applied
@@ -254,40 +288,43 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
    registration score.
 */
 template <class PointRange1, class PointRange2,
-          class NamedParameters1, class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 std::pair<geom_traits::Aff_transformation_3, double>
 #else
-std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParameters1>
-  ::Kernel::Aff_transformation_3, double>
+std::pair<typename Point_set_processing_3_np_helper<PointRange1, NamedParameters1>
+  ::Geom_traits::Aff_transformation_3, double>
 #endif
 compute_registration_transformation (const PointRange1& point_set_1, const PointRange2& point_set_2,
-                                     const NamedParameters1& np1, const NamedParameters2& np2)
+                                     const NamedParameters1& np1 = parameters::default_values(),
+                                     const NamedParameters2& np2 = parameters::default_values())
 {
-  namespace PSP = CGAL::Point_set_processing_3;
   namespace GR = gr;
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // property map types
-  typedef typename CGAL::GetPointMap<PointRange1, NamedParameters1>::type PointMap1;
-  typedef typename CGAL::GetPointMap<PointRange2, NamedParameters2>::type PointMap2;
-  CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<PointMap1>::value_type,
-                                             typename boost::property_traits<PointMap2>::value_type> ::value),
+  typedef Point_set_processing_3_np_helper<PointRange1, NamedParameters1> NP_helper1;
+  typedef Point_set_processing_3_np_helper<PointRange2, NamedParameters2> NP_helper2;
+  typedef typename NP_helper1::Const_point_map PointMap1;
+  typedef typename NP_helper2::Const_point_map PointMap2;
+  CGAL_static_assertion_msg((std::is_same< typename boost::property_traits<PointMap1>::value_type,
+                                           typename boost::property_traits<PointMap2>::value_type> ::value),
                             "The point type of input ranges must be the same");
 
-  typedef typename PSP::GetNormalMap<PointRange1, NamedParameters1>::type NormalMap1;
-  typedef typename PSP::GetNormalMap<PointRange2, NamedParameters2>::type NormalMap2;
-  CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<NormalMap1>::value_type,
-                                             typename boost::property_traits<NormalMap2>::value_type> ::value),
+  typedef typename NP_helper1::Normal_map NormalMap1;
+  typedef typename NP_helper2::Normal_map NormalMap2;
+  CGAL_static_assertion_msg((std::is_same< typename boost::property_traits<NormalMap1>::value_type,
+                                           typename boost::property_traits<NormalMap2>::value_type> ::value),
                             "The vector type of input ranges must be the same");
 
-  typedef typename PSP::GetK<PointRange1, NamedParameters1>::Kernel Kernel;
+  typedef typename NP_helper1::Geom_traits Kernel;
 
-  PointMap1 point_map1 = choose_parameter(get_parameter(np1, internal_np::point_map), PointMap1());
-  NormalMap1 normal_map1 = choose_parameter(get_parameter(np1, internal_np::normal_map), NormalMap1());
-  PointMap2 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
-  NormalMap2 normal_map2 = choose_parameter(get_parameter(np2, internal_np::normal_map), NormalMap2());
+  PointMap1 point_map1 = NP_helper1::get_const_point_map(point_set_1, np1);
+  NormalMap1 normal_map1 = NP_helper2::get_normal_map(point_set_1, np1);
+  PointMap2 point_map2 = NP_helper2::get_const_point_map(point_set_2, np2);
+  NormalMap2 normal_map2 = NP_helper2::get_normal_map(point_set_2, np2);
 
   Options<Kernel> options;
   options.sample_size = choose_parameter(get_parameter(np1, internal_np::number_of_samples), 200);
@@ -304,30 +341,6 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
                                                                normal_map1, normal_map2,
                                                                options);
 
-}
-
-// convenience overloads
-template <class PointRange1, class PointRange2,
-          class NamedParameters1>
-std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParameters1>
-  ::Kernel::Aff_transformation_3, double>
-compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2,
-      const NamedParameters1& np1)
-{
-  namespace params = CGAL::Point_set_processing_3::parameters;
-  return compute_registration_transformation(point_set_1, point_set_2, np1, params::all_default(point_set_1));
-}
-
-template <class PointRange1, class PointRange2>
-std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1,
-          Named_function_parameters<bool, internal_np::all_default_t> >
-  ::Kernel::Aff_transformation_3, double>
-compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2)
-{
-  namespace params = CGAL::Point_set_processing_3::parameters;
-  return compute_registration_transformation(point_set_1, point_set_2,
-                                             params::all_default(point_set_1),
-                                             params::all_default(point_set_2));
 }
 
 } } // end of namespace CGAL::OpenGR

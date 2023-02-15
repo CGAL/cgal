@@ -3,12 +3,12 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K1;
-typedef CGAL::Triangulation_2_projection_traits_3<K1> K;
+typedef CGAL::Projection_traits_3<K1> K;
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
@@ -37,7 +37,8 @@ int main()
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
   std::cout << "Meshing the triangulation..." << std::endl;
-  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5, gt));
+  Criteria criteria(0.125, 0.5, gt);
+  CGAL::refine_Delaunay_mesh_2(cdt, CGAL::parameters::criteria(criteria));
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 }

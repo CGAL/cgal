@@ -15,8 +15,9 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/basic.h>
+
+#include <utility>
 
 namespace CGAL {
 
@@ -29,20 +30,12 @@ public:
 
   typedef typename CAP::result_type  result_type;
 
-  Unfiltered_predicate_adaptor()
-  {}
-
   // These constructors are used for constructive predicates.
   // You should try to avoid constructive predicates, as they will construct
   // the exact values systematically (in the ctor), rather than lazily.
-  template <class O>
-  Unfiltered_predicate_adaptor(const O &o1)
-    : Certified_approx_predicate(o1)
-  {}
-
-  template <class O>
-  Unfiltered_predicate_adaptor(const O &o1, const O &o2)
-    : Certified_approx_predicate(o1, o2)
+  template <class ... O>
+  Unfiltered_predicate_adaptor(O&& ...o)
+    : Certified_approx_predicate(std::forward<O>(o)...)
   {}
 
   template <class ... A>
@@ -55,8 +48,6 @@ public:
     return static_cast<result_type>(Certified_approx_predicate(std::forward<A>(a)...));
   }
 #endif
-
-  // Idem for more than 9 arguments.  Do it on demand.
 };
 
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG

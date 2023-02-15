@@ -32,8 +32,9 @@
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/functional.hpp>
 #include <CGAL/NT_converter.h>
+
+#include <functional>
 
 // here is how it works. We have d+2 variables:
 // R (big radius), r (small radius), c (center). The problem is
@@ -258,9 +259,6 @@ private:
   typedef  QP_access_by_index
   <typename std::vector<Point>::const_iterator, int> Point_by_index;
 
-  typedef  boost::binder2nd< std::divides<int> >
-  Divide;
-
   typedef  std::vector<int>           Index_vector;
 
   typedef  std::vector<NT>            NT_vector;
@@ -272,7 +270,7 @@ public:
 
   typedef  CGAL::Join_input_iterator_1<
     Basic_variable_index_iterator,
-    CGAL::Unary_compose_1<Point_by_index,Divide> >
+    std::function<Point(int)> >
   Support_point_iterator;
 
 
@@ -327,24 +325,20 @@ public:
 
   Support_point_iterator
   support_points_begin() const {
-    CGAL_optimisation_assertion_msg(number_of_points() >= 2,
+    CGAL_assertion_msg(number_of_points() >= 2,
                                     "support_points_begin: not enough points");
     return Support_point_iterator(
                                   solver->basic_original_variable_indices_begin(),
-                                  CGAL::compose1_1(
-                                                   Point_by_index( points.begin()),
-                                                   boost::bind2nd( std::divides<int>(), 2)));
+                                  [this](int i){ return Point_by_index(this->points.begin())(i/2); });
   }
 
   Support_point_iterator
   support_points_end() const {
-    CGAL_optimisation_assertion_msg(number_of_points() >= 2,
+    CGAL_assertion_msg(number_of_points() >= 2,
                                     "support_points_begin: not enough points");
     return Support_point_iterator(
                                   solver->basic_original_variable_indices_end(),
-                                  CGAL::compose1_1(
-                                                   Point_by_index( points.begin()),
-                                                   boost::bind2nd( std::divides<int>(), 2)));
+                                  [this](int i){ return Point_by_index(this->points.begin())(i/2); });
   }
 
   int  number_of_inner_support_points() const { return static_cast<int>(inner_indices.size());}
@@ -407,27 +401,27 @@ public:
   // NOTE: an implicit conversion from ET to RT must be available!
   Point
   center( ) const
-  { CGAL_optimisation_precondition( ! is_empty());
+  { CGAL_precondition( ! is_empty());
   return tco.construct_point_d_object()( ambient_dimension(),
                                          center_coordinates_begin(),
                                          center_coordinates_end()); }
 
   FT
   squared_inner_radius( ) const
-  { CGAL_optimisation_precondition( ! is_empty());
+  { CGAL_precondition( ! is_empty());
   return FT( squared_inner_radius_numerator()) /
     FT( squared_radii_denominator()); }
 
   FT
   squared_outer_radius( ) const
-  { CGAL_optimisation_precondition( ! is_empty());
+  { CGAL_precondition( ! is_empty());
   return FT( squared_outer_radius_numerator()) /
     FT( squared_radii_denominator()); }
 
   // predicates
   CGAL::Bounded_side
   bounded_side( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
@@ -437,7 +431,7 @@ public:
 
   bool
   has_on_bounded_side( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
@@ -446,7 +440,7 @@ public:
 
   bool
   has_on_boundary( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
@@ -455,7 +449,7 @@ public:
 
   bool
   has_on_unbounded_side( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr(da_coord(p)[d]);
@@ -474,14 +468,14 @@ public:
   { if ( points.size() > 0) points.erase( points.begin(), points.end());
   std::copy( first, last, std::back_inserter( points));
   set_dimension();
-  CGAL_optimisation_precondition_msg( check_dimension(),
+  CGAL_precondition_msg( check_dimension(),
                                       "Not all points have the same dimension.");
   compute_min_annulus(); }
 
   void
   insert( const Point& p)
   { if ( is_empty()) d = tco.access_dimension_d_object()( p);
-  CGAL_optimisation_precondition(
+  CGAL_precondition(
                                  tco.access_dimension_d_object()( p) == d);
   points.push_back( p);
   compute_min_annulus(); }
@@ -489,10 +483,10 @@ public:
   template < class InputIterator >
   void
   insert( InputIterator first, InputIterator last)
-  { CGAL_optimisation_precondition_code( std::size_t old_n = points.size());
+  { CGAL_precondition_code( std::size_t old_n = points.size());
   points.insert( points.end(), first, last);
   set_dimension();
-  CGAL_optimisation_precondition_msg( check_dimension( old_n),
+  CGAL_precondition_msg( check_dimension( old_n),
                                       "Not all points have the same dimension.");
   compute_min_annulus(); }
 
@@ -592,9 +586,7 @@ private:
   bool
   check_dimension( std::size_t  offset = 0)
   { return ( std::find_if( points.begin()+offset, points.end(),
-                           CGAL::compose1_1( boost::bind2nd(
-                                                          std::not_equal_to<int>(), d),
-                                             tco.access_dimension_d_object()))
+                          [this](const Point& p){ return this->d != this->tco.access_dimension_d_object()(p); })
              == points.end()); }
 
   // compute smallest enclosing annulus
@@ -653,7 +645,7 @@ private:
     options.set_pricing_strategy(pricing_strategy(NT()));
     delete solver;
     solver = new Solver(lp, options);
-    CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
+    CGAL_assertion(solver->status() == QP_OPTIMAL);
 
     // compute center and squared radius
     ET sqr_sum = 0;
@@ -789,7 +781,7 @@ operator << ( std::ostream& os,
   typedef  typename Traits_::ET          ET;
   typedef  ostream_iterator<ET>          Et_it;
 
-  switch ( CGAL::get_mode( os)) {
+  switch ( CGAL::IO::get_mode( os)) {
 
   case CGAL::IO::PRETTY:
     os << "CGAL::Min_annulus_d( |P| = "
@@ -837,8 +829,8 @@ operator << ( std::ostream& os,
     break;
 
   default:
-    CGAL_optimisation_assertion_msg( false,
-                                     "CGAL::get_mode( os) invalid!");
+    CGAL_assertion_msg( false,
+                                     "CGAL::IO::get_mode( os) invalid!");
     break; }
 
   return( os);
@@ -851,11 +843,11 @@ operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
 {
   using namespace std;
 
-  switch ( CGAL::get_mode( is)) {
+  switch ( CGAL::IO::get_mode( is)) {
 
   case CGAL::IO::PRETTY:
     cerr << endl;
-    cerr << "Stream must be in ascii or binary mode" << endl;
+    cerr << "Stream must be in ASCII or binary mode" << endl;
     break;
 
   case CGAL::IO::ASCII:
@@ -866,7 +858,7 @@ operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
     break;
 
   default:
-    CGAL_optimisation_assertion_msg( false, "CGAL::IO::mode invalid!");
+    CGAL_assertion_msg( false, "CGAL::IO::mode invalid!");
     break; }
 
   return( is);

@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     CGAL::face_index_t
     >::const_type Face_index_map;
 
-  std::ifstream in((argc>1)?argv[1]:"cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   Polyhedron P;
   in >> P ;
 
@@ -79,10 +79,10 @@ int main(int argc, char** argv)
 
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See
-  // http://www.boost.org/libs/property_map/doc/vector_property_map.html
+  // https://www.boost.org/libs/property_map/doc/vector_property_map.html
   // for details.
   boost::vector_property_map<Vector, Face_index_map>
-    normals(get(CGAL::face_index, P));
+    normals(static_cast<unsigned>(num_faces(P)), get(CGAL::face_index, P));
 
   calculate_face_normals(
     P // Graph

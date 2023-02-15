@@ -53,22 +53,12 @@ struct Identity_edge_rejector
     return false;
   }
 
-  bool operator()(const Delaunay_graph& , const Edge& ) const {
-    return false;
-  }
+  // handles Edge, All_edges_iterator, Finite_edges_iterator, Edge_circulator...
+  // use a single template in case some of these types (typically All_edges_iterator
+  // and Finite_edges_iterator) are equal
 
-  bool operator()(const Delaunay_graph& ,
-                  const All_edges_iterator& ) const {
-    return false;
-  }
-
-  bool operator()(const Delaunay_graph& ,
-                  const Finite_edges_iterator& ) const {
-    return false;
-  }
-
-  bool operator()(const Delaunay_graph& ,
-                  const Edge_circulator& ) const {
+  template <typename E>
+  bool operator()(const Delaunay_graph& , const E& ) const {
     return false;
   }
 };

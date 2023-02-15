@@ -4,9 +4,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <boost/bind.hpp>
-#include <boost/range/algorithm.hpp>
-
 #include <CGAL/use.h>
 
 void constructors_test()
@@ -118,15 +115,13 @@ void memory_reuse_test()
   // remove all faces
   std::size_t old_face_size = f.m.number_of_faces();
   std::size_t old_removed_face_size = f.m.number_of_removed_faces();
-  boost::range::for_each(f.m.faces(), boost::bind(&Sm::remove_face, boost::ref(f.m), _1));
+  for(auto face : f.m.faces()) f.m.remove_face(face);
   assert(f.m.number_of_faces()== 0);
   assert(f.m.number_of_removed_faces()== old_face_size + old_removed_face_size);
   // remove all edges
   std::size_t old_edge_size = f.m.number_of_edges();
   std::size_t old_removed_edge_size = f.m.number_of_removed_edges();
-  boost::range::for_each(f.m.edges(),
-                         boost::bind(static_cast<void (Sm::*)(Sm::Edge_index)>(&Sm::remove_edge),
-                                     boost::ref(f.m), _1));
+  for(auto e : f.m.edges()) f.m.remove_edge(e);
   assert(f.m.number_of_faces() == 0);
   assert(f.m.number_of_removed_edges()== old_edge_size + old_removed_edge_size);
 
@@ -151,7 +146,7 @@ void memory_reuse_test()
   std::size_t old_size = f.m.number_of_vertices();
   std::size_t old_removed_size = f.m.number_of_removed_vertices();
 
-  boost::range::for_each(f.m.vertices(), boost::bind(&Sm::remove_vertex, boost::ref(f.m), _1));
+  for(auto v : f.m.vertices()) f.m.remove_vertex(v);
   assert(f.m.number_of_vertices() == 0);
   assert(f.m.number_of_removed_vertices()== old_size + old_removed_size);
 
@@ -235,6 +230,40 @@ void properties () {
   assert(created == false);
 }
 
+void move () {
+  Surface_fixture f;
+
+  auto nf = num_faces(f.m);
+
+  // test move-constructor
+  Sm m2{std::move(f.m)};
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(m2) == nf);
+  assert(num_faces(f.m) == 0);
+
+  // test move-assignment
+  f.m = std::move(m2);
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == 0);
+
+  // test copy-assignment
+  m2 = f.m;
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == nf);
+
+  // test copy-constructor
+  Sm m3 {f.m};
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == nf);
+}
+
 
 int main()
 {
@@ -249,6 +278,7 @@ int main()
   border_vertex_check();
   point_position_accessor();
   properties();
+  move();
   std::cout << "done" << std::endl;
   return 0;
 }

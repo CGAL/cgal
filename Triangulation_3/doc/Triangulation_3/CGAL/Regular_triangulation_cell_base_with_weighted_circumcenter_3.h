@@ -42,9 +42,9 @@ typedef Traits::Weighted_point_3 Point;
 
 As a model of the concept `RegularTriangulationCellBase_3`,
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3`
-provides a `weighted_circumcenter()` member fonction.
+provides a `weighted_circumcenter()` member function.
 
-In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
+In this model, the `weighted_circumcenter()` member function returns the <b>weighted circumcenter</b>
 of the cell.
 This `Point_3` is computed using the `Construct_weighted_circumcenter_3` functor
 of the traits class when this function is first called and its value is stored.
@@ -68,7 +68,7 @@ Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and `othe
 This function should be preferred to an assignment or the copy constructor
 if `other` is deleted thereafter.
 */
-void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw();
+void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) noexcept;
 
 /// @}
 

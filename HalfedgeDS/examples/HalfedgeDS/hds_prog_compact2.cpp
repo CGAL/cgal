@@ -2,6 +2,7 @@
 #include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <cstddef>
+#include <cassert>
 
 // Define a new halfedge class. We assume that the Halfedge_handle can
 // be created from a pointer (e.g. the HalfedgeDS is based here on the
@@ -37,14 +38,14 @@ public:
         // pointer arithmetic, then convert pointer back to handle again.
         Halfedge_handle h = HDS::halfedge_handle(this); // proper handle
         if ( nxt & 1)
-            return HDS::halfedge_handle( &* h + 1);
-        return HDS::halfedge_handle( &* h - 1);
+            return HDS::halfedge_handle( std::next(&*h) );
+        return HDS::halfedge_handle( std::prev(&*h));
     }
     Halfedge_const_handle opposite() const { // same as above
         Halfedge_const_handle h = HDS::halfedge_handle(this); // proper handle
         if ( nxt & 1)
-            return HDS::halfedge_handle( &* h + 1);
-        return HDS::halfedge_handle( &* h - 1);
+            return HDS::halfedge_handle( std::next(&*h));
+        return HDS::halfedge_handle( std::prev(&*h));
     }
     Halfedge_handle next() {
         return HDS::halfedge_handle((Halfedge*)(nxt & (~ std::ptrdiff_t(1))));
@@ -54,15 +55,15 @@ public:
                                                  (~ std::ptrdiff_t(1))));
     }
     void  set_opposite( Halfedge_handle h) {
-        CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) ||
-                          ( &* h + 1 == &* HDS::halfedge_handle(this)));
-        if ( &* h - 1 == &* HDS::halfedge_handle(this))
+        assert(( std::prev(&*h) == &* HDS::halfedge_handle(this)) ||
+               ( std::next(&*h)== &* HDS::halfedge_handle(this)));
+        if ( std::prev(&*h) == &* HDS::halfedge_handle(this))
             nxt |= 1;
         else
             nxt &= (~ std::ptrdiff_t(1));
     }
     void  set_next( Halfedge_handle h) {
-        CGAL_precondition( ((std::ptrdiff_t)(&*h) & 1) == 0);
+        assert( ((std::ptrdiff_t)(&*h) & 1) == 0);
         nxt = ((std::ptrdiff_t)(&*h)) | (nxt & 1);
     }
 private:    // Support for the Vertex_handle.
@@ -98,6 +99,6 @@ int main() {
     HDS hds;
     Decorator decorator(hds);
     decorator.create_loop();
-    CGAL_assertion( decorator.is_valid());
+    assert( decorator.is_valid());
     return 0;
 }

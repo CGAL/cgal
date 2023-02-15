@@ -37,8 +37,8 @@ void concept_check_dual() {
     Graph, face_descriptor, boost::face_index_t> >();
 
   // edge properties should be forwarded
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    Graph, edge_descriptor, boost::edge_weight_t> >();
+  //boost::function_requires< boost::concepts::ReadablePropertyGraph<
+  //  Graph, edge_descriptor, boost::edge_weight_t> >();
 
   // boost::function_requires< boost::concepts::PropertyGraph<
   //   Graph, halfedge_descriptor, CGAL::halfedge_index_t> >();

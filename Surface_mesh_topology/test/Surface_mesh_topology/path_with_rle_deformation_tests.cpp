@@ -5,6 +5,8 @@
 #include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <vector>
 #include <sstream>
+#include <tuple>
+#include <cassert>
 
 #include "Creation_of_test_cases_for_paths.h"
 
@@ -22,7 +24,7 @@ struct MyItems
     typedef std::size_t Dart_info;
 #endif // CGAL_PWRLE_TURN_V3
     typedef CGAL::Cell_attribute_with_point<CMap> Vertex_attrib;
-    typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+    typedef std::tuple<Vertex_attrib> Attributes;
   };
 };
 
@@ -35,7 +37,7 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3,
 #define NB_TESTS 21 // 0 ... 20
 static unsigned int nbtests=0;
 
-static const unsigned int ALL_TESTS=std::numeric_limits<unsigned int>::max();
+static const unsigned int ALL_TESTS=(std::numeric_limits<unsigned int>::max)();
 
 enum Transformation // enum for the type of transformations
 {
@@ -55,7 +57,7 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     draw
 #endif
                     =false,
-                    std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
+                    std::size_t repeat=0) // If 0, repeat as long as there is one modification;
                                            // otherwise repeat the given number of times
 {
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -119,7 +121,7 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 #endif // CGAL_USE_BASIC_VIEWER
 
   path.swap(prevp);
-  CGAL_assertion(path.is_valid(true));
+  assert(path.is_valid(true));
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
@@ -165,9 +167,9 @@ bool test_all_cases_spurs_and_bracket(bool draw, unsigned int testtorun)
 {
   bool res=true;
   LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
+  if (!CGAL::load_off(lcc, "data/cube-mesh-5-5.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
+    std::cout<<"PROBLEM reading file data/cube-mesh-5-5.off"<<std::endl;
     return false;
   }
 
@@ -199,9 +201,9 @@ bool test_all_cases_spurs_and_bracket(bool draw, unsigned int testtorun)
   { res=false; }
 
   lcc.clear();
-  if (!CGAL::load_off(lcc, "./data/spiral-squared.off"))
+  if (!CGAL::load_off(lcc, "data/spiral-squared.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/spiral-squared.off"<<std::endl;
+    std::cout<<"PROBLEM reading file data/spiral-squared.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -216,9 +218,9 @@ bool test_all_cases_spurs_and_bracket(bool draw, unsigned int testtorun)
   { res=false; }
 
   lcc.clear();
-  if (!CGAL::load_off(lcc, "./data/loop-squared.off"))
+  if (!CGAL::load_off(lcc, "data/loop-squared.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/spiral-squared.off"<<std::endl;
+    std::cout<<"PROBLEM reading file data/spiral-squared.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -239,9 +241,9 @@ bool test_all_cases_l_shape(bool draw, unsigned int testtorun)
 {
   bool res=true;
   LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
+  if (!CGAL::load_off(lcc, "data/cube-mesh-5-5.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
+    std::cout<<"PROBLEM reading file data/cube-mesh-5-5.off"<<std::endl;
     return false;
   }
   Path_on_surface<LCC_3_cmap> path(lcc);
@@ -263,9 +265,9 @@ bool test_all_cases_l_shape(bool draw, unsigned int testtorun)
   { res=false; }
 
   lcc.clear();
-  if (!CGAL::load_off(lcc, "./data/case4-right-shift-squared.off"))
+  if (!CGAL::load_off(lcc, "data/case4-right-shift-squared.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/case4-right-shift-squared.off"
+    std::cout<<"PROBLEM reading file data/case4-right-shift-squared.off"
              <<std::endl;
     exit(EXIT_FAILURE);
   }
@@ -277,9 +279,9 @@ bool test_all_cases_l_shape(bool draw, unsigned int testtorun)
   { res=false; }
 
   lcc.clear();
-  if (!CGAL::load_off(lcc, "./data/cases5-6-right-shift-squared.off"))
+  if (!CGAL::load_off(lcc, "data/cases5-6-right-shift-squared.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/cases5-6-right-shift-squared.off"
+    std::cout<<"PROBLEM reading file data/cases5-6-right-shift-squared.off"
              <<std::endl;
     exit(EXIT_FAILURE);
   }
@@ -296,9 +298,9 @@ bool test_all_cases_l_shape(bool draw, unsigned int testtorun)
   { res=false; }
 
   lcc.clear();
-  if (!CGAL::load_off(lcc, "./data/case7-right-shift-squared.off"))
+  if (!CGAL::load_off(lcc, "data/case7-right-shift-squared.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/case7-right-shift-squared.off"
+    std::cout<<"PROBLEM reading file data/case7-right-shift-squared.off"
              <<std::endl;
     exit(EXIT_FAILURE);
   }
@@ -309,9 +311,9 @@ bool test_all_cases_l_shape(bool draw, unsigned int testtorun)
   { res=false; }
 
   lcc.clear();
-  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
+  if (!CGAL::load_off(lcc, "data/cube-mesh-5-5.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
+    std::cout<<"PROBLEM reading file data/cube-mesh-5-5.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -327,9 +329,9 @@ bool test_all_cases_l_shape(bool draw, unsigned int testtorun)
 bool test_some_random_paths_on_cube(bool draw, unsigned int testtorun)
 {
   LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
+  if (!CGAL::load_off(lcc, "data/cube-mesh-5-5.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
+    std::cout<<"PROBLEM reading file data/cube-mesh-5-5.off"<<std::endl;
     return false;
   }
 

@@ -182,7 +182,7 @@ public:
     _target (target),
     _extra_data_P (nullptr)
   {
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
                                                            target) != EQUAL);
 
@@ -197,6 +197,35 @@ public:
     rat_coeffs[5] = w;
 
     _set (rat_coeffs);
+  }
+
+  /*! Construct a segment conic arc from two endpoints.
+   * \param source the source point with rational coordinates.
+   */
+  _Conic_arc_2(const Point_2& source, const Point_2& target) :
+    _orient (COLLINEAR),
+    _info(static_cast<int>(IS_VALID)),
+    _source(source),
+    _target(target),
+    _extra_data_P(nullptr)
+  {
+    CGAL_precondition(Alg_kernel().compare_xy_2_object()(_source, _target) !=
+                      EQUAL);
+
+    // Compose the equation of the underlying line.
+    const Algebraic x1 = source.x();
+    const Algebraic y1 = source.y();
+    const Algebraic x2 = target.x();
+    const Algebraic y2 = target.y();
+
+    // The supporting line is A*x + B*y + C = 0, where:
+    //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
+    // We use the extra data field to store the equation of this line.
+    _extra_data_P = new Extra_data;
+    _extra_data_P->a = y2 - y1;
+    _extra_data_P->b = x1 - x2;
+    _extra_data_P->c = x2*y1 - x1*y2;
+    _extra_data_P->side = ZERO;
   }
 
   /*!
@@ -220,7 +249,7 @@ public:
     _source = Point_2 (nt_traits.convert (x1), nt_traits.convert (y1));
     _target = Point_2 (nt_traits.convert (x2), nt_traits.convert (y2));
 
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (_source,
                                                            _target) != EQUAL);
 
@@ -271,7 +300,7 @@ public:
     Rational          y0 = center.y();
     Rational          R_sqr = ker.compute_squared_radius_2_object() (circ);
 
-    // Produce the correponding conic: if the circle center is (x0,y0)
+    // Produce the corresponding conic: if the circle center is (x0,y0)
     // and its squared radius is R^2, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
     // Note that this equation describes a curve with a negative (clockwise)
@@ -309,7 +338,7 @@ public:
     _target(target),
     _extra_data_P (nullptr)
   {
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
                                                            target) != EQUAL);
     CGAL_precondition (orient != COLLINEAR);
@@ -321,11 +350,11 @@ public:
     Rational          y0 = center.y();
     Rational          R_sqr = ker.compute_squared_radius_2_object() (circ);
 
-    // Produce the correponding conic: if the circle center is (x0,y0)
+    // Produce the corresponding conic: if the circle center is (x0,y0)
     // and it squared radius is R^2, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
     // Since this equation describes a curve with a negative (clockwise)
-    // orientation, we multiply it by -1 if necessary to obtain a positive
+    // orientation, we multiply it by -1 if nece_Conic_arc_2 ssary to obtain a positive
     // (counterclockwise) orientation.
     const Rational    _zero (0);
     Rational          rat_coeffs[6];
@@ -383,7 +412,7 @@ public:
     _source = Point_2 (nt_traits.convert (x1), nt_traits.convert (y1));
     _target = Point_2 (nt_traits.convert (x3), nt_traits.convert (y3));
 
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (_source,
                                                            _target) != EQUAL);
 
@@ -411,7 +440,7 @@ public:
 
     if (points_collinear)
     {
-      _info = 0;           // Inavlid arc.
+      _info = 0;           // Invalid arc.
       return;
     }
 
@@ -477,7 +506,7 @@ public:
 
     if (point_collinear)
     {
-      _info = 0;           // Inavlid arc.
+      _info = 0;           // Invalid arc.
       return;
     }
 
@@ -914,7 +943,7 @@ public:
     }
     else
     {
-      // Use the source and target to initialize the exterme points.
+      // Use the source and target to initialize the extreme points.
       bool   source_left =
         CGAL::to_double(_source.x()) < CGAL::to_double(_target.x());
       x_min = source_left ?
@@ -1241,7 +1270,7 @@ private:
       else
       {
         // The sign of (4rs - t^2) detetmines the conic type:
-        // - if it is possitive, the conic is an ellipse,
+        // - if it is positive, the conic is an ellipse,
         // - if it is negative, the conic is a hyperbola,
         // - if it is zero, the conic is a parabola.
         CGAL::Sign   sign_conic = CGAL::sign (4*_r*_s - _t*_t);
@@ -1342,7 +1371,7 @@ private:
   }
 
   /*!
-   * Build the data for hyperbolic arc, contaning the characterization of the
+   * Build the data for hyperbolic arc, containing the characterization of the
    * hyperbolic branch the arc is placed on.
    */
   void _build_hyperbolic_arc_data ()
@@ -1597,7 +1626,7 @@ protected:
   }
 
   /*!
-   * Find the vertical tangency points of the undelying conic.
+   * Find the vertical tangency points of the underlying conic.
    * \param ps The output points of vertical tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -1680,7 +1709,7 @@ protected:
   }
 
   /*!
-   * Find the horizontal tangency points of the undelying conic.
+   * Find the horizontal tangency points of the underlying conic.
    * \param ps The output points of horizontal tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of horizontal tangency points.

@@ -34,6 +34,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
+#include <tbb/parallel_for.h>
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
@@ -85,7 +86,7 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Flat || m == FlatPlusEdges);
   }
-  Scene_item* clone() const {return 0;}
+  Scene_item* clone() const {return nullptr;}
   QString toolTip() const {return QString("Item %1 with color indicating distance with %2").arg(this->name()).arg(other_poly);}
   void draw(Viewer_interface *viewer) const
   {
@@ -194,7 +195,7 @@ private:
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
-        std::size_t nb_points =  (std::max)((int)std::ceil(nb_pts_per_face * PMP::face_area(f,*poly,PMP::parameters::geom_traits(Kernel()))),
+        std::size_t nb_points =  (std::max)((int)std::ceil(nb_pts_per_face * PMP::face_area(f,*poly,CGAL::parameters::geom_traits(Kernel()))),
                                             1);
         Kernel::Point_3 &p = get(vpmap,target(halfedge(f,*poly),*poly));
         Kernel::Point_3 &q = get(vpmap,target(next(halfedge(f,*poly),*poly),*poly));

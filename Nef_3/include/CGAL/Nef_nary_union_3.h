@@ -52,10 +52,11 @@ class Nef_nary_union_3 {
   }
 
   Polyhedron get_union() {
-
+    if (queue.empty())
+      return empty;
     while(queue.size() > 1)
       unite();
-    inserted = 0;
+    inserted = 1;
     return queue.front();
   }
 };

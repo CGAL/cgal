@@ -79,7 +79,8 @@ enum MouseAction {
   ROLL,
   DRIVE,
   SCREEN_TRANSLATE,
-  ZOOM_ON_REGION
+  ZOOM_ON_REGION,
+  ZOOM_FOV
 };
 
 enum SnapShotBackground {

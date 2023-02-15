@@ -14,19 +14,18 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/config.h>
 
 //#define CGAL_MESH_3_VERBOSE 1
 
 // Use optimisations of Mesh_3
-#  define CGAL_INTRUSIVE_LIST 1
 #  define CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR 1
 #  define CGAL_MESH_3_NEW_GET_FACETS 1
 #  define CGAL_MESH_3_GET_FACETS_USING_INTRUSIVE_LIST 1
 #  define CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE 1
 #  define FORCE_STRUCTURAL_FILTERING 1
 #  define CGAL_NEW_INCIDENT_SLIVERS 1
+#  define CGAL_INTRUSIVE_LIST 1
 
 //experimental
 #  define CGAL_FASTER_BUILD_QUEUE 1
@@ -55,6 +54,12 @@
 #ifdef CGAL_MESH_3_VERBOSE
 #  ifndef CGAL_MESH_3_OPTIMIZER_VERBOSE
 #    define CGAL_MESH_3_OPTIMIZER_VERBOSE 1
+#  endif
+#endif
+
+#ifdef CGAL_MESH_3_VERY_VERBOSE
+#  ifndef CGAL_MESH_3_OPTIMIZER_VERY_VERBOSE
+#    define CGAL_MESH_3_OPTIMIZER_VERY_VERBOSE 1
 #  endif
 #endif
 

@@ -56,17 +56,17 @@ typedef unspecified_type Id;
 /// @{
 
 /*!
-Returns the datum (geometric object) represented by the primitive.
+returns the datum (geometric object) represented by the primitive.
 */
 Datum_reference datum();
 
 /*!
-Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the `AABB_tree` methods.
+returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the `AABB_tree` methods.
 */
 Id id();
 
 /*!
-Returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
+returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
 */
 Point_reference reference_point();
 

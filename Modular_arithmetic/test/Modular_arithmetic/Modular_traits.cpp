@@ -3,7 +3,7 @@
 
 
 /*! \file CGAL/Residue.C
-  test for number type modul
+  test for number type module
 */
 
 #include <CGAL/config.h>
@@ -51,13 +51,13 @@ void test_modular_traits(){
         typedef typename MT::NT NT;
 
         assert(
-            !(::boost::is_same<CGAL::Null_functor,Modular_image>::value));
+            !(::std::is_same<CGAL::Null_functor,Modular_image>::value));
         assert(
-            !(::boost::is_same<CGAL::Null_functor,Modular_image_representative>::value));
+            !(::std::is_same<CGAL::Null_functor,Modular_image_representative>::value));
         assert(
-            (::boost::is_same<CGAL::Tag_true,Is_modularizable>::value));
+            (::std::is_same<CGAL::Tag_true,Is_modularizable>::value));
         assert(
-            (::boost::is_same<TESTT,NT>::value));
+            (::std::is_same<TESTT,NT>::value));
 
         Residue::set_current_prime(7);
         Modular_image modular_image;

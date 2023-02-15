@@ -2,7 +2,7 @@
 # CGAL_SetupCGAL_ImageIODependencies
 # ----------------------------------
 #
-# The module searchs for the dependencies of the `CGAL_ImageIO` library:
+# The module searches for the dependencies of the `CGAL_ImageIO` library:
 #   - the `Zlib` library (optional)
 #
 # by calling
@@ -51,22 +51,14 @@ set(CGAL_ImageIO_FOUND TRUE)
 set_property(GLOBAL PROPERTY CGAL_ImageIO_FOUND TRUE)
 
 function(CGAL_setup_CGAL_ImageIO_dependencies target)
-  if(ARGV1 STREQUAL INTERFACE)
-    set(keyword INTERFACE)
-  else()
-    set(keyword PUBLIC)
-  endif()
 
-  target_link_libraries( CGAL_ImageIO ${keyword} CGAL::CGAL)
+  target_link_libraries( CGAL_ImageIO INTERFACE CGAL::CGAL)
 
   if(ZLIB_FOUND)
-    target_include_directories( CGAL_ImageIO SYSTEM ${keyword} ${ZLIB_INCLUDE_DIRS})
-    target_link_libraries( CGAL_ImageIO ${keyword} ${ZLIB_LIBRARIES})
+    target_include_directories( CGAL_ImageIO SYSTEM INTERFACE ${ZLIB_INCLUDE_DIRS})
+    target_link_libraries( CGAL_ImageIO INTERFACE ${ZLIB_LIBRARIES})
 
-    target_compile_definitions( CGAL_ImageIO ${keyword} CGAL_USE_ZLIB=1)
-    if(NOT ARGV1 STREQUAL INTERFACE)
-      set_target_properties(CGAL_ImageIO PROPERTIES CGAL_TARGET_USES_ZLIB TRUE)
-    endif()
+    target_compile_definitions( CGAL_ImageIO INTERFACE CGAL_USE_ZLIB=1)
   else()
     message( STATUS "NOTICE: libCGAL_ImageIO needs ZLib to read compressed files. That feature will not be activated.")
   endif()

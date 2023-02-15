@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <fstream>
 #include <string>
+#include <cassert>
 #include "draw_surface_mesh_small_faces.h"
 
 typedef CGAL::Simple_cartesian<double> K;
@@ -14,16 +15,21 @@ typedef K::FT                          FT;
 
 int main(int argc, char* argv[])
 {
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+
   Mesh sm;
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
-  input>>sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   CGAL::Polygon_mesh_processing::triangulate_faces(sm);
 
   Mesh::Property_map<face_descriptor, FT> faces_size;
   bool created;
   boost::tie(faces_size, created)=sm.add_property_map<face_descriptor, FT>("f:size",0.);
-  CGAL_assertion(created);
+  assert(created);
 
   for(face_descriptor fd : sm.faces())
   { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
@@ -34,4 +40,3 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;
 }
-

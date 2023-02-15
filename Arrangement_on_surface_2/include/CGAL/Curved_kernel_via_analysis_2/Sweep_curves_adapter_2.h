@@ -699,13 +699,14 @@ public:
      * is by definition x-monotone, an input arc is passed to the
      * output iterator directly.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object.
-     * The returned objects are all wrappers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+     * \param oi The output iteratorfor the result. Its dereference type is a
+     *        variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *        objects..
+     * \return The past-the-end output iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator()(const Generic_arc_2& cv,
-            OutputIterator oi) const {
+    OutputIterator operator()(const Generic_arc_2& cv, OutputIterator oi) const
+    {
         *oi++ = cv;
         return oi;
     }
@@ -714,32 +715,32 @@ public:
      * decompose a given curve into list of x-monotone pieces
      * (subcurves) and insert them to the output iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object.
-     * The returned objects are all wrappers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
+     * \return The past-the-end output iterator.
      */
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
 
-        typedef typename SweepCurvesAdapter_2::Native_arc_2 Native_arc_2;
-        typedef typename SweepCurvesAdapter_2::Native_point_2 Native_point_2;
-        typedef typename SweepCurvesAdapter_2::Generic_point_2 Generic_point_2;
+        typedef typename SweepCurvesAdapter_2::Native_arc_2     Native_arc_2;
+        typedef typename SweepCurvesAdapter_2::Native_point_2   Native_point_2;
+        typedef typename SweepCurvesAdapter_2::Generic_point_2  Generic_point_2;
+        typedef boost::variant<Native_arc_2, Native_point_2>
+          Make_x_monotone_result;
 
-        typedef std::vector<CGAL::Object> Objects;
-        Objects objs;
-        _m_adapter->kernel().make_x_monotone_2_object()(cv,
-            std::back_inserter(objs));
+        std::vector<Make_x_monotone_result> objs;
+        auto make_x_monotone = _m_adapter->kernel().make_x_monotone_2_object();
+        make_x_monotone(cv, std::back_inserter(objs));
         // sort out normal and degenerate arcs
-        for(typename Objects::const_iterator it = objs.begin();
-                it != objs.end(); it++) {
-            Native_arc_2 arc;
-            Native_point_2 pt;
-            if(CGAL::assign(arc, *it))
-                *oi++ = Generic_arc_2(arc);
-            else if(CGAL::assign(pt, *it))
-                *oi++ = Generic_arc_2(Generic_point_2(pt));
-            else
-                CGAL_error_msg("Bogus object..\n");
+        for (auto& obj : objs) {
+          if (auto* arc = boost::get<Native_arc_2>(&obj)) {
+            *oi++ = Generic_arc_2(*arc);
+            continue;
+          }
+          auto* pt = boost::get<Native_point_2>(&obj);
+          CGAL_assertion(pt);
+          *oi++ = Generic_arc_2(Generic_point_2(*pt));
         }
         return oi;
     }

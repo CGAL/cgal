@@ -18,9 +18,12 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Random.h>
+#include <CGAL/assertions.h>
+
 #include <unordered_map>
 
 namespace CGAL {
@@ -29,11 +32,11 @@ namespace CGAL {
 struct DefaultColorFunctorNefPolyhedron
 {
   template<typename NefPolyhedron>
-  static CGAL::Color run(const NefPolyhedron&,
+  static CGAL::IO::Color run(const NefPolyhedron&,
                          typename NefPolyhedron::Halffacet_const_handle fh)
   {
     if (fh == nullptr) // use to get the mono color
-      return CGAL::Color(100, 125, 200); // R G B between 0-255
+      return CGAL::IO::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random((unsigned int)(std::size_t)(&(*fh)));
     return get_random_color(random);
@@ -100,9 +103,10 @@ protected:
         return;
       }
 
+
+
       SHalfedge_const_handle se;
-      Halffacet_cycle_const_iterator fc;
-      fc = f->facet_cycles_begin();
+      Halffacet_cycle_const_iterator fc=f->facet_cycles_begin();
 
       se = SHalfedge_const_handle(fc); // non-zero if shalfedge is returned
       if(se == 0)
@@ -110,18 +114,40 @@ protected:
         return;
       }
 
-      CGAL::Color c = viewer.run_color(f);
+      CGAL::IO::Color c = viewer.run_color(f);
       viewer.face_begin(c);
 
       SHalfedge_around_facet_const_circulator hc_start(se);
       SHalfedge_around_facet_const_circulator hc_end(hc_start);
+      Vertex_const_handle lastvh;
       CGAL_For_all(hc_start, hc_end) {
-        Vertex_const_handle vh = hc_start->source()->center_vertex();
+        Vertex_const_handle vh=hc_start->source()->center_vertex();
+        lastvh=vh;
         viewer.add_point_in_face(vh->point(),
                                  viewer.get_vertex_normal(vh));
       }
+
+      // Now iterate through holes of the face
+      ++fc;
+      while(fc!=f->facet_cycles_end())
+      {
+        se = SHalfedge_const_handle(fc);
+        hc_start=se;
+        hc_end=hc_start;
+        CGAL_For_all(hc_start, hc_end) {
+          Vertex_const_handle vh=hc_start->source()->center_vertex();
+          viewer.add_point_in_face(vh->point(),
+                                   viewer.get_vertex_normal(vh));
+        }
+        viewer.add_point_in_face(hc_start->source()->center_vertex()->point(),
+                                 viewer.get_vertex_normal(hc_start->source()->center_vertex()));
+        viewer.add_point_in_face(lastvh->point(),
+                                 viewer.get_vertex_normal(lastvh));
+        ++fc;
+      }
+
       viewer.face_end();
-      facets_done[f] = true;
+      facets_done[f]=true;
       n_faces++;
     }
 
@@ -170,7 +196,7 @@ protected:
     negate_all_normals();
   }
 
-  CGAL::Color run_color(Halffacet_const_handle fh)
+  CGAL::IO::Color run_color(Halffacet_const_handle fh)
   {
     return m_fcolor.run(nef, fh);
   }
@@ -208,7 +234,7 @@ protected:
       ++nb;
     }
 
-    assert(nb > 0);
+    CGAL_assertion(nb > 0);
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0 / nb));
   }
 
@@ -253,8 +279,9 @@ void draw(const CGAL_NEF3_TYPE &anef,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc = 1;
-    const char *argv[2] = {"nef_polyhedron_viewer", "\0"};
+    const char *argv[2] = {"nef_polyhedron_viewer", nullptr};
     QApplication app(argc, const_cast<char **>(argv));
     DefaultColorFunctorNefPolyhedron fcolor;
     SimpleNefPolyhedronViewerQt<CGAL_NEF3_TYPE,

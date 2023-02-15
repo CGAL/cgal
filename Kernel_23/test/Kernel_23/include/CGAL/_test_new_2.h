@@ -477,6 +477,7 @@ test_new_2(const R& rep)
         = rep.compare_slope_2_object();
   Comparison_result tmp34ee = compare_slope(l1, l2);
   Comparison_result tmp34ff = compare_slope(s1, s2);
+  Comparison_result tmp34gg = compare_slope(p3, p5, p2, p3);
 
   typename R::Less_distance_to_point_2 less_distance_to_point
         = rep.less_distance_to_point_2_object();
@@ -680,7 +681,7 @@ test_new_2(const R& rep)
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
   use(tmp29); use(tmp28); use(tmp33a); use(tmp33b); use(tmp34ab); use(tmp34ac);
-  use(tmp34ff); use(tmp34ee); use(tmp34dd); use(tmp34cc); use(tmp34bb);
+  use(tmp34ff); use(tmp34gg); use(tmp34ee); use(tmp34dd); use(tmp34cc); use(tmp34bb);
   use(tmp34aa);
   use(tmp39a); use(tmp36a); use(tmp48c); use(tmp49c); use(tmp50c);
   use(tmp24a); use(tmp24b); use(tmp24c); use(tmp24d); use(tmp24e); use(tmp24f);

@@ -18,7 +18,7 @@
 
 
 #include <CGAL/Arrangement_2.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Arr_observer.h>
@@ -151,7 +151,7 @@ private:
 
   // May change during visibility computation
   mutable Observer observer;
-  mutable boost::shared_ptr<CDT> p_cdt;
+  mutable std::shared_ptr<CDT> p_cdt;
   mutable std::vector<Segment_2> needles;
 
   // Copy constructor and assignment not supported
@@ -481,7 +481,7 @@ private:
         //std::cout << vh->point() <<" -3- "<< nvh->point() <<std::endl;
         needles.push_back(Segment_2(vh->point(),nvh->point()));
       }
-      // but we may also contiue looking along the vertex
+      // but we may also continue looking along the vertex
       if(!p_cdt->is_constrained(re)) {
         collect_needle(q,nvh,nfh,rindex);
       }
@@ -564,7 +564,7 @@ private:
           //std::cout<< "h1 done"<< std::endl;
           return oit;
         }else{
-          // spliting at new vertex
+          // splitting at new vertex
           //std::cout<< "h2"<< std::endl;
           *oit++ = expand_edge(q,nvh->point(),right,nfh,rindex,oit);
           //std::cout<< "h2 done"<< std::endl;
@@ -581,7 +581,7 @@ private:
     //std::cout << "rvh->point()  "<< rvh->point() << std::endl<< std::endl;
 
 
-    // determin whether new vertex needs to be reported
+    // determine whether new vertex needs to be reported
     if(ro != CGAL::CLOCKWISE && lo != CGAL::COUNTERCLOCKWISE){
       *oit++ = nvh->point();
     }
@@ -601,7 +601,7 @@ private:
     if(lo == CGAL::CLOCKWISE){
       if(p_cdt->is_constrained(le)){
         // the edge is constrained
-        // report interesection with right boarder if exists
+        // report intersection with right boarder if exists
         if(ro == CGAL::CLOCKWISE){
           *oit++ = ray_seg_intersection(q,right,nvh->point(),lvh->point());
         }
@@ -620,7 +620,7 @@ private:
           //std::cout<< "h3 done"<< std::endl;
           return oit;
         }else{
-          // spliting at new vertex
+          // splitting at new vertex
           //std::cout<< "h4"<< std::endl;
           oit = expand_edge(q,left,nvh->point(),nfh,lindex,oit);
           //std::cout<< "h4 done"<< std::endl;
@@ -696,7 +696,7 @@ private:
                                               Make_constraint());
 
     //std::cout << "init_cdt new CDT" << std::endl;
-    p_cdt = boost::shared_ptr<CDT>(new CDT(begin, end));
+    p_cdt = std::shared_ptr<CDT>(new CDT(begin, end));
     observer.has_changed = false;
     //std::cout << "init_cdt done" << std::endl;
     //std::cout << std::endl;

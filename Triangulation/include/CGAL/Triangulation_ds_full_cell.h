@@ -18,7 +18,7 @@
 
 #include <CGAL/TDS_full_cell_default_storage_policy.h>
 #include <CGAL/TDS_full_cell_mirror_storage_policy.h>
-#include <CGAL/internal/Triangulation/Dummy_TDS.h>
+#include <CGAL/Triangulation/internal/Dummy_TDS.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/array.h>
@@ -204,7 +204,7 @@ public:
     TDS_data & tds_data() { return tds_data_; } /* Concept */
 
     void*   for_compact_container() const { return combinatorics_.for_compact_container(); }
-    void* & for_compact_container() { return combinatorics_.for_compact_container(); }
+    void    for_compact_container(void* p){ combinatorics_.for_compact_container(p); }
 
     bool is_valid(bool verbose = false, int = 0) const /* Concept */
     {
@@ -259,7 +259,7 @@ template < typename TDS, typename SSP >
 std::ostream &
 operator<<(std::ostream & O, const Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
-    /*if( is_ascii(O) )
+    /*if( IO::is_ascii(O) )
     {
         // os << '\n';
     }
@@ -271,7 +271,7 @@ template < typename TDS, typename SSP >
 std::istream &
 operator>>(std::istream & I, Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
-    /*if( is_ascii(I) )
+    /*if( IO::is_ascii(I) )
     {}
     else {}*/
     return I;

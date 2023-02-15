@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian.h>
 
 namespace CGAL
@@ -71,14 +71,14 @@ public:
   int &operator[](int i)
   {
     if (i == 0) return _offx;
-    CGAL_triangulation_assertion(i == 1);
+    CGAL_assertion(i == 1);
     return _offy;
   }
   /// Return the i-th entry of o.
   int operator[](int i) const
   {
     if (i == 0) return _offx;
-    CGAL_triangulation_assertion(i == 1);
+    CGAL_assertion(i == 1);
     return _offy;
   }
   /// Add o' to o using vector addition.
@@ -146,7 +146,7 @@ inline typename K::Point_2 operator+(const typename K::Point_2 &p, const Periodi
 inline std::ostream
 &operator<<(std::ostream &os, const Periodic_2_offset_2 &off)
 {
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
     os << off.x() << " " << off.y();
   else
     {
@@ -161,7 +161,7 @@ inline std::istream
 &operator>>(std::istream &is, Periodic_2_offset_2 &off)
 {
   int x = 0, y = 0;
-  if (is_ascii(is))
+  if (IO::is_ascii(is))
     is >> x >> y;
   else
     {

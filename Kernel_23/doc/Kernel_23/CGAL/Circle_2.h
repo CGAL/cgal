@@ -28,7 +28,7 @@ introduces a variable `c` of type `Circle_2`.
 It is initialized to the circle with center `center`,
 squared radius `squared_radius` and orientation
 `ori`.
-\pre `ori` \f$ \neq\f$ `COLLINEAR`, and further, `squared_radius` \f$ \geq\f$ 0.
+\pre `ori != COLLINEAR` and `squared_radius >= 0`.
 */
 Circle_2(const Point_2<Kernel> &center,
 const Kernel::FT &squared_radius,
@@ -52,7 +52,7 @@ const Point_2<Kernel> &r);
 introduces a variable `c` of type `Circle_2`.
 It is initialized to the circle with diameter \f$ \overline{pq}\f$
 and orientation `ori`.
-\pre `ori` \f$ \neq\f$ `COLLINEAR`.
+\pre `ori != COLLINEAR`.
 */
 Circle_2( const Point_2<Kernel> &p,
 const Point_2<Kernel> &q,
@@ -63,7 +63,7 @@ const Orientation &ori = COUNTERCLOCKWISE);
 introduces a variable `c` of type `Circle_2`.
 It is initialized to the circle with center `center`, squared
 radius zero and orientation `ori`.
-\pre `ori` \f$ \neq\f$ `COLLINEAR`.
+\pre `ori != COLLINEAR`.
 \post `c.is_degenerate()` = `true`.
 */
 Circle_2( const Point_2<Kernel> &center,

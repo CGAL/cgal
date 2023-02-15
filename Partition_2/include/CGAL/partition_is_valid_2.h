@@ -19,7 +19,7 @@
 #include <list>
 #include <utility>
 #include <iterator>
-#include <CGAL/Partition_2/partition_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Partition_2/Partitioned_polygon_2.h>
 #include <CGAL/Partition_2/Partition_vertex_map.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
@@ -147,8 +147,8 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
    for (;point_first != point_last; point_first++)
       orig_poly.push_back(*point_first);
 
-   CGAL_partition_precondition(orientation_2(orig_poly.begin(),orig_poly.end(),
-                                             traits) == COUNTERCLOCKWISE);
+   CGAL_precondition(orientation_2(orig_poly.begin(),orig_poly.end(),
+                                   traits) == COUNTERCLOCKWISE);
 
    P_Vertex_map  output_vertex_set(poly_first, poly_last, traits);
 
@@ -163,7 +163,7 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
          std::cout << "Polygon " << poly_num << " is " << std::endl;
          std::cout << *poly_first << std::endl;
 #endif
-      CGAL_partition_assertion (
+      CGAL_assertion (
            orientation_2(vtx_begin, vtx_end, traits) == COUNTERCLOCKWISE);
       if (!is_valid(vtx_begin, vtx_end))
       {
@@ -201,10 +201,10 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 }
 } // namespace internal
 
-template<class InputIterator, class FowardIterator>
+template<class InputIterator, class ForwardIterator>
 bool
 partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
-                      FowardIterator poly_first, FowardIterator poly_last)
+                      ForwardIterator poly_first, ForwardIterator poly_last)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel     K;
@@ -218,10 +218,10 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 }
 
 
-template<class InputIterator, class FowardIterator, class Traits>
+template<class InputIterator, class ForwardIterator, class Traits>
 bool
 partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
-                      FowardIterator poly_first, FowardIterator poly_last,
+                      ForwardIterator poly_first, ForwardIterator poly_last,
                       const Traits& traits)
 {
   //typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;

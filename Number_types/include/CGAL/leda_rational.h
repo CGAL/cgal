@@ -180,7 +180,7 @@ public:
     Output_rep( const leda_rational& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        switch (get_mode(out)) {
+        switch (IO::get_mode(out)) {
         case IO::PRETTY:{
             if(t.denominator() == leda_integer(1))
                 return out <<t.numerator();
@@ -221,9 +221,9 @@ public:
     std::ostream& operator()( std::ostream& out) const {
         Needs_parens_as_product< leda_rational > needs_parens_as_product;
         if (needs_parens_as_product(t))
-            return out <<"("<< oformat(t) <<")";
+            return out <<"("<< IO::oformat(t) <<")";
         else
-            return out << oformat(t);
+            return out << IO::oformat(t);
     }
 };
 

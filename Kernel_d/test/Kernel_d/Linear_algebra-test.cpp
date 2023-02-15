@@ -30,7 +30,7 @@ typedef double FT;
 int main(int argc, char* argv[])
 {
   CGAL_KD_SETDTHREAD(151);
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
   {
     typedef RT NT;

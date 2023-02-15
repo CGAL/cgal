@@ -59,7 +59,7 @@ public:
 
   // Returns the midpoint (under the L1 metric) that is on the rectangle
   // defined by the two points (the rectangle can be degenerate).
-  // As there are to enpoints, the index determines which is returned
+  // As there are two endpoints, the index determines which one is returned
   static Point_2 midpoint(const Point_2& p1, const Point_2& p2, std::size_t index) {
     const Point_2 *pp1;
     const Point_2 *pp2;
@@ -88,7 +88,7 @@ public:
 
     // Walk on the horizontal edge of the rectangle and then on the vertical.
 
-    // There is a chance that the width of the rectangle is smaller then the mid-dist.
+    // There is a chance that the width of the rectangle is smaller than the mid-dist.
     FT walk_x = (CGAL::min)(abs_x, dist);
     mid_x += sign_x * walk_x;
     dist -= walk_x;

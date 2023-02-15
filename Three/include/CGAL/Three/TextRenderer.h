@@ -38,7 +38,7 @@ public :
    */
     TextItem() {}
     /*!
-     * \brief The construtor for the TextItem
+     * \brief The constructor for the TextItem
      * \param p_x, p_y, p_z the coordinates of the TextItem.
      * \param p_text the text to render.
      * \param p_3D
@@ -139,12 +139,12 @@ public:
     {
     }
     //!Draws all the `TextItem`s
-    void draw(CGAL::Three::Viewer_interface* viewer);
+    void draw(CGAL::Three::Viewer_interface* viewer, const QVector3D &scaler);
     //!\brief Adds a single TextItem to TextRenderer::local_textItems
     //!
     //! @see addText(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true,  QFont font = QFont(), QColor p_color = Qt::black)
     void addText(TextItem*);
-    //!\brief Creates a new TextItem in TextRenderer::local_textItems
+    //!\brief creates a new TextItem in TextRenderer::local_textItems
     //!
     //!This is a version of addText(TextItem*) that creates the TextItem on the fly.
     //! @see addText(TextItem*)
@@ -183,7 +183,7 @@ protected:
     QList<TextListItem*> textItems;
     //!\brief List of `TextItem`s
     //!
-    //! Usually fed by the viewer, it holds the text informations from the
+    //! Usually fed by the viewer, it holds the text information from the
     //! viewer that are displayed directly on the screen, like the fps,
     //! the distances, etc.
     QList<TextItem*> local_textItems;

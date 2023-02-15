@@ -24,7 +24,7 @@ int main( int argc, char* argv[] )
   }
 
   std::ifstream F( (argc >= 2) ? argv[1] : "files/CD500");
-  CGAL::set_ascii_mode( F );
+  CGAL::IO::set_ascii_mode( F );
   std::istream_iterator< Point_2>  in_start( F );
   std::istream_iterator< Point_2>  in_end;
 

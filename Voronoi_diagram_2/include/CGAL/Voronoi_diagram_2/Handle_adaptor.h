@@ -33,6 +33,8 @@ class Handle_adaptor
   typedef T&     reference;
   typedef const T*  const_pointer;
   typedef const T&  const_reference;
+  typedef void iterator_category;
+  typedef std::ptrdiff_t difference_type;
 
  public:
   Handle_adaptor() : t() {}

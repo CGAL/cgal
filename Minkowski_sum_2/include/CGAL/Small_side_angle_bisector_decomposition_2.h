@@ -94,7 +94,7 @@ private:
   typedef std::vector<Point_info_2>                Point_vector_2;
 
   const Kernel* m_kernel;
-  bool m_own_kernel;    // inidicates whether the kernel should be freed up.
+  bool m_own_kernel;    // indicates whether the kernel should be freed up.
 
   // Data members:
   Equal_2                 f_equal;
@@ -106,11 +106,33 @@ private:
   Ccw_in_between_2        f_ccw_in_between;
 
 public:
+  // The pointer to the kernel and the flag that indicate ownership should be
+  // replaced with a smart pointer. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   /*! Default constructor. */
   Small_side_angle_bisector_decomposition_2() :
     m_kernel(new Kernel),
     m_own_kernel(true)
   { init(); }
+
+  /*! Copy constructor. */
+  Small_side_angle_bisector_decomposition_2
+  (const Small_side_angle_bisector_decomposition_2& other) :
+    m_kernel((other.m_own_kernel) ? new Kernel : other.m_kernel),
+    m_own_kernel(other.m_own_kernel)
+  { init(); }
+
+  /*! Copy assignment. */
+  Small_side_angle_bisector_decomposition_2&
+  operator=(const Small_side_angle_bisector_decomposition_2& other) {
+    m_kernel = (other.m_own_kernel) ? new Kernel : other.m_kernel;
+    m_own_kernel = other.m_own_kernel;
+    init();
+    return *this;
+  }
 
   /*! Constructor. */
   Small_side_angle_bisector_decomposition_2(const Kernel& kernel) :
@@ -234,7 +256,7 @@ public:
 
 private:
 
-  /*! Return the succesive index of a 'point info' vector. */
+  /*! Return the successive index of a 'point info' vector. */
   inline unsigned int _vec_succ(const Point_vector_2& vec,
                                 unsigned int i) const
   {
@@ -335,7 +357,7 @@ private:
   {
     CGAL_precondition(vec[v_ind].is_reflex);
 
-    // Check whether the visiblity status is already known.
+    // Check whether the visibility status is already known.
     if (vec[v_ind].is_visible(u_ind)) return (true);
     if (vec[v_ind].is_non_visible(u_ind)) return (false);
 
@@ -731,7 +753,7 @@ private:
   }
 
   /*!
-   * Get the angle ratio created by the the bisection of the angle at the
+   * Get the angle ratio created by the bisection of the angle at the
    * reflex vertex v by the diagonal uv.
    * \param vec A vector defining counterclockwise-oriented polygon.
    * \param v_ind The index of the vertex v.

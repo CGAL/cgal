@@ -5,6 +5,11 @@
 #ifndef CGAL_POLYHEDRON_DEMO_CONFIG_H
 #define CGAL_POLYHEDRON_DEMO_CONFIG_H
 
+#ifdef CGAL_USE_SSH
+//to avoid clashing between windows.h and winsock2.h
+#define _WINSOCKAPI_
+#endif
+
 #ifndef CGAL_POLYHEDRON_DEMO_NO_PARAMETRIZATION
 #  define CGAL_POLYHEDRON_DEMO_USE_PARAMETRIZATION
 #endif

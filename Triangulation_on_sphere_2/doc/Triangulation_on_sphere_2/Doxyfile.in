@@ -1,0 +1,7 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Triangulations on the Sphere"
+
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/geometric_embedding.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/ghost_faces.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/header.png

@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Skin_surface_3.h>
 
-// #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -254,12 +253,6 @@ private:
   struct Index_c4 { Tmc_Vertex_handle V[4]; };
   struct Index_c6 { Tmc_Vertex_handle V[6]; };
   struct Index_c44 { Tmc_Vertex_handle V[4][4]; };
-  struct Index_v {
-    Unique_hash_map < Rt_Vertex_handle, Tmc_Vertex_handle > V;
-  };
-
-  // index to vertex
-  Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
 
   Union_find_anchor                            anchor_del_uf, anchor_vor_uf;
   Simplex_UF_map                               anchor_del_map, anchor_vor_map;
@@ -1197,39 +1190,39 @@ Mixed_complex_triangulator_3<RegularTriangulation_3,
                              TriangulatedMixedComplexObserver_3>::
 orientation(Tmc_Cell_handle ch)
 {
-  Orientation o;
-  // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
-  Protect_FPU_rounding<true> P;
-  try {
-  Tmc_Point pts[4];
-  for (int i=0; i<4; i++)
-    pts[i] = ch->vertex(i)->point();
+  {
+    // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+    Protect_FPU_rounding<true> P;
+    try {
+    Tmc_Point pts[4];
+    for (int i=0; i<4; i++)
+      pts[i] = ch->vertex(i)->point();
 
-  // filtered kernel
-  o = _tmc.geom_traits().orientation_3_object()(pts[0], pts[1], pts[2], pts[3]);
-  } catch (Uncertain_conversion_exception&) {
-    Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-    typedef Exact_predicates_exact_constructions_kernel EK;
-    typedef Cartesian_converter<EK, Tmc_traits>         Exact_converter;
-    typedef Skin_surface_traits_3<EK>                   Exact_traits;
-    typedef Skin_surface_base_3<EK>                     Exact_skin_surface;
-
-    Exact_converter converter;
-    Exact_traits    exact_traits(shrink);
-    typename Exact_skin_surface::Bare_point e_pts[4];
-
-    for (int k=0; k<4; k++) {
-       e_pts[k] =
-         Triangulated_mixed_complex_observer::Skin_surface::
-           get_anchor_point(ch->vertex(k)->info(), exact_traits);
-
-      // Store the more precise point
-      ch->vertex(k)->point() = converter(e_pts[k]);
-    }
-    o = exact_traits.orientation_3_object()(e_pts[0], e_pts[1],
-                                            e_pts[2], e_pts[3]);
+    // filtered kernel
+    return _tmc.geom_traits().orientation_3_object()(pts[0], pts[1], pts[2], pts[3]);
+    } catch (Uncertain_conversion_exception&) {}
   }
-  return o;
+  Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  typedef Exact_predicates_exact_constructions_kernel EK;
+  typedef Cartesian_converter<EK, Tmc_traits>         Exact_converter;
+  typedef Skin_surface_traits_3<EK>                   Exact_traits;
+  typedef Skin_surface_base_3<EK>                     Exact_skin_surface;
+
+  Exact_converter converter;
+  Exact_traits    exact_traits(shrink);
+  typename Exact_skin_surface::Bare_point e_pts[4];
+
+  for (int k=0; k<4; k++) {
+     e_pts[k] =
+       Triangulated_mixed_complex_observer::Skin_surface::
+         get_anchor_point(ch->vertex(k)->info(), exact_traits);
+
+    // Store the more precise point
+    ch->vertex(k)->point() = converter(e_pts[k]);
+  }
+  return exact_traits.orientation_3_object()(e_pts[0], e_pts[1],
+                                          e_pts[2], e_pts[3]);
 }
 
 template <class RegularTriangulation_3,

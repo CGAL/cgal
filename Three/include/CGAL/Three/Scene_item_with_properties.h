@@ -14,15 +14,21 @@
 
 #include <CGAL/license/Three.h>
 
+#ifdef demo_framework_EXPORTS
+#  define DEMO_FRAMEWORK_EXPORT Q_DECL_EXPORT
+#else
+#  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
+#endif
+
 namespace CGAL
 {
 namespace Three {
   class Scene_item;
 
 //! Base class to allow an item to copy properties from another.
-//! Properties reprensent the current state of an item : its color,
+//! Properties represent the current state of an item : its color,
 //! the position of its manipulated frame, ...
-class Scene_item_with_properties {
+class DEMO_FRAMEWORK_EXPORT Scene_item_with_properties {
 public:
   virtual ~Scene_item_with_properties(){}
  //!\brief Copies properties from another Scene_item.

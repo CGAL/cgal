@@ -42,7 +42,7 @@ class Simple_feature : public Feature_base
 
 public:
   /*!
-    \brief Constructs the feature using an input range and a property map.
+    \brief constructs the feature using an input range and a property map.
 
     \param input point range.
     \param property_map property map to access scalar field.

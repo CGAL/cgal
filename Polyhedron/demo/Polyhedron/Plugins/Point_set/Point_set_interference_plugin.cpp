@@ -65,7 +65,7 @@ private Q_SLOTS:
     flags |= Qt::WindowCloseButtonHint;
 
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
       return;
 
     double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(

@@ -17,7 +17,7 @@
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -33,6 +33,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <string>
 #include <ctype.h>
 #include <CGAL/CORE/Real.h>
 #include <CGAL/tss.h>
@@ -44,6 +45,7 @@ namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const Real& Real::getZero() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(Real, Zero, 0);
   return Zero;
 }
@@ -94,7 +96,7 @@ extern BigInt FiveTo(unsigned long exp);
 // Note:
 //         -- Zilin Du: 06/03/2003
 //         -- Original it is the code for Real's constructor for "const char*".
-//            I change it to a function so that two constrcutors can share the code.
+//            I change it to a function so that two constructors can share the code.
 //            now it is private and no default value.
 //
 //   --Default value of the argument "prec" is get_static_defInputDigits()
@@ -188,8 +190,9 @@ void Real::constructFromString(const char *str, const extLong& prec )
 CGAL_INLINE_FUNCTION
 std::istream& operator >>(std::istream& i, Real& x) {
   int size = 20;
-  char *str = new char[size];
-  char *p = str;
+  std::string str;
+  str.reserve(size);
+
   char c;
   int d = 0, e = 0, s = 0;
   //  int done = 0;
@@ -206,17 +209,16 @@ std::istream& operator >>(std::istream& i, Real& x) {
                              char read in is white-space. */
   // Chen Li,
   // original "if (c == EOF) ..." is unsafe since c is of char type and
-  // EOF is of int tyep with a negative value -1
+  // EOF is of int type with a negative value -1
 
   if (i.eof()) {
     i.clear(std::ios::eofbit | std::ios::failbit);
-    delete [] str;
     return i;
   }
 
   // the current content in "c" should be the first non-whitespace char
   if (c == '-' || c == '+') {
-    *p++ = c;
+    str += c;
     i.get(c);
   }
 
@@ -229,23 +231,13 @@ std::istream& operator >>(std::istream& i, Real& x) {
     //  xxxx.xxxe+xxx.xxx:
     if (e && (c == '.'))
       break;
-    if (p - str == size) {
-      char *t = str;
-      str = new char[size*2];
-      std::memcpy(str, t, size);
-      delete [] t;
-      p = str + size;
-      size *= 2;
-    }
-#ifdef CORE_DEBUG
-    CGAL_assertion((p-str) < size);
-#endif
 
-    *p++ = c;
+    str += c;
+
     if (c == '.')
       d = 1;
     // Chen Li: fix a bug -- the sign of exponent can not happen before
-    // the character "e" appears! It must follow the "e' actually.
+    // the character "e" appears! It must follow the "e" actually.
     //    if (e || c == '-' || c == '+') s = 1;
     if (e)
       s = 1;
@@ -254,29 +246,13 @@ std::istream& operator >>(std::istream& i, Real& x) {
   }
 
   if (!i && !i.eof()) {
-    delete [] str;
     return i;
   }
-  // chenli: make sure that the p is still in the range
-  if (p - str >= size) {
-    std::ptrdiff_t len = p - str;
-    char *t = str;
-    str = new char[len + 1];
-    std::memcpy(str, t, len);
-    delete [] t;
-    p = str + len;
-  }
 
-#ifdef CORE_DEBUG
-  CGAL_assertion(p - str < size);
-#endif
-
-  *p = '\0';
   i.putback(c);
   i.clear();
   // old: x = Real(str, i.precision()); // use precision of input stream.
-  x = Real(str);  // default precision = get_static_defInputDigits()
-  delete [] str;
+  x = Real(str.c_str());  // default precision = get_static_defInputDigits()
   return i;
 }//operator >> (std::istream&, Real&)
 

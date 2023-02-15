@@ -13,7 +13,7 @@
 #define CGAL_BOOST_GRAPH_INITIALIZED_INTERNAL_INDEX_MAPS_HELPERS
 
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/use.h>
@@ -35,9 +35,11 @@ bool is_index_map_valid(IndexMap idmap,
 
   Id_type max_id = static_cast<Id_type>(num_simplices);
   std::vector<bool> indices(max_id);
-  for(const auto& d : range)
+
+  // According to concepts, the descriptor ranges such as 'vertices(g)' return a 'std::pair<it, it>'
+  for(auto it = range.first; it != range.second; ++it)
   {
-    const Id_type id = get(idmap, d);
+    const Id_type id = get(idmap, *it);
     if(id >= 0 && id < max_id && !indices[id])
     {
       indices[id] = true;
@@ -133,7 +135,7 @@ struct Index_map_initializer<IndexPropertyMap, Graph, false>
   void operator()(const PropertyTag, IndexPropertyMap, const Graph&)
   {
     // The property map is not writable; should never be here.
-    CGAL_assertion_msg(false, "You are trying to initialize a non-writable property map");
+    CGAL_assertion_msg(false, "Initialization of a non-writable property map is impossible");
   }
 };
 
@@ -169,7 +171,7 @@ IndexMap get_initialized_index_map_const(const IndexMap index_map,
   CGAL_USE(g);
   CGAL_USE(p);
 
-  // If you are passing a pmap via NPs, it must be initialized
+  // If a pmap is passed via NPs, it must be initialized
   CGAL_assertion(is_index_map_valid(p, index_map, g));
 
   return index_map;
@@ -183,7 +185,7 @@ IndexMap get_initialized_index_map(const IndexMap index_map,
   CGAL_USE(g);
   CGAL_USE(p);
 
-  // If you are passing a pmap via NPs, it must be initialized
+  // If a pmap is passed via NPs, it must be initialized
   CGAL_assertion(is_index_map_valid(p, index_map, g));
 
   return index_map;
@@ -269,7 +271,7 @@ get_initialized_index_map(CGAL::internal_np::Param_not_found,
 
 template <typename PropertyTag, typename Tag, typename DynamicTag,
           typename Graph,
-          typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+          typename NamedParameters = parameters::Default_named_parameters >
 class GetInitializedIndexMap
 {
 public:

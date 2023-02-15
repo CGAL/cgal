@@ -16,6 +16,8 @@
 #include <CGAL/use.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 #include <cassert>
+#include <string>
+#include <sstream>
 #include "helper_functions.h"
 #include <CGAL/Testsuite/use.h>
 
@@ -499,15 +501,15 @@ void test_vda(const VDA& vda)
 
 #ifndef VDA_TEST_RT
   // testing file I/O
-  std::ofstream ofs("tmp.vd.cgal");
-  assert( ofs );
-  ofs << vda;
-  ofs.close();
+  std::ostringstream oss;
+  oss << vda;
+  oss.flush();
 
-  std::ifstream ifs("tmp.vd.cgal");
-  assert( ifs );
-  ifs >> vda_copy;
-  ifs.close();
+  std::string input = oss.str();
+
+  std::istringstream iss(input);
+
+  iss >> vda_copy;
 
   assert( vda_copy.number_of_vertices() == nv );
   assert( vda_copy.number_of_halfedges() == ne );

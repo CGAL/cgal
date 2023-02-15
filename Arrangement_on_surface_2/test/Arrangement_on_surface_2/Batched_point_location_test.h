@@ -208,8 +208,7 @@ verify(InputIterator begin, InputIterator end)
   typename TopolTraits::Default_point_location_strategy pl(m_arr);
   for (InputIterator it = begin; it != end; ++it) {
 
-    if (m_verbose_level > 1)
-      print(*it);
+    if (m_verbose_level > 1) print(*it);
 
     // Perform (single) point location.
     Result_type obj = pl.locate(it->first);

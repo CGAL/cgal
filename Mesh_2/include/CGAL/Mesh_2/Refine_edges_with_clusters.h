@@ -27,13 +27,13 @@ namespace Mesh_2 {
 /**
  * This class is the base for the first level of Mesh_2: the edge
  * conforming level. It \e does handle clusters.
- * To handle clusters, an helping \c Clusters object is used.
+ * To handle clusters, an helping `Clusters` object is used.
  *
  * \param Tr is the type of triangulation on which the level acts.
  * \param Is_locally_conform defines the locally conform criterion: Gabriel
  *        or Delaunay. It defaults to the Garbriel criterion.
  * \param Container is the type of container. It defaults to a filtered
- *        queue of \c Vertex_handle pair (see \c Filtered_queue_container).
+ *        queue of `Vertex_handle` pair (see `Filtered_queue_container`).
  */
 template <
   class Tr,
@@ -71,9 +71,9 @@ class Refine_edges_base_with_clusters :
   Cluster ca, cb;
   clusters_iterator ca_it, cb_it;
 
+public:
   using Super::triangulation_ref_impl;
 
-public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base_with_clusters(Tr& tr_, Clusters<Tr>& c_)
@@ -82,7 +82,7 @@ public:
   }
 
 
-  /** \name FUNCTIONS NEEDED BY Mesher_level OVERIDDEN BY THIS CLASS. */
+  /** \name FUNCTIONS NEEDED BY Mesher_level OVERRIDDEN BY THIS CLASS. */
 
   Point refinement_point_impl(const Edge& edge)
   {
@@ -91,6 +91,11 @@ public:
 
     this->va = edge.first->vertex(Tr::cw (edge.second));
     this->vb = edge.first->vertex(Tr::ccw(edge.second));
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    std::cerr << "refinement_point_impl("
+              << "#" << this->va->time_stamp() << ": " << this->va->point() << ", "
+              << "#" << this->vb->time_stamp() << ": " << this->vb->point() << ") = ";
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
 
 //     std::cerr << "refinement_point_impl\n" << this->va->point() << " / "
 //               << this->vb->point() << std::endl;
@@ -99,7 +104,7 @@ public:
     vb_has_a_cluster = false;
     cluster_splitted = false;
 
-    // true bellow to remove ca and cb because they will
+    // true below to remove ca and cb because they will
     // be restored by update_cluster(...).
     if( clusters.get_cluster(this->va,this->vb,ca,ca_it) ) {
       if( clusters.get_cluster(this->vb,this->va,cb,cb_it) )
@@ -110,17 +115,32 @@ public:
           std::cerr << "midpoint(" << this->va->point()
                     << " , " << this->vb->point() << ")\n";
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+          auto p = midpoint(this->va->point(), this->vb->point());
+          std::cerr << p << '\n';
+          return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
           return midpoint(this->va->point(), this->vb->point());
         }
       else {
         // va only is a cluster
         va_has_a_cluster = true;
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+        auto p = split_cluster_point(this->va,this->vb,ca);
+        std::cerr << p << '\n';
+        return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
         return split_cluster_point(this->va,this->vb,ca);
       }
     } else
     if( clusters.get_cluster(this->vb,this->va,cb,cb_it) ){
       // vb only is a cluster
       vb_has_a_cluster = true;
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+      auto p = split_cluster_point(this->vb,this->va,cb);
+      std::cerr << p << '\n';
+      return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
       return split_cluster_point(this->vb,this->va,cb);
     }else{
       // no cluster
@@ -128,6 +148,11 @@ public:
       std::cerr << "midpoint(" << this->va->point()
                 << " , " << this->vb->point() << ")\n";
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+      auto p = midpoint(this->va->point(), this->vb->point());
+      std::cerr << p << '\n';
+      return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
       return midpoint(this->va->point(), this->vb->point());
     }
   };
@@ -273,8 +298,10 @@ private:
         const Point m = midpoint(a, b);
 
         typename Geom_traits::Vector_2 v = vector(a,m);
-        v = scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
-                                      squared_distance(a,b)));
+        v = scaled_vector(
+            v, CGAL_NTS sqrt(CGAL_NTS to_double(c.minimum_squared_length /
+                                                squared_distance(a, b))));
+
 
         Point i = translate(a,v), i2(i);
 

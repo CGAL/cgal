@@ -3,7 +3,7 @@
 
 Viewer::Viewer(QWidget* parent)
   : CGAL::QGLViewer(parent),
-    m_pScene(NULL)
+    m_pScene(nullptr)
 {
 }
 
@@ -15,7 +15,7 @@ void Viewer::setScene(Scene* pScene)
 void Viewer::draw()
 {
   CGAL::QGLViewer::draw();
-  if(m_pScene != NULL)
+  if(m_pScene != nullptr)
   {
         glClearColor(1.0f,1.0f,1.0f,1.0f);
         m_pScene->draw(this);

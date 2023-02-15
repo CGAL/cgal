@@ -109,7 +109,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     MScalar mg_;
     MPoly   mF1,mF2,mG_;
 
-    typename CRT::Scalar_type p,q,pq,s,t;
+    typename CRT::Scalar_type p(0),q(0),pq,s,t;
     Poly Gs,H1s,H2s, Gs_old; // s =^ star
 #ifdef CGAL_MODULAR_GCD_TIMER
     timer_init.stop();
@@ -118,7 +118,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     while(!solved){
         do{
             //---------------------------------------
-            //choose prime not deviding f1 or f2
+            //choose prime not dividing f1 or f2
             MScalar tmp1, tmp2;
             do{
                 int current_prime = -1;

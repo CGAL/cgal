@@ -66,8 +66,6 @@ class Uncertain_conversion_exception
 public:
   Uncertain_conversion_exception(const std::string &s)
     : std::range_error(s) {}
-
-  ~Uncertain_conversion_exception() throw() {}
 };
 
 
@@ -291,6 +289,11 @@ Uncertain<bool> operator!(Uncertain<bool> a)
   return Uncertain<bool>(!a.sup(), !a.inf());
 }
 
+#ifdef __clang__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunknown-warning-option"
+#  pragma GCC diagnostic ignored "-Wbitwise-instead-of-logical"
+#endif
 inline
 Uncertain<bool> operator|(Uncertain<bool> a, Uncertain<bool> b)
 {
@@ -326,32 +329,9 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 {
   return Uncertain<bool>(a.inf() & b, a.sup() & b);
 }
-
-// operator&& and operator|| are not provided because, unless their bool counterpart,
-// they lack the "short-circuiting" property.
-// We provide macros CGAL_AND and CGAL_OR, which attempt to emulate their behavior.
-// Key things : do not evaluate expressions twice, and evaluate the right hand side
-// expression only when needed.
-// TODO : C++0x lambdas should be able to help here.
-#ifdef CGAL_CFG_NO_STATEMENT_EXPRESSIONS
-#  define CGAL_AND(X, Y)  ((X) && (Y))
-#  define CGAL_OR(X, Y)   ((X) || (Y))
-#else
-#  define CGAL_AND(X, Y) \
-       __extension__ \
-       ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
-          CGAL::certainly_not(CGAL_TMP) ? CGAL::make_uncertain(false) \
-                                        : CGAL_TMP & CGAL::make_uncertain((Y)); })
-#  define CGAL_OR(X, Y) \
-       __extension__ \
-       ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
-          CGAL::certainly(CGAL_TMP) ? CGAL::make_uncertain(true) \
-                                    : CGAL_TMP | CGAL::make_uncertain((Y)); })
+#ifdef __clang__
+#  pragma GCC diagnostic pop
 #endif
-
-#define CGAL_AND_3(X, Y, Z)  CGAL_AND(X, CGAL_AND(Y, Z))
-#define CGAL_OR_3(X, Y, Z)   CGAL_OR(X, CGAL_OR(Y, Z))
-
 
 // Equality operators
 
@@ -521,6 +501,38 @@ Uncertain<T> make_uncertain(Uncertain<T> t)
   return t;
 }
 
+// operator&& and operator|| are not provided because, unless their bool counterpart,
+// they lack the "short-circuiting" property.
+// We provide macros CGAL_AND and CGAL_OR, which attempt to emulate their behavior.
+// Key things : do not evaluate expressions twice, and evaluate the right hand side
+// expression only when needed. This is done by using the second value of the macro
+// only when required thanks to a lambda that will consume the second expression on demand.
+
+namespace internal{
+  template <class F_B>
+  inline Uncertain<bool> cgal_and_impl(const Uncertain<bool>& a, F_B&& f_b)
+  {
+    return certainly_not(a) ? make_uncertain(false)
+                            : a & make_uncertain(f_b());
+  }
+
+  template <class F_B>
+  inline Uncertain<bool> cgal_or_impl(const Uncertain<bool>& a, F_B&& f_b)
+  {
+    return certainly(a) ? make_uncertain(true)
+                        : a | make_uncertain(f_b());
+  }
+}
+
+#  define CGAL_AND(X, Y) \
+  ::CGAL::internal::cgal_and_impl((X), [&]() { return (Y); })
+
+#  define CGAL_OR(X, Y) \
+  ::CGAL::internal::cgal_or_impl((X), [&]() { return (Y); })
+
+#define CGAL_AND_3(X, Y, Z)  CGAL_AND(X, CGAL_AND(Y, Z))
+#define CGAL_AND_6(A, B, C, D, E, F)  CGAL_AND(CGAL_AND_3(A, B, C), CGAL_AND_3(D, E,F))
+#define CGAL_OR_3(X, Y, Z)   CGAL_OR(X, CGAL_OR(Y, Z))
 
 // make_certain() : Forcing a cast to certain (possibly throwing).
 // This is meant to be used only in cases where we cannot easily propagate the
@@ -614,26 +626,12 @@ Uncertain<T> operator*(Uncertain<T> a, T b)
 
 // enum_cast overload
 
-#ifdef CGAL_CFG_MATCHING_BUG_5
-
-template < typename T, typename U >
-inline
-Uncertain<T> enum_cast_bug(Uncertain<U> u, const T*)
-{
-  return Uncertain<T>(static_cast<const T>(u.inf()),
-                      static_cast<const T>(u.sup()));
-}
-
-#else
-
 template < typename T, typename U >
 inline
 Uncertain<T> enum_cast(Uncertain<U> u)
 {
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
-
-#endif
 
 } //namespace CGAL
 

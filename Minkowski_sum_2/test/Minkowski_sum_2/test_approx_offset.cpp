@@ -71,10 +71,10 @@ int main (int argc, char* argv[])
     bool use_greene = true;
 
     if (((i+2) < argc) && (argv[i+2][0] == '-')) {
-      use_ssab = (std::strchr (argv[i+2], 's') != NULL);
-      use_opt = (std::strchr (argv[i+2], 'o') != NULL);
-      use_hm = (std::strchr (argv[i+2], 'h') != NULL);
-      use_greene = (std::strchr (argv[i+2], 'g') != NULL);
+      use_ssab = (std::strchr (argv[i+2], 's') != nullptr);
+      use_opt = (std::strchr (argv[i+2], 'o') != nullptr);
+      use_hm = (std::strchr (argv[i+2], 'h') != nullptr);
+      use_greene = (std::strchr (argv[i+2], 'g') != nullptr);
     }
 
     // Compute the Minkowski sum using the convolution method.

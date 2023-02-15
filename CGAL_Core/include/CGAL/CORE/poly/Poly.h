@@ -36,7 +36,7 @@
  * Author: Chee Yap
  * Date:   May 28, 2002
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -252,6 +252,7 @@ public:
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyZero() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Polynomial<NT>, zeroP);
   return zeroP;
 }
@@ -259,6 +260,7 @@ const Polynomial<NT> & Polynomial<NT>::polyZero() {
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyUnity() {
+  init_CORE();
   static const NT c[] = {1};
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Polynomial<NT>, unityP, 0, c);
   return unityP;

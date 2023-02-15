@@ -10,9 +10,7 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "ColorItemEditor.h"
-#include "DeleteCurveModeItemEditor.h"
 #include "PropertyValueDelegate.h"
-#include "DeleteCurveMode.h"
 
 #include <iostream>
 #include <QItemEditorFactory>
@@ -35,46 +33,12 @@ createEditor( QWidget* parent, const QStyleOptionViewItem& option,
   QWidget* editor;
   QVariant myData = index.data( Qt::UserRole );
 
-  // check for data types we need to handle ourselves
- /*
-  if ( qVariantCanConvert< QColor >( myData ) )
-  {
-    ColorItemEditor* colorEditor = new ColorItemEditor( parent );
-    editor = colorEditor;
-
-    QObject::connect( colorEditor, SIGNAL(confirmed()), this, SLOT(commit()));
-  }
-  else if ( qVariantCanConvert< DeleteCurveMode >( myData ) )
-  {
-    DeleteCurveModeItemEditor* modeEditor =
-      new DeleteCurveModeItemEditor( parent );
-    modeEditor->setMode( qVariantValue< DeleteCurveMode >( myData ) );
-    editor = modeEditor;
-
-    QObject::connect( modeEditor, SIGNAL( currentIndexChanged( int ) ), this,
-                      SLOT( commit( ) ) );
-  }
-  else
-  { // default handler
-    editor = QItemDelegate::createEditor( parent, option, index );
-  }*/
-
  if ( myData.canConvert< QColor >() )
   {
     ColorItemEditor* colorEditor = new ColorItemEditor( parent );
     editor = colorEditor;
 
     QObject::connect( colorEditor, SIGNAL(confirmed()), this, SLOT(commit()));
-  }
-  else if ( myData.canConvert< DeleteCurveMode >() )
-  {
-    DeleteCurveModeItemEditor* modeEditor =
-      new DeleteCurveModeItemEditor( parent );
-    modeEditor->setMode( myData.value< DeleteCurveMode >() );
-    editor = modeEditor;
-
-    QObject::connect( modeEditor, SIGNAL( currentIndexChanged( int ) ), this,
-                      SLOT( commit( ) ) );
   }
   else
   { // default handler
@@ -98,15 +62,6 @@ void PropertyValueDelegate::setModelData( QWidget* editor,
                     Qt::UserRole);
     return;
   }
-  DeleteCurveModeItemEditor* modeEditor =
-    qobject_cast<DeleteCurveModeItemEditor*>(editor);
-  if (modeEditor) {
-    model->setData(index, DeleteCurveMode::ToString(modeEditor->mode()),
-                   Qt::DisplayRole);
-    model->setData(index, QVariant::fromValue(modeEditor->mode()),
-                   Qt::UserRole);
-    return;
-  }
   QItemDelegate::setModelData(editor, model, index);
 }
 
@@ -119,17 +74,12 @@ bool PropertyValueDelegate::eventFilter( QObject* object, QEvent* event )
     ColorItemEditor* colorEditor = qobject_cast<ColorItemEditor*>(editor);
     if (colorEditor)
       return false;
-    DeleteCurveModeItemEditor* modeEditor =
-      qobject_cast<DeleteCurveModeItemEditor*>(editor);
-    if (modeEditor)
-      return false;
   }
   return QItemDelegate::eventFilter( object, event );
 }
 
 void PropertyValueDelegate::commit( )
 {
-  // std::cout << "commit selection" << std::endl;
   QWidget* editor = qobject_cast< QWidget* >( sender( ) );
   if ( editor )
   {

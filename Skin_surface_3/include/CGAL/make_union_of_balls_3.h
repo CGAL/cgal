@@ -20,8 +20,6 @@
 #include <CGAL/mesh_union_of_balls_3.h>
 #include <CGAL/subdivide_union_of_balls_mesh_3.h>
 
-#include <CGAL/make_union_of_balls_3.h>
-
 namespace CGAL {
 
 template <class WP_iterator, class Polyhedron_3>

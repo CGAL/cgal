@@ -19,7 +19,6 @@
 #define CGAL_LINE_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
@@ -39,7 +38,7 @@ class Line_3 : public R_::Kernel_base::Line_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Line_3                             Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Line_3>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Line_3>::value));
 
 public:
 
@@ -65,6 +64,9 @@ public:
   // conversion impl -> interface class
   Line_3(const Rep& l)
       : Rep(l) {}
+
+  Line_3(Rep&& l)
+      : Rep(std::move(l)) {}
 
   Line_3(const Point_3 & p, const Point_3 & q)
       : Rep(typename R::Construct_line_3()(Return_base_tag(), p, q)) {}
@@ -138,7 +140,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Line_3<R> &l)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << l.point(0) << ' ' << l.point(1);
     case IO::BINARY :

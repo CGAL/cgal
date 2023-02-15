@@ -89,7 +89,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -162,9 +162,11 @@ before_handle_event(Event* event)
 {
   if (event->is_closed()) return;
 
-  // In case the event lies at inifinity, check whether its incident curve
+  // In case the event lies at infinity, check whether its incident curve
   // is already in the arrangement.
-  if (event->curve().halfedge_handle() == Halfedge_handle()) {
+  Arr_curve_end ce;
+  if (event->boundary_touching_curve(ce).halfedge_handle() == Halfedge_handle())
+  {
     // The curve is not in the arrangement, use the base construction helper
     // to handle the event:
     Base::before_handle_event (event);

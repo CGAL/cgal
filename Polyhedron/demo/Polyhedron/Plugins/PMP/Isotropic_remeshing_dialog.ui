@@ -245,12 +245,12 @@
  </customwidgets>
  <tabstops>
   <tabstop>splitEdgesOnly_checkbox</tabstop>
+  <tabstop>edgeLength_dspinbox</tabstop>
   <tabstop>nbIterations_spinbox</tabstop>
   <tabstop>nbSmoothing_spinbox</tabstop>
   <tabstop>protect_checkbox</tabstop>
   <tabstop>smooth1D_checkbox</tabstop>
   <tabstop>preserveDuplicates_checkbox</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -21,6 +21,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
+#include <boost/container/small_vector.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
@@ -522,7 +523,7 @@ Delaunay_triangulation<DCTraits, TDS>
     // 2. Find corresponding Facet on boundary of dark zone
     // 3. stitch.
 
-    // 1. Build a facet on the boudary of the light zone:
+    // 1. Build a facet on the boundary of the light zone:
     Full_cell_handle light_s = *simps.begin();
     Facet light_ft(light_s, light_s->index(v));
 
@@ -792,7 +793,7 @@ Delaunay_triangulation<DCTraits, TDS>
 {
     CGAL_precondition_msg( ! is_infinite(s), "full cell must be finite");
     CGAL_expensive_precondition( POSITIVE == orientation(s) );
-    typedef std::vector<const Point *> Points;
+    typedef boost::container::small_vector<const Point *, 8> Points;
     Points points(current_dimension() + 2);
     int i(0);
     for( ; i <= current_dimension(); ++i )

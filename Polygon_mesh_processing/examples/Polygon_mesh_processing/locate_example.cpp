@@ -1,14 +1,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Polygon_mesh_processing/locate.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Dynamic_property_map.h>
-#include <CGAL/Polygon_mesh_processing/locate.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel             K;
 typedef K::FT                                                           FT;
@@ -74,7 +74,7 @@ int main(int /*argc*/, char** /*argv*/)
   std::cout << "Is it on the face's border? " << (PMP::is_on_face_border(ray_location, tm) ? "Yes" : "No") << "\n\n";
 
   // -----------------------------------------------------------------------------------------------
-  // Now, we artifically project the mesh to the natural 2D dimensional plane, with a little translation
+  // Now, we artificially project the mesh to the natural 2D dimensional plane, with a little translation
   // via a custom vertex point property map
 
   typedef CGAL::dynamic_vertex_property_t<Point_2>                      Point_2_property;
