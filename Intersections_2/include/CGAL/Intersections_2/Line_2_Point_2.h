@@ -29,21 +29,23 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-inline bool
-do_intersect(const typename K::Point_2 &pt,
-             const typename K::Line_2 &line,
+inline
+typename K::Boolean
+do_intersect(const typename K::Point_2& pt,
+             const typename K::Line_2& line,
              const K&)
 {
-    return line.has_on(pt);
+  return line.has_on(pt);
 }
 
 template <class K>
-inline bool
-do_intersect(const typename K::Line_2 &line,
-             const typename K::Point_2 &pt,
+inline
+typename K::Boolean
+do_intersect(const typename K::Line_2& line,
+             const typename K::Point_2& pt,
              const K&)
 {
-    return line.has_on(pt);
+  return line.has_on(pt);
 }
 
 template <class K>
@@ -76,6 +78,6 @@ intersection(const typename K::Line_2 &line,
 CGAL_INTERSECTION_FUNCTION(Point_2, Line_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Point_2, Line_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_POINT_2_LINE_2_H

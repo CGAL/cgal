@@ -71,7 +71,7 @@ namespace Mesh_3 {
 
 /**
 * @class PVertex
-* Vertex with associated perturbation datas
+* Vertex with associated perturbation data
 */
 // Sequential
 template< typename FT
@@ -171,7 +171,7 @@ void update_saved_erase_counter() {}
 bool is_zombie() { return false; }
 
 private:
-/// Private datas
+/// Private data
 Vertex_handle vertex_handle_;
 unsigned int incident_sliver_nb_;
 FT min_value_;
@@ -294,7 +294,7 @@ bool operator<(const Self& pv) const
 }
 
 private:
-/// Private datas
+/// Private data
 Vertex_handle vertex_handle_;
 unsigned int vh_erase_counter_when_added_;
 int in_dimension_;
@@ -553,7 +553,7 @@ private:
   int build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const;
 
   /**
-   * Updates priority queue for all vertices of \c vertices
+   * Updates priority queue for all vertices of `vertices`.
    */
   // Sequential
   int update_priority_queue(const Vertex_vector& vertices,
@@ -568,7 +568,7 @@ private:
 #endif
 
   /**
-   * Updates \c pv in priority queue
+   * Updates `pv` in priority queue.
    */
   int update_priority_queue(const PVertex& pv, PQueue& pqueue) const;
 
@@ -582,7 +582,7 @@ private:
                 ) const;
 
   /**
-   * Returns a pvertex from a vertex handle \c vh, using id \c pv_id
+   * Returns a pvertex from a vertex handle `vh`, using the id `pv_id`.
    */
   PVertex
   make_pvertex(const Vertex_handle& vh,
@@ -595,13 +595,13 @@ private:
                const typename PVertex::id_type& pv_id) const;
 
   /**
-   * Updates a pvertex \c pv
+   * Updates a pvertex `pv`.
    */
   void update_pvertex(PVertex& pv, const FT& sliver_bound) const;
   void update_pvertex__concurrent(PVertex& pv, const FT& sliver_bound) const;
 
   /**
-   * Returns \c vh pvertex id
+   * Returns `vh` pvertex id.
    */
   typename PVertex::id_type get_pvertex_id(const Vertex_handle& vh) const
   {
@@ -609,7 +609,7 @@ private:
   }
 
   /**
-   * Update bad vertices vector, wrt \c sliver_bound
+   * Updates bad vertices vector, wrt. `sliver_bound`.
    */
   // Sequential
   void update_bad_vertices(std::vector<Vertex_handle> &bad_vertices,
@@ -1032,7 +1032,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
         }
       }
 
-      // Update pqueue in every cases, because pv was poped
+      // Update pqueue in every cases, because pv was popped
       pqueue_size += update_priority_queue(pv, pqueue);
       visitor.end_of_perturbation_iteration(pqueue_size);
 
@@ -1378,7 +1378,7 @@ perturb_vertex( PVertex pv
       ++bcounter;
 #endif
 
-      // Update pqueue in every cases, because pv was poped
+      // Update pqueue in every cases, because pv was popped
       if (pv.is_perturbable())
       {
         enqueue_task(pv, sliver_bound, visitor, bad_vertices);

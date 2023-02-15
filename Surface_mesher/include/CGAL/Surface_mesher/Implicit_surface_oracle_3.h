@@ -54,46 +54,6 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
-    /**
-       Type and functions required in GT:
-         - Compute_scalar_product_3             (from rev. 29646)
-         - Compute_squared_distance_3
-         - Compute_squared_radius_3
-         - Construct_center_3
-         - Construct_midpoint_3
-         - Construct_point_on_3                 (from rev. 29646)
-         - Construct_scaled_vector_3
-         - Construct_segment_3                  (from rev. 29646)
-         - Construct_translated_point_3
-         - Construct_vector_3
-         - FT
-         - Has_on_bounded_side_3                (from rev. 29646)
-         - Line_3
-         - Point_3
-         - Ray_3
-         - Segment_3
-         - Sphere_3
-         - Vector_3                             (from rev. 29646)
-         - compute_scalar_product_3_object      (from rev. 29646)
-         - compute_squared_distance_3_object
-         - compute_squared_radius_3_object
-         - construct_center_3_object
-         - construct_line_3_object              (no longer, since rev. 29646)
-         - construct_midpoint_3_object
-         - construct_point_on_3_object          (from rev. 29646)
-         - construct_scaled_vector_3_object
-         - construct_segment_3_object           (from rev. 29646)
-         - construct_translated_point_3_object
-         - construct_vector_3_object
-         - has_on_bounded_side_3_object         (from rev. 29646)
-(Computed by use of:
- perl -ne '/GT\(\)\.([a-zA-Z_0-9]+)/
-             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
- perl -ne '/GT::([a-zA-Z_0-9]+)/
-             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
-)
-    */
-
   namespace {
 
   template <typename T>

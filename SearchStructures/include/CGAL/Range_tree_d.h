@@ -27,7 +27,7 @@
 // A d-dimensional Range Tree or a multilayer tree consisting of Range
 // and other trees that are derived public
 // Tree_base<C_Data, C_Window, C_Interface>
-// can be construced within this class.
+// can be constructed within this class.
 // C_Data: container class which contains the d-dimensional data the tree holds.
 // C_Window: Query window -- a d-dimensional interval
 // C_Interface: Interface for the class with functions that allow to
@@ -202,7 +202,7 @@ protected:
   // recursive function
   // (current,last) describe an interval of length n of sorted elements,
   // for this interval a tree is build containing these elements.
-  // the most left child is returend in prevchild.
+  // the most left child is returned in prevchild.
 
   template <class T>
   void build_range_tree(int n, link_type& leftchild,
@@ -222,18 +222,18 @@ protected:
       link_type  vleft = new Range_tree_node2( 0, 0,
                                   (*current), m_interface.get_key(*current) );
       //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_Tree_assertion( vleft != 0);
+      CGAL_assertion( vleft != 0);
 
       ++current;
       link_type  vright = new Range_tree_node2( 0,0,
                                   (*current), m_interface.get_key(*current) );
       //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_Tree_assertion( vright != 0);
+      CGAL_assertion( vright != 0);
       current++;
       sublevel_last = current;
 
       link_type  vparent = new Range_tree_node2( vleft, vright, vleft->key );
-      CGAL_Tree_assertion( vparent != 0);
+      CGAL_assertion( vparent != 0);
 
       vleft->parent_link = vparent;
       vright->parent_link = vparent;
@@ -260,7 +260,7 @@ protected:
         link_type vright = new Range_tree_node2( 0, 0,
                                    (*current), m_interface.get_key(*current) );
         //CGAL_NIL CGAL_NIL first two arguments
-        CGAL_Tree_assertion( vright != 0); //CGAL_NIL
+        CGAL_assertion( vright != 0); //CGAL_NIL
         current++;
         sublevel_last = current;
         prevchild = vright;
@@ -268,7 +268,7 @@ protected:
       }
       else
       {
-        // recursiv call for the construction. the interval is devided.
+        // recursiv call for the construction. the interval is divided.
         T sublevel_left, sublevel_right;
         build_range_tree(n - (int)n/2, leftchild, rightchild,
                          prevchild, leftmostlink, current, last,
@@ -276,7 +276,7 @@ protected:
         link_type vparent = new Range_tree_node2( prevchild, 0,
                                         rightchild->key );
         //CGAL_NIL argument
-        CGAL_Tree_assertion( vparent != 0);
+        CGAL_assertion( vparent != 0);
 
         prevchild->parent_link = vparent;
 

@@ -184,7 +184,7 @@ paintWithFloodFill(QPainter* painter, const TTraits& traits) {
 
   // paint bounded faces normally?
   // by experimenting it's faster to just paint all using the flood algo
-  // specially with algebraic faces since currenlty all edges have to
+  // specially with algebraic faces since currently all edges have to
   // be recalculated/rendered again for faces
   // this->paintFaces(&painter2);
   this->paintEdges(&painter2, traits);
@@ -570,7 +570,7 @@ paintFace(Face_handle f, QPainter* painter,
 
       Halfedge_handle he = cc;
       X_monotone_curve_2 c = he->curve();
-      // Get the co-ordinates of the curve's source and target.
+      // Get the coordinates of the curve's source and target.
       double sx = CGAL::to_double(he->source()->point().x()),
              sy = CGAL::to_double(he->source()->point().y()),
              tx = CGAL::to_double(he->target()->point().x()),
@@ -587,7 +587,7 @@ paintFace(Face_handle f, QPainter* painter,
       if (c.orientation() == CGAL::COLLINEAR) { pts.push_back(coord_source); }
       else {
         // If the curve is monotone, than its source and its target has the
-        // extreme x co-ordinates on this curve.
+        // extreme x coordinates on this curve.
         bool is_source_left = (sx < tx);
         int x_min = is_source_left ? coord_source_viewport.x()
                                    : coord_target_viewport.x();

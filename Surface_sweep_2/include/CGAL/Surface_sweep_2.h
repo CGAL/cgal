@@ -122,12 +122,12 @@ protected:
   // Data members:
   Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
-                                     // creaed by an overlap.
+                                     // created by an overlap.
 
   Intersection_vector m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
-  X_monotone_curve_2 m_sub_cv1;      // Auxiliary varibales
+  X_monotone_curve_2 m_sub_cv1;      // Auxiliary variables
   X_monotone_curve_2 m_sub_cv2;      // (for splitting curves).
 
 public:
@@ -145,7 +145,7 @@ public:
     Base(traits, visitor)
   {}
 
-  /*! Destrcut. */
+  /*! Destruct. */
   virtual ~Surface_sweep_2() {}
 
 protected:
@@ -184,10 +184,10 @@ protected:
    * \param overlap_cv the overlapping curve.
    * \param c1 first subcurve contributing to the overlap.
    * \param c2 second subcurve contributing to the overlap.
-   * \param all_leaves_diff not empty in case c1 and c2 have common ancesters.
+   * \param all_leaves_diff not empty in case c1 and c2 have common ancestors.
    *                        It contains the set of curves  not contained in first_parent
    *                        that are in the other subcurve
-   * \param first_parent only used when c1 and c2 have common ancesters.
+   * \param first_parent only used when c1 and c2 have common ancestors.
    *                     It is either c1 or c2 (the one having the more leaves)
    *
    */

@@ -262,7 +262,7 @@ void remove_negligible_connected_components(const std::string filename)
   PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(1e15));
   assert(is_empty(mesh));
 
-  // Could also have used default paramaters, which does the job by itself
+  // Could also have used default parameters, which does the job by itself
   std::cout << "---------\ndefault values..." << std::endl;
 
   std::vector<face_descriptor> faces_to_be_removed;

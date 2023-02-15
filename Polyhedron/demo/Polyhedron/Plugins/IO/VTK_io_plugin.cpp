@@ -60,15 +60,13 @@
 #include <vtkAppendFilter.h>
 #include <vtkSphereSource.h>
 #include <vtkVersion.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
 #include <vtkCommand.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::property_traits<boost::property_map<FaceGraph,

@@ -42,28 +42,25 @@ namespace Qt {
 
     using Base::operator <<;
 
-    PainterOstream& operator << (Hyperbolic_segment_2 s)
+    PainterOstream& operator <<(const Hyperbolic_segment_2& s)
       {
         if(const Line_arc* seg = boost::get<Line_arc>(&s)) {
           operator << (*seg);
           return *this;
         }
 
-        Circular_arc* arc = boost::get<Circular_arc>(&s);
+        const Circular_arc& arc = boost::get<const Circular_arc&>(s);
 
-        if(arc->squared_radius() > 10)
-          // due to rounding, the arc drawn does not look like it
-          // passes through the endpoints
+        if(arc.squared_radius() > 10)
+        {
+          // due to rounding, the arc drawn does not look like it passes through the endpoints
           // so we replace the arc by a line segment
-          {
-            Point_2 source(to_double(arc->source().x()),to_double(arc->source().y()));
-            Point_2 target(to_double(arc->target().x()),to_double(arc->target().y()));
-            const Line_arc seg(source,target);
-            operator << (seg);
-            return *this;
-          }
+          const Line_arc seg(arc.source(),arc.target());
+          operator << (seg);
+          return *this;
+        }
 
-        operator << (*arc);
+        operator<<(arc);
         return *this;
       }
 

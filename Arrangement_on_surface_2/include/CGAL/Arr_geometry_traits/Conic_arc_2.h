@@ -147,7 +147,7 @@ public:
     m_target(target),
     m_extra_data(nullptr)
   {
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition(Alg_kernel().compare_xy_2_object()(source, target) !=
                       EQUAL);
 
@@ -207,7 +207,7 @@ public:
     m_source = Point_2(nt_traits.convert (x1), nt_traits.convert(y1));
     m_target = Point_2(nt_traits.convert (x2), nt_traits.convert(y2));
 
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object()(m_source, m_target)
                        != EQUAL);
 
@@ -256,7 +256,7 @@ public:
     Rational y0 = center.y();
     Rational R_sqr = ker.compute_squared_radius_2_object()(circ);
 
-    // Produce the correponding conic: if the circle center is (x0,y0)
+    // Produce the corresponding conic: if the circle center is (x0,y0)
     // and its squared radius is R^2, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
     // Note that this equation describes a curve with a negative (clockwise)
@@ -294,7 +294,7 @@ public:
     m_target(target),
     m_extra_data(nullptr)
   {
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition(Alg_kernel().compare_xy_2_object()(source, target) !=
                       EQUAL);
     CGAL_precondition(orient != COLLINEAR);
@@ -306,7 +306,7 @@ public:
     Rational y0 = center.y();
     Rational R_sqr = ker.compute_squared_radius_2_object()(circ);
 
-    // Produce the correponding conic: if the circle center is (x0,y0)
+    // Produce the corresponding conic: if the circle center is (x0,y0)
     // and it squared radius is R^2, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
     // Since this equation describes a curve with a negative (clockwise)
@@ -365,7 +365,7 @@ public:
     m_source = Point_2(nt_traits.convert (x1), nt_traits.convert(y1));
     m_target = Point_2(nt_traits.convert (x3), nt_traits.convert(y3));
 
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition(Alg_kernel().compare_xy_2_object()(m_source, m_target) !=
                       EQUAL);
 

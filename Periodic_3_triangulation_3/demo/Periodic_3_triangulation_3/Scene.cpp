@@ -1,4 +1,4 @@
-//The function project() is a modified version of the function gluProject(),whcich license is :
+//The function project() is a modified version of the function gluProject(),which license is :
 /*
  * SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008)
  * Copyright (C) 1991-2000 Silicon Graphics, Inc. All Rights Reserved.
@@ -12,7 +12,7 @@
  *
  * The above copyright notice including the dates of first publication and
  * either this permission notice or a reference to
- * http://oss.sgi.com/projects/FreeB/
+ * https://spdx.org/licenses/SGI-B-2.0.html
  * shall be included in all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS

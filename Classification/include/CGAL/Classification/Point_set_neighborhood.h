@@ -73,7 +73,7 @@ class Point_set_neighborhood
     My_point_property_map (const PointRange *input, PointMap point_map)
       : input (input), point_map (point_map) { }
 
-    // we did not put `reference` here on purpose as the recommanded default
+    // we did not put `reference` here on purpose as the recommended default
     // is `Identity_property_map<Point_3>` and not `Identity_property_map<const Point_3>`
     friend decltype(auto) get (const My_point_property_map& ppmap, key_type i)
     { return get(ppmap.point_map, *(ppmap.input->begin()+std::size_t(i))); }

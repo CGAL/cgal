@@ -1937,8 +1937,8 @@ perform a point-location query on the resulting arrangement. The query
 point \f$q\f$ is drawn as a plus sign. The face that contains it is
 drawn with a shaded texture. The program calls an instance of the
 function template `print_arrangement_size()`, which prints
-quantitative measures of the arrangement; see \ref lst_paz "code
-example" for its listing in Section \ref aos_ssec-basic-arr_class.
+quantitative measures of the arrangement; see \ref lst_paz
+"code example" for its listing in Section \ref aos_ssec-basic-arr_class.
 
 \cgalExample{Arrangement_on_surface_2/incremental_insertion.cpp}
 

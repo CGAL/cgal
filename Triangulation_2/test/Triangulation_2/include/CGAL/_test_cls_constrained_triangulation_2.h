@@ -23,8 +23,8 @@
 // ============================================================================
 
 #include <list>
+#include <type_traits>
 #include <CGAL/_test_cls_triangulation_short_2.h>
-#include <boost/type_traits/is_same.hpp>
 
 enum Intersection_type {
   NO_INTERSECTION = 0,
@@ -55,18 +55,18 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
     // If the intersection requires no construction, then only 'No_constraint_intersection_tag' throws
     if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION)
     {
-      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
+      assert((std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
     }
     else // threw and it's not a construction-less intersection ---> real intersection
     {
       assert(intersection_type == INTERSECTION);
 #if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
-      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
-             (boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
-             (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+      assert((std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
+             (std::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
+             (std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
 #else
-      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
-             (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+      assert((std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
+             (std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
 #endif
     }
 
@@ -76,14 +76,14 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
   if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION)
   {
     // Even with an intersection without construction, 'No_constraint_intersection_tag' should have thrown
-    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
+    assert(!(std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
   }
   else if(intersection_type == INTERSECTION)
   {
-    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) &&
-           !(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+    assert(!(std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) &&
+           !(std::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
 #if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
-    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+    assert(!(std::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
 #endif
   }
 }
@@ -211,7 +211,7 @@ _test_cls_constrained_triangulation(const Triang &)
    T2_5.is_valid();
 
 
-   // test assignement operator
+   // test assignment operator
     Triang Taux = T2_2;
     assert( Taux.dimension() == 2 );
     assert( Taux.number_of_vertices() == 20);

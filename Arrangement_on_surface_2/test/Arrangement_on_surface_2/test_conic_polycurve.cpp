@@ -13,8 +13,7 @@ int main()
 
 #include <vector>
 #include <list>
-
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
@@ -498,12 +497,12 @@ void check_are_mergable() {
    Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc3 = ctr_xcv(c3);
 
   bool result = are_mergeable_2(polyline_xmc1, polyline_xmc2);
-  std::cout << "Are_mergable:: Mergable x-monotone polycurves are Computed as: "
-            << ((result)? "Mergable" : "Not-Mergable") << std::endl;
+  std::cout << "Are_mergeable:: Mergeable x-monotone polycurves are Computed as: "
+            << ((result)? "Mergeable" : "Not-Mergeable") << std::endl;
 
   result = are_mergeable_2(polyline_xmc1, polyline_xmc3);
-  std::cout << "Are_mergable:: Non-Mergable x-monotone polycurves are Computed as: "
-            << ((result)? "Mergable" : "Not-Mergable") << std::endl;
+  std::cout << "Are_mergeable:: Non-Mergeable x-monotone polycurves are Computed as: "
+            << ((result)? "Mergeable" : "Not-Mergeable") << std::endl;
 }
 
 void check_merge_2() {
@@ -531,7 +530,7 @@ void check_merge_2() {
  Polycurve_conic_traits_2::X_monotone_curve_2 merged_xmc;
 
  merge_2(polyline_xmc1, polyline_xmc2, merged_xmc);
- std::cout<< "Merge_2:: Mergable x-monotone curves merged successfully"
+ std::cout<< "Merge_2:: Mergeable x-monotone curves merged successfully"
           << std:: endl;
 }
 

@@ -22,8 +22,10 @@
 #include <CGAL/Intersections_2/internal/Triangle_2_Triangle_2_intersection_impl.h>
 
 namespace CGAL {
+
 CGAL_DO_INTERSECT_FUNCTION_SELF(Triangle_2, 2)
 CGAL_INTERSECTION_FUNCTION_SELF(Triangle_2, 2)
+
 } // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_TRIANGLE_2_TRIANGLE_2_H

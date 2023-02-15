@@ -31,16 +31,16 @@ namespace internal {
 template<class SNC, bool Copy>
 struct Get_original_dart
 {
-  static typename SNC::Original_dart_const_handle
-  run(SNC* snc, typename SNC::Dart_handle dh)
+  static typename SNC::Original_dart_const_descriptor
+  run(SNC* snc, typename SNC::Dart_descriptor dh)
   { return snc->m_copy_to_origin[dh]; }
 };
 
 template<class SNC>
 struct Get_original_dart<SNC, false>
 {
-  static typename SNC::Original_dart_const_handle
-  run(SNC* /* snc */, typename SNC::Dart_handle dh)
+  static typename SNC::Original_dart_const_descriptor
+  run(SNC* /* snc */, typename SNC::Dart_descriptor dh)
   { return dh; }
 };
 
@@ -54,19 +54,19 @@ public:
   friend struct Get_original_dart<Self, Copy>;
 
   using Original_map_wrapper=internal::Generic_map_selector<Mesh, Items_for_shortest_noncontractible_cycle>;
-  using Original_dart_const_handle=typename Original_map_wrapper::Dart_const_handle_original;
+  using Original_dart_const_descriptor=typename Original_map_wrapper::Dart_const_descriptor_original;
 
   using Local_map        =typename Original_map_wrapper::Generic_map;
-  using Dart_handle      =typename Local_map::Dart_handle;
-  using Dart_const_handle=typename Local_map::Dart_const_handle;
+  using Dart_descriptor      =typename Local_map::Dart_descriptor;
+  using Dart_const_descriptor=typename Local_map::Dart_const_descriptor;
   using size_type        = typename Local_map::size_type;
 
-  using Dart_container=std::vector<Dart_handle>;
+  using Dart_container=std::vector<Dart_descriptor>;
   using Path          =CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
 
   // Associations between original darts and their copy.
-  using Origin_to_copy=std::unordered_map<Original_dart_const_handle, Dart_handle>;
-  using Copy_to_origin=std::unordered_map<Dart_handle, Original_dart_const_handle>;
+  using Origin_to_copy=std::unordered_map<Original_dart_const_descriptor, Dart_descriptor>;
+  using Copy_to_origin=std::unordered_map<Dart_descriptor, Original_dart_const_descriptor>;
 
   /// @return the local map
   const Local_map& get_local_map() const
@@ -124,7 +124,7 @@ public:
   }
 
   template <class WeightFunctor>
-  Path compute_cycle(Original_dart_const_handle root_vertex,
+  Path compute_cycle(Original_dart_const_descriptor root_vertex,
                      typename WeightFunctor::Weight_t* length,
                      const WeightFunctor& wf,
                      bool display_time=false)
@@ -134,7 +134,7 @@ public:
     { t.start(); }
 
     m_cycle.clear();
-    Dart_handle root=m_origin_to_copy[root_vertex];
+    Dart_descriptor root=m_origin_to_copy[root_vertex];
     this->compute_cycle(root, m_cycle, length, nullptr, wf);
 
     if (display_time)
@@ -147,13 +147,13 @@ public:
   }
 
   template <class WeightFunctor=Unit_weight_functor>
-  Path compute_cycle(Original_dart_const_handle root_vertex,
+  Path compute_cycle(Original_dart_const_descriptor root_vertex,
                      typename WeightFunctor::Weight_t* length,
                      bool display_time=false)
   { return compute_cycle(root_vertex, length, WeightFunctor(), display_time); }
 
   template <class WeightFunctor=Unit_weight_functor>
-  Path compute_cycle(Original_dart_const_handle root_vertex,
+  Path compute_cycle(Original_dart_const_descriptor root_vertex,
                      bool display_time=false)
   { return compute_cycle(root_vertex, nullptr, display_time); }
 
@@ -172,7 +172,7 @@ public:
     for (auto it=get_local_map().template attributes<0>().begin(),
          itend=get_local_map().template attributes<0>().end(); it!=itend; ++it)
     {
-      Dart_handle dh=get_local_map().template dart_of_attribute<0>(it);
+      Dart_descriptor dh=get_local_map().template dart_of_attribute<0>(it);
       typename WeightFunctor::Weight_t temp_length;
       if (first_check)
       {
@@ -208,9 +208,9 @@ public:
   { return compute_shortest_non_contractible_cycle(nullptr, display_time); }
 
 protected:
-  int vertex_info(Dart_handle dh) const
+  int vertex_info(Dart_descriptor dh) const
   { return get_local_map().template info<0>(dh); }
-  int& vertex_info(Dart_handle dh)
+  int& vertex_info(Dart_descriptor dh)
   { return get_local_map().template info<0>(dh); }
 
   void create_vertex_info()
@@ -232,7 +232,7 @@ protected:
   }
 
   template <class WeightFunctor, class Distance_>
-  void compute_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
+  void compute_spanning_tree(Dart_descriptor root, Dart_container& spanning_tree,
                              std::vector<Distance_>& distance_from_root,
                              std::vector<int>& trace_index,
                              const WeightFunctor& wf)
@@ -257,7 +257,7 @@ protected:
 
   /// Create a spanning tree using Dijkstra
   template <class WeightFunctor, class Distance_>
-  void compute_Dijkstra_tree(Dart_handle root, Dart_container& spanning_tree,
+  void compute_Dijkstra_tree(Dart_descriptor root, Dart_container& spanning_tree,
                              std::vector<Distance_>& distance_from_root,
                              std::vector<int>& trace_index,
                              const WeightFunctor& wf)
@@ -266,10 +266,10 @@ protected:
     Dijkstra_comparator<Distance_> dc(distance_from_root);
     //std::priority_queue<int, std::vector<int>, Dijkstra_comparator<Distance_> > pq(dc);
     typedef boost::heap::fibonacci_heap<int, boost::heap::compare<Dijkstra_comparator<Distance_>>> Heap;
-    typedef typename Heap::handle_type heap_handle;
+    typedef typename Heap::handle_type heap_descriptor;
 
     Heap pq(dc);
-    std::unordered_map<int, heap_handle> inqueue;
+    std::unordered_map<int, heap_descriptor> inqueue;
 
     int vertex_index=0;
     size_type vertex_visited=get_local_map().get_new_mark();
@@ -287,12 +287,12 @@ protected:
 
       inqueue.erase(u_index);
 
-      Dart_handle u=(u_index==0)?root:get_local_map().next(spanning_tree[u_index-1]);
+      Dart_descriptor u=(u_index==0)?root:get_local_map().next(spanning_tree[u_index-1]);
       CGAL_assertion(u_index==vertex_info(u));
-      Dart_handle it=u;
+      Dart_descriptor it=u;
       do
       {
-        Dart_handle v=get_local_map().next(it);
+        Dart_descriptor v=get_local_map().next(it);
         Distance_ w=wf(Get_original_dart<Self, Copy>::run(this, nonhole_dart_of_same_edge(it)));
         if (!get_local_map().is_marked(v, vertex_visited))
         {
@@ -333,7 +333,7 @@ protected:
 
   /// Create a spanning tree using BFS
   template <class Distance_>
-  void compute_BFS_tree(Dart_handle root, Dart_container& spanning_tree,
+  void compute_BFS_tree(Dart_descriptor root, Dart_container& spanning_tree,
                         std::vector<Distance_>& distance_from_root,
                         std::vector<int>& trace_index)
   {
@@ -351,12 +351,12 @@ protected:
     {
       int u_index=q.front();
       q.pop();
-      Dart_handle u=(u_index==0)?root:get_local_map().next(spanning_tree[u_index-1]);
+      Dart_descriptor u=(u_index==0)?root:get_local_map().next(spanning_tree[u_index-1]);
       CGAL_assertion(u_index==vertex_info(u));
-      Dart_handle it=u;
+      Dart_descriptor it=u;
       do
       {
-        Dart_handle v=get_local_map().next(it);
+        Dart_descriptor v=get_local_map().next(it);
         if (!get_local_map().is_marked(v, vertex_visited))
         {
           int v_index=++vertex_index;
@@ -379,10 +379,10 @@ protected:
 
   /// Check if there is only one unmarked edge around a face.
   /// If there is, let dh_only_edge=the edge separating it and its only adjacent face.
-  bool is_degree_one_face(Dart_handle dh_face, Dart_handle& dh_only_edge,
+  bool is_degree_one_face(Dart_descriptor dh_face, Dart_descriptor& dh_only_edge,
                           size_type edge_deleted)
   {
-    Dart_handle dh=dh_face;
+    Dart_descriptor dh=dh_face;
     dh_only_edge=nullptr;
     do
     {
@@ -411,7 +411,7 @@ protected:
       if (!get_local_map().is_marked(dh, edge_deleted))
       { get_local_map().template mark_cell<1>(dh, edge_deleted); }
     }
-    std::queue<Dart_handle> degree_one_faces;
+    std::queue<Dart_descriptor> degree_one_faces;
     // Add to queue the degree-1 faces
     for (auto it=get_local_map().darts().begin(), itend=get_local_map().darts().end();
          it!=itend; ++it)
@@ -423,7 +423,7 @@ protected:
       }
       else if (!get_local_map().is_marked(it, tested))
       {
-        Dart_handle dh=it, dh_only_edge=nullptr;
+        Dart_descriptor dh=it, dh_only_edge=nullptr;
         bool degree_one=true;
         do // Here we do not use is_degree_one_face method because we want to
         {  // mark tested all darts of the face in the same loop.
@@ -452,16 +452,16 @@ protected:
     // Remove the degree-1 faces
     while (!degree_one_faces.empty())
     {
-      Dart_handle dh_face=degree_one_faces.front();
+      Dart_descriptor dh_face=degree_one_faces.front();
       degree_one_faces.pop();
       if (!get_local_map().is_marked(dh_face, edge_deleted))
       { get_local_map().template mark_cell<1>(dh_face, edge_deleted); }
       if (!get_local_map().is_marked(dh_face, face_deleted))
       { get_local_map().template mark_cell<2>(dh_face, face_deleted); }
-      Dart_handle dh_adj_face=get_local_map().opposite2(dh_face);
+      Dart_descriptor dh_adj_face=get_local_map().opposite2(dh_face);
       if (!get_local_map().is_marked(dh_adj_face, face_deleted))
       {
-        Dart_handle dh_only_edge=nullptr;
+        Dart_descriptor dh_only_edge=nullptr;
         if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted))
         {
           degree_one_faces.push(dh_only_edge);
@@ -487,7 +487,7 @@ protected:
     get_local_map().free_mark(face_deleted);
   }
 
-  Dart_handle nonhole_dart_of_same_edge(Dart_handle dh)
+  Dart_descriptor nonhole_dart_of_same_edge(Dart_descriptor dh)
   {
     CGAL_assertion(dh!=nullptr);
     if (get_local_map().is_marked(dh, m_is_perforated))
@@ -496,7 +496,7 @@ protected:
     return dh;
   }
 
-  Dart_handle nonhole_dart_of_same_edge(Dart_handle dh, bool& flip)
+  Dart_descriptor nonhole_dart_of_same_edge(Dart_descriptor dh, bool& flip)
   {
     CGAL_assertion(dh!=nullptr);
     if (get_local_map().is_marked(dh, m_is_perforated))
@@ -508,10 +508,10 @@ protected:
     return dh;
   }
 
-  void add_to_cycle(Dart_handle dh, Path& cycle, bool flip)
+  void add_to_cycle(Dart_descriptor dh, Path& cycle, bool flip)
   {
     dh=nonhole_dart_of_same_edge(dh, flip);
-    Original_dart_const_handle
+    Original_dart_const_descriptor
         dh_original=Get_original_dart<Self, Copy>::run(this, dh);
     if (cycle.can_be_pushed(dh_original, flip))
     { cycle.push_back(dh_original, flip, false); }
@@ -523,7 +523,7 @@ protected:
   }
 
   template <class WeightFunctor>
-  bool compute_cycle(Dart_handle root, Path& cycle,
+  bool compute_cycle(Dart_descriptor root, Path& cycle,
                      typename WeightFunctor::Weight_t* length,
                      const typename WeightFunctor::Weight_t* max_length,
                      const WeightFunctor& wf)
@@ -537,11 +537,11 @@ protected:
 
     bool first_check=true;
     typename WeightFunctor::Weight_t min_distance=0;
-    Dart_handle min_noncon_edge;
+    Dart_descriptor min_noncon_edge;
     int min_a=-1, min_b=-1;
     for (auto dh : m_noncon_edges)
     {
-      Dart_handle a=dh, b=get_local_map().next(dh);
+      Dart_descriptor a=dh, b=get_local_map().next(dh);
       int index_a=vertex_info(a), index_b=vertex_info(b);
       typename WeightFunctor::Weight_t sum_distance=
         distance_from_root[index_a]+distance_from_root[index_b]

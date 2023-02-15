@@ -37,7 +37,7 @@ int main() {
 
   // Insert a parabolic arc (C6) supported by the parabola y = -x^2 with
   // endpoints (-sqrt(3),-3) (~(-1.73,-3)) and (sqrt(2),-2) (~(1.41,-2)).
-  // Since the x-coordinates of the endpoints cannot be acccurately represented,
+  // Since the x-coordinates of the endpoints cannot be accurately represented,
   // we specify them as the intersections of the parabola with the lines
   // y = -3 and y = -2, respectively. The arc is clockwise-oriented.
   Conic_arc c6 =

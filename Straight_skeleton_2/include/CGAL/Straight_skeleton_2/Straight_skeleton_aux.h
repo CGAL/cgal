@@ -21,26 +21,44 @@
 #include <boost/mpl/or.hpp>
 #include <boost/none.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
+#include <type_traits>
 
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 namespace CGAL {
 
 namespace CGAL_SS_i {
 
-template<class K> struct Has_inexact_constructions
+template<class K>
+struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
-  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
-                                                   , boost::is_same<FT,Interval_nt_advanced>
+  typedef typename boost::mpl::if_< boost::mpl::or_< std::is_same<FT,double>
+                                                   , std::is_same<FT,Interval_nt_advanced>
                                                    >
                                   , Tag_true
                                   , Tag_false
                                   >::type type ;
 } ;
+
+template <class K>
+struct Segment_2_with_ID
+  : public K::Segment_2
+{
+  typedef typename K::Segment_2 Base;
+  typedef typename K::Point_2 Point_2;
+
+public:
+  Segment_2_with_ID() : Base(), mID(-1) { }
+  Segment_2_with_ID(Base const& aS) : Base(aS), mID(-1) { }
+  Segment_2_with_ID(Base const& aS, const std::size_t aID) : Base(aS), mID(aID) { }
+  Segment_2_with_ID(Point_2 const& aP, Point_2 const& aQ, const std::size_t aID) : Base(aP, aQ), mID(aID) { }
+
+public:
+  std::size_t mID;
+};
 
 //
 // This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
@@ -176,10 +194,7 @@ public:
 
 inline void intrusive_ptr_add_ref( Ref_counted_base const* p ) { p->AddRef(); }
 inline void intrusive_ptr_release( Ref_counted_base const* p ) { p->Release(); }
+
 } // namespace CGAL
 
-
-
-#endif // CGAL_STRAIGHT_SKELETON_AUX_H //
-// EOF //
-
+#endif // CGAL_STRAIGHT_SKELETON_AUX_H

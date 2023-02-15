@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <type_traits>
 
 namespace CGAL {
@@ -67,8 +67,8 @@ public:
   Value
   operator()(int r, int c) const
   {
-    CGAL_optimisation_precondition(r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition(c >= 0 && c < number_of_columns());
+    CGAL_precondition(r >= 0 && r < number_of_rows());
+    CGAL_precondition(c >= 0 && c < number_of_columns());
     return op(row_vec[r], column_vec[c]);
   }
 

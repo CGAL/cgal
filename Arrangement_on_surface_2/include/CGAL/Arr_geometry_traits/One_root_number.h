@@ -474,7 +474,7 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
       sign_right = ZERO;
   }
 
-  // Check whether on of the terms is zero. In this case, the comparsion
+  // Check whether on of the terms is zero. In this case, the comparison
   // result is simpler:
   if (sign_left == ZERO)
   {
@@ -507,7 +507,7 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
   // We now square both terms and look at the sign of the one-root number:
   //   ((a1 - a2)^2 - (b1^2*c1 + b2^2*c2)) + 2*b1*b2*sqrt(c1*c2)
   //
-  // If both signs are negative, we should swap the comparsion result
+  // If both signs are negative, we should swap the comparison result
   // we eventually compute.
   const NT          A = diff_alpha*diff_alpha - (x_sqr + y_sqr);
   const NT          B = 2 * x.beta() * y.beta();

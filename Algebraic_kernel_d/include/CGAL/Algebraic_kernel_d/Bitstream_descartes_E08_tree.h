@@ -436,6 +436,9 @@ public:
   friend class CGAL::internal::Bitstream_descartes_E08_tree<TRAITS>;
   friend class CGAL::internal::Bitstream_descartes_E08_tree_rep<TRAITS>;
 
+  Bitstream_descartes_E08_node(const Self&) = default;
+  Self& operator= (const Self&) = delete;
+
 private:
     // "node data" (set individually in subdivision)
     Integer lower_num_, upper_num_; // TODO use lower_num_, width_num_ instead
@@ -443,7 +446,7 @@ private:
     Integer_vector coeff_; // wrt [lower_, upper_], approximate
     int min_var_, max_var_;
     bool coeff_update_delayed_;
-    // "state data" (copied en bloc by .copy_state_from())
+    // "state data" (copied en block by .copy_state_from())
     long subdepth_bound_, subdepth_current_;
     long log_eps_;   // $q - p$
     long log_C_eps_; // $q - p + 4n$
@@ -466,8 +469,6 @@ private:
         log_eps_          = n.log_eps_;
         log_C_eps_        = n.log_C_eps_;
     }
-
-    Self& operator= (const Self&) = delete;
 }; // struct Bitstream_descartes_E08_node
 
 

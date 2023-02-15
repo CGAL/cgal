@@ -17,8 +17,9 @@
 
 
 #include <CGAL/AABB_traits.h>
-#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
+
+#include <type_traits>
 
 namespace CGAL
 {
@@ -45,9 +46,9 @@ public:
 
     // activate functions below if K::FT is floating point and fast_bbox_intersection = true
     template <class K>
-    typename boost::enable_if_c<
+    std::enable_if_t<
       boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
-          bool >::type
+          bool >
     operator()(const CGAL::Segment_3<K>& segment, const Bounding_box& bbox) const {
       const Point_3& p = segment.source();
       const Point_3& q = segment.target();
@@ -63,9 +64,9 @@ public:
     }
 
     template <class K>
-    typename boost::enable_if_c<
+    std::enable_if_t<
       boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
-          bool >::type
+          bool >
     operator()(const CGAL::Ray_3<K>& ray, const Bounding_box& bbox) const {
       const Point_3& p = ray.source();
       const Point_3& q = ray.second_point();

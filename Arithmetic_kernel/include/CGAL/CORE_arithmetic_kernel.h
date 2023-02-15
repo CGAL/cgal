@@ -42,7 +42,7 @@ class CORE_arithmetic_kernel : public internal::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef CORE::BigInt Integer;
-    //! exact float nummber
+    //! exact float number
     typedef CORE::BigRat Exact_float_number;
     //! exact rationals, constructible from integers
     typedef CORE::BigRat Rational;

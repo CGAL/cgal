@@ -306,7 +306,7 @@ namespace internal {
     return boost::none;
   }
 
-  // Check wether a query point belongs to the last polygon edge.
+  // Check whether a query point belongs to the last polygon edge.
   template<
   typename VertexRange,
   typename OutputIterator,

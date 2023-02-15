@@ -288,16 +288,14 @@ bool test_case (std::istream &is)
 
     point_set points;
     Cls T;
-    int number = 0;
 
     do {
-        ++number;
         points.insert (*pi);
         T.insert (*pi);
     } while (++pi != pend);
     assert(T.is_valid());
 
-    for (int i = 0; !points.empty(); ++i) {
+    while(! points.empty()) {
         assert(T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
         set_iterator pos = points.find (v->point());
@@ -376,4 +374,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-

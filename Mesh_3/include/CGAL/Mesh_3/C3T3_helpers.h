@@ -41,7 +41,6 @@
 #include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -713,18 +712,18 @@ public:
   { }
 
   /**
-   * @brief tries to move \c old_vertex to \c new_position in the mesh
+   * @brief tries to move `old_vertex` to `new_position` in the mesh
    * @param old_vertex the old vertex
    * @param move the translation from the old position to the new
-   * @param new_position the new position of \c old_vertex
+   * @param new_position the new position of `old_vertex`
    * @param criterion the criterion which will be used to verify the new
    *    position is ok. c3t3 minimal value of new criterion shall not decrease.
    * @param modified_vertices contains the vertices incident to cells which
    *    may have been impacted by relocation
    * @return a pair which contains:
-   *    - a bool which is \c true if the move has been done.
+   *    - a bool which is `true` if the move has been done.
    *    - a Vertex_handle which is always filled and may be the new vertex (if
-   *      the move is a success), or the vertex which lies at \c v's position in
+   *      the move is a success), or the vertex which lies at `v`'s position in
    *      the updated c3t3.
    */
   template <typename SliverCriterion, typename OutputIterator>
@@ -736,7 +735,7 @@ public:
               OutputIterator modified_vertices,
               bool *could_lock_zone = nullptr);
 
-  /** @brief tries to move \c old_vertex to \c new_position in the mesh
+  /** @brief tries to move `old_vertex` to `new_position` in the mesh
    *
    * Same as update_mesh, but with the precondition that
    * Th().no_topological_change(tr_, old_vertex, new_position,
@@ -751,7 +750,7 @@ public:
                           bool *could_lock_zone = nullptr);
 
   /**
-   * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
+   * Updates mesh moving vertex `old_vertex` to `new_position`. Returns the
    * new vertex of the triangulation.
    *
    * Insert into modified vertices the vertices which are impacted by to move.
@@ -763,7 +762,7 @@ public:
                             bool fill_modified_vertices = true);
 
   /**
-   * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
+   * Updates mesh moving vertex `old_vertex` to `new_position`. Returns the
    * new vertex of the triangulation.
    */
   Vertex_handle update_mesh(const Vertex_handle& old_vertex,
@@ -800,14 +799,14 @@ public:
 #endif
 
   /**
-   * @brief Project \c p on surface, using incident facets of \c v
+   * @brief Project `p` on surface, using incident facets of `v`
    * @param v The vertex from which p was moved
    * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
    * @return the projected point
    *
-   * \c p is projected as follows using normal of least square fitting plane
-   * on \c v incident surface points. If \c index is specified, only
+   * `p` is projected as follows using normal of least square fitting plane
+   * on `v` incident surface points. If `index` is specified, only
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
    */
@@ -816,16 +815,16 @@ public:
                      Surface_patch_index index = Surface_patch_index()) const;
 
   /**
-   * Returns the minimum value for criterion for incident cells of \c vh
+   * Returns the minimum value for criterion for incident cells of `vh`
    */
   template <typename SliverCriterion>
   FT min_incident_value(const Vertex_handle& vh,
                         const SliverCriterion& criterion) const;
 
   /**
-   * Moves \c old_vertex to \c new_position
-   * Stores the cells which have to be updated in \c outdated_cells
-   * Updates the Vertex_handle old_vertex to its new value in \c moving_vertices
+   * Moves `old_vertex` to `new_position`
+   * Stores the cells which have to be updated in `outdated_cells`
+   * Updates the Vertex_handle old_vertex to its new value in `moving_vertices`
    * The second one (with the could_lock_zone param) is for the parallel version
    */
   Vertex_handle move_point(const Vertex_handle& old_vertex,
@@ -840,11 +839,11 @@ public:
                            bool *could_lock_zone) const;
 
   /**
-   * Try to lock ALL the incident cells and return in \c cells the ones
-   * whose \c filter says "true".
+   * Try to lock ALL the incident cells and return in `cells` the ones
+   * whose `filter` says `true`.
    * Return value:
-   * - false: everything is unlocked and \c cells is empty
-   * - true: ALL incident cells are locked and \c cells is filled
+   * - false: everything is unlocked and `cells` is empty
+   * - true: ALL incident cells are locked and `cells` is filled
    */
   template <typename Filter>
   bool
@@ -853,10 +852,10 @@ public:
                                   const Filter &filter) const;
 
   /**
-   * Try to lock ALL the incident cells and return in \c cells the slivers
+   * Try to lock ALL the incident cells and return in `cells` the slivers
    * Return value:
-   * - false: everything is unlocked and \c cells is empty
-   * - true: incident cells are locked and \c cells contains all slivers
+   * - false: everything is unlocked and `cells` is empty
+   * - true: incident cells are locked and `cells` contains all slivers
    */
   template <typename SliverCriterion>
   bool
@@ -873,8 +872,8 @@ public:
                                               Cell_vector &slivers) const;
 
   /**
-   * Outputs to out the sliver (wrt \c criterion and \c sliver_bound) incident
-   * to \c v
+   * Outputs to out the sliver (wrt `criterion` and `sliver_bound`) incident
+   * to `v`
    */
   template <typename SliverCriterion, typename OutputIterator>
   OutputIterator
@@ -892,7 +891,7 @@ public:
                    OutputIterator out) const;
 
   /**
-   * Returns the sliver (wrt \c criterion and \c sliver_bound) incident to \c v
+   * Returns the sliver (wrt `criterion` and `sliver_bound`) incident to `v`
    */
   template <typename SliverCriterion>
   Cell_vector
@@ -918,7 +917,7 @@ public:
 
 
   /**
-   * Returns the number of slivers incident to \c v
+   * Returns the number of slivers incident to `v`
    */
   template <typename SliverCriterion>
   std::size_t
@@ -933,8 +932,8 @@ public:
             const FT& sliver_bound) const;
 
   /**
-   * Returns the minimum criterion value of cells contained in \c cells
-   * Precondition: cells of \c cells must not be infinite.
+   * Returns the minimum criterion value of cells contained in `cells`
+   * Precondition: cells of `cells` must not be infinite.
    * Warning: Here we don't check if cells are in c3t3
    */
   template <typename SliverCriterion>
@@ -1093,10 +1092,10 @@ private:
       , c3t3_(c3t3) {}
 
     /**
-     * @brief Updates facet \c facet in c3t3
+     * @brief Updates facet `facet` in c3t3
      * @param facet the facet to update
-     * @param update if set to \c false, checking only is done
-     * @return true if \c facet is in c3t3
+     * @param update if set to `false`, checking only is done
+     * @return true if `facet` is in c3t3
      */
     Surface_patch operator()(const Facet& facet, const bool update = true) const
     {
@@ -1104,15 +1103,15 @@ private:
     }
 
     /**
-     * @brief Updates facet \c facet in c3t3
+     * @brief Updates facet `facet` in c3t3
      * @param facet the facet to update
-     * @param update_c3t3 if set to \c false, checking only is done
-     * @param update_surface_center if set to \c true, the facet surface
+     * @param update_c3t3 if set to `false`, checking only is done
+     * @param update_surface_center if set to `true`, the facet surface
      * center is updated.
-     * @return true if \c facet is in c3t3
+     * @return true if `facet` is in c3t3
      *
-     * By default, \c update_c3t3 is \c true, and \c update_surface_center
-     * is equal to \c update_c3t3.
+     * By default, `update_c3t3` is `true`, and `update_surface_center`
+     * is equal to `update_c3t3`.
      */
     Surface_patch operator()(const Facet& facet,
                              const bool update_c3t3,
@@ -1163,10 +1162,10 @@ private:
     }
 
     /**
-     * @brief Updates cell \c ch in c3t3
+     * @brief Updates cell `ch` in c3t3
      * @param ch the cell to update
-     * @param update if set to \c false, checking only is done
-     * @return true if \c ch is in c3t3
+     * @param update if set to `false`, checking only is done
+     * @return true if `ch` is in c3t3
      */
     Subdomain operator()(const Cell_handle& ch, const bool update = true) const
     {
@@ -1557,7 +1556,7 @@ private:
   // Private methods
   // -----------------------------------
   /**
-   * Returns the minimum criterion value of c3t3 cells contained in \c cells.
+   * Returns the minimum criterion value of c3t3 cells contained in `cells`.
    */
   template <typename SliverCriterion>
   FT min_sliver_in_c3t3_value(const Cell_vector& cells,
@@ -1587,7 +1586,7 @@ private:
   }
 
   /**
-   * Removes objects of [begin,end[ range from \c c3t3_
+   * Removes objects of [begin,end[ range from `c3t3_`
    */
   template<typename ForwardIterator>
   void remove_from_c3t3(ForwardIterator begin, ForwardIterator end) const
@@ -1597,7 +1596,7 @@ private:
   }
 
   /**
-   * Remove cells and facets of \c cells from c3t3
+   * Remove cells and facets of `cells` from c3t3
    */
   template < typename ForwardIterator >
   void remove_cells_and_facets_from_c3t3(ForwardIterator cells_begin,
@@ -1609,7 +1608,7 @@ private:
   }
 
   /**
-   * Insert into \c out the vertices of range [cells_begin,cells_end[
+   * Insert into `out` the vertices of range [cells_begin,cells_end[
    */
   template <typename InputIterator, typename OutputIterator>
   void fill_modified_vertices(InputIterator cells_begin,
@@ -1689,15 +1688,15 @@ private:
                                  Surface_patch_index index = Surface_patch_index()) const;
 
   /**
-   * @brief Project \c p on surface, using incident facets of \c v
+   * @brief Project `p` on surface, using incident facets of `v`
    * @param v The vertex from which p was moved
    * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
    * @return a `boost::optional` with the projected point if the projection
    * was possible, or `boost::none`.
    *
-   * \c p is projected using the normal of least square fitting plane
-   * on \c v incident surface points. If \c index is specified, only
+   * `p` is projected using the normal of least square fitting plane
+   * on `v` incident surface points. If `index` is specified, only
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
    */
@@ -1707,8 +1706,8 @@ private:
                                  Surface_patch_index index = Surface_patch_index()) const;
 
   /**
-   * @brief Returns the projection of \c p, using direction of
-   * \c projection_vector
+   * @brief Returns the projection of `p`, using direction of
+   * `projection_vector`
    */
   Bare_point
   project_on_surface_aux(const Bare_point& p,
@@ -1716,8 +1715,8 @@ private:
                          const Vector_3& projection_vector) const;
 
   /**
-   * Reverts the move from \c old_point to \c new_vertex. Returns the inserted
-   * vertex located at \c old_point
+   * Reverts the move from `old_point` to `new_vertex`. Returns the inserted
+   * vertex located at `old_point`
    * and an output iterator on outdated cells
    */
   template<typename OutputIterator>
@@ -1737,7 +1736,7 @@ private:
   }
 
   /**
-   * Returns the boundary of restricted facets of \c facets,
+   * Returns the boundary of restricted facets of `facets`,
      and the list of vertices of all restricted facets,
      which should not contain the vertex that is moving
    */
@@ -1747,7 +1746,7 @@ private:
                        Vertex_set& incident_surface_vertices) const;
 
   /**
-   * Returns the boundary of restricted facets of \c cells
+   * Returns the boundary of restricted facets of `cells`
      and the list of vertices of all restricted facets.
    */
   Facet_boundary
@@ -1761,13 +1760,13 @@ private:
   }
 
   /**
-   * Returns false if there is a vertex belonging to one facet of \c facets
+   * Returns false if there is a vertex belonging to one facet of `facets`
    * which has not his dimension < 3
    */
   bool check_no_inside_vertices(const Facet_vector& facets) const;
 
   /**
-   * Returns the impacted cells when moving \c vertex to \c conflict_point
+   * Returns the impacted cells when moving `vertex` to `conflict_point`
    */
   template <typename OutputIterator>
   OutputIterator
@@ -1806,7 +1805,7 @@ private:
                                              DeletedCellsOutputIterator deleted_cells) const;
 
   /**
-   * Updates \c boundary wrt \c edge: if edge is already in boundary we remove
+   * Updates `boundary` wrt `edge`: if edge is already in boundary we remove
    * it, else we add it.
    */
   void update_boundary(Facet_boundary& boundary,
@@ -1832,7 +1831,7 @@ private:
   }
 
   /**
-   * Returns the facets of \c cells (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once i.e. use
    * canonical facet)
    */
   Facet_vector get_facets(const Cell_vector& cells) const
@@ -1901,7 +1900,7 @@ private:
   }
 #else
   /**
-   * Returns the facets of \c cells (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once i.e. use
    * canonical facet)
    */
   template <typename ForwardIterator>
@@ -1992,7 +1991,7 @@ private:
 
 
   /**
-   * Returns the facets of \c cells (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once i.e. use
    * canonical facet)
    */
   template <typename ForwardIterator>
@@ -2061,7 +2060,7 @@ private:
   }
 
   /**
-   * Restore mesh for cells and facets of \c cells, using domain_
+   * Restore mesh for cells and facets of `cells`, using domain_
    */
   template <typename ForwardIterator>
   void restore_mesh(ForwardIterator first_cell, ForwardIterator last_cell)
@@ -2071,7 +2070,7 @@ private:
   }
 
   /**
-   * Restore mesh for cells of \c cells and facets of \c facets, using domain_
+   * Restore mesh for cells of `cells` and facets of `facets`, using domain_
    */
   template <typename CellForwardIterator, typename FacetForwardIterator>
   void restore_mesh(CellForwardIterator first_cell,
@@ -2086,8 +2085,8 @@ private:
   }
 
   /**
-   * Returns true if facets of \c facets have the same boundary as
-   * \c old_boundary, and if the list of vertices has not changed.
+   * Returns true if facets of `facets` have the same boundary as
+   * `old_boundary`, and if the list of vertices has not changed.
    */
   bool check_surface_mesh(const Vertex_handle& moving_vertex,
                           const Facet_vector& facets,
@@ -2114,7 +2113,7 @@ private:
   }
 
   /**
-   * Orders handles \c h1, \c h2 & \c h3
+   * Orders handles `h1`, `h2` & `h3`
    */
   template <typename Handle>
   void order_handles(Handle& h1, Handle& h2, Handle& h3) const
@@ -2668,7 +2667,7 @@ update_mesh(const Vertex_handle& old_vertex,
 
   // Fill modified vertices
   if ( fill_vertices
-        && !(boost::is_same<OutputIterator,CGAL::Emptyset_iterator>::value))
+        && !(std::is_same<OutputIterator,CGAL::Emptyset_iterator>::value))
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
                            new_vertex, modified_vertices);
@@ -3284,7 +3283,7 @@ move_point_topo_change_conflict_zone_known(
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
   // Fill deleted_cells
-  if(! boost::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
+  if(! std::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
     std::copy(conflict_zone.begin(), conflict_zone.end(), deleted_cells);
 
   return new_vertex;
@@ -3350,8 +3349,8 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
 
 
 /**
- * @brief Returns the projection of \c p, using direction of
- * \c projection_vector
+ * @brief Returns the projection of `p`, using direction of
+ * `projection_vector`
  */
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Bare_point

@@ -16,7 +16,6 @@ ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of poin
 
 EXAMPLE_PATH += ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR}
 
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/internal
 EXCLUDE_SYMBOLS += experimental
 
 HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \

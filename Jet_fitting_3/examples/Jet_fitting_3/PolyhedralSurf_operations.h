@@ -34,7 +34,7 @@ struct Facet_unit_normal {
 
 
 //----------------------------------------------------------------
-// operations on hedges, facets etc, handled using proeprty maps
+// operations on hedges, facets etc, handled using property maps
 //----------------------------------------------------------------
 
 template <class TPoly , class HEdgePropertyMap> class T_PolyhedralSurf_hedge_ops

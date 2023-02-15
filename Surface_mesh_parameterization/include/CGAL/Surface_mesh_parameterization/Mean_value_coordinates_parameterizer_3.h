@@ -53,7 +53,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -206,7 +206,7 @@ protected:
     ++next_vertex_v_l;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
 
-    return CGAL::Weights::tangent_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
+    return CGAL::Weights::tangent_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
   }
 };
 

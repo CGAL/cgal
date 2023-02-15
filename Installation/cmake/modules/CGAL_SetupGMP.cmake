@@ -2,7 +2,7 @@
 # CGAL_SetupGMP
 # -------------
 #
-# The module searchs for the `GMP` and `MPFR` headers and libraries,
+# The module searches for the `GMP` and `MPFR` headers and libraries,
 # by calling
 #
 # .. code-block:: cmake

@@ -30,7 +30,7 @@ std::vector<Triangle> triangles;
 struct Intersect_facets {
     void operator()( const Box* b, const Box* c) const {
         Halfedge_const_handle h = b->handle()->halfedge();
-        // check for shared egde --> no intersection
+        // check for shared edge --> no intersection
         if ( h->opposite()->facet() == c->handle()
              || h->next()->opposite()->facet() == c->handle()
              || h->next()->next()->opposite()->facet() == c->handle())

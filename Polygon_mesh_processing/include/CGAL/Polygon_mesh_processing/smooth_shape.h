@@ -142,11 +142,11 @@ void smooth_shape(const FaceRange& faces,
 
 #if defined(CGAL_EIGEN3_ENABLED)
   CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "Eigen3 version 3.2 or later is required.");
 #else
   CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "Eigen3 version 3.2 or later is required.");
 #endif
 

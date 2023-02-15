@@ -30,7 +30,7 @@ namespace Surface_sweep_2 {
 template <typename Vis>
 void Surface_sweep_2<Vis>::_init_structures()
 {
-  // Initailize the structures maintained by the base sweep-line class.
+  // Initialize the structures maintained by the base sweep-line class.
   Base::_init_structures();
 }
 
@@ -172,7 +172,7 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
     ++left_iter;
 
     //remove curve from the status line (also checks intersection
-    //between the neighbouring curves,only if the curve is removed for good)
+    //between the neighboring curves,only if the curve is removed for good)
     _remove_curve_from_status_line(leftCurve, remove_for_good);
   }
 
@@ -347,9 +347,9 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
 
     CGAL_SS_PRINT_STATUS_LINE();
 
-    // If the two curves used to be neighbours before, we do not need to
+    // If the two curves used to be neighbors before, we do not need to
     // intersect them again.
-    if (!this->m_currentEvent->are_left_neighbours(*currentOne, *prevOne))
+    if (!this->m_currentEvent->are_left_neighbors(*currentOne, *prevOne))
       _intersect(*prevOne, *currentOne);
 
     prevOne = currentOne;
@@ -468,7 +468,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
 
   if (! remove_for_good) {
     // the subcurve is not removed for good, so we dont need to intersect
-    // its neighbours after its removal.
+    // its neighbors after its removal.
     CGAL_SS_PRINT_ERASE(*sliter);
     this->m_statusLine.erase(sliter);
     CGAL_SS_PRINT_END_EOL("Removing a curve from the status line");
@@ -476,7 +476,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
   }
 
   // the subcurve will be removed for good from the stauts line, we need
-  // to check for intersection between his two neighbours (below and above him)
+  // to check for intersection between his two neighbors (below and above him)
   // but we need to make sure that its not the first or last subcurve
   // at the status line.
   CGAL_assertion(sliter != this->m_statusLine.end());
@@ -515,13 +515,13 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
 
   CGAL_assertion(c1 != c2);
 
-  // look up for c1 in the table of c2 (or vice versa if c2<c1) and insert if doesnt exist
+  // look up for c1 in the table of c2 (or vice versa if c2<c1) and insert if doesn't exist
   if ((c1 < c2 ? c1->intersection_exists(c2) : c2->intersection_exists(c1))) {
     CGAL_SS_PRINT_END_EOL("computing intersection (already computed)");
     return;  //the curves have already been checked for intersection
   }
 
-  // handle overlapping curves with common ancesters
+  // handle overlapping curves with common ancestors
   Subcurve_vector all_leaves_diff;
   Subcurve* first_parent = nullptr;
   if ((c1->originating_subcurve1() != nullptr) ||
@@ -605,7 +605,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
       // This is needed rather than simply computing the intersection of
       // the last curves of first_parent and second_parent as some traits
       // classes (such as Arr_curve_data_traits_2) override the Intersect_2
-      // functor and expects the curve to have no common ancesters
+      // functor and expects the curve to have no common ancestors
       // (Arr_curve_data_traits_2 is used in the testsuite to sum up
       //  the overlapping degree of a curve)
       CGAL_SS_PRINT_TEXT("First parent is: ");
@@ -804,7 +804,7 @@ void Surface_sweep_2<Vis>::_create_intersection_point(const Point_2& xp,
 
     // Act according to the multiplicity:
     if (multiplicity == 0) {
-      // The multiplicity of the intersection point is unkown or undefined:
+      // The multiplicity of the intersection point is unknown or undefined:
       _add_curve_to_right(e, c1);
       _add_curve_to_right(e, c2);
       if (e->is_right_curve_bigger(c1, c2, this->m_traits)) std::swap(c1, c2);

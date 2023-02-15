@@ -24,10 +24,10 @@
 #include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
 #include <limits>
+#include <type_traits>
 
 namespace CGAL {
 namespace Surface_mesh_approximation {

@@ -12,7 +12,6 @@
 #include <iterator>
 #include <string>
 #include <vector>
-#include <boost/lexical_cast.hpp>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Construct_yao_graph_2.h>
 #include <CGAL/gnuplot_output_2.h>
@@ -72,7 +71,7 @@ int main(int argc, char ** argv)
   boost::graph_traits<Graph>::vertices_size_type n = boost::num_vertices(g);
 
   // generate gnuplot files for plotting this graph
-  std::string fileprefix = "y" + boost::lexical_cast<std::string>(k) + "n" + boost::lexical_cast<std::string>(n);
+  std::string fileprefix = "y" + std::to_string(k) + "n" + std::to_string(n);
   CGAL::gnuplot_output_2(g, fileprefix);
 
   return 0;
