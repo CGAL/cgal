@@ -15,15 +15,13 @@
 
 #include <CGAL/license/Polygon_mesh_processing/detect_features.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Dynamic_property_map.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/utils.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
@@ -1346,11 +1344,11 @@ void detect_sharp_edges_pp(const FaceRange& /*faces*/,
 template <typename PolygonMesh,
           typename FT,
           typename EdgeIsFeatureMap,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 void detect_sharp_edges_pp(PolygonMesh& pmesh,
                            const FT strong_DA_in_deg,
                            EdgeIsFeatureMap edge_is_feature_map,
-                           const CGAL_PMP_NP_CLASS& np)
+                           const CGAL_NP_CLASS& np)
 {
   return detect_sharp_edges_pp(faces(pmesh), pmesh, strong_DA_in_deg, edge_is_feature_map, np);
 }
