@@ -28,19 +28,6 @@
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <type_traits>
-
-
-#if defined(BOOST_MSVC)
-// workaround for using boost::hana with MSVC without warnings
-#pragma push_macro("__cplusplus")
-#undef __cplusplus
-#define __cplusplus _MSVC_LANG
-#include <boost/hana.hpp>
-#pragma pop_macro("__cplusplus")
-#else
-#include <boost/hana.hpp>
-#endif
-
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Arrangement_2.h>
 
@@ -73,10 +60,6 @@ class Arr_2_basic_viewer_qt : public Basic_viewer_qt {
   using Face_const_handle = typename Arr::Face_const_handle;
   using Ccb_halfedge_const_circulator =
     typename Arr::Ccb_halfedge_const_circulator;
-
-  template <typename T>
-  using approximate_2_object_t =
-    decltype(std::declval<T&>().approximate_2_object());
 
 public:
   /// Construct the viewer.
@@ -137,37 +120,45 @@ public:
   template <typename Point>
   CGAL::Bbox_2 exact_bbox(const Point& p) { return p.bbox(); }
 
-  //! Compute the bounding box
-  CGAL::Bbox_2 bounding_box() {
-    namespace bh = boost::hana;
-    auto has_approximate_2_object =
-      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
+  /*! Compile time dispatching
+   */
+  template <typename T>
+  auto bounding_box_impl2(CGAL::Bbox_2& bbox, const Point& p, T const& approx,
+                          long) -> decltype(void())
+  { bbox += exact_bbox(p); }
 
+  template <typename T>
+  auto bounding_box_impl2(CGAL::Bbox_2& bbox, const Point& p, T const& approx,
+                          int) -> decltype(approx.operator()(p), void())
+  { bbox += approximate_bbox(p, approx); }
+
+  template <typename T>
+  auto bounding_box_impl1(CGAL::Bbox_2& bbox, const Point& p, T const& traits,
+                          long) -> decltype(void())
+  { bbox += exact_bbox(p); }
+
+  template <typename T>
+  auto bounding_box_impl1(CGAL::Bbox_2& bbox, const Point& p, T const& traits,
+                          int) ->
+    decltype(traits.approximate_2_object(), void()) {
+    using Approximate = typename Gt::Approximate_2;
+    bounding_box_impl2<Approximate>(bbox, p, traits.approximate_2_object(), 0);
+  }
+
+  /*! Compute the bounding box.
+   */
+  CGAL::Bbox_2 bounding_box() {
+    CGAL::Bbox_2 bbox;
+    const auto* traits = this->m_arr.geometry_traits();
     // At this point we assume that the arrangement is not open, and thus the
     // bounding box is defined by the vertices.
-    //! The bounding box
-    CGAL::Bbox_2 bbox;
-    for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it) {
-      bh::if_(has_approximate_2_object(Gt{}),
-              [&](auto& /* x */) {
-                const auto* traits = this->m_arr.geometry_traits();
-                auto approx = traits->approximate_2_object();
-                auto has_operator =
-                  bh::is_valid([](auto&& x) ->
-                               decltype(x.operator()(Point{}, int{})){});
-                bh::if_(has_operator(approx),
-                        [&](auto& x)
-                          { bbox += x.approximate_bbox(it->point(), approx); },
-                        [&](auto& x) { bbox += x.exact_bbox(it->point()); }
-                        )(*this);
-              },
-              [&](auto& x) { bbox += x.exact_bbox(it->point()); }
-              )(*this);
-    }
+    for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
+      bounding_box_impl1(bbox, it->point(), *traits, 0);
     return bbox;
   }
 
-  //!
+  /*! Add all elements to be drawn.
+   */
   void add_elements() {
     // std::cout << "ratio: " << this->pixel_ratio() << std::endl;
     clear();
@@ -258,7 +249,8 @@ protected:
     }
   }
 
-  //! Draw an exact curve.
+  /*! Draw an exact curve.
+   */
   template <typename XMonotoneCurve>
   void draw_exact_curve(const XMonotoneCurve& curve) {
     const auto* traits = this->m_arr.geometry_traits();
@@ -267,21 +259,40 @@ protected:
     this->add_segment(ctr_min(curve), ctr_max(curve));
   }
 
-  //! Draw an exact region.
+  /*! Draw an exact region.
+   */
   void draw_exact_region(Halfedge_const_handle curr) {
     this->add_point_in_face(curr->source()->point());
     draw_exact_curve(curr->curve());
   }
 
-  //! Utility struct
-  template <typename T>
-  struct can_call_operator_curve {
-    template <typename F>
-    constexpr auto operator()(F&& f) ->
-      decltype(f.template operator()<T>(X_monotone_curve{}, double{}, T{}, bool{})) {}
-  };
+  /*! Compile time dispatching
+   */
+  template <typename T, typename I = void>
+  auto draw_region_impl2(Halfedge_const_handle curr, T const& approx, long) ->
+    decltype(void())
+  { draw_exact_region(curr); }
 
-  //! Draw a region.
+  template <typename T, typename I>
+  auto draw_region_impl2(Halfedge_const_handle curr, T const& approx, int) ->
+    decltype(approx.template operator()<I>(X_monotone_curve{}, double{}, I{},
+                                           bool{}), void())
+  { draw_approximate_region(curr, approx); }
+
+  template <typename T>
+  auto draw_region_impl1(Halfedge_const_handle curr, T const& traits, long) ->
+    decltype(void())
+  { draw_exact_region(curr); }
+
+  template <typename T>
+  auto draw_region_impl1(Halfedge_const_handle curr, T const& traits, int) ->
+    decltype(traits.approximate_2_object(), void()) {
+    using Approximate = typename Gt::Approximate_2;
+    draw_region_impl2<Approximate, int>(curr, traits.approximate_2_object(), 0);
+  }
+
+  /*! Draw a region.
+   */
   void draw_region(Ccb_halfedge_const_circulator circ) {
     /* Check whether the traits has a member function called
      * approximate_2_object() and if so check whether the return type, namely
@@ -296,34 +307,19 @@ protected:
      * C++17 has experimental constructs called is_detected and
      * is_detected_v that can be used to achieve the same goal.
      *
-     * For now we use C++14 features and boost.hana instead.
+     * For now we use C++14 features.
      */
-    namespace bh = boost::hana;
-    auto has_approximate_2_object =
-      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
-
     auto color = m_color_generator(circ->face());
     this->face_begin(color);
 
     const auto* traits = this->m_arr.geometry_traits();
     auto ext = find_smallest(circ);
     auto curr = ext;
+
     do {
       // Skip halfedges that are "antenas":
       while (curr->face() == curr->twin()->face()) curr = curr->twin()->next();
-
-      bh::if_(has_approximate_2_object(Gt{}),
-              [&](auto& /* x */) {
-                auto approx = traits->approximate_2_object();
-                auto has_operator =
-                  bh::is_valid(can_call_operator_curve<int>{});
-                bh::if_(has_operator(approx),
-                        [&](auto& x) { x.draw_approximate_region(curr, approx); },
-                        [&](auto& x) { x.draw_exact_region(curr); }
-                        )(*this);
-              },
-              [&](auto& x) { x.draw_exact_region(curr); }
-              )(*this);
+      draw_region_impl1(curr, *traits, 0);
       curr = curr->next();
     } while (curr != ext);
 
@@ -348,7 +344,33 @@ protected:
     for (; it != polyline.end(); prev = it++) this->add_segment(*prev, *it);
   }
 
-  //! Draw a curve.
+  /*! Compile time dispatching
+   */
+  template <typename T, typename I = void>
+  auto draw_curve_impl2(const X_monotone_curve& xcv, T const& approx, long) ->
+    decltype(void())
+  { draw_exact_curve(xcv); }
+
+  template <typename T, typename I>
+  auto draw_curve_impl2(const X_monotone_curve& xcv, T const& approx, int) ->
+    decltype(approx.template operator()<I>(X_monotone_curve{}, double{}, I{},
+                                           bool{}), void())
+  { draw_approximate_curve(xcv, approx); }
+
+  template <typename T>
+  auto draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, long) ->
+    decltype(void())
+  { draw_exact_curve(xcv); }
+
+  template <typename T>
+  auto draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, int) ->
+    decltype(traits.approximate_2_object(), void()) {
+    using Approximate = typename Gt::Approximate_2;
+    draw_curve_impl2<Approximate, int>(xcv, traits.approximate_2_object(), 0);
+  }
+
+  /*! Draw a curve.
+   */
   template <typename XMonotoneCurve>
   void draw_curve(const XMonotoneCurve& curve) {
     /* Check whether the traits has a member function called
@@ -364,7 +386,7 @@ protected:
      * C++17 has experimental constructs called is_detected and
      * is_detected_v that can be used to achieve the same goal.
      *
-     * For now we use C++14 features and boost.hana instead.
+     * For now we use C++14 features.
      */
 #if 0
     if constexpr (std::experimental::is_detected_v<approximate_2_object_t, Gt>)
@@ -376,56 +398,44 @@ protected:
     }
     draw_exact_curve(curve);
 #else
-    namespace bh = boost::hana;
-    auto has_approximate_2_object =
-      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
     const auto* traits = this->m_arr.geometry_traits();
-    bh::if_(has_approximate_2_object(Gt{}),
-            [&](auto& /* x */) {
-              auto approx = traits->approximate_2_object();
-              auto has_operator = bh::is_valid(can_call_operator_curve<int>{});
-              bh::if_(has_operator(approx),
-                      [&](auto& x) { x.draw_approximate_curve(curve, approx); },
-                      [&](auto& x) { x.draw_exact_curve(curve); }
-                      )(*this);
-            },
-            [&](auto& x) { x.draw_exact_curve(curve); }
-            )(*this);
+    draw_curve_impl1(curve, *traits, 0);
 #endif
   }
 
-  /*! Add an approximation of a point.
-   * \param[in] p the (exact) point.
-   * Call this member function only if the geometry traits is equipped with
-   * the coordinate-approximation functionality of a point.
-   * This function must be inlined (e.g., a template) to enable the
-   * compiled-time dispatching in the function `draw_point()`.
+  /*! Compile time dispatching
    */
-  template <typename Point, typename Approximate>
-  void draw_approximate_point(const Point& p, const Approximate& approx)
-  { this->add_point(approx(p)); }
+  template <typename T>
+  auto draw_point_impl2(const Point& p, T const& approx, long) ->
+    decltype(void())
+  { add_point(p); }
 
-  //!
-  void draw_point(const Point& p) {
-    namespace bh = boost::hana;
-    auto has_approximate_2_object =
-      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
-    bh::if_(has_approximate_2_object(Gt{}),
-            [&](auto& x) {
-              const auto* traits = x.m_arr.geometry_traits();
-              auto approx = traits->approximate_2_object();
-              auto has_operator =
-                bh::is_valid([](auto&& x) -> decltype(x.operator()(Point{})){});
-              bh::if_(has_operator(approx),
-                      [&](auto& x) { x.draw_approximate_point(p, approx); },
-                      [&](auto& x) { x.add_point(p); }
-                      )(*this);
-            },
-            [&](auto& x) { x.add_point(p); }
-            )(*this);
+  template <typename T>
+  auto draw_point_impl2(const Point& p, T const& approx, int) ->
+    decltype(approx.operator()(p), void())
+  { add_point(approx(p)); }
+
+  template <typename T>
+  auto draw_point_impl1(const Point& p, T const& traits, long) ->
+    decltype(void())
+  { add_point(p); }
+
+  template <typename T>
+  auto draw_point_impl1(const Point& p, T const& traits, int) ->
+    decltype(traits.approximate_2_object(), void()) {
+    using Approximate = typename Gt::Approximate_2;
+    draw_point_impl2<Approximate>(p, traits.approximate_2_object(), 0);
   }
 
-  //!
+  /*! Draw a point.
+   */
+  void draw_point(const Point& p) {
+    const auto* traits = m_arr.geometry_traits();
+    draw_point_impl1(p, *traits, 0);
+  }
+
+  /*! Add a Connected Component of the Boundary.
+   */
   void add_ccb(Ccb_halfedge_const_circulator circ) {
     auto curr = circ;
     do {
@@ -436,7 +446,8 @@ protected:
     } while (++curr != circ);
   }
 
-  //!
+  /*! Add a face.
+   */
   void add_face(Face_const_handle face) {
     for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
       add_ccb(*it);
@@ -504,15 +515,18 @@ public:
   /// @param title the title of the window
   Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
                   Color_generator color_generator,
-                  const char* title = "2D Arrangement Basic Viewer") :
-    Base(parent, arr, color_generator, title)
+                  const char* title = "2D Arrangement Basic Viewer",
+                  bool draw_vertices = false) :
+    Base(parent, arr, color_generator, title, draw_vertices)
   {}
 };
 
-//!
+/*! Draw an arrangement.
+ */
 template <typename GeometryTraits_2, typename Dcel>
 void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
-          const char* title = "2D Arrangement Basic Viewer") {
+          const char* title = "2D Arrangement Basic Viewer",
+          bool draw_vertices = false) {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
@@ -530,18 +544,20 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
   const char* argv[2] = {"t2_viewer", nullptr};
   QApplication app(argc, const_cast<char**>(argv));
   Default_color_generator color_generator;
-  Viewer mainwindow(app.activeWindow(), arr, color_generator, title);
+  Viewer mainwindow(app.activeWindow(), arr, color_generator, title, draw_vertices);
   mainwindow.add_elements();
   mainwindow.show();
   app.exec();
 }
 
-//!
+/*! Draw an arrangement using a given color generator.
+ */
 template <typename GeometryTraits_2, typename Dcel,
           typename ColorGenerator>
 void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
           ColorGenerator color_generator,
-          const char* title = "2D Arrangement Basic Viewer") {
+          const char* title = "2D Arrangement Basic Viewer",
+          bool draw_vertices = false) {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
@@ -560,7 +576,7 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
   int argc = 1;
   const char* argv[2] = {"t2_viewer", nullptr};
   QApplication app(argc, const_cast<char**>(argv));
-  Viewer mainwindow(app.activeWindow(), arr, color_generator, title);
+  Viewer mainwindow(app.activeWindow(), arr, color_generator, title, draw_vertices);
   mainwindow.add_elements();
   mainwindow.show();
   app.exec();
