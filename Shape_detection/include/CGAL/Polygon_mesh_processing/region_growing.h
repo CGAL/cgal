@@ -27,16 +27,17 @@ namespace Polygon_mesh_processing {
 
 /*!
   \ingroup PkgPolygonMeshProcessingRef
-  applies the region growing algorithm to fit planes on faces of `mesh`.
+  \brief applies the region growing algorithm to fit planes on faces of a mesh.
+
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
 
   @tparam PolygonMesh a model of `FaceListGraph`
   @tparam RegionMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  @param mesh polygon mesh for region growing.
-  @param region_map property map storing the region index of each face. Values start at `0` up to the value returned minus 1.
-         `std::size_t(-1)` is put for faces with no region assigned (can only append if minimum_region_size > 1).
+  @param mesh the polygon mesh whose faces are used for region growing
+  @param region_map a property map storing the region index of each face. Values start at `0` up to the value returned minus `1`.
+         `std::size_t(-1)` is put for faces with no region assigned (can only happen if `minimum_region_size > 1`).
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   @return the number of regions detected
@@ -64,14 +65,13 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{1}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
-      \cgalParamDescription{the maximum angle in degrees between
-      the normal of the supporting planes of adjacent faces}
+      \cgalParamDescription{the maximum angle (in degrees) between the normals of the supporting planes of two adjacent faces such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
     \cgalParamNBegin{cosine_value}
-      \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
-      this parameter can be used instead of the `maximum_angle`}
+      \cgalParamDescription{The maximum angle in degrees between
+      the normal of the supporting planes of adjacent faces, given as a cosine}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{`cos(25 * PI / 180)`}
     \cgalParamNEnd
@@ -82,25 +82,25 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
   \cgalNamedParamsEnd
  */
-template<
-typename PolygonMesh,
-typename RegionMap,
-typename CGAL_NP_TEMPLATE_PARAMETERS>
+template<typename PolygonMesh,
+                  typename RegionMap,
+                  typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t
-region_growing_of_planes_on_faces(
-  const PolygonMesh& mesh,
-  RegionMap region_map,
-  const CGAL_NP_CLASS& np = parameters::default_values())
+region_growing_of_planes_on_faces(const PolygonMesh& mesh,
+                                  RegionMap region_map,
+                                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  typedef typename GetVertexPointMap < PolygonMesh, CGAL_NP_CLASS>::const_type VPM;
-  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type  Traits;
+  namespace RG_PM = CGAL::Shape_detection::Polygon_mesh;
 
-  typedef boost::graph_traits<PolygonMesh> Graph_traits;
-  typedef typename Graph_traits::face_descriptor face_descriptor;
+  using VPM = typename GetVertexPointMap < PolygonMesh, CGAL_NP_CLASS>::const_type;
+  using Traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
+
+  using Graph_traits = boost::graph_traits<PolygonMesh>;
+  using face_descriptor = typename Graph_traits::face_descriptor;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  namespace RG_PM = CGAL::Shape_detection::Polygon_mesh;
+
 
   using Neighbor_query = RG_PM::One_ring_neighbor_query<PolygonMesh>;
   using Region_type = RG_PM::Least_squares_plane_fit_region<Traits, PolygonMesh, VPM>;
@@ -125,9 +125,11 @@ region_growing_of_planes_on_faces(
 
 /*!
   \ingroup PkgPolygonMeshProcessingRef
-  detects corners on the boundary of (almost) planar regions by applying the region growing algorithm fitting lines on segment edges of
-  a partition of `mesh`. More precisely, a corner on the boundary of the region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
+    \brief detects the corners on the boundary of almost planar regions by applying the region growing algorithm fitting lines on segment edges of a partition of a mesh.
+    
+    More precisely, a corner on the boundary of a region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
+
   @tparam PolygonMesh a model of `FaceListGraph` and `EdgeListGaph`
   @tparam RegionMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type.
   @tparam CornerIdMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `std::size_t` as value type.
@@ -182,9 +184,9 @@ region_growing_of_planes_on_faces(
     \cgalParamNEnd
   \cgalNamedParamsEnd
  */
-template <class PolygonMesh,
-          class RegionMap,
-          class CornerIdMap,
+template <typename PolygonMesh,
+          typename RegionMap,
+          typename CornerIdMap,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t
 detect_corners_of_regions(
