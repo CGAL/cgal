@@ -32,16 +32,18 @@
 namespace CGAL {
 namespace Shape_detection {
 
+namespace internal {
   template <typename RegionType, typename RegionMap,
             bool b=std::is_same<RegionMap, typename RegionType::Region_index_map>::value>
-  struct pipo{
-    static RegionMap create_map(RegionType) { return RegionMap(); }
+  struct RM_creator{
+    static RegionMap create(RegionType) { return RegionMap(); }
   };
 
   template <typename RegionType, typename RegionMap>
-  struct pipo<RegionType, RegionMap, true>{
-    static RegionMap create_map(RegionType& r ) { return r.region_index_map(); }
+  struct RM_creator<RegionType, RegionMap, true>{
+    static RegionMap create(RegionType& r ) { return r.region_index_map(); }
   };
+}
 
   /*!
     \ingroup PkgShapeDetectionRG
@@ -132,7 +134,7 @@ namespace Shape_detection {
       ) :
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
-      m_region_map(pipo<Region_type, RegionMap>::create_map(region_type)),
+      m_region_map(internal::RM_creator<Region_type, RegionMap>::create(region_type)),
       m_visited(m_visited_map)
     {
       CGAL_precondition(input_range.size() > 0);
@@ -196,7 +198,7 @@ namespace Shape_detection {
       ) :
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
-      m_region_map(pipo<Region_type, RegionMap>::create_map(region_type)),
+      m_region_map(internal::RM_creator<Region_type, RegionMap>::create(region_type)),
       m_visited(m_visited_map) {
 
       CGAL_precondition(input_range.size() > 0);
