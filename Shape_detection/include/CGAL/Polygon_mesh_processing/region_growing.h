@@ -96,9 +96,6 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   using VPM = typename GetVertexPointMap < PolygonMesh, NamedParameters>::const_type;
   using Traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
 
-  using Graph_traits = boost::graph_traits<PolygonMesh>;
-  using face_descriptor = typename Graph_traits::face_descriptor;
-
   using parameters::choose_parameter;
   using parameters::get_parameter;
 

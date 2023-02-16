@@ -32,6 +32,17 @@
 namespace CGAL {
 namespace Shape_detection {
 
+  template <typename RegionType, typename RegionMap,
+            bool b=std::is_same<RegionMap, typename RegionType::Region_index_map>::value>
+  struct pipo{
+    static RegionMap create_map(RegionType) { return RegionMap(); }
+  };
+
+  template <typename RegionType, typename RegionMap>
+  struct pipo<RegionType, RegionMap, true>{
+    static RegionMap create_map(RegionType& r ) { return r.region_index_map(); }
+  };
+
   /*!
     \ingroup PkgShapeDetectionRG
 
@@ -79,7 +90,7 @@ namespace Shape_detection {
     using Running_queue = std::queue<Item>;
 
   public:
-    /// \name Initialization
+    /// \name Initialization (RegionMap is the default type)
     /// @{
 
     /*!
@@ -94,7 +105,7 @@ namespace Shape_detection {
         either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
 
       \param input_range
-      a range of input items for region growing. `input_range` must not be empty.
+      a range of input items for region growing.
 
       \param neighbor_query
       an instance of `NeighborQuery` that is used internally to
@@ -106,18 +117,22 @@ namespace Shape_detection {
 
       \param item_map
         an instance of the property map to retrieve items from input values
+
+      \pre `input_range.size() > 0`
     */
     template<typename InputRange, typename ItemMap = Default>
     Region_growing(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       RegionType& region_type,
-      ItemMap item_map = ItemMap(),
-      std::enable_if_t<std::is_same<RegionMap, typename Region_type::Region_index_map>::value>* = 0
+      ItemMap item_map = ItemMap()
+#ifndef DOXYGEN_RUNNING
+      , std::enable_if<!std::is_same<ItemMap, RegionMap>::value>* = 0
+#endif
       ) :
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
-      m_region_map(region_type.region_index_map()),
+      m_region_map(pipo<Region_type, RegionMap>::create_map(region_type)),
       m_visited(m_visited_map)
     {
       CGAL_precondition(input_range.size() > 0);
@@ -134,8 +149,104 @@ namespace Shape_detection {
       clear(input_range, item_map_);
     }
 
-    /// \copydoc Region_growing()
-    /// \param rm external property map that will be filled when calling `detect()`
+    /*!
+      \brief initializes the region growing algorithm.
+
+      \tparam InputRange
+        a model of `ConstRange`
+
+      \tparam SeedRange
+        a model of `ConstRange` with `Item` as value type
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
+      \param input_range
+      a range of input items for region growing
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access item's neighbors
+
+      \param region_type
+      an instance of `RegionType` that is used internally to
+      control if items form a valid region type
+
+      \param seed_range
+      a vector of `Item` that is used as seeds for the region growing.
+      Defaults to the full input_range.
+
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
+      \pre `input_range.size() > 0`
+    */
+    template<typename InputRange, typename SeedRange, typename ItemMap = Default>
+    Region_growing(
+      const InputRange& input_range,
+      SeedRange& seed_range,
+      NeighborQuery& neighbor_query,
+      RegionType& region_type,
+      ItemMap item_map = ItemMap()
+#ifndef DOXYGEN_RUNNING
+      , std::enable_if<!std::is_same<ItemMap, RegionMap>::value>* = 0
+#endif
+      ) :
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_region_map(pipo<Region_type, RegionMap>::create_map(region_type)),
+      m_visited(m_visited_map) {
+
+      CGAL_precondition(input_range.size() > 0);
+      CGAL_precondition(seed_range.size() > 0);
+      m_seed_range.resize(seed_range.size());
+
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
+      std::size_t idx = 0;
+      for (auto it = seed_range.begin(); it != seed_range.end(); it++)
+        m_seed_range[idx++] = *it;
+
+      clear(input_range, item_map_);
+    }
+    /// @}
+
+    /// \name Initialization (RegionMap is a user provided type)
+    /// @{
+
+    /*!
+      \brief initializes the region growing algorithm.
+
+      \tparam InputRange
+        a model of `ConstRange`
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
+      \param input_range
+      a range of input items for region growing.
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access item's neighbors
+
+      \param region_type
+      an instance of `RegionType` that is used internally to
+      control if items form a valid region type
+
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
+      \param rm external property map that will be filled when calling `detect()`
+
+      \pre `input_range.size() > 0`
+    */
     template<typename InputRange, typename ItemMap = Default>
     Region_growing(
       const InputRange& input_range,
@@ -194,6 +305,8 @@ namespace Shape_detection {
       \param item_map
         an instance of the property map to retrieve items from input values
 
+      \param rm external property map that will be filled when calling `detect()`
+
       \pre `input_range.size() > 0`
     */
     template<typename InputRange, typename SeedRange, typename ItemMap = Default>
@@ -202,10 +315,11 @@ namespace Shape_detection {
       SeedRange& seed_range,
       NeighborQuery& neighbor_query,
       RegionType& region_type,
+      Region_map rm,
       ItemMap item_map = ItemMap()) :
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
-      m_region_map(region_type.region_index_map()),
+      m_region_map(rm),
       m_visited(m_visited_map) {
 
       CGAL_precondition(input_range.size() > 0);
