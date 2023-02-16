@@ -128,7 +128,7 @@ namespace Segment_set {
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
-        \cgalParamNBegin{cosine_value}
+        \cgalParamNBegin{cosine_of_maxium_angle}
           \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
           this parameter can be used instead of the `maximum_angle`}
           \cgalParamType{`GeomTraits::FT`}
@@ -152,7 +152,7 @@ namespace Segment_set {
 
       \pre `maximum_distance >= 0`
       \pre `maximum_angle >= 0 && maximum_angle <= 90`
-      \pre `cosine_value >= 0 && cosine_value <= 1`
+      \pre `cosine_of_maxium_angle >= 0 && cosine_of_maxium_angle <= 1`
       \pre `minimum_region_size > 0`
     */
     template<typename NamedParameters = parameters::Default_named_parameters>
@@ -182,7 +182,7 @@ namespace Segment_set {
       const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
         (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
       const FT cos_value = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::cosine_value), default_cos_value);
+        parameters::get_parameter(np, internal_np::cosine_of_maxium_angle), default_cos_value);
       CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
       m_cos_value_threshold = cos_value;
     }

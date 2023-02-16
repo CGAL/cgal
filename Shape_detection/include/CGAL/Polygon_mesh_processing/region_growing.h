@@ -53,9 +53,9 @@ namespace Polygon_mesh_processing {
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{25 degrees}
-      \cgalParamExtra{this parameter and `cosine_value` are exclusive}
+      \cgalParamExtra{this parameter and `cosine_of_maxium_angle` are exclusive}
     \cgalParamNEnd
-    \cgalParamNBegin{cosine_value}
+    \cgalParamNBegin{cosine_of_maxium_angle}
       \cgalParamDescription{The maximum angle, given as a cosine, between the normal of the supporting planes of adjacent faces
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
@@ -157,7 +157,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamDescription{the maximum distance from a point to a line such that it is considered part of the region of the line}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{1}
-      \cgalParamExtra{this parameter and `cosine_value` are exclusive}
+      \cgalParamExtra{this parameter and `cosine_of_maxium_angle` are exclusive}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
       \cgalParamDescription{the maximum angle in degrees between two adjacent segments
@@ -165,7 +165,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
-    \cgalParamNBegin{cosine_value}
+    \cgalParamNBegin{cosine_of_maxium_angle}
       \cgalParamDescription{The maximum angle, given as a cosine, between two adjacent segments
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
@@ -204,8 +204,7 @@ detect_corners_of_regions(
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type  Traits;
-
+  using Traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
   using Graph_traits = boost::graph_traits<PolygonMesh>;
   using halfedge_descriptor = typename Graph_traits::halfedge_descriptor;
   using edge_descriptor = typename Graph_traits::edge_descriptor;
@@ -213,7 +212,7 @@ detect_corners_of_regions(
   using vertex_descriptor = typename Graph_traits::vertex_descriptor;
 
   using Default_ecm = typename boost::template property_map<PolygonMesh, CGAL::dynamic_edge_property_t<bool> >::type;
-  using Ecm = internal_np::Lookup_named_param_def <
+  using Ecm = typename internal_np::Lookup_named_param_def <
                 internal_np::edge_is_constrained_t,
                 CGAL_NP_CLASS,
                 Default_ecm
@@ -238,6 +237,7 @@ detect_corners_of_regions(
     halfedge_descriptor h = halfedge(e, mesh);
     face_descriptor f1 = face(h, mesh);
     face_descriptor f2 = face(opposite(h, mesh), mesh);
+    // an edge is constrained if it is a border edge or if the regions assigned to the two faces are different
     if (f1 == Graph_traits::null_face() || f2 == Graph_traits::null_face() || get(region_map,f1)!=get(region_map,f2))
       put(ecm, e, true);
   }
