@@ -2,7 +2,7 @@ project(Surface_mesh_topology_Benchmarks)
 
 cmake_minimum_required(VERSION 3.1...3.23)
 
-find_package(CGAL)
+find_package(CGAL REQUIRED)
 
 # add_definitions(-DCGAL_TRACE_PATH_TESTS)
 # add_definitions(-DCGAL_TRACE_CMAP_TOOLS)

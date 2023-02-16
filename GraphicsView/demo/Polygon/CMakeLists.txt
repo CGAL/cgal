@@ -15,13 +15,10 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 Core)
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS
-      "NOTICE: This project requires the Eigen library, and will not be compiled."
-  )
+  message("NOTICE: This demo requires the Eigen library, and will not be compiled.")
   return()
 endif()
 
@@ -36,9 +33,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     add_definitions(-DCGAL_USE_CORE)
   endif()
 
-  #--------------------------------
-  # Demo: Polygon_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Polygon_2.ui)
 
@@ -60,10 +54,5 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Polygon_2)
 else()
-
-  message(
-    STATUS
-      "NOTICE: This demo requires CGAL, CGAL_Core, and Qt5, and will not be compiled."
-  )
-
+  message("NOTICE: This demo requires CGAL, CGAL_Core, and Qt5, and will not be compiled.")
 endif()

@@ -27,10 +27,7 @@ foreach(cppfile ${cppfiles})
       create_single_source_cgal_program("${cppfile}")
       target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
     else()
-      message(
-        STATUS
-          "NOTICE : This program requires the lib3MF library, and will not be compiled."
-      )
+      message(STATUS "NOTICE: Some tests require the lib3MF library, and will not be compiled.")
     endif()
   else()
     create_single_source_cgal_program("${cppfile}")

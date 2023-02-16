@@ -98,6 +98,8 @@ public Q_SLOTS:
 
   void on_actionClear_triggered();
 
+  void on_actionOpen_triggered();
+
   void processInput(CGAL::Object);
 
   void on_actionRecenter_triggered();
@@ -105,7 +107,7 @@ public Q_SLOTS:
   void on_actionGeneratePointsInSquare_triggered();
   void on_actionGeneratePointsInDisc_triggered();
   void clear();
-
+  void open(QString fileName);
   void update_largest_empty_rectangle();
 
 Q_SIGNALS:
@@ -226,6 +228,50 @@ void
 MainWindow::on_actionClear_triggered()
 {
   clear();
+  Q_EMIT( changed());
+}
+
+void
+MainWindow::on_actionOpen_triggered()
+{
+  QString fileName = QFileDialog::getOpenFileName(this,
+                                                  tr("Open points file"),
+                                                  "."
+                                                  ,tr("xy files (*.xy)")
+                                                  );
+  if(! fileName.isEmpty()){
+    open(fileName);
+  }
+
+}
+
+void
+MainWindow::open(QString fileName)
+{
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  std::ifstream ifs(qPrintable(fileName));
+
+  clear();
+
+  Point_2 p;
+  while(ifs >> p){
+    points.push_back(p);
+  }
+
+  CGAL::Bbox_2 bbox = CGAL::bbox_2(points.begin(), points.end());
+  square = Iso_rectangle_2(bbox);
+
+  ler = Largest_empty_iso_rectangle_2(square);
+  ler.insert(points.begin(), points.end());
+
+  frame[0]->setLine(convert(Segment_2(square.vertex(0),square.vertex(1))));
+  frame[1]->setLine(convert(Segment_2(square.vertex(1), square.vertex(2))));
+  frame[2]->setLine(convert(Segment_2(square.vertex(2), square.vertex(3))));
+  frame[3]->setLine(convert(Segment_2(square.vertex(3), square.vertex(0))));
+
+  QApplication::restoreOverrideCursor();
+  on_actionRecenter_triggered();
   Q_EMIT( changed());
 }
 

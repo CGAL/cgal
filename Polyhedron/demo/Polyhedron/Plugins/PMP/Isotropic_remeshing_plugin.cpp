@@ -347,8 +347,7 @@ public Q_SLOTS:
       }
       // Create dialog box
       QDialog dialog(mw);
-      Ui::Isotropic_remeshing_dialog ui
-        = remeshing_dialog(&dialog, poly_item, selection_item);
+      initialize_remeshing_dialog(&dialog, poly_item, selection_item);
 
       // Get values
       int i = dialog.exec();
@@ -357,6 +356,7 @@ public Q_SLOTS:
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
+
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
@@ -710,7 +710,7 @@ public Q_SLOTS:
         if (target_length == 0.)//parameters have not been set yet
         {
         QDialog dialog(mw);
-        Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
+        initialize_remeshing_dialog(&dialog, poly_item);
         ui.objectName->setText(QString::number(scene->selectionIndices().size())
           .append(QString(" items to be remeshed")));
         int i = dialog.exec();
@@ -937,31 +937,72 @@ private:
   };
 #endif
 
-  Ui::Isotropic_remeshing_dialog
-  remeshing_dialog(QDialog* dialog,
-                   Scene_facegraph_item* poly_item,
-                   Scene_polyhedron_selection_item* selection_item = nullptr)
+public Q_SLOTS:
+  void update_after_protect_checkbox_click()
   {
-    Ui::Isotropic_remeshing_dialog ui;
+    if(ui.protect_checkbox->isChecked())
+    {
+      ui.smooth1D_label->setEnabled(false);
+      ui.smooth1D_checkbox->setEnabled(false);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+    else
+    {
+      ui.smooth1D_label->setEnabled(true);
+      ui.smooth1D_checkbox->setEnabled(true);
+    }
+  }
+
+  void update_after_splitEdgesOnly_click()
+  {
+    if(ui.splitEdgesOnly_checkbox->isChecked())
+    {
+      ui.nbIterations_label->setEnabled(false);
+      ui.nbIterations_spinbox->setEnabled(false);
+      ui.nbSmoothing_label->setEnabled(false);
+      ui.nbSmoothing_spinbox->setEnabled(false);
+
+      ui.protect_label->setEnabled(false);
+      ui.protect_checkbox->setEnabled(false);
+      ui.protect_checkbox->setChecked(false);
+
+      ui.smooth1D_label->setEnabled(false);
+      ui.smooth1D_checkbox->setEnabled(false);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+    else
+    {
+      ui.nbIterations_label->setEnabled(true);
+      ui.nbIterations_spinbox->setEnabled(true);
+      ui.nbSmoothing_label->setEnabled(true);
+      ui.nbSmoothing_spinbox->setEnabled(true);
+
+      ui.protect_label->setEnabled(true);
+      ui.protect_checkbox->setEnabled(true);
+
+      ui.smooth1D_label->setEnabled(true);
+      ui.smooth1D_checkbox->setEnabled(true);
+    }
+  }
+
+public:
+  void
+  initialize_remeshing_dialog(QDialog* dialog,
+                              Scene_facegraph_item* poly_item,
+                              Scene_polyhedron_selection_item* selection_item = nullptr)
+  {
     ui.setupUi(dialog);
     connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
     connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
 
     //connect checkbox to spinbox
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.protect_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.nbSmoothing_spinbox, SLOT(setDisabled(bool)));
-    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
-            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setChecked(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setDisabled(bool)));
+
+    connect(ui.protect_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_protect_checkbox_click()));
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_splitEdgesOnly_click()));
 
     //Set default parameters
     Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
@@ -1003,14 +1044,12 @@ private:
       ui.preserveDuplicates_checkbox->setDisabled(true);
       ui.preserveDuplicates_checkbox->setChecked(false);
     }
-
-    return ui;
   }
 
 
 private:
   QAction* actionIsotropicRemeshing_;
-
+  Ui::Isotropic_remeshing_dialog ui;
 }; // end Polyhedron_demo_isotropic_remeshing_plugin
 
 #include "Isotropic_remeshing_plugin.moc"

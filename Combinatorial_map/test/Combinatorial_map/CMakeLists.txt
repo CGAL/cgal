@@ -27,6 +27,12 @@ cgal_add_compilation_test(Combinatorial_map_copy_test_index)
 # Link with OpenMesh if possible
 find_package(OpenMesh QUIET)
 if(TARGET OpenMesh::OpenMesh)
+  message(STATUS "Found OpenMesh")
+
   target_link_libraries(Combinatorial_map_copy_test PRIVATE OpenMesh::OpenMesh)
+  target_compile_definitions(Combinatorial_map_copy_test PRIVATE -DCGAL_USE_OPENMESH)
   target_link_libraries(Combinatorial_map_copy_test_index PRIVATE OpenMesh::OpenMesh)
+  target_compile_definitions(Combinatorial_map_copy_test_index PRIVATE -DCGAL_USE_OPENMESH)
+else()
+  message(STATUS "NOTICE: Tests will not use OpenMesh.")
 endif()
