@@ -85,16 +85,16 @@ namespace Polygon_mesh_processing {
  */
 template<typename PolygonMesh,
                   typename RegionMap,
-                  typename CGAL_NP_TEMPLATE_PARAMETERS>
+                  typename NamedParameters = parameters::Default_named_parameters>>
 std::size_t
 region_growing_of_planes_on_faces(const PolygonMesh& mesh,
                                   RegionMap region_map,
-                                  const CGAL_NP_CLASS& np = parameters::default_values())
+                                  const NamedParameters& np = parameters::default_values())
 {
   namespace RG_PM = CGAL::Shape_detection::Polygon_mesh;
 
-  using VPM = typename GetVertexPointMap < PolygonMesh, CGAL_NP_CLASS>::const_type;
-  using Traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
+  using VPM = typename GetVertexPointMap < PolygonMesh, NamedParameters>::const_type;
+  using Traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
 
   using Graph_traits = boost::graph_traits<PolygonMesh>;
   using face_descriptor = typename Graph_traits::face_descriptor;
@@ -191,20 +191,20 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
 template <typename PolygonMesh,
           typename RegionMap,
           typename CornerIdMap,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+          typename NamedParameters = parameters::Default_named_parameters>>
 std::size_t
 detect_corners_of_regions(
   const PolygonMesh& mesh,
   RegionMap region_map,
   std::size_t nb_regions,
   CornerIdMap corner_id_map,
-  const CGAL_NP_CLASS& np = parameters::default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  using Traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
+  using Traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   using Graph_traits = boost::graph_traits<PolygonMesh>;
   using halfedge_descriptor = typename Graph_traits::halfedge_descriptor;
   using edge_descriptor = typename Graph_traits::edge_descriptor;
@@ -214,12 +214,12 @@ detect_corners_of_regions(
   using Default_ecm = typename boost::template property_map<PolygonMesh, CGAL::dynamic_edge_property_t<bool> >::type;
   using Ecm = typename internal_np::Lookup_named_param_def <
                 internal_np::edge_is_constrained_t,
-                CGAL_NP_CLASS,
+                NamedParameters,
                 Default_ecm
               > ::type;
 
   Default_ecm dynamic_ecm;
-  if(!(is_default_parameter<CGAL_NP_CLASS, internal_np::edge_is_constrained_t>::value))
+  if(!(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value))
     dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 
