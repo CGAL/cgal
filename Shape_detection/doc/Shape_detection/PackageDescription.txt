@@ -60,7 +60,7 @@ Classified Reference Manual for the Region Growing shape detection component.
 - `RegionType`
 
 # Algorithm #
-- `CGAL::Shape_detection::Region_growing<%NeighborQuery, %RegionType>`
+- `CGAL::Shape_detection::Region_growing<%NeighborQuery, %RegionType, RegionMap>`
 
 # Point Set #
 ## Neighbord Query Classes ##

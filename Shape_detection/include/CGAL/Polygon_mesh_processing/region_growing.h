@@ -106,7 +106,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   using Neighbor_query = RG_PM::One_ring_neighbor_query<PolygonMesh>;
   using Region_type = RG_PM::Least_squares_plane_fit_region<Traits, PolygonMesh, VPM>;
   using Sorting = RG_PM::Least_squares_plane_fit_sorting<Traits, PolygonMesh, Neighbor_query, VPM>;
-  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type, RegionMap>;
 
   Neighbor_query neighbor_query(mesh);
   Region_type region_type(mesh, np);
@@ -115,11 +115,8 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
   Region_growing region_growing(
-    faces(mesh), sorting.ordered(), neighbor_query, region_type);
+    faces(mesh), sorting.ordered(), neighbor_query, region_type, region_map);
   region_growing.detect(CGAL::Emptyset_iterator());
-
-  for (face_descriptor f : faces(mesh))
-    put(region_map, f, get(region_growing.region_map(), f));
 
   return region_growing.number_of_regions_detected();
 }

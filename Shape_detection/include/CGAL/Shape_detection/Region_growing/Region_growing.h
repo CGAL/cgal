@@ -48,10 +48,14 @@ namespace Shape_detection {
 
     \tparam RegionType
     a model of `RegionType`
+
+    \tparam RegionMap a model of `ReadWritePropertyMap` whose key type is `Item`
+    and value type is `std::size_t`.
   */
   template<
     typename NeighborQuery,
-    typename RegionType >
+    typename RegionType,
+    typename RegionMap = typename RegionType::Region_index_map>
   class Region_growing {
 
   public:
@@ -69,7 +73,7 @@ namespace Shape_detection {
     using Primitive_and_region = std::pair<typename Region_type::Primitive, Region>;
 
     /// Item to region property map.
-    using Region_map = typename Region_type::Region_index_map;
+    using Region_map = RegionMap;
 
   private:
     using Running_queue = std::queue<Item>;
@@ -90,7 +94,7 @@ namespace Shape_detection {
         either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
 
       \param input_range
-      a range of input items for region growing
+      a range of input items for region growing. `input_range` must not be empty.
 
       \param neighbor_query
       an instance of `NeighborQuery` that is used internally to
@@ -102,18 +106,46 @@ namespace Shape_detection {
 
       \param item_map
         an instance of the property map to retrieve items from input values
-
-      \pre `input_range.size() > 0`
     */
     template<typename InputRange, typename ItemMap = Default>
     Region_growing(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       RegionType& region_type,
-      ItemMap item_map = ItemMap()) :
+      ItemMap item_map = ItemMap(),
+      std::enable_if_t<std::is_same<RegionMap, typename Region_type::Region_index_map>::value>* = 0
+      ) :
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
       m_region_map(region_type.region_index_map()),
+      m_visited(m_visited_map)
+    {
+      CGAL_precondition(input_range.size() > 0);
+      m_seed_range.resize(input_range.size());
+
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
+      std::size_t idx = 0;
+      for (auto it = input_range.begin(); it != input_range.end(); it++)
+        m_seed_range[idx++] = get(item_map_, it);
+
+      clear(input_range, item_map_);
+    }
+
+    /// \copydoc Region_growing()
+    /// \param rm external property map that will be filled when calling `detect()`
+    template<typename InputRange, typename ItemMap = Default>
+    Region_growing(
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query,
+      RegionType& region_type,
+      Region_map rm,
+      ItemMap item_map = ItemMap()) :
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_region_map(rm),
       m_visited(m_visited_map)
     {
       CGAL_precondition(input_range.size() > 0);
@@ -208,8 +240,8 @@ namespace Shape_detection {
 
       \return past-the-end position in the output sequence
     */
-    template<typename PrimitiveAndRegionOutputIterator>
-    PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator region_out) {
+    template<typename PrimitiveAndRegionOutputIterator = Emptyset_iterator>
+    PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator region_out = PrimitiveAndRegionOutputIterator()) {
 //      clear(); TODO: this is not valid to comment this clear()
       m_visited_map.clear(); // tmp replacement for the line above
 
