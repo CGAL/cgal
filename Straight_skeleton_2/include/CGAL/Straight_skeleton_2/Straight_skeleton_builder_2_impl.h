@@ -88,7 +88,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::PopEventFromPQ()
 //
 template<class Gt, class Ss, class V>
 typename Straight_skeleton_builder_2<Gt,Ss,V>::EventPtr
-Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode, Triedge const& aPrevEventTriedge  )
+Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode,
+                                                     Vertex_handle aRNode,
+                                                     Triedge const& aPrevEventTriedge )
 {
   EventPtr rResult ;
 
@@ -701,12 +703,6 @@ Straight_skeleton_builder_2<Gt,Ss,V>::ConstructEdgeEventNode( EdgeEvent& aEvent 
 
   SetTrisegment(lNewNode,aEvent.trisegment());
 
-  CGAL_STSKEL_BUILDER_TRACE
-  ( 3
-  ,    "LSeed: N" << lLSeed->id() << " processed\n"
-    << "RSeed: N" << lRSeed->id() << " processed"
-  ) ;
-
   SetIsProcessed(lLSeed) ;
   SetIsProcessed(lRSeed) ;
   GLAV_remove(lLSeed);
@@ -828,8 +824,6 @@ Straight_skeleton_builder_2<Gt,Ss,V>::ConstructSplitEventNodes( SplitEvent& aEve
 
   Vertex_handle lSeed = aEvent.seed0() ;
 
-  CGAL_STSKEL_BUILDER_TRACE ( 3, "Seed: N" << lSeed->id() << " processed" ) ;
-
   SetIsProcessed(lSeed) ;
   GLAV_remove(lSeed);
 
@@ -880,14 +874,6 @@ Straight_skeleton_builder_2<Gt,Ss,V>::ConstructPseudoSplitEventNodes( PseudoSpli
   InitVertexData(lNewNodeB);
   SetTrisegment(lNewNodeA,aEvent.trisegment());
   SetTrisegment(lNewNodeB,aEvent.trisegment());
-
-  CGAL_STSKEL_BUILDER_TRACE
-  (
-   3
-   ,   "LSeed: N" << lLSeed->id() << " processed\n"
-    << "RSeed: N" << lRSeed->id() << " processed"
-  ) ;
-
 
   SetIsProcessed(lLSeed) ;
   SetIsProcessed(lRSeed) ;
@@ -1031,7 +1017,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
 {
   EdgeEvent& lEvent = dynamic_cast<EdgeEvent&>(*aEvent) ;
 
-  CGAL_STSKEL_BUILDER_TRACE( 2, "Edge event." );
+  CGAL_STSKEL_BUILDER_TRACE( 2, "\n== Edge event." );
 
   if ( IsValidEdgeEvent(lEvent) )
   {
@@ -1568,11 +1554,13 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
       if ( lEvent->type() != Event::cEdgeEvent )
         AllowNextSplitEvent(lEvent->seed0());
 
-      CGAL_STSKEL_BUILDER_TRACE (3,"\nTentative Event: " << *lEvent << " at ID: " << mStepID) ;
+
+      CGAL_STSKEL_BUILDER_TRACE(3, " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " );
+      CGAL_STSKEL_BUILDER_TRACE(3, "\n\tS" << mStepID << " Tentative Event: " << *lEvent ) ;
 
       if ( !IsProcessed(lEvent) )
       {
-        CGAL_STSKEL_BUILDER_TRACE (1,"\nS" << mStepID << " Event: " << *lEvent ) ;
+        CGAL_STSKEL_BUILDER_TRACE (1,"\n\tS" << mStepID << " Event: " << *lEvent ) ;
 
         SetEventTimeAndPoint(*lEvent) ;
 

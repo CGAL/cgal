@@ -295,7 +295,7 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 
   typedef boost::optional<Line_2> Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec time for: " << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing normal offset lines isec time for: " << tri ) ;
 
   FT num(0), den(0) ;
 
@@ -374,6 +374,11 @@ compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
 
   typedef typename K::FT FT ;
 
+  CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
+                            << "\ne0: " << s2str(e0)
+                            << "\ne1: " << s2str(e1)
+                          );
+
   FT delta01 = CGAL::squared_distance(e0.target(),e1.source());
   FT delta10 = CGAL::squared_distance(e1.target(),e0.source());
 
@@ -386,11 +391,7 @@ compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
     else
       mp = CGAL::midpoint(e1.target(),e0.source());
 
-    CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
-                             << "\ne0: " << s2str(e0)
-                             << "\ne1: " << s2str(e1)
-                             << "\nmp=" << p2str(mp)
-                            );
+    CGAL_STSKEL_TRAITS_TRACE("\nmp=" << p2str(mp) );
 
     ok = CGAL_NTS is_finite(mp.x()) && CGAL_NTS is_finite(mp.y());
   }
@@ -496,7 +497,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec time for: " << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing degenerate offset lines isec time for: " << tri ) ;
 
   // DETAILS:
   //
@@ -563,9 +564,9 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
 
   if ( l0 && l1 && l2 && q )
   {
-    CGAL_STSKEL_TRAITS_TRACE("\tl0 ID: " << tri->collinear_edge().mID << " w: " << n2str(tri->collinear_edge_weight()) ) ;
-    CGAL_STSKEL_TRAITS_TRACE("\tl1 ID: " << tri->other_collinear_edge().mID << " w: " << n2str(tri->other_collinear_edge_weight()) );
-    CGAL_STSKEL_TRAITS_TRACE("\tl2 ID: " << tri->non_collinear_edge().mID << " w: " << n2str(tri->non_collinear_edge_weight()) ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tCE ID: " << tri->collinear_edge().mID << " w: " << n2str(tri->collinear_edge_weight()) ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\tOCE ID: " << tri->other_collinear_edge().mID << " w: " << n2str(tri->other_collinear_edge_weight()) );
+    CGAL_STSKEL_TRAITS_TRACE("\tNCE ID: " << tri->non_collinear_edge().mID << " w: " << n2str(tri->non_collinear_edge_weight()) ) ;
     CGAL_STSKEL_TRAITS_TRACE("\tLabc [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
                                  << "[" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
                                  << "[" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
@@ -678,7 +679,7 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec point for:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing normal offset lines isec point for:" << tri ) ;
 
   FT x(0), y(0) ;
 
@@ -741,8 +742,8 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec point for:"
-                           << " E" << tri->e0().mID << ",E" << tri->e1().mID << ",E" << tri->e2().mID << std::endl
+  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing degenerate offset lines isec point for:"
+                           << " E" << tri->e0().mID << ",E" << tri->e1().mID << ",E" << tri->e2().mID
                            << tri ) ;
 
   FT x(0),y(0) ;
@@ -762,6 +763,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
       FT px, py ;
       line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(), px,py);
 
+      CGAL_STSKEL_TRAITS_TRACE("Degenerate, equal weights " << tri->collinear_edge_weight() ) ;
       CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ". Projected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
 
       const FT& l0a = l0->a() ;
@@ -801,6 +803,9 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
     }
     else
     {
+      CGAL_STSKEL_TRAITS_TRACE("Degenerate, different weights " << n2str(tri->collinear_edge_weight())
+                                                     << " and " << n2str(tri->other_collinear_edge_weight()));
+
       const FT& l0a = l0->a() ; const FT& l0b = l0->b() ; const FT& l0c = l0->c() ;
       const FT& l2a = l2->a() ; const FT& l2b = l2->b() ; const FT& l2c = l2->c() ;
 
@@ -826,7 +831,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
     }
   }
 
-  CGAL_STSKEL_TRAITS_TRACE("\nDegenerate" << (CGAL_NTS is_zero(l0->b()) ? " (vertical)" : "") << " event point:  x=" << n2str(x) << " y=" << n2str(y) )
+  CGAL_STSKEL_TRAITS_TRACE("Degenerate" << (CGAL_NTS is_zero(l0->b()) ? " (vertical)" : "") << " event point:  x=" << n2str(x) << " y=" << n2str(y) )
 
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }

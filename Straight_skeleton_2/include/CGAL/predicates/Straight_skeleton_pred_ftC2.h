@@ -460,8 +460,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
       FT sd_p_l0 = validate(l0.a() * p.x() + l0.b() * p.y() + l0.c()) ;
       FT sd_p_l1 = validate(l1.a() * p.x() + l1.b() * p.y() + l1.c()) ;
 
-      CGAL_STSKEL_TRAITS_TRACE("sd_p_l1=" << n2str(sd_p_l1) ) ;
-      CGAL_STSKEL_TRAITS_TRACE("sd_p_l0=" << n2str(sd_p_l0) ) ;
+      CGAL_STSKEL_TRAITS_TRACE("sd_p_l0 = " << n2str(sd_p_l0) ) ;
+      CGAL_STSKEL_TRAITS_TRACE("sd_p_l1 = " << n2str(sd_p_l1) ) ;
 
       Uncertain<bool> equal = CGAL_NTS certified_is_equal(sd_p_l0,sd_p_l1) ;
       if ( is_certain(equal) )

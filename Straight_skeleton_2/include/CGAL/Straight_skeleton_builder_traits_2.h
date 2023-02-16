@@ -134,9 +134,7 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
   Uncertain<Comparison_result> operator() ( Trisegment_2_ptr const& aL, Trisegment_2_ptr const& aR ) const
   {
     Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR,mTime_cache,mCoeff_cache) ;
-
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_times","L: " << aL << "\nR:" << aR );
-
     return rResult ;
   }
 

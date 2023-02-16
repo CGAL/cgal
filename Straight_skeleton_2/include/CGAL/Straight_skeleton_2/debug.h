@@ -48,7 +48,8 @@ bool sEnableTrace = true ;
 template<class T>
 inline std::string o2str( boost::optional<T> const& o )
 {
-  std::ostringstream ss ; ss << std::setprecision(17)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   if ( o )
        ss << *o ;
   else ss << "·NONE·" ;
@@ -58,7 +59,8 @@ inline std::string o2str( boost::optional<T> const& o )
 template<class T>
 inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
 {
-  std::ostringstream ss ; ss << std::setprecision(17)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   if ( ptr )
        ss << *ptr ;
   else ss << "·nullptr·" ;
@@ -101,6 +103,7 @@ inline CORE::BigFloat to_big_float( NT const& n )
 inline std::string n2str( CGAL::MP_Float const& n )
 {
   std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   ss << to_big_float(n) ;
   return ss.str();
 }
@@ -108,20 +111,23 @@ inline std::string n2str( CGAL::MP_Float const& n )
 inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 {
   std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   ss << to_big_float(n) ;
   return ss.str();
 }
 #else
 inline std::string n2str( CGAL::MP_Float const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(17) ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   ss << CGAL_NTS to_double(n) ;
   return ss.str();
 }
 
 inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(17)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17)  ;
   ss << CGAL_NTS to_double(n) ;
   return ss.str();
 }
@@ -156,7 +162,8 @@ inline std::string op2str( OP const& op )
 template<class V>
 inline std::string v2str( V const& v )
 {
-  std::ostringstream ss ; ss << std::setprecision(17)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17)  ;
   ss << "V" << v.id() << " " << p2str(v.point()) << " [" << v.time() << "]" ;
   return ss.str();
 }
@@ -181,7 +188,8 @@ inline std::string s2str( S const& seg ) { return s2str(seg.source(),seg.target(
 template<class E>
 inline std::string e2str( E const& e )
 {
-  std::ostringstream ss ; ss << std::setprecision(17)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   if ( e.is_bisector() )
   {
     ss << "B" << e.id()
@@ -231,7 +239,7 @@ template<class VH, class Triedge>
 inline std::string newn2str( char const* name, VH const& v, Triedge const& aTriedge )
 {
   std::ostringstream ss ;
-  ss.precision(17);
+  ss << std::setprecision(17) ;
 
   ss << "New Node " << name <<" is N" << v->id() << " at " << v->point()
      << " [E" << aTriedge.e0()->id()
@@ -272,6 +280,7 @@ bool sEnableTraitsTrace = true;
      if ( sEnableTraitsTrace ) \
      { \
        std::ostringstream ss ; \
+       ss << std::setprecision(17) ; \
        ss << m ; \
        std::string s = ss.str(); \
        Straight_skeleton_traits_external_trace(s); \

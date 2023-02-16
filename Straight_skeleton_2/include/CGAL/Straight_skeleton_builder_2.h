@@ -831,6 +831,8 @@ private :
 
   void SetIsProcessed ( Vertex_handle aV )
   {
+    CGAL_STSKEL_BUILDER_TRACE(2, "Set V" << aV->id() << " Processed");
+
     GetVertexData(aV).mIsProcessed = true ;
 
     mVisitor.on_vertex_processed(aV);
