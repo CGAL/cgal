@@ -20,6 +20,9 @@ Release date: June 2023
   `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
   which have output iterators for vertices and faces as parameter. They are replaced by overloads with two additional named parameters.
 
+- added functions `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` and `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
+  that allow to have a partition into planar regions of a mesh using the region growing algorithm from the [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) package.
+
 -   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
 CGAL tetrahedral Delaunay refinement algorithm.
 
@@ -31,22 +34,15 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 ### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
 
+-   **Breaking change**: The region growing part of the package have been reworked to fix design issues introduced with the handling `FaceGraph` models.
+    In particular, the notion of `Item` has been introduced to reference an element in the input range of elements. Region maps now operates on `Item` and no longer on the value type
+    of the input range.
 -   **Breaking change**: The method `update()` in the concept `RegionType` returns now
     a `boolean` instead of  `void` that is used inside the class `Region_growing` for detecting if
     the input conditions for the new region are satisfied. This change affects only user-defined
     types of regions.
--   **Breaking change**: Constructors of all models of the concepts [`RegionType`](https://doc.cgal.org/5.5/Shape_detection/classRegionType.html`)
-    and [`NeighborQuery`](https://doc.cgal.org/5.5/Shape_detection/classNeighborQuery.html`) have been updated to used named parameters.
-    Namely, the following classes are affected:
-      - [`CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__line__fit__region.html)
-      - [`CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__plane__fit__region.html)
-      - [`CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Least__squares__plane__fit__region.html)
-      - [`CGAL::Shape_detection::Point_set::K_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1K__neighbor__query.html)
-      - [`CGAL::Shape_detection::Point_set::Sphere_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Sphere__neighbor__query.html)
-      - [`CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1One__ring__neighbor__query.html)
--   The constructors of all models used together with the region growing algorithm now enable users
-    to provide parameters through the named parameters mechanism. The old constructors without named
-    parameters are deprecated.
+-   **Breaking change**: The constructors of all models used together with the region growing algorithm now enable users
+    to provide parameters through the named parameters mechanism.
 -   All fitting classes in the region growing framework are now using better versions of the region
     conditions, more precise and faster, including the correct normal orientations.
 -   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
