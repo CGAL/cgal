@@ -208,19 +208,32 @@ private:
     typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
     Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), mesh);
 
+    bool has_unassigned = false;
     for(SMesh::Face_index f : faces(mesh))
     {
       std::size_t region_id = region_ids[f];
       if (region_id != std::size_t(-1))
         put(pidmap, f, static_cast<int>(region_id)+1);
       else
-        put(pidmap, f, static_cast<int>(nb_regions)+2); // TODO force black?
+      {
+        has_unassigned = true;
+        put(pidmap, f, 0);
+      }
     }
 
     sm_item->setItemIsMulticolor(true);
     sm_item->computeItemColorVectorAutomatically(true);
     sm_item->invalidateOpenGLBuffers();
     scene->itemChanged(sm_item);
+
+    if (has_unassigned)
+    {
+      // hack to get unassigned as black
+      sm_item->color_vector()[0]=QColor().black();
+      sm_item->computeItemColorVectorAutomatically(false);
+      sm_item->invalidateOpenGLBuffers();
+      scene->itemChanged(sm_item);
+    }
   }
 
   void detect_shapes_with_region_growing (
