@@ -25,6 +25,7 @@
 
 #include <boost/cstdint.hpp>
 
+#include <vector>
 #include <cstddef>
 #include <iostream>
 #include <sstream>
