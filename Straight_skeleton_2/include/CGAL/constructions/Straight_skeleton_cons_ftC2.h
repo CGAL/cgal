@@ -748,22 +748,15 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
   FT x(0),y(0) ;
 
   Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCoeff_cache) ;
-  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->other_collinear_edge(), tri->other_collinear_edge_weight(), aCoeff_cache) ;
   Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->non_collinear_edge(), tri->non_collinear_edge_weight(), aCoeff_cache) ;
 
   Optional_point_2 q = compute_degenerate_seed_pointC2(tri, aCoeff_cache);
 
   bool ok = false ;
 
-  if ( l0 && l1 && l2 && q )
+  if ( l0 && l2 && q )
   {
-    // If the norm (aka speeds) are equal, keep both alive and the bisector is orthogonal to l0 and l1
-    // If one is larger than the other, kill the one with lower speed
-    const FT l0_square_norm = square(l0->a()) + square(l0->b());
-    const FT l1_square_norm = square(l1->a()) + square(l1->b());
-    CGAL_STSKEL_TRAITS_TRACE("Norms: " << l0_square_norm << " " << l1_square_norm ) ;
-
-    const Comparison_result res = compare(l0_square_norm, l1_square_norm);
+    const Comparison_result res = compare(tri->collinear_edge_weight(), tri->other_collinear_edge_weight());
     if ( res == EQUAL )
     {
       FT px, py ;
