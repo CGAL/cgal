@@ -85,7 +85,7 @@ namespace Polygon_mesh_processing {
  */
 template<typename PolygonMesh,
                   typename RegionMap,
-                  typename NamedParameters = parameters::Default_named_parameters>>
+                  typename NamedParameters = parameters::Default_named_parameters>
 std::size_t
 region_growing_of_planes_on_faces(const PolygonMesh& mesh,
                                   RegionMap region_map,
@@ -188,7 +188,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
 template <typename PolygonMesh,
           typename RegionMap,
           typename CornerIdMap,
-          typename NamedParameters = parameters::Default_named_parameters>>
+          typename NamedParameters = parameters::Default_named_parameters>
 std::size_t
 detect_corners_of_regions(
   const PolygonMesh& mesh,
