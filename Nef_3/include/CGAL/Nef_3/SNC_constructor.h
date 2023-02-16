@@ -486,7 +486,7 @@ public:
       SHalfedge_around_svertex_circulator ec2(D.out_edges(v1)), ee2(ec2);
       CGAL_For_all(ec2,ee2) {
         sf = D.new_sface();
-        CGAL_assertion(index_check[mark_index]==ec2);
+        CGAL_assertion(mark_index<index_check.size() && index_check[mark_index] == ec2);
         sf->mark() = mark_of_right_sface[mark_index++];
         D.link_as_face_cycle(SHalfedge_handle(ec2),sf);
       }
@@ -864,7 +864,7 @@ public:
                         " -> " << en->twin()->source()->vector());
         se1->circle() = Sphere_circle(faces_p->plane());
         se1->twin()->circle() = se1->circle().opposite();
-        CGAL_assertion(mark_of_right_sface[mark_index]==ec2);
+        CGAL_assertion(mark_index<index_check.size() && index_check[mark_index] == ec2);
         Mark m = mark_of_right_sface[mark_index++];
         se1->mark() = se1->twin()->mark() = BOP(m, faces_p->mark(), inv);
 
