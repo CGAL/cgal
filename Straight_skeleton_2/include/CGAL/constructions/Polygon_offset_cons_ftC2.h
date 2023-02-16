@@ -32,18 +32,19 @@ namespace CGAL_SS_i {
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K, class CoeffCache>
-boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t,
-                                                         Segment_2_with_ID<K> const& e0,
-                                                         typename K::FT const& weight0,
-                                                         Segment_2_with_ID<K> const& e1,
-                                                         typename K::FT const& weight1,
-                                                         boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
-                                                         CoeffCache& aCoeff_cache)
+boost::optional< typename K::Point_2 >
+construct_offset_pointC2 ( typename K::FT const& t,
+                           Segment_2_with_ID<K> const& e0,
+                           typename K::FT const& weight0,
+                           Segment_2_with_ID<K> const& e1,
+                           typename K::FT const& weight1,
+                           boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                           CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT FT ;
 
-  typedef Point_2<K>  Point_2 ;
-  typedef Line_2<K>   Line_2 ;
+  typedef typename K::Point_2  Point_2 ;
+  typedef typename K::Line_2   Line_2 ;
 
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;

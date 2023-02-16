@@ -366,8 +366,9 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
-                                                          Segment_2_with_ID<K> const& e1 )
+boost::optional< typename K::Point_2 >
+compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
+                            Segment_2_with_ID<K> const& e1 )
 {
   bool ok = false ;
 
@@ -426,12 +427,12 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
 // If you request the point of such degenerate pseudo seed the oriented midpoint between e0 and e2 is returned.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+boost::optional< typename K::Point_2 >
 compute_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                        typename Trisegment_2<K, Segment_2_with_ID<K> >::SEED_ID sid,
                        CoeffCache& aCoeff_cache)
 {
-  boost::optional< Point_2<K> > p ;
+  boost::optional< typename K::Point_2 > p ;
 
   typedef Trisegment_2<K, Segment_2_with_ID<K> > Trisegment_2 ;
 
@@ -465,7 +466,7 @@ compute_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K
 // of the degenerate seed.
 // A normal collinearity occurs when e0,e1 or e1,e2 are collinear.
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+boost::optional< typename K::Point_2 >
 compute_degenerate_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                   CoeffCache& aCoeff_cache )
 {
@@ -489,8 +490,8 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
 {
   typedef typename K::FT FT ;
 
-  typedef Point_2<K> Point_2 ;
-  typedef Line_2 <K> Line_2 ;
+  typedef typename K::Point_2 Point_2 ;
+  typedef typename K::Line_2 Line_2 ;
 
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
@@ -667,17 +668,17 @@ compute_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K, class CoeffCache>
-boost::optional< Point_2<K> >
+boost::optional< typename K::Point_2 >
 construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                        CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT  FT ;
 
-  typedef Line_2<K>  Line_2 ;
+  typedef typename K::Line_2  Line_2 ;
 
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec point for: " << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec point for:" << tri ) ;
 
   FT x(0), y(0) ;
 
@@ -728,14 +729,14 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 //
 // See detailed computations in compute_degenerate_offset_lines_isec_timeC2()
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+boost::optional< typename K::Point_2 >
 construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                            CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT FT ;
 
-  typedef Point_2<K> Point_2 ;
-  typedef Line_2<K>  Line_2 ;
+  typedef typename K::Point_2 Point_2 ;
+  typedef typename K::Line_2  Line_2 ;
 
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
@@ -841,7 +842,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
 // Calls the appropriate function depending on the collinearity of the edges.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+boost::optional< typename K::Point_2 >
 construct_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                 CoeffCache& aCoeff_cache)
 {

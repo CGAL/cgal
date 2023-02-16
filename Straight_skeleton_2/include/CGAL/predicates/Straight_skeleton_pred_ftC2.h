@@ -37,10 +37,9 @@ namespace CGAL_SS_i {
 // the three points are along the same line, in any order.
 template<class K>
 inline
-Uncertain<bool> certified_collinearC2( Point_2<K> const& p
-                                     , Point_2<K> const& q
-                                     , Point_2<K> const& r
-                                     )
+Uncertain<bool> certified_collinearC2( typename K::Point_2 const& p,
+                                       typename K::Point_2 const& q,
+                                       typename K::Point_2 const& r )
 {
   return CGAL_NTS certified_is_equal( ( q.x() - p.x() ) * ( r.y() - p.y() )
                                     , ( r.x() - p.x() ) * ( q.y() - p.y() )
@@ -52,10 +51,9 @@ Uncertain<bool> certified_collinearC2( Point_2<K> const& p
 // q is in the closed segment [p,r].
 template<class K>
 inline
-Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2<K> const& p
-                                                            , Point_2<K> const& q
-                                                            , Point_2<K> const& r
-                                                            )
+Uncertain<bool> certified_collinear_are_ordered_along_lineC2( typename K::Point_2 const& p,
+                                                              typename K::Point_2 const& q,
+                                                              typename K::Point_2 const& r )
 {
   if ( CGAL_NTS certainly(p.x() < q.x()) ) return !(r.x() < q.x());
   if ( CGAL_NTS certainly(q.x() < p.x()) ) return !(q.x() < r.x());
@@ -305,7 +303,7 @@ Uncertain<Comparison_result> compare_isec_anglesC2 ( Vector_2<K> const& aBV1
 // Returns true if the point aP is on the positive side of the line supporting the edge
 //
 template<class K>
-Uncertain<bool> is_edge_facing_pointC2 ( boost::optional< Point_2<K> > const& aP,
+Uncertain<bool> is_edge_facing_pointC2 ( boost::optional< typename K::Point_2 > const& aP,
                                          Segment_2_with_ID<K> const& aEdge )
 {
   typedef typename K::FT FT ;
@@ -528,7 +526,7 @@ Uncertain<bool> are_events_simultaneousC2 ( boost::intrusive_ptr< Trisegment_2<K
 {
   typedef typename K::FT FT ;
 
-  typedef Point_2<K> Point_2 ;
+  typedef typename K::Point_2 Point_2 ;
 
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
