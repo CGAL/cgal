@@ -19,8 +19,9 @@
 
 #ifdef CGAL_USE_BOOST_MP
 
-// already protected by CGAL_USE_CORE macro
+#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_arithmetic_kernel.h>
+#endif
 
 //Currently already included in boost_mp.h
 //#include <boost/multiprecision/cpp_int.hpp>
