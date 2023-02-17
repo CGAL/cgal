@@ -50,7 +50,6 @@ inline int cmp(const BigInt& x, const BigInt& y) {
 
 
 inline int set_str(BigInt& a, const char* s) {
-      // AF   makeCopy();
     a = BigInt(s);
     return 0;  // should be -1 if not correct in the base (we ignore)
   }
@@ -115,8 +114,6 @@ inline long floorLg(const BigInt& a) {
 
 /// div_rem
 inline void div_rem(BigInt& q, BigInt& r, const BigInt& a, const BigInt& b) {
-  // AF q.makeCopy();
-  // AF r.makeCopy();
   divide_qr(a, b, q, r);
 }
 
@@ -129,7 +126,6 @@ inline unsigned long ulongValue(const BigInt& a) {
 
   /// exact div
 inline void divexact(BigInt& z, const BigInt& x, const BigInt& y) {
-  // AF z.makeCopy();
   BigInt r;
   divide_qr(x, y, z, r );  // was void mpz_divexact (mpz_t q, const mpz_t n, const mpz_t d)   Is this faster?
   assert(r.is_zero());
@@ -178,7 +174,6 @@ inline long ceilLg(int a) { // need this for Polynomial<int>
 
 /// negate
 inline void negate(BigInt& a) {
-  // AF a.makeCopy();
   a= - a;
 }
 
@@ -187,7 +182,6 @@ inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
     BigInt k(uk), q, r;
     e = 0;
     m = z;
-    // AF m.makeCopy();
     for(;;) {
         divide_qr(m, k, q, r);
         if (!r.is_zero()) break;
@@ -197,7 +191,6 @@ inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
 }
 
 inline void power(BigInt& c, const BigInt& a, unsigned long ul) {
-    // AF c.makeCopy();
   c = pow(a, ul);
 }
 
