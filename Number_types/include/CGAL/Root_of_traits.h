@@ -75,10 +75,10 @@ compute_roots_of_2(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
       return oit;
     }
   }
-  else {
-      assert(false); 
-    // *oit++ = - c / b;  // AF: HELP 
-      return oit;
+  else { 
+    Root_of_1 cb = -c / b;
+    *oit++ = Root_of_2(cb); 
+    return oit;
   }
 }
 
