@@ -120,11 +120,11 @@ struct Sizing_field_with_aabb_tree
       // possible.
       for(Curve_index curve_index : incident_curves) {
         if(domain.is_loop(curve_index)) {
-          FT curve_lenght = d_ptr->domain.curve_length(curve_index);
+          FT curve_length = d_ptr->domain.curve_length(curve_index);
           Point_3 other_point =
             d_ptr->domain.construct_point_on_curve(pair.first,
                                                    curve_index,
-                                                   curve_lenght / 2);
+                                                   curve_length / 2);
           d_ptr->dt.insert(other_point);
         }
       }
@@ -420,12 +420,12 @@ struct Sizing_field_with_aabb_tree
           if (const Point_3* pp = boost::get<Point_3>(&*int_res))
           {
             FT new_sqd = CGAL::squared_distance(p, *pp);
-            FT gdist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));
+            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
             std::cerr << "Intersection point : Point_3(" << *pp << ") ";
             std::cerr << "\n  new_sqd = " << new_sqd ;
-            std::cerr << "\n  gdist = " << gdist << "\n";
+            std::cerr << "\n  dist = " << dist << "\n";
 #endif
             if (new_sqd * 1e10 < CGAL::squared_distance(curr_segment.source(),
                                                         curr_segment.target()))
@@ -436,7 +436,7 @@ struct Sizing_field_with_aabb_tree
 #endif
               continue;
             }
-            if (CGAL_NTS sqrt(new_sqd) > 0.9 * gdist)
+            if (CGAL_NTS sqrt(new_sqd) > 0.9 * dist)
               continue;
             if (sqd_intersection == -1 || new_sqd < sqd_intersection)
             {
