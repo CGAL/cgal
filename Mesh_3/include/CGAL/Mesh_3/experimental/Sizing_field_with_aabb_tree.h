@@ -129,12 +129,12 @@ struct Sizing_field_with_aabb_tree
       };
 
       struct Visit_all_primitives {
-        decltype(push_vertex) push_vertex;
+        decltype(push_vertex) register_vertex;
         bool go_further() const { return true; }
         bool do_intersect(std::nullptr_t, const Node&) { return true; }
         void intersection(std::nullptr_t, const Primitive& primitive)
         {
-          push_vertex(primitive);
+          register_vertex(primitive);
         }
       } visit_all_primitives{push_vertex};
       d_ptr->aabb_tree.traversal(nullptr, visit_all_primitives);
