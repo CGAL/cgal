@@ -79,6 +79,35 @@ public:
   }
 
   template <typename IndexToIgnoreIterator>
+  Filtered_projection_traits(const Point_and_primitive_id& hint,
+                             IndexToIgnoreIterator begin,
+                             IndexToIgnoreIterator end,
+                             const AABBTraits& aabb_traits,
+                             IndexPropertyMap index_map = IndexPropertyMap())
+    : m_closest_point(hint.first),
+      m_closest_primitive(hint.second),
+      m_closest_point_initialized(true),
+      set_of_indices(begin, end),
+      aabb_traits(aabb_traits),
+      index_map(index_map)
+  {
+  }
+
+  Filtered_projection_traits(const Point_and_primitive_id& hint,
+                             Index_type index,
+                             const AABBTraits& aabb_traits,
+                             IndexPropertyMap index_map = IndexPropertyMap())
+    : m_closest_point(hint.first),
+      m_closest_primitive(hint.second),
+      m_closest_point_initialized(true),
+      set_of_indices(),
+      aabb_traits(aabb_traits),
+      index_map(index_map)
+  {
+    set_of_indices.insert(index);
+  }
+
+  template <typename IndexToIgnoreIterator>
   Filtered_projection_traits(IndexToIgnoreIterator begin,
                              IndexToIgnoreIterator end,
                              const AABBTraits& aabb_traits,
