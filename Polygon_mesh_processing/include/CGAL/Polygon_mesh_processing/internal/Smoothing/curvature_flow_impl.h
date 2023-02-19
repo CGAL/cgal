@@ -70,13 +70,14 @@ public:
   Shape_smoother(TriangleMesh& mesh,
                  VertexPointMap& vpmap,
                  VertexConstraintMap& vcmap,
+                 bool scale,
                  const GeomTraits& traits)
     :
       mesh_(mesh),
       vpmap_(vpmap),
       vcmap_(vcmap),
       vimap_(get(Vertex_local_index(), mesh_)),
-      scale_volume_after_smoothing(true),
+      scale_volume_after_smoothing(scale),
       traits_(traits),
       weight_calculator_(mesh_, vpmap_, traits_, false /*no clamping*/, false /*no bounding from below*/)
   { }

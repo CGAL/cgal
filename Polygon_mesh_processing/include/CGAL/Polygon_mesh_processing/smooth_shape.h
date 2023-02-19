@@ -85,6 +85,13 @@ namespace Polygon_mesh_processing {
 *     \cgalParamExtra{A constrained vertex cannot be modified at all during smoothing.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{scale}
+*     \cgalParamDescription{A closed mesh with at most one constrained
+*     vertex can be scaled in order to maintain its volume.}
+*     \cgalParamType{bool}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{sparse_linear_solver}
 *     \cgalParamDescription{an instance of the sparse linear solver used for smoothing}
 *     \cgalParamType{a class model of `SparseLinearAlgebraWithFactorTraits_d`}
@@ -125,6 +132,7 @@ void smooth_shape(const FaceRange& faces,
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                  Static_boolean_property_map<vertex_descriptor, false>());
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
+  const bool scale = choose_parameter(get_parameter(np, internal_np::scale), true);
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #if EIGEN_VERSION_AT_LEAST(3,2,0)
@@ -161,11 +169,11 @@ void smooth_shape(const FaceRange& faces,
   Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
   std::vector<CGAL::Triple<std::size_t, std::size_t, double> > stiffness;
 
-  internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
+  internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap, scale, gt);
 
   smoother.init_smoothing(faces);
 
-  // For robustness reasons, the laplacian coefficients are computed only once (only the mass
+  // For robustness reasons, the Laplacian coefficients are computed only once (only the mass
   // matrix is updated at every iteration). See Kazdhan et al. "Can Mean-Curvature Flow Be Made Non-Singular?".
   smoother.calculate_stiffness_matrix_elements(stiffness);
 
