@@ -383,8 +383,6 @@ boost::optional< typename K::Point_2 >
 compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
                             Segment_2_with_ID<K> const& e1 )
 {
-  bool ok = false ;
-
   typedef typename K::FT FT ;
 
   CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
@@ -393,9 +391,15 @@ compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
                           );
 
   FT delta01 = CGAL::squared_distance(e0.target(),e1.source());
-  FT delta10 = CGAL::squared_distance(e1.target(),e0.source());
+  if( CGAL_NTS is_finite(delta01) && CGAL_NTS is_zero(delta01))
+    return (true /*ok*/, e0.target());
 
-  Point_2<K> mp ;
+  FT delta10 = CGAL::squared_distance(e1.target(),e0.source());
+  if( CGAL_NTS is_finite(delta10) && CGAL_NTS is_zero(delta10))
+    return (true /*ok*/, e1.target());
+
+  bool ok = false ;
+  typename K::Point_2 mp ;
 
   if ( CGAL_NTS is_finite(delta01) &&  CGAL_NTS is_finite(delta10) )
   {
