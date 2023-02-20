@@ -594,11 +594,31 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
       const FT& l0a = l0->a() ;
       const FT& l0b = l0->b() ;
       const FT& l0c = l0->c() ;
-      const FT sq_w0 = square(tri->collinear_edge_weight());
       const FT& l2a = l2->a() ;
       const FT& l2b = l2->b() ;
       const FT& l2c = l2->c() ;
-      const FT sq_w2 = square(tri->non_collinear_edge_weight());
+
+      // Since l0 and l1 are parallel, we cannot solve the system using:
+      //   l0a*x + l0b*y + l0c = 0
+      //   l1a*x + l1b*y + l1c = 0
+      // Instead, we use the equation of the line orthogonal to l0 (and l1).
+      // However, rephrasing
+      //   l0a*x + l0b*y + l0c = 0
+      // to
+      //   [x, y] = projected_seed + t * N
+      // requires the norm (l0a² + l0b²) to be exactly '1', which likely isn't the case
+      // if we are using inexact square roots. In that case, the norm behaves similarly
+      // to a weight, and likewise needs to be inverted. So (now with weights), the equation
+      //   w*l0a*x + w*l0b*y + w*l0c = 0
+      // with l0a² + l0b² ~= 1 is:
+      //   w'*l0a'*x + w'*l0b'*y + w'*l0c' = 0,
+      // with l0a'² + l0b'² = 1. The orthogonal displacement is rephrased to:
+      //   [x, y] = projected_seed + t / w' * N,
+      // with w' = weight * (l0a² + l0b²).
+      //
+      // @todo further robustification by storing independently the norm (and not the weighted,
+      // normalized coeffs?)
+      const FT sq_w0 = square(l0a) + square(l0b); // l0a and l0b are *weighted* coefficients
 
       FT num(0), den(0) ;
       if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
@@ -778,15 +798,15 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
 
       CGAL_STSKEL_TRAITS_TRACE("Degenerate, equal weights " << tri->collinear_edge_weight() ) ;
       CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ". Projected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
-
       const FT& l0a = l0->a() ;
       const FT& l0b = l0->b() ;
       const FT& l0c = l0->c() ;
-      const FT sq_w0 = square(tri->collinear_edge_weight());
       const FT& l2a = l2->a() ;
       const FT& l2b = l2->b() ;
       const FT& l2c = l2->c() ;
-      const FT sq_w2 = square(tri->non_collinear_edge_weight());
+
+      // See details in compute_degenerate_offset_lines_isec_timeC2()
+      const FT sq_w0 = square(l0a) + square(l0b);
 
       // Note that "* sq_w0" is removed from the numerator expression.
       //
