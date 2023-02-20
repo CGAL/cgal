@@ -352,7 +352,7 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 //
 // If e0,e1 are collinear then this perpendicular line is a perpendicular bisector of the two segments.
 //
-// If e0,e1 are parallel but not collinear then the actual bisector is an equidistant line parallel to e0 and e1.
+// If e0,e1 are parallel but in opposite directions then the bisector is an equidistant line parallel to e0 and e1.
 // e0* and e1* overlap and are known to be connected sharing a known vertex v01, which is somewhere along the parallel
 // line which is the bisector of e0 and e1.
 // Given a line perpendicular to e0 through v01, a point to its positive side belongs to e0* while a point to its negative side does not.
@@ -369,10 +369,10 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 // bound the opposite edge.
 // If the opposite edge is 'e' and its previous/next edges are "preve"/"nexte" then the split point is inside the offset
 // edge if it is NOT to the positive side of [preve,e] *and* NOT to the negative side o [e,nexte].
-// (so this predicate answer half the question, at one and other side independently).
+// (so this predicate answers half the question, at one side).
 // If the split point is exactly over any of these bisectors then the split point occurs exactly and one (or both) endpoints
-// of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halfedges)
-// When this predicate is called to test (prev,e), e is the primary edge but since it is  pass as e1, primary_is_0=false.
+// of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halfedges).
+// When this predicate is called to test (prev,e), e is the primary edge but since it is passed as e1, primary_is_0=false.
 // This causes the case of parallel but not collinear edges to return positive when the split point is before the source point of e*
 // (a positive result means invalid split).
 // Likewise, primary_is_0 must be true when testing (e,nexte) to return negative if the split point is past the target endpoint of e*.
@@ -383,13 +383,13 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 // In all cases there is an edge before e1, say e0, and after e3, say e4.
 // Testing for the validity of an edge event amounts to determine that (e1,e3) (the new vertex) is not before (e0,e1) nor
 // past (e3,e4).
-// Thus, and edge event is valid if the new vertex NOT to the positive side of [e0,e1] *and* NOT to the negative side o [e3,e4].
+// Thus, and edge event is valid if the new vertex is NOT to the positive side of [e0,e1] *and* NOT to the negative side of [e3,e4].
 //
 // PRECONDITIONS:
 //   There exists a single point 'p' corresponding to the event as given by the trisegment
 //   e0 and e1 are known to be consecutive at the time of the event (even if they are not consecutive in the input polygon)
-//   If e0 and e1 are not consecutive in the input, v01_event is the event that defined they very first offset vertex.
-//   If e0 and e1 are consecutive, v01_event is null.
+//   If e0 and e1 are not consecutive in the input, v01_event is the event that defined their first common offset vertex.
+//   If e0 and e1 are consecutive in the input, v01_event is null.
 //
 template<class K, class CoeffCache>
 Uncertain<Oriented_side>
