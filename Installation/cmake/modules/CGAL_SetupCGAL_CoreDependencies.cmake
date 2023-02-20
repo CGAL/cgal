@@ -18,9 +18,6 @@ endif()
 set(CGAL_SetupCGAL_CoreDependencies_included TRUE)
 
 #.rst:
-# Used Modules
-# ^^^^^^^^^^^^
-#   - :module:`CGAL_SetupGMP`
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
@@ -29,13 +26,10 @@ set(CGAL_SetupCGAL_CoreDependencies_included TRUE)
 #
 #    Set to `TRUE` if the dependencies of `CGAL_Core` were found.
 
-if(NOT CGAL_DISABLE_GMP)
-  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupGMP.cmake)
-  if(GMP_FOUND)
-    set(CGAL_Core_FOUND TRUE)
-    set_property(GLOBAL PROPERTY CGAL_Core_FOUND TRUE)
-  endif()
-endif()
+
+# always found as it requires the minimal version of boost required by CGAL
+set(CGAL_Core_FOUND TRUE)
+set_property(GLOBAL PROPERTY CGAL_Core_FOUND TRUE)
 
 #.rst:
 #
