@@ -966,8 +966,6 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidEvent( EventPtr aEvent )
 template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidEdgeEvent( EdgeEvent const& aEvent )
 {
-  bool rResult = false ;
-
   Vertex_handle lLSeed = aEvent.seed0() ;
   Vertex_handle lRSeed = aEvent.seed1() ;
 
@@ -984,32 +982,35 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidEdgeEvent( EdgeEvent const& aE
     CGAL_STSKEL_BUILDER_TRACE(3, "PrevLSeed=N" << lPrevLSeed->id() << " PrevE0=E" << lPrevE0->id() ) ;
     CGAL_STSKEL_BUILDER_TRACE(3, "NextRSeed=N" << lNextRSeed->id() << " NextE2=E" << lNextE2->id() ) ;
 
-    Oriented_side lLSide = EventPointOrientedSide(aEvent, lPrevE0, lE0    , lPrevLSeed, false ) ;
-    Oriented_side lRSide = EventPointOrientedSide(aEvent, lE2    , lNextE2, lNextRSeed, true  ) ;
-
+    CGAL_STSKEL_BUILDER_TRACE(3, "- Check left E" << lPrevE0->id() << " E" << lE0->id() << " N" << lPrevLSeed->id() ) ;
+    Oriented_side lLSide = EventPointOrientedSide(aEvent, lPrevE0, lE0, lPrevLSeed, false /*aE0isPrimary*/ ) ;
     bool lLSideOK = ( lLSide != ON_POSITIVE_SIDE ) ;
+    if ( ! lLSideOK )
+    {
+      CGAL_STSKEL_BUILDER_TRACE(3, "Invalid edge event on the left side: " << aEvent.triedge()
+                                     << " NewNode is before E" << lE0->id()
+                                     << " source N" << lPrevLSeed->id() ) ;
+
+      return false;
+    }
+
+    CGAL_STSKEL_BUILDER_TRACE(3, "- Check right E" << lE2->id() << " E" << lNextE2->id() << " N" << lNextRSeed->id() ) ;
+    Oriented_side lRSide = EventPointOrientedSide(aEvent, lE2, lNextE2, lNextRSeed, true /*aE0isPrimary*/ ) ;
     bool lRSideOK = ( lRSide != ON_NEGATIVE_SIDE ) ;
+    if ( ! lRSideOK )
+    {
+      CGAL_STSKEL_BUILDER_TRACE(3, "Invalid edge event on the right side: " << aEvent.triedge()
+                                     << " NewNode is past E" << lE2->id()
+                                     << " target N" << lNextRSeed->id() ) ;
+    }
 
-    CGAL_STSKEL_BUILDER_TRACE_IF( !lLSideOK
-                                ,3
-                                ,"Invalid edge event: " << aEvent.triedge() << " NewNode is before E" << lE0->id()
-                                << " source N" << lPrevLSeed->id()
-                                ) ;
-
-    CGAL_STSKEL_BUILDER_TRACE_IF( !lRSideOK
-                                ,3
-                                ,"Invalid edge event: " << aEvent.triedge() << " NewNode is past E" << lE2->id()
-                                 << " target N" << lNextRSeed->id()
-                                ) ;
-
-    rResult = lLSideOK && lRSideOK ;
+    return lRSideOK ; // lLSideOK is `true` if we are here
   }
   else
   {
     // Triangle collapse. No need to test explicitly.
-    rResult = true ;
+    return true ;
   }
-  return rResult ;
 }
 
 template<class Gt, class Ss, class V>
