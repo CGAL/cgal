@@ -463,10 +463,11 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l0 = " << n2str(sd_p_l0) ) ;
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l1 = " << n2str(sd_p_l1) ) ;
 
-      Uncertain<bool> equal = CGAL_NTS certified_is_equal(sd_p_l0,sd_p_l1) ;
-      if ( is_certain(equal) )
+      Uncertain<Comparison_result> lCmpResult = CGAL_NTS certified_compare(sd_p_l0,sd_p_l1) ;
+      if ( is_certain(lCmpResult) )
       {
-        if ( equal )
+        CGAL_STSKEL_TRAITS_TRACE("compare(sd_p_l0, sd_p_l1) = " << lCmpResult ) ;
+        if ( lCmpResult == EQUAL )
         {
           CGAL_STSKEL_TRAITS_TRACE("Point is exactly at bisector");
 
@@ -474,23 +475,20 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
         }
         else
         {
+          // @fixme? is this correct given that norms might be slightly wrong?
           Uncertain<bool> smaller = CGAL_NTS certified_is_smaller( validate(l0.a()*l1.b()), validate(l1.a()*l0.b()) ) ;
           if ( is_certain(smaller) )
           {
             // Reflex bisector?
             if ( smaller )
             {
-              rResult = CGAL_NTS certified_is_smaller(sd_p_l0,sd_p_l1) ? ON_NEGATIVE_SIDE
-                                                                       : ON_POSITIVE_SIDE ;
-
-              CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of reflex bisector" ) ;
+              rResult = (lCmpResult == SMALLER) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE ;
+              CGAL_STSKEL_TRAITS_TRACE("Event point is on " << ((rResult > 0) ? "POSITIVE" : "NEGATIVE") << " side of reflex bisector" ) ;
             }
             else
             {
-              rResult = CGAL_NTS certified_is_larger (sd_p_l0,sd_p_l1) ? ON_NEGATIVE_SIDE
-                                                                       : ON_POSITIVE_SIDE ;
-
-              CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of convex bisector" ) ;
+              rResult = (lCmpResult == LARGER) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE ;
+              CGAL_STSKEL_TRAITS_TRACE("Event point is on " << ((rResult > 0) ? "POSITIVE" : "NEGATIVE") << " side of convex bisector" ) ;
             }
           }
         }
