@@ -554,11 +554,8 @@ public:
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
-    CGAL_assertion(false); // @fixme fix weights
-
     mFilteringBound = boost::none;
 
-#if 0
     if ( ! aNode->is_contour() )
       return ;
 
@@ -607,7 +604,6 @@ public:
       if ( ! mFilteringBound || *mFilteringBound > lBound )
         mFilteringBound = lBound;
     }
-#endif
   }
 
 public:
@@ -857,11 +853,8 @@ public:
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
-    CGAL_assertion(false); // @fixme fix weights
-
     mApproximate_traits.mFilteringBound = boost::none;
 
-#if 0
     if ( ! aNode->is_contour() )
       return ;
 
@@ -921,7 +914,6 @@ public:
       catch(CGAL::Uncertain_conversion_exception&)
       {}
     }
-#endif
   }
 
 public:

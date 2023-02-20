@@ -132,7 +132,7 @@ Point_2 snap_point_to_contour_halfedge_plane(const Point_2& op,
     // Project orthogonally onto the halfedge
     // @fixme, the correct projection should be along the direction of the other offset edge sharing this point
     Segment_2 s { sv->point(), tv->point() };
-    boost::optional<Line_2> line = SS::compute_weighted_line_coeffC2(s, FT(1)); // the weight does not matter
+    boost::optional<Line_2> line = SS::compute_normalized_line_coeffC2(s);
     CGAL_assertion(bool(line)); // otherwise the skeleton would have failed already
 
     FT px, py;

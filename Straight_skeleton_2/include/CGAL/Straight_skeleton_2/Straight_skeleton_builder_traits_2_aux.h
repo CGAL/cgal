@@ -272,7 +272,7 @@ template <typename K>
 using Time_cache = Info_cache< boost::optional< CGAL_SS_i::Rational< typename K::FT > > > ;
 
 template <typename K>
-using Coeff_cache = Info_cache< boost::optional< Line_2<K> > > ;
+using Coeff_cache = Info_cache< boost::optional< typename K::Line_2 > > ;
 
 template<class K>
 struct Functor_base_2

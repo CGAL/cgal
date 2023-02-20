@@ -34,6 +34,7 @@ compare_offset_against_isec_timeC2 ( typename K::FT const& t,
                                      boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri )
 {
   typedef typename K::FT FT ;
+  typedef typename K::Line_2 Line_2 ;
 
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
@@ -43,7 +44,7 @@ compare_offset_against_isec_timeC2 ( typename K::FT const& t,
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
   No_cache<boost::optional<CGAL_SS_i::Rational<typename K::FT> > > lTime_cache ;
-  No_cache<boost::optional<Line_2<K> > > lCoeff_cache ;
+  No_cache<boost::optional<Line_2 > > lCoeff_cache ;
 
   Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, lTime_cache, lCoeff_cache);
   if ( et_ )

@@ -404,8 +404,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
 {
   typedef typename K::FT FT ;
 
-  typedef Point_2     <K> Point_2 ;
-  typedef Line_2      <K> Line_2 ;
+  typedef typename K::Point_2 Point_2 ;
+  typedef typename K::Line_2  Line_2 ;
 
   Uncertain<Oriented_side> rResult = Uncertain<Oriented_side>::indeterminate();
 

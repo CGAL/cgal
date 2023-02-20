@@ -112,11 +112,8 @@ inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& lz)
 // POSTCONDITION: [a,b] is the leftward normal vector.
 // POSTCONDITION: In case of overflow, an empty optional<> is returned.
 template<class K>
-boost::optional< Line_2<K> > compute_weighted_line_coeffC2( Segment_2<K> const& e,
-                                                            typename K::FT const& aWeight )
+boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<K> const& e )
 {
-  CGAL_precondition( CGAL_NTS is_finite(aWeight) && CGAL_NTS is_positive(aWeight) ) ;
-
   bool finite = true ;
 
   typedef typename K::FT FT ;
@@ -199,31 +196,48 @@ boost::optional< Line_2<K> > compute_weighted_line_coeffC2( Segment_2<K> const& 
     if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) )
       finite = false ;
 
-  a = a * aWeight ;
-  b = b * aWeight ;
-  c = c * aWeight ;
+  return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
+}
 
-  CGAL_precondition( CGAL_NTS is_finite(a) ) ;
-  CGAL_precondition( CGAL_NTS is_finite(b) ) ;
-  CGAL_precondition( CGAL_NTS is_finite(c) ) ;
+template<class K>
+boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_with_ID<K> const& e,
+                                                                     typename K::FT const& aWeight)
+{
+  typedef typename K::FT FT ;
+  typedef typename K::Line_2 Line_2 ;
+
+  CGAL_precondition( CGAL_NTS is_finite(aWeight) && CGAL_NTS is_positive(aWeight) ) ;
+
+  boost::optional< Line_2 > l = compute_normalized_line_coeffC2(static_cast<typename K::Segment_2 const&>(e));
+  if( ! l )
+    return boost::none ;
+
+  FT a = l->a() * aWeight ;
+  FT b = l->b() * aWeight ;
+  FT c = l->c() * aWeight ;
 
   CGAL_STSKEL_TRAITS_TRACE("Weighted line coefficients for line: " << s2str(e)
                             << "\nweight=" << n2str(aWeight)
                             << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
                             ) ;
 
-  return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
+  if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) )
+    return boost::none;
+  else
+    return cgal_make_optional( true, K().construct_line_2_object()(a,b,c) ) ;
 }
 
 template<class K, class CoeffCache>
-boost::optional< Line_2<K> > compute_weighted_line_coeffC2( Segment_2_with_ID<K> const& e,
-                                                            typename K::FT const& aWeight,
-                                                            CoeffCache& aCoeff_cache )
+boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_with_ID<K> const& e,
+                                                                     typename K::FT const& aWeight,
+                                                                     CoeffCache& aCoeff_cache )
 {
+  typedef typename K::Line_2 Line_2 ;
+
   if ( aCoeff_cache.IsCached(e.mID) )
     return aCoeff_cache.Get(e.mID) ;
 
-  boost::optional< Line_2<K> > rRes = compute_weighted_line_coeffC2 ( static_cast<Segment_2<K> const&>(e), aWeight ) ;
+  boost::optional< Line_2 > rRes = compute_weighted_line_coeffC2 ( e, aWeight ) ;
 
   aCoeff_cache.Set(e.mID, rRes) ;
 
@@ -290,8 +304,7 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
                                           CoeffCache& aCoeff_cache )
 {
   typedef typename K::FT  FT ;
-
-  typedef Line_2<K> Line_2 ;
+  typedef typename K::Line_2 Line_2 ;
 
   typedef boost::optional<Line_2> Optional_line_2 ;
 
