@@ -1022,8 +1022,8 @@ private:
 * \ingroup PMP_corrected_curvatures_grp
 *
 * Computes the interpolated corrected curvatures across the mesh, based on the provided property maps.
-* By providing mean, gaussian and/or principal curvature property maps as named parameters, the user
-* can choose which curvatures to compute.
+* By providing mean, gaussian and/or principal curvature and direction property maps as named parameters, the user
+* can choose which quantites to compute.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
@@ -1039,7 +1039,7 @@ private:
 *                    `boost::graph_traits<PolygonMesh>::%Vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
+*     \cgalParamExtra{If this parameter is omitted, an internal property map forBy
 *                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
 *   \cgalParamNEnd
 *
@@ -1301,9 +1301,10 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 /**
   * \ingroup PMP_corrected_curvatures_grp
   * Computes the interpolated corrected curvatures at a certain vertex, based on the provided pointers.
-  * By providing mean, gaussian and/or principal curvature pointers as named parameters, the user
-  * can choose which curvatures to compute.
-  * The pointers are used to store the computed curvatures.
+  * By providing mean, gaussian and/or principal curvature and direction property maps as named parameters, the user
+  * can choose which quantites to compute.
+  *
+  * The pointers are used to store the computed quantities.
   * The user is responsible for the memory management of the pointers.
   *
   * @tparam PolygonMesh a model of `FaceListGraph`
