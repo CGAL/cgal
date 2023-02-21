@@ -982,7 +982,7 @@ private:
 #if CGAL_DEBUG_CDT_3 > 64 && __has_include(<format>)
     std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
 #endif // CGAL_DEBUG_CDT_3
-    for(const auto edge : cdt_2.finite_edges()) {
+    for(const auto& edge : cdt_2.finite_edges()) {
       const auto fh = edge.first;
       const auto i = edge.second;
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
@@ -1121,7 +1121,7 @@ public:
     std::vector<std::array<std::size_t, 3>> facets;
     facets.reserve(facets_range.size());
 
-    for(std::size_t i = 0; const auto [cell, facet_index] : facets_range) {
+    for(std::size_t i = 0; const auto& [cell, facet_index] : facets_range) {
       const auto v0 = cell->vertex(this->vertex_triple_index(facet_index, 0));
       const auto v1 = cell->vertex(this->vertex_triple_index(facet_index, 1));
       const auto v2 = cell->vertex(this->vertex_triple_index(facet_index, 2));
