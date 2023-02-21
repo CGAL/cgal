@@ -293,7 +293,7 @@ class Intersection_of_triangle_meshes
           if (non_manifold_feature_map.non_manifold_edges[eid].front()!=ed)
             continue;
           else
-            // make sure the halfedge used is consistant with stored one
+            // make sure the halfedge used is consistent with stored one
             h = halfedge(non_manifold_feature_map.non_manifold_edges[eid].front(), tm_e);
         }
         edge_boxes.push_back( Box(

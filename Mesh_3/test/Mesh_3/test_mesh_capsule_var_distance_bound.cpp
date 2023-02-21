@@ -50,8 +50,8 @@ auto field = [](const Point& p, const int, const Mesh_domain::Index)
 int main()
 {
   Mesh_domain domain =
-    Mesh_domain::create_implicit_mesh_domain(capsule_function,
-                                             K::Sphere_3(CGAL::ORIGIN, 49.));
+    Mesh_domain::create_implicit_mesh_domain(function = capsule_function,
+                                             bounding_object = K::Sphere_3(CGAL::ORIGIN, 49.));
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=0.5,

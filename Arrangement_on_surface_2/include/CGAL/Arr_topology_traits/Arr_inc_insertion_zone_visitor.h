@@ -59,8 +59,8 @@ private:
   const Vertex_handle invalid_v;        // An invalid vertex handle.
   const Halfedge_handle invalid_he;     // An invalid halfedge handle.
 
-  X_monotone_curve_2 m_sub_cv1;           // Auxiliary varibale (for splitting).
-  X_monotone_curve_2 m_sub_cv2;           // Auxiliary varibale (for splitting).
+  X_monotone_curve_2 m_sub_cv1;           // Auxiliary variable (for splitting).
+  X_monotone_curve_2 m_sub_cv2;           // Auxiliary variable (for splitting).
 
 public:
   /*! Constructor. */

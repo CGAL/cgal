@@ -761,7 +761,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     d->soup->vcolors.reserve (vcolors.size());
     std::copy (vcolors.begin(), vcolors.end(), std::back_inserter (d->soup->vcolors));
 }
-// Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
+// Force the instantiation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<EPICK::Point_3, std::vector<int> >
 (const std::vector<EPICK::Point_3>& points, const std::vector<std::vector<int> >& polygons);
@@ -911,32 +911,34 @@ void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
 CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const
 {
   CGAL::Three::Scene_item::Header_data data;
-  //categories
 
+  //categories
+  data.categories.append(std::pair<QString,int>(QString("Properties"),2));
   data.categories.append(std::pair<QString,int>(QString("Vertices"),1));
-  data.categories.append(std::pair<QString,int>(QString("Polygons"),4));
+  data.categories.append(std::pair<QString,int>(QString("Polygons"),2));
   data.categories.append(std::pair<QString,int>(QString("Edges"),6));
   data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
-
   //titles
+  data.titles.append(QString("Pure Triangle"));
+  data.titles.append(QString("Pure Quad"));
+
   data.titles.append(QString("#Points"));
 
   data.titles.append(QString("#Polygons"));
-  data.titles.append(QString("Pure Triangle"));
-  data.titles.append(QString("Pure Quad"));
   data.titles.append(QString("#Degenerate Polygons"));
 
   data.titles.append(QString("#Edges"));
+  data.titles.append(QString("#Degenerate Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
-  data.titles.append(QString("#Degenerate Edges"));
 
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
+
   return data;
 }
 
@@ -954,7 +956,7 @@ QString Scene_polygon_soup_item::computeStats(int type)
   case NB_EDGES:
     return QString::number(d->nb_lines/6);
 
-  case NB_DEGENERATED_FACES:
+  case NB_DEGENERATE_FACES:
   {
     if(d->is_triangle)
     {
@@ -968,11 +970,11 @@ QString Scene_polygon_soup_item::computeStats(int type)
     return QString::number(d->minl);
   case MAX_LENGTH:
     return QString::number(d->maxl);
-  case MID_LENGTH:
+  case MED_LENGTH:
     return QString::number(d->midl);
   case MEAN_LENGTH:
     return QString::number(d->meanl);
-  case NB_NULL_LENGTH:
+  case NB_DEGENERATE_EDGES:
     return QString::number(d->nb_null_edges);
 
   case MIN_ANGLE:

@@ -76,7 +76,7 @@ typedef unspecified_type Less_y_2;
 /// @}
 
 /// \name Creation
-/// Only a default constructor, copy constructor and an assignement
+/// Only a default constructor, copy constructor and an assignment
 /// operator are required. Note that further constructors can be
 /// provided.
 /// @{

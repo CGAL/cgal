@@ -42,7 +42,7 @@ class Optimization_function_base
 {
 public:
   /// Constructor
-  /// Takes the responsability of d
+  /// Takes the responsibility of d
   explicit
   Optimization_function_base(C3t3& c3t3, Domain* d)
     : c3t3_(c3t3), domain_(d) {}
@@ -171,7 +171,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
                            p_function->bbox().zmax());
 
     Function_mesh_domain* p_domain =
-      new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7,
+      new Function_mesh_domain(CGAL::parameters::function = Function_wrapper(*p_function), CGAL::parameters::bounding_object = dom_bbox, CGAL::parameters::relative_error_bound = 1e-7,
                                CGAL::parameters::construct_surface_patch_index =
                                  [](int i, int j) { return (i * 1000 + j); } );
 

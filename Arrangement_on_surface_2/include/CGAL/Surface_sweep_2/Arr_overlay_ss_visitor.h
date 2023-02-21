@@ -289,8 +289,8 @@ protected:
   /*!
    * Update the boundary vertices map.
    * This function is used when the parameter space has an identified (or
-   * contructed) boundary side. We assume that if the parameter space has a
-   * contructed boundary side, it also must have an identified boundary side.
+   * constructed) boundary side. We assume that if the parameter space has a
+   * constructed boundary side, it also must have an identified boundary side.
    * \param event The event.
    * \param v The vertex.
    * \param tag The tag used for dispatching.
@@ -301,7 +301,7 @@ protected:
   /*!
    * Update the boundary vertices map.
    * This function is used when the parameter space does not have an identified
-   * boundary side, and thus, neither it has a contructed boundary side.
+   * boundary side, and thus, neither it has a constructed boundary side.
    * \param event The event.
    * \param v The vertex.
    * \param tag The tag used for dispatching.
@@ -312,8 +312,8 @@ protected:
   /*!
    * Update a newly created vertex using the overlay traits.
    * This function is used when the parameter space has an identified (or
-   * contructed) boundary side. We assume that if the parameter space has a
-   * contructed boundary side, it also must have an identified boundary side.
+   * constructed) boundary side. We assume that if the parameter space has a
+   * constructed boundary side, it also must have an identified boundary side.
    * \param event The event associated with the new vertex.
    * \param res_v The new vertex in the overlaid arrangement.
    * \param sc The subcurve incident to the event.
@@ -325,7 +325,7 @@ protected:
   /*!
    * Update a newly created vertex using the overlay traits.
    * This function is used when the parameter space does not have an identified
-   * boundary side, and thus, neither it has a contructed boundary side.
+   * boundary side, and thus, neither it has a constructed boundary side.
    * \param event The event associated with the new vertex.
    * \param res_v The new vertex in the overlaid arrangement.
    * \param sc The subcurve incident to the event.

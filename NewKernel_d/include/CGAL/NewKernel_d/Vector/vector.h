@@ -12,7 +12,6 @@
 #ifndef CGAL_VECTOR_VECTOR_H
 #define CGAL_VECTOR_VECTOR_H
 #include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <CGAL/Dimension.h>
 #include <CGAL/NewKernel_d/utils.h>
 #include <vector>

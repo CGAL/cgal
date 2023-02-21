@@ -27,7 +27,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/tss.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 
 #include <boost/optional.hpp>
@@ -781,7 +781,7 @@ public:
 
   // E2A()(e) and std::forward<E>(e) could be evaluated in any order, but
   // that's ok, "forward" itself does not modify e, it may only mark it as
-  // modifyable by the outer call, which is obviously sequenced after the inner
+  // modifiable by the outer call, which is obviously sequenced after the inner
   // call E2A()(e).
   template<class E>
   Lazy_rep_0(E&& e)

@@ -26,7 +26,7 @@ template <class R_> class Segment {
         public:
         //typedef Segmentd<R_> Segment;
         //FIXME: don't forward directly, piecewise_construct should call the point construction functor (I guess? or is it unnecessary?)
-        template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment>>::value>::type>
+        template<class...U,class=std::enable_if_t<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment>>::value>>
         Segment(U&&...u):data(std::forward<U>(u)...){}
         Point_ source()const{return data.first;}
         Point_ target()const{return data.second;}

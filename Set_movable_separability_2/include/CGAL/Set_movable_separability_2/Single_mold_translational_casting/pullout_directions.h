@@ -32,7 +32,7 @@ namespace Single_mold_translational_casting {
  *           intersection in  [firstClockwise,secondClockwise].
  *           When a new semicircle appear the possible cases are as such:
  *           (let f:=firstClockwise, s:=secondClockwise, a:=newSemicircleFirstClockwise , b:=newSemicircleSecondClockwise)
- *        REMEBER THAT THIS ARE SEGMENTS ON A CIRCLE! NOT ON A LINE!
+ *        REMEMBER THAT THIS ARE SEGMENTS ON A CIRCLE! NOT ON A LINE!
  * 1. [f,s] contained in [a,b]
  *                f           s                    *      f                s   *          f        s  *     f        s
  *           a                b          *      a                b   *     a                b  *     a                b
@@ -61,7 +61,7 @@ namespace Single_mold_translational_casting {
  *          f                s *          f                s
  *                a           b          *                 b          a
  *           __________________*        __________________
- *           THIS CASE CANT HAPPEN!! [a,b] is an semicircle, and (f,s) is a semicircle or less
+ *           THIS CASE CAN'T HAPPEN!! [a,b] is a semicircle, and (f,s) is a semicircle or less
  */
 template <typename CastingTraits_2>
 std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,

@@ -207,13 +207,11 @@ struct Regularization_graph
       prevent_unselection (prevent_unselection)
   {
     labels.reserve(num_faces(fg));
-    std::size_t nb_selected = 0;
     for (fg_face_descriptor fd : faces(fg))
     {
       if (get(is_selected_map,fd))
       {
         labels.push_back(1);
-        ++ nb_selected;
       }
       else
         labels.push_back(0);
@@ -486,7 +484,7 @@ reduce_face_selection(
     \cgalParamNEnd
 
     \cgalParamNBegin{prevent_unselection}
-      \cgalParamDescription{Boolean used to indicate if selection can be only expanded or if it can also be shrinked.}
+      \cgalParamDescription{Boolean used to indicate if selection can be only expanded or if it can also be shrunk.}
       \cgalParamType{`bool`}
       \cgalParamDefault{`false`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
@@ -545,7 +543,7 @@ regularize_face_selection_borders(
                             (face_index_map));
 
   for (mesh_face_descriptor fd : faces(mesh))
-    put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
+    put(is_selected, fd, (graph.labels[get(face_index_map,fd)] != 0));
 }
 
 /// \cond SKIP_IN_MANUAL

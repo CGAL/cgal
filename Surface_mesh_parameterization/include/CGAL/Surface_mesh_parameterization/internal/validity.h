@@ -26,9 +26,9 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/range/has_range_iterator.hpp>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -132,7 +132,7 @@ public:
     halfedge_descriptor h = halfedge(a->info(), mesh);
     halfedge_descriptor g = halfedge(b->info(), mesh);
 
-    // check for shared egde
+    // check for shared edge
     if(face(opposite(h, mesh), mesh) == b->info() ||
        face(opposite(prev(h, mesh), mesh), mesh) == b->info() ||
        face(opposite(next(h, mesh), mesh), mesh) == b->info()) {
@@ -242,9 +242,9 @@ template <typename TriangleMesh,
 bool is_one_to_one_mapping(const TriangleMesh& mesh,
                            const Faces_Container& faces,
                            const VertexUVMap uvmap,
-                           typename boost::enable_if<
-                              boost::has_range_iterator<Faces_Container>
-                           >::type* = nullptr)
+                           std::enable_if_t<
+                              boost::has_range_iterator<Faces_Container>::value
+                           >* = nullptr)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;

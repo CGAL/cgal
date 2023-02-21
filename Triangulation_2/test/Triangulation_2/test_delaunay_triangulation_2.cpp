@@ -25,7 +25,7 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4661) // Explicit instantiation will not
-                                //  instatiate template member functions
+                                //  instantiate template member functions
 #endif
 
 

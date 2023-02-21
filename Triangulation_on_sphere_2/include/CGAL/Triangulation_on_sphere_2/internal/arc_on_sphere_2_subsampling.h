@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Default.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
@@ -103,7 +103,7 @@ void subsample_arc_on_sphere_2(const typename Kernel::Circle_3& circle,
   if(source > target)
     target += 2*CGAL_PI;
 
-  CGAL_triangulation_assertion(target > source);
+  CGAL_assertion(target > source);
 
   const double radius = sqrt(circle.squared_radius());
   const double edge_len = (target - source) * radius;
@@ -115,7 +115,7 @@ void subsample_arc_on_sphere_2(const typename Kernel::Circle_3& circle,
   for(int i=0; i<nb_of_segments-1; ++i)
   {
     current_theta += step_size;
-    CGAL_triangulation_assertion(current_theta <= target);
+    CGAL_assertion(current_theta <= target);
     *out_pts++ = compute_point<Kernel>(circle.center(), radius, current_theta, b1, b2);
   }
   *out_pts++ = compute_point<Kernel>(circle.center(), radius, target, b1, b2);

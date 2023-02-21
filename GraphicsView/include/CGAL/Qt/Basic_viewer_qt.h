@@ -1781,7 +1781,7 @@ protected:
 
   QGLBuffer buffers[NB_VBO_BUFFERS];
 
-  // The following enum gives the indices of the differents vao.
+  // The following enum gives the indices of the different vao.
   enum
     { VAO_MONO_POINTS=0,
       VAO_COLORED_POINTS,

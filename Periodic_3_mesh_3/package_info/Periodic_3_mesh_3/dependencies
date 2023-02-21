@@ -28,12 +28,11 @@ Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 Random_numbers
+SMDS_3
 STL_Extension
 Solver_interface
 Spatial_sorting
 Stream_support
-SMDS_3
 TDS_3
 Triangulation_3
 Union_find
-

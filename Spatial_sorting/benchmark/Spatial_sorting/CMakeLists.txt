@@ -6,5 +6,4 @@ project(Spatial_sorting_)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
 create_single_source_cgal_program("simple.cpp")

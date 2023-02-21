@@ -33,8 +33,9 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Sqrt_extension_fwd.h>
 #include <boost/optional.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/NT_converter.h>
+
+#include <type_traits>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
@@ -177,10 +178,10 @@ public:
      */
   template <class NTX>
   explicit Sqrt_extension(const NTX& a, const NTX& b, const NTX& c, const bool is_smaller,
-    typename boost::enable_if< boost::mpl::and_<
-      boost::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
-      boost::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
-    > >::type* = 0  )
+    std::enable_if_t< boost::mpl::and_<
+      std::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
+      std::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
+    >::value >* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
     typename Fraction_traits<ROOT>::Compose compose_root;
@@ -228,7 +229,7 @@ public:
     //! Access operator for is_extended_, \c const
     inline const bool& is_extended() const { return is_extended_; }
     inline bool is_rational() const {
-      CGAL_precondition( (boost::is_same<NT,ROOT>::value) || !"NT and ROOT should be identical and rational");
+      CGAL_precondition( (std::is_same<NT,ROOT>::value) || !"NT and ROOT should be identical and rational");
       return !is_extended_;} //for backward compatibility
 
     //!check if the number is an extension (test the values) and update the internal flag
@@ -594,7 +595,7 @@ CGAL::Comparison_result
       sign_right = ZERO;
   }
 
-  // Check whether on of the terms is zero. In this case, the comparsion
+  // Check whether on of the terms is zero. In this case, the comparison
   // result is simpler:
   if (sign_left == ZERO)
   {
@@ -627,7 +628,7 @@ CGAL::Comparison_result
   // We now square both terms and look at the sign of the one-root number:
   //   ((a1 - a2)^2 - (b12*c1 + b22*c2)) + 2*b1*b2*sqrt(c1*c2)
   //
-  // If both signs are negative, we should swap the comparsion result
+  // If both signs are negative, we should swap the comparison result
   // we eventually compute.
   const NT          A = diff_a0*diff_a0 - (x_sqr + y_sqr);
   const NT          B = 2 * a1_ * y.a1_;

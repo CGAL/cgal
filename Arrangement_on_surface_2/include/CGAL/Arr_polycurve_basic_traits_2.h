@@ -25,8 +25,7 @@
  */
 
 #include <iterator>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -326,7 +325,7 @@ public:
     {}
 
     /*! Compare two directional points lexigoraphically: by x, then by y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
@@ -1115,7 +1114,7 @@ public:
   // model of this concept.
   //
   // The following implementation is inspired by
-  // http://stackoverflow.com/a/11816999/1915421
+  // https://stackoverflow.com/a/11816999/1915421
 
   template <typename T>
   struct Void {
@@ -1144,14 +1143,14 @@ public:
                                         Approximate_2;
 
   /*! Obtain an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object_impl(boost::false_type) const
+  Approximate_2 approximate_2_object_impl(std::false_type) const
   { return subcurve_traits_2()->approximate_2_object(); }
 
-  Approximate_2 approximate_2_object_impl(boost::true_type) const { }
+  Approximate_2 approximate_2_object_impl(std::true_type) const { }
 
   Approximate_2 approximate_2_object() const
   {
-    typedef typename boost::is_same<void, Approximate_2>::type      Is_void;
+    typedef typename std::is_same<void, Approximate_2>::type      Is_void;
     return approximate_2_object_impl(Is_void());
   }
 #endif
@@ -1215,7 +1214,7 @@ public:
                                   ForwardIterator end) const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename boost::is_same<VT,Point_2>::type Is_point;
+      typedef typename std::is_same<VT,Point_2>::type Is_point;
 
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
@@ -1233,7 +1232,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator /* begin */,
                                         ForwardIterator /* end */,
-                                        boost::true_type) const
+                                        std::true_type) const
     { CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 
     /*! Obtain an x-monotone polycurve from a range of subcurves.
@@ -1254,7 +1253,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::false_type) const
+                                        std::false_type) const
     {
       CGAL_precondition_msg
         (
@@ -1593,7 +1592,7 @@ public:
       // x-value.
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
-      // Comfirm with Eric.
+      // Confirm with Eric.
       return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
     }
 
@@ -1682,7 +1681,7 @@ public:
       // x-value.
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
-      // Comfirm with Eric.
+      // Confirm with Eric.
       size_type index = (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
       return index;
     }
@@ -2329,7 +2328,7 @@ public:
         target = src;
       }
 
-      // std::cout << "**************the new sourc: " << source
+      // std::cout << "**************the new source: " << source
       //           << "the new target: " << target << std::endl;
       /*
        * Get the source and target subcurve numbers from the polycurve.

@@ -84,7 +84,7 @@ function(CGAL_hook_check_CMAKE_BUILD_TYPE)
   if(DEFINED CMAKE_BUILD_TYPE AND ( NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "Debug") )
     set(keyword WARNING)
     set(type warning)
-    if(RUNNING_CGAL_AUTO_TEST)
+    if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
       # No warning in the CMake test suite, but a status message
       set(keyword)
       set(type notice)

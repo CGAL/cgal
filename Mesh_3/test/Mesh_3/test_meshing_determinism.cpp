@@ -68,7 +68,10 @@ void test()
   // iterate
   std::vector<std::string> output_c3t3;
   std::vector<std::string> output_surfaces;
-  output_c3t3.reserve(5 * nb_runs);
+
+  const std::size_t nb_operations = 5;
+
+  output_c3t3.reserve(nb_operations * nb_runs);
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
@@ -133,14 +136,16 @@ void test()
     if(i == 0)
       continue;
     //else check
-    for(std::size_t j = 0; j < 5; ++j)
+    for(std::size_t j = 0; j < nb_operations; ++j)
     {
-      if(0 != output_c3t3[5*(i-1)+j].compare(output_c3t3[5*i+j]))
+      std::size_t id1 = nb_operations * (i - 1) + j;
+      std::size_t id2 = nb_operations * i + j;
+      if(0 != output_c3t3[id1].compare(output_c3t3[id2]))
       {
         std::cerr << "Meshing operation " << j << " is not deterministic.\n";
         assert(false);
       }
-      if (0 != output_surfaces[5 * (i - 1) + j].compare(output_surfaces[5 * i + j]))
+      if (0 != output_surfaces[id1].compare(output_surfaces[id2]))
       {
         std::cerr << "Output surface after operation " << j << " is not deterministic.\n";
         assert(false);
@@ -151,8 +156,11 @@ void test()
 
 int main(int, char*[])
 {
+  std::cout << "Sequential test" << std::endl;
   test<CGAL::Sequential_tag>();
+
 #ifdef CGAL_LINKED_WITH_TBB
+  std::cout << "\n\nParallel with 1 thread test" << std::endl;
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test<CGAL::Parallel_tag>();
 #endif

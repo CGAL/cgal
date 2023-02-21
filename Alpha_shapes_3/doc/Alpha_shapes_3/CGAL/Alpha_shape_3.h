@@ -44,7 +44,7 @@ the basic `Cartesian_converter`, for example when a custom point is used.
 In this case, a partial specialization of `Cartesian_converter`
 must be provided by the user. An example of such specialization is given in the
 two-dimensional Alpha Shapes example \ref Alpha_shapes_2/ex_alpha_projection_traits.cpp "ex_alpha_projection_traits.cpp".
-<li>The tag `ExactAlphaComparisonTag` cannot be used in conjonction with periodic triangulations.
+<li>The tag `ExactAlphaComparisonTag` cannot be used in conjunction with periodic triangulations.
 When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the evaluations of predicates such as `Side_of_oriented_sphere_3` are done lazily.
 Consequently, the predicates store pointers to the geometrical positions of the

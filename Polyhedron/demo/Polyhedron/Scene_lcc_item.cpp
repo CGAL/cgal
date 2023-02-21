@@ -15,13 +15,13 @@ typedef Edge_container Ec;
 typedef Point_container Pc;
 typedef Viewer_interface Vi;
 
-typedef Scene_lcc_item::LCC::Dart_const_handle Dart_const_handle;
-typedef Scene_lcc_item::LCC::Dart_handle Dart_handle;
+typedef Scene_lcc_item::LCC::Dart_const_descriptor Dart_const_descriptor;
+typedef Scene_lcc_item::LCC::Dart_descriptor Dart_descriptor;
 typedef Scene_lcc_item::LCC::Point Point;
 
 struct Facet{
   Facet():normal(Scene_lcc_item::LCC::Vector(0,0,0)){}
-  Dart_const_handle f_handle;
+  Dart_const_descriptor f_handle;
   std::vector<Point> points;
   Scene_lcc_item::LCC::Vector normal;
   std::size_t volume_id;
@@ -46,13 +46,13 @@ struct lcc_priv{
   lcc_priv(const Scene_lcc_item::LCC& lcc)
     :lcc(lcc), is_mono_color(true){}
 
-  bool compute_face(Dart_const_handle dh, Facet& f)
+  bool compute_face(Dart_const_descriptor dh, Facet& f)
   {
     f.f_handle = dh;
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
+    Dart_const_descriptor cur=dh;
+    Dart_const_descriptor min=dh;
     do
     {
       if (!lcc.is_next_exist(cur)) return false; // open face=>not filled
@@ -164,7 +164,7 @@ struct lcc_priv{
 
       P_traits cdt_traits(f.normal);
       CDT cdt(cdt_traits);
-        // (1) We insert all the edges as contraint in the CDT.
+        // (1) We insert all the edges as constraint in the CDT.
         typename CDT::Vertex_handle previous=nullptr, first=nullptr;
         for (unsigned int i=0; i<f.size(); ++i)
         {
@@ -428,7 +428,7 @@ void Scene_lcc_item::computeElements() const
             if ( !d->lcc.is_marked(itf, markedges))
             {
               Point p1 = d->lcc.point(itf);
-              LCC::Dart_const_handle d2 = d->lcc.other_extremity(itf);
+              LCC::Dart_const_descriptor d2 = d->lcc.other_extremity(itf);
               Point p2 = d->lcc.point(d2);
               d->lines.push_back(p1.x() + offset.x);
               d->lines.push_back(p1.y() + offset.y);

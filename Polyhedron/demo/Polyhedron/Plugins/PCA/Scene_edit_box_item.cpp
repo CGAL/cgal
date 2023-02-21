@@ -941,6 +941,7 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
   Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
   {
     int id = selected_vertex->id;
+    CGAL_assume(id<8);
     *selected_vertex->x = applyX(id, last_pool[id][0], dir.x());
     *selected_vertex->y = applyY(id, last_pool[id][1], dir.y());
     *selected_vertex->z = applyZ(id, last_pool[id][2], dir.z());

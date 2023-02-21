@@ -129,7 +129,7 @@ public:
               const std::size_t nelder_mead_iterations,
               const std::size_t max_random_mutations = 0)
   {
-    // stopping criteria prameters
+    // stopping criteria parameters
     FT prev_fit_value = 0;
     const FT tolerance = 1e-10;
     int stale = 0;

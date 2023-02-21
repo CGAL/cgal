@@ -450,7 +450,7 @@ When we use our new items class with the polyhedral surface, our new
 face class is used in the halfedge data structure and the color
 attribute is available in the type `Polyhedron_3::Facet`. However,
 `Polyhedron_3::Facet` is not the same type as our local face
-typedef for `My_face`, but it is derived therefrom. Thus,
+typedef for `My_face`, but it is derived there from. Thus,
 everything that we put in the local face type except constructors is
 then available in the `Polyhedron_::Facet` type. For more
 details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structures"

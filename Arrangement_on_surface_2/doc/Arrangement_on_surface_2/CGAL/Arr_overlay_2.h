@@ -72,4 +72,4 @@ void overlay (const Arrangement_with_history_2<Traits,Dcel1>& arr1,
 
 
 
-} /* end namesapce CGAL */
+} /* end namespace CGAL */

@@ -6,7 +6,4 @@ project(tools_)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-include_directories(BEFORE "../include")
-
 create_single_source_cgal_program("points_in_bbox.cpp")

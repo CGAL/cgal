@@ -12,6 +12,7 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/generate_label_weights.h>
+#include <CGAL/Mesh_3/Detect_features_in_image.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Image_domain = CGAL::Labeled_mesh_domain_3<K>;
@@ -55,9 +56,10 @@ int main(int argc, char* argv[])
   CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
 
   Mesh_domain domain
-    = Mesh_domain::create_labeled_image_mesh_domain_with_features(image,
-                                                                  weights = img_weights,
-                                                                  relative_error_bound = 1e-6);
+    = Mesh_domain::create_labeled_image_mesh_domain(image,
+                                                    weights = img_weights,
+                                                    relative_error_bound = 1e-6,
+                                                    features_detector = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();

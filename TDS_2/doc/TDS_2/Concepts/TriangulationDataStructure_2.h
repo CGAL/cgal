@@ -692,7 +692,7 @@ vertex has been omitted when output.
 Vertex_handle file_input( istream& is, bool skip_first=false);
 
 /*!
-reads a combinatorial triangulation data structure from `is` and assigns it to tthe triangulation data structure.
+reads a combinatorial triangulation data structure from `is` and assigns it to the triangulation data structure.
 */
 istream& operator>> (istream& is, TriangulationDataStructure_2 & tds);
 

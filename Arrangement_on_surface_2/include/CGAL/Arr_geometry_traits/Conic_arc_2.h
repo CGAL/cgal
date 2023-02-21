@@ -182,7 +182,7 @@ public:
     _target (target),
     _extra_data_P (nullptr)
   {
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
                                                            target) != EQUAL);
 
@@ -249,7 +249,7 @@ public:
     _source = Point_2 (nt_traits.convert (x1), nt_traits.convert (y1));
     _target = Point_2 (nt_traits.convert (x2), nt_traits.convert (y2));
 
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (_source,
                                                            _target) != EQUAL);
 
@@ -300,7 +300,7 @@ public:
     Rational          y0 = center.y();
     Rational          R_sqr = ker.compute_squared_radius_2_object() (circ);
 
-    // Produce the correponding conic: if the circle center is (x0,y0)
+    // Produce the corresponding conic: if the circle center is (x0,y0)
     // and its squared radius is R^2, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
     // Note that this equation describes a curve with a negative (clockwise)
@@ -338,7 +338,7 @@ public:
     _target(target),
     _extra_data_P (nullptr)
   {
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
                                                            target) != EQUAL);
     CGAL_precondition (orient != COLLINEAR);
@@ -350,7 +350,7 @@ public:
     Rational          y0 = center.y();
     Rational          R_sqr = ker.compute_squared_radius_2_object() (circ);
 
-    // Produce the correponding conic: if the circle center is (x0,y0)
+    // Produce the corresponding conic: if the circle center is (x0,y0)
     // and it squared radius is R^2, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
     // Since this equation describes a curve with a negative (clockwise)
@@ -412,7 +412,7 @@ public:
     _source = Point_2 (nt_traits.convert (x1), nt_traits.convert (y1));
     _target = Point_2 (nt_traits.convert (x3), nt_traits.convert (y3));
 
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (_source,
                                                            _target) != EQUAL);
 
@@ -440,7 +440,7 @@ public:
 
     if (points_collinear)
     {
-      _info = 0;           // Inavlid arc.
+      _info = 0;           // Invalid arc.
       return;
     }
 
@@ -506,7 +506,7 @@ public:
 
     if (point_collinear)
     {
-      _info = 0;           // Inavlid arc.
+      _info = 0;           // Invalid arc.
       return;
     }
 
@@ -943,7 +943,7 @@ public:
     }
     else
     {
-      // Use the source and target to initialize the exterme points.
+      // Use the source and target to initialize the extreme points.
       bool   source_left =
         CGAL::to_double(_source.x()) < CGAL::to_double(_target.x());
       x_min = source_left ?
@@ -1270,7 +1270,7 @@ private:
       else
       {
         // The sign of (4rs - t^2) detetmines the conic type:
-        // - if it is possitive, the conic is an ellipse,
+        // - if it is positive, the conic is an ellipse,
         // - if it is negative, the conic is a hyperbola,
         // - if it is zero, the conic is a parabola.
         CGAL::Sign   sign_conic = CGAL::sign (4*_r*_s - _t*_t);
@@ -1371,7 +1371,7 @@ private:
   }
 
   /*!
-   * Build the data for hyperbolic arc, contaning the characterization of the
+   * Build the data for hyperbolic arc, containing the characterization of the
    * hyperbolic branch the arc is placed on.
    */
   void _build_hyperbolic_arc_data ()
@@ -1626,7 +1626,7 @@ protected:
   }
 
   /*!
-   * Find the vertical tangency points of the undelying conic.
+   * Find the vertical tangency points of the underlying conic.
    * \param ps The output points of vertical tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -1709,7 +1709,7 @@ protected:
   }
 
   /*!
-   * Find the horizontal tangency points of the undelying conic.
+   * Find the horizontal tangency points of the underlying conic.
    * \param ps The output points of horizontal tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of horizontal tangency points.
