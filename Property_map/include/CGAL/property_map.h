@@ -437,7 +437,7 @@ struct Pointer_property_map{
 
 /// \ingroup PkgPropertyMapRef
 /// Starting from boost 1.55, the use of raw pointers as property maps has been deprecated.
-/// This function is a shortcut to the recommanded replacement:
+/// This function is a shortcut to the recommended replacement:
 /// `boost::make_iterator_property_map(<pointer>, boost::typed_identity_property_map<std::size_t>())`
 /// Note that the property map is a mutable `LvaluePropertyMap` with `std::size_t` as key.
 template <class T>

@@ -148,7 +148,7 @@ public:
 #endif
 
     /*!\brief
-     * constructs an arc from a given represenation
+     * constructs an arc from a given representation
      */
     Generic_arc_2(Rep rep) :
         Base(rep) {

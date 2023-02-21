@@ -30,7 +30,7 @@ namespace CGAL {
 // https://lists.boost.org/Archives/boost/2006/08/109003.php
 //
 // C++0x has it under discussion here :
-// http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#851
+// https://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#851
 
 // Hopefully C++0x will fix this properly with initializer_lists.
 // So, it's temporary, therefore I do not document it and keep it internal.

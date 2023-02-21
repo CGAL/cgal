@@ -161,7 +161,7 @@ public:
   void end_building_output();
   /// called before filtering intersection edges in the interior of a set of coplanar faces.
   void filter_coplanar_edges();
-  /// called before segmenting input meshes in patches defined by connected components seperated by intersection edges.
+  /// called before segmenting input meshes in patches defined by connected components separated by intersection edges.
   void detect_patches();
   /// called before classifying which patches contribute to each Boolean operation.
   void classify_patches();

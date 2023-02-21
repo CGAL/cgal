@@ -69,7 +69,7 @@ int main() {
     CGAL::test_real_embeddable<NT>();
 
     CGAL::test_fraction_traits<NT>();
-    // backward compatiblity
+    // backward compatibility
     CGAL::test_rational_traits<NT>();
 
     test_io();

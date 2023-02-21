@@ -26,13 +26,8 @@ else()
   set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
 
-find_package(Doxygen)
+find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-
-if(NOT DOXYGEN_FOUND)
-  message(WARNING "Cannot build the documentation without Doxygen!")
-  return()
-endif()
 
 #starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
 if(TARGET Doxygen::doxygen)
@@ -130,6 +125,10 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
         endforeach()
       endif()
     endif()
+  endif()
+  if(EXISTS "${CGAL_PACKAGE_DIR}/include/CGAL/${CGAL_PACKAGE_NAME}/internal")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
+        "EXCLUDE += ${CGAL_PACKAGE_DIR}/include/CGAL/${CGAL_PACKAGE_NAME}/internal\n")
   endif()
 
   # IMAGE_PATH is set by default. For Documentation, we generate the extra path using packages.txt

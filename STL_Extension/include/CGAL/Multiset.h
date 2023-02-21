@@ -31,10 +31,10 @@ namespace CGAL {
  * 3. The number of black nodes from every path from the tree root to a leaf
  *    is the same for all tree leaves (it is called the 'black height' of the
  *    tree).
- * Due to propeties 2-3, the height of a red-black tree containing n nodes
+ * Due to properties 2-3, the height of a red-black tree containing n nodes
  * is bounded by 2*log_2(n).
  *
- * The Multiset template requires three template parmeters:
+ * The Multiset template requires three template parameters:
  * - The contained Type class represents the objects stored in the tree.
  *   It has to support the default constructor, the copy constructor and
  *   the assignment operator (operator=).
@@ -42,7 +42,7 @@ namespace CGAL {
  *   class Type: It has to support an operator() that receives two objects from
  *   the Type class and returns SMALLER, EQUAL or LARGER, depending on the
  *   comparison result.
- *   In case the deafult parameter is supplied, the Type class has to support
+ *   In case the default parameter is supplied, the Type class has to support
  *   the less-than (<) and the equal (==) operators.
  * - The Allocator represents an allocator class. By default, it is the CGAL
  *   allocator.
@@ -291,7 +291,7 @@ protected:
 
 public:
 
-  // Forward decleration:
+  // Forward declaration:
   class const_iterator;
 
   /*! \class
@@ -325,7 +325,7 @@ public:
 
   public:
 
-    /*! Deafult constructor. */
+    /*! Default constructor. */
     iterator () :
       nodeP (nullptr)
     {}
@@ -435,7 +435,7 @@ public:
 
   public:
 
-    /*! Deafult constructor. */
+    /*! Default constructor. */
     const_iterator () :
       nodeP (nullptr)
     {}
@@ -624,7 +624,7 @@ public:
   //@{
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& key_comp ()
   {
@@ -632,7 +632,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& value_comp ()
   {
@@ -641,7 +641,7 @@ public:
 
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& key_comp () const
   {
@@ -649,7 +649,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& value_comp () const
   {
@@ -1275,7 +1275,7 @@ protected:
   /*! Check whether a node is black. */
   inline bool _is_black (const Node *nodeP) const
   {
-    // Note that invalid nodes are considered ro be black as well.
+    // Note that invalid nodes are considered to be black as well.
     return (nodeP == nullptr || nodeP->color != Node::RED);
   }
   //@}
@@ -1979,7 +1979,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator positi
       if (k > max_steps)
       {
         // In case the given position is too far away (more than log(n) steps)
-        // from the true poisition of the object, break the loop.
+        // from the true position of the object, break the loop.
         found_pos = false;
         break;
       }
@@ -2003,7 +2003,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator positi
       if (k > max_steps)
       {
         // In case the given position is too far away (more than log(n) steps)
-        // from the true poisition of the object, break the loop.
+        // from the true position of the object, break the loop.
         found_pos = false;
         break;
       }
@@ -2463,7 +2463,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
 
   if (max1_P != rootP)
   {
-    // Splice max1_P from its current poisition in our tree.
+    // Splice max1_P from its current position in our tree.
     // We know it is has no right child, so we just have to connect its
     // left child with its parent.
     max1_P->parentP->rightP = max1_P->leftP;
@@ -2479,7 +2479,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
   }
   else if (min2_P != tree.rootP)
   {
-    // Splice min2_P from its current poisition in the other tree.
+    // Splice min2_P from its current position in the other tree.
     // We know it is has no left child, so we just have to connect its
     // right child with its parent.
     if (min2_P->parentP != nullptr)
@@ -2749,7 +2749,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
       if (_is_valid (childP) && rightTree.rootP == nullptr)
       {
-        // Assing T_r to rightTree.
+        // Assign T_r to rightTree.
         rightTree.rootP = childP;
         rightTree.iBlackHeight = iCurrBHeight;
 
@@ -2884,7 +2884,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
       if (_is_valid (childP) && leftTree.rootP == nullptr)
       {
-        // Assing T_l to leftTree.
+        // Assign T_l to leftTree.
         leftTree.rootP = childP;
         leftTree.iBlackHeight = iCurrBHeight;
 
@@ -3158,7 +3158,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_at (Node* 
 
     // Now physically swap nodeP and its successor. Notice this may temporarily
     // violate the tree properties, but we are going to remove nodeP anyway.
-    // This way we have moved nodeP to a position were it is more convinient
+    // This way we have moved nodeP to a position were it is more convenient
     // to delete it.
     _swap (nodeP, succP);
   }
@@ -3735,7 +3735,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_insert_fixup (Nod
 {
   CGAL_precondition (_is_red (nodeP));
 
-  // Fix the red-black propreties: we may have inserted a red leaf as the
+  // Fix the red-black properties: we may have inserted a red leaf as the
   // child of a red parent - so we have to fix the coloring of the parent
   // recursively.
   Node        *currP = nodeP;
@@ -3895,7 +3895,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
       else
       {
         // In this case, at least one of the sibling's children is red.
-        // It is therfore obvious that the sibling itself is black.
+        // It is therefore obvious that the sibling itself is black.
         if (_is_black (siblingP->rightP))
         {
           // The left child is red: Color it black, and color the sibling red.
@@ -3960,7 +3960,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
       else
       {
         // In this case, at least one of the sibling's children is red.
-        // It is therfore obvious that the sibling itself is black.
+        // It is therefore obvious that the sibling itself is black.
         if (_is_black (siblingP->leftP))
         {
           // The right child is red: Color it black, and color the sibling red.

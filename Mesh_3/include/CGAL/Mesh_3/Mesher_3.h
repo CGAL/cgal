@@ -575,7 +575,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   nbsteps = 0;
 
   facets_visitor_.activate();
-  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
+
   std::cerr << "Start volume scan...";
   CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
   cells_mesher_.scan_triangulation();
@@ -584,6 +584,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
+  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   timer.stop(); timer.reset(); timer.start();
 
   std::cerr << "Refining...\n";
@@ -690,7 +691,8 @@ initialize()
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-      Random_points_on_sphere_3<Bare_point> random_point(radius);
+      CGAL::Random rnd(0);
+      Random_points_on_sphere_3<Bare_point> random_point(radius, rnd);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);

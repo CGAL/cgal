@@ -192,7 +192,7 @@ public:
       m_queue(4096)
   {
     // Due to the Steiner point computation being a dichotomy, the algorithm is inherently inexact
-    // and passing exact kernels is explicitely disabled to ensure no misunderstanding.
+    // and passing exact kernels is explicitly disabled to ensure no misunderstanding.
     CGAL_static_assertion((std::is_floating_point<FT>::value));
   }
 
@@ -944,7 +944,7 @@ private:
       return IRRELEVANT;
     }
 
-    // push if facet is connected to artifical vertices
+    // push if facet is connected to artificial vertices
     for(int i=0; i<3; ++i)
     {
       const Vertex_handle vh = ch->vertex(Dt::vertex_triple_index(id, i));
@@ -1049,7 +1049,7 @@ private:
       check_queue_sanity();
 #endif
 
-      // const& to something that will be poped, but safe as `ch` && `id` are extracted before the pop
+      // const& to something that will be popped, but safe as `ch` && `id` are extracted before the pop
       const Gate& gate = m_queue.top();
       const Facet& f = gate.facet();
       CGAL_precondition(!m_dt.is_infinite(f));

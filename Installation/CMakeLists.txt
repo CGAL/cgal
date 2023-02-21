@@ -24,8 +24,7 @@ include(GNUInstallDirs)
 
 if(CGAL_BRANCH_BUILD)
 
-  message(
-    STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
+  message(STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
 
   # list packages
   file(
@@ -75,10 +74,8 @@ if(CGAL_BRANCH_BUILD)
       "${CGAL_SOURCE_DIR}/GraphicsView"
       CACHE INTERNAL "Directory containing the GraphicsView package")
 
-  message(
-    STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
-  message(
-    STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
+  message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
+  message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
   message(STATUS "Core package directory: ${CGAL_CORE_PACKAGE_DIR}")
 
 else(CGAL_BRANCH_BUILD)
@@ -354,7 +351,7 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   message(STATUS "Operating system:")
   execute_process(
     COMMAND uname -a
@@ -392,7 +389,7 @@ if(MSVC)
   uniquely_add_flags(CGAL_CXX_FLAGS "/fp:except-")
   uniquely_add_flags(CGAL_CXX_FLAGS "/bigobj") # Use /bigobj by default
 
-  if(RUNNING_CGAL_AUTO_TEST)
+  if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     set(CMAKE_CXX_WARNING_LEVEL
         2
         CACHE STRING "MSVC C++ compiler warning level" FORCE)
@@ -445,7 +442,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
   if(GCC_FOUND)
 
-    if(RUNNING_CGAL_AUTO_TEST)
+    if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
       uniquely_add_flags(CGAL_CXX_FLAGS "-Wall")
       # Remove -g from the relevant CMAKE_CXX_FLAGS. This will also
       # propagate to the rest of the tests, since we overwrite those
@@ -482,7 +479,7 @@ message("== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-if(CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST)
+if(CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   message("== Set up flags ==")
 
   # Ugly hack to be compatible with current CGAL testsuite process (as of
@@ -1254,4 +1251,4 @@ if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   if(Qt5_FOUND)
     message(STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'")
   endif()#Qt5_FOUND
-endif()#RUNNING_CGAL_AUTO_TEST
+endif()#RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE

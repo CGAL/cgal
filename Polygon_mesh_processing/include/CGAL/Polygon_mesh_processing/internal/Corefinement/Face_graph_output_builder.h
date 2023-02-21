@@ -273,7 +273,7 @@ class Face_graph_output_builder
   };
 
   // detect if a polyline is incident to two patches that won't be imported
-  // for the current operation (polylines skipt are always incident to a
+  // for the current operation (polylines skipped are always incident to a
   // coplanar patch)
   template <class TM, class FIM1, class FIM2>
   static
@@ -1068,15 +1068,15 @@ public:
             if (!used_to_clip_a_surface && !used_to_classify_patches && (!is_tm1_closed || !is_tm2_closed))
             {
               //make sure there is no ambiguity in tm1
-              if( (patch_status_was_not_already_set[0] && previous_bitvalue[0]!=is_patch_inside_tm2[patch_id_p1] ) ||
-                  (patch_status_was_not_already_set[1] && previous_bitvalue[1]!=is_patch_inside_tm2[patch_id_p2] ) )
+              if( (!patch_status_was_not_already_set[0] && previous_bitvalue[0]!=is_patch_inside_tm2.test(patch_id_p1) ) ||
+                  (!patch_status_was_not_already_set[1] && previous_bitvalue[1]!=is_patch_inside_tm2.test(patch_id_p2) ) )
               {
                 impossible_operation.set();
                 return true;
               }
               //make sure there is no ambiguity in tm2
-              if( (patch_status_was_not_already_set[2] && previous_bitvalue[2]!=is_patch_inside_tm2[patch_id_q1] ) ||
-                  (patch_status_was_not_already_set[3] && previous_bitvalue[3]!=is_patch_inside_tm2[patch_id_q2] ) )
+              if( (!patch_status_was_not_already_set[2] && previous_bitvalue[2]!=is_patch_inside_tm1.test(patch_id_q1) ) ||
+                  (!patch_status_was_not_already_set[3] && previous_bitvalue[3]!=is_patch_inside_tm1.test(patch_id_q2) ) )
               {
                 impossible_operation.set();
                 return true;
@@ -1090,6 +1090,15 @@ public:
           patch_status_not_set_tm1.reset(patch_id_p2);
           patch_status_not_set_tm2.reset(patch_id_q1);
           patch_status_not_set_tm2.reset(patch_id_q2);
+
+          // restore initial state, needed when checking in `inconsistent_classification()`
+          if (!is_tm1_closed  || !is_tm2_closed)
+          {
+            is_patch_inside_tm2.reset(patch_id_p1);
+            is_patch_inside_tm2.reset(patch_id_p2);
+            is_patch_inside_tm1.reset(patch_id_q1);
+            is_patch_inside_tm1.reset(patch_id_q2);
+          }
 
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
           #warning: Factorize the orientation predicates.
@@ -1228,7 +1237,7 @@ public:
             }
           }
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-          #warning At some point we should have a check if a patch status is already set, what we do is consistant otherwise --> ambiguous
+          #warning At some point we should have a check if a patch status is already set, what we do is consistent otherwise --> ambiguous
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
@@ -1384,10 +1393,13 @@ public:
             }
           }
           if (inconsistent_classification()) return;
-          CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
-          CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
-          CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
-          CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
+          if (!used_to_clip_a_surface && !used_to_classify_patches)
+          {
+            CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
+            CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
+            CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
+            CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
+          }
         }
     }
 

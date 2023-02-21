@@ -322,7 +322,7 @@ namespace internal {
     {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
-      CGAL_assertion_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
+      CGAL_warning_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
       CGAL_warning_msg(input_mesh_is_valid_,
         "The input mesh is not a valid polygon mesh. "
         "It could lead PMP::isotropic_remeshing() to fail.");
@@ -1219,7 +1219,7 @@ private:
       halfedge_descriptor hopp = opposite(h, mesh_);
 
       //check whether h is the longest edge in its associated face
-      //overwise refinement will go for an endless loop
+      //otherwise refinement will go into an endless loop
       double sqh = sqlength(h);
       return sqh >= sqlength(next(h, mesh_))
           && sqh >= sqlength(next(next(h, mesh_), mesh_))

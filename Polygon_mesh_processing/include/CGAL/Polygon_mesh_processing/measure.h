@@ -24,6 +24,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
 
@@ -31,6 +32,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/dynamic_bitset.hpp>
 
+#include <vector>
 #include <utility>
 #include <algorithm>
 #include <unordered_set>
@@ -308,6 +310,7 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   *   - `first`: a halfedge on the longest border.
   *     The return type `halfedge_descriptor` is a halfedge descriptor. It is
   *     deduced from the graph traits corresponding to the type `PolygonMesh`.
+  *     `first` is among the halfedges reported by `extract_boundary_cycles()`.
   *   - `second`: the length of the longest border
   *     The return type `FT` is a number type either deduced from the `geom_traits`
   *     \ref bgl_namedparameters "Named Parameters" if provided,
@@ -318,6 +321,7 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   * will be performed approximately.
   *
   * @see `face_border_length()`
+  * @see `extract_boundary_cycles()`
   */
 template<typename PolygonMesh,
          typename NamedParameters = parameters::Default_named_parameters>
@@ -334,28 +338,18 @@ longest_border(const PolygonMesh& pmesh,
             typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type>::Kernel::FT  FT;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                       halfedge_descriptor;
 
-  std::unordered_set<halfedge_descriptor> visited;
+  std::vector<halfedge_descriptor> boundary_cycles;
+  extract_boundary_cycles(pmesh, std::back_inserter(boundary_cycles));
   halfedge_descriptor result_halfedge = boost::graph_traits<PolygonMesh>::null_halfedge();
   FT result_len = 0;
-  for(halfedge_descriptor h : halfedges(pmesh))
+  for(halfedge_descriptor h : boundary_cycles)
   {
-    if(visited.find(h)== visited.end())
-    {
-      if(is_border(h, pmesh))
-      {
-        FT len = 0;
-        for(halfedge_descriptor haf : halfedges_around_face(h, pmesh))
-        {
-          len += edge_length(haf, pmesh, np);
-          visited.insert(haf);
-        }
+    FT len = face_border_length(h, pmesh, np);
 
-        if(result_len < len)
-        {
-          result_len = len;
-          result_halfedge = h;
-        }
-      }
+    if(result_len < len)
+    {
+      result_len = len;
+      result_halfedge = h;
     }
   }
   return std::make_pair(result_halfedge, result_len);

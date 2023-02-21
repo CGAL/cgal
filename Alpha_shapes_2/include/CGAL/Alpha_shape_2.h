@@ -57,7 +57,7 @@ public:
   typedef typename Dt::Geom_traits Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
-  // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
+  // The Exact Comparison Tag cannot be used in conjunction with periodic triangulations
   // because the periodic triangulations' point() function returns a temporary
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
@@ -432,7 +432,7 @@ public:
 private:
 
   // the dynamic version is not yet implemented
-  // desactivate the triangulation member functions
+  // deactivate the triangulation member functions
   Vertex_handle insert(const Point& p);
   // Inserts point `p' in the alpha shape and returns the
   // corresponding vertex of the underlying Delaunay triangulation.
@@ -744,7 +744,7 @@ private:
   //---------------------------------------------------------------------
 
 private:
-  // prevent default copy constructor and default assigment
+  // prevent default copy constructor and default assignment
 
   Alpha_shape_2(const Alpha_shape_2& A);
 
@@ -1435,7 +1435,7 @@ template < class Dt, class EACT >
 typename Alpha_shape_2<Dt,EACT>::Type_of_alpha
 Alpha_shape_2<Dt,EACT>::find_alpha_solid() const
 {
-  // compute the minumum alpha such that all data points
+  // compute the minimum alpha such that all data points
   // are either on the boundary or in the interior
   // not necessarily connected
   // starting point for searching

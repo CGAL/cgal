@@ -116,7 +116,7 @@ vertex either the
 sublayer tree is a tree anchor, or it stores a (possibly empty)
 list of data items. In the first case, the sublayer tree of the
 vertex is checked on being valid. In the second case, each data
-item is checked weather it contains the associated interval of
+item is checked whether it contains the associated interval of
 the vertex and does not contain the associated interval of the
 parent vertex or not. `true` is returned if the tree structure is valid,
 `false` otherwise.

@@ -39,7 +39,7 @@ int main()
   std::list<Point> result;
   tree.search(std::back_inserter(result), default_range);
 
-  std::cout << "\nPoints in cirle with center " << center << " and radius 0.2" << std::endl;
+  std::cout << "\nPoints in circle with center " << center << " and radius 0.2" << std::endl;
 
   std::list<Point>::iterator it;
   for (it=result.begin(); (it != result.end()); ++it)
@@ -51,7 +51,7 @@ int main()
 
   tree.search(std::back_inserter( result ), approximate_range);
 
-  std::cout << "\n\nPoints in cirle with center " << center << " and fuzzy radius [0.1,0.3]" << std::endl;
+  std::cout << "\n\nPoints in circle with center " << center << " and fuzzy radius [0.1,0.3]" << std::endl;
 
   for (it=result.begin(); (it != result.end()); ++it)
     std::cout << *it << std::endl;

@@ -74,7 +74,7 @@ typedef Oracle_5 Oracle;
 int main(int, char**)
 {
   /*** Spheres radiuss ***/
-  FT r1; // 93 milimeters
+  FT r1; // 93 millimeters
   FT r2;
   FT r3;
   FT r4;
@@ -102,7 +102,7 @@ int main(int, char**)
   const int number_of_initial_points = 20;
 
   const double facets_uniform_size_bound = 0.5; // mm
-  const double facets_aspect_ratio_bound = 30; // degres
+  const double facets_aspect_ratio_bound = 30; // degrees
 
   Sphere_3 sphere1(CGAL::ORIGIN, r1*r1);
   Sphere_3 sphere2(CGAL::ORIGIN, r2*r2);
@@ -180,7 +180,7 @@ int main(int, char**)
                           CGAL::Non_manifold_tag());
 
   std::string filename;
-  std::cout << "Ouput file name (without extension):" << std::endl;
+  std::cout << "Output file name (without extension):" << std::endl;
   std::cin >> filename;
 
   std::ofstream out_cgal((filename+".off").c_str());

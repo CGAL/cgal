@@ -458,7 +458,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
   create_face_objects(Out);
 
 
-  CGAL_NEF_TRACEN("transfering marks");
+  CGAL_NEF_TRACEN("transferring marks");
   Face_iterator f = this->faces_begin(); assoc_info(f);
   for (i=0; i<2; ++i) mark(f,i) = PI[i].mark(PI[i].faces_begin());
 

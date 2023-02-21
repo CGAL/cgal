@@ -148,7 +148,7 @@ point_iterator points_end() const { return ptr()->P.end(); }
 /*{\Mop returns an iterator pointing beyond the last defining point.}*/
 
 bool is_degenerate() const { return (ptr()->orient == CGAL::ZERO); }
-/*{\Mop returns true iff the defining points are not full dimenional.}*/
+/*{\Mop returns true iff the defining points are not full dimensional.}*/
 
 bool is_legal() const
 /*{\Mop returns true iff the set of defining points is legal.

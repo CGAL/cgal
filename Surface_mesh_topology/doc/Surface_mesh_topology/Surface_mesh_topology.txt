@@ -48,7 +48,7 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 
 \subsection SMTopology_simplicity Simplicity Test
 
-Given a cycle drawn on a surface one can ask if the cycle can be continously deformed to a cycle that does not intersect with itself. Any contractible cycle deforms to a simple cycle but this is not true for more complicated cycles. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
+Given a cycle drawn on a surface one can ask if the cycle can be continuously deformed to a cycle that does not intersect with itself. Any contractible cycle deforms to a simple cycle but this is not true for more complicated cycles. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
 
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
 - Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is homotopic to a simple one on \f$\cal{M}\f$.

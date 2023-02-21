@@ -211,7 +211,7 @@ intersect(const Arr_plane_3<Kernel> & plane1,
   typedef typename Kernel::FT           FT;
   typedef boost::variant<Line_3, Arr_plane_3<Kernel> >  Intersection_result;
 
-  // We know that the plane goes throgh the origin
+  // We know that the plane goes through the origin
   const FT& a1 = plane1.a();
   const FT& b1 = plane1.b();
   const FT& c1 = plane1.c();

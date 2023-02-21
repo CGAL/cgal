@@ -193,7 +193,7 @@ namespace CGAL {
      *  @param dartinfoconverter functor to transform original information of darts into information of copies
      *  @param pointconverter functor to transform points in original map into points of copies.
      *  @param copy_perforated_darts true to copy also darts marked perforated (if any)
-     *  @param mark_perforated_darts true to mark darts wich are copies of perforated darts (if any)
+     *  @param mark_perforated_darts true to mark darts which are copies of perforated darts (if any)
      *  @post *this is valid.
      */
     template <typename GMap2, typename Dart_descriptor_2,
@@ -1415,7 +1415,7 @@ namespace CGAL {
        std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(args...);
      // Reinitialize the ref counting of the new attribute. This is normally
-     // not required except if create_attribute is used as "copy contructor".
+     // not required except if create_attribute is used as "copy constructor".
      this->template init_attribute_ref_counting<i>(res);
      internal::Init_id<typename Attribute_range<i>::type>::run
          (this->template attributes<i>(), res);
@@ -2632,7 +2632,7 @@ namespace CGAL {
                   <Self, Map2, 0>::run(*this, map2, current, other);
             }
 
-            // We test if the injection is valid with its neighboors.
+            // We test if the injection is valid with its neighbors.
             // We go out as soon as it is not satisfied.
             for (i = 0; match && i <= dimension; ++i)
             {
@@ -3021,7 +3021,7 @@ namespace CGAL {
 
     /** Test if a face is a combinatorial polygon of length alg
      *  (a cycle of alg edges alpha1 links together).
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the face containing adart is a polygon of length alg.
      */
     bool is_face_combinatorial_polygon(Dart_const_descriptor adart,
@@ -3115,7 +3115,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial tetrahedron.
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the volume containing adart is a combinatorial tetrahedron.
      */
     bool is_volume_combinatorial_tetrahedron(Dart_const_descriptor d1) const
@@ -3192,7 +3192,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial hexahedron.
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the volume containing adart is a combinatorial hexahedron.
      */
     bool is_volume_combinatorial_hexahedron(Dart_const_descriptor d1) const
@@ -3385,7 +3385,7 @@ namespace CGAL {
     }
 
     /** Insert a vertex in the given 2-cell which is split in triangles,
-     * once for each inital edge of the facet.
+     * once for each initial edge of the facet.
      * @param adart a dart of the facet to triangulate.
      * @return A dart incident to the new vertex.
      */

@@ -309,7 +309,7 @@ Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr_> &tr)
 }
 
 
-//Assignement
+//Assignment
 template <class Tr_>
 Triangulation_hierarchy_2<Tr_> &
 Triangulation_hierarchy_2<Tr_>::

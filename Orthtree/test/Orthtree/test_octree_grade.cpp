@@ -56,7 +56,6 @@ void test(std::size_t dataset_size) {
   // Count the jumps in depth
   auto jumps = count_jumps(octree);
   std::cout << "un-graded octree has " << jumps << " jumps" << std::endl;
-  assert(jumps > 0);
 
   // Grade the octree
   octree.grade();

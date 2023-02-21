@@ -33,7 +33,7 @@ int main()
   NN_incremental_search NN(tree, query);
   NN_positive_x_iterator it(NN.end(), X_not_positive(), NN.begin()), end(NN.end(), X_not_positive());
 
-  std::cout <<  "The first 5 nearest neighbours with positive x-coord are: " << std::endl;
+  std::cout <<  "The first 5 nearest neighbors with positive x-coord are: " << std::endl;
   for (int j=0; (j < 5)&&(it!=end); ++j,++it)
     std::cout <<   (*it).first << "  at squared distance = " << it->second << std::endl;
 

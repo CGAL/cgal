@@ -68,7 +68,7 @@ Equality test.
 bool operator==(const Interval& I) const;
 
 /*!
-Unequality test.
+Inequality test.
 */
 bool operator!=(const Interval& I) const;
 

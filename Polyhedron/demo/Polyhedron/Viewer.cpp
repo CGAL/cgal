@@ -994,7 +994,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_NO_SELECTION:
     case PROGRAM_HEAT_INTENSITY:
-      program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
+      program->setUniformValue("alpha", 1.0f); //overridden in item draw() if necessary
     default:
       break;
     }

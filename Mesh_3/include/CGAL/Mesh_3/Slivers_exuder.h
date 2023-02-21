@@ -1559,7 +1559,7 @@ update_mesh(const Weighted_point& new_point,
   if (could_lock_zone && *could_lock_zone == false)
     return false;
 
-  // Get some datas to restore mesh
+  // Get some data to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 

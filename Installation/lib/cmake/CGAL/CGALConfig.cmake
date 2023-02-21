@@ -89,7 +89,7 @@ if (NOT CGAL_DATA_DIR)
           if (EXISTS "${CMAKE_SOURCE_DIR}/../../data")
               set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/../../data")
           else()
-            if(CGAL_TEST_SUITE)
+            if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
               message(WARNING "CGAL_DATA_DIR cannot be deduced, set the variable CGAL_DATA_DIR to set the default value of CGAL::data_file_path()")
             endif()
           endif()
@@ -114,6 +114,18 @@ include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+
+include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
+
+# Temporary? Change the CMAKE module path
+cgal_setup_module_path()
+
+include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
+
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+endif()
 
 foreach(comp ${CGAL_FIND_COMPONENTS})
   if(NOT comp MATCHES "Core|ImageIO|Qt5")
@@ -184,19 +196,3 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer)
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
 endif()
 
-include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
-
-#
-#
-#
-
-# Temporary? Change the CMAKE module path
-cgal_setup_module_path()
-
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
-include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
-
-if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
-  # Do not use -isystem for CGAL include paths
-  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
-endif()

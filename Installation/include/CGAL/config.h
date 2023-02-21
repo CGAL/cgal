@@ -52,7 +52,7 @@
 #endif // CGAL_TEST_SUITE and NDEBUG
 
 // See [[Small features/Visual_Leak_Detector]] in CGAL developers wiki
-// See also: http://vld.codeplex.com/
+// See also: https://kinddragon.github.io/vld/
 #if defined(CGAL_ENABLE_VLD)
 #  include <vld.h>
 #endif // CGAL_ENABLE_VLD
@@ -296,7 +296,7 @@ using std::max;
 
 // Macros to detect features of clang. We define them for the other
 // compilers.
-// See http://clang.llvm.org/docs/LanguageExtensions.html
+// See https://clang.llvm.org/docs/LanguageExtensions.html
 // See also https://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
@@ -473,7 +473,7 @@ namespace cpp11{
 
 // The fallthrough attribute
 // See for clang:
-//   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
+//   https://clang.llvm.org/docs/AttributeReference.html#statement-attributes
 // See for gcc:
 //   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 #if __cplusplus > 201402L && __has_cpp_attribute(fallthrough)
@@ -549,7 +549,7 @@ namespace cpp11{
 namespace CGAL {
 
 // Returns filename prefixed by the directory of CGAL containing data.
-// This directory is either defined in the environement variable CGAL_DATA_DIR,
+// This directory is either defined in the environment variable CGAL_DATA_DIR,
 // otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
 // otherwise it is empty (and thus returns filename unmodified).
 inline std::string data_file_path(const std::string& filename)

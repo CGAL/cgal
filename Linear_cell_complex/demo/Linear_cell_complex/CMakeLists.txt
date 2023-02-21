@@ -48,14 +48,13 @@ if(NOT
    (CGAL_Qt5_FOUND
     AND Qt5_FOUND))
 
-  message(STATUS "NOTICE: This demo requires CGAL, "
-                 "and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 else()
 
   add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
               CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
 

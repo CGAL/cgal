@@ -44,7 +44,7 @@ protected:
     GABRIEL   /**< `this` has been \e Gabriel-initialized. */
   };
 
-// --- PROTECTED DATAS ---
+// --- PROTECTED DATA ---
   Initialization initialized;
   Tr& tr;
   Null_mesher_level null_level;

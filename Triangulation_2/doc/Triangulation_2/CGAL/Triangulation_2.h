@@ -413,7 +413,7 @@ Triangulation_2 operator=(const Triangulation_2<Traits,Tds>& tr);
 
 /*!
 The triangulations `tr` and `*this` are swapped.
-This method should be used instead of assignment of copy construtor.
+This method should be used instead of assignment of copy constructor.
 if `tr` is deleted after that.
 */
 void swap(Triangulation_2& tr);

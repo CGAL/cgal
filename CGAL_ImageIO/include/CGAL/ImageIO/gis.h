@@ -23,7 +23,7 @@
 
    Format du fichier texte associe aux fichiers binaires (images)
 
-exemple :
+example :
          512 512 100 2
          -type U16
          -dx 1.

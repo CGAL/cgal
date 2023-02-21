@@ -108,7 +108,7 @@ int main() {
   X_monotone_polycurve conic_x_mono_polycurve_2 =
     ctr_xpolycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
-  // Insert the Polycurves into arrangment and print.
+  // Insert the Polycurves into arrangement and print.
   Polycurve_conic_arrangment x_pc_arrangment(&traits);
   insert(x_pc_arrangment, conic_x_mono_polycurve_1);
   insert(x_pc_arrangment, conic_x_mono_polycurve_2);
