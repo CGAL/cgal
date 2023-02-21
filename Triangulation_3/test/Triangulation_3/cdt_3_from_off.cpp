@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
   auto finally = [&cdt]() {
     {
       std::ofstream dump("dump.binary.cgal");
-      CGAL::Mesh_3::save_binary_file(dump, cdt);
+      CGAL::IO::save_binary_file(dump, cdt);
     }
     {
       std::ofstream missing_faces("missing_faces.polylines.txt");

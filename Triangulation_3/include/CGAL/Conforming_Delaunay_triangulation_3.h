@@ -283,7 +283,7 @@ protected:
   void debug_dump(std::string filename) {
     {
       std::ofstream dump(filename + ".binary.cgal", std::ios::binary);
-      CGAL::Mesh_3::save_binary_file(dump, *this);
+      CGAL::IO::save_binary_file(dump, *this);
     }
     {
       std::ofstream dump(filename + "_point.xyz");

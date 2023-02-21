@@ -133,7 +133,7 @@ public:
   {
     os << static_cast<const Base&>(c);
     for( unsigned li = 0; li < 4; ++li ) {
-      if(is_ascii(os)) {
+      if(IO::is_ascii(os)) {
         os << " " << c.face_id[li];
       } else {
         CGAL::write(os, c.face_id[li]);
@@ -149,7 +149,7 @@ public:
     if(!is) return is;
     for( int li = 0; li < 4; ++li ) {
       int i;
-      if(is_ascii(is)) {
+      if(IO::is_ascii(is)) {
         is >> i;
       } else {
         CGAL::read(is, i);
@@ -1069,7 +1069,7 @@ public:
 
   void dump_triangulation() const {
     std::ofstream dump("dump.binary.cgal");
-    CGAL::Mesh_3::save_binary_file(dump, *this);
+    CGAL::IO::save_binary_file(dump, *this);
   }
 
   void dump_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2) {
