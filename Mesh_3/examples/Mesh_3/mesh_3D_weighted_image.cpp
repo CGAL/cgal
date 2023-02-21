@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
                                  cell_radius_edge_ratio(3).cell_size(8));
 
   /// [Meshing]
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude(), params::no_perturb());
   /// [Meshing]
 
   // Output

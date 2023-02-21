@@ -1,3 +1,6 @@
+#define CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+#define CGAL_MESH_3_VERBOSE 1
+
 #include <iostream>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -51,9 +54,9 @@ int main(int argc, char* argv[])
   /// [Domain creation]
   const float sigma = (std::max)(image.vx(), (std::max)(image.vy(), image.vz()));
   CGAL::Image_3 img_weights =
-    CGAL::Mesh_3::generate_label_weights(image, sigma);
+    CGAL::Mesh_3::generate_label_weights(image, sigma, with_features(true));
 
-  CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
+//  CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
@@ -71,7 +74,7 @@ int main(int argc, char* argv[])
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
   Mesh_criteria criteria(edge_size = sizing_default,
       facet_angle = 30, facet_size = sizing_default, facet_distance = sizing_default / 10,
-      facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH,
+      //facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH,
       cell_radius_edge_ratio = 0, cell_size = 0
   );
   /// [Mesh criteria]

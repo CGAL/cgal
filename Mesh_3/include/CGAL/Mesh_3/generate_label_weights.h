@@ -24,10 +24,21 @@
 #include <itkDiscreteGaussianImageFilter.h>
 #include <itkMaximumImageFilter.h>
 
+#include <CGAL/Mesh_3/features_detection/features_detection.h>
+#include <CGAL/Mesh_3/features_detection/coordinates.h>
+#include <CGAL/Mesh_3/features_detection/combinations.h>
+#include <CGAL/Mesh_3/features_detection/cases_table.h>
+#include <CGAL/Mesh_3/features_detection/cube_isometries.h>
+#include <CGAL/Mesh_3/features_detection/features_detection_helpers.h>
+
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <iostream>
 #include <vector>
 #include <set>
 #include <type_traits>
+#include <algorithm>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -111,7 +122,7 @@ SIGN get_sign()
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
 template<typename Image_word_type>
 void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
-                            const char* filename)
+                            const char* filename = "")
 {
   auto t = itk_img->GetOrigin();
   auto v = itk_img->GetSpacing();
@@ -138,7 +149,8 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
             itk_img->GetBufferPointer() + size,
             img_ptr);
 
-  _writeImage(img, filename);
+  if(filename != "")
+    _writeImage(img, filename);
 }
 #endif
 
@@ -147,7 +159,8 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
 /// @cond INTERNAL
 template<typename Image_word_type>
 CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
-                                                    const float& sigma)
+                                                          const float& sigma,
+                                                          const bool with_features)
 {
   typedef unsigned char Weights_type; //from 0 t 255
   const std::size_t img_size = image.size();
@@ -284,6 +297,11 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   _writeImage(weights, "weights-image.inr.gz");
 #endif
 
+  if (with_features)
+  {
+    postprocess_weights_for_feature_protection(image, weights_img);
+  }
+
   return weights_img;
 }
 /// @endcond
@@ -309,12 +327,17 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 * @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`,
 * with the same dimensions as `image`
 */
-inline
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
-                                     const float& sigma)
+    const float& sigma,
+    const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const bool with_features = choose_parameter(get_parameter(np, internal_np::with_features_param), false);
   CGAL_IMAGE_IO_CASE(image.image(),
-    return generate_label_weights_with_known_word_type<Word>(image, sigma);
+    return generate_label_weights_with_known_word_type<Word>(image, sigma, with_features);
   );
   CGAL_error_msg("This place should never be reached, because it would mean "
     "the image word type is a type that is not handled by "
@@ -322,67 +345,207 @@ CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
   return CGAL::Image_3();
 }
 
+namespace internal
+{
+  template<typename Word_type>
+  void set_voxel(CGAL::Image_3& img,
+                 const std::size_t& i,
+                 const std::size_t& j,
+                 const std::size_t& k,
+                 const Word_type& w)
+  {
+    using CGAL::IMAGEIO::static_evaluate;
+  
+    if (i < 0 || j < 0 || k < 0)
+      return;
+    else if (i > img.xdim() - 1 || j > img.ydim() - 1 || k > img.zdim() - 1)
+      return;
+    else
+      static_evaluate<Word_type>(img.image(), i, j, k) = w;
+  }
+}
+inline
 void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
                                                 CGAL::Image_3& weights)
 {
+  typedef unsigned char Image_word_type; //todo
   typedef unsigned char Weights_type; //from 0 t 255
-  typedef std::array<Weights_type, 8> Cube;
 
   using CGAL::IMAGEIO::static_evaluate;
 
-  for (std::size_t k = 0, end_k = image.zdim() - 1; k < end_k; ++k)
-  {
-    for (std::size_t j = 0, end_j = image.ydim() - 1; j < end_j; ++j)
-    {
-      for (std::size_t i = 0, end_i = image.xdim() - 1; i < end_i; ++i)
-      {
-        const Cube cube = {
-          static_evaluate<Weights_type>(image.image(), i  , j  , k),
-          static_evaluate<Weights_type>(image.image(), i + 1, j  , k),
-          static_evaluate<Weights_type>(image.image(), i  , j + 1, k),
-          static_evaluate<Weights_type>(image.image(), i + 1, j + 1, k),
-          static_evaluate<Weights_type>(image.image(), i  , j  , k + 1),
-          static_evaluate<Weights_type>(image.image(), i + 1, j  , k + 1),
-          static_evaluate<Weights_type>(image.image(), i  , j + 1, k + 1),
-          static_evaluate<Weights_type>(image.image(), i + 1, j + 1, k + 1),
-        };
-        std::array<Weights_type, 2> colors;
-        colors[0] = cube[0];
-        std::size_t nb_colors = 1;
-        if ( i == 0 || i == image.xdim() - 1) nb_colors++;
-        if ( j == 0 || j == image.ydim() - 1) nb_colors++;
-        if ( k == 0 || k == image.zdim() - 1) nb_colors++;
+  using Word //use unsigned integral Word type to use it as an index
+    = typename CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, sizeof(Image_word_type)>::type;
 
-        for (int ii = 1; ii < 8; ++ii)
-        {
-          if (colors[0] == cube[ii])
-            continue;
-          else if (nb_colors == 1)
+  using Color_transform = internal::Color_transformation_helper<Word>;
+  typename Color_transform::type color_transformation;
+
+  struct Dummy_point {
+    double x, y, z;
+    Dummy_point(double, double, double) {}
+  };
+  CGAL::Mesh_3::Triple_line_extractor<Dummy_point> lines;
+
+  const std::size_t xdim = image.xdim();
+  const std::size_t ydim = image.ydim();
+  const std::size_t zdim = image.zdim();
+
+  std::vector<std::array<std::size_t, 3>> black_voxels;
+
+  // POLYLINES INSIDE THE CUBE
+  for (std::size_t k = 0, end_k = zdim - 1; k < end_k; ++k)
+  {
+    for (std::size_t j = 0, end_j = ydim - 1; j < end_j; ++j)
+    {
+      for (std::size_t i = 0, end_i = xdim - 1; i < end_i; ++i)
+      {
+        using Cube = CGAL::Mesh_3::Cube;
+        const Cube cube = {
+          static_evaluate<Word>(image.image(), i  , j  , k),
+          static_evaluate<Word>(image.image(), i + 1, j  , k),
+          static_evaluate<Word>(image.image(), i  , j + 1, k),
+          static_evaluate<Word>(image.image(), i + 1, j + 1, k),
+          static_evaluate<Word>(image.image(), i  , j  , k + 1),
+          static_evaluate<Word>(image.image(), i + 1, j  , k + 1),
+          static_evaluate<Word>(image.image(), i  , j + 1, k + 1),
+          static_evaluate<Word>(image.image(), i + 1, j + 1, k + 1),
+        };
+
+        bool monocolor = (cube[0] == cube[1]);
+        for (int i = 2; i < 8; ++i) monocolor = monocolor && (cube[0] == cube[i]);
+        if (monocolor) continue;
+
+        Color_transform::reset(color_transformation);
+
+        std::uint8_t nb_color = 0;
+        for (int i = 0; i < 8; ++i) {
+          if (!Color_transform::is_valid(color_transformation, cube[i]))
           {
-            ++nb_colors;
-            colors[1] = cube[ii];
-          }
-          else if (nb_colors == 2)
-          {
-            if (colors[1] == cube[ii])
-              continue;
-            else
-            {
-              Weights_type w1(1);
-              static_evaluate<Weights_type>(weights.image(), i, j, k) = w1;
-              static_evaluate<Weights_type>(weights.image(), i + 1, j, k) = w1;
-              static_evaluate<Weights_type>(weights.image(), i, j + 1, k) = w1;
-              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k) = w1;
-              static_evaluate<Weights_type>(weights.image(), i, j, k + 1) = w1;
-              static_evaluate<Weights_type>(weights.image(), i + 1, j, k + 1) = w1;
-              static_evaluate<Weights_type>(weights.image(), i, j + 1, k + 1) = w1;
-              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k + 1) = w1;
-              break;
-            }
+            color_transformation[cube[i]] = nb_color;
+            ++nb_color;
           }
         }
+        std::array<std::uint8_t, 8> reference_cube = {
+            color_transformation[cube[0]],
+            color_transformation[cube[1]],
+            color_transformation[cube[2]],
+            color_transformation[cube[3]],
+            color_transformation[cube[4]],
+            color_transformation[cube[5]],
+            color_transformation[cube[6]],
+            color_transformation[cube[7]]
+        };
+        auto case_it = internal::find_case(internal::cases, reference_cube);
+        const bool case_found = (case_it != std::end(internal::cases));
+        if (!case_found)
+          CGAL_error();
+        else
+          reference_cube = internal::combinations[(*case_it)[8]];
+
+        auto fct_it = lines.create_polylines_fcts.find(reference_cube);
+        if (fct_it != lines.create_polylines_fcts.end())
+          black_voxels.push_back({ i, j, k });
       }
     }
+  }
+
+  // POLYLINES ON CUBE BOUNDARY
+  const std::size_t wx = (std::max)(xdim - 1, std::size_t(1));
+  const std::size_t wy = (std::max)(ydim - 1, std::size_t(1));
+  const std::size_t wz = (std::max)(zdim - 1, std::size_t(1));
+
+  for (int axis = 0; axis < 3; ++axis)
+  {
+    for (std::size_t i = 0; i < xdim; i += (axis == 0 ? wx : 1))
+      for (std::size_t j = 0; j < ydim; j += (axis == 1 ? wy : 1))
+        for (std::size_t k = 0; k < zdim; k += (axis == 2 ? wz : 1))
+        {
+          typedef std::array<std::size_t, 3> Pixel;
+
+          Pixel pix00 = { {i  , j  , k  } },
+            pix10 = pix00, pix01 = pix00, pix11 = pix00;
+
+          const int axis_xx = (axis + 1) % 3;
+          const int axis_yy = (axis + 2) % 3;
+
+          ++pix10[axis_xx];
+          ++pix11[axis_xx]; ++pix11[axis_yy];
+          ++pix01[axis_yy];
+          if (pix11[0] >= xdim || pix11[1] >= ydim || pix11[2] >= zdim) {
+            // we have gone too far
+            continue;
+          }
+
+          struct Enriched_pixel {
+            Pixel pixel;
+            Image_word_type word;
+          };
+
+          std::array<std::array<Enriched_pixel, 2>, 2> square =
+          { { {{ { pix00, Image_word_type() },
+                 { pix01, Image_word_type() } }},
+              {{ { pix10, Image_word_type() },
+                 { pix11, Image_word_type() } }} } };
+
+          std::map<Image_word_type, int> pixel_values_set;
+          for (int ii = 0; ii < 2; ++ii) {
+            for (int jj = 0; jj < 2; ++jj) {
+              const Pixel& pixel = square[ii][jj].pixel;
+              short sum_faces =
+                  ((0 == pixel[0] || (xdim - 1) == pixel[0]) ? 1 : 0)
+                + ((0 == pixel[1] || (ydim - 1) == pixel[1]) ? 1 : 0)
+                + ((0 == pixel[2] || (zdim - 1) == pixel[2]) ? 1 : 0);
+
+              square[ii][jj].word = CGAL::IMAGEIO::static_evaluate<Image_word_type>
+                                     (image.image(), pixel[0], pixel[1], pixel[2]);
+              ++pixel_values_set[square[ii][jj].word];
+ 
+              if (pixel_values_set.size() > 1 || sum_faces > 1/*on edge of bbox*/)
+                black_voxels.push_back({ i, j, k });
+            }
+          }//end for loops on ii, jj
+        }//end for loops on i,j,k
+  }//end for loop on axis
+
+  Weights_type wblack(0);
+  for (auto v : black_voxels)
+  {
+    const std::size_t& i = v[0];
+    const std::size_t& j = v[1];
+    const std::size_t& k = v[2];
+
+    // i - 1 : 9 voxels
+    internal::set_voxel(weights, i - 1, j - 1, k - 1, wblack);
+    internal::set_voxel(weights, i - 1, j - 1, k, wblack);
+    internal::set_voxel(weights, i - 1, j - 1, k + 1, wblack);
+    internal::set_voxel(weights, i - 1, j, k - 1, wblack);
+    internal::set_voxel(weights, i - 1, j, k, wblack);
+    internal::set_voxel(weights, i - 1, j, k + 1, wblack);
+    internal::set_voxel(weights, i - 1, j + 1, k - 1, wblack);
+    internal::set_voxel(weights, i - 1, j + 1, k, wblack);
+    internal::set_voxel(weights, i - 1, j + 1, k + 1, wblack);
+
+    // i : 9 voxels
+    internal::set_voxel(weights, i, j - 1, k - 1, wblack);
+    internal::set_voxel(weights, i, j - 1, k, wblack);
+    internal::set_voxel(weights, i, j - 1, k + 1, wblack);
+    internal::set_voxel(weights, i, j, k - 1, wblack);
+    internal::set_voxel(weights, i, j, k, wblack);
+    internal::set_voxel(weights, i, j, k + 1, wblack);
+    internal::set_voxel(weights, i, j + 1, k - 1, wblack);
+    internal::set_voxel(weights, i, j + 1, k, wblack);
+    internal::set_voxel(weights, i, j + 1, k + 1, wblack);
+
+    // i + 1 : 9 voxels
+    internal::set_voxel(weights, i + 1, j - 1, k - 1, wblack);
+    internal::set_voxel(weights, i + 1, j - 1, k, wblack);
+    internal::set_voxel(weights, i + 1, j - 1, k + 1, wblack);
+    internal::set_voxel(weights, i + 1, j, k - 1, wblack);
+    internal::set_voxel(weights, i + 1, j, k, wblack);
+    internal::set_voxel(weights, i + 1, j, k + 1, wblack);
+    internal::set_voxel(weights, i + 1, j + 1, k - 1, wblack);
+    internal::set_voxel(weights, i + 1, j + 1, k, wblack);
+    internal::set_voxel(weights, i + 1, j + 1, k + 1, wblack);
+
   }
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG

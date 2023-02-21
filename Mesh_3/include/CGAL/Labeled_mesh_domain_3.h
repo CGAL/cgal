@@ -743,9 +743,6 @@ public:
        p::construct_surface_patch_index =
                create_construct_surface_patch_index(construct_surface_patch_index_));
 
-    if (weights_.is_valid())
-      return domain;
-
     // features
     Mesh_3::internal::Add_features_in_domain<!no_features>()
       (image_, domain, input_features_, features_detector_);
