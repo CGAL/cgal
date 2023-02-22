@@ -95,7 +95,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
   if ( ! lOverflow )
   {
-    FT lDist = inexact_sqrt(lMaxSDist) ;
+    FT lDist = CGAL_SS_i::inexact_sqrt(lMaxSDist) ;
     double approx = ceil( to_interval(lDist + ( aOffset * FT(1.05) ) ).second );
 
     // Add a %5 gap, and ceil to get simpler values
