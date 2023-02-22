@@ -283,8 +283,8 @@ Uncertain<Comparison_result> compare_isec_anglesC2 ( Vector_2<K> const& aBV1
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
   const Vector_2 lBisectorDirection = aBV2 - aBV1 ;
-  const FT lLNorm = CGAL_SS_i::inexact_sqrt ( K().compute_scalar_product_2_object()( aLV, aLV ) ) ;
-  const FT lRNorm = CGAL_SS_i::inexact_sqrt ( K().compute_scalar_product_2_object()( aRV, aRV ) ) ;
+  const FT lLNorm = CGAL_SS_i::inexact_norm ( aLV.x(), aLV.y() ) ;
+  const FT lRNorm = CGAL_SS_i::inexact_norm ( aRV.x(), aRV.y() ) ;
 
   if (! CGAL_NTS certified_is_positive( lLNorm ) ||
       ! CGAL_NTS certified_is_positive( lRNorm ) )
