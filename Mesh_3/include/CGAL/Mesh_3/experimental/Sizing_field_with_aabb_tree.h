@@ -84,9 +84,9 @@ struct Sizing_field_with_aabb_tree
     Facet_patch_id_map index_map{};
 
     bool go_further() const { return true; }
-    bool do_intersect(std::nullptr_t, const auto&) { return true; }
+    template <typename T> bool do_intersect(std::nullptr_t, const T&) { return true; }
 
-    void intersection(std::nullptr_t, const auto& primitive) {
+    template <typename P> void intersection(std::nullptr_t, const P& primitive) {
       const Patch_index id = get(index_map, primitive.id());
       if (id < min) min = id;
       if (id > max) max = id;
