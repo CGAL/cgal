@@ -565,11 +565,11 @@ public:
     auto lHR = ( aNode->is_contour() ) ? lHL->opposite()->prev()->opposite()
                                        : aNode->halfedge()->opposite()->defining_contour_edge() ;
 
-    CGAL_SS_i::Segment_2_with_ID<K> lSL (lHL->source()->point(),
-                                         lHL->target()->point(),
+    CGAL_SS_i::Segment_2_with_ID<K> lSL (lHL->opposite()->vertex()->point(),
+                                         lHL->vertex()->point(),
                                          lHL->id());
-    CGAL_SS_i::Segment_2_with_ID<K> lSR (lHR->source()->point(),
-                                         lHR->target()->point(),
+    CGAL_SS_i::Segment_2_with_ID<K> lSR (lHR->opposite()->vertex()->point(),
+                                         lHR->vertex()->point(),
                                          lHR->id());
 
     boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, FT(1)/lHL->weight(), mCoeff_cache);
