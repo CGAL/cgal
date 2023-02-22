@@ -61,6 +61,8 @@ private:
 
   using Face_event      = typename Data_structure::Support_plane::Face_event;
 
+  using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
+
   struct Face_event_order {
     bool operator()(const Face_event &a, const Face_event &b) {
       return a.time > b.time;
@@ -141,7 +143,7 @@ private:
 
       ++iteration;
 
-      apply(event);
+      apply(event, iteration);
     }
     return iteration;
   }
@@ -150,15 +152,35 @@ private:
   **        HANDLE EVENTS       **
   ********************************/
 
-  void apply(const Face_event& event) {
-    //std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
+  void apply(const Face_event& event, std::size_t iteration) {
+    if (m_parameters.verbose)
+      std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
     if (m_data.igraph().face(event.face).part_of_partition) {
-      //std::cout << " face already crossed, skipping event" << std::endl;
+      if (m_parameters.verbose)
+        std::cout << " face already crossed, skipping event" << std::endl;
       return;
     }
 
     std::size_t line = m_data.line_idx(event.crossed_edge);
-    if (!m_data.support_plane(event.support_plane).has_crossed_line(line)) {
+    auto& sp = m_data.support_plane(event.support_plane);
+    int& k = sp.k();
+
+    const typename Data_structure::Intersection_graph::Face_property& face = m_data.igraph().face(event.face);
+
+    From_exact from_exact;
+    Point_2 on_edge = sp.to_2d(from_exact(m_data.point_3(m_data.source(event.crossed_edge))));
+    Point_2 center = from_exact(CGAL::centroid(face.pts.begin(), face.pts.end()));
+    Point_2 origin = sp.centroid();
+    Vector_2 dir = sp.to_2d(from_exact(m_data.igraph().line(line).to_vector()));
+    dir = Vector_2(-dir.y(), dir.x()); // Vector orthogonal to line.
+
+    bool need_check = false;
+
+    // Only allow crossing edges away from the input polygon centroid.
+    if (((center - on_edge) * dir) * ((origin - on_edge) * dir) > 0)
+      need_check = true;
+
+    if (need_check || !sp.has_crossed_line(line)) {
       // Check intersection against kinetic intervals from other support planes
       int crossing = 0;
       auto kis = m_data.igraph().kinetic_intervals(event.crossed_edge);
@@ -189,7 +211,6 @@ private:
       }
 
       // Check if the k value is sufficient for crossing the edge.
-      int& k = m_data.support_plane(event.support_plane).k();
       if (k <= crossing)
         return;
 

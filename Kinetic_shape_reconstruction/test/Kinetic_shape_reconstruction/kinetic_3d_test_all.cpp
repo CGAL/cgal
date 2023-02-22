@@ -55,6 +55,7 @@ bool run_test(
     CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
     ksp.get_linear_cell_complex(lcc);
 
+
     std::vector<unsigned int> cells = { 0, 2, 3 }, count;
     count = lcc.count_cells(cells);
 
@@ -79,6 +80,30 @@ void run_all_tests() {
 
   // All results are precomputed for k = 1!
   std::vector<std::vector<int> > results(3);
+
+  results[0] = { 53, 49, 10 };
+  results[1] = { 54, 63, 14 };
+  results[2] = { 54, 77, 18 };
+  run_test<Kernel>("data/edge-case-test/test-same-time.off", { 1, 2, 3 }, results);
+
+  // Edge tests.
+  results[0] = { 18, 20, 4 };
+  run_test<Kernel>("data/edge-case-test/test-2-polygons.off", { 1 }, results);
+
+  results[0] = { 24, 29, 6 };
+  run_test<Kernel>("data/edge-case-test/test-4-polygons.off", { 1 }, results);
+
+  results[0] = { 24, 29, 6 };
+  run_test<Kernel>("data/edge-case-test/test-5-polygons.off", { 1 }, results);
+
+  results[0] = { 53, 52, 11 };
+  results[1] = { 54, 77, 18 };
+  run_test<Kernel>("data/edge-case-test/test-local-global-1.off", { 1, 2 }, results);
+
+  results[0] = { 53, 52, 11 };
+  results[1] = { 53, 73, 17 };
+  results[2] = { 54, 77, 18 };
+  run_test<Kernel>("data/edge-case-test/test-local-global-2.off", { 1, 2, 3 }, results);
 
   // Stress tests 0.
   results[0] = { 14, 13, 2 };
@@ -117,7 +142,7 @@ void run_all_tests() {
   results[0] = { 38, 46, 9 };
   results[1] = { 38, 52, 11 };
   run_test<Kernel>("data/stress-test-0/test-4-polygons-abcd.off", { 1, 2 }, results);
-  results[0] = { 67, 83, 18 };
+  results[0] = { 66, 76, 16 };
   results[1] = { 67, 102, 24 };
   results[2] = { 67, 109, 26 };
   run_test<Kernel>("data/stress-test-0/test-6-polygons.off", { 1, 2, 3 }, results);
@@ -205,48 +230,49 @@ void run_all_tests() {
   run_test<Kernel>("data/stress-test-4/test-4-rnd-polygons-4-6.off", { 1, 2, 3 }, results);
   results[0] = { 83, 105, 24 };
   results[1] = { 83, 128, 31 };
-  results[2] = { 83, 145, 36 };
-  run_test<Kernel>("data/stress-test-4/test-5-rnd-polygons-6-4.off", { 1, 2, 3 }, results);
+  results[2] = { 83, 128, 31 };
+  run_test<Kernel>("data/stress-test-4/test-5-rnd-polygons-6-4.off", { 1, 2, 3}, results);
+
   results[0] = { 50, 62, 13 };
   results[1] = { 50, 75, 17 };
   run_test<Kernel>("data/stress-test-4/test-6-rnd-polygons-5-6.off", { 1, 2 }, results);
   results[0] = { 98, 105, 24 };
   results[1] = { 104, 147, 36 };
-  results[2] = { 104, 163, 41 };
+  results[2] = { 104, 157, 39 };
   run_test<Kernel>("data/stress-test-4/test-7-rnd-polygons-7-6.off", { 1, 2, 3 }, results);
   results[0] = { 69, 77, 16 };
   results[1] = { 69, 107, 25 };
   results[2] = { 69, 110, 26 };
   run_test<Kernel>("data/stress-test-4/test-8-rnd-polygons-7-8.off", { 1, 2, 3 }, results);
-  results[0] = { 247, 328, 83 };
-  results[1] = { 248, 378, 99 };
-  results[2] = { 250, 419, 112 };
+  results[0] = { 243, 304, 74 };
+  results[1] = { 248, 360, 93 };
+  results[2] = { 248, 384, 101};
   run_test<Kernel>("data/stress-test-4/test-9-rnd-polygons-12-4.off", { 1, 2, 3 }, results);
 
   // Stress tests 5.
 
-  results[0] = { 389, 369, 90 };
-  results[1] = { 433, 508, 132 };
-  results[2] = { 452, 656, 178 };
+  results[0] = { 386, 349, 83 };
+  results[1] = { 417, 459, 115 };
+  results[2] = { 444, 616, 165 };
   run_test<Kernel>("data/stress-test-5/test-1-rnd-polygons-15-6.off", { 1, 2, 3 }, results);
-  results[0] = { 849, 915, 247 };
-  results[1] = { 947, 1227, 344 };
-  results[2] = { 984, 1510, 435 };
+  results[0] = { 837, 855, 228 };
+  results[1] = { 919, 1043, 285 };
+  results[2] = { 955, 1279, 360 };
   run_test<Kernel>("data/stress-test-5/test-2-rnd-polygons-20-4.off", { 1, 2, 3 }, results);
 
   // Real data tests.
 
-  results[0] = { 130, 180, 44 };
+  results[0] = { 128, 162, 38 };
   results[1] = { 133, 220, 56 };
   results[2] = { 133, 241, 62 };
   run_test<Kernel>("data/real-data-test/test-10-polygons.off", { 1, 2, 3 }, results);
-  results[0] = { 347, 573, 158 };
-  results[1] = { 349, 608, 169 };
-  results[2] = { 349, 671, 189 };
+  results[0] = { 333, 497, 133 };
+  results[1] = { 339, 529, 143 };
+  results[2] = { 345, 575, 158 };
   run_test<Kernel>("data/real-data-test/test-15-polygons.off", { 1, 2, 3 }, results);
-  results[0] = { 2314, 1749, 474 };
-  results[1] = { 2602, 2416, 683 };
-  results[2] = { 2799, 2900, 834 };
+  results[0] = { 2225, 1360, 347 };
+  results[1] = { 2336, 1540, 403 };
+  results[2] = { 2527, 2018, 550 };
   run_test<Kernel>("data/real-data-test/test-40-polygons.ply", { 1, 2, 3 }, results);
 
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();

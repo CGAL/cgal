@@ -101,6 +101,11 @@ public:
 
   void create_polyhedra() {
 
+    if (m_parameters.debug) {
+      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
+        dump_2d_surface_mesh(m_data, sp, "after-partition-sp" + std::to_string(sp));
+    }
+
     std::cout.precision(20);
     CGAL_assertion(m_data.check_bbox());
     CGAL_assertion(m_data.check_interior());
@@ -123,10 +128,6 @@ public:
         dump_volume(m_data, v.pfaces, "volumes/" + std::to_string(v.index), true, v.index);
     }
     CGAL_assertion(m_data.check_faces());
-  }
-
-  void clear() {
-    // to be done
   }
 
 private:

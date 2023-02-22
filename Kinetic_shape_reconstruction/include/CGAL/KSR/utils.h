@@ -49,6 +49,9 @@
 namespace CGAL {
 namespace KSR {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
 // Use -1 as no element identifier.
 inline std::size_t no_element() { return std::size_t(-1); }
 
@@ -346,6 +349,8 @@ private:
     return line;
   }
 };
+
+#endif
 
 } // namespace KSR
 } // namespace CGAL

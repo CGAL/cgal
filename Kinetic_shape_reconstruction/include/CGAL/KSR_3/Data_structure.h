@@ -1243,12 +1243,25 @@ public:
   Point_3 centroid_of_pface(const PFace& pface) const {
 
     const std::function<Point_3(PVertex)> unary_f =
-    [&](const PVertex& pvertex) -> Point_3 {
+      [&](const PVertex& pvertex) -> Point_3 {
       return point_3(pvertex);
     };
     const std::vector<Point_3> polygon(
       boost::make_transform_iterator(pvertices_of_pface(pface).begin(), unary_f),
-      boost::make_transform_iterator(pvertices_of_pface(pface).end()  , unary_f));
+      boost::make_transform_iterator(pvertices_of_pface(pface).end(), unary_f));
+    CGAL_assertion(polygon.size() >= 3);
+    return CGAL::centroid(polygon.begin(), polygon.end());
+  }
+
+  Point_2 centroid_of_pface_2d(const PFace& pface) const {
+
+    const std::function<Point_2(PVertex)> unary_f =
+      [&](const PVertex& pvertex) -> Point_2 {
+      return point_2(pvertex);
+    };
+    const std::vector<Point_2> polygon(
+      boost::make_transform_iterator(pvertices_of_pface(pface).begin(), unary_f),
+      boost::make_transform_iterator(pvertices_of_pface(pface).end(), unary_f));
     CGAL_assertion(polygon.size() >= 3);
     return CGAL::centroid(polygon.begin(), polygon.end());
   }
@@ -1807,6 +1820,8 @@ public:
       incident_faces(edge, nfaces);
       if (nfaces.size() == 1) {
         std::cout << "ERROR: CURRENT NUMBER OF FACES = " << nfaces.size() << std::endl;
+        std::cout << edge << std::endl;
+        std::cout << "PFace(" << nfaces[0].first << " " << nfaces[0].second << ")" << std::endl;
         CGAL_assertion_msg(nfaces.size() != 1,
         "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
         return false;

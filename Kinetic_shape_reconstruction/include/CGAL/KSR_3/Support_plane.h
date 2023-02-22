@@ -83,7 +83,7 @@ public:
     FT time;
     FT intersection_bary;
     IEdge crossed_edge;
-    IFace face;
+    IFace face; // The face that does not yet belong to the region.
   };
 
   struct Data {
@@ -631,6 +631,12 @@ public:
 
   const Point_2 to_2d(const Point_3& point) const {
     return m_data->plane.to_2d(point);
+  }
+
+  const Vector_2 to_2d(const Vector_3& vec) const {
+    return Vector_2(
+      m_data->plane.to_2d(Point_3(0, 0, 0)),
+      m_data->plane.to_2d(Point_3(0, 0, 0) + vec));
   }
 
   const typename Intersection_kernel::Point_2 to_2d(const typename Intersection_kernel::Point_3& point) const {
