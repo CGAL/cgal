@@ -298,16 +298,37 @@ boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<
   return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
 }
 
-template<class K>
+template<class K, class CoeffCache>
+boost::optional< typename K::Line_2 >
+compute_normalized_line_coeffC2( Segment_2_with_ID<K> const& e,
+                                 CoeffCache& aCoeff_cache )
+{
+  typedef typename K::Segment_2 Segment_2 ;
+  typedef typename K::Line_2 Line_2 ;
+
+  if ( aCoeff_cache.IsCached(e.mID) )
+    return aCoeff_cache.Get(e.mID) ;
+
+  boost::optional< Line_2 > rRes = compute_normalized_line_coeffC2 ( static_cast<const Segment_2&>(e) ) ;
+
+  aCoeff_cache.Set(e.mID, rRes) ;
+
+  return rRes ;
+}
+
+// @todo weightless coefficients are stored because we use them sometimes weighted, and sometimes
+// inversely weighted (filtering bound). Should we store them weighted also?
+template<class K, class CoeffCache>
 boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_with_ID<K> const& e,
-                                                                     typename K::FT const& aWeight)
+                                                                     typename K::FT const& aWeight,
+                                                                     CoeffCache& aCoeff_cache )
 {
   typedef typename K::FT FT ;
   typedef typename K::Line_2 Line_2 ;
 
   CGAL_precondition( CGAL_NTS is_finite(aWeight) && CGAL_NTS is_positive(aWeight) ) ;
 
-  boost::optional< Line_2 > l = compute_normalized_line_coeffC2(static_cast<typename K::Segment_2 const&>(e));
+  boost::optional< Line_2 > l = compute_normalized_line_coeffC2(e, aCoeff_cache);
   if( ! l )
     return boost::none ;
 
@@ -324,23 +345,6 @@ boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_w
     return boost::none;
   else
     return cgal_make_optional( true, K().construct_line_2_object()(a,b,c) ) ;
-}
-
-template<class K, class CoeffCache>
-boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_with_ID<K> const& e,
-                                                                     typename K::FT const& aWeight,
-                                                                     CoeffCache& aCoeff_cache )
-{
-  typedef typename K::Line_2 Line_2 ;
-
-  if ( aCoeff_cache.IsCached(e.mID) )
-    return aCoeff_cache.Get(e.mID) ;
-
-  boost::optional< Line_2 > rRes = compute_weighted_line_coeffC2 ( e, aWeight ) ;
-
-  aCoeff_cache.Set(e.mID, rRes) ;
-
-  return rRes ;
 }
 
 template<class FT>

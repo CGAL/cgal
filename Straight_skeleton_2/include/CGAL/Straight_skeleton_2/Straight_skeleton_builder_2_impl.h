@@ -672,7 +672,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
     }
     else
     {
-      mTraits.InitializeLineCoeffs ( lS, lBorder->weight() );
+      mTraits.InitializeLineCoeffs ( lS );
     }
   }
 }
