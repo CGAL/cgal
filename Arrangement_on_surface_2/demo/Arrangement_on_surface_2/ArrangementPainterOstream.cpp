@@ -43,12 +43,8 @@ template <typename SegmentTraits>
 ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>&
 ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
 operator<<(const X_monotone_curve_2& curve) {
-  int cnt = 0;
-  for (auto it = curve.subcurves_begin(); it != curve.subcurves_end(); ++it) {
-    ++cnt;
+  for (auto it = curve.subcurves_begin(); it != curve.subcurves_end(); ++it)
     this->painterOstream << *it;
-  }
-
   return *this;
 }
 
