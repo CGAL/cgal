@@ -18,6 +18,7 @@
 #include <CGAL/Lazy.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
+#include <CGAL/FPU.h>
 
 #include <boost/optional/optional.hpp>
 
@@ -70,41 +71,145 @@ Trisegment_collinearity trisegment_collinearity_no_exact_constructions ( Segment
     return TRISEGMENT_COLLINEARITY_ALL;
 }
 
-template<class NT>
-inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor /*no_sqrt*/ )
+///
+
+template <typename NT>
+typename Coercion_traits<double, NT>::Type
+inexact_sqrt(const NT& n, CGAL::Null_functor)
 {
   typedef CGAL::Interval_nt<false> IFT;
   typename IFT::Protector protector;
 
   CGAL::NT_converter<NT, IFT> to_ift;
-  return NT( to_double(sqrt(to_ift(n))) );
+  IFT sqrt_ift = sqrt(to_ift(n));
+  CGAL_STSKEL_TRAITS_TRACE("interval " << sqrt_ift.inf() << " " << sqrt_ift.sup() ) ;
+  CGAL_STSKEL_TRAITS_TRACE("delta " << sqrt_ift.sup() - sqrt_ift.inf() ) ;
+
+  return NT(to_double(sqrt_ift));
 }
 
-template<class NT, class Sqrt>
-inline NT inexact_sqrt_implementation( NT const& n, Sqrt sqrt_f )
+template <typename NT, typename Sqrt>
+typename Sqrt::result_type
+inexact_sqrt(const NT& nt, Sqrt sqrt)
 {
+  CGAL_STSKEL_TRAITS_TRACE("sqrt(" << typeid(NT).name() << ")");
+  return sqrt(nt);
+}
+
+template <typename NT>
+decltype(auto) inexact_sqrt(const NT& nt)
+{
+  // the initial version of this function was using Algebraic_category
+  // for the dispatch but some ring type (like Gmpz) provides a Sqrt
+  // functor even if not being Field_with_sqrt.
+  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  typedef typename AST::Sqrt Sqrt;
+  return inexact_sqrt(nt, Sqrt());
+}
+
+template <typename NT>
+Quotient<NT>
+inexact_sqrt(const Quotient<NT>& q)
+{
+  return { inexact_sqrt(q.numerator()*q.denominator()), abs(q.denominator()) };
+}
+
+template <typename NT>
+Lazy_exact_nt<NT>
+inexact_sqrt(const Lazy_exact_nt<NT>& lz)
+{
+  return inexact_sqrt(exact(lz));
+}
+
+// Currently the norm can be inexact even when we are in the exact pipeline of the traits
+// if we use something like K = EPICK because there is no exact sqrt.
+//
+// @todo Ideally, we could compute how much precision is required for the sqrt
+// given all possible operations that are performed in the SLS and the input values
+// and compute (in the exact pipeline) an approximate sqrt with such sufficient precision.
+
+template <typename FT>
+FT inexact_norm (const FT& x, const FT& y,
+                 CGAL::Null_functor /*no_sqrt*/)
+{
+  CGAL_STSKEL_TRAITS_TRACE("inexact_norm(" << typeid(FT).name() << "," << typeid(FT).name() << ",Null_functor)");
+  return std::hypot(CGAL::to_double(x), CGAL::to_double(y));
+}
+
+template <typename FT, class Sqrt>
+FT inexact_norm (const FT& x, const FT& y,
+                 Sqrt sqrt_f)
+{
+  CGAL_STSKEL_TRAITS_TRACE("inexact_norm(" << typeid(FT).name() << "," << typeid(FT).name() << "," << typeid(Sqrt).name() << ")");
+  const FT n = square(x) + square(y);
   return sqrt_f(n);
 }
 
-template<class NT>
-inline NT inexact_sqrt( NT const& n )
+template <typename FT>
+FT inexact_norm (const FT& x, const FT& y)
 {
-  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  typedef CGAL::Algebraic_structure_traits<FT> AST;
   typedef typename AST::Sqrt Sqrt;
-  return inexact_sqrt_implementation(n,Sqrt());
+  return inexact_norm(x,y, Sqrt());
 }
 
-inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
+template <typename NT>
+inline Lazy_exact_nt<NT> inexact_norm( Lazy_exact_nt<NT> const& lx,
+                                       Lazy_exact_nt<NT> const& ly )
 {
-  CGAL_precondition(q > 0);
-  return Quotient<MP_Float>(CGAL_SS_i::inexact_sqrt(q.numerator()*q.denominator()), q.denominator() );
+  return inexact_norm( exact(lx), exact(ly) ) ;
 }
 
-template <class NT>
-inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& lz)
+template <typename NT>
+inline Quotient<NT> inexact_norm( Quotient<NT> const& x,
+                                  Quotient<NT> const& y )
 {
-  return inexact_sqrt( exact(lz) );
+  CGAL_STSKEL_TRAITS_TRACE("inexact_norm(Quotient,Quotient)");
+  return { inexact_norm(x.numerator()*y.denominator(), y.numerator()*x.denominator()),
+           abs(x.denominator()*y.denominator()) } ;
 }
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+inexact_norm (const Interval_nt<Protected>& x, const Interval_nt<Protected>& y)
+{
+  typename Interval_nt<Protected>::Internal_protector P;
+
+  CGAL_STSKEL_TRAITS_TRACE("inexact_norm(Interval_nt,Interval_nt)");
+
+#if 0 // CGAL_USE_SSE2  _mm_hypot_pd is documented but does not exist...?
+  __m128d xx = IA_opacify128(x.simd());
+  __m128d yy = IA_opacify128(y.simd());
+  __m128d r = _mm_hypot_pd(xx, yy);
+  return Interval_nt<Protected>(IA_opacify128(r));
+#else
+
+  // @fixme is below correct?
+
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  double i = std::nextafter(std::hypot(x.inf(), y.inf()), 0.) ;
+#else
+  FPU_set_cw(CGAL_FE_DOWNWARD);
+  double i = CGAL_IA_FORCE_TO_DOUBLE(std::hypot(CGAL_IA_STOP_CPROP(x.inf()),
+                                                CGAL_IA_STOP_CPROP(y.inf())));
+  FPU_set_cw(CGAL_FE_UPWARD);
+#endif
+
+  return Interval_nt<Protected>(i, IA_up(std::hypot(x.sup(), y.sup())));
+#endif
+}
+
+///
+
+template <typename ET>
+CGAL::Lazy_exact_nt<ET> ceil(const CGAL::Lazy_exact_nt<ET>& n)
+{
+  return { ceil(exact(n)) };
+}
+
+///
+
 
 // Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c)
 // of the supporting line, and weights them with 'aWeight'.
@@ -167,21 +272,18 @@ boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<
   {
     FT sa = e.source().y() - e.target().y();
     FT sb = e.target().x() - e.source().x();
-    FT l2 = (sa*sa) + (sb*sb) ;
+    FT l = inexact_norm(sa, sb);
 
-    if ( CGAL_NTS is_finite(l2) )
+    if ( CGAL_NTS is_finite(l) )
     {
-      FT l = CGAL_SS_i :: inexact_sqrt(l2);
-
       a = sa / l ;
       b = sb / l ;
 
       c = -e.source().x()*a - e.source().y()*b;
 
-      CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for line: " << s2str(e)
-                               << "\nsa="<< n2str(sa) << "\nsb=" << n2str(sb) << "\nl2=" << n2str(l2) << "\nl=" << n2str(l)
-                               << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
-                               ) ;
+      CGAL_STSKEL_TRAITS_TRACE("GENERIC line; sa="<< n2str(sa) << " sb=" << n2str(sb)
+                               << "\nl=" << n2str(l)
+                               << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c) ) ;
     }
     else
     {
