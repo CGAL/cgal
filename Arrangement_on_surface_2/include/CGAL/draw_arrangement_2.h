@@ -123,8 +123,8 @@ public:
   /*! Compile time dispatching
    */
   template <typename T>
-  auto bounding_box_impl2(CGAL::Bbox_2& bbox, const Point& p, T const& approx,
-                          long) -> decltype(void())
+  auto bounding_box_impl2(CGAL::Bbox_2& bbox, const Point& p, T const&, long)
+    -> decltype(void())
   { bbox += exact_bbox(p); }
 
   template <typename T>
@@ -133,8 +133,8 @@ public:
   { bbox += approximate_bbox(p, approx); }
 
   template <typename T>
-  auto bounding_box_impl1(CGAL::Bbox_2& bbox, const Point& p, T const& traits,
-                          long) -> decltype(void())
+  auto bounding_box_impl1(CGAL::Bbox_2& bbox, const Point& p, T const&, long)
+    -> decltype(void())
   { bbox += exact_bbox(p); }
 
   template <typename T>
@@ -269,7 +269,7 @@ protected:
   /*! Compile time dispatching
    */
   template <typename T, typename I = void>
-  auto draw_region_impl2(Halfedge_const_handle curr, T const& approx, long) ->
+  auto draw_region_impl2(Halfedge_const_handle curr, T const&, long) ->
     decltype(void())
   { draw_exact_region(curr); }
 
@@ -280,7 +280,7 @@ protected:
   { draw_approximate_region(curr, approx); }
 
   template <typename T>
-  auto draw_region_impl1(Halfedge_const_handle curr, T const& traits, long) ->
+  auto draw_region_impl1(Halfedge_const_handle curr, T const&, long) ->
     decltype(void())
   { draw_exact_region(curr); }
 
@@ -347,7 +347,7 @@ protected:
   /*! Compile time dispatching
    */
   template <typename T, typename I = void>
-  auto draw_curve_impl2(const X_monotone_curve& xcv, T const& approx, long) ->
+  auto draw_curve_impl2(const X_monotone_curve& xcv, T const&, long) ->
     decltype(void())
   { draw_exact_curve(xcv); }
 
@@ -358,7 +358,7 @@ protected:
   { draw_approximate_curve(xcv, approx); }
 
   template <typename T>
-  auto draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, long) ->
+  auto draw_curve_impl1(const X_monotone_curve& xcv, T const&, long) ->
     decltype(void())
   { draw_exact_curve(xcv); }
 
@@ -406,8 +406,7 @@ protected:
   /*! Compile time dispatching
    */
   template <typename T>
-  auto draw_point_impl2(const Point& p, T const& approx, long) ->
-    decltype(void())
+  auto draw_point_impl2(const Point& p, T const&, long) -> decltype(void())
   { add_point(p); }
 
   template <typename T>
@@ -416,8 +415,7 @@ protected:
   { add_point(approx(p)); }
 
   template <typename T>
-  auto draw_point_impl1(const Point& p, T const& traits, long) ->
-    decltype(void())
+  auto draw_point_impl1(const Point& p, T const&, long) -> decltype(void())
   { add_point(p); }
 
   template <typename T>
@@ -449,11 +447,15 @@ protected:
   /*! Add a face.
    */
   void add_face(Face_const_handle face) {
-    for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
+    using Inner_ccb_const_iterator = typename Arr::Inner_ccb_const_iterator;
+    using Outer_ccb_const_iterator = typename Arr::Outer_ccb_const_iterator;
+
+    for (Inner_ccb_const_iterator it = face->inner_ccbs_begin();
+         it != face->inner_ccbs_end(); ++it)
       add_ccb(*it);
 
-    for (auto it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it)
-    {
+    for (Outer_ccb_const_iterator it = face->outer_ccbs_begin();
+         it != face->outer_ccbs_end(); ++it) {
       add_ccb(*it);
       draw_region(*it);
     }
@@ -489,7 +491,7 @@ protected:
   const Arr& m_arr;
 
   //! The color generator.
-  Color_generator& m_color_generator;
+  Color_generator m_color_generator;
 
   std::unordered_map<Face_const_handle, bool> m_visited;
 };
@@ -544,7 +546,8 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
   const char* argv[2] = {"t2_viewer", nullptr};
   QApplication app(argc, const_cast<char**>(argv));
   Default_color_generator color_generator;
-  Viewer mainwindow(app.activeWindow(), arr, color_generator, title, draw_vertices);
+  Viewer mainwindow(app.activeWindow(), arr, color_generator, title,
+                    draw_vertices);
   mainwindow.add_elements();
   mainwindow.show();
   app.exec();
@@ -576,7 +579,8 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
   int argc = 1;
   const char* argv[2] = {"t2_viewer", nullptr};
   QApplication app(argc, const_cast<char**>(argv));
-  Viewer mainwindow(app.activeWindow(), arr, color_generator, title, draw_vertices);
+  Viewer mainwindow(app.activeWindow(), arr, color_generator, title,
+                    draw_vertices);
   mainwindow.add_elements();
   mainwindow.show();
   app.exec();
