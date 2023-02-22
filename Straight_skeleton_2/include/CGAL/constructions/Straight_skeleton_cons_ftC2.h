@@ -114,10 +114,11 @@ inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& lz)
 template<class K>
 boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<K> const& e )
 {
-  bool finite = true ;
-
   typedef typename K::FT FT ;
 
+  CGAL_STSKEL_TRAITS_TRACE("\n~~ Unweighted line coefficients for " << s2str(e) );
+
+  bool finite = true ;
   FT a(0), b(0), c(0) ;
 
   if(e.source().y() == e.target().y())
@@ -139,9 +140,7 @@ boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<
       c = e.source().y();
     }
 
-    CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for HORIZONTAL line: " << s2str(e)
-                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
-                           ) ;
+    CGAL_STSKEL_TRAITS_TRACE("HORIZONTAL line; a="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c) ) ;
   }
   else if(e.target().x() == e.source().x())
   {
@@ -162,9 +161,7 @@ boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<
       c = -e.source().x();
     }
 
-    CGAL_STSKEL_TRAITS_TRACE("Unweighted line coefficients for VERTICAL line: " << s2str(e)
-                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
-                           ) ;
+    CGAL_STSKEL_TRAITS_TRACE("VERTICAL line; a="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c) ) ;
   }
   else
   {
@@ -216,7 +213,7 @@ boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_w
   FT b = l->b() * aWeight ;
   FT c = l->c() * aWeight ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Weighted line coefficients for line: " << s2str(e)
+  CGAL_STSKEL_TRAITS_TRACE("\n~~ Weighted line coefficients for line: " << s2str(e)
                             << "\nweight=" << n2str(aWeight)
                             << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
                             ) ;
@@ -308,7 +305,8 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 
   typedef boost::optional<Line_2> Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing normal offset lines isec time for: " << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing normal offset lines isec time [" << typeid(FT).name() << "]") ;
+  CGAL_STSKEL_TRAITS_TRACE("Event" << tri );
 
   FT num(0), den(0) ;
 
@@ -343,12 +341,9 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 
   if ( l0 && l1 && l2 )
   {
-    CGAL_STSKEL_TRAITS_TRACE("\tl0 ID: " << tri->e0().mID << " w: " << n2str(tri->w0()) ) ;
-    CGAL_STSKEL_TRAITS_TRACE("\tl1 ID: " << tri->e1().mID << " w: " << n2str(tri->w1()) );
-    CGAL_STSKEL_TRAITS_TRACE("\tl2 ID: " << tri->e2().mID << " w: " << n2str(tri->w2()) ) ;
-    CGAL_STSKEL_TRAITS_TRACE("\tLabc [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
-                                 << "[" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
-                                 << "[" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
+    CGAL_STSKEL_TRAITS_TRACE("coeffs 0 [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
+                          << "\ncoeffs 1 [" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
+                          << "\ncoeffs 2 [" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
 
     num = (l2->a()*l0->b()*l1->c())
          -(l2->a()*l1->b()*l0->c())
@@ -514,7 +509,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing degenerate offset lines isec time for: " << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing degenerate offset lines isec time for: " << tri ) ;
 
   // DETAILS:
   //
@@ -716,7 +711,8 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing normal offset lines isec point for:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing normal offset lines isec point [" << typeid(FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
 
   FT x(0), y(0) ;
 
@@ -737,6 +733,8 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
       FT numX = l0->b()*l2->c() - l0->b()*l1->c() - l1->b()*l2->c() + l2->b()*l1->c() + l1->b()*l0->c() - l2->b()*l0->c();
       FT numY = l0->a()*l2->c() - l0->a()*l1->c() - l1->a()*l2->c() + l2->a()*l1->c() + l1->a()*l0->c() - l2->a()*l0->c();
 
+      CGAL_STSKEL_TRAITS_TRACE("\tnumX=" << n2str(numX) << "\n\tnumY=" << n2str(numY) ) ;
+
       if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(numX) && CGAL_NTS is_finite(numY)  )
       {
         ok = true ;
@@ -744,12 +742,10 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
         x =  numX / den ;
         y = -numY / den ;
 
-       CGAL_STSKEL_TRAITS_TRACE("\tnumX=" << n2str(numX) << "\n\tnumY=" << n2str(numY)
-                                << "\n\tx=" << n2str(x) << "\n\ty=" << n2str(y) ) ;
+       CGAL_STSKEL_TRAITS_TRACE("\n\tx=" << n2str(x) << "\n\ty=" << n2str(y) ) ;
       }
     }
   }
-
 
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
@@ -779,9 +775,8 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE(" ~~ Computing degenerate offset lines isec point for:"
-                           << " E" << tri->e0().mID << ",E" << tri->e1().mID << ",E" << tri->e2().mID
-                           << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing degenerate offset lines isec point [" << typeid(FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("Event: " << tri ) ;
 
   FT x(0),y(0) ;
 

@@ -192,9 +192,10 @@ public:
   friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
   {
     return os << "["
-              << "\n\te0 " << s2str(aTrisegment.e0()) << " weight = " << n2str(aTrisegment.w0()) << ";"
-              << "\n\te1 " << s2str(aTrisegment.e1()) << " weight = " << n2str(aTrisegment.w1()) << ";"
-              << "\n\te2 " << s2str(aTrisegment.e2()) << " weight = " << n2str(aTrisegment.w2()) << ";"
+              << "\n\tE" << aTrisegment.e0().mID << " E" << aTrisegment.e1().mID << " E" << aTrisegment.e2().mID
+              << "\n\t" << s2str(aTrisegment.e0()) << " w = " << n2str(aTrisegment.w0()) << ";"
+              << "\n\t" << s2str(aTrisegment.e1()) << " w = " << n2str(aTrisegment.w1()) << ";"
+              << "\n\t" << s2str(aTrisegment.e2()) << " w = " << n2str(aTrisegment.w2()) << ";"
               << "\n\tCollinearity: " << trisegment_collinearity_to_string(aTrisegment.collinearity())
               << "\n]";
   }

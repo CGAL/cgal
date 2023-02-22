@@ -72,7 +72,7 @@ inline std::string n2str( N const& n )
 {
   std::ostringstream ss ;
   ss << std::setprecision(17);
-  ss << CGAL_NTS to_double(n);
+  ss << n;
   return ss.str();
 }
 
@@ -120,7 +120,7 @@ inline std::string n2str( CGAL::MP_Float const& n )
 {
   std::ostringstream ss ;
   ss << std::setprecision(17) ;
-  ss << CGAL_NTS to_double(n) ;
+  ss << n ;
   return ss.str();
 }
 
@@ -128,7 +128,7 @@ inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 {
   std::ostringstream ss ;
   ss << std::setprecision(17)  ;
-  ss << CGAL_NTS to_double(n) ;
+  ss << n ;
   return ss.str();
 }
 #endif

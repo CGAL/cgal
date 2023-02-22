@@ -185,7 +185,9 @@ Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K,
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  CGAL_STSKEL_TRAITS_TRACE( "Checking existence of an event for E" << tri->e0().mID << " E" << tri->e1().mID << " E" << tri->e2().mID ) ;
+
+  CGAL_STSKEL_TRAITS_TRACE( "\n~~ Checking existence of an event [" << typeid(FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
 
   if ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL )
   {
@@ -260,6 +262,7 @@ compare_offset_lines_isec_timesC2 ( boost::intrusive_ptr< Trisegment_2<K, Segmen
   {
     Quotient mt = mt_->to_quotient();
     Quotient nt = nt_->to_quotient();
+
     if ( CGAL_NTS certified_is_positive(mt) && CGAL_NTS certified_is_positive(nt) )
       rResult = CGAL_NTS certified_compare(mt,nt);
   }
@@ -416,7 +419,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
     Line_2 l0 = validate(compute_weighted_line_coeffC2(e0, w0, aCoeff_cache)) ;
     Line_2 l1 = validate(compute_weighted_line_coeffC2(e1, w1, aCoeff_cache)) ;
 
-    CGAL_STSKEL_TRAITS_TRACE("Getting oriented side of point " << p2str(p)
+    CGAL_STSKEL_TRAITS_TRACE("\n~~ Oriented side of point [" << typeid(FT).name() << "]" );
+    CGAL_STSKEL_TRAITS_TRACE("p = " << p2str(p)
                             << " w.r.t. bisector ["
                             << s2str(e0) << ( primary_is_0 ? "*" : "" )
                             << ","

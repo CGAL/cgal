@@ -865,7 +865,7 @@ private :
       if ( !lPQ.empty() )
       {
         // When there are simultaneous split events, we sort them to handle nearby pseudo split events
-        // together as to avoid multiple fronts crossing each other without seeing
+        // together as to avoid multiple fronts crossing each other without noticing each other.
         // and creating an invalid SLS.
         //
         // Unfortunately, the way that this sorting is performed requires knowing whether an event
@@ -941,7 +941,10 @@ private :
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    return aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL ;
+    Comparison_result rResult = aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL;
+
+    CGAL_STSKEL_BUILDER_TRACE(3, "Compare events " << aA->triedge() << " and " << aB->triedge() << " -> " << rResult);
+    return rResult;
   }
 
   Comparison_result CompareEvents( Trisegment_2_ptr const& aTrisegment, Vertex_handle aSeedNode ) const
