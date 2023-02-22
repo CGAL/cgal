@@ -522,9 +522,8 @@ public:
       mCoeff_cache.Set( aID, boost::none ) ;
   }
 
-  // @tmp disabled what weights to give to non input segments used in this optimization?
   // functions and tag for filtering split events
-  // struct Filters_split_events_tag{};
+  struct Filters_split_events_tag{};
 
   template <class EventPtr>
   bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent) const
@@ -549,55 +548,64 @@ public:
 
   // @todo there shouldn't be any combinatorial structures such as vertices in the traits
   template <class Vertex_handle, class Halfedge_handle_vector_iterator>
-  void ComputeFilteringBound(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+  void ComputeFilteringBound(Vertex_handle aNode,
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
-    mFilteringBound = boost::none;
-
-    if ( ! aNode->is_contour() )
-      return ;
-
+    typedef typename K::FT FT;
     typedef typename K::Vector_2 Vector_2;
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2 Ray_2;
     typedef typename K::Line_2 Line_2;
 
-    Segment_2 s1(lPrev->point(), aNode->point());
-    Segment_2 s2(aNode->point(), lNext->point());
+    mFilteringBound = boost::none;
 
-    // @todo? These are not input segments, but it might still worth caching (but they need an ID)
-    boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_coeffC2(s1);
-    boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_coeffC2(s2);
+    // get the contour input segments on each side of the bisector spawned ataNode
+    auto lHL = aNode->halfedge()->defining_contour_edge();
+    auto lHR = ( aNode->is_contour() ) ? lHL->opposite()->prev()->opposite()
+                                       : aNode->halfedge()->opposite()->defining_contour_edge() ;
 
-    Vector_2 lV1(l1->a(), l1->b()) ;
-    Vector_2 lV2(l2->a(), l2->b()) ;
-    Vector_2 lV12 = lV1 + lV2 ;
-    Ray_2 bisect_ray(aNode->point(), lV12) ;
+    CGAL_SS_i::Segment_2_with_ID<K> lSL (lHL->source()->point(),
+                                         lHL->target()->point(),
+                                         lHL->id());
+    CGAL_SS_i::Segment_2_with_ID<K> lSR (lHR->source()->point(),
+                                         lHR->target()->point(),
+                                         lHR->id());
 
-    // F2C to_input;
-    // std::cout << "bisect " << aNode->point() << " " << aNode->point() + to_input(lV12) << "\n";
+    boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, FT(1)/lHL->weight(), mCoeff_cache);
+    boost::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, FT(1)/lHR->weight(), mCoeff_cache);
 
-    for ( Halfedge_handle_vector_iterator i = contour_halfedges_begin; i != contour_halfedges_end; ++ i )
+    // @fixme below needs to use inverted weights like in degenerate time/point computations
+    Vector_2 lVL(lL->a(), lL->b()) ;
+    Vector_2 lVR(lR->a(), lR->b()) ;
+    Vector_2 lVLR = lVL + lVR ;
+    Ray_2 bisect_ray(aNode->point(), lVLR) ;
+
+    // @todo this should use spatial searching
+    for ( Halfedge_handle_vector_iterator h = contour_halfedges_begin; h != contour_halfedges_end; ++h )
     {
-      CGAL_assertion((*i)->vertex()->is_contour() && (*i)->opposite()->vertex()->is_contour() );
-      Segment_2 s_h((*i)->opposite()->vertex()->point(), (*i)->vertex()->point());
+      CGAL_assertion((*h)->vertex()->is_contour() && (*h)->opposite()->vertex()->is_contour() );
 
-      auto inter = K().do_intersect_2_object()(s_h, bisect_ray);
-      auto orient = K().orientation_2_object()(s_h[0], s_h[1], aNode->point());
+      // @todo could be a line as long as we are in a convex area
+      Segment_2 s_h((*h)->opposite()->vertex()->point(), (*h)->vertex()->point());
 
       // we use segments of the input polygon intersected by the bisector and such that
       // they are oriented such that the reflex vertex is on the left side of the segment
-      if (!is_certain(inter) || !is_certain(orient) || !inter || orient != LEFT_TURN)
+      auto orient = K().orientation_2_object()(s_h[0], s_h[1], aNode->point());
+      if (!is_certain(orient) || orient != LEFT_TURN)
         continue;
 
-      // Note that we don't need the normalization
-      boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(s_h);
+      auto inter = K().do_intersect_2_object()(s_h, bisect_ray);
+      if (!is_certain(inter) || !inter)
+        continue;
 
-      typename K::FT lBound = ( - lh->c() - lh->a()*aNode->point().x() - lh->b()*aNode->point().y() ) /
-                                ( lh->a()*lV12.x() + lh->b()*lV12.y() );
+      CGAL_SS_i::Segment_2_with_ID<K> lSh (s_h, (*h)->id());
+      boost::optional< Line_2 > lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, (*h)->weight(), mCoeff_cache);
 
-      if( ! is_finite(lBound) )
+      FT lBound = ( - lh->c() - lh->a()*aNode->point().x() - lh->b()*aNode->point().y() ) /
+                    ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) - aNode->time() ;
+
+      if( ! is_finite(lBound) || ! is_positive(lBound) )
         continue;
 
       if ( ! mFilteringBound || *mFilteringBound > lBound )
@@ -800,7 +808,7 @@ public:
   }
 
   // functions and tag for filtering split events
-  // struct Filters_split_events_tag{}; // @tmp, what weights to give to non input segments used in this optimization?
+  struct Filters_split_events_tag{};
 
   // The kernel is filtered, and only the filtered part is used in the check (to avoid computing
   // exact stuff and losing time in a check that is there to gain speed)
@@ -847,63 +855,75 @@ public:
 
   // @todo there shouldn't be any combinatorial structures such as vertices in the traits
   template <class Vertex_handle, class Halfedge_handle_vector_iterator>
-  void ComputeFilteringBound(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+  void ComputeFilteringBound(Vertex_handle aNode,
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
-    mApproximate_traits.mFilteringBound = boost::none;
-
-    if ( ! aNode->is_contour() )
-      return ;
-
+    typedef typename FK::FT Target_FT;
     typedef typename FK::Point_2 Target_Point_2;
     typedef typename FK::Vector_2 Target_Vector_2;
     typedef typename FK::Segment_2 Target_Segment_2;
     typedef typename FK::Ray_2 Target_Ray_2;
     typedef typename FK::Line_2 Target_Line_2;
 
+    mApproximate_traits.mFilteringBound = boost::none;
+
     typename FK::FT::Protector protector;
 
-    C2F to_FK;
+    C2F lToFiltered;
 
-    Target_Point_2 laP = to_FK(aNode->point());
-    Target_Segment_2 s1(to_FK(lPrev->point()), laP);
-    Target_Segment_2 s2(laP, to_FK(lNext->point()));
+    // get the contour input segments on each side of the bisector spawned ataNode
+    auto lHL = aNode->halfedge()->defining_contour_edge();
+    auto lHR = ( aNode->is_contour() ) ? lHL->opposite()->prev()->opposite()
+                                       : aNode->halfedge()->opposite()->defining_contour_edge() ;
 
-    // @todo? These are not input segments, but it might still worth caching (just gotta assign them an ID)
-    boost::optional< Target_Line_2 > l1 = CGAL_SS_i::compute_normalized_line_coeffC2(s1);
-    boost::optional< Target_Line_2 > l2 = CGAL_SS_i::compute_normalized_line_coeffC2(s2);
+    CGAL_SS_i::Segment_2_with_ID<FK> lSL (lToFiltered(lHL->opposite()->vertex()->point()),
+                                          lToFiltered(lHL->vertex()->point()),
+                                          lHL->id());
+    CGAL_SS_i::Segment_2_with_ID<FK> lSR (lToFiltered(lHR->opposite()->vertex()->point()),
+                                          lToFiltered(lHR->vertex()->point()),
+                                          lHR->id());
 
-    Target_Vector_2 lV1(l1->a(), l1->b()) ;
-    Target_Vector_2 lV2(l2->a(), l2->b()) ;
-    Target_Vector_2 lV12 = lV1 + lV2 ;
-    Target_Ray_2 bisect_ray(laP, lV12) ;
+    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, Target_FT(1) / lToFiltered(lHL->weight()), mApproximate_traits.mCoeff_cache);
+    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, Target_FT(1) / lToFiltered(lHR->weight()), mApproximate_traits.mCoeff_cache);
 
-    // F2C to_input;
-    // std::cout << "bisect " << aNode->point() << " " << aNode->point() + to_input(lV12) << "\n";
+    Target_Point_2 laP = lToFiltered(aNode->point());
 
-    for ( Halfedge_handle_vector_iterator i = contour_halfedges_begin; i != contour_halfedges_end; ++ i )
+    // @fixme below needs to use inverted weights like in degenerate time/point computations
+    Target_Vector_2 lVL(lL->a(), lL->b()) ;
+    Target_Vector_2 lVR(lR->a(), lR->b()) ;
+    Target_Vector_2 lVLR = lVL + lVR ;
+    Target_Ray_2 bisect_ray(laP, lVLR) ;
+
+    // @todo this should use spatial searching
+    for ( Halfedge_handle_vector_iterator h = contour_halfedges_begin; h != contour_halfedges_end; ++h )
     {
       try
       {
-        CGAL_assertion((*i)->vertex()->is_contour() && (*i)->opposite()->vertex()->is_contour() );
-        Target_Segment_2 s_h(to_FK((*i)->opposite()->vertex()->point()), to_FK((*i)->vertex()->point()));
+        CGAL_assertion((*h)->vertex()->is_contour() && (*h)->opposite()->vertex()->is_contour() );
 
-        Uncertain<bool> inter = FK().do_intersect_2_object()(s_h, bisect_ray);
-        Uncertain<Oriented_side> orient = FK().orientation_2_object()(s_h[0], s_h[1], laP);
+        // @todo could be a line as long as we are in a convex area
+        Target_Segment_2 s_h(lToFiltered((*h)->opposite()->vertex()->point()),
+                             lToFiltered((*h)->vertex()->point()));
 
         // we use segments of the input polygon intersected by the bisector and such that
         // they are oriented such that the reflex vertex is on the left side of the segment
-        if (!is_certain(inter) || !is_certain(orient) || !inter || orient != LEFT_TURN)
+        Uncertain<Oriented_side> orient = FK().orientation_2_object()(s_h[0], s_h[1], laP);
+        if (!is_certain(orient) || orient != LEFT_TURN)
           continue;
 
-        // Note that we don't need the normalization
-        boost::optional< Target_Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(s_h);
+        Uncertain<bool> inter = FK().do_intersect_2_object()(s_h, bisect_ray);
+        if (!is_certain(inter) || !inter)
+          continue;
 
-        typename FK::FT lBound = ( - lh->c() - lh->a()*laP.x() - lh->b()*laP.y() ) /
-                                   ( lh->a()*lV12.x() + lh->b()*lV12.y() );
+        CGAL_SS_i::Segment_2_with_ID<FK> lSh (s_h, (*h)->id());
+        auto lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, lToFiltered((*h)->weight()), mApproximate_traits.mCoeff_cache);
 
-        if ( ! is_finite(lBound) )
+        // @fixme precision issues...? lToFiltered earlier?
+        Target_FT lBound = (- lh->c() - lh->a()*laP.x() - lh->b()*laP.y()) /
+                             ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) - lToFiltered(aNode->time()) ;
+
+        if ( ! is_finite(lBound) || ! is_positive(lBound) )
           continue;
 
         if ( ! mApproximate_traits.mFilteringBound || *mApproximate_traits.mFilteringBound > lBound )

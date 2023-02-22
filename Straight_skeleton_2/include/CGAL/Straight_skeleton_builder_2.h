@@ -1355,25 +1355,26 @@ private :
     return CanSafelyIgnoreSplitEventImpl(lEvent, typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
   }
 
-  void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle, Vertex_handle, Vertex_handle,
-                                                Halfedge_handle_vector_iterator, Halfedge_handle_vector_iterator,
+  void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle,
+                                                Halfedge_handle_vector_iterator,
+                                                Halfedge_handle_vector_iterator,
                                                 boost::mpl::bool_<false>) const
   {
   }
 
-  void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+  void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle aNode,
                                                 Halfedge_handle_vector_iterator contour_halfedges_begin,
                                                 Halfedge_handle_vector_iterator contour_halfedges_end,
                                                 boost::mpl::bool_<true>) const
   {
-    return mTraits.ComputeFilteringBound(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
+    return mTraits.ComputeFilteringBound(aNode, contour_halfedges_begin, contour_halfedges_end);
   }
 
-  void ComputeUpperBoundForValidSplitEvents(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+  void ComputeUpperBoundForValidSplitEvents(Vertex_handle aNode,
                                             Halfedge_handle_vector_iterator contour_halfedges_begin,
                                             Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
-    return ComputeUpperBoundForValidSplitEventsImpl(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end,
+    return ComputeUpperBoundForValidSplitEventsImpl(aNode, contour_halfedges_begin, contour_halfedges_end,
                                                     typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
   }
 

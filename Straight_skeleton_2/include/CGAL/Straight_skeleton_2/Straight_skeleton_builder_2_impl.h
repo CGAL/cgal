@@ -286,8 +286,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
                       << " LBorder: E" << lLBorder->id() << " RBorder: E" << lRBorder->id()
                       );
 
-  ComputeUpperBoundForValidSplitEvents(GetPrevInLAV(aNode), aNode, GetNextInLAV(aNode),
-                                       mContourHalfedges.begin(), mContourHalfedges.end());
+  ComputeUpperBoundForValidSplitEvents(aNode, mContourHalfedges.begin(), mContourHalfedges.end());
 
   for ( Halfedge_handle_vector_iterator i = mContourHalfedges.begin(); i != mContourHalfedges.end(); ++ i )
   {
