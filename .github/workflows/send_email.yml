@@ -1,4 +1,4 @@
-name: Send Email 
+name: Send Email using SSH
 
 on:
   workflow_call:
@@ -7,14 +7,14 @@ on:
         description: 'Message to send'
         required: true
         type: string
-      email:
-        description: 'Email address to send to'
-        required: true
-        type: string
     secrets:
+      email:
+        required: true
       private_key:
         required: true
       user:
+        required: true
+      host:
         required: true
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
         echo "${{ secrets.private_key }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ vars.CGAL_SEND_EMAIL_SSH_HOST }} > ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ secrets.host }} > ~/.ssh/known_hosts
     - name: send email via ssh
       run: |
-        echo "${{ inputs.message }}" | ssh  ${{ secrets.user }}@${{ vars.CGAL_SEND_EMAIL_SSH_HOST }} "/sbin/sendmail -t ${{ inputs.email }}"
+        echo "${{ inputs.message }}" | ssh  ${{ secrets.user }}@${{ secrets.host }} "/sbin/sendmail -t ${{ secrets.email }}"
