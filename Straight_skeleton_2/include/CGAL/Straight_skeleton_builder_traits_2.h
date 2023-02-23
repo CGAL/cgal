@@ -467,7 +467,7 @@ public:
   }
 
   // functions and tag for filtering split events
-  struct Filters_split_events_tag{};
+  // struct Filters_split_events_tag{}; // @tmp
 
   template <class EventPtr>
   bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent) const
@@ -752,7 +752,7 @@ public:
   }
 
   // functions and tag for filtering split events
-  struct Filters_split_events_tag{};
+  // struct Filters_split_events_tag{}; // @tmp
 
   // The kernel is filtered, and only the filtered part is used in the check (to avoid computing
   // exact stuff and losing time in a check that is there to gain speed)
