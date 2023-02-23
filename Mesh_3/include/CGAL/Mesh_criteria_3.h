@@ -264,7 +264,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                           a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_min_size}
- *     \cgalParamDescription{a constant describing a uniform upper-bound for the radii of the surface Delaunay balls.
+ *     \cgalParamDescription{a constant describing a uniform lower-bound for the radii of the surface Delaunay balls.
  *                           Only facets with a radius larger than this bound will be refined.
  *                           If a facet is too small with respect to this criterion,
  *                           it will not be refined however the other criteria are met or not.}
@@ -288,7 +288,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                            a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{cell_min_size}
- *     \cgalParamDescription{ a constant describing a uniform upper-bound for the radii of the circumradii
+ *     \cgalParamDescription{ a constant describing a uniform lower-bound for the radii of the circumradii
  *                            of the mesh tetrahedra.
  *                            Only tetrahedra with a circumradius larger than this bound will be refined.
  *                            If a cell is too small with respect to this criterion,
