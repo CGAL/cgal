@@ -31,9 +31,6 @@
 #include <CGAL/Mesh_3/features_detection/cube_isometries.h>
 #include <CGAL/Mesh_3/features_detection/features_detection_helpers.h>
 
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-
 #include <iostream>
 #include <vector>
 #include <set>
@@ -159,8 +156,7 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
 /// @cond INTERNAL
 template<typename Image_word_type>
 CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
-                                                          const float& sigma,
-                                                          const bool with_features)
+                                                          const float& sigma)
 {
   typedef unsigned char Weights_type; //from 0 t 255
   const std::size_t img_size = image.size();
@@ -297,11 +293,6 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   _writeImage(weights, "weights-image.inr.gz");
 #endif
 
-  if (with_features)
-  {
-    postprocess_weights_for_feature_protection(image, weights_img);
-  }
-
   return weights_img;
 }
 /// @endcond
@@ -328,16 +319,10 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 * with the same dimensions as `image`
 */
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
-    const float& sigma,
-    const CGAL_NP_CLASS& np = parameters::default_values())
+CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image, const float& sigma)
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  const bool with_features = choose_parameter(get_parameter(np, internal_np::with_features_param), false);
   CGAL_IMAGE_IO_CASE(image.image(),
-    return generate_label_weights_with_known_word_type<Word>(image, sigma, with_features);
+    return generate_label_weights_with_known_word_type<Word>(image, sigma);
   );
   CGAL_error_msg("This place should never be reached, because it would mean "
     "the image word type is a type that is not handled by "

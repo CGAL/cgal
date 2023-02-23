@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   /// [Domain creation]
   const float sigma = (std::max)(image.vx(), (std::max)(image.vy(), image.vz()));
   CGAL::Image_3 img_weights =
-    CGAL::Mesh_3::generate_label_weights(image, sigma, with_features(true));
+    CGAL::Mesh_3::generate_label_weights(image, sigma);
 
 //  CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
 
