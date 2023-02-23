@@ -640,7 +640,7 @@ public:
    *    \cgalParamDefault{CGAL::Null_functor()}
    *    \cgalParamExtra{The return type of the function depends on whether this parameter
                         or `input_features` are provided or not.}
-   *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
+   *    \cgalParamExtra{TODO}
    *   \cgalParamNEnd
    *
    *   \cgalParamNBegin{input_features}
@@ -658,6 +658,8 @@ public:
    *   \cgalParamNEnd
    *
    * \cgalNamedParamsEnd
+   * 
+   * \todo{Add warning about using weights and feature detection together}
    *
    * \cgalHeading{Example}
    *
