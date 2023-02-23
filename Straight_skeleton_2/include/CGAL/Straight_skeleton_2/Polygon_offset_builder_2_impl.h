@@ -55,7 +55,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
                                                         , Hook_position&        rPos
                                                         )
 {
-  CGAL_POLYOFFSET_TRACE(2,"Locate hook at " << aTime ) ;
+  CGAL_POLYOFFSET_TRACE(2,"Locate hook at T=" << aTime ) ;
   CGAL_POLYOFFSET_TRACE(2,"Start halfedge: " << e2str(*aBisector) ) ;
 
   Halfedge_const_handle rHook ;
@@ -116,7 +116,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
 
           rHook = aBisector ;
 
-          CGAL_POLYOFFSET_TRACE(2, "  Hook found here at " << Hook_position2Str(rPos) ) ;
+          CGAL_POLYOFFSET_TRACE(2, "  Hook found here on " << e2str(*aBisector) << "(" << Hook_position2Str(rPos) << ")" ) ;
 
           break ;
         }
@@ -127,7 +127,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
       }
       else
       {
-        CGAL_POLYOFFSET_TRACE(2,"Bisector is a roof peak (zero slope).");
+        CGAL_POLYOFFSET_TRACE(2, e2str(*aBisector) << " is a roof peak (zero slope).");
       }
     }
     else
@@ -177,7 +177,7 @@ template<class Ss, class Gt, class Cont, class Visitor>
 typename Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::Halfedge_const_handle
 Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateSeed( FT aTime )
 {
-  CGAL_POLYOFFSET_TRACE(2,"Searching for a starting seed at " << aTime ) ;
+  CGAL_POLYOFFSET_TRACE(2,"Searching for a starting seed at T=" << aTime ) ;
 
   Halfedge_const_handle rSeed ;
 
