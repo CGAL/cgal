@@ -464,6 +464,22 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
     typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
     return Params(std::cref(p));
   }
+
+  template <typename K>
+  Named_function_parameters<std::reference_wrapper<K>, Tag>
+  operator()(K& p) const
+  {
+    typedef Named_function_parameters<std::reference_wrapper<K>, Tag> Params;
+    return Params(std::ref(p));
+  }
+
+  template <typename K>
+  Named_function_parameters<std::reference_wrapper<K>, Tag>
+  operator=(K& p) const
+  {
+    typedef Named_function_parameters<std::reference_wrapper<K>, Tag> Params;
+    return Params(std::ref(p));
+  }
 };
 
 // define free functions and Boost_parameter_compatibility_wrapper for named parameters
