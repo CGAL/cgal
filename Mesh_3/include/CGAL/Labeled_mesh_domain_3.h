@@ -632,10 +632,10 @@ public:
    *   \cgalParamNBegin{features_detector}
    *    \cgalParamDescription{ a functor that implements
    *      `std::vector<std::vector<Point>> operator()(const Image_3& img) const`,
-   *      where `%Point` matches the mesh domain point type,
-   *      that returns a range of detected polyline features for feature protection.
-   *      Polyline features are added to the domain for further feature protection.
-   *      See \ref PkgMesh3FeatureDetection for available functors.}
+   *      where `%Point` matches the mesh domain point type.
+   *      It returns a range of detected polyline features, which can be added
+   *      to the domain for feature protection.
+   *      See \ref PkgMesh3FeatureDetection for a list of available functors.}
    *    \cgalParamDefault{CGAL::Null_functor()}
    *    \cgalParamExtra{The return type of the function depends on whether this parameter
                         or `input_features` are provided or not.}
