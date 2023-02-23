@@ -35,9 +35,9 @@ template<class K, class CoeffCache>
 boost::optional< typename K::Point_2 >
 construct_offset_pointC2 ( typename K::FT const& t,
                            Segment_2_with_ID<K> const& e0,
-                           typename K::FT const& weight0,
+                           typename K::FT const& w0,
                            Segment_2_with_ID<K> const& e1,
-                           typename K::FT const& weight1,
+                           typename K::FT const& w1,
                            boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                            CoeffCache& aCoeff_cache)
 {
@@ -52,11 +52,11 @@ construct_offset_pointC2 ( typename K::FT const& t,
   FT x(0.0),y(0.0) ;
 
   CGAL_STSKEL_TRAITS_TRACE("Constructing offset point for t=" << t ) ;
-  CGAL_STSKEL_TRAITS_TRACE("Edges " << " e0=" << s2str(e0) << " w = " << weight0 ) ;
-  CGAL_STSKEL_TRAITS_TRACE(            " e1=" << s2str(e1) << " w = " << weight1 << " tri=" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Edges " << " e0=" << s2str(e0) << " w = " << w0 ) ;
+  CGAL_STSKEL_TRAITS_TRACE(            " e1=" << s2str(e1) << " w = " << w1 << " tri=" << tri ) ;
 
-  Optional_line_2 l0 = compute_weighted_line_coeffC2(e0, weight0, aCoeff_cache) ;
-  Optional_line_2 l1 = compute_weighted_line_coeffC2(e1, weight1, aCoeff_cache) ;
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(e0, aCoeff_cache) ;
+  Optional_line_2 l1 = compute_normalized_line_coeffC2(e1, aCoeff_cache) ;
 
   bool ok = false ;
 
@@ -68,8 +68,8 @@ construct_offset_pointC2 ( typename K::FT const& t,
     {
       if ( ! CGAL_NTS is_zero(den) )
       {
-        FT numX = t * l1->b() - t * l0->b() + l0->b() * l1->c() - l1->b() * l0->c() ;
-        FT numY = t * l1->a() - t * l0->a() + l0->a() * l1->c() - l1->a() * l0->c() ;
+        FT numX = t * l1->b() / w1 - t * l0->b() / w0 + l0->b() * l1->c() - l1->b() * l0->c() ;
+        FT numY = t * l1->a() / w1 - t * l0->a() / w0 + l0->a() * l1->c() - l1->a() * l0->c() ;
 
         x = -numX / den ;
         y =  numY / den ;
@@ -92,8 +92,9 @@ construct_offset_pointC2 ( typename K::FT const& t,
 
           CGAL_STSKEL_TRAITS_TRACE("  Projected seed point: (" << px << "," << py << ")" ) ;
 
-          x = px + l0->a() * t  ;
-          y = py + l0->b() * t  ;
+          // when travelling in the line's orthgonal direction, the speed (weight) is inverted
+          x = px + t * l0->a() / w0 ;
+          y = py + t * l0->b() / w0 ;
 
           ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
         }
