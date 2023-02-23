@@ -68,8 +68,8 @@ construct_offset_pointC2 ( typename K::FT const& t,
     {
       if ( ! CGAL_NTS is_zero(den) )
       {
-        FT numX = t * l1->b() / w1 - t * l0->b() / w0 + l0->b() * l1->c() - l1->b() * l0->c() ;
-        FT numY = t * l1->a() / w1 - t * l0->a() / w0 + l0->a() * l1->c() - l1->a() * l0->c() ;
+        FT numX = t * l1->b() / w0 - t * l0->b() / w1 + l0->b() * l1->c() - l1->b() * l0->c() ;
+        FT numY = t * l1->a() / w0 - t * l0->a() / w1 + l0->a() * l1->c() - l1->a() * l0->c() ;
 
         x = -numX / den ;
         y =  numY / den ;
