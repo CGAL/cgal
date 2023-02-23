@@ -355,7 +355,7 @@ namespace internal
                  const Word_type& w)
   {
     using CGAL::IMAGEIO::static_evaluate;
-  
+
     if (i < 0 || j < 0 || k < 0)
       return;
     else if (i > img.xdim() - 1 || j > img.ydim() - 1 || k > img.zdim() - 1)
@@ -498,7 +498,7 @@ void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
               square[ii][jj].word = CGAL::IMAGEIO::static_evaluate<Image_word_type>
                                      (image.image(), pixel[0], pixel[1], pixel[2]);
               ++pixel_values_set[square[ii][jj].word];
- 
+
               if (pixel_values_set.size() > 1 || sum_faces > 1/*on edge of bbox*/)
                 black_voxels.push_back({ i, j, k });
             }
