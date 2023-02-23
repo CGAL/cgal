@@ -306,7 +306,6 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
       if ( oi )
       {
         i = *oi ;
-        CGAL_stskel_intrinsic_test_assertion(!is_point_calculation_clearly_wrong(t,i,aTrisegment));
         lOK = true ;
       }
     }
@@ -314,61 +313,6 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",aTrisegment);
 
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
-  }
-
-  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Trisegment_2_ptr const& aTrisegment ) const
-  {
-    return false; // @tmp disabled for now: needs to handle weights
-
-    bool rR = false ;
-
-    if ( is_possibly_inexact_time_clearly_not_zero(t) )
-    {
-      Segment_2_with_ID const& e0 = aTrisegment->e0() ;
-      Segment_2_with_ID const& e1 = aTrisegment->e1() ;
-      Segment_2_with_ID const& e2 = aTrisegment->e2() ;
-
-      Point_2 const& e0s = e0.source();
-      Point_2 const& e0t = e0.target();
-
-      Point_2 const& e1s = e1.source();
-      Point_2 const& e1t = e1.target();
-
-      Point_2 const& e2s = e2.source();
-      Point_2 const& e2t = e2.target();
-
-      FT const very_short(0.1);
-      FT const very_short_squared = CGAL_NTS square(very_short);
-
-      FT l0 = squared_distance(e0s,e0t) ;
-      FT l1 = squared_distance(e1s,e1t) ;
-      FT l2 = squared_distance(e2s,e2t) ;
-
-      bool e0_is_not_very_short = l0 > very_short_squared ;
-      bool e1_is_not_very_short = l1 > very_short_squared ;
-      bool e2_is_not_very_short = l2 > very_short_squared ;
-
-      FT d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y()).to_nt();
-      FT d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y()).to_nt();
-      FT d2 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e2s.x(),e2s.y(),e2t.x(),e2t.y()).to_nt();
-
-      FT tt = CGAL_NTS square(t);
-
-      bool e0_is_clearly_wrong = e0_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d0,tt) ;
-      bool e1_is_clearly_wrong = e1_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d1,tt) ;
-      bool e2_is_clearly_wrong = e2_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d2,tt) ;
-
-      rR = e0_is_clearly_wrong || e1_is_clearly_wrong || e2_is_clearly_wrong ;
-
-      CGAL_stskel_intrinsic_test_trace_if(rR
-                                        , "\nSkeleton node point calculation is clearly wrong:"
-                                          << "\ntime=" << t << " p=" << p2str(p) << " e0=" << s2str(e0) << " e1=" << s2str(e1) << " e2=" << s2str(e2)
-                                          << "\nl0=" << inexact_sqrt(l0) << " l1=" << inexact_sqrt(l1) << " l2=" << inexact_sqrt(l2)
-                                          << "\nd0=" << d0 << " d1=" << d1 << " d2=" << d2 << " tt=" << tt
-                                        ) ;
-    }
-
-    return rR ;
   }
 
 private:

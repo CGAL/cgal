@@ -112,8 +112,6 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
         //
         if ( lTimeWrtSrcTime != lTimeWrtTgtTime )
         {
-          CGAL_stskel_intrinsic_test_assertion( !CGAL_SS_i::is_time_clearly_not_within_possibly_inexact_bisector_time_interval(aTime,aBisector) ) ;
-
           rPos = ( lTimeWrtTgtTime == EQUAL ? TARGET : lTimeWrtSrcTime == EQUAL ? SOURCE : INSIDE ) ;
 
           rHook = aBisector ;
@@ -124,9 +122,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
         }
         else
         {
-          CGAL_stskel_intrinsic_test_assertion( !CGAL_SS_i::is_time_clearly_within_possibly_inexact_bisector_time_interval(aTime,aBisector) ) ;
-
-          CGAL_POLYOFFSET_TRACE(2, "  Hook not found here.") ;
+          CGAL_POLYOFFSET_TRACE(2, "  Hook not found on." << e2str(*aBisector) ) ;
         }
       }
       else

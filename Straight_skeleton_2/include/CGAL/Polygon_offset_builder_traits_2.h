@@ -67,54 +67,7 @@ struct Construct_offset_point_2 : Functor_base_2<K>
 
     result_type p = construct_offset_pointC2(aT,aE0,aWeight0,aE1,aWeight1,aNode,lCoeff_cache);
 
-    CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
-
     return p ;
-  }
-
-  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p,
-                                           Segment_2_with_ID const& aE0, Segment_2_with_ID const& aE1 ) const
-  {
-    return false; // @tmp disabled for now: needs to handle weights
-
-    bool rR = false ;
-
-    if ( is_possibly_inexact_time_clearly_not_zero(t) )
-    {
-      Point_2 const& e0s = aE0.source();
-      Point_2 const& e0t = aE0.target();
-
-      Point_2 const& e1s = aE1.source();
-      Point_2 const& e1t = aE1.target();
-
-      FT const very_short(0.1);
-      FT const very_short_squared = CGAL_NTS square(very_short);
-
-      FT l0 = squared_distance(e0s,e0t) ;
-      FT l1 = squared_distance(e1s,e1t) ;
-
-      bool e0_is_not_very_short = l0 > very_short_squared ;
-      bool e1_is_not_very_short = l1 > very_short_squared ;
-
-      FT d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y()).to_nt();
-      FT d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y()).to_nt();
-
-      FT tt = CGAL_NTS square(t) ;
-
-      bool e0_is_clearly_wrong = e0_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d0,tt) ;
-      bool e1_is_clearly_wrong = e1_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d1,tt) ;
-
-      rR = e0_is_clearly_wrong || e1_is_clearly_wrong ;
-
-      CGAL_stskel_intrinsic_test_trace_if(rR
-                                        , "\nOffset point calculation is clearly wrong:"
-                                          << "\ntime=" << t << " p=" << p2str(p) << " e0=" << s2str(aE0) << " e1=" << s2str(aE1)
-                                          << "\nl0=" << inexact_sqrt(l0) << " l1=" << inexact_sqrt(l1)
-                                          << "\nd0=" << d0 << " d1=" << d1 << " tt=" << tt
-                                        ) ;
-    }
-
-    return rR ;
   }
 };
 

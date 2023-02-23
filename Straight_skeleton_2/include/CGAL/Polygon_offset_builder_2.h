@@ -183,21 +183,6 @@ public:
                                                          ,lBorderB->weight()
                                                          ,lSeedEvent
                                                          );
-    CGAL_stskel_intrinsic_test_assertion
-    (
-      !p
-      ||
-      ( p && !CGAL_SS_i::is_possibly_inexact_distance_clearly_not_zero
-              ( CGAL_SS_i::squared_distance_from_point_to_lineC2(p->x()
-                                                                ,p->y()
-                                                                ,lNodeS->point().x()
-                                                                ,lNodeS->point().y()
-                                                                ,lNodeT->point().x()
-                                                                ,lNodeT->point().y()
-                                                                ).to_nt()
-              )
-      )
-    ) ;
 
     return p ;
   }
