@@ -973,7 +973,7 @@ protection of the 1D-features.
 Left: the mesh without any call to `%add_features()`.
 
 Middle: the mesh with only the 1D-features computed by
-`%CGAL::polylines_to_protect()`.
+`CGAL::Mesh_3::Detect_features_on_image_bbox()`.
 
 Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
