@@ -92,7 +92,9 @@ construct_offset_pointC2 ( typename K::FT const& t,
 
           CGAL_STSKEL_TRAITS_TRACE("  Projected seed point: (" << px << "," << py << ")" ) ;
 
-          // when travelling in the line's orthgonal direction, the speed (weight) is inverted
+          // When reformulating the progression of the front using the line orthogonal
+          // to the input segment, the speed (weight) becomes inverted: a large weight
+          // in the coefficients of the line means the front moves slower
           x = px + t * l0->a() / w0 ;
           y = py + t * l0->b() / w0 ;
 
