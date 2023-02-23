@@ -99,7 +99,7 @@ struct Snapping_pair
 #ifdef CGAL_LINKED_WITH_TBB
 // Functor that forwards the pair of the two intersecting boxes
 // Note that Box_intersection_d does a lot of copies of the callback functor, but we are passing it
-// with std::ref, so is always refering to the same reporter object (and importantly, the same counter)
+// with std::ref, so is always referring to the same reporter object (and importantly, the same counter)
 template <typename OutputIterator, typename Visitor>
 struct Intersecting_boxes_pairs_parallel_report
 {
@@ -611,7 +611,7 @@ void find_vertex_vertex_matches_with_box_d(const Unique_positions& unique_positi
     // Shenanigans to pass a reference as callback (which is copied by value by 'box_intersection_d')
     std::function<void(const Box*, const Box*)> callback(std::ref(box_callback));
 
-    // Grab the boxes that are interesecting but don't do any extra filtering (in parallel)
+    // Grab the boxes that are intersecting but don't do any extra filtering (in parallel)
     CGAL::box_intersection_d<CGAL::Parallel_tag>(boxes_A_ptr.begin(), boxes_A_ptr.end(),
                                                  boxes_B_ptr.begin(), boxes_B_ptr.end(),
                                                  callback);
@@ -1029,7 +1029,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
         const vertex_descriptor va = target(ha, tm_A);
         const vertex_descriptor vb = target(hb, tm_B);
 
-        // The two folloing halfedges might not be in the range to snap, but it doesn't matter
+        // The two following halfedges might not be in the range to snap, but it doesn't matter
         const halfedge_descriptor nha = next(ha, tm_A);
         const halfedge_descriptor nhb = next(hb, tm_B);
         const bool is_stitchable_left = gt.equal_3_object()(get(vpm_A, source(ha, tm_A)),

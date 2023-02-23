@@ -115,7 +115,7 @@ It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it s
 \subsection examplePluginDockWidget Adding a Dock Widget
 
 This section describes how to add a dock widget to the application.\n
-You can make your plugin inherit from CGAL::Three::Polyhedron_demo_plugin_helper, which gives acces to the function CGAL::Three::Polyhedron_demo_plugin_helper#addDockWidget.
+You can make your plugin inherit from CGAL::Three::Polyhedron_demo_plugin_helper, which gives access to the function CGAL::Three::Polyhedron_demo_plugin_helper#addDockWidget.
 This will manage automatically the position and tabification of a dock widget. \n
 Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets
 *  \image html menu_6.png
@@ -221,14 +221,14 @@ One way to store the data you computed is to use member std::vector. It must be 
 The application uses OpenGL VBOs to display the geometry. Those are buffers that will stream their data to the GPU. This step consists to put the data stored in the std::vector in those buffers.
 This mechanism is wrapped using a bunch of classes called Geometry_containers. There is one type for each basic type of geometry in OpenGL(triangles, lines and points). They embark a SHaderProgram
 and everything that can be bound to it (one VAO and vbos).
-In this exemple, we only need one Triangle_container, as we are only storing one kind of data. If we wanted to store normals and colors, for instance, we could provide it the same way the points are given to the Triangle_container.
+In this example, we only need one Triangle_container, as we are only storing one kind of data. If we wanted to store normals and colors, for instance, we could provide it the same way the points are given to the Triangle_container.
 If we wanted to define different king of lighting, we would need a Triangle_container for each, and if we wanted to draw the edges of the triangle, we would need an Edge_container, etc.
 
 \snippet Three_examples/Example_plugin.cpp creation
 The code above creates a Triangle_container, that holds the characteristics of the display (here a basic lighting), as a non-indexed data container. It means the vertices will be duplicated.
 
 \snippet Three_examples/Example_plugin.cpp allocateelements
-Once the Triangle_container exists, we must feed it the previously computed data. This step initializes the embeded VAO with the correct size.
+Once the Triangle_container exists, we must feed it the previously computed data. This step initializes the embedded VAO with the correct size.
 
 \snippet Three_examples/Example_plugin.cpp fillbuffers
 And here, the data previously given to the Triangle_container is actually bound. It is like a green light to the program, letting it embark the data previously prepared for it.

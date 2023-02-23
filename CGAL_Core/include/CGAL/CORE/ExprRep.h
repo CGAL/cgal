@@ -145,7 +145,7 @@ struct NodeInfo {
 // class Expr;
 
 /// \class ExprRep
-/// \brief The sharable, internal representation of expressions
+/// \brief The shareable, internal representation of expressions
 //  Members: private: int refCount,
 //            public:  NodeInfo* nodeInfo,
 //                     filteredFp ffVal.
@@ -425,7 +425,7 @@ public:
   extLong computeBound();
   /// driver function to approximate
   void approx(const extLong& relPrec, const extLong& absPrec);
-  /// compute an approximate value satifying the specified precisions
+  /// compute an approximate value satisfying the specified precisions
   virtual void computeApproxValue(const extLong&, const extLong&) = 0;
   /// Test whether the current approx. value satisfies [relPrec, absPrec]
   bool withinKnownPrecision(const extLong&, const extLong&);

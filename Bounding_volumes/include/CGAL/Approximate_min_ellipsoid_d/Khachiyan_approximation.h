@@ -13,7 +13,7 @@
 // Note: whenever a comment refers to "Khachiyan's paper" then the
 // paper "Rounding of polytopes in the real number model of
 // computation" is meant (Mathematics of Operations Research, Vol. 21,
-// No. 2, May 1996).  Nontheless, most comments refer to the
+// No. 2, May 1996).  Nonetheless, most comments refer to the
 // accompanying documentation sheet (and not to the above paper), see
 // the file(s) in documentation/.
 
@@ -294,7 +294,7 @@ namespace CGAL {
                 (Embed? "" : "not ") << "embedded)." << std::endl);
       CGAL_APPEL_TIMER_START("khachiyan");
 
-      // In order to satisfy the invariant on m, we have to initalize
+      // In order to satisfy the invariant on m, we have to initialize
       // m with the zero matrix:
       for (int i=0; i<d; ++i)
         for (int j=0; j<d; ++j)
@@ -435,7 +435,7 @@ namespace CGAL {
                 "bound was " << max_iterations << "." << std::endl);
       CGAL_APPEL_TIMER_PRINT("appel","khachiyan","  Time at end: ");
       CGAL_APPEL_IF_STATS(CGAL_APPEL_LOG("appel",
-                  "  The overall represenation error in m is:   " <<
+                  "  The overall representation error in m is:   " <<
                      max_error_m_all << "." << std::endl);)
     }
 
@@ -527,7 +527,7 @@ namespace CGAL {
     // Complexity: O(n d^2)
     bool is_valid(bool verbose);
 
-  private: // internal assertion routines (only avalable in debug mode):
+  private: // internal assertion routines (only available in debug mode):
 
     #ifdef CGAL_APPEL_ASSERTION_MODE
     void compute_M_of_x();
@@ -586,8 +586,8 @@ namespace CGAL {
     bool compute_initial_inverse_from_sum();
     // Initializes the current solution x to (1/n,...,1/n), computes
     // into mi the inverse of M(x) and sets eps to some (trivial)
-    // value such that the relaxed optimiality conditions (*) hold.
-    // In addition, this routine intializes the array ex to hold the
+    // value such that the relaxed optimality conditions (*) hold.
+    // In addition, this routine initializes the array ex to hold the
     // excesses (w.r.t. this trivial solution) of the input points and
     // initializes ex_max to the index into ex of a largest element.
     // The routine returns true if and only if M(x)^{-1} exists.

@@ -1088,7 +1088,7 @@ public:
     }
 
     /*!\brief
-     * Compares the relative vertical aligment of this arc with a second
+     * Compares the relative vertical alignment of this arc with a second
      * immediately to the left of one of their intersection points.
      *
      * If one of the curves is vertical (emanating downward from p),
@@ -1116,7 +1116,7 @@ public:
     }
 
     /*!\brief
-     * Compares the relative vertical aligment of this arc with a second
+     * Compares the relative vertical alignment of this arc with a second
      * immediately to the right of one of their intersection points.
      *
      * If one of the curves is vertical (emanating downward from p),
@@ -1436,7 +1436,7 @@ public:
      * \pre p != q
      * \pre both points must be interior and must lie on \c cv
      */
-    // do we need this method separetely ??
+    // do we need this method separately ??
     Kernel_arc_2 trim(const Point_2& p, const Point_2& q) const {
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Trim_2, trim_2)
@@ -1937,7 +1937,7 @@ protected:
      * \param cv2 the second arc
      * \param where the location in parameter space
      * \param x0 The x-coordinate
-     * \param perturb determines whether to pertub slightly to the left/right
+     * \param perturb determines whether to perturb slightly to the left/right
      * \return the relative vertical alignment
      *
      * \pre !is_on_bottom_top(where)
@@ -1964,7 +1964,7 @@ protected:
      * \param cv2 the second arc
      * \param where the location in parameter space
      * \param x0 The x-coordinate
-     * \param perturb determines whether to pertub slightly to the left/right
+     * \param perturb determines whether to perturb slightly to the left/right
      * \return the relative vertical alignment
      */
      CGAL::Comparison_result _compare_coprime(
@@ -2595,7 +2595,7 @@ protected:
     /*!\brief
      * computes intersection of two arcs meeting only at their curve ends.
      *
-     * Intersection points are returned in the output interator \c oi as object
+     * Intersection points are returned in the output iterator \c oi as object
      * of type std::pair<Point_2, int> (intersection + multiplicity)
      *
      * \param cv1 the first arc

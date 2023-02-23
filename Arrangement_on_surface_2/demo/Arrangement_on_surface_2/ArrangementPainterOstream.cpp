@@ -186,7 +186,7 @@ ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   QGraphicsView* view = this->scene->views().first();
   int xmin = view->mapFromScene(bb.xmin(), bb.ymin()).x();
   int xmax = view->mapFromScene(bb.xmax(), bb.ymin()).x();
-  // can be negitive due to rotation trasnformation
+  // can be negative due to rotation transformation
   size_t n = static_cast<size_t>(std::abs(xmax - xmin));
   if (n == 0) { return *this; }
 

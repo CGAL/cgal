@@ -76,7 +76,7 @@ private:
     vertex_descriptor v,
     int row_id,                            // which row to insert in [ frees stay left-hand side ]
     Solver_matrix& matrix,
-    double& x, double& y, double& z,               // constants transfered to right-hand side
+    double& x, double& y, double& z,               // constants transferred to right-hand side
     double multiplier,
     const std::map<vertex_descriptor, std::size_t>& vertex_id_map,
     unsigned int depth)

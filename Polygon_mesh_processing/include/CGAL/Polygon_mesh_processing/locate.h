@@ -44,7 +44,7 @@
 
 // Everywhere in this file:
 // If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 // between the coordinates in `bc` and the vertices of the face `f` is the following:
 // - `w0` corresponds to `source(halfedge(f, tm), tm)`
 // - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -111,7 +111,7 @@ using Barycentric_coordinates = std::array<FT, 3>;
 /// \ingroup PMP_locate_grp
 ///
 /// If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-/// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+/// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 /// between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///   - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///   - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -631,7 +631,7 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
 /// \brief Given a location, returns whether the location is on the vertex `vd` or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -675,7 +675,7 @@ is_on_vertex(const std::pair<typename boost::graph_traits<TriangleMesh>::face_de
 /// \brief Given a location, returns whether this location is on the halfedge `hd` or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -724,7 +724,7 @@ is_on_halfedge(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
 ///        that is, if all the barycentric coordinates are positive.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -764,7 +764,7 @@ is_in_face(const std::array<FT, 3>& bar,
 /// \brief Given a location, returns whether the location is in the face (boundary included) or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -796,7 +796,7 @@ is_in_face(const std::pair<typename boost::graph_traits<TriangleMesh>::face_desc
 /// \brief Given a location, returns whether the location is on the boundary of the face or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -837,7 +837,7 @@ is_on_face_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 /// \brief Given a location, returns whether the location is on the border of the mesh or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -906,7 +906,7 @@ is_on_mesh_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 ///        and the barycentric coordinates of the vertex `vd` in that face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -967,7 +967,7 @@ locate_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 ///        of the vertex in `fd`.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -1006,7 +1006,7 @@ locate_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descripto
 ///        barycentric coordinates of that location in that face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -1046,7 +1046,7 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///        `query` with respect to the vertices of `fd`.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -1157,7 +1157,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 /// \brief Given a location and a second face adjacent to the first, returns the location of the point in the second face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`

@@ -57,4 +57,10 @@
 #  endif
 #endif
 
+#ifdef CGAL_MESH_3_VERY_VERBOSE
+#  ifndef CGAL_MESH_3_OPTIMIZER_VERY_VERBOSE
+#    define CGAL_MESH_3_OPTIMIZER_VERY_VERBOSE 1
+#  endif
+#endif
+
 #endif // CGAL_MESH_3_CONFIG_H

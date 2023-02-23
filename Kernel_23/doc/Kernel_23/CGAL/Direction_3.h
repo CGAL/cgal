@@ -57,7 +57,7 @@ Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);
 
 /*!
 returns values, such that `d``== Direction_3<Kernel>(delta(0),delta(1),delta(2))`.
-\pre \f$ 0 \leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::RT delta(int i) const;
 

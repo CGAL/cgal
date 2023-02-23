@@ -1058,7 +1058,7 @@ private:
    */
   FT cotangent(const FT& value) const
   {
-    return FT(1/std::tan(CGAL::to_double(value)));
+    return FT(1./std::tan(CGAL::to_double(value)));
   }
 
   /**

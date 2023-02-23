@@ -6,6 +6,7 @@ project(Alpha_shapes_3_Demo)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -27,7 +28,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   # include(${QT_USE_FILE})
   include_directories(BEFORE ./)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)
@@ -46,8 +47,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL, and Qt5, and will not be compiled."
-  )
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

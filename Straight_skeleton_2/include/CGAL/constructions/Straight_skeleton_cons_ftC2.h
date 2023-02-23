@@ -254,7 +254,7 @@ construct_trisegment ( Segment_2_with_ID<K> const& e0,
 // If the lines intersect to the left, the returned distance is positive.
 // If the lines intersect to the right, the returned distance is negative.
 // If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
-// returns 0 (the actual distance is undefined in this case, but 0 is a usefull return)
+// returns 0 (the actual distance is undefined in this case, but 0 is a useful return)
 //
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
@@ -364,7 +364,7 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
 
 
 //
-// Given 3 oriented straight line segments: e0, e1, e2 and the corresponding offseted segments: e0*, e1* and e2*,
+// Given 3 oriented straight line segments: e0, e1, e2 and the corresponding offsetted segments: e0*, e1* and e2*,
 // returns the point of the left or right seed (offset vertex) (e0*,e1*) or (e1*,e2*)
 //
 // If the current event (defined by e0,e1,e2) is a propagated event, that is, it follows from a previous event,
@@ -375,7 +375,7 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
 // That trisegment is exactly the trisegment tree that defined the previous event which produced the skeleton node
 // (so the trisegment tree is basically a lazy representation of the seed point).
 //
-// If a seed is a contour vertex, its point is then simply the target endoint of e0 or e1 (for the left/right seed).
+// If a seed is a contour vertex, its point is then simply the target endpoint of e0 or e1 (for the left/right seed).
 //
 // This method returns the specified seed point (left or right)
 //
@@ -385,10 +385,10 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
 // If you ask for the right child point for a trisegment tree corresponding to a split event you will just get e1.target()
 // which is nonsensical for a non initial split event.
 //
-// NOTE: There is an abnormal collinearity case which ocurrs when e0 and e2 are collinear.
+// NOTE: There is an abnormal collinearity case which occurs when e0 and e2 are collinear.
 // In this case, these lines do not correspond to an offset vertex (because e0* and e2* are never consecutive before the event),
-// so the degenerate seed is neither the left or the right seed. In this case, the SEED ID for the degenerate pseudo seed is UNKOWN.
-// If you request the point of such degenerate pseudo seed the oriented midpoint bettwen e0 and e2 is returned.
+// so the degenerate seed is neither the left or the right seed. In this case, the SEED ID for the degenerate pseudo seed is UNKNOWN.
+// If you request the point of such degenerate pseudo seed the oriented midpoint between e0 and e2 is returned.
 //
 template <class K, class CoeffCache>
 boost::optional< Point_2<K> >
@@ -438,7 +438,7 @@ compute_degenerate_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2
-// such that two and only two of these edges are collinear, not neccesarily consecutive but with the same orientaton;
+// such that two and only two of these edges are collinear, not necessarily consecutive but with the same orientaton;
 // returns the OFFSET DISTANCE (n/d) at which a line perpendicular to the collinear edge passing through
 // the degenerate seed point intersects the offset line of the non collinear edge
 //
@@ -537,7 +537,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
 }
 
 //
-// Calls the appropiate function depending on the collinearity of the edges.
+// Calls the appropriate function depending on the collinearity of the edges.
 //
 template<class K, class TimeCache, class CoeffCache>
 boost::optional< Rational< typename K::FT > >
@@ -560,7 +560,7 @@ compute_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment
 }
 
 // Given 3 oriented line segments e0, e1 and e2
-// such that their offsets at a certian distance intersect in a single point,
+// such that their offsets at a certain distance intersect in a single point,
 // returns the coordinates (x,y) of such a point.
 //
 // PRECONDITIONS:
@@ -621,9 +621,9 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 }
 
 // Given 3 oriented line segments e0, e1 and e2
-// such that their offsets at a certian distance intersect in a single point,
+// such that their offsets at a certain distance intersect in a single point,
 // returns the coordinates (x,y) of such a point.
-// two and only two of the edges are collinear, not neccesarily consecutive but with the same orientaton
+// two and only two of the edges are collinear, not necessarily consecutive but with the same orientaton
 //
 // PRECONDITIONS:
 // The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
@@ -691,7 +691,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
 }
 
 //
-// Calls the appropiate function depending on the collinearity of the edges.
+// Calls the appropriate function depending on the collinearity of the edges.
 //
 template <class K, class CoeffCache>
 boost::optional< Point_2<K> >

@@ -157,19 +157,19 @@ public:
 
   /*!
   returns the i'th homogeneous coordinate of `p`.
-  \pre \f$ 0\leq i \leq3\f$.
+  \pre  `0 <= i <= 3`
   */
   Kernel::RT homogeneous(int i) const;
 
   /*!
   returns the i'th %Cartesian coordinate of `p`.
-  \pre \f$ 0\leq i \leq2\f$.
+  \pre  `0 <= i <= 2`
   */
   Kernel::FT cartesian(int i) const;
 
   /*!
   returns `cartesian(i)`.
-  \pre \f$ 0\leq i \leq2\f$.
+  \pre  `0 <= i <= 2`
   */
   Kernel::FT operator[](int i) const;
 

@@ -241,7 +241,7 @@ void interior_triangle_example(const double error_bound,
 }
 
 // Read a real mesh given by the user, perturb it slightly, and compute the
-// Hausdorff distance between the original mesh and its pertubation.
+// Hausdorff distance between the original mesh and its perturbation.
 void perturbing_surface_mesh_example(const std::string& filepath,
                                      const double error_bound,
                                      const bool save = true)

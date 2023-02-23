@@ -9,8 +9,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_H
-#define CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_H 1
+#ifndef CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_3_H
+#define CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_3_H 1
 
 #include <vector>
 #include <cstddef>
@@ -127,7 +127,7 @@ struct Find_opposite_2_with_control<LCC, CGAL::Combinatorial_map_tag>
     {
       if (!lcc.template is_free<2>(res))
       { // Here a dart vah1->vah2 already exists, and it was already 2-sewn.
-        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
+        std::cerr<<"ERROR in Linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
         return lcc.null_descriptor;
       }
     }
@@ -135,7 +135,7 @@ struct Find_opposite_2_with_control<LCC, CGAL::Combinatorial_map_tag>
                                              vertex_to_dart_map_in_surface,
                                              vah2, vah1)!=lcc.null_descriptor)
     { // Here a dart vah1->vah2 already exists (but it was not already 2-sewn).
-      std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
+      std::cerr<<"ERROR in Linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
       return lcc.null_descriptor;
     }
 
@@ -159,7 +159,7 @@ struct Find_opposite_2_with_control<LCC, CGAL::Generalized_map_tag>
     {
       if (!lcc.template is_free<2>(res))
       { // Here a dart vah1->vah2 already exists, and it was already 2-sewn.
-        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
+        std::cerr<<"ERROR in Linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
         return lcc.null_descriptor;
       }
     }
@@ -209,7 +209,7 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
 };
 ///////////////////////////////////////////////////////////////////////////////
 template<class LCC_, unsigned int dim=LCC_::dimension>
-struct Sew3_for_LCC_incremental_builder
+struct Sew3_for_LCC_incremental_builder_3
 {
   static void run(LCC_& lcc,
                   typename LCC_::Dart_descriptor dh1, typename LCC_::Dart_descriptor dh2)
@@ -218,8 +218,8 @@ struct Sew3_for_LCC_incremental_builder
     {
       if(!lcc.template is_free<3>(dh1))
       {
-        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: "
-                 <<"it exists more than 2 faces with same indices."<<std::endl;
+        std::cerr<<"ERROR in Linear_cell_complex_incremental_builder_3: "
+                 <<"it exist more than 2 faces with same indices."<<std::endl;
       }
       else
       { lcc.template sew<3>(lcc.other_orientation(dh1), dh2); }
@@ -227,7 +227,7 @@ struct Sew3_for_LCC_incremental_builder
   }
 };
 template<class LCC_>
-struct Sew3_for_LCC_incremental_builder<LCC_, 2>
+struct Sew3_for_LCC_incremental_builder_3<LCC_, 2>
 {
   static void run(LCC_&, typename LCC_::Dart_descriptor, typename LCC_::Dart_descriptor)
   {}
@@ -319,7 +319,7 @@ public:
     if(LCC::dimension>2)
     {
       opposite=opposite_face();
-      Sew3_for_LCC_incremental_builder<LCC>::run(lcc, opposite, min_dart);
+      Sew3_for_LCC_incremental_builder_3<LCC>::run(lcc, opposite, min_dart);
       add_face_in_array();
     }
     return first_dart;
@@ -404,5 +404,5 @@ private:
 
 } //namespace CGAL
 
-#endif // CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_H //
+#endif // CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_3_H //
 // EOF //

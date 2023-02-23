@@ -23,7 +23,7 @@ namespace CGAL
 
 /**
  * @class Special case for ray/segment-triangle
- * the only difference with the offical one (Listing_intersection_traits) is that
+ * the only difference with the official one (Listing_intersection_traits) is that
  * is the do_intersect which is made prior to the intersection call.
  */
 template<typename AABBTraits, typename Query, typename Output_iterator>

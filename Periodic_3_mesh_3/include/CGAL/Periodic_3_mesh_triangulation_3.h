@@ -49,7 +49,7 @@
 
 namespace CGAL {
 
-/// This class currently provides an interface between the classe
+/// This class currently provides an interface between the class
 /// `CGAL::Periodic_3_regular_triangulation_3` and the mesher `Mesh_3`.
 /// As periodic triangulations are parallelized, a lot of these functions will
 /// become obsolete.

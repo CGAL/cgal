@@ -1155,7 +1155,7 @@ try_to_remove_close_dummy_vertex(Vertex_handle& protection_vertex,
          protection_vertex, weight, is_special(protection_vertex), dummy_point))
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
-      std::cerr << "Successfuly removed the dummy point and changed the vertex weight" << std::endl;
+      std::cerr << "Successfully removed the dummy point and changed the vertex weight" << std::endl;
 #endif
       return true;
     }
@@ -1657,7 +1657,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     }
     else
     {
-      // The corner has already been inserted and necessary adjustements to its weight
+      // The corner has already been inserted and necessary adjustments to its weight
       // have already been performed during its insertion and during the insertion
       // of other points. Only thing missing is to add it the correspondence map.
       insert_in_correspondence_map(v, p, curve_indices);
@@ -1884,7 +1884,7 @@ insert_balls_on_edges()
   Input_features input_features;
   domain_.get_curves(std::back_inserter(input_features));
 
-  // Interate on edges
+  // Iterate on edges
   for(typename Input_features::iterator fit = input_features.begin(),
        end = input_features.end() ; fit != end ; ++fit)
   {

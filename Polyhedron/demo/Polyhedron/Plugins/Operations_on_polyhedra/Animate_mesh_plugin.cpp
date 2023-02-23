@@ -77,7 +77,7 @@ public :
     frame = -1;
     connect(dock_widget->helpButton, &QPushButton::clicked,this, [this](){
       QMessageBox::information(dock_widget, QString("Animation"),
-                             QString("The TRJS format contains informations for a succession of modifications on a Surface Mesh. "
+                             QString("The TRJS format contains information for a succession of modifications on a Surface Mesh. "
                                      "Such a modification is called a frame, and every frame is composed with a ligne for the "
                                      "number of points modified, and one ligne per modified point and its index.\n\n"
                                      "Example:\n\n"

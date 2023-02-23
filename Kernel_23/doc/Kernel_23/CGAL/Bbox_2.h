@@ -77,13 +77,13 @@ double ymax() const;
 
 /*!
 Returns `xmin()` if `i==0` or `ymin()` if `i==1`.
-\pre i==0 or i==1
+\pre `i==0` or `i==1`
 */
 double min(int i) const;
 
 /*!
 Returns `xmax()` if `i==0` or `ymax()` if `i==1`.
-\pre i==0 or i==1
+\pre `i==0` or `i==1`
 */
 double max(int i) const;
 

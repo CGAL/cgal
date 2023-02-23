@@ -7,20 +7,10 @@ project(Generalized_map_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-set(hfiles Generalized_map_2_test.h Generalized_map_3_test.h
-  Generalized_map_4_test.h GMap_test_insertions.h)
+set(hfiles Generalized_map_2_test.h
+           Generalized_map_3_test.h
+           Generalized_map_4_test.h
+           GMap_test_insertions.h)
 
 create_single_source_cgal_program("Generalized_map_test.cpp" ${hfiles})
 

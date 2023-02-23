@@ -263,7 +263,7 @@ protected:
        }
        else
        {
-         // recursiv call for the construction. the interval is devided.
+         // recursiv call for the construction. the interval is divided.
          build_segment_tree(n - (int)n/2, leftchild, rightchild,
                          prevchild, leftmostlink, index, last, keys);
          link_type vparent = new_Segment_tree_node_t

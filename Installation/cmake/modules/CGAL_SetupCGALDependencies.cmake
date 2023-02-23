@@ -2,7 +2,7 @@
 # CGAL_SetupCGALDependencies
 # --------------------------
 #
-# The module searchs for the dependencies of the CGAL library:
+# The module searches for the dependencies of the CGAL library:
 #   - the `GMP/MPFR` couple,
 #   - `LEDA` (optional)
 #   - the `Boost` libraries (mostly the header-only libraries)
@@ -97,8 +97,7 @@ function(CGAL_setup_CGAL_dependencies target)
     target_compile_definitions(${target} INTERFACE CGAL_TEST_SUITE=1)
   endif()
 
-  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
-  # C++14.
+  # CGAL now requires C++14. `decltype(auto)` is used as a marker of C++14.
   target_compile_features(${target} INTERFACE cxx_decltype_auto)
 
   use_CGAL_Boost_support(${target} INTERFACE)

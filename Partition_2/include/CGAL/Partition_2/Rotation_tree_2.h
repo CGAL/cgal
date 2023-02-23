@@ -108,7 +108,7 @@ public:
 
 
    // the point that comes first in the right-to-left ordering is first
-   // in the ordering, after the auxilliary points p_minus_inf and p_inf
+   // in the ordering, after the auxiliary points p_minus_inf and p_inf
    Self_iterator rightmost_point_ref()
    {
       return this->begin();

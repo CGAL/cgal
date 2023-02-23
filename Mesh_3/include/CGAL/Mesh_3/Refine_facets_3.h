@@ -1471,7 +1471,7 @@ before_insertion_impl(const Facet& facet,
     error_msg <<
       boost::format("Mesh_3 ERROR: "
                     "A facet is not in conflict with its refinement point!\n"
-                    "Debugging informations:\n"
+                    "Debugging information:\n"
                     "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
                     "  Dual: %3%\n"
                     "  Refinement point: %5%\n"

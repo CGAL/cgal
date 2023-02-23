@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  // For the pupose of the example we mark 100 edges as constrained edges
+  // For the purpose of the example we mark 100 edges as constrained edges
   int count = 0;
   for(edge_descriptor e : edges(surface_mesh))
     put(constraints_map, e, (count++ < 100));

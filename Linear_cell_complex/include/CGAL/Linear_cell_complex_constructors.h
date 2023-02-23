@@ -13,7 +13,7 @@
 #define CGAL_LINEAR_CELL_COMPLEX_CONSTRUCTORS_H 1
 
 #include <CGAL/IO/OFF.h>
-#include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/assertions.h>
 
@@ -135,7 +135,7 @@ namespace CGAL {
    *
    * @param alcc the linear cell complex where the graph will be imported.
    * @param ais the istream where read the graph.
-   * @return A dart created during the convertion.
+   * @return A dart created during the conversion.
    */
   template< class LCC >
   typename LCC::Dart_descriptor import_from_plane_graph(LCC& alcc,

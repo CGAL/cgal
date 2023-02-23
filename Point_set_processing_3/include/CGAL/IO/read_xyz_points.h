@@ -89,8 +89,6 @@ bool read_XYZ(std::istream& is,
   typedef typename NP_helper::Normal_map NormalMap;
   typedef typename NP_helper::Geom_traits Kernel;
 
-  bool has_normals = NP_helper::has_normal_map();
-
   PointMap point_map = NP_helper::get_point_map(np);
   NormalMap normal_map = NP_helper::get_normal_map(np);
 
@@ -155,8 +153,7 @@ bool read_XYZ(std::istream& is,
         Enriched_point pwn;
         put(point_map,  pwn, point);  // point_map[pwn] = point
 
-        if (has_normals)
-          put(normal_map, pwn, normal); // normal_map[pwn] = normal
+        put(normal_map, pwn, normal); // normal_map[pwn] = normal
 
         *output++ = pwn;
         continue;

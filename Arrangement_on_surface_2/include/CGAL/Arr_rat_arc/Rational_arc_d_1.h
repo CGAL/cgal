@@ -450,7 +450,7 @@ public:
     _info = (_info | IS_DIRECTED_RIGHT);
 
 
-    // Analyze the bahaviour of the rational function at x = -oo (the source).
+    // Analyze the behaviour of the rational function at x = -oo (the source).
     Algebraic_real_1          y0;
     const Arr_parameter_space inf_s = _analyze_at_minus_infinity(P, Q, y0);
 
@@ -460,7 +460,7 @@ public:
       _info = (_info | SRC_AT_Y_PLUS_INFTY);
     else // if (inf_s == ARR_INTERIOR)
       _ps = Algebraic_point_2();   //the point is a dummy
-    //Analyze the bahaviour of the rational function at x = +oo (the target).
+    //Analyze the behaviour of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t = _analyze_at_plus_infinity(P, Q, y0);
 
     if (inf_t == ARR_BOTTOM_BOUNDARY)
@@ -1010,7 +1010,7 @@ public:
   //Get the relative position of the point with respect to the rational arc.
   //param p The query point.
   //precondition: p is in the x-range of the arc.
-  //    both p's supporting curve and the rational arc are continous
+  //    both p's supporting curve and the rational arc are continuous
   //return SMALLER if the point is below the arc;
   //       LARGER if the point is above the arc;
   //       EQUAL if p lies on the arc.
@@ -1450,7 +1450,7 @@ protected:
   //-------------------------------
 
   //--------------------------------------------------------------------------
-  // Cannonicalize numerator and denominator such that:
+  // Canonicalize numerator and denominator such that:
   //  There are no common devisor
   //  If negative sign exists, it is in the numerator
   void _canonicalize(const Polynomial_1& P,const Polynomial_1& Q,
@@ -1852,7 +1852,7 @@ public:
   //typedef std::pair<Algebraic_point_2, unsigned int>  Intersection_point;
 
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!
@@ -1863,7 +1863,7 @@ public:
   {}
 
   /*!
-   * Constrcutor from a base arc.
+   * Constructor from a base arc.
    */
   Continuous_rational_arc_d_1(const Base& arc) :
     Base(arc)
@@ -2421,7 +2421,7 @@ public:
 
   typedef typename Base::Cache                          Cache;
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!

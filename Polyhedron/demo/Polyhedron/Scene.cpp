@@ -739,7 +739,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       // we distinguish the case were there is no alpha, to let the viewer
       //perform it, and the case where the pixel is not found. In the first case,
       //we erase the property, in the latter we return an empty list.
-      //According ot that, in the viewer, either we perform the picking, either we do nothing.
+      //According to that, in the viewer, either we perform the picking, either we do nothing.
       if(has_alpha()) {
         bool found = false;
         CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(picked_pixel, found) - viewer->offset();
@@ -1928,6 +1928,7 @@ void Scene::removeViewer(Viewer_interface *viewer)
   if(viewer->property("is_destroyed").toBool())
     return;
 
+  viewer->makeCurrent();
   vaos[viewer]->destroy();
   vaos[viewer]->deleteLater();
   vaos.remove(viewer);

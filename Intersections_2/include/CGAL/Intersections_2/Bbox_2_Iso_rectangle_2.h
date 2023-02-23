@@ -21,15 +21,19 @@
 namespace CGAL {
 
 template <typename K>
-inline bool do_intersect(const Iso_rectangle_2<K> &rect,
-                         const Bbox_2 &box)
+inline
+typename K::Boolean
+do_intersect(const Iso_rectangle_2<K>& rect,
+             const Bbox_2& box)
 {
   return do_intersect(K::Iso_rectangle_2(box), rect);
 }
 
 template <typename K>
-inline bool do_intersect(const Bbox_2 &box,
-                         const Iso_rectangle_2<K> &rect)
+inline
+typename K::Boolean
+do_intersect(const Bbox_2 &box,
+             const Iso_rectangle_2<K> &rect)
 {
   return do_intersect(rect, box);
 }

@@ -51,7 +51,7 @@ namespace Triangulate_faces
 *   %Default new face visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
 *   base class if only some of the functions of the concept require to be
-*   overriden.
+*   overridden.
 */
 template<class PolygonMesh>
 struct Default_visitor {
