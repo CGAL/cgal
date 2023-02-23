@@ -280,6 +280,23 @@ public:
 
     return std::vector<std::vector<Point>>();
   }
+
+  /*!
+  * @todo documentation
+  */
+  template<typename Point>
+  std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3& image, CGAL::Image_3&) const
+  {
+    CGAL_IMAGE_IO_CASE(image.image(),
+      return (internal::detect_features_in_image_with_know_word_type<Word, Point>(image));
+    );
+    CGAL_error_msg("This place should never be reached, because it would mean "
+      "the image word type is a type that is not handled by "
+      "CGAL_ImageIO.");
+
+    return std::vector<std::vector<Point>>();
+  }
 };
 
 
