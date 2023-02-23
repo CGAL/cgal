@@ -232,7 +232,7 @@ struct Sizing_field_with_aabb_tree
     boost::optional<Point_and_primitive_id> result{};
     if(d_ptr->aabb_tree.empty()) return result;
     for(std::size_t i = 0; i < d_ptr->kd_trees_ptrs.size(); ++i) {
-      const auto patch_id = i + d_ptr->min_patch_id;
+      const auto patch_id = static_cast<Patch_index>(i + d_ptr->min_patch_id);
       if(patch_ids_to_ignore.find(patch_id) != patch_ids_to_ignore.end()) continue;
       if(d_ptr->kd_trees_ptrs[i]) {
         const Kd_tree& kd_tree = *d_ptr->kd_trees_ptrs[i];
