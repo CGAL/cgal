@@ -140,7 +140,7 @@ create_partial_exterior_weighted_straight_skeleton_2 ( FT const&      aMaxOffset
     holes.push_back(lPoly) ;
 
     // put a weight large enough such that frame edges are not relevant
-    const FT frame_weight = *(std::max_element(aWeights[0].begin(), aWeights[0].end()));
+    const FT frame_weight = FT(10) * *(std::max_element(aWeights[0].begin(), aWeights[0].end()));
     CGAL_STSKEL_BUILDER_TRACE(4, "Frame weight = " << frame_weight);
 
     Weights lWeights = { std::vector<FT>(4, frame_weight),
