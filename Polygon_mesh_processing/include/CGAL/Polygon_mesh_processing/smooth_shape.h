@@ -108,7 +108,7 @@ namespace Polygon_mesh_processing {
 *
 * @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
 *
-* @see `smooth_mesh()`
+* @see `angle_and_area_smoothing()`
 */
 template<typename TriangleMesh, typename FaceRange,
          typename NamedParameters = parameters::Default_named_parameters>
