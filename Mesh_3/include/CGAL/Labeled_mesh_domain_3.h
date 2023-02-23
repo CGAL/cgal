@@ -126,12 +126,19 @@ namespace internal {
   // Detect_features_in_domain
   template<typename Point, typename DetectFunctor>
   struct Detect_features_in_domain {
+
     std::vector<std::vector<Point>>
-    operator()(const CGAL::Image_3& image, DetectFunctor functor) const {
+    operator()(const CGAL::Image_3& image, CGAL::Image_3& weights, DetectFunctor functor) const {
 #if defined(BOOST_MSVC) && (BOOST_MSVC < 1910) //before msvc2017
-      return functor.operator()<Point>(image);
+      if(weights.is_valid())
+        return functor.operator()<Point>(image, weights);
+      else
+        return functor.operator()<Point>(image);
 #else
-      return functor.template operator()<Point>(image);
+      if(weights.is_valid())
+        return functor.template operator()<Point>(image, weights);
+      else
+        return functor.template operator()<Point>(image);
 #endif
     }
   };
@@ -139,23 +146,23 @@ namespace internal {
   template<typename Point>
   struct Detect_features_in_domain<Point, Null_functor> {
     std::vector<std::vector<Point>>
-    operator()(const CGAL::Image_3&, Null_functor) const {
+    operator()(const CGAL::Image_3&, CGAL::Image_3&, Null_functor) const {
       return std::vector<std::vector<Point>>();
     }
   };
 
   template<typename Point, typename DetectFunctor>
   std::vector<std::vector<Point>>
-    detect_features(const CGAL::Image_3& image, DetectFunctor functor)
+    detect_features(const CGAL::Image_3& image, CGAL::Image_3& weights, DetectFunctor functor)
   {
     Detect_features_in_domain<Point, DetectFunctor> detector;
-    return detector(image, functor);
+    return detector(image, weights, functor);
   }
 
   template<bool WithFeatures>
   struct Add_features_in_domain {
     template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
-    void operator()(const CGAL::Image_3&, MeshDomain&, const InputFeatureRange&, DetectFunctor)
+    void operator()(const CGAL::Image_3&, CGAL::Image_3&, MeshDomain&, const InputFeatureRange&, DetectFunctor)
     {}
   };
 
@@ -164,13 +171,14 @@ namespace internal {
   {
     template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
     void operator()(const CGAL::Image_3& image,
+                    CGAL::Image_3& weights,
                     MeshDomain& domain,
                     const InputFeatureRange& input_features,
                     DetectFunctor functor)
     {
       using P = typename MeshDomain::Point_3;
       auto detected_feature_range
-        = CGAL::Mesh_3::internal::detect_features<P>(image, functor);
+        = CGAL::Mesh_3::internal::detect_features<P>(image, weights, functor);
 
       CGAL::merge_and_snap_polylines(image, detected_feature_range, input_features);
 
@@ -608,13 +616,13 @@ public:
    *
    * \cgalNamedParamsBegin
    *   \cgalParamNBegin{weights}
-   *     \cgalParamDescription{an input 3D image that provides
+   *     \cgalParamDescription{a reference to an input 3D image that provides
    *                           weights associated to each voxel (the word type is `unsigned char`,
    *                           and the voxels values are integers between 0 and 255).
    *                           The weights image can be generated with `CGAL::Mesh_3::generate_label_weights()`.
    *                           Its dimensions must be the same as the dimensions of `parameters::image`.}
    *     \cgalParamDefault{CGAL::Image_3()}
-   *     \cgalParamExtra{A const reference will be taken to the parameter passed.}
+   *     \cgalParamExtra{if `features_detector` is provided, `weights` should be modified accordingly}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{value_outside}
    *     \cgalParamDescription{the value attached to voxels
@@ -657,7 +665,7 @@ public:
    *   \cgalParamNEnd
    *
    * \cgalNamedParamsEnd
-   * 
+   *
    * \todo{Add warning about using weights and feature detection together}
    *
    * \cgalHeading{Example}
@@ -680,6 +688,8 @@ public:
    * where the features are provided by the user:
    *
    * \snippet Mesh_3/mesh_3D_image_with_input_features.cpp Domain creation
+   *
+   * \todo what if `input_features` and `weights` are both provided?
    */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static auto
@@ -700,8 +710,8 @@ public:
     using Image_ref_type = typename internal_np::Lookup_named_param_def<internal_np::weights_param_t,
                                                                         CGAL_NP_CLASS,
                                                                         CGAL::Image_3>::reference;
-    CGAL::Image_3 no_weights;
-    const Image_ref_type weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
+    CGAL::Image_3 no_weights_;
+    Image_ref_type weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights_);
     auto features_detector_ = choose_parameter(get_parameter(np, internal_np::features_detector_param), Null_functor());
 
     using Default_input_features = std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>>;
@@ -715,7 +725,9 @@ public:
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
 
-    auto image_wrapper = weights_.is_valid()
+    const bool use_weights
+      = !CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::weights_param_t>::value;
+    auto image_wrapper = use_weights
       ? create_weighted_labeled_image_wrapper(image_,
                                               weights_,
                                               image_values_to_subdomain_indices_,
@@ -746,7 +758,7 @@ public:
 
     // features
     Mesh_3::internal::Add_features_in_domain<!no_features>()
-      (image_, domain, input_features_, features_detector_);
+      (image_, weights_, domain, input_features_, features_detector_);
 
     return domain;
   }

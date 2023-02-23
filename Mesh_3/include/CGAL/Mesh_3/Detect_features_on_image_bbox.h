@@ -91,6 +91,17 @@ public:
   {
     return internal::detect_features_on_bbox<Point>(image);
   }
+
+  /*!
+  * @todo documentation
+  */
+  template<typename Point>
+  std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3& image, CGAL::Image_3&) const
+  {
+    return internal::detect_features_on_bbox<Point>(image);
+  }
+
 };
 
 }//end namespace Mesh_3

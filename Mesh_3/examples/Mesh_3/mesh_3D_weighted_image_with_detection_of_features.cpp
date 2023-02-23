@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-                                                    weights = img_weights,
+                                                    weights = std::ref(img_weights),
                                                     relative_error_bound = 1e-6,
                                                     features_detector = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
