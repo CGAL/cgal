@@ -129,7 +129,7 @@ namespace internal {
       RegionType& region_type,
       ItemMap item_map = ItemMap()
 #ifndef DOXYGEN_RUNNING
-      , std::enable_if<!std::is_same<ItemMap, RegionMap>::value>* = 0
+      , std::enable_if_t<!std::is_same<ItemMap, RegionMap>::value>* = 0
 #endif
       ) :
       m_neighbor_query(neighbor_query),
@@ -193,7 +193,7 @@ namespace internal {
       RegionType& region_type,
       ItemMap item_map = ItemMap()
 #ifndef DOXYGEN_RUNNING
-      , std::enable_if<!std::is_same<ItemMap, RegionMap>::value>* = 0
+      , std::enable_if_t<!std::is_same<ItemMap, RegionMap>::value>* = 0
 #endif
       ) :
       m_neighbor_query(neighbor_query),
