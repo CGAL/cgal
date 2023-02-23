@@ -56,7 +56,9 @@ int main(int argc, char* argv[])
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();
-  double diag = CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
+  double diag = CGAL::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
+                           CGAL::square(bbox.ymax() - bbox.ymin()) +
+                           CGAL::square(bbox.zmax() - bbox.zmin()));
   double sizing_default = diag * 0.05;
 
   /// [Mesh criteria]
