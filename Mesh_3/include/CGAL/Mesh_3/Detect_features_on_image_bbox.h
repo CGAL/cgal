@@ -87,7 +87,7 @@ public:
   */
   template<typename Point>
   std::vector<std::vector<Point>>
-  operator()(const CGAL::Image_3& image)
+  operator()(const CGAL::Image_3& image) const
   {
     return internal::detect_features_on_bbox<Point>(image);
   }
