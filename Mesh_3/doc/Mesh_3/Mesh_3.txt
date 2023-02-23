@@ -925,21 +925,22 @@ The first modification is the type of the mesh domain. Instead of being
 
 \snippet Mesh_3/mesh_3D_image_with_features.cpp Domain definition
 
-Then, in the function `%main()`, creation of `%domain` is done
-with an additional argument: a dedicated functor
-that computes the 1D features, that are added to the domain.
+In the %main() function, the domain is created with an additional argument - a
+dedicated functor that computes the one-dimensional features, which are then
+added to the domain.
 
 \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
 
-The functor `CGAL::Detect_features_in_image` is defined in its own header file.
-It computes the 1D features that correspond to the intersections of the bounding box of the
-image with the surfaces defined by the image, and polylines that lie at
-the intersection of three or more subdomains (including the outside).
-It then constructs a graph of these polyline features. The named constructor
-adds this feature graph to the domain for later feature protection.
-The original feature detection algorithm was described in \cgalCite{cgal:hssz-gmcabonbc-97},
-along with a list of possible voxel configurations. The detection implemented in \cgal
-generalizes this description.
+The `CGAL::Mesh_3::Detect_features_in_image` functor is defined in its own
+header file. It computes the one-dimensional features that correspond to the
+intersections of the bounding box of the image with the surfaces defined by the
+image, as well as polylines that lie at the intersection of three or more
+subdomains (including the outside). It then constructs a graph of these polyline
+features. The named constructor adds this feature graph to the domain for later
+feature protection. The original feature detection algorithm was described in
+\cgalCite{cgal:hssz-gmcabonbc-97}, which provides a list of possible voxel
+configurations. The feature detection implemented in \cgal generalizes this
+description.
 
 The example \ref Mesh_3/mesh_3D_image_with_features.cpp shows how
 user-specified input polylines can further be added as 1D features to the mesh domain.
