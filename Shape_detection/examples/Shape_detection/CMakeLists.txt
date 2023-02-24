@@ -6,7 +6,10 @@ project(Shape_detection_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-# Use Eigen.
+create_single_source_cgal_program("efficient_RANSAC_with_custom_shape.cpp")
+create_single_source_cgal_program("efficient_RANSAC_with_parameters.cpp")
+create_single_source_cgal_program("efficient_RANSAC_with_point_access.cpp")
+
 find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
@@ -37,9 +40,4 @@ if(TARGET CGAL::Eigen3_support)
     shape_detection_basic_deprecated)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
-
 endif()
-
-create_single_source_cgal_program("efficient_RANSAC_with_custom_shape.cpp")
-create_single_source_cgal_program("efficient_RANSAC_with_parameters.cpp")
-create_single_source_cgal_program("efficient_RANSAC_with_point_access.cpp")
