@@ -86,13 +86,54 @@ public Q_SLOTS:
   {
     if (scene->selectionIndices().size() > 1)
     {
+
+      // Create dialog box
+      QDialog dialog(mw);
+      ui.setupUi(&dialog);
+      connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+      connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+      ui.create_new_item_checkbox->setEnabled(false);
+
+      // Get values
+      int i = dialog.exec();
+      if (i == QDialog::Rejected)
+      {
+        std::cout << "Remeshing aborted" << std::endl;
+        return;
+      }
+
+//      bool retriangulate = ui.notriangulation_checkbox->isChecked();
+      double cos_threshold = ui.cos_dspinbox->value();
+
+      std::vector<Scene_surface_mesh_item*> meshes;
       for(int index : scene->selectionIndices())
       {
         Scene_surface_mesh_item* poly_item =
           qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
         if (poly_item != nullptr)
-        { }
+          meshes.push_back(poly_item);
+      }
+
+      struct Mesh_map
+      {
+        typedef Mesh value_type;
+        typedef Mesh& reference;
+        typedef Scene_surface_mesh_item* key_type;
+        typedef boost::lvalue_property_map_tag category;
+
+        Mesh& operator[](Scene_surface_mesh_item* poly_item) const
+        {
+          return *poly_item->polyhedron();
+        }
+      };
+
+      CGAL::Polygon_mesh_processing::decimate_meshes_with_common_interfaces(meshes, cos_threshold, Mesh_map());
+
+      for (Scene_surface_mesh_item* poly_item : meshes)
+      {
+        poly_item->invalidateOpenGLBuffers();
+        Q_EMIT poly_item->itemChanged();
       }
 
       return;
