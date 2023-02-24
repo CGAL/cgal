@@ -51,12 +51,15 @@ enum all_default_t { all_default };
   enum X { Y };
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)            \
   enum X { Y };
+#define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)            \
+  enum X { Y };
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)            \
   enum X { Y };
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility_cref_only
 #undef CGAL_add_named_parameter_with_compatibility_ref_only
 #undef CGAL_add_extra_named_parameter_with_compatibility
 
@@ -359,7 +362,7 @@ struct Named_function_parameters
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
     return Params(k, *this);                                          \
   }
-#define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z) \
+#define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z) \
   template<typename K>                                                \
   Named_function_parameters<std::reference_wrapper<const K>,          \
                             internal_np::X, self>                     \
@@ -368,6 +371,16 @@ struct Named_function_parameters
     typedef Named_function_parameters<std::reference_wrapper<const K>,\
                                       internal_np::X, self> Params;   \
     return Params(std::cref(k), *this);                               \
+  }
+#define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z) \
+  template<typename K>                                                \
+  Named_function_parameters<std::reference_wrapper<K>,                \
+                            internal_np::X, self>                     \
+  Z(K& k) const                                                       \
+  {                                                                   \
+    typedef Named_function_parameters<std::reference_wrapper<K>,      \
+                                      internal_np::X, self> Params;   \
+    return Params(std::ref(k), *this);                                \
   }
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)    \
   template<typename K>                                                \
@@ -380,6 +393,7 @@ struct Named_function_parameters
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility_cref_only
 #undef CGAL_add_named_parameter_with_compatibility_ref_only
 #undef CGAL_add_extra_named_parameter_with_compatibility
 
@@ -475,7 +489,7 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
 
   template <typename K>
   Named_function_parameters<std::reference_wrapper<K>, Tag>
-  operator=(K& p) const
+  operator=(std::reference_wrapper<K> p) const
   {
     typedef Named_function_parameters<std::reference_wrapper<K>, Tag> Params;
     return Params(std::ref(p));
@@ -494,6 +508,8 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
 
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
   const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+#define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)        \
+  const Boost_parameter_compatibility_wrapper<internal_np::X, true> Z;
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
   const Boost_parameter_compatibility_wrapper<internal_np::X, true> Z;
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
@@ -502,6 +518,7 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_extra_named_parameter_with_compatibility
 #undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility_cref_only
 #undef CGAL_add_named_parameter_with_compatibility_ref_only
 
 // Version with three parameters for dynamic property maps
