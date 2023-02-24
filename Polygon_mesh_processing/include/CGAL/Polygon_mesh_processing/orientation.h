@@ -1354,6 +1354,8 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
+  if (is_empty(tm)) return;
+
   CGAL_precondition(is_closed(tm));
   CGAL_precondition(is_triangle_mesh(tm));
 
