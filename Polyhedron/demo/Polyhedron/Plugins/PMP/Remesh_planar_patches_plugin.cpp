@@ -168,14 +168,16 @@ public Q_SLOTS:
         new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
         scene->setSelectedItem( scene->addItem(new_item) );
 
-        new_item->setItemIsMulticolor(true);
-        new_item->computeItemColorVectorAutomatically(true);
-        new_item->invalidateOpenGLBuffers();
-        Q_EMIT new_item->itemChanged();
         poly_item->setItemIsMulticolor(true);
         poly_item->computeItemColorVectorAutomatically(true);
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
+        new_item->setItemIsMulticolor(true);
+        new_item->computeItemColorVectorAutomatically(false);
+        new_item->color_vector()=poly_item->color_vector(); // colors are not deterministic
+        new_item->invalidateOpenGLBuffers();
+        Q_EMIT new_item->itemChanged();
+
       }
       else
       {
