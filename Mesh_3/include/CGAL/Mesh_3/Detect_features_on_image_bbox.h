@@ -19,7 +19,10 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/Image_3.h>
+
 #include <CGAL/Mesh_3/polylines_to_protect.h>
+#include <CGAL/Mesh_3/generate_label_weights.h>
 
 #include <vector>
 
@@ -97,8 +100,11 @@ public:
   */
   template<typename Point>
   std::vector<std::vector<Point>>
-    operator()(const CGAL::Image_3& image, CGAL::Image_3&) const
+    operator()(const CGAL::Image_3& image, CGAL::Image_3& weights) const
   {
+    CGAL_assertion(weights.is_valid());
+    postprocess_weights_for_feature_protection(image, weights);
+
     return internal::detect_features_on_bbox<Point>(image);
   }
 

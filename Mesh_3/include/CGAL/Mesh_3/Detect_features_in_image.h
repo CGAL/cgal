@@ -19,6 +19,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/Image_3.h>
 #include <CGAL/ImageIO.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -32,6 +33,7 @@
 
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Mesh_3/generate_label_weights.h>
 
 #include <vector>
 #include <array>
@@ -286,8 +288,11 @@ public:
   */
   template<typename Point>
   std::vector<std::vector<Point>>
-    operator()(const CGAL::Image_3& image, CGAL::Image_3&) const
+    operator()(const CGAL::Image_3& image, CGAL::Image_3& weights) const
   {
+    CGAL_assertion(weights.is_valid());
+    postprocess_weights_for_feature_protection(image, weights);
+
     CGAL_IMAGE_IO_CASE(image.image(),
       return (internal::detect_features_in_image_with_know_word_type<Word, Point>(image));
     );

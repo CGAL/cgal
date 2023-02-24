@@ -56,8 +56,6 @@ int main(int argc, char* argv[])
   CGAL::Image_3 img_weights =
     CGAL::Mesh_3::generate_label_weights(image, sigma);
 
-//  CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
-
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
                                                     weights = std::ref(img_weights),
