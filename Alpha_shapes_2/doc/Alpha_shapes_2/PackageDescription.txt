@@ -8,7 +8,7 @@
 \cgalPkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShapes2}
 \cgalPkgPicture{alpha-detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Tran Kai Frank Da}
+\cgalPkgAuthor{Tran Kai Frank Da}
 \cgalPkgDesc{This package offers  a data structure encoding the whole family of alpha-complexes related to a given 2D Delaunay or regular triangulation. In particular, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex).}
 \cgalPkgManuals{Chapter_2D_Alpha_Shapes,PkgAlphaShapes2Ref}
 \cgalPkgSummaryEnd
