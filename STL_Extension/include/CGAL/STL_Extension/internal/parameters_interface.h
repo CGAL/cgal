@@ -331,3 +331,6 @@ CGAL_add_named_parameter_with_compatibility_cref_only(sizing_field_param_t, sizi
 
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
+
+//List of named parameters used in Straight_skeleton_2
+CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
