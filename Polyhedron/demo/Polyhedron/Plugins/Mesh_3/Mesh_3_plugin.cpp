@@ -808,9 +808,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       && sigma_weights != image_item->sigma_weights())
     {
       CGAL::Image_3 weights = CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights);
-      if (protect_features || protect_borders)
-        CGAL::Mesh_3::postprocess_weights_for_feature_protection(*pImage, weights);
-
       image_item->set_image_weights(weights, sigma_weights);
     }
 #endif

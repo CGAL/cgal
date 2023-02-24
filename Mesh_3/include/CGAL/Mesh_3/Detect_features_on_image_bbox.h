@@ -22,7 +22,7 @@
 #include <CGAL/Image_3.h>
 
 #include <CGAL/Mesh_3/polylines_to_protect.h>
-#include <CGAL/Mesh_3/generate_label_weights.h>
+#include <CGAL/Mesh_3/features_detection/postprocess_weights.h>
 
 #include <vector>
 
@@ -36,16 +36,25 @@ namespace internal
 
 template<typename Point>
 std::vector<std::vector<Point>>
-detect_features_on_bbox(const CGAL::Image_3& image)
+detect_features_on_bbox(const CGAL::Image_3& image, CGAL::Image_3& weights)
 {
   using Point_3 = Point;
   using Polyline_type = std::vector<Point_3>;
   using Polylines = std::vector<Polyline_type>;
 
+  const bool postprocess_weights = weights.is_valid();
+  std::vector<std::array<std::size_t, 3>> black_voxels;
+
   Polylines polylines_on_bbox;
 
   CGAL_IMAGE_IO_CASE(image.image(),
     {
+      if (postprocess_weights)
+      {
+        internal::feature_voxels_on_image_bbox<Word>(image, black_voxels);
+        internal::set_voxels(weights, black_voxels, 0/*black*/);
+      }
+
       (CGAL::polylines_to_protect<Point_3, Word>(image, polylines_on_bbox));
       return polylines_on_bbox;
     }
@@ -92,7 +101,8 @@ public:
   std::vector<std::vector<Point>>
   operator()(const CGAL::Image_3& image) const
   {
-    return internal::detect_features_on_bbox<Point>(image);
+    CGAL::Image_3 no_weights;
+    return internal::detect_features_on_bbox<Point>(image, no_weights);
   }
 
   /*!
@@ -103,9 +113,8 @@ public:
     operator()(const CGAL::Image_3& image, CGAL::Image_3& weights) const
   {
     CGAL_assertion(weights.is_valid());
-    postprocess_weights_for_feature_protection(image, weights);
 
-    return internal::detect_features_on_bbox<Point>(image);
+    return internal::detect_features_on_bbox<Point>(image, weights);
   }
 
 };

@@ -42,17 +42,16 @@ int main(int argc, char* argv[])
   CGAL::Image_3 img_weights =
     CGAL::Mesh_3::generate_label_weights(image, sigma);
 
-  CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
-
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
                                                     params::weights(img_weights).
                                                             relative_error_bound(1e-6));
   /// [Domain creation]
 
-  // Mesh criteria
+  /// [Mesh criteria]
   Mesh_criteria criteria(params::facet_angle(30).facet_size(6).facet_distance(0.5).
                                  cell_radius_edge_ratio(3).cell_size(8));
+  /// [Mesh criteria]
 
   /// [Meshing]
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude(), params::no_perturb());
