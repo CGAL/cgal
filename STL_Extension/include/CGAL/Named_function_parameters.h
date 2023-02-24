@@ -376,7 +376,7 @@ struct Named_function_parameters
   template<typename K>                                                \
   Named_function_parameters<std::reference_wrapper<K>,                \
                             internal_np::X, self>                     \
-  Z(std::reference_wrapper<K> k) const                                                       \
+  Z(K& k) const                                                       \
   {                                                                   \
     typedef Named_function_parameters<std::reference_wrapper<K>,      \
                                       internal_np::X, self> Params;   \
