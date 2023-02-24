@@ -35,5 +35,5 @@ if __name__ == '__main__':
     create_release = actions[DAY_OF_THE_WEEK]
 
     # Then create the release tarball
-    if os.system(create_release.command() + " --dont-do-it") != 0 :
+    if os.system(create_release.command()) != 0 :
         raise RuntimeError(f"ERROR while creating release tarball")
