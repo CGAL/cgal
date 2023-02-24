@@ -37,6 +37,48 @@ namespace Polygon_mesh_processing {
 
 namespace Planar_segmentation{
 
+template <class PM>
+struct Face_map
+{
+  typedef typename boost::property_traits<PM>::value_type key_type;
+  typedef typename boost::property_traits<PM>::key_type value_type;
+  typedef value_type reference;
+  typedef boost::writable_property_map_tag category;
+
+  Face_map(PM pm, const std::vector<std::size_t>& triangle_ids)
+    : pm(pm)
+    , triangle_ids(triangle_ids)
+  {}
+
+  friend
+  void put(Face_map m, key_type k, value_type v)
+  {
+    put(m.pm, v, m.triangle_ids[k]);
+  }
+
+  PM pm;
+  const std::vector<std::size_t>& triangle_ids;
+};
+
+template <class PM>
+struct Vertex_map
+{
+  typedef typename boost::property_traits<PM>::value_type key_type;
+  typedef typename boost::property_traits<PM>::key_type value_type;
+  typedef value_type reference;
+  typedef boost::writable_property_map_tag category;
+
+  Vertex_map(PM pm) : pm(pm) {}
+
+  friend
+  void put(Vertex_map m, key_type k, value_type v)
+  {
+    put(m.pm, v, k);
+  }
+
+  PM pm;
+};
+
 template <class TriangleMesh>
 struct Default_visitor
 {
@@ -49,29 +91,26 @@ struct Triangle_index_tracker_base
   typedef boost::graph_traits<TriangleMeshOut> GT;
 
   Triangle_index_tracker_base(VertexCornerMapOut vertex_corner_map)
-    : vertex_corner_map(vertex_corner_map)
+    : m_v2v2_map(vertex_corner_map)
   {}
 
-  decltype(auto)
-  v2v_oi()
+  Vertex_map<VertexCornerMapOut> v2v_map()
   {
-    auto l = [this](const std::pair<std::size_t, typename GT::vertex_descriptor>& p)
-    {
-      put(vertex_corner_map, p.second, p.first);
-    };
-    return boost::make_function_output_iterator(l);
+    return m_v2v2_map;
   }
 
-  VertexCornerMapOut vertex_corner_map;
+  Vertex_map<VertexCornerMapOut> m_v2v2_map;
 };
 
 template <class TriangleMeshOut>
 struct Triangle_index_tracker_base<TriangleMeshOut, internal_np::Param_not_found>
 {
   typedef boost::graph_traits<TriangleMeshOut> GT;
+  using Vmap = Constant_property_map<std::size_t,
+                                     typename boost::graph_traits<TriangleMeshOut>::vertex_descriptor>;
 
   Triangle_index_tracker_base(internal_np::Param_not_found) {}
-  Emptyset_iterator v2v_oi() { return Emptyset_iterator(); }
+  Vmap v2v_map() { return Vmap(); }
 };
 
 template <class TriangleMeshOut, class VertexCornerMapOut, class FacePatchMapOut>
@@ -82,7 +121,7 @@ struct Triangle_index_tracker
 
   Triangle_index_tracker(VertexCornerMapOut vertex_corner_map, FacePatchMapOut face_patch_map)
     : Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
-    , face_patch_map(face_patch_map)
+    , m_f2f_map(face_patch_map, triangle_ids)
   {}
 
   std::vector<std::size_t> triangle_ids;
@@ -96,17 +135,13 @@ struct Triangle_index_tracker
     triangle_ids.resize(triangle_ids.size()+nb_triangles, i);
   }
 
-  decltype(auto)
-  f2f_oi()
+  Face_map<FacePatchMapOut>
+  f2f_map()
   {
-    auto l = [this](const std::pair<std::size_t, typename GT::face_descriptor>& p)
-    {
-      put(face_patch_map, p.second, triangle_ids[p.first]);
-    };
-    return boost::make_function_output_iterator(l);
+    return m_f2f_map;
   }
 
-  FacePatchMapOut face_patch_map;
+  Face_map<FacePatchMapOut> m_f2f_map;
 };
 
 
@@ -114,6 +149,9 @@ template <class TriangleMeshOut, class VertexCornerMapOut>
 struct Triangle_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::Param_not_found>
   : public Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
 {
+  using Fmap = Constant_property_map<std::size_t,
+                                     typename boost::graph_traits<TriangleMeshOut>::face_descriptor>;
+
   Triangle_index_tracker(VertexCornerMapOut vertex_corner_map,internal_np::Param_not_found)
     : Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
   {}
@@ -121,7 +159,7 @@ struct Triangle_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::
   void new_triangle_added_to_patch(std::size_t /*in_patch_id*/) {}
   void new_triangles_added_to_patch(std::size_t /*nb_triangles*/, std::size_t /*in_patch_id*/) {}
 
-  Emptyset_iterator f2f_oi() { return Emptyset_iterator(); }
+  Fmap f2f_map() { return Fmap(); }
 };
 
 
@@ -759,8 +797,8 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
 
   visitor(tm_out);
   polygon_soup_to_polygon_mesh(corners, triangles, tm_out,
-                               parameters::vertex_to_vertex_output_iterator(t_id_tracker.v2v_oi()).
-                                           face_to_face_output_iterator(t_id_tracker.f2f_oi()),
+                               parameters::vertex_to_vertex_map(t_id_tracker.v2v_map()).
+                                           face_to_face_map(t_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
   return remeshing_failed;
 }

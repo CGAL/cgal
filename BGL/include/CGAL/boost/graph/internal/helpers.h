@@ -222,7 +222,6 @@ namespace impl
     {
       put(map, pair.first, pair.second);
     }
-
   };
 
   template<typename PMAP>

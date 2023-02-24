@@ -151,15 +151,31 @@ public Q_SLOTS:
 
       if (create_new_item)
       {
-        Mesh out;
+        typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+        Scene_surface_mesh_item* new_item=new Scene_surface_mesh_item();
+        Mesh& out = *new_item->polyhedron();
+
+
+        Patch_id_pmap in_fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
+        Patch_id_pmap out_fpmap = get(CGAL::face_patch_id_t<int>(), out);
+
         CGAL::Polygon_mesh_processing::remesh_planar_patches(pmesh,
                                                              out,
-                                                             CGAL::parameters::cosinus_threshold(cos_threshold));
+                                                             CGAL::parameters::cosinus_threshold(cos_threshold).face_patch_map(in_fpmap),
+                                                             CGAL::parameters::face_patch_map(out_fpmap));
 
 
-        Scene_surface_mesh_item* new_item=new Scene_surface_mesh_item(out);
         new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
         scene->setSelectedItem( scene->addItem(new_item) );
+
+        new_item->setItemIsMulticolor(true);
+        new_item->computeItemColorVectorAutomatically(true);
+        new_item->invalidateOpenGLBuffers();
+        Q_EMIT new_item->itemChanged();
+        poly_item->setItemIsMulticolor(true);
+        poly_item->computeItemColorVectorAutomatically(true);
+        poly_item->invalidateOpenGLBuffers();
+        Q_EMIT poly_item->itemChanged();
       }
       else
       {
