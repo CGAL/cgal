@@ -137,6 +137,11 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
 endif()
 
+qt5_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
+polyhedron_demo_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
+                       ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
+target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item)
+
 polyhedron_demo_plugin(distance_plugin Distance_plugin KEYWORDS PMP)
 target_link_libraries(distance_plugin PUBLIC scene_surface_mesh_item
                                              scene_color_ramp)
@@ -171,6 +176,7 @@ if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     compilation_of__selection_plugin
     compilation_of__triangulate_facets_plugin
     compilation_of__isotropic_remeshing_plugin
+    compilation_of__remesh_planar_patches_plugin
     compilation_of__random_perturbation_plugin
     compilation_of__engrave_text_plugin
     compilation_of__degenerated_faces_plugin
