@@ -226,6 +226,92 @@ int main()
   for (int i=0; i<nb_meshes_range; ++i)
     assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 
+  // test face/vertex maps
+  {
+    std::cout << "check face patch ids\n";
+    std::cout << "  face map alone\n";
+    Surface_mesh in, out;
+    std::ifstream(CGAL::data_file_path("meshes/cube-meshed.off")) >> in;
+    assert(vertices(in).size()!=0);
+    auto fmap_in = in.add_property_map<Surface_mesh::Face_index, std::size_t>("f:pid").first;
+    auto fmap_out = out.add_property_map<Surface_mesh::Face_index, std::size_t>("f:pid").first;
+    auto vmap_in = in.add_property_map<Surface_mesh::Vertex_index, std::size_t>("v:pid").first;
+    auto vmap_out = out.add_property_map<Surface_mesh::Vertex_index, std::size_t>("v:pid").first;
+    PMP::remesh_planar_patches(in, out,
+                               CGAL::parameters::face_patch_map(fmap_in),
+                               CGAL::parameters::face_patch_map(fmap_out));
+
+    auto get_id = [](Surface_mesh::Face_index f, Surface_mesh& sm)
+    {
+      auto h = halfedge(f, sm);
+      Point_3 p=sm.point(source(h, sm)), q=sm.point(target(h, sm)), r=sm.point(target(next(h, sm), sm));
+      if (p.x()==-1 && q.x()==-1 && r.x()==-1) return 0;
+      if (p.x()== 1 && q.x()== 1 && r.x()== 1) return 1;
+      if (p.y()==-1 && q.y()==-1 && r.y()==-1) return 2;
+      if (p.y()== 1 && q.y()== 1 && r.y()== 1) return 3;
+      if (p.z()==-1 && q.z()==-1 && r.z()==-1) return 4;
+      assert(p.z()==1 && q.z()==1 && r.z()==1);
+      return 5;
+    };
+
+    std::array<std::size_t, 6> pids; // xi, Xi, yi, Yi, zi, Zi;
+    for (auto f : faces(out)) pids[get_id(f, out)]=get(fmap_out, f);
+    for (auto f : faces(in)) assert(pids[get_id(f, in)]==get(fmap_in, f));
+    //------------------------------------------------------
+    std::cout << "  face and vertex maps\n";
+    out.clear_without_removing_property_maps();
+    PMP::remesh_planar_patches(in, out,
+                               CGAL::parameters::face_patch_map(fmap_in).vertex_corner_map(vmap_in),
+                               CGAL::parameters::face_patch_map(fmap_out).vertex_corner_map(vmap_out));
+
+    auto check_corner_ids = [&]()
+    {
+      std::vector<Point_3> id2pt(vertices(out).size());
+      for (auto v : vertices(out))
+        id2pt[get(vmap_out, v)]=out.point(v);
+      for (auto v : vertices(in))
+      {
+
+        if (!( get(vmap_in, v)==std::size_t(-1) || id2pt[get(vmap_in, v)]==in.point(v) ))
+          std::cout << get(vmap_in, v) << " vs " << std::size_t(-1) << " vs " << std::size_t(-2) << "\n";
+        assert( get(vmap_in, v)==std::size_t(-1) || id2pt[get(vmap_in, v)]==in.point(v) );
+      }
+
+    };
+    check_corner_ids();
+    for (auto f : faces(out)) pids[get_id(f, out)]=get(fmap_out, f);
+    for (auto f : faces(in)) assert(pids[get_id(f, in)]==get(fmap_in, f));
+    //------------------------------------------------------
+    std::cout << "  vertex map alone\n";
+    out.clear_without_removing_property_maps();
+    PMP::remesh_planar_patches(in, out,
+                               CGAL::parameters::vertex_corner_map(vmap_in),
+                               CGAL::parameters::vertex_corner_map(vmap_out));
+    check_corner_ids();
+    //------------------------------------------------------
+    std::cout << "  no simplification face+vertex maps\n";
+    out.clear_without_removing_property_maps();
+    in.clear_without_removing_property_maps();
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> in;
+    assert(vertices(in).size()!=0);
+    PMP::remesh_planar_patches(in, out,
+                               CGAL::parameters::face_patch_map(fmap_in).vertex_corner_map(vmap_in),
+                               CGAL::parameters::face_patch_map(fmap_out).vertex_corner_map(vmap_out));
+    check_corner_ids();
+    std::map<std::array<Point_3, 3>, std::size_t> pids_map;
+    auto get_pt_sorted_array = [](Surface_mesh::Face_index f, Surface_mesh& sm)
+    {
+      auto h = halfedge(f, sm);
+      std::array<Point_3, 3> pts = CGAL::make_array(sm.point(source(h, sm)),
+                                                    sm.point(target(h, sm)),
+                                                    sm.point(target(next(h, sm), sm)));
+      std::sort(pts.begin(), pts.end());
+      return pts;
+    };
+    for (auto f : faces(out)) pids_map[get_pt_sorted_array(f, out)]=get(fmap_out, f);
+    for (auto f : faces(in)) assert(pids_map[get_pt_sorted_array(f, in)]==get(fmap_in, f));
+  }
+
 #if 0 // tests to be re-enable when using region growing
 // testing decimate function with almost coplanar/collinear tests using PCA
   for (int i=1; i<=nb_meshes; ++i)

@@ -165,12 +165,12 @@ struct Triangle_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::
 
 inline std::size_t init_id()
 {
-  return std::size_t(-1);
+  return std::size_t(-2);
 }
 
 inline std::size_t default_id()
 {
-  return std::size_t(-2);
+  return std::size_t(-1);
 }
 
 inline bool is_init_id(std::size_t i)
@@ -180,7 +180,7 @@ inline bool is_init_id(std::size_t i)
 
 inline bool is_corner_id(std::size_t i)
 {
-  return i < default_id();
+  return i < init_id();
 }
 
 template <typename Vector_3>
@@ -312,6 +312,14 @@ mark_corner_vertices(
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
   std::size_t corner_id = 0;
+  for(typename graph_traits::edge_descriptor e : edges(tm))
+  {
+    if (get(edge_is_constrained, e))
+    {
+      put(vertex_corner_id, source(e, tm), init_id());
+      put(vertex_corner_id, target(e, tm), init_id());
+    }
+  }
   for(typename graph_traits::edge_descriptor e : edges(tm))
   {
     if (!get(edge_is_constrained, e)) continue;
@@ -1364,7 +1372,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                                                 dynamic_face_property_t<std::size_t>(), tm_in);
 
   for(edge_descriptor e : edges(tm_in)) put(edge_is_constrained, e, false);
-  for(vertex_descriptor v : vertices(tm_in)) put(vertex_corner_id, v, Planar_segmentation::init_id());
+  for(vertex_descriptor v : vertices(tm_in)) put(vertex_corner_id, v, Planar_segmentation::default_id());
   for(face_descriptor f : faces(tm_in)) put(face_cc_ids, f, -1);
 
   VPM_in vpm_in = choose_parameter(get_parameter(np_in, internal_np::vertex_point),
