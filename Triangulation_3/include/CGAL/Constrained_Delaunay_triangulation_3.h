@@ -34,6 +34,7 @@
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
@@ -1053,7 +1054,7 @@ public:
   }
 
   void write_3d_triangulation_to_OFF(std::ostream& out, const Constrained_Delaunay_triangulation_3& tr) {
-    write_facets(out, tr.finite_facets());
+    write_facets(out, tr, tr.finite_facets());
   }
 
   void dump_3d_triangulation(CDT_3_face_index face_index,
@@ -1115,11 +1116,12 @@ public:
     write_segment(out, std::forward<Args>(args)...);
   }
 
-  void write_facets(std::ostream& out, const auto& facets_range) {
+  void write_facets(std::ostream& out, const auto& tr, const auto& facets_range) {
+    const auto size = std::distance(facets_range.begin(), facets_range.end());
     std::vector<typename Geom_traits::Point_3> points;
-    points.reserve(facets_range.size() * 3);
+    points.reserve(size * 3);
     std::vector<std::array<std::size_t, 3>> facets;
-    facets.reserve(facets_range.size());
+    facets.reserve(size);
 
     for(std::size_t i = 0; const auto& [cell, facet_index] : facets_range) {
       const auto v0 = cell->vertex(this->vertex_triple_index(facet_index, 0));
@@ -1132,6 +1134,7 @@ public:
       i += 3;
     }
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, facets);
+    CGAL::Polygon_mesh_processing::orient_polygon_soup(points, facets);
     CGAL::IO::write_OFF(out, points, facets);
   }
 
@@ -1140,7 +1143,7 @@ public:
     std::ofstream out(std::string("dump_facets_of_region_") + std::to_string(face_index) + "_" +
                       std::to_string(region_count) + "_" + type + ".off");
     out.precision(17);
-    write_facets(out, facets_range);
+    write_facets(out, *this, facets_range);
   }
 
   void write_2d_triangle(std::ostream &out, const CDT_2_face_handle fh)
