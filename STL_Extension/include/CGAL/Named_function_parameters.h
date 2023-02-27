@@ -440,7 +440,7 @@ inline all_default()
 }
 #endif
 
-template <class Tag, bool ref_only = false>
+template <class Tag, bool ref_only = false, bool ref_is_const = false>
 struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
@@ -461,7 +461,7 @@ struct Boost_parameter_compatibility_wrapper
 };
 
 template <class Tag>
-struct Boost_parameter_compatibility_wrapper<Tag, true>
+struct Boost_parameter_compatibility_wrapper<Tag, true, true>
 {
   template <typename K>
   Named_function_parameters<std::reference_wrapper<const K>, Tag>
@@ -478,7 +478,11 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
     typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
     return Params(std::cref(p));
   }
+};
 
+template <class Tag>
+struct Boost_parameter_compatibility_wrapper<Tag, true, false>
+{
   template <typename K>
   Named_function_parameters<std::reference_wrapper<K>, Tag>
   operator()(K& p) const
@@ -509,9 +513,9 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
   const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X, true> Z;
+  const Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X, true> Z;
+  const Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
   const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
