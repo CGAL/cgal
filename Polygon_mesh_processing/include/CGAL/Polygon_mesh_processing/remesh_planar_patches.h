@@ -1488,6 +1488,11 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                      must be available in `TriangleMeshIn`.}
  *    \cgalParamNEnd
+ *    \cgalParamNBegin{do_not_triangulate_faces}
+ *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
+ *      \cgalParamType{`bool`}
+ *      \cgalParamDefault{false}
+ *   \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
  *  \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
@@ -1546,9 +1551,12 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
   VPM_out vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
                                      get_property_map(vertex_point, tm_out));
 
+  bool do_not_triangulate_faces = choose_parameter(get_parameter(np_in, internal_np::do_not_triangulate_faces), false);
+
   return Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
                                                     std::make_pair(nb_corners, nb_patches),
                                                     vertex_corner_map, ecm, face_patch_map, vpm_in, vpm_out,
+                                                    do_not_triangulate_faces
                                                     get_parameter(np_out, internal_np::vertex_corner_map),
                                                     get_parameter(np_out, internal_np::face_patch));
 }
