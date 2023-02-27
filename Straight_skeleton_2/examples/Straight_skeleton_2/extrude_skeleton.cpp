@@ -285,7 +285,7 @@ int main(int argc, char** argv)
   char* poly_filename = nullptr;
   char* speeds_filename = nullptr;
 
-  FT offset = FT{std::numeric_limits<double>::max()};
+  FT height = FT{std::numeric_limits<double>::max()};
   bool use_angles = false; // whether the input is SLS edge weights, or taper angles
   bool flip_weights = false; // takes the opposite for weights, and the complement for angles
 
@@ -325,7 +325,7 @@ int main(int argc, char** argv)
       speeds_filename = argv[++i];
       use_angles = true;
     } else if(!strcmp("-t", argv[i]) && i < argc_check) {
-      offset = std::stod(argv[++i]);
+      height = std::stod(argv[++i]);
     } else if(!strcmp("-mw", argv[i]) && i < argc_check) {
       min_weight = std::stod(argv[++i]);
     } else if(!strcmp("-Mw", argv[i]) && i < argc_check) {
@@ -337,9 +337,9 @@ int main(int argc, char** argv)
     }
   }
 
-  if(offset <= FT(0))
+  if(height <= FT(0))
   {
-    std::cerr << "Error: height/offset/time must be strictly positive; it is " << offset << std::endl;
+    std::cerr << "Error: height/offset/time must be strictly positive; it is " << height << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -398,9 +398,9 @@ int main(int argc, char** argv)
 
   Mesh sm;
   if(use_angles)
-    extrude_skeleton(pwh, offset, sm, CGAL::parameters::angles(speeds));
+    extrude_skeleton(pwh, height, sm, CGAL::parameters::angles(speeds));
   else
-    extrude_skeleton(pwh, offset, sm, CGAL::parameters::weights(speeds));
+    extrude_skeleton(pwh, height, sm, CGAL::parameters::weights(speeds));
 
   timer.stop();
   std::cout << "Extrusion computation took " << timer.time() << " s." << std::endl;
