@@ -54,10 +54,7 @@ int main(int argc, char** argv) {
   std::vector<Segment_2> segments;
   #define REGULAR_CASE
 
-  unsigned int nb_lines = 30;
-  if (argc > 1) {
-    nb_lines = std::atoi(argv[1]);
-  }
+
   unsigned int k = 2;
   if (argc > 2) {
     k = std::atoi(argv[2]);
@@ -66,12 +63,16 @@ int main(int argc, char** argv) {
   #ifdef REGULAR_CASE
     add_regular_case(segments, rand);
   #else
-    for (unsigned int i = 0; i < nb_lines; ++i) {
-      const Point_2 source(rand.get_double(0, 5), rand.get_double(0, 5));
-      const Vector_2 vec(rand.get_double(-0.5, 0.5), rand.get_double(-0.5, 0.5));
-      const Point_2 target = source + vec;
-      segments.push_back(Segment_2(source, target));
-    }
+  unsigned int nb_lines = 30;
+  if (argc > 1) {
+    nb_lines = std::atoi(argv[1]);
+  }
+  for (unsigned int i = 0; i < nb_lines; ++i) {
+    const Point_2 source(rand.get_double(0, 5), rand.get_double(0, 5));
+    const Vector_2 vec(rand.get_double(-0.5, 0.5), rand.get_double(-0.5, 0.5));
+    const Point_2 target = source + vec;
+    segments.push_back(Segment_2(source, target));
+  }
   #endif
 
   std::ofstream input_file("input.polylines.txt");

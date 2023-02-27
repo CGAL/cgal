@@ -16,12 +16,9 @@ template<typename Kernel>
 bool run_test(
   const std::string input_filename,
   const std::vector<unsigned int>& ks,
-  const std::vector<std::vector<int> >& results) {
+  const std::vector<std::vector<unsigned int> >& results) {
 
   using Point_3   = typename Kernel::Point_3;
-  using Segment_3 = typename Kernel::Segment_3;
-
-  using Surface_mesh = CGAL::Surface_mesh<Point_3>;
   using KSP = CGAL::Kinetic_shape_partition_3<Kernel>;
 
   std::string baseDir = "";// "C:/dev/kinetic_commit/Kinetic_shape_reconstruction/examples/Kinetic_shape_reconstruction/";
@@ -79,7 +76,7 @@ void run_all_tests() {
   std::vector< std::vector<double> > all_times;
 
   // All results are precomputed for k = 1!
-  std::vector<std::vector<int> > results(3);
+  std::vector<std::vector<unsigned int> > results(3);
 
   results[0] = { 53, 49, 10 };
   results[1] = { 54, 63, 14 };
