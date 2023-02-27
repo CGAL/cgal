@@ -725,8 +725,7 @@ public:
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
 
-    const bool use_weights
-      = !CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::weights_param_t>::value;
+    const bool use_weights = weights_.is_valid();
     auto image_wrapper = use_weights
       ? create_weighted_labeled_image_wrapper(image_,
                                               weights_,
