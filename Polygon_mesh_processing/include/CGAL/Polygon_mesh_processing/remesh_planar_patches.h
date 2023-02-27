@@ -515,6 +515,8 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   }
   CGAL_assertion(cdt.number_of_vertices() == nbv);
 
+  if (cdt.dimension()!=2) return false;
+
   mark_face_triangles(cdt);
 
   for (typename CDT::Finite_faces_iterator fit=cdt.finite_faces_begin(),
@@ -1556,7 +1558,7 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
   return Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
                                                     std::make_pair(nb_corners, nb_patches),
                                                     vertex_corner_map, ecm, face_patch_map, vpm_in, vpm_out,
-                                                    do_not_triangulate_faces
+                                                    do_not_triangulate_faces,
                                                     get_parameter(np_out, internal_np::vertex_corner_map),
                                                     get_parameter(np_out, internal_np::face_patch));
 }
