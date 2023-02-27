@@ -517,7 +517,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::UpdatePQ( Vertex_handle aNode, Triedg
   else if ( AreBisectorsCoincident(lOBisector_C,lOBisector_N) )
     HandleSimultaneousEdgeEvent( aNode, lNext ) ;
   else
-     CollectNewEvents(aNode,aPrevEventTriedge);
+    CollectNewEvents(aNode,aPrevEventTriedge);
 }
 template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::CreateInitialEvents()

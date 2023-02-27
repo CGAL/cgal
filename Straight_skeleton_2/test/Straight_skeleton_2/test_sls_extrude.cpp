@@ -177,6 +177,14 @@ bool read_segment_speeds(const char* filename,
   return true;
 }
 
+std::string root_name(const std::string& full_filename)
+{
+  std::string name = std::string(full_filename);
+  name = name.substr(name.find_last_of("/") + 1, name.length() - 1);
+  name = name.substr(0, name.find_last_of("."));
+  return name;
+}
+
 bool test(const char* poly_filename,
           const char* angles_filename,
           const FT height,
@@ -203,6 +211,8 @@ bool test(const char* poly_filename,
 
   Mesh sm;
   extrude_skeleton(pwh, height, sm, CGAL::parameters::angles(angles));
+
+  CGAL::IO::write_polygon_mesh(root_name(poly_filename) + "_extruded.off", sm, CGAL::parameters::stream_precision(17));
 
   const FT volume = PMP::volume(sm);
   const FT rel_eps = 1e-5;
