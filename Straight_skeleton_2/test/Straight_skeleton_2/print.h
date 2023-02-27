@@ -4,7 +4,7 @@
 #include <CGAL/Straight_skeleton_2.h>
 
 template<class K>
-void print_point ( typename K::Point_2 const& p )
+void print_point ( CGAL::Point_2<K> const& p )
 {
   std::cout << p.x() << " " << p.y();
 }
