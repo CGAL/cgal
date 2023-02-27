@@ -18,6 +18,8 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -28,6 +30,7 @@
 #include <unordered_map>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include <algorithm>
 
@@ -45,19 +48,19 @@ struct Face_map
   typedef value_type reference;
   typedef boost::writable_property_map_tag category;
 
-  Face_map(PM pm, const std::vector<std::size_t>& triangle_ids)
+  Face_map(PM pm, const std::vector<std::size_t>& face_ids)
     : pm(pm)
-    , triangle_ids(triangle_ids)
+    , face_ids(face_ids)
   {}
 
   friend
   void put(Face_map m, key_type k, value_type v)
   {
-    put(m.pm, v, m.triangle_ids[k]);
+    put(m.pm, v, m.face_ids[k]);
   }
 
   PM pm;
-  const std::vector<std::size_t>& triangle_ids;
+  const std::vector<std::size_t>& face_ids;
 };
 
 template <class PM>
@@ -86,11 +89,11 @@ struct Default_visitor
 };
 
 template <class TriangleMeshOut, class VertexCornerMapOut>
-struct Triangle_index_tracker_base
+struct Face_index_tracker_base
 {
   typedef boost::graph_traits<TriangleMeshOut> GT;
 
-  Triangle_index_tracker_base(VertexCornerMapOut vertex_corner_map)
+  Face_index_tracker_base(VertexCornerMapOut vertex_corner_map)
     : m_v2v2_map(vertex_corner_map)
   {}
 
@@ -103,36 +106,36 @@ struct Triangle_index_tracker_base
 };
 
 template <class TriangleMeshOut>
-struct Triangle_index_tracker_base<TriangleMeshOut, internal_np::Param_not_found>
+struct Face_index_tracker_base<TriangleMeshOut, internal_np::Param_not_found>
 {
   typedef boost::graph_traits<TriangleMeshOut> GT;
   using Vmap = Constant_property_map<std::size_t,
                                      typename boost::graph_traits<TriangleMeshOut>::vertex_descriptor>;
 
-  Triangle_index_tracker_base(internal_np::Param_not_found) {}
+  Face_index_tracker_base(internal_np::Param_not_found) {}
   Vmap v2v_map() { return Vmap(); }
 };
 
 template <class TriangleMeshOut, class VertexCornerMapOut, class FacePatchMapOut>
-struct Triangle_index_tracker
-  : public Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
+struct Face_index_tracker
+  : public Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
 {
   typedef boost::graph_traits<TriangleMeshOut> GT;
 
-  Triangle_index_tracker(VertexCornerMapOut vertex_corner_map, FacePatchMapOut face_patch_map)
-    : Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
-    , m_f2f_map(face_patch_map, triangle_ids)
+  Face_index_tracker(VertexCornerMapOut vertex_corner_map, FacePatchMapOut face_patch_map)
+    : Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
+    , m_f2f_map(face_patch_map, face_ids)
   {}
 
-  std::vector<std::size_t> triangle_ids;
-  void new_triangle_added_to_patch(std::size_t i)
+  std::vector<std::size_t> face_ids;
+  void new_face_added_to_patch(std::size_t i)
   {
-    triangle_ids.push_back(i);
+    face_ids.push_back(i);
   }
 
   void new_triangles_added_to_patch(std::size_t nb_triangles, std::size_t i)
   {
-    triangle_ids.resize(triangle_ids.size()+nb_triangles, i);
+    face_ids.resize(face_ids.size()+nb_triangles, i);
   }
 
   Face_map<FacePatchMapOut>
@@ -146,17 +149,17 @@ struct Triangle_index_tracker
 
 
 template <class TriangleMeshOut, class VertexCornerMapOut>
-struct Triangle_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::Param_not_found>
-  : public Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
+struct Face_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::Param_not_found>
+  : public Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
 {
   using Fmap = Constant_property_map<std::size_t,
                                      typename boost::graph_traits<TriangleMeshOut>::face_descriptor>;
 
-  Triangle_index_tracker(VertexCornerMapOut vertex_corner_map,internal_np::Param_not_found)
-    : Triangle_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
+  Face_index_tracker(VertexCornerMapOut vertex_corner_map,internal_np::Param_not_found)
+    : Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
   {}
 
-  void new_triangle_added_to_patch(std::size_t /*in_patch_id*/) {}
+  void new_face_added_to_patch(std::size_t /*in_patch_id*/) {}
   void new_triangles_added_to_patch(std::size_t /*nb_triangles*/, std::size_t /*in_patch_id*/) {}
 
   Fmap f2f_map() { return Fmap(); }
@@ -434,7 +437,7 @@ template <typename Kernel>
 bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >& csts,
                         typename Kernel::Vector_3 normal,
                         const std::vector<typename Kernel::Point_3>& corners,
-                        std::vector<std::array<std::size_t, 3> >& triangles)
+                        std::vector<boost::container::small_vector<std::size_t, 3> >& out_faces)
 {
   typedef Projection_traits_3<Kernel>                            P_traits;
   typedef Triangulation_vertex_base_with_id_2<P_traits>                Vb;
@@ -521,13 +524,13 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
     if (cdt.is_infinite(fit)) return false;
 
     if (reverse_face_orientation)
-      triangles.push_back( make_array(fit->vertex(1)->corner_id(),
-                                      fit->vertex(0)->corner_id(),
-                                      fit->vertex(2)->corner_id()) );
+      out_faces.push_back( {fit->vertex(1)->corner_id(),
+                            fit->vertex(0)->corner_id(),
+                            fit->vertex(2)->corner_id()} );
     else
-      triangles.push_back( make_array(fit->vertex(0)->corner_id(),
-                                      fit->vertex(1)->corner_id(),
-                                      fit->vertex(2)->corner_id()) );
+      out_faces.push_back( {fit->vertex(0)->corner_id(),
+                            fit->vertex(1)->corner_id(),
+                            fit->vertex(2)->corner_id()} );
   }
 
   return true;
@@ -587,8 +590,9 @@ bool decimate_impl(const TriangleMesh& tm,
                    EdgeIsConstrainedMap& edge_is_constrained,
                    FaceCCIdMap& face_cc_ids,
                    const VertexPointMap& vpm,
+                   bool do_not_triangulate_faces,
                    std::vector< typename Kernel::Point_3 >& corners,
-                   std::vector< std::array<std::size_t, 3> >& out_triangles,
+                   std::vector< boost::container::small_vector<std::size_t,3> >& out_faces,
                    IndexTracking& t_id_tracker)
 {
   typedef typename Kernel::Point_3 Point_3;
@@ -601,7 +605,7 @@ bool decimate_impl(const TriangleMesh& tm,
   std::vector< Vector_3 > face_normals(nb_corners_and_nb_cc.second, NULL_VECTOR);
 
   // compute the new mesh
-  std::vector< std::vector< std::array<std::size_t, 3> > > triangles_per_cc(nb_corners_and_nb_cc.second);
+  std::vector< std::vector< boost::container::small_vector<std::size_t,3> > > faces_per_cc(nb_corners_and_nb_cc.second);
   boost::dynamic_bitset<> cc_to_handle(nb_corners_and_nb_cc.second);
   cc_to_handle.set();
 
@@ -659,8 +663,8 @@ bool decimate_impl(const TriangleMesh& tm,
                          cc_id < cc_to_handle.npos;
                          cc_id = cc_to_handle.find_next(cc_id))
     {
-      std::vector< std::array<std::size_t, 3> >& triangles = triangles_per_cc[cc_id];
-      triangles.clear();
+      std::vector< boost::container::small_vector<std::size_t,3> >& cc_faces = faces_per_cc[cc_id];
+      cc_faces.clear();
 
       std::vector< Id_pair >& csts = face_boundaries[cc_id];
 
@@ -676,20 +680,47 @@ bool decimate_impl(const TriangleMesh& tm,
 #ifdef CGAL_DEBUG_DECIMATION
       std::cout << "csts.size() " <<  csts.size() << "\n";
 #endif
+
       if (csts.size()==3)
       {
-        triangles.push_back( make_array(csts[0].first,
-                                        csts[0].second,
-                                        csts[0].first==csts[1].first ||
-                                        csts[0].second==csts[1].first ?
-                                        csts[1].second:csts[1].first) );
+        cc_faces.push_back( { csts[0].first,
+                              csts[0].second,
+                              csts[0].first==csts[1].first ||
+                              csts[0].second==csts[1].first ?
+                              csts[1].second:csts[1].first} );
         cc_to_handle.set(cc_id, 0);
-        t_id_tracker.new_triangle_added_to_patch(cc_id);
+        t_id_tracker.new_face_added_to_patch(cc_id);
       }
       else
       {
-        std::size_t prev_triangles_size=triangles.size();
-        if (csts.size() > 3 && add_triangle_faces<Kernel>(csts, face_normals[cc_id], corners, triangles))
+        std::size_t prev_cc_faces_size=cc_faces.size();
+
+        if (csts.size() > 3 && do_not_triangulate_faces)
+        {
+          // TODO this is not optimal at all since we already have the set of contraints,
+          //      we could work on the graph on constraint and recover only the orientation
+          //      of the edge. To be done if someone find it too slow.
+          std::vector<halfedge_descriptor> hborders;
+          CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, cc_id, face_cc_ids);
+          extract_boundary_cycles(ffg, std::back_inserter(hborders));
+
+          if (hborders.size()==1)
+          {
+            cc_faces.resize(1);
+            for (halfedge_descriptor h : halfedges_around_face(hborders[0], ffg))
+            {
+              std::size_t cid = get(vertex_corner_id, target(h, tm));
+              if (is_corner_id(cid))
+                cc_faces.back().push_back(cid);
+            }
+            std::reverse(cc_faces.back().begin(), cc_faces.back().end());
+            cc_to_handle.set(cc_id, 0);
+            t_id_tracker.new_face_added_to_patch(cc_id);
+            continue;
+          }
+        }
+
+        if (csts.size() > 3 && add_triangle_faces<Kernel>(csts, face_normals[cc_id], corners, cc_faces))
           cc_to_handle.set(cc_id, 0);
         else
         {
@@ -716,10 +747,10 @@ bool decimate_impl(const TriangleMesh& tm,
           for (face_descriptor f : faces(ffg))
           {
             halfedge_descriptor h = halfedge(f, tm);
-            triangles.push_back({ get(vertex_corner_id, source(h,tm)),
-                                  get(vertex_corner_id, target(h,tm)),
+            cc_faces.push_back({ get(vertex_corner_id, source(h,tm)),
+                                 get(vertex_corner_id, target(h,tm)),
                                   get(vertex_corner_id, target(next(h,tm), tm)) });
-            t_id_tracker.new_triangle_added_to_patch(cc_id);
+            t_id_tracker.new_face_added_to_patch(cc_id);
           }
           // reset flag for neighbor connected components only if interface has changed
           for (vertex_descriptor v : new_corners)
@@ -736,14 +767,15 @@ bool decimate_impl(const TriangleMesh& tm,
           }
           cc_to_handle.set(cc_id, 0);
         }
-        t_id_tracker.new_triangles_added_to_patch(triangles.size()-prev_triangles_size, cc_id);
+        t_id_tracker.new_triangles_added_to_patch(cc_faces.size()-prev_cc_faces_size, cc_id);
       }
     }
   }
   while(cc_to_handle.any());
 
-  for (const std::vector<std::array<std::size_t, 3>>& cc_trs : triangles_per_cc)
-    out_triangles.insert(out_triangles.end(), cc_trs.begin(), cc_trs.end());
+
+  for (const std::vector<boost::container::small_vector<std::size_t,3>>& cc_trs : faces_per_cc)
+    out_faces.insert(out_faces.end(), cc_trs.begin(), cc_trs.end());
 
   return all_patches_successfully_remeshed;
 }
@@ -767,6 +799,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                    FaceCCIdMap& face_cc_ids,
                    const VertexPointMapIn& vpm_in,
                    const VertexPointMapOut& vpm_out,
+                   bool do_not_triangulate_faces,
                    VertexCornerMapOut vcorner_map_out,
                    FacePatchMapOut fpatch_map_out,
                    Visitor& visitor)
@@ -775,7 +808,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Kernel::Point_3 Point_3;
 
-  Triangle_index_tracker<TriangleMeshOut, VertexCornerMapOut, FacePatchMapOut>
+  Face_index_tracker<TriangleMeshOut, VertexCornerMapOut, FacePatchMapOut>
     t_id_tracker(vcorner_map_out, fpatch_map_out);
 
   //collect corners
@@ -789,22 +822,25 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
     }
   }
 
-  std::vector< std::array<std::size_t, 3> > triangles;
+  std::vector< boost::container::small_vector<std::size_t,3> > faces;
   bool remeshing_failed = decimate_impl<Kernel>(tm_in,
                                                 nb_corners_and_nb_cc,
                                                 vertex_corner_id,
                                                 edge_is_constrained,
                                                 face_cc_ids,
                                                 vpm_in,
+                                                do_not_triangulate_faces,
                                                 corners,
-                                                triangles,
+                                                faces,
                                                 t_id_tracker);
 
-  if (!is_polygon_soup_a_polygon_mesh(triangles))
+  if (!is_polygon_soup_a_polygon_mesh(faces))
+  {
     return false;
+  }
 
   visitor(tm_out);
-  polygon_soup_to_polygon_mesh(corners, triangles, tm_out,
+  polygon_soup_to_polygon_mesh(corners, faces, tm_out,
                                parameters::vertex_to_vertex_map(t_id_tracker.v2v_map()).
                                            face_to_face_map(t_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
@@ -975,7 +1011,8 @@ template <typename Kernel,
 bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                                                  MeshMap mesh_map,
                                                  double coplanar_cos_threshold,
-                                                 const std::vector<VertexPointMap>& vpms)
+                                                 const std::vector<VertexPointMap>& vpms,
+                                                 bool do_not_triangulate_faces)
 {
   typedef typename boost::property_traits<MeshMap>::value_type Triangle_mesh;
   typedef typename std::iterator_traits<typename TriangleMeshRange::iterator>::value_type Mesh_descriptor;
@@ -1109,7 +1146,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 // now call the decimation
   // storage of all new triangles and all corners
   std::vector< std::vector< Point_3 > > all_corners(nb_meshes);
-  std::vector< std::vector< std::array<std::size_t, 3> > > all_triangles(nb_meshes);
+  std::vector< std::vector< boost::container::small_vector<std::size_t,3> > > all_faces(nb_meshes);
   bool res = true;
   std::vector<bool> to_be_processed(nb_meshes, true);
   bool loop_again;
@@ -1129,7 +1166,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
         to_be_processed[mesh_id]=false;
         continue;
       }
-      all_triangles[mesh_id].clear();
+      all_faces[mesh_id].clear();
       Triangle_mesh& tm = *mesh_ptrs[mesh_id];
 
       //collect corners
@@ -1148,7 +1185,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
       typedef internal_np::Param_not_found PNF;
       PNF pnf;
-      Triangle_index_tracker<Triangle_mesh, PNF, PNF> tracker(pnf, pnf);
+      Face_index_tracker<Triangle_mesh, PNF, PNF> tracker(pnf, pnf);
       bool all_patches_successfully_remeshed =
         decimate_impl<Kernel>(tm,
                               nb_corners_and_nb_cc_all[mesh_id],
@@ -1156,10 +1193,11 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                               edge_is_constrained_maps[mesh_id],
                               face_cc_ids_maps[mesh_id],
                               vpms[mesh_id],
+                              do_not_triangulate_faces,
                               corners,
-                              all_triangles[mesh_id],
+                              all_faces[mesh_id],
                               tracker) &&
-        is_polygon_soup_a_polygon_mesh(all_triangles[mesh_id]);
+        is_polygon_soup_a_polygon_mesh(all_faces[mesh_id]);
 #ifdef CGAL_DEBUG_DECIMATION
       std::cout << "all_patches_successfully_remeshed? " << all_patches_successfully_remeshed << "\n";
 #endif
@@ -1209,11 +1247,11 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
       no_remeshing_issue = false;
       continue;
     }
-    CGAL_assertion(is_polygon_soup_a_polygon_mesh(all_triangles[mesh_id]));
+    CGAL_assertion(is_polygon_soup_a_polygon_mesh(all_faces[mesh_id]));
 
     //clear(tm);
     tm.clear_without_removing_property_maps();
-    polygon_soup_to_polygon_mesh(all_corners[mesh_id], all_triangles[mesh_id],
+    polygon_soup_to_polygon_mesh(all_corners[mesh_id], all_faces[mesh_id],
                                  tm, parameters::default_values(), parameters::vertex_point_map(vpms[mesh_id]));
   }
 
@@ -1282,9 +1320,14 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *   \cgalParamNEnd
  *    \cgalParamNBegin{cosinus_threshold}
  *      \cgalParamDescription{the cosinus an angle that is used as the lower bound of both the dihedral angle between two adjacent
-                              triangles to consider then as coplanar, and the angle between adjacent segments to consider then as collinear.}
+ *                            triangles to consider then as coplanar, and the angle between adjacent segments to consider then as collinear.}
  *      \cgalParamType{`FT` type from the `geom_traits` parameter}
  *      \cgalParamDefault{-1, which means exact coplanarity and collinearity}
+ *   \cgalParamNEnd
+ *    \cgalParamNBegin{do_not_triangulate_faces}
+ *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
+ *      \cgalParamType{`bool`}
+ *      \cgalParamDefault{false}
  *   \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
@@ -1386,6 +1429,8 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                                                 Planar_segmentation::Default_visitor<TriangleMeshOut>>::type
     visitor = choose_parameter<Planar_segmentation::Default_visitor<TriangleMeshOut>>(get_parameter(np_out, internal_np::visitor));
 
+  bool do_not_triangulate_faces = choose_parameter(get_parameter(np_in, internal_np::do_not_triangulate_faces), false);
+
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
     Planar_segmentation::tag_corners_and_constrained_edges<Traits>(tm_in, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm_in);
   Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
@@ -1394,6 +1439,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                                              edge_is_constrained,
                                              face_cc_ids,
                                              vpm_in, vpm_out,
+                                             do_not_triangulate_faces,
                                              get_parameter(np_out, internal_np::vertex_corner_map),
                                              get_parameter(np_out, internal_np::face_patch),
                                              visitor);
@@ -1510,7 +1556,7 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
 #ifndef DOXYGEN_RUNNING
 // MeshMap must be a mutable lvalue pmap with Triangle_mesh as value_type
 template <typename TriangleMeshRange, typename MeshMap>
-bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double coplanar_cos_threshold, MeshMap mesh_map)
+bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double coplanar_cos_threshold, MeshMap mesh_map, bool do_not_triangulate_faces=false)
 {
   CGAL_assertion(coplanar_cos_threshold<0);
   typedef typename boost::property_traits<MeshMap>::value_type Triangle_mesh;
@@ -1525,7 +1571,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
 
   for(Mesh_descriptor& md : meshes)
     vpms.push_back( get(boost::vertex_point, mesh_map[md]) );
-  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms);
+  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms, do_not_triangulate_faces);
 }
 
 template <class TriangleMesh>

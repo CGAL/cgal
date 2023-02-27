@@ -102,7 +102,7 @@ public Q_SLOTS:
         return;
       }
 
-//      bool retriangulate = ui.notriangulation_checkbox->isChecked();
+      bool do_not_triangulate_faces = ui.notriangulation_checkbox->isChecked();
       double cos_threshold = ui.cos_dspinbox->value();
 
       std::vector<Scene_surface_mesh_item*> meshes;
@@ -128,7 +128,7 @@ public Q_SLOTS:
         }
       };
 
-      CGAL::Polygon_mesh_processing::decimate_meshes_with_common_interfaces(meshes, cos_threshold, Mesh_map());
+      CGAL::Polygon_mesh_processing::decimate_meshes_with_common_interfaces(meshes, cos_threshold, Mesh_map(), do_not_triangulate_faces);
 
       for (Scene_surface_mesh_item* poly_item : meshes)
       {
@@ -160,7 +160,7 @@ public Q_SLOTS:
         return;
       }
 
-//      bool retriangulate = ui.notriangulation_checkbox->isChecked();
+      bool do_not_triangulate_faces = ui.notriangulation_checkbox->isChecked();
       bool create_new_item = ui.create_new_item_checkbox->isChecked();
       double cos_threshold = ui.cos_dspinbox->value();
 
@@ -202,7 +202,9 @@ public Q_SLOTS:
 
         CGAL::Polygon_mesh_processing::remesh_planar_patches(pmesh,
                                                              out,
-                                                             CGAL::parameters::cosinus_threshold(cos_threshold).face_patch_map(in_fpmap),
+                                                             CGAL::parameters::cosinus_threshold(cos_threshold)
+                                                                  .face_patch_map(in_fpmap)
+                                                                  .do_not_triangulate_faces(do_not_triangulate_faces),
                                                              CGAL::parameters::face_patch_map(out_fpmap));
 
 
@@ -224,7 +226,8 @@ public Q_SLOTS:
       {
         CGAL::Polygon_mesh_processing::remesh_planar_patches(pmesh,
                                                              pmesh,
-                                                             CGAL::parameters::cosinus_threshold(cos_threshold),
+                                                             CGAL::parameters::cosinus_threshold(cos_threshold)
+                                                                              .do_not_triangulate_faces(do_not_triangulate_faces),
                                                              CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
 
         poly_item->invalidateOpenGLBuffers();
