@@ -492,6 +492,9 @@ public:
   {
     CGAL_precondition(height != default_height);
 
+    const bool extrude_upwards = is_positive(height);
+    const FT abs_height = CGAL::abs(height);
+
     const HDS& hds = static_cast<const HDS&>(ss);
 
     std::size_t fc = 0;
@@ -524,7 +527,7 @@ public:
           if(node->is_contour())
             return CGAL::LARGER; // offset > 0 and contour nodes' time is 0
           else
-            return offset_builder.Compare_offset_against_event_time(height, node);
+            return offset_builder.Compare_offset_against_event_time(abs_height, node);
         };
 
         const CGAL::Comparison_result sc = compare_time_to_offset(hds_sv);
@@ -557,7 +560,8 @@ public:
 #endif
 
           const Point_2& off_p = hds_tv->point();
-          face_points.emplace_back(off_p.x(), off_p.y(), hds_tv->time());
+          face_points.emplace_back(off_p.x(), off_p.y(), extrude_upwards ?   hds_tv->time()
+                                                                         : - hds_tv->time());
         }
 
         hds_h = hds_h->next();
@@ -586,6 +590,10 @@ public:
                           PointRange& points,
                           FaceRange& faces)
   {
+    CGAL_precondition(!is_zero(height));
+
+    const FT abs_height = abs(height);
+
     // bottom face (z=0)
     construct_horizontal_faces(pwh, 0 /*height*/, points, faces, true /*invert faces*/);
 
@@ -613,7 +621,7 @@ public:
     else
     {
       ss_ptr = CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
-                 height,
+                 abs_height,
                  CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
                  CGAL_SS_i::vertices_end(pwh.outer_boundary()),
                  pwh.holes_begin(), pwh.holes_end(),
@@ -649,7 +657,7 @@ public:
 #endif
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
       Offset_polygons raw_output;
-      ob.construct_offset_contours(height, std::back_inserter(raw_output));
+      ob.construct_offset_contours(abs_height, std::back_inserter(raw_output));
 
       Offset_polygons_with_holes output = CGAL::arrange_offset_polygons_2<Polygon_with_holes_2>(raw_output);
       construct_horizontal_faces(output, height, points, faces);
@@ -659,6 +667,13 @@ public:
 #else
       construct_lateral_faces(*ss_ptr, ob, height, points, faces, offset_points);
 #endif
+    }
+
+    // if the height is negative (extruding downwards), we need to invert all the faces
+    if(is_negative(height))
+    {
+      for(auto& f : faces)
+        std::swap(f[0], f[1]);
     }
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
@@ -677,7 +692,10 @@ public:
                             PointRange& points,
                             FaceRange& faces)
   {
+    CGAL_precondition(!is_zero(height));
     CGAL_precondition(height != default_height); // was checked before, this is just a reminder
+
+    const FT abs_height = abs(height);
 
     // bottom face (z=0)
     construct_horizontal_faces(pwh, 0 /*height*/, points, faces, true /*invert faces*/);
@@ -701,7 +719,7 @@ public:
     {
       std::vector<std::vector<FT> > outer_speeds = { speeds[0] };
       Straight_skeleton_2_ptr ss_ptr = CGAL_SS_i::create_partial_exterior_weighted_straight_skeleton_2(
-                                          height,
+                                          abs_height,
                                           CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
                                           CGAL_SS_i::vertices_end(pwh.outer_boundary()),
                                           outer_speeds,
@@ -724,7 +742,7 @@ public:
       Visitor visitor(*ss_ptr, offset_points);
 #endif
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
-      ob.construct_offset_contours(height, std::back_inserter(raw_output));
+      ob.construct_offset_contours(abs_height, std::back_inserter(raw_output));
 
       // Manually filter the offset of the outer frame
       std::swap(raw_output[0], raw_output.back());
@@ -754,7 +772,7 @@ public:
       std::vector<Polygon_2> no_holes;
       std::vector<std::vector<FT> > hole_speeds = { speeds[hole_id] };
       Straight_skeleton_2_ptr ss_ptr = CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
-                                          height,
+                                          abs_height,
                                           CGAL_SS_i::vertices_begin(hole),
                                           CGAL_SS_i::vertices_end(hole),
                                           no_holes.begin(), no_holes.end(),
@@ -778,7 +796,7 @@ public:
       Visitor visitor(*ss_ptr, offset_points);
 #endif
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
-      ob.construct_offset_contours(height, std::back_inserter(raw_output));
+      ob.construct_offset_contours(abs_height, std::back_inserter(raw_output));
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       construct_lateral_faces(*ss_ptr, ob, height, points, faces, offset_points,
@@ -799,6 +817,13 @@ public:
 
     Offset_polygons_with_holes output = CGAL::arrange_offset_polygons_2<Polygon_with_holes_2>(raw_output);
     construct_horizontal_faces(output, height, points, faces);
+
+    // if the height is negative (extruding downwards), we need to invert all the faces
+    if(is_negative(height))
+    {
+      for(auto& f : faces)
+        std::swap(f[0], f[1]);
+    }
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
     apply_snapping<Geom_traits>(points, snapped_positions);

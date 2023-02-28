@@ -300,7 +300,7 @@ int main(int argc, char** argv)
       std::cout << "Usage: " << argv[0] << "[options].\n"
         "Options:\n"
         "   -i <input_filename>: input polygon filename.\n"
-        "   -t <value>: time (== height). Must be strictly positive.\n"
+        "   -t <value>: height. Must be non-zero.\n"
         "   -a <angles_filename>: angles. Format: one angle per line, a space to separate borders.\n"
         "   -w <weights_filename>: weights. Format: one weight per line, a space to separate borders.\n"
         " Note: -w and -a are exclusive.\n"
@@ -337,9 +337,9 @@ int main(int argc, char** argv)
     }
   }
 
-  if(height <= FT(0))
+  if(CGAL::is_zero(height))
   {
-    std::cerr << "Error: height/offset/time must be strictly positive; it is " << height << std::endl;
+    std::cerr << "Error: height must be non-zero" << std::endl;
     return EXIT_FAILURE;
   }
 

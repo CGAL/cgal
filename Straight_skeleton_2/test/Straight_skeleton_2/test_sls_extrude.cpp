@@ -212,12 +212,21 @@ bool test(const char* poly_filename,
   Mesh sm;
   extrude_skeleton(pwh, height, sm, CGAL::parameters::angles(angles));
 
-  CGAL::IO::write_polygon_mesh(root_name(poly_filename) + "_extruded.off", sm, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(root_name(poly_filename) + "_extruded_up.off", sm, CGAL::parameters::stream_precision(17));
 
-  const FT volume = PMP::volume(sm);
+  FT volume = PMP::volume(sm);
   const FT rel_eps = 1e-5;
 
-  assert(are_equal(volume, expected_volume, rel_eps, true));
+  assert(are_equal(volume, expected_volume, rel_eps, true /*verbose*/));
+
+  // also test with the opposite weight
+  clear(sm);
+  extrude_skeleton(pwh, - height, sm, CGAL::parameters::angles(angles));
+
+  CGAL::IO::write_polygon_mesh(root_name(poly_filename) + "_extruded_down.off", sm, CGAL::parameters::stream_precision(17));
+
+  volume = PMP::volume(sm);
+  assert(are_equal(volume, expected_volume, rel_eps, true /*verbose*/));
 
   return true;
 }
