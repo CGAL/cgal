@@ -97,14 +97,14 @@ int main() {
             << arr.number_of_faces() << std::endl;
 
   std::size_t id(0);
-  CGAL::draw(arr, [&] (Arrangement_2::Face_const_handle fh) -> CGAL::IO::Color {
+  CGAL::draw(arr, [&] (Arrangement_2::Face_const_handle) -> CGAL::IO::Color {
                     float h = 360.0 * id++ / arr.number_of_faces();
                     float s = 0.5;
                     float v = 0.5;
                     float r, g, b;
                     std::tie(r, g, b) = hsv_to_rgb(h, s, v);
                     return CGAL::IO::Color(r, g, b);
-                  });
+                  }, "hsv colors", true);
 
   return EXIT_SUCCESS;
 }
