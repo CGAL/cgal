@@ -933,12 +933,12 @@ preprocess_weights(WeightRange& weights)
 
 template <typename PolygonWithHoles,
           typename FT,
-          typename SpeedRange,
+          typename WeightRange,
           typename PolygonMesh,
           typename NamedParameters>
 bool extrude_skeleton(const PolygonWithHoles& pwh,
                       const FT height,
-                      SpeedRange& speeds,
+                      WeightRange& weights,
                       PolygonMesh& out,
                       const NamedParameters& np)
 {
@@ -963,7 +963,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   Slope slope;
   bool valid_input;
   FT vertical_weight;
-  std::tie(slope, valid_input, vertical_weight) = preprocess_weights<FT>(speeds);
+  std::tie(slope, valid_input, vertical_weight) = preprocess_weights<FT>(weights);
 
   if(!valid_input)
   {
@@ -1002,9 +1002,9 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   bool res;
   if(slope != Slope::OUTWARD) // INWARD or VERTICAL
-    res = builder.inward_construction(pwh, speeds, vertical_weight, height, points, faces);
+    res = builder.inward_construction(pwh, weights, vertical_weight, height, points, faces);
   else
-    res = builder.outward_construction(pwh, speeds, vertical_weight, height, points, faces);
+    res = builder.outward_construction(pwh, weights, vertical_weight, height, points, faces);
 
   if(!res)
     return false;
@@ -1043,12 +1043,6 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   namespace SSI = Straight_skeletons_2::internal;
 
   using Default_speed_type = std::vector<std::vector<FT> >;
-  using Angles = typename internal_np::Lookup_named_param_def<internal_np::angles_param_t,
-                                                              NamedParameters,
-                                                              Default_speed_type>::reference;
-  using Weights = typename internal_np::Lookup_named_param_def<internal_np::weights_param_t,
-                                                               NamedParameters,
-                                                               Default_speed_type>::reference;
 
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -1061,12 +1055,14 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   if(has_weights)
   {
-    Weights weights = choose_parameter(get_parameter_reference(np, internal_np::weights_param), def_speed);
+    // not using "Angles" here is on purpose, I want to copy the range but the NP is ref only
+    auto weights = choose_parameter(get_parameter_reference(np, internal_np::weights_param), def_speed);
     return SSI::extrude_skeleton(pwh, height, weights, out, np);
   }
   else if(has_angles)
   {
-    Angles angles = choose_parameter(get_parameter_reference(np, internal_np::angles_param), def_speed);
+    // not using "Weights" here is on purpose, I want to copy the range but the NP is ref only
+    auto angles = choose_parameter(get_parameter_reference(np, internal_np::angles_param), def_speed);
     SSI::convert_angles<FT>(angles);
     return SSI::extrude_skeleton(pwh, height, angles, out, np);
   }
