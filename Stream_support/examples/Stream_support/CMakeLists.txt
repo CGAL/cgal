@@ -3,6 +3,7 @@ project(Stream_support_Examples)
 
 find_package(CGAL REQUIRED)
 
+create_single_source_cgal_program( "split_stl.cpp" )
 create_single_source_cgal_program( "Point_WKT.cpp" )
 create_single_source_cgal_program( "Polygon_WKT.cpp" )
 create_single_source_cgal_program( "Linestring_WKT.cpp" )
