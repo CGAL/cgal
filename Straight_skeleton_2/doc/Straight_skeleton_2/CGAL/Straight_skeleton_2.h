@@ -15,15 +15,19 @@ straight skeleton. If an advanced user needs to get access to the
 modifying operations, it must call the required methods through the
 `Base` class.
 
-\tparam Traits_ must be a model of `Kernel`
+\tparam Traits must be a model of `Kernel`
 
 \sa `StraightSkeletonVertex_2`
 \sa `StraightSkeletonHalfedge_2`
 */
-template< typename Traits_>
+template< typename Traits>
 class Straight_skeleton_2
-  : public HalfedgeDS_vector<Traits,Items,Alloc> {
+  : public CGAL::HalfedgeDS_default<Traits>
+{
 public:
+
+  /// Access to the base (HDS) class
+  typedef unspecified_type Base;
 
 }; /* end Straight_skeleton_2 */
 
