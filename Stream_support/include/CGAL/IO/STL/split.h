@@ -106,7 +106,7 @@ bool split_binary_STL(std::istream& is,
   if(verbose)
     std::cout << N << " facets to read" << std::endl;
 
-  for(unsigned int i=0; i<N; ++i)
+  for(unsigned int ti=0; ti<N; ++ti)
   {
     float normal[3];
     if(!(is.read(reinterpret_cast<char*>(&normal[0]), sizeof(normal[0]))) ||
@@ -118,7 +118,6 @@ bool split_binary_STL(std::istream& is,
 
       return false;
     }
-
 
     int xrange[2], yrange[2], zrange[2];
 
@@ -149,16 +148,14 @@ bool split_binary_STL(std::istream& is,
       }
     }
 
-    // Write into stream (xi[0],yi[0],zi[0]);  for v0
-
     for(int i = xrange[0]; i <= xrange[1]; ++i)
       for(int j = yrange[0]; j <= yrange[1]; ++j)
         for(int k = zrange[0]; k <= zrange[1]; ++k){
           index = i * ncells * ncells + j * ncells + k;
           ++ntriangles[index];
-          streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-          streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-          streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&normal[0]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&normal[1]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&normal[2]), sizeof(f));
           streams[index].write(reinterpret_cast<const char *>(&x[0]), sizeof(f));
           streams[index].write(reinterpret_cast<const char *>(&y[0]), sizeof(f));
           streams[index].write(reinterpret_cast<const char *>(&z[0]), sizeof(f));

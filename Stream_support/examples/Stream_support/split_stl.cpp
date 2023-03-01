@@ -11,7 +11,6 @@ typedef K::Point_3                                            Point;
 
 struct BB {
   CGAL::Bbox_3 bbox;
-  int m_size = 0;
   BB()
     : bbox()
   {}
@@ -19,12 +18,6 @@ struct BB {
   void push_back(const Point& p)
   {
     bbox += p.bbox();
-    ++m_size;
-  }
-
-  int size() const
-  {
-    return m_size;
   }
 };
 
@@ -61,6 +54,7 @@ int main(int argc, char* argv[])
     CGAL::Timer t;
     t.start();
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.stl");
+  int gridlength = (argc > 2) ? std::stoi(argv[2]) : 3;
 
   Empty_set<std::array<int,3>> count_faces;
   BB bbox_points;
@@ -72,13 +66,13 @@ int main(int argc, char* argv[])
                        count_faces,
                        CGAL::parameters::verbose(true).unique(false));
 
-    std::cout << bbox_points.bbox  << " " << bbox_points.size()  << " " << count_faces.size() << std::endl;
+    std::cout << "#triangles = " << count_faces.size() << std::endl;
     std::cout << t.time() << " sec." << std::endl;
   }
 
   {
     std::ifstream in(filename, std::ios::binary);
-    CGAL::IO::split_binary_STL(in, bbox_points.bbox, 3, true);
+    CGAL::IO::split_binary_STL(in, bbox_points.bbox, gridlength, true);
 
   }
   return 0;
