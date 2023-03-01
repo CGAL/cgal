@@ -83,26 +83,44 @@ do_coplanar_segments_intersect(const std::array<typename K::Point_3, 2>& s1,
 //////////////////////////////////
 
 // imported from Intersections_3/include/CGAL/Intersections_3/internal/Triangle_3_Triangle_3_intersection.h
-
 template<class K>
 void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
                             const std::array<typename K::Point_3, 3>& t2,
                             std::vector<typename K::Point_3>& inter_pts)
 {
-  const typename K::Point_3& p = t1[0], q = t1[1], r = t1[2];
+  const typename K::Point_3& p1 = t1[0], q1 = t1[1], r1 = t1[2];
+  const typename K::Point_3& p2 = t2[0], q2 = t2[1], r2 = t2[2];
 
-  std::list<typename K::Point_3> l_inter_pts;
-  l_inter_pts.push_back(t2[0]);
-  l_inter_pts.push_back(t2[1]);
-  l_inter_pts.push_back(t2[2]);
+  std::list<Intersections::internal::Point_on_triangle<K>> l_inter_pts;
+  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(-1,0));
+  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(-1,1));
+  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(-1,2));
+
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  auto to_string = [](const auto& t)
+  {
+    std::stringstream sstr;
+    sstr << "4 "
+         << to_double(t[0].x()) << " "  << to_double(t[0].y()) << " "  << to_double(t[0].z()) << " "
+         << to_double(t[1].x()) << " "  << to_double(t[1].y()) << " "  << to_double(t[1].z()) << " "
+         << to_double(t[2].x()) << " "  << to_double(t[2].y()) << " "  << to_double(t[2].z()) << " "
+         << to_double(t[0].x()) << " "  << to_double(t[0].y()) << " "  << to_double(t[0].z()) << "\n";
+    return sstr.str();
+  };
+
+  std::cout << "intersection_coplanar_triangles\n";
+  std::ofstream("/tmp/t1.polylines.txt") << to_string(t1) << "\n";
+  std::ofstream("/tmp/t2.polylines.txt") << to_string(t2) << "\n";
+#endif
 
   //intersect t2 with the three half planes which intersection defines t1
   K k;
-  Intersections::internal::intersection_coplanar_triangles_cutoff(p,q,r,k,l_inter_pts); //line pq
-  Intersections::internal::intersection_coplanar_triangles_cutoff(q,r,p,k,l_inter_pts); //line qr
-  Intersections::internal::intersection_coplanar_triangles_cutoff(r,p,q,k,l_inter_pts); //line rp
+  intersection_coplanar_triangles_cutoff(p1,q1,r1,0,p2,q2,r2,k,l_inter_pts); //line p1q1
+  intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,l_inter_pts); //line q1r1
+  intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,l_inter_pts); //line r1p1
 
-  inter_pts.assign(l_inter_pts.begin(), l_inter_pts.end());
+  for (const Intersections::internal::Point_on_triangle<K>& pot : l_inter_pts)
+    inter_pts.push_back( pot.point(p1,q1,r1,p2,q2,r2,k) );
 }
 
 // imported from Polygon_mesh_processing/internal/Corefinement/intersect_triangle_segment_3.h
