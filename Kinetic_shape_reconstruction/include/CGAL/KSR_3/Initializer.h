@@ -445,9 +445,9 @@ private:
 
         std::vector<typename Intersection_kernel::Segment_2> crossing_polygon_segments;
         std::vector<IEdge> crossing_iedges;
-        FT min = std::numeric_limits<double>::max();
-        FT max = -std::numeric_limits<double>::max();
-        FT min_speed = std::numeric_limits<double>::max(), max_speed = -std::numeric_limits<double>::max();
+        FT min = (std::numeric_limits<double>::max)();
+        FT max = -(std::numeric_limits<double>::max)();
+        FT min_speed = (std::numeric_limits<double>::max)(), max_speed = -(std::numeric_limits<double>::max)();
 
         CGAL::Oriented_side last_side = l.oriented_side(sp.data().original_vertices.back());
 

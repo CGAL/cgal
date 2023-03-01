@@ -387,8 +387,8 @@ public:
       }
       else
       {
-        FT max_negative = -std::numeric_limits<FT>::max();
-        FT min_positive = std::numeric_limits<FT>::max();
+        FT max_negative = -(std::numeric_limits<FT>::max)();
+        FT min_positive = (std::numeric_limits<FT>::max)();
 
         for (std::size_t i = 0; i < 4; ++ i)
         {
@@ -403,8 +403,8 @@ public:
             min_positive = position;
         }
 
-        CGAL_assertion (max_negative != -std::numeric_limits<FT>::max()
-                        && min_positive != -std::numeric_limits<FT>::min());
+        CGAL_assertion (max_negative != -(std::numeric_limits<FT>::max)()
+                        && min_positive != -(std::numeric_limits<FT>::min)());
 
         m_support_lines.back().minimum() = max_negative;
         m_support_lines.back().maximum() = min_positive;

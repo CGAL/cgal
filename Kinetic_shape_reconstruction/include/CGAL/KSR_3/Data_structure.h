@@ -453,7 +453,7 @@ public:
       std::size_t idx = (i + lower) % sp.data().original_directions.size();
       const auto result = CGAL::intersection(l, sp.data().original_rays[idx]);
       if (!result) {
-        time[i] = std::numeric_limits<double>::max();
+        time[i] = (std::numeric_limits<double>::max)();
         continue;
       }
       const IkPoint_2* p = nullptr;
