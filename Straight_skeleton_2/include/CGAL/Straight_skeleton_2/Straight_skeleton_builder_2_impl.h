@@ -633,14 +633,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
       if ( K().orientation_2_object()(lLH->vertex()->point(),
                                       lLH->opposite()->vertex()->point(),
                                       lRH->vertex()->point()) == EQUAL )
-      {
-        // only harmonize coefficients if they have the same weights
-        if ( lLH->weight() == lRH->weight() )
-          return false ; // true collinear; harmonize their line coefficients
-
-        // collinear but different weights, order arbitrarily (but consistently)
-        return ( lLH->weight() < lRH->weight() ) ;
-      }
+        return false; // collinear
 
       // parallel but not collinear, order arbitrarily (but consistently)
       return K().less_xy_2_object()(lLH->vertex()->point(), lRH->vertex()->point()) ;
