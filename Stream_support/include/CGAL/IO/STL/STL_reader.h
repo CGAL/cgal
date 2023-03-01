@@ -34,7 +34,8 @@ bool read_ASCII_facet(std::istream& is,
                       TriangleRange& facets,
                       int& index,
                       IndexMap& index_map,
-                      const bool verbose = false)
+                      const bool verbose = false,
+                      const bool unique = true)
 {
   typedef typename boost::range_value<PointRange>::type         Point;
   typedef typename boost::range_value<TriangleRange>::type      Triangle;
@@ -85,17 +86,23 @@ bool read_ASCII_facet(std::istream& is,
       else
       {
         fill_point(x, y, z, 1 /*w*/, p);
-        typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
+        if(unique){
+          typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
 
-        if(iti->second == -1)
-        {
+          if(iti->second == -1)
+            {
           ijk[count] = index;
           iti->second = index++;
           points.push_back(p);
-        }
-        else
-        {
-          ijk[count] = iti->second;
+            }
+          else
+            {
+              ijk[count] = iti->second;
+            }
+        }else{
+        ijk[count] = index;
+        ++index;
+        points.push_back(p);
         }
       }
 
@@ -113,7 +120,8 @@ template <class PointRange, class TriangleRange>
 bool parse_ASCII_STL(std::istream& is,
                      PointRange& points,
                      TriangleRange& facets,
-                     const bool verbose = false)
+                     const bool verbose = false,
+                      const bool unique = true)
 {
   typedef typename boost::range_value<PointRange>::type           Point;
   bool solid_found = false;
@@ -141,7 +149,7 @@ bool parse_ASCII_STL(std::istream& is,
     }
     if(s == facet)
     {
-      if(!read_ASCII_facet(is, points, facets, index, index_map, verbose))
+      if(!read_ASCII_facet(is, points, facets, index, index_map, verbose, unique))
         return false;
     }
     else if(s == endsolid)
@@ -166,7 +174,8 @@ template <class PointRange, class TriangleRange>
 bool parse_binary_STL(std::istream& is,
                       PointRange& points,
                       TriangleRange& facets,
-                      const bool verbose = false)
+                      const bool verbose = false,
+                      const bool unique = true)
 {
   typedef typename boost::range_value<PointRange>::type         Point;
   typedef typename boost::range_value<TriangleRange>::type      Triangle;
@@ -254,20 +263,25 @@ bool parse_binary_STL(std::istream& is,
       Point p;
       fill_point(x, y, z, 1 /*w*/, p);
 
-      typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
+      if(unique){
+        typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
 
-      if(iti->second == -1)
-      {
+        if(iti->second == -1)
+          {
+            ijk[j] = index;
+            iti->second = index++;
+            points.push_back(p);
+          }
+        else
+          {
+            ijk[j] = iti->second;
+          }
+      }else{
         ijk[j] = index;
-        iti->second = index++;
+        ++index;
         points.push_back(p);
       }
-      else
-      {
-        ijk[j] = iti->second;
-      }
     }
-
     facets.push_back(ijk);
 
     // Read so-called attribute byte count and ignore it

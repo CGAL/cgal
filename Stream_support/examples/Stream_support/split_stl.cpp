@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
     CGAL::IO::read_STL(in,
                        bbox_points,
                        count_faces,
-                       CGAL::parameters::verbose(true));
+                       CGAL::parameters::verbose(true).unique(false));
 
     std::cout << bbox_points.bbox  << " " << bbox_points.size()  << " " << count_faces.size() << std::endl;
     std::cout << t.time() << " sec." << std::endl;
