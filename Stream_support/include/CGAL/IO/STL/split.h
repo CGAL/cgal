@@ -120,7 +120,7 @@ bool split_binary_STL(std::istream& is,
     }
 
 
-    int xi[3], yi[3], zi[3];
+    int xrange[2], yrange[2], zrange[2];
 
     float f=0, x[3], y[3], z[3];
     for(int j=0; j<3; ++j)
@@ -135,65 +135,41 @@ bool split_binary_STL(std::istream& is,
         return false;
       }
 
-      xi[j] = std::floor( (x[j]-xmin)/cwx );
-      yi[j] = std::floor( (y[j]-ymin)/cwy );
-      zi[j] = std::floor( (z[j]-zmin)/cwz );
+      int xr = std::floor( (x[j]-xmin)/cwx );
+      int yr = std::floor( (y[j]-ymin)/cwy );
+      int zr = std::floor( (z[j]-zmin)/cwz );
+      if(j ==0){
+        xrange[0] = xr; xrange[1] = xr;
+        yrange[0] = yr; yrange[1] = yr;
+        zrange[0] = zr; zrange[1] = zr;
+      }else{
+        xrange[0] = (std::min)(xrange[0],xr); xrange[1] = (std::max)(xrange[1],xr);
+        yrange[0] = (std::min)(yrange[0],yr); yrange[1] = (std::max)(yrange[1],yr);
+        zrange[0] = (std::min)(zrange[0],zr); zrange[1] = (std::max)(zrange[1],zr);
+      }
     }
 
     // Write into stream (xi[0],yi[0],zi[0]);  for v0
 
-    index = xi[0]*ncells*ncells + yi[0]*ncells + zi[0];
-    ++ntriangles[index];
-    streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&x[0]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&y[0]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&z[0]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&x[1]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&y[1]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&z[1]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&x[2]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&y[2]), sizeof(f));
-    streams[index].write(reinterpret_cast<const char *>(&z[2]), sizeof(f));
-    streams[index] << "  ";
-
-    if(xi[1]!=xi[0] ||yi[1]!=yi[0] ||zi[1]!=xi[0]){
-      index = xi[1]*ncells*ncells + yi[1]*ncells + zi[1];
-      ++ntriangles[index];
-      streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&x[0]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&y[0]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&z[0]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&x[1]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&y[1]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&z[1]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&x[2]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&y[2]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&z[2]), sizeof(f));
-      streams[index] << "  ";
-    }
-    if(xi[2]!=xi[0] ||yi[2]!=yi[0] || zi[2]!=xi[0] ||
-       xi[2]!=xi[1] ||yi[2]!=yi[1] || zi[2]!=xi[1]){
-      // also write in cell of third point
-      index = xi[2]*ncells*ncells + yi[2]*ncells + zi[2];
-      ++ntriangles[index];
-      streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&x[0]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&y[0]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&z[0]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&x[1]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&y[1]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&z[1]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&x[2]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&y[2]), sizeof(f));
-      streams[index].write(reinterpret_cast<const char *>(&z[2]), sizeof(f));
-      streams[index] << "  ";
-    }
+    for(int i = xrange[0]; i <= xrange[1]; ++i)
+      for(int j = yrange[0]; j <= yrange[1]; ++j)
+        for(int k = zrange[0]; k <= zrange[1]; ++k){
+          index = i * ncells * ncells + j * ncells + k;
+          ++ntriangles[index];
+          streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&f), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&x[0]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&y[0]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&z[0]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&x[1]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&y[1]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&z[1]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&x[2]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&y[2]), sizeof(f));
+          streams[index].write(reinterpret_cast<const char *>(&z[2]), sizeof(f));
+          streams[index] << "  ";
+        }
 
     // Read so-called attribute byte count and ignore it
     char c;
