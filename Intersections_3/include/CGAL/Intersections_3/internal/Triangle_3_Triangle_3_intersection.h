@@ -14,6 +14,8 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_TRIANGLE_3_TRIANGLE_3_INTERSECTION_H
 #define CGAL_INTERNAL_INTERSECTIONS_TRIANGLE_3_TRIANGLE_3_INTERSECTION_H
 
+//#define CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+
 #include <CGAL/Intersection_traits_3.h>
 #include <CGAL/Intersections_3/internal/Line_3_Triangle_3_intersection.h>
 #include <CGAL/Intersections_3/internal/Line_3_Line_3_intersection.h>
@@ -74,21 +76,20 @@ struct Point_on_triangle
     }
   }
 
-  Point_on_triangle(int i1, int i2=-1, int sign=0, typename Kernel::FT alpha = 0.) // TODO add global zero()?
+  Point_on_triangle(int i1, int i2=-1, typename Kernel::FT alpha = 0.) // TODO add global zero()?
     : t1_t2_ids(i1,i2)
-    , sign(sign)
+    , alpha(alpha)
   {}
 
   // (id, -1) point on t1
   // (-1, id) point on t2
   // (id1, id2) intersection of edges
   std::pair<int, int> t1_t2_ids;
-  int sign;
   typename Kernel::FT alpha;
 
   Orientation
-  orientation (const typename Kernel::Point_3& p1, // source of edge edge_ids1
-               const typename Kernel::Point_3& q1, // target of edge edge_ids1
+  orientation (const typename Kernel::Point_3& p1, // source of edge edge_id1
+               const typename Kernel::Point_3& q1, // target of edge edge_id1
                const typename Kernel::Point_3& r1,
                int edge_id1,
                const typename Kernel::Point_3& p2,
@@ -98,15 +99,21 @@ struct Point_on_triangle
   {
     if (t1_t2_ids.first!=-1)
     {
-      if (t1_t2_ids.second==-1) return ZERO; // it is a point on t1
+      if (t1_t2_ids.second==-1)
+        return (edge_id1==t1_t2_ids.first || (edge_id1+1)%3==t1_t2_ids.first) ? ZERO:POSITIVE; // it is a point on t1
       // this is an intersection point
-      if (sign == 0)
-        return POSITIVE;
-      if (sign == -1)
-        return edge_id1==t1_t2_ids.first+1?POSITIVE:NEGATIVE;
-      else
-        return edge_id1==t1_t2_ids.first+1?NEGATIVE:POSITIVE;
-    }
+
+      if (t1_t2_ids.first==edge_id1)
+        return ZERO;
+      if (t1_t2_ids.first==(edge_id1+1)%3)
+      {
+        if (alpha==0) return ZERO;
+        return alpha>=0 ? POSITIVE:NEGATIVE;
+      }
+      CGAL_assertion((t1_t2_ids.first+1)%3==edge_id1);
+      if (alpha==1) return ZERO;
+      return alpha<=1?POSITIVE:NEGATIVE;
+  }
     else
     {
       //this is an input point of t2
@@ -150,6 +157,11 @@ intersection(const Point_on_triangle<Kernel>& p,
              const typename Kernel::Point_3& r2,
              const Kernel& k)
 {
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "    calling intersection: ";
+  std::cout << "  (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "])-";
+  std::cout << "  (" << q.id1() << "," << q.id2() << ",[" << q.alpha << "])  || e" << edge_id_t1 << "\n";
+#endif
   typedef Point_on_triangle<Kernel> Pot;
   switch(p.id1())
   {
@@ -163,21 +175,23 @@ intersection(const Point_on_triangle<Kernel>& p,
             coplanar_segment_segment_alpha_intersection(p1, q1,
                                                         Pot::point_from_id(p2, q2, r2, p.id2()),
                                                         Pot::point_from_id(p2, q2, r2, q.id2()), k);
-          int sgn = sign(alpha);
-          return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), sgn, alpha); // intersection with an original edge of t2
+          return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), alpha); // intersection with an original edge of t2
         }
         default:
           if (q.id2()!=-1) // (-1, ip2) - (iq1, iq2)
           {
-            // we shorten an already cut edge
-            CGAL_assertion((p.id2()+1)%3 == q.id2());
+            if (p.id2() == q.id2() || p.id2() == (q.id2()+1)%3)
+            {
+              // points are on the same edge of t2 --> we shorten an already cut edge
+              typename Kernel::FT alpha =
+                coplanar_segment_segment_alpha_intersection(p1, q1,
+                                                            Pot::point_from_id(p2, q2, r2,  q.id2()),
+                                                            Pot::point_from_id(p2, q2, r2, (q.id2()+1)%3), k);
 
-            typename Kernel::FT alpha =
-              coplanar_segment_segment_alpha_intersection(p1, q1,
-                                                          Pot::point_from_id(p2, q2, r2, p.id2()),
-                                                          Pot::point_from_id(p2, q2, r2, q.id2()), k);
-            int sgn = sign(alpha);
-            return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), sgn, alpha);
+              return  Point_on_triangle<Kernel>(edge_id_t1, q.id2(), alpha);
+            }
+            // point of t1
+            return  Point_on_triangle<Kernel>((q.id1()+1)%3==edge_id_t1?edge_id_t1:(edge_id_t1+1)%3 , -1);
           }
           // (-1, ip2) - (iq1, -1)
           //vertex of t1, special case t1 edge passed thru a vertex of t2
@@ -211,15 +225,18 @@ intersection(const Point_on_triangle<Kernel>& p,
           {
             case -1: // (ip1, ip2) - (-1, iq2)
             {
-              // we shorten an already cut edge
-              CGAL_assertion((q.id2()+1)%3 == p.id2());
+              if (q.id2() == p.id2() || q.id2() == (p.id2()+1)%3)
+              {
+                // points are on the same edge of t2 --> we shorten an already cut edge
+                typename Kernel::FT alpha =
+                  coplanar_segment_segment_alpha_intersection(p1, q1,
+                                                              Pot::point_from_id(p2, q2, r2,  p.id2()),
+                                                              Pot::point_from_id(p2, q2, r2, (p.id2()+1)%3), k);
 
-              typename Kernel::FT alpha =
-                coplanar_segment_segment_alpha_intersection(p1, q1,
-                                                            Pot::point_from_id(p2, q2, r2, q.id2()),
-                                                            Pot::point_from_id(p2, q2, r2, p.id2()), k);
-              int sgn = sign(alpha);
-              return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), sgn, alpha);
+                return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), alpha);
+              }
+              // point of t1
+              return  Point_on_triangle<Kernel>((p.id1()+1)%3==edge_id_t1?edge_id_t1:(edge_id_t1+1)%3 , -1);
             }
             default:
             {
@@ -231,7 +248,8 @@ intersection(const Point_on_triangle<Kernel>& p,
                   return  Point_on_triangle<Kernel>(p.id1()==1?2:0); // vertex of t1
                 }
                 default: // (ip1, ip2) - (iq1, iq2)
-                  return  Point_on_triangle<Kernel>((p.id1()+1)%3==q.id1()?q.id1():p.id1(), -1); // vertex of t1
+                  CGAL_assertion(p.id1()==q.id1());
+                  return  Point_on_triangle<Kernel>((p.id1()+1)%3==edge_id_t1?edge_id_t1:(edge_id_t1+1)%3, -1); // vertex of t1
               }
             }
           }
@@ -252,6 +270,11 @@ void intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& p1,
                                             const Kernel& k,
                                             std::list<Point_on_triangle<Kernel>>& inter_pts)
 {
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "  cutoff using e" << edge_id << ": "
+            << to_double(p1.x()) << " " << to_double(p1.y()) << " " << to_double(p1.z()) << " "
+            << to_double(q1.x()) << " " << to_double(q1.y()) << " " << to_double(q1.z()) << "\n";
+#endif
   typedef typename std::list<Point_on_triangle<Kernel>>::iterator Iterator;
 
   if(inter_pts.empty())
@@ -262,6 +285,12 @@ void intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& p1,
   for (const Point_on_triangle<Kernel>& pot : inter_pts)
     orientations[ &pot ]=pot.orientation(p1,q1,r1,edge_id,p2,q2,r2,k);
 
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "    Orientations:";
+  for (const Point_on_triangle<Kernel>& pot : inter_pts)
+    std::cout << " " << orientations[ &pot ];
+  std::cout << "\n";
+#endif
   CGAL_kernel_assertion_code(int pt_added = 0);
 
   Iterator prev = std::prev(inter_pts.end());
@@ -301,6 +330,22 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
                                 const typename K::Triangle_3& t2,
                                 const K& k)
 {
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  auto to_string = [](const typename K::Triangle_3& t)
+  {
+    std::stringstream sstr;
+    sstr << "4 "
+         << to_double(t[0].x()) << " "  << to_double(t[0].y()) << " "  << to_double(t[0].z()) << " "
+         << to_double(t[1].x()) << " "  << to_double(t[1].y()) << " "  << to_double(t[1].z()) << " "
+         << to_double(t[2].x()) << " "  << to_double(t[2].y()) << " "  << to_double(t[2].z()) << " "
+         << to_double(t[0].x()) << " "  << to_double(t[0].y()) << " "  << to_double(t[0].z()) << "\n";
+    return sstr.str();
+  };
+
+  std::cout << "intersection_coplanar_triangles\n";
+  std::ofstream("/tmp/t1.polylines.txt") << to_string(t1) << "\n";
+  std::ofstream("/tmp/t2.polylines.txt") << to_string(t2) << "\n";
+#endif
   const typename K::Point_3& p1 = t1.vertex(0),
                              q1 = t1.vertex(1),
                              r1 = t1.vertex(2);
@@ -314,10 +359,30 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
   inter_pts.push_back(Point_on_triangle<K>(-1,1));
   inter_pts.push_back(Point_on_triangle<K>(-1,2));
 
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  auto print_points = [&]()
+  {
+    for(auto p : inter_pts) std::cout << "  (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) "; std::cout <<"\n";
+  };
+  std::cout << "  ipts size: " << inter_pts.size() << "\n";
+  print_points();
+#endif
   //intersect t2 with the three half planes which intersection defines t1
   intersection_coplanar_triangles_cutoff(p1,q1,r1,0,p2,q2,r2,k,inter_pts); //line pq
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "  ipts size: " << inter_pts.size() << "\n";
+  print_points();
+#endif
   intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,inter_pts); //line qr
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "  ipts size: " << inter_pts.size() << "\n";
+  print_points();
+#endif
   intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,inter_pts); //line rp
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "  ipts size: " << inter_pts.size() << "\n";
+  print_points();
+#endif
 
   auto point = [&](const Point_on_triangle<K>& pot){ return pot.point(p1,q1,r1,p2,q2,r2,k); };
   switch(inter_pts.size())
