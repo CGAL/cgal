@@ -30,6 +30,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Random.h>
+#include <CGAL/IO/Color.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
