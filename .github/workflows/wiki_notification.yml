@@ -19,9 +19,9 @@ jobs:
           const pages = payload.pages;
           let messages = "Subject:Updates to CGAL Wiki \nContent-Type: text/html\n";
           messages += "<html><body>";
-          messages += `<p>The following CGAL Wiki page were modified by <a href="${actor.html_url}">"${actor.login}"</a></p><ul>\n`
+          messages += `<p>The following CGAL Wiki page were modified by <a href="${actor.html_url}">"${actor.login}"</a>:</p><ul>\n`
           for (const page of pages){
-              messages += `<li><a href="${page.html_url}"> ${page.title}</a></li>\n`;
+              messages += `<li><a href="${page.html_url}">${page.title}</a> (link to <a href="${page.html_url}/_compare/${page.sha}%5E...${page.sha}">the diff</a>)</li>\n`;
           }
           messages += "</ul></body></html>";
           console.log( messages );
