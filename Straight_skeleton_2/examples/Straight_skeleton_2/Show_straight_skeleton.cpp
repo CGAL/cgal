@@ -51,8 +51,6 @@ int main( int argc, char* argv[] )
         std::cerr << "ERROR: outer boundary is not simple.";
         return 1;
       }
-      if ( input.outer_boundary().is_clockwise_oriented() )
-        input.outer_boundary().reverse_orientation();
       int k=0;
       for (Polygon_with_holes::Hole_iterator it = input.holes_begin();
                                              it!=input.holes_end(); ++it, ++k)
@@ -62,8 +60,6 @@ int main( int argc, char* argv[] )
           std::cerr << "ERROR: hole "<< k << " is not simple.\n";
           return 1;
         }
-        if (it->is_counterclockwise_oriented())
-          it->reverse_orientation();
       }
 
       Straight_skeleton_ptr ss = CGAL::create_interior_straight_skeleton_2(input);
