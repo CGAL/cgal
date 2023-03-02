@@ -106,7 +106,9 @@ public:
   }
 
   /*!
-  * @todo documentation
+  * Similar to the above function,
+  * but modifies `weights` to set the voxels that are
+  * part of a polyline feature to 0.
   */
   template<typename Point>
   std::vector<std::vector<Point>>

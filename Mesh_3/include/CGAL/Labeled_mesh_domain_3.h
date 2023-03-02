@@ -622,7 +622,12 @@ public:
    *                           The weights image can be generated with `CGAL::Mesh_3::generate_label_weights()`.
    *                           Its dimensions must be the same as the dimensions of `parameters::image`.}
    *     \cgalParamDefault{CGAL::Image_3()}
-   *     \cgalParamExtra{if `features_detector` is provided, `weights` should be modified accordingly}
+   *     \cgalParamType{CGAL::Image_3&}
+   *     \cgalParamExtra{if `features_detector` is provided, `weights` should be modified accordingly.
+   *                     The available functors described in See \ref PkgMesh3FeatureDetection
+   *                     implement the necessary modifications.}
+   *     \cgalParamExtra{if `input_features` is provided, `weights` should be modified accordingly
+   *                     to keep consistency of the output `MeshDomainWithFeatures_3`}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{value_outside}
    *     \cgalParamDescription{the value attached to voxels
@@ -640,14 +645,20 @@ public:
    *   \cgalParamNBegin{features_detector}
    *    \cgalParamDescription{ a functor that implements
    *      `std::vector<std::vector<Point>> operator()(const Image_3& img) const`,
+   *      and `std::vector<std::vector<Point>> operator()(const Image_3& img, Image_3& weights) const`,
    *      where `%Point` matches the mesh domain point type,
-   *      that returns a range of detected polyline features for feature protection.
+   *      that both return a range of detected polyline features for feature protection.
+   *      Only one implementation is used, depending on whether the named parameter `weights`
+   *      is provided or not.
    *      Polyline features are added to the domain for further feature protection.
    *      See \ref PkgMesh3FeatureDetection for available functors.}
    *    \cgalParamDefault{CGAL::Null_functor()}
    *    \cgalParamExtra{The return type of the function depends on whether this parameter
-                        or `input_features` are provided or not.}
-   *    \cgalParamExtra{TODO}
+   *                    or `input_features` are provided or not.}
+   *    \cgalParamExtra{If `weights` is provided, it must either be adapted to the detected features,
+   *                    or post-processed during feature detection to keep consistency
+   *                    of the output `MeshDomainWithFeatures_3`.
+   *                    Available functors implement the necessary modifications.}
    *   \cgalParamNEnd
    *
    *   \cgalParamNBegin{input_features}
@@ -661,12 +672,11 @@ public:
                         or `input_features` are provided or not.}
    *    \cgalParamExtra{It is recommended to pass a const-reference for this parameter,
    *                    possibly using `std::cref(polylines_range)` to avoid useless copies.}
-   *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
+   *    \cgalParamExtra{If `weights` is provided, it must be adapted to the input features,
+   *                    to keep consistency of the output `MeshDomainWithFeatures_3`}
    *   \cgalParamNEnd
    *
    * \cgalNamedParamsEnd
-   *
-   * \todo{Add warning about using weights and feature detection together}
    *
    * \cgalHeading{Example}
    *
@@ -689,7 +699,6 @@ public:
    *
    * \snippet Mesh_3/mesh_3D_image_with_input_features.cpp Domain creation
    *
-   * \todo what if `input_features` and `weights` are both provided?
    */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static auto
