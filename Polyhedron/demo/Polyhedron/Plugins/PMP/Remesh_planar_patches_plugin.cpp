@@ -43,7 +43,6 @@ class Polyhedron_demo_remesh_planar_patches_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "isotropic_remeshing_plugin.json")
 
-  typedef Scene_surface_mesh_item Scene_surface_mesh_item;
   typedef Scene_surface_mesh_item::Face_graph Mesh;
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
