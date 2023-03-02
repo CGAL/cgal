@@ -42,7 +42,7 @@ int main( int argc, char* argv[] )
       for(Polygon_with_holes::Hole_const_iterator it = input.holes_begin();
           it != input.holes_end();
           ++it){
-        assert(it->is_counterclockwise_oriented());
+        assert(it->is_clockwise_oriented());
       }
 
       //check the validity of the input and fix orientation
@@ -99,11 +99,12 @@ int main( int argc, char* argv[] )
   {
     std::cerr << "Computes the straight skeleton in the interior of a polygon with holes and draws it in an EPS file." << std::endl
               << std::endl
-              << "Usage: show_straight_skeleton <intput_file> [output_eps_file]" << std::endl
+              << "Usage: show_straight_skeleton <input_file> [output_eps_file]" << std::endl
               << std::endl
-              << "       intput_file  Text file describing the input polygon with holes." << std::endl
-              << "         (See input_file_format.txt for details)" << std::endl
-              << "       output_file     [default='innput_file.skeleton.eps']" << std::endl ;
+              << "       input_file  Text file describing the input polygon with holes." << std::endl
+              << "         (See input_file_format.txt for details" << std::endl
+              << "         or use input_file_example.txt)" << std::endl
+              << "       output_file     [default='input_file.skeleton.eps']" << std::endl ;
   }
 
   return 0;
