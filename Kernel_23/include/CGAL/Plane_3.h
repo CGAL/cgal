@@ -73,6 +73,9 @@ public:
   Plane_3(const Point_3& p, const Point_3& q, const Point_3& r)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, q, r)) {}
 
+  Plane_3(Origin o, const Point_3& q, const Point_3& r)
+    : Rep(typename R::Construct_plane_3()(Return_base_tag(), o, q, r)) {}
+
   Plane_3(const Point_3& p, const Direction_3& d)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, d)) {}
 
