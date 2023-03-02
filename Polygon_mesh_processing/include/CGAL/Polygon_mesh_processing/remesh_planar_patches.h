@@ -1340,7 +1340,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *   \cgalParamNEnd
- *    \cgalParamNBegin{cosinus_threshold}
+ *    \cgalParamNBegin{cosine_of_maxium_angle}
  *      \cgalParamDescription{the cosinus an angle that is used as the lower bound of both the dihedral angle between two adjacent
  *                            triangles to consider then as coplanar, and the angle between adjacent segments to consider then as collinear.}
  *      \cgalParamType{`FT` type from the `geom_traits` parameter}
@@ -1407,7 +1407,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
 
-  double coplanar_cos_threshold = choose_parameter(get_parameter(np_in, internal_np::cosinus_threshold), -1);
+  double coplanar_cos_threshold = choose_parameter(get_parameter(np_in, internal_np::cosine_of_maxium_angle), -1);
   CGAL_precondition(coplanar_cos_threshold<0);
 
   // initialize property maps (fill user provided or user internal ones)

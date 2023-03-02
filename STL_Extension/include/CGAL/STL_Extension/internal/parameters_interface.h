@@ -147,7 +147,6 @@ CGAL_add_named_parameter(mesh_facet_angle_t, mesh_facet_angle, mesh_facet_angle)
 CGAL_add_named_parameter(mesh_facet_distance_t, mesh_facet_distance, mesh_facet_distance)
 CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_topology)
 CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
-CGAL_add_named_parameter(cosinus_threshold_t, cosinus_threshold, cosinus_threshold)
 CGAL_add_named_parameter(vertex_corner_map_t, vertex_corner_map, vertex_corner_map)
 CGAL_add_named_parameter(normals_of_patches_t, normals_of_patches, normals_of_patches)
 

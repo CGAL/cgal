@@ -202,7 +202,7 @@ public Q_SLOTS:
 
         CGAL::Polygon_mesh_processing::remesh_planar_patches(pmesh,
                                                              out,
-                                                             CGAL::parameters::cosinus_threshold(cos_threshold)
+                                                             CGAL::parameters::cosine_of_maxium_angle(cos_threshold)
                                                                   .face_patch_map(in_fpmap)
                                                                   .do_not_triangulate_faces(do_not_triangulate_faces),
                                                              CGAL::parameters::face_patch_map(out_fpmap));
@@ -226,7 +226,7 @@ public Q_SLOTS:
       {
         CGAL::Polygon_mesh_processing::remesh_planar_patches(pmesh,
                                                              pmesh,
-                                                             CGAL::parameters::cosinus_threshold(cos_threshold)
+                                                             CGAL::parameters::cosine_of_maxium_angle(cos_threshold)
                                                                               .do_not_triangulate_faces(do_not_triangulate_faces),
                                                              CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
 
