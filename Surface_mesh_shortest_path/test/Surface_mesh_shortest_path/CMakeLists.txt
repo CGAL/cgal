@@ -3,8 +3,6 @@ project(Surface_mesh_shortest_path_Tests)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
 
-find_package(LEDA QUIET)
-
 include_directories(BEFORE "include")
 
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_1.cpp")
@@ -15,25 +13,25 @@ create_single_source_cgal_program("Surface_mesh_shortest_path_test_5.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_6.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_traits_test.cpp")
 
+find_package(LEDA QUIET)
+if(LEDA_FOUND)
+  message(STATUS "Found LEDA")
+endif()
+
 # Link with Boost.ProgramOptions (optional)
 find_package(Boost QUIET COMPONENTS program_options)
 if(Boost_PROGRAM_OPTIONS_FOUND)
+  message(STATUS "Found Boost program_options")
   if(CGAL_Core_FOUND OR LEDA_FOUND)
     create_single_source_cgal_program("TestMesh.cpp")
-    if(TARGET Boost::filesystem)
+    if(TARGET Boost::program_options)
       target_link_libraries(TestMesh PRIVATE Boost::program_options)
     else()
       target_link_libraries(TestMesh PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
     endif()
   else()
-    message(
-      STATUS
-        "NOTICE: Example TestMesh.cpp requires the CGAL_Core library (or LEDA) and will not be compiled."
-    )
+    message(STATUS "NOTICE: The example TestMesh.cpp requires the CGAL_Core library (or LEDA) and will not be compiled.")
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE: Example TestMesh.cpp requires boost program_option and will not be compiled."
-  )
+  message(STATUS "NOTICE: The example TestMesh.cpp requires boost program_option and will not be compiled.")
 endif()

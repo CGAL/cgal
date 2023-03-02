@@ -9,8 +9,5 @@ find_package(CGAL REQUIRED COMPONENTS ImageIO)
 if(WITH_CGAL_ImageIO)
   create_single_source_cgal_program("test_trilinear_interpolation.cpp")
 else()
-  message(
-    STATUS
-      "NOTICE: Some tests require the CGAL_ImageIO library, and will not be compiled."
-  )
+  message("NOTICE: This project requires the CGAL_ImageIO library, and will not be compiled.")
 endif()

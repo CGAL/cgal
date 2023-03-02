@@ -25,5 +25,5 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/N
   target_link_libraries(test_deprecated_io_sm PRIVATE ${3MF_LIBRARIES})
   target_compile_definitions(test_deprecated_io_sm PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
-  message(STATUS "NOTICE : read_3mf requires the lib3MF library, and will not be tested.")
+  message(STATUS "NOTICE: read_3mf requires the lib3MF library, and will not be tested.")
 endif()

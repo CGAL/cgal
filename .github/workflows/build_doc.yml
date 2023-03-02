@@ -159,7 +159,8 @@ jobs:
         with:
           script: |
             const error = process.env.ERRORMSG
-            const msg = "There was an error while building the doc: \n"+error
+            const job_url = `${context.serverUrl}/CGAL/cgal/actions/runs/${context.runId}`
+            const msg = "There was an error while building the doc: \n"+error + "\n" + job_url
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

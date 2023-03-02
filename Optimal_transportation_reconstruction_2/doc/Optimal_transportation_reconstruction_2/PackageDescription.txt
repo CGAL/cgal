@@ -12,7 +12,7 @@
 \cgalPkgDescriptionBegin{Optimal Transportation Curve Reconstruction, PkgOptimalTransportationReconstruction2}
 \cgalPkgPicture{RS_2_small.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Pierre Alliez, David Cohen-Steiner, Fernando de Goes, Clément Jamin, Ivo Vigan}
+\cgalPkgAuthors{Pierre Alliez, David Cohen-Steiner, Fernando de Goes, Clément Jamin, and Ivo Vigan}
 \cgalPkgDesc{This package provides an algorithm to reconstruct and simplify a shape from a point set in the plane, possibly hampered with noise and outliers. It generates as output a set of line segments and isolated points, which approximate the input point set.}
 \cgalPkgManuals{Chapter_Optimal_Transportation_Curve_Reconstruction, PkgOptimalTransportationReconstruction2Ref}
 \cgalPkgSummaryEnd
