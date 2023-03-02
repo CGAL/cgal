@@ -707,7 +707,7 @@ public:
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
     std::size_t nb_patches_tm1 =
       connected_components(tm1,
-                           bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
+                           make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_1)
                                       .face_index_map(fids1));
 
@@ -720,7 +720,7 @@ public:
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
     std::size_t nb_patches_tm2 =
       connected_components(tm2,
-                           bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
+                           make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_2)
                                       .face_index_map(fids2));
 
