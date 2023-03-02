@@ -115,7 +115,7 @@ int main()
 
     // call the decimation function
     Surface_mesh sm_out;
-    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosine_of_maxium_angle(-0.99));
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosine_of_maximum_angle(0.99));
     ss=std::stringstream();
     ss << "out_a" << i << ".off";
     std::ofstream out(ss.str().c_str());
@@ -391,7 +391,7 @@ int main()
     std::ifstream in("data/decimation/sphere.off");
     in >> sm;
     Surface_mesh sm_out;
-    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosine_of_maxium_angle(-0.99));
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosine_of_maximum_angle(0.99));
   }
   {
     Surface_mesh sm;
@@ -399,7 +399,7 @@ int main()
     std::ifstream in("data/decimation/sphere_selection.off");
     in >> sm;
     Surface_mesh sm_out;
-    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosine_of_maxium_angle(-0.99));
+    PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosine_of_maximum_angle(0.99));
     std::ofstream out("sphere_selection_app.off");
     out << sm_out;
     std::cout << "output written to sphere_selection_app.off\n";

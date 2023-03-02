@@ -53,10 +53,10 @@ namespace Polygon_mesh_processing {
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{25 degrees}
-      \cgalParamExtra{this parameter and `cosine_of_maxium_angle` are exclusive}
+      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
-    \cgalParamNBegin{cosine_of_maxium_angle}
-      \cgalParamDescription{The maximum angle, given as a cosine, between the normal of the supporting planes of adjacent faces
+    \cgalParamNBegin{cosine_of_maximum_angle}
+      \cgalParamDescription{The maximum angle, given as a cosine, between the normals of the supporting planes of adjacent faces
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{`cos(25 * PI / 180)`}
@@ -151,7 +151,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamDescription{the maximum distance from a point to a line such that it is considered part of the region of the line}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{1}
-      \cgalParamExtra{this parameter and `cosine_of_maxium_angle` are exclusive}
+      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
       \cgalParamDescription{the maximum angle in degrees between two adjacent segments
@@ -159,8 +159,9 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
-    \cgalParamNBegin{cosine_of_maxium_angle}
-      \cgalParamDescription{The maximum angle, given as a cosine, between two adjacent segments
+    \cgalParamNBegin{cosine_of_maximum_angle}
+      \cgalParamDescription{The maximum angle, given as a cosine, for the smallest angle
+                            between the supporting line of a segment and an adjacent segment
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{`cos(25 * PI / 180)`}
@@ -205,7 +206,7 @@ detect_corners_of_regions(
   using face_descriptor = typename Graph_traits::face_descriptor;
   using vertex_descriptor = typename Graph_traits::vertex_descriptor;
 
-  using Default_ecm = typename boost::template property_map<PolygonMesh, CGAL::dynamic_edge_property_t<bool> >::type;
+  using Default_ecm = typename boost::template property_map<PolygonMesh, CGAL::dynamic_edge_property_t<bool> >::const_type;
   using Ecm = typename internal_np::Lookup_named_param_def <
                 internal_np::edge_is_constrained_t,
                 NamedParameters,
@@ -213,7 +214,7 @@ detect_corners_of_regions(
               > ::type;
 
   Default_ecm dynamic_ecm;
-  if(!(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value))
+  if(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value)
     dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 

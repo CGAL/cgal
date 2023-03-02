@@ -8,6 +8,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/region_growing.h>
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
 
@@ -32,7 +33,7 @@
 #include "ui_Remesh_planar_patches_dialog.h"
 
 
-
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 using namespace CGAL::Three;
 class Polyhedron_demo_remesh_planar_patches_plugin :
@@ -92,6 +93,7 @@ public Q_SLOTS:
       connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
       ui.create_new_item_checkbox->setEnabled(false);
+      ui.use_region_growing_checkbox->setEnabled(false);
 
       // Get values
       int i = dialog.exec();
@@ -127,7 +129,7 @@ public Q_SLOTS:
         }
       };
 
-      CGAL::Polygon_mesh_processing::decimate_meshes_with_common_interfaces(meshes, cos_threshold, Mesh_map(), do_not_triangulate_faces);
+      PMP::decimate_meshes_with_common_interfaces(meshes, -cos_threshold, Mesh_map(), do_not_triangulate_faces);
 
       for (Scene_surface_mesh_item* poly_item : meshes)
       {
@@ -181,7 +183,7 @@ public Q_SLOTS:
               (QMessageBox::Ok | QMessageBox::Cancel), QMessageBox::Ok))
         {
           QApplication::setOverrideCursor(Qt::WaitCursor);
-          CGAL::Polygon_mesh_processing::triangulate_faces(pmesh);
+          PMP::triangulate_faces(pmesh);
         }
         else
         {
@@ -189,49 +191,117 @@ public Q_SLOTS:
         }
       }
 
-      if (create_new_item)
+      if (ui.use_region_growing_checkbox->isChecked())
       {
+
+        //TODO: add maximum_distance parameter
         typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
-        Scene_surface_mesh_item* new_item=new Scene_surface_mesh_item();
-        Mesh& out = *new_item->polyhedron();
-
-
         Patch_id_pmap in_fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
-        Patch_id_pmap out_fpmap = get(CGAL::face_patch_id_t<int>(), out);
+        std::vector<std::size_t> corner_id_map(num_vertices(pmesh), -1);
+        std::vector<bool> ecm(num_edges(pmesh), false);
+        std::size_t nb_regions =
+          PMP::region_growing_of_planes_on_faces(pmesh,
+                                                 in_fpmap,
+                                                 CGAL::parameters::cosine_of_maximum_angle(cos_threshold));
+        std::size_t nb_corners =
+          PMP::detect_corners_of_regions(pmesh,
+                                         in_fpmap,
+                                         nb_regions,
+                                         CGAL::make_random_access_property_map(corner_id_map),
+                                         CGAL::parameters::cosine_of_maximum_angle(cos_threshold).
+                                                           edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+        if (create_new_item)
+        {
+          Scene_surface_mesh_item* new_item=new Scene_surface_mesh_item();
+          Mesh& out = *new_item->polyhedron();
 
-        CGAL::Polygon_mesh_processing::remesh_planar_patches(pmesh,
-                                                             out,
-                                                             CGAL::parameters::cosine_of_maxium_angle(cos_threshold)
-                                                                  .face_patch_map(in_fpmap)
-                                                                  .do_not_triangulate_faces(do_not_triangulate_faces),
-                                                             CGAL::parameters::face_patch_map(out_fpmap));
+          Patch_id_pmap out_fpmap = get(CGAL::face_patch_id_t<int>(), out);
+
+          PMP::remesh_almost_planar_patches(pmesh,
+                                            out,
+                                            nb_regions, nb_corners,
+                                            in_fpmap,
+                                            CGAL::make_random_access_property_map(corner_id_map),
+                                            CGAL::make_random_access_property_map(ecm),
+                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces),
+                                           CGAL::parameters::face_patch_map(out_fpmap));
 
 
-        new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
-        scene->setSelectedItem( scene->addItem(new_item) );
+          new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
+          scene->setSelectedItem( scene->addItem(new_item) );
 
-        poly_item->setItemIsMulticolor(true);
-        poly_item->computeItemColorVectorAutomatically(true);
-        poly_item->invalidateOpenGLBuffers();
-        Q_EMIT poly_item->itemChanged();
-        new_item->setItemIsMulticolor(true);
-        new_item->computeItemColorVectorAutomatically(false);
-        new_item->color_vector()=poly_item->color_vector(); // colors are not deterministic
-        new_item->invalidateOpenGLBuffers();
-        Q_EMIT new_item->itemChanged();
+          poly_item->setItemIsMulticolor(true);
+          poly_item->computeItemColorVectorAutomatically(true);
+          poly_item->invalidateOpenGLBuffers();
+          Q_EMIT poly_item->itemChanged();
+          new_item->setItemIsMulticolor(true);
+          new_item->computeItemColorVectorAutomatically(false);
+          new_item->color_vector()=poly_item->color_vector(); // colors are not deterministic
+          new_item->invalidateOpenGLBuffers();
+          Q_EMIT new_item->itemChanged();
+        }
+        else
+        {
+          PMP::remesh_almost_planar_patches(pmesh,
+                                            pmesh,
+                                            nb_regions, nb_corners,
+                                            in_fpmap,
+                                            CGAL::make_random_access_property_map(corner_id_map),
+                                            CGAL::make_random_access_property_map(ecm),
+                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces),
+                                            CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
+          pmesh.remove_property_map<Mesh::Face_index, int>(in_fpmap);
+          poly_item->invalidateOpenGLBuffers();
 
+          Q_EMIT poly_item->itemChanged();
+        }
       }
       else
       {
-        CGAL::Polygon_mesh_processing::remesh_planar_patches(pmesh,
-                                                             pmesh,
-                                                             CGAL::parameters::cosine_of_maxium_angle(cos_threshold)
-                                                                              .do_not_triangulate_faces(do_not_triangulate_faces),
-                                                             CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
+        if (create_new_item)
+        {
+          typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+          Scene_surface_mesh_item* new_item=new Scene_surface_mesh_item();
+          Mesh& out = *new_item->polyhedron();
 
-        poly_item->invalidateOpenGLBuffers();
 
-        Q_EMIT poly_item->itemChanged();
+          Patch_id_pmap in_fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
+          Patch_id_pmap out_fpmap = get(CGAL::face_patch_id_t<int>(), out);
+
+          PMP::remesh_planar_patches(pmesh,
+                                     out,
+                                     CGAL::parameters::cosine_of_maximum_angle(cos_threshold)
+                                          .face_patch_map(in_fpmap)
+                                          .do_not_triangulate_faces(do_not_triangulate_faces),
+                                     CGAL::parameters::face_patch_map(out_fpmap));
+
+
+          new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
+          scene->setSelectedItem( scene->addItem(new_item) );
+
+          poly_item->setItemIsMulticolor(true);
+          poly_item->computeItemColorVectorAutomatically(true);
+          poly_item->invalidateOpenGLBuffers();
+          Q_EMIT poly_item->itemChanged();
+          new_item->setItemIsMulticolor(true);
+          new_item->computeItemColorVectorAutomatically(false);
+          new_item->color_vector()=poly_item->color_vector(); // colors are not deterministic
+          new_item->invalidateOpenGLBuffers();
+          Q_EMIT new_item->itemChanged();
+
+        }
+        else
+        {
+          PMP::remesh_planar_patches(pmesh,
+                                     pmesh,
+                                     CGAL::parameters::cosine_of_maximum_angle(cos_threshold)
+                                                      .do_not_triangulate_faces(do_not_triangulate_faces),
+                                     CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
+
+          poly_item->invalidateOpenGLBuffers();
+
+          Q_EMIT poly_item->itemChanged();
+        }
       }
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 

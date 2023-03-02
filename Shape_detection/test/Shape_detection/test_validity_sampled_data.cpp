@@ -122,7 +122,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
   RG_region rg_region (
     CGAL::parameters::
     maximum_distance(parameters.epsilon).
-    cosine_of_maxium_angle(parameters.normal_threshold).
+    cosine_of_maximum_angle(parameters.normal_threshold).
     minimum_region_size(parameters.min_points));
   Region_growing region_growing (points, rg_query, rg_region);
   std::size_t nb_detected = 0;

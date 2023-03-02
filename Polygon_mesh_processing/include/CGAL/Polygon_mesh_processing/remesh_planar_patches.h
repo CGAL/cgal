@@ -1340,11 +1340,12 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *   \cgalParamNEnd
- *    \cgalParamNBegin{cosine_of_maxium_angle}
- *      \cgalParamDescription{the cosinus an angle that is used as the lower bound of both the dihedral angle between two adjacent
- *                            triangles to consider then as coplanar, and the angle between adjacent segments to consider then as collinear.}
+ *    \cgalParamNBegin{cosine_of_maximum_angle}
+ *      \cgalParamDescription{The maximum angle, given as a cosine,
+ *                            (i) between the normals of the supporting planes of adjacent faces such that they are considered coplanar, and
+ *                            (ii) for the smallest angle between the supporting line of a segment and an adjacent segment such that they are considered collinear.}
  *      \cgalParamType{`FT` type from the `geom_traits` parameter}
- *      \cgalParamDefault{-1, which means exact coplanarity and collinearity}
+ *      \cgalParamDefault{1, which means exact coplanarity and collinearity}
  *   \cgalParamNEnd
  *    \cgalParamNBegin{do_not_triangulate_faces}
  *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
@@ -1407,8 +1408,8 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
 
-  double coplanar_cos_threshold = choose_parameter(get_parameter(np_in, internal_np::cosine_of_maxium_angle), -1);
-  CGAL_precondition(coplanar_cos_threshold<0);
+  double coplanar_cos_threshold = - choose_parameter(get_parameter(np_in, internal_np::cosine_of_maximum_angle), 1);
+  CGAL_precondition(coplanar_cos_threshold<=0 && coplanar_cos_threshold>=-1);
 
   // initialize property maps (fill user provided or user internal ones)
   typedef typename boost::property_map<TriangleMeshIn,

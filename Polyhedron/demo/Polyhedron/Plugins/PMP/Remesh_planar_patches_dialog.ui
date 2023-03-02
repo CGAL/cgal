@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>374</width>
-    <height>186</height>
+    <width>392</width>
+    <height>217</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,17 @@
      <property name="title">
       <string>Parameters</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="0,0">
+     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="0,0">
+      <item row="0" column="0">
+       <widget class="QLabel" name="cos_label">
+        <property name="text">
+         <string>Cosinus Threshold</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <widget class="DoubleEdit" name="cos_dspinbox">
         <property name="inputMethodHints">
@@ -32,20 +42,17 @@
          <string/>
         </property>
         <property name="text">
-         <string>-1</string>
+         <string>1</string>
         </property>
         <property name="placeholderText">
          <string>0.00</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="cos_label">
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="create_new_item_checkbox">
         <property name="text">
-         <string>Cosinus Threshold</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <string>Create new item</string>
         </property>
        </widget>
       </item>
@@ -60,9 +67,9 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QCheckBox" name="create_new_item_checkbox">
+       <widget class="QCheckBox" name="use_region_growing_checkbox">
         <property name="text">
-         <string>Create new item</string>
+         <string>Use region growing of planes</string>
         </property>
        </widget>
       </item>

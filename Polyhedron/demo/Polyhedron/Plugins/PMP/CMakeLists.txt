@@ -33,32 +33,37 @@ if(TARGET CGAL::Eigen3_support)
         scene_mcf_item
         demo_framework
         CGAL::Eigen3_support)
-      # The smoothing plugin can still do some things, even if Ceres is not found
-      qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui Smoothing_tangential_relaxation.ui)
-      polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
-      target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
-      find_package(Ceres QUIET)
-      include(CGAL_Ceres_support)
-      if(TARGET CGAL::Ceres_support)
-        target_link_libraries(smoothing_plugin PUBLIC CGAL::Ceres_support)
-      endif()
+    # The smoothing plugin can still do some things, even if Ceres is not found
+    qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui Smoothing_tangential_relaxation.ui)
+    polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+    target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
+    find_package(Ceres QUIET)
+    include(CGAL_Ceres_support)
+    if(TARGET CGAL::Ceres_support)
+      target_link_libraries(smoothing_plugin PUBLIC CGAL::Ceres_support)
+    endif()
 
-      set_package_properties(
-        Ceres PROPERTIES
-        DESCRIPTION "A large scale non-linear optimization library."
-        PURPOSE "Can be used as a solver in the smoothing plugin.")
-        target_link_libraries(extrude_plugin PUBLIC CGAL::Eigen3_support)
+    set_package_properties(
+      Ceres PROPERTIES
+      DESCRIPTION "A large scale non-linear optimization library."
+      PURPOSE "Can be used as a solver in the smoothing plugin.")
+    target_link_libraries(extrude_plugin PUBLIC CGAL::Eigen3_support)
 
-        if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
-          set_tests_properties(
-            compilation_of__extrude_plugin
-            compilation_of__fairing_plugin
-            PROPERTIES RESOURCE_LOCK Selection_test_resources)
-          set_tests_properties(
-          compilation_of__hole_filling_plugin
-          compilation_of__smoothing_plugin
-          PROPERTIES RESOURCE_LOCK Selection_test_resources)
-        endif()
+    qt5_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
+    polyhedron_demo_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
+                           ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
+    target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item CGAL::Eigen3_support)
+
+    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+      set_tests_properties(
+        compilation_of__extrude_plugin
+        compilation_of__fairing_plugin
+        PROPERTIES RESOURCE_LOCK Selection_test_resources)
+      set_tests_properties(
+      compilation_of__hole_filling_plugin
+      compilation_of__smoothing_plugin
+      PROPERTIES RESOURCE_LOCK Selection_test_resources)
+    endif()
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
@@ -125,11 +130,6 @@ target_link_libraries(isotropic_remeshing_plugin PUBLIC scene_surface_mesh_item
 if(TARGET CGAL::TBB_support)
   target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
 endif()
-
-qt5_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
-polyhedron_demo_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
-                       ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
-target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item)
 
 polyhedron_demo_plugin(distance_plugin Distance_plugin KEYWORDS PMP)
 target_link_libraries(distance_plugin PUBLIC scene_surface_mesh_item
