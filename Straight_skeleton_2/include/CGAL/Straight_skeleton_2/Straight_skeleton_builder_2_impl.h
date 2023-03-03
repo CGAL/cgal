@@ -425,13 +425,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
 
   Link(lOB,aA);
 
-  CGAL_STSKEL_BUILDER_TRACE ( 1, "B" << lOA->id() << " and B" << lIA->id() << " erased." ) ;
-  mDanglingBisectors.push_back(lOA);
-
-  //
   // The code above corrects the links for vertices aA/aB to the erased halfedges lOA and lIA.
-  // However, any of these vertices (aA/aB) maybe one of the twin vertices of a split event.
-  // If that's the case, the erased halfedge maybe be linked to a 'couple' of those vertices.
+  // However, any of these vertices (aA/aB) may be one of the twin vertices of a split event.
+  // If that's the case, the erased halfedge may be be linked to a 'couple' of those vertices.
   // This situation is corrected below:
 
   if ( !lOAV->has_infinite_time() && lOAV != aA && lOAV != aB )
@@ -472,6 +468,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
     CGAL_STSKEL_BUILDER_TRACE ( 2, "Fictitious N" << lOBV->id() << " erased." ) ;
     EraseNode(lOBV);
   }
+
+  CGAL_STSKEL_BUILDER_TRACE ( 1, "B" << lOA->id() << " and B" << lIA->id() << " erased." ) ;
+  EraseBisector(lOA); // `edges_erase(h)` removes `h` and `h->opposite()`
 }
 
 // Returns true if the skeleton edges 'aA' and 'aB' are defined by the same pair of contour edges (but possibly in reverse order)
@@ -2005,10 +2004,6 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
                 ,[this](Vertex_handle_pair p){ this->MergeSplitNodes(p); }
                ) ;
 
-  std::for_each( mDanglingBisectors.begin()
-                ,mDanglingBisectors.end  ()
-                ,[this](Halfedge_handle db){ this->EraseBisector(db); }
-               ) ;
 
   // MergeCoincidentNodes() locks all extremities of halfedges that have a vertex involved in a multinode.
   // However, both extremities might have different (combinatorially and geometrically) vertices.

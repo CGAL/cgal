@@ -1219,9 +1219,7 @@ private:
   std::vector<std::list<Vertex_handle>> mLAVLists;
 
   Vertex_handle_vector   mReflexVertices ;
-  Halfedge_handle_vector mDanglingBisectors ;
   Halfedge_handle_vector mContourHalfedges ;
-
 
   Vertex_handle_pair_vector mSplitNodes ;
 
