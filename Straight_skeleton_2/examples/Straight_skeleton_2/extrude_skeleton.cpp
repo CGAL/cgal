@@ -5,9 +5,10 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/extrude_skeleton.h>
 #include "print.h"
+#include <CGAL/draw_straight_skeleton_2.h>
 #include <CGAL/draw_surface_mesh.h>
+#include <CGAL/extrude_skeleton.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/IO/polygon_soup_io.h>

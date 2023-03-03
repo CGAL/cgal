@@ -15,6 +15,7 @@
 
 #include <CGAL/number_type_config.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/utility.h>
 
 #include <boost/utility.hpp>
 #include <boost/version.hpp>

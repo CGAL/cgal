@@ -119,9 +119,10 @@ private :
 
   typedef typename Traits::FT               FT ;
   typedef typename Traits::Point_2          Point_2 ;
+  typedef typename Traits::Segment_2        Segment_2 ;
   typedef typename Traits::Vector_2         Vector_2 ;
   typedef typename Traits::Direction_2      Direction_2 ;
-  typedef typename Traits::Segment_2        Segment_2 ;
+
   typedef typename Traits::Trisegment_2     Trisegment_2 ;
   typedef typename Traits::Trisegment_2_ptr Trisegment_2_ptr ;
 
