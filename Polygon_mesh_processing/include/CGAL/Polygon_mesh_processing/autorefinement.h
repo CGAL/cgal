@@ -38,6 +38,7 @@
 
 //#define TEST_RESOLVE_INTERSECTION
 //#define DEDUPLICATE_SEGMENTS
+//#define DEBUG_DEPTH
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -111,13 +112,31 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
   std::cout << "intersection_coplanar_triangles\n";
   std::ofstream("/tmp/t1.polylines.txt") << to_string(t1) << "\n";
   std::ofstream("/tmp/t2.polylines.txt") << to_string(t2) << "\n";
+  auto print_points = [&]()
+  {
+    for(auto p : l_inter_pts) std::cout << "  (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) "; std::cout <<"\n";
+  };
+  std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
+  print_points();
 #endif
 
   //intersect t2 with the three half planes which intersection defines t1
   K k;
   intersection_coplanar_triangles_cutoff(p1,q1,r1,0,p2,q2,r2,k,l_inter_pts); //line p1q1
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
+  print_points();
+#endif
   intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,l_inter_pts); //line q1r1
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
+  print_points();
+#endif
   intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,l_inter_pts); //line r1p1
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
+  print_points();
+#endif
 
   for (const Intersections::internal::Point_on_triangle<K>& pot : l_inter_pts)
     inter_pts.push_back( pot.point(p1,q1,r1,p2,q2,r2,k) );
@@ -277,8 +296,10 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   if (ori[0]== COPLANAR && ori[1]==COPLANAR && ori[2]==COPLANAR)
   {
     coplanar_intersections<K>(t1, t2, inter_pts);
+#ifdef DEBUG_DEPTH
     for (auto p : inter_pts)
-      if (depth(p)>2) throw std::runtime_error("Depth is not 2: "+std::to_string(depth(p)));
+      if (depth(p)>2) throw std::runtime_error("Depth is not 4: "+std::to_string(depth(p)));
+#endif
 
     return;
   }
@@ -308,7 +329,6 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 
   for (auto p : inter_pts)
     if (depth(p)>2) throw std::runtime_error("Depth is not 2: "+std::to_string(depth(p)));
-
 }
 
 //////////////////////////////////
