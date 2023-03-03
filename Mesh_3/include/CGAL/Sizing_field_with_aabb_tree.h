@@ -29,6 +29,10 @@
 
 #include "AABB_filtered_projection_traits.h"
 
+/*!
+* @ingroup PkgMesh3DomainFields
+*
+*/
 template <typename GeomTraits, typename MeshDomain,
           typename Input_facets_AABB_tree = typename MeshDomain::AABB_tree,
           typename Get_curve_index_ = CGAL::Default,
