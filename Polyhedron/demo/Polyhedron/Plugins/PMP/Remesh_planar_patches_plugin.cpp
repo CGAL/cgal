@@ -86,12 +86,12 @@ public Q_SLOTS:
   {
     if (scene->selectionIndices().size() > 1)
     {
-
       // Create dialog box
       QDialog dialog(mw);
       ui.setupUi(&dialog);
       connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
       ui.create_new_item_checkbox->setEnabled(false);
       ui.use_region_growing_checkbox->setEnabled(false);
 
@@ -152,6 +152,7 @@ public Q_SLOTS:
       ui.setupUi(&dialog);
       connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+      connect(ui.use_region_growing_checkbox, SIGNAL(toggled(bool)), ui.dist_dspinbox, SLOT(setEnabled(bool)));
 
       // Get values
       int i = dialog.exec();
@@ -193,8 +194,6 @@ public Q_SLOTS:
 
       if (ui.use_region_growing_checkbox->isChecked())
       {
-
-        //TODO: add maximum_distance parameter
         typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
         Patch_id_pmap in_fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
         std::vector<std::size_t> corner_id_map(num_vertices(pmesh), -1);
@@ -202,13 +201,15 @@ public Q_SLOTS:
         std::size_t nb_regions =
           PMP::region_growing_of_planes_on_faces(pmesh,
                                                  in_fpmap,
-                                                 CGAL::parameters::cosine_of_maximum_angle(cos_threshold));
+                                                 CGAL::parameters::cosine_of_maximum_angle(cos_threshold).
+                                                                   maximum_distance(ui.dist_dspinbox->value()));
         std::size_t nb_corners =
           PMP::detect_corners_of_regions(pmesh,
                                          in_fpmap,
                                          nb_regions,
                                          CGAL::make_random_access_property_map(corner_id_map),
                                          CGAL::parameters::cosine_of_maximum_angle(cos_threshold).
+                                                           maximum_distance(ui.dist_dspinbox->value()).
                                                            edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
         if (create_new_item)
         {

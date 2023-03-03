@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>217</height>
+    <width>262</width>
+    <height>254</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,41 +22,71 @@
      <property name="title">
       <string>Parameters</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="0,0">
-      <item row="0" column="0">
-       <widget class="QLabel" name="cos_label">
-        <property name="text">
-         <string>Cosinus Threshold</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="cos_label">
+          <property name="text">
+           <string>Cosinus Threshold</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="DoubleEdit" name="cos_dspinbox">
+          <property name="inputMethodHints">
+           <set>Qt::ImhNone</set>
+          </property>
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="text">
+           <string>1</string>
+          </property>
+          <property name="placeholderText">
+           <string>0.00</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="0" column="1">
-       <widget class="DoubleEdit" name="cos_dspinbox">
-        <property name="inputMethodHints">
-         <set>Qt::ImhNone</set>
-        </property>
-        <property name="inputMask">
-         <string/>
-        </property>
-        <property name="text">
-         <string>1</string>
-        </property>
-        <property name="placeholderText">
-         <string>0.00</string>
-        </property>
-       </widget>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="dist_label">
+          <property name="text">
+           <string>Frechet Distance</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="DoubleEdit" name="dist_dspinbox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="inputMethodHints">
+           <set>Qt::ImhNone</set>
+          </property>
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="text">
+           <string>1</string>
+          </property>
+          <property name="placeholderText">
+           <string>0.00</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="4" column="1">
-       <widget class="QCheckBox" name="create_new_item_checkbox">
-        <property name="text">
-         <string>Create new item</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
+      <item>
        <widget class="QCheckBox" name="notriangulation_checkbox">
         <property name="enabled">
          <bool>true</bool>
@@ -66,10 +96,17 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item>
        <widget class="QCheckBox" name="use_region_growing_checkbox">
         <property name="text">
          <string>Use region growing of planes</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="create_new_item_checkbox">
+        <property name="text">
+         <string>Create new item</string>
         </property>
        </widget>
       </item>

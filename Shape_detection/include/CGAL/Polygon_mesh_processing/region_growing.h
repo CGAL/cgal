@@ -148,16 +148,16 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamDefault{Unused if not provided}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_distance}
-      \cgalParamDescription{the maximum distance from a point to a line such that it is considered part of the region of the line}
+      \cgalParamDescription{the maximum distance from a segment to a line such that it is considered part of the region of the line}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{1}
-      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
       \cgalParamDescription{the maximum angle in degrees between two adjacent segments
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{25 degrees}
+      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
     \cgalParamNBegin{cosine_of_maximum_angle}
       \cgalParamDescription{The maximum angle, given as a cosine, for the smallest angle
