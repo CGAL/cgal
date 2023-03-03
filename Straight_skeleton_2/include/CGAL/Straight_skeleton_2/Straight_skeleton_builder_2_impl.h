@@ -420,6 +420,43 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
                                  << "IB_Next: B" << lIB_Next->id() << " V" << lIB_Next->vertex()->id()
                             ) ;
 
+  // For weighted skeletons of polygons with holes, one can have a skeleton face wrap
+  // around an input hole. In that case, we have a configured of two fictous vertices
+  // meeting from each front that went around the wall, as well as the fictous vertex
+  // from the hole edge where the simultaneous event occurs. We have to close the "strait"
+  // and ensure that the contour edge corresponding to the wrapping face has its fictous vertex
+  // to continue its progression.
+
+  Halfedge_handle lIA_Prev = lIA->prev() ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "lIA_Prev: B" << lIA_Prev->id() << " V" << lIA_Prev->vertex()->id() ) ;
+
+  if ( lIA_Prev != lOB )
+  {
+    CGAL_STSKEL_BUILDER_TRACE ( 2, "Closing A-strait N" << lOBV->id() << " N" << lIA_Prev->vertex()->id() ) ;
+
+    Halfedge_handle lOB_Next = lOB->next() ;
+    CrossLinkFwd(lIA_Prev, lOB_Next );
+
+    SetNextInLAV( lOB_Next->vertex(), lIA_Prev->prev()->vertex() ) ;
+    SetPrevInLAV( lIA_Prev->prev()->vertex(), lOB_Next->vertex() ) ;
+  }
+
+  Halfedge_handle lIB_Prev = lIB->prev() ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "lIB_Prev: B" << lIB_Prev->id() << " V" << lIB_Prev->vertex()->id() ) ;
+
+  if ( lIB_Prev != lOA )
+  {
+    CGAL_STSKEL_BUILDER_TRACE ( 2, "Closing B-strait N" << lOAV->id() << " N" << lIB_Prev->vertex()->id() ) ;
+
+    Halfedge_handle lOA_Next = lOA->next() ;
+    CrossLinkFwd(lIB_Prev, lOA_Next );
+
+    SetNextInLAV( lOA_Next->vertex(), lIB_Prev->prev()->vertex() ) ;
+    SetPrevInLAV( lIB_Prev->prev()->vertex(), lOA_Next->vertex() ) ;
+  }
+
+  // Merge the two bisectors
+
   CrossLinkFwd(lOB, lIA_Next );
   CrossLinkFwd(lOA_Prev, lIB );
 
