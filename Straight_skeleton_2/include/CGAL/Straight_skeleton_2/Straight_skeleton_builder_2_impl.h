@@ -330,20 +330,19 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
   // polygon doex not have the common edge anymore, and the two vertices become one. This new 'skeleton' vertex generates a new
   // vertex wavefront which can further collide with other wavefronts, producing for instance, more edge events.
   //
-  // If a refex vertex wavefront collide with an edge wavefront, the event is called a split event. At the time of the event, the current
+  // If a reflex vertex wavefront collide with an edge wavefront, the event is called a split event. At the time of the event, the current
   // polygon is split in two unconnected polygons, each one containing a portion of the edge hit and split by the reflex wavefront.
   //
-  // If 2 reflex wavefronts collide each other, the event is called a vertex event. At the time of the event, the current polygon
+  // If 2 reflex wavefronts collide with each other, the event is called a vertex event. At the time of the event, the current polygon
   // is split in two unconnected polygons. Each one contains a different combination of the colliding reflex edges. That is, if the
   // wavefront (edgea,edgeb) collides with (edgec,edged), the two resulting polygons will contain (edgea,edgec) and (edgeb,edged).
-  // Furthermore, one of the new vertices can be a reflex vertex generating a reflex wavefront which can further produce more split or
-  // vertex events (or edge events of course)
+  // Furthermore, one of the new vertices can be a reflex vertex generating a reflex wavefront which can further produces more split
+  // or vertex events (or edge events of course).
   //
   // Each vertex wavefront (reflex or not) results in one and only one event from a set of possible events.
   // It can result in a edge event against the vertex wavefronts emerging from the adjacent vertices (in the current polygon, not
   // in the input polygon); or it can result in a split event (or vertex event) against any other wavefront in the rest of
   // current polygon.
-
 
   // Adjacent vertices in the current polygon containing aNode (called LAV)
   Vertex_handle lPrev = GetPrevInLAV(aNode) ;
@@ -421,11 +420,11 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
                             ) ;
 
   // For weighted skeletons of polygons with holes, one can have a skeleton face wrap
-  // around an input hole. In that case, we have a configured of two fictous vertices
-  // meeting from each front that went around the wall, as well as the fictous vertex
-  // from the hole edge where the simultaneous event occurs. We have to close the "strait"
-  // and ensure that the contour edge corresponding to the wrapping face has its fictous vertex
-  // to continue its progression.
+  // around an input hole. In that case, we have a configuration of two fictous vertices
+  // meeting from each side after going around the hole, as well as the fictous vertex
+  // from the hole edge where the simultaneous event occurs. We then have to close the "strait"
+  // and ensure that the contour edge corresponding to the wrapping face still has
+  // a fictous vertex to continue its progression beyond the hole.
 
   Halfedge_handle lIA_Prev = lIA->prev() ;
   CGAL_STSKEL_BUILDER_TRACE ( 2, "lIA_Prev: B" << lIA_Prev->id() << " V" << lIA_Prev->vertex()->id() ) ;

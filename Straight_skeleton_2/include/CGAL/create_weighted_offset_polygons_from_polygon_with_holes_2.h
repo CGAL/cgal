@@ -53,7 +53,7 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                                  aWeights, ofk, ssk);
 }
 
-/*! create_interior_skeleton_and_offset_polygons_with_holes_2 (orders the resulting polygons) */
+/*! create_interior_weighted_skeleton_and_offset_polygons_with_holes_2 (orders the resulting polygons) */
 
 // Polygon might be a Polygon with holes or not, but it returns a Polygon with holes
 template<class FT, class Polygon, class Weights, class OfK, class SsK,
