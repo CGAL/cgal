@@ -40,7 +40,6 @@ struct Compare_offset_against_event_time_2 : Functor_base_2<K>
   }
 };
 
-
 template<class K>
 struct Construct_offset_point_2 : Functor_base_2<K>
 {
@@ -111,19 +110,18 @@ struct Polygon_offset_builder_traits_2_base
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
   typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
-
-  template<class F> F get( F const* = 0 ) const { return F(); }
 } ;
 
-template<class Is_filtered_kernel, class K> class Polygon_offset_builder_traits_2_impl ;
+template<class Is_filtered_kernel, class K>
+class Polygon_offset_builder_traits_2_impl ;
 
 template<class K>
-class Polygon_offset_builder_traits_2_impl<Tag_false,K> : public Polygon_offset_builder_traits_2_base<K>
+class Polygon_offset_builder_traits_2_impl<Tag_false,K>
+  : public Polygon_offset_builder_traits_2_base<K>
 {
   typedef Polygon_offset_builder_traits_2_functors<K> Unfiltering ;
 
 public:
-
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_offset_against_event_time_2>
     Compare_offset_against_event_time_2 ;
 
@@ -133,11 +131,11 @@ public:
   typedef typename Unfiltering::Construct_offset_point_2            Construct_offset_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
-
 } ;
 
 template<class K>
-class Polygon_offset_builder_traits_2_impl<Tag_true,K> : public Polygon_offset_builder_traits_2_base<K>
+class Polygon_offset_builder_traits_2_impl<Tag_true,K>
+  : public Polygon_offset_builder_traits_2_base<K>
 {
   typedef typename K::Exact_kernel       EK ;
   typedef typename K::Approximate_kernel FK ;
@@ -159,7 +157,6 @@ class Polygon_offset_builder_traits_2_impl<Tag_true,K> : public Polygon_offset_b
   typedef CGAL_SS_i::SS_converter<BaseC2C> C2C ;
 
 public:
-
   typedef Filtered_predicate<typename Exact    ::Compare_offset_against_event_time_2
                             ,typename Filtering::Compare_offset_against_event_time_2
                             , C2E
@@ -201,13 +198,27 @@ template<class K>
 class Polygon_offset_builder_traits_2
   : public Polygon_offset_builder_traits_2_impl<typename CGAL_SS_i::Is_filtering_kernel<K>::type,K>
 {
+  typedef Polygon_offset_builder_traits_2_impl<typename CGAL_SS_i::Is_filtering_kernel<K>::type,K> Base ;
+
+public:
+  typedef typename Base::Compare_offset_against_event_time_2 Compare_offset_against_event_time_2 ;
+  typedef typename Base::Compare_ss_event_times_2 Compare_ss_event_times_2 ;
+  typedef typename Base::Construct_offset_point_2 Construct_offset_point_2 ;
+  typedef typename Base::Construct_ss_trisegment_2 Construct_ss_trisegment_2 ;
+  typedef typename Base::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
+
+  Compare_offset_against_event_time_2 compare_offset_against_event_time_2_object() const
+  { return Compare_offset_against_event_time_2() ; }
+  Compare_ss_event_times_2 compare_ss_event_times_2_object() const
+  { return Compare_ss_event_times_2() ; }
+  Construct_offset_point_2 construct_offset_point_2_object() const
+  { return Construct_offset_point_2() ; }
+  Construct_ss_trisegment_2 construct_ss_trisegment_2_object() const
+  { return Construct_ss_trisegment_2() ; }
+  Construct_ss_event_time_and_point_2 construct_ss_event_time_and_point_2_object() const
+  { return Construct_ss_event_time_and_point_2() ; }
 } ;
 
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_offset_against_event_time_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_offset_point_2)
+} // namespace CGAL
 
-} // end namespace CGAL
-
-
-#endif // CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H //
-// EOF //
+#endif // CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H

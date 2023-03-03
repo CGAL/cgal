@@ -464,29 +464,7 @@ struct Get_protector<GT, true>
   typedef typename GT::Protector type;
 };
 
-
 } // namespace CGAL_SS_i
-
-
-//
-// This macro defines a global functor adapter which allows users to use it in the following ways:
-//
-// Given a 'Functor' provided by a given 'Traits' (or Kernel):
-//
-//   typedef typename CGAL::Functor<Traits>::type Functor ;
-//   result r = CGAL::Functor<Traits>(traits)(a,b,c);
-//
-#define CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(functor) \
-        template<class K> \
-        typename K :: functor functor ( K const& aK ) \
-        { \
-          return aK.get((typename K :: functor const*)0);  \
-        }
-
-
-} // end namespace CGAL
-
+} // namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H //
-
-// EOF //

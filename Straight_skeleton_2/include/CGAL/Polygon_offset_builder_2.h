@@ -145,7 +145,7 @@ public:
     CGAL_precondition( aNode->is_skeleton() ) ;
 
     Comparison_result r = aNode->has_infinite_time() ? SMALLER
-                                                     : static_cast<Comparison_result>(Compare_offset_against_event_time_2(mTraits)(aT,GetTrisegment(aNode)));
+                                                     : static_cast<Comparison_result>(mTraits.compare_offset_against_event_time_2_object()(aT,GetTrisegment(aNode)));
 
     return r ;
   }
@@ -176,13 +176,12 @@ public:
       CGAL_POLYOFFSET_TRACE(3,"Seed node for " << e2str(*aBisector) << " is " << v2str(*lSeedNode) << " event=" << lSeedEvent ) ;
     }
 
-    OptionalPoint_2 p = Construct_offset_point_2(mTraits)(aT
-                                                         ,CreateSegment(lBorderA)
-                                                         ,lBorderA->weight()
-                                                         ,CreateSegment(lBorderB)
-                                                         ,lBorderB->weight()
-                                                         ,lSeedEvent
-                                                         );
+    OptionalPoint_2 p = mTraits.construct_offset_point_2_object()( aT,
+                                                                   CreateSegment(lBorderA),
+                                                                   lBorderA->weight(),
+                                                                   CreateSegment(lBorderB),
+                                                                   lBorderB->weight(),
+                                                                   lSeedEvent );
 
     return p ;
   }

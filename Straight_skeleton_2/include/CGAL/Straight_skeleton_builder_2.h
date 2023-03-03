@@ -309,10 +309,10 @@ private :
   Comparison_result CompareEventsSupportAnglesSplitSplit ( EventPtr const& aA, EventPtr const& aB )
   {
     CGAL_precondition ( aA->triedge().e0() == aB->triedge().e0() && aA->triedge().e1() == aB->triedge().e1() ) ;
-    return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
-                                               CreateVector(aA->triedge().e1()),
-                                               CreateVector(aA->triedge().e2()),
-                                               CreateVector(aB->triedge().e2()) );
+    return mTraits.compare_ss_event_angles_2_object()( CreateVector(aA->triedge().e0()),
+                                                       CreateVector(aA->triedge().e1()),
+                                                       CreateVector(aA->triedge().e2()),
+                                                       CreateVector(aB->triedge().e2()) );
   }
 
   Comparison_result CompareEventsSupportAnglesSplitPseudoSplit ( EventPtr const& aA, EventPtr const& aB )
@@ -322,17 +322,17 @@ private :
     PseudoSplitEvent& lPSEvent = dynamic_cast<PseudoSplitEvent&>(*aB) ;
     if(lPSEvent.is_at_source_vertex())
     {
-      return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
-                                                 CreateVector(aA->triedge().e1()),
-                                                 CreateVector(aA->triedge().e2()),
-                                                 CreateVector(aB->triedge().e2()) );
+      return mTraits.compare_ss_event_angles_2_object()( CreateVector(aA->triedge().e0()),
+                                                         CreateVector(aA->triedge().e1()),
+                                                         CreateVector(aA->triedge().e2()),
+                                                         CreateVector(aB->triedge().e2()) );
     }
     else
     {
-      return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
-                                                 CreateVector(aA->triedge().e1()),
-                                                 CreateVector(aA->triedge().e2()),
-                                                 K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
+      return mTraits.compare_ss_event_angles_2_object()( CreateVector(aA->triedge().e0()),
+                                                         CreateVector(aA->triedge().e1()),
+                                                         CreateVector(aA->triedge().e2()),
+                                                         K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
     }
   }
 
@@ -347,34 +347,34 @@ private :
     {
       if(lPSEventB.is_at_source_vertex())
       {
-        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
-                                                   CreateVector(aA->triedge().e1()),
-                                                   CreateVector(aA->triedge().e2()),
-                                                   CreateVector(aB->triedge().e2()) );
+        return mTraits.compare_ss_event_angles_2_object()( CreateVector(aA->triedge().e0()),
+                                                           CreateVector(aA->triedge().e1()),
+                                                           CreateVector(aA->triedge().e2()),
+                                                           CreateVector(aB->triedge().e2()) );
       }
       else
       {
-        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
-                                                   CreateVector(aA->triedge().e1()),
-                                                   CreateVector(aA->triedge().e2()),
-                                                   K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
+        return mTraits.compare_ss_event_angles_2_object()( CreateVector(aA->triedge().e0()),
+                                                           CreateVector(aA->triedge().e1()),
+                                                           CreateVector(aA->triedge().e2()),
+                                                           K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
       }
     }
     else // aA is a Pseudo-split Event at the target
     {
       if(lPSEventB.is_at_source_vertex())
       {
-        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
-                                                   CreateVector(aA->triedge().e1()),
-                                                   K().construct_opposite_vector_2_object()( CreateVector(aA->triedge().e2()) ),
-                                                   CreateVector(aB->triedge().e2()) );
+        return mTraits.compare_ss_event_angles_2_object()( CreateVector(aA->triedge().e0()),
+                                                           CreateVector(aA->triedge().e1()),
+                                                           K().construct_opposite_vector_2_object()( CreateVector(aA->triedge().e2()) ),
+                                                           CreateVector(aB->triedge().e2()) );
       }
       else
       {
-        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
-                                                   CreateVector(aA->triedge().e1()),
-                                                   K().construct_opposite_vector_2_object()( CreateVector(aA->triedge().e2())),
-                                                   K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
+        return mTraits.compare_ss_event_angles_2_object()( CreateVector(aA->triedge().e0()),
+                                                           CreateVector(aA->triedge().e1()),
+                                                           K().construct_opposite_vector_2_object()( CreateVector(aA->triedge().e2())),
+                                                           K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
       }
     }
   }
@@ -698,13 +698,12 @@ private :
   {
     CGAL_precondition(aTriedge.is_valid() && aTriedge.is_skeleton());
 
-    Trisegment_2_ptr r = Construct_ss_trisegment_2(mTraits)(CreateSegment<Traits>(aTriedge.e0())
-                                                           ,aTriedge.e0()->weight()
-                                                           ,CreateSegment<Traits>(aTriedge.e1())
-                                                           ,aTriedge.e1()->weight()
-                                                           ,CreateSegment<Traits>(aTriedge.e2())
-                                                           ,aTriedge.e2()->weight()
-                                                           );
+    Trisegment_2_ptr r = mTraits.construct_ss_trisegment_2_object()( CreateSegment<Traits>(aTriedge.e0()),
+                                                                     aTriedge.e0()->weight(),
+                                                                     CreateSegment<Traits>(aTriedge.e1()),
+                                                                     aTriedge.e1()->weight(),
+                                                                     CreateSegment<Traits>(aTriedge.e2()),
+                                                                     aTriedge.e2()->weight() );
 
     CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":" << r ) ;
 
@@ -907,14 +906,17 @@ private :
 
   bool ExistEvent ( Trisegment_2_ptr const& aS )
   {
-    return Do_ss_event_exist_2(mTraits)(aS,mMaxTime);
+    return mTraits.do_ss_event_exist_2_object()( aS, mMaxTime ) ;
   }
 
   bool IsOppositeEdgeFacingTheSplitSeed( Vertex_handle aSeed, Halfedge_handle aOpposite ) const
   {
     if ( aSeed->is_skeleton() )
-         return Is_edge_facing_ss_node_2(mTraits)( GetTrisegment(aSeed), CreateSegment<Traits>(aOpposite) ) ;
-    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()      , CreateSegment<Traits>(aOpposite) ) ;
+      return mTraits.is_edge_facing_ss_node_2_object()( GetTrisegment(aSeed),
+                                                        CreateSegment<Traits>(aOpposite) ) ;
+    else
+      return mTraits.is_edge_facing_ss_node_2_object()( aSeed->point(),
+                                                        CreateSegment<Traits>(aOpposite) ) ;
   }
 
   Oriented_side EventPointOrientedSide( Event const&          aEvent
@@ -924,24 +926,24 @@ private :
                                       , bool                  aE0isPrimary
                                       ) const
   {
-    return Oriented_side_of_event_point_wrt_bisector_2(mTraits)( aEvent.trisegment()
-                                                               , CreateSegment<Traits>(aE0)
-                                                               , aE0->weight()
-                                                               , CreateSegment<Traits>(aE1)
-                                                               , aE1->weight()
-                                                               , GetTrisegment(aV01) // Can be null
-                                                               , aE0isPrimary
-                                                               ) ;
+    return mTraits.oriented_side_of_event_point_wrt_bisector_2_object()( aEvent.trisegment(),
+                                                                         CreateSegment<Traits>(aE0),
+                                                                         aE0->weight(),
+                                                                         CreateSegment<Traits>(aE1),
+                                                                         aE1->weight(),
+                                                                         GetTrisegment(aV01), // Can be null
+                                                                         aE0isPrimary ) ;
   }
 
   Comparison_result CompareEvents ( Trisegment_2_ptr const& aA, Trisegment_2_ptr const& aB ) const
   {
-    return Compare_ss_event_times_2(mTraits)(aA,aB) ;
+    return mTraits.compare_ss_event_times_2_object()( aA, aB ) ;
   }
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    Comparison_result rResult = aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL;
+    Comparison_result rResult = aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() )
+                                                               : EQUAL;
 
     CGAL_STSKEL_BUILDER_TRACE(3, "Compare events " << aA->triedge() << " and " << aB->triedge() << " -> " << rResult);
     return rResult;
@@ -985,7 +987,7 @@ private :
 
   bool AreEventsSimultaneous( Trisegment_2_ptr const& x, Trisegment_2_ptr const& y ) const
   {
-    return Are_ss_events_simultaneous_2(mTraits)(x,y) ;
+    return mTraits.are_ss_events_simultaneous_2_object()( x, y ) ;
   }
 
   bool AreEventsSimultaneous( EventPtr const& x, EventPtr const& y ) const
@@ -1063,7 +1065,7 @@ private :
 
   boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Trisegment_2_ptr const& aS ) const
   {
-    boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
+    boost::optional< boost::tuple<FT,Point_2> > r = mTraits.construct_ss_event_time_and_point_2_object()( aS ) ;
     CGAL_postcondition_msg(!!r, "Unable to compute skeleton node coordinates");
     return *r ;
   }

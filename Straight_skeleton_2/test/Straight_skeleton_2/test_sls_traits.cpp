@@ -98,7 +98,7 @@ struct triple
     int sid1 = sid++;
     int sid2 = sid++;
 
-    return CGAL::Construct_ss_trisegment_2(sTraits)(
+    return sTraits.construct_ss_trisegment_2_object()(
              Segment(Point(mP[0].x(),mP[0].y()), Point(mP[1].x(),mP[1].y()), sid0),
              FT(1),
              Segment(Point(mP[2].x(),mP[2].y()), Point(mP[3].x(),mP[3].y()), sid1),

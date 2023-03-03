@@ -351,9 +351,6 @@ struct Straight_skeleton_builder_traits_2_base
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
   typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
-
-  template<class F> F get( F const* = 0 ) const { return F(); }
-
 } ;
 
 
@@ -381,7 +378,7 @@ public:
     Compare_ss_event_angles_2 ;
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_edge_facing_ss_node_2>
-     Is_edge_facing_ss_node_2 ;
+    Is_edge_facing_ss_node_2 ;
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Oriented_side_of_event_point_wrt_bisector_2>
     Oriented_side_of_event_point_wrt_bisector_2 ;
@@ -398,47 +395,42 @@ public:
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
 
-  using Straight_skeleton_builder_traits_2_base<K>::get;
-
-  Is_edge_facing_ss_node_2
-  get(Is_edge_facing_ss_node_2 const* = 0 ) const
+  Is_edge_facing_ss_node_2 is_edge_facing_ss_node_2_object() const
   {
     return Is_edge_facing_ss_node_2(mCoeff_cache);
   }
 
-  Compare_ss_event_times_2
-  get(Compare_ss_event_times_2 const* = 0 ) const
+  Compare_ss_event_times_2 compare_ss_event_times_2_object() const
   {
     return Compare_ss_event_times_2(mTime_cache, mCoeff_cache);
   }
 
+  Compare_ss_event_angles_2 compare_ss_event_angles_2_object() const
+  {
+    return Compare_ss_event_angles_2();
+  }
 
-  Oriented_side_of_event_point_wrt_bisector_2
-  get(Oriented_side_of_event_point_wrt_bisector_2 const* = 0 ) const
+  Oriented_side_of_event_point_wrt_bisector_2 oriented_side_of_event_point_wrt_bisector_2_object() const
   {
     return Oriented_side_of_event_point_wrt_bisector_2(mCoeff_cache);
   }
 
-  Do_ss_event_exist_2
-  get(Do_ss_event_exist_2 const* = 0 ) const
+  Do_ss_event_exist_2 do_ss_event_exist_2_object() const
   {
     return Do_ss_event_exist_2(mTime_cache, mCoeff_cache);
   }
 
-  Are_ss_events_simultaneous_2
-  get(Are_ss_events_simultaneous_2 const* = 0 ) const
+  Are_ss_events_simultaneous_2 are_ss_events_simultaneous_2_object() const
   {
     return Are_ss_events_simultaneous_2(mTime_cache, mCoeff_cache);
   }
 
-  Construct_ss_event_time_and_point_2
-  get(Construct_ss_event_time_and_point_2 const* = 0 ) const
+  Construct_ss_event_time_and_point_2 construct_ss_event_time_and_point_2_object() const
   {
     return Construct_ss_event_time_and_point_2(mTime_cache, mCoeff_cache);
   }
 
-  Construct_ss_trisegment_2
-  get( Construct_ss_trisegment_2 const* = 0 ) const
+  Construct_ss_trisegment_2 construct_ss_trisegment_2_object() const
   {
     return Construct_ss_trisegment_2(*this);
   }
@@ -659,11 +651,8 @@ public:
 
   typedef typename Unfiltering::Construct_ss_trisegment_2        Construct_ss_trisegment_2 ;
 
-  using Straight_skeleton_builder_traits_2_base<K>::get;
-
 // constructor of predicates using time caching
-  Compare_ss_event_times_2
-  get(Compare_ss_event_times_2 const* = 0 ) const
+  Compare_ss_event_times_2 compare_ss_event_times_2_object() const
   {
     return Compare_ss_event_times_2( typename Exact::Compare_ss_event_times_2(
                                        mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
@@ -671,15 +660,18 @@ public:
                                        mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
 
-  Is_edge_facing_ss_node_2
-  get(Is_edge_facing_ss_node_2 const* = 0 ) const
+  Compare_ss_event_angles_2 compare_ss_event_angles_2_object() const
+  {
+    return Compare_ss_event_angles_2();
+  }
+
+  Is_edge_facing_ss_node_2 is_edge_facing_ss_node_2_object() const
   {
     return Is_edge_facing_ss_node_2( typename Exact::Is_edge_facing_ss_node_2(mExact_traits.mCoeff_cache),
                                      typename Filtering::Is_edge_facing_ss_node_2(mApproximate_traits.mCoeff_cache) );
   }
 
-  Oriented_side_of_event_point_wrt_bisector_2
-  get(Oriented_side_of_event_point_wrt_bisector_2 const* = 0 ) const
+  Oriented_side_of_event_point_wrt_bisector_2 oriented_side_of_event_point_wrt_bisector_2_object() const
   {
     return Oriented_side_of_event_point_wrt_bisector_2( typename Exact::Oriented_side_of_event_point_wrt_bisector_2(
                                                           mExact_traits.mCoeff_cache),
@@ -687,8 +679,7 @@ public:
                                                           mApproximate_traits.mCoeff_cache) );
   }
 
-  Do_ss_event_exist_2
-  get(Do_ss_event_exist_2 const* = 0 ) const
+  Do_ss_event_exist_2 do_ss_event_exist_2_object() const
   {
     return Do_ss_event_exist_2( typename Exact::Do_ss_event_exist_2(
                                   mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
@@ -696,8 +687,7 @@ public:
                                   mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
 
-  Are_ss_events_simultaneous_2
-  get(Are_ss_events_simultaneous_2 const* = 0 ) const
+  Are_ss_events_simultaneous_2 are_ss_events_simultaneous_2_object() const
   {
     return Are_ss_events_simultaneous_2( typename Exact::Are_ss_events_simultaneous_2(
                                            mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
@@ -705,8 +695,7 @@ public:
                                            mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
 
-  Construct_ss_event_time_and_point_2
-  get(Construct_ss_event_time_and_point_2 const* = 0 ) const
+  Construct_ss_event_time_and_point_2 construct_ss_event_time_and_point_2_object() const
   {
     return Construct_ss_event_time_and_point_2( typename Exact::Construct_ss_event_time_and_point_2(
                                                   mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
@@ -715,8 +704,7 @@ public:
   }
 
 // constructor of trisegments using global id stored in the traits
-  Construct_ss_trisegment_2
-  get( Construct_ss_trisegment_2 const* = 0 ) const
+  Construct_ss_trisegment_2 construct_ss_trisegment_2_object() const
   {
     return Construct_ss_trisegment_2(*this);
   }
@@ -890,17 +878,6 @@ template<class K>
 class Straight_skeleton_builder_traits_2
   : public Straight_skeleton_builder_traits_2_impl<typename CGAL_SS_i::Is_filtering_kernel<K>::type, K>
 {} ;
-
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Do_ss_event_exist_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_angles_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_edge_facing_ss_node_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Oriented_side_of_event_point_wrt_bisector_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_events_simultaneous_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_parallel_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_collinear_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_trisegment_2)
 
 } // end namespace CGAL
 
