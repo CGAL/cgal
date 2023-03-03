@@ -33,6 +33,7 @@ namespace CGAL {
 namespace Intersections {
 namespace internal{
 
+//TODO: move into a functor
 template <class K>
 typename K::FT
 coplanar_segment_segment_alpha_intersection(const typename K::Point_3& p1, const typename K::Point_3& p2, // segment 1
@@ -248,8 +249,18 @@ intersection(const Point_on_triangle<Kernel>& p,
                   return  Point_on_triangle<Kernel>(p.id1()==1?2:0); // vertex of t1
                 }
                 default: // (ip1, ip2) - (iq1, iq2)
-                  CGAL_assertion(p.id1()==q.id1());
-                  return  Point_on_triangle<Kernel>((p.id1()+1)%3==edge_id_t1?edge_id_t1:(edge_id_t1+1)%3, -1); // vertex of t1
+                {
+                  CGAL_assertion(p.id1()==q.id1() || p.id2()==q.id2() );
+
+                  if (p.id1()==q.id1())
+                    return  Point_on_triangle<Kernel>((p.id1()+1)%3==edge_id_t1?edge_id_t1:(edge_id_t1+1)%3, -1); // vertex of t1
+
+                  typename Kernel::FT alpha =
+                    coplanar_segment_segment_alpha_intersection(p1, q1,
+                                                                Pot::point_from_id(p2, q2, r2,  q.id2()),
+                                                                Pot::point_from_id(p2, q2, r2, (q.id2()+1)%3), k);
+                  return  Point_on_triangle<Kernel>(edge_id_t1, q.id2(), alpha);
+                }
               }
             }
           }
