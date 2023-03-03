@@ -421,9 +421,9 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
 
     CGAL_STSKEL_TRAITS_TRACE("\n~~ Oriented side of point [" << typeid(FT).name() << "]" );
     CGAL_STSKEL_TRAITS_TRACE("p = " << p2str(p)
-                            << " w.r.t. bisector ["
+                            << " w.r.t. bisector of [E0 "
                             << s2str(e0) << ( primary_is_0 ? "*" : "" )
-                            << ","
+                            << ", E1 "
                             << s2str(e1) << ( primary_is_0 ? "" : "*" )
                             << "]"
                             ) ;
@@ -445,7 +445,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
       // If e0 and e1 are collinear this line is the actual perpendicular bisector.
       //
       // If e0 and e1 are parallel but not collinear (then necessarily facing each other) this line
-      // is NOT the bisector, but the serves to determine the side of the point (projected along the primary edge) w.r.t. vertex v01.
+      // is NOT the bisector, but it serves to determine the side of the point (projected along
+      // the primary edge) w.r.t. vertex v01.
 
       FT a, b, c ;
       perpendicular_through_pointC2( primary_is_0 ? l0.a() : l1.a()

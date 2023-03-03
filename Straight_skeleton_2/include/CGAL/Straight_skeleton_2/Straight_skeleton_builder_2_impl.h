@@ -393,11 +393,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
   Vertex_handle lOBV = lOB->vertex() ;
   // Vertex_handle lIBV = lIB->vertex() ;
 
-  CGAL_STSKEL_BUILDER_TRACE ( 2
-                            ,    "OA: B" << lOA->id() << '\n'
-                              << "IA: B" << lIA->id() << '\n'
-                              << "OB: B" << lOB->id() << '\n'
-                              << "IB: B" << lIB->id()
+  CGAL_STSKEL_BUILDER_TRACE ( 2 ,    "OA: B" << lOA->id() << " V" << lOA->vertex()->id() << '\n'
+                                  << "IA: B" << lIA->id() << " V" << lIA->vertex()->id() << '\n'
+                                  << "OB: B" << lOB->id() << " V" << lOB->vertex()->id() << '\n'
+                                  << "IB: B" << lIB->id() << " V" << lIB->vertex()->id()
                             ) ;
 
   SetIsProcessed(aA) ;
@@ -415,12 +414,11 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
   (void) lOB_Prev; // may be unused
   (void) lIB_Next; // may be unused
 
-  CGAL_STSKEL_BUILDER_TRACE ( 2
-                            ,   "OA_Prev: B" << lOA_Prev->id() << '\n'
-                              << "IA_Next: B" << lIA_Next->id() << '\n'
-                              << "OB_Prev: B" << lOB_Prev->id() << '\n'
-                              << "IB_Next: B" << lIB_Next->id()
-                           ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2 ,   "OA_Prev: B" << lOA_Prev->id() << " V" << lOA_Prev->vertex()->id() << '\n'
+                                 << "IA_Next: B" << lIA_Next->id() << " V" << lIA_Next->vertex()->id() << '\n'
+                                 << "OB_Prev: B" << lOB_Prev->id() << " V" << lOB_Prev->vertex()->id() << '\n'
+                                 << "IB_Next: B" << lIB_Next->id() << " V" << lIB_Next->vertex()->id()
+                            ) ;
 
   CrossLinkFwd(lOB, lIA_Next );
   CrossLinkFwd(lOA_Prev, lIB );
@@ -436,21 +434,21 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
   // If that's the case, the erased halfedge maybe be linked to a 'couple' of those vertices.
   // This situation is corrected below:
 
-
   if ( !lOAV->has_infinite_time() && lOAV != aA && lOAV != aB )
   {
     Link(lOAV,lIB);
 
     CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lOAV->id() << " has B" << lOA->id()
-                              << " as it's halfedge. Replacing it with B" << lIB->id()
+                              << " as its halfedge. Replacing it with B" << lIB->id()
                               ) ;
   }
+
   if ( !lIAV->has_infinite_time() && lIAV != aA && lIAV != aB )
   {
     Link(lIAV,lOB);
 
     CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lIAV->id() << " has B" << lIA->id()
-                              << " as it's halfedge. Replacing it with B" << lOB->id()
+                              << " as its halfedge. Replacing it with B" << lOB->id()
                               ) ;
   }
 
@@ -783,7 +781,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::LookupOnSLAV ( Halfedge_handle aBorder, Ev
     }
     else
     {
-      CGAL_STSKEL_BUILDER_TRACE(1,"Split event is no longer valid. Point not inside the opposite edge offset zone.");
+      CGAL_STSKEL_BUILDER_TRACE(1,"Split event is no longer valid. Point not inside the opposite edge's offset zone.");
     }
   }
 #endif
@@ -906,6 +904,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::ConstructPseudoSplitEventNodes( PseudoSpli
 template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::IsProcessed( EventPtr aEvent )
 {
+  CGAL_STSKEL_BUILDER_TRACE(4, "Event is processed? V" << aEvent->seed0()->id() << ": " << IsProcessed(aEvent->seed0()) << "; V"
+                                                       << aEvent->seed1()->id() << ": " << IsProcessed(aEvent->seed1()) );
+
   return IsProcessed(aEvent->seed0()) || IsProcessed(aEvent->seed1()) ;
 }
 
@@ -1192,7 +1193,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Link(lNIBisector_R,lNewNode_R);
 
     Link(lNOBisector_L,lXOFicNode);
-
 
     CrossLinkFwd(lXOBisector    ,lNOBisector_L);
     CrossLinkFwd(lNOBisector_L  ,lXONextBisector);
@@ -1546,7 +1546,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
 
       if ( lEvent->type() != Event::cEdgeEvent )
         AllowNextSplitEvent(lEvent->seed0());
-
 
       CGAL_STSKEL_BUILDER_TRACE(3, " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " );
       CGAL_STSKEL_BUILDER_TRACE(3, "\n\tS" << mStepID << " Tentative Event: " << *lEvent ) ;
