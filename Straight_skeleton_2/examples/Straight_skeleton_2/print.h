@@ -8,6 +8,15 @@ void print_point ( CGAL::Point_2<K> const& p )
   std::cout << "(" << p.x() << "," << p.y() << ")" ;
 }
 
+template<class HDS_V>
+void print_vertex ( HDS_V const& v )
+{
+  if(v->has_infinite_time())
+    std::cout << "F" << v->id() << " " ;
+  else
+    std::cout << "N" << v->id() << " " ;
+}
+
 template<class K, class C>
 void print_polygon ( CGAL::Polygon_2<K,C> const& poly )
 {
@@ -75,12 +84,51 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
             << " halfedges and " << ss.size_of_faces()
             << " faces" << std::endl ;
 
-  for ( Halfedge_const_iterator i = ss.halfedges_begin(); i != ss.halfedges_end(); ++i )
+  std::cout << "Faces " << std::endl;
+  for ( Halfedge_const_iterator h = ss.halfedges_begin(); h != ss.halfedges_end(); ++h )
   {
-    print_point(i->opposite()->vertex()->point()) ;
-    std::cout << "->" ;
-    print_point(i->vertex()->point());
-    std::cout << " " << ( i->is_bisector() ? "bisector" : "contour" ) << std::endl;
+    if(h->is_inner_bisector() || h->is_bisector())
+      continue;
+
+    Halfedge_const_iterator end = h;
+    for(;;)
+    {
+      if(h->is_inner_bisector())
+        std::cout << "IBH" << h->id() << " " << std::flush ;
+      else if(h->is_bisector())
+        std::cout << "BH" << h->id() << " " << std::flush ;
+      else
+        std::cout << "CH" << h->id() << " " << std::flush ;
+
+      print_vertex(h->vertex());
+
+      h = h->next();
+      if(h == end)
+        break;
+
+      std::cout << " ==> " << std::flush ;
+    }
+
+    std::cout << std::endl;
+  }
+
+  std::cout << "All halfedges: " << std::endl;
+
+  for ( Halfedge_const_iterator h = ss.halfedges_begin(); h != ss.halfedges_end(); ++h )
+  {
+    if(h->is_inner_bisector())
+      std::cout << "IBH" << h->id() << " " << std::flush ;
+    else if(h->is_bisector())
+      std::cout << "BH" << h->id() << " " << std::flush ;
+    else
+      std::cout << "CH" << h->id() << " " << std::flush ;
+
+    print_vertex(h->prev()->vertex()) ;
+    print_point(h->prev()->vertex()->point()) ;
+    std::cout << " ==> " << std::flush ;
+    print_vertex(h->vertex());
+    print_point(h->vertex()->point()) ;
+    std::cout << std::endl;
   }
 }
 
