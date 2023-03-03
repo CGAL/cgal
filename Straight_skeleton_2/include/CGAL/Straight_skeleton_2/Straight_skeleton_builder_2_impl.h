@@ -2325,6 +2325,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
         Halfedge_handle rspawn_h = SSkelEdgesPushBack(right_spawn, right_spawn_opp) ;
         Halfedge_handle rspawn_h_opp = rspawn_h->opposite() ;
 
+        split_h_sv->VBase::set_halfedge( rspawn_h_opp ) ;
+
         rspawn_h->HBase_base::set_face( extreme_h->face() );
         rspawn_h_opp->HBase_base::set_face( split_h_opp->face() );
 
