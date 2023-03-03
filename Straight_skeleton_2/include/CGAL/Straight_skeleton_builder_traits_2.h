@@ -230,47 +230,6 @@ private:
   Coeff_cache<K>& mCoeff_cache ;
 };
 
-// Not actually in use
-template<class K>
-struct Are_ss_edges_collinear_2 : Functor_base_2<K>
-{
-  typedef Functor_base_2<K> Base ;
-
-  typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
-
-  typedef Uncertain<bool> result_type ;
-
-  Uncertain<bool> operator() ( Segment_2_with_ID const& aA, Segment_2_with_ID const& aB ) const
-  {
-    Uncertain<bool> rResult = are_edges_collinearC2(aA,aB);
-
-    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_collinear","A=" << aA << "\nB=" << aB);
-
-    return rResult ;
-  }
-};
-
-// Not actually in use
-template<class K>
-struct Are_ss_edges_parallel_2 : Functor_base_2<K>
-{
-  typedef Functor_base_2<K> Base ;
-
-  typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
-
-  typedef Uncertain<bool> result_type ;
-
-  Uncertain<bool> operator() ( Segment_2_with_ID const& aA, Segment_2_with_ID const& aB ) const
-  {
-    Uncertain<bool> rResult = are_edges_parallelC2(aA,aB);
-
-    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_parallel","A=" << aA << "\nB=" << aB);
-
-    return rResult ;
-  }
-};
-
-
 template<class K>
 struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 {
@@ -331,8 +290,6 @@ struct Straight_skeleton_builder_traits_2_functors
   typedef CGAL_SS_i::Is_edge_facing_ss_node_2                   <K> Is_edge_facing_ss_node_2 ;
   typedef CGAL_SS_i::Oriented_side_of_event_point_wrt_bisector_2<K> Oriented_side_of_event_point_wrt_bisector_2 ;
   typedef CGAL_SS_i::Are_ss_events_simultaneous_2               <K> Are_ss_events_simultaneous_2 ;
-  typedef CGAL_SS_i::Are_ss_edges_parallel_2                    <K> Are_ss_edges_parallel_2 ;
-  typedef CGAL_SS_i::Are_ss_edges_collinear_2                   <K> Are_ss_edges_collinear_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2        <K> Construct_ss_event_time_and_point_2 ;
   typedef CGAL_SS_i::Construct_ss_trisegment_2                  <K> Construct_ss_trisegment_2 ;
 } ;
@@ -385,12 +342,6 @@ public:
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_events_simultaneous_2>
     Are_ss_events_simultaneous_2 ;
-
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_edges_parallel_2>
-    Are_ss_edges_parallel_2 ;
-
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_edges_collinear_2>
-    Are_ss_edges_collinear_2 ;
 
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
@@ -624,20 +575,6 @@ public:
                             , C2F
                             >
                             Are_ss_events_simultaneous_2 ;
-
-  typedef Filtered_predicate< typename Exact    ::Are_ss_edges_parallel_2
-                            , typename Filtering::Are_ss_edges_parallel_2
-                            , C2E
-                            , C2F
-                            >
-                            Are_ss_edges_parallel_2 ;
-
-  typedef Filtered_predicate< typename Exact    ::Are_ss_edges_collinear_2
-                            , typename Filtering::Are_ss_edges_collinear_2
-                            , C2E
-                            , C2F
-                            >
-                            Are_ss_edges_collinear_2 ;
 
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
