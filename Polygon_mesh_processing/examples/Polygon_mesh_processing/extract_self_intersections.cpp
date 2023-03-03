@@ -7,7 +7,6 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-
 #include <CGAL/Real_timer.h>
 #include <CGAL/tags.h>
 
@@ -41,7 +40,7 @@ int main(int argc, char* argv[])
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
   PMP::self_intersections<CGAL::Parallel_if_available_tag>(faces(mesh), mesh, std::back_inserter(intersected_tris));
-  
+
   if (intersected_tris.empty()) {
       std::cout << "No self intersections" << std::endl;
       return 0;
