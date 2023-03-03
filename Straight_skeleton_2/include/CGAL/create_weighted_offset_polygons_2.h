@@ -16,6 +16,7 @@
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/create_offset_polygons_2.h>
+#include <CGAL/create_weighted_straight_skeleton_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_converter_2.h>
@@ -43,6 +44,21 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
+// ==== WARNING ====
+// There is currently no way to recover simply-connectedness (see EnsureSimpleConnectedness())
+// for faces that have fictitious vertices. Non-simply-connected faces can be created
+// with skeletons of weighted polygons with holes.
+//
+// As such, you should either:
+// - Use this function without holes (aHolesBegin == aHolesEnd)
+// - Use this function with holes, but with weights set up such that there can be no non-simply connected
+//   skeleton faces with fictitious vertices. This is for example the case when calling exterior skeleton:
+//   the weights of the frame are set up to be very large and guarantee that no non-simply connected face
+//   can appear.
+//
+// see also tags @partial_wsls_pwh
+
+// If you are using this with some holes, you should know what you are doing
 template<class FT, class PointIterator, class HoleIterator, class Weights, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_partial_interior_weighted_straight_skeleton_2 ( FT const&     aMaxTime
@@ -150,6 +166,7 @@ create_partial_exterior_weighted_straight_skeleton_2 ( FT const&      aMaxOffset
     // but it is the edge v_0 v_{n-1}, which has the weight w_0.
     std::rotate(lWeights[1].rbegin(), lWeights[1].rbegin()+1, lWeights[1].rend());
 
+    // weights ensure that we cannot create a non-simply connected face with a frame halfedge
     rSkeleton = create_partial_interior_weighted_straight_skeleton_2(aMaxOffset,
                                                                      frame, frame+4,
                                                                      holes.begin(), holes.end(),
@@ -255,19 +272,39 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const OfK& ofk,
                                                         const SsK& ssk)
 {
-  return create_weighted_offset_polygons_2<OutPolygon>(
-           aOffset,
-           CGAL_SS_i::dereference(
-             CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
-               aOffset,
-               CGAL_SS_i::vertices_begin(aOuterBoundary),
-               CGAL_SS_i::vertices_end  (aOuterBoundary),
-               aWeights,
-               aHolesBegin,
-               aHolesEnd,
-               ssk)),
-           aWeights,
-           ofk);
+  // partial_wsls_pwh
+  if(aHolesBegin == aHolesEnd)
+  {
+    return create_weighted_offset_polygons_2<OutPolygon>(
+          aOffset,
+          CGAL_SS_i::dereference(
+            CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
+              aOffset,
+              CGAL_SS_i::vertices_begin(aOuterBoundary),
+              CGAL_SS_i::vertices_end  (aOuterBoundary),
+              aWeights,
+              aHolesBegin,
+              aHolesEnd,
+              ssk)),
+          aWeights,
+          ofk);
+  }
+  else
+  {
+    return create_weighted_offset_polygons_2<OutPolygon>(
+          aOffset,
+          CGAL_SS_i::dereference(
+            CGAL::create_interior_weighted_straight_skeleton_2(
+              aOffset,
+              CGAL_SS_i::vertices_begin(aOuterBoundary),
+              CGAL_SS_i::vertices_end  (aOuterBoundary),
+              aWeights,
+              aHolesBegin,
+              aHolesEnd,
+              ssk)),
+          aWeights,
+          ofk);
+  }
 }
 
 template<class FT, class APolygon, class HoleIterator, class Weights, class OfK,
@@ -275,11 +312,11 @@ template<class FT, class APolygon, class HoleIterator, class Weights, class OfK,
 std::vector< boost::shared_ptr<OutPolygon> >
 inline
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
-                                               const APolygon& aOuterBoundary,
-                                               HoleIterator aHolesBegin,
-                                               HoleIterator aHolesEnd,
-                                                const Weights& aWeights,
-                                               const OfK& ofk)
+                                                        const APolygon& aOuterBoundary,
+                                                        HoleIterator aHolesBegin,
+                                                        HoleIterator aHolesEnd,
+                                                          const Weights& aWeights,
+                                                        const OfK& ofk)
 {
   return create_interior_weighted_skeleton_and_offset_polygons_2(aOffset, aOuterBoundary,
                                                                  aHolesBegin, aHolesEnd,

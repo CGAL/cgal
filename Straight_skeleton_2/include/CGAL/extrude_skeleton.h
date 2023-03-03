@@ -609,7 +609,10 @@ public:
 
     Straight_skeleton_2_ptr ss_ptr;
 
-    if(height == default_height)
+    // @partial_wsls_pwh interior SLS of weighted polygons with holes can have skeleton faces with holes
+    // The current postprocessing is in the function EnsureSimpleConnectedness, but it has not yet
+    // been made compatible with partial skeletons.
+    if(height == default_height || pwh.number_of_holes() != 0)
     {
       ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(
                  CGAL_SS_i::vertices_begin(pwh.outer_boundary()),

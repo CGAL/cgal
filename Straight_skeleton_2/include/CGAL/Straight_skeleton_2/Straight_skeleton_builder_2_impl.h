@@ -2138,8 +2138,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
                             Split& tentative_split) -> void
       {
         // Don't compute an intersection with a halfedge incident to a fictitious vertex
-        CGAL_assertion(!test_h->vertex()->has_infinite_time() &&
-                       !test_h->prev()->vertex()->has_infinite_time());
+        if(test_h->vertex()->has_infinite_time() || test_h->prev()->vertex()->has_infinite_time())
+          return;
 
         typename K::Segment_2 s(test_h->opposite()->vertex()->point(),
                                 test_h->vertex()->point());
@@ -2193,25 +2193,18 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
       // @todo support partial weighted skeleton of polygons with holes
       // In partial skeletons, we might the face (and possibly even holes!) are not closed,
       // so we could potentially not find a halfedge
-      CGAL_assertion(tentative_split.first != nullptr);
-
-      splits.push_back(tentative_split);
+      CGAL_warning(tentative_split.first != nullptr);
+      if(tentative_split.first != nullptr)
+        splits.push_back(tentative_split);
     }
 
-    // It has to exists since the origin of the ray is on the hole, and the hole is in the face
-    CGAL_assertion( splits.size() == holes.size() ) ;
+    CGAL_warning( splits.size() == holes.size() ) ;
 
     // Splits need to be sorted right to left such that consecutive splits do not tangle the HDS
     std::sort(splits.begin(), splits.end(),
               [&](const CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2>& split_1,
                   const CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2>& split_2)
               {
-                // arbitrarily sort fictitious splits
-                if(split_1.second == nullptr)
-                  return true;
-                if(split_2.second == nullptr)
-                  return false;
-
                 // sorting only matters if splitting the same halfedge multiple times
                 if(split_1.second->id() != split_2.second->id())
                   return split_1.second->id() < split_2.second->id() ;
