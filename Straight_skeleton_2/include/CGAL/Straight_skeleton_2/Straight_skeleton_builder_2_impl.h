@@ -2030,6 +2030,334 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
 }
 
 template<class Gt, class Ss, class V>
+void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
+{
+  CGAL_STSKEL_BUILDER_TRACE(1, "Ensuring simple connectedness...");
+
+  // Associates to contour halfedges a range of holes, each hole being represented by a halfedge
+  // pointing to the vertex farthest from the contour halfedge.
+  //
+  // contour halfedges are the first N *even* halfedges
+  std::vector<std::vector<Halfedge_handle> > skeleton_face_holes ( 2 * mContourHalfedges.size() );
+  std::vector<bool> visited_halfedges ( mSSkel->size_of_halfedges(), false );
+
+  for ( Halfedge_handle h = mSSkel->halfedges_begin() ; h != mSSkel->halfedges_end() ; ++ h )
+  {
+    if ( h->is_border() ) // halfedges incident to the null face
+      continue;
+
+    if ( visited_halfedges[h->id()] )
+      continue;
+
+    // Walk the halfedge cycle; if it doesn't contain its contour halfedge, then it is a hole
+    // in the skeleton face.
+
+    Halfedge_handle contour_h = h->defining_contour_edge() ;
+    bool is_contour_h_in_boundary = false ;
+
+    Halfedge_handle done = h;
+    do
+    {
+      visited_halfedges[h->id()] = true ;
+
+      if ( h == contour_h )
+        is_contour_h_in_boundary = true;
+
+      h = h->next() ;
+    }
+    while ( h != done );
+
+    if ( is_contour_h_in_boundary )
+      continue ;
+
+    CGAL_STSKEL_BUILDER_TRACE(4, "Face incident to border E" << contour_h->id() << " has a hole at " << h->id() );
+
+    // This is a hole, find the point farthest from the defining border to ensure
+    // that the ray we will shoot does not intersect the hole
+    Halfedge_handle extreme_h = h ;
+    do
+    {
+      CGAL::Comparison_result res = CompareEvents( h->vertex() , extreme_h->vertex() ) ;
+      if ( res == CGAL::LARGER )
+        extreme_h = h ;
+
+      h = h->next() ;
+    }
+    while ( h != done );
+
+    CGAL_STSKEL_BUILDER_TRACE(4, "Extremum: E" << extreme_h->id() << " V" << extreme_h->vertex()->id() );
+
+    skeleton_face_holes[ contour_h->id() ].push_back( extreme_h ) ;
+  }
+
+  // For each face with hole(s), create the extra halfedges to bridge the gap between
+  // the skeleton face's border and the holes
+  for ( Halfedge_handle_vector_iterator contour_hi = mContourHalfedges.begin(); contour_hi != mContourHalfedges.end(); ++contour_hi )
+  {
+    Halfedge_handle contour_h = *contour_hi;
+    std::vector<Halfedge_handle>& holes = skeleton_face_holes[contour_h->id()];
+
+    if( holes.empty() )
+      continue;
+
+    Direction_2 orth_dir ( contour_h->opposite()->vertex()->point().y() - contour_h->vertex()->point().y() ,
+                           contour_h->vertex()->point().x() - contour_h->opposite()->vertex()->point().x() ) ;
+
+    CGAL_STSKEL_BUILDER_TRACE(4, "E" << contour_h->id() << " has " << holes.size() << " hole(s)." );
+
+    // First, order the holes such that extreme points (one by hole) are from closest
+    // to farthest from the contour border
+    std::sort( holes.begin(), holes.end(),
+               [this](Halfedge_handle h1, Halfedge_handle h2)
+               {
+                 return CompareEvents( h1->vertex(), h2->vertex() ) == CGAL::SMALLER ;
+               }
+             ) ;
+
+    // Shoot a ray from each hole's extreme point to find the closest halfedge of another hole
+    // or of the face's main contour
+    //
+    // Do not actually create the halfedges yet as to not disturb walking around other holes
+    //   .first is the hole halfedge, ray from .first->vertex()
+    //   .second is the halfedge to split, at the "vertical" of .first->vertex()
+    //   .third is the refinement point
+    typedef CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2> Split;
+    std::vector<Split> splits;
+
+    for(auto hole_hi = holes.begin(); hole_hi != holes.end(); ++hole_hi)
+    {
+      const Halfedge_handle extreme_h = *hole_hi;
+
+      typename K::Ray_2 r ( extreme_h->vertex()->point(), orth_dir ) ;
+
+      CGAL_STSKEL_BUILDER_TRACE(4, "Shooting ray from " << extreme_h->vertex()->point() );
+
+      Split tentative_split ( nullptr, nullptr, CGAL::ORIGIN );
+
+      auto test_split = [&](const Halfedge_handle test_h,
+                            Split& tentative_split) -> void
+      {
+        // Don't compute an intersection with a halfedge incident to a fictitious vertex
+        CGAL_assertion(!test_h->vertex()->has_infinite_time() &&
+                       !test_h->prev()->vertex()->has_infinite_time());
+
+        typename K::Segment_2 s(test_h->opposite()->vertex()->point(),
+                                test_h->vertex()->point());
+        auto inter_res = K().intersect_2_object()(r, s);
+        if(!inter_res)
+          return;
+
+        CGAL_assertion( boost::get<Point_2>( &*inter_res ) );
+        const Point_2 inter_point = boost::get<Point_2>( *inter_res ) ;
+
+        // we need the closest intersection point
+        if (tentative_split.first == nullptr ||
+            K().compare_distance_2_object()(extreme_h->vertex()->point(), inter_point,
+                                            extreme_h->vertex()->point(), tentative_split.third ) == CGAL::SMALLER )
+        {
+          tentative_split = make_triple(extreme_h, test_h, inter_point);
+        }
+      };
+
+      // Seek an intersection with other holes. Only need to check holes that are farther
+      // than the one we are tracing from.
+      Halfedge_handle_vector_iterator hole_hj = std::next(hole_hi);
+      for(;;)
+      {
+        if(hole_hj == holes.end())
+          break;
+
+        // @todo same spatial searching required as in filtering bound computations
+        Halfedge_handle other_hole_done = *hole_hj, other_hole_h = *hole_hj;
+        do
+        {
+          test_split(other_hole_h, tentative_split);
+          other_hole_h = other_hole_h->next() ; // next halfedge of the hole
+        }
+        while(other_hole_h != other_hole_done);
+
+        // can't break yet: a yet farther hole might have a closer intersection
+        hole_hj = std::next(hole_hj) ; // next hole
+      }
+
+      // Whether an intersection has been found or not, we still need to check with the border
+      // of the face, because it could be pinched and be closer than a hole
+      Halfedge_handle done = contour_h, h = contour_h->next(); // no point checking the contour edge
+      do
+      {
+        test_split(h, tentative_split);
+        h = h->next() ;
+      }
+      while(h != done);
+
+      // @todo support partial weighted skeleton of polygons with holes
+      // In partial skeletons, we might the face (and possibly even holes!) are not closed,
+      // so we could potentially not find a halfedge
+      CGAL_assertion(tentative_split.first != nullptr);
+
+      splits.push_back(tentative_split);
+    }
+
+    // It has to exists since the origin of the ray is on the hole, and the hole is in the face
+    CGAL_assertion( splits.size() == holes.size() ) ;
+
+    // Splits need to be sorted right to left such that consecutive splits do not tangle the HDS
+    std::sort(splits.begin(), splits.end(),
+              [&](const CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2>& split_1,
+                  const CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2>& split_2)
+              {
+                // arbitrarily sort fictitious splits
+                if(split_1.second == nullptr)
+                  return true;
+                if(split_2.second == nullptr)
+                  return false;
+
+                // sorting only matters if splitting the same halfedge multiple times
+                if(split_1.second->id() != split_2.second->id())
+                  return split_1.second->id() < split_2.second->id() ;
+
+                return K().left_turn_2_object()( contour_h->vertex()->point(),
+                                                 split_1.third, split_2.third );
+               } );
+
+    // Apply the splits
+
+    /*
+
+          <----------------                     <---------   <----------
+             split_h                             split_h | | split_h_prev
+                                                new_up_h | | new_down_h
+                .                                        | |
+              /  \                ----->                /  \
+  extreme_h /     \                          extreme_h /     \
+          /        \                                 /        \
+
+    */
+
+    for(const auto& split : splits)
+    {
+      Halfedge_handle extreme_h = split.first;
+      Halfedge_handle split_h = split.second ;
+      const Point_2& split_p = split.third ;
+
+      Halfedge_handle extreme_h_next = extreme_h->next() ;
+
+      Vertex_handle split_h_tv = split_h->vertex() ;
+      Halfedge_handle split_h_opp = split_h->opposite() ;
+      Vertex_handle split_h_sv = split_h_opp->vertex() ;
+      Halfedge_handle split_h_prev = split_h->prev() ;
+      Halfedge_handle split_h_next = split_h->next() ;
+      Halfedge_handle split_h_opp_next = split_h_opp->next() ;
+
+      CGAL_STSKEL_BUILDER_TRACE(4, "Splitting E" << split_h->id() << " at " << split_p );
+
+      // Create the new "vertical" (w.r.t. the contour edge) halfedges
+      Halfedge new_up(mEdgeID++), new_down(mEdgeID++);
+      Halfedge_handle new_up_h = SSkelEdgesPushBack(new_up, new_down);
+      Halfedge_handle new_down_h = new_up_h->opposite();
+
+      new_down_h->HBase_base::set_vertex( extreme_h->vertex() );
+      new_up_h->HBase_base::set_face( extreme_h->face() );
+      new_down_h->HBase_base::set_face( extreme_h->face() );
+
+      new_down_h->HBase_base::set_next( extreme_h_next );
+      extreme_h_next->HBase_base::set_prev( new_down_h );
+      extreme_h->HBase_base::set_next( new_up_h );
+      new_up_h->HBase_base::set_prev( extreme_h );
+
+      if(split_p == split_h_tv->point())
+      {
+        new_up_h->HBase_base::set_vertex( split_h_tv );
+
+        new_up_h->HBase_base::set_next( split_h_next );
+        split_h_next->HBase_base::set_prev( new_up_h );
+
+        split_h->HBase_base::set_next( new_down_h );
+        new_down_h->HBase_base::set_prev( split_h );
+      }
+      else if (split_p == split_h_sv->point())
+      {
+        new_up_h->HBase_base::set_vertex( split_h_sv );
+
+        new_up_h->HBase_base::set_next( split_h );
+        split_h->HBase_base::set_prev( new_up_h );
+
+        new_down_h->HBase_base::set_prev( split_h_prev );
+        split_h_prev->HBase_base::set_next( new_down_h );
+      }
+      else
+      {
+        // time is scaled between the values at the two extremities of split_h
+        const FT split_h_sv_time = split_h_sv->time() ;
+        const FT split_h_tv_time = split_h_tv->time() ;
+        FT new_v_time ;
+        if( split_h_sv_time == split_h_tv_time )
+        {
+          new_v_time = split_h_sv_time;
+        }
+        else
+        {
+          FT lambda ;
+          FT den = split_h_tv->point().x() - split_h_sv->point().x() ;
+          if(is_zero(den))
+          {
+            den = split_h_tv->point().y() - split_h_sv->point().y() ;
+            lambda = (split_p.y() - split_h_sv->point().y()) / den ;
+          }
+          else
+          {
+            lambda = (split_p.x() - split_h_sv->point().x()) / den ;
+          }
+
+          new_v_time = split_h_sv_time + lambda * (split_h_tv_time - split_h_sv_time) ;
+        }
+
+        // Create the new vertex
+        Vertex_handle new_v = mSSkel->SSkel::Base::vertices_push_back( Vertex (mVertexID++, split_p, new_v_time, false, false) ) ;
+        InitVertexData(new_v);
+        SetTrisegment(new_v, nullptr);
+
+        new_up_h->HBase_base::set_vertex( new_v ) ;
+        new_v->VBase::set_halfedge( new_up_h ) ;
+
+        // Split the halfdege
+        Halfedge right_spawn(mEdgeID++), right_spawn_opp(mEdgeID++) ; // split new prev
+        Halfedge_handle rspawn_h = SSkelEdgesPushBack(right_spawn, right_spawn_opp) ;
+        Halfedge_handle rspawn_h_opp = rspawn_h->opposite() ;
+
+        rspawn_h->HBase_base::set_face( extreme_h->face() );
+        rspawn_h_opp->HBase_base::set_face( split_h_opp->face() );
+
+        // vertex incidences
+        rspawn_h->HBase_base::set_vertex( new_v );
+        rspawn_h_opp->HBase_base::set_vertex( split_h_sv );
+        split_h_opp->HBase_base::set_vertex( new_v );
+
+        new_up_h->HBase_base::set_next( split_h );
+        split_h->HBase_base::set_prev( new_up_h );
+
+        split_h_opp->HBase_base::set_next( rspawn_h_opp );
+        rspawn_h_opp->HBase_base::set_prev( split_h_opp );
+
+        rspawn_h_opp->HBase_base::set_next( split_h_opp_next );
+        split_h_opp_next->HBase_base::set_prev( rspawn_h_opp );
+
+        split_h_prev->HBase_base::set_next( rspawn_h );
+        rspawn_h->HBase_base::set_prev( split_h_prev );
+
+        rspawn_h->HBase_base::set_next( new_down_h );
+        new_down_h->HBase_base::set_prev( rspawn_h );
+
+        CGAL_STSKEL_BUILDER_TRACE(4, "New vertex V" << new_v->id() << " at position " << new_v->point()
+                                 << " [between V" << split_h_sv->id() << " and V" << split_h_tv->id() << "]"
+                                 << " at time " << new_v->time()
+                                 << " [between " << split_h_sv->time() << " and " << split_h_tv->time() << "]" );
+      }
+    } // splits
+  } // contours
+}
+
+template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "\n\nFinishing up...");
@@ -2052,6 +2380,10 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
     if(!MergeCoincidentNodes())
       break;
   }
+
+  // For weighted polygons with holes, some faces might not be simply connected. In this case,
+  // add extra, manually constructed bisectors to ensure that this property is present in all faces
+  EnsureSimpleConnectedness();
 
   mVisitor.on_cleanup_finished();
 

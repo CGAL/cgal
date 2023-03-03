@@ -1203,6 +1203,8 @@ private :
   // returns 'true' if something was merged
   bool MergeCoincidentNodes() ;
 
+  void EnsureSimpleConnectedness() ;
+
   bool FinishUp();
 
   bool Run();
