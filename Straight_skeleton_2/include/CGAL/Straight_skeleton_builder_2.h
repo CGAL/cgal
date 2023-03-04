@@ -685,8 +685,8 @@ private :
 
   Vector_2 CreateVector ( Halfedge_const_handle aH ) const
   {
-    Point_2 s = aH->opposite()->vertex()->point() ;
-    Point_2 t = aH->vertex()->point() ;
+    const Point_2& s = aH->opposite()->vertex()->point() ;
+    const Point_2& t = aH->vertex()->point() ;
     return K().construct_vector_2_object()(s,t);
   }
 
