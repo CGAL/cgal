@@ -2100,8 +2100,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
     if( holes.empty() )
       continue;
 
-    Direction_2 orth_dir ( contour_h->opposite()->vertex()->point().y() - contour_h->vertex()->point().y() ,
-                           contour_h->vertex()->point().x() - contour_h->opposite()->vertex()->point().x() ) ;
+    const Direction_2 orth_dir = CreatePerpendicularDirection( contour_h ) ;
 
     CGAL_STSKEL_BUILDER_TRACE(4, "E" << contour_h->id() << " has " << holes.size() << " hole(s)." );
 

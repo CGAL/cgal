@@ -695,6 +695,12 @@ private :
     return K().construct_direction_2_object()( CreateVector(aH) );
   }
 
+  Direction_2 CreatePerpendicularDirection ( Halfedge_const_handle aH ) const
+  {
+    const Direction_2 lD = CreateDirection(aH);
+    return K().construct_perpendicular_direction_2_object()( lD, CGAL::COUNTERCLOCKWISE );
+  }
+
   Trisegment_2_ptr CreateTrisegment ( Triedge const& aTriedge ) const
   {
     CGAL_precondition(aTriedge.is_valid() && aTriedge.is_skeleton());
