@@ -2248,6 +2248,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
       Halfedge_handle new_up_h = SSkelEdgesPushBack(new_up, new_down);
       Halfedge_handle new_down_h = new_up_h->opposite();
 
+      SetBisectorSlope(new_up_h, POSITIVE);
+      SetBisectorSlope(new_down_h, NEGATIVE);
+
       new_down_h->HBase_base::set_vertex( extreme_h->vertex() );
       new_up_h->HBase_base::set_face( extreme_h->face() );
       new_down_h->HBase_base::set_face( extreme_h->face() );
@@ -2316,6 +2319,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
         Halfedge right_spawn(mEdgeID++), right_spawn_opp(mEdgeID++) ; // split new prev
         Halfedge_handle rspawn_h = SSkelEdgesPushBack(right_spawn, right_spawn_opp) ;
         Halfedge_handle rspawn_h_opp = rspawn_h->opposite() ;
+
+        SetBisectorSlope(rspawn_h, split_h->slope() );
+        SetBisectorSlope(rspawn_h_opp, split_h_opp->slope() );
 
         split_h_sv->VBase::set_halfedge( rspawn_h_opp ) ;
 
