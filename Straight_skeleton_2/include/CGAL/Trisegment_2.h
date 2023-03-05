@@ -189,49 +189,44 @@ public:
     return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : THIRD  ;
   }
 
-  friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
+  static void print ( std::ostream& os, Self const& aTri, int aDepth )
   {
-    return os << "["
-              << "\n\tE" << aTrisegment.e0().mID << " E" << aTrisegment.e1().mID << " E" << aTrisegment.e2().mID
-              << "\n\t" << s2str(aTrisegment.e0()) << " w = " << n2str(aTrisegment.w0()) << ";"
-              << "\n\t" << s2str(aTrisegment.e1()) << " w = " << n2str(aTrisegment.w1()) << ";"
-              << "\n\t" << s2str(aTrisegment.e2()) << " w = " << n2str(aTrisegment.w2()) << ";"
-              << "\n\tCollinearity: " << trisegment_collinearity_to_string(aTrisegment.collinearity())
-              << "\n]";
-  }
+    const std::string lPadding = std::string(2 * aDepth, ' ');
 
-  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
-  {
-    recursive_print(os,aPtr,0);
-    return os ;
+    os << lPadding << "[ ID: " << aTri.id() << "\n"
+       << lPadding << "\tE" << aTri.e0().mID << " E" << aTri.e1().mID << " E" << aTri.e2().mID << "\n"
+       << lPadding << "\t" << s2str(aTri.e0()) << " w = " << n2str(aTri.w0()) << ";" << "\n"
+       << lPadding << "\t" << s2str(aTri.e1()) << " w = " << n2str(aTri.w1()) << ";" << "\n"
+       << lPadding << "\t" << s2str(aTri.e2()) << " w = " << n2str(aTri.w2()) << ";" << "\n"
+       << lPadding << "\tCollinearity: " << trisegment_collinearity_to_string(aTri.collinearity()) << "\n"
+       << lPadding << "]\n";
   }
 
   static void recursive_print ( std::ostream& os, Self_ptr const& aTriPtr, int aDepth )
   {
-    os << "\n" ;
+    const std::string lPadding = std::string(2 * aDepth, ' ');
 
-    for ( int i = 0 ; i < aDepth ; ++ i )
-      os << "  " ;
+    os << "\n" ;
 
     if ( aTriPtr )
     {
-      os << *aTriPtr ;
+      print(os, *aTriPtr, aDepth);
 
       if ( aTriPtr->child_l() )
       {
-        os << " \nleft child:" ;
+        os << lPadding << "left child:" ;
         recursive_print(os,aTriPtr->child_l(),aDepth+1);
       }
 
       if ( aTriPtr->child_r() )
       {
-        os << " \nright child:" ;
+        os << lPadding << "right child:" ;
         recursive_print(os,aTriPtr->child_r(),aDepth+1);
       }
 
       if ( aTriPtr->child_t() )
       {
-        os << " \nthird child:" ;
+        os << lPadding << "third child:" ;
         recursive_print(os,aTriPtr->child_t(),aDepth+1);
       }
     }
@@ -239,6 +234,18 @@ public:
     {
       os << "{null}" ;
     }
+  }
+
+  friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
+  {
+    print(os, aTrisegment, 0);
+    return  os ;
+  }
+
+  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
+  {
+    recursive_print(os,aPtr,0);
+    return os ;
   }
 
 private :
