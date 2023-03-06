@@ -343,8 +343,8 @@ boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_w
 
   if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) )
     return boost::none;
-  else
-    return cgal_make_optional( true, K().construct_line_2_object()(a,b,c) ) ;
+
+  return cgal_make_optional( K().construct_line_2_object()(a,b,c) ) ;
 }
 
 template<class FT>
@@ -412,7 +412,7 @@ compute_normal_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segm
   typedef boost::optional<Line_2> Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing normal offset lines isec time [" << typeid(FT).name() << "]") ;
-  CGAL_STSKEL_TRAITS_TRACE("Event" << tri );
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri );
 
   FT num(0), den(0) ;
 

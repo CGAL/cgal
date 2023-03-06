@@ -51,8 +51,9 @@ construct_offset_pointC2 ( typename K::FT const& t,
   FT x(0.0),y(0.0) ;
 
   CGAL_STSKEL_TRAITS_TRACE("Constructing offset point for t=" << t ) ;
-  CGAL_STSKEL_TRAITS_TRACE("Edges " << " e0=" << s2str(e0) << " w = " << w0 ) ;
-  CGAL_STSKEL_TRAITS_TRACE(            " e1=" << s2str(e1) << " w = " << w1 << " tri=" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Edges e0=" << s2str(e0) << "w = " << w0 ) ;
+  CGAL_STSKEL_TRAITS_TRACE("      e1=" << s2str(e1) << "w = " << w1 ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
 
   Optional_line_2 l0 = compute_normalized_line_coeffC2(e0, aCoeff_cache) ;
   Optional_line_2 l1 = compute_normalized_line_coeffC2(e1, aCoeff_cache) ;

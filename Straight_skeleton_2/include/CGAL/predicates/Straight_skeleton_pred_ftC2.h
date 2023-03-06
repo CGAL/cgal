@@ -478,7 +478,6 @@ oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, 
         }
         else
         {
-          // @fixme? is this correct given that norms might be slightly wrong?
           Uncertain<bool> smaller = CGAL_NTS certified_is_smaller( validate(l0.a()*l1.b()), validate(l1.a()*l0.b()) ) ;
           if ( is_certain(smaller) )
           {

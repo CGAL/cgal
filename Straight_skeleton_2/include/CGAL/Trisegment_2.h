@@ -193,13 +193,13 @@ public:
   {
     const std::string lPadding = std::string(2 * aDepth, ' ');
 
-    os << lPadding << "[ ID: " << aTri.id() << "\n"
+    os << lPadding << "[&: " << &aTri << " ID: " << aTri.id() << "\n"
        << lPadding << "\tE" << aTri.e0().mID << " E" << aTri.e1().mID << " E" << aTri.e2().mID << "\n"
        << lPadding << "\t" << s2str(aTri.e0()) << " w = " << n2str(aTri.w0()) << ";" << "\n"
        << lPadding << "\t" << s2str(aTri.e1()) << " w = " << n2str(aTri.w1()) << ";" << "\n"
        << lPadding << "\t" << s2str(aTri.e2()) << " w = " << n2str(aTri.w2()) << ";" << "\n"
        << lPadding << "\tCollinearity: " << trisegment_collinearity_to_string(aTri.collinearity()) << "\n"
-       << lPadding << "]\n";
+       << lPadding << "]\n" << std::flush;
   }
 
   static void recursive_print ( std::ostream& os, Self_ptr const& aTriPtr, int aDepth )
@@ -242,10 +242,13 @@ public:
     return  os ;
   }
 
-  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
+  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aTriPtr )
   {
-    recursive_print(os,aPtr,0);
-    return os ;
+    if(aTriPtr)
+      print(os, *aTriPtr, 0);
+    else
+      os << "{null}" ;
+    return  os ;
   }
 
 private :

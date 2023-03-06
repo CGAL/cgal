@@ -102,9 +102,8 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
     CGAL_STSKEL_BUILDER_TRACE(4, "outer frame margin: " << approx );
     return boost::optional<FT> ( approx ) ;
   }
-  else
-    return boost::optional<FT>();
 
+  return boost::none;
 }
 
 

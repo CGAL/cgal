@@ -263,10 +263,10 @@ private:
 
   int              mID ;
   Halfedge_handle  mHE ;
-  Trisegment_2_ptr mTrisegment ;
   Point_2          mP;
   FT               mTime ;
   unsigned char    mFlags ;
+  Trisegment_2_ptr mTrisegment ;
 };
 
 template < class Refs, class P, class N >

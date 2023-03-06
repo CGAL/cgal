@@ -283,7 +283,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
   Halfedge_handle lRBorder = lTriedge.e1();
 
   CGAL_STSKEL_BUILDER_TRACE(3
-                      ,"Finding SplitEvent for N" << aNode->id()
+                      ,"Finding SplitEvents for N" << aNode->id()
                       << " LBorder: E" << lLBorder->id() << " RBorder: E" << lRBorder->id()
                       );
 

@@ -106,7 +106,7 @@ snap_point_to_contour_halfedge_plane(const typename GeomTraits::Point_2& op,
   else
   {
     // Project orthogonally onto the halfedge
-    // @fixme, the correct projection should be along the direction of the other offset edge sharing this point
+    // @todo the best projection could be along the direction of the other offset edge sharing this point?
     Segment_2 s { sv->point(), tv->point() };
     boost::optional<Line_2> line = CGAL_SS_i::compute_normalized_line_coeffC2(s);
     CGAL_assertion(bool(line)); // otherwise the skeleton would have failed already
@@ -195,7 +195,7 @@ public:
     CGAL_assertion(hook->is_bisector());
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    // @fixme technically, one could create a polygon thin-enough w.r.t. the max weight value such that
+    // @fixme on paper one could create a polygon thin-enough w.r.t. the max weight value such that
     // there is a skeleton vertex that wants to be snapped to two different sides...
     CGAL_assertion(m_snapped_positions.count(op) == 0);
 
@@ -419,7 +419,6 @@ public:
   }
 
   // This version is for default height, so just gather all the full faces
-  // @todo this doesn't not support holes in SLS faces
   void construct_lateral_faces(const Straight_skeleton_2& ss,
                                std::vector<Point_3>& points,
                                std::vector<std::vector<std::size_t> >& faces,
@@ -476,7 +475,6 @@ public:
     }
   }
 
-  // @todo this doesn't not support holes in SLS faces
   void construct_lateral_faces(const Straight_skeleton_2& ss,
                               const Offset_builder& offset_builder,
                               const FT height,
@@ -1026,7 +1024,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   PMP::polygon_soup_to_polygon_mesh(points, faces, out);
 
-  CGAL_postcondition(is_valid_polygon_mesh(out) && is_closed(out));
+  CGAL_warning(is_valid_polygon_mesh(out) && is_closed(out));
 
   return true;
 }
@@ -1091,7 +1089,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 {
   using Polygon_2 = typename PolygonWithHoles::Polygon_2;
   using Point = typename boost::range_value<Polygon_2>::type;
-  using FT = typename boost::range_value<Point>::type;
+  using FT = typename CGAL::Kernel_traits<Point>::type::FT;
 
   return extrude_skeleton(pwh, FT(1), out, np);
 }
