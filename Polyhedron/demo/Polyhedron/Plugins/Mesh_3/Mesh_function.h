@@ -264,9 +264,7 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       (*patches_ids_vector_p)[curve_id] = domain_->get_incidences(curve_id);
     }
     Mesh_sizing_field* sizing_field_ptr =
-      new Mesh_sizing_field(edge_size,
-                            domain_->aabb_tree(),
-                            *domain_);
+      new Mesh_sizing_field(edge_size, *domain_, domain_->aabb_tree());
     // The sizing field object, as well as the `patch_ids_vector` are
     // allocated on the heap, and the following `boost::any` object,
     // containing two shared pointers, is used to make the allocated

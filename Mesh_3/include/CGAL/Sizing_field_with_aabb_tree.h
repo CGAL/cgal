@@ -17,9 +17,11 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include "Facet_patch_id_map.h"
-#include "Get_curve_index.h"
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h> // for weight_modifier
+
+#include <CGAL/Mesh_3/experimental/Facet_patch_id_map.h>
+#include <CGAL/Mesh_3/experimental/Get_curve_index.h>
+#include <CGAL/Mesh_3/experimental/AABB_filtered_projection_traits.h>
 
 #include <boost/container/flat_set.hpp>
 #if defined(CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY) || defined(CGAL_NO_ASSERTIONS) == 0
@@ -27,27 +29,38 @@
 #  include <boost/format.hpp>
 #endif  // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY || (! CGAL_NO_ASSERTIONS)
 
-#include "AABB_filtered_projection_traits.h"
-
 /*!
 * @ingroup PkgMesh3DomainFields
 *
+* @tparam GeomTraits is the geometric traits class. It must match the type `Triangulation::Geom_traits`,
+* where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used
+* in the meshing process.
+* @tparam MeshDomain is the type of the domain. It must be a model of `MeshDomainWithFeatures_3`,
+* and derive from `Polyhedral_mesh_domain_with_features_3`
+
+
+* @cgalModels `MeshDomainField_3`
 */
-template <typename GeomTraits, typename MeshDomain,
-          typename Input_facets_AABB_tree = typename MeshDomain::AABB_tree,
-          typename Get_curve_index_ = CGAL::Default,
-          typename Facet_patch_id_map_ = CGAL::Default
+template <typename GeomTraits,
+          typename MeshDomain
+#ifndef DOXYGEN_RUNNING
+        , typename Input_facets_AABB_tree_ = CGAL::Default
+        , typename Get_curve_index_ = CGAL::Default
+        , typename Facet_patch_id_map_ = CGAL::Default
+#endif
           >
 struct Sizing_field_with_aabb_tree
 {
-  typedef GeomTraits Kernel_;
-  typedef typename Kernel_::FT FT;
-  typedef typename Kernel_::Point_3 Point_3;
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point_3;
 
   typedef typename MeshDomain::Index               Index;
   typedef typename MeshDomain::Corner_index        Corner_index;
   typedef typename MeshDomain::Curve_index         Curve_index;
   typedef typename MeshDomain::Surface_patch_index Patch_index;
+
+private:
+  typedef GeomTraits Kernel_;
 
   typedef boost::container::flat_set<Curve_index> Curves_ids;
   typedef boost::container::flat_set<Patch_index> Patches_ids;
@@ -60,30 +73,48 @@ struct Sizing_field_with_aabb_tree
 
   typedef CGAL::Delaunay_triangulation_3<Kernel_> Dt;
 
-  typedef Input_facets_AABB_tree Input_facets_AABB_tree_;
-  typedef typename Input_facets_AABB_tree_::Primitive Input_facets_AABB_tree_primitive_;
-  typedef typename MeshDomain::Curves_AABB_tree Input_curves_AABB_tree_;
+  using Input_facets_AABB_tree = typename CGAL::Default::Get<
+    Input_facets_AABB_tree_,
+    typename MeshDomain::AABB_tree
+    >::type;
+  typedef typename Input_facets_AABB_tree::Primitive  Input_facets_AABB_tree_primitive_;
+  typedef typename MeshDomain::Curves_AABB_tree       Input_curves_AABB_tree_;
   typedef typename Input_curves_AABB_tree_::Primitive Input_curves_AABB_tree_primitive_;
 
-  typedef typename CGAL::Default::Get<
+  using Get_curve_index = typename CGAL::Default::Get<
     Get_curve_index_,
     CGAL::Mesh_3::Get_curve_index<typename MeshDomain::Curves_AABB_tree::Primitive>
-    >::type Get_curve_index;
-  typedef typename CGAL::Default::Get<
+    >::type;
+  using Facet_patch_id_map = typename CGAL::Default::Get<
     Facet_patch_id_map_,
     CGAL::Mesh_3::Facet_patch_id_map<MeshDomain,
                                      typename Input_facets_AABB_tree::Primitive>
-    >::type Facet_patch_id_map;
+    >::type;
 
-  Sizing_field_with_aabb_tree
-  (typename Kernel_::FT d,
-   const Input_facets_AABB_tree_& aabb_tree,
-   const MeshDomain& domain,
-   Get_curve_index get_curve_index = Get_curve_index(),
-   Facet_patch_id_map facet_patch_id_map = Facet_patch_id_map()
-   )
-    : d_(d), aabb_tree(aabb_tree),
+public:
+  /*!
+  * Constructor...
+  * @param d
+  * @param domain
+  */
+  Sizing_field_with_aabb_tree(const FT& d, const MeshDomain& domain)
+    : Sizing_field_with_aabb_tree(d,
+                                  domain,
+                                  domain.aabb_tree(),
+                                  Get_curve_index(),
+                                  Facet_patch_id_map())
+  {}
+
+#ifndef DOXYGEN_RUNNING
+  Sizing_field_with_aabb_tree(const FT& d,
+                              const MeshDomain& domain,
+                              const Input_facets_AABB_tree& input_facets_aabb_tree,
+                              Get_curve_index get_curve_index = Get_curve_index(),
+                              Facet_patch_id_map facet_patch_id_map = Facet_patch_id_map()
+                              )
+    : d_(d),
       domain(domain),
+      aabb_tree(input_facets_aabb_tree),
       dt(),
       get_curve_index(get_curve_index),
       facet_patch_id_map(facet_patch_id_map)
@@ -169,7 +200,14 @@ struct Sizing_field_with_aabb_tree
       }
     }
   }
+#endif // DOXYGEN_RUNNING
 
+public:
+  /*! \name Operations
+  * returns the value of the sizing field at the point `p`,
+  * assumed to be included in the input complex feature with dimension `dimension`
+  * and mesh subcomplex index `index`.
+  */
   double operator()(const Point_3& p,
                     const int dim,
                     const Index& id) const
@@ -234,7 +272,7 @@ struct Sizing_field_with_aabb_tree
         CGAL_assertion(! ids.empty());
 
         CGAL::Mesh_3::Filtered_projection_traits<
-          typename Input_facets_AABB_tree_::AABB_traits,
+          typename Input_facets_AABB_tree::AABB_traits,
           Facet_patch_id_map
           > projection_traits(ids.begin(), ids.end(),
                               aabb_tree.traits(),
@@ -297,7 +335,7 @@ struct Sizing_field_with_aabb_tree
         //Compute distance to surface patches
         CGAL::Mesh_3::Filtered_projection_traits
           <
-            typename Input_facets_AABB_tree_::AABB_traits
+            typename Input_facets_AABB_tree::AABB_traits
           , Facet_patch_id_map
           > projection_traits(ids.begin(), ids.end(),
                               aabb_tree.traits(),
@@ -520,8 +558,8 @@ struct Sizing_field_with_aabb_tree
   }
 private:
   typename Kernel_::FT d_;
-  const Input_facets_AABB_tree_& aabb_tree;
   const MeshDomain& domain;
+  const Input_facets_AABB_tree& aabb_tree;
   Dt dt;
   Corners          corners;
   Corners_indices  corners_indices;
