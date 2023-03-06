@@ -42,10 +42,9 @@ compare_offset_against_isec_timeC2 ( typename K::FT const& t,
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  No_cache<boost::optional<CGAL_SS_i::Rational<typename K::FT> > > lTime_cache ;
-  No_cache<boost::optional<Line_2 > > lCoeff_cache ;
+  No_caches<K> no_caches;
 
-  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, lTime_cache, lCoeff_cache);
+  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, no_caches);
   if ( et_ )
   {
     Quotient et = et_->to_quotient();

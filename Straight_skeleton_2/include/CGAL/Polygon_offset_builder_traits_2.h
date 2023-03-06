@@ -62,9 +62,9 @@ struct Construct_offset_point_2 : Functor_base_2<K>
   {
     typedef boost::optional< typename K::Line_2 > Optional_line;
 
-    No_cache<Optional_line> lCoeff_cache;
+    No_caches<K> no_caches;
 
-    result_type p = construct_offset_pointC2(aT,aE0,aWeight0,aE1,aWeight1,aNode,lCoeff_cache);
+    result_type p = construct_offset_pointC2(aT,aE0,aWeight0,aE1,aWeight1,aNode, no_caches);
 
     return p ;
   }

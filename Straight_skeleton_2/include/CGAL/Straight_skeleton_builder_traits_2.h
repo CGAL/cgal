@@ -16,6 +16,7 @@
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_caches.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/Trisegment_2.h>
 
@@ -71,13 +72,13 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
 
   typedef Uncertain<bool> result_type ;
 
-  Do_ss_event_exist_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
-    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
+  Do_ss_event_exist_2(Caches<K>& aCaches)
+    : mCaches(aCaches)
   {}
 
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, boost::optional<FT> aMaxTime ) const
   {
-    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment,aMaxTime,mTime_cache,mCoeff_cache) ;
+    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment, aMaxTime, mCaches);
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTrisegment);
 
@@ -85,8 +86,7 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
   }
 
 private:
-  Time_cache<K>& mTime_cache ;
-  Coeff_cache<K>& mCoeff_cache ;
+  Caches<K>& mCaches;
 };
 
 template<class K>
@@ -100,8 +100,8 @@ struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
 
   typedef Uncertain<bool> result_type ;
 
-  Is_edge_facing_ss_node_2(Coeff_cache<K>& aCoeff_cache)
-    : mCoeff_cache(aCoeff_cache)
+  Is_edge_facing_ss_node_2(Caches<K>& aCaches)
+    : mCaches(aCaches)
   { }
 
   Uncertain<bool> operator() ( Point_2 const& aContourNode, Segment_2_with_ID const& aEdge ) const
@@ -111,11 +111,11 @@ struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
 
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aSkeletonNode, Segment_2_with_ID const& aEdge ) const
   {
-    return is_edge_facing_offset_lines_isecC2(aSkeletonNode,aEdge,mCoeff_cache) ;
+    return is_edge_facing_offset_lines_isecC2(aSkeletonNode, aEdge, mCaches);
   }
 
 private:
-  Coeff_cache<K>& mCoeff_cache ;
+  Caches<K>& mCaches;
 };
 
 template<class K>
@@ -127,20 +127,19 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
 
   typedef Uncertain<Comparison_result> result_type ;
 
-  Compare_ss_event_times_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
-    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
+  Compare_ss_event_times_2(Caches<K>& aCaches)
+    : mCaches(aCaches)
   {}
 
   Uncertain<Comparison_result> operator() ( Trisegment_2_ptr const& aL, Trisegment_2_ptr const& aR ) const
   {
-    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR,mTime_cache,mCoeff_cache) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL, aR, mCaches);
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_times","L: " << aL << "\nR:" << aR );
     return rResult ;
   }
 
 private:
-  Time_cache<K>& mTime_cache ;
-  Coeff_cache<K>& mCoeff_cache ;
+  Caches<K>& mCaches;
 };
 
 template<class K>
@@ -177,8 +176,8 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
 
   typedef Uncertain<Oriented_side> result_type ;
 
-  Oriented_side_of_event_point_wrt_bisector_2(Coeff_cache<K>& aCoeff_cache)
-    : mCoeff_cache(aCoeff_cache)
+  Oriented_side_of_event_point_wrt_bisector_2(Caches<K>& aCaches)
+    : mCaches(aCaches)
   {}
 
   Uncertain<Oriented_side> operator() ( Trisegment_2_ptr const& aEvent
@@ -190,7 +189,7 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
                                       , bool                    aE0isPrimary
                                       ) const
   {
-    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aW0,aE1,aW1,aE01Event,aE0isPrimary,mCoeff_cache) ;
+    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aW0,aE1,aW1,aE01Event,aE0isPrimary,mCaches) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Oriented_side_of_event_point_wrt_bisector_2","Event=" << aEvent << " E0=" << aE0 << " E1=" << aE1 );
 
@@ -198,7 +197,7 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
   }
 
 private:
-  Coeff_cache<K>& mCoeff_cache ;
+  Caches<K>& mCaches;
 };
 
 
@@ -211,13 +210,13 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
 
   typedef Uncertain<bool> result_type ;
 
-  Are_ss_events_simultaneous_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
-    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
+  Are_ss_events_simultaneous_2(Caches<K>& aCaches)
+    : mCaches(aCaches)
   {}
 
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aA, Trisegment_2_ptr const& aB ) const
   {
-    Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB,mTime_cache,mCoeff_cache);
+    Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB, mCaches);
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_events_simultaneous","A=" << aA << "\nB=" << aB);
 
@@ -225,8 +224,7 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
   }
 
 private:
-  Time_cache<K>& mTime_cache ;
-  Coeff_cache<K>& mCoeff_cache ;
+  Caches<K>& mCaches;
 };
 
 template<class K>
@@ -243,8 +241,8 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
   typedef boost::optional<rtype> result_type ;
 
-  Construct_ss_event_time_and_point_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
-    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
+  Construct_ss_event_time_and_point_2(Caches<K>& aCaches)
+    : mCaches(aCaches)
   {}
 
   result_type operator() ( Trisegment_2_ptr const& aTrisegment ) const
@@ -254,13 +252,13 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    boost::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment,mTime_cache,mCoeff_cache);
+    boost::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment, mCaches);
 
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
 
-      boost::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment,mCoeff_cache);
+      boost::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment, mCaches);
       if ( oi )
       {
         i = *oi ;
@@ -274,8 +272,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   }
 
 private:
-  Time_cache<K>& mTime_cache ;
-  Coeff_cache<K>& mCoeff_cache ;
+  Caches<K>& mCaches;
 };
 
 } // namespace CGAL_SS_i
@@ -347,12 +344,12 @@ public:
 
   Is_edge_facing_ss_node_2 is_edge_facing_ss_node_2_object() const
   {
-    return Is_edge_facing_ss_node_2(mCoeff_cache);
+    return Is_edge_facing_ss_node_2(mCaches);
   }
 
   Compare_ss_event_times_2 compare_ss_event_times_2_object() const
   {
-    return Compare_ss_event_times_2(mTime_cache, mCoeff_cache);
+    return Compare_ss_event_times_2(mCaches);
   }
 
   Compare_ss_event_angles_2 compare_ss_event_angles_2_object() const
@@ -362,22 +359,22 @@ public:
 
   Oriented_side_of_event_point_wrt_bisector_2 oriented_side_of_event_point_wrt_bisector_2_object() const
   {
-    return Oriented_side_of_event_point_wrt_bisector_2(mCoeff_cache);
+    return Oriented_side_of_event_point_wrt_bisector_2(mCaches);
   }
 
   Do_ss_event_exist_2 do_ss_event_exist_2_object() const
   {
-    return Do_ss_event_exist_2(mTime_cache, mCoeff_cache);
+    return Do_ss_event_exist_2(mCaches);
   }
 
   Are_ss_events_simultaneous_2 are_ss_events_simultaneous_2_object() const
   {
-    return Are_ss_events_simultaneous_2(mTime_cache, mCoeff_cache);
+    return Are_ss_events_simultaneous_2(mCaches);
   }
 
   Construct_ss_event_time_and_point_2 construct_ss_event_time_and_point_2_object() const
   {
-    return Construct_ss_event_time_and_point_2(mTime_cache, mCoeff_cache);
+    return Construct_ss_event_time_and_point_2(mCaches);
   }
 
   Construct_ss_trisegment_2 construct_ss_trisegment_2_object() const
@@ -391,21 +388,21 @@ public:
   void reset_trisegment(std::size_t i) const
   {
     --mTrisegment_ID ;
-    mTime_cache.Reset(i) ;
+    mCaches.Reset(i) ;
   }
 
 // functions to initialize (and harmonize) and cache speeds
   void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS )
   {
-    CGAL_SS_i::compute_normalized_line_coeffC2( aBorderS, mCoeff_cache ) ;
+    CGAL_SS_i::compute_normalized_line_coeffC2(aBorderS, mCaches);
   }
 
   void InitializeLineCoeffs ( std::size_t aID, std::size_t aOtherID )
   {
-    if ( mCoeff_cache.Get( aOtherID ) )
-      mCoeff_cache.Set( aID, CGAL_SS_i::cgal_make_optional(*(mCoeff_cache.Get(aOtherID))) ) ;
+    if(mCaches.mCoeff_cache.Get(aOtherID))
+      mCaches.mCoeff_cache.Set(aID, CGAL_SS_i::cgal_make_optional(*(mCaches.mCoeff_cache.Get(aOtherID))));
     else
-      mCoeff_cache.Set( aID, boost::none ) ;
+      mCaches.mCoeff_cache.Set(aID, boost::none);
   }
 
   // functions and tag for filtering split events
@@ -420,7 +417,7 @@ public:
 
     typename Base::Trisegment_2_ptr tri = lEvent->trisegment() ;
     boost::optional<CGAL_SS_i::Rational<typename K::FT> > lOptTime =
-        CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, mTime_cache, mCoeff_cache);
+        CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, mCaches);
 
     if ( lOptTime && lOptTime->to_nt() > *mFilteringBound )
     {
@@ -458,8 +455,8 @@ public:
                                          lHR->vertex()->point(),
                                          lHR->id());
 
-    boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, FT(1)/lHL->weight(), mCoeff_cache);
-    boost::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, FT(1)/lHR->weight(), mCoeff_cache);
+    boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, FT(1)/lHL->weight(), mCaches);
+    boost::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, FT(1)/lHR->weight(), mCaches);
 
     // @fixme below needs to use inverted weights like in degenerate time/point computations
     Vector_2 lVL(lL->a(), lL->b()) ;
@@ -486,7 +483,7 @@ public:
         continue;
 
       CGAL_SS_i::Segment_2_with_ID<K> lSh (s_h, (*h)->id());
-      boost::optional< Line_2 > lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, (*h)->weight(), mCoeff_cache);
+      boost::optional< Line_2 > lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, (*h)->weight(), mCaches);
 
       FT lBound = ( - lh->c() - lh->a()*aNode->point().x() - lh->b()*aNode->point().y() ) /
                     ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) - aNode->time() ;
@@ -501,8 +498,7 @@ public:
 
 public:
   mutable std::size_t mTrisegment_ID = 0 ;
-  mutable CGAL_SS_i::Time_cache<K> mTime_cache ;
-  mutable CGAL_SS_i::Coeff_cache<K> mCoeff_cache ;
+  mutable CGAL_SS_i::Caches<K> mCaches ;
   mutable boost::optional< typename K::FT > mFilteringBound ;
 } ;
 
@@ -590,10 +586,8 @@ public:
 // constructor of predicates using time caching
   Compare_ss_event_times_2 compare_ss_event_times_2_object() const
   {
-    return Compare_ss_event_times_2( typename Exact::Compare_ss_event_times_2(
-                                       mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
-                                     typename Filtering::Compare_ss_event_times_2(
-                                       mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
+    return Compare_ss_event_times_2(typename Exact::Compare_ss_event_times_2(mExact_traits.mCaches),
+                                    typename Filtering::Compare_ss_event_times_2(mApproximate_traits.mCaches));
   }
 
   Compare_ss_event_angles_2 compare_ss_event_angles_2_object() const
@@ -603,40 +597,32 @@ public:
 
   Is_edge_facing_ss_node_2 is_edge_facing_ss_node_2_object() const
   {
-    return Is_edge_facing_ss_node_2( typename Exact::Is_edge_facing_ss_node_2(mExact_traits.mCoeff_cache),
-                                     typename Filtering::Is_edge_facing_ss_node_2(mApproximate_traits.mCoeff_cache) );
+    return Is_edge_facing_ss_node_2(typename Exact::Is_edge_facing_ss_node_2(mExact_traits.mCaches),
+                                    typename Filtering::Is_edge_facing_ss_node_2(mApproximate_traits.mCaches));
   }
 
   Oriented_side_of_event_point_wrt_bisector_2 oriented_side_of_event_point_wrt_bisector_2_object() const
   {
-    return Oriented_side_of_event_point_wrt_bisector_2( typename Exact::Oriented_side_of_event_point_wrt_bisector_2(
-                                                          mExact_traits.mCoeff_cache),
-                                                        typename Filtering::Oriented_side_of_event_point_wrt_bisector_2(
-                                                          mApproximate_traits.mCoeff_cache) );
+    return Oriented_side_of_event_point_wrt_bisector_2(typename Exact::Oriented_side_of_event_point_wrt_bisector_2(mExact_traits.mCaches),
+                                                       typename Filtering::Oriented_side_of_event_point_wrt_bisector_2(mApproximate_traits.mCaches));
   }
 
   Do_ss_event_exist_2 do_ss_event_exist_2_object() const
   {
-    return Do_ss_event_exist_2( typename Exact::Do_ss_event_exist_2(
-                                  mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
-                                typename Filtering::Do_ss_event_exist_2(
-                                  mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
+    return Do_ss_event_exist_2(typename Exact::Do_ss_event_exist_2(mExact_traits.mCaches),
+                               typename Filtering::Do_ss_event_exist_2(mApproximate_traits.mCaches));
   }
 
   Are_ss_events_simultaneous_2 are_ss_events_simultaneous_2_object() const
   {
-    return Are_ss_events_simultaneous_2( typename Exact::Are_ss_events_simultaneous_2(
-                                           mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
-                                         typename Filtering::Are_ss_events_simultaneous_2(
-                                           mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
+    return Are_ss_events_simultaneous_2(typename Exact::Are_ss_events_simultaneous_2(mExact_traits.mCaches),
+                                        typename Filtering::Are_ss_events_simultaneous_2(mApproximate_traits.mCaches));
   }
 
   Construct_ss_event_time_and_point_2 construct_ss_event_time_and_point_2_object() const
   {
-    return Construct_ss_event_time_and_point_2( typename Exact::Construct_ss_event_time_and_point_2(
-                                                  mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
-                                                typename Filtering::Construct_ss_event_time_and_point_2(
-                                                  mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
+    return Construct_ss_event_time_and_point_2(typename Exact::Construct_ss_event_time_and_point_2(mExact_traits.mCaches),
+                                               typename Filtering::Construct_ss_event_time_and_point_2(mApproximate_traits.mCaches) );
   }
 
 // constructor of trisegments using global id stored in the traits
@@ -653,8 +639,8 @@ public:
     if ( i+1 == trisegment_ID() )
     {
       --trisegment_ID() ;
-      mExact_traits.mTime_cache.Reset(i) ;
-      mApproximate_traits.mTime_cache.Reset(i) ;
+      mExact_traits.mCaches.Reset(i) ;
+      mApproximate_traits.mCaches.Reset(i) ;
     }
   }
 
@@ -705,8 +691,7 @@ public:
     try
     {
       boost::optional<CGAL_SS_i::Rational<typename FK::FT> > lOptTime =
-          CGAL_SS_i::compute_offset_lines_isec_timeC2(
-            tri, mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache);
+          CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, mApproximate_traits.mCaches);
 
       if ( lOptTime && lOptTime->to_nt() > *mApproximate_traits.mFilteringBound )
       {
@@ -752,8 +737,8 @@ public:
                                           lToFiltered(lHR->vertex()->point()),
                                           lHR->id());
 
-    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, Target_FT(1) / lToFiltered(lHL->weight()), mApproximate_traits.mCoeff_cache);
-    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, Target_FT(1) / lToFiltered(lHR->weight()), mApproximate_traits.mCoeff_cache);
+    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, Target_FT(1) / lToFiltered(lHL->weight()), mApproximate_traits.mCaches);
+    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, Target_FT(1) / lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
 
     Target_Point_2 laP = lToFiltered(aNode->point());
 
@@ -785,7 +770,7 @@ public:
           continue;
 
         CGAL_SS_i::Segment_2_with_ID<FK> lSh (s_h, (*h)->id());
-        auto lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, lToFiltered((*h)->weight()), mApproximate_traits.mCoeff_cache);
+        auto lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, lToFiltered((*h)->weight()), mApproximate_traits.mCaches);
 
         // @fixme precision issues...? lToFiltered earlier?
         Target_FT lBound = (- lh->c() - lh->a()*laP.x() - lh->b()*laP.y()) /

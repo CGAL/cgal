@@ -30,7 +30,7 @@ namespace CGAL_SS_i {
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class K, class CoeffCache>
+template<class K, class Caches>
 boost::optional< typename K::Point_2 >
 construct_offset_pointC2 ( typename K::FT const& t,
                            Segment_2_with_ID<K> const& e0,
@@ -38,7 +38,7 @@ construct_offset_pointC2 ( typename K::FT const& t,
                            Segment_2_with_ID<K> const& e1,
                            typename K::FT const& w1,
                            Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
-                           CoeffCache& aCoeff_cache)
+                           Caches& aCaches)
 {
   typedef typename K::FT FT ;
 
@@ -55,8 +55,8 @@ construct_offset_pointC2 ( typename K::FT const& t,
   CGAL_STSKEL_TRAITS_TRACE("      e1=" << s2str(e1) << "w = " << w1 ) ;
   CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
 
-  Optional_line_2 l0 = compute_normalized_line_coeffC2(e0, aCoeff_cache) ;
-  Optional_line_2 l1 = compute_normalized_line_coeffC2(e1, aCoeff_cache) ;
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(e0, aCaches) ;
+  Optional_line_2 l1 = compute_normalized_line_coeffC2(e1, aCaches) ;
 
   bool ok = false ;
 
@@ -80,7 +80,7 @@ construct_offset_pointC2 ( typename K::FT const& t,
       {
         CGAL_STSKEL_TRAITS_TRACE("  DEGENERATE case: Collinear segments involved. Seed event " << ( !tri ? " ABSENT" : " exists." ) ) ;
 
-        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri, aCoeff_cache)
+        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri, aCaches)
                                  : compute_oriented_midpoint(e0,e1) ;
 
         if ( q )

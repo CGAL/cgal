@@ -189,24 +189,20 @@ class Rational
     NT mN, mD ;
 } ;
 
-template <class Info>
-struct No_cache
-{
-  bool IsCached ( std::size_t ) const { return false; }
-
-  Info Get ( std::size_t ) const
-  {
-    CGAL_error();
-    return Info();
-  }
-
-  void Set ( std::size_t, Info const& ) { }
-  void Reset ( std::size_t ) { }
-};
 
 // Debug struct
 template <class Info>
 struct FPU_checker;
+
+template <class K>
+struct FPU_checker<boost::optional< Line_2<K> > >
+{
+  static bool is_valid()
+  {
+    return !std::is_same<typename K::FT, CGAL::Interval_nt<false> >::value ||
+           FPU_get_cw() == CGAL_FE_UPWARD;
+  }
+};
 
 template <class FT>
 struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
@@ -219,7 +215,7 @@ struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
 };
 
 template <class K>
-struct FPU_checker<boost::optional< Line_2<K> > >
+struct FPU_checker<boost::optional< Point_2<K> > >
 {
   static bool is_valid()
   {
@@ -228,50 +224,6 @@ struct FPU_checker<boost::optional< Line_2<K> > >
   }
 };
 
-//TODO: call reserve, but how? #input vertices + n*m estimation?
-template <class Info>
-struct Info_cache
-{
-  std::vector<Info> mValues ;
-  std::vector<bool> mAlreadyComputed ;
-
-  bool IsCached ( std::size_t i ) const
-  {
-    return ( (mAlreadyComputed.size() > i) && mAlreadyComputed[i] ) ;
-  }
-
-  Info const& Get(std::size_t i) const
-  {
-    CGAL_precondition ( IsCached(i) ) ;
-    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
-    return mValues[i] ;
-  }
-
-  void Set ( std::size_t i, Info const& aValue)
-  {
-    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
-    if (mValues.size() <= i )
-    {
-      mValues.resize(i+1) ;
-      mAlreadyComputed.resize(i+1, false) ;
-    }
-
-    mAlreadyComputed[i] = true ;
-    mValues[i] = aValue ;
-  }
-
-  void Reset ( std::size_t i )
-  {
-    if ( IsCached(i) ) // needed if approx info is set but not exact info
-      mAlreadyComputed[i] = false ;
-  }
-};
-
-template <typename K>
-using Time_cache = Info_cache< boost::optional< CGAL_SS_i::Rational< typename K::FT > > > ;
-
-template <typename K>
-using Coeff_cache = Info_cache< boost::optional< typename K::Line_2 > > ;
 
 template<class K>
 struct Functor_base_2

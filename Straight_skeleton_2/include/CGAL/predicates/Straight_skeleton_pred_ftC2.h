@@ -171,11 +171,10 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // Those seeds are used to determine the actual position of the degenerate vertex in case of collinear edges (since that point is
 // not given by the collinear edges alone)
 //
-template<class K, class FT, class TimeCache, class CoeffCache>
+template<class K, class FT, class Caches>
 Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                            boost::optional<FT> const& aMaxTime,
-                                           TimeCache& aTime_cache,
-                                           CoeffCache& aCoeff_cache )
+                                           Caches& aCaches )
 {
 
   typedef Rational<FT>              Rational ;
@@ -191,7 +190,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
   {
     CGAL_STSKEL_TRAITS_TRACE( ( tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? " normal edges" : " collinear edges" ) ) ;
 
-    Optional_rational t = compute_offset_lines_isec_timeC2(tri, aTime_cache, aCoeff_cache) ;
+    Optional_rational t = compute_offset_lines_isec_timeC2(tri, aCaches) ;
     if ( t )
     {
       Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t->d()) ;
@@ -238,12 +237,11 @@ Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
 // (m0',m1',m2') and (n0',n1',n2') intersect each in a single point; returns the relative order of mt w.r.t. nt.
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exists distances mt and nt for which each offset triple intersect at a single point.
-template<class K, class TimeCache, class CoeffCache>
+template<class K, class Caches>
 Uncertain<Comparison_result>
 compare_offset_lines_isec_timesC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& m,
                                     Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& n,
-                                    TimeCache& aTime_cache,
-                                    CoeffCache& aCoeff_cache )
+                                    Caches& aCaches )
 {
   typedef typename K::FT FT ;
 
@@ -253,8 +251,8 @@ compare_offset_lines_isec_timesC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  Optional_rational mt_ = compute_offset_lines_isec_timeC2(m, aTime_cache, aCoeff_cache);
-  Optional_rational nt_ = compute_offset_lines_isec_timeC2(n, aTime_cache, aCoeff_cache);
+  Optional_rational mt_ = compute_offset_lines_isec_timeC2(m, aCaches);
+  Optional_rational nt_ = compute_offset_lines_isec_timeC2(n, aCaches);
 
   if ( mt_ && nt_ )
   {
@@ -322,13 +320,13 @@ Uncertain<bool> is_edge_facing_pointC2 ( boost::optional< typename K::Point_2 > 
 // Given a triple of oriented straight line segments: (e0,e1,e2) such that their offsets
 // at some distance intersects in a point (x,y), returns true if (x,y) is on the positive side of the line supporting aEdge
 //
-template<class K, class CoeffCache>
+template<class K, class Caches>
 inline Uncertain<bool>
 is_edge_facing_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                      Segment_2_with_ID<K> const& aEdge,
-                                     CoeffCache& aCoeff_cache)
+                                     Caches& aCaches )
 {
-  return is_edge_facing_pointC2(construct_offset_lines_isecC2(tri, aCoeff_cache), aEdge);
+  return is_edge_facing_pointC2(construct_offset_lines_isecC2(tri, aCaches), aEdge);
 }
 
 // Given an event trisegment and two oriented straight line segments e0 and e1, returns the oriented side of the event point
@@ -392,7 +390,7 @@ is_edge_facing_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2
 //   If e0 and e1 are not consecutive in the input, v01_event is the event that defined their first common offset vertex.
 //   If e0 and e1 are consecutive in the input, v01_event is null.
 //
-template<class K, class CoeffCache>
+template<class K, class Caches>
 Uncertain<Oriented_side>
 oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& event,
                                               Segment_2_with_ID<K> const& e0,
@@ -401,7 +399,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, 
                                               typename K::FT const& w1,
                                               Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& v01_event, // can be null
                                               bool primary_is_0,
-                                              CoeffCache& aCoeff_cache )
+                                              Caches& aCaches )
 {
   typedef typename K::FT FT ;
 
@@ -412,10 +410,10 @@ oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, 
 
   try
   {
-    Point_2 p = validate(construct_offset_lines_isecC2(event, aCoeff_cache));
+    Point_2 p = validate(construct_offset_lines_isecC2(event, aCaches));
 
-    Line_2 l0 = validate(compute_weighted_line_coeffC2(e0, w0, aCoeff_cache)) ;
-    Line_2 l1 = validate(compute_weighted_line_coeffC2(e1, w1, aCoeff_cache)) ;
+    Line_2 l0 = validate(compute_weighted_line_coeffC2(e0, w0, aCaches));
+    Line_2 l1 = validate(compute_weighted_line_coeffC2(e1, w1, aCaches));
 
     CGAL_STSKEL_TRAITS_TRACE("\n~~ Oriented side of point [" << typeid(FT).name() << "]" );
     CGAL_STSKEL_TRAITS_TRACE("p = " << p2str(p)
@@ -435,7 +433,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       // We need to compute the actual bisector line.
       CGAL_assertion( v01_event || ( !v01_event && e0.target() == e1.source() ) ) ;
 
-      Point_2 v01 = v01_event ? validate( construct_offset_lines_isecC2(v01_event, aCoeff_cache) ) : e1.source() ;
+      Point_2 v01 = v01_event ? validate(construct_offset_lines_isecC2(v01_event, aCaches))
+                              : e1.source() ;
 
       CGAL_STSKEL_TRAITS_TRACE("v01=" << p2str(v01) << ( v01_event ? " (from skeleton node)" : "" ) ) ;
 
@@ -518,11 +517,10 @@ oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, 
 // PRECONDITIONS:
 //   There exists single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
-template<class K, class TimeCache, class CoeffCache>
+template<class K, class Caches>
 Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& l,
                                             Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& r,
-                                            TimeCache& aTime_cache,
-                                            CoeffCache& aCoeff_cache )
+                                            Caches& aCaches )
 {
   typedef typename K::FT FT ;
 
@@ -536,8 +534,8 @@ Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2_ptr< Trisegment_2<K, Se
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  Optional_rational lt_ = compute_offset_lines_isec_timeC2(l, aTime_cache, aCoeff_cache);
-  Optional_rational rt_ = compute_offset_lines_isec_timeC2(r, aTime_cache, aCoeff_cache);
+  Optional_rational lt_ = compute_offset_lines_isec_timeC2(l, aCaches);
+  Optional_rational rt_ = compute_offset_lines_isec_timeC2(r, aCaches);
 
   if ( lt_ && rt_ )
   {
@@ -552,8 +550,8 @@ Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2_ptr< Trisegment_2<K, Se
       {
         if ( equal_times )
         {
-          Optional_point_2 li = construct_offset_lines_isecC2(l, aCoeff_cache);
-          Optional_point_2 ri = construct_offset_lines_isecC2(r, aCoeff_cache);
+          Optional_point_2 li = construct_offset_lines_isecC2(l, aCaches);
+          Optional_point_2 ri = construct_offset_lines_isecC2(r, aCaches);
 
           if ( li && ri )
             rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
