@@ -24,7 +24,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
-
+  int k_ring = (argc > 2) ? std::stoi(argv[2]) : 3;
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
   {
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
   }
 
 
-  CGAL::expand_face_selection(selection, mesh, 3, selection_pmap, std::inserter(selection, selection.end()));
+  CGAL::expand_face_selection(selection, mesh, k_ring, selection_pmap, std::inserter(selection, selection.end()));
 
   CGAL::Face_filtered_graph<Mesh> selection_mesh(mesh, selection);
 
