@@ -28,7 +28,6 @@
 #include <iostream>
 #include <type_traits>
 
-// The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 namespace CGAL {
 
 namespace CGAL_SS_i {
@@ -238,27 +237,6 @@ struct Default_return_polygon_with_holes_type<Polygon, OfK, false> // Polygon ty
 };
 
 } // namespace CGAL_SS_i
-
-class Ref_counted_base
-{
-private:
-  mutable long mCount ;
-  Ref_counted_base( Ref_counted_base const &);
-  Ref_counted_base& operator=( Ref_counted_base const &);
-protected:
-  Ref_counted_base(): mCount(0) {}
-  virtual ~Ref_counted_base() noexcept(!CGAL_ASSERTIONS_ENABLED) {}
-public:
-    void AddRef() const { ++mCount; }
-    void Release() const
-      {
-        if( --mCount == 0 )
-          delete this;
-      }
-};
-
-inline void intrusive_ptr_add_ref( Ref_counted_base const* p ) { p->AddRef(); }
-inline void intrusive_ptr_release( Ref_counted_base const* p ) { p->Release(); }
 
 } // namespace CGAL
 

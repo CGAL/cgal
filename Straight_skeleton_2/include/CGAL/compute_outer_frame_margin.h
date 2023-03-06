@@ -70,7 +70,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
       WeightIterator lNextWeight = ( lCurr == lLast  ? aWeights.begin() : std::next(lWeight) ) ;
 
-      OptionalPoint_2 lP = aTraits.construct_offset_point_2_object()(aOffset,lLEdge,*lWeight,lREdge,*lNextWeight, Trisegment_2_ptr() );
+      OptionalPoint_2 lP = aTraits.construct_offset_point_2_object()(aOffset,lLEdge,*lWeight,lREdge,*lNextWeight, nullptr );
 
       if ( !lP )
       {

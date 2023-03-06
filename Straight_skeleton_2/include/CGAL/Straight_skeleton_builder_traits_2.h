@@ -148,7 +148,6 @@ struct Compare_ss_event_angles_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
   typedef typename Base::FT FT ;
   typedef typename Base::Vector_2 Vector_2 ;
 

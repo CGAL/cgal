@@ -19,8 +19,6 @@
 
 #include <CGAL/assertions.h>
 
-#include <boost/intrusive_ptr.hpp>
-
 #include <limits>
 #include <iostream>
 
@@ -62,14 +60,16 @@ struct Minmax_traits< Trisegment_collinearity >
 
 } // namespace internal
 
+template <class Trisegment>
+using Trisegment_2_ptr = std::shared_ptr<Trisegment>;
+
 template<class K, typename Segment>
 class Trisegment_2
-  : public Ref_counted_base
 {
   typedef Trisegment_2<K, Segment> Self;
 
 public:
-  typedef boost::intrusive_ptr<Trisegment_2> Self_ptr ;
+  typedef Trisegment_2_ptr<Self>             Self_ptr ;
   typedef typename K::FT                     FT ;
 
   Trisegment_2 ( Segment const&        aE0
@@ -170,9 +170,9 @@ public:
     }
   }
 
-  Self_ptr child_l() const { return mChildL ; }
-  Self_ptr child_r() const { return mChildR ; }
-  Self_ptr child_t() const { return mChildT ; }
+  Self_ptr const& child_l() const { return mChildL ; }
+  Self_ptr const& child_r() const { return mChildR ; }
+  Self_ptr const& child_t() const { return mChildT ; }
 
   void set_child_l( Self_ptr const& aChild ) { mChildL = aChild ; }
   void set_child_r( Self_ptr const& aChild ) { mChildR = aChild ; }

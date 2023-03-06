@@ -23,7 +23,6 @@
 #include <CGAL/enum.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/mpl/bool.hpp>
@@ -31,8 +30,9 @@
 #include <algorithm>
 #include <exception>
 #include <iostream>
-#include <map>
 #include <list>
+#include <map>
+#include <memory>
 #include <queue>
 #include <string>
 #include <sstream>
@@ -157,7 +157,7 @@ private :
   typedef CGAL_SS_i::Split_event_2       <SSkel,Traits> SplitEvent ;
   typedef CGAL_SS_i::Pseudo_split_event_2<SSkel,Traits> PseudoSplitEvent ;
 
-  typedef boost::intrusive_ptr<Event> EventPtr ;
+  typedef std::shared_ptr<Event> EventPtr ;
 
   typedef std::pair<Vertex_handle,Vertex_handle> Vertex_handle_pair ;
 
@@ -181,7 +181,7 @@ private :
 
   enum Site { AT_SOURCE = -1 , INSIDE = 0, AT_TARGET = +1 } ;
 
-  struct Multinode : public Ref_counted_base
+  struct Multinode
   {
     Multinode ( Halfedge_handle b, Halfedge_handle e )
       :
@@ -200,7 +200,7 @@ private :
     Vertex_handle_vector   nodes_to_remove ;
   } ;
 
-  typedef boost::intrusive_ptr<Multinode> MultinodePtr ;
+  typedef std::shared_ptr<Multinode> MultinodePtr ;
 
   struct MultinodeComparer
   {
@@ -553,7 +553,7 @@ public:
 
   typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Split_event_compare> SplitPQ ;
 
-  struct Vertex_data : public Ref_counted_base
+  struct Vertex_data
   {
     Vertex_data ( Vertex_handle aVertex, Split_event_compare const& aComparer )
       :
@@ -583,7 +583,7 @@ public:
     Trisegment_2_ptr  mTrisegment ; // Skeleton nodes cache the full trisegment tree that defines the originating event
   } ;
 
-  typedef boost::intrusive_ptr<Vertex_data> Vertex_data_ptr ;
+  typedef std::shared_ptr<Vertex_data> Vertex_data_ptr ;
 
   typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Event_compare> PQ ;
 
@@ -756,7 +756,7 @@ private :
     CGAL_assertion_code(})
     CGAL_assertion_code(})
 
-    CGAL_postcondition_msg((r!= Trisegment_2_ptr()), "Unable to determine edges collinearity");
+    CGAL_postcondition_msg((r != nullptr), "Unable to determine edges collinearity");
 
     return r ;
   }

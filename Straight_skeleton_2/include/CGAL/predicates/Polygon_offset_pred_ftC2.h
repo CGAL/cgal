@@ -18,7 +18,6 @@
 #include <CGAL/Uncertain.h>
 
 #include <boost/optional/optional.hpp>
-#include <boost/intrusive_ptr.hpp>
 
 namespace CGAL {
 
@@ -31,7 +30,7 @@ namespace CGAL_SS_i {
 template<class K>
 Uncertain<Comparison_result>
 compare_offset_against_isec_timeC2 ( typename K::FT const& t,
-                                     boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri )
+                                     Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri )
 {
   typedef typename K::FT FT ;
   typedef typename K::Line_2 Line_2 ;

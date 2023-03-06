@@ -20,7 +20,6 @@
 #include <CGAL/Cartesian_converter.h>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/intrusive_ptr.hpp>
 
 #include <vector>
 
@@ -51,14 +50,14 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
   typedef typename Target_traits::Segment_2 Target_segment_2;
   typedef Trisegment_2<Source_traits, Source_segment_2> Source_trisegment_2;
   typedef Trisegment_2<Target_traits, Target_segment_2> Target_trisegment_2;
-  typedef boost::intrusive_ptr<Source_trisegment_2> Source_trisegment_2_ptr;
-  typedef boost::intrusive_ptr<Target_trisegment_2> Target_trisegment_2_ptr;
+  typedef Trisegment_2_ptr<Source_trisegment_2> Source_trisegment_2_ptr;
+  typedef Trisegment_2_ptr<Target_trisegment_2> Target_trisegment_2_ptr;
 
   // Same as above, but for Segment with IDs...
   typedef Trisegment_2<Source_traits, Source_segment_2_with_ID> Source_trisegment_2_with_ID;
   typedef Trisegment_2<Target_traits, Target_segment_2_with_ID> Target_trisegment_2_with_ID;
-  typedef boost::intrusive_ptr<Source_trisegment_2_with_ID> Source_trisegment_2_with_ID_ptr;
-  typedef boost::intrusive_ptr<Target_trisegment_2_with_ID> Target_trisegment_2_with_ID_ptr;
+  typedef Trisegment_2_ptr<Source_trisegment_2_with_ID> Source_trisegment_2_with_ID_ptr;
+  typedef Trisegment_2_ptr<Target_trisegment_2_with_ID> Target_trisegment_2_with_ID_ptr;
 
   typedef Cartesian_converter<Source_traits,Target_traits> Base ;
 

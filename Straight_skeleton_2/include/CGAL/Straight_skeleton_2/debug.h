@@ -42,7 +42,6 @@ bool sEnableTrace = true ;
      }
 
 #include <boost/optional.hpp>
-#include <boost/intrusive_ptr.hpp>
 
 template<class T>
 inline std::string o2str( boost::optional<T> const& o )
@@ -56,13 +55,14 @@ inline std::string o2str( boost::optional<T> const& o )
 }
 
 template<class T>
-inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
+inline std::string ptr2str( std::shared_ptr<T> const& ptr )
 {
   std::ostringstream ss ;
   ss << std::setprecision(17) ;
   if ( ptr )
-       ss << *ptr ;
-  else ss << "·nullptr·" ;
+    ss << *ptr ;
+  else
+    ss << "·nullptr·" ;
   return ss.str();
 }
 

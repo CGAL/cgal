@@ -16,7 +16,6 @@
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
 #include <boost/optional/optional.hpp>
-#include <boost/intrusive_ptr.hpp>
 
 namespace CGAL {
 
@@ -38,7 +37,7 @@ construct_offset_pointC2 ( typename K::FT const& t,
                            typename K::FT const& w0,
                            Segment_2_with_ID<K> const& e1,
                            typename K::FT const& w1,
-                           boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                           Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                            CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT FT ;

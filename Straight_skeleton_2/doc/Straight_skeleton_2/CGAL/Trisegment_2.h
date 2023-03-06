@@ -36,9 +36,6 @@ template< typename K, typename Segment >
 class Trisegment_2
 {
 public:
-  // @todo make an alias for the smart pointer type
-  typedef boost::intrusive_ptr<Trisegment_2<K, Segment> > Self_ptr ;
-
   /// the field type
   typedef typename K::FT FT ;
 
@@ -61,5 +58,8 @@ public:
   const FT& w2() const;
 
 }; /* end Trisegment_2 */
+
+/// @brief a smart pointer to a `Trisegment_2` object
+using Trisegment_2_ptr = std::shared_ptr<Trisegment_2<K, Segment> > ;
 
 } /* end namespace CGAL */

@@ -27,7 +27,6 @@
 #include <CGAL/Unfiltered_predicate_adaptor.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/intrusive_ptr.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -467,4 +466,4 @@ struct Get_protector<GT, true>
 } // namespace CGAL_SS_i
 } // namespace CGAL
 
-#endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H //
+#endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H

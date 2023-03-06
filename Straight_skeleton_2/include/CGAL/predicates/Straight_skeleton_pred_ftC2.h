@@ -24,7 +24,6 @@
 #include <CGAL/Uncertain.h>
 
 #include <boost/optional/optional.hpp>
-#include <boost/intrusive_ptr.hpp>
 
 #include <stdexcept>
 
@@ -173,7 +172,7 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // not given by the collinear edges alone)
 //
 template<class K, class FT, class TimeCache, class CoeffCache>
-Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                            boost::optional<FT> const& aMaxTime,
                                            TimeCache& aTime_cache,
                                            CoeffCache& aCoeff_cache )
@@ -184,7 +183,6 @@ Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K,
   typedef Quotient<FT>              Quotient ;
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
-
 
   CGAL_STSKEL_TRAITS_TRACE( "\n~~ Checking existence of an event [" << typeid(FT).name() << "]");
   CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
@@ -242,8 +240,8 @@ Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K,
 // PRECONDITION: There exists distances mt and nt for which each offset triple intersect at a single point.
 template<class K, class TimeCache, class CoeffCache>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_timesC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& m,
-                                    boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& n,
+compare_offset_lines_isec_timesC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& m,
+                                    Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& n,
                                     TimeCache& aTime_cache,
                                     CoeffCache& aCoeff_cache )
 {
@@ -326,7 +324,7 @@ Uncertain<bool> is_edge_facing_pointC2 ( boost::optional< typename K::Point_2 > 
 //
 template<class K, class CoeffCache>
 inline Uncertain<bool>
-is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+is_edge_facing_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                      Segment_2_with_ID<K> const& aEdge,
                                      CoeffCache& aCoeff_cache)
 {
@@ -396,12 +394,12 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 //
 template<class K, class CoeffCache>
 Uncertain<Oriented_side>
-oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& event,
+oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& event,
                                               Segment_2_with_ID<K> const& e0,
                                               typename K::FT const& w0,
                                               Segment_2_with_ID<K> const& e1,
                                               typename K::FT const& w1,
-                                              boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& v01_event, // can be null
+                                              Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& v01_event, // can be null
                                               bool primary_is_0,
                                               CoeffCache& aCoeff_cache )
 {
@@ -522,8 +520,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
 //   There exists single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
 template<class K, class TimeCache, class CoeffCache>
-Uncertain<bool> are_events_simultaneousC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& l,
-                                            boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& r,
+Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& l,
+                                            Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& r,
                                             TimeCache& aTime_cache,
                                             CoeffCache& aCoeff_cache )
 {

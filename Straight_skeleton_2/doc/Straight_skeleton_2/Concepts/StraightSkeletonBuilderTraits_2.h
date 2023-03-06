@@ -53,7 +53,7 @@ typedef CGAL::Trisegment_2<Kernel> Trisegment_2;
 
 /*!
 */
-typedef boost::intrusive_ptr<Trisegment_2> Trisegment_2_ptr;
+typedef CGAL::Trisegment_2_ptr<Trisegment_2> Trisegment_2_ptr;
 
 /// @}
 
