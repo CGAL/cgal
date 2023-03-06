@@ -38,7 +38,12 @@
 
 //#define TEST_RESOLVE_INTERSECTION
 //#define DEDUPLICATE_SEGMENTS
+//#define USE_FIXED_PROJECTION_TRAITS
 //#define DEBUG_DEPTH
+
+#ifdef USE_FIXED_PROJECTION_TRAITS
+#include <CGAL/Kernel_23/internal/Projection_traits_3.h>
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -337,7 +342,11 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 //////////////////////////////////
 //////////////////////////////////
 
-template <class EK>
+template <class EK
+#ifdef USE_FIXED_PROJECTION_TRAITS
+, int dim
+#endif
+>
 void generate_subtriangles(std::size_t ti,
                            std::vector<std::array<typename EK::Point_3, 2>>& segments,
                            const std::vector<typename EK::Point_3>& points,
@@ -349,8 +358,11 @@ void generate_subtriangles(std::size_t ti,
   //~ std::cout << "generate_subtriangles()\n";
   std::cout << std::setprecision(17);
 
-
+#ifdef USE_FIXED_PROJECTION_TRAITS
+  typedef ::CGAL::internal::Projection_traits_3<EK, dim> P_traits;
+#else
   typedef CGAL::Projection_traits_3<EK> P_traits;
+#endif
   typedef CGAL::Exact_intersections_tag Itag;
 
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits
@@ -367,20 +379,28 @@ void generate_subtriangles(std::size_t ti,
   typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
   typename EK::Point_3 o(CGAL::ORIGIN);
 
+#ifdef USE_FIXED_PROJECTION_TRAITS
+  P_traits cdt_traits;
+  bool orientation_flipped = false;
+  CDT cdt(cdt_traits);
+  // TODO: still need to figure out why I can't make the orientation_flipped correctly
+  cdt.insert(t[0]);
+  cdt.insert(t[1]);
+  cdt.insert(t[2]);
+#else
+  P_traits cdt_traits(n);
   bool orientation_flipped = false;
   if ( typename EK::Less_xyz_3()(o+n,o) )
   {
     n=-n;
     orientation_flipped = true;
   }
-
-  P_traits cdt_traits(n);
   CDT cdt(cdt_traits);
-
   cdt.insert_outside_affine_hull(t[0]);
   cdt.insert_outside_affine_hull(t[1]);
   typename CDT::Vertex_handle v = cdt.tds().insert_dim_up(cdt.infinite_vertex(), orientation_flipped);
   v->set_point(t[2]);
+#endif
 
 #ifdef TEST_RESOLVE_INTERSECTION
   //~ static std::ofstream debug("inter_segments.polylines.txt");
@@ -832,7 +852,31 @@ void autorefine_soup_output(const PointRange& input_points,
     if (all_segments[ti].empty() && all_points[ti].empty())
       new_triangles.push_back(triangles[ti]);
     else
+    {
+      #ifdef USE_FIXED_PROJECTION_TRAITS
+      const std::array<typename EK::Point_3, 3>& t = triangles[ti];
+      auto is_constant_in_dim = [](const std::array<typename EK::Point_3, 3>& t, int dim)
+      {
+        return t[0][dim]==t[1][dim] && t[0][dim]!=t[2][dim];
+      };
+
+      typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
+      int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
+      c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
+
+      if(c == 0) {
+        autorefine_impl::generate_subtriangles<EK, 0>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      } else if(c == 1) {
+        autorefine_impl::generate_subtriangles<EK, 1>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      } else if(c == 2) {
+        autorefine_impl::generate_subtriangles<EK, 2>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      }
+      #else
       autorefine_impl::generate_subtriangles<EK>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      #endif
+    }
+
+
   }
 
   // brute force output: create a soup, orient and to-mesh
