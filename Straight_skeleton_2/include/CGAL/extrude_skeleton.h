@@ -610,7 +610,7 @@ public:
     Straight_skeleton_2_ptr ss_ptr;
 
     // @partial_wsls_pwh interior SLS of weighted polygons with holes can have skeleton faces with holes
-    // The current postprocessing is in the function EnsureSimpleConnectedness, but it has not yet
+    // The current postprocessing is in the function EnforceSimpleConnectedness, but it has not yet
     // been made compatible with partial skeletons.
     if(height == default_height || pwh.number_of_holes() != 0)
     {

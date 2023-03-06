@@ -45,7 +45,7 @@ namespace CGAL {
 namespace CGAL_SS_i {
 
 // ==== WARNING ====
-// There is currently no way to recover simply-connectedness (see EnsureSimpleConnectedness())
+// There is currently no way to recover simply-connectedness (see EnforceSimpleConnectedness())
 // for faces that have fictitious vertices. Non-simply-connected faces can be created
 // with skeletons of weighted polygons with holes.
 //

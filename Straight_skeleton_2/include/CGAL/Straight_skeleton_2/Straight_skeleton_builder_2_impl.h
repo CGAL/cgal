@@ -1597,6 +1597,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
           case Event::cEdgeEvent       : HandleEdgeEvent              (lEvent) ; break ;
           case Event::cSplitEvent      : HandleSplitOrPseudoSplitEvent(lEvent) ; break ;
           case Event::cPseudoSplitEvent: HandlePseudoSplitEvent       (lEvent) ; break ;
+          default: CGAL_assertion(false);
         }
 
         ++ mStepID ;
@@ -2029,24 +2030,28 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
   return true;
 }
 
+// For weighted skeletons of polygons with holes, one can create non-simply-connected skeleton faces.
+// This is a problem both because it is not a valid HDS, and because we walk skeleton face borders
+// in polygon offseting. We add so-called artificial nodes and bisectors to ensure that faces
+// are simply-connected by shooting rays from the topmost vertex of the bisectors of the skeleton
+// of the hole(s).
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
+void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
 {
   CGAL_STSKEL_BUILDER_TRACE(1, "Ensuring simple connectedness...");
 
   // Associates to contour halfedges a range of holes, each hole being represented by a halfedge
   // pointing to the vertex farthest from the contour halfedge.
-  //
-  // contour halfedges are the first N *even* halfedges
-  std::vector<std::vector<Halfedge_handle> > skeleton_face_holes ( 2 * mContourHalfedges.size() );
-  std::vector<bool> visited_halfedges ( mSSkel->size_of_halfedges(), false );
+  std::vector<std::vector<Halfedge_handle> > skeleton_face_holes ( mContourHalfedges.size() );
+  std::size_t max_id = std::prev(mSSkel->halfedges_end())->id();
+  std::vector<bool> visited_halfedges (max_id + 1, false );
 
   for ( Halfedge_handle h = mSSkel->halfedges_begin() ; h != mSSkel->halfedges_end() ; ++ h )
   {
-    if ( h->is_border() ) // halfedges incident to the null face
+    if ( h->is_border() )
       continue;
 
-    if ( visited_halfedges[h->id()] )
+    if ( visited_halfedges.at(h->id()) )
       continue;
 
     // Walk the halfedge cycle; if it doesn't contain its contour halfedge, then it is a hole
@@ -2058,7 +2063,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
     Halfedge_handle done = h;
     do
     {
-      visited_halfedges[h->id()] = true ;
+      visited_halfedges.at(h->id()) = true ;
 
       if ( h == contour_h )
         is_contour_h_in_boundary = true;
@@ -2070,10 +2075,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
     if ( is_contour_h_in_boundary )
       continue ;
 
-    CGAL_STSKEL_BUILDER_TRACE(4, "Face incident to border E" << contour_h->id() << " has a hole at " << h->id() );
+    CGAL_STSKEL_BUILDER_TRACE(4, "Face incident to border E" << contour_h->id() << " has a hole at E" << h->id() );
 
-    // This is a hole, find the point farthest from the defining border to ensure
-    // that the ray we will shoot does not intersect the hole
+    // This is a hole, find the vertex of the hole that is farthest from the defining border
+    // as to ensure that the artificial bisectors will not intersect the hole
     Halfedge_handle extreme_h = h ;
     do
     {
@@ -2087,15 +2092,22 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
 
     CGAL_STSKEL_BUILDER_TRACE(4, "Extremum: E" << extreme_h->id() << " V" << extreme_h->vertex()->id() );
 
-    skeleton_face_holes[ contour_h->id() ].push_back( extreme_h ) ;
+    // contour halfedges are the first N *even* halfedges
+    skeleton_face_holes[ contour_h->id() / 2 ].push_back( extreme_h ) ;
   }
 
   // For each face with hole(s), create the extra halfedges to bridge the gap between
-  // the skeleton face's border and the holes
+  // the skeleton face's border and the holes by shooting a ray from a vertex hole to a halfedge
+  //   .first is the source of the ray
+  //   .second is th event creating the intersection of the ray with an halfedge
+
+  // Collect first for all faces, apply later because one might split
+  std::vector<std::pair<Halfedge_handle, EventPtr> > artifical_events;
+
   for ( Halfedge_handle_vector_iterator contour_hi = mContourHalfedges.begin(); contour_hi != mContourHalfedges.end(); ++contour_hi )
   {
     Halfedge_handle contour_h = *contour_hi;
-    std::vector<Halfedge_handle>& holes = skeleton_face_holes[contour_h->id()];
+    std::vector<Halfedge_handle>& holes = skeleton_face_holes[contour_h->id() / 2];
 
     if( holes.empty() )
       continue;
@@ -2115,46 +2127,34 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
 
     // Shoot a ray from each hole's extreme point to find the closest halfedge of another hole
     // or of the face's main contour
-    //
-    // Do not actually create the halfedges yet as to not disturb walking around other holes
-    //   .first is the hole halfedge, ray from .first->vertex()
-    //   .second is the halfedge to split, at the "vertical" of .first->vertex()
-    //   .third is the refinement point
-    typedef CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2> Split;
-    std::vector<Split> splits;
-
     for(auto hole_hi = holes.begin(); hole_hi != holes.end(); ++hole_hi)
     {
-      const Halfedge_handle extreme_h = *hole_hi;
+      Halfedge_handle extreme_h = *hole_hi;
 
       typename K::Ray_2 r ( extreme_h->vertex()->point(), orth_dir ) ;
 
       CGAL_STSKEL_BUILDER_TRACE(4, "Shooting ray from " << extreme_h->vertex()->point() );
 
-      Split tentative_split ( nullptr, nullptr, CGAL::ORIGIN );
+      EventPtr closest_artificial_event = nullptr;
 
-      auto test_split = [&](const Halfedge_handle test_h,
-                            Split& tentative_split) -> void
+      auto test_halfedge = [&](const Halfedge_handle h) -> void
       {
-        // Don't compute an intersection with a halfedge incident to a fictitious vertex
-        if(test_h->vertex()->has_infinite_time() || test_h->prev()->vertex()->has_infinite_time())
+        // @partial_wsls_pwh Don't compute an intersection with a halfedge incident to a fictitious vertex
+        if(h->vertex()->has_infinite_time() || h->prev()->vertex()->has_infinite_time())
           return;
 
-        typename K::Segment_2 s(test_h->opposite()->vertex()->point(),
-                                test_h->vertex()->point());
-        auto inter_res = K().intersect_2_object()(r, s);
-        if(!inter_res)
+        Triedge artificial_triedge(contour_h, contour_h, h);
+        Trisegment_2_ptr artificial_trisegment = CreateTrisegment(artificial_triedge, extreme_h->vertex());
+        CGAL_assertion(bool(artificial_trisegment->child_l()));
+
+        if(!ExistEvent(artificial_trisegment))
           return;
 
-        CGAL_assertion( boost::get<Point_2>( &*inter_res ) );
-        const Point_2 inter_point = boost::get<Point_2>( *inter_res ) ;
-
-        // we need the closest intersection point
-        if (tentative_split.first == nullptr ||
-            K().compare_distance_2_object()(extreme_h->vertex()->point(), inter_point,
-                                            extreme_h->vertex()->point(), tentative_split.third ) == CGAL::SMALLER )
+        EventPtr artificial_event = EventPtr(new ArtificialEvent(artificial_triedge, artificial_trisegment, extreme_h->vertex()));
+        if(closest_artificial_event == nullptr ||
+           CompareEvents(artificial_event, closest_artificial_event) == CGAL::SMALLER)
         {
-          tentative_split = make_triple(extreme_h, test_h, inter_point);
+          closest_artificial_event = artificial_event;
         }
       };
 
@@ -2170,7 +2170,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
         Halfedge_handle other_hole_done = *hole_hj, other_hole_h = *hole_hj;
         do
         {
-          test_split(other_hole_h, tentative_split);
+          test_halfedge(other_hole_h);
           other_hole_h = other_hole_h->next() ; // next halfedge of the hole
         }
         while(other_hole_h != other_hole_done);
@@ -2184,177 +2184,212 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnsureSimpleConnectedness()
       Halfedge_handle done = contour_h, h = contour_h->next(); // no point checking the contour edge
       do
       {
-        test_split(h, tentative_split);
+        test_halfedge(h);
         h = h->next() ;
       }
       while(h != done);
 
-      // @todo support partial weighted skeleton of polygons with holes
+      // @partial_wsls_pwh support partial weighted skeleton of polygons with holes
       // In partial skeletons, we might the face (and possibly even holes!) are not closed,
       // so we could potentially not find a halfedge
-      CGAL_warning(tentative_split.first != nullptr);
-      if(tentative_split.first != nullptr)
-        splits.push_back(tentative_split);
-    }
-
-    CGAL_warning( splits.size() == holes.size() ) ;
-
-    // Splits need to be sorted right to left such that consecutive splits do not tangle the HDS
-    std::sort(splits.begin(), splits.end(),
-              [&](const CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2>& split_1,
-                  const CGAL::Triple<Halfedge_handle, Halfedge_handle, Point_2>& split_2)
-              {
-                // sorting only matters if splitting the same halfedge multiple times
-                if(split_1.second->id() != split_2.second->id())
-                  return split_1.second->id() < split_2.second->id() ;
-
-                return K().left_turn_2_object()( contour_h->vertex()->point(),
-                                                 split_1.third, split_2.third );
-               } );
-
-    // Apply the splits
-
-    /*
-
-          <----------------                     <---------   <----------
-             split_h                             split_h | | split_h_prev
-                                                new_up_h | | new_down_h
-                .                                        | |
-              /  \                ----->                /  \
-  extreme_h /     \                          extreme_h /     \
-          /        \                                 /        \
-
-    */
-
-    for(const auto& split : splits)
-    {
-      Halfedge_handle extreme_h = split.first;
-      Halfedge_handle split_h = split.second ;
-      const Point_2& split_p = split.third ;
-
-      Halfedge_handle extreme_h_next = extreme_h->next() ;
-
-      Vertex_handle split_h_tv = split_h->vertex() ;
-      Halfedge_handle split_h_opp = split_h->opposite() ;
-      Vertex_handle split_h_sv = split_h_opp->vertex() ;
-      Halfedge_handle split_h_prev = split_h->prev() ;
-      Halfedge_handle split_h_next = split_h->next() ;
-      Halfedge_handle split_h_opp_next = split_h_opp->next() ;
-
-      CGAL_STSKEL_BUILDER_TRACE(4, "Splitting E" << split_h->id() << " at " << split_p );
-
-      // Create the new "vertical" (w.r.t. the contour edge) halfedges
-      Halfedge new_up(mEdgeID++), new_down(mEdgeID++);
-      Halfedge_handle new_up_h = SSkelEdgesPushBack(new_up, new_down);
-      Halfedge_handle new_down_h = new_up_h->opposite();
-
-      SetBisectorSlope(new_up_h, POSITIVE);
-      SetBisectorSlope(new_down_h, NEGATIVE);
-
-      new_down_h->HBase_base::set_vertex( extreme_h->vertex() );
-      new_up_h->HBase_base::set_face( extreme_h->face() );
-      new_down_h->HBase_base::set_face( extreme_h->face() );
-
-      new_down_h->HBase_base::set_next( extreme_h_next );
-      extreme_h_next->HBase_base::set_prev( new_down_h );
-      extreme_h->HBase_base::set_next( new_up_h );
-      new_up_h->HBase_base::set_prev( extreme_h );
-
-      if(split_p == split_h_tv->point())
+      CGAL_warning(closest_artificial_event != nullptr);
+      if(closest_artificial_event != nullptr)
       {
-        new_up_h->HBase_base::set_vertex( split_h_tv );
-
-        new_up_h->HBase_base::set_next( split_h_next );
-        split_h_next->HBase_base::set_prev( new_up_h );
-
-        split_h->HBase_base::set_next( new_down_h );
-        new_down_h->HBase_base::set_prev( split_h );
+        SetEventTimeAndPoint(*closest_artificial_event);
+        artifical_events.emplace_back(extreme_h, closest_artificial_event);
       }
-      else if (split_p == split_h_sv->point())
+    } // holes
+  } // contours
+
+  CGAL_STSKEL_BUILDER_TRACE(2, artifical_events.size() << " artificial events to add");
+
+  // Splits need to be sorted right to left such that consecutive splits do not tangle the HDS
+  // Since we can have splits from both side of an edge, we sort events globally
+  std::sort(artifical_events.begin(), artifical_events.end(),
+            [&](const auto& e1, const auto& e2)
+            {
+              EventPtr artificial_event_1 = e1.second;
+              EventPtr artificial_event_2 = e2.second;
+
+              Halfedge_handle split_h_1 = artificial_event_1->triedge().e2();
+              Halfedge_handle split_h_2 = artificial_event_2->triedge().e2();
+              Halfedge_handle canonical_split_h_1 = (split_h_1->id() < split_h_1->opposite()->id()) ? split_h_1 : split_h_1->opposite();
+              Halfedge_handle canonical_split_h_2 = (split_h_2->id() < split_h_2->opposite()->id()) ? split_h_2 : split_h_2->opposite();
+
+              bool is_same_edge = (canonical_split_h_1 == canonical_split_h_2);
+              if(!is_same_edge)
+                return canonical_split_h_1->id() < canonical_split_h_2->id(); // arbitrary
+
+              Halfedge_handle contour_h = artificial_event_1->triedge().e0();
+
+              // @fixme this should be a predicate...
+              const Point_2& split_p_1 = artificial_event_1->point();
+              const Point_2& split_p_2 = artificial_event_2->point();
+
+              return K().left_turn_2_object()( contour_h->vertex()->point(), split_p_1, split_p_2 );
+              } );
+
+  // Apply the splits
+
+  /*
+
+        <----------------                     <---------   <----------
+            split_h                             split_h | | split_h_prev
+                                              new_up_h | | new_down_h
+              .                                        | |
+            /  \                ----->                /  \
+extreme_h /     \                          extreme_h /     \
+        /        \                                 /        \
+
+  */
+
+  for(const auto& e : artifical_events)
+  {
+    Halfedge_handle extreme_h = e.first;
+    EventPtr artificial_event = e.second;
+
+    Halfedge_handle contour_h = artificial_event->triedge().e0() ;
+
+    Halfedge_handle split_h = artificial_event->triedge().e2() ;
+    Halfedge_handle split_h_prev = split_h->prev() ;
+    Halfedge_handle split_h_next = split_h->next() ;
+    Halfedge_handle split_h_opp = split_h->opposite() ;
+    Halfedge_handle split_h_opp_prev = split_h_opp->prev() ;
+    Halfedge_handle split_h_opp_next = split_h_opp->next() ;
+
+    Vertex_handle split_h_sv = split_h_opp->vertex() ;
+    Vertex_handle split_h_tv = split_h->vertex() ;
+
+    Halfedge_handle extreme_h_next = extreme_h->next() ;
+
+    const Point_2& split_p = artificial_event->point() ;
+    FT split_t = artificial_event->time() ;
+
+    CGAL_STSKEL_BUILDER_TRACE(4, "Splitting E" << split_h->id() << " at pos " << split_p << " time " << split_t );
+
+    // Create the new "vertical" (w.r.t. the contour edge) halfedges
+    Halfedge new_up(mEdgeID++), new_down(mEdgeID++);
+    Halfedge_handle new_up_h = SSkelEdgesPushBack(new_up, new_down);
+    Halfedge_handle new_down_h = new_up_h->opposite();
+
+    SetBisectorSlope(new_up_h, POSITIVE);
+    SetBisectorSlope(new_down_h, NEGATIVE);
+
+    new_down_h->HBase_base::set_vertex( extreme_h->vertex() );
+    new_up_h->HBase_base::set_face( extreme_h->face() );
+    new_down_h->HBase_base::set_face( extreme_h->face() );
+
+    new_down_h->HBase_base::set_next( extreme_h_next );
+    extreme_h_next->HBase_base::set_prev( new_down_h );
+    extreme_h->HBase_base::set_next( new_up_h );
+    new_up_h->HBase_base::set_prev( extreme_h );
+
+    if(split_p == split_h_tv->point())
+    {
+      new_up_h->HBase_base::set_vertex( split_h_tv );
+
+      new_up_h->HBase_base::set_next( split_h_next );
+      split_h_next->HBase_base::set_prev( new_up_h );
+
+      split_h->HBase_base::set_next( new_down_h );
+      new_down_h->HBase_base::set_prev( split_h );
+    }
+    else if (split_p == split_h_sv->point())
+    {
+      new_up_h->HBase_base::set_vertex( split_h_sv );
+
+      new_up_h->HBase_base::set_next( split_h );
+      split_h->HBase_base::set_prev( new_up_h );
+
+      new_down_h->HBase_base::set_prev( split_h_prev );
+      split_h_prev->HBase_base::set_next( new_down_h );
+    }
+    else
+    {
+      // Create the new artificial vertex
+      Vertex_handle new_v = mSSkel->SSkel::Base::vertices_push_back( Vertex (mVertexID++, split_p, split_t, false, false) ) ;
+      InitVertexData(new_v);
+
+      // This is not a valid triedge because split_h is not a contour halfedge, but we need
+      // to know which skeleton bisector the line orthogonal to contour_h interscets.
+      // The pair of identical contour halfedges at e0 and e1 is the marker for artifical vertices
+      SetVertexTriedge(new_v, artificial_event->triedge());
+      SetTrisegment(new_v, artificial_event->trisegment());
+
+      new_up_h->HBase_base::set_vertex( new_v ) ;
+      new_v->VBase::set_halfedge( new_up_h ) ;
+
+      // Split the halfdege
+
+      Halfedge new_horizontal(mEdgeID++), new_horizontal_opp(mEdgeID++) ; // split new prev
+      Halfedge_handle new_hor_h = SSkelEdgesPushBack(new_horizontal, new_horizontal_opp) ;
+
+      SetBisectorSlope(new_hor_h, split_h->slope() );
+      SetBisectorSlope(new_hor_h->opposite(), split_h_opp->slope() );
+
+      new_hor_h->HBase_base::set_face( split_h->face() );
+      new_hor_h->opposite()->HBase_base::set_face( split_h_opp->face() );
+
+      // A skeleton edge might be split from both sides, so we have previously ordered
+      // these artificial vertices from the right to the left, and we want split_h/split_h_opp
+      // to remain on the leftmost (they are told to split "split_h/split_h_opp").
+      // Thus:
+      // - if we are on the canonical halfedge, split_h is on the left after the split
+      // - if we are not on the canonical halfedge, split_h is on the right after the split
+      Halfedge_handle left_h, right_h;
+      if(split_h->id() < split_h_opp->id())
       {
-        new_up_h->HBase_base::set_vertex( split_h_sv );
-
-        new_up_h->HBase_base::set_next( split_h );
-        split_h->HBase_base::set_prev( new_up_h );
-
-        new_down_h->HBase_base::set_prev( split_h_prev );
-        split_h_prev->HBase_base::set_next( new_down_h );
+        left_h = split_h;
+        right_h = new_hor_h;
       }
       else
       {
-        // time is scaled between the values at the two extremities of split_h
-        const FT split_h_sv_time = split_h_sv->time() ;
-        const FT split_h_tv_time = split_h_tv->time() ;
-        FT new_v_time ;
-        if( split_h_sv_time == split_h_tv_time )
-        {
-          new_v_time = split_h_sv_time;
-        }
-        else
-        {
-          FT lambda ;
-          FT den = split_h_tv->point().x() - split_h_sv->point().x() ;
-          if(is_zero(den))
-          {
-            den = split_h_tv->point().y() - split_h_sv->point().y() ;
-            lambda = (split_p.y() - split_h_sv->point().y()) / den ;
-          }
-          else
-          {
-            lambda = (split_p.x() - split_h_sv->point().x()) / den ;
-          }
-
-          new_v_time = split_h_sv_time + lambda * (split_h_tv_time - split_h_sv_time) ;
-        }
-
-        // Create the new vertex
-        Vertex_handle new_v = mSSkel->SSkel::Base::vertices_push_back( Vertex (mVertexID++, split_p, new_v_time, false, false) ) ;
-        InitVertexData(new_v);
-        SetTrisegment(new_v, nullptr);
-
-        new_up_h->HBase_base::set_vertex( new_v ) ;
-        new_v->VBase::set_halfedge( new_up_h ) ;
-
-        // Split the halfdege
-        Halfedge right_spawn(mEdgeID++), right_spawn_opp(mEdgeID++) ; // split new prev
-        Halfedge_handle rspawn_h = SSkelEdgesPushBack(right_spawn, right_spawn_opp) ;
-        Halfedge_handle rspawn_h_opp = rspawn_h->opposite() ;
-
-        SetBisectorSlope(rspawn_h, split_h->slope() );
-        SetBisectorSlope(rspawn_h_opp, split_h_opp->slope() );
-
-        split_h_sv->VBase::set_halfedge( rspawn_h_opp ) ;
-
-        rspawn_h->HBase_base::set_face( extreme_h->face() );
-        rspawn_h_opp->HBase_base::set_face( split_h_opp->face() );
-
-        // vertex incidences
-        rspawn_h->HBase_base::set_vertex( new_v );
-        rspawn_h_opp->HBase_base::set_vertex( split_h_sv );
-        split_h_opp->HBase_base::set_vertex( new_v );
-
-        new_up_h->HBase_base::set_next( split_h );
-        split_h->HBase_base::set_prev( new_up_h );
-
-        split_h_opp->HBase_base::set_next( rspawn_h_opp );
-        rspawn_h_opp->HBase_base::set_prev( split_h_opp );
-
-        rspawn_h_opp->HBase_base::set_next( split_h_opp_next );
-        split_h_opp_next->HBase_base::set_prev( rspawn_h_opp );
-
-        split_h_prev->HBase_base::set_next( rspawn_h );
-        rspawn_h->HBase_base::set_prev( split_h_prev );
-
-        rspawn_h->HBase_base::set_next( new_down_h );
-        new_down_h->HBase_base::set_prev( rspawn_h );
-
-        CGAL_STSKEL_BUILDER_TRACE(4, "New vertex V" << new_v->id() << " at position " << new_v->point()
-                                 << " [between V" << split_h_sv->id() << " and V" << split_h_tv->id() << "]"
-                                 << " at time " << new_v->time()
-                                 << " [between " << split_h_sv->time() << " and " << split_h_tv->time() << "]" );
+        left_h = new_hor_h;
+        right_h = split_h;
       }
-    } // splits
-  } // contours
+
+      Halfedge_handle left_h_opp = left_h->opposite();
+      Halfedge_handle right_h_opp = right_h->opposite();
+
+      // Update the canonical halfedge of the vertices only if they are not contour vertices
+      if(!split_h_sv->is_contour())
+        split_h_sv->VBase::set_halfedge( right_h_opp ) ;
+      if(!split_h_tv->is_contour())
+        split_h_tv->VBase::set_halfedge( left_h ) ;
+
+      // vertex incidences
+      right_h->HBase_base::set_vertex( new_v );
+      right_h_opp->HBase_base::set_vertex( split_h_sv );
+      left_h->HBase_base::set_vertex( split_h_tv );
+      left_h_opp->HBase_base::set_vertex( new_v );
+
+      new_up_h->HBase_base::set_next( left_h );
+      left_h->HBase_base::set_prev( new_up_h );
+
+      left_h->HBase_base::set_next( split_h_next );
+      split_h_next->HBase_base::set_prev( left_h );
+
+      split_h_opp_prev->HBase_base::set_next( left_h_opp );
+      left_h_opp->HBase_base::set_prev( split_h_opp_prev );
+
+      left_h_opp->HBase_base::set_next( right_h_opp );
+      right_h_opp->HBase_base::set_prev( left_h_opp );
+
+      right_h_opp->HBase_base::set_next( split_h_opp_next );
+      split_h_opp_next->HBase_base::set_prev( right_h_opp );
+
+      split_h_prev->HBase_base::set_next( right_h );
+      right_h->HBase_base::set_prev( split_h_prev );
+
+      right_h->HBase_base::set_next( new_down_h );
+      new_down_h->HBase_base::set_prev( right_h );
+
+      CGAL_STSKEL_BUILDER_TRACE(4, "New vertex V" << new_v->id() << " at position " << new_v->point()
+                                << " [between V" << split_h_sv->id() << " and V" << split_h_tv->id() << "]"
+                                << " at time " << new_v->time()
+                                << " [between " << split_h_sv->time() << " and " << split_h_tv->time() << "]" );
+    }
+  }
 }
 
 template<class Gt, class Ss, class V>
@@ -2383,7 +2418,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 
   // For weighted polygons with holes, some faces might not be simply connected. In this case,
   // add extra, manually constructed bisectors to ensure that this property is present in all faces
-  EnsureSimpleConnectedness();
+  EnforceSimpleConnectedness();
 
   mVisitor.on_cleanup_finished();
 

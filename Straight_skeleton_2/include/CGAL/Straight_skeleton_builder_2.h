@@ -156,6 +156,7 @@ private :
   typedef CGAL_SS_i::Edge_event_2        <SSkel,Traits> EdgeEvent ;
   typedef CGAL_SS_i::Split_event_2       <SSkel,Traits> SplitEvent ;
   typedef CGAL_SS_i::Pseudo_split_event_2<SSkel,Traits> PseudoSplitEvent ;
+  typedef CGAL_SS_i::Artificial_event_2  <SSkel,Traits> ArtificialEvent ;
 
   typedef std::shared_ptr<Event> EventPtr ;
 
@@ -1210,7 +1211,7 @@ private :
   // returns 'true' if something was merged
   bool MergeCoincidentNodes() ;
 
-  void EnsureSimpleConnectedness() ;
+  void EnforceSimpleConnectedness() ;
 
   bool FinishUp();
 

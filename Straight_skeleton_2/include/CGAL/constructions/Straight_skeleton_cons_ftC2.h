@@ -586,10 +586,73 @@ compute_seed_pointC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > 
 // A normal collinearity occurs when e0,e1 or e1,e2 are collinear.
 template <class K, class CoeffCache>
 boost::optional< typename K::Point_2 >
-compute_degenerate_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+compute_degenerate_seed_pointC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                   CoeffCache& aCoeff_cache )
 {
   return compute_seed_pointC2( tri, tri->degenerate_seed_id(), aCoeff_cache ) ;
+}
+
+template <class K, class CoeffCache>
+boost::optional< Rational< typename K::FT> >
+compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                CoeffCache& aCoeff_cache )
+{
+  typedef typename K::Boolean Boolean ;
+  typedef typename K::FT FT ;
+  typedef typename K::Point_2 Point_2 ;
+  typedef typename K::Segment_2 Segment_2 ;
+  typedef typename K::Line_2 Line_2 ;
+  typedef typename K::Direction_2 Direction_2 ;
+  typedef typename K::Ray_2 Ray_2 ;
+
+  typedef boost::optional<Point_2> Optional_point_2 ;
+  typedef boost::optional<Line_2> Optional_line_2 ;
+
+  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec time [" << typeid(FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+
+  CGAL_precondition(tri->e0() == tri->e1());
+  CGAL_precondition(bool(tri->child_l()));
+
+  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCoeff_cache) ;
+  if( !l0 )
+    return boost::none ;
+
+  const Segment_2& contour_seg = tri->e0();
+  Direction_2 perp_dir ( contour_seg.source().y() - contour_seg.target().y() ,
+                         contour_seg.target().x() - contour_seg.source().x() ) ;
+  boost::optional< typename K::Point_2 > seed = construct_offset_lines_isecC2(tri->child_l(), aCoeff_cache) ;
+
+  if(!seed)
+    return boost::none;
+
+  const Ray_2 ray(*seed, perp_dir);
+  const Segment_2& opp_seg = tri->e2();
+  Boolean inter_exist = K().do_intersect_2_object()(ray, opp_seg);
+  if (!inter_exist) // no intersection
+    return cgal_make_optional(Rational<FT>(FT(0),FT(0))) ; // does not exist
+
+  // Compute the intersection point and evalute the time from the line equation of the contour edge
+  auto inter_res = K().intersect_2_object()(ray, opp_seg);
+
+  const Point_2* inter_pt;
+  if(const Segment_2* seg = boost::get<Segment_2>(&*inter_res))
+  {
+    // get the segment extremity closest to the seed
+    Boolean res = (K().compare_distance_2_object()(*seed, seg->source(), seg->target()) == CGAL::SMALLER);
+    inter_pt = res ? &(seg->source()) : &(seg->target()) ;
+  }
+  else
+  {
+    inter_pt = boost::get<const Point_2>(&*inter_res);
+    if(!CGAL_NTS is_finite(inter_pt->x()) || !CGAL_NTS is_finite(inter_pt->y()))
+      return boost::none;
+  }
+
+  const FT t = l0->a() * inter_pt->x() + l0->b() * inter_pt->y() + l0->c() ;
+
+  bool ok = CGAL_NTS is_finite(t);
+  return cgal_make_optional(ok, Rational<FT>(t, FT(1))) ;
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2
@@ -615,7 +678,11 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing degenerate offset lines isec time for: " << tri ) ;
+  if(tri->e0() == tri->e1()) // marker for artificial bisectors: they have the same face on both sides
+    return compute_artifical_isec_timeC2(tri, aCoeff_cache) ;
+
+  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing degenerate offset lines isec time [" << typeid(FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
 
   // DETAILS:
   //
@@ -720,9 +787,6 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       // with l0a'² + l0b'² = 1. The orthogonal displacement is rephrased to:
       //   [x, y] = projected_seed + t / w' * N,
       // with w' = weight * (l0a² + l0b²).
-      //
-      // @todo further robustification by storing independently the norm (and not the weighted,
-      // normalized coeffs?)
       const FT sq_w0 = square(l0a) + square(l0b); // l0a and l0b are *weighted* coefficients
 
       FT num(0), den(0) ;
@@ -754,17 +818,20 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       const FT t0 = l0->a() * q->x() + l0->b() * q->y() + l0->c();
       const FT t1 = l1->a() * q->x() + l1->b() * q->y() + l1->c();
 
-      if( CGAL_NTS is_finite(t0) && CGAL_NTS is_finite(t1) && t0 == t1 )
+      if( CGAL_NTS is_finite(t0) && CGAL_NTS is_finite(t1))
       {
-        CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, inequal norms) t:" << t0 )
-        return cgal_make_optional(true, Rational<FT>(t0,FT(1))) ;
-      }
-      else
-      {
-        CGAL_STSKEL_TRAITS_TRACE("Event times (degenerate, inequal norms) t0:" << t0 << " != t1:" << t1 )
-        CGAL_STSKEL_TRAITS_TRACE("--> Returning 0/0 (no event)");
-        // if we return boost::none, exist_offset_lines_isec2() will think it's a numerical error
-        return cgal_make_optional(true, Rational<FT>(FT(0),FT(0))) ;
+        if( t0 == t1 )
+        {
+          CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, inequal norms) t:" << t0 )
+          return cgal_make_optional(Rational<FT>(t0,FT(1))) ;
+        }
+        else
+        {
+          CGAL_STSKEL_TRAITS_TRACE("Event times (degenerate, inequal norms) t0:" << t0 << " != t1:" << t1 )
+          CGAL_STSKEL_TRAITS_TRACE("--> Returning 0/0 (no event)");
+          // if we return boost::none, exist_offset_lines_isec2() will think it's a numerical error
+          return cgal_make_optional(Rational<FT>(FT(0),FT(0))) ;
+        }
       }
     }
   }
@@ -781,6 +848,9 @@ compute_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_w
                                    TimeCache& aTime_cache,
                                    CoeffCache& aCoeff_cache)
 {
+  typedef typename K::FT FT ;
+  CGAL_STSKEL_TRAITS_TRACE("compute_offset_lines_isec_timeC2(" << tri->id() << ") [" << typeid(FT).name() << "]" );
+
   if ( aTime_cache.IsCached(tri->id()) )
     return aTime_cache.Get(tri->id()) ;
 
@@ -856,6 +926,60 @@ construct_normal_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
 
+// Given a contour halfedge and a bisector halfedge, constructs the intersection
+// between the line orthogonal to the contour halfedge through a given seed and the bisector halfedge.
+// This is an artificial vertex added to recover simply-connectedness of a skeleton face
+// in weighted skeletons of polygons with holes.
+template <class K, class CoeffCache>
+boost::optional< typename K::Point_2 >
+construct_artifical_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                             CoeffCache& aCoeff_cache )
+{
+  typedef typename K::FT FT ;
+  typedef typename K::Boolean Boolean ;
+  typedef typename K::Point_2 Point_2 ;
+  typedef typename K::Segment_2 Segment_2 ;
+  typedef typename K::Ray_2 Ray_2 ;
+  typedef typename K::Direction_2 Direction_2 ;
+
+  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec point [" << typeid(FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+
+  CGAL_precondition(tri->e0() == tri->e1());
+  CGAL_precondition(bool(tri->child_l()));
+
+  const Segment_2& contour_seg = tri->e0();
+  Direction_2 perp_dir ( contour_seg.source().y() - contour_seg.target().y() ,
+                         contour_seg.target().x() - contour_seg.source().x() ) ;
+  boost::optional< typename K::Point_2 > seed = construct_offset_lines_isecC2(tri->child_l(), aCoeff_cache) ;
+
+  if(!seed)
+    return boost::none;
+
+  const Ray_2 ray(*seed, perp_dir);
+  const Segment_2& opp_seg = tri->e2();
+  auto inter_res = K().intersect_2_object()(ray, opp_seg);
+  if (!inter_res) // shouldn't be here if there is no intersection
+    return boost::none;
+
+  if(const Point_2* inter_pt = boost::get<Point_2>(&*inter_res))
+  {
+    bool ok = CGAL_NTS is_finite(inter_pt->x()) && CGAL_NTS is_finite(inter_pt->y()) ;
+    return cgal_make_optional(ok, *inter_pt) ;
+  }
+  else if(const Segment_2* seg = boost::get<Segment_2>(&*inter_res))
+  {
+    // get the segment extremity closest to the seed
+    const Point_2& pt = (K().compare_distance_2_object()(*seed,
+                                                         seg->source(),
+                                                         seg->target()) == CGAL::SMALLER) ? seg->source()
+                                                                                          : seg->target() ;
+    return cgal_make_optional(pt);
+  }
+
+  return boost::none;
+}
+
 // Given 3 oriented line segments e0, e1 and e2
 // such that their offsets at a certain distance intersect in a single point,
 // returns the coordinates (x,y) of such a point.
@@ -881,8 +1005,11 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
   typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
+  if(tri->e0() == tri->e1()) // marker for artificial bisectors: they have the same face on both sides
+    return construct_artifical_isecC2(tri, aCoeff_cache) ;
+
   CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing degenerate offset lines isec point [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event: " << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
 
   FT x(0),y(0) ;
 

@@ -41,7 +41,7 @@ public:
 
   typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge ;
 
-  enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent } ;
+  enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent, cArficialEvent } ;
 
 public:
 
@@ -241,6 +241,48 @@ private :
   Vertex_handle mSeed1 ;
   bool          mOppositeIs0 ;
 } ;
+
+
+template<class SSkel_, class Traits_>
+class Artificial_event_2 : public Event_2<SSkel_,Traits_>
+{
+  typedef SSkel_  SSkel ;
+  typedef Traits_ Traits ;
+
+  typedef Event_2<SSkel,Traits> Base ;
+
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  typedef typename SSkel::Vertex_handle   Vertex_handle ;
+
+  typedef typename Base::Type             Type ;
+  typedef typename Base::Triedge          Triedge ;
+  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
+
+public:
+  Artificial_event_2 ( Triedge const&          aTriedge,
+                       Trisegment_2_ptr const& aTrisegment,
+                       Vertex_handle           aSeed )
+    :
+      Base(aTriedge,aTrisegment)
+    , mSeed(aSeed)
+  {}
+
+  virtual Type type() const { return this->cArficialEvent ; }
+
+  virtual Vertex_handle seed0() const { return mSeed ; }
+  virtual Vertex_handle seed1() const { return mSeed ; }
+
+private :
+  virtual void dump ( std::ostream& ss ) const
+  {
+    this->Base::dump(ss);
+
+    ss << " (Artificial Event, Seed=" << mSeed->id() << ")" ;
+  }
+
+private :
+  Vertex_handle mSeed ;
+};
 
 }
 
