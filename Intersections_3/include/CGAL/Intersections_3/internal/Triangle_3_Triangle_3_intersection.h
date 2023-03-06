@@ -141,7 +141,7 @@ struct Point_on_triangle
     if (t1_t2_ids.second==-1)
       return point_from_id(p1,q1,r1,t1_t2_ids.first);
 
-    return k.construct_barycenter_3_object()(point_from_id(p2,q2,r2,(t1_t2_ids.second+1)%3), alpha, point_from_id(p2,q2,r2,t1_t2_ids.second)) ;
+    return k.construct_barycenter_3_object()(point_from_id(p1,q1,r1,(t1_t2_ids.first+1)%3), alpha, point_from_id(p1,q1,r1,t1_t2_ids.first)) ;
   }
 };
 
@@ -160,8 +160,8 @@ intersection(const Point_on_triangle<Kernel>& p,
 {
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "    calling intersection: ";
-  std::cout << "  (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "])-";
-  std::cout << "  (" << q.id1() << "," << q.id2() << ",[" << q.alpha << "])  || e" << edge_id_t1 << "\n";
+  std::cout << " (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) -";
+  std::cout << " (" << q.id1() << "," << q.id2() << ",[" << q.alpha << "]) || e" << edge_id_t1 << "\n";
 #endif
   typedef Point_on_triangle<Kernel> Pot;
   switch(p.id1())
@@ -354,8 +354,8 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
   };
 
   std::cout << "intersection_coplanar_triangles\n";
-  std::ofstream("/tmp/t1.polylines.txt") << to_string(t1) << "\n";
-  std::ofstream("/tmp/t2.polylines.txt") << to_string(t2) << "\n";
+  std::ofstream("/tmp/t1.polylines.txt") << std::setprecision(17) << to_string(t1) << "\n";
+  std::ofstream("/tmp/t2.polylines.txt") << std::setprecision(17) << to_string(t2) << "\n";
 #endif
   const typename K::Point_3& p1 = t1.vertex(0),
                              q1 = t1.vertex(1),
