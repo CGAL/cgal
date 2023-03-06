@@ -145,6 +145,19 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
 
   for (const Intersections::internal::Point_on_triangle<K>& pot : l_inter_pts)
     inter_pts.push_back( pot.point(p1,q1,r1,p2,q2,r2,k) );
+
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::ofstream debug("interpts.xyz");
+  debug << std::setprecision(17);
+  debug << l_inter_pts.size() << "\n";
+  for (auto pot : l_inter_pts)
+    debug << pot.point(p1,q1,r1,p2,q2,r2,k)  << "\n";
+  debug.close();
+  std::cout <<"check!\n";
+  int i;
+  std::cin >> i;
+#endif
+
 }
 
 // imported from Polygon_mesh_processing/internal/Corefinement/intersect_triangle_segment_3.h
