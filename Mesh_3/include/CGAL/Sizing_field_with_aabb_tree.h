@@ -32,11 +32,24 @@
 /*!
 * @ingroup PkgMesh3DomainFields
 *
+* The class `Sizing_field_with_aabb_tree` is a model of concept `MeshDomainField_3`.
+* It provides a sizing field to be used in the meshing process of a polyhedral surface with features.
+*
+* At each query point, the field value is the minimum of the distances to the
+* surface patches it does not belong to, and the distances to the curves it does belong to.
+*
+* This sizing field is designed to be used for mesh complex edges,
+* in `Mesh_edge_criteria_3` or as `edge_size` in `Mesh_criteria_3`.
+* Using this sizing field for complex edges provides a high-quality hint
+* to the protecting balls placement algorithm, since it ensures that no
+* protecting ball will intersect a surface patch to which the
+* corresponding vertex does not belong.
+*
 * @tparam GeomTraits is the geometric traits class. It must match the type `Triangulation::Geom_traits`,
 * where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used
 * in the meshing process.
 * @tparam MeshDomain is the type of the domain. It must be a model of `MeshDomainWithFeatures_3`,
-* and derive from `Polyhedral_mesh_domain_with_features_3`
+* and derive from `CGAL::Polyhedral_mesh_domain_with_features_3`
 
 
 * @cgalModels `MeshDomainField_3`
@@ -51,16 +64,14 @@ template <typename GeomTraits,
           >
 struct Sizing_field_with_aabb_tree
 {
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
+  using FT      = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Index   = typename MeshDomain::Index;
 
-  typedef typename MeshDomain::Index               Index;
+private:
   typedef typename MeshDomain::Corner_index        Corner_index;
   typedef typename MeshDomain::Curve_index         Curve_index;
   typedef typename MeshDomain::Surface_patch_index Patch_index;
-
-private:
-  typedef GeomTraits Kernel_;
 
   typedef boost::container::flat_set<Curve_index> Curves_ids;
   typedef boost::container::flat_set<Patch_index> Patches_ids;
@@ -71,6 +82,7 @@ private:
   typedef std::vector<Patches_ids> Corners_incident_patches;
   typedef std::vector<Patches_ids> Curves_incident_patches;
 
+  typedef GeomTraits Kernel_;
   typedef CGAL::Delaunay_triangulation_3<Kernel_> Dt;
 
   using Input_facets_AABB_tree = typename CGAL::Default::Get<
@@ -92,10 +104,15 @@ private:
     >::type;
 
 public:
+  /// \name Creation
+  /// @{
+
   /*!
-  * Constructor...
-  * @param d
-  * @param domain
+  * Constructor for the sizing field.
+  * @param d the minimal value returned by `operator()`, corresponding
+  * to the minimal edge length that can be requested in the
+  * feature protection by protecting balls placement algorithm.
+  * @param domain the mesh domain to be meshed
   */
   Sizing_field_with_aabb_tree(const FT& d, const MeshDomain& domain)
     : Sizing_field_with_aabb_tree(d,
@@ -104,6 +121,8 @@ public:
                                   Get_curve_index(),
                                   Facet_patch_id_map())
   {}
+
+  /// @}
 
 #ifndef DOXYGEN_RUNNING
   Sizing_field_with_aabb_tree(const FT& d,
@@ -203,7 +222,10 @@ public:
 #endif // DOXYGEN_RUNNING
 
 public:
-  /*! \name Operations
+  /// \name Operations
+  /// @{
+
+  /*!
   * returns the value of the sizing field at the point `p`,
   * assumed to be included in the input complex feature with dimension `dimension`
   * and mesh subcomplex index `index`.
@@ -556,6 +578,9 @@ public:
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
     return result;
   }
+
+  /// @}
+
 private:
   typename Kernel_::FT d_;
   const MeshDomain& domain;
