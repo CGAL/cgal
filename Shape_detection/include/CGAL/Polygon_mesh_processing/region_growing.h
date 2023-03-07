@@ -25,6 +25,32 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+namespace internal
+{
+  template <class GT, class Pair>
+  void fill_region_primitive_map(const std::vector<Pair>&, internal_np::Param_not_found) {}
+
+  template <class GT, class Pair, class RegionMap>
+  void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Vector_3)
+  {
+    for (std::size_t i = 0 ; i<normals.size(); ++i)
+      put(region_map, i, normals[i].first.orthogonal_vector());
+  }
+
+  template <class GT, class Pair, class RegionMap>
+  void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Plane_3)
+  {
+    for (std::size_t i = 0 ; i<normals.size(); ++i)
+      put(region_map, i, normals[i].first);
+  }
+
+  template <class GT, class Pair, class RegionMap>
+  void fill_region_primitive_map(const std::vector<Pair>& normals, RegionMap region_map)
+  {
+    fill_plane_or_vector_map<GT>(normals, region_map, typename boost::property_traits<RegionMap>::value_type());
+  }
+}
+
 /*!
   \ingroup PkgPolygonMeshProcessingRef
   \brief applies a region growing algorithm to fit planes on faces of a mesh.
@@ -81,6 +107,14 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
     \cgalParamNEnd
+    \cgalParamNBegin{region_primitive_map}
+      \cgalParamDescription{a property map filled by this function and that will contain for each region
+                            the plane (or only its orthognonal vector) estimated that approximates it.}
+      \cgalParamType{a class model of `WritablePropertyMap` with the value type of `RegionMap` as key and
+                     `GeomTraits::Plane_3` or `GeomTraits::Vector_3` as value type,
+                     `GeomTraits` being the type of the parameter `geom_traits`}
+      \cgalParamDefault{None}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
  */
 template<typename PolygonMesh,
@@ -89,7 +123,6 @@ template<typename PolygonMesh,
 std::size_t
 region_growing_of_planes_on_faces(const PolygonMesh& mesh,
                                   RegionMap region_map,
-                                  std::vector<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3> & normals,
                                   const NamedParameters& np = parameters::default_values())
 {
   namespace RG_PM = CGAL::Shape_detection::Polygon_mesh;
@@ -118,11 +151,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   std::vector<std::pair<typename Traits::Plane_3, std::vector<typename PolygonMesh::Face_index> > > tmp;
   region_growing.detect(std::back_inserter(tmp));
 
-  normals.resize(region_growing.number_of_regions_detected());
-  for (std::size_t i =0 ; i<region_growing.number_of_regions_detected(); ++i)
-  {
-    normals[i]=tmp[i].first.orthogonal_vector();
-  }
+  internal::fill_region_primitive_map<Traits>(tmp, parameters::get_parameter(np, internal_np::region_primitive_map));
 
   return region_growing.number_of_regions_detected();
 }

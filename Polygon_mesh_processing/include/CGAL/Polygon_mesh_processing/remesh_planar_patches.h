@@ -165,13 +165,14 @@ struct Face_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::Para
   Fmap f2f_map() { return Fmap(); }
 };
 
-template <class Vector_3, class NormalRange>
+template <class Vector_3, class PatchNormalMap>
 void init_face_normals(std::vector<Vector_3>& face_normals,
                        std::size_t nb_patches,
-                       const NormalRange& normal_range)
+                       PatchNormalMap patch_normal_map)
 {
-  face_normals.reserve(nb_patches);
-  face_normals.assign(normal_range.begin(), normal_range.end());
+  face_normals.resize(nb_patches);
+  for (std::size_t i=0; i<nb_patches; ++i)
+    face_normals[i] = get(patch_normal_map, i);
 }
 
 template <class Vector_3>
@@ -741,7 +742,18 @@ bool decimate_impl(const TriangleMesh& tm,
         {
           //TODO: shall we try to plug pseudo-cdt?
 #ifdef CGAL_DEBUG_DECIMATION
-          std::cout << "  DEBUG: Failed to remesh a patch" << std::endl;
+          static int fail_case_id=0;
+          std::cout << "  DEBUG: Failed to remesh a patch, case #" << fail_case_id  << std::endl;
+          std::ofstream debug("failed_remesh_"+std::to_string(fail_case_id)+".polylines.txt");
+          debug << std::setprecision(17);
+          for (auto c : csts)
+            debug << "2 " << corners[c.first] << " " << corners[c.second] << "\n";
+          debug.close();
+          std::cout << "  normal used is " << face_normals[cc_id] << "\n";
+          debug.open("normal"+std::to_string(fail_case_id)+".polylines.txt");
+          debug << "2 " << corners[csts[0].first] << " " << corners[csts[0].first]+face_normals[cc_id] << "\n";
+          debug.close();
+          ++fail_case_id;
 #endif
           all_patches_successfully_remeshed = false;
           // make all vertices of the patch a corner
@@ -1501,6 +1513,17 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  *  \cgalNamedParamsBegin
+ *    \cgalParamNBegin{patch_normal_map}
+ *      \cgalParamDescription{a property map providing for each patch the normal of the supporting plane of the patch (used to triangulate it)}
+ *      \cgalParamType{a class model of `ReadPropertyMap` with the value type of `FacePatchMap` as key and
+ *                     `GeomTraits::Vector_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+ *      \cgalParamDefault{If not provided, patch normals will be estimated using corners of the patches}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{do_not_triangulate_faces}
+ *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
+ *      \cgalParamType{`bool`}
+ *      \cgalParamDefault{false}
+ *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `tm_in`}
  *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
@@ -1509,11 +1532,6 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                      must be available in `TriangleMeshIn`.}
  *    \cgalParamNEnd
- *    \cgalParamNBegin{do_not_triangulate_faces}
- *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
- *      \cgalParamType{`bool`}
- *      \cgalParamDefault{false}
- *   \cgalParamNEnd
  *    \cgalParamNBegin{geom_traits}
  *      \cgalParamDescription{an instance of a geometric traits class}
  *      \cgalParamType{a class model of `Kernel`}
@@ -1539,12 +1557,6 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%face_descriptor`
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
- *    \cgalParamNEnd
- *    \cgalParamNBegin{normals_of_patches}
- *      \cgalParamDescription{the normals of the supporting planes of the patches (in the same order of `face_patch_map`) used to triangulate patches.}
- *      \cgalParamType{a model of `InputIterator` with `GeomTraits::Vector_3` as value type,
- *                     `GeomTraits` being the type of the parameter `geom_traits`}
- *      \cgalParamDefault{normals will be estimated from three non-collinear corners on the boundary of each patch}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_corner_map}
  *      \cgalParamDescription{a property map filled by this function and that will contain for each vertex its corner
@@ -1599,7 +1611,7 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
   bool do_not_triangulate_faces = choose_parameter(get_parameter(np_in, internal_np::do_not_triangulate_faces), false);
 
   std::vector< typename Traits::Vector_3 > face_normals;
-  Planar_segmentation::init_face_normals(face_normals, nb_patches, get_parameter(np_out, internal_np::normals_of_patches));
+  Planar_segmentation::init_face_normals(face_normals, nb_patches, get_parameter(np_in, internal_np::patch_normal_map));
   return Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
                                                     std::make_pair(nb_corners, nb_patches),
                                                     vertex_corner_map, ecm, face_patch_map, vpm_in, vpm_out,
