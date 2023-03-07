@@ -110,9 +110,8 @@ public:
 
   /*!
   * Constructor for the sizing field.
-  * @param d the minimal value returned by `operator()`, corresponding
-  * to the minimal edge length that can be requested in the
-  * feature protection by protecting balls placement algorithm.
+  * @param d the maximal value returned by `operator()`, corresponding
+  * to an upper bound on feature edges length in the output mesh.
   * @param domain the mesh domain to be meshed
   */
   Sizing_field_with_aabb_tree(const FT& d, const MeshDomain& domain)
