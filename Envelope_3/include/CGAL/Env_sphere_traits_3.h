@@ -330,7 +330,7 @@ public:
           if (n_xs == 1)
           {
             // intersection is a point
-            Point_2 inter_point(xs[0], (-2*a_diff*xs[0] + m)/(2*b_diff) );
+            Point_2 inter_point(xs[0], (Rational(- 2 * a_diff) * xs[0] + m) / Rational(2 * b_diff));
             *o++ = make_object(inter_point);
             return o;
           }
@@ -340,8 +340,8 @@ public:
           // so we construct a COLLINEAR conic (with equation as in (1))
           // with 2 endpoints
           Algebraic ys[2];
-          ys[0] = (-2*a_diff*xs[0] + m)/(2*b_diff);
-          ys[1] = (-2*a_diff*xs[1] + m)/(2*b_diff);
+          ys[0] = (Rational(-2*a_diff)*xs[0] + m)/Rational(2*b_diff);
+          ys[1] = (Rational(-2*a_diff)*xs[1] + m)/Rational(2*b_diff);
 
           Alg_point_2 end1(xs[0], ys[0]);
           Alg_point_2 end2(xs[1], ys[1]);
@@ -969,8 +969,8 @@ public:
     //    -m*x + n*y + (m*x0 -n*y0) = 0 (with integer coordinates)
     const Rational r = cv.r(), s = cv.s(), t = cv.t(),
                u = cv.u(), v = cv.v(), w = cv.w();
-    Algebraic m = -1 * (2*r*x0 + t*y0 + u);
-    Algebraic n = 2*s*y0 + t*x0 + v;
+    Algebraic m = -1 * (Rational(2*r)*x0 + t*y0 + u);
+    Algebraic n = Rational(2*s)*y0 + t*x0 + v;
     // line coefficients: A3, B3, C3
     Algebraic A3 = -1*m, B3 = n, C3 = m*x0 - n*y0;
 
@@ -1081,7 +1081,7 @@ public:
     // the coefficients are:
     Algebraic A = 1,
               B = -2*c,
-              C = x_diff*x_diff + y_diff*y_diff + c*c - sqr_r;
+              C = x_diff*x_diff + y_diff*y_diff + Rational(c*c) - sqr_r;
 
     Algebraic  zs[2];
     Algebraic *zs_end;
