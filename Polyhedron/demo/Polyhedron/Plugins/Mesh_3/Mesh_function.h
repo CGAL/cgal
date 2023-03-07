@@ -253,7 +253,7 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
-    typedef Sizing_field_with_aabb_tree<Kernel, Domain> Mesh_sizing_field; // type of sizing field for 0D and 1D features
+    typedef CGAL::Sizing_field_with_aabb_tree<Kernel, Domain> Mesh_sizing_field; // type of sizing field for 0D and 1D features
     typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
     typedef typename Domain::Curve_index Curve_index;
     const Curve_index max_index = domain_->maximal_curve_index();

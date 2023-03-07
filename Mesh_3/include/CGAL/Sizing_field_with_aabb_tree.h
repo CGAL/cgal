@@ -29,6 +29,7 @@
 #  include <boost/format.hpp>
 #endif  // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY || (! CGAL_NO_ASSERTIONS)
 
+namespace CGAL {
 /*!
 * @ingroup PkgMesh3DomainFields
 *
@@ -594,5 +595,7 @@ private:
   Get_curve_index     get_curve_index;
   Facet_patch_id_map  facet_patch_id_map;
 };
+
+}//end namespace CGAL
 
 #endif // CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
