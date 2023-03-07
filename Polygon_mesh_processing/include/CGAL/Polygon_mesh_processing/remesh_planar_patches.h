@@ -236,7 +236,6 @@ bool is_edge_between_coplanar_faces(edge_descriptor e,
                                     double coplanar_cos_threshold,
                                     const VertexPointMap& vpm)
 {
-  typedef typename Kernel::Point_3 Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref_3;
   if (is_border(e, tm)) return false;
   typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
@@ -614,8 +613,6 @@ bool decimate_impl(const TriangleMesh& tm,
                    IndexTracking& f_id_tracker,
                    std::vector< typename Kernel::Vector_3 >& face_normals)
 {
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
@@ -1170,7 +1167,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   bool res = true;
   std::vector<bool> to_be_processed(nb_meshes, true);
   bool loop_again;
-  bool no_remeshing_issue = true;
+//  bool no_remeshing_issue = true;
   do{
     loop_again = false;
     for(std::size_t mesh_id=0; mesh_id<nb_meshes; ++mesh_id)
@@ -1225,7 +1222,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 #endif
       if (!all_patches_successfully_remeshed)
       {
-        no_remeshing_issue=false;
+//        no_remeshing_issue=false;
         // iterate over points newly marked as corners
         std::set<std::size_t> mesh_ids;
         for (std::size_t cid=ncid; cid<corners.size(); ++cid)
@@ -1266,7 +1263,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     Triangle_mesh& tm = *mesh_ptrs[mesh_id];
     if (mesh_has_non_manifold_vertices[mesh_id])
     {
-      no_remeshing_issue = false;
+//      no_remeshing_issue = false;
       continue;
     }
     CGAL_assertion(is_polygon_soup_a_polygon_mesh(all_faces[mesh_id]));
