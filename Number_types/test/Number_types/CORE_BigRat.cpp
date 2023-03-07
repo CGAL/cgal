@@ -37,6 +37,7 @@ void test_io(){
         std::stringstream ss;
         CGAL::IO::set_pretty_mode(ss);
         ss << CGAL::IO::oformat(NT(2), CGAL::Parens_as_product_tag());
+        std::cout << "|" << ss.str() << "|" << std::endl;
         assert( ss.str() == "2");
     }{
         std::stringstream ss;
