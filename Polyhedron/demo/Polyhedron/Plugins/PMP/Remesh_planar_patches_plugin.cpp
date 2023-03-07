@@ -198,9 +198,11 @@ public Q_SLOTS:
         Patch_id_pmap in_fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
         std::vector<std::size_t> corner_id_map(num_vertices(pmesh), -1);
         std::vector<bool> ecm(num_edges(pmesh), false);
+        std::vector<CGAL::Epick::Vector_3> normals;
         std::size_t nb_regions =
           PMP::region_growing_of_planes_on_faces(pmesh,
                                                  in_fpmap,
+                                                 normals,
                                                  CGAL::parameters::cosine_of_maximum_angle(cos_threshold).
                                                                    maximum_distance(ui.dist_dspinbox->value()));
         std::size_t nb_corners =
@@ -217,15 +219,16 @@ public Q_SLOTS:
           Mesh& out = *new_item->polyhedron();
 
           Patch_id_pmap out_fpmap = get(CGAL::face_patch_id_t<int>(), out);
-
+//TODO: use the return type
           PMP::remesh_almost_planar_patches(pmesh,
                                             out,
                                             nb_regions, nb_corners,
                                             in_fpmap,
                                             CGAL::make_random_access_property_map(corner_id_map),
                                             CGAL::make_random_access_property_map(ecm),
-                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces),
-                                           CGAL::parameters::face_patch_map(out_fpmap));
+                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces).
+                                                              normals_of_patches(CGAL::make_random_access_property_map(normals)),
+                                            CGAL::parameters::face_patch_map(out_fpmap));
 
 
           new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
@@ -249,7 +252,8 @@ public Q_SLOTS:
                                             in_fpmap,
                                             CGAL::make_random_access_property_map(corner_id_map),
                                             CGAL::make_random_access_property_map(ecm),
-                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces),
+                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces).
+                                                              normals_of_patches(CGAL::make_random_access_property_map(normals)),
                                             CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
           pmesh.remove_property_map<Mesh::Face_index, int>(in_fpmap);
           poly_item->invalidateOpenGLBuffers();

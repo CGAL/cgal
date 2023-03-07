@@ -89,6 +89,7 @@ template<typename PolygonMesh,
 std::size_t
 region_growing_of_planes_on_faces(const PolygonMesh& mesh,
                                   RegionMap region_map,
+                                  std::vector<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3> & normals,
                                   const NamedParameters& np = parameters::default_values())
 {
   namespace RG_PM = CGAL::Shape_detection::Polygon_mesh;
@@ -113,7 +114,15 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   std::vector<typename Region_growing::Primitive_and_region> regions;
   Region_growing region_growing(
     faces(mesh), sorting.ordered(), neighbor_query, region_type, region_map);
-  region_growing.detect(CGAL::Emptyset_iterator());
+
+  std::vector<std::pair<typename Traits::Plane_3, std::vector<typename PolygonMesh::Face_index> > > tmp;
+  region_growing.detect(std::back_inserter(tmp));
+
+  normals.resize(region_growing.number_of_regions_detected());
+  for (std::size_t i =0 ; i<region_growing.number_of_regions_detected(); ++i)
+  {
+    normals[i]=tmp[i].first.orthogonal_vector();
+  }
 
   return region_growing.number_of_regions_detected();
 }
