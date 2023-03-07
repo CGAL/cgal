@@ -304,7 +304,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
     }
   }
 
-  CGAL_STSKEL_BUILDER_TRACE(4, GetVertexData(aNode).mSplitEvents.size());
+  CGAL_STSKEL_BUILDER_TRACE(4, "#Split Events=" << GetVertexData(aNode).mSplitEvents.size());
 }
 
 

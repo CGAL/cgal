@@ -121,8 +121,8 @@ inexact_sqrt(const Lazy_exact_nt<NT>& lz)
   return inexact_sqrt(exact(lz));
 }
 
-// Currently the norm can be inexact even when we are in the exact pipeline of the traits
-// if we use something like K = EPICK because there is no exact sqrt.
+// Currently the norm can be inexact even if we are in the exact pipeline of the traits.
+// For example, if we use something like K = EPICK, there is no exact sqrt in K::Exact_K.
 //
 // @todo Ideally, we could compute how much precision is required for the sqrt
 // given all possible operations that are performed in the SLS and the input values
@@ -412,7 +412,7 @@ compute_normal_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segm
   typedef boost::optional<Line_2> Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing normal offset lines isec time [" << typeid(FT).name() << "]") ;
-  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri );
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   FT num(0), den(0) ;
 
@@ -609,7 +609,7 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   typedef boost::optional<Line_2> Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec time [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   CGAL_precondition(tri->e0() == tri->e1());
   CGAL_precondition(bool(tri->child_l()));
@@ -682,7 +682,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
     return compute_artifical_isec_timeC2(tri, aCaches) ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing degenerate offset lines isec time [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   // DETAILS:
   //
@@ -851,10 +851,7 @@ compute_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_w
   CGAL_STSKEL_TRAITS_TRACE("compute_offset_lines_isec_timeC2(" << tri->id() << ") [" << typeid(FT).name() << "]" );
 
   if ( aCaches.mTime_cache.IsCached(tri->id()) )
-  {
-    CGAL_STSKEL_TRAITS_TRACE("cached");
     return aCaches.mTime_cache.Get(tri->id()) ;
-  }
 
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
 
@@ -890,7 +887,7 @@ construct_normal_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment
   typedef boost::optional<Line_2>  Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing normal offset lines isec point [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   FT x(0), y(0) ;
 
@@ -945,7 +942,7 @@ construct_artifical_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID
   typedef typename K::Direction_2 Direction_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec point [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   CGAL_precondition(tri->e0() == tri->e1());
   CGAL_precondition(bool(tri->child_l()));
@@ -1011,7 +1008,7 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
     return construct_artifical_isecC2(tri, aCaches) ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing degenerate offset lines isec point [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   FT x(0),y(0) ;
 

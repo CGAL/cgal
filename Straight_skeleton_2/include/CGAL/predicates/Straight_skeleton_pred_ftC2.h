@@ -184,7 +184,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
   CGAL_STSKEL_TRAITS_TRACE( "\n~~ Checking existence of an event [" << typeid(FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Event:" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   if ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL )
   {

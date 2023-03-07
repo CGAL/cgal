@@ -713,7 +713,7 @@ private :
                                                                      CreateSegment<Traits>(aTriedge.e2()),
                                                                      aTriedge.e2()->weight() );
 
-    CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":" << r ) ;
+    CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":\n" << r ) ;
 
     // Consecutive collinear segments must not have the same weight
     CGAL_assertion_code(if(r->collinearity() == TRISEGMENT_COLLINEARITY_01))

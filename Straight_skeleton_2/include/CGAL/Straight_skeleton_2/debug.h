@@ -19,28 +19,6 @@
 #  include <CGAL/CORE_BigFloat.h>
 #endif
 
-#if    defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) \
-    || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE) \
-    || defined(CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE) \
-    || defined(CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE)
-#
-#  define CGAL_STSKEL_TRACE_ON
-bool sEnableTrace = true ;
-#  define CGAL_STSKEL_ENABLE_TRACE sEnableTrace = true ;
-#  define CGAL_STSKEL_DISABLE_TRACE sEnableTrace = false ;
-#  include<string>
-#  include<iostream>
-#  include<sstream>
-#  include<iomanip>
-#  define CGAL_STSKEL_TRACE(m) \
-     if ( sEnableTrace ) \
-     { \
-       std::ostringstream ss ; \
-       ss << std::setprecision(17) << m ; \
-       std::string s = ss.str(); \
-       Straight_skeleton_external_trace(s); \
-     }
-
 #include <boost/optional.hpp>
 
 template<class T>
@@ -249,6 +227,28 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 
   return ss.str();
 }
+
+#if    defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) \
+    || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE) \
+    || defined(CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE) \
+    || defined(CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE)
+#
+#  define CGAL_STSKEL_TRACE_ON
+bool sEnableTrace = true ;
+#  define CGAL_STSKEL_ENABLE_TRACE sEnableTrace = true ;
+#  define CGAL_STSKEL_DISABLE_TRACE sEnableTrace = false ;
+#  include<string>
+#  include<iostream>
+#  include<sstream>
+#  include<iomanip>
+#  define CGAL_STSKEL_TRACE(m) \
+     if ( sEnableTrace ) \
+     { \
+       std::ostringstream ss ; \
+       ss << std::setprecision(17) << m ; \
+       std::string s = ss.str(); \
+       Straight_skeleton_external_trace(s); \
+     }
 
 #endif
 

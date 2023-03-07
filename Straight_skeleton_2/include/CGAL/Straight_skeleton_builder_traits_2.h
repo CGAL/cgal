@@ -695,6 +695,8 @@ public:
 
       if ( lOptTime && lOptTime->to_nt() > *mApproximate_traits.mFilteringBound )
       {
+        CGAL_STSKEL_TRAITS_TRACE("Ignoring potential split event");
+
         // avoid filling the cache vectors with times of trisegments that will be removed
         reset_trisegment(tri->id());
         return true;
