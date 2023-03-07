@@ -228,7 +228,7 @@ public:
   /*!
   * returns the value of the sizing field at the point `p`,
   * assumed to be included in the input complex feature with dimension `dimension`
-  * and mesh subcomplex index `index`.
+  * and mesh subcomplex index `id`.
   */
   double operator()(const Point_3& p,
                     const int dim,
