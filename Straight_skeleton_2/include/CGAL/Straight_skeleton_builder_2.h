@@ -581,7 +581,6 @@ public:
     bool              mHasSimultaneousEvents ;
     SplitPQ           mSplitEvents ;
     Triedge           mTriedge ; // Here, E0,E1 corresponds to the vertex (unlike *event* triedges)
-    Trisegment_2_ptr  mTrisegment ; // Skeleton nodes cache the full trisegment tree that defines the originating event
   } ;
 
   typedef std::shared_ptr<Vertex_data> Vertex_data_ptr ;
@@ -630,14 +629,11 @@ private :
   // Null if aV is a contour or infinite node
   Trisegment_2_ptr const& GetTrisegment ( Vertex_handle aV ) const
   {
-    return GetVertexData(aV).mTrisegment ;
+    return aV->trisegment() ;
   }
 
   void SetTrisegment ( Vertex_handle aV, Trisegment_2_ptr const& aTrisegment )
   {
-    // @todo could get rid of the 'mTrisegment' in vertex data
-    // since it's also stored in the vertex directly (to be used during offset construction...)
-    GetVertexData(aV).mTrisegment = aTrisegment ;
     aV->set_trisegment(aTrisegment) ;
   }
 
