@@ -586,8 +586,8 @@ compute_seed_pointC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > 
 // A normal collinearity occurs when e0,e1 or e1,e2 are collinear.
 template <class K, class Caches>
 boost::optional< typename K::Point_2 >
-compute_degenerate_seed_pointC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
-                                  Caches& aCaches )
+construct_degenerate_seed_pointC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                    Caches& aCaches )
 {
   return compute_seed_pointC2( tri, tri->degenerate_seed_id(), aCaches ) ;
 }
@@ -743,7 +743,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
   Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->other_collinear_edge(), tri->other_collinear_edge_weight(), aCaches) ;
   Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->non_collinear_edge(), tri->non_collinear_edge_weight(), aCaches) ;
 
-  Optional_point_2 q = compute_degenerate_seed_pointC2(tri, aCaches);
+  Optional_point_2 q = construct_degenerate_seed_pointC2(tri, aCaches);
 
   bool ok = false ;
 
@@ -1015,7 +1015,7 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
   Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCaches) ;
   Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->non_collinear_edge(), tri->non_collinear_edge_weight(), aCaches) ;
 
-  Optional_point_2 q = compute_degenerate_seed_pointC2(tri, aCaches);
+  Optional_point_2 q = construct_degenerate_seed_pointC2(tri, aCaches);
 
   bool ok = false ;
 
