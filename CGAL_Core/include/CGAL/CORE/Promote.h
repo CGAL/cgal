@@ -27,7 +27,7 @@
  ***************************************************************************/
 
 #ifndef _CORE_PROMOTE_H__
-#define _COEE_PROMOTE_H__
+#define _CORE_PROMOTE_H__
 
 #include <CGAL/CORE/Impl.h>
 #include <CGAL/CORE/BigInt.h>
