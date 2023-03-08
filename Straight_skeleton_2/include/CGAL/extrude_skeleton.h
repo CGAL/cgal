@@ -43,6 +43,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_2.h>
 
+#include <boost/algorithm/clamp.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/shared_ptr.hpp>
@@ -558,8 +559,10 @@ public:
 #endif
 
           const Point_2& off_p = hds_tv->point();
-          face_points.emplace_back(off_p.x(), off_p.y(), extrude_upwards ?   hds_tv->time()
-                                                                         : - hds_tv->time());
+          // ->time() could be an approximation of the true time. If we are here, the target's time
+          // is smaller than the height, but we still sanitize it in case of numerical errors in ->time().
+          const FT time = boost::algorithm::clamp(hds_tv->time(), FT(0), abs_height);
+          face_points.emplace_back(off_p.x(), off_p.y(), extrude_upwards ? time : - time);
         }
 
         hds_h = hds_h->next();
