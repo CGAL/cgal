@@ -75,6 +75,25 @@ struct Needs_parens_as_product<typename boost::multiprecision::cpp_rational>{
 
 };
 
+template<>
+struct Needs_parens_as_product<typename boost::multiprecision::mpz_int>{
+  bool operator()(const typename boost::multiprecision::mpz_int& x){
+    return x < 0;
+  }
+};
+
+template<>
+struct Needs_parens_as_product<typename boost::multiprecision::mpq_rational>{
+  bool operator()(const typename boost::multiprecision::mpq_rational& x){
+    if (denominator(x) != 1 )
+      return true;
+    else
+      return needs_parens_as_product(numerator(x)) ;
+  }
+
+};
+
+
 
 // Algebraic_structure_traits
 

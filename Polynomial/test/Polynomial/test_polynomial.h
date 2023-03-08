@@ -307,7 +307,6 @@ void io() {
         std::ostringstream os;
         CGAL::IO::set_pretty_mode(os);
         os << CGAL::IO::oformat(POLY(NT(3)));
-        std::cout << "|" << os.str() << "|" <<std::endl;
         assert( os.str() == "3" );
     }{
         std::ostringstream os;
