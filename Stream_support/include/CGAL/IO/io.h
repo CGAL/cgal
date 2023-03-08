@@ -990,6 +990,52 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 
 } // namespace CGAL
 
+#if __has_include(<format>) && \
+  (__cpp_lib_format >= 201907L || __cplusplus >= 202000L || _MSVC_LANG >= 202000L)
+#  include <format>
+#  include <sstream>
+
+namespace std {
+
+template <typename T, typename F, typename CharT>
+struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::basic_string<CharT>>
+{
+  constexpr auto parse(std::basic_format_parse_context<CharT>& ctx)
+  {
+    auto it = ctx.begin();
+    const auto end = ctx.end();
+    if(it == end)
+      return it;
+    if(*it != CharT('.'))
+      return it;
+    if(++it == end)
+      throw std::format_error("Missing precision");
+    if(*it < CharT('0') || *it > CharT('9'))
+      throw std::format_error("Invalid value for precision");
+    precision = *it - CharT('0');
+    while(++it != end) {
+      if(*it < CharT('0') || *it > CharT('9'))
+        return it;
+      precision = precision * 10 + (*it - CharT('0'));
+    }
+    return it;
+  }
+
+  template <typename FormatContext>
+  auto format(const CGAL::Output_rep<T, F> &rep, FormatContext& ctx) const
+  {
+    std::basic_stringstream<CharT> ss;
+    ss.precision(precision);
+    ss << rep;
+    return std::formatter<std::basic_string<CharT>>::format(ss.str(), ctx);
+  }
+
+  int precision = 17;
+};
+
+} // namespace std
+#endif // __cpp_lib_format >= 201907L
+
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_H

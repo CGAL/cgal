@@ -293,7 +293,9 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See https://clang.llvm.org/docs/LanguageExtensions.html
-// See also https://en.cppreference.com/w/cpp/experimental/feature_test
+//
+// Some of those macro have been standardized. See C++20 feature testing:
+//   https://en.cppreference.com/w/cpp/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -314,6 +316,10 @@ using std::max;
 #endif
 #ifndef __has_warning
   #define __has_warning(x) 0  // Compatibility with non-clang compilers.
+#endif
+
+#if __has_include(<version>)
+#  include <version>
 #endif
 
 // Macro to specify a 'unused' attribute.

@@ -1166,6 +1166,24 @@ public:
   }
 };
 
+struct With_point_tag {};
+
+template <class DSC, bool Const>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
+  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
+{
+  using Base = Output_rep<CGAL::internal::CC_iterator<DSC, Const>>;
+  using Base::Base;
+
+  std::ostream& operator()(std::ostream& out) const {
+    Base::operator()(out);
+    if(this->it.operator->() != nullptr)
+      return  out << "= " << this->it->point();
+    else
+      return out;
+  }
+};
+
 } //namespace CGAL
 
 namespace std {

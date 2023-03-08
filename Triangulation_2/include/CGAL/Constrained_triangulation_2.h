@@ -37,28 +37,6 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-#  include <CGAL/IO/io.h>
-#  include <CGAL/Compact_container.h>
-#  include <iostream>
-namespace CGAL {
-
-struct With_point_tag {};
-
-template <class DSC, bool Const>
-struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
-  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
-{
-  using Base = Output_rep<CGAL::internal::CC_iterator<DSC, Const>>;
-  using Base::Base;
-
-  std::ostream& operator()(std::ostream& out) const {
-    return Base::operator()(out) << "= " << this->it->point();
-  }
-};
-} // namespace CGAL
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
-
 namespace CGAL {
 
 struct No_constraint_intersection_tag{};

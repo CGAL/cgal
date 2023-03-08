@@ -69,7 +69,10 @@ struct Time_stamper
 
   static auto display_id(const T* pt)
   {
-    return std::string("#") + std::to_string(pt->time_stamp());
+    if(pt == nullptr)
+      return std::string("nullptr");
+    else
+      return std::string("#") + std::to_string(pt->time_stamp());
   }
 
   static std::size_t hash_value(const T* p) {
