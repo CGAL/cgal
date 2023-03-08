@@ -248,7 +248,7 @@ public:
           }
 
           // the x coordinate of the solution points
-          Algebraic xs = m / (2*a_diff);
+          Algebraic xs = Rational(m / (2*a_diff));
 
           if (n_ys == 1)
           {
