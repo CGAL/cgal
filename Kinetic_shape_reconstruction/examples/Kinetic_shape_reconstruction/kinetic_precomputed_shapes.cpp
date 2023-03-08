@@ -27,7 +27,7 @@ int main(const int argc, const char** argv) {
 
   // Reading polygons from file
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
-  std::string input_filename = (argc > 1 ? argv[1] : "../data/test-4-rnd-polygons-4-6.off");
+  std::string input_filename = (argc > 1 ? argv[1] : "data/test-4-rnd-polygons-4-6.off");
   std::ifstream input_file_off(input_filename);
   std::ifstream input_file_ply(input_filename);
 
