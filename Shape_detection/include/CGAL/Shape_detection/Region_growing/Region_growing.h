@@ -358,12 +358,12 @@ namespace internal {
     */
     template<typename PrimitiveAndRegionOutputIterator = Emptyset_iterator>
     PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator region_out = PrimitiveAndRegionOutputIterator()) {
-//      clear(); TODO: this is not valid to comment this clear()
+      //      clear(); TODO: this is not valid to comment this clear()
       m_visited_map.clear(); // tmp replacement for the line above
+      m_regions.clear();
 
       Region region;
       m_nb_regions = 0;
-
 
       // Grow regions.
       for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
@@ -376,8 +376,10 @@ namespace internal {
           // Check global conditions.
           if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
-          } else {
-            *(region_out++) = std::pair<typename RegionType::Primitive, Region>(m_region_type.primitive(), region);
+          }
+          else {
+            *region_out = std::make_pair(m_region_type.primitive(), std::move(region));
+            region_out++;
             fill_region_map(m_nb_regions++, region);
           }
         }
@@ -387,13 +389,74 @@ namespace internal {
     }
 
     /*!
+      \brief runs the region growing algorithm and fills an output iterator
+      with the fitted primitive and their region.
+
+      \tparam PrimitiveAndRegionOutputIterator
+      a model of `OutputIterator` whose value type is `Primitive_and_region`
+
+      \param region_out
+      an output iterator of type `PrimitiveAndRegionOutputIterator`.
+
+      \return past-the-end position in the output sequence
+    */
+
+    void detect() {
+      //      clear(); TODO: this is not valid to comment this clear()
+      m_visited_map.clear(); // tmp replacement for the line above
+      m_regions.clear();
+      m_primitives.clear();
+
+      Region region;
+      m_nb_regions = 0;
+
+      m_regions.push_back(std::vector<typename Region_type::Item>());
+
+      // Grow regions.
+      for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
+        const Item seed = *it;
+
+        // Try to grow a new region from the index of the seed item.
+        if (!get(m_visited, seed)) {
+          const bool is_success = propagate(seed, m_regions.back());
+
+          // Check global conditions.
+          if (!is_success || !m_region_type.is_valid_region(m_regions.back())) {
+            revert(m_regions.back());
+          }
+          else {
+            m_primitives.push_back(m_region_type.primitive());
+            fill_region_map(m_nb_regions++, m_regions.back());
+            m_regions.push_back(std::vector<typename Region_type::Item>());
+          }
+        }
+      }
+
+      // Remove the last empty region entry.
+      m_regions.pop_back();
+    }
+
+    /*!
       \brief provides a property map that provides the region index (or std::size_t(-1)) for each input element.
 
       \return Property map that maps each iterator of the input range to a region index.
     */
 
-    const Region_map &region_map() {
+    const Region_map& region_map() {
       return m_region_map;
+    }
+
+    /*!
+      \brief provides the `Region` vector for the region with index idx.
+
+      \return `Region` vector of the detected region with index idx.
+
+      \pre idx < number_of_regions_detected
+    */
+
+    const Region& region(std::size_t idx) {
+      CGAL_assertion(m_regions.size() > idx);
+      return m_regions[idx];
     }
 
     /// @}
@@ -470,6 +533,9 @@ namespace internal {
     Neighbor_query& m_neighbor_query;
     Region_type& m_region_type;
     Region_map m_region_map;
+
+    std::vector<std::vector<typename Region_type::Item> > m_regions;
+    std::vector<typename Region_type::Primitive> m_primitives;
     std::vector<Item> m_seed_range;
     std::size_t m_nb_regions = 0;
 
