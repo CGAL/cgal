@@ -361,8 +361,7 @@ private:
         // Thus the only neighbor needs to be a bbox face.
         PFace neighbor = (neighbor_faces[0] == pface) ? neighbor_faces[1] : neighbor_faces[0];
         CGAL_assertion(neighbor.first < 6 && pface.first < 6);
-        Oriented_side side = oriented_side(pface, neighbor);
-        CGAL_assertion(side == seed_side);
+        CGAL_assertion(oriented_side(pface, neighbor) == seed_side);
 
         Oriented_side inverse_side = oriented_side(neighbor, pface);
 

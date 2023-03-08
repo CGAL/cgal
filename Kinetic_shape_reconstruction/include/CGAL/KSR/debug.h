@@ -495,13 +495,12 @@ public:
       for (const auto& p : polygon)
         stream << p << std::endl;
 
-    std::size_t i = 0, polygon_id = 0;
+    std::size_t i = 0;
     for (std::size_t k = 0; k < polygons.size(); ++k) {
       stream << polygons[k].size() << " ";
       for (std::size_t j = 0; j < polygons[k].size(); ++j)
         stream << i++ << " ";
       stream << colors[k] << std::endl;
-      ++polygon_id;
     }
     save(stream, file_name + ".ply");
   }

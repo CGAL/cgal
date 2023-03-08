@@ -1461,8 +1461,7 @@ public:
       const auto pair = m_intersection_graph.add_edge(
         vertices[i], vertices[i + 1], support_planes_idx);
       const auto iedge = pair.first;
-      const auto is_inserted = pair.second;
-      CGAL_assertion(is_inserted);
+      CGAL_assertion(pair.second);// is inserted?
       m_intersection_graph.set_line(iedge, line_idx);
 
       for (const auto support_plane_idx : support_planes_idx) {

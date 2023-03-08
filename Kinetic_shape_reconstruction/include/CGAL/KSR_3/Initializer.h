@@ -1081,7 +1081,6 @@ private:
 
       std::set<IFace> faces;
 
-      std::size_t j = 0;
       for (auto f : sp.ifaces()) {
         Face_property& face = m_data.igraph().face(f);
 
@@ -1093,12 +1092,7 @@ private:
           m_data.add_iface_to_mesh(i, f);
           faces.insert(f);
         }
-        j++;
       }
-      //std::cout << "Support plane " << i << " has faces: ";
-      //for (auto f : faces)
-      //  std::cout << f << " ";
-      //std::cout << std::endl;
     }
   }
 
