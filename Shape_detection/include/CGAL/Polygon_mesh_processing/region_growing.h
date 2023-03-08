@@ -163,7 +163,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
     More precisely, a corner on the boundary of a region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
 
-  @tparam PolygonMesh a model of `FaceListGraph` and `EdgeListGaph`
+  @tparam PolygonMesh a model of `FaceListGraph` and `EdgeListGraph`
   @tparam RegionMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type.
   @tparam CornerIdMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `std::size_t` as value type.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
