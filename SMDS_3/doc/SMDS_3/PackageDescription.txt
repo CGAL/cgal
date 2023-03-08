@@ -26,7 +26,7 @@
 \cgalPkgPicture{knot_small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
+\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, and Mariette Yvinec}
 \cgalPkgDesc{This package provides a data structure to store three-dimensional
   simplicial meshes and their subcomplexes.
   It provides an API for tetrahedral meshes generated with %CGAL or not,

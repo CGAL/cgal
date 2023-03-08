@@ -511,13 +511,14 @@ private: //------------------------------------------------------ iterator types
     class Index_iterator
       : public boost::iterator_facade< Index_iterator<Index_>,
                                        Index_,
-                                       std::random_access_iterator_tag
+                                       std::random_access_iterator_tag,
+                                       Index_
                                        >
     {
         typedef boost::iterator_facade< Index_iterator<Index_>,
                                         Index_,
-                                        std::random_access_iterator_tag
-                                        > Facade;
+                                        std::random_access_iterator_tag,
+                                        Index_> Facade;
     public:
         Index_iterator() : hnd_(), mesh_(nullptr) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
@@ -595,7 +596,7 @@ private: //------------------------------------------------------ iterator types
             return this->hnd_ == other.hnd_;
         }
 
-        Index_& dereference() const { return const_cast<Index_&>(hnd_); }
+        Index_ dereference() const { return hnd_; }
 
         Index_ hnd_;
         const Surface_mesh* mesh_;

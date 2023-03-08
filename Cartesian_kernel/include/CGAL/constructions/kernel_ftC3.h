@@ -240,6 +240,22 @@ plane_from_pointsC3(const FT &px, const FT &py, const FT &pz,
   pd = - pa*rx - pb*ry - pc*rz;
 }
 
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+void
+plane_from_pointsC3( /* origin */
+                    const FT &qx, const FT &qy, const FT &qz,
+                    const FT &rx, const FT &ry, const FT &rz,
+                    FT &pa, FT &pb, FT &pc /* , zero */ )
+{
+  pa = qy*rz - ry*qz;
+  pb = qz*rx - rz*qx;
+  pc = qx*ry - rx*qy;
+}
+
+
+
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
 void

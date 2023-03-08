@@ -276,7 +276,7 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       std::make_pair(QSharedPointer<Mesh_sizing_field>(sizing_field_ptr),
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
 
-    std::cerr << "USE SIZING FIELD!\n";
+    std::cerr << "Note: Mesh_3 is using a sizing field based on AABB tree.\n";
     return Edge_criteria(*sizing_field_ptr);
   } else {
     return Edge_criteria(edge_size);

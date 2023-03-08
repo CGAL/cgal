@@ -23,6 +23,12 @@ Release date: June 2023
   `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
   which have output iterators for vertices and faces as parameter. They are replaced by overloads with two additional named parameters.
 
+- added functions `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` and `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
+  that allow to have a partition into planar regions of a mesh using the region growing algorithm from the [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) package.
+
+-   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
+CGAL tetrahedral Delaunay refinement algorithm.
+
 -   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh using
   the Delaunay refinement algorithm from the 3D Mesh Generation package.
 
@@ -31,6 +37,26 @@ Release date: June 2023
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
+
+### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
+
+-   **Breaking change**: The region growing part of the package have been reworked to fix design issues introduced with the handling `FaceGraph` models.
+    In particular, the notion of `Item` has been introduced to reference an element in the input range of elements. Region maps now operates on `Item` and no longer on the value type
+    of the input range.
+-   **Breaking change**: The method `update()` in the concept `RegionType` returns now
+    a `boolean` instead of  `void` that is used inside the class `Region_growing` for detecting if
+    the input conditions for the new region are satisfied. This change affects only user-defined
+    types of regions.
+-   **Breaking change**: The constructors of all models used together with the region growing algorithm now enable users
+    to provide parameters through the named parameters mechanism.
+-   All fitting classes in the region growing framework are now using better versions of the region
+    conditions, more precise and faster, including the correct normal orientations.
+-   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
+    segments and on 2D and 3D polylines.
+-   Added the `Polyline_graph` class for extracting a set of polylines from a face graph, which splits
+    this graph into a set of user-defined regions.
+-   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
+    and cylinders in 3D.
 
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.

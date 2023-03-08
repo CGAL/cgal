@@ -257,18 +257,21 @@ CGAL_add_named_parameter(reorient_bbox_t, reorient_bbox, reorient_bbox)
 CGAL_add_named_parameter(distance_tolerance_t, distance_tolerance, distance_tolerance)
 CGAL_add_named_parameter(angle_tolerance_t, angle_tolerance, angle_tolerance)
 CGAL_add_named_parameter(debug_t, debug, debug)
-
-// region growing
-CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
-CGAL_add_named_parameter(distance_threshold_t, distance_threshold, distance_threshold)
-CGAL_add_named_parameter(angle_threshold_t, angle_threshold, angle_threshold)
-CGAL_add_named_parameter(min_region_size_t, min_region_size, min_region_size)
-CGAL_add_named_parameter(regularize_t, regularize, regularize)
 CGAL_add_named_parameter(graphcut_beta_t, graphcut_beta, graphcut_beta)
+
+// List of named parameters used in Shape_detection package
+CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
+CGAL_add_named_parameter(maximum_distance_t, maximum_distance, maximum_distance)
+CGAL_add_named_parameter(minimum_region_size_t, minimum_region_size, minimum_region_size)
+CGAL_add_named_parameter(sphere_radius_t, sphere_radius, sphere_radius)
+CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
+CGAL_add_named_parameter(item_map_t, item_map, item_map)
+CGAL_add_named_parameter(cosine_of_maxium_angle_t, cosine_of_maxium_angle, cosine_of_maxium_angle)
+CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
+CGAL_add_named_parameter(maximum_radius_t, maximum_radius, maximum_radius)
 
 // List of named parameters used in Shape_regularization package
 CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
-CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
 CGAL_add_named_parameter(maximum_offset_t, maximum_offset, maximum_offset)
 CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
 CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
