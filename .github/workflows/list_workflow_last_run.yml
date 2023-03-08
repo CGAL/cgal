@@ -20,7 +20,7 @@
         - name: convert markdown to html
           run: |
             sudo apt-get update && sudo apt-get install -y pandoc
-            pandoc -f markdown -t html -o output.html output.md
+            pandoc -f markdown -t html --self-contained --css=.github/workflows/list_workflow_last_run.css -o output.html output.md
         - name: set_output
           id: cat_output
           run: |
