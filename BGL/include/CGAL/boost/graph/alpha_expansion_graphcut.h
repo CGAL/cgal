@@ -711,9 +711,6 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
     Alpha_expansion graph;
 
-    // TODO: check this hardcoded parameter
-    const double tolerance = 1e-10;
-
     double min_cut = (std::numeric_limits<double>::max)();
 
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
@@ -723,8 +720,6 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
     std::vector<Vertex_descriptor> inserted_vertices;
     inserted_vertices.resize(num_vertices(input_graph));
-
-    std::size_t number_of_labels = get(vertex_label_cost_map, *(vertices(input_graph).first)).size();
 
     graph.clear_graph();
 
@@ -765,8 +760,6 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
       Vertex_descriptor v1 = inserted_vertices[idx1],
         v2 = inserted_vertices[idx2];
 
-      std::size_t label_1 = get(vertex_label_map, vd1);
-      std::size_t label_2 = get(vertex_label_map, vd2);
       graph.add_edge(v1, v2, weight, weight);
     }
 
