@@ -406,7 +406,7 @@ public:
   }
 
   // functions and tag for filtering split events
-  // struct Filters_split_events_tag{}; // @tmp
+  struct Filters_split_events_tag{};
 
   template <class EventPtr>
   bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent) const
@@ -421,6 +421,8 @@ public:
 
     if ( lOptTime && lOptTime->to_nt() > *mFilteringBound )
     {
+      CGAL_STSKEL_TRAITS_TRACE("Ignoring potential split event");
+
       // avoid filling the cache vectors with times of trisegments that will be removed
       reset_trisegment(tri->id());
       return true;
@@ -436,12 +438,19 @@ public:
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
     typedef typename K::FT FT;
+    typedef typename K::Point_2 Point_2;
     typedef typename K::Vector_2 Vector_2;
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2 Ray_2;
     typedef typename K::Line_2 Line_2;
 
+    CGAL_STSKEL_TRAITS_TRACE("Computing filtering bound of V" << aNode->id() << " [" << typeid(FT).name() << "]" );
+
     mFilteringBound = boost::none;
+
+    // No gain observed on norway while doing it for more than contour nodes
+    if(!aNode->is_contour())
+      return;
 
     // get the contour input segments on each side of the bisector spawned ataNode
     auto lHL = aNode->halfedge()->defining_contour_edge();
@@ -455,16 +464,16 @@ public:
                                          lHR->vertex()->point(),
                                          lHR->id());
 
-    boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, FT(1)/lHL->weight(), mCaches);
-    boost::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, FT(1)/lHR->weight(), mCaches);
+    boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lHL->weight(), mCaches);
+    boost::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lHR->weight(), mCaches);
 
-    // @fixme below needs to use inverted weights like in degenerate time/point computations
-    Vector_2 lVL(lL->a(), lL->b()) ;
-    Vector_2 lVR(lR->a(), lR->b()) ;
+    Vector_2 lVL(  lL->b(), - lL->a()) ;
+    Vector_2 lVR(- lR->b(),   lR->a()) ;
     Vector_2 lVLR = lVL + lVR ;
-    Ray_2 bisect_ray(aNode->point(), lVLR) ;
+    const Point_2& laP = aNode->point();
+    Ray_2 bisect_ray(laP, lVLR) ;
 
-    // @todo this should use spatial searching
+    // @todo this should use some kind of spatial searching
     for ( Halfedge_handle_vector_iterator h = contour_halfedges_begin; h != contour_halfedges_end; ++h )
     {
       CGAL_assertion((*h)->vertex()->is_contour() && (*h)->opposite()->vertex()->is_contour() );
@@ -482,17 +491,28 @@ public:
       if (!is_certain(inter) || !inter)
         continue;
 
+      // See the other function for the equations
       CGAL_SS_i::Segment_2_with_ID<K> lSh (s_h, (*h)->id());
-      boost::optional< Line_2 > lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, (*h)->weight(), mCaches);
+      boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mCaches);
 
-      FT lBound = ( - lh->c() - lh->a()*aNode->point().x() - lh->b()*aNode->point().y() ) /
-                    ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) - aNode->time() ;
+      FT lLambda = - ( lh->a()*laP.x() + lh->b()*laP.y() + lh->c() ) /
+                       ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) ;
 
-      if( ! is_finite(lBound) || ! is_positive(lBound) )
+      Point_2 lP = laP + lVLR;
+      FT lBound = lLambda * ( lL->a()*lP.x() + lL->b()*lP.y() + lL->c() ) ;
+
+      if(!is_finite(lBound) || !is_positive(lBound))
         continue;
 
-      if ( ! mFilteringBound || *mFilteringBound > lBound )
+      if(!mFilteringBound || *mFilteringBound > lBound)
         mFilteringBound = lBound;
+    }
+
+    if(mFilteringBound)
+    {
+      CGAL_STSKEL_TRAITS_TRACE("Filtering bound: " << *mFilteringBound);
+    } else {
+      CGAL_STSKEL_TRAITS_TRACE("Filtering bound: none");
     }
   }
 
@@ -662,7 +682,7 @@ public:
   }
 
   // functions and tag for filtering split events
-  // struct Filters_split_events_tag{}; // @tmp
+  struct Filters_split_events_tag{};
 
   // The kernel is filtered, and only the filtered part is used in the check (to avoid computing
   // exact stuff and losing time in a check that is there to gain speed)
@@ -721,36 +741,49 @@ public:
     typedef typename FK::Ray_2 Target_Ray_2;
     typedef typename FK::Line_2 Target_Line_2;
 
+    typedef decltype(aNode->halfedge()) Halfedge_handle;
+    typedef CGAL_SS_i::Segment_2_with_ID<FK> Target_Segment_with_ID_2;
+    typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge;
+    typedef CGAL::Trisegment_2<FK, Target_Segment_with_ID_2> Target_Trisegment_2;
+    typedef Trisegment_2_ptr<Target_Trisegment_2> Target_Trisegment_2_ptr;
+
+    CGAL_STSKEL_TRAITS_TRACE("Computing approximate filtering bound of V" << aNode->id() << " [" << typeid(Target_FT).name() << "]" );
+
     mApproximate_traits.mFilteringBound = boost::none;
+
+    // No gain observed on norway while doing it for more than contour nodes
+    if(!aNode->is_contour())
+      return;
 
     typename FK::FT::Protector protector;
 
     C2F lToFiltered;
 
     // get the contour input segments on each side of the bisector spawned ataNode
-    auto lHL = aNode->halfedge()->defining_contour_edge();
-    auto lHR = ( aNode->is_contour() ) ? lHL->opposite()->prev()->opposite()
-                                       : aNode->halfedge()->opposite()->defining_contour_edge() ;
+    Halfedge_handle lHL = aNode->halfedge()->defining_contour_edge();
+    Halfedge_handle lHR = ( aNode->is_contour() ) ? lHL->opposite()->prev()->opposite()
+                                                  : aNode->halfedge()->opposite()->defining_contour_edge() ;
 
-    CGAL_SS_i::Segment_2_with_ID<FK> lSL (lToFiltered(lHL->opposite()->vertex()->point()),
-                                          lToFiltered(lHL->vertex()->point()),
-                                          lHL->id());
-    CGAL_SS_i::Segment_2_with_ID<FK> lSR (lToFiltered(lHR->opposite()->vertex()->point()),
-                                          lToFiltered(lHR->vertex()->point()),
-                                          lHR->id());
+    Target_Segment_with_ID_2 lSL (lToFiltered(lHL->opposite()->vertex()->point()),
+                                  lToFiltered(lHL->vertex()->point()),
+                                  lHL->id());
+    Target_Segment_with_ID_2 lSR (lToFiltered(lHR->opposite()->vertex()->point()),
+                                  lToFiltered(lHR->vertex()->point()),
+                                  lHR->id());
 
-    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, Target_FT(1) / lToFiltered(lHL->weight()), mApproximate_traits.mCaches);
-    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, Target_FT(1) / lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
+    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lToFiltered(lHL->weight()), mApproximate_traits.mCaches);
+    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
 
     Target_Point_2 laP = lToFiltered(aNode->point());
 
-    // @fixme below needs to use inverted weights like in degenerate time/point computations
-    Target_Vector_2 lVL(lL->a(), lL->b()) ;
-    Target_Vector_2 lVR(lR->a(), lR->b()) ;
+    // These are weighted direction of the lines supporting the contour segments.
+    // Coefficients for SR are negated because aNode is at the "source" of SR.
+    Target_Vector_2 lVL(  lL->b(), - lL->a()) ;
+    Target_Vector_2 lVR(- lR->b(),   lR->a()) ;
     Target_Vector_2 lVLR = lVL + lVR ;
     Target_Ray_2 bisect_ray(laP, lVLR) ;
 
-    // @todo this should use spatial searching
+    // @todo this should use some kind of spatial searching
     for ( Halfedge_handle_vector_iterator h = contour_halfedges_begin; h != contour_halfedges_end; ++h )
     {
       try
@@ -767,25 +800,91 @@ public:
         if (!is_certain(orient) || orient != LEFT_TURN)
           continue;
 
-        Uncertain<bool> inter = FK().do_intersect_2_object()(s_h, bisect_ray);
+        Uncertain<bool> inter = FK().do_intersect_2_object()(bisect_ray, s_h);
         if (!is_certain(inter) || !inter)
           continue;
 
-        CGAL_SS_i::Segment_2_with_ID<FK> lSh (s_h, (*h)->id());
-        auto lh = CGAL_SS_i::compute_weighted_line_coeffC2(lSh, lToFiltered((*h)->weight()), mApproximate_traits.mCaches);
+        // We want the time it takes to get from aNode to h along the primary bisector of aNode.
+        //
+        // Let d0 be the weighted direction of the defining contour edge to the left of aNode, that is (-b0, a0) / w0.
+        // Let d1 be the weighted, opposite direction of the defining contour edge to the right of aNode, that is (b1, -a1) / w1.
+        // The bisector has direction n0 + n1.
+        // Let n2 be the unweighted normal of 'h', that is v3 = (a, b) if h is defined as la*x+lb*y+lc = 0
+        //
+        // Projecting aNode onto h orthogonally, we create a right triangle.
+        // Let theta be the angle between the line orthogonal to h through aNode and the primary bisector of aNode.
+        // Let T be the distance between aNode and the projection of aNode onto h.
+        // Let H be the distance between aNode and the intersection of aNode and h along the primary bisector of aNode.
+        //
+        // We have:
+        //   cos(theta) = (d0 + d1) * n2 / (|d0 + d1| * |n2|)  [note that |n2| = 1]
+        // and on the other hand:
+        //   cos(theta) = T / H
+        // If we express H as lambda * |d0 + d1|, we get:
+        //   lambda = - T / (d0 + d1) * n2
 
-        // @fixme precision issues...? lToFiltered earlier?
-        Target_FT lBound = (- lh->c() - lh->a()*laP.x() - lh->b()*laP.y()) /
-                             ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) - lToFiltered(aNode->time()) ;
+        Target_Segment_with_ID_2 lSh (s_h, (*h)->id());
+        boost::optional<Target_Line_2> lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mApproximate_traits.mCaches);
 
-        if ( ! is_finite(lBound) || ! is_positive(lBound) )
+        Target_FT lLambda = - ( lh->a()*laP.x() + lh->b()*laP.y() + lh->c() ) /
+                                ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) ;
+
+        // Scale it because |d0 + d1| doesn't send aNode to the t=1 line, but to t=lL(aNode+d0+d1)=lR(aNode+d0+d1)
+        Target_Point_2 lP = laP + lVLR;
+        Target_FT lBound = lLambda * ( lL->a()*lP.x() + lL->b()*lP.y() + lL->c() ) ;
+
+#if 0
+        std::cout << "E" << (*h)->id() << " s_h = " << s_h << std::endl;
+        std::cout << "left/right E" << lHL->id() << " E" << lHR->id() << std::endl;
+        std::cout << "V" << aNode->id() << std::endl;
+        std::cout << "lSL: " << lSL << std::endl;
+        std::cout << "lSR: " << lSR << std::endl;
+        std::cout << "lHL->weight(): " << lHL->weight() << std::endl;
+        std::cout << "lHR->weight(): " << lHR->weight() << std::endl;
+        std::cout << "lVL " << lVL << std::endl;
+        std::cout << "lVR " << lVR << std::endl;
+        std::cout << "lVLR " << lVLR << std::endl;
+        std::cout << "lAP " << laP <<  std::endl;
+        std::cout << "lAP + lVL " << laP + lVL <<  std::endl;
+        std::cout << "lAP + lVR " << laP + lVR <<  std::endl;
+        std::cout << "lAP+v " << laP + lVLR << std::endl;
+        std::cout << "Inter pt: " << *ip << std::endl;
+
+        boost::optional<Target_Line_2> lh1 = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
+
+        std::cout << "lh0 check" << square(lh0->a()) + square(lh0->b()) << std::endl;
+        std::cout << "lh1 check" << square(lh1->a()) + square(lh1->b()) << std::endl;
+        std::cout << "l0 time at aNode: " << lh0->a()*laP.x() + lh0->b()*laP.y() + lh0->c() << std::endl;
+        std::cout << "l1 time at aNode: " << lh1->a()*laP.x() + lh1->b()*laP.y() + lh1->c() << std::endl;
+        std::cout << "l0 time at aNode + lVLR: " << lh0->a()*(laP + lVLR).x() + lh0->b()*(laP + lVLR).y() + lh0->c() << std::endl;
+        std::cout << "l1 time at aNode + lVLR: " << lh1->a()*(laP + lVLR).x() + lh1->b()*(laP + lVLR).y() + lh1->c() << std::endl;
+
+        auto ipp = FK().intersect_2_object()(s_h, bisect_ray);
+        Target_Point_2* ip = boost::get<Target_Point_2>(&*ipp);
+        std::cout << "l0 time at inter pt: " << lh0->a()*ip->x() + lh0->b()*ip->y() + lh0->c() << std::endl;
+        std::cout << "l1 time at inter pt: " << lh1->a()*ip->x() + lh1->b()*ip->y() + lh1->c() << std::endl;
+        std::cout << "lh-> " << lh->a() << " " << lh->b() << " " << square(lh->a()) + square(lh->b()) << std::endl;
+        std::cout << "lh time at inter pt: " << lh->a()*ip->x() + lh->b()*ip->y() + lh->c() << std::endl;
+        std::cout << "lLambda: " << lLambda << std::endl;
+        std::cout << "lBound: " << lBound << std::endl;
+        CGAL_assertion(lBound == lh0->a()*ip->x() + lh0->b()*ip->y() + lh0->c());
+#endif
+
+        if(!is_finite(lBound) || !is_positive(lBound))
           continue;
 
-        if ( ! mApproximate_traits.mFilteringBound || *mApproximate_traits.mFilteringBound > lBound )
-          mApproximate_traits.mFilteringBound = lBound ;
+        if(!mApproximate_traits.mFilteringBound || *mApproximate_traits.mFilteringBound > lBound)
+          mApproximate_traits.mFilteringBound = lBound;
       }
       catch(CGAL::Uncertain_conversion_exception&)
       {}
+    }
+
+    if(mApproximate_traits.mFilteringBound)
+    {
+      CGAL_STSKEL_TRAITS_TRACE("Filtering bound: " << *mApproximate_traits.mFilteringBound);
+    } else {
+      CGAL_STSKEL_TRAITS_TRACE("Filtering bound: none");
     }
   }
 
