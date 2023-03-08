@@ -54,7 +54,8 @@ int main(int argc, char* argv[])
     CGAL::Timer t;
     t.start();
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.stl");
-  int gridlength = (argc > 2) ? std::stoi(argv[2]) : 3;
+  const std::string stem = (argc > 2) ? argv[2] : "split";
+  int gridlength = (argc > 3) ? std::stoi(argv[3]) : 3;
 
   Empty_set<std::array<int,3>> count_faces;
   BB bbox_points;
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
 
   {
     std::ifstream in(filename, std::ios::binary);
-    CGAL::IO::split_binary_STL(in, bbox_points.bbox, gridlength, true);
+    CGAL::IO::split_binary_STL(in, stem, bbox_points.bbox, gridlength, true);
 
   }
   return 0;

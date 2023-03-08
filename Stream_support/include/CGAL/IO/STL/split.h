@@ -28,6 +28,7 @@ namespace IO {
 
 inline
 bool split_binary_STL(std::istream& is,
+                      std::string stem,
                       Bbox_3& bb,
                       int ncells,
                       const bool verbose = false)
@@ -51,7 +52,7 @@ bool split_binary_STL(std::istream& is,
     for(int j = 0; j < ncells; j++)
       for(int k = 0; k < ncells; k++){
         int index = i*ncells*ncells + j*ncells +k;
-        std::string fileName = "split_" + std:: to_string(i) + "_"  + std:: to_string(j) + "_" + std:: to_string(k) +   ".stl";
+        std::string fileName = stem + "_" + std:: to_string(i) + "_"  + std:: to_string(j) + "_" + std:: to_string(k) +   ".stl";
         streams.emplace_back(std::ofstream {fileName.c_str(), std::ios::binary} );
         streams[index] << "FileType: Binary                                                                ";
         boost::uint32_t N32 = 0; // has to be rewritten later
