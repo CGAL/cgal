@@ -26,7 +26,7 @@
           run: |
             delimiter="$(openssl rand -hex 8)"
               echo "message<<${delimiter}" >> "${GITHUB_OUTPUT}"
-              echo "Subject:List workflow run \nContent-Type: text/html\n" >> "${GITHUB_OUTPUT}"
+              echo "Subject:List workflow run \nContent-Type: text/html; charset=\"UTF-8\"\n" >> "${GITHUB_OUTPUT}"
               echo "<html><body>" >> "${GITHUB_OUTPUT}"
               cat output.html >> "${GITHUB_OUTPUT}"
               echo "</body></html>" >> "${GITHUB_OUTPUT}"
