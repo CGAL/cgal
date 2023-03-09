@@ -714,9 +714,9 @@ private:
     struct Outputs
     {
       std::vector<Edge> intersecting_edges;
-      std::vector<Cell_handle> intersecting_cells;
-      std::vector<Vertex_handle> vertices_of_upper_cavity;
-      std::vector<Vertex_handle> vertices_of_lower_cavity;
+      std::set<Cell_handle> intersecting_cells;
+      std::set<Vertex_handle> vertices_of_upper_cavity;
+      std::set<Vertex_handle> vertices_of_lower_cavity;
       std::set<Facet> facets_of_upper_cavity;
       std::set<Facet> facets_of_lower_cavity;
     } outputs{
@@ -762,10 +762,10 @@ private:
       CGAL_assertion(false == polygon_vertices.contains(v_above));
       CGAL_assertion(false == polygon_vertices.contains(v_below));
       if(new_vertex(v_above)) {
-        vertices_of_upper_cavity.push_back(v_above);
+        vertices_of_upper_cavity.insert(v_above);
       }
       if(new_vertex(v_below)) {
-        vertices_of_lower_cavity.push_back(v_below);
+        vertices_of_lower_cavity.insert(v_below);
       }
       auto facet_circ = this->incident_facets(intersecting_edge);
       const auto facet_circ_end = facet_circ;
@@ -774,7 +774,7 @@ private:
         const auto cell = facet_circ->first;
         const auto facet_index = facet_circ->second;
         if(new_cell(cell)) {
-          intersecting_cells.push_back(cell);
+          intersecting_cells.insert(cell);
         }
         const auto index_v_above = cell->index(v_above);
         const auto index_v_below = cell->index(v_below);
@@ -818,7 +818,6 @@ private:
       std::cerr << "intersecting_edges.size() = " << intersecting_edges.size() << '\n';
 #endif
     }
-    const std::set<Cell_handle> intersecting_cells_set{intersecting_cells.begin(), intersecting_cells.end()};
     for(auto intersecting_edge: intersecting_edges) {
       const auto [v_above, v_below] = vertex_pair(intersecting_edge);
 
@@ -830,10 +829,10 @@ private:
         const auto index_v_below = cell->index(v_below);
         const auto cell_above = cell->neighbor(index_v_below);
         const auto cell_below = cell->neighbor(index_v_above);
-        if(!intersecting_cells_set.contains(cell_above)) {
+        if(!intersecting_cells.contains(cell_above)) {
           facets_of_upper_cavity.emplace(cell_above, cell_above->index(cell));
         }
-        if(!intersecting_cells_set.contains(cell_below)) {
+        if(!intersecting_cells.contains(cell_below)) {
           facets_of_lower_cavity.emplace(cell_below, cell_below->index(cell));
         }
       } while(++cell_circ != end);
@@ -886,14 +885,10 @@ private:
     const auto first_intersecting_edge = *found_edge_opt;
     auto cavities =
         construct_cavities(face_index, region_count, cdt_2, fh_region, polygon_vertices, first_intersecting_edge);
-    auto& [intersecting_edges, intersecting_cells_vector, vertices_of_upper_cavity_vector,
-           vertices_of_lower_cavity_vector, facets_of_upper_cavity, facets_of_lower_cavity] = cavities;
+    auto& [intersecting_edges, intersecting_cells_vector, vertices_of_upper_cavity,
+           vertices_of_lower_cavity, facets_of_upper_cavity, facets_of_lower_cavity] = cavities;
 
     const std::set<Cell_handle> intersecting_cells{intersecting_cells_vector.begin(), intersecting_cells_vector.end()};
-    const std::set<Vertex_handle> vertices_of_upper_cavity{vertices_of_upper_cavity_vector.begin(),
-                                                           vertices_of_upper_cavity_vector.end()};
-    const std::set<Vertex_handle> vertices_of_lower_cavity{vertices_of_lower_cavity_vector.begin(),
-                                                           vertices_of_lower_cavity_vector.end()};
     const std::set<Point_3> polygon_points = [&](){
       std::set<Point_3> polygon_points;
       for(auto vh : polygon_vertices) {
