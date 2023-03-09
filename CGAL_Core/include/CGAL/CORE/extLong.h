@@ -149,8 +149,7 @@ const extLong EXTLONG_EIGHT(8);
 //  private comparison function
 inline int extLong::cmp(const extLong& x) const {
   if (isNaN() || x.isNaN()) {
-    core_error("Two extLong NaN's cannot be compared!",
-               __FILE__, __LINE__, false);
+    CGAL_warning_msg(false, "Two extLong NaN's cannot be compared!");
   }
   return (val == x.val) ? 0 : ((val > x.val) ? 1 : -1);
 }

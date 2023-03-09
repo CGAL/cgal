@@ -176,7 +176,7 @@ void core_error(std::string msg, std::string file, int lineno, bool err) {
      << msg << std::endl;
   outFile.close();
   if (err) {
-     std::cerr << (std::string("CORE ERROR") + " (file " + file + ", line "
+      (std::string("CORE ERROR") + " (file " + file + ", line "
                    + std::to_string(lineno) +"):" + msg + "\n").c_str();
      std::exit(1); //Note: do not call abort()
   }
