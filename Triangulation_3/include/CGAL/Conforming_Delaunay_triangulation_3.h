@@ -141,7 +141,7 @@ protected:
   void add_to_subconstraints_to_conform(Vertex_handle va, Vertex_handle vb,
                                         Constraint_id id) {
     const auto pair = make_subconstraint(va, vb);
-#if CGAL_DEBUG_CDT_3 > 32
+#if CGAL_DEBUG_CDT_3 & 32
     std::cerr << "tr.subconstraints_to_conform.push("
               << display_subcstr(pair) << ")\n";
 #endif // CGAL_DEBUG_CDT_3
@@ -234,7 +234,7 @@ public:
                          const auto va = sc.first.first;
                          const auto vb = sc.first.second;
                          const auto is_edge = this->tr.tds().is_edge(va, vb);
-#if CGAL_DEBUG_CDT_3 > 128 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 & 128 && __has_include(<format>)
                          std::cerr << std::format("is_conforming>> Edge is 3D: {:6}  ({} , {})\n",
                                                   is_edge,
                                                   oformat(this->point(va)),
@@ -303,7 +303,7 @@ protected:
                                                       pair.first.second)) {
         continue;
       }
-#if CGAL_DEBUG_CDT_3 > 32
+#if CGAL_DEBUG_CDT_3 & 32
       std::cerr << "tr.subconstraints_to_conform.pop()="
                 << display_subcstr(pair.first) << "\n";
 #endif // CGAL_DEBUG_CDT_3
@@ -365,10 +365,10 @@ protected:
                                this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
                      this->constraint_hierarchy.vertices_in_constraint_end(c_id));
-#if CGAL_DEBUG_CDT_3 > 64
+#if CGAL_DEBUG_CDT_3 & 64
       std::cerr << "constraint " << (void*) c_id.vl_ptr() << " has "
                 << c_id.vl_ptr()->skip_size() << " vertices\n";
-#endif
+#endif // CGAL_DEBUG_CDT_3
       auto it = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
       const auto end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
       const auto c_va = *it;
@@ -453,7 +453,7 @@ protected:
                   [this](Vertex_handle v){
                     std::cerr << "    " << this->display_vert(v) << '\n';
                   });
-#endif
+#endif // CGAL_DEBUG_CDT_3
     auto end = std::remove_if(vector_of_encroaching_vertices.begin(),
                               vector_of_encroaching_vertices.end(),
                               [pa, pb, &angle_functor, this](Vertex_handle v) {
@@ -467,7 +467,7 @@ protected:
                   [this](Vertex_handle v){
                     std::cerr << "    " << this->display_vert(v) << '\n';
                   });
-#endif
+#endif // CGAL_DEBUG_CDT_3
     CGAL_assertion(vector_of_encroaching_vertices.begin() != end);
 
     auto reference_point_it = std::max_element(
