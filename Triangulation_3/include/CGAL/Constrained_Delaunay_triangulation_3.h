@@ -949,13 +949,14 @@ private:
     std::vector<Facet> missing_faces;
     while(true) {
       missing_faces.clear();
-      for(auto f: facets_of_cavity) {
+      for(auto f : facets_of_cavity) {
         if(cells_of_cavity.contains(f.first)) {
           // internal facet, due to cavity growing
           continue;
         }
         const auto [v0, v1, v2] = this->make_vertex_triple(f);
-        Cell_handle c; int i, j, k;
+        Cell_handle c;
+        int i, j, k;
         if(!cavity_triangulation.is_facet(vertex_map[v0], vertex_map[v1], vertex_map[v2], c, i, j, k)) {
           missing_faces.push_back(f);
         }
@@ -963,21 +964,22 @@ private:
       if(missing_faces.empty()) {
         break;
       }
-      for(auto [cell, facet_index]: missing_faces) {
+      for(auto [cell, facet_index] : missing_faces) {
         {
           auto [_, is_new_cell] = cells_of_cavity.insert(cell);
-          if(!is_new_cell) continue;
+          if(!is_new_cell)
+            continue;
         }
         const auto v3 = cell->vertex(facet_index);
         auto [_, v3_is_new_vertex] = vertices_of_cavity.insert(v3);
         if(v3_is_new_vertex) {
-          vertex_map[v3] = cavity_triangulation.insert(this->point(v3));
+          insert_new_vertex(v3, "extra ");
         }
         for(int i = 0; i < 3; ++i) {
           Facet other_f{cell, this->vertex_triple_index(facet_index, i)};
           Facet mirror_f = this->mirror_facet(other_f);
           if(!cells_of_cavity.contains(mirror_f.first)) {
-            facets_of_cavity.push_back(mirror_f);
+            facets_of_cavity.insert(mirror_f);
           }
         }
       }
