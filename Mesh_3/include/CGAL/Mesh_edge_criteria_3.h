@@ -85,41 +85,83 @@ namespace internal {
 } // end namespace internal
 } // end namespace Mesh_3
 
+/*!
+\ingroup PkgMesh3MeshClasses
+
+The function object class `Mesh_edge_criteria_3` is a model of `MeshEdgeCriteria_3`. It
+provides a bound for the size criterion.
+
+\cgalModels `MeshEdgeCriteria_3`
+
+\sa `MeshCriteria_3`
+\sa `CGAL::Mesh_criteria_3<Tr>`
+\sa `MeshDomainField_3`
+
+*/
 template < typename Tr >
 class Mesh_edge_criteria_3
 {
+private:
   typedef Mesh_edge_criteria_3 Self;
+  typedef typename Tr::Geom_traits Gt;
 
 public:
-  typedef typename Tr::Vertex::Index  Index;
-  typedef typename Tr::Geom_traits    Gt;
-  typedef typename Gt::FT             FT;
-  typedef typename Tr::Bare_point     Point_3;
+  /// \name Types
+  /// @{
+  /*!
+  Numerical type.
+  */
+  typedef typename Tr::Geom_traits::FT  FT;
+  typedef typename Tr::Vertex::Index    Index;
+  typedef typename Tr::Bare_point       Point_3;
 
-  /// Constructors
-  Mesh_edge_criteria_3(const FT& value)
+  /// @}
+
+
+  /// \name Creation
+  /// @{
+  /*!
+  * Returns an object to serve as criteria for edges.
+  * The argument `length_bound` is an upper bound
+  * for the length of the edges which are used to discretize the curves.
+  * Note that if one parameter is set to 0, then its corresponding criteria is ignored.
+  */
+  Mesh_edge_criteria_3(const FT& length_bound)
     : p_size_(new Mesh_3::internal::Sizing_field_container<
                 Mesh_constant_domain_field_3<Gt,Index> ,
                 FT,
                 Point_3,
-                Index>(value))
+                Index>(length_bound))
   {}
 
   // Nb: SFINAE to avoid wrong matches with built-in numerical types
   // as int.
-  template < typename Sizing_field >
+  /*!
+  * @tparam SizingField a model of `MeshDomainField_3`
+  *
+  * Returns an object to serve as criteria for edges.
+  * The behavior and semantic of the argument are the same
+  * as above, except that the `length_bound`
+  * parameter is a functional instead of a constant.
+  */
+  template < typename SizingField >
   Mesh_edge_criteria_3
   (
-   const Sizing_field& size,
-   std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>::value>* = 0
+   const SizingField& length_bound
+#ifndef DOXYGEN_RUNNING
+    , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>::value>* = 0
+#endif
    )
   {
-    p_size_ = new Mesh_3::internal::Sizing_field_container<Sizing_field,
+    p_size_ = new Mesh_3::internal::Sizing_field_container<SizingField,
                                                            FT,
                                                            Point_3,
-                                                           Index>(size);
+                                                           Index>(length_bound);
   }
 
+  /// @}
+
+#ifndef DOXYGEN_RUNNING
   Mesh_edge_criteria_3(const Self& rhs)
     : p_size_(rhs.p_size_->clone()) {}
 
@@ -132,6 +174,8 @@ public:
   /// Returns size of tuple (p,dim,index)
   FT sizing_field(const Point_3& p, const int dim, const Index& index) const
   { return (*p_size_)(p,dim,index); }
+
+#endif
 
 private:
   typedef Mesh_3::internal::Sizing_field_interface<FT,Point_3,Index>
