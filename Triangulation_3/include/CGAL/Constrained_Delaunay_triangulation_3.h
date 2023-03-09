@@ -939,13 +939,14 @@ private:
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "# upper cavity\n";
 #endif // CGAL_DEBUG_CDT_3
-    const auto upper_cavity_triangulation = triangulate_cavity(
+    const auto [upper_cavity_triangulation, nb_of_add_vertices_upper] = triangulate_cavity(
         intersecting_cells, facets_of_upper_cavity, map_cavity_vertices_to_ambient_vertices, vertices_of_upper_cavity);
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "# lower cavity\n";
 #endif // CGAL_DEBUG_CDT_3
-    const auto lower_cavity_triangulation = triangulate_cavity(
-        intersecting_cells, facets_of_lower_cavity, map_lower_cavity_vertices_to_ambient_vertices, vertices_of_lower_cavity);
+    const auto [lower_cavity_triangulation, nb_of_add_vertices_lower] =
+        triangulate_cavity(intersecting_cells, facets_of_lower_cavity, map_lower_cavity_vertices_to_ambient_vertices,
+                           vertices_of_lower_cavity);
 
     CGAL_assertion(std::all_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
       auto is_fh_facet_of = [this, fh](const auto& tr) -> std::optional<Facet> {
@@ -992,8 +993,7 @@ private:
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "# glu the upper triangulation of the cavity\n";
 
-    if(vertices_of_upper_cavity.size() != vertices_of_upper_cavity_vector.size() ||
-       vertices_of_lower_cavity.size() != vertices_of_lower_cavity_vector.size())
+    if(nb_of_add_vertices_upper > 0 || nb_of_add_vertices_lower > 0)
     {
       std::cerr << std::format("!! Cavity has grown and not has {} cells and {} edges, "
                                "{} vertices in upper cavity and {} in lower, "
@@ -1231,7 +1231,11 @@ private:
                           Vertex_map& map_cavity_vertices_to_ambient_vertices,
                           std::set<Vertex_handle> vertices_of_cavity) ///@TODO: not deterministic
   {
-    Constrained_Delaunay_triangulation_3 cavity_triangulation;
+    struct {
+      Constrained_Delaunay_triangulation_3 cavity_triangulation{};
+      std::size_t number_of_added_vertices = 0;
+    } result;
+    auto& cavity_triangulation =  result.cavity_triangulation;
     CGAL::Unique_hash_map<Vertex_handle, Vertex_handle> vertex_map;
 
     auto insert_new_vertex = [&](Vertex_handle v, std::string_view extra = "") {
@@ -1244,6 +1248,7 @@ private:
                                IO::oformat(cavity_v, with_point),
                                IO::oformat(v, with_point));
 #endif
+      ++result.number_of_added_vertices;
       return cavity_v;
     };
 
@@ -1295,7 +1300,7 @@ private:
       int i, j, k;
       return cavity_triangulation.is_facet(vertex_map[v0], vertex_map[v1], vertex_map[v2], c, i, j, k);
     }));
-    return cavity_triangulation;
+    return result;
   }
 
   void restore_face(CDT_3_face_index face_index) {
