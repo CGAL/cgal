@@ -97,17 +97,17 @@ public:
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{12}
     \cgalParamNEnd
-    \cgalParamNBegin{distance_threshold}
+    \cgalParamNBegin{distance_tolerance}
       \cgalParamDescription{maximum distance from a point to a planar shape}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{1}
     \cgalParamNEnd
-    \cgalParamNBegin{angle_threshold}
+    \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{maximum angle in degrees between the normal of a point and the plane normal}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
-    \cgalParamNBegin{min_region_size}
+    \cgalParamNBegin{minimum_region_size}
       \cgalParamDescription{minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{5}
