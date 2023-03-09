@@ -93,6 +93,33 @@ int main(int argc, char* argv[])
         polygon.push_back(get(pmap, vertex_it));
       }
       std::cerr << "NEW POLYGON #" << poly_id << '\n';
+      const auto coplanar = polygon.size() < 3 ||
+          std::all_of(polygon.begin(), polygon.end(),
+                      [p1 = polygon[0], p2 = polygon[1], p3 = polygon[2]](auto p) {
+                        const auto coplanar =
+                            CGAL::orientation(p1, p2, p3, p) == CGAL::COPLANAR;
+                        if(!coplanar) {
+                          std::cerr << "Non coplanar points: " << p1 << ", " << p2
+                                    << ", " << p3 << ", " << p << '\n'
+                                    << "  volume: " << volume(p1, p2, p3, p) << '\n';
+
+                        }
+                        return coplanar;
+                      });
+      if(!coplanar) {
+        std::ofstream out(std::string("dump_noncoplanar_polygon_") + std::to_string(poly_id) + ".off");
+        out.precision(17);
+        out << "OFF\n" << polygon.size() << " 1 0\n";
+        for(auto p : polygon) {
+          out << p << '\n';
+        }
+        out << polygon.size() << ' ';
+        for(std::size_t i = 0u, end = polygon.size(); i < end; ++i) {
+          out << ' ' << i;
+        }
+        out << '\n';
+        std::cerr << "Polygon is not coplanar\n";
+      }
       try {
         auto id = cdt.insert_constrained_polygon(polygon);
         assert(id == poly_id);
