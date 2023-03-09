@@ -5110,16 +5110,17 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
       // because the infinite vertices are different
     }
 
-    typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    const auto vertex_triple = oit->first;
+    const auto facet = oit->second;
     outer_map.erase(oit);
-    Cell_handle o_ch = o_vt_f_pair.second.first;
-    unsigned int o_i = o_vt_f_pair.second.second;
+    const Cell_handle o_ch = facet.first;
+    const unsigned int o_i = facet.second;
 
-    auto iit = inner_map.find(o_vt_f_pair.first);
+    const auto iit = inner_map.find(vertex_triple);
     CGAL_assertion(iit != inner_map.end());
-    typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
-    Cell_handle i_ch = i_vt_f_pair.second.first;
-    unsigned int i_i = i_vt_f_pair.second.second;
+    const auto i_facet = iit->second;
+    const Cell_handle i_ch = i_facet.first;
+    const unsigned int i_i = i_facet.second;
 
     // Create a new cell and glue it to the outer surface
     Cell_handle new_ch = tds().create_cell();
@@ -5138,7 +5139,7 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
     {
       if(index != i_i)
       {
-        Facet f = std::pair<Cell_handle, int>(new_ch, index);
+        Facet f{new_ch, index};
         Vertex_triple vt = make_vertex_triple(f);
         make_canonical_oriented_triple(vt);
         std::swap(vt[1], vt[2]);
@@ -5152,9 +5153,9 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
         else
         {
           // glue the faces
-          typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
-          Cell_handle o_ch2 = o_vt_f_pair2.second.first;
-          int o_i2 = o_vt_f_pair2.second.second;
+          const auto facet2 = oit2->second;
+          const Cell_handle o_ch2 = facet2.first;
+          const int o_i2 = facet2.second;
           o_ch2->set_neighbor(o_i2, new_ch);
           new_ch->set_neighbor(index, o_ch2);
           outer_map.erase(oit2);
