@@ -679,7 +679,7 @@ public:
       stepsize++; // heuristic
     } while ((del != 0) && ((del.uMSB() >= -prec) && (count >0))) ;
 
-    CGAL_assertion(count != 0, "newtonIterE: reached count=0");
+    CGAL_assertion_msg(count != 0, "newtonIterE: reached count=0");
     del = BigFloat(core_abs(del.m()), err, del.exp() );
     del.makeCeilExact();
     return val;
