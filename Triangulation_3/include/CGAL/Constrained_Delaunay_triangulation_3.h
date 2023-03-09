@@ -984,6 +984,12 @@ private:
         }
       }
     }
+    CGAL_assertion(std::all_of(facets_of_cavity.begin(), facets_of_cavity.end(), [&](const auto& f) {
+      const auto [v0, v1, v2] = this->make_vertex_triple(f);
+      Cell_handle c;
+      int i, j, k;
+      return cavity_triangulation.is_facet(vertex_map[v0], vertex_map[v1], vertex_map[v2], c, i, j, k);
+    }));
     return cavity_triangulation;
   }
 
