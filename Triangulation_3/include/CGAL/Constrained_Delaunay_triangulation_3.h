@@ -685,7 +685,7 @@ private:
     return {};
   }
 
-  struct Next_face {};
+  struct Next_face : std::logic_error { using std::logic_error::logic_error; };
 
   static constexpr auto vertex_pair(Edge e) {
     const auto [c, i, j] = e;
@@ -859,7 +859,7 @@ private:
         dump_triangulation();
         dump_region(face_index, region_count, cdt_2);
       }
-      throw Next_face{};
+      throw Next_face{"No segment found"};
     }
     CGAL_assertion(found_edge_opt != std::nullopt);
 
@@ -1017,7 +1017,9 @@ private:
       try {
         restore_subface_region(face_index, ++region_count, cdt_2, fh_region);
       }
-      catch(Next_face&) {
+      catch(Next_face& e) {
+        std::cerr << "ERROR: " << e.what() << " in sub-region " << (region_count - 1)
+                  << " of facet #" << face_index << '\n';
       }
     }
   }
