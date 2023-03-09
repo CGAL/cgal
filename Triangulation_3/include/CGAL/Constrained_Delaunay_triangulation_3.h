@@ -696,7 +696,7 @@ private:
                           int region_count,
                           const CDT_2& cdt_2,
                           const auto& fh_region,
-                          const auto& border_vertices,
+                          const auto& polygon_vertices,
                           Edge first_intersecting_edge)
   {
     // outputs
@@ -709,7 +709,7 @@ private:
       std::vector<Facet> facets_of_upper_cavity;
       std::vector<Facet> facets_of_lower_cavity;
     } outputs{
-        {}, {}, {border_vertices.begin(), border_vertices.end()}, {border_vertices.begin(), border_vertices.end()},
+        {}, {}, {polygon_vertices.begin(), polygon_vertices.end()}, {polygon_vertices.begin(), polygon_vertices.end()},
         {}, {}};
 
     auto& [_, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
@@ -748,8 +748,8 @@ private:
                                 IO::oformat(v_above, with_point),
                                 IO::oformat(v_below, with_point));
 #endif
-      CGAL_assertion(false == border_vertices.contains(v_above));
-      CGAL_assertion(false == border_vertices.contains(v_below));
+      CGAL_assertion(false == polygon_vertices.contains(v_above));
+      CGAL_assertion(false == polygon_vertices.contains(v_below));
       if(new_vertex(v_above)) {
         vertices_of_upper_cavity.push_back(v_above);
       }
@@ -769,7 +769,7 @@ private:
         const auto index_v_below = cell->index(v_below);
         const auto index_vc = 6 - index_v_above - index_v_below - facet_index;
         const auto vc = cell->vertex(index_vc);
-        if(border_vertices.contains(vc)) continue; // intersecting edges cannot touch the border
+        if(polygon_vertices.contains(vc)) continue; // intersecting edges cannot touch the border
 
         auto test_edge = [&](Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1, int expected) {
           if(!new_edge(v0, v1)) return true;
@@ -833,10 +833,11 @@ private:
 
   static constexpr With_point_tag with_point{};
 
-  void restore_subface_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2, const auto& fh_region)
+  void restore_subface_region(CDT_3_face_index face_index, int region_count,
+                              const CDT_2& cdt_2, const auto& fh_region)
   {
     const auto border_edges = brute_force_border_3_of_region(fh_region);
-    const auto border_vertices = [&]() {
+    const auto polygon_vertices = [&]() {
       std::set<Vertex_handle> vertices;
       for(const auto& [c, i, j]: border_edges) {
         vertices.insert(c->vertex(i));
@@ -845,7 +846,10 @@ private:
       return vertices;
     }();
 #if CGAL_DEBUG_CDT_3
-    std::cerr << "border_vertices.size() = " << border_vertices.size() << "\n";
+    std::cerr << "polygon_vertices.size() = " << polygon_vertices.size() << "\n";
+    for(auto v : polygon_vertices) {
+      std::cerr << std::format("  {:.6}\n", IO::oformat(v, with_point));
+    }
 #endif
     const Edge first_border_edge{border_edges[0]};
     const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, first_border_edge);
@@ -861,9 +865,9 @@ private:
 
     const auto first_intersecting_edge = *found_edge_opt;
     auto cavities =
-        construct_cavities(face_index, region_count, cdt_2, fh_region, border_vertices, first_intersecting_edge);
-    auto& [intersecting_edges, intersecting_cells_vector, vertices_of_upper_cavity_vector, vertices_of_lower_cavity_vector,
-           facets_of_upper_cavity, facets_of_lower_cavity] = cavities;
+        construct_cavities(face_index, region_count, cdt_2, fh_region, polygon_vertices, first_intersecting_edge);
+    auto& [intersecting_edges, intersecting_cells_vector, vertices_of_upper_cavity_vector,
+           vertices_of_lower_cavity_vector, facets_of_upper_cavity, facets_of_lower_cavity] = cavities;
 
     std::set<Cell_handle> intersecting_cells{intersecting_cells_vector.begin(), intersecting_cells_vector.end()};
     std::set<Vertex_handle> vertices_of_upper_cavity{vertices_of_upper_cavity_vector.begin(),

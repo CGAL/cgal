@@ -63,6 +63,13 @@ int main(int argc, char* argv[])
       CGAL::IO::save_binary_file(dump, cdt);
     }
     {
+      std::ofstream dump("dump.off");
+      dump.precision(17);
+      cdt.write_facets(dump, cdt, std::views::filter(cdt.finite_facets(), [&](auto f) {
+          return cdt.is_constrained(f);
+      }));
+    }
+    {
       std::ofstream missing_faces("missing_faces.polylines.txt");
       missing_faces.precision(17);
       cdt.write_missing_subfaces_file(missing_faces);
