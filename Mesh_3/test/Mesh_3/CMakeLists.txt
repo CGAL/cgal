@@ -52,6 +52,7 @@ create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
 create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
 create_single_source_cgal_program( "test_mesh_cell_base_3.cpp")
+create_single_source_cgal_program( "test_min_edge_length.cpp")
 
 foreach(target
     test_boost_has_xxx
@@ -80,7 +81,9 @@ foreach(target
     test_mesh_3_issue_1554
     test_mesh_polyhedral_domain_with_features_deprecated
     test_mesh_cell_base_3
-    test_meshing_with_one_step.cpp)
+    test_meshing_with_one_step
+    test_min_edge_length
+    )
   if(TARGET ${target})
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endif()
@@ -103,6 +106,7 @@ if(TARGET CGAL::TBB_support)
       test_mesh_3_issue_1554
       test_mesh_polyhedral_domain_with_features_deprecated
       test_mesh_cell_base_3
+      test_min_edge_length
       )
     if(TARGET ${target})
       target_link_libraries(${target} PUBLIC CGAL::TBB_support)

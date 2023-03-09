@@ -126,12 +126,14 @@ public:
   * for the length of the edges which are used to discretize the curves.
   * Note that if one parameter is set to 0, then its corresponding criteria is ignored.
   */
-  Mesh_edge_criteria_3(const FT& length_bound)
+  Mesh_edge_criteria_3(const FT& length_bound,
+                       const FT& min_length_bound = 0.)
     : p_size_(new Mesh_3::internal::Sizing_field_container<
                 Mesh_constant_domain_field_3<Gt,Index> ,
                 FT,
                 Point_3,
                 Index>(length_bound))
+    , min_length_bound_(min_length_bound)
   {}
 
   // Nb: SFINAE to avoid wrong matches with built-in numerical types
@@ -147,11 +149,13 @@ public:
   template < typename SizingField >
   Mesh_edge_criteria_3
   (
-   const SizingField& length_bound
+   const SizingField& length_bound,
+   const FT& min_length_bound = 0.
 #ifndef DOXYGEN_RUNNING
     , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>::value>* = 0
 #endif
    )
+   : min_length_bound_(min_length_bound)
   {
     p_size_ = new Mesh_3::internal::Sizing_field_container<SizingField,
                                                            FT,
@@ -163,7 +167,9 @@ public:
 
 #ifndef DOXYGEN_RUNNING
   Mesh_edge_criteria_3(const Self& rhs)
-    : p_size_(rhs.p_size_->clone()) {}
+    : p_size_(rhs.p_size_->clone())
+    , min_length_bound_(rhs.min_length_bound_)
+  {}
 
   /// Destructor
   ~Mesh_edge_criteria_3()
@@ -175,6 +181,11 @@ public:
   FT sizing_field(const Point_3& p, const int dim, const Index& index) const
   { return (*p_size_)(p,dim,index); }
 
+public:
+  const FT& min_length_bound() const
+  {
+    return min_length_bound_;
+  }
 #endif
 
 private:
@@ -184,6 +195,7 @@ private:
   // A pointer to Sizing_field_interface to handle dynamic wrapping of
   // real Sizing_field type
   Sizing_field_interface* p_size_;
+  const FT min_length_bound_;
 };
 
 } // end namespace CGAL
