@@ -93,7 +93,7 @@ protected:
   auto display_vert(Vertex_handle v) {
     std::stringstream os;
     os.precision(17);
-    os << oformat(v) << "=(" << this->tr.point(v) << ")";
+    os << IO::oformat(v) << "=(" << this->tr.point(v) << ")";
     return os.str();
   };
   auto display_subcstr(Subconstraint subconstraint) {

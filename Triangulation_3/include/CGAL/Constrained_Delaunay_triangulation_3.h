@@ -743,10 +743,10 @@ private:
       const auto intersecting_edge = intersecting_edges[i];
       const auto [v_above, v_below] = vertex_pair(intersecting_edge);
 #if CGAL_DEBUG_CDT_3
-      std::cerr << std::format("restore_subface_region, Edge #{:6}: ({} , {})\n",
-                                i,
-                                oformat(this->point(v_above)),
-                                oformat(this->point(v_below)));
+      std::cerr << std::format("restore_subface_region face index: {}, region #{}, Edge #{:6}: ({} , {})\n",
+                                face_index, region_count, i,
+                                IO::oformat(v_above, with_point),
+                                IO::oformat(v_below, with_point));
 #endif
       CGAL_assertion(false == border_vertices.contains(v_above));
       CGAL_assertion(false == border_vertices.contains(v_below));
@@ -830,6 +830,8 @@ private:
     }
     return outputs;
   }
+
+  static constexpr With_point_tag with_point{};
 
   void restore_subface_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2, const auto& fh_region)
   {
@@ -992,8 +994,8 @@ private:
 #if CGAL_DEBUG_CDT_3 > 64 && __has_include(<format>)
       std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
                                 is_3d,
-                                oformat(this->point(va_3d)),
-                                oformat(this->point(vb_3d)));
+                                IO::oformat(this->point(va_3d)),
+                                IO::oformat(this->point(vb_3d)));
 #endif // CGAL_DEBUG_CDT_3
       CGAL_assertion(is_3d || !cdt_2.is_constrained(edge));
       fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
