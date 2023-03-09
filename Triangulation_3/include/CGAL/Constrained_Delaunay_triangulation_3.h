@@ -1046,7 +1046,7 @@ public:
       i = face_constraint_misses_subfaces.find_next(i);
     }
   }
-  void write_region_to_OFF(std::ostream& out, const CDT_2& cdt_2) {
+  static void write_region_to_OFF(std::ostream& out, const CDT_2& cdt_2) {
     out.precision(17);
     auto color_fn = [](CDT_2_face_handle fh_2d) -> CGAL::IO::Color {
       if(fh_2d->info().is_outside_the_face) return CGAL::IO::gray();
@@ -1099,13 +1099,13 @@ public:
         << " " << tr.point(v0) << '\n';
   }
 
-  void write_segment(std::ostream &out, Point_3 p0, Point_3 p1)
+  static void write_segment(std::ostream &out, Point_3 p0, Point_3 p1)
   {
     out.precision(17);
     out << "2" << " " << p0 << " " << p1 << '\n';
   }
 
-  void write_segment(std::ostream &out, Segment_3 seg) {
+  static void write_segment(std::ostream &out, Segment_3 seg) {
     write_segment(out, seg.source(), seg.target());
   }
 
@@ -1127,7 +1127,7 @@ public:
     write_segment(out, std::forward<Args>(args)...);
   }
 
-  void write_facets(std::ostream& out, const auto& tr, const auto& facets_range) {
+  static void write_facets(std::ostream& out, const auto& tr, auto&& facets_range) {
     const auto size = std::distance(facets_range.begin(), facets_range.end());
     std::vector<typename Geom_traits::Point_3> points;
     points.reserve(size * 3);
@@ -1135,9 +1135,9 @@ public:
     facets.reserve(size);
 
     for(std::size_t i = 0; const auto& [cell, facet_index] : facets_range) {
-      const auto v0 = cell->vertex(this->vertex_triple_index(facet_index, 0));
-      const auto v1 = cell->vertex(this->vertex_triple_index(facet_index, 1));
-      const auto v2 = cell->vertex(this->vertex_triple_index(facet_index, 2));
+      const auto v0 = cell->vertex(T_3::vertex_triple_index(facet_index, 0));
+      const auto v1 = cell->vertex(T_3::vertex_triple_index(facet_index, 1));
+      const auto v2 = cell->vertex(T_3::vertex_triple_index(facet_index, 2));
       points.push_back(tr.point(v0));
       points.push_back(tr.point(v1));
       points.push_back(tr.point(v2));
