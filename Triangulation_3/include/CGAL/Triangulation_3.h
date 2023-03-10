@@ -902,6 +902,7 @@ public:
                Cell_handle& c, int& i, int& j) const;
   bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
                 Cell_handle& c, int& i, int& j, int& k) const;
+  bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w) const;
   bool is_cell(Cell_handle c) const;
   bool is_cell(Vertex_handle u, Vertex_handle v,
                Vertex_handle w, Vertex_handle t,
@@ -2712,6 +2713,16 @@ Triangulation_3<GT,Tds,Lds>::
 is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
          Cell_handle& c, int& i, int& j, int& k) const
 {
+  return _tds.is_facet(u, v, w, c, i, j, k);
+}
+
+template < class GT, class Tds, class Lds >
+bool
+Triangulation_3<GT,Tds,Lds>::
+is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w) const
+{
+  Cell_handle c;
+  int i; int j; int k;
   return _tds.is_facet(u, v, w, c, i, j, k);
 }
 
