@@ -397,6 +397,7 @@ struct Init_id;
     typedef OnSplit                          On_split;
     typedef void                             Info;
 
+  protected:
     /// Default constructor.
     Cell_attribute()
     {}
