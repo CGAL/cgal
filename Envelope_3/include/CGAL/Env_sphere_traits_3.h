@@ -1080,7 +1080,7 @@ public:
     Algebraic x_diff = x1 - a, y_diff = y1 - b;
     // the coefficients are:
     Algebraic A = 1,
-              B = -2*c,
+              B = Rational(-2*c),
               C = x_diff*x_diff + y_diff*y_diff + Rational(c*c) - sqr_r;
 
     Algebraic  zs[2];
