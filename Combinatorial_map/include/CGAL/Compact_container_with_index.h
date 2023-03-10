@@ -752,6 +752,9 @@ public:
     return false;
   }
 
+  bool owns(size_type i) const
+  { return i<capacity() && is_used(i); }
+
   bool owns_dereferenceable(const_iterator cit) const
   { return cit!=end() && owns(cit); }
 
