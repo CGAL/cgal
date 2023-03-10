@@ -44,9 +44,8 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
 
   typedef Trisegment_2_ptr result_type ;
 
-  template <class Traits>
-  Construct_ss_trisegment_2(const Traits& traits)
-    : mNext_ID(traits.trisegment_ID())
+  Construct_ss_trisegment_2(std::size_t& aNext_ID, Caches<K>& aCaches)
+    : mNext_ID(aNext_ID), mCaches(aCaches)
   {}
 
   result_type operator() ( Segment_2_with_ID const& aS0,
@@ -56,10 +55,15 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
                            Segment_2_with_ID const& aS2,
                            FT const& aW2 ) const
   {
-    return construct_trisegment(aS0,aW0,aS1,aW1,aS2,aW2,mNext_ID++) ;
+    Trisegment_2_ptr rRes = construct_trisegment(aS0,aW0,aS1,aW1,aS2,aW2,mNext_ID,mCaches) ;
+    if(rRes)
+      ++mNext_ID;
+    return rRes;
   }
 
-  std::size_t& mNext_ID ;
+private:
+  std::size_t& mNext_ID;
+  Caches<K>& mCaches;
 };
 
 template<class K>
@@ -379,7 +383,7 @@ public:
 
   Construct_ss_trisegment_2 construct_ss_trisegment_2_object() const
   {
-    return Construct_ss_trisegment_2(*this);
+    return Construct_ss_trisegment_2(trisegment_ID(), mCaches);
   }
 
 // ID functions
@@ -601,7 +605,15 @@ public:
                                                         >
                                                         Construct_ss_event_time_and_point_2 ;
 
-  typedef typename Unfiltering::Construct_ss_trisegment_2        Construct_ss_trisegment_2 ;
+  typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_trisegment_2
+                                                        , typename Exact      ::Construct_ss_trisegment_2
+                                                        , typename Filtering  ::Construct_ss_trisegment_2
+                                                        , C2E
+                                                        , C2F
+                                                        , E2C
+                                                        , F2C
+                                                        >
+                                                        Construct_ss_trisegment_2 ;
 
 // constructor of predicates using time caching
   Compare_ss_event_times_2 compare_ss_event_times_2_object() const
@@ -648,7 +660,8 @@ public:
 // constructor of trisegments using global id stored in the traits
   Construct_ss_trisegment_2 construct_ss_trisegment_2_object() const
   {
-    return Construct_ss_trisegment_2(*this);
+    return Construct_ss_trisegment_2(typename Exact::Construct_ss_trisegment_2(trisegment_ID(), mExact_traits.mCaches),
+                                     typename Filtering::Construct_ss_trisegment_2(trisegment_ID(), mApproximate_traits.mCaches));
   }
 
 // ID functions

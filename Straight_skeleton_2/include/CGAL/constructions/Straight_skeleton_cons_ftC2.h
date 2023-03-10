@@ -50,14 +50,25 @@ bool are_edges_orderly_collinear( S const& e0, S const& e1 )
 }
 
 
-template<class K>
-Trisegment_collinearity trisegment_collinearity_no_exact_constructions ( Segment_2_with_ID<K> const& e0
-                                                                       , Segment_2_with_ID<K> const& e1
-                                                                       , Segment_2_with_ID<K> const& e2)
+template<class K, class Caches>
+Trisegment_collinearity trisegment_collinearity_no_exact_constructions(const Segment_2_with_ID<K>& e0,
+                                                                       const Segment_2_with_ID<K>& e1,
+                                                                       const Segment_2_with_ID<K>& e2,
+                                                                      Caches& caches )
 {
-  bool is_01 = are_edges_orderly_collinear(e0,e1);
-  bool is_02 = are_edges_orderly_collinear(e0,e2);
-  bool is_12 = are_edges_orderly_collinear(e1,e2);
+  // 'are_edges_orderly_collinear()' is used to harmonize coefficients, but if the kernel is inexact
+  // we could also have that are_edges_orderly_collinear() returns false, but the computed coefficients
+  // are identical. In that case, we want to return that there is a collinearity, otherwise the internal
+  // computations (even the exact ones) will fail.
+  boost::optional<typename K::Line_2> l0 = compute_normalized_line_coeffC2(e0, caches);
+  boost::optional<typename K::Line_2> l1 = compute_normalized_line_coeffC2(e1, caches);
+  boost::optional<typename K::Line_2> l2 = compute_normalized_line_coeffC2(e2, caches);
+
+  bool is_01 = (l0->a() == l1->a()) && (l0->b() == l1->b()) && (l0->c() == l1->c());
+  bool is_02 = (l0->a() == l2->a()) && (l0->b() == l2->b()) && (l0->c() == l2->c());
+  bool is_12 = (l1->a() == l2->a()) && (l1->b() == l2->b()) && (l1->c() == l2->c());
+
+  CGAL_STSKEL_TRAITS_TRACE("coeff equalities: " << is_01 << " " << is_02 << " " << is_12)
 
   if ( is_01 & !is_02 & !is_12 )
     return TRISEGMENT_COLLINEARITY_01;
@@ -280,7 +291,7 @@ Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, 
 //
 // NOTE: If the collinearity cannot be determined reliably, a null trisegment is returned.
 //
-template<class K>
+template<class K, class Caches>
 Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > >
 construct_trisegment ( Segment_2_with_ID<K> const& e0,
                        typename K::FT const& w0,
@@ -288,12 +299,16 @@ construct_trisegment ( Segment_2_with_ID<K> const& e0,
                        typename K::FT const& w1,
                        Segment_2_with_ID<K> const& e2,
                        typename K::FT const& w2,
-                       std::size_t id )
+                       std::size_t id,
+                       Caches& aCaches )
 {
   typedef Trisegment_2<K, Segment_2_with_ID<K> >Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
-  Trisegment_collinearity lCollinearity = trisegment_collinearity_no_exact_constructions(e0,e1,e2);
+  CGAL_STSKEL_TRAITS_TRACE("\n~~  Construct trisegment [" << typeid(typename K::FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("Segments E" << e0.id() << " E" << e1.id() << " E" << e2.id());
+
+  Trisegment_collinearity lCollinearity = trisegment_collinearity_no_exact_constructions(e0,e1,e2,aCaches);
 
   return Trisegment_2_ptr( new Trisegment_2(e0, w0, e1, w1, e2, w2, lCollinearity, id) ) ;
 }
@@ -361,9 +376,9 @@ compute_normal_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segm
 
   if ( l0 && l1 && l2 )
   {
-    CGAL_STSKEL_TRAITS_TRACE("coeffs 0 [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
-                          << "\ncoeffs 1 [" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
-                          << "\ncoeffs 2 [" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
+    CGAL_STSKEL_TRAITS_TRACE("coeffs E" << tri->e0().id() << " [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
+                        << "\ncoeffs E" << tri->e1().id() << " [" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
+                        << "\ncoeffs E" << tri->e2().id() << " [" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
 
     num = (l2->a()*l0->b()*l1->c())
          -(l2->a()*l1->b()*l0->c())

@@ -120,6 +120,19 @@ private:
            has_enough_precision(boost::get<1>(time_and_point), precision);
   }
 
+  bool has_enough_precision(const CGAL::Trisegment_2<FK, CGAL_SS_i::Segment_2_with_ID<FK> >& trisegment, double precision) const
+  {
+    return has_enough_precision(trisegment.e0().source(), precision) &&
+           has_enough_precision(trisegment.e0().target(), precision) &&
+           has_smaller_relative_precision(trisegment.w0(), precision) &&
+           has_enough_precision(trisegment.e1().source(), precision) &&
+           has_enough_precision(trisegment.e1().target(), precision) &&
+           has_smaller_relative_precision(trisegment.w1(), precision) &&
+           has_enough_precision(trisegment.e2().source(), precision) &&
+           has_enough_precision(trisegment.e2().target(), precision) &&
+           has_smaller_relative_precision(trisegment.w2(), precision);
+  }
+
 public:
 
   Exceptionless_filtered_construction() {}
