@@ -45,6 +45,7 @@ Point_set_2 2D Range and Neighbor Search
 Point_set_3 3D Point Set
 Point_set_processing_3 Point Set Processing
 Poisson_surface_reconstruction_3 Poisson Surface Reconstruction
+Polygon_extrusion 2D Polygon Extrusion
 Polygon_mesh_processing Polygon Mesh Processing
 Polygon_mesh_processing/Compute_normal Polygon Mesh Processing - Normal Computation
 Polygon_mesh_processing/connected_components Polygon Mesh Processing - Connected Components

@@ -244,29 +244,29 @@ int main(int argc, char** argv)
     return EXIT_SUCCESS;
   }
 
-  test("data/extrusion/polygon_000.dat", "data/extrusion/angles_000.dat",   6, 162.37987499999997);
-  test("data/extrusion/polygon_001.dat", "data/extrusion/angles_001.dat",   6, 761.76899999999989);
-  test("data/extrusion/polygon_002.dat", "data/extrusion/angles_002.dat",  22, 15667.658890389464);
-  test("data/extrusion/polygon_003.dat", "data/extrusion/angles_003.dat",  12, 105.79864291299999);
-  test("data/extrusion/polygon_004.dat", "data/extrusion/angles_004.dat",  12, 3119.9357499857151);
-  test("data/extrusion/polygon_005.dat", "data/extrusion/angles_005.dat",  12, 1342.9474791424002);
-  test("data/extrusion/polygon_006.dat", "data/extrusion/angles_006.dat",  12, 249.41520000000008);
-  test("data/extrusion/polygon_007.dat", "data/extrusion/angles_007.dat",  12, 7344.8312073148918);
-  test("data/extrusion/polygon_008.dat", "data/extrusion/angles_008.dat",  12, 7240.6890039677555);
-  test("data/extrusion/polygon_009.dat", "data/extrusion/angles_009.dat",  10, 3704.0787987580375);
-  test("data/extrusion/polygon_010.dat", "data/extrusion/angles_010.dat",  40, 29306.453333333335);
-  test("data/extrusion/polygon_011.dat", "data/extrusion/angles_011.dat",  40, 375866.54633629462);
-  test("data/extrusion/polygon_012.dat", "data/extrusion/angles_012.dat",  12, 4560.0268861722925);
-  test("data/extrusion/polygon_013.dat", "data/extrusion/angles_013.dat",  12, 2221.3622594712501);
-  test("data/extrusion/polygon_014.dat", "data/extrusion/angles_014.dat",  12, 4534.0568515270861);
-  test("data/extrusion/polygon_015.dat", "data/extrusion/angles_015.dat",  12, 1565.5667825255343);
-  test("data/extrusion/polygon_016.dat", "data/extrusion/angles_016.dat", 311, 2518611984.6277928);
-  test("data/extrusion/polygon_017.dat", "data/extrusion/angles_017.dat",  50, 7729166.666666667);
-  test("data/extrusion/polygon_018.dat", "data/extrusion/angles_018.dat",  50, 354166.66666666663);
-  test("data/extrusion/polygon_019.dat", "data/extrusion/angles_019.dat", 311, 92570921.033775225);
-  test("data/extrusion/polygon_020.dat", "data/extrusion/angles_020.dat",  70, 1550161.8131298050);
-  test("data/extrusion/polygon_021.dat", "data/extrusion/angles_021.dat",  70, 37631800.885042846);
-  test("data/extrusion/polygon_022.dat", "data/extrusion/angles_022.dat",  20, 7702444.2118858183);
+  test("data/polygon_000.dat", "data/angles_000.dat",   6, 162.37987499999997);
+  test("data/polygon_001.dat", "data/angles_001.dat",   6, 761.76899999999989);
+  test("data/polygon_002.dat", "data/angles_002.dat",  22, 15667.658890389464);
+  test("data/polygon_003.dat", "data/angles_003.dat",  12, 105.79864291299999);
+  test("data/polygon_004.dat", "data/angles_004.dat",  12, 3119.9357499857151);
+  test("data/polygon_005.dat", "data/angles_005.dat",  12, 1342.9474791424002);
+  test("data/polygon_006.dat", "data/angles_006.dat",  12, 249.41520000000008);
+  test("data/polygon_007.dat", "data/angles_007.dat",  12, 7344.8312073148918);
+  test("data/polygon_008.dat", "data/angles_008.dat",  12, 7240.6890039677555);
+  test("data/polygon_009.dat", "data/angles_009.dat",  10, 3704.0787987580375);
+  test("data/polygon_010.dat", "data/angles_010.dat",  40, 29306.453333333335);
+  test("data/polygon_011.dat", "data/angles_011.dat",  40, 375866.54633629462);
+  test("data/polygon_012.dat", "data/angles_012.dat",  12, 4560.0268861722925);
+  test("data/polygon_013.dat", "data/angles_013.dat",  12, 2221.3622594712501);
+  test("data/polygon_014.dat", "data/angles_014.dat",  12, 4534.0568515270861);
+  test("data/polygon_015.dat", "data/angles_015.dat",  12, 1565.5667825255343);
+  test("data/polygon_016.dat", "data/angles_016.dat", 311, 2518611984.6277928);
+  test("data/polygon_017.dat", "data/angles_017.dat",  50, 7729166.666666667);
+  test("data/polygon_018.dat", "data/angles_018.dat",  50, 354166.66666666663);
+  test("data/polygon_019.dat", "data/angles_019.dat", 311, 92570921.033775225);
+  test("data/polygon_020.dat", "data/angles_020.dat",  70, 1550161.8131298050);
+  test("data/polygon_021.dat", "data/angles_021.dat",  70, 37631800.885042846);
+  test("data/polygon_022.dat", "data/angles_022.dat",  20, 7702444.2118858183);
 
   std::cout << "OK" << std::endl;
 

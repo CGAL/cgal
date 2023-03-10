@@ -89,6 +89,7 @@ R = RU Groningen
  Point_set_processing_3                  I
  Poisson_surface_reconstruction_3        I
  Polygon                                 ETIMU
+ Polygon_extrusion                       G
  Polyhedron                              E
  Polyhedron_IO                           E
  Polynomial                              M

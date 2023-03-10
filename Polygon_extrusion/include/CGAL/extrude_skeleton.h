@@ -10,10 +10,10 @@
 // Author(s)     : Mael Rouxel-Labbé
 //
 
-#ifndef CGAL_SLS_EXTRUDE_SKELETON_H
-#define CGAL_SLS_EXTRUDE_SKELETON_H
+#ifndef CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
+#define CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
 
-#include <CGAL/license/Straight_skeleton_2.h>
+#include <CGAL/license/Polygon_extrusion.h>
 
 #include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
 #include <CGAL/create_weighted_offset_polygons_2.h>
@@ -1105,4 +1105,4 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
 } // namespace CGAL
 
-#endif // CGAL_SLS_EXTRUDE_SKELETON_H
+#endif // CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
