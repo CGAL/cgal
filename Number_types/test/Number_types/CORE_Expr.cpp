@@ -137,6 +137,10 @@ int main() {
 
     CGAL::test_real_embeddable<NT>();
 
+    CORE::BigRat br(1,3);
+
+    CORE::Expr exp = 2 * br;
+
   return 0;
 }
 
