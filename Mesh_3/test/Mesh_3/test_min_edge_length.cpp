@@ -42,16 +42,19 @@ struct Tester {
     // Create domain
     Mesh_domain domain(polyhedron);
 
-    domain.detect_features();
+    domain.detect_features(40);
 
     // Mesh criteria
-    Mesh_criteria criteria(edge_size = 0.2,
+    Mesh_criteria criteria(edge_size = 0.074,
                            edge_min_size = 0.1,
-                           facet_distance = 0.02,
-                           cell_radius_edge_ratio = 3);
+                           facet_distance = 0.0074,
+                           facet_angle = 25,
+                           facet_size = 0.074,
+                           cell_radius_edge_ratio = 3,
+                           cell_size = 0.074);
 
     // Mesh generation
-    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
     // Output
     CGAL::dump_c3t3(c3t3, out_fname);
@@ -62,10 +65,10 @@ struct Tester {
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/star.off");
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/dragknob.off");
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Surface_mesh<K::Point_3>                      Surface_mesh;
 
-  return Tester<K, Surface_mesh>()(fname, "out-star");
+  return Tester<K, Surface_mesh>()(fname, "out-dragknob");
 }
