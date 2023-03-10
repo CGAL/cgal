@@ -145,8 +145,6 @@ boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<
 {
   typedef typename K::FT FT ;
 
-  CGAL_STSKEL_TRAITS_TRACE("\n~~ Unweighted line coefficients for " << s2str(e) );
-
   bool finite = true ;
   FT a(0), b(0), c(0) ;
 
@@ -223,6 +221,16 @@ boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<
   return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
 }
 
+template<class K>
+boost::optional< typename K::Line_2> compute_normalized_line_coeffC2(const Segment_2_with_ID<K>& e)
+{
+  typedef typename K::Segment_2 Segment_2 ;
+
+  CGAL_STSKEL_TRAITS_TRACE("\n~~ Unweighted line coefficients for E" << e.id() << " [" << typeid(typename K::FT).name() << "]" );
+
+  return compute_normalized_line_coeffC2(static_cast<const Segment_2&>(e));
+}
+
 template<class K, class Caches>
 boost::optional< typename K::Line_2 >
 compute_normalized_line_coeffC2( Segment_2_with_ID<K> const& e,
@@ -234,7 +242,7 @@ compute_normalized_line_coeffC2( Segment_2_with_ID<K> const& e,
   if(aCaches.mCoeff_cache.IsCached(e.mID) )
     return aCaches.mCoeff_cache.Get(e.mID) ;
 
-  boost::optional< Line_2 > rRes = compute_normalized_line_coeffC2 ( static_cast<const Segment_2&>(e) ) ;
+  boost::optional< Line_2 > rRes = compute_normalized_line_coeffC2 ( e ) ;
 
   aCaches.mCoeff_cache.Set(e.mID, rRes) ;
 
@@ -261,7 +269,7 @@ boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_w
   FT b = l->b() * aWeight ;
   FT c = l->c() * aWeight ;
 
-  CGAL_STSKEL_TRAITS_TRACE("\n~~ Weighted line coefficients for line: " << s2str(e)
+  CGAL_STSKEL_TRAITS_TRACE("\n~~ Weighted line coefficients for E" << e.id() << " " << s2str(e)
                             << "\nweight=" << n2str(aWeight)
                             << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
                             ) ;
