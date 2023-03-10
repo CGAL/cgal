@@ -167,6 +167,8 @@ namespace CGAL {
       { return cit; }
       bool is_used(size_type i) const
       { return mmap.mdarts.is_used(i); }
+      bool owns(size_type i) const
+      { return mmap.mdarts.owns(i); }
     private:
       Self & mmap;
     };
