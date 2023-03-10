@@ -572,21 +572,22 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   // Compute the intersection point and evalute the time from the line equation of the contour edge
   auto inter_res = K().intersect_2_object()(ray, opp_seg);
 
-  const Point_2* inter_pt;
+  FT t;
+
   if(const Segment_2* seg = boost::get<Segment_2>(&*inter_res))
   {
     // get the segment extremity closest to the seed
     Boolean res = (K().compare_distance_2_object()(*seed, seg->source(), seg->target()) == CGAL::SMALLER);
-    inter_pt = res ? &(seg->source()) : &(seg->target()) ;
+    t = res ? l0->a() * seg->source().x() + l0->b() * seg->source().y() + l0->c()
+            : l0->a() * seg->target().x() + l0->b() * seg->target().y() + l0->c();
   }
   else
   {
-    inter_pt = boost::get<const Point_2>(&*inter_res);
+    const Point_2* inter_pt = boost::get<const Point_2>(&*inter_res);
     if(!CGAL_NTS is_finite(inter_pt->x()) || !CGAL_NTS is_finite(inter_pt->y()))
       return boost::none;
+    t = l0->a() * inter_pt->x() + l0->b() * inter_pt->y() + l0->c() ;
   }
-
-  const FT t = l0->a() * inter_pt->x() + l0->b() * inter_pt->y() + l0->c() ;
 
   bool ok = CGAL_NTS is_finite(t);
   return cgal_make_optional(ok, Rational<FT>(t, FT(1))) ;
