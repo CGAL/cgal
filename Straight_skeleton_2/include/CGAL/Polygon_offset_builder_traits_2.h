@@ -80,22 +80,6 @@ struct Polygon_offset_builder_traits_2_functors
   typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Construct_offset_point_2           <K> Construct_offset_point_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
-
-  struct Construct_ss_trisegment_2 : CGAL_SS_i::Functor_base_2<K>
-  {
-    typedef CGAL_SS_i::Functor_base_2<K> Base ;
-
-    typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
-    typedef typename Base::Trisegment_2     Trisegment_2 ;
-    typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
-
-    typedef Trisegment_2_ptr result_type ;
-
-    result_type operator() ( Segment_2_with_ID const& aS0, Segment_2_with_ID const& aS1, Segment_2_with_ID const& aS2 ) const
-    {
-      return CGAL_SS_i::construct_trisegment(aS0,aS1,aS2,0);
-    }
-  };
 } ;
 
 template<class K>
@@ -129,7 +113,6 @@ public:
     Compare_ss_event_times_2 ;
 
   typedef typename Unfiltering::Construct_offset_point_2            Construct_offset_point_2 ;
-  typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
 } ;
 
@@ -181,8 +164,6 @@ public:
                                                         >
                                                         Construct_offset_point_2 ;
 
-  typedef typename Unfiltering::Construct_ss_trisegment_2 Construct_ss_trisegment_2 ;
-
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
                                                         , typename Filtering::Construct_ss_event_time_and_point_2
@@ -204,7 +185,6 @@ public:
   typedef typename Base::Compare_offset_against_event_time_2 Compare_offset_against_event_time_2 ;
   typedef typename Base::Compare_ss_event_times_2 Compare_ss_event_times_2 ;
   typedef typename Base::Construct_offset_point_2 Construct_offset_point_2 ;
-  typedef typename Base::Construct_ss_trisegment_2 Construct_ss_trisegment_2 ;
   typedef typename Base::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
 
   Compare_offset_against_event_time_2 compare_offset_against_event_time_2_object() const
@@ -213,8 +193,6 @@ public:
   { return Compare_ss_event_times_2() ; }
   Construct_offset_point_2 construct_offset_point_2_object() const
   { return Construct_offset_point_2() ; }
-  Construct_ss_trisegment_2 construct_ss_trisegment_2_object() const
-  { return Construct_ss_trisegment_2() ; }
   Construct_ss_event_time_and_point_2 construct_ss_event_time_and_point_2_object() const
   { return Construct_ss_event_time_and_point_2() ; }
 } ;
