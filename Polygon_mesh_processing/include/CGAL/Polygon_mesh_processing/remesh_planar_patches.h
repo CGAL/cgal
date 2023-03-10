@@ -128,14 +128,10 @@ struct Face_index_tracker
   {}
 
   std::vector<std::size_t> face_ids;
-  void new_face_added_to_patch(std::size_t i)
-  {
-    face_ids.push_back(i);
-  }
 
-  void new_triangles_added_to_patch(std::size_t nb_triangles, std::size_t i)
+  void register_faces_of_cc(std::size_t nb_faces, std::size_t i)
   {
-    face_ids.resize(face_ids.size()+nb_triangles, i);
+    face_ids.insert(face_ids.end(), nb_faces, i);
   }
 
   Face_map<FacePatchMapOut>
@@ -159,8 +155,7 @@ struct Face_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::Para
     : Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
   {}
 
-  void new_face_added_to_patch(std::size_t /*in_patch_id*/) {}
-  void new_triangles_added_to_patch(std::size_t /*nb_triangles*/, std::size_t /*in_patch_id*/) {}
+  void register_faces_of_cc(std::size_t /*nb_triangles*/, std::size_t /*in_patch_id*/) {}
 
   Fmap f2f_map() { return Fmap(); }
 };
@@ -705,12 +700,9 @@ bool decimate_impl(const TriangleMesh& tm,
                               csts[0].second==csts[1].first ?
                               csts[1].second:csts[1].first} );
         cc_to_handle.set(cc_id, 0);
-        f_id_tracker.new_face_added_to_patch(cc_id);
       }
       else
       {
-        std::size_t prev_cc_faces_size=cc_faces.size();
-
         if (csts.size() > 3 && do_not_triangulate_faces)
         {
           // TODO this is not optimal at all since we already have the set of contraints,
@@ -731,7 +723,6 @@ bool decimate_impl(const TriangleMesh& tm,
             }
             std::reverse(cc_faces.back().begin(), cc_faces.back().end());
             cc_to_handle.set(cc_id, 0);
-            f_id_tracker.new_face_added_to_patch(cc_id);
             continue;
           }
         }
@@ -777,7 +768,6 @@ bool decimate_impl(const TriangleMesh& tm,
             cc_faces.push_back({ get(vertex_corner_id, source(h,tm)),
                                  get(vertex_corner_id, target(h,tm)),
                                   get(vertex_corner_id, target(next(h,tm), tm)) });
-            f_id_tracker.new_face_added_to_patch(cc_id);
           }
           // reset flag for neighbor connected components only if interface has changed
           for (vertex_descriptor v : new_corners)
@@ -794,15 +784,17 @@ bool decimate_impl(const TriangleMesh& tm,
           }
           cc_to_handle.set(cc_id, 0);
         }
-        f_id_tracker.new_triangles_added_to_patch(cc_faces.size()-prev_cc_faces_size, cc_id);
       }
     }
   }
   while(cc_to_handle.any());
 
-
+  std::size_t cc_id=0;
   for (const std::vector<boost::container::small_vector<std::size_t,3>>& cc_trs : faces_per_cc)
+  {
     out_faces.insert(out_faces.end(), cc_trs.begin(), cc_trs.end());
+    f_id_tracker.register_faces_of_cc(cc_trs.size(), cc_id++);
+  }
 
   return all_patches_successfully_remeshed;
 }
@@ -1258,8 +1250,10 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
         for (std::size_t mid : mesh_ids)
           if (!to_be_processed[mid])
           {
+#ifdef CGAL_DEBUG_DECIMATION
             if (!loop_again)
               std::cout << "setting for another loop\n";
+#endif
             loop_again=true;
             to_be_processed[mid] = true;
           }
