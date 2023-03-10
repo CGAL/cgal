@@ -688,17 +688,16 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
   for( Face_iterator fit = mSSkel->SSkel::Base::faces_begin(); fit != mSSkel->SSkel::Base::faces_end(); ++fit)
   {
     Halfedge_handle lBorder = fit->halfedge() ;
-    Segment_2 lS = CreateSegment<Traits> ( lBorder ) ;
-
-    std::pair<typename Ordered_halfedges::iterator, bool> rRes = lOrdered_halfedges.insert ( lBorder ) ;
-    if ( ! rRes.second ) // some collinear edge is already in the set
+    auto lRes = lOrdered_halfedges.insert(lBorder);
+    if(!lRes.second) // successful insertion (i.e., not collinear to any previously inserted halfedge)
     {
-      CGAL_STSKEL_BUILDER_TRACE ( 4, "Harmonize " << lBorder->id() << " with " << (*rRes.first)->id() ) ;
-      mTraits.InitializeLineCoeffs ( lBorder->id(), (*rRes.first)->id() );
+      CGAL_STSKEL_BUILDER_TRACE(4, "Harmonize " << lBorder->id() << " with " << (*lRes.first)->id() ) ;
+      mTraits.InitializeLineCoeffs(lBorder->id(), (*lRes.first)->id());
     }
     else
     {
-      mTraits.InitializeLineCoeffs ( lS );
+      const Segment_2 lBS = CreateSegment<Traits>(lBorder);
+      mTraits.InitializeLineCoeffs(lBS);
     }
   }
 }
