@@ -767,7 +767,6 @@ public:
   void reserve(size_type n)
   {
     if(capacity_>=n) return;
-    capacity_=n;
     increase_size();
   }
 
