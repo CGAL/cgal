@@ -77,10 +77,8 @@ public:
       bbox += segment.bbox();
     }
 
-    std::cout << "Adding bbox as segments" << std::endl;
     add_bbox_as_segments (bbox, enlarge_bbox_ratio);
 
-    std::cout << "Adding input as segments" << std::endl;
     // Add input as segments
     std::size_t segment_idx = 0;
     for (const typename SegmentRange::const_iterator::value_type& vt : segments)
@@ -95,7 +93,6 @@ public:
 
     time_step /= 50;
 
-    std::cout << "Making input segments intersection free" << std::endl;
     make_segments_intersection_free();
 
     CGAL_assertion(check_integrity(true));
@@ -370,7 +367,6 @@ public:
     std::vector<std::vector<std::size_t> > neighbors (m_data.number_of_meta_vertices());
     get_meta_neighbors (neighbors);
 
-    std::cout << "Creating vertices and edges" << std::endl;
     std::vector<vertex_descriptor> map_v2v (m_data.number_of_meta_vertices(),
                                             boost::graph_traits<MutableFaceGraph>::null_vertex());
 
@@ -417,9 +413,8 @@ public:
         hdesc.insert (std::make_pair (std::make_pair (target, source), opp_hd));
       }
 
-    std::cout << "* Found " << is_border_halfedge.size() << " border halfedges" << std::endl;
+    //std::cout << "* Found " << is_border_halfedge.size() << " border halfedges" << std::endl;
 
-    std::cout << "Ordering halfedges" << std::endl;
     for (std::size_t i = 0; i < m_data.number_of_meta_vertices(); ++ i)
     {
       if (map_v2v[i] == boost::graph_traits<MutableFaceGraph>::null_vertex())
@@ -452,7 +447,7 @@ public:
       }
     }
 
-    std::cout << "Creating faces" << std::endl;
+    // Creating Faces
     for (halfedge_descriptor hd : halfedges(mesh))
       set_face (hd, boost::graph_traits<MutableFaceGraph>::null_face(), mesh);
 
@@ -492,7 +487,6 @@ public:
 
       if (border)
       {
-        std::cout << "* Found border face" << std::endl;
         found_border_face = true;
         end = hd;
         do
@@ -645,9 +639,6 @@ private:
          ++ nb_inter;
        });
 
-
-    std::cout << "* Found " << nb_inter << " intersection(s) at initialization" << std::endl;
-
     std::vector<std::size_t> new_meta_vertices;
 
     for (const std::tuple<Point_2, std::size_t, std::size_t>& t : todo)
@@ -673,8 +664,6 @@ private:
 
   bool initialize_queue(FT min_time, FT max_time)
   {
-    std::cout << "Initializing queue for events in [" << min_time << ";" << max_time << "]" << std::endl;
-
     m_data.update_positions(max_time);
 
     bool still_running = false;
@@ -872,15 +861,11 @@ private:
       }
     }
 
-    m_queue.print();
-
     return still_running;
   }
 
   void run()
   {
-    std::cout << "Unstacking queue" << std::endl;
-
     std::size_t iterations = 0;
 
     // static int iter = 0;
@@ -893,8 +878,6 @@ private:
 
       m_data.update_positions (current_time);
 
-      std::cout << "* Applying " << ev << std::endl;
-
       apply(ev);
 
       ++ iterations;
@@ -904,9 +887,6 @@ private:
   void apply (const Event& ev)
   {
     bool is_meta_vertex_active = m_data.is_meta_vertex_active (ev.meta_vertex_idx());
-
-    std::cout << "** Vertex " << ev.vertex_idx() << " is at position "
-                    << m_data.vertex(ev.vertex_idx()).point(ev.time()) << std::endl;
 
     // First, attach vertex to meta vertex
     m_data.attach_vertex_to_meta_vertex (ev.vertex_idx(), ev.meta_vertex_idx());
@@ -919,15 +899,12 @@ private:
     //  -> special case for parallel lines, if deadend is reached, we don't propagate
     if (m_data.is_meta_vertex_deadend_of_vertex (ev.meta_vertex_idx(), ev.vertex_idx()))
     {
-      std::cout << "*** Deadend reached" << std::endl;
       m_data.vertex(ev.vertex_idx()).remaining_intersections() = 0;
     }
 
     //  -> if the number of K intersections is reached, we don't propagate
     if (is_meta_vertex_active && m_data.vertex(ev.vertex_idx()).remaining_intersections() != 0)
       m_data.vertex(ev.vertex_idx()).remaining_intersections() --;
-
-    std::cout << "** Remaining intersections = " << m_data.vertex(ev.vertex_idx()).remaining_intersections() << std::endl;
 
     // If there are still intersections to be made, propagate
     std::size_t new_vertex_idx = KSR::no_element();
@@ -943,8 +920,6 @@ private:
 
   void redistribute_vertex_events (std::size_t old_vertex, std::size_t new_vertex)
   {
-    std::cout << "** Redistribution events of vertex " << old_vertex << " to " << new_vertex << std::endl;
-
     std::vector<Event> events;
     m_queue.erase_vertex_events (old_vertex, events);
 
@@ -952,14 +927,12 @@ private:
       for (Event& ev : events)
       {
         ev.vertex_idx() = new_vertex;
-        std::cout << "****   - Pushing " << ev << std::endl;
         m_queue.push (ev);
       }
     else
       for (Event& ev : events)
         if (m_data.is_meta_vertex_deadend_of_vertex (ev.meta_vertex_idx(), ev.vertex_idx()))
         {
-          std::cout << "*** Remove deadend" << std::endl;
           m_data.make_meta_vertex_no_longer_deadend_of_vertex (ev.meta_vertex_idx(), ev.vertex_idx());
         }
   }

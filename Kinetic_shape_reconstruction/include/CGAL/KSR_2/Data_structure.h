@@ -450,10 +450,6 @@ public:
 
     std::size_t meta_vertex_idx = iter->second;
 
-    std::cout << "** Adding meta vertex " << meta_vertex_idx << " between "
-                    << support_line_idx_0 << " and " << support_line_idx_1
-                    << " at point " << p << std::endl;
-
     for (std::size_t support_line_idx : { support_line_idx_0, support_line_idx_1 })
     {
       if (support_line_idx != KSR::no_element())
@@ -471,8 +467,6 @@ public:
     if (support_line_idx_1 == KSR::no_element())
     {
       meta_vertex(meta_vertex_idx).make_deadend_of (support_line_idx_0);
-      std::cout << "*** Meta_vertex[" << meta_vertex_idx
-                      << "] is deadend of Support_line[" << support_line_idx_0 << "]" << std::endl;
     }
 
     return meta_vertex_idx;
@@ -496,8 +490,6 @@ public:
 
   void cut_segment (std::size_t segment_idx, std::vector<std::size_t>& meta_vertices_idx)
   {
-    std::cout << "** Cutting " << segment_str(segment_idx) << std::endl;
-
     Segment& segment = m_segments[segment_idx];
     std::size_t input_idx = segment.input_idx();
     std::size_t support_line_idx = segment.support_line_idx();
@@ -561,22 +553,10 @@ public:
 
     m_vertices[target_idx].segment_idx() = sidx;
     m_segments[sidx].target_idx() = target_idx;
-
-    std::cout << "*** new vertices:";
-    for (std::size_t i = nb_vertices_before; i < m_vertices.size(); ++ i)
-      std::cout << " " << vertex_str(i);
-    std::cout << std::endl;
-
-    std::cout << "*** new segments: " << segment_str(segment_idx);
-    for (std::size_t i = nb_segments_before; i < m_segments.size(); ++ i)
-      std::cout << " " << segment_str(i);
-    std::cout << std::endl;
   }
 
   std::size_t propagate_segment (std::size_t vertex_idx)
   {
-    std::cout << "** Propagating " << vertex_str(vertex_idx) << std::endl;
-
     // Create a new segment
     std::size_t segment_idx = m_segments.size();
     m_segments.push_back (Segment(segment_of_vertex(vertex_idx).input_idx(),
@@ -606,10 +586,6 @@ public:
 
     // Release other end
     m_vertices[target_idx].meta_vertex_idx() = KSR::no_element();
-
-    std::cout << "*** new vertices: " << vertex_str (source_idx)
-                  << " " << vertex_str (target_idx) << std::endl;
-    std::cout << "*** new segment: " << segment_str(segment_idx) << std::endl;
 
     return target_idx;
   }
