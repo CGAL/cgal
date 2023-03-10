@@ -400,9 +400,6 @@ public:
     face_constraint_misses_subfaces.resize(face_cdt_2.size());
     const auto polygon_contraint_id = static_cast<CDT_3_face_index>(face_cdt_2.size() - 1);
 
-    // search_for_missing_subfaces(polygon_contraint_id);
-    // restore_constrained_Delaunay();
-
     return polygon_contraint_id;
   }
 
@@ -1365,6 +1362,11 @@ private:
   }
 
 public:
+  void recheck_constrainted_Delaunay() {
+    for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+      search_for_missing_subfaces(i);
+    }
+  }
   void restore_constrained_Delaunay()
   {
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
