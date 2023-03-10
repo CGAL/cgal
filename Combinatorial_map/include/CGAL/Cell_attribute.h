@@ -397,12 +397,6 @@ struct Init_id;
     typedef OnSplit                          On_split;
     typedef void                             Info;
 
-    // Copy constructor why this is required for CMap with index and not for CMap with handle ?
-    Cell_attribute(const Cell_attribute& other) :
-      Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>(other)
-    {}
-
-  protected:
     /// Default constructor.
     Cell_attribute()
     {}
@@ -464,12 +458,6 @@ struct Init_id;
 
     bool operator!=(const Self& other) const
     { return !operator==(other); }
-
-    // Copy constructor why this is required for CMap with index and not cor CMap with handle ?
-    Cell_attribute(const Self& other) :
-      Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>(other),
-      Info_for_cell_attribute<Info_>(other)
-    {}
 
   protected:
     /// Default constructor.
