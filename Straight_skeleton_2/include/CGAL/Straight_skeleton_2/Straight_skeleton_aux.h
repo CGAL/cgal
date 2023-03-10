@@ -52,6 +52,8 @@ struct Segment_2_with_ID
   typedef typename K::Segment_2 Base;
   typedef typename K::Point_2 Point_2;
 
+  std::size_t id() const { return mID; }
+
 public:
   Segment_2_with_ID() : Base(), mID(-1) { }
   Segment_2_with_ID(Base const& aS) : Base(aS), mID(-1) { }
