@@ -378,9 +378,9 @@ namespace internal {
             revert(region);
           }
           else {
+            fill_region_map(m_nb_regions++, region);
             *region_out = std::make_pair(m_region_type.primitive(), std::move(region));
             region_out++;
-            fill_region_map(m_nb_regions++, region);
           }
         }
       }
