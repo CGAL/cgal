@@ -550,7 +550,7 @@ private:
         fh->info().missing_subface = true;
         face_constraint_misses_subfaces.set(static_cast<std::size_t>(polygon_contraint_id));
 #if CGAL_DEBUG_CDT_3
-        std::cerr << "Missing triangle: \n";
+        std::cerr << std::format("Missing triangle in polygon #{}:\n", polygon_contraint_id);
         write_triangle(std::cerr, v0, v1, v2);
 #endif // CGAL_DEBUG_CDT_3
       } else {
@@ -1147,30 +1147,6 @@ private:
       f2d->info().missing_subface = false;
     }
     CGAL_assertion(this->T_3::Tr_Base::is_valid(true));
-
-    CGAL_assertion_code(
-        auto check_tr = ([&, this](const auto& tr, std::string type) {
-          std::vector<Facet> facets;
-
-          std::for_each(tr.finite_facets_begin(), tr.finite_facets_end(), [&](auto f) {
-            if(!is_facet_of_polygon(tr, f)) return;
-            const auto result = static_cast<bool>(this->facet_is_facet_of_cdt_2(tr, f, cdt_2));
-            if(!result) {
-              facets.push_back(f);
-            }
-          });
-          if(!facets.empty()) {
-            std::ofstream out(std::string("dump_pb_facets_of_region_") + std::to_string(face_index) + "_" +
-                              std::to_string(region_count) + "_" + type + ".off");
-            out.precision(17);
-            write_facets(out, tr, facets);
-          }
-          return !facets.empty();
-        });
-    );
-
-    CGAL_warning(check_tr(upper_cavity_triangulation, "upper"));
-    CGAL_warning(check_tr(lower_cavity_triangulation, "lower"));
   };
 
   struct Oriented_face_of_cdt_2 {
@@ -1347,7 +1323,12 @@ private:
     int region_count = 0;
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
-      if(false == fh->info().missing_subface) continue;
+      CGAL_assertion((fh->info().missing_subface == false) == tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
+                                                                          fh->vertex(1)->info().vertex_handle_3d,
+                                                                          fh->vertex(2)->info().vertex_handle_3d));
+      if(false == fh->info().missing_subface) {
+        continue;
+      }
       if(processed_faces.contains(fh)) continue;
       const auto fh_region = region(cdt_2, fh);
       processed_faces.insert(fh_region.begin(), fh_region.end());
