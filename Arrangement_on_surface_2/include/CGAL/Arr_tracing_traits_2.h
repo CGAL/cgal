@@ -162,13 +162,17 @@ private:
   { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
 
 public:
-  /*! Default constructor */
+  /*! Construct default */
   template<typename ... Args>
   Arr_tracing_traits_2(Args ... args) :
     Base(args...)
   {
     enable_all_traces();
   }
+
+  /*! Disable copy constructor.
+   */
+  Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
   /*! Enable the trace of a traits operation
    * \param id the operation identifier
