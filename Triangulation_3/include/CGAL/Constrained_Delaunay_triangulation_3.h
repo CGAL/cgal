@@ -1140,6 +1140,19 @@ private:
       this->tds().delete_cell(c);
     }
 
+    auto restore_markers = [&](Facet outside_facet) {
+      const auto [outside_cell, outside_face_index] = outside_facet;
+      const auto [cell, face_index] = this->mirror_facet(outside_facet);
+      if(outside_cell->is_facet_constrained(outside_face_index)) {
+        const auto poly_id = outside_cell->face_constraint_index(outside_face_index);
+        const auto f2d = outside_cell->face_2(cdt_2, outside_face_index);
+        cell->set_facet_constraint(face_index, poly_id, f2d);
+      }
+    };
+
+    std::for_each(facets_of_lower_cavity.begin(), facets_of_lower_cavity.end(), restore_markers);
+    std::for_each(facets_of_upper_cavity.begin(), facets_of_upper_cavity.end(), restore_markers);
+
     for(const auto [f, f2d] : new_constrained_facets) {
       const auto [c, i] = f;
       c->set_facet_constraint(i, face_index, f2d);
