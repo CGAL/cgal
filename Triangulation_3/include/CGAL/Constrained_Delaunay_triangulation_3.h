@@ -770,6 +770,7 @@ private:
         CGAL_assertion(false == this->is_infinite(*facet_circ));
         const auto cell = facet_circ->first;
         const auto facet_index = facet_circ->second;
+        CGAL_assertion_msg(!cell->is_facet_constrained(facet_index), "intersecting polygons!");
         if(new_cell(cell)) {
           intersecting_cells.insert(cell);
         }
@@ -937,14 +938,14 @@ private:
     std::cerr << "# upper cavity\n";
 #endif // CGAL_DEBUG_CDT_3
     const auto [upper_cavity_triangulation, nb_of_add_vertices_upper] =
-        triangulate_cavity(cdt_2, intersecting_cells, facets_of_upper_cavity,
+        triangulate_cavity(face_index, cdt_2, intersecting_cells, facets_of_upper_cavity,
                            map_cavity_vertices_to_ambient_vertices,
                            vertices_of_upper_cavity);
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "# lower cavity\n";
 #endif // CGAL_DEBUG_CDT_3
     const auto [lower_cavity_triangulation, nb_of_add_vertices_lower] =
-        triangulate_cavity(cdt_2, intersecting_cells, facets_of_lower_cavity,
+        triangulate_cavity(face_index, cdt_2, intersecting_cells, facets_of_lower_cavity,
                            map_lower_cavity_vertices_to_ambient_vertices,
                            vertices_of_lower_cavity);
 
@@ -1213,7 +1214,8 @@ private:
   };
 
   template <typename Vertex_map>
-  auto triangulate_cavity(const CDT_2& cdt_2,
+  auto triangulate_cavity([[maybe_unused]] CDT_3_face_index face_index,
+                          const CDT_2& cdt_2,
                           std::set<Cell_handle> cells_of_cavity,
                           std::set<Facet>& facets_of_cavity,
                           Vertex_map& map_cavity_vertices_to_ambient_vertices,
@@ -1268,6 +1270,7 @@ private:
             const auto polygon_contraint_id = cell->face_constraint_index(facet_index);
             auto f2d = cell->face_2(cdt_2, facet_index);
             f2d->info().missing_subface = true;
+            CGAL_assertion(polygon_contraint_id != face_index);
             face_constraint_misses_subfaces.set(static_cast<std::size_t>(polygon_contraint_id));
           }
           auto [_, is_new_cell] = cells_of_cavity.insert(cell);
@@ -1348,6 +1351,7 @@ public:
       search_for_missing_subfaces(i);
     }
   }
+
   void restore_constrained_Delaunay()
   {
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
@@ -1367,6 +1371,7 @@ public:
       i = face_constraint_misses_subfaces.find_first();
     }
   }
+
   static void write_region_to_OFF(std::ostream& out, const CDT_2& cdt_2) {
     out.precision(17);
     auto color_fn = [](CDT_2_face_handle fh_2d) -> CGAL::IO::Color {
