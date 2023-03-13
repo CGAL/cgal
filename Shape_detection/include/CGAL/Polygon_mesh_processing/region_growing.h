@@ -81,6 +81,11 @@ namespace internal
       \cgalParamDefault{25 degrees}
       \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
+    \cgalParamNBegin{postprocess_regions}
+      \cgalParamDescription{Apply a post-processing step to the output of the region growing algorithm.}
+      \cgalParamType{`bool`}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
     \cgalParamNBegin{cosine_of_maximum_angle}
       \cgalParamDescription{The maximum angle, given as a cosine, between the normals of the supporting planes of adjacent faces
                             such that they are considered part of the same region}
@@ -148,12 +153,71 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   Region_growing region_growing(
     faces(mesh), sorting.ordered(), neighbor_query, region_type, region_map);
 
-  std::vector<std::pair<typename Traits::Plane_3, std::vector<typename PolygonMesh::Face_index> > > tmp;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  std::vector<std::pair<typename Traits::Plane_3, std::vector<face_descriptor> > > tmp;
   region_growing.detect(std::back_inserter(tmp));
+
+  if (choose_parameter(get_parameter(np, internal_np::postprocess_regions), false))
+  {
+    // first try for a post-processing: look at regions made of one face and check if a
+    // larger region contains its 3 vertices and if so assigned it to it.
+    typedef typename boost::property_traits<RegionMap>::value_type Id;
+    for (std::size_t i=0; i<tmp.size(); ++i)
+    {
+      if (tmp[i].second.size() == 1)
+      {
+        face_descriptor f0=tmp[i].second[0];
+        std::map<Id, int> vertex_incidence;
+        halfedge_descriptor h0 = halfedge(f0, mesh);
+        for (int k=0; k<3; ++k)
+        {
+          std::set<Id> ids_for_v;
+          for (halfedge_descriptor h : halfedges_around_target(h0, mesh))
+          {
+            if (!is_border(h, mesh))
+            {
+              Id id = get(region_map, face(h, mesh));
+              if (id!=i)
+                ids_for_v.insert(id);
+            }
+          }
+          h0=next(h0, mesh);
+          for (Id id : ids_for_v)
+            vertex_incidence.insert(std::make_pair(id, 0)).first->second+=1;
+        }
+        std::set<Id> candidates;
+        for (const std::pair<const Id, int>& p : vertex_incidence)
+        {
+          if (p.second == 3)
+            candidates.insert(p.first);
+        }
+        if (candidates.size() == 1)
+        {
+          Id new_id = *candidates.begin();
+          put(region_map, f0, new_id);
+          tmp[new_id].second.push_back(f0);
+          tmp[i].second.clear();
+        }
+      }
+    }
+    auto last = std::remove_if(tmp.begin(), tmp.end(),
+                               [](const std::pair<typename Traits::Plane_3, std::vector<face_descriptor>>& p)
+                               {return p.second.empty();});
+    tmp.erase(last, tmp.end());
+
+    //update region map
+    for (std::size_t i=0; i<tmp.size(); ++i)
+    {
+      for (face_descriptor f : tmp[i].second)
+        put(region_map, f, i);
+    }
+
+  }
 
   internal::fill_region_primitive_map<Traits>(tmp, parameters::get_parameter(np, internal_np::region_primitive_map));
 
-  return region_growing.number_of_regions_detected();
+  return tmp.size();
 }
 
 /*!

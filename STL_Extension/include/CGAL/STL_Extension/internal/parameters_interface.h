@@ -150,6 +150,8 @@ CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_
 CGAL_add_named_parameter(vertex_corner_map_t, vertex_corner_map, vertex_corner_map)
 CGAL_add_named_parameter(patch_normal_map_t, patch_normal_map, patch_normal_map)
 CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_primitive_map)
+CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
+
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

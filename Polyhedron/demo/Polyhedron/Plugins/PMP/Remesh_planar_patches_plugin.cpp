@@ -153,7 +153,6 @@ public Q_SLOTS:
       ui.setupUi(&dialog);
       connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-      connect(ui.use_region_growing_checkbox, SIGNAL(toggled(bool)), ui.dist_dspinbox, SLOT(setEnabled(bool)));
 
       // Get values
       int i = dialog.exec();
@@ -205,7 +204,8 @@ public Q_SLOTS:
                                                  in_fpmap,
                                                  CGAL::parameters::cosine_of_maximum_angle(cos_threshold).
                                                                    region_primitive_map(normal_map).
-                                                                   maximum_distance(ui.dist_dspinbox->value()));
+                                                                   maximum_distance(ui.dist_dspinbox->value()).
+                                                                   postprocess_regions(ui.postprocess_regions_checkbox->isChecked()));
         std::size_t nb_corners =
           PMP::detect_corners_of_regions(pmesh,
                                          in_fpmap,

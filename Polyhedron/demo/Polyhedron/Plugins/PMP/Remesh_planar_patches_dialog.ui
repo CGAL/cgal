@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>262</width>
-    <height>254</height>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -104,6 +104,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="postprocess_regions_checkbox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Post-process regions</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="create_new_item_checkbox">
         <property name="text">
          <string>Create new item</string>
@@ -167,6 +177,38 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>195</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_region_growing_checkbox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>postprocess_regions_checkbox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_region_growing_checkbox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dist_dspinbox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>135</y>
     </hint>
    </hints>
   </connection>
