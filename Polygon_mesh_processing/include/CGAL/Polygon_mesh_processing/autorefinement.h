@@ -401,13 +401,14 @@ void generate_subtriangles(std::size_t ti,
   cdt.insert(t[1]);
   cdt.insert(t[2]);
 #else
-  P_traits cdt_traits(n);
   bool orientation_flipped = false;
   if ( typename EK::Less_xyz_3()(o+n,o) )
   {
     n=-n;
     orientation_flipped = true;
   }
+
+  P_traits cdt_traits(n);
   CDT cdt(cdt_traits);
   cdt.insert_outside_affine_hull(t[0]);
   cdt.insert_outside_affine_hull(t[1]);
