@@ -1217,7 +1217,7 @@ private:
   auto triangulate_cavity([[maybe_unused]] CDT_3_face_index face_index,
                           const CDT_2& cdt_2,
                           std::set<Cell_handle> cells_of_cavity,
-                          std::set<Facet>& facets_of_cavity,
+                          std::set<Facet>& facets_of_cavity_border,
                           Vertex_map& map_cavity_vertices_to_ambient_vertices,
                           std::set<Vertex_handle> vertices_of_cavity) ///@TODO: not deterministic
   {
@@ -1249,7 +1249,7 @@ private:
     std::vector<Facet> missing_faces;
     while(true) {
       missing_faces.clear();
-      for(auto f : facets_of_cavity) {
+      for(auto f : facets_of_cavity_border) {
         if(cells_of_cavity.contains(f.first)) {
           // internal facet, due to cavity growing
           continue;
@@ -1286,12 +1286,12 @@ private:
           Facet other_f{cell, this->vertex_triple_index(facet_index, i)};
           Facet mirror_f = this->mirror_facet(other_f);
           if(!cells_of_cavity.contains(mirror_f.first)) {
-            facets_of_cavity.insert(mirror_f);
+            facets_of_cavity_border.insert(mirror_f);
           }
         }
       }
     }
-    CGAL_assertion(std::all_of(facets_of_cavity.begin(), facets_of_cavity.end(), [&](const auto& f) {
+    CGAL_assertion(std::all_of(facets_of_cavity_border.begin(), facets_of_cavity_border.end(), [&](const auto& f) {
       const auto [v0, v1, v2] = this->make_vertex_triple(f);
       Cell_handle c;
       int i, j, k;
