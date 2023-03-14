@@ -389,16 +389,7 @@ namespace internal {
     }
 
     /*!
-      \brief runs the region growing algorithm and fills an output iterator
-      with the fitted primitive and their region.
-
-      \tparam PrimitiveAndRegionOutputIterator
-      a model of `OutputIterator` whose value type is `Primitive_and_region`
-
-      \param region_out
-      an output iterator of type `PrimitiveAndRegionOutputIterator`.
-
-      \return past-the-end position in the output sequence
+      \brief runs the region growing algorithm
     */
 
     void detect() {

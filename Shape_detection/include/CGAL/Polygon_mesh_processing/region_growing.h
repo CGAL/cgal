@@ -373,7 +373,7 @@ detect_corners_of_regions(
   RG_lines rg_lines(
     segment_range, pgraph, line_region);
 
-  std::vector< std::pair<typename Line_region::Primitive, std::vector<edge_descriptor> > > subregions;
+  std::vector< std::pair<typename Line_region::Primitive, std::vector<edge_descriptor> > > subregions; // TODO dump into pmap lines
   rg_lines.detect(std::back_inserter(subregions));
 
 #ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS

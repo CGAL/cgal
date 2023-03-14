@@ -72,11 +72,10 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region.second));
 
-  std::size_t num = 0;
   auto map = region_growing.region_map();
   for (auto fit : face_range) {
     std::size_t id = get(region_growing.region_map(), fit);
-    assert(id != -1);
+    assert(id != std::size_t(-1));
   }
 
   std::vector<typename Region_growing::Item> unassigned_faces;

@@ -36,6 +36,20 @@
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+template <class SM>
+struct Mesh_map
+{
+  typedef SM value_type;
+  typedef SM& reference;
+  typedef Scene_surface_mesh_item* key_type;
+  typedef boost::lvalue_property_map_tag category;
+
+  SM& operator[](Scene_surface_mesh_item* poly_item) const
+  {
+    return *poly_item->polyhedron();
+  }
+};
+
 using namespace CGAL::Three;
 class Polyhedron_demo_remesh_planar_patches_plugin :
   public QObject,
@@ -117,20 +131,7 @@ public Q_SLOTS:
           meshes.push_back(poly_item);
       }
 
-      struct Mesh_map
-      {
-        typedef Mesh value_type;
-        typedef Mesh& reference;
-        typedef Scene_surface_mesh_item* key_type;
-        typedef boost::lvalue_property_map_tag category;
-
-        Mesh& operator[](Scene_surface_mesh_item* poly_item) const
-        {
-          return *poly_item->polyhedron();
-        }
-      };
-
-      PMP::decimate_meshes_with_common_interfaces(meshes, -cos_threshold, Mesh_map(), do_not_triangulate_faces);
+      PMP::decimate_meshes_with_common_interfaces(meshes, -cos_threshold, Mesh_map<Mesh>(), do_not_triangulate_faces);
 
       for (Scene_surface_mesh_item* poly_item : meshes)
       {
