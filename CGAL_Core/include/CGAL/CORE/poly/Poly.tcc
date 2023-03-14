@@ -977,7 +977,7 @@ BigFloat Polynomial<NT>::CauchyLowerBound() const {
   for (int i = 1; i <= deg; ++i) {
     mx = core_max(mx, NT(abs(coeff[i])));
   }
-  Expr e = Expr(NT(abs(coeff[0])))/ Expr(NT(abs(coeff[0])) + mx);
+  Expr e = Expr(NT(abs(coeff[0])))/ Expr(NT(NT(abs(coeff[0])) + mx));
   e.approx(2, CORE_INFTY);
   // get an relative approximate value with error < 1/4
   return (e.BigFloatValue().makeExact().div2());
