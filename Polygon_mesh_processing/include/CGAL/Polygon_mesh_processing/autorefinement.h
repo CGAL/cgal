@@ -663,7 +663,7 @@ void generate_subtriangles(std::size_t ti,
                   [&](std::size_t id1, std::size_t id2)
                   {
                     if (id1==id2) return false;
-                    return points[id1][coord]<points[id1][coord];
+                    return points[id1][coord]<points[id2][coord];
                   });
         points_on_segments[i].push_back(tgt_id);
         auto last = std::unique(points_on_segments[i].begin(), points_on_segments[i].end());
