@@ -3,7 +3,7 @@
 \ingroup PkgKernelDKernelConcept
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with one argument)
+\cgalRefines{AdaptableFunctor (with one argument)}
 
 \sa `Kernel_d::CartesianConstIterator_d`
 

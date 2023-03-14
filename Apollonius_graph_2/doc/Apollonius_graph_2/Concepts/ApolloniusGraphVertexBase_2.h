@@ -10,7 +10,7 @@ Apollonius site and provides access to one of its incident faces
 through a `Face_handle`. In addition, it maintains a container of
 sites. The container stores the hidden sites related to the vertex.
 
-\cgalRefines `TriangulationVertexBase_2`
+\cgalRefines{TriangulationVertexBase_2}
 
 \cgalHasModel `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
 

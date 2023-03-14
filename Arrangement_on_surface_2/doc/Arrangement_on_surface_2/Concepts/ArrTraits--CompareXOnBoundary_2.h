@@ -3,7 +3,7 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableFunctor
+ * \cgalRefines{AdaptableFunctor}
  *
  * \cgalHasModel ArrangementClosedBottomTraits_2::Compare_x_on_boundary_2
  * \cgalHasModel ArrangementClosedTopTraits_2::Compare_x_on_boundary_2

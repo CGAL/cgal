@@ -11,7 +11,7 @@ functor is optional and a tag determines whether it is provided or
 not. Note that while the first two functors do not modify the Delaunay
 graph they take as an argument, the last ones does.
 
-\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModel `CGAL::Identity_policy_2<DG,AT>`
 \cgalHasModel `CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>`

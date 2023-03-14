@@ -33,7 +33,7 @@ The concept `RegularTriangulationVertexBase_2` refines the concept
 just adding a Boolean to mark if the vertex is a
 vertex of the triangulation or a hidden vertex.
 
-\cgalRefines `TriangulationVertexBase_2`
+\cgalRefines{TriangulationVertexBase_2}
 
 \cgalHasModel `CGAL::Regular_triangulation_vertex_base_2`
 

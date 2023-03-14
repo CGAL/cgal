@@ -9,7 +9,7 @@ accessing geometric information in the Delaunay graph that is needed by the
 It optionally defines a functor for performing nearest site queries. A
 tag is provided for determining whether this functor is defined or not.
 
-\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModel `CGAL::Apollonius_graph_adaptation_traits_2<AG2>`
 \cgalHasModel `CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>`

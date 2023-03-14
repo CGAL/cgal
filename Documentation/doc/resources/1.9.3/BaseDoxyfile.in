@@ -321,9 +321,14 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalFigureCaptionEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
                          "cgalConcept=\details <div id=\"CGALConcept\"></div>^^ \brief" \
                          "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>^^ \brief" \
-                         "cgalRefines=<b>Refines</b>:" \
-                         "cgalRefines{1}=@qualifier \"\1\" ^^ @cgalRefines  @c \1." \
-                         "cgalRefines{3}=@qualifier \"\1\" ^^ @qualifier \"\2\" ^^ @qualifier \"\3\" ^^ @cgalRefines @c \1, @c \2 and @c \3." \
+                         "cgalRefines=Refines" \
+                         "cgalRefines{1}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd></dl>" \
+                         "cgalRefines{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd></dl>" \
+                         "cgalRefines{3}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd></dl>" \
+                         "cgalRefines{4}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd></dl>" \
+                         "cgalRefines{5}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
+                         "cgalRefinesBare{1}=<dl><dt>@cgalRefines</dt><dd>\1</dd></dl>" \
+                         "cgalRefinesBare{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>\2</dd></dl>" \
                          "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\"" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
                          "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\"" \

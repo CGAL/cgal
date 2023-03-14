@@ -9,7 +9,7 @@ and compute intersections between query objects and the primitives stored in the
 In addition, it contains predicates and constructors to compute distances between a point query
 and the primitives stored in the AABB tree.
 
-\cgalRefines `SearchGeomTraits_3`
+\cgalRefines{SearchGeomTraits_3}
 
 \cgalHasModel All models of the concept `Kernel`
 

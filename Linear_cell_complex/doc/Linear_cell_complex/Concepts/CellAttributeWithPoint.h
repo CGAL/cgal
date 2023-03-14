@@ -5,7 +5,7 @@
 
 The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute` concept, to represent a cell attribute containing a point.
 
-\cgalRefines `CellAttribute`
+\cgalRefines{CellAttribute}
 
 \cgalHasModel \link CGAL::Cell_attribute_with_point `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`\endlink
 

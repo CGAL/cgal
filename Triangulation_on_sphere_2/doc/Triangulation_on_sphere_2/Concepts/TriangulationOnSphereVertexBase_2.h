@@ -2,7 +2,7 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDSVertexBase_2`
+\cgalRefines{TriangulationDSVertexBase_2}
 
 The concept `TriangulationOnSphereVertexBase_2` describes the requirements for the vertex base class
 of a triangulation data structure to be plugged in a triangulation on the sphere.

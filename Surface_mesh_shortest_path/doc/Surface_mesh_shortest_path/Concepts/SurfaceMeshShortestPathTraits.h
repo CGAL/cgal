@@ -7,7 +7,7 @@ The concept `SurfaceMeshShortestPathTraits` describes the types,
 predicates, and constructions required by the traits class parameter of
 `CGAL::Surface_mesh_shortest_path`.
 
-\cgalRefines `CopyConstructible` and `Assignable`
+\cgalRefines{CopyConstructible,Assignable}
 \cgalHasModel `CGAL::Surface_mesh_shortest_path_traits<K,P>`
 
 */
