@@ -478,11 +478,11 @@ inline Real sqrt(const Real& x) {
 // unary minus operator
 template <class T>
 inline Real Realbase_for<T>::operator-() const {
-  return -T(ker);
+  return T(- T(ker));
 }
 template <>
 inline Real RealLong::operator-() const {
-  return ker < -LONG_MAX ? -BigInt(ker) : -ker;
+  return ker < -LONG_MAX ? BigInt(- BigInt(ker)) : -ker;
 }
 
 inline void init_CORE() {
