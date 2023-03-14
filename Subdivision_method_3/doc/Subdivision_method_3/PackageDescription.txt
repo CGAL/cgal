@@ -45,6 +45,6 @@ The page \ref bgl_namedparameters describes their usage.
 - `CGAL::Loop_mask_3<PolygonMesh>`
 - `CGAL::DooSabin_mask_3<PolygonMesh>`
 - `CGAL::Sqrt3_mask_3<PolygonMesh>`
+- `CGAL::Linear_mask_3<PolygonMesh>`
 
 */
-

@@ -74,6 +74,7 @@ Catmull-Clark subdivision.
 \sa `CGAL::DooSabin_mask_3<PolygonMesh`
 \sa `CGAL::Loop_mask_3<PolygonMesh`
 \sa `CGAL::Sqrt3_mask_3<PolygonMesh>`
+\sa `CGAL::Linear_mask_3<PolygonMesh>`
 */
 /// @{
 
