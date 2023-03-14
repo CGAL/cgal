@@ -649,7 +649,7 @@ void generate_subtriangles(std::size_t ti,
         {
           coord=1;
           if (src.y()==tgt.y())
-            coord==2;
+            coord=2;
         }
         if (src[coord]>tgt[coord])
         {
