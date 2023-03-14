@@ -10,7 +10,7 @@
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
 
-// This files adds an optional static cache to convert_to_bfi for Sqrt_extension
+// This file adds an optional static cache to convert_to_bfi for Sqrt_extension
 
 #ifndef CGAL_SQRT_EXTENSION_CONVERT_TO_BFI_H
 #define CGAL_SQRT_EXTENSION_CONVERT_TO_BFI_H

@@ -75,7 +75,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz}
+\cgalPkgAuthors{Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, and Ilker %O. Yaz}
 \cgalPkgDesc{This package provides a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms such as
 Boolean operations, remeshing, repairing, collision and intersection detection, and more.}
@@ -248,6 +248,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
 - `CGAL::Polygon_mesh_processing::transform()`
 - `CGAL::Polygon_mesh_processing::triangle()`
+- `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
+- `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
 
 \cgalCRPSection{I/O Functions}
 - \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink

@@ -60,7 +60,7 @@ print_testresult()
           RESULT="t"
         fi
       else
-        if grep -E -q 'NOTICE: .*(need|require|incompatible).*will not be' CompilerOutput_$1
+        if grep -E -q 'NOTICE: .*(need|require|incompatible|not found).*will not be' CompilerOutput_$1
         then
           RESULT="r"
         else

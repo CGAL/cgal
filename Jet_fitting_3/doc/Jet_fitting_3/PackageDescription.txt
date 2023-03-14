@@ -7,7 +7,7 @@
 \cgalPkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJetFitting3}
 \cgalPkgPicture{DavidDetail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Marc Pouget  and Frédéric Cazals}
+\cgalPkgAuthors{Marc Pouget and Frédéric Cazals}
 \cgalPkgDesc{For a surface discretized as a point cloud or a mesh, it is desirable to estimate pointwise differential quantities. More precisely, first order properties correspond to the normal or the tangent plane; second order properties provide the principal curvatures and directions, third order properties provide the directional derivatives of the principal curvatures along the curvature lines, etc. This package allows the estimation of local differential quantities of a surface from a point sample.}
 \cgalPkgManuals{Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces,PkgJetFitting3Ref}
 \cgalPkgSummaryEnd

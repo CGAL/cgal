@@ -43,7 +43,7 @@ bool test_orientation(const TriangleMesh& tm, bool is_positive, const NamedParam
 
   // set the connected component id of each face
   std::size_t nb_cc = PMP::connected_components(tm,
-                                           CGAL::bind_property_maps(fid_map,CGAL::make_property_map(face_cc)),
+                                           CGAL::make_compose_property_map(fid_map,CGAL::make_property_map(face_cc)),
                                            CGAL::parameters::face_index_map(fid_map));
 
   // extract a vertex with max z coordinate for each connected component

@@ -12,40 +12,25 @@ if(MSVC)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
 
   # Print new compilation options
-  message(
-    STATUS
-      "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'")
-  message(
-    STATUS
-      "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'"
-  )
-  message(
-    STATUS
-      "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'"
-  )
-  message(
-    STATUS
-      "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'"
-  )
+  message(STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'")
+  message(STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'")
+  message(STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'")
+  message(STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'")
 endif()
 
 # Find Eigen3 (requires 3.1.0 or greater)
-find_package(Eigen3 3.1.0)
+find_package(Eigen3 3.1.0 QUIET)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3
   create_single_source_cgal_program("poisson_reconstruction_example.cpp")
-  target_link_libraries(poisson_reconstruction_example
-                        PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(poisson_reconstruction_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction.cpp")
   target_link_libraries(poisson_reconstruction PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction_function.cpp")
-  target_link_libraries(poisson_reconstruction_function
-                        PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(poisson_reconstruction_function PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("tutorial_example.cpp")
   target_link_libraries(tutorial_example PUBLIC CGAL::Eigen3_support)
 else()
-  message(
-    STATUS
-      "NOTICE: The examples need Eigen 3.1 (or greater) will not be compiled.")
+  message("NOTICE: The examples require Eigen 3.1 (or greater) will not be compiled.")
 endif()
