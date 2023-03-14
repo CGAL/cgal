@@ -37,12 +37,17 @@
 #include <vector>
 
 //#define TEST_RESOLVE_INTERSECTION
-//#define DEDUPLICATE_SEGMENTS
+#define DEDUPLICATE_SEGMENTS
+//#define DEBUG_COUNTERS
 //#define USE_FIXED_PROJECTION_TRAITS
 //#define DEBUG_DEPTH
 
 #ifdef USE_FIXED_PROJECTION_TRAITS
 #include <CGAL/Kernel_23/internal/Projection_traits_3.h>
+#endif
+
+#ifdef DEBUG_COUNTERS
+#include <CGAL/Real_timer.h>
 #endif
 
 namespace CGAL {
@@ -55,28 +60,28 @@ enum Segment_inter_type { NO_INTERSECTION=0, COPLANAR_SEGMENTS, POINT_INTERSECTI
 
 template <class K>
 Segment_inter_type
-do_coplanar_segments_intersect(const std::array<typename K::Point_3, 2>& s1,
-                               const std::array<typename K::Point_3, 2>& s2,
+do_coplanar_segments_intersect(const typename K::Point_3& s1_0, const typename K::Point_3& s1_1,
+                               const typename K::Point_3& s2_0, const typename K::Point_3& s2_1,
                                const K& k = K())
 {
   // supporting_line intersects: points are coplanar
   typename K::Coplanar_orientation_3 cpl_orient=k.coplanar_orientation_3_object();
-  ::CGAL::Orientation or1 = cpl_orient(s1[0], s1[1], s2[0]);
-  ::CGAL::Orientation or2 = cpl_orient(s1[0], s1[1], s2[1]);
+  ::CGAL::Orientation or1 = cpl_orient(s1_0, s1_1, s2_0);
+  ::CGAL::Orientation or2 = cpl_orient(s1_0, s1_1, s2_1);
 
   if(or1 == COLLINEAR && or2 == COLLINEAR)
   {
     // segments are collinear
     typename K::Collinear_are_ordered_along_line_3 cln_order = k.collinear_are_ordered_along_line_3_object();
-    return (cln_order(s1[0], s2[0], s1[1]) ||
-            cln_order(s1[0], s2[1], s1[1]) ||
-            cln_order(s2[0], s1[0], s2[1])) ? COPLANAR_SEGMENTS : NO_INTERSECTION;
+    return (cln_order(s1_0, s2_0, s1_1) ||
+            cln_order(s1_0, s2_1, s1_1) ||
+            cln_order(s2_0, s1_0, s2_1)) ? COPLANAR_SEGMENTS : NO_INTERSECTION;
   }
 
   if(or1 != or2)
   {
-    or1 = cpl_orient(s2[0], s2[1], s1[0]);
-    return (or1 == COLLINEAR || or1 != cpl_orient(s2[0], s2[1], s1[1])) ? POINT_INTERSECTION : NO_INTERSECTION;
+    or1 = cpl_orient(s2_0, s2_1, s1_0);
+    return (or1 == COLLINEAR || or1 != cpl_orient(s2_0, s2_1, s1_1)) ? POINT_INTERSECTION : NO_INTERSECTION;
   }
 
   return NO_INTERSECTION;
@@ -361,8 +366,8 @@ template <class EK
 #endif
 >
 void generate_subtriangles(std::size_t ti,
-                           std::vector<std::array<typename EK::Point_3, 2>>& segments,
-                           const std::vector<typename EK::Point_3>& points,
+                           std::vector<std::pair<std::size_t, std::size_t>>& segments,
+                           std::vector<typename EK::Point_3>& points,
                            const std::vector<std::size_t>& in_triangle_ids,
                            const std::set<std::pair<std::size_t, std::size_t> >& intersecting_triangles,
                            const std::vector<std::array<typename EK::Point_3,3>>& triangles,
@@ -376,13 +381,14 @@ void generate_subtriangles(std::size_t ti,
 #else
   typedef CGAL::Projection_traits_3<EK> P_traits;
 #endif
-  typedef CGAL::Exact_intersections_tag Itag;
 
-  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits
 #ifndef TEST_RESOLVE_INTERSECTION
-  ,Default, Itag
+  typedef CGAL::Exact_intersections_tag Itag;
+#else
+  typedef CGAL::No_constraint_intersection_tag Itag;
 #endif
-> CDT_2;
+
+  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits ,Default, Itag> CDT_2;
   //typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
   typedef CDT_2 CDT;
 
@@ -415,6 +421,35 @@ void generate_subtriangles(std::size_t ti,
   typename CDT::Vertex_handle v = cdt.tds().insert_dim_up(cdt.infinite_vertex(), orientation_flipped);
   v->set_point(t[2]);
 #endif
+
+#ifdef DEBUG_COUNTERS
+  struct Counter
+  {
+    int c1=0;
+    int c2=0;
+    int c3=0;
+    int c4=0;
+    int total=0;
+    ~Counter()
+    {
+      std::cout << "intersection of 3 planes: " << c1 << "\n";
+      std::cout << "coplanar segment intersection : " << c2 << "\n";
+      std::cout << "coplanar segment overlap: " << c3 << "\n";
+      std::cout << "no intersection: " << c4 << "\n";
+      std::cout << "# pairs of segments : " << total << "\n";
+      std::cout << "time computing segment intersections: " << timer1.time() << "\n";
+      std::cout << "time sorting intersection points: " << timer2.time() << "\n";
+      std::cout << "time for cdt of constraints: " << timer3.time() << "\n";
+    }
+    CGAL::Real_timer timer1, timer2, timer3;
+  };
+
+  static Counter counter;
+#define COUNTER_INSTRUCTION(X) X
+#else
+#define COUNTER_INSTRUCTION(X)
+#endif
+
 
 #ifdef TEST_RESOLVE_INTERSECTION
   //~ static std::ofstream debug("inter_segments.polylines.txt");
@@ -458,14 +493,33 @@ void generate_subtriangles(std::size_t ti,
       return typename EK::Plane_3(t[0], t[1], t[2]);
     };
 
-    std::vector< std::vector<typename EK::Point_3> > points_on_segments(nbs);
+    std::vector< std::vector<std::size_t> > points_on_segments(nbs);
+
+    COUNTER_INSTRUCTION(counter.timer1.start();)
+
+    std::map<typename EK::Point_3, std::size_t> point_id_map;
+
+    for (std::size_t pid=0; pid<points.size(); ++pid)
+      point_id_map.insert(std::make_pair(points[pid], pid));
+
+    auto get_point_id = [&](const typename EK::Point_3& pt)
+    {
+      auto insert_res = point_id_map.insert(std::make_pair(pt, points.size()));
+      if (insert_res.second)
+        points.push_back(pt);
+      return insert_res.first->second;
+    };
+
+
     for (std::size_t i = 0; i<nbs-1; ++i)
     {
       for (std::size_t j = i+1; j<nbs; ++j)
       {
         if (intersecting_triangles.count(CGAL::make_sorted_pair(in_triangle_ids[i], in_triangle_ids[j]))!=0)
         {
-          Segment_inter_type seg_inter_type = do_coplanar_segments_intersect<EK>(segments[i], segments[j]);
+          Segment_inter_type seg_inter_type =
+            do_coplanar_segments_intersect<EK>(points[segments[i].first], points[segments[i].second],
+                                               points[segments[j].first], points[segments[j].second]);
           switch(seg_inter_type)
           {
             case POINT_INTERSECTION:
@@ -476,9 +530,11 @@ void generate_subtriangles(std::size_t ti,
 
               if (const typename EK::Point_3* pt_ptr = boost::get<typename EK::Point_3>(&(*res)))
               {
-                points_on_segments[i].push_back(*pt_ptr);
-                points_on_segments[j].push_back(*pt_ptr);
-
+                COUNTER_INSTRUCTION(++counter.c1;)
+                std::size_t pid = get_point_id(*pt_ptr);
+                points_on_segments[i].push_back(pid);
+                points_on_segments[j].push_back(pid);
+                break;
                 //~ std::cout << "new inter " << *pt_ptr << " (" << depth(points_on_segments[i].back()) << ")" << "\n";
 
               }
@@ -490,30 +546,35 @@ void generate_subtriangles(std::size_t ti,
 
               //~ std::cout << "coplanar inter: " << i << " " << j << "\n";
 
-              typename EK::Segment_3 s1(segments[i][0], segments[i][1]);
-              typename EK::Segment_3 s2(segments[j][0], segments[j][1]);// TODO: avoid this construction
+              typename EK::Segment_3 s1(points[segments[i].first], points[segments[i].second]);
+              typename EK::Segment_3 s2(points[segments[j].first], points[segments[j].second]);// TODO: avoid this construction
               auto inter = CGAL::intersection(s1, s2);
 
               if (inter == boost::none) throw std::runtime_error("Unexpected case #2");
 
               if (const typename EK::Point_3* pt_ptr = boost::get<typename EK::Point_3>(&(*inter)))
               {
-                points_on_segments[i].push_back(*pt_ptr);
-                points_on_segments[j].push_back(*pt_ptr);
-
+                COUNTER_INSTRUCTION(++counter.c2;)
+                std::size_t pid = get_point_id(*pt_ptr);
+                points_on_segments[i].push_back(pid);
+                points_on_segments[j].push_back(pid);
+                break;
                 //~ std::cout << "new inter bis " << *pt_ptr << " (" << depth(points_on_segments[i].back()) << ")" <<  "\n";
               }
               else
               {
                 if (const typename EK::Segment_3* seg_ptr = boost::get<typename EK::Segment_3>(&(*inter)))
                 {
-                  points_on_segments[i].push_back(seg_ptr->source());
-                  points_on_segments[j].push_back(seg_ptr->source());
-                  points_on_segments[i].push_back(seg_ptr->target());
-                  points_on_segments[j].push_back(seg_ptr->target());
-
+                  //TODO HERE WE SHOULD IMPROVE TO AVOID RECOMPUTING SEGMENTS ENDPOINTS
+                  COUNTER_INSTRUCTION(++counter.c3;)
+                  std::size_t src_pid = get_point_id(seg_ptr->source());
+                  std::size_t tgt_pid = get_point_id(seg_ptr->target());
+                  points_on_segments[i].push_back(src_pid);
+                  points_on_segments[j].push_back(src_pid);
+                  points_on_segments[i].push_back(tgt_pid);
+                  points_on_segments[j].push_back(tgt_pid);
+                  break;
                   //~ std::cout << "new inter seg " << *seg_ptr << " (" << depth(*seg_ptr) << ")" <<  "\n";
-
                 }
                 else
                   throw std::runtime_error("BOOM\n");
@@ -564,24 +625,26 @@ void generate_subtriangles(std::size_t ti,
               //~ debug << "4 " << triangles[ti] << " " << triangles[ti][0] << "\n";
               //~ exit(1);
             }
-            break;
+//            break;
             default:
+              COUNTER_INSTRUCTION(++counter.c4;)
             break;
           }
         }
+        COUNTER_INSTRUCTION(++counter.total;)
       }
     }
-
-    std::vector<typename EK::Point_3> cst_points;
-    std::vector<std::pair<std::size_t, std::size_t>> csts;
+    COUNTER_INSTRUCTION(counter.timer1.stop();)
+    COUNTER_INSTRUCTION(counter.timer2.start();)
+    std::size_t nb_new_segments=0;
     for (std::size_t i = 0; i<nbs; ++i)
     {
       if(!points_on_segments[i].empty())
       {
         // TODO: predicate on input triangles
         int coord = 0;
-        const std::array<typename EK::Point_3, 2>& s = segments[i];
-        typename EK::Point_3 src = s[0], tgt=s[1];
+        std::size_t src_id = segments[i].first, tgt_id = segments[i].second;
+        typename EK::Point_3 src = points[src_id], tgt=points[tgt_id];
         if (src.x()==tgt.x())
         {
           coord=1;
@@ -589,15 +652,23 @@ void generate_subtriangles(std::size_t ti,
             coord==2;
         }
         if (src[coord]>tgt[coord])
+        {
+          std::swap(src_id, tgt_id);
           std::swap(src, tgt);
+        }
 
-        std::sort(points_on_segments[i].begin(), points_on_segments[i].end(), [coord](const typename EK::Point_3& p, const typename EK::Point_3& q){return p[coord]<q[coord];});
-//TODO: use reserve on cst_points?
-        std::size_t src_id=cst_points.size();
-        cst_points.push_back(src);
-        cst_points.insert(cst_points.end(), points_on_segments[i].begin(), points_on_segments[i].end());
-        cst_points.push_back(tgt);
-
+        points_on_segments[i].push_back(src_id);
+        std::swap(points_on_segments[i].front(), points_on_segments[i].back());
+        std::sort(std::next(points_on_segments[i].begin()), points_on_segments[i].end(),
+                  [&](std::size_t id1, std::size_t id2)
+                  {
+                    if (id1==id2) return false;
+                    return points[id1][coord]<points[id1][coord];
+                  });
+        points_on_segments[i].push_back(tgt_id);
+        auto last = std::unique(points_on_segments[i].begin(), points_on_segments[i].end());
+        points_on_segments[i].erase(last, points_on_segments[i].end());
+        nb_new_segments+=points_on_segments[i].size()-2;
 
         //~ {
         //~ std::cout << "cst_points.size() " << cst_points.size() << "\n";
@@ -617,11 +688,9 @@ void generate_subtriangles(std::size_t ti,
         //~ }
         //~ std::cout << "---\n";
         //~ }
-
-        for (std::size_t k=0; k<=points_on_segments[i].size(); ++k)
-          csts.emplace_back(src_id+k, src_id+k+1);
       }
     }
+    COUNTER_INSTRUCTION(counter.timer2.stop();)
 
     //~ int max_degree = 0;
     //~ for (const auto p : cst_points)
@@ -637,20 +706,24 @@ void generate_subtriangles(std::size_t ti,
       //~ exit(1);
     //~ }
 
-    cdt.insert_constraints(cst_points.begin(), cst_points.end(), csts.begin(), csts.end());
-
-    std::vector<std::array<typename EK::Point_3,2>> no_inter_segments;
-    no_inter_segments.reserve(nbs);
+    // now fill segments with new segments
+    segments.reserve(segments.size()+nb_new_segments);
     for (std::size_t i = 0; i<nbs; ++i)
-      if(points_on_segments[i].empty())
-        no_inter_segments.push_back(segments[i]);
-    no_inter_segments.swap(segments);
+    {
+      if(!points_on_segments[i].empty())
+      {
+        segments[i]=std::make_pair(points_on_segments[i][0], points_on_segments[i][1]);
+        for(std::size_t pos=1; pos<points_on_segments[i].size()-1; ++pos)
+          segments.emplace_back(points_on_segments[i][pos], points_on_segments[i][pos+1]);
+      }
+    }
   }
   //~ std::cout << "done\n";
 #endif
 
-  cdt.insert_constraints(segments.begin(), segments.end());
-  cdt.insert(points.begin(), points.end());
+  COUNTER_INSTRUCTION(counter.timer3.start();)
+  cdt.insert_constraints(points.begin(), points.end(), segments.begin(), segments.end());
+  COUNTER_INSTRUCTION(counter.timer3.stop();)
 
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
     static int k = 0;
@@ -806,32 +879,22 @@ void autorefine_soup_output(const PointRange& input_points,
     }
   }
 
-  // deduplicate inserted segments
-  Cartesian_converter<EK, GT> to_input;
-  std::map<EK::Point_3, std::size_t> point_id_map;
-#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-  std::vector<EK::Point_3> exact_soup_points;
-#endif
-
-  auto get_point_id = [&](const typename EK::Point_3& pt)
-  {
-    auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
-    if (insert_res.second)
-    {
-      soup_points.push_back(to_input(pt));
-#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-      exact_soup_points.push_back(pt);
-#endif
-    }
-    return insert_res.first->second;
-  };
-
-  // filter duplicated segments
 #ifdef DEDUPLICATE_SEGMENTS
+  // deduplicate inserted segments
+  std::vector<std::vector<std::pair<std::size_t, std::size_t>>> all_segments_ids(all_segments.size());
   for(std::size_t ti=0; ti<triangles.size(); ++ti)
   {
     if (!all_segments[ti].empty())
     {
+      std::map<EK::Point_3, std::size_t> point_id_map;
+      auto get_point_id = [&](const typename EK::Point_3& pt)
+      {
+        auto insert_res = point_id_map.insert(std::make_pair(pt, all_points[ti].size()));
+        if (insert_res.second)
+          all_points[ti].push_back(pt);
+        return insert_res.first->second;
+      };
+
       std::size_t nbs = all_segments[ti].size();
       std::vector<std::array<EK::Point_3,2>> filtered_segments;
       std::vector<std::size_t> filtered_in_triangle_ids;
@@ -841,19 +904,16 @@ void autorefine_soup_output(const PointRange& input_points,
       {
         EK::Point_3 src = all_segments[ti][si][0],
                     tgt = all_segments[ti][si][1];
+        std::size_t src_id = get_point_id(src), tgt_id=get_point_id(tgt);
         if (segset.insert(
-              CGAL::make_sorted_pair( get_point_id(src),
-                                      get_point_id(tgt))).second)
+              CGAL::make_sorted_pair(src_id, tgt_id)).second)
         {
-          filtered_segments.push_back(all_segments[ti][si]);
+          all_segments_ids[ti].emplace_back(src_id, tgt_id);
           filtered_in_triangle_ids.push_back(all_in_triangle_ids[ti][si]);
         }
       }
-      if (filtered_segments.size()!=nbs)
-      {
-        filtered_segments.swap(all_segments[ti]);
+      if (all_segments_ids[ti].size()!=nbs)
         filtered_in_triangle_ids.swap(all_in_triangle_ids[ti]);
-      }
     }
   }
 #endif
@@ -886,7 +946,7 @@ void autorefine_soup_output(const PointRange& input_points,
         autorefine_impl::generate_subtriangles<EK, 2>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
       }
       #else
-      autorefine_impl::generate_subtriangles<EK>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      autorefine_impl::generate_subtriangles<EK>(ti, all_segments_ids[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
       #endif
     }
 
@@ -896,11 +956,31 @@ void autorefine_soup_output(const PointRange& input_points,
   // brute force output: create a soup, orient and to-mesh
   CGAL_PMP_AUTOREFINE_VERBOSE("create output soup");
 
+  Cartesian_converter<EK, GT> to_input;
+  std::map<EK::Point_3, std::size_t> point_id_map;
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+  std::vector<EK::Point_3> exact_soup_points;
+#endif
+
+  auto get_point_id = [&](const typename EK::Point_3& pt)
+  {
+    auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
+    if (insert_res.second)
+    {
+      soup_points.push_back(to_input(pt));
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+      exact_soup_points.push_back(pt);
+#endif
+    }
+    return insert_res.first->second;
+  };
+
   std::vector <std::size_t> input_point_ids;
   input_point_ids.reserve(input_points.size());
   for (const auto& p : input_points)
     input_point_ids.push_back(get_point_id(to_exact(get(pm,p))));
 
+  // raw copy of input triangles with no intersection
   for (Input_TID f=0; f<id_triples.size(); ++f)
   {
     if (is_degen[f]) continue; //skip degenerate faces
@@ -915,6 +995,7 @@ void autorefine_soup_output(const PointRange& input_points,
       );
     }
   }
+  // import refined triangles
   for (const std::array<EK::Point_3,3>& t : new_triangles)
   {
     soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
