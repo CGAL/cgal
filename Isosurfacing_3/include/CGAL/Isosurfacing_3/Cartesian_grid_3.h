@@ -185,9 +185,9 @@ public:
    *
    * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
-  const Point_3& point(const std::size_t i,
-                       const std::size_t j,
-                       const std::size_t k) const
+  Point_3 point(const std::size_t i,
+                const std::size_t j,
+                const std::size_t k) const
   {
     typename Geom_traits::Construct_point_3 cp = m_gt.construct_point_3_object();
 
