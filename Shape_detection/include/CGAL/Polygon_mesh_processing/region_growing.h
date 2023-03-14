@@ -178,7 +178,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
             if (!is_border(h, mesh))
             {
               Id id = get(region_map, face(h, mesh));
-              if (id!=i)
+              if (std::size_t(id)!=i)
                 ids_for_v.insert(id);
             }
           }
