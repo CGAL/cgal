@@ -749,29 +749,11 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
     }
     else
     {
-      // l0 and l1 are collinear and are meeting up, the time is simply the time at Q,
-      // and the event only exists if the two times are identical
-      //
-      // @todo, which direction the horizontal line uses is likely dictated by the order
-      // of the input segments in the triedge, maybe we would like more control over this.
-      const FT t0 = l0->a() * q->x() + l0->b() * q->y() + l0->c();
-      const FT t1 = l1->a() * q->x() + l1->b() * q->y() + l1->c();
-
-      if( CGAL_NTS is_finite(t0) && CGAL_NTS is_finite(t1))
-      {
-        if( t0 == t1 )
-        {
-          CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, inequal norms) t:" << t0 )
-          return cgal_make_optional(Rational<FT>(t0,FT(1))) ;
-        }
-        else
-        {
-          CGAL_STSKEL_TRAITS_TRACE("Event times (degenerate, inequal norms) t0:" << t0 << " != t1:" << t1 )
-          CGAL_STSKEL_TRAITS_TRACE("--> Returning 0/0 (no event)");
-          // if we return boost::none, exist_offset_lines_isec2() will think it's a numerical error
-          return cgal_make_optional(Rational<FT>(FT(0),FT(0))) ;
-        }
-      }
+      // l0 and l1 are collinear but with different speeds, so there cannot be an event.
+      CGAL_STSKEL_TRAITS_TRACE("Event times (degenerate, inequal norms)")
+      CGAL_STSKEL_TRAITS_TRACE("--> Returning 0/0 (no event)");
+      // if we return boost::none, exist_offset_lines_isec2() will think it's a numerical error
+      return cgal_make_optional(Rational<FT>(FT(0),FT(0))) ;
     }
   }
 
