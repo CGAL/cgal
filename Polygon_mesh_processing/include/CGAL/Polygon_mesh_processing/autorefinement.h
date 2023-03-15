@@ -56,13 +56,59 @@ namespace Polygon_mesh_processing {
 #ifndef DOXYGEN_RUNNING
 namespace autorefine_impl {
 
-enum Segment_inter_type { NO_INTERSECTION=0, COPLANAR_SEGMENTS, POINT_INTERSECTION };
+
+enum Segment_inter_type_old { NO_INTERSECTION_OLD=0, COPLANAR_SEGMENTS, POINT_INTERSECTION_OLD };
+enum Segment_inter_type { NO_INTERSECTION=0,
+                          POINT_INTERSECTION,
+                          POINT_P,
+                          POINT_Q,
+                          POINT_R,
+                          POINT_S,
+                          COPLANAR_SEGMENT_PQ,
+                          COPLANAR_SEGMENT_RS,
+                          COPLANAR_SEGMENT_PS,
+                          COPLANAR_SEGMENT_QS,
+                          COPLANAR_SEGMENT_PR,
+                          COPLANAR_SEGMENT_QR,
+                        };
+
+
+
+std::string print_enum(Segment_inter_type_old s)
+{
+  switch(s)
+  {
+    case NO_INTERSECTION_OLD: return "NO_INTERSECTION_OLD";
+    case COPLANAR_SEGMENTS: return "COPLANAR_SEGMENTS";
+    case POINT_INTERSECTION_OLD: return "POINT_INTERSECTION_OLD";
+  }
+}
+
+std::string print_enum(Segment_inter_type s)
+{
+  switch(s)
+  {
+    case NO_INTERSECTION: return "NO_INTERSECTION";
+    case POINT_INTERSECTION: return "POINT_INTERSECTION";
+    case POINT_P: return "POINT_P";
+    case POINT_Q: return "POINT_Q";
+    case POINT_R: return "POINT_R";
+    case POINT_S: return "POINT_S";
+    case COPLANAR_SEGMENT_PQ: return "COPLANAR_SEGMENT_PQ";
+    case COPLANAR_SEGMENT_RS: return "COPLANAR_SEGMENT_RS";
+    case COPLANAR_SEGMENT_PS: return "COPLANAR_SEGMENT_PS";
+    case COPLANAR_SEGMENT_QS: return "COPLANAR_SEGMENT_QS";
+    case COPLANAR_SEGMENT_PR: return "COPLANAR_SEGMENT_PR";
+    case COPLANAR_SEGMENT_QR: return "COPLANAR_SEGMENT_QR";
+  }
+}
+
 
 template <class K>
-Segment_inter_type
-do_coplanar_segments_intersect(const typename K::Point_3& s1_0, const typename K::Point_3& s1_1,
-                               const typename K::Point_3& s2_0, const typename K::Point_3& s2_1,
-                               const K& k = K())
+Segment_inter_type_old
+do_coplanar_segments_intersect_old(const typename K::Point_3& s1_0, const typename K::Point_3& s1_1,
+                                   const typename K::Point_3& s2_0, const typename K::Point_3& s2_1,
+                                   const K& k = K())
 {
   // supporting_line intersects: points are coplanar
   typename K::Coplanar_orientation_3 cpl_orient=k.coplanar_orientation_3_object();
@@ -75,13 +121,155 @@ do_coplanar_segments_intersect(const typename K::Point_3& s1_0, const typename K
     typename K::Collinear_are_ordered_along_line_3 cln_order = k.collinear_are_ordered_along_line_3_object();
     return (cln_order(s1_0, s2_0, s1_1) ||
             cln_order(s1_0, s2_1, s1_1) ||
-            cln_order(s2_0, s1_0, s2_1)) ? COPLANAR_SEGMENTS : NO_INTERSECTION;
+            cln_order(s2_0, s1_0, s2_1)) ? COPLANAR_SEGMENTS : NO_INTERSECTION_OLD;
   }
 
   if(or1 != or2)
   {
     or1 = cpl_orient(s2_0, s2_1, s1_0);
-    return (or1 == COLLINEAR || or1 != cpl_orient(s2_0, s2_1, s1_1)) ? POINT_INTERSECTION : NO_INTERSECTION;
+    return (or1 == COLLINEAR || or1 != cpl_orient(s2_0, s2_1, s1_1)) ? POINT_INTERSECTION_OLD : NO_INTERSECTION_OLD;
+  }
+
+  return NO_INTERSECTION_OLD;
+}
+
+
+// test intersection in the interior of segment pq and rs with pq and rs being coplanar segments
+// note that for coplanar cases, we might report identical endpoints
+template <class K>
+Segment_inter_type
+do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
+                               std::size_t ri, std::size_t si,
+                               const std::vector<typename K::Point_3>& points,
+                               const K& k = K())
+{
+  typename K::Collinear_are_ordered_along_line_3 cln_order = k.collinear_are_ordered_along_line_3_object();
+  typename K::Coplanar_orientation_3 cpl_orient=k.coplanar_orientation_3_object();
+
+  const typename K::Point_3& p=points[pi];
+  const typename K::Point_3& q=points[qi];
+  const typename K::Point_3& r=points[ri];
+  const typename K::Point_3& s=points[si];
+
+  // first handle case of shared endpoints
+  if (pi==ri)
+  {
+    if (si==qi || cpl_orient(p, q, s)!=COPLANAR) return NO_INTERSECTION;
+    // can be s, q or nothing
+    if (cln_order(p,s,q))
+      return POINT_S;
+    if (cln_order(p,q,s))
+      return POINT_Q;
+    return NO_INTERSECTION;
+  }
+  else
+  {
+    if(pi==si)
+    {
+      if (qi==ri || cpl_orient(p, q, r)!=COPLANAR) return NO_INTERSECTION;
+      // can be r, q or nothing
+      if (cln_order(p,r,q))
+        return POINT_R;
+      if (cln_order(p,q,r))
+        return POINT_Q;
+      return NO_INTERSECTION;
+    }
+    else
+    {
+      if (qi==ri)
+      {
+        if (pi==si || cpl_orient(p, q, s)!=COPLANAR) return NO_INTERSECTION;
+        // can be p, s or nothing
+        if (cln_order(p,s,q))
+          return POINT_S;
+        if (cln_order(q,p,s))
+          return POINT_P;
+        return NO_INTERSECTION;
+      }
+      else
+      {
+        if (qi==si)
+        {
+          if (pi==ri || cpl_orient(p, q, r)!=COPLANAR) return NO_INTERSECTION;
+          // can be p, r or nothing
+          if (cln_order(p,r,q))
+            return POINT_R;
+          if (cln_order(q,p,r))
+            return POINT_P;
+          return NO_INTERSECTION;
+        }
+      }
+    }
+  }
+
+  // supporting_line intersects: points are coplanar
+  ::CGAL::Orientation pqr = cpl_orient(p, q, r);
+  ::CGAL::Orientation pqs = cpl_orient(p, q, s);
+
+  if(pqr == COLLINEAR && pqs == COLLINEAR)
+  {
+    // segments are collinear
+    bool r_in_pq = cln_order(p, r, q),
+         s_in_pq = cln_order(p, s, q),
+         p_in_rs = cln_order(r, p, s);
+
+    if (r_in_pq)
+    {
+      // intersection could be rs, pr or qr
+      if (s_in_pq)
+        return COPLANAR_SEGMENT_RS;
+      if (p_in_rs)
+        return COPLANAR_SEGMENT_PR;
+      CGAL_assertion(cln_order(r, q, s));
+      return COPLANAR_SEGMENT_QR;
+    }
+    else
+    {
+      if (s_in_pq)
+      {
+        // intersection could be ps or qs
+        if (p_in_rs)
+          return COPLANAR_SEGMENT_PS;
+        CGAL_assertion(cln_order(r, q, s));
+        return COPLANAR_SEGMENT_QS;
+      }
+      else
+        if (p_in_rs)
+        {
+          CGAL_assertion(cln_order(r, q, s));
+          return COPLANAR_SEGMENT_PQ;
+        }
+    }
+    return NO_INTERSECTION;
+  }
+
+  if(pqr != pqs)
+  {
+    ::CGAL::Orientation rsp = cpl_orient(r, s, p);
+
+    if (rsp==COLLINEAR)
+    {
+      if (pqr==COLLINEAR || pqs==COLLINEAR)
+      {
+        throw std::runtime_error("no expected #1");
+      }
+      return POINT_P;
+    }
+    ::CGAL::Orientation rsq = cpl_orient(r, s, q);
+    if (rsq==COLLINEAR)
+    {
+      if (pqr==COLLINEAR || pqs==COLLINEAR)
+      {
+        throw std::runtime_error("no expected #2");
+      }
+      return POINT_Q;
+    }
+    if (rsp!=rsq)
+    {
+      if (pqr==COLLINEAR) return POINT_R;
+      if (pqs==COLLINEAR) return POINT_S;
+      return POINT_INTERSECTION;
+    }
   }
 
   return NO_INTERSECTION;
@@ -429,6 +617,7 @@ void generate_subtriangles(std::size_t ti,
     int c2=0;
     int c3=0;
     int c4=0;
+    int c5=0;
     int total=0;
     ~Counter()
     {
@@ -436,6 +625,7 @@ void generate_subtriangles(std::size_t ti,
       std::cout << "coplanar segment intersection : " << c2 << "\n";
       std::cout << "coplanar segment overlap: " << c3 << "\n";
       std::cout << "no intersection: " << c4 << "\n";
+      std::cout << "intersection filtered with bboxes: " << c5 << "\n";
       std::cout << "# pairs of segments : " << total << "\n";
       std::cout << "time computing segment intersections: " << timer1.time() << "\n";
       std::cout << "time sorting intersection points: " << timer2.time() << "\n";
@@ -480,13 +670,6 @@ void generate_subtriangles(std::size_t ti,
   if (!segments.empty())
   {
     std::size_t nbs = segments.size();
-    //~ std::cout << "nbs " << nbs << "\n";
-
-    //~ if (nbs==8)
-    //~ {
-      //~ for (std::size_t i = 0; i<nbs; ++i)
-        //~ std::ofstream("cst_"+std::to_string(i)+".polylines.txt") << std::setprecision(17) << "2 " << segments[i][0] << " " << segments[i][1] << "\n";
-    //~ }
 
     auto supporting_plane = [](const std::array<typename EK::Point_3, 3>& t)
     {
@@ -510,20 +693,69 @@ void generate_subtriangles(std::size_t ti,
       return insert_res.first->second;
     };
 
-
+    std::vector<Bbox_3> point_boxes(points.size());
+    for (std::size_t i = 0; i<points.size(); ++i)
+      point_boxes[i]=points[i].bbox();
+    std::vector<Bbox_3> segment_boxes(nbs);
+    for (std::size_t i = 0; i<nbs; ++i)
+      segment_boxes[i]=point_boxes[segments[i].first]+point_boxes[segments[i].second];
+//~ std::cout << "=========================================================================\n";
     for (std::size_t i = 0; i<nbs-1; ++i)
     {
       for (std::size_t j = i+1; j<nbs; ++j)
       {
         if (intersecting_triangles.count(CGAL::make_sorted_pair(in_triangle_ids[i], in_triangle_ids[j]))!=0)
         {
+          if ( !do_overlap(segment_boxes[i], segment_boxes[j]) )
+          {
+            COUNTER_INSTRUCTION(++counter.c5;)
+            COUNTER_INSTRUCTION(++counter.total;)
+            continue;
+          }
+
+          // TODO: use point ids to skip some test?
           Segment_inter_type seg_inter_type =
-            do_coplanar_segments_intersect<EK>(points[segments[i].first], points[segments[i].second],
-                                               points[segments[j].first], points[segments[j].second]);
+            do_coplanar_segments_intersect<EK>(segments[i].first, segments[i].second,
+                                               segments[j].first, segments[j].second,
+                                               points);
+
+
+          //~ Segment_inter_type_old seg_inter_type_old =
+            //~ do_coplanar_segments_intersect_old<EK>(points[segments[i].first], points[segments[i].second],
+                                               //~ points[segments[j].first], points[segments[j].second]);
+
+
+          //~ std::cout << std::setprecision(17);
+          //~ std::cout << points[segments[i].first] << " " << points[segments[i].second] << "\n";
+          //~ std::cout << points[segments[j].first] << " " << points[segments[j].second] << "\n";
+          //~ std::cout << "OLD: " << print_enum(seg_inter_type_old) << "\n";
+          //~ std::cout << "NEW: " << print_enum(seg_inter_type) << "\n";
+
           switch(seg_inter_type)
           {
+            case POINT_P:
+            {
+              points_on_segments[j].push_back(segments[i].first);
+              break;
+            }
+            case POINT_Q:
+            {
+              points_on_segments[j].push_back(segments[i].second);
+              break;
+            }
+            case POINT_R:
+            {
+              points_on_segments[i].push_back(segments[j].first);
+              break;
+            }
+            case POINT_S:
+            {
+              points_on_segments[i].push_back(segments[j].second);
+              break;
+            }
             case POINT_INTERSECTION:
             {
+              // TODO: use version with no variant
               auto res = CGAL::intersection(supporting_plane(triangles[in_triangle_ids[i]]),
                                             supporting_plane(triangles[in_triangle_ids[j]]),
                                             supporting_plane(triangles[ti]));
@@ -534,101 +766,78 @@ void generate_subtriangles(std::size_t ti,
                 std::size_t pid = get_point_id(*pt_ptr);
                 points_on_segments[i].push_back(pid);
                 points_on_segments[j].push_back(pid);
-                break;
-                //~ std::cout << "new inter " << *pt_ptr << " (" << depth(points_on_segments[i].back()) << ")" << "\n";
-
-              }
-            }
-            // break; No break because of the coplanar case
-            case COPLANAR_SEGMENTS:
-            {
-              // We can have hard cases if two triangles are coplanar....
-
-              //~ std::cout << "coplanar inter: " << i << " " << j << "\n";
-
-              typename EK::Segment_3 s1(points[segments[i].first], points[segments[i].second]);
-              typename EK::Segment_3 s2(points[segments[j].first], points[segments[j].second]);// TODO: avoid this construction
-              auto inter = CGAL::intersection(s1, s2);
-
-              if (inter == boost::none) throw std::runtime_error("Unexpected case #2");
-
-              if (const typename EK::Point_3* pt_ptr = boost::get<typename EK::Point_3>(&(*inter)))
-              {
-                COUNTER_INSTRUCTION(++counter.c2;)
-                std::size_t pid = get_point_id(*pt_ptr);
-                points_on_segments[i].push_back(pid);
-                points_on_segments[j].push_back(pid);
-                break;
-                //~ std::cout << "new inter bis " << *pt_ptr << " (" << depth(points_on_segments[i].back()) << ")" <<  "\n";
               }
               else
               {
-                if (const typename EK::Segment_3* seg_ptr = boost::get<typename EK::Segment_3>(&(*inter)))
+                COUNTER_INSTRUCTION(++counter.c2;)
+                //TODO find better!
+                typename EK::Segment_3 s1(points[segments[i].first], points[segments[i].second]);
+                typename EK::Segment_3 s2(points[segments[j].first], points[segments[j].second]);// TODO: avoid this construction
+                auto inter = CGAL::intersection(s1, s2);
+                if (inter == boost::none) throw std::runtime_error("Unexpected case #2");
+                if (const typename EK::Point_3* pt_ptr = boost::get<typename EK::Point_3>(&(*inter)))
                 {
-                  //TODO HERE WE SHOULD IMPROVE TO AVOID RECOMPUTING SEGMENTS ENDPOINTS
-                  COUNTER_INSTRUCTION(++counter.c3;)
-                  std::size_t src_pid = get_point_id(seg_ptr->source());
-                  std::size_t tgt_pid = get_point_id(seg_ptr->target());
-                  points_on_segments[i].push_back(src_pid);
-                  points_on_segments[j].push_back(src_pid);
-                  points_on_segments[i].push_back(tgt_pid);
-                  points_on_segments[j].push_back(tgt_pid);
+                  std::size_t pid = get_point_id(*pt_ptr);
+                  points_on_segments[i].push_back(pid);
+                  points_on_segments[j].push_back(pid);
                   break;
-                  //~ std::cout << "new inter seg " << *seg_ptr << " (" << depth(*seg_ptr) << ")" <<  "\n";
                 }
                 else
-                  throw std::runtime_error("BOOM\n");
+                  throw std::runtime_error("Unexpected case 1");
+                //~ std::ofstream debug ("/tmp/triangles.polylines.txt");
+                //~ debug << "4 " << triangles[ti][0] << " " << triangles[ti][1] << " " << triangles[ti][2] << " " << triangles[ti][0] << "\n";
+                //~ debug << "4 " << triangles[in_triangle_ids[i]][0] << " " << triangles[in_triangle_ids[i]][1] << " " << triangles[in_triangle_ids[i]][2] << " " << triangles[in_triangle_ids[i]][0] << "\n";
+                //~ debug << "4 " << triangles[in_triangle_ids[j]][0] << " " << triangles[in_triangle_ids[j]][1] << " " << triangles[in_triangle_ids[j]][2] << " " << triangles[in_triangle_ids[j]][0] << "\n";
+                //~ debug.close();
+                //~ throw std::runtime_error("Unexpected case 1");
               }
-
-#if 0
-              //this code works if triangles are not coplanar
-              // coplanar intersection that is not a point
-              int coord = 0;
-              const typename EK::Segment_3& s = segments[i];
-              typename EK::Point_3 src = s[0], tgt=s[1];
-              if (src.x()==tgt.x())
-              {
-                coord=1;
-                if (src.y()==tgt.y())
-                  coord==2;
-              }
-
-              std::vector<typename EK::Point_3> tmp_pts = {
-                src, tgt, segments[j][0], segments[j][1] };
-
-              std::sort(tmp_pts.begin(), tmp_pts.end(),
-                        [coord](const typename EK::Point_3& p, const typename EK::Point_3& q)
-                        {return p[coord]<q[coord];});
-
-              points_on_segments[i].push_back(tmp_pts[1]);
-              points_on_segments[i].push_back(tmp_pts[2]);
-              points_on_segments[j].push_back(tmp_pts[1]);
-              points_on_segments[j].push_back(tmp_pts[2]);
-#endif
-              //~ std::cout << "new inter coli " << segments[j][0] << "\n";
-              //~ std::cout << "new inter coli " << segments[j][1] << "\n";
-              //~ std::cout << "new inter coli " << segments[i][0] << "\n";
-              //~ std::cout << "new inter coli " << segments[i][1] << "\n";
-
-              //~ points_on_segments[j].push_back(*pt_ptr);
-
-
-
-              //~ std::cerr << "ERROR: intersection is a segment\n";
-              //~ std::cout << std::setprecision(17);
-              //~ exact(segments[i]);
-              //~ exact(segments[j]);
-              //~ std::cout << segments[i] << "\n";
-              //~ std::cout << segments[j] << "\n";
-              //~ debug << "4 " << triangles[in_triangle_ids[i]] << " " << triangles[in_triangle_ids[i]][0] << "\n";
-              //~ debug << "4 " << triangles[in_triangle_ids[j]] << " " << triangles[in_triangle_ids[j]][0] << "\n";
-              //~ debug << "4 " << triangles[ti] << " " << triangles[ti][0] << "\n";
-              //~ exit(1);
+              break;
+            }
+            case COPLANAR_SEGMENT_PQ:
+            {
+              COUNTER_INSTRUCTION(++counter.c3;)
+              points_on_segments[j].push_back(segments[i].first);
+              points_on_segments[j].push_back(segments[i].second);
+              break;
+            }
+            case COPLANAR_SEGMENT_RS:
+            {
+              COUNTER_INSTRUCTION(++counter.c3;)
+              points_on_segments[i].push_back(segments[j].first);
+              points_on_segments[i].push_back(segments[j].second);
+              break;
+            }
+            case COPLANAR_SEGMENT_PR:
+            {
+              COUNTER_INSTRUCTION(++counter.c3;)
+              points_on_segments[i].push_back(segments[j].first);
+              points_on_segments[j].push_back(segments[i].first);
+              break;
+            }
+            case COPLANAR_SEGMENT_QS:
+            {
+              COUNTER_INSTRUCTION(++counter.c3;)
+              points_on_segments[i].push_back(segments[j].second);
+              points_on_segments[j].push_back(segments[i].second);
+              break;
+            }
+            case COPLANAR_SEGMENT_PS:
+            {
+              COUNTER_INSTRUCTION(++counter.c3;)
+              points_on_segments[i].push_back(segments[j].second);
+              points_on_segments[j].push_back(segments[i].first);
+              break;
+            }
+            case COPLANAR_SEGMENT_QR:
+            {
+              COUNTER_INSTRUCTION(++counter.c3;)
+              points_on_segments[i].push_back(segments[j].first);
+              points_on_segments[j].push_back(segments[i].second);
+              break;
             }
 //            break;
-            default:
+            case NO_INTERSECTION:
               COUNTER_INSTRUCTION(++counter.c4;)
-            break;
           }
         }
         COUNTER_INSTRUCTION(++counter.total;)
@@ -668,6 +877,24 @@ void generate_subtriangles(std::size_t ti,
         points_on_segments[i].push_back(tgt_id);
         auto last = std::unique(points_on_segments[i].begin(), points_on_segments[i].end());
         points_on_segments[i].erase(last, points_on_segments[i].end());
+
+        if (std::set<std::size_t>(points_on_segments[i].begin(), points_on_segments[i].end()).size()!= points_on_segments[i].size())
+        {
+          std::cout << "coord = " << coord << "\n";
+          std::cout << "(src.x()==tgt.x()) " << (src.x()==tgt.x()) << "\n";
+          std::cout << "(src.y()==tgt.y()) " << (src.y()==tgt.y()) << "\n";
+          std::cout << "(src.z()==tgt.z()) " << (src.z()==tgt.z()) << "\n";
+
+          for (auto v : points_on_segments[i])
+            std::cout << " " << v;
+          std::cout << std::endl;
+          for (auto v : points_on_segments[i])
+            std::cout << points[v] << "\n";
+          std::cout << std::endl;
+          throw std::runtime_error("unique failed!");
+        }
+
+
         nb_new_segments+=points_on_segments[i].size()-2;
 
         //~ {
@@ -720,6 +947,24 @@ void generate_subtriangles(std::size_t ti,
   }
   //~ std::cout << "done\n";
 #endif
+
+  // TODO: sorted pair to be constructed when pushing_back
+  for (std::pair<std::size_t, size_t>& s : segments)
+    if (s.second < s.first)
+      std::swap(s.first,s.second);
+  std::sort(segments.begin(), segments.end());
+  auto last = std::unique(segments.begin(), segments.end());
+  segments.erase(last, segments.end());
+
+
+  std::ofstream("/tmp/tri.xyz") << std::setprecision(17) << triangles[ti][0] << "\n"
+                                                         << triangles[ti][1] << "\n"
+                                                         << triangles[ti][2] << "\n";
+  std::ofstream debug("/tmp/cst.polylines.txt");
+  debug << std::setprecision(17);
+  for(auto s : segments)
+    debug << "2 " << points[s.first] << " " << points[s.second] << "\n";
+  debug.close();
 
   COUNTER_INSTRUCTION(counter.timer3.start();)
   cdt.insert_constraints(points.begin(), points.end(), segments.begin(), segments.end());
