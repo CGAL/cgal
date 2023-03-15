@@ -668,14 +668,14 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
   //       y ==  (a2*t*w2 - (a2*c0*w2 - a0*c2*w2 + a0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0) ]]
   //
   //   sage: x0 = -(b2*t*w2 - (b2*c0*w2 - b0*c2*w2 + b0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0)
-  //   sage: eqb0 = qx + t * a0 / w0 - x0 == 0
+  //   sage: eqb0 = px + t * a0 / w0 - x0 == 0
   //   sage: solve(eqb0, t)
-  //     [t == -(b2*c0 - b0*c2 - (a2*b0 - a0*b2)*qx)*w0*w2/(b0*w0 - (a0*a2*b0 - (a0^2 - 1)*b2)*w2) ]
+  //     [t == -(b2*c0 - b0*c2 - (a2*b0 - a0*b2)*px)*w0*w2/(b0*w0 - (a0*a2*b0 - (a0^2 - 1)*b2)*w2) ]
   //
   //   sage: y0 = (a2*t*w2 - (a2*c0*w2 - a0*c2*w2 + a0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0)
-  //   sage: eqb1 = qy + t * b0 / w0 - y0 == 0
+  //   sage: eqb1 = py + t * b0 / w0 - y0 == 0
   //   sage: solve(eqb1, t)
-  //     [t == -(a2*c0 - a0*c2 + (a2*b0 - a0*b2)*qy)*w0*w2/(a0*w0 + (a2*b0^2 - a0*b0*b2 - a2)*w2)]
+  //     [t == -(a2*c0 - a0*c2 + (a2*b0 - a0*b2)*py)*w0*w2/(a0*w0 + (a2*b0^2 - a0*b0*b2 - a2)*w2)]
 
   Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCaches) ;
   Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->other_collinear_edge(), tri->other_collinear_edge_weight(), aCaches) ;
@@ -708,8 +708,9 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       const FT& l2c = l2->c() ;
 
       // Since l0 and l1 are parallel, we cannot solve the system using:
-      //   l0a*x + l0b*y + l0c = 0
+      //   l0a*x + l0b*y + l0c = 0 (1)
       //   l1a*x + l1b*y + l1c = 0
+      //   l2a*x + l2b*y + l2c = 0
       // Instead, we use the equation of the line orthogonal to l0 (and l1).
       // However, rephrasing
       //   l0a*x + l0b*y + l0c = 0
@@ -717,14 +718,16 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       //   [x, y] = projected_seed + t * N
       // requires the norm (l0a² + l0b²) to be exactly '1', which likely isn't the case
       // if we are using inexact square roots. In that case, the norm behaves similarly
-      // to a weight, and likewise needs to be inverted. So (now with weights), the equation
+      // to a weight (i.e. speed), and the speed is inverted in the alternate front formulation.
+      // Equation (1) rewritten with weights is:
       //   w*l0a*x + w*l0b*y + w*l0c = 0
-      // with l0a² + l0b² ~= 1 is:
+      // with l0a² + l0b² ~= 1. Extracting the numerical error, we have:
       //   w'*l0a'*x + w'*l0b'*y + w'*l0c' = 0,
-      // with l0a'² + l0b'² = 1. The orthogonal displacement is rephrased to:
+      // with l0a'² + l0b'² = 1.
+      // The orthogonal displacement is rephrased to:
       //   [x, y] = projected_seed + t / w' * N,
       // with w' = weight * (l0a² + l0b²).
-      const FT sq_w0 = square(l0a) + square(l0b); // l0a and l0b are *weighted* coefficients
+      const FT sq_w0 = square(l0a) + square(l0b); // l0a and l0b are already *weighted* coefficients
 
       FT num(0), den(0) ;
       if ( ! CGAL_NTS is_zero(l0b) ) // Non-vertical
