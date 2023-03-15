@@ -12,8 +12,8 @@
 
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 void Straight_skeleton_traits_external_trace( std::string s )
 {
   std::cout << s << std::endl ;
