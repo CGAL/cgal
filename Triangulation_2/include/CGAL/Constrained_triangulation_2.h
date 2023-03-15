@@ -600,6 +600,7 @@ public:
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   auto display_vertex(Vertex_handle v) const {
     With_point_tag point_tag;
+    using CGAL::IO::oformat;
     return oformat(v, point_tag);
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS

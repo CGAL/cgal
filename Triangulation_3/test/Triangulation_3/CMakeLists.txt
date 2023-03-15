@@ -74,10 +74,13 @@ foreach(test ${all_tests})
 endforeach()
 
 if(TARGET CGAL::TBB_support)
+  message(STATUS "Found TBB")
+
   foreach(target test_delaunay_3 test_regular_3
                  test_regular_insert_range_with_info)
     target_link_libraries(${target} PUBLIC CGAL::TBB_support)
   endforeach()
+
   if(BUILD_TESTING)
     set_property(TEST
       "execution   of  test_delaunay_3"
@@ -85,6 +88,8 @@ if(TARGET CGAL::TBB_support)
       "execution   of  test_regular_insert_range_with_info"
       PROPERTY RUN_SERIAL 1)
   endif()
+else()
+  message(STATUS "NOTICE: The TBB library was not found. Some tests will not be available.")
 endif()
 
 if(BUILD_TESTING)

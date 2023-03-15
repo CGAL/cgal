@@ -5,27 +5,8 @@ project(Core_Examples)
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 if(NOT CGAL_Core_FOUND)
-
-  message(
-    STATUS
-      "This project requires the CGAL_Core library, and will not be compiled.")
+  message("NOTICE: This project requires the CGAL_Core library, and will not be compiled.")
   return()
-
 endif()
-
-# Boost and its components
-find_package(Boost)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
 
 create_single_source_cgal_program("delaunay.cpp")

@@ -1313,7 +1313,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
   }
 
   //write facets
-  std::size_t nbf_print = 0;
+  CGAL_assertion_code(std::size_t nbf_print = 0);
   for (Finite_facets_iterator fit = tr.finite_facets_begin();
        fit != tr.finite_facets_end(); ++fit)
   {
@@ -1324,7 +1324,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
       ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
           << vertices.left.at(c->vertex((i + 2) % 4)) << " "
           << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
-      ++nbf_print;
+      CGAL_assertion_code(++nbf_print);
     }
   }
   CGAL_assertion(nbf == nbf_print);
@@ -1581,7 +1581,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
   }
 
   //write facets
-  std::size_t nbf_print = 0;
+  CGAL_assertion_code(std::size_t nbf_print = 0);
   for (Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin();
        fit != c3t3.facets_in_complex_end(); ++fit)
   {
@@ -1590,7 +1590,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
     ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
         << vertices.left.at(c->vertex((i + 2) % 4)) << " "
         << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
-    ++nbf_print;
+    CGAL_assertion_code(++nbf_print);
   }
   CGAL_assertion(nbf == nbf_print);
 
