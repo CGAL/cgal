@@ -40,6 +40,6 @@ target_link_libraries(
 
      if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
        set_tests_properties(
-         compilation_of__create_obb_mesh_plugin
+         "compilation of  create_obb_mesh_plugin"
          PROPERTIES RESOURCE_LOCK Selection_test_resources)
      endif()
