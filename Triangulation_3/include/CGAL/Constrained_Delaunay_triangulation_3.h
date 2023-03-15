@@ -404,10 +404,8 @@ public:
   }
 
 private:
-  void fill_cdt_2(CDT_3_face_index polygon_contraint_id)
+  void fill_cdt_2(CDT_2& cdt_2, CDT_3_face_index polygon_contraint_id)
   {
-    CDT_2& cdt_2 = face_cdt_2[polygon_contraint_id];
-
     const auto handles = [this, polygon_contraint_id]() {
       std::vector<Vertex_handle> handles;
       for(const auto& face_edge : this->face_border[polygon_contraint_id]) {
@@ -1368,7 +1366,8 @@ public:
   void restore_constrained_Delaunay()
   {
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
-      fill_cdt_2(i);
+      CDT_2& cdt_2 = face_cdt_2[i];
+      fill_cdt_2(cdt_2, i);
       search_for_missing_subfaces(i);
     }
     const auto npos = face_constraint_misses_subfaces.npos;
