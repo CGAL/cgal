@@ -744,7 +744,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
         CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
       }
 
-      ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den) && !CGAL_NTS certified_is_zero(den);
+      ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);
       return cgal_make_optional(ok, Rational<FT>(num,den)) ;
     }
     else
