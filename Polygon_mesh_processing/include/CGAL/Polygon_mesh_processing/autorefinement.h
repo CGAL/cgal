@@ -154,7 +154,7 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
   // first handle case of shared endpoints
   if (pi==ri)
   {
-    if (si==qi || cpl_orient(p, q, s)!=COPLANAR) return NO_INTERSECTION;
+    if (si==qi || cpl_orient(p, q, s)!=COLLINEAR) return NO_INTERSECTION;
     // can be s, q or nothing
     if (cln_order(p,s,q))
       return POINT_S;
@@ -166,7 +166,7 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
   {
     if(pi==si)
     {
-      if (qi==ri || cpl_orient(p, q, r)!=COPLANAR) return NO_INTERSECTION;
+      if (qi==ri || cpl_orient(p, q, r)!=COLLINEAR) return NO_INTERSECTION;
       // can be r, q or nothing
       if (cln_order(p,r,q))
         return POINT_R;
@@ -178,7 +178,7 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
     {
       if (qi==ri)
       {
-        if (pi==si || cpl_orient(p, q, s)!=COPLANAR) return NO_INTERSECTION;
+        if (pi==si || cpl_orient(p, q, s)!=COLLINEAR) return NO_INTERSECTION;
         // can be p, s or nothing
         if (cln_order(p,s,q))
           return POINT_S;
@@ -190,7 +190,7 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
       {
         if (qi==si)
         {
-          if (pi==ri || cpl_orient(p, q, r)!=COPLANAR) return NO_INTERSECTION;
+          if (pi==ri || cpl_orient(p, q, r)!=COLLINEAR) return NO_INTERSECTION;
           // can be p, r or nothing
           if (cln_order(p,r,q))
             return POINT_R;
@@ -577,7 +577,7 @@ void generate_subtriangles(std::size_t ti,
 #endif
 
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits ,Default, Itag> CDT_2;
-  //typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
+  //typedef CGAL::Constrained_triangulation_plus_2<CDT_2> CDT;
   typedef CDT_2 CDT;
 
   const std::array<typename EK::Point_3,3>& t = triangles[ti];
@@ -630,8 +630,11 @@ void generate_subtriangles(std::size_t ti,
       std::cout << "time computing segment intersections: " << timer1.time() << "\n";
       std::cout << "time sorting intersection points: " << timer2.time() << "\n";
       std::cout << "time for cdt of constraints: " << timer3.time() << "\n";
+      std::cout << "time coplanar segment intersections: " << timer4.time() << "\n";
+      std::cout << "time of do_coplanar_segments_intersect: " << timer5.time() << "\n";
+      std::cout << "time of triplane intersection: " << timer6.time() << "\n";
     }
-    CGAL::Real_timer timer1, timer2, timer3;
+    CGAL::Real_timer timer1, timer2, timer3, timer4, timer5, timer6;
   };
 
   static Counter counter;
@@ -713,11 +716,12 @@ void generate_subtriangles(std::size_t ti,
             continue;
           }
 
-          // TODO: use point ids to skip some test?
+          COUNTER_INSTRUCTION(counter.timer5.start();)
           Segment_inter_type seg_inter_type =
             do_coplanar_segments_intersect<EK>(segments[i].first, segments[i].second,
                                                segments[j].first, segments[j].second,
                                                points);
+          COUNTER_INSTRUCTION(counter.timer5.stop();)
 
 
           //~ Segment_inter_type_old seg_inter_type_old =
@@ -756,9 +760,11 @@ void generate_subtriangles(std::size_t ti,
             case POINT_INTERSECTION:
             {
               // TODO: use version with no variant
+              COUNTER_INSTRUCTION(counter.timer6.start();)
               auto res = CGAL::intersection(supporting_plane(triangles[in_triangle_ids[i]]),
                                             supporting_plane(triangles[in_triangle_ids[j]]),
                                             supporting_plane(triangles[ti]));
+              COUNTER_INSTRUCTION(counter.timer6.stop();)
 
               if (const typename EK::Point_3* pt_ptr = boost::get<typename EK::Point_3>(&(*res)))
               {
@@ -770,6 +776,7 @@ void generate_subtriangles(std::size_t ti,
               else
               {
                 COUNTER_INSTRUCTION(++counter.c2;)
+                COUNTER_INSTRUCTION(counter.timer4.start();)
                 //TODO find better!
                 typename EK::Segment_3 s1(points[segments[i].first], points[segments[i].second]);
                 typename EK::Segment_3 s2(points[segments[j].first], points[segments[j].second]);// TODO: avoid this construction
@@ -784,6 +791,7 @@ void generate_subtriangles(std::size_t ti,
                 }
                 else
                   throw std::runtime_error("Unexpected case 1");
+                COUNTER_INSTRUCTION(counter.timer4.stop();)
                 //~ std::ofstream debug ("/tmp/triangles.polylines.txt");
                 //~ debug << "4 " << triangles[ti][0] << " " << triangles[ti][1] << " " << triangles[ti][2] << " " << triangles[ti][0] << "\n";
                 //~ debug << "4 " << triangles[in_triangle_ids[i]][0] << " " << triangles[in_triangle_ids[i]][1] << " " << triangles[in_triangle_ids[i]][2] << " " << triangles[in_triangle_ids[i]][0] << "\n";
@@ -877,24 +885,6 @@ void generate_subtriangles(std::size_t ti,
         points_on_segments[i].push_back(tgt_id);
         auto last = std::unique(points_on_segments[i].begin(), points_on_segments[i].end());
         points_on_segments[i].erase(last, points_on_segments[i].end());
-
-        if (std::set<std::size_t>(points_on_segments[i].begin(), points_on_segments[i].end()).size()!= points_on_segments[i].size())
-        {
-          std::cout << "coord = " << coord << "\n";
-          std::cout << "(src.x()==tgt.x()) " << (src.x()==tgt.x()) << "\n";
-          std::cout << "(src.y()==tgt.y()) " << (src.y()==tgt.y()) << "\n";
-          std::cout << "(src.z()==tgt.z()) " << (src.z()==tgt.z()) << "\n";
-
-          for (auto v : points_on_segments[i])
-            std::cout << " " << v;
-          std::cout << std::endl;
-          for (auto v : points_on_segments[i])
-            std::cout << points[v] << "\n";
-          std::cout << std::endl;
-          throw std::runtime_error("unique failed!");
-        }
-
-
         nb_new_segments+=points_on_segments[i].size()-2;
 
         //~ {
@@ -1240,6 +1230,7 @@ void autorefine_soup_output(const PointRange& input_points,
       );
     }
   }
+
   // import refined triangles
   for (const std::array<EK::Point_3,3>& t : new_triangles)
   {
