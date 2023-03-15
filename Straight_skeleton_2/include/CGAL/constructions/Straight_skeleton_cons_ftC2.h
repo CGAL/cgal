@@ -194,7 +194,7 @@ boost::optional< typename K::Line_2> compute_normalized_line_coeffC2( Segment_2<
   {
     FT sa = e.source().y() - e.target().y();
     FT sb = e.target().x() - e.source().x();
-    FT l2 = (sa*sa) + (sb*sb) ;
+    FT l2 = square(sa) + square(sb) ;
 
     if ( CGAL_NTS is_finite(l2) )
     {
@@ -698,8 +698,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
     line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(), px,py);
     CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ".\nProjected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
 
-    const Comparison_result res = compare(tri->collinear_edge_weight(), tri->other_collinear_edge_weight());
-    if ( res == EQUAL )
+    if ( tri->collinear_edge_weight() == tri->other_collinear_edge_weight() )
     {
       const FT& l0a = l0->a() ;
       const FT& l0b = l0->b() ;
@@ -728,7 +727,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       const FT sq_w0 = square(l0a) + square(l0b); // l0a and l0b are *weighted* coefficients
 
       FT num(0), den(0) ;
-      if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
+      if ( ! CGAL_NTS is_zero(l0b) ) // Non-vertical
       {
         num = ((l2a*l0b - l0a*l2b) * px - l2b*l0c + l0b*l2c) * sq_w0 ;
         den = l0a*l0a*l2b - l2b*sq_w0 + l0b*sq_w0 - l0a*l2a*l0b ;
