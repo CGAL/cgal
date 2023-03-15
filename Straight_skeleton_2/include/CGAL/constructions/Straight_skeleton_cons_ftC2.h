@@ -737,8 +737,9 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       }
       else
       {
-        num = ((l2a*l0b - l0a*l2b) * py - l0a*l2c + l2a*l0c) * sq_w0 ;
-        den = l0a*l0b*l2b - l0b*l0b*l2a + l2a*sq_w0 - l0a*sq_w0;
+        // l0b = 0, and all sq_w0 disappear
+        num = - l0a*l2b*py - l0a*l2c + l2a*l0c ;
+        den = l2a - l0a;
 
         CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
       }
