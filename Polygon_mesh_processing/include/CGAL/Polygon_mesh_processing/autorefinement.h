@@ -36,9 +36,9 @@
 
 #include <vector>
 
-//#define TEST_RESOLVE_INTERSECTION
+#define TEST_RESOLVE_INTERSECTION
 #define DEDUPLICATE_SEGMENTS
-//#define DEBUG_COUNTERS
+#define DEBUG_COUNTERS
 //#define USE_FIXED_PROJECTION_TRAITS
 //#define DEBUG_DEPTH
 
@@ -56,8 +56,6 @@ namespace Polygon_mesh_processing {
 #ifndef DOXYGEN_RUNNING
 namespace autorefine_impl {
 
-
-enum Segment_inter_type_old { NO_INTERSECTION_OLD=0, COPLANAR_SEGMENTS, POINT_INTERSECTION_OLD };
 enum Segment_inter_type { NO_INTERSECTION=0,
                           POINT_INTERSECTION,
                           POINT_P,
@@ -71,68 +69,6 @@ enum Segment_inter_type { NO_INTERSECTION=0,
                           COPLANAR_SEGMENT_PR,
                           COPLANAR_SEGMENT_QR,
                         };
-
-
-
-std::string print_enum(Segment_inter_type_old s)
-{
-  switch(s)
-  {
-    case NO_INTERSECTION_OLD: return "NO_INTERSECTION_OLD";
-    case COPLANAR_SEGMENTS: return "COPLANAR_SEGMENTS";
-    case POINT_INTERSECTION_OLD: return "POINT_INTERSECTION_OLD";
-  }
-}
-
-std::string print_enum(Segment_inter_type s)
-{
-  switch(s)
-  {
-    case NO_INTERSECTION: return "NO_INTERSECTION";
-    case POINT_INTERSECTION: return "POINT_INTERSECTION";
-    case POINT_P: return "POINT_P";
-    case POINT_Q: return "POINT_Q";
-    case POINT_R: return "POINT_R";
-    case POINT_S: return "POINT_S";
-    case COPLANAR_SEGMENT_PQ: return "COPLANAR_SEGMENT_PQ";
-    case COPLANAR_SEGMENT_RS: return "COPLANAR_SEGMENT_RS";
-    case COPLANAR_SEGMENT_PS: return "COPLANAR_SEGMENT_PS";
-    case COPLANAR_SEGMENT_QS: return "COPLANAR_SEGMENT_QS";
-    case COPLANAR_SEGMENT_PR: return "COPLANAR_SEGMENT_PR";
-    case COPLANAR_SEGMENT_QR: return "COPLANAR_SEGMENT_QR";
-  }
-}
-
-
-template <class K>
-Segment_inter_type_old
-do_coplanar_segments_intersect_old(const typename K::Point_3& s1_0, const typename K::Point_3& s1_1,
-                                   const typename K::Point_3& s2_0, const typename K::Point_3& s2_1,
-                                   const K& k = K())
-{
-  // supporting_line intersects: points are coplanar
-  typename K::Coplanar_orientation_3 cpl_orient=k.coplanar_orientation_3_object();
-  ::CGAL::Orientation or1 = cpl_orient(s1_0, s1_1, s2_0);
-  ::CGAL::Orientation or2 = cpl_orient(s1_0, s1_1, s2_1);
-
-  if(or1 == COLLINEAR && or2 == COLLINEAR)
-  {
-    // segments are collinear
-    typename K::Collinear_are_ordered_along_line_3 cln_order = k.collinear_are_ordered_along_line_3_object();
-    return (cln_order(s1_0, s2_0, s1_1) ||
-            cln_order(s1_0, s2_1, s1_1) ||
-            cln_order(s2_0, s1_0, s2_1)) ? COPLANAR_SEGMENTS : NO_INTERSECTION_OLD;
-  }
-
-  if(or1 != or2)
-  {
-    or1 = cpl_orient(s2_0, s2_1, s1_0);
-    return (or1 == COLLINEAR || or1 != cpl_orient(s2_0, s2_1, s1_1)) ? POINT_INTERSECTION_OLD : NO_INTERSECTION_OLD;
-  }
-
-  return NO_INTERSECTION_OLD;
-}
-
 
 // test intersection in the interior of segment pq and rs with pq and rs being coplanar segments
 // note that for coplanar cases, we might report identical endpoints
@@ -723,18 +659,6 @@ void generate_subtriangles(std::size_t ti,
                                                points);
           COUNTER_INSTRUCTION(counter.timer5.stop();)
 
-
-          //~ Segment_inter_type_old seg_inter_type_old =
-            //~ do_coplanar_segments_intersect_old<EK>(points[segments[i].first], points[segments[i].second],
-                                               //~ points[segments[j].first], points[segments[j].second]);
-
-
-          //~ std::cout << std::setprecision(17);
-          //~ std::cout << points[segments[i].first] << " " << points[segments[i].second] << "\n";
-          //~ std::cout << points[segments[j].first] << " " << points[segments[j].second] << "\n";
-          //~ std::cout << "OLD: " << print_enum(seg_inter_type_old) << "\n";
-          //~ std::cout << "NEW: " << print_enum(seg_inter_type) << "\n";
-
           switch(seg_inter_type)
           {
             case POINT_P:
@@ -947,14 +871,14 @@ void generate_subtriangles(std::size_t ti,
   segments.erase(last, segments.end());
 
 
-  std::ofstream("/tmp/tri.xyz") << std::setprecision(17) << triangles[ti][0] << "\n"
-                                                         << triangles[ti][1] << "\n"
-                                                         << triangles[ti][2] << "\n";
-  std::ofstream debug("/tmp/cst.polylines.txt");
-  debug << std::setprecision(17);
-  for(auto s : segments)
-    debug << "2 " << points[s.first] << " " << points[s.second] << "\n";
-  debug.close();
+  //~ std::ofstream("/tmp/tri.xyz") << std::setprecision(17) << triangles[ti][0] << "\n"
+                                                         //~ << triangles[ti][1] << "\n"
+                                                         //~ << triangles[ti][2] << "\n";
+  //~ std::ofstream debug("/tmp/cst.polylines.txt");
+  //~ debug << std::setprecision(17);
+  //~ for(auto s : segments)
+    //~ debug << "2 " << points[s.first] << " " << points[s.second] << "\n";
+  //~ debug.close();
 
   COUNTER_INSTRUCTION(counter.timer3.start();)
   cdt.insert_constraints(points.begin(), points.end(), segments.begin(), segments.end());
