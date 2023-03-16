@@ -1347,7 +1347,7 @@ private:
       const auto fh_region = region(cdt_2, fh);
       processed_faces.insert(fh_region.begin(), fh_region.end());
       try {
-        restore_subface_region(face_index, ++region_count, cdt_2, fh_region);
+        restore_subface_region(face_index, region_count++, cdt_2, fh_region);
       }
       catch(Next_face& e) {
         std::cerr << "ERROR: " << e.what() << " in sub-region " << (region_count - 1)
