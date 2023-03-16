@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     {
       std::ofstream missing_faces("missing_faces.polylines.txt");
       missing_faces.precision(17);
-      cdt.recheck_constrainted_Delaunay();
+      cdt.recheck_constrained_Delaunay();
       cdt.write_missing_subfaces_file(missing_faces);
     }
     {

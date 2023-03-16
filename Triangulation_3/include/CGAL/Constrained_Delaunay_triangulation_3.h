@@ -1357,7 +1357,7 @@ private:
   }
 
 public:
-  void recheck_constrainted_Delaunay() {
+  void recheck_constrained_Delaunay() {
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
       search_for_missing_subfaces(i);
     }
