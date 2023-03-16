@@ -28,7 +28,7 @@ do
                 workflows_check_runs=$(gh api repos/$repo/check-suites/$workflows_checksuite_id/check-runs)
                 workflows_check_runs_id=$(jq -r '.check_runs[0].id' <<< "$workflows_check_runs")
                 workflows_check_runs_annotation=$(gh api repos/$repo/check-runs/$workflows_check_runs_id/annotations)
-                worfklows_annotation_level=$(jq -r '.[].annotation_level' <<< "$workflows_check_runs_annotation")
+                worfklows_annotation_level=$(jq -r '.[].annotation_level' <<< "$workflows_check_runs_annotation" | tr '\n' ' ')
                 if [ "$worfklows_annotation_level" == "" ]
                 then
                     worfklows_annotation_level+="-"
