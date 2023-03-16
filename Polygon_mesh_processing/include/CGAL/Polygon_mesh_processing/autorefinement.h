@@ -465,7 +465,6 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   {
     int j=(i+1)%3;
     test_edge<K>(t1[i], t1[j], t2[0], t2[1], t2[2], ori[i], ori[j], inter_pts);
-    //~ if (inter_pts.size()>1) return;
   }
 
   // test edges of t2 vs t1
@@ -475,7 +474,6 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   {
     int j=(i+1)%3;
     test_edge<K>(t2[i], t2[j], t1[0], t1[1], t1[2], ori[i], ori[j], inter_pts);
-    //~ if (inter_pts.size()>1) return;
   }
 
   // because we don't handle intersection type and can have edge-edge edge-vertex duplicates
@@ -483,9 +481,10 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   auto last = std::unique(inter_pts.begin(), inter_pts.end());
   inter_pts.erase(last, inter_pts.end());
 
-
+#ifdef DEBUG_DEPTH
   for (auto p : inter_pts)
     if (depth(p)>2) throw std::runtime_error("Depth is not 2: "+std::to_string(depth(p)));
+#endif
 }
 
 //////////////////////////////////
@@ -507,8 +506,8 @@ void generate_subtriangles(std::size_t ti,
                            const std::vector<std::array<typename EK::Point_3,3>>& triangles,
                            std::vector<std::array<typename EK::Point_3,3>>& new_triangles)
 {
-  //~ std::cout << "generate_subtriangles()\n";
-  std::cout << std::setprecision(17);
+  // std::cout << "generate_subtriangles()\n";
+  // std::cout << std::setprecision(17);
 
 #ifdef USE_FIXED_PROJECTION_TRAITS
   typedef ::CGAL::internal::Projection_traits_3<EK, dim> P_traits;
@@ -870,16 +869,16 @@ void generate_subtriangles(std::size_t ti,
       }
     }
   }
-#endif
 
   // TODO: sorted pair to be constructed when pushing_back
+  // TODO: only needed in case of coplanar segments?
   for (std::pair<std::size_t, size_t>& s : segments)
     if (s.second < s.first)
       std::swap(s.first,s.second);
   std::sort(segments.begin(), segments.end());
   auto last = std::unique(segments.begin(), segments.end());
   segments.erase(last, segments.end());
-
+#endif
 
   //~ std::ofstream("/tmp/tri.xyz") << std::setprecision(17) << triangles[ti][0] << "\n"
                                                          //~ << triangles[ti][1] << "\n"
@@ -891,7 +890,10 @@ void generate_subtriangles(std::size_t ti,
   //~ debug.close();
 
   COUNTER_INSTRUCTION(counter.timer3.start();)
-  cdt.insert_constraints(points.begin(), points.end(), segments.begin(), segments.end());
+  if (segments.empty())
+    cdt.insert(points.begin(), points.end());
+  else
+    cdt.insert_constraints(points.begin(), points.end(), segments.begin(), segments.end());
   COUNTER_INSTRUCTION(counter.timer3.stop();)
 
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
