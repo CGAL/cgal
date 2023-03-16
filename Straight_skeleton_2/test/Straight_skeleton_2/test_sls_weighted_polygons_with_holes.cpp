@@ -139,8 +139,6 @@ int main(int argc, char** argv)
     pwh.add_hole(hole);
     weights.push_back(std::vector<FT>(hole.size(), 10));
 
-    break; // @tmp
-
     // same but for negative x
     poly = generate_random_polygon(rnd);
     hole_pts = poly.container();
