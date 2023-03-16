@@ -115,13 +115,13 @@ int main(int argc, char** argv)
   std::cout << "pwh.outer_boundary() = " << pwh.outer_boundary() << std::endl;
 
   // tiny weight (far-reaching) for vertical sides
-  weights[0].push_back(rnd.get_double(0.01, 0.1));
+  weights[0].push_back(rnd.get_double(0.05, 0.5));
   weights[0].push_back(rnd.get_double(1, 10));
 
   // half the time, use the same weight on the left and right span as to get a nicer bisector
   // in the middle, which increases the likelihood of multiple splits being required
   if(rnd.get_int(0, 2) == 1)
-    weights[0].push_back(rnd.get_double(0.01, 0.1));
+    weights[0].push_back(rnd.get_double(0.05, 0.5));
   else
     weights[0].push_back(weights[0][0]);
   weights[0].push_back(rnd.get_double(1, 10));
