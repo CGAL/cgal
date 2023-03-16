@@ -672,14 +672,16 @@ CGAL::Comparison_result
     { return ( p.compare(num) == CGAL::LARGER ); }
 };
 
+// The two operators are moved out of the class scope (where they were friends) 
+// in order to work around a VC2017 compilation problem
 template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
-inline bool operator <  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+bool operator <  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
 {
     return (p.compare(num) == CGAL::SMALLER);
 }
 
 template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
-inline bool operator >  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+bool operator >  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
 {
     return (p.compare(num) == CGAL::LARGER);
 }
