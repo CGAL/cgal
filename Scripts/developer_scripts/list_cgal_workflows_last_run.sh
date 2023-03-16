@@ -13,6 +13,10 @@ do
         do
             workflow_id=$(jq '.workflows['$i'].id' <<< "$workflows")
             workflows_state=$(jq '.workflows['$i'].state' <<< "$workflows")
+            if [ "$workflows_state" == "\"disabled\"" -o "$workflows_state" == "\"disabled_manually\"" ]
+            then
+                continue
+            fi
             workflow_runs=$(gh api repos/$repo/actions/workflows/$workflow_id/runs)
             workflows_name=$(jq -e '.workflow_runs[0].name' <<< "$workflow_runs")
             if [ $? -eq 0 ]
