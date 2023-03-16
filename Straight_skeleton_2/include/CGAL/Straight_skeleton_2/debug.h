@@ -18,8 +18,13 @@
 #ifdef CGAL_USE_CORE
 #  include <CGAL/CORE_BigFloat.h>
 #endif
+#include <CGAL/MP_Float.h>
 
 #include <boost/optional.hpp>
+
+#include <memory>
+#include <sstream>
+#include <string>
 
 template<class T>
 inline std::string o2str( boost::optional<T> const& o )
@@ -53,9 +58,7 @@ inline std::string n2str( N const& n )
   return ss.str();
 }
 
-
 #if 0 //CGAL_USE_CORE
-
 inline CORE::BigFloat to_big_float( CGAL::MP_Float const& n )
 {
   return n.to_rational<CORE::BigFloat>() ;
@@ -75,7 +78,6 @@ inline CORE::BigFloat to_big_float( NT const& n )
 {
   return CORE::BigFloat( CGAL_NTS to_double(n) ) ;
 }
-
 
 inline std::string n2str( CGAL::MP_Float const& n )
 {
