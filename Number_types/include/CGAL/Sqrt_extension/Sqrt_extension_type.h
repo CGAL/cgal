@@ -662,12 +662,6 @@ CGAL::Comparison_result
   // NT
   friend bool operator == (const Sqrt_extension& p, const NT& num)
     { return (p-num).is_zero();}
-#if 0
-  friend bool operator <  (const Sqrt_extension& p, const NT& num)
-    { return ( p.compare(num) == CGAL::SMALLER ); }
-  friend bool operator >  (const Sqrt_extension& p, const NT& num)
-    { return ( p.compare(num) == CGAL::LARGER ); }
-#endif
 
   //CGAL_int(NT)
   friend bool operator == (const Sqrt_extension& p, CGAL_int(NT) num)
