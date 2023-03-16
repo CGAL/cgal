@@ -36,7 +36,7 @@
 
 #include <vector>
 
-#define TEST_RESOLVE_INTERSECTION
+//#define TEST_RESOLVE_INTERSECTION
 #define DEDUPLICATE_SEGMENTS
 //#define DEBUG_COUNTERS
 //#define USE_FIXED_PROJECTION_TRAITS
@@ -1178,7 +1178,7 @@ void autorefine_soup_output(const PointRange& input_points,
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
   if (does_triangle_soup_self_intersect(exact_soup_points, soup_triangles))
-    throw std::runtime_error("invalid output");
+    throw std::runtime_error("ERROR: invalid output, there is most probably a bug");
 #endif
 #endif
   CGAL_PMP_AUTOREFINE_VERBOSE("done");
