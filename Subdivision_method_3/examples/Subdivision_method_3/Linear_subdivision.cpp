@@ -15,7 +15,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[]) {
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube_quad.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/quad.off");
 
   Surface_mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
   }
 
   CGAL::Linear_mask_3<Surface_mesh> mask(&mesh);
-  CGAL::Subdivision_method_3::PQQ(mesh, mask, CGAL::parameters::number_of_iterations(2));
+  CGAL::Subdivision_method_3::PQQ(mesh, mask, CGAL::parameters::number_of_iterations(1));
 
   std::ofstream out("out.off");
   out << mesh;

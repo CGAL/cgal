@@ -118,7 +118,7 @@ public:
   }
 
   void border_node(halfedge_descriptor edge, Point& ept, Point& /*vpt*/){
-    edge_node(edge, ept);
+   edge_node(edge, ept);
   }
 };
 
