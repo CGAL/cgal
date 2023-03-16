@@ -38,7 +38,7 @@
 
 #define TEST_RESOLVE_INTERSECTION
 #define DEDUPLICATE_SEGMENTS
-#define DEBUG_COUNTERS
+//#define DEBUG_COUNTERS
 //#define USE_FIXED_PROJECTION_TRAITS
 //#define DEBUG_DEPTH
 
@@ -77,10 +77,20 @@ Segment_inter_type
 do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
                                std::size_t ri, std::size_t si,
                                const std::vector<typename K::Point_3>& points,
+                               const typename K::Vector_3& plane_normal,
                                const K& k = K())
 {
   typename K::Collinear_are_ordered_along_line_3 cln_order = k.collinear_are_ordered_along_line_3_object();
+#ifdef USE_PROJECTED_ORIENTATION_2_FOR_COPLANAR_ORIENTATION_TESTS
+  auto cpl_orient =
+    [&plane_normal](const typename K::Point_3& p, const typename K::Point_3& q, const typename K::Point_3& r)
+  {
+    return ::CGAL::orientation(q-p, r-p, plane_normal);
+  };
+#else
   typename K::Coplanar_orientation_3 cpl_orient=k.coplanar_orientation_3_object();
+  CGAL_USE(plane_normal);
+#endif
 
   const typename K::Point_3& p=points[pi];
   const typename K::Point_3& q=points[qi];
@@ -638,7 +648,7 @@ void generate_subtriangles(std::size_t ti,
     std::vector<Bbox_3> segment_boxes(nbs);
     for (std::size_t i = 0; i<nbs; ++i)
       segment_boxes[i]=point_boxes[segments[i].first]+point_boxes[segments[i].second];
-//~ std::cout << "=========================================================================\n";
+
     for (std::size_t i = 0; i<nbs-1; ++i)
     {
       for (std::size_t j = i+1; j<nbs; ++j)
@@ -656,7 +666,7 @@ void generate_subtriangles(std::size_t ti,
           Segment_inter_type seg_inter_type =
             do_coplanar_segments_intersect<EK>(segments[i].first, segments[i].second,
                                                segments[j].first, segments[j].second,
-                                               points);
+                                               points, n);
           COUNTER_INSTRUCTION(counter.timer5.stop();)
 
           switch(seg_inter_type)
@@ -767,9 +777,10 @@ void generate_subtriangles(std::size_t ti,
               points_on_segments[j].push_back(segments[i].second);
               break;
             }
-//            break;
             case NO_INTERSECTION:
+            {
               COUNTER_INSTRUCTION(++counter.c4;)
+            }
           }
         }
         COUNTER_INSTRUCTION(++counter.total;)
@@ -859,7 +870,6 @@ void generate_subtriangles(std::size_t ti,
       }
     }
   }
-  //~ std::cout << "done\n";
 #endif
 
   // TODO: sorted pair to be constructed when pushing_back
