@@ -11,6 +11,8 @@
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+
 #include <vector>
 #include <cassert>
 #include <fstream>
@@ -56,6 +58,20 @@ int main(int argc, char* argv[])
   const std::string output_filename = (argc > 2) ? argv[2] : "dump.off";
 
   CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt;
+
+  const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
+  const double d_x = bbox.xmax() - bbox.xmin();
+  const double d_y = bbox.ymax() - bbox.ymin();
+  const double d_z = bbox.zmax() - bbox.zmin();
+
+  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
+  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
+  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
+  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
+  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
+  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
+  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
+  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
 
   int exit_code = EXIT_SUCCESS;
 
