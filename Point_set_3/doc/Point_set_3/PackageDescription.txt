@@ -55,7 +55,7 @@
 \cgalPkgDescriptionBegin{3D Point Set, PkgPointSet3}
 \cgalPkgPicture{point_set_3.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgAuthor{Simon Giraudot}
 \cgalPkgDesc{This component provides the user with a flexible 3D point set data structure. The user can define any additional property needed such as normal vectors, colors or labels. \cgal algorithms can be easily applied to this data structure.}
 \cgalPkgManuals{Chapter_Point_Set_3, PkgPointSet3Ref}
 \cgalPkgSummaryEnd
