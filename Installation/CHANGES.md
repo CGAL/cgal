@@ -54,6 +54,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 -   Deprecated usage of boost parameters in favor of function named parameters.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
+-   Periodic Mesh Generation now supports non-cubic domains.
 -   Deprecated usage of boost parameters in favor of function named parameters.
 
 ### [2D Hyperbolic Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgHyperbolicTriangulation2)
