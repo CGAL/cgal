@@ -26,8 +26,8 @@ bounded or unbounded side of `Q` (but not both).
 
 \return `true` if no error was encountered, and `false` otherwise.
 
-\sa `create_exterior_straight_skeleton_2()`
-\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
+\sa `CGAL::create_exterior_straight_skeleton_2()`
+\sa `CGAL::Straight_skeleton_builder_2`
 
 */
 template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtrIterator>

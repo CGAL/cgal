@@ -11,7 +11,6 @@
 #include <CGAL/extrude_skeleton.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
-#include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Random.h>
