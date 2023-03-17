@@ -116,8 +116,8 @@ Starting from any border contour halfedge, circulating the structure walks throu
 halfedges and traces the vertices of the polygon's contours (in opposite order).
 
 Starting from any non-border but contour halfedge, circulating the structure walks counter-clockwise
-around the face corresponding to that contour halfedge. [[The vertices around a face always describe
-a non-convex weakly simple polygon.]] @fixme
+around the face corresponding to that contour halfedge. The vertices around a face always describe
+a non-convex weakly simple polygon.
 
 A vertex is the intersection of contour and/or skeleton edges. Since a skeleton edge is defined
 by 2 contour edges, any vertex is itself defined by a unique set of contour edges. These are called the
