@@ -195,10 +195,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_tri
   ui.collapseBox->setValue(sm_item->diagonalBbox()*0.01);
   if(dialog.exec() != QDialog::Accepted)
     return;
-  CGAL::Polygon_mesh_processing::experimental::remove_almost_degenerate_faces(*sm_item->face_graph(),
-                                                                               std::cos((ui.capBox->value()/180.0) * CGAL_PI),
-                                                                              ui.needleBox->value(),
-                                                                              ui.collapseBox->value());
+  CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(*sm_item->face_graph(),
+                                                                CGAL::parameters::cap_threshold(std::cos((ui.capBox->value()/180.0) * CGAL_PI))
+                                                                                 .needle_threshold(ui.needleBox->value())
+                                                                                 .collapse_length_threshold(ui.collapseBox->value())
+                                                                                 .flip_triangle_height_threshold(ui.flipBox->value()));
   sm_item->invalidateOpenGLBuffers();
   sm_item->itemChanged();
 }
@@ -298,12 +299,10 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
       std::vector<halfedge_descriptor> remaining_cycles;
       CGAL::Polygon_mesh_processing::extract_boundary_cycles(tm, std::back_inserter(remaining_cycles));
 
-      int tested=0, done=0;
       for (halfedge_descriptor hc : remaining_cycles)
       {
         if (next(next(hc,tm),tm)==prev(hc,tm))
         {
-          ++tested;
           //get smallest halfedge
           halfedge_descriptor hm = hc;
           double min_l = CGAL::Polygon_mesh_processing::edge_length(hc, tm);
@@ -334,7 +333,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
           std::array<vertex_descriptor,3> vr = { source(hm, tm), target(hm, tm), target(next(hm, tm), tm) };
           CGAL::Euler::add_face(vr, tm);
           CGAL::Euler::collapse_edge(edge(hm, tm), tm);
-          ++done;
         }
       }
     }

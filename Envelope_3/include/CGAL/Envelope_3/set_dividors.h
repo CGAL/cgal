@@ -46,7 +46,7 @@ public:
 };
 
 //! The last element is stored in the second sequence and all the other (n-1)
-//  elments are stored in the first sequence.
+//  elements are stored in the first sequence.
 class Incremental_dividor
 {
 public:

@@ -226,13 +226,13 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::Mesh_3::internal::has_Has_features<Domain>::value >()
+    CGAL::internal::has_Has_features<Domain>::value >()
     (c3t3_,
      *domain_,
      criteria,
      p_.protect_features,
      p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
-                       p::nonlinear_growth_of_balls = true));
+                       p::nonlinear_growth_of_balls = true).v);
 }
 
 template < typename D_, typename Tag >
@@ -276,7 +276,7 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       std::make_pair(QSharedPointer<Mesh_sizing_field>(sizing_field_ptr),
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
 
-    std::cerr << "USE SIZING FIELD!\n";
+    std::cerr << "Note: Mesh_3 is using a sizing field based on AABB tree.\n";
     return Edge_criteria(*sizing_field_ptr);
   } else {
     return Edge_criteria(edge_size);
@@ -329,7 +329,7 @@ launch()
   std::cerr << "Full refinement time (without fix_c3t3): " << t.time() << " seconds." << std::endl;
 #endif
 
-  // Ensure c3t3 is ok (usefull if process has been stop by the user)
+  // Ensure c3t3 is ok (useful if process has been stop by the user)
   mesher_->fix_c3t3();
   std::cerr<<"Done."<<std::endl;
 }

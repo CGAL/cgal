@@ -131,7 +131,7 @@ void read_x_monotone_curve(X_monotone_curve_2& c);
 /*! reads an auxiliary halfedge-data object and associates it with the halfedge
  * `he`.
  */
-void read_halfegde_data(Halfedge_handle he);
+void read_halfedge_data(Halfedge_handle he);
 
 /*! reads a message indicating the beginning of a single face record. */
 void read_face_begin();

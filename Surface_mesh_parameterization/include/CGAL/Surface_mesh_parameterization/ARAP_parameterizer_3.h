@@ -83,7 +83,6 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <unordered_set>
 #include <iostream>
@@ -93,6 +92,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 /// \file ARAP_parameterizer_3.h
 
@@ -138,7 +138,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -162,7 +162,7 @@ namespace Surface_mesh_parameterization {
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+/// \sa `CGAL::Surface_mesh_parameterization::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
 template < class TriangleMesh_,
            class BorderParameterizer_ = Default,
@@ -176,7 +176,7 @@ public:
     Two_vertices_parameterizer_3<TriangleMesh_> >::type       Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -505,7 +505,7 @@ private:
   // - compute w_ii = - sum of w_ijs.
   //
   // \pre Vertices must be indexed.
-  // \pre Vertex i musn't be already parameterized.
+  // \pre Vertex i mustn't be already parameterized.
   // \pre Line i of A must contain only zeros.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_matrix(Matrix& A,
@@ -561,7 +561,6 @@ private:
     Error_code status = OK;
 
     // compute A
-    unsigned int count = 0;
     for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the line i of the matrix A
@@ -571,7 +570,6 @@ private:
       } else { // fixed vertices
         int index = get(vimap, vd);
         A.set_coef(index, index, 1, true /*new*/);
-        ++count;
       }
     }
     return status;
@@ -1019,7 +1017,7 @@ private:
   // - call compute_b_ij() for each neighbor v_j to compute the B coefficient b_i
   //
   // \pre Vertices must be indexed.
-  // \pre Vertex i musn't be already parameterized.
+  // \pre Vertex i mustn't be already parameterized.
   // \pre Lines i of Bu and Bv must be zero.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_rhs(const Triangle_mesh& mesh,
@@ -1080,7 +1078,6 @@ private:
     // Initialize the right hand side B in the linear system "A*X = B"
     Error_code status = OK;
 
-    unsigned int count = 0;
     for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the lines i of the vectors Bu and Bv
@@ -1093,7 +1090,6 @@ private:
         const Point_2& uv = get(uvmap, vd);
         Bu.set(index, uv.x());
         Bv.set(index, uv.y());
-        ++count;
       }
     }
     return status;
@@ -1294,9 +1290,9 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The vertices must be indexed (vimap must be initialized).

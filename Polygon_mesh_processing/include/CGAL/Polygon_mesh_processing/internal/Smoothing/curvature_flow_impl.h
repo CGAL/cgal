@@ -18,7 +18,7 @@
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/utility.h>

@@ -49,7 +49,7 @@ namespace Mesh_3 {
 namespace details
 {
 /**
-   * @brief Returns the angle in radian of vectors \c u and \c v
+   * @brief Returns the angle in radian of vectors `u` and `v`
    */
 template <typename K>
 typename K::FT
@@ -98,7 +98,7 @@ angle_in_radian(const typename K::Vector_3& u,
 }
 
 /**
-   * @brief Returns the angle in radian of vectors \c u and \c v
+   * @brief Returns the angle in radian of vectors `u` and `v`
    */
 template <typename Vector_3>
 typename Kernel_traits<Vector_3>::Kernel::FT
@@ -108,7 +108,7 @@ angle_in_radian(const Vector_3& u, const Vector_3& v)
 }
 
 /**
-   * @brief Returns the squared length of edge \c e
+   * @brief Returns the squared length of edge `e`.
    */
 template <typename Tr>
 typename Tr::Geom_traits::FT
@@ -133,8 +133,8 @@ edge_sq_length(const typename Tr::Edge& e,
 }
 
 /**
-   * @brief Returns the minimal incident edge length of \c v
-   * in triangulation \c tr
+   * @brief Returns the minimal incident edge length of `v`
+   * in triangulation `tr`.
    */
 template <typename Tr>
 typename Tr::Geom_traits::FT
@@ -210,7 +210,7 @@ public:
   /**
    * @brief This operator try to move vertex \v using the perturbation.
    * @param v the vertex to move
-   * @param slivers a vector which contains incident slivers of \c v
+   * @param slivers a vector which contains incident slivers of `v`
    * @param c3t3 the c3t3
    * @param domain the domain
    * @param criterion the criterion which is used to evaluate if a cell is
@@ -219,12 +219,12 @@ public:
    * @param modified_vertices an output vector which contains vertices of c3t3
    *   which may have been impacted by v relocation.
    * @return a pair containing:
-   *   - a bool which is \c true if a move has been done.
+   *   - a bool which is `true` if a move has been done.
    *   - a Vertex_handle which is always filled and may be the new vertex (if
-   *   the move is a success), or the vertex which lies at \c v's position in
+   *   the move is a success), or the vertex which lies at `v`'s position in
    *   the new c3t3.
    *
-   * Note that this function is hill_climbing only. The min \c criterion value
+   * Note that this function is hill_climbing only. The min `criterion` value
    * of c3t3 could not decrease.
    */
   std::pair<bool,Vertex_handle>
@@ -432,7 +432,7 @@ protected:
 
   /**
    * Tries to apply a gradient perturbation using direction of
-   * \c gradient_vector
+   * `gradient_vector`
    */
   std::pair<bool, Vertex_handle>
   apply_perturbation(const Vertex_handle& v,
@@ -1054,7 +1054,7 @@ private:
   }
 
   /**
-   * @brief returns the cotangent of \c value
+   * @brief returns the cotangent of `value`.
    */
   FT cotangent(const FT& value) const
   {
@@ -1062,8 +1062,8 @@ private:
   }
 
   /**
-   * @brief returns the normal of facet (ch,i), oriented from inside to outside
-   * of \c ch
+   * @brief returns the normal of facet `(ch,i)`, oriented from inside to outside
+   * of `ch`.
    */
   Vector_3 normal_estimate(const C3T3& c3t3, const Cell_handle& ch, const int i) const
   {
@@ -1157,7 +1157,7 @@ protected:
   FT sphere_sq_radius() const { return sphere_sq_radius_; }
 
   /**
-   * @brief returns a FT between \c min and \c max
+   * @brief returns a FT between `min` and `max`.
    */
   FT random_ft(const FT& min = FT(0.), const FT& max = FT(1.)) const
   {
@@ -1166,7 +1166,7 @@ protected:
   }
 
   /**
-   * @brief returns a random vector with size \c vector_size
+   * @brief returns a random vector with size `vector_size`.
    */
   Vector_3 random_vector_fixed_size(const C3T3& c3t3,
                                     const FT& vector_sq_size) const
@@ -1184,7 +1184,7 @@ protected:
   }
 
   /**
-   * @brief returns a random vector with size between 0 and \c vector_size
+   * @brief returns a random vector with size between 0 and `vector_size`.
    */
   Vector_3 random_vector_max_size(const C3T3& c3t3,
                                   const FT& vector_max_sq_size) const
@@ -1299,7 +1299,7 @@ private:
   // -----------------------------------
 
   /**
-   * @brief try to improve mesh using random moves of \c v
+   * @brief tries to improve mesh using random moves of `v`.
    */
   std::pair<bool,Vertex_handle>
   apply_perturbation(const Vertex_handle& v,
@@ -1410,7 +1410,7 @@ private:
   }
 
 private:
-  // If set to \c true, then random point will be generated on sphere surface.
+  // If set to `true`, then random points will be generated on sphere surface.
   bool on_sphere_;
 };
 

@@ -14,9 +14,9 @@ public:
   /// The default-constructor. The object is invalid until a call to `read()`.
   Image_3();
 
-  /// Open an 3D image file.
+  /// Open a 3D image file.
   ///
-  /// Returns `true` if the file was sucessfully loaded.
+  /// Returns `true` if the file was successfully loaded.
   bool read(const char* file);
 
 };

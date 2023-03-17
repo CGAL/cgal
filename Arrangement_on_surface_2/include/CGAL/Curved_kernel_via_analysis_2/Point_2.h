@@ -23,13 +23,14 @@
 
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Handle_with_policy.h>
 
 #include <CGAL/Arr_enums.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -170,7 +171,7 @@ public:
     //!@}
 
     #if !defined(CGAL_NO_ASSERTIONS)
-    static const bool Kernel_point_2_equals_Point_2 = boost::is_same<Point_2, Kernel_point_2>::value;
+    static const bool Kernel_point_2_equals_Point_2 = std::is_same<Point_2, Kernel_point_2>::value;
     #endif
 
 public:
@@ -325,7 +326,7 @@ protected:
     //!@{
 
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     /*!\brief
      * Constructor for for rebind

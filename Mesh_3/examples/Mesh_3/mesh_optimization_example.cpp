@@ -26,8 +26,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Mesh Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -42,27 +41,29 @@ int main(int argc, char* argv[])
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle=30, facet_size=5, facet_distance=1.5,
-                         cell_radius_edge_ratio=2, cell_size=7);
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(5).facet_distance(1.5).
+                                 cell_radius_edge_ratio(2).cell_size(7));
 
   // Mesh generation and optimization in one call (sliver_bound is the
   // targeted dihedral angle in degrees)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      no_exude(),
-                                      perturb(sliver_bound=10, time_limit=15));
+                                      params::no_exude().
+                                      perturb(params::sliver_bound(10).time_limit(15)));
 
   // Mesh generation and optimization in several call
   C3t3 c3t3_bis = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                          no_perturb(), no_exude());
+                                          params::no_perturb().no_exude());
 
-  CGAL::perturb_mesh_3(c3t3_bis, domain, time_limit=15);
+  CGAL::perturb_mesh_3(c3t3_bis, domain, params::time_limit(15));
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   std::ofstream medit_file_bis("out_bis.mesh");
-  c3t3_bis.output_to_medit(medit_file_bis);
+  CGAL::IO::write_MEDIT(medit_file_bis, c3t3_bis);
+  medit_file_bis.close();
 
   return 0;
 }

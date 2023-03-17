@@ -32,9 +32,6 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Container_helper.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/tuple.h>
-
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>
@@ -42,7 +39,7 @@
 #include <CGAL/tuple.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing{

@@ -1705,7 +1705,7 @@ protected:
   }
 
   /*! Compute the intersections between the supporting circle of (*this) and
-   * the supporting line of the segement cv.
+   * the supporting line of the segment cv.
    */
   void _circ_line_intersect(const Self& cv,
                             Intersection_list& inter_list) const

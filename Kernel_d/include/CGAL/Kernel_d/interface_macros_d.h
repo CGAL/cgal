@@ -16,7 +16,7 @@
 // It's aimed at being included from within a kernel traits class, this
 // way we share more code.
 
-// It is the responsability of the including file to correctly set the 2
+// It is the responsibility of the including file to correctly set the 2
 // macros CGAL_Kernel_pred, CGAL_Kernel_cons and CGAL_Kernel_obj.
 // And they are #undefed at the end of this file.
 

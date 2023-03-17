@@ -5,8 +5,8 @@
 #include <cstring>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2> LCC_2;
-typedef LCC_2::Dart_handle             Dart_handle;
-typedef LCC_2::Point                   Point;
+typedef LCC_2::Dart_descriptor Dart_descriptor;
+typedef LCC_2::Point           Point;
 
 int main(int narg, char** argv)
 {
@@ -21,7 +21,7 @@ int main(int narg, char** argv)
              <<"nbvertices nbedges"<<std::endl
              <<"x y //coordinates, one pair for each vertex"<<std::endl
              <<"..."<<std::endl
-             <<"i j //edge betwen vertices number i and j,"
+             <<"i j //edge between vertices number i and j,"
              <<" one pair for each edge"<<std::endl
              <<"..."<<std::endl
              <<"***********************************************"<<std::endl

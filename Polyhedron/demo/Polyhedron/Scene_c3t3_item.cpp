@@ -29,7 +29,9 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/range/empty.hpp>
 
+#include <CGAL/IO/io.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_cell_primitive.h>
@@ -210,9 +212,18 @@ bool Scene_c3t3_item::is_facet_oriented(const T3::Facet& f)const
   return (index % 2 == 1) == d->c3t3.is_in_complex(cell);
 }
 
+QString Scene_c3t3_item::toolTip() const {
+  return tr("<p><b>3D complex in a 3D triangulation</b></p>"
+    "<p>Number of vertices: %1<br />"
+    "Number of surface facets: %2<br />"
+    "Number of volume tetrahedra: %3</p>%4")
+    .arg(c3t3().triangulation().number_of_vertices())
+    .arg(c3t3().number_of_facets_in_complex())
+    .arg(c3t3().number_of_cells_in_complex())
+    .arg(property("toolTip").toString());
+}
 QMenu* Scene_c3t3_item::contextMenu()
 {
-
   const char* prop_name = "Menu modified by Scene_c3t3_item.";
 
   QMenu* menu = Scene_triangulation_3_item::contextMenu();
@@ -267,7 +278,7 @@ void Scene_c3t3_item::show_cnc(bool b)
 
 bool Scene_c3t3_item::load_binary(std::istream& is)
 {
-  if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
+  if(!CGAL::IO::load_binary_file(is, c3t3())) return false;
   resetCutPlane();
   if(is.good()) {
     c3t3_changed();
@@ -277,6 +288,37 @@ bool Scene_c3t3_item::load_binary(std::istream& is)
   else
     return false;
 }
+
+void Scene_c3t3_item::compute_bbox() const
+{
+  if (isEmpty())
+    _bbox = Bbox();
+  else
+  {
+    CGAL::Bbox_3 result;//default is [+infinity; -infinity]
+    for (Tr::Cell_handle c : c3t3().cells_in_complex())
+    {
+      Tr::Vertex_handle v = (c->vertex(0) != c3t3().triangulation().infinite_vertex())
+                           ? c->vertex(0)
+                           : c->vertex(1);
+      result += v->point().bbox();
+    }
+    _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
+                 result.xmax(), result.ymax(), result.zmax());
+
+    if (boost::empty(c3t3().cells_in_complex()))
+    {
+      for (Tr::Vertex_handle v : c3t3().triangulation().finite_vertex_handles())
+      {
+        if(v->in_dimension() != -1) //skip far points
+          result += v->point().bbox();
+      }
+      _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
+                   result.xmax(), result.ymax(), result.zmax());
+    }
+  }
+}
+
 
 void Scene_c3t3_item::export_facets_in_complex()
 {

@@ -18,19 +18,19 @@
 #include <CGAL/IO/PLY.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Iterator_range.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#include <boost/utility/enable_if.hpp>
 #include <boost/version.hpp>
 
 #include <iostream>
 #include <fstream>
 #include <iterator>
 #include <tuple>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -111,7 +111,7 @@ template <typename PointRange,
                                  const PointRange& points, ///< input point range.
                                  PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {
@@ -189,7 +189,7 @@ bool write_PLY(std::ostream& os,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
@@ -277,7 +277,7 @@ bool write_PLY(const std::string& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {

@@ -32,7 +32,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t)
@@ -458,7 +458,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
   create_face_objects(Out);
 
 
-  CGAL_NEF_TRACEN("transfering marks");
+  CGAL_NEF_TRACEN("transferring marks");
   Face_iterator f = this->faces_begin(); assoc_info(f);
   for (i=0; i<2; ++i) mark(f,i) = PI[i].mark(PI[i].faces_begin());
 
@@ -959,7 +959,7 @@ bool is_forward_edge(const Const_decorator& N,
 
 void assert_type_precondition() const
 { typename PM_decorator_::Point p1; Point p2;
-  CGAL_static_assertion((boost::is_same<typename PM_decorator_::Point, Point>::value)); }
+  CGAL_static_assertion((std::is_same<typename PM_decorator_::Point, Point>::value)); }
 
 
 

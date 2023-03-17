@@ -246,7 +246,7 @@ public:
      * \c Coord_2 must be constructible from a pair of integers / doubles
      * depending on the renderer type
      *
-     * computes optionaly end-point coordinates (even if they lie outside the
+     * computes optionally end-point coordinates (even if they lie outside the
      * window)
      */
     template < class Coord_2, template < class, class > class Container,
@@ -279,7 +279,7 @@ Lrestart:
             std::cerr << "Switching to multi-precision arithmetic" <<
                 std::endl;
 #ifdef CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
-            if(::boost::is_same<typename Algebraic_structure_traits< Float >::
+            if(::std::is_same<typename Algebraic_structure_traits< Float >::
                     Is_exact, CGAL::Tag_true>::value)
                 goto Lexit;
 
@@ -298,7 +298,7 @@ Lrestart:
                 std::cerr << "Switching to exact arithmetic" << std::endl;
 #ifdef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
-                if(::boost::is_same<
+                if(::std::is_same<
                     typename Algebraic_structure_traits< Float >::Is_exact,
                          CGAL::Tag_true>::value)
                     goto Lexit;
@@ -335,7 +335,7 @@ Lexit:  std::cerr << "Sorry, this does not work even with exact "
      * rasterizes a point on curve, returns point coordinates as objects of
      * type \c Coord_2 which are constructible from a pair of ints / doubles
      *
-     * retunrs \c false if point lies outside the window or cannot be
+     * returns \c false if point lies outside the window or cannot be
      * rasterized due to precision problems
      */
     template < class Coord_2 >

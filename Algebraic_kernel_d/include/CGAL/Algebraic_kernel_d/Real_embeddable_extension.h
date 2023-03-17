@@ -54,7 +54,7 @@ namespace internal {
 // TODO: Implement array in source code file
 //    extern const signed char floor_log2_4bit[16]; // see src/floor_log2_4bit.C
 
-// Don't define default, results in more convinient compiler messages
+// Don't define default, results in more convenient compiler messages
 template< class Type > class Real_embeddable_extension;
 // {
 // public:

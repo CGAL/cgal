@@ -42,7 +42,7 @@ namespace internal {
 
 };
 
-} // namesapce internal
+} // namespace internal
 
 template<typename GeomTraits,typename BaseFilter = internal::Dummy_filter2>
 class Polyhedral_envelope_filter
@@ -140,7 +140,7 @@ public:
         Point pw = get(profile.vertex_point_map(),w);
 
         if(! (*m_envelope)(p, pv, pw)){
-          // the triange intersects the envelope
+          // the triangle intersects the envelope
           return boost::none;
         }
         pv = pw;

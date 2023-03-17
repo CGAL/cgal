@@ -15,16 +15,16 @@
 // File Description :
 //******************************************************************************
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <boost/type_traits/is_same.hpp>
-
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 #include <CGAL/disable_warnings.h>
+
+#include <type_traits>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
@@ -35,7 +35,7 @@ struct Polyhedron_tester : public Tester<K>
     typedef CGAL::Polyhedron_3<Gt> Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
 
-    CGAL_static_assertion((boost::is_same<
+    CGAL_static_assertion((std::is_same<
                             typename Mesh_domain::Surface_patch_index,
                             std::pair<int, int>
                            >::value));

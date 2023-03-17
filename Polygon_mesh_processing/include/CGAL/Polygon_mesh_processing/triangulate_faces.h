@@ -32,7 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/range/size.hpp>
 
@@ -51,7 +51,7 @@ namespace Triangulate_faces
 *   %Default new face visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
 *   base class if only some of the functions of the concept require to be
-*   overriden.
+*   overridden.
 */
 template<class PolygonMesh>
 struct Default_visitor {
@@ -473,6 +473,8 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;

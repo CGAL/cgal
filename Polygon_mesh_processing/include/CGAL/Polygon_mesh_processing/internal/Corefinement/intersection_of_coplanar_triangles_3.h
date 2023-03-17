@@ -81,7 +81,7 @@ struct Intersect_coplanar_faces_3
   //an intersection point between two edges. Otherwise, the point is a vertex of the second facet included into
   //the first facet.
   //
-  //(V,F) : point initialy constructed
+  //(V,F) : point initially constructed
   //(V,E) : (V,F) updated by get_orientation_and_update_info_2 (i.e lies on one edge)
   //(V,V) : (V,E) updated by get_orientation_and_update_info_2 (i.e lies on two edges)
   //(E,E) : created in the following function when prev and curr lie on the same edge

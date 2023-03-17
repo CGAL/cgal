@@ -872,7 +872,8 @@ bool clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
-  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamDescription{(`np_tm` only) a visitor used to track a series of events such as the creation
+  *                           of new faces, edges... in both `tm` and `splitter`.}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
   *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
   *   \cgalParamNEnd

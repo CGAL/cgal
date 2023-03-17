@@ -26,8 +26,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -45,8 +44,8 @@ int main(int argc, char* argv[])
   /// [Domain creation]
 
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=4,
-                         cell_radius_edge_ratio=3, cell_size=8);
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(6).facet_distance(4).
+                                 cell_radius_edge_ratio(3).cell_size(8));
 
   /// [Meshing]
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
@@ -54,7 +53,8 @@ int main(int argc, char* argv[])
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

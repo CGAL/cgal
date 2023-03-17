@@ -325,7 +325,7 @@ Matrix operator-();
 /*!
 Multiplication.
 
-\pre `M.column_dimension() = M1.row_dimension()`
+\pre `M.column_dimension() == M1.row_dimension()`
 */
 Matrix operator*(const Matrix& M1)
 ;
@@ -334,7 +334,7 @@ Matrix operator*(const Matrix& M1)
 Multiplication with
 vector.
 
-\pre `M.column_dimension() = vec.dimension()`
+\pre `M.column_dimension() == vec.dimension()`
 */
 Vector operator*(const Vector& vec) ;
 

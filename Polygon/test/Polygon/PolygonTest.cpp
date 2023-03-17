@@ -51,6 +51,18 @@ void test_default_methods(      vector<Point>& pvec0,
 
     x=p0;
     assert(x == p0);
+
+    // move assignment and constructor
+    x.clear();
+    assert(x.is_empty());
+    x = std::move(p0);
+    assert(p0.is_empty());
+    assert(x == p0_copy);
+
+    CGAL::Polygon_2<K, list<Point> > xm(std::move(x));
+     assert(x.is_empty());
+    assert(xm == p0_copy);
+
   }
 
   {
@@ -336,4 +348,3 @@ int main()
 
   return 0;
 }
-

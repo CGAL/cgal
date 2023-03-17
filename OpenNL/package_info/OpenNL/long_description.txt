@@ -15,7 +15,7 @@ Contact
 =======
 
 The author is Bruno Levy <bruno.levy@loria.fr>.
-OpenNL main page is http://www.loria.fr/~levy/software/.
+OpenNL main page is https://www.loria.fr/~levy/software/.
 
 Caution
 =======

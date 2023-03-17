@@ -405,7 +405,9 @@ namespace internal {
       }
 
       //split long edges
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_splits = 0;
+#endif
       while (!long_edges.empty())
       {
         //the edge with longest length
@@ -420,7 +422,9 @@ namespace internal {
         // propagate the constrained status
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)));
         CGAL_assertion(he == next(hnew, mesh_));
+#ifdef CGAL_PMP_REMESHING_VERBOSE
         ++nb_splits;
+#endif
 
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
@@ -441,18 +445,24 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
         {
+          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
         }
 
         //do it again on the other side if we're not on boundary
         halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
         if (!is_border(hnew_opp, mesh_))
         {
+          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -491,7 +501,9 @@ namespace internal {
       }
 
       //split long edges
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_splits = 0;
+#endif
       while (!long_edges.empty())
       {
         //the edge with longest length
@@ -518,8 +530,9 @@ namespace internal {
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
+#ifdef CGAL_PMP_REMESHING_VERBOSE
         ++nb_splits;
-
+#endif
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
@@ -636,7 +649,9 @@ namespace internal {
       std::cout << "done." << std::endl;
 #endif
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_collapses = 0;
+#endif
       while (!short_edges.empty())
       {
         //the edge with shortest length
@@ -773,8 +788,9 @@ namespace internal {
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_, ecmap_);
           CGAL_assertion(is_valid(mesh_));
           CGAL_assertion(vkept == vb);//is the constrained point still here
+#ifdef CGAL_PMP_REMESHING_VERBOSE
           ++nb_collapses;
-
+#endif
           //fix constrained case
           CGAL_assertion((is_constrained(vkept) || is_corner(vkept) || is_on_patch_border(vkept)) ==
                          (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
@@ -836,7 +852,9 @@ namespace internal {
 
       const double cap_threshold = std::cos(160. / 180 * CGAL_PI);
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_flips = 0;
+#endif
       for(edge_descriptor e : edges(mesh_))
       {
         //only the patch edges are allowed to be flipped
@@ -900,8 +918,9 @@ namespace internal {
         put(degree, vc, vvc);
         put(degree, vd, vvd);
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
         ++nb_flips;
-
+#endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << nb_flips << " flips)";
         std::cout.flush();
@@ -950,8 +969,9 @@ namespace internal {
           put(degree, vc, vvc);
           put(degree, vd, vvd);
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
           --nb_flips;
-
+#endif
           CGAL_assertion_code(Halfedge_status s3 = status(he));
           CGAL_assertion(s1 == s3);
           CGAL_assertion(!is_border(he, mesh_));
@@ -1199,7 +1219,7 @@ private:
       halfedge_descriptor hopp = opposite(h, mesh_);
 
       //check whether h is the longest edge in its associated face
-      //overwise refinement will go for an endless loop
+      //otherwise refinement will go into an endless loop
       double sqh = sqlength(h);
       return sqh >= sqlength(next(h, mesh_))
           && sqh >= sqlength(next(next(h, mesh_), mesh_))
@@ -1526,7 +1546,7 @@ private:
       }
 
       // update status using constrained edge map
-      if (!boost::is_same<EdgeIsConstrainedMap,
+      if (!std::is_same<EdgeIsConstrainedMap,
                           Static_boolean_property_map<edge_descriptor, false> >::value)
       {
         for(edge_descriptor e : edges(mesh_))
@@ -1629,8 +1649,6 @@ private:
                               const double& sq_low,
                               const bool collapse_constraints)
     {
-      CGAL_assertion_code(std::size_t nb_done = 0);
-
       std::unordered_set<halfedge_descriptor> degenerate_faces;
       for(halfedge_descriptor h :
           halfedges_around_target(halfedge(v, mesh_), mesh_))
@@ -1689,7 +1707,6 @@ private:
               continue;
 
             CGAL::Euler::flip_edge(hf, mesh_);
-            CGAL_assertion_code(++nb_done);
             done = true;
 
             //update status
@@ -1885,6 +1902,11 @@ private:
         else if(is_an_isolated_constraint(h)) nb_isolated++;
         else CGAL_assertion(false);
       }
+      CGAL_USE(nb_border);
+      CGAL_USE(nb_mesh);
+      CGAL_USE(nb_patch);
+      CGAL_USE(nb_patch_border);
+      CGAL_USE(nb_isolated);
     }
 
 #ifdef CGAL_PMP_REMESHING_DEBUG

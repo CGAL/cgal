@@ -250,29 +250,24 @@ for further information.
 
 \section Periodic_3_mesh_3_section_interface Interface
 
+As of \cgal 5.6, this package uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
+
 \subsection Periodic_3_mesh_3TheGlobalFunctions The Global Functions
 
 A periodic 3D mesh generation process is launched through a call
 to one of the two following functions:
 
 \code{.cpp}
-template <class C3T3, class PeriodicMeshDomain, class MeshCriteria>
+template <class C3T3, class PeriodicMeshDomain, class MeshCriteria, class NamedParameters>
 C3T3 make_periodic_3_mesh_3(const PeriodicMeshDomain& domain,
                             const MeshCriteria& criteria,
-                            parameters::internal::Features_options features = parameters::features(domain),
-                            parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
-                            parameters::internal::Odt_options odt = parameters::no_odt(),
-                            parameters::internal::Perturb_options perturb = parameters::perturb(),
-                            parameters::internal::Exude_options exude = parameters::exude());
+                            const NamedParameters& np);
 
-template <class C3T3, class MeshDomain, class MeshCriteria>
+template <class C3T3, class MeshDomain, class MeshCriteria, class NamedParameters>
 void refine_periodic_3_mesh_3(C3T3& c3t3,
                               const PeriodicMeshDomain& domain,
                               const MeshCriteria& criteria,
-                              parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
-                              parameters::internal::Odt_options odt = parameters::no_odt(),
-                              parameters::internal::Perturb_options perturb = parameters::perturb(),
-                              parameters::internal::Exude_options exude = parameters::exude());
+                              const NamedParameters& np);
 \endcode
 
 The function `make_periodic_3_mesh_3()` generates from scratch a periodic mesh
@@ -444,7 +439,7 @@ These (purely visual) issues disappear when considering multiple copies together
 \subsection Periodic_3_mesh_33DDomainsImplicitIsosurfaces 3D Periodic Domains Bounded by Implicit Isosurfaces
 The following code produces a 3D periodic mesh for a domain whose boundary surface
 is an isosurface defined by an implicit function.
-Note the use of named parameters (from the Boost library) in the
+Note the use of named parameters in the
 constructor of the `Mesh_criteria` instance.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_shape} shows the resulting mesh.
 
