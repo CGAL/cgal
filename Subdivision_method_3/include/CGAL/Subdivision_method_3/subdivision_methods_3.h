@@ -122,7 +122,6 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \pre `pmesh` must be a triangle mesh.
  **/
 template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
@@ -180,6 +179,8 @@ void Loop_subdivision(PolygonMesh& pmesh, int step) {
  *     \cgalParamDefault{`1`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * \pre `pmesh` must be a triangle mesh.
  **/
 template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
