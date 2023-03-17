@@ -1154,8 +1154,10 @@ private:
     for(const auto [f, f2d] : new_constrained_facets) {
       const auto [c, i] = f;
       c->set_facet_constraint(i, face_index, f2d);
-      const auto [c2, i2] = this->mirror_facet(f);
-      c2->set_facet_constraint(i2, face_index, f2d);
+      if(tr.dimension() > 2) {
+        const auto [c2, i2] = this->mirror_facet(f);
+        c2->set_facet_constraint(i2, face_index, f2d);
+      }
       f2d->info().missing_subface = false;
     }
     CGAL_assertion(this->T_3::Tr_Base::is_valid(true));
@@ -1337,13 +1339,29 @@ private:
     int region_count = 0;
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
-      CGAL_assertion((fh->info().missing_subface == false) == tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
-                                                                          fh->vertex(1)->info().vertex_handle_3d,
-                                                                          fh->vertex(2)->info().vertex_handle_3d));
+      CGAL_assertion(tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
+                                 fh->vertex(1)->info().vertex_handle_3d,
+                                 fh->vertex(2)->info().vertex_handle_3d) ||
+                     (fh->info().missing_subface == true));
       if(false == fh->info().missing_subface) {
         continue;
       }
-      if(processed_faces.contains(fh)) continue;
+      Cell_handle c;
+      int i, j, k;
+      if(tr.is_facet(fh->vertex(0)->info().vertex_handle_3d, fh->vertex(1)->info().vertex_handle_3d,
+                     fh->vertex(2)->info().vertex_handle_3d, c, i, j, k))
+      {
+        const int facet_index = 6 - i - j - k;
+        c->set_facet_constraint(facet_index, face_index, fh);
+        if(tr.dimension() > 2) {
+          const auto [c2, i2] = this->mirror_facet({c, facet_index});
+          c2->set_facet_constraint(i2, face_index, fh);
+        }
+        fh->info().missing_subface = false;
+        continue;
+      }
+      if(processed_faces.contains(fh))
+        continue;
       const auto fh_region = region(cdt_2, fh);
       processed_faces.insert(fh_region.begin(), fh_region.end());
       try {
