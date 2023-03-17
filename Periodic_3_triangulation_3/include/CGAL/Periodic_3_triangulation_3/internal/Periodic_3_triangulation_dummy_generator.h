@@ -109,7 +109,7 @@ insert_generic_dummy_points()
 
   auto grid_offset_to_lattice_offset = [&](const Offset& loff) -> Offset
   {
-    const int hloz = std::ceil(double(loff[max_pos]) / 2.);
+    const std::size_t hloz = std::size_t(std::ceil(double(loff[max_pos]) / 2.));
 
     Offset goff;
     goff[min_pos] = loff[min_pos] + hloz;
@@ -120,7 +120,7 @@ insert_generic_dummy_points()
 
   auto lattice_offset_to_grid_offset = [&](const Offset& loff) -> Offset
   {
-    const int hloz = std::ceil(double(loff[max_pos]) / 2.);
+    const std::size_t hloz = std::size_t(std::ceil(double(loff[max_pos]) / 2.));
 
     Offset goff;
     goff[min_pos] = loff[min_pos] - hloz;
