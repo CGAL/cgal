@@ -52,11 +52,11 @@ target_compile_features(test_CDT_3_insert_constrained_edge_from_OFF_file PUBLIC 
 target_compile_definitions(test_CDT_3_insert_constrained_edge_from_OFF_file PUBLIC CGAL_TEST_CDT_3_USE_CDT)
 cgal_add_test(test_CDT_3_insert_constrained_edge_from_OFF_file)
 
-add_test(NAME "execution   of  cdt_3_from_off cube" COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/cube.off)
-add_test(NAME "execution   of  cdt_3_from_off sphere" COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/sphere.off)
-add_test(NAME "execution   of  cdt_3_from_off fandisk" COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/fandisk.off)
-add_test(NAME "execution   of  cdt_3_from_off mpi" COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/mpi.off)
-add_test(NAME "execution   of  cdt_3_from_off 3torus" COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/3torus.off)
+add_test(NAME "execution   of  cdt_3_from_off cube"    COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/cube.off    ${CMAKE_CURRENT_BINARY_DIR}/dump_output_cube.off)
+add_test(NAME "execution   of  cdt_3_from_off sphere"  COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/sphere.off  ${CMAKE_CURRENT_BINARY_DIR}/dump_output_sphere.off)
+add_test(NAME "execution   of  cdt_3_from_off fandisk" COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/fandisk.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_fandisk.off)
+add_test(NAME "execution   of  cdt_3_from_off mpi"     COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/mpi.off     ${CMAKE_CURRENT_BINARY_DIR}/dump_output_mpi.off)
+add_test(NAME "execution   of  cdt_3_from_off 3torus"  COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/3torus.off  ${CMAKE_CURRENT_BINARY_DIR}/dump_output_3torus.off)
 add_test(NAME "execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" COMMAND cdt_3_from_off_CGAL_DEBUG_CDT_3 ${CGAL_DATA_DIR}/meshes/3torus.off)
 
 cgal_setup_test_properties("execution   of  cdt_3_from_off cube" cdt_3_from_off)

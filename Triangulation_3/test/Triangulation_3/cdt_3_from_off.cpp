@@ -53,17 +53,19 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  const std::string output_filename = (argc > 2) ? argv[2] : "dump.off";
+
   CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt;
 
   int exit_code = EXIT_SUCCESS;
 
-  auto finally = [&cdt]() {
+  auto finally = [&cdt,output_filename]() {
     {
       std::ofstream dump("dump.binary.cgal");
       CGAL::IO::save_binary_file(dump, cdt);
     }
     {
-      std::ofstream dump("dump.off");
+      std::ofstream dump(output_filename);
       dump.precision(17);
       cdt.write_facets(dump, cdt, std::views::filter(cdt.finite_facets(), [&](auto f) {
           return cdt.is_constrained(f);
