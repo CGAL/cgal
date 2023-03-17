@@ -357,7 +357,7 @@ struct real_div {
         bf_a.approx(a.BigRatValue(), bf_b.MSB() - bf_b.flrLgErr() + 1, CORE_posInfty);
         return bf_a.div(bf_b, r);
       } else // both are BigRat
-        return BigRat(a.BigRatValue(), b.BigRatValue());
+        return BigRat(a.BigRatValue() / b.BigRatValue());
     } else if (a.ID() == REAL_BIGFLOAT || b.ID() == REAL_BIGFLOAT
                || a.ID() == REAL_DOUBLE || b.ID() == REAL_DOUBLE) {
       return a.BigFloatValue().div(b.BigFloatValue(), r);
