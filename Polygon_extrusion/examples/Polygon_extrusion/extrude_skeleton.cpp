@@ -316,6 +316,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
       }
       speeds_filename = argv[++i];
+      use_angles = false;
     } else if(!strcmp("-a", argv[i])) {
       if(speeds_filename != nullptr)
       {
