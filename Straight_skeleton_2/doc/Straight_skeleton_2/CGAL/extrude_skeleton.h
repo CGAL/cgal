@@ -10,7 +10,7 @@ namespace CGAL {
 * which corresponds to the time at the vertex. The input polygon is placed at `z = 0`.
 *
 * This function allows cropping the extruded skeleton at a maximum height, using the optional
-* `max_height` named parameter.
+* `maximum_height` named parameter.
 *
 * The result is a closed, 2-manifold surface triangle mesh. Note that this mesh can have non-local
 * self-intersections in some case of cropping.
@@ -42,11 +42,13 @@ namespace CGAL {
 *     \cgalParamType{a model of `Range` whose value type is a model of `Range` whose value type is `FT`}
 *     \cgalParamDefault{an empty range (uniform weights are used)}
 *     \cgalParamExtra{Angles are measured in degrees and should be strictly within `0` and `180` degrees
-                      and should be eitger all acute (inward extrusion) or all obtuse (outward extrusion).}
+*                     and should be eitger all acute (inward extrusion) or all obtuse (outward extrusion).}
 *     \cgalParamExtra{This parameter is ignored if the `weights` parameter is provided.}
+*     \cgalParamExtra{The conversion to weights involves trigonometry and will be inexact,
+*                     even when using a number type with exact square roots.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{max_height}
+*   \cgalParamNBegin{maximum_height}
 *     \cgalParamDescription{the maximum height of the extrusion}
 *     \cgalParamType{`FT`, a model of `FieldNumberType` convertible to the kernel type of the polygon.}
 *     \cgalParamDefault{unused}

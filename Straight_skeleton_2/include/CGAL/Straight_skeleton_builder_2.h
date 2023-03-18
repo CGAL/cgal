@@ -1442,30 +1442,35 @@ public:
     return enter_contour(aBegin, aEnd, Cartesian_converter<K,K>(), aCheckValidity);
   }
 
-  template<class Weights>
-  Straight_skeleton_builder_2& enter_weights ( const Weights& aWeights )
+  template <typename WeightIterator, typename Converter>
+  Straight_skeleton_builder_2& enter_weights(WeightIterator aWeightsBegin,
+                                             WeightIterator aWeightsEnd,
+                                             const Converter& cvt)
   {
-    Face_iterator fit = mSSkel->SSkel::Base::faces_begin() ;
-    CGAL_assertion_code( unsigned int lFaceCountThroughWeights = 0; )
+    auto lWeightsN = std::distance(aWeightsBegin, aWeightsEnd);
+    CGAL_assertion(lWeightsN <= mSSkel->SSkel::Base::size_of_faces());
 
-    for(auto const& lSingleBorderWeights : aWeights )
+    Face_iterator fit = std::next(mSSkel->SSkel::Base::faces_end(), -lWeightsN);
+
+    for(; aWeightsBegin!=aWeightsEnd; ++aWeightsBegin, ++fit)
     {
-      for(FT const& lWeight : lSingleBorderWeights )
-      {
-        CGAL_assertion( fit != mSSkel->SSkel::Base::faces_end() );
+      CGAL_assertion(fit != mSSkel->SSkel::Base::faces_end());
 
-        Halfedge_handle lBorder = fit->halfedge() ;
-        CGAL_assertion( lBorder->opposite()->is_border() ) ;
-        CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << lWeight << " to E" << lBorder->id());
-        lBorder->set_weight ( lWeight ) ;
-        CGAL_assertion_code( ++lFaceCountThroughWeights ) ;
-        ++fit ;
-      }
+      Halfedge_handle lBorder = fit->halfedge();
+      FT lWeight = *aWeightsBegin;
+      CGAL_assertion(lBorder->opposite()->is_border());
+      CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << lWeight << " cvt to " << cvt(lWeight) << " to E" << lBorder->id());
+      lBorder->set_weight(cvt(lWeight));
     }
 
-    CGAL_assertion( lFaceCountThroughWeights == mSSkel->SSkel::Base::size_of_faces() ) ;
-
     return *this;
+  }
+
+  template <typename WeightIterator>
+  Straight_skeleton_builder_2& enter_weights(WeightIterator aWeightsBegin,
+                                             WeightIterator aWeightsEnd)
+  {
+    return enter_weights(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>());
   }
 } ;
 

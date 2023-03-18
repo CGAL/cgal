@@ -24,10 +24,11 @@
 
 namespace CGAL {
 
-template<class ForwardPointIterator, class Traits, class Weights>
+template<class ForwardPointIterator, class WeightIterator, class Traits>
 boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
                                                                   , ForwardPointIterator aEnd
-                                                                  , Weights const&       aWeights
+                                                                  , WeightIterator       aWBegin
+                                                                  , WeightIterator       aWEnd
                                                                   , typename Traits::FT  aOffset
                                                                   , Traits const&        aTraits
                                                                   )
@@ -37,8 +38,6 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   typedef typename Traits::Point_2          Point_2 ;
   typedef typename Traits::Segment_2        Segment_2 ;
   typedef typename Traits::Trisegment_2_ptr Trisegment_2_ptr ;
-
-  typedef typename Weights::const_iterator  WeightIterator ;
 
   Kernel kernel ;
 
@@ -53,13 +52,15 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
   FT lMaxSDist(0) ;
 
+  WeightIterator lWIt = aWBegin ;
   ForwardPointIterator lLast = std::prev(aEnd) ;
-  WeightIterator lWeight = aWeights.begin() ;
 
   bool lOverflow = false ;
 
-  for ( ForwardPointIterator lCurr = aBegin ; lCurr != aEnd ; ++ lCurr, ++ lWeight )
+  for ( ForwardPointIterator lCurr = aBegin ; lCurr != aEnd ; ++ lCurr, ++ lWIt )
   {
+    CGAL_assertion(lWIt != aWEnd);
+
     ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : std::prev  (lCurr) ) ;
     ForwardPointIterator lNext = ( lCurr == lLast  ? aBegin : std::next  (lCurr) ) ;
 
@@ -68,9 +69,9 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
       Segment_2 lLEdge = construct_segment(*lPrev,*lCurr);
       Segment_2 lREdge = construct_segment(*lCurr,*lNext);
 
-      WeightIterator lNextWeight = ( lCurr == lLast  ? aWeights.begin() : std::next(lWeight) ) ;
+      WeightIterator lNextWeight = ( lCurr == lLast  ? aWBegin : std::next(lWIt) ) ;
 
-      OptionalPoint_2 lP = aTraits.construct_offset_point_2_object()(aOffset,lLEdge,*lWeight,lREdge,*lNextWeight, nullptr );
+      OptionalPoint_2 lP = aTraits.construct_offset_point_2_object()(aOffset,lLEdge,*lWIt,lREdge,*lNextWeight, nullptr );
 
       if ( !lP )
       {
@@ -116,14 +117,15 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
                                                                   )
 {
   typedef typename Traits::FT FT ;
-  std::vector<FT> aUniformWeights(std::distance(aBegin,aEnd), FT(1)) ;
-  return compute_outer_frame_margin(aBegin,aEnd,aUniformWeights,aOffset,aTraits) ;
+  std::vector<FT> aUWeights(std::distance(aBegin,aEnd), FT(1)) ;
+  return compute_outer_frame_margin(aBegin,aEnd,aUWeights.begin(),aUWeights.end(),aOffset,aTraits) ;
 }
 
-template<class ForwardPointIterator, class FT, class Weights>
+template<class ForwardPointIterator, class WeightIterator, class FT>
 boost::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
                                                ForwardPointIterator aEnd,
-                                               Weights const& aWeights,
+                                               WeightIterator aWBegin,
+                                               WeightIterator aWEnd,
                                                const FT aOffset)
 {
   typedef typename std::iterator_traits<ForwardPointIterator>::value_type Point_2 ;
@@ -132,7 +134,7 @@ boost::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
 
   Polygon_offset_builder_traits_2<K> traits ;
 
-  return compute_outer_frame_margin(aBegin,aEnd,aWeights,aOffset,traits);
+  return compute_outer_frame_margin(aBegin,aEnd,aWBegin,aWEnd,aOffset,traits);
 }
 
 template<class FT, class ForwardPointIterator>

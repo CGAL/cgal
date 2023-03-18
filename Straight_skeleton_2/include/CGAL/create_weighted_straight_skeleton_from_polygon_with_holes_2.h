@@ -41,7 +41,8 @@ create_interior_weighted_straight_skeleton_2(const Polygon& poly_with_holes,
                                                       poly_with_holes.outer_boundary().vertices_end(),
                                                       poly_with_holes.holes_begin(),
                                                       poly_with_holes.holes_end(),
-                                                      weights,
+                                                      std::begin(weights[0]), std::end(weights[0]),
+                                                      std::next(std::begin(weights)), std::end(weights),
                                                       k);
 }
 

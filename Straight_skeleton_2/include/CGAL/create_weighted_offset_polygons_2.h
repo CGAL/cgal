@@ -59,16 +59,21 @@ namespace CGAL_SS_i {
 // see also tags @partial_wsls_pwh
 
 // If you are using this with some holes, you should know what you are doing
-template<class FT, class PointIterator, class HoleIterator, class Weights, class K>
+template <typename FT, typename PointIterator, typename HoleIterator,
+          typename WeightIterator, typename HoleWeightsIterator,
+          typename K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_partial_interior_weighted_straight_skeleton_2 ( FT const&     aMaxTime
-                                                     , PointIterator aOuterContour_VerticesBegin
-                                                     , PointIterator aOuterContour_VerticesEnd
-                                                     , HoleIterator  aHolesBegin
-                                                     , HoleIterator  aHolesEnd
-                                                     , Weights const& aWeights
-                                                     , K const& // aka 'SK'
-                                                     )
+create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
+                                                      PointIterator aOuterContour_VerticesBegin,
+                                                      PointIterator aOuterContour_VerticesEnd,
+                                                      HoleIterator aHolesBegin,
+                                                      HoleIterator aHolesEnd,
+                                                      WeightIterator aOuterContour_WeightsBegin,
+                                                      WeightIterator aOuterContour_WeightsEnd,
+                                                      HoleWeightsIterator aHoles_WeightsBegin,
+                                                      HoleWeightsIterator aHoles_WeightsEnd,
+                                                      const K& // aka 'SK'
+                                                      )
 {
   CGAL_precondition( aMaxTime > static_cast<FT>(0) ) ;
 
@@ -80,36 +85,40 @@ create_partial_interior_weighted_straight_skeleton_2 ( FT const&     aMaxTime
 
   typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
   typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
+  typedef typename InputKernel::FT InputFT ;
 
-  Cartesian_converter<InputKernel, K> conv ;
+  Cartesian_converter<InputKernel, K> conv;
+  NT_converter<InputFT, KFT> wconv;
 
-  typename InputKernel::FT lMaxTime = aMaxTime;
+  InputFT lMaxTime = aMaxTime;
   boost::optional<KFT> lOptMaxTime(conv(lMaxTime)) ;
 
   SsBuilder ssb( lOptMaxTime ) ;
 
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, conv ) ;
+  ssb.enter_contour ( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, conv ) ;
+  ssb.enter_weights ( aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, wconv ) ;
 
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
+  {
     ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), conv ) ;
-
-  ssb.enter_weights( aWeights ) ;
+    ssb.enter_weights( aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end(), wconv ) ;
+  }
 
   return ssb.construct_skeleton();
 }
 
-template<class FT, class PointIterator, class Weights, class K>
+template <typename FT, typename PointIterator, typename WeightIterator, typename K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_partial_exterior_weighted_straight_skeleton_2 ( FT const&      aMaxOffset
-                                                     , PointIterator  aVerticesBegin
-                                                     , PointIterator  aVerticesEnd
-                                                     , Weights const& aWeights
-                                                     , K const&       k // aka 'SK'
-                                                    )
+create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
+                                                     PointIterator aVerticesBegin,
+                                                     PointIterator aVerticesEnd,
+                                                     WeightIterator aWeightsBegin,
+                                                     WeightIterator aWeightsEnd,
+                                                     const K& k // aka 'SK'
+                                                     )
 {
-  CGAL_precondition( aMaxOffset > 0 ) ;
-  CGAL_precondition(aWeights.size() == 1); // single (external) contour
-  CGAL_precondition(aWeights[0].size() == std::distance(aVerticesBegin, aVerticesEnd));
+  CGAL_precondition(aMaxOffset > 0);
+  CGAL_precondition(std::distance(aWeightsBegin, aWeightsEnd) == std::distance(aVerticesBegin, aVerticesEnd));
 
   typedef typename std::iterator_traits<PointIterator>::value_type   Point_2;
   typedef typename Kernel_traits<Point_2>::Kernel                    IK;
@@ -125,7 +134,8 @@ create_partial_exterior_weighted_straight_skeleton_2 ( FT const&      aMaxOffset
   // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
   boost::optional<IFT> margin = compute_outer_frame_margin(aVerticesBegin,
                                                            aVerticesEnd,
-                                                           aWeights[0],
+                                                           aWeightsBegin,
+                                                           aWeightsEnd,
                                                            lOffset);
 
   if ( margin )
@@ -156,26 +166,31 @@ create_partial_exterior_weighted_straight_skeleton_2 ( FT const&      aMaxOffset
     holes.push_back(lPoly) ;
 
     // put a weight large enough such that frame edges are not relevant
-    const FT frame_weight = FT(10) * *(std::max_element(aWeights[0].begin(), aWeights[0].end()));
+    const FT frame_weight = FT(10) * *(std::max_element(aWeightsBegin, aWeightsEnd));
     CGAL_STSKEL_BUILDER_TRACE(4, "Frame weight = " << frame_weight);
 
-    Weights lWeights = { std::vector<FT>(4, frame_weight),
-                         std::vector<FT>(std::rbegin(aWeights[0]), std::rend(aWeights[0])) };
+    std::vector<FT> lFrameWeights(4, frame_weight);
+    std::vector<std::vector<FT> > lHoleWeights;
+    lHoleWeights.emplace_back(aWeightsBegin, aWeightsEnd);
 
     // If w[0] pointed to v_0, then when we reverse the polygon, the last polygon is pointing to v_{n-1}
     // but it is the edge v_0 v_{n-1}, which has the weight w_0.
-    std::rotate(lWeights[1].rbegin(), lWeights[1].rbegin()+1, lWeights[1].rend());
+    std::reverse(lHoleWeights[0].begin(), lHoleWeights[0].end());
+    std::rotate(lHoleWeights[0].rbegin(), lHoleWeights[0].rbegin()+1, lHoleWeights[0].rend());
 
     // weights ensure that we cannot create a non-simply connected face with a frame halfedge
     rSkeleton = create_partial_interior_weighted_straight_skeleton_2(aMaxOffset,
                                                                      frame, frame+4,
                                                                      holes.begin(), holes.end(),
-                                                                     lWeights,
+                                                                     lFrameWeights.begin(), lFrameWeights.end(),
+                                                                     lHoleWeights.begin(), lHoleWeights.end(),
                                                                      k ) ;
   }
 
   return rSkeleton ;
 }
+
+} // namespace CGAL_SS_i
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,26 +209,27 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const OfK& ofk,
                                                         const SsK& ssk)
 {
-  // partial_wsls_pwh
-  if(aHolesBegin == aHolesEnd)
+  if(aHolesBegin == aHolesEnd) // see @partial_wsls_pwh
   {
-    return create_weighted_offset_polygons_2<OutPolygon>(
+    return create_offset_polygons_2<OutPolygon>(
           aOffset,
           CGAL_SS_i::dereference(
             CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
               aOffset,
               CGAL_SS_i::vertices_begin(aOuterBoundary),
               CGAL_SS_i::vertices_end  (aOuterBoundary),
-              aWeights,
               aHolesBegin,
               aHolesEnd,
+              aWeights[0].begin(),
+              aWeights[0].end(),
+              std::next(aWeights.begin()),
+              std::end(aWeights.begin()),
               ssk)),
-          aWeights,
           ofk);
   }
   else
   {
-    return create_weighted_offset_polygons_2<OutPolygon>(
+    return create_offset_polygons_2<OutPolygon>(
           aOffset,
           CGAL_SS_i::dereference(
             CGAL::create_interior_weighted_straight_skeleton_2(
@@ -224,7 +240,6 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
               aHolesBegin,
               aHolesEnd,
               ssk)),
-          aWeights,
           ofk);
   }
 }
@@ -237,7 +252,7 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aOuterBoundary,
                                                         HoleIterator aHolesBegin,
                                                         HoleIterator aHolesEnd,
-                                                          const Weights& aWeights,
+                                                        const Weights& aWeights,
                                                         const OfK& ofk)
 {
   return create_interior_weighted_skeleton_and_offset_polygons_2(aOffset, aOuterBoundary,
@@ -314,16 +329,16 @@ create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         std::enable_if_t<
                                                           ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>* = nullptr)
 {
-  return create_weighted_offset_polygons_2<OutPolygon>(
+  return create_offset_polygons_2<OutPolygon>(
            aOffset,
            CGAL_SS_i::dereference(
              CGAL_SS_i::create_partial_exterior_weighted_straight_skeleton_2(
                aOffset,
                CGAL_SS_i::vertices_begin(aPoly),
                CGAL_SS_i::vertices_end  (aPoly),
-               aWeights,
+               aWeights[0].begin(),
+               aWeights[0].end(),
                ssk)),
-           aWeights,
            ofk);
 }
 

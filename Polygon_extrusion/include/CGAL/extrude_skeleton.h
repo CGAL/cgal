@@ -56,7 +56,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Straight_skeletons_2 {
+namespace Polygon_extrusions {
 namespace internal {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -308,7 +308,7 @@ private:
   Geom_traits m_gt;
 
 public:
-  const FT default_height = FT((std::numeric_limits<double>::max)());
+  static constexpr FT default_height = FT((std::numeric_limits<double>::max)());
 
 public:
   Extrusion_builder(const Geom_traits& gt) : m_gt(gt) { }
@@ -619,7 +619,8 @@ public:
                  CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
                  CGAL_SS_i::vertices_end(pwh.outer_boundary()),
                  pwh.holes_begin(), pwh.holes_end(),
-                 speeds,
+                 std::begin(speeds[0]), std::end(speeds[0]),
+                 std::next(std::begin(speeds)), std::end(speeds),
                  m_gt);
     }
     else
@@ -629,7 +630,8 @@ public:
                  CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
                  CGAL_SS_i::vertices_end(pwh.outer_boundary()),
                  pwh.holes_begin(), pwh.holes_end(),
-                 speeds,
+                 std::begin(speeds[0]), std::end(speeds[0]),
+                 std::next(std::begin(speeds)), std::end(speeds),
                  m_gt);
     }
 
@@ -721,12 +723,11 @@ public:
     //
     // Start with the outer boundary
     {
-      std::vector<std::vector<FT> > outer_speeds = { speeds[0] };
       Straight_skeleton_2_ptr ss_ptr = CGAL_SS_i::create_partial_exterior_weighted_straight_skeleton_2(
                                           abs_height,
                                           CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
                                           CGAL_SS_i::vertices_end(pwh.outer_boundary()),
-                                          outer_speeds,
+                                          std::begin(speeds[0]), std::end(speeds[0]),
                                           m_gt);
 
       if(!ss_ptr)
@@ -764,7 +765,7 @@ public:
 
     // now, deal with the holes
 
-    std::size_t hole_id = 1;
+    std::size_t hole_id = 0;
     for(auto hit=pwh.holes_begin(); hit!=pwh.holes_end(); ++hit, ++hole_id)
     {
       Polygon_2 hole = *hit; // intentional copy
@@ -774,13 +775,14 @@ public:
       // but we want to know the intermediate straight skeleton to build the lateral faces of the 3D mesh
 
       std::vector<Polygon_2> no_holes;
-      std::vector<std::vector<FT> > hole_speeds = { speeds[hole_id] };
+      std::vector<std::vector<FT> > no_speeds;
       Straight_skeleton_2_ptr ss_ptr = CGAL_SS_i::create_partial_interior_weighted_straight_skeleton_2(
                                           abs_height,
                                           CGAL_SS_i::vertices_begin(hole),
                                           CGAL_SS_i::vertices_end(hole),
-                                          no_holes.begin(), no_holes.end(),
-                                          hole_speeds,
+                                          std::begin(no_holes), std::end(no_holes),
+                                          std::begin(speeds[hole_id]), std::end(speeds[hole_id]),
+                                          std::begin(no_speeds), std::end(no_speeds),
                                           m_gt);
 
       if(!ss_ptr)
@@ -936,12 +938,10 @@ preprocess_weights(WeightRange& weights)
 }
 
 template <typename PolygonWithHoles,
-          typename FT,
           typename WeightRange,
           typename PolygonMesh,
           typename NamedParameters>
 bool extrude_skeleton(const PolygonWithHoles& pwh,
-                      const FT height,
                       WeightRange& weights,
                       PolygonMesh& out,
                       const NamedParameters& np)
@@ -955,6 +955,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   using Geom_traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                                    NamedParameters,
                                                                    Default_kernel>::type;
+  using FT = typename Geom_traits::FT;
 
   using Point_3 = typename Geom_traits::Point_3;
 
@@ -963,6 +964,9 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, CGAL::internal_np::geom_traits));
+
+  const FT height = choose_parameter(get_parameter(np, internal_np::maximum_height),
+                                                   Extrusion_builder<Geom_traits>::default_height);
 
   Slope slope;
   bool valid_input;
@@ -1033,19 +1037,21 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 }
 
 } // namespace internal
-} // namespace Straight_skeletons_2
+} // namespace Polygon_extrusions
 
+// Documented in the Straight_skeleton_2 package
 template <typename PolygonWithHoles,
-          typename FT,
           typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 bool extrude_skeleton(const PolygonWithHoles& pwh,
-                      const FT height,
                       PolygonMesh& out,
                       const NamedParameters& np = parameters::default_values())
 {
-  namespace SSI = Straight_skeletons_2::internal;
+  namespace PEI = Polygon_extrusions::internal;
 
+  using Polygon_2 = typename PolygonWithHoles::General_polygon_2;
+  using K = typename Kernel_traits<typename boost::range_value<Polygon_2>::type>::type;
+  using FT = typename K::FT;
   using Default_speed_type = std::vector<std::vector<FT> >;
 
   using parameters::choose_parameter;
@@ -1055,20 +1061,20 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   const bool has_weights = !(is_default_parameter<NamedParameters, internal_np::weights_param_t>::value);
   const bool has_angles = !(is_default_parameter<NamedParameters, internal_np::angles_param_t>::value);
 
-  Default_speed_type def_speed;
+  Default_speed_type def_speeds; // never used, but needed for compilation
 
   if(has_weights)
   {
     // not using "Angles" here is on purpose, I want to copy the range but the NP is ref only
-    auto weights = choose_parameter(get_parameter_reference(np, internal_np::weights_param), def_speed);
-    return SSI::extrude_skeleton(pwh, height, weights, out, np);
+    auto weights = choose_parameter(get_parameter_reference(np, internal_np::weights_param), def_speeds);
+    return PEI::extrude_skeleton(pwh, weights, out, np);
   }
   else if(has_angles)
   {
     // not using "Weights" here is on purpose, I want to copy the range but the NP is ref only
-    auto angles = choose_parameter(get_parameter_reference(np, internal_np::angles_param), def_speed);
-    SSI::convert_angles<FT>(angles);
-    return SSI::extrude_skeleton(pwh, height, angles, out, np);
+    auto angles = choose_parameter(get_parameter_reference(np, internal_np::angles_param), def_speeds);
+    PEI::convert_angles<FT>(angles);
+    return PEI::extrude_skeleton(pwh, angles, out, np);
   }
   else // neither angles nor weights were provided
   {
@@ -1079,22 +1085,8 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
     for(const auto& hole : pwh.holes())
       uniform_weights.push_back(std::vector<FT>(hole.size(), FT(1)));
 
-    return SSI::extrude_skeleton(pwh, height, uniform_weights, out, np);
+    return PEI::extrude_skeleton(pwh, uniform_weights, out, np);
   }
-}
-
-template <typename PolygonWithHoles,
-          typename PolygonMesh,
-          typename NamedParameters = parameters::Default_named_parameters>
-bool extrude_skeleton(const PolygonWithHoles& pwh,
-                      PolygonMesh& out,
-                      const NamedParameters& np = parameters::default_values())
-{
-  using Polygon_2 = typename PolygonWithHoles::Polygon_2;
-  using Point = typename boost::range_value<Polygon_2>::type;
-  using FT = typename CGAL::Kernel_traits<Point>::type::FT;
-
-  return extrude_skeleton(pwh, FT(1), out, np);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
