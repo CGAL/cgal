@@ -32,6 +32,10 @@
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h> // could be avoided
 
+#ifdef CGAL_SLS_OUTPUT_FILES
+#include <CGAL/IO/polygon_soup_io.h>
+#endif
+
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
