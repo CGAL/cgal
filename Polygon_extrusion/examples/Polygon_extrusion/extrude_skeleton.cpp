@@ -398,9 +398,9 @@ int main(int argc, char** argv)
 
   Mesh sm;
   if(use_angles)
-    extrude_skeleton(pwh, height, sm, CGAL::parameters::angles(speeds));
+    CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(speeds).maximum_height(height));
   else
-    extrude_skeleton(pwh, height, sm, CGAL::parameters::weights(speeds));
+    CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::weights(speeds).maximum_height(height));
 
   timer.stop();
   std::cout << "Extrusion computation took " << timer.time() << " s." << std::endl;
