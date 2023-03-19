@@ -106,6 +106,7 @@ extracted from labeled images.
 
 ### [2D Minkowski Sums](https://doc.cgal.org/5.6/Manual/packages.html#PkgMinkowskiSum2)
 -   Fixed a bug that made holes in the Minkowski sum disappear
+-   Fixed hole filtering. The code use to erroneously remove holes from the container of holes of polygons with holes that did not affect the mink. sum. Now it simply adds those that do affect it.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
