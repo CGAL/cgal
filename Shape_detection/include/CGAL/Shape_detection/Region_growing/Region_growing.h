@@ -394,7 +394,6 @@ namespace internal {
       //      clear(); TODO: this is not valid to comment this clear()
       m_visited_map.clear(); // tmp replacement for the line above
 
-      Region region;
       m_nb_regions = 0;
 
       // Grow regions.
@@ -403,6 +402,7 @@ namespace internal {
 
         // Try to grow a new region from the index of the seed item.
         if (!get(m_visited, seed)) {
+          Region region;
           const bool is_success = propagate(seed, region);
 
           // Check global conditions.
