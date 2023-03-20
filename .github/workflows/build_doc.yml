@@ -3,7 +3,6 @@ name: Documentation
 on:
   issue_comment:
       types: [created]
-  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -67,7 +66,6 @@ jobs:
         with:
            repository: ${{ github.repository }}
            ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
-           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
            fetch-depth: 2
 
       - name: install dependencies
@@ -161,7 +159,8 @@ jobs:
         with:
           script: |
             const error = process.env.ERRORMSG
-            const msg = "There was an error while building the doc: \n"+error
+            const job_url = `${context.serverUrl}/CGAL/cgal/actions/runs/${context.runId}`
+            const msg = "There was an error while building the doc: \n"+error + "\n" + job_url
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

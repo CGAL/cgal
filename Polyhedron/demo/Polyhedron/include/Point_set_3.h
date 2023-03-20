@@ -579,9 +579,9 @@ namespace CGAL
 {
 
 // specialization for default named parameters
-template <typename Gt, typename NamedParameters, typename NP_TAG>
-struct Point_set_processing_3_np_helper<::Point_set_3<Gt>, NamedParameters, NP_TAG>
-    : public Point_set_processing_3_np_helper<typename ::Point_set_3<Gt>::Base, NamedParameters, NP_TAG>
+template <typename Gt, typename NamedParameters, typename DPM, typename DVM>
+struct Point_set_processing_3_np_helper<::Point_set_3<Gt>, NamedParameters, DPM, DVM>
+    : public Point_set_processing_3_np_helper<typename ::Point_set_3<Gt>::Base, NamedParameters, DPM, DVM>
 {};
 
 }

@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <memory>
 #include <cstddef>
+#include <functional>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
@@ -134,6 +135,13 @@ public:
               ( const_cast<Ptr_no_c>(ptr) );
     }
 };
+
+template < class T, class Ref, class Ptr>
+std::size_t hash_value(const vector_iterator<T, Ref, Ptr>& i)
+{
+  Ptr ptr = i.operator->();
+  return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+}
 
 template < class T, class Ref, class Ptr> inline
 vector_iterator<T,Ref,Ptr>
@@ -608,5 +616,32 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
 } // namespace internal
 
 } //namespace CGAL
+
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash
+#endif
+
+#ifndef CGAL_CFG_NO_STD_HASH
+
+  template < class T, class Ref, class Ptr>
+  struct hash<CGAL::internal::vector_iterator<T, Ref, Ptr> >
+    : public CGAL::cpp98::unary_function<CGAL::internal::vector_iterator<T, Ref, Ptr>, std::size_t>  {
+
+    std::size_t operator()(const CGAL::internal::vector_iterator<T, Ref, Ptr>& i) const
+    {
+      return CGAL::internal::hash_value(i);
+    }
+  };
+
+#endif // CGAL_CFG_NO_STD_HASH
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // namespace std
 
 #endif // CGAL_VECTOR_H //
