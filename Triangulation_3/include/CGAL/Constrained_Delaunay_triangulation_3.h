@@ -400,10 +400,10 @@ public:
                        cross_product(vector(last_point, tr.point(*vit)),
                                      vector(last_point, tr.point(*next_it))));
       }
-      if (accumulated_normal.z() < 0 ||
-          (accumulated_normal.z() == 0 && accumulated_normal.y() > 0) ||
-          (accumulated_normal.z() == 0 && accumulated_normal.y() == 0 &&
-           accumulated_normal.x() > 0)
+      if (accumulated_normal.x() < 0 ||
+          (accumulated_normal.x() == 0 && accumulated_normal.y() < 0) ||
+          (accumulated_normal.x() == 0 && accumulated_normal.y() == 0 &&
+           accumulated_normal.z() < 0)
           )
       {
         accumulated_normal = - accumulated_normal;
