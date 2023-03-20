@@ -261,7 +261,7 @@ private:
  * \sa `CGAL::parameters::no_odt()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
-void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
+void refine_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -291,7 +291,7 @@ template<typename C3T3, typename MeshDomain, typename MeshCriteria,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
          typename ... NP>
-void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria,
+void refine_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
                    const CGAL_NP_CLASS_1&  np1,
                    const CGAL_NP_CLASS_2&  np2,
                    const NP& ... nps)

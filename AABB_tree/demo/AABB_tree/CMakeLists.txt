@@ -5,6 +5,7 @@ project(AABB_tree_Demo)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -31,10 +32,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   include(AddFileDependencies)
 
-  qt5_generate_moc("MainWindow.h"
-                   "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp")
-  add_file_dependencies(MainWindow_moc.cpp
-                        "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h")
+  qt5_generate_moc("MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp")
+  add_file_dependencies(MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h")
 
   qt5_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
   add_file_dependencies(Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h")
@@ -62,8 +61,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(AABB_demo)
 
-else(CGAL_Qt5_FOUND
-  AND Qt5_FOUND)
+else(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(AABB_MISSING_DEPS "")
 
@@ -75,11 +73,6 @@ else(CGAL_Qt5_FOUND
     set(AABB_MISSING_DEPS "Qt5, ${AABB_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${AABB_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${AABB_MISSING_DEPS}, and will not be compiled.")
 
-endif(
-  CGAL_Qt5_FOUND
-  AND Qt5_FOUND)
+endif(CGAL_Qt5_FOUND AND Qt5_FOUND)

@@ -31,7 +31,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   cgal_add_compilation_test(min)
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()
