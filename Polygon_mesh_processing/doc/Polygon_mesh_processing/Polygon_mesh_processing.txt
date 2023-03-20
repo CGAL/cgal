@@ -38,7 +38,7 @@ The page \ref bgl_namedparameters describes their usage.
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
 - \ref PMPMeshing : meshing algorithms, including triangulation of non-triangulated
-meshes, refinement, optimization by fairing, isotropic remeshing of triangulated surface meshes
+meshes, refinement, optimization by fairing, remeshing of triangulated surface meshes
 and smoothing algorithms.
 - \ref Coref_section : methods to corefine triangle meshes and to compute
   boolean operations out of corefined closed triangle meshes.
@@ -151,6 +151,31 @@ and one-dimensional features sampling.
 An example of how to remesh a given triangulated surface mesh with the Delaunay refinement
 algorithm while preserving the detected sharp edges
 is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
+
+\paragraph Decimate Remeshing of (Almost) Planar Patches
+If a triangulated surface mesh uses a lot of triangles to described some planar regions of a model, it is possible to simplify
+those parts using the function `CGAL::Polygon_mesh_processing::remesh_planar_patches()`.
+For simply connected patches, it is even possible to not retriangulate them.
+The coplanarity and collinearty tests being exact, almost coplanar patches will not be detected by default. It is possible to specify a
+threshold on the angle between adjacent faces (resp. segments) so that they are considered coplanar (resp. collinear). However, this
+coplanarity and collinearity tolerance is only local and there is no global control (think of the classical example of a circle arc
+densely sampled: 3 consecutive points are seen as almost collinear while all the points on the arc are not). To circumvent this situation,
+we also provide the function `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()` that expects the segmentation into
+planar patches and corner to be provided. The function `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
+uses the region growing algorithm to detect planar regions in a mesh with global and local criteria. Similarly, the function
+`CGAL::Polygon_mesh_processing::detect_corners_of_regions()` can be used to detect corner vertices on the border of the planar
+regions detected by running the region growing algorithm on border segments of the patch.
+
+
+\cgalFigureBegin{decimate_cheese, decimate_cheese.png, decimate_colors.png}
+Remeshing of planar patches in two models. On the right, the output has not been retriangulated and the patch ids
+has been assigned to the input and the output meshes, allowing an identical color scheme.
+\cgalFigureEnd
+
+\cgalFigureBegin{decimate_rg_sphere, decimate_rg_sphere.png}
+Remeshing of planar patches using region growing for the detection of planar patches.
+From left to right: input mesh, remeshed version, remeshed version using the same angle threshold but better approximation error.
+\cgalFigureEnd
 
 \subsubsection Smoothing
 
