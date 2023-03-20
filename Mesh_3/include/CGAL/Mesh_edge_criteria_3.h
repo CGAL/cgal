@@ -122,9 +122,15 @@ public:
   /// @{
   /*!
   * Returns an object to serve as criteria for edges.
-  * The argument `length_bound` is an upper bound
+  * \param length_bound is an upper bound
   * for the length of the edges which are used to discretize the curves.
-  * Note that if one parameter is set to 0, then its corresponding criteria is ignored.
+  * \param min_length_bound is a lower bound
+  * for the length of the edges which are used to discretize the curves.
+  * Only edges that are longer than this bound will be refined. Using
+  * this lower bound can be handy on some domains, but using it may
+  * break all the surface topology guarantees of the meshing algorithm.
+  *
+  * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
   */
   Mesh_edge_criteria_3(const FT& length_bound,
                        const FT& min_length_bound = 0.)
