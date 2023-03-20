@@ -1293,8 +1293,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *  first extracted (each such connected component is called a *patch*). Then the connected components of vertex
  *  connected patch border edges belonging to the same line are extracted. Endpoints of such components and
  *  vertices incident to more than two patches (or two patches + one mesh boundary) are called *corners*.
- *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch with border defined by
- *  only corner vertices.
+ *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch using only only corner vertices
+ *  on the boundary of the patch.
  *
  *  \warning if `tm_in` contains a non-manifold vertex, `tm_out` will be empty. Those vertices must be
  *           duplicated with `duplicate_non_manifold_vertices()` to get an output.
