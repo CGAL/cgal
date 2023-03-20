@@ -5,34 +5,32 @@ namespace CGAL {
 
 \cgalModels `StraightSkeleton_2`
 
-The class `Straight_skeleton_2` provides a model for the `StraightSkeleton_2` concept
+\brief The class `Straight_skeleton_2` provides a model for the `StraightSkeleton_2` concept
 which is the class type used to represent a straight skeleton.
+
+\tparam Traits must be a model of `Kernel`
 
 The only purpose of this class is to protect all the modifying operations in a `HalfedgeDS`.
 Normal users should not modify a straight skeleton. If an advanced user needs to get access to the
 modifying operations, it must call the required methods through the `Base` class.
 
-\tparam Traits must be a model of `Kernel`
+Below is an in-depth description of the combinatorial representation used in the straight skeleton class,
+starting with a few definitions describing the different concepts appearing in the algorithm.
 
 \cgalHeading{Angular Bisecting Lines and Offset Bisectors}
 
 Given two points and a line passing through them, the perpendicular line passing through the midpoint
 is the bisecting line (or bisector) of those points.
-
 Two non-parallel lines, intersecting at a point, are bisected by two other lines passing through
 that intersection point.
-
 Two parallel lines are bisected by another parallel line placed halfway in between.
-
 Given just one line, any perpendicular line can be considered the bisecting line (any bisector
 of any two points along the single line).
-
 The bisecting lines of two edges are the lines bisecting the supporting lines of the edges
 (if the edges are parallel or collinear, there is just one bisecting line).
 
 The halfplane to the bounded side of the line supporting a contour edge is called the <I>offset zone</I>
 of the contour edge.
-
 Given any number of contour edges (not necessarily consecutive), the intersection of their offset zones
 is called their <I>combined offset zone</I>.
 
