@@ -378,42 +378,13 @@ namespace internal {
           }
           else {
             fill_region_map(m_nb_regions++, region);
-            *region_out = std::make_pair(m_region_type.primitive(), std::move(region));
-            region_out++;
+            if (!std::is_same<PrimitiveAndRegionOutputIterator, Emptyset_iterator>::value)
+              *region_out++ = std::make_pair(m_region_type.primitive(), std::move(region));
           }
         }
       }
 
       return region_out;
-    }
-
-    /*!
-      \brief runs the region growing algorithm
-    */
-    void detect() {
-      //      clear(); TODO: this is not valid to comment this clear()
-      m_visited_map.clear(); // tmp replacement for the line above
-
-      m_nb_regions = 0;
-
-      // Grow regions.
-      for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
-        const Item seed = *it;
-
-        // Try to grow a new region from the index of the seed item.
-        if (!get(m_visited, seed)) {
-          Region region;
-          const bool is_success = propagate(seed, region);
-
-          // Check global conditions.
-          if (!is_success || !m_region_type.is_valid_region(region)) {
-            revert(region);
-          }
-          else {
-            fill_region_map(m_nb_regions++, region);
-          }
-        }
-      }
     }
 
     /*!
