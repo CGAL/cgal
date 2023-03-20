@@ -947,14 +947,14 @@ private:
     typename T_3::Vertex_handle_unique_hash_map map_cavity_vertices_to_ambient_vertices;
     typename T_3::Vertex_handle_unique_hash_map map_lower_cavity_vertices_to_ambient_vertices;
 
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# upper cavity\n";
 #endif // CGAL_DEBUG_CDT_3
     const auto [upper_cavity_triangulation, nb_of_add_vertices_upper] =
         triangulate_cavity(face_index, cdt_2, intersecting_cells, facets_of_upper_cavity,
                            map_cavity_vertices_to_ambient_vertices,
                            vertices_of_upper_cavity);
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# lower cavity\n";
 #endif // CGAL_DEBUG_CDT_3
     const auto [lower_cavity_triangulation, nb_of_add_vertices_lower] =
@@ -1004,7 +1004,7 @@ private:
       return test;
     }));
 
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# glu the upper triangulation of the cavity\n";
 
     if(nb_of_add_vertices_upper > 0 || nb_of_add_vertices_lower > 0)
@@ -1022,9 +1022,10 @@ private:
 #endif // CGAL_DEBUG_CDT_3
 
     typename T_3::Vertex_triple_Facet_map outer_map;
-    auto add_to_outer_map = [&outer_map](typename T_3::Vertex_triple vt, Facet f, std::string_view extra = {}) {
+    auto add_to_outer_map = [&outer_map](typename T_3::Vertex_triple vt, Facet f,
+                                         [[maybe_unused]] std::string_view extra = {}) {
       outer_map[vt] = f;
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
       CGAL_assertion(vt.first != vt.second);
       CGAL_assertion(vt.first != vt.third);
       CGAL_assertion(vt.second != vt.third);
@@ -1079,7 +1080,7 @@ private:
                                        map_cavity_vertices_to_ambient_vertices[vt_aux.third],
                                        map_cavity_vertices_to_ambient_vertices[vt_aux.second]);
         this->make_canonical_oriented_triple(vt);
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
         CGAL_assertion(vt.first != vt.second);
         CGAL_assertion(vt.first != vt.third);
         CGAL_assertion(vt.second != vt.third);
@@ -1098,7 +1099,7 @@ private:
     };
 
     {
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
       std::ofstream out("dump_upper_outer_map.off");
       out.precision(17);
       write_facets(out, *this, std::ranges::views::values(outer_map));
@@ -1111,7 +1112,7 @@ private:
                                          upper_inner_map,
                                          Emptyset_iterator{});
     }
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# glu the lower triangulation of the cavity\n";
 #endif // CGAL_DEBUG_CDT_3
 
@@ -1133,7 +1134,7 @@ private:
     fill_outer_map_of_cavity(lower_cavity_triangulation, facets_of_lower_cavity);
     {
       const auto lower_inner_map = inner_map_of_cavity(lower_cavity_triangulation);
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
       std::cerr << "outer_map:\n";
       for(auto [vt, _] : outer_map) {
         std::cerr << std::format("  {:.6}, {:.6}, {:.6})\n",
@@ -1256,11 +1257,11 @@ private:
     auto& cavity_triangulation =  result.cavity_triangulation;
     CGAL::Unique_hash_map<Vertex_handle, Vertex_handle> vertex_map;
 
-    auto insert_new_vertex = [&](Vertex_handle v, std::string_view extra = "") {
+    auto insert_new_vertex = [&](Vertex_handle v, [[maybe_unused]] std::string_view extra = "") {
       const auto cavity_v = cavity_triangulation.insert(this->point(v));
       vertex_map[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
       std::cerr << std::format("inserted {}cavity vertex {:.6} -> {:.6}\n",
                                extra,
                                IO::oformat(cavity_v, with_point),
@@ -1330,7 +1331,7 @@ private:
 
   void restore_face(CDT_3_face_index face_index) {
     const CDT_2& cdt_2 = face_cdt_2[face_index];
-#if CGAL_DEBUG_CDT_3 > 64 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
     std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
 #endif // CGAL_DEBUG_CDT_3
     for(const auto& edge : cdt_2.finite_edges()) {
@@ -1339,7 +1340,7 @@ private:
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
       const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
       const bool is_3d = this->tds().is_edge(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3 > 64 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
       std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
                                 is_3d,
                                 IO::oformat(this->point(va_3d)),
