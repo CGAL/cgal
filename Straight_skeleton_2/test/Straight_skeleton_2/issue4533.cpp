@@ -2,7 +2,7 @@
 
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
 #include <CGAL/Polygon_2.h>
 
 #include <boost/shared_ptr.hpp>

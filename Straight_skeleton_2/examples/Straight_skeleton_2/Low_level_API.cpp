@@ -5,7 +5,7 @@
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
 
 #include <boost/shared_ptr.hpp>
 

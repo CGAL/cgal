@@ -45,7 +45,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Surface_mesh.h>
 
-#include "print.h" // @todo symmetry with examples/print.h
+#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 #include <CGAL/draw_polygon_2.h>
 #include <CGAL/draw_polygon_with_holes_2.h>

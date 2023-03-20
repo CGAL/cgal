@@ -2,7 +2,7 @@
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/create_offset_polygons_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
 
 #include <boost/shared_ptr.hpp>
 

@@ -30,7 +30,7 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2.h>

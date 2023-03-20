@@ -112,8 +112,7 @@ void register_construction_success ( std::string cons) { ++ sConsSuccessMap[cons
 
 #include <CGAL/test_sls_types.h>
 
-
-#include <CGAL/IO/Dxf_stream.h>
+#include <CGAL/Straight_skeleton_2/IO/Dxf_stream.h>
 
 typedef CGAL::Dxf_stream<IK> DxfStream ;
 

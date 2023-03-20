@@ -29,7 +29,7 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/draw_polygon_2.h>
