@@ -31,6 +31,7 @@ create_single_source_cgal_program( "test_without_detect_features.cpp" )
 if(CGAL_ImageIO_USE_ZLIB)
   create_single_source_cgal_program( "test_meshing_3D_image.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_image_deprecated.cpp" )
+  create_single_source_cgal_program( "test_meshing_3D_image_with_features.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_gray_image.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_gray_image_deprecated.cpp" )
 else()
@@ -65,6 +66,7 @@ foreach(target
     test_without_detect_features
     test_meshing_3D_image
     test_meshing_3D_image_deprecated
+    test_meshing_3D_image_with_features
     test_meshing_3D_gray_image
     test_meshing_3D_gray_image_deprecated
     test_meshing_implicit_function

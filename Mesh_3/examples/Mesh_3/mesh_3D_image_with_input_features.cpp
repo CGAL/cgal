@@ -18,12 +18,10 @@ typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
 /// [Domain definition]
 
-#include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
-
 #ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Parallel_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Sequential_tag;
 #endif
 
 // Triangulation
@@ -36,7 +34,6 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
-// Read input features
 #include "read_polylines.h"
 
 int main(int argc, char* argv[])
@@ -49,9 +46,10 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  /// Load 1D-features
-  const std::string lines_fname = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt");
-  std::vector<std::vector<K::Point_3> > features_inside;
+  /// Declare 1D-features
+  const std::string lines_fname = (argc>2)?argv[2]:CGAL::data_file_path("images/420.polylines.txt");
+  using Point_3 = K::Point_3;
+  std::vector<std::vector<Point_3> > features_inside;
   if (!read_polylines(lines_fname, features_inside)) // see file "read_polylines.h"
   {
     std::cerr << "Error: Cannot read file " << lines_fname << std::endl;
@@ -60,12 +58,11 @@ int main(int argc, char* argv[])
 
   /// [Domain creation]
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image,
-    params::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
-    params::input_features  = std::cref(features_inside));//use std::cref to avoid a copy
+    params::input_features = std::cref(features_inside));//use std::cref to avoid a copy
   /// [Domain creation]
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(params::edge_size = 6.,
+  Mesh_criteria criteria(params::edge_size = 6,
     params::facet_angle = 30,
     params::facet_size = 6,
     params::facet_distance = 4,
