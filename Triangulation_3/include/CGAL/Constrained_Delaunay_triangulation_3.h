@@ -190,7 +190,22 @@ public:
 
 private:
   struct CDT_2_types {
-    using Projection_traits = Projection_traits_3<Geom_traits>;
+    struct Projection_traits : public Projection_traits_3<Geom_traits> {
+      struct Side_of_oriented_circle_2 : public Geom_traits::Coplanar_side_of_bounded_circle_3 {
+        using result_type = Oriented_side;
+        template <typename... Arg> auto operator()(Arg&&... arg) const
+        {
+          return CGAL::enum_cast<Oriented_side>(
+              Geom_traits::Coplanar_side_of_bounded_circle_3::operator()(std::forward<Arg>(arg)...));
+        }
+      };
+      Side_of_oriented_circle_2 side_of_oriented_circle_2_object() const { return {}; }
+
+      using Compare_xy_2 = typename Geom_traits::Compare_xyz_3;
+      Compare_xy_2 compare_xy_2_object() const { return {}; }
+
+      using Projection_traits_3<Geom_traits>::Projection_traits_3; // inherit cstr
+    };
     static_assert(std::is_nothrow_move_constructible<Projection_traits>::value,
                   "move cstr is missing");
 
