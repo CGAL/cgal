@@ -210,7 +210,10 @@ bool test(const char* poly_filename,
   }
 
   Mesh sm;
-  CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(angles).maximum_height(height));
+  if(pwh.number_of_holes() == 0) // just to test the hole-less version
+    CGAL::extrude_skeleton(pwh.outer_boundary(), sm, CGAL::parameters::angles(angles).maximum_height(height));
+  else
+    CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(angles).maximum_height(height));
 
   assert(CGAL::IO::write_polygon_mesh(root_name(poly_filename) + "_extruded_up.off", sm, CGAL::parameters::stream_precision(17)));
 
@@ -235,14 +238,6 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
   std::cerr.precision(17);
-
-  if(argc != 1)
-  {
-    Mesh sm;
-    CGAL::IO::read_polygon_mesh(argv[1], sm);
-    std::cout << PMP::volume(sm) << std::endl;
-    return EXIT_SUCCESS;
-  }
 
   test("data/polygon_000.dat", "data/angles_000.dat",   6, 162.37987499999997);
   test("data/polygon_001.dat", "data/angles_001.dat",   6, 761.76899999999989);

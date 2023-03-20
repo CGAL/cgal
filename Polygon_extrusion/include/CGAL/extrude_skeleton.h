@@ -13,12 +13,9 @@
 #ifndef CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
 #define CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
 
-#include <CGAL/license/Polygon_extrusion.h>
+#define CGAL_SLS_OUTPUT_FILES
 
-#include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
-#include <CGAL/create_weighted_offset_polygons_2.h>
-#include <CGAL/create_weighted_straight_skeleton_from_polygon_with_holes_2.h>
-#include <CGAL/create_weighted_straight_skeleton_2.h>
+#include <CGAL/license/Polygon_extrusion.h>
 
 #ifdef CGAL_SLS_DEBUG_DRAW
   #include <CGAL/draw_straight_skeleton_2.h>
@@ -27,10 +24,18 @@
   #include <CGAL/draw_triangulation_2.h>
 #endif
 
+#include <CGAL/create_weighted_straight_skeleton_2.h>
+#include <CGAL/create_weighted_straight_skeleton_from_polygon_with_holes_2.h>
+#include <CGAL/create_weighted_offset_polygons_2.h>
+#include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+
+#include <CGAL/General_polygon_with_holes_2.h>
+
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h> // could be avoided
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 #ifdef CGAL_SLS_OUTPUT_FILES
 #include <CGAL/IO/polygon_soup_io.h>
@@ -1049,7 +1054,8 @@ template <typename PolygonWithHoles,
           typename NamedParameters = parameters::Default_named_parameters>
 bool extrude_skeleton(const PolygonWithHoles& pwh,
                       PolygonMesh& out,
-                      const NamedParameters& np = parameters::default_values())
+                      const NamedParameters& np = parameters::default_values(),
+                      std::enable_if_t<CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
   namespace PEI = Polygon_extrusions::internal;
 
@@ -1097,7 +1103,18 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// @todo Overloads for simple polygons
+template <typename Polygon, // without holes
+          typename PolygonMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
+bool extrude_skeleton(const Polygon& p,
+                      PolygonMesh& out,
+                      const NamedParameters& np = parameters::default_values(),
+                      std::enable_if_t<!CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>* = nullptr)
+{
+  using Polygon_with_holes = CGAL::General_polygon_with_holes_2<Polygon>;
+
+  return extrude_skeleton(Polygon_with_holes(p), out, np);
+}
 
 } // namespace CGAL
 
