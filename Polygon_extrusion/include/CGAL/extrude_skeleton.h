@@ -81,7 +81,9 @@ enum class Slope
   VERTICAL
 };
 
-// @todo Maybe this postprocessing is not really necessary?...
+// @todo Maybe this postprocessing is not really necessary? Do users really care if the point
+// is not perfectly above the input contour edge (it generally cannot be anyway if the kernel is not exact except for some
+// specific cases)?
 #define CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 
@@ -116,7 +118,7 @@ snap_point_to_contour_halfedge_plane(const typename GeomTraits::Point_2& op,
   else
   {
     // Project orthogonally onto the halfedge
-    // @todo the best projection could be along the direction of the other offset edge sharing this point?
+    // @todo should the projection be along the direction of the other offset edge sharing this point?
     Segment_2 s { sv->point(), tv->point() };
     boost::optional<Line_2> line = CGAL_SS_i::compute_normalized_line_coeffC2(s);
     CGAL_assertion(bool(line)); // otherwise the skeleton would have failed already

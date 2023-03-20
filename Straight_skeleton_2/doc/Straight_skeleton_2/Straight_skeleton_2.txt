@@ -416,7 +416,7 @@ or even cross each other.
 Thus, it is necessary to use a kernel with exact constructions if offset polygons must be simple,
 yet computing a straight skeleton using that kernel is very slow, much more than computing the offset
 polygons. To help with this, it is possible to construct the straight skeleton using the recommended
-kernel Exact_predicates_inexact_constructions_kernel`, then convert the skeleton to a different kernel
+kernel `Exact_predicates_inexact_constructions_kernel`, then convert the skeleton to a different kernel
 via the function `CGAL::convert_straight_skeleton_2()` and input the converted skeleton to the offsetting functions.
 
 All the offsetting functions that take polygons as input (and create the straight skeleton
@@ -434,7 +434,7 @@ The following example shows how to extrude the weighted skeleton of a polygon wi
 
 \cgalExample{Straight_skeleton_2/extrude_skeleton.cpp}
 
-\subsection Straight_skeleton_2LowlevelAPI Low level API
+\subsection Straight_skeleton_2LowlevelAPI Low Level API
 
 All the high level functions described above are just wrappers around the low-level API described here.
 This low level API is richer and provides options and configurations not covered by any of those functions.
@@ -503,7 +503,7 @@ Therefore, the `Exact_predicates_inexact_constructions_kernel` should be used.
 Fernando Cacciola created the first version of this package, providing unweighted straight skeletons
 and polygon offsetting.
 
-Sébastien Loriot and Mael Rouxel-Labbé implemented further robustification techniues,
+Sébastien Loriot and Mael Rouxel-Labbé implemented further robustification techniques,
 as well as weighted straight skeletons, and skeleton extrusion.
 
 */
