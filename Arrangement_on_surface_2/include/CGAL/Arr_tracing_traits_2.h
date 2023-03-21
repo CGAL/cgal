@@ -678,8 +678,8 @@ public:
     /*! The base does not have Are_mergable_2
      */
     template <typename T>
-    bool are_mergable_2_impl(const X_monotone_curve_2& xcv1,
-                             const X_monotone_curve_2& xcv2, long) const {
+    bool are_mergable_2_impl(const X_monotone_curve_2& /* xcv1 */,
+                             const X_monotone_curve_2& /* xcv2 */, long) const {
       CGAL_error();
       return false;
     }
