@@ -224,8 +224,8 @@ in the range [points_first, points_last). The indices must go from 0 to `std::di
 \tparam PointIterator is an `InputIterator` with the value type `Point`.
 \tparam IndicesIterator is an `InputIterator` with `std::pair<Int,Int>`
 where `Int` is an integral type implicitly convertible to `std::size_t`
-\return the number of inserted points.
 \note points are inserted even if they are not endpoint of a constraint.
+\return the number of inserted points.
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
