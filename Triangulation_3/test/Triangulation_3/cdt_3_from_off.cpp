@@ -91,7 +91,9 @@ int main(int argc, char* argv[])
       std::ofstream missing_faces("missing_faces.polylines.txt");
       missing_faces.precision(17);
       cdt.recheck_constrained_Delaunay();
-      cdt.write_missing_subfaces_file(missing_faces);
+      if(cdt.write_missing_subfaces_file(missing_faces)) {
+        std::cerr << "ERROR: Missing subfaces!\n";
+      }
     }
     {
       std::ofstream missing_edges("missing_segments.polylines.txt");

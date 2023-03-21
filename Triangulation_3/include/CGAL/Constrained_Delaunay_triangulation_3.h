@@ -1537,9 +1537,10 @@ public:
     write_triangle(out, v0, v1, v2);
   }
 
-  void write_missing_subfaces_file(std::ostream& out) {
+  bool write_missing_subfaces_file(std::ostream& out) {
     const auto npos = face_constraint_misses_subfaces.npos;
     auto i = face_constraint_misses_subfaces.find_first();
+    bool has_missing_subfaces = i != npos;
     while(i != npos) {
       const CDT_2& cdt = face_cdt_2[i];
       for(const auto fh: cdt.finite_face_handles()) {
@@ -1551,6 +1552,7 @@ public:
       }
       i = face_constraint_misses_subfaces.find_next(i);
     }
+    return has_missing_subfaces;
   }
 
   /// @{
