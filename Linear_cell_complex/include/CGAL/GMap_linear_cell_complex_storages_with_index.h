@@ -261,6 +261,13 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "copy_attribute<i> called but i-attributes are disabled.");
+      // We need to do a reserve before the emplace in order to avoid a bug of
+      // invalid reference when the container is reallocated.
+      std::get<Helper::template Dimension_index<i>::value>
+          (mattribute_containers).reserve
+          (std::get<Helper::template Dimension_index<i>::value>
+           (mattribute_containers).size()+1);
+
       typename Attribute_descriptor<i>::type res=
         std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(get_attribute<i>(ah));
