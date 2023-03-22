@@ -413,7 +413,7 @@ void mark_face_triangles(CDT& cdt)
 
 template < typename GT,
            typename Vb = Triangulation_vertex_base_2<GT> >
-class Triangulation_vertex_base_with_id_2
+class Triangulation_vertex_with_corner_id_2
   : public Vb
 {
   std::size_t _id;
@@ -425,19 +425,19 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other          Vb2;
-    typedef Triangulation_vertex_base_with_id_2<GT, Vb2>   Other;
+    typedef Triangulation_vertex_with_corner_id_2<GT, Vb2>   Other;
   };
 
-  Triangulation_vertex_base_with_id_2()
+  Triangulation_vertex_with_corner_id_2()
     : Vb(), _id(-1) {}
 
-  Triangulation_vertex_base_with_id_2(const Point & p)
+  Triangulation_vertex_with_corner_id_2(const Point & p)
     : Vb(p), _id(-1) {}
 
-  Triangulation_vertex_base_with_id_2(const Point & p, Face_handle c)
+  Triangulation_vertex_with_corner_id_2(const Point & p, Face_handle c)
     : Vb(p, c), _id(-1) {}
 
-  Triangulation_vertex_base_with_id_2(Face_handle c)
+  Triangulation_vertex_with_corner_id_2(Face_handle c)
     : Vb(c), _id(-1) {}
 
   const std::size_t& corner_id() const { return _id; }
@@ -452,7 +452,7 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
                         std::vector<boost::container::small_vector<std::size_t, 3> >& out_faces)
 {
   typedef Projection_traits_3<Kernel>                            P_traits;
-  typedef Triangulation_vertex_base_with_id_2<P_traits>                Vb;
+  typedef Triangulation_vertex_with_corner_id_2<P_traits>              Vb;
   typedef Triangulation_face_base_with_info_2<FaceInfo2,P_traits>     Fbb;
   typedef Constrained_triangulation_face_base_2<P_traits,Fbb>          Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>                       TDS;
