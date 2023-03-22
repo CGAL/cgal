@@ -1339,6 +1339,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *                            (ii) for the smallest angle between the supporting line of a segment and an adjacent segment such that they are considered collinear.}
  *      \cgalParamType{`FT` type from the `geom_traits` parameter}
  *      \cgalParamDefault{1, which means exact coplanarity and collinearity}
+ *      \cgalParamExtra{The value must be in the interval `[0,1]`}
  *   \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
