@@ -624,6 +624,16 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
   return vertex_measures;
 }
 
+template <class T>
+void set_value(const T& value, std::reference_wrapper<T> rw)
+{
+  rw.get()=value;
+}
+
+template <class T>
+void set_value(const T&, internal_np::Param_not_found)
+{}
+
 // computes selected curvatures for one specific vertex
 template<typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
@@ -662,15 +672,10 @@ template<typename PolygonMesh,
   if (radius == 0)
     radius = average_edge_length<PolygonMesh, GT>(pmesh) * 1e-6;
 
-  // get parameters (pointers) for curvatures
-  typename GT::FT* vertex_mean_curvature = choose_parameter(get_parameter(np, internal_np::vertex_mean_curvature), nullptr);
-  typename GT::FT* vertex_gaussian_curvature = choose_parameter(get_parameter(np, internal_np::vertex_gaussian_curvature), nullptr);
-  Principal_curvatures_and_directions<GT>* vertex_principal_curvatures_and_directions = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions), nullptr);
-
-  // determine which curvatures are selected (by checking if the pointers are not null)
-  const bool is_mean_curvature_selected = (vertex_mean_curvature != nullptr);
-  const bool is_gaussian_curvature_selected = (vertex_gaussian_curvature != nullptr);
-  const bool is_principal_curvatures_and_directions_selected = (vertex_principal_curvatures_and_directions != nullptr);
+  // determine which curvatures are selected
+  const bool is_mean_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_mean_curvature_t>::value;
+  const bool is_gaussian_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_gaussian_curvature_t>::value;
+  const bool is_principal_curvatures_and_directions_selected = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_t>::value;
 
   Vertex_measures<GT> vertex_measures;
 
@@ -703,13 +708,13 @@ template<typename PolygonMesh,
 
   // compute the selected curvatures from expanded measures
   if (is_mean_curvature_selected) {
-    *vertex_mean_curvature = vertex_measures.area_measure != 0 ?
-      0.5 * vertex_measures.mean_curvature_measure / vertex_measures.area_measure : 0;
+    set_value(vertex_measures.area_measure != 0 ? 0.5 * vertex_measures.mean_curvature_measure / vertex_measures.area_measure : 0,
+              get_parameter(np, internal_np::vertex_mean_curvature));
   }
 
   if (is_gaussian_curvature_selected) {
-    *vertex_gaussian_curvature = vertex_measures.area_measure != 0 ?
-      vertex_measures.gaussian_curvature_measure / vertex_measures.area_measure : 0;
+    set_value(vertex_measures.area_measure != 0 ? vertex_measures.gaussian_curvature_measure / vertex_measures.area_measure : 0,
+              get_parameter(np, internal_np::vertex_gaussian_curvature));
   }
 
   if (is_principal_curvatures_and_directions_selected) {
@@ -718,9 +723,8 @@ template<typename PolygonMesh,
     const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
       vertex_measures.anisotropic_measure,
       vertex_measures.area_measure,
-      v_normal
-      );
-    *vertex_principal_curvatures_and_directions = principal_curvatures_and_directions;
+      v_normal);
+    set_value(principal_curvatures_and_directions, get_parameter(np, internal_np::vertex_principal_curvatures_and_directions));
   }
 }
 
@@ -1064,7 +1068,7 @@ private:
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `GT::FT` as value type}
-*     \cgalParamExtra{If this parameter is omitted, mean curvatures won't be computed}
+*     \cgalParamExtra{If this parameter is omitted, mean curvatures will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_gaussian_curvature_map}
@@ -1072,7 +1076,7 @@ private:
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `GT::FT` as value type}
-*     \cgalParamExtra{If this parameter is omitted, gaussian curvatures won't be computed}
+*     \cgalParamExtra{If this parameter is omitted, gaussian curvatures will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_principal_curvatures_and_directions_map}
@@ -1080,7 +1084,7 @@ private:
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `Principal_curvatures_and_directions<GT>` as value type}
-*     \cgalParamExtra{If this parameter is omitted, mean principal won't be computed}
+*     \cgalParamExtra{If this parameter is omitted, mean principal will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{ball_radius}
@@ -1323,12 +1327,9 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 
 /**
 * \ingroup PMP_corrected_curvatures_grp
-* computes the interpolated corrected curvatures at a certain vertex, based on the provided pointers.
+* computes the interpolated corrected curvatures at a vertex `v`.
 * By providing mean, gaussian and/or principal curvature and direction property maps as named parameters, the user
 * can choose which quantites to compute.
-*
-* The pointers are used to store the computed quantities.
-* The user is responsible for the memory management of the pointers.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1359,7 +1360,6 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 *                     computed using `compute_vertex_normals()`}
 *   \cgalParamNEnd
 *
-*
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
@@ -1368,24 +1368,21 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_mean_curvature}
-*     \cgalParamDescription{a pointer to a scalar value to store the mean curvature at the vertex `v`}
-*     \cgalParamType{`GT::FT*`}
-*     \cgalParamDefault{`nullptr`}
-*     \cgalParamExtra{If this parameter is omitted, mean curvature won't be computed}
+*     \cgalParamDescription{a reference to a scalar value to store the mean curvature at the vertex `v`}
+*     \cgalParamType{`std::reference_wrapper<GT::FT>`}
+*     \cgalParamExtra{If this parameter is omitted, mean curvature will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_gaussian_curvature}
-*     \cgalParamDescription{a pointer to a scalar value to store the gaussian curvature at the vertex `v`}
-*     \cgalParamType{`GT::FT*`}
-*     \cgalParamDefault{`nullptr`}
-*     \cgalParamExtra{If this parameter is omitted, gaussian curvature won't be computed}
+*     \cgalParamDescription{a reference to a scalar value to store the gaussian curvature at the vertex `v`}
+*     \cgalParamType{`std::reference_wrapper<GT::FT>`}
+*     \cgalParamExtra{If this parameter is omitted, gaussian curvature will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_principal_curvatures_and_directions}
-*     \cgalParamDescription{a pointer to a Principal_curvatures_and_directions object to store the principal curvatures and directions at the vertex `v`}
-*     \cgalParamType{`Principal_curvatures_and_directions<GT>*`}
-*     \cgalParamDefault{`nullptr`}
-*     \cgalParamExtra{If this parameter is omitted, principal curvatures and directions won't be computed}
+*     \cgalParamDescription{a reference to an`Principal_curvatures_and_directions<GT>` object to store the principal curvatures and directions at the vertex `v`}
+*     \cgalParamType{`std::reference_wrapper<Principal_curvatures_and_directions<GT>>`}
+*     \cgalParamExtra{If this parameter is omitted, principal curvatures and directions will not be computed}
 *  \cgalParamNEnd
 *
 *   \cgalParamNBegin{ball_radius}
@@ -1488,7 +1485,7 @@ interpolated_corrected_mean_curvature_one_vertex(const PolygonMesh& pmesh,
                                                  const NamedParameters& np = parameters::default_values())
 {
   typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT mean_curvature;
-  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_mean_curvature(&mean_curvature));
+  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_mean_curvature(std::ref(mean_curvature)));
   return mean_curvature;
 }
 
@@ -1565,7 +1562,7 @@ interpolated_corrected_gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
                                                      const NamedParameters& np = parameters::default_values())
 {
   typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT gc;
-  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_gaussian_curvature(&gc));
+  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_gaussian_curvature(std::ref(gc)));
   return gc;
 }
 
@@ -1642,7 +1639,7 @@ interpolated_corrected_principal_curvatures_and_directions_one_vertex(const Poly
 {
   using GT=typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   Principal_curvatures_and_directions<GT> pcd;
-  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_principal_curvatures_and_directions(&pcd));
+  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_principal_curvatures_and_directions(std::ref(pcd)));
   return pcd;
 }
 
