@@ -1351,16 +1351,16 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *      \cgalParamType{`FT` type from the `geom_traits` parameter}
  *      \cgalParamDefault{1, which means exact coplanarity and collinearity}
  *   \cgalParamNEnd
- *    \cgalParamNBegin{do_not_triangulate_faces}
- *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
- *      \cgalParamType{`bool`}
- *      \cgalParamDefault{false}
- *   \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
  *  \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  *  \cgalNamedParamsBegin
+ *    \cgalParamNBegin{do_not_triangulate_faces}
+ *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
+ *      \cgalParamType{`bool`}
+ *      \cgalParamDefault{false}
+ *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
  *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
@@ -1456,7 +1456,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                                                 Planar_segmentation::Default_visitor<TriangleMeshOut>>::type
     visitor = choose_parameter<Planar_segmentation::Default_visitor<TriangleMeshOut>>(get_parameter(np_out, internal_np::visitor));
 
-  bool do_not_triangulate_faces = choose_parameter(get_parameter(np_in, internal_np::do_not_triangulate_faces), false);
+  bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
 
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
     Planar_segmentation::tag_corners_and_constrained_edges<Traits>(tm_in, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm_in);
@@ -1514,11 +1514,6 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *                     `GeomTraits::Vector_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
  *      \cgalParamDefault{If not provided, patch normals will be estimated using corners of the patches}
  *    \cgalParamNEnd
- *    \cgalParamNBegin{do_not_triangulate_faces}
- *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
- *      \cgalParamType{`bool`}
- *      \cgalParamDefault{false}
- *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `tm_in`}
  *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
@@ -1538,6 +1533,11 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  *  \cgalNamedParamsBegin
+ *    \cgalParamNBegin{do_not_triangulate_faces}
+ *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
+ *      \cgalParamType{`bool`}
+ *      \cgalParamDefault{false}
+ *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
  *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
@@ -1603,7 +1603,7 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
                                                 Planar_segmentation::Default_visitor<TriangleMeshOut>>::type
     visitor = choose_parameter<Planar_segmentation::Default_visitor<TriangleMeshOut>>(get_parameter(np_out, internal_np::visitor));
 
-  bool do_not_triangulate_faces = choose_parameter(get_parameter(np_in, internal_np::do_not_triangulate_faces), false);
+  bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
 
   std::vector< typename Traits::Vector_3 > face_normals;
   Planar_segmentation::init_face_normals(face_normals, nb_patches, get_parameter(np_in, internal_np::patch_normal_map));

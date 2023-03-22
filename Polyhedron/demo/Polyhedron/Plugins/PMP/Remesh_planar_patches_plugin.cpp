@@ -228,9 +228,8 @@ public Q_SLOTS:
                                             in_fpmap,
                                             CGAL::make_random_access_property_map(corner_id_map),
                                             CGAL::make_random_access_property_map(ecm),
-                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces).
-                                                              patch_normal_map(normal_map),
-                                            CGAL::parameters::face_patch_map(out_fpmap));
+                                            CGAL::parameters::patch_normal_map(normal_map),
+                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces).face_patch_map(out_fpmap));
 
 
           new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
@@ -254,9 +253,9 @@ public Q_SLOTS:
                                             in_fpmap,
                                             CGAL::make_random_access_property_map(corner_id_map),
                                             CGAL::make_random_access_property_map(ecm),
-                                            CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_faces).
-                                                              patch_normal_map(normal_map),
-                                            CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
+                                            CGAL::parameters::patch_normal_map(normal_map),
+                                            CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();})
+                                                             .do_not_triangulate_faces(do_not_triangulate_faces));
           pmesh.remove_property_map<Mesh::Face_index, int>(in_fpmap);
           poly_item->invalidateOpenGLBuffers();
 
@@ -278,9 +277,9 @@ public Q_SLOTS:
           PMP::remesh_planar_patches(pmesh,
                                      out,
                                      CGAL::parameters::cosine_of_maximum_angle(cos_threshold)
-                                          .face_patch_map(in_fpmap)
-                                          .do_not_triangulate_faces(do_not_triangulate_faces),
-                                     CGAL::parameters::face_patch_map(out_fpmap));
+                                          .face_patch_map(in_fpmap),
+                                     CGAL::parameters::face_patch_map(out_fpmap)
+                                                      .do_not_triangulate_faces(do_not_triangulate_faces));
 
 
           new_item->setName(tr("%1_remeshed").arg(poly_item->name()));
@@ -301,9 +300,9 @@ public Q_SLOTS:
         {
           PMP::remesh_planar_patches(pmesh,
                                      pmesh,
-                                     CGAL::parameters::cosine_of_maximum_angle(cos_threshold)
-                                                      .do_not_triangulate_faces(do_not_triangulate_faces),
-                                     CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();}));
+                                     CGAL::parameters::cosine_of_maximum_angle(cos_threshold),
+                                     CGAL::parameters::visitor([](Mesh& pmesh){pmesh.clear_without_removing_property_maps ();})
+                                                      .do_not_triangulate_faces(do_not_triangulate_faces));
 
           poly_item->invalidateOpenGLBuffers();
 
