@@ -27,8 +27,8 @@ not a one-to-one correspondence between an input constraint and
 the sequence of vertices. These vertices are
 either vertices of the input constraint or intersection points.
 Also consecutive identical points in the input constraint
-result in a single vertex in the sequence if vertices on this
-constrain. In case of an input constraint being degenerate
+result in a single vertex in the sequence of vertices on this
+constraint. In case of an input constraint being degenerate
 to a point, this point is inserted but there will not be a
 zero length constraint.
 
@@ -278,8 +278,6 @@ In case the range contains only one point or all points are equal the point is i
 and a default constructed `Constraint_id` is returned.
 
 \tparam PointIterator must be an `InputIterator` with the value type `Point`.
-
-\note
 */
 template < class PointIterator>
 Constraint_id insert_constraint(PointIterator first, PointIterator last, bool close=false);
