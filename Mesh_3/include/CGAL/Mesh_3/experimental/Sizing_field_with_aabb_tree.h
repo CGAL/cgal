@@ -376,7 +376,7 @@ struct Sizing_field_with_aabb_tree
       if(!d_ptr->aabb_tree.empty()) {
         //Compute distance to surface patches
         const auto closest_point_and_primitive = closest_point_on_surfaces(p, ids);
-        if(closest_point_and_primitive != boost::none) {
+        if(closest_point_and_primitive == boost::none) {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           std::cerr << result << " (projection not found)\n";
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
