@@ -111,6 +111,9 @@ struct Sizing_field_with_aabb_tree
       //  - First compute the number of patches and min/max patch ids
       Face_ids_traversal_traits traversal_traits;
       d_ptr->aabb_tree.traversal(nullptr, traversal_traits);
+#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+      std::cerr << "min: " << traversal_traits.min << ", max: " << traversal_traits.max << '\n';
+#endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
       d_ptr->min_patch_id = traversal_traits.min;
       d_ptr->kd_trees_ptrs.resize(traversal_traits.max - d_ptr->min_patch_id + 1);
 
@@ -378,7 +381,12 @@ struct Sizing_field_with_aabb_tree
         const auto closest_point_and_primitive = closest_point_on_surfaces(p, ids);
         if(closest_point_and_primitive == boost::none) {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-          std::cerr << result << " (projection not found)\n";
+          std::cerr << result << " (projection not found) ids:";
+          for(Patch_index i : ids) {
+            std::cerr << " " << CGAL::IO::oformat(i);
+          }
+          std::cerr << "\n";
+
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           return result;
         }
