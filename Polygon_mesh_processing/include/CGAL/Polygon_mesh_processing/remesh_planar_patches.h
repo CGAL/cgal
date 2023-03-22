@@ -416,29 +416,18 @@ template < typename GT,
 class Triangulation_vertex_with_corner_id_2
   : public Vb
 {
-  std::size_t _id;
-
+  std::size_t _id = -1;
 public:
-  typedef typename Vb::Face_handle                   Face_handle;
-  typedef typename Vb::Point                         Point;
-
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other          Vb2;
     typedef Triangulation_vertex_with_corner_id_2<GT, Vb2>   Other;
   };
 
-  Triangulation_vertex_with_corner_id_2()
-    : Vb(), _id(-1) {}
-
-  Triangulation_vertex_with_corner_id_2(const Point & p)
-    : Vb(p), _id(-1) {}
-
-  Triangulation_vertex_with_corner_id_2(const Point & p, Face_handle c)
-    : Vb(p, c), _id(-1) {}
-
-  Triangulation_vertex_with_corner_id_2(Face_handle c)
-    : Vb(c), _id(-1) {}
+  template<class ... T>
+  Triangulation_vertex_with_corner_id_2(const T& ... t)
+    : Vb(t...)
+  {}
 
   const std::size_t& corner_id() const { return _id; }
         std::size_t& corner_id()       { return _id; }
