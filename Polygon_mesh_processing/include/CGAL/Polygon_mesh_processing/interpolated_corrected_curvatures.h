@@ -1414,7 +1414,7 @@ void interpolated_corrected_curvatures_one_vertex(const PolygonMesh& pmesh,
 
 /**
 * \ingroup PMP_corrected_curvatures_grp
-* computes the interpolated corrected mean curvature at a vertex of a triangle mesh.
+* computes the interpolated corrected mean curvature at vertex `v` of mesh `pmesh`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1491,7 +1491,7 @@ interpolated_corrected_mean_curvature_one_vertex(const PolygonMesh& pmesh,
 
 /**
 * \ingroup PMP_corrected_curvatures_grp
-* computes the interpolated corrected Gaussian curvature at a vertex of a triangle mesh.
+* computes the interpolated corrected Gaussian curvature at vertex `v` of mesh `pmesh`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1568,7 +1568,7 @@ interpolated_corrected_gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
 
 /**
 * \ingroup PMP_corrected_curvatures_grp
-* computes the interpolated corrected principal curvatures and directions at a vertex of a triangle mesh.
+* computes the interpolated corrected principal curvatures and directions at vertex `v` of mesh `pmesh`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
