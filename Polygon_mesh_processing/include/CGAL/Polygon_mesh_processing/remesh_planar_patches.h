@@ -863,8 +863,8 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
 
   visitor(tm_out);
   polygon_soup_to_polygon_mesh(corners, faces, tm_out,
-                               parameters::vertex_to_vertex_map(f_id_tracker.v2v_map()).
-                                           face_to_face_map(f_id_tracker.f2f_map()),
+                               parameters::point_to_vertex_map(f_id_tracker.v2v_map()).
+                                           polygon_to_face_map(f_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
   return remeshing_failed;
 }
