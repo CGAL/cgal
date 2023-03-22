@@ -54,6 +54,18 @@ PM_Point convert_to_pm_point(const std::array<PS_FT, 3>& p)
   return PM_Point(p[0], p[1], p[2]);
 }
 
+template <class OutputIterator, typename Value_type = typename value_type_traits<OutputIterator>::type>
+struct Polygon_and_Point_id_helper
+{
+  typedef typename Value_type::first_type type;
+};
+
+template <class OutputIterator>
+struct Polygon_and_Point_id_helper<OutputIterator, void>
+{
+  typedef std::size_t type;
+};
+
 template <typename PointRange,
           typename PolygonRange,
           typename PointMap = typename CGAL::GetPointMap<PointRange>::const_type>
@@ -85,8 +97,13 @@ public:
                   const bool insert_isolated_vertices = true)
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-
     typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
+
+    typedef typename value_type_traits<V2V>::type Raw_point_id;
+    typedef typename value_type_traits<V2V>::type Raw_polygon_id;
+
+    typedef typename Polygon_and_Point_id_helper<V2V>::type Point_id;
+    typedef typename Polygon_and_Point_id_helper<F2F>::type Polygon_id;
 
     reserve(pmesh, static_cast<typename boost::graph_traits<PolygonMesh>::vertices_size_type>(m_points.size()),
             static_cast<typename boost::graph_traits<PolygonMesh>::edges_size_type>(2*m_polygons.size()),
@@ -106,7 +123,7 @@ public:
     }
 
     std::vector<vertex_descriptor> vertices(m_points.size());
-    for(std::size_t i = 0, end = m_points.size(); i < end; ++i)
+    for(Point_id i = 0, end = static_cast<Point_id>(m_points.size()); i < end; ++i)
     {
       if(!insert_isolated_vertices && !not_isolated.test(i))
         continue;
@@ -117,7 +134,7 @@ public:
       *i2v++ = std::make_pair(i, vertices[i]);
     }
 
-    for(std::size_t i = 0, end = m_polygons.size(); i < end; ++i)
+    for(Polygon_id i = 0, end = static_cast<Polygon_id>(m_polygons.size()); i < end; ++i)
     {
       const Polygon& polygon = m_polygons[i];
       const std::size_t size = polygon.size();
