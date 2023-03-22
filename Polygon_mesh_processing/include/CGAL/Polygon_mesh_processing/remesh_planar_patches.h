@@ -27,12 +27,13 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
-#include <unordered_map>
+
 #include <boost/dynamic_bitset.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/container/small_vector.hpp>
 
 #include <algorithm>
+#include <unordered_map>
 
 namespace CGAL{
 
@@ -1290,8 +1291,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *  \ingroup PMP_meshing_grp
  *  generates a new triangle mesh `tm_out` with the minimal number of triangles while preserving the shape as `tm_in`.
  *  In practice, this means that connected components of edge incident faces belonging to the same plane are
- *  first extracted (each such connected component is called a *patch*). Then the connected components of vertex
- *  connected patch border edges belonging to the same line are extracted. Endpoints of such components and
+ *  first extracted (each such connected component is called a *patch*). Then, the connected components of
+ *  vertex-connected patch border edges belonging to the same line are extracted. Endpoints of such components and
  *  vertices incident to more than two patches (or two patches + one mesh boundary) are called *corners*.
  *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch using only corner vertices
  *  on the boundary of the patch.

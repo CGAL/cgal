@@ -153,18 +153,22 @@ algorithm while preserving the detected sharp edges
 is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
 
 \paragraph Decimate Remeshing of (Almost) Planar Patches
-If a triangulated surface mesh uses a lot of triangles to describe some planar regions of a model, it is possible to simplify
-those parts using the function `CGAL::Polygon_mesh_processing::remesh_planar_patches()`.
-For simply connected patches, it is even possible to not retriangulate them.
-The coplanarity and collinearty tests being exact, almost coplanar patches will not be detected by default. It is possible to specify a
-threshold on the angle between adjacent faces (resp. segments) so that they are considered coplanar (resp. collinear). However, this
-coplanarity and collinearity tolerance is only local and there is no global control (think of the classical example of a circle arc
-densely sampled: 3 consecutive points are seen as almost collinear while all the points on the arc are not). To circumvent this situation,
-we also provide the function `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()` that expects the segmentation into
-planar patches and corners to be provided. The function `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
-uses the region growing algorithm to detect planar regions in a mesh with global and local criteria. Similarly, the function
-`CGAL::Polygon_mesh_processing::detect_corners_of_regions()` can be used to detect corner vertices on the border of the planar
-regions detected by running the region growing algorithm on border segments of the patch.
+When many triangles are used to describe a planar region of a model, one might wish to simplify the mesh
+in this region to use few elements, or even a single large polygonal face when the region makes up a simply connected patch.
+This can be achieved using the function `CGAL::Polygon_mesh_processing::remesh_planar_patches()`.
+This function performs the detection of the planar regions, using geometric predicates for coplanarity and
+collinearity checks. If these tests are performed exactly, the planar regions can be unexpectedly small due to the
+input in fact not being perfectly planar. To palliate this, it is possible to specify a threshold on the angle
+between adjacent faces (resp. segments) such that they are considered coplanar (resp. collinear).
+However, this tolerance threshold is only local and there is no global control, which can have undesired effects, such as in the classic example of a densely sampled circle arc where all points are eventually found
+to be almost collinear). To circumvent this situation, we provide the function
+ `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()` , which expects the segmentation into
+planar patches and corners to be provided by the user. Such segmentation can be obtained using the function
+ `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`, which
+uses the region growing algorithm to detect planar regions in a mesh with global and local criteria.
+Similarly, the function `CGAL::Polygon_mesh_processing::detect_corners_of_regions()` can be used
+to detect corner vertices on the border of the planar regions detected by running the region growing
+algorithm on border segments of the patch.
 
 
 \cgalFigureBegin{decimate_cheese, decimate_cheese.png, decimate_colors.png}

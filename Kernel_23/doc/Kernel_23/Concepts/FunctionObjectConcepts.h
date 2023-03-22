@@ -759,7 +759,7 @@ public:
 
   /*!
   compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
-  \f$ \theta_1\f$ is the angle, in \f$ [0, \pi]\f$, of the triangle
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ of the triangle
   \f$ (a, b, c)\f$ at the vertex `b`, and \f$ \theta_2\f$ is
   the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
   \pre `a!=b && c!=b`.

@@ -22,6 +22,7 @@ int main()
 
   // triangulate faces;
   PMP::triangulate_faces(sm);
+  std::cout << "Input mesh has " << faces(sm).size() << " faces" << std::endl;
   assert(faces(sm).size()==12);
 
   Surface_mesh::Property_map<Surface_mesh::Edge_index, bool> ecm =
@@ -32,16 +33,17 @@ int main()
 
   // create a remeshed version of the cube with many elements
   PMP::isotropic_remeshing(faces(sm), 0.1, sm, CGAL::parameters::edge_is_constrained_map(ecm));
-  std::ofstream("cube_remeshed.off") << sm;
+  CGAL::IO::write_polygon_mesh("cube_remeshed.off", sm, CGAL::parameters::stream_precision(17));
   assert(faces(sm).size()>100);
 
   // decimate the mesh
   Surface_mesh out;
   PMP::remesh_planar_patches(sm, out);
-  std::ofstream("cube_decimated.off") << out;
+  CGAL::IO::write_polygon_mesh("cube_decimated.off", out, CGAL::parameters::stream_precision(17));
 
   // we should be back to 12 faces
+  std::cout << "Output mesh has " << faces(out).size() << " faces" << std::endl;
   assert(faces(out).size()==12);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
