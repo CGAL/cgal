@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     polyhedron,
     mean_curvature_map);
 
-  PMP::interpolated_corrected_gaussian_curvature(
+  PMP::interpolated_corrected_Gaussian_curvature(
     polyhedron,
     gaussian_curvature_map);
 

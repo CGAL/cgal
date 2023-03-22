@@ -222,7 +222,7 @@ typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::ve
 }
 
 template<typename GT>
-typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std::vector<typename GT::Vector_3>& u)
+typename GT::FT interpolated_corrected_Gaussian_curvature_measure_face(const std::vector<typename GT::Vector_3>& u)
 {
   const std::size_t n = u.size();
   CGAL_precondition(n >= 3);
@@ -259,7 +259,7 @@ typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std
     // summing each triangle's measure after triangulation by barycenter split.
     for (std::size_t i = 0; i < n; i++)
     {
-      mu2 += interpolated_corrected_gaussian_curvature_measure_face<GT>(
+      mu2 += interpolated_corrected_Gaussian_curvature_measure_face<GT>(
         std::vector<typename GT::Vector_3> {u[i], u[(i + 1) % n], uc}
       );
     }
@@ -483,7 +483,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
   const PolygonMesh& pmesh,
   const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const bool is_mean_curvature_selected,
-  const bool is_gaussian_curvature_selected,
+  const bool is_Gaussian_curvature_selected,
   const bool is_principal_curvatures_and_directions_selected,
   const VPM vpm,
   const VNM vnm
@@ -519,8 +519,8 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
       if (is_mean_curvature_selected)
         vertex_measures.mean_curvature_measure += interpolated_corrected_mean_curvature_measure_face<GT>(u, x);
 
-      if (is_gaussian_curvature_selected)
-        vertex_measures.gaussian_curvature_measure += interpolated_corrected_gaussian_curvature_measure_face<GT>(u);
+      if (is_Gaussian_curvature_selected)
+        vertex_measures.gaussian_curvature_measure += interpolated_corrected_Gaussian_curvature_measure_face<GT>(u);
 
       if (is_principal_curvatures_and_directions_selected)
       {
@@ -543,7 +543,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
   const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const typename GT::FT radius,
   const bool is_mean_curvature_selected,
-  const bool is_gaussian_curvature_selected,
+  const bool is_Gaussian_curvature_selected,
   const bool is_principal_curvatures_and_directions_selected,
   const VPM vpm,
   const VNM vnm
@@ -598,8 +598,8 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
       if (is_mean_curvature_selected)
         vertex_measures.mean_curvature_measure += f_ratio * interpolated_corrected_mean_curvature_measure_face<GT>(u, x);
 
-      if (is_gaussian_curvature_selected)
-        vertex_measures.gaussian_curvature_measure += f_ratio * interpolated_corrected_gaussian_curvature_measure_face<GT>(u);
+      if (is_Gaussian_curvature_selected)
+        vertex_measures.gaussian_curvature_measure += f_ratio * interpolated_corrected_Gaussian_curvature_measure_face<GT>(u);
 
       if (is_principal_curvatures_and_directions_selected)
       {
@@ -674,7 +674,7 @@ template<typename PolygonMesh,
 
   // determine which curvatures are selected
   const bool is_mean_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_mean_curvature_t>::value;
-  const bool is_gaussian_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_gaussian_curvature_t>::value;
+  const bool is_Gaussian_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_Gaussian_curvature_t>::value;
   const bool is_principal_curvatures_and_directions_selected = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_t>::value;
 
   Vertex_measures<GT> vertex_measures;
@@ -686,7 +686,7 @@ template<typename PolygonMesh,
       pmesh,
       v,
       is_mean_curvature_selected,
-      is_gaussian_curvature_selected,
+      is_Gaussian_curvature_selected,
       is_principal_curvatures_and_directions_selected,
       vpm,
       vnm
@@ -699,7 +699,7 @@ template<typename PolygonMesh,
       v,
       radius,
       is_mean_curvature_selected,
-      is_gaussian_curvature_selected,
+      is_Gaussian_curvature_selected,
       is_principal_curvatures_and_directions_selected,
       vpm,
       vnm
@@ -712,9 +712,9 @@ template<typename PolygonMesh,
               get_parameter(np, internal_np::vertex_mean_curvature));
   }
 
-  if (is_gaussian_curvature_selected) {
+  if (is_Gaussian_curvature_selected) {
     set_value(vertex_measures.area_measure != 0 ? vertex_measures.gaussian_curvature_measure / vertex_measures.area_measure : 0,
-              get_parameter(np, internal_np::vertex_gaussian_curvature));
+              get_parameter(np, internal_np::vertex_Gaussian_curvature));
   }
 
   if (is_principal_curvatures_and_directions_selected) {
@@ -756,9 +756,9 @@ class Interpolated_corrected_curvatures_computer
     NamedParameters,
     Default_scalar_map>::type Vertex_mean_curvature_map;
 
-  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_gaussian_curvature_map_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_Gaussian_curvature_map_t,
     NamedParameters,
-    Default_scalar_map>::type Vertex_gaussian_curvature_map;
+    Default_scalar_map>::type Vertex_Gaussian_curvature_map;
 
   typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
@@ -777,11 +777,11 @@ private:
   FT ball_radius;
 
   bool is_mean_curvature_selected;
-  bool is_gaussian_curvature_selected;
+  bool is_Gaussian_curvature_selected;
   bool is_principal_curvatures_and_directions_selected;
 
   Vertex_mean_curvature_map mean_curvature_map;
-  Vertex_gaussian_curvature_map gaussian_curvature_map;
+  Vertex_Gaussian_curvature_map gaussian_curvature_map;
   Vertex_principal_curvatures_and_directions_map principal_curvatures_and_directions_map;
 
   Face_scalar_measure_map mu0_map, mu1_map, mu2_map;
@@ -817,11 +817,11 @@ private:
 
     // check which curvature maps are provided by the user (determines which curvatures are computed)
     is_mean_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_mean_curvature_map_t>::value;
-    is_gaussian_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_gaussian_curvature_map_t>::value;
+    is_Gaussian_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_Gaussian_curvature_map_t>::value;
     is_principal_curvatures_and_directions_selected = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value;
 
     mean_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_mean_curvature_map), Default_scalar_map());
-    gaussian_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_gaussian_curvature_map), Default_scalar_map());
+    gaussian_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_Gaussian_curvature_map), Default_scalar_map());
     principal_curvatures_and_directions_map = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map), Default_principal_map());
   }
 
@@ -842,7 +842,7 @@ public:
   {
     set_named_params(np);
 
-    if (is_mean_curvature_selected || is_gaussian_curvature_selected || is_principal_curvatures_and_directions_selected)
+    if (is_mean_curvature_selected || is_Gaussian_curvature_selected || is_principal_curvatures_and_directions_selected)
     {
       set_property_maps();
 
@@ -872,8 +872,8 @@ private:
       if (is_mean_curvature_selected)
         put(mu1_map, f, interpolated_corrected_mean_curvature_measure_face<GT>(u, x));
 
-      if (is_gaussian_curvature_selected)
-        put(mu2_map, f, interpolated_corrected_gaussian_curvature_measure_face<GT>(u));
+      if (is_Gaussian_curvature_selected)
+        put(mu2_map, f, interpolated_corrected_Gaussian_curvature_measure_face<GT>(u));
 
       if (is_principal_curvatures_and_directions_selected)
         put(muXY_map, f, interpolated_corrected_anisotropic_measure_face<GT>(u, x));
@@ -899,7 +899,7 @@ private:
       if (is_mean_curvature_selected)
         vertex_measures.mean_curvature_measure += get(mu1_map, f);
 
-      if (is_gaussian_curvature_selected)
+      if (is_Gaussian_curvature_selected)
         vertex_measures.gaussian_curvature_measure += get(mu2_map, f);
 
       if (is_principal_curvatures_and_directions_selected)
@@ -957,7 +957,7 @@ private:
         if (is_mean_curvature_selected)
           vertex_measures.mean_curvature_measure += f_ratio * get(mu1_map, fi);
 
-        if (is_gaussian_curvature_selected)
+        if (is_Gaussian_curvature_selected)
           vertex_measures.gaussian_curvature_measure += f_ratio * get(mu2_map, fi);
 
         if (is_principal_curvatures_and_directions_selected)
@@ -998,7 +998,7 @@ private:
           put(mean_curvature_map, v, 0);
       }
 
-      if (is_gaussian_curvature_selected) {
+      if (is_Gaussian_curvature_selected) {
         vertex_measures.area_measure != 0 ?
           put(gaussian_curvature_map, v, vertex_measures.gaussian_curvature_measure / vertex_measures.area_measure) :
           put(gaussian_curvature_map, v, 0);
@@ -1071,7 +1071,7 @@ private:
 *     \cgalParamExtra{If this parameter is omitted, mean curvatures will not be computed}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{vertex_gaussian_curvature_map}
+*   \cgalParamNBegin{vertex_Gaussian_curvature_map}
 *     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -1101,7 +1101,7 @@ private:
 * \cgalNamedParamsEnd
 *
 * @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_gaussian_curvature()`
+* @see `interpolated_corrected_Gaussian_curvature()`
 * @see `interpolated_corrected_principal_curvatures_and_directions()`
 */
 template<typename PolygonMesh,
@@ -1169,7 +1169,7 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 *
 * \cgalNamedParamsEnd
 *
-* @see `interpolated_corrected_gaussian_curvature()`
+* @see `interpolated_corrected_Gaussian_curvature()`
 * @see `interpolated_corrected_principal_curvatures_and_directions()`
 * @see `interpolated_corrected_curvatures()`
 */
@@ -1246,11 +1246,11 @@ void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
 */
 template<typename PolygonMesh, typename VertexCurvatureMap,
          typename NamedParameters = parameters::Default_named_parameters>
-void interpolated_corrected_gaussian_curvature(const PolygonMesh& pmesh,
+void interpolated_corrected_Gaussian_curvature(const PolygonMesh& pmesh,
                                                VertexCurvatureMap vcm,
                                                const NamedParameters& np = parameters::default_values())
 {
-  interpolated_corrected_curvatures(pmesh, np.vertex_gaussian_curvature_map(vcm));
+  interpolated_corrected_curvatures(pmesh, np.vertex_Gaussian_curvature_map(vcm));
 }
 
 /**
@@ -1312,7 +1312,7 @@ void interpolated_corrected_gaussian_curvature(const PolygonMesh& pmesh,
 * \cgalNamedParamsEnd
 *
 * @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_gaussian_curvature()`
+* @see `interpolated_corrected_Gaussian_curvature()`
 * @see `interpolated_corrected_curvatures()`
 */
 template<typename PolygonMesh, typename VertexCurvatureMap,
@@ -1373,7 +1373,7 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 *     \cgalParamExtra{If this parameter is omitted, mean curvature will not be computed}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{vertex_gaussian_curvature}
+*   \cgalParamNBegin{vertex_Gaussian_curvature}
 *     \cgalParamDescription{a reference to a scalar value to store the gaussian curvature at the vertex `v`}
 *     \cgalParamType{`std::reference_wrapper<GT::FT>`}
 *     \cgalParamExtra{If this parameter is omitted, gaussian curvature will not be computed}
@@ -1400,7 +1400,7 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 *
 * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
 * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
-* @see `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_one_vertex()`
+* @see `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature_one_vertex()`
 * @see `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
 */
 template<typename PolygonMesh,
@@ -1468,7 +1468,7 @@ void interpolated_corrected_curvatures_one_vertex(const PolygonMesh& pmesh,
 * @return the interpolated corrected mean curvature at the vertex `v`
 *
 * @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_gaussian_curvature_one_vertex()`
+* @see `interpolated_corrected_Gaussian_curvature_one_vertex()`
 * @see `interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
 * @see `interpolated_corrected_curvatures_one_vertex()`
 */
@@ -1544,7 +1544,7 @@ interpolated_corrected_mean_curvature_one_vertex(const PolygonMesh& pmesh,
 *
 * @return the interpolated corrected Gaussian curvature at the vertex `v`
 *
-* @see `interpolated_corrected_gaussian_curvature()`
+* @see `interpolated_corrected_Gaussian_curvature()`
 * @see `interpolated_corrected_mean_curvature_one_vertex()`
 * @see `interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
 * @see `interpolated_corrected_curvatures_one_vertex()`
@@ -1557,12 +1557,12 @@ typename GT::FT
 #else
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 #endif
-interpolated_corrected_gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
+interpolated_corrected_Gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
                                                      typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                                                      const NamedParameters& np = parameters::default_values())
 {
   typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT gc;
-  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_gaussian_curvature(std::ref(gc)));
+  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_Gaussian_curvature(std::ref(gc)));
   return gc;
 }
 
@@ -1622,7 +1622,7 @@ interpolated_corrected_gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
 *
 * @see `interpolated_corrected_principal_curvatures_and_directions()`
 * @see `interpolated_corrected_mean_curvature_one_vertex()`
-* @see `interpolated_corrected_gaussian_curvature_one_vertex()`
+* @see `interpolated_corrected_Gaussian_curvature_one_vertex()`
 * @see `interpolated_corrected_curvatures_one_vertex()`
 */
 

@@ -662,7 +662,7 @@ private Q_SLOTS:
       if (does_exist)
           sm_item->face_graph()->remove_property_map(pmap);
       std::tie(pmap, does_exist) =
-        sm_item->face_graph()->property_map<face_descriptor, double>("v:interpolated_corrected_gaussian_curvature");
+        sm_item->face_graph()->property_map<face_descriptor, double>("v:interpolated_corrected_Gaussian_curvature");
       if (does_exist)
         sm_item->face_graph()->remove_property_map(pmap);
     });
@@ -748,7 +748,7 @@ private Q_SLOTS:
       smesh.remove_property_map(mean_curvature);
     }
     SMesh::Property_map<vertex_descriptor, double> gaussian_curvature;
-    std::tie(gaussian_curvature, found) = smesh.property_map<vertex_descriptor, double>("v:interpolated_corrected_gaussian_curvature");
+    std::tie(gaussian_curvature, found) = smesh.property_map<vertex_descriptor, double>("v:interpolated_corrected_Gaussian_curvature");
     if (found)
     {
       smesh.remove_property_map(gaussian_curvature);
@@ -851,7 +851,7 @@ private Q_SLOTS:
     if (mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE) return;
 
     std::string tied_string = (mu_index == MEAN_CURVATURE)?
-        "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_gaussian_curvature";
+        "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_Gaussian_curvature";
     SMesh& smesh = *item->face_graph();
 
     const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
@@ -868,13 +868,13 @@ private Q_SLOTS:
         if (mu_index == MEAN_CURVATURE)
           PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
         else
-          PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
       }
       else {
         if (mu_index == MEAN_CURVATURE)
           PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
         else
-          PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
       }
       double res_min = ARBITRARY_DBL_MAX,
              res_max = -ARBITRARY_DBL_MAX;

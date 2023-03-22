@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
   for (vertex_descriptor v : vertices(smesh))
   {
     double h = PMP::interpolated_corrected_mean_curvature_one_vertex(smesh, v);
-    double g = PMP::interpolated_corrected_gaussian_curvature_one_vertex(smesh, v);
+    double g = PMP::interpolated_corrected_Gaussian_curvature_one_vertex(smesh, v);
     PMP::Principal_curvatures_and_directions<Epic_kernel> p =
       PMP::interpolated_corrected_principal_curvatures_and_directions_one_vertex(smesh, v);
 
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     //   smesh,
     //   v,
     //   CGAL::parameters::vertex_mean_curvature(&h)
-    //   .vertex_gaussian_curvature(&g)
+    //   .vertex_Gaussian_curvature(&g)
     // );
 
     std::cout << v.idx() << ": HC = " << h

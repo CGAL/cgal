@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     mean_curvature_map
   );
 
-  PMP::interpolated_corrected_gaussian_curvature(
+  PMP::interpolated_corrected_Gaussian_curvature(
     smesh,
     gaussian_curvature_map
   );

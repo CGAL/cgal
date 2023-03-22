@@ -901,7 +901,7 @@ Polyhedron_3 and other polygonal mesh structures based on the Face Graph Model.
 
 These computations are performed using (on all vertices of mesh):
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
 
@@ -910,7 +910,7 @@ as the implementation performs the shared computations only once, making it more
 
 Similarly, we can use the following functions to compute curvatures on a specific vertex:
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_one_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature_one_vertex()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_one_vertex()`
 

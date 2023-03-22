@@ -78,7 +78,7 @@ void test_average_curvatures(std::string mesh_path,
   // test_info.expansion_radius -> test if no radius is provided by user.
   if (test_info.expansion_radius < 0) {
     PMP::interpolated_corrected_mean_curvature(pmesh, mean_curvature_map);
-    PMP::interpolated_corrected_gaussian_curvature(pmesh, gaussian_curvature_map);
+    PMP::interpolated_corrected_Gaussian_curvature(pmesh, gaussian_curvature_map);
     PMP::interpolated_corrected_principal_curvatures_and_directions(pmesh, principal_curvatures_and_directions_map);
   }
   else {
@@ -88,7 +88,7 @@ void test_average_curvatures(std::string mesh_path,
       CGAL::parameters::ball_radius(test_info.expansion_radius)
     );
 
-    PMP::interpolated_corrected_gaussian_curvature(
+    PMP::interpolated_corrected_Gaussian_curvature(
       pmesh,
       gaussian_curvature_map,
       CGAL::parameters::ball_radius(test_info.expansion_radius)
@@ -125,28 +125,28 @@ void test_average_curvatures(std::string mesh_path,
     pmesh,
     CGAL::parameters::ball_radius(test_info.expansion_radius)
     .vertex_mean_curvature_map(mean_curvature_map)
-    .vertex_gaussian_curvature_map(gaussian_curvature_map)
+    .vertex_Gaussian_curvature_map(gaussian_curvature_map)
     .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
   );
 
-  Epic_kernel::FT new_mean_curvature_avg = 0, new_gaussian_curvature_avg = 0, new_principal_curvature_avg = 0;
+  Epic_kernel::FT new_mean_curvature_avg = 0, new_Gaussian_curvature_avg = 0, new_principal_curvature_avg = 0;
 
   for (vertex_descriptor v : vertices(pmesh))
   {
     new_mean_curvature_avg += get(mean_curvature_map, v);
-    new_gaussian_curvature_avg += get(gaussian_curvature_map, v);
+    new_Gaussian_curvature_avg += get(gaussian_curvature_map, v);
     new_principal_curvature_avg += get(principal_curvatures_and_directions_map, v).min_curvature
       + get(principal_curvatures_and_directions_map, v).max_curvature;
   }
 
   new_mean_curvature_avg /= vertices(pmesh).size();
-  new_gaussian_curvature_avg /= vertices(pmesh).size();
+  new_Gaussian_curvature_avg /= vertices(pmesh).size();
   new_principal_curvature_avg /= vertices(pmesh).size() * 2;
 
   // are average curvatures computed from interpolated_corrected_curvatures()
   // equal to average curvatures each computed on its own?
   assert(passes_comparison(mean_curvature_avg, new_mean_curvature_avg, 0.99));
-  assert(passes_comparison(gaussian_curvature_avg, new_gaussian_curvature_avg, 0.99));
+  assert(passes_comparison(gaussian_curvature_avg, new_Gaussian_curvature_avg, 0.99));
   assert(passes_comparison(principal_curvature_avg, new_principal_curvature_avg, 0.99));
 
   if (compare_single_vertex)
@@ -154,7 +154,7 @@ void test_average_curvatures(std::string mesh_path,
     // computing curvatures together from interpolated_corrected_curvatures()
 
     Epic_kernel::FT single_vertex_mean_curvature_avg = 0,
-      single_vertex_gaussian_curvature_avg = 0,
+      single_vertex_Gaussian_curvature_avg = 0,
       single_vertex_principal_curvature_avg = 0;
 
     Epic_kernel::FT h, g;
@@ -165,23 +165,23 @@ void test_average_curvatures(std::string mesh_path,
       PMP::interpolated_corrected_curvatures_one_vertex(
         pmesh,
         v,
-        CGAL::parameters::vertex_gaussian_curvature(std::ref(g))
+        CGAL::parameters::vertex_Gaussian_curvature(std::ref(g))
         .vertex_mean_curvature(std::ref(h))
         .vertex_principal_curvatures_and_directions(std::ref(p))
         .ball_radius(test_info.expansion_radius)
       );
 
       single_vertex_mean_curvature_avg += h;
-      single_vertex_gaussian_curvature_avg += g;
+      single_vertex_Gaussian_curvature_avg += g;
       single_vertex_principal_curvature_avg += p.min_curvature + p.max_curvature;
     }
 
     single_vertex_mean_curvature_avg /= vertices(pmesh).size();
-    single_vertex_gaussian_curvature_avg /= vertices(pmesh).size();
+    single_vertex_Gaussian_curvature_avg /= vertices(pmesh).size();
     single_vertex_principal_curvature_avg /= vertices(pmesh).size() * 2;
 
     assert(passes_comparison(mean_curvature_avg, single_vertex_mean_curvature_avg, 0.99));
-    assert(passes_comparison(gaussian_curvature_avg, single_vertex_gaussian_curvature_avg, 0.99));
+    assert(passes_comparison(gaussian_curvature_avg, single_vertex_Gaussian_curvature_avg, 0.99));
     assert(passes_comparison(principal_curvature_avg, single_vertex_principal_curvature_avg, 0.99));
   }
 
