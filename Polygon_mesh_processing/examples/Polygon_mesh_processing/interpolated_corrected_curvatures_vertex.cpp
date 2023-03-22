@@ -10,7 +10,6 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
-typedef Epic_kernel::FT FT;
 typedef CGAL::Surface_mesh<Epic_kernel::Point_3> Surface_Mesh;
 typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
 
@@ -31,10 +30,10 @@ int main(int argc, char* argv[])
   // loop over vertices and use vertex_descriptor to compute a curvature on one vertex
   for (vertex_descriptor v : vertices(smesh))
   {
-    FT h = PMP::interpolated_corrected_mean_curvature_one_vertex<Epic_kernel>(smesh, v);
-    FT g = PMP::interpolated_corrected_gaussian_curvature_one_vertex<Epic_kernel>(smesh, v);
+    double h = PMP::interpolated_corrected_mean_curvature_one_vertex(smesh, v);
+    double g = PMP::interpolated_corrected_gaussian_curvature_one_vertex(smesh, v);
     PMP::Principal_curvatures_and_directions<Epic_kernel> p =
-      PMP::interpolated_corrected_principal_curvatures_and_directions_one_vertex<Epic_kernel>(smesh, v);
+      PMP::interpolated_corrected_principal_curvatures_and_directions_one_vertex(smesh, v);
 
     // we can also specify a ball radius for expansion and a user defined vertex normals map using
     // named parameters. Refer to interpolated_corrected_curvatures_SM.cpp to see example usage.
