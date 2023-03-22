@@ -56,6 +56,7 @@ void merge_sets( Object o1, Object o2, Hash_map& hash, Union_find& uf) {
 template <typename K, typename I, typename M> class SNC_sphere_map;
 template <typename S> class SM_decorator;
 template <typename S> class SNC_decorator;
+template <typename S> class SNC_io_parser;
 
 /*{\Manpage {SNC_structure}{Items}{Selective Nef Complex}{C}}*/
 

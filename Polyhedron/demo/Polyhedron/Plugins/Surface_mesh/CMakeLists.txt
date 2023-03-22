@@ -23,10 +23,7 @@ if(NOT CGAL_DISABLE_GMP)
     endif()
 
   else()
-    message(
-      STATUS
-        "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available."
-    )
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
   endif()
 
   qt5_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)

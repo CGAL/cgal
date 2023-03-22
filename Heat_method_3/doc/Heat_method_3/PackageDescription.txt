@@ -12,7 +12,7 @@
 \cgalPkgPicture{heat-method-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
+\cgalPkgAuthors{Keenan Crane, Christina Vaz, and Andreas Fabri}
 \cgalPkgDesc{The package provides an algorithm that solves the single- or
 multiple-source shortest path problem by returning an approximation of the geodesic distance
 for all vertices of a triangle mesh to the closest vertex in a given set of

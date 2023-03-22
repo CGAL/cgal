@@ -388,7 +388,7 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
 // NOTE: There is an abnormal collinearity case which occurs when e0 and e2 are collinear.
 // In this case, these lines do not correspond to an offset vertex (because e0* and e2* are never consecutive before the event),
 // so the degenerate seed is neither the left or the right seed. In this case, the SEED ID for the degenerate pseudo seed is UNKNOWN.
-// If you request the point of such degenerate pseudo seed the oriented midpoint bettwen e0 and e2 is returned.
+// If you request the point of such degenerate pseudo seed the oriented midpoint between e0 and e2 is returned.
 //
 template <class K, class CoeffCache>
 boost::optional< Point_2<K> >

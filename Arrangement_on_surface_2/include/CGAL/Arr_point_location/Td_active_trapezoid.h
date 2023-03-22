@@ -163,14 +163,19 @@ private:
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
   /*! Initialize the trapezoid's neighbors. */
-   inline void init_neighbours(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
-                               boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
+   inline void init_neighbors(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
+                              boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
   {
     set_lb((lb) ? *lb : Td_map_item(0));
     set_lt((lt) ? *lt : Td_map_item(0));
     set_rb((rb) ? *rb : Td_map_item(0));
     set_rt((rt) ? *rt : Td_map_item(0));
   }
+  /*! \copydoc init_neighbors
+   *  \deprecated please use #init_neighbors */
+   CGAL_DEPRECATED inline void init_neighbours(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
+                                               boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
+  { init_neighbors(lb, lt, rb, rt); }
 
   /*! Set the DAG node. */
   inline void set_dag_node(Dag_node* p)

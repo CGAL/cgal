@@ -294,7 +294,6 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
   return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
-// adapted from triangulate_faces
 template <typename TriangleMesh, typename VPM, typename Traits>
 bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
                  const TriangleMesh& tmesh,
@@ -303,49 +302,23 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename Traits::FT                                             FT;
+  typedef typename Traits:: FT                                            FT;
   typedef typename boost::property_traits<VPM>::reference                 Point_ref;
-  typedef typename Traits::Vector_3                                       Vector_3;
 
   CGAL_precondition(!is_border(e, tmesh));
 
-  halfedge_descriptor h = halfedge(e, tmesh);
+  typename Traits::Compute_approximate_angle_3 angle = gt.compute_approximate_angle_3_object();
 
-  Point_ref p0 = get(vpm, target(h, tmesh));
-  Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
-  Point_ref p2 = get(vpm, source(h, tmesh));
-  Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
+  const halfedge_descriptor h = halfedge(e, tmesh);
 
-  /* Chooses the diagonal that will split the quad in two triangles that maximize
-   * the scalar product of of the un-normalized normals of the two triangles.
-   * The lengths of the un-normalized normals (computed using cross-products of two vectors)
-   *  are proportional to the area of the triangles.
-   * Maximize the scalar product of the two normals will avoid skinny triangles,
-   * and will also taken into account the cosine of the angle between the two normals.
-   * In particular, if the two triangles are oriented in different directions,
-   * the scalar product will be negative.
-   */
+  const Point_ref p0 = get(vpm, target(h, tmesh));
+  const Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
+  const Point_ref p2 = get(vpm, source(h, tmesh));
+  const Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
 
-//  CGAL::cross_product(p2-p1, p3-p2) * CGAL::cross_product(p0-p3, p1-p0);
-//  CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
-
-  const Vector_3 v01 = gt.construct_vector_3_object()(p0, p1);
-  const Vector_3 v12 = gt.construct_vector_3_object()(p1, p2);
-  const Vector_3 v23 = gt.construct_vector_3_object()(p2, p3);
-  const Vector_3 v30 = gt.construct_vector_3_object()(p3, p0);
-
-  const FT p1p3 = gt.compute_scalar_product_3_object()(
-                    gt.construct_cross_product_vector_3_object()(v12, v23),
-                    gt.construct_cross_product_vector_3_object()(v30, v01));
-
-  const Vector_3 v21 = gt.construct_opposite_vector_3_object()(v12);
-  const Vector_3 v03 = gt.construct_opposite_vector_3_object()(v30);
-
-  const FT p0p2 = gt.compute_scalar_product_3_object()(
-                    gt.construct_cross_product_vector_3_object()(v01, v21),
-                    gt.construct_cross_product_vector_3_object()(v23, v03));
-
-  return p0p2 <= p1p3;
+  const FT ap1 = angle(p0,p1,p2);
+  const FT ap3 = angle(p2,p3,p0);
+  return (ap1 + ap3 > FT(180));
 }
 
 template <class TriangleMesh, class VPM, class Traits, class Functor>

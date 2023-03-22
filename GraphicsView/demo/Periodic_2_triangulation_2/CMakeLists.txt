@@ -21,9 +21,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
 
-  #--------------------------------
-  # The "2D Periodic triangulation" demo: Periodic_2_triangulation_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Periodic_2_triangulation_2.ui)
 
@@ -58,7 +55,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   cgal_add_compilation_test(Periodic_2_Delaunay_triangulation_2)
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

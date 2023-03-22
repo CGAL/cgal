@@ -24,6 +24,7 @@
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {

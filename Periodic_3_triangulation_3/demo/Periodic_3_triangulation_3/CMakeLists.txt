@@ -97,9 +97,6 @@ else()
     )
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled.")
 
 endif()

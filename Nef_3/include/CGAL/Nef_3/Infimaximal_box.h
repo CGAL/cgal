@@ -24,6 +24,7 @@
 #include <CGAL/Extended_homogeneous.h>
 
 #include <CGAL/Nef_3/SNC_intersection.h>
+#include <CGAL/Nef_3/SNC_iteration.h>
 
 namespace CGAL {
 

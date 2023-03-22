@@ -707,7 +707,7 @@ public:
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
     std::size_t nb_patches_tm1 =
       connected_components(tm1,
-                           bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
+                           make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_1)
                                       .face_index_map(fids1));
 
@@ -720,7 +720,7 @@ public:
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
     std::size_t nb_patches_tm2 =
       connected_components(tm2,
-                           bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
+                           make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_2)
                                       .face_index_map(fids2));
 
@@ -1393,10 +1393,13 @@ public:
             }
           }
           if (inconsistent_classification()) return;
-          CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
-          CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
-          CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
-          CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
+          if (!used_to_clip_a_surface && !used_to_classify_patches)
+          {
+            CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
+            CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
+            CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
+            CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
+          }
         }
     }
 

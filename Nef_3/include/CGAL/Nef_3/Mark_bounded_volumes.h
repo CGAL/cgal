@@ -15,8 +15,8 @@
 
 #include <CGAL/license/Nef_3.h>
 
-
-#include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/Modifier_base.h>
+#include <CGAL/Nef_3/SNC_iteration.h>
 
 namespace CGAL {
 
