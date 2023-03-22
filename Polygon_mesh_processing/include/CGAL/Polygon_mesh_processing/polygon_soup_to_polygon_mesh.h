@@ -57,7 +57,7 @@ PM_Point convert_to_pm_point(const std::array<PS_FT, 3>& p)
 template <class OutputIterator, typename Value_type = typename value_type_traits<OutputIterator>::type>
 struct Polygon_and_Point_id_helper
 {
-  typedef typename Value_type::first_type type;
+  typedef std::remove_cv_t<std::remove_reference_t<typename Value_type::first_type>> type;
 };
 
 template <class OutputIterator>
