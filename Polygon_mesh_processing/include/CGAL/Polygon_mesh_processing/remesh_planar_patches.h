@@ -89,10 +89,10 @@ struct Default_visitor
   void operator()(TriangleMesh&) const {}
 };
 
-template <class TriangleMeshOut, class VertexCornerMapOut>
+template <class PolygonMeshOut, class VertexCornerMapOut>
 struct Face_index_tracker_base
 {
-  typedef boost::graph_traits<TriangleMeshOut> GT;
+  typedef boost::graph_traits<PolygonMeshOut> GT;
 
   Face_index_tracker_base(VertexCornerMapOut vertex_corner_map)
     : m_v2v2_map(vertex_corner_map)
@@ -106,25 +106,25 @@ struct Face_index_tracker_base
   Vertex_map<VertexCornerMapOut> m_v2v2_map;
 };
 
-template <class TriangleMeshOut>
-struct Face_index_tracker_base<TriangleMeshOut, internal_np::Param_not_found>
+template <class PolygonMeshOut>
+struct Face_index_tracker_base<PolygonMeshOut, internal_np::Param_not_found>
 {
-  typedef boost::graph_traits<TriangleMeshOut> GT;
+  typedef boost::graph_traits<PolygonMeshOut> GT;
   using Vmap = Constant_property_map<std::size_t,
-                                     typename boost::graph_traits<TriangleMeshOut>::vertex_descriptor>;
+                                     typename boost::graph_traits<PolygonMeshOut>::vertex_descriptor>;
 
   Face_index_tracker_base(internal_np::Param_not_found) {}
   Vmap v2v_map() { return Vmap(); }
 };
 
-template <class TriangleMeshOut, class VertexCornerMapOut, class FacePatchMapOut>
+template <class PolygonMeshOut, class VertexCornerMapOut, class FacePatchMapOut>
 struct Face_index_tracker
-  : public Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
+  : public Face_index_tracker_base<PolygonMeshOut, VertexCornerMapOut>
 {
-  typedef boost::graph_traits<TriangleMeshOut> GT;
+  typedef boost::graph_traits<PolygonMeshOut> GT;
 
   Face_index_tracker(VertexCornerMapOut vertex_corner_map, FacePatchMapOut face_patch_map)
-    : Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
+    : Face_index_tracker_base<PolygonMeshOut, VertexCornerMapOut>(vertex_corner_map)
     , m_f2f_map(face_patch_map, face_ids)
   {}
 
@@ -145,15 +145,15 @@ struct Face_index_tracker
 };
 
 
-template <class TriangleMeshOut, class VertexCornerMapOut>
-struct Face_index_tracker<TriangleMeshOut, VertexCornerMapOut, internal_np::Param_not_found>
-  : public Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>
+template <class PolygonMeshOut, class VertexCornerMapOut>
+struct Face_index_tracker<PolygonMeshOut, VertexCornerMapOut, internal_np::Param_not_found>
+  : public Face_index_tracker_base<PolygonMeshOut, VertexCornerMapOut>
 {
   using Fmap = Constant_property_map<std::size_t,
-                                     typename boost::graph_traits<TriangleMeshOut>::face_descriptor>;
+                                     typename boost::graph_traits<PolygonMeshOut>::face_descriptor>;
 
   Face_index_tracker(VertexCornerMapOut vertex_corner_map,internal_np::Param_not_found)
-    : Face_index_tracker_base<TriangleMeshOut, VertexCornerMapOut>(vertex_corner_map)
+    : Face_index_tracker_base<PolygonMeshOut, VertexCornerMapOut>(vertex_corner_map)
   {}
 
   void register_faces_of_cc(std::size_t /*nb_triangles*/, std::size_t /*in_patch_id*/) {}
@@ -791,7 +791,7 @@ bool decimate_impl(const TriangleMesh& tm,
 
 template <typename Kernel,
           typename TriangleMeshIn,
-          typename TriangleMeshOut,
+          typename PolygonMeshOut,
           typename VertexCornerIdMap,
           typename EdgeIsConstrainedMap,
           typename FaceCCIdMap,
@@ -801,7 +801,7 @@ template <typename Kernel,
           typename FacePatchMapOut,
           typename Visitor>
 bool decimate_impl(const TriangleMeshIn& tm_in,
-                   TriangleMeshOut& tm_out,
+                   PolygonMeshOut& pm_out,
                    std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc,
                    VertexCornerIdMap& vertex_corner_id,
                    EdgeIsConstrainedMap& edge_is_constrained,
@@ -818,7 +818,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Kernel::Point_3 Point_3;
 
-  Face_index_tracker<TriangleMeshOut, VertexCornerMapOut, FacePatchMapOut>
+  Face_index_tracker<PolygonMeshOut, VertexCornerMapOut, FacePatchMapOut>
     f_id_tracker(vcorner_map_out, fpatch_map_out);
 
   //collect corners
@@ -850,8 +850,8 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
     return false;
   }
 
-  visitor(tm_out);
-  polygon_soup_to_polygon_mesh(corners, faces, tm_out,
+  visitor(pm_out);
+  polygon_soup_to_polygon_mesh(corners, faces, pm_out,
                                parameters::point_to_vertex_map(f_id_tracker.v2v_map()).
                                            polygon_to_face_map(f_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
@@ -1278,24 +1278,24 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
 /*!
  *  \ingroup PMP_meshing_grp
- *  generates a new triangle mesh `tm_out` with the minimal number of triangles while preserving the shape as `tm_in`.
- *  In practice, this means that connected components of edge incident faces belonging to the same plane are
+ *  generates a new triangle mesh `pm_out` with the minimal number of triangles while preserving the shape as `tm_in`.
+ *  In practice, this means that connected components of edge-connected faces belonging to the same plane are
  *  first extracted (each such connected component is called a *patch*). Then, the connected components of
  *  vertex-connected patch border edges belonging to the same line are extracted. Endpoints of such components and
  *  vertices incident to more than two patches (or two patches + one mesh boundary) are called *corners*.
- *  `tm_out` contains the 2D constrained Delaunay triangulation of each patch using only corner vertices
+ *  `pm_out` contains the 2D constrained Delaunay triangulation of each patch using only corner vertices
  *  on the boundary of the patch.
  *
- *  \warning if `tm_in` contains a non-manifold vertex, `tm_out` will be empty. Those vertices must be
+ *  \warning if `tm_in` contains a non-manifold vertex, `pm_out` will be empty. Those vertices must be
  *           duplicated with `duplicate_non_manifold_vertices()` to get an output.
  *
  *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
- *  \tparam TriangleMeshOut a model of `MutableFaceGraph`
+ *  \tparam PolygonMeshOut a model of `MutableFaceGraph`
  *  \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
  *  \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  *  \param tm_in input triangle mesh
- *  \param tm_out output triangle mesh
+ *  \param pm_out output polygon mesh
  *  \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  *  \cgalNamedParamsBegin
@@ -1351,42 +1351,42 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *      \cgalParamDefault{false}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_point_map}
- *      \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
- *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *      \cgalParamDescription{a property map associating points to the vertices of `pm_out`}
+ *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%vertex_descriptor`
  *                     as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
- *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_out)`}
+ *      \cgalParamDefault{`boost::get(CGAL::vertex_point, pm_out)`}
  *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                      must be available in `TriangleMeshOut`.}
+ *                      must be available in `PolygonMeshOut`.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{face_patch_map}
  *      \cgalParamDescription{a property map filled by this function and that will contain for each face the id
  *                            of its patch in the range `[0, number of patches - 1]`}
- *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%face_descriptor`
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%face_descriptor`
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_corner_map}
  *      \cgalParamDescription{a property map filled by this function and that will contain for each vertex its corner
  *                            an id in the range `[0, number of corners - 1]`}
- *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%vertex_descriptor`
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{visitor}
- *      \cgalParamDescription{a callable with `visitor(tm_out)` being called once `tm_in` is no longer needed
- *                            and `tm_out` is not already modified. It can be used in the case when `tm_in` and `tm_out` are the same mesh,
- *                            so that `tm_out` can be cleared before being filled.}
- *      \cgalParamType{`visitor(tm_out)` must be a valid expression.}
+ *      \cgalParamDescription{a callable with `visitor(pm_out)` being called once `tm_in` is no longer needed
+ *                            and `pm_out` is not already modified. It can be used in the case when `tm_in` and `pm_out` are the same mesh,
+ *                            so that `pm_out` can be cleared before being filled.}
+ *      \cgalParamType{`visitor(pm_out)` must be a valid expression.}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  */
 template <typename TriangleMeshIn,
-          typename TriangleMeshOut,
+          typename PolygonMeshOut,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
 void remesh_planar_patches(const TriangleMeshIn& tm_in,
-                                 TriangleMeshOut& tm_out,
+                                 PolygonMeshOut& pm_out,
                            const NamedParametersIn& np_in = parameters::default_values(),
                            const NamedParametersOut& np_out = parameters::default_values())
 {
@@ -1438,19 +1438,19 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                                    get_const_property_map(vertex_point, tm_in));
 
   VPM_out vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
-                                     get_property_map(vertex_point, tm_out));
+                                     get_property_map(vertex_point, pm_out));
 
   typename internal_np::Lookup_named_param_def< internal_np::visitor_t,
                                                 NamedParametersOut,
-                                                Planar_segmentation::Default_visitor<TriangleMeshOut>>::type
-    visitor = choose_parameter<Planar_segmentation::Default_visitor<TriangleMeshOut>>(get_parameter(np_out, internal_np::visitor));
+                                                Planar_segmentation::Default_visitor<PolygonMeshOut>>::type
+    visitor = choose_parameter<Planar_segmentation::Default_visitor<PolygonMeshOut>>(get_parameter(np_out, internal_np::visitor));
 
   bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
 
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
     Planar_segmentation::tag_corners_and_constrained_edges<Traits>(tm_in, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm_in);
   std::vector< typename Traits::Vector_3 > face_normals(nb_corners_and_nb_cc.second, NULL_VECTOR);
-  Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
+  Planar_segmentation::decimate_impl<Traits>(tm_in, pm_out,
                                              nb_corners_and_nb_cc,
                                              vertex_corner_id,
                                              edge_is_constrained,
@@ -1465,7 +1465,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
 
 /*!
  *  \ingroup PMP_meshing_grp
- *  generates a new triangle mesh `tm_out` with the minimal number of triangles from a partition of `tm_in`.
+ *  generates a new triangle mesh `pm_out` with the minimal number of triangles from a partition of `tm_in`.
  *  The terminology used here and the global idea is very similar to what is done by `remesh_planar_patches()`
  *  except that here the partition into patches and corner identification is provided by the user.
  *  It allows to have a remeshing of almost coplanar regions, detected for example using the region growing algorithm
@@ -1475,7 +1475,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  \returns `true` if all patches could be triangulated and `false` otherwise.
  *
  *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
- *  \tparam TriangleMeshOut a model of `MutableFaceGraph`
+ *  \tparam PolygonMeshOut a model of `MutableFaceGraph`
  *
  *  \tparam FacePatchMap a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%face_descriptor`
  *                       as key type and `std::size_t` as value type
@@ -1487,7 +1487,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  *  \param tm_in input triangle mesh
- *  \param tm_out output triangle mesh
+ *  \param pm_out output polygon mesh
  *  \param nb_patches the number of patches in the partition
  *  \param nb_corners the number of corners
  *  \param face_patch_map a property map that contains for each face the id of its patch in the range `[0, nb_patches]`
@@ -1528,45 +1528,45 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *      \cgalParamDefault{false}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_point_map}
- *      \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
- *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *      \cgalParamDescription{a property map associating points to the vertices of `pm_out`}
+ *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%vertex_descriptor`
  *                     as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
- *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_out)`}
+ *      \cgalParamDefault{`boost::get(CGAL::vertex_point, pm_out)`}
  *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                      must be available in `TriangleMeshOut`.}
+ *                      must be available in `PolygonMeshOut`.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{face_patch_map}
  *      \cgalParamDescription{a property map filled by this function and that will contain for each face the id
  *                            of its patch in the range `[0, number of patches - 1]`}
- *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%face_descriptor`
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%face_descriptor`
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{vertex_corner_map}
  *      \cgalParamDescription{a property map filled by this function and that will contain for each vertex its corner
  *                            an id in the range `[0, number of corners - 1]`}
- *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshOut>::%vertex_descriptor`
+ *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%vertex_descriptor`
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{visitor}
- *      \cgalParamDescription{a callable with `visitor(tm_out)` being called once `tm_in` is no longer needed
- *                            and `tm_out` is not already modified. It can be used in the case when `tm_in` and `tm_out` are the same mesh,
- *                            so that `tm_out` can be cleared before being filled.}
- *      \cgalParamType{`visitor(tm_out)` must be a valid expression.}
+ *      \cgalParamDescription{a callable with `visitor(pm_out)` being called once `tm_in` is no longer needed
+ *                            and `pm_out` is not already modified. It can be used in the case when `tm_in` and `pm_out` are the same mesh,
+ *                            so that `pm_out` can be cleared before being filled.}
+ *      \cgalParamType{`visitor(pm_out)` must be a valid expression.}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  */
 template <typename TriangleMeshIn,
-          typename TriangleMeshOut,
+          typename PolygonMeshOut,
           typename FacePatchMap,
           typename EdgeIsConstrainedMap,
           typename VertexCornerMap,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
 bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
-                                        TriangleMeshOut& tm_out,
+                                        PolygonMeshOut& pm_out,
                                    std::size_t nb_patches,
                                    std::size_t nb_corners,
                                    FacePatchMap face_patch_map,
@@ -1585,18 +1585,18 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
                                    get_const_property_map(vertex_point, tm_in));
 
   VPM_out vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
-                                     get_property_map(vertex_point, tm_out));
+                                     get_property_map(vertex_point, pm_out));
 
   typename internal_np::Lookup_named_param_def< internal_np::visitor_t,
                                                 NamedParametersOut,
-                                                Planar_segmentation::Default_visitor<TriangleMeshOut>>::type
-    visitor = choose_parameter<Planar_segmentation::Default_visitor<TriangleMeshOut>>(get_parameter(np_out, internal_np::visitor));
+                                                Planar_segmentation::Default_visitor<PolygonMeshOut>>::type
+    visitor = choose_parameter<Planar_segmentation::Default_visitor<PolygonMeshOut>>(get_parameter(np_out, internal_np::visitor));
 
   bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
 
   std::vector< typename Traits::Vector_3 > face_normals;
   Planar_segmentation::init_face_normals(face_normals, nb_patches, get_parameter(np_in, internal_np::patch_normal_map));
-  return Planar_segmentation::decimate_impl<Traits>(tm_in, tm_out,
+  return Planar_segmentation::decimate_impl<Traits>(tm_in, pm_out,
                                                     std::make_pair(nb_corners, nb_patches),
                                                     vertex_corner_map, ecm, face_patch_map, vpm_in, vpm_out,
                                                     do_not_triangulate_faces,
