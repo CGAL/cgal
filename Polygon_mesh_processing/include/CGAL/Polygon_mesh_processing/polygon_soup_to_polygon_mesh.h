@@ -99,9 +99,6 @@ public:
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
     typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
 
-    typedef typename value_type_traits<V2V>::type Raw_point_id;
-    typedef typename value_type_traits<V2V>::type Raw_polygon_id;
-
     typedef typename Polygon_and_Point_id_helper<V2V>::type Point_id;
     typedef typename Polygon_and_Point_id_helper<F2F>::type Polygon_id;
 

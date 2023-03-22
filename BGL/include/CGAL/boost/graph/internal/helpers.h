@@ -238,7 +238,7 @@ namespace impl
 }//end of impl
 
 template <class PMAP>
-struct value_type_traits<impl::Output_iterator_functor<PMAP> >
+struct value_type_traits<boost::function_output_iterator<impl::Output_iterator_functor<PMAP>>>
 {
   typedef std::pair<typename impl::Output_iterator_functor<PMAP>::input_t,
                     typename impl::Output_iterator_functor<PMAP>::output_t> type;
