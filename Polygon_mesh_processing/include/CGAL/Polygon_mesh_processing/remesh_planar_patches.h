@@ -1361,7 +1361,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *    \cgalParamNEnd
  *    \cgalParamNBegin{face_patch_map}
  *      \cgalParamDescription{a property map filled by this function and that will contain for each face the id
- *                            of its patch in the range `[0, number of patches - 1]`}
+ *                            of its patch in the range `[0, number of patches - 1]`,
+ *                            the patch id of two identical patches in the input and output meshes being equal.}
  *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%face_descriptor`
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
