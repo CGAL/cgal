@@ -20,7 +20,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
-Octree;
+  Octree;
 
 typedef CGAL::Search_traits_3<Kernel> Kd_tree_traits;
 typedef CGAL::Orthogonal_k_neighbor_search<Kd_tree_traits> Kd_tree_search;
@@ -47,7 +47,7 @@ void naive_vs_octree(std::size_t dataset_size) {
   {
 
     FT distance_nearest = (std::numeric_limits<FT>::max)();
-    for (auto &p : points.points()) {
+    for (auto& p: points.points()) {
 
       FT distance_current = CGAL::squared_distance(p, random_point);
       if (distance_current < distance_nearest) {
@@ -72,7 +72,6 @@ void naive_vs_octree(std::size_t dataset_size) {
   octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
   {
-    // TODO: Write a nearest-neighbor implementation and use it here
     std::vector<Point> k_neighbors;
     octree.nearest_neighbors(random_point, 1, std::back_inserter(k_neighbors));
     octree_nearest = *k_neighbors.begin();
@@ -109,9 +108,9 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
   Kd_tree kd_tree(points.points().begin(), points.points().end());
   kd_tree.build();
   auto kd_tree_start_time = high_resolution_clock::now();
-  Kd_tree_search search(kd_tree, random_point, (unsigned int)(K));
+  Kd_tree_search search(kd_tree, random_point, (unsigned int) (K));
   duration<float> kd_tree_elapsed_time = high_resolution_clock::now() - kd_tree_start_time;
-  for (auto p : search)
+  for (auto p: search)
     kd_tree_nearest_neighbors.push_back(p.first);
 
   std::cout << "Kd_tree --> "
@@ -143,6 +142,7 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
 
 int main(void) {
 
+  naive_vs_octree(21);
   naive_vs_octree(500);
   naive_vs_octree(1000);
   naive_vs_octree(10000);

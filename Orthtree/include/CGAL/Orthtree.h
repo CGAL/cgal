@@ -40,7 +40,8 @@
 #include <vector>
 #include <math.h>
 
-namespace CGAL {
+namespace CGAL
+{
 
 /*!
   \ingroup PkgOrthtreeClasses
@@ -63,8 +64,8 @@ namespace CGAL {
   \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap_`
   \tparam PointMap_ must be a model of `ReadablePropertyMap` whose value type is `Traits_::Point_d`
  */
-template<typename Traits_, typename PointRange_,
-         typename PointMap_ = Identity_property_map<typename Traits_::Point_d> >
+template <typename Traits_, typename PointRange_,
+  typename PointMap_ = Identity_property_map<typename Traits_::Point_d> >
 class Orthtree
 {
 
@@ -88,9 +89,9 @@ public:
   /// \cond SKIP_IN_MANUAL
   typedef typename Traits::Array Array; ///< Array type.
   typedef typename Traits::Construct_point_d_from_array
-  Construct_point_d_from_array;
+    Construct_point_d_from_array;
   typedef typename Traits::Construct_bbox_d
-  Construct_bbox_d;
+    Construct_bbox_d;
   /// \endcond
   /// @}
 
@@ -105,7 +106,7 @@ public:
   /*!
    * \brief Degree of the tree (number of children of non-leaf nodes).
    */
-  typedef Dimension_tag<(2 << (Dimension::value-1))> Degree;
+  typedef Dimension_tag<(2 << (Dimension::value - 1))> Degree;
 
   /*!
    * \brief The Sub-tree / Orthant type.
@@ -123,7 +124,7 @@ public:
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Node_range;
 #else
-  typedef boost::iterator_range<Traversal_iterator<Node> > Node_range;
+  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range;
 #endif
 
   /// \cond SKIP_IN_MANUAL
@@ -131,7 +132,7 @@ public:
   /*!
    * \brief A function that determines the next node in a traversal given the current one.
    */
-  typedef std::function<Node(Node)> Node_traversal_method_const;
+  typedef std::function<const Node *(const Node *)> Node_traversal_method_const;
 
   /// \endcond
 
@@ -193,48 +194,48 @@ public:
            PointMap point_map = PointMap(),
            const FT enlarge_ratio = 1.2,
            Traits traits = Traits())
-    : m_traits (traits)
-    , m_range (point_range)
-    , m_point_map (point_map)
-    , m_root(Node(), 0)
+    : m_traits(traits)
+      , m_range(point_range)
+      , m_point_map(point_map)
+      , m_root() // todo: can this be default-constructed?
   {
     Array bbox_min;
     Array bbox_max;
 
     // init bbox with first values found
     {
-      const Point& p = get (m_point_map, *(point_range.begin()));
+      const Point& p = get(m_point_map, *(point_range.begin()));
       std::size_t i = 0;
-      for (const FT& x : cartesian_range(p))
+      for (const FT& x: cartesian_range(p))
       {
         bbox_min[i] = x;
         bbox_max[i] = x;
-        ++ i;
+        ++i;
       }
     }
 
-    for (const Range_type& r : point_range)
+    for (const Range_type& r: point_range)
     {
-      const Point& p = get (m_point_map, r);
+      const Point& p = get(m_point_map, r);
       std::size_t i = 0;
-      for (const FT& x : cartesian_range(p))
+      for (const FT& x: cartesian_range(p))
       {
         bbox_min[i] = (std::min)(x, bbox_min[i]);
         bbox_max[i] = (std::max)(x, bbox_max[i]);
-        ++ i;
+        ++i;
       }
     }
 
     Array bbox_centroid;
     FT max_length = FT(0);
-    for (std::size_t i = 0 ; i < Dimension::value; ++ i)
+    for (std::size_t i = 0; i < Dimension::value; ++i)
     {
       bbox_centroid[i] = (bbox_min[i] + bbox_max[i]) / FT(2);
       max_length = (std::max)(max_length, bbox_max[i] - bbox_min[i]);
     }
     max_length *= enlarge_ratio / FT(2);
 
-    for (std::size_t i = 0 ; i < Dimension::value; ++ i)
+    for (std::size_t i = 0; i < Dimension::value; ++i)
     {
       bbox_min[i] = bbox_centroid[i] - max_length;
       bbox_max[i] = bbox_centroid[i] + max_length;
@@ -254,47 +255,31 @@ public:
   /// \cond SKIP_IN_MANUAL
 
   // copy constructor
-  Orthtree (const Orthtree& other)
-    : m_traits (other.m_traits)
-    , m_range (other.m_range)
-    , m_point_map (other.m_point_map)
-    , m_root (other.m_root.deep_copy())
-    , m_bbox_min (other.m_bbox_min)
-    , m_side_per_depth(other.m_side_per_depth)
-  { }
+  Orthtree(const Orthtree& other)
+    : m_traits(other.m_traits)
+      , m_range(other.m_range)
+      , m_point_map(other.m_point_map)
+      , m_root(other.m_root.deep_copy())
+      , m_bbox_min(other.m_bbox_min)
+      , m_side_per_depth(other.m_side_per_depth) {}
 
   // move constructor
-  Orthtree (Orthtree&& other)
-    : m_traits (other.m_traits)
-    , m_range (other.m_range)
-    , m_point_map (other.m_point_map)
-    , m_root (other.m_root)
-    , m_bbox_min (other.m_bbox_min)
-    , m_side_per_depth(other.m_side_per_depth)
-  {
-    other.m_root = Node(Node(), 0);
+  Orthtree(Orthtree&& other)
+    : m_traits(other.m_traits)
+      , m_range(other.m_range)
+      , m_point_map(other.m_point_map)
+      , m_root(other.m_root)
+      , m_bbox_min(other.m_bbox_min)
+      , m_side_per_depth(other.m_side_per_depth) {
+    other.m_root = Node{};
   }
 
   // Non-necessary but just to be clear on the rule of 5:
 
   // assignment operators deleted (PointRange is a ref)
-  Orthtree& operator= (const Orthtree& other) = delete;
-  Orthtree& operator= (Orthtree&& other) = delete;
-  // Destructor
-  ~Orthtree()
-  {
-    std::queue<Node> nodes;
-    nodes.push(m_root);
-    while (!nodes.empty())
-    {
-      Node node = nodes.front();
-      nodes.pop();
-      if (!node.is_leaf())
-        for (std::size_t i = 0; i < Degree::value; ++ i)
-          nodes.push (node[i]);
-      node.free();
-    }
-  }
+  Orthtree& operator=(const Orthtree& other) = delete;
+
+  Orthtree& operator=(Orthtree&& other) = delete;
 
   // move constructor
   /// \endcond
@@ -320,52 +305,39 @@ public:
   void refine(const Split_predicate& split_predicate) {
 
     // If the tree has already been refined, reset it
-    if (!m_root.is_leaf()){
-      std::queue<Node> nodes;
-      for (std::size_t i = 0; i < Degree::value; ++ i)
-            nodes.push (m_root[i]);
-      while (!nodes.empty())
-      {
-        Node node = nodes.front();
-        nodes.pop();
-        if (!node.is_leaf())
-          for (std::size_t i = 0; i < Degree::value; ++ i)
-            nodes.push (node[i]);
-        node.free();
-      }
+    if (!m_root.is_leaf())
       m_root.unsplit();
-    }
 
     // Reset the side length map, too
     m_side_per_depth.resize(1);
 
     // Initialize a queue of nodes that need to be refined
-    std::queue<Node> todo;
-    todo.push(m_root);
+    std::queue<Node *> todo;
+    todo.push(&m_root);
 
     // Process items in the queue until it's consumed fully
     while (!todo.empty()) {
 
       // Get the next element
-      Node current = todo.front();
+      auto current = todo.front();
       todo.pop();
 
       // Check if this node needs to be processed
-      if (split_predicate(current)) {
+      if (split_predicate(*current)) {
 
         // Check if we've reached a new max depth
-        if (current.depth() == depth()) {
+        if (current->depth() == depth()) {
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
         }
 
         // Split the node, redistributing its points to its children
-        split(current);
+        split((*current));
 
         // Process each of its children
         for (int i = 0; i < Degree::value; ++i)
-          todo.push(current[i]);
+          todo.push(&(*current)[i]);
 
       }
     }
@@ -401,52 +373,52 @@ public:
   void grade() {
 
     // Collect all the leaf nodes
-    std::queue<Node> leaf_nodes;
-    for (Node leaf : traverse(Orthtrees::Leaves_traversal())) {
+    std::queue<Node *> leaf_nodes;
+    for (const Node &leaf : traverse(Orthtrees::Leaves_traversal())) {
       // TODO: I'd like to find a better (safer) way of doing this
-      leaf_nodes.push(leaf);
+      leaf_nodes.push(const_cast<Node *>(&leaf));
     }
 
     // Iterate over the nodes
     while (!leaf_nodes.empty()) {
 
       // Get the next node
-      Node node = leaf_nodes.front();
+      Node *node = leaf_nodes.front();
       leaf_nodes.pop();
 
       // Skip this node if it isn't a leaf anymore
-      if (!node.is_leaf())
+      if (!node->is_leaf())
         continue;
 
       // Iterate over each of the neighbors
       for (int direction = 0; direction < 6; ++direction) {
 
         // Get the neighbor
-        Node neighbor = node.adjacent_node(direction);
+        auto *neighbor = node->adjacent_node(direction);
 
         // If it doesn't exist, skip it
-        if (neighbor.is_null())
+        if (!neighbor)
           continue;
 
         // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
         // TODO: This check might be redundant, if it doesn't affect performance maybe I could remove it
-        if (neighbor.parent() == node.parent())
+        if (neighbor->parent() == node->parent())
           continue;
 
         // If it's already been split, skip it
-        if (!neighbor.is_leaf())
+        if (!neighbor->is_leaf())
           continue;
 
         // Check if the neighbor breaks our grading rule
         // TODO: could the rule be parametrized?
-        if ((node.depth() - neighbor.depth()) > 1) {
+        if ((node->depth() - neighbor->depth()) > 1) {
 
           // Split the neighbor
-          split(neighbor);
+          split(*neighbor);
 
           // Add newly created children to the queue
           for (int i = 0; i < Degree::value; ++i) {
-            leaf_nodes.push(neighbor[i]);
+            leaf_nodes.push(&(*neighbor)[i]);
           }
         }
       }
@@ -459,9 +431,22 @@ public:
   /// @{
 
   /*!
-    \brief returns the root node.
+    \brief provides read-only access to the root node, and by
+    extension the rest of the tree.
+
+    \return a const reference to the root node of the tree.
    */
-  Node root() const { return m_root; }
+  const Node &root() const { return m_root; }
+
+  /*!
+    \brief provides read-write access to the root node, and by
+    extension the rest of the tree.
+
+    todo: why wasn't this provided previously?
+
+    \return a reference to the root node of the tree.
+   */
+  Node &root() { return m_root; }
 
   /*!
     \brief Convenience function to access the child nodes of the root
@@ -472,9 +457,9 @@ public:
     \sa `Node::operator[]()`
 
     \param index the index of the child node.
-    \return the accessed node.
+    \return a reference to the node.
    */
-  Node operator[](std::size_t index) const { return m_root[index]; }
+  const Node &operator[](std::size_t index) const { return m_root[index]; }
 
   /*!
     \brief returns the deepest level reached by a leaf node in this tree (root being level 0).
@@ -497,13 +482,13 @@ public:
   template<typename Traversal>
   Node_range traverse(const Traversal &traversal = Traversal()) const {
 
-    Node first = traversal.first(m_root);
+    const Node *first = traversal.first(&m_root);
 
     Node_traversal_method_const next
-      = [&](const Node& n) -> Node { return traversal.next(n); };
+      = [&](const Node* n) -> const Node * { return traversal.next(n); };
 
-    return boost::make_iterator_range(Traversal_iterator<Node>(first, next),
-                                      Traversal_iterator<Node>());
+    return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
+                                      Traversal_iterator<const Node>());
   }
 
   /*!
@@ -547,19 +532,19 @@ public:
     \param point query point.
     \return the node which contains the point.
    */
-  Node locate(const Point &point) const {
+  const Node& locate(const Point &point) const {
 
     // Make sure the point is enclosed by the orthtree
     CGAL_precondition (CGAL::do_intersect(point, bbox(m_root)));
 
     // Start at the root node
-    auto node_for_point = m_root;
+    auto *node_for_point = &m_root;
 
     // Descend the tree until reaching a leaf node
-    while (!node_for_point.is_leaf()) {
+    while (!node_for_point->is_leaf()) {
 
       // Find the point to split around
-      Point center = barycenter(node_for_point);
+      Point center = barycenter(*node_for_point);
 
       // Find the index of the correct sub-node
       typename Node::Local_coordinates index;
@@ -568,11 +553,11 @@ public:
         index[dimension ++] = (get<0>(r) < get<1>(r));
 
       // Find the correct sub-node of the current node
-      node_for_point = node_for_point[index.to_ulong()];
+      node_for_point = &(*node_for_point)[index.to_ulong()];
     }
 
     // Return the result
-    return node_for_point;
+    return *node_for_point;
   }
 
   /*!
@@ -582,15 +567,15 @@ public:
     `query`.
 
     \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
-    \param query a query point.
-    \param k the number of neighbors.
-    \param output the output iterator.
+    \param query query point.
+    \param k number of neighbors.
+    \param output output iterator.
    */
-  template<typename OutputIterator>
-  OutputIterator nearest_neighbors (const Point& query,
-                                    std::size_t k,
-                                    OutputIterator output) const {
-    Sphere query_sphere (query, (std::numeric_limits<FT>::max)());
+  template <typename OutputIterator>
+  OutputIterator nearest_neighbors(const Point& query,
+                                   std::size_t k,
+                                   OutputIterator output) const {
+    Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
     return nearest_k_neighbors_in_radius(query_sphere, k, output);
   }
 
@@ -604,8 +589,8 @@ public:
     \param query query sphere.
     \param output output iterator.
    */
-  template<typename OutputIterator>
-  OutputIterator nearest_neighbors (const Sphere& query, OutputIterator output) const {
+  template <typename OutputIterator>
+  OutputIterator nearest_neighbors(const Sphere& query, OutputIterator output) const {
     Sphere query_sphere = query;
     return nearest_k_neighbors_in_radius(query_sphere,
                                          (std::numeric_limits<std::size_t>::max)(), output);
@@ -625,7 +610,7 @@ public:
     \param output output iterator.
    */
   template<typename Query, typename OutputIterator>
-  OutputIterator intersected_nodes (const Query& query, OutputIterator output) const {
+  OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
     return intersected_nodes_recursive(query, root(), output);
   }
 
@@ -666,7 +651,7 @@ public:
 
   // TODO: Document this
   // TODO: Could this method name be reduced to just "center" ?
-  Point barycenter(const Node& node) const {
+  Point barycenter(const Node &node) const {
 
     // Determine the side length of this node
     FT size = m_side_per_depth[node.depth()];
@@ -677,7 +662,7 @@ public:
     for (const FT& f : cartesian_range(m_bbox_min))
     {
       bary[i] = FT(node.global_coordinates()[i]) * size + size / FT(2) + f;
-      ++ i;
+      ++i;
     }
 
     // Convert that location into a point
@@ -703,11 +688,12 @@ private: // functions :
     // Split the point collection around the center point on this dimension
     Range_iterator split_point = std::partition
       (begin, end,
-       [&](const Range_type &a) -> bool {
-        // This should be done with cartesian iterator but it seems
-        // complicated to do efficiently
+       [&](const Range_type& a) -> bool
+       {
+         // This should be done with cartesian iterator but it seems
+         // complicated to do efficiently
          return (get(m_point_map, a)[int(dimension)] < center[int(dimension)]);
-      });
+       });
 
     // Further subdivide the first side of the split
     std::bitset<Dimension::value> coord_left = coord;
@@ -721,7 +707,7 @@ private: // functions :
 
   }
 
-  void split(Node& node) {
+  void split(Node &node) {
 
     // Make sure the node hasn't already been split
     CGAL_precondition (node.is_leaf());
@@ -755,18 +741,19 @@ private: // functions :
     Point point;
     FT distance;
   };
-  struct Node_index_with_distance {
+
+  struct Node_index_with_distance
+  {
     typename Node::Local_coordinates index;
     FT distance;
 
-    Node_index_with_distance (const typename Node::Local_coordinates& index,
-                              const FT& distance)
-      : index(index), distance(distance)
-    { }
+    Node_index_with_distance(const typename Node::Local_coordinates& index,
+                             const FT& distance)
+      : index(index), distance(distance) {}
   };
 
-  void nearest_k_neighbors_recursive(Sphere& search_bounds, const Node &node,
-                                     std::vector<Point_with_distance> &results, FT epsilon = 0) const {
+  void nearest_k_neighbors_recursive(Sphere &search_bounds, const Node& node,
+                                     std::vector<Point_with_distance>& results, FT epsilon = 0) const {
 
     // Check whether the node has children
     if (node.is_leaf()) {
@@ -820,7 +807,7 @@ private: // functions :
 
       // Fill the list with child nodes
       for (int index = 0; index < Degree::value; ++index) {
-        Node child_node = node[index];
+        auto &child_node = node[index];
 
         // Add a child to the list, with its distance
         children_with_distances.emplace_back(typename Node::Local_coordinates(index),
@@ -834,7 +821,7 @@ private: // functions :
 
       // Loop over the children
       for (auto child_with_distance : children_with_distances) {
-        Node child_node = node[child_with_distance.index.to_ulong()];
+        auto &child_node = node[child_with_distance.index.to_ulong()];
 
         // Check whether the bounding box of the child intersects with the search bounds
         if (do_intersect(child_node, search_bounds)) {
@@ -853,9 +840,9 @@ private: // functions :
     // Check if the current node intersects with the query
     if (CGAL::do_intersect(query, bbox(node))) {
 
-      // if this node is a leaf, than it's considered an intersecting node
+      // if this node is a leaf, then it's considered an intersecting node
       if (node.is_leaf()) {
-        *output++ = node;
+        *output++ = &node;
         return output;
       }
 
@@ -884,9 +871,9 @@ private: // functions :
     \param k the number of points to find
     \param output the output iterator to add the found points to (in order of increasing distance)
    */
-  template<typename OutputIterator>
+  template <typename OutputIterator>
   OutputIterator nearest_k_neighbors_in_radius
-  (Sphere& query_sphere,
+  (Sphere &query_sphere,
    std::size_t k, OutputIterator output) const {
 
     // Create an empty list of points
@@ -907,18 +894,16 @@ private: // functions :
 public:
 
   /// \cond SKIP_IN_MANUAL
-  void dump_to_polylines (std::ostream& os) const
-  {
-    for (const Node& n : traverse<Orthtrees::Preorder_traversal>())
+  void dump_to_polylines(std::ostream& os) const {
+    for (const Node& n: traverse<Orthtrees::Preorder_traversal>())
       if (n.is_leaf())
       {
         Bbox box = bbox(n);
-        dump_box_to_polylines (box, os);
+        dump_box_to_polylines(box, os);
       }
   }
 
-  void dump_box_to_polylines (const Bbox_2& box, std::ostream& os) const
-  {
+  void dump_box_to_polylines(const Bbox_2& box, std::ostream& os) const {
     // dump in 3D for visualisation
     os << "5 "
        << box.xmin() << " " << box.ymin() << " 0 "
@@ -927,8 +912,8 @@ public:
        << box.xmax() << " " << box.ymin() << " 0 "
        << box.xmin() << " " << box.ymin() << " 0" << std::endl;
   }
-  void dump_box_to_polylines (const Bbox_3& box, std::ostream& os) const
-  {
+
+  void dump_box_to_polylines(const Bbox_3& box, std::ostream& os) const {
     // Back face
     os << "5 "
        << box.xmin() << " " << box.ymin() << " " << box.zmin() << " "
@@ -960,12 +945,12 @@ public:
        << box.xmax() << " " << box.ymax() << " " << box.zmax() << std::endl;
   }
 
-  friend std::ostream& operator<< (std::ostream& os, const Self& orthtree)
-  {
+  friend std::ostream& operator<<(std::ostream& os, const Self& orthtree) {
     // Create a range of nodes
     auto nodes = orthtree.traverse(Orthtrees::Preorder_traversal());
     // Iterate over the range
-    for (auto &n : nodes) {
+    for (auto& n: nodes)
+    {
       // Show the depth
       for (int i = 0; i < n.depth(); ++i)
         os << ". ";

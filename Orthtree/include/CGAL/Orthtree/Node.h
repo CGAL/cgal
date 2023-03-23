@@ -27,42 +27,20 @@
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
-namespace Orthtrees
-{
+namespace Orthtrees {
 
 // Non-documented, or testing purpose only
-struct Node_access
-{
+struct Node_access {
   template <typename Node, typename LC>
-  static Node create_node (Node parent, LC local_coordinates)
-  {
+  static Node create_node(Node* parent, LC local_coordinates) {
     return Node(parent, local_coordinates);
   }
 
   template <typename Node>
-  static typename Node::Point_range& points(Node node) { return node.points(); }
+  static typename Node::Point_range& points(Node& node) { return node.points(); }
 
   template <typename Node>
-  static void split(Node node) { return node.split(); }
-
-  template <typename Node>
-  static void free(Node node)
-  {
-    typedef Dimension_tag<(2 << (Node::Dimension::value - 1))> Degree;
-    std::queue<Node> nodes;
-    nodes.push(node);
-    while (!nodes.empty())
-    {
-      Node node = nodes.front();
-      nodes.pop();
-      if (!node.is_leaf()){
-        for (std::size_t i = 0; i < Degree::value; ++ i){
-          nodes.push (node[i]);
-        }
-      }
-      node.free();
-    }
-  }
+  static void split(Node& node) { return node.split(); }
 
 };
 
@@ -79,9 +57,8 @@ struct Node_access
 
   \cgalModels `ConstRange`
  */
-template<typename Traits, typename PointRange, typename PointMap>
-class Orthtree<Traits, PointRange, PointMap>::Node
-{
+template <typename Traits, typename PointRange, typename PointMap>
+class Orthtree<Traits, PointRange, PointMap>::Node {
 
 public:
 
@@ -144,20 +121,25 @@ private:
   typedef boost::iterator_range<iterator> Point_range;
   /// \endcond
 
-  // make Node trivially copiabled
-  struct Data
-  {
-    Point_range points;
-    Self parent;
-    std::uint8_t depth;
-    Global_coordinates global_coordinates;
-    std::unique_ptr<Children> children;
+  // make Node trivially copiable
+//  struct Data
+//  {
+//    Point_range points;
+//    Self parent;
+//    std::uint8_t depth;
+//    Global_coordinates global_coordinates;
+//    std::unique_ptr<Children> children;
+//
+//    Data (Self parent)
+//      : parent (parent), depth (0) { }
+//  };
+//  Data* m_data;
 
-    Data (Self parent)
-      : parent (parent), depth (0) { }
-  };
-
-  Data* m_data;
+  Point_range m_points;
+  Self* m_parent; // todo: use optional<reference_wrapper<Self>> instead of Self *
+  std::uint8_t m_depth;
+  Global_coordinates m_global_coordinates;
+  std::shared_ptr<Children> m_children;
 
 
   /// \cond SKIP_IN_MANUAL
@@ -173,8 +155,9 @@ private:
    * \brief Access to the content held by this node
    * \return a reference to the collection of point indices
    */
-  Point_range &points() { return m_data->points; }
-  const Point_range &points() const { return m_data->points; }
+  Point_range& points() { return m_points; }
+
+  const Point_range& points() const { return m_points; }
 
   /// \name Construction
   /// @{
@@ -194,42 +177,38 @@ private:
     \param parent the node containing this one
     \param index this node's relationship to its parent
   */
-  explicit Node(Self parent, Local_coordinates local_coordinates)
-    : m_data (new Data(parent)) {
+  explicit Node(Self* parent, Local_coordinates local_coordinates)
+    : m_parent(parent) {
 
-    if (!parent.is_null()) {
-
-      m_data->depth = parent.m_data->depth + 1;
+    if (parent != nullptr) {
+      m_depth = parent->m_depth + 1;
 
       for (int i = 0; i < Dimension::value; i++)
-        m_data->global_coordinates[i] = (2 * parent.m_data->global_coordinates[i]) + local_coordinates[i];
+        m_global_coordinates[i] = (2 * parent->m_global_coordinates[i]) + local_coordinates[i];
 
+    } else {
+      m_depth = 0;
+
+      for (int i = 0; i < Dimension::value; i++)
+        m_global_coordinates[i] = 0;
     }
-    else
-      for (int i = 0; i < Dimension::value; i++)
-        m_data->global_coordinates[i] = 0;
   }
 
-  void free() { delete m_data; }
-
-  Node deep_copy(Self parent = Node()) const
-  {
-    if (is_null())
-      return Node();
+  Node deep_copy(Self parent = Node()) const {
 
     Node out;
-    out.m_data = new Data(parent);
 
-    out.m_data->points = m_data->points;
-    out.m_data->depth = m_data->depth;
-    out.m_data->global_coordinates = m_data->global_coordinates;
-    std::unique_ptr<Children> children;
-    if (!is_leaf())
-    {
-      out.m_data->children = std::make_unique<Children>();
+    out.m_parent = m_parent;
+    out.m_points = m_points;
+    out.m_depth = m_depth;
+    out.m_global_coordinates = m_global_coordinates;
+
+    if (!is_leaf()) {
+      out.m_children = std::make_shared<Children>();
       for (int index = 0; index < Degree::value; index++)
-        (*out.m_data->children)[index] = (*this)[index].deep_copy(out);
+        (*out.m_children)[index] = (*m_children)[index].deep_copy(out);
     }
+
     return out;
   }
 
@@ -251,10 +230,10 @@ private:
 
     CGAL_precondition (is_leaf());
 
-    m_data->children = std::make_unique<Children>();
+    m_children = std::make_shared<Children>();
     for (int index = 0; index < Degree::value; index++) {
 
-      (*m_data->children)[index] = std::move(Self(*this, {Local_coordinates(index)}));
+      (*m_children)[index] = std::move(Self(this, {Local_coordinates(index)}));
 
     }
   }
@@ -267,7 +246,7 @@ private:
    */
   void unsplit() {
 
-    m_data->children.reset();
+    m_children.reset();
   }
 
   /// @}
@@ -279,10 +258,12 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   // Default creates null node
-  Node() : m_data(nullptr) { }
+  // todo: default node is no longer null, but still isn't guaranteed to be valid
+  Node() = default;
 
   // Comparison operator
-  bool operator< (const Node& other) const { return m_data < other.m_data; }
+  // todo: where is this used
+  //bool operator<(const Node& other) const { return m_data < other.m_data; }
   /// \endcond
 
   /// \name Type & Location
@@ -291,36 +272,30 @@ public:
   /*!
     \brief returns `true` if the node is null, `false` otherwise.
   */
-  bool is_null() const { return (m_data == nullptr); }
+  //bool is_null() const { return (m_data == nullptr); }
 
   /*!
     \brief returns `true` if the node has no parent, `false` otherwise.
     \pre `!is_null()`
   */
-  bool is_root() const
-  {
-    CGAL_precondition(!is_null());
-    return m_data->parent.is_null();
+  bool is_root() const {
+    return m_parent == nullptr;
   }
 
   /*!
     \brief returns `true` if the node has no children, `false` otherwise.
     \pre `!is_null()`
   */
-  bool is_leaf() const
-  {
-    CGAL_precondition(!is_null());
-    return (!m_data->children);
+  bool is_leaf() const {
+    return (!m_children);
   }
 
   /*!
     \brief returns this node's depth.
     \pre `!is_null()`
   */
-  std::uint8_t depth() const
-  {
-    CGAL_precondition (!is_null());
-    return m_data->depth;
+  std::uint8_t depth() const {
+    return m_depth;
   }
 
   /*!
@@ -329,12 +304,9 @@ public:
   */
   Local_coordinates local_coordinates() const {
 
-    CGAL_precondition (!is_null());
-    // TODO: There must be a better way of doing this!
-
     Local_coordinates result;
 
-    for (std::size_t i = 0; i < Dimension::value; ++ i)
+    for (std::size_t i = 0; i < Dimension::value; ++i)
       result[i] = global_coordinates()[i] & 1;
 
     return result;
@@ -344,10 +316,8 @@ public:
     \brief returns this node's global coordinates.
     \pre `!is_null()`
   */
-  Global_coordinates global_coordinates() const
-  {
-    CGAL_precondition (!is_null());
-    return m_data->global_coordinates;
+  Global_coordinates global_coordinates() const {
+    return m_global_coordinates;
   }
 
 
@@ -356,18 +326,16 @@ public:
 
   /*!
     \brief returns this node's parent.
-    \pre `!is_null()`
-  */
-  Self parent() const
-  {
-    CGAL_precondition (!is_null());
-    return m_data->parent;
+    \pre `!is_root()`
+   */
+  const Self* parent() const {
+    CGAL_precondition (!is_root());
+    return m_parent;
   }
 
   /*!
     \brief returns the nth child of this node.
 
-    \pre `!is_null()`
     \pre `!is_leaf()`
     \pre `0 <= index && index < Degree::value`
 
@@ -418,13 +386,29 @@ public:
     The operator can be chained. For example, `n[5][2][3]` returns the
     third child of the second child of the fifth child of a node `n`.
   */
-  Self operator[](std::size_t index) const {
+  Self& operator[](std::size_t index) {
 
-    CGAL_precondition (!is_null());
     CGAL_precondition (!is_leaf());
     CGAL_precondition (index < Degree::value);
 
-    return (*m_data->children)[index];
+    return (*m_children)[index];
+  }
+
+  /*!
+    \brief returns the nth child of this node.
+
+    \pre `!is_leaf()`
+    \pre `index < Degree::value`
+
+    The operator can be chained. For example, `n[5][2][3]` returns the
+    third child of the second child of the fifth child of a node `n`.
+   */
+  const Self& operator[](std::size_t index) const {
+
+    CGAL_precondition (!is_leaf());
+    CGAL_precondition (index < Degree::value);
+
+    return (*m_children)[index];
   }
 
   /*!
@@ -478,9 +462,7 @@ public:
 
     \return the adjacent node if it exists, a null node otherwise.
   */
-  Self adjacent_node (Local_coordinates direction) const
-  {
-    CGAL_precondition(!is_null());
+  const Self* adjacent_node(Local_coordinates direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -489,8 +471,7 @@ public:
     CGAL_precondition(direction.to_ulong() < Dimension::value * 2);
 
     // The root node has no adjacent nodes!
-    if (is_root())
-      return Self();
+    if (is_root()) return nullptr;
 
     // The least significant bit indicates the sign (which side of the node)
     bool sign = direction[0];
@@ -506,24 +487,22 @@ public:
 
     // Check if this child has the opposite sign along the direction's axis
     if (local_coordinates()[dimension] != sign) {
-
       // This means the adjacent node is a direct sibling, the offset can be applied easily!
-      return parent()[local_coordinates().to_ulong() + offset];
+      return &(*parent())[local_coordinates().to_ulong() + offset];
     }
 
-    // Find the parent's neighbor in that direction if it exists
-    Self adjacent_node_of_parent = parent().adjacent_node(direction);
+    // Find the parent's neighbor in that direction, if it exists
+    const Self* adjacent_node_of_parent = parent()->adjacent_node(direction);
 
     // If the parent has no neighbor, then this node doesn't have one
-    if (adjacent_node_of_parent.is_null())
-      return Node();
+    if (!adjacent_node_of_parent) return nullptr;
 
     // If the parent's adjacent node has no children, then it's this node's adjacent node
-    if (adjacent_node_of_parent.is_leaf())
+    if (adjacent_node_of_parent->is_leaf())
       return adjacent_node_of_parent;
 
     // Return the nearest node of the parent by subtracting the offset instead of adding
-    return adjacent_node_of_parent[local_coordinates().to_ulong() - offset];
+    return &(*adjacent_node_of_parent)[local_coordinates().to_ulong() - offset];
 
   }
 
@@ -531,7 +510,21 @@ public:
     \brief equivalent to `adjacent_node()`, with an adjacency direction
     rather than a bitset.
    */
-  Self adjacent_node(Adjacency adjacency) const {
+  const Self* adjacent_node(Adjacency adjacency) const {
+    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(adjacency)));
+  }
+
+  /*!
+   * \brief equivalent to adjacent_node, except non-const
+   */
+  Self* adjacent_node(std::bitset<Dimension::value> direction) {
+    return const_cast<Self*>(const_cast<const Self*>(this)->adjacent_node(direction));
+  }
+
+  /*!
+   * \brief equivalent to adjacent_node, with a Direction rather than a bitset and non-const
+   */
+  Self* adjacent_node(Adjacency adjacency) {
     return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(adjacency)));
   }
 
@@ -544,27 +537,27 @@ public:
     \brief checks whether the node is empty of points or not.
    */
   bool empty() const {
-    return m_data->points.empty();
+    return m_points.empty();
   }
 
   /*!
     \brief returns the number of points of this node.
    */
   std::size_t size() const {
-    return std::size_t(std::distance(m_data->points.begin(), m_data->points.end()));
+    return std::size_t(std::distance(m_points.begin(), m_points.end()));
   }
 
   /*!
     \brief returns the iterator at the start of the collection of
     points held by this node.
    */
-  const_iterator begin() const { return m_data->points.begin(); }
+  const_iterator begin() const { return m_points.begin(); }
 
   /*!
     \brief returns the iterator at the end of the collection of
     points held by this node.
    */
-  const_iterator end() const { return m_data->points.end(); }
+  const_iterator end() const { return m_points.end(); }
 
   /// @}
 
@@ -575,18 +568,23 @@ public:
   /*!
    * \brief compares the topology of this node to another node.
    *
-   * \todo
+   * \todo This seems out of date, the implementation I see compares for direct equality
    *
    * \param rhs node to compare with
    * \return whether the nodes have different topology.
    */
-  bool operator==(const Self &rhs) const {
-    return m_data == rhs.m_data;
+  bool operator==(const Self& rhs) const {
+
+    // todo: This is a trivial implementation, maybe it can be set to =default in c++17?
+    return rhs.m_parent == m_parent &&
+           rhs.m_children == m_children &&
+           rhs.m_points == m_points &&
+           rhs.m_depth == m_depth &&
+           rhs.m_global_coordinates == m_global_coordinates;
   }
 
-  static bool is_topology_equal (const Self& a, const Self& b)
-  {
-    CGAL_assertion (!a.is_null() && !b.is_null());
+  // todo: this does what the documentation for operator== claims to do!
+  static bool is_topology_equal(const Self& a, const Self& b) {
 
     // If one node is a leaf, and the other isn't, they're not the same
     if (a.is_leaf() != b.is_leaf())
@@ -607,8 +605,7 @@ public:
     return (a.global_coordinates() == b.global_coordinates());
   }
 
-  friend std::ostream& operator<< (std::ostream& os, const Self& node)
-  {
+  friend std::ostream& operator<<(std::ostream& os, const Self& node) {
     return internal::print_orthtree_node(os, node);
   }
   /// \endcond

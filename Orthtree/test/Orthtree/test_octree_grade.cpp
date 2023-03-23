@@ -27,10 +27,10 @@ std::size_t count_jumps(Octree &octree) {
 
       auto adjacent_node = node.adjacent_node(direction);
 
-      if (adjacent_node.is_null())
+      if (adjacent_node == nullptr)
         continue;
 
-      if ((node.depth() - adjacent_node.depth()) > 1)
+      if ((node.depth() - adjacent_node->depth()) > 1)
         jumps++;
     }
   }

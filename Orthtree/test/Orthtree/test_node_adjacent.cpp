@@ -10,7 +10,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
-Octree;
+  Octree;
 typedef Octree::Node Node;
 typedef Octree::Traits Traits;
 
@@ -42,33 +42,36 @@ int main(void) {
   std::cout << octree << std::endl;
 
   // Root node should have no siblings
-  assert(octree.root().adjacent_node(0).is_null());
-  assert(octree.root().adjacent_node(1).is_null());
-  assert(octree.root().adjacent_node(2).is_null());
-  assert(octree.root().adjacent_node(3).is_null());
-  assert(octree.root().adjacent_node(4).is_null());
-  assert(octree.root().adjacent_node(5).is_null());
+  assert(octree.root().adjacent_node(0) == nullptr);
+  assert(octree.root().adjacent_node(1) == nullptr);
+  assert(octree.root().adjacent_node(2) == nullptr);
+  assert(octree.root().adjacent_node(3) == nullptr);
+  assert(octree.root().adjacent_node(4) == nullptr);
+  assert(octree.root().adjacent_node(5) == nullptr);
 
   // Left Top Front node should have siblings to the Right, Down, and Back
   auto left_top_back = octree.root()[Traits::LEFT_TOP_BACK];
 
-  assert(octree.root()[Traits::RIGHT_TOP_BACK] == left_top_back.adjacent_node(Traits::RIGHT));
-  assert(octree.root()[Traits::LEFT_BOTTOM_BACK] == left_top_back.adjacent_node(Traits::DOWN));
-  assert(octree.root()[Traits::LEFT_TOP_FRONT] == left_top_back.adjacent_node(Traits::FRONT));
-  assert(left_top_back.adjacent_node(Traits::LEFT).is_null());
-  assert(left_top_back.adjacent_node(Traits::UP).is_null());
-  assert(left_top_back.adjacent_node(Traits::BACK).is_null());
+  assert(&octree.root()[Traits::RIGHT_TOP_BACK] == left_top_back.adjacent_node(Traits::RIGHT));
+  assert(&octree.root()[Traits::LEFT_BOTTOM_BACK] == left_top_back.adjacent_node(Traits::DOWN));
+  assert(&octree.root()[Traits::LEFT_TOP_FRONT] == left_top_back.adjacent_node(Traits::FRONT));
+  assert(left_top_back.adjacent_node(Traits::LEFT) == nullptr);
+  assert(left_top_back.adjacent_node(Traits::UP) == nullptr);
+  assert(left_top_back.adjacent_node(Traits::BACK) == nullptr);
 
   std::cout << octree.root()[Traits::LEFT_BOTTOM_BACK] << std::endl;
 
   auto right_top_back_of_left_bottom_back = octree.root()[Traits::LEFT_BOTTOM_BACK][Traits::RIGHT_TOP_BACK];
-  assert(octree.root()[Traits::LEFT_BOTTOM_BACK][Traits::LEFT_TOP_BACK] == right_top_back_of_left_bottom_back.adjacent_node(Traits::LEFT));
-  assert(octree.root()[Traits::RIGHT_BOTTOM_BACK] == right_top_back_of_left_bottom_back.adjacent_node(Traits::RIGHT));
-  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::RIGHT).is_null());
-  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::UP).is_null());
-  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::DOWN).is_null());
-  assert(right_top_back_of_left_bottom_back.adjacent_node(Traits::BACK).is_null());
-  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::FRONT).is_null());
+  assert(&octree.root()[Traits::LEFT_BOTTOM_BACK][Traits::LEFT_TOP_BACK] ==
+         right_top_back_of_left_bottom_back.adjacent_node(Traits::LEFT));
+  assert(&octree.root()[Traits::RIGHT_BOTTOM_BACK] == right_top_back_of_left_bottom_back.adjacent_node(Traits::RIGHT));
+  assert(right_top_back_of_left_bottom_back.adjacent_node(Traits::RIGHT) != nullptr);
+  assert(right_top_back_of_left_bottom_back.adjacent_node(Traits::UP) != nullptr);
+  assert(right_top_back_of_left_bottom_back.adjacent_node(Traits::DOWN) != nullptr);
+  assert(right_top_back_of_left_bottom_back.adjacent_node(Traits::FRONT) != nullptr);
+
+  // A node at the back of the tree should have no neighbor to its back
+  assert(right_top_back_of_left_bottom_back.adjacent_node(Traits::BACK) == nullptr);
 
   return 0;
 }

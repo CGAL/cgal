@@ -25,12 +25,11 @@ void test_1_point() {
   octree.refine(10, 1);
 
   // Check that the topology matches
-  Node single_node = CGAL::Orthtrees::Node_access::create_node(Node(), 0);
+  Node single_node = CGAL::Orthtrees::Node_access::create_node(static_cast<Node *>(nullptr), 0);
   CGAL::Orthtrees::Node_access::points(single_node)
     = CGAL::Orthtrees::Node_access::points(octree.root());
   assert(Node::is_topology_equal(single_node, octree.root()));
   assert(0 == octree.depth());
-  CGAL::Orthtrees::Node_access::free(single_node);
 }
 
 void test_2_points() {
@@ -45,12 +44,10 @@ void test_2_points() {
   octree.refine(10, 1);
 
   // The octree should have been split once
-  Node other = CGAL::Orthtrees::Node_access::create_node(Node(), 0);
+  Node other = CGAL::Orthtrees::Node_access::create_node(static_cast<Node *>(nullptr), 0);
   CGAL::Orthtrees::Node_access::split(other);
   assert(Node::is_topology_equal(other, octree.root()));
   assert(1 == octree.depth());
-  CGAL::Orthtrees::Node_access::free(other);
-
 }
 
 void test_4_points() {
@@ -66,13 +63,12 @@ void test_4_points() {
   octree.refine(10, 1);
 
   // The octree should have been split once on the first level, and twice on the second
-  Node other = CGAL::Orthtrees::Node_access::create_node(Node(), 0);
+  Node other = CGAL::Orthtrees::Node_access::create_node(static_cast<Node *>(nullptr), 0);
   CGAL::Orthtrees::Node_access::split(other);
   CGAL::Orthtrees::Node_access::split(other[3]);
   CGAL::Orthtrees::Node_access::split(other[7]);
   assert(Node::is_topology_equal(other, octree.root()));
   assert(2 == octree.depth());
-  CGAL::Orthtrees::Node_access::free(other);
 }
 
 int main(void) {
