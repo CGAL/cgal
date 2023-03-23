@@ -23,8 +23,6 @@
 #include <CGAL/IO/OFF/File_header_OFF.h>
 #include <CGAL/IO/io.h>
 
-#include <boost/cstdint.hpp>
-
 #include <vector>
 #include <cstddef>
 #include <iostream>
@@ -656,7 +654,7 @@ public:
 
       if(has_colors())
       {
-        boost::int32_t k;
+        std::int32_t k;
         I_Binary_read_big_endian_integer32(m_in, k);
         if(k<0 || k>4)
         {
@@ -688,7 +686,7 @@ public:
     CGAL_assertion(current_facet < size_of_facets());
     if(binary())
     {
-      boost::int32_t i32;
+      std::int32_t i32;
       I_Binary_read_big_endian_integer32(m_in, i32);
       size = i32;
     }
@@ -735,7 +733,7 @@ public:
                                std::size_t current_facet)
   {
     if(binary()){
-      boost::int32_t i32;
+      std::int32_t i32;
       I_Binary_read_big_endian_integer32(m_in, i32);
       index = i32;
     }
@@ -793,7 +791,7 @@ public:
     // Take care of trailing information like color triples.
     if(binary())
     {
-      boost::int32_t k;
+      std::int32_t k;
       I_Binary_read_big_endian_integer32(m_in, k);
       if(k<0 || k>4)
       {

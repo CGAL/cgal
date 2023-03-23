@@ -24,8 +24,6 @@
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/OFF/File_header_OFF.h>
 
-#include <boost/cstdint.hpp>
-
 #include <algorithm>
 #include <cstdlib>
 #include <cctype>
@@ -348,7 +346,7 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     // Read remaining size value(s).
     int n_h;
     if ( h.binary()) {
-        boost::int32_t a, b, c;
+        std::int32_t a, b, c;
         I_Binary_read_big_endian_integer32( in, a);
         if ( h.n_dimensional()) {
             h.set_dimension( a);
