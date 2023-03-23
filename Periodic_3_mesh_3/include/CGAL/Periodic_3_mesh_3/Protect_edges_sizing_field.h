@@ -1038,8 +1038,7 @@ get_maximum_weight(const Vertex_handle protection_vertex, const FT intended_weig
     max_possible_weight = minimal_weight_;
 
   CGAL_assertion_code(const Weighted_point& pvwp = c3t3_.triangulation().point(protection_vertex);)
-  CGAL_assertion_code(const Bare_point& pvp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object()(pvwp);)
+  CGAL_assertion_code(const Bare_point& pvp = c3t3_.triangulation().geom_traits().construct_point_3_object()(pvwp);)
   CGAL_assertion_code(const int dim = get_dimension(protection_vertex);)
   CGAL_assertion_code(const Index index = c3t3_.index(protection_vertex);)
   CGAL_assertion_code(const FT w_max = CGAL::square(query_size(pvp, dim, index));)

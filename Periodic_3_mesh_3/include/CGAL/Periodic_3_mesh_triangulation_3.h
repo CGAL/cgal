@@ -202,6 +202,12 @@ public:
     return P3T3::internal::robust_canonicalize_point(p, geom_traits());
   }
 
+  // 1-cover, so we can take a const&
+  const Weighted_point& point(const Vertex_handle v) const
+  {
+    return v->point();
+  }
+
   Triangle triangle(const Facet& f) const
   {
     Periodic_triangle ptri = periodic_triangle(f);
@@ -513,7 +519,7 @@ public:
 
     CGAL_precondition(f.first != Cell_handle() && f.first->has_vertex(ref_v));
     const int ref_v_pos = f.first->index(ref_v);
-    const Bare_point ref_p = cp(point(ref_v));
+    const Bare_point& ref_p = cp(point(ref_v));
     const Bare_point ref_p_in_f = cp(point(f.first, ref_v_pos));
     Vector_3 move_to_canonical = cv(ref_p_in_f, ref_p);
 

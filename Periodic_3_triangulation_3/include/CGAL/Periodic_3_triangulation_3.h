@@ -693,14 +693,6 @@ public:
     return point(periodic_point(v), cp);
   }
 
-  virtual Point point(Vertex_handle) const
-  {
-    // This is a purely virtual function, but it cannot be made "= 0;" otherwise
-    // one cannot use P3T3 by itself (which never happens except in tests...)
-    CGAL_assertion(false);
-    return Point();
-  };
-
   template <class ConstructPoint>
   Point point(Cell_handle c, int idx, ConstructPoint cp) const
   {
@@ -758,13 +750,24 @@ public:
     return Point();
   }
 
-  virtual Point point(Cell_handle, int) const
+  Point point(const Periodic_point& pp) const
   {
-    // This is a purely virtual function, but it cannot be made "= 0;" otherwise
-    // one cannot use P3T3 by itself (which never happens except in tests...)
-    CGAL_assertion(false);
-    return Point();
-  };
+    return point(pp, geom_traits().construct_point_3_object());
+  }
+
+  // The following functions return the "real" position in space (unrestrained
+  // to the fundamental domain) of the vertices v and c->vertex(idx),
+  // respectively
+
+  Point point(Vertex_handle v) const
+  {
+    return point(v, geom_traits().construct_point_3_object());
+  }
+
+  Point point(Cell_handle c, int idx) const
+  {
+    return point(c, idx, geom_traits().construct_point_3_object());
+  }
 
   Periodic_point periodic_point(const Vertex_handle v) const
   {

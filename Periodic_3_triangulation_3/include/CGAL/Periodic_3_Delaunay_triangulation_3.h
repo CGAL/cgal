@@ -665,29 +665,6 @@ private:
   }
 
 public:
-  /** @name Geometric access functions */
-
-  Point point(const Periodic_point& pp) const
-  {
-    return point(pp, geom_traits().construct_point_3_object());
-  }
-
-  // The following functions return the "real" position in space (unrestrained
-  // to the fundamental domain) of the vertices v and c->vertex(idx),
-  // respectively
-
-  Point point(Vertex_handle v) const
-  {
-    return point(v, geom_traits().construct_point_3_object());
-  }
-
-  Point point(Cell_handle c, int idx) const
-  {
-    return point(c, idx, geom_traits().construct_point_3_object());
-  }
-
-  // end of geometric functions
-
   Periodic_point periodic_circumcenter(Cell_handle c) const {
     return Base::periodic_circumcenter(c, geom_traits().construct_circumcenter_3_object());
   }
