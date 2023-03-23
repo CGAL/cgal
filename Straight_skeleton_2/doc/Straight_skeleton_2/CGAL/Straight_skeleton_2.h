@@ -19,6 +19,8 @@ starting with a few definitions describing the different concepts appearing in t
 
 \cgalHeading{Angular Bisecting Lines and Offset Bisectors}
 
+We make use of definitions from the user manual, see Section \link Straight_skeleton_2Definitions.
+
 Given two points and a line passing through them, the perpendicular line passing through the midpoint
 is the bisecting line (or bisector) of those points.
 Two non-parallel lines, intersecting at a point, are bisected by two other lines passing through
@@ -29,7 +31,7 @@ of any two points along the single line).
 The bisecting lines of two edges are the lines bisecting the supporting lines of the edges
 (if the edges are parallel or collinear, there is just one bisecting line).
 
-The halfplane to the bounded side of the line supporting a contour edge is called the <I>offset zone</I>
+The halfplane to the bounded side of the line supporting a contour (input) edge is called the <I>offset zone</I>
 of the contour edge.
 Given any number of contour edges (not necessarily consecutive), the intersection of their offset zones
 is called their <I>combined offset zone</I>.
@@ -89,7 +91,7 @@ A face of the straight skeleton is represented as a face in the HDS. Both contou
 are represented by pairs of opposite HDS halfedges, and both contour and skeleton vertices are
 represented by HDS vertices.
 
-In a HDS, a border halfedge is a halfedge which is incident upon an unbounded face. In the case
+In a HDS, a border halfedge is a halfedge which does not have an incident face. In the case
 of the straight skeleton HDS, such border halfedges are oriented such that their left side faces
 outwards the polygon. Therefore, the opposite halfedge of any border halfedge is oriented such that
 its left side faces inward the polygon.
@@ -149,14 +151,14 @@ provided by the vertex class. The degree of a vertex is not cached and cannot be
 from the vertex, but you can calculate this number by manually counting the number of incident halfedges
 around the vertex.
 
-Each vertex stores a 2D point and a `time`, which is the euclidean distance from the vertex's point
-to the <I>lines</I> supporting each of the defining contour edges of the vertex (the distance is
-the same to each line). Unless the polygon is convex, this distance is not equidistant to the edges,
+Each vertex stores a 2D point and a time, which is the euclidean distance from the vertex's point
+to the lines supporting each of the defining contour edges of the vertex (the distance is
+the same to each line). Unless the polygon is convex, this distance is not equal to the edges,
 as in the case of a Medial Axis, therefore, the time of a skeleton vertex does not correspond
 to the distance from the polygon to the vertex (so it cannot be used to obtain the deep of a region
 in a shape, for instance).
 
-If the polygon <I>is</I> convex, the straight skeleton is exactly equivalent to the polygon's
+If the polygon is convex, the straight skeleton is exactly equivalent to the polygon's
 Voronoi diagram and each vertex time is the equidistance to the defining edges.
 
 Contour vertices have time zero.

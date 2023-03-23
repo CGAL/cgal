@@ -41,8 +41,8 @@ The outer boundary is `outer_boundary` and its holes are given by `[holes_begin,
 
 \note A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets.
 The construction of this skeleton is the most expensive operation, therefore, to construct offsets
-at more than one single distance, it is advised to use the separate functions `create_interior_straight_skeleton_2()`
-and `create_offset_polygons_2()` instead.
+at more than one single distance, it is advised to use `create_interior_straight_skeleton_2()` to create
+the skeleton only once, and then call `create_offset_polygons_2()` for each distance.
 
 \tparam OfK must be a model of `Kernel`. It is used to instantiate
             `Polygon_offset_builder_traits_2<OfK>` for constructing the offset polygons.
@@ -81,8 +81,8 @@ create_interior_skeleton_and_offset_polygons_2(FT offset,
 
 \note A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets.
 The construction of this skeleton is the most expensive operation, therefore, to construct offsets
- at more than one single distance, use the separate functions `create_interior_straight_skeleton_2()`
-and `create_offset_polygons_2()` instead.
+ at more than one single distance, it is advised to use `create_interior_straight_skeleton_2()` to create
+the skeleton only once, and then call `create_offset_polygons_2()` for each distance
 
 \tparam OfK must be a model of `Kernel`. It is used to instantiate
             `Polygon_offset_builder_traits_2<OfK>` for constructing the offset polygons.

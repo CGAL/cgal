@@ -31,7 +31,7 @@ namespace CGAL {
 *     \cgalParamDefault{an empty range (uniform weights are used)}
 *     \cgalParamExtra{Weights should be finite and all of the same sign.
 *                     Negative weights are used to signify exterior extrusion.
-*                     A weight `0` can exceptionally be used to signify a vertical extrusion of this edge.}
+*                     Contrary to weighted skeleton functions, a weight `0` can here be used to signify a vertical extrusion of this edge.}
 *     \cgalParamExtra{If neither `weights` nor `angles` are provided, uniform weights are used.}
 *   \cgalParamNEnd
 *
