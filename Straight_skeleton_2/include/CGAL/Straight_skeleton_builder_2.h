@@ -1443,9 +1443,9 @@ public:
   }
 
   template <typename WeightIterator, typename Converter>
-  Straight_skeleton_builder_2& enter_weights(WeightIterator aWeightsBegin,
-                                             WeightIterator aWeightsEnd,
-                                             const Converter& cvt)
+  Straight_skeleton_builder_2& enter_contour_weights(WeightIterator aWeightsBegin,
+                                                     WeightIterator aWeightsEnd,
+                                                     const Converter& cvt)
   {
     auto lWeightsN = std::distance(aWeightsBegin, aWeightsEnd);
     CGAL_assertion(lWeightsN <= mSSkel->SSkel::Base::size_of_faces());
@@ -1467,10 +1467,10 @@ public:
   }
 
   template <typename WeightIterator>
-  Straight_skeleton_builder_2& enter_weights(WeightIterator aWeightsBegin,
-                                             WeightIterator aWeightsEnd)
+  Straight_skeleton_builder_2& enter_contour_weights(WeightIterator aWeightsBegin,
+                                                     WeightIterator aWeightsEnd)
   {
-    return enter_weights(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>());
+    return enter_contour_weightsg(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>());
   }
 } ;
 

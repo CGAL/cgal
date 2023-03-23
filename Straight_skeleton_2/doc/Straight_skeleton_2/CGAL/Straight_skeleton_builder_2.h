@@ -199,7 +199,7 @@ defines the <I>weights</I> of the contour last entered through `enter_contour()`
 \returns `*this`
 */
 template<class WeightIterator>
-Straight_skeleton_builder_2& enter_weights( WeightIterator aBegin, WeightIterator aEnd );
+Straight_skeleton_builder_2& enter_contour_weights( WeightIterator aBegin, WeightIterator aEnd );
 
 /*!
 constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined

@@ -96,12 +96,12 @@ create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
   SsBuilder ssb( lOptMaxTime ) ;
 
   ssb.enter_contour ( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, conv ) ;
-  ssb.enter_weights ( aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, wconv ) ;
+  ssb.enter_contour_weights ( aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, wconv ) ;
 
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
   {
     ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), conv ) ;
-    ssb.enter_weights( aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end(), wconv ) ;
+    ssb.enter_contour_weights( aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end(), wconv ) ;
   }
 
   return ssb.construct_skeleton();
