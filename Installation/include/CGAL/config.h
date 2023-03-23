@@ -597,4 +597,40 @@ inline std::string data_file_path(const std::string& filename)
 
 } // end namespace CGAL
 
+
+// Workaround for an accidental enable if of Eigen::Matrix in the
+// boost::multiprecision::cpp_int constructor for some versions of
+// boost
+
+namespace Eigen{
+  template <class A, int B, int C, int D, int E, int F>
+  class Matrix;
+  template <class A, int B, class C>
+  class Ref;
+
+}
+
+namespace boost {
+    namespace multiprecision {
+        namespace detail {
+            template <typename T>
+            struct is_byte_container;
+
+
+            template <class A, int B, int C, int D, int E, int F>
+            struct is_byte_container< Eigen::Matrix<A, B, C, D, E, F>>
+            {
+                static const bool value = false;
+            };
+
+            template <class A, int B, class C>
+            struct is_byte_container< Eigen::Ref<A, B, C>>
+            {
+                static const bool value = false;
+            };
+
+        }
+    }
+}
+
 #endif // CGAL_CONFIG_H
