@@ -137,6 +137,6 @@ arrange_offset_polygons_2 ( std::vector<boost::shared_ptr<Polygon> > const& aPol
   return arrange_offset_polygons_2<PolygonWithHoles>(aPolygons, no_error);
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_ARRANGE_OFFSET_POLYGONS_2_H

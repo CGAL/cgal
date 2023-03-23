@@ -178,6 +178,6 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                                    Exact_predicates_inexact_constructions_kernel());
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_CREATE_OFFSET_POLYGONS_FROM_POLYGON_WITH_HOLES_2_H

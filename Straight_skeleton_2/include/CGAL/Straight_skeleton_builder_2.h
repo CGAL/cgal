@@ -1474,9 +1474,8 @@ public:
   }
 } ;
 
-} // end namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_2_impl.h>
 
-#endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
-// EOF //
+#endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H

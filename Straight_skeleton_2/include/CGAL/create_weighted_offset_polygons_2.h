@@ -369,6 +369,6 @@ create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                                  Exact_predicates_inexact_constructions_kernel());
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_CREATE_WEIGHTED_OFFSET_POLYGONS_2_H

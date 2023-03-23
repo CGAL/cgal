@@ -305,6 +305,6 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                                       Exact_predicates_inexact_constructions_kernel());
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
+#endif // CGAL_CREATE_WEIGHTED_STRAIGHT_SKELETON_2_H

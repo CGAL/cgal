@@ -151,9 +151,6 @@ boost::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
   return compute_outer_frame_margin<Builder_traits>(aBegin,aEnd,aOffset,traits);
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_COMPUTE_OUTER_FRAME_MARGIN_H //
-// EOF //
-
-
+#endif // CGAL_COMPUTE_OUTER_FRAME_MARGIN_H
