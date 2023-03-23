@@ -3476,7 +3476,6 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                        tr_.geom_traits(),
                                        Default_diagonalize_traits<FT, 3>());
 
-
   // The surface center of a facet might have an offset in periodic triangulations
   const Bare_point& ref_facet_scp = ref_facet.first->get_facet_surface_center(ref_facet.second);
   const Bare_point& ref_point = tr_.get_closest_point(cp(position), ref_facet_scp);

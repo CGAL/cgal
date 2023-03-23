@@ -511,16 +511,19 @@ public:
     typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
     typename Geom_traits::Construct_triangle_3 ct = geom_traits().construct_triangle_3_object();
 
-    CGAL_precondition(f.first->has_vertex(ref_v));
+    CGAL_precondition(f.first != Cell_handle() && f.first->has_vertex(ref_v));
     const int ref_v_pos = f.first->index(ref_v);
-    const Bare_point& ref_p = cp(point(ref_v));
-    const Bare_point& ref_p_in_f = cp(point(f.first, ref_v_pos));
+    const Bare_point ref_p = cp(point(ref_v));
+    const Bare_point ref_p_in_f = cp(point(f.first, ref_v_pos));
     Vector_3 move_to_canonical = cv(ref_p_in_f, ref_p);
 
     const int s = f.second;
-    return ct(tr(cp(point(f.first, (s+1)%4)), move_to_canonical),
-              tr(cp(point(f.first, (s+2)%4)), move_to_canonical),
-              tr(cp(point(f.first, (s+3)%4)), move_to_canonical));
+    const Bare_point mp0 = tr(cp(point(f.first, (s+1)%4)), move_to_canonical);
+    const Bare_point mp1 = tr(cp(point(f.first, (s+2)%4)), move_to_canonical);
+    const Bare_point mp2 = tr(cp(point(f.first, (s+3)%4)), move_to_canonical);
+    const Triangle t = ct(mp0, mp1, mp2);
+
+    return t;
   }
 
   // Warning: This is a periodic version that computes the smallest possible
