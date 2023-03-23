@@ -18,7 +18,7 @@ typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
 /// [Domain definition]
 
-#include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
+#include <CGAL/Mesh_3/Detect_features_in_image.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -34,52 +34,53 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
+// To avoid verbose function and named parameters call
 namespace params = CGAL::parameters;
-
-// Read input features
-#include "read_polylines.h"
 
 int main(int argc, char* argv[])
 {
   const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/420.inr");
-  // Loads image
+
+  /// [Loads image]
   CGAL::Image_3 image;
   if(!image.read(fname)){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }
-
-  /// Load 1D-features
-  const std::string lines_fname = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt");
-  std::vector<std::vector<K::Point_3> > features_inside;
-  if (!read_polylines(lines_fname, features_inside)) // see file "read_polylines.h"
-  {
-    std::cerr << "Error: Cannot read file " << lines_fname << std::endl;
-    return EXIT_FAILURE;
-  }
+  /// [Loads image]
 
   /// [Domain creation]
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image,
-    params::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
-    params::input_features  = std::cref(features_inside));//use std::cref to avoid a copy
+  Mesh_domain domain
+    = Mesh_domain::create_labeled_image_mesh_domain(image,
+         params::features_detector = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 
-  /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(params::edge_size = 6.,
+  CGAL::Bbox_3 bbox = domain.bbox();
+  double diag = CGAL::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
+                           CGAL::square(bbox.ymax() - bbox.ymin()) +
+                           CGAL::square(bbox.zmax() - bbox.zmin()));
+  double sizing_default = diag * 0.05;
+
+  /// [Mesh criteria]
+  /// Note that `edge_size` is needed with 1D-features
+  Mesh_criteria criteria(params::edge_size = sizing_default,
     params::facet_angle = 30,
-    params::facet_size = 6,
-    params::facet_distance = 4,
-    params::cell_radius_edge_ratio = 3,
-    params::cell_size = 8);
+    params::facet_size = sizing_default,
+    params::facet_distance = sizing_default / 10,
+    params::facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH,
+    params::cell_radius_edge_ratio = 0,
+    params::cell_size = 0
+  );
   /// [Mesh criteria]
 
-  // Meshing
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  /// [Meshing]
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      params::no_exude(),
+                                      params::no_perturb());
+  /// [Meshing]
 
   // Output
-  std::ofstream medit_file("out.mesh");
-  CGAL::IO::write_MEDIT(medit_file, c3t3);
-  medit_file.close();
+  CGAL::dump_c3t3(c3t3, "out");
 
-  return EXIT_SUCCESS;
+  return 0;
 }

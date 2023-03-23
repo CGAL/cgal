@@ -16,6 +16,10 @@
 /// \ingroup PkgMesh3Ref
 /// The classes in this group are models of domain concepts and their associated classes.
 
+/// \defgroup PkgMesh3FeatureDetection Feature Detection
+/// \ingroup PkgMesh3Ref
+/// The functors in this group perform polyline features detection in input domains.
+
 /// \defgroup PkgMesh3DomainFields Mesh Domain Fields
 /// \ingroup PkgMesh3Ref
 /// The classes in this group are models of `MeshDomainField_3`
@@ -106,6 +110,11 @@ and their associated classes:
 - `CGAL::Implicit_mesh_domain_3<Function,BGT>` (deprecated)
 - `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` (deprecated)
 - `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>` (deprecated)
+
+The following functors are available for feature detection:
+
+- `CGAL::Mesh_3::Detect_features_in_image`
+- `CGAL::Mesh_3::Detect_features_on_image_bbox`
 
 \cgalCRPSection{Function Templates}
 

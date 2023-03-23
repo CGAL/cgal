@@ -32,7 +32,7 @@ TD.error {background-color: rgb(100%,50%,50%)}
 TD.na {background-color: white;}
 TD.requirements { background-color: rgb(65%,65%,100%) }
 
-TD.ok {background-color: rgb(44%,88%,44%)}
+TH.ok {background-color: rgb(44%,88%,44%)}
 TH.warning {background-color: rgb(100%,100%,50%)}
 TH.third_party_warning {background-color: rgb(75%,100%,50%)}
 TH.error {background-color: rgb(100%,50%,50%)}
