@@ -10,7 +10,7 @@ namespace CGAL {
 * which corresponds to the time at the vertex. The input polygon is placed at `z = 0`.
 *
 * This function allows cropping the extruded skeleton at a maximum height, using the optional
-* `maximum_height` named parameter.
+* `maximum_height()` named parameter.
 *
 * The result is a closed, 2-manifold surface triangle mesh. Note that this mesh can have non-local
 * self-intersections in some case of cropping.

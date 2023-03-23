@@ -66,7 +66,7 @@ is uniquely given by two contour edges. These edges are called the <I>defining c
 of the bisector.
 
 The intersection of the edges are called <I>vertices</I>. Although in a simple polygon, only 2 edges
-intersect at a vertex, in a straight skeleton, 3 or more edges intersect a any given vertex.
+intersect at a vertex, in a straight skeleton, 3 or more edges intersect at any given vertex.
 That is, vertices in a straight skeleton have degree \f$ >=3\f$.
 
 A <I>contour vertex</I> is a vertex for which 2 of its incident edges are contour edges.
@@ -74,7 +74,7 @@ A <I>contour vertex</I> is a vertex for which 2 of its incident edges are contou
 A <I>skeleton vertex</I> is a vertex whose incident edges are all skeleton edges.
 
 A <I>contour bisector</I> is a bisector whose defining contour edges are consecutive. Such a bisector
-is incident upon 1 contour vertex and 1 skeleton vertex and touches the input polygon at exactly 1 endpoint.
+is incident upon 1 contour vertex and 1 skeleton vertex, and touches the input polygon at exactly 1 endpoint.
 
 An <I>inner bisector</I> is a bisector whose defining contour edges are not consecutive.
 Such a bisector is incident upon 2 skeleton vertices and is strictly contained in the interior of the polygon.
@@ -103,7 +103,7 @@ That is, the vertices (both contour and skeleton) of a face are circulated in co
 There is one and only one contour halfedge incident upon any face.
 
 The contours of the input polygon are traced by the border halfedges of the HDS (those facing outward),
-but in the opposite direction. That is, the vertices of the contours can only by traced from the straight
+but in the opposite direction. That is, the vertices of the contours can only be traced from the straight
 skeleton data structure by circulating the border halfedges, and the resulting vertex sequence will
 be reversed w.r.t. the input vertex sequence.
 
