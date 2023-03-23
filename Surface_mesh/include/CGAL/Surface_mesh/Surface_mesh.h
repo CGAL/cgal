@@ -1215,6 +1215,10 @@ public:
         fprops_.resize(nfaces);
     }
 
+  /// copies the simplices from `other`, and copies values of
+  /// properties that already exist under the same name in `*this`.
+  /// In case `*this` has a property that does not exist in `other`
+  /// the copied simplices get the default value of the property.
   bool join(const Surface_mesh& other)
   {
     // increase capacity
