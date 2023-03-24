@@ -75,8 +75,10 @@ int main(int argc, char* argv[])
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Surface_mesh<K::Point_3>                      Surface_mesh;
 
+  std::cout << "Sequential test" << std::endl;
   Tester<K, Surface_mesh, CGAL::Sequential_tag>()(fname, "out-dragknob-sequential");
 
+  std::cout << "Parallel test" << std::endl;
   Tester<K, Surface_mesh, CGAL::Parallel_tag>()(fname, "out-dragknob-parallel");
 
   return EXIT_SUCCESS;
