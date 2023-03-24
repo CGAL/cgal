@@ -41,7 +41,7 @@ namespace CGAL {
 * where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used
 * in the meshing process.
 *
-* @tparam Index is the type of index of the vertices of the triangulation.
+* @tparam Index_ is the type of index of the vertices of the triangulation.
 * It must match the type `%Index` of the model of `MeshDomain_3` used in the meshing process.
 *
 * @cgalModels `MeshDomainField_3`
