@@ -592,40 +592,40 @@ void Basic_generator_plugin::generateTetrahedron()
   typename Facegraph_item::Face_graph tetrahedron;
   if (dock_widget->tabWidget->currentIndex() == 0)
   {
-      QString point_texts[4];
-      Point points[4];
-      point_texts[0] = dock_widget->tetP0->text();
-      point_texts[1] = dock_widget->tetP1->text();
-      point_texts[2] = dock_widget->tetP2->text();
-      point_texts[3] = dock_widget->tetP3->text();
+    QString point_texts[4];
+    Point points[4];
+    point_texts[0] = dock_widget->tetP0->text();
+    point_texts[1] = dock_widget->tetP1->text();
+    point_texts[2] = dock_widget->tetP2->text();
+    point_texts[3] = dock_widget->tetP3->text();
 
-      for (int i = 0; i < 4; ++i)
-      {
-          QStringList list = point_texts[i].split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
-          if (list.isEmpty()) return;
-          if (list.size() != 3) {
-              QMessageBox* msgBox = new QMessageBox;
-              msgBox->setWindowTitle("Error");
-              msgBox->setText("ERROR : Input should consists of 3 doubles.");
-              msgBox->exec();
-              return;
-          }
-          double coords[3];
-          for (int j = 0; j < 3; ++j)
-          {
-              bool ok;
-              coords[j] = list.at(j).toDouble(&ok);
-              if (!ok)
-              {
-                  QMessageBox* msgBox = new QMessageBox;
-                  msgBox->setWindowTitle("Error");
-                  msgBox->setText("ERROR : Coordinates are invalid.");
-                  msgBox->exec();
-                  return;
-              }
-          }
-          points[i] = Point(coords[0], coords[1], coords[2]);
+    for (int i = 0; i < 4; ++i)
+    {
+      QStringList list = point_texts[i].split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+      if (list.isEmpty()) return;
+      if (list.size() != 3) {
+        QMessageBox* msgBox = new QMessageBox;
+        msgBox->setWindowTitle("Error");
+        msgBox->setText("ERROR : Input should consists of 3 doubles.");
+        msgBox->exec();
+        return;
       }
+      double coords[3];
+      for (int j = 0; j < 3; ++j)
+      {
+        bool ok;
+        coords[j] = list.at(j).toDouble(&ok);
+        if (!ok)
+        {
+          QMessageBox* msgBox = new QMessageBox;
+          msgBox->setWindowTitle("Error");
+          msgBox->setText("ERROR : Coordinates are invalid.");
+          msgBox->exec();
+          return;
+        }
+      }
+      points[i] = Point(coords[0], coords[1], coords[2]);
+    }
       CGAL::make_tetrahedron(points[0],
           points[1],
           points[2],

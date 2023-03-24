@@ -560,7 +560,7 @@ QGroupBox::title {
           <item>
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab_3">
              <property name="sizePolicy">
@@ -759,9 +759,9 @@ QGroupBox::title {
           <item>
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
-            <widget class="QWidget" name="tetraTab">
+            <widget class="QWidget" name="tetraTab_2">
              <attribute name="title">
               <string>Tetrahedron</string>
              </attribute>
@@ -854,7 +854,7 @@ QGroupBox::title {
               </layout>
              </widget>
             </widget>
-            <widget class="QWidget" name="tetraTab">
+            <widget class="QWidget" name="tetraTab_3">
              <attribute name="title">
               <string>Multi-line</string>
              </attribute>
