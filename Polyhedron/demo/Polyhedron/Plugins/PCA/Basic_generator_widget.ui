@@ -856,35 +856,38 @@ QGroupBox::title {
             </widget>
             <widget class="QWidget" name="tetraTab">
              <attribute name="title">
-              <string>Bbox</string>
+              <string>Multi-line</string>
              </attribute>
-             <widget class="QLabel" name="label_33">
+             <widget class="QTextEdit" name="point_textEdit_2">
               <property name="geometry">
                <rect>
-                <x>8</x>
-                <y>9</y>
-                <width>46</width>
-                <height>207</height>
+                <x>10</x>
+                <y>10</y>
+                <width>451</width>
+                <height>201</height>
                </rect>
               </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Coordinates of the minimum and the maximum of the Bbox.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-              <property name="text">
-               <string>Extrema:</string>
+              <property name="html">
+               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
-             </widget>
-             <widget class="QLineEdit" name="extremaEdit_2">
-              <property name="geometry">
-               <rect>
-                <x>60</x>
-                <y>100</y>
-                <width>401</width>
-                <height>24</height>
-               </rect>
+              <property name="overwriteMode">
+               <bool>false</bool>
               </property>
-              <property name="text">
-               <string>1.0 1.0 1.0</string>
+              <property name="placeholderText">
+               <string notr="true">Point format:  P0x P0y P0z P1x P1y P1z P2x P2y P2z  P3x P3y P3z </string>
               </property>
              </widget>
             </widget>

@@ -634,18 +634,18 @@ void Basic_generator_plugin::generateTetrahedron()
   }
   else
   {
-      QString text = dock_widget->extremaEdit_2->text();
+      QString text = dock_widget->point_textEdit_2->toPlainText();
       QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
-      if (list.size() != 3) {
+      if (list.size() != 12) {
           QMessageBox* msgBox = new QMessageBox;
           msgBox->setWindowTitle("Error");
-          msgBox->setText("ERROR : Input should consists of 3 doubles.");
+          msgBox->setText("ERROR : Input should consists of 12 doubles.");
           msgBox->exec();
           return;
       }
 
-      for (int i = 0; i < 3; ++i)
+      for (int i = 0; i < 12; ++i)
       {
           bool ok;
           list.at(i).toDouble(&ok);
@@ -658,8 +658,12 @@ void Basic_generator_plugin::generateTetrahedron()
               return;
           }
       }
-
-
+      CGAL::make_tetrahedron(
+          Point(list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble()),
+          Point(list.at(3).toDouble(), list.at(4).toDouble(), list.at(5).toDouble()),
+          Point(list.at(6).toDouble(), list.at(7).toDouble(), list.at(8).toDouble()),
+          Point(list.at(9).toDouble(), list.at(10).toDouble(), list.at(11).toDouble()),
+          tetrahedron);
   }
 
   Facegraph_item* tet_item = new Facegraph_item(tetrahedron);
