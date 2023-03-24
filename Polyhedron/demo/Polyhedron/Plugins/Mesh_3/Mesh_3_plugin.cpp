@@ -701,12 +701,23 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
 
   const int pe_ci = ui.protectEdges->currentIndex();
-  protect_borders = ui.protect->isChecked()
-    && (  pe_ci == ui.protectEdges->findText(on_cube, Qt::MatchContains)
-       || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
-  protect_features = ui.protect->isChecked()
-    && (  pe_ci == ui.protectEdges->findText(triple_lines, Qt::MatchContains)
-       || pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains));
+  if (items->which() == IMAGE_MESH_ITEMS)
+  {
+    protect_borders = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(on_cube, Qt::MatchContains)
+         || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
+    protect_features = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(triple_lines, Qt::MatchContains)
+         || pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains));
+  }
+  else if (items->which() == POLYHEDRAL_MESH_ITEMS)
+  {
+    protect_borders = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains)
+         || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
+    protect_features = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(sharp_edges, Qt::MatchContains));
+  }
 
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = (ui.manifoldCheckBox->isChecked() ? 1 : 0) +
