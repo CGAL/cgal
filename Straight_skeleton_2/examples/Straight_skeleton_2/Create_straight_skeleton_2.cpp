@@ -3,6 +3,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
+#include <CGAL/draw_straight_skeleton_2.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -33,14 +34,17 @@ int main()
   // You can pass the polygon via an iterator pair
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
 
+  print_straight_skeleton(*iss);
+  CGAL::draw(*iss);
+
   // Or you can pass the polygon directly, as below.
 
   // To create an exterior straight skeleton you need to specify a maximum offset.
   double lMaxOffset = 5 ;
   SsPtr oss = CGAL::create_exterior_straight_skeleton_2(lMaxOffset, poly);
 
-  print_straight_skeleton(*iss);
   print_straight_skeleton(*oss);
+  CGAL::draw(*oss);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
