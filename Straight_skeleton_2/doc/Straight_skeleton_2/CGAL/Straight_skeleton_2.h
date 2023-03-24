@@ -19,7 +19,7 @@ starting with a few definitions describing the different concepts appearing in t
 
 \cgalHeading{Angular Bisecting Lines and Offset Bisectors}
 
-We make use of definitions from the user manual, see Section \link Straight_skeleton_2Definitions.
+We make use of definitions from the user manual, see Section \ref Straight_skeleton_2Definitions.
 
 Given two points and a line passing through them, the perpendicular line passing through the midpoint
 is the bisecting line (or bisector) of those points.
