@@ -124,11 +124,12 @@ public:
   * Returns an object to serve as criteria for edges.
   * \param length_bound is an upper bound
   * for the length of the edges which are used to discretize the curves.
-  * \param min_length_bound is a lower bound
+  * \param min_length_bound is a desired lower bound
   * for the length of the edges which are used to discretize the curves.
   * Only edges that are longer than this bound will be refined. Using
   * this lower bound can be handy on some domains, but using it may
   * break all the surface topology guarantees of the meshing algorithm.
+  * It is not guaranteed to be exactly respected in the output mesh.
   *
   * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
   */

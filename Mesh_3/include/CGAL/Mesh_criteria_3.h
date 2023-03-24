@@ -255,7 +255,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                           value when 1-dimensional features protection is used.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{edge_min_size}
- *     \cgalParamDescription{a uniform lower-bound for the lengths of curve edges.
+ *     \cgalParamDescription{a desired uniform lower-bound for the lengths of curve edges.
  *                           Only feature edges with a length larger than this bound will be refined.
  *                           If a feature edge is too small with respect to this criterion,
  *                           it will not be refined however the other criteria are met or not.}
@@ -263,6 +263,8 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                     the feature protection algorithm correctness is not guaranteed anymore,
  *                     and the output mesh may contain incorrect polyline features,
  *                     or have missing polyline features.}
+ *     \cgalParamExtra{Note it may not be respected everywhere in the output mesh,
+ *                     to keep the feature graph valid.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_angle}
  *     \cgalParamDescription{a lower bound for the angles (in degrees) of the
