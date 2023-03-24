@@ -5,7 +5,7 @@
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
-#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -102,7 +102,7 @@ int main()
     // Proceed only if the skeleton was correctly constructed.
     if ( ss )
     {
-      print_straight_skeleton(*ss);
+      CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*ss);
 
       // Instantiate the container of offset contours
       ContourSequence offset_contours ;
@@ -131,7 +131,7 @@ int main()
       // Remove the offset contour that corresponds to the frame.
       offset_contours.erase(f);
 
-      print_polygons(offset_contours);
+      CGAL::Straight_skeletons_2::IO::print_polygons(offset_contours);
     }
   }
 

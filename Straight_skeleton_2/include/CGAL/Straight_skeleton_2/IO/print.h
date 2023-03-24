@@ -1,7 +1,25 @@
+// Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Fernando Cacciola
+
+#ifndef CGAL_SLS_IO_PRINT_H
+#define CGAL_SLS_IO_PRINT_H
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Straight_skeleton_2.h>
+
+namespace CGAL {
+namespace Straight_skeletons_2 {
+namespace IO {
 
 template<class K>
 void print_point ( CGAL::Point_2<K> const& p )
@@ -133,3 +151,8 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
   }
 }
 
+} // namespace IO
+} // namespace Straight_skeletons_2
+} // namespace CGAL
+
+#endif // CGAL_SLS_IO_PRINT_H

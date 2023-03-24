@@ -2,7 +2,7 @@
 #include <CGAL/Polygon_2.h>
 
 #include <CGAL/create_straight_skeleton_2.h>
-#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 
 #include <boost/shared_ptr.hpp>
@@ -48,10 +48,10 @@ int main(int, char**)
     return EXIT_FAILURE ;
   }
 
-  print_straight_skeleton(*iss);
-  print_straight_skeleton(*oss);
-
+  CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*iss);
   CGAL::draw(*iss);
+
+  CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*oss);
   CGAL::draw(*oss);
 
   std::cout << "OK" << std::endl;

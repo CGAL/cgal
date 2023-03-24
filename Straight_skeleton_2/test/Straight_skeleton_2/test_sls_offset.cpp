@@ -30,7 +30,7 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
-#include <CGAL/Straight_skeleton_2/IO/print_straight_skeleton_2.h>
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2.h>
@@ -200,7 +200,7 @@ void test_offset_square()
 
   std::cout << offset_polys.size() << " polygons" << std::endl;
   for(const auto& offp : offset_polys)
-    print_polygon(*offp);
+    CGAL::Straight_skeletons_2::IO::print_polygon(*offp);
 
   assert(offset_polys.empty());
 }
@@ -257,7 +257,7 @@ void test_offset_four_square_holes()
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
-//    print_polygon_with_holes(*offp);
+//    CGAL::Straight_skeletons_2::IO::print_polygon_with_holes(*offp);
 
   // @todo
 //  assert(offset_poly_with_holes.size() == 1);
@@ -303,7 +303,7 @@ void test_offset_L()
 
   std::cout << offset_polys.size() << " polygons" << std::endl;
 //  for(const auto& offp : offset_polys)
-//    print_polygon(*offp);
+//    CGAL::Straight_skeletons_2::IO::print_polygon(*offp);
 
   assert(offset_polys.size() == 1);
   assert(offset_polys[0]->size() == 4);
