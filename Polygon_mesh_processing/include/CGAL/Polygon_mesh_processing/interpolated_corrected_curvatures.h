@@ -1072,7 +1072,7 @@ private:
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_Gaussian_curvature_map}
-*     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`}
+*     \cgalParamDescription{a property map associating Gaussian curvatures to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `GT::FT` as value type}
@@ -1080,11 +1080,11 @@ private:
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_principal_curvatures_and_directions_map}
-*     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`}
+*     \cgalParamDescription{a property map associating principal curvatures and directions to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `Principal_curvatures_and_directions<GT>` as value type}
-*     \cgalParamExtra{If this parameter is omitted, mean principal will not be computed}
+*     \cgalParamExtra{If this parameter is omitted, principal curvatures and directions will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{ball_radius}
@@ -1256,7 +1256,7 @@ void interpolated_corrected_Gaussian_curvature(const PolygonMesh& pmesh,
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected principal curvatures across the mesh `pmesh`.
+* computes the interpolated corrected principal curvatures and directions across the mesh `pmesh`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
@@ -1265,7 +1265,7 @@ void interpolated_corrected_Gaussian_curvature(const PolygonMesh& pmesh,
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param pmesh the polygon mesh.
-* @param vcm the vertex property map in which the computed principal curvatures are stored.
+* @param vcm the vertex property map in which the computed principal curvatures and directions are stored.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
