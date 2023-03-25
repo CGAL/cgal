@@ -896,10 +896,10 @@ and meshes with n-gon faces. The algorithms used prove to work well in general. 
 with noise on vertex positions, they give accurate results, on the condition that the
 correct vertex normals are provided.
 
-The implementation is generic in terms of mesh data structure. It can be used on Surface_mesh,
-Polyhedron_3 and other polygonal mesh structures based on the Face Graph Model.
+The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`,
+`Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
 
-These computations are performed using (on all vertices of mesh):
+These computations are performed using (on all vertices of the mesh):
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
@@ -916,29 +916,25 @@ Similarly, we can use the following functions to compute curvatures on a specifi
 
 
 \cgalFigureRef{icc_diff_radius} shows how the mean curvature changes depending on
-the ball_radius named parameter which can be set to a value > 0 to get a smoother
-distribution of values and "diffuse" the extreme values of curvatures across the mesh.
+the named parameter `ball_radius`, which can be set to a value > 0 to get a smoother
+distribution of values and "diffuses" the extreme values of curvatures across the mesh.
 
 \cgalFigureAnchor{icc_diff_radius}
 <center>
-<img src="icc_diff_radius.png" style="max-width:90%;"/>
+<img src="icc_diff_radius.png" style="max-width:85%;"/>
 </center>
 \cgalFigureCaptionBegin{icc_diff_radius}
-The mean curvature distribution on a bear mesh with different values for the expanding ball radius
+The mean curvature distribution on a bear mesh with different values for the ball radius parameter
 \cgalFigureCaptionEnd
 
-Property maps are used to record the computed curvatures as shown in examples.
-
-
-Property maps are an API introduced in the boost library that allows associating
-values to keys. In the following examples, for each property map, we associate
+\ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
 a curvature value to each vertex.
 
 \subsection ICCExampleSM Interpolated Corrected Curvatures on a Surface Mesh Example
 
 The following example illustrates how to
 compute the curvatures on vertices
-and store them in property maps provided by the class `Surface_mesh`.
+and store them in the property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_SM.cpp}
 
