@@ -1024,7 +1024,7 @@ private:
 * \ingroup PMP_corrected_curvatures_grp
 *
 * computes the interpolated corrected curvatures across the mesh `pmesh`.
-* By providing mean, gaussian and/or principal curvature and direction property maps as named parameters, the user
+* By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
 * can choose which quantites to compute.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
@@ -1076,7 +1076,7 @@ private:
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `GT::FT` as value type}
-*     \cgalParamExtra{If this parameter is omitted, gaussian curvatures will not be computed}
+*     \cgalParamExtra{If this parameter is omitted, Gaussian curvatures will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_principal_curvatures_and_directions_map}
@@ -1186,7 +1186,7 @@ void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected gaussian curvature across the mesh `pmesh`.
+* computes the interpolated corrected Gaussian curvature across the mesh `pmesh`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
@@ -1194,7 +1194,7 @@ void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param pmesh the polygon mesh.
-* @param vcm the vertex property map in which the computed gaussian curvatures are stored.
+* @param vcm the vertex property map in which the computed Gaussian curvatures are stored.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters".
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
@@ -1328,7 +1328,7 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 /**
 * \ingroup PMP_corrected_curvatures_grp
 * computes the interpolated corrected curvatures at a vertex `v`.
-* By providing mean, gaussian and/or principal curvature and direction property maps as named parameters, the user
+* By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
 * can choose which quantites to compute.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
@@ -1374,9 +1374,9 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_Gaussian_curvature}
-*     \cgalParamDescription{a reference to a scalar value to store the gaussian curvature at the vertex `v`}
+*     \cgalParamDescription{a reference to a scalar value to store the Gaussian curvature at the vertex `v`}
 *     \cgalParamType{`std::reference_wrapper<GT::FT>`}
-*     \cgalParamExtra{If this parameter is omitted, gaussian curvature will not be computed}
+*     \cgalParamExtra{If this parameter is omitted, Gaussian curvature will not be computed}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_principal_curvatures_and_directions}

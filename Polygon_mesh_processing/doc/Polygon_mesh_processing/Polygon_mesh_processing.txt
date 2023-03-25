@@ -890,7 +890,7 @@ not provide storage for the normals.
 \section PMPICC Computing Curvatures
 
 This package provides methods to compute curvatures on polygonal meshes based on Interpolated Corrected Curvatures
-on Polyhedral Surfaces \cgalCite{lachaud2020}. This includes mean curvature, gaussian curvature,
+on Polyhedral Surfaces \cgalCite{lachaud2020}. This includes mean curvature, Gaussian curvature,
 principal curvatures and directions. These can be computed on triangle meshes, quad meshes,
 and meshes with n-gon faces. The algorithms used prove to work well in general. Also, on meshes
 with noise on vertex positions, they give accurate results, on the condition that the
@@ -905,7 +905,7 @@ These computations are performed using (on all vertices of mesh):
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
 
-Where it is recommended to use the last function for computing multiple curvatures (example: mean and gaussian)
+Where it is recommended to use the last function for computing multiple curvatures (example: mean and Gaussian)
 as the implementation performs the shared computations only once, making it more efficient.
 
 Similarly, we can use the following functions to compute curvatures on a specific vertex:

@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     // The following commented lines show this (all mentioned named parameters work on it as well)
     // we specify which curvatures we want to compute by passing pointers as named parameters
     // as shown. These pointers are used for storing the result as well. in this example we
-    // selected mean and gaussian curvatures
+    // selected mean and Gaussian curvatures
     // PMP::interpolated_corrected_curvatures_one_vertex(
     //   smesh,
     //   v,
