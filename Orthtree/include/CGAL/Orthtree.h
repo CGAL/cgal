@@ -442,19 +442,6 @@ public:
   Node& root() { return m_root; }
 
   /*!
-    \brief Convenience function to access the child nodes of the root
-    node by their indices.
-
-    `my_tree[5]` is equivalent to `my_tree.root()[5]`.
-
-    \sa `Node::operator[]()`
-
-    \param index the index of the child node.
-    \return a reference to the node.
-   */
-  const Node& operator[](std::size_t index) const { return m_root[index]; }
-
-  /*!
     \brief returns the deepest level reached by a leaf node in this tree (root being level 0).
    */
   std::size_t depth() const { return m_side_per_depth.size() - 1; }
