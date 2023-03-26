@@ -26,27 +26,6 @@
 
 namespace CGAL {
 
-/// \cond SKIP_IN_MANUAL
-namespace Orthtrees {
-
-// Non-documented, or testing purpose only
-struct Node_access {
-  template <typename Node, typename LC>
-  static Node create_node(Node* parent, LC local_coordinates) {
-    return Node(parent, local_coordinates);
-  }
-
-  template <typename Node>
-  static typename Node::Point_range& points(Node& node) { return node.points(); }
-
-  template <typename Node>
-  static void split(Node& node) { return node.split(); }
-
-};
-
-} // namespace Orthtrees
-/// \endcond
-
 /*!
 
   \brief represents a single node of the tree. Alternatively referred
@@ -121,35 +100,18 @@ private:
   typedef boost::iterator_range<iterator> Point_range;
   /// \endcond
 
-  // make Node trivially copiable
-//  struct Data
-//  {
-//    Point_range points;
-//    Self parent;
-//    std::uint8_t depth;
-//    Global_coordinates global_coordinates;
-//    std::unique_ptr<Children> children;
-//
-//    Data (Self parent)
-//      : parent (parent), depth (0) { }
-//  };
-//  Data* m_data;
-
   Point_range m_points;
-  Self* m_parent; // todo: use optional<reference_wrapper<Self>> instead of Self *
-  std::uint8_t m_depth;
-  Global_coordinates m_global_coordinates;
-  std::shared_ptr<Children> m_children;
+  Self* m_parent = nullptr; // todo: use optional<reference_wrapper<Self>> instead of Self *
+  std::uint8_t m_depth = 0;
+  Global_coordinates m_global_coordinates{};
+  std::shared_ptr<Children> m_children{};
 
-
-  /// \cond SKIP_IN_MANUAL
 
   // Only the Orthtree class has access to the non-default
   // constructor, mutators, etc.
   friend Enclosing;
 
-  // Hidden class to access methods for testing purposes
-  friend Orthtrees::Node_access;
+public: // todo: Was there a good reason that all of this was private?
 
   /*!
    * \brief Access to the content held by this node
@@ -161,6 +123,10 @@ private:
 
   /// \name Construction
   /// @{
+
+  /// \cond SKIP_IN_MANUAL
+  Node() = default;
+  /// \endcond
 
   /*!
     \brief creates a new node, optionally as the child of a parent
@@ -180,6 +146,13 @@ private:
   explicit Node(Self* parent, Local_coordinates local_coordinates)
     : m_parent(parent) {
 
+//    if (m_parent) {
+//      m_depth = m_parent->m_depth + 1;
+//
+//      for (int i = 0; i < Dimension::value; i++)
+//        m_global_coordinates[i] = (2 * parent->m_global_coordinates[i]) + local_coordinates[i];
+//    }
+
     if (parent != nullptr) {
       m_depth = parent->m_depth + 1;
 
@@ -194,77 +167,9 @@ private:
     }
   }
 
-  Node deep_copy(Self parent = Node()) const {
-
-    Node out;
-
-    out.m_parent = m_parent;
-    out.m_points = m_points;
-    out.m_depth = m_depth;
-    out.m_global_coordinates = m_global_coordinates;
-
-    if (!is_leaf()) {
-      out.m_children = std::make_shared<Children>();
-      for (int index = 0; index < Degree::value; index++)
-        (*out.m_children)[index] = (*m_children)[index].deep_copy(out);
-    }
-
-    return out;
-  }
-
   /// @}
-
-  /// \name Mutators
-  /// @{
-
-  /*!
-    \brief splits a node into subnodes.
-
-    Only leaf nodes should be split.
-    When a node is split it is no longer a leaf node.
-    A number of `Degree::value` children are constructed automatically, and their values are set.
-    Contents of this node are _not_ propagated automatically.
-    It is the responsibility of the caller to redistribute the points contained by a node after splitting
-   */
-  void split() {
-
-    CGAL_precondition (is_leaf());
-
-    m_children = std::make_shared<Children>();
-    for (int index = 0; index < Degree::value; index++) {
-
-      (*m_children)[index] = std::move(Self(this, {Local_coordinates(index)}));
-
-    }
-  }
-
-  /*!
-   * \brief eliminates this node's children, making it a leaf node.
-   *
-   * When a node is un-split, its children are automatically deleted.
-   * After un-splitting a node it will be considered a leaf node.
-   */
-  void unsplit() {
-
-    m_children.reset();
-  }
-
-  /// @}
-
-  /// \endcond
-
 
 public:
-
-  /// \cond SKIP_IN_MANUAL
-  // Default creates null node
-  // todo: default node is no longer null, but still isn't guaranteed to be valid
-  Node() = default;
-
-  // Comparison operator
-  // todo: where is this used
-  //bool operator<(const Node& other) const { return m_data < other.m_data; }
-  /// \endcond
 
   /// \name Type & Location
   /// @{
