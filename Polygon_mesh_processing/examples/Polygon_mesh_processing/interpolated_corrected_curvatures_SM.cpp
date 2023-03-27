@@ -29,17 +29,23 @@ int main(int argc, char* argv[])
 
   // creating and tying surface mesh property maps for curvatures (with defaults = 0)
   bool created = false;
-  Surface_Mesh::Property_map<vertex_descriptor, Epic_kernel::FT> mean_curvature_map, Gaussian_curvature_map;
-  boost::tie(mean_curvature_map, created) = smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:mean_curvature_map", 0);
+  Surface_Mesh::Property_map<vertex_descriptor, Epic_kernel::FT> 
+    mean_curvature_map, Gaussian_curvature_map;
+
+  boost::tie(mean_curvature_map, created) = 
+    smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:mean_curvature_map", 0);
   assert(created);
 
-  boost::tie(Gaussian_curvature_map, created) = smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:Gaussian_curvature_map", 0);
+  boost::tie(Gaussian_curvature_map, created) = 
+    smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:Gaussian_curvature_map", 0);
   assert(created);
 
   // we use a tuple of 2 scalar values and 2 vectors for principal curvatures and directions
-  Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>> principal_curvatures_and_directions_map;
+  Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>> 
+    principal_curvatures_and_directions_map;
 
-  boost::tie(principal_curvatures_and_directions_map, created) = smesh.add_property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+  boost::tie(principal_curvatures_and_directions_map, created) = 
+    smesh.add_property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
     ("v:principal_curvatures_and_directions_map", { 0, 0,
         Epic_kernel::Vector_3(0,0,0),
         Epic_kernel::Vector_3(0,0,0) });
@@ -48,20 +54,11 @@ int main(int argc, char* argv[])
   // user can call these fucntions to compute a specfic curvature type on each vertex.
   // (Note: if no ball radius is specified, the measure expansion of each vertex happens by
   // summing measures on faces adjacent to each vertex.)
-  PMP::interpolated_corrected_mean_curvature(
-    smesh,
-    mean_curvature_map
-  );
+  PMP::interpolated_corrected_mean_curvature(smesh, mean_curvature_map);
 
-  PMP::interpolated_corrected_Gaussian_curvature(
-    smesh,
-    Gaussian_curvature_map
-  );
+  PMP::interpolated_corrected_Gaussian_curvature(smesh, Gaussian_curvature_map);
 
-  PMP::interpolated_corrected_principal_curvatures_and_directions(
-    smesh,
-    principal_curvatures_and_directions_map
-  );
+  PMP::interpolated_corrected_principal_curvatures_and_directions(smesh, principal_curvatures_and_directions_map);
 
   // uncomment this to compute a curvature while specifying named parameters
   // Example: an expansion ball radius of 0.5 and a vertex normals map (does not have to depend on positions)
