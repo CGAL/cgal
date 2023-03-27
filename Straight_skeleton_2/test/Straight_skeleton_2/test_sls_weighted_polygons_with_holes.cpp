@@ -57,6 +57,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 #include <CGAL/random_polygon_2.h>
 
 #include <CGAL/create_weighted_straight_skeleton_from_polygon_with_holes_2.h>
+#include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
 #include <CGAL/extrude_skeleton.h>
 
 #include <boost/shared_ptr.hpp>
@@ -161,21 +162,24 @@ int main(int argc, char** argv)
     std::cout << std::endl;
   }
 
-  CGAL::draw(pwh); // @tmp remove draw() calls
+//  CGAL::draw(pwh); // @tmp remove draw() calls
 
   auto ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pwh, weights, K());
 
   if(!ss_ptr)
     std::cerr << "Failed to create straight skeleton" << std::endl;
 
-  CGAL::draw(*ss_ptr);
+//  CGAL::draw(*ss_ptr);
+
+  auto offsets = CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(FT(0.1), pwh, weights);
+  CGAL_USE(offsets);
 
   Mesh sm;
   extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights));
 
   std::cout << num_vertices(sm) << " vertices and " << num_faces(sm) << " faces" << std::endl;
 
-  CGAL::draw(sm);
+//  CGAL::draw(sm);
 
   return EXIT_SUCCESS;
 }

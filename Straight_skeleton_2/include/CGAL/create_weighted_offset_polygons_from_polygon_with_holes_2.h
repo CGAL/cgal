@@ -50,7 +50,10 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 {
   return create_interior_weighted_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(),
                                                                  aPoly.holes_begin(), aPoly.holes_end(),
-                                                                 aWeights, ofk, ssk);
+                                                                 aWeights[0],
+                                                                 std::next(std::begin(aWeights)),
+                                                                 std::end(aWeights),
+                                                                 ofk, ssk);
 }
 
 /*! create_interior_weighted_skeleton_and_offset_polygons_with_holes_2 (orders the resulting polygons) */

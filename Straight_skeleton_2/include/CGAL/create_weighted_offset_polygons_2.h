@@ -197,7 +197,8 @@ create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// INTERIOR
 
-template<class FT, class APolygon, class HoleIterator, class Weights, class OfK, class SsK,
+template<class FT, class APolygon, class HoleIterator, class Weights, class HoleWeightsIterator,
+         class OfK, class SsK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
 std::vector< boost::shared_ptr<OutPolygon> >
 inline
@@ -206,6 +207,8 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         HoleIterator aHolesBegin,
                                                         HoleIterator aHolesEnd,
                                                         const Weights& aWeights,
+                                                        HoleWeightsIterator aHoles_WeightsBegin,
+                                                        HoleWeightsIterator aHoles_WeightsEnd,
                                                         const OfK& ofk,
                                                         const SsK& ssk)
 {
@@ -220,10 +223,10 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
               CGAL_SS_i::vertices_end  (aOuterBoundary),
               aHolesBegin,
               aHolesEnd,
-              aWeights[0].begin(),
-              aWeights[0].end(),
-              std::next(aWeights.begin()),
-              std::end(aWeights.begin()),
+              std::begin(aWeights),
+              std::end(aWeights),
+              aHoles_WeightsBegin,
+              aHoles_WeightsEnd,
               ssk)),
           ofk);
   }
@@ -233,12 +236,14 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
           aOffset,
           CGAL_SS_i::dereference(
             CGAL::create_interior_weighted_straight_skeleton_2(
-              aOffset,
               CGAL_SS_i::vertices_begin(aOuterBoundary),
               CGAL_SS_i::vertices_end  (aOuterBoundary),
-              aWeights,
               aHolesBegin,
               aHolesEnd,
+              std::begin(aWeights),
+              std::end(aWeights),
+              aHoles_WeightsBegin,
+              aHoles_WeightsEnd,
               ssk)),
           ofk);
   }
