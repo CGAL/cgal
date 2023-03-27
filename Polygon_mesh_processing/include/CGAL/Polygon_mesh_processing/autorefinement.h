@@ -36,7 +36,7 @@
 
 #include <vector>
 
-//#define TEST_RESOLVE_INTERSECTION
+#define TEST_RESOLVE_INTERSECTION
 #define DEDUPLICATE_SEGMENTS
 //#define DEBUG_COUNTERS
 //#define USE_FIXED_PROJECTION_TRAITS
@@ -227,6 +227,69 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
 //////////////////////////////////
 //////////////////////////////////
 
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+template <class Kernel>
+void old_intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& p,
+                                                const typename Kernel::Point_3& q,
+                                                const typename Kernel::Point_3& r,
+                                                const Kernel& k,
+                                                std::list<typename Kernel::Point_3>& inter_pts)
+{
+  typedef typename std::list<typename Kernel::Point_3>::iterator Iterator;
+
+  if(inter_pts.empty())
+    return;
+
+  typename Kernel::Coplanar_orientation_3 orient = k.coplanar_orientation_3_object();
+  typename Kernel::Construct_line_3 line = k.construct_line_3_object();
+
+  //orient(p,q,r,r) is POSITIVE
+  std::map<const typename Kernel::Point_3*,Orientation> orientations;
+  for (Iterator it=inter_pts.begin();it!=inter_pts.end();++it)
+    orientations[ &(*it) ]=orient(p,q,r,*it);
+
+  CGAL_kernel_assertion_code(int pt_added = 0;)
+
+  const typename Kernel::Point_3* prev = &(*boost::prior(inter_pts.end()));
+  Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : boost::prior(inter_pts.end());
+  for(Iterator it=inter_pts.begin(); it!=stop; ++it)
+  {
+    const typename Kernel::Point_3& curr = *it;
+    Orientation or_prev = orientations[prev],
+                or_curr = orientations[&curr];
+
+    if((or_prev == POSITIVE && or_curr == NEGATIVE) ||
+       (or_prev == NEGATIVE && or_curr == POSITIVE))
+    {
+      typename Intersection_traits<Kernel, typename Kernel::Line_3, typename Kernel::Line_3>::result_type
+        obj = ::CGAL::Intersections::internal::intersection(line(p,q), line(*prev,curr), k);
+
+      // assert "not empty"
+      CGAL_kernel_assertion(bool(obj));
+
+      const typename Kernel::Point_3* inter = ::CGAL::Intersections::internal::intersect_get<typename Kernel::Point_3>(obj);
+      CGAL_kernel_assertion(inter != nullptr);
+
+      prev = &(*inter_pts.insert(it,*inter));
+      orientations[prev] = COLLINEAR;
+      CGAL_kernel_assertion_code(++pt_added;)
+    }
+
+    prev = &(*it);
+  }
+
+  CGAL_kernel_assertion(pt_added<3);
+  Iterator it = inter_pts.begin();
+  while(it!=inter_pts.end())
+  {
+    if(orientations[&(*it)] == NEGATIVE)
+      inter_pts.erase(it++);
+    else
+      ++it;
+  }
+}
+#endif
+
 // imported from Intersections_3/include/CGAL/Intersections_3/internal/Triangle_3_Triangle_3_intersection.h
 template<class K>
 void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
@@ -242,6 +305,19 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
   l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(-1,2));
 
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::list<typename K::Point_3> old_l_inter_pts;
+  old_l_inter_pts.push_back(p2);
+  old_l_inter_pts.push_back(q2);
+  old_l_inter_pts.push_back(r2);
+
+
+  auto enum_to_string = [](CGAL::Orientation o)
+  {
+    if (o==COLLINEAR) return std::string("COLLINEAR");
+    if (o==POSITIVE) return std::string("POSITIVE");
+    return std::string("NEGATIVE");
+  };
+
   auto to_string = [](const auto& t)
   {
     std::stringstream sstr;
@@ -256,6 +332,32 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
   std::cout << "intersection_coplanar_triangles\n";
   std::ofstream("/tmp/t1.polylines.txt") << to_string(t1) << "\n";
   std::ofstream("/tmp/t2.polylines.txt") << to_string(t2) << "\n";
+
+  std::cout << "Position of vertices of t1: ";
+  std::cout << enum_to_string( coplanar_orientation(p2,q2,r2,p1)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(p2,q2,r2,q1)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(p2,q2,r2,r1)) << "\n";
+  std::cout << "                            ";
+  std::cout << enum_to_string( coplanar_orientation(q2,r2,p2,p1)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(q2,r2,p2,q1)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(q2,r2,p2,r1)) << "\n";
+  std::cout << "                            ";
+  std::cout << enum_to_string( coplanar_orientation(r2,p2,q2,p1)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(r2,p2,q2,q1)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(r2,p2,q2,r1)) << "\n";
+  std::cout << "Position of vertices of t2: ";
+  std::cout << enum_to_string( coplanar_orientation(p1,q1,r1,p2)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(p1,q1,r1,q2)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(p1,q1,r1,r2)) << "\n";
+  std::cout << "                            ";
+  std::cout << enum_to_string( coplanar_orientation(q1,r1,p1,p2)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(q1,r1,p1,q2)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(q1,r1,p1,r2)) << "\n";
+  std::cout << "                            ";
+  std::cout << enum_to_string( coplanar_orientation(r1,p1,q1,p2)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(r1,p1,q1,q2)) << " - ";
+  std::cout << enum_to_string( coplanar_orientation(r1,p1,q1,r2)) << "\n";
+
   auto print_points = [&]()
   {
     for(auto p : l_inter_pts) std::cout << "  (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) "; std::cout <<"\n";
@@ -270,31 +372,76 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
   print_points();
+  old_intersection_coplanar_triangles_cutoff(p1,q1,r1,k,old_l_inter_pts);
+  CGAL_assertion(l_inter_pts.size()==old_l_inter_pts.size());
+  for (std::size_t i=0; i<l_inter_pts.size(); ++i)
+  {
+    if (*(std::next(old_l_inter_pts.begin(),i))!=std::next(l_inter_pts.begin(),i)->point(p1,q1,r1,p2,q2,r2,k))
+    {
+      std::cout <<"ERROR with point #" << i << "\n";
+      throw std::runtime_error("invalid output 0");
+    }
+  }
 #endif
   intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,l_inter_pts); //line q1r1
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
   print_points();
+  old_intersection_coplanar_triangles_cutoff(q1,r1,p1,k,old_l_inter_pts);
+  CGAL_assertion(l_inter_pts.size()==old_l_inter_pts.size());
+  for (std::size_t i=0; i<l_inter_pts.size(); ++i)
+  {
+    if (*(std::next(old_l_inter_pts.begin(),i))!=std::next(l_inter_pts.begin(),i)->point(p1,q1,r1,p2,q2,r2,k))
+    {
+      std::cout <<"ERROR with point #" << i << "\n";
+      throw std::runtime_error("invalid output 1");
+    }
+  }
 #endif
   intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,l_inter_pts); //line r1p1
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
   print_points();
+  old_intersection_coplanar_triangles_cutoff(r1,p1,q1,k,old_l_inter_pts);
+  CGAL_assertion(l_inter_pts.size()==old_l_inter_pts.size());
+  for (std::size_t i=0; i<l_inter_pts.size(); ++i)
+  {
+    if (*(std::next(old_l_inter_pts.begin(),i))!=std::next(l_inter_pts.begin(),i)->point(p1,q1,r1,p2,q2,r2,k))
+    {
+      std::cout <<"ERROR with point #" << i << "\n";
+      throw std::runtime_error("invalid output 2");
+    }
+  }
+#endif
+
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  std::size_t start=inter_pts.size();
 #endif
 
   for (const Intersections::internal::Point_on_triangle<K>& pot : l_inter_pts)
     inter_pts.push_back( pot.point(p1,q1,r1,p2,q2,r2,k) );
 
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  for (std::size_t i=0; i<l_inter_pts.size(); ++i)
+  {
+    typename K::Point_3 inter = inter_pts[start+i];
+    CGAL_assertion( coplanar_orientation(p1,q1,r1,inter)!=NEGATIVE );
+    CGAL_assertion( coplanar_orientation(q1,r1,p1,inter)!=NEGATIVE );
+    CGAL_assertion( coplanar_orientation(r1,p1,q1,inter)!=NEGATIVE );
+    CGAL_assertion( coplanar_orientation(p2,q2,r2,inter)!=NEGATIVE );
+    CGAL_assertion( coplanar_orientation(q2,r2,p2,inter)!=NEGATIVE );
+    CGAL_assertion( coplanar_orientation(r2,p2,q2,inter)!=NEGATIVE );
+  }
+
   std::ofstream debug("interpts.xyz");
   debug << std::setprecision(17);
   debug << l_inter_pts.size() << "\n";
   for (auto pot : l_inter_pts)
     debug << pot.point(p1,q1,r1,p2,q2,r2,k)  << "\n";
   debug.close();
-  std::cout <<"check!\n";
-  int i;
-  std::cin >> i;
+  // std::cout <<"check!\n";
+  // int i;
+  // std::cin >> i;
 #endif
 
 }
@@ -1021,6 +1168,10 @@ void autorefine_soup_output(const PointRange& input_points,
 
     std::vector<typename EK::Point_3> inter_pts;
     autorefine_impl::collect_intersections<EK>(t1, t2, inter_pts);
+
+    CGAL_assertion(
+      CGAL::do_intersect(typename EK::Triangle_3(t1[0], t1[1], t1[2]), typename EK::Triangle_3(t2[0], t2[1], t2[2]))
+      != inter_pts.empty());
 
     if (!inter_pts.empty())
     {
