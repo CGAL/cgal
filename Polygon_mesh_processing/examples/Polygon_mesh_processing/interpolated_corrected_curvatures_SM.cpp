@@ -29,11 +29,11 @@ int main(int argc, char* argv[])
 
   // creating and tying surface mesh property maps for curvatures (with defaults = 0)
   bool created = false;
-  Surface_Mesh::Property_map<vertex_descriptor, Epic_kernel::FT> mean_curvature_map, gaussian_curvature_map;
+  Surface_Mesh::Property_map<vertex_descriptor, Epic_kernel::FT> mean_curvature_map, Gaussian_curvature_map;
   boost::tie(mean_curvature_map, created) = smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:mean_curvature_map", 0);
   assert(created);
 
-  boost::tie(gaussian_curvature_map, created) = smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:gaussian_curvature_map", 0);
+  boost::tie(Gaussian_curvature_map, created) = smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:Gaussian_curvature_map", 0);
   assert(created);
 
   // we use a tuple of 2 scalar values and 2 vectors for principal curvatures and directions
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
   PMP::interpolated_corrected_Gaussian_curvature(
     smesh,
-    gaussian_curvature_map
+    Gaussian_curvature_map
   );
 
   PMP::interpolated_corrected_principal_curvatures_and_directions(
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
   {
     auto PC = principal_curvatures_and_directions_map[v];
     std::cout << v.idx() << ": HC = " << mean_curvature_map[v]
-      << ", GC = " << gaussian_curvature_map[v] << "\n"
+      << ", GC = " << Gaussian_curvature_map[v] << "\n"
       << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
   }
 }

@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
   boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
     mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron),
-    gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
+    Gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
   boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
     principal_curvatures_and_directions_map = get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), polyhedron);
 
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 
   PMP::interpolated_corrected_Gaussian_curvature(
     polyhedron,
-    gaussian_curvature_map);
+    Gaussian_curvature_map);
 
   PMP::interpolated_corrected_principal_curvatures_and_directions(
     polyhedron,
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
   {
     auto PC = get(principal_curvatures_and_directions_map, v);
     std::cout << i << ": HC = " << get(mean_curvature_map, v)
-      << ", GC = " << get(gaussian_curvature_map, v) << "\n"
+      << ", GC = " << get(Gaussian_curvature_map, v) << "\n"
       << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
     i++;
   }
