@@ -113,50 +113,6 @@ Uncertain<Sign> certified_side_of_oriented_lineC2(const FT &a, const FT &b, cons
   return CGAL_NTS certified_sign(a*x+b*y+c);
 }
 
-
-//
-// Constructs a Trisegment_2 which stores 3 edges (segments) such that
-// if two of them are collinear, they are put first, as e0, e1.
-// Stores also the number of collinear edges. which should be 0 or 2.
-//
-// If the collinearity test is indeterminate for any pair of edges the
-// resulting sorted trisegment is itself indeterminate
-// (encoded as a collinear count of -1)
-//
-template<class K>
-Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2_with_ID<K> const& e0
-                                                                     , Segment_2_with_ID<K> const& e1
-                                                                     , Segment_2_with_ID<K> const& e2
-                                                                     )
-{
-  Uncertain<bool> is_01 = are_edges_orderly_collinearC2(e0,e1);
-  if ( is_certain(is_01) )
-  {
-    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(e0,e2);
-    if ( is_certain(is_02) )
-    {
-      Uncertain<bool> is_12 = are_edges_orderly_collinearC2(e1,e2);
-      if ( is_certain(is_12) )
-      {
-        if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
-          return TRISEGMENT_COLLINEARITY_01;
-        else if ( CGAL_NTS logical_and(is_02 , !is_01 , !is_12 ) )
-          return TRISEGMENT_COLLINEARITY_02;
-        else if ( CGAL_NTS logical_and(is_12 , !is_01 , !is_02 ) )
-          return TRISEGMENT_COLLINEARITY_12;
-        else if ( CGAL_NTS logical_and(!is_01 , !is_02, !is_12  ) )
-          return TRISEGMENT_COLLINEARITY_NONE;
-        else
-          return TRISEGMENT_COLLINEARITY_ALL;
-      }
-    }
-  }
-
-  return Uncertain<Trisegment_collinearity>::indeterminate();
-}
-
-
-
 // Given 3 oriented straight line segments: e0, e1, e2
 // returns true if there exists some positive offset distance 't' for which the
 // leftward-offsets of their supporting lines intersect at a single point.
