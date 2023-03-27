@@ -470,8 +470,8 @@ Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from
 
   // returning principal curvatures and directions (with the correct sign)
   return Principal_curvatures_and_directions<GT>(
-    (v_mu0 != 0.0) ? -eig_vals[1] / v_mu0 : 0.0,
-    (v_mu0 != 0.0) ? -eig_vals[0] / v_mu0 : 0.0,
+    (!is_zero(v_mu0)) ? -eig_vals[1] / v_mu0 : 0.0,
+    (!is_zero(v_mu0)) ? -eig_vals[0] / v_mu0 : 0.0,
     min_eig_vec,
     max_eig_vec
     );
@@ -591,7 +591,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
 
     // if it is not 0 (not completely outside), compute measures for selected curvatures (area is always computed)
     // and add neighboring faces to the bfs queue
-    if (f_ratio != 0.0)
+    if (!is_zero(f_ratio))
     {
       vertex_measures.area_measure += f_ratio * interpolated_corrected_area_measure_face<GT>(u, x);
 
@@ -669,7 +669,7 @@ template<typename PolygonMesh,
   // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
   typename GT::FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
   // if the radius is 0, we use a small epsilon to expand the ball (scaled with the average edge length)
-  if (radius == 0)
+  if (is_zero(radius))
     radius = average_edge_length<PolygonMesh, GT>(pmesh) * 1e-6;
 
   // determine which curvatures are selected
@@ -680,7 +680,7 @@ template<typename PolygonMesh,
   Vertex_measures<GT> vertex_measures;
 
   // if the radius is negative, we do not expand the ball (only the incident faces)
-  if (radius < 0)
+  if (is_negative(radius))
   {
     vertex_measures = interpolated_corrected_measures_one_vertex_no_radius<GT>(
       pmesh,
@@ -708,12 +708,12 @@ template<typename PolygonMesh,
 
   // compute the selected curvatures from expanded measures
   if (is_mean_curvature_selected) {
-    set_value(vertex_measures.area_measure != 0 ? 0.5 * vertex_measures.mean_curvature_measure / vertex_measures.area_measure : 0,
+    set_value(!is_zero(vertex_measures.area_measure) ? 0.5 * vertex_measures.mean_curvature_measure / vertex_measures.area_measure : 0,
               get_parameter(np, internal_np::vertex_mean_curvature));
   }
 
   if (is_Gaussian_curvature_selected) {
-    set_value(vertex_measures.area_measure != 0 ? vertex_measures.gaussian_curvature_measure / vertex_measures.area_measure : 0,
+    set_value(!is_zero(vertex_measures.area_measure) ? vertex_measures.gaussian_curvature_measure / vertex_measures.area_measure : 0,
               get_parameter(np, internal_np::vertex_Gaussian_curvature));
   }
 
@@ -827,7 +827,7 @@ private:
 
   void set_ball_radius(const FT radius) {
     // if given radius is 0, we use a small epsilon to expand the ball (scaled by the average edge length)
-    if (radius == 0)
+    if (is_zero(radius))
       ball_radius = average_edge_length<PolygonMesh, GT>(pmesh) * 1e-6;
     else
       ball_radius = radius;
@@ -950,7 +950,7 @@ private:
 
       // if the face is inside the ball, add the measures
       // only add the measures for the selected curvatures (area measure is always added)
-      if (f_ratio != 0.0)
+      if (!is_zero(f_ratio))
       {
         vertex_measures.area_measure += f_ratio * get(mu0_map, fi);
 
@@ -986,20 +986,20 @@ private:
     for (Vertex_descriptor v : vertices(pmesh))
     {
       // expand the computed measures (on faces) to the vertices
-      Vertex_measures<GT> vertex_measures = (ball_radius < 0) ?
+      Vertex_measures<GT> vertex_measures = (is_negative(ball_radius)) ?
         expand_interpolated_corrected_measure_vertex_no_radius(v) :
         expand_interpolated_corrected_measure_vertex(v);
 
       // compute the selected curvatures from the expanded measures and store them in the property maps
       // if the area measure is zero, the curvature is set to zero
       if (is_mean_curvature_selected) {
-        vertex_measures.area_measure != 0 ?
+        !is_zero(vertex_measures.area_measure) ?
           put(mean_curvature_map, v, 0.5 * vertex_measures.mean_curvature_measure / vertex_measures.area_measure) :
           put(mean_curvature_map, v, 0);
       }
 
       if (is_Gaussian_curvature_selected) {
-        vertex_measures.area_measure != 0 ?
+        !is_zero(vertex_measures.area_measure) ?
           put(gaussian_curvature_map, v, vertex_measures.gaussian_curvature_measure / vertex_measures.area_measure) :
           put(gaussian_curvature_map, v, 0);
       }
