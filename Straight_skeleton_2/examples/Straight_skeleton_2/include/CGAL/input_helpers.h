@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org).
 
-#ifndef CGAL_POLYGON_EXTRUSION_INPUT_HELPERS_H
-# define CGAL_POLYGON_EXTRUSION_INPUT_HELPERS_H
+#ifndef CGAL_STRAIGHT_SKELETON_EXTRUSION_INPUT_HELPERS_H
+# define CGAL_STRAIGHT_SKELETON_EXTRUSION_INPUT_HELPERS_H
 
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
@@ -253,4 +253,4 @@ void generate_random_weights(const PolygonWithHoles& p,
     speeds.push_back(generate_range_weights(*hit));
 }
 
-#endif // CGAL_POLYGON_EXTRUSION_INPUT_HELPERS_H
+#endif // CGAL_STRAIGHT_SKELETON_EXTRUSION_INPUT_HELPERS_H

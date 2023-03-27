@@ -10,12 +10,12 @@
 // Author(s)     : Mael Rouxel-Labbé
 //
 
-#ifndef CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
-#define CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
+#ifndef CGAL_SLS_EXTRUSION_EXTRUDE_SKELETON_H
+#define CGAL_SLS_EXTRUSION_EXTRUDE_SKELETON_H
 
 #define CGAL_SLS_OUTPUT_FILES
 
-#include <CGAL/license/Polygon_extrusion.h>
+#include <CGAL/license/Straight_skeleton_extrusion_2.h>
 
 #ifdef CGAL_SLS_DEBUG_DRAW
   #include <CGAL/draw_straight_skeleton_2.h>
@@ -65,7 +65,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Polygon_extrusions {
+namespace Straight_skeleton_extrusion {
 namespace internal {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1048,7 +1048,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 }
 
 } // namespace internal
-} // namespace Polygon_extrusions
+} // namespace Straight_skeleton_extrusion
 
 // Documented in the Straight_skeleton_2 package
 template <typename PolygonWithHoles,
@@ -1059,7 +1059,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
                       const NamedParameters& np = parameters::default_values(),
                       std::enable_if_t<CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
-  namespace PEI = Polygon_extrusions::internal;
+  namespace SSEI = Straight_skeleton_extrusion::internal;
 
   using Polygon_2 = typename PolygonWithHoles::General_polygon_2;
   using K = typename Kernel_traits<typename boost::range_value<Polygon_2>::type>::type;
@@ -1079,14 +1079,14 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   {
     // not using "Angles" here is on purpose, I want to copy the range but the NP is ref only
     auto weights = choose_parameter(get_parameter_reference(np, internal_np::weights_param), def_speeds);
-    return PEI::extrude_skeleton(pwh, weights, out, np);
+    return SSEI::extrude_skeleton(pwh, weights, out, np);
   }
   else if(has_angles)
   {
     // not using "Weights" here is on purpose, I want to copy the range but the NP is ref only
     auto angles = choose_parameter(get_parameter_reference(np, internal_np::angles_param), def_speeds);
-    PEI::convert_angles<FT>(angles);
-    return PEI::extrude_skeleton(pwh, angles, out, np);
+    SSEI::convert_angles<FT>(angles);
+    return SSEI::extrude_skeleton(pwh, angles, out, np);
   }
   else // neither angles nor weights were provided
   {
@@ -1097,7 +1097,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
     for(const auto& hole : pwh.holes())
       uniform_weights.push_back(std::vector<FT>(hole.size(), FT(1)));
 
-    return PEI::extrude_skeleton(pwh, uniform_weights, out, np);
+    return SSEI::extrude_skeleton(pwh, uniform_weights, out, np);
   }
 }
 
@@ -1120,4 +1120,4 @@ bool extrude_skeleton(const Polygon& p,
 
 } // namespace CGAL
 
-#endif // CGAL_POLYGON_EXTRUSION_EXTRUDE_SKELETON_H
+#endif // CGAL_SLS_EXTRUSION_EXTRUDE_SKELETON_H

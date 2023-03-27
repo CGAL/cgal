@@ -10,7 +10,7 @@
 /// \defgroup PkgStraightSkeleton2Auxiliary Auxiliary Classes
 /// \ingroup PkgStraightSkeleton2Ref
 
-/// \defgroup PkgStraightSkeleton2Extrusion Polygon Extrusion
+/// \defgroup PkgStraightSkeleton2Extrusion Skeleton Extrusion
 /// \ingroup PkgStraightSkeleton2Ref
 ///
 /// The following functions are used to construct the skeleton extrusion of a polygon.
@@ -171,7 +171,7 @@
 - `CGAL::create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2()`
 - `CGAL::create_offset_polygons_2()`
 
-\cgalCRPSection{Polygon Extrusion}
+\cgalCRPSection{Skeleton Extrusion}
 - `CGAL::extrude_skeleton()`
 
 \cgalCRPSection{Lower Level API}
