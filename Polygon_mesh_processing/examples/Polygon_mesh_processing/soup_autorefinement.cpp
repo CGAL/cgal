@@ -7,6 +7,8 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
+#include <boost/container/small_vector.hpp>
+
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -22,9 +24,12 @@ int main(int argc, char** argv)
                                          : std::string(argv[1]);
 
   std::vector<Point> input_points;
-  std::vector<std::array<std::size_t, 3>> input_triangles;
+  std::vector<boost::container::small_vector<std::size_t, 3>> input_triangles;
   CGAL::IO::read_polygon_soup(filename, input_points, input_triangles);
   PMP::repair_polygon_soup(input_points, input_triangles);
+
+  for (const auto& c : input_triangles)
+    if (c.size()!=3) return 0; // skipt for now
 
   std::vector<Point> output_points;
   std::vector<std::array<std::size_t, 3>> output_triangles;
