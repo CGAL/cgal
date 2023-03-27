@@ -43,7 +43,7 @@ void test_2_points() {
   // The octree should have been split once
   Octree other(points, points.point_map());
   other.split(other.root());
-  assert(Node::is_topology_equal(other.root(), octree.root()));
+  assert(Octree::is_topology_equal(other, octree));
   assert(1 == octree.depth());
 }
 
@@ -62,9 +62,9 @@ void test_4_points() {
   // The octree should have been split once on the first level, and twice on the second
   Octree other(points, points.point_map());
   other.split(other.root());
-  other.split(other.root()[3]);
-  other.split(other.root()[7]);
-  assert(Node::is_topology_equal(other.root(), octree.root()));
+  other.split(other.children(other.root())[3]);
+  other.split(other.children(other.root())[7]);
+  assert(Octree::is_topology_equal(other, octree));
   assert(2 == octree.depth());
 }
 

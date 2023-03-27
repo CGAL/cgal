@@ -15,17 +15,17 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-typedef CGAL::Orthtrees::Leaves_traversal Leaves_traversal;
+typedef CGAL::Orthtrees::Leaves_traversal<Octree> Leaves_traversal;
 
 std::size_t count_jumps(Octree &octree) {
 
   std::size_t jumps = 0;
 
-  for (auto &node : octree.traverse(Leaves_traversal())) {
+  for (auto &node : octree.traverse<Leaves_traversal>()) {
 
     for (int direction = 0; direction < 6; ++direction) {
 
-      auto adjacent_node = node.adjacent_node(direction);
+      auto adjacent_node = octree.adjacent_node(node, direction);
 
       if (adjacent_node == nullptr)
         continue;

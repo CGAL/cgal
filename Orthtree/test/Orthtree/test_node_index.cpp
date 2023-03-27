@@ -10,7 +10,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
-Octree;
+  Octree;
 
 int main(void) {
 
@@ -38,9 +38,10 @@ int main(void) {
   octree.refine(10, 1);
 
   std::cout << "root: " << octree.root().local_coordinates() << std::endl;
-  std::cout << "first child: " << octree.root()[0].local_coordinates() << std::endl;
-  std::cout << "fifth child: " << octree.root()[4].local_coordinates() << std::endl;
-  std::cout << "fifth child of first child: " << octree.root()[0][4].local_coordinates() << std::endl;
+  std::cout << "first child: " << octree.children(octree.root())[0].local_coordinates() << std::endl;
+  std::cout << "fifth child: " << octree.children(octree.root())[4].local_coordinates() << std::endl;
+  std::cout << "fifth child of first child: "
+            << octree.children(octree.children(octree.root())[0])[4].local_coordinates() << std::endl;
 
   // TODO
 

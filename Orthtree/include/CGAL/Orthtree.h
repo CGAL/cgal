@@ -197,7 +197,7 @@ public:
       , m_range(point_range)
       , m_point_map(point_map) {
 
-    m_nodes.reserve(2048); // todo: temporary, for testing
+    m_nodes.reserve(1'000'000); // todo: temporary, for testing
     m_nodes.emplace_back();
 
     Array bbox_min;
@@ -331,7 +331,7 @@ public:
 
         // Process each of its children
         for (int i = 0; i < Degree::value; ++i)
-          todo.push(&(*current)[i]);
+          todo.push(&children(*current)[i]);
 
       }
     }
@@ -368,7 +368,7 @@ public:
 
     // Collect all the leaf nodes
     std::queue<Node*> leaf_nodes;
-    for (const Node& leaf: traverse(Orthtrees::Leaves_traversal())) {
+    for (const Node& leaf: traverse(Orthtrees::Leaves_traversal<Self>(*this))) {
       // TODO: I'd like to find a better (safer) way of doing this
       leaf_nodes.push(const_cast<Node*>(&leaf));
     }
@@ -388,7 +388,7 @@ public:
       for (int direction = 0; direction < 6; ++direction) {
 
         // Get the neighbor
-        auto* neighbor = node->adjacent_node(direction);
+        auto* neighbor = adjacent_node(*node, direction);
 
         // If it doesn't exist, skip it
         if (!neighbor)
@@ -412,7 +412,7 @@ public:
 
           // Add newly created children to the queue
           for (int i = 0; i < Degree::value; ++i) {
-            leaf_nodes.push(&(*neighbor)[i]);
+            leaf_nodes.push(&children(*neighbor)[i]);
           }
         }
       }
@@ -461,15 +461,21 @@ public:
     \return a forward input iterator over the nodes of the tree
    */
   template <typename Traversal>
-  Node_range traverse(const Traversal& traversal = Traversal()) const {
+  Node_range traverse(const Traversal& traversal) const {
 
-    const Node* first = traversal.first(&root());
+    const Node* first = traversal.first();
 
     Node_traversal_method_const next
       = [&](const Node* n) -> const Node* { return traversal.next(n); };
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
                                       Traversal_iterator<const Node>());
+  }
+
+  // todo: document this convenience function
+  template <typename Traversal>
+  Node_range traverse() const {
+    return traverse<Traversal>(Traversal(*this));
   }
 
   /*!
@@ -534,7 +540,7 @@ public:
         index[dimension++] = (get < 0 > (r) < get < 1 > (r));
 
       // Find the correct sub-node of the current node
-      node_for_point = &(*node_for_point)[index.to_ulong()];
+      node_for_point = &children(*node_for_point)[index.to_ulong()];
     }
 
     // Return the result
@@ -618,7 +624,7 @@ public:
       return false;
 
     // If all else is equal, recursively compare the trees themselves
-    return Node::is_topology_equal(rhs.root(), root());
+    return is_topology_equal(root(), *this, rhs.root(), rhs);
   }
 
   /*!
@@ -629,6 +635,21 @@ public:
   }
 
   /// @}
+
+  /// \name Node Access
+  /// @{
+
+  using Children = typename Node::Children;
+
+  Children& children(Node& node) {
+    CGAL_precondition (!node.is_leaf());
+    return node.m_children.get();
+  }
+
+  const Children& children(const Node& node) const {
+    CGAL_precondition (!node.is_leaf());
+    return node.m_children.get();
+  }
 
   /*!
   \brief splits the node into subnodes.
@@ -711,6 +732,151 @@ public:
     return construct_point_d_from_array(bary);
   }
 
+
+  // todo: this does what the documentation for operator== claims to do!
+  static bool is_topology_equal(const Node& lhsNode, const Self& lhsTree, const Node& rhsNode, const Self& rhsTree) {
+
+    // If one node is a leaf, and the other isn't, they're not the same
+    if (lhsNode.is_leaf() != rhsNode.is_leaf())
+      return false;
+
+    // If both nodes are non-leaf nodes
+    if (!lhsNode.is_leaf()) {
+
+      // Check all the children
+      for (int i = 0; i < Degree::value; ++i) {
+        // If any child cell is different, they're not the same
+        if (!is_topology_equal(lhsTree.children(lhsNode)[i], lhsTree, rhsTree.children(rhsNode)[i], rhsTree))
+          return false;
+      }
+    }
+
+    // If both nodes are leaf nodes, they must be in the same location
+    return (lhsNode.global_coordinates() == rhsNode.global_coordinates());
+  }
+
+  static bool is_topology_equal(const Self& lhs, const Self& rhs) {
+    return is_topology_equal(lhs.root(), lhs, rhs.root(), rhs);
+  }
+
+  /*!
+    \brief finds the directly adjacent node in a specific direction
+
+    \pre `!is_null()`
+    \pre `direction.to_ulong < 2 * Dimension::value`
+
+    Adjacent nodes are found according to several properties:
+    - adjacent nodes may be larger than the seek node, but never smaller
+    - a node has at most `2 * Dimension::value` different adjacent nodes (in 3D: left, right, up, down, front, back)
+    - adjacent nodes are not required to be leaf nodes
+
+    Here's a diagram demonstrating the concept for a Quadtree:
+
+    ```
+    +---------------+---------------+
+    |               |               |
+    |               |               |
+    |               |               |
+    |       A       |               |
+    |               |               |
+    |               |               |
+    |               |               |
+    +-------+-------+---+---+-------+
+    |       |       |   |   |       |
+    |   A   |  (S)  +---A---+       |
+    |       |       |   |   |       |
+    +---+---+-------+---+---+-------+
+    |   |   |       |       |       |
+    +---+---+   A   |       |       |
+    |   |   |       |       |       |
+    +---+---+-------+-------+-------+
+    ```
+
+    - (S) : Seek node
+    - A  : Adjacent node
+
+    Note how the top adjacent node is larger than the seek node.  The
+    right adjacent node is the same size, even though it contains
+    further subdivisions.
+
+    This implementation returns the adjacent node if it's found.  If
+    there is no adjacent node in that direction, it returns a null
+    node.
+
+    \param direction which way to find the adjacent node relative to
+    this one. Each successive bit selects the direction for the
+    corresponding dimension: for an Octree in 3D, 010 means: negative
+    direction in X, position direction in Y, negative direction in Z.
+
+    \return the adjacent node if it exists, a null node otherwise.
+  */
+  const Node* adjacent_node(const Node& node, typename Node::Local_coordinates direction) const {
+
+    // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
+    // direction:    000    001   010   011   100   101
+
+    // Nodes only have up to 2*dim different adjacent nodes (since cubes have 6 sides)
+    CGAL_precondition(direction.to_ulong() < Dimension::value * 2);
+
+    // The root node has no adjacent nodes!
+    if (node.is_root()) return nullptr;
+
+    // The least significant bit indicates the sign (which side of the node)
+    bool sign = direction[0];
+
+    // The first two bits indicate the dimension/axis (x, y, z)
+    uint8_t dimension = uint8_t((direction >> 1).to_ulong());
+
+    // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
+    int8_t offset = (uint8_t) 1 << dimension;
+
+    // Finally, apply the sign to the offset
+    offset = (sign ? offset : -offset);
+
+    // Check if this child has the opposite sign along the direction's axis
+    if (node.local_coordinates()[dimension] != sign) {
+      // This means the adjacent node is a direct sibling, the offset can be applied easily!
+      return &children(*node.parent())[node.local_coordinates().to_ulong() + offset];
+    }
+
+    // Find the parent's neighbor in that direction, if it exists
+    const Node* adjacent_node_of_parent = adjacent_node(*node.parent(), direction);
+
+    // If the parent has no neighbor, then this node doesn't have one
+    if (adjacent_node_of_parent == nullptr) return nullptr;
+
+    // If the parent's adjacent node has no children, then it's this node's adjacent node
+    if (adjacent_node_of_parent->is_leaf())
+      return adjacent_node_of_parent;
+
+    // Return the nearest node of the parent by subtracting the offset instead of adding
+    return &children(*adjacent_node_of_parent)[node.local_coordinates().to_ulong() - offset];
+
+  }
+
+  /*!
+    \brief equivalent to `adjacent_node()`, with an adjacency direction rather than a bitset.
+   */
+  const Node* adjacent_node(const Node& node, typename Node::Adjacency adjacency) const {
+    return adjacent_node(node, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
+  }
+
+  /*!
+   * \brief equivalent to adjacent_node, except non-const
+   */
+  Node* adjacent_node(Node& node, std::bitset<Dimension::value> direction) {
+    return const_cast<Node*>(const_cast<const Self*>(this)->adjacent_node(node, direction));
+  }
+
+  /*!
+   * \brief equivalent to adjacent_node, with a Direction rather than a bitset and non-const
+   */
+  Node* adjacent_node(Node& node, typename Node::Adjacency adjacency) {
+    return adjacent_node(node, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
+  }
+
+  /// @}
+
 private: // functions :
 
   void reassign_points(Node& node, Range_iterator begin, Range_iterator end, const Point& center,
@@ -720,7 +886,7 @@ private: // functions :
     // Root case: reached the last dimension
     if (dimension == Dimension::value) {
 
-      node[coord.to_ulong()].points() = {begin, end};
+      children(node)[coord.to_ulong()].points() = {begin, end};
 
       return;
     }
@@ -831,7 +997,7 @@ private: // functions :
 
       // Fill the list with child nodes
       for (int index = 0; index < Degree::value; ++index) {
-        auto& child_node = node[index];
+        auto& child_node = children(node)[index];
 
         // Add a child to the list, with its distance
         children_with_distances.emplace_back(typename Node::Local_coordinates(index),
@@ -845,7 +1011,7 @@ private: // functions :
 
       // Loop over the children
       for (auto child_with_distance: children_with_distances) {
-        auto& child_node = node[child_with_distance.index.to_ulong()];
+        auto& child_node = children(node)[child_with_distance.index.to_ulong()];
 
         // Check whether the bounding box of the child intersects with the search bounds
         if (do_intersect(child_node, search_bounds)) {
@@ -872,7 +1038,7 @@ private: // functions :
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < Degree::value; ++i) {
-        intersected_nodes_recursive(query, node[i], output);
+        intersected_nodes_recursive(query, children(node)[i], output);
       }
     }
     return output;
@@ -970,7 +1136,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Self& orthtree) {
     // Create a range of nodes
-    auto nodes = orthtree.traverse(Orthtrees::Preorder_traversal());
+    auto nodes = orthtree.traverse(Orthtrees::Preorder_traversal<Self>(orthtree));
     // Iterate over the range
     for (auto& n: nodes) {
       // Show the depth

@@ -12,7 +12,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-typedef CGAL::Orthtrees::Preorder_traversal Preorder_traversal;
+typedef CGAL::Orthtrees::Preorder_traversal<Octree> Preorder_traversal;
 
 bool test_preorder_1_node() {
 
@@ -53,7 +53,7 @@ bool test_preorder_9_nodes() {
   assert(*iter == octree.root());
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert((*iter == octree.root()[i]));
+    assert((*iter == octree.children(octree.root())[i]));
   }
 
   return true;
@@ -79,28 +79,28 @@ bool test_preorder_25_nodes() {
   auto iter = nodes.begin();
   assert(*iter == octree.root());
   iter++;
-  assert((*iter == octree.root()[0]));
+  assert((*iter == octree.children(octree.root())[0]));
   iter++;
-  assert((*iter == octree.root()[1]));
+  assert((*iter == octree.children(octree.root())[1]));
   iter++;
-  assert((*iter == octree.root()[2]));
+  assert((*iter == octree.children(octree.root())[2]));
   iter++;
-  assert((*iter == octree.root()[3]));
+  assert((*iter == octree.children(octree.root())[3]));
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert((*iter == octree.root()[3][i]));
+    assert((*iter == octree.children(octree.children(octree.root())[3])[i]));
   }
   iter++;
-  assert((*iter == octree.root()[4]));
+  assert((*iter == octree.children(octree.root())[4]));
   iter++;
-  assert((*iter == octree.root()[5]));
+  assert((*iter == octree.children(octree.root())[5]));
   iter++;
-  assert((*iter == octree.root()[6]));
+  assert((*iter == octree.children(octree.root())[6]));
   iter++;
-  assert((*iter == octree.root()[7]));
+  assert((*iter == octree.children(octree.root())[7]));
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert((*iter == octree.root()[7][i]));
+    assert((*iter == octree.children(octree.children(octree.root())[7])[i]));
   }
 
   return true;

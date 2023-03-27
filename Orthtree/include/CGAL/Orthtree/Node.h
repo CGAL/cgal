@@ -139,13 +139,6 @@ public:
   explicit Node(Self* parent, Local_coordinates local_coordinates)
     : m_parent(parent) {
 
-//    if (m_parent) {
-//      m_depth = m_parent->m_depth + 1;
-//
-//      for (int i = 0; i < Dimension::value; i++)
-//        m_global_coordinates[i] = (2 * parent->m_global_coordinates[i]) + local_coordinates[i];
-//    }
-
     if (parent != nullptr) {
       m_depth = parent->m_depth + 1;
 
@@ -174,16 +167,6 @@ public:
   Point_range& points() { return m_points; }
 
   const Point_range& points() const { return m_points; }
-
-  Children& children() {
-    CGAL_precondition (!is_leaf());
-    return m_children.get();
-  }
-
-  const Children& children() const {
-    CGAL_precondition (!is_leaf());
-    return m_children.get();
-  }
 
   /// @}
 
@@ -255,201 +238,6 @@ public:
     return m_parent;
   }
 
-  /*!
-    \brief returns the nth child of this node.
-
-    \pre `!is_leaf()`
-    \pre `0 <= index && index < Degree::value`
-
-    The orthtree subdivides the space in 2 on each dimension
-    available, so a child node can be accessed by selecting a Boolean
-    value for each dimension. The `index` parameter is thus
-    interpreted as a bitmap, where each bit matches a dimension
-    (starting by the least significant bit for coordinate X).
-
-    For example, in the case of an octree (dimension 3):
-
-    - index 0 (000 in binary) is the children on the "minimum corner" (xmin, ymin, zmin)
-    - index 1 (001 in binary) is on (xmax, ymin, zmin)
-    - index 2 (010 in binary) is on (xmin, ymax, zmin)
-    - index 6 (101 in binary) is on (xmax, ymin, zmax)
-
-    Diagram of a quadtree:
-
-    ```
-    Children of the current node:
-
-    Y axis
-    A
-    |  +-------------------+-------------------+
-    |  | Coord:  Ymax Xmin | Coord:  Ymax Xmax |
-    |  | Bitmap:    1    0 | Bitmap:    1    1 |
-    |  |                   |                   |
-    |  | -> index = 2      | -> index = 3      |
-    |  |                   |                   |
-    |  |                   |                   |
-    |  |                   |                   |
-    |  |                   |                   |
-    |  +-------------------+-------------------+
-    |  | Coord:  Ymin Xmin | Coord:  Ymin Xmax |
-    |  | Bitmap:    0    0 | Bitmap:    0    1 |
-    |  |                   |                   |
-    |  | -> index = 0      | -> index = 1      |
-    |  |                   |                   |
-    |  |                   |                   |
-    |  |                   |                   |
-    |  |                   |                   |
-    |  +-------------------+-------------------+
-    |
-    +--------------------------------------------> X axis
-    0
-    ```
-
-    The operator can be chained. For example, `n[5][2][3]` returns the
-    third child of the second child of the fifth child of a node `n`.
-  */
-  Self& operator[](std::size_t index) {
-
-    CGAL_precondition (!is_leaf());
-    CGAL_precondition (index < Degree::value);
-
-    return m_children.get()[index];
-  }
-
-  /*!
-    \brief returns the nth child of this node.
-
-    \pre `!is_leaf()`
-    \pre `index < Degree::value`
-
-    The operator can be chained. For example, `n[5][2][3]` returns the
-    third child of the second child of the fifth child of a node `n`.
-   */
-  const Self& operator[](std::size_t index) const {
-
-    CGAL_precondition (!is_leaf());
-    CGAL_precondition (index < Degree::value);
-
-    return m_children.get()[index];
-  }
-
-  /*!
-    \brief finds the directly adjacent node in a specific direction
-
-    \pre `!is_null()`
-    \pre `direction.to_ulong < 2 * Dimension::value`
-
-    Adjacent nodes are found according to several properties:
-    - adjacent nodes may be larger than the seek node, but never smaller
-    - a node has at most `2 * Dimension::value` different adjacent nodes (in 3D: left, right, up, down, front, back)
-    - adjacent nodes are not required to be leaf nodes
-
-    Here's a diagram demonstrating the concept for a Quadtree:
-
-    ```
-    +---------------+---------------+
-    |               |               |
-    |               |               |
-    |               |               |
-    |       A       |               |
-    |               |               |
-    |               |               |
-    |               |               |
-    +-------+-------+---+---+-------+
-    |       |       |   |   |       |
-    |   A   |  (S)  +---A---+       |
-    |       |       |   |   |       |
-    +---+---+-------+---+---+-------+
-    |   |   |       |       |       |
-    +---+---+   A   |       |       |
-    |   |   |       |       |       |
-    +---+---+-------+-------+-------+
-    ```
-
-    - (S) : Seek node
-    - A  : Adjacent node
-
-    Note how the top adjacent node is larger than the seek node.  The
-    right adjacent node is the same size, even though it contains
-    further subdivisions.
-
-    This implementation returns the adjacent node if it's found.  If
-    there is no adjacent node in that direction, it returns a null
-    node.
-
-    \param direction which way to find the adjacent node relative to
-    this one. Each successive bit selects the direction for the
-    corresponding dimension: for an Octree in 3D, 010 means: negative
-    direction in X, position direction in Y, negative direction in Z.
-
-    \return the adjacent node if it exists, a null node otherwise.
-  */
-  const Self* adjacent_node(Local_coordinates direction) const {
-
-    // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
-    // direction:    000    001   010   011   100   101
-
-    // Nodes only have up to 2*dim different adjacent nodes (since cubes have 6 sides)
-    CGAL_precondition(direction.to_ulong() < Dimension::value * 2);
-
-    // The root node has no adjacent nodes!
-    if (is_root()) return nullptr;
-
-    // The least significant bit indicates the sign (which side of the node)
-    bool sign = direction[0];
-
-    // The first two bits indicate the dimension/axis (x, y, z)
-    uint8_t dimension = uint8_t((direction >> 1).to_ulong());
-
-    // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
-    int8_t offset = (uint8_t) 1 << dimension;
-
-    // Finally, apply the sign to the offset
-    offset = (sign ? offset : -offset);
-
-    // Check if this child has the opposite sign along the direction's axis
-    if (local_coordinates()[dimension] != sign) {
-      // This means the adjacent node is a direct sibling, the offset can be applied easily!
-      return &(*parent())[local_coordinates().to_ulong() + offset];
-    }
-
-    // Find the parent's neighbor in that direction, if it exists
-    const Self* adjacent_node_of_parent = parent()->adjacent_node(direction);
-
-    // If the parent has no neighbor, then this node doesn't have one
-    if (!adjacent_node_of_parent) return nullptr;
-
-    // If the parent's adjacent node has no children, then it's this node's adjacent node
-    if (adjacent_node_of_parent->is_leaf())
-      return adjacent_node_of_parent;
-
-    // Return the nearest node of the parent by subtracting the offset instead of adding
-    return &(*adjacent_node_of_parent)[local_coordinates().to_ulong() - offset];
-
-  }
-
-  /*!
-    \brief equivalent to `adjacent_node()`, with an adjacency direction
-    rather than a bitset.
-   */
-  const Self* adjacent_node(Adjacency adjacency) const {
-    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(adjacency)));
-  }
-
-  /*!
-   * \brief equivalent to adjacent_node, except non-const
-   */
-  Self* adjacent_node(std::bitset<Dimension::value> direction) {
-    return const_cast<Self*>(const_cast<const Self*>(this)->adjacent_node(direction));
-  }
-
-  /*!
-   * \brief equivalent to adjacent_node, with a Direction rather than a bitset and non-const
-   */
-  Self* adjacent_node(Adjacency adjacency) {
-    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(adjacency)));
-  }
-
   /// @}
 
   /// \name Point Range
@@ -503,28 +291,6 @@ public:
            rhs.m_points == m_points &&
            rhs.m_depth == m_depth &&
            rhs.m_global_coordinates == m_global_coordinates;
-  }
-
-  // todo: this does what the documentation for operator== claims to do!
-  static bool is_topology_equal(const Self& a, const Self& b) {
-
-    // If one node is a leaf, and the other isn't, they're not the same
-    if (a.is_leaf() != b.is_leaf())
-      return false;
-
-    // If both nodes are non-leaf nodes
-    if (!a.is_leaf()) {
-
-      // Check all the children
-      for (int i = 0; i < Degree::value; ++i) {
-        // If any child cell is different, they're not the same
-        if (!is_topology_equal(a[i], b[i]))
-          return false;
-      }
-    }
-
-    // If both nodes are leaf nodes, they must be in the same location
-    return (a.global_coordinates() == b.global_coordinates());
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Self& node) {
