@@ -87,6 +87,9 @@ create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
   typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
   typedef typename InputKernel::FT InputFT ;
 
+  CGAL_precondition(std::distance(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd) == std::distance(aOuterContour_WeightsBegin, aOuterContour_WeightsEnd));
+  CGAL_precondition(std::distance(aHolesBegin, aHolesEnd) == std::distance(aHoles_WeightsBegin, aHoles_WeightsEnd));
+
   Cartesian_converter<InputKernel, K> conv;
   NT_converter<InputFT, KFT> wconv;
 
@@ -100,6 +103,8 @@ create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
 
   for(HoleIterator hi = aHolesBegin; hi != aHolesEnd && aHoles_WeightsBegin != aHoles_WeightsEnd; ++ hi, ++aHoles_WeightsBegin)
   {
+    CGAL_precondition(std::distance(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi)) ==
+                      std::distance(aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end()));
     ssb.enter_contour(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), conv);
     ssb.enter_contour_weights(aHoles_WeightsBegin->begin(), aHoles_WeightsBegin->end(), wconv);
   }

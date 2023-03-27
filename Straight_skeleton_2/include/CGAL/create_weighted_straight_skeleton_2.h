@@ -54,6 +54,11 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
   using Input_point = typename std::iterator_traits<PointIterator>::value_type;
   using Input_kernel = typename Kernel_traits<Input_point>::Kernel;
 
+  CGAL_precondition(std::distance(outer_contour_vertices_begin, outer_contour_vertices_end) ==
+                    std::distance(outer_contour_weights_begin, outer_contour_weights_end));
+  CGAL_precondition(std::distance(holes_begin, holes_end) ==
+                    std::distance(holes_weights_begin, holes_weights_end));
+
   Cartesian_converter<Input_kernel, K> point_converter;
   NT_converter<typename Input_kernel::FT, typename K::FT> weight_converter;
 
@@ -63,6 +68,8 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
 
   for(HoleIterator hi = holes_begin; hi != holes_end && holes_weights_begin != holes_weights_end; ++hi, ++holes_weights_begin)
   {
+    CGAL_precondition(std::distance(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi)) ==
+                      std::distance(holes_weights_begin->begin(), holes_weights_begin->end()));
     ssb.enter_contour(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), point_converter);
     ssb.enter_contour_weights(holes_weights_begin->begin(), holes_weights_begin->end(), weight_converter);
   }
