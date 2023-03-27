@@ -96,7 +96,14 @@ struct Caches
 {
   void Reset ( std::size_t i )
   {
-    mCoeff_cache.Reset(i) ;
+    // !WARNING! subtlety here:
+    // - The coefficient caches are attached to *contour edge IDs*.
+    //   There is never any reason to reset coefficient caches because the geometry does not change.
+    // - The time and point caches are attached to *trisegment IDs*
+    //   There is a reason to reset trisegment caches to not waste memory when a trisegment is ignored.
+    //
+    // mCoeff_cache.Reset(i) ;
+
     mTime_cache.Reset(i) ;
     mPoint_cache.Reset(i) ;
   }
