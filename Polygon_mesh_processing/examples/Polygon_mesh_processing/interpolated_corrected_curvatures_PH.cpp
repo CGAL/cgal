@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     Gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
 
   boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
-    principal_curvatures_and_directions_map = 
+    principal_curvatures_and_directions_map =
     get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), polyhedron);
 
   PMP::interpolated_corrected_mean_curvature(polyhedron, mean_curvature_map);
