@@ -778,7 +778,13 @@ void generate_subtriangles(std::size_t ti,
     std::map<typename EK::Point_3, std::size_t> point_id_map;
 
     for (std::size_t pid=0; pid<points.size(); ++pid)
-      point_id_map.insert(std::make_pair(points[pid], pid));
+    {
+      CGAL_assertion_code(bool insertion_ok =)
+      point_id_map.insert(std::make_pair(points[pid], pid))
+      CGAL_assertion_code(.second);
+      CGAL_assertion(insertion_ok);
+    }
+
 
     auto get_point_id = [&](const typename EK::Point_3& pt)
     {
@@ -1015,6 +1021,9 @@ void generate_subtriangles(std::size_t ti,
           segments.emplace_back(points_on_segments[i][pos], points_on_segments[i][pos+1]);
       }
     }
+
+    CGAL_assertion(points.size()==std::set<typename EK::Point_3>(points.begin(), points.end()).size());
+    CGAL_assertion(points.size()==point_id_map.size());
   }
 
   // TODO: sorted pair to be constructed when pushing_back
@@ -1216,6 +1225,14 @@ void autorefine_soup_output(const PointRange& input_points,
           all_points[ti].push_back(pt);
         return insert_res.first->second;
       };
+
+      if (!all_points[ti].empty())
+      {
+        std::vector<typename EK::Point_3> tmp;
+        tmp.swap(all_points[ti]);
+        for (const typename EK::Point_3& pt : tmp)
+          get_point_id(pt);
+      }
 
       std::size_t nbs = all_segments[ti].size();
       std::vector<std::array<EK::Point_3,2>> filtered_segments;
