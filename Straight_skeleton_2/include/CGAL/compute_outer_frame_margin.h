@@ -37,7 +37,6 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   typedef typename Traits::FT               FT ;
   typedef typename Traits::Point_2          Point_2 ;
   typedef typename Traits::Segment_2        Segment_2 ;
-  typedef typename Traits::Trisegment_2_ptr Trisegment_2_ptr ;
 
   Kernel kernel ;
 

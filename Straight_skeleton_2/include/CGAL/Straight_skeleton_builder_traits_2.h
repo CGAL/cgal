@@ -756,9 +756,6 @@ public:
 
     typedef decltype(aNode->halfedge()) Halfedge_handle;
     typedef CGAL_SS_i::Segment_2_with_ID<FK> Target_Segment_with_ID_2;
-    typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge;
-    typedef CGAL::Trisegment_2<FK, Target_Segment_with_ID_2> Target_Trisegment_2;
-    typedef Trisegment_2_ptr<Target_Trisegment_2> Target_Trisegment_2_ptr;
 
     CGAL_STSKEL_TRAITS_TRACE("Computing approximate filtering bound of V" << aNode->id() << " [" << typeid(Target_FT).name() << "]" );
 

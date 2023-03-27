@@ -61,7 +61,7 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
   ssb.enter_contour(outer_contour_vertices_begin, outer_contour_vertices_end, point_converter);
   ssb.enter_contour_weights(outer_contour_weights_begin, outer_contour_weights_end, weight_converter);
 
-  for(HoleIterator hi = holes_begin; hi != holes_end; ++hi, ++holes_weights_begin)
+  for(HoleIterator hi = holes_begin; hi != holes_end && holes_weights_begin != holes_weights_end; ++hi, ++holes_weights_begin)
   {
     ssb.enter_contour(CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), point_converter);
     ssb.enter_contour_weights(holes_weights_begin->begin(), holes_weights_begin->end(), weight_converter);

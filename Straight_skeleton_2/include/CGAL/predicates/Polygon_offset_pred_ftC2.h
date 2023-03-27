@@ -33,7 +33,6 @@ compare_offset_against_isec_timeC2 ( typename K::FT const& t,
                                      Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri )
 {
   typedef typename K::FT FT ;
-  typedef typename K::Line_2 Line_2 ;
 
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;

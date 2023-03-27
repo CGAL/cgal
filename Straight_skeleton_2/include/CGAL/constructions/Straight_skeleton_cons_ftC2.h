@@ -236,7 +236,6 @@ boost::optional< typename K::Line_2 >
 compute_normalized_line_coeffC2( Segment_2_with_ID<K> const& e,
                                  Caches& aCaches )
 {
-  typedef typename K::Segment_2 Segment_2 ;
   typedef typename K::Line_2 Line_2 ;
 
   if(aCaches.mCoeff_cache.IsCached(e.mID) )
@@ -430,11 +429,11 @@ compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
 
   FT delta01 = CGAL::squared_distance(e0.target(),e1.source());
   if( CGAL_NTS is_finite(delta01) && CGAL_NTS is_zero(delta01))
-    return (true /*ok*/, e0.target());
+    return cgal_make_optional(e0.target());
 
   FT delta10 = CGAL::squared_distance(e1.target(),e0.source());
   if( CGAL_NTS is_finite(delta10) && CGAL_NTS is_zero(delta10))
-    return (true /*ok*/, e1.target());
+    return cgal_make_optional(e1.target());
 
   bool ok = false ;
   typename K::Point_2 mp ;
@@ -542,7 +541,6 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   typedef typename K::Direction_2 Direction_2 ;
   typedef typename K::Ray_2 Ray_2 ;
 
-  typedef boost::optional<Point_2> Optional_point_2 ;
   typedef boost::optional<Line_2> Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec time [" << typeid(FT).name() << "]");
@@ -778,7 +776,7 @@ compute_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_w
 
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
 
-  boost::optional< Rational< typename K::FT > > rRes =
+  boost::optional< Rational<FT> > rRes =
       tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? compute_normal_offset_lines_isec_timeC2    (tri, aCaches)
                                                           : compute_degenerate_offset_lines_isec_timeC2(tri, aCaches);
 
@@ -857,14 +855,12 @@ boost::optional< typename K::Point_2 >
 construct_artifical_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                              Caches& aCaches )
 {
-  typedef typename K::FT FT ;
-  typedef typename K::Boolean Boolean ;
   typedef typename K::Point_2 Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
   typedef typename K::Ray_2 Ray_2 ;
   typedef typename K::Direction_2 Direction_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec point [" << typeid(FT).name() << "]");
+  CGAL_STSKEL_TRAITS_TRACE("\n~~  Computing artificial isec point [" << typeid(typename K::FT).name() << "]");
   CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   CGAL_precondition(tri->e0() == tri->e1());
@@ -1008,7 +1004,7 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
       //  l2a*x + l2b*y + l2c - t = 0
       //  l0a*x + l0b*y + lambda = 0
 
-      const FT t = l0c - lambda ; // (3) - (1)
+      // const FT t = l0c - lambda ; // (3) - (1)
       const FT den = l2a*l0b - l0a*l2b;
 
       if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) )
@@ -1029,10 +1025,9 @@ boost::optional< typename K::Point_2 >
 construct_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                 Caches& aCaches )
 {
-  typedef typename K::FT FT ;
   typedef typename K::Point_2 Point_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("construct_offset_lines_isecC2(" << tri->id() << ") [" << typeid(FT).name() << "]" );
+  CGAL_STSKEL_TRAITS_TRACE("construct_offset_lines_isecC2(" << tri->id() << ") [" << typeid(typename K::FT).name() << "]" );
 
   if(aCaches.mPoint_cache.IsCached(tri->id()) )
     return aCaches.mPoint_cache.Get(tri->id()) ;

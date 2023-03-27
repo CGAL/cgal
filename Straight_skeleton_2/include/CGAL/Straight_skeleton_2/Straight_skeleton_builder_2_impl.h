@@ -48,7 +48,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( boost::optio
  ,mSSkel( new SSkel() )
 {
   if( mMaxTime )
+  {
     CGAL_STSKEL_BUILDER_TRACE(4, "Init with mMaxTime = " << *mMaxTime);
+  }
 }
 
 template<class Gt, class Ss, class V>
@@ -2247,7 +2249,7 @@ extreme_h /     \                          extreme_h /     \
     Halfedge_handle extreme_h = e.first;
     EventPtr artificial_event = e.second;
 
-    Halfedge_handle contour_h = artificial_event->triedge().e0() ;
+    // Halfedge_handle contour_h = artificial_event->triedge().e0() ;
 
     Halfedge_handle split_h = artificial_event->triedge().e2() ;
     Halfedge_handle split_h_prev = split_h->prev() ;

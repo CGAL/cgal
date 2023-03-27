@@ -1447,7 +1447,7 @@ public:
                                                      WeightIterator aWeightsEnd,
                                                      const Converter& cvt)
   {
-    auto lWeightsN = std::distance(aWeightsBegin, aWeightsEnd);
+    const std::size_t lWeightsN = std::distance(aWeightsBegin, aWeightsEnd);
     CGAL_assertion(lWeightsN <= mSSkel->SSkel::Base::size_of_faces());
 
     Face_iterator fit = std::next(mSSkel->SSkel::Base::faces_end(), -lWeightsN);

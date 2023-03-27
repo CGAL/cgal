@@ -234,7 +234,7 @@ bool test(const char* poly_filename,
   return true;
 }
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
   std::cout.precision(17);
   std::cerr.precision(17);
