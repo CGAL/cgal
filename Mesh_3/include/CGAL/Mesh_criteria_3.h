@@ -267,7 +267,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *     \cgalParamDescription{a constant describing a uniform lower-bound for the radii of the surface Delaunay balls.
  *                           Only facets with a radius larger than this bound will be refined.
  *                           If a facet is too small with respect to this criterion,
- *                           it will not be refined however the other criteria are met or not.}
+ *                           it will not be refined whether the other criteria are met or not.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_distance}
  *     \cgalParamDescription{a scalar field (resp. a constant) describing a space varying (resp. a uniform)
@@ -292,7 +292,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                            of the mesh tetrahedra.
  *                            Only tetrahedra with a circumradius larger than this bound will be refined.
  *                            If a cell is too small with respect to this criterion,
- *                            it will not be refined however the other criteria are met or not.}
+ *                            it will not be refined whether the other criteria are met or not.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
