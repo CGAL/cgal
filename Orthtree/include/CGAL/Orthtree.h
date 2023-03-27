@@ -26,6 +26,7 @@
 #include <CGAL/Dimension.h>
 
 #include <boost/function.hpp>
+#include <boost/core/span.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
 
@@ -148,7 +149,7 @@ private: // data members :
   PointRange& m_range;              /* input point range */
   PointMap m_point_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
-  Node m_root;                      /* root node of the orthtree */
+  std::vector<Node> m_nodes;    /* nodes of the tree; root is always at index 0 */
 
   Point m_bbox_min;                  /* input bounding box min value */
 
@@ -194,9 +195,11 @@ public:
            Traits traits = Traits())
     : m_traits(traits)
       , m_range(point_range)
-      , m_point_map(point_map)
-      , m_root() // todo: can this be default-constructed?
-  {
+      , m_point_map(point_map) {
+
+    m_nodes.reserve(2048); // todo: temporary, for testing
+    m_nodes.emplace_back();
+
     Array bbox_min;
     Array bbox_max;
 
@@ -240,7 +243,7 @@ public:
     // save orthtree attributes
     m_bbox_min = construct_point_d_from_array(bbox_min);
     m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
-    m_root.points() = {point_range.begin(), point_range.end()};
+    root().points() = {point_range.begin(), point_range.end()};
   }
 
   /// @}
@@ -252,7 +255,7 @@ public:
     : m_traits(other.m_traits)
       , m_range(other.m_range)
       , m_point_map(other.m_point_map)
-      , m_root(deep_copy(other.m_root))
+      , m_nodes(other.m_nodes) // todo: copying will require some extra management
       , m_bbox_min(other.m_bbox_min)
       , m_side_per_depth(other.m_side_per_depth) {}
 
@@ -261,11 +264,9 @@ public:
     : m_traits(other.m_traits)
       , m_range(other.m_range)
       , m_point_map(other.m_point_map)
-      , m_root(other.m_root)
+      , m_nodes(std::move(other.m_nodes))
       , m_bbox_min(other.m_bbox_min)
-      , m_side_per_depth(other.m_side_per_depth) {
-    other.m_root = Node{};
-  }
+      , m_side_per_depth(other.m_side_per_depth) {}
 
   // Non-necessary but just to be clear on the rule of 5:
 
@@ -298,15 +299,15 @@ public:
   void refine(const Split_predicate& split_predicate) {
 
     // If the tree has already been refined, reset it
-    if (!m_root.is_leaf())
-      unsplit(m_root);
+    if (!root().is_leaf())
+      unsplit(root());
 
     // Reset the side length map, too
     m_side_per_depth.resize(1);
 
     // Initialize a queue of nodes that need to be refined
     std::queue<Node*> todo;
-    todo.push(&m_root);
+    todo.push(&root());
 
     // Process items in the queue until it's consumed fully
     while (!todo.empty()) {
@@ -429,7 +430,7 @@ public:
 
     \return a const reference to the root node of the tree.
    */
-  const Node& root() const { return m_root; }
+  const Node& root() const { return m_nodes[0]; }
 
   /*!
     \brief provides read-write access to the root node, and by
@@ -439,7 +440,7 @@ public:
 
     \return a reference to the root node of the tree.
    */
-  Node& root() { return m_root; }
+  Node& root() { return m_nodes[0]; }
 
   /*!
     \brief returns the deepest level reached by a leaf node in this tree (root being level 0).
@@ -462,7 +463,7 @@ public:
   template <typename Traversal>
   Node_range traverse(const Traversal& traversal = Traversal()) const {
 
-    const Node* first = traversal.first(&m_root);
+    const Node* first = traversal.first(&root());
 
     Node_traversal_method_const next
       = [&](const Node* n) -> const Node* { return traversal.next(n); };
@@ -515,10 +516,10 @@ public:
   const Node& locate(const Point& point) const {
 
     // Make sure the point is enclosed by the orthtree
-    CGAL_precondition (CGAL::do_intersect(point, bbox(m_root)));
+    CGAL_precondition (CGAL::do_intersect(point, bbox(root())));
 
     // Start at the root node
-    auto* node_for_point = &m_root;
+    auto* node_for_point = &root();
 
     // Descend the tree until reaching a leaf node
     while (!node_for_point->is_leaf()) {
@@ -617,7 +618,7 @@ public:
       return false;
 
     // If all else is equal, recursively compare the trees themselves
-    return Node::is_topology_equal(rhs.m_root, m_root);
+    return Node::is_topology_equal(rhs.root(), root());
   }
 
   /*!
@@ -644,10 +645,12 @@ public:
     CGAL_precondition (node.is_leaf());
 
     // Split the node to create children
-    node.m_children = std::make_shared<typename Node::Children>();
+    using Children = typename Node::Children;
+    using Local_coordinates = typename Node::Local_coordinates;
     for (int index = 0; index < Degree::value; index++) {
-      (*node.m_children)[index] = std::move(Node(&node, {index}));
+      m_nodes.emplace_back(&node, Local_coordinates{index});
     }
+    node.m_children = Children{&*(m_nodes.end() - Degree::value), Degree::value}; // todo: temporary, for testing
 
     // Find the point to around which the node is split
     Point center = barycenter(node);
@@ -723,13 +726,14 @@ private: // functions :
     }
 
     // Split the point collection around the center point on this dimension
-    Range_iterator split_point = std::partition
-      (begin, end,
-       [&](const Range_type& a) -> bool {
-         // This should be done with cartesian iterator but it seems
-         // complicated to do efficiently
-         return (get(m_point_map, a)[int(dimension)] < center[int(dimension)]);
-       });
+    Range_iterator split_point = std::partition(
+      begin, end,
+      [&](const Range_type& a) -> bool {
+        // This should be done with cartesian iterator but it seems
+        // complicated to do efficiently
+        return (get(m_point_map, a)[int(dimension)] < center[int(dimension)]);
+      }
+    );
 
     // Further subdivide the first side of the split
     std::bitset<Dimension::value> coord_left = coord;
@@ -902,7 +906,7 @@ private: // functions :
       points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbors_recursive(query_sphere, m_root, points_list);
+    nearest_k_neighbors_recursive(query_sphere, root(), points_list);
 
     // Add all the points found to the output
     for (auto& item: points_list)

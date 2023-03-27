@@ -17,6 +17,7 @@
 #include <CGAL/Orthtree.h>
 
 #include <boost/range/iterator_range.hpp>
+#include <boost/core/span.hpp>
 
 #include <array>
 #include <memory>
@@ -58,7 +59,7 @@ public:
   /*!
    * \brief Array for containing the child nodes of this node.
    */
-  typedef std::array<Self, Degree::value> Children;
+  typedef boost::span<Self, Degree::value> Children;
   /// \endcond
 
   /*!
@@ -104,22 +105,14 @@ private:
   Self* m_parent = nullptr; // todo: use optional<reference_wrapper<Self>> instead of Self *
   std::uint8_t m_depth = 0;
   Global_coordinates m_global_coordinates{};
-  std::shared_ptr<Children> m_children{};
+  boost::optional<Children> m_children{};
 
 
   // Only the Orthtree class has access to the non-default
   // constructor, mutators, etc.
   friend Enclosing;
 
-public: // todo: Was there a good reason that all of this was private?
-
-  /*!
-   * \brief Access to the content held by this node
-   * \return a reference to the collection of point indices
-   */
-  Point_range& points() { return m_points; }
-
-  const Point_range& points() const { return m_points; }
+public:
 
   /// \name Construction
   /// @{
@@ -171,6 +164,29 @@ public: // todo: Was there a good reason that all of this was private?
 
 public:
 
+  /// \name Member Access
+  /// @{
+
+  /*!
+   * \brief Access to the content held by this node
+   * \return a reference to the collection of point indices
+   */
+  Point_range& points() { return m_points; }
+
+  const Point_range& points() const { return m_points; }
+
+  Children& children() {
+    CGAL_precondition (!is_leaf());
+    return m_children.get();
+  }
+
+  const Children& children() const {
+    CGAL_precondition (!is_leaf());
+    return m_children.get();
+  }
+
+  /// @}
+
   /// \name Type & Location
   /// @{
 
@@ -192,7 +208,7 @@ public:
     \pre `!is_null()`
   */
   bool is_leaf() const {
-    return (!m_children);
+    return (!m_children.has_value());
   }
 
   /*!
@@ -225,6 +241,7 @@ public:
     return m_global_coordinates;
   }
 
+  /// @}
 
   /// \name Adjacency
   /// @{
@@ -296,7 +313,7 @@ public:
     CGAL_precondition (!is_leaf());
     CGAL_precondition (index < Degree::value);
 
-    return (*m_children)[index];
+    return m_children.get()[index];
   }
 
   /*!
@@ -313,7 +330,7 @@ public:
     CGAL_precondition (!is_leaf());
     CGAL_precondition (index < Degree::value);
 
-    return (*m_children)[index];
+    return m_children.get()[index];
   }
 
   /*!
@@ -482,7 +499,7 @@ public:
 
     // todo: This is a trivial implementation, maybe it can be set to =default in c++17?
     return rhs.m_parent == m_parent &&
-           rhs.m_children == m_children &&
+           //rhs.m_children == m_children && // todo: this might be wrong for deep-copies
            rhs.m_points == m_points &&
            rhs.m_depth == m_depth &&
            rhs.m_global_coordinates == m_global_coordinates;
