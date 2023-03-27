@@ -361,7 +361,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
     CollectSplitEvents(aNode, aPrevEventTriedge) ;
 
   EventPtr lLEdgeEvent = FindEdgeEvent( lPrev , aNode, aPrevEventTriedge ) ;
+  CGAL_STSKEL_BUILDER_TRACE(2, "Done Left " << (lLEdgeEvent ? "Found" : "Not Found"));
   EventPtr lREdgeEvent = FindEdgeEvent( aNode , lNext, aPrevEventTriedge ) ;
+  CGAL_STSKEL_BUILDER_TRACE(2, "Done Right " << (lREdgeEvent ? "Found" : "Not Found"));
 
   bool lAcceptL = !!lLEdgeEvent ;
   bool lAcceptR = !!lREdgeEvent ;
@@ -548,6 +550,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::UpdatePQ( Vertex_handle aNode, Triedg
   Halfedge_handle lOBisector_C = aNode->primary_bisector() ;
   Halfedge_handle lOBisector_N = lNext->primary_bisector() ;
 
+  // @todo it's pointless to collect for both the left and the right for contour nodes
   if ( AreBisectorsCoincident(lOBisector_C,lOBisector_P) )
     HandleSimultaneousEdgeEvent( aNode, lPrev ) ;
   else if ( AreBisectorsCoincident(lOBisector_C,lOBisector_N) )

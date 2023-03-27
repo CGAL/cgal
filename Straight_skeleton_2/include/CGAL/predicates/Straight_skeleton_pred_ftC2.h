@@ -205,6 +205,8 @@ compare_offset_lines_isec_timesC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_
   typedef Quotient<FT>       Quotient ;
   typedef boost::optional<Rational> Optional_rational ;
 
+  CGAL_STSKEL_TRAITS_TRACE("compare_offset_lines_isec_timesC2(\n" << m << "\n" << n << "\n) [" << typeid(FT).name() << "]" );
+
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
   Optional_rational mt_ = compute_offset_lines_isec_timeC2(m, aCaches);
