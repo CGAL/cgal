@@ -18,16 +18,6 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#ifndef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/mark_domain_in_triangulation.h>
-#include <CGAL/Projection_traits_3.h>
-#else
-#include <CGAL/use.h>
-#endif
-
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Named_function_parameters.h>
@@ -39,6 +29,12 @@
 #include <vector>
 #include <utility>
 #include <CGAL/array.h>
+
+#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
+# ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+#   define CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+# endif
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -144,166 +140,17 @@ public:
       visitor.after_subface_created(face(opposite(res,pmesh),pmesh));
 
       visitor.after_subface_creations();
+
+      return true;
     }
-    else
-    {
-#ifndef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
-      if (use_cdt)
-      {
-        typedef CGAL::Projection_traits_3<Traits>   P_traits;
-        typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,
-                                                            P_traits>        Vb;
-        typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-                                                          P_traits>          Fb1;
-        typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-        typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-        typedef CGAL::No_constraint_intersection_tag                         Itag;
-        typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-                                                           TDS,
-                                                           Itag>             CDT;
-        P_traits cdt_traits(normal);
-        CDT cdt(cdt_traits);
-        return triangulate_face_with_CDT(f, pmesh, cdt, visitor);
-      }
-#else
-      CGAL_USE(use_cdt);
-#endif
-      return triangulate_face_with_hole_filling(f, pmesh, visitor);
-    }
-    return true;
+
+    return triangulate_face_with_hole_filling(f, pmesh, use_cdt, visitor);
   }
 
-  template<class CDT>
-  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, Visitor visitor)
-  {
-    typedef typename CDT::Vertex_handle Tr_Vertex_handle;
-
-    std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
-
-    try
-    {
-      halfedge_descriptor start = halfedge(f, pmesh);
-      halfedge_descriptor h = start;
-      Tr_Vertex_handle previous, first;
-      do
-      {
-        Tr_Vertex_handle vh = cdt.insert(get(_vpmap, target(h, pmesh)));
-        if (first == Tr_Vertex_handle()) {
-          first = vh;
-        }
-        vh->info() = h;
-        if(previous != Tr_Vertex_handle() && previous != vh) {
-          cdt.insert_constraint(previous, vh);
-        }
-        previous = vh;
-        h = next(h, pmesh);
-
-      } while( h != start );
-      cdt.insert_constraint(previous, first);
-    }
-    catch(const typename CDT::Intersection_of_constraints_exception&)
-    {
-      return false;
-    }
-
-    // sets mark is_external
-    for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
-          end = cdt.all_faces_end();
-        fit != end; ++fit)
-    {
-      fit->info().is_external = false;
-    }
-    std::queue<typename CDT::Face_handle> face_queue;
-    face_queue.push(cdt.infinite_vertex()->face());
-    while(! face_queue.empty() )
-    {
-      typename CDT::Face_handle fh = face_queue.front();
-      face_queue.pop();
-
-      if(fh->info().is_external)
-        continue;
-
-      fh->info().is_external = true;
-      for(int i = 0; i <3; ++i)
-      {
-        if(!cdt.is_constrained(typename CDT::Edge(fh, i)))
-        {
-          face_queue.push(fh->neighbor(i));
-        }
-      }
-    }
-
-    if(cdt.dimension() != 2 ||
-       cdt.number_of_vertices() != original_size)
-      return false;
-
-
-    // then modify the polyhedron
-    visitor.before_subface_creations(f);
-    // make_hole. (see comment in function body)
-    this->make_hole(halfedge(f, pmesh), pmesh);
-
-    for(typename CDT::Finite_edges_iterator eit = cdt.finite_edges_begin(),
-          end = cdt.finite_edges_end();
-        eit != end; ++eit)
-    {
-      typename CDT::Face_handle fh = eit->first;
-      const int index = eit->second;
-      typename CDT::Face_handle opposite_fh = fh->neighbor(eit->second);
-      const int opposite_index = opposite_fh->index(fh);
-
-      const Tr_Vertex_handle va = fh->vertex(cdt. cw(index));
-      const Tr_Vertex_handle vb = fh->vertex(cdt.ccw(index));
-
-      if( ! (is_external(fh) && is_external(opposite_fh))//not both fh are external
-          && ! cdt.is_constrained(*eit) )                  //and edge is not constrained
-      {
-        // strictly internal edge
-        halfedge_descriptor hnew = halfedge(add_edge(pmesh), pmesh),
-          hnewopp = opposite(hnew, pmesh);
-
-        fh->info().e[index] = hnew;
-        opposite_fh->info().e[opposite_index] = hnewopp;
-
-        set_target(hnew,    target(va->info(), pmesh), pmesh);
-        set_target(hnewopp, target(vb->info(), pmesh), pmesh);
-      }
-      if( cdt.is_constrained(*eit) ) //edge is constrained
-      {
-        if(!is_external(fh)) {
-          fh->info().e[index] = va->info();
-        }
-        if(!is_external(opposite_fh)) {
-          opposite_fh->info().e[opposite_index] = vb->info();
-        }
-      }
-    }
-    for(typename CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(),
-          end = cdt.finite_faces_end();
-        fit != end; ++fit)
-    {
-      if(!is_external(fit))
-      {
-        halfedge_descriptor h0 = fit->info().e[0];
-        halfedge_descriptor h1 = fit->info().e[1];
-        halfedge_descriptor h2 = fit->info().e[2];
-        CGAL_assertion(h0 != halfedge_descriptor());
-        CGAL_assertion(h1 != halfedge_descriptor());
-        CGAL_assertion(h2 != halfedge_descriptor());
-
-        set_next(h0, h1, pmesh);
-        set_next(h1, h2, pmesh);
-        set_next(h2, h0, pmesh);
-
-        Euler::fill_hole(h0, pmesh);
-        visitor.after_subface_created(face(h0, pmesh));
-      }
-    }
-    visitor.after_subface_creations();
-    return true;
-  }
-
-  bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh, Visitor visitor)
+  bool triangulate_face_with_hole_filling(face_descriptor f,
+                                          PM& pmesh,
+                                          const bool use_cdt,
+                                          Visitor visitor)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -322,7 +169,8 @@ public:
     typedef CGAL::Triple<int, int, int> Face_indices;
     std::vector<Face_indices> patch;
     PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch),
-                                   parameters::geom_traits(_traits));
+                                   parameters::geom_traits(_traits)
+                                              .use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch.empty())
       return false;
@@ -491,7 +339,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
 
   //Option
-  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
+  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
 
   typedef typename internal_np::Lookup_named_param_def<
     internal_np::visitor_t,
@@ -568,7 +416,7 @@ bool triangulate_faces(FaceRange face_range,
   Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
 
   //Option
-  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
+  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
 
   typedef typename internal_np::Lookup_named_param_def<
     internal_np::visitor_t,
@@ -659,97 +507,11 @@ private:
            typename PolygonRange,
            typename PMap,
            typename Visitor>
-  bool triangulate_face_with_CDT(const Polygon& polygon,
-                                 const PointRange& points,
-                                 PolygonRange& triangulated_polygons,
-                                 PMap pmap,
-                                 Visitor visitor)
-  {
-    using Point_ref = typename boost::property_traits<PMap>::reference;
-
-    using PK = CGAL::Projection_traits_3<Traits>;
-    using Vbb = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, PK>;
-    using Vb = CGAL::Triangulation_vertex_base_2<PK, Vbb>;
-    using Fb = CGAL::Constrained_triangulation_face_base_2<PK>;
-    using TDS = CGAL::Triangulation_data_structure_2<Vb,Fb>;
-    using Itag = CGAL::No_constraint_intersection_tag;
-    using CDT = CGAL::Constrained_Delaunay_triangulation_2<PK, TDS, Itag>;
-    using CDT_Vertex_handle = typename CDT::Vertex_handle;
-    using CDT_Face_handle = typename CDT::Face_handle;
-
-    const std::size_t original_size = polygon.size();
-
-    Vector n = CGAL::NULL_VECTOR;
-    for(std::size_t i=0; i<original_size; ++i)
-    {
-      const Point_ref pi = get(pmap, points[polygon[i]]);
-      const Point_ref pj = get(pmap, points[polygon[(i+1)%original_size]]);
-      const Point_ref pk = get(pmap, points[polygon[(i+2)%original_size]]);
-      const Vector ni = internal::triangle_normal(pi, pj, pk, _traits);
-
-      n = _traits.construct_sum_of_vectors_3_object()(n, ni);
-    }
-
-    if(n == CGAL::NULL_VECTOR)
-      return false;
-
-    PK cdt_traits(n);
-    CDT cdt(cdt_traits);
-
-    try
-    {
-      CDT_Vertex_handle previous, first;
-      for(std::size_t i : polygon)
-      {
-        CDT_Vertex_handle vh = cdt.insert(get(pmap, points[i]));
-        if(first == CDT_Vertex_handle())
-          first = vh;
-
-        vh->info() = i;
-        if(previous != CDT_Vertex_handle() && previous != vh)
-          cdt.insert_constraint(previous, vh);
-
-        previous = vh;
-      }
-      cdt.insert_constraint(previous, first);
-    }
-    catch(const typename CDT::Intersection_of_constraints_exception&)
-    {
-      return false;
-    }
-
-    if(cdt.dimension() != 2 || cdt.number_of_vertices() != polygon.size())
-      return false;
-
-    std::unordered_map<CDT_Face_handle, bool> in_domain_map;
-    boost::associative_property_map< std::unordered_map<CDT_Face_handle, bool> > in_domain(in_domain_map);
-
-    CGAL::mark_domain_in_triangulation(cdt, in_domain);
-
-    visitor.before_subface_creations(polygon);
-
-    for(CDT_Face_handle f : cdt.finite_face_handles())
-    {
-      if(!get(in_domain, f))
-        continue;
-
-      triangulated_polygons.push_back({f->vertex(0)->info(), f->vertex(1)->info(), f->vertex(2)->info()});
-      visitor.after_subface_created(triangulated_polygons.back());
-    }
-
-    visitor.after_subface_creations();
-    return true;
-  }
-
-  template<typename Polygon,
-           typename PointRange,
-           typename PolygonRange,
-           typename PMap,
-           typename Visitor>
   bool triangulate_face_with_hole_filling(const Polygon& polygon,
                                           const PointRange& points,
                                           PolygonRange& triangulated_polygons,
                                           PMap pmap,
+                                          const bool use_cdt,
                                           Visitor visitor)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
@@ -768,10 +530,14 @@ private:
     typedef CGAL::Triple<int, int, int> Face_indices;
     std::vector<Face_indices> patch;
     PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch),
-                                   parameters::geom_traits(_traits));
+                                   parameters::geom_traits(_traits)
+                                              .use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch.empty())
+    {
+      std::cout << "failed hole filling" << std::endl;
       return false;
+    }
 
     visitor.before_subface_creations(polygon);
 
@@ -838,20 +604,11 @@ private:
       visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-1]);
 
       visitor.after_subface_creations();
-    }
-    else
-    {
-#ifndef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
-      if(use_cdt)
-        return triangulate_face_with_CDT(polygon, points, triangulated_polygons, pmap, visitor);
 
-#else
-      CGAL_USE(use_cdt);
-#endif
-      return triangulate_face_with_hole_filling(polygon, points, triangulated_polygons, pmap, visitor);
+      return true;
     }
 
-    return true;
+    return triangulate_face_with_hole_filling(polygon, points, triangulated_polygons, pmap, use_cdt, visitor);
   }
 
 public:
@@ -981,8 +738,8 @@ bool triangulate_polygons(const PointRange& points,
                             Def_Kernel>::type;
   Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
 
-  //Option
-  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
+  // Option
+  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
 
   typedef typename internal_np::Lookup_named_param_def<
     internal_np::visitor_t,
