@@ -601,9 +601,9 @@ self_intersections(const FaceRange& face_range,
  *
  * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect.
-              In case `tmesh` contains some degenerate faces, for each degenerate face `f` a pair `(f,f)`
-              will be put in `out` before any other self intersection between non-degenerate faces.
-              These are the only pairs where degenerate faces will be reported.
+ *            In case `tmesh` contains some degenerate faces, for each degenerate face `f` a pair `(f,f)`
+ *            will be put in `out` before any other self intersection between non-degenerate faces.
+ *            These are the only pairs where degenerate faces will be reported.
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -767,7 +767,6 @@ bool does_self_intersect(const TriangleMesh& tmesh,
 
 
 #ifndef DOXYGEN_RUNNING
-
 template <class PointRange, class VPM>
 struct Property_map_for_soup
 {
@@ -791,16 +790,71 @@ struct Property_map_for_soup
     return get(map.vpm, map.points[k]);
   }
 };
+#endif
 
+/**
+ * \ingroup PMP_intersection_grp
+ *
+ * collects intersections between all the triangles in a triangle soup.
+ *
+ * Two triangles of the soup are said to intersect if the corresponding geometric triangles intersect
+ * and the intersection is not an edge nor a vertex of both triangles
+ * (with the same point ids, ignoring the orientation for an edge).
+ *
+ * A triangle soup self-intersects if at least two triangles of the soup intersect.
+ * Two triangles of the soup are considered to intersect if the geometric triangles are not disjoint
+ * and the intersection is not a restricted to the same point (i.e. with the same id) or to a triangle edge
+ * (i.e. with the same ids, the edge orientation being ignored).
+ *
+ * This function depends on the package \ref PkgBoxIntersectionD
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam PointRange a model of the concept `RandomAccessContainer`
+ *         whose value type is the point type
+ * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose
+ *         value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
+ * @tparam TriangleIdPairOutputIterator a model of `OutputIterator` holding objects of type
+ *   `std::pair<std::size_t,std::size_t>`
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param points points of the soup of polygons
+ * @param triangles each element in the range describes a triangle using the indices of the points in `points`
+ * @param out output iterator to be filled with all pairs of ids of triangles intersecting (the id of a triangle is its position in `triangles`).
+ *            In case the triangle soup contains some degenerate faces, for each degenerate face `t` with id `i` a pair `(i,i)`
+ *            will be put in `out` before any other self intersection between non-degenerate faces.
+ *            These are the only pairs where degenerate faces will be reported.
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
+ *                    of the vertex point map associated to the polygon mesh}
+ *     \cgalParamDefault{`CGAL::Identity_property_map`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the point type of the point map.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return `true` if the triangle soup self-intersects, and `false` otherwise.
+ *
+ * @sa `does_triangle_soup_self_intersect()`
+ */
 template <class ConcurrencyTag = Sequential_tag,
           class PointRange,
           class TriangleRange,
-          class FacePairOutputIterator,
+          class TriangleIdPairOutputIterator,
           class CGAL_NP_TEMPLATE_PARAMETERS>
-FacePairOutputIterator
+TriangleIdPairOutputIterator
 triangle_soup_self_intersections(const PointRange& points,
                                  const TriangleRange& triangles,
-                                 FacePairOutputIterator out,
+                                 TriangleIdPairOutputIterator out,
                                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
@@ -809,13 +863,60 @@ triangle_soup_self_intersections(const PointRange& points,
   typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::const_type Point_map_base;
   Point_map_base pm_base = choose_parameter<Point_map_base>(get_parameter(np, internal_np::point_map));
   typedef Property_map_for_soup<PointRange, Point_map_base> Point_map;
+  typedef typename GetPolygonSoupGeomTraits<PointRange, CGAL_NP_CLASS>::type GT;
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   return self_intersections<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
                                             std::make_pair(std::cref(points), std::cref(triangles)),
                                             out,
-                                            parameters::vertex_point_map(Point_map(points,pm_base)));
+                                            parameters::vertex_point_map(Point_map(points,pm_base)).
+                                            geom_traits(gt));
 }
 
+/**
+ * \ingroup PMP_intersection_grp
+ *
+ * \brief tests if a triangle soup self-intersects.
+ *
+ * A triangle soup self-intersects if at least two triangles of the soup intersect.
+ * Two triangles of the soup are said to intersect if the corresponding geometric triangles intersect
+ * and the intersection is not an edge nor a vertex of both triangles
+ * (with the same point ids, ignoring the orientation for an edge).
+ *
+ * This function depends on the package \ref PkgBoxIntersectionD
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam PointRange a model of the concept `RandomAccessContainer`
+ *         whose value type is the point type
+ * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose
+ *         value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param points points of the soup of polygons
+ * @param triangles each element in the range describes a triangle using the indices of the points in `points`
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
+ *                    of the vertex point map associated to the polygon mesh}
+ *     \cgalParamDefault{`CGAL::Identity_property_map`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the point type of the point map.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return `out`
+ *
+ * @sa `triangle_soup_self_intersections()`
+ */
 template <class ConcurrencyTag = Sequential_tag,
           class PointRange,
           class TriangleRange,
@@ -833,14 +934,14 @@ bool does_triangle_soup_self_intersect(const PointRange& points,
     typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::const_type Point_map_base;
     Point_map_base pm_base = choose_parameter<Point_map_base>(get_parameter(np, internal_np::point_map));
     typedef Property_map_for_soup<PointRange, Point_map_base> Point_map;
-
-    typename Kernel_traits<typename boost::property_traits<Point_map>::value_type>::Kernel k;
+    typedef typename GetPolygonSoupGeomTraits<PointRange, CGAL_NP_CLASS>::type GT;
+    GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
     internal::self_intersections_impl<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
                                                       std::make_pair(std::cref(points), std::cref(triangles)),
                                                       unused_out, true /*throw*/,
                                                       parameters::vertex_point_map(Point_map(points,pm_base))
-                                                                 .geom_traits(k));
+                                                                 .geom_traits(gt));
   }
   catch (const CGAL::internal::Throw_at_output_exception&)
   {
@@ -859,8 +960,6 @@ bool does_triangle_soup_self_intersect(const PointRange& points,
   #endif
   return false;
 }
-
-#endif
 
 }// namespace Polygon_mesh_processing
 }// namespace CGAL
