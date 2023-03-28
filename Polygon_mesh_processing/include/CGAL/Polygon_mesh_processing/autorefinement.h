@@ -1360,19 +1360,18 @@ void autorefine_soup_output(const PointRange& input_points,
  * refines a triangle mesh so that no triangles intersects in their interior.
  *
  * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm input triangulated surface mesh
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
- * \cgalParamNBegin{geom_traits}
- *   \cgalParamDescription{an instance of a geometric traits class}
- *   \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
- *   \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *   \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- * \cgalParamNEnd
- *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -1380,7 +1379,8 @@ void autorefine_soup_output(const PointRange& input_points,
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `TriangleMesh`.}
- *  \cgalParamNEnd
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  */
 template <class TriangleMesh,
