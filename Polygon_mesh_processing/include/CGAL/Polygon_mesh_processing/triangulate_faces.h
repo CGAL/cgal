@@ -159,7 +159,7 @@ public:
                                                           P_traits>          Fb1;
         typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
         typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-        typedef CGAL::Exact_intersections_tag                                Itag;
+        typedef CGAL::No_constraint_intersection_tag                         Itag;
         typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
                                                            TDS,
                                                            Itag>             CDT;
@@ -178,28 +178,35 @@ public:
   template<class CDT>
   bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, Visitor visitor)
   {
+    typedef typename CDT::Vertex_handle Tr_Vertex_handle;
+
     std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
 
-    // Halfedge_around_facet_circulator
-    typedef typename CDT::Vertex_handle Tr_Vertex_handle;
-    halfedge_descriptor start = halfedge(f, pmesh);
-    halfedge_descriptor h = start;
-    Tr_Vertex_handle previous, first;
-    do
+    try
     {
-      Tr_Vertex_handle vh = cdt.insert(get(_vpmap, target(h, pmesh)));
-      if (first == Tr_Vertex_handle()) {
-        first = vh;
-      }
-      vh->info() = h;
-      if(previous != Tr_Vertex_handle() && previous != vh) {
-        cdt.insert_constraint(previous, vh);
-      }
-      previous = vh;
-      h = next(h, pmesh);
+      halfedge_descriptor start = halfedge(f, pmesh);
+      halfedge_descriptor h = start;
+      Tr_Vertex_handle previous, first;
+      do
+      {
+        Tr_Vertex_handle vh = cdt.insert(get(_vpmap, target(h, pmesh)));
+        if (first == Tr_Vertex_handle()) {
+          first = vh;
+        }
+        vh->info() = h;
+        if(previous != Tr_Vertex_handle() && previous != vh) {
+          cdt.insert_constraint(previous, vh);
+        }
+        previous = vh;
+        h = next(h, pmesh);
 
-    } while( h != start );
-    cdt.insert_constraint(previous, first);
+      } while( h != start );
+      cdt.insert_constraint(previous, first);
+    }
+    catch(const typename CDT::Intersection_of_constraints_exception&)
+    {
+      return false;
+    }
 
     // sets mark is_external
     for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
@@ -667,7 +674,7 @@ private:
     using Vb = CGAL::Triangulation_vertex_base_2<PK, Vbb>;
     using Fb = CGAL::Constrained_triangulation_face_base_2<PK>;
     using TDS = CGAL::Triangulation_data_structure_2<Vb,Fb>;
-    using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
+    using Itag = CGAL::No_constraint_intersection_tag;
     using CDT = CGAL::Constrained_Delaunay_triangulation_2<PK, TDS, Itag>;
     using CDT_Vertex_handle = typename CDT::Vertex_handle;
     using CDT_Face_handle = typename CDT::Face_handle;
@@ -691,20 +698,27 @@ private:
     PK cdt_traits(n);
     CDT cdt(cdt_traits);
 
-    CDT_Vertex_handle previous, first;
-    for(std::size_t i : polygon)
+    try
     {
-      CDT_Vertex_handle vh = cdt.insert(get(pmap, points[i]));
-      if(first == CDT_Vertex_handle())
-        first = vh;
+      CDT_Vertex_handle previous, first;
+      for(std::size_t i : polygon)
+      {
+        CDT_Vertex_handle vh = cdt.insert(get(pmap, points[i]));
+        if(first == CDT_Vertex_handle())
+          first = vh;
 
-      vh->info() = i;
-      if(previous != CDT_Vertex_handle() && previous != vh)
-        cdt.insert_constraint(previous, vh);
+        vh->info() = i;
+        if(previous != CDT_Vertex_handle() && previous != vh)
+          cdt.insert_constraint(previous, vh);
 
-      previous = vh;
+        previous = vh;
+      }
+      cdt.insert_constraint(previous, first);
     }
-    cdt.insert_constraint(previous, first);
+    catch(const typename CDT::Intersection_of_constraints_exception&)
+    {
+      return false;
+    }
 
     if(cdt.dimension() != 2 || cdt.number_of_vertices() != polygon.size())
       return false;
