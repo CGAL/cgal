@@ -507,12 +507,12 @@ private:
            typename PolygonRange,
            typename PMap,
            typename Visitor>
-  bool triangulate_face_with_hole_filling(const Polygon& polygon,
-                                          const PointRange& points,
-                                          PolygonRange& triangulated_polygons,
-                                          PMap pmap,
-                                          const bool use_cdt,
-                                          Visitor visitor)
+  bool triangulate_polygon_with_hole_filling(const Polygon& polygon,
+                                             const PointRange& points,
+                                             PolygonRange& triangulated_polygons,
+                                             PMap pmap,
+                                             const bool use_cdt,
+                                             Visitor visitor)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -558,12 +558,12 @@ private:
             typename PolygonRange,
             typename PMap,
             typename Visitor>
-  bool triangulate_face(const Polygon& polygon,
-                        const PointRange& points,
-                        PolygonRange& triangulated_polygons,
-                        PMap pmap,
-                        const bool use_cdt,
-                        Visitor visitor)
+  bool triangulate_polygon(const Polygon& polygon,
+                           const PointRange& points,
+                           PolygonRange& triangulated_polygons,
+                           PMap pmap,
+                           const bool use_cdt,
+                           Visitor visitor)
   {
     using FT = typename Traits::FT;
     using Point_ref = typename boost::property_traits<PMap>::reference;
@@ -608,7 +608,7 @@ private:
       return true;
     }
 
-    return triangulate_face_with_hole_filling(polygon, points, triangulated_polygons, pmap, use_cdt, visitor);
+    return triangulate_polygon_with_hole_filling(polygon, points, triangulated_polygons, pmap, use_cdt, visitor);
   }
 
 public:
@@ -636,7 +636,7 @@ public:
         continue;
       }
 
-      if(!triangulate_face(polygon, points, triangulated_polygons, pmap, use_cdt, visitor))
+      if(!triangulate_polygon(polygon, points, triangulated_polygons, pmap, use_cdt, visitor))
         result = false;
     }
 
