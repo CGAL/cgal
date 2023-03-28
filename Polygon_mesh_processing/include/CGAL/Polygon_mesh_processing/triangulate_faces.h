@@ -41,11 +41,9 @@
 #include <CGAL/array.h>
 
 namespace CGAL {
-
 namespace Polygon_mesh_processing {
+namespace Triangulate_faces {
 
-namespace Triangulate_faces
-{
 /** \ingroup PMP_meshing_grp
 *   %Default new face visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
@@ -895,6 +893,12 @@ public:
 namespace Triangulate_polygons {
 namespace internal {
 
+/** \ingroup PMP_meshing_grp
+*   %Default new polygon visitor model of `PMPTriangulateFaceVisitor`.
+*   All its functions have an empty body. This class can be used as a
+*   base class if only some of the functions of the concept require to be
+*   overridden.
+*/
 struct Default_visitor
 {
   template <typename Polygon>
@@ -909,12 +913,55 @@ struct Default_visitor
 } // namespace internal
 } // namespace Triangulate_polygons
 
+/**
+* \ingroup PMP_meshing_grp
+*
+* triangulates all polygons of a polygon soup. This function depends on the package \ref PkgTriangulation2.
+*
+* @tparam PointRange a model of `ConstRange`. The value type of its iterator is the point type.
+* @tparam PolygonRange a model of the concept `SequenceContainer` and `Swappable`,
+*                      whose `value_type` is itself a model of the concepts `SequenceContainer`
+*                      whose `value_type` is `std::size_t`.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* @param points the point geometry of the soup to be triangulated
+* @param polygons the polygons to be triangulated
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{point_map}
+*     \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+*     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+*                    of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+*     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{visitor}
+*     \cgalParamDescription{a visitor that enables to track how polygons are triangulated into triangles}
+*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
+*     \cgalParamDefault{`Triangulate_polygons::Default_visitor`}
+*     \cgalParamExtra{Note that the visitor will be copied, so
+*                     it must not have any data member that does not have a reference-like type.}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
+* @return `true` if all the polygons have been triangulated.
+*
+* @see `triangulate_face()`
+*/
 template <typename PointRange,
           typename PolygonRange,
           typename NamedParameters = parameters::Default_named_parameters>
-bool triangulate_faces_tmp(const PointRange& points, // @tmp
-                           PolygonRange& polygons,
-                           const NamedParameters& np = parameters::default_values())
+bool triangulate_polygons(const PointRange& points,
+                          PolygonRange& polygons,
+                          const NamedParameters& np = parameters::default_values())
 {
   using Polygon = typename boost::range_value<PolygonRange>::type;
 
