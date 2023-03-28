@@ -1442,11 +1442,19 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     vertices[v->info()] = v;
   }
 
-  for (std::size_t i = 0; i < size; ++i) {
-    const std::size_t ip = (i + 1) % size;
-    if (vertices[i] != vertices[ip]) {
-      cdt.insert_constraint(vertices[i], vertices[ip]);
+  try
+  {
+    for (std::size_t i = 0; i < size; ++i) {
+      const std::size_t ip = (i + 1) % size;
+      if (vertices[i] != vertices[ip]) {
+        cdt.insert_constraint(vertices[i], vertices[ip]);
+      }
     }
+  }
+  catch(const typename CDT::Intersection_of_constraints_exception&)
+  {
+    visitor.end_planar_phase(false);
+    return false;
   }
 
   // Mark external faces.
