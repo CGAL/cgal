@@ -728,7 +728,7 @@ private:
 
     CGAL::mark_domain_in_triangulation(cdt, in_domain);
 
-    // visitor.before_subface_creations(f);
+    visitor.before_subface_creations(polygon);
 
     for(CDT_Face_handle f : cdt.finite_face_handles())
     {
@@ -736,10 +736,10 @@ private:
         continue;
 
       triangulated_polygons.push_back({f->vertex(0)->info(), f->vertex(1)->info(), f->vertex(2)->info()});
-      // visitor.after_subface_created(face(h0, pmesh));
+      visitor.after_subface_created(triangulated_polygons.back());
     }
 
-    // visitor.after_subface_creations();
+    visitor.after_subface_creations();
     return true;
   }
 
@@ -775,17 +775,17 @@ private:
     if(patch.empty())
       return false;
 
-    // visitor.before_subface_creations(f);
+    visitor.before_subface_creations(polygon);
 
     for(const Face_indices& triangle : patch)
     {
       triangulated_polygons.push_back({hole_points_indices[triangle.first],
                                        hole_points_indices[triangle.second],
                                        hole_points_indices[triangle.third]});
-      // visitor.after_subface_created(face(h0, pmesh));
+      visitor.after_subface_created(triangulated_polygons.back());
     }
 
-    // visitor.after_subface_creations();
+    visitor.after_subface_creations();
     return true;
   }
 
@@ -824,7 +824,7 @@ private:
       FT p1p3 = CGAL::cross_product(p2-p1, p3-p2) * CGAL::cross_product(p0-p3, p1-p0);
       FT p0p2 = CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
 
-      // visitor.before_subface_creations(f);
+      visitor.before_subface_creations(polygon);
       if(p0p2 > p1p3)
       {
         triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
@@ -836,10 +836,10 @@ private:
         triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
       }
 
-      // visitor.after_subface_created(face(res,pmesh));
-      // visitor.after_subface_created(face(opposite(res,pmesh),pmesh));
+      visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-2]);
+      visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-1]);
 
-      // visitor.after_subface_creations();
+      visitor.after_subface_creations();
     }
     else
     {
@@ -892,16 +892,22 @@ public:
 
 } // namespace internal
 
-namespace Triangulate_faces {
+namespace Triangulate_polygons {
 namespace internal {
 
-struct Default_visitor_tmp // @tmp
+struct Default_visitor
 {
+  template <typename Polygon>
+  void before_subface_creations(const Polygon& /*f_old*/) {}
 
+  template <typename Polygon>
+  void after_subface_created(const Polygon& /*f_new*/) {}
+
+  void after_subface_creations() {}
 };
 
 } // namespace internal
-} // namespace Triangulate_faces
+} // namespace Triangulate_polygons
 
 template <typename PointRange,
           typename PolygonRange,
@@ -934,10 +940,10 @@ bool triangulate_faces_tmp(const PointRange& points, // @tmp
   typedef typename internal_np::Lookup_named_param_def<
     internal_np::visitor_t,
     NamedParameters,
-    Triangulate_faces::internal::Default_visitor_tmp // default
+    Triangulate_polygons::internal::Default_visitor // default
   >::type Visitor;
   Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor),
-                                              Triangulate_faces::internal::Default_visitor_tmp());
+                                              Triangulate_polygons::internal::Default_visitor());
 
   PolygonRange triangulated_polygons;
   internal::Triangulate_polygon_soup_modifier<Kernel> modifier(traits);
@@ -949,7 +955,6 @@ bool triangulate_faces_tmp(const PointRange& points, // @tmp
 }
 
 } // namespace Polygon_mesh_processing
-
 } // namespace CGAL
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
