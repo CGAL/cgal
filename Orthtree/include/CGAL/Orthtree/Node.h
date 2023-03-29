@@ -226,20 +226,6 @@ public:
 
   /// @}
 
-  /// \name Adjacency
-  /// @{
-
-  /*!
-    \brief returns this node's parent.
-    \pre `!is_root()`
-   */
-  const Self* parent() const {
-    CGAL_precondition (!is_root());
-    return m_parent;
-  }
-
-  /// @}
-
   /// \name Point Range
   /// @{
 

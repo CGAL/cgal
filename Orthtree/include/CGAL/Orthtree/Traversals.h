@@ -36,9 +36,9 @@ namespace Orthtrees {
 // todo: all of these could be members of Orthtree
 
 template <typename Tree>
-const typename Tree::Node* next_sibling(const Tree &orthtree, const typename Tree::Node* n) {
+const typename Tree::Node* next_sibling(const Tree& orthtree, const typename Tree::Node* n) {
 
-  // Passing null returns the first node
+  // todo: maybe this should take a reference?
   if (nullptr == n)
     return nullptr;
 
@@ -55,30 +55,29 @@ const typename Tree::Node* next_sibling(const Tree &orthtree, const typename Tre
     return nullptr;
 
   // Otherwise, return the next child
-  return &(orthtree.children(*n->parent())[index + 1]);
+  return &(orthtree.children(orthtree.parent(*n))[index + 1]);
 }
 
 template <typename Tree>
-const typename Tree::Node* next_sibling_up(const Tree &orthtree, const typename Tree::Node* n) {
+const typename Tree::Node* next_sibling_up(const Tree& orthtree, const typename Tree::Node* n) {
 
   if (!n || n->is_root()) return nullptr;
 
-  auto up = n->parent();
+  auto up = &orthtree.parent(*n);
   while (nullptr != up) {
 
     if (nullptr != next_sibling(orthtree, up))
       return next_sibling(orthtree, up);
 
-    if (up->is_root()) return nullptr;
-
-    up = up->parent();
+    // todo: this could be cleaned up; it's probably not necessary to involve pointers here
+    up = up->is_root() ? nullptr : &orthtree.parent(*up);
   }
 
   return nullptr;
 }
 
 template <typename Tree>
-const typename Tree::Node* deepest_first_child(const Tree &orthtree, const typename Tree::Node* n) {
+const typename Tree::Node* deepest_first_child(const Tree& orthtree, const typename Tree::Node* n) {
 
   if (n == nullptr)
     return nullptr;
@@ -92,7 +91,7 @@ const typename Tree::Node* deepest_first_child(const Tree &orthtree, const typen
 
 
 template <typename Tree>
-const typename Tree::Node* first_child_at_depth(const Tree &orthtree, const typename Tree::Node* n, std::size_t depth) {
+const typename Tree::Node* first_child_at_depth(const Tree& orthtree, const typename Tree::Node* n, std::size_t depth) {
 
   if (!n)
     return nullptr;

@@ -396,7 +396,7 @@ public:
 
         // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
         // TODO: This check might be redundant, if it doesn't affect performance maybe I could remove it
-        if (neighbor->parent() == node->parent())
+        if (&parent(*neighbor) == &parent(*node))
           continue;
 
         // If it's already been split, skip it
@@ -639,6 +639,20 @@ public:
   /// \name Node Access
   /// @{
 
+  /*!
+    \brief returns this node's parent.
+    \pre `!is_root()`
+   */
+  const Node& parent(const Node& node) const {
+    CGAL_precondition (!node.is_root());
+    return *node.m_parent;
+  }
+
+  Node& parent(Node& node) {
+    CGAL_precondition (!node.is_root());
+    return *node.m_parent;
+  }
+
   using Children = typename Node::Children;
 
   Children& children(Node& node) {
@@ -836,11 +850,11 @@ public:
     // Check if this child has the opposite sign along the direction's axis
     if (node.local_coordinates()[dimension] != sign) {
       // This means the adjacent node is a direct sibling, the offset can be applied easily!
-      return &children(*node.parent())[node.local_coordinates().to_ulong() + offset];
+      return &children(parent(node))[node.local_coordinates().to_ulong() + offset];
     }
 
     // Find the parent's neighbor in that direction, if it exists
-    const Node* adjacent_node_of_parent = adjacent_node(*node.parent(), direction);
+    const Node* adjacent_node_of_parent = adjacent_node(parent(node), direction);
 
     // If the parent has no neighbor, then this node doesn't have one
     if (adjacent_node_of_parent == nullptr) return nullptr;
