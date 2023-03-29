@@ -340,6 +340,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 * @return `true` if all the faces have been triangulated.
 *
 * @see `triangulate_face()`
+* @see `triangulate_polygons()`
 */
 template <typename FaceRange,
           typename PolygonMesh,
@@ -412,6 +413,7 @@ bool triangulate_faces(FaceRange face_range,
 * @return `true` if all the faces have been triangulated.
 *
 * @see `triangulate_face()`
+* @see `triangulate_polygons()`
 */
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(PolygonMesh& pmesh,
@@ -636,7 +638,7 @@ public:
 *
 * @return `true` if all the polygons have been triangulated.
 *
-* @see `triangulate_face()`
+* @see `triangulate_faces()`
 */
 template <typename PointRange,
           typename PolygonRange,
