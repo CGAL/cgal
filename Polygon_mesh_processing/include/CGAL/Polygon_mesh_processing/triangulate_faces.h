@@ -428,7 +428,6 @@ bool triangulate_faces(PolygonMesh& pmesh,
 // Polygon Soup
 
 namespace Triangulate_polygons {
-namespace internal {
 
 /** \ingroup PMP_meshing_grp
 *   %Default new polygon visitor model of `PMPTriangulateFaceVisitor`.
@@ -447,7 +446,6 @@ struct Default_visitor
   void after_subface_creations() {}
 };
 
-} // namespace internal
 } // namespace Triangulate_polygons
 
 namespace internal {
@@ -532,7 +530,7 @@ public:
     using Visitor = typename internal_np::Lookup_named_param_def<
                                             internal_np::visitor_t,
                                             NamedParameters,
-                                            Triangulate_polygons::internal::Default_visitor // default
+                                            Triangulate_polygons::Default_visitor // default
                                           >::type;
 
     using parameters::choose_parameter;
@@ -541,7 +539,7 @@ public:
     PMap pm = choose_parameter<PMap>(get_parameter(np, internal_np::point_map));
     Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor),
-                                                Triangulate_polygons::internal::Default_visitor());
+                                                Triangulate_polygons::Default_visitor());
 
     typename Traits::Construct_cross_product_vector_3 cross_product =
       traits.construct_cross_product_vector_3_object();
