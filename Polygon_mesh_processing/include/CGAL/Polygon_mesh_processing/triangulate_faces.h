@@ -309,6 +309,8 @@ public:
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* @pre The face `f` is not degenerate.
+*
 * @return `true` if the face has been triangulated.
 *
 * @see `triangulate_faces()`
@@ -388,6 +390,8 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *  `\cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* @pre No face within `face_range` is degenerate.
+*
 * @return `true` if all the faces have been triangulated.
 *
 * @see `triangulate_face()`
@@ -461,6 +465,8 @@ bool triangulate_faces(FaceRange face_range,
 *                     it must not have any data member that does not have a reference-like type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
+* @pre No face of `pmesh` is degenerate.
 *
 * @return `true` if all the faces have been triangulated.
 *
@@ -702,6 +708,8 @@ struct Default_visitor
 *                     it must not have any data member that does not have a reference-like type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
+* @pre No polygon within `polygons` is degenerate.
 *
 * @return `true` if all the polygons have been triangulated.
 *
