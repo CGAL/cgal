@@ -44,6 +44,7 @@ namespace Triangulate_faces {
 */
 template<class PolygonMesh>
 struct Default_visitor
+  : public Hole_filling::Default_visitor
 {
   typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
@@ -266,7 +267,7 @@ public:
 *
 *   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
-*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
+*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor` and `PMPHolefillingVisitor`}
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
 *                     it must not have any data member that does not have a reference-like type.}
@@ -325,7 +326,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *
 *   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
-*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
+*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor` and `PMPHolefillingVisitor`}
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
 *                     it must not have any data member that does not have a reference-like type.}
@@ -398,7 +399,7 @@ bool triangulate_faces(FaceRange face_range,
 *
 *   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
-*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
+*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor` and `PMPHolefillingVisitor`}
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
 *                     it must not have any data member that does not have a reference-like type.}
@@ -436,6 +437,7 @@ namespace Triangulate_polygons {
 *   overridden.
 */
 struct Default_visitor
+  : public Hole_filling::Default_visitor
 {
   template <typename Polygon>
   void before_subface_creations(const Polygon& /*f_old*/) {}
@@ -622,7 +624,7 @@ public:
 *
 *   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor that enables to track how polygons are triangulated into triangles}
-*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
+*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor` and `PMPHolefillingVisitor`}
 *     \cgalParamDefault{`Triangulate_polygons::Default_visitor`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
 *                     it must not have any data member that does not have a reference-like type.}
