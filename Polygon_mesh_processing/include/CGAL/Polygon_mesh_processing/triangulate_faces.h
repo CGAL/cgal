@@ -623,7 +623,7 @@ public:
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{visitor}
-*     \cgalParamDescription{a visitor that enables to track how polygons are triangulated into triangles}
+*     \cgalParamDescription{a visitor that enables to track how polygons are divided into triangles}
 *     \cgalParamType{a class model of `PMPTriangulateFaceVisitor` and `PMPHolefillingVisitor`}
 *     \cgalParamDefault{`Triangulate_polygons::Default_visitor`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
