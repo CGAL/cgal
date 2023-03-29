@@ -206,7 +206,7 @@ public:
       Point_ref p3 = get(vpm, target(v3, pmesh));
 
       /* Chooses the diagonal that will split the quad in two triangles that maximize
-       * the scalar product of of the un-normalized normals of the two triangles.
+       * the scalar product of the un-normalized normals of the two triangles.
        * The lengths of the un-normalized normals (computed using cross-products of two vectors)
        *  are proportional to the area of the triangles.
        * Maximize the scalar product of the two normals will avoid skinny triangles,
@@ -353,7 +353,7 @@ bool triangulate_faces(FaceRange face_range,
 
   bool result = true;
 
-  // One need to store facet handles into a vector, because the list of
+  // One needs to store the facets into a vector, because the list of
   // facets of the polyhedron will be modified during the loop, and
   // that invalidates the range [facets_begin(), facets_end()[.
   std::vector<face_descriptor> facets(std::begin(face_range), std::end(face_range));
@@ -553,7 +553,7 @@ public:
       Point_ref p3 = get(pm, points[polygon[3]]);
 
       /* Chooses the diagonal that will split the quad in two triangles that maximize
-       * the scalar product of of the un-normalized normals of the two triangles.
+       * the scalar product of the un-normalized normals of the two triangles.
        * The lengths of the un-normalized normals (computed using cross-products of two vectors)
        *  are proportional to the area of the triangles.
        * Maximize the scalar product of the two normals will avoid skinny triangles,
@@ -596,8 +596,8 @@ public:
 * triangulates all polygons of a polygon soup. This function depends on the package \ref PkgTriangulation2.
 *
 * @tparam PointRange a model of `ConstRange`. The value type of its iterator is the point type.
-* @tparam PolygonRange a model of the concept `SequenceContainer` and `Swappable`,
-*                      whose `value_type` is itself a model of the concepts `SequenceContainer`
+* @tparam PolygonRange a model of the concepts `SequenceContainer` and `Swappable`,
+*                      whose `value_type` is itself a model of the concept `SequenceContainer`
 *                      whose `value_type` is `std::size_t`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
