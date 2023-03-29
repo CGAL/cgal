@@ -27,9 +27,7 @@ int main(int argc, char** argv)
   std::vector<boost::container::small_vector<std::size_t, 3>> input_triangles;
   CGAL::IO::read_polygon_soup(filename, input_points, input_triangles);
   PMP::repair_polygon_soup(input_points, input_triangles);
-
-  for (const auto& c : input_triangles)
-    if (c.size()!=3) return 0; // skipt for now
+  PMP::triangulate_polygons(input_points, input_triangles);
 
   std::vector<Point> output_points;
   std::vector<std::array<std::size_t, 3>> output_triangles;
