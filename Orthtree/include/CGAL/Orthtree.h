@@ -436,11 +436,21 @@ public:
     \brief provides read-write access to the root node, and by
     extension the rest of the tree.
 
-    todo: why wasn't this provided previously?
-
     \return a reference to the root node of the tree.
    */
   Node& root() { return m_nodes[0]; }
+
+  std::size_t index(const Node& node) const {
+    return std::distance(m_nodes.data(), &node);
+  }
+
+  const Node& operator[](std::size_t index) const {
+    return m_nodes[index];
+  }
+
+  Node& operator[](std::size_t index) {
+    return m_nodes[index];
+  }
 
   /*!
     \brief returns the deepest level reached by a leaf node in this tree (root being level 0).
@@ -664,6 +674,86 @@ public:
     CGAL_precondition (!node.is_leaf());
     return node.m_children.get();
   }
+
+  const Node* next_sibling(const Node* n) const {
+
+    // todo: maybe this should take a reference?
+    if (nullptr == n)
+      return nullptr;
+
+    // If this node has no parent, it has no siblings
+    if (n->is_root())
+      return nullptr;
+
+    // Find out which child this is
+    std::size_t index = n->local_coordinates().to_ulong();
+
+    constexpr static int degree = Node::Degree::value;
+
+    // Return null if this is the last child
+    if (int(index) == degree - 1)
+      return nullptr;
+
+    // Otherwise, return the next child
+    return &(children(parent(*n))[index + 1]);
+  }
+
+  const Node* next_sibling_up(const Node* n) const {
+
+    if (!n || n->is_root()) return nullptr;
+
+    auto up = &parent(*n);
+    while (nullptr != up) {
+
+      if (nullptr != next_sibling(up))
+        return next_sibling(up);
+
+      // todo: this could be cleaned up; it's probably not necessary to involve pointers here
+      up = up->is_root() ? nullptr : &parent(*up);
+    }
+
+    return nullptr;
+  }
+
+  const Node* deepest_first_child(const Node* n) const {
+
+    if (n == nullptr)
+      return nullptr;
+
+    // Find the deepest child on the left
+    auto first = n;
+    while (!first->is_leaf())
+      first = &children(*first)[0];
+    return first;
+  }
+
+
+  const Node* first_child_at_depth(const Node* n, std::size_t depth) const {
+
+    if (!n)
+      return nullptr;
+
+    std::stack<const Node*> todo;
+    todo.push(n);
+
+    if (n->depth() == depth)
+      return n;
+
+    while (!todo.empty()) {
+      const Node* node = todo.top();
+      todo.pop();
+
+      if (node->depth() == depth)
+        return node;
+
+      if (!node->is_leaf())
+        for (int i = 0; i < Node::Degree::value; ++i)
+          todo.push(&((*node)[std::size_t(Node::Degree::value - 1 - i)]));
+    }
+
+    return nullptr;
+  }
+
 
   /*!
   \brief splits the node into subnodes.
