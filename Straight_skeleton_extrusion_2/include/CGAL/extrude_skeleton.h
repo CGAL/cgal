@@ -296,7 +296,7 @@ class Extrusion_builder
   using Vbb = CGAL::Triangulation_vertex_base_2<Geom_traits, Vb>;
   using Fb = CGAL::Constrained_triangulation_face_base_2<Geom_traits>;
   using TDS = CGAL::Triangulation_data_structure_2<Vb,Fb>;
-  using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
+  using Itag = CGAL::No_constraint_intersection_tag;
   using CDT = CGAL::Constrained_Delaunay_triangulation_2<Geom_traits, TDS, Itag>;
   using CDT_Vertex_handle = typename CDT::Vertex_handle;
   using CDT_Face_handle = typename CDT::Face_handle;
@@ -341,9 +341,18 @@ public:
 #endif
 
     CDT cdt;
-    cdt.insert_constraint(p.outer_boundary().begin(), p.outer_boundary().end(), true /*close*/);
-    for(auto h_it=p.holes_begin(); h_it!=p.holes_end(); ++h_it)
-      cdt.insert_constraint(h_it->begin(), h_it->end(), true /*close*/);
+
+    try
+    {
+      cdt.insert_constraint(p.outer_boundary().begin(), p.outer_boundary().end(), true /*close*/);
+      for(auto h_it=p.holes_begin(); h_it!=p.holes_end(); ++h_it)
+        cdt.insert_constraint(h_it->begin(), h_it->end(), true /*close*/);
+    }
+    catch(const typename CDT::Intersection_of_constraints_exception& e)
+    {
+      std::cerr << "Warning: Failed to triangulate horizontal face" << std::endl;
+      return;
+    }
 
     std::size_t id = points.size(); // point ID offset (previous faces inserted their points)
     for(CDT_Vertex_handle vh : cdt.finite_vertex_handles())
@@ -399,7 +408,16 @@ public:
     const Vector_3 n = CGAL::cross_product(face_points[1] - face_points[0], face_points[2] - face_points[0]);
     PK traits(n);
     PCDT pcdt(traits);
-    pcdt.insert_constraint(face_points.begin(), face_points.end(), true /*close*/);
+
+    try
+    {
+      pcdt.insert_constraint(face_points.begin(), face_points.end(), true /*close*/);
+    }
+    catch(const typename PCDT::Intersection_of_constraints_exception& e)
+    {
+      std::cerr << "Warning: Failed to triangulate skeleton face" << std::endl;
+      return;
+    }
 
     std::size_t id = points.size(); // point ID offset (previous faces inserted their points);
     for(PCDT_Vertex_handle vh : pcdt.finite_vertex_handles())
