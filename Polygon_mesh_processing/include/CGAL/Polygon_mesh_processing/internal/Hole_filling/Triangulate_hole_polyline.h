@@ -15,6 +15,11 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
+# ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+#   define CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+# endif
+#endif
 
 #include <CGAL/value_type_traits.h>
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
