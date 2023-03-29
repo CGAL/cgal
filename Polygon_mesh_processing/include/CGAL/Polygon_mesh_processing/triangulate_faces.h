@@ -15,20 +15,22 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+
+#include <CGAL/array.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
 
-#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
+#include <algorithm>
+#include <iterator>
+#include <map>
 #include <queue>
-#include <vector>
 #include <utility>
-#include <CGAL/array.h>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -51,68 +53,157 @@ struct Default_visitor
   void after_subface_created(face_descriptor /*f_new*/) {}
 };
 
-} //end namespace Triangulate_faces
+} // namespace Triangulate_faces
 
 namespace internal {
 
-template <class PM
-          , typename VertexPointMap
-          , typename Kernel
-          , typename Visitor>
+template <typename PolygonMesh>
 class Triangulate_polygon_mesh_modifier
 {
-  typedef Kernel Traits;
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
-  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
-  typedef typename Kernel::Point_3 Point;
-
-  struct Face_info {
-    typename boost::graph_traits<PM>::halfedge_descriptor e[3];
-    bool is_external;
-  };
-
-  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
-  VertexPointMap _vpmap;
-  Traits _traits;
-
-public:
-  Triangulate_polygon_mesh_modifier(VertexPointMap vpmap, const Traits& traits = Traits())
-    : _vpmap(vpmap), _traits(traits)
+private:
+  template <typename VPM,
+            typename Visitor,
+            typename NamedParameters>
+  bool triangulate_face_with_hole_filling(face_descriptor f,
+                                          PolygonMesh& pmesh,
+                                          const VPM vpm,
+                                          Visitor visitor,
+                                          const NamedParameters& np)
   {
-  }
+    namespace PMP = CGAL::Polygon_mesh_processing;
 
-  template <class Face_handle>
-  bool is_external(Face_handle fh) const {
-    return fh->info().is_external;
-  }
+    using Point = typename boost::property_traits<VPM>::value_type;
 
-  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt, Visitor visitor)
-  {
-    typedef typename Traits::FT FT;
+    // gather halfedges around the face
+    std::vector<Point> hole_points;
+    std::vector<vertex_descriptor> border_vertices;
+    CGAL_assertion(CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size() > 0);
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      vertex_descriptor v = source(h, pmesh);
+      hole_points.push_back(get(vpm, v));
+      border_vertices.push_back(v);
+    }
 
-    typename Traits::Vector_3 normal =
-      Polygon_mesh_processing::compute_face_normal(
-        f, pmesh, CGAL::parameters::geom_traits(_traits)
-                                   .vertex_point_map(_vpmap));
+    // use hole filling
+    typedef CGAL::Triple<int, int, int> Face_indices;
+    std::vector<Face_indices> patch;
+    PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch), np);
 
-    if(normal == typename Traits::Vector_3(0,0,0))
+    if(patch.empty())
       return false;
 
-    std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
+    // triangulate the hole
+    std::map<std::pair<int, int>, halfedge_descriptor > halfedge_map;
+    int i = 0;
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      int j = std::size_t(i+1) == hole_points.size() ? 0 : i+1;
+      halfedge_map[std::make_pair(i, j)] = h;
+      ++i;
+    }
+
+    visitor.before_subface_creations(f);
+
+    bool first = true;
+    std::vector<halfedge_descriptor> hedges;
+    hedges.reserve(4);
+    for(const Face_indices& triangle : patch)
+    {
+      if(first)
+        first = false;
+      else
+        f = add_face(pmesh);
+
+      visitor.after_subface_created(f);
+
+      std::array<int, 4> indices = make_array(triangle.first,
+                                              triangle.second,
+                                              triangle.third,
+                                              triangle.first);
+      for (int i=0; i<3; ++i)
+      {
+        typename std::map< std::pair<int, int> , halfedge_descriptor >::iterator insert_res =
+          halfedge_map.emplace(std::make_pair(indices[i], indices[i+1]),
+                               boost::graph_traits<PolygonMesh>::null_halfedge()).first;
+        if(insert_res->second == boost::graph_traits<PolygonMesh>::null_halfedge())
+        {
+          halfedge_descriptor nh = halfedge(add_edge(pmesh), pmesh);
+          insert_res->second = nh;
+          halfedge_map[std::make_pair(indices[i+1], indices[i])] = opposite(nh, pmesh);
+        }
+        hedges.push_back(insert_res->second);
+      }
+
+      hedges.push_back(hedges.front());
+      for(int i=0; i<3;++i)
+      {
+        set_next(hedges[i], hedges[i+1], pmesh);
+        set_face(hedges[i], f, pmesh);
+        set_target(hedges[i], border_vertices[indices[i+1]], pmesh);
+      }
+
+      set_halfedge(f, hedges[0], pmesh);
+      hedges.clear();
+    }
+
+    visitor.after_subface_creations();
+
+    return true;
+  }
+
+public:
+  template <typename NamedParameters>
+  bool operator()(face_descriptor f,
+                  PolygonMesh& pmesh,
+                  const NamedParameters& np)
+  {
+    using Traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+    using VPM = typename GetVertexPointMap<PolygonMesh, NamedParameters>::type;
+
+    using FT = typename Traits::FT;
+    using Point_ref = typename boost::property_traits<VPM>::reference;
+    using Vector = typename Traits::Vector_3;
+
+    using Visitor = typename internal_np::Lookup_named_param_def<
+                                            internal_np::visitor_t,
+                                            NamedParameters,
+                                            Triangulate_faces::Default_visitor<PolygonMesh> // default
+                                          >::type;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    CGAL_precondition(is_valid_face_descriptor(f, pmesh));
+
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_property_map(vertex_point, pmesh));
+    Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor),
+                                                Triangulate_faces::Default_visitor<PolygonMesh>());
+
+    typename Traits::Construct_cross_product_vector_3 cross_product =
+      traits.construct_cross_product_vector_3_object();
+
+    typename boost::graph_traits<PolygonMesh>::degree_size_type  original_size = degree(f, pmesh);
+    if(original_size <= 3)
+      return true;
+
     if(original_size == 4)
     {
       halfedge_descriptor v0, v1, v2, v3;
       v0 = halfedge(f, pmesh);
-      Point_ref p0 = get(_vpmap, target(v0, pmesh));
+      Point_ref p0 = get(vpm, target(v0, pmesh));
       v1 = next(v0, pmesh);
-      Point_ref p1 = get(_vpmap, target(v1, pmesh));
+      Point_ref p1 = get(vpm, target(v1, pmesh));
       v2 = next(v1, pmesh);
-      Point_ref p2 = get(_vpmap, target(v2, pmesh));
+      Point_ref p2 = get(vpm, target(v2, pmesh));
       v3 = next(v2, pmesh);
-      Point_ref p3 = get(_vpmap, target(v3, pmesh));
+      Point_ref p3 = get(vpm, target(v3, pmesh));
 
       /* Chooses the diagonal that will split the quad in two triangles that maximize
        * the scalar product of of the un-normalized normals of the two triangles.
@@ -123,150 +214,23 @@ public:
        * In particular, if the two triangles are oriented in different directions,
        * the scalar product will be negative.
        */
-      FT p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
-      FT p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
       visitor.before_subface_creations(f);
-      halfedge_descriptor res = (p0p2>p1p3)
-                              ?  CGAL::Euler::split_face(v0, v2, pmesh)
-                              :  CGAL::Euler::split_face(v1, v3, pmesh);
 
-      visitor.after_subface_created(face(res,pmesh));
-      visitor.after_subface_created(face(opposite(res,pmesh),pmesh));
+      const FT p1p3 = cross_product(p2-p1, p3-p2) * cross_product(p0-p3, p1-p0);
+      const FT p0p2 = cross_product(p1-p0, p1-p2) * cross_product(p3-p2, p3-p0);
+      halfedge_descriptor res = (p0p2>p1p3) ?  CGAL::Euler::split_face(v0, v2, pmesh)
+                                            :  CGAL::Euler::split_face(v1, v3, pmesh);
+
+      visitor.after_subface_created(face(res, pmesh));
+      visitor.after_subface_created(face(opposite(res, pmesh), pmesh));
 
       visitor.after_subface_creations();
 
       return true;
     }
 
-    return triangulate_face_with_hole_filling(f, pmesh, use_cdt, visitor);
+    return triangulate_face_with_hole_filling(f, pmesh, vpm, visitor, np);
   }
-
-  bool triangulate_face_with_hole_filling(face_descriptor f,
-                                          PM& pmesh,
-                                          const bool use_cdt,
-                                          Visitor visitor)
-  {
-    namespace PMP = CGAL::Polygon_mesh_processing;
-
-    // gather halfedges around the face
-    std::vector<Point> hole_points;
-    std::vector<vertex_descriptor> border_vertices;
-    CGAL_assertion(CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size() > 0);
-    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
-    {
-      vertex_descriptor v = source(h, pmesh);
-      hole_points.push_back( get(_vpmap, v) );
-      border_vertices.push_back(v);
-    }
-
-    // use hole filling
-    typedef CGAL::Triple<int, int, int> Face_indices;
-    std::vector<Face_indices> patch;
-    PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch),
-                                   parameters::geom_traits(_traits)
-                                              .use_2d_constrained_delaunay_triangulation(use_cdt));
-
-    if(patch.empty())
-      return false;
-
-    // triangulate the hole
-    std::map< std::pair<int, int> , halfedge_descriptor > halfedge_map;
-    int i=0;
-    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
-    {
-      int j = std::size_t(i+1) == hole_points.size() ? 0 : i+1;
-      halfedge_map[ std::make_pair(i, j) ] = h;
-      ++i;
-    }
-
-    visitor.before_subface_creations(f);
-    bool first = true;
-    std::vector<halfedge_descriptor> hedges;
-    hedges.reserve(4);
-    for(const Face_indices& triangle : patch)
-    {
-      if (first)
-        first=false;
-      else
-        f=add_face(pmesh);
-      visitor.after_subface_created(f);
-
-      std::array<int, 4> indices =
-        make_array( triangle.first,
-                    triangle.second,
-                    triangle.third,
-                    triangle.first );
-      for (int i=0; i<3; ++i)
-      {
-        typename std::map< std::pair<int, int> , halfedge_descriptor >::iterator insert_res =
-          halfedge_map.insert(
-            std::make_pair( std::make_pair(indices[i], indices[i+1]),
-                            boost::graph_traits<PM>::null_halfedge() ) ).first;
-        if (insert_res->second == boost::graph_traits<PM>::null_halfedge())
-        {
-          halfedge_descriptor nh = halfedge(add_edge(pmesh), pmesh);
-          insert_res->second=nh;
-          halfedge_map[std::make_pair(indices[i+1], indices[i])]=opposite(nh, pmesh);
-        }
-        hedges.push_back(insert_res->second);
-      }
-      hedges.push_back(hedges.front());
-      for(int i=0; i<3;++i)
-      {
-        set_next(hedges[i], hedges[i+1], pmesh);
-        set_face(hedges[i], f, pmesh);
-        set_target(hedges[i], border_vertices[indices[i+1]], pmesh);
-      }
-      set_halfedge(f, hedges[0], pmesh);
-      hedges.clear();
-    }
-    visitor.after_subface_creations();
-    return true;
-  }
-
-  template<typename FaceRange>
-  bool operator()(FaceRange face_range, PM& pmesh, bool use_cdt, Visitor visitor)
-  {
-   bool result = true;
-    // One need to store facet handles into a vector, because the list of
-    // facets of the polyhedron will be modified during the loop, and
-    // that invalidates the range [facets_begin(), facets_end()[.
-    std::vector<face_descriptor> facets;
-    facets.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
-
-    //only consider non-triangular faces
-    for(face_descriptor fit : face_range)
-      if ( next( next( halfedge(fit, pmesh), pmesh), pmesh)
-        !=       prev( halfedge(fit, pmesh), pmesh) )
-        facets.push_back(fit);
-
-    // Iterates on the vector of face descriptors
-    for(face_descriptor f : facets)
-    {
-      if(!this->triangulate_face(f, pmesh, use_cdt, visitor))
-       result = false;
-    }
-    return result;
-  }
-
-  void make_hole(halfedge_descriptor h, PM& pmesh)
-  {
-    //we are not using Euler::make_hole because it has a precondition
-    //that the hole is not made on the boundary of the mesh
-    //here we allow making a hole on the boundary, and the pair(s) of
-    //halfedges that become border-border are fixed by the connectivity
-    //setting made in operator()
-    CGAL_assertion(!is_border(h, pmesh));
-    face_descriptor fd = face(h, pmesh);
-
-    for(halfedge_descriptor hd : halfedges_around_face(h, pmesh))
-    {
-      CGAL::internal::set_border(hd, pmesh);
-    }
-    remove_face(fd, pmesh);
-  }
-
-
 }; // class Triangulate_polygon_mesh_modifier
 
 } // namespace internal
@@ -309,45 +273,23 @@ public:
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* This function calls `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`.
+* Refer to its documentation for its named parameters.
+*
 * @pre The face `f` is not degenerate.
 *
 * @return `true` if the face has been triangulated.
 *
 * @see `triangulate_faces()`
 */
-template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
+template <typename PolygonMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                       PolygonMesh& pmesh,
                       const NamedParameters& np = parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
-
-  //VertexPointMap
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                 get_property_map(vertex_point, pmesh));
-
-  //Kernel
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
-  Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
-
-  //Option
-  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
-
-  typedef typename internal_np::Lookup_named_param_def<
-    internal_np::visitor_t,
-    NamedParameters,
-    Triangulate_faces::Default_visitor<PolygonMesh>//default
-  >::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(
-                             get_parameter(np, internal_np::visitor),
-                             Triangulate_faces::Default_visitor<PolygonMesh>());
-
-  internal::Triangulate_polygon_mesh_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
-  return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
+  internal::Triangulate_polygon_mesh_modifier<PolygonMesh> modifier;
+  return modifier(f, pmesh, np);
 }
 
 /**
@@ -390,43 +332,39 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *  `\cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* This function calls `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()` for each face.
+* Refer to its documentation for its named parameters.
+*
 * @pre No face within `face_range` is degenerate.
 *
 * @return `true` if all the faces have been triangulated.
 *
 * @see `triangulate_face()`
 */
-template <typename FaceRange, typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
+template <typename FaceRange,
+          typename PolygonMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(FaceRange face_range,
                        PolygonMesh& pmesh,
                        const NamedParameters& np = parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
-  //VertexPointMap
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+  bool result = true;
 
-  //Kernel
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
-  Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
+  // One need to store facet handles into a vector, because the list of
+  // facets of the polyhedron will be modified during the loop, and
+  // that invalidates the range [facets_begin(), facets_end()[.
+  std::vector<face_descriptor> facets(std::begin(face_range), std::end(face_range));
 
-  //Option
-  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+  internal::Triangulate_polygon_mesh_modifier<PolygonMesh> modifier;
+  for(face_descriptor f : facets)
+  {
+    if(!modifier(f, pmesh, np))
+      result = false;
+  }
 
-  typedef typename internal_np::Lookup_named_param_def<
-    internal_np::visitor_t,
-    NamedParameters,
-    Triangulate_faces::Default_visitor<PolygonMesh>//default
-  >::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(
-                                  get_parameter(np, internal_np::visitor),
-                                  Triangulate_faces::Default_visitor<PolygonMesh>());
-
-  internal::Triangulate_polygon_mesh_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
-  return modifier(face_range, pmesh, use_cdt, visitor);
+  return result;
 }
 
 /**
@@ -466,6 +404,9 @@ bool triangulate_faces(FaceRange face_range,
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* This function calls `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()` on all the faces of the polygon mesh.
+* Refer to its documentation for its named parameters.
+*
 * @pre No face of `pmesh` is degenerate.
 *
 * @return `true` if all the faces have been triangulated.
@@ -483,169 +424,6 @@ bool triangulate_faces(PolygonMesh& pmesh,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Polygon Soup
-
-namespace internal {
-
-template <typename Kernel>
-class Triangulate_polygon_soup_modifier
-{
-  using Traits = Kernel;
-  using Point = typename Traits::Point_3;
-  using Vector = typename Traits::Vector_3;
-
-private:
-  Traits _traits;
-
-public:
-  Triangulate_polygon_soup_modifier(const Traits& traits = Traits())
-    : _traits(traits)
-  { }
-
-private:
-  template<typename Polygon,
-           typename PointRange,
-           typename PolygonRange,
-           typename PMap,
-           typename Visitor>
-  bool triangulate_polygon_with_hole_filling(const Polygon& polygon,
-                                             const PointRange& points,
-                                             PolygonRange& triangulated_polygons,
-                                             PMap pmap,
-                                             const bool use_cdt,
-                                             Visitor visitor)
-  {
-    namespace PMP = CGAL::Polygon_mesh_processing;
-
-    // gather halfedges around the face
-    std::vector<Point> hole_points;
-    std::vector<std::size_t> hole_points_indices;
-
-    for(std::size_t i : polygon)
-    {
-      hole_points.push_back(get(pmap, points[i]));
-      hole_points_indices.push_back(i);
-    }
-
-    // use hole filling
-    typedef CGAL::Triple<int, int, int> Face_indices;
-    std::vector<Face_indices> patch;
-    PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch),
-                                   parameters::geom_traits(_traits)
-                                              .use_2d_constrained_delaunay_triangulation(use_cdt));
-
-    if(patch.empty())
-    {
-      std::cout << "failed hole filling" << std::endl;
-      return false;
-    }
-
-    visitor.before_subface_creations(polygon);
-
-    for(const Face_indices& triangle : patch)
-    {
-      triangulated_polygons.push_back({hole_points_indices[triangle.first],
-                                       hole_points_indices[triangle.second],
-                                       hole_points_indices[triangle.third]});
-      visitor.after_subface_created(triangulated_polygons.back());
-    }
-
-    visitor.after_subface_creations();
-    return true;
-  }
-
-  template <typename Polygon,
-            typename PointRange,
-            typename PolygonRange,
-            typename PMap,
-            typename Visitor>
-  bool triangulate_polygon(const Polygon& polygon,
-                           const PointRange& points,
-                           PolygonRange& triangulated_polygons,
-                           PMap pmap,
-                           const bool use_cdt,
-                           Visitor visitor)
-  {
-    using FT = typename Traits::FT;
-    using Point_ref = typename boost::property_traits<PMap>::reference;
-
-    const std::size_t original_size = polygon.size();
-    if(original_size == 4)
-    {
-      Point_ref p0 = get(pmap, points[polygon[0]]);
-      Point_ref p1 = get(pmap, points[polygon[1]]);
-      Point_ref p2 = get(pmap, points[polygon[2]]);
-      Point_ref p3 = get(pmap, points[polygon[3]]);
-
-      /* Chooses the diagonal that will split the quad in two triangles that maximize
-       * the scalar product of of the un-normalized normals of the two triangles.
-       * The lengths of the un-normalized normals (computed using cross-products of two vectors)
-       *  are proportional to the area of the triangles.
-       * Maximize the scalar product of the two normals will avoid skinny triangles,
-       * and will also taken into account the cosine of the angle between the two normals.
-       * In particular, if the two triangles are oriented in different directions,
-       * the scalar product will be negative.
-       */
-      FT p1p3 = CGAL::cross_product(p2-p1, p3-p2) * CGAL::cross_product(p0-p3, p1-p0);
-      FT p0p2 = CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
-
-      visitor.before_subface_creations(polygon);
-      if(p0p2 > p1p3)
-      {
-        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
-        triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
-      }
-      else
-      {
-        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
-        triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
-      }
-
-      visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-2]);
-      visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-1]);
-
-      visitor.after_subface_creations();
-
-      return true;
-    }
-
-    return triangulate_polygon_with_hole_filling(polygon, points, triangulated_polygons, pmap, use_cdt, visitor);
-  }
-
-public:
-  template<typename PolygonRange,
-           typename PointRange,
-           typename PMap,
-           typename Visitor>
-  bool operator()(const PolygonRange& polygons,
-                  const PointRange& points,
-                  PolygonRange& triangulated_polygons,
-                  PMap pmap,
-                  const bool use_cdt,
-                  Visitor visitor)
-  {
-    using Polygon = typename boost::range_value<PolygonRange>::type;
-
-    bool result = true;
-    triangulated_polygons.reserve(polygons.size());
-
-    for(const Polygon& polygon : polygons)
-    {
-      if(polygon.size() <= 3)
-      {
-        triangulated_polygons.push_back(polygon);
-        continue;
-      }
-
-      if(!triangulate_polygon(polygon, points, triangulated_polygons, pmap, use_cdt, visitor))
-        result = false;
-    }
-
-    return result;
-  }
-
-}; // class Triangulate_polygon_soup_modifier
-
-} // namespace internal
 
 namespace Triangulate_polygons {
 namespace internal {
@@ -669,6 +447,148 @@ struct Default_visitor
 
 } // namespace internal
 } // namespace Triangulate_polygons
+
+namespace internal {
+
+class Triangulate_polygon_soup_modifier
+{
+private:
+  template<typename Polygon,
+           typename PointRange,
+           typename PolygonRange,
+           typename PMap,
+           typename Visitor,
+           typename NamedParameters>
+  bool triangulate_polygon_with_hole_filling(const Polygon& polygon,
+                                             const PointRange& points,
+                                             PolygonRange& triangulated_polygons, // output
+                                             PMap pm,
+                                             Visitor visitor,
+                                             const NamedParameters& np)
+  {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    using Point = typename boost::property_traits<PMap>::value_type;
+    using Kernel = typename CGAL::Kernel_traits<Point>::type;
+
+    // gather halfedges around the face
+    std::vector<Point> hole_points;
+    std::vector<std::size_t> hole_points_indices;
+
+    for(std::size_t i : polygon)
+    {
+      hole_points.push_back(get(pm, points[i]));
+      hole_points_indices.push_back(i);
+    }
+
+    // use hole filling
+    typedef CGAL::Triple<int, int, int> Face_indices;
+    std::vector<Face_indices> patch;
+    PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch), np);
+
+    if(patch.empty())
+      return false;
+
+    visitor.before_subface_creations(polygon);
+
+    for(const Face_indices& triangle : patch)
+    {
+      triangulated_polygons.push_back({hole_points_indices[triangle.first],
+                                       hole_points_indices[triangle.second],
+                                       hole_points_indices[triangle.third]});
+      visitor.after_subface_created(triangulated_polygons.back());
+    }
+
+    visitor.after_subface_creations();
+    return true;
+  }
+
+public:
+  template <typename Polygon,
+            typename PointRange,
+            typename PolygonRange,
+            typename NamedParameters>
+  bool operator()(const Polygon& polygon,
+                  const PointRange& points,
+                  PolygonRange& triangulated_polygons,
+                  const NamedParameters& np)
+  {
+    // PointMap
+    using PMap = typename GetPointMap<PointRange, NamedParameters>::const_type;
+    using Point_ref = typename boost::property_traits<PMap>::reference;
+
+    // Kernel
+    using Point = typename boost::property_traits<PMap>::value_type;
+    using Def_Kernel = typename CGAL::Kernel_traits<Point>::Kernel;
+    using Traits = typename internal_np::Lookup_named_param_def<
+                              internal_np::geom_traits_t,
+                              NamedParameters,
+                              Def_Kernel>::type;
+    using FT = typename Traits::FT;
+
+    // Visitor
+    using Visitor = typename internal_np::Lookup_named_param_def<
+                                            internal_np::visitor_t,
+                                            NamedParameters,
+                                            Triangulate_polygons::internal::Default_visitor // default
+                                          >::type;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    PMap pm = choose_parameter<PMap>(get_parameter(np, internal_np::point_map));
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+    Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor),
+                                                Triangulate_polygons::internal::Default_visitor());
+
+    typename Traits::Construct_cross_product_vector_3 cross_product =
+      traits.construct_cross_product_vector_3_object();
+
+    const std::size_t original_size = polygon.size();
+    if(original_size == 4)
+    {
+      Point_ref p0 = get(pm, points[polygon[0]]);
+      Point_ref p1 = get(pm, points[polygon[1]]);
+      Point_ref p2 = get(pm, points[polygon[2]]);
+      Point_ref p3 = get(pm, points[polygon[3]]);
+
+      /* Chooses the diagonal that will split the quad in two triangles that maximize
+       * the scalar product of of the un-normalized normals of the two triangles.
+       * The lengths of the un-normalized normals (computed using cross-products of two vectors)
+       *  are proportional to the area of the triangles.
+       * Maximize the scalar product of the two normals will avoid skinny triangles,
+       * and will also taken into account the cosine of the angle between the two normals.
+       * In particular, if the two triangles are oriented in different directions,
+       * the scalar product will be negative.
+       */
+      visitor.before_subface_creations(polygon);
+
+      const FT p1p3 = cross_product(p2-p1, p3-p2) * cross_product(p0-p3, p1-p0);
+      const FT p0p2 = cross_product(p1-p0, p1-p2) * cross_product(p3-p2, p3-p0);
+      if(p0p2 > p1p3)
+      {
+        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
+        triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
+      }
+      else
+      {
+        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
+        triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
+      }
+
+      visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-2]);
+      visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-1]);
+
+      visitor.after_subface_creations();
+
+      return true;
+    }
+
+    return triangulate_polygon_with_hole_filling(polygon, points, triangulated_polygons, pm, visitor, np);
+  }
+}; // class Triangulate_polygon_soup_modifier
+
+} // namespace internal
 
 /**
 * \ingroup PMP_meshing_grp
@@ -709,6 +629,9 @@ struct Default_visitor
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* This function calls `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()` for each polygon.
+* Refer to its documentation for its named parameters.
+*
 * @pre No polygon within `polygons` is degenerate.
 *
 * @return `true` if all the polygons have been triangulated.
@@ -724,36 +647,23 @@ bool triangulate_polygons(const PointRange& points,
 {
   using Polygon = typename boost::range_value<PolygonRange>::type;
 
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  //VertexPointMap
-  using PMap = typename GetPointMap<PointRange, NamedParameters>::const_type;
-  PMap pmap = choose_parameter<PMap>(get_parameter(np, internal_np::point_map));
-
-  //Kernel
-  using Point = typename boost::property_traits<PMap>::value_type;
-  using Def_Kernel = typename CGAL::Kernel_traits<Point>::Kernel;
-  using Kernel = typename internal_np::Lookup_named_param_def<
-                            internal_np::geom_traits_t,
-                            NamedParameters,
-                            Def_Kernel>::type;
-  Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
-
-  // Option
-  bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
-
-  typedef typename internal_np::Lookup_named_param_def<
-    internal_np::visitor_t,
-    NamedParameters,
-    Triangulate_polygons::internal::Default_visitor // default
-  >::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor),
-                                              Triangulate_polygons::internal::Default_visitor());
-
   PolygonRange triangulated_polygons;
-  internal::Triangulate_polygon_soup_modifier<Kernel> modifier(traits);
-  const bool success = modifier(polygons, points, triangulated_polygons, pmap, use_cdt, visitor);
+  triangulated_polygons.reserve(polygons.size());
+
+  bool success = true;
+
+  internal::Triangulate_polygon_soup_modifier modifier;
+  for(const Polygon& polygon : polygons)
+  {
+    if(polygon.size() <= 3)
+    {
+      triangulated_polygons.push_back(polygon);
+      continue;
+    }
+
+    if(!modifier(polygon, points, triangulated_polygons, np))
+      success = false;
+  }
 
   std::swap(polygons, triangulated_polygons);
 
