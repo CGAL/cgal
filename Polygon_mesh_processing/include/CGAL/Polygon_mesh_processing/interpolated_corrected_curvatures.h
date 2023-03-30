@@ -436,7 +436,8 @@ template<typename GT>
 Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from_anisotropic_measures(
   const std::array<typename GT::FT, 3 * 3> anisotropic_measure,
   const typename GT::FT v_mu0,
-  const typename GT::Vector_3 u_GT
+  const typename GT::Vector_3 u_GT,
+  const typename GT::FT avg_edge_length
 )
 {
   // putting anisotropic measure in matrix form
@@ -448,7 +449,7 @@ Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from
 
   // constant factor K to force the principal direction eigenvectors to be tangential to the surface
   Eigen::Matrix<typename GT::FT, 3, 1> u(u_GT.x(), u_GT.y(), u_GT.z());
-  const typename GT::FT K = 1000 * v_mu0;
+  const typename GT::FT K = 1000 * avg_edge_length * v_mu0;
 
   // symmetrizing and adding the constant term
   v_muXY = 0.5 * (v_muXY + v_muXY.transpose()) + K * u * u.transpose();
@@ -668,9 +669,13 @@ template<typename PolygonMesh,
 
   // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
   typename GT::FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
+
+  // calculate avg_edge_length as it is used in case radius is 0, and in the principal curvature computation later
+  typename GT::FT avg_edge_length = average_edge_length<PolygonMesh, GT>(pmesh);
+
   // if the radius is 0, we use a small epsilon to expand the ball (scaled with the average edge length)
   if (is_zero(radius))
-    radius = average_edge_length<PolygonMesh, GT>(pmesh) * 1e-6;
+    radius = avg_edge_length * 1e-6;
 
   // determine which curvatures are selected
   const bool is_mean_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_mean_curvature_t>::value;
@@ -723,7 +728,9 @@ template<typename PolygonMesh,
     const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
       vertex_measures.anisotropic_measure,
       vertex_measures.area_measure,
-      v_normal);
+      v_normal,
+      avg_edge_length
+      );
     set_value(principal_curvatures_and_directions, get_parameter(np, internal_np::vertex_principal_curvatures_and_directions));
   }
 }
@@ -775,6 +782,7 @@ private:
   Vertex_position_map vpm;
   Vertex_normal_map vnm;
   FT ball_radius;
+  FT avg_edge_length;
 
   bool is_mean_curvature_selected;
   bool is_Gaussian_curvature_selected;
@@ -813,6 +821,7 @@ private:
 
     // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
     const FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
+    avg_edge_length = average_edge_length<PolygonMesh, GT>(pmesh);
     set_ball_radius(radius);
 
     // check which curvature maps are provided by the user (determines which curvatures are computed)
@@ -828,7 +837,7 @@ private:
   void set_ball_radius(const FT radius) {
     // if given radius is 0, we use a small epsilon to expand the ball (scaled by the average edge length)
     if (is_zero(radius))
-      ball_radius = average_edge_length<PolygonMesh, GT>(pmesh) * 1e-6;
+      ball_radius = avg_edge_length * 1e-6;
     else
       ball_radius = radius;
   }
@@ -1010,7 +1019,8 @@ private:
         const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
           vertex_measures.anisotropic_measure,
           vertex_measures.area_measure,
-          v_normal
+          v_normal,
+          avg_edge_length
           );
         put(principal_curvatures_and_directions_map, v, principal_curvatures_and_directions);
       }
