@@ -13,8 +13,6 @@
 #ifndef CGAL_SLS_EXTRUSION_EXTRUDE_SKELETON_H
 #define CGAL_SLS_EXTRUSION_EXTRUDE_SKELETON_H
 
-#define CGAL_SLS_OUTPUT_FILES
-
 #include <CGAL/license/Straight_skeleton_extrusion_2.h>
 
 #ifdef CGAL_SLS_DEBUG_DRAW
