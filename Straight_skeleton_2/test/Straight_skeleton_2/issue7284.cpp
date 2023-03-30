@@ -1,8 +1,5 @@
 #ifdef CGAL_USE_GMPXX
 
-#include <vector>
-#include <algorithm>
-
 #include <CGAL/draw_polygon_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 
@@ -17,6 +14,10 @@
 #include <CGAL/gmpxx.h>
 
 #include <boost/shared_ptr.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel E_Kernel;
 typedef E_Kernel::FT E_FT;

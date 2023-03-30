@@ -22,19 +22,21 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
+#include <CGAL/draw_polygon_2.h>
+#include <CGAL/draw_polygon_with_holes_2.h>
+#include <CGAL/draw_straight_skeleton_2.h>
+
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/create_offset_polygons_2.h>
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
-#include <CGAL/draw_straight_skeleton_2.h>
+
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_2/IO/print.h>
-
-#include <CGAL/Bbox_2.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/draw_polygon_2.h>
 
 #include <boost/shared_ptr.hpp>
 
