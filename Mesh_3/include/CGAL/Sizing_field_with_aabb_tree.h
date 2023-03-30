@@ -39,7 +39,7 @@ namespace CGAL {
 * At each query point `p`, the field value is the minimum of the distances to
 *   - the surface patches `p` does not belong to, and
 *   - for each curve `C` it does belong to, the intersection points of `C` with
-*     plane orthogonal to `C` and passing through `p`.
+*     the plane orthogonal to `C` and passing through `p`.
 *
 * This sizing field is designed to be used for mesh complex edges,
 * in `Mesh_edge_criteria_3` or as `edge_size` in `Mesh_criteria_3`.

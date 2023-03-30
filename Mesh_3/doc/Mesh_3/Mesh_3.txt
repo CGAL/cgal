@@ -1013,7 +1013,7 @@ Right: the mesh with added 1D-features along sharp edges and edges shared
 by at least two of the input polyhedral surfaces forming the complex.
 \cgalFigureCaptionEnd
 
-\subsubsection Mesh_3EdgesSizingField Sizing field for feature edges
+\subsubsection Mesh_3EdgesSizingField Sizing Field for Feature Edges
 
 The following example shows how to generate a mesh from a polyhedral complex
 or a polyhedral surface with polyline features.

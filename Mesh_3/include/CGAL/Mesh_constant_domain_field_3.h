@@ -97,7 +97,7 @@ public:
   /// @{
 
   /*!
-  * Returns size
+  * Returns the size of query points of dimension `dim` and index `index`.
   */
   FT operator()(const Point_3&, const int dim, const Index& index) const
   {
