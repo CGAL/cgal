@@ -171,12 +171,32 @@ to detect corner vertices on the border of the planar regions detected by runnin
 algorithm on border segments of the patch.
 
 
-\cgalFigureBegin{decimate_cheese, decimate_cheese.png, decimate_colors.png}
-Remeshing of planar patches in two models. On the right, the output has not been retriangulated and the patch ids
-have been assigned to the input and the output meshes, allowing an identical color scheme.
-\cgalFigureEnd
+\cgalFigureAnchor{decimate_cheese}
+<center>
+<table border=0>
+<tr>
+<td><img src="decimate_cheese.png" style="width:100%;"/></td>
+<td><img src="decimate_colors.png" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{decimate_cheese}
+Remeshing of planar patches in two models: (a) planar patches in the cheese model are retriangulated
+                                           (b) the remeshed version of this model contains 14 vertices and
+                                               has not been retriangulated, the patch ids have been assigned to the input
+                                               and the output meshes, allowing an identical color scheme.
+\cgalFigureCaptionEnd
 
-\cgalFigureBegin{decimate_rg_sphere, decimate_rg_sphere.png}
+\cgalFigureAnchor{decimate_rg_sphere}
+<center>
+<table border=0>
+<tr>
+<td><img src="decimate_rg_sphere.png" style="width:100%;"/></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{decimate_rg_sphere}
 Remeshing of planar patches using region growing for the detection of planar patches.
 From left to right: input mesh, remeshed version, remeshed version using the same angle threshold but better approximation error.
 \cgalFigureEnd
