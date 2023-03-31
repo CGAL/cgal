@@ -197,7 +197,8 @@ public:
       , m_range(point_range)
       , m_point_map(point_map) {
 
-    m_nodes.reserve(1'000'000); // todo: temporary, for testing
+    // fixme: this can be removed once traversal doesn't require pointer stability
+    m_nodes.reserve(1'000'000);
     m_nodes.emplace_back();
 
     Array bbox_min;
@@ -266,7 +267,11 @@ public:
       , m_point_map(other.m_point_map)
       , m_nodes(std::move(other.m_nodes))
       , m_bbox_min(other.m_bbox_min)
-      , m_side_per_depth(other.m_side_per_depth) {}
+      , m_side_per_depth(other.m_side_per_depth) {
+
+    // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
+    other.m_nodes.emplace_back();
+  }
 
   // Non-necessary but just to be clear on the rule of 5:
 
@@ -471,12 +476,13 @@ public:
     \return a forward input iterator over the nodes of the tree
    */
   template <typename Traversal>
-  Node_range traverse(const Traversal& traversal) const {
+  Node_range traverse(Traversal traversal) const {
 
     const Node* first = traversal.first();
 
-    Node_traversal_method_const next
-      = [&](const Node* n) -> const Node* { return traversal.next(n); };
+    Node_traversal_method_const next = [=](const Node* n) -> const Node* {
+      return traversal.next(n);
+    };
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
                                       Traversal_iterator<const Node>());
@@ -485,7 +491,7 @@ public:
   // todo: document this convenience function
   template <typename Traversal>
   Node_range traverse() const {
-    return traverse<Traversal>(Traversal(*this));
+    return traverse<Traversal>({*this});
   }
 
   /*!
@@ -655,24 +661,26 @@ public:
    */
   const Node& parent(const Node& node) const {
     CGAL_precondition (!node.is_root());
-    return *node.m_parent;
+    return m_nodes[node.m_parent_index.get()];
   }
 
   Node& parent(Node& node) {
     CGAL_precondition (!node.is_root());
-    return *node.m_parent;
+    return m_nodes[node.m_parent_index.get()];
   }
 
+  // todo: these types can probably be moved out of Node
   using Children = typename Node::Children;
+  using Children_const = typename Node::Children_const;
 
-  Children& children(Node& node) {
+  Children children(Node& node) {
     CGAL_precondition (!node.is_leaf());
-    return node.m_children.get();
+    return Children{&m_nodes[node.m_children_index.get()], Degree::value};
   }
 
-  const Children& children(const Node& node) const {
+  Children_const children(const Node& node) const {
     CGAL_precondition (!node.is_leaf());
-    return node.m_children.get();
+    return Children_const{&m_nodes[node.m_children_index.get()], Degree::value};
   }
 
   const Node* next_sibling(const Node* n) const {
@@ -770,12 +778,11 @@ public:
     CGAL_precondition (node.is_leaf());
 
     // Split the node to create children
-    using Children = typename Node::Children;
     using Local_coordinates = typename Node::Local_coordinates;
-    for (int index = 0; index < Degree::value; index++) {
-      m_nodes.emplace_back(&node, Local_coordinates{index});
+    for (int i = 0; i < Degree::value; i++) {
+      m_nodes.emplace_back(&node, index(node), Local_coordinates{i});
     }
-    node.m_children = Children{&*(m_nodes.end() - Degree::value), Degree::value}; // todo: temporary, for testing
+    node.m_children_index = m_nodes.size() - Degree::value;
 
     // Find the point to around which the node is split
     Point center = barycenter(node);
@@ -792,31 +799,10 @@ public:
    * Idempotent, un-splitting a leaf node has no effect.
    */
   void unsplit(Node& node) {
-    node.m_children.reset();
+    node.m_children_index.reset();
   }
 
-  // todo: this can be removed when nodes store indices instead of references!
-  Node deep_copy(const Node& node, Node* parent = nullptr) const {
-
-    Node out;
-
-    out.m_parent = parent;
-    out.m_points = node.m_points;
-    out.m_depth = node.m_depth;
-    out.m_global_coordinates = node.m_global_coordinates;
-
-    if (!node.is_leaf()) {
-      out.m_children = std::make_shared<typename Node::Children>();
-      for (int index = 0; index < Degree::value; index++)
-        (*out.m_children)[index] = deep_copy((*node.m_children)[index], &out);
-    }
-
-    return out;
-  }
-
-
-  // TODO: Document this
-  // TODO: Could this method name be reduced to just "center" ?
+  // todo: documentation
   Point barycenter(const Node& node) const {
 
     // Determine the side length of this node
@@ -999,8 +985,8 @@ private: // functions :
     Range_iterator split_point = std::partition(
       begin, end,
       [&](const Range_type& a) -> bool {
-        // This should be done with cartesian iterator but it seems
-        // complicated to do efficiently
+        // This should be done with cartesian iterator,
+        // but it seems complicated to do efficiently
         return (get(m_point_map, a)[int(dimension)] < center[int(dimension)]);
       }
     );

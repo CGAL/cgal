@@ -57,6 +57,8 @@ public:
 
   const Node* next(const Node* n) const {
 
+    if (n == nullptr) return nullptr;
+
     if (n->is_leaf()) {
 
       auto next = m_orthtree.next_sibling(n);

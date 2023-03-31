@@ -60,6 +60,7 @@ public:
    * \brief Array for containing the child nodes of this node.
    */
   typedef boost::span<Self, Degree::value> Children;
+  typedef boost::span<const Self, Degree::value> Children_const;
   /// \endcond
 
   /*!
@@ -102,11 +103,12 @@ private:
   /// \endcond
 
   Point_range m_points;
-  Self* m_parent = nullptr; // todo: use optional<reference_wrapper<Self>> instead of Self *
   std::uint8_t m_depth = 0;
   Global_coordinates m_global_coordinates{};
-  boost::optional<Children> m_children{};
 
+  // todo
+  boost::optional<std::size_t> m_parent_index{};
+  boost::optional<std::size_t> m_children_index{};
 
   // Only the Orthtree class has access to the non-default
   // constructor, mutators, etc.
@@ -136,8 +138,10 @@ public:
     \param parent the node containing this one
     \param index this node's relationship to its parent
   */
-  explicit Node(Self* parent, Local_coordinates local_coordinates)
-    : m_parent(parent) {
+  explicit Node(Self* parent, boost::optional<std::size_t> parent_index, Local_coordinates local_coordinates) :
+    m_parent_index(parent_index) {
+
+    // todo: this can be cleaned up; it probably doesn't need to take a reference to the parent
 
     if (parent != nullptr) {
       m_depth = parent->m_depth + 1;
@@ -183,7 +187,7 @@ public:
     \pre `!is_null()`
   */
   bool is_root() const {
-    return m_parent == nullptr;
+    return !m_parent_index.has_value();
   }
 
   /*!
@@ -191,7 +195,7 @@ public:
     \pre `!is_null()`
   */
   bool is_leaf() const {
-    return (!m_children.has_value());
+    return !m_children_index.has_value();
   }
 
   /*!
@@ -270,10 +274,9 @@ public:
    * \return whether the nodes have different topology.
    */
   bool operator==(const Self& rhs) const {
-
     // todo: This is a trivial implementation, maybe it can be set to =default in c++17?
-    return rhs.m_parent == m_parent &&
-           //rhs.m_children == m_children && // todo: this might be wrong for deep-copies
+    return rhs.m_parent_index == m_parent_index &&
+           rhs.m_children_index == m_children_index &&
            rhs.m_points == m_points &&
            rhs.m_depth == m_depth &&
            rhs.m_global_coordinates == m_global_coordinates;

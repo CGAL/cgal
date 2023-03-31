@@ -30,10 +30,9 @@ namespace CGAL {
  *
  * \tparam Value
  */
-template<class Value>
-class Traversal_iterator :
-        public boost::iterator_facade<Traversal_iterator<Value>, Value, boost::forward_traversal_tag> {
-
+template <class Value>
+class Traversal_iterator
+  : public boost::iterator_facade<Traversal_iterator<Value>, Value, boost::forward_traversal_tag> {
 public:
 
   /// \name Types
@@ -44,7 +43,7 @@ public:
    *
    * \todo
    */
-  typedef std::function<Value *(Value *)> Traversal_function;
+  typedef std::function<Value*(Value*)> Traversal_function;
 
   /// @}
 
@@ -68,14 +67,14 @@ public:
    * \param first
    * \param next
    */
-  Traversal_iterator(Value *first, const Traversal_function &next) : m_value(first), m_next(next) {}
+  Traversal_iterator(Value* first, const Traversal_function& next) : m_value(first), m_next(next) {}
 
   /// @}
 
 private:
   friend class boost::iterator_core_access;
 
-  bool equal(Traversal_iterator<Value> const &other) const {
+  bool equal(Traversal_iterator<Value> const& other) const {
     return m_value == other.m_value;
   }
 
@@ -83,13 +82,13 @@ private:
     m_value = m_next(m_value);
   }
 
-  Value &dereference() const {
+  Value& dereference() const {
     return *m_value;
   }
 
 private:
 
-  Value *m_value;
+  Value* m_value;
   Traversal_function m_next;
 };
 }
