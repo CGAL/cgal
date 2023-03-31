@@ -20,6 +20,7 @@
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Projection_traits_3.h>
@@ -1417,6 +1418,7 @@ autorefine(      TriangleMesh& tm,
                          out_soup_points, out_soup_triangles);
 
   clear(tm);
+  repair_polygon_soup(out_soup_points, out_soup_triangles);
   orient_polygon_soup(out_soup_points, out_soup_triangles);
   polygon_soup_to_polygon_mesh(out_soup_points, out_soup_triangles, tm);
 }
