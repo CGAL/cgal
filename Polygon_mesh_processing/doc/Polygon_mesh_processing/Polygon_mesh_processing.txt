@@ -192,13 +192,13 @@ Remeshing of planar patches in two models: (a) planar patches in the cheese mode
 <center>
 <table border=0>
 <tr>
-<td><img src="decimate_rg_sphere.png" style="width:100%;"/></td>
+<td><img src="decimate_rg_joint.png" style="width:100%;"/></td>
 </tr>
 </table>
 </center>
 \cgalFigureCaptionBegin{decimate_rg_sphere}
 Remeshing of planar patches using region growing for the detection of planar patches.
-From left to right: input mesh, remeshed version, remeshed version using the same angle threshold but better approximation error.
+From left to right: input mesh, remeshed version, remeshed version using the same angle threshold but larger approximation error.
 \cgalFigureEnd
 
 \subsubsection Smoothing
