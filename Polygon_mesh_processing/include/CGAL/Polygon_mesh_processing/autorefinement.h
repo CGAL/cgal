@@ -25,6 +25,10 @@
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#ifdef USE_PROGRESS_DISPLAY
+#include <boost/timer/progress_display.hpp>
+#endif
+
 // output
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -1260,6 +1264,11 @@ void autorefine_soup_output(const PointRange& input_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
   // now refine triangles
   std::vector<std::array<EK::Point_3,3>> new_triangles;
+
+#ifdef USE_PROGRESS_DISPLAY
+  boost::timer::progress_display pd(triangles.size());
+#endif
+
   for(std::size_t ti=0; ti<triangles.size(); ++ti)
   {
     if (all_segments[ti].empty() && all_points[ti].empty())
@@ -1289,7 +1298,9 @@ void autorefine_soup_output(const PointRange& input_points,
       #endif
     }
 
-
+#ifdef USE_PROGRESS_DISPLAY
+    ++pd;
+#endif
   }
 
   // brute force output: create a soup, orient and to-mesh
