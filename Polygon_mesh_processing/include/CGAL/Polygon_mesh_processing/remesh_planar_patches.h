@@ -1376,7 +1376,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *    \cgalParamNEnd
  *    \cgalParamNBegin{visitor}
  *      \cgalParamDescription{a callable with `visitor(pm_out)` being called once `tm_in` is no longer needed
- *                            and `pm_out` is not already modified. It can be used in the case when `tm_in` and `pm_out` are the same mesh,
+ *                            and before `pm_out` starts being built. It should be used in the case when `tm_in` and `pm_out` are the same mesh,
  *                            so that `pm_out` can be cleared before being filled.}
  *      \cgalParamType{`visitor(pm_out)` must be a valid expression.}
  *      \cgalParamDefault{None}
@@ -1553,7 +1553,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *    \cgalParamNEnd
  *    \cgalParamNBegin{visitor}
  *      \cgalParamDescription{a callable with `visitor(pm_out)` being called once `tm_in` is no longer needed
- *                            and `pm_out` is not already modified. It can be used in the case when `tm_in` and `pm_out` are the same mesh,
+ *                            and before `pm_out` starts being built. It should be used in the case when `tm_in` and `pm_out` are the same mesh,
  *                            so that `pm_out` can be cleared before being filled.}
  *      \cgalParamType{`visitor(pm_out)` must be a valid expression.}
  *      \cgalParamDefault{None}
