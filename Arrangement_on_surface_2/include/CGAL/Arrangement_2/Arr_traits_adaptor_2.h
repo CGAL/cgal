@@ -3387,7 +3387,7 @@ public:
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      Base base(m_self);
+      const Base& base = m_self;
       return base.compare_xy_2_object()(p1, p2);
     }
 
