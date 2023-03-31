@@ -431,6 +431,9 @@ public:
                                  IndicesIterator indices_first,
                                  IndicesIterator indices_beyond)
   {
+    if(indices_first == indices_beyond){
+      return insert(points_first, points_beyond);
+    }
     std::vector<Point> points(points_first, points_beyond);
     return internal::insert_constraints(*this,points, indices_first, indices_beyond);
   }
