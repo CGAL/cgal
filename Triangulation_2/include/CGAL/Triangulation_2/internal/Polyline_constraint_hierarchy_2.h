@@ -334,7 +334,7 @@ copy(const Polyline_constraint_hierarchy_2& ch1, std::map<Vertex_handle,Vertex_h
     Vertex_list* hvl2 = new Vertex_list;
     vlmap[hvl1] = hvl2;
     Vertex_it vit = hvl1->skip_begin(), end = hvl1->skip_end();
-    for( ; vit != end; ++vit) hvl2->push_back(Node(vmap[*vit]));
+    for( ; vit != end; ++vit) hvl2->push_back(Node(vmap[*vit], vit.input()));
     constraint_set.insert(hvl2);
   }
   // copy sc_to_c_map
