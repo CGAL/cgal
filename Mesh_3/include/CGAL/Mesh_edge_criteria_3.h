@@ -134,7 +134,7 @@ public:
   * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
   */
   Mesh_edge_criteria_3(const FT& length_bound,
-                       const FT& min_length_bound = 0.)
+                       const FT& min_length_bound = 0)
     : p_size_(new Mesh_3::internal::Sizing_field_container<
                 Mesh_constant_domain_field_3<Gt,Index> ,
                 FT,
@@ -157,7 +157,7 @@ public:
   Mesh_edge_criteria_3
   (
    const SizingField& length_bound,
-   const FT& min_length_bound = 0.
+   const FT& min_length_bound = 0
 #ifndef DOXYGEN_RUNNING
     , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>::value>* = 0
 #endif

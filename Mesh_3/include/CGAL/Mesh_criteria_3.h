@@ -258,7 +258,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *     \cgalParamDescription{a desired uniform lower-bound for the lengths of curve edges.
  *                           Only feature edges with a length larger than this bound will be refined.
  *                           If a feature edge is too small with respect to this criterion,
- *                           it will not be refined however the other criteria are met or not.}
+ *                           it will not be refined whether the other criteria are met or not.}
  *     \cgalParamExtra{If this criterion is applied during the meshing process,
  *                     the feature protection algorithm correctness is not guaranteed anymore,
  *                     and the output mesh may contain incorrect polyline features,
