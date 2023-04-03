@@ -1018,12 +1018,16 @@ by at least two of the input polyhedral surfaces forming the complex.
 The following example shows how to generate a mesh from a polyhedral complex
 or a polyhedral surface with polyline features.
 Polyline features are covered by a set of so-called "protecting balls" which
-sizes are driven by the size component of `Mesh_edge_criteria_3`.
-The ideal size of the protecting balls can be computed using
-`CGAL::Sizing_field_with_aabb_tree` that helps start the feature protection
-process with a good initial guess. To fit the protecting balls requirements,
-each protecting ball cannot have its radius
-larger than half of the distance from its center to surface patches the
+sizes are highly related to the edge length, and
+are driven by the size component of `Mesh_edge_criteria_3`
+(see Section \ref Mesh_3Protectionof0and1dimensionalExposed).
+The ideal size can be computed using
+`Sizing_field_with_aabb_tree` that helps start the feature protection
+and one-dimensional meshing process with a good initial guess.
+To fit the protecting balls requirements,
+no protecting ball can have its radius
+larger than half of the distance from the corresponding vertex (its center),
+to surface patches the
 current polyline feature does not belong to.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_sizing.cpp}
