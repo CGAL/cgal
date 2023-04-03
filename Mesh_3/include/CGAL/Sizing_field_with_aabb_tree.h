@@ -45,7 +45,7 @@ namespace CGAL {
 *   - for each curve `C` it does belong to, the intersection points of `C` with
 *     the plane orthogonal to `C` and passing through `p`.
 *
-* This sizing field is designed to be used for mesh complex edges,
+* This sizing field is designed to be used for the edges of the mesh complex,
 * in `Mesh_edge_criteria_3` or as `edge_size` in `Mesh_criteria_3`.
 * Using this sizing field for complex edges provides a high-quality hint
 * to the protecting balls placement algorithm, since it ensures that no
@@ -119,7 +119,7 @@ public:
   /*!
   * Constructor for the sizing field.
   * @param d the maximal value returned by `operator()`, corresponding
-  * to an upper bound on feature edges length in the output mesh.
+  * to an upper bound on feature edge lengths in the output mesh.
   * @param domain the mesh domain to be meshed
   */
   Sizing_field_with_aabb_tree(const FT& d, const MeshDomain& domain)

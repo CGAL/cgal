@@ -108,8 +108,8 @@ public:
   }
 
   /*!
-  * Sets the size such that `operator()` will return size `size`
-  * at any query point of dimension `dim` and index `index`.
+  * Sets the size such that `operator()` for any query point
+  * of dimension `dim` and index `index` returns `size`.
   */
   void set_size(const FT& size, const int dim, const Index& index)
   {
