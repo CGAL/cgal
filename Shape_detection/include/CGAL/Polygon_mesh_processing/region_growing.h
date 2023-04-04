@@ -248,6 +248,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
                      as key type and `bool` as value type}
       \cgalParamDefault{Unused if not provided}
+      \cgalParamExtra{The value for each edge must be initialized to `false`.}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_distance}
       \cgalParamDescription{the maximum distance from a segment to a line such that it is considered part of the region of the line}
@@ -317,7 +318,11 @@ detect_corners_of_regions(
 
   Default_ecm dynamic_ecm;
   if(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value)
+  {
     dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
+    for (edge_descriptor e : edges(mesh))
+      put(ecm, e, false);
+  }
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 
   using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh>;
