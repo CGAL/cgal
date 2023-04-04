@@ -598,6 +598,8 @@ inline std::string data_file_path(const std::string& filename)
 } // end namespace CGAL
 
 
+#if BOOST_VERSION < 107900
+
 // Workaround for an accidental enable if of Eigen::Matrix in the
 // boost::multiprecision::cpp_int constructor for some versions of
 // boost
@@ -649,5 +651,7 @@ namespace boost {
         }
     }
 }
+
+#endif
 
 #endif // CGAL_CONFIG_H
