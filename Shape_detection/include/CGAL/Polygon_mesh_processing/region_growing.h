@@ -321,7 +321,7 @@ detect_corners_of_regions(
   {
     dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
     for (edge_descriptor e : edges(mesh))
-      put(ecm, e, false);
+      put(dynamic_ecm, e, false);
   }
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 
