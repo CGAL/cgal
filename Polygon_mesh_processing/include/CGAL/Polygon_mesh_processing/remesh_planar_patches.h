@@ -1278,7 +1278,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
 /*!
  *  \ingroup PMP_meshing_grp
- *  generates a new triangle mesh `pm_out` with the minimal number of triangles while preserving the shape as `tm_in`.
+ *  generates a new triangle mesh `pm_out` with the minimal number of triangles while preserving the shape of `tm_in`.
  *  In practice, this means that connected components of edge-connected faces belonging to the same plane are
  *  first extracted (each such connected component is called a *patch*). Then, the connected components of
  *  vertex-connected patch border edges belonging to the same line are extracted. Endpoints of such components and
@@ -1347,7 +1347,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *
  *  \cgalNamedParamsBegin
  *    \cgalParamNBegin{do_not_triangulate_faces}
- *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
+ *      \cgalParamDescription{if `true`, faces of `pm_out` will not be triangulated, but the one with more than one connected component of the boundary.}
  *      \cgalParamType{`bool`}
  *      \cgalParamDefault{false}
  *    \cgalParamNEnd
