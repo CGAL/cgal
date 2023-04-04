@@ -149,11 +149,11 @@ CGAL_add_named_parameter(mesh_facet_angle_t, mesh_facet_angle, mesh_facet_angle)
 CGAL_add_named_parameter(mesh_facet_distance_t, mesh_facet_distance, mesh_facet_distance)
 CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_topology)
 CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
+CGAL_add_named_parameter(do_scale_t, do_scale, do_scale)
 CGAL_add_named_parameter(vertex_corner_map_t, vertex_corner_map, vertex_corner_map)
 CGAL_add_named_parameter(patch_normal_map_t, patch_normal_map, patch_normal_map)
 CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_primitive_map)
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
-
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -333,6 +333,8 @@ CGAL_add_named_parameter_with_compatibility(rng_t, rng, p_rng)
 CGAL_add_named_parameter_with_compatibility(null_subdomain_index_param_t,null_subdomain_index_param, null_subdomain_index)
 CGAL_add_named_parameter_with_compatibility(surface_patch_index_t, surface_patch_index, construct_surface_patch_index)
 CGAL_add_named_parameter_with_compatibility_ref_only(weights_param_t, weights_param, weights)
+CGAL_add_named_parameter_with_compatibility(features_detector_param_t, features_detector_param, features_detector)
+CGAL_add_named_parameter_with_compatibility(input_features_param_t, input_features_param, input_features)
 
 CGAL_add_named_parameter_with_compatibility(edge_size_param_t, edge_size_param, edge_size)
 CGAL_add_named_parameter_with_compatibility_ref_only(edge_sizing_field_param_t, edge_sizing_field_param, edge_sizing_field)

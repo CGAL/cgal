@@ -43,9 +43,18 @@ CGAL tetrahedral Delaunay refinement algorithm.
 -   Added the functions `CGAL::Polygon_mesh_processing::remesh_planar_patches()` and
     `CGAL::Polygon_mesh_processing::remesh_almost_coplanar_patches()` to retriangulate patches of coplanar faces in a mesh.
 
+-   Added a named parameter to `CGAL::Polygon_mesh_processing::smooth_shape()` to disable scaling to compensate volume loss.
+
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
+
+### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
+
+- Added two new named parameters to the named constructor `CGAL::create_labeled_image_mesh_domain()`
+for automatic detection and protection
+of 1D-curves that lie at the intersection of three or more subdomains,
+extracted from labeled images.
 
 ### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
 
@@ -68,6 +77,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
     and cylinders in 3D.
 
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
+
 -   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.
 
 ### [2D Convex Hulls](https://doc.cgal.org/5.6/Manual/packages.html#PkgConvexHull2)
