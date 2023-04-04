@@ -7,6 +7,10 @@
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 #include <CGAL/Polygon_mesh_processing/region_growing.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/subdivision_method_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -63,9 +67,13 @@ void approximate_remeshing(Surface_mesh& sm, double cos_th, double frechet)
 
 int main()
 {
+  CGAL::Aff_transformation_3<Kernel> rot( 0.914409, 0.0707007,-0.39857 , 0,
+                                         -0.34672 , 0.644949 ,-0.681048, 0,
+                                          0.208907, 0.760948 , 0.61426 , 0);
+
 // testing decimate function
   bool OK = true;
-  const int nb_meshes=5;
+  const int nb_meshes=4;
 
   for (int i=1; i<=nb_meshes; ++i)
   {
@@ -86,6 +94,26 @@ int main()
     std::cout << "  output written to out" << i << ".off\n";
     assert(CGAL::is_valid_polygon_mesh(sm_out));
   }
+// test on cheese
+{
+    std::cout << "handling decimation of data/cheese.off\n";
+    Surface_mesh sm;
+    std::ifstream(CGAL::data_file_path("meshes/cheese.off")) >> sm;
+    auto ecm = sm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+    PMP::detect_sharp_edges(sm, 60, ecm);
+    PMP::isotropic_remeshing(faces(sm), 0.004, sm, CGAL::parameters::edge_is_constrained_map(ecm));
+
+    Surface_mesh sm_out;
+    PMP::remesh_planar_patches(sm, sm_out);
+    std::ofstream("cheese_out.off") << sm_out;
+    assert(CGAL::is_valid_polygon_mesh(sm_out));
+
+    PMP::transform(rot, sm);
+    approximate_remeshing(sm, 0.98, 1e-2);
+    std::ofstream("cheese_out_rg.off") << sm;
+    assert(CGAL::is_valid_polygon_mesh(sm));
+}
+
 // testing border non-manifold vertex: not working for now, test kept
 /*
 // in case we find a solution
@@ -145,12 +173,13 @@ int main()
 // testing decimate function with almost coplanar/collinear tests
   for (int i=1; i<=nb_meshes; ++i)
   {
-    std::cout << "handling decimation of data/decimation/am" << i << ".off (approximate coplanar/collinear)\n";
+    std::cout << "handling decimation of transformed data/decimation/m" << i << ".off (approximate coplanar/collinear)\n";
     std::stringstream ss;
-    ss << "data/decimation/am" << i << ".off";
+    ss << "data/decimation/m" << i << ".off";
     Surface_mesh sm;
     std::ifstream in(ss.str().c_str());
     in >> sm;
+    PMP::transform(rot, sm);
 
     // call the decimation function
     Surface_mesh sm_out;
@@ -352,31 +381,6 @@ int main()
   }
 
 #if 0 // tests to be re-enable when using region growing with common interface
-// testing decimate function with almost coplanar/collinear tests using PCA
-  for (int i=1; i<=nb_meshes; ++i)
-  {
-    std::cout << "handling decimation of data/decimation/am" << i << ".off (approximate coplanar/collinear with PCA)\n";
-    std::stringstream ss;
-    ss << "data/decimation/am" << i << ".off";
-    Surface_mesh sm;
-    std::ifstream in(ss.str().c_str());
-    in >> sm;
-
-    // call the decimation function
-
-    if (!PMP::decimate_with_pca_for_coplanarity(sm, 1e-5, -0.99))
-    {
-      std::cerr << "ERROR: decimate failed to remesh some patches\n";
-      OK=false;
-    }
-    ss=std::stringstream();
-    ss << "out_a_pca" << i << ".off";
-    std::ofstream out(ss.str().c_str());
-    out << sm;
-    std::cout << "  output written to out_a_pca" << i << ".off\n";
-    assert(CGAL::is_valid_polygon_mesh(sm));
-  }
-
 // testing decimation of meshes,  preserving common interface with almost coplanar/collinear tests using PCA
   std::cout << "decimate a range of meshes with common interfaces (approximate coplanar/collinear with PCA)\n";
   if (!PMP::decimate_meshes_with_common_interfaces_and_pca_for_coplanarity(meshes, 0.99, -0.99))
@@ -394,36 +398,49 @@ int main()
   for (int i=0; i<nb_meshes_range; ++i)
     assert(CGAL::is_valid_polygon_mesh(meshes[i]));
 #endif
+// testing decimate function with almost coplanar/collinear tests using RG
+  for (int i=1; i<=nb_meshes; ++i)
+  {
+    std::cout << "handling decimation of transformed data/decimation/m" << i << ".off (approximate coplanar/collinear with RG)\n";
+    std::stringstream ss;
+    ss << "data/decimation/m" << i << ".off";
+    Surface_mesh sm;
+    std::ifstream in(ss.str().c_str());
+    in >> sm;
+    PMP::transform(rot, sm);
+
+    // call the decimation function
+
+    approximate_remeshing(sm, 0.98, 1e-2);
+    ss=std::stringstream();
+    ss << "out_a_rg" << i << ".off";
+    std::ofstream out(ss.str().c_str());
+    out << sm;
+    std::cout << "  output written to out_a_rg" << i << ".off\n";
+    assert(CGAL::is_valid_polygon_mesh(sm));
+  }
+
 // two examples that fails with approximate but works with RG
   //PCA first
   {
     Surface_mesh sm;
-    std::cout << "decimate of data/decimation/sphere.off using RG\n";
-    std::ifstream in("data/decimation/sphere.off");
-    in >> sm;
+    std::cout << "decimate of refined data/decimation/sphere.off using RG\n";
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> sm;
+    CGAL::Subdivision_method_3::Sqrt3_subdivision(sm,
+                                                  CGAL::parameters::number_of_iterations(3));
+
     approximate_remeshing(sm, 0.98, 1e-2);
     std::ofstream out("sphere_rg.off");
     out << sm;
     std::cout << "output written to sphere_rg.off\n";
     assert(CGAL::is_valid_polygon_mesh(sm));
   }
-  {
-    Surface_mesh sm;
-    std::cout << "decimate of data/decimation/sphere_selection.off using RG\n";
-    std::ifstream in("data/decimation/sphere_selection.off");
-    in >> sm;
-    approximate_remeshing(sm, 0.98, 1e-2);
-    std::ofstream out("sphere_selection_rg.off");
-    out << sm;
-    std::cout << "output written to sphere_selection_rg.off\n";
-    assert(CGAL::is_valid_polygon_mesh(sm));
-  }
   // Approximation then
   {
     Surface_mesh sm;
-    std::cout << "decimate of data/decimation/sphere.off using approximate predicates\n";
-    std::ifstream in("data/decimation/sphere.off");
-    in >> sm;
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> sm;
+    CGAL::Subdivision_method_3::Sqrt3_subdivision(sm,
+                                                  CGAL::parameters::number_of_iterations(3));
     Surface_mesh sm_out;
     PMP::remesh_planar_patches(sm, sm_out, CGAL::parameters::cosine_of_maximum_angle(0.99));
   }
