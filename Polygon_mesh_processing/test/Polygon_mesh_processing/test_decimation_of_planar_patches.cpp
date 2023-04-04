@@ -5,6 +5,7 @@
 #include <CGAL/Surface_mesh.h>
 #endif
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
+#include <CGAL/Polygon_mesh_processing/region_growing.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 
 #include <iostream>
@@ -20,8 +21,46 @@ typedef Kernel::Point_3 Point_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 #endif
 
-
 namespace PMP = CGAL::Polygon_mesh_processing;
+
+void approximate_remeshing(Surface_mesh& sm, double cos_th, double frechet)
+{
+  std::vector<std::size_t> region_ids(num_faces(sm));
+  std::vector<std::size_t> corner_id_map(num_vertices(sm), -1); // corner status of vertices
+  std::vector<bool> ecm(num_edges(sm), false); // mark edges at the boundary of regions
+  boost::vector_property_map<CGAL::Epick::Vector_3> normal_map; // normal of the supporting planes of the regions detected
+
+  // detect planar regions in the mesh
+  std::size_t nb_regions =
+    PMP::region_growing_of_planes_on_faces(sm,
+                                           CGAL::make_random_access_property_map(region_ids),
+                                           CGAL::parameters::cosine_of_maximum_angle(cos_th).
+                                                             region_primitive_map(normal_map).
+                                                             maximum_distance(frechet));
+
+  // detect corner vertices on the boundary of planar regions
+  std::size_t nb_corners =
+    PMP::detect_corners_of_regions(sm,
+                                   CGAL::make_random_access_property_map(region_ids),
+                                   nb_regions,
+                                   CGAL::make_random_access_property_map(corner_id_map),
+                                   CGAL::parameters::cosine_of_maximum_angle(cos_th).
+                                                     maximum_distance(frechet).
+                                                     edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+
+  // run the remeshing algorithm using filled properties
+  Surface_mesh out;
+  PMP::remesh_almost_planar_patches(sm,
+                                    sm,
+                                    nb_regions, nb_corners,
+                                    CGAL::make_random_access_property_map(region_ids),
+                                    CGAL::make_random_access_property_map(corner_id_map),
+                                    CGAL::make_random_access_property_map(ecm),
+                                    CGAL::parameters::patch_normal_map(normal_map),
+                                    CGAL::parameters::visitor([](Surface_mesh& sm){sm.clear_without_removing_property_maps ();}));
+
+}
+
 int main()
 {
 // testing decimate function
@@ -312,7 +351,7 @@ int main()
     for (auto f : faces(in)) assert(pids_map[get_pt_sorted_array(f, in)]==get(fmap_in, f));
   }
 
-#if 0 // tests to be re-enable when using region growing
+#if 0 // tests to be re-enable when using region growing with common interface
 // testing decimate function with almost coplanar/collinear tests using PCA
   for (int i=1; i<=nb_meshes; ++i)
   {
@@ -354,36 +393,31 @@ int main()
   std::cout << "\n";
   for (int i=0; i<nb_meshes_range; ++i)
     assert(CGAL::is_valid_polygon_mesh(meshes[i]));
-
-// two examples that fails with approximate but works with PCA
+#endif
+// two examples that fails with approximate but works with RG
   //PCA first
   {
     Surface_mesh sm;
-    std::cout << "decimate of data/decimation/sphere.off using PCA\n";
+    std::cout << "decimate of data/decimation/sphere.off using RG\n";
     std::ifstream in("data/decimation/sphere.off");
     in >> sm;
-    if (!PMP::decimate_with_pca_for_coplanarity(sm,1e-5,-0.99))
-    {
-      std::cerr << "ERROR: decimate failed to remesh some patches\n";
-    }
-    std::ofstream out("sphere_pca.off");
+    approximate_remeshing(sm, 0.98, 1e-2);
+    std::ofstream out("sphere_rg.off");
     out << sm;
-    std::cout << "output written to sphere_pca.off\n";
+    std::cout << "output written to sphere_rg.off\n";
     assert(CGAL::is_valid_polygon_mesh(sm));
   }
   {
     Surface_mesh sm;
-    std::cout << "decimate of data/decimation/sphere_selection.off using PCA\n";
+    std::cout << "decimate of data/decimation/sphere_selection.off using RG\n";
     std::ifstream in("data/decimation/sphere_selection.off");
     in >> sm;
-    if (!PMP::decimate_with_pca_for_coplanarity(sm,1e-5,-0.99))
-      std::cerr << "decimate failed to remesh some patches\n";
-    std::ofstream out("sphere_selection_pca.off");
+    approximate_remeshing(sm, 0.98, 1e-2);
+    std::ofstream out("sphere_selection_rg.off");
     out << sm;
-    std::cout << "output written to sphere_selection_pca.off\n";
+    std::cout << "output written to sphere_selection_rg.off\n";
     assert(CGAL::is_valid_polygon_mesh(sm));
   }
-#endif
   // Approximation then
   {
     Surface_mesh sm;
