@@ -168,7 +168,6 @@ public:
 
     using FT = typename Traits::FT;
     using Point_ref = typename boost::property_traits<VPM>::reference;
-    using Vector = typename Traits::Vector_3;
 
     using Visitor = typename internal_np::Lookup_named_param_def<
                                             internal_np::visitor_t,
@@ -471,7 +470,6 @@ private:
     namespace PMP = CGAL::Polygon_mesh_processing;
 
     using Point = typename boost::property_traits<PMap>::value_type;
-    using Kernel = typename CGAL::Kernel_traits<Point>::type;
 
     // gather halfedges around the face
     std::vector<Point> hole_points;
