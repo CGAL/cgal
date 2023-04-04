@@ -608,7 +608,7 @@ namespace Eigen{
   template <class A, int B, class C>
   class Ref;
 
-  template <class A, class B, int C = 0>
+  template <class A, class B, int C>
   class Product;
 
   template<typename BinaryOp, typename Lhs, typename Rhs>  class CwiseBinaryOp;
