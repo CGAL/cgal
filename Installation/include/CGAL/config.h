@@ -608,6 +608,11 @@ namespace Eigen{
   template <class A, int B, class C>
   class Ref;
 
+  template <class A, class B, int C = 0>
+  class Product;
+
+  template<typename BinaryOp, typename Lhs, typename Rhs>  class CwiseBinaryOp;
+
 }
 
 namespace boost {
@@ -625,6 +630,18 @@ namespace boost {
 
             template <class A, int B, class C>
             struct is_byte_container< Eigen::Ref<A, B, C>>
+            {
+                static const bool value = false;
+            };
+
+            template <class A, class B, int C>
+            struct is_byte_container< Eigen::Product<A, B, C>>
+            {
+                static const bool value = false;
+            };
+
+            template <class A, class B, class C>
+            struct is_byte_container< Eigen::CwiseBinaryOp<A, B, C>>
             {
                 static const bool value = false;
             };
