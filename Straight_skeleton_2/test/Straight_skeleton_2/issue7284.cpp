@@ -209,6 +209,8 @@ int main()
 }
 
 #else
+#include <iostream>
+
 int main()
 {
   std::cerr << "This test requires GMPXX" << std::endl;
