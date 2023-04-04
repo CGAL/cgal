@@ -1525,7 +1525,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *
  *  \cgalNamedParamsBegin
  *    \cgalParamNBegin{do_not_triangulate_faces}
- *      \cgalParamDescription{if `true`, faces of `out` will not be triangulated, but the one with more than one connected component of the boundary.}
+ *      \cgalParamDescription{if `true`, faces of `pm_out` will not be triangulated, but the one with more than one connected component of the boundary.}
  *      \cgalParamType{`bool`}
  *      \cgalParamDefault{false}
  *    \cgalParamNEnd
