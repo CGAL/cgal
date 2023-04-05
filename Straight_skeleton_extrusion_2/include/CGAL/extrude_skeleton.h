@@ -346,7 +346,7 @@ public:
       for(auto h_it=p.holes_begin(); h_it!=p.holes_end(); ++h_it)
         cdt.insert_constraint(h_it->begin(), h_it->end(), true /*close*/);
     }
-    catch(const typename CDT::Intersection_of_constraints_exception& e)
+    catch(const typename CDT::Intersection_of_constraints_exception&)
     {
       std::cerr << "Warning: Failed to triangulate horizontal face" << std::endl;
       return;
@@ -411,7 +411,7 @@ public:
     {
       pcdt.insert_constraint(face_points.begin(), face_points.end(), true /*close*/);
     }
-    catch(const typename PCDT::Intersection_of_constraints_exception& e)
+    catch(const typename PCDT::Intersection_of_constraints_exception&)
     {
       std::cerr << "Warning: Failed to triangulate skeleton face" << std::endl;
       return;

@@ -28,7 +28,7 @@ template<class ForwardPointIterator, class WeightIterator, class Traits>
 boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
                                                                   , ForwardPointIterator aEnd
                                                                   , WeightIterator       aWBegin
-                                                                  , WeightIterator       aWEnd
+                                                                  , WeightIterator       CGAL_assertion_code(aWEnd)
                                                                   , typename Traits::FT  aOffset
                                                                   , Traits const&        aTraits
                                                                   )
@@ -37,6 +37,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   typedef typename Traits::FT               FT ;
   typedef typename Traits::Point_2          Point_2 ;
   typedef typename Traits::Segment_2        Segment_2 ;
+  typedef typename Traits::Trisegment_2_ptr Trisegment_2_ptr ;
 
   Kernel kernel ;
 
@@ -70,7 +71,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
       WeightIterator lNextWeight = ( lCurr == lLast  ? aWBegin : std::next(lWIt) ) ;
 
-      OptionalPoint_2 lP = aTraits.construct_offset_point_2_object()(aOffset,lLEdge,*lWIt,lREdge,*lNextWeight, nullptr );
+      OptionalPoint_2 lP = aTraits.construct_offset_point_2_object()(aOffset,lLEdge,*lWIt,lREdge,*lNextWeight, Trisegment_2_ptr() );
 
       if ( !lP )
       {

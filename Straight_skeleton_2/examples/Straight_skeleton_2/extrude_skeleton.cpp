@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 
   // below is only used for random weight generation
   double min_weight = 1., max_weight = 10.;
-  std::size_t seed = std::time(nullptr);
+  int seed = std::time(nullptr);
 
   for(int i = 1; i < argc; ++i)
   {

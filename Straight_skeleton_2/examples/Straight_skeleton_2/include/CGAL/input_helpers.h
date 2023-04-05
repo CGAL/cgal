@@ -158,7 +158,7 @@ bool read_segment_speeds(const char* filename,
 
 // create a random 10-gon in a square
 template <typename PolygonWithHoles>
-PolygonWithHoles generate_random_polygon(const std::size_t seed)
+PolygonWithHoles generate_random_polygon(const int seed)
 {
   using Polygon_2 = typename PolygonWithHoles::Polygon_2;
   using Point_2 = typename Polygon_2::Point_2;
@@ -176,7 +176,7 @@ template <typename PolygonWithHoles, typename FT>
 void generate_random_weights(const PolygonWithHoles& p,
                              const double min_weight,
                              const double max_weight,
-                             const unsigned int seed,
+                             const int seed,
                              std::vector<std::vector<FT> >& speeds)
 {
   using Polygon_2 = typename PolygonWithHoles::Polygon_2;
