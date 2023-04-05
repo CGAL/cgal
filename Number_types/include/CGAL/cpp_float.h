@@ -69,7 +69,15 @@ public:
     : man(), exp()
   {}
 
+  cpp_float(short i)
+    : man(i),exp(0)
+  {}
+
   cpp_float(int i)
+    : man(i),exp(0)
+  {}
+
+  cpp_float(long i)
     : man(i),exp(0)
   {}
 
@@ -80,7 +88,7 @@ public:
 
   cpp_float(double d)
   {
-      std::cout << "\ndouble = " << d << std::endl;
+    //std::cout << "\ndouble = " << d << std::endl;
     using boost::uint64_t;
     union {
 #ifdef CGAL_LITTLE_ENDIAN
@@ -110,21 +118,21 @@ public:
     int idexp = (int)dexp;
     idexp -= 1023;
 
-    std::cout << "m    = "  << m << std::endl;
-    std::cout << "idexp = " << idexp << std::endl;
+    // std::cout << "m    = "  << m << std::endl;
+    // std::cout << "idexp = " << idexp << std::endl;
 
     int shifted = internal::low_bit(m);
 
     m >>= shifted;
 
     int nbits = internal::high_bit(m);
-    std::cout << "nbits = " << nbits << std::endl;
+    // std::cout << "nbits = " << nbits << std::endl;
 
     exp = idexp - nbits;
     if(u.s.sig){
       m = -m;
     }
-    std::cout << "m = " << m << " * 2^" << exp  << std::endl;
+    // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
     man = boost::multiprecision::cpp_int(m);
   }
