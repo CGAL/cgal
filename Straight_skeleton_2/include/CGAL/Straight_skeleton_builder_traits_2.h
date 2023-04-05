@@ -392,6 +392,7 @@ public:
   void reset_trisegment(std::size_t i) const
   {
     --mTrisegment_ID ;
+    mCaches.Reset(i) ;
   }
 
 // functions to initialize (and harmonize) and cache speeds
@@ -671,6 +672,8 @@ public:
     if ( i+1 == trisegment_ID() )
     {
       --trisegment_ID() ;
+      mApproximate_traits.mCaches.Reset(i) ;
+      mExact_traits.mCaches.Reset(i) ;
     }
   }
 
