@@ -232,20 +232,20 @@ public:
   double to_double() const
   {
     if(exp == 0){
-      return to_double(man);
+      return CGAL::to_double(man);
     }
     if(exp > 0){
       boost::multiprecision::cpp_int as(man);
       as <<= exp;
-      return to_double(as);
+      return CGAL::to_double(as);
     }
     boost::multiprecision::cpp_int pow(1);
     pow <<= -exp;
     boost::multiprecision::cpp_rational rat(man, pow);
-    return to_double(rat);
+    return CGAL::to_double(rat);
   }
 
-  std::pair<double,double> to_interval()
+  std::pair<double,double> to_interval() const
   {
     assert(false);
     double zero(0);
