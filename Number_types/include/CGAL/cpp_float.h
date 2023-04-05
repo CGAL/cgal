@@ -1,3 +1,4 @@
+
 // Copyright (c) 2023 GeometryFactory (France).
 // All rights reserved.
 //
@@ -130,7 +131,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const cpp_float& m)
   {
-    return os << m.man << " * 2 ^ " << m.exp << " ( " << to_double(m) << ") ";
+    return os << m.man << " * 2 ^ " << m.exp << " ( " << m.to_double() << ") ";
   }
 
   friend cpp_float operator-(cpp_float const&x)
@@ -228,23 +229,23 @@ public:
     return !(a==b);
   }
 
-  friend double to_double(const cpp_float const&a)
+  double to_double() const
   {
-    if(a.exp == 0){
-      return to_double(a.man);
+    if(exp == 0){
+      return to_double(man);
     }
-    if(a.exp > 0){
-      boost::multiprecision::cpp_int as(a.man);
-      as <<= a.exp;
+    if(exp > 0){
+      boost::multiprecision::cpp_int as(man);
+      as <<= exp;
       return to_double(as);
     }
     boost::multiprecision::cpp_int pow(1);
-    pow <<= -a.exp;
-    boost::multiprecision::cpp_rational rat(a.man, pow);
+    pow <<= -exp;
+    boost::multiprecision::cpp_rational rat(man, pow);
     return to_double(rat);
   }
 
-  friend std::pair<double,double> to_interval()
+  std::pair<double,double> to_interval()
   {
     assert(false);
     double zero(0);
