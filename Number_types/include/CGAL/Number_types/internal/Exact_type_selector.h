@@ -25,6 +25,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 
 #include <CGAL/boost_mp.h>
+#  include <CGAL/cpp_float.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
@@ -94,7 +95,7 @@ struct Exact_ring_selector : Exact_field_selector < T > { };
 template <>
 struct Exact_ring_selector<double>
 #ifdef CGAL_HAS_MPZF
-{ typedef Mpzf Type; };
+{ typedef cpp_float Type; };
 #elif defined(CGAL_HAS_THREADS) || !defined(CGAL_USE_GMP)
 { typedef MP_Float Type; };
 #else
