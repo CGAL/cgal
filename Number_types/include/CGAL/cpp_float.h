@@ -220,7 +220,7 @@ public:
       return ac == b.man;
     }else if(shift < 0){
       boost::multiprecision::cpp_int bc(b.man);
-      bc <<= shift;
+      bc <<= -shift;
       return a.man == bc;
     }
     return a.man==b.man;
