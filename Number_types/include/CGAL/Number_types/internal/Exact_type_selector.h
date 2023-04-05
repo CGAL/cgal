@@ -25,6 +25,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 
 #include <CGAL/boost_mp.h>
+#  include <CGAL/cpp_float.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
