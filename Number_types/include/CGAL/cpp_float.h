@@ -273,16 +273,19 @@ public:
 
 };
 
+  inline
   cpp_float operator+(const cpp_float& a, const cpp_float&b){
     cpp_float ret(a);
     return ret += b;
   }
 
+  inline
   cpp_float operator-(const cpp_float& a, const cpp_float&b){
     cpp_float ret(a);
     return ret -= b;
   }
 
+  inline
   cpp_float operator*(const cpp_float& a, const cpp_float&b){
     cpp_float ret(a);
     return ret *= b;
@@ -393,6 +396,12 @@ public:
     };
 
 
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(cpp_float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,cpp_float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,cpp_float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,cpp_float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float    ,cpp_float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double   ,cpp_float)
 
 } // namespace CGAL
 
