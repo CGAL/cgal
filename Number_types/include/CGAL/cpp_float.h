@@ -61,32 +61,34 @@ namespace internal {
 
 class cpp_float {
 
+  boost::multiprecision::cpp_rational rat;
   boost::multiprecision::cpp_int man;
   int exp; /* The number man (an integer) * 2 ^ exp  */
 
 public:
   cpp_float()
-    : man(), exp()
+    : rat(), man(), exp()
   {}
 
   cpp_float(short i)
-    : man(i),exp(0)
+    : rat(i), man(i),exp(0)
   {}
 
   cpp_float(int i)
-    : man(i),exp(0)
+    : rat(i),man(i),exp(0)
   {}
 
   cpp_float(long i)
-    : man(i),exp(0)
+    : rat(i),man(i),exp(0)
   {}
 
-  cpp_float(const boost::multiprecision::cpp_int& man,  int exp)
-    : man(man),exp(exp)
+  cpp_float(const boost::multiprecision::cpp_int& man,  int exp, const boost::multiprecision::cpp_rational& rat)
+    : rat(rat),man(man),exp(exp)
   {}
 
 
   cpp_float(double d)
+    : rat(d)
   {
     //std::cout << "\ndouble = " << d << std::endl;
     using boost::uint64_t;
@@ -144,11 +146,12 @@ public:
 
   friend cpp_float operator-(cpp_float const&x)
   {
-    return cpp_float(-x.man,x.exp);
+    return cpp_float(-x.man,x.exp, -x.rat);
   }
 
   cpp_float& operator*=(const cpp_float& other)
   {
+    rat *= other.rat;
     man *= other.man;
     exp += other.exp;
     return *this;
@@ -156,6 +159,7 @@ public:
 
   cpp_float operator+=(const cpp_float& other)
   {
+    rat += other.rat;
     int shift = exp - other.exp;
     if(shift > 0){
       man <<= shift;
@@ -163,7 +167,7 @@ public:
       exp = other.exp;
     }else if(shift < 0){
       boost::multiprecision::cpp_int cpy(other.man);
-      cpy << shift;
+      cpy <<= -shift;
       man += cpy;
     }else{
       man += other.man;
@@ -173,6 +177,9 @@ public:
 
   cpp_float operator-=(const cpp_float& other)
   {
+      assert(is_positive(rat) == is_positive(man));
+      assert(is_positive(other.rat) == is_positive(other.man));
+    rat -= other.rat;
     int shift = exp - other.exp;
     if(shift > 0){
       man <<= shift;
@@ -180,25 +187,30 @@ public:
       exp = other.exp;
     }else if(shift < 0){
       boost::multiprecision::cpp_int cpy(other.man);
-      cpy << shift;
+      cpy <<= -shift;
       man -= cpy;
     }else{
       man -= other.man;
     }
+    assert(is_positive(rat) == is_positive(man));
     return *this;
   }
 
   bool positive() const
   {
+    assert(is_positive(rat) == is_positive(man));
     return is_positive(man);
   }
 
 
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
+    bool qres = a.rat < b.rat;
     cpp_float d(b);
     d -= a;
-    return d.positive();
+
+    assert(qres == ( (!d.is_zero()) && d.positive()));
+    return ( (!d.is_zero()) && d.positive());
   }
 
   friend bool operator>(cpp_float const&a, cpp_float const&b){
@@ -213,16 +225,20 @@ public:
 
 
   friend bool operator==(cpp_float const&a, cpp_float const&b){
+    bool qres = a.rat == b.rat;
    int shift = a.exp - b.exp;
     if(shift > 0){
       boost::multiprecision::cpp_int ac(a.man);
       ac <<= shift;
+      assert( qres == (ac == b.man));
       return ac == b.man;
     }else if(shift < 0){
       boost::multiprecision::cpp_int bc(b.man);
       bc <<= -shift;
+      assert(qres == (a.man == bc));
       return a.man == bc;
     }
+    assert(qres == (a.man == b.man));
     return a.man==b.man;
   }
 
@@ -262,7 +278,6 @@ public:
 
 
   bool is_zero () const {
-    assert(false);
     return man==0 && exp == 0;
   }
 
