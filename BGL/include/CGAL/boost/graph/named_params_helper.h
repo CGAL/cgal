@@ -344,6 +344,21 @@ public:
   typedef typename CGAL::Identity_property_map<const Dummy_point> const_type;
 };
 
+template <typename PointRange, typename NamedParameters>
+struct GetPolygonSoupGeomTraits
+{
+  typedef typename internal_np::Lookup_named_param_def <
+                     internal_np::geom_traits_t,
+                     NamedParameters,
+                     typename CGAL::Kernel_traits<
+                       typename boost::property_traits<
+                         typename GetPointMap<PointRange, NamedParameters>::type
+                       >::value_type
+                     >::type
+                   > ::type                                                         type;
+};
+
+
 template <class PointRange, class NamedParameters, class PointMap = Default, class NormalMap = Default>
 struct Point_set_processing_3_np_helper
 {
