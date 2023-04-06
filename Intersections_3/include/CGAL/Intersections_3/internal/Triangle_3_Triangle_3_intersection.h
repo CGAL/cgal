@@ -372,7 +372,7 @@ void intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& p1,
 
       prev = inter_pts.insert(it,new_pt);
       orientations[&(*prev)] = COLLINEAR;
-      CGAL_assertion_code(++pt_added);
+      CGAL_kernel_assertion_code(++pt_added);
     }
 
     prev = it;
