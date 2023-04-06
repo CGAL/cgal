@@ -434,7 +434,7 @@ void orient(TriangleMesh& tm,
 
   // set the connected component id of each face
   std::size_t nb_cc = connected_components(tm,
-                                           bind_property_maps(fid_map,make_property_map(face_cc)),
+                                           make_compose_property_map(fid_map,make_property_map(face_cc)),
                                            parameters::face_index_map(fid_map));
 
   // extract a vertex with max z coordinate for each connected component
@@ -844,7 +844,7 @@ volume_connected_components(const TriangleMesh& tm,
 
 // set the connected component id of each face
   const std::size_t nb_cc = connected_components(tm,
-                              bind_property_maps(fid_map,make_property_map(face_cc)),
+                              make_compose_property_map(fid_map,make_property_map(face_cc)),
                               parameters::face_index_map(fid_map));
 
   // contains for each CC the CC that are in its bounded side
@@ -1354,6 +1354,8 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
+  if (is_empty(tm)) return;
+
   CGAL_precondition(is_closed(tm));
   CGAL_precondition(is_triangle_mesh(tm));
 
@@ -1376,7 +1378,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
                               parameters::vertex_point_map(vpm)
                                           .geom_traits(gt)
                                           .nesting_levels(boost::ref(nesting_levels))
-                                          .face_connected_component_map(bind_property_maps(fid_map,make_property_map(face_cc)))
+                                          .face_connected_component_map(make_compose_property_map(fid_map,make_property_map(face_cc)))
                                           .i_used_for_volume_orientation(true)
                                           .do_orientation_tests(true)
                                           .is_cc_outward_oriented(boost::ref(is_cc_outward_oriented))

@@ -146,6 +146,7 @@ CGAL_add_named_parameter(mesh_facet_angle_t, mesh_facet_angle, mesh_facet_angle)
 CGAL_add_named_parameter(mesh_facet_distance_t, mesh_facet_distance, mesh_facet_distance)
 CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_topology)
 CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
+CGAL_add_named_parameter(do_scale_t, do_scale, do_scale)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -251,9 +252,19 @@ CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_r
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
 
+// List of named parameters used in Shape_detection package
+CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
+CGAL_add_named_parameter(maximum_distance_t, maximum_distance, maximum_distance)
+CGAL_add_named_parameter(minimum_region_size_t, minimum_region_size, minimum_region_size)
+CGAL_add_named_parameter(sphere_radius_t, sphere_radius, sphere_radius)
+CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
+CGAL_add_named_parameter(item_map_t, item_map, item_map)
+CGAL_add_named_parameter(cosine_of_maxium_angle_t, cosine_of_maxium_angle, cosine_of_maxium_angle)
+CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
+CGAL_add_named_parameter(maximum_radius_t, maximum_radius, maximum_radius)
+
 // List of named parameters used in Shape_regularization package
 CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
-CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
 CGAL_add_named_parameter(maximum_offset_t, maximum_offset, maximum_offset)
 CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
 CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
@@ -315,6 +326,8 @@ CGAL_add_named_parameter_with_compatibility(rng_t, rng, p_rng)
 CGAL_add_named_parameter_with_compatibility(null_subdomain_index_param_t,null_subdomain_index_param, null_subdomain_index)
 CGAL_add_named_parameter_with_compatibility(surface_patch_index_t, surface_patch_index, construct_surface_patch_index)
 CGAL_add_named_parameter_with_compatibility_ref_only(weights_param_t, weights_param, weights)
+CGAL_add_named_parameter_with_compatibility(features_detector_param_t, features_detector_param, features_detector)
+CGAL_add_named_parameter_with_compatibility(input_features_param_t, input_features_param, input_features)
 
 CGAL_add_named_parameter_with_compatibility(edge_size_param_t, edge_size_param, edge_size)
 CGAL_add_named_parameter_with_compatibility_ref_only(edge_sizing_field_param_t, edge_sizing_field_param, edge_sizing_field)

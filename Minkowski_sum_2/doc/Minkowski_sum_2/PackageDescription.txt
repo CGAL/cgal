@@ -8,7 +8,7 @@
 \cgalPkgDescriptionBegin{2D Minkowski Sums,PkgMinkowskiSum2}
 \cgalPkgPicture{Minkowski_sum_2/fig/Minkowski_sum_2.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Ron Wein, Alon Baram, Eyal Flato, Efi Fogel, Michael Hemmer, Sebastian Morr}
+\cgalPkgAuthors{Ron Wein, Alon Baram, Eyal Flato, Efi Fogel, Michael Hemmer, and Sebastian Morr}
 \cgalPkgDesc{This package consists of functions that compute the Minkowski sum of two simple straight-edge polygons in the plane. It also contains functions for computing the Minkowski sum of a polygon and a disc, an operation known as <I>offsetting</I> or <I>dilating</I> a polygon. The package can compute the exact representation of the offset polygon, or provide a guaranteed approximation of the offset.}
 \cgalPkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2Ref}
 \cgalPkgSummaryEnd

@@ -2,6 +2,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/generators.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
@@ -25,7 +26,7 @@ int main()
   // give each vertex a name, the default is empty
   Mesh::Property_map<vertex_descriptor,std::string> name;
   bool created;
-  boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name","");
+  boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name","m1");
   assert(created);
   // add some names to the vertices
   name[v0] = "hello";
@@ -51,14 +52,34 @@ int main()
     std::cout << name[vd] << " @ " << location[vd] << std::endl;
   }
 
+  Mesh m2;
+  CGAL::make_triangle(K::Point_3(0,0,1), K::Point_3(1,0,1),K::Point_3(0,1,1), m2);
+
+  m2.add_property_map<vertex_descriptor,std::string>("v:name","m2");
+  Mesh::Property_map<vertex_descriptor,int> index;
+  index = m2.add_property_map<vertex_descriptor,int>("v:index",-1).first;
+  int i = 0;
+  for (auto v : vertices(m2)) {
+      index[v] = i++;
+  }
+
+  std::cout << "properties of m1:" << std::endl;
   std::vector<std::string> props = m.properties<vertex_descriptor>();
   for(std::string p : props){
     std::cout << p << std::endl;
   }
 
+  m.join(m2);
+  std::cout << "properties of m1 after join:" << std::endl;
+  for(std::string p : m.properties<vertex_descriptor>()){
+    std::cout << p << std::endl;
+  }
+
+  for (auto v : vertices(m)) {
+    std::cout << name[v] << std::endl;
+  }
   // delete the string property again
   m.remove_property_map(name);
 
   return 0;
 }
-

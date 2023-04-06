@@ -22,4 +22,4 @@ else()
     ${CMAKE_BINARY_DIR}/icons/Triangulation_2.qrc)
 endif()
 
-qt5_wrap_ui(_CGAL_Qt5_UI_FILES ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/resources/ImageInterface.ui)
+qt5_wrap_ui(_CGAL_Qt5_UI_FILES ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/ImageInterface.ui)

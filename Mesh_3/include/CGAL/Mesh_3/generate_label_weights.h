@@ -309,9 +309,9 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 * @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`,
 * with the same dimensions as `image`
 */
-
+inline
 CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
-                               const float& sigma)
+                                     const float& sigma)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
     return generate_label_weights_with_known_word_type<Word>(image, sigma);
