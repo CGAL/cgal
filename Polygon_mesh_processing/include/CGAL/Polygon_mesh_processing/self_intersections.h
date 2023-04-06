@@ -602,8 +602,8 @@ self_intersections(const FaceRange& face_range,
  * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect.
  *            In case `tmesh` contains some degenerate faces, for each degenerate face `f` a pair `(f,f)`
- *            will be put in `out` before any other self intersection between non-degenerate faces.
- *            These are the only pairs where degenerate faces will be reported.
+ *            will be put in `out` before any other self intersection between non-degenerate faces. <br>
+ *            Note that these are the only pairs where degenerate faces will be reported.
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -817,8 +817,8 @@ struct Property_map_for_soup
  * @param triangles each element in the range describes a triangle using the indices of the points in `points`
  * @param out output iterator to be filled with all pairs of ids of triangles intersecting (the id of a triangle is its position in `triangles`).
  *            In case the triangle soup contains some degenerate triangles, for each degenerate triangle `t` with id `i` a pair `(i,i)`
- *            will be put in `out` before any other self intersection between non-degenerate triangles.
- *            These are the only pairs where degenerate triangles will be reported.
+ *            will be put in `out` before any other self intersection between non-degenerate triangles.<br>
+ *            Note that these are the only pairs where degenerate triangles will be reported.
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
