@@ -652,6 +652,6 @@ namespace boost {
     }
 }
 
-#endif
+#endif // BOOST_VERSION < 107900
 
 #endif // CGAL_CONFIG_H
