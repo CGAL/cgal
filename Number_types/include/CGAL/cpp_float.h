@@ -169,7 +169,7 @@ public:
     }
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
-    man = Mantissa(m);
+    man = std::move(m);
   }
 
   friend std::ostream& operator<<(std::ostream& os, const cpp_float& m)
