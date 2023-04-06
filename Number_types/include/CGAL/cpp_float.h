@@ -107,6 +107,13 @@ public:
   cpp_float(const boost::multiprecision::cpp_int& man, int exp)
       : man(man), exp(exp)
   {}
+
+
+  template <typename Expression>
+  cpp_float(const Expression& man, int exp)
+      : man(man), exp(exp)
+  {}
+
 #endif
   cpp_float(double d)
 
