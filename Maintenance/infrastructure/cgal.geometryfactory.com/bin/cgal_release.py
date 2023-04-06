@@ -36,12 +36,25 @@ class InternalRelease(Release) :
         super().__init__(branch, Release.INTERNAL)
         self.extra_options = ' --integration'
 
+class BetaRelease(Release) :
+    '''class to create an internal CGAL release from a branch'''
+    def __init__(self, branch, beta_number) :
+        super().__init__(branch, Release.INTERNAL)
+        self.extra_options = f' --public --beta {beta_number}'
+
 integration = InternalRelease("integration")
 integration.repo = '$HOME/CGAL/branches/integration.git'
 integration.cwd = '$HOME/CGAL/create_internal_release'
 master = Release("master")
 master.repo = '$HOME/CGAL/branches/master.git'
 master.cwd = '$HOME/CGAL/create_internal_release'
+
+def beta_release_from_master(beta_number) :
+    '''Convenience function to create a beta release from master'''
+    release = BetaRelease("master", beta_number)
+    release.repo = '$HOME/CGAL/branches/master.git'
+    release.cwd = '$HOME/CGAL/create_internal_release'
+    return release
 
 def release(branch) :
     '''Convenience function to create a release from a branch'''

@@ -8,9 +8,10 @@ import sys
 import os
 import datetime
 import locale
+import argparse
 from pathlib import Path
 sys.path.append(Path(__file__))
-from cgal_release import release, integration, master
+from cgal_release import release, integration, master, beta_release_from_master
 
 # Define a dictionary that maps day of the week to an action
 actions = {
@@ -20,20 +21,30 @@ actions = {
     "Thursday": integration,
     "Friday": release("5.5"),
     "Saturday": release("5.4"),
-    "Sunday": master
+    "Sunday": beta_release_from_master(1)
 }
 
-if __name__ == '__main__':
+def main():
     # Get the current day of the week, or get it from the command line
     locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-    try:
-        DAY_OF_THE_WEEK = sys.argv[1]
-    except IndexError:
-        DAY_OF_THE_WEEK = datetime.datetime.now().strftime("%A")
+
+    day_help = f"Day of the week (default: {datetime.datetime.now().strftime('%A')})"
+    day_help += " possible values: ({})".format(', '.join(actions.keys()))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('day', help = day_help, nargs='?', default = datetime.datetime.now().strftime("%A"))
+    parser.add_argument('-n', '--dry-run', action='store_true')
+    args = parser.parse_args()
 
     # Look up the action for the current day of the week in the dictionary
-    create_release = actions[DAY_OF_THE_WEEK]
+    create_release = actions[args.day]
 
-    # Then create the release tarball
-    if os.system(create_release.command()) != 0 :
-        raise RuntimeError(f"ERROR while creating release tarball")
+    if(args.dry_run):
+        print(create_release)
+        return
+    else:
+        # Then create the release tarball
+        if os.system(create_release.command()) != 0 :
+            raise RuntimeError(f"ERROR while creating release tarball")
+
+if __name__ == '__main__':
+    main()
