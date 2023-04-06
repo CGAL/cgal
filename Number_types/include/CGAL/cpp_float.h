@@ -60,35 +60,59 @@ namespace internal {
 #endif
 
 class cpp_float {
-
+#ifdef CGAL_CPPF
   boost::multiprecision::cpp_rational rat;
+#endif
   boost::multiprecision::cpp_int man;
   int exp; /* The number man (an integer) * 2 ^ exp  */
 
 public:
   cpp_float()
-    : rat(), man(), exp()
+    :
+#ifdef CGAL_CPPF
+    rat(),
+#endif
+    man(), exp()
   {}
 
   cpp_float(short i)
-    : rat(i), man(i),exp(0)
+    :
+#ifdef CGAL_CPPF
+    rat(i),
+#endif
+    man(i),exp(0)
   {}
 
   cpp_float(int i)
-    : rat(i),man(i),exp(0)
+    :
+#ifdef CGAL_CPPF
+    rat(i),
+#endif
+    man(i),exp(0)
   {}
 
   cpp_float(long i)
-    : rat(i),man(i),exp(0)
+    :
+#ifdef CGAL_CPPF
+    rat(i),
+#endif
+    man(i),exp(0)
   {}
-
+#ifdef CGAL_CPPF
   cpp_float(const boost::multiprecision::cpp_int& man,  int exp, const boost::multiprecision::cpp_rational& rat)
-    : rat(rat),man(man),exp(exp)
+    : rat(rat), man(man),exp(exp)
   {}
+#else
 
-
+  cpp_float(const boost::multiprecision::cpp_int& man, int exp)
+      : man(man), exp(exp)
+  {}
+#endif
   cpp_float(double d)
-    : rat(d)
+
+#ifdef CGAL_CPPF
+   : rat(d)
+#endif
   {
     //std::cout << "\ndouble = " << d << std::endl;
     using boost::uint64_t;
@@ -146,70 +170,110 @@ public:
 
   friend cpp_float operator-(cpp_float const&x)
   {
+#ifdef CGAL_CPPF
     return cpp_float(-x.man,x.exp, -x.rat);
+#else
+    return cpp_float(-x.man,x.exp);
+#endif
   }
 
   cpp_float& operator*=(const cpp_float& other)
   {
+#ifdef CGAL_CPPF
     rat *= other.rat;
+#endif
     man *= other.man;
     exp += other.exp;
     return *this;
   }
 
+
+  friend
+  cpp_float operator*(const cpp_float& a, const cpp_float&b){
+    return cpp_float(a.man*b.man, a.exp+b.exp);
+  }
+
+
   cpp_float operator+=(const cpp_float& other)
   {
+#ifdef CGAL_CPPF
     rat += other.rat;
+#endif
     int shift = exp - other.exp;
     if(shift > 0){
       man <<= shift;
       man += other.man;
       exp = other.exp;
     }else if(shift < 0){
-      boost::multiprecision::cpp_int cpy(other.man);
-      cpy <<= -shift;
-      man += cpy;
+      man += (other.man << -shift);
     }else{
       man += other.man;
     }
     return *this;
   }
 
+
+  friend
+  cpp_float operator+(const cpp_float& a, const cpp_float&b){
+    int shift = a.exp - b.exp;
+    if(shift > 0){
+      return cpp_float((a.man << shift) + b.man, b.exp);
+    }else if(shift < 0){
+      return cpp_float(a.man + (b.man << -shift), a.exp);
+    }
+    return cpp_float(a.man + b.man, a.exp);
+  }
+
+
+
   cpp_float operator-=(const cpp_float& other)
   {
-      assert(is_positive(rat) == is_positive(man));
-      assert(is_positive(other.rat) == is_positive(other.man));
+
+#ifdef CGAL_CPPF
     rat -= other.rat;
+#endif
     int shift = exp - other.exp;
     if(shift > 0){
       man <<= shift;
       man -= other.man;
       exp = other.exp;
     }else if(shift < 0){
-      boost::multiprecision::cpp_int cpy(other.man);
-      cpy <<= -shift;
-      man -= cpy;
+      man -= (other.man << -shift);
     }else{
       man -= other.man;
     }
-    assert(is_positive(rat) == is_positive(man));
     return *this;
+  }
+
+  friend
+  cpp_float operator-(const cpp_float& a, const cpp_float&b){
+
+    int shift = a.exp - b.exp;
+    if(shift > 0){
+      return cpp_float((a.man << shift) - b.man, b.exp);
+    }else if(shift < 0){
+      return cpp_float(a.man - (b.man << -shift), a.exp);
+    }
+    return cpp_float(a.man - b.man, a.exp);
   }
 
   bool positive() const
   {
-    assert(is_positive(rat) == is_positive(man));
     return is_positive(man);
   }
 
 
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
+#ifdef CGAL_CPPF
     bool qres = a.rat < b.rat;
+#endif
     cpp_float d(b);
     d -= a;
 
+#ifdef CGAL_CPPF
     assert(qres == ( (!d.is_zero()) && d.positive()));
+#endif
     return ( (!d.is_zero()) && d.positive());
   }
 
@@ -225,20 +289,29 @@ public:
 
 
   friend bool operator==(cpp_float const&a, cpp_float const&b){
+
+#ifdef CGAL_CPPF
     bool qres = a.rat == b.rat;
+#endif
    int shift = a.exp - b.exp;
     if(shift > 0){
       boost::multiprecision::cpp_int ac(a.man);
       ac <<= shift;
+#ifdef CGAL_CPPF
       assert( qres == (ac == b.man));
+#endif
       return ac == b.man;
     }else if(shift < 0){
       boost::multiprecision::cpp_int bc(b.man);
       bc <<= -shift;
+#ifdef CGAL_CPPF
       assert(qres == (a.man == bc));
+#endif
       return a.man == bc;
     }
+#ifdef CGAL_CPPF
     assert(qres == (a.man == b.man));
+#endif
     return a.man==b.man;
   }
 
@@ -295,24 +368,6 @@ public:
   }
 
 };
-
-  inline
-  cpp_float operator+(const cpp_float& a, const cpp_float&b){
-    cpp_float ret(a);
-    return ret += b;
-  }
-
-  inline
-  cpp_float operator-(const cpp_float& a, const cpp_float&b){
-    cpp_float ret(a);
-    return ret -= b;
-  }
-
-  inline
-  cpp_float operator*(const cpp_float& a, const cpp_float&b){
-    cpp_float ret(a);
-    return ret *= b;
-  }
 
 
   template <> struct Algebraic_structure_traits< cpp_float >
