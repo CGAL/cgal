@@ -63,7 +63,9 @@ class cpp_float {
 #ifdef CGAL_CPPF
   boost::multiprecision::cpp_rational rat;
 #endif
-  boost::multiprecision::cpp_int man;
+
+  typedef boost::multiprecision::number<boost::multiprecision::cpp_int_backend<256> > Mantissa;
+  Mantissa man;
   int exp; /* The number man (an integer) * 2 ^ exp  */
 
 public:
@@ -99,12 +101,12 @@ public:
     man(i),exp(0)
   {}
 #ifdef CGAL_CPPF
-  cpp_float(const boost::multiprecision::cpp_int& man,  int exp, const boost::multiprecision::cpp_rational& rat)
+  cpp_float(const Mantissa& man,  int exp, const boost::multiprecision::cpp_rational& rat)
     : rat(rat), man(man),exp(exp)
   {}
 #else
 
-  cpp_float(const boost::multiprecision::cpp_int& man, int exp)
+  cpp_float(const Mantissa& man, int exp)
       : man(man), exp(exp)
   {}
 
@@ -167,7 +169,7 @@ public:
     }
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
-    man = boost::multiprecision::cpp_int(m);
+    man = Mantissa(m);
   }
 
   friend std::ostream& operator<<(std::ostream& os, const cpp_float& m)
@@ -302,14 +304,14 @@ public:
 #endif
    int shift = a.exp - b.exp;
     if(shift > 0){
-      boost::multiprecision::cpp_int ac(a.man);
+      Mantissa ac(a.man);
       ac <<= shift;
 #ifdef CGAL_CPPF
       assert( qres == (ac == b.man));
 #endif
       return ac == b.man;
     }else if(shift < 0){
-      boost::multiprecision::cpp_int bc(b.man);
+      Mantissa  bc(b.man);
       bc <<= -shift;
 #ifdef CGAL_CPPF
       assert(qres == (a.man == bc));
@@ -339,11 +341,11 @@ public:
       return CGAL::to_double(man);
     }
     if(exp > 0){
-      boost::multiprecision::cpp_int as(man);
+      Mantissa as(man);
       as <<= exp;
       return CGAL::to_double(as);
     }
-    boost::multiprecision::cpp_int pow(1);
+    Mantissa pow(1);
     pow <<= -exp;
     boost::multiprecision::cpp_rational rat(man, pow);
     return CGAL::to_double(rat);
