@@ -519,7 +519,7 @@ self_intersections_impl(const FaceRange& face_range,
  *
  * collects intersections between a subset of faces of a triangulated surface mesh.
  * Two faces are said to intersect if the corresponding triangles intersect
- * and the intersection is not an edge nor a vertex incident to both faces.
+ * and the intersection is neither an edge nor a vertex incident to both faces.
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -586,7 +586,7 @@ self_intersections(const FaceRange& face_range,
  *
  * collects intersections between all the faces of a triangulated surface mesh.
  * Two faces are said to intersect if the corresponding triangles intersect
- * and the intersection is not an edge nor a vertex incident to both faces.
+ * and the intersection is neither an edge nor a vertex incident to both faces.
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -798,7 +798,7 @@ struct Property_map_for_soup
  * collects intersections between all the triangles in a triangle soup.
  *
  * Two triangles of the soup are said to intersect if the corresponding geometric triangles intersect
- * and the intersection is not an edge nor a vertex of both triangles
+ * and the intersection is neither an edge nor a vertex of both triangles
  * (with the same point ids, ignoring the orientation for an edge).
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
@@ -824,7 +824,7 @@ struct Property_map_for_soup
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{point_map}
  *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
- *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type from a \cgal Kernel.}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type from a \cgal `Kernel`.}
  *     \cgalParamDefault{`CGAL::Identity_property_map`}
  *   \cgalParamNEnd
  *
@@ -876,7 +876,7 @@ triangle_soup_self_intersections(const PointRange& points,
  *
  * A triangle soup self-intersects if at least two triangles of the soup intersect.
  * Two triangles of the soup are said to intersect if the corresponding geometric triangles intersect
- * and the intersection is not an edge nor a vertex of both triangles
+ * and the intersection is neither an edge nor a vertex of both triangles
  * (with the same point ids, ignoring the orientation for an edge).
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
@@ -896,7 +896,7 @@ triangle_soup_self_intersections(const PointRange& points,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{point_map}
  *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
- *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type from a \cgal Kernel.}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type from a \cgal `Kernel`.}
  *     \cgalParamDefault{`CGAL::Identity_property_map`}
  *   \cgalParamNEnd
  *
