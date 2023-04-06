@@ -64,7 +64,7 @@ class cpp_float {
   boost::multiprecision::cpp_rational rat;
 #endif
 
-  typedef boost::multiprecision::number<boost::multiprecision::cpp_int_backend<256> > Mantissa;
+  typedef boost::multiprecision::number<boost::multiprecision::cpp_int_backend<512> > Mantissa;
   Mantissa man;
   int exp; /* The number man (an integer) * 2 ^ exp  */
 
@@ -169,7 +169,7 @@ public:
     }
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
-    man = std::move(m);
+    man = m;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const cpp_float& m)
