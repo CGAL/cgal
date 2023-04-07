@@ -54,7 +54,7 @@ namespace CGAL { namespace internal {
 // to answer predicates at the end of the filtering chain of predicates and EPECK uses
 // Exact_field_selector<double> for as its exact number type.
 
-
+// Warning, the order in this list must match the one in Installation/lib/cmake/CGALConfig.cmake
 enum ENT_backend_choice
 {
   GMP_BACKEND,
@@ -132,6 +132,7 @@ struct Exact_NT_backend<MP_FLOAT_BACKEND>
   typedef MP_Float Integer;
 };
 
+#ifndef CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND
 constexpr ENT_backend_choice Default_exact_nt_backend =
 #if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
   BOOST_BACKEND;
@@ -150,6 +151,9 @@ constexpr ENT_backend_choice Default_exact_nt_backend =
     MP_FLOAT_BACKEND;
   #endif
 #endif // BOOST_VERSION > 107900
+#else
+constexpr ENT_backend_choice Default_exact_nt_backend = static_cast<ENT_backend_choice>(CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND);
+#endif
 
 template < typename >
 struct Exact_field_selector
