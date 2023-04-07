@@ -14,7 +14,15 @@
 #ifndef CGAL_SHAPE_DETECTION_H
 #define CGAL_SHAPE_DETECTION_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Shape_detection.h>
+/// \endcond
+
+/**
+* \ingroup PkgShapeDetectionRef
+* \file CGAL/Shape_detection.h
+* A convenience header that includes all classes for shape detection.
+*/
 
 #include <CGAL/Shape_detection/Region_growing.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>

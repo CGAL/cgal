@@ -130,7 +130,7 @@ namespace CGAL {
  * \sa `CGAL::lloyd_optimize_mesh_3()`
  */
 template<typename C3T3,typename MeshDomain,typename CGAL_NP_TEMPLATE_PARAMETERS>
-Mesh_optimization_return_code odt_optimize_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& np = parameters::default_values())
+Mesh_optimization_return_code odt_optimize_mesh_3(C3T3& c3t3, const MeshDomain& domain, const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -148,7 +148,7 @@ template<typename C3T3, typename MeshDomain,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
          typename ... NP>
-Mesh_optimization_return_code odt_optimize_mesh_3(C3T3& c3t3, MeshDomain& domain,
+Mesh_optimization_return_code odt_optimize_mesh_3(C3T3& c3t3, const MeshDomain& domain,
                                                   const CGAL_NP_CLASS_1&  np1,
                                                   const CGAL_NP_CLASS_2&  np2,
                                                   const NP& ... nps)

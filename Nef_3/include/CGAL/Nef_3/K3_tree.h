@@ -23,13 +23,11 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
+
 #include <boost/container/deque.hpp>
 
-
-#include <deque>
 #include <sstream>
 #include <string>
-#include <map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 503

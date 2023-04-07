@@ -566,6 +566,15 @@ void test_split_attribute_functor_one_dart
   Attribute_descriptor_i a1 = amap.template attribute<i>(adart);
   if ( found_attributes.is_defined(a1) )
   {  // Here the attribute was already present in the hash_map
+
+    // We need to call reserve for the cc with index case. Indeed, if the vector
+    // is reallocated, the reference returned by get_attribute<i>(a1) will be
+    // invalidated, and the copy will be wrong. Note that there is no overhead
+    // since the creation of the attribute need one allocation.
+    amap.template attributes<i>().reserve(amap.template attributes<i>().size()+1);
+
+    // Now we are sure that the creation of a new attribute will not imply
+    // a realloc.
     Attribute_descriptor_i a2 = amap.template
       create_attribute<i>(amap.template get_attribute<i>(a1));
 

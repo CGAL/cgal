@@ -21,6 +21,10 @@
 #include "Get_curve_index.h"
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h> // for weight_modifier
 
+#include <cstddef>
+#include <memory>
+#include <limits>
+
 #include <boost/container/flat_set.hpp>
 #if defined(CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY) || defined(CGAL_NO_ASSERTIONS) == 0
 #  include <sstream>
@@ -57,6 +61,8 @@ struct Sizing_field_with_aabb_tree
   typedef CGAL::Delaunay_triangulation_3<Kernel_> Dt;
 
   typedef Input_facets_AABB_tree Input_facets_AABB_tree_;
+  typedef typename Input_facets_AABB_tree_::AABB_traits AABB_traits;
+  using Point_and_primitive_id = typename AABB_traits::Point_and_primitive_id;
   typedef typename Input_facets_AABB_tree_::Primitive Input_facets_AABB_tree_primitive_;
   typedef typename MeshDomain::Curves_AABB_tree Input_curves_AABB_tree_;
   typedef typename Input_curves_AABB_tree_::Primitive Input_curves_AABB_tree_primitive_;
@@ -71,6 +77,22 @@ struct Sizing_field_with_aabb_tree
                                      typename Input_facets_AABB_tree::Primitive>
     >::type Facet_patch_id_map;
 
+  struct Face_ids_traversal_traits {
+    using Limits = std::numeric_limits<Patch_index>;
+    Patch_index min{Limits::max()};
+    Patch_index max{Limits::lowest()};
+    Facet_patch_id_map index_map{};
+
+    bool go_further() const { return true; }
+    template <typename T> bool do_intersect(std::nullptr_t, const T&) { return true; }
+
+    template <typename P> void intersection(std::nullptr_t, const P& primitive) {
+      const Patch_index id = get(index_map, primitive.id());
+      if (id < min) min = id;
+      if (id > max) max = id;
+    }
+  };
+
   Sizing_field_with_aabb_tree
   (typename Kernel_::FT d,
    const Input_facets_AABB_tree_& aabb_tree,
@@ -78,92 +100,163 @@ struct Sizing_field_with_aabb_tree
    Get_curve_index get_curve_index = Get_curve_index(),
    Facet_patch_id_map facet_patch_id_map = Facet_patch_id_map()
    )
-    : d_(d), aabb_tree(aabb_tree),
-      domain(domain),
-      dt(),
-      get_curve_index(get_curve_index),
-      facet_patch_id_map(facet_patch_id_map)
+    : d_ptr{std::make_shared<Private_data>(d,
+                                           aabb_tree,
+                                           domain,
+                                           get_curve_index,
+                                           facet_patch_id_map)}
   {
+    if(!d_ptr->aabb_tree.empty()) {
+      // Initialize the per-patch kd-trees
+      //  - First compute the number of patches and min/max patch ids
+      Face_ids_traversal_traits traversal_traits;
+      d_ptr->aabb_tree.traversal(nullptr, traversal_traits);
+#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+      std::cerr << "min: " << traversal_traits.min << ", max: " << traversal_traits.max << '\n';
+#endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+      d_ptr->min_patch_id = traversal_traits.min;
+      d_ptr->kd_trees_ptrs.resize(traversal_traits.max - d_ptr->min_patch_id + 1);
+
+      using Node = CGAL::AABB_node<AABB_traits>;
+      using Primitive = typename AABB_traits::Primitive;
+      using Point_and_primitive_id = typename AABB_traits::Point_and_primitive_id;
+
+      std::vector<std::set<Point_and_primitive_id>> vertices_per_patch;
+      vertices_per_patch.resize(d_ptr->kd_trees_ptrs.size());
+
+      //  - then fill sets of vertices per patch
+      auto push_vertex = [&](const auto& primitive) {
+        const Patch_index id = get(d_ptr->facet_patch_id_map, primitive.id());
+        const Point_3& p = primitive.reference_point();
+        vertices_per_patch[id - d_ptr->min_patch_id].emplace(p, primitive.id());
+      };
+
+      struct Visit_all_primitives {
+        decltype(push_vertex) register_vertex;
+        bool go_further() const { return true; }
+        bool do_intersect(std::nullptr_t, const Node&) { return true; }
+        void intersection(std::nullptr_t, const Primitive& primitive)
+        {
+          register_vertex(primitive);
+        }
+      } visit_all_primitives{push_vertex};
+      d_ptr->aabb_tree.traversal(nullptr, visit_all_primitives);
+
+      //  - then create the kd-trees
+      for(std::size_t i = 0; i < vertices_per_patch.size(); ++i) {
+        if(!vertices_per_patch[i].empty()) {
+          d_ptr->kd_trees_ptrs[i] = std::make_unique<Kd_tree>(vertices_per_patch[i].begin(),
+                                                              vertices_per_patch[i].end());
+        }
+      }
+    }
     {
       Corner_index maximal_corner_index = 0;
       typedef std::pair<Corner_index, Point_3> Corner_index_and_point;
       std::vector<Corner_index_and_point > corners_tmp;
-      domain.get_corners(std::back_inserter(corners_tmp));
+      d_ptr->domain.get_corners(std::back_inserter(corners_tmp));
       for(const Corner_index_and_point& pair : corners_tmp)
       {
         // Fill `corners_indices`
         if(pair.first > maximal_corner_index) maximal_corner_index = pair.first;
-        corners_indices.
+        d_ptr->corners_indices.
           insert(typename Corners_indices::value_type(pair.second, pair.first));
       }
-      corners.resize(maximal_corner_index+1);
+      d_ptr->corners.resize(maximal_corner_index+1);
       for(const Corner_index_and_point& pair : corners_tmp)
       {
         // Fill `corners`
-        corners[pair.first] = pair.second;
+        d_ptr->corners[pair.first] = pair.second;
       }
     }
 
     //fill incidences of corners with curves
-    corners_incident_curves.resize(corners.size());
-    for(const typename Corners_indices::value_type& pair :
-      corners_indices)
-    {
-      dt.insert(pair.first);
+    d_ptr->corners_incident_curves.resize(d_ptr->corners.size());
+    for(const typename Corners_indices::value_type& pair : d_ptr->corners_indices) {
+      d_ptr->dt.insert(pair.first);
 
       // Fill `corners_incident_curves[corner_id]`
-      Curves_ids& incident_curves = corners_incident_curves[pair.second];
-      domain.get_corner_incident_curves(pair.second,
+      Curves_ids& incident_curves = d_ptr->corners_incident_curves[pair.second];
+      d_ptr->domain.get_corner_incident_curves(pair.second,
                                         std::inserter(incident_curves,
                                                       incident_curves.end()));
       // For each incident loops, insert a point on the loop, as far as
       // possible.
       for(Curve_index curve_index : incident_curves) {
         if(domain.is_loop(curve_index)) {
-          FT curve_lenght = domain.curve_length(curve_index);
+          FT curve_length = d_ptr->domain.curve_length(curve_index);
           Point_3 other_point =
-            domain.construct_point_on_curve(pair.first,
-                                            curve_index,
-                                            curve_lenght / 2);
-          dt.insert(other_point);
+            d_ptr->domain.construct_point_on_curve(pair.first,
+                                                   curve_index,
+                                                   curve_length / 2);
+          d_ptr->dt.insert(other_point);
         }
       }
     }
 
-    if (aabb_tree.empty())
+    if (d_ptr->aabb_tree.empty())
       return;//there is no surface --> no surface patches
 
     //fill incidences with patches
-    curves_incident_patches.resize(domain.maximal_curve_index()+1);
-    corners_incident_patches.resize(corners.size());
+    d_ptr->curves_incident_patches.resize(domain.maximal_curve_index()+1);
+    d_ptr->corners_incident_patches.resize(d_ptr->corners.size());
     for (Curve_index curve_id = 1;
-         std::size_t(curve_id) < curves_incident_patches.size();
+         std::size_t(curve_id) < d_ptr->curves_incident_patches.size();
          ++curve_id)
     {
       const typename MeshDomain::Surface_patch_index_set& incident_patches =
-        domain.get_incidences(curve_id);
+        d_ptr->domain.get_incidences(curve_id);
 
       // Fill `curves_incident_patches[curve_id]`
-      curves_incident_patches[curve_id].
+      d_ptr->curves_incident_patches[curve_id].
         insert(boost::container::ordered_unique_range,
                incident_patches.begin(), incident_patches.end());
     }
-    for(const typename Corners_indices::value_type& pair :
-                  corners_indices)
-    {
+    for(const typename Corners_indices::value_type& pair : d_ptr->corners_indices) {
       // Get `corners_incident_curves[corner_id]`
-      Curves_ids& incident_curves = corners_incident_curves[pair.second];
+      Curves_ids& incident_curves = d_ptr->corners_incident_curves[pair.second];
 
       // Fill `corners_incident_patches[corner_id]`
-      Patches_ids& incident_patches = corners_incident_patches[pair.second];
+      Patches_ids& incident_patches = d_ptr->corners_incident_patches[pair.second];
       for(Curve_index curve_index : incident_curves) {
         const Patches_ids& curve_incident_patches =
-          curves_incident_patches[curve_index];
+          d_ptr->curves_incident_patches[curve_index];
         incident_patches.insert(boost::container::ordered_unique_range,
                                 curve_incident_patches.begin(),
                                 curve_incident_patches.end());
       }
     }
+  }
+
+  boost::optional<Point_and_primitive_id>
+  closest_point_on_surfaces(const Point_3& p,
+                            const Patches_ids& patch_ids_to_ignore) const
+  {
+    boost::optional<Point_and_primitive_id> result{};
+    if(d_ptr->aabb_tree.empty()) return result;
+    for(std::size_t i = 0; i < d_ptr->kd_trees_ptrs.size(); ++i) {
+      const auto patch_id = static_cast<Patch_index>(i + d_ptr->min_patch_id);
+      if(patch_ids_to_ignore.find(patch_id) != patch_ids_to_ignore.end()) continue;
+      if(d_ptr->kd_trees_ptrs[i]) {
+        const Kd_tree& kd_tree = *d_ptr->kd_trees_ptrs[i];
+        const Point_and_primitive_id closest_point = kd_tree.closest_point(p);
+        if(!result || CGAL::compare_distance(p, closest_point.first, result->first) == CGAL::SMALLER)
+        {
+          result = closest_point;
+        }
+      }
+    }
+    if(!result) return result;
+    CGAL::Mesh_3::Filtered_projection_traits<
+      AABB_traits,
+      Facet_patch_id_map
+      > projection_traits(*result,
+                          patch_ids_to_ignore.begin(), patch_ids_to_ignore.end(),
+                          d_ptr->aabb_tree.traits(),
+                          d_ptr->facet_patch_id_map);
+    d_ptr->aabb_tree.traversal(p, projection_traits);
+    result = projection_traits.closest_point_and_primitive();
+    return result;
   }
 
   double operator()(const Point_3& p,
@@ -177,9 +270,9 @@ struct Sizing_field_with_aabb_tree
                 << ", index=#" << CGAL::IO::oformat(id) << "): ";
     }
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-    double result = d_;
+    double result = d_ptr->d_;
     if(dim == 0) {
-      if(dt.dimension() < 1) {
+      if(d_ptr->dt.dimension() < 1) {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
         std::cerr << result << "(dt.dimension() < 1)\n";
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -189,15 +282,15 @@ struct Sizing_field_with_aabb_tree
 
       typename Dt::Locate_type lt;
       int li, lj;
-      const typename Dt::Cell_handle ch = dt.locate(p, lt, li, lj);
+      const typename Dt::Cell_handle ch = d_ptr->dt.locate(p, lt, li, lj);
       if(lt == Dt::VERTEX) {
 //         std::cerr << "lt == Dt::VERTEX\n";
         const typename Dt::Vertex_handle vh = ch->vertex(li);
         std::vector<typename Dt::Vertex_handle> vs;
         vs.reserve(32);
-        dt.finite_adjacent_vertices(vh, std::back_inserter(vs));
+        d_ptr->dt.finite_adjacent_vertices(vh, std::back_inserter(vs));
         CGAL_assertion(!vs.empty());
-        nearest = dt.point(vs[0]);
+        nearest = d_ptr->dt.point(vs[0]);
 //         std::cerr << "sq_dist = " << CGAL::squared_distance(p, nearest)
 //                   << std::endl;
         typename Kernel_::Compare_distance_3 compare_dist;
@@ -206,44 +299,38 @@ struct Sizing_field_with_aabb_tree
         {
 //           std::cerr << "sq_dist = " << CGAL::squared_distance(p, dt.point(*it))
 //                   << std::endl;
-          if(compare_dist(p, dt.point(*it), nearest) == CGAL::SMALLER) {
+          if(compare_dist(p, d_ptr->dt.point(*it), nearest) == CGAL::SMALLER) {
 //             std::cerr << "  nearest!\n";
-            nearest = dt.point(*it);
+            nearest = d_ptr->dt.point(*it);
           }
         }
       } else {
 //         std::cerr << "lt=" << lt << std::endl;
-        const typename Dt::Vertex_handle vh = dt.nearest_vertex(p, ch);
-        nearest = dt.point(vh);
+        const typename Dt::Vertex_handle vh = d_ptr->dt.nearest_vertex(p, ch);
+        nearest = d_ptr->dt.point(vh);
       }
       const FT dist = CGAL_NTS sqrt(CGAL::squared_distance( nearest, p));
       // std::cerr << (std::min)(dist / FT(1.5), d_) << "\n";
       result = (std::min)(dist / FT(2), result);
 
       // now search in the AABB tree
-      typename Corners_indices::const_iterator ids_it = corners_indices.find(p);
-      if(ids_it == corners_indices.end()) {
+      typename Corners_indices::const_iterator ids_it =
+          d_ptr->corners_indices.find(p);
+      if(ids_it == d_ptr->corners_indices.end()) {
         std::cerr << "ERROR at " << __FILE__ << " line " << __LINE__ << "\n";
       }
-      else if(!aabb_tree.empty()) {
-        const Patches_ids& ids = corners_incident_patches[ids_it->second];
+      else if(!d_ptr->aabb_tree.empty()) {
+        const Patches_ids& ids = d_ptr->corners_incident_patches[ids_it->second];
         CGAL_assertion(! ids.empty());
 
-        CGAL::Mesh_3::Filtered_projection_traits<
-          typename Input_facets_AABB_tree_::AABB_traits,
-          Facet_patch_id_map
-          > projection_traits(ids.begin(), ids.end(),
-                              aabb_tree.traits(),
-                              facet_patch_id_map);
+        const auto closest_point_and_primitive = closest_point_on_surfaces(p, ids);
 
-        aabb_tree.traversal(p, projection_traits);
-
-        if(projection_traits.found()) {
+        if(closest_point_and_primitive != boost::none) {
           result =
             (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                        CGAL_NTS
                        sqrt(CGAL::squared_distance(p,
-                                                   projection_traits.closest_point())),
+                                                   closest_point_and_primitive->first)),
                        result);
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           {
@@ -258,10 +345,10 @@ struct Sizing_field_with_aabb_tree
                                "Ids are { ")
               % group(setprecision(17),result)
               % group(setprecision(17),p)
-              % CGAL::IO::oformat(get(facet_patch_id_map,
-                                  projection_traits.closest_point_and_primitive().second))
+              % CGAL::IO::oformat(get(d_ptr->facet_patch_id_map,
+                                  closest_point_and_primitive->second))
               % group(setprecision(17),
-                      projection_traits.closest_point_and_primitive().first);
+                      closest_point_and_primitive->first);
             for(Patch_index i : ids) {
               s << CGAL::IO::oformat(i) << " ";
             }
@@ -285,37 +372,33 @@ struct Sizing_field_with_aabb_tree
     }
     else { // dim == 1
       const typename MeshDomain::Curve_index& curve_id =
-        domain.curve_index(id);
-      if(!aabb_tree.empty()) {
-        const Patches_ids& ids = curves_incident_patches[curve_id];
-        CGAL_assertion(! ids.empty());
+        d_ptr->domain.curve_index(id);
+      const Patches_ids& ids = d_ptr->curves_incident_patches[curve_id];
+      CGAL_assertion(! ids.empty());
 
+      if(!d_ptr->aabb_tree.empty()) {
         //Compute distance to surface patches
-        CGAL::Mesh_3::Filtered_projection_traits
-          <
-            typename Input_facets_AABB_tree_::AABB_traits
-          , Facet_patch_id_map
-          > projection_traits(ids.begin(), ids.end(),
-                              aabb_tree.traits(),
-                              facet_patch_id_map);
-
-        aabb_tree.traversal(p, projection_traits);
-
-        if(!projection_traits.found()) {
+        const auto closest_point_and_primitive = closest_point_on_surfaces(p, ids);
+        if(closest_point_and_primitive == boost::none) {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-          std::cerr << result << " (projection not found)\n";
+          std::cerr << result << " (projection not found) ids:";
+          for(Patch_index i : ids) {
+            std::cerr << " " << CGAL::IO::oformat(i);
+          }
+          std::cerr << "\n";
+
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           return result;
         }
 
-        CGAL_assertion(ids.count(get(facet_patch_id_map,
-                                     projection_traits.closest_point_and_primitive().second)) == 0);
+        CGAL_assertion(ids.count(get(d_ptr->facet_patch_id_map,
+                                     closest_point_and_primitive->second)) == 0);
 
         result =
           (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                      CGAL_NTS
                      sqrt(CGAL::squared_distance(p,
-                                                 projection_traits.closest_point())),
+                                                 closest_point_and_primitive->first)),
                      result);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -327,8 +410,8 @@ struct Sizing_field_with_aabb_tree
                              "Closest face id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % CGAL::IO::oformat(get(facet_patch_id_map,
-                                projection_traits.closest_point_and_primitive().second));
+            % CGAL::IO::oformat(get(d_ptr->facet_patch_id_map,
+                                closest_point_and_primitive->second));
           for(Patch_index i : ids) {
             s << CGAL::IO::oformat(i) << " ";
           }
@@ -346,8 +429,8 @@ struct Sizing_field_with_aabb_tree
                              "Closest face id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % CGAL::IO::oformat(get(facet_patch_id_map,
-                                projection_traits.closest_point_and_primitive().second));
+            % CGAL::IO::oformat(get(d_ptr->facet_patch_id_map,
+                                closest_point_and_primitive->second));
           for(Patch_index i : ids) {
             s << CGAL::IO::oformat(i) << " ";
           }
@@ -362,7 +445,7 @@ struct Sizing_field_with_aabb_tree
                              "Closest face id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % projection_traits.closest_point_and_primitive().second->patch_id();
+            % closest_point_and_primitive->second->patch_id();
           for(Patch_index i : ids) {
             s << CGAL::IO::oformat(i) << " ";
           }
@@ -377,25 +460,25 @@ struct Sizing_field_with_aabb_tree
       CGAL::Mesh_3::Filtered_projection_traits<typename Input_curves_AABB_tree_::AABB_traits,
                                                Get_curve_index >
         curves_projection_traits(curve_id,
-                                 domain.curves_aabb_tree().traits(),
-                                 get_curve_index);
+                                 d_ptr->domain.curves_aabb_tree().traits(),
+                                 d_ptr->get_curve_index);
 
-      domain.curves_aabb_tree().traversal(p, curves_projection_traits);
+      d_ptr->domain.curves_aabb_tree().traversal(p, curves_projection_traits);
 
       //Compute distance to the curve on which p lies
       typedef typename GeomTraits::Segment_3                        Segment_3;
       typedef typename GeomTraits::Plane_3                          Plane_3;
 
       const typename Input_curves_AABB_tree_::Point_and_primitive_id& ppid
-        = domain.curves_aabb_tree().closest_point_and_primitive(p);
+        = d_ptr->domain.curves_aabb_tree().closest_point_and_primitive(p);
 
       Segment_3 curr_segment(*ppid.second.second, *(ppid.second.second + 1));
       Plane_3 curr_ortho_plane(p, curr_segment.to_vector()/*normal*/);
       Input_curves_AABB_tree_primitive_ curr_prim(ppid.second);
 
       std::vector<Input_curves_AABB_tree_primitive_> prims;
-      domain.curves_aabb_tree().all_intersected_primitives(curr_ortho_plane,
-                                                           std::back_inserter(prims));
+      d_ptr->domain.curves_aabb_tree().
+          all_intersected_primitives(curr_ortho_plane, std::back_inserter(prims));
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
       std::cerr << std::endl;
@@ -421,12 +504,12 @@ struct Sizing_field_with_aabb_tree
           if (const Point_3* pp = boost::get<Point_3>(&*int_res))
           {
             FT new_sqd = CGAL::squared_distance(p, *pp);
-            FT gdist = CGAL::abs(domain.signed_geodesic_distance(p, *pp, curve_id));
+            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
             std::cerr << "Intersection point : Point_3(" << *pp << ") ";
             std::cerr << "\n  new_sqd = " << new_sqd ;
-            std::cerr << "\n  gdist = " << gdist << "\n";
+            std::cerr << "\n  dist = " << dist << "\n";
 #endif
             if (new_sqd * 1e10 < CGAL::squared_distance(curr_segment.source(),
                                                         curr_segment.target()))
@@ -437,7 +520,7 @@ struct Sizing_field_with_aabb_tree
 #endif
               continue;
             }
-            if (CGAL_NTS sqrt(new_sqd) > 0.9 * gdist)
+            if (CGAL_NTS sqrt(new_sqd) > 0.9 * dist)
               continue;
             if (sqd_intersection == -1 || new_sqd < sqd_intersection)
             {
@@ -468,7 +551,7 @@ struct Sizing_field_with_aabb_tree
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
       std::cout << " curve_id = " << curve_id
                 << " proj_cid = " << closest_primitive.id().first->first
-                << " (" << get(get_curve_index, closest_primitive.id()) << ")"
+                << " (" << get(d_ptr->get_curve_index, closest_primitive.id()) << ")"
                 << std::endl;
       std::cerr << " --- domain.curves_aabb_tree().traversal \n";
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -482,7 +565,7 @@ struct Sizing_field_with_aabb_tree
         double new_result =
           (std::min)(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                      CGAL_NTS sqrt(sqd_intersection),
-                     d_);
+                     d_ptr->d_);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
         std::cerr << "result     = " << result << "\n";
@@ -515,17 +598,34 @@ struct Sizing_field_with_aabb_tree
     return result;
   }
 private:
-  typename Kernel_::FT d_;
-  const Input_facets_AABB_tree_& aabb_tree;
-  const MeshDomain& domain;
-  Dt dt;
-  Corners          corners;
-  Corners_indices  corners_indices;
-  Curves_incident_patches    curves_incident_patches;
-  Corners_incident_patches  corners_incident_patches;
-  Corners_incident_curves   corners_incident_curves;
-  Get_curve_index     get_curve_index;
-  Facet_patch_id_map  facet_patch_id_map;
+  using Kd_tree = CGAL::AABB_search_tree<AABB_traits>;
+  struct Private_data {
+    using FT = typename Kernel_::FT;
+    Private_data(FT d, const Input_facets_AABB_tree_& aabb_tree,
+                 const MeshDomain& domain,
+                 Get_curve_index get_curve_index,
+                 Facet_patch_id_map facet_patch_id_map)
+      : d_(d)
+      , aabb_tree(aabb_tree)
+      , domain(domain)
+      , get_curve_index(get_curve_index)
+      , facet_patch_id_map(facet_patch_id_map)
+    {}
+    FT d_;
+    const Input_facets_AABB_tree_& aabb_tree;
+    const MeshDomain& domain;
+    Get_curve_index     get_curve_index;
+    Facet_patch_id_map  facet_patch_id_map;
+    Dt dt{};
+    Corners          corners{};
+    Corners_indices  corners_indices{};
+    Curves_incident_patches   curves_incident_patches{};
+    Corners_incident_patches  corners_incident_patches{};
+    Corners_incident_curves   corners_incident_curves{};
+    std::vector<std::unique_ptr<Kd_tree>> kd_trees_ptrs{};
+    Patch_index min_patch_id{};
+  };
+  std::shared_ptr<Private_data> d_ptr;
 };
 
 #endif // CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H

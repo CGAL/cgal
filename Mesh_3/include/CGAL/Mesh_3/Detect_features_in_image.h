@@ -270,7 +270,7 @@ public:
   * of the input labeled image is defined as the set of voxels
   * with the same value. The outside of the bounding box
   * of the image is considered as a subdomain with voxel value
-  * `value_outside` (see `create_labeled_image_mesh_domain()`
+  * `value_outside` (see \link CGAL::Labeled_mesh_domain_3::create_labeled_image_mesh_domain `create_labeled_image_mesh_domain()` \endlink
   * parameters description). Hence, this function also computes
   * intersections with the image bounding box.
   *

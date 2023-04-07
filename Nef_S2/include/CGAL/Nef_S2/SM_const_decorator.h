@@ -299,13 +299,13 @@ check_integrity_and_topological_planarity(bool faces) const
     EI(shalfedges_begin(),shalfedges_end(),'e');
 #endif
   SVertex_const_handle v;
-  int iso_vert_num=0;
+  CGAL_assertion_code(int iso_vert_num=0);
   /* check the source links of out edges and count isolated vertices */
   CGAL_forall_svertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
         CGAL_assertion_msg(v->incident_sface() != SFace_const_handle(), get_svertex_index(v).c_str());
-      ++iso_vert_num;
+      CGAL_assertion_code(++iso_vert_num);
     } else {
       CGAL_assertion_code(SHalfedge_const_handle e=first_out_edge(v));
       CGAL_assertion_msg(e != SHalfedge_const_handle(), get_svertex_index(v).c_str());

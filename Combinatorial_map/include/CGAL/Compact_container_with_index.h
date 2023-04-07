@@ -752,6 +752,9 @@ public:
     return false;
   }
 
+  bool owns(size_type i) const
+  { return i<capacity() && is_used(i); }
+
   bool owns_dereferenceable(const_iterator cit) const
   { return cit!=end() && owns(cit); }
 
@@ -764,7 +767,6 @@ public:
   void reserve(size_type n)
   {
     if(capacity_>=n) return;
-    capacity_=n;
     increase_size();
   }
 
