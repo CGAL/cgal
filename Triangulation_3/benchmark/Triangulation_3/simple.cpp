@@ -29,6 +29,9 @@ int main(int argc, char* argv[])
   while(in >> p ){
     points.push_back(p);
   }
+
+  std::cout << points.size() << " points read\n";
+
   Timer timer;
   timer.start();
   size_t N = 0;

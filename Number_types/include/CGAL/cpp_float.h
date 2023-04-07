@@ -14,7 +14,7 @@
 #define CGAL_CPP_FLOAT_H
 
 
-#include <CGAL/boost_mp_type.h>
+#include <CGAL/boost_mp.h>
 #include <CGAL/assertions.h>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <iostream>
