@@ -50,28 +50,57 @@ class Expr;
 namespace CGAL { namespace internal {
 
 // Two classes which tell the preferred "exact number types" corresponding to a type.
+// Exact_ring_selector<double> and Exact_field_selector<double> are used by EPICK as exact number type
+// to answer predicates at the end of the filtering chain of predicates and EPECK uses
+// Exact_field_selector<double> for as its exact number type.
 
-// The default template chooses mpq_class, Gmpq, leda_rational, or Quotient<MP_Float>.
-// It should support the built-in types.
-template < typename >
-struct Exact_field_selector
 
-#if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
-// use boost-mp by default
-// Boost
-{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
-#else // BOOST_VERSION > 107900
-#ifdef CGAL_USE_GMPXX
-{ typedef mpq_class Type; };
-#elif defined(CGAL_USE_GMP)
-#if defined(CGAL_USE_BOOST_MP)
-{ typedef BOOST_gmp_arithmetic_kernel::Rational Type; };
+enum ENT_backend_choice
+{
+  GMP_BACKEND,
+  GMPXX_BACKEND,
+  BOOST_GMP_BACKEND,
+  BOOST_BACKEND,
+  LEDA_BACKEND,
+  MP_FLOAT_BACKEND
+};
+
+template <ENT_backend_choice>
+struct Exact_NT_backend;
+
+#ifdef CGAL_USE_GMP
+template <>
+struct Exact_NT_backend<GMP_BACKEND>
+{
+  typedef Gmpq Rational;
+#ifdef CGAL_HAS_MPZF
+  typedef Mpzf Integer;
 #else
-{ typedef Gmpq Type; };
+  typedef Gmpzf Integer;
 #endif
-#elif defined(CGAL_USE_LEDA)
-{ typedef leda_rational Type; };
-#elif defined(CGAL_USE_BOOST_MP)
+};
+#endif
+
+#ifdef CGAL_USE_GMPXX
+template <>
+struct Exact_NT_backend<GMPXX_BACKEND>
+{
+  typedef mpq_class Rational;
+  typedef Exact_NT_backend<GMP_BACKEND>::Integer Integer;
+};
+#endif
+
+#ifdef CGAL_USE_BOOST_MP
+template <>
+struct Exact_NT_backend<BOOST_GMP_BACKEND>
+{
+  typedef BOOST_gmp_arithmetic_kernel::Rational Rational;
+  typedef Exact_NT_backend<GMP_BACKEND>::Integer Integer;
+};
+
+template <>
+struct Exact_NT_backend<BOOST_BACKEND>
+{
 // See the discussion in https://github.com/CGAL/cgal/pull/3614
 // This is disabled for now because cpp_rational is even slower than Quotient<MP_Float>. Quotient<cpp_int> will be a good candidate after some polishing.
 // In fact, the new version of cpp_rational from here: https://github.com/boostorg/multiprecision/pull/366
@@ -79,14 +108,54 @@ struct Exact_field_selector
 // while Quotient does not. Though, we can still use it if needed.
 #if BOOST_VERSION <= 107800
 // See this comment: https://github.com/CGAL/cgal/pull/5937#discussion_r721533675
-{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
+  typedef Quotient<boost::multiprecision::cpp_int> Rational;
 #else
-{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
+  typedef BOOST_cpp_arithmetic_kernel::Rational Rational;
 #endif
-#else
-{ typedef Quotient<MP_Float> Type; };
+  typedef cpp_float Integer;
+};
 #endif
+
+#ifdef CGAL_USE_LEDA
+template <>
+struct Exact_NT_backend<LEDA_BACKEND>
+{
+  typedef leda_rational Rational;
+  typedef leda_integer Integer;
+};
+#endif
+
+template <>
+struct Exact_NT_backend<MP_FLOAT_BACKEND>
+{
+  typedef Quotient<MP_Float> Rational;
+  typedef MP_Float Integer;
+};
+
+constexpr ENT_backend_choice Default_Exact_nt_back_end =
+#if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
+  BOOST_BACKEND;
+#else // BOOST_VERSION > 107900
+  #ifdef CGAL_USE_GMPXX
+    GMPXX_BACKEND;
+  #elif defined(CGAL_USE_GMP)
+    #if defined(CGAL_USE_BOOST_MP)
+      BOOST_GMP_BACKEND;
+    #else
+      GMP_BACKEND;
+    #endif
+  #elif defined(CGAL_USE_LEDA)
+    LEDA_BACKEND;
+  #else
+    MP_FLOAT_BACKEND;
+  #endif
 #endif // BOOST_VERSION > 107900
+
+template < typename >
+struct Exact_field_selector
+{
+  using Type = typename Exact_NT_backend<Default_Exact_nt_back_end>::Rational;
+};
 
 // By default, a field is a safe choice of ring.
 template < typename T >
@@ -94,17 +163,9 @@ struct Exact_ring_selector : Exact_field_selector < T > { };
 
 template <>
 struct Exact_ring_selector<double>
-#if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
-{ typedef cpp_float Type; };
-#elif CGAL_HAS_MPZF
-{ typedef Mpzf Type; };
- #elif defined(CGAL_USE_BOOST_MP)
-{ typedef boost::multiprecision::cpp_int Type; };
-#elif defined(CGAL_HAS_THREADS) || !defined(CGAL_USE_GMP)
-{ typedef MP_Float Type; };
-#else
-{ typedef Gmpzf Type; };
-#endif
+{
+  using Type = typename Exact_NT_backend<Default_Exact_nt_back_end>::Integer;
+};
 
 template <>
 struct Exact_ring_selector<float> : Exact_ring_selector<double> { };
