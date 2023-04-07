@@ -7,25 +7,6 @@ project(Surface_mesh_simplification_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost)
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
-find_package(OpenMesh QUIET)
-
-if(OpenMesh_FOUND)
-  include(UseOpenMesh)
-else()
-  message(STATUS "Examples that use OpenMesh will not be compiled.")
-endif()
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("edge_collapse_envelope.cpp")
 create_single_source_cgal_program("edge_collapse_constrain_sharp_edges.cpp")
 create_single_source_cgal_program("edge_collapse_constrained_border_polyhedron.cpp")
@@ -47,20 +28,27 @@ else()
   message(STATUS "NOTICE: Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled.")
 endif()
 
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
+  include(UseOpenMesh)
+  message(STATUS "Found OpenMesh")
+
   create_single_source_cgal_program("edge_collapse_OpenMesh.cpp")
   target_link_libraries(edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+else()
+  message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
 endif()
 
-find_package(METIS)
+find_package(METIS QUIET)
 include(CGAL_METIS_support)
 
-find_package(TBB)
+find_package(TBB QUIET)
 include(CGAL_TBB_support)
-
 if(TARGET CGAL::TBB_support AND TARGET CGAL::METIS_support)
+  message(STATUS "Found METIS & TBB")
+
   create_single_source_cgal_program("collapse_small_edges_in_parallel.cpp")
   target_link_libraries(collapse_small_edges_in_parallel PUBLIC CGAL::TBB_support CGAL::METIS_support)
 else()
-  message(STATUS "collapse_small_edges_in_parallel, which use the METIS and TBB libraries will not be compiled.")
+  message(STATUS "NOTICE: The example 'collapse_small_edges_in_parallel' uses the METIS and TBB libraries, and will not be compiled.")
 endif()

@@ -17,9 +17,8 @@
 
 #include <CGAL/Nef_3/Nef_box.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <vector>
-#include <iostream>
-#include <CGAL/Timer.h>
 
 namespace CGAL {
 
@@ -41,21 +40,6 @@ struct binop_intersection_test_segment_tree {
   struct Bop_edge0_face1_callback {
     Callback           &cb;
 
-    struct Pair_hash_function {
-      typedef std::size_t result_type;
-
-      template <class H>
-      std::size_t
-      operator() (const H& h) const {
-        return
-          std::size_t(&*(h.first)) / sizeof
-          (typename std::iterator_traits<typename H::first_type>::value_type)
-              +
-          std::size_t(&*(h.second)) / sizeof
-          (typename std::iterator_traits<typename H::second_type>::value_type);
-      }
-    };
-
     Bop_edge0_face1_callback(Callback &cb)
     : cb(cb)
     {}
@@ -75,7 +59,6 @@ struct binop_intersection_test_segment_tree {
       }
     }
   };
-
 
   template<class Callback>
   struct Bop_edge1_face0_callback {
@@ -126,55 +109,40 @@ struct binop_intersection_test_segment_tree {
   template<class Callback>
   void operator()(Callback& cb0,
                   Callback& cb1,
-                  SNC_structure& sncp,
-                  SNC_structure& snc1i)
+                  const SNC_structure& snc0,
+                  const SNC_structure& snc1)
   {
     Halfedge_iterator e0, e1;
     Halffacet_iterator f0, f1;
-    std::vector<Nef_box> a, b;
+    std::vector<Nef_box> e0boxes, e1boxes, f0boxes, f1boxes;
+
+    e0boxes.reserve(snc0.number_of_halfedges());
+    e1boxes.reserve(snc1.number_of_halfedges());
+    f0boxes.reserve(snc0.number_of_halffacets());
+    f1boxes.reserve(snc1.number_of_halffacets());
+
+    CGAL_forall_edges( e0, snc0) e0boxes.push_back( Nef_box( e0 ) );
+    CGAL_forall_edges( e1, snc1) e1boxes.push_back( Nef_box( e1 ) );
+    CGAL_forall_facets( f0, snc0) f0boxes.push_back( Nef_box( f0 ) );
+    CGAL_forall_facets( f1, snc1) f1boxes.push_back( Nef_box( f1 ) );
 
     CGAL_NEF_TRACEN("start edge0 edge1");
     Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( cb0 );
-    CGAL_forall_edges( e0, sncp)  a.push_back( Nef_box( e0 ) );
-    CGAL_forall_edges( e1, snc1i) b.push_back( Nef_box( e1 ) );
-#ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
-    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
-                        callback_edge0_edge1,
-                        CGAL_NEF3_BOX_INTERSECTION_CUTOFF,);
-#else
-    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
+    box_intersection_d( e0boxes.begin(), e0boxes.end(),
+                        e1boxes.begin(), e1boxes.end(),
                         callback_edge0_edge1);
-#endif
-    a.clear();
-    b.clear();
 
     CGAL_NEF_TRACEN("start edge0 face1");
     Bop_edge0_face1_callback<Callback> callback_edge0_face1( cb0 );
-    CGAL_forall_edges( e0, sncp ) a.push_back( Nef_box( e0 ) );
-    CGAL_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
-#ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
-    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
-                        callback_edge0_face1,
-                        CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
-#else
-    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
+    box_intersection_d( e0boxes.begin(), e0boxes.end(),
+                        f1boxes.begin(), f1boxes.end(),
                         callback_edge0_face1);
-#endif
-    a.clear();
-    b.clear();
 
     CGAL_NEF_TRACEN("start edge1 face0");
     Bop_edge1_face0_callback<Callback> callback_edge1_face0( cb1 );
-    CGAL_forall_edges( e1, snc1i)  a.push_back( Nef_box( e1 ) );
-    CGAL_forall_facets( f0, sncp ) b.push_back( Nef_box( f0 ) );
-#ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
-    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
-                        callback_edge1_face0,
-                        CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
-#else
-    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
+    box_intersection_d( e1boxes.begin(), e1boxes.end(),
+                        f0boxes.begin(), f0boxes.end(),
                         callback_edge1_face0);
-#endif
   }
 };
 

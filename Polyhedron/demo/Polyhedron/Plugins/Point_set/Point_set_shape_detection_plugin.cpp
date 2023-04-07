@@ -20,6 +20,8 @@
 
 #include <CGAL/Shape_detection.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
+#include <CGAL/Polygon_mesh_processing/region_growing.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
@@ -182,112 +184,76 @@ private:
     Scene_surface_mesh_item* sm_item,
     Point_set_demo_point_set_shape_detection_dialog& dialog) {
 
-    using Face_range = typename SMesh::Face_range;
-
-    using Neighbor_query =
-    CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<SMesh>;
-    using Region_type =
-    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, SMesh>;
-
-    using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
-    using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type>;
-
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
-    const SMesh& mesh = *(sm_item->polyhedron());
-    scene->setSelectedItem(-1);
-    const Face_range face_range = faces(mesh);
+    SMesh& mesh = *(sm_item->polyhedron());
 
     // Set parameters.
-    const double max_distance_to_plane =
-    dialog.epsilon();
-    const double max_accepted_angle =
-    dialog.normal_tolerance();
-    const std::size_t min_region_size =
-    dialog.min_points();
+    const double max_distance_to_plane = dialog.epsilon();
+    const double max_accepted_angle = dialog.normal_tolerance();
+    const std::size_t min_region_size = dialog.min_points();
 
-    // Region growing.
-    Neighbor_query neighbor_query(mesh);
-    const Vertex_to_point_map vertex_to_point_map(get(CGAL::vertex_point, mesh));
-    Region_type region_type(
-      mesh,
-      max_distance_to_plane, max_accepted_angle, min_region_size,
-      vertex_to_point_map);
+    std::vector<std::size_t> region_ids(num_faces(mesh));
+    std::size_t nb_regions =
+      CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
+        mesh,
+        CGAL::make_property_map(region_ids),
+        CGAL::parameters::
+        maximum_distance(max_distance_to_plane).
+        maximum_angle(max_accepted_angle).
+        minimum_region_size(min_region_size));
 
-    Region_growing region_growing(
-      face_range, neighbor_query, region_type);
+    std::cerr << "* " << nb_regions << " regions have been found" << std::endl;
 
-    std::vector< std::vector<std::size_t> > regions;
-    region_growing.detect(std::back_inserter(regions));
 
-    std::cerr << "* " << regions.size() <<
-    " regions have been found"
-    << std::endl;
+    typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+    Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), mesh);
 
-    // Output result as a new colored item.
-    Scene_surface_mesh_item *colored_item = new Scene_surface_mesh_item;
-    colored_item->setName(QString("%1 (region growing)").arg(sm_item->name()));
-    SMesh& fg = *(colored_item->polyhedron());
-
-    fg = mesh;
-    const Face_range fr = faces(fg);
-
-    colored_item->setItemIsMulticolor(true);
-    colored_item->computeItemColorVectorAutomatically(false);
-    auto& color_vector = colored_item->color_vector();
-    color_vector.clear();
-
-    for (std::size_t i = 0; i < regions.size(); ++i) {
-      for (const std::size_t idx : regions[i]) {
-        const auto fit = fr.begin() + idx;
-        fg.property_map<face_descriptor, int>("f:patch_id").first[*fit] =
-        static_cast<int>(i);
-      }
-      CGAL::Random rnd(static_cast<unsigned int>(i));
-      color_vector.push_back(QColor(
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192)));
-    }
-    if(color_vector.empty())
+    bool has_unassigned = false;
+    for(SMesh::Face_index f : faces(mesh))
     {
-      for(const auto& f : faces(fg))
+      std::size_t region_id = region_ids[f];
+      if (region_id != std::size_t(-1))
+        put(pidmap, f, static_cast<int>(region_id)+1);
+      else
       {
-        fg.property_map<face_descriptor, int>("f:patch_id").first[f] =
-            static_cast<int>(0);
+        has_unassigned = true;
+        put(pidmap, f, 0);
       }
-      CGAL::Random rnd(static_cast<unsigned int>(0));
-      color_vector.push_back(QColor(
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192)));
     }
-    colored_item->invalidateOpenGLBuffers();
-    scene->addItem(colored_item);
+
+    sm_item->setItemIsMulticolor(true);
+    sm_item->computeItemColorVectorAutomatically(true);
+    sm_item->invalidateOpenGLBuffers();
+    scene->itemChanged(sm_item);
+
+    if (has_unassigned)
+    {
+      // hack to get unassigned as black
+      sm_item->color_vector()[0]=QColor().black();
+      sm_item->computeItemColorVectorAutomatically(false);
+      sm_item->invalidateOpenGLBuffers();
+      scene->itemChanged(sm_item);
+    }
   }
 
   void detect_shapes_with_region_growing (
     Scene_points_with_normal_item* item,
     Point_set_demo_point_set_shape_detection_dialog& dialog) {
 
-    using Point_map = typename Point_set::Point_map;
-    using Normal_map = typename Point_set::Vector_map;
-
     using Neighbor_query =
-    CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, Point_map>;
+    CGAL::Shape_detection::Point_set::Sphere_neighbor_query_for_point_set<Point_set>;
+    using Sorting =
+    CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set<Point_set, Neighbor_query>;
     using Region_type =
-    CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Point_map, Normal_map>;
+    CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>;
     using Region_growing =
-    CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>;
+    CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
     // Set parameters.
-    const double search_sphere_radius =
-    dialog.cluster_epsilon();
-    const double max_distance_to_plane =
-    dialog.epsilon();
-    const double max_accepted_angle =
-    dialog.normal_tolerance();
-    const std::size_t min_region_size =
-    dialog.min_points();
+    const double search_sphere_radius = dialog.cluster_epsilon();
+    const double max_distance_to_plane = dialog.epsilon();
+    const double max_accepted_angle = dialog.normal_tolerance();
+    const std::size_t min_region_size = dialog.min_points();
 
     // Get a point set.
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
@@ -336,18 +302,20 @@ private:
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     // Region growing set up.
-    Neighbor_query neighbor_query(
-      *points,
-      search_sphere_radius,
-      points->point_map());
-
-    Region_type region_type(
-      *points,
-      max_distance_to_plane, max_accepted_angle, min_region_size,
-      points->point_map(), points->normal_map());
+    Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_sphere_neighbor_query(
+      *points, CGAL::parameters::
+      sphere_radius(search_sphere_radius));
+    Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(
+      *points, CGAL::parameters::
+      maximum_distance(max_distance_to_plane).
+      maximum_angle(max_accepted_angle).
+      minimum_region_size(min_region_size));
+    Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_sorting(
+      *points, neighbor_query);
+    sorting.sort();
 
     Region_growing region_growing(
-      *points, neighbor_query, region_type);
+      *points, sorting.ordered(), neighbor_query, region_type);
 
     std::vector<Scene_group_item *> groups;
     groups.resize(1);
@@ -359,7 +327,7 @@ private:
     // The actual shape detection.
     CGAL::Real_timer t;
     t.start();
-    std::vector< std::vector<std::size_t> > regions;
+    std::vector<typename Region_growing::Primitive_and_region> regions;
     region_growing.detect(std::back_inserter(regions));
     t.stop();
 
@@ -367,19 +335,28 @@ private:
       " shapes found in " << t.time() << " second(s)" << std::endl;
 
     std::vector<Plane_3> planes;
-    CGAL::Shape_detection::internal::create_planes_from_points(
-      *points, points->point_map(), regions, planes);
+    planes.reserve(regions.size());
+    for (const auto& region : regions) {
+      planes.push_back(region.first);
+    }
+    CGAL_precondition(planes.size() == regions.size());
+
+    const CGAL::Identity_property_map<Plane_3> plane_identity_map;
+    CGAL::internal::Dynamic_property_map<Point_set::Index, std::size_t> plane_index_map;
+
+    for (Point_set::Index idx : *points)
+      put(plane_index_map, idx, get(region_growing.region_map(), idx));
 
     if (dialog.regularize()) {
 
       std::cerr << "Regularization of planes... " << std::endl;
       CGAL::Shape_regularization::Planes::regularize_planes(
         planes,
-        CGAL::Identity_property_map<Plane_3>(),
+        plane_identity_map,
         *points,
         points->point_map(),
-        CGAL::parameters::plane_index_map(
-          CGAL::Shape_detection::RG::Point_to_shape_index_map(*points, regions)).
+        CGAL::parameters::
+        plane_index_map(plane_index_map).
         regularize_parallelism(true).
         regularize_orthogonality(true).
         regularize_coplanarity(true).
@@ -403,10 +380,10 @@ private:
       Scene_points_with_normal_item *point_item =
       new Scene_points_with_normal_item;
 
-      for (const std::size_t idx : regions[index]) {
-        point_item->point_set()->insert(points->point(*(points->begin() + idx)));
+      for (auto &item : regions[index].second) {
+        point_item->point_set()->insert(points->point(item));
         if (dialog.add_property())
-          shape_id[*(points->begin() + idx)] = index;
+          shape_id[item] = index;
       }
 
       unsigned char r, g, b;
@@ -417,9 +394,9 @@ private:
 
       std::size_t nb_colored_pts = 0;
       if (dialog.generate_colored_point_set()) {
-        for(std::size_t idx : regions[index]) {
+        for(Point_set::Index item : regions[index].second) {
           auto it = colored_item->point_set()->insert(
-            points->point(*(points->begin() + idx)));
+            points->point(item));
           ++nb_colored_pts;
           colored_item->point_set()->set_color(*it, r, g, b);
         }
@@ -463,8 +440,7 @@ private:
         Scene_surface_mesh_item* sm_item = nullptr;
         sm_item = new Scene_surface_mesh_item;
 
-        using Plane = CGAL::Shape_detection::RG::Plane<Kernel>;
-        boost::shared_ptr<Plane> rg_plane(new Plane(*points, points->point_map(), regions[index], plane));
+        boost::shared_ptr<Plane_3> rg_plane(boost::make_shared<Plane_3>(plane));
         build_alpha_shape(
           *(point_item->point_set()), rg_plane,
           sm_item, search_sphere_radius);
@@ -472,7 +448,7 @@ private:
         if (sm_item){
           sm_item->setColor(point_item->color ());
           sm_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
-          .arg(QString::number(regions[index].size())));
+          .arg(QString::number(regions[index].second.size())));
           sm_item->setRenderingMode(Flat);
           sm_item->invalidateOpenGLBuffers();
           scene->addItem(sm_item);
@@ -481,7 +457,7 @@ private:
           scene->changeGroup(sm_item, groups[0]);
         }
       }
-      ss << regions[index].size();
+      ss << regions[index].second.size();
 
       point_item->setName(QString::fromStdString(ss.str()));
       point_item->setRenderingMode(item->renderingMode());
@@ -515,14 +491,15 @@ private:
       Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
       pts_full->point_set()->add_normal_map();
 
+
       CGAL::structure_point_set(
         *points,
         planes,
         boost::make_function_output_iterator(build_from_pair((*(pts_full->point_set())))),
         search_sphere_radius,
         points->parameters().
-        plane_map(CGAL::Identity_property_map<Plane_3>()).
-        plane_index_map(CGAL::Shape_detection::RG::Point_to_shape_index_map(*points, regions)));
+        plane_map(plane_identity_map).
+        plane_index_map(plane_index_map));
 
       if (pts_full->point_set()->empty())
         delete pts_full;
@@ -663,7 +640,8 @@ private:
           CGAL::Shape_detection::Plane_map<Traits>(),
           *points,
           points->point_map(),
-          CGAL::parameters::plane_index_map(
+          CGAL::parameters::
+          plane_index_map(
             CGAL::Shape_detection::Point_to_shape_index_map<Traits>(*points, planes)).
           regularize_parallelism(true).
           regularize_orthogonality(true).
@@ -970,9 +948,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
     dialog.groupBox_3->setEnabled(true);
 
     // Update scene.
-    scene->itemChanged(index);
     QApplication::restoreOverrideCursor();
-    sm_item->setVisible(false);
   }
 }
 

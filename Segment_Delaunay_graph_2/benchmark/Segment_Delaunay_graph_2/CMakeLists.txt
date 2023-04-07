@@ -6,8 +6,6 @@ project(Segment_Delaunay_graph_2_example)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 create_single_source_cgal_program("benchmark.cpp")
 create_single_source_cgal_program("benchmark_nox.cpp")
 create_single_source_cgal_program("double.cpp")
