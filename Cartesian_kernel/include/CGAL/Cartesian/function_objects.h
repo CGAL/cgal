@@ -3160,9 +3160,10 @@ namespace CartesianKernelFunctors {
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
 
+    template <class T1, class T2, class T3>
     Rep // Point_3
-    operator()(Return_base_tag, RT&& x, RT&& y, RT&& z) const
-    { return Rep(std::forward<RT>(x), std::forward<RT>(y), std::forward<RT>(z)); }
+    operator()(Return_base_tag, T1&& x, T2&& y, T3&& z) const
+    { return Rep(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z)); }
 
     Rep // Point_3
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
@@ -3184,9 +3185,10 @@ namespace CartesianKernelFunctors {
     operator()(const RT& x, const RT& y, const RT& z) const
     { return Point_3(x, y, z); }
 
+    template <class T1, class T2, class T3>
     Point_3
-    operator()(RT&& x, RT&& y, RT&& z) const
-    { return Point_3(std::forward<RT>(x), std::forward<RT>(y), std::forward<RT>(z)); }
+    operator()(T1&& x, T2&& y, T3&& z) const
+    { return Point_3(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z)); }
 
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
@@ -3679,9 +3681,10 @@ namespace CartesianKernelFunctors {
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
 
+    template<class T1, class T2, class T3>
     Rep // Vector_3
-    operator()(Return_base_tag, RT&& x, RT&& y, RT&& z) const
-    { return Rep(std::forward<RT>(x), std::forward<RT>(y), std::forward<RT>(z)); }
+    operator()(Return_base_tag, T1&& x, T2&& y, T3&& z) const
+    { return Rep(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z)); }
 
     Rep // Vector_3
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
