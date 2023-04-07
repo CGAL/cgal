@@ -132,7 +132,7 @@ struct Exact_NT_backend<MP_FLOAT_BACKEND>
   typedef MP_Float Integer;
 };
 
-constexpr ENT_backend_choice Default_Exact_nt_back_end =
+constexpr ENT_backend_choice Default_exact_nt_backend =
 #if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
   BOOST_BACKEND;
 #else // BOOST_VERSION > 107900
@@ -154,7 +154,7 @@ constexpr ENT_backend_choice Default_Exact_nt_back_end =
 template < typename >
 struct Exact_field_selector
 {
-  using Type = typename Exact_NT_backend<Default_Exact_nt_back_end>::Rational;
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational;
 };
 
 // By default, a field is a safe choice of ring.
@@ -164,7 +164,7 @@ struct Exact_ring_selector : Exact_field_selector < T > { };
 template <>
 struct Exact_ring_selector<double>
 {
-  using Type = typename Exact_NT_backend<Default_Exact_nt_back_end>::Integer;
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Integer;
 };
 
 template <>
