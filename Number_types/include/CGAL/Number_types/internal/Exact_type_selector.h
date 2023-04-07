@@ -25,7 +25,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 
 #include <CGAL/boost_mp.h>
-#  include <CGAL/cpp_float.h>
+
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
@@ -95,7 +95,7 @@ struct Exact_ring_selector : Exact_field_selector < T > { };
 template <>
 struct Exact_ring_selector<double>
 #if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
-{ typedef boost::multiprecision::cpp_int Type; };
+{ typedef cpp_float Type; };
 #elif CGAL_HAS_MPZF
 { typedef Mpzf Type; };
  #elif defined(CGAL_USE_BOOST_MP)

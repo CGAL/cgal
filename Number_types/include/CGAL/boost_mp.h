@@ -53,6 +53,7 @@
 #ifdef CGAL_USE_MPFR
 # include <mpfr.h>
 #endif
+#include <CGAL/cpp_float.h>
 
 // TODO: work on the coercions (end of the file)
 
