@@ -40,12 +40,12 @@ namespace internal {
 #if defined(_MSC_VER)
     unsigned long ret;
     _BitScanReverse64(&ret, x);
-    return (int)ret; // AF:  was 63 - (int)ret;  The others have to be changed too
+    return (int)ret;
 #elif defined(__xlC__)
     // Macro supposedly not defined on z/OS.
-    return __cntlz8 (x);
+    return 63 - __cntlz8 (x);
 #else
-    return __builtin_clzll (x);
+    return 63 - __builtin_clzll (x);
 #endif
   }
 
