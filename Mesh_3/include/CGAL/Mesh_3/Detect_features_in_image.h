@@ -235,7 +235,7 @@ detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
   if (postprocess_weights)
   {
     internal::feature_voxels_on_image_bbox<Word>(image, black_voxels);
-    internal::set_voxels(weights, black_voxels, 0/*black*/);
+    internal::set_voxels<unsigned char/*Weights_type*/>(weights, black_voxels, 0/*black*/);
   }
 
 #ifdef CGAL_DEBUG_TRIPLE_LINES
