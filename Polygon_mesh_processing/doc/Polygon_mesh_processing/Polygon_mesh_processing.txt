@@ -921,10 +921,12 @@ distribution of values and "diffuses" the extreme values of curvatures across th
 
 \cgalFigureAnchor{icc_diff_radius}
 <center>
-<img src="icc_diff_radius.png" style="max-width:85%;"/>
+<img src="icc_diff_radius.png" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{icc_diff_radius}
-The mean curvature distribution on a bear mesh with different values for the ball radius parameter
+The mean curvature distribution on a bear mesh with different values for the ball
+radius parameter. R = 0 (a), R = 0.025 (b), R = 0.05 (c), R = 0.16 (d). Note that
+the max edge length is 0.031 and the size of bounding box of the mesh is 1 x 0.7 x 0.8.
 \cgalFigureCaptionEnd
 
 \ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
