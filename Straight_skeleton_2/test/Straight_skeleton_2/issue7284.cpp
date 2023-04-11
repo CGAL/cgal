@@ -1,7 +1,7 @@
-#ifdef CGAL_USE_GMPXX
-
+#ifdef CGAL_ENABLE_DRAW_FOR_TEST
 #include <CGAL/draw_polygon_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
+#endif
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -178,13 +178,15 @@ void test(const std::vector<std::string>& x,
 #else
   std::vector<E_Point_2> poly_vec;
   for (size_t i = 0; i < x.size(); ++i)
-    poly_vec.emplace_back(E_FT(mpq_class(x[i])), E_FT(mpq_class(y[i])));
+    poly_vec.emplace_back(E_FT(E_FT::ET(x[i])), E_FT(E_FT::ET(y[i])));
 
   E_Polygon_2 poly(poly_vec.begin(), poly_vec.end());
   I_Polygon_2 ipoly = exact_to_inexact_poly(poly);
 #endif
 
+#ifdef CGAL_ENABLE_DRAW_FOR_TEST
   CGAL::draw(ipoly);
+#endif
 
   boost::shared_ptr< CGAL::Straight_skeleton_2<I_Kernel> > skeleton = CGAL::create_interior_straight_skeleton_2(ipoly, I_Kernel());
 
@@ -195,7 +197,9 @@ void test(const std::vector<std::string>& x,
     return;
   }
 
+#ifdef CGAL_ENABLE_DRAW_FOR_TEST
   CGAL::draw(*skeleton);
+#endif
 }
 
 int main()
@@ -207,14 +211,3 @@ int main()
   std::cout << "Done" << std::endl;
   return EXIT_SUCCESS;
 }
-
-#else
-#include <iostream>
-
-int main()
-{
-  std::cerr << "This test requires GMPXX" << std::endl;
-  return EXIT_SUCCESS;
-}
-
-#endif // CGAL_USE_GMPXX
