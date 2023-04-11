@@ -15,6 +15,7 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <boost/function.hpp>
+#include <boost/optional.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 /// \cond SKIP_IN_MANUAL
@@ -30,9 +31,9 @@ namespace CGAL {
  *
  * \tparam Value
  */
-template <class Value>
+template <class Tree>
 class Traversal_iterator
-  : public boost::iterator_facade<Traversal_iterator<Value>, Value, boost::forward_traversal_tag> {
+  : public boost::iterator_facade<Traversal_iterator<Tree>, const typename Tree::Node, boost::forward_traversal_tag> {
 public:
 
   /// \name Types
@@ -43,7 +44,7 @@ public:
    *
    * \todo
    */
-  typedef std::function<Value*(Value*)> Traversal_function;
+  typedef std::function<boost::optional<std::size_t>(const Tree&, std::size_t)> Traversal_function;
 
   /// @}
 
@@ -53,43 +54,50 @@ public:
   /// @{
 
   /*!
-   * \brief
+   * \brief Default constructor, creates an end sentinel
    *
    * \todo
    */
-  Traversal_iterator() : m_value(nullptr), m_next() {}
+  Traversal_iterator() : m_next() {}
 
   /*!
    * \brief
    *
    * \todo
    *
+   * \param tree
    * \param first
    * \param next
    */
-  Traversal_iterator(Value* first, const Traversal_function& next) : m_value(first), m_next(next) {}
+  Traversal_iterator(const Tree& tree, const typename Tree::Node* first, const Traversal_function& next) :
+    m_tree(&tree), m_index(tree.index(first)), m_next(next) {}
 
   /// @}
 
 private:
+
   friend class boost::iterator_core_access;
 
-  bool equal(Traversal_iterator<Value> const& other) const {
-    return m_value == other.m_value;
+  bool equal(Traversal_iterator<Tree> const& other) const {
+    return m_index == other.m_index;
   }
 
   void increment() {
-    m_value = m_next(m_value);
+    // invoking increment on the sentinel is undefined behavior
+    m_index = m_next(*m_tree, m_index.get());
   }
 
-  Value& dereference() const {
-    return *m_value;
+  const typename Tree::Node& dereference() const {
+    return (*m_tree)[m_index.get()];
   }
 
 private:
 
-  Value* m_value;
   Traversal_function m_next;
+
+  boost::optional<std::size_t> m_index = {};
+  const Tree* m_tree = nullptr;
+
 };
 }
 

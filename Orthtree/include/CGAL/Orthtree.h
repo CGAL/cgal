@@ -123,7 +123,7 @@ public:
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Node_range;
 #else
-  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range;
+  typedef boost::iterator_range<Traversal_iterator<Self>> Node_range;
 #endif
 
   /// \cond SKIP_IN_MANUAL
@@ -449,6 +449,12 @@ public:
     return std::distance(m_nodes.data(), &node);
   }
 
+  boost::optional<std::size_t> index(const Node* node) const {
+    if (node == nullptr) return {};
+    return index(*node);
+  }
+
+
   const Node& operator[](std::size_t index) const {
     return m_nodes[index];
   }
@@ -480,12 +486,14 @@ public:
 
     const Node* first = traversal.first();
 
-    Node_traversal_method_const next = [=](const Node* n) -> const Node* {
-      return traversal.next(n);
+    auto next = [=](const Self& tree, std::size_t index) -> boost::optional<std::size_t> {
+      auto n = traversal.next(&tree[index]);
+      if (n == nullptr) return {};
+      return tree.index(*n);
     };
 
-    return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
-                                      Traversal_iterator<const Node>());
+    return boost::make_iterator_range(Traversal_iterator<Self>(*this, first, next),
+                                      Traversal_iterator<Self>());
   }
 
   // todo: document this convenience function
