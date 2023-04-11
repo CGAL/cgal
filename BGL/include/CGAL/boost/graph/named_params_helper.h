@@ -141,14 +141,14 @@ struct GetVertexPointMap_impl<PolygonMesh, internal_np::Param_not_found>
 
   template<class NamedParameters>
   static const_type
-  get_const_map(const NamedParameters& np, const PolygonMesh& pm)
+  get_const_map(const NamedParameters& /* np */, const PolygonMesh& pm)
   {
     return get_const_property_map(boost::vertex_point, pm);
   }
 
   template<class NamedParameters>
   static type
-  get_map(const NamedParameters& np, PolygonMesh& pm)
+  get_map(const NamedParameters& /* np */, PolygonMesh& pm)
   {
     return get_property_map(boost::vertex_point, pm);
   }
