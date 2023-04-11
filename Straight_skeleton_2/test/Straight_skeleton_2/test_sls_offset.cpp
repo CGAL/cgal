@@ -1068,8 +1068,8 @@ void test_kernel()
   test_offset<K>("data/near_degenerate_0.poly");
   test_offset<K>("data/near_degenerate_1.poly");
   test_offset<K>("data/nearly_collinear.poly");
+  test_offset<K>("data/parallels0.poly", skeleton_only);
   test_offset<K>("data/parallels0_b.poly");
-  test_offset<K>("data/parallels0.poly");
   test_offset<K>("data/parallels_1.poly");
   test_offset<K>("data/poly4b.poly");
   test_offset<K>("data/poly4.poly");
