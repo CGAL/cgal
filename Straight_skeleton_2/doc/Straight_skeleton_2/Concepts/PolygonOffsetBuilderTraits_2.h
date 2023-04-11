@@ -20,7 +20,10 @@ public:
 /*!
 A predicate object type.
 
-Must provide `Comparison_result operator()( FT d, const Trisegment_2_ptr& et) const`,
+Must provide
+
+`Comparison_result operator()( FT d, const Trisegment_2_ptr& et) const`,
+
 which compares the Euclidean distance `d` with the event time for `et`. Such event time
 is the Euclidean distance at which the <I>offset lines</I> intersect in a single point.
 The source of such offset lines is given by the three <I>oriented</I> lines defined by the edge-triple `et`.
@@ -33,7 +36,10 @@ typedef unspecified_type Compare_offset_against_event_time_2;
 /*!
 A construction object type.
 
-Must provide `boost::optional<Point_2> operator()(const FT& t, const Segment_2& e0, const Segment_2& e1, const Trisegment_2_ptr& et) const`,
+Must provide
+
+`boost::optional<Point_2> operator()(const FT& t, const Segment_2& e0, const Segment_2& e1, const Trisegment_2_ptr& et) const`,
+
 which constructs the point of intersection of the lines obtained by offsetting
 the oriented lines given by `e0` and `e0` an Euclidean distance `t`.
 

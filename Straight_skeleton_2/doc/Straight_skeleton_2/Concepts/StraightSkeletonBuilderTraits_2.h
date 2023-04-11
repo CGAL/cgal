@@ -123,12 +123,7 @@ typedef unspecified_type Construct_ss_event_time_and_point_2;
 /*!
 A construction object type.
 
-Must provide `Trisegment_2_ptr operator()( const Segment_2& e0,
-                                           const FT& w0,
-                                           const Segment_2& e1,
-                                           const FT& w1,
-                                           const Segment_2& e2,
-                                           const FT& w2 ) const`,
+Must provide `Trisegment_2_ptr operator()( const Segment_2& e0, const FT& w0, const Segment_2& e1, const FT& w1, const Segment_2& e2, const FT& w2 ) const`,
 
 which returns an intrusive pointer to an object containing the three <I>oriented</I> lines
 defined by the three input edges.
@@ -160,10 +155,7 @@ A predicate object type.
 
 Must provide
 
-`CGAL::Oriented_side operator()( const Trisegment_2_ptr& e,
-                                 const Segment_2& e0, const FT& w0,
-                                 const Segment_2& e1, const FT& w1,
-                                 const Trisegment_2_ptr& e01_event, bool e0_is_primary) const`,
+`CGAL::Oriented_side operator()( const Trisegment_2_ptr& e, const Segment_2& e0, const FT& w0, const Segment_2& e1, const FT& w1, const Trisegment_2_ptr& e01_event, bool e0_is_primary) const`,
 
 which returns the oriented side of the event point described by the edge triple `e`
 w.r.t. the (positive) bisector `[e0,e1]`.
