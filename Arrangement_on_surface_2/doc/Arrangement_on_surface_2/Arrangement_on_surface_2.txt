@@ -2058,7 +2058,7 @@ insertion.
 
 The example below shows how to construct the same arrangement of five
 line segments built incrementally in \ref
-Arrangement_on_surface_2/incremental_insertion.cpp` depicted in
+Arrangement_on_surface_2/incremental_insertion.cpp depicted in
 \cgalFigureRef{aos_fig-incremental_insertion} using the aggregate
 insertion function \link CGAL::insert<>() `insert()`\endlink.  Note
 that no point-location object needs to be defined and attached to the
