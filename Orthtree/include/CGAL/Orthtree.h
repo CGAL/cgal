@@ -198,7 +198,7 @@ public:
       , m_point_map(point_map) {
 
     // fixme: this can be removed once traversal doesn't require pointer stability
-    m_nodes.reserve(1'000'000);
+    //m_nodes.reserve(1'000'000);
     m_nodes.emplace_back();
 
     Array bbox_min;
@@ -311,8 +311,8 @@ public:
     m_side_per_depth.resize(1);
 
     // Initialize a queue of nodes that need to be refined
-    std::queue<Node*> todo;
-    todo.push(&root());
+    std::queue<std::size_t> todo;
+    todo.push(0);
 
     // Process items in the queue until it's consumed fully
     while (!todo.empty()) {
@@ -322,21 +322,21 @@ public:
       todo.pop();
 
       // Check if this node needs to be processed
-      if (split_predicate(*current)) {
+      if (split_predicate(m_nodes[current])) {
 
         // Check if we've reached a new max depth
-        if (current->depth() == depth()) {
+        if (m_nodes[current].depth() == depth()) {
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
         }
 
         // Split the node, redistributing its points to its children
-        split((*current));
+        split(current);
 
         // Process each of its children
         for (int i = 0; i < Degree::value; ++i)
-          todo.push(&children(*current)[i]);
+          todo.push(m_nodes[current].m_children_index.get() + i);
 
       }
     }
@@ -780,23 +780,26 @@ public:
   Contents of this node are _not_ propagated automatically.
   It is the responsibility of the caller to redistribute the points contained by a node after splitting
  */
-  void split(Node& node) {
+  void split(Node& node) { split(index(node)); }
+
+  void split(std::size_t n) {
 
     // Make sure the node hasn't already been split
-    CGAL_precondition (node.is_leaf());
+    CGAL_precondition (m_nodes[n].is_leaf());
 
     // Split the node to create children
     using Local_coordinates = typename Node::Local_coordinates;
     for (int i = 0; i < Degree::value; i++) {
-      m_nodes.emplace_back(&node, index(node), Local_coordinates{i});
+      m_nodes.emplace_back(n, m_nodes[n].global_coordinates(), m_nodes[n].depth() + 1, Local_coordinates{i});
     }
-    node.m_children_index = m_nodes.size() - Degree::value;
+    // todo: this assumes that the new nodes always are allocated at the end
+    m_nodes[n].m_children_index = m_nodes.size() - Degree::value;
 
     // Find the point to around which the node is split
-    Point center = barycenter(node);
+    Point center = barycenter(m_nodes[n]);
 
     // Add the node's points to its children
-    reassign_points(node, node.points().begin(), node.points().end(), center);
+    reassign_points(m_nodes[n], m_nodes[n].points().begin(), m_nodes[n].points().end(), center);
   }
 
   /*!
@@ -808,6 +811,10 @@ public:
    */
   void unsplit(Node& node) {
     node.m_children_index.reset();
+  }
+
+  void unsplit(std::size_t n) {
+    unsplit(m_nodes[n]);
   }
 
   // todo: documentation

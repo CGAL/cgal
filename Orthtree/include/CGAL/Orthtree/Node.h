@@ -120,7 +120,7 @@ public:
   /// @{
 
   /// \cond SKIP_IN_MANUAL
-  Node() = default;
+  Node() = default; // constructs a root node
   /// \endcond
 
   /*!
@@ -138,23 +138,13 @@ public:
     \param parent the node containing this one
     \param index this node's relationship to its parent
   */
-  explicit Node(Self* parent, boost::optional<std::size_t> parent_index, Local_coordinates local_coordinates) :
-    m_parent_index(parent_index) {
+  explicit Node(std::size_t parent_index, Global_coordinates parent_coordinates,
+                std::size_t depth, Local_coordinates local_coordinates) :
+    m_parent_index(parent_index), m_depth(depth) {
 
-    // todo: this can be cleaned up; it probably doesn't need to take a reference to the parent
+    for (int i = 0; i < Dimension::value; i++)
+      m_global_coordinates[i] = (2 * parent_coordinates[i]) + local_coordinates[i];
 
-    if (parent != nullptr) {
-      m_depth = parent->m_depth + 1;
-
-      for (int i = 0; i < Dimension::value; i++)
-        m_global_coordinates[i] = (2 * parent->m_global_coordinates[i]) + local_coordinates[i];
-
-    } else {
-      m_depth = 0;
-
-      for (int i = 0; i < Dimension::value; i++)
-        m_global_coordinates[i] = 0;
-    }
   }
 
   /// @}
@@ -176,11 +166,6 @@ public:
 
   /// \name Type & Location
   /// @{
-
-  /*!
-    \brief returns `true` if the node is null, `false` otherwise.
-  */
-  //bool is_null() const { return (m_data == nullptr); }
 
   /*!
     \brief returns `true` if the node has no parent, `false` otherwise.
