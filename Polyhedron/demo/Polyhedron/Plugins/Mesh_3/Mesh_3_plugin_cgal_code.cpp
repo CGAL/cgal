@@ -360,56 +360,55 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     }
     else
 #endif
-      if (protect_features)
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); },
-            p::features_detector = CGAL::Mesh_3::Detect_features_in_image(),
-            p::input_features = std::cref(polylines)
-          )
-        );
-      }
-      else if (protect_borders)//protect polylines on image Bbox
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); },
-            p::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
-            p::input_features = std::cref(polylines)
-          )
-        );
-      }
-      else if (!polylines.empty())
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); },
-            p::input_features = std::cref(polylines)
-          )
-        );
-      }
-
-      if (p_domain == nullptr)
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); }
-          )
-        );
-      }
+    if (protect_features)
+    {
+      p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); },
+          p::features_detector = CGAL::Mesh_3::Detect_features_in_image(),
+          p::input_features = std::cref(polylines)
+        )
+      );
+    }
+    else if (protect_borders)//protect polylines on image Bbox
+    {
+      p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); },
+          p::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
+          p::input_features = std::cref(polylines)
+        )
+      );
+    }
+    else if (!polylines.empty())
+    {
+      p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); },
+          p::input_features = std::cref(polylines)
+        )
+      );
+    }
+    if (p_domain == nullptr)
+    {
+      p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); }
+        )
+      );
+    }
 
     typedef ::Mesh_function<Image_mesh_domain,
                             Mesh_fnt::Labeled_image_domain_tag> Mesh_function;
