@@ -33,10 +33,10 @@ if(TARGET CGAL::Eigen3_support)
       add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
       add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
     else()
-      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation.")
+      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the SuiteSparse library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation.")
     endif()
   else(SuiteSparse_FOUND)
-    message(STATUS "NOTICE: The example `orbifold.cpp` will not be compiled without the Sparsesuite library.")
+    message(STATUS "NOTICE: The example `orbifold.cpp` will not be compiled without the SuiteSparse library.")
   endif(SuiteSparse_FOUND)
 
   # ------------------------------------------------------------------
