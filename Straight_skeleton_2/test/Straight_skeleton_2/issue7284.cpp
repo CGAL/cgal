@@ -1,7 +1,5 @@
-#ifdef CGAL_ENABLE_DRAW_FOR_TEST
 #include <CGAL/draw_polygon_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
-#endif
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -184,9 +182,7 @@ void test(const std::vector<std::string>& x,
   I_Polygon_2 ipoly = exact_to_inexact_poly(poly);
 #endif
 
-#ifdef CGAL_ENABLE_DRAW_FOR_TEST
   CGAL::draw(ipoly);
-#endif
 
   boost::shared_ptr< CGAL::Straight_skeleton_2<I_Kernel> > skeleton = CGAL::create_interior_straight_skeleton_2(ipoly, I_Kernel());
 
@@ -197,9 +193,7 @@ void test(const std::vector<std::string>& x,
     return;
   }
 
-#ifdef CGAL_ENABLE_DRAW_FOR_TEST
   CGAL::draw(*skeleton);
-#endif
 }
 
 int main()
