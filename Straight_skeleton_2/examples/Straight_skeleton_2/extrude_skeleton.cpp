@@ -56,7 +56,7 @@ int main(int argc, char** argv)
   char* poly_filename = nullptr;
   char* speeds_filename = nullptr;
 
-  FT height = FT{(std::numeric_limits<double>::max)();
+  FT height = FT{(std::numeric_limits<double>::max)()};
   bool use_angles = false; // whether the input is SLS edge weights, or taper angles
   bool flip_weights = false; // takes the opposite for weights, and the complement for angles
 
