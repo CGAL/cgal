@@ -82,8 +82,8 @@ A type for the predicate functor that is
 responsible for rejecting an edge of the Delaunay graph (or
 equivalently rejecting its dual edge in the Voronoi diagram). It must be
 model of the concepts `DefaultConstructible`,
-`CopyConstructible`, `Assignable`, and `AdaptableFunctor`
-(with two arguments). It must provide the following operators:
+`CopyConstructible`, `Assignable`, and `AdaptableBinaryFunction`.
+It must provide the following operators:
 
 `bool operator()(Delaunay_graph dg, Delaunay_edge e)`
 
@@ -104,8 +104,8 @@ A type for the predicate functor that is
 responsible for rejecting a vertex of the Delaunay graph (or
 equivalently its dual face in the Voronoi diagram - hence the name
 of the functor). It must be model of the concepts `DefaultConstructible`,
-`CopyConstructible`, `Assignable`, `AdaptableFunctor`
-(with two arguments). It must provide the following operator:
+`CopyConstructible`, `Assignable`, `AdaptableBinaryFunction`.
+It must provide the following operator:
 
 <CENTER>`bool operator()(Delaunay graph dg, Delaunay_vertex_handle v)`</CENTER>
 
@@ -126,7 +126,7 @@ typedef unspecified_type Has_inserter;
 A type for a functor that inserts sites
 in the Delaunay graph. It must be model of the concepts
 `DefaultConstructible`, `CopyConstructible`, `Assignable`,
-`AdaptableFunctor` (with two arguments). It must provide the
+`AdaptableBinaryFunction`
 following operator
 
 <CENTER>`Delaunay_vertex_handle operator()(Delaunay_graph& dg, Site_2 t)`</CENTER>

@@ -63,7 +63,7 @@ typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;
 A type for a functor that accesses the
 site associated with a vertex. The functor should be a model of the
 concepts `DefaultConstructible`, `CopyConstructible`,
-`Assignable` and `AdaptableFunctor` (with one argument). The
+`Assignable` and `AdaptableUnaryFunction`. The
 functor must provide the following operator:
 
 <CENTER>`result_type operator()(Delaunay_vertex_handle v)`</CENTER>
@@ -79,7 +79,7 @@ constructs the dual point of a (triangular) face in the Delaunay
 graph. This point is the Voronoi vertex of the three sites defining
 the face in the Delaunay graph. The functor must be a model of the
 concepts `DefaultConstructible`, `CopyConstructible`,
-`Assignable`, `AdaptableFunctor` (with one argument). It
+`Assignable`, `AdaptableUnaryFunction`. It
 must provide the following operator:
 
 <CENTER>`Point_2 operator()(Delaunay_face_handle f)`</CENTER>.
@@ -107,8 +107,8 @@ the source and target vertices of the edge. In all other cases, the
 search result is a vertex, namely, the unique vertex of the
 Delaunay graph closest to the query point. The functor must be a
 model of the concepts `DefaultConstructible`,
-`CopyConstructible`, `Assignable`, `AdaptableFunctor`
-(with two arguments). It must provide the following operator:
+`CopyConstructible`, `Assignable`, `AdaptableBinaryFunction`.
+It must provide the following operator:
 
 <CENTER>`result_type operator()(Delaunay_graph dg, Point_2 p)`</CENTER>
 
