@@ -4,6 +4,12 @@
 int main()
 {
 
+  double d = -0;
+  CGAL::cpp_float zero(d);
+  assert(! CGAL::is_positive(zero));
+  assert(! CGAL::is_negative(zero));
+  assert(CGAL::is_zero(zero));
+
   CGAL::cpp_float m(0);
   std::cout << m << std::endl;
 

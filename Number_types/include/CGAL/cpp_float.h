@@ -1,4 +1,3 @@
-
 // Copyright (c) 2023 GeometryFactory (France).
 // All rights reserved.
 //
@@ -13,6 +12,7 @@
 #ifndef CGAL_CPP_FLOAT_H
 #define CGAL_CPP_FLOAT_H
 
+//#define CGAL_CPPF
 
 #include <CGAL/boost_mp.h>
 #include <CGAL/assertions.h>
@@ -110,11 +110,12 @@ public:
       : man(man), exp(exp)
   {}
 
-
+#ifndef CGAL_CPPF
   template <typename Expression>
   cpp_float(const Expression& man, int exp)
-      : man(man), exp(exp)
+    :man(man), exp(exp)
   {}
+#endif
 
 #endif
   cpp_float(double d)
@@ -123,7 +124,7 @@ public:
    : rat(d)
 #endif
   {
-    //std::cout << "\ndouble = " << d << std::endl;
+    // std::cout << "\ndouble = " << d << std::endl;
     using boost::uint64_t;
     union {
 #ifdef CGAL_LITTLE_ENDIAN
@@ -164,18 +165,23 @@ public:
     // std::cout << "nbits = " << nbits << std::endl;
 
     exp = idexp - nbits;
+    man = m;
     if(u.s.sig){
-      m = -m;
+      man = -man;
     }
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
-    man = m;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const cpp_float& m)
   {
-    return os << m.man << " * 2 ^ " << m.exp << " ( " << m.to_double() << ") ";
+    return os << m.man << " * 2 ^ " << m.exp << " ( " << m.to_double() << ") "
+#ifdef CGAL_CPPF
+              << "  " << m.rat
+#endif
+      ;
   }
+
 
   friend cpp_float operator-(cpp_float const&x)
   {
@@ -199,7 +205,11 @@ public:
 
   friend
   cpp_float operator*(const cpp_float& a, const cpp_float&b){
+#ifdef CGAL_CPPF
+    return cpp_float(a.man*b.man, a.exp+b.exp, a.rat * b.rat);
+#else
     return cpp_float(a.man*b.man, a.exp+b.exp);
+#endif
   }
 
 
@@ -222,6 +232,18 @@ public:
   }
 
 
+#ifdef CGAL_CPPF
+  friend
+  cpp_float operator+(const cpp_float& a, const cpp_float&b){
+    int shift = a.exp - b.exp;
+    if(shift > 0){
+      return cpp_float((a.man << shift) + b.man, b.exp, a.rat+b.rat);
+    }else if(shift < 0){
+      return cpp_float(a.man + (b.man << -shift), a.exp, a.rat+b.rat);
+    }
+    return cpp_float(a.man + b.man, a.exp, a.rat+b.rat);
+  }
+#else
   friend
   cpp_float operator+(const cpp_float& a, const cpp_float&b){
     int shift = a.exp - b.exp;
@@ -232,7 +254,7 @@ public:
     }
     return cpp_float(a.man + b.man, a.exp);
   }
-
+#endif
 
 
   cpp_float operator-=(const cpp_float& other)
@@ -254,6 +276,19 @@ public:
     return *this;
   }
 
+  #ifdef CGAL_CPPF
+  friend
+  cpp_float operator-(const cpp_float& a, const cpp_float&b){
+
+    int shift = a.exp - b.exp;
+    if(shift > 0){
+      return cpp_float((a.man << shift) - b.man, b.exp, a.rat-b.rat);
+    }else if(shift < 0){
+      return cpp_float(a.man - (b.man << -shift), a.exp, a.rat-b.rat);
+    }
+    return cpp_float(a.man - b.man, a.exp, a.rat-b.rat);
+  }
+#else
   friend
   cpp_float operator-(const cpp_float& a, const cpp_float&b){
 
@@ -265,6 +300,7 @@ public:
     }
     return cpp_float(a.man - b.man, a.exp);
   }
+#endif
 
   bool positive() const
   {
@@ -274,12 +310,15 @@ public:
 
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
+    //    if(a.is_negative() && b.is_positive()) return true;
+    // if(b.is_negative() && a.is_positive()) return false;
 #ifdef CGAL_CPPF
     bool qres = a.rat < b.rat;
 #endif
     cpp_float d(b);
     d -= a;
-
+    std::cout << a << std::endl;
+    std::cout << b << std::endl;
 #ifdef CGAL_CPPF
     assert(qres == ( (!d.is_zero()) && d.positive()));
 #endif
@@ -347,8 +386,8 @@ public:
     }
     Mantissa pow(1);
     pow <<= -exp;
-    boost::multiprecision::cpp_rational rat(man, pow);
-    return CGAL::to_double(rat);
+    boost::multiprecision::cpp_rational r(man, pow);
+    return CGAL::to_double(r);
   }
 
   std::pair<double,double> to_interval() const
@@ -362,8 +401,8 @@ public:
     }
     Mantissa pow(1);
     pow <<= -exp;
-    boost::multiprecision::cpp_rational rat(man, pow);
-    return CGAL::to_interval(rat);
+    boost::multiprecision::cpp_rational r(man, pow);
+    return CGAL::to_interval(r);
   }
 
 
