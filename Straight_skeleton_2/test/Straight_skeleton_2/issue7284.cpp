@@ -9,7 +9,6 @@
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 #include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/gmpxx.h>
 
 #include <boost/shared_ptr.hpp>
 
