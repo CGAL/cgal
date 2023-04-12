@@ -186,5 +186,49 @@ int main(int argc, char** argv)
   std::cout << "Test with maximum_number (EPECK):" << std::endl;
   r += test_limited_self_intersections<EPECK>(filename);
 
+  // extra hand written tests
+  {
+    // shared edge with same point: no self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), Point_3(0,-1,0)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2}, {0,1,3}};
+    assert(!PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
+    // shared edge with duplicated points: self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0),Point_3(0,0,0), Point_3(1,0,0), Point_3(0,-1,0)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2}, {3,4,5}};
+    assert(PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
+    // shared vertex with same point: no self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), Point_3(0,2,0), Point_3(1,2,0)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2}, {3,4,2}};
+    assert(!PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
+    // shared vertex with duplicated points: self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), Point_3(0,2,0), Point_3(1,2,0), Point_3(0,1,0)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2}, {3,4,5}};
+    assert(PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
+    // 4 triangles around a shared edge: no self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), Point_3(0,-1,0), Point_3(0,0,1), Point_3(0,0,-1)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2},{0,1,3},{0,1,4},{0,1,5}};
+    assert(!PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
+    // 4 triangles around a shared edge but two triangles intersecting: self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), Point_3(0,0.5,0), Point_3(0,0,1), Point_3(0,0,-1)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2},{0,1,3},{0,1,4},{0,1,5}};
+    assert(PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+
   return r;
 }
