@@ -139,7 +139,7 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
             itk_img->GetBufferPointer() + size,
             img_ptr);
 
-  if(filename != "")
+  if(!std::string(filename).empty())
     _writeImage(img, filename);
 }
 #endif
