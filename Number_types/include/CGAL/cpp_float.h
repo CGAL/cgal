@@ -302,27 +302,29 @@ public:
   }
 #endif
 
-  bool positive() const
+  bool is_positive() const
   {
-    return is_positive(man);
+    return CGAL::is_positive(man);
   }
 
+  bool is_negative() const
+  {
+    return CGAL::is_negative(man);
+  }
 
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
-    //    if(a.is_negative() && b.is_positive()) return true;
-    // if(b.is_negative() && a.is_positive()) return false;
+    if((! a.is_positive()) && b.is_positive()) return true;
+    if((! b.is_positive()) && a.is_positive()) return false;
+
 #ifdef CGAL_CPPF
     bool qres = a.rat < b.rat;
 #endif
-    cpp_float d(b);
-    d -= a;
-    std::cout << a << std::endl;
-    std::cout << b << std::endl;
+    cpp_float d = b-a;
 #ifdef CGAL_CPPF
-    assert(qres == ( (!d.is_zero()) && d.positive()));
+    assert(qres == d.is_positive());
 #endif
-    return ( (!d.is_zero()) && d.positive());
+    return d.is_positive();
   }
 
   friend bool operator>(cpp_float const&a, cpp_float const&b){
