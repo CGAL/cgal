@@ -940,7 +940,7 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
 
   if ( l0 && l2 && q )
   {
-    const Comparison_result res = compare(tri->collinear_edge_weight(), tri->other_collinear_edge_weight());
+    const Comparison_result res = CGAL::compare(tri->collinear_edge_weight(), tri->other_collinear_edge_weight());
     if ( res == EQUAL )
     {
       FT px, py ;
