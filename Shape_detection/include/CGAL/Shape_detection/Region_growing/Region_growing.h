@@ -408,7 +408,7 @@ namespace internal {
       a model of `OutputIterator` whose value type is `Item`
 
       \tparam InputRange
-        a model of `ConstRange
+        a model of `ConstRange`
 
       \tparam ItemMap
         a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.

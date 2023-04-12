@@ -2058,7 +2058,7 @@ insertion.
 
 The example below shows how to construct the same arrangement of five
 line segments built incrementally in \ref
-Arrangement_on_surface_2/incremental_insertion.cpp` depicted in
+Arrangement_on_surface_2/incremental_insertion.cpp depicted in
 \cgalFigureRef{aos_fig-incremental_insertion} using the aggregate
 insertion function \link CGAL::insert<>() `insert()`\endlink.  Note
 that no point-location object needs to be defined and attached to the
@@ -2266,7 +2266,7 @@ description of geometric objects from a file and constructs them. It
 accepts the name of an input file that contains the plain-text
 description of the geometric objects and an output iterator for
 storing the newly constructed objects.  When the function is
-instantiated, the first template parameter, namely Type`, must be
+instantiated, the first template parameter, namely `Type`, must be
 substituted with the type of objects to read. It is assumed that an
 extractor operator (`>>`) that extracts objects of the given type from
 the input stream is available. The listing of the function template,
@@ -4953,7 +4953,7 @@ nested type `Algebraic_real_1` of the \f$y\f$-coordinate is only
 computed upon request, as it can be a rather costly operation.
 
 The aforementioned types, `Polynomial_1`, `Coefficient`,
-`Bound, and `Algebraic_real_1`, are conveniently nested in
+`Bound`, and `Algebraic_real_1`, are conveniently nested in
 the `Arr_rational_function_traits_2` class template among
 the others and obtained from there in the type definitions used
 in the examples given in this section and listed below. These types
@@ -5510,7 +5510,7 @@ nested types are defined as follows:
   The latter ensures that every instance of the class template
   `Arr_curve_data_traits_2` obtained by substituting the `BaseTraits`
   template parameter with a model of the `ArrangementLandmarkTraits_2`
-  concept models the ArrangementLandmarkTraits_2` concept as well
+  concept models the `ArrangementLandmarkTraits_2` concept as well
 
 </UL>
 
@@ -6936,7 +6936,7 @@ demonstrates the application of the breadth-first search} (BFS)
 algorithm on a dual arrangement. It uses the functor template
 `Extended_face_property_map<Arrangement, Type>` to directly access
 information stored inside the faces. The functor implements a property
-map that utilizes the `data()` and `set_data() member functions of the
+map that utilizes the `data()` and `set_data()` member functions of the
 extended face to update or obtain the property. When the property map
 is instantiated, the `Type` parameter must be substituted with the
 same type that is used to extend the arrangement face; see Section
