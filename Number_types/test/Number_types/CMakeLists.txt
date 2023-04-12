@@ -13,6 +13,7 @@ include(CGAL_VersionUtils)
 include_directories(BEFORE include)
 
 create_single_source_cgal_program("bench_interval.cpp")
+create_single_source_cgal_program("cpp_float.cpp")
 create_single_source_cgal_program("constant.cpp")
 create_single_source_cgal_program("CORE_BigFloat.cpp")
 create_single_source_cgal_program("CORE_BigInt.cpp")

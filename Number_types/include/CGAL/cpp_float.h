@@ -353,21 +353,27 @@ public:
 
   std::pair<double,double> to_interval() const
   {
-    assert(false);
-    double zero(0);
-    return std::make_pair(zero,zero);
+      if(exp == 0){
+      return CGAL::to_interval(man);
+    }
+    if(exp > 0){
+      Mantissa as = man << exp;
+      return CGAL::to_interval(as);
+    }
+    Mantissa pow(1);
+    pow <<= -exp;
+    boost::multiprecision::cpp_rational rat(man, pow);
+    return CGAL::to_interval(rat);
   }
 
 
   bool is_zero () const {
-    return man==0 && exp == 0;
+    return CGAL::is_zero(man);
   }
 
 
   bool is_one () const {
-    assert(false);
-    return true;
-    //  return exp==0 && size==1 && data()[0]==1;
+    return *this == cpp_float(1);
   }
 
 
@@ -394,8 +400,7 @@ public:
       struct Is_one
         : public CGAL::cpp98::unary_function< Type, bool > {
           bool operator()( const Type& x ) const {
-            assert(false);
-            return false; // x.is_one();
+            return x.is_one();
           }
         };
 
