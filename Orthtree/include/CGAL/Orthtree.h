@@ -87,10 +87,8 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   typedef typename Traits::Array Array; ///< Array type.
-  typedef typename Traits::Construct_point_d_from_array
-    Construct_point_d_from_array;
-  typedef typename Traits::Construct_bbox_d
-    Construct_bbox_d;
+  typedef typename Traits::Construct_point_d_from_array Construct_point_d_from_array;
+  typedef typename Traits::Construct_bbox_d Construct_bbox_d;
   /// \endcond
   /// @}
 
@@ -106,6 +104,11 @@ public:
    * \brief Degree of the tree (number of children of non-leaf nodes).
    */
   typedef Dimension_tag<(2 << (Dimension::value - 1))> Degree;
+
+  /*!
+   * \brief Index of a given node in the tree; the root always has index 0.
+   */
+  typedef std::size_t Node_index;
 
   /*!
    * \brief The Sub-tree / Orthant type.
@@ -197,8 +200,6 @@ public:
       , m_range(point_range)
       , m_point_map(point_map) {
 
-    // fixme: this can be removed once traversal doesn't require pointer stability
-    //m_nodes.reserve(1'000'000);
     m_nodes.emplace_back();
 
     Array bbox_min;
@@ -311,7 +312,7 @@ public:
     m_side_per_depth.resize(1);
 
     // Initialize a queue of nodes that need to be refined
-    std::queue<std::size_t> todo;
+    std::queue<Node_index> todo;
     todo.push(0);
 
     // Process items in the queue until it's consumed fully
@@ -372,28 +373,27 @@ public:
   void grade() {
 
     // Collect all the leaf nodes
-    std::queue<Node*> leaf_nodes;
+    std::queue<Node_index> leaf_nodes;
     for (const Node& leaf: traverse(Orthtrees::Leaves_traversal<Self>(*this))) {
-      // TODO: I'd like to find a better (safer) way of doing this
-      leaf_nodes.push(const_cast<Node*>(&leaf));
+      leaf_nodes.push(index(leaf));
     }
 
     // Iterate over the nodes
     while (!leaf_nodes.empty()) {
 
       // Get the next node
-      Node* node = leaf_nodes.front();
+      Node_index node = leaf_nodes.front();
       leaf_nodes.pop();
 
       // Skip this node if it isn't a leaf anymore
-      if (!node->is_leaf())
+      if (!m_nodes[node].is_leaf())
         continue;
 
       // Iterate over each of the neighbors
       for (int direction = 0; direction < 6; ++direction) {
 
         // Get the neighbor
-        auto* neighbor = adjacent_node(*node, direction);
+        auto neighbor = index(adjacent_node(node, direction));
 
         // If it doesn't exist, skip it
         if (!neighbor)
@@ -401,23 +401,23 @@ public:
 
         // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
         // TODO: This check might be redundant, if it doesn't affect performance maybe I could remove it
-        if (&parent(*neighbor) == &parent(*node))
+        if (parent(neighbor.get()) == parent(node))
           continue;
 
         // If it's already been split, skip it
-        if (!neighbor->is_leaf())
+        if (!m_nodes[neighbor.get()].is_leaf())
           continue;
 
         // Check if the neighbor breaks our grading rule
         // TODO: could the rule be parametrized?
-        if ((node->depth() - neighbor->depth()) > 1) {
+        if ((m_nodes[node].depth() - m_nodes[neighbor.get()].depth()) > 1) {
 
           // Split the neighbor
-          split(*neighbor);
+          split(neighbor.get());
 
           // Add newly created children to the queue
           for (int i = 0; i < Degree::value; ++i) {
-            leaf_nodes.push(&children(*neighbor)[i]);
+            leaf_nodes.push(index(children(neighbor.get())[i]));
           }
         }
       }
@@ -445,21 +445,21 @@ public:
    */
   Node& root() { return m_nodes[0]; }
 
-  std::size_t index(const Node& node) const {
+  Node_index index(const Node& node) const {
     return std::distance(m_nodes.data(), &node);
   }
 
-  boost::optional<std::size_t> index(const Node* node) const {
+  boost::optional<Node_index> index(const Node* node) const {
     if (node == nullptr) return {};
     return index(*node);
   }
 
 
-  const Node& operator[](std::size_t index) const {
+  const Node& operator[](Node_index index) const {
     return m_nodes[index];
   }
 
-  Node& operator[](std::size_t index) {
+  Node& operator[](Node_index index) {
     return m_nodes[index];
   }
 
@@ -486,7 +486,7 @@ public:
 
     const Node* first = traversal.first();
 
-    auto next = [=](const Self& tree, std::size_t index) -> boost::optional<std::size_t> {
+    auto next = [=](const Self& tree, Node_index index) -> boost::optional<Node_index> {
       auto n = traversal.next(&tree[index]);
       if (n == nullptr) return {};
       return tree.index(*n);
@@ -526,6 +526,10 @@ public:
     Construct_bbox_d construct_bbox
       = m_traits.construct_bbox_d_object();
     return construct_bbox(min_corner, max_corner);
+  }
+
+  Bbox bbox(Node_index n) const {
+    return bbox(m_nodes[n]);
   }
 
   /// @}
@@ -603,8 +607,7 @@ public:
   template <typename OutputIterator>
   OutputIterator nearest_neighbors(const Sphere& query, OutputIterator output) const {
     Sphere query_sphere = query;
-    return nearest_k_neighbors_in_radius(query_sphere,
-                                         (std::numeric_limits<std::size_t>::max)(), output);
+    return nearest_k_neighbors_in_radius(query_sphere, (std::numeric_limits<std::size_t>::max)(), output);
   }
 
   /*!
@@ -677,6 +680,11 @@ public:
     return m_nodes[node.m_parent_index.get()];
   }
 
+  Node_index parent(Node_index node) const {
+    CGAL_precondition (!m_nodes[node].is_root());
+    return m_nodes[node].m_parent_index.get();
+  }
+
   // todo: these types can probably be moved out of Node
   using Children = typename Node::Children;
   using Children_const = typename Node::Children_const;
@@ -686,9 +694,17 @@ public:
     return Children{&m_nodes[node.m_children_index.get()], Degree::value};
   }
 
+  Children children(Node_index node) {
+    return children(m_nodes[node]);
+  }
+
   Children_const children(const Node& node) const {
     CGAL_precondition (!node.is_leaf());
     return Children_const{&m_nodes[node.m_children_index.get()], Degree::value};
+  }
+
+  Children_const children(Node_index node) const {
+    return children(m_nodes[node]);
   }
 
   const Node* next_sibling(const Node* n) const {
@@ -702,16 +718,20 @@ public:
       return nullptr;
 
     // Find out which child this is
-    std::size_t index = n->local_coordinates().to_ulong();
+    std::size_t local_coordinates = n->local_coordinates().to_ulong();
 
     constexpr static int degree = Node::Degree::value;
 
     // Return null if this is the last child
-    if (int(index) == degree - 1)
+    if (int(local_coordinates) == degree - 1)
       return nullptr;
 
     // Otherwise, return the next child
-    return &(children(parent(*n))[index + 1]);
+    return &(children(parent(*n))[local_coordinates + 1]);
+  }
+
+  const Node* next_sibling(Node_index n) const {
+    return next_sibling(&m_nodes[n]);
   }
 
   const Node* next_sibling_up(const Node* n) const {
@@ -731,6 +751,10 @@ public:
     return nullptr;
   }
 
+  const Node* next_sibling_up(Node_index n) const {
+    return next_sibling_up(&m_nodes[n]);
+  }
+
   const Node* deepest_first_child(const Node* n) const {
 
     if (n == nullptr)
@@ -743,12 +767,16 @@ public:
     return first;
   }
 
+  const Node* deepest_first_child(Node_index n) const {
+    return deepest_first_child(&m_nodes[n]);
+  }
 
   const Node* first_child_at_depth(const Node* n, std::size_t depth) const {
 
     if (!n)
       return nullptr;
 
+    // todo: use Node_index instead of pointer
     std::stack<const Node*> todo;
     todo.push(n);
 
@@ -770,6 +798,10 @@ public:
     return nullptr;
   }
 
+  const Node* first_child_at_depth(Node_index n, std::size_t depth) const {
+    return first_child_at_depth(&m_nodes[n], depth);
+  }
+
 
   /*!
   \brief splits the node into subnodes.
@@ -782,7 +814,7 @@ public:
  */
   void split(Node& node) { split(index(node)); }
 
-  void split(std::size_t n) {
+  void split(Node_index n) {
 
     // Make sure the node hasn't already been split
     CGAL_precondition (m_nodes[n].is_leaf());
@@ -813,7 +845,7 @@ public:
     node.m_children_index.reset();
   }
 
-  void unsplit(std::size_t n) {
+  void unsplit(Node_index n) {
     unsplit(m_nodes[n]);
   }
 
@@ -837,6 +869,9 @@ public:
     return construct_point_d_from_array(bary);
   }
 
+  Point barycenter(Node_index n) const {
+    return barycenter(m_nodes[n]);
+  }
 
   // todo: this does what the documentation for operator== claims to do!
   static bool is_topology_equal(const Node& lhsNode, const Self& lhsTree, const Node& rhsNode, const Self& rhsTree) {
@@ -959,11 +994,19 @@ public:
 
   }
 
+  const Node* adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
+    return adjacent_node(m_nodes[n], direction);
+  }
+
   /*!
     \brief equivalent to `adjacent_node()`, with an adjacency direction rather than a bitset.
    */
   const Node* adjacent_node(const Node& node, typename Node::Adjacency adjacency) const {
     return adjacent_node(node, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
+  }
+
+  const Node* adjacent_node(Node_index n, typename Node::Adjacency adjacency) const {
+    return adjacent_node(m_nodes[n], adjacency);
   }
 
   /*!
@@ -1018,15 +1061,25 @@ private: // functions :
 
   }
 
+  void reassign_points(Node_index n, Range_iterator begin, Range_iterator end, const Point& center,
+                       std::bitset<Dimension::value> coord = {},
+                       std::size_t dimension = 0) {
+    reassign_points(m_nodes[n], begin, end, center, coord, dimension);
+  }
+
   bool do_intersect(const Node& node, const Sphere& sphere) const {
 
     // Create a cubic bounding box from the node
     Bbox node_cube = bbox(node);
 
-    // Check for overlap between the node's box and the sphere as a box, to quickly catch some cases
-    // FIXME: Activating this causes slower times
-//    if (!do_overlap(node_cube, sphere.bbox()))
-//      return false;
+    // Check for intersection between the node and the sphere
+    return CGAL::do_intersect(node_cube, sphere);
+  }
+
+  bool do_intersect(Node_index n, const Sphere& sphere) const {
+
+    // Create a cubic bounding box from the node
+    Bbox node_cube = bbox(n);
 
     // Check for intersection between the node and the sphere
     return CGAL::do_intersect(node_cube, sphere);
@@ -1167,9 +1220,7 @@ private: // functions :
     \param output the output iterator to add the found points to (in order of increasing distance)
    */
   template <typename OutputIterator>
-  OutputIterator nearest_k_neighbors_in_radius
-    (Sphere& query_sphere,
-     std::size_t k, OutputIterator output) const {
+  OutputIterator nearest_k_neighbors_in_radius(Sphere& query_sphere, std::size_t k, OutputIterator output) const {
 
     // Create an empty list of points
     std::vector<Point_with_distance> points_list;

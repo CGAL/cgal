@@ -48,6 +48,7 @@ public:
   typedef Orthtree<Traits, PointRange, PointMap> Enclosing; ///< Orthtree type (enclosing class).
   typedef typename Enclosing::Dimension Dimension; ///< Dimension type.
   typedef typename Enclosing::Degree Degree; ///< Degree type.
+  typedef typename Enclosing::Node_index Node_index; ///< Index type.
 
   /*!
     \brief Self typedef for convenience.
@@ -106,9 +107,8 @@ private:
   std::uint8_t m_depth = 0;
   Global_coordinates m_global_coordinates{};
 
-  // todo
-  boost::optional<std::size_t> m_parent_index{};
-  boost::optional<std::size_t> m_children_index{};
+  boost::optional<Node_index> m_parent_index{};
+  boost::optional<Node_index> m_children_index{};
 
   // Only the Orthtree class has access to the non-default
   // constructor, mutators, etc.
@@ -138,7 +138,7 @@ public:
     \param parent the node containing this one
     \param index this node's relationship to its parent
   */
-  explicit Node(std::size_t parent_index, Global_coordinates parent_coordinates,
+  explicit Node(Node_index parent_index, Global_coordinates parent_coordinates,
                 std::size_t depth, Local_coordinates local_coordinates) :
     m_parent_index(parent_index), m_depth(depth) {
 
