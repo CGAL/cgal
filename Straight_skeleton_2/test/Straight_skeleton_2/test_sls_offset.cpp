@@ -933,8 +933,15 @@ void test_offset(const char* filename,
 
   std::set<FT> offset_times;
   for(auto vit=ss->vertices_begin(); vit!=ss->vertices_end(); ++vit)
+  {
     if(vit->time() != 0)
-      offset_times.insert(vit->time());
+    {
+      if(std::is_same<K, EPECK_w_sqrt>::value)
+        offset_times.insert(vit->time());
+      else
+        offset_times.insert(1.01 * vit->time());
+    }
+  }
 
   Min_circle mc(points.begin(), points.end(), true /*randomize*/);
   const FT r = CGAL::approximate_sqrt(mc.circle().squared_radius());
@@ -975,12 +982,6 @@ void test_kernel()
   // test_API<K>();
 #endif
 
-  // @fixme With an inexact kernel, some offset polygons of these polygons are not simple
-  // due to numerical errors.
-  // Note that the test is intentionally looking for trouble by using a double approximation
-  // of the time at skeleton vertices, which will tend to create a lot of epsilon-close points.
-  const bool skeleton_only = true;
-
   // Artificial data
   test_offset_square<K>();
   test_offset_four_square_holes<K>();
@@ -1001,7 +1002,7 @@ void test_kernel()
   test_offset<K>("data/5-SPOKE.poly");
   test_offset<K>("data/7-SPOKE.poly");
   test_offset<K>("data/AlmostClosed.poly");
-  test_offset<K>("data/A.poly", skeleton_only);
+  test_offset<K>("data/A.poly");
   test_offset<K>("data/closer_edge_event_0.poly");
   test_offset<K>("data/closer_edge_event_1.poly");
   test_offset<K>("data/consecutive_coincident_vertices_0.poly");
@@ -1025,26 +1026,26 @@ void test_kernel()
   test_offset<K>("data/degenerate12.poly");
   test_offset<K>("data/degenerate13.poly");
   test_offset<K>("data/degenerate1.poly");
-  test_offset<K>("data/degenerate20.poly", skeleton_only);
-  test_offset<K>("data/degenerate21.poly", skeleton_only);
-  test_offset<K>("data/degenerate22.poly", skeleton_only);
+  test_offset<K>("data/degenerate20.poly");
+  test_offset<K>("data/degenerate21.poly");
+  test_offset<K>("data/degenerate22.poly");
   test_offset<K>("data/degenerate22b.poly");
-  test_offset<K>("data/degenerate22c.poly", skeleton_only);
-  test_offset<K>("data/degenerate24.poly", skeleton_only);
-  test_offset<K>("data/degenerate25.poly", skeleton_only);
+  test_offset<K>("data/degenerate22c.poly");
+  test_offset<K>("data/degenerate24.poly");
+  test_offset<K>("data/degenerate25.poly");
   test_offset<K>("data/degenerate26.poly");
   test_offset<K>("data/degenerate27.poly");
   test_offset<K>("data/degenerate27b.poly");
   test_offset<K>("data/degenerate27c.poly");
   test_offset<K>("data/degenerate27d.poly");
   test_offset<K>("data/degenerate27e.poly");
-  test_offset<K>("data/degenerate28a.poly", skeleton_only);
-  test_offset<K>("data/degenerate28aa.poly", skeleton_only);
-  test_offset<K>("data/degenerate28b.poly", skeleton_only);
-  test_offset<K>("data/degenerate28c.poly", skeleton_only);
-  test_offset<K>("data/degenerate28x.poly", skeleton_only);
+  test_offset<K>("data/degenerate28a.poly");
+  test_offset<K>("data/degenerate28aa.poly");
+  test_offset<K>("data/degenerate28b.poly");
+  test_offset<K>("data/degenerate28c.poly");
+  test_offset<K>("data/degenerate28x.poly");
   test_offset<K>("data/degenerate_multinode0.poly");
-  test_offset<K>("data/Detmier_b.poly", skeleton_only);
+  test_offset<K>("data/Detmier_b.poly");
   test_offset<K>("data/Detmier_c.poly");
   test_offset<K>("data/Detmier_d.poly");
   test_offset<K>("data/Detmier_e.poly");
@@ -1054,21 +1055,21 @@ void test_kernel()
   test_offset<K>("data/double_edge_2.poly");
   test_offset<K>("data/double_edge.poly");
   test_offset<K>("data/double_split.poly");
-  test_offset<K>("data/equal_times_0.poly", skeleton_only);
+  test_offset<K>("data/equal_times_0.poly");
   test_offset<K>("data/ExtraEdge_1.poly");
   test_offset<K>("data/ExtraEdge_2.poly");
   test_offset<K>("data/hole.poly");
   test_offset<K>("data/inputcircle.poly");
   test_offset<K>("data/inputsquare2.poly");
   test_offset<K>("data/inputsquare.poly");
-  test_offset<K>("data/many_holes.poly", skeleton_only);
+  test_offset<K>("data/many_holes.poly");
   test_offset<K>("data/masked_double_split.poly");
   test_offset<K>("data/multinode0.poly");
   test_offset<K>("data/multinode1.poly");
   test_offset<K>("data/near_degenerate_0.poly");
   test_offset<K>("data/near_degenerate_1.poly");
   test_offset<K>("data/nearly_collinear.poly");
-  test_offset<K>("data/parallels0.poly", skeleton_only);
+  test_offset<K>("data/parallels0.poly");
   test_offset<K>("data/parallels0_b.poly");
   test_offset<K>("data/parallels_1.poly");
   test_offset<K>("data/poly4b.poly");
@@ -1090,7 +1091,7 @@ void test_kernel()
   test_offset<K>("data/pseudo_split_7.poly");
   test_offset<K>("data/pseudo_split_8.poly");
   test_offset<K>("data/pseudo_split_9.poly");
-  test_offset<K>("data/rect_4_spokes.poly", skeleton_only);
+  test_offset<K>("data/rect_4_spokes.poly");
   test_offset<K>("data/rectangle.poly");
   test_offset<K>("data/region_4.poly");
   test_offset<K>("data/rombus_4_spokes.poly");
@@ -1101,10 +1102,10 @@ void test_kernel()
   test_offset<K>("data/sample_1.poly");
   test_offset<K>("data/sample_2.poly");
   test_offset<K>("data/sample2.poly");
-  test_offset<K>("data/sample_3.poly", skeleton_only);
-  test_offset<K>("data/sample3.poly", skeleton_only);
+  test_offset<K>("data/sample_3.poly");
+  test_offset<K>("data/sample3.poly");
   test_offset<K>("data/sample_4.poly");
-  test_offset<K>("data/sample_5.poly", skeleton_only);
+  test_offset<K>("data/sample_5.poly");
   test_offset<K>("data/sample_6.poly");
   test_offset<K>("data/sample_46.poly");
   test_offset<K>("data/sample_73.poly");
@@ -1119,7 +1120,7 @@ void test_kernel()
   test_offset<K>("data/sample_333.poly");
   test_offset<K>("data/sample_638.poly");
   test_offset<K>("data/sample_698.poly");
-  test_offset<K>("data/simple_0.poly", skeleton_only);
+  test_offset<K>("data/simple_0.poly");
   test_offset<K>("data/simple_1.poly");
   test_offset<K>("data/simple_2.poly");
   test_offset<K>("data/simple_3.poly");
@@ -1148,7 +1149,7 @@ void test_kernel()
   test_offset<K>("data/inputc.poly");
   test_offset<K>("data/inputd1.poly");
   test_offset<K>("data/inputd.poly");
-  test_offset<K>("data/inputG.poly", skeleton_only);
+  test_offset<K>("data/inputG.poly");
   test_offset<K>("data/input_K.poly");
   test_offset<K>("data/inputPa.poly");
   test_offset<K>("data/inputP.poly");
@@ -1156,17 +1157,17 @@ void test_kernel()
   test_offset<K>("data/inputq.poly");
   test_offset<K>("data/inputT.poly");
   test_offset<K>("data/inputu.poly");
-  test_offset<K>("data/large_1.poly", skeleton_only);
-  test_offset<K>("data/large_2.poly", skeleton_only);
+  test_offset<K>("data/large_1.poly");
+  test_offset<K>("data/large_2.poly");
   test_offset<K>("data/large_3.poly");
-  test_offset<K>("data/large_4.poly", skeleton_only);
+  test_offset<K>("data/large_4.poly");
   test_offset<K>("data/complex_0.poly");
   test_offset<K>("data/complex_1.poly");
   test_offset<K>("data/complex_2.poly");
   test_offset<K>("data/complex_3.poly");
   test_offset<K>("data/complex_4.poly");
   test_offset<K>("data/complex_5.poly");
-  test_offset<K>("data/wheel_128_spokes.poly", skeleton_only);
+  test_offset<K>("data/wheel_128_spokes.poly");
 #endif
 }
 
