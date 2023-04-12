@@ -822,6 +822,14 @@ struct Property_map_for_soup
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{maximum_number}
+ *     \cgalParamDescription{the maximum number of self intersections that will be detected and returned by the function.}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{No limit.}
+ *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `maximum_number`
+ *     (and not exactly that number) as no strong synchronization is put on threads for performance reasons.}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{point_map}
  *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type from a \cgal `Kernel`.}
@@ -855,12 +863,24 @@ triangle_soup_self_intersections(const PointRange& points,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::const_type Point_map_base;
   Point_map_base pm_base = choose_parameter<Point_map_base>(get_parameter(np, internal_np::point_map));
   typedef Property_map_for_soup<PointRange, Point_map_base> Point_map;
   typedef typename GetPolygonSoupGeomTraits<PointRange, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+  const bool do_limit = !(is_default_parameter<CGAL_NP_CLASS, internal_np::maximum_number_t>::value);
+  if (do_limit)
+  {
+    return self_intersections<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
+                                              std::make_pair(std::cref(points), std::cref(triangles)),
+                                              out,
+                                              parameters::vertex_point_map(Point_map(points,pm_base)).
+                                              geom_traits(gt).
+                                              maximum_number(choose_parameter(get_parameter(np, internal_np::maximum_number), 0)));
+  }
 
   return self_intersections<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
                                             std::make_pair(std::cref(points), std::cref(triangles)),
