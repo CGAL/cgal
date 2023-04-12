@@ -14,6 +14,18 @@ typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
 typedef Octree::Node Node;
 
+class Split_nth_child_of_root {
+  std::size_t m_n;
+public:
+
+  Split_nth_child_of_root(std::size_t n) : m_n(n) {}
+
+  template <typename Node>
+  bool operator()(const Node& node) const {
+    return (node.depth() == 1 && node.local_coordinates().to_ulong() == m_n);
+  }
+};
+
 void test_1_point() {
 
   // Define the dataset
@@ -66,6 +78,12 @@ void test_4_points() {
   other.split(other.children(other.root())[7]);
   assert(Octree::is_topology_equal(other, octree));
   assert(2 == octree.depth());
+
+  // Applying another splitting criterion shouldn't reset the tree.
+  octree.refine(Split_nth_child_of_root(2));
+  other.split(other.children(other.root())[2]);
+  assert(Octree::is_topology_equal(other, octree));
+
 }
 
 int main(void) {

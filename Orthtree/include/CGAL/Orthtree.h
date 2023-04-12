@@ -304,13 +304,6 @@ public:
    */
   void refine(const Split_predicate& split_predicate) {
 
-    // If the tree has already been refined, reset it
-    if (!root().is_leaf())
-      unsplit(root());
-
-    // Reset the side length map, too
-    m_side_per_depth.resize(1);
-
     // Initialize a queue of nodes that need to be refined
     std::queue<Node_index> todo;
     todo.push(0);
@@ -335,10 +328,14 @@ public:
         // Split the node, redistributing its points to its children
         split(current);
 
+      }
+
+      // Check if the node has children which need to be processed
+      if (!m_nodes[current].is_leaf()) {
+
         // Process each of its children
         for (int i = 0; i < Degree::value; ++i)
           todo.push(m_nodes[current].m_children_index.get() + i);
-
       }
     }
   }
