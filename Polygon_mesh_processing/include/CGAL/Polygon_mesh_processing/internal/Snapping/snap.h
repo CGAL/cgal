@@ -806,21 +806,12 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       v1 = next(v0, tm_T);
       v2 = next(v1, tm_T);
       v3 = next(v2, tm_T);
-      const halfedge_descriptor h_to_split_opp = opposite(h_to_split, tm_T);
-      halfedge_descriptor h2 = prev(prev(h_to_split_opp, tm_T), tm_T);
-      const halfedge_descriptor res = prev(h_to_split, tm_T);
       halfedge_descriptor new_hd = first_split_face ? CGAL::Euler::split_face(v0, v2, tm_T)
                                                     : CGAL::Euler::split_face(v1, v3, tm_T);
       if(first_split_face)
-      {
-        h_to_split = opposite(prev(new_hd, tm_T), tm_T);
-        visitor.after_split_face(h_to_split_opp, h2, tm_T);
-      }
+        visitor.after_split_face(v0, v2, tm_T);
       else
-      {
-        h_to_split = opposite(next(new_hd, tm_T), tm_T);
-        visitor.after_split_face(opposite(res, tm_T), h2, tm_T);
-      }
+        visitor.after_split_face(v1, v3, tm_T);
     }
   }
 
