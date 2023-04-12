@@ -919,10 +919,11 @@ void test_offset(const char* filename,
   {
     if(vit->time() != 0)
     {
+      // if the kernel is not exact, avoid trouble
       if(std::is_same<K, EPECK_w_sqrt>::value)
         offset_times.insert(vit->time());
       else
-        offset_times.insert(1.01 * vit->time());
+        offset_times.insert(0.99 * vit->time());
     }
   }
 
