@@ -760,8 +760,8 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       auto p0p2 = CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
       bool first_split_face = (p0p2 > p1p3);
 
-      bool is_deg = first_split_face ? collinear(p0,p1,p2) && collinear(p0,p3,p2)
-                                     : collinear(p0,p1,p3) && collinear(p1,p2,p3);
+      bool is_deg = first_split_face ? collinear(p0,p1,p2) || collinear(p0,p3,p2)
+                                     : collinear(p0,p1,p3) || collinear(p1,p2,p3);
       if(is_deg)
         do_split = false;
 
