@@ -770,6 +770,21 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       else
         do_split = false;
 
+      if(do_split && !is_source_mesh_fixed)
+      {
+        for(halfedge_descriptor h : halfedges_around_target(splitter_v, tm_S))
+        {
+          if(!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
+          {
+            do_split = false;
+            break;
+          }
+        }
+
+        if(do_split)
+          put(vpm_S, splitter_v, new_position);
+      }
+
       // Split and update positions
       vertex_descriptor new_v = boost::graph_traits<TriangleMesh>::null_vertex();
       if(do_split)
@@ -782,29 +797,12 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
         visitor.after_vertex_edge_snap(new_v, tm_T);
       }
-
-      if(!is_source_mesh_fixed)
-      {
-        bool skip = false;
-        for(halfedge_descriptor h : halfedges_around_target(splitter_v, tm_S))
-        {
-          if(!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
-          {
-            skip = true;
-            break;
-          }
-        }
-
-        if(!skip)
-          put(vpm_S, splitter_v, new_position);
-      }
+      else
+        continue;
 
       first_split = false;
       previous_split_position = new_position;
       ++snapped_n;
-
-      if(!do_split)
-        continue;
 
       halfedge_descriptor v0, v1, v2, v3;
       v0 = opposite(h_to_split, tm_T);
