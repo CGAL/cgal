@@ -8,6 +8,7 @@ int main() {
 #define GMP_SONAME "libgmp-10"
 #define MPFR_SONAME "libmpfr-4"
 #define GMP_SONAME_BACKUP "gmp"
+#define GMP_SONAME_BACKUP_2 "gmp-10"
 #define MPFR_SONAME_BACKUP "mpfr-6"
 #define GMP_MAJOR 5
 #define MPFR_MAJOR 3
@@ -66,7 +67,9 @@ int main() {
   int major, minor, patch, build;
   if(!get_version_info(GMP_SONAME, major, minor, patch, build)) {
     if(!get_version_info(GMP_SONAME_BACKUP, major, minor, patch, build)) {
-      return 1;
+      if (!get_version_info(GMP_SONAME_BACKUP_2, major, minor, patch, build)) {
+        return 1;
+      }
     }
   }
 
