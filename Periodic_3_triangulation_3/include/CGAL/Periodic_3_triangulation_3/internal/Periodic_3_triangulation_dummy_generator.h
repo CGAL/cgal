@@ -38,9 +38,9 @@ insert_generic_dummy_points()
             << domain().zmin() << " " << domain().zmax() << std::endl;
 #endif
 
-  std::size_t min_pos = std::min_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
-  std::size_t max_pos = std::max_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
-  std::size_t mid_pos;
+  int min_pos = std::min_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
+  int max_pos = std::max_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
+  int mid_pos;
 
   if(min_pos == max_pos) // cubic
   {
@@ -109,7 +109,7 @@ insert_generic_dummy_points()
 
   auto grid_offset_to_lattice_offset = [&](const Offset& loff) -> Offset
   {
-    const std::size_t hloz = std::size_t(std::ceil(double(loff[max_pos]) / 2.));
+    const int hloz = int(std::ceil(double(loff[max_pos]) / 2.));
 
     Offset goff;
     goff[min_pos] = loff[min_pos] + hloz;
@@ -120,7 +120,7 @@ insert_generic_dummy_points()
 
   auto lattice_offset_to_grid_offset = [&](const Offset& loff) -> Offset
   {
-    const std::size_t hloz = std::size_t(std::ceil(double(loff[max_pos]) / 2.));
+    const int hloz = int(std::ceil(double(loff[max_pos]) / 2.));
 
     Offset goff;
     goff[min_pos] = loff[min_pos] - hloz;
