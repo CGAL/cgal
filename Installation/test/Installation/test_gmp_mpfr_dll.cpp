@@ -33,6 +33,9 @@ bool get_version_info(const LPCTSTR name,
     std::cerr << name << " is not loaded!\n";
     return false;
   }
+  else
+    std::cerr << name << " is loaded.\n";
+
   char fileName[_MAX_PATH];
   DWORD size = GetModuleFileName(g_dllHandle, fileName, _MAX_PATH);
   fileName[size] = NULL;
