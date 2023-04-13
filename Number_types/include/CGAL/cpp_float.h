@@ -349,15 +349,13 @@ public:
 #endif
    int shift = a.exp - b.exp;
     if(shift > 0){
-      Mantissa ac(a.man);
-      ac <<= shift;
+      Mantissa ac = a.man << shift;
 #ifdef CGAL_CPPF
       assert( qres == (ac == b.man));
 #endif
       return ac == b.man;
     }else if(shift < 0){
-      Mantissa  bc(b.man);
-      bc <<= -shift;
+      Mantissa  bc = b.man << -shift;
 #ifdef CGAL_CPPF
       assert(qres == (a.man == bc));
 #endif
