@@ -167,7 +167,7 @@ public:
     exp = idexp - nbits;
     man = m;
     if(u.s.sig){
-      man = -man;
+      man.backend().negate();
     }
 #ifdef CGAL_CPPF
     assert(rat.sign() == man.sign());
