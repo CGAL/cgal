@@ -80,7 +80,10 @@ enum class Slope
 };
 
 template <typename FT>
-const FT default_extrusion_height = { (std::numeric_limits<double>::max)() };
+inline constexpr FT default_extrusion_height()
+{
+  return (std::numeric_limits<double>::max)();
+}
 
 // @todo Maybe this postprocessing is not really necessary? Do users really care if the point
 // is not perfectly above the input contour edge (it generally cannot be anyway if the kernel is not exact except for some
@@ -516,7 +519,7 @@ public:
                               const bool ignore_frame_faces = false,
                               const bool invert_faces = false)
   {
-    CGAL_precondition(height != default_extrusion_height<FT>);
+    CGAL_precondition(height != default_extrusion_height<FT>());
 
     const bool extrude_upwards = is_positive(height);
     const FT abs_height = CGAL::abs(height);
@@ -637,10 +640,12 @@ public:
 
     Straight_skeleton_2_ptr ss_ptr;
 
+    bool is_default_extrusion_height = (height == default_extrusion_height<FT>());
+
     // @partial_wsls_pwh interior SLS of weighted polygons with holes can have skeleton faces with holes
     // The current postprocessing is in the function EnforceSimpleConnectedness, but it has not yet
     // been made compatible with partial skeletons.
-    if(height == default_extrusion_height<FT> || pwh.number_of_holes() != 0)
+    if(is_default_extrusion_height || pwh.number_of_holes() != 0)
     {
       ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(
                  CGAL_SS_i::vertices_begin(pwh.outer_boundary()),
@@ -673,7 +678,7 @@ public:
     CGAL::draw(*ss_ptr);
 #endif
 
-    if(height == default_extrusion_height<FT>)
+    if(is_default_extrusion_height)
     {
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       construct_lateral_faces(*ss_ptr, points, faces, vertical_weight, snapped_positions);
@@ -681,7 +686,7 @@ public:
       construct_lateral_faces(*ss_ptr, points, faces);
 #endif
     }
-    else // height != default_extrusion_height<FT>
+    else // height != default_extrusion_height<FT>()
     {
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       Visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);
@@ -726,7 +731,7 @@ public:
                             FaceRange& faces)
   {
     CGAL_precondition(!is_zero(height));
-    CGAL_precondition(height != default_extrusion_height<FT>); // was checked before, this is just a reminder
+    CGAL_precondition(height != default_extrusion_height<FT>()); // was checked before, this is just a reminder
 
     const FT abs_height = abs(height);
 
@@ -992,7 +997,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, CGAL::internal_np::geom_traits));
 
-  const FT height = choose_parameter(get_parameter(np, internal_np::maximum_height), default_extrusion_height<FT>);
+  const FT height = choose_parameter(get_parameter(np, internal_np::maximum_height), default_extrusion_height<FT>());
 
   Slope slope;
   bool valid_input;
@@ -1019,7 +1024,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
 
   // End of preprocessing, start the actual skeleton computation
 
-  if(slope != Slope::INWARD && height == default_extrusion_height<FT>)
+  if(slope != Slope::INWARD && height == default_extrusion_height<FT>())
   {
     if(verbose)
       std::cerr << "Error: height must be specified when using an outward (or vertical) slope" << std::endl;
