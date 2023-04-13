@@ -418,7 +418,12 @@ public:
 
 
   bool is_one () const {
-    return *this == cpp_float(1);
+    if(! is_positive()) return false;
+
+    int msb = boost::multiprecision::msb(man);
+    if (msb != -exp) return false;
+    int lsb = boost::multiprecision::lsb(man);
+    return (msb == lsb);
   }
 
 

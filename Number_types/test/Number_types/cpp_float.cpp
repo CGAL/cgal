@@ -92,5 +92,13 @@ int main()
   m0 += m4;
   std::cout << m0 << std::endl;
 
+  CGAL::cpp_float one(1);
+  assert(one.is_one());
+  one += m4;
+  one -= m4;
+  std::cout << one << std::endl;
+  assert(one.is_one());
+
+
   return 0;
 }
