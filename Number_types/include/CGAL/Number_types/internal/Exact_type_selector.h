@@ -73,10 +73,11 @@ template <>
 struct Exact_NT_backend<GMP_BACKEND>
 {
   typedef Gmpq Rational;
+  typedef Gmpz Integer;
 #ifdef CGAL_HAS_MPZF
-  typedef Mpzf Integer;
+  typedef Mpzf Ring;
 #else
-  typedef Gmpzf Integer;
+  typedef Gmpzf Ring;
 #endif
 };
 #endif
@@ -86,7 +87,8 @@ template <>
 struct Exact_NT_backend<GMPXX_BACKEND>
 {
   typedef mpq_class Rational;
-  typedef Exact_NT_backend<GMP_BACKEND>::Integer Integer;
+  typedef mpz_class Integer;
+  typedef Exact_NT_backend<GMP_BACKEND>::Ring Ring;
 };
 #endif
 
@@ -95,7 +97,8 @@ template <>
 struct Exact_NT_backend<BOOST_GMP_BACKEND>
 {
   typedef BOOST_gmp_arithmetic_kernel::Rational Rational;
-  typedef Exact_NT_backend<GMP_BACKEND>::Integer Integer;
+  typedef BOOST_gmp_arithmetic_kernel::Integer Integer;
+  typedef Exact_NT_backend<GMP_BACKEND>::Ring Ring;
 };
 
 template <>
@@ -112,7 +115,8 @@ struct Exact_NT_backend<BOOST_BACKEND>
 #else
   typedef BOOST_cpp_arithmetic_kernel::Rational Rational;
 #endif
-  typedef cpp_float Integer;
+  typedef boost::multiprecision::cpp_int Integer;
+  typedef cpp_float Ring;
 };
 #endif
 
@@ -122,6 +126,7 @@ struct Exact_NT_backend<LEDA_BACKEND>
 {
   typedef leda_rational Rational;
   typedef leda_integer Integer;
+  typedef leda_integer Ring;
 };
 #endif
 
@@ -130,6 +135,7 @@ struct Exact_NT_backend<MP_FLOAT_BACKEND>
 {
   typedef Quotient<MP_Float> Rational;
   typedef MP_Float Integer;
+  typedef MP_Float Ring;
 };
 
 #ifndef CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND
@@ -161,14 +167,16 @@ struct Exact_field_selector
   using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational;
 };
 
-// By default, a field is a safe choice of ring.
-template < typename T >
-struct Exact_ring_selector : Exact_field_selector < T > { };
+template < typename >
+struct Exact_ring_selector
+{
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Integer;
+};
 
 template <>
 struct Exact_ring_selector<double>
 {
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Integer;
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Ring;
 };
 
 template <>
