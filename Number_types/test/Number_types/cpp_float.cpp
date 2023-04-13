@@ -1,4 +1,5 @@
 
+
 #include <CGAL/cpp_float.h>
 
 template<class NT>
@@ -51,7 +52,18 @@ int main()
 
   CGAL::cpp_float m5(0.5);
 
+  CGAL::cpp_float m6(-0.625);
+
   CGAL::is_positive(m5);
+  CGAL::is_negative(m6);
+
+  assert(m < m5);
+  assert(m6 < m);
+  assert(! (m5 < m));
+  assert(! (m < m6));
+  assert(! (m6 < m6));
+
+
 
   assert(m4 > m5);
 

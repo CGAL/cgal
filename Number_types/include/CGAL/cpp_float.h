@@ -223,11 +223,10 @@ public:
 #endif
     int shift = exp - other.exp;
     if(shift > 0){
-      man <<= shift;
-      man += other.man;
+      man = (man << shift) + other.man;
       exp = other.exp;
     }else if(shift < 0){
-      man += (other.man << -shift);
+      man = man + (other.man << -shift);
     }else{
       man += other.man;
     }
@@ -317,8 +316,10 @@ public:
 
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
-    if((! a.is_positive()) && b.is_positive()) return true;
-    if((! b.is_positive()) && a.is_positive()) return false;
+    if(((! a.is_positive()) && b.is_positive())
+       || a.is_negative()&& b.is_zero())return true;
+    if(((! b.is_positive()) && a.is_positive())
+       ||b.is_negative()&& a.is_zero())return false;
 
 #ifdef CGAL_CPPF
     bool qres = a.rat < b.rat;

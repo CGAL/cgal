@@ -4,6 +4,8 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Triangulation_3_Tests)
 
+add_definitions ( -D CGAL_CPPF -D CGAL_EPICK_NO_INTERVALS -D CGAL_NO_STATIC_FILTERS )
+
 find_package(CGAL REQUIRED)
 
 find_package(TBB QUIET)
