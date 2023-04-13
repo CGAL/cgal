@@ -75,9 +75,9 @@ struct Exact_NT_backend<GMP_BACKEND>
   typedef Gmpq Rational;
   typedef Gmpz Integer;
 #ifdef CGAL_HAS_MPZF
-  typedef Mpzf Ring;
+  typedef Mpzf Ring_for_float;
 #else
-  typedef Gmpzf Ring;
+  typedef Gmpzf Ring_for_float;
 #endif
 };
 #endif
@@ -88,7 +88,7 @@ struct Exact_NT_backend<GMPXX_BACKEND>
 {
   typedef mpq_class Rational;
   typedef mpz_class Integer;
-  typedef Exact_NT_backend<GMP_BACKEND>::Ring Ring;
+  typedef Exact_NT_backend<GMP_BACKEND>::Ring_for_float Ring_for_float;
 };
 #endif
 
@@ -98,7 +98,7 @@ struct Exact_NT_backend<BOOST_GMP_BACKEND>
 {
   typedef BOOST_gmp_arithmetic_kernel::Rational Rational;
   typedef BOOST_gmp_arithmetic_kernel::Integer Integer;
-  typedef Exact_NT_backend<GMP_BACKEND>::Ring Ring;
+  typedef Exact_NT_backend<GMP_BACKEND>::Ring_for_float Ring_for_float;
 };
 
 template <>
@@ -116,7 +116,7 @@ struct Exact_NT_backend<BOOST_BACKEND>
   typedef BOOST_cpp_arithmetic_kernel::Rational Rational;
 #endif
   typedef boost::multiprecision::cpp_int Integer;
-  typedef cpp_float Ring;
+  typedef cpp_float Ring_for_float;
 };
 #endif
 
@@ -126,7 +126,7 @@ struct Exact_NT_backend<LEDA_BACKEND>
 {
   typedef leda_rational Rational;
   typedef leda_integer Integer;
-  typedef leda_integer Ring;
+  typedef leda_rational Ring_for_float;
 };
 #endif
 
@@ -135,7 +135,7 @@ struct Exact_NT_backend<MP_FLOAT_BACKEND>
 {
   typedef Quotient<MP_Float> Rational;
   typedef MP_Float Integer;
-  typedef MP_Float Ring;
+  typedef MP_Float Ring_for_float;
 };
 
 #ifndef CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND
@@ -176,7 +176,7 @@ struct Exact_ring_selector
 template <>
 struct Exact_ring_selector<double>
 {
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Ring;
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Ring_for_float;
 };
 
 template <>
