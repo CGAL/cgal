@@ -21,6 +21,7 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Has_member.h>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/unordered_set_of.hpp>
@@ -35,6 +36,8 @@
 namespace CGAL {
 
 namespace Mesh_3 {
+
+CGAL_GENERATE_MEMBER_DETECTOR(min_facet_radius_bound);
 
 template<class Tr,
          class Criteria,
@@ -91,12 +94,59 @@ protected:
   mutable Bad_edges m_bad_edges;
   mutable Vertex_set m_bad_vertices;
 
+  FT m_min_squared_radius;
   mutable bool m_manifold_info_initialized;
   mutable bool m_bad_vertices_initialized;
   bool m_with_manifold_criterion;
   bool m_with_boundary;
 
 private:
+  static FT min_squared_radius_bound(const Criteria& criteria, Tag_true) {
+    return criteria.min_facet_radius_bound();
+  }
+
+  static FT min_squared_radius_bound(const Criteria& /*criteria*/, Tag_false) {
+    return FT(0);
+  }
+
+  static FT min_squared_radius_bound(const Criteria& criteria) {
+    return min_squared_radius_bound(criteria,
+        Boolean_tag<has_min_facet_radius_bound<Criteria>::value>());
+  }
+
+  bool is_too_small(Vertex_handle v) const {
+    if(is_zero(m_min_squared_radius)) return false;
+    return is_too_small(biggest_incident_facet_in_complex(v));
+  }
+
+  bool is_too_small(Edge e) const
+  {
+    if(is_zero(m_min_squared_radius)) return false;
+    auto cmp_sq_radius = this->r_tr_.geom_traits().compare_squared_radius_3_object();
+    auto cp = this->r_tr_.geom_traits().construct_point_3_object();
+    const auto p1 = cp(this->r_tr_.point(e.first->vertex(e.second)));
+    const auto p2 = cp(this->r_tr_.point(e.first->vertex(e.third)));
+    if(cmp_sq_radius(p1, p2, m_min_squared_radius) == CGAL::SMALLER)
+      return true;
+  }
+
+  bool is_too_small(Facet f) const {
+    if(is_zero(m_min_squared_radius)) return false;
+    auto cmp_sq_radius = this->r_tr_.geom_traits().compare_squared_radius_3_object();
+    auto cp = this->r_tr_.geom_traits().construct_point_3_object();
+    const auto p1 = cp(this->r_tr_.point(f.first->vertex(f.second)));
+    const auto p2 = cp(this->r_tr_.point(f.first->vertex(Tr::cw(f.second))));
+    const auto p3 = cp(this->r_tr_.point(f.first->vertex(Tr::ccw(f.second))));
+    if(cmp_sq_radius(p1, p2, p3, m_min_squared_radius) == CGAL::SMALLER)
+      return true;
+  }
+
+  void try_insert_bad_facet(Facet facet, const typename Base::Quality& quality) {
+    if(!is_too_small(facet)) {
+      this->insert_bad_facet(facet, quality);
+    }
+  }
+
   // computes and return an ordered pair of Vertex
   EdgeVV make_edgevv(const Vertex_handle vh1,
                      const Vertex_handle vh2) const {
@@ -320,6 +370,7 @@ public:
            , stop_ptr
 #endif
            )
+    , m_min_squared_radius(min_squared_radius_bound(criteria))
     , m_manifold_info_initialized(false)
     , m_bad_vertices_initialized(false)
     , m_with_manifold_criterion((mesh_topology & MANIFOLD_WITH_BOUNDARY) != 0)
@@ -361,11 +412,12 @@ public:
         // Parallel
         if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
-          this->insert_bad_facet(biggest_incident_facet_in_complex(*eit),
-                                 typename Base::Quality());
+          try_insert_bad_facet(biggest_incident_facet_in_complex(*eit),
+                               typename Base::Quality());
         } else
 #endif // CGAL_LINKED_WITH_TBB
         { // Sequential
+          if(is_too_small(*eit)) continue;
           m_bad_edges.insert(Bad_edge(edge_to_edgevv(*eit),
                                       (this->r_c3t3_.face_status(*eit) ==
                                        C3t3::SINGULAR ? 0 : 1)));
@@ -404,11 +456,12 @@ public:
         // Parallel
         if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
-          this->insert_bad_facet(biggest_incident_facet_in_complex(vit),
+          try_insert_bad_facet(biggest_incident_facet_in_complex(vit),
                                  typename Base::Quality());
         } else
 #endif // CGAL_LINKED_WITH_TBB
         { // Sequential
+          if(is_too_small(vit)) continue;
           m_bad_vertices.insert( vit );
         }
 #ifdef CGAL_MESH_3_VERBOSE
@@ -572,11 +625,12 @@ public:
             // Parallel
             if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
             {
-              this->insert_bad_facet(biggest_incident_facet_in_complex(edge),
-                                     typename Base::Quality());
+              try_insert_bad_facet(biggest_incident_facet_in_complex(edge),
+                                   typename Base::Quality());
             } else
 #endif // CGAL_LINKED_WITH_TBB
             { // Sequential
+              if(is_too_small(edge)) continue;
               m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
                                           (this->r_c3t3_.face_status(edge) ==
                                            C3t3::SINGULAR ? 0 : 1)));
@@ -624,11 +678,12 @@ public:
         // Parallel
         if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
-          this->insert_bad_facet(biggest_incident_facet_in_complex(*vit),
-                                 typename Base::Quality());
+          try_insert_bad_facet(biggest_incident_facet_in_complex(*vit),
+                               typename Base::Quality());
         } else
 #endif // CGAL_LINKED_WITH_TBB
         { // Sequential
+          if(is_too_small(*vit)) continue;
           m_bad_vertices.insert(*vit);
         }
       }
@@ -647,12 +702,14 @@ public:
       // Parallel
       if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       {
-        this->insert_bad_facet(biggest_incident_facet_in_complex(v),
-                               typename Base::Quality());
+        try_insert_bad_facet(biggest_incident_facet_in_complex(v),
+                             typename Base::Quality());
       } else
 #endif // CGAL_LINKED_WITH_TBB
       { // Sequential
-        m_bad_vertices.insert(v);
+        if(!is_too_small(v)) {
+          m_bad_vertices.insert(v);
+        }
       }
     }
   }

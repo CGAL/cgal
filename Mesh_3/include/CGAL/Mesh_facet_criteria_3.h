@@ -57,6 +57,7 @@ public:
                         const Sizing_field2& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.)
+    : min_radius_bound(min_radius_bound)
   {
     if (FT(0) != min_radius_bound)
       init_min_radius(min_radius_bound);
@@ -93,6 +94,10 @@ public:
 
   Mesh_facet_topology topology() const {
     return topology_;
+  }
+
+  FT minimal_radius_bound() const {
+    return min_radius_bound;
   }
 
 private:
@@ -162,6 +167,7 @@ private:
   }
 
 private:
+  FT min_radius_bound;
   Criteria criteria_;
   Mesh_facet_topology topology_;
 };  // end class Mesh_facet_criteria_3
