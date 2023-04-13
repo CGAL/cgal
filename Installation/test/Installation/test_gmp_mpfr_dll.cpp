@@ -10,9 +10,6 @@ int main() {
 #define GMP_SONAME_BACKUP "gmp"
 #define GMP_SONAME_BACKUP_2 "gmp-10"
 #define MPFR_SONAME_BACKUP "mpfr-6"
-#define GMP_MAJOR 5
-#define MPFR_MAJOR 3
-
 
 #include <iostream>
 #include <cassert>
