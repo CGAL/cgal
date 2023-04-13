@@ -1,8 +1,33 @@
 
 #include <CGAL/cpp_float.h>
 
+template<class NT>
+void test1(){
+  NT z;
+  NT a=3;
+  NT b=4.5;
+  NT c=2*(a+b)+-a*5;
+  assert(CGAL::sign(c)==0);
+
+  NT e=.0003;
+  NT f=1e-90;
+  assert(CGAL::to_double(b) == 4.5);
+  std::pair<double,double> p=CGAL::to_interval(b);
+  assert(p.first<=4.5 && p.second >= 4.5);
+  assert(a<b && CGAL::compare(b,a)>0);
+  assert(z<f && CGAL::compare(z,f)<0 && CGAL::compare(f,z)>0);
+  assert(z==z && CGAL::compare(z,z)==0);
+  assert(CGAL::square(b)*4==81);
+  assert(CGAL::is_zero(c));
+  assert(!CGAL::is_zero(a));
+  assert(!CGAL::is_one(a));
+  assert(CGAL::is_one(a-2));
+  assert(e-e==0);
+}
+
 int main()
 {
+  test1<CGAL::cpp_float>();
 
   double d = -0;
   CGAL::cpp_float zero(d);

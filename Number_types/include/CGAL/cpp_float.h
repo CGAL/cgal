@@ -169,6 +169,9 @@ public:
     if(u.s.sig){
       man = -man;
     }
+#ifdef CGAL_CPPF
+    assert(rat.sign() == man.sign());
+#endif
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
   }
