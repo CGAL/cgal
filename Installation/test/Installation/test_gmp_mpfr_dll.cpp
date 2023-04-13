@@ -42,6 +42,12 @@ bool get_version_info(const LPCTSTR name,
   std::cerr << "Query FileVersion of \"" << fileName << "\"\n";
   DWORD handle = 0;
   size = GetFileVersionInfoSize(fileName, &handle);
+
+  DWORD err = GetLastError();
+  if (size == 0) {
+    std::cerr << "GetFileVersionInfoSize failed with error " << err << std::endl;
+  }
+
   BYTE* versionInfo = new BYTE[size];
   if (!GetFileVersionInfo(fileName, handle, size, versionInfo))
   {
