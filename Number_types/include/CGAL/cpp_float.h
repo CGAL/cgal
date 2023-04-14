@@ -215,7 +215,6 @@ public:
 #endif
   }
 
-
   cpp_float operator+=(const cpp_float& other)
   {
 #ifdef CGAL_CPPF
@@ -233,7 +232,6 @@ public:
     return *this;
   }
 
-
 #ifdef CGAL_CPPF
   friend
   cpp_float operator+(const cpp_float& a, const cpp_float&b){
@@ -249,6 +247,7 @@ public:
   friend
   cpp_float operator+(const cpp_float& a, const cpp_float&b){
     int shift = a.exp - b.exp;
+    CGAL_HISTOGRAM_PROFILER("shift+", CGAL::abs(shift));
     if(shift > 0){
       return cpp_float((a.man << shift) + b.man, b.exp);
     }else if(shift < 0){
@@ -257,7 +256,6 @@ public:
     return cpp_float(a.man + b.man, a.exp);
   }
 #endif
-
 
   cpp_float operator-=(const cpp_float& other)
   {
@@ -295,6 +293,7 @@ public:
   cpp_float operator-(const cpp_float& a, const cpp_float&b){
 
     int shift = a.exp - b.exp;
+    CGAL_HISTOGRAM_PROFILER("shift-", CGAL::abs(shift));
     if(shift > 0){
       return cpp_float((a.man << shift) - b.man, b.exp);
     }else if(shift < 0){
@@ -348,6 +347,7 @@ public:
     bool qres = a.rat == b.rat;
 #endif
    int shift = a.exp - b.exp;
+   CGAL_HISTOGRAM_PROFILER("shift==", CGAL::abs(shift));
     if(shift > 0){
       Mantissa ac = a.man << shift;
 #ifdef CGAL_CPPF
