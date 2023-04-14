@@ -218,6 +218,7 @@ void generate_random_weights(const PolygonWithHoles& p,
       if(!CGAL::CGAL_SS_i::are_edges_orderly_collinear(s0, s1)){
         start_it = it;
         CGAL_assertion_code(found = true);
+        break;
       }
     }
 
