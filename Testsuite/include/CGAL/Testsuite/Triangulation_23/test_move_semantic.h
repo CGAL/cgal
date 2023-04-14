@@ -11,6 +11,8 @@
 // Author(s)     : Laurent Rineau
 //
 
+#ifndef CGAL_TEST_T23_MOVE_SEMANTIC_C
+#define CGAL_TEST_T23_MOVE_SEMANTIC_C
 
 #include <cassert>
 
@@ -67,3 +69,5 @@ namespace CGAL {
     }
   }
 }
+
+#endif // CGAL_TEST_T23_MOVE_SEMANTIC_C

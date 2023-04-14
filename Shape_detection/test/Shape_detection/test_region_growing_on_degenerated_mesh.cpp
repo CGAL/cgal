@@ -15,7 +15,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -30,103 +30,85 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
 
   using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
   using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
-  using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
+  using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
-  // Default parameter values for the data file degenerated.off.
+  // Default parameter values.
   const FT          distance_threshold = FT(1);
   const FT          angle_threshold    = FT(45);
   const std::size_t min_region_size    = 5;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : "data/degenerated.off");
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("meshes/degenerated-sd.off"));
   CGAL::IO::set_ascii_mode(in);
-
-  if (!in) {
-    std::cout <<
-    "Error: cannot read the file degenerated.off!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
-    return false;
-  }
+  assert(in);
 
   Surface_mesh surface_mesh;
   in >> surface_mesh;
-
   in.close();
   const Face_range face_range = faces(surface_mesh);
-
   assert(face_range.size() == 13477);
-  if (face_range.size() != 13477)
-    return false;
-
-  // Create parameter classes.
-  Neighbor_query neighbor_query(surface_mesh);
 
   using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, surface_mesh));
 
+  // Create parameter classes.
+  Neighbor_query neighbor_query(surface_mesh);
+
   Region_type region_type(
     surface_mesh,
-    distance_threshold, angle_threshold, min_region_size,
-    vertex_to_point_map);
+    CGAL::parameters::
+    maximum_distance(distance_threshold).
+    maximum_angle(angle_threshold).
+    minimum_region_size(min_region_size).
+    vertex_point_map(vertex_to_point_map));
 
   // Run region growing.
   Region_growing region_growing(
     face_range, neighbor_query, region_type);
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
-
-  // Test data.
-  assert(regions.size() >= 265 && regions.size() <= 269);
-  if (regions.size() < 265 || regions.size() > 269)
-    return false;
-
+  assert(regions.size() == 298);
   for (const auto& region : regions)
-    if (!region_type.is_valid_region(region))
-      return false;
+    assert(region_type.is_valid_region(region.second));
 
-  std::vector<std::size_t> unassigned_faces;
-  region_growing.unassigned_items(std::back_inserter(unassigned_faces));
-
-  assert(unassigned_faces.size() >= 501 && unassigned_faces.size() <= 521);
-  if (unassigned_faces.size() < 501 || unassigned_faces.size() > 521)
-    return false;
-
+  std::vector<typename Region_growing::Item> unassigned_faces;
+  region_growing.unassigned_items(face_range, std::back_inserter(unassigned_faces));
+  assert(unassigned_faces.size() == 496);
   return true;
 }
 
 int main(int argc, char *argv[]) {
 
-  // ------>
-
-  bool cartesian_double_test_success = true;
-  if (!test_region_growing_on_degenerated_mesh< CGAL::Simple_cartesian<double> >(argc, argv))
-    cartesian_double_test_success = false;
-
-  std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
-  assert(cartesian_double_test_success);
+  using SC = CGAL::Simple_cartesian<double>;
+  using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
   // ------>
 
-  bool exact_inexact_test_success = true;
-  if (!test_region_growing_on_degenerated_mesh<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
-    exact_inexact_test_success = false;
-
-  std::cout << "exact_inexact_test_success: " << exact_inexact_test_success << std::endl;
-  assert(exact_inexact_test_success);
+  bool sc_test_success = true;
+  if (!test_region_growing_on_degenerated_mesh<SC>(argc, argv))
+    sc_test_success = false;
+  std::cout << "rg_degmesh, sc_test_success: " << sc_test_success << std::endl;
+  assert(sc_test_success);
 
   // ------>
 
-  bool exact_exact_test_success = true;
-  if (!test_region_growing_on_degenerated_mesh<CGAL::Exact_predicates_exact_constructions_kernel>(argc, argv))
-    exact_exact_test_success = false;
+  bool epick_test_success = true;
+  if (!test_region_growing_on_degenerated_mesh<EPICK>(argc, argv))
+    epick_test_success = false;
+  std::cout << "rg_degmesh, epick_test_success: " << epick_test_success << std::endl;
+  assert(epick_test_success);
 
-  std::cout << "exact_exact_test_success: " << exact_exact_test_success << std::endl;
-  assert(exact_exact_test_success);
+  // ------>
 
-  const bool success = cartesian_double_test_success && exact_inexact_test_success && exact_exact_test_success;
+  bool epeck_test_success = true;
+  if (!test_region_growing_on_degenerated_mesh<EPECK>(argc, argv))
+    epeck_test_success = false;
+  std::cout << "rg_degmesh, epeck_test_success: " << epeck_test_success << std::endl;
+  assert(epeck_test_success);
+
+  const bool success = sc_test_success && epick_test_success && epeck_test_success;
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

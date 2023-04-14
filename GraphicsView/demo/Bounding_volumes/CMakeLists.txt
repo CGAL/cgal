@@ -24,9 +24,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_AUTOMOC ON)
 
-  #----------------------------------------------
-  # The "Bounding volumes" demo: Bounding_volumes
-  #----------------------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Bounding_volumes.ui)
 
@@ -53,7 +50,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

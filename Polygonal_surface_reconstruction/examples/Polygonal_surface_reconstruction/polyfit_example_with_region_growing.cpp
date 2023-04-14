@@ -42,7 +42,7 @@ Sphere_neighbor_query<Kernel, Point_vector, Point_map> Neighbor_query;
 typedef CGAL::Shape_detection::Point_set::
 Least_squares_plane_fit_region<Kernel, Point_vector, Point_map, Normal_map> Region_type;
 typedef CGAL::Shape_detection::
-Region_growing<Point_vector, Neighbor_query, Region_type> Region_growing;
+Region_growing<Neighbor_query, Region_type> Region_growing;
 
 typedef CGAL::Surface_mesh<Point>        Surface_mesh;
 typedef        CGAL::Polygonal_surface_reconstruction<Kernel> Polygonal_surface_reconstruction;
@@ -83,13 +83,13 @@ private:
 * the surface model from the planes.
 */
 
-int main()
+int main(int argc, char* argv[])
 {
   Point_vector points;
 
   // Load point set from a file.
-  const std::string input_file(CGAL::data_file_path("points_3/cube.pwn"));
-    std::ifstream input_stream(input_file.c_str());
+  const std::string input_file = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
+  std::ifstream input_stream(input_file.c_str());
   if (input_stream.fail()) {
     std::cerr << "Failed open file \'" << input_file << "\'" << std::endl;
     return EXIT_FAILURE;

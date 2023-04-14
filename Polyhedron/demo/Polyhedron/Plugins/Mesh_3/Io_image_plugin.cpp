@@ -1337,6 +1337,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
   QApplication::restoreOverrideCursor();
   CGAL::Three::Three::warning("VTK is required to read DCM and BMP files");
   CGAL_USE(dirname);
+  CGAL_USE(ext);
   return false;
 #else
   QFileInfo fileinfo;
@@ -1440,6 +1441,7 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
   CGAL::Three::Three::warning("VTK is required to read DCM and BMP files");
   CGAL_USE(dirname);
   CGAL_USE(ext);
+  CGAL_USE(smooth);
 #else
   auto create_image = [&](auto&& reader) -> void
   {

@@ -31,7 +31,7 @@ struct Concurrent_compact_container_traits {
 /// @{
   /*!
   Returns the pointer held by `t`.
-  The template version defines this function as: `return t.for_compact_container();
+  The template version defines this function as: `return t.for_compact_container();`
   */
   static void * pointer(const T &t);
 
@@ -294,8 +294,8 @@ complexity. No exception is thrown.
   /// returns whether `pos` is in the range `[ccc.begin(),  ccc.end()]` (`ccc.end()` included).
   bool owns(const_iterator pos);
   /// returns whether `pos` is in the range `[ccc.begin(), ccc.end())` (`ccc.end()` excluded).
-  bool owns_dereferenceable(const_iterator pos);
 
+  bool owns_dereferencable(const_iterator pos);
 /// @}
 
 /// \name Merging

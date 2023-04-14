@@ -13,7 +13,7 @@
 #define CGAL_LINEAR_CELL_COMPLEX_CONSTRUCTORS_H 1
 
 #include <CGAL/IO/OFF.h>
-#include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/assertions.h>
 

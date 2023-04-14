@@ -57,7 +57,6 @@ _test_cls_const_Del_triangulation(const Triangul&)
   typedef std::list<Constraint>               list_constraints;
 
   CGAL_USE_TYPE(Gt);
-  CGAL_USE_TYPE(Segment);
   CGAL_USE_TYPE(Triangle);
   CGAL_USE_TYPE(Locate_type);
 
@@ -80,6 +79,19 @@ _test_cls_const_Del_triangulation(const Triangul&)
    assert( T2.dimension() == 2 );
    assert( T2.number_of_vertices() == 20);
    assert( T2.is_valid() );
+
+{
+   // alternative build method
+   std::vector<Segment> l;
+   for (int m=0; m<19;  m++)
+     l.push_back(Segment(lpt[m],lpt[m+1]));
+
+   Triangul T2_bis;
+   T2_bis.insert_constraints(l.begin(), l.end());
+   assert( T2_bis.dimension() == 2 );
+   assert( T2_bis.number_of_vertices() == 20);
+   assert( T2_bis.is_valid() );
+}
 
    // test get_conflicts
   std:: cout << "    get conflicts" << std::endl;

@@ -6,22 +6,20 @@ project(Generator_Tests)
 
 find_package(CGAL REQUIRED)
 
-# Use Eigen
+create_single_source_cgal_program("random_hull_test.cpp")
+create_single_source_cgal_program("random_poly_test.cpp")
+create_single_source_cgal_program("rcs_test.cpp")
+create_single_source_cgal_program("test_combination_enumerator.cpp")
+create_single_source_cgal_program("test_generators.cpp")
+create_single_source_cgal_program("test_tetrahedron_3.cpp")
+create_single_source_cgal_program("test_triangle_2.cpp")
+create_single_source_cgal_program("test_triangle_3.cpp")
+
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
-
-# create a target per cppfile
-file(
-  GLOB cppfiles
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-foreach(cppfile ${cppfiles})
-  if(NOT (${cppfile} STREQUAL "generic_random_test.cpp") OR TARGET
-                                                            CGAL::Eigen3_support)
-    create_single_source_cgal_program("${cppfile}")
-    if(TARGET CGAL::Eigen3_support)
-      get_filename_component(target ${cppfile} NAME_WE)
-      target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
-    endif()
-  endif()
-endforeach()
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("generic_random_test.cpp")
+  target_link_libraries(generic_random_test PRIVATE CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: The test 'generic_random_test' uses Eigen, and will not be compiled.")
+endif()

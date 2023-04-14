@@ -549,11 +549,15 @@ public:
   typedef int                                        Curve_index;
   typedef int                                        Corner_index;
 
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                           Index;
+#else
   typedef typename Mesh_3::internal::Index_generator_with_features<
     typename MeshDomain_3::Subdomain_index,
     Surface_patch_index,
     Curve_index,
     Corner_index>::type                              Index;
+#endif
 
   typedef CGAL::Tag_true                             Has_features;
   typedef typename MeshDomain_3::R::FT               FT;

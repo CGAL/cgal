@@ -17,13 +17,10 @@ include_directories(./)
 # Find CGAL and CGAL Qt5
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS
-      "NOTICE: This project requires the Eigen library, and will not be compiled."
-  )
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
 
@@ -73,9 +70,6 @@ else(CGAL_Qt5_FOUND AND Qt5_FOUND)
     set(PCA_MISSING_DEPS "Qt5, ${PCA_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${PCA_MISSING_DEPS} and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${PCA_MISSING_DEPS} and will not be compiled.")
 
 endif(CGAL_Qt5_FOUND AND Qt5_FOUND)

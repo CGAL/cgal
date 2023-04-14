@@ -43,7 +43,7 @@ public:
   ///  Functor with operator: `Vector_3 operator()(const Vector_3& v, const Vector_3& w) const`, which constructs the cross product of `v` and `w`.
   typedef unspecified_type Construct_cross_product_vector_3;
 
-  ///  Functor with operator: `FT operator()(const Vector_3& v, const Vector_3& w) const, which constructs the scalar product of `v` and `w`.
+  ///  Functor with operator: `FT operator()(const Vector_3& v, const Vector_3& w) const`, which constructs the scalar product of `v` and `w`.
   typedef unspecified_type Compute_scalar_product_3;
 
   ///  Functor with operator: `FT operator()(const Point_3& p, const Point_3& q) const` which computes the squared distance between `p` and `q`.

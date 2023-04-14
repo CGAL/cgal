@@ -14,7 +14,7 @@
 \cgalPkgPicture{bimba_back_small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur}
+\cgalPkgAuthors{Jane Tournois, Noura Faraj, Jean-Marc Thiery, and Tamy Boubekeur}
 \cgalPkgDesc{
 The package provides a function for remeshing tetrahedral meshes,
 targeting high quality meshes with respect to dihedral angles.

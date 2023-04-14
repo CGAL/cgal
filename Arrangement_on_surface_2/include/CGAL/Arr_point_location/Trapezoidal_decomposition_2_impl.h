@@ -72,10 +72,10 @@ split_trapezoid_by_vertex(Dag_node& split_node,
     CGAL_warning(left_tr.is_on_left_boundary() == tr.is_on_left_boundary());
     CGAL_warning(right_tr.is_on_right_boundary() == tr.is_on_right_boundary());
 
-    left_tr.init_neighbours(tr.lb(), tr.lt(),
-                            right_node.get_data(), right_node.get_data());
-    right_tr.init_neighbours(left_node.get_data(), left_node.get_data(),
-                             tr.rb(), tr.rt());
+    left_tr.init_neighbors(tr.lb(), tr.lt(),
+                           right_node.get_data(), right_node.get_data());
+    right_tr.init_neighbors(left_node.get_data(), left_node.get_data(),
+                            tr.rb(), tr.rt());
     if (!traits->is_empty_item(tr.lb())) {
       Td_active_trapezoid& lb(boost::get<Td_active_trapezoid>(tr.lb()));
       lb.set_rb(left_node.get_data());
@@ -109,10 +109,10 @@ split_trapezoid_by_vertex(Dag_node& split_node,
     //CGAL_warning(left_e.is_on_left_boundary() == e.is_on_left_boundary());
     //CGAL_warning(right_e.is_on_right_boundary() == e.is_on_right_boundary());
 
-    left_e.init_neighbours(boost::none);
-    //left_e.init_neighbours(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
-    right_e.init_neighbours(e.next());
-    //right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
+    left_e.init_neighbors(boost::none);
+    //left_e.init_neighbors(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
+    right_e.init_neighbors(e.next());
+    //right_e.init_neighbors(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
   }
 
   // left and right are set to the point itself,
@@ -307,8 +307,8 @@ split_trapezoid_by_halfedge(Dag_node& split_node,
   Td_active_trapezoid& top =
     boost::get<Td_active_trapezoid>(top_node.get_data());
 
-  top.init_neighbours(prev_top_tr, split_tr.lt(), boost::none , split_tr.rt());
-  bottom.init_neighbours(split_tr.lb(), prev_bottom_tr, split_tr.rb(),
+  top.init_neighbors(prev_top_tr, split_tr.lt(), boost::none , split_tr.rt());
+  bottom.init_neighbors(split_tr.lb(), prev_bottom_tr, split_tr.rb(),
                          boost::none);
 
   if (!traits->is_empty_item(prev_bottom_tr)) {
@@ -2340,7 +2340,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  }
 //  else // new_left_t is leftmost representative for he
 //  {
-//    //set_neighbours_after_split_halfedge_update (new_left_t, t1, he1, he2); //MICHAL: this method does nothing
+//    //set_neighbors_after_split_halfedge_update (new_left_t, t1, he1, he2); //MICHAL: this method does nothing
 //  }
 //  if (t1.rt()==&old_t) t1.set_rt(&new_left_t);
 //  if (t1.lb()==&old_t) t1.set_lb(&new_left_t);
@@ -2366,7 +2366,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  }
 //  else // new_right_t is rightmost representative for te
 //  {
-//    //set_neighbours_after_split_halfedge_update (new_right_t,t2,he1, he2,false); //MICHAL: this method does nothing
+//    //set_neighbors_after_split_halfedge_update (new_right_t,t2,he1, he2,false); //MICHAL: this method does nothing
 //  }
 //  if (t2.rt()==&old_t) t2.set_rt(&new_right_t);
 //  if (t2.lb()==&old_t) t2.set_lb(&new_right_t);

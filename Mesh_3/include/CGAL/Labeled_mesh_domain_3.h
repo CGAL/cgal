@@ -31,6 +31,7 @@
 #include <CGAL/Origin.h>
 
 #include <functional>
+#include <type_traits>
 
 #include <CGAL/SMDS_3/internal/Handle_IO_for_pair_of_int.h>
 #include <CGAL/SMDS_3/internal/indices_management.h>
@@ -47,6 +48,11 @@
 #  include <boost/format.hpp>
 #endif
 #include <boost/optional.hpp>
+
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
+
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -117,15 +123,67 @@ namespace internal {
     }
   };
 
+  // Detect_features_in_domain
+  template<typename Point, typename DetectFunctor>
+  struct Detect_features_in_domain {
+    std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3& image, DetectFunctor functor) const {
+#if defined(BOOST_MSVC) && (BOOST_MSVC < 1910) //before msvc2017
+      return functor.operator()<Point>(image);
+#else
+      return functor.template operator()<Point>(image);
+#endif
+    }
+  };
+  // specialization for `Null_functor`: create the default functor
+  template<typename Point>
+  struct Detect_features_in_domain<Point, Null_functor> {
+    std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3&, Null_functor) const {
+      return std::vector<std::vector<Point>>();
+    }
+  };
+
+  template<typename Point, typename DetectFunctor>
+  std::vector<std::vector<Point>>
+    detect_features(const CGAL::Image_3& image, DetectFunctor functor)
+  {
+    Detect_features_in_domain<Point, DetectFunctor> detector;
+    return detector(image, functor);
+  }
+
+  template<bool WithFeatures>
+  struct Add_features_in_domain {
+    template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
+    void operator()(const CGAL::Image_3&, MeshDomain&, const InputFeatureRange&, DetectFunctor)
+    {}
+  };
+
+  template<>
+  struct Add_features_in_domain<true>
+  {
+    template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
+    void operator()(const CGAL::Image_3& image,
+                    MeshDomain& domain,
+                    const InputFeatureRange& input_features,
+                    DetectFunctor functor)
+    {
+      using P = typename MeshDomain::Point_3;
+      auto detected_feature_range
+        = CGAL::Mesh_3::internal::detect_features<P>(image, functor);
+
+      CGAL::merge_and_snap_polylines(image, detected_feature_range, input_features);
+
+      if (!input_features.empty())
+        domain.add_features(input_features.begin(), input_features.end());
+      domain.add_features(detected_feature_range.begin(), detected_feature_range.end());
+    }
+  };
+
 } // end namespace CGAL::Mesh_3::internal
 } // end namespace CGAL::Mesh_3
 
 #ifndef DOXYGEN_RUNNING
-struct Null_subdomain_index {
-  template <typename T>
-  bool operator()(const T& x) const { return 0 == x; }
-};
-
 template <typename Subdomain_index>
 struct Construct_pair_from_subdomain_indices {
   typedef std::pair<Subdomain_index, Subdomain_index> result_type;
@@ -427,7 +485,7 @@ public:
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  template<typename Function, typename Bounding_object>
 #if !defined(BOOST_MSVC)
   CGAL_DEPRECATED
 #endif
@@ -539,6 +597,11 @@ public:
    * domain to be discretized is the union of voxels that have non-zero
    * values.
    *
+   * \returns either a `Labeled_mesh_domain_3`,
+   *   or a `Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>`
+   *   depending on whether one or more of the named parameters
+   *   `features_detector` and `input_features` are provided.
+   *
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \param image_ the input 3D image.
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
@@ -565,6 +628,34 @@ public:
    *                            bound, relative to the diameter of the box of the image.}
    *     \cgalParamDefault{FT(1e-3)}
    *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{features_detector}
+   *    \cgalParamDescription{ a functor that implements
+   *      `std::vector<std::vector<Point>> operator()(const Image_3& img) const`,
+   *      where `%Point` matches the mesh domain point type.
+   *      It returns a range of detected polyline features, which are added
+   *      to the domain for feature protection.
+   *      See \ref PkgMesh3FeatureDetection for a list of available functors.}
+   *    \cgalParamDefault{CGAL::Null_functor()}
+   *    \cgalParamExtra{The return type of the function depends on whether this parameter
+                        or `input_features` are provided or not.}
+   *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{input_features}
+   *    \cgalParamDescription{ a `Range` of polyline features, represented as `Range`s of `Point_3`.
+   *         Polyline features are added to the domain for further feature protection.
+   *         Input polyline features must be different from the detected features
+   *         and can intersect only at vertices, if they do. Otherwise,
+   *         the meshing process may not terminate.}
+   *    \cgalParamDefault{`std::vector<std::vector<Point_3>>()`}
+   *    \cgalParamExtra{The return type of the function depends on whether this parameter
+                        or `input_features` are provided or not.}
+   *    \cgalParamExtra{It is recommended to pass a const-reference for this parameter,
+   *                    possibly using `std::cref(polylines_range)` to avoid useless copies.}
+   *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
+   *   \cgalParamNEnd
+   *
    * \cgalNamedParamsEnd
    *
    * \cgalHeading{Example}
@@ -578,13 +669,24 @@ public:
    *
    * \snippet Mesh_3/mesh_3D_weighted_image.cpp Domain creation
    *
+   * From the example (\ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp)
+   * where the features are detected in `image`:
+   *
+   * \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
+   *
+   * From the example (\ref Mesh_3/mesh_3D_image_with_input_features.cpp)
+   * where the features are provided by the user:
+   *
+   * \snippet Mesh_3/mesh_3D_image_with_input_features.cpp Domain creation
    */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
+  static auto
+  create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
+
     auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
     auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
     FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
@@ -592,41 +694,62 @@ public:
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
-    const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), CGAL::Image_3());
+
+    using Image_ref_type = typename internal_np::Lookup_named_param_def<internal_np::weights_param_t,
+                                                                        CGAL_NP_CLASS,
+                                                                        CGAL::Image_3>::reference;
+    CGAL::Image_3 no_weights;
+    const Image_ref_type weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
+    auto features_detector_ = choose_parameter(get_parameter(np, internal_np::features_detector_param), Null_functor());
+
+    using Default_input_features = std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>>;
+    using Input_features_ref_type = typename internal_np::Lookup_named_param_def<internal_np::input_features_param_t,
+                                                                                 CGAL_NP_CLASS,
+                                                                                 Default_input_features>::reference;
+    Default_input_features empty_vec;
+    Input_features_ref_type input_features_
+          = choose_parameter(get_parameter_reference(np, internal_np::input_features_param), empty_vec);
+
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
 
+    auto image_wrapper = weights_.is_valid()
+      ? create_weighted_labeled_image_wrapper(image_,
+                                              weights_,
+                                              image_values_to_subdomain_indices_,
+                                              value_outside_)
+      : create_labeled_image_wrapper(image_,
+                                     image_values_to_subdomain_indices_,
+                                     value_outside_);
+
+    // warning : keep Return_type consistent with actual return type
+    const bool no_features
+      =  CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::features_detector_param_t>::value
+      && CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::input_features_param_t>::value;
+    using Return_type = std::conditional_t <
+      no_features,
+      Labeled_mesh_domain_3,
+      Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
+    >;
+
+    Return_type domain
+      (p::function = image_wrapper,
+       p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
+       p::relative_error_bound = relative_error_bound_,
+       p::p_rng = p_rng_,
+       p::null_subdomain_index =
+               create_null_subdomain_index(null_subdomain_index_),
+       p::construct_surface_patch_index =
+               create_construct_surface_patch_index(construct_surface_patch_index_));
+
     if (weights_.is_valid())
-    {
-      return Labeled_mesh_domain_3
-              (p::function = create_weighted_labeled_image_wrapper
-                       (image_,
-                        weights_,
-                        image_values_to_subdomain_indices_,
-                        value_outside_),
-               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
-               p::relative_error_bound = relative_error_bound_,
-               p::p_rng = p_rng_,
-               p::null_subdomain_index =
-                       create_null_subdomain_index(null_subdomain_index_),
-               p::construct_surface_patch_index =
-                       create_construct_surface_patch_index(construct_surface_patch_index_));
-    }
-    else
-    {
-      return Labeled_mesh_domain_3
-              (p::function = create_labeled_image_wrapper
-                       (image_,
-                        image_values_to_subdomain_indices_,
-                        value_outside_),
-               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
-               p::relative_error_bound = relative_error_bound_,
-               p::p_rng = p_rng_,
-               p::null_subdomain_index =
-                       create_null_subdomain_index(null_subdomain_index_),
-               p::construct_surface_patch_index =
-                       create_construct_surface_patch_index(construct_surface_patch_index_));
-    }
+      return domain;
+
+    // features
+    Mesh_3::internal::Add_features_in_domain<!no_features>()
+      (image_, domain, input_features_, features_detector_);
+
+    return domain;
   }
 /// @}
 
@@ -686,7 +809,7 @@ public:
   }
 
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS& np)
+  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS& np)
   {
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::image_3_param_t>::value, "Value for required parameter not found");
     using parameters::get_parameter_reference;
@@ -698,10 +821,10 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
-                                                                const CGAL_NP_CLASS_1&  np1,
-                                                                const CGAL_NP_CLASS_2&  np2,
-                                                                const NP& ... nps)
+  static auto create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
+                                               const CGAL_NP_CLASS_1&  np1,
+                                               const CGAL_NP_CLASS_2&  np2,
+                                               const NP& ... nps)
   {
     return create_labeled_image_mesh_domain(image_, internal_np::combine_named_parameters(np1, np2, nps...));
   }
@@ -709,9 +832,9 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1&  np1,
-                                                                const CGAL_NP_CLASS_2&  np2,
-                                                                const NP& ... nps)
+  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1& np1,
+                                               const CGAL_NP_CLASS_2& np2,
+                                               const NP& ... nps)
   {
     return create_labeled_image_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
@@ -904,9 +1027,9 @@ public:
       // null(f(p)) means p is outside the domain
       Subdomain_index index = (r_domain_.function_)(p);
       if ( r_domain_.null(index) )
-        return Subdomain();
+        return Subdomain{};
       else
-        return Subdomain(index);
+        return Subdomain{ index };
     }
   private:
     const Labeled_mesh_domain_3& r_domain_;

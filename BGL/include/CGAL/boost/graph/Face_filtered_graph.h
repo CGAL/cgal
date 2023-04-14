@@ -588,31 +588,31 @@ struct Face_filtered_graph
     return selected_halfedges.count();
   }
 
-  Property_map_binder<FIM, typename Pointer_property_map<typename boost::property_traits<FIM>::value_type>::type>
+  Compose_property_map<FIM, typename Pointer_property_map<typename boost::property_traits<FIM>::value_type>::type>
   get_face_index_map() const
   {
     is_imap_in_use.set(0);
     initialize_face_indices();
 
-    return bind_property_maps(fimap, make_property_map(face_indices));
+    return make_compose_property_map(fimap, make_property_map(face_indices));
   }
 
-  Property_map_binder<VIM, typename Pointer_property_map<typename boost::property_traits<VIM>::value_type>::type>
+  Compose_property_map<VIM, typename Pointer_property_map<typename boost::property_traits<VIM>::value_type>::type>
   get_vertex_index_map() const
   {
     is_imap_in_use.set(1);
     initialize_vertex_indices();
 
-    return bind_property_maps(vimap, make_property_map(vertex_indices) );
+    return make_compose_property_map(vimap, make_property_map(vertex_indices) );
   }
 
-  Property_map_binder<HIM, typename Pointer_property_map<typename boost::property_traits<HIM>::value_type >::type>
+  Compose_property_map<HIM, typename Pointer_property_map<typename boost::property_traits<HIM>::value_type >::type>
   get_halfedge_index_map() const
   {
     is_imap_in_use.set(2);
     initialize_halfedge_indices();
 
-    return bind_property_maps(himap, make_property_map(halfedge_indices) );
+    return make_compose_property_map(himap, make_property_map(halfedge_indices) );
   }
 
   /// returns `true` if around any vertex of a selected face there is at most a single umbrella
@@ -1322,7 +1322,7 @@ struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
   typedef typename FFG::FIM                                                           FIM;
 
-  typedef typename CGAL::Property_map_binder<FIM,
+  typedef typename CGAL::Compose_property_map<FIM,
                      typename CGAL::Pointer_property_map<
                        typename boost::property_traits<FIM>::value_type>::type>       type;
   typedef type                                                                        const_type;
@@ -1334,7 +1334,7 @@ struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
   typedef typename FFG::VIM                                                           VIM;
 
-  typedef typename CGAL::Property_map_binder<VIM,
+  typedef typename CGAL::Compose_property_map<VIM,
                      typename CGAL::Pointer_property_map<
                        typename boost::property_traits<VIM>::value_type>::type>       type;
   typedef type                                                                        const_type;
@@ -1346,7 +1346,7 @@ struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
   typedef typename FFG::HIM                                                           HIM;
 
-  typedef typename CGAL::Property_map_binder<HIM,
+  typedef typename CGAL::Compose_property_map<HIM,
                      typename CGAL::Pointer_property_map<
                        typename boost::property_traits<HIM>::value_type>::type>       type;
   typedef type                                                                        const_type;
