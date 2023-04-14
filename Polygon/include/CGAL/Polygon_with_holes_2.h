@@ -166,7 +166,7 @@ Both \ascii and binary formats are supported, and the format is automatically de
 The format consists of the number of points of the outer boundary followed
 by the points themselves in counterclockwise order, followed by the number of holes,
 and for each hole, the number of points of the outer boundary is followed
-by the points themselves in clockwise order.
+by the points themselves, in clockwise order.
 
 \relates Polygon_with_holes_2
 */

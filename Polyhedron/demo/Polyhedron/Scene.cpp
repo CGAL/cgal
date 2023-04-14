@@ -1928,6 +1928,7 @@ void Scene::removeViewer(Viewer_interface *viewer)
   if(viewer->property("is_destroyed").toBool())
     return;
 
+  viewer->makeCurrent();
   vaos[viewer]->destroy();
   vaos[viewer]->deleteLater();
   vaos.remove(viewer);

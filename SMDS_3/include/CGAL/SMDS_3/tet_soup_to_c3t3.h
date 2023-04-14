@@ -419,7 +419,8 @@ bool build_triangulation_impl(Tr& tr,
 
   if(finite_cells.empty())
   {
-    std::cout << "WARNING: No finite cells were provided. Only the points will be loaded."<<std::endl;
+    if (verbose)
+      std::cout << "WARNING: No finite cells were provided. Only the points will be loaded."<<std::endl;
   }
 
   tr.tds().clear(); // not tr.clear() since it calls tr.init() which we don't want
@@ -438,14 +439,14 @@ bool build_triangulation_impl(Tr& tr,
       success = false;
     }
     else
-      std::cout << "build finite cells done" << std::endl;
+      if (verbose) std::cout << "build finite cells done" << std::endl;
     if (!CGAL::SMDS_3::build_infinite_cells<Tr>(tr, incident_cells_map, verbose, allow_non_manifold))
     {
       if(verbose) std::cout << "build_infinite_cells went wrong" << std::endl;
       success = false;
     }
     else
-      std::cout << "build infinite cells done" << std::endl;
+      if (verbose) std::cout << "build infinite cells done" << std::endl;
     tr.tds().set_dimension(3);
     if (!CGAL::SMDS_3::assign_neighbors<Tr>(tr, incident_cells_map, allow_non_manifold))
     {
@@ -453,7 +454,7 @@ bool build_triangulation_impl(Tr& tr,
       success = false;
     }
     else
-      std::cout << "assign neighbors done" << std::endl;
+      if (verbose) std::cout << "assign neighbors done" << std::endl;
     if (verbose)
     {
       std::cout << "built triangulation : " << std::endl;

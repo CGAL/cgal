@@ -349,7 +349,7 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
 
     // If the two curves used to be neighbors before, we do not need to
     // intersect them again.
-    if (!this->m_currentEvent->are_left_neighbours(*currentOne, *prevOne))
+    if (!this->m_currentEvent->are_left_neighbors(*currentOne, *prevOne))
       _intersect(*prevOne, *currentOne);
 
     prevOne = currentOne;

@@ -137,43 +137,14 @@ private:
     return K().construct_segment_2_object()(s,t);
   }
 
-  Trisegment_2_ptr CreateTrisegment ( Triedge const& aTriedge ) const
-  {
-    CGAL_precondition( aTriedge.is_valid() ) ;
-
-    if ( aTriedge.is_skeleton() )
-    {
-      return Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0())
-                                               ,CreateSegment(aTriedge.e1())
-                                               ,CreateSegment(aTriedge.e2())
-                                               );
-    }
-    else
-    {
-      return Trisegment_2_ptr() ;
-    }
-  }
-
-  Trisegment_2_ptr CreateTrisegment ( Vertex_const_handle aNode ) const ;
-
-  Vertex_const_handle GetSeedVertex ( Vertex_const_handle   aNode
-                                    , Halfedge_const_handle aBisector
-                                    , Halfedge_const_handle aEa
-                                    , Halfedge_const_handle aEb
-                                    ) const ;
-
-  bool Is_bisector_defined_by ( Halfedge_const_handle aBisector, Halfedge_const_handle aEa, Halfedge_const_handle aEb ) const
-  {
-    return    ( aBisector->defining_contour_edge() == aEa && aBisector->opposite()->defining_contour_edge() == aEb )
-           || ( aBisector->defining_contour_edge() == aEb && aBisector->opposite()->defining_contour_edge() == aEa ) ;
-  }
+  Trisegment_2_ptr GetTrisegment ( Vertex_const_handle aNode ) const ;
 
   Comparison_result Compare_offset_against_event_time( FT aT, Vertex_const_handle aNode ) const
   {
     CGAL_precondition( aNode->is_skeleton() ) ;
 
     Comparison_result r = aNode->has_infinite_time() ? SMALLER
-                                                     : static_cast<Comparison_result>(Compare_offset_against_event_time_2(mTraits)(aT,CreateTrisegment(aNode)));
+                                                     : static_cast<Comparison_result>(Compare_offset_against_event_time_2(mTraits)(aT,GetTrisegment(aNode)));
 
     return r ;
   }
@@ -199,8 +170,7 @@ public:
       CGAL_assertion ( lNodeT->is_skeleton() ) ;
 
       Vertex_const_handle lSeedNode = aBisector->slope() == POSITIVE ? lNodeS : lNodeT ;
-
-      lSeedEvent = CreateTrisegment(lSeedNode) ;
+      lSeedEvent = GetTrisegment(lSeedNode) ;
 
       CGAL_POLYOFFSET_TRACE(3,"Seed node for " << e2str(*aBisector) << " is " << v2str(*lSeedNode) << " event=" << lSeedEvent ) ;
     }

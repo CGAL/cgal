@@ -413,8 +413,8 @@ namespace nanoflann
                         checks(checks_IGNORED_), eps(eps_), sorted(sorted_) {}
 
                 int   checks;  //!< Ignored parameter (Kept for compatibility with the FLANN interface).
-                float eps;  //!< search for eps-approximate neighbours (default: 0)
-                bool sorted; //!< only for radius search, require neighbours sorted by distance (default: true)
+                float eps;  //!< search for eps-approximate neighbors (default: 0)
+                bool sorted; //!< only for radius search, require neighbors sorted by distance (default: true)
         };
         /** @} */
 
@@ -823,7 +823,7 @@ namespace nanoflann
                 };
 
                 /**
-                 * Array of k-d trees used to find neighbours.
+                 * Array of k-d trees used to find neighbors.
                  */
                 NodePtr root_node;
                 typedef BranchStruct<NodePtr, DistanceType> BranchSt;

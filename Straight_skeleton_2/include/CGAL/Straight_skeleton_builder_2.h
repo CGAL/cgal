@@ -633,7 +633,10 @@ private :
 
   void SetTrisegment ( Vertex_handle aV, Trisegment_2_ptr const& aTrisegment )
   {
+    // @todo could get rid of the 'mTrisegment' in vertex data
+    // since it's also stored in the vertex directly (to be used during offset construction...)
     GetVertexData(aV).mTrisegment = aTrisegment ;
+    aV->set_trisegment(aTrisegment) ;
   }
 
   // Null if aV is a contour node

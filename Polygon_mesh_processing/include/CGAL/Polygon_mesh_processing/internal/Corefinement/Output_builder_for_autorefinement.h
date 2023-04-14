@@ -349,7 +349,7 @@ public:
       is_intersection(intersection_edges);
     std::size_t nb_patches =
       connected_components(tm,
-                           bind_property_maps(fids,make_property_map(patch_ids)),
+                           make_compose_property_map(fids,make_property_map(patch_ids)),
                            parameters::edge_is_constrained_map(is_intersection)
                                       .face_index_map(fids));
 

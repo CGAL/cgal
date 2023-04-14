@@ -312,7 +312,7 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
  * \sa `odt_optimize_mesh_3()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
-C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
+C3T3 make_periodic_3_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -339,7 +339,7 @@ template<typename C3T3, typename MeshDomain, typename MeshCriteria,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
          typename ... NP>
-C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria,
+C3T3 make_periodic_3_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria,
                             const CGAL_NP_CLASS_1&  np1,
                             const CGAL_NP_CLASS_2&  np2,
                             const NP& ... nps)

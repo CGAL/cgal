@@ -341,7 +341,7 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalPkgShortInfoBegin=<div class=\"PkgShortInfo\">" \
                          "cgalPkgShortInfoEnd=</div>" \
                          "cgalPkgAuthor{1}=<div class=\"PkgAuthors\">\1</div>" \
-                         "cgalPkgAuthors{1}=<div class=\"PkgAuthors\">\1</div>" \
+                         "cgalPkgAuthors{1}=\cgalPkgAuthor{\1}" \
                          "cgalPkgDesc{1}=<div class=\"PkgDescription\">\1</div>" \
                          "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>" \
                          "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>" \

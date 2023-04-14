@@ -268,7 +268,7 @@ _test_cls_aff_transformation_2(const R& )
  assert( pnt.transform(gat3).transform(gat2) == pnt.transform(co1) );
  assert( dir.transform(gat3).transform(gat2) == dir.transform(co1) );
  assert( vec.transform(gat3).transform(gat2) == vec.transform(co1) );
- assert( lin.transform(gat3).transform(gat2) == lin.transform(co1) );
+ assert( lin.transform(gat3).transform(gat2) == lin.transform(co1) || nonexact);
  co1 = ident * gat1;
  assert( vec.transform(gat1) == vec.transform(co1) );
  assert( dir.transform(gat1) == dir.transform(co1) );
@@ -281,7 +281,7 @@ _test_cls_aff_transformation_2(const R& )
  assert( lin.transform(gat1) == lin.transform(co1) );
  co1 = gat1 * gat1.inverse() ;
  assert( vec == vec.transform(co1) );
- assert( pnt == pnt.transform(co1) );
+ assert( pnt == pnt.transform(co1) || nonexact);
  assert( dir == dir.transform(co1) );
  assert( lin == lin.transform(co1) );
 
@@ -619,7 +619,7 @@ _test_cls_aff_transformation_2(const R& )
                                       CGAL::Point_2<R>(1,3),
                                       CGAL::Point_2<R>(2,1)));
  CGAL::Point_2<R> p(4,2);
- assert(p.transform(refl) == CGAL::Point_2<R>(0,0));
+ assert(p.transform(refl) == CGAL::Point_2<R>(0,0) || nonexact);
 
 
  //with translation
@@ -642,7 +642,7 @@ _test_cls_aff_transformation_2(const R& )
  assert(p1 == p.transform(comp1));
  p1 = p.transform(refl);
  p1 = p1.transform(scal);
- assert(p1 == p.transform(comp2));
+ assert(p1 == p.transform(comp2) || nonexact);
  //with rotation
  CGAL::Aff_transformation_2<R> rot(CGAL::ROTATION, 1, 0);
  comp1 = refl*rot;
@@ -652,7 +652,7 @@ _test_cls_aff_transformation_2(const R& )
  assert(p1 == p.transform(comp1));
  p1 = p.transform(refl);
  p1 = p1.transform(rot);
- assert(p1 == p.transform(comp2));
+ assert(p1 == p.transform(comp2) || nonexact);
  //with reflection
  CGAL::Aff_transformation_2<R> refl2(CGAL::REFLECTION, CGAL::Line_2<R>(
                                       CGAL::Point_2<R>(0,0),
@@ -664,7 +664,7 @@ _test_cls_aff_transformation_2(const R& )
  assert(p1 == p.transform(comp1));
  p1 = p.transform(refl);
  p1 = p1.transform(refl2);
- assert(p1 == p.transform(comp2));
+ assert(p1 == p.transform(comp2) || nonexact);
  //with transformation
  CGAL::Aff_transformation_2<R> afft(1,2,3,4,5,6);
  comp1 = refl*afft;
@@ -674,7 +674,7 @@ _test_cls_aff_transformation_2(const R& )
  assert(p1 == p.transform(comp1));
  p1 = p.transform(refl);
  p1 = p1.transform(afft);
- assert(p1 == p.transform(comp2));
+ assert(p1 == p.transform(comp2) || nonexact);
 
  //equality
  CGAL::Aff_transformation_2<R> a2(0,1,0,1),

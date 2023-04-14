@@ -1,16 +1,12 @@
 include(polyhedron_demo_macros)
-if(TARGET CGAL::Eigen3_support)
 
+if(TARGET CGAL::Eigen3_support)
   polyhedron_demo_plugin(jet_fitting_plugin Jet_fitting_plugin)
   target_link_libraries(
     jet_fitting_plugin PUBLIC scene_surface_mesh_item scene_polylines_item
                               CGAL::Eigen3_support)
-
 else()
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available."
-  )
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif()
 
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
@@ -64,17 +60,10 @@ if(TARGET CGAL::Eigen3_support)
           PROPERTIES RESOURCE_LOCK Selection_test_resources)
         endif()
   else()
-    message(
-      STATUS
-        "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available."
-    )
+    message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
-
-else(EIGEN3_FOUND)
-  message(
-    STATUS
-      "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available."
-  )
+else()
+  message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
 endif()
 
 qt5_wrap_ui(soupUI_FILES Repair_soup.ui)

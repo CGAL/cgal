@@ -83,7 +83,7 @@ typedef unspecified_type Compute_squared_distance_2;
 A function object whose
 `operator()` computes the bounding box of a point.
 
-CGAL::Bbox_2 operator()(Point_2 p);` Returns the bounding box of `p`.
+`CGAL::Bbox_2 operator()(Point_2 p);` Returns the bounding box of `p`.
 The result type is `CGAL::Bbox_2` (even for projection traits classes).
 */
 typedef unspecified_type Compute_bounding_box_2;

@@ -7,6 +7,3 @@ EXTRACT_ALL                     =  false
 HIDE_UNDOC_CLASSES      =  true
 HIDE_UNDOC_MEMBERS     =  true
 WARN_IF_UNDOCUMENTED =  false
-
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/internal/SMDS_3
-

@@ -2,7 +2,6 @@
 // A face overlay of two arrangements with unbounded faces.
 
 #include <string>
-#include <boost/lexical_cast.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
@@ -14,7 +13,7 @@
 // Define a functor for creating a label from a character and an integer.
 struct Overlay_label {
   std::string operator()(char c, unsigned int i) const
-  { return c + boost::lexical_cast<std::string>(i); }
+  { return c + std::to_string(i); }
 };
 
 typedef CGAL::Arr_face_extended_dcel<Traits, char>         Dcel_dlue;
