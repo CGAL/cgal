@@ -208,17 +208,20 @@ void generate_random_weights(const PolygonWithHoles& p,
 
     // start somewhere not collinear
     Iterator start_it;
+    CGAL_assertion_code(bool found = false);
     for(Iterator it=c.begin(); it<c.end(); ++it)
     {
       // the edge is [prev_1 ; it], check for collinearity with the previous edge [prev_2; prev_1]
       auto prev_2 = prev(prev(it, c), c);
       auto prev_1 = prev(it, c);
       Segment_2 s0 {*prev_2, *prev_1}, s1 {*prev_1, *it};
-      if(!CGAL::CGAL_SS_i::are_edges_orderly_collinear(s0, s1))
+      if(!CGAL::CGAL_SS_i::are_edges_orderly_collinear(s0, s1)){
         start_it = it;
+        CGAL_assertion_code(found = true);
+      }
     }
 
-    CGAL_assertion(start_it != Iterator()); // all collinear is impossible
+    CGAL_assertion(found); // all collinear is impossible
 
     Iterator it=start_it, end=start_it;
     do
