@@ -514,6 +514,11 @@ public:
     return this->base_reference() == nullptr;
   }
 
+  bool operator!= (void*) const
+  {
+    return this->base_reference() != nullptr;
+  }
+
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::halfedge_descriptor dereference() const { return opp(*this->base_reference()); }
@@ -563,6 +568,11 @@ public:
   bool operator== (void*) const
   {
     return this->base_reference() == nullptr;
+  }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference() != nullptr;
   }
 
 
@@ -631,6 +641,11 @@ public:
   bool operator== (void* ) const
   {
     return g == nullptr;
+  }
+
+  bool operator!= (void* ) const
+  {
+    return g != nullptr;
   }
 
 
@@ -719,6 +734,11 @@ public:
   bool operator== (void* ) const
   {
     return g == nullptr;
+  }
+
+  bool operator!= (void* ) const
+  {
+    return g != nullptr;
   }
 
   Self& operator++()
@@ -970,6 +990,12 @@ public:
   {
     return this->base_reference()== nullptr;
   }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference()!= nullptr;
+  }
+
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
@@ -1141,6 +1167,11 @@ public:
   bool operator== (void*) const
   {
     return this->base_reference()== nullptr;
+  }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference()!= nullptr;
   }
 
 private:
