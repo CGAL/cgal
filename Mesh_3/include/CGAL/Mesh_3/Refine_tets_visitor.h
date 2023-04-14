@@ -65,7 +65,7 @@ namespace Mesh_3 {
       }
 
       template <typename E, typename P, typename Z>
-      void after_no_insertion(E, P, Z) const {}
+      void after_no_insertion(const E&, const P&, const Z&) const {}
 
       Previous_visitor& previous_level()
       {
