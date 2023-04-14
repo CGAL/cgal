@@ -16,6 +16,7 @@ namespace unit_tests { void testGeometricBasics(); }
 // distance_t
 //
 
+// TODO: replace by NT of traits
 using distance_t = double;
 
 //
@@ -46,6 +47,7 @@ struct Point {
 using Points = std::vector<Point>;
 using PointID = ID<Point>;
 
+// TODO: already defined for CGAL types?
 std::ostream& operator<<(std::ostream& out, const Point& p);
 
 struct PointRange {
@@ -113,6 +115,7 @@ BFDirection toBFDirection(Direction direction);
 // Interval
 //
 
+// TODO: does CGAL have any replacement for this or do we want our custom type here?
 struct Interval
 {
 	distance_t begin;
@@ -305,6 +308,7 @@ struct CInterval
 
 std::ostream& operator<<(std::ostream& out, const CInterval& interval);
 
+// TODO: CGAL certainly has a replacement for this; do we want this though as it's (probably) only used for visualization?
 // Ellipse
 struct Ellipse
 {
@@ -317,6 +321,7 @@ struct Ellipse
 	bool is_valid() { return width >= 0 && height >= 0; }
 };
 
+// TODO: many things here can be deleted after replacements above
 namespace
 {
 
@@ -389,11 +394,13 @@ bool Point::operator!=(Point const& other) const
 	return !(*this == other);
 }
 
+// TODO: should be replaced everywhere by low_level_predicate
 distance_t Point::dist_sqr(const Point& point) const
 {
     return pow2(x - point.x) + pow2(y - point.y);
 }
 
+// TODO: should be replaced everywhere by low_level_predicate
 distance_t Point::dist(const Point& point) const
 {
     return std::sqrt(dist_sqr(point));

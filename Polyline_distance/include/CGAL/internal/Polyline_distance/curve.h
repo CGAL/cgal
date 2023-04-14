@@ -4,6 +4,7 @@
 #include "geometry_basics.h"
 #include "id.h"
 
+// TODO: should probably make this a more general type in CGAL
 // Represents a trajectory. Additionally to the points given in the input file,
 // we also store the length of any prefix of the trajectory.
 class Curve
