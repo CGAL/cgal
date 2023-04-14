@@ -537,16 +537,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
 
   CGAL_MESH_3_TASK_BEGIN(refine_surface_mesh_task_handle);
-  while ( ! facets_mesher_.is_algorithm_done() &&
-          ! forced_stop() )
-  {
-    facets_mesher_.one_step(facets_visitor_);
-    std::cerr
-    << boost::format("\r             \r"
-                     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-    % r_tr.number_of_vertices()
-    % nbsteps % cells_mesher_.debug_info()
-    % (nbsteps / timer.time());
+  do {
     if(refinement_stage == REFINE_FACETS &&
        ! forced_stop() &&
        facets_mesher_.is_algorithm_done())
@@ -561,8 +552,18 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
       facets_mesher_.scan_vertices();
       refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
     }
+    facets_mesher_.one_step(facets_visitor_);
+    std::cerr
+    << boost::format("\r             \r"
+                     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+    % r_tr.number_of_vertices()
+    % nbsteps % cells_mesher_.debug_info()
+    % (nbsteps / timer.time());
     ++nbsteps;
   }
+  while ( ( refinement_stage != REFINE_FACETS_AND_EDGES_AND_VERTICES ||
+            ! facets_mesher_.is_algorithm_done() ) 
+          && ! forced_stop() );
   CGAL_MESH_3_TASK_END(refine_surface_mesh_task_handle);
   std::cerr << std::endl;
   std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
