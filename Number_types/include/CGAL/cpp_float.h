@@ -316,9 +316,9 @@ public:
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
     if(((! a.is_positive()) && b.is_positive())
-       || a.is_negative()&& b.is_zero())return true;
+       || (a.is_negative() && b.is_zero()))return true;
     if(((! b.is_positive()) && a.is_positive())
-       ||b.is_negative()&& a.is_zero())return false;
+       || (b.is_negative() && a.is_zero()))return false;
 
 #ifdef CGAL_CPPF
     bool qres = a.rat < b.rat;
