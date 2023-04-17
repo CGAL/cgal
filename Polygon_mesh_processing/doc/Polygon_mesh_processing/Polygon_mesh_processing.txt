@@ -892,9 +892,15 @@ not provide storage for the normals.
 This package provides methods to compute curvatures on polygonal meshes based on Interpolated Corrected Curvatures
 on Polyhedral Surfaces \cgalCite{lachaud2020}. This includes mean curvature, Gaussian curvature,
 principal curvatures and directions. These can be computed on triangle meshes, quad meshes,
-and meshes with n-gon faces. The algorithms used prove to work well in general. Also, on meshes
+and meshes with n-gon faces (for n-gons, the centroid must be inside the n-gon face).
+The algorithms used prove to work well in general. Also, on meshes
 with noise on vertex positions, they give accurate results, on the condition that the
 correct vertex normals are provided.
+
+\subsection ICCBackground Brief Background
+
+
+\subsection ICCAPI API
 
 The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`,
 `Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
@@ -914,6 +920,9 @@ Similarly, we can use the following functions to compute curvatures on a specifi
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_one_vertex()`
 
+\subsection ICCResults Results
+
+**To be updated**
 
 \cgalFigureRef{icc_diff_radius} shows how the mean curvature changes depending on
 the named parameter `ball_radius`, which can be set to a value > 0 to get a smoother
@@ -921,12 +930,12 @@ distribution of values and "diffuses" the extreme values of curvatures across th
 
 \cgalFigureAnchor{icc_diff_radius}
 <center>
-<img src="icc_diff_radius.png" style="max-width:90%;"/>
+<img src="icc_diff_radius.png" style="max-width:85%;"/>
 </center>
 \cgalFigureCaptionBegin{icc_diff_radius}
-The mean curvature distribution on a bear mesh with different values for the ball radius
-parameter. R = 0 (a), R = 0.025 (b), R = 0.05 (c), R = 0.16 (d). Note that the max
-edge length is 0.031 and the size of the bounding box of the mesh is 1 x 0.7 x 0.8.
+The mean curvature on a mesh with different values for the ball radius
+parameter: (a) R = 0, (b) R = 0.025, (c) R = 0.05, (d) R = 0.16. Note that the max
+edge length is 0.031 and the size of the bounding box of the mesh is 1 x .7 x .8.
 \cgalFigureCaptionEnd
 
 \ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
