@@ -125,7 +125,10 @@ int main(int argc, char** argv)
   auto ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pwh, weights, K());
 
   if(!ss_ptr)
-    std::cerr << "Failed to create straight skeleton" << std::endl;
+  {
+    std::cerr << "Error: failed to create straight skeleton" << std::endl;
+    return EXIT_FAILURE;
+  }
 
 //  CGAL::draw(*ss_ptr);
 
@@ -133,7 +136,13 @@ int main(int argc, char** argv)
   CGAL_USE(offsets);
 
   Mesh sm;
-  extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights));
+  bool success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights));
+
+  if(!success)
+  {
+    std::cerr << "Error: failed to extrude skeleton" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   std::cout << num_vertices(sm) << " vertices and " << num_faces(sm) << " faces" << std::endl;
 

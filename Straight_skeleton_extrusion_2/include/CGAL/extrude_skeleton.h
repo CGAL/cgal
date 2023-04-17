@@ -396,9 +396,9 @@ public:
 
   template <typename SLSFacePoints, typename PointRange, typename FaceRange>
   void triangulate_skeleton_face(SLSFacePoints& face_points,
-                                const bool invert_faces,
-                                PointRange& points,
-                                FaceRange& faces)
+                                 const bool invert_faces,
+                                 PointRange& points,
+                                 FaceRange& faces)
   {
     CGAL_precondition(face_points.size() >= 3);
 
