@@ -1691,7 +1691,7 @@ protected:
 
   struct Fill_auxiliary_return_type {
     Vertex_handle_unique_hash_map vmap;
-    bool vertex_is_incident_to_infinity;
+    bool vertex_is_incident_to_infinity = false;
   };
 
   template < class Triangulation >
