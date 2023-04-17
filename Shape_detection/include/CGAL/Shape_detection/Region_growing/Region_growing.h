@@ -358,12 +358,11 @@ namespace internal {
     */
     template<typename PrimitiveAndRegionOutputIterator = Emptyset_iterator>
     PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator region_out = PrimitiveAndRegionOutputIterator()) {
-//      clear(); TODO: this is not valid to comment this clear()
+      //      clear(); TODO: this is not valid to comment this clear()
       m_visited_map.clear(); // tmp replacement for the line above
 
       Region region;
       m_nb_regions = 0;
-
 
       // Grow regions.
       for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
@@ -376,9 +375,11 @@ namespace internal {
           // Check global conditions.
           if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
-          } else {
-            *(region_out++) = std::pair<typename RegionType::Primitive, Region>(m_region_type.primitive(), region);
+          }
+          else {
             fill_region_map(m_nb_regions++, region);
+            if (!std::is_same<PrimitiveAndRegionOutputIterator, Emptyset_iterator>::value)
+              *region_out++ = std::make_pair(m_region_type.primitive(), std::move(region));
           }
         }
       }
@@ -391,8 +392,7 @@ namespace internal {
 
       \return Property map that maps each iterator of the input range to a region index.
     */
-
-    const Region_map &region_map() {
+    const Region_map& region_map() {
       return m_region_map;
     }
 
@@ -470,6 +470,7 @@ namespace internal {
     Neighbor_query& m_neighbor_query;
     Region_type& m_region_type;
     Region_map m_region_map;
+
     std::vector<Item> m_seed_range;
     std::size_t m_nb_regions = 0;
 

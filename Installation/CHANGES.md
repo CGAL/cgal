@@ -10,6 +10,12 @@ Release date: June 2023
 
 - **Breaking change**: The per package assertions, pre- and postconditions are no longer supported.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.6/Manual/packages.html#PkgKernel23)
+-   Added the functor
+    [`CompareAngle_3`](https://doc.cgal.org/5.6/Kernel_23/classKernel_1_1CompareAngle__3.html)
+    to the concept [`Kernel`](https://doc.cgal.org/5.6/Kernel_23/classKernel.html) to compare
+    an angle defined by three points to the cosinus of another angle.
+
 ### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
 
 - Added a version that uses indices instead of handles as dart and attribute descriptors. As the indices are integers convertible from and to `std::size_t`, they can be used as index into vectors which store properties. To use the index version,  `Use_index` must be defined and be equal to `CGAL::Tag_true` in the item class.
@@ -33,6 +39,9 @@ CGAL tetrahedral Delaunay refinement algorithm.
   the Delaunay refinement algorithm from the 3D Mesh Generation package.
 
 -   Added the function `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` to remove badly shaped triangles faces in a mesh.
+
+-   Added the functions `CGAL::Polygon_mesh_processing::remesh_planar_patches()` and
+    `CGAL::Polygon_mesh_processing::remesh_almost_coplanar_patches()` to retriangulate patches of coplanar faces in a mesh.
 
 -   Added a named parameter to `CGAL::Polygon_mesh_processing::smooth_shape()` to disable scaling to compensate volume loss.
 
@@ -180,7 +189,6 @@ Release date: June 2022
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
 
 -   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
-
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
