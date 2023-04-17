@@ -188,6 +188,10 @@ void tangential_relaxation(const VertexRange& vertices,
       }
       prev = n;
     }
+
+    if (first_run)
+      return true; //vertex incident only to degenerate faces
+
     if (!get(ecm, edge(first_h, tm)))
       if (to_double(first * prev) <= 0)
         return false;
