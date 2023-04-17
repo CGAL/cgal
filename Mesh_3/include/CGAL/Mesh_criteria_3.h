@@ -263,7 +263,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                     the feature protection algorithm correctness is not guaranteed anymore,
  *                     and the output mesh may contain incorrect polyline features,
  *                     or have missing polyline features.}
- *     \cgalParamExtra{Note it may not be respected everywhere in the output mesh,
+ *     \cgalParamExtra{Note this lower-bound may not be respected everywhere in the output mesh,
  *                     to keep the feature graph valid.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_angle}
