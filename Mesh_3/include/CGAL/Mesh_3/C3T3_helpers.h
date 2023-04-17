@@ -1167,7 +1167,7 @@ private:
      * @brief Updates cell \c ch in c3t3
      * @param ch the cell to update
      * @param update if set to \c false, checking only is done
-     * @return true if \c ch is in c3t3
+     * @return a boost::optional<Subdomain_index>, valid iff \c ch is in c3t3
      */
     Subdomain operator()(const Cell_handle& ch, const bool update = true) const
     {
