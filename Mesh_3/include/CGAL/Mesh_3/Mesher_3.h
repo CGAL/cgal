@@ -562,7 +562,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     ++nbsteps;
   }
   while ( ( refinement_stage != REFINE_FACETS_AND_EDGES_AND_VERTICES ||
-            ! facets_mesher_.is_algorithm_done() ) 
+            ! facets_mesher_.is_algorithm_done() )
           && ! forced_stop() );
   CGAL_MESH_3_TASK_END(refine_surface_mesh_task_handle);
   std::cerr << std::endl;

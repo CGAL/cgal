@@ -134,9 +134,9 @@ private:
     if(is_zero(m_min_squared_radius)) return false;
     auto cmp_sq_radius = this->r_tr_.geom_traits().compare_squared_radius_3_object();
     auto cp = this->r_tr_.geom_traits().construct_point_3_object();
-    const auto p1 = cp(this->r_tr_.point(f.first->vertex(f.second)));
-    const auto p2 = cp(this->r_tr_.point(f.first->vertex(Tr::cw(f.second))));
-    const auto p3 = cp(this->r_tr_.point(f.first->vertex(Tr::ccw(f.second))));
+    const auto p1 = cp(this->r_tr_.point(f.first->vertex(this->r_tr_.vertex_triple_index(f.second, 0))));
+    const auto p2 = cp(this->r_tr_.point(f.first->vertex(this->r_tr_.vertex_triple_index(f.second, 1))));
+    const auto p3 = cp(this->r_tr_.point(f.first->vertex(this->r_tr_.vertex_triple_index(f.second, 2))));
     if(cmp_sq_radius(p1, p2, p3, m_min_squared_radius) == CGAL::SMALLER)
       return true;
   }

@@ -96,7 +96,7 @@ public:
     return topology_;
   }
 
-  FT minimal_radius_bound() const {
+  FT min_facet_radius_bound() const {
     return min_radius_bound;
   }
 

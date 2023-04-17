@@ -1846,6 +1846,15 @@ is_valid(bool verbose) const
 
   Vertex_map vertex_map;
 
+  for (auto f :this->facets_in_complex()) {
+    if(tr_.is_infinite(f)) {
+      if(verbose) {
+        std::cerr << "One facet of the complex is infinite." << std::endl;
+      }
+      return false;
+    }
+  }
+
   // Fill map counting neighbor number for each vertex of an edge
   for ( typename Edge_map::const_iterator it = edges_.begin(),
        end = edges_.end() ; it != end ; ++it )
