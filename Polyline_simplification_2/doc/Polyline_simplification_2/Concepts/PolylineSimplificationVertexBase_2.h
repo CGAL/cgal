@@ -6,7 +6,7 @@
 The polyline simplification algorithm stores in the vertices
 whether a vertex can be removed, and the cost of the removal.
 
-\cgalRefines `TriangulationVertexBase_2`
+\cgalRefines{TriangulationVertexBase_2}
 
 \cgalHasModel `CGAL::Polyline_simplification_2::Vertex_base_2<Vb>`
 

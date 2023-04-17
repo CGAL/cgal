@@ -6,9 +6,7 @@
 A model of the `AlgebraicKernel_d_2` concept gathers necessary tools
 for solving and handling bivariate polynomial systems of general degree \f$ d\f$.
 
-\cgalRefines `AlgebraicKernel_d_1`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{AlgebraicKernel_d_1,CopyConstructible,Assignable}
 
 \sa `AlgebraicKernel_d_1`
 

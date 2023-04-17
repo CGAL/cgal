@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `StraightSkeletonBuilderTraits_2`
+\cgalRefines{StraightSkeletonBuilderTraits_2}
 
 The concept `PolygonOffsetBuilderTraits_2` describes the requirements for the geometric traits class
 required by the algorithm class `CGAL::Polygon_offset_builder_2`.

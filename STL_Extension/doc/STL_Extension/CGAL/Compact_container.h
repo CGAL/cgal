@@ -670,7 +670,7 @@ void clear();
 bool owns(const_iterator pos);
 
 /*!
- * returns whether `pos` is in the range `[cc.begin(), cc`.end())` (`cc.end()` excluded).
+ * returns whether `pos` is in the range `[cc.begin(), cc.end())` (`cc.end()` excluded).
  */
 bool owns_dereferenceable(const_iterator pos);
 

@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
-\cgalRefines Kernel::ConstructBbox_3
+\cgalRefines{Kernel::ConstructBbox_3}
 
 */
 

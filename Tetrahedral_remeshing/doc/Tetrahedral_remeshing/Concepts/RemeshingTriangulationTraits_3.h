@@ -3,7 +3,7 @@
 \ingroup PkgTetrahedralRemeshingConcepts
 \cgalConcept
 
-\cgalRefines TriangulationTraits_3
+\cgalRefines{TriangulationTraits_3}
 
 The concept `RemeshingTriangulationTraits_3` is the first template parameter
 of the class `Remeshing_triangulation_3`. It defines the geometric objects

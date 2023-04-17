@@ -6,9 +6,7 @@
 This `AdaptableBinaryFunction` provides access to coefficients of a
 `PolynomialTraits_d::Polynomial_d`.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
