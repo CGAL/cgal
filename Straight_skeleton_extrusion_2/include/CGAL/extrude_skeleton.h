@@ -297,7 +297,7 @@ class Extrusion_builder
   using Vbb = CGAL::Triangulation_vertex_base_2<Geom_traits, Vb>;
   using Fb = CGAL::Constrained_triangulation_face_base_2<Geom_traits>;
   using TDS = CGAL::Triangulation_data_structure_2<Vb,Fb>;
-  using Itag = CGAL::No_constraint_intersection_tag;
+  using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
   using CDT = CGAL::Constrained_Delaunay_triangulation_2<Geom_traits, TDS, Itag>;
   using CDT_Vertex_handle = typename CDT::Vertex_handle;
   using CDT_Face_handle = typename CDT::Face_handle;
