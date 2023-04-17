@@ -4,7 +4,7 @@ namespace ArrDirectionalTraits {
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Compare_endpoints_xy_2`
 

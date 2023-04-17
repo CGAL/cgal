@@ -12,7 +12,7 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines `TriangulationTraits_3`
+\cgalRefines{TriangulationTraits_3}
 
 \cgalHasModel `CGAL::Periodic_3_triangulation_traits_3`
 

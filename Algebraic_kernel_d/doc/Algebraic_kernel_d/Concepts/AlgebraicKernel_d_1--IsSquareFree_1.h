@@ -5,7 +5,7 @@
 
 Computes whether the given univariate polynomial is square free.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicKernel_d_1::MakeSquareFree_1`
 \sa `AlgebraicKernel_d_1::SquareFreeFactorize_1`

@@ -189,7 +189,7 @@ r
 
 </TABLE>
 
-\cgalRefines `AdaptableFunctor`
+\cgalRefines{AdaptableFunctor}
 
 \sa `AlgebraicStructureTraits`
 \sa `AlgebraicStructureTraits_::Mod`

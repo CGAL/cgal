@@ -32,7 +32,7 @@ public:
 \ingroup PkgHyperbolicTriangulation2Concepts
 \cgalConcept
 
-\cgalRefines TriangulationFaceBase_2
+\cgalRefines{TriangulationFaceBase_2}
 
 The concept `HyperbolicTriangulationFaceBase_2` describes the requirements for the base
 face class of a hyperbolic triangulation data structure.

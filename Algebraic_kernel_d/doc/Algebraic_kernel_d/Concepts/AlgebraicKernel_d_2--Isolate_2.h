@@ -5,7 +5,7 @@
 
 Computes an isolating box for a given `AlgebraicKernel_d_2::Algebraic_real_2`.
 
-\cgalRefines `AdaptableFunctor`
+\cgalRefines{AdaptableFunctor}
 
 \sa `AlgebraicKernel_d_2::IsolateX_2`
 \sa `AlgebraicKernel_d_2::IsolateY_2`
