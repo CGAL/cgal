@@ -85,9 +85,9 @@ function(cgal_add_compilation_test exe_name)
       APPEND PROPERTY LABELS "${PROJECT_NAME}")
     set_property(TEST "compilation of  ${exe_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
-  elseif(NOT TARGET "compilation of  ${PROJECT_NAME}")#CMAKE_VS_MSBUILD_COMMAND
+  elseif(NOT TARGET "compilation_of__${PROJECT_NAME}")#CMAKE_VS_MSBUILD_COMMAND
     #this target is just a flag, to deal with the scope problem with the tests
-    add_custom_target("compilation of  ${PROJECT_NAME}")
+    add_custom_target("compilation_of__${PROJECT_NAME}")
     add_test(NAME "compilation of  ${PROJECT_NAME}"
       COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
     set_property(TEST "compilation of  ${PROJECT_NAME}"
