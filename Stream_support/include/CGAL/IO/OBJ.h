@@ -146,7 +146,11 @@ bool read_OBJ(std::istream& is,
       }
 
       if(iss.bad())
+      {
+        if(verbose)
+          std::cerr << "error while reading OBJ face." << std::endl;
         return false;
+      }
     }
     else if(s.front() == '#')
     {
@@ -172,15 +176,15 @@ bool read_OBJ(std::istream& is,
     else
     {
       if(verbose)
-        std::cerr << "error: unrecognized line: " << s << std::endl;
+        std::cerr << "Error: unrecognized line: " << s << std::endl;
       return false;
     }
   }
 
   if(norm_found && verbose)
-    std::cout<<"NOTE: normals were found in this file, but were discarded."<<std::endl;
+    std::cout << "NOTE: normals were found in this file, but were discarded." << std::endl;
   if(tex_found && verbose)
-    std::cout<<"NOTE: textures were found in this file, but were discarded."<<std::endl;
+    std::cout << "NOTE: textures were found in this file, but were discarded." << std::endl;
 
   if(points.empty() || polygons.empty())
   {
