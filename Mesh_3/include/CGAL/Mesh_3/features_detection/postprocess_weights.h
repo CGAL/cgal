@@ -32,7 +32,7 @@ namespace internal {
   {
     using CGAL::IMAGEIO::static_evaluate;
 
-    if (i < 0 || j < 0 || k < 0)
+    if (i == std::size_t(-1) || j == std::size_t(-1) || k == std::size_t(-1))
       return;
     else if (i > img.xdim() - 1 || j > img.ydim() - 1 || k > img.zdim() - 1)
       return;
