@@ -108,13 +108,17 @@ public:
 
   cpp_float(const Mantissa& man, int exp)
       : man(man), exp(exp)
-  {}
+  {
+    CGAL_HISTOGRAM_PROFILER("size (man/exp)", man.backend().size());
+  }
 
 #ifndef CGAL_CPPF
   template <typename Expression>
   cpp_float(const Expression& man, int exp)
     :man(man), exp(exp)
-  {}
+  {
+    CGAL_HISTOGRAM_PROFILER("size (expression/exp)", this->man.backend().size());
+  }
 #endif
 
 #endif
@@ -174,15 +178,30 @@ public:
 #endif
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
+
+    CGAL_HISTOGRAM_PROFILER("size when constructed from double", man.backend().size());
   }
+
 
   friend std::ostream& operator<<(std::ostream& os, const cpp_float& m)
   {
+    return os << m.to_double();
+#if 0 // dehug output
     return os << m.man << " * 2 ^ " << m.exp << " ( " << m.to_double() << ") "
 #ifdef CGAL_CPPF
               << "  " << m.rat
 #endif
       ;
+#endif
+  }
+
+
+  friend std::istream& operator>>(std::istream& is, cpp_float& m)
+  {
+    double d;
+    is >> d;
+    m = cpp_float(d);
+    return is;
   }
 
 
@@ -205,13 +224,12 @@ public:
     return *this;
   }
 
-
   friend
   cpp_float operator*(const cpp_float& a, const cpp_float&b){
 #ifdef CGAL_CPPF
     return cpp_float(a.man*b.man, a.exp+b.exp, a.rat * b.rat);
 #else
-    return cpp_float(a.man*b.man, a.exp+b.exp);
+      return cpp_float(a.man*b.man, a.exp+b.exp);
 #endif
   }
 
@@ -430,6 +448,10 @@ public:
     return CGAL::sign(man);
   }
 
+  int size() const
+  {
+    return man.backend().size();
+  }
 };
 
 

@@ -1,4 +1,4 @@
-//#define CGAL_PROFILE
+#define CGAL_PROFILE
 //#define CGAL_USE_SSE2_FABS
 //#define CGAL_USE_SSE2_MAX
 //#define CGAL_MSVC_USE_STD_FABS  // use this one with precise
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   Timer timer;
   timer.start();
   size_t N = 0;
-  for(int i = 0; i < 1; i++){
+  for(int i = 0; i < 100; i++){
     DT dt;
     dt.insert(points.begin(), points.end());
     N += dt.number_of_cells();
