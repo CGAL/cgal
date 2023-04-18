@@ -2,7 +2,7 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines SpatialSortingTraits_3
+\cgalRefines{SpatialSortingTraits_3}
 
 The concept `TriangulationOnSphereTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template

@@ -6,7 +6,7 @@ The concept `ArrangementApproximateTraits_2` refines the basic traits concept
 `ArrangementBasicTraits_2`. A model of this concept is able to approximate a
 point.
 
-\cgalRefines `ArrangementBasicTraits_2`
+\cgalRefines{ArrangementBasicTraits_2}
 
 \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
 \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2`

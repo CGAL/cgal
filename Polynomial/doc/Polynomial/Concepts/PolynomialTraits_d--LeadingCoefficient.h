@@ -6,9 +6,7 @@
 This `AdaptableUnaryFunction` computes the leading coefficient
 of a `PolynomialTraits_d::Polynomial_d`.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

@@ -329,7 +329,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
 *                     it must not have any data member that does not have a reference-like type.}
-*  `\cgalParamNEnd
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * This function calls `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()` for each face.

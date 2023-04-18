@@ -15,9 +15,7 @@ polynomial \f$ p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1\f$.
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is
 `RealEmbeddable`.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

@@ -6,9 +6,7 @@
 The concept `SegmentDelaunayGraphSite_2` provides the
 requirements for the sites of a segment Delaunay graph.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModel `CGAL::Segment_Delaunay_graph_site_2<K>`
 

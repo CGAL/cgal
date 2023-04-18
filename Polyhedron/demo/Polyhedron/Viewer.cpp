@@ -67,7 +67,7 @@ public:
 
   // M e s s a g e s
   QString message;
-  bool _displayMessage;
+  bool _displayMessage = false;
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Core* _recentFunctions;
   bool is_2d_selection_mode;
