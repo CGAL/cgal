@@ -346,7 +346,7 @@ using std::max;
 #define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
-#if _MSC_VER >= 1929
+#if _MSC_VER >= 1929 && _MSVC_LANG >= 202002L
 // see https://devblogs.microsoft.com/cppblog/msvc-cpp20-and-the-std-cpp20-switch/#c20-no_unique_address
 #  define CGAL_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
 #elif __has_cpp_attribute(no_unique_address)
