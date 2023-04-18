@@ -55,6 +55,10 @@ public:
     return &m_orthtree.root();
   }
 
+  typename Tree::Node_index first_index() const {
+    return m_orthtree.index(first()).get();
+  }
+
   const Node* next(const Node* n) const {
 
     if (n == nullptr) return nullptr;
@@ -77,6 +81,11 @@ public:
     }
 
   }
+
+  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+    return m_orthtree.index(next(&m_orthtree[n]));
+  }
+
 };
 
 /*!
@@ -103,6 +112,10 @@ public:
     return deepest_first_child(m_orthtree, m_orthtree.root());
   }
 
+  typename Tree::Node_index first_index() const {
+    return m_orthtree.index(first()).get();
+  }
+
   const Node* next(const Node* n) const {
 
     auto next = deepest_first_child(m_orthtree, next_sibling(m_orthtree, n));
@@ -111,6 +124,10 @@ public:
       next = n->parent();
 
     return next;
+  }
+
+  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+    return m_orthtree.index(next(&m_orthtree[n]));
   }
 };
 
@@ -138,6 +155,10 @@ public:
     return m_orthtree.deepest_first_child(&m_orthtree.root());
   }
 
+  typename Tree::Node_index first_index() const {
+    return m_orthtree.index(first()).get();
+  }
+
   const Node* next(const Node* n) const {
 
     auto next = m_orthtree.deepest_first_child(m_orthtree.next_sibling(n));
@@ -146,6 +167,10 @@ public:
       next = m_orthtree.deepest_first_child(m_orthtree.next_sibling_up(n));
 
     return next;
+  }
+
+  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+    return m_orthtree.index(next(&m_orthtree[n]));
   }
 };
 
@@ -179,6 +204,10 @@ public:
     return m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth);
   }
 
+  typename Tree::Node_index first_index() const {
+    return m_orthtree.index(first()).get();
+  }
+
   template <typename Node>
   const Node* next(const Node* n) const {
     const Node* next = m_orthtree.next_sibling(n);
@@ -195,6 +224,10 @@ public:
     }
 
     return next;
+  }
+
+  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+    return m_orthtree.index(next(&m_orthtree[n]));
   }
 };
 

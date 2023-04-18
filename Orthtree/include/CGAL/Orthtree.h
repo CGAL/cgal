@@ -125,8 +125,10 @@ public:
    */
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Node_range;
+  typedef unspecified_type Node_index_range;
 #else
   typedef boost::iterator_range<Traversal_iterator<Self>> Node_range;
+  typedef boost::iterator_range<Index_traversal_iterator<Self>> Node_index_range;
 #endif
 
   /// \cond SKIP_IN_MANUAL
@@ -371,8 +373,8 @@ public:
 
     // Collect all the leaf nodes
     std::queue<Node_index> leaf_nodes;
-    for (const Node& leaf: traverse(Orthtrees::Leaves_traversal<Self>(*this))) {
-      leaf_nodes.push(index(leaf));
+    for (Node_index leaf: traverse_indices(Orthtrees::Leaves_traversal<Self>(*this))) {
+      leaf_nodes.push(leaf);
     }
 
     // Iterate over the nodes
@@ -481,7 +483,7 @@ public:
   template <typename Traversal>
   Node_range traverse(Traversal traversal) const {
 
-    const Node* first = traversal.first();
+    auto first = traversal.first_index();
 
     auto next = [=](const Self& tree, Node_index index) -> boost::optional<Node_index> {
       auto n = traversal.next(&tree[index]);
@@ -493,10 +495,28 @@ public:
                                       Traversal_iterator<Self>());
   }
 
+  template <typename Traversal>
+  Node_index_range traverse_indices(Traversal traversal) const {
+
+    Node_index first = traversal.first_index();
+
+    auto next = [=](const Self& tree, Node_index index) -> boost::optional<Node_index> {
+      return traversal.next_index(index);
+    };
+
+    return boost::make_iterator_range(Index_traversal_iterator<Self>(*this, first, next),
+                                      Index_traversal_iterator<Self>());
+  }
+
   // todo: document this convenience function
   template <typename Traversal>
   Node_range traverse() const {
     return traverse<Traversal>({*this});
+  }
+
+  template <typename Traversal>
+  Node_index_range traverse_indices() const {
+    return traverse_indices<Traversal>({*this});
   }
 
   /*!
@@ -526,7 +546,24 @@ public:
   }
 
   Bbox bbox(Node_index n) const {
-    return bbox(m_nodes[n]);
+    auto node = m_nodes[n];
+
+    // Determine the side length of this node
+    FT size = m_side_per_depth[node.depth()];
+
+    // Determine the location this node should be split
+    Array min_corner;
+    Array max_corner;
+    for (int i = 0; i < Dimension::value; i++) {
+
+      min_corner[i] = m_bbox_min[i] + (node.global_coordinates()[i] * size);
+      max_corner[i] = min_corner[i] + size;
+    }
+
+    // Create the bbox
+    Construct_bbox_d construct_bbox
+      = m_traits.construct_bbox_d_object();
+    return construct_bbox(min_corner, max_corner);
   }
 
   /// @}
