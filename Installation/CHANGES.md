@@ -88,6 +88,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 for automatic detection and protection
 of 1D-curves that lie at the intersection of three or more subdomains,
 extracted from labeled images.
+-   Added `CGAL::Sizing_field_with_aabb_tree`, a geometry-aware sizing field for feature edges in polyhedral domains.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
