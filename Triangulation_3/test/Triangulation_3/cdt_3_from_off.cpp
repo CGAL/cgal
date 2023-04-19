@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
       }));
     }
     {
-      std::ofstream missing_faces("missing_faces.polylines.txt");
+      std::ofstream missing_faces("dump_missing_faces.polylines.txt");
       missing_faces.precision(17);
       cdt.recheck_constrained_Delaunay();
       if(cdt.write_missing_subfaces_file(missing_faces)) {
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
       }
     }
     {
-      std::ofstream missing_edges("missing_segments.polylines.txt");
+      std::ofstream missing_edges("dump_missing_segments.polylines.txt");
       missing_edges.precision(17);
       if(cdt.write_missing_segments_file(missing_edges)) {
         std::cerr << "ERROR: Missing segments!\n";
