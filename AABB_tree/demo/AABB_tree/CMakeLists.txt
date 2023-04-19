@@ -20,28 +20,28 @@ endif()
 # Include this package's headers first
 include_directories(BEFORE ./ ./include)
 
-# Find CGAL and CGAL Qt5
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+# Find CGAL and CGAL Qt6
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-# Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Gui Svg)
+# Find Qt6 itself
+find_package(Qt6 QUIET COMPONENTS  OpenGLWidgets Gui Svg)
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-  qt5_wrap_ui(UI_FILES MainWindow.ui)
+  qt6_wrap_ui(UI_FILES MainWindow.ui)
 
   include(AddFileDependencies)
 
-  qt5_generate_moc("MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp")
+  qt6_generate_moc("MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp")
   add_file_dependencies(MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h")
 
-  qt5_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
+  qt6_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
   add_file_dependencies(Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h")
 
-  qt5_generate_moc("Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp")
+  qt6_generate_moc("Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp")
   add_file_dependencies(Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h")
 
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES AABB_demo.qrc)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES AABB_demo.qrc)
 
   add_file_dependencies(
     AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
@@ -49,30 +49,30 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp")
 
   add_executable(
-    AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES}
-    #${CGAL_Qt5_MOC_FILES}
+    AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt6_RESOURCE_FILES}
+    #${CGAL_Qt6_MOC_FILES}
   )
   # Link with Qt libraries
-  target_link_libraries(AABB_demo PRIVATE Qt5::OpenGL Qt5::Gui
-                                          CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries(AABB_demo PRIVATE Qt6::OpenGLWidgets Qt6::Gui
+                                          CGAL::CGAL CGAL::CGAL_Qt6)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS AABB_demo)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(AABB_demo)
 
-else(CGAL_Qt5_FOUND AND Qt5_FOUND)
+else(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(AABB_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt5_FOUND)
-    set(AABB_MISSING_DEPS "CGAL_Qt5, ${AABB_MISSING_DEPS}")
+  if(NOT CGAL_Qt6_FOUND)
+    set(AABB_MISSING_DEPS "CGAL_Qt6, ${AABB_MISSING_DEPS}")
   endif()
 
-  if(NOT Qt5_FOUND)
-    set(AABB_MISSING_DEPS "Qt5, ${AABB_MISSING_DEPS}")
+  if(NOT Qt6_FOUND)
+    set(AABB_MISSING_DEPS "Qt6, ${AABB_MISSING_DEPS}")
   endif()
 
   message("NOTICE: This demo requires ${AABB_MISSING_DEPS}, and will not be compiled.")
 
-endif(CGAL_Qt5_FOUND AND Qt5_FOUND)
+endif(CGAL_Qt6_FOUND AND Qt6_FOUND)

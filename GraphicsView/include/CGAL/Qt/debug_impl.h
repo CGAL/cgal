@@ -23,7 +23,7 @@
 #include <CGAL/Qt/debug.h>
 #include <QDir>
 #include <iostream>
-#include <QtOpenGL/qgl.h>
+#include <QOpenGLWidget>
 #include <qopenglfunctions.h>
 namespace CGAL {
 namespace Qt {

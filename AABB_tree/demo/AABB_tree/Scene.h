@@ -1,7 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <QtOpenGL/qgl.h>
+#include <QOpenGLWidget>
 #include <iostream>
 #include <cmath>
 
@@ -77,7 +77,7 @@ private:
     };
 
 public:
-    QGLContext* context;
+    QOpenGLContext* context;
     void draw(CGAL::QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }

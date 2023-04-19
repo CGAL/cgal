@@ -1,7 +1,7 @@
 #include "Viewer.h"
 #include "Scene.h"
 #include <QMouseEvent>
-#include <QGLFunctions>
+#include <QOpenGLFunctions>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget* parent)
