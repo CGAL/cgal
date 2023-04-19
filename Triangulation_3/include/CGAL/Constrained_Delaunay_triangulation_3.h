@@ -259,53 +259,53 @@ private:
   static_assert(std::is_nothrow_move_assignable<CDT_2>::value,
                 "move assignment is missing");
 
-  protected:
-    struct PLC_error {};
-    using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
-    using Constraint_id = typename Constraint_hierarchy::Constraint_id;
-    using Subconstraint = typename Constraint_hierarchy::Subconstraint;
+protected:
+  struct PLC_error {};
+  using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
+  using Constraint_id = typename Constraint_hierarchy::Constraint_id;
+  using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
-    class Insert_in_conflict_visitor {
-      Constrained_Delaunay_triangulation_3<T_3> &self;
-      typename Conforming_Dt::Insert_in_conflict_visitor conforming_dt_visitor;
+  class Insert_in_conflict_visitor {
+    Constrained_Delaunay_triangulation_3<T_3> &self;
+    typename Conforming_Dt::Insert_in_conflict_visitor conforming_dt_visitor;
 
-    public:
-      Insert_in_conflict_visitor(Constrained_Delaunay_triangulation_3 &self)
-          : self(self), conforming_dt_visitor(self) {}
+  public:
+    Insert_in_conflict_visitor(Constrained_Delaunay_triangulation_3 &self)
+        : self(self), conforming_dt_visitor(self) {}
 
-      template <class InputIterator>
-      void process_cells_in_conflict(const InputIterator cell_it_begin, const InputIterator end) {
-        CGAL_assertion(self.dimension() >= 2);
-        const int first_li = self.dimension() == 2 ? 3 : 0;
-        for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
-          auto c = *cell_it;
-          for(int li = first_li; li < 4; ++li) {
-            if(c->is_facet_constrained(li)) {
-              const auto face_id = static_cast<std::size_t>(c->face_constraint_index(li));
-              self.face_constraint_misses_subfaces.set(face_id);
-              auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
+    template <class InputIterator>
+    void process_cells_in_conflict(const InputIterator cell_it_begin, const InputIterator end) {
+      CGAL_assertion(self.dimension() >= 2);
+      const int first_li = self.dimension() == 2 ? 3 : 0;
+      for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
+        auto c = *cell_it;
+        for(int li = first_li; li < 4; ++li) {
+          if(c->is_facet_constrained(li)) {
+            const auto face_id = static_cast<std::size_t>(c->face_constraint_index(li));
+            self.face_constraint_misses_subfaces.set(face_id);
+            auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
 #if CGAL_DEBUG_CDT_3
-              std::cerr << "Add missing triangle (from visitor): \n";
-              self.write_2d_triangle(std::cerr, fh_2);
+            std::cerr << "Add missing triangle (from visitor): \n";
+            self.write_2d_triangle(std::cerr, fh_2);
 #endif // CGAL_DEBUG_CDT_3
 
-              fh_2->info().missing_subface = true;
-            }
+            fh_2->info().missing_subface = true;
           }
         }
-        conforming_dt_visitor.process_cells_in_conflict(cell_it_begin, end);
       }
-      void after_insertion(Vertex_handle) {
+      conforming_dt_visitor.process_cells_in_conflict(cell_it_begin, end);
+    }
+    void after_insertion(Vertex_handle) {
 
-      }
+    }
 
-      void reinsert_vertices(Vertex_handle v) {
-        after_insertion(v);
-      }
-      Vertex_handle replace_vertex(Cell_handle c, int index,
-                                   const Point_3 &) const {
-        return c->vertex(index);
-      }
+    void reinsert_vertices(Vertex_handle v) {
+      after_insertion(v);
+    }
+    Vertex_handle replace_vertex(Cell_handle c, int index,
+                                  const Point_3 &) const {
+      return c->vertex(index);
+    }
       void hide_point(Cell_handle, const Point_3 &) const {}
 
     void insert_Steiner_point_on_constraint(Constraint_id constraint,
