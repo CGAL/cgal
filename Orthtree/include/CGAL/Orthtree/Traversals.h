@@ -153,7 +153,7 @@ public:
   }
 
   typename Tree::Node_index first_index() const {
-    return m_orthtree.index(first()).get();
+    return m_orthtree.deepest_first_child(0);
   }
 
   const Node* next(const Node* n) const {

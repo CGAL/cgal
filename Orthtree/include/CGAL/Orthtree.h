@@ -736,48 +736,20 @@ public:
     return children(m_nodes[node]);
   }
 
-  const Node* _next_sibling(const Node* n) const {
+  const boost::optional<Node_index> next_sibling(Node_index n) const {
 
-    // todo: maybe this should take a reference?
-    if (nullptr == n)
-      return nullptr;
-
-    // If this node has no parent, it has no siblings
-    if (n->is_root())
-      return nullptr;
+    // Root node has no siblings
+    if (is_root(n)) return {};
 
     // Find out which child this is
-    std::size_t local_coordinates = n->local_coordinates().to_ulong();
+    std::size_t local_coordinates = m_nodes[n].local_coordinates().to_ulong(); // todo: add local_coordinates(n) helper
 
-    constexpr static int degree = Node::Degree::value;
+    // The last child has no more siblings
+    if (int(local_coordinates) == Node::Degree::value - 1)
+      return {};
 
-    // Return null if this is the last child
-    if (int(local_coordinates) == degree - 1)
-      return nullptr;
-
-    // Otherwise, return the next child
-    return &(children(parent(*n))[local_coordinates + 1]);
-  }
-
-  const boost::optional<Node_index> next_sibling(Node_index n) const {
-    return index(_next_sibling(&m_nodes[n]));
-  }
-
-  const Node* next_sibling_up(const Node* n) const {
-
-    if (!n || n->is_root()) return nullptr;
-
-    auto up = &parent(*n);
-    while (nullptr != up) {
-
-      if (nullptr != next_sibling(up))
-        return next_sibling(up);
-
-      // todo: this could be cleaned up; it's probably not necessary to involve pointers here
-      up = up->is_root() ? nullptr : &parent(*up);
-    }
-
-    return nullptr;
+    // The next sibling is the child of the parent with the following local coordinates
+    return index(children(parent(n))[local_coordinates + 1]);
   }
 
   const boost::optional<Node_index> next_sibling_up(Node_index n) const {
@@ -796,47 +768,13 @@ public:
     return {};
   }
 
-  const Node* deepest_first_child(const Node* n) const {
-
-    if (n == nullptr)
-      return nullptr;
-
-    // Find the deepest child on the left
-    auto first = n;
-    while (!first->is_leaf())
-      first = &children(*first)[0];
-    return first;
-  }
-
   Node_index deepest_first_child(Node_index n) const {
-    return index(deepest_first_child(&m_nodes[n])).get();
-  }
 
-  const Node* first_child_at_depth(const Node* n, std::size_t depth) const {
+    auto first = n;
+    while (!is_leaf(first))
+      first = index(children(first)[0]);
 
-    if (!n)
-      return nullptr;
-
-    // todo: use Node_index instead of pointer
-    std::stack<const Node*> todo;
-    todo.push(n);
-
-    if (n->depth() == depth)
-      return n;
-
-    while (!todo.empty()) {
-      const Node* node = todo.top();
-      todo.pop();
-
-      if (node->depth() == depth)
-        return node;
-
-      if (!node->is_leaf())
-        for (int i = 0; i < Node::Degree::value; ++i)
-          todo.push(&((*node)[std::size_t(Node::Degree::value - 1 - i)]));
-    }
-
-    return nullptr;
+    return first;
   }
 
   boost::optional<Node_index> first_child_at_depth(Node_index n, std::size_t d) const {
@@ -859,7 +797,6 @@ public:
     return {};
   }
 
-
   /*!
   \brief splits the node into subnodes.
 
@@ -869,8 +806,6 @@ public:
   Contents of this node are _not_ propagated automatically.
   It is the responsibility of the caller to redistribute the points contained by a node after splitting
  */
-  void split(Node& node) { split(index(node)); }
-
   void split(Node_index n) {
 
     // Make sure the node hasn't already been split
@@ -898,25 +833,21 @@ public:
    * After un-splitting a node it will be considered a leaf node.
    * Idempotent, un-splitting a leaf node has no effect.
    */
-  void unsplit(Node& node) {
-    node.m_children_index.reset();
-  }
-
   void unsplit(Node_index n) {
-    unsplit(m_nodes[n]);
+    m_nodes[n].m_children_index.reset();
+    // todo: the child nodes should be de-allocated!
   }
 
-  // todo: documentation
-  Point barycenter(const Node& node) const {
+  Point barycenter(Node_index n) const {
 
     // Determine the side length of this node
-    FT size = m_side_per_depth[node.depth()];
+    FT size = m_side_per_depth[depth(n)];
 
     // Determine the location this node should be split
     Array bary;
     std::size_t i = 0;
     for (const FT& f: cartesian_range(m_bbox_min)) {
-      bary[i] = FT(node.global_coordinates()[i]) * size + size / FT(2) + f;
+      bary[i] = FT(m_nodes[n].global_coordinates()[i]) * size + size / FT(2) + f;
       ++i;
     }
 
@@ -924,10 +855,6 @@ public:
     Construct_point_d_from_array construct_point_d_from_array
       = m_traits.construct_point_d_from_array_object();
     return construct_point_d_from_array(bary);
-  }
-
-  Point barycenter(Node_index n) const {
-    return barycenter(m_nodes[n]);
   }
 
   // todo: this does what the documentation for operator== claims to do!
