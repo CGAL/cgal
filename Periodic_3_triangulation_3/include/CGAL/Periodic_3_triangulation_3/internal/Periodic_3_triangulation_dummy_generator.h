@@ -38,9 +38,9 @@ insert_generic_dummy_points()
             << domain().zmin() << " " << domain().zmax() << std::endl;
 #endif
 
-  int min_pos = std::min_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
-  int max_pos = std::max_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
-  int mid_pos;
+  std::size_t min_pos = std::min_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
+  std::size_t max_pos = std::max_element(std::cbegin(spans), std::cend(spans)) - std::cbegin(spans);
+  std::size_t mid_pos;
 
   if(min_pos == max_pos) // cubic
   {
