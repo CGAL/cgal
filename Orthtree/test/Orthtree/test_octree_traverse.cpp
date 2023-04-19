@@ -13,6 +13,7 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
 typedef CGAL::Orthtrees::Preorder_traversal<Octree> Preorder_traversal;
+typedef CGAL::Orthtrees::Level_traversal<Octree> Level_traversal;
 
 bool test_preorder_1_node() {
 
@@ -54,6 +55,30 @@ bool test_preorder_9_nodes() {
   for (int i = 0; i < 8; ++i) {
     iter++;
     assert((*iter == octree.children(octree.root())[i]));
+  }
+
+  return true;
+}
+
+bool test_level_9_nodes() {
+
+  // Define the dataset
+  Point_set points;
+  points.insert({-1, -1, -1});
+  points.insert({1, -1, -1});
+
+  // Create the octree
+  Octree octree(points, points.point_map());
+  octree.refine(10, 1);
+
+  // Create the range
+  auto nodes = octree.traverse<Level_traversal>(1);
+
+  // Check each item in the range
+  auto iter = nodes.begin();
+  for (int i = 0; i < 8; ++i) {
+    assert((*iter == octree.children(octree.root())[i]));
+    iter++;
   }
 
   return true;
@@ -110,6 +135,7 @@ int main(void) {
 
   test_preorder_1_node();
   test_preorder_9_nodes();
+  test_level_9_nodes();
   test_preorder_25_nodes();
 
   return 0;

@@ -507,9 +507,9 @@ public:
   }
 
   // todo: document this convenience function
-  template <typename Traversal>
-  Node_range traverse() const {
-    return traverse<Traversal>({*this});
+  template <typename Traversal, typename ...Args>
+  Node_range traverse(Args&& ...args) const {
+    return traverse<Traversal>({*this, std::forward<Args>(args)...});
   }
 
   template <typename Traversal>
@@ -691,6 +691,10 @@ public:
     return n == 0;
   }
 
+  std::size_t depth(Node_index n) const {
+    return m_nodes[n].depth();
+  }
+
   /*!
     \brief returns this node's parent.
     \pre `!is_root()`
@@ -835,8 +839,24 @@ public:
     return nullptr;
   }
 
-  const Node* first_child_at_depth(Node_index n, std::size_t depth) const {
-    return first_child_at_depth(&m_nodes[n], depth);
+  boost::optional<Node_index> first_child_at_depth(Node_index n, std::size_t d) const {
+
+    std::queue<Node_index> todo;
+    todo.push(n);
+
+    while (!todo.empty()) {
+      Node_index node = todo.front();
+      todo.pop();
+
+      if (depth(node) == d)
+        return node;
+
+      if (!is_leaf(node))
+        for (int i = 0; i < Node::Degree::value; ++i)
+          todo.push(m_nodes[node].m_children_index.get() + i);
+    }
+
+    return {};
   }
 
 

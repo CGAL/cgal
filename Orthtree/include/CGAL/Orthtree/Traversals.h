@@ -209,7 +209,8 @@ public:
   }
 
   typename Tree::Node_index first_index() const {
-    return m_orthtree.index(first()).get();
+    // assumes the tree has at least one child at m_depth
+    return m_orthtree.first_child_at_depth(m_orthtree.index(m_orthtree.root()), m_depth).get();
   }
 
   template <typename Node>
@@ -231,7 +232,24 @@ public:
   }
 
   boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
-    return m_orthtree.index(next(&m_orthtree[n]));
+
+    auto next = m_orthtree.next_sibling(n);
+
+    if (!next) {
+
+      auto up = n;
+      do {
+
+        if (!m_orthtree.next_sibling_up(up))
+          return {};
+
+        up = m_orthtree.next_sibling_up(up).get();
+        next = m_orthtree.first_child_at_depth(up, m_depth);
+
+      } while (!next);
+    }
+
+    return next;
   }
 };
 
