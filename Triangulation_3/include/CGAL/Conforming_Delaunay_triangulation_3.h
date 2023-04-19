@@ -416,7 +416,7 @@ protected:
     Cell_handle hint;
   };
 
-  auto construct_Steiner_point(Subconstraint subconstraint) -> Construct_Steiner_point_return_type
+  Construct_Steiner_point_return_type construct_Steiner_point(Subconstraint subconstraint)
   {
     auto& gt = tr.geom_traits();
     auto angle_functor = gt.angle_3_object();
