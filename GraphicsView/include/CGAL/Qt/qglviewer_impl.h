@@ -35,6 +35,7 @@
 #include <QImage>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTextEdit>
@@ -2455,7 +2456,10 @@ void CGAL::QGLViewer::setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers mod
     mouseBinding_.insert(mbp, map);
 
   ClickBindingPrivate cbp(modifiers, button, false, ::Qt::NoButton, key);
-  clickBinding_.remove(cbp);
+  
+  // AF: currently results in a runtime error
+  // clickBinding_.remove(cbp);
+  
 }
 
 
