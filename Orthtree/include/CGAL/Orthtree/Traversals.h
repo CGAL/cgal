@@ -60,30 +60,27 @@ public:
   }
 
   const Node* next(const Node* n) const {
+    if (n == nullptr || !next_index(m_orthtree.index(*n))) return nullptr;
+    return &m_orthtree[next_index(m_orthtree.index(*n)).get()];
+  }
 
-    if (n == nullptr) return nullptr;
+  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
 
-    if (n->is_leaf()) {
+    if (m_orthtree.is_leaf(n)) {
 
       auto next = m_orthtree.next_sibling(n);
 
-      if (nullptr == next) {
-
-        return m_orthtree.next_sibling_up(n);
-      }
+      if (!next)
+        next = m_orthtree.next_sibling_up(n);
 
       return next;
 
     } else {
 
-      // Return the first child of this node
-      return &m_orthtree.children(*n)[0];
+      // todo: this shouldn't be necessary, I'd prefer to directly get m_orthtree[n].m_children_index
+      return m_orthtree.index(m_orthtree.children(n)[0]);
+
     }
-
-  }
-
-  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
-    return m_orthtree.index(next(&m_orthtree[n]));
   }
 
 };
@@ -170,7 +167,14 @@ public:
   }
 
   boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
-    return m_orthtree.index(next(&m_orthtree[n]));
+
+    if (m_orthtree.next_sibling(n))
+      return m_orthtree.deepest_first_child(m_orthtree.next_sibling(n).get());
+
+    if (m_orthtree.next_sibling_up(n))
+      return m_orthtree.deepest_first_child(m_orthtree.next_sibling_up(n).get());
+
+    return {};
   }
 };
 

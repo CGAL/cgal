@@ -486,9 +486,7 @@ public:
     auto first = traversal.first_index();
 
     auto next = [=](const Self& tree, Node_index index) -> boost::optional<Node_index> {
-      auto n = traversal.next(&tree[index]);
-      if (n == nullptr) return {};
-      return tree.index(*n);
+      return traversal.next_index(index);
     };
 
     return boost::make_iterator_range(Traversal_iterator<Self>(*this, first, next),
@@ -527,22 +525,7 @@ public:
     (cubic).
    */
   Bbox bbox(const Node& node) const {
-    // Determine the side length of this node
-    FT size = m_side_per_depth[node.depth()];
-
-    // Determine the location this node should be split
-    Array min_corner;
-    Array max_corner;
-    for (int i = 0; i < Dimension::value; i++) {
-
-      min_corner[i] = m_bbox_min[i] + (node.global_coordinates()[i] * size);
-      max_corner[i] = min_corner[i] + size;
-    }
-
-    // Create the bbox
-    Construct_bbox_d construct_bbox
-      = m_traits.construct_bbox_d_object();
-    return construct_bbox(min_corner, max_corner);
+    return bbox(index(node));
   }
 
   Bbox bbox(Node_index n) const {
@@ -700,6 +683,14 @@ public:
   /// \name Node Access
   /// @{
 
+  bool is_leaf(Node_index n) const {
+    return m_nodes[n].is_leaf();
+  }
+
+  bool is_root(Node_index n) const {
+    return n == 0;
+  }
+
   /*!
     \brief returns this node's parent.
     \pre `!is_root()`
@@ -741,7 +732,7 @@ public:
     return children(m_nodes[node]);
   }
 
-  const Node* next_sibling(const Node* n) const {
+  const Node* _next_sibling(const Node* n) const {
 
     // todo: maybe this should take a reference?
     if (nullptr == n)
@@ -764,8 +755,8 @@ public:
     return &(children(parent(*n))[local_coordinates + 1]);
   }
 
-  const Node* next_sibling(Node_index n) const {
-    return next_sibling(&m_nodes[n]);
+  const boost::optional<Node_index> next_sibling(Node_index n) const {
+    return index(_next_sibling(&m_nodes[n]));
   }
 
   const Node* next_sibling_up(const Node* n) const {
@@ -785,8 +776,20 @@ public:
     return nullptr;
   }
 
-  const Node* next_sibling_up(Node_index n) const {
-    return next_sibling_up(&m_nodes[n]);
+  const boost::optional<Node_index> next_sibling_up(Node_index n) const {
+
+    // the root node has no next sibling up
+    if (n == 0) return {};
+
+    auto up = boost::optional<Node_index>{parent(n)};
+    while (up) {
+
+      if (next_sibling(up.get())) return {next_sibling(up.get())};
+
+      up = is_root(up.get()) ? boost::optional<Node_index>{} : boost::optional<Node_index>{parent(up.get())};
+    }
+
+    return {};
   }
 
   const Node* deepest_first_child(const Node* n) const {
@@ -801,8 +804,8 @@ public:
     return first;
   }
 
-  const Node* deepest_first_child(Node_index n) const {
-    return deepest_first_child(&m_nodes[n]);
+  Node_index deepest_first_child(Node_index n) const {
+    return index(deepest_first_child(&m_nodes[n])).get();
   }
 
   const Node* first_child_at_depth(const Node* n, std::size_t depth) const {
