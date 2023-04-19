@@ -318,8 +318,8 @@ Consider the subgraph formed only by <I>inner bisectors</I> (that is, only the s
 which are not incident upon a contour vertex). Call this subgraph a <I>skeleton axis</I>.
 Each node in the skeleton axis whose degree is \f$ >=3\f$ roots more than one skeleton tree.
 Each skeleton tree roughly corresponds to a region in the input topologically equivalent
-to a rectangle; that is, without branches. For example, a simple letter "H" would contain 2 higher
-degree nodes separating the skeleton axis in 5 trees; while the letter "@" would contain
+to a rectangle; that is, without branches. For example, a simple character "H" would contain 2 higher
+degree nodes separating the skeleton axis in 5 trees; while the character "@" would contain
 just 1 higher degree node separating the skeleton axis in 2 curly trees.
 
 Since a skeleton edge is a straight line, each branch in a skeleton tree is a polyline.
