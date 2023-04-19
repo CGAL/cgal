@@ -9,7 +9,7 @@ if(NOT CGAL_DISABLE_GMP)
 
     include(${CGAL_USE_FILE})
 
-    qt5_wrap_ui(parameterizationUI_FILES Parameterization_widget.ui OTE_dialog.ui)
+    qt6_wrap_ui(parameterizationUI_FILES Parameterization_widget.ui OTE_dialog.ui)
     polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin
                            ${parameterizationUI_FILES})
     target_link_libraries(
@@ -26,7 +26,7 @@ if(NOT CGAL_DISABLE_GMP)
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
   endif()
 
-  qt5_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)
+  qt6_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)
   polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin
                          ${segmentationUI_FILES})
   target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item)
@@ -37,11 +37,11 @@ if(NOT CGAL_DISABLE_GMP)
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 
-  qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
+  qt6_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
   polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
   target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-  qt5_wrap_ui(remeshingUI_FILES Remeshing_dialog.ui)
+  qt6_wrap_ui(remeshingUI_FILES Remeshing_dialog.ui)
   polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin
                          ${remeshingUI_FILES})
   target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item
@@ -54,14 +54,14 @@ if(NOT CGAL_DISABLE_GMP)
     target_link_libraries(offset_meshing_plugin PUBLIC CGAL::TBB_support)
   endif()
 
-  qt5_wrap_ui(shortestPathUI_FILES Shortest_path_widget.ui)
+  qt6_wrap_ui(shortestPathUI_FILES Shortest_path_widget.ui)
   polyhedron_demo_plugin(shortest_path_plugin Shortest_path_plugin
                          ${shortestPathUI_FILES})
   target_link_libraries(
     shortest_path_plugin PUBLIC scene_surface_mesh_item scene_shortest_path_item
                                 scene_basic_objects)
 
-  qt5_wrap_ui(basicUI_FILES Surface_mesh_approximation_dockwidget.ui)
+  qt6_wrap_ui(basicUI_FILES Surface_mesh_approximation_dockwidget.ui)
   polyhedron_demo_plugin(
     surface_mesh_approximation_plugin Surface_mesh_approximation_plugin
     ${basicUI_FILES} VSA_wrapper.cpp)
