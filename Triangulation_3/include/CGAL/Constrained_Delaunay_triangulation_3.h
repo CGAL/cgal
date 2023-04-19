@@ -217,7 +217,7 @@ private:
     struct Face_info {
       Color_value_type is_outside_the_face = 0;
       Color_value_type is_in_region = 0;
-      std::bitset<3> is_edge_also_in_3d_triangulation;
+      std::bitset<3> is_edge_also_in_3d_triangulation = 0;
       bool missing_subface = true;
     };
     using Vb1 = Triangulation_vertex_base_with_info_2<Vertex_info,
@@ -329,6 +329,8 @@ private:
 
         const auto outside_on_right = fh_2d->info().is_outside_the_face;
         const auto outside_on_left = mirror_fh_2d->info().is_outside_the_face;
+        const auto in_region_on_right = fh_2d->info().is_in_region;
+        const auto in_region_on_left = mirror_fh_2d->info().is_in_region;
 
         fh_2d->set_constraint(edge_index, false);
         mirror_fh_2d->set_constraint(mirror_edge_index, false);
@@ -344,14 +346,22 @@ private:
         auto fc = cdt_2.incident_faces(v_Steiner_2d, fh_2d), fcbegin(fc);
         // circulators are counter-clockwise, so we start at the right of [va,v]
         do {
-          fc->info().missing_subface = true;
           fc->info().is_outside_the_face = outside_on_right;
+          fc->info().is_in_region = in_region_on_right;
           ++fc;
         } while ( fc->vertex(cdt_2.ccw(fc->index(v_Steiner_2d))) != vb_2d );
 
         do {
-          fc->info().missing_subface = true;
           fc->info().is_outside_the_face = outside_on_left;
+          fc->info().is_in_region = in_region_on_left;
+        } while(++fc != fcbegin);
+        fc = cdt_2.incident_faces(v_Steiner_2d, fh_2d);
+        fcbegin  = fc;
+        do {
+          fc->info().missing_subface = true;
+          const auto v_Steiner_index = fc->index(v_Steiner_2d);
+          const auto other_edge = cdt_2.mirror_edge({fc, v_Steiner_index});
+          fc->info().is_edge_also_in_3d_triangulation.set(other_edge.first->info().is_edge_also_in_3d_triangulation.test(other_edge.second));
         } while(++fc != fcbegin);
 
         self.face_constraint_misses_subfaces.set(poly_id);
@@ -1416,7 +1426,8 @@ private:
     return result;
   }
 
-  void restore_face(CDT_3_face_index face_index) {
+  bool restore_face(CDT_3_face_index face_index) {
+    bool all_regions_are_restored = true;
     CDT_2& cdt_2 = face_cdt_2[face_index];
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
     std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
@@ -1506,8 +1517,10 @@ private:
           const auto v_2d = cdt_2.insert(circ, other_fh);
           v_2d->info().vertex_handle_3d = v;
         }
+        all_regions_are_restored = false;
       }
     }
+    return all_regions_are_restored;
   }
 
 public:
@@ -1529,8 +1542,9 @@ public:
     auto i = face_constraint_misses_subfaces.find_first();
     while(i != npos) {
       try {
-        restore_face(i);
-        face_constraint_misses_subfaces.reset(i);
+        if(restore_face(i)) {
+          face_constraint_misses_subfaces.reset(i);
+        }
       }
       catch(PLC_error&) {
         std::cerr << std::string("ERROR: PLC error with face #") << std::to_string(face_index) + "\n";
