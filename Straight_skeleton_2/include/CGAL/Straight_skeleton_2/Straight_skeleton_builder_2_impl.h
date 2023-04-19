@@ -2224,7 +2224,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
               if(!is_same_edge)
                 return canonical_split_h_1->id() < canonical_split_h_2->id(); // arbitrary
 
-              Halfedge_handle contour_h = artificial_event_1->triedge().e0();
+              Halfedge_handle contour_h = canonical_split_h_1->defining_contour_edge();
 
               // @fixme this should be a predicate...
               const Point_2& split_p_1 = artificial_event_1->point();
@@ -2323,7 +2323,7 @@ extreme_h /     \                          extreme_h /     \
       new_up_h->HBase_base::set_vertex( new_v ) ;
       new_v->VBase::set_halfedge( new_up_h ) ;
 
-      // Split the halfdege
+      // Split the halfedge
 
       Halfedge new_horizontal(mEdgeID++), new_horizontal_opp(mEdgeID++) ; // split new prev
       Halfedge_handle new_hor_h = SSkelEdgesPushBack(new_horizontal, new_horizontal_opp) ;
@@ -2336,7 +2336,7 @@ extreme_h /     \                          extreme_h /     \
 
       // A skeleton edge might be split from both sides, so we have previously ordered
       // these artificial vertices from the right to the left, and we want split_h/split_h_opp
-      // to remain on the leftmost (they are told to split "split_h/split_h_opp").
+      // to remain on the leftmost when looking from the canonical halfedge's side.
       // Thus:
       // - if we are on the canonical halfedge, split_h is on the left after the split
       // - if we are not on the canonical halfedge, split_h is on the right after the split
@@ -2354,6 +2354,12 @@ extreme_h /     \                          extreme_h /     \
 
       Halfedge_handle left_h_opp = left_h->opposite();
       Halfedge_handle right_h_opp = right_h->opposite();
+
+      CGAL_STSKEL_BUILDER_TRACE(4, "Split actors\n"
+                                << "  left_h: H" << left_h->id() << "\n"
+                                << "  right_h: H" << right_h->id() << "\n"
+                                << "  left_h_opp: H" << left_h_opp->id() << "\n"
+                                << "  right_h_opp: H" << right_h_opp->id());
 
       // Update the canonical halfedge of the vertices only if they are not contour vertices
       if(!split_h_sv->is_contour())
