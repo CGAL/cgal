@@ -31,7 +31,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
-#include <QGLContext>
+#include <QOpenGLContext>
 #include <QImage>
 #include <QMessageBox>
 #include <QMouseEvent>

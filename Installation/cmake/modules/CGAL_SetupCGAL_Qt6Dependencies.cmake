@@ -9,7 +9,7 @@
 #
 # .. code-block:: cmake
 #
-#    find_package(Qt6 QUIET COMPONENTS OpenGL Svg)
+#    find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Svg)
 #
 # and defines the variable :variable:`CGAL_Qt6_FOUND` and the function
 # :command:`CGAL_setup_CGAL_Qt6_dependencies`.
@@ -24,19 +24,24 @@ set(CGAL_SetupCGAL_Qt6Dependencies_included TRUE)
 # Used Modules
 # ^^^^^^^^^^^^
 #   - :module:`Qt6Config`
-find_package(Qt6 QUIET COMPONENTS OpenGL Svg)
+
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets Svg)
 
 set(CGAL_Qt6_MISSING_DEPS "")
-if(NOT Qt6OpenGL_FOUND)
-  set(CGAL_Qt6_MISSING_DEPS "Qt6OpenGL")
+if(NOT Qt6OpenGLWidgets_FOUND)
+  message( STATUS "NOTICE: NOT Qt6OpenGLWidgets_FOUND")
+  set(CGAL_Qt6_MISSING_DEPS "Qt6OpenGLWidgets")
 endif()
 if(NOT Qt6Svg_FOUND)
+  message(STATUS "NOTICE: NOT Qt6Svg_FOUND")
   set(CGAL_Qt6_MISSING_DEPS "${CGAL_Qt6_MISSING_DEPS} Qt6Svg")
 endif()
 if(NOT Qt6_FOUND)
+  message(STATUS "NOTICE: NOT Qt6_FOUND")
   set(CGAL_Qt6_MISSING_DEPS "${CGAL_Qt6_MISSING_DEPS} Qt6")
 endif()
 if(NOT EXISTS ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsItem.h)
+  message(STATUS "NOTICE: NOT EXISTS GraphicsItem")
   set(CGAL_Qt6_MISSING_DEPS "${CGAL_Qt6_MISSING_DEPS} <CGAL/Qt/*.h> headers")
 endif()
 
@@ -75,7 +80,7 @@ if(NOT CGAL_Qt6_MISSING_DEPS)
       POSITION_INDEPENDENT_CODE TRUE
       EXCLUDE_FROM_ALL TRUE
       AUTOMOC TRUE)
-    target_link_libraries(CGAL_Qt6_moc_and_resources CGAL::CGAL Qt6::Widgets Qt6::OpenGL Qt6::Svg )
+    target_link_libraries(CGAL_Qt6_moc_and_resources CGAL::CGAL Qt6::Widgets Qt6::OpenGLWidgets Qt6::Svg )
 
     add_library(CGAL::CGAL_Qt6_moc_and_resources ALIAS CGAL_Qt6_moc_and_resources)
     add_library(CGAL::Qt6_moc_and_resources ALIAS CGAL_Qt6_moc_and_resources)
@@ -112,7 +117,7 @@ function(CGAL_setup_CGAL_Qt6_dependencies target)
   endif()
   target_link_libraries( ${target} INTERFACE CGAL::CGAL)
   target_link_libraries( ${target} INTERFACE CGAL::Qt6_moc_and_resources)
-  target_link_libraries( ${target} INTERFACE Qt6::OpenGL Qt6::Svg )
+  target_link_libraries( ${target} INTERFACE Qt6::OpenGLWidgets Qt6::Svg )
 
   # Remove -Wdeprecated-copy, for g++ >= 9.0, because Qt6, as of
   # version 5.12, has a lot of [-Wdeprecated-copy] warnings.

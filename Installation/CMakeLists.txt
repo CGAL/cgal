@@ -500,7 +500,7 @@ macro(set_special_prefix library prefix)
   set(CGAL_EXT_LIB_${library}_PREFIX ${prefix})
 endmacro()
 
-set_special_prefix(Qt5 QT)
+set_special_prefix(Qt6 QT)
 set_special_prefix(Eigen3 EIGEN3)
 set_special_prefix(Coin3D COIN3D)
 
@@ -647,10 +647,10 @@ cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
+install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt6)
 if(CGAL_BRANCH_BUILD)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt6)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt6)
 endif()
 
 #
@@ -660,7 +660,7 @@ set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 get_property(CGAL_FOUND GLOBAL PROPERTY CGAL_FOUND)
 get_property(CGAL_Core_FOUND GLOBAL PROPERTY CGAL_Core_FOUND)
 get_property(CGAL_ImageIO_FOUND GLOBAL PROPERTY CGAL_ImageIO_FOUND)
-get_property(CGAL_Qt5_FOUND GLOBAL PROPERTY CGAL_Qt5_FOUND)
+get_property(CGAL_Qt6_FOUND GLOBAL PROPERTY CGAL_Qt6_FOUND)
 
 #
 # Repeat some problems
@@ -928,7 +928,7 @@ if(CGAL_BRANCH_BUILD)
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
-    find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
+    find_package(Qt6 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
     find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
     find_package(IPE)
     find_package(RS3)
@@ -939,10 +939,10 @@ if(CGAL_BRANCH_BUILD)
     set(compile_options
         "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
-${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Gui_DEFINITIONS} \
-${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
-${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
-${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
+${Qt6Widgets_DEFINITIONS} ${Qt6OpenGL_DEFINITIONS} ${Qt6Gui_DEFINITIONS} \
+${Qt6OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
+${Qt6Gui_EXECUTABLE_COMPILE_FLAGS} \
+${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt6_3RD_PARTY_DEFINITIONS} \
 ${CGAL_DEFINITIONS}")
     message("COMPILATION OPTIONS ARE :  ${compile_options}")
 
@@ -1032,11 +1032,11 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       ${RS_INCLUDE_DIR}
       ${EIGEN3_INCLUDE_DIR}
       ${GMP_INCLUDE_DIR}
-      ${Qt5OpenGL_INCLUDE_DIRS}
-      ${Qt5Widgets_INCLUDE_DIRS}
-      ${Qt5Gui_DEFINITIONS}
+      ${Qt6OpenGL_INCLUDE_DIRS}
+      ${Qt6Widgets_INCLUDE_DIRS}
+      ${Qt6Gui_DEFINITIONS}
       ${CGAL_3RD_PARTY_INCLUDE_DIRS}
-      ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS})
+      ${CGAL_Qt6_3RD_PARTY_INCLUDE_DIRS})
       list(APPEND include_options "-I${incdir}")
     endforeach()
     include_directories(SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
@@ -1234,7 +1234,7 @@ endif()
 
 #print some info about versions
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
-  find_package(Qt5 QUIET COMPONENTS Core)
+  find_package(Qt6 QUIET COMPONENTS Core)
   find_package(Boost)
   if(NOT CGAL_DISABLE_GMP)
     find_package(GMP)
@@ -1248,7 +1248,7 @@ if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     STATUS
     "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'"
     )
-  if(Qt5_FOUND)
-    message(STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'")
-  endif()#Qt5_FOUND
+  if(Qt6_FOUND)
+    message(STATUS "USING Qt6_VERSION = '${Qt6Core_VERSION_STRING}'")
+  endif()#Qt6_FOUND
 endif()#RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE

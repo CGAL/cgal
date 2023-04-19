@@ -229,7 +229,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           message (STATUS "Configured ${lib} from UseLIB-file: ${usefile}")
 
           # UseLIB-file has to set ${vlib}_SETUP to TRUE
-          # TODO EBEB what about Qt5, zlib?
+          # TODO EBEB what about Qt6, zlib?
 
         else()
 
@@ -288,11 +288,11 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
-      # To deal with imported targets of Qt5 and Boost, when CGAL
+      # To deal with imported targets of Qt6 and Boost, when CGAL
       # targets are themselves imported by another project.
 
-      if (${component} STREQUAL "Qt5")
-        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
+      if (${component} STREQUAL "Qt6")
+        find_package(Qt6 COMPONENTS Widgets OpenGLWidgets Gui Core Script ScriptTools QUIET)
       endif()
 
     else(WITH_CGAL_${component})

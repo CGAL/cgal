@@ -32,12 +32,11 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QGraphicsView>
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QTextStream>
 #include <QSettings>
 #include <QUrl>
-#include <QDesktopWidget>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSvgGenerator>
 #include <QtCore>
 #include <QtOpenGL>
@@ -205,16 +204,16 @@ void
 DemosMainWindow::setUseOpenGL(bool checked)
 {
   if(checked) {
-    QGLWidget* new_viewport = new QGLWidget;
+    // AF QOpenGLWidget* new_viewport = new QOpenGLWidget;
 
     // Setup the format to allow antialiasing with OpenGL:
     // one need to activate the SampleBuffers, if the graphic driver allows
     // this.
-    QGLFormat glformat = new_viewport->format();
-    glformat.setOption(QGL::SampleBuffers);
-    new_viewport->setFormat(glformat);
+    // AF QGLFormat glformat = new_viewport->format();
+    // AF glformat.setOption(QGL::SampleBuffers);
+    // AF new_viewport->setFormat(glformat);
 
-    view->setViewport(new_viewport);
+    // AF view->setViewport(new_viewport);
   }
   else {
     view->setViewport(new QWidget);

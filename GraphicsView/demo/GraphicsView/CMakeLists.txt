@@ -12,25 +12,25 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets Svg)
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  add_executable(min min.cpp ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+  add_executable(min min.cpp ${CGAL_Qt6_RESOURCE_FILES} ${CGAL_Qt6_MOC_FILES})
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS min)
 
-  target_link_libraries(min PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
+  target_link_libraries(min PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Gui)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(min)
 else()
 
-  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt6, and will not be compiled.")
 
 endif()

@@ -128,7 +128,7 @@ if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
 endif()
 
 foreach(comp ${CGAL_FIND_COMPONENTS})
-  if(NOT comp MATCHES "Core|ImageIO|Qt5")
+  if(NOT comp MATCHES "Core|ImageIO|Qt6")
     message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
   endif()
   if(comp MATCHES "Core" AND CGAL_DISABLE_GMP)
@@ -193,6 +193,5 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer)
   add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
     set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
-      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
 endif()
-
