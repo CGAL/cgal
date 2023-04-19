@@ -307,6 +307,57 @@ private:
         return c->vertex(index);
       }
       void hide_point(Cell_handle, const Point_3 &) const {}
+
+    void insert_Steiner_point_on_constraint(Constraint_id constraint,
+                                            Vertex_handle va,
+                                            Vertex_handle vb,
+                                            Vertex_handle v_Steiner) const
+    {
+      const auto point = self.point(v_Steiner);
+      if(!self.cdt_2_are_initialized) return;
+      for(const auto [constraint_id, poly_id] : CGAL::make_range(self.constraint_to_faces.equal_range(constraint))) {
+        auto& cdt_2 = self.face_cdt_2[poly_id];
+
+        auto opt_edge = self.edge_of_cdt_2(cdt_2, va, vb);
+        CGAL_assume(opt_edge != std::nullopt);
+        CGAL_assertion(cdt_2.is_constrained(*opt_edge));
+        auto [fh_2d, edge_index]= *opt_edge;
+        const auto va_2d = fh_2d->vertex(cdt_2.cw(edge_index));
+        const auto vb_2d = fh_2d->vertex(cdt_2.ccw(edge_index));
+
+        const auto [mirror_fh_2d, mirror_edge_index] = cdt_2.mirror_edge(*opt_edge);
+
+        const auto outside_on_right = fh_2d->info().is_outside_the_face;
+        const auto outside_on_left = mirror_fh_2d->info().is_outside_the_face;
+
+        fh_2d->set_constraint(edge_index, false);
+        mirror_fh_2d->set_constraint(mirror_edge_index, false);
+        const auto v_Steiner_2d = cdt_2.insert(point, fh_2d);
+        v_Steiner_2d->info().vertex_handle_3d = v_Steiner;
+        cdt_2.insert_constraint(va_2d, v_Steiner_2d);
+        cdt_2.insert_constraint(vb_2d, v_Steiner_2d);
+
+        // update the edge {fh_2d, edge_index}
+        const bool is_edge = cdt_2.is_edge(va_2d, v_Steiner_2d, fh_2d, edge_index);
+        CGAL_assume(is_edge);
+
+        auto fc = cdt_2.incident_faces(v_Steiner_2d, fh_2d), fcbegin(fc);
+        // circulators are counter-clockwise, so we start at the right of [va,v]
+        do {
+          fc->info().missing_subface = true;
+          fc->info().is_outside_the_face = outside_on_right;
+          ++fc;
+        } while ( fc->vertex(cdt_2.ccw(fc->index(v_Steiner_2d))) != vb_2d );
+
+        do {
+          fc->info().missing_subface = true;
+          fc->info().is_outside_the_face = outside_on_left;
+        } while(++fc != fcbegin);
+
+        self.face_constraint_misses_subfaces.set(poly_id);
+      }
+      conforming_dt_visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v_Steiner);
+    }
   };
 
 public:
@@ -368,6 +419,7 @@ public:
     CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>> circ{&vertex_handles};
     const auto circ_end{circ};
     auto& border = this->face_border.emplace_back();
+    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(this->face_border.size() - 1);
     do {
       const auto va = *circ;
       ++circ;
@@ -376,10 +428,12 @@ public:
       if(c_id != Constraint_id{}) {
         const bool constraint_c_id_is_reversed = true;
         border.push_back(Face_edge{c_id, constraint_c_id_is_reversed});
+        constraint_to_faces.emplace(c_id, polygon_contraint_id);
       } else {
         const auto c_id = this->insert_constrained_edge(va, vb);
         CGAL_assertion(c_id != Constraint_id{});
         border.push_back(Face_edge{c_id});
+        constraint_to_faces.emplace(c_id, polygon_contraint_id);
       }
     } while(circ != circ_end);
 
@@ -413,7 +467,6 @@ public:
 
     face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
     face_constraint_misses_subfaces.resize(face_cdt_2.size());
-    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(face_cdt_2.size() - 1);
 
     return polygon_contraint_id;
   }
@@ -706,7 +759,12 @@ private:
     return {};
   }
 
-  struct Next_face : std::logic_error { using std::logic_error::logic_error; };
+  struct Next_region : std::logic_error {
+    using std::logic_error::logic_error;
+    CDT_2_face_handle fh_2d;
+    // create a new region
+    Next_region(const std::string& what, CDT_2_face_handle fh) : std::logic_error(what), fh_2d(fh) {}
+  };
 
   static constexpr auto vertex_pair(Edge e) {
     const auto [c, i, j] = e;
@@ -889,7 +947,7 @@ private:
         dump_triangulation();
         dump_region(face_index, region_count, cdt_2);
       }
-      throw Next_face{"No segment found"};
+      throw Next_region{"No segment found", fh_region[0]};
     }
     CGAL_assertion(found_edge_opt != std::nullopt);
 
@@ -999,7 +1057,7 @@ private:
         };
         dump_facets_of_cavity_border(face_index, region_count, "lower", lower_cavity_triangulation);
         dump_facets_of_cavity_border(face_index, region_count, "upper", upper_cavity_triangulation);
-        throw Next_face{"missing facet in polygon"};
+        throw Next_region{"missing facet in polygon", fh_region[0]};
       }
       return test;
     }));
@@ -1217,6 +1275,35 @@ private:
       return std::nullopt;
   }
 
+  auto edge_of_cdt_2(const CDT_2& cdt_2, const Vertex_handle va, const Vertex_handle vb) const
+      -> std::optional<typename CDT_2::Edge>
+  {
+    auto v = [&, hint = CDT_2_face_handle{}](const auto& p) mutable {
+      int i;
+      typename CDT_2::Locate_type lt;
+      const auto fh = cdt_2.locate(p, lt, i, hint);
+      CGAL_assume(lt == CDT_2::VERTEX);
+      hint = fh;
+      return fh->vertex(i);
+    };
+    const auto cdt_2_v0 = v(this->point(va));
+    const auto cdt_2_v1 = v(this->point(vb));
+    CDT_2_face_handle fh;
+    int edge_index;
+    const bool is_edge = cdt_2.is_edge(cdt_2_v0, cdt_2_v1, fh, edge_index);
+    if(is_edge) {
+      typename CDT_2::Edge edge{fh, edge_index};
+      // if(fh->vertex(cdt_2.cw(edge_index)) != cdt_2_v0) {
+      //   edge = cdt_2.mirror_edge(edge);
+      // }
+      CGAL_assertion(edge.first->vertex(cdt_2.cw(edge.second)) == cdt_2_v0);
+      CGAL_assertion(edge.first->vertex(cdt_2.ccw(edge.second)) == cdt_2_v1);
+      return edge;
+    }
+    else
+      return std::nullopt;
+  }
+
   template <typename Tr1, typename Tr2, typename Vertex_handle1>
   static auto vertex_triple_is_facet_of_other_triangulation(
       const Tr1& tr, Vertex_handle1 v0, Vertex_handle1 v1, Vertex_handle1 v2, const Tr2& other_tr)
@@ -1330,7 +1417,7 @@ private:
   }
 
   void restore_face(CDT_3_face_index face_index) {
-    const CDT_2& cdt_2 = face_cdt_2[face_index];
+    CDT_2& cdt_2 = face_cdt_2[face_index];
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
     std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
 #endif // CGAL_DEBUG_CDT_3
@@ -1364,7 +1451,8 @@ private:
       }
       Cell_handle c;
       int i, j, k;
-      if(tr.is_facet(fh->vertex(0)->info().vertex_handle_3d, fh->vertex(1)->info().vertex_handle_3d,
+      if(tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
+                     fh->vertex(1)->info().vertex_handle_3d,
                      fh->vertex(2)->info().vertex_handle_3d, c, i, j, k))
       {
         const int facet_index = 6 - i - j - k;
@@ -1383,9 +1471,41 @@ private:
       try {
         restore_subface_region(face_index, region_count++, cdt_2, fh_region);
       }
-      catch(Next_face& e) {
+      catch(Next_region& e) {
         std::cerr << "ERROR: " << e.what() << " in sub-region " << (region_count - 1)
                   << " of facet #" << face_index << '\n';
+        // return;
+        const auto circ = CGAL::centroid(cdt_2.triangle(e.fh_2d));
+        const auto other_fh = cdt_2.locate(circ, fh);
+        if([&]() {
+          for(int index = 0; index < 3; ++index) {
+            if(!other_fh->is_constrained(index)) continue;
+            const auto va = other_fh->vertex(cdt_2.cw(index));
+            const auto vb = other_fh->vertex(cdt_2.ccw(index));
+            const auto a = cdt_2.point(va);
+            const auto b = cdt_2.point(vb);
+            if(CGAL::angle(a, circ, b) == CGAL::OBTUSE) {
+              const auto mid = CGAL::midpoint(a, b);
+              const auto va_3d = va->info().vertex_handle_3d;
+              const auto vb_3d = vb->info().vertex_handle_3d;
+              const auto constraint_id = this->constraint_from_extremities(va_3d, vb_3d);
+              CGAL_assertion(constraint_id != Constraint_id{});
+              this->insert_Steiner_point_on_subconstraint(mid, va_3d->cell(), {va_3d, vb_3d}, constraint_id,
+                                                          insert_in_conflict_visitor);
+              return false;
+            }
+          }
+          return true;
+        }()) {
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+          std::cerr << std::format("Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n",
+                                    IO::oformat(circ),
+                                    IO::oformat(cdt_2.triangle(e.fh_2d)));
+#endif // CGAL_DEBUG_CDT_3
+          const auto v = this->insert(circ);
+          const auto v_2d = cdt_2.insert(circ, other_fh);
+          v_2d->info().vertex_handle_3d = v;
+        }
       }
     }
   }
@@ -1404,6 +1524,7 @@ public:
       fill_cdt_2(cdt_2, i);
       search_for_missing_subfaces(i);
     }
+    cdt_2_are_initialized = true;
     const auto npos = face_constraint_misses_subfaces.npos;
     auto i = face_constraint_misses_subfaces.find_first();
     while(i != npos) {
@@ -1566,11 +1687,13 @@ protected:
   Conforming_Dt &conforming_dt = *this;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
   std::vector<CDT_2> face_cdt_2;
+  bool cdt_2_are_initialized = false;
   struct Face_edge {
     Constraint_id constraint_id;
     bool is_reverse = false;
   };
   std::vector<std::vector<Face_edge>> face_border;
+  std::multimap<Constraint_id, CDT_3_face_index> constraint_to_faces;
   boost::dynamic_bitset<> face_constraint_misses_subfaces;
 };
 

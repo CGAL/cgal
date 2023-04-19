@@ -132,6 +132,13 @@ protected:
       return c->vertex(index);
     }
     void hide_point(Cell_handle, const Point& ) const {}
+
+    void insert_Steiner_point_on_constraint([[maybe_unused]] Constraint_id constraint,
+                                            [[maybe_unused]] Vertex_handle va,
+                                            [[maybe_unused]] Vertex_handle vb,
+                                            [[maybe_unused]] Vertex_handle v_Steiner) const
+    {
+    }
   };
 
   auto make_subconstraint(Vertex_handle va, Vertex_handle vb) {
@@ -311,6 +318,28 @@ protected:
     }
   }
 
+  template <typename Visitor>
+  Vertex_handle insert_Steiner_point_on_subconstraint(
+      Point steiner_pt, Cell_handle hint,
+      Subconstraint subconstraint, Constraint_id constraint, Visitor& visitor)
+  {
+    const Vertex_handle va = subconstraint.first;
+    const Vertex_handle vb = subconstraint.second;
+    Locate_type lt;
+    int li, lj;
+    const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
+    const Vertex_handle v = this->insert_impl(steiner_pt, lt, c, li, lj, visitor);
+    if(lt != T_3::VERTEX) {
+      v->nb_of_incident_constraints = 1;
+      v->c_id = constraint.vl_ptr();
+    }
+    constraint_hierarchy.add_Steiner(va, vb, v);
+    visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v);
+    add_to_subconstraints_to_conform(va, v, constraint);
+    add_to_subconstraints_to_conform(v, vb, constraint);
+    return v;
+  }
+
   /// Return `true` if a Steiner point was inserted
   template <typename Visitor>
   bool conform_subconstraint(Subconstraint subconstraint,
@@ -322,24 +351,7 @@ protected:
     CGAL_assertion(va != vb);
     if (!tr.tds().is_edge(va, vb)) {
       const auto& [steiner_pt, hint] = construct_Steiner_point(subconstraint);
-      Locate_type lt;
-      int li, lj;
-      const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
-      const Vertex_handle v = this->insert_impl(steiner_pt, lt, c, li, lj,
-                                                visitor);
-      if(lt != T_3::VERTEX) {
-        v->nb_of_incident_constraints = 1;
-        v->c_id = constraint.vl_ptr();
-#if CGAL_DEBUG_CDT_3
-        std::cerr << "New Steiner vertex (#" << tr.number_of_vertices() << "): "
-                  << display_vert(v) << '\n';
-#endif // CGAL_DEBUG_CDT_3
-      }
-      CGAL_assertion(v != va);
-      CGAL_assertion(v != vb);
-      constraint_hierarchy.add_Steiner(va, vb, v);
-      add_to_subconstraints_to_conform(va, v, constraint);
-      add_to_subconstraints_to_conform(v, vb, constraint);
+      (void)insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
       return true;
     }
 
