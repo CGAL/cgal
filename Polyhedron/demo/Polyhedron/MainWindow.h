@@ -3,12 +3,13 @@
 #include "config.h"
 #include "MainWindow_config.h"
 
-#include <QtOpenGL/qgl.h>
+#include <QOpenGLWidget>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Three/Three.h>
 
-#include <QScriptEngine>
-#include <QScriptable>
+// AF @todo   Scripting has changed
+// #include <QScriptEngine>
+// #include <QScriptable>
 
 
 #include <QVector>
@@ -60,8 +61,8 @@ namespace Ui {
 class MAINWINDOW_EXPORT MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface,
-  public CGAL::Three::Three,
-  protected QScriptable
+  public CGAL::Three::Three
+  // AF        , protected QScriptable
 {
   Q_OBJECT
   Q_INTERFACES(Messages_interface)
@@ -147,12 +148,13 @@ public Q_SLOTS:
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/
   void reloadItem();
-
+#if 0
   //! Loads a script. Returns true if it worked.
   bool loadScript(QString filename);
 
   //! Loads a script. Returns true if it worked.
   bool loadScript(QFileInfo);
+#endif
 
   /*!
    * Gives the keyboard input focus to the widget searchEdit.
@@ -261,7 +263,7 @@ public Q_SLOTS:
    * If able, finds a script debugger and interrupts current action. Default
    * value for parameter is true.
    */
-  void enableScriptDebugger(bool = true);
+  // void enableScriptDebugger(bool = true);
 
   /// This slot is used to test exception handling in Qt Scripts.
   void throw_exception();
@@ -449,9 +451,11 @@ public:
   //! Calls evaluate_script(script, filename, true).
   void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
+  #endif 
+
   QMutex mutex;
   QWaitCondition wait_condition;
-#endif
+
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
   void on_actionLoad_a_Scene_from_a_Script_File_triggered();

@@ -7,7 +7,7 @@
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <CGAL/Three/Viewer_config.h>
 
-#include <QtOpenGL/qgl.h>
+#include <QtOpenGLWidgets>
 #include <QStandardItemModel>
 #include <QString>
 #include <QColor>

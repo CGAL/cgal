@@ -19,7 +19,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       set(moc_file_name "")
     else()
       set(moc_file_name ${plugin_implementation_base_name}.moc )
-      qt5_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" )
+      qt6_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" )
       add_file_dependencies( ${moc_file_name} "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
     endif()
 
@@ -49,7 +49,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
               set_property(TEST "compilation_of__demo_framework"
                 APPEND PROPERTY FIXTURES_SETUP "demo_framework_SetupFixture")
               set_property(TEST "compilation_of__demo_framework"
-                APPEND PROPERTY DEPENDS "compilation_of__CGAL_Qt5_moc_and_resources")
+                APPEND PROPERTY DEPENDS "compilation_of__CGAL_Qt6_moc_and_resources")
         endif()
       endif()
     else()

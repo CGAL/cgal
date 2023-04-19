@@ -18,6 +18,7 @@
 #include <QStyleFactory>
 #include <QAction>
 #include <QMultipleInputDialog.h>
+#include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #ifdef CGAL_USE_WEBSOCKETS
 #include <QtWebSockets/QWebSocket>
@@ -1838,7 +1839,7 @@ void Viewer::setLighting()
   connect(dialog->position_lineEdit, &QLineEdit::editingFinished,
           [this, dialog]()
   {
-    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), CGAL_QT_SKIP_EMPTY_PARTS);
+    QStringList list = dialog->position_lineEdit->text().split(QRegularExpression(","), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;

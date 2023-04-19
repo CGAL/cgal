@@ -2,6 +2,7 @@
 #include "ui_Show_point_dialog.h"
 
 #include <QClipboard>
+#include <QRegularExpression>
 
 Show_point_dialog::Show_point_dialog(QWidget* parent)
   : QDialog(parent)
@@ -50,7 +51,8 @@ void Show_point_dialog::interprete_string(const QString& string)
     + "|" + not_double_char_re + "+" + double_re
     + ")"
     + "$";
-  QRegExp re(full_re);
+#if 0  // AF @todo  QRegExp had exactMatch() and cap()
+  QRegularExpression re(full_re);
   if(re.exactMatch(string)) {
     // const double x = re.cap(1).toDouble();
     // const double y = re.cap(2).toDouble();
@@ -66,6 +68,7 @@ void Show_point_dialog::interprete_string(const QString& string)
     ui->coord_z->setText(QString());
     m_has_correct_coordinates = false;
   }
+#endif
 }
 
 double Show_point_dialog::get_x() const

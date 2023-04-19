@@ -73,10 +73,12 @@
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/manipulatedFrame.h>
 
+#include "Color_map.h"
+
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
-#include "Color_map.h"
+
 
 
 using namespace CGAL::Three;
@@ -123,6 +125,7 @@ const QString debug_widgets_names[9] = {
 #  endif
 #endif
 
+#if 0
 QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
 {
   MainWindow* mw = qobject_cast<MainWindow*>(engine->parent());
@@ -138,6 +141,7 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
 
   return engine->undefinedValue();
 }
+#endif
 
 inline
 QKeySequence combine(Qt::Modifier m, Qt::Key k)
@@ -166,8 +170,8 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   is_locked = false;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
-  ui->menuBar->removeAction(ui->actionLoadScript);
-  ui->menuBar->removeAction(ui->on_actionLoad_a_Scene_from_a_Script_File);
+ // ui->menuBar->removeAction(ui->actionLoadScript);
+ // ui->menuBar->removeAction(ui->on_actionLoad_a_Scene_from_a_Script_File);
 #endif
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
@@ -528,6 +532,7 @@ void MainWindow::filterOperations(bool)
 
 #include <CGAL/Three/exceptions.h>
 
+#if 0
 void MainWindow::evaluate_script(QString script,
                                  const QString& filename,
                                  const bool quiet) {
@@ -595,6 +600,7 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
   this->error(tr("Your version of Qt is too old, and for that reason "
                  "the Qt Script Debugger is not available."));
 }
+#endif 
 
 namespace {
 bool actionsByName(QAction* x, QAction* y) {
@@ -650,8 +656,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     QFileInfo fileinfo(fileName);
     //set plugin name
     QString name = fileinfo.fileName();
-    name.remove(QRegExp("^lib"));
-    name.remove(QRegExp("\\..*"));
+    name.remove(QRegularExpression("^lib"));
+    name.remove(QRegularExpression("\\..*"));
     //do not load it if it is in the blacklist
     if(blacklisted)
     {
@@ -1138,20 +1144,22 @@ bool MainWindow::file_matches_filter(const QString& filters,
   QString filename_striped=fileinfo.fileName();
 
   //match all filters between ()
-  QRegExp all_filters_rx("\\((.*)\\)");
+  QRegularExpression all_filters_rx("\\((.*)\\)");
 
   QStringList split_filters = filters.split(";;");
   Q_FOREACH(const QString& filter, split_filters) {
     //extract filters
+#if 0 // AF @todo
     if ( all_filters_rx.indexIn(filter)!=-1 ){
       Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
-        QRegExp rx(pattern);
-        rx.setPatternSyntax(QRegExp::Wildcard);
+        QRegularExpression rx(pattern);
+        rx.setPatternSyntax(QRegularExpression::Wildcard);
         if ( rx.exactMatch(filename_striped) ){
           return true;
         }
       }
     }
+#endif
   }
   return false;
 }
@@ -1268,6 +1276,7 @@ void MainWindow::open(QString filename)
 bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename);
   boost::optional<bool> item_opt;
+#if 0 // AF
   try {
     item_opt = wrap_a_call_to_cpp
         ([this, fileinfo, loader_name]()
@@ -1284,6 +1293,7 @@ bool MainWindow::open(QString filename, QString loader_name) {
     std::cerr << e.what() << std::endl;
     return false;
   }
+#endif
   return true;
 }
 
@@ -1887,6 +1897,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
+#if 0
 bool MainWindow::loadScript(QString filename)
 {
   QFileInfo fileinfo(filename);
@@ -1920,12 +1931,15 @@ bool MainWindow::loadScript(QFileInfo info)
 #endif
   return false;
 }
+#endif
 
 void MainWindow::throw_exception() {
+#if 0 // AF
   wrap_a_call_to_cpp([]() {
     throw std::runtime_error("Exception thrown in "
                              "MainWindow::throw_exception()");
   }, this, __FILE__, __LINE__);
+#endif
 }
 
 void MainWindow::on_actionLoadScript_triggered()
@@ -2046,7 +2060,7 @@ void MainWindow::on_actionSaveAs_triggered()
           sf = plugin->saveNameFilters().split(";;").first();
       }
     }
-    QRegExp extensions("\\(\\*\\..+\\)");
+    QRegularExpression extensions("\\(\\*\\..+\\)");
     QStringList filter_exts;
     if(filters.empty())
     {
@@ -2056,6 +2070,7 @@ void MainWindow::on_actionSaveAs_triggered()
                            .arg(item->name()));
           return;
     }
+#if 0 // AF 
     Q_FOREACH(QString string, filters)
     {
       QStringList sl = string.split(";;");
@@ -2065,6 +2080,8 @@ void MainWindow::on_actionSaveAs_triggered()
           filter_exts.append(extensions.capturedTexts());
       }
     }
+#endif 
+
     filters << tr("All files (*)");
     if(canSavePlugins.isEmpty()) {
       QMessageBox::warning(this,
@@ -2094,9 +2111,9 @@ void MainWindow::on_actionSaveAs_triggered()
     if(filename.isEmpty())
       return;
     last_saved_dir = QFileInfo(filename).absoluteDir().path();
-    extensions.indexIn(sf.split(";;").first());
+    // AF  extensions.indexIn(sf.split(";;").first());
     QString filter_ext, filename_ext;
-    filter_ext = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
+    // AF filter_ext = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
 
     filter_ext.remove(")");
     filter_ext.remove("(");
@@ -2804,9 +2821,11 @@ void MainWindow::colorItems()
     return;
   std::vector<QColor> colors_;
   colors_.reserve(nb_files);
+#
   compute_color_map(scene->item(scene->selectionIndices().last())->color(),
                     static_cast<unsigned>(nb_files),
                     std::back_inserter(colors_));
+
   std::size_t nb_item = -1;
   Q_FOREACH(int id, scene->selectionIndices())
   {
@@ -3859,7 +3878,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     if(filename.isEmpty())
       return;
   }
-  loadScript(QFileInfo(filename));
+  
   if(do_download){
     QFile tmp_file(filename);
     tmp_file.remove();

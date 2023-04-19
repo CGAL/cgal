@@ -19,9 +19,9 @@
 #include <exception>
 #include <QString>
 #include <QApplication>
-#include <QScriptable>
-#include <QScriptContext>
-#include <QScriptEngine>
+//#include <QScriptable>
+//#include <QScriptContext>
+//#include <QScriptEngine>
 #include <boost/optional.hpp>
 #include <QStringList>
 
@@ -60,6 +60,7 @@ struct Optional_or_bool<void> {
 
 enum Context { CURRENT_CONTEXT, PARENT_CONTEXT };
 
+#if 1 //  AF @todo scripting has changed
 /// This function template wraps a `Callable` that can be called without
 /// any argument (such as a lambda expression without arguments), and in
 /// case the function call is in a Qt Script context, wraps the call in a
@@ -69,7 +70,7 @@ enum Context { CURRENT_CONTEXT, PARENT_CONTEXT };
 template <typename Callable>
 typename Optional_or_bool<typename cpp11::result_of<Callable()>::type>::type
 wrap_a_call_to_cpp(Callable f,
-                   QScriptable* qs = 0,
+                   // QScriptable* qs = 0,
                    const char* file = 0,
                    int line = -1,
                    Context c = CURRENT_CONTEXT) {
@@ -78,12 +79,13 @@ wrap_a_call_to_cpp(Callable f,
   typedef typename O_r_b::type Return_type;
 
   const bool no_try_catch = qApp->property("no-try-catch").toBool();
-  if(no_try_catch || qs == 0 || !qs->context()) return O_r_b::invoke(f);
+  if(no_try_catch /*  || qs == 0 || !qs->context() */ ) return O_r_b::invoke(f);
   else
     try {
       return O_r_b::invoke(f);
     }
     catch(const std::exception& e) {
+#if 0
       const Script_exception* se = dynamic_cast<const Script_exception*>(&e);
       QScriptContext* context = qs->context();
       QStringList qt_bt = context->backtrace();
@@ -121,9 +123,11 @@ wrap_a_call_to_cpp(Callable f,
                     qScriptValueFromSequence(context->engine(), qt_bt));
       std::cerr << "result after throwError: "
                 << qPrintable(v.toString()) << std::endl;
+#endif
       return Return_type();
     }
 }
+#endif 
 
 } // end namespace Three
 } // end namespace CGAL
