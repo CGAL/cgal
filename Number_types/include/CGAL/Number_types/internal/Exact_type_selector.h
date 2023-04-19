@@ -92,7 +92,7 @@ struct Exact_NT_backend<GMPXX_BACKEND>
 };
 #endif
 
-#ifdef CGAL_USE_BOOST_MP
+#if defined (CGAL_USE_BOOST_MP) && defined(CGAL_USE_GMP)
 template <>
 struct Exact_NT_backend<BOOST_GMP_BACKEND>
 {
@@ -100,7 +100,9 @@ struct Exact_NT_backend<BOOST_GMP_BACKEND>
   typedef BOOST_gmp_arithmetic_kernel::Integer Integer;
   typedef Exact_NT_backend<GMP_BACKEND>::Ring_for_float Ring_for_float;
 };
+#endif
 
+#ifdef CGAL_USE_BOOST_MP
 template <>
 struct Exact_NT_backend<BOOST_BACKEND>
 {
