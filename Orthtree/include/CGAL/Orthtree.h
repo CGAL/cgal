@@ -576,7 +576,7 @@ public:
     while (!node_for_point->is_leaf()) {
 
       // Find the point to split around
-      Point center = barycenter(*node_for_point);
+      Point center = barycenter(index(*node_for_point));
 
       // Find the index of the correct sub-node
       typename Node::Local_coordinates index;
@@ -668,7 +668,7 @@ public:
       return false;
 
     // If all else is equal, recursively compare the trees themselves
-    return is_topology_equal(root(), *this, rhs.root(), rhs);
+    return is_topology_equal(*this, rhs);
   }
 
   /*!
@@ -816,11 +816,11 @@ public:
     for (int i = 0; i < Degree::value; i++) {
       m_nodes.emplace_back(n, m_nodes[n].global_coordinates(), m_nodes[n].depth() + 1, Local_coordinates{i});
     }
-    // todo: this assumes that the new nodes always are allocated at the end
+    // todo: this assumes that the new nodes are always allocated at the end
     m_nodes[n].m_children_index = m_nodes.size() - Degree::value;
 
-    // Find the point to around which the node is split
-    Point center = barycenter(m_nodes[n]);
+    // Find the point around which the node is split
+    Point center = barycenter(n);
 
     // Add the node's points to its children
     reassign_points(m_nodes[n], m_nodes[n].points().begin(), m_nodes[n].points().end(), center);
@@ -857,30 +857,29 @@ public:
     return construct_point_d_from_array(bary);
   }
 
-  // todo: this does what the documentation for operator== claims to do!
-  static bool is_topology_equal(const Node& lhsNode, const Self& lhsTree, const Node& rhsNode, const Self& rhsTree) {
+  static bool is_topology_equal(Node_index lhsNode, const Self& lhsTree, Node_index rhsNode, const Self& rhsTree) {
 
     // If one node is a leaf, and the other isn't, they're not the same
-    if (lhsNode.is_leaf() != rhsNode.is_leaf())
+    if (lhsTree.is_leaf(lhsNode) != rhsTree.is_leaf(rhsNode))
       return false;
 
-    // If both nodes are non-leaf nodes
-    if (!lhsNode.is_leaf()) {
+    // If both nodes are non-leaf
+    if (!lhsTree.is_leaf(lhsNode)) {
 
       // Check all the children
       for (int i = 0; i < Degree::value; ++i) {
         // If any child cell is different, they're not the same
-        if (!is_topology_equal(lhsTree.children(lhsNode)[i], lhsTree, rhsTree.children(rhsNode)[i], rhsTree))
+        if (!is_topology_equal(lhsTree[lhsNode].m_children_index.get() + i, lhsTree,
+                                rhsTree[rhsNode].m_children_index.get() + i, rhsTree))
           return false;
       }
     }
 
-    // If both nodes are leaf nodes, they must be in the same location
-    return (lhsNode.global_coordinates() == rhsNode.global_coordinates());
+    return (lhsTree[lhsNode].global_coordinates() == rhsTree[rhsNode].global_coordinates());
   }
 
   static bool is_topology_equal(const Self& lhs, const Self& rhs) {
-    return is_topology_equal(lhs.root(), lhs, rhs.root(), rhs);
+    return is_topology_equal(lhs.index(lhs.root()), lhs, rhs.index(rhs.root()), rhs);
   }
 
   /*!
@@ -1138,12 +1137,14 @@ private: // functions :
       children_with_distances.reserve(Degree::value);
 
       // Fill the list with child nodes
-      for (int index = 0; index < Degree::value; ++index) {
-        auto& child_node = children(node)[index];
+      for (int i = 0; i < Degree::value; ++i) {
+        auto& child_node = children(node)[i];
 
         // Add a child to the list, with its distance
-        children_with_distances.emplace_back(typename Node::Local_coordinates(index),
-                                             CGAL::squared_distance(search_bounds.center(), barycenter(child_node)));
+        children_with_distances.emplace_back(
+          typename Node::Local_coordinates(i),
+          CGAL::squared_distance(search_bounds.center(), barycenter(index(child_node)))
+        );
       }
 
       // Sort the children by their distance from the search point
