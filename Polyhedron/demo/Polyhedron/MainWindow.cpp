@@ -600,7 +600,7 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
   this->error(tr("Your version of Qt is too old, and for that reason "
                  "the Qt Script Debugger is not available."));
 }
-#endif 
+#endif
 
 namespace {
 bool actionsByName(QAction* x, QAction* y) {
@@ -2070,17 +2070,16 @@ void MainWindow::on_actionSaveAs_triggered()
                            .arg(item->name()));
           return;
     }
-#if 0 // AF 
+
     Q_FOREACH(QString string, filters)
     {
       QStringList sl = string.split(";;");
       Q_FOREACH(QString s, sl){
-        int pos = extensions.indexIn(s);
-        if( pos >-1)
-          filter_exts.append(extensions.capturedTexts());
+        QRegularExpressionMatch match = extensions.match(s);
+        if(match.hasMatch())
+          filter_exts.append(match.capturedTexts());
       }
     }
-#endif 
 
     filters << tr("All files (*)");
     if(canSavePlugins.isEmpty()) {
@@ -3878,7 +3877,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     if(filename.isEmpty())
       return;
   }
-  
+
   if(do_download){
     QFile tmp_file(filename);
     tmp_file.remove();
