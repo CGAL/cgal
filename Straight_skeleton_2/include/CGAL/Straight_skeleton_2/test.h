@@ -13,6 +13,10 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/number_utils.h>
+
+#include <algorithm>
+#include <iostream>
 
 //
 // INTRINSIC UNIT TESTING macros.

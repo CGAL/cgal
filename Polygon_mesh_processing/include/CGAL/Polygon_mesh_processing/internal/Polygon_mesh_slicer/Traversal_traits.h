@@ -19,7 +19,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Intersections_3/Ray_3_Triangle_3.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/enum.h>
 
 namespace CGAL{
@@ -73,7 +73,7 @@ public:
     , do_intersect_3( m_traits.do_intersect_3_object() )
   {}
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const typename Traits::Plane_3& plane, const typename AABBTraits::Primitive& primitive)
   {

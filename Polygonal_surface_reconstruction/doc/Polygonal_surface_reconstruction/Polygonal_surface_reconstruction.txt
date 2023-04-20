@@ -182,7 +182,7 @@ The following example shows how to control the model complexity by tuning the we
 \remark
 This example also shows how to reuse the intermediate results from the candidate generation step.
 
-\cgalExample{Polygonal_surface_reconstruction/polyfit_example_model_complexty_control.cpp}
+\cgalExample{Polygonal_surface_reconstruction/polyfit_example_model_complexity_control.cpp}
 
 
 \section secPerformances Performance
@@ -208,8 +208,8 @@ The current implementation incorporates two open source solvers: \ref thirdparty
 (see \ref PkgSolverInterface). It should be noted that GLPK only manages to solve small problems, i.e., objects
 with reasonably simple structure.
 In case you are reconstructing more complex objects, you may need to consider more efficient open source
-solvers (e.g., <a href = "https://projects.coin-or.org/Cbc">CBC</a>) or even commercial solvers (e.g.,
-<a href = "http://www.gurobi.com/">Gurobi</a>, <a href = "https://www.ibm.com/analytics/cplex-optimizer">CPLEX</a>).
+solvers (e.g., <a href = "https://github.com/coin-or/Cbc">CBC</a>) or even commercial solvers (e.g.,
+<a href = "https://www.gurobi.com/">Gurobi</a>, <a href = "https://www.ibm.com/analytics/cplex-optimizer">CPLEX</a>).
 The following table gives a rough idea of the performance of some solvers.
 
 | Model            | Problem Size <br>variables/constraints | Gurobi | CBC | SCIP | GLPK | LP_SOLVE |

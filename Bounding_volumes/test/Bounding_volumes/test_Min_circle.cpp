@@ -219,26 +219,26 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
     {
         verr << endl << "  writing `test_Min_circle_2.ascii'...";
         ofstream os( "test_Min_circle_2.ascii");
-        CGAL::set_ascii_mode( os);
+        CGAL::IO::set_ascii_mode( os);
         os << mc;
     }
     {
         verr << endl << "  writing `test_Min_circle_2.pretty'...";
         ofstream os( "test_Min_circle_2.pretty");
-        CGAL::set_pretty_mode( os);
+        CGAL::IO::set_pretty_mode( os);
         os << mc;
     }
     {
         verr << endl << "  writing `test_Min_circle_2.binary'...";
         ofstream os( "test_Min_circle_2.binary");
-        CGAL::set_binary_mode( os);
+        CGAL::IO::set_binary_mode( os);
         os << mc;
     }
     {
         verr << endl << "  reading `test_Min_circle_2.ascii'...";
         Min_circle mc_in;
         ifstream is( "test_Min_circle_2.ascii");
-        CGAL::set_ascii_mode( is);
+        CGAL::IO::set_ascii_mode( is);
         is >> mc_in;
         bool    is_valid = mc_in.is_valid( verbose);
         assert( is_valid);

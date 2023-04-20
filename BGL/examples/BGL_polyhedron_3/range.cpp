@@ -50,7 +50,7 @@ void fct(const Polyhedron& p)
 int main(int argc, char** argv)
 {
   Polyhedron P;
-  std::ifstream in((argc>1)?argv[1]:"cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   in >> P ;
 
   fct(P);

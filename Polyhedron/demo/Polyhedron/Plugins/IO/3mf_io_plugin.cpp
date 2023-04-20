@@ -6,8 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#include <CGAL/IO/read_3mf.h>
-#include <CGAL/IO/write_3mf.h>
+#include <CGAL/IO/3MF.h>
 #include <QFileDialog>
 
 #include "Scene_surface_mesh_item.h"
@@ -33,7 +32,7 @@ class Io_3mf_plugin:
   typedef std::vector<std::size_t> Polygon;
   typedef std::vector<Polygon> PolygonRange;
   typedef std::list<PointRange> PolylineRange;
-  typedef std::vector<CGAL::Color> ColorRange;
+  typedef std::vector<CGAL::IO::Color> ColorRange;
   void init() Q_DECL_OVERRIDE
   {
     QMenu* menuFile = CGAL::Three::Three::mainWindow()->findChild<QMenu*>("menuFile");
@@ -77,10 +76,10 @@ class Io_3mf_plugin:
     std::vector<PolygonRange> all_polygons;
     std::vector<std::string> names;
     QList<Scene_item*> result;
-    std::vector<std::vector<CGAL::Color> > all_colors;
+    std::vector<std::vector<CGAL::IO::Color> > all_colors;
     int nb_meshes =
-        CGAL::read_triangle_soups_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
-                                  all_points, all_polygons, all_colors, names);
+        CGAL::IO::read_3MF(fileinfo.filePath().toUtf8().toStdString(),
+                           all_points, all_polygons, all_colors, names);
     if(nb_meshes <0 )
     {
       ok = false;
@@ -101,7 +100,7 @@ class Io_3mf_plugin:
       }
       SMesh mesh;
       PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
-      CGAL::Color first = colors.front();
+      CGAL::IO::Color first = colors.front();
       bool need_pmap = false;
       for(auto color : colors)
       {
@@ -113,16 +112,16 @@ class Io_3mf_plugin:
       }
       if(need_pmap)
       {
-        SMesh::Property_map<face_descriptor,CGAL::Color> fcolor =
-            mesh.add_property_map<face_descriptor,CGAL::Color>("f:color",first).first;
+        SMesh::Property_map<face_descriptor,CGAL::IO::Color> fcolor =
+            mesh.add_property_map<face_descriptor,CGAL::IO::Color>("f:color",first).first;
         for(std::size_t pid = 0; pid < colors.size(); ++pid)
         {
           put(fcolor, face_descriptor(pid), colors[pid]);//should work bc mesh is just created and shouldn't have any destroyed face. Not so sure bc of orientation though.
         }
       }
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(mesh);
-      if(first == CGAL::Color(0,0,0,0))
-        first = CGAL::Color(50,80,120,255);
+      if(first == CGAL::IO::Color(0,0,0,0))
+        first = CGAL::IO::Color(50,80,120,255);
       sm_item->setColor(QColor(first.red(), first.green(), first.blue()));
       sm_item->setProperty("already_colored", true);
       sm_item->setName(names[i].data());
@@ -207,13 +206,13 @@ class Io_3mf_plugin:
         triangles.push_back(triangle);
       }
 
-      std::vector<CGAL::Color> colors;
+      std::vector<CGAL::IO::Color> colors;
       //if item is multicolor, fill colors with f:color
       if(sm_item->isItemMulticolor())
       {
         colors.reserve(triangles.size());
-        SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-            mesh.property_map<face_descriptor, CGAL::Color >("f:color").first;
+        SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
+            mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
         for(auto fd : mesh.faces())
         {
           colors.push_back(get(fcolors, fd));
@@ -228,7 +227,7 @@ class Io_3mf_plugin:
         {
           int pid = get(fpid, fd);
           QColor q_color = sm_item->color_vector()[pid];
-          colors.push_back(CGAL::Color(q_color.red(), q_color.green(),
+          colors.push_back(CGAL::IO::Color(q_color.red(), q_color.green(),
                                        q_color.blue(), q_color.alpha()));
         }
       }
@@ -241,14 +240,14 @@ class Io_3mf_plugin:
           color.set_rgb(c.red(), c.green(), c.blue());
       }
 
-      CGAL::write_mesh_to_model(points, triangles, colors,
+      CGAL::IO::write_mesh_to_model(points, triangles, colors,
                                 sm_item->name().toStdString(), &pMeshObject, pModel);
     }
     for(Scene_points_with_normal_item* pts_item : pts_items)
     {
       QColor qc = pts_item->color();
-      CGAL::Color color(qc.red(), qc.green(), qc.blue());
-      CGAL::write_point_cloud_to_model(pts_item->point_set()->points(), color,
+      CGAL::IO::Color color(qc.red(), qc.green(), qc.blue());
+      CGAL::IO::write_point_cloud_to_model(pts_item->point_set()->points(), color,
                                        pts_item->name().toStdString(),
                                        &pMeshObject, pModel);
     }
@@ -258,13 +257,13 @@ class Io_3mf_plugin:
           pol_it != pol_item->polylines.end(); ++pol_it)
       {
         QColor qc = pol_item->color();
-        CGAL::Color color(qc.red(), qc.green(), qc.blue());
-        CGAL::write_polyline_to_model(*pol_it,color,
+        CGAL::IO::Color color(qc.red(), qc.green(), qc.blue());
+        CGAL::IO::write_polyline_to_model(*pol_it,color,
                                       pol_item->name().toStdString(),
                                       &pMeshObject, pModel);
       }
     }
-    CGAL::export_model_to_file(fi.filePath().toUtf8().toStdString(), pModel);
+    CGAL::IO::export_model_to_file(fi.filePath().toUtf8().toStdString(), pModel);
     items = to_return;
     return true;
   }

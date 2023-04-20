@@ -28,9 +28,9 @@ int main(int argc, char** argv)
 {
   bool draw=(argc>1?std::string(argv[1])=="-draw":false);
   LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "data/torus_quad.off"))
+  if (!CGAL::load_off(lcc, CGAL::data_file_path("meshes/torus_quad.off").c_str()))
   {
-    std::cout<<"ERROR reading file data/torus_quad.off"<<std::endl;
+    std::cout<<"ERROR reading file " << CGAL::data_file_path("data/torus_quad.off") <<std::endl;
     exit(EXIT_FAILURE);
   }
 

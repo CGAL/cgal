@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include <cstdio>
 
 namespace CGAL {
@@ -163,7 +164,7 @@ enum Fig_depth
 
 /*!
  * \class A class for writing geometric objects in a FIG format (version 3.2).
- * For more details, see: http://www.xfig.org/userman/fig-format.html
+ * For more details, see: https://mcj.sourceforge.net/
  */
 template <class Kernel_>
 class Fig_stream
@@ -309,7 +310,7 @@ public:
   }
   //@}
 
-  /// \name Openning and closing the file.
+  /// \name Opening and closing the file.
   //@{
 
   /*!
@@ -730,7 +731,7 @@ public:
 
   /*!
    * Add a user-defined color.
-   * Use this function after openning the FIG stream and before writing any
+   * Use this function after opening the FIG stream and before writing any
    * other object (i.e. before calling the write_<object> () functions).
    * \param color The color.
    * \param r The red component (0 - 255).
@@ -749,15 +750,18 @@ public:
     if (color_defined (color))
       return;
 
-    // Prepare a string desribing the color.
-    char    color_desc [10];
+    // Prepare a string describing the color.
 
-    sprintf ("#%02x%02x%02x", r, g, b);
+    std::stringstream out;
+    out << "0x"  << std::hex
+        << std::setfill('0') << std::setw(2) << r
+        << std::setfill('0') << std::setw(2) << g
+        << std::setfill('0') << std::setw(2) << b;
 
     // Write the color to the FIG file.
     _ofile << "0 "                        // Desginates a color pseudo-object.
            << static_cast<int>(color) << ' '
-           << color_desc << std::endl;
+           << out.str() << std::endl;
 
     // Mark that the color is now defined.
     colors[static_cast<int>(color)] = true;
@@ -1397,7 +1401,7 @@ protected:
   }
 
   /*!
-   * Write a polygon, reprsented as a range of points.
+   * Write a polygon, represented as a range of points.
    */
   template <class Input_iterator>
   void _write_polygon (const int n_points,
@@ -1700,7 +1704,6 @@ protected:
     _ofile << ' ' << ix << ' ' << iy << ' ';
 
     // Write the text.
-    char    oct[10];
     int     i;
 
     for (i = 0; i < len_text; i++)
@@ -1712,9 +1715,11 @@ protected:
       }
       else
       {
-        // Convert the current character to an octal string and write it.
-        sprintf (oct, "\\%03o", text[i]);
-        _ofile << oct;
+        // Convert the current character to an octal string and write
+        // it.
+        std::stringstream out;
+        out << "\\" << std::setfill('0') << std::setw(3) << std::oct << text[i];
+        _ofile << out.str();
       }
     }
 

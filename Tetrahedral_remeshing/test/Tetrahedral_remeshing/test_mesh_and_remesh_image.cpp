@@ -32,14 +32,14 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  const char* filename = "data/liver.inr.gz";
+  const std::string filename = CGAL::data_file_path("images/liver.inr.gz");
 
   CGAL::Image_3 image;
   if (!image.read(filename)) {
     std::cerr << "Error: Cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image, 1e-9);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image, relative_error_bound = 1e-9);
 
   // Mesh criteria
   Facet_criteria facet_criteria(25, 20, 2); // angle, size, approximation

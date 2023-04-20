@@ -23,9 +23,9 @@
 #include <CGAL/Triangulation_face.h>
 #include <CGAL/Triangulation_ds_vertex.h>
 #include <CGAL/Triangulation_ds_full_cell.h>
-#include <CGAL/internal/Combination_enumerator.h>
-#include <CGAL/internal/Triangulation/utilities.h>
-#include <CGAL/internal/Triangulation/Triangulation_ds_iterators.h>
+#include <CGAL/Triangulation/internal/Combination_enumerator.h>
+#include <CGAL/Triangulation/internal/utilities.h>
+#include <CGAL/Triangulation/internal/Triangulation_ds_iterators.h>
 
 #include <algorithm>
 #include <vector>
@@ -1342,7 +1342,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     std::size_t m; // number of full_cells
     int index;
     const int cd = current_dimension();
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         is >> m;
     else
         read(is, m, io_Read_write());
@@ -1359,11 +1359,12 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
         full_cells.push_back(s);
         for( int j = 0; j <= cd; ++j )
         {
-            if( is_ascii(is) )
+            if( IO::is_ascii(is) )
                 is >> index;
             else
                 read(is, index);
             s->set_vertex(j, vertices[index]);
+            s->vertex(j)->set_full_cell(s);
         }
         // read other non-combinatorial information for the full_cells
         is >> (*s);
@@ -1372,7 +1373,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
 
     // read the neighbors of each full_cell
     i = 0;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         while( i < m )
     {
         for( int j = 0; j <= cd; ++j )
@@ -1423,7 +1424,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
 
     std::size_t m = number_of_full_cells();
 
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         os << std::endl << m;
     else
         write(os, m, io_Read_write());
@@ -1434,11 +1435,11 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
     {
         index_of_full_cell[it] = i++;
-        if( is_ascii(os) )
+        if( IO::is_ascii(os) )
             os << std::endl;
         for( int j = 0; j <= cur_dim; ++j )
         {
-            if( is_ascii(os) )
+            if( IO::is_ascii(os) )
                 os << ' ' << index_of_vertex[it->vertex(j)];
             else
                 write(os, index_of_vertex[it->vertex(j)]);
@@ -1450,7 +1451,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     CGAL_assertion( (std::size_t) i == m );
 
     // write the neighbors of each full_cell
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
         {
             os << std::endl;
@@ -1489,7 +1490,7 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
     // read current dimension and number of vertices
     std::size_t n;
     int cd;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         is >> cd >> n;
     else
     {
@@ -1539,7 +1540,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
 
     // outputs dimension and number of vertices
     std::size_t n = tr.number_of_vertices();
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         os << tr.current_dimension() << std::endl << n;
     else
     {
@@ -1556,7 +1557,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
     {
         os << *it; // write the vertex
-        if (is_ascii(os))
+        if (IO::is_ascii(os))
             os << std::endl;
         index_of_vertex[it] = i;
     }

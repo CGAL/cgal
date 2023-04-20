@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Polyhedron_items_with_id_3` is a model of the `PolyhedronItems_3`
 concept. It provides definitions for vertices with points, halfedges,
 and faces with plane equations, all of them with an additional integer
-field which can be used to index the items in a \sc{Bgl} algorithm.
+field which can be used to index the items in a \bgl algorithm.
 The polyhedron traits class must provide the respective types for
 the point and the plane equation.
 Vertices and facets both contain a halfedge handle to an incident

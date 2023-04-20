@@ -305,7 +305,7 @@ int main(int, char**)
         oss_2 << iter->first << "__" << it->first << "__" << *i  << ".mesh";
         std::string output_filename = oss_2.str();
         std::ofstream medit_file( output_filename.data() );
-        CGAL::output_periodic_mesh_to_medit(medit_file, c3t3, *i);
+        CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, *i);
         medit_file.close();
 
         std::cout << ", " << *i << "-copy Saved" << std::flush;

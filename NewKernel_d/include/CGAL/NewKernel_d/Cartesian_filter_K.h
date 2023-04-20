@@ -42,7 +42,7 @@ template<> struct Functors_without_division<Dimension_tag<6> > {
 };
 
 // FIXME:
-// - Is_exact (which should be renamed to Uses_no_arithmetic) predicates should not be filtered
+// - Uses_no_arithmetic predicates should not be filtered
 // - Functors_without_division should be defined near/in the actual functors
 
 template < typename Base_, typename AK_, typename EK_, typename Pred_list = typeset_all >
@@ -78,18 +78,24 @@ struct Cartesian_filter_K : public Base_
     // TODO: only fix some types, based on some criterion?
     template<class T> struct Type : Get_type<Kernel_base,T> {};
 
-    template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type, bool=Pred_list::template contains<T>::value> struct Functor :
-      Inherit_functor<Kernel_base,T,D> {};
-    template<class T,class D> struct Functor<T,D,Predicate_tag,true> {
+    template<class T,class D,bool=Uses_no_arithmetic<typename Get_functor<Kernel_base,T,D>::type>::value> struct Pred_helper {
       typedef typename Get_functor<AK, T>::type AP;
       typedef typename Get_functor<EK, T>::type EP;
       typedef Filtered_predicate2<Cartesian_filter_K,EP,AP,C2E,C2A> type;
     };
+    // Less_cartesian_coordinate doesn't usually need filtering
+    // This fixes the predicate, as opposed to Inherit_functor which would leave it open (is that good?)
+    template<class T,class D> struct Pred_helper<T,D,true> :
+      Get_functor<Kernel_base,T,D> {};
+
+    template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type, bool=Pred_list::template contains<T>::value> struct Functor :
+      Inherit_functor<Kernel_base,T,D> {};
+    template<class T,class D> struct Functor<T,D,Predicate_tag,true> :
+      Pred_helper<T,D> {};
+
 // TODO:
 //    template<class T> struct Functor<T,No_filter_tag,Predicate_tag> :
 //            Kernel_base::template Functor<T,No_filter_tag> {};
-// TODO:
-// detect when Less_cartesian_coordinate doesn't need filtering
 };
 
 } //namespace CGAL

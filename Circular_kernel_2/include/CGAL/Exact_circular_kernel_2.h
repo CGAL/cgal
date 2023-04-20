@@ -44,28 +44,20 @@ namespace CGAL {
 namespace internal {
 
 #ifdef CGAL_USE_GMP
-  typedef CGAL::Gmpq                                           NT1;
+  typedef CGAL::Gmpq                                     NT;
 #else
 
-  typedef Quotient<MP_Float>                       NT1;
+  typedef Quotient<MP_Float>                             NT;
 
 #endif
 
-  typedef Cartesian<NT1>                                 Linear_k1;
-  typedef Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
-  typedef Circular_kernel_2<Linear_k1, Algebraic_k1>     CK1;
-
-//   typedef CGAL::Interval_nt_advanced                           NT2;
-//   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
-//   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
-//   typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2;
-
-//  typedef CGAL::Lazy_circular_kernel_2<CK1,CK2>
-//  Exact_circular_kernel_2;
+  typedef Cartesian<NT>                                  Linear_k;
+  typedef Algebraic_kernel_for_circles_2_2<NT>           Algebraic_k;
+  typedef Circular_kernel_2<Linear_k, Algebraic_k>       CK;
 
 } // namespace internal
 
-typedef Filtered_bbox_circular_kernel_2<internal::CK1>   Exact_circular_kernel_2;
+typedef Filtered_bbox_circular_kernel_2<internal::CK>    Exact_circular_kernel_2;
 
 } //namespace CGAL
 

@@ -228,8 +228,8 @@ public:
   }
 
 //  // Compute the MLS projection of the list of point stored in pv and store the resulting
-//  // positions and normal in qv. qv must be preallocated to stroe 6*pvSize float32.
-//  // The strid indicates the offsets in qv (the defautl value of 3 means that the qv
+//  // positions and normal in qv. qv must be preallocated to store 6*pvSize float32.
+//  // The strid indicates the offsets in qv (the default value of 3 means that the qv
 //  // is compact: pv={x0,y0,z0,x1,y1,z1...}. If pv contains also normals for instance,
 //  // the stride should be set to 6.
 //  void fastProjectionCPU(const std::vector<float>& pv,
@@ -297,7 +297,7 @@ public:
   //  Accessors
   // --------------------------------------------------------------
 
-  // Number of elements of the PN. One elemnt is a 6-float32 chunk.
+  // Number of elements of the PN. One element is a 6-float32 chunk.
   inline std::size_t getPNSize() const { return PNSize; }
   inline std::vector<double>& getPN() { return PN; }
   inline const std::vector<double>& getPN() const { return PN; }
@@ -382,11 +382,19 @@ private:
             minMax[3 + j] = PN[6 * i + j];
         }
       for (std::size_t i = 0; i < 3; i++) {
-        minMax[i] -= 0.001f;
-        minMax[3 + i] += 0.001f;
+        minMax[i] = (minMax[i] > 0.)
+                  ? (0.99 * minMax[i]) : (1.01 * minMax[i]);
+        minMax[3 + i] = (minMax[3+i] > 0.)
+                  ? (1.01 * minMax[3+i]) : (0.99 * minMax[3+i]);
       }
+
       for (std::size_t i = 0; i < 3; i++)
+      {
         res[i] = (std::size_t)ceil((minMax[3 + i] - minMax[i]) / cellSize);
+        if(res[i] == 0)
+          res[i] = 1;
+      }
+
       std::size_t LUTSize = res[0] * res[1] * res[2];
       LUT.resize(LUTSize);
       LUT.assign(LUTSize, 0);
@@ -463,7 +471,7 @@ private:
       {
         if (vp[j] < 0)
           p[j] = 0;
-        if (vp[j] >= res[j])
+        else if (vp[j] >= res[j])
           p[j] = res[j] - 1;
         else
           p[j] = static_cast<std::size_t>(std::floor(vp[j]));
@@ -500,7 +508,7 @@ private:
 
 
   // --------------------------------------------------------------
-  //  Memory Managment
+  //  Memory Management
   // --------------------------------------------------------------
 
   void freeCPUMemory()
@@ -554,7 +562,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   subdomain_FMLS.clear();
   subdomain_FMLS_indices.clear();
 
-  typedef boost::unordered_map<Surface_index, std::size_t> SurfaceIndexMap;
+  typedef std::unordered_map<Surface_index, std::size_t, boost::hash<Surface_index>> SurfaceIndexMap;
 
   SurfaceIndexMap current_subdomain_FMLS_indices;
   SurfaceIndexMap subdomain_sample_numbers;
@@ -765,7 +773,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   std::size_t nb_of_mls_to_create = 0;
   double average_point_spacing = 0;
 
-  //Cretaing the actual MLS surfaces
+  //Creating the actual MLS surfaces
   for (typename SurfaceIndexMap::iterator it = current_subdomain_FMLS_indices.begin();
        it != current_subdomain_FMLS_indices.end(); ++it)
   {

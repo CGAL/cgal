@@ -22,8 +22,12 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
+#include <CGAL/_test_compare_angle_3.h>
+#include <CGAL/Has_member.h>
 
 #include <CGAL/use.h>
+
+CGAL_GENERATE_MEMBER_DETECTOR(needs_FT);
 
 using CGAL::internal::use;
 
@@ -75,6 +79,28 @@ _test_new_3_sqrt(const R& rep, CGAL::Tag_true)
   return true;
 }
 
+template <bool b = false> struct Test_needs_FT
+{
+  template <typename ...T> void operator()(const T&...) const {}
+};
+
+template <> struct Test_needs_FT<true>
+{
+  template <typename Compare_distance_3,
+            typename Point_3, typename Segment_3, typename Line_3>
+  void operator()(const Compare_distance_3& compare_dist,
+                  const Point_3& p1, const Point_3 p2, const Point_3& p3,
+                  const Segment_3& s2, const Line_3& l1) const
+  {
+    assert(!compare_dist.needs_FT(p1, p2, p3));
+    assert(!compare_dist.needs_FT(p2, s2, s2));
+    assert(!compare_dist.needs_FT(p2, p2, s2));
+    assert(!compare_dist.needs_FT(p1, s2, p2));
+    assert(compare_dist.needs_FT(l1, p1, p1));
+    assert(compare_dist.needs_FT(p2, p3, p2, p3));
+    assert(compare_dist.needs_FT(p2, s2, l1, s2));
+  }
+};
 
 template <class R>
 bool
@@ -599,12 +625,24 @@ test_new_3(const R& rep)
     bool tmp = _test_compare_dihedral_angle_3(rep);
     assert(tmp);
   }
+  {
+    bool tmp = _test_compare_angle_3(rep);
+    assert(tmp);
+  }
 
   typename R::Compare_distance_3 compare_dist
         = rep.compare_distance_3_object();
   Comparison_result tmp34ab = compare_dist(p2,p3,p4);
+  tmp34ab = compare_dist(p1, s2, s2);
+  tmp34ab = compare_dist(p1, p2, s2);
+  tmp34ab = compare_dist(p1, s2, p2);
   tmp34ab = compare_dist(p2,p3,p2,p3);
   tmp34ab = compare_dist(p1, p2, p3, p4);
+  tmp34ab = compare_dist(l2, p1, p1);
+
+  Test_needs_FT<R::Has_filtered_predicates &&
+      has_needs_FT<typename R::Compare_distance_3>::value> test_needs_ft;
+  test_needs_ft(compare_dist, p1, p2, p3, s2, l1);
   (void) tmp34ab;
 
   typename R::Compare_squared_distance_3 compare_sq_dist
@@ -747,6 +785,7 @@ test_new_3(const R& rep)
         = rep.oriented_side_3_object();
   Oriented_side tmp39 = oriented_side(h2,p2);
                 tmp39 = oriented_side(sp9,p2);
+                tmp39 = oriented_side(p2,v3,p2);
   (void) tmp39;
 
   typename R::Bounded_side_3 bounded_side
@@ -833,7 +872,7 @@ test_new_3(const R& rep)
   // More tests, that require sqrt().
   typedef ::CGAL::Algebraic_structure_traits<FT> AST;
   static const bool has_sqrt =
-      ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
+      ! ::std::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
   _test_new_3_sqrt(rep, ::CGAL::Boolean_tag<has_sqrt>() );
 
   return true;

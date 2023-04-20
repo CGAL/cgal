@@ -1,4 +1,10 @@
-// Copyright (c) 2011 GeometryFactory (France). All rights reserved.
+// Copyright (c) 1997-2021
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).
+// GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -14,6 +20,11 @@
 #define CGAL_INTERSECTION_TRAITS_3_H
 
 #include <CGAL/Intersection_traits.h>
+#include <CGAL/Bbox_3.h>
+
+#include <boost/optional.hpp>
+#include <boost/variant.hpp>
+
 #include <vector>
 
 namespace CGAL  {

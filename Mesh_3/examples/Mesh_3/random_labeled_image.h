@@ -11,7 +11,7 @@ CGAL::Image_3 random_labeled_image()
   _image* image = _createImage(dim, dim, dim, 1,
                                1.f, 1.f, 1.f, 1,
                                WK_FIXED, SGN_UNSIGNED);
-  unsigned char* ptr = (unsigned char*)(image->data);
+  unsigned char* ptr = static_cast<unsigned char*>(image->data);
   std::fill(ptr, ptr+dim*dim*dim, '\0');
 
   std::ptrdiff_t center = dim / 2;

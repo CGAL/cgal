@@ -15,13 +15,14 @@
 
 #include <CGAL/license/GraphicsView.h>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/assertions.h>
 
 #include <vector>
 #include <cstdlib>
@@ -58,7 +59,7 @@ namespace internal
       ++nb;
     }
 
-    assert(nb>0);
+    CGAL_assertion(nb>0);
     return (typename Kernel_traits<Vector>::Kernel::Construct_scaled_vector_3()
             (normal, 1.0/nb));
   }
@@ -105,7 +106,7 @@ namespace internal
     }
   };
 
-  // Specialization when K==Local_kernel, because there is no need of convertion here.
+  // Specialization when K==Local_kernel, because there is no need of conversion here.
   template<typename Local_kernel>
   struct Geom_utils<Local_kernel, Local_kernel>
   {
@@ -244,7 +245,7 @@ public:
 
   // 1.2) Add a point, with color.
   template<typename KPoint>
-  void add_point(const KPoint& kp, const CGAL::Color& c)
+  void add_point(const KPoint& kp, const CGAL::IO::Color& c)
   {
     add_point(kp);
     add_color(c);
@@ -268,7 +269,7 @@ public:
 
   // 2.2) Add a segment, with color.
   template<typename KPoint>
-  void add_segment(const KPoint& kp1, const KPoint& kp2, const CGAL::Color& c)
+  void add_segment(const KPoint& kp1, const KPoint& kp2, const CGAL::IO::Color& c)
   {
     add_segment(kp1, kp2);
     add_color(c);
@@ -294,7 +295,7 @@ public:
   //3.2) Add a ray segment, with color
   template<typename KPoint, typename KVector>
   void add_ray_segment(const KPoint& kp1, const KVector& kp2,
-                       const CGAL::Color& c)
+                       const CGAL::IO::Color& c)
   {
     add_point(kp1);
     add_point_infinity(kp2);
@@ -313,7 +314,7 @@ public:
   // 4.1) Add a line, with color
   template<typename KPoint>
   void add_line_segment(const KPoint& kp1, const KPoint& kp2,
-                        const CGAL::Color& c)
+                        const CGAL::IO::Color& c)
   {
     add_point_infinity(kp1);
     add_point_infinity(kp2);
@@ -330,7 +331,7 @@ public:
   { face_begin_internal(false, false); }
 
   // 3.2) Add a face, with a color, without normal.
-  void face_begin(const CGAL::Color& c)
+  void face_begin(const CGAL::IO::Color& c)
   {
     m_color_of_face=c;
     face_begin_internal(true, false);
@@ -346,7 +347,7 @@ public:
 
   // 3.3) Add a face, with a color and with a normal.
   template<typename KNormal>
-  void face_begin(const CGAL::Color& c, const KNormal& kv)
+  void face_begin(const CGAL::IO::Color& c, const KNormal& kv)
   {
     m_color_of_face=c;
     m_normal_of_face=get_local_vector(kv);
@@ -477,7 +478,7 @@ public:
   }
 
   ///adds `acolor` RGB components to `buffer`
-  static void add_color_in_buffer(const CGAL::Color& acolor, std::vector<float>& buffer)
+  static void add_color_in_buffer(const CGAL::IO::Color& acolor, std::vector<float>& buffer)
   {
     buffer.push_back((float)acolor.red()/(float)255);
     buffer.push_back((float)acolor.green()/(float)255);
@@ -502,11 +503,11 @@ public:
       // Is it possible that orientation==COPLANAR ? Maybe if V1 or V2 is very small ?
     }
     while(++id!=facet.size() &&
-          (orientation==CGAL::COPLANAR || orientation==CGAL::ZERO));
+          (orientation==CGAL::COPLANAR ));
 
     //Here, all orientations were COPLANAR. Not sure this case is possible,
     // but we stop here.
-    if (orientation==CGAL::COPLANAR || orientation==CGAL::ZERO)
+    if (orientation==CGAL::COPLANAR)
     { return false; }
 
     // Now we compute convexness
@@ -521,8 +522,16 @@ public:
 
       local_orientation=Local_kernel::Orientation_3()(V1, V2, normal) ;
 
-      if(local_orientation!=CGAL::ZERO && local_orientation!=orientation)
-      { return false; }
+      if(local_orientation!=CGAL::ZERO)
+      {
+        if(local_orientation!=orientation)
+        { return false; }
+      }
+      else
+      {
+        if(CGAL::scalar_product(V1,V2)<0)
+        { return false; }  //TS and TU are opposite
+      }
     }
     return true;
   }
@@ -568,7 +577,7 @@ protected:
           add_gouraud_normal(m_vertex_normals_for_face[i]);
         }
         else
-        { // Here user does not provide all vertex normals: we use face normal istead
+        { // Here user does not provide all vertex normals: we use face normal instead
           // and thus we will not be able to use Gouraud
           add_gouraud_normal(normal);
         }
@@ -694,7 +703,7 @@ protected:
         else { ++(edges[p1][p2]); }
       }
 
-      // (1) We insert all the edges as contraint in the CDT.
+      // (1) We insert all the edges as constraint in the CDT.
       typename CDT::Vertex_handle previous=nullptr, first=nullptr;
       for (unsigned int i=0; i<m_points_of_face.size(); ++i)
       {
@@ -827,7 +836,7 @@ protected:
     return is_facet_convex(m_points_of_face, N);
   }
 
-  void add_color(const CGAL::Color& acolor)
+  void add_color(const CGAL::IO::Color& acolor)
   {
     if (m_color_buffer!=nullptr)
     { add_color_in_buffer(acolor, *m_color_buffer); }
@@ -863,7 +872,7 @@ protected:
   }
 
 protected:
-  // Types usefull for triangulation
+  // Types useful for triangulation
   struct Vertex_info
   {
     Local_vector v;
@@ -877,7 +886,7 @@ protected:
     bool is_process;
   };
 
-  typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+  typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
   typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
   typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits>     Fb1;
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>         Fb;
@@ -898,7 +907,7 @@ protected:
   bool m_zero_y; /// True iff all points have y==0
   bool m_zero_z; /// True iff all points have z==0
 
-  bool m_inverse_normal;;
+  bool m_inverse_normal;
 
   // Local variables, used when we started a new face.g
   bool m_face_started;
@@ -907,7 +916,7 @@ protected:
   std::vector<Local_point> m_points_of_face;
   std::vector<Local_vector> m_vertex_normals_for_face;
   std::vector<std::size_t> m_indices_of_points_of_face;
-  CGAL::Color m_color_of_face;
+  CGAL::IO::Color m_color_of_face;
   Local_vector m_normal_of_face;
 };
 

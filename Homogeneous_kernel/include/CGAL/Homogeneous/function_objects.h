@@ -30,7 +30,7 @@ namespace HomogeneousKernelFunctors {
 
   using namespace CommonKernelFunctors;
 
-  // For lazyness...
+  // For laziness...
   using CartesianKernelFunctors::Are_parallel_2;
   using CartesianKernelFunctors::Are_parallel_3;
   using CartesianKernelFunctors::Compute_squared_area_3;
@@ -45,7 +45,6 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Compute_approximate_squared_length_3;
   using CartesianKernelFunctors::Compute_area_divided_by_pi_3;
   using CartesianKernelFunctors::Compute_squared_length_divided_by_pi_square_3;
-  using CartesianKernelFunctors::Construct_radical_plane_3;
 
   template <typename K>
   class Angle_2
@@ -810,6 +809,7 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Compare_slope_2
   {
+    typedef typename K::Point_2            Point_2;
     typedef typename K::Line_2             Line_2;
     typedef typename K::Segment_2          Segment_2;
   public:
@@ -843,47 +843,54 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Segment_2& s1, const Segment_2& s2) const
     {
+      return (*this)(s1.source(), s1.target(),
+                     s2.source(), s2.target());
+    }
+
+    result_type
+    operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
+    {
       typedef typename K::FT        FT;
 
-      typename K::Comparison_result cmp_y1 = compare_y(s1.source(), s1.target());
+      typename K::Comparison_result cmp_y1 = compare_y(s1s, s1t);
       if (cmp_y1 == EQUAL) // horizontal
         {
-          typename K::Comparison_result cmp_x2 = compare_x(s2.source(), s2.target());
+          typename K::Comparison_result cmp_x2 = compare_x(s2s, s2t);
 
           if (cmp_x2 == EQUAL) return SMALLER;
-          FT s_hw = s2.source().hw();
-          FT t_hw = s2.target().hw();
-          return - CGAL_NTS sign(s2.source().hy()*t_hw - s2.target().hy()*s_hw) *
-                   CGAL_NTS sign(s2.source().hx()*t_hw - s2.target().hx()*s_hw);
+          FT s_hw = s2s.hw();
+          FT t_hw = s2t.hw();
+          return - CGAL_NTS sign(s2s.hy()*t_hw - s2t.hy()*s_hw) *
+                   CGAL_NTS sign(s2s.hx()*t_hw - s2t.hx()*s_hw);
         }
 
-      typename K::Comparison_result cmp_y2 = compare_y(s2.source(), s2.target());
+      typename K::Comparison_result cmp_y2 = compare_y(s2s, s2t);
       if (cmp_y2 == EQUAL)
         {
-          typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
+          typename K::Comparison_result cmp_x1 = compare_x(s1s, s1t);
 
           if (cmp_x1 == EQUAL) return LARGER;
-          FT s_hw = s1.source().hw();
-          FT t_hw = s1.target().hw();
-          return CGAL_NTS sign(s1.source().hy()*t_hw - s1.target().hy()*s_hw) *
-                 CGAL_NTS sign(s1.source().hx()*t_hw - s1.target().hx()*s_hw);
+          FT s_hw = s1s.hw();
+          FT t_hw = s1t.hw();
+          return CGAL_NTS sign(s1s.hy()*t_hw - s1t.hy()*s_hw) *
+                 CGAL_NTS sign(s1s.hx()*t_hw - s1t.hx()*s_hw);
         }
 
-      typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
-      typename K::Comparison_result cmp_x2 = compare_x(s2.source(), s2.target());
+      typename K::Comparison_result cmp_x1 = compare_x(s1s, s1t);
+      typename K::Comparison_result cmp_x2 = compare_x(s2s, s2t);
       if (cmp_x1 == EQUAL)
         return cmp_x2 == EQUAL ? EQUAL : LARGER;
 
       if (cmp_x2 == EQUAL) return SMALLER;
 
-      FT s1_s_hw = s1.source().hw();
-      FT s1_t_hw = s1.target().hw();
-      FT s2_s_hw = s2.source().hw();
-      FT s2_t_hw = s2.target().hw();
-      FT s1_xdiff = s1.source().hx()*s1_t_hw - s1.target().hx()*s1_s_hw;
-      FT s1_ydiff = s1.source().hy()*s1_t_hw - s1.target().hy()*s1_s_hw;
-      FT s2_xdiff = s2.source().hx()*s2_t_hw - s2.target().hx()*s2_s_hw;
-      FT s2_ydiff = s2.source().hy()*s2_t_hw - s2.target().hy()*s2_s_hw;
+      FT s1_s_hw = s1s.hw();
+      FT s1_t_hw = s1t.hw();
+      FT s2_s_hw = s2s.hw();
+      FT s2_t_hw = s2t.hw();
+      FT s1_xdiff = s1s.hx()*s1_t_hw - s1t.hx()*s1_s_hw;
+      FT s1_ydiff = s1s.hy()*s1_t_hw - s1t.hy()*s1_s_hw;
+      FT s2_xdiff = s2s.hx()*s2_t_hw - s2t.hx()*s2_s_hw;
+      FT s2_ydiff = s2s.hy()*s2_t_hw - s2t.hy()*s2_s_hw;
       typename K::Sign s1_sign = CGAL_NTS sign(s1_ydiff * s1_xdiff);
       typename K::Sign s2_sign = CGAL_NTS sign(s2_ydiff * s2_xdiff);
 
@@ -2950,6 +2957,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Segment_2 Segment_2;
   public:
     typedef Point_2          result_type;
 
@@ -2963,6 +2971,19 @@ namespace HomogeneousKernelFunctors {
                       p.hy()*qhw + q.hy()*phw,
                       phw * qhw * RT( 2));
     }
+
+    Point_2
+    operator()(const Segment_2& s) const
+    {
+      typedef typename K::RT RT;
+      const Point_2& p = s.source();
+      const Point_2& q = s.target();
+      const RT& phw = p.hw();
+      const RT& qhw = q.hw();
+      return Point_2( p.hx()*qhw + q.hx()*phw,
+                      p.hy()*qhw + q.hy()*phw,
+                      phw * qhw * RT( 2));
+    }
   };
 
   template <typename K>
@@ -2970,6 +2991,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_3   Point_3;
+    typedef typename K::Segment_3 Segment_3;
   public:
     typedef Point_3          result_type;
 
@@ -2977,6 +2999,20 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p, const Point_3& q) const
     {
       typedef typename K::RT RT;
+      RT phw = p.hw();
+      RT qhw = q.hw();
+      return Point_3( p.hx()*qhw + q.hx()*phw,
+                      p.hy()*qhw + q.hy()*phw,
+                      p.hz()*qhw + q.hz()*phw,
+                      RT(2) * phw * qhw );
+    }
+
+    Point_3
+    operator()(const Segment_3& s) const
+    {
+      typedef typename K::RT RT;
+      const Point_3& p = s.source();
+      const Point_3& q = s.target();
       RT phw = p.hw();
       RT qhw = q.hw();
       return Point_3( p.hx()*qhw + q.hx()*phw,
@@ -3362,8 +3398,17 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_3 Triangle_3;
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
+
   public:
-    typedef Point_3          result_type;
+    template<typename>
+    struct result {
+      typedef const Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3, Point_3)> {
+      typedef const Point_3& type;
+    };
 
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
@@ -3393,15 +3438,19 @@ namespace HomogeneousKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(t,p,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(s,p,K()); }
 
     Point_3
     operator()( const Ray_3& r, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(r,p,K()); }
+
+    const Point_3&
+    operator()( const Point_3& p, const Point_3& q) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,q,K()); }
   };
 
   template <class K>
@@ -3418,22 +3467,59 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator() (const Circle_2 & c1, const Circle_2 & c2) const
-          {
+    {
       // Concentric Circles don't have radical line
       CGAL_kernel_precondition (c1.center() != c2.center());
       const FT a = 2*(c2.center().x() - c1.center().x());
       const FT b = 2*(c2.center().y() - c1.center().y());
       const FT c = CGAL::square(c1.center().x()) +
-        CGAL::square(c1.center().y()) - c1.squared_radius() -
-        CGAL::square(c2.center().x()) -
-        CGAL::square(c2.center().y()) + c2.squared_radius();
-                        const RT aa = a.numerator() * b.denominator() * c.denominator();
-                        const RT bb = a.denominator() * b.numerator() * c.denominator();
-                        const RT cc = a.denominator() * b.denominator() * c.numerator();
+                   CGAL::square(c1.center().y()) - c1.squared_radius() -
+                   CGAL::square(c2.center().x()) -
+                   CGAL::square(c2.center().y()) + c2.squared_radius();
+
+      const RT aa = a.numerator() * b.denominator() * c.denominator();
+      const RT bb = a.denominator() * b.numerator() * c.denominator();
+      const RT cc = a.denominator() * b.denominator() * c.numerator();
+
       return Line_2(aa, bb, cc);
     }
   };
 
+  template <class K>
+  class Construct_radical_plane_3
+  {
+    typedef typename K::Plane_3            Plane_3;
+    typedef typename K::Sphere_3           Sphere_3;
+    typedef typename K::RT                 RT;
+    typedef typename K::FT                 FT;
+
+  public:
+
+    typedef Plane_3 result_type;
+
+    result_type
+    operator() (const Sphere_3 & s1, const Sphere_3 & s2) const
+    {
+      // Concentric Spheres don't have radical plane
+      CGAL_kernel_precondition (s1.center() != s2.center());
+      const FT a = 2*(s2.center().x() - s1.center().x());
+      const FT b = 2*(s2.center().y() - s1.center().y());
+      const FT c = 2*(s2.center().z() - s1.center().z());
+      const FT d = CGAL::square(s1.center().x()) +
+                   CGAL::square(s1.center().y()) +
+                   CGAL::square(s1.center().z()) - s1.squared_radius() -
+                   CGAL::square(s2.center().x()) -
+                   CGAL::square(s2.center().y()) -
+                   CGAL::square(s2.center().z()) + s2.squared_radius();
+
+      const RT aa = a.numerator() * b.denominator() * c.denominator() * d.denominator();
+      const RT bb = a.denominator() * b.numerator() * c.denominator() * d.denominator();
+      const RT cc = a.denominator() * b.denominator() * c.numerator() * d.denominator();
+      const RT dd = a.denominator() * b.denominator() * c.denominator() * d.numerator();
+
+      return Plane_3(aa, bb, cc, dd);
+    }
+  };
 
   template <typename K>
   class Construct_scaled_vector_2
@@ -3837,9 +3923,9 @@ namespace HomogeneousKernelFunctors {
       // p,q,r supposed to be non collinear
       // tests whether s is on the same side of p,q as r
       // returns :
-      // COLLINEAR if pqr collinear
-      // POSITIVE if qrp and qrs have the same orientation
-      // NEGATIVE if qrp and qrs have opposite orientations
+      // COLLINEAR if qps collinear
+      // POSITIVE if qpr and qps have the same orientation
+      // NEGATIVE if qpr and qps have opposite orientations
       CGAL_kernel_exactness_precondition( ! cl(p, q, r) );
       CGAL_kernel_exactness_precondition( cp(p, q, r, s) );
 
@@ -4004,7 +4090,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Segment_3& s, const Point_3& p) const
-    { return s.has_on(p); }
+    { return s.rep().has_on(p); }
 
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const
@@ -4597,12 +4683,13 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Circle_2       Circle_2;
     typedef typename K::Line_2         Line_2;
     typedef typename K::Triangle_2     Triangle_2;
+    typedef typename K::Segment_2      Segment_2;
   public:
     typedef typename K::Oriented_side  result_type;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
-    { return Oriented_side(c.bounded_side(p) * c.orientation()); }
+    { return Oriented_side(static_cast<int>(c.bounded_side(p)) * static_cast<int>(c.orientation())); }
 
     result_type
     operator()( const Line_2& l, const Point_2& p) const
@@ -4635,6 +4722,41 @@ namespace HomogeneousKernelFunctors {
          && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
         ? ON_ORIENTED_BOUNDARY
         : -ot;
+    }
+
+    result_type
+    operator()(const Segment_2& s, const Triangle_2& t) const
+    {
+      typename K::Construct_source_2 source;
+      typename K::Construct_target_2 target;
+      typename K::Construct_vertex_2 vertex;
+      typename K::Construct_circumcenter_2 circumcenter;
+      typename K::Orientation_2 orientation;
+
+      const Point_2& a = source(s);
+      const Point_2& b = target(s);
+      CGAL_assertion(a != b);
+
+      const Point_2& p0 = vertex(t, 0);
+      const Point_2& p1 = vertex(t, 1);
+      const Point_2& p2 = vertex(t, 2);
+      CGAL_assertion(p0 != p1 && p1 != p2 && p2 != p0);
+
+      const Point_2 cc = circumcenter(t);
+
+      CGAL::Orientation o_abc = orientation(a, b, cc);
+      if (o_abc == CGAL::COLLINEAR)
+        return CGAL::ON_ORIENTED_BOUNDARY;
+
+      CGAL::Orientation o_abt = orientation(a, b, p0);
+      if (o_abt == CGAL::COLLINEAR)
+        o_abt = orientation(a, b, p1);
+      if (o_abt == CGAL::COLLINEAR)
+        o_abt = orientation(a, b, p2);
+      CGAL_assertion(o_abt != CGAL::COLLINEAR);
+
+      if (o_abc == o_abt) return CGAL::ON_POSITIVE_SIDE;
+      else                return CGAL::ON_NEGATIVE_SIDE;
     }
   };
 

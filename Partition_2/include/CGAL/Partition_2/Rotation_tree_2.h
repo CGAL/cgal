@@ -34,7 +34,6 @@
 
 #include <CGAL/vector.h>
 #include <CGAL/Partition_2/Rotation_tree_node_2.h>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 
@@ -48,7 +47,8 @@ public:
    typedef typename Traits::Point_2                Point_2;
 
    using internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
-      using internal::vector< Rotation_tree_node_2<Traits_> >::back;
+   using internal::vector< Rotation_tree_node_2<Traits_> >::back;
+   using internal::vector< Rotation_tree_node_2<Traits_> >::erase;
 
    class Greater {
       typename Traits::Less_xy_2 less;
@@ -79,7 +79,7 @@ public:
       Greater greater (traits.less_xy_2_object());
       Equal equal;
       std::sort(this->begin(), this->end(), greater);
-      std::unique(this->begin(), this->end(),equal);
+      this->erase(std::unique(this->begin(), this->end(),equal), this->end());
 
       // front() is the point with the largest x coordinate
 
@@ -108,7 +108,7 @@ public:
 
 
    // the point that comes first in the right-to-left ordering is first
-   // in the ordering, after the auxilliary points p_minus_inf and p_inf
+   // in the ordering, after the auxiliary points p_minus_inf and p_inf
    Self_iterator rightmost_point_ref()
    {
       return this->begin();

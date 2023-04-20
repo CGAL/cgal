@@ -13,7 +13,7 @@
 #define CGAL_FILTERED_KERNEL_D_H
 
 #include <CGAL/Filtered_predicate.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/Kernel_d/Cartesian_converter_d.h>
 #include <CGAL/Cartesian_d.h>
 

@@ -18,6 +18,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/Subiterator.h>
 
 #include <list>
 #include <iterator>
@@ -73,24 +74,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Segment_3  Segment;
+  auto converter = [](const Triangle& t, int idx) -> Segment { return Segment(t[idx], t[(idx+1)%3]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment> segments;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Triangle& t = *it;
-    segments.push_back(Segment(t[0],t[1]));
-    segments.push_back(Segment(t[1],t[2]));
-    segments.push_back(Segment(t[2],t[0]));
-  }
-
-  // compute fitting plane
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)nullptr,k,tag,
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_3
+    (make_subiterator<Segment, 3> (first, converter),
+     make_subiterator<Segment, 3> (beyond),
+     plane,c,(Segment*)nullptr,k,tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_triangles_3
 
@@ -110,23 +103,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Point_3  Point;
+  auto converter = [](const Triangle& t, int idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Triangle& t = *it;
-    points.push_back(t[0]);
-    points.push_back(t[1]);
-    points.push_back(t[2]);
-  }
 
-  // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)nullptr,k,tag,
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_3
+    (make_subiterator<Point, 3> (first, converter),
+     make_subiterator<Point, 3> (beyond),
+     plane,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_triangles_3
 
@@ -177,25 +163,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Segment_3  Segment;
+  auto converter = [](const Triangle& t, int idx) -> Segment { return Segment(t[idx], t[(idx+1)%3]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment> segments;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Triangle& t = *it;
-    segments.push_back(Segment(t[0],t[1]));
-    segments.push_back(Segment(t[1],t[2]));
-    segments.push_back(Segment(t[2],t[0]));
-  }
-
-  // compute fitting line
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Segment, 3> (first, converter),
+     make_subiterator<Segment, 3> (beyond),
+     line,c,(Segment*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_triangles_3
 
 // fits a line to a 3D triangle set
@@ -214,24 +191,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Point_3  Point;
+  auto converter = [](const Triangle& t, int idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Triangle& t = *it;
-    points.push_back(t[0]);
-    points.push_back(t[1]);
-    points.push_back(t[2]);
-  }
 
-  // compute fitting line
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Point, 3> (first, converter),
+     make_subiterator<Point, 3> (beyond),
+     line,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_triangles_3
 
 } // end namespace internal

@@ -35,8 +35,8 @@ bool load_triangulation(std::istream& is, T3& t3)
     return false;
 
   std::getline(is, s);
-  if (binary) CGAL::set_binary_mode(is);
-  else        CGAL::set_ascii_mode(is);
+  if (binary) CGAL::IO::set_binary_mode(is);
+  else        CGAL::IO::set_ascii_mode(is);
   is >> t3;
   return bool(is);
 }
@@ -45,7 +45,7 @@ template<typename T3>
 bool save_binary_triangulation(std::ostream& os, const T3& t3)
 {
   os << "binary CGAL c3t3\n";
-  CGAL::set_binary_mode(os);
+  CGAL::IO::set_binary_mode(os);
   return !!(os << t3);
 }
 
@@ -53,7 +53,7 @@ template<typename T3>
 bool save_ascii_triangulation(std::ostream& os, const T3& t3)
 {
   os << "CGAL c3t3\n";
-  CGAL::set_ascii_mode(os);
+  CGAL::IO::set_ascii_mode(os);
   return !!(os << t3);
 }
 

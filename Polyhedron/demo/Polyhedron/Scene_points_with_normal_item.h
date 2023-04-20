@@ -1,16 +1,22 @@
 #ifndef POINT_SET_ITEM_H
 #define POINT_SET_ITEM_H
+
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
+
 #include "Scene_points_with_normal_item_config.h"
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+
+#include <CGAL/config.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+
 #include "Kernel_type.h"
 #include "Point_set_3.h"
+
 #include <iostream>
-#include <CGAL/config.h>
 
 struct Scene_points_with_normal_item_priv;
+
 // point set
 typedef Point_set_3<Kernel> Point_set;
 typedef CGAL::Surface_mesh<Kernel::Point_3> SMesh;
@@ -44,10 +50,6 @@ public:
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   // IO
-#ifdef CGAL_LINKED_WITH_LASLIB
-  bool read_las_point_set(std::istream& in);
-  bool write_las_point_set(std::ostream& out) const;
-#endif // LAS
   bool read_ply_point_set(std::istream& in);
   bool write_ply_point_set(std::ostream& out, bool binary) const;
   bool read_off_point_set(std::istream& in);

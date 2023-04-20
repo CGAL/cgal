@@ -13,10 +13,10 @@
 #define CGAL_PSP_INTERNAL_CALLBACK_WRAPPER_H
 
 #include <CGAL/license/Point_set_processing_3.h>
-
+#include <atomic>
+#include <thread>
 #include <functional>
 
-#include <CGAL/thread.h>
 
 namespace CGAL {
 namespace Point_set_processing_3 {
@@ -91,11 +91,11 @@ template <>
 class Callback_wrapper<CGAL::Parallel_tag>
 {
   const std::function<bool(double)>& m_callback;
-  cpp11::atomic<std::size_t>* m_advancement;
-  cpp11::atomic<bool>* m_interrupted;
+  std::atomic<std::size_t>* m_advancement;
+  std::atomic<bool>* m_interrupted;
   std::size_t m_size;
   bool m_creator;
-  cpp11::thread* m_thread;
+  std::thread* m_thread;
 
   // assignment operator shouldn't be used (m_callback is const ref)
   Callback_wrapper& operator= (const Callback_wrapper&)
@@ -109,17 +109,17 @@ public:
                      std::size_t advancement = 0,
                      bool interrupted = false)
     : m_callback (callback)
-    , m_advancement (new cpp11::atomic<std::size_t>())
-    , m_interrupted (new cpp11::atomic<bool>())
+    , m_advancement (new std::atomic<std::size_t>())
+    , m_interrupted (new std::atomic<bool>())
     , m_size (size)
     , m_creator (true)
     , m_thread (nullptr)
   {
-    // cpp11::atomic only has default constructor, initialization done in two steps
+    // std::atomic only has default constructor, initialization done in two steps
     *m_advancement = advancement;
     *m_interrupted = interrupted;
     if (m_callback)
-      m_thread = new cpp11::thread (*this);
+      m_thread = new std::thread (*this);
   }
 
   Callback_wrapper (const Callback_wrapper& other)
@@ -150,11 +150,11 @@ public:
     *m_advancement = advancement;
     *m_interrupted = interrupted;
     if (m_callback)
-      m_thread = new cpp11::thread (*this);
+      m_thread = new std::thread (*this);
   }
 
-  cpp11::atomic<std::size_t>& advancement() { return *m_advancement; }
-  cpp11::atomic<bool>& interrupted() { return *m_interrupted; }
+  std::atomic<std::size_t>& advancement() { return *m_advancement; }
+  std::atomic<bool>& interrupted() { return *m_interrupted; }
   void join()
   {
     if (m_thread != nullptr)
@@ -169,7 +169,9 @@ public:
         *m_interrupted = true;
       if (*m_interrupted)
         return;
-      cpp11::sleep_for (0.00001);
+      typedef std::chrono::nanoseconds nanoseconds;
+      nanoseconds ns (nanoseconds::rep (1000000000.0 * 0.00001));
+      std::this_thread::sleep_for(ns);
     }
     if (m_callback)
       m_callback (1.);

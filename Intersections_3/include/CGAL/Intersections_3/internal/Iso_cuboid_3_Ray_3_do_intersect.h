@@ -17,21 +17,20 @@
 #include <CGAL/Ray_3.h>
 #include <CGAL/Iso_cuboid_3.h>
 
-#include <CGAL/Intersections_3/internal/Bbox_3_Ray_3_do_intersect.h>
+#include <CGAL/Intersections_3/internal/Bbox_3_Segment_3_do_intersect.h>
 // for CGAL::internal::do_intersect_bbox_segment_aux
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Ray_3& ray,
-                  const typename K::Iso_cuboid_3& ic,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Ray_3& ray,
+             const typename K::Iso_cuboid_3& ic,
+             const K&)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
@@ -40,27 +39,29 @@ bool do_intersect(const typename K::Ray_3& ray,
   const Point_3& point_on_ray = ray.second_point();
 
   return do_intersect_bbox_segment_aux
-    <FT,FT,
-     true,  // bounded at t=0
-     false,  // bounded at t=1
-     false> // do not use static filters
-    (
-     source.x(), source.y(), source.z(),
-     point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
-     (ic.min)().x(), (ic.min)().y(), (ic.min)().z(),
-     (ic.max)().x(), (ic.max)().y(), (ic.max)().z()
-     );
+      <FT,FT,
+      true,  // bounded at t=0
+      false,  // bounded at t=1
+      false> // do not use static filters
+      (
+        source.x(), source.y(), source.z(),
+        point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
+        (ic.min)().x(), (ic.min)().y(), (ic.min)().z(),
+        (ic.max)().x(), (ic.max)().y(), (ic.max)().z()
+        );
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                  const typename K::Ray_3& ray,
-                  const K&) {
-  return do_intersect(ray, ic, K());
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& ic,
+             const typename K::Ray_3& ray,
+             const K& k)
+{
+  return do_intersect(ray, ic, k);
 }
 
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif  // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_RAY_3_DO_INTERSECT_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_RAY_3_DO_INTERSECT_H

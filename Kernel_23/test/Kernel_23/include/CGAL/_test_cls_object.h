@@ -114,12 +114,12 @@ _test_cls_object(const R&)
 
   // Test object_cast<>().
   const int *i = CGAL::object_cast<int>(&o6);
-  assert( i != NULL );
+  assert( i != nullptr );
   int j = CGAL::object_cast<int>(o6);
   use(j);
 
   const double *d = CGAL::object_cast<double>(&o6);
-  assert( d == NULL );
+  assert( d == nullptr );
   try {
     // This case must throw.
     double k = CGAL::object_cast<double>(o6);

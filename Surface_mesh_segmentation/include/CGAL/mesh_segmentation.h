@@ -20,7 +20,7 @@
  * @file mesh_segmentation.h
  * @brief The API which contains free template functions for SDF computation and mesh segmentation.
  */
-#include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
+#include <CGAL/Surface_mesh_segmentation/internal/Surface_mesh_segmentation.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/config.hpp>
 #include <CGAL/Kernel/global_functions_3.h>

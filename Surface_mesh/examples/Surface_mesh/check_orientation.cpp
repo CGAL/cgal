@@ -5,6 +5,7 @@ typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef Mesh::Vertex_index vertex_descriptor;
 typedef Mesh::Face_index face_descriptor;
+
 int main()
 {
   Mesh m;

@@ -28,7 +28,7 @@
 
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Compact_mesh_cell_base_3.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 
 namespace CGAL {
 
@@ -59,6 +59,7 @@ public:
   typedef typename Geom_traits::FT                            FT;
   typedef typename Base::Bare_point                           Bare_point;
   typedef typename Base::Weighted_point                       Weighted_point;
+  typedef typename Base::Triangle                             Triangle;
 
   typedef typename Base::Vertex_handle                        Vertex_handle;
   typedef typename Base::Cell_handle                          Cell_handle;
@@ -77,9 +78,14 @@ public:
   // possibilities). To allow Periodic_3_mesh_3 to use Mesh_3's files,
   // each mesh triangulation implements its own version.
 
-  Bare_point get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
+  const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
   {
     return q;
+  }
+
+  const Triangle& get_closest_triangle(const Bare_point& /*p*/, const Triangle& t) const
+  {
+    return t;
   }
 
   void set_point(const Vertex_handle v,
@@ -148,7 +154,6 @@ private:
                                                      Concurrency_tag> {};
   using Triangulation =
       Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
-  ;
 
 public:
   using type = Triangulation;

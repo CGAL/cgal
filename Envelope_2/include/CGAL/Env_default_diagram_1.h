@@ -18,7 +18,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Env_default_diagram_1.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Envelope_diagram_1>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #if (defined __GNUC__)
   #if !(defined __STRICT_ANSI__)

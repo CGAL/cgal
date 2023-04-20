@@ -17,6 +17,7 @@
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Convex_decomposition_3/SM_walls.h>
 
@@ -28,7 +29,7 @@ namespace CGAL {
 
 template<typename Nef_>
 class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
-
+protected:
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
@@ -50,13 +51,15 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef typename Base::Vector_3                Vector_3;
   typedef typename Base::Sphere_point            Sphere_point;
   typedef typename Base::Vertex_handle           Vertex_handle;
-  typedef typename Base::SVertex_handle           SVertex_handle;
+  typedef typename Base::SVertex_handle          SVertex_handle;
   typedef typename Base::Halfedge_handle         Halfedge_handle;
   typedef typename Base::Halffacet_handle        Halffacet_handle;
   typedef typename Base::Object_handle           Object_handle;
 
   typedef typename Base::Vertex_iterator         Vertex_iterator;
-  typedef typename Base::SVertex_iterator         SVertex_iterator;
+  typedef typename Base::SVertex_iterator        SVertex_iterator;
+
+
 
   Vector_3 dir;
   SNC_structure* sncp;
@@ -64,7 +67,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
   int mask;
 
  public:
-  Ray_hit_generator(Vector_3 d = Vector_3()) : dir(d), mask(255) {}
+  Ray_hit_generator(Vector_3 d = Vector_3()) : dir(d), sncp(nullptr), pl(nullptr), mask(255) {}
   Ray_hit_generator(SNC_structure* sncin, SNC_point_locator* plin, int m = 255)
     : sncp(sncin), pl(plin), mask(m) {}
 
@@ -76,25 +79,24 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Vertex_handle v;
     if(assign(v, o)) {
-      CGAL_NEF_TRACEN( "Found vertex " << v->point() );
+      CGAL_NEF_TRACEN("Found vertex " << v->point());
       return v;
     }
 
     Point_3 ip;
-    SNC_intersection I;
     SNC_constructor C(*sncp);
 
     Halfedge_handle e;
     if(assign(e, o)) {
-      CGAL_NEF_TRACEN( "Found edge " << e->source()->point()
-                << "->" << e->twin()->source()->point() );
+       CGAL_NEF_TRACEN("Found edge " << e->source()->point()
+                       << "->" << e->twin()->source()->point());
       Segment_3 seg(e->source()->point(), e->twin()->source()->point());
-      I.does_intersect_internally(r, seg, ip);
+      SNC_intersection::does_intersect_internally(r, seg, ip);
       ip = normalized(ip);
       v = C.create_from_edge(e,ip);
       pl->add_vertex(v);
 
-      CGAL_NEF_TRACEN( "new vertex " << ip );
+      CGAL_NEF_TRACEN("new vertex " << ip);
 
       SVertex_iterator svi = v->svertices_begin();
       SVertex_handle svf = svi;
@@ -107,8 +109,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
         e->twin() = svb;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
         svb->set_index(e->get_index());
-        svf->set_index();
-        svf->twin()->set_index(svf->get_index());
+        svf->twin()->set_index(svf->new_index());
 #endif
       } else {
         svf->twin() = e;
@@ -117,31 +118,25 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
         e->twin() = svf;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
         svf->set_index(e->get_index());
-        svb->set_index();
-        svb->twin()->set_index(svb->get_index());
+        svb->twin()->set_index(svb->new_index());
 #endif
       }
 
-      // TODO: that's too much
       pl->add_edge(svf);
       pl->add_edge(svb);
 
-      CGAL_NEF_TRACEN("new edge " << e->source()->point() <<
-                      "->" << e->twin()->source()->point());
-      CGAL_NEF_TRACEN("new edge " << svf->source()->point() <<
-                      "->" << svf->twin()->source()->point());
-
+      handle_splits(e,svf,svb);
       return v;
     }
 
     Halffacet_handle f;
     if(assign(f, o)) {
-      CGAL_NEF_TRACEN( "Found facet " );
-      I.does_intersect_internally(r, f, ip);
+      CGAL_NEF_TRACEN("Found facet ");
+      SNC_intersection::does_intersect_internally(r, f, ip);
       ip = normalized(ip);
       v = C.create_from_facet(f,ip);
       pl->add_vertex(v);
-      CGAL_NEF_TRACEN( "new vertex " << ip );
+      CGAL_NEF_TRACEN("new vertex " << ip);
 
       return v;
     }
@@ -150,7 +145,15 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
     return Vertex_handle();
   }
 
-  void operator()(SNC_and_PL& sncpl) {
+  virtual void handle_splits(Halfedge_handle, SVertex_handle, SVertex_handle) {
+      CGAL_NEF_TRACEN("new edge " << e->source()->point() <<
+                      "->" << e->twin()->source()->point());
+      CGAL_NEF_TRACEN("new edge " << svf->source()->point() <<
+                      "->" << svf->twin()->source()->point());
+
+  }
+
+  virtual void operator()(SNC_and_PL& sncpl) {
 
     sncp = sncpl.sncp;
     pl = sncpl.pl;
@@ -165,8 +168,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
         SM_walls smw(&*v_new);
         sv2 = smw.add_ray_svertex(Sphere_point(-dir));
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      sv1->set_index();
-      sv2->set_index(sv1->get_index());
+      sv2->set_index(sv1->new_index());
 #endif
       }
     }

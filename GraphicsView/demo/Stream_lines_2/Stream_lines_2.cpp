@@ -21,9 +21,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 // the two base classes
 #include "ui_Stream_lines_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -167,14 +165,10 @@ MainWindow::generate()
 void
 MainWindow::on_actionLoadPoints_triggered()
 {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-#endif
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Open grid file"),
                                                   "."
-                                                #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                 ,tr("WKT files (*.wkt *.WKT)")
-                                                #endif
                                                   );
   if(! fileName.isEmpty()){
     open(fileName);
@@ -194,13 +188,12 @@ MainWindow::open(QString fileName)
   iXSize = iYSize = 512;
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     std::vector<std::vector<Point_2> > mp;
     int size= -1;
     do
     {
       std::vector<Point_2> ps;
-      CGAL::read_multi_point_WKT(ifs, ps);
+      CGAL::IO::read_multi_point_WKT(ifs, ps);
       if(size == -1)
         size = static_cast<int>(ps.size());
       else if(ps.size() > 0 && size != static_cast<int>(ps.size()))
@@ -216,10 +209,6 @@ MainWindow::open(QString fileName)
       {
         regular_grid->set_field(i, j, Vector(mp[j][i].x(), mp[j][i].y()));
       }
-#else
-    QApplication::restoreOverrideCursor();
-    return;
-#endif
   }
   else{
     unsigned int x_samples, y_samples;
@@ -248,7 +237,6 @@ MainWindow::open(QString fileName)
 void
 MainWindow::on_actionSavePoints_triggered()
 {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Save points"),
                                                   ".",
@@ -266,11 +254,10 @@ MainWindow::on_actionSavePoints_triggered()
         mp[i].push_back(Point_2(regular_grid->get_field(j,i).x(),
                                 regular_grid->get_field(j,i).y()));
       }
-      CGAL::write_multi_point_WKT(ofs, mp[i]);
+      CGAL::IO::write_multi_point_WKT(ofs, mp[i]);
     }
     ofs.close();
   }
-#endif
 }
 
 

@@ -19,7 +19,7 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget* = 0);
+  MainWindow(QWidget* = nullptr);
   ~MainWindow() { process->close(); delete(process); }
 
   void connectActions();

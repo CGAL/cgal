@@ -8,8 +8,8 @@
 #include <fstream>
 #include <vector>
 
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_set>
+#include <unordered_map>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Gt;
 
@@ -48,7 +48,7 @@ int main()
 
 // collect alpha-shape facets accessible from the infinity
   // marks the cells that are in the same component as the infinite vertex by flooding
-  boost::unordered_set< Alpha_shape_3::Cell_handle > marked_cells;
+  std::unordered_set< Alpha_shape_3::Cell_handle > marked_cells;
   std::vector< Alpha_shape_3::Cell_handle > queue;
   queue.push_back( as.infinite_cell() );
 
@@ -86,7 +86,7 @@ int main()
 
 // dump into OFF format
   // assign an id per vertex
-  boost::unordered_map< Alpha_shape_3::Vertex_handle, std::size_t> vids;
+  std::unordered_map< Alpha_shape_3::Vertex_handle, std::size_t> vids;
   points.clear();
 
   for(Alpha_shape_3::Facet f : filtered_regular_facets)

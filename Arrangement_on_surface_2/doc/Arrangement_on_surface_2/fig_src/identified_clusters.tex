@@ -1,0 +1,22 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+  \psset{treevshift=0,unit=1em,xunit=2em,yunit=1em,everytree={},etcratio=.75,triratio=.5}
+     \jtree[everylabel=\sl,xunit=70pt,arrows=->]
+     \! = {}
+        <4wideleft>[scaleby=2.24 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangementLeftSideTraits\_2}}}@lt !lt
+        ^<left>[scaleby=1.15 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangemenRightSideTraits\_2}}}@rt !rt
+        ^<right>[scaleby=1.15 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangemenBottomSideTraits\_2}}}@bt !bt
+        ^<4wideright>[scaleby=2.26 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangemenTopSideTraits\_2}}}@tt !tt
+        .
+     \!lt = <right>[scaleby=1.08 1]{\psframebox{\concept{ArrangementIdentifiedVerticalTraits\_2}}}@ivt !ivt
+        .
+     \!bt = <right>[scaleby=1.17 1]{\psframebox{\concept{ArrangementIdentifiedHorizontalTraits\_2}}}@iht !iht
+     .
+     \ncline{rt:b}{ivt:t}
+     \ncline{tt:b}{iht:t}
+     \endjtree
+  \psset{treevshift=0,unit=1cm,xunit=1cm,yunit=1cm,everytree={},
+         etcratio=.75,triratio=.5}
+\end{document}

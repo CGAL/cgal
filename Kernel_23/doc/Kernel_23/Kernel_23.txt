@@ -290,7 +290,7 @@ crash or compute incorrect results due to accumulated rounding errors.
 
 \subsubsection Kernel_23PredefinedKernels Predefined Kernels
 
-For the user's convenience, \cgal provides 3 typedefs to generally useful
+For the user's convenience, \cgal provides 5 typedefs to generally useful
 kernels.
 
 <UL>
@@ -353,7 +353,7 @@ assert( p == q );
 
 In order to obtain the point corresponding to a vector \f$ v\f$ you simply
 have to add \f$ v\f$ to \ref ORIGIN. If you want to determine
-the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can write\cgalFootnote{you might call `midpoint(p_1,p_2)` instead.}
+the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can write\cgalFootnote{you might call \cgalFootnoteCode{midpoint(p_1,p_2)} instead.}
 
 \code{.cpp}
 q = p_1 + (p_2 - p_1) / 2.0;
@@ -493,23 +493,19 @@ especially integer types and rationals.
 
 \subsection Kernel_23VariantReturnValues Intersections and Variant Return Types
 
-Some functions, for example \link intersection_linear_grp `intersection()`\endlink, can return different types of objects. To achieve this
-in a type-safe way \cgal uses return values of type
-`boost::optional< boost::variant< T...  > >` were `T...` is a
-list of all possible resulting geometric objects.  The exact result
-type of an intersection can be determined through the metafunction
-`cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>` or
-`cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>`, where
-`Type1` and `Type2` are the types of the objects used in the
-intersection computation.
+Some functions, for example \link intersection_linear_grp `intersection()`\endlink,
+can return different types of objects. To achieve this in a type-safe way \cgal uses
+return values of type `boost::optional< boost::variant< T...  > >` where `T...` is a
+list of all possible resulting geometric objects. The exact result type of an intersection
+can be specified through the placeholder type specifier `auto`.
 
 
 
 Example
 -------
 
-In the following example, `result_of` is used to query the type of the
-return value for the intersection computation:
+In the following example, `auto` is used to specify the type of the return value
+for the intersection computation:
 
 \code{.cpp}
 typedef Cartesian<double> K;
@@ -521,13 +517,9 @@ Segment_2 segment_1, segment_2;
 std::cin >> segment_1 >> segment_2;
 
 
-/* C++11 */
-// auto v = intersection(segment_1, segment_2);
-
-/* C++03 */
-cpp11::result_of<K::Intersect_2(Segment_2, Segment_2)>::type
-v = intersection(segment_1, segment_2);
-if(v) {
+/* use auto */
+auto v = intersection(segment_1, segment_2);
+if (v) {
   /* not empty */
   if (const Point_2 *p = boost::get<Point_2>(&*v) ) {
     /* do something with *p */
@@ -712,7 +704,7 @@ for 3D triangles and efficient intersection tests for bounding boxes.
 This work was supported
 by the Graduiertenkolleg 'Algorithmische Diskrete Mathematik',
 under grant DFG We 1265/2-1,
-and by ESPRIT IV Long Term Research Projects No. 21957 (%CGAL)
+and by ESPRIT IV Long Term Research Projects No. 21957 (\cgal)
 and No. 28155 (GALIA).
 
 */

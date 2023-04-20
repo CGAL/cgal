@@ -270,7 +270,7 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   // copy itemA
-  Scene_nef_polyhedron_item* new_item = 0;
+  Scene_nef_polyhedron_item* new_item = nullptr;
   if(operation != MINKOWSKI_SUM) {
     new_item = new Scene_nef_polyhedron_item(*itemA->nef_polyhedron());
   };

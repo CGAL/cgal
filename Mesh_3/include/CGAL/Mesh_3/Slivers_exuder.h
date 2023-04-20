@@ -30,15 +30,14 @@
 #include <CGAL/Double_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/functional.h>
-#include <CGAL/internal/Has_member_visited.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Real_timer.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
-#include <boost/bind.hpp>
 #include <boost/format.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -158,7 +157,7 @@ protected:
   }
 
   /**
-   * A functor to remove one \c Cell_handle from a priority queue
+   * A functor to remove one `Cell_handle` from a priority queue
    */
   class Erase_from_queue
   {
@@ -173,7 +172,7 @@ protected:
   };
 
   /**
-   * Delete cells of \c cells from \c cells_queue
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -289,7 +288,7 @@ protected:
   }
 
   /**
-   * A functor to remove one \c Cell_handle from a priority queue
+   * A functor to remove one `Cell_handle` from a priority queue
    */
   class Erase_from_queue
   {
@@ -301,7 +300,7 @@ protected:
   };
 
   /**
-   * Delete cells of \c cells from \c cells_queue
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -526,7 +525,7 @@ private:
                                const Vertex_handle& new_vertex);
 
   /**
-   * Orders handles \c h1 & \c h2
+   * Orders handles `h1` & `h2`
    */
   template <typename Handle>
   static
@@ -595,8 +594,8 @@ private:
 
 
   /**
-   * Returns the \c Boundary_facets_from_outside object containing mirror facets
-   * of \c facets
+   * Returns the `Boundary_facets_from_outside` object containing mirror facets
+   * of `facets`.
    */
   Boundary_facets_from_outside
   get_boundary_facets_from_outside(const Facet_vector& facets) const
@@ -617,7 +616,7 @@ private:
   }
 
   /**
-   * Add a cell \c ch to \c cells_queue
+   * Adds a cell `ch` to `cells_queue`.
    */
   template <bool pump_vertices_on_surfaces>
   void add_cell_to_queue(Cell_handle ch, FT criterion_value)
@@ -652,7 +651,7 @@ private:
   };
 
   /**
-   * Removes objects of [begin,end[ range from \c c3t3_
+   * Removes objects of [begin,end[ range from `c3t3_`.
    */
   template<typename ForwardIterator>
   void remove_from_c3t3(ForwardIterator begin, ForwardIterator end)
@@ -853,8 +852,8 @@ private:
                       const Vertex_handle& vh) const;
 
   /**
-   * Checks if the sliver criterion values from \c criterion_values are the same as
-   * those that will be found if wp is inserted in the triangulation
+   * Checks if the sliver criterion values from `criterion_values` are the same as
+   * those that will be found if wp is inserted in the triangulation.
    */
   bool check_ratios(const Sliver_values& criterion_values,
                     const Weighted_point& wp,
@@ -1560,7 +1559,7 @@ update_mesh(const Weighted_point& new_point,
   if (could_lock_zone && *could_lock_zone == false)
     return false;
 
-  // Get some datas to restore mesh
+  // Get some data to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 

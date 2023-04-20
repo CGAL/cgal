@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
   for (auto k = zmin; k < zmax; ++k)
     for (auto j = ymin; j <= ymax; ++j)
       for (auto i = xmin; i <= xmax; ++i) {
-        auto pos = data + image->wdim * (i + image->xdim * (j + image->zdim * k));
+        auto pos = data + image->wdim * (i + image->xdim * (j + image->ydim * k));
         std::copy(pos, pos + image->wdim, new_data);
         new_data += image->wdim;
       }

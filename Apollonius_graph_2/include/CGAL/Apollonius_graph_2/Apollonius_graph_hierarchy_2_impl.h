@@ -54,7 +54,7 @@ Apollonius_graph_hierarchy_2
 }
 
 
-//Assignement
+//Assignment
 template<class Gt, class Agds, class LTag>
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag> &
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::
@@ -332,8 +332,8 @@ void
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_precondition( v != Vertex_handle());
+  CGAL_precondition( !is_infinite(v));
 
   // get the hidden circles
   typename Apollonius_graph_base::Site_list wp_list;
@@ -484,7 +484,7 @@ file_output(std::ostream& os) const
   // write each level of the hierarchy
   for (unsigned int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     hierarchy[i]->file_output(os);
-    if ( is_ascii(os) ) { os << std::endl << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl << std::endl; }
   }
 
   Vertex_map* V = new Vertex_map[ag_hierarchy_2__maxlevel];
@@ -520,22 +520,22 @@ file_output(std::ostream& os) const
   }
 
   // write up and down pointer info
-  if ( is_ascii(os) ) { os << std::endl << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl << std::endl; }
   for (unsigned int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     os << i;
-    if ( is_ascii(os) ) { os << " "; }
+    if ( IO::is_ascii(os) ) { os << " "; }
     os << hierarchy[i]->number_of_vertices();
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     for (Finite_vertices_iterator vit = hierarchy[i]->finite_vertices_begin();
          vit != hierarchy[i]->finite_vertices_end(); ++vit) {
       os << V[i][vit];
-      if ( is_ascii(os) ) { os << " "; }
+      if ( IO::is_ascii(os) ) { os << " "; }
       os << V_down[i][vit];
-      if ( is_ascii(os) ) { os << " "; }
+      if ( IO::is_ascii(os) ) { os << " "; }
       os << V_up[i][vit];
-      if ( is_ascii(os) ) { os << std::endl; }
+      if ( IO::is_ascii(os) ) { os << std::endl; }
     }
-    if ( is_ascii(os) ) { os << std::endl << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl << std::endl; }
   }
 
   delete[] V;

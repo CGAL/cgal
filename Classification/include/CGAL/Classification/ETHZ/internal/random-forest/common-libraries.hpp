@@ -29,8 +29,9 @@
 #include <numeric>
 #include <limits>
 #include <list>
+#include <CGAL/IO/binary_file_io.h>
 #include <boost/version.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #if BOOST_VERSION >= 104700
@@ -46,7 +47,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 #include <iostream>
 #include <cstdio>
 
@@ -62,7 +63,7 @@ inline void init_feature_class_data(FeatureClassDataFloat& /*data*/, int /*n_cla
 {
 //    data.resize(n_samples);
 }
-typedef boost::unordered_set<int> FeatureSet;
+typedef std::unordered_set<int> FeatureSet;
 
 #if BOOST_VERSION >= 104700
 typedef boost::random::uniform_int_distribution<> UniformIntDist;
@@ -109,6 +110,30 @@ struct ForestParams {
         ar & BOOST_SERIALIZATION_NVP(sample_reduction);
     }
 #endif
+
+    void write (std::ostream& os)
+    {
+      I_Binary_write_size_t_into_uinteger32 (os, n_classes);
+      I_Binary_write_size_t_into_uinteger32 (os, n_features);
+      I_Binary_write_size_t_into_uinteger32 (os, n_samples);
+      I_Binary_write_size_t_into_uinteger32 (os, n_in_bag_samples);
+      I_Binary_write_size_t_into_uinteger32 (os, max_depth);
+      I_Binary_write_size_t_into_uinteger32 (os, n_trees);
+      I_Binary_write_size_t_into_uinteger32 (os, min_samples_per_node);
+      I_Binary_write_float32 (os, sample_reduction);
+    }
+
+    void read (std::istream& is)
+    {
+      I_Binary_read_size_t_from_uinteger32 (is, n_classes);
+      I_Binary_read_size_t_from_uinteger32 (is, n_features);
+      I_Binary_read_size_t_from_uinteger32 (is, n_samples);
+      I_Binary_read_size_t_from_uinteger32 (is, n_in_bag_samples);
+      I_Binary_read_size_t_from_uinteger32 (is, max_depth);
+      I_Binary_read_size_t_from_uinteger32 (is, n_trees);
+      I_Binary_read_size_t_from_uinteger32 (is, min_samples_per_node);
+      I_Binary_read_float32 (is, sample_reduction);
+    }
 };
 
 struct QuadraticSplitter {
@@ -248,6 +273,18 @@ struct AxisAlignedSplitter {
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
 #endif
+
+    void write (std::ostream& os)
+    {
+      os.write((char*)(&feature), sizeof(int));
+      os.write((char*)(&threshold), sizeof(FeatureType));
+    }
+
+    void read (std::istream& is)
+    {
+      is.read((char*)(&feature), sizeof(int));
+      is.read((char*)(&threshold), sizeof(FeatureType));
+    }
 };
 
 struct AxisAlignedRandomSplitGenerator {

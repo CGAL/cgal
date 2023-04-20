@@ -14,10 +14,6 @@
 #include <CGAL/Circular_arc_traits.h>
 #include <CGAL/Circular_arc_traits_tracer.h>
 
-#include <CGAL/Lazy_circular_kernel_2.h>
-
-#include <CGAL/Filtered_hexagon_circular_kernel_2.h>
-
 #include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
 #include <CGAL/Arrangement_2.h>
@@ -225,4 +221,3 @@ int exit_status = 0;
     return exit_status;
 
 }
-

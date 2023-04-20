@@ -1,6 +1,5 @@
 Algebraic_foundations
 Circulator
-Distance_2
 Filtered_kernel
 Hash_map
 Installation
@@ -9,7 +8,6 @@ Kernel_23
 Modular_arithmetic
 Number_types
 Point_set_2
-Polygon
 Profiling_tools
 Property_map
 STL_Extension

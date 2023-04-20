@@ -61,7 +61,7 @@ public:
     // Copy constructor
     Arr_algebraic_segment_traits_2 (const  Self& /* s */) { /* No state...*/}
 
-    // Assignement operator
+    // Assignment operator
     const Self& operator= (const Self& s)
         {return s;}
 
@@ -129,14 +129,14 @@ public:
         return CKvA_2::instance().parameter_space_in_x_2_object();
     }
 
-    typedef typename CKvA_2::Compare_x_at_limit_2 Compare_x_at_limit_2;
-    Compare_x_at_limit_2 compare_x_at_limit_2_object() const {
-        return CKvA_2::instance().compare_x_at_limit_2_object();
+    typedef typename CKvA_2::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+    Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
+        return CKvA_2::instance().compare_x_on_boundary_2_object();
     }
 
-    typedef typename CKvA_2::Compare_x_near_limit_2  Compare_x_near_limit_2;
-    Compare_x_near_limit_2 compare_x_near_limit_2_object() const {
-        return CKvA_2::instance().compare_x_near_limit_2_object();
+    typedef typename CKvA_2::Compare_x_near_boundary_2 Compare_x_near_boundary_2;
+    Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
+        return CKvA_2::instance().compare_x_near_boundary_2_object();
     }
 
     typedef typename CKvA_2::Construct_min_vertex_2 Construct_min_vertex_2;
@@ -254,7 +254,7 @@ public:
             return std::make_pair(std::make_pair(0,0),vertical);
         }
 
-        // abbrevation for convenience
+        // abbreviation for convenience
         bool is_one_one(Curve_2 cv, Point_2 p) const {
 
             std::pair<std::pair<int,int>,bool> branches

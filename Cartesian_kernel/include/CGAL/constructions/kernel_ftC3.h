@@ -142,11 +142,12 @@ centroidC3( const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-FT
+void
 squared_radiusC3(const FT &px, const FT &py, const FT &pz,
-                       const FT &qx, const FT &qy, const FT &qz,
-                       const FT &rx, const FT &ry, const FT &rz,
-                       const FT &sx, const FT &sy, const FT &sz)
+                 const FT &qx, const FT &qy, const FT &qz,
+                 const FT &rx, const FT &ry, const FT &rz,
+                 const FT &sx, const FT &sy, const FT &sz,
+                 FT &num, FT &den)
 {
   // Translate p to origin to simplify the expression.
   FT qpx = qx-px;
@@ -163,29 +164,30 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS square(spz);
 
   FT num_x = determinant(qpy,qpz,qp2,
-                               rpy,rpz,rp2,
-                               spy,spz,sp2);
+                         rpy,rpz,rp2,
+                         spy,spz,sp2);
   FT num_y = determinant(qpx,qpz,qp2,
-                               rpx,rpz,rp2,
-                               spx,spz,sp2);
+                         rpx,rpz,rp2,
+                         spx,spz,sp2);
   FT num_z = determinant(qpx,qpy,qp2,
-                               rpx,rpy,rp2,
-                               spx,spy,sp2);
-  FT den   = determinant(qpx,qpy,qpz,
-                               rpx,rpy,rpz,
-                               spx,spy,spz);
-  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+                         rpx,rpy,rp2,
+                         spx,spy,sp2);
+  FT dden  = determinant(qpx,qpy,qpz,
+                         rpx,rpy,rpz,
+                         spx,spy,spz);
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(dden) );
 
-  return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(2 * den);
+  num = CGAL_NTS square(num_x) + CGAL_NTS square(num_y) + CGAL_NTS square(num_z);
+  den = CGAL_NTS square(2 * dden);
 }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-FT
+void
 squared_radiusC3(const FT &px, const FT &py, const FT &pz,
-                       const FT &qx, const FT &qy, const FT &qz,
-                       const FT &sx, const FT &sy, const FT &sz)
+                 const FT &qx, const FT &qy, const FT &qz,
+                 const FT &sx, const FT &sy, const FT &sz,
+                 FT &num, FT &den)
 {
   // Translate s to origin to simplify the expression.
   FT psx = px-sx;
@@ -207,14 +209,14 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
            - qs2 * determinant(psx,psy,rsx,rsy);
 
-  FT den   = determinant(psx,psy,psz,
-                               qsx,qsy,qsz,
-                               rsx,rsy,rsz);
+  FT dden  = determinant(psx,psy,psz,
+                         qsx,qsy,qsz,
+                         rsx,rsy,rsz);
 
-  CGAL_kernel_assertion( den != 0 );
+  CGAL_kernel_assertion( dden != 0 );
 
-  return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(2 * den);
+  num = CGAL_NTS square(num_x) + CGAL_NTS square(num_y) + CGAL_NTS square(num_z);
+  den = CGAL_NTS square(2 * dden);
 }
 
 template <class FT>
@@ -237,6 +239,22 @@ plane_from_pointsC3(const FT &px, const FT &py, const FT &pz,
   pc = rpx*rqy - rqx*rpy;
   pd = - pa*rx - pb*ry - pc*rz;
 }
+
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+void
+plane_from_pointsC3( /* origin */
+                    const FT &qx, const FT &qy, const FT &qz,
+                    const FT &rx, const FT &ry, const FT &rz,
+                    FT &pa, FT &pb, FT &pc /* , zero */ )
+{
+  pa = qy*rz - ry*qz;
+  pb = qz*rx - rz*qx;
+  pc = qx*ry - rx*qy;
+}
+
+
 
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
@@ -305,11 +323,13 @@ squared_distanceC3( const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_INLINE
-FT
+void
 squared_radiusC3( const FT &px, const FT &py, const FT &pz,
-                  const FT &qx, const FT &qy, const FT &qz)
+                  const FT &qx, const FT &qy, const FT &qz,
+                  FT &num, FT &den)
 {
-  return squared_distanceC3(px, py, pz, qx, qy, qz) / 4;
+  num = squared_distanceC3(px, py, pz, qx, qy, qz);
+  den = FT(4);
 }
 
 template < class FT >
@@ -366,10 +386,10 @@ bisector_of_planesC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
                      FT &a, FT &b, FT &c, FT &d)
 {
   // We normalize the equations of the 2 planes, and we then add them.
-  FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb) +
-                        CGAL_NTS square(pc));
-  FT n2 = CGAL_NTS sqrt(CGAL_NTS square(qa) + CGAL_NTS square(qb) +
-                        CGAL_NTS square(qc));
+  FT n1 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(pa) + CGAL_NTS square(pb) +
+                        CGAL_NTS square(pc)) );
+  FT n2 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(qa) + CGAL_NTS square(qb) +
+                        CGAL_NTS square(qc)) );
   a = n2 * pa + n1 * qa;
   b = n2 * pb + n1 * qb;
   c = n2 * pc + n1 * qc;
@@ -406,48 +426,74 @@ squared_areaC3(const FT &px, const FT &py, const FT &pz,
     return (CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz))/4;
 }
 
+// Compute determinants for weighted_circumcenter and circumradius
 template <class FT>
 void
-determinants_for_weighted_circumcenterC3(
-    const FT &px, const FT &py, const FT &pz, const FT &pw,
-    const FT &qx, const FT &qy, const FT &qz, const FT &qw,
-    const FT &rx, const FT &ry, const FT &rz, const FT &rw,
-    const FT &sx, const FT &sy, const FT &sz, const FT &sw,
-    FT &num_x,  FT &num_y, FT &num_z, FT& den)
+determinants_for_circumcenterC3(const FT &px, const FT &py, const FT &pz,
+                                const FT &qx, const FT &qy, const FT &qz,
+                                const FT &sx, const FT &sy, const FT &sz,
+                                FT &num_x, FT &num_y, FT &num_z, FT& den)
 {
-  // translate origin to p
-  // and compute determinants for weighted_circumcenter and
-  // circumradius
-  FT qpx = qx - px;
-  FT qpy = qy - py;
-  FT qpz = qz - pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
-           CGAL_NTS square(qpz) - qw + pw;
-  FT rpx = rx - px;
-  FT rpy = ry - py;
-  FT rpz = rz - pz;
-  FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) +
-           CGAL_NTS square(rpz) - rw + pw;
-  FT spx = sx - px;
-  FT spy = sy - py;
-  FT spz = sz - pz;
-  FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) +
-           CGAL_NTS square(spz) - sw + pw;
+  // Translate s to origin to simplify the expression.
+  FT psx = px - sx;
+  FT psy = py - sy;
+  FT psz = pz - sz;
+  FT ps2 = CGAL_NTS square(psx) + CGAL_NTS square(psy) + CGAL_NTS square(psz);
+  FT qsx = qx - sx;
+  FT qsy = qy - sy;
+  FT qsz = qz - sz;
+  FT qs2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy) + CGAL_NTS square(qsz);
+  FT rsx = psy*qsz - psz*qsy;
+  FT rsy = psz*qsx - psx*qsz;
+  FT rsz = psx*qsy - psy*qsx;
 
-  num_x = determinant(qpy,qpz,qp2,
-                      rpy,rpz,rp2,
-                      spy,spz,sp2);
-  num_y = determinant(qpx,qpz,qp2,
-                      rpx,rpz,rp2,
-                      spx,spz,sp2);
-  num_z = determinant(qpx,qpy,qp2,
-                      rpx,rpy,rp2,
-                      spx,spy,sp2);
-  den   = determinant(qpx,qpy,qpz,
-                      rpx,rpy,rpz,
-                      spx,spy,spz);
+  // The following determinants can be developed and simplified.
+  //
+  // FT num_x = determinant(psy,psz,ps2,
+  //                        qsy,qsz,qs2,
+  //                        rsy,rsz,0);
+  // FT num_y = determinant(psx,psz,ps2,
+  //                        qsx,qsz,qs2,
+  //                        rsx,rsz,0);
+  // FT num_z = determinant(psx,psy,ps2,
+  //                        qsx,qsy,qs2,
+  //                        rsx,rsy,0);
+
+  num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
+        - qs2 * determinant(psy,psz,rsy,rsz);
+  num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
+        - qs2 * determinant(psx,psz,rsx,rsz);
+  num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
+        - qs2 * determinant(psx,psy,rsx,rsy);
+
+  den = determinant(psx,psy,psz,
+                    qsx,qsy,qsz,
+                    rsx,rsy,rsz);
 }
 
+// this function computes the circumcenter point only
+template < class FT>
+void
+circumcenterC3(const FT &px, const FT &py, const FT &pz,
+               const FT &qx, const FT &qy, const FT &qz,
+               const FT &sx, const FT &sy, const FT &sz,
+               FT &x, FT &y, FT &z)
+{
+  FT num_x, num_y, num_z, den;
+  determinants_for_circumcenterC3(px, py, pz,
+                                  qx, qy, qz,
+                                  sx, sy, sz,
+                                  num_x, num_y, num_z, den);
+
+  CGAL_kernel_assertion( den != 0 );
+  FT inv = 1 / (2 * den);
+
+  x = sx + num_x*inv;
+  y = sy - num_y*inv;
+  z = sz + num_z*inv;
+}
+
+// Compute determinants for weighted_circumcenter and circumradius
 template <class FT>
 void
 determinants_for_circumcenterC3(const FT &px, const FT &py, const FT &pz,
@@ -457,8 +503,6 @@ determinants_for_circumcenterC3(const FT &px, const FT &py, const FT &pz,
                                 FT &num_x,  FT &num_y, FT &num_z, FT& den)
 {
   // translate origin to p
-  // and compute determinants for weighted_circumcenter and
-  // circumradius
   FT qpx = qx - px;
   FT qpy = qy - py;
   FT qpz = qz - pz;
@@ -489,6 +533,72 @@ determinants_for_circumcenterC3(const FT &px, const FT &py, const FT &pz,
                       spx,spy,spz);
 }
 
+// this function computes the circumcenter point only
+template < class FT>
+void
+circumcenterC3(const FT &px, const FT &py, const FT &pz,
+               const FT &qx, const FT &qy, const FT &qz,
+               const FT &rx, const FT &ry, const FT &rz,
+               const FT &sx, const FT &sy, const FT &sz,
+               FT &x, FT &y, FT &z)
+{
+  FT num_x, num_y, num_z, den;
+  determinants_for_circumcenterC3(px, py, pz,
+                                  qx, qy, qz,
+                                  rx, ry, rz,
+                                  sx, sy, sz,
+                                  num_x, num_y, num_z, den);
+
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
+  FT inv = FT(1)/(FT(2) * den);
+
+  x = px + num_x*inv;
+  y = py - num_y*inv;
+  z = pz + num_z*inv;
+}
+
+// compute determinants for weighted_circumcenter and circumradius
+template <class FT>
+void
+determinants_for_weighted_circumcenterC3(
+    const FT &px, const FT &py, const FT &pz, const FT &pw,
+    const FT &qx, const FT &qy, const FT &qz, const FT &qw,
+    const FT &rx, const FT &ry, const FT &rz, const FT &rw,
+    const FT &sx, const FT &sy, const FT &sz, const FT &sw,
+    FT &num_x,  FT &num_y, FT &num_z, FT& den)
+{
+  // translate origin to p
+  FT qpx = qx - px;
+  FT qpy = qy - py;
+  FT qpz = qz - pz;
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
+           CGAL_NTS square(qpz) - qw + pw;
+  FT rpx = rx - px;
+  FT rpy = ry - py;
+  FT rpz = rz - pz;
+  FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) +
+           CGAL_NTS square(rpz) - rw + pw;
+  FT spx = sx - px;
+  FT spy = sy - py;
+  FT spz = sz - pz;
+  FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) +
+           CGAL_NTS square(spz) - sw + pw;
+
+  num_x = determinant(qpy,qpz,qp2,
+                      rpy,rpz,rp2,
+                      spy,spz,sp2);
+  num_y = determinant(qpx,qpz,qp2,
+                      rpx,rpz,rp2,
+                      spx,spz,sp2);
+  num_z = determinant(qpx,qpy,qp2,
+                      rpx,rpy,rp2,
+                      spx,spy,sp2);
+  den   = determinant(qpx,qpy,qpz,
+                      rpx,rpy,rpz,
+                      spx,spy,spz);
+}
+
+// this function computes the weighted circumcenter point only
 template < class FT>
 void
 weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
@@ -497,9 +607,6 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                         const FT &sx, const FT &sy, const FT &sz, const FT &sw,
                         FT &x, FT &y, FT &z)
 {
-  // this function computes the weighted circumcenter point only
-
-  // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
                                            qx, qy, qz, qw,
@@ -515,6 +622,7 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
   z = pz + num_z*inv;
 }
 
+// this function computes the weighted circumcenter point and the squared weighted circumradius
 template < class FT>
 void
 weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
@@ -523,10 +631,6 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                         const FT &sx, const FT &sy, const FT &sz, const FT &sw,
                         FT &x, FT &y, FT &z, FT &w)
 {
-  // this function computes the weighted circumcenter point
-  // and the squared weighted circumradius
-
-  // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
                                            qx, qy, qz, qw,
@@ -545,6 +649,7 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
       * CGAL_NTS square(inv) - pw;
 }
 
+// this function computes the squared weighted circumradius only
 template< class FT >
 FT
 squared_radius_orthogonal_sphereC3(
@@ -553,9 +658,6 @@ squared_radius_orthogonal_sphereC3(
     const FT &rx, const FT &ry, const FT &rz, const FT &rw,
     const FT &sx, const FT &sy, const FT &sz, const FT &sw)
 {
-  // this function computes the squared weighted circumradius only
-
-  // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
                                            qx, qy, qz, qw,
@@ -570,6 +672,7 @@ squared_radius_orthogonal_sphereC3(
          * CGAL_NTS square(inv) - pw;
 }
 
+// compute determinants for weighted_circumcenter and circumradius
 template <class FT>
 void
 determinants_for_weighted_circumcenterC3(
@@ -578,10 +681,7 @@ determinants_for_weighted_circumcenterC3(
     const FT &rx, const FT &ry, const FT &rz, const FT &rw,
     FT &num_x,  FT &num_y, FT &num_z, FT &den)
 {
-  // translate origin to p and compute determinants for weighted_circumcenter
-  // and circumradius
-
-  // Translate s to origin to simplify the expression.
+  // translate origin to p
   FT qpx = qx - px;
   FT qpy = qy - py;
   FT qpz = qz - pz;
@@ -597,7 +697,7 @@ determinants_for_weighted_circumcenterC3(
   FT sy = qpz*rpx - qpx*rpz;
   FT sz = qpx*rpy - qpy*rpx;
 
-  // The following determinants can be developped and simplified.
+// The following determinants can be developed and simplified.
 //
 //  FT num_x = determinant(qpy,qpz,qp2,
 //                         rpy,rpz,rp2,
@@ -623,6 +723,7 @@ determinants_for_weighted_circumcenterC3(
                       sx,sy,sz);
 }
 
+// this function computes the weighted circumcenter point only
 template < class FT >
 void
 weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
@@ -630,9 +731,6 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                         const FT &rx, const FT &ry, const FT &rz, const FT &rw,
                         FT &x, FT &y, FT &z)
 {
-  // this function computes the weighted circumcenter point only
-
-  // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
                                            qx, qy, qz, qw,
@@ -647,6 +745,7 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
   z = pz + num_z*inv;
 }
 
+// this function computes the weighted circumcenter and the weighted squared circumradius
 template < class FT >
 void
 weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
@@ -654,9 +753,6 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                         const FT &rx, const FT &ry, const FT &rz, const FT &rw,
                         FT &x, FT &y, FT &z, FT &w)
 {
-  // this function computes the weighted circumcenter and
-  // the weighted squared circumradius
-
   // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
@@ -672,9 +768,10 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
   z = pz + num_z*inv;
 
   w = (CGAL_NTS square(num_x) + CGAL_NTS square(num_y) + CGAL_NTS square(num_z))
-      *CGAL_NTS square(inv) - pw;
+      * CGAL_NTS square(inv) - pw;
 }
 
+// this function computes the weighted squared circumradius only
 template< class FT >
 CGAL_MEDIUM_INLINE
 FT
@@ -683,9 +780,6 @@ squared_radius_smallest_orthogonal_sphereC3(
     const FT &qx, const FT &qy, const FT &qz, const FT &qw,
     const FT &rx, const FT &ry, const FT &rz, const FT &rw)
 {
-  // this function computes the weighted squared circumradius only
-
-  // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
                                            qx, qy, qz, qw,
@@ -699,18 +793,17 @@ squared_radius_smallest_orthogonal_sphereC3(
          * CGAL_NTS square(inv) - pw;
 }
 
+// this function computes the weighted circumcenter point only
 template < class FT >
 void
 weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                         const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                         FT &x, FT &y, FT &z)
 {
-// this function computes the weighted circumcenter point only
   FT qpx = qx - px;
   FT qpy = qy - py;
   FT qpz = qz - pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
-           CGAL_NTS square(qpz);
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
   FT inv = FT(1) / (FT(2) * qp2);
   FT alpha = 1 / FT(2) + (pw-qw) * inv;
 
@@ -719,14 +812,13 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
   z = pz + alpha * qpz;
 }
 
+// this function computes the weighted circumcenter point and the weighted circumradius
 template < class FT >
 void
 weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                         const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                         FT &x, FT &y, FT &z, FT &w)
 {
- // this function computes the weighted circumcenter point and
-  // the weighted circumradius
   FT qpx = qx - px;
   FT qpy = qy - py;
   FT qpz = qz - pz;
@@ -742,6 +834,7 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
   w = CGAL_NTS square(alpha) * qp2 - pw;
 }
 
+// this function computes the weighted circumradius only
 template< class FT >
 CGAL_MEDIUM_INLINE
 FT
@@ -749,7 +842,6 @@ squared_radius_smallest_orthogonal_sphereC3(
   const FT &px, const FT &py, const FT &pz, const FT  &pw,
   const FT &qx, const FT &qy, const FT &qz, const FT  &qw)
 {
-  // this function computes the weighted circumradius only
   FT qpx = qx - px;
   FT qpy = qy - py;
   FT qpz = qz - pz;

@@ -10,14 +10,14 @@
 # Is it already configured?
 if (IPE_INCLUDE_DIR AND IPE_LIBRARIES AND IPE_FULL_VERSION)
   set(IPE_FOUND TRUE)
-else()  
-  find_path(IPE_INCLUDE_DIR 
+else()
+  find_path(IPE_INCLUDE_DIR
             NAMES ipelib.h
             PATHS /usr/include
                   /usr/local/include
            )
 
-  find_library(IPE_LIBRARIES 
+  find_library(IPE_LIBRARIES
                NAMES ipe
                PATHS /usr/lib
                      /usr/local/lib
@@ -26,7 +26,7 @@ else()
 
   if(IPE_INCLUDE_DIR)
     file(READ "${IPE_INCLUDE_DIR}/ipebase.h" IPEBASE_H)
-    string(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([67])([0-9][0-9])([0-9][0-9]);" FOUND_IPE_VERSION "${IPEBASE_H}")
+    string(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([6789])([0-9][0-9])([0-9][0-9]);" FOUND_IPE_VERSION "${IPEBASE_H}")
     if (FOUND_IPE_VERSION)
       set(IPE_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "Ipe version major number")
       set(IPE_MINOR_VERSION_1 ${CMAKE_MATCH_2} CACHE INTERNAL "Ipe version minor number")

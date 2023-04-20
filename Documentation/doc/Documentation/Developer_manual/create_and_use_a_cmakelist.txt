@@ -6,7 +6,7 @@ A base can be created using the script `cgal_create_CMakeLists`. Its usage is de
 \section seclink Linking with CGAL
 To link with the \cgal library, use the following:
 \code
-find_package(CGAL)
+find_package(CGAL REQUIRED)
 add_executable(my_executable my_source_file.cpp)
 target_link_libraries(my_executable CGAL::CGAL)
 \endcode
@@ -30,11 +30,16 @@ This section describes a minimal example of a program that uses \cgal and Qt5 fo
 
 \subsection subcmake CMakeLists.txt
 \dontinclude Surface_mesh/CMakeLists.txt
-\skip cmake
-\until if ( CGAL_FOUND )
+\skip cmake_minimum_required
+\until project
+
+\skip #CGAL_Qt5 is needed for the drawing.
+\until endif()
+
 \skip #create the executable of the application
 \until "draw_surface_mesh.cpp"
-\skip if(CGAL_Qt5_FOUND )
+
+\skip if(CGAL_Qt5_FOUND)
 \until target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
 \skip endif
 \until #end of the file

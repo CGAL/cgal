@@ -14,10 +14,10 @@
 
 #include <CGAL/license/Optimal_bounding_box.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/ch_akl_toussaint.h>
 #include <CGAL/min_quadrilateral_2.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/number_type_config.h>
 
 #include <iostream>
 #include <iterator>

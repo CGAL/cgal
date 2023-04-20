@@ -1,12 +1,15 @@
 /// \defgroup PkgAdvancingFrontSurfaceReconstructionRef Advancing Front Surface Reconstruction Reference
 
+/// \defgroup PkgAdvancingFrontSurfaceReconstructionRefConcepts Concepts
+/// \ingroup PkgAdvancingFrontSurfaceReconstructionRef
+
 /*!
 \addtogroup PkgAdvancingFrontSurfaceReconstructionRef
 
 \cgalPkgDescriptionBegin{Advancing Front Surface Reconstruction,PkgAdvancingFrontSurfaceReconstruction}
 \cgalPkgPicture{afsr-detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Tran Kai Frank Da, David Cohen-Steiner}
+\cgalPkgAuthors{Tran Kai Frank Da and David Cohen-Steiner}
 \cgalPkgDesc{This package provides a greedy algorithm for surface reconstruction from an
 unorganized point set. Starting from a seed facet, a piecewise linear
 surface is grown by adding Delaunay triangles one by one. The most
@@ -24,6 +27,10 @@ of topological singularities. }
 
 
 \cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `AdvancingFrontSurfaceReconstructionTraits_3`
 
 \cgalCRPSection{Classes}
 

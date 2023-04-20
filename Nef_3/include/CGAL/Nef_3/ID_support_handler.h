@@ -18,7 +18,8 @@
 
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <CGAL/Unique_hash_map.h>
+#include <boost/functional/hash.hpp>
+#include <unordered_map>
 #include <map>
 
 #undef CGAL_NEF_DEBUG
@@ -38,13 +39,44 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
   typedef typename Decorator::SHalfloop_const_handle SHalfloop_const_handle;
   typedef typename Decorator::Halffacet_const_handle Halffacet_const_handle;
 
-  typedef CGAL::Unique_hash_map<Halffacet_const_handle, int> F2E;
-  CGAL::Unique_hash_map<Halffacet_const_handle, F2E> f2m;
-  std::map<int, int> hash;
+  struct Halffacet_pair
+  {
+    Halffacet_const_handle f1;
+    Halffacet_const_handle f2;
+    bool operator==(const Halffacet_pair& r) const
+    { return f1==r.f1 && f2==r.f2; }
+  };
+
+  struct Handle_pair_hash_function {
+    std::size_t operator() (const Halffacet_pair& p) const {
+      std::size_t hash = 0;
+      boost::hash_combine(hash,Handle_hash_function()(p.f1));
+      boost::hash_combine(hash,Handle_hash_function()(p.f2));
+      return hash;
+    }
+  };
+  std::unordered_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
+  std::unordered_map<int, int> hash;
 
  public:
   ID_support_handler() {}
 
+  void reserve(std::size_t n) {
+    hash.reserve(n);
+  }
+
+  /*
+     The method get_hash implements a
+     two-pass union find algorithm
+        __    __           _______
+       /  \  /  \         /  _____\
+      _|__|__|__|_      _/__/__/__|_
+     | |  v  |  v |    | |  |  |  v |
+     | O  O  O  O | => | O  O  O  O |
+     |____|__^____|    |____________|
+          |  | root
+          \_/
+  */
   int get_hash(int i) {
     int root(i);
     while(hash[root] != root)
@@ -62,12 +94,13 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     hash[get_hash(i)] = parent;
   }
 
+  void initialize_hash(int i) {
+    hash[i] = i;
+  }
+
   template<typename Handle>
   void initialize_hash(Handle h) {
-    hash[h->get_index()] = h->get_index();
-  }
-  void initialize_hash(int i) {
-        hash[i] = i;
+    initialize_hash(h->get_index());
   }
 
   void hash_facet_pair(SVertex_handle sv,
@@ -76,17 +109,17 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     CGAL_NEF_TRACEN("hash_facet_pair " << sv->point() << std::endl
                     << "  " << f1->plane() << &f1 << std::endl
                     << " "  << f2->plane() << &f2);
+    int& idx=f2m[{f1,f2}];
+    if(idx==0) {
+      idx = sv->new_index();
 
-    if(f2m[f1][f2]==0) {
-      sv->set_index();
-      f2m[f1][f2] = sv->get_index();
       CGAL_NEF_TRACEN("insert " << sv->point() << &*sv
-                      << ": " << f2m[f1][f2]);
+                      << ": " << idx);
       CGAL_NEF_TRACEN("not defined, yet");
     }
     else {
       CGAL_NEF_TRACEN("access " << sv->point() << &*sv);
-      sv->set_index(f2m[f1][f2]);
+      sv->set_index(idx);
     }
   }
 

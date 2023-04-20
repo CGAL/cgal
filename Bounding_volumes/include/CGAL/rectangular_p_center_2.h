@@ -72,8 +72,8 @@ public:
   Value
   operator()( int r, int c) const
   {
-    CGAL_optimisation_precondition( r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition( c >= 0 && c < number_of_columns());
+    CGAL_precondition( r >= 0 && r < number_of_rows());
+    CGAL_precondition( c >= 0 && c < number_of_columns());
     return Base::operator()( r, number_of_columns() - 1 - c);
   }
 };
@@ -145,7 +145,7 @@ rectangular_p_center_2_binary_search(
 // --------------
 //
 {
-  CGAL_optimisation_precondition( f != l);
+  CGAL_precondition( f != l);
 
   // typedefs:
   typedef typename Traits::FT    FT;
@@ -171,7 +171,7 @@ rectangular_p_center_2_binary_search(
       c_diffs.push_back( CGAL_NTS abs( i->x() - j->x()));
       c_diffs.push_back( CGAL_NTS abs( i->y() - j->y()));
     }
-  CGAL_optimisation_assertion(
+  CGAL_assertion(
     c_diffs.size() == pierce_it.number_of_points() *
     (pierce_it.number_of_points() - 1));
 
@@ -195,12 +195,12 @@ rectangular_p_center_2_binary_search(
       b = c + 1;
     }
   } // while ( e > b)
-  CGAL_optimisation_assertion( e == b);
+  CGAL_assertion( e == b);
 
   // return the result:
   r = c_diffs[e];
   OutputIterator o_return( pierce_it( r, o, ok));
-  CGAL_optimisation_assertion( ok);
+  CGAL_assertion( ok);
   return o_return;
 
 } // rectangular_p_center_2_binary_search( ... )
@@ -221,7 +221,7 @@ rectangular_p_center_2_matrix_search(
   const MatrixOperator& mop)
 {
   std::size_t number_of_points( iterator_distance( f, l));
-  CGAL_optimisation_precondition( number_of_points > 0);
+  CGAL_precondition( number_of_points > 0);
 
   using std::minus;
   using std::sort;
@@ -296,7 +296,7 @@ rectangular_p_center_2_matrix_search(
 
   // return result:
   OutputIterator o_return(pierce_it(r, o, ok));
-  CGAL_optimisation_assertion(ok);
+  CGAL_assertion(ok);
   return o_return;
 
 } // P_center_matrix_search
@@ -316,7 +316,6 @@ rectangular_p_center_2_matrix_search(
   const Traits& t)
 {
   typedef typename Traits::FT FT;
-  using std::minus;
 
   return rectangular_p_center_2_matrix_search(
     f,
@@ -325,7 +324,9 @@ rectangular_p_center_2_matrix_search(
     r,
     pf,
     t,
-    boost::bind(Max<FT>(), 0, boost::bind(minus<FT>(), _1, _2)));
+    std::function<FT(const FT&, const FT&)>(
+      [](const FT& a, const FT& b) { return Max<FT>()(0, std::minus<FT>()(a,b)); }
+    ));
 
 } // Pcenter_matrix_search( ... )
 
@@ -340,7 +341,7 @@ rectangular_p_center_matrix_search_2(
   FT& r,
   int p)
 {
-  CGAL_optimisation_precondition(p >= 2 && p < 5);
+  CGAL_precondition(p >= 2 && p < 5);
   typename std::iterator_traits<ForwardIterator>::value_type::R t;
   if (p == 2)
     return rectangular_p_center_2_matrix_search(
@@ -400,7 +401,7 @@ rectangular_p_center_2(ForwardIterator f,
                        int p,
                        Traits& t)
 {
-  CGAL_optimisation_precondition(p >= 2 && p < 5);
+  CGAL_precondition(p >= 2 && p < 5);
   r=0;
   if ( !internal::is_distance_greater_than_p(f,l,p) ) return std::copy(f,l,o);
 
@@ -421,7 +422,7 @@ rectangular_p_center_2(ForwardIterator f,
                        FT& r,
                        int p)
 {
-  CGAL_optimisation_precondition(p >= 2 && p < 5);
+  CGAL_precondition(p >= 2 && p < 5);
   typedef typename
     std::iterator_traits< ForwardIterator >::value_type::R R;
   Rectangular_p_center_default_traits_2< R > t;

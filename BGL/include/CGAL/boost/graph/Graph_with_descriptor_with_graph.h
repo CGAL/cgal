@@ -727,7 +727,7 @@ struct Graph_with_descriptor_with_graph_property_map {
   template <typename Descriptor>
   friend
   void
-  put(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d,   const value_type& v)
+  put(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d, const value_type& v)
   {
     CGAL_assertion(gpm.graph!=nullptr);
     CGAL_assertion(d.graph == gpm.graph);
@@ -747,9 +747,9 @@ struct Graph_with_descriptor_with_graph_property_map<Graph, PM, boost::lvalue_pr
   Graph* graph;
   PM pm;
 
-  value_type& operator[](key_type& k) const
+  reference operator[](key_type& k) const
   {
-      return get(*this, k);
+    return get(*this, k);
   }
 
   Graph_with_descriptor_with_graph_property_map()

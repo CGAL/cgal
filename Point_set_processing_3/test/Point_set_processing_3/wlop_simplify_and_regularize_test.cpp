@@ -15,7 +15,7 @@
 
 // This package
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <vector>
 #include <string>
@@ -117,23 +117,18 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // File name is:
-    std::string input_filename  = argv[i];
-
     // Reads the point set file in points[].
     std::vector<Point> points;
-    std::cerr << "Opening " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Opening " << argv[i] << " for reading..." << std::endl;
 
     // If XYZ file format:
-    std::ifstream stream(input_filename.c_str());
-    if(stream &&
-       CGAL::read_xyz_points(stream, std::back_inserter(points)))
+    if(CGAL::IO::read_points(argv[i], std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
     else
     {
-      std::cerr << "Error: cannot read file " << input_filename << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }

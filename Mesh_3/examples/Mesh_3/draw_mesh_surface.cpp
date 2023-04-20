@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   Mesh mesh;
   std::ifstream in1((argc>1)?argv[1]:"data/elephant.off");
   std::string comments;
-  CGAL::read_ply(in1, mesh, comments);
+  CGAL::IO::read_PLY(in1, mesh, comments);
   std::cerr << "comments: " << comments << '\n';
 
   return draw_c3t3_surface_from_surface_mesh(mesh);

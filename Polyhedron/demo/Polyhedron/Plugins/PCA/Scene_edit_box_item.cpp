@@ -263,7 +263,7 @@ struct Scene_edit_box_item_priv{
 
 Scene_edit_box_item::Scene_edit_box_item()
 {
-  d = NULL;
+  d = nullptr;
 }
 Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
 {
@@ -772,6 +772,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       int type, picked;
       d->picked_pixel = e->pos();
       d->picking(type, picked, viewer);
+      viewer->makeCurrent();
       if(type !=-1)
       {
         bool found = false;
@@ -809,12 +810,14 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
             d->selected_vertices.push_back(d->faces[picked].vertices[i]);
           Kernel::Point_3 a1(d->faces[picked].vertices[1]->position()), a0(d->faces[picked].vertices[0]->position())
               ,a3(d->faces[picked].vertices[3]->position());
-          QVector3D a(a1.x()-a0.x(), a1.y()-a0.y(),a1.z()-a0.z()),b(a3.x()-a0.x(), a3.y()-a0.y(),a3.z()-a0.z());
-          QVector3D n = QVector3D::crossProduct(a,b);
+          Kernel::Vector_3 a = a1 - a0,
+                           b = a3 - a0;
+          Kernel::Vector_3 n = CGAL::cross_product(a,b);
 
           d->remodel_frame->setConstraint(&d->constraint);
           d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
           d->constraint.setTranslationConstraintDirection(CGAL::qglviewer::Vec(n.x(), n.y(), n.z()));
+
         }
 
         viewer->setManipulatedFrame(d->remodel_frame);
@@ -938,6 +941,7 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
   Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
   {
     int id = selected_vertex->id;
+    CGAL_assume(id<8);
     *selected_vertex->x = applyX(id, last_pool[id][0], dir.x());
     *selected_vertex->y = applyY(id, last_pool[id][1], dir.y());
     *selected_vertex->z = applyZ(id, last_pool[id][2], dir.z());
@@ -1046,11 +1050,7 @@ void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *vie
   viewer->setBackgroundColor(::Qt::white);
   draw_picking(viewer);
 
-  int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
-  const static int dataLength = rowLength * deviceHeight;
-  GLubyte* buffer = new GLubyte[dataLength];
-  // Qt uses upper corner for its origin while GL uses the lower corner.
-  viewer->glReadPixels(picked_pixel.x(), deviceHeight-1-picked_pixel.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+  const auto buffer = read_pixel_as_ubyte_rgba(picked_pixel, viewer, viewer->camera());
   //decode ID and pick (don't forget the case nothing is picked
   if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
   {
@@ -1077,7 +1077,6 @@ void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *vie
       }
     }
   }
-  delete[] buffer;
   viewer->setBackgroundColor(bgColor);
   fbo->release();
   delete fbo;

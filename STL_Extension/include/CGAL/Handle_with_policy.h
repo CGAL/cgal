@@ -275,11 +275,11 @@ public:
     //! the virtual destructor is essential for proper memory management here.
     virtual ~Reference_counted_hierarchy() {}
     //! can be used to minimize memory consumption once it is known that this
-    //! representation is not used anymore and only needed to keep a fowarding
+    //! representation is not used anymore and only needed to keep a forwarding
     //! pointer. One example would be cleaning up dynamically allocated
     //! data, or another example would be overwriting a \c leda::real with
     //! a default constructed value to free its old expression tree. However,
-    //! this function can also be savely ignored and kept empty.
+    //! this function can also be safely ignored and kept empty.
     virtual void clear() {}
 };
 
@@ -396,7 +396,7 @@ public:
      * of representations.
      *
      * The base classes can be used directly, but this
-     * rebind mechamism allows the implementation of handle-rep classes
+     * rebind mechanism allows the implementation of handle-rep classes
      * that are parameterized with the policy class only and adapt to
      * the necessary base class.
      */
@@ -456,7 +456,7 @@ public:
      * of representations.
      *
      * The base classes can be used directly, but this
-     * rebind mechamism allows the implementation of handle-rep classes
+     * rebind mechanism allows the implementation of handle-rep classes
      * that are parameterized with the policy class only and adapt to
      * the necessary base class.
      */
@@ -589,7 +589,7 @@ public:
      * of representations.
      *
      * The base classes can be used directly, but this
-     * rebind mechamism allows the implementation of handle-rep classes
+     * rebind mechanism allows the implementation of handle-rep classes
      * that are parameterized with the policy class only and adapt to
      * the necessary base class.
      */
@@ -851,7 +851,7 @@ protected:
     //! constructor used for class hierarchies of representations, where
     //! the handle class derived from this handle creates the different
     //! representations itself with the \c new operator. Except for this
-    //! constructor, the the one with the \c Use_with_initialize_with
+    //! constructor, the one with the \c Use_with_initialize_with
     //! argument, and the single argument template constructor no other
     //! constructor will work for class hierarchies of representations.
     Handle_with_policy( Rep* p) : ptr_( p) {
@@ -1138,7 +1138,7 @@ template <class T_, class Allocator_>
 class Handle_with_policy<T_, Handle_policy_in_place, Allocator_> {
 public:
 
-    //! first template paramter
+    //! first template parameter
     typedef T_ Handled_type;
 
     //! the handle type itself.

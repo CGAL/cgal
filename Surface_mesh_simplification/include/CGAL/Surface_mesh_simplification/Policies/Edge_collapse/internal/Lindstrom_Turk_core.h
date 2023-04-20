@@ -264,7 +264,7 @@ compute_placement()
   // 'Ai' is a (row) vector and 'bi' a scalar.
   //
   // The vertex is completely determined with 3 such constraints,
-  // so is the solution to the folloing system:
+  // so is the solution to the following system:
   //
   //  A.r0(). * v = b0
   //  A1 * v = b1
@@ -491,7 +491,7 @@ add_shape_optimization_constraints(const vertex_descriptor_vector& link)
            0.0, 0.0, s);
 
   Vector c = NULL_VECTOR;
-  for(const vertex_descriptor v : link)
+  for(const vertex_descriptor& v : link)
     c = c + (ORIGIN - get_point(v));
 
   CGAL_SMS_LT_TRACE(1,"  Adding shape optimization constraint. Shape vector: " << xyz_to_string(c));
@@ -540,7 +540,7 @@ compute_shape_cost(const Point& p,
                    const vertex_descriptor_vector& link)
 {
   FT rCost(0);
-  for(const vertex_descriptor v : link)
+  for(const vertex_descriptor& v : link)
     rCost += squared_distance(p, get_point(v));
 
   return rCost;

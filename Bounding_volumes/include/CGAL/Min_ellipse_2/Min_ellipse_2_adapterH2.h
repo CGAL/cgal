@@ -18,7 +18,7 @@
 
 // includes
 #  include <CGAL/Homogeneous/ConicHPA2.h>
-#  include <CGAL/Optimisation/assertions.h>
+#  include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -243,7 +243,7 @@ class _Min_ellipse_2_adapterH2__Ellipse {
                 int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
                 return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
           default:
-            CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+            CGAL_assertion( ( n_boundary_points >= 0) &&
                                          ( n_boundary_points <= 5) ); }
         // keeps g++ happy
         return( CGAL::Bounded_side( 0));
@@ -306,7 +306,7 @@ class _Min_ellipse_2_adapterH2__Ellipse {
                     || (    ( conic1 == e.conic2)
                          && ( conic2 == e.conic1)));
           default:
-            CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+            CGAL_assertion(    ( n_boundary_points >= 0)
                                          && ( n_boundary_points <= 5)); }
         // keeps g++ happy
         return( false);
@@ -337,7 +337,7 @@ operator << ( std::ostream& os,
     const char*  sep  = empty;
     const char*  tail = empty;
 
-    switch ( CGAL::get_mode( os)) {
+    switch ( CGAL::IO::get_mode( os)) {
       case CGAL::IO::PRETTY:
         head = pretty_head;
         sep  = pretty_sep;
@@ -349,8 +349,8 @@ operator << ( std::ostream& os,
       case CGAL::IO::BINARY:
         break;
       default:
-        CGAL_optimisation_assertion_msg( false,
-                                        "CGAL::get_mode( os) invalid!");
+        CGAL_assertion_msg( false,
+                                        "CGAL::IO::get_mode( os) invalid!");
         break; }
 
     os << head << e.n_boundary_points;
@@ -382,11 +382,11 @@ std::istream&
 operator >> ( std::istream& is,
               CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>& e)
 {
-    switch ( CGAL::get_mode( is)) {
+    switch ( CGAL::IO::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
         std::cerr << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
 
       case CGAL::IO::ASCII:
@@ -413,7 +413,7 @@ operator >> ( std::istream& is,
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::mode invalid!");
         break; }
 

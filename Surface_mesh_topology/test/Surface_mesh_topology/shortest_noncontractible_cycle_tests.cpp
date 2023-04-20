@@ -30,7 +30,7 @@ using Polyhedron = CGAL::Polyhedron_3<Kernel>;
 struct Weight_functor_for_GM {
   using Weight_t = unsigned int;
   Weight_functor_for_GM(const GMap_2& gm, GMap_2::size_type amark) : m_gm(gm), m_mark(amark) {}
-  unsigned int operator() (GMap_2::Dart_const_handle dh) const {
+  unsigned int operator() (GMap_2::Dart_const_descriptor dh) const {
     if (m_gm.is_marked(dh, m_mark)) return 3;
     else return 4;
   }
@@ -55,7 +55,7 @@ template <class LCC_3>
 struct Weight_functor_for_LCC {
   Weight_functor_for_LCC(const LCC_3& lcc) : m_lcc(lcc) { }
   using Weight_t = double;
-  Weight_t operator()(typename LCC_3::Dart_const_handle dh) const {
+  Weight_t operator()(typename LCC_3::Dart_const_descriptor dh) const {
     auto x = m_lcc.point_of_vertex_attribute(m_lcc.vertex_attribute(dh));
     auto y = m_lcc.point_of_vertex_attribute(m_lcc.vertex_attribute(m_lcc.next(dh)));
     return CGAL::sqrt(CGAL::squared_distance(x, y));
@@ -65,14 +65,14 @@ private:
 };
 
 bool get_data(Surface_mesh& sm) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in(CGAL::data_file_path("meshes/3torus.off"));
   if (in.fail()) return false;
   in >> sm;
   return true;
 }
 
 bool get_data(Polyhedron& sm) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in(CGAL::data_file_path("meshes/3torus.off"));
   if (in.fail()) return false;
   in >> sm;
   return true;
@@ -80,7 +80,7 @@ bool get_data(Polyhedron& sm) {
 
 template <class T>
 bool get_data(T& lcc) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in(CGAL::data_file_path("meshes/3torus.off"));
   if (in.fail()) return false;
   CGAL::load_off(lcc, in);
   return true;
@@ -93,12 +93,12 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
     return false;
   }
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_CMap_2> cst1(lcc);
-  LCC_for_CMap_2::Dart_handle root1 = lcc.darts().begin();
+  LCC_for_CMap_2::Dart_descriptor root1 = lcc.darts().begin();
   Point R = lcc.point_of_vertex_attribute(lcc.vertex_attribute(root1));
   CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_non_contractible_cycle_with_base_point(root1);
   for (std::size_t i = 0; i < cycle1.length(); ++i) {
     auto e = cycle1[i];
-    if (e == NULL) {
+    if (e == nullptr) {
       std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: NULL dart handle found in cycle1\n";
       return false;
     }
@@ -120,7 +120,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
   CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle2 = cst2.compute_shortest_non_contractible_cycle_with_base_point(*root2);
   for (std::size_t i = 0; i < cycle2.length(); ++i) {
     auto e = cycle2[i];
-    if (e == NULL) {
+    if (e == nullptr) {
       std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: NULL dart handle found in cycle\n";
       return false;
     }
@@ -142,7 +142,7 @@ bool edge_width_in_unweighted_polyhedron() {
   CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle = cst.compute_edge_width();
   for (std::size_t i = 0; i < cycle.length(); ++i) {
     auto e = cycle[i];
-    if (e == NULL) {
+    if (e == nullptr) {
       std::cerr << "Fail edge_width_in_unweighted_polyhedron: NULL dart handle found in cycle\n";
       return false;
     }
@@ -153,7 +153,7 @@ bool edge_width_in_unweighted_polyhedron() {
 bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
   // Sewing the Petersen graph embedded in a Klein bottle surface
   GMap_2 gm;
-  std::vector<GMap_2::Dart_handle> faces;
+  std::vector<GMap_2::Dart_descriptor> faces;
   for (int i = 0; i < 6; ++i) faces.push_back(gm.make_combinatorial_polygon(5));
   gm.sew<2>(faces[0], faces[1]); // 1-2
   gm.sew<2>(gm.alpha<1>(faces[1]), gm.alpha<1>(faces[2])); // 1-6
@@ -364,7 +364,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
     LCC_for_GMap_2::size_type belong_to_cycle = lcc_gm.get_new_mark();
     for (std::size_t i = 0; i < cycle.length(); ++i) {
       auto e = cycle[i];
-      if (e == NULL) {
+      if (e == nullptr) {
         std::cerr << "Fail unsew_edge_width_repeatedly_in_unweighted_gmap: NULL dart handle found in cycle\n";
         return false;
       }

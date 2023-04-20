@@ -39,7 +39,7 @@ void create_path_3(Path_on_surface<SM>& p)
 int main(int argc, char* argv[])
 {
   bool draw=(argc>1?std::string(argv[1])=="-draw":false);
-  std::ifstream in("data/double-torus.off");
+  std::ifstream in(CGAL::data_file_path("meshes/double-torus-example.off"));
   if (!in.is_open())
   {
     std::cout<<"ERROR reading file data/double-torus.off"<<std::endl;

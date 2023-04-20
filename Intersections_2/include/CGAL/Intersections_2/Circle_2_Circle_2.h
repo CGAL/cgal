@@ -17,19 +17,19 @@
 #ifndef CGAL_INTERSECTIONS_2_CIRCLE_2_CIRCLE_2_H
 #define CGAL_INTERSECTIONS_2_CIRCLE_2_CIRCLE_2_H
 
-#include <CGAL/Circle_2.h>
-#include <CGAL/squared_distance_2_1.h>
-
+#include <CGAL/Distance_2/Point_2_Point_2.h>
 #include <CGAL/Intersection_traits_2.h>
+
+#include <CGAL/Circle_2.h>
 
 namespace CGAL {
 namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Circle_2 & circ1,
-                  const typename K::Circle_2& circ2,
-                  const K&)
+typename K::Boolean do_intersect(const typename K::Circle_2& circ1,
+                                 const typename K::Circle_2& circ2,
+                                 const K&)
 {
   typedef typename K::FT FT;
 

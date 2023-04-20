@@ -20,12 +20,10 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -44,7 +42,7 @@ class Vector_2 : public R_::Kernel_base::Vector_2
   typedef typename R_::Kernel_base::Vector_2  RVector_2;
 
   typedef Vector_2                    Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Vector_2>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Vector_2>::value));
 
 public:
 
@@ -71,6 +69,9 @@ public:
   Vector_2(const RVector_2& v)
       : RVector_2(v) {}
 
+  Vector_2(RVector_2&& v)
+      : RVector_2(std::move(v)) {}
+
   Vector_2(const Point_2& a, const Point_2& b)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), a, b)) {}
 
@@ -94,7 +95,7 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
   friend void swap(Self& a, Self& b)
-#ifdef __cpp_lib_is_swappable
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
     noexcept(std::is_nothrow_swappable_v<Rep>)
 #endif
   {
@@ -103,26 +104,26 @@ public:
   }
 
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+  decltype(auto)
   x() const
   {
     return R().compute_x_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -138,26 +139,26 @@ public:
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_2_object()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_hy_2(Vector_2)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2(Vector_2)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );
@@ -291,7 +292,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Vector_2<R>& v, const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << v.x() << ' ' << v.y();
     case IO::BINARY :
@@ -307,7 +308,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Vector_2<R>& v, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << v.hx() << ' ' << v.hy() << ' ' << v.hw();
@@ -337,9 +338,9 @@ std::istream&
 extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(x) >> iformat(y);
+        is >> IO::iformat(x) >> IO::iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
@@ -348,7 +349,7 @@ extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -362,7 +363,7 @@ std::istream&
 extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hw;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
         is >> hx >> hy >> hw;
@@ -375,7 +376,7 @@ extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   v = Vector_2<R>(hx, hy, hw);

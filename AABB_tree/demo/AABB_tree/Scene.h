@@ -86,7 +86,7 @@ public:
 
 private:
     // member data
-    QOpenGLFunctions_2_1 *gl;
+    QOpenGLFunctions *gl;
     Bbox m_bbox;
     Polyhedron *m_pPolyhedron;
     std::list<Point> m_points;

@@ -69,12 +69,12 @@ void Viewer::init()
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
     /* Add mouse and key description */
-    setKeyDescription( Qt::CTRL + Qt::Key_G, tr("Generate points") );
-    setKeyDescription( Qt::CTRL + Qt::Key_O, tr("Load points") );
-    setKeyDescription( Qt::CTRL + Qt::Key_S, tr("Save points") );
-    setKeyDescription( Qt::CTRL + Qt::Key_Comma, tr("Preference") );
-    setKeyDescription( Qt::CTRL + Qt::Key_H, tr("Hide Kernel Demo") );
-    setKeyDescription( Qt::CTRL + Qt::Key_Q, tr("Quit Kernel Demo") );
+    setKeyDescription( Qt::CTRL, Qt::Key_G, tr("Generate points") );
+    setKeyDescription( Qt::CTRL, Qt::Key_O, tr("Load points") );
+    setKeyDescription( Qt::CTRL, Qt::Key_S, tr("Save points") );
+    setKeyDescription( Qt::CTRL, Qt::Key_Comma, tr("Preference") );
+    setKeyDescription( Qt::CTRL, Qt::Key_H, tr("Hide Kernel Demo") );
+    setKeyDescription( Qt::CTRL, Qt::Key_Q, tr("Quit Kernel Demo") );
     setKeyDescription( Qt::Key_Return,
                        tr("Insert new point to triangulation in <u>Input-Point</u> mode") );
     setKeyDescription( Qt::Key_Escape,
@@ -476,7 +476,7 @@ void Viewer::compute_elements()
         drawVertex( m_pScene->m_vhArray.at( m_vidMoving )->point(), pos_movingPoint );
     }//end-if-v
     // Draw the nearest neighbor
-    if( m_nearestNb != NULL ) {
+    if( m_nearestNb != nullptr ) {
         drawVertex( m_queryPt, pos_queryPoint);
         drawVertex( m_nearestNb->point(), pos_nearest_neighbor);
     }
@@ -621,7 +621,7 @@ void Viewer::initialize_buffers()
         buffers[7].release();
         vao[7].release();
 
-        //Querry Point
+        //Query Point
         vao[8].bind();
         buffers[8].bind();
         buffers[8].allocate(pos_queryPoint->data(), pos_queryPoint->size()*sizeof(float));
@@ -863,7 +863,7 @@ void Viewer::initialize_buffers()
         }
         vao[16].release();
 
-        //Querry point Sphere
+        //Query point Sphere
         vao[17].bind();
         buffers[8].bind();
         centerLocation[0] = rendering_program_spheres.attributeLocation("center");
@@ -1676,7 +1676,7 @@ void Viewer::drawWithNames()
     buffers[33].bind();
     buffers[33].allocate(buf, 3*sizeof(GLfloat));
     rendering_program.enableAttributeArray("vertex");
-    rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+    rendering_program.setAttributeArray("vertex",GL_FLOAT,nullptr,3);
     buffers[33].release();
     vao[3].release();
 
@@ -1696,9 +1696,9 @@ void Viewer::drawWithNames()
     rendering_program.release();
 
     //read depth and store in map
-    GLfloat depth = 1.0f;
-    glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-    if (depth != 1.0)
+    GLfloat depth = 2.0f;
+    depth = read_depth_under_pixel(picking_pos, this, this->camera());
+    if (depth < 2.0f)
     {
       picked_IDs[depth] = i;
     }
@@ -1721,7 +1721,7 @@ void Viewer::drawWithNames()
         buffers[33].bind();
         buffers[33].allocate(buf, 3*sizeof(GLfloat));
         rendering_program.enableAttributeArray("vertex");
-        rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+        rendering_program.setAttributeArray("vertex",GL_FLOAT,nullptr,3);
         buffers[33].release();
 
         QMatrix4x4 mvpMatrix;
@@ -1740,9 +1740,9 @@ void Viewer::drawWithNames()
         rendering_program.release();
 
         //read depth and store in map
-        GLfloat depth = 1.0f;
-        glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        if (depth != 1.0)
+        GLfloat depth = 2.0f;
+        depth = read_depth_under_pixel(picking_pos, this, this->camera());
+        if (depth < 2.0f)
         {
           picked_IDs[depth] = -1;
         }
@@ -1754,7 +1754,7 @@ void Viewer::beginSelection(const QPoint &point)
 {
   picking_pos = point;
   CGAL::QGLViewer::beginSelection(point);
-};
+}
 void Viewer::endSelection(const QPoint& p)
 {
   CGAL::QGLViewer::endSelection(p);
@@ -2381,7 +2381,7 @@ void Viewer::toggleIncremental(bool on) {
             }//end-if-pts
             // sorts points in a way that improves space locality
             CGAL::spatial_sort( m_incrementalPts.begin(), m_incrementalPts.end() );
-            // set the current to "hightlight the new point"
+            // set the current to "highlight the new point"
             m_curStep = INIT;
         }/* else resume play */
 
@@ -2472,7 +2472,7 @@ void Viewer::incremental_insert() {
         }//end-for
         // erase existing vertices
         initClean();
-        // set the current to "hightlight the new point"
+        // set the current to "highlight the new point"
         m_curStep = INIT;
     }
 

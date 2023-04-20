@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
       exit(-1);
     }
 
-  //initalize the in_points container
+  //initialize the in_points container
   double x, y, z;
   std::vector<DPoint> in_points;
   while (inFile >> x) {
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   monge_form = monge_fit(in_points.begin(), in_points.end(), d_fitting, d_monge);
 
   //OUTPUT on std::cout
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
   std::cout << "vertex : " << in_points[0] << std::endl
             << "number of points used : " << in_points.size() << std::endl
             << monge_form;

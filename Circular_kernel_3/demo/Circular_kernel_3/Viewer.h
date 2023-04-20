@@ -12,7 +12,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 class Viewer : public CGAL::QGLViewer
 {
 public:
-    Viewer(QWidget* parent = 0);
+    Viewer(QWidget* parent = nullptr);
+    ~Viewer();
   GLuint dl_nb;
 protected :
   virtual void draw();

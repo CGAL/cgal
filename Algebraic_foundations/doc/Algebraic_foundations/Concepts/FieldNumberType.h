@@ -7,14 +7,13 @@ The concept `FieldNumberType` combines the requirements of the concepts
 A model of `FieldNumberType` can be used as a template parameter
 for Cartesian kernels.
 
-\cgalRefines `Field`
-\cgalRefines `RealEmbeddable`
+\cgalRefines{Field,RealEmbeddable}
 
 \cgalHasModel float
 \cgalHasModel double
 \cgalHasModel `CGAL::Gmpq`
 \cgalHasModel `CGAL::Interval_nt`
-\cgalHasModel \ref CGAL::Interval_nt_advanced
+\cgalHasModel `CGAL::Interval_nt_advanced`
 \cgalHasModel `CGAL::Lazy_exact_nt<FieldNumberType>`
 \cgalHasModel `CGAL::Quotient<RingNumberType>`
 \cgalHasModel `leda_rational`

@@ -168,7 +168,7 @@ Section \ref bso_secbso_gen.
 
 The basic components of our package are the free (global) functions
 `complement()` that accepts a single `Polygon_2` object, and
-`intersection()`, `join()`,\cgalFootnote{The function that computes the union of two polygons is called `join()`, since the word `union` is reserved in \cpp.} `difference()`,
+`intersection()`, `join()`,\cgalFootnote{The function that computes the union of two polygons is called \cgalFootnoteCode{join()}, since the word \cgalFootnoteCode{union} is reserved in \cpp.} `difference()`,
 `symmetric_difference()` and the predicate `do_intersect()`
 that accept two `Polygon_2` objects as their input. We explain how
 these functions should be used through several examples in the
@@ -185,9 +185,9 @@ two input polygons. The example listed below tests whether the two
 triangles depicted on the right intersect. It uses, as do the other
 example programs in this chapter, the auxiliary header file
 `bso_rational_nt.h`, which defines the type `Number_type` as
-<span class="textsc">Gmp</span>'s rational number-type (`Gmpq`), or as the
+\gmp's rational number-type (`Gmpq`), or as the
 number type `Quotient<MP_Float>` that is included in the support
-library of \cgal, based on whether the <span class="textsc">Gmp</span> library is installed
+library of \cgal, based on whether the \gmp library is installed
 or not. It also uses the function `print_polygon.h` listed above,
 which is located in the header file `print_utils.h`.
 
@@ -309,7 +309,7 @@ of several disconnected components, they all accept an output iterator
 output polygons to its associated container.
 </UL>
 
-\subsection bso_sssecex_simple_bops Example - Joining and Intersecting Simple Polygons
+\subsection bso_sssecex_simple_bops Joining and Intersecting Simple Polygons
 
 The following example demonstrates the usage of the free functions
 `join()` and `intersection()` for computing the union and the
@@ -322,14 +322,17 @@ the header file `print_utils.h` under the examples folder.
 
 \subsection bso_sssecpwh_bops Operations on Polygons with Holes
 
-We have demonstrated that free functions that perform boolean set operations on simple polygons may output polygons with holes. In addition to these functions, the Boolean set-operations package provides the following overridden free functions that accept
-`General_polygon_with_holes_2` objects as their input -
-`complement()`, `intersection()`, `join()`, `difference()`,
-`symmetric_difference()` and `do_intersect()` The prototypes of
-most functions is the same as of their simpler counterparts that operate
-on simple polygons. The only exception is `complement(P, oi)`, which
-outputs a range of polygons with holes that represents the complement
-of the polygon with holes \f$ P\f$.
+We have demonstrated that free functions that perform Boolean set
+operations on simple polygons may output polygons with holes. In
+addition to these functions, the Boolean set-operations package
+provides the following overridden free functions that accept
+`General_polygon_with_holes_2` objects as their input: `complement()`,
+`intersection()`, `join()`, `difference()`, `symmetric_difference()`,
+and `do_intersect()` The prototypes of most functions are the same as
+of their simpler counterparts that operate on simple polygons. The
+only exception is `complement(P, oi)`, which outputs a range of
+polygons with holes that represents the complement of the polygon with
+holes \f$ P\f$.
 
 \image html symm_diff.png
 \image latex symm_diff.png
@@ -356,12 +359,11 @@ vertical walls).
 
 \subsection bso_ssecmain_component Operating on Polygon Sets
 
-We argue that the result of a regularized operations on two polygons
-(or polygons with holes) \f$ P\f$ and \f$ Q\f$ is typically a collection of
-several disconnected polygons with holes. It is only natural to
-represent such a collection in terms of a class, making it possible to
-operate on the set resulting from computing, for example, \f$ P \setminus
-Q\f$.
+The result of a regularized operation on two polygons (or polygons
+with holes) \f$ P\f$ and \f$ Q\f$ is typically a collection of several
+disconnected polygons with holes. It is only natural to represent such
+a collection in terms of a class, making it possible to operate on the
+set resulting from computing, for example, \f$ P \setminus Q\f$.
 
 A central component in the Boolean set-operations package is the
 `Polygon_set_2<Kernel, Container, Dcel>` class-template. An instance of
@@ -371,7 +373,7 @@ to represent this point set in the plane as a planar arrangement; see
 Chapter \ref chapterArrangement_on_surface_2 "2D Arrangements". The instantiated `Dcel`
 type is used to represent the underlying internal arrangement. It must model
 the concept `GeneralPolygonSetDcel`, and defaults to `Gps_default_dcel`.
-You can override this default, with a different <span class="textsc">Dcel</span> class, typically
+You can override this default, with a different \dcel class, typically
 an extension of the default. Overriding the default is necessary only if
 you intend to obtain the underlying internal arrangement and process it further.
 
@@ -382,31 +384,35 @@ sequence of operations that were applied in order to arrive at it.
 
 In addition, a polygon-set object can be constructed from a single
 polygon object or from a polygon-with-holes object. Once constructed,
-it is possible to insert new polygons (or polygons with holes)
-into the set using the `insert()` method, as long as the inserted
-polygons and the existing polygons in the set are disjoint.
-The `Polygon_set_2` class also provides access functions for
-accessing the polygons with holes it contains, and a few queries. The
-most important query is `S.oriented_side(q)`, which determined
-whether the query point \f$ q\f$ is contained in the interior of the set
-\f$ S\f$, lies on the boundary of the set, or neither.
+it is possible to insert new polygons (or polygons with holes) into
+the set using the `insert()` method, as long as the inserted polygons
+and the existing polygons in the set are disjoint.  The
+`Polygon_set_2` class also provides access functions for obtaining the
+polygons with holes it contains, and a few queries. An important query
+is `S.oriented_side(q)`, which determined whether the query point \f$
+q\f$ is contained in the interior of the set \f$ S\f$, lies on the
+boundary of the set, or neither.
 
-The `General_polygon_set_2` class defines the predicate
-`do_intersect()` and the methods `complement()`, `intersection()`,
-`join()`, `difference()` and `symmetric_difference()` as member
-functions. The operands to these functions may be simple polygons
-(`Polygon_2` object), polygons with holes
-(`General_polygon_with_holes_2` objects), or polygon sets
-(`General_polygon_set_2` objects). Thus, each of the function
-mentioned above is actually realized by a set overriding member
-functions.
+Similar to the `Polygon_set_2` class template, which applies to linear
+polygons (or polygons with holes), the `General_polygon_set_2` class
+applies to general polygons (or general polygons with holes). Each of
+these class templates defines the predicate `do_intersect()` and the
+methods `complement()`, `intersection()`, `join()`, `difference()` and
+`symmetric_difference()` as member functions. The operands to these
+functions may be simple polygons (`Polygon_2` or `General_polygon_2`
+objects), polygons with holes (`Polygon_with_holes_2` or
+`General_polygon_with_holes_2` objects), or polygon sets
+(`cpolygon_set_2` or `General_polygon_set_2` objects). Each of the
+aforementioned free functions is actually realized by a set overriding
+member function.
 
-Member functions of the `General_polygon_set_2` that perform
-Boolean set-operations come in two flavors: for example, `S.join(P, Q)`
-computes the union of \f$ P\f$ and \f$ Q\f$ and assigned the result to \f$ S\f$, while
+member functions of the `Polygon_set_2`
+(resp. `General_polygon_set_2`) that perform Boolean set-operations
+come in two flavors: for example, `S.join(P, Q)` computes the union of
+\f$ P\f$ and \f$ Q\f$ and assigned the result to \f$ S\f$, while
 `S.join(P)` performs the operation \f$ S \longleftarrow S \cup P\f$.
-Similarly, `S.complement(P)` sets \f$ S\f$ to be the complement of \f$ P\f$,
-while `S.complement()` simply negates the set \f$ S\f$.
+Similarly, `S.complement(P)` sets \f$ S\f$ to be the complement of \f$
+P\f$, while `S.complement()` assigns \f$ S\f$ with its complement.
 
 \subsection bso_sssecsequence A Sequence of Set Operations
 
@@ -500,11 +506,11 @@ arrangement. Similarly, it is also possible to aggregately compute the
 intersection \f$ \bigcap_{i=1}^{m}{P_i}\f$ of a set of input polygons.
 
 Our package provides the free overloaded functions `join()` and
-`intersection()` that aggregately compute the union and the intersection
-of a range of input polygons. There is no restriction on the polygons in the
-range - naturally, they may intersect each other.
-The package provides the overloaded free function
-\ref do_intersect "do_intersect(begin, end)" that determines whether the polygons in the
+`intersection()` that aggregately compute the union and the
+intersection of a range of input polygons. There is no restriction on
+the polygons in the range; naturally, they may intersect each other.
+The package provides the overloaded free function \ref do_intersect
+"do_intersect(begin, end)" that determines whether the polygons in the
 range defined by the two input iterators `[begin, end)` intersect.
 
 The class `General_polygon_set_2` also provides equivalent member
@@ -518,20 +524,86 @@ Polygon_set_2 S;
 S.join (begin, end);
 \endcode
 
+\subsection bso_ssectraits_sel Traits Selection
+
+All the free function-templates that apply Boolean set operations
+accept an optional traits argument; see next Section for more
+information. If a traits class is not provided, a default one that can
+handle the type of the curves that comprise the boundaries of the
+input polygons is selected. You somehow can influence this selection
+using a template parameter as described below.
+
+The set of free function-templates that handle (linear) polygons
+include overloaded versions that are parameterized by the template
+parameter `UsePolylines`. For each such function template the
+`UsePolylines` template parameter determmines whether to treat the
+boundary of each input (linear) polygon as a cyclic sequence of single
+(\f$x\f$-monotone) segments or as a cyclic sequence of
+(\f$x\f$-monotone) polylines. By default, `UsePolylines` is set to
+`CGAL::Tag_true`, which implies that the boundary of the each input
+(linear) polygon is treated as a cyclic sequence of (\f$x\f$-monotone)
+polylines. In most cases this behaviour is superior (that is, less
+time-consuming) because the number of events handled as part of the
+execution of the plane-sweep algorithm is reduced. In cases where the
+boundaries of the input polygons frequently intersect, treating them
+as polylines may become less efficient. In these cases substitute the
+`UsePolylines` template parameter with `CGAL::Tag_false` to restore
+the original behaviour (where the boundary of each input linear
+polygon is treated as a cyclic sequence of single \f$x\f$-monotone
+segments).
+
+\cgalAdvancedBegin
+
+A Boolean set operation can be apppplied on general polygons (or
+general polygons with holes) directly using an instance of the class
+template `General_polygon_set_2` or by using a free function, which
+internally uses an instance of the class template
+`General_polygon_set_2`. Similarly, a Boolean set operation can be
+apppplied on linear polygons (or linear polygons with holes) directly
+using an instance of the class template `Polygon_set_2` or by using a
+free function, which internally uses an instance of the class template
+`Polygon_set_2` by default. An instance of the `Polygon_set_2` class
+template treats every edge of the polygon as a single
+(\f$x\f$-monotone) segment, as it utilizes, in turn, the
+`Arr_segment_traits_2` class template; see Section \ref
+arr_ssectr_segs in the 2D Arrangements package.
+
+If the `UsePolylines` template parameter is substitited with
+`CGAL::Tag_true` the following occurs:
+
+<ol>
+
+<li>Instead of using an instance of the `Polygon_set_2` class
+template, as described above, an instance of the
+`General_polygon_set_2` class template is used, which utilzes the
+`Arr_polyline_traits_2` class template; see Section \ref
+arr_ssectr_polylines in the 2D Arrangements package.
+
+<li>Each input linear polygon (resp. linear polygon with holes) is
+converted into a general polygon (resp. general polygon with holes)
+bounded by \f$x\f$-monotone polylines. Then, the resulting generl
+polygons, which are also bounded by \f$x\f$-monotone polylines, are
+converted back to standard polygons.
+
+</ol>
+
+\cgalAdvancedEnd
+
 \section bso_secbso_gen Boolean Set-Operations on General Polygons
 
 \image html general_polygon.png
 \image latex general_polygon.png
 
-In previous sections only ordinary (linear) polygons were dealt with. Namely, closed
-point sets bounded by piecewise linear curves. The Boolean
-set-operations package allows a more general geometric mapping of the
-polygon edges. The operations provided by the package operate on point
-sets bounded by \f$ x\f$-monotone segments of general curves (e.g., conic
-arcs and segments of polynomial functions). For example, the point set
-depicted on the right is a general polygon bounded by two \f$ x\f$-monotone
-circular arcs that correspond to the lower half and the upper half of
-a circle, respectively.
+In previous sections only ordinary (linear) polygons were dealt
+with. Namely, closed point sets bounded by piecewise linear
+curves. The Boolean set-operations package allows a more general
+geometric mapping of the polygon edges. The operations provided by the
+package operate on point sets bounded by \f$ x\f$-monotone segments of
+general curves (e.g., conic arcs and segments of polynomial
+functions). For example, the point set depicted on the right is a
+general polygon bounded by two \f$ x\f$-monotone circular arcs that
+correspond to the lower half and the upper half of a circle,
+respectively.
 
 Using the topological terminology, a general polygon can represent any
 simply-connected point set whose boundary is a strictly simple curve.
@@ -572,15 +644,15 @@ The central class-template `General_polygon_set_2<Traits,Dcel>` is
 used to represent point sets that are comprised of a finite number of
 pairwise disjoint general polygons with holes, and provides various
 Boolean set-operations on such sets. It is parameterized by a <I>traits</I>
-class and a <span class="textsc">Dcel</span> class. The former defines the type of points used
+class and a \dcel class. The former defines the type of points used
 to represent polygon vertices and the type of \f$ x\f$-monotone curves that
 represent the polygon edges. The traits class also provides primitive
 geometric operations that operate on objects of these types.
-The <span class="textsc">Dcel</span> class is used to represent the underlying internal
+The \dcel class is used to represent the underlying internal
 `Arrangement_2` data structure. The instantiated `Dcel` type is
 used to represent the underlying internal arrangement. It must model the
 concept `GeneralPolygonSetDcel`, and defaults to `Gps_default_dcel`.
-You can override this default, with a different <span class="textsc">Dcel</span> class, typically
+You can override this default, with a different \dcel class, typically
 an extension of the default. Overriding the default is necessary only if
 you intend to obtain the underlying internal arrangement and process it further.
 
@@ -601,7 +673,7 @@ and is tailored to handle a specific family of curves. The concept
 
 The concept `ArrangementDirectionalXMonotoneTraits_2` refines the
 concept `ArrangementXMonotoneTraits_2` (see
-Section \ref arr_sssecinsert_x_mon in the 2D Arrangements chapter).
+Section \ref arr_sssecinsert_x_mon in the 2D Arrangements package).
 Thus, a model of this concept must define the type `X_monotone_curve_2`,
 which represents an \f$ x\f$-monotone curve, and the type `Point_2`,
 with represents a planar point. Such a point may be an endpoint of an
@@ -630,7 +702,7 @@ The traits classes `Arr_segment_traits_2`,
 `Arr_conic_traits_2` and `Arr_rational_function_traits_2`, which are
 bundled in the `Arrangement_2` package and distributed with \cgal,
 are all models of the refined concept
-`ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The `Arr_polyline_traits_2` class is <I>not</I> a model of the, `ArrangementDirectionalXMonotoneTraits_2` concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
+`ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The \cgalFootnoteCode{Arr_polyline_traits_2} class is <I>not</I> a model of the, \cgalFootnoteCode{ArrangementDirectionalXMonotoneTraits_2} concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
 
 Just as with the case of computations using models of the
 `ArrangementXMonotoneTraits_2` concept, operations are robust only
@@ -744,7 +816,7 @@ respectively. Their intersection comprises nine simple polygons, as
 depicted to the right.
 
 Recall that every B&eacute;zier curve is defined by a sequence of control
-points that form chains (see Section \ref arr_ssectr_bez. The last
+points that form chains (see Section \ref arr_sssectr_bez. The last
 control point of every curve must be identical to the first control
 point of its successor. The function `read_Bezier_polygon()`
 included in the example reads the curves from an input file until they
@@ -757,7 +829,7 @@ the `Gps_traits_2` adapter.
 
 \cgalExample{Boolean_set_operations_2/bezier_traits_adapter.cpp}
 
-\subsection bso_ssecaggregated_gen_ops Example - Aggregated Operations
+\subsection bso_ssecaggregated_gen_ops Aggregated Operations
 
 In Section \ref bso_ssecagg_ops we describe how aggregated union
 and intersection operations can be applied to a collection of ordinary
@@ -781,4 +853,3 @@ line.
 
 */
 } /* namespace CGAL */
-

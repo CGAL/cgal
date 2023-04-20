@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
@@ -21,6 +21,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/internal/helpers.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/property_map.h>
 
@@ -28,6 +29,7 @@
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
+#include <boost/container/flat_set.hpp>
 
 #include <array>
 #include <set>
@@ -52,6 +54,18 @@ PM_Point convert_to_pm_point(const std::array<PS_FT, 3>& p)
   return PM_Point(p[0], p[1], p[2]);
 }
 
+template <class OutputIterator, typename Value_type = typename value_type_traits<OutputIterator>::type>
+struct Polygon_and_Point_id_helper
+{
+  typedef std::remove_cv_t<std::remove_reference_t<typename Value_type::first_type>> type;
+};
+
+template <class OutputIterator>
+struct Polygon_and_Point_id_helper<OutputIterator, void>
+{
+  typedef std::size_t type;
+};
+
 template <typename PointRange,
           typename PolygonRange,
           typename PointMap = typename CGAL::GetPointMap<PointRange>::const_type>
@@ -73,14 +87,20 @@ public:
       m_pm(pm)
   { }
 
-  template <typename PolygonMesh, typename VertexPointMap>
+  template <typename PolygonMesh, typename VertexPointMap,
+            typename V2V, //pointindex-2-vertex
+            typename F2F> //polygonindex-2-face
   void operator()(PolygonMesh& pmesh,
                   VertexPointMap vpm,
+                  V2V i2v,
+                  F2F i2f,
                   const bool insert_isolated_vertices = true)
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-
     typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
+
+    typedef typename Polygon_and_Point_id_helper<V2V>::type Point_id;
+    typedef typename Polygon_and_Point_id_helper<F2F>::type Polygon_id;
 
     reserve(pmesh, static_cast<typename boost::graph_traits<PolygonMesh>::vertices_size_type>(m_points.size()),
             static_cast<typename boost::graph_traits<PolygonMesh>::edges_size_type>(2*m_polygons.size()),
@@ -100,7 +120,7 @@ public:
     }
 
     std::vector<vertex_descriptor> vertices(m_points.size());
-    for(std::size_t i = 0, end = m_points.size(); i < end; ++i)
+    for(Point_id i = 0, end = static_cast<Point_id>(m_points.size()); i < end; ++i)
     {
       if(!insert_isolated_vertices && !not_isolated.test(i))
         continue;
@@ -108,9 +128,10 @@ public:
       vertices[i] = add_vertex(pmesh);
       PM_Point pi = convert_to_pm_point<PM_Point>(get(m_pm, m_points[i]));
       put(vpm, vertices[i], pi);
+      *i2v++ = std::make_pair(i, vertices[i]);
     }
 
-    for(std::size_t i = 0, end = m_polygons.size(); i < end; ++i)
+    for(Polygon_id i = 0, end = static_cast<Polygon_id>(m_polygons.size()); i < end; ++i)
     {
       const Polygon& polygon = m_polygons[i];
       const std::size_t size = polygon.size();
@@ -120,9 +141,9 @@ public:
       for(std::size_t j = 0; j < size; ++j)
         vr[j] = vertices[polygon[j] ];
 
-      CGAL_assertion_code(typename boost::graph_traits<PolygonMesh>::face_descriptor fd =)
-          CGAL::Euler::add_face(vr, pmesh);
-      CGAL_assertion(fd != boost::graph_traits<PolygonMesh>::null_face());
+      typename boost::graph_traits<PolygonMesh>::face_descriptor fd = CGAL::Euler::add_face(vr, pmesh);
+      CGAL_postcondition(is_valid_face_descriptor(fd, pmesh));
+      *i2f++ = std::make_pair(i, fd);
     }
   }
 
@@ -130,7 +151,11 @@ public:
   void operator()(PolygonMesh& pmesh,
                   const bool insert_isolated_vertices = true)
   {
-    return operator()(pmesh, get(CGAL::vertex_point, pmesh), insert_isolated_vertices);
+    return operator()(pmesh,
+             get(CGAL::vertex_point, pmesh),
+             CGAL::Emptyset_iterator(),
+             CGAL::Emptyset_iterator(),
+             insert_isolated_vertices);
   }
 
 private:
@@ -142,11 +167,12 @@ private:
 } // namespace internal
 
 /**
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
 *
-* returns `true` if the soup of polygons defines a valid polygon
+* \brief returns `true` if the soup of polygons defines a valid polygon
 * mesh that can be handled by
 * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
+*
 * It checks that each edge has at most two incident faces and such an edge
 * is visited in opposite direction along the two face boundaries,
 * no polygon has twice the same vertex,
@@ -157,13 +183,13 @@ private:
 * boundaries of the polygons provided in `polygons`.
 *
 * @tparam PolygonRange a model of the concept `RandomAccessContainer`
-* whose value_type is a model of the concept `RandomAccessContainer`
-* whose value_type is `std::size_t`.
+* whose `value_type` is a model of the concept `RandomAccessContainer`
+* whose `value_type` is `std::size_t`.
 *
 * @param polygons each element in the range describes a polygon
 * using the indices of the vertices.
 *
-* @sa `orient_polygon_soup()`
+* @sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 */
 template<typename PolygonRange>
 bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
@@ -177,14 +203,16 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   //check there is no duplicated ordered edge, and
   //check there is no polygon with twice the same vertex
   std::set<std::pair<V_ID, V_ID> > edge_set;
+  boost::container::flat_set<V_ID> polygon_vertices;
   V_ID max_id = 0;
+
   for(const Polygon& polygon : polygons)
   {
     std::size_t nb_edges = boost::size(polygon);
     if(nb_edges < 3)
       return false;
 
-    std::set<V_ID> polygon_vertices;
+    polygon_vertices.clear();
     V_ID prev = *std::prev(boost::end(polygon));
     for(V_ID id : polygon)
     {
@@ -217,7 +245,8 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 }
 
 /**
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
+*
 * builds a polygon mesh from a soup of polygons.
 *
 * @pre the input polygon soup describes a consistently oriented
@@ -234,7 +263,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * @tparam NamedParameters_PM a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param points points of the soup of polygons
-* @param polygons each element in the vector describes a polygon using the indices of the points in `points`
+* @param polygons each element in the range describes a polygon using the indices of the points in `points`
 * @param out the polygon mesh to be built
 * @param np_ps an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -245,6 +274,37 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *                    of the vertex point map associated to the polygon mesh}
 *     \cgalParamDefault{`CGAL::Identity_property_map`}
 *   \cgalParamNEnd
+*
+*  \cgalParamNBegin{point_to_vertex_output_iterator}
+*   \cgalParamDescription{an `OutputIterator` containing the pairs source-vertex-index
+*                         from `points`, target-vertex.}
+*   \cgalParamType{a class model of `OutputIterator` accepting
+*                  `std::pair<int, boost::graph_traits<PolygonMesh>::%vertex_descriptor>`}
+*   \cgalParamDefault{`Emptyset_iterator`}
+* \cgalParamNEnd
+*
+*  \cgalParamNBegin{polygon_to_face_output_iterator}
+*   \cgalParamDescription{an `OutputIterator` containing the pairs polygon-index
+*                         from `polygons`, target-face.}
+*   \cgalParamType{a class model of `OutputIterator` accepting
+*                  `std::pair<int, boost::graph_traits<PolygonMesh>::%face_descriptor>`}
+*   \cgalParamDefault{`Emptyset_iterator`}
+* \cgalParamNEnd
+*
+*  \cgalParamNBegin{point_to_vertex_map}
+*   \cgalParamDescription{a property map associating each soup point of `points` to a vertex of `out`.}
+*   \cgalParamType{a class model of `ReadablePropertyMap` with an integer type as key type and
+*                  `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as value type.}
+*   \cgalParamDefault{unused}
+* \cgalParamNEnd
+*
+*  \cgalParamNBegin{polygon_to_face_map}
+*   \cgalParamDescription{a property map associating each soup polygon of `polygons` to a face of `out`}
+*   \cgalParamType{a class model of `ReadablePropertyMap` with an integer type as key type and
+*                  `boost::graph_traits<PolygonMesh>::%face_descriptor` as value type.}
+*   \cgalParamDefault{unused}
+* \cgalParamNEnd
+*
 * \cgalNamedParamsEnd
 *
 * @param np_pm an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -266,12 +326,12 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 */
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
-         typename NamedParameters_PS, typename NamedParameters_PM>
+         typename NamedParameters_PS = parameters::Default_named_parameters, typename NamedParameters_PM = parameters::Default_named_parameters>
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,
                                   PolygonMesh& out,
-                                  const NamedParameters_PS& np_ps,
-                                  const NamedParameters_PM& np_pm)
+                                  const NamedParameters_PS& np_ps = parameters::default_values(),
+                                  const NamedParameters_PM& np_pm = parameters::default_values())
 {
   CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                         "Input soup needs to define a valid polygon mesh! See is_polygon_soup_a_polygon_mesh() for further information.");
@@ -287,26 +347,18 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
                                           get_property_map(CGAL::vertex_point, out));
 
   internal::PS_to_PM_converter<PointRange, PolygonRange, Point_map> converter(points, polygons, pm);
-  converter(out, vpm);
-}
+  converter(out, vpm,
+    choose_parameter(get_parameter(np_ps, internal_np::point_to_vertex_output_iterator),
+                     impl::make_functor(get_parameter(np_ps, internal_np::point_to_vertex_map))),
+    choose_parameter(get_parameter(np_ps, internal_np::polygon_to_face_output_iterator),
+                     impl::make_functor(get_parameter(np_ps, internal_np::polygon_to_face_map))));
 
-template<typename PolygonMesh,
-         typename PointRange, typename PolygonRange,
-         typename NamedParameters_PS>
-void polygon_soup_to_polygon_mesh(const PointRange& points,
-                                  const PolygonRange& polygons,
-                                  PolygonMesh& out,
-                                  const NamedParameters_PS& np_ps)
-{
-  return polygon_soup_to_polygon_mesh(points, polygons, out, np_ps, parameters::all_default());
-}
-
-template<typename PolygonMesh, typename PointRange, typename PolygonRange>
-void polygon_soup_to_polygon_mesh(const PointRange& points,
-                                  const PolygonRange& polygons,
-                                  PolygonMesh& out)
-{
-  return polygon_soup_to_polygon_mesh(points, polygons, out, parameters::all_default(), parameters::all_default());
+  CGAL_static_assertion_msg(
+      (parameters::is_default_parameter<NamedParameters_PS,internal_np::vertex_to_vertex_map_t>::value),
+      "Named parameter vertex_to_vertex_map was renamed point_to_vertex_map");
+  CGAL_static_assertion_msg(
+      (parameters::is_default_parameter<NamedParameters_PS,internal_np::face_to_face_map_t>::value),
+      "Named parameter face_to_face_map was renamed polygon_to_face_map");
 }
 
 } // namespace Polygon_mesh_processing

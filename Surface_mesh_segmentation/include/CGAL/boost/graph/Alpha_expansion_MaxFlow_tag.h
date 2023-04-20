@@ -20,7 +20,7 @@
 
 namespace MaxFlow
 {
-#include <CGAL/internal/auxiliary/graph.h>
+#include <CGAL/Surface_mesh_segmentation/internal/auxiliary/graph.h>
 }
 
 
@@ -47,7 +47,7 @@ public:
 
   void clear_graph()
   {
-    graph = MaxFlow::Graph();
+    graph.clear();
   }
 
   Vertex_descriptor add_vertex()

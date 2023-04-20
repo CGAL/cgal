@@ -19,12 +19,12 @@
 #include <iterator>
 #include <algorithm>
 #include <vector>
+#include <type_traits>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <CGAL/int.h>
 
 #include <boost/operators.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -59,7 +59,7 @@ public:
     :v(begin,end){
     typedef typename std::iterator_traits<InputIterator>::value_type value_type;
     CGAL_USE_TYPE(value_type);
-    CGAL_static_assertion(( ::boost::is_same<value_type, int>::value));
+    CGAL_static_assertion(( ::std::is_same<value_type, int>::value));
   }
 
 
@@ -161,7 +161,7 @@ inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
 namespace std{
 template <> inline
 void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2)
-  CGAL_NOEXCEPT(std::is_nothrow_move_constructible<CGAL::Exponent_vector>::value
+  noexcept(std::is_nothrow_move_constructible<CGAL::Exponent_vector>::value
                 && std::is_nothrow_move_assignable<CGAL::Exponent_vector>::value)
 {
   ev1.swap(ev2);

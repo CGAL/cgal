@@ -23,7 +23,7 @@
 
    Format du fichier texte associe aux fichiers binaires (images)
 
-exemple :
+example :
          512 512 100 2
          -type U16
          -dx 1.
@@ -88,7 +88,7 @@ exemple :
    -a age (entier)
    -s sexe (1/2)
    -l lateralite
-   -txt texte libre (ascii)
+   -txt texte libre (ASCII)
    -endtxt (fin du texte)
 
 

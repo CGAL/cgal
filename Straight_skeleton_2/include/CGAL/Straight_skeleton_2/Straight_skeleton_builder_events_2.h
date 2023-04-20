@@ -13,15 +13,15 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
-#include<ostream>
-
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+
+#include <boost/intrusive_ptr.hpp>
+
+#include <ostream>
 
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 template<class SSkel_, class Traits_>
 class Event_2 : public Ref_counted_base
@@ -129,7 +129,7 @@ private :
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << ')' ;
+    ss << " (Edge Event, LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << ')' ;
   }
 
 private :
@@ -178,7 +178,7 @@ private :
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (Seed=" << mSeed->id() << " OppBorder=" << this->triedge().e2()->id() << ')' ;
+    ss << " (Split Event, Seed=" << mSeed->id() << " (" << mSeed->point() << ") OppBorder=" << this->triedge().e2()->id() << ')' ;
   }
 
 private :
@@ -234,7 +234,7 @@ private :
   {
     this->Base::dump(ss);
 
-    ss << " ("
+    ss << " (Pseudo-split Event, "
        << "Seed0=" << mSeed0->id() << (  mOppositeIs0 ? " {Opp} " : " " )
        << "Seed1=" << mSeed1->id() << ( !mOppositeIs0 ? " {Opp}"  : "" )
        << ")" ;

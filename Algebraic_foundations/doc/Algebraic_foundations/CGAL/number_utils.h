@@ -22,7 +22,7 @@ namespace CGAL {
 \ingroup PkgAlgebraicFoundationsRef
 
 The template function `compare()` compares the first argument with respect to
-the second, i.e.\ it returns `CGAL::LARGER` if \f$ x\f$ is larger then \f$ y\f$.
+the second, i.e.\ it returns `CGAL::LARGER` if \f$ x\f$ is larger than \f$ y\f$.
 
 In case the argument types `NT1` and `NT2` differ,
 `compare` is performed with the semantic of the type determined via

@@ -148,7 +148,7 @@ private:
     }
 
 
-    /* a^-1, using Bezout (extended Euclidian algorithm). */
+    /* a^-1, using Bezout (extended Euclidean algorithm). */
     static inline
     double RES_inv (double ri1){
         CGAL_precondition (ri1 != 0.0);
@@ -197,7 +197,7 @@ public:
       return old_prime;
     }
 
-  /*! \brief return the current prime.  */
+  /*! \brief returns the current prime.  */
     static int get_current_prime(){
       return get_prime_int();
     }

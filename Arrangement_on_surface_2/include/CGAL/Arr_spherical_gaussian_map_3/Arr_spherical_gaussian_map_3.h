@@ -21,7 +21,7 @@
  * embedded on the sphere.
  *
  * This file consists of the definition of the main type, namely
- * Arr_spherical_gaussian_map_2 and a service tye,
+ * Arr_spherical_gaussian_map_2 and a service type,
  * namely Arr_sgm_initializer, that initializes an object of the main type.
  */
 
@@ -89,7 +89,7 @@ public:
 };
 #endif
 
-/*! Arr_sgm_initializer is an algorothmic framework that initializes a
+/*! Arr_sgm_initializer is an algorithmic framework that initializes a
  * Arr_spherical_gaussian_map_3 structure. It is parameterized by the SGM to
  * be initialized and by a visitor class.
  */
@@ -115,7 +115,7 @@ public:
   virtual ~Arr_sgm_initializer() {}
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    */
@@ -133,14 +133,17 @@ public:
                                  const Vector_3 & normal2,
                                  OutputIterator oi)
   {
-    Curve_2 cv(normal1.direction(), normal2.direction());
-    const Geometry_traits_2 * traits = this->m_sgm.geometry_traits();
-    oi = traits->make_x_monotone_2_object()(cv, oi);
+    const Geometry_traits_2* traits = this->m_sgm.geometry_traits();
+    auto ctr_point = traits->construct_point_2_object();
+    Curve_2 cv =
+      traits->construct_curve_2_object()(ctr_point(normal1.direction()),
+                                         ctr_point(normal2.direction()));
+    *oi++ = traits->make_x_monotone_2_object()(cv, oi);
     return oi;
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \return the handle for the halfedge directed from the endpoint
@@ -180,7 +183,7 @@ public:
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \return the handle for the halfedge directed from the endpoint
@@ -224,7 +227,7 @@ public:
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \param vertex the handle of the vertex that is the source of the arc
@@ -278,7 +281,7 @@ public:
   }
 
   /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the SGM. Each normal defines an end point of the greate arc.
+   * normals into the SGM. Each normal defines an end point of the great arc.
    * \param normal1 represents the source normal.
    * \param normal2 represents the target normal.
    * \param vertex1 the handle of the vertex that is the source of the arc
@@ -349,8 +352,8 @@ public:
   typedef Traits                                            Geometry_traits_2;
 
   typedef Arrangement_on_surface_2<Traits,
-        Arr_spherical_topology_traits_2<Traits, T_Dcel<Traits> > >
-                                                                                                                        Base;
+    Arr_spherical_topology_traits_2<Traits, T_Dcel<Traits> > >
+                                                            Base;
 
   /*! Parameter-less Constructor */
   Arr_spherical_gaussian_map_3() { }

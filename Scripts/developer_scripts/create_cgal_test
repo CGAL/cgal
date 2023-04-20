@@ -34,7 +34,7 @@ while [ $1 ]; do
             DO_RUN=""
             shift; continue
         ;;
-        *) 
+        *)
             echo "Unknown option: $1"
             usage
         ;;
@@ -80,7 +80,7 @@ configure()
 {
   echo "Configuring... "
 
-  if eval 'cmake ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      --no-warn-unused-cli \
                                      .' ; then
@@ -97,6 +97,21 @@ cat << EOF
 
 compile_and_run()
 {
+  if [ -z "\${CGAL_DATA_DIR}" ]; then
+    if [ -d \${CGAL_DIR}/data ]; then
+      export CGAL_DATA_DIR=\${CGAL_DIR}/data
+    else
+      if [ -d \${CGAL_DIR}/Data/data ]; then
+        export CGAL_DATA_DIR=\${CGAL_DIR}/Data/data
+      else
+        echo "ERROR: Cannot run test script, please set the variable CGAL_DATA_DIR"
+        exit 1
+      fi
+    fi
+  fi
+
+  echo "Runs will be using CGAL_DATA_DIR = \${CGAL_DATA_DIR}"
+
   echo "Compiling \$1 ... "
   SUCCESS="y"
 
@@ -113,7 +128,7 @@ compile_and_run()
       rm -f \$OUTPUTFILE
       COMMAND="./\$1"
       if [ -f \$1.cmd ] ; then
-        COMMAND="\$COMMAND \`cat \$1.cmd\`"
+        COMMAND="\$COMMAND \`eval echo \$(cat \$1.cmd)\`"
       fi
       if [ -f \$1.cin ] ; then
         COMMAND="cat \$1.cin | \$COMMAND"

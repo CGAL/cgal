@@ -25,7 +25,7 @@
 
 #include <CGAL/generators.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/internal/Generic_random_point_generator.h>
+#include <CGAL/Generator/internal/Generic_random_point_generator.h>
 #include <CGAL/iterator.h>
 
 #include <iterator>
@@ -186,7 +186,7 @@ generate_point() {
         this->d_item = creator( T( this->d_range),        T(d));
         break;
     default:
-        CGAL_assume(false);
+        CGAL_unreachable();
     }
 }
 
@@ -658,7 +658,7 @@ struct Address_of {
   }
 };
 
-}//namesapce internal
+}//namespace internal
 
 template <class Point_2,
           class Triangle_2=typename Kernel_traits<Point_2>::Kernel::Triangle_2,

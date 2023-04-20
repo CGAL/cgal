@@ -611,7 +611,7 @@ public:
 public:
 
     /*
-     * \brief Returns the indices of the <tt>i</tt>th event value
+     * \brief returns the indices of the <tt>i</tt>th event value
      *
      * Returns a Event_indices <tt>(fg,ffy,ggy)</tt> such that
      * the <tt>i</tt>th event root is the <tt>fg</tt>th root of the
@@ -963,7 +963,7 @@ public:
     }
 
     /*!
-     * \brief Returns the number of event slices
+     * \brief returns the number of event slices
      *
      * Precisely, this is the number of points which are either root of
      * the resultant of the two curves, or root of discriminant of one
@@ -1171,7 +1171,7 @@ private:
                                   Integer s) const;
 
     /*
-     * \brief Reduces the number of possible intersections
+     * \brief reduces the number of possible intersections
      *
      * At the position given by the event lins \c e1 and \c e2 and the slice
      * info object \c slice, the points on the event lines are further refined
@@ -1197,7 +1197,7 @@ private:
 
 }; // end of Curve_pair_analysis_2
 
-//! \brief Prints the objects.
+//! \brief prints the objects.
 template<typename AlgebraicKernelWithAnalysis_2>
 std::ostream& operator<<
     (std::ostream& out,

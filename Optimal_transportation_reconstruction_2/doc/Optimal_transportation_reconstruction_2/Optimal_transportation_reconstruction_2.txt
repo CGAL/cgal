@@ -53,7 +53,7 @@ The output of the reconstruction can be obtained in two ways: either as a sequen
 \cgalExample{Optimal_transportation_reconstruction_2/otr2_indexed_output_example.cpp}
 
 \subsection Optimal_transportation_reconstruction_2Mass_example Example with Mass Attributes
-The following example first reads a set of input points and masses from an ASCII file. Using two property maps, the points and their initial mass are passed to the Optimal_transportation_reconstruction_2 object. After initialization 100 iterations of the reconstruction process are performed, then the segments and isolated points of the reconstructed shape are extracted and printed to the console.
+The following example first reads a set of input points and masses from an \ascii file. Using two property maps, the points and their initial mass are passed to the Optimal_transportation_reconstruction_2 object. After initialization 100 iterations of the reconstruction process are performed, then the segments and isolated points of the reconstructed shape are extracted and printed to the console.
 \cgalExample{Optimal_transportation_reconstruction_2/otr2_mass_example.cpp}
 
 

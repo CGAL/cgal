@@ -96,7 +96,7 @@ public:
     m_subcurves()
   {
     typedef typename std::iterator_traits<InputIterator>::value_type VT;
-    typedef typename boost::is_same<VT, Point_type_2>::type Is_point;
+    typedef typename std::is_same<VT, Point_type_2>::type Is_point;
     construct_polycurve(begin, end, Is_point());
   }
 
@@ -108,7 +108,7 @@ public:
    */
   template <typename InputIterator>
   void construct_polycurve(InputIterator begin, InputIterator end,
-                          boost::false_type)
+                          std::false_type)
   { m_subcurves.assign(begin, end); }
 
   /*! Construct a polycurve from a range of points.
@@ -119,8 +119,8 @@ public:
    */
   template <typename InputIterator>
   CGAL_DEPRECATED void construct_polycurve(InputIterator begin,
-                                          InputIterator end,
-                                          boost::true_type)
+                                           InputIterator end,
+                                           std::true_type)
   {
     // Check if there are no points in the range:
     InputIterator ps = begin;
@@ -433,7 +433,7 @@ public:
     Base(begin, end)
   {
     typedef typename std::iterator_traits<InputIterator>::value_type VT;
-    typedef typename boost::is_same<VT, Point_type_2>::type Is_point;
+    typedef typename std::is_same<VT, Point_type_2>::type Is_point;
     construct_x_monotone_polycurve(begin, end, Is_point());
   }
 
@@ -444,7 +444,7 @@ public:
    */
   template <typename InputIterator>
   void construct_x_monotone_polycurve(InputIterator, InputIterator,
-                                      boost::false_type)
+                                      std::false_type)
   {}
 
   /*! Construct from a range of points, defining the endpoints of the
@@ -453,7 +453,7 @@ public:
   template <typename InputIterator>
   CGAL_DEPRECATED void construct_x_monotone_polycurve(InputIterator,
                                                      InputIterator,
-                                                     boost::true_type)
+                                                     std::true_type)
   {}
 };
 

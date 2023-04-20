@@ -10,17 +10,14 @@ Distance_2
 Distance_3
 Filtered_kernel
 Hash_map
-Homogeneous_kernel
 Installation
 Intersections_2
 Intersections_3
 Interval_support
 Kernel_23
-Kernel_d
 Modular_arithmetic
 Number_types
 Optimal_bounding_box
-Optimisation_basic
 Polygon
 Profiling_tools
 Property_map
@@ -29,4 +26,3 @@ STL_Extension
 Solver_interface
 Stream_support
 TDS_2
-Triangulation_2

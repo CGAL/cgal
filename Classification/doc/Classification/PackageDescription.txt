@@ -24,11 +24,6 @@ Classifiers that use the ETHZ library.
 
 Classifiers that use the \ref thirdpartyOpenCV library.
 
-\defgroup PkgClassificationClassifiersTensorFlow TensorFlow
-\ingroup PkgClassificationClassifiers
-
-Classifiers that use the \ref thirdpartyTensorFlow library.
-
 \defgroup PkgClassificationDataStructures Common Data Structures
 \ingroup PkgClassificationRef
 
@@ -70,15 +65,14 @@ Data structures specialized to classify clusters.
 \cgalPkgPicture{data_classif.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot, Florent Lafarge}
+\cgalPkgAuthors{Simon Giraudot and Florent Lafarge}
 \cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of labels (such as ground, vegetation, buildings, etc.). A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set, and define their own labels.}
 \cgalPkgManuals{Chapter_Classification, PkgClassificationRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.12}
-\cgalPkgDependsOn{\ref PkgSolverInterface, \ref PkgSpatialSearchingD, [Boost Serialization](https://www.boost.org/libs/serialization) and
-[Boost IO Streams](https://www.boost.org/libs/iostreams)}
+\cgalPkgDependsOn{\ref PkgSolverInterface, \ref PkgSpatialSearchingD}
 \cgalPkgBib{cgal:lm-clscm-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
@@ -103,7 +97,6 @@ Data structures specialized to classify clusters.
 
 - `CGAL::Classification::ETHZ::Random_forest_classifier`
 - `CGAL::Classification::OpenCV::Random_forest_classifier`
-- `CGAL::Classification::TensorFlow::Neural_network_classifier<ActivationFunction>`
 - `CGAL::Classification::Sum_of_weighted_features_classifier`
 
 \cgalCRPSection{Common Data Structures}

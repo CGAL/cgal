@@ -137,7 +137,7 @@ int
 main(int argc, char* argv[])
 {
 #ifndef CGAL_PCENTER_NO_OUTPUT
-  CGAL::set_pretty_mode(cerr);
+  CGAL::IO::set_pretty_mode(cerr);
 #endif // CGAL_PCENTER_NO_OUTPUT
 
   int number_of_points;

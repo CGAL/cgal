@@ -1,5 +1,5 @@
 #include <CGAL/Exact_algebraic.h>
-#include <CGAL/internal/Exact_complex.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Exact_complex.h>
 #include <CGAL/Cartesian.h>
 
 #include <iostream>

@@ -89,11 +89,12 @@ int main(int argc, char** argv)
 
   // CGAL::Mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria);
 
-  // Output
-  std::ofstream medit_file("out-mesh-polylines.mesh");
-  c3t3.output_to_medit(medit_file);
-  std::ofstream binary_file("out-mesh-polylines.binary.cgal", std::ios::binary|std::ios::out);
-  save_binary_file(binary_file, c3t3);
+//  // Output
+//  std::ofstream medit_file("out-mesh-polylines.mesh");
+//  CGAL::IO::write_MEDIT(medit_file, c3t3);
+//  std::ofstream binary_file("out-mesh-polylines.binary.cgal", std::ios::binary|std::ios::out);
+//  CGAL::IO::save_binary_file(binary_file, c3t3);
+
   std::cout << "Number of vertices in c3t3: "
             << c3t3.triangulation().number_of_vertices() << std::endl;
   assert(c3t3.triangulation().number_of_vertices() > 900);

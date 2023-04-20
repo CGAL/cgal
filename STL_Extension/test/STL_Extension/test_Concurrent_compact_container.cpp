@@ -22,8 +22,8 @@ int main()
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
-
-# include <tbb/task_scheduler_init.h>
+#define TBB_PREVIEW_GLOBAL_CONTROL 1
+# include <tbb/global_control.h>
 # include <tbb/parallel_for.h>
 # include <atomic>
 
@@ -322,15 +322,15 @@ void test(const Cont &)
   assert(c11.size() == v1.size());
   assert(c10 == c11);*/
 
-  // owns() and owns_dereferencable().
+  // owns() and owns_dereferenceable().
   for(typename Cont::const_iterator it = c9.begin(), end = c9.end(); it != end; ++it) {
     assert(c9.owns(it));
-    assert(c9.owns_dereferencable(it));
+    assert(c9.owns_dereferenceable(it));
     assert(! c10.owns(it));
-    assert(! c10.owns_dereferencable(it));
+    assert(! c10.owns_dereferenceable(it));
   }
   assert(c9.owns(c9.end()));
-  assert(! c9.owns_dereferencable(c9.end()));
+  assert(! c9.owns_dereferenceable(c9.end()));
 
 
   c9.erase(c9.begin(), c9.end());
@@ -451,7 +451,7 @@ int main()
     std::cout << "cc2: " << it->rnd << " / " << std::endl;
   }*/
 
-  tbb::task_scheduler_init init(1);
+  tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test_time_stamps<CGAL::Concurrent_compact_container<Node_1> >();
   return 0;
 }

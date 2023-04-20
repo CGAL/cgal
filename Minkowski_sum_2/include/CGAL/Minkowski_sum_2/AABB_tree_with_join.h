@@ -20,9 +20,9 @@
 #include <iterator>
 #include <CGAL/Minkowski_sum_2/AABB_traversal_traits_with_join.h>
 #include <CGAL/Minkowski_sum_2/AABB_node_with_join.h>
-#include <CGAL/internal/AABB_tree/AABB_search_tree.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_search_tree.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <boost/optional.hpp>
 
 #ifdef CGAL_HAS_THREADS

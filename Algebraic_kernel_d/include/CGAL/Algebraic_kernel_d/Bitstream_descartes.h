@@ -375,7 +375,7 @@ public:
   }
 
   /*!
-   * \brief Gives an opportunity to process the nodes after
+   * \brief gives an opportunity to process the nodes after
    * the subdivision steps are finished
    *
    * This method must be specialised by derived classes, but can
@@ -386,7 +386,7 @@ public:
     return;
   }
 
-  /*! \brief Returns whether the \c i th root is definitely a simple root
+  /*! \brief returns whether the \c i th root is definitely a simple root
    * of the isolated polynomial
    *
    * Must be specialised by derived class
@@ -396,7 +396,7 @@ public:
     return false;
   }
 
-  /*! \brief Returns whether the \c i th root is definitely a multiple root
+  /*! \brief returns whether the \c i th root is definitely a multiple root
    * of the isolated polynomial
    *
    * Must be specialised by derived class
@@ -789,7 +789,7 @@ public:
       if(Base::bitstream_tree.max_var(curr) == 1) {
         ++curr;
         ++curr_mark;
-        //AcX_DSTREAM("nothing happend" << std::endl);
+        //AcX_DSTREAM("nothing happened" << std::endl);
       }
       else {
         newly_created =
@@ -1040,7 +1040,7 @@ public:
   }
 
 
-  /*! \brief Returns whether the \c i th root is definitely a simple root
+  /*! \brief returns whether the \c i th root is definitely a simple root
    * of the isolated polynomial
    *
    */
@@ -1048,7 +1048,7 @@ public:
     return false;
   }
 
-  /*! \brief Returns whether the \c i th root is definitely
+  /*! \brief returns whether the \c i th root is definitely
    * a multiple root
    * of the isolated polynomial
    *
@@ -1147,8 +1147,8 @@ public:
   Bitstream_descartes() : Base(new Rep()) {}
 
   //! Copy constructor
-  Bitstream_descartes(const Self& other) : Base(static_cast<const Base&>(other))
-  {}
+  Bitstream_descartes(const Self& other) = default;
+  Bitstream_descartes& operator=(const Self& other) = default;
 
   /*!
    * \brief Constructor for a polynomial \c f
@@ -1217,7 +1217,7 @@ public:
    *
    * The polynomial \c f must have exactly \c m real roots, counted without
    * multiplicity, and the degree of <tt>gcd(f,f')</tt> must be \c k. In this
-   * case, the constructor either isolates the real roots of \c f sucessfully
+   * case, the constructor either isolates the real roots of \c f successfully
    * or a Non_generic_position_exception is thrown. Such an exception
    * certainly occurs if \c f has more than one multiple real root. If \c f
    * has at most one multiple root over the complex numbers, the roots are
@@ -1372,7 +1372,7 @@ public:
   bool is_exact_root(int) const { return false; }
 
   /*!
-   * \brief Returns true if the <tt>i</tt>th root is known to be a simple
+   * \brief returns true if the <tt>i</tt>th root is known to be a simple
    * root of the curve.
    */
   bool is_certainly_simple_root(int i) const {
@@ -1381,7 +1381,7 @@ public:
   }
 
   /*!
-   * \brief Returns true if the <tt>i</tt>th root is known to be a multiple
+   * \brief returns true if the <tt>i</tt>th root is known to be a multiple
    * root of the curve.
    */
   bool is_certainly_multiple_root(int i) const {
@@ -1391,7 +1391,7 @@ public:
 
 
   /*!
-   * \brief Returns the multiplicity of the root if know, otherwise -1
+   * \brief returns the multiplicity of the root if know, otherwise -1
    */
   int multiplicity_of_root(int i) const {
     CGAL_assertion(is_isolated());
@@ -1407,7 +1407,7 @@ public:
   }
 
   /*!
-   * \brief Returns the isolator of the polynomial f(1/x + q), if known
+   * \brief returns the isolator of the polynomial f(1/x + q), if known
    */
   Self inverse_transform_isolator() const {
     return this->ptr()->inverse_transform_isolator();

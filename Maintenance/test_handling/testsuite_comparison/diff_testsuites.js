@@ -30,22 +30,23 @@ function diff_testsuites(baseTest, newTest){
   var init = false;
   for(s = 0; s < suffixes.length; s++) {
     var new_column = new Array();
-    xhr.open('GET', URL_testsuite+baseTest+'/'+suffixes[s], false);
+      var suffixe=suffixes[s].replace("\r", "");
+    xhr.open('GET', URL_testsuite+baseTest+'/'+suffixe, false);
     xhr.send(null);
     var base_exists = (xhr.status === 200);
-    var base=xhr.responseText;
-    xhr.open('GET', URL_testsuite+newTest+'/'+suffixes[s], false);
+    var base=xhr.responseText.replace("\r", "");
+    xhr.open('GET', URL_testsuite+newTest+'/'+suffixe, false);
     xhr.send(null);
     var new_exists = (xhr.status === 200)
       
     if(base_exists && !new_exists)
     {
-        diffArray.push("-"+suffixes[s]);
+        diffArray.push("-"+suffixe);
         continue;
     }
     if(!base_exists && new_exists)
     {
-        diffArray.push("+"+suffixes[s]);
+        diffArray.push("+"+suffixe);
         continue;
     }
     if(!base_exists && !new_exists)
@@ -53,11 +54,17 @@ function diff_testsuites(baseTest, newTest){
         continue;
     }
    
-    var newtext=xhr.responseText;
+    var newtext=xhr.responseText.replace("\r", "");
     var sp_base=base.split("\n");
     sp_base.sort();
+    for(i=0; i< sp_base.length; i++){
+        sp_base[i]=sp_base[i].replace("\r", "");
+    }
     var sp_newtext=newtext.split("\n");
     sp_newtext.sort();
+    for(i=0; i< sp_newtext.length; i++){
+        sp_newtext[i]=sp_newtext[i].replace("\r", "");
+    }
     addMissingLines(sp_base, sp_newtext);
     if(!init)
     {
@@ -73,7 +80,7 @@ function diff_testsuites(baseTest, newTest){
       myArray.push(first_column);
       init = true;
     }
-    var fragments = suffixes[s].split("_");
+    var fragments = suffixe.split("_");
     fragments.shift();
     var name = fragments.join("_");
     name = name.replace('.txt', '');
@@ -82,29 +89,29 @@ function diff_testsuites(baseTest, newTest){
       for(i=0; i< sp_base.length; i++){
         var broken = false;
         var res = print_diff(sp_base[i], sp_newtext[i]);
-          var compensator=0;
-          if(sp_base[i] !== ""){
-            while(sp_base[i].substr(0, sp_base[i].length-2) !== first_column[i+compensator]){
-                if(compensator >10){
-                  broken=true;
-                  break;
-                }
-              compensator++;
-            }
+        var compensator=0;
+        if(sp_base[i] !== ""){
+          while(sp_base[i].substr(0, sp_base[i].length-2) !== first_column[i+compensator]){
+              if(compensator >10){
+                broken=true;
+                break;
+              }
+            compensator++;
           }
-          else{
-            while(sp_newtext[i].substr(0, sp_newtext[i].length-2) !== first_column[i+compensator]){
-                if(compensator >10){
-                  broken=true;
-                  break;
-                }
-              compensator++;
-            }
+        }
+        else{
+          while(sp_newtext[i].substr(0, sp_newtext[i].length-2) !== first_column[i+compensator]){
+              if(compensator >10){
+                broken=true;
+                break;
+              }
+            compensator++;
           }
-          if(broken)
-          {
-            continue;
-          }
+        }
+        if(broken)
+        {
+          continue;
+        }
         var new_line=first_column[i+compensator]+"||"+"<td style='width: 25px; text-align: right;";
         var result="";
         if(res[0]===""){
@@ -130,8 +137,9 @@ function diff_testsuites(baseTest, newTest){
           new_line+=" background-color: rgb(65%,65%,100%)'> "+result;
         } else if(res[1]=== "n"){
           new_line+=" background-color: rgb(100%,50%,50%)'> "+result;
-        }
-        else if(res[1]==="" && res[0]!==""){
+        } else if(res[1]== "t"){
+          new_line+=" background-color: rgb(75%,100%,50%)'> "+result;
+        } else if(res[1]==="" && res[0]!==""){
           new_line+=" background-color: rgb(50%,25%,75%)'>"+result;
         }
         else{
@@ -146,3 +154,4 @@ function diff_testsuites(baseTest, newTest){
   
   return [myArray, diffArray];
 }
+

@@ -31,7 +31,7 @@ int main() {
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
         CGAL::test_real_embeddable<NT>();
 
-        // assert(CGAL::approximate_sqrt(NT(4)) == NT(2));
+        assert(CGAL::approximate_sqrt(NT(4)) == NT(2));
 
     }
  return 0;

@@ -27,13 +27,13 @@ int main() {
 
         CGAL::test_real_embeddable<NT>();
         CGAL::test_fraction_traits<NT>();
-        // backward compatiblity
+        // backward compatibility
         CGAL::test_rational_traits<NT>();
     }
     {
       mpq_class q;
       std::istringstream in("12.34");
-      in >> CGAL::iformat(q);
+      in >> CGAL::IO::iformat(q);
       assert(in);
       assert(q.get_num() == 617);
       assert(q.get_den() == 50);

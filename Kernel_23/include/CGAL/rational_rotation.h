@@ -27,13 +27,12 @@ template < class NT >
 void
 rational_rotation_approximation( const NT &  dirx,     // dir.x()
                                  const NT &  diry,     // dir.y()
-                                       NT &  sin_num,  // return
-                                       NT &  cos_num,  // return
-                                       NT &  denom,    // return
+                                       NT &  sin,      // numerator    return
+                                       NT &  cos,      // numerator    return
+                                       NT &  den,      // denominator  return
                                  const NT &  eps_num,  // quality_bound
                                  const NT &  eps_den )
 {
-
   const NT& n   = eps_num;
   const NT& d   = eps_den;
   const NT  NT0 = NT(0)  ;
@@ -41,12 +40,9 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
   CGAL_kernel_precondition( (dirx != NT0) ||  (diry != NT0));
   CGAL_kernel_precondition( n > NT0 );
   CGAL_kernel_precondition( d > NT0 );
-  NT & sin = sin_num;
-  NT & cos = cos_num;
-  NT & den = denom;
-  NT   dx = CGAL_NTS abs(dirx);
-  NT   dy = CGAL_NTS abs(diry);
-  NT   sq_hypotenuse = dx*dx + dy*dy;
+  NT   dx = CGAL::abs(dirx);
+  NT   dy = CGAL::abs(diry);
+  NT   sq_hypotenuse = square(dx) + square(dy);
   NT   common_part;
   NT   diff_part;
   NT   rhs;
@@ -59,7 +55,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
   }
   // approximate sin = dy / sqrt(sq_hypotenuse)
   // if ( dy / sqrt(sq_hypotenuse) < n/d )
-  if (dy * dy * d * d < sq_hypotenuse * n * n)
+  if (square(dy) * square(d) < sq_hypotenuse * square(n))
   {
       cos = NT1;
       sin = NT0;
@@ -79,7 +75,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
           p = p0 + p1;
           q = q0 + q1;
           sin = NT(2)*p*q;
-          den = p*p + q*q;
+          den = square(p) + square(q);
 
       // sanity check for approximation
       //        sin/den < dy/sqrt(hypotenuse) + n/d
@@ -89,9 +85,9 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
       // ===    (sin^2 d^2 + n^2 den^2)sq_hypotenuse - 2... < dy^2 d^2 den^2
       //    &&  (sin^2 d^2 + n^2 den^2)sq_hypotenuse + 2... > dy^2 d^2 den^2
 
-          common_part = (sin*sin*d*d + n*n*den*den)*sq_hypotenuse;
+          common_part = (square(sin) * square(d) + square(n) * square(den))*sq_hypotenuse;
           diff_part   = NT(2)*n*sin*d*den*sq_hypotenuse;
-          rhs         = dy*dy*d*d*den*den;
+          rhs         = square(dy) * square(d) * square(den);
 
           upper_ok    = (common_part - diff_part < rhs);
           lower_ok    = (common_part + diff_part > rhs);
@@ -106,7 +102,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
              // }
              // else
              // {
-                    cos = q*q - p*p;
+             cos = square(q) - square(p);
              // }
 
              break;
@@ -114,7 +110,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
           else
           {
               // if ( dy/sqrt(sq_hypotenuse) < sin/den )
-              if ( dy*dy*den*den < sin*sin*sq_hypotenuse )
+            if ( square(dy) * square(den) < square(sin) * sq_hypotenuse )
               {
                   p1 = p;
                   q1 = q;
@@ -130,24 +126,20 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
   dx = dirx;
   dy = diry;
 
-  if (CGAL_NTS abs(dy) > CGAL_NTS abs(dx) ) { std::swap (sin,cos); }
+  if (CGAL::abs(dy) > CGAL::abs(dx) ) { std::swap (sin,cos); }
 
   if (dx < NT0) { cos = - cos; }
 
   if (dy < NT0) { sin = - sin; }
-
-  sin_num = sin;
-  cos_num = cos;
-  denom   = den;
 }
 
 
 template < class NT >
 void
 rational_rotation_approximation( const double& angle,
-                                            NT &  sin_num,  // return
-                                            NT &  cos_num,  // return
-                                            NT &  denom,    // return
+                                            NT &  isin,      // numerator   return
+                                            NT &  icos,      // numerator   return
+                                            NT &  iden,      // denominator return
                                       const NT &  eps_num,  // quality_bound
                                       const NT &  eps_den )
 {
@@ -158,16 +150,14 @@ rational_rotation_approximation( const double& angle,
   const NT  NT1 = NT(1)  ;
   CGAL_kernel_precondition( n > NT0 );
   CGAL_kernel_precondition( d > NT0 );
-  NT& isin = sin_num;
-  NT& icos = cos_num;
-  NT& iden = denom;
+
   double dsin = std::sin(angle);
   double dcos = std::cos(angle);
   double dn = CGAL::to_double(n);
   double dd = CGAL::to_double(d);
   double eps = dn / dd;
-  dsin = CGAL_NTS abs( dsin);
-  dcos = CGAL_NTS abs( dcos);
+  dsin = CGAL::abs( dsin);
+  dcos = CGAL::abs( dcos);
   NT   common_part;
   NT   diff_part;
   NT   os;
@@ -200,7 +190,7 @@ rational_rotation_approximation( const double& angle,
           p = p0 + p1;
           q = q0 + q1;
           isin = NT(2)*p*q;
-          iden = p*p + q*q;
+          iden = square(p) + square(q);
 
           // XXX sanity check for approximation
           //        sin/den < dsin + n/d
@@ -224,7 +214,7 @@ rational_rotation_approximation( const double& angle,
              // }
              // else
              // {
-                    icos = q*q - p*p;
+            icos = square(q) - square(p);
              // }
 
              break;
@@ -253,9 +243,6 @@ rational_rotation_approximation( const double& angle,
   if (dcos < 0.0) { icos = - icos; }
   if (dsin < 0.0) { isin = - isin; }
 
-  sin_num = isin;
-  cos_num = icos;
-  denom   = iden;
 }
 
 } //namespace CGAL

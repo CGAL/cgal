@@ -30,6 +30,9 @@ void test_write_read()
   Polyhedron P;
   P.make_tetrahedron( p, q, r, s);
   Nef_polyhedron nef_1( P );
+  const Polyhedron P_bis = P;
+  Nef_polyhedron nef_1_bis( P_bis );
+  assert( nef_1 == nef_1_bis);
 
   std::cout << "    write...\n";
   std::ofstream out ("temp.nef");

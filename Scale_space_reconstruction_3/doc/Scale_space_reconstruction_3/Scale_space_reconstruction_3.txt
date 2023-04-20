@@ -9,7 +9,7 @@ namespace CGAL {
 \authors Thijs van Lankveld
 
 
-This %CGAL package implements a surface reconstruction method which takes as input an unordered point set and computes a triangulated surface mesh interpolating the point set. We assume that the input points were sampled from the surface of an object. The method can also process point sets sampled from the interior of the object, although we cannot provide guarantees on the output. This method can handle a decent amount of noise and outliers. The point set may greatly undersample the object in occluded regions, although no surface will be reconstructed to fill these regions.
+This \cgal package implements a surface reconstruction method which takes as input an unordered point set and computes a triangulated surface mesh interpolating the point set. We assume that the input points were sampled from the surface of an object. The method can also process point sets sampled from the interior of the object, although we cannot provide guarantees on the output. This method can handle a decent amount of noise and outliers. The point set may greatly undersample the object in occluded regions, although no surface will be reconstructed to fill these regions.
 
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figIntro, knot2_pts_surf.png}
 Left: 5760 points on a synthetic knot data set. Right: reconstructed surface mesh.

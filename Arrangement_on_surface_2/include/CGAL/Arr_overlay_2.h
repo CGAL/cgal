@@ -40,6 +40,89 @@
 
 namespace CGAL {
 
+template <typename Arr1, typename Arr2, typename Curve>
+class Indexed_sweep_accessor
+{
+  const Arr1& arr1;
+  const Arr2& arr2;
+  mutable std::vector<void*> backup_inc;
+
+public:
+
+  Indexed_sweep_accessor (const Arr1& arr1, const Arr2& arr2)
+    : arr1(arr1), arr2(arr2) { }
+
+  std::size_t nb_vertices() const
+  {
+    return arr1.number_of_vertices() + arr2.number_of_vertices();
+  }
+
+  std::size_t min_end_index (const Curve& c) const
+  {
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->target()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->target()->inc());
+  }
+
+  std::size_t max_end_index (const Curve& c) const
+  {
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->source()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->source()->inc());
+  }
+
+  const Curve& curve (const Curve& c) const
+  {
+    return c;
+  }
+
+  // Initializes indices by squatting Vertex::inc();
+  void before_init() const
+  {
+    std::size_t idx = 0;
+    backup_inc.resize (nb_vertices());
+    for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
+         vit != arr1.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      backup_inc[idx] = vit->inc();
+      vit->set_inc (reinterpret_cast<void*>(idx));
+    }
+    for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
+         vit != arr2.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      backup_inc[idx] = vit->inc();
+      vit->set_inc (reinterpret_cast<void*>(idx));
+    }
+  }
+
+  // Restores state of arrangements before index squatting
+  void after_init() const
+  {
+    std::size_t idx = 0;
+    for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
+         vit != arr1.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      vit->set_inc (backup_inc[idx]);
+    }
+    for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
+         vit != arr2.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      vit->set_inc (backup_inc[idx]);
+    }
+  }
+
+private:
+
+};
+
 /*! Compute the overlay of two input arrangements.
  * \tparam GeometryTraitsA_2 the geometry traits of the first arrangement.
  * \tparam GeometryTraitsB_2 the geometry traits of the second arrangement.
@@ -85,20 +168,16 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   typedef Arrangement_on_surface_2<Rgt2, Rtt>                   Arr_res;
   typedef typename Arr_res::Allocator                           Allocator;
 
-  // some type assertions (not all, but better then nothing).
-#if !defined(CGAL_NO_ASSERTIONS)
+  // some type assertions (not all, but better than nothing).
   typedef typename Agt2::Point_2                                A_point;
   typedef typename Bgt2::Point_2                                B_point;
   typedef typename Rgt2::Point_2                                Res_point;
-#endif
   CGAL_static_assertion((boost::is_convertible<A_point, Res_point>::value));
   CGAL_static_assertion((boost::is_convertible<B_point, Res_point>::value));
 
-#if !defined(CGAL_NO_ASSERTIONS)
   typedef typename Agt2::X_monotone_curve_2                     A_xcv;
   typedef typename Bgt2::X_monotone_curve_2                     B_xcv;
   typedef typename Rgt2::X_monotone_curve_2                     Res_xcv;
-#endif
   CGAL_static_assertion((boost::is_convertible<A_xcv, Res_xcv>::value));
   CGAL_static_assertion((boost::is_convertible<B_xcv, Res_xcv>::value));
 
@@ -168,7 +247,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt_adaptor_2, Ovl_gt2>,
+  typename boost::mpl::if_<std::is_same<Gt_adaptor_2, Ovl_gt2>,
                            const Ovl_gt2&, Ovl_gt2>::type
     ex_traits(*traits_adaptor);
 
@@ -183,7 +262,14 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr.clear();
-    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end());
+    if (std::is_same<typename Agt2::Bottom_side_category,
+                     Arr_contracted_side_tag>::value)
+      surface_sweep.sweep (xcvs_vec.begin(), xcvs_vec.end());
+    else
+      surface_sweep.indexed_sweep (xcvs_vec,
+                                   Indexed_sweep_accessor
+                                   <Arr_a, Arr_b, Ovl_x_monotone_curve_2>
+                                   (arr1, arr2));
     xcvs_vec.clear();
     return;
   }
@@ -215,8 +301,16 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
 
   // Clear the result arrangement and perform the sweep to construct it.
   arr.clear();
-  surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
-                      pts_vec.begin(), pts_vec.end());
+  if (std::is_same<typename Agt2::Bottom_side_category,
+      Arr_contracted_side_tag>::value)
+    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
+                        pts_vec.begin(), pts_vec.end());
+  else
+    surface_sweep.indexed_sweep (xcvs_vec,
+                                 Indexed_sweep_accessor
+                                 <Arr_a, Arr_b, Ovl_x_monotone_curve_2>
+                                 (arr1, arr2),
+                                 pts_vec.begin(), pts_vec.end());
   xcvs_vec.clear();
   pts_vec.clear();
 }

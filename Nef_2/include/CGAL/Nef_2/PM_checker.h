@@ -124,7 +124,7 @@ check_order_preserving_embedding(Vertex_const_handle v) const
 {
   if ( is_isolated(v) ) return;
   std::ostringstream error_status;
-  CGAL::set_pretty_mode ( error_status );
+  CGAL::IO::set_pretty_mode ( error_status );
   Halfedge_const_handle ef = first_out_edge(v) ,e=ef,en,enn;
   error_status << "check_order_preserving_embedding\n";
   error_status << "vertex " << PV(v) << std::endl;
@@ -220,7 +220,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   } while (hvit != hend);
   // now e_boundary_at_v_min is highest starting edge in bundle!!
 
-  int winding_around_globally=0;
+  CGAL_assertion_code(int winding_around_globally=0);
   Halfedge_around_face_const_circulator
     hfit(e_boundary_at_v_min),hstart(hfit);
   Halfedge_const_handle e_prev = next(e_boundary_at_v_min);
@@ -229,7 +229,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   Direction d_prev = direction(e_prev);
   CGAL_For_all_backwards(hstart,hfit) {
     Direction d_curr = direction(hfit);
-    if ( d_curr < d_prev ) ++winding_around_globally;
+    CGAL_assertion_code(if ( d_curr < d_prev ) ++winding_around_globally);
     d_prev = d_curr;
   }
   CGAL_assertion(winding_around_globally == 1);
@@ -251,7 +251,7 @@ check_is_triangulation() const
   CGAL::Unique_hash_map< Halfedge_const_iterator, bool> on_boundary(false);
   Halfedge_around_face_const_circulator hit(eb), hend(hit);
   std::ostringstream error_status;
-  CGAL::set_pretty_mode ( error_status );
+  CGAL::IO::set_pretty_mode ( error_status );
   error_status << "check_is_triangulation\n";
   error_status << "on boundary:\n";
   CGAL_For_all(hit,hend) {
@@ -262,10 +262,10 @@ check_is_triangulation() const
   for( eit = this->halfedges_begin(); eit != this->halfedges_end(); ++eit) {
     if (on_boundary[eit]) continue;
     hit = hend = eit;
-    int edges_in_face_cycle=0;
+    CGAL_assertion_code(int edges_in_face_cycle=0);
     CGAL_For_all(hit,hend) {
       error_status << PE(hit);
-      ++edges_in_face_cycle;
+      CGAL_assertion_code(++edges_in_face_cycle);
     }
     CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str().c_str());
     CGAL_assertion_msg(

@@ -15,6 +15,7 @@
 #include <CGAL/license/Classification.h>
 
 #include <vector>
+#include <memory>
 
 #include <CGAL/Classification/compressed_float.h>
 #include <CGAL/Search_traits_3.h>
@@ -28,7 +29,6 @@
 #include <CGAL/boost/graph/properties.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/make_shared.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -57,7 +57,7 @@ namespace Classification {
 class Local_eigen_analysis
 {
 public:
-  typedef std::array<float, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
+  using Eigenvalues = std::array<float, 3>; ///< Eigenvalues (sorted in ascending order)
 
 private:
 
@@ -113,9 +113,9 @@ private:
   template <typename FaceListGraph, typename NeighborQuery, typename DiagonalizeTraits>
   class Compute_eigen_values_graph
   {
-    typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
-    typedef typename boost::property_map<FaceListGraph, CGAL::face_index_t>::type::value_type face_index;
-    typedef typename boost::graph_traits<FaceListGraph>::face_iterator face_iterator;
+    using face_descriptor = typename boost::graph_traits<FaceListGraph>::face_descriptor;
+    using face_index = typename boost::property_map<FaceListGraph, CGAL::face_index_t>::type::value_type;
+    using face_iterator = typename boost::graph_traits<FaceListGraph>::face_iterator;
 
     Local_eigen_analysis& m_eigen;
     const FaceListGraph& m_input;
@@ -178,8 +178,8 @@ private:
 
     inline void apply (std::size_t i) const
     {
-      typedef typename ClusterRange::value_type Cluster;
-      typedef typename Cluster::Item Item;
+      using Cluster = typename ClusterRange::value_type;
+      using Item = typename Cluster::Item;
       const Cluster& cluster = m_input[i];
 
       std::vector<typename ClusterRange::value_type::Item> points;
@@ -191,9 +191,9 @@ private:
 
   };
 
-  typedef std::array<float, 3> float3;
-  typedef std::array<float, 2> float2;
-  typedef std::array<compressed_float, 2> cfloat2;
+  using float3 = std::array<float, 3>;
+  using float2 = std::array<float, 2>;
+  using cfloat2 = std::array<compressed_float, 2>;
 
   struct Content
   {
@@ -203,7 +203,7 @@ private:
     float mean_range;
   };
 
-  boost::shared_ptr<Content> m_content; // To avoid copies with named constructors
+  std::shared_ptr<Content> m_content; // To avoid copies with named constructors
 
 public:
 
@@ -215,7 +215,7 @@ public:
   /// @{
 
   /*!
-    \brief Computes the local eigen analysis of an input point set
+    \brief computes the local eigen analysis of an input point set
     based on a local neighborhood.
 
     \tparam PointRange model of `ConstRange`. Its iterator type is
@@ -226,7 +226,7 @@ public:
     is `CGAL::Point_3`.
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if \cgal
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted if Eigen 3 (or greater)
@@ -257,7 +257,7 @@ public:
                                                     const DiagonalizeTraits& = DiagonalizeTraits())
   {
     Local_eigen_analysis out;
-    out.m_content = boost::make_shared<Content>();
+    out.m_content = std::make_shared<Content>();
     out.m_content->eigenvalues.resize (input.size());
     out.m_content->centroids.resize (input.size());
     out.m_content->smallest_eigenvectors.resize (input.size());
@@ -265,10 +265,10 @@ public:
     out.m_content->mean_range = 0.;
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       std::mutex mutex;
       Compute_eigen_values<PointRange, PointMap, NeighborQuery, DiagonalizeTraits>
@@ -302,13 +302,13 @@ public:
 
 
   /*!
-    \brief Computes the local eigen analysis of an input face graph
+    \brief computes the local eigen analysis of an input face graph
     based on a local neighborhood.
 
     \tparam FaceListGraph model of `FaceListGraph`.
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if \cgal
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -336,13 +336,13 @@ public:
                                                       const ConcurrencyTag& = ConcurrencyTag(),
                                                       const DiagonalizeTraits& = DiagonalizeTraits())
   {
-    typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
-    typedef typename boost::graph_traits<FaceListGraph>::face_iterator face_iterator;
-    typedef typename CGAL::Iterator_range<face_iterator> Face_range;
-    typedef typename boost::property_map<FaceListGraph, CGAL::face_index_t>::type::value_type face_index;
+    using face_descriptor = typename boost::graph_traits<FaceListGraph>::face_descriptor;
+    using face_iterator = typename boost::graph_traits<FaceListGraph>::face_iterator;
+    using Face_range = typename CGAL::Iterator_range<face_iterator>;
+    using face_index = typename boost::property_map<FaceListGraph, CGAL::face_index_t>::type::value_type;
 
     Local_eigen_analysis out;
-    out.m_content = boost::make_shared<Content>();
+    out.m_content = std::make_shared<Content>();
 
     Face_range range (faces(input));
 
@@ -353,10 +353,10 @@ public:
     out.m_content->mean_range = 0.;
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       std::mutex mutex;
       Compute_eigen_values_graph<FaceListGraph, NeighborQuery, DiagonalizeTraits>
@@ -385,14 +385,14 @@ public:
   }
 
   /*!
-    \brief Computes the local eigen analysis of an input set of point
+    \brief computes the local eigen analysis of an input set of point
     clusters based on a local neighborhood.
 
     \tparam ClusterRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator` and its value type is the key type of
     `PointMap`.
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if \cgal
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -418,7 +418,7 @@ public:
                                                           const DiagonalizeTraits& = DiagonalizeTraits())
   {
     Local_eigen_analysis out;
-    out.m_content = boost::make_shared<Content>();
+    out.m_content = std::make_shared<Content>();
 
     out.m_content->eigenvalues.resize (input.size());
     out.m_content->centroids.resize (input.size());
@@ -431,10 +431,10 @@ public:
 
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
     }
@@ -454,7 +454,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns the estimated unoriented normal vector of the point at position `index`.
+    \brief returns the estimated unoriented normal vector of the point at position `index`.
     \tparam GeomTraits model of \cgal Kernel.
   */
   template <typename GeomTraits>
@@ -467,7 +467,7 @@ public:
   }
 
   /*!
-    \brief Returns the estimated local tangent plane of the point at position `index`.
+    \brief returns the estimated local tangent plane of the point at position `index`.
     \tparam GeomTraits model of \cgal Kernel.
   */
   template <typename GeomTraits>
@@ -481,7 +481,7 @@ public:
   }
 
   /*!
-    \brief Returns the normalized eigenvalues of the point at position `index`.
+    \brief returns the normalized eigenvalues of the point at position `index`.
   */
   Eigenvalues eigenvalue (std::size_t index) const
   {
@@ -505,7 +505,7 @@ private:
   float face_radius (typename boost::graph_traits<FaceListGraph>::face_descriptor& fd,
                      const FaceListGraph& g)
   {
-    typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
+    using halfedge_descriptor = typename boost::graph_traits<FaceListGraph>::halfedge_descriptor;
 
     float out = 0.f;
     for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, g), g))
@@ -520,7 +520,7 @@ private:
   template <typename Point, typename DiagonalizeTraits>
   void compute (std::size_t index, const Point& query, std::vector<Point>& neighbor_points)
   {
-    typedef typename Kernel_traits<Point>::Kernel::Vector_3 Vector;
+    using Vector = typename Kernel_traits<Point>::Kernel::Vector_3;
 
     if (neighbor_points.size() == 0)
     {
@@ -575,12 +575,12 @@ private:
                           typename boost::graph_traits<FaceListGraph>::face_descriptor& query,
                           std::vector<typename boost::property_map<FaceListGraph, CGAL::face_index_t>::type::value_type>& neighbor_faces)
   {
-    typedef typename boost::property_map<FaceListGraph, boost::vertex_point_t>::type::value_type Point;
-    typedef typename Kernel_traits<Point>::Kernel Kernel;
-    typedef typename Kernel::Triangle_3 Triangle;
+    using Point = typename boost::property_map<FaceListGraph, boost::vertex_point_t>::type::value_type;
+    using Kernel = typename Kernel_traits<Point>::Kernel;
+    using Triangle = typename Kernel::Triangle_3;
 
-    typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
-    typedef typename boost::graph_traits<FaceListGraph>::face_iterator face_iterator;
+    using face_descriptor = typename boost::graph_traits<FaceListGraph>::face_descriptor;
+    using face_iterator = typename boost::graph_traits<FaceListGraph>::face_iterator;
 
     if (neighbor_faces.size() == 0)
     {

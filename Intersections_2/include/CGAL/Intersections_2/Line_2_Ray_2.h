@@ -35,11 +35,11 @@ namespace internal {
 template <class K>
 class Ray_2_Line_2_pair {
 public:
-    enum Intersection_results {NOT_COMPUTED_YET, NO_INTERSECTION, POINT, RAY};
+    enum Intersection_results {NO_INTERSECTION, POINT, RAY, UNKNOWN};
     typedef typename K::FT FT;
     Ray_2_Line_2_pair(typename K::Ray_2 const *ray,
                       typename K::Line_2 const *line)
-      : _ray(ray), _line(line), _result(NOT_COMPUTED_YET),
+      : _ray(ray), _line(line),
         _intersection_point(K().construct_point_2_object()(ORIGIN))
     {}
 
@@ -50,22 +50,31 @@ public:
 protected:
     typename K::Ray_2 const *   _ray;
     typename K::Line_2 const *  _line;
-    mutable Intersection_results    _result;
+    mutable Intersection_results    _result = UNKNOWN;
     mutable typename K::Point_2         _intersection_point;
 };
 
 template <class K>
-inline bool do_intersect(
-    const typename K::Ray_2 &p1,
-    const typename K::Line_2 &p2,
-    const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Ray_2& r,
+             const typename K::Line_2& l,
+             const K&)
 {
-    typedef Ray_2_Line_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  typedef Ray_2_Line_2_pair<K> pair_t;
+  pair_t pair(&r, &l);
+  return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
-
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Line_2& l,
+             const typename K::Ray_2& r,
+             const K& k)
+{
+  return do_intersect(r, l, k);
+}
 
 template <class K>
 typename Intersection_traits
@@ -99,25 +108,11 @@ intersection(const typename K::Line_2 &line,
     return internal::intersection(ray, line, k);
 }
 
-
-template <class K>
-inline bool do_intersect(
-    const typename K::Line_2 &p1,
-    const typename K::Ray_2 &p2,
-    const K&)
-{
-    typedef Ray_2_Line_2_pair<K> pair_t;
-    pair_t pair(&p2, &p1);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
-}
-
-
-
 template <class K>
 typename Ray_2_Line_2_pair<K>::Intersection_results
 Ray_2_Line_2_pair<K>::intersection_type() const
 {
-    if (_result != NOT_COMPUTED_YET)
+    if (_result != UNKNOWN)
         return _result;
     // The non const this pointer is used to cast away const.
     const typename K::Line_2 &l1 = _ray->supporting_line();
@@ -144,7 +139,7 @@ template <class K>
 typename K::Point_2
 Ray_2_Line_2_pair<K>::intersection_point() const
 {
-    if (_result == NOT_COMPUTED_YET)
+    if (_result == UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -154,7 +149,7 @@ template <class K>
 typename K::Ray_2
 Ray_2_Line_2_pair<K>::intersection_ray() const
 {
-    if (_result == NOT_COMPUTED_YET)
+    if (_result == UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == RAY);
     return *_ray;

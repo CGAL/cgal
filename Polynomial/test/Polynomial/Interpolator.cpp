@@ -54,7 +54,7 @@ void test_interpolator(){
 
 int main(){
 
-    CGAL::set_pretty_mode(std::cout);
+    CGAL::IO::set_pretty_mode(std::cout);
 
     typedef CGAL::Arithmetic_kernel AK;
     typedef AK::Integer Integer;

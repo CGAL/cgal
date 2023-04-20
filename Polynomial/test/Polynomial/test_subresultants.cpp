@@ -1,16 +1,3 @@
-// TODO: Add licence
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL:$
-// $Id: $
-//
-//
-// Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
-//
-// ============================================================================
-
 #include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
@@ -491,7 +478,7 @@ void test_routine() {
       assert(sres[2]==coP[2]*f + coQ[2]*g);
       assert(sres[1]==coP[1]*f + coQ[1]*g);
       assert(sres[0]==coP[0]*f + coQ[0]*g);
-      CGAL::set_pretty_mode(std::cout);
+      CGAL::IO::set_pretty_mode(std::cout);
       assert(sres[2]==sres_check[2]);
       assert(sres[1]==sres_check[1]);
       assert(sres[0]==sres_check[0]);
@@ -508,7 +495,7 @@ void test_routine() {
          std::back_inserter(sres),
          std::back_inserter(coP),
          std::back_inserter(coQ));
-      CGAL::set_pretty_mode(std::cout);
+      CGAL::IO::set_pretty_mode(std::cout);
       for(int i=static_cast<int>(sres.size()-1);i>=0;i--) {
         assert(sres[i]==coP[i]*f + coQ[i]*g);
         assert(sres_check[i]==sres[i]);
@@ -532,7 +519,7 @@ void test_routine() {
          std::back_inserter(sres),
          std::back_inserter(coP),
          std::back_inserter(coQ));
-      CGAL::set_pretty_mode(std::cout);
+      CGAL::IO::set_pretty_mode(std::cout);
       for(int i=static_cast<int>(sres.size()-1);i>=0;i--) {
         assert(sres[i]==coP[i]*f + coQ[i]*g);
         assert(sres_check[i]==sres[i]);
@@ -556,7 +543,7 @@ void test_routine() {
          std::back_inserter(sres),
          std::back_inserter(coP),
          std::back_inserter(coQ));
-      CGAL::set_pretty_mode(std::cout);
+      CGAL::IO::set_pretty_mode(std::cout);
       for(int i=static_cast<int>(sres.size()-1);i>=0;i--) {
         assert(sres[i]==coP[i]*f + coQ[i]*g);
         assert(sres_check[i]==sres[i]);

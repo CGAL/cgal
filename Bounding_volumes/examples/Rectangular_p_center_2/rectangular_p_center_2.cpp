@@ -21,7 +21,7 @@ int main()
   int n = 10;
   int p = 2;
   OIterator cout_ip(std::cout);
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   Cont points;
   std::copy_n(Generator(1), n, std::back_inserter(points));

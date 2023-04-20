@@ -26,10 +26,11 @@
 #include <CGAL/memory.h>
 #include <algorithm>
 #include <cstddef>
+#include <atomic>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4345) // Avoid warning  http://msdn.microsoft.com/en-us/library/wewb47ee(VS.80).aspx
+#  pragma warning(disable:4345) // Avoid warning https://learn.microsoft.com/en-us/previous-versions/wewb47ee(v=vs.120)
 #endif
 namespace CGAL {
 
@@ -39,7 +40,9 @@ class Handle_for
     // Wrapper that adds the reference counter.
     struct RefCounted {
         T t;
-        unsigned int count;
+        std::atomic_uint count;
+        template <class... U>
+        RefCounted(U&&...u ) : t(std::forward<U>(u)...), count(1) {}
     };
 
 
@@ -60,25 +63,19 @@ public:
     Handle_for()
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(); // we get the warning here
-        p->count = 1;
-        ptr_ = p;
+        ptr_ = new (p) RefCounted();
     }
 
     Handle_for(const element_type& t)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t);
-        p->count = 1;
-        ptr_ = p;
+        ptr_ = new (p) RefCounted(t);
     }
 
     Handle_for(element_type && t)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(std::move(t));
-        p->count = 1;
-        ptr_ = p;
+        ptr_ = new (p) RefCounted(std::move(t));
     }
 
 /* I comment this one for now, since it's preventing the automatic conversions
@@ -87,9 +84,7 @@ public:
     Handle_for(const T1& t1)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) T(t1);
-        p->count = 1;
-        ptr_ = p;
+        ptr_ = new (p) RefCounted(t1);
     }
 */
 
@@ -97,20 +92,21 @@ public:
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
-        p->count = 1;
-        ptr_ = p;
+        ptr_ = new (p) RefCounted(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
     }
 
-    Handle_for(const Handle_for& h) noexcept
+    Handle_for(const Handle_for& h) noexcept(!CGAL_ASSERTIONS_ENABLED)
       : ptr_(h.ptr_)
     {
-        CGAL_assume (ptr_->count > 0);
-        ++(ptr_->count);
+        // CGAL_assume (ptr_->count > 0);
+        if (is_currently_single_threaded())
+          ptr_->count.store(ptr_->count.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
+        else
+          ptr_->count.fetch_add(1, std::memory_order_relaxed);
     }
 
     Handle_for&
-    operator=(const Handle_for& h) noexcept
+    operator=(const Handle_for& h) noexcept(!CGAL_ASSERTIONS_ENABLED)
     {
         Handle_for tmp = h;
         swap(tmp);
@@ -151,9 +147,26 @@ public:
 
     ~Handle_for()
     {
-      if (--(ptr_->count) == 0) {
-        Allocator_traits::destroy(allocator, ptr_);
-        allocator.deallocate( ptr_, 1);
+      if (is_currently_single_threaded()) {
+        auto c = ptr_->count.load(std::memory_order_relaxed);
+        if (c == 1) {
+          Allocator_traits::destroy(allocator, ptr_);
+          allocator.deallocate(ptr_, 1);
+        } else {
+          ptr_->count.store(c - 1, std::memory_order_relaxed);
+        }
+      } else {
+      // TSAN does not support fences :-(
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+        if (ptr_->count.load(std::memory_order_relaxed) == 1
+            || ptr_->count.fetch_sub(1, std::memory_order_release) == 1) {
+          std::atomic_thread_fence(std::memory_order_acquire);
+#else
+        if (ptr_->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+#endif
+          Allocator_traits::destroy(allocator, ptr_);
+          allocator.deallocate(ptr_, 1);
+        }
       }
     }
 
@@ -190,7 +203,7 @@ public:
     bool
     is_shared() const noexcept
     {
-        return ptr_->count > 1;
+        return ptr_->count.load(std::memory_order_relaxed) > 1;
     }
 
     bool
@@ -202,7 +215,7 @@ public:
     long
     use_count() const noexcept
     {
-        return ptr_->count;
+        return ptr_->count.load(std::memory_order_relaxed);
     }
 
     void

@@ -26,7 +26,7 @@
 namespace CGAL {
 
 /*! \class
- * A class defining a textual (ASCII) input/output format for arrangements
+ * A class defining a textual (\ascii) input/output format for arrangements
  * with history and supports reading and writing an arrangement from or to
  * input/output streams.
  */

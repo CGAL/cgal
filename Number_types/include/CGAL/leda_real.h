@@ -197,8 +197,8 @@ public:
     Output_rep( const ::leda::real& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        if (t<0) out << "(" << ::CGAL::oformat(t)<<")";
-        else out << ::CGAL::oformat(t);
+        if (t<0) out << "(" << ::CGAL::IO::oformat(t)<<")";
+        else out << ::CGAL::IO::oformat(t);
         return out;
     }
 };

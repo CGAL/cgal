@@ -23,9 +23,8 @@
 
 #include <iterator>
 #include <boost/mpl/and.hpp>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/if.hpp>
 
 #include <CGAL/Default.h>
@@ -140,14 +139,27 @@ public:
 #endif
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor edge_descriptor;
 
+#ifdef DOXYGEN_RUNNING
   /*!
   constructs a primitive.
+
   \tparam Iterator is an input iterator with `Id` as value type.
+
   This \ref AABB_tree/AABB_halfedge_graph_edge_example.cpp "example" gives a way to call this constructor
   using the insert-by-range method of the class `AABB_tree<Traits>`.
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
+  template <class Iterator>
+  AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph, VertexPointPMap vppm);
+
+  /*!
+  constructs a primitive.
+  If `VertexPointPMap` is the default of the class, an additional constructor
+  is available with `vppm` set to `boost::get(vertex_point, graph)`.
+  */
+  AABB_halfedge_graph_segment_primitive(edge_descriptor ed, const HalfedgeGraph& graph, VertexPointPMap vppm);
+#else
   template <class Iterator>
   AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(make_id(*it, graph, OneHalfedgeGraphPerTree())),
@@ -155,18 +167,12 @@ public:
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
   {}
 
-  /*!
-  constructs a primitive.
-  If `VertexPointPMap` is the default of the class, an additional constructor
-  is available with `vppm` set to `boost::get(vertex_point, graph)`.
-  */
   AABB_halfedge_graph_segment_primitive(edge_descriptor ed, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(make_id(ed, graph, OneHalfedgeGraphPerTree())),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
   {}
 
-  #ifndef DOXYGEN_RUNNING
   template <class Iterator>
   AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
     : Base( Id_(make_id(*it, graph, OneHalfedgeGraphPerTree())),
@@ -177,7 +183,7 @@ public:
     : Base( Id_(make_id(ed, graph, OneHalfedgeGraphPerTree())),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
-  #endif
+#endif
 
   /// \internal
   typedef internal::Cstr_shared_data<HalfedgeGraph, Base, Segment_property_map, Point_property_map, OneHalfedgeGraphPerTree> Cstr_shared_data;

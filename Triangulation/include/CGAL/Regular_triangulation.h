@@ -652,7 +652,7 @@ Regular_triangulation<Traits, TDS>
   // 2. Find corresponding Facet on boundary of dark zone
   // 3. stitch.
 
-  // 1. Build a facet on the boudary of the light zone:
+  // 1. Build a facet on the boundary of the light zone:
   Full_cell_handle light_s = *simps.begin();
   Facet light_ft(light_s, light_s->index(v));
 
@@ -974,7 +974,8 @@ Regular_triangulation<Traits, TDS>
   // => we don't insert it
   if (!in_conflict)
   {
-    m_hidden_points.push_back(p);
+    if(only_if_this_vertex_is_in_the_cz == Vertex_handle())
+      m_hidden_points.push_back(p);
     return Vertex_handle();
   }
   else

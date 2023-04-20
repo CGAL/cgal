@@ -7,7 +7,7 @@ The concept `MeshTriangulationTraits_3` describes the requirements for
 the geometric traits class of the underlying regular triangulation used during
 a mesh generation process.
 
-\cgalRefines RegularTriangulationTraits_3
+\cgalRefines{RegularTriangulationTraits_3}
 
 \cgalHasModel All models of `Kernel`.
 
@@ -312,11 +312,11 @@ public:
   /*!
   A constructor object that must provide the function operators:
 
-  `CGAL::cpp11::result_of< Kernel::Intersect_3(Segment_3, Plane_3)>::%type operator()(Segment_3 s, Plane_3 p)`
+  `boost::optional< boost::variant< T... > > operator()(Segment_3 s, Plane_3 p)`
 
-  `CGAL::cpp11::result_of< Kernel::Intersect_3(Ray_3, Iso_cuboid_3)>::%type operator()(Ray_3 r, Iso_cuboid i)`
+  `boost::optional< boost::variant< T... > > operator()(Ray_3 r, Iso_cuboid i)`
 
-  `CGAL::cpp11::result_of< Kernel::Intersect_3(Segment_3, Iso_cuboid_3)>::%type operator()(Segment_3 s, Iso_cuboid i)`
+  `boost::optional< boost::variant< T... > > operator()(Segment_3 s, Iso_cuboid i)`
 
   which returns the intersection region of two geometrical objects.
   */

@@ -22,7 +22,7 @@
 
 #include <CGAL/_test_types.h>
 
-#include <CGAL/internal/Projection_traits_3.h>
+#include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 #include <CGAL/_test_traits.h>
 #include <CGAL/_test_cls_geom_traits.h>
 

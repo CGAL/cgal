@@ -39,7 +39,7 @@ bool check_strict_ordering(const std::vector<FT> &error)
 int main()
 {
   Mesh mesh;
-  std::ifstream input("./data/sphere.off");
+  std::ifstream input(CGAL::data_file_path("meshes/sphere.off"));
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -54,7 +54,7 @@ int main()
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 

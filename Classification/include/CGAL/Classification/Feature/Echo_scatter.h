@@ -52,9 +52,9 @@ template <typename GeomTraits, typename PointRange, typename PointMap, typename 
 class Echo_scatter : public Feature_base
 {
 public:
-  typedef Classification::Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
+  using Grid = Classification::Planimetric_grid<GeomTraits, PointRange, PointMap>;
 private:
-  typedef Classification::Image<compressed_float> Image_cfloat;
+  using Image_cfloat = Classification::Image<compressed_float>;
 
   const Grid& grid;
   Image_cfloat Scatter;
@@ -62,7 +62,7 @@ private:
 
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param echo_map property map to access the echo values of the input points.

@@ -13,16 +13,20 @@
 #ifndef CGAL_NT_CONVERTER_H
 #define CGAL_NT_CONVERTER_H
 
-#include <functional>
 #include <CGAL/number_type_config.h>
 #include <CGAL/number_utils.h>
 
-template <bool> class Interval_nt;
+#include <functional>
 
 namespace CGAL {
 
-// A number type converter usable as default, using the conversion operator.
+template <bool>
+class Interval_nt;
 
+template <class NT>
+class Quotient;
+
+// A number type converter usable as default, using the conversion operator.
 template < class NT1, class NT2 >
 struct NT_converter
   : public CGAL::cpp98::unary_function< NT1, NT2 >
@@ -38,6 +42,7 @@ struct NT_converter
 // - double to call to_double().
 // - Interval_nt<> to call to_interval().
 // - NT1 == NT2 to return a reference instead of copying.
+// - Quotient conversions
 
 template < class NT1 >
 struct NT_converter < NT1, NT1 >
@@ -61,12 +66,34 @@ struct NT_converter < NT1, double >
     }
 };
 
+template < class NT1 >
+struct NT_converter < NT1, float >
+  : public CGAL::cpp98::unary_function< NT1, float >
+{
+    float
+    operator()(const NT1 &a) const
+    {
+        return static_cast<float>(to_double(a));
+    }
+};
+
 template <>
 struct NT_converter < double, double >
   : public CGAL::cpp98::unary_function< double, double >
 {
     const double &
     operator()(const double &a) const
+    {
+        return a;
+    }
+};
+
+template <>
+struct NT_converter < float, float >
+  : public CGAL::cpp98::unary_function< float, float >
+{
+    const float &
+    operator()(const float &a) const
     {
         return a;
     }
@@ -91,6 +118,29 @@ struct NT_converter < Interval_nt<b>, Interval_nt<b> >
     operator()(const Interval_nt<b> &a) const
     {
         return a;
+    }
+};
+
+template < class NT >
+struct NT_converter < Quotient<NT>, Quotient<NT> >
+  : public CGAL::cpp98::unary_function< Quotient<NT>, Quotient<NT> >
+{
+    const Quotient<NT>&
+    operator()(const Quotient<NT> & q) const
+    {
+        return q;
+    }
+};
+
+template < class NT1, class NT2 >
+struct NT_converter < Quotient<NT1>, Quotient<NT2> >
+  : public CGAL::cpp98::unary_function< Quotient<NT1>, Quotient<NT2> >
+{
+    Quotient<NT2>
+    operator()(const Quotient<NT1> & q) const
+    {
+        NT_converter < NT1, NT2 > nt;
+        return Quotient<NT2>(nt(q.numerator()), nt(q.denominator()));
     }
 };
 

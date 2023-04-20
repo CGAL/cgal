@@ -16,7 +16,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/Return_base_tag.h>
@@ -64,8 +64,8 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
         }
 
         // Since the dimension is at least 2, there are at least 3 points and no ambiguity with iterators.
-        // template <class...U,class=typename std::enable_if<std::is_same<Dimension_tag<sizeof...(U)-1>,typename R::Default_ambient_dimension>::value>::type>
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
+        // template <class...U,class=std::enable_if_t<std::is_same<Dimension_tag<sizeof...(U)-1>::value,typename R::Default_ambient_dimension>::value>>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=3)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -159,7 +159,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
                 return R::LA::sign_of_determinant(std::move(m));
         }
 
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=3)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -425,7 +425,7 @@ CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K
 
 #if 0
 namespace CartesianDKernelFunctors {
-template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
+template<class R_,bool=std::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Orientation)
         typedef R_ R;
         typedef typename Get_type<R, Vector_tag>::type Vector;
@@ -463,12 +463,12 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
         //when Point and Vector are distinct types, the dispatch should be made
         //in a way that doesn't instantiate a conversion from Point to Vector
         template<class Iter>
-        typename boost::enable_if<is_iterator_to<Iter,Point>,result_type>::type
+        std::enable_if_t<is_iterator_to<Iter,Point>::value,result_type>
         operator()(Iter const&f, Iter const& e)const{
                 return OP(this->kernel())(f,e);
         }
         template<class Iter>
-        typename boost::enable_if<is_iterator_to<Iter,Vector>,result_type>::type
+        std::enable_if_t<is_iterator_to<Iter,Vector>::value,result_type>
         operator()(Iter const&f, Iter const& e)const{
                 return OV(this->kernel())(f,e);
         }
@@ -586,7 +586,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
             return LA::sign_of_determinant(std::move(m));
         }
 
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=4)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -762,7 +762,7 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
           return enum_cast<Bounded_side> (sos (f, e, p0) * op (f, e));
         }
 
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=4)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -1108,7 +1108,7 @@ template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel
         typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<Cc> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<Cc> Uses_no_arithmetic;
 
         template<class V,class W,class I>
         result_type operator()(V const&a, W const&b, I i)const{
@@ -1128,7 +1128,7 @@ template<class R_> struct Compare_point_cartesian_coordinate : private Store_ker
         typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<Cc> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<Cc> Uses_no_arithmetic;
 
         template<class V,class W,class I>
         result_type operator()(V const&a, W const&b, I i)const{
@@ -1148,7 +1148,7 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<CI> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
 
         template<class V,class W>
         result_type operator()(V const&a, W const&b)const{
@@ -1176,7 +1176,7 @@ template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
         typedef R_ R;
         typedef typename Get_type<R, Bool_tag>::type result_type;
         typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
-        typedef typename CGAL::Is_exact<CL> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CL> Uses_no_arithmetic;
 
         template <class V, class W>
         result_type operator() (V const&a, W const&b) const {
@@ -1194,7 +1194,7 @@ template<class R_> struct Less_or_equal_lexicographically : private Store_kernel
         typedef R_ R;
         typedef typename Get_type<R, Bool_tag>::type result_type;
         typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
-        typedef typename CGAL::Is_exact<CL> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CL> Uses_no_arithmetic;
 
         template <class V, class W>
         result_type operator() (V const&a, W const&b) const {
@@ -1214,7 +1214,7 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<CI> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
 
         template<class V,class W>
         result_type operator()(V const&a, W const&b)const{

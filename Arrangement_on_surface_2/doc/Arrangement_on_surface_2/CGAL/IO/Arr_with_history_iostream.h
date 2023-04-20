@@ -1,5 +1,7 @@
 namespace CGAL {
 
+namespace IO {
+
 /*!
 \ingroup PkgArrangementOnSurface2Read
 
@@ -26,13 +28,15 @@ std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
                      std::ostream& os,
                      WithHistoryFormatter& formatter);
 
+} // namespace IO
+
 /*!
 \ingroup PkgArrangementOnSurface2op_left_shift
 Inserts the arrangement-with-history object `arr` into the output
 stream `os` using the output format defined by the
 `Arr_with_history_text_formatter` class. Only the basic geometric
 and topological features of the arrangement are inserted. Auxiliary
-data that may be attached to the <span class="textsc">Dcel</span> features is ignored.
+data that may be attached to the \dcel features is ignored.
 */
 template<typename Traits, typename Dcel>
 std::ostream& operator<< (std::ostream& os,

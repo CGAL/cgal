@@ -1,0 +1,96 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{2}%
+  \begin{pspicture}(-.8,-1.7)(.8,1.7)
+    \arraxes(0,0)(-.8,-1.7)(.8,1.7)
+    \parametricplot[linecolor=olivegreen,plotstyle=ecurve]{-18}{18}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=blue,plotstyle=ecurve]{18}{35}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=purple,plotstyle=ecurve]{35}{90}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=orange,plotstyle=ecurve]{90}{145}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=cyan,plotstyle=ecurve]{145}{162}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=magenta,plotstyle=ecurve]{162}{198}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=seagreen,plotstyle=ecurve]{198}{215}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=violet,plotstyle=ecurve]{215}{270}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=brown,plotstyle=ecurve]{270}{325}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \parametricplot[linecolor=red,plotstyle=ecurve]{325}{342}{
+      /cost t cos def /cos2t 2 t mul cos def
+      /sint t sin def /sin2t 2 t mul sin def
+      /k 4 3 div def
+      /t1 k sin2t sin2t mul sub sqrt def /t2 cos2t t1 add sqrt def
+      sint t2 mul cost t2 mul
+    }
+    \psline[linestyle=dashed,dash=2pt 2pt,linewidth=0.5pt](-.57,-1.7)(-.57,1.7)
+    \psline[linestyle=dashed,dash=2pt 2pt,linewidth=0.5pt](.57,-1.7)(.57,1.7)
+    \psline[linestyle=dashed,dash=2pt 2pt,linewidth=0.5pt](-.4,-1.7)(-.4,1.7)
+    \psline[linestyle=dashed,dash=2pt 2pt,linewidth=0.5pt](.4,-1.7)(.4,1.7)
+    %
+    \arrMinorVertex(-0.39332, -1.30023){1}
+    \arrEmptyVertex(-0.57735, -0.816497){2}
+    \arrEmptyVertex(-0.39332, 0){3}
+    \arrEmptyVertex(-0.57735, 0.816497){4}
+    \arrMinorVertex(-0.39332, 1.30023){5}
+    \arrMinorVertex(0.39332, -1.30023){6}
+    \arrMinorVertex(0.39332, 1.30023){7}
+    \arrEmptyVertex(0.57735, -0.816497){8}
+    \arrEmptyVertex(0.39332, 0){9}
+    \arrEmptyVertex(0.57735, 0.816497){10}\uput[0]{0}(0.57735, 0.816497){$q$}
+    \arrMainVertex(-0.48,1.18){x}\uput[90]{0}(-0.48,1.18){$p$}
+  \end{pspicture}
+}
+\end{document}

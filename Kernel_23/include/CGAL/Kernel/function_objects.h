@@ -20,6 +20,7 @@
 #ifndef CGAL_KERNEL_FUNCTION_OBJECTS_H
 #define CGAL_KERNEL_FUNCTION_OBJECTS_H
 
+#include <CGAL/tags.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
@@ -30,12 +31,44 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-
 #include <cmath> // for Compute_dihedral_angle
 
 namespace CGAL {
 
 namespace CommonKernelFunctors {
+
+
+
+  template <typename K>
+  class Non_zero_coordinate_index_3
+  {
+    typedef typename K::Vector_3 Vector_3;
+
+  public:
+    typedef int result_type;
+
+    result_type operator()(const Vector_3& vec) const
+    {
+      if(certainly_not(is_zero(vec.hx()))){
+        return 0;
+      } else if(certainly_not(is_zero(vec.hy()))){
+        return 1;
+      }else if(certainly_not(is_zero(vec.hz()))){
+        return 2;
+      }
+
+      if(! is_zero(vec.hx())){
+        return 0;
+      } else if(! is_zero(vec.hy())){
+        return 1;
+      } else if(! is_zero(vec.hz())){
+        return 2;
+      }
+
+      return -1;
+  }
+  };
+
 
   template <typename K>
   class Are_ordered_along_line_2
@@ -161,6 +194,49 @@ namespace CommonKernelFunctors {
     result_type
     operator()(T& t, const Object_3& o) const
     { return assign(t, o); }
+  };
+
+  template <typename K>
+  class Compare_angle_3
+  {
+    typedef typename K::Point_3            Point_3;
+    typedef typename K::Vector_3           Vector_3;
+    typedef typename K::FT                 FT;
+  public:
+    typedef typename K::Comparison_result  result_type;
+
+    result_type
+    operator()(const Point_3& a, const Point_3& b, const Point_3& c,
+               const FT& cosine) const
+    {
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+      typename K::Compute_squared_length_3 sq_length = K().compute_squared_length_3_object();
+
+      const Vector_3 ba = vector(b, a);
+      const Vector_3 bc = vector(b, c);
+
+      typename K::FT sc_prod = scalar_product(ba, bc);
+
+      if (sc_prod >= 0)
+      {
+        if (cosine >= 0)
+          return CGAL::compare(CGAL::square(cosine)
+                                * sq_length(ba)*sq_length(bc),
+                               CGAL::square(sc_prod));
+        else
+          return SMALLER;
+      }
+      else
+      {
+        if (cosine >= 0)
+          return LARGER;
+        else
+          return CGAL::compare(CGAL::square(sc_prod),
+                               CGAL::square(cosine)
+                                * sq_length(ba)*sq_length(bc));
+      }
+    }
   };
 
   template <typename K>
@@ -703,11 +779,12 @@ namespace CommonKernelFunctors {
 
     typedef Comparison_result                             result_type;
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const Weighted_point_3 & r,
-                           const Weighted_point_3 & s,
-                           const FT& w) const
+    Needs_FT<result_type>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const Weighted_point_3 & r,
+               const Weighted_point_3 & s,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -717,10 +794,11 @@ namespace CommonKernelFunctors {
                            w);
     }
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const Weighted_point_3 & r,
-                           const FT& w) const
+    Needs_FT<result_type>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const Weighted_point_3 & r,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_smallest_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -729,9 +807,10 @@ namespace CommonKernelFunctors {
                            w);
     }
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const FT& w) const
+    Needs_FT<result_type>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_smallest_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -784,17 +863,18 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     template <class T1, class T2>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL::compare(squared_distance(p, q), d2);
+      return CGAL::compare(internal::squared_distance(p, q, K()), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(internal::squared_distance(p, q, K()),
+                           internal::squared_distance(r, s, K()));
     }
   };
 
@@ -806,17 +886,18 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     template <class T1, class T2>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL::compare(squared_distance(p, q), d2);
+      return CGAL::compare(internal::squared_distance(p, q, K()), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(internal::squared_distance(p, q, K()),
+                           internal::squared_distance(r, s, K()));
     }
   };
 
@@ -1682,8 +1763,7 @@ namespace CommonKernelFunctors {
       Line l1 = construct_line(l11, l12);
       Line l2 = construct_line(l21, l22);
 
-      typename cpp11::result_of<typename K::Intersect_3(Line,Line)>::type
-        res = typename K::Intersect_3()(l1,l2);
+      const auto res = typename K::Intersect_3()(l1,l2);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
@@ -1779,7 +1859,8 @@ namespace CommonKernelFunctors {
     {
       CGAL_kernel_precondition(! K().collinear_3_object()(p,q,r) );
       Vector_3 res = CGAL::cross_product(q-p, r-p);
-      return res; }
+      return res;
+    }
   };
 
   template <typename K>
@@ -2007,12 +2088,20 @@ namespace CommonKernelFunctors {
     { return Rep(p, q, r); }
 
     Rep // Plane_3
+    operator()(Return_base_tag, Origin o, const Point_3& q, const Point_3& r) const
+    { return Rep(o, q, r); }
+
+    Rep // Plane_3
     operator()(Return_base_tag, const Point_3& p, const Direction_3& d) const
     { return Rep(p, d); }
 
     Rep // Plane_3
     operator()(Return_base_tag, const Point_3& p, const Vector_3& v) const
     { return Rep(p, v); }
+
+    Rep // Plane_3
+    operator()(Return_base_tag, Origin o, const Vector_3& v) const
+    { return Rep(o, v); }
 
     Rep // Plane_3
     operator()(Return_base_tag, const Line_3& l, const Point_3& p) const
@@ -2082,8 +2171,7 @@ namespace CommonKernelFunctors {
       Plane plane = construct_plane(p1, p2, p3);
       Line line = construct_line( l1, l2 );
 
-      typename cpp11::result_of<typename K::Intersect_3(Plane,Line)>::type
-        res = typename K::Intersect_3()(plane,line);
+      const auto res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
@@ -2096,8 +2184,7 @@ namespace CommonKernelFunctors {
     {
       Line line = construct_line( l1, l2 );
 
-      typename cpp11::result_of<typename K::Intersect_3(Plane,Line)>::type
-        res = typename K::Intersect_3()(plane,line);
+      const auto res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
@@ -2548,7 +2635,7 @@ namespace CommonKernelFunctors {
       Vector_3 res = CGAL::cross_product(q-p, r-p);
       res = res / CGAL::sqrt(res.squared_length());
       return res;
-        }
+    }
   };
 
   template <typename K>
@@ -2560,15 +2647,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    template<typename>
-    struct result {
-      typedef const Point_3& type;
-    };
-
-    template<typename T>
-    struct result<T(Iso_cuboid_3, int)> {
-      typedef Point_3 type;
-    };
 
     const Point_3&
     operator()( const Segment_3& s, int i) const
@@ -2752,24 +2830,18 @@ namespace CommonKernelFunctors {
     bool
     is_inside_triangle_3(const typename K::Point_3& p,
                          const typename K::Triangle_3& t,
+                         const typename K::Vector_3& w,
                          typename K::Point_3& result,
                          const K& k)
     {
       typedef typename K::Point_3 Point_3;
-      typedef typename K::Vector_3 Vector_3;
 
-      typename K::Construct_vector_3 vector =
-        k.construct_vector_3_object();
       typename K::Construct_vertex_3 vertex_on =
         k.construct_vertex_3_object();
-      typename K::Construct_cross_product_vector_3 cross_product =
-        k.construct_cross_product_vector_3_object();
 
       const Point_3& t0 = vertex_on(t,0);
       const Point_3& t1 = vertex_on(t,1);
       const Point_3& t2 = vertex_on(t,2);
-
-      Vector_3 w = cross_product(vector(t0,t1), vector(t1,t2));
 
       bool outside = false;
       if (   is_inside_triangle_3_aux(w, t0, t1, p, result, outside, k)
@@ -2835,8 +2907,8 @@ namespace CommonKernelFunctors {
 
   public:
     typename K::Point_3
-    operator()(const typename K::Point_3& origin,
-               const typename K::Triangle_3& triangle,
+    operator()(const typename K::Triangle_3& triangle,
+               const typename K::Point_3& origin,
                const K& k)
     {
       typedef typename K::Point_3 Point_3;
@@ -2846,6 +2918,8 @@ namespace CommonKernelFunctors {
       typename K::Construct_projected_point_3 projection =
         k.construct_projected_point_3_object();
       typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
+      typename K::Construct_orthogonal_vector_3 normal =
+        k.construct_orthogonal_vector_3_object();
 
       const typename K::Plane_3 plane = supporting_plane(triangle);
       if(is_degenerate(plane)) {
@@ -2873,18 +2947,18 @@ namespace CommonKernelFunctors {
         if(linf_ab > linf_ac) {
           if(linf_ab > linf_bc) {
             // ab is the maximal segment
-            return this->operator()(origin, seg(a, b), k);
+            return this->operator()(seg(a, b), origin, k);
           } else {
             // ab > ac, bc >= ab, use bc
-            return this->operator()(origin, seg(b, c), k);
+            return this->operator()(seg(b, c), origin, k);
           }
         } else { // ab <= ac
           if(linf_ac > linf_bc) {
             // ac is the maximal segment
-            return this->operator()(origin, seg(a, c), k);
+            return this->operator()(seg(a, c), origin, k);
           } else {
             // ab <= ac, ac <= bc, use bc
-            return this->operator()(origin, seg(b, c), k);
+            return this->operator()(seg(b, c), origin, k);
           }
         }
       } // degenerate plane
@@ -2892,9 +2966,8 @@ namespace CommonKernelFunctors {
       // Project origin on triangle supporting plane
       const Point_3 proj = projection(plane, origin);
 
-
       Point_3 moved_point;
-      bool inside = is_inside_triangle_3(proj,triangle,moved_point,k);
+      bool inside = is_inside_triangle_3(proj,triangle,normal(plane),moved_point,k);
 
       // If proj is inside triangle, return it
       if ( inside )
@@ -2907,8 +2980,8 @@ namespace CommonKernelFunctors {
     }
 
     typename K::Point_3
-    operator()(const typename K::Point_3& query,
-               const typename K::Segment_3& segment,
+    operator()(const typename K::Segment_3& segment,
+               const typename K::Point_3& query,
                const K& k)
     {
 
@@ -2929,8 +3002,8 @@ namespace CommonKernelFunctors {
     }
 
     typename K::Point_3
-    operator()(const typename K::Point_3& query,
-               const typename K::Ray_3& ray,
+    operator()(const typename K::Ray_3& ray,
+               const typename K::Point_3& query,
                const K& k)
     {
       if ( ray.to_vector() * (query-ray.source()) <= 0)
@@ -2939,6 +3012,14 @@ namespace CommonKernelFunctors {
       {
         return k.construct_projected_point_3_object()(ray.supporting_line(), query);
       }
+    }
+
+    const typename K::Point_3&
+    operator()(const typename K::Point_3& point,
+               const typename K::Point_3&,
+               const K&)
+    {
+      return point;
     }
 
     // code for operator for plane and point is defined in
@@ -2989,11 +3070,11 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Boolean     result_type;
 
-    // There are 36 combinaisons, so I use a template.
+    // Needs_FT because Line/Line (and variations) as well as Circle_2/X compute intersections
     template <class T1, class T2>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::do_intersect(t1, t2, K()); }
+    { return { Intersections::internal::do_intersect(t1, t2, K())}; }
   };
 
   template <typename K>
@@ -3002,16 +3083,17 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Boolean     result_type;
 
-    // There are x combinaisons, so I use a template.
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::do_intersect(t1, t2, K()); }
 
-    result_type
-    operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
-    { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
-
+    result_type operator()(const typename K::Plane_3& pl1,
+                           const typename K::Plane_3& pl2,
+                           const typename K::Plane_3& pl3) const
+    {
+      return Intersections::internal::do_intersect(pl1, pl2, pl3, K());
+    }
   };
 
   template <typename K>
@@ -3095,7 +3177,7 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const Iso_rectangle_2& i1, const Iso_rectangle_2& i2) const
     {
-      return ((i1.min)() == (i2.min)()) && ((i1.max)() == (i2.max)());
+      return CGAL_AND((i1.min)() == (i2.min)(), (i1.max)() == (i2.max)());
     }
   };
 
@@ -3122,7 +3204,7 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const Point_3 &p, const Point_3 &q) const
     {
-      return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
+      return CGAL_AND_3(p.x() == q.x(), p.y() == q.y(), p.z() == q.z());
     }
 
     result_type
@@ -3301,42 +3383,38 @@ namespace CommonKernelFunctors {
       return c.rep().has_on_bounded_side(p);
     }
 
-    bool operator()(const Sphere_3& s1, const Sphere_3& s2,
-                    const Point_3& a, const Point_3& b) const
+    // returns true iff the line segment ab is inside the union of the bounded sides of s1 and s2.
+    Needs_FT<result_type>
+    operator()(const Sphere_3& s1, const Sphere_3& s2,
+               const Point_3& a, const Point_3& b) const
     {
-      typedef typename K::Circle_3    Circle_3;
-      typedef typename K::Point_3     Point_3;
-      typedef typename K::Segment_3   Segment_3;
-      typedef typename K::Plane_3     Plane_3;
-      typedef typename K::Intersect_3 Intersect_3;
+      typedef typename K::Circle_3  Circle_3;
+      typedef typename K::Point_3   Point_3;
+      typedef typename K::Segment_3 Segment_3;
+      typedef typename K::Plane_3   Plane_3;
 
       const Has_on_bounded_side_3& has_on_bounded_side = *this;
 
       const bool a_in_s1 = has_on_bounded_side(s1, a);
       const bool a_in_s2 = has_on_bounded_side(s2, a);
 
-      if(!(a_in_s1 || a_in_s2)) return false;
+      if(!(a_in_s1 || a_in_s2)) return {false};
 
       const bool b_in_s1 = has_on_bounded_side(s1, b);
       const bool b_in_s2 = has_on_bounded_side(s2, b);
 
-      if(!(b_in_s1 || b_in_s2)) return false;
+      if(!(b_in_s1 || b_in_s2)) return {false};
 
-      if(a_in_s1 && b_in_s1) return true;
-      if(a_in_s2 && b_in_s2) return true;
+      if(a_in_s1 && b_in_s1) return {true};
+      if(a_in_s2 && b_in_s2) return {true};
 
-      if(!K().do_intersect_3_object()(s1, s2)) return false;
+      if(!K().do_intersect_3_object()(s1, s2)) return {false};
       const Circle_3 circ(s1, s2);
       const Plane_3& plane = circ.supporting_plane();
-      typename CGAL::cpp11::result_of<Intersect_3(Plane_3, Segment_3)>::type
-        optional = K().intersect_3_object()(plane, Segment_3(a, b));
-      CGAL_kernel_assertion_msg(bool(optional) == true,
-                                "the segment does not intersect the supporting"
-                                " plane");
+      const auto optional = K().intersect_3_object()(plane, Segment_3(a, b));
+      CGAL_kernel_assertion_msg(bool(optional) == true, "the segment does not intersect the supporting plane");
       const Point_3* p = boost::get<Point_3>(&*optional);
-      CGAL_kernel_assertion_msg(p != 0,
-                                "the segment intersection with the plane is "
-                                "not a point");
+      CGAL_kernel_assertion_msg(p != 0, "the segment intersection with the plane is not a point");
       return squared_distance(circ.center(), *p) < circ.squared_radius();
     }
 
@@ -3520,17 +3598,10 @@ namespace CommonKernelFunctors {
   class Intersect_2
   {
   public:
-    template<typename>
-    struct result;
-
-    template<typename F, typename A, typename B>
-    struct result<F(A,B)> {
-      typedef typename Intersection_traits<K, A, B>::result_type type;
-    };
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    typename Intersection_traits<K, T1, T2>::result_type
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K()); }
   };
@@ -3540,32 +3611,45 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Plane_3     Plane_3;
   public:
-    template<typename>
-    struct result;
-
-    template<typename F, typename A, typename B>
-    struct result<F(A, B)> {
-      typedef typename Intersection_traits<K, A, B>::result_type type;
-    };
-
-    template<typename F>
-    struct result<F(Plane_3, Plane_3, Plane_3)> {
-      typedef boost::optional<
-        boost::variant< typename K::Point_3,
-                        typename K::Line_3,
-                        typename K::Plane_3 > > type;
-    };
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    typename cpp11::result_of< Intersect_3(T1, T2) >::type
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
+    boost::optional<boost::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
+
+
+  // This functor is not part of the documented Kernel API, but an implementation detail
+  // of Polygon_mesh_processing::Polyhedral_envelope
+  // When used with the Lazy_kernel (that is Epeck) the returned point
+  // is a singleton (so its coordinates will be changed by another call).
+  template <typename K>
+  class Intersect_point_3_for_polyhedral_envelope
+  {
+  public:
+    typedef typename K::Point_3     Point_3;
+    typedef typename K::Line_3      Line_3;
+    typedef typename K::Plane_3     Plane_3;
+    typedef typename boost::optional<Point_3> result_type;
+
+    result_type
+    operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const
+    {
+      return Intersections::internal::intersection_point(pl1, pl2, pl3, K() );
+    }
+
+    result_type
+    operator()(const Plane_3& plane, const Line_3& line) const
+    {
+      return Intersections::internal::intersection_point(plane, line, K() );
+    }
+  };
+
 
   template <typename K>
   class Is_degenerate_2
@@ -3763,6 +3847,7 @@ namespace CommonKernelFunctors {
   class Oriented_side_3
   {
     typedef typename K::Point_3        Point_3;
+    typedef typename K::Vector_3       Vector_3;
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
     typedef typename K::Plane_3        Plane_3;
     typedef typename K::Sphere_3       Sphere_3;
@@ -3776,6 +3861,12 @@ namespace CommonKernelFunctors {
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.rep().oriented_side(p); }
+
+    result_type
+    operator()( const Point_3& plane_pt, const Vector_3& plane_normal, const Point_3& query) const
+    {
+      return typename K::Construct_plane_3()(plane_pt, plane_normal).rep().oriented_side(query);
+    }
 
     result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const

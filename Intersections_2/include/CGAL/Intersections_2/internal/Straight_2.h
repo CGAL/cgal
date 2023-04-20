@@ -14,12 +14,11 @@
 //
 // Author(s)     : Geert-Jan Giezeman
 
-
 #ifndef CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 #define CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 
+#include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
-#include <CGAL/squared_distance_utils.h>
 #include <CGAL/Kernel/global_functions_internal_2.h>
 
 namespace CGAL {
@@ -346,6 +345,6 @@ collinear_order(typename K::Point_2 const &pt1, typename K::Point_2 const & pt2)
 
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H

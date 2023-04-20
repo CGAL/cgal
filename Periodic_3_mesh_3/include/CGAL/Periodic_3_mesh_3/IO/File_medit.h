@@ -308,7 +308,7 @@ void output_to_medit(std::ostream& os,
 #endif
   CGAL_precondition(c3t3.triangulation().is_1_cover());
 
-  typedef CGAL::Mesh_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
+  typedef CGAL::SMDS_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
   typedef typename Generator::Cell_pmap                               Cell_pmap;
   typedef typename Generator::Facet_pmap                              Facet_pmap;
   typedef typename Generator::Facet_pmap_twice                        Facet_pmap_twice;
@@ -330,8 +330,10 @@ void output_to_medit(std::ostream& os,
 
 } // namespace Periodic_3_mesh_3
 
+namespace IO {
+
 /**
- * \brief Outputs a periodic mesh to the .mesh file format, which can be visualized
+ * \brief outputs a periodic mesh to the .mesh file format, which can be visualized
  *        using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
  * \param os the stream
  * \param c3t3 the mesh
@@ -366,6 +368,12 @@ void output_periodic_mesh_to_medit(std::ostream& os,
       Periodic_3_mesh_3::output_to_medit<C3T3, false, true>(os, c3t3, occurrence_count, distinguish_copies);
   }
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_periodic_mesh_to_medit;
+#endif
 
 } // namespace CGAL
 

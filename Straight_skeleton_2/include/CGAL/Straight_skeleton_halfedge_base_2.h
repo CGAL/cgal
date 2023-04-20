@@ -19,7 +19,7 @@
 
 namespace CGAL {
 
-template < class Refs, class S >
+template < class Refs >
 class Straight_skeleton_halfedge_base_base_2
 {
 public:
@@ -38,9 +38,7 @@ public:
   typedef typename Refs::Vertex                Vertex;
   typedef typename Refs::Face                  Face;
 
-  typedef Straight_skeleton_halfedge_base_base_2<Refs,S> Base_base ;
-
-  typedef S Segment_2;
+  typedef Straight_skeleton_halfedge_base_base_2<Refs> Base_base ;
 
 protected:
 
@@ -63,8 +61,6 @@ public:
   {
     return !this->vertex()->is_contour() && !this->opposite()->vertex()->is_contour();
   }
-
-  bool has_null_segment() const { return this->vertex()->has_null_point() ; }
 
   bool has_infinite_time() const { return this->vertex()->has_infinite_time() ; }
 
@@ -107,8 +103,8 @@ private:
   Sign             mSlope ;
 };
 
-template < class Refs, class S >
-class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs,S>
+template < class Refs >
+class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs>
 {
 public:
 
@@ -116,8 +112,8 @@ public:
   typedef typename Refs::Halfedge_handle Halfedge_handle;
   typedef typename Refs::Face_handle     Face_handle;
 
-  typedef Straight_skeleton_halfedge_base_base_2<Refs,S> Base_base ;
-  typedef Straight_skeleton_halfedge_base_2<Refs,S>      Base ;
+  typedef Straight_skeleton_halfedge_base_base_2<Refs> Base_base ;
+  typedef Straight_skeleton_halfedge_base_2<Refs>      Base ;
 
   Straight_skeleton_halfedge_base_2() {}
 

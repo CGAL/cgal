@@ -24,7 +24,7 @@ typedef Alpha_shape_3::NT                                NT;
 int main()
 {
   Delaunay dt;
-  std::ifstream is("./data/bunny_1000");
+  std::ifstream is("data/bunny_1000");
   int n;
   is >> n;
   Point p;
@@ -37,7 +37,7 @@ int main()
 
   // compute alpha shape
   Alpha_shape_3 as(dt);
-  std::cout << "Alpha shape computed in REGULARIZED mode by defaut."
+  std::cout << "Alpha shape computed in REGULARIZED mode by default."
             << std::endl;
 
    // find optimal alpha values

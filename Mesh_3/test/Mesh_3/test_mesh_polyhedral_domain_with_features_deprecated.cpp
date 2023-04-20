@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -31,7 +31,7 @@ using namespace CGAL::parameters;
 int main()
 {
   // Create domain
-  Mesh_domain domain("data/cube.off");
+  Mesh_domain domain(CGAL::data_file_path("meshes/cube.off"));
 
   // Get sharp features
   domain.detect_features();
@@ -44,7 +44,10 @@ int main()
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-  // Output
-  std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+//  // Output
+//  std::ofstream medit_file("out.mesh");
+//  CGAL::IO::write_MEDIT(medit_file, c3t3);
+//  medit_file.close();
+
+  return EXIT_SUCCESS;
 }

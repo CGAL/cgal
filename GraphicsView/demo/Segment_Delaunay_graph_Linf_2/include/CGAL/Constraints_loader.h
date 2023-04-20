@@ -3,12 +3,20 @@
 
 #include <CGAL/config.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 #include <vector>
 #include <utility>
 #include <iostream>
 
+#include <boost/version.hpp>
+#if BOOST_VERSION < 107200
 #include <boost/progress.hpp>
+using boost::progress_display;
+#else
+#include <boost/timer/progress_display.hpp>
+using boost::timer::progress_display;
+#endif
 
 namespace CGAL {
 
@@ -96,7 +104,7 @@ class Constraints_loader {
     for(Points_iterator it = points.begin(); it != points.end(); ++it) {
       indices.push_back(it);
     }
-    std::random_shuffle(indices.begin(), indices.end());
+    CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
     CGAL::spatial_sort(indices.begin(), indices.end(),
                        sort_traits);
 
@@ -117,9 +125,9 @@ class Constraints_loader {
     std::cerr << " done (" << timer.time() << "s)\n";
 
     std::cerr << "Inserting constraints...\n";
-    boost::progress_display show_progress(constraints.size(),
-                                          std::cerr,
-                                          "");
+    progress_display show_progress(constraints.size(),
+                                   std::cerr,
+                                   "");
     timer.reset();
     timer.start();
     for(typename Constraints_container::const_iterator

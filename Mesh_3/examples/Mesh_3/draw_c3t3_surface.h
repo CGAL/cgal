@@ -10,7 +10,7 @@
 #include <thread>
 #include <cstdlib>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 #include <boost/iterator/filter_iterator.hpp>
 #include "ui_draw_c3t3_surface.h"
 
@@ -143,7 +143,7 @@ int draw_c3t3_surface_from_surface_mesh(const Mesh& mesh)
   rainbow_colors.setKeyValueAt(1.0f, QVariant{ QColor::fromRgbF(0.5 , 0.  , 0.  ) });
   rainbow_colors.setDuration(1000);
 
-  auto fromQColor = [](QColor c) -> CGAL::Color {
+  auto fromQColor = [](QColor c) -> CGAL::IO::Color {
     return {
       (unsigned char)c.red(),
       (unsigned char)c.green(),
@@ -158,7 +158,7 @@ int draw_c3t3_surface_from_surface_mesh(const Mesh& mesh)
 
   auto draw_mesh = [&]() {
     for(auto fh : faces(mesh)) {
-      viewer->face_begin(CGAL::gray());
+      viewer->face_begin(CGAL::IO::gray());
       auto hd=mesh.halfedge(fh);
       do
         {
@@ -186,7 +186,7 @@ int draw_c3t3_surface_from_surface_mesh(const Mesh& mesh)
       if((thread_id_to_display == 0 || thread_id == thread_id_to_display) &&
          ts < max_timestamp)
       {
-        CGAL::Color c = get_color(((0.+thread_id) - min) / delta);
+        CGAL::IO::Color c = get_color(((0.+thread_id) - min) / delta);
         viewer->add_point(mesh.point(v), c);
       }
     }

@@ -21,7 +21,7 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 #ifndef CGAL_DONT_USE_LAZY_KERNEL
 #  include <CGAL/Lazy_kernel.h>

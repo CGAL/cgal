@@ -3,7 +3,7 @@
 
 \ingroup PkgBGLRef
 
-The \sc{Bgl} defines the class template
+The \bgl defines the class template
 <A HREF="https://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
 as a uniform interface to the properties and types of %graph types.
 
@@ -36,7 +36,7 @@ The traits class `boost::graph_traits< CGAL::Surface_mesh<T> >` provides the fol
 | `face_iterator`          | `Surface_mesh::Face_iterator`         | An iterator to traverse through the faces of the graph. Its value type is `face_descriptor`. |
 | `directed_category`      | `boost::undirected_tag`      | This graph is not directed. |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | This graph does not support multiedges. |
-| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, and `boost::edge_list_graph_tag` | The ways in which the vertices in the graph can be traversed. |
+| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, `boost::edge_list_graph_tag`, and `boost::adjacency_graph_tag`  | The ways in which the vertices in the graph can be traversed. |
 | `vertices_size_type`     | `Surface_mesh::vertices_size_type` | The size type of the vertex list. |
 | `edges_size_type`        | `Surface_mesh::edges_size_type` | The size type of the edge list. |
 | `degree_size_type`       | `Surface_mesh::degree_size_type` | The size type of the adjacency list. |
@@ -69,7 +69,7 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 | `face_iterator`          | `unspecified_type`         | An iterator to traverse through the faces of the graph. Its value type is `face_descriptor`. |
 | `directed_category`      | `boost::undirected_tag`      | This graph is not directed. |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | This graph does not support multiedges. |
-| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, and `boost::edge_list_graph_tag` | The ways in which the vertices in the graph can be traversed. |
+| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, `boost::edge_list_graph_tag`, and`boost::adjacency_graph_tag`  | The ways in which the vertices in the graph can be traversed. |
 | `vertices_size_type`     | `Polyhedron_3::size_type` | The size type of the vertex list. |
 | `edges_size_type`        | `Polyhedron_3::size_type` | The size type of the edge list. |
 | `degree_size_type`       | `Polyhedron_3::size_type` | The size type of the adjacency list. |
@@ -102,7 +102,7 @@ The traits class `boost::graph_traits<LCC>` provides the following types:
 | `edge_iterator`          | `unspecified_type`         | Iterate through the edges of LCC.|
 | `halfedge_iterator`      | `unspecified_type`         | Iterate through the halfedges of LCC.|
 | `face_iterator`          | `unspecified_type`         | Iterate through the faces of LCC.|
-| `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
+| `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, `boost::edge_list_graph_tag`, and `boost::adjacency_graph_tag`  | |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
 | `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
 | `vertices_size_type`     | `LCC::size_type` | The size type of the vertex list |
@@ -120,7 +120,7 @@ For convenience, the type `edge_descriptor` is hashable using the functor `CGAL:
 
 <li> All darts of the linear cell complexes must be associated with a 2-attribute, except darts that represent holes.</li>
 
-<li> In order to use property maps, darts and types associated with of 0- and 2-attributes must define the two fonctions:
+<li> In order to use property maps, darts and types associated with of 0- and 2-attributes must define the two functions:
 \code
 int id() const; // Returns the index.
 int& id();      // Returns a reference to the index stored in the attribute.
@@ -156,7 +156,7 @@ vertex, or walking through the faces container.
 
 The mapping between vertices, edges, and faces of the triangulation and the
 graph is rather straightforward, but there are some subtleties. The
-value type of the \sc{Bgl} iterators is the vertex or edge descriptor,
+value type of the \bgl iterators is the vertex or edge descriptor,
 whereas in \cgal all iterators and circulators are also handles and
 hence have as value type Vertex or Edge.
 
@@ -197,14 +197,14 @@ provides the following types:
 | :----------------------- | :----: | :---------- |
 | `vertex_descriptor`      | `Arrangement_2::Vertex_handle`     | Identify vertices in the graph. |
 | `edge_descriptor`        | `Arrangement_2::Halfedge_handle`   | Identify edges in the graph. |
-| `adjacency_iterator`     | Not provided| |
+| `adjacency_iterator`     | `Vertex_around_target_iterator<Arrangement_2>`| An iterator to traverse through the vertices adjacent to a vertex. Its value type is `vertex_descriptor`.|
 | `out_edge_iterator`      | `unspecified_type` | An edge iterator which only iterates over the outgoing halfedges around a vertex. It corresponds to a `Arrangement_2::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Arrangement_2::Halfedge`|
 | `in_edge_iterator`       | `unspecified_type` | An edge iterator which only iterates over the incoming edges around a vertex. It corresponds to a `Arrangement_2::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Arrangement_2::Halfedge`|
 | `vertex_iterator`        | `unspecified_type` | An iterator corresponding to `Arrangement_2::Vertex_iterator`, with the difference that its value type is a vertex descriptor and not `Arrangement_2::Vertex`  |
 | `edge_iterator`          | `unspecified_type` | An iterator corresponding to `Arrangement_2::Halfedge_iterator` with the difference that its value type is an edge descriptor and not `Arrangement_2::Halfedge`|
 | `directed_category`      | `boost::directed_tag`      | This graph is directed. |
 | `edge_parallel_category` | `boost::allow_parallel_edge_tag` | This graph supports multiedges. |
-| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, and `boost::edge_list_graph_tag` | The ways in which the vertices in the graph can be traversed. |
+| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, `boost::edge_list_graph_tag`, and `boost::adjacency_graph_tag`  | The ways in which the vertices in the graph can be traversed. |
 | `vertices_size_type`     | `Arrangement_2::Size` | The size type of the vertex list. |
 | `edges_size_type`        | `Arrangement_2::Size` | The size type of the edge list. |
 | `degree_size_type`       | `Arrangement_2::Size` | The size type of the adjacency list. |
@@ -221,20 +221,20 @@ The traits class `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` prov
 
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
-| `vertex_descriptor`      | `OpenMesh::PolyMesh_ArrayKernelT::VertexHandle`     | Identify vertices in the graph. |
+| `vertex_descriptor`      | `OpenMesh::PolyMesh_ArrayKernelT<K>::%VertexHandle`     | Identify vertices in the graph. |
 | `edge_descriptor`        | `unspecified_type`   | Identify edges in the graph. |
-| `halfedge_descriptor`    | `OpenMesh::PolyMesh_ArrayKernelT::HalfedgeHandle`   | Identify halfedges in the graph. |
-| `face_descriptor`        | `OpenMesh::PolyMesh_ArrayKernelT::FaceHandle`       | Identify faces in the graph. |
-| `adjacency_iterator`     | `unspecified_type` | An iterator to traverse through the vertices adjacent to a vertex. Its value type is `vertex_descriptor`. |
+| `halfedge_descriptor`    | `OpenMesh::PolyMesh_ArrayKernelT<K>::%HalfedgeHandle`   | Identify halfedges in the graph. |
+| `face_descriptor`        | `OpenMesh::PolyMesh_ArrayKernelT<K>::%FaceHandle`       | Identify faces in the graph. |
+| `adjacency_iterator`     | `CGAL::Vertex_around_target_iterator<OpenMesh::PolyMesh_ArrayKernelT<K> >` | An iterator to traverse through the vertices adjacent to a vertex. Its value type is `vertex_descriptor`. |
 | `out_edge_iterator`      | `CGAL::Out_edge_iterator<OpenMesh::PolyMesh_ArrayKernelT<K> >` | An iterator to traverse through the outgoing edges incident to a vertex. Its value type is `edge_descriptor`. |
 | `in_edge_iterator`       | `CGAL::In_edge_iterator<OpenMesh::PolyMesh_ArrayKernelT<K> >` | An iterator to traverse through the incoming edges incident to a vertex. Its value type is `edge_descriptor`. |
-| `vertex_iterator`        | `OpenMesh::PolyMesh_ArrayKernelT::VertexIter`     | An iterator to traverse through the vertices of the graph. Its value type is `vertex_descriptor`. |
+| `vertex_iterator`        | `OpenMesh::PolyMesh_ArrayKernelT<K>::%VertexIter`     | An iterator to traverse through the vertices of the graph. Its value type is `vertex_descriptor`. |
 | `edge_iterator`          | `unspecified_type`     | An iterator to traverse through the edges of the graph. Its value type is `edge_descriptor`. |
-| `halfedge_iterator`      | `OpenMesh::PolyMesh_ArrayKernelT::HalfedgeIter`     | An iterator to traverse through the halfedges of the graph. Its value type is `halfedge_descriptor`. |
-| `face_iterator`          | `OpenMesh::PolyMesh_ArrayKernelT::FaceIter`         | An iterator to traverse through the faces of the graph. Its value type is `face_descriptor`. |
+| `halfedge_iterator`      | `OpenMesh::PolyMesh_ArrayKernelT<K>::%HalfedgeIter`     | An iterator to traverse through the halfedges of the graph. Its value type is `halfedge_descriptor`. |
+| `face_iterator`          | `OpenMesh::PolyMesh_ArrayKernelT<K>::%FaceIter`         | An iterator to traverse through the faces of the graph. Its value type is `face_descriptor`. |
 | `directed_category`      | `boost::undirected_tag`      | This graph is not directed. |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | This graph does not support multiedges. |
-| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, and `boost::edge_list_graph_tag` | The ways in which the vertices in the graph can be traversed. |
+| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`,`boost::edge_list_graph_tag`, and`boost::adjacency_graph_tag`  | The ways in which the vertices in the graph can be traversed. |
 | `vertices_size_type`     | `unsigned int` | The size type of the vertex list. |
 | `edges_size_type`        | `unsigned int` | The size type of the edge list. |
 | `degree_size_type`       | `unsigned int` | The size type of the adjacency list. |
@@ -251,20 +251,20 @@ The traits class `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` provi
 
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
-| `vertex_descriptor`      | `OpenMesh::TriMesh_ArrayKernelT::VertexHandle`     | Identify vertices in the graph. |
+| `vertex_descriptor`      | `OpenMesh::TriMesh_ArrayKernelT<K>::%VertexHandle`     | Identify vertices in the graph. |
 | `edge_descriptor`        | `unspecified_type`   | Identify edges in the graph. |
-| `halfedge_descriptor`    | `OpenMesh::TriMesh_ArrayKernelT::HalfedgeHandle`   | Identify halfedges in the graph. |
-| `face_descriptor`        | `OpenMesh::TriMesh_ArrayKernelT::FaceHandle`       | Identify faces in the graph. |
-| `adjacency_iterator`     | `unspecified_type` | An iterator to traverse through the vertices adjacent to a vertex. Its value type is `vertex_descriptor`. |
+| `halfedge_descriptor`    | `OpenMesh::TriMesh_ArrayKernelT<K>::%HalfedgeHandle`   | Identify halfedges in the graph. |
+| `face_descriptor`        | `OpenMesh::TriMesh_ArrayKernelT<K>::%FaceHandle`       | Identify faces in the graph. |
+| `adjacency_iterator`     | `CGAL::Vertex_around_target_iterator<OpenMesh::TriMesh_ArrayKernelT<K> >` | An iterator to traverse through the vertices adjacent to a vertex. Its value type is `vertex_descriptor`. |
 | `out_edge_iterator`      | `CGAL::Out_edge_iterator<OpenMesh::TriMesh_ArrayKernelT<K> >` | An iterator to traverse through the outgoing edges incident to a vertex. Its value type is `edge_descriptor`. |
 | `in_edge_iterator`       | `CGAL::In_edge_iterator<OpenMesh::TriMesh_ArrayKernelT<K> >` | An iterator to traverse through the incoming edges incident to a vertex. Its value type is `edge_descriptor`. |
-| `vertex_iterator`        | `OpenMesh::PolyMesh_ArrayKernelT::VertexIter`     | An iterator to traverse through the vertices of the graph. Its value type is `vertex_descriptor`. |
+| `vertex_iterator`        | `OpenMesh::PolyMesh_ArrayKernelT<K>::%VertexIter`     | An iterator to traverse through the vertices of the graph. Its value type is `vertex_descriptor`. |
 | `edge_iterator`          | `unspecified_type`     | An iterator to traverse through the edges of the graph. Its value type is `edge_descriptor`. |
-| `halfedge_iterator`      | `OpenMesh::TriMesh_ArrayKernelT::HalfedgeIter`     | An iterator to traverse through the halfedges of the graph. Its value type is `halfedge_descriptor`. |
-| `face_iterator`          | `OpenMesh::TriMesh_ArrayKernelT::FaceIter`         | An iterator to traverse through the faces of the graph. Its value type is `face_descriptor`. |
+| `halfedge_iterator`      | `OpenMesh::TriMesh_ArrayKernelT<K>::%HalfedgeIter`     | An iterator to traverse through the halfedges of the graph. Its value type is `halfedge_descriptor`. |
+| `face_iterator`          | `OpenMesh::TriMesh_ArrayKernelT<K>::%FaceIter`         | An iterator to traverse through the faces of the graph. Its value type is `face_descriptor`. |
 | `directed_category`      | `boost::undirected_tag`      | This graph is not directed. |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | This graph does not support multiedges. |
-| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, and `boost::edge_list_graph_tag` | The ways in which the vertices in the graph can be traversed. |
+| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag`, `boost::edge_list_graph_tag`, and `boost::adjacency_graph_tag` | The ways in which the vertices in the graph can be traversed. |
 | `vertices_size_type`     | `unsigned int` | The size type of the vertex list. |
 | `edges_size_type`        | `unsigned int` | The size type of the edge list. |
 | `degree_size_type`       | `unsigned int` | The size type of the adjacency list. |

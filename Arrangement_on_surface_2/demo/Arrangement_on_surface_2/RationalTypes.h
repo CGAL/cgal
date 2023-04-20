@@ -12,10 +12,10 @@
 #ifndef ARRANGEMENT_DEMO_RATIONAL_TYPES_H
 #define ARRANGEMENT_DEMO_RATIONAL_TYPES_H
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
 #ifdef CGAL_USE_CORE
   #include <CGAL/CORE_BigRat.h>
-  #include <CGAL/Cartesian.h>
-  #include <CGAL/Point_2.h>
 #else
   #include <CGAL/Exact_rational.h>
 #endif

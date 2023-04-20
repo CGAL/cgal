@@ -25,10 +25,9 @@
  */
 
 #include <iterator>
+#include <type_traits>
 
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -62,8 +61,8 @@ public:
   typedef typename Base::Top_side_category            Top_side_category;
   typedef typename Base::Right_side_category          Right_side_category;
 
-  typedef typename Base::Are_all_sides_oblivious_tag
-    Are_all_sides_oblivious_tag;
+  typedef typename Base::All_sides_oblivious_category
+    All_sides_oblivious_category;
 
   typedef typename Base::X_monotone_subcurve_2        X_monotone_subcurve_2;
   typedef typename Base::Size                         Size;
@@ -89,9 +88,7 @@ public:
   typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
-  typedef typename Base::Compare_x_at_limit_2         Compare_x_at_limit_2;
   typedef typename Base::Compare_x_near_boundary_2    Compare_x_near_boundary_2;
-  typedef typename Base::Compare_x_near_limit_2       Compare_x_near_limit_2;
   typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
   typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;
   typedef typename Base::Is_on_y_identification_2     Is_on_y_identification_2;
@@ -476,7 +473,7 @@ public:
   public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
-    { return operator_impl(cv, oi, Are_all_sides_oblivious_tag()); }
+    { return operator_impl(cv, oi, All_sides_oblivious_category()); }
   };
 
   /*! Obtain a Make_x_monotone_2 functor object. */
@@ -716,13 +713,18 @@ public:
       Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
 
+      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
+      const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
+      const bool consistent = (dir1 == dir2);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      CGAL_assertion(consistent);
+#endif
+
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
 
       std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
       std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
-
-      X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
       auto compare_xy = m_poly_traits.compare_xy_2_object();
       Comparison_result left_res =
@@ -733,7 +735,7 @@ public:
         // Locate the index i1 of the subcurve in cv1 which contains cv2's
         // left endpoint.
         i1 = m_poly_traits.locate_impl(cv1, cv2[i2], ARR_MIN_END,
-                                       Are_all_sides_oblivious_tag());
+                                       All_sides_oblivious_category());
         if (i1 == Polycurve_traits_2::INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
@@ -756,7 +758,7 @@ public:
         // Locate the index i2 of the subcurve in cv2 which contains cv1's
         // left endpoint.
         i2 = m_poly_traits.locate_impl(cv2, cv1[i1], ARR_MIN_END,
-                                       Are_all_sides_oblivious_tag());
+                                       All_sides_oblivious_category());
         if (i2 == Polycurve_traits_2::INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
@@ -776,7 +778,7 @@ public:
         }
       }
 
-      // Check if the the left endpoint lies on the other polycurve.
+      // Check if the left endpoint lies on the other polycurve.
       bool left_coincides = (left_res == EQUAL);
       bool left_overlap = false;
 
@@ -812,11 +814,11 @@ public:
 
         right_overlap = false;
 
-        //! EF: the following code is abit suspicious. It may erroneously
+        //! EF: the following code is a bit suspicious. It may erroneously
         //      assume that the subcurves cannot overlap more than once.
         if (! right_coincides && ! left_coincides) {
           // Non of the endpoints of the current subcurve of one polycurve
-          // coincides with the curent subcurve of the other polycurve:
+          // coincides with the current subcurve of the other polycurve:
           // Output the intersection if exists.
           std::vector<Intersection_base_result> xections;
           intersect(cv1[i1], cv2[i2], std::back_inserter(xections));
@@ -825,8 +827,7 @@ public:
               boost::get<X_monotone_subcurve_2>(&xection);
             if (subcv_p != nullptr) {
               ocv.push_back(*subcv_p);
-              *oi++ = Intersection_result(ocv);
-              ocv.clear();
+              oi = output_ocv (ocv, invert_ocv, oi);
               continue;
             }
 
@@ -848,10 +849,16 @@ public:
               boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
-
-              // If for some reason the subcurve intersection
-              // results in left oriented curve.
-              if (cmp_seg_endpts(seg) == LARGER) seg = construct_opposite(seg);
+              // We maintain the variant that if the input curves have opposite
+              // directions (! consistent), the overalpping curves are directed
+              // left=>right. This, however, is not guaranteed for the
+              // subcurves. Therefore, we need to enforce it. That is, we make
+              // sure the subcurves are also directed left=>right in this case.
+              if (! consistent && (cmp_seg_endpts(seg) == LARGER))
+                seg = construct_opposite(seg);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+              CGAL_assertion(cmp_seg_endpts(seg) == SMALLER);
+#endif
               ocv.push_back(seg);
             }
 
@@ -876,9 +883,8 @@ public:
           if (left_overlap) {
             // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
-            CGAL_assertion(ocv.number_of_subcurves() > 0);
-            *oi++ = Intersection_result(ocv);
-            ocv.clear();
+            CGAL_assertion(ocv.size() > 0);
+            oi = output_ocv (ocv, invert_ocv, oi);
           }
           else {
             // The left point of the current subcurve of one
@@ -923,8 +929,8 @@ public:
       } // END of while loop
 
         // Output the remaining overlapping polycurve, if necessary.
-      if (ocv.number_of_subcurves() > 0) {
-        *oi++ = Intersection_result(ocv);
+      if (ocv.size() > 0) {
+        oi = output_ocv (ocv, invert_ocv, oi);
       }
       else if (right_coincides) {
         typedef std::pair<Point_2,Multiplicity> return_point;
@@ -973,6 +979,27 @@ public:
           *oi++ = Intersection_result(ip);
         }
       }
+
+      return oi;
+    }
+
+  private:
+
+    template <typename OutputIterator>
+    inline OutputIterator output_ocv
+    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
+    {
+      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                      Intersection_result;
+      X_monotone_curve_2 curve;
+      if (invert_ocv)
+        std::reverse (ocv.begin(), ocv.end());
+      for (X_monotone_subcurve_2& sc : ocv)
+        curve.push_back (sc);
+      *(oi ++) = Intersection_result(curve);
+
+      ocv.clear();
 
       return oi;
     }
@@ -1146,7 +1173,7 @@ public:
     Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      typedef typename std::is_same<VT, Point_2>::type Is_point;
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
@@ -1163,7 +1190,7 @@ public:
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator /* begin */,
                              ForwardIterator /* end */,
-                             boost::true_type) const
+                             std::true_type) const
     {  CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 
     /*! Construction implementation from a range of subcurves.
@@ -1174,7 +1201,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::false_type) const
+                             std::false_type) const
     {
       // Range has to contain at least one subcurve
       CGAL_precondition(begin != end);

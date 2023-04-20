@@ -24,7 +24,7 @@ class Volume_plane_thread : public QThread {
 Q_OBJECT
 public:
   Volume_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : img(img), clamper(clamp), item(NULL), name(name) { _type = 'n';}
+    : img(img), clamper(clamp), item(nullptr), name(name) { _type = 'n';}
 
   Volume_plane_interface* getItem() {
     return item;

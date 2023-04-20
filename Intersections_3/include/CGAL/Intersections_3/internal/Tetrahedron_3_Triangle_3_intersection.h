@@ -9,288 +9,172 @@
 //
 //
 // Author(s)     : Maxime Gimeno
+//                 Mael Rouxel-Labbé
 //
-
 
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_3_TRIANGLE_3_INTERSECTIONS_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_3_TRIANGLE_3_INTERSECTIONS_H
 
+#include <CGAL/Intersections_3/internal/Line_3_Plane_3_intersection.h>
+
 #include <CGAL/kernel_basic.h>
-#include <CGAL/intersections.h>
-#include <CGAL/Intersections_3/internal/Triangle_3_Triangle_3_intersection.h>
-#include <CGAL/Intersections_3/internal/Tetrahedron_3_Plane_3_intersection.h>
-#include <CGAL/Intersections_3/internal/tetrahedron_intersection_helpers.h>
+
+#include <algorithm>
+#include <iterator>
+#include <list>
+#include <utility>
+#include <vector>
+#include <bitset>
+
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
 
-//Tetrahedron_3 Segment_3
 template <class K>
 typename Intersection_traits<K, typename K::Tetrahedron_3, typename K::Triangle_3>::result_type
-intersection(
-    const typename K::Tetrahedron_3 &tet,
-    const typename K::Triangle_3 &tr,
-    const K& k)
+intersection(const typename K::Tetrahedron_3& tet,
+             const typename K::Triangle_3& tr,
+             const K& k)
 {
-  typedef typename Intersection_traits<K,
-      typename K::Tetrahedron_3,
-      typename K::Triangle_3>::result_type result_type;
+  typedef typename Intersection_traits<K, typename K::Tetrahedron_3, typename K::Triangle_3>::result_type result_type;
 
-  typedef typename Intersection_traits<K,
-      typename K::Triangle_3,
-      typename K::Triangle_3>::result_type Inter_type;
+  CGAL_precondition(!tet.is_degenerate());
+  CGAL_precondition(!tr.is_degenerate());
 
-  typedef typename K::Segment_3 Segment_3;
   typedef typename K::Point_3 Point_3;
-  typedef typename K::Triangle_3 Triangle_3;
-  typedef std::vector<Point_3> Poly;
+  typedef typename K::Plane_3 Plane_3;
 
-  std::vector<Point_3> inside_points;
-  for(int i = 0; i< 3; ++i)
+  typename K::Construct_plane_3 plane = k.construct_plane_3_object();
+  typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
+  typename K::Construct_triangle_3 triangle = k.construct_triangle_3_object();
+  typename K::Construct_segment_3 segment = k.construct_segment_3_object();
+  typename K::Construct_line_3 line = k.construct_line_3_object();
+  typename K::Oriented_side_3 oriented_side = k.oriented_side_3_object();
+  typename K::Orientation_3 orientation = k.orientation_3_object();
+
+
+  std::vector<Point_3> res = { vertex(tr,0), vertex(tr,1), vertex(tr,2) };
+  std::vector<std::bitset<4>> supporting_planes(3); // bitset used to indicate when a point is on a plane
+
+  // iteratively clip `tr` with the halfspaces whose intersection form `tet`
+  static constexpr std::array<int8_t, 12> vids = { 1,2,3, 0,3,2, 0,1,3, 1,0,2 };
+  const bool tet_ori_positive = (orientation(tet)==POSITIVE);
+  for (int pid=0; pid<4; ++pid)
   {
-    if(tet.has_on_bounded_side(tr.vertex(i))
-       || tet.has_on_boundary(tr.vertex(i))){
-      inside_points.push_back(tr.vertex(i));
-    }
-  }
-  switch(inside_points.size())
-  {
-  case 0:
-  {
-    Inter_type intersections[4];
-    std::vector<Segment_3> segments;
-    std::vector<std::size_t> seg_ids;
-    std::vector<Point_3> points;
-    for(std::size_t i = 0; i < 4; ++i)
+    Plane_3 pl = tet_ori_positive
+               ? plane(vertex(tet, vids[pid*3]), vertex(tet, vids[pid*3+2]),vertex(tet, vids[pid*3+1]))
+               : plane(vertex(tet, vids[pid*3]), vertex(tet, vids[pid*3+1]),vertex(tet, vids[pid*3+2]));
+    CGAL_assertion(oriented_side(pl, vertex(tet,pid))==ON_POSITIVE_SIDE);
+
+    std::vector<Point_3> current;
+    std::vector<std::bitset<4>> current_sp;
+    std::vector<Oriented_side> orientations(res.size());
+    for (std::size_t i=0; i<res.size(); ++i)
     {
-     const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
-                             tet.vertex((i+2)%4),
-                             tet.vertex((i+3)%4));
-      intersections[i] = typename K::Intersect_3()(tr, triangle);
-      if(intersections[i]){
-        //a face is inside the input tr
-        if(const Triangle_3* t = boost::get<typename K::Triangle_3>(&*intersections[i]))
+      orientations[i]=oriented_side(pl, res[i]);
+      if (orientations[i]==ON_ORIENTED_BOUNDARY)
+      {
+        supporting_planes[i].set(pid);
+        //workaround for kernels with inexact constructions
+        //--
+        if (supporting_planes[i].count()==3)
         {
-          Triangle_3 res = *t;
-          return result_type(std::forward<Triangle_3>(res));
+          for (int b=0; i<4; ++b)
+          {
+            if (!supporting_planes[i].test(b))
+            {
+              res[i] = vertex(tet, b);
+              break;
+            }
+          }
         }
-        //get segs and pts to construct poly
-        else if( const Segment_3* s
-                 = boost::get<Segment_3>(&*intersections[i]))
+        //--
+      }
+    }
+
+    for (std::size_t i=0; i<res.size(); ++i)
+    {
+      const bool test_segment = i!=1 || res.size()!=2;
+      std::size_t j = (i+1)%res.size();
+      switch(orientations[j])
+      {
+        case ON_POSITIVE_SIDE:
+          if (test_segment && orientations[i]==ON_NEGATIVE_SIDE)
+          {
+            current_sp.push_back(supporting_planes[i] & supporting_planes[j]);
+            current_sp.back().set(pid);
+            if (current_sp.back().count()==3)
+            {
+              for (int b=0; i<4; ++b)
+                if (!current_sp.back().test(b))
+                {
+                  current.push_back(vertex(tet, b));
+                  break;
+                }
+            }
+            else
+              current.push_back(*CGAL::Intersections::internal::intersection_point(pl, line(res[i], res[j]), k));
+          }
+          current.push_back(res[j]);
+          current_sp.push_back(supporting_planes[j]);
+        break;
+        case ON_NEGATIVE_SIDE:
+          if (test_segment && orientations[i]==ON_POSITIVE_SIDE)
+          {
+            current_sp.push_back(supporting_planes[i] & supporting_planes[j]);
+            current_sp.back().set(pid);
+            if (current_sp.back().count()==3)
+            {
+              for (int b=0; i<4; ++b)
+                if (!current_sp.back().test(b))
+                {
+                  current.push_back(vertex(tet, b));
+                  break;
+                }
+            }
+            else
+              current.push_back(*CGAL::Intersections::internal::intersection_point(pl, line(res[i], res[j]), k));
+          }
+        break;
+        default:
         {
-          segments.push_back(*s);
-          seg_ids.push_back(i);
-        }
-        else if( const typename K::Point_3* p
-                 = boost::get<typename K::Point_3>(&*intersections[i]))
-        {
-          points.push_back(*p);
-        }
-        //if poly : then the input is in a supporting plane of a face, return the poly.
-        else if( const Poly* p
-                 = boost::get<Poly>(&*intersections[i]))
-        {
-          Poly res = *p;
-          return result_type(std::forward<Poly>(res));
+          CGAL_assertion(supporting_planes[j].test(pid));
+          current.push_back(res[j]);
+          current_sp.push_back(supporting_planes[j]);
         }
       }
     }
-    if(segments.size() > 1)
-    {
-      std::vector<Segment_3> filtered;
-      filter_segments(segments, filtered);
-      segments = filtered;
-    }
-    //if there are several segments, then we need to compute the polygone.
-    if(segments.size() > 1)
-    {
-      std::list<Point_3> tmp;
-      fill_segments_infos(segments,tmp, tr);
-      Poly res;
-      res.reserve(4);
-      for(const auto& p : tmp)
-        res.push_back(p);
-      return result_type(std::forward<Poly>(res));
-    }
-    //else it must be adjacent to an vertex, so we return the point
-    else if(segments.size() == 1)
-    {
-      //adjacency to an edge, return resulting segment.
-      return result_type(std::forward<Segment_3>(segments.front()));
-    }
-    else
-    {
-      //no segment = adjacency to an vertex or an edge : return result point
-      return result_type(std::forward<Point_3>(points.front()));
+    res.swap(current);
+    supporting_planes.swap(current_sp);
 
-    }
+    if (res.empty())
+      return boost::none;
   }
-    break;
-  case 1:
-  case 2:
+
+  switch(res.size())
   {
-    //tricky cases
-    Inter_type intersections[4];
-    std::vector<typename K::Point_3> points;
-    std::vector<Segment_3> segments;
-    for(std::size_t i = 0; i < 4; ++i)
-    {
-     const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
-                             tet.vertex((i+2)%4),
-                             tet.vertex((i+3)%4));
-      intersections[i] = typename K::Intersect_3()(tr, triangle);
-      if(intersections[i]){
-        if(const Triangle_3* t = boost::get<typename K::Triangle_3>(&*intersections[i]))
-        {
-          Triangle_3 res = *t;
-          return result_type(std::forward<Triangle_3>(res));
-        }
-        //get segs and pts to construct poly
-        else if( const Segment_3* s
-                 = boost::get<Segment_3>(&*intersections[i]))
-        {
-          segments.push_back(*s);
-        }
-        else if( const typename K::Point_3* p
-                 = boost::get<typename K::Point_3>(&*intersections[i]))
-        {
-          points.push_back(*p);
-        }
-        //if poly : then the input is in a supporting plane of a face, return the poly.
-        else if( const Poly* p
-                 = boost::get<Poly>(&*intersections[i]))
-        {
-          Poly res = *p;
-          return result_type(std::forward<Poly>(res));
-        }
-      }
-    }
-    if(segments.empty())
-    {
-      //then there is only one point of contact. Return it:
-      return result_type(std::forward<Point_3>(points.front()));
-    }
-
-    if(segments.size() > 1)
-    {
-      std::vector<Segment_3> filtered;
-      filter_segments(segments, filtered);
-      segments = filtered;
-    }
-
-    switch(segments.size())
-    {
     case 1:
-    {
-      bool return_solo_seg = true;
-      //only one intersection, a triangle edge is one of the tet edges, and
-      //the 3rd point is outside. This is the only intersection.
-      for(const auto& p : inside_points)
-      {
-        if(!tet.has_on_boundary(p))
-        {
-          return_solo_seg = false;
-          break;
-        }
-      }
-      if(return_solo_seg)
-      {
-        return result_type(std::forward<Segment_3>(segments.front()));
-      }
-
-      if(inside_points.size() == 1)
-      {
-        Triangle_3 res(inside_points.front(), segments.front().source(),
-                       segments.front().target());
-        return result_type(std::forward<Triangle_3>(res));
-      }
-      else //size 2
-      {
-        Poly res(4);
-        res[0] = inside_points.front();
-        res[1] = inside_points.back();
-        if((inside_points.front() - inside_points.back()) *
-           (segments.front().source() - segments.front().target()) > 0)
-        {
-          res[2] = segments.front().target();
-          res[3] = segments.front().source();
-        }
-        else
-        {
-          res[3] = segments.front().target();
-          res[2] = segments.front().source();
-        }
-        return result_type(std::forward<Poly>(res));
-      }
-      }
-      break;
+      return result_type(res[0]);
     case 2:
+      return result_type(segment(res[0], res[1]));
     case 3:
-    {
-      std::list<Segment_3> segs(segments.begin(), segments.end());
-      std::list<Point_3> tmp;
-      fill_points_list(segs, tmp);
-      if(inside_points.size() == 1)
-      {
-        Poly res;
-        res.reserve(4);
-        res.push_back(inside_points.front());
-        for(const auto& p : tmp)
-          res.push_back(p);
-        return result_type(std::forward<Poly>(res));
-      }
-      else //size 2
-      {
-        Poly res;
-        res.reserve(5);
-        typename K::Compute_scalar_product_3 scalar =
-          k.compute_scalar_product_3_object();
-        typename K::Construct_vector_3 construct_vector =
-          k.construct_vector_3_object();
-
-        if(scalar(construct_vector(inside_points.front(), inside_points.back()),
-           construct_vector(tmp.front(), tmp.back())) > 0)
-        {
-          res.push_back(inside_points.front());
-        }
-        res.push_back(inside_points.back());
-        for(const auto& p : tmp)
-          res.push_back(p);
-        return result_type(std::forward<Poly>(res));
-      }
-    }
-      break;
+      return result_type(triangle(res[0], res[1], res[2]));
     default:
-      //3 faces max if a point or more are inside tetrahedron
-      break;
-    }
+      return result_type(res);
   }
-    break;
-
-  case 3:
-  {
-    //triangle entirely inside tetra : return input triangle
-    return result_type(tr);
-  }
-    break;
-  default:
-    //never happens (only 3 pts in a tr)
-    break;
-  }
-  return result_type();
 }
 
 template <class K>
 typename Intersection_traits<K, typename K::Tetrahedron_3, typename K::Triangle_3>::result_type
-intersection(
-    const typename K::Triangle_3 &pl,
-    const typename K::Tetrahedron_3 &tet,
-    const K& k)
+intersection(const typename K::Triangle_3& pl,
+             const typename K::Tetrahedron_3& tet,
+             const K& k)
 {
   return intersection(tet, pl, k);
 }
 
-}}}
+} // namespace internal
+} // namespace Intersections
+} // namespace CGAL
+
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_3_TRIANGLE_3_INTERSECTIONS_H

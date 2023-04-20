@@ -281,14 +281,6 @@ public Q_SLOTS:
   virtual void interpolateAtTime(qreal time);
   //@}
 
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-  virtual void initFromDOMElement(const QDomElement &element);
-  //@}
-
 private Q_SLOTS:
   virtual void update();
   virtual void invalidateValues() {
@@ -298,7 +290,7 @@ private Q_SLOTS:
   }
 
 private:
-  // Copy constructor and opertor= are declared private and undefined
+  // Copy constructor and operator= are declared private and undefined
   // Prevents everyone from trying to use them
   // KeyFrameInterpolator(const KeyFrameInterpolator& kfi);
   // KeyFrameInterpolator& operator=(const KeyFrameInterpolator& kfi);

@@ -12,7 +12,7 @@ int main()
 {
   SM sm;
   Mesh mesh(sm);
-  std::ifstream in("data/cube.off");
+  std::ifstream in(CGAL::data_file_path("meshes/cube.off"));
   in >> sm;
 
   assert( num_vertices(mesh) == num_vertices(sm) );

@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget* = 0) {
+  MainWindow(QWidget* = nullptr) {
     ui = new Ui::MainWindow;
     ui->setupUi(this);
     s = new Scene(ui);

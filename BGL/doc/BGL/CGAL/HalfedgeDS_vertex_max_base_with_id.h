@@ -8,7 +8,7 @@ The class `HalfedgeDS_vertex_max_base_with_id` is a model of the `HalfedgeDSVert
 concept.  It is
 equivalent to `HalfedgeDS_vertex_base< Refs, Tag_true>`
 with an added integer field which can be used to index vertices
-in \sc{Bgl} algorithms..
+in \bgl algorithms..
 The class contains support for the point and the required type definitions.
 It can be used for deriving own vertices.
 

@@ -9,7 +9,6 @@ distance of an intersection along a ray.
 
 \cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 
-\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 
@@ -38,7 +37,7 @@ public:
      operator()(const Ray_3& r, const Primitive& primitive)`.
 
     A common algorithm to compute the intersection between a bounding box and a ray is <A
-    HREF="http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter3.htm">the
+    HREF="https://education.siggraph.org/static/HyperGraph/raytrace/rtinter3.htm">the
     slab method</A>.
   */
   typedef unspecified_type Intersection_distance;

@@ -53,7 +53,7 @@ is_valid(bool verbose, int level) const
 
   if (number_of_vertices() < 3)  return true;
 
-  //  CGAL_triangulation_assertion(result);
+  //  CGAL_assertion(result);
 
   for (All_edges_iterator eit = all_edges_begin();
        eit != all_edges_end(); ++eit) {
@@ -64,7 +64,7 @@ is_valid(bool verbose, int level) const
     if ( !is_infinite(v) ) {
       result = result &&
         ( incircle(f, v->site()) != NEGATIVE );
-      //    CGAL_triangulation_assertion(result);
+      //    CGAL_assertion(result);
     }
     Edge sym_e = sym_edge(e);
     f = sym_e.first;
@@ -72,7 +72,7 @@ is_valid(bool verbose, int level) const
     if ( !is_infinite(v) ) {
       result = result &&
         ( incircle(f, v->site()) != NEGATIVE );
-      //    CGAL_triangulation_assertion(result);
+      //    CGAL_assertion(result);
     }
   }
 
@@ -83,7 +83,7 @@ is_valid(bool verbose, int level) const
     std::cerr << "Apollonius diagram is NOT valid..." << std::flush;
   }
 
-  //  CGAL_triangulation_assertion(result);
+  //  CGAL_assertion(result);
   return result;
 }
 
@@ -100,7 +100,7 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Point_2
 Apollonius_graph_2<Gt,Agds,LTag>::
 circumcenter(const Face_handle& f) const
 {
-  CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
+  CGAL_precondition (dimension()==2 || !is_infinite(f));
   return circumcenter(f->vertex(0)->site(),
                       f->vertex(1)->site(),
                       f->vertex(2)->site());
@@ -122,7 +122,7 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Site_2
 Apollonius_graph_2<Gt,Agds,LTag>::
 circumcircle(const Face_handle& f) const
 {
-  CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
+  CGAL_precondition (dimension()==2 || !is_infinite(f));
   return circumcircle(f->vertex(0)->site(),
                       f->vertex(1)->site(),
                       f->vertex(2)->site());
@@ -178,7 +178,7 @@ typename Gt::Object_2
 Apollonius_graph_2<Gt,Agds,LTag>::
 dual(const Edge e) const
 {
-  CGAL_triangulation_precondition( !is_infinite(e) );
+  CGAL_precondition( !is_infinite(e) );
 
   if ( dimension() == 1 ) {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
@@ -207,16 +207,16 @@ dual(const Edge e) const
   }
 
   // only one of the adjacent faces is infinite
-  CGAL_triangulation_assertion( is_infinite( e.first ) ||
+  CGAL_assertion( is_infinite( e.first ) ||
                                 is_infinite( e.first->neighbor(e.second) )
                                 );
 
-  CGAL_triangulation_assertion( !(is_infinite( e.first ) &&
+  CGAL_assertion( !(is_infinite( e.first ) &&
                                   is_infinite( e.first->neighbor(e.second) )
                                   )
                                 );
 
-  CGAL_triangulation_assertion
+  CGAL_assertion
     (  is_infinite( e.first->vertex(e.second) ) ||
        is_infinite( tds().mirror_vertex(e.first, e.second) )  );
 
@@ -246,7 +246,7 @@ primal(const Edge e) const
   //  typedef typename Geom_traits::Hyperbola_segment_2  Hyperbola_segment;
   //  typedef typename Geom_traits::Parabola_segment_2   Parabola_segment;
 
-  //  CGAL_triangulation_precondition( !is_infinite(e) );
+  //  CGAL_precondition( !is_infinite(e) );
 
   if ( number_of_vertices() != 2 ) {
     if ( is_infinite(e) ) {
@@ -257,7 +257,7 @@ primal(const Edge e) const
         Site_2 s = tds().mirror_vertex( e.first, e.second )->site();
         ray = construct_Apollonius_primal_ray_2_object()(p,r,s);
       } else {
-        CGAL_triangulation_assertion
+        CGAL_assertion
           (   is_infinite( e.first->vertex(ccw(e.second)) )   );
         Site_2 q = e.first->vertex( cw(e.second) )->site();
         Site_2 r = e.first->vertex( e.second )->site();
@@ -317,11 +317,11 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Edge
 Apollonius_graph_2<Gt,Agds,LTag>::
 flip(Face_handle& f, int i)
 {
-  CGAL_triangulation_precondition ( f != Face_handle() );
-  CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
-  CGAL_triangulation_precondition( dimension()==2 );
+  CGAL_precondition ( f != Face_handle() );
+  CGAL_precondition (i == 0 || i == 1 || i == 2);
+  CGAL_precondition( dimension()==2 );
 
-  CGAL_triangulation_precondition( f->vertex(i) != tds().mirror_vertex(f,i) );
+  CGAL_precondition( f->vertex(i) != tds().mirror_vertex(f,i) );
 
   this->_tds.flip(f, i);
 
@@ -383,7 +383,7 @@ void
 Apollonius_graph_2<Gt,Agds,LTag>::
 remove_degree_2(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( is_degree_2(v) );
+  CGAL_precondition( is_degree_2(v) );
 
   this->_tds.remove_degree_2( v );
 }
@@ -403,7 +403,7 @@ void
 Apollonius_graph_2<Gt,Agds,LTag>::
 remove_degree_3(Vertex_handle v, Face_handle f)
 {
-  CGAL_triangulation_precondition( degree(v) == 3 );
+  CGAL_precondition( degree(v) == 3 );
   this->_tds.remove_degree_3(v, f);
 }
 
@@ -416,7 +416,7 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Vertex_handle
 Apollonius_graph_2<Gt,Agds,LTag>::
 insert_first(const Site_2& p)
 {
-  CGAL_triangulation_precondition(number_of_vertices() == 0);
+  CGAL_precondition(number_of_vertices() == 0);
   Vertex_handle v = this->_tds.insert_second();
   v->set_site(p);
   return v;
@@ -428,7 +428,7 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Vertex_handle
 Apollonius_graph_2<Gt,Agds,LTag>::
 insert_second(const Site_2& p)
 {
-  CGAL_triangulation_precondition( number_of_vertices() == 1 );
+  CGAL_precondition( number_of_vertices() == 1 );
   Vertex_handle vnew;
   Vertex_handle v(finite_vertices_begin());
   if ( is_hidden(v->site(), p) ) {
@@ -439,7 +439,7 @@ insert_second(const Site_2& p)
     v->set_site(p);
     vnew = v;
   } else {
-    CGAL_triangulation_precondition(number_of_vertices() == 1);
+    CGAL_precondition(number_of_vertices() == 1);
     vnew = this->_tds.insert_dim_up(infinite_vertex(), true);
     vnew->set_site(p);
     //    vnew = Delaunay_graph::insert_second(p);
@@ -453,7 +453,7 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Vertex_handle
 Apollonius_graph_2<Gt,Agds,LTag>::
 insert_third(const Site_2& p)
 {
-  CGAL_triangulation_precondition( number_of_vertices() == 2 );
+  CGAL_precondition( number_of_vertices() == 2 );
 
   Face_handle f((*finite_edges_begin()).first);
   Vertex_handle v1(f->vertex(0));
@@ -592,7 +592,7 @@ insert_third(const Site_2& p)
     }
   }
 
-  //  CGAL_triangulation_assertion( is_valid() );
+  //  CGAL_assertion( is_valid() );
 
   return v;
 }
@@ -1752,8 +1752,8 @@ void
 Apollonius_graph_2<Gt,Agds,LTag>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( v != Vertex_handle() );
-  CGAL_triangulation_precondition( !is_infinite(v) );
+  CGAL_precondition( v != Vertex_handle() );
+  CGAL_precondition( !is_infinite(v) );
 
   // find a neighbor of v to use for point location of hidden sites to
   // be re-inserted
@@ -1900,7 +1900,7 @@ remove_degree_d_vertex(Vertex_handle v)
     CGAL_assertion( found );
     CGAL_USE(found);
   }
-  CGAL_triangulation_precondition( degree(v) == 3 );
+  CGAL_precondition( degree(v) == 3 );
 
   this->_tds.remove_degree_3( v, Face_handle() );
 
@@ -1960,13 +1960,13 @@ template<class Gt, class Agds, class LTag>
 void
 Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
 {
-  // ouput to a file
+  // output to a file
   size_type n = this->_tds.number_of_vertices();
   size_type m = this->_tds.number_of_full_dim_faces();
 
   CGAL_assertion( n >= 1 );
 
-  if( is_ascii(os) ) {
+  if( IO::is_ascii(os) ) {
     os << n << ' ' << m << ' ' << dimension() << std::endl;
   } else {
     os << n << m << dimension();
@@ -1980,24 +1980,24 @@ Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
   V[infinite_vertex()] = inum++;
 
   // finite vertices
-  if (is_ascii(os)) os << std::endl;
+  if (IO::is_ascii(os)) os << std::endl;
   for (Finite_vertices_iterator vit = finite_vertices_begin();
        vit != finite_vertices_end(); ++vit) {
     V[vit] = inum++;
     os << vit->site();
-    if ( is_ascii(os) ) { os << ' '; }
+    if ( IO::is_ascii(os) ) { os << ' '; }
     os << vit->number_of_hidden_sites();
     typename Vertex::Hidden_sites_iterator hit;
     for (hit = vit->hidden_sites_begin(); hit != vit->hidden_sites_end();
          ++hit) {
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << *hit;
     }
     // write non-combinatorial info of the vertex
     //    os << *vit ;
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 
   // vertices of the faces
   inum = 0;
@@ -2007,25 +2007,25 @@ Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
     F[fit] = inum++;
     for(int j = 0; j < dim ; ++j) {
       os << V[ fit->vertex(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
     // write non-combinatorial info of the face
     //    os << *fit ;
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if( is_ascii(os) ) { os << std::endl; }
+  if( IO::is_ascii(os) ) { os << std::endl; }
 
   // neighbor pointers of the  faces
   for( All_faces_iterator it = all_faces_begin();
        it != all_faces_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[ it->neighbor(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
 
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 }
 
 

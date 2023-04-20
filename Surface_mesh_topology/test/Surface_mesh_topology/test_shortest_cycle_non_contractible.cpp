@@ -44,12 +44,12 @@ template<typename Map>
 struct Marked_weight_functor
 {
   using Weight_t=unsigned int;
-  using Dart_const_handle=typename Map::Dart_const_handle;
+  using Dart_const_descriptor=typename Map::Dart_const_descriptor;
 
   Marked_weight_functor(const Map& m, typename Map::size_type mark) : m_map(m), m_mark(mark)
   {}
 
-  Weight_t operator() (Dart_const_handle dh) const
+  Weight_t operator() (Dart_const_descriptor dh) const
   {
     if (m_map.is_marked(dh, m_mark))
     { return 1; }
@@ -75,7 +75,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
   // Cycle is the smallest non contractible cycle with unary weight on double-torus-2-b.off.
   // Its length is 12.
   // 1) We create a cycle parallel to this first one.
-  typename LCC_CM::Dart_const_handle dh=nullptr;
+  typename LCC_CM::Dart_const_descriptor dh=nullptr;
 
   // We iterate through the cycle until a junction
   for (std::size_t i=0; dh==nullptr && i<cycle.length(); ++i)
@@ -91,10 +91,10 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
 
   dh=map.next(dh);
   // 2) Here dh is  on the parallel of the first cycle. We mark darts of the cycle parallel
-  //    to the first one. Its lenght is 24.
+  //    to the first one. Its length is 24.
   auto mark=map.get_new_mark();
   std::size_t nbedges=0;
-  typename LCC_CM::Dart_const_handle dh2=dh;
+  typename LCC_CM::Dart_const_descriptor dh2=dh;
   do
   {
     map.mark(dh2, mark);
@@ -189,7 +189,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
 /// Compute edge width for the given mesh (loaded in filename), and test if
 /// the size of the cycle is nbedges for unit weight and the length of the cycle
 /// is smaller than length for Euclidean length weight.
-bool test(const char* filename, std::size_t nbedges, double length, std::size_t nbfaces)
+bool test(const std::string filename, std::size_t nbedges, double length, std::size_t nbfaces)
 {
   bool res=true;
 

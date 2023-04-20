@@ -78,10 +78,8 @@ public Q_SLOTS:
   void on_actionMerge_toggled(bool);
   void on_actionSplit_toggled(bool);
   void on_actionFill_toggled(bool);
-#ifdef CGAL_USE_CORE
   void on_actionAddAlgebraicCurve_triggered();
   void on_actionAddRationalCurve_triggered();
-#endif
 
 Q_SIGNALS:
   void modelChanged();

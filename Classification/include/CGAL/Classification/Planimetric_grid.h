@@ -51,12 +51,12 @@ template <typename GeomTraits, typename PointRange, typename PointMap>
 class Planimetric_grid
 {
 public:
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
 
 private:
-  typedef Image<std::vector<boost::uint32_t> > Image_indices;
-  typedef Image<bool> Image_bool;
+  using Image_indices = Image<std::vector<std::uint32_t> >;
+  using Image_bool = Image<bool>;
 
   const PointRange* m_points;
   PointMap m_point_map;
@@ -74,7 +74,7 @@ private:
 public:
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type iterator; ///< A forward iterator with value type `std::size_t`.
+  using iterator = unspecified_type; ///< A forward iterator with value type `std::size_t`.
 #else
   class iterator
     : public boost::iterator_facade<iterator,
@@ -194,7 +194,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Constructs a planimetric grid based on the input range.
+    \brief constructs a planimetric grid based on the input range.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -216,9 +216,9 @@ public:
     for (std::size_t i = 0; i < input.size(); ++ i)
     {
       const Point_3& p = get(point_map, *(input.begin()+i));
-      std::size_t x = (boost::uint32_t)((p.x() - bbox.xmin()) / grid_resolution);
-      std::size_t y = (boost::uint32_t)((p.y() - bbox.ymin()) / grid_resolution);
-      m_grid(x,y).push_back (boost::uint32_t(i));
+      std::size_t x = (std::uint32_t)((p.x() - bbox.xmin()) / grid_resolution);
+      std::size_t y = (std::uint32_t)((p.y() - bbox.ymin()) / grid_resolution);
+      m_grid(x,y).push_back (std::uint32_t(i));
     }
   }
 
@@ -266,7 +266,7 @@ public:
 
 
   /*!
-    \brief Returns the resolution of the grid.
+    \brief returns the resolution of the grid.
   */
   float resolution() const
   {
@@ -274,14 +274,14 @@ public:
   }
 
   /*!
-    \brief Returns the number of cells along the X-axis.
+    \brief returns the number of cells along the X-axis.
   */
   std::size_t width() const
   {
     return m_width;
   }
   /*!
-    \brief Returns the number of cells along the Y-axis.
+    \brief returns the number of cells along the Y-axis.
   */
   std::size_t height() const
   {
@@ -300,7 +300,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the begin iterator on the indices of the points
+    \brief returns the begin iterator on the indices of the points
     lying in the cell at position `(x,y)`.
   */
   iterator indices_begin(std::size_t x, std::size_t y) const
@@ -311,7 +311,7 @@ public:
   }
 
   /*!
-    \brief Returns the past-the-end iterator on the indices of the points
+    \brief returns the past-the-end iterator on the indices of the points
     lying in the cell at position `(x,y)`.
   */
   iterator indices_end(std::size_t x, std::size_t y) const
@@ -322,7 +322,7 @@ public:
   }
 
   /*!
-    \brief Returns `false` if the cell at position `(x,y)` is empty, `true` otherwise.
+    \brief returns `false` if the cell at position `(x,y)` is empty, `true` otherwise.
   */
   bool has_points(std::size_t x, std::size_t y) const
   {
@@ -336,7 +336,7 @@ public:
   }
 
   /*!
-    \brief Returns the `x` grid coordinate of the point at position `index`.
+    \brief returns the `x` grid coordinate of the point at position `index`.
   */
   std::size_t x(std::size_t index) const
   {
@@ -350,7 +350,7 @@ public:
     return m_lower_scale->x(index) / 2;
   }
   /*!
-    \brief Returns the `y` grid coordinate of the point at position `index`.
+    \brief returns the `y` grid coordinate of the point at position `index`.
   */
   std::size_t y(std::size_t index) const
   {

@@ -18,7 +18,7 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d_traits_3.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>

@@ -57,20 +57,16 @@ the following function overloads are also available.
 The iterator versions of those functions can be used in conjunction
 with `Dispatch_output_iterator`.
 
-Since both the number of intersections, if any, and their types, depend
-on the arguments, the function expects an output iterator on
-`cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::%type`,
+Since both the number of intersections, if any, and types of the intersection results
+depend on the arguments, the function expects an output iterator on `Kernel::Intersect_3(Type1, Type2)`
 as presented below.
 */
 /// @{
 
 /*!
-Copies in the output iterator the intersection elements between the
-two objects. `intersections` iterates on
-elements of type `result_of< Intersect_3(SphericalType1, SphericalType2) >`, in lexicographic order,
-when this ordering is defined on the computed objects,
-
-where `SphericalType1` and `SphericalType2` can both be one of:
+Constructs the intersection elements between the two input
+objects and stores them in the OutputIterator in lexicographic order,
+where both, `SphericalType1` and `SphericalType2`, can be either
 
 - `Sphere_3<SphericalKernel>`,
 - `Plane_3<SphericalKernel>`,
@@ -87,10 +83,10 @@ type can be
   where the unsigned integer is the multiplicity of the corresponding
   intersection point between `obj1` and `obj2`,
 - `SphericalType1`, when `SphericalType1` and `SphericalType2` are equal,
-  and if the two objets `obj1` and `obj2` are equal,
+  and if the two objects `obj1` and `obj2` are equal,
 - `Line_3<SphericalKernel>` or
   `Circle_3<SphericalKernel>` when `SphericalType1` and `SphericalType2`
-  are two-dimensional objets intersecting along a curve (2 planes, or 2
+  are two-dimensional objects intersecting along a curve (2 planes, or 2
   spheres, or one plane and one sphere),
 - `Circular_arc_3<SphericalKernel>` in case of an overlap of
   two circular arcs or
@@ -123,7 +119,7 @@ and depending of these types, the computed return value
   intersection point,
 - `Circle_3<SphericalKernel>` or
 - `Type1`, when `Type1`, `Type2` and
-  `Type3` are equal, and if the three objets `obj1` and `obj2`
+  `Type3` are equal, and if the three objects `obj1` and `obj2`
   and `obj3` are equal.
 */
   template < typename Type1, typename Type2, typename Type3, typename OutputIterator >

@@ -43,7 +43,7 @@ struct Gmpz_rep
 // maybe the mpz_init_set* functions should move back to Gmpz_rep.
 // But then we should use the Storage_traits::construct/get...
 
-  mpz_t mpZ;
+  mpz_t mpZ; /* coverity[member_decl] */
 
   Gmpz_rep() {}
   ~Gmpz_rep() { mpz_clear(mpZ); }
@@ -324,9 +324,9 @@ gmpz_new_read(std::istream &is, Gmpz &z)
     // peek() sets also the failbit, one has to check for EOL twice.
     //
     // See the LWG C++ Issue 2036, classified as Not-A-Defect:
-    //   http://lwg.github.com/issues/lwg-closed.html#2036
+    //   https://lwg.github.io/issues/lwg-closed.html#2036
     // and a StackOverflow related question:
-    //   http://stackoverflow.com/a/9020292/1728537
+    //   https://stackoverflow.com/a/9020292/1728537
     // --
     // Laurent Rineau, 2013/10/10
     while (!is.eof()) {

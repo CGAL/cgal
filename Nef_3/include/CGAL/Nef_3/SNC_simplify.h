@@ -111,7 +111,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
           if ( SD.is_closed_at_source( u->twin()) )
              SD.set_face( tgt, fu);
           /* TO VERIFY: does is_closed_at_source(u) imply is_isolated(src)?
-             if it is true, the svertex face update is not necesary. */
+             if it is true, the svertex face update is not necessary. */
 
           SHalfedge_around_facet_circulator next = u;
           ++next;
@@ -127,7 +127,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       }
       else if(fc.is_shalfloop()) {
         SHalfloop_handle l(fc);
-        // this code is currenlty not used, but it is potentially need
+        // this code is currently not used, but it is potentially need
         // in the future, e.g for complex marks or a relative interior
         // function
         SFace_handle fu = l->incident_sface(), ftu = l->twin()->incident_sface();
@@ -144,7 +144,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   bool is_part_of_volume(Vertex_handle v)
-    /* determines if a vertex v is part of a volume, cheking if its local
+    /* determines if a vertex v is part of a volume, checking if its local
        graph is trivial (only one sface with no boundary). */  {
     SM_decorator SD(&*v);
     CGAL_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
@@ -189,16 +189,6 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_NEF_TRACE("has two svertices ");
     Sphere_point sp1(p1->point()), sp2(p2->point());
     return (sp1 == sp2.antipode());
-  }
-
-  bool simplify_redundant_box_vertex(Vertex_handle v, bool snc_computed) {
-    //CGAL_warning("altered code");
-    return false;
-    if(snc_computed) return false;
-    if(!Infi_box::is_redundant_box_vertex(*v)) return false;
-    this->sncp()->delete_vertex(v);
-    simplified = true;
-    return true;
   }
 
   bool simplify_redundant_vertex_in_volume(Vertex_handle v) {
@@ -295,7 +285,6 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     while( v != (*this->sncp()).vertices_end()) {
       Vertex_iterator v_next(v);
       ++v_next;
-      if(!simplify_redundant_box_vertex(v, snc_computed))
         if(!simplify_redundant_vertex_in_volume(v))
           if(!simplify_redundant_vertex_on_facet(v))
             simplify_redundant_vertex_on_edge(v, snc_computed);
@@ -327,9 +316,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_NEF_TRACEN(">>> simplifying");
     SNC_decorator D(*this->sncp());
 
-    Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
-    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
-    Unique_hash_map< SFace_handle, UFH_sface> hash_sface;
+    Unique_hash_map< Volume_handle, UFH_volume> hash_volume(UFH_volume(), this->sncp()->number_of_volumes());
+    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet(UFH_facet(), this->sncp()->number_of_halffacets());
+    Unique_hash_map< SFace_handle, UFH_sface> hash_sface(UFH_sface(), this->sncp()->number_of_sfaces());
     Union_find< Volume_handle> uf_volume;
     Union_find< Halffacet_handle> uf_facet;
     Union_find< SFace_handle> uf_sface;
@@ -555,7 +544,8 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   void create_boundary_links_forall_sfaces(
       Unique_hash_map< SFace_handle, UFH_sface>& hash,
       Union_find< SFace_handle>& uf ) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    Unique_hash_map< SHalfedge_handle, bool> linked(false, this->sncp()->number_of_shalfedges());
+
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e, *this->sncp()) {
@@ -608,7 +598,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   void create_boundary_links_forall_facets(
       Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
       Union_find< Halffacet_handle>& uf) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    Unique_hash_map< SHalfedge_handle, bool> linked(false, this->sncp()->number_of_shalfedges());
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator u;
     CGAL_forall_shalfedges(u, *this->sncp()) {
@@ -620,8 +610,8 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       SHalfedge_around_facet_circulator c(u), cend(c);
       CGAL_For_all( c, cend) {
         D.set_facet( c, f);
-        if( lexicographically_xyz_smaller(c->source()->source()->point(),
-                                          u_min->source()->source()->point()))
+        if( (c != u_min) && lexicographically_xyz_smaller(c->source()->source()->point(),
+                                                          u_min->source()->source()->point()))
           u_min = c;
         linked[c] = true;
       }
@@ -662,6 +652,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
     SNC_decorator D(*this->sncp());
     Volume_setter setter(D);
+    setter.reserve(this->sncp()->number_of_sfaces());
 
     SFace_iterator sf;
     Volume_handle c;

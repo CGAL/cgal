@@ -22,7 +22,7 @@ template <class Weighted_point>
 bool
 file_input(std::ifstream& is, std::list<Weighted_point>& L)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   int n;
   is >> n;
   std::cout << "Reading " << n << " points" << std::endl;
@@ -127,7 +127,7 @@ _test_weighted_alpha_shape_3()
   // test a bigger Alpha_shapes
   A.clear();
   L.clear();
-  std::ifstream is("./data/fin", std::ios::in);
+  std::ifstream is("data/fin", std::ios::in);
   assert(is);
   file_input(is,L);
   A.set_mode(Alpha_shape_3::REGULARIZED);

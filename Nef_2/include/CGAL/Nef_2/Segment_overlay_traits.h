@@ -39,7 +39,7 @@
 #include <sstream>
 
 namespace CGAL {
-#ifdef CGAL_NEF_DEBUG
+#ifdef CGAL_USE_TRACE
 #define PIS(s) (s->first())
 #endif
 
@@ -460,59 +460,6 @@ public:
   OUTPUT&  GO;
   const GEOMETRY& K;
 
-
-  class lt_segs_at_sweepline
-  {
-    const Point_2& p;
-    ISegment s_bottom, s_top; // sentinel segments
-    const GEOMETRY& K;
-
-  public:
-    lt_segs_at_sweepline(const Point_2& pi,
-                         ISegment s1, ISegment s2,
-                         const GEOMETRY& k)
-     : p(pi), s_bottom(s1), s_top(s2), K(k)
-    {}
-
-    lt_segs_at_sweepline(const lt_segs_at_sweepline& lt)
-      : p(lt.p), s_bottom(lt.s_bottom), s_top(lt.s_top), K(lt.K)
-    {}
-
-    template <typename ss_pair>
-    bool
-    operator()(const ISegment& is1, const ss_pair& ss2) const
-    {
-      return operator()(is1, ss2.first);
-    }
-
-    bool
-    operator()(const ISegment& is1, const ISegment& is2) const
-    {
-      if ( is2 == s_top || is1 == s_bottom ) return true;
-      if ( is1 == s_top || is2 == s_bottom ) return false;
-      if ( is1 == is2 ) return false;
-      // Precondition: p is contained in s1 or s2.
-      const Segment_2& s1 = is1->first;
-      const Segment_2& s2 = is2->first;
-
-      CGAL_assertion_msg(( K.orientation(s1,p) == 0 ) ||  ( K.orientation(s2,p) == 0 ) ,"compare error in sweep.");
-
-      int s = 0;
-      if( p == K.source(s1) )
-        s = K.orientation(s2,p);
-      else
-        s = - K.orientation(s1,p);
-      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) )
-        return ( s < 0 );
-
-      s = K.orientation(s2,K.target(s1));
-      if (s==0) return ( is1 - is2 ) < 0;
-      // overlapping segments are not equal
-      return ( s < 0 );
-    }
-  };
-
-
   class compare_segs_at_sweepline
   {
     const Point_2& p;
@@ -553,43 +500,16 @@ public:
       const Segment_2& s1 = is1->first;
       const Segment_2& s2 = is2->first;
 
-      CGAL_assertion_msg(( K.orientation(s1,p) == 0 ) ||  ( K.orientation(s2,p) == 0 ) ,"compare error in sweep.");
-
-      int s = 0;
-      if(K.is_degenerate(s1))
-        return o2c(K.orientation(s2,p));
-      if(K.is_degenerate(s2))
-        return o2c(-K.orientation(s1,p));
-
-      s = - K.orientation(s1,p);
-      if(s!=0)
-        return o2c(s);
-      s = K.orientation(s2,p);
-      if(s!=0)
-        return o2c(s);
-      return o2c(K.orientation(s2,K.target(s1)));
-      /*
-      if( p == K.source(s1) )
+      int s = -K.orientation(s1,p);
+      if ( s == 0 )
         s = K.orientation(s2,p);
       else
-        s = - K.orientation(s1,p);
-      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) )
-        if(s < 0) return CGAL::SMALLER;
-        else if(s > 0) return CGAL::LARGER;
-        else return CGAL::EQUAL;
+        CGAL_assertion_msg( K.orientation(s2,p) == 0, "compare error in sweep.");
 
-      s = K.orientation(s2,K.target(s1));
-      //        if (s==0) {
-      //        if(is1 < is2) return CGAL::SMALLER;
-      //        if (is1 > is2) return CGAL::LARGER;
-      //        return CGAL::EQUAL;
-      //      }
+      if( s || K.is_degenerate(s2) || K.is_degenerate(s1))
+        return o2c(s);
 
-      // overlapping segments are not equal
-      if(s < 0) return CGAL::SMALLER;
-      if(s > 0) return CGAL::LARGER;
-      return CGAL::EQUAL;
-*/
+      return o2c(K.orientation(s2,K.target(s1)));
     }
   };
 

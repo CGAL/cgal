@@ -56,7 +56,7 @@ for t in testing.findall('Test'):
         if 'encoding' in t_output.attrib and t_output.attrib['encoding'] == 'base64':
            t_output_value = base64.standard_b64decode(t_output_value)
         if 'compression' in t_output.attrib and t_output.attrib['compression'] == 'gzip':
-           t_output_value = zlib.decompress(t_output_value).decode("utf-8")
+           t_output_value = zlib.decompress(t_output_value).decode("utf-8", 'backslashreplace')
     tests[tests_ids[t.find('FullName').text]] = \
          { \
            "Name":   t.find('Name').text, \
@@ -71,27 +71,52 @@ tests_per_label = defaultdict(list)
 for t_id in range(0, len(tests)):
     t = tests[t_id]
     for l in t['Labels']:
-        label = l.replace("_Tests","")
-        labels.add(label)
-        tests_per_label[label].append(t)
+        if "_Tests" in l or "_Examples" in l or "_Demo" in l:
+            label = l.replace("_Tests","")
+            labels.add(label)
+            tests_per_label[label].append(t)
 
+warning_pattern=re.compile(r'(.*([^a-zA-Z_,:-])warning)', flags=re.IGNORECASE)
+w_det=re.compile("warning");
+filter_pattern=re.compile(r'cmake|cgal', flags=re.IGNORECASE);
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                                                   tester=tester_name,
                                                   platform=platform_name), 'a+') as results:
     for label, tests in tests_per_label.items():
+        counts={"n": 0, "w": 0, "t": 0, "o": 0}
         result_for_label='y'
         with open_file_create_dir("{}/error.txt".format(label), 'w') as error:
             for t in tests:
                 print("   {result} {name} in {time} s : {value} ".format(result = "successful " if (t['Status'] == 'passed') else "ERROR:     ", name = t['Name'], value = t['ExitValue'] if(t['ExitValue'] != "") else "SUCCESS" , time = t['ExecutionTime']), file=error)
                 if t['Status'] != 'passed':
-                    result_for_label='n'
-                elif t['Output'] != None and re.search(r'(^|[^a-zA-Z_,:-])warning', t['Output'], flags=re.IGNORECASE):
-                    result_for_label='w'
+                    if t['ExitValue'] == "Timeout":
+                        counts["o"]+=1
+                    else:
+                        counts["n"]+=1
+                elif t['Output'] != None and w_det.search(t['Output']):
+                    entries = re.split("\n+", t['Output'])
+                    for entry in entries:
+                        m=warning_pattern.search(entry)
+                        if m:
+                            n = filter_pattern.search(m.group(0))
+                            if n:
+                                counts["w"]+=1
+                                break;
+                            else:
+                                counts["t"]+=1
 
                 with io.open("{}/ProgramOutput.{}".format(label, t['Name']), mode="w", encoding="utf-8") as f:
                     print("{}/ProgramOutput.{}".format(label, t['Name']))
                     f.write(t['Output'] if t['Output'] != None else "")
 
+            if counts["n"] > 0:
+                result_for_label='n'
+            elif counts["o"] > 0:
+                result_for_label='o'
+            elif counts["w"] > 0:
+                result_for_label='w'
+            elif counts["t"] > 0:
+                result_for_label='t'
 
             print("{label} {result}".format(label=label, result=result_for_label), file=results)
 

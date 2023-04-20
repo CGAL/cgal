@@ -22,7 +22,7 @@
 
 #include <map>
 #include <utility>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
 
@@ -57,7 +57,7 @@ public:
     return d_;
   }
 
-  /// Sets size at any point of dimension \c dim and index \c index
+  /// Sets size at any point of dimension `dim` and index `index`.
   void set_size(const FT& size, const int dim, const Index& index)
   {
     values_.insert(std::make_pair(std::make_pair(dim,index),size));

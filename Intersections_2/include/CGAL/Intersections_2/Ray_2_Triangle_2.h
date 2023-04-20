@@ -34,10 +34,10 @@ namespace internal {
 template <class K>
 class Ray_2_Triangle_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Ray_2_Triangle_2_pair(typename K::Ray_2 const *ray,
                           typename K::Triangle_2 const *trian)
-            : _ray(ray), _trian(trian), _known(false) {}
+            : _ray(ray), _trian(trian) {}
 
     Intersection_results intersection_type() const;
 
@@ -46,8 +46,7 @@ public:
 protected:
     typename K::Ray_2 const* _ray;
     typename K::Triangle_2 const *  _trian;
-    mutable bool                    _known;
-    mutable Intersection_results     _result;
+    mutable Intersection_results     _result = UNKNOWN;
     mutable typename K::Point_2         _intersection_point;
     mutable typename K::Point_2         _other_point;
 };
@@ -59,10 +58,9 @@ typename Ray_2_Triangle_2_pair<K>::Intersection_results
 Ray_2_Triangle_2_pair<K>::intersection_type() const
 {
   typedef typename K::Line_2  Line_2;
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
 // The non const this pointer is used to cast away const.
-    _known = true;
     Straight_2_<K> straight(*_ray);
     Line_2 l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
@@ -111,7 +109,7 @@ typename K::Point_2
 Ray_2_Triangle_2_pair<K>::
 intersection_point() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -123,7 +121,7 @@ Ray_2_Triangle_2_pair<K>::
 intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return Segment_2(_intersection_point, _other_point);
@@ -167,26 +165,26 @@ intersection(const typename K::Triangle_2&tr,
 
 
 template <class K>
-inline bool do_intersect(
-    const typename K::Ray_2 &p1,
-    const typename K::Triangle_2 &p2,
-    const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Ray_2& r,
+             const typename K::Triangle_2& tr,
+             const K&)
 {
-    typedef Ray_2_Triangle_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  typedef Ray_2_Triangle_2_pair<K> pair_t;
+  pair_t pair(&r, &tr);
+  return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 
 template <class K>
-inline bool do_intersect(
-    const typename K::Triangle_2 &p1,
-    const typename K::Ray_2 &p2,
-    const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Triangle_2& tr,
+             const typename K::Ray_2& r,
+             const K& k)
 {
-    typedef Ray_2_Triangle_2_pair<K> pair_t;
-    pair_t pair(&p2, &p1);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  return do_intersect(r, tr, k);
 }
 
 } // namespace internal
@@ -195,7 +193,6 @@ inline bool do_intersect(
 CGAL_INTERSECTION_FUNCTION(Ray_2, Triangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Ray_2, Triangle_2, 2)
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif
+#endif // CGAL_INTERSECTIONS_2_RAY_2_TRIANGLE_2_H

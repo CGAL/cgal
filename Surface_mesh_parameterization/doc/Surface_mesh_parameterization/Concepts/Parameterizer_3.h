@@ -19,11 +19,11 @@ Construction and destruction are undefined.
 \cgalHasModel `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 \cgalHasModel `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 \cgalHasModel `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-\cgalHasModel `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 \cgalHasModel `CGAL::Surface_mesh_parameterization::Circular_border_parameterizer_3<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_parameterization::Square_border_parameterizer_3<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh>`
 
+\sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 */
 
 class Parameterizer_3
@@ -58,9 +58,9 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The vertices must be indexed (`vimap` must be initialized)
@@ -75,4 +75,3 @@ public:
   /// @}
 
 }; /* end Parameterizer_3 */
-

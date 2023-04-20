@@ -196,24 +196,26 @@ angle bound greater than \f$ 20.7\f$ degrees, but there is no such guarantee.
 \subsection secMesh_2_building_meshes Building Meshes
 
 Meshes are obtained from
-constrained Delaunay triangulations by calling the global function :
+constrained Delaunay triangulations by calling the global function:
 
 \code{.cpp}
-template<class CDT, class Criteria>
-void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria)
+template<class CDT, class NamedParameters>
+void refine_Delaunay_mesh_2 (CDT &t, NamedParameters np)
 \endcode
 
 The template parameter `CDT` must be instantiated by a constrained
-Delaunay triangulation class. In order to override the domain,
-a version of this function has two more arguments that define a sequence of
-seed points.
+Delaunay triangulation class.
 
 The geometric traits class of `CDT` has to be a
 model of the concept `DelaunayMeshTraits_2`. This concept
 refines the concept `ConformingDelaunayTriangulationTraits_2`
-adding the geometric predicates and constructors. The template parameter
-`Criteria` must be a model of `MeshingCriteria_2`. This concept
-defines criteria that the triangles have to satisfy.
+adding the geometric predicates and constructors.
+
+The second template parameter `NamedParameters` enables
+to pass a sequence of seed points to define a domain.
+It further enables to pass meshing criteria that the triangles have to satisfy.
+The criteria must be a model of `MeshingCriteria_2`.
+
 \cgal provides two models for this concept:
 <UL>
 <LI>`Delaunay_mesh_criteria_2<CDT>`, that defines a shape criterion
@@ -253,7 +255,7 @@ template< class CDT >
 Mesh_optimization_return_code lloyd_optimize_mesh_2(CDT& cdt);
 
 \endcode
-Note that this global function has more parameters (see details in reference pages) to tune the optimization process.
+Note that this global function has several named parameters (see details in reference pages) to tune the optimization process.
 
 This optimization process alternates relocating vertices to the center of mass
 of their Voronoi cells, and updating the Delaunay connectivity of the triangulation.
@@ -276,6 +278,7 @@ After Delaunay refinement, angles are in the interval [28.5; 121.9] degrees.
 After 10 iterations of Lloyd optimization, they are in [29.1; 110.8]. 100 iterations take them to [29.3; 109.9].
 \cgalFigureEnd
 
+As of \cgal 5.6, `lloyd_optimize_mesh_2()` uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
 
 \subsection Mesh_2Examples Examples
 
@@ -313,6 +316,13 @@ faces is used to count them.
 
 \cgalExample{Mesh_2/mesh_with_seeds.cpp}
 
+\subsubsection Mesh_2ExampleUsingMarkDomains Example with a Domain Defined by Nesting Level.
+
+When the domain is defined by polygons for the outer boundaries and the boundaries of holes
+the function `mark_domain_in_triangulation()`  can be called instead of passing seedpoints.
+
+\cgalExample{Mesh_2/mesh_marked_domain.cpp}
+
 
 \subsubsection Mesh_2ExampleLloyd Example Using the Lloyd optimizer
 
@@ -327,7 +337,8 @@ in the Reference Manual.
 \cgalExample{Mesh_2/mesh_optimization.cpp}
 
 
-
+\section secMesh_2_IO Input/Output
+It is possible to export the result of a meshing in VTU, using the function `CGAL::IO::write_VTU()`.
+For more information about this format, see \ref IOStreamVTK.
 */
 } /* namespace CGAL */
-

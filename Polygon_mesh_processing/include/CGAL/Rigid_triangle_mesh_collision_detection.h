@@ -37,7 +37,7 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PkgPolygonMeshProcessingRef
  * This class provides methods to perform some intersection tests between triangle meshes
  * that undergo affine transformations (rotation, translation, and scaling).
  * Meshes are added to an internal set and are referenced using an id assigned when added to the set.
@@ -176,6 +176,14 @@ public:
     : m_free_id(0)
   {}
 
+  Rigid_triangle_mesh_collision_detection(const Rigid_triangle_mesh_collision_detection&) = default;
+
+  //! move constructor
+  Rigid_triangle_mesh_collision_detection(Rigid_triangle_mesh_collision_detection&& other)
+  {
+    *this = std::move(other);
+  }
+
   ~Rigid_triangle_mesh_collision_detection()
   {
     for (std::size_t k=0; k<m_free_id; ++k)
@@ -183,6 +191,25 @@ public:
       std::size_t id = m_id_pool[k];
       if (m_own_aabb_trees[id]) delete m_aabb_trees[id];
     }
+  }
+
+  Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection& other) = default;
+
+  //! move assignment operator
+  Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection&& other)
+  {
+    m_own_aabb_trees = std::move(other.m_own_aabb_trees);
+    m_aabb_trees = std::move(other.m_aabb_trees);
+    m_is_closed = std::move(other.m_is_closed);
+    m_points_per_cc = std::move(other.m_points_per_cc);
+    m_traversal_traits = std::move(other.m_traversal_traits);
+    m_free_id = std::move(other.m_free_id);
+    m_id_pool = std::move(other.m_id_pool);
+
+    for(std::size_t i = 0; i< other.m_own_aabb_trees.size(); ++i)
+      other.m_own_aabb_trees[i]= false;
+
+    return *this;
   }
 
  /*!
@@ -217,17 +244,13 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
+  template <class NamedParameters = parameters::Default_named_parameters>
   std::size_t add_mesh(const TriangleMesh& tm,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
   {
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_USE_TYPE(Local_vpm);
-
-    CGAL_assertion_code(
-      static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
-    CGAL_static_assertion(same_vpm);
+    CGAL_static_assertion( (std::is_same<Local_vpm,Vpm>::value) );
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -280,8 +303,8 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
-  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np)
+  template <class NamedParameters = parameters::Default_named_parameters>
+  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np = parameters::default_values())
   {
     std::size_t id = get_id_for_new_mesh();
     CGAL_assertion( m_aabb_trees[id] == nullptr );
@@ -527,23 +550,19 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
+  template <class NamedParameters = parameters::Default_named_parameters>
   static
   void collect_one_point_per_connected_component(
     const TriangleMesh& tm,
           std::vector<Point_3>& points,
-    const NamedParameters& np)
+    const NamedParameters& np = parameters::default_values())
   {
     const bool maybe_several_cc =
       parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_USE_TYPE(Local_vpm);
-
-    CGAL_assertion_code(
-      static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
-    CGAL_static_assertion(same_vpm);
+    CGAL_static_assertion((std::is_same<Local_vpm,Vpm>::value));
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -560,7 +579,7 @@ public:
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
-          tm, bind_property_maps(fid_map, make_property_map(cc_ids)),
+          tm, make_compose_property_map(fid_map, make_property_map(cc_ids)),
           parameters::face_index_map(fid_map));
       if (nb_cc != 1)
       {
@@ -609,25 +628,6 @@ public:
     m_points_per_cc[id] = points_per_cc;
 
     return id;
-  }
-
-  // versions without NP
-  static
-  void collect_one_point_per_connected_component(
-    const TriangleMesh& tm,
-          std::vector<typename K::Point_3>& points)
-  {
-    collect_one_point_per_connected_component(tm, points, parameters::all_default());
-  }
-
-  std::size_t add_mesh(const TriangleMesh& tm)
-  {
-    return add_mesh(tm, parameters::all_default());
-  }
-
-  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm)
-  {
-    return add_mesh(tree, tm, parameters::all_default());
   }
 #endif
 };

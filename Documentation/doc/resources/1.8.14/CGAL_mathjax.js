@@ -25,6 +25,8 @@ MathJax.Hub.Config(
           ccProd: [ "{\\prod_{#1}^{#2}{#3}}", 3],
           pyr: [ "{\\operatorname{Pyr}}", 0],
           aff: [ "{\\operatorname{aff}}", 0],
+          Ac: [ "{\\cal A}", 0],
+          Sc: [ "{\\cal S}", 0],
       }
   }
 }

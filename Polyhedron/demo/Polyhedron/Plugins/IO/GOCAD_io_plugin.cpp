@@ -3,16 +3,19 @@
 #include "Kernel_type.h"
 #include "Scene.h"
 #include "SMesh_type.h"
-#include <CGAL/gocad_io.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
-#include <fstream>
+#include <CGAL/boost/graph/io.h>
 
 #include <QColor>
 #include <QMainWindow>
+
+#include <fstream>
+
 using namespace CGAL::Three;
 
 class Polyhedron_demo_gocad_plugin :
@@ -54,7 +57,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
     ok = false;
     return QList<Scene_item*>();
   }
-
+  in.close();
 
   CGAL::Timer t;
   t.start();
@@ -70,8 +73,9 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
   }
   SMesh& P = * const_cast<SMesh*>(item->polyhedron());
 
-  std::string name, color;
-  if(! read_gocad(P, in, name, color)){
+  std::pair<std::string,std::string> name_and_color;
+  if(! CGAL::IO::read_GOCAD(in, name_and_color, P))
+  {
     std::cerr << "Error: Invalid polyhedron" << std::endl;
     delete item;
     ok = false;
@@ -80,12 +84,12 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
 
   t.stop();
   std::cerr << "Reading took " << t.time() << " sec." << std::endl;
-  if(name.size() == 0){
+  if(name_and_color.first.size() == 0){
     item->setName(fileinfo.baseName());
   } else {
-    item->setName(name.c_str());
+    item->setName(name_and_color.first.c_str());
   }
-  QColor qcolor(color.c_str());
+  QColor qcolor(name_and_color.second.c_str());
   if(qcolor.isValid())
   {
     item->setColor(qcolor);
@@ -117,7 +121,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   SMesh* poly = const_cast<SMesh*>(sm_item->polyhedron());
-  write_gocad(*poly, out, qPrintable(fileinfo.baseName()));
+  CGAL::IO::write_GOCAD(out, qPrintable(fileinfo.baseName()), *poly);
   items.pop_front();
   return true;
 

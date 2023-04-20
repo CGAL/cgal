@@ -22,18 +22,11 @@
 \cgalPkgDescriptionEnd
 
 
-\cgalCRPSection{Assertions}
-
-The optimization code uses infix `OPTIMISATION` in the assertions,
-e.g. defining the compiler flag
-`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
-checking off, cf. Section  \ref secchecks.
-
 \cgalClassifedRefPages
 
-- `CGAL::maximum_area_inscribed_k_gon_2`
-- `CGAL::maximum_perimeter_inscribed_k_gon_2`
-- `CGAL::extremal_polygon_2`
+- `CGAL::maximum_area_inscribed_k_gon_2()`
+- `CGAL::maximum_perimeter_inscribed_k_gon_2()`
+- `CGAL::extremal_polygon_2()`
 - `CGAL::Largest_empty_iso_rectangle_2<T>`
 - `CGAL::Extremal_polygon_area_traits_2<K>`
 - `CGAL::Extremal_polygon_perimeter_traits_2<K>`
@@ -41,4 +34,3 @@ checking off, cf. Section  \ref secchecks.
 - `LargestEmptyIsoRectangleTraits_2`
 
 */
-

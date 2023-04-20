@@ -1,10 +1,7 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
-project( Arrangement_on_surface_2_Demo )
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+cmake_minimum_required(VERSION 3.1...3.23)
+project(Arrangement_on_surface_2_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -15,14 +12,16 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL QUIET COMPONENTS Qt5 OPTIONAL_COMPONENTS Core)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt5)
 find_package(Qt5 QUIET COMPONENTS Gui Widgets)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
+if (CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_compile_definitions(QT_NO_KEYWORDS)
   include_directories( BEFORE ./ )
 
+  # Arrangement package includes
+  add_definitions(-DQT_NO_KEYWORDS)
   option(COMPILE_UTILS_INCREMENTALLY
     "Compile files in Utils directory incrementally, or compile them all as a unit. \
     Incremental compilation will be better for development and consume less \
@@ -111,10 +110,10 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})
 
-  target_link_libraries(arrangement_2 Qt5::Core Qt5::Gui Qt5::Widgets)
-  target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries(arrangement_2 PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets)
+  target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
   if(CGAL_Core_FOUND)
-    target_link_libraries(arrangement_2 CGAL::CGAL_Core)
+    target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL_Core)
   endif()
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
@@ -125,16 +124,11 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 else()
   set(MISSING_DEPS "")
 
-  if(NOT CGAL_FOUND)
-    set(MISSING_DEPS "CGAL, ${MISSING_DEPS}")
-  endif()
   if(NOT CGAL_Qt5_FOUND)
     set(MISSING_DEPS "the CGAL Qt5 library, ${MISSING_DEPS}")
   endif()
   if(NOT Qt5_FOUND)
     set(MISSING_DEPS "Qt5, ${MISSING_DEPS}")
   endif()
-
-  message(STATUS
-          "NOTICE: This demo requires ${MISSING_DEPS} and will not be compiled.")
+  message("NOTICE: This demo requires ${MISSING_DEPS} and will not be compiled.")
 endif()

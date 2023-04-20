@@ -17,7 +17,7 @@ This class can be used directly or can serve as a base to derive other classes
 with some additional attributes tuned for a specific application.
 
 
-\tparam `TriangulationDataStructure_` must be a model of the
+\tparam TriangulationDataStructure_ must be a model of the
 `TriangulationDataStructure` concept.
 
 \tparam TriangulationDSFullCellStoragePolicy indicates whether or not

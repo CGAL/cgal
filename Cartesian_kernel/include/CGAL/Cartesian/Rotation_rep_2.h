@@ -139,7 +139,13 @@ public:
                                 -sinus_*t.t21 + cosinus_*t.t22,
                                 t.t23);
   }
+
   bool is_even() const
+  {
+    return true;
+  }
+
+  bool is_rotation() const
   {
     return true;
   }

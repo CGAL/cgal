@@ -21,7 +21,7 @@ EchoServer::EchoServer(quint16 port) :
   }
   QHostAddress local_host("0.0.0.0");
 
-  //to avoid printing 127.0.0.1. Not realy sure it won't ever print the external ipv4 though.
+  //to avoid printing 127.0.0.1. Not really sure it won't ever print the external ipv4 though.
   const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
   for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
     if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   parser.addHelpOption();
   QCommandLineOption portOption(QStringList() << "p" << "port",
                                 QCoreApplication::translate("main", "Port for echoserver [default: 1234]."),
-                                QCoreApplication::translate("main", "port"), QLatin1Literal("1234"));
+                                QCoreApplication::translate("main", "port"), QLatin1String("1234"));
   parser.addOption(portOption);
   parser.process(a);
   int port = parser.value(portOption).toInt();

@@ -1,7 +1,8 @@
 #ifndef POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 #define POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 
-#include <CGAL/squared_distance_3_0.h>
+#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/Distance_3/Point_3_Line_3.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <boost/accumulators/accumulators.hpp>
@@ -49,7 +50,6 @@ void compute_angles(Mesh* poly,Tester tester , double& mini, double& maxi, doubl
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
   typedef typename CGAL::Kernel_traits< typename boost::property_traits<VPMap>::value_type >::Kernel Traits;
-  double rad_to_deg = 180. / CGAL_PI;
 
   accumulator_set< double,
     features< tag::min, tag::max, tag::mean > > acc;
@@ -66,12 +66,8 @@ void compute_angles(Mesh* poly,Tester tester , double& mini, double& maxi, doubl
     typename Traits::Point_3 b = get(vpmap, target(h, *poly));
     typename Traits::Point_3 c = get(vpmap, target(next(h, *poly), *poly));
 
-    typename Traits::Vector_3 ba(b, a);
-    typename Traits::Vector_3 bc(b, c);
-    double cos_angle = (ba * bc)
-      / std::sqrt(ba.squared_length() * bc.squared_length());
-
-    acc(std::acos(cos_angle) * rad_to_deg);
+    typename Traits::FT ang = CGAL::approximate_angle(b,a,c);
+    acc(CGAL::to_double(ang));
   }
 
   mini = extract_result< tag::min >(acc);
@@ -280,4 +276,3 @@ void faces_aspect_ratio(Mesh* poly,
   faces_aspect_ratio(poly, faces(*poly), min_altitude,  mini, maxi, mean);
 }
 #endif // POLYHEDRON_DEMO_STATISTICS_HELPERS_H
-

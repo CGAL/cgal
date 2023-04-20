@@ -13,8 +13,7 @@ Point and normal property maps have to be provided to extract the points
 and the normals from the input.
 
 \cgalHasModel
-- `CGAL::Shape_detection::Efficient_RANSAC_traits`,
-- `CGAL::Shape_detection::deprecated::Shape_detection_traits`
+- `CGAL::Shape_detection::Efficient_RANSAC_traits`
 */
 class EfficientRANSACTraits{
 
@@ -38,7 +37,7 @@ public:
   /// The circle type, only required if you want to detect tori
   typedef unspecified_type Circle_2;
   /// The 2D vector type, only required if you want to detect tori
-  typedef unspecified_type Vector_3;
+  typedef unspecified_type Vector_2;
 
   /// The number type of the Cartesian coordinates of types Point_3
   typedef unspecified_type FT;

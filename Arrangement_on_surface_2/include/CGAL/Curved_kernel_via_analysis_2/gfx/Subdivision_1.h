@@ -264,7 +264,7 @@ private:
     //!@}
 }; // class Subdivision_1<>
 
-//! \brief main rasterization procedure, copies in the the output iterator
+//! \brief main rasterization procedure, copies in the output iterator
 //! \c oi a set of pixel coordinates
 
 template <class Coeff_, class Algebraic_curve_2_>

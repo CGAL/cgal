@@ -28,48 +28,37 @@ namespace CGAL {
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature containing the given point.
 //
-template <class Arrangement>
+template <typename Arrangement>
 typename Arr_naive_point_location<Arrangement>::Result_type
 Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
 {
   // Go over the arrangement vertices and check whether one of them equals
   // the query point.
-  typename Traits_adaptor_2::Equal_2   equal = geom_traits->equal_2_object();
-  typename Arrangement_2::Vertex_const_iterator  vit;
-  Vertex_const_handle                            vh;
+  auto equal = geom_traits->equal_2_object();
 
-  for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
-    vh = vit;
-    if (equal(p, vh->point()))
-      return make_result(vh);
+  for (auto vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
+    Vertex_const_handle vh = vit;
+    if (equal(p, vh->point())) return make_result(vh);
   }
 
   // Go over arrangement halfedges and check whether one of them contains
   // the query point in its interior.
-  typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range =
-    geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2   compare_y_at_x =
-    geom_traits->compare_y_at_x_2_object();
-  typename Arrangement_2::Edge_const_iterator   eit;
-  Halfedge_const_handle                         hh;
+  auto is_in_x_range = geom_traits->is_in_x_range_2_object();
+  auto compare_y_at_x = geom_traits->compare_y_at_x_2_object();
 
-  for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit) {
-    hh = eit;
-
+  for (auto eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit) {
+    Halfedge_const_handle hh = eit;
     if (is_in_x_range(hh->curve(), p) && compare_y_at_x(p, hh->curve()) == EQUAL)
       return make_result(hh);
   }
 
-  // Go over all faces an locate the innermost one that contains the query
+  // Go over all faces and locate the innermost one that contains the query
   // point in its interior.
-  typename Arrangement_2::Face_const_iterator   fit;
-  Face_const_handle                             fh;
-  Face_const_handle                             f_inner;
-  const Face_const_handle                       invalid_f;
+  Face_const_handle f_inner;
+  const Face_const_handle invalid_f;
 
-  for (fit = p_arr->faces_begin(); fit != p_arr->faces_end(); ++fit) {
-    fh = fit;
-
+  for (auto fit = p_arr->faces_begin(); fit != p_arr->faces_end(); ++fit) {
+    Face_const_handle fh = fit;
     if (top_traits->is_in_face(&(*fh), p, nullptr)) {
       // The current face contains p in its interior.
       if (f_inner == invalid_f ||
@@ -79,8 +68,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
         // This is the first face that contains p we encounter:
         f_inner = fh;
       }
-      else if (! fh->is_unbounded() && fh->number_of_outer_ccbs() > 0)
-      {
+      else if (! fh->is_unbounded() && fh->number_of_outer_ccbs() > 0) {
         // As we have already some other containing face, one face must be
         // contained inside the other. To check that, we select a
         // representative vertex of inner_f and check whether it is contained
@@ -91,8 +79,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
         // source() of its value_type is accessed.
         typename Arrangement_2::Outer_ccb_const_iterator it =
           fh->outer_ccbs_begin();
-        Vertex_const_handle  v = (*it)->source();
-
+        Vertex_const_handle v = (*it)->source();
         if (top_traits->is_in_face(&(*f_inner), v->point(), nullptr))
           f_inner = fh;
       }

@@ -302,13 +302,41 @@ public:
 
   /*!
    * Create a new boundary vertex.
-   * \param cv The curve incident to the boundary.
-   * \param ind The relevant curve-end.
-   * \param ps_x The boundary condition in x.
-   * \param by The boundary condition in y.
+   * \param pt the point
+   * \param ps_x The parameter space in x.
+   * \param ps_y The parameter space in y.
    * \param notify Should we send a notification to the topology traits
    *               on the creation of the vertex (true by default).
-   * \pre Either ps_x or by does not equal ARR_INTERIOR.
+   * \pre One of ps_x or ps_y does not equal ARR_INTERIOR.
+   * \return A handle for the newly created vertex.
+   */
+  Vertex_handle create_boundary_vertex(const Point_2& pt,
+                                       Arr_parameter_space ps_x,
+                                       Arr_parameter_space ps_y,
+                                       bool notify = true)
+  {
+    CGAL_precondition(ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
+
+    DVertex* v = p_arr->_create_boundary_vertex (pt, ps_x, ps_y);
+
+    CGAL_assertion(v != NULL);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    if (notify)
+      p_arr->topology_traits()->notify_on_boundary_vertex_creation(v, pt,
+                                                                   ps_x, ps_y);
+    return (p_arr->_handle_for(v));
+  }
+
+  /*!
+   * Create a new boundary vertex.
+   * \param cv The curve incident to the boundary.
+   * \param ind The relevant curve-end.
+   * \param ps_x The parameter space in x.
+   * \param ps_y The parameter space in y.
+   * \param notify Should we send a notification to the topology traits
+   *               on the creation of the vertex (true by default).
+   * \pre One of ps_x or ps_y does not equal ARR_INTERIOR.
    * \return A handle for the newly created vertex.
    */
   Vertex_handle create_boundary_vertex(const X_monotone_curve_2& cv,
@@ -317,6 +345,8 @@ public:
                                        Arr_parameter_space ps_y,
                                        bool notify = true)
   {
+    CGAL_precondition(ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
+
     DVertex* v = p_arr->_create_boundary_vertex (cv, ind, ps_x, ps_y);
 
     CGAL_assertion(v != nullptr);
@@ -400,7 +430,7 @@ public:
    * Insert an x-monotone curve into the arrangement, such that one of its
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex. The other
-   * endpoint corrsponds to a free vertex (a newly created vertex or an
+   * endpoint corresponds to a free vertex (a newly created vertex or an
    * isolated vertex).
    * \param he_to The reference halfedge. We should represent cv as a pair
    *              of edges, one of them should become he_to's successor.
@@ -589,7 +619,7 @@ public:
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is p.
@@ -602,7 +632,7 @@ public:
                                 const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2)
   {
-    DHalfedge* he = p_arr->_split_edge (p_arr->_halfedge(e), p, cv1, cv2);
+    DHalfedge* he = p_arr->_split_edge(p_arr->_halfedge(e), p, cv1, cv2);
 
     CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for(he));
@@ -611,7 +641,7 @@ public:
   /*!
    * Split a given edge into two at the given vertex, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is v's point.
@@ -633,7 +663,7 @@ public:
 
   /*!
    * Split a fictitious edge at the given vertex.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \return A handle for the first split halfedge, whose source equals the
    *         source of e, and whose target is the split vertex v.
@@ -762,7 +792,7 @@ public:
   const Dcel& dcel() const { return (p_arr->_dcel()); }
 
   /*!
-   * Clear the entire arrangment.
+   * Clear the entire arrangement.
    */
   void clear_all()
   {

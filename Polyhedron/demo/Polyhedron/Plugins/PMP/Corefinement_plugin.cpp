@@ -11,7 +11,7 @@
 using namespace CGAL::Three;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 class Polyhedron_demo_corefinement_sm_plugin :
   public QObject,
@@ -159,7 +159,7 @@ private:
       scene->itemChanged(item2);
       scene->itemChanged(item1);
     }
-    catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+    catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
     {
       CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
     }
@@ -229,10 +229,11 @@ private:
           str_op = "Difference";
       }
     }
-    catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+    catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
     {
       CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
       QApplication::restoreOverrideCursor();
+      return;
     }
 
     first_item->invalidateOpenGLBuffers();
@@ -245,6 +246,8 @@ private:
     new_item->setColor(first_item->color());
     new_item->setRenderingMode(first_item->renderingMode());
     new_item->setVisible(first_item->visible());
+    first_item->setVisible(false);
+    item->setVisible(false);
     scene->addItem(new_item);
     new_item->invalidateOpenGLBuffers();
 

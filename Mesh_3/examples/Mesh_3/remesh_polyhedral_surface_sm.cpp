@@ -10,8 +10,7 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/IO/PLY_writer.h>
-
+#include <CGAL/Surface_mesh/IO/PLY.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -26,12 +25,11 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/lion-head.off";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/lion-head.off");
   // Load a polyhedron
   Polyhedron poly;
   std::ifstream input(fname);
@@ -54,14 +52,13 @@ int main(int argc, char*argv[])
   domain.detect_features(); //includes detection of borders
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.025,
-                         facet_angle = 25,
-                         facet_size = 0.1,
-                         facet_distance = 0.001);
+  Mesh_criteria criteria(params::edge_size(0.025).
+                                 facet_angle(25).
+                                 facet_size(0.1).
+                                 facet_distance(0.001));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(),
-                                      no_exude(), manifold_with_boundary());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_perturb().no_exude());
 
   // Output
   dump_c3t3(c3t3, "out");
@@ -72,7 +69,7 @@ int main(int argc, char*argv[])
     Mesh surface_mesh = draw_c3t3_surface(c3t3);
     std::ofstream out("out.ply");
     out.precision(17);
-    write_ply(out, surface_mesh, "essai");
+    CGAL::IO::write_PLY(out, surface_mesh, "essai");
   }
 #endif
 }

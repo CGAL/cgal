@@ -60,6 +60,11 @@ public:
 
   virtual Aff_transformation_2 inverse() const  = 0;
   virtual bool                 is_even() const  = 0;
+  virtual bool                 is_translation() const { return false; }
+  virtual bool                 is_scaling() const { return false; }
+  virtual bool                 is_rotation() const { return false; }
+  virtual bool                 is_reflection() const { return false; }
+
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };

@@ -23,7 +23,6 @@
 
 namespace CGAL {
 
-
 namespace Boolean_set_operation_2_internal
 {
   struct PreconditionValidationPolicy
@@ -42,7 +41,6 @@ namespace Boolean_set_operation_2_internal
     }
   };
 }
-
 
 // General_polygon_set_on_surface_2
 /*
@@ -70,52 +68,59 @@ public:
 
 public:
 
-  // default costructor
+  // default constructor
   General_polygon_set_on_surface_2() : Base()
   {}
 
-  // constructor with traits object
-  General_polygon_set_on_surface_2(const Traits_2& tr) : Base(tr) {}
+  // constructor from a traits object
+  General_polygon_set_on_surface_2(const Traits_2& traits) : Base(traits) {}
 
+  // copy constructor
   General_polygon_set_on_surface_2(const Self& ps) : Base(ps) {}
 
+  // assignment operator
   General_polygon_set_on_surface_2& operator=(const Self& ps)
   {
     Base::operator=(ps);
     return (*this);
   }
 
+  // constructor from a polygon
   explicit General_polygon_set_on_surface_2(const Polygon_2& pgn) : Base(pgn) {}
 
+  // constructor from a polygon with holes
   explicit
-  General_polygon_set_on_surface_2(const Polygon_with_holes_2& pgn_with_holes) :
-    Base(pgn_with_holes)
+  General_polygon_set_on_surface_2(const Polygon_with_holes_2& pwh) :
+    Base(pwh)
+  {}
+
+  // constructor from a polygon and a traits object
+  explicit General_polygon_set_on_surface_2(const Polygon_2& pgn,
+                                            const Traits_2& traits) :
+    Base(pgn, traits) {}
+
+  // constructor from a polygon with holes and a traits object
+  explicit
+  General_polygon_set_on_surface_2(const Polygon_with_holes_2& pwh,
+                                   const Traits_2& traits) :
+    Base(pwh, traits)
   {}
 
 protected:
-  General_polygon_set_on_surface_2(Arrangement_on_surface_2* arr) : Base(arr)
-  {}
+  General_polygon_set_on_surface_2(Arrangement_on_surface_2* arr) : Base(arr) {}
 
 public:
-  //destructor
-  virtual ~General_polygon_set_on_surface_2()
-  {}
+  // destructor
+  virtual ~General_polygon_set_on_surface_2() {}
 
   void intersection(const Self& gps1, const Self& gps2)
-  {
-    Base::intersection(gps1.base(), gps2.base());
-  }
+  { Base::intersection(gps1.base(), gps2.base()); }
 
   void join(const Self& gps1, const Self& gps2)
-  {
-    Base::join(gps1.base(), gps2.base());
-  }
+  { Base::join(gps1.base(), gps2.base()); }
 
   void symmetric_difference(const Self& gps1, const Self& gps2)
-  {
-    Base::symmetric_difference(gps1.base(), gps2.base());
-  }
-
+  { Base::symmetric_difference(gps1.base(), gps2.base()); }
 
   // For some reason the below functions (the ones that we call "using" for)
   // are hidden by the function in this class and are not found in the parent's
@@ -128,16 +133,9 @@ public:
   using Base::symmetric_difference;
 
 private:
-  const Base& base() const
-    {
-      return static_cast<const Base&> (*this);
-    }
+  const Base& base() const { return static_cast<const Base&> (*this); }
 
-  Base& base()
-    {
-      return static_cast<Base&> (*this);
-    }
-
+  Base& base() { return static_cast<Base&> (*this); }
 };
 
 } //namespace CGAL

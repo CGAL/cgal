@@ -237,7 +237,7 @@ public:
   std::ostream& print (std::ostream& os) const
   {
     std::pair<double,double> double_p;
-    switch(::CGAL::get_mode(os))
+    switch(::CGAL::IO::get_mode(os))
     {
      case ::CGAL::IO::PRETTY:
       double_p = this->to_double();

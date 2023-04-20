@@ -15,19 +15,19 @@
 #ifndef CGAL_MESH_CELL_BASE_3_H
 #define CGAL_MESH_CELL_BASE_3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/Mesh_3.h>
 
 
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_cell_base_3.h>"
 // #define CGAL_REPLACEMENT_HEADER "<CGAL/Compact_mesh_cell_base_3.h>"
-// #include <CGAL/internal/deprecation_warning.h>
+// #include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 
 #include <boost/type_traits/is_convertible.hpp>
@@ -95,14 +95,46 @@ protected:
 // Class Mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
+/*!
+\ingroup PkgMesh3MeshClasses
+<!-- Meta-comment: this class cannot be deprecated by
+Compact_mesh_cell_base_3, because the latter has a different API.
+-- Laurent Rineau, 2013/10/16
+\deprecated This class is deprecated since \cgal 4.3. Use
+`CGAL::Compact_mesh_cell_base_3<GT,MD,Tds>` instead.
+-->
+
+The class `Mesh_cell_base_3<GT, MD, Cb>` is a model of the concept `MeshCellBase_3`.
+It is designed to serve as cell base class for the 3D triangulation
+used in the 3D mesh generation process.
+
+\tparam GT is the geometric traits class.
+It has to be a model of the concept `MeshTriangulationTraits_3`.
+
+\tparam MD provides the types of indices used to identify
+the faces of the input complex. It has to be a model
+of the concept `MeshDomain_3`.
+
+\tparam Cb is the cell base class. It has to be a model
+of the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3` and defaults to
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3<GT>`.
+
+\cgalModels `MeshCellBase_3`
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+\sa `CGAL::Compact_mesh_cell_base_3<GT, MD, Tds>`
+
+*/
 template< class GT,
   class MD,
   class Cb= CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<
               GT, CGAL::Regular_triangulation_cell_base_3<GT> > >
 class Mesh_cell_base_3
-: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>,
-  public Mesh_cell_base_3_base<
+: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>
+#ifndef DOXYGEN_RUNNING
+, public Mesh_cell_base_3_base<
     typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Concurrency_tag>
+#endif
 {
   typedef typename GT::FT FT;
 
@@ -248,7 +280,7 @@ operator>>(std::istream &is,
            Mesh_cell_base_3<GT, MT, Cb> &c)
 {
   typename Mesh_cell_base_3<GT, MT, Cb>::Subdomain_index index;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
     is >> index;
   else
     read(is, index);
@@ -263,7 +295,7 @@ std::ostream&
 operator<<(std::ostream &os,
            const Mesh_cell_base_3<GT, MT, Cb> &c)
 {
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
      os << c.subdomain_index();
   else
     write(os, c.subdomain_index());

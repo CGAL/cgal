@@ -10,10 +10,6 @@
 // Author(s)     :  Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 //                  Mael Rouxel-Labbé
 
-#if (__GNUC__>4) || (__GNUC__ == 4 && __GNUC_MINOR__ >=6)
-#  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#endif
-
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 
 #include <CGAL/use.h>

@@ -22,7 +22,7 @@ struct Scene_spheres_item_priv
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Sphere_3<Kernel> Sphere;
-  typedef std::pair<Sphere, CGAL::Color> Sphere_pair;
+  typedef std::pair<Sphere, CGAL::IO::Color> Sphere_pair;
   typedef std::vector<std::vector<Sphere_pair> > Spheres_container;
 
   Scene_spheres_item_priv(bool planed, std::size_t max_index, Scene_spheres_item* parent, bool pickable)
@@ -187,8 +187,6 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     setBuffersFilled(true);
     setBuffersInit(viewer, true);
   }
-  int deviceWidth = viewer->camera()->screenWidth();
-  int deviceHeight = viewer->camera()->screenHeight();
     if(d->has_plane)
     {
       QVector4D cp = cgal_plane_to_vector4d(d->plane);
@@ -207,12 +205,8 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     }
     if(d->pickable && (d->spheres.size() > 1 && viewer->inDrawWithNames()))
     {
-      int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
-      const static int dataLength = rowLength * deviceHeight;
-      GLubyte* buffer = new GLubyte[dataLength];
-      // Qt uses upper corner for its origin while GL uses the lower corner.
       QPoint picking_target = viewer->mapFromGlobal(QCursor::pos());
-      viewer->glReadPixels(picking_target.x(), deviceHeight-1-picking_target.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+      const auto buffer = read_pixel_as_ubyte_rgba(picking_target, viewer, viewer->camera());
       int ID = (buffer[0] + buffer[1] * 256 +buffer[2] * 256*256) ;
       if(buffer[0]*buffer[1]*buffer[2] < 255*255*255)
       {
@@ -247,7 +241,7 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
   getEdgeContainer(0)->draw(viewer, false);
 
 }
-void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CGAL::Color color)
+void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CGAL::IO::Color color)
 {
   if((int)index > (int)d->spheres.size() - 1)
     d->spheres.resize(index+1);
@@ -429,3 +423,15 @@ bool Scene_spheres_item::save(const std::string& file_name)const
   return true;
 }
 
+bool Scene_spheres_item::eventFilter(QObject *, QEvent *e)
+{
+  if(e->type() == QEvent::ShortcutOverride)
+  {
+    QKeyEvent* k = static_cast<QKeyEvent*>(e);
+    if(k && k->key() == Qt::Key_Delete)
+    {
+      Q_EMIT destroyMe();
+    }
+  }
+  return false;
+}

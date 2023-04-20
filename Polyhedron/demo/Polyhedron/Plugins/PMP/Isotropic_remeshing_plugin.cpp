@@ -14,14 +14,11 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/utility.h>
+#include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_set.hpp>
-#include <CGAL/property_map.h>
 
 #include <QElapsedTimer>
 #include <QAction>
@@ -37,6 +34,7 @@
 #include <queue>
 #include <sstream>
 #include <cmath>
+#include <unordered_set>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/parallel_for.h"
@@ -177,8 +175,29 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-  typedef boost::unordered_set<edge_descriptor>    Edge_set;
+  typedef std::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
+
+  struct Visitor
+  {
+    typedef typename Scene_polyhedron_selection_item::Selection_set_facet Container;
+    Container& faces;
+
+    Visitor(Container& container)
+      : faces(container)
+    {}
+
+    void before_subface_creations(face_descriptor fd)
+    {
+      Container::iterator it = faces.find(fd);
+      faces.erase(it);
+    }
+    void after_subface_created(face_descriptor fd)
+    {
+      faces.insert(fd);
+    }
+    void after_subface_creations(){}
+  };
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
@@ -206,13 +225,16 @@ public:
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
     }
 
+    bool ok(true), found_poly(false);
+
     Q_FOREACH(int index, scene->selectionIndices())
     {
-      //if one polyhedron is found in the selection, it's fine
-      if (qobject_cast<Scene_facegraph_item*>(scene->item(index)))
-        return true;
+      if (!qobject_cast<Scene_facegraph_item*>(scene->item(index)))
+        ok = false;
+      else
+        found_poly=true;
     }
-    return false;
+    return ok && found_poly;
   }
 
   typedef boost::property_map<FaceGraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
@@ -294,7 +316,7 @@ public:
             p_edges
             , target_length
             , *selection_item->polyhedron()
-            , PMP::parameters::geom_traits(EPICK())
+            , CGAL::parameters::geom_traits(EPICK())
             .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
     else
       std::cout << "No selected or boundary edges to be split" << std::endl;
@@ -318,10 +340,14 @@ public Q_SLOTS:
 
     if (poly_item || selection_item)
     {
+      if(selection_item && selection_item->selected_edges.empty() && selection_item->selected_facets.empty())
+      {
+        QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Aborting.");
+        return;
+      }
       // Create dialog box
       QDialog dialog(mw);
-      Ui::Isotropic_remeshing_dialog ui
-        = remeshing_dialog(&dialog, poly_item, selection_item);
+      initialize_remeshing_dialog(&dialog, poly_item, selection_item);
 
       // Get values
       int i = dialog.exec();
@@ -330,6 +356,7 @@ public Q_SLOTS:
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
+
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
@@ -347,10 +374,9 @@ public Q_SLOTS:
       typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
       typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-      FaceGraph& pmesh = (poly_item != NULL)
+      FaceGraph& pmesh = (poly_item != nullptr)
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
-
 
      Patch_id_pmap fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
      bool fpmap_valid = false;
@@ -405,18 +431,36 @@ public Q_SLOTS:
               }
               else
               {
-                QApplication::setOverrideCursor(Qt::WaitCursor);
                 do_split_edges(selection_item, pmesh, target_length);
               }
             }
 
             if (selection_item->selected_facets.empty() && !selection_item->isEmpty())
             {
+              if (!CGAL::is_triangle_mesh(pmesh))
+              {
+                QApplication::restoreOverrideCursor();
+                if (QMessageBox::Ok ==
+                    QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                      tr("The input mesh is not a triangulated surface mesh.\n"
+                         "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                      (QMessageBox::Ok | QMessageBox::Cancel),
+                      QMessageBox::Ok))
+                {
+                  QApplication::setOverrideCursor(Qt::WaitCursor);
+                  CGAL::Polygon_mesh_processing::triangulate_faces(pmesh);
+                }
+                else
+                {
+                  return;
+                }
+              }
+
               if (fpmap_valid)
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
                    , target_length
                    , *selection_item->polyhedron()
-                   , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                   , CGAL::parameters::number_of_iterations(nb_iter)
                    .protect_constraints(protect)
                    .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                    .relax_constraints(smooth_features)
@@ -427,7 +471,7 @@ public Q_SLOTS:
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
                    , target_length
                    , *selection_item->polyhedron()
-                   , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                   , CGAL::parameters::number_of_iterations(nb_iter)
                    .protect_constraints(protect)
                    .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                    .relax_constraints(smooth_features)
@@ -437,11 +481,36 @@ public Q_SLOTS:
             }
             else //selected_facets not empty
             {
+              for (auto f : selection_item->selected_facets)
+              {
+                if (!CGAL::is_triangle(halfedge(f, pmesh), pmesh))
+                {
+                  QApplication::restoreOverrideCursor();
+                  if(QMessageBox::Ok ==
+                     QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                       tr("The input faces selected for remeshing are not all triangle faces.\n"
+                          "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                       (QMessageBox::Ok | QMessageBox::Cancel),
+                       QMessageBox::Ok))
+                  {
+                    Visitor visitor(selection_item->selected_facets);
+                    CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets,
+                      pmesh,
+                      CGAL::parameters::visitor(visitor));
+                    break;
+                  }
+                  else
+                  {
+                    return;
+                  }
+                }
+              }
+
               if (fpmap_valid)
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
                   , target_length
                   , *selection_item->polyhedron()
-                  , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                  , CGAL::parameters::number_of_iterations(nb_iter)
                   .protect_constraints(protect)
                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                   .relax_constraints(smooth_features)
@@ -452,7 +521,7 @@ public Q_SLOTS:
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
                   , target_length
                   , *selection_item->polyhedron()
-                  , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                  , CGAL::parameters::number_of_iterations(nb_iter)
                   .protect_constraints(protect)
                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                   .relax_constraints(smooth_features)
@@ -461,40 +530,6 @@ public Q_SLOTS:
             }
         }
 
-        SMesh mesh_ = *selection_item->polyhedron();
-        std::vector<bool> are_edges_removed;
-        are_edges_removed.resize(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
-        std::vector<bool> are_edges_constrained;
-        are_edges_constrained.resize(are_edges_removed.size());
-        for(std::size_t i=0; i< are_edges_removed.size(); ++i)
-        {
-          are_edges_removed[i] = mesh_.is_removed(SMesh::Edge_index(static_cast<int>(i)));
-          if(!are_edges_removed[i])
-            are_edges_constrained[i] = get(selection_item->constrained_edges_pmap(), SMesh::Edge_index(static_cast<int>(i)));
-        }
-
-
-        int i0, i1,
-            nE(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
-
-        //get constrained values in order.
-        if (nE > 0)
-        {
-          i0=0;  i1=nE-1;
-          while (1)
-          {
-            // find first removed and last un-removed
-            while (!are_edges_removed[i0] && i0 < i1) ++i0;
-            while ( are_edges_removed[i1] && i0 < i1) --i1;
-            if (i0 >= i1) break;
-
-            // swap
-            std::swap(are_edges_constrained[i0], are_edges_constrained[i1]);
-            std::swap(are_edges_removed[i0], are_edges_removed[i1]);
-          }
-          // remember new size
-          nE = are_edges_removed[i0] ? i0 : i0+1;
-        }
         selection_item->polyhedron_item()->setColor(
               selection_item->polyhedron_item()->color());
         if(fpmap_valid)
@@ -506,19 +541,11 @@ public Q_SLOTS:
         {
           selection_item->polyhedron_item()->setItemIsMulticolor(false);
         }
-
-        selection_item->polyhedron_item()->polyhedron()->collect_garbage();
-        //fix constrained_edges_map
-        for(int i=0; i< nE; ++i)
-        {
-          Scene_polyhedron_selection_item::Is_constrained_map<Scene_polyhedron_selection_item::Selection_set_edge>
-              pmap = selection_item->constrained_edges_pmap();
-          put(pmap, SMesh::Edge_index(i), are_edges_constrained[i]);
-        }
-
-        selection_item->poly_item_changed();
-        selection_item->clear<face_descriptor>();
-        selection_item->changed_with_poly_item();
+        selection_item->setKeepSelectionValid(Scene_polyhedron_selection_item::Edge);
+        selection_item->polyhedron_item()->invalidateOpenGLBuffers();
+        Q_EMIT selection_item->polyhedron_item()->itemChanged();
+        selection_item->invalidateOpenGLBuffers();
+        selection_item->setKeepSelectionValid(Scene_polyhedron_selection_item::None);
       }
       else if (poly_item)
       {
@@ -540,7 +567,7 @@ public Q_SLOTS:
                 edges_to_split
                 , target_length
                 , pmesh
-                , PMP::parameters::geom_traits(EPICK())
+                , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif)
                 . face_patch_map(fpmap));
             else
@@ -548,7 +575,7 @@ public Q_SLOTS:
                 edges_to_split
                 , target_length
                 , pmesh
-                , PMP::parameters::geom_traits(EPICK())
+                , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif));
           }
           else
@@ -564,7 +591,6 @@ public Q_SLOTS:
           if (preserve_duplicates)
           {
             detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
-
           }
           Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
           for(edge_descriptor e : edges(pmesh))
@@ -588,12 +614,31 @@ public Q_SLOTS:
                                     " Aborting."));
             return;
           }
+
+          if (!CGAL::is_triangle_mesh(pmesh))
+          {
+            QApplication::restoreOverrideCursor();
+            if (QMessageBox::Ok ==
+                QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                  tr("The input mesh is not a triangulated surface mesh.\n"
+                     "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                  (QMessageBox::Ok | QMessageBox::Cancel), QMessageBox::Ok))
+            {
+              QApplication::setOverrideCursor(Qt::WaitCursor);
+              CGAL::Polygon_mesh_processing::triangulate_faces(pmesh);
+            }
+            else
+            {
+              return;
+            }
+          }
+
           if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
                  faces(*poly_item->polyhedron())
                , target_length
                , *poly_item->polyhedron()
-               , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+               , CGAL::parameters::number_of_iterations(nb_iter)
                .protect_constraints(protect)
                .number_of_relaxation_steps(nb_smooth)
                .edge_is_constrained_map(ecm)
@@ -604,7 +649,7 @@ public Q_SLOTS:
                  faces(*poly_item->polyhedron())
                , target_length
                , *poly_item->polyhedron()
-               , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+               , CGAL::parameters::number_of_iterations(nb_iter)
                .protect_constraints(protect)
                .number_of_relaxation_steps(nb_smooth)
                .edge_is_constrained_map(ecm)
@@ -632,10 +677,9 @@ public Q_SLOTS:
         std::cout << "Can't remesh that type of thing" << std::endl;
       }
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
-      // default cursor
-      QApplication::restoreOverrideCursor();
     }
+    // default cursor
+    QApplication::restoreOverrideCursor();
   }
 
   void isotropic_remeshing_of_several_polyhedra()
@@ -653,7 +697,7 @@ public Q_SLOTS:
       Scene_facegraph_item* poly_item =
         qobject_cast<Scene_facegraph_item*>(scene->item(index));
 
-      if (poly_item == NULL)
+      if (poly_item == nullptr)
       {
         std::cout << scene->item(index)->name().data()
           << " is not a FaceGraph, remeshing skipped\n";
@@ -666,7 +710,7 @@ public Q_SLOTS:
         if (target_length == 0.)//parameters have not been set yet
         {
         QDialog dialog(mw);
-        Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
+        initialize_remeshing_dialog(&dialog, poly_item);
         ui.objectName->setText(QString::number(scene->selectionIndices().size())
           .append(QString(" items to be remeshed")));
         int i = dialog.exec();
@@ -692,12 +736,36 @@ public Q_SLOTS:
       return;
     }
 
+
+    //check non-triangulated surfaces
+    for (Scene_facegraph_item* poly_item : selection)
+    {
+      if (!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
+      {
+        if (QMessageBox::Ok == QMessageBox::question(mw,
+              tr("Error - Triangulate Faces?"),
+              tr("The input mesh ").append(poly_item->name())
+               .append(tr(" is not a triangulated surface mesh.\n"
+                "Do you wish to triangulate faces first, or cancel remeshing ?")),
+              (QMessageBox::Ok | QMessageBox::Cancel),
+              QMessageBox::Ok))
+        {
+          QApplication::setOverrideCursor(Qt::WaitCursor);
+          CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
+          QApplication::restoreOverrideCursor();
+        }
+        else
+        {
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+      }
+    }
+
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
     int total_time = 0;
 
-
-    //     typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
     std::map<FaceGraph*,Edge_set > edges_to_protect;
 
     if(preserve_duplicates)
@@ -791,7 +859,7 @@ private:
             faces(*poly_item->polyhedron())
           , target_length_
           , *poly_item->polyhedron()
-          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
+          , CGAL::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
           .edge_is_constrained_map(ecm)
           .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
@@ -869,36 +937,79 @@ private:
   };
 #endif
 
-  Ui::Isotropic_remeshing_dialog
-  remeshing_dialog(QDialog* dialog,
-                   Scene_facegraph_item* poly_item,
-                   Scene_polyhedron_selection_item* selection_item = NULL)
+public Q_SLOTS:
+  void update_after_protect_checkbox_click()
   {
-    Ui::Isotropic_remeshing_dialog ui;
+    if(ui.protect_checkbox->isChecked())
+    {
+      ui.smooth1D_label->setEnabled(false);
+      ui.smooth1D_checkbox->setEnabled(false);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+    else
+    {
+      ui.smooth1D_label->setEnabled(true);
+      ui.smooth1D_checkbox->setEnabled(true);
+    }
+  }
+
+  void update_after_splitEdgesOnly_click()
+  {
+    if(ui.splitEdgesOnly_checkbox->isChecked())
+    {
+      ui.nbIterations_label->setEnabled(false);
+      ui.nbIterations_spinbox->setEnabled(false);
+      ui.nbSmoothing_label->setEnabled(false);
+      ui.nbSmoothing_spinbox->setEnabled(false);
+
+      ui.protect_label->setEnabled(false);
+      ui.protect_checkbox->setEnabled(false);
+      ui.protect_checkbox->setChecked(false);
+
+      ui.smooth1D_label->setEnabled(false);
+      ui.smooth1D_checkbox->setEnabled(false);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+    else
+    {
+      ui.nbIterations_label->setEnabled(true);
+      ui.nbIterations_spinbox->setEnabled(true);
+      ui.nbSmoothing_label->setEnabled(true);
+      ui.nbSmoothing_spinbox->setEnabled(true);
+
+      ui.protect_label->setEnabled(true);
+      ui.protect_checkbox->setEnabled(true);
+
+      ui.smooth1D_label->setEnabled(true);
+      ui.smooth1D_checkbox->setEnabled(true);
+    }
+  }
+
+public:
+  void
+  initialize_remeshing_dialog(QDialog* dialog,
+                              Scene_facegraph_item* poly_item,
+                              Scene_polyhedron_selection_item* selection_item = nullptr)
+  {
     ui.setupUi(dialog);
     connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
     connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
 
     //connect checkbox to spinbox
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.protect_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
-            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setChecked(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setDisabled(bool)));
 
+    connect(ui.protect_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_protect_checkbox_click()));
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_splitEdgesOnly_click()));
+
     //Set default parameters
-    Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
-      : (selection_item != NULL ? selection_item->bbox()
+    Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
+      : (selection_item != nullptr ? selection_item->bbox()
         : scene->bbox());
-    ui.objectName->setText(poly_item != NULL ? poly_item->name()
-      : (selection_item != NULL ? selection_item->name()
+    ui.objectName->setText(poly_item != nullptr ? poly_item->name()
+      : (selection_item != nullptr ? selection_item->name()
         : QString("Remeshing parameters")));
 
     ui.objectNameSize->setText(
@@ -927,20 +1038,18 @@ private:
     ui.protect_checkbox->setChecked(false);
     ui.smooth1D_checkbox->setChecked(true);
 
-    if (NULL != selection_item)
+    if (nullptr != selection_item)
     {
       //do not preserve duplicates in selection mode
       ui.preserveDuplicates_checkbox->setDisabled(true);
       ui.preserveDuplicates_checkbox->setChecked(false);
     }
-
-    return ui;
   }
 
 
 private:
   QAction* actionIsotropicRemeshing_;
-
+  Ui::Isotropic_remeshing_dialog ui;
 }; // end Polyhedron_demo_isotropic_remeshing_plugin
 
 #include "Isotropic_remeshing_plugin.moc"

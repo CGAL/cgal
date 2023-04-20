@@ -83,12 +83,12 @@ linear_least_squares_fitting_2(InputIterator first,
 
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
-    FT radius = std::sqrt(t.squared_radius());
+    FT radius = CGAL::approximate_sqrt(t.squared_radius());
     FT delta[4] = {radius, 0.0,
                    0.0, radius};
     Matrix transformation = init_matrix<FT>(2,delta);
     FT area = t.squared_radius();
-    CGAL_assertion(area != 0.0);
+    CGAL_assertion(!CGAL::is_zero(area));
 
     // Find the 2nd order moment for the circle wrt to the origin by an affine transformation.
 
@@ -100,18 +100,20 @@ linear_least_squares_fitting_2(InputIterator first,
     FT y0 = t.center().y();
 
     // and add to covariance matrix
-    covariance[0] += transformation[0][0] + area * x0*x0;
+    covariance[0] += transformation[0][0] + area * CGAL::square(x0);
     covariance[1] += transformation[0][1] + area * x0*y0;
-    covariance[2] += transformation[1][1] + area * y0*y0;
+    covariance[2] += transformation[1][1] + area * CGAL::square(y0);
 
     mass += area;
   }
 
+  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
+
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
+  covariance[0] -= mass * (CGAL::square(c.x()));
+  covariance[1] -= mass * (c.x() * c.y());
+  covariance[2] -= mass * (CGAL::square(c.y()));
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,
@@ -133,7 +135,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through
     // the centroid and with a default horizontal vector.
-    line = Line(c, Vector(1.0, 0.0));
+    line = Line(c, Vector(FT(1), FT(0)));
     return (FT)0.0;
   }
 
@@ -187,35 +189,37 @@ linear_least_squares_fitting_2(InputIterator first,
 
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
-    FT radius = std::sqrt(t.squared_radius());
+    FT radius = CGAL::approximate_sqrt(t.squared_radius());
     FT delta[4] = {radius, 0.0,
                    0.0, radius};
     Matrix transformation = init_matrix<FT>(2,delta);
     FT length = 2 * radius;
-    CGAL_assertion(length != 0.0);
+    CGAL_assertion(!CGAL::is_zero(length));
 
     // Find the 2nd order moment for the circle wrt to the origin by an affine transformation.
 
     // Transform the standard 2nd order moment using the transformation matrix
-    transformation = 0.5 * length * transformation * moment * LA::transpose(transformation);
+    transformation = FT(0.5) * length * transformation * moment * LA::transpose(transformation);
 
     // Translate the 2nd order moment to the center of the circle.
     FT x0 = t.center().x();
     FT y0 = t.center().y();
 
     // and add to covariance matrix
-    covariance[0] += transformation[0][0] + length * x0*x0;
+    covariance[0] += transformation[0][0] + length * CGAL::square(x0);
     covariance[1] += transformation[0][1] + length * x0*y0;
-    covariance[2] += transformation[1][1] + length * y0*y0;
+    covariance[2] += transformation[1][1] + length * CGAL::square(y0);
 
     mass += length;
   }
 
+  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
+
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
+  covariance[0] -= mass * (CGAL::square(c.x()));
+  covariance[1] -= mass * (c.x() * c.y());
+  covariance[2] -= mass * (CGAL::square(c.y()));
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,
@@ -237,7 +241,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through
     // the centroid and with a default horizontal vector.
-    line = Line(c, Vector(1.0, 0.0));
+    line = Line(c, Vector(FT(1), FT(0)));
     return (FT)0.0;
   }
 } // end linear_least_squares_fitting_2 for circle set with 1D tag

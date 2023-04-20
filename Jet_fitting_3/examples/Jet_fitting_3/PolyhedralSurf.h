@@ -59,7 +59,7 @@ public:
 
   //My_facet(): ring_index(-1) {}
   //void setNormal(Vector_3  n) { normal = n; }
-//   //this is for collecting i-th ring neighbours
+//   //this is for collecting i-th ring neighbors
 //   void setRingIndex(int i) { ring_index = i; }
 //   int getRingIndex() { return ring_index; }
 //   void resetRingIndex() { ring_index = -1; }
@@ -68,12 +68,12 @@ public:
 
 template <class TPoly>
 class Facet_PM :
-  public boost::put_get_helper<typename TPoly::Traits::Vector_3, Facet_PM<TPoly> >
+  public boost::put_get_helper<typename TPoly::Traits::Vector_3&, Facet_PM<TPoly> >
 {
 public:
 
   //read_write
-  typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag category;
   typedef typename TPoly::Facet key_type;
   typedef typename TPoly::Traits::Vector_3 value_type;
   typedef typename TPoly::Traits::Vector_3& reference;
@@ -121,8 +121,6 @@ class HEdge_PM :
   public boost::put_get_helper<typename TPoly::Traits::FT&, HEdge_PM<TPoly> >//double
 {
 public:
-  //read_write or lvalue
-  //typedef boost::read_write_property_map_tag category;
   typedef boost::lvalue_property_map_tag category;
   typedef typename TPoly::Halfedge key_type;
   typedef typename TPoly::Traits::FT value_type;
@@ -145,7 +143,7 @@ HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& )
 struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   // wrap vertex
   template < class Refs, class Traits > struct Vertex_wrapper {
-    typedef struct {
+    typedef struct FGeomTraits {
     public:
       typedef typename Traits::Point_3 Point_3;
     } FGeomTraits;
@@ -158,7 +156,7 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   template < class Refs, class Traits > struct Face_wrapper {
     //typedef typename Traits::Vector_3 Vector_3;
     //all types needed by the facet...
-    typedef struct {
+    typedef struct FGeomTraits {
     public:
       typedef typename Traits::Vector_3 Vector_3;
     } FGeomTraits;

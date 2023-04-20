@@ -19,7 +19,6 @@
 
 #include <CGAL/Kernel_d/Pair_d.h>
 #include <CGAL/Kernel_d/Point_d.h>
-#include <CGAL/Kernel_d/Segment_d.h>
 #include <CGAL/Kernel_d/Line_d.h>
 #include <CGAL/Kernel_d/Ray_d.h>
 #include <CGAL/Kernel_d/Aff_transformation_d.h>
@@ -46,7 +45,7 @@ class Segment_d : public Handle_for< Pair_d<p_R> > {
 
 /*{\Mdefinition
 An instance $s$ of the data type |Segment_d| is a directed straight
-line segment in $d$-dimensional Euclidian space connecting two points
+line segment in $d$-dimensional Euclidean space connecting two points
 $p$ and $q$. $p$ is called the source point and $q$ is called
 the target point of $s$, both points are called endpoints of $s$. A
 segment whose endpoints are equal is called \emph{degenerate}.}*/

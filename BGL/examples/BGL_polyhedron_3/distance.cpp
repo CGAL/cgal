@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
-#include <boost/graph/breadth_first_search.hpp>
+#include <CGAL/boost/graph/breadth_first_search.h>
 
 #include <fstream>
 
@@ -17,7 +17,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 int main(int argc, char** argv) {
 
   Polyhedron P;
-  std::ifstream in((argc>1)?argv[1]:"cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   in >> P ;
 
   // associate indices to the vertices using the "id()" field of the vertex.

@@ -35,7 +35,7 @@ public:
 
     Color out;
     for (std::size_t i = 0; i < 3; ++ i)
-      out[i] = (unsigned char)((1 - ratio) * c0[i] + ratio * c1[i]);
+      out[i] = static_cast<unsigned char>((1 - ratio) * c0[i] + ratio * c1[i]);
 
     return out;
   }

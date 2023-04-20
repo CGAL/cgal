@@ -18,11 +18,10 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/point_set_processing_assertions.h>
 
 #include <CGAL/iterator.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 namespace Point_set_processing_3 {
@@ -57,7 +56,7 @@ public:
     typedef input_iterator key_type;
     typedef typename boost::property_traits<PointMap>::reference reference;
     typedef typename boost::property_traits<PointMap>::value_type value_type;
-    typedef typename boost::property_traits<PointMap>::category category;
+    typedef typename boost::readable_property_map_tag category;
 
     PointMap point_map;
 

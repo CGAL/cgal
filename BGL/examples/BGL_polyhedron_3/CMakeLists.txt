@@ -1,78 +1,34 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.15)
-project( BGL_polyhedron_3_Examples )
-
-
+cmake_minimum_required(VERSION 3.1...3.23)
+project(BGL_polyhedron_3_Examples)
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package(CGAL REQUIRED)
 
-if ( NOT CGAL_FOUND )
+create_single_source_cgal_program("distance.cpp")
+create_single_source_cgal_program("incident_vertices.cpp")
+create_single_source_cgal_program("kruskal.cpp")
+create_single_source_cgal_program("kruskal_with_stored_id.cpp")
+create_single_source_cgal_program("normals.cpp")
+create_single_source_cgal_program("range.cpp")
+create_single_source_cgal_program("transform_iterator.cpp")
+create_single_source_cgal_program("copy_polyhedron.cpp")
 
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
-
-endif()
-
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-find_package( OpenMesh QUIET )
-
-if ( OpenMesh_FOUND )
-  include( UseOpenMesh )
-  add_definitions( -DCGAL_USE_OPENMESH )
-else()
-  message(STATUS "Examples that use OpenMesh will not be compiled.")
-endif()
-
-find_package( METIS )
-
-if( METIS_FOUND )
-  include_directories(${METIS_INCLUDE_DIRS} )
-else()
-  message( STATUS "Examples that use the METIS library will not be compiled." )
-endif()
-
-# include for local directory
-
-# include for local package
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
-create_single_source_cgal_program( "distance.cpp" )
-
-create_single_source_cgal_program( "incident_vertices.cpp" )
-
-create_single_source_cgal_program( "kruskal.cpp" )
-
-create_single_source_cgal_program( "kruskal_with_stored_id.cpp" )
-
-create_single_source_cgal_program( "normals.cpp" )
-
-create_single_source_cgal_program( "range.cpp" )
-
-create_single_source_cgal_program( "transform_iterator.cpp" )
-
-create_single_source_cgal_program( "copy_polyhedron.cpp" )
-
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  target_link_libraries( copy_polyhedron PRIVATE ${OPENMESH_LIBRARIES} )
+  target_link_libraries(copy_polyhedron PRIVATE ${OPENMESH_LIBRARIES})
+  target_compile_definitions(copy_polyhedron PRIVATE -DCGAL_USE_OPENMESH)
+else()
+  message(STATUS "NOTICE: The example 'copy_polyhedron' will not use OpenMesh.")
 endif()
 
-if( METIS_FOUND )
-  create_single_source_cgal_program( "polyhedron_partition.cpp" )
-  target_link_libraries( polyhedron_partition PRIVATE ${METIS_LIBRARIES} )
+find_package(METIS QUIET)
+include(CGAL_METIS_support)
+if(TARGET CGAL::METIS_support)
+  create_single_source_cgal_program("polyhedron_partition.cpp")
+  target_link_libraries(polyhedron_partition PUBLIC CGAL::METIS_support)
+else()
+  message(STATUS "NOTICE: The example 'polyhedron_partition' requires the METIS library, and will not be compiled.")
 endif()
-

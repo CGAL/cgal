@@ -3,7 +3,7 @@
 \ingroup PkgTDS2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDataStructure_2::Face`
+\cgalRefines{TriangulationDataStructure_2::Face}
 
 The concept `TriangulationDSFaceBase_2` describes the requirements for
 the face base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`.
@@ -90,6 +90,11 @@ typedef TriangulationDataStructure_2::Vertex_handle Vertex_handle;
 
 */
 typedef TriangulationDataStructure_2::Face_handle Face_handle;
+
+/*!
+
+*/
+typedef TriangulationDataStructure_2::Face_data TDS_data;
 
 /// @}
 
@@ -184,6 +189,26 @@ void * for_compact_container() const;
 
 */
 void for_compact_container(void *p);
+
+/// @}
+
+/// \name Internal
+/// \cgalAdvancedBegin
+/// These functions are used internally by the triangulation data
+/// structure. The user is not encouraged to use them directly as they
+/// may change in the future.
+/// \cgalAdvancedEnd
+/// @{
+
+/*!
+
+*/
+TDS_data& tds_data();
+
+/*!
+
+*/
+const TDS_data& tds_data() const;
 
 /// @}
 

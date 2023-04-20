@@ -36,7 +36,7 @@
 
 #include <CGAL/Mesh_error_code.h>
 
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 #include <CGAL/Mesh_3/Refine_facets_3.h>
 #include <CGAL/Mesh_3/Refine_facets_manifold_base.h>
@@ -45,7 +45,7 @@
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/atomic.h>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
@@ -65,6 +65,7 @@
 #include <boost/format.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <string>
+#include <atomic>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -222,7 +223,7 @@ public:
            std::size_t maximal_number_of_vertices = 0,
            Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
-           , CGAL::cpp11::atomic<bool>* stop_ptr = 0
+           , std::atomic<bool>* stop_ptr = 0
 #endif
            );
 
@@ -294,7 +295,7 @@ private:
 
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const stop_ptr;
+  std::atomic<bool>* const stop_ptr;
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -318,7 +319,7 @@ private:
   bool forced_stop() const {
 #ifndef CGAL_NO_ATOMIC
     if(stop_ptr != 0 &&
-       stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+       stop_ptr->load(std::memory_order_acquire) == true)
     {
       if(error_code_ != 0) *error_code_ = CGAL_MESH_3_STOPPED;
       return true;
@@ -353,7 +354,7 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                std::size_t maximal_number_of_vertices,
                                Mesh_error_code* error_code
 #ifndef CGAL_NO_ATOMIC
-                               , CGAL::cpp11::atomic<bool>* stop_ptr
+                               , std::atomic<bool>* stop_ptr
 #endif
                                )
 : Base(c3t3.bbox(),
@@ -567,14 +568,14 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
   std::cerr << std::endl;
 
-  CGAL_triangulation_postcondition(r_tr.is_valid());
+  CGAL_postcondition(r_tr.is_valid());
 
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
   nbsteps = 0;
 
   facets_visitor_.activate();
-  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
+
   std::cerr << "Start volume scan...";
   CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
   cells_mesher_.scan_triangulation();
@@ -583,6 +584,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
+  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   timer.stop(); timer.reset(); timer.start();
 
   std::cerr << "Refining...\n";
@@ -612,7 +614,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
 
-  CGAL_triangulation_postcondition(r_tr.is_valid());
+  CGAL_postcondition(r_tr.is_valid());
 #endif
 
   (void)(forced_stop()); // sets *error_code
@@ -689,7 +691,8 @@ initialize()
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-      Random_points_on_sphere_3<Bare_point> random_point(radius);
+      CGAL::Random rnd(0);
+      Random_points_on_sphere_3<Bare_point> random_point(radius, rnd);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
@@ -764,6 +767,18 @@ initialize()
     // Scan triangulation
     facets_mesher_.scan_triangulation();
     refinement_stage = REFINE_FACETS;
+  }
+
+  if (r_c3t3_.number_of_facets() == 0)
+  {
+    CGAL::warning_fail("r_c3t3_.number_of_facets() == 0",
+      __FILE__,
+      __LINE__,
+      "Warning : The mesh refinement process can't start.\n"
+      "When calling refine_mesh_3(), the input `c3t3` should have been initialized and have "
+      "at least one facet in the complex. Try to solve this issue using :\n"
+      "\t- The automatic initialization provided by make_mesh_3()\n"
+      "\t- Adding more and better chosen points on the input surface\n");
   }
 }
 

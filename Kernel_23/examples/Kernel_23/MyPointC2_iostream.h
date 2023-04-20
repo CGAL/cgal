@@ -4,7 +4,7 @@
 std::ostream &
 operator<<(std::ostream &os, const MyPointC2 &p)
 {
-    switch(CGAL::get_mode(os)) {
+    switch(CGAL::IO::get_mode(os)) {
     case CGAL::IO::ASCII :
         return os << p.x() << ' ' << p.y() << ' ' << p.color();
     case CGAL::IO::BINARY :
@@ -24,7 +24,7 @@ operator>>(std::istream &is, MyPointC2 &p)
 {
     double x, y;
     int c;
-    switch(CGAL::get_mode(is)) {
+    switch(CGAL::IO::get_mode(is)) {
     case CGAL::IO::ASCII :
       is >> x >> y >> c;
         break;
@@ -35,7 +35,7 @@ operator>>(std::istream &is, MyPointC2 &p)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is) {

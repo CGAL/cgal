@@ -14,24 +14,20 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_SEGMENT_3_DO_INTERSECT_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_SEGMENT_3_DO_INTERSECT_H
 
-#include <CGAL/Segment_3.h>
-#include <CGAL/Iso_cuboid_3.h>
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 #include <CGAL/Intersections_3/internal/Bbox_3_Segment_3_do_intersect.h>
 // for CGAL::internal::do_intersect_bbox_segment_aux
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
-
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Segment_3& seg,
-                  const typename K::Iso_cuboid_3& ic,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Segment_3& seg,
+             const typename K::Iso_cuboid_3& ic,
+             const K&)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
@@ -53,14 +49,16 @@ bool do_intersect(const typename K::Segment_3& seg,
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                  const typename K::Segment_3& seg,
-                  const K&) {
-  return do_intersect(seg, ic, K());
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& ic,
+             const typename K::Segment_3& seg,
+             const K& k)
+{
+  return do_intersect(seg, ic, k);
 }
 
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif  // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_SEGMENT_3_DO_INTERSECT_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_SEGMENT_3_DO_INTERSECT_H

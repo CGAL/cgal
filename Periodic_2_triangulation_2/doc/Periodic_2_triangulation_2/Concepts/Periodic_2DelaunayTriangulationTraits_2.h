@@ -14,7 +14,7 @@ predicates from `DelaunayTriangulationTraits_2` can be used
 directly. For efficiency reasons we maintain for each functor the
 version without offsets.
 
-\cgalRefines `DelaunayTriangulationTraits_2` and `Periodic_2TriangulationTraits_2`
+\cgalRefines{DelaunayTriangulationTraits_2,Periodic_2TriangulationTraits_2}
 
 In addition to the requirements of the concepts `Periodic_2TriangulationTraits_2`
 and `DelaunayTriangulationTraits_2`,

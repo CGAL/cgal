@@ -13,7 +13,7 @@ bool may_have_common_factor(
   std::cout<< "The type is modularizable" << std::endl;
 
   // Enforce IEEE double precision and rounding mode to nearest
-  // before useing modular arithmetic
+  // before using modular arithmetic
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
   // Use Modular_traits to convert to polynomials with modular coefficients
@@ -67,7 +67,7 @@ Polynomial modular_filtered_gcd(const Polynomial& p1, const Polynomial& p2){
 }
 
 int main(){
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   typedef CGAL::Gmpz NT;
   typedef CGAL::Polynomial<NT> Poly;

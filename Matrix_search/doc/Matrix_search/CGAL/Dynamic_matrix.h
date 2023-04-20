@@ -8,7 +8,7 @@ The class `Dynamic_matrix` is an adaptor for an arbitrary
 matrix class `M` to provide the dynamic operations needed for monotone
 matrix search.
 
-\tparam `M` is a model of `BasicMatrix`.
+\tparam M is a model of `BasicMatrix`.
 
 \cgalModels `MonotoneMatrixSearchTraits`
 \cgalModels `BasicMatrix`
@@ -69,7 +69,7 @@ void replace_column( int old, int new);
 
 /*!
 returns
-a new matrix consisting of all rows of the dynmic matrix with even index,
+a new matrix consisting of all rows of the dynamic matrix with even index,
 (i.e.\ first row is row \f$ 0\f$ of the dynamic matrix, second row is row \f$ 2\f$ of
 the dynamic matrix, etc.). \pre `number_of_rows()` \f$ > 0\f$.
 */

@@ -23,9 +23,7 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/SegmentDelaunayGraphLinfGraphicsItem.h>
 #include <CGAL/Constraints_loader.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 //#include <CGAL/Qt/Converter.h>
 
 // the two base classes
@@ -270,10 +268,8 @@ MainWindow::open(QString fileName)
       loadSitesInput(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       loadWKT(fileName);
       this->addToRecentFiles(fileName);
-#endif
     }
   }
 }
@@ -291,9 +287,7 @@ MainWindow::on_actionLoadSegments_triggered()
                                     "Pts  files (*.pts);;"
                                     "Edge files (*.edg);;"
                                     "Polylines files (*.polygons.cgal);;"
-                                 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                     "WKT files (*.WKT *.wkt)"
-                                 #endif
                                                           ));
   open(fileName);
 }
@@ -388,19 +382,14 @@ MainWindow::loadPoints(QString fileName)
 }
 
 void
-MainWindow::loadWKT(QString
-                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-                    fileName
-                    #endif
-                    )
+MainWindow::loadWKT(QString fileName )
 {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
   std::ifstream ifs(qPrintable(fileName));
   //Points
   do
     {
     std::vector<K::Point_2> mpts;
-    CGAL::read_multi_point_WKT(ifs, mpts);
+    CGAL::IO::read_multi_point_WKT(ifs, mpts);
     for(const K::Point_2& p : mpts)
       svd.insert(p);
     }while(ifs.good() && !ifs.eof());
@@ -411,7 +400,7 @@ MainWindow::loadWKT(QString
     {
     typedef std::vector<K::Point_2> LineString;
     std::vector<LineString> mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
+    CGAL::IO::read_multi_linestring_WKT(ifs, mls);
     for(const LineString& ls : mls)
     {
       if(ls.empty())
@@ -449,7 +438,7 @@ MainWindow::loadWKT(QString
   {
     typedef CGAL::Polygon_with_holes_2<K> Polygon;
     std::vector<Polygon> mps;
-    CGAL::read_multi_polygon_WKT(ifs, mps);
+    CGAL::IO::read_multi_polygon_WKT(ifs, mps);
     for(const Polygon& poly : mps)
     {
       if(poly.outer_boundary().is_empty())
@@ -479,7 +468,6 @@ MainWindow::loadWKT(QString
 
   Q_EMIT( changed());
   actionRecenter->trigger();
-#endif
 }
 
 void

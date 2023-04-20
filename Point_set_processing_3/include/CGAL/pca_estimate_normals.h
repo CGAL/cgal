@@ -23,11 +23,11 @@
 #include <CGAL/for_each.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Memory_sizer.h>
 #include <functional>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -96,7 +96,7 @@ pca_estimate_normal(const typename NeighborQuery::Kernel::Point_3& query, ///< p
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param k number of neighbors
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
@@ -148,31 +148,30 @@ pca_estimate_normal(const typename NeighborQuery::Kernel::Point_3& query, ///< p
 */
 template <typename ConcurrencyTag,
           typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 void
 pca_estimate_normals(
   PointRange& points,
   unsigned int k,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_TRACE("Calls pca_estimate_normals()\n");
+  CGAL_TRACE_STREAM << "Calls pca_estimate_normals()\n";
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
+  typedef typename NP_helper::Geom_traits Kernel;
   typedef typename Kernel::FT FT;
 
-  CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                              typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                            "Error: no normal map");
+  CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
   FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
@@ -187,18 +186,20 @@ pca_estimate_normals(
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   // precondition: at least 2 nearest neighbors
-  CGAL_point_set_processing_precondition(k >= 2);
+  CGAL_precondition(k >= 2);
 
-  std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("  Creates KD-tree\n");
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
+  CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+  CGAL_TRACE_STREAM << "  Creates KD-tree\n";
 
   Neighbor_query neighbor_query (points, point_map);
 
-  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("  Computes normals\n");
+  memory = CGAL::Memory_sizer().virtual_size();
+  CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+  CGAL_TRACE_STREAM << "  Computes normals\n";
 
   std::size_t nb_points = points.size();
 
@@ -223,25 +224,10 @@ pca_estimate_normals(
 
   callback_wrapper.join();
 
-  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("End of pca_estimate_normals()\n");
+  memory = CGAL::Memory_sizer().virtual_size();
+  CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+  CGAL_TRACE_STREAM << "End of pca_estimate_normals()\n";
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename ConcurrencyTag,
-          typename PointRange
->
-void
-pca_estimate_normals(
-  PointRange& points,
-  unsigned int k) ///< number of neighbors.
-{
-  return pca_estimate_normals<ConcurrencyTag>
-    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

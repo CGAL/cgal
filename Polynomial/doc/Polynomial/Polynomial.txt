@@ -236,7 +236,7 @@ structure of the innermost coefficient, for instance, a gcd is available
 if and only if the innermost coefficient is a `Field` or a
 `UniqueFactorizationDomain`. Hence, we can not provide a \f$ gcd\f$ if the
 innermost coefficient is just an `IntegralDomain` since it is simply
-not well defined\cgalFootnote{An example for such a number type is the template `Sqrt_extension<NT,ROOT>` representing an algebraic extension of degree two. This is just an `IntegralDomain` if NT is not a `Field`. }.
+not well defined\cgalFootnote{An example for such a number type is the template S\cgalFootnoteCode{qrt_extension<NT,ROOT>} representing an algebraic extension of degree two. This is just an \cgalFootnoteCode{IntegralDomain} if NT is not a `Field`. }.
 However, if we would consider the polynomial over the quotient field of the
 integral domain the \f$ gcd\f$ would be well defined. The only problem is
 that the result can not be represented over the ring since it contains
@@ -400,10 +400,10 @@ of a polynomial using its principal Sturm-Habicht coefficients.
 \section PolynomialDesign Design and Implementation History
 
 This package is the result of the integration process of the NumeriX library
-of <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05} into \cgal.
+of \exacus \cgalCite{beh-eeeafcs-05} into \cgal.
 
 The class `Polynomial<Coeff>` had been started by Michael Seel within
-CGAL as part of the Nef_2 package. As part of the <span class="textsc">Exacus</span> project
+CGAL as part of the Nef_2 package. As part of the \exacus project
 it got significantly improved by Arno Eigenwillig and Michael Hemmer.
 
 However, due to the recursive definition the class was rather restricted to the

@@ -34,15 +34,16 @@ public:
   // Types for shortest noncontractible cycle
   using Shortest_noncontractible_cycle=typename internal::Shortest_noncontractible_cycle<Mesh, true>;
   using Facewidth                     =typename internal::Facewidth<Mesh>;
-  using Dart_const_handle             =typename Shortest_noncontractible_cycle::Original_dart_const_handle;
-  using halfedge_descriptor           =Dart_const_handle ; // To be compatible with BGL
+  using Dart_const_descriptor             =typename Shortest_noncontractible_cycle::Original_dart_const_descriptor;
+  using halfedge_descriptor           =Dart_const_descriptor ; // To be compatible with BGL
 
   // Constructor
   Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
     m_original_mesh(amesh),
     m_minimal_quadrangulation(nullptr),
     m_shortest_noncontractible_cycle(nullptr),
-    m_facewidth(nullptr)
+    m_facewidth(nullptr),
+    m_is_verbose(false)
   {}
 
 //================================================================================
@@ -75,7 +76,7 @@ public:
                        bool display_time=false) const
   {
     compute_minimal_quadrangulation(display_time);
-    return m_minimal_quadrangulation->is_contractible(p, display_time);
+    return m_minimal_quadrangulation->is_contractible(p, display_time, m_is_verbose);
   }
 
   /// @return true iff 'p1' and 'p2' are freely homotopic.
@@ -85,7 +86,7 @@ public:
   {
     compute_minimal_quadrangulation(display_time);
     return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
-                                                           display_time);
+                                                           display_time, m_is_verbose);
   }
 
   /// @return true iff 'p1' and 'p2' are base point freely homotopic.
@@ -95,7 +96,7 @@ public:
   {
     compute_minimal_quadrangulation(display_time);
     return m_minimal_quadrangulation->are_base_point_homotopic(p1, p2,
-                                                               display_time);
+                                                               display_time, m_is_verbose);
   }
 
 //================================================================================
@@ -115,14 +116,14 @@ public:
 
   template <class WeightFunctor>
   Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_base_point
-  (Dart_const_handle dh, const WeightFunctor& wf, bool display_time=false) const
+  (Dart_const_descriptor dh, const WeightFunctor& wf, bool display_time=false) const
   {
     compute_shortest_non_contractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf, display_time);
   }
 
   Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_base_point
-  (Dart_const_handle dh, bool display_time=false) const
+  (Dart_const_descriptor dh, bool display_time=false) const
   {
     compute_shortest_non_contractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->compute_cycle(dh, display_time);
@@ -160,10 +161,30 @@ public:
     { m_facewidth=std::make_unique<Facewidth>(m_original_mesh, display_time); }
   }
 
-  std::vector<Dart_const_handle> compute_face_width(bool display_time=false) const
+  std::vector<Dart_const_descriptor> compute_face_width(bool display_time=false) const
   {
     compute_face_width_representation(display_time);
     return m_facewidth->compute_face_width(display_time);
+  }
+
+//================================================================================
+// Test whether a path is homotopic to a simple cycle
+
+  bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p,
+                       bool display_time=false) const
+  {
+    compute_minimal_quadrangulation(display_time);
+    return m_minimal_quadrangulation->is_homotopic_to_simple_cycle(p, display_time, m_is_verbose);
+  }
+
+//================================================================================
+// Utility functions
+
+  // Set whether to display warning message in `std::cerr` when input doesn't meet
+  // prerequisite
+  void set_verbose(bool is_verbose)
+  {
+    m_is_verbose = is_verbose;
   }
 
 protected:
@@ -171,6 +192,7 @@ protected:
   mutable std::unique_ptr<Minimal_quadrangulation>        m_minimal_quadrangulation;
   mutable std::unique_ptr<Shortest_noncontractible_cycle> m_shortest_noncontractible_cycle;
   mutable std::unique_ptr<Facewidth>                      m_facewidth;
+  bool                                                    m_is_verbose;
 };
 
 } // namespace Surface_mesh_topology

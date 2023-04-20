@@ -2,7 +2,7 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 
 // #define CGAL_TEST_PROPERTIES_DEBUG
 
@@ -13,12 +13,12 @@ struct Non_mutable_property_map
 {
   typedef Key                                     key_type;
   typedef Value                                   value_type;
-  typedef value_type                              reference;
+  typedef const value_type&                       reference;
   typedef boost::readable_property_map_tag        category;
 
   Non_mutable_property_map(const Container& c) : m_c(c) { }
 
-  friend reference get(const Non_mutable_property_map<Key, Value, Container>& pmap, key_type k)
+  friend reference get(const Non_mutable_property_map<Key, Value, Container>& pmap, const key_type& k)
   {
     return pmap.m_c.at(k);
   }
@@ -42,7 +42,7 @@ struct RW_property_map
     pmap.m_c[k] = val;
   }
 
-  friend reference get(RW_property_map<Key, Value, Container>& pmap, const key_type& k)
+  friend reference get(const RW_property_map<Key, Value, Container>& pmap, const key_type& k)
   {
     return pmap.m_c[k];
   }
@@ -72,7 +72,7 @@ void test_uniqueness(const Graph&,
     begin2 = boost::begin(range),
     end = boost::end(range);
 
-  typedef boost::unordered_set<typename IndexPropertyMap::value_type> id_map;
+  typedef std::unordered_set<typename IndexPropertyMap::value_type> id_map;
   typedef std::pair<typename id_map::iterator, bool> resultp;
 
   id_map m;
@@ -217,7 +217,8 @@ void test_initialized_index_maps_const(const Graph& g)
 
   // Writable pmap
   typedef typename boost::graph_traits<Graph>::edge_descriptor          edge_descriptor;
-  typedef boost::unordered_map<edge_descriptor, int>                    EdgeIndexMap;
+  typedef std::unordered_map<edge_descriptor, int,
+                             boost::hash<edge_descriptor>>              EdgeIndexMap;
   typedef CGAL::RW_property_map<edge_descriptor, int, EdgeIndexMap>     EdgeIdPropertyMap;
 
   EdgeIndexMap eim;
@@ -321,7 +322,8 @@ void test_initialized_index_maps(Graph& g)
 
   // Writable pmap
   typedef typename boost::graph_traits<Graph>::edge_descriptor          edge_descriptor;
-  typedef boost::unordered_map<edge_descriptor, int>                    EdgeIndexMap;
+  typedef std::unordered_map<edge_descriptor, int, boost::hash<edge_descriptor>>
+                                                                        EdgeIndexMap;
   typedef CGAL::RW_property_map<edge_descriptor, int, EdgeIndexMap>     EdgeIdPropertyMap;
 
   EdgeIndexMap eim;

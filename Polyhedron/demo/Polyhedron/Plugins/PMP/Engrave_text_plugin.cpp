@@ -52,8 +52,8 @@ halfedge_descriptor      halfedge_descriptor;
 typedef boost::graph_traits<SMesh>::
 vertex_descriptor        vertex_descriptor;
 
-typedef boost::unordered_set<boost::graph_traits<SMesh>::
-face_descriptor>                                         Component;
+typedef std::unordered_set<boost::graph_traits<SMesh>::
+                           face_descriptor>             Component;
 
 struct FaceInfo2
 {
@@ -214,13 +214,13 @@ protected:
   bool eventFilter(QObject *obj, QEvent *ev)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
-    if(v == NULL) {
+    if(v == nullptr) {
       QWidget* viewport = qobject_cast<QWidget*>(obj);
-      if(viewport == NULL) {
+      if(viewport == nullptr) {
         return false;
       }
       v = qobject_cast<QGraphicsView*>(viewport->parent());
-      if(v == NULL) {
+      if(v == nullptr) {
         return false;
       }
     }
@@ -492,8 +492,8 @@ public Q_SLOTS:
           sm->add_property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
 
       // Parameterized bool pmap
-      boost::unordered_set<SMesh::Vertex_index> vs;
-      SMP::internal::Bool_property_map< boost::unordered_set<SMesh::Vertex_index> > vpm(vs);
+      std::unordered_set<SMesh::Vertex_index> vs;
+      SMP::internal::Bool_property_map< std::unordered_set<SMesh::Vertex_index> > vpm(vs);
 
       // Parameterizer
       SMP::ARAP_parameterizer_3<SMesh> parameterizer;
@@ -961,8 +961,8 @@ private:
   int pointsize;
   bool locked;
   EPICK::Line_2 bf_line;
-  QGraphicsScene *graphics_scene;
-  Navigation* navigation;
+  QGraphicsScene *graphics_scene = nullptr;
+  Navigation* navigation = nullptr;
 };
 #include "Engrave_text_plugin.moc"
 

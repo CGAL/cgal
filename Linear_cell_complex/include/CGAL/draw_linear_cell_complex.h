@@ -15,6 +15,7 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/Qt/init_ogl_context.h>
 
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
@@ -28,63 +29,63 @@ struct DefaultDrawingFunctorLCC
   /// @return true iff the volume containing dh is drawn.
   template<typename LCC>
   bool draw_volume(const LCC&,
-                   typename LCC::Dart_const_handle) const
+                   typename LCC::Dart_const_descriptor) const
   { return true; }
   /// @return true iff the face containing dh is drawn.
   template<typename LCC>
   bool draw_face(const LCC&,
-                 typename LCC::Dart_const_handle) const
+                 typename LCC::Dart_const_descriptor) const
   { return true; }
   /// @return true iff the edge containing dh is drawn.
   template<typename LCC>
   bool draw_edge(const LCC&,
-                 typename LCC::Dart_const_handle) const
+                 typename LCC::Dart_const_descriptor) const
   { return true; }
   /// @return true iff the vertex containing dh is drawn.
   template<typename LCC>
   bool draw_vertex(const LCC&,
-                   typename LCC::Dart_const_handle) const
+                   typename LCC::Dart_const_descriptor) const
   { return true; }
 
   /// @return true iff the volume containing dh is drawn in wireframe.
   template<typename LCC>
   bool volume_wireframe(const LCC&,
-                        typename LCC::Dart_const_handle) const
+                        typename LCC::Dart_const_descriptor) const
   { return false; }
   /// @return true iff the face containing dh is drawn in wireframe.
   template<typename LCC>
   bool face_wireframe(const LCC&,
-                        typename LCC::Dart_const_handle) const
+                        typename LCC::Dart_const_descriptor) const
   { return false; }
 
   /// @return true iff the volume containing dh is colored.
   template<typename LCC>
   bool colored_volume(const LCC&,
-                      typename LCC::Dart_const_handle) const
+                      typename LCC::Dart_const_descriptor) const
   { return true; }
   /// @return true iff the face containing dh is colored.
   ///  if we have also colored_volume(alcc, dh), the volume color is
   ///  ignored and only the face color is considered.
   template<typename LCC>
   bool colored_face(const LCC&,
-                    typename LCC::Dart_const_handle) const
+                    typename LCC::Dart_const_descriptor) const
   { return false; }
   /// @return true iff the edge containing dh is colored.
   template<typename LCC>
   bool colored_edge(const LCC&,
-                    typename LCC::Dart_const_handle) const
+                    typename LCC::Dart_const_descriptor) const
   { return false; }
   /// @return true iff the vertex containing dh is colored.
   template<typename LCC>
   bool colored_vertex(const LCC&,
-                      typename LCC::Dart_const_handle) const
+                      typename LCC::Dart_const_descriptor) const
   { return false; }
 
   /// @return the color of the volume containing dh
   ///  used only if colored_volume(alcc, dh) and !colored_face(alcc, dh)
   template<typename LCC>
-  CGAL::Color volume_color(const LCC& alcc,
-                           typename LCC::Dart_const_handle dh) const
+  CGAL::IO::Color volume_color(const LCC& alcc,
+                           typename LCC::Dart_const_descriptor dh) const
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
@@ -92,8 +93,8 @@ struct DefaultDrawingFunctorLCC
   /// @return the color of the face containing dh
   ///  used only if colored_face(alcc, dh)
   template<typename LCC>
-  CGAL::Color face_color(const LCC& alcc,
-                         typename LCC::Dart_const_handle dh) const
+  CGAL::IO::Color face_color(const LCC& alcc,
+                         typename LCC::Dart_const_descriptor dh) const
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
@@ -101,8 +102,8 @@ struct DefaultDrawingFunctorLCC
   /// @return the color of the edge containing dh
   ///  used only if colored_edge(alcc, dh)
   template<typename LCC>
-  CGAL::Color edge_color(const LCC& alcc,
-                         typename LCC::Dart_const_handle dh) const
+  CGAL::IO::Color edge_color(const LCC& alcc,
+                         typename LCC::Dart_const_descriptor dh) const
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
@@ -110,8 +111,8 @@ struct DefaultDrawingFunctorLCC
   /// @return the color of the vertex containing dh
   ///  used only if colored_vertex(alcc, dh)
   template<typename LCC>
-  CGAL::Color vertex_color(const LCC& alcc,
-                           typename LCC::Dart_const_handle dh) const
+  CGAL::IO::Color vertex_color(const LCC& alcc,
+                           typename LCC::Dart_const_descriptor dh) const
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
@@ -125,7 +126,7 @@ template<class LCC, class Local_kernel>
 struct LCC_geom_utils<LCC, Local_kernel, 3>
 {
   static typename Local_kernel::Vector_3
-  get_vertex_normal(const LCC& lcc, typename LCC::Dart_const_handle dh)
+  get_vertex_normal(const LCC& lcc, typename LCC::Dart_const_descriptor dh)
   {
     typename Local_kernel::Vector_3 n = internal::Geom_utils
       <typename LCC::Traits, Local_kernel>::
@@ -139,7 +140,7 @@ template<class LCC, class Local_kernel>
 struct LCC_geom_utils<LCC, Local_kernel, 2>
 {
   static typename Local_kernel::Vector_3
-  get_vertex_normal(const LCC&, typename LCC::Dart_const_handle)
+  get_vertex_normal(const LCC&, typename LCC::Dart_const_descriptor)
   {
     typename Local_kernel::Vector_3 n=CGAL::NULL_VECTOR;
     return n;
@@ -151,7 +152,7 @@ template<class LCC, class DrawingFunctorLCC>
 class SimpleLCCViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt Base;
-  typedef typename LCC::Dart_const_handle Dart_const_handle;
+  typedef typename LCC::Dart_const_descriptor Dart_const_descriptor;
   typedef typename LCC::Traits Kernel;
   typedef typename Kernel::Point Point;
   typedef typename Kernel::Vector Vector;
@@ -161,7 +162,7 @@ public:
   /// @param alcc the lcc to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big object where this time could be long)
   SimpleLCCViewerQt(QWidget* parent,
                     const LCC* alcc=nullptr,
                     const char* title="Basic LCC Viewer",
@@ -170,39 +171,37 @@ public:
     // First draw: vertices; edges, faces; multi-color; inverse normal
     Base(parent, title, true, true, true, false, false),
     lcc(alcc),
-    m_oriented_mark(lcc->get_new_mark()),
     m_nofaces(anofaces),
     m_random_face_color(false),
     m_drawing_functor(drawing_functor)
   {
-    lcc->orient(m_oriented_mark);
-    compute_elements();
+    if (lcc!=nullptr)
+    { compute_elements(); }
   }
 
   ~SimpleLCCViewerQt()
-  { lcc->free_mark(m_oriented_mark); }
+  {}
 
 protected:
   void set_lcc(const LCC* alcc, bool doredraw=true)
   {
-    if (lcc!=nullptr)
-    { lcc->free_mark(m_oriented_mark); }
+    if (lcc==alcc)
+    { return; }
 
     lcc=alcc;
-    m_oriented_mark=lcc->get_new_mark();
-    lcc->orient(m_oriented_mark);
+    if (lcc!=nullptr)
+    { compute_elements(); }
 
-    compute_elements();
     if (doredraw) { redraw(); }
   }
 
-  void compute_face(Dart_const_handle dh, Dart_const_handle voldh)
+  void compute_face(Dart_const_descriptor dh, Dart_const_descriptor voldh)
   {
     if (m_nofaces || !m_drawing_functor.draw_face(*lcc, dh)) return;
 
     // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
+    Dart_const_descriptor cur=dh;
+    Dart_const_descriptor min=dh;
     do
     {
       if (!lcc->is_next_exist(cur)) return; // open face=>not filled
@@ -214,17 +213,17 @@ protected:
     if (m_random_face_color)
     {
       CGAL::Random random((unsigned int)(lcc->darts().index(dh)));
-      CGAL::Color c=get_random_color(random);
+      CGAL::IO::Color c=get_random_color(random);
       face_begin(c);
     }
     else if (m_drawing_functor.colored_face(*lcc, dh))
     {
-      CGAL::Color c=m_drawing_functor.face_color(*lcc, dh);
+      CGAL::IO::Color c=m_drawing_functor.face_color(*lcc, dh);
       face_begin(c);
     }
     else if (m_drawing_functor.colored_volume(*lcc, voldh))
     {
-      CGAL::Color c=m_drawing_functor.volume_color(*lcc, voldh);
+      CGAL::IO::Color c=m_drawing_functor.volume_color(*lcc, voldh);
       face_begin(c);
     }
     else
@@ -242,13 +241,13 @@ protected:
     face_end();
   }
 
-  void compute_edge(Dart_const_handle dh)
+  void compute_edge(Dart_const_descriptor dh)
   {
     if (!m_drawing_functor.draw_edge(*lcc, dh)) return;
 
     Point p1 = lcc->point(dh);
-    Dart_const_handle d2 = lcc->other_extremity(dh);
-    if (d2!=nullptr)
+    Dart_const_descriptor d2 = lcc->other_extremity(dh);
+    if (d2!=lcc->null_descriptor)
     {
       if (m_drawing_functor.colored_edge(*lcc, dh))
       { add_segment(p1, lcc->point(d2), m_drawing_functor.edge_color(*lcc, dh)); }
@@ -257,7 +256,7 @@ protected:
     }
   }
 
-  void compute_vertex(Dart_const_handle dh)
+  void compute_vertex(Dart_const_descriptor dh)
   {
     if (!m_drawing_functor.draw_vertex(*lcc, dh)) return;
 
@@ -272,10 +271,13 @@ protected:
     clear();
     if (lcc==nullptr) return;
 
-    typename LCC::size_type markvolumes  = lcc->get_new_mark();
-    typename LCC::size_type markfaces    = lcc->get_new_mark();
-    typename LCC::size_type markedges    = lcc->get_new_mark();
-    typename LCC::size_type markvertices = lcc->get_new_mark();
+    typename LCC::size_type markvolumes  =lcc->get_new_mark();
+    typename LCC::size_type markfaces    =lcc->get_new_mark();
+    typename LCC::size_type markedges    =lcc->get_new_mark();
+    typename LCC::size_type markvertices =lcc->get_new_mark();
+    typename LCC::size_type oriented_mark=lcc->get_new_mark();
+
+    lcc->orient(oriented_mark);
 
     for (typename LCC::Dart_range::const_iterator it=lcc->darts().begin(),
          itend=lcc->darts().end(); it!=itend; ++it )
@@ -290,7 +292,7 @@ protected:
         {
           lcc->mark(itv, markvolumes); // To be sure that all darts of the basic iterator will be marked
           if (!lcc->is_marked(itv, markfaces) &&
-              lcc->is_marked(itv, m_oriented_mark) &&
+              lcc->is_marked(itv, oriented_mark) &&
               m_drawing_functor.draw_face(*lcc, itv))
           {
             if (!m_drawing_functor.volume_wireframe(*lcc, itv) &&
@@ -335,13 +337,14 @@ protected:
       lcc->unmark(it, markedges);
       lcc->unmark(it, markfaces);
       lcc->unmark(it, markvolumes);
-
+      lcc->unmark(it, oriented_mark);
     }
 
     lcc->free_mark(markvolumes);
     lcc->free_mark(markfaces);
     lcc->free_mark(markedges);
     lcc->free_mark(markvertices);
+    lcc->free_mark(oriented_mark);
   }
 
   virtual void init()
@@ -372,7 +375,6 @@ protected:
 
 protected:
   const LCC* lcc;
-  typename LCC::size_type m_oriented_mark;
   bool m_nofaces;
   bool m_random_face_color;
   const DrawingFunctorLCC& m_drawing_functor;
@@ -404,8 +406,9 @@ void draw(const CGAL_LCC_TYPE& alcc,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"lccviewer","\0"};
+    const char* argv[2]={"lccviewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     SimpleLCCViewerQt<CGAL_LCC_TYPE, DrawingFunctorLCC>
       mainwindow(app.activeWindow(), &alcc, title, nofill, drawing_functor);

@@ -129,7 +129,7 @@ private:
                                                         Base;
   typedef typename Sgm::Vertex_handle                   Arr_vertex_handle;
 
-  /*! The arrangement vertex handle of the projected noraml. */
+  /*! The arrangement vertex handle of the projected normal. */
   Arr_vertex_handle m_vertex;
 
   /*! Indicates whether it is a marked face */
@@ -161,7 +161,7 @@ public:
 };
 
 /*! The "items" type. A model of the PolyhedralSgmPolyhedronItems_3 concept,
- * which is a refinment of the PolyhedronItems_3 concept. Its base class
+ * which is a refinement of the PolyhedronItems_3 concept. Its base class
  * Polyhedron_items_3, a model of the latter concept, provides definitions of
  * vertices with points, halfedges, and faces with normal equations. We extend
  * the definition of each one of the three items with the necessary data

@@ -246,8 +246,8 @@ bisector_of_linesC2(const FT &pa, const FT &pb, const FT &pc,
                     FT &a, FT &b, FT &c)
 {
   // We normalize the equations of the 2 lines, and we then add them.
-  FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb));
-  FT n2 = CGAL_NTS sqrt(CGAL_NTS square(qa) + CGAL_NTS square(qb));
+  FT n1 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(pa) + CGAL_NTS square(pb)) );
+  FT n2 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(qa) + CGAL_NTS square(qb)) );
   a = n2 * pa + n1 * qa;
   b = n2 * pb + n1 * qb;
   c = n2 * pc + n1 * qc;

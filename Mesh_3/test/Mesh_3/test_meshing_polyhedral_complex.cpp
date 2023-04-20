@@ -24,12 +24,12 @@
 #include <fstream>
 
 const char* const filenames[] = {
-  "data/patches/patch-01.off",
-  "data/patches/patch-13.off",
-  "data/patches/patch-20.off",
-  "data/patches/patch-21.off",
-  "data/patches/patch-23.off",
-  "data/patches/patch-30.off",
+  "meshes/patch-01.off",
+  "meshes/patch-13.off",
+  "meshes/patch-20.off",
+  "meshes/patch-21.off",
+  "meshes/patch-23.off",
+  "meshes/patch-30.off"
 };
 
 const std::pair<int, int> incident_subdomains[] = {
@@ -63,9 +63,9 @@ struct Polyhedral_complex_tester : public Tester<K>
 
     std::vector<Polyhedron> patches(nb_patches);
     for (std::size_t i = 0; i < nb_patches; ++i) {
-      std::ifstream input(filenames[i]);
+      std::ifstream input(CGAL::data_file_path(filenames[i]));
       if (!(input >> patches[i])) {
-        std::cerr << "Error reading " << filenames[i] << " as a polyhedron!\n";
+        std::cerr << "Error reading " << CGAL::data_file_path(filenames[i]) << " as a polyhedron!\n";
         return;
       }
     }

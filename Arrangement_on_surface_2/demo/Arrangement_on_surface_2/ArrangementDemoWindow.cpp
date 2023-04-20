@@ -280,9 +280,9 @@ void ArrangementDemoWindow::updateInputType(QAction* a)
   tab->activateCurveInputCallback(curveType);
 }
 
-#ifdef CGAL_USE_CORE
 void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
 {
+#ifdef CGAL_USE_CORE
   AlgebraicCurveInputDialog newDialog;
 
   if (newDialog.exec() == QDialog::Accepted)
@@ -312,10 +312,12 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
     algCurveInputCallback->generate(cv);
     if (is_first_curve) currentTab->adjustViewport();
   }
+#endif
 }
 
 void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
 {
+#ifdef CGAL_USE_CORE
   RationalCurveInputDialog newDialog;
 
   if (newDialog.exec() == QDialog::Accepted)
@@ -346,8 +348,8 @@ void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
     algCurveInputCallback->generate(cv);
     if (is_first_curve) currentTab->adjustViewport();
   }
-}
 #endif
+}
 
 void ArrangementDemoWindow::on_actionQuit_triggered() { qApp->exit(); }
 

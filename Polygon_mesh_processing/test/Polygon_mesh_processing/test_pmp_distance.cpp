@@ -1,11 +1,11 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Real_timer.h>
-#include <CGAL/IO/OFF_reader.h>
-
-
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/boost/graph/property_maps.h>
-
+#include <CGAL/number_utils.h>
+#include <CGAL/Coercion_traits.h>
 
 #include <fstream>
 #include <ostream>
@@ -44,44 +44,42 @@ struct Custom_traits_Hausdorff
 
   struct Triangle_3
   {
-    Triangle_3(const Point_3&,  const Point_3&, const Point_3&){}
-    Point_3 operator[](int)const{return Point_3();}
-    CGAL::Bbox_3 bbox(){return CGAL::Bbox_3();}
+    Triangle_3(const Point_3&, const Point_3&, const Point_3&){}
+    Point_3 operator[](int) const {return Point_3();}
+    CGAL::Bbox_3 bbox() const {return CGAL::Bbox_3();}
   };
 
   struct Segment_3
   {
-    Segment_3(const Point_3&,  const Point_3&){}
+    Segment_3(const Point_3&, const Point_3&){}
     Point_3 operator[](int)const{return Point_3();}
   };
 
   struct Compute_squared_area_3
   {
     typedef FT result_type;
-    FT operator()(Point_3,Point_3,Point_3)const{return FT();}
-    FT operator()(Triangle_3)const{return FT();}
+    FT operator()(Point_3,Point_3,Point_3) const {return FT();}
+    FT operator()(Triangle_3) const {return FT();}
   };
 
   struct Compute_squared_length_3
   {
     typedef FT result_type;
-    FT operator()(Segment_3)const{return FT();}
+    FT operator()(Segment_3) const {return FT();}
   };
 
   struct Construct_translated_point_3
   {
-    Point_3 operator() (const Point_3 &, const Vector_3 &){return Point_3();}
+    Point_3 operator()(const Point_3 &, const Vector_3 &) const {return Point_3();}
   };
 
   struct Construct_vector_3{
-    Vector_3         operator() (const Point_3 &, const Point_3 &){return Vector_3();}
+    Vector_3         operator()(const Point_3 &, const Point_3 &) const {return Vector_3();}
   };
 
   struct Construct_scaled_vector_3
   {
-    Vector_3         operator() (const Vector_3 &, const FT &)
-    {return Vector_3();}
-
+    Vector_3         operator()(const Vector_3 &, const FT &) const {return Vector_3();}
   };
 
   Compute_squared_area_3 compute_squared_area_3_object(){return Compute_squared_area_3();}
@@ -98,7 +96,7 @@ struct Custom_traits_Hausdorff
 
   struct Do_intersect_3
   {
-    CGAL::Comparison_result operator()(const Sphere_3& , const CGAL::Bbox_3&){ return CGAL::ZERO;}
+    CGAL::Comparison_result operator()(const Sphere_3& , const CGAL::Bbox_3&) const { return CGAL::ZERO;}
   };
 
   struct Intersect_3
@@ -108,24 +106,23 @@ struct Custom_traits_Hausdorff
 
   struct Construct_sphere_3
   {
-    Sphere_3 operator()(const Point_3& , FT ){return Sphere_3();}
+    Sphere_3 operator()(const Point_3& , FT ) const {return Sphere_3();}
   };
 
   struct Construct_projected_point_3
   {
-    const Point_3 operator()(Triangle_3,  Point_3)const{return Point_3();}
+    const Point_3 operator()(Triangle_3,  Point_3) const {return Point_3();}
   };
 
   struct Compare_distance_3
   {
-    CGAL::Comparison_result operator()(Point_3, Point_3, Point_3)
-    {return CGAL::ZERO;}
+    CGAL::Comparison_result operator()(Point_3, Point_3, Point_3) const {return CGAL::ZERO;}
   };
 
   struct Has_on_bounded_side_3
   {
-    //documented as Comparision_result
-    CGAL::Comparison_result operator()(const Point_3&, const Point_3&, const Point_3&)
+    //documented as Comparison_result
+    CGAL::Comparison_result operator()(const Point_3&, const Point_3&, const Point_3&) const
     {return CGAL::ZERO;}
     bool operator()(const Sphere_3&, const Point_3&)
     {return false;}
@@ -133,21 +130,21 @@ struct Custom_traits_Hausdorff
 
   struct Compute_squared_radius_3
   {
-    FT operator()(const Sphere_3&){return FT();}
+    FT operator()(const Sphere_3&) const {return FT();}
   };
 
   struct Compute_squared_distance_3
   {
-    FT operator()(const Point_3& , const Point_3& ){return FT();}
+    FT operator()(const Point_3& , const Point_3& ) const {return FT();}
   };
 
-  Compare_distance_3 compare_distance_3_object(){return Compare_distance_3();}
-  Construct_sphere_3 construct_sphere_3_object(){return Construct_sphere_3();}
-  Construct_projected_point_3 construct_projected_point_3_object(){return Construct_projected_point_3();}
-  Compute_squared_distance_3 compute_squared_distance_3_object(){return Compute_squared_distance_3();}
-  Do_intersect_3 do_intersect_3_object(){return Do_intersect_3();}
-  Equal_3 equal_3_object(){return Equal_3();}
-// } end of requirments from AABBGeomTraits
+  Compare_distance_3 compare_distance_3_object() const {return Compare_distance_3();}
+  Construct_sphere_3 construct_sphere_3_object() const {return Construct_sphere_3();}
+  Construct_projected_point_3 construct_projected_point_3_object() const {return Construct_projected_point_3();}
+  Compute_squared_distance_3 compute_squared_distance_3_object() const {return Compute_squared_distance_3();}
+  Do_intersect_3 do_intersect_3_object() const {return Do_intersect_3();}
+  Equal_3 equal_3_object() const {return Equal_3();}
+// } end of requirements from AABBGeomTraits
 
 
 // requirements from SearchGeomTraits_3 {
@@ -165,27 +162,26 @@ struct Custom_traits_Hausdorff
   typedef const FT* Cartesian_const_iterator_3;
 
 
-  struct Construct_cartesian_const_iterator_3{
+  struct Construct_cartesian_const_iterator_3
+  {
     Construct_cartesian_const_iterator_3(){}
     Construct_cartesian_const_iterator_3(const Point_3&){}
-    const FT* operator()(const Point_3&) const
-    { return 0; }
+    const FT* operator()(const Point_3&) const { return nullptr; }
 
-    const FT* operator()(const Point_3&, int)  const
-    { return 0; }
+    const FT* operator()(const Point_3&, int) const { return nullptr; }
     typedef const FT* result_type;
   };
 // } end of requirements from SearchGeomTraits_3
 
 // requirements from SpatialSortingTraits_3 {
   struct Less_x_3{
-    bool operator()(Point_3, Point_3){return false;}
+    bool operator()(Point_3, Point_3) const {return false;}
   };
   struct Less_y_3{
-    bool operator()(Point_3, Point_3){return false;}
+    bool operator()(Point_3, Point_3) const {return false;}
   };
   struct Less_z_3{
-    bool operator()(Point_3, Point_3){return false;}
+    bool operator()(Point_3, Point_3) const {return false;}
   };
   Less_x_3 less_x_3_object()const{return Less_x_3();}
   Less_y_3 less_y_3_object()const{return Less_y_3();}
@@ -194,6 +190,14 @@ struct Custom_traits_Hausdorff
 };
 
 namespace CGAL{
+
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double, Custom_traits_Hausdorff::FT)
+
 template<>struct Kernel_traits<Custom_traits_Hausdorff::Point_3>
 {
   typedef Custom_traits_Hausdorff Kernel;
@@ -248,8 +252,8 @@ void general_tests(const TriangleMesh& m1,
   std::cout << "Symmetric distance between meshes (sequential) "
               << PMP::approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(
                   m1,m2,
-                  PMP::parameters::number_of_points_per_area_unit(4000),
-                  PMP::parameters::number_of_points_per_area_unit(4000))
+                  CGAL::parameters::number_of_points_per_area_unit(4000),
+                  CGAL::parameters::number_of_points_per_area_unit(4000))
               << "\n";
 
   std::cout << "Max distance to point set "
@@ -261,9 +265,8 @@ void general_tests(const TriangleMesh& m1,
             << "\n";
 
   std::vector<typename GeomTraits::Point_3> samples;
-  PMP::sample_triangle_mesh(m1, std::back_inserter(samples));
+  PMP::sample_triangle_mesh(m1, std::back_inserter(samples), CGAL::parameters::random_seed(0));
   std::cout << samples.size()<<" points sampled on mesh."<<std::endl;
-
 }
 
 void test_concept()
@@ -275,19 +278,22 @@ void test_concept()
 
 int main(int argc, char** argv)
 {
-  if(argc != 3)
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/blobby_3cc.off");
+
+  Mesh m1, m2;
+  if(!PMP::IO::read_polygon_mesh(filename1, m1))
   {
-    std::cerr << "Missing input meshes" << std::endl;
+    std::cerr << "Failed to read " << filename1 << std::endl;
     return EXIT_FAILURE;
   }
 
-  Mesh m1,m2;
-  std::ifstream input(argv[1]);
-  input >> m1;
-  input.close();
-  input.open(argv[2]);
-  input >> m2;
-  input.close();
+  if(!PMP::IO::read_polygon_mesh(filename2, m2))
+  {
+    std::cerr << "Failed to read " << filename2 << std::endl;
+    return EXIT_FAILURE;
+  }
+
   std::cout << "First mesh has " << num_faces(m1) << " faces\n";
   std::cout << "Second mesh has " << num_faces(m2) << " faces\n";
 
@@ -296,7 +302,7 @@ int main(int argc, char** argv)
   time.start();
    std::cout << "Distance between meshes (parallel) "
              << PMP::approximate_Hausdorff_distance<CGAL::Parallel_tag>(
-                  m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
+                  m1,m2,CGAL::parameters::number_of_points_per_area_unit(4000))
              << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -306,7 +312,7 @@ int main(int argc, char** argv)
   time.start();
   std::cout << "Distance between meshes (sequential) "
             << PMP::approximate_Hausdorff_distance<CGAL::Sequential_tag>(
-                 m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
+                 m1,m2,CGAL::parameters::number_of_points_per_area_unit(4000))
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -317,14 +323,15 @@ int main(int argc, char** argv)
 
   std::vector<std::vector<std::size_t> > faces;
   std::vector<K::Point_3> points;
-  input.open(argv[1]);
-  CGAL::read_OFF(input, points, faces);
-  input.close();
+  if(!CGAL::IO::read_polygon_soup(filename1, points, faces))
+  {
+    std::cerr << "Failed to read " << filename1 << std::endl;
+    return EXIT_FAILURE;
+  }
 
   std::vector<K::Point_3> samples;
   PMP::sample_triangle_soup(points, faces, std::back_inserter(samples));
   std::cout<<samples.size()<<" points sampled on soup."<<std::endl;
-
 
   return 0;
 }

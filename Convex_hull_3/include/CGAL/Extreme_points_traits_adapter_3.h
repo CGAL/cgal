@@ -22,7 +22,6 @@
 #include <CGAL/Kernel_traits.h>
 
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/result_of.h>
 
 namespace CGAL {
 namespace Convex_hull_3 {
@@ -37,14 +36,14 @@ struct Forward_functor
   Forward_functor(const PointPropertyMap& vpm, const F& f) : F(f), vpm_(vpm) {}
 
   template <class Vertex>
-  typename cpp11::result_of<F(const Vertex&, const Vertex&)>::type
+  decltype(auto)
   operator()(const Vertex& p, const Vertex& q) const
   {
     return static_cast<const F*>(this)->operator()(get(vpm_, p), get(vpm_, q));
   }
 
   template <class Vertex>
-  typename cpp11::result_of<F(const Vertex&, const Vertex&, const Vertex&)>::type
+  decltype(auto)
   operator()(const Vertex& p, const Vertex& q, const Vertex& r) const
   {
     return static_cast<const F*>(this)->operator()(get(vpm_, p),
@@ -53,7 +52,7 @@ struct Forward_functor
   }
 
   template <class Vertex>
-  typename cpp11::result_of<F(const Vertex&, const Vertex&, const Vertex&, const Vertex&)>::type
+  decltype(auto)
   operator()(const Vertex& p, const Vertex& q, const Vertex& r, const Vertex& s) const
   {
     return static_cast<const F*>(this)->operator()(get(vpm_, p),
@@ -191,7 +190,7 @@ public:
     typedef Convex_hull_3::internal::Forward_functor<
               typename Btt::Less_yx_2, PointPropertyMap>                      Less_yx_2;
     typedef Convex_hull_3::internal::Forward_functor<
-              typename Btt::Less_signed_distance_to_line_2, PointPropertyMap> Less_signed_distance_to_line_2;
+              typename Btt::Compare_signed_distance_to_line_2, PointPropertyMap> Compare_signed_distance_to_line_2;
     typedef Convex_hull_3::internal::Forward_functor<
               typename Btt::Left_turn_2, PointPropertyMap>                    Left_turn_2;
 
@@ -220,8 +219,8 @@ public:
     { return Less_xy_2(vpm_, static_cast<const Btt*>(this)->less_xy_2_object()); }
     Less_yx_2 less_yx_2_object() const
     { return Less_yx_2(vpm_, static_cast<const Btt*>(this)->less_yx_2_object()); }
-    Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object() const
-    { return Less_signed_distance_to_line_2(vpm_, static_cast<const Btt*>(this)->Less_signed_distance_to_line_2()); }
+    Compare_signed_distance_to_line_2 compare_signed_distance_to_line_2_object() const
+    { return Compare_signed_distance_to_line_2(vpm_, static_cast<const Btt*>(this)->Compare_signed_distance_to_line_2()); }
     Less_rotate_ccw_2 less_rotate_ccw_2_object() const
     { return Less_rotate_ccw_2(vpm_, static_cast<const Btt*>(this)->less_rotate_ccw_2_object()); }
     Left_turn_2 left_turn_2_object() const

@@ -444,6 +444,10 @@ sub parselicense {
 	$license = "GENERATED FILE";
     }
 
+    if ($licensetext =~ /This file incorporates work covered by the following copyright and permission notice/i) {
+  $license = "DERIVED WORK";
+    }
+
     if ($licensetext =~ /((is free software.? )?you can redistribute (it|them) and\/or modify (it|them)|is licensed) under the terms of (version [^ ]+ of )?the (GNU (Library |Lesser )General Public License|LGPL)/i) {
 	$license = "LGPL$gplver$extrainfo $license";
     }
@@ -576,12 +580,14 @@ sub parselicense {
     }
 
     # Since SPDX tags are sufficient, make sure no license notice was present
-    if (length($license)!=0 && $license ne "GENERATED FILE")
+    if (length($license)!=0 && $license ne "GENERATED FILE" && !($license =~ "DERIVED WORK"))
     {
       $license = $license." READ FROM LICENSE NOTICE THAT SHOULD NOT BE PRESENT";
     }
     else
     {
+      $license="";
+
       if ($licensetext =~ /SPDX-License-Identifier GPL-3.0-or-later/i) {
         $license = "GPL (v3 or later)";
       }
@@ -600,6 +606,10 @@ sub parselicense {
 
       if ($licensetext =~ /SPDX-License-Identifier LicenseRef-RFL/i) {
         $license = "MIT/X11 (BSD like)";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier \( GPL-3.0-or-later OR LicenseRef-Commercial \) AND MIT/i) {
+        $license = "GPL (v3 or later) AND MIT/X11 (BSD like)";
       }
     }
 

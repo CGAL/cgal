@@ -1,8 +1,6 @@
 #ifndef CGAL_DEMO_MESH_3_CONFIG_H
 #define CGAL_DEMO_MESH_3_CONFIG_H
 
-#define  BOOST_PARAMETER_MAX_ARITY 12
-
 // CGAL_MESH_3_PROTECTION_DEBUG:
 // -  1 : display debug messages
 // -  2 : dump file `polylines_graph.polylines.txt` and

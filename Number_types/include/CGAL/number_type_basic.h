@@ -23,8 +23,8 @@
 #include <CGAL/basic.h>
 
 // basic tools needed in several files
-#include <boost/type_traits/is_same.hpp>
 #include <functional>
+#include <type_traits>
 
 #include <CGAL/Quotient_fwd.h>
 
@@ -54,11 +54,7 @@
 #include <CGAL/Interval_nt.h> // needed by To_interval(long double), To_interval(long), To_interval(long long)
 
 #include <CGAL/int.h>
-#ifdef CGAL_USE_LONG_LONG
 #include <CGAL/long_long.h>
-#endif
-
-
 
 #ifdef CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX

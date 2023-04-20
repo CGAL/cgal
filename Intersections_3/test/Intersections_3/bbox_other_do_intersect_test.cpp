@@ -11,8 +11,6 @@
 // Author(s)     : Stephane Tayeb
 //
 
-#include <string>
-
 #include <CGAL/config.h>
 
 #if defined(BOOST_MSVC)
@@ -22,17 +20,19 @@
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
 typedef CGAL::Exact_rational         Rational;
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Kernel_traits.h>
-
-#include <iomanip>
+#include <CGAL/intersection_3.h>
 
 #include <boost/math/special_functions/next.hpp> // for nextafter
 
+#include <iomanip>
+#include <string>
 
 double random_in(const double a,
                  const double b)
@@ -243,7 +243,7 @@ bool test_case(const FT& px, const FT& py, const FT& pz,
     {
       if(!exactness_issue || exact_k) {
         b = false;
-        CGAL::set_pretty_mode(std::cerr);
+        CGAL::IO::set_pretty_mode(std::cerr);
         std::cerr.precision(17);
         std::cerr << "Wrong result for do_intersect("
                   << Bbox_3(bxmin, bymin, bzmin,
@@ -378,7 +378,7 @@ bool test(bool exact_kernel = false)
   typedef typename K::Triangle_3 Triangle;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
-  CGAL::Bbox_3 bbox(1.0,1.0,1.0,10.0,50.0,100.0);
+  CGAL::Bbox_3 bbox(1.0,1.0,1.0, 10.0,50.0,100.0);
 
   Point p1(FT(0.), FT(0.), FT(0.));
   Point p2(FT(0.), FT(100.), FT(100.));
@@ -559,7 +559,10 @@ bool test(bool exact_kernel = false)
   Triangle tABC(pA,pB,pC);
   Triangle t1(Point(1,1,1),Point(0,0,0),Point(0,0,1));
   Triangle t2(Point(4,1,7),Point(8,1,99),Point(7,1,11));
-  Triangle t3(Point(0,1,1),Point(0,0,0),Point(0,0,1));
+  // triangles completely to the left side of the cube
+  Triangle t3(Point(0, 1, 1), Point(0, 0, 0), Point(0, 0, 1));   // parallel to the left side
+  Triangle t4(Point(-1, 3, 2), Point(0, 2, 2), Point(0, 3, 2));  // projection inside the left side
+  Triangle t5(Point(-1, 3, 2), Point(0, 1, 2), Point(0, 3, -1)); // projection with one point outside of the left side
 
   b &= test_aux(t123,"t123",bbox,true);
   b &= test_aux(t124,"t124",bbox,true);
@@ -569,6 +572,9 @@ bool test(bool exact_kernel = false)
   b &= test_aux(t1,"t1",bbox,true);
   b &= test_aux(t2,"t2",bbox,true);
   b &= test_aux(t3,"t3",bbox,false);
+  b &= test_aux(t4,"t4",bbox,false);
+  b &= test_aux(t5,"t5",bbox, false);
+
 
   b &= test_aux(t123,"t123",Iso_cuboid_3(bbox),true);
   b &= test_aux(t124,"t124",Iso_cuboid_3(bbox),true);

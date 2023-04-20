@@ -1057,6 +1057,7 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
+#if 0
   /*! A function object that compares the x-coordinates of arc ends near the
    * boundary of the parameter space
    */
@@ -1115,7 +1116,7 @@ public:
   /*! Obtain a Compare_x_near_boundary_2 function object */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(); }
-
+#endif
 
   /*! A function object that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
@@ -1154,7 +1155,7 @@ public:
   /*! A function object that compares at limit
    */
   //new functor
-  class Compare_x_at_limit_2
+  class Compare_x_on_boundary_2
   {
    public:
     /*! Compares the x coordinate of p with the curve end
@@ -1189,24 +1190,24 @@ public:
                            (ce2 == ARR_MIN_END) ? xcv2.left_x() : xcv2.right_x());
     }
 
-  }; //Compare_x_at_limit_2
+  }; //Compare_x_on_boundary_2
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(); }
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
 
   //new functor
-  class Compare_x_near_limit_2
+  class Compare_x_near_boundary_2
   {
   private:
     Cache& _cache;
 
   public:
-    Compare_x_near_limit_2(Cache& cache) : _cache(cache) {}
+    Compare_x_near_boundary_2(Cache& cache) : _cache(cache) {}
     /*! Compares the curve end of  xcv1 that is defined by ce1
      *  with the curve end of xcv2 that is defined by ce2
      * at their limits in x.
@@ -1218,11 +1219,11 @@ public:
     {
       return xcv1.compare_near_end(xcv2,ce,_cache);
     }
-  }; //Compare_x_near_limit_2
+  }; //Compare_x_near_boundary_2
 
-  /*! Obtain a Compare_x_near_limit_2 function object */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(_cache); }
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(_cache); }
 
   class Compare_endpoints_xy_2
   {

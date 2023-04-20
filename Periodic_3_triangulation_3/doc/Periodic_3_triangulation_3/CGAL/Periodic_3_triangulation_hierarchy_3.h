@@ -12,7 +12,7 @@ location queries.
 implementation, only `Periodic_3_Delaunay_triangulation_3` is supported for.</I>
 
 `PTr::Vertex` has to be a model of the concept
-`Periodic_3TriangulationHierarchyVertexBase_3`.
+`Periodic_3TriangulationDSVertexBase_3`.
 
 `PTr::Geom_traits` has to be a model of the concept
 `Periodic_3DelaunayTriangulationTraits_3`.

@@ -37,11 +37,11 @@ public:
 
   template <class H>
   const I& operator[](H h) const
-  { return Base::operator[](&*h); }
+  { return Base::operator[]((void*)&*h); }
 
   template <class H>
   I& operator[](H h)
-  { return Base::operator[](&*h); }
+  { return Base::operator[]((void*)&*h); }
 
 };
 

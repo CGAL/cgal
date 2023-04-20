@@ -114,11 +114,11 @@ public:
 
 
     /*!
-     * \brief Creates an event line at position \c alpha for the specified
+     * \brief creates an event line at position \c alpha for the specified
      * curve.
      *
      * Additionally, the \c id of the event line to be created has to be
-     * specfied, and
+     * specified, and
      * the number of arcs that are entering from the left and leaving to the
      * right are needed. Furthermore, the flag \c root_of_resultant tells
      * whether \c alpha is a root of the resultant of the specified curve, and
@@ -314,7 +314,7 @@ protected:
      *
      * If the first elements in the sequence are known to be zero,
      * \c first_elements_zero can be set accordingly. The zero test is then
-     * ommitted for that leading elements.
+     * omitted for that leading elements.
      */
     template<typename InputIterator>
     std::pair<int,int> compute_mk(Algebraic_real_1 alpha,
@@ -441,7 +441,7 @@ protected:
                 }
 /*
 #if CGAL_ACK_DEBUG_FLAG
-                ::CGAL::set_ascii_mode(CGAL_ACK_DEBUG_PRINT);
+                ::CGAL::IO::set_ascii_mode(CGAL_ACK_DEBUG_PRINT);
                 CGAL_ACK_DEBUG_PRINT << "Stha: " << (*seq_it) << std::endl;
 #endif
 */

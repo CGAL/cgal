@@ -20,14 +20,15 @@
 #ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/Mesh_3.h>
 
 
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
-#include <CGAL/internal/Mesh_3/indices_management.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
+#include <atomic>
 
 #if CGAL_MESH_3_STATS_THREADS
 #  include <thread>
@@ -69,6 +70,13 @@ template <>
 class Mesh_vertex_base_3_base<Parallel_tag>
 {
 public:
+  Mesh_vertex_base_3_base()
+  {}
+
+  Mesh_vertex_base_3_base( const Mesh_vertex_base_3_base& c)
+  {
+    m_erase_counter.store(c.erase_counter());
+  }
 
   // Erase counter (cf. Compact_container)
   unsigned int erase_counter() const
@@ -85,7 +93,7 @@ public:
   }
 
 protected:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
 
 };
@@ -256,7 +264,7 @@ public:
   {
     is >> static_cast<Cmvb3_base&>(v);
     int dimension;
-    if(is_ascii(is)) {
+    if(IO::is_ascii(is)) {
       is >> dimension;
 
     } else {
@@ -275,7 +283,7 @@ public:
   friend std::ostream& operator<<(std::ostream &os, const Mesh_vertex_3& v)
   {
     os << static_cast<const Cmvb3_base&>(v);
-    if(is_ascii(os)) {
+    if(IO::is_ascii(os)) {
       os << " " << v.in_dimension()
          << " ";
     } else {
@@ -289,11 +297,39 @@ public:
   }
 };  // end class Mesh_vertex_3
 
+
+/*!
+\ingroup PkgMesh3MeshClasses
+
+The class `Mesh_vertex_base_3` is a model of the concept `MeshVertexBase_3`.
+It is designed to serve as vertex base class for the 3D triangulation
+used in a 3D mesh generation process.
+
+\tparam GT is the geometric traits class.
+It must be a model of the concept `MeshTriangulationTraits_3`.
+
+\tparam MD provides the types of indices
+used to identify
+the faces of the input complex. It must be a model
+of the concept `MeshDomain_3`.
+
+\tparam Vb is the vertex base class. It has to be a model
+of the concept `RegularTriangulationVertexBase_3` and defaults to
+`Regular_triangulation_vertex_base_3<GT>`.
+
+\cgalModels `MeshVertexBase_3`
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+*/
 template<class GT,
          class MD,
          class Vb = Regular_triangulation_vertex_base_3<GT> >
 struct Mesh_vertex_base_3 {
+#ifdef DOXYGEN_RUNNING
+  using Triangulation_data_structure = unspecified_type;
+#else
   using Triangulation_data_structure = internal::Dummy_tds_3;
+#endif
   using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
   using Cell_handle = typename Triangulation_data_structure::Cell_handle;
 
@@ -311,7 +347,11 @@ template<class GT,
          class Index,
          class Vb = Regular_triangulation_vertex_base_3<GT> >
 struct Mesh_vertex_generator_3 {
+#ifdef DOXYGEN_RUNNING
+  using Triangulation_data_structure = unspecified_type;
+#else
   using Triangulation_data_structure = internal::Dummy_tds_3;
+#endif
   using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
   using Cell_handle = typename Triangulation_data_structure::Cell_handle;
 

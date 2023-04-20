@@ -76,6 +76,7 @@ public:
   }
 
   ~Scene() {
+    ui->viewer->makeCurrent();
     for(int i=0; i<24; i++)
         buffers[i].destroy();
     for(int i=0; i<12; i++)

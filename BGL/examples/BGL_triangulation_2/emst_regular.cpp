@@ -4,7 +4,7 @@
 #include <CGAL/boost/graph/graph_traits_Regular_triangulation_2.h>
 
 #include <boost/property_map/function_property_map.hpp>
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include <CGAL/boost/graph/kruskal_min_spanning_tree.h>
 
 #include <fstream>
 #include <iostream>
@@ -78,7 +78,7 @@ int main(int argc,char* argv[])
                                        .weight_map(boost::make_function_property_map<
                                           edge_descriptor, FT, Edge_weight_functor>(Edge_weight_functor(tr))));
 
-  std::cout << "The edges of the Euclidean mimimum spanning tree:" << std::endl;
+  std::cout << "The edges of the Euclidean minimum spanning tree:" << std::endl;
   for(edge_descriptor ed : mst)
   {
     vertex_descriptor svd = source(ed, tr);

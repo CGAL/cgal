@@ -211,7 +211,7 @@ limited precision in the algorithm's underlying arithmetic, it
 can happen that the computed approximation ellipsoid has a
 worse approximation ratio (and \f$ \epsilon\f$ can thus be larger
 than `eps` in general). In any case, the number
-\f$ \epsilon\f$ (and with this, the achived approximation
+\f$ \epsilon\f$ (and with this, the achieved approximation
 \f$ 1+\epsilon\f$) can be queried by calling the routine
 `achieved_epsilon()` discussed below.
 
@@ -240,7 +240,7 @@ const Traits& traits = Traits() );
 /// exactly representable as `double` numbers.) In order to access the
 /// center and semiaxes of the computed approximation ellipsoid, the
 /// functions `center_cartesian_begin()`, `axes_lengths_begin()`, and
-/// `axis_direction_cartesian_begin()` can be used. In constrast to
+/// `axis_direction_cartesian_begin()` can be used. In contrast to
 /// the above access functions `achieved_epsilon()`,
 /// `defining_matrix()`, `defining_vector()`, and `defining_scalar()`,
 /// which return the described quantities exactly, the routines below
@@ -262,7 +262,7 @@ returns a number
 arithmetic) guaranteed to be an \f$ (1+\epsilon')\f$-approximation to
 \f$ (P)\f$.
 \pre `ame.is_full_dimensional() == true`.
-\post \f$ \epsilon'>0\f$.
+\post \f$ \epsilon'>=0\f$.
 */
 double achieved_epsilon() const;
 
@@ -337,7 +337,7 @@ sorted lengths of the computed ellipsoid's axes. The \f$ d\f$ returned
 numbers are floating-point approximations to the exact
 axes-lengths of the computed ellipsoid; no guarantee is given
 w.r.t.\ the involved relative error. (See also method
-`axes_direction_cartesian_begin()`.) \pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$.
+`axis_direction_cartesian_begin()`.) \pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$.
 */
 Axes_lengths_iterator axes_lengths_begin();
 

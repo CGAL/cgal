@@ -1,0 +1,270 @@
+namespace CGAL {
+
+/*!
+\mainpage User Manual
+\anchor Chapter_Orthtree
+
+\cgalAutoToc
+\authors Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez
+
+\section Section_Orthtree_Introduction Introduction
+
+Quadtrees are tree data structures in which each node encloses a
+square section of space, and each internal node has exactly 4
+children. Octrees are a similar data structure in 3D in which each
+node encloses a cubic section of space, and each internal node has
+exactly 8 children.
+
+We call the generalization of such data structure "orthtrees", as
+orthants are generalizations of quadrants and octants. The term
+"hyperoctree" can also be found in literature to name such data
+structures in dimensions 4 and higher.
+
+This package provides a general data structure `Orthtree` along with
+aliases for `Quadtree` and `Octree`. These trees can be constructed
+with custom point ranges and split predicates, and iterated on with
+various traversal methods.
+
+\cgalFigureBegin{Orthtree_fig, orthtree.png}
+Building an %orthtree in 3D (%octree) from a point cloud.
+\cgalFigureEnd
+
+
+\section Section_Orthtree_Building Building
+
+An orthtree is created using a set of points. The points are not
+copied: the provided point range is used directly and is rearranged by
+the orthtree. Altering the point range after creating the orthtree
+might leave it in an invalid state. The constructor returns a tree
+with a single (root) node that contains all the points.
+
+The method [refine()](@ref CGAL::Orthtree::refine) must be called to
+subdivide space further. This method uses a split predicate which
+takes a node as input and returns `true` if this node should be
+split, `false` otherwise: this enables users to choose on what
+criterion should the orthtree be refined. Predefined predicates are
+provided such as [Maximum_depth](@ref CGAL::Orthtrees::Maximum_depth) or [Maximum_number_of_inliers](@ref CGAL::Orthtrees::Maximum_number_of_inliers).
+
+The simplest way to create an orthtree is using a vector of points.
+The constructor generally expects a separate point range and map,
+but the point map defaults to `Identity_property_map` if none is provided.
+
+The split predicate is a user-defined functor that determines whether
+a node needs to be split. Custom predicates can easily be defined if
+the existing ones do not match users' needs.
+
+\subsection Section_Orthtree_Quadtree Building a Quadtree
+
+The `Orthtree` class may be templated with `Orthtree_traits_2` and thus
+behave as a %quadtree. For convenience, the alias `Quadtree` is provided.
+
+The following example shows how to create a %quadtree object from a
+vector of `Point_2` objects and refine it, which means constructing
+the tree's space subdivision itself, using a maximum depth of 10 and a
+maximum number of inliers per node (bucket size) of 5. The refinement
+is stopped as soon as one of the conditions is violated: if a node has
+more inliers than `bucket_size` but is already at `max_depth`, it is
+not split. Similarly, a node that is at a depth smaller than
+`max_depth` but already has fewer inliers than `bucket_size` is not
+split.
+
+
+\cgalExample{Orthtree/quadtree_build_from_point_vector.cpp}
+
+\subsection Section_Orthtree_Point_Vector Building an Octree
+
+The `Orthtree` class may be templated with `Orthtree_traits_3` and thus
+behave as an %octree. For convenience, the alias `Octree` is provided.
+
+The following example shows how to create an %octree from a vector of
+`Point_3` objects:
+
+\cgalExample{Orthtree/octree_build_from_point_vector.cpp}
+
+\subsection Section_Orthtree_Point_Set Building an Octree from a Point_set_3
+
+Some data structures such as `Point_set_3` require a non-default point
+map type and object. This example illustrates how to create an octree from a `Point_set_3` loaded from a file.
+It also shows a more explicit way of setting the split predicate when refining the tree.
+
+An octree is constructed from the point set and its map.
+The tree is refined with a maximum depth (deepest node allowed) of 10,
+and a bucket size (maximum number of points contained by a single node) of 20.
+The tree is then written to the standard output.
+
+The split predicate is manually constructed and passed to the refine method.
+
+\cgalExample{Orthtree/octree_build_from_point_set.cpp}
+
+\subsection Section_Orthtree_Custom_Split_Precicate Building an Octree with a Custom Split Predicate
+
+The following example illustrates how to refine an octree using a
+split predicate that isn't provided by default. This particular
+predicate sets a node's bucket size as a ratio of its depth. For
+example, for a ratio of 2, a node at depth 2 can hold 4 points, a node
+at depth 7 can hold 14.
+
+\cgalExample{Orthtree/octree_build_with_custom_split.cpp}
+
+\subsection Section_Orthtree_Orthtree_Point_Vector Building an Orthtree
+
+The following example shows how to build an generalized orthtree in dimension 4.
+A `std::vector<Point_d>` is manually filled with points.
+The vector is used as the point set,
+an `Identity_property_map` is automatically set as the orthtree's map type, so a map does not need to be provided.
+
+\cgalExample{Orthtree/orthtree_build.cpp}
+
+\section Section_Orthtree_Traversal Traversal
+
+\note For simplicity, the rest of the user manual will only use
+octrees, but all the presented features also apply to quadtrees and
+higher dimension orthtrees.
+
+%Traversal is the act of navigating among the nodes of the tree.
+The `Orthtree` and [Node](@ref CGAL::Orthtree::Node) classes provide a
+number of different solutions for traversing the tree.
+
+\subsection Section_Orthtree_Manual_Traveral Manual Traversal
+
+Because our orthtree is a form of connected acyclic undirected graph, it is possible to navigate between any two nodes.
+What that means in practice, is that given a node on the tree, it is possible to
+access any other node using the right set of operations.
+The `Node` class provides functions that enable the user to access each of its children, as well as its parent (if it exists).
+
+The following example demonstrates ways of accessing different nodes of a tree, given a reference to one.
+
+From the root node, children can be accessed using the subscript operator `CGAL::Orthtree::Node::operator[]()`.
+For an octree, values from 0-7 provide access to the different children.
+
+For non-root nodes, it is possible to access parent nodes using the [parent()](@ref CGAL::Orthtree::Node::parent) accessor.
+
+These accessors and operators can be chained to access any node in the tree in a single line of code, as shown in the following example:
+
+\cgalExample{Orthtree/octree_traversal_manual.cpp}
+
+\subsection Section_Orthtree_Preorder_Traversal Preorder Traversal
+
+It is often useful to be able to iterate over the nodes of the tree in a particular order.
+For example, the stream operator `<<` uses a traversal to print out each node.
+A few traversals are provided, among them [Preorder_traversal](@ref CGAL::Orthtrees::Preorder_traversal) and [Postorder_traversal](@ref CGAL::Orthtrees::Postorder_traversal).
+To traverse a tree in preorder is to visit each parent immediately followed by its children,
+whereas in postorder, traversal the children are visited first.
+
+The following example illustrates how to use the provided traversals.
+
+A tree is constructed, and a traversal is used to create a range that can be iterated over using a for-each loop.
+The default output operator for the orthtree uses the preorder traversal to do a pretty-print of the tree structure.
+In this case, we print out the nodes of the tree without indentation instead.
+
+\cgalExample{Orthtree/octree_traversal_preorder.cpp}
+
+\subsection Section_Orthtree_Custom_Traversal Custom Traversal
+
+Users can define their own traversal methods by creating models of the
+`OrthtreeTraversal` concept. The following example shows how to define a
+custom traversal that only traverses the first branch of the octree:
+
+\cgalExample{Orthtree/octree_traversal_custom.cpp}
+
+\subsection Comparison of Traversals
+
+Figure \cgalFigureRef{Orthtree_traversal_fig} shows in which order
+nodes are visited depending on the traversal method used.
+
+\cgalFigureBegin{Orthtree_traversal_fig, quadtree_traversal.png}
+%Quadtree visualized as a graph. Each node is labelled according to the
+order in which it is visited by the traversal. When using leaves and
+level traversals, the quadtree is only partially traversed.
+\cgalFigureEnd
+
+\section Section_Orthtree_Acceleration Acceleration of Common Tasks
+
+Once an orthtree is built, its structure can be used to accelerate different tasks.
+
+\subsection Section_Orthtree_Nearest_Neighbor Finding the Nearest Neighbor of a Point
+
+The naive way of finding the nearest neighbor of a point requires finding the distance to every other point.
+An orthtree can be used to perform the same task in significantly less time.
+For large numbers of points, this can be a large enough difference to outweigh the time spent building the tree.
+
+Note that a kd-tree is expected to outperform the orthtree for this task,
+it should be preferred unless features specific to the orthtree are needed.
+
+The following example illustrates how to use an octree to accelerate the search for points close to a location.
+
+Points are loaded from a file and an octree is built.
+The nearest neighbor method is invoked for several input points.
+A `k` value of 1 is used to find the single closest point.
+Results are put in a vector, and then printed.
+
+\cgalExample{Orthtree/octree_find_nearest_neighbor.cpp}
+
+\subsection Section_Orthtree_Grade Grading
+
+An orthtree is graded if the difference of depth between two adjacent
+leaves is at most 1 for every pair of leaves.
+
+\cgalFigureBegin{Orthtree_quadree_graded_fig, quadtree_graded.png}
+%Quadtree before and after being graded.
+\cgalFigureEnd
+
+The following example demonstrates how to use the grade method to eliminate large jumps in depth within the orthtree.
+
+A tree is created such that one node is split many more times than those it borders.
+[grade()](@ref CGAL::Orthtree::grade) splits the octree's nodes so that adjacent nodes never have a difference in depth greater than one.
+The tree is printed before and after grading, so that the differences are visible.
+
+\cgalExample{Orthtree/octree_grade.cpp}
+
+\section Section_Orthtree_Performance Performance
+
+\subsection Section_Orthtree_Performance_Construction Tree Construction
+
+Tree construction benchmarks were conducted by randomly generating a collection of points,
+and then timing the process of creating a fully refined tree which contains them.
+
+Because of its simplicity, an octree can be constructed faster than a kd-tree.
+
+\cgalFigureBegin{Orthtree_construction_benchmark_fig, construction_benchmark.png}
+%Plot of the time to construct a tree.
+\cgalFigureEnd
+
+\subsection Section_Orthtree_Performance_Nearest_Neighbors Nearest Neighbors
+
+%Orthtree nodes are uniform, so orthtrees will tend to have deeper hierarchies than equivalent kd-trees.
+As a result, orthtrees will generally perform worse for nearest neighbor searches.
+Both nearest neighbor algorithms have a theoretical complexity of O(log(n)),
+but the orthtree can generally be expected to have a higher coefficient.
+
+\cgalFigureBegin{Orthtree_nearest_neighbor_benchmark_fig, nearest_neighbor_benchmark.png}
+%Plot of the time to find the 10 nearest neighbors of a random point using a pre-constructed tree.
+\cgalFigureEnd
+
+The performance difference between the two trees is large,
+but both algorithms compare very favorably to the linear complexity of the naive approach,
+which involves comparing every point to the search point.
+
+Using the orthtree for nearest neighbor computations instead of the
+kd-tree can be justified either when few queries are needed (as the
+construction is faster) or when the orthtree is also needed for other
+purposes.
+
+\cgalFigureBegin{Orthtree_nearest_neighbor_benchmark_with_naive_fig, nearest_neighbor_benchmark_with_naive.png}
+%Plot of the time to find nearest neighbors using tree methods and a naive approach.
+\cgalFigureEnd
+
+For nontrivial point counts, the naive approach's calculation time dwarfs that of either the %orthtree or kd-tree.
+
+\section Section_Orthtree_History History
+
+A prototype code was implemented by Pierre Alliez and improved by Tong
+Zhao and Cédric Portaneri. From this prototype code, the package was
+developed by Jackson Campolatarro as part of the Google Summer of Code
+2020. Simon Giraudot, supervisor of the GSoC internship, completed and
+finalized the package for integration in CGAL 5.3. Pierre Alliez
+provided kind help and advice all the way through.
+
+*/
+
+}

@@ -46,7 +46,7 @@ class Polyhedron_demo_features_detection_dialog : public QDialog, private Ui::VC
 {
   Q_OBJECT
   public:
-    Polyhedron_demo_features_detection_dialog(QWidget* /*parent*/ = 0)
+    Polyhedron_demo_features_detection_dialog(QWidget* /*parent*/ = nullptr)
     {
       setupUi(this);
     }
@@ -67,7 +67,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     // Gets options

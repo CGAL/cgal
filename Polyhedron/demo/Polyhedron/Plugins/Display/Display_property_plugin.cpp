@@ -22,7 +22,6 @@
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
 #include "Color_map.h"
-#include <boost/unordered_map.hpp>
 #include "ui_Display_property.h"
 #include "id_printing.h"
 #include "Scene.h"
@@ -207,8 +206,8 @@ public:
     typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
     typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
     typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-        sm->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
+    SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
+        sm->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
     SMesh::Property_map<vertex_descriptor, float> vdist=
         sm->property_map<vertex_descriptor, float >("v:dist").first;
     typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
@@ -263,7 +262,7 @@ public:
     }
     for(vertex_descriptor vd : vertices(*sm))
     {
-      CGAL::Color c = vcolors[vd];
+      CGAL::IO::Color c = vcolors[vd];
       colors.push_back((float)c.red()/255);
       colors.push_back((float)c.green()/255);
       colors.push_back((float)c.blue()/255);
@@ -364,7 +363,7 @@ public:
   {
     this->scene = sc;
     this->mw = mw;
-    this->current_item = NULL;
+    this->current_item = nullptr;
 
     QAction *actionDisplayProperties= new QAction(QString("Display Properties"), mw);
     QAction *actionHeatMethod= new QAction(QString("Heat Method"), mw);
@@ -890,8 +889,8 @@ private Q_SLOTS:
       QMessageBox::warning(mw,"Error","The mesh must be triangulated.");
       return false;
     }
-    Heat_method * hm = NULL;
-    Heat_method_idt * hm_idt = NULL;
+    Heat_method * hm = nullptr;
+    Heat_method_idt * hm_idt = nullptr;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity =
       mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
     if(! iDT){
@@ -966,8 +965,8 @@ private Q_SLOTS:
     dock_widget->maxBox->setValue(max);
     displayLegend();
     //}
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-        mesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+    SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
+        mesh.add_property_map<vertex_descriptor, CGAL::IO::Color >("v:color", CGAL::IO::Color()).first;
     SMesh::Property_map<vertex_descriptor, float> vdist=
         mesh.add_property_map<vertex_descriptor, float >("v:dist", 0.0).first;
     for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(mesh).begin();
@@ -975,7 +974,7 @@ private Q_SLOTS:
         ++vit)
     {
       double h =(heat_intensity[*vit]-min)/(max-min);
-      CGAL::Color color(
+      CGAL::IO::Color color(
             255*color_ramp.r(h),
             255*color_ramp.g(h),
             255*color_ramp.b(h));
@@ -1069,6 +1068,7 @@ private Q_SLOTS:
       case 2:
       case 3:
         dock_widget->sourcePointsButton->setEnabled(true);
+        CGAL_FALLTHROUGH;
       default:
         dock_widget->maxBox->setMinimum(-99999999);
         dock_widget->maxBox->setMaximum(99999999);
@@ -1222,7 +1222,7 @@ private Q_SLOTS:
         scene->addItem(source_points);
         connect(source_points, &Scene_points_with_normal_item::aboutToBeDestroyed,
                 [this](){
-          boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*>::iterator it;
+          std::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*>::iterator it;
           for(it = mesh_sources_map.begin();
               it != mesh_sources_map.end();
               ++it)
@@ -1262,7 +1262,7 @@ private Q_SLOTS:
       if(!current_item)
         return;
       disconnect(current_item, SIGNAL(selected_vertex(void*)), this, SLOT(on_vertex_selected(void*)));
-      current_item = NULL;
+      current_item = nullptr;
     }
   }
 
@@ -1431,12 +1431,12 @@ private:
   double bm;
   double bM;
   double bI;
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
 
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
-  boost::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+  std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
 
   double minBox;
@@ -1445,11 +1445,11 @@ private:
 
   Scene_surface_mesh_item* current_item;
   Scene_points_with_normal_item* source_points;
-  boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
-  boost::unordered_map<Scene_surface_mesh_item*, Scene_heat_item*> mesh_heat_item_map;
+  std::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
+  std::unordered_map<Scene_surface_mesh_item*, Scene_heat_item*> mesh_heat_item_map;
 
-  boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
-  boost::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> mesh_heat_method_idt_map;
+  std::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
+  std::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> mesh_heat_method_idt_map;
 
   template<typename, typename, typename> friend class PropertyDisplayer;
 
@@ -1463,7 +1463,7 @@ private:
     {}
 
     virtual void fill_values(){}
-    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map){}
+    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &){}
     virtual void set_colors_ramp(){}
     bool operator()()
     {
@@ -1534,7 +1534,7 @@ private:
           pit != this->dataset.end();
           ++pit)
       {
-        CGAL::Color color(
+        CGAL::IO::Color color(
               this->parent->color_map[value_index_map[this->property_map[*pit]]].red(),
               this->parent->color_map[value_index_map[this->property_map[*pit]]].green(),
               this->parent->color_map[value_index_map[this->property_map[*pit]]].blue());
@@ -1557,7 +1557,7 @@ private:
           f = 0;
         if(f>1)
           f = 1;
-        CGAL::Color color(
+        CGAL::IO::Color color(
               255*this->parent->color_ramp.r(f),
               255*this->parent->color_ramp.g(f),
               255*this->parent->color_ramp.b(f));
@@ -1588,13 +1588,13 @@ private:
 
     void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
     {
-      SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-          this->dataset.template add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+      SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
+          this->dataset.template add_property_map<vertex_descriptor, CGAL::IO::Color >("v:color", CGAL::IO::Color()).first;
       for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(this->dataset).begin();
           vit != vertices(this->dataset).end();
           ++vit)
       {
-        CGAL::Color color(
+        CGAL::IO::Color color(
               this->parent->color_map[value_index_map[this->property_map[*vit]]].red(),
               this->parent->color_map[value_index_map[this->property_map[*vit]]].green(),
               this->parent->color_map[value_index_map[this->property_map[*vit]]].blue());
@@ -1604,8 +1604,8 @@ private:
 
     void set_colors_ramp()
     {
-      SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-          this->dataset.template add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+      SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
+          this->dataset.template add_property_map<vertex_descriptor, CGAL::IO::Color >("v:color", CGAL::IO::Color()).first;
       float max = this->parent->maxBox;
       float min = this->parent->minBox;
       for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(this->dataset).begin();
@@ -1619,7 +1619,7 @@ private:
           f = 0;
         if(f>1)
           f = 1;
-        CGAL::Color color(
+        CGAL::IO::Color color(
               255*this->parent->color_ramp.r(f),
               255*this->parent->color_ramp.g(f),
               255*this->parent->color_ramp.b(f));
@@ -1647,13 +1647,13 @@ private:
 
     void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
     {
-      SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-          this->dataset.template add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
+      SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
+          this->dataset.template add_property_map<face_descriptor, CGAL::IO::Color >("f:color", CGAL::IO::Color()).first;
       for(boost::graph_traits<SMesh>::face_iterator fit = faces(this->dataset).begin();
           fit != faces(this->dataset).end();
           ++fit)
       {
-        CGAL::Color color(
+        CGAL::IO::Color color(
               this->parent->color_map[value_index_map[this->property_map[*fit]]].red(),
               this->parent->color_map[value_index_map[this->property_map[*fit]]].green(),
               this->parent->color_map[value_index_map[this->property_map[*fit]]].blue());
@@ -1663,8 +1663,8 @@ private:
 
     void set_colors_ramp()
     {
-      SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-          this->dataset.template add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
+      SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
+          this->dataset.template add_property_map<face_descriptor, CGAL::IO::Color >("f:color", CGAL::IO::Color()).first;
       float max = this->parent->maxBox;
       float min = this->parent->minBox;
       for(boost::graph_traits<SMesh>::face_iterator fit = faces(this->dataset).begin();
@@ -1678,7 +1678,7 @@ private:
           f = 0;
         if(f>1)
           f = 1;
-        CGAL::Color color(
+        CGAL::IO::Color color(
               255*this->parent->color_ramp.r(f),
               255*this->parent->color_ramp.g(f),
               255*this->parent->color_ramp.b(f));
@@ -1694,7 +1694,7 @@ private:
   /*=========================================================================
   Copyright (c) 2006 Sandia Corporation.
   All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+  See Copyright.txt or https://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -2079,4 +2079,3 @@ private:
   }
 
 #include "Display_property_plugin.moc"
-

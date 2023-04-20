@@ -31,6 +31,7 @@
 #include <CGAL/_test_fct_is_infinite.h>
 #include <CGAL/_test_triangulation_iterators.h>
 #include <CGAL/_test_triangulation_circulators.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 
 template <class Triangul>
@@ -143,7 +144,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   assert( T0_0.is_valid() );
 
   Triangul T0_1;
-  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != NULL );
+  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != nullptr );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.is_valid() );
@@ -151,7 +152,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   // test insert_first()
   Triangul T0_2;
   Vertex_handle v0_2_0 =   T0_2.insert_first(p0);
-  assert( v0_2_0 != NULL );
+  assert( v0_2_0 != nullptr );
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.is_valid() );
@@ -281,6 +282,15 @@ _test_cls_triangulation_short_2( const Triangul &)
   assert( T2_3_4.number_of_vertices() == 11 );
   assert( T2_3_4.is_valid() );
 
+  /****************************/
+  /******* MOVE SEMANTIC*******/
+
+  std::cout << "    move constructors and move assignment" << std::endl;
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T0_1);
+  test_tr_23::test_move_semantic(T1_5);
+  test_tr_23::test_move_semantic(T2_8);
+  test_tr_23::test_move_semantic(T2_3);
 
   /*********************************************/
   /****** FINITE/INFINITE VERTICES/FACES *******/
@@ -399,7 +409,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   // here == operator needed for Point!
   // testing with the grid triangulation
   LFC fc= T2_3.line_walk(p1,p10);
-  assert(fc != NULL);
+  assert(fc != nullptr);
   assert(!fc.is_empty());
   LFC fc2=fc;
   assert(fc==fc2);
@@ -467,21 +477,21 @@ _test_cls_triangulation_short_2( const Triangul &)
   /******** I/O *******/
   std::cout << "    output to a file" << std::endl;
   std::ofstream of1_5("T15.triangulation");
-  CGAL::set_ascii_mode(of1_5);
+  CGAL::IO::set_ascii_mode(of1_5);
   of1_5 << T1_5; of1_5.close();
   std::ofstream of2_3("T23.triangulation");
-  CGAL::set_ascii_mode(of2_3);
+  CGAL::IO::set_ascii_mode(of2_3);
   of2_3 << T2_3; of2_3.close();
 
 
   std::cout << "    input from a file" << std::endl;
 
-  std::ifstream if1_5("T15.triangulation"); CGAL::set_ascii_mode(if1_5);
+  std::ifstream if1_5("T15.triangulation"); CGAL::IO::set_ascii_mode(if1_5);
   Triangul T1_5_copy; if1_5 >> T1_5_copy;
   assert( T1_5_copy.is_valid() &&
           T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
 
-  std::ifstream if2_3("T23.triangulation"); CGAL::set_ascii_mode(if2_3);
+  std::ifstream if2_3("T23.triangulation"); CGAL::IO::set_ascii_mode(if2_3);
   Triangul T2_3_copy; if2_3 >> T2_3_copy;
   assert( T2_3_copy.is_valid() &&
           T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );

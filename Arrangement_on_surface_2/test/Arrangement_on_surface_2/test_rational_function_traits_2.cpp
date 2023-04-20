@@ -28,9 +28,15 @@ typedef Traits_2::Point_2                          Point_2;
 
 template <typename Cmp_object>
 struct Cmp {
-  Cmp<Cmp_object>& operator=(const  Cmp<Cmp_object>&);
   const Cmp_object& m_cmp_object;
+
+  Cmp(const Cmp&) = default;
+  Cmp(Cmp&&) = default;
+  Cmp<Cmp_object>& operator=(const Cmp&) = default;
+  Cmp<Cmp_object>& operator=(Cmp&&) = default;
+
   Cmp(const Cmp_object& cmp_object) : m_cmp_object(cmp_object) {}
+
   bool operator()(const Point_2& p1, const Point_2& p2) const
   { return (m_cmp_object(p1, p2) == CGAL::LARGER); }
 };
@@ -65,8 +71,8 @@ int main()
   typedef Traits_2::Equal_2 Equal_2;
   typedef Traits_2::Parameter_space_in_x_2 Parameter_space_in_x_2;
   typedef Traits_2::Parameter_space_in_y_2 Parameter_space_in_y_2;
-  typedef Traits_2::Compare_x_at_limit_2 Compare_x_at_limit_2;
-  typedef Traits_2::Compare_x_near_limit_2 Compare_x_near_limit_2;
+  typedef Traits_2::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+  typedef Traits_2::Compare_x_near_boundary_2 Compare_x_near_boundary_2;
   typedef Traits_2::Compare_y_near_boundary_2 Compare_y_near_boundary_2;
   typedef Traits_2::Intersect_2 Intersect_2;
   typedef Traits_2::Split_2 Split_2;
@@ -89,8 +95,8 @@ int main()
   CGAL_USE_TYPE(Equal_2);
   CGAL_USE_TYPE(Parameter_space_in_x_2);
   CGAL_USE_TYPE(Parameter_space_in_y_2);
-  CGAL_USE_TYPE(Compare_x_at_limit_2);
-  CGAL_USE_TYPE(Compare_x_near_limit_2);
+  CGAL_USE_TYPE(Compare_x_on_boundary_2);
+  CGAL_USE_TYPE(Compare_x_near_boundary_2);
   CGAL_USE_TYPE(Compare_y_near_boundary_2);
   CGAL_USE_TYPE(Intersect_2);
   CGAL_USE_TYPE(Split_2);

@@ -174,7 +174,7 @@ public:
 
   Default value is (0,1,0), but it is updated by the Camera when this object is
   set as its Camera::frame(). Camera::setOrientation() and
-  Camera::setUpVector()) direclty modify this value and should be used instead.
+  Camera::setUpVector()) directly modify this value and should be used instead.
 */
   Vec sceneUpVector() const { return sceneUpVector_; }
 
@@ -198,15 +198,6 @@ protected:
 protected Q_SLOTS:
   virtual void spin();
   //@}
-
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-//@}
 
 #ifndef DOXYGEN
 protected:

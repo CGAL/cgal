@@ -1,24 +1,23 @@
 // The Heat Method
 
-/// \defgroup PkgHeatMethod Heat Method Reference
+/// \defgroup PkgHeatMethodRef Heat Method Reference
 
 /// \defgroup PkgHeatMethodConcepts Concepts
-/// \ingroup PkgHeatMethod
-
+/// \ingroup PkgHeatMethodRef
 
 /*!
-\addtogroup PkgHeatMethod
+\addtogroup PkgHeatMethodRef
 
-\cgalPkgDescriptionBegin{The Heat Method,PkgHeatMethodSummary}
+\cgalPkgDescriptionBegin{The Heat Method,PkgHeatMethod}
 \cgalPkgPicture{heat-method-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
+\cgalPkgAuthors{Keenan Crane, Christina Vaz, and Andreas Fabri}
 \cgalPkgDesc{The package provides an algorithm that solves the single- or
 multiple-source shortest path problem by returning an approximation of the geodesic distance
 for all vertices of a triangle mesh to the closest vertex in a given set of
-source vertices. }
-\cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethod}
+source vertices.}
+\cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethodRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.14}

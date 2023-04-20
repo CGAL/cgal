@@ -1,4 +1,4 @@
-//The function project() is a modified version of the function gluProject(),whcich license is :
+//The function project() is a modified version of the function gluProject(),which license is :
 /*
  * SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008)
  * Copyright (C) 1991-2000 Silicon Graphics, Inc. All Rights Reserved.
@@ -12,7 +12,7 @@
  *
  * The above copyright notice including the dates of first publication and
  * either this permission notice or a reference to
- * http://oss.sgi.com/projects/FreeB/
+ * https://spdx.org/licenses/SGI-B-2.0.html
  * shall be included in all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
@@ -1368,7 +1368,7 @@ void Scene::gl_draw_location() {
     if (in_plane) {
         int i=0;
         int count = 0;
-        // Figure out whether there is a facet that is completly contained
+        // Figure out whether there is a facet that is completely contained
         // in the z=0 plane
         for (int j=0 ; j<4 ; j++) {
             if (ch->vertex(j)->point().z() != 0.0 ||

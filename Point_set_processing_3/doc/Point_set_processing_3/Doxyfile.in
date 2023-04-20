@@ -2,6 +2,3 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Point Set Processing"
 EXCLUDE_PATTERNS          +=  property_map.h
-
-EXPAND_AS_DEFINED      = CGAL_BGL_NP_TEMPLATE_PARAMETERS \
-                         CGAL_BGL_NP_CLASS

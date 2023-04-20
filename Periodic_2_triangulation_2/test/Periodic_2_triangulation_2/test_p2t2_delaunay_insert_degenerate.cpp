@@ -21,20 +21,20 @@ void test_insertion()
     }
 
   Triangulation pt(pts_rnd1000.begin(), pts_rnd1000.end());
-  CGAL_assertion(pt.is_valid());
-  CGAL_assertion(pt.number_of_vertices() == 1000);
+  assert(pt.is_valid());
+  assert(pt.number_of_vertices() == 1000);
   pt.clear();
-  CGAL_assertion(pt.is_valid());
-  CGAL_assertion(pt.empty());
-  CGAL_assertion(pt.number_of_vertices() == 0);
+  assert(pt.is_valid());
+  assert(pt.empty());
+  assert(pt.number_of_vertices() == 0);
 
   pt.insert(pts_rnd1000.begin(), pts_rnd1000.end());
-  CGAL_assertion(pt.is_valid());
-  CGAL_assertion(pt.number_of_vertices() == 1000);
+  assert(pt.is_valid());
+  assert(pt.number_of_vertices() == 1000);
   pt.clear();
-  CGAL_assertion(pt.is_valid());
-  CGAL_assertion(pt.empty());
-  CGAL_assertion(pt.number_of_vertices() == 0);
+  assert(pt.is_valid());
+  assert(pt.empty());
+  assert(pt.number_of_vertices() == 0);
 
   // Center of the circle around the origin
   pts_rnd1000.clear();
@@ -45,12 +45,12 @@ void test_insertion()
     }
 
   pt.insert(pts_rnd1000.begin(), pts_rnd1000.end());
-  CGAL_assertion(pt.is_valid());
-  CGAL_assertion(pt.number_of_vertices() == 1000);
+  assert(pt.is_valid());
+  assert(pt.number_of_vertices() == 1000);
   pt.clear();
-  CGAL_assertion(pt.is_valid());
-  CGAL_assertion(pt.empty());
-  CGAL_assertion(pt.number_of_vertices() == 0);
+  assert(pt.is_valid());
+  assert(pt.empty());
+  assert(pt.number_of_vertices() == 0);
 }
 
 int main()

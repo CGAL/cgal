@@ -91,7 +91,7 @@ void test_OBB_of_mesh(const std::string fname,
   }
 
   std::vector<Point> points;
-  for(const auto v : vertices(mesh))
+  for(const auto& v : vertices(mesh))
     points.push_back(v->point());
 
   test_OBB_data(points, expected_vol);
@@ -121,9 +121,9 @@ int main()
 {
   std::cout.precision(17);
 
-  test_OBB_of_mesh("data/elephant.off", 0.294296);
+  test_OBB_of_mesh(CGAL::data_file_path("meshes/elephant.off"), 0.294296);
   test_OBB_of_mesh("data/long_tetrahedron.off", 0.04);
-  test_OBB_of_mesh("data/reference_tetrahedron.off", 1);
+  test_OBB_of_mesh(CGAL::data_file_path("meshes/reference_tetrahedron.off"), 1);
 
   // degenerate cases, disabled because
   // - some testsuite platforms are too slow in debug, and they timeout

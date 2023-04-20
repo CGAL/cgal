@@ -1,4 +1,4 @@
-#include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
+#include <CGAL/Surface_mesh_segmentation/internal/Filters.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
@@ -20,7 +20,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main(void)
 {
         Polyhedron mesh;
-       if( !read_to_polyhedron("./data/cactus.off", mesh) ) { return 1; }
+       if( !read_to_polyhedron(CGAL::data_file_path("meshes/cactus.off"), mesh) ) { return 1; }
 
         typedef std::map< Polyhedron::Facet_const_handle, double> Facet_double_map;
     Facet_double_map internal_1;

@@ -26,7 +26,7 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/Delaunay_d.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 /*{\Manpage {Delaunay_d}{R,Lifted_R}{Delaunay Triangulations}{DT}}*/
 /*{\Mdefinition
@@ -830,7 +830,7 @@ locate(const Point_d& x) const
   // lift(p) is not a dimension jump
   std::list<Simplex_handle> candidates;
   std::size_t dummy1 = 0;
-  int loc = -1; // intialization is important
+  int loc = -1; // initialization is important
   Simplex_handle f;
   this -> visibility_search(origin_simplex_,lp,candidates,dummy1,loc,f);
   this -> clear_visited_marks(origin_simplex_);

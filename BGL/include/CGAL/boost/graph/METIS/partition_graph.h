@@ -15,7 +15,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
@@ -112,6 +112,8 @@ void partition_graph(const TriangleMesh& tm,
     eptr[i + 1] = j;
   }
 
+  idx_t nparts_as_idx_t = nparts;
+
   // either the edgecut or the total communication volume of the dual graph’s partitioning
   idx_t objval;
 
@@ -130,7 +132,7 @@ void partition_graph(const TriangleMesh& tm,
   CGAL_assertion_code(int ret =)
     METIS_PartMeshNodal(&ne, &nn, eptr, eind,
                         nullptr /* nodes weights */, nullptr /* nodes sizes */,
-                        &nparts,
+                        &nparts_as_idx_t,
                         nullptr /* partitions weights */,
                         *options,
                         &objval, epart, npart);
@@ -215,18 +217,12 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 ///
 /// \pre `tm` is a pure triangular surface mesh: there are no edges
 ///       without at least one incident face
-template<typename TriangleMesh, typename NamedParameters>
-void partition_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np)
+template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
+void partition_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
 
   return partition_graph(tm, nparts, get_parameter(np, internal_np::METIS_options), np);
-}
-
-template<typename TriangleMesh>
-void partition_graph(const TriangleMesh& tm, const int nparts)
-{
-  return partition_graph(tm, nparts, CGAL::parameters::all_default());
 }
 
 } // end namespace METIS

@@ -66,11 +66,11 @@ surface can be used without knowing the halfedge data structure.
 - `CGAL::Polyhedron_min_items_3`
 - `CGAL::Polyhedron_incremental_builder_3<HDS>`
 
-\cgalCRPSection{Functions}
+\cgalCRPSection{I/O Functions}
 - \link PkgPolyhedronIOFunc `CGAL::operator<<()` \endlink
 - \link PkgPolyhedronIOFunc `CGAL::operator>>()` \endlink
-- \link PkgPolyhedronIOFunc `write_off()` \endlink
-- \link PkgPolyhedronIOFunc `read_off()` \endlink
+- \link PkgPolyhedronIOFunc `write_OFF()` \endlink
+- \link PkgPolyhedronIOFunc `read_OFF()` \endlink
 
 \cgalCRPSection{Draw a Polyhedron 3}
 - \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink

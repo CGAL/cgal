@@ -42,14 +42,14 @@ template<typename Map_>
 class CFlat
 {
   typedef Map_                            Map;
-  typedef typename Map::Dart_const_handle Dart_const_handle;
+  typedef typename Map::Dart_const_descriptor Dart_const_descriptor;
   typedef CFlat<Map>                      Self;
 
 public:
-  CFlat(Dart_const_handle dh) : begin(dh), end(dh), length(0)
+  CFlat(Dart_const_descriptor dh) : begin(dh), end(dh), length(0)
   {}
 
-  CFlat(Dart_const_handle dh1, Dart_const_handle dh2, int l) :
+  CFlat(Dart_const_descriptor dh1, Dart_const_descriptor dh2, int l) :
     begin(dh1), end(dh2), length(l)
   {}
 
@@ -65,7 +65,7 @@ public:
     return os;
   }
 
-  Dart_const_handle begin, end;
+  Dart_const_descriptor begin, end;
   int length; // Length of the flat, positive flat if >0, negative flat if <0
 };
 
@@ -77,18 +77,19 @@ class Light_MQ  // MQ for minimal quadrangulation
 public:
   typedef Map_                              Local_map;
   typedef Map_                              Mesh;
-  typedef typename Map_::Dart_const_handle  Dart_const_handle;
+  typedef typename Map_::Dart_const_descriptor  Dart_const_descriptor;
 
   Light_MQ(const Local_map& m): m_map(m)
   {}
+  Light_MQ(const Light_MQ&) = default;
 
   const Local_map& get_local_map() const
   { return m_map; }
 
-  std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
+  std::size_t positive_turn(Dart_const_descriptor d1, Dart_const_descriptor d2) const
   { return m_map.positive_turn(d1, d2); }
 
-  std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
+  std::size_t negative_turn(Dart_const_descriptor d1, Dart_const_descriptor d2) const
   { return m_map.negative_turn(d1, d2); }
 
 protected:
@@ -102,8 +103,8 @@ public:
   typedef Path_on_surface_with_rle<MQ>                       Self;
   typedef typename MQ::Local_map                             Map;
   typedef typename MQ::Mesh                                  Mesh;
-  typedef typename Map::Dart_handle                          Dart_handle;
-  typedef typename Map::Dart_const_handle                    Dart_const_handle;
+  typedef typename Map::Dart_descriptor                          Dart_descriptor;
+  typedef typename Map::Dart_const_descriptor                    Dart_const_descriptor;
   typedef CFlat<Map>                                         Flat;
   typedef std::list<Flat>                                    List_of_flats;
   typedef typename List_of_flats::iterator                   List_iterator;
@@ -122,7 +123,7 @@ public:
   typedef std::unordered_set<List_iterator, List_iterator_hash> Set_of_it;
 
 #ifdef CGAL_PWRLE_TURN_V2
-    typedef std::unordered_map<Dart_const_handle, std::size_t> TDartIds;
+    typedef std::unordered_map<Dart_const_descriptor, std::size_t> TDartIds;
 #endif //CGAL_PWRLE_TURN_V2
 
   /// Constructor
@@ -141,6 +142,8 @@ public:
   #endif //CGAL_PWRLE_TURN_V2
   {}
 
+  Path_on_surface_with_rle(const Self&) = default;
+
   /// Creates a Path_on_surface_with_rle from a Path_on_surface.
   /// If use_only_positive, consider only positive flats and not negative ones.
   /// If use_only_negative, consider only negative flats and not positive ones.
@@ -148,7 +151,7 @@ public:
   /// Both cannot be true at the same time.
   /// Note that for a minimal surface of genus>=2, we cannot have both -2 and
   /// +2 as turn, and thus these parameters are useless.
-  /// However, this case can occured for our unit tests on the cube, this is
+  /// However, this case can occur for our unit tests on the cube, this is
   /// the reason of these parameters.
   Path_on_surface_with_rle(const MQ& aMQ, const Path_on_surface<Map>& apath,
                            bool use_only_positive=false,
@@ -167,27 +170,26 @@ public:
 
     if (apath.is_closed())
     {
-      if (!use_only_negative && apath.next_positive_turn(i)==2)
+      if (!use_only_negative && apath.prev_positive_turn(i)==2)
       { positive_flat=true; negative_flat=false; }
-      else if (!use_only_positive && apath.next_negative_turn(i)==2)
+      else if (!use_only_positive && apath.prev_negative_turn(i)==2)
       { positive_flat=false; negative_flat=true; }
 
-      while ((positive_flat && apath.next_positive_turn(i)==2) ||
-             (negative_flat && apath.next_negative_turn(i)==2))
+      while ((positive_flat && apath.prev_positive_turn(i)==2) ||
+             (negative_flat && apath.prev_negative_turn(i)==2))
       {
-        i=apath.next_index(i);
+        i=apath.prev_index(i);
         if (i==0) // Case of a closed path, made of only one flat part.
         {
           m_path.push_back(Flat(apath.real_front(), apath.real_back(),
                                 (positive_flat?(static_cast<int>(apath.length()-1)):
                                  -(static_cast<int>(apath.length()-1)))));
           m_length=apath.length();
-          CGAL_assertion(is_valid());
+          CGAL_expensive_assertion(is_valid());
           return;
         }
       }
-      // Here i is the last dart of a flat
-      i=apath.next_index(i); // Now we are sure that i is the beginning of a flat
+      // Here i is the first dart of a flat
     }
 
     starti=i;
@@ -199,7 +201,7 @@ public:
     }
     while(i<apath.length() && i!=starti);
 
-    CGAL_assertion(is_valid(true));
+    CGAL_expensive_assertion(is_valid(true));
   }
 
   void swap(Self& p2)
@@ -312,7 +314,7 @@ public:
   bool is_flat_valid(const List_iterator& flat) const
   {
     CGAL_assertion(is_valid_iterator(flat));
-    Dart_const_handle dhend=flat->begin;
+    Dart_const_descriptor dhend=flat->begin;
     int nb=0;
     while(nb!=flat->length)
     {
@@ -342,7 +344,7 @@ public:
     if (is_empty()) { return !is_closed(); } // an empty past is not closed
 
     unsigned int nbdarts=0,i=0;
-    Dart_const_handle prev=(is_closed()?back():nullptr); // Last dart of the path
+    Dart_const_descriptor prev=(is_closed()?back():nullptr); // Last dart of the path
     for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
       if (prev!=nullptr && !get_map().template belong_to_same_cell<0>
@@ -419,7 +421,7 @@ public:
 
   /// @return the first dart of the path
   /// @pre !is_empty()
-  Dart_const_handle front()
+  Dart_const_descriptor front()
   {
     CGAL_assertion(!is_empty());
     return begin_of_flat(m_path.begin());
@@ -427,14 +429,14 @@ public:
 
   /// @return the last dart of the path
   /// @pre !is_empty()
-  Dart_const_handle back()
+  Dart_const_descriptor back()
   {
     CGAL_assertion(!is_empty());
     return end_of_flat(std::prev(m_path.end()));
   }
 
   /// @return true iff df can be added at the end of the path.
-  bool can_be_pushed(Dart_const_handle dh)
+  bool can_be_pushed(Dart_const_descriptor dh)
   {
     // This assert is too long
     // CGAL_assertion(get_map().darts().owns(dh));
@@ -446,9 +448,9 @@ public:
 
   /// Add the given dart at the end of this path.
   /// @pre can_be_pushed(dh)
-  void push_back(Dart_const_handle dh, bool update_isclosed=true)
+  void push_back(Dart_const_descriptor dh, bool update_isclosed=true)
   {
-    CGAL_assertion(dh!=Map::null_handle);
+    CGAL_assertion(dh!=Map::null_descriptor);
     // This assert is too long, it is tested in the is_valid method.
     // CGAL_assertion(can_be_pushed(dh));
 
@@ -486,8 +488,8 @@ public:
     if (is_empty()) { m_is_closed=false; }
     else
     {
-      Dart_const_handle pend=get_map().other_extremity(back());
-      if (pend==Map::null_handle) { m_is_closed=false; }
+      Dart_const_descriptor pend=get_map().other_extremity(back());
+      if (pend==Map::null_descriptor) { m_is_closed=false; }
       else
       { m_is_closed=get_map().template belong_to_same_cell<0>(front(), pend); }
     }
@@ -543,14 +545,14 @@ public:
   }
 
   /// @return the beginning of the flat
-  Dart_const_handle begin_of_flat(const List_iterator& it)
+  Dart_const_descriptor begin_of_flat(const List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
     return it->begin;
   }
 
   /// @return the end of the flat
-  Dart_const_handle end_of_flat(const List_iterator& it)
+  Dart_const_descriptor end_of_flat(const List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
     return it->end;
@@ -584,20 +586,20 @@ public:
     else                    { --(it->length); }
   }
 
-  void set_begin_of_flat(const List_iterator& it, Dart_const_handle dh)
+  void set_begin_of_flat(const List_iterator& it, Dart_const_descriptor dh)
   {
     CGAL_assertion(is_valid_iterator(it));
     it->begin=dh;
   }
 
-  void set_end_of_flat(const List_iterator& it, Dart_const_handle dh)
+  void set_end_of_flat(const List_iterator& it, Dart_const_descriptor dh)
   {
     CGAL_assertion(is_valid_iterator(it));
     it->end=dh;
   }
 
   /// @return the second dart of the given flat.
-  Dart_const_handle second_dart_of_a_flat(const List_iterator& it)
+  Dart_const_descriptor second_dart_of_a_flat(const List_iterator& it)
   {
     if (flat_length(it)>0)
     { return get_map().template beta<1, 2, 1>(begin_of_flat(it)); }
@@ -607,7 +609,7 @@ public:
   }
 
   /// @return the dart before the last dart of the given flat.
-  Dart_const_handle before_last_dart_of_a_flat(const List_iterator& it)
+  Dart_const_descriptor before_last_dart_of_a_flat(const List_iterator& it)
   {
     if (flat_length(it)>0)
     { return get_map().template beta<0, 2, 0>(end_of_flat(it)); }
@@ -727,10 +729,10 @@ public:
   }
 
   /// Reduce the length of the flat part starting at 'it' from its beginning
-  /// 'it' moves to the previous flat if the current flat disapeared.
+  /// 'it' moves to the previous flat if the current flat disappeared.
   /// The path could be not valid after this operation (consistency with next
   /// element should be ensure, by possibly updating the next flat part).
-  /// @return true iff the flat disapeared after its reduction.
+  /// @return true iff the flat disappeared after its reduction.
   bool reduce_flat_from_beginning(List_iterator& it,
                                   Set_of_it& modified_flats)
   {
@@ -753,10 +755,10 @@ public:
   }
 
   /// Reduce the length of the flat part starting at 'it' from its end.
-  /// 'it' moves to the previous flat if the current flat disapeared.
+  /// 'it' moves to the previous flat if the current flat disappeared.
   /// The path could be not valid after this operation (consistency with next
   /// element should be ensure, by possibly updating the next flat part).
-  /// @return true iff the flat disapeared after its reduction.
+  /// @return true iff the flat disappeared after its reduction.
   bool reduce_flat_from_end(List_iterator& it,
                             Set_of_it& modified_flats)
   {
@@ -1027,7 +1029,7 @@ public:
       return;
     }
 
-    it2=next_iterator(it1); // it2 is the the next flat after it1
+    it2=next_iterator(it1); // it2 is the next flat after it1
 
     reduce_flat_from_end(it1, modified_flats); // decrease also m_length
     reduce_flat_from_beginning(it3, modified_flats);
@@ -1153,7 +1155,7 @@ public:
   /// @return true iff the flat before flat 'it' can be extended by adding
   ///              dart 'dh' to its end.
   bool is_prev_flat_can_be_extended_at_end(const List_iterator& it,
-                                           Dart_const_handle dh,
+                                           Dart_const_descriptor dh,
                                            bool& positive_flat,
                                            bool& negative_flat)
   {
@@ -1165,7 +1167,7 @@ public:
     if (!m_use_only_positive && m_MQ.negative_turn(end_of_flat(ittemp), dh)==2)
     { negative_flat=true; }
 
-    if (flat_length(ittemp)==0) // Case of flat lengh 0
+    if (flat_length(ittemp)==0) // Case of flat length 0
     { return positive_flat || negative_flat; }
 
     return (flat_length(ittemp)>0 && positive_flat) ||
@@ -1175,7 +1177,7 @@ public:
   /// @return true iff the flat before flat 'it' can be extended by adding
   ///              dart 'dh' to its end.
   bool is_prev_flat_can_be_extended_at_end(const List_iterator& it,
-                                           Dart_const_handle dh)
+                                           Dart_const_descriptor dh)
   {
     bool dummy1, dummy2;
     return is_prev_flat_can_be_extended_at_end(it, dh, dummy1, dummy2);
@@ -1184,7 +1186,7 @@ public:
   /// @return true iff the flat after flat 'it' can be extended by adding
   ///              dart 'dh' to its beginning.
   bool is_next_flat_can_be_extended_at_beginning(const List_iterator& it,
-                                                 Dart_const_handle dh,
+                                                 Dart_const_descriptor dh,
                                                  bool& positive_flat,
                                                  bool& negative_flat)
   {
@@ -1198,7 +1200,7 @@ public:
      if (!m_use_only_positive && m_MQ.negative_turn(dh, begin_of_flat(ittemp))==2)
      { negative_flat=true; }
 
-     if (flat_length(ittemp)==0)  // Case of flat lengh 0
+     if (flat_length(ittemp)==0)  // Case of flat length 0
      { return positive_flat || negative_flat; }
 
      return (flat_length(ittemp)>0 && positive_flat) ||
@@ -1208,14 +1210,23 @@ public:
   /// @return true iff the flat after flat 'it' can be extended by adding
   ///              dart 'dh' to its beginning.
   bool is_next_flat_can_be_extended_at_beginning(const List_iterator& it,
-                                                 Dart_const_handle dh)
+                                                 Dart_const_descriptor dh)
   {
     bool dummy1, dummy2;
     return is_next_flat_can_be_extended_at_beginning(it, dh, dummy1, dummy2);
   }
 
+  /// @return true iff the flat 'it' forms a switchable subpath (aka left-L-shape)
+  bool is_switchable(const List_iterator& it)
+  {
+    CGAL_assertion(is_valid_iterator(it));
+    if (it == m_path.begin() || std::next(it) == m_path.end()) { return false; }
+    std::size_t t=next_positive_turn(it);
+    return (t==1 && flat_length(it) >= 0);
+  }
+
   /// Add the given dart 'dh' before the flat 'it'.
-  void add_dart_before(const List_iterator& it, Dart_const_handle dh,
+  void add_dart_before(const List_iterator& it, Dart_const_descriptor dh,
                        Set_of_it& modified_flats)
   {
     CGAL_assertion(is_valid_iterator(it));
@@ -1238,7 +1249,7 @@ public:
   }
 
   /// Add the given dart 'dh' after the flat 'it'.
-  void add_dart_after(const List_iterator& it, Dart_const_handle dh,
+  void add_dart_after(const List_iterator& it, Dart_const_descriptor dh,
                       Set_of_it& modified_flats)
   {
     CGAL_assertion(is_valid_iterator(it));
@@ -1288,8 +1299,8 @@ public:
         if (flat_length(it1)>0) // Case where the first flat is positive
         { // We split the flat in two parts
           CGAL_assertion(flat_length(it1)>=1);
-          Dart_const_handle dh1=begin_of_flat(it1);
-          Dart_const_handle dh2=end_of_flat(it1);
+          Dart_const_descriptor dh1=begin_of_flat(it1);
+          Dart_const_descriptor dh2=end_of_flat(it1);
           if (flat_length(it1)==1) // only one flat with two darts
           {
             reduce_flat_from_end(it1, modified_flats);
@@ -1325,7 +1336,7 @@ public:
 
     if (flat_length(it1)>0) // Case where the first flat is positive
     { // We split the flat in two parts
-      Dart_const_handle dh=end_of_flat(it1); // last dart of the first flat
+      Dart_const_descriptor dh=end_of_flat(it1); // last dart of the first flat
       reduce_flat_from_end(it1, modified_flats);
       it1=m_path.insert(it2, Flat(dh)); // insert dh before it2
       ++m_length;
@@ -1334,7 +1345,7 @@ public:
 
     if (flat_length(it2)>0) // Case where the second flat is positive, we need to
     { // split it into two parts
-      Dart_const_handle dh=begin_of_flat(it2); // first dart of the second flat
+      Dart_const_descriptor dh=begin_of_flat(it2); // first dart of the second flat
       reduce_flat_from_beginning(it2, modified_flats);
       it2=m_path.insert(it2, Flat(dh)); // insert dh before the second flat
       ++m_length;
@@ -1344,12 +1355,12 @@ public:
     // CGAL_assertion(is_valid(false));
     // CGAL_assertion(is_l_shape(it1));
 
-    Dart_const_handle dh1=get_map().template beta<2,1>(begin_of_flat(it1));
-    Dart_const_handle dh2=get_map().template beta<1>(dh1);
-    Dart_const_handle dh3=get_map().template beta<2,1,2,0>(end_of_flat(it1));
-    Dart_const_handle dh4=get_map().template beta<2,0,2,1>(begin_of_flat(it2));
-    Dart_const_handle dh5=get_map().template beta<2,0,0>(end_of_flat(it2));
-    Dart_const_handle dh6=get_map().template beta<1>(dh5);
+    Dart_const_descriptor dh1=get_map().template beta<2,1>(begin_of_flat(it1));
+    Dart_const_descriptor dh2=get_map().template beta<1>(dh1);
+    Dart_const_descriptor dh3=get_map().template beta<2,1,2,0>(end_of_flat(it1));
+    Dart_const_descriptor dh4=get_map().template beta<2,0,2,1>(begin_of_flat(it2));
+    Dart_const_descriptor dh5=get_map().template beta<2,0,0>(end_of_flat(it2));
+    Dart_const_descriptor dh6=get_map().template beta<1>(dh5);
 
     bool first_flat_zero=(flat_length(it1)==0);
     bool second_flat_zero=(flat_length(it2)==0);
@@ -1476,7 +1487,7 @@ public:
   /// Canonize the path
   void canonize()
   {
-    CGAL_assertion(is_valid());
+    CGAL_expensive_assertion(is_valid());
 
     if (is_empty()) { return; }
 
@@ -1496,7 +1507,7 @@ public:
 
      CGAL_assertion(remove_brackets()==false);
      CGAL_assertion(remove_spurs()==false);
-     CGAL_assertion(is_valid());
+     CGAL_expensive_assertion(is_valid());
   }
 
   void display_positive_turns()

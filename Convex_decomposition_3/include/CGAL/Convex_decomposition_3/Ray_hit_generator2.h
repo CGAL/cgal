@@ -18,6 +18,7 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Convex_decomposition_3/SM_walls.h>
+#include <CGAL/Convex_decomposition_3/Ray_hit_generator.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 233
@@ -26,42 +27,23 @@
 namespace CGAL {
 
 template<typename Nef_>
-class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
-
+class Ray_hit_generator2 : public Ray_hit_generator<Nef_> {
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
-  typedef typename Nef_polyhedron::Items         Items;
-  typedef CGAL::SNC_decorator<SNC_structure>     Base;
-  typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
-  typedef CGAL::SNC_intersection<SNC_structure>  SNC_intersection;
-  typedef CGAL::SNC_constructor<Items, SNC_structure>
-    SNC_constructor;
+  typedef Ray_hit_generator<Nef_polyhedron>      Base;
 
   typedef typename SNC_structure::Sphere_map     Sphere_map;
-  typedef CGAL::SM_decorator<Sphere_map>         SM_decorator;
-  typedef CGAL::SM_point_locator<SM_decorator>   SM_point_locator;
   typedef CGAL::SM_walls<Sphere_map>             SM_walls;
 
-  typedef typename Base::Segment_3               Segment_3;
-  typedef typename Base::Point_3                 Point_3;
   typedef typename Base::Ray_3                   Ray_3;
   typedef typename Base::Vector_3                Vector_3;
   typedef typename Base::Sphere_point            Sphere_point;
   typedef typename Base::Vertex_handle           Vertex_handle;
-  typedef typename Base::SVertex_handle           SVertex_handle;
+  typedef typename Base::SVertex_handle          SVertex_handle;
   typedef typename Base::Halfedge_handle         Halfedge_handle;
-  typedef typename Base::Halffacet_handle        Halffacet_handle;
-  typedef typename Base::Object_handle           Object_handle;
 
-  typedef typename Base::Vertex_iterator         Vertex_iterator;
-  typedef typename Base::SVertex_iterator         SVertex_iterator;
-
-  Vector_3 dir;
   Vertex_handle vs;
-  SNC_structure* sncp;
-  SNC_point_locator* pl;
-
   bool edge_splitted;
   Halfedge_handle second_half;
 
@@ -69,67 +51,10 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   bool vertex_added;
 
  public:
-  Ray_hit_generator2(Vector_3 d, Vertex_handle v) : dir(d), vs(v) {}
+  Ray_hit_generator2(Vector_3 d, Vertex_handle v)
+    : Base(d), vs(v), edge_splitted(false), vertex_added(false) {}
 
-  Vertex_handle create_vertex_on_first_hit(const Ray_3& r) {
-
-    CGAL_NEF_TRACEN("shoot ray in SNC " << r);
-
-    //    CGAL_NEF_SETDTHREAD(503*509);
-    Object_handle o = pl->shoot(r);
-    //    CGAL_NEF_SETDTHREAD(1);
-
-    Vertex_handle v;
-    if(assign(v, o)) {
-      CGAL_NEF_TRACEN("Found vertex " << v->point());
-      return v;
-    }
-
-    Point_3 ip;
-    SNC_intersection I;
-    SNC_constructor C(*sncp);
-
-    Halfedge_handle e;
-    if(assign(e, o)) {
-       CGAL_NEF_TRACEN("Found edge " << e->source()->point()
-                       << "->" << e->twin()->source()->point());
-      Segment_3 seg(e->source()->point(), e->twin()->source()->point());
-      I.does_intersect_internally(r, seg, ip);
-      ip = normalized(ip);
-      v = C.create_from_edge(e,ip);
-      pl->add_vertex(v);
-
-      CGAL_NEF_TRACEN("new vertex " << ip);
-
-      SVertex_iterator svi = v->svertices_begin();
-      SVertex_handle svf = svi;
-      SVertex_handle svb = ++svi;
-
-      if(svf->point() == e->point()) {
-        svb->twin() = e;
-        svf->twin() = e->twin();
-        e->twin()->twin() = svf;
-        e->twin() = svb;
-#ifndef CGAL_NEF_NO_INDEXED_ITEMS
-        svb->set_index(e->get_index());
-        svf->set_index();
-        svf->twin()->set_index(svf->get_index());
-#endif
-      } else {
-        svf->twin() = e;
-        svb->twin() = e->twin();
-        e->twin()->twin() = svb;
-        e->twin() = svf;
-#ifndef CGAL_NEF_NO_INDEXED_ITEMS
-        svf->set_index(e->get_index());
-        svb->set_index();
-        svb->twin()->set_index(svb->get_index());
-#endif
-      }
-
-      pl->add_edge(svf);
-      pl->add_edge(svb);
-
+  void handle_splits(Halfedge_handle e, SVertex_handle svf, SVertex_handle svb) override {
       edge_splitted = true;
       if(e->source()->point() < e->twin()->source()->point())
         second_half = svf;
@@ -142,28 +67,11 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
                       << "->" << second_half->twin()->source()->point());
 
       vertex_added = true;
-      return v;
-    }
-
-    Halffacet_handle f;
-    if(assign(f, o)) {
-      CGAL_NEF_TRACEN("Found facet ");
-      I.does_intersect_internally(r, f, ip);
-      ip = normalized(ip);
-      v = C.create_from_facet(f,ip);
-      pl->add_vertex(v);
-      CGAL_NEF_TRACEN("new vertex " << ip);
-
-      return v;
-    }
-
-    CGAL_error_msg( "ray should hit vertex, edge, or facet");
-    return Vertex_handle();
   }
 
-  void operator()(SNC_and_PL& sncpl) {
-    sncp = sncpl.sncp;
-    pl = sncpl.pl;
+  void operator()(SNC_and_PL& sncpl) override {
+    Base::sncp = sncpl.sncp;
+    Base::pl = sncpl.pl;
 
     edge_splitted = false;
     vertex_added = false;
@@ -172,18 +80,17 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
                     << " (" << dir << ")");
     SM_walls smw(&*vs);
     SVertex_handle sv1, sv2;
-    if(smw.need_to_shoot(Sphere_point(dir),sv1)) {
-      Ray_3 r(vs->point(), dir);
-      v_new = create_vertex_on_first_hit(r);
+    if(smw.need_to_shoot(Sphere_point(Base::dir),sv1)) {
+      Ray_3 r(vs->point(), Base::dir);
+      v_new = Base::create_vertex_on_first_hit(r);
       SM_walls smw(&*v_new);
-      sv2 = smw.add_ray_svertex(Sphere_point(-dir));
+      sv2 = smw.add_ray_svertex(Sphere_point(-Base::dir));
       CGAL_NEF_TRACEN("sv1 " << sv1->source()->point() << "( " << sv1->point() << ")");
       CGAL_NEF_TRACEN("sv2 " << sv2->source()->point() << "( " << sv2->point() << ")");
       sv1->twin() = sv2; // TODO: why is this necessary?
       sv2->twin() = sv1; // these edges should not go into the Edge_sorter
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      sv1->set_index();
-      sv2->set_index(sv1->get_index());
+      sv2->set_index(sv1->new_index());
 #endif
     }
   }

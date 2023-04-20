@@ -52,6 +52,7 @@ These refining concepts and their models are described in Chapter
 \cgalCRPSection{Concepts}
 - `TriangulationDataStructure_2`
 - `TriangulationDataStructure_2::Face`
+- `TriangulationDataStructure_2::Face_data`
 - `TriangulationDataStructure_2::Vertex`
 
 - `TriangulationDSFaceBase_2`

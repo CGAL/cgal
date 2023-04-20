@@ -7,7 +7,7 @@
 GlViewer::GlViewer(QWidget *pParent)
 : QOpenGLWidget(pParent)
 {
-  m_scene = NULL;
+  m_scene = nullptr;
 
   m_view_points         = true;
   m_view_tolerance      = false;

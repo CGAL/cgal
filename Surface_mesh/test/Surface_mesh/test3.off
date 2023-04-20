@@ -7,7 +7,7 @@ COFF
 
 1 0 0     36   #blue
 1 1 0     34   #red
-0 1 0 0 36   #blue
+0 1 0  36   #blue
 
 -1 1 0 34  #red
 -1 0 0 36  #blue

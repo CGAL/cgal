@@ -3,13 +3,9 @@ The usage is:
 
 where alpha:
 1: means to bench the BBox(CK) with Vartraits
-2: means to bench the Lazy(CK) with Vartraits
 3: means to bench the CK with Vartraits
-4: means to bench the Bbox(Lazy(CK)) with Vartraits
 5: means to bench the BBox(CK) with Circulartraits
-6: means to bench the Lazy(CK) with Circulartraits
 7: means to bench the CK(CK) with Circulartraits
-8: means to bench the Bbox(Lazy(CK)) Circulartraits
 (le 0 est interne)
 
 beta:
@@ -60,7 +56,7 @@ The output:
 
 In std::cout :
 The number of elements to compute the arrangement
-The number of circles and polygons (wich the side may be circular arcs)
+The number of circles and polygons (which the side may be circular arcs)
 The time needed to compute it,
 The number of Vertices, Edges and Faces of the arrangement
 
@@ -74,5 +70,3 @@ with 5 <= a <= 8  and 0 <= b <= 8, we cannot use the Circulartraits to handle th
 
 Compile with -DCGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES if you want to benchmark with
 the same kernel, but with an additional map for supporting circles.
-
-

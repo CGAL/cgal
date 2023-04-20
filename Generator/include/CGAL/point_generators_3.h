@@ -25,7 +25,7 @@
 #include <CGAL/generators.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/internal/Generic_random_point_generator.h>
+#include <CGAL/Generator/internal/Generic_random_point_generator.h>
 #include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {

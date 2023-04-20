@@ -429,6 +429,8 @@ struct Scene_image_item_priv
   Scene_image_item_priv(int display_scale, bool hidden, Scene_image_item* parent)
     : m_initialized(false)
     , m_voxel_scale(display_scale)
+    , m_image_weights()
+    , m_sigma_weights(0.f)
   {
     item = parent;
     is_ogl_4_3 = Three::mainViewer()->isOpenGL_4_3();
@@ -450,6 +452,8 @@ struct Scene_image_item_priv
   bool is_ogl_4_3;
   Scene_image_item* item;
   internal::Vertex_buffer_helper* helper;
+  Image m_image_weights;
+  float m_sigma_weights;
 
 //#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 };
@@ -495,6 +499,24 @@ Scene_image_item::compute_bbox() const
                 m_image->image()->ty+(m_image->ydim()-1) * m_image->vy(),
                 m_image->image()->tz+(m_image->zdim()-1) * m_image->vz()));
 }
+
+const Image*
+Scene_image_item::image_weights() const
+{
+  return &d->m_image_weights;
+}
+void
+Scene_image_item::set_image_weights(const Image& img, const float sigma)
+{
+  d->m_image_weights = img;
+  d->m_sigma_weights = sigma;
+}
+float
+Scene_image_item::sigma_weights() const
+{
+  return d->m_sigma_weights;
+}
+
 
 void
 Scene_image_item::draw(Viewer_interface* viewer) const

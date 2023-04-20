@@ -20,7 +20,7 @@ _test_cls_regular_hierarchy_2( const Rh & )
   Regular_hierarchy rh;
 
   CGAL::Random rand;
-  // std::ofstream output("data"); CGAL::set_binary_mode(output);
+  // std::ofstream output("data"); CGAL::IO::set_binary_mode(output);
   for(int i = 0; i < nn ; i++){
     Bare_point p( rand.get_double(), rand.get_double());
     Weighted_point wp(p, (rand.get_double())*100);
@@ -32,7 +32,7 @@ _test_cls_regular_hierarchy_2( const Rh & )
   std::cerr << std::endl;
   rh.is_valid(true);
 
-//    std::ifstream input("data"); CGAL::set_binary_mode(input);
+//    std::ifstream input("data"); CGAL::IO::set_binary_mode(input);
 //    Weighted_point wp;
 //    int inr = 0;
 //    while(input) {

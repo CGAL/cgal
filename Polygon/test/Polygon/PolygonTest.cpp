@@ -51,6 +51,18 @@ void test_default_methods(      vector<Point>& pvec0,
 
     x=p0;
     assert(x == p0);
+
+    // move assignment and constructor
+    x.clear();
+    assert(x.is_empty());
+    x = std::move(p0);
+    assert(p0.is_empty());
+    assert(x == p0_copy);
+
+    CGAL::Polygon_2<K, list<Point> > xm(std::move(x));
+     assert(x.is_empty());
+    assert(xm == p0_copy);
+
   }
 
   {
@@ -91,7 +103,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
   typedef ListPolygon::Edge_const_circulator EC;
   typedef ListPolygon::Edge_const_iterator EI;
 
-  CGAL::set_ascii_mode(cout);
+  CGAL::IO::set_ascii_mode(cout);
 
   {
     VC v = p.vertices_circulator();
@@ -99,7 +111,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic1);
 
     VC vstart(v);
-    if (v != 0)
+    if (v != nullptr)
       do {
         cout << *v << endl;
         ++v;
@@ -113,7 +125,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic2);
 
     EC estart(e);
-    if (e != 0)
+    if (e != nullptr)
       do {
         cout << *e << endl;
         ++e;
@@ -132,7 +144,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic3);
 
     VCC vstart(v);
-    if (v != 0)
+    if (v != nullptr)
       do {
         cout << *v << endl;
         ++v;
@@ -146,7 +158,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic4);
 
     EC estart(e);
-    if (e != 0)
+    if (e != nullptr)
       do {
         cout << *e << endl;
         ++e;
@@ -165,28 +177,28 @@ void test_stream_operators(ListPolygon& p)
 {
   {
     std::ofstream to("polytest.ascii");
-    CGAL::set_ascii_mode(to);
+    CGAL::IO::set_ascii_mode(to);
     to << p;
     to.close();
 
     ListPolygon p_copy;
     std::ifstream from("polytest.ascii");
-    CGAL::set_ascii_mode(from);
+    CGAL::IO::set_ascii_mode(from);
     from >> p_copy;
 
     assert(p == p_copy);
   }
   {
     std::ofstream to("polytest.pretty");
-    CGAL::set_pretty_mode(to);
+    CGAL::IO::set_pretty_mode(to);
     to << p;
   }
   {
     std::ofstream to("polytest.binary");
-    CGAL::set_binary_mode(to);
+    CGAL::IO::set_binary_mode(to);
     to << p;
   }
-  CGAL::set_pretty_mode(cout);
+  CGAL::IO::set_pretty_mode(cout);
 }
 
 //-----------------------------------------------------------------------//
@@ -336,4 +348,3 @@ int main()
 
   return 0;
 }
-

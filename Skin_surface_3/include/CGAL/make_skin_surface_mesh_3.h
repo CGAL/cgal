@@ -33,8 +33,9 @@ void make_skin_surface_mesh_3(Polyhedron_3 &p,
                               int nSubdivisions=0,
                               bool grow_balls=true)
 {
-  if (shrink_factor == 1) {
+  if (shrink_factor >= 1) {
     make_union_of_balls_mesh_3(p,begin,end,nSubdivisions);
+    return;
   }
 
   typedef typename WP_iterator::value_type               Weighted_point;

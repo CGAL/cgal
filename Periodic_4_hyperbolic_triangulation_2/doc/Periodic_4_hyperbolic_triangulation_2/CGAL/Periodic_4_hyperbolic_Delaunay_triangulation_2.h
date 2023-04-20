@@ -21,10 +21,12 @@ The class expects two template parameters.
                 and faces, following the concepts `Periodic_4HyperbolicTriangulationVertexBase_2` and
                 `Periodic_4HyperbolicTriangulationFaceBase_2`, respectively. The default value for
                 this parameter is
-                `Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_vertex_base_2<GT>, Periodic_4_hyperbolic_triangulation_face_base_2<GT> >`
-
+                \code
+                CGAL::Triangulation_data_structure_2<
+                  CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2<GT>,
+                  CGAL::Periodic_4_hyperbolic_triangulation_face_base_2<GT> >
+                \endcode
 */
-
   template <  class GT, class TDS >
   class Periodic_4_hyperbolic_Delaunay_triangulation_2: public Periodic_4_hyperbolic_triangulation_2<GT, TDS> {
 

@@ -18,9 +18,13 @@
 namespace CGAL {
 
 enum Mesher_level_conflict_status {
-  NO_CONFLICT = 0,
-  CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED,
-  CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+  NO_CONFLICT = 0
+  , CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
+  , CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+  , THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE
+  , ELEMENT_WAS_A_ZOMBIE
+  , COULD_NOT_LOCK_ZONE
+  , COULD_NOT_LOCK_ELEMENT
 };
 
 struct Null_mesher_level {
@@ -104,7 +108,7 @@ private:
   }
   //@}
 
-  /** \name Private member datas */
+  /** \name Private member data */
 
   Previous& previous_level; /**< The previous level of the refinement
                                     process. */

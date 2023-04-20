@@ -5,6 +5,7 @@
 \example Boolean_set_operations_2/conic_traits_adapter.cpp
 \example Boolean_set_operations_2/connect_polygon.cpp
 \example Boolean_set_operations_2/do_intersect.cpp
+\example Boolean_set_operations_2/draw_polygon_set.cpp
 \example Boolean_set_operations_2/dxf_union.cpp
 \example Boolean_set_operations_2/sequence.cpp
 \example Boolean_set_operations_2/set_union.cpp

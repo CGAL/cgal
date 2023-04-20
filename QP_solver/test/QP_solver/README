@@ -15,9 +15,9 @@ ends in ".cpp". If for such a file a corresponding ".cin" file exits, the latter
 is used as input. In our case, this means that the CGAL testsuite will
 automatically perform the following commands:
 
-  ./data_to_mps < data_to_mps.cin
-  ./data_to_mps-double < data_to_mps-double.cin
-  ./data_to_mps-rational < data_to_mps-rational.cin
+  data_to_mps < data_to_mps.cin
+  data_to_mps-double < data_to_mps-double.cin
+  data_to_mps-rational < data_to_mps-rational.cin
   ./master_mps_to_derivatives
   ./test_MPS < test_MPS.cin
   ./test_solver < test_solver.cin
@@ -84,7 +84,7 @@ SVN repository) and construct the new test_solver.cin.
 As a remark: if you start off with a ".data"-file (i.e., with "Test.data")
 then you can solve this file by running
 
-  ./data_to_mps "Simple testcase" "Simple" < Test.data | ./test_MPS 0
+  data_to_mps "Simple testcase" "Simple" < Test.data | ./test_MPS 0
 
 where the "0" argument is the verbosity (tune it up if need be).
 

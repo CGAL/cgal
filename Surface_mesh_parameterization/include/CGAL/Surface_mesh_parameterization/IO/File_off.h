@@ -23,11 +23,11 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/circulator.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <cstddef>
 #include <fstream>
 #include <sstream>
@@ -96,11 +96,11 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  typedef boost::unordered_map<vertex_descriptor, std::size_t> Vertex_index_map;
+  typedef std::unordered_map<vertex_descriptor, std::size_t> Vertex_index_map;
   Vertex_index_map vium;
   boost::associative_property_map<Vertex_index_map> vimap(vium);
 
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);

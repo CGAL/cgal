@@ -8,7 +8,7 @@ namespace CGAL {
 
 The class `Hyperbolic_triangulation_face_base_2` is designed as the
 default model for the face concept `HyperbolicTriangulationFaceBase_2`
-offered by %CGAL.
+offered by \cgal.
 
 \tparam Gt must be a model of `HyperbolicDelaunayTriangulationTraits_2`.
 \tparam Fb must be a model of `TriangulationFaceBase_2`. %Defaults to `Triangulation_face_base_2<Gt>`.

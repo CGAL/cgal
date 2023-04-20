@@ -79,7 +79,7 @@ void test_speed_for_query(const Tree& tree,
         }
         nb++;
     }
-    unsigned int speed = (unsigned int)(nb / timer.time());
+    unsigned int speed = static_cast<unsigned int>(nb / timer.time());
     std::cout.precision(10);
     std::cout.width(15);
     std::cout << speed << " intersections/s with " << query_name << std::endl;
@@ -106,9 +106,9 @@ void test_impl(Tree& tree, Polyhedron&, const double duration)
 int main()
 {
     const double duration = 0.1; // duration of each test
-    test_kernels<TRIANGLE>("./data/cube.off",duration);
-    test_kernels<TRIANGLE>("./data/coverrear.off",duration);
-    test_kernels<TRIANGLE>("./data/finger.off",duration);
-    test_kernels<TRIANGLE>("./data/pinion.off",duration);
+    test_kernels<TRIANGLE>("data/cube.off",duration);
+    test_kernels<TRIANGLE>("data/coverrear.off",duration);
+    test_kernels<TRIANGLE>("data/finger.off",duration);
+    test_kernels<TRIANGLE>(CGAL::data_file_path("meshes/pinion_small.off"),duration);
     return EXIT_SUCCESS;
 }

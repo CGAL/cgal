@@ -17,36 +17,36 @@ void test_io(){
     // MODE ASCII
     {
         std::stringstream ss;
-        CGAL::set_ascii_mode(ss);
-        ss << CGAL::oformat(NT(1));
+        CGAL::IO::set_ascii_mode(ss);
+        ss << CGAL::IO::oformat(NT(1));
         //std::cout << ss.str()<<std::endl;
         assert( ss.str() == "1/1");
     }{
         std::stringstream ss;
-        CGAL::set_ascii_mode(ss);
-        ss << CGAL::oformat(NT(0));
+        CGAL::IO::set_ascii_mode(ss);
+        ss << CGAL::IO::oformat(NT(0));
         assert( ss.str() == "0/1");
     }{
         std::stringstream ss;
-        CGAL::set_ascii_mode(ss);
-        ss << CGAL::oformat(NT(-1));
+        CGAL::IO::set_ascii_mode(ss);
+        ss << CGAL::IO::oformat(NT(-1));
         assert( ss.str() == "-1/1");
     }
     //MODE PRETTY
     {
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << CGAL::oformat(NT(2), CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(NT(2), CGAL::Parens_as_product_tag());
         assert( ss.str() == "2");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << CGAL::oformat(NT(1)/NT(2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(NT(1)/NT(2),CGAL::Parens_as_product_tag());
         assert( ss.str() == "(1/2)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << CGAL::oformat(NT(-2), CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(NT(-2), CGAL::Parens_as_product_tag());
         assert( ss.str() == "(-2)");
     }
 }
@@ -69,7 +69,7 @@ int main() {
     CGAL::test_real_embeddable<NT>();
 
     CGAL::test_fraction_traits<NT>();
-    // backward compatiblity
+    // backward compatibility
     CGAL::test_rational_traits<NT>();
 
     test_io();

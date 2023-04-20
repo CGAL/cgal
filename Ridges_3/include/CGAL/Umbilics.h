@@ -19,7 +19,7 @@
 #include <CGAL/PolyhedralSurf_neighbors.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <list>
 #include <vector>
@@ -31,7 +31,7 @@ enum Umbilic_type { NON_GENERIC_UMBILIC = 0, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILI
 
 //-------------------------------------------------------------------
 //Umbilic : stores umbilic data, its location given by a vertex, its
-//type and a circle of edges bording a disk containing the vertex
+//type and a circle of edges bordering a disk containing the vertex
 //------------------------------------------------------------------
 template < class TriangleMesh >
 class Umbilic
@@ -110,10 +110,10 @@ class Umbilic_approximation
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator  Vertex_const_iterator;
 
   //requirements for the templates TriangleMesh and VertexFTMap or VertexVectorMap
-  CGAL_static_assertion((boost::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value));
-  CGAL_static_assertion((boost::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value));
-  CGAL_static_assertion((boost::is_same<FT, typename VertexFTMap::value_type>::value));
-  CGAL_static_assertion((boost::is_same<Vector_3, typename VertexVectorMap::value_type>::value));
+  CGAL_static_assertion((std::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value));
+  CGAL_static_assertion((std::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value));
+  CGAL_static_assertion((std::is_same<FT, typename VertexFTMap::value_type>::value));
+  CGAL_static_assertion((std::is_same<Vector_3, typename VertexVectorMap::value_type>::value));
 
   typedef CGAL::Umbilic<TriangleMesh> Umbilic;
 
@@ -133,7 +133,7 @@ class Umbilic_approximation
   const TriangleMesh& P;
 
   typedef T_PolyhedralSurf_neighbors<TriangleMesh> Poly_neighbors;
-  boost::shared_ptr<Poly_neighbors> poly_neighbors;
+  std::shared_ptr<Poly_neighbors> poly_neighbors;
 
   CGAL::Abs<FT> cgal_abs;
   CGAL::To_double<FT> To_double;
@@ -165,7 +165,7 @@ Umbilic_approximation(const TriangleMesh& p,
 {
   CGAL_precondition(is_triangle_mesh(P));
 
-  poly_neighbors = boost::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
+  poly_neighbors = std::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
 }
 
 
@@ -192,7 +192,7 @@ compute(OutputIterator umbilics_it, FT size)
     vces.clear();
     contour.clear();
     is_umbilic = true;
-    //the size of neighbourhood is (size * OneRingSize)
+    //the size of neighborhood is (size * OneRingSize)
     poly_neighbors->compute_neighbors(vh, vces, contour, size);
 
 

@@ -16,7 +16,7 @@ This functor is required to provide two operators. The first operator takes two
 arguments and returns true if the first argument divides the second argument.
 The second operator returns \f$ c\f$ via the additional third argument.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicStructureTraits`
 \sa `AlgebraicStructureTraits_::IntegralDivision`

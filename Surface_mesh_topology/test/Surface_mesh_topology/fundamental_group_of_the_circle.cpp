@@ -17,6 +17,8 @@ Then it verify that
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 
+#include <cassert>
+
 // If you want to use a viewer, you can use qglviewer.
 #ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/draw_face_graph_with_paths.h>
@@ -36,12 +38,12 @@ void create_positive_loop_88(Path_on_surface<SM>& p, unsigned int n)
   if (n==0)
   {
     p.push_back_by_index(88, true, true);
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
   else
   {
     p.extend_straight_positive(10*n-1);
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,12 +54,12 @@ void create_negative_loop_88(Path_on_surface<SM>& p, unsigned int n)
   if (n==0)
   {
     p.push_back_by_index(88, false, true);
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
   else
   {
     p.extend_straight_positive(10*n-1);
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,7 +70,7 @@ void create_positive_loop_24(Path_on_surface<SM>& p, unsigned int n)
   if (n==0)
   {
     p.push_back_by_index(24, true, true);
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
   else
   {
@@ -80,7 +82,7 @@ void create_positive_loop_24(Path_on_surface<SM>& p, unsigned int n)
   CGAL::draw(p.get_mesh(), v, "Title"); */
 #endif // CGAL_USE_BASIC_VIEWER
 
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,12 +93,12 @@ void create_negative_loop_24(Path_on_surface<SM>& p, unsigned int n)
   if (n==0)
   {
     p.push_back_by_index(24, false, true);
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
   else
   {
     p.extend_straight_negative((10*n)-1);
-    CGAL_assertion(p.is_closed());
+    assert(p.is_closed());
   }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -159,7 +161,7 @@ int main()
       if (!h22)
       { std::cout<<"FAILURE : a path associated with int "<<j<<" is not homotopic to himself"<<std::endl; test_valid=false; }
       if (h12!=h21)
-      { std::cout<<"FAILURE : the homotopy relation is not symetric on paths associated with ints "<<i<<", "<<j<<std::endl; test_valid=false; }
+      { std::cout<<"FAILURE : the homotopy relation is not symmetric on paths associated with ints "<<i<<", "<<j<<std::endl; test_valid=false; }
 
       if (i==j && (!h12 || !h21))
       { std::cout<<"FAILURE : paths both associated with int "<<i<<" are not homotopic"<<std::endl; test_valid=false; }

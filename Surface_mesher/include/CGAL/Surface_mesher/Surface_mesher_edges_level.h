@@ -591,7 +591,6 @@ namespace Surface_mesher {
                                const Point_3&,
                                const Zone& zone)
     {
-      CGAL_assertion_code(bool is_e_removed = false);
       CGAL_assertion_code(const Cell_handle& c = e.first);
       CGAL_assertion_code(Vertex_handle va = c->vertex(e.second));
       CGAL_assertion_code(Vertex_handle vb = c->vertex(e.third));
@@ -614,7 +613,6 @@ namespace Surface_mesher {
           CGAL_assertion_code(Vertex_handle eit_va = eit->first->vertex(eit->second));
           CGAL_assertion_code(Vertex_handle eit_vb = eit->first->vertex(eit->third));
           CGAL_assertion_code(order_pair(eit_va, eit_vb));
-          CGAL_assertion_code(if(va == eit_va && vb == eit_vb) is_e_removed = true);
 //           c2t3.remove_from_complex(*eit);
           this->remove_element(make_pair_of_vertices(*eit));
 #ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INSERTIONS
@@ -626,7 +624,6 @@ namespace Surface_mesher {
         boost::format("     before insertion: remove %1% edges\n")
         % number_of_edges_removed;
 #endif
-//       CGAL_assertion(is_e_removed == true);
     }
 
     // for visitors

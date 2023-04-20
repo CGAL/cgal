@@ -33,10 +33,12 @@
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
-#include <sstream>
-#include <cassert>
 #include <CGAL/Min_sphere_annulus_d_traits_d.h>
 #include <CGAL/Min_sphere_d.h>
+#include <CGAL/Quotient.h>
+
+#include <cassert>
+#include <sstream>
 
 using namespace CGAL;
 
@@ -228,11 +230,11 @@ int main ()
 
 
     std::ostringstream ost;           // output string
-    set_ascii_mode (ost);
+    IO::set_ascii_mode (ost);
     ost << msC << msH << std::endl;      // write spheres
 
     std::istringstream ist (ost.str().c_str());  // input string
-    set_ascii_mode (ist);
+    IO::set_ascii_mode (ist);
     ist >> msC >> msH;              // read spheres
 
     assert(centerC == msC.center());

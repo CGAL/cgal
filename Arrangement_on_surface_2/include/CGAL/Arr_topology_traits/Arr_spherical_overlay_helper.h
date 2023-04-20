@@ -8,9 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Ron Wein <wein@post.tau.ac.il>
+//            Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_OVERLAY_HELPER_H
 #define CGAL_ARR_SPHERICAL_OVERLAY_HELPER_H
@@ -57,6 +57,7 @@ public:
   typedef typename Gt2::Point_2                         Point_2;
 
   typedef typename Event::Subcurve_iterator             Subcurve_iterator;
+  typedef typename Event::Subcurve_reverse_iterator     Subcurve_reverse_iterator;
 
 
   // The input arrangements (the "red" and the "blue" one):
@@ -112,97 +113,158 @@ public:
         event->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
       return;
 
-    Arr_curve_end ind = ((event->number_of_left_curves() == 0) &&
-                         (event->number_of_right_curves() != 0)) ?
-      ARR_MIN_END : ARR_MAX_END;
+    // 1. The left halfedges and the right halfedges are always directed right
+    //    to left.
+    // 2. A left curve of an event, if exists, must be vertical, that is, either
+    //    a. the event coincides with the top boundary (north pole), or
+    //    b. the curve lies on the identification curve
+    // 3. The right curves are ordered bottom to top
+    // std::cout << "before_handle_event: " << event->point() << std::endl;
+    // std::cout << "# left: " << event->number_of_left_curves() << std::endl;
+    // for (auto it = event->left_curves_begin();
+    //      it != event->left_curves_end(); ++it) {
+    //   if ((*it)->color() == Gt2::RED) {
+    //     const Subcurve* sc_red = *it;
+    //     std::cout << "  Red: "
+    //               << sc_red->red_halfedge_handle()->source()->point() << " => "
+    //               << sc_red->red_halfedge_handle()->target()->point() << ", "
+    //               << sc_red->red_halfedge_handle()->direction()
+    //               << std::endl;
+    //   }
+    //   else {
+    //     const Subcurve* sc_blue = *it;
+    //     std::cout << "  Blue: "
+    //               << sc_blue->blue_halfedge_handle()->source()->point() << " => "
+    //               << sc_blue->blue_halfedge_handle()->target()->point() << ", "
+    //               << sc_blue->blue_halfedge_handle()->direction()
+    //               << std::endl;
+    //   }
+    // }
+    // std::cout << "# right: " << event->number_of_right_curves() << std::endl;
+    // for (auto it = event->right_curves_begin();
+    //      it != event->right_curves_end(); ++it) {
+    //   if ((*it)->color() == Gt2::RED) {
+    //     const Subcurve* sc = *it;
+    //     std::cout << "  Red: "
+    //               << sc->red_halfedge_handle()->source()->point() << " => "
+    //               << sc->red_halfedge_handle()->target()->point() << ", "
+    //               << sc->red_halfedge_handle()->direction()
+    //               << std::endl;
+    //   }
+    //   else {
+    //     const Subcurve* sc = *it;
+    //     std::cout << "  Blue: "
+    //               << sc->blue_halfedge_handle()->source()->point() << " => "
+    //               << sc->blue_halfedge_handle()->target()->point() << ", "
+    //               << sc->blue_halfedge_handle()->direction()
+    //               << std::endl;
+    //   }
+    // }
 
-    Subcurve_iterator it_red, it_blue, it_end;
-    if (ind == ARR_MIN_END) {
-      it_blue = it_red = event->right_curves_begin();
-      it_end = event->right_curves_end();
+    if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+      // The curve is incident to the north pole; therefore,
+      //  (i) the event has only left curves, and
+      // (ii) the event point is the rightend (ARR_MIN_END) of all left curves.
+      CGAL_assertion(event->number_of_right_curves() == 0);
+      CGAL_assertion(event->number_of_left_curves() != 0);
+      Subcurve_reverse_iterator it_end = event->left_curves_rend();
+
+      // Handle red curves
+      Subcurve_reverse_iterator it_red = event->left_curves_rbegin();
+      while ((it_red != it_end) && ((*it_red)->color() == Gt2::BLUE)) ++it_red;
+      if (it_red != it_end) {
+        const Subcurve* sc = *it_red;
+        CGAL_assertion(sc->color() != Gt2::BLUE);
+        m_red_nf = sc->red_halfedge_handle()->face();
+      }
+
+      // Handle blue curves
+      Subcurve_reverse_iterator it_blue = event->left_curves_rbegin();
+      while ((it_blue != it_end) && ((*it_blue)->color() == Gt2::RED)) ++it_blue;
+      if (it_blue != it_end) {
+        const Subcurve* sc = *it_blue;
+        CGAL_assertion(sc->color() != Gt2::RED);
+        m_blue_nf = sc->blue_halfedge_handle()->face();
+      }
+
+      return;
+    }
+
+    // The curve is incident to, or lies on, the identification curve.
+    Subcurve_reverse_iterator itr_end(event->right_curves_rend());
+
+    // Handle red curves
+    // First use the right curves if exists.
+    Subcurve_reverse_iterator itr(event->right_curves_rbegin());
+    while ((itr != itr_end) && ((*itr)->color() == Gt2::BLUE)) ++itr;
+    if (itr != itr_end) {
+      const Subcurve* sc = *itr;
+      // Case 1.1.
+      // The right event of a right curve coincides with the identification
+      // curve. It implies that the entire curve lies on the identification
+      // curve. In this case, the desired face is incident to the halfedge.
+      //
+      //             o : the right event
+      //             |
+      //             |_
+      //             |/
+      //  the event: o
+      //             |
+      //
+      // Case 1.2.
+      // The curve extends to the internal parameter space in X.
+      // In this case, the desired face is incident to the twin halfedge.
+      //
+      //             |
+      //             |
+      //             |----->o : the right event
+      //  the event: o<-----
+      //             |
+      //
+      // Case 2.
+      // The event does not have appropriately colored right-curves.
+      // It has a left curve; it must lie on the identification curve.
+      //
+      //             o : the event
+      //             |
+      //             |_
+      //             |/
+      //             o
+      //             |
+      //
+      auto* right_event = sc->right_event();
+      m_red_nf = (right_event->parameter_space_in_x() == ARR_LEFT_BOUNDARY) ?
+        sc->red_halfedge_handle()->face() :
+        sc->red_halfedge_handle()->twin()->face();
     }
     else {
-      it_blue = it_red = event->left_curves_begin();
-      it_end = event->left_curves_end();
-    }
-
-    // red arrangement
-    while ((it_red != it_end) && ((*it_red)->color() == Gt2::BLUE))
-      ++it_red;
-
-    if (it_red != it_end) {
-      const Subcurve* sc_red = *it_red;
-      if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
-        // The curve is incident to the north pole.
-        switch (sc_red->color()) {
-         case Gt2::RED:
-          m_red_nf = (ind == ARR_MIN_END) ?
-            sc_red->red_halfedge_handle()->twin()->face() :
-            sc_red->red_halfedge_handle()->face();
-          break;
-
-         case Gt2::RB_OVERLAP:
-          m_red_nf = (ind == ARR_MIN_END) ?
-            sc_red->red_halfedge_handle()->twin()->face() :
-            sc_red->red_halfedge_handle()->face();
-          break;
-
-         case Gt2::BLUE: break;
-        }
-      }
-      else {
-        // The curve extends to the right from the curve of discontinuity.
-        CGAL_assertion(ind == ARR_MIN_END);
-        switch (sc_red->color()) {
-        case Gt2::RED:
-          m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
-          break;
-        case Gt2::RB_OVERLAP:
-          m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
-          break;
-        case Gt2::BLUE: break;
-        }
+      Subcurve_reverse_iterator itl(event->left_curves_rbegin());
+      Subcurve_reverse_iterator itl_end(event->left_curves_rend());
+      while ((itl != itl_end) && ((*itl)->color() == Gt2::BLUE)) ++itl;
+      if (itl != itl_end) {
+        const Subcurve* sc = *itl;
+        m_red_nf = sc->red_halfedge_handle()->face();
       }
     }
 
-    // blue arrangement
-    while ((it_blue != it_end) && ((*it_blue)->color() == Gt2::RED))
-      ++it_blue;
-
-    if (it_blue != it_end) {
-      const Subcurve* sc_blue = *it_blue;
-      if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
-        // The curve is incident to the north pole.
-        switch (sc_blue->color()) {
-         case Gt2::BLUE:
-          m_blue_nf = (ind == ARR_MIN_END) ?
-            sc_blue->blue_halfedge_handle()->twin()->face() :
-            sc_blue->blue_halfedge_handle()->face();
-          break;
-
-         case Gt2::RB_OVERLAP:
-          m_blue_nf = (ind == ARR_MIN_END) ?
-            sc_blue->blue_halfedge_handle()->twin()->face() :
-            sc_blue->blue_halfedge_handle()->face();
-          break;
-
-         case Gt2::RED: break;
-        }
-      }
-      else {
-        // The curve extends to the right from the curve of discontinuity.
-        CGAL_assertion(ind == ARR_MIN_END);
-        switch (sc_blue->color()) {
-         case Gt2::BLUE:
-          m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
-          break;
-
-         case Gt2::RB_OVERLAP:
-          m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
-          break;
-
-         case Gt2::RED: break;
-        }
+    // Handle blue curves
+    // First use the right curves if exists.
+    itr = event->right_curves_rbegin();
+    while ((itr != itr_end) && ((*itr)->color() == Gt2::RED)) ++itr;
+    if (itr != itr_end) {
+      const Subcurve* sc = *itr;
+      auto* right_event = sc->right_event();
+      m_blue_nf = (right_event->parameter_space_in_x() == ARR_LEFT_BOUNDARY) ?
+        sc->blue_halfedge_handle()->face() :
+        sc->blue_halfedge_handle()->twin()->face();
+    }
+    else {
+      Subcurve_reverse_iterator itl(event->left_curves_rbegin());
+      Subcurve_reverse_iterator itl_end(event->left_curves_rend());
+      while ((itl != itl_end) && ((*itl)->color() == Gt2::RED)) ++itl;
+      if (itl != itl_end) {
+        const Subcurve* sc = *itl;
+        m_blue_nf = sc->blue_halfedge_handle()->face();
       }
     }
   }

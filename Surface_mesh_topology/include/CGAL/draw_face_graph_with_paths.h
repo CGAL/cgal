@@ -18,9 +18,11 @@
 #include <initializer_list>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {
@@ -31,12 +33,12 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 {
   static typename Get_traits<Mesh>::Vector
   get_face_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
-                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
+                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor dh)
   {
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     const typename Get_traits<Mesh>::Point*
         curr=&Get_traits<Mesh>::get_point(mesh.get_fg(), dh);
-    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle adart=dh;
+    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor adart=dh;
     unsigned int nb=0;
 
     do
@@ -51,13 +53,13 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
     }
     while(adart!=dh);
 
-    assert(nb>0);
+    CGAL_assertion(nb>0);
     return typename Get_traits<Mesh>::Kernel::Construct_scaled_vector_3()
       (normal, 1.0/nb);
   }
   static typename Local_kernel::Vector_3
   get_vertex_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
-                    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
+                    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor dh)
   {
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
@@ -88,7 +90,7 @@ class Face_graph_with_path_viewer : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt                         Base;
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
-  typedef typename LCC::Dart_const_handle         Dart_const_handle;
+  typedef typename LCC::Dart_const_descriptor         Dart_const_descriptor;
   typedef typename LCC::size_type                 size_type;
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
@@ -99,7 +101,7 @@ public:
   /// @param alcc the lcc to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed;
-  ///     this can be usefull for very big object where this time could be long)
+  ///     this can be useful for very big object where this time could be long)
   Face_graph_with_path_viewer(QWidget* parent,
                               const Mesh& amesh,
                               const std::vector
@@ -133,7 +135,7 @@ public:
 
 protected:
 
-  const Point& get_point(Dart_const_handle dh) const
+  const Point& get_point(Dart_const_descriptor dh) const
   { return CGAL::Get_traits<Mesh>::get_point(mesh, dh); }
 
   void compute_elements()
@@ -146,8 +148,8 @@ protected:
 
     if (m_current_dart!=lcc.darts().end())
     { // We want to draw only one dart
-      Dart_const_handle selected_dart=m_current_dart; //lcc.dart_handle(m_current_dart);
-      compute_edge(selected_dart, CGAL::Color(255,0,0));
+      Dart_const_descriptor selected_dart=m_current_dart; //lcc.dart_descriptor(m_current_dart);
+      compute_edge(selected_dart, CGAL::IO::Color(255,0,0));
       lcc.template mark_cell<1>(selected_dart, markedges);
       compute_vertex(selected_dart);
 
@@ -203,11 +205,11 @@ protected:
     lcc.free_mark(markvertices);
   }
 
-  void compute_face(Dart_const_handle dh)
+  void compute_face(Dart_const_descriptor dh)
   {
     // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
+    Dart_const_descriptor cur=dh;
+    Dart_const_descriptor min=dh;
     do
     {
       if (!lcc.is_next_exist(cur)) return; // open face=>not filled
@@ -216,7 +218,7 @@ protected:
     }
     while(cur!=dh);
 
-    // CGAL::Color c=m_fcolor.run(*lcc, dh);
+    // CGAL::IO::Color c=m_fcolor.run(*lcc, dh);
     face_begin(); //c);
 
     cur=dh;
@@ -232,43 +234,43 @@ protected:
     face_end();
   }
 
-  void compute_edge(Dart_const_handle dh)
+  void compute_edge(Dart_const_descriptor dh)
   {
     Point p1 = get_point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_handle)
+    Dart_const_descriptor d2 = lcc.other_extremity(dh);
+    if (d2!=LCC::null_descriptor)
     {
       if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
           (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
-      { add_segment(p1, get_point(d2), CGAL::Color(0, 0, 255)); }
+      { add_segment(p1, get_point(d2), CGAL::IO::Color(0, 0, 255)); }
       else
       { add_segment(p1, get_point(d2)); }
     }
   }
 
-  void compute_edge(Dart_const_handle dh, const CGAL::Color& color)
+  void compute_edge(Dart_const_descriptor dh, const CGAL::IO::Color& color)
   {
     Point p1 = get_point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_handle)
+    Dart_const_descriptor d2 = lcc.other_extremity(dh);
+    if (d2!=LCC::null_descriptor)
     { add_segment(p1, get_point(d2), color); }
   }
 
-  void compute_vertex(Dart_const_handle dh)
+  void compute_vertex(Dart_const_descriptor dh)
   { add_point(get_point(dh)); }
 
   virtual void init()
   {
     Base::init();
     setKeyDescription(::Qt::Key_D, "Increase current dart drawing");
-    setKeyDescription(::Qt::Key_D+::Qt::ControlModifier, "Decrease current dart drawing");
-    setKeyDescription(::Qt::Key_D+::Qt::ShiftModifier, "Draw all darts");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_D, "Decrease current dart drawing");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Draw all darts");
 
     setKeyDescription(::Qt::Key_X, "Toggles marked darts display");
 
     setKeyDescription(::Qt::Key_P, "Increase current path drawing");
-    setKeyDescription(::Qt::Key_P+::Qt::ControlModifier, "Decrease current path drawing");
-    setKeyDescription(::Qt::Key_P+::Qt::ShiftModifier, "Draw all paths");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_P, "Decrease current path drawing");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_P, "Draw all paths");
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -366,7 +368,7 @@ protected:
     { return; }
 
     CGAL::Random random(static_cast<unsigned int>(i));
-    CGAL::Color color=get_random_color(random);
+    CGAL::IO::Color color=get_random_color(random);
 
     add_point(get_point((*m_paths)[i].get_ith_dart(0)), color);
     for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
@@ -409,8 +411,9 @@ void draw(const Mesh& alcc,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"lccviewer","\0"};
+    const char* argv[1]={"lccviewer"};
     QApplication app(argc,const_cast<char**>(argv));
     Face_graph_with_path_viewer<Mesh, DrawingFunctor> mainwindow(app.activeWindow(),
                                                                  alcc, &paths, amark,

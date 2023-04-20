@@ -1,8 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/IO.h>
 #include <CGAL/grid_simplify_point_set.h>
+
+#include <boost/unordered_set.hpp>
 
 #include <fstream>
 #include <limits>
@@ -36,10 +37,12 @@ int main (int, char**)
   point_set.add_normal_map();
   test (point_set.has_normal_map(), "point set should have normals.");
 
-  std::ifstream f ("data/oni.pwn");
-  CGAL::read_xyz_point_set(f, point_set);
-
-  f.close ();
+  const std::string fname (CGAL::data_file_path("points_3/oni.pwn"));
+  if(!CGAL::IO::read_point_set(fname, point_set))
+  {
+    test (false, "failed to read input point set.");
+    return EXIT_FAILURE;
+  }
 
   Point_set::iterator
     first_to_remove = CGAL::grid_simplify_point_set (point_set,
@@ -106,6 +109,11 @@ int main (int, char**)
   point_set.add_property_map<int> ("label", 0);
   point_set.add_property_map<double> ("intensity", 0.0);
 
+  auto pnt = point_set.properties_and_types();
+  std::cerr << "Properties = " << std::endl;
+  for (const auto& p : pnt)
+    std::cerr << " * " << p.first << " with type " << p.second.name() << std::endl;
+
   test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
 
   Point p_before = *(point_set.points().begin());
@@ -119,6 +127,9 @@ int main (int, char**)
   Point p_after = *(point_set.points().begin());
 
   test (p_before == p_after, "points should not change when clearing properties.");
+
+  std::unordered_set<Point_set::Index> std_hash;
+  boost::unordered_set<Point_set::Index> boost_hash;
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
 

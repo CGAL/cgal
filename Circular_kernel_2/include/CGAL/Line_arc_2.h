@@ -21,7 +21,6 @@
 #include <CGAL/license/Circular_kernel_2.h>
 
 
-#include <CGAL/result_of.h>
 #include <CGAL/Bbox_2.h>
 
 namespace CGAL {
@@ -91,25 +90,25 @@ public:
      : RLine_arc_2(a)
    {}
 
-  typename cpp11::result_of< typename R::Construct_circular_source_vertex_2(Line_arc_2)>::type
+  decltype(auto)
     source() const
   {
         return typename R::Construct_circular_source_vertex_2()(*this);
   }
 
-  typename cpp11::result_of< typename R::Construct_circular_target_vertex_2(Line_arc_2)>::type
+  decltype(auto)
     target() const
   {
         return typename R::Construct_circular_target_vertex_2()(*this);
   }
 
-  typename cpp11::result_of< typename R::Construct_circular_min_vertex_2(Line_arc_2)>::type
+  decltype(auto)
   left() const
   {
         return typename R::Construct_circular_min_vertex_2()(*this);
   }
 
-  typename cpp11::result_of< typename R::Construct_circular_max_vertex_2(Line_arc_2)>::type
+  decltype(auto)
   right() const
   {
         return typename R::Construct_circular_max_vertex_2()(*this);

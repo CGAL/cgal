@@ -24,10 +24,9 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_segment_primitive.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_halfedge_graph_segment_primitive.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -80,9 +79,9 @@ namespace CGAL {
             : m_halfedge_handle(*ptr)  { };
         template <class Iterator>
         AABB_polyhedron_segment_primitive( Iterator it,
-                                           typename boost::enable_if<
-                                                      boost::is_same<Id,typename Iterator::value_type>
-                                            >::type* =0
+                                           std::enable_if_t<
+                                                      std::is_same<Id,typename Iterator::value_type>::value
+                                            >* =0
         ) : m_halfedge_handle(*it)  { }
 
         AABB_polyhedron_segment_primitive(const Self& primitive)

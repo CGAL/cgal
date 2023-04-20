@@ -99,10 +99,6 @@ public:
     }
 };
 
-
-// TODO implement Compare_y_limit_on_boundary_2
-
-
 template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_near_boundary_2 :
         public FunctorBase::Compare_y_near_boundary_2 {
@@ -550,7 +546,7 @@ public:
 
         if (!Base::_ckva()->may_have_intersection_2_object()(cv1, cv2)) {
             // return no one
-            CKvA_CERR("\nfilter: sucessfull\n");
+            CKvA_CERR("\nfilter: successful\n");
 
             CGAL_assertion_code(
             {

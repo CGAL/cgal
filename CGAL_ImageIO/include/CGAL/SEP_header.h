@@ -22,11 +22,11 @@
 #include <boost/fusion/adapted/boost_tuple.hpp>
 #include <boost/array.hpp>
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_core.hpp>
-#include <boost/spirit/include/phoenix_operator.hpp>
-#include <boost/spirit/include/phoenix_object.hpp>
-#include <boost/spirit/include/phoenix_stl.hpp>
-#include <boost/spirit/include/phoenix_fusion.hpp>
+#include <boost/phoenix/core.hpp>
+#include <boost/phoenix/operator.hpp>
+#include <boost/phoenix/object.hpp>
+#include <boost/phoenix/stl.hpp>
+#include <boost/phoenix/fusion.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
 #ifdef CGAL_SEP_READER_DEBUG
@@ -72,7 +72,7 @@ private:
 
     template <typename T>
     void operator()(const T& t) {
-      // std::cerr << "My assignement ("
+      // std::cerr << "My assignment ("
       //           << typeid(t).name() << "): "
       //           << key << "=" << t << std::endl;
       self->add(key, t);

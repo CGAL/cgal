@@ -14,7 +14,8 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 typedef Kernel::Aff_transformation_3 Trsfrm;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
+
 int main()
 {
   Surface_mesh base_cube;

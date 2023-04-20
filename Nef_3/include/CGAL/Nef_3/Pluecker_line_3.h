@@ -316,7 +316,7 @@ on their Pluecker coefficient tuples.}*/
 template <typename Tag, typename R>
 std::ostream& operator<<(std::ostream& os, const Pluecker_line_3<Tag,R>& l)
 {
-  switch( get_mode(os) ) {
+  switch( IO::get_mode(os) ) {
     case CGAL::IO::ASCII :
       for (unsigned i=0; i<6; ++i) os << l[i] << " ";
       return os;

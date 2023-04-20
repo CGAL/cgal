@@ -24,7 +24,7 @@ class RationalCurveInputDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RationalCurveInputDialog(QWidget *parent = 0);
+    explicit RationalCurveInputDialog(QWidget *parent = nullptr);
     ~RationalCurveInputDialog();
     std::string getNumeratorText();
     std::string getDenominatorText();

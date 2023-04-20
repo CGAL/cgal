@@ -28,6 +28,7 @@
 
 #include <vector>
 
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Surface_sweep_2/Default_visitor_base.h>
@@ -74,6 +75,17 @@ private:
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
   typedef Ss2::Default_visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
                                                         Base;
+
+  typedef typename Gt2::Left_side_category              Left_side_category;
+  typedef typename Gt2::Bottom_side_category            Bottom_side_category;
+  typedef typename Gt2::Top_side_category               Top_side_category;
+  typedef typename Gt2::Right_side_category             Right_side_category;
+
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
+    Are_all_sides_oblivious_category;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -142,6 +154,9 @@ public:
   /* A notification issued before the sweep process starts. */
   inline void before_sweep();
 
+  /* A notification issued after the sweep process stops. */
+  inline void after_sweep();
+
   /*!
    * A notification invoked before the sweep-line starts handling the given
    * event.
@@ -161,8 +176,7 @@ public:
   /// \name Insertion functions.
   //@{
 
-  /*!
-   * Insert the given subcurve in the interior of a face.
+  /*! Insert the given subcurve in the interior of a face.
    * \param cv The geometric subcurve.
    * \param sc The sweep-line subcurve information.
    * \return A handle to the inserted halfedge.
@@ -170,8 +184,7 @@ public:
   virtual Halfedge_handle
   insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc);
 
-  /*!
-   * Insert the given subcurve given its left end-vertex.
+  /*! Insert the given subcurve given its left end-vertex.
    * \param cv The geometric entity.
    * \param prev The predecessor halfedge around the left vertex.
    * \param sc The sweep-line subcurve information.
@@ -181,8 +194,7 @@ public:
   insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
                           Subcurve* sc);
 
-  /*!
-   * Insert the given subcurve given its right end-vertex.
+  /*! Insert the given subcurve given its right end-vertex.
    * \param cv The geometric entity.
    * \param prev The predecessor halfedge around the right vertex.
    * \param sc The sweep-line subcurve information.
@@ -193,8 +205,7 @@ public:
                            Halfedge_handle prev,
                            Subcurve* sc);
 
-  /*!
-   * Insert the given subcurve given its two end-vertices.
+  /*! Insert the given subcurve given its two end-vertices.
    * \param cv The geometric subcurve.
    * \param prev1 The predecessor halfedge around the left vertex.
    * \param prev2 The predecessor halfedge around the right vertex.
@@ -208,8 +219,7 @@ public:
                                              Subcurve* sc,
                                              bool& new_face_created);
 
-  /*!
-   * Insert an isolated vertex into the arrangement.
+  /*! Insert an isolated vertex into the arrangement.
    * \param pt The point associated with the vertex.
    * \param iter The location of the corresponding event in the status line.
    * \return A handle to the inserted vertex.
@@ -217,8 +227,7 @@ public:
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                Status_line_iterator iter);
 
-  /*!
-   * Relocate holes and isolated vertices inside a newly created face f2,
+  /*! Relocate holes and isolated vertices inside a newly created face f2,
    * that was split from f1 after the insertion of a new edge.
    * \param he The halfedge that caused the face split. Its incident face is
    *           the new face f2, and the incident face of its twin is f1.
@@ -253,13 +262,28 @@ private:
     return (static_cast<const typename Arrangement_2::X_monotone_curve_2&>(cv));
   }
 
-  /*! Map the given subcurve index to the given halfedge handle. */
+  /*! Map the given subcurve index to the given halfedge handle.
+   */
   void _map_new_halfedge(unsigned int i, Halfedge_handle he);
+
+  /*! Move halfedge indices from the top face to the last inserted curve.
+   * This is the implementation for the case where all 4 boundary sides are
+   * oblivious.
+   */
+  void move_halfedge_indices(Event* event, Status_line_iterator iter,
+                             Arr_all_sides_oblivious_tag);
+
+  /*! Move halfedge indices from the top face to the last inserted curve.
+   * This is the implementation for the case where all 4 boundary sides are
+   * not oblivious.
+   */
+  void move_halfedge_indices(Event* event, Status_line_iterator iter,
+                             Arr_not_all_sides_oblivious_tag);
   //@}
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -267,7 +291,21 @@ private:
 // Notifies the helper that the sweep process now starts.
 template <typename Hlpr, typename Vis>
 void Arr_construction_ss_visitor<Hlpr, Vis>::before_sweep()
-{ m_helper.before_sweep(); }
+{
+  m_helper.before_sweep();
+  m_arr->set_sweep_mode(true);
+}
+
+
+//-----------------------------------------------------------------------------
+// A notification issued after the sweep process stops.
+template <typename Hlpr, typename Vis>
+void Arr_construction_ss_visitor<Hlpr, Vis>::after_sweep()
+{
+  m_arr->clean_inner_ccbs_after_sweep();
+  m_arr->set_sweep_mode(false);
+}
+
 
 //-----------------------------------------------------------------------------
 // A notification invoked before the sweep-line starts handling the given
@@ -281,6 +319,96 @@ void Arr_construction_ss_visitor<Hlpr, Vis>::before_handle_event(Event* event)
 #endif
   // We just have to notify the helper class on the event.
   m_helper.before_handle_event(event);
+}
+
+//-----------------------------------------------------------------------------
+// Move halfedge indices from the top face to the last inserted curve.
+// This is the implementation for the case where all 4 boundary sides are
+// oblivious.
+//
+template <typename Hlpr, typename Vis>
+void Arr_construction_ss_visitor<Hlpr, Vis>::
+move_halfedge_indices(Event* /* event */, Status_line_iterator /* iter */,
+                      Arr_all_sides_oblivious_tag)
+{ return; }
+
+//-----------------------------------------------------------------------------
+// Move halfedge indices from the top face to the last inserted curve.
+// This is the implementation for the case where all 4 boundary sides are
+// not oblivious.
+//
+template <typename Hlpr, typename Vis>
+void Arr_construction_ss_visitor<Hlpr, Vis>::
+move_halfedge_indices(Event* event, Status_line_iterator iter,
+                      Arr_not_all_sides_oblivious_tag)
+{
+  // Processing is required only for events on the left non-top-corner boundary
+  if ((event->parameter_space_in_x() != CGAL::ARR_LEFT_BOUNDARY) ||
+      (event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY))
+    return;
+
+  // If the status line is empty, do nothing.
+  if (this->is_status_line_empty()) return;
+
+  // Given a curve c, we need to record all the curves "seen" by c from above.
+  // Assume that the curve c is a chain in an outer CCB of a face f1. F1 is
+  // formed when a final curve on the CCB is added. At this point the face f1
+  // is split out of another face, say f0.  We relocate the inner CCBs of f0
+  // that are "seen" by any curve on this outer ccb (from above) as inner CCBs
+  // of f1.
+  //
+  // If the event has left curves, then it has exactly one left curve, and this
+  // curve must entirely lie on the left boundary.
+  //
+  // We are interested only in events that have at least one right curve and do
+  // not have a left curve.
+  // The following explains why events with left curves are eliminated.
+  // Consider the following case:
+  //
+  //   p0 = (0,0,-1) (the south pole)
+  //   p1 = (-1,0,0)
+  //   p2 = (0,-1,0)
+  //
+  //   c0 = p0-p2
+  //   c1 = p2-p1
+  //   c2 = p1-p0
+  //
+  // The parameter space:
+  //    o--------------------------------o
+  //    |                                |
+  //    |                                |
+  //    |                                |
+  //    |                                |
+  // p1 o--------o p2       f0           o
+  //    |        |                       |
+  //    |        |                       |
+  //    |   f1   |                       |
+  //    |        |                       |
+  //    o--------o-----------------------o <= p0
+  //  p00       p01
+  //
+  // First, c0 is inserted into the container of curves associated with the top
+  // face, as a curve that potentially can be seen later on by other curves.
+  // Then, the event associated with p1 is handled. Failing to eliminate p1,
+  // will result with the recording of c2 as "seen" by c1, which in turn will
+  // result with the relocation of the inner cbb (p1->p2->p0) from the face f0
+  // to the face f1---a clear error.
+  if ((0 == event->number_of_right_curves())  ||
+      (0 != event->number_of_left_curves()))
+    return;
+
+  Status_line_iterator prev = iter;
+  for (size_t i = 0; i < event->number_of_right_curves(); ++i) --prev;
+
+  // move items from top face to last inserted curve
+  Indices_list& list_ref = (*prev)->halfedge_indices_list();
+  list_ref.clear();
+  list_ref.splice(list_ref.end(), m_helper.halfedge_indices_list());
+
+#if CGAL_ARR_CONSTRUCTION_SS_VISITOR_VERBOSE
+  for (auto it = list_ref.begin(); it != list_ref.end(); ++it)
+    std::cout << "moved " << *it << " from top to below" << std::endl;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -305,6 +433,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 
     ++m_sc_counter;
     m_iso_verts_map[m_sc_counter] = v;
+
     _map_new_halfedge(m_sc_counter, Halfedge_handle());
 
     if (iter != this->status_line_end()) {
@@ -326,23 +455,8 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
     return true;
   }
 
-  // TODO EBEB 2012-10-16 compile only when non-oblivious
-  if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
-    if (!this->is_status_line_empty()) {
-      Status_line_iterator prev = iter;
-      for (size_t i = 0; i < event->number_of_right_curves(); ++i) --prev;
-      // move items from top face to last inserted curve
-      Indices_list& list_ref = (*prev)->halfedge_indices_list();
-      list_ref.clear();
-      list_ref.splice(list_ref.end(), m_helper.halfedge_indices_list());
-
-#if CGAL_ARR_CONSTRUCTION_SS_VISITOR_VERBOSE
-      typename Indices_list::const_iterator it;
-      for (it = list_ref.begin(); it != list_ref.end(); ++it)
-        std::cout << "moved " << *it << " from top to below" << std::endl;
-#endif
-    }
-  }
+  // Move halfedge indices from the top.
+  move_halfedge_indices(event, iter, Are_all_sides_oblivious_category());
 
   // Check if the event has only incident subcurves from its right.
   if (!event->has_left_curves()) {
@@ -371,8 +485,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 
   // Set the last event of all left subcurve (thus, this event corresponds
   // to their right endpoint).
-  Event_subcurve_iterator  left_it;
-  for (left_it = event->left_curves_begin();
+  for (auto left_it = event->left_curves_begin();
        left_it != event->left_curves_end(); ++left_it)
     (*left_it)->set_last_event(event);
 
@@ -389,8 +502,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 
   // Set the last event of all right subcurve (thus, this event corresponds
   // to their left endpoint).
-  Event_subcurve_iterator  right_it;
-  for (right_it = event->right_curves_begin();
+  for (auto right_it = event->right_curves_begin();
        right_it != event->right_curves_end(); ++right_it)
     (*right_it)->set_last_event(event);
 
@@ -525,7 +637,7 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 #endif
   }
 
-  // Update the last event with the inserted halfegde (if necessary)
+  // Update the last event with the inserted halfedge (if necessary)
   // and check if we have to update the auxiliary information on the location
   // of holes.
   if ((last_event->number_of_left_curves() == 0) &&
@@ -635,7 +747,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #endif
 
   // Use the helper class to determine whether the order of predecessor
-  // halfedges should be swaped, to that the edge directed from prev1->target()
+  // halfedges should be swapped, to that the edge directed from prev1->target()
   // to prev2->target() is incident to the new face (in case a new face is
   // created).
   Halfedge_handle res;
@@ -843,6 +955,7 @@ relocate_in_new_face(Halfedge_handle he)
   std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
   std::cout << "m_sc_he_table: " << m_sc_he_table.size() << std::endl;
 #endif
+
   do {
     // We are interested only in halfedges directed from right to left.
     if (curr_he->direction() == ARR_LEFT_TO_RIGHT) {
@@ -853,8 +966,7 @@ relocate_in_new_face(Halfedge_handle he)
     // Get the indices list associated with the current halfedges, representing
     // the halfedges and isolated vertices that "see" it from above.
     const Indices_list& indices_list = const_he_indices_table[curr_he];
-    typename Indices_list::const_iterator itr;
-    for (itr = indices_list.begin(); itr != indices_list.end(); ++itr) {
+    for (auto itr = indices_list.begin(); itr != indices_list.end(); ++itr) {
       CGAL_assertion(*itr != 0);
 #if CGAL_ARR_CONSTRUCTION_SS_VISITOR_VERBOSE
       std::cout << "itr: " << *itr << std::endl;
@@ -873,7 +985,15 @@ relocate_in_new_face(Halfedge_handle he)
         // isolated vertex. Move this vertex to the new face, if necessary.
         Vertex_handle v = m_iso_verts_map[*itr];
         CGAL_assertion(v != m_invalid_vertex);
-        if (v->face() != new_face) {
+        // There are cases where the vertex is not isolated. For example,
+        // consider an arrangement embedded on a sphere. When inserting the
+        // north pole as an isolated vertex and at the same time some arcs
+        // incident to the north pole, the isolated vertex and the curve-ends
+        // that end at the north pole generate different events. The insertion
+        // of the isolated vertex generates an event that is processed before
+        // other events, and the associated vertex is recorder in the iso vertex
+        // map.
+        if (v->is_isolated() && (v->face() != new_face)) {
           m_arr_access.move_isolated_vertex(v->face(), new_face, v);
         }
       }
@@ -906,8 +1026,10 @@ void Arr_construction_ss_visitor<Hlpr, Vis>::
 _map_new_halfedge(unsigned int i, Halfedge_handle he)
 {
 #if CGAL_ARR_CONSTRUCTION_SS_VISITOR_VERBOSE
-  std::cout << "map " << i << " to " << he->curve() << " "
-            << he->direction() << std::endl;
+  std::cout << "map " << i << " to ";
+  if (he == Halfedge_handle()) std::cout << "null halfedge";
+  else std::cout << he->curve() << " " << he->direction();
+  std::cout << std::endl;
 #endif
   CGAL_assertion(i != 0);
   // Resize the index table if needed.

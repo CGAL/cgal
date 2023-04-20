@@ -44,10 +44,10 @@ private:
         int x2 = m_nodes[i+1];
         int y1 = m_colors[k][x1];
         int y2 = m_colors[k][x2];
-        float a = (float)(y2-y1) / (float)(x2-x1);
-        float b = (float)y1 - a*(float)x1;
+        float a = static_cast<float>(y2-y1) / static_cast<float>(x2-x1);
+        float b = static_cast<float>(y1) - a*static_cast<float>(x1);
         for(int j=x1;j<x2;j++)
-          m_colors[k][j] = (unsigned char)(a*(float)j+b);
+          m_colors[k][j] = static_cast<unsigned char>(a*static_cast<float>(j)+b);
       }
   }
 

@@ -21,8 +21,8 @@
 #include <CGAL/tags.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Intersections_3/Ray_3_Triangle_3.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
 
 namespace CGAL {
 namespace internal {

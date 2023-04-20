@@ -16,7 +16,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& 
       qobject_cast<CGAL::Three::Scene_print_item_interface*>(scene->item(scene->mainSelectionIndex()));
       if( item &&
           item->shouldDisplayIds(list->item())
-         )
+         ){
         Q_FOREACH(TextItem* item, list->textList())
         {
           CGAL::qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
@@ -48,6 +48,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& 
             painter->drawText(rect, item->text());
           }
         }
+      }
     }
 
     //Display the local TextItems

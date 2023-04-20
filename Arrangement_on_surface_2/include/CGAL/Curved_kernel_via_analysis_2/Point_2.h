@@ -15,7 +15,7 @@
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_POINT_2_H
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Point_2.h
- * \brief Defines class \c Point_2 that represents a point on a curve that can
+ * \brief defines class \c Point_2 that represents a point on a curve that can
  * be analyzed.
  */
 
@@ -23,13 +23,14 @@
 
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Handle_with_policy.h>
 
 #include <CGAL/Arr_enums.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -170,7 +171,7 @@ public:
     //!@}
 
     #if !defined(CGAL_NO_ASSERTIONS)
-    static const bool Kernel_point_2_equals_Point_2 = boost::is_same<Point_2, Kernel_point_2>::value;
+    static const bool Kernel_point_2_equals_Point_2 = std::is_same<Point_2, Kernel_point_2>::value;
     #endif
 
 public:
@@ -325,7 +326,7 @@ protected:
     //!@{
 
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     /*!\brief
      * Constructor for for rebind
@@ -615,7 +616,7 @@ public:
      */
     void write(std::ostream& os) const {
 
-        switch(::CGAL::get_mode(os)) {
+        switch(::CGAL::IO::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "point@" << this->id() << "(";
             os << "sup@" << this->curve().id() << "; ";
@@ -722,7 +723,7 @@ public:
    */
   void read(std::istream& is) {
 
-    CGAL_precondition(CGAL::is_ascii(is));
+    CGAL_precondition(CGAL::IO::is_ascii(is));
 
     Rep rep;
 
@@ -738,35 +739,12 @@ public:
 
     // read values
     is >> rep._m_xy;
-#if BOOST_VERSION < 104300
-    // EBEB: This fixes a bug in optional_io.hpp, reported to Fernando on
-    //       April 27, 2010, don't know whether the fix makes it into
-    //       boost 1_43.
-    if (!rep._m_xy) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_x;
-#if BOOST_VERSION < 104300
-    if (!rep._m_x) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_curve;
-#if BOOST_VERSION < 104300
-    if (!rep._m_curve) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_arcno;
-#if BOOST_VERSION < 104300
-    if (!rep._m_arcno) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_location;
 
@@ -817,13 +795,13 @@ std::ostream& operator <<(std::ostream& os,
 }
 
 
-//! \brief Reads the objects from stream.
+//! \brief reads the objects from stream.
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::istream& operator>> (
     std::istream& is,
     Point_2< CurvedKernelViaAnalysis_2, Rep_ >& pt) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   //typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
   //typedef Rep_ Rep;

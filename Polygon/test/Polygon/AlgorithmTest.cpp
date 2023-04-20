@@ -23,7 +23,7 @@ void test_collinear_point_filtering(const R&, const char* FileName)
     std::cerr << "Could not open file " << FileName << "!" << endl;
     std::exit(1);
   }
-  CGAL::set_ascii_mode(from);
+  CGAL::IO::set_ascii_mode(from);
 
   std::vector<Point> polygon;
   std::copy(std::istream_iterator<Point>(from), std::istream_iterator<Point>(),
@@ -82,7 +82,7 @@ void test_polygon(const R&, const Point&, const char* FileName)
     std::cerr << "could not open file " << FileName << "!" << endl;
     std::exit(1);
   }
-  CGAL::set_ascii_mode(from);
+  CGAL::IO::set_ascii_mode(from);
 
   Point point;
   std::vector<Point> polygon;
@@ -185,7 +185,7 @@ void test_polygon(const R&, const Point&, const char* FileName)
 
 int main()
 {
-  CGAL::set_pretty_mode(cout);
+  CGAL::IO::set_pretty_mode(cout);
 
   cout << endl;
   cout << "--------------------------------------------------------" << endl;

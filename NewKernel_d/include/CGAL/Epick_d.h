@@ -19,7 +19,7 @@
 #include <CGAL/NewKernel_d/Cartesian_filter_K.h>
 #include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/NewKernel_d/Types/Weighted_point.h>
 

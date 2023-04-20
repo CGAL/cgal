@@ -25,7 +25,7 @@
 
 #include <CGAL/NT_converter.h>
 #include <CGAL/Triangulation_utils_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/utility.h>
 #include <CGAL/use.h>
 
@@ -110,7 +110,7 @@ public:
   Periodic_4_hyperbolic_triangulation_2(const Periodic_4_hyperbolic_triangulation_2& tr)
     : _gt(tr.geom_traits())
   {
-    CGAL_triangulation_expensive_postcondition(*this == tr);
+    CGAL_expensive_postcondition(*this == tr);
   }
 
   Periodic_4_hyperbolic_triangulation_2& operator=(Periodic_4_hyperbolic_triangulation_2 tr)
@@ -175,7 +175,7 @@ public:
 
   Periodic_point periodic_point(const Face_handle c, int i) const
   {
-    CGAL_triangulation_precondition(i >= 0 && i <= 2);
+    CGAL_precondition(i >= 0 && i <= 2);
     return std::make_pair(c->vertex(i)->point(), c->translation(i));
   }
 
@@ -194,8 +194,8 @@ public:
 
   Periodic_segment periodic_segment(const Face_handle c, int i, int j) const
   {
-    CGAL_triangulation_precondition(i != j);
-    CGAL_triangulation_precondition((i >= 0 && i <= 2) && (j >= 0 && j <= 2));
+    CGAL_precondition(i != j);
+    CGAL_precondition((i >= 0 && i <= 2) && (j >= 0 && j <= 2));
     return periodic_segment(c->vertex(i)->point(), c->vertex(j)->point(),
                             c->translation(i), c->translation(j));
   }
@@ -263,14 +263,14 @@ public:
 
   Hyperbolic_segment construct_hyperbolic_segment(const Face_handle & fh, int idx) const
   {
-    CGAL_triangulation_precondition(idx >= 0 && idx <= 2);
+    CGAL_precondition(idx >= 0 && idx <= 2);
     return construct_hyperbolic_segment(fh->vertex(ccw(idx))->point(), fh->vertex(cw(idx))->point(),
                                         fh->translation(ccw(idx)), fh->translation(cw(idx)));
   }
 
   Hyperbolic_segment construct_hyperbolic_segment(const std::pair<Face_handle, int> & edge) const
   {
-    CGAL_triangulation_precondition(edge.second >= 0 && edge.second <= 2);
+    CGAL_precondition(edge.second >= 0 && edge.second <= 2);
     return construct_hyperbolic_segment(edge.first, ccw(edge.second));
   }
 
@@ -523,7 +523,7 @@ public:
 
   Hyperbolic_translation neighbor_translation(const Face_handle fh, int i) const
   {
-    CGAL_triangulation_precondition(i >= 0 && i <= 2);
+    CGAL_precondition(i >= 0 && i <= 2);
     int myi = ccw(i);
     Hyperbolic_translation myof = fh->translation(myi);
 
@@ -645,9 +645,9 @@ inline bool
 Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
 has_self_edges(typename TDS::Face_handle c) const
 {
-  CGAL_triangulation_assertion((c->vertex(0) != c->vertex(1)) || (c->translation(0) != c->translation(1)));
-  CGAL_triangulation_assertion((c->vertex(0) != c->vertex(2)) || (c->translation(0) != c->translation(2)));
-  CGAL_triangulation_assertion((c->vertex(1) != c->vertex(2)) || (c->translation(1) != c->translation(2)));
+  CGAL_assertion((c->vertex(0) != c->vertex(1)) || (c->translation(0) != c->translation(1)));
+  CGAL_assertion((c->vertex(0) != c->vertex(2)) || (c->translation(0) != c->translation(2)));
+  CGAL_assertion((c->vertex(1) != c->vertex(2)) || (c->translation(1) != c->translation(2)));
 
   return ((c->vertex(0) == c->vertex(1)) ||
           (c->vertex(0) == c->vertex(2)) ||
@@ -671,7 +671,7 @@ has_cycles_length_2(typename TDS::Vertex_handle v) const
   return false;
 }
 
-/*! \brief Tests if the triangulation is valid.
+/*! \brief tests if the triangulation is valid.
  *
  * A triangulation is valid if
  * - A cell is not its own neighbor.
@@ -691,11 +691,11 @@ is_valid(bool verbose) const {
   {
     for(int i=0; i<3; ++i)
     {
-      CGAL_triangulation_assertion(cit != cit->neighbor(i));
+      CGAL_assertion(cit != cit->neighbor(i));
       for(int j=i+1; j<3; ++j)
       {
-        CGAL_triangulation_assertion(cit->neighbor(i) != cit->neighbor(j));
-        CGAL_triangulation_assertion(cit->vertex(i) != cit->vertex(j));
+        CGAL_assertion(cit->neighbor(i) != cit->neighbor(j));
+        CGAL_assertion(cit->vertex(i) != cit->vertex(j));
       }
     }
 
@@ -735,9 +735,9 @@ is_valid(bool verbose) const {
 
   if(!error)
   {
-    CGAL_triangulation_assertion(!has_self_edges());
-    CGAL_triangulation_assertion(!has_cycles_length_2());
-    CGAL_triangulation_assertion(_tds.number_of_vertices() + _tds.number_of_faces() + 2 == _tds.number_of_edges());
+    CGAL_assertion(!has_self_edges());
+    CGAL_assertion(!has_cycles_length_2());
+    CGAL_assertion(_tds.number_of_vertices() + _tds.number_of_faces() + 2 == _tds.number_of_edges());
     return true;
   }
   else
@@ -990,8 +990,8 @@ hyperbolic_periodic_locate(const Point& p,
     Point np0 = construct_point(construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr);
     Point np1 = construct_point(construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr);
     Point np2 = construct_point(construct_point(nf->vertex(2)->point(), nf->translation(2)) , tr);
-    CGAL_triangulation_assertion_code(Oriented_side os1 = side_of_hyperbolic_triangle(np0, np1, np2, p, lt, li));
-    CGAL_triangulation_assertion(os1 == ON_POSITIVE_SIDE);
+    CGAL_assertion_code(Oriented_side os1 = side_of_hyperbolic_triangle(np0, np1, np2, p, lt, li));
+    CGAL_assertion(os1 == ON_POSITIVE_SIDE);
     lo = tr;
     return nf;
   }

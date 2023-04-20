@@ -34,7 +34,7 @@
 #include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/internal/TDS_2/edge_list.h>
+#include <CGAL/TDS_2/internal/edge_list.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
@@ -43,6 +43,7 @@
 
 #include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
+#include <CGAL/use.h>
 
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>

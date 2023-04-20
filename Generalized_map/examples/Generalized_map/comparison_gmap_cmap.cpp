@@ -5,14 +5,14 @@
 
 typedef CGAL::Generalized_map<3>   GMap_3;
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef GMap_3::Dart_handle        Dart_const_handle;
+typedef GMap_3::Dart_descriptor    Dart_const_descriptor;
 
 template<typename Map>
 void test(Map& m)
 {
   // Create two tetrahedra.
-  typename Map::Dart_handle d1 = m.make_combinatorial_tetrahedron();
-  typename Map::Dart_handle d2 = m.make_combinatorial_tetrahedron();
+  typename Map::Dart_descriptor d1 = m.make_combinatorial_tetrahedron();
+  typename Map::Dart_descriptor d2 = m.make_combinatorial_tetrahedron();
   m.template sew<3>(d1, d2);
 
   // Display the map characteristics.

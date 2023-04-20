@@ -11,7 +11,7 @@
  *    by the elements in the two pairs above, respectively.
  * 5. Initialize the data field of each halfedge with the number of curves
  *    that induced that halfedge if the halfedge is directed left-to-right
- *    and twice the the number of curves that induced that halfedge if the
+ *    and twice the number of curves that induced that halfedge if the
  *    halfedge is directed right-to-left. We initialize the data field of
  *    each face with the total sum of the data of the halfedges on the
  *    boundary of the face. We initialize the data field of each isolated
@@ -129,8 +129,8 @@ bool test(const char* filename, int verbose_level)
 int main(int argc, char* argv[])
 {
 #if TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 #endif
 
   if (argc < 2) {

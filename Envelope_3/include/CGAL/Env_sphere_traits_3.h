@@ -847,7 +847,7 @@ public:
     // the curve cv (i.e. lower if computing the lower envelope, or upper if
     // computing the upper envelope)
     // precondition: the surfaces are defined above cv
-    //               the choise between s1 and s2 for the envelope is the same
+    //               the choice between s1 and s2 for the envelope is the same
     //               for every point in the infinitesimal region above cv
     //               the surfaces are EQUAL over the curve cv
     Comparison_result

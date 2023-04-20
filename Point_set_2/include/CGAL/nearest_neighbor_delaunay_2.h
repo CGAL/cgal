@@ -19,7 +19,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/squared_distance_2_1.h>
 #include <CGAL/compare_vertices.h>
 #include <list>
 #include <queue>

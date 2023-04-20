@@ -16,7 +16,7 @@ A model of this refined concept therefore needs to compute the intersections
 (and possibly overlaps) between two \f$ x\f$-monotone curves and to support
 curve splitting.
 
-\cgalRefines `ArrangementBasicTraits_2`
+\cgalRefines{ArrangementBasicTraits_2}
 
 \cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
 \cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
@@ -79,7 +79,7 @@ typedef unspecified_type Split_2;
 /// \name
 /// \attention The two following function-object types are
 /// optional. If they are supported, the `Has_merge_category` tag
-/// should be defined as `Tag_true` (and `Tag_false` otherwise.
+/// should be defined as `Tag_true` and otherwise as `Tag_false`.
 /// @{
 
 /*!
@@ -114,8 +114,8 @@ Split_2 split_2_object() const;
 
 /// \name
 /// The two following methods are optional. If they are supported, the
-/// `Has_merge_category` tag should be defined as `Tag_true` (and
-/// `Tag_false` otherwise.
+/// `Has_merge_category` tag should be defined as `Tag_true` and otherwise
+/// as `Tag_false`.
 /// @{
 
 /*!

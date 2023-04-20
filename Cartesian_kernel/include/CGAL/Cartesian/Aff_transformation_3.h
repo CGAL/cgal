@@ -143,14 +143,7 @@ public:
 
   Plane_3
   transform(const Plane_3& p) const
-  {
-    if (is_even())
-      return Plane_3(transform(p.point()),
-                 transpose().inverse().transform(p.orthogonal_direction()));
-    else
-      return Plane_3(transform(p.point()),
-               - transpose().inverse().transform(p.orthogonal_direction()));
-  }
+  { return this->Ptr()->transform(p); }
 
   Plane_3
   operator()(const Plane_3& p) const
@@ -160,6 +153,10 @@ public:
 
   bool is_even() const { return this->Ptr()->is_even(); }
   bool is_odd() const { return  ! (this->Ptr()->is_even()); }
+
+  bool is_translation() const { return this->Ptr()->is_translation(); }
+  bool is_scaling() const { return this->Ptr()->is_scaling(); }
+
 
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }

@@ -13,7 +13,7 @@
 // ============================================================================
 
 /*! \file CGAL/Polynomial/modular_gcd_utils.h
- *  \brief Provides additional utils for the modular GCD calculation
+ *  \brief provides additional utils for the modular GCD calculation
  */
 
 #ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H
@@ -51,7 +51,7 @@ void euclidean_division_obstinate(const Polynomial<NT>& F1,
     int d2 = F2.degree();
     if ( d1 < d2 ) {
         Q = Polynomial<NT>(NT(0)); R = F1;
-        CGAL_postcondition( !(boost::is_same< typename Algebraic_structure_traits<NT>::Is_exact,
+        CGAL_postcondition( !(std::is_same< typename Algebraic_structure_traits<NT>::Is_exact,
                         CGAL::Tag_true >::value) ||  F1 == Q*F2 + R); return;
     }
 
