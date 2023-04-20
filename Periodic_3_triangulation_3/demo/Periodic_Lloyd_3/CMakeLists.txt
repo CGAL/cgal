@@ -17,27 +17,27 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt5 QUIET COMPONENTS Script Help OpenGL Svg)
+find_package(Qt6 QUIET COMPONENTS Help OpenGLWidget Svg)
 
-if(Qt5Help_VERSION VERSION_LESS 5.12)
-  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qcollectiongenerator)
+if(Qt6Help_VERSION VERSION_LESS 5.12)
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qcollectiongenerator)
 else()
-  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qhelpgenerator)
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qhelpgenerator)
 endif()
 
-if(CGAL_Qt5_FOUND
-   AND Qt5_FOUND
+if(CGAL_Qt6_FOUND
+   AND Qt6_FOUND
    AND TARGET ${CGAL_QCOLLECTIONGENERATOR_TARGET})
 
   include_directories(BEFORE ./)
 
   # ui file, created with Qt Designer
-  qt5_wrap_ui(uis MainWindow.ui)
+  qt6_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Periodic_Lloyd_3.qrc)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Periodic_Lloyd_3.qrc)
 
   if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
 
@@ -62,29 +62,29 @@ if(CGAL_Qt5_FOUND
     MainWindow.cpp
     Viewer.cpp
     ${uis}
-    ${CGAL_Qt5_RESOURCE_FILES}
-    ${CGAL_Qt5_MOC_FILES})
+    ${CGAL_Qt6_RESOURCE_FILES}
+    ${CGAL_Qt6_MOC_FILES})
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3)
 
-  target_link_libraries(Periodic_Lloyd_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                                 Qt5::OpenGL)
+  target_link_libraries(Periodic_Lloyd_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
+                                                 Qt6::OpenGLWidget)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Periodic_Lloyd_3)
-else(CGAL_Qt5_FOUND
-  AND Qt5_FOUND
+else(CGAL_Qt6_FOUND
+  AND Qt6_FOUND
   AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
 
   set(PERIODIC_LLOYD_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt5_FOUND)
+  if(NOT CGAL_Qt6_FOUND)
     set(PERIODIC_LLOYD_MISSING_DEPS
-        "the CGAL Qt5 library, ${PERIODIC_LLOYD_MISSING_DEPS}")
+        "the CGAL Qt6 library, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()
 
-  if(NOT Qt5_FOUND)
-    set(PERIODIC_LLOYD_MISSING_DEPS "Qt5, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  if(NOT Qt6_FOUND)
+    set(PERIODIC_LLOYD_MISSING_DEPS "Qt6, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()
 
   if(NOT QT_QCOLLECTIONGENERATOR_EXECUTABLE)

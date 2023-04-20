@@ -14,8 +14,8 @@ endif()
 
 include_directories(./)
 
-# Find CGAL and CGAL Qt5
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+# Find CGAL and CGAL Qt6
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
@@ -24,52 +24,52 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-# Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Script OpenGL)
+# Find Qt6 itself
+find_package(Qt6 QUIET COMPONENTS OpenGLWidgets)
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  qt5_wrap_ui(UI_FILES MainWindow.ui)
+  qt6_wrap_ui(UI_FILES MainWindow.ui)
 
   include(AddFileDependencies)
 
-  qt5_generate_moc("MainWindow.h"
+  qt6_generate_moc("MainWindow.h"
                    "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp")
   add_file_dependencies(MainWindow_moc.cpp
                         "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h")
 
-  qt5_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
+  qt6_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
   add_file_dependencies(Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h")
 
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES PCA_demo.qrc)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES PCA_demo.qrc)
 
   add_file_dependencies(
     PCA_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
-  add_executable(PCA_demo PCA_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES}
-                          ${CGAL_Qt5_MOC_FILES})
+  add_executable(PCA_demo PCA_demo.cpp ${UI_FILES} ${CGAL_Qt6_RESOURCE_FILES}
+                          ${CGAL_Qt6_MOC_FILES})
 
-  target_link_libraries(PCA_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                         CGAL::Eigen3_support Qt5::Gui)
+  target_link_libraries(PCA_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
+                                         CGAL::Eigen3_support Qt6::Gui)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS PCA_demo)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(PCA_demo)
 
-else(CGAL_Qt5_FOUND AND Qt5_FOUND)
+else(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(PCA_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt5_FOUND)
-    set(PCA_MISSING_DEPS "the CGAL Qt5 library, ${PCA_MISSING_DEPS}")
+  if(NOT CGAL_Qt6_FOUND)
+    set(PCA_MISSING_DEPS "the CGAL Qt6 library, ${PCA_MISSING_DEPS}")
   endif()
 
-  if(NOT Qt5_FOUND)
-    set(PCA_MISSING_DEPS "Qt5, ${PCA_MISSING_DEPS}")
+  if(NOT Qt6_FOUND)
+    set(PCA_MISSING_DEPS "Qt6, ${PCA_MISSING_DEPS}")
   endif()
 
   message("NOTICE: This demo requires ${PCA_MISSING_DEPS} and will not be compiled.")
 
-endif(CGAL_Qt5_FOUND AND Qt5_FOUND)
+endif(CGAL_Qt6_FOUND AND Qt6_FOUND)

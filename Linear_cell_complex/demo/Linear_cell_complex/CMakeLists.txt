@@ -40,26 +40,26 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 add_definitions(-DCMAP_WITH_INDEX) # to use cc with index (handle otherwise)
 
 ##################
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Svg)
 
 if(NOT
-   (CGAL_Qt5_FOUND
-    AND Qt5_FOUND))
+   (CGAL_Qt6_FOUND
+    AND Qt6_FOUND))
 
-  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt6, and will not be compiled.")
 
 else()
 
   add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
   # ui file, created with Qt Designer
-  qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
+  qt6_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
               CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
 
   # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
   add_executable(
     Linear_cell_complex_3_demo
@@ -73,13 +73,13 @@ else()
     MainWindow.h
     Viewer.h
     ${uis}
-    ${CGAL_Qt5_RESOURCE_FILES}
-    ${CGAL_Qt5_MOC_FILES})
+    ${CGAL_Qt6_RESOURCE_FILES}
+    ${CGAL_Qt6_MOC_FILES})
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
   target_link_libraries(Linear_cell_complex_3_demo
-                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
+                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Gui Qt6::OpenGLWidgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Linear_cell_complex_3_demo)

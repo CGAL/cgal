@@ -15,15 +15,15 @@ endif()
 # Include this package's headers first
 include_directories(BEFORE ./ ./include)
 
-# Find CGAL and CGAL Qt5
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+# Find CGAL and CGAL Qt6
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-# Find Qt5 itself
-find_package(Qt5 5.4 QUIET COMPONENTS OpenGL)
-if(Qt5_FOUND)
+# Find Qt6 itself
+find_package(Qt6 5.4 QUIET COMPONENTS OpenGLWidgets)
+if(Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-endif(Qt5_FOUND)
+endif(Qt6_FOUND)
 
 # Find CImg
 find_path(
@@ -39,37 +39,37 @@ else()
                  "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(SRCS glviewer.cpp scene.cpp Otr2_demo.cpp window.cpp render.cpp)
 
-  set(CGAL_Qt5_MOC_FILES moc_dialog_options.cxx moc_glviewer.cxx moc_window.cxx)
+  set(CGAL_Qt6_MOC_FILES moc_dialog_options.cxx moc_glviewer.cxx moc_window.cxx)
 
   set(UIS pwsrec.ui options.ui)
 
-  qt5_wrap_ui(UI_FILES ${UIS})
+  qt6_wrap_ui(UI_FILES ${UIS})
 
   include(AddFileDependencies)
 
-  qt5_generate_moc("window.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_window.cxx")
+  qt6_generate_moc("window.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_window.cxx")
   add_file_dependencies(moc_window.cxx "${CMAKE_CURRENT_SOURCE_DIR}/window.h")
 
-  qt5_generate_moc("glviewer.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_glviewer.cxx")
+  qt6_generate_moc("glviewer.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_glviewer.cxx")
   add_file_dependencies(moc_glviewer.cxx
                         "${CMAKE_CURRENT_SOURCE_DIR}/glviewer.h")
 
-  qt5_generate_moc("dialog_options.h"
+  qt6_generate_moc("dialog_options.h"
                    "${CMAKE_CURRENT_BINARY_DIR}/moc_dialog_options.cxx")
   add_file_dependencies(moc_dialog_options.cxx
                         "${CMAKE_CURRENT_SOURCE_DIR}/dialog_options.h")
 
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES pwsrec.qrc)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES pwsrec.qrc)
 
-  add_executable(Otr2_demo ${SRCS} ${CGAL_Qt5_MOC_FILES} ${UI_FILES}
-                           ${CGAL_Qt5_RESOURCE_FILES})
+  add_executable(Otr2_demo ${SRCS} ${CGAL_Qt6_MOC_FILES} ${UI_FILES}
+                           ${CGAL_Qt6_RESOURCE_FILES})
 
-  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui
-                                          Qt5::OpenGL)
+  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Gui
+                                          Qt6::OpenGLWidgets)
 
   # Link with pthread if necessary
   if(CIMG_INCLUDE_DIR)
@@ -88,21 +88,21 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Otr2_demo)
 else(
-  CGAL_Qt5_FOUND
-  AND Qt5_FOUND)
+  CGAL_Qt6_FOUND
+  AND Qt6_FOUND)
 
   set(OTR2_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt5_FOUND)
-    set(OTR2_MISSING_DEPS "the CGAL Qt5 library, ${OTR2_MISSING_DEPS}")
+  if(NOT CGAL_Qt6_FOUND)
+    set(OTR2_MISSING_DEPS "the CGAL Qt6 library, ${OTR2_MISSING_DEPS}")
   endif()
 
-  if(NOT Qt5_FOUND)
-    set(OTR2_MISSING_DEPS "Qt5.4, ${OTR2_MISSING_DEPS}")
+  if(NOT Qt6_FOUND)
+    set(OTR2_MISSING_DEPS "Qt6.4, ${OTR2_MISSING_DEPS}")
   endif()
 
   message("NOTICE: This demo requires ${OTR2_MISSING_DEPS} and will not be compiled.")
 
 endif(
-  CGAL_Qt5_FOUND
-  AND Qt5_FOUND)
+  CGAL_Qt6_FOUND
+  AND Qt6_FOUND)
