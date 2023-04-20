@@ -639,7 +639,7 @@ auto unit = [](CGAL::Vector_2<R> v) { return v / CGAL::approximate_sqrt(v*v); };
  assert(p1 == p.transform(comp1) || nonexact);
  p1 = p.transform(refl);
  p1 = p1.transform(trans);
- assert(p1 == p.transform(comp2));
+ assert(p1 == p.transform(comp2) || nonexact);
  //with scaling
  CGAL::Aff_transformation_2<R> scal(CGAL::SCALING, 2);
  comp1 = refl*scal;
