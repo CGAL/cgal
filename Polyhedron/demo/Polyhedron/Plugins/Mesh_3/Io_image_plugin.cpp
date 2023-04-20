@@ -666,7 +666,7 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
-    QRegExpValidator* validator = new QRegExpValidator(QRegExp("\\d*"), this);
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(QRegularExpression("\\d*"), this);
     bool show_sliders = true;
     if(x_control == nullptr)
     {

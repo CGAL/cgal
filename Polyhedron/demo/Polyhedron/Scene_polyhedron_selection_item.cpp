@@ -1830,7 +1830,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 {
   common_constructor();
   QString sf = poly_item->property("source filename").toString();
-  QRegExp rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
+  QRegularExpression rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
   sf.remove(rx);
   if(!sf.isEmpty())
     setProperty("defaultSaveDir", sf);
