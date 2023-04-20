@@ -2456,10 +2456,8 @@ void CGAL::QGLViewer::setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers mod
     mouseBinding_.insert(mbp, map);
 
   ClickBindingPrivate cbp(modifiers, button, false, ::Qt::NoButton, key);
-  
-  // AF: currently results in a runtime error
-  // clickBinding_.remove(cbp);
-  
+  clickBinding_.remove(cbp);
+
 }
 
 

@@ -51,15 +51,16 @@ void Show_point_dialog::interprete_string(const QString& string)
     + "|" + not_double_char_re + "+" + double_re
     + ")"
     + "$";
-#if 0  // AF @todo  QRegExp had exactMatch() and cap()
+
   QRegularExpression re(full_re);
-  if(re.exactMatch(string)) {
+  QRegularExpressionMatch match = re.match(string); // AF @todo  QRegExp had exactMatch()
+  if(match.hasMatch()) {
     // const double x = re.cap(1).toDouble();
     // const double y = re.cap(2).toDouble();
     // const double z = re.cap(3).toDouble();
-    ui->coord_x->setText(QString(re.cap(1)));
-    ui->coord_y->setText(QString(re.cap(2)));
-    ui->coord_z->setText(QString(re.cap(3)));
+    ui->coord_x->setText(QString(match.captured(1)));
+    ui->coord_y->setText(QString(match.captured(2)));
+    ui->coord_z->setText(QString(match.captured(3)));
     m_has_correct_coordinates = true;
   }
   else {
@@ -68,7 +69,6 @@ void Show_point_dialog::interprete_string(const QString& string)
     ui->coord_z->setText(QString());
     m_has_correct_coordinates = false;
   }
-#endif
 }
 
 double Show_point_dialog::get_x() const
@@ -90,4 +90,3 @@ bool Show_point_dialog::has_correct_coordinates() const
 {
   return m_has_correct_coordinates;
 }
-
