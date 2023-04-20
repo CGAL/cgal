@@ -800,7 +800,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::LookupOnSLAV ( Halfedge_handle aBorder, Ev
 
           CGAL_STSKEL_BUILDER_TRACE ( 3, "Split point found at the "
                                     << ( rSite == AT_SOURCE ? "SOURCE vertex" : ( rSite == AT_TARGET ? "TARGET vertex" : "strict inside" ) )
-                                    << " of the offset edge."
+                                    << " of the offset edge " << vh2str(lPrevN) << " " << vh2str(v)
                                     ) ;
           break ;
         }
@@ -1165,30 +1165,29 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Vertex_handle lOppL = aOpp.first ;
     Vertex_handle lOppR = aOpp.second ;
 
+    Halfedge_handle lOppOBisector_R = lOppR->primary_bisector();
+    Halfedge_handle lOppIBisector_L = lOppOBisector_R->next();
+
+    Vertex_handle lOppFicNode = lOppOBisector_R->vertex() ;
+    (void)lOppFicNode; // variable may be unused
+
     CGAL_STSKEL_BUILDER_TRACE( 4, "TriEdge e0 = " << e2str(*lEvent.triedge().e0()) );
     CGAL_STSKEL_BUILDER_TRACE( 4, "TriEdge e1 = " << e2str(*lEvent.triedge().e1()) );
     CGAL_STSKEL_BUILDER_TRACE( 4, "TriEdge e2 = " << e2str(*lEvent.triedge().e2()) );
     CGAL_STSKEL_BUILDER_TRACE( 4, "lOppL = " << v2str(*lOppL) );
     CGAL_STSKEL_BUILDER_TRACE( 4, "lOppR = " << v2str(*lOppR) );
-
-    Halfedge_handle lOppIBisector_L = lOppL->primary_bisector()->opposite();
-    Halfedge_handle lOppOBisector_R = lOppR->primary_bisector();
-
-    Vertex_handle lOppFicNode = lOppOBisector_R->vertex() ;
-    (void)lOppFicNode; // variable may be unused
-
-    CGAL_assertion(lOppOBisector_R->next() == lOppIBisector_L ) ;
-    CGAL_assertion(lOppIBisector_L->prev() == lOppOBisector_R ) ;
-    CGAL_assertion(lOppFicNode->has_infinite_time());
+    CGAL_STSKEL_BUILDER_TRACE( 4, "lOppLPrimary = " << e2str(*lOppL->primary_bisector()) );
+    CGAL_STSKEL_BUILDER_TRACE( 4, "lOppRPrimary = " << e2str(*lOppR->primary_bisector()) );
 
     CGAL_STSKEL_BUILDER_TRACE(2,"Split face: N" << lOppR->id()
                                 << "->B" << lOppOBisector_R->id()
                                 << "->N" << lOppFicNode->id()
                                 << "->B" << lOppIBisector_L->id()
-                                << "->N" << lOppL->id()
-                             ) ;
+                                << "->N" << lOppL->id());
 
     CGAL_STSKEL_BUILDER_TRACE(2,"fictitious node for right half of opposite edge: N" << lOppFicNode->id() ) ;
+
+    CGAL_assertion(lOppFicNode->has_infinite_time());
 
     Halfedge_handle lOppBorder = lEvent.triedge().e2() ;
 

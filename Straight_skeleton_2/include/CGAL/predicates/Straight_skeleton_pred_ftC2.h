@@ -374,9 +374,9 @@ oriented_side_of_event_point_wrt_bisectorC2 ( Trisegment_2_ptr< Trisegment_2<K, 
 
     CGAL_STSKEL_TRAITS_TRACE("\n~~ Oriented side of point [" << typeid(FT).name() << "]" );
     CGAL_STSKEL_TRAITS_TRACE("p = " << p2str(p)
-                            << " w.r.t. bisector of [E0 "
+                            << " w.r.t. bisector of [E" << e0.id() << " "
                             << s2str(e0) << ( primary_is_0 ? "*" : "" )
-                            << ", E1 "
+                            << ", E" << e1.id() << " "
                             << s2str(e1) << ( primary_is_0 ? "" : "*" )
                             << "]"
                             ) ;
