@@ -1141,25 +1141,22 @@ bool MainWindow::file_matches_filter(const QString& filters,
                                      const QString& filename )
 {
   QFileInfo fileinfo(filename);
-  QString filename_striped=fileinfo.fileName();
+  QString filename_stripped=fileinfo.fileName();
 
   //match all filters between ()
   QRegularExpression all_filters_rx("\\((.*)\\)");
 
   QStringList split_filters = filters.split(";;");
   Q_FOREACH(const QString& filter, split_filters) {
-    //extract filters
-#if 0 // AF @todo
-    if ( all_filters_rx.indexIn(filter)!=-1 ){
-      Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
-        QRegularExpression rx(pattern);
-        rx.setPatternSyntax(QRegularExpression::Wildcard);
-        if ( rx.exactMatch(filename_striped) ){
-          return true;
+      QRegularExpressionMatch match = all_filters_rx.match(filter);
+      if(match.hasMatch()){
+        for (const QString& pattern : match.captured(1).split(' ')) {
+            QRegularExpressionMatch m = QRegularExpression(QRegularExpression::fromWildcard(pattern)).match(filename_stripped);
+            if (m.hasMatch()) {
+                return true;
+            }
         }
       }
-    }
-#endif
   }
   return false;
 }
