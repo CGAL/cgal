@@ -727,7 +727,7 @@ void Polyhedron_demo_affine_transform_plugin::normalize(Item* item)
   double max = (std::max)((double)tsr.x()-bil.x(), (double)tsr.y()-bil.y());
   max = (std::max)(max, (double)tsr.z()-bil.z());
   QVector3D v_bil= QVector3D(bil.x(),bil.y(),bil.z());
-  QMatrix4x4 frameMat = QMatrix();
+  QMatrix4x4 frameMat = QMatrix4x4();
   QVector3D center(item->center().x,
                    item->center().y,
                    item->center().z);
