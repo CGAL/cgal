@@ -22,6 +22,7 @@
 #endif
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/use.h>
 #include <vector>
 
 namespace CGAL {
@@ -107,6 +108,11 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             Visitor& visitor,
             const typename Kernel::FT max_squared_distance)
 {
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+  CGAL_USE(use_cdt);
+  CGAL_USE(max_squared_distance);
+#endif
+
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;

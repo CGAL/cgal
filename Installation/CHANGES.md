@@ -40,6 +40,8 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   Added the function `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` to remove badly shaped triangles faces in a mesh.
 
+-   Added the function `CGAL::Polygon_mesh_processing::triangulate_polygons()`, which allows users to triangulate polygon soups.
+
 -   Added the functions `CGAL::Polygon_mesh_processing::remesh_planar_patches()` and
     `CGAL::Polygon_mesh_processing::remesh_almost_coplanar_patches()` to retriangulate patches of coplanar faces in a mesh.
 
