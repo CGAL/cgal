@@ -279,7 +279,7 @@ There are also two different classes of ranges containing one dart per <I>i</I>-
 
 The iterators of the \link GenericMap::Dart_range `Dart_range`\endlink are bidirectional iterators,  while the iterators of the other four ranges are forward iterators.  The value type of all these iterators is `Dart` thus all these iterators can be directly used as \link GenericMap::Dart_descriptor `Dart_descriptor`\endlink.
 
-Additionally, there is a range over non void <I>i</I>-attributes: \link GenericMap::Attribute_range `Attribute_range<i>::type`\endlink, having a bidirectional iterator with value type \link GenericMap::Attribute_type Attribute_type<i>::type`\endlink.
+Additionally, there is a range over non void <I>i</I>-attributes: \link GenericMap::Attribute_range `Attribute_range<i>::type`\endlink, having a bidirectional iterator with value type \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink.
 
 For each range, there is an associated const range, a model of the `ConstRange` concept. You can find some examples of ranges in Section \ref ssecexample3DGM "A 3D Generalized Map".
 

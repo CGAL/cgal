@@ -799,6 +799,8 @@ Scene_triangulation_3_item::build_histogram()
   {
     max_size = (std::max)(max_size, *it);
   }
+  if(max_size == 0)
+    return;
 
   // colored histogram
   int j = 0;

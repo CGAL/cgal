@@ -980,6 +980,12 @@ faces_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, co
   return make_range(I(h,g), I(h,g,1));
 }
 
+/**
+ * \ingroup PkgBGLIterators
+ * A bidirectional circulator with value type `boost::graph_traits<Graph>::%vertex_descriptor` over all vertices incident to the same face or border.
+ * \tparam Graph must be a model of the concept `HalfedgeGraph`
+ * \cgalModels `BidirectionalIterator`
+ */
 template <typename Graph>
 class Vertex_around_face_circulator
 #ifndef DOXYGEN_RUNNING

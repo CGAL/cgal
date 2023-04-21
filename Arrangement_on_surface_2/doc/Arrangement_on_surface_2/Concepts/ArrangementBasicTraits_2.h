@@ -25,9 +25,7 @@
  * `Bottom_side_category`, and `Top_side_category`. Each such type must be
  * convertible to the type `CGAL::Arr_oblivious_side_tag`.
  *
- * \cgalRefines DefaultConstructible
- * \cgalRefines CopyConstructible
- * \cgalRefines Assignable
+ * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * \cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
  * \cgalHasModel `CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>`

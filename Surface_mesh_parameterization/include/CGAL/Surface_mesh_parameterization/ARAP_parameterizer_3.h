@@ -33,7 +33,7 @@
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
-#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
 #include <Eigen/UmfPackSupport>
 #endif
 #endif
@@ -154,7 +154,7 @@ namespace Surface_mesh_parameterization {
 ///   CGAL::Eigen_solver_traits<
 ///           Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
 /// \endcode
-///         Moreover, if SparseSuite solvers are available, which is greatly preferable for speed,
+///         Moreover, if SuiteSparse solvers are available, which is greatly preferable for speed,
 ///         then the default parameter is:
 /// \code
 ///   CGAL::Eigen_solver_traits<
@@ -183,7 +183,7 @@ public:
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
-    #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+    #ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
       CGAL::Eigen_solver_traits<
         Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
     #else

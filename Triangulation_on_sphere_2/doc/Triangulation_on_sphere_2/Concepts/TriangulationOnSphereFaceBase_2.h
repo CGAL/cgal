@@ -2,7 +2,7 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDSFaceBase_2`
+\cgalRefines{TriangulationDSFaceBase_2}
 
 The concept `TriangulationOnSphereFaceBase_2` describes the requirements for a face class
 of a triangulation data structure that is itself plugged into a triangulation on the sphere.

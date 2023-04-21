@@ -3,7 +3,7 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableBinaryFunction
+ * \cgalRefines{AdaptableBinaryFunction}
  *
  * \cgalHasModel ArrangementBasicTraits_2::Equal_2
  */

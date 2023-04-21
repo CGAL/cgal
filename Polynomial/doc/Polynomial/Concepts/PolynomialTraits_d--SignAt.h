@@ -10,9 +10,7 @@ as an iterator range.
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is
 `RealEmbeddable`.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
