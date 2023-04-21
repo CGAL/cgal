@@ -1,4 +1,14 @@
+#ifdef CGAL_DO_NOT_USE_BOOST_MP
 
+#include <iostream>
+
+int main()
+{
+  std::cout << "The class CGAL::cpp_float is not tested on this platform" << std::endl;
+  return 0;
+}
+
+#else
 
 #include <CGAL/cpp_float.h>
 
@@ -102,3 +112,5 @@ int main()
 
   return 0;
 }
+
+#endif
