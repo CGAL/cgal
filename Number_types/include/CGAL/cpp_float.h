@@ -436,9 +436,9 @@ public:
   bool is_one () const {
     if(! is_positive()) return false;
 
-    int msb = boost::multiprecision::msb(man);
+    int msb = static_cast<int>(boost::multiprecision::msb(man));
     if (msb != -exp) return false;
-    int lsb = boost::multiprecision::lsb(man);
+    int lsb = static_cast<int>(boost::multiprecision::lsb(man));
     return (msb == lsb);
   }
 
