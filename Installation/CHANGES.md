@@ -45,6 +45,8 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   Added a named parameter to `CGAL::Polygon_mesh_processing::smooth_shape()` to disable scaling to compensate volume loss.
 
+-   Added the functions `CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect()` and `CGAL::Polygon_mesh_processing::triangle_soup_self_intersections()` to identify and report self-intersections in a triangle soup, similarly to existing functions on triangle meshes.
+
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
