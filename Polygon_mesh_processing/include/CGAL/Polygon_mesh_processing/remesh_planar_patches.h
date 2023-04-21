@@ -698,8 +698,9 @@ bool decimate_impl(const TriangleMesh& tm,
           // TODO this is not optimal at all since we already have the set of contraints,
           //      we could work on the graph on constraint and recover only the orientation
           //      of the edge. To be done if someone find it too slow.
+          typedef typename boost::property_traits<FaceCCIdMap>::value_type PID;
           std::vector<halfedge_descriptor> hborders;
-          CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, cc_id, face_cc_ids);
+          CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, static_cast<PID>(cc_id), face_cc_ids);
           extract_boundary_cycles(ffg, std::back_inserter(hborders));
 
           if (hborders.size()==1)
