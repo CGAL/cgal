@@ -13,6 +13,8 @@
 
 #include "ui_MainWindow.h"
 
+
+
 MainWindow::MainWindow(QWidget* parent)
 : CGAL::Qt::DemosMainWindow(parent)
 {
@@ -38,12 +40,25 @@ MainWindow::MainWindow(QWidget* parent)
   connect(this, SIGNAL(openRecentFile(QString)),
     this, SLOT(open(QString)));
 
+  QJSValue mainWindow = myEngine.newQObject(this);
+  myEngine.globalObject().setProperty("main_window", mainWindow);
   readSettings();
+  std::ifstream script("init.js");
+  if(script.good()){
+    std::string line;
+    while(getline(script, line)){
+      myEngine.evaluate(line.c_str());
+    }
+  }
 }
 
 MainWindow::~MainWindow()
 {
   m_pViewer->makeCurrent();
+  // AF I thought this helps to avoid  the exception when the program
+  // terminates, but it does not
+  myEngine.globalObject().setProperty("main_window", QJSValue());
+  myEngine.collectGarbage();
   delete ui;
 }
 
@@ -64,6 +79,13 @@ void MainWindow::dropEvent(QDropEvent *event)
   }
   event->acceptProposedAction();
 }
+
+
+void MainWindow::hello() const
+{
+  std::cout << "Hhello world" << std::endl;
+}
+
 
 void MainWindow::updateViewerBBox()
 {
@@ -418,7 +440,3 @@ void MainWindow::on_actionCopy_snapshot_triggered()
   qb->setImage(snapshot);
   QApplication::restoreOverrideCursor();
 }
-
-
-
-

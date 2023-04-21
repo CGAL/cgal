@@ -24,7 +24,7 @@ include_directories(BEFORE ./ ./include)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS  OpenGLWidgets Gui Svg)
+find_package(Qt6 QUIET COMPONENTS  OpenGLWidgets Gui Svg Qml)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
@@ -53,7 +53,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     #${CGAL_Qt6_MOC_FILES}
   )
   # Link with Qt libraries
-  target_link_libraries(AABB_demo PRIVATE Qt6::OpenGLWidgets Qt6::Gui
+  target_link_libraries(AABB_demo PRIVATE Qt6::OpenGLWidgets Qt6::Gui Qt6::Qml
                                           CGAL::CGAL CGAL::CGAL_Qt6)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS AABB_demo)
