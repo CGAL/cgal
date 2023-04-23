@@ -47,7 +47,7 @@ class transforming_pair_iterator_helper
                 decltype(std::declval<F>()(std::declval<typename std::iterator_traits<It1>::reference>(),std::declval<typename std::iterator_traits<It2>::reference>()))
                         >::type reference;
 
-        typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference>::type>::type>::type value_type;
+        typedef typename Default::Get<Val,std::remove_cv_t<typename boost::remove_reference<reference>::type>>::type value_type;
 
         public:
         typedef boost::iterator_facade<

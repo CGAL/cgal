@@ -55,7 +55,7 @@ class transforming_iterator_helper
                 decltype(std::declval<F>()(std::declval<Iter_ref>()))
                         >::type reference_;
 
-        typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference_>::type>::type>::type value_type;
+        typedef typename Default::Get<Val,std::remove_cv_t<typename boost::remove_reference<reference_>::type>>::type value_type;
 
         // Crappy heuristic. If we have *it that returns a Weighted_point and F that returns a reference to the Point contained in the Weighted_point it takes as argument, we do NOT want the transformed iterator to return a reference to the temporary *it. On the other hand, if *it returns an int n, and F returns a reference to array[n] it is not so good to lose the reference. This probably should be done elsewhere and should at least be made optional...
         typedef typename boost::mpl::if_<

@@ -30,7 +30,6 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/remove_cv.hpp>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -64,7 +63,7 @@ public:
 template<typename T>
 struct Has_result_type
   : boost::integral_constant< bool,
-                              Has_result_type_helper< typename boost::remove_cv<T>::type>::value>
+                              Has_result_type_helper< std::remove_cv_t<T>>::value>
 {};
 
 template <typename T>
@@ -191,10 +190,10 @@ private:
   template <typename Construction, typename Dummy = boost::none_t>
   struct Lazy_wrapper_traits :
     boost::mpl::eval_if< internal::Has_result_type<Construction>,
-                         boost::mpl::eval_if< std::is_same< typename boost::remove_cv<
+                         boost::mpl::eval_if< std::is_same< std::remove_cv_t<
                                                             typename boost::remove_reference<
                                                               typename internal::Lazy_result_type<Construction>::type
-                                                                  >::type >::type,
+                                                                  >::type >,
                                                             typename Approximate_kernel::FT>,
                                               boost::mpl::int_<NT>,
                                               boost::mpl::eval_if< std::is_same< typename internal::Lazy_result_type<Construction>::type,

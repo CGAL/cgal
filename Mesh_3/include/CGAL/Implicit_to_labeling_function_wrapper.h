@@ -33,7 +33,6 @@
 
 #include <boost/dynamic_bitset.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/is_function.hpp>
 #include <boost/mpl/if.hpp>
 
@@ -157,7 +156,7 @@ class Implicit_multi_domain_to_labeling_function_wrapper
   {
   public:
     typedef typename boost::remove_reference<
-            typename boost::remove_cv< Point_ >::type>::type Point;
+            std::remove_cv_t< Point_ >>::type Point;
   };
 
 public:
