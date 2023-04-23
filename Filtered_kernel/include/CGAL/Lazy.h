@@ -2089,9 +2089,9 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
   typedef std::remove_cv_t<
-    typename boost::remove_reference < typename AC::result_type >::type > AT;
+    std::remove_reference_t < typename AC::result_type > > AT;
   typedef std::remove_cv_t<
-    typename boost::remove_reference < typename EC::result_type >::type > ET;
+    std::remove_reference_t < typename EC::result_type > > ET;
 
   typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
 

@@ -104,7 +104,7 @@ struct Has_type_different_from <T, No, true>
         template<class T,class U> struct Type_copy_cv<T const volatile,U> { typedef U const volatile type; };
 
         template<class T,class U> struct Type_copy_cvref :
-                Type_copy_ref<T,typename Type_copy_cv<typename boost::remove_reference<T>::type,U>::type> {};
+                Type_copy_ref<T,typename Type_copy_cv<std::remove_reference_t<T>,U>::type> {};
 
         struct Dereference_functor {
                 template<class> struct result{};

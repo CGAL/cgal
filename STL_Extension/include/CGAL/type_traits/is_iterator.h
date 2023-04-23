@@ -19,7 +19,6 @@
 
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_pointer.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/logical.hpp>
 
@@ -64,7 +63,7 @@ struct is_iterator_type_<T, U, true>
 // NOTE: we don't want the real std::decay or functions are included
 template <class T>
 struct is_iterator
-  : public internal::is_iterator_<std::remove_cv_t<typename boost::remove_reference<T>::type>>
+  : public internal::is_iterator_<std::remove_cv_t<std::remove_reference_t<T>>>
 { };
 
 template <class T>
@@ -72,7 +71,7 @@ CGAL_CPP17_INLINE constexpr bool is_iterator_v = is_iterator<T>::value;
 
 template <class T, class Tag>
 struct is_iterator_type
-  : public internal::is_iterator_type_<std::remove_cv_t<typename boost::remove_reference<T>::type>, Tag>
+  : public internal::is_iterator_type_<std::remove_cv_t<std::remove_reference_t<T>>, Tag>
 { };
 
 template <class T, class Tag>

@@ -23,7 +23,6 @@
 #include <CGAL/Search_traits_adapter.h>
 
 #include <boost/mpl/if.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 
 #include <type_traits>
 
@@ -63,7 +62,7 @@ namespace CGAL {
     private:
 
     std::remove_cv_t<
-      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type
+      std::remove_reference_t< typename Construct_min_vertex_d::result_type >
       > min, max;
     Cartesian_const_iterator_d min_begin, max_begin;
     FT eps;

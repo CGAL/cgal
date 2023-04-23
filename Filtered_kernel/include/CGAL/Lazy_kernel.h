@@ -29,7 +29,6 @@
 #include <boost/none.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -191,9 +190,9 @@ private:
   struct Lazy_wrapper_traits :
     boost::mpl::eval_if< internal::Has_result_type<Construction>,
                          boost::mpl::eval_if< std::is_same< std::remove_cv_t<
-                                                            typename boost::remove_reference<
+                                                            std::remove_reference_t<
                                                               typename internal::Lazy_result_type<Construction>::type
-                                                                  >::type >,
+                                                                  > >,
                                                             typename Approximate_kernel::FT>,
                                               boost::mpl::int_<NT>,
                                               boost::mpl::eval_if< std::is_same< typename internal::Lazy_result_type<Construction>::type,
