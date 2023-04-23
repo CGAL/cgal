@@ -25,7 +25,6 @@
 #include <memory>
 #include <cstddef>
 #include <functional>
-#include <boost/type_traits/remove_pointer.hpp>
 
 namespace CGAL {
 
@@ -120,12 +119,12 @@ public:
                         std::remove_reference_t<Ref>
                       >&,
                       std::remove_const_t<
-                          typename boost::remove_pointer<Ptr>::type
+                          std::remove_pointer_t<Ptr>
                       >* >
     remove_const() const
     {
       typedef std::remove_const_t<
-                typename boost::remove_pointer<Ptr>::type
+                std::remove_pointer_t<Ptr>
               >* Ptr_no_c;
       return  vector_iterator< T,
                      std::remove_const_t<std::remove_reference_t<Ref>>&,
