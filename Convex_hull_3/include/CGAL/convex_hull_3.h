@@ -42,7 +42,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/type_traits/is_iterator.h>
 
-#include <boost/type_traits/is_floating_point.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/graph/graph_traits.hpp>
 
@@ -148,7 +147,7 @@ namespace internal {
 //struct to select the default traits class for computing convex hull
 template< class Point_3,
           class PolygonMesh = Default,
-          class Is_floating_point=typename boost::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
+          class Is_floating_point=typename std::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<Point_3>::Kernel::Has_filtered_predicates_tag >
 struct Default_traits_for_Chull_3{
   typedef typename Kernel_traits<Point_3>::Kernel type;

@@ -34,7 +34,6 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/is_float.hpp>
 
 namespace CGAL {
 
@@ -1196,7 +1195,7 @@ public:
   void relocate_on_the_double_grid(Point& p) const
   {
     relocate_on_the_double_grid(p,
-      typename boost::is_float<typename Traits::FT>::type());
+      typename std::is_floating_point<typename Traits::FT>::type());
   }
 
   Point compute_relocation(Vertex_handle vertex) const {
