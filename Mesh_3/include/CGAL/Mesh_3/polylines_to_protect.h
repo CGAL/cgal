@@ -29,7 +29,7 @@
 #include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <boost/utility.hpp> // for boost::prior
+#include <boost/utility.hpp> // for std::prev
 #include <boost/optional.hpp>
 
 #include <CGAL/Search_traits_3.h>
@@ -388,7 +388,7 @@ void snap_graph_vertices(Graph& graph,
     if(poly_it->begin() != poly_it->end()) {
       tree.insert(*poly_it->begin());
       if(boost::next(poly_it->begin()) != poly_it->end()) {
-        tree.insert(*boost::prior(poly_it->end()));
+        tree.insert(*std::prev(poly_it->end()));
       }
     }
   }

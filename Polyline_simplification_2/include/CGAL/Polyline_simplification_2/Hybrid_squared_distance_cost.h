@@ -65,7 +65,7 @@ public:
     Construct_segment        construct_segment        = pct.geom_traits().construct_segment_2_object() ;
     typedef typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
 
-    Vertices_in_constraint_iterator vicp = boost::prior(vicq);
+    Vertices_in_constraint_iterator vicp = std::prev(vicq);
     Vertices_in_constraint_iterator vicr = boost::next(vicq);
 
     Point const& lP = (*vicp)->point();

@@ -86,8 +86,8 @@ BOOST_FIXTURE_TEST_CASE( test_single_skip, Fixture )
                                 skips.begin(), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(),
                                 all.begin(), all.end());
-  l.skip(boost::prior(l.all_end()));
-  BOOST_CHECK(l.is_skipped(boost::prior(l.all_end())));
+  l.skip(std::prev(l.all_end()));
+  BOOST_CHECK(l.is_skipped(std::prev(l.all_end())));
   skips.erase(std::remove(skips.begin(), skips.end(), 7), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
@@ -112,7 +112,7 @@ BOOST_FIXTURE_TEST_CASE( test_range_skip, Fixture )
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
   // drop 6 and 7
-  l.skip(boost::prior(l.all_end(), 2), l.all_end());
+  l.skip(std::prev(l.all_end(), 2), l.all_end());
   skips.erase(std::remove(skips.begin(), skips.end(), 6), skips.end());
   skips.erase(std::remove(skips.begin(), skips.end(), 7), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE( test_swap )
 {
   using std::swap;
   Fixture a, b;
-  all_iterator it = boost::prior(b.l.all_end());
+  all_iterator it = std::prev(b.l.all_end());
   b.l.push_back(8); b.l.push_back(9); b.l.push_back(10);
   swap(a.l, b.l);
 
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE( test_swap )
                                 a.all.begin(), a.all.end());
   // this iterator should still be valid and now point into a
   BOOST_CHECK_EQUAL_COLLECTIONS(it, a.l.all_end(),
-                                boost::prior(a.all.end(), 4), a.all.end());
+                                std::prev(a.all.end(), 4), a.all.end());
 }
 
 BOOST_AUTO_TEST_CASE( test_splice )

@@ -613,7 +613,7 @@ partition_outside_sets(const std::list<Face_handle>& new_facets,
     }
     if(! point_list.empty()){
       pending_facets.push_back(f);
-      f->it = boost::prior(pending_facets.end());
+      f->it = std::prev(pending_facets.end());
     } else {
       f->it = pending_facets.end();
     }
@@ -748,7 +748,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   for(Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit){
     if (! fit->points.empty()){
       pending_facets.push_back(fit);
-      fit->it = boost::prior(pending_facets.end());
+      fit->it = std::prev(pending_facets.end());
         } else {
       fit->it =  pending_facets.end();
     }

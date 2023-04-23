@@ -243,9 +243,9 @@ struct Intersect_coplanar_faces_3
 
     CGAL_assertion_code(int pt_added=0;)
 
-    Inter_pt_info* prev = &(*boost::prior(inter_pts.end()));
+    Inter_pt_info* prev = &(*std::prev(inter_pts.end()));
     bool inter_pts_size_g_2 = inter_pts.size() > 2;
-    Iterator stop = inter_pts_size_g_2 ? inter_pts.end() : boost::prior(inter_pts.end());
+    Iterator stop = inter_pts_size_g_2 ? inter_pts.end() : std::prev(inter_pts.end());
     for (Iterator it=inter_pts.begin();it!=stop;++it)
     {
       Inter_pt_info* curr=&(*it);

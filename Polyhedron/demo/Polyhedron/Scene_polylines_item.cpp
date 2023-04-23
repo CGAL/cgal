@@ -622,9 +622,9 @@ void Scene_polylines_item::split_at_sharp_angles()
         else
             ++bare_polyline_it;
         if(it != bare_polyline.end()) {
-            for(; it != boost::prior(bare_polyline.end()); ++it) {
+            for(; it != std::prev(bare_polyline.end()); ++it) {
                 const Point_3 pv = *it;
-                const Point_3 pa = *boost::prior(it);
+                const Point_3 pa = *std::prev(it);
                 const Point_3 pb = *boost::next(it);
                 const K::Vector_3 av = pv - pa;
                 const K::Vector_3 bv = pv - pb;
@@ -647,7 +647,7 @@ void Scene_polylines_item::split_at_sharp_angles()
                         // if the polyline is a cycle, test if its beginning is a sharp
                         // angle...
                         const Point_3 pv = *bare_polyline.begin();
-                        const Point_3 pa = *boost::prior(boost::prior(bare_polyline.end()));
+                        const Point_3 pa = *std::prev(std::prev(bare_polyline.end()));
                         const Point_3 pb = *boost::next(bare_polyline.begin());
                         const K::Vector_3 av = pv - pa;
                         const K::Vector_3 bv = pv - pb;

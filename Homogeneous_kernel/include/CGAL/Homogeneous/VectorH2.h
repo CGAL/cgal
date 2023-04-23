@@ -101,12 +101,12 @@ public:
    Cartesian_const_iterator cartesian_begin() const
    {
      return make_cartesian_const_iterator_begin(CGAL::get_pointee_or_identity(base).begin(),
-                                                boost::prior(CGAL::get_pointee_or_identity(base).end()));
+                                                std::prev(CGAL::get_pointee_or_identity(base).end()));
    }
 
    Cartesian_const_iterator cartesian_end() const
    {
-     return make_cartesian_const_iterator_end(boost::prior(CGAL::get_pointee_or_identity(base).end()));
+     return make_cartesian_const_iterator_end(std::prev(CGAL::get_pointee_or_identity(base).end()));
    }
 
    int     dimension() const;

@@ -255,7 +255,7 @@ public:
                               std::back_inserter(cells),
                               Emptyset_iterator()));
 
-    Facet facet=*boost::prior(facets_on_the_boundary_of_the_hole.end());
+    Facet facet=*std::prev(facets_on_the_boundary_of_the_hole.end());
 
     // Remember the points that are hidden by the conflicting cells,
     // as they will be deleted during the insertion.
