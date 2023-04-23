@@ -387,7 +387,7 @@ void snap_graph_vertices(Graph& graph,
   {
     if(poly_it->begin() != poly_it->end()) {
       tree.insert(*poly_it->begin());
-      if(boost::next(poly_it->begin()) != poly_it->end()) {
+      if(std::next(poly_it->begin()) != poly_it->end()) {
         tree.insert(*std::prev(poly_it->end()));
       }
     }
@@ -1048,10 +1048,10 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
       continue;
 
     typename Polyline::const_iterator pit = polyline.begin();
-    while (boost::next(pit) != polyline.end())
+    while (std::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }
@@ -1165,10 +1165,10 @@ merge_and_snap_polylines(const CGAL::Image_3& image,
       continue;
 
     auto pit = polyline.begin();
-    while (boost::next(pit) != polyline.end())
+    while (std::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }

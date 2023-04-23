@@ -120,10 +120,10 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(*inter_pts.begin());
     case 2:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
-            k.construct_segment_3_object()(*inter_pts.begin(), *boost::next(inter_pts.begin())) );
+            k.construct_segment_3_object()(*inter_pts.begin(), *std::next(inter_pts.begin())) );
     case 3:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
-            k.construct_triangle_3_object()(*inter_pts.begin(), *boost::next(inter_pts.begin()), *std::prev(inter_pts.end())) );
+            k.construct_triangle_3_object()(*inter_pts.begin(), *std::next(inter_pts.begin()), *std::prev(inter_pts.end())) );
     default:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
             std::vector<typename K::Point_3>(inter_pts.begin(),inter_pts.end()));

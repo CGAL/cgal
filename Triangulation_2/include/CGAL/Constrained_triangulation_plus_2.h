@@ -754,7 +754,7 @@ public:
   void simplify(Vertices_in_constraint_iterator v)
   {
     Vertices_in_constraint_iterator u = std::prev(v);
-    Vertices_in_constraint_iterator w = boost::next(v);
+    Vertices_in_constraint_iterator w = std::next(v);
     bool unew = (*u != *w);
     hierarchy.simplify(u,v,w);
 
