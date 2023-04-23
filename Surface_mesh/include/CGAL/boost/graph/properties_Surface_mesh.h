@@ -238,7 +238,7 @@ template<typename Point>
 typename
 boost::lazy_disable_if
 <
-  boost::is_const<Point>,
+  std::is_const<Point>,
   internal::Get_vertex_point_map_for_Surface_mesh_return_type<Point>
 >::type
 get(CGAL::vertex_point_t, const CGAL::Surface_mesh<Point>& g) {
