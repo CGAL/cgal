@@ -26,7 +26,6 @@
 #include <CGAL/property_map.h>
 
 #include <boost/dynamic_bitset.hpp>
-#include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
 #include <boost/container/flat_set.hpp>
@@ -197,7 +196,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   typedef typename boost::range_value<PolygonRange>::type           Polygon;
   typedef typename boost::range_value<Polygon>::type                V_ID;
 
-  if(boost::begin(polygons) == boost::end(polygons))
+  if(std::begin(polygons) == std::end(polygons))
     return true;
 
   //check there is no duplicated ordered edge, and
@@ -208,12 +207,12 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 
   for(const Polygon& polygon : polygons)
   {
-    std::size_t nb_edges = boost::size(polygon);
+    std::size_t nb_edges = std::size(polygon);
     if(nb_edges < 3)
       return false;
 
     polygon_vertices.clear();
-    V_ID prev = *std::prev(boost::end(polygon));
+    V_ID prev = *std::prev(std::end(polygon));
     for(V_ID id : polygon)
     {
       if(max_id<id)

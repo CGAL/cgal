@@ -306,7 +306,7 @@ void Scene_c3t3_item::compute_bbox() const
     _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
                  result.xmax(), result.ymax(), result.zmax());
 
-    if (boost::empty(c3t3().cells_in_complex()))
+    if (std::empty(c3t3().cells_in_complex()))
     {
       for (Tr::Vertex_handle v : c3t3().triangulation().finite_vertex_handles())
       {

@@ -1177,7 +1177,7 @@ merge_and_snap_polylines(const CGAL::Image_3& image,
   // snap graph to existing_polylines
   snap_graph_vertices(graph,
     image.vx(), image.vy(), image.vz(),
-    boost::begin(existing_polylines), boost::end(existing_polylines),
+    std::begin(existing_polylines), std::end(existing_polylines),
     K());
 
   // rebuild polylines_to_snap

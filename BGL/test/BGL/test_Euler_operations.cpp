@@ -476,8 +476,8 @@ test_swap_edges()
     {
       Graph g;
       CGAL::make_tetrahedron(pt,pt,pt,pt,g);
-      halfedge_descriptor h1 = *std::next(boost::begin(halfedges(g)), i);
-      halfedge_descriptor h2 = *std::next(boost::begin(halfedges(g)), j);
+      halfedge_descriptor h1 = *std::next(std::begin(halfedges(g)), i);
+      halfedge_descriptor h2 = *std::next(std::begin(halfedges(g)), j);
       CGAL::internal::swap_edges(h1, h2, g);
       assert(CGAL::is_valid_polygon_mesh(g));
     }

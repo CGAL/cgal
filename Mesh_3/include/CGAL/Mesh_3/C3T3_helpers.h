@@ -36,8 +36,6 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
 #include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
@@ -2135,8 +2133,8 @@ private:
   template <typename CellRange>
   void reset_sliver_cache(CellRange& cell_range) const
   {
-    reset_sliver_cache(boost::begin(cell_range),
-                       boost::end(cell_range));
+    reset_sliver_cache(std::begin(cell_range),
+                       std::end(cell_range));
   }
 
   template <typename CellForwardIterator>
@@ -2152,8 +2150,8 @@ private:
   template <typename CellRange>
   void reset_circumcenter_cache(CellRange& cell_range) const
   {
-    reset_circumcenter_cache(boost::begin(cell_range),
-                             boost::end(cell_range));
+    reset_circumcenter_cache(std::begin(cell_range),
+                             std::end(cell_range));
   }
 
   template <typename CellForwardIterator>

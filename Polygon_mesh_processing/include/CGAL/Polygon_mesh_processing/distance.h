@@ -481,8 +481,8 @@ struct Triangle_structure_sampler_for_triangle_mesh
   void sample_points()
   {
     Property_map_to_unary_function<Vpm> unary(pmap);
-    this->out = std::copy(boost::make_transform_iterator(boost::begin(vertices(tm)), unary),
-                          boost::make_transform_iterator(boost::end(vertices(tm)), unary),
+    this->out = std::copy(boost::make_transform_iterator(std::begin(vertices(tm)), unary),
+                          boost::make_transform_iterator(std::end(vertices(tm)), unary),
                           this->out);
   }
 

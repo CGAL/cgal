@@ -486,8 +486,8 @@ struct Face_filtered_graph
     selected_halfedges.reset();
 
     typedef typename boost::property_traits<FacePatchIndexMap>::value_type Patch_index;
-    std::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
-                                         boost::end(selected_face_patch_indices));
+    std::unordered_set<Patch_index> pids(std::begin(selected_face_patch_indices),
+                                         std::end(selected_face_patch_indices));
 
     for(face_descriptor fd : faces(_graph) )
     {
