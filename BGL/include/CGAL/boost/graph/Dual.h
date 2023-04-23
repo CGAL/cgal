@@ -458,7 +458,7 @@ out_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
            const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return boost::distance(halfedges_around_face(halfedge(v,primal),primal));
+  return std::distance(halfedges_around_face(halfedge(v,primal),primal));
 }
 
  template <typename P>
