@@ -33,6 +33,12 @@ range type for iterating over holes.
 */
 typedef unspecified_type Holes_container;
 
+
+/*!
+range type for iterating over holes.
+*/
+typedef unspecified_type Holes_container;
+
 /// @}
 
 /// \name Creation
