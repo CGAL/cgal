@@ -251,7 +251,7 @@ private:
   {
 #ifdef CGAL_LINKED_WITH_TBB
     // Sequential only
-    if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (!std::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // CGAL_LINKED_WITH_TBB
     {
     //Sequential
@@ -280,7 +280,7 @@ private:
 
 #ifdef CGAL_LINKED_WITH_TBB
     // Sequential only
-    if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (!std::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // CGAL_LINKED_WITH_TBB
     {
     if(m_bad_vertices_initialized) {
@@ -359,7 +359,7 @@ public:
       {
 #ifdef CGAL_LINKED_WITH_TBB
         // Parallel
-        if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+        if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
           this->insert_bad_facet(biggest_incident_facet_in_complex(*eit),
                                  typename Base::Quality());
@@ -402,7 +402,7 @@ public:
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
         // Parallel
-        if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+        if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
           this->insert_bad_facet(biggest_incident_facet_in_complex(vit),
                                  typename Base::Quality());
@@ -471,7 +471,7 @@ public:
   Facet get_next_element_impl() {
 
 #ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
       return Base::get_next_element_impl();
     else
 #endif
@@ -570,7 +570,7 @@ public:
           {
 #ifdef CGAL_LINKED_WITH_TBB
             // Parallel
-            if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+            if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
             {
               this->insert_bad_facet(biggest_incident_facet_in_complex(edge),
                                      typename Base::Quality());
@@ -585,7 +585,7 @@ public:
           else {
 #ifdef CGAL_LINKED_WITH_TBB
             // Sequential only
-            if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+            if (!std::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // CGAL_LINKED_WITH_TBB
             {
               m_bad_edges.left.erase( edge_to_edgevv(edge) ); // @TODO: pourquoi?!
@@ -622,7 +622,7 @@ public:
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
         // Parallel
-        if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+        if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
           this->insert_bad_facet(biggest_incident_facet_in_complex(*vit),
                                  typename Base::Quality());
@@ -645,7 +645,7 @@ public:
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
       // Parallel
-      if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+      if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
       {
         this->insert_bad_facet(biggest_incident_facet_in_complex(v),
                                typename Base::Quality());

@@ -22,8 +22,6 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 #include <iterator>
 #include <list>
 #include <map>
@@ -343,7 +341,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                OutputIterator out,
                                OutputFunctor fct,
                                std::enable_if_t<
-                                 !boost::is_convertible<OutputFunctor,
+                                 !std::is_convertible<OutputFunctor,
                                                        typename Rt::Face_handle>::value
                                >* = 0)
 {

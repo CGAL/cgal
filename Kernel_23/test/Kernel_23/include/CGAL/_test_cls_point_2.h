@@ -26,8 +26,6 @@
 #include <CGAL/Weighted_point_2.h>
 #include <CGAL/use.h>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 #include <cassert>
 #include <iostream>
 
@@ -60,9 +58,9 @@ _test_cls_point_2(const R& )
  CGAL::Weighted_point_2<R> wp(p1);
  CGAL::Point_2<R> p7(wp);
 
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Weighted_point_2<R>,
+ CGAL_static_assertion(!(std::is_convertible<CGAL::Weighted_point_2<R>,
                                                CGAL::Point_2<R> >::value));
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Point_2<R>,
+ CGAL_static_assertion(!(std::is_convertible<CGAL::Point_2<R>,
                                                CGAL::Weighted_point_2<R> >::value));
 
  std::cout << '.';

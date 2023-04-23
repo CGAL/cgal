@@ -80,7 +80,7 @@ struct is_Range
   : public boost::mpl::and_<
              boost::has_range_const_iterator<T>, // should be a range
              boost::mpl::not_<is_Point_set_3<T> >, // but not a Point_set_3
-             boost::mpl::not_<boost::is_convertible<T, std::string> > > // or a std::string / char [x]
+             boost::mpl::not_<std::is_convertible<T, std::string> > > // or a std::string / char [x]
 { };
 
 template <class T>

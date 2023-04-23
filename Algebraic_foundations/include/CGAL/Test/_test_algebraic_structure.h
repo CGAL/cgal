@@ -819,7 +819,7 @@ void test_algebraic_structure(){
     CGAL_static_assertion(
             ( ::std::is_same< typename AST::Is_exact, Is_exact >::value));
 
-    CGAL_static_assertion(( ::boost::is_convertible< Tag,
+    CGAL_static_assertion(( ::std::is_convertible< Tag,
                     Integral_domain_without_division_tag >::value ));
     CGAL_static_assertion(( ::std::is_same< Tag, Algebraic_category>::value));
     CGAL_static_assertion((!::std::is_same< Simplify, Null_functor>::value));

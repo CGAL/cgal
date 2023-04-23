@@ -63,7 +63,6 @@
 #endif
 
 #include <boost/format.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <string>
 #include <atomic>
 
@@ -653,7 +652,7 @@ initialize()
     defined(CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE)
 
 #ifndef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // If that macro is defined, then estimated_bbox must be initialized
   {
     Base::set_bbox(r_oracle_.bbox());
@@ -666,7 +665,7 @@ initialize()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);
@@ -861,7 +860,7 @@ Mesher_3<C3T3,MC,MD>::
 status() const
 {
 #ifdef CGAL_LINKED_WITH_TBB
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value) {
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value) {
     return Mesher_status(
 #  if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
                          approximate_number_of_vertices(Concurrency_tag()),

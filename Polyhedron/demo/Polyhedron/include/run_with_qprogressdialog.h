@@ -111,7 +111,7 @@ void run_with_qprogressdialog (Functor& functor,
            signal_callback->signaler.get(), SLOT(cancel()));
 
 #ifdef CGAL_HAS_STD_THREADS
-  if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
+  if (std::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
   {
     std::thread thread (functor);
 

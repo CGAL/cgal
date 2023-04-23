@@ -17,7 +17,6 @@
 #ifndef CGAL_TYPE_TRAITS_IS_ITERATOR_H
 #define CGAL_TYPE_TRAITS_IS_ITERATOR_H
 
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/logical.hpp>
 
@@ -54,7 +53,7 @@ struct is_iterator_type_
 template <class T,class U>
 struct is_iterator_type_<T, U, true>
   : public //boost::is_base_of<U,typename std::iterator_traits<T>::iterator_category>
-           boost::is_convertible<typename std::iterator_traits<T>::iterator_category, U>
+           std::is_convertible<typename std::iterator_traits<T>::iterator_category, U>
 { };
 
 } // namespace internal
@@ -84,7 +83,7 @@ struct is_iterator_to
 
 template <class T, class U>
 struct is_iterator_to<T, U, true>
-  : public boost::is_convertible<typename std::iterator_traits<T>::value_type, U>
+  : public std::is_convertible<typename std::iterator_traits<T>::value_type, U>
 { };
 
 template <class T, class U>
