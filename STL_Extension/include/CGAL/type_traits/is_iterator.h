@@ -18,7 +18,6 @@
 #define CGAL_TYPE_TRAITS_IS_ITERATOR_H
 
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/is_pointer.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/logical.hpp>
 
@@ -44,7 +43,7 @@ struct is_iterator_
                has_difference_type<T>,
                has_pointer<T>,
                has_reference<T> >,
-             boost::is_pointer<T> >
+               std::is_pointer<T> >
 { };
 
 template <class T, class U, bool = is_iterator_<T>::value>
