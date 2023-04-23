@@ -1959,7 +1959,7 @@ private:
   /*!
    * @brief checks if a vertex is attached with an anchor.
    * @tparam VertexAnchorIndexMap `ReadablePropertyMap`
-   * with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
+   * with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
    * @param vtx a vertex descriptor
    * @param vanchor_map vertex anchor index map
    */
