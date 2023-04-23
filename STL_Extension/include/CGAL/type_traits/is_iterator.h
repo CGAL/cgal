@@ -52,7 +52,7 @@ struct is_iterator_type_
 
 template <class T,class U>
 struct is_iterator_type_<T, U, true>
-  : public //boost::is_base_of<U,typename std::iterator_traits<T>::iterator_category>
+  : public //std::is_base_of<U,typename std::iterator_traits<T>::iterator_category>
            std::is_convertible<typename std::iterator_traits<T>::iterator_category, U>
 { };
 

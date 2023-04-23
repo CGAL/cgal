@@ -23,7 +23,6 @@
 #include <type_traits>
 
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/type_traits/is_base_of.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
 
@@ -73,7 +72,7 @@ template<typename Comparable>
   struct Is_derived_from_Handle_with_policy<Comparable,true> {
 
     typedef typename
-      boost::is_base_of< CGAL::Handle_with_policy
+      std::is_base_of< CGAL::Handle_with_policy
                              < typename Comparable::T,
                                typename Comparable::Handle_policy,
                                typename Comparable::Allocator >,

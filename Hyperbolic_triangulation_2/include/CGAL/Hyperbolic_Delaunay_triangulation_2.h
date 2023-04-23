@@ -431,7 +431,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
                         std::enable_if_t<
-                          boost::is_base_of<Point, typename std::iterator_traits<InputIterator>::value_type>::value
+                          std::is_base_of<Point, typename std::iterator_traits<InputIterator>::value_type>::value
                         >* = nullptr)
 #else
   template < class InputIterator >
