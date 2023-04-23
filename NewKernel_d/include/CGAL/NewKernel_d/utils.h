@@ -88,7 +88,7 @@ struct Has_type_different_from <T, No, true>
                 }
         };
 
-        template <class NT> struct has_cheap_constructor : boost::is_arithmetic<NT>{};
+        template <class NT> struct has_cheap_constructor : std::is_arithmetic<NT>{};
         template <bool p> struct has_cheap_constructor<Interval_nt<p> > {
                         enum { value=true };
         };
