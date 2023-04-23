@@ -145,10 +145,10 @@ public:
     const std::string& name = property->name();
     if(name == "vertex_indices" || name == "vertex_index")
     {
-      CGAL_assertion(dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property)
+      CGAL_assertion(dynamic_cast<PLY_read_typed_list<std::int32_t>*>(property)
                      || dynamic_cast<PLY_read_typed_list<std::uint32_t>*>(property));
       m_index_tag  = name;
-      m_use_int32_t = dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property);
+      m_use_int32_t = dynamic_cast<PLY_read_typed_list<std::int32_t>*>(property);
       return true;
     }
     if(name == "red" ||
@@ -218,25 +218,25 @@ public:
 
       const std::string& name = property->name();
 
-      if(dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(property))
+      if(dynamic_cast<PLY_read_typed_number<std::int8_t>*>(property))
       {
-        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::int8_t>(m_mesh, name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, std::int8_t>(m_mesh, name));
       }
       else if(dynamic_cast<PLY_read_typed_number<std::uint8_t>*>(property))
       {
         properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, std::uint8_t>(m_mesh, name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::int16_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::int16_t>*>(property))
       {
-        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::int16_t>(m_mesh, name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, std::int16_t>(m_mesh, name));
       }
       else if(dynamic_cast<PLY_read_typed_number<std::uint16_t>*>(property))
       {
         properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, std::uint16_t>(m_mesh, name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::int32_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::int32_t>*>(property))
       {
-        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::int32_t>(m_mesh, name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, std::int32_t>(m_mesh, name));
       }
       else if(dynamic_cast<PLY_read_typed_number<std::uint32_t>*>(property))
       {
@@ -314,7 +314,7 @@ public:
     Face_index fi = m_mesh.null_face();
 
     if(m_use_int32_t)
-      process_line<boost::int32_t>(element, fi);
+      process_line<std::int32_t>(element, fi);
     else
       process_line<std::uint32_t>(element, fi);
 
@@ -368,7 +368,7 @@ public:
     Edge_index ei = m_mesh.null_edge();
 
     if(m_use_int32_t)
-      process_line<boost::int32_t>(element, ei);
+      process_line<std::int32_t>(element, ei);
     else
       process_line<std::uint32_t>(element, ei);
 
@@ -401,7 +401,7 @@ public:
     Halfedge_index hi = m_mesh.null_halfedge();
 
     if(m_use_int32_t)
-      process_line<boost::int32_t>(element, hi);
+      process_line<std::int32_t>(element, hi);
     else
       process_line<std::uint32_t>(element, hi);
 
@@ -640,13 +640,13 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef Surface_mesh<Point>                                             SMesh;
-  typedef typename SMesh::template Property_map<Simplex, boost::int8_t>   Int8_map;
+  typedef typename SMesh::template Property_map<Simplex, std::int8_t>   Int8_map;
   typedef typename SMesh::template Property_map<Simplex, std::uint8_t>  Uint8_map;
-  typedef typename SMesh::template Property_map<Simplex, boost::int16_t>  Int16_map;
+  typedef typename SMesh::template Property_map<Simplex, std::int16_t>  Int16_map;
   typedef typename SMesh::template Property_map<Simplex, std::uint16_t> Uint16_map;
-  typedef typename SMesh::template Property_map<Simplex, boost::int32_t>  Int32_map;
+  typedef typename SMesh::template Property_map<Simplex, std::int32_t>  Int32_map;
   typedef typename SMesh::template Property_map<Simplex, std::uint32_t> Uint32_map;
-  typedef typename SMesh::template Property_map<Simplex, boost::int64_t>  Int64_map;
+  typedef typename SMesh::template Property_map<Simplex, std::int64_t>  Int64_map;
   typedef typename SMesh::template Property_map<Simplex, std::uint64_t> Uint64_map;
   typedef typename SMesh::template Property_map<Simplex, float>           Float_map;
   typedef typename SMesh::template Property_map<Simplex, double>          Double_map;
@@ -711,7 +711,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     bool okay = false;
     {
       Int8_map pmap;
-      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int8_t>(prop[i]);
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::int8_t>(prop[i]);
       if(okay)
       {
         os << "property char " << name << std::endl;
@@ -731,7 +731,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     }
     {
       Int16_map pmap;
-      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int16_t>(prop[i]);
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::int16_t>(prop[i]);
       if(okay)
       {
         os << "property short " << name << std::endl;
@@ -751,7 +751,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     }
     {
       Int32_map pmap;
-      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int32_t>(prop[i]);
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::int32_t>(prop[i]);
       if(okay)
       {
         os << "property int " << name << std::endl;
@@ -771,11 +771,11 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     }
     {
       Int64_map pmap;
-      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int64_t>(prop[i]);
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::int64_t>(prop[i]);
       if(okay)
       {
         os << "property int " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Int64_map,boost::int32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Int64_map,std::int32_t>(pmap));
         continue;
       }
     }

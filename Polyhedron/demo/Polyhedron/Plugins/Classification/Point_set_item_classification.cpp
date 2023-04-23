@@ -668,15 +668,15 @@ void Point_set_item_classification::add_remaining_point_set_properties_as_featur
         prop[i] == "r" || prop[i] == "g" || prop[i] == "b")
       continue;
 
-    if (try_adding_simple_feature<boost::int8_t>(prop[i]))
+    if (try_adding_simple_feature<std::int8_t>(prop[i]))
       continue;
     if (try_adding_simple_feature<std::uint8_t>(prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int16_t>(prop[i]))
+    if (try_adding_simple_feature<std::int16_t>(prop[i]))
       continue;
     if (try_adding_simple_feature<std::uint16_t>(prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int32_t>(prop[i]))
+    if (try_adding_simple_feature<std::int32_t>(prop[i]))
       continue;
     if (try_adding_simple_feature<std::uint32_t>(prop[i]))
       continue;

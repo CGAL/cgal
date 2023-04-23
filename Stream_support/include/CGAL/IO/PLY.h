@@ -131,17 +131,17 @@ bool read_PLY(std::istream& is,
     }
     else if(element.name() == "face" || element.name() == "faces")
     {
-      if(element.has_property<std::vector<boost::int32_t> >("vertex_indices"))
+      if(element.has_property<std::vector<std::int32_t> >("vertex_indices"))
       {
-        internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fc_out, "vertex_indices");
+        internal::read_PLY_faces<std::int32_t>(is, element, polygons, fc_out, "vertex_indices");
       }
       else if(element.has_property<std::vector<std::uint32_t> >("vertex_indices"))
       {
         internal::read_PLY_faces<std::uint32_t>(is, element, polygons, fc_out, "vertex_indices");
       }
-      else if(element.has_property<std::vector<boost::int32_t> >("vertex_index"))
+      else if(element.has_property<std::vector<std::int32_t> >("vertex_index"))
       {
-        internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fc_out, "vertex_index");
+        internal::read_PLY_faces<std::int32_t>(is, element, polygons, fc_out, "vertex_index");
       }
       else if(element.has_property<std::vector<std::uint32_t> >("vertex_index"))
       {

@@ -773,15 +773,15 @@ void Cluster_classification::add_remaining_point_set_properties_as_features(Feat
         prop[i] == "r" || prop[i] == "g" || prop[i] == "b")
       continue;
 
-    if (try_adding_simple_feature<boost::int8_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::int8_t>(feature_set, prop[i]))
       continue;
     if (try_adding_simple_feature<std::uint8_t>(feature_set, prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int16_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::int16_t>(feature_set, prop[i]))
       continue;
     if (try_adding_simple_feature<std::uint16_t>(feature_set, prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int32_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::int32_t>(feature_set, prop[i]))
       continue;
     if (try_adding_simple_feature<std::uint32_t>(feature_set, prop[i]))
       continue;

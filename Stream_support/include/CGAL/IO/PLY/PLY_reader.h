@@ -38,11 +38,11 @@
 
 #define TRY_TO_GENERATE_LIST_PROPERTY(STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
   TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uchar", "uint8", std::uint8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("char", "int8", boost::int8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("char", "int8", std::int8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
   else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("ushort", "uint16", std::uint16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("short", "int16", boost::int16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("short", "int16", std::int16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
   else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uint", "uint32", std::uint32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("int", "int32", boost::int32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("int", "int32", std::int32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
 
 namespace CGAL {
 
@@ -529,22 +529,22 @@ public:
               return false;
             }
 
-            TRY_TO_GENERATE_LIST_PROPERTY("char", "int8", boost::int8_t);
+            TRY_TO_GENERATE_LIST_PROPERTY("char", "int8", std::int8_t);
             else TRY_TO_GENERATE_LIST_PROPERTY("uchar", "uint8", std::uint8_t);
-            else TRY_TO_GENERATE_LIST_PROPERTY("short", "int16", boost::int16_t);
+            else TRY_TO_GENERATE_LIST_PROPERTY("short", "int16", std::int16_t);
             else TRY_TO_GENERATE_LIST_PROPERTY("ushort", "uint16", std::uint16_t);
-            else TRY_TO_GENERATE_LIST_PROPERTY("int", "int32", boost::int32_t);
+            else TRY_TO_GENERATE_LIST_PROPERTY("int", "int32", std::int32_t);
             else TRY_TO_GENERATE_LIST_PROPERTY("uint", "uint32", std::uint32_t);
             else TRY_TO_GENERATE_LIST_PROPERTY("float", "float32", float);
             else TRY_TO_GENERATE_LIST_PROPERTY("double", "float64", double);
           }
           else
           {
-            TRY_TO_GENERATE_PROPERTY("char", "int8", boost::int8_t);
+            TRY_TO_GENERATE_PROPERTY("char", "int8", std::int8_t);
             else TRY_TO_GENERATE_PROPERTY("uchar", "uint8", std::uint8_t);
-            else TRY_TO_GENERATE_PROPERTY("short", "int16", boost::int16_t);
+            else TRY_TO_GENERATE_PROPERTY("short", "int16", std::int16_t);
             else TRY_TO_GENERATE_PROPERTY("ushort", "uint16", std::uint16_t);
-            else TRY_TO_GENERATE_PROPERTY("int", "int32", boost::int32_t);
+            else TRY_TO_GENERATE_PROPERTY("int", "int32", std::int32_t);
             else TRY_TO_GENERATE_PROPERTY("uint", "uint32", std::uint32_t);
             else TRY_TO_GENERATE_PROPERTY("float", "float32", float);
             else TRY_TO_GENERATE_PROPERTY("double", "float64", double);

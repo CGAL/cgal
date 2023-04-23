@@ -435,7 +435,7 @@ namespace CGAL {
   private:
 
     // private variables for leaf nodes
-    boost::int32_t n; // denotes number of items in a leaf node
+    std::int32_t n; // denotes number of items in a leaf node
     iterator data; // iterator to data in leaf node
 
 
@@ -503,7 +503,7 @@ namespace CGAL {
   private:
 
        // private variables for internal nodes
-    boost::int32_t cut_dim;
+    std::int32_t cut_dim;
     FT cut_val;
     Node_handle lower_ch, upper_ch;
 

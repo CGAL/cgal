@@ -61,7 +61,7 @@ struct VTK_type_generator<std::uint8_t> {
 };
 
 template <>
-struct VTK_type_generator<boost::int16_t> {
+struct VTK_type_generator<std::int16_t> {
   static const int type = VTK_SHORT;
   typedef vtkShortArray ArrayType;
 };
@@ -73,7 +73,7 @@ struct VTK_type_generator<std::uint16_t> {
 };
 
 template <>
-struct VTK_type_generator<boost::int32_t> {
+struct VTK_type_generator<std::int32_t> {
   static const int type = VTK_INT;
   typedef vtkIntArray ArrayType;
 };

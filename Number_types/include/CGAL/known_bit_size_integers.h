@@ -34,9 +34,9 @@
 
 namespace CGAL {
 
-  typedef boost::int8_t    Integer8;
-  typedef boost::int16_t   Integer16;
-  typedef boost::int32_t   Integer32;
+  typedef std::int8_t    Integer8;
+  typedef std::int16_t   Integer16;
+  typedef std::int32_t   Integer32;
 
   typedef std::uint8_t   UInteger8;
   typedef std::uint16_t  UInteger16;
@@ -45,7 +45,7 @@ namespace CGAL {
 #ifndef BOOST_NO_INT64_T
 // this macro is still provided but its use is discouraged
 #   define CGAL_HAS_INTEGER64
-  typedef boost::int64_t   Integer64;
+  typedef std::int64_t   Integer64;
   typedef std::uint64_t  UInteger64;
 #endif
 
