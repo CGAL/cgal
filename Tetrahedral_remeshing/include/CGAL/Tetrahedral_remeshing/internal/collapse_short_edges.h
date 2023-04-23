@@ -18,7 +18,6 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/array.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
 
@@ -453,7 +452,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
       if (!ch->has_vertex(v1))
       {
         //check orientation
-        boost::array<Point, 4> pts = { ch->vertex(0)->point(),
+        std::array<Point, 4> pts = { ch->vertex(0)->point(),
                                        ch->vertex(1)->point(),
                                        ch->vertex(2)->point(),
                                        ch->vertex(3)->point()};
@@ -486,7 +485,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
       if (!ch->has_vertex(v0))
       {
         //check orientation
-        boost::array<Point, 4> pts = { ch->vertex(0)->point(),
+        std::array<Point, 4> pts = { ch->vertex(0)->point(),
                                        ch->vertex(1)->point(),
                                        ch->vertex(2)->point(),
                                        ch->vertex(3)->point() };

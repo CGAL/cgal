@@ -45,7 +45,6 @@
 #include <CGAL/Timer.h>
 
 #include <memory>
-#include <boost/array.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 

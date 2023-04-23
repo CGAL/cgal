@@ -20,7 +20,6 @@
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/fusion/adapted/boost_tuple.hpp>
-#include <boost/array.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/phoenix/core.hpp>
 #include <boost/phoenix/operator.hpp>
@@ -106,9 +105,9 @@ namespace CGAL {
 
 class SEP_header {
 
-  boost::array<std::size_t, 3> _n;
-  boost::array<double, 3> _d;
-  boost::array<double, 3> _o;
+  std::array<std::size_t, 3> _n;
+  std::array<double, 3> _d;
+  std::array<double, 3> _o;
 
   SEP_header_aux::String_dict _string_dict;
 

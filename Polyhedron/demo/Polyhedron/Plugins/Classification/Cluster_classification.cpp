@@ -19,7 +19,6 @@
 #include <set>
 #include <stack>
 #include <algorithm>
-#include <boost/array.hpp>
 
 Cluster_classification::Cluster_classification(Scene_points_with_normal_item* points)
   : m_points (points)

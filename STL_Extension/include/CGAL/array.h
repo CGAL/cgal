@@ -37,7 +37,7 @@ namespace CGAL {
 
 // NOTE : The above is actually untrue !  It is possible to do :
 //     struct S2 {
-//       typedef boost::array<M,2> Ar;
+//       typedef std::array<M,2> Ar;
 //       Ar m;
 //       S2 (const M&a) : m ((Ar) { { a, a } }) {}
 //     };

@@ -30,7 +30,6 @@
 #include <set>
 #include <stack>
 #include <algorithm>
-#include <boost/array.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 
