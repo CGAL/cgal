@@ -60,7 +60,7 @@ namespace CGAL {
     class SM_Index
     {
     public:
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -239,7 +239,7 @@ namespace CGAL {
     class SM_Edge_index
     {
     public:
-        typedef boost::uint32_t size_type;
+        typedef std::uint32_t size_type;
 
         SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
 
@@ -364,7 +364,7 @@ public:
     typedef P Point;
 
     /// The type used to represent an index.
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
 
     ///@}
 

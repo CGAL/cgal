@@ -48,7 +48,7 @@ namespace internal {
 #ifdef CGAL_POINT_SET_3_USE_STD_SIZE_T_AS_SIZE_TYPE
     typedef std::size_t size_type;
 #else
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
 #endif
     typedef CGAL::Point_set_3<Point, Vector> Point_set_3;
 

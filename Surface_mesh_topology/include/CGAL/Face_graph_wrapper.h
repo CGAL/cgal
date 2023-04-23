@@ -40,7 +40,7 @@ class Face_graph_wrapper
 public:
   typedef HEG_                    HEG;
   typedef Face_graph_wrapper<HEG> Self;
-  typedef boost::uint32_t /*std::size_t*/ size_type;
+  typedef std::uint32_t /*std::size_t*/ size_type;
   typedef Self                    Refs;
 
   struct Dart_container

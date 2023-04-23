@@ -1758,7 +1758,7 @@ private:
     {
       return true;
     }
-    if(ps->template property_map<boost::uint8_t>(name).second)
+    if(ps->template property_map<std::uint8_t>(name).second)
     {
       return true;
     }
@@ -1766,7 +1766,7 @@ private:
     {
       return true;
     }
-    if(ps->template property_map<boost::uint16_t>(name).second)
+    if(ps->template property_map<std::uint16_t>(name).second)
     {
       return true;
     }
@@ -1774,7 +1774,7 @@ private:
     {
       return true;
     }
-    if(ps->template property_map<boost::uint32_t>(name).second)
+    if(ps->template property_map<std::uint32_t>(name).second)
     {
       return true;
     }
@@ -1782,7 +1782,7 @@ private:
     {
       return true;
     }
-    if(ps->template property_map<boost::uint64_t>(name).second)
+    if(ps->template property_map<std::uint64_t>(name).second)
     {
       return true;
     }
@@ -1805,7 +1805,7 @@ private:
     {
       return true;
     }
-    if(sm->template property_map<Simplex,boost::uint8_t>(name).second)
+    if(sm->template property_map<Simplex,std::uint8_t>(name).second)
     {
       return true;
     }
@@ -1813,7 +1813,7 @@ private:
     {
       return true;
     }
-    if(sm->template property_map<Simplex,boost::uint16_t>(name).second)
+    if(sm->template property_map<Simplex,std::uint16_t>(name).second)
     {
       return true;
     }
@@ -1821,7 +1821,7 @@ private:
     {
       return true;
     }
-    if(sm->template property_map<Simplex,boost::uint32_t>(name).second)
+    if(sm->template property_map<Simplex,std::uint32_t>(name).second)
     {
       return true;
     }
@@ -1829,7 +1829,7 @@ private:
     {
       return true;
     }
-    if(sm->template property_map<Simplex,boost::uint64_t>(name).second)
+    if(sm->template property_map<Simplex,std::uint64_t>(name).second)
     {
       return true;
     }
@@ -1847,13 +1847,13 @@ private:
   bool DisplayPropertyPlugin::treat_point_property(std::string name, Point_set* ps)
   {
     typedef typename Point_set::template Property_map<boost::int8_t>   Int8_map;
-    typedef typename Point_set::template Property_map<boost::uint8_t>  Uint8_map;
+    typedef typename Point_set::template Property_map<std::uint8_t>  Uint8_map;
     typedef typename Point_set::template Property_map<boost::int16_t>  Int16_map;
-    typedef typename Point_set::template Property_map<boost::uint16_t> Uint16_map;
+    typedef typename Point_set::template Property_map<std::uint16_t> Uint16_map;
     typedef typename Point_set::template Property_map<boost::int32_t>  Int32_map;
-    typedef typename Point_set::template Property_map<boost::uint32_t> Uint32_map;
+    typedef typename Point_set::template Property_map<std::uint32_t> Uint32_map;
     typedef typename Point_set::template Property_map<boost::int64_t>  Int64_map;
-    typedef typename Point_set::template Property_map<boost::uint64_t> Uint64_map;
+    typedef typename Point_set::template Property_map<std::uint64_t> Uint64_map;
     typedef typename Point_set::template Property_map<float>           Float_map;
     typedef typename Point_set::template Property_map<double>          Double_map;
 
@@ -1869,7 +1869,7 @@ private:
 
     {
       Uint8_map pmap;
-      std::tie(pmap, okay) = ps->property_map<boost::uint8_t>(name);
+      std::tie(pmap, okay) = ps->property_map<std::uint8_t>(name);
       if(okay)
       {
         return displayPSProperty(ps, pmap);
@@ -1887,7 +1887,7 @@ private:
 
     {
       Uint16_map pmap;
-      std::tie(pmap, okay) = ps->property_map<boost::uint16_t>(name);
+      std::tie(pmap, okay) = ps->property_map<std::uint16_t>(name);
       if(okay)
       {
         return displayPSProperty(ps, pmap);
@@ -1905,7 +1905,7 @@ private:
 
     {
       Uint32_map pmap;
-      std::tie(pmap, okay) = ps->property_map<boost::uint32_t>(name);
+      std::tie(pmap, okay) = ps->property_map<std::uint32_t>(name);
       if(okay)
       {
         return displayPSProperty(ps, pmap);
@@ -1923,7 +1923,7 @@ private:
 
     {
       Uint64_map pmap;
-      std::tie(pmap, okay) = ps->property_map<boost::uint64_t>(name);
+      std::tie(pmap, okay) = ps->property_map<std::uint64_t>(name);
       if(okay)
       {
         return displayPSProperty(ps, pmap);
@@ -1954,13 +1954,13 @@ private:
   bool DisplayPropertyPlugin::treat_sm_property(std::string name, SMesh* sm)
   {
     typedef typename SMesh::template Property_map<TAG, boost::int8_t>   Int8_map;
-    typedef typename SMesh::template Property_map<TAG, boost::uint8_t>  Uint8_map;
+    typedef typename SMesh::template Property_map<TAG, std::uint8_t>  Uint8_map;
     typedef typename SMesh::template Property_map<TAG, boost::int16_t>  Int16_map;
-    typedef typename SMesh::template Property_map<TAG, boost::uint16_t> Uint16_map;
+    typedef typename SMesh::template Property_map<TAG, std::uint16_t> Uint16_map;
     typedef typename SMesh::template Property_map<TAG, boost::int32_t>  Int32_map;
-    typedef typename SMesh::template Property_map<TAG, boost::uint32_t> Uint32_map;
+    typedef typename SMesh::template Property_map<TAG, std::uint32_t> Uint32_map;
     typedef typename SMesh::template Property_map<TAG, boost::int64_t>  Int64_map;
-    typedef typename SMesh::template Property_map<TAG, boost::uint64_t> Uint64_map;
+    typedef typename SMesh::template Property_map<TAG, std::uint64_t> Uint64_map;
     typedef typename SMesh::template Property_map<TAG, float>           Float_map;
     typedef typename SMesh::template Property_map<TAG, double>          Double_map;
 
@@ -1976,7 +1976,7 @@ private:
 
     {
       Uint8_map pmap;
-      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint8_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,std::uint8_t>(name);
       if(okay)
       {
         return displaySMProperty(*sm, pmap, TAG());
@@ -1994,7 +1994,7 @@ private:
 
     {
       Uint16_map pmap;
-      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint16_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,std::uint16_t>(name);
       if(okay)
       {
         return displaySMProperty(*sm, pmap, TAG());
@@ -2012,7 +2012,7 @@ private:
 
     {
       Uint32_map pmap;
-      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint32_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,std::uint32_t>(name);
       if(okay)
       {
         return displaySMProperty(*sm, pmap, TAG());
@@ -2030,7 +2030,7 @@ private:
 
     {
       Uint64_map pmap;
-      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint64_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,std::uint64_t>(name);
       if(okay)
       {
         return displaySMProperty(*sm, pmap, TAG());

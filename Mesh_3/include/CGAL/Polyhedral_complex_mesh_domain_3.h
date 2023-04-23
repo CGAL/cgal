@@ -456,9 +456,9 @@ public:
         // here we have a new free vertex on patch #`patch_id`
 
         if(random.uniform_smallint(
-               boost::uint32_t(0),
-               boost::uint32_t(nb_of_free_vertices_on_patch[patch_id]))
-           < boost::uint32_t(needed_vertices_on_patch[patch_id]))
+               std::uint32_t(0),
+               std::uint32_t(nb_of_free_vertices_on_patch[patch_id]))
+           < std::uint32_t(needed_vertices_on_patch[patch_id]))
         {
           several_vertices_on_patch[patch_id].push_back(vit);
           --needed_vertices_on_patch[patch_id];
