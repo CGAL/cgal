@@ -33,8 +33,6 @@
 #include <algorithm>
 #include <iterator>
 
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/math/constants/constants.hpp>
 
@@ -329,7 +327,7 @@ private:
       typename FT_list::iterator pos = std::find_if(
         big_moves_.begin(),
         big_moves_.end(),
-        boost::lambda::_1 < new_sq_move );
+        [&](const FT& v) { return v< new_sq_move; } );
 
       big_moves_.insert(pos, new_sq_move);
     }
@@ -343,8 +341,6 @@ private:
 
   bool check_convergence() const
   {
-    namespace bl = boost::lambda;
-
     FT sum(0);
     for(typename FT_list::const_iterator it = big_moves_.begin();
         it != big_moves_.end();

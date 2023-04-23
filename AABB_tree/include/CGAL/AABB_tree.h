@@ -27,7 +27,6 @@
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <boost/optional.hpp>
-#include <boost/lambda/lambda.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -326,7 +325,7 @@ public:
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query) const
     {
-      return first_intersection(query, boost::lambda::constant(false));
+      return first_intersection(query, [](Primitive_id){ return false; });
     }
     /// \endcond
 
@@ -351,7 +350,7 @@ public:
     boost::optional<Primitive_id>
     first_intersected_primitive(const Ray& query) const
     {
-      return first_intersected_primitive(query, boost::lambda::constant(false));
+      return first_intersected_primitive(query, [](Primitive_id){ return false; });
     }
     /// \endcond
     ///@}
