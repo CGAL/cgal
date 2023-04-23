@@ -27,7 +27,7 @@ namespace CGAL {
 namespace internal {
 
 // non-empty case
-template<class T,bool=boost::is_empty<T>::value> struct Functor_as_base {
+template<class T,bool=std::is_empty<T>::value> struct Functor_as_base {
         Functor_as_base(){}
         Functor_as_base(T const& t):f(t){}
         //template<class T2> Functor_as_base(Functor_as_base<T2> const&g):f(g.functor()){}
