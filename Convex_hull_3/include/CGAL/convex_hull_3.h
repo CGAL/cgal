@@ -42,7 +42,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/type_traits/is_iterator.h>
 
-#include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/graph/graph_traits.hpp>

@@ -22,7 +22,6 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
-#include <boost/next_prior.hpp>
 
 namespace CGAL {
 namespace internal{

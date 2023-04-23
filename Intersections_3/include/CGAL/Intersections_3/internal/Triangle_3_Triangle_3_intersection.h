@@ -21,8 +21,6 @@
 
 #include <CGAL/kernel_assertions.h>
 
-#include <boost/next_prior.hpp>
-
 #include <list>
 #include <map>
 #include <vector>

@@ -37,7 +37,6 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <boost/next_prior.hpp> // for std::prev and std::next
 #include <boost/variant.hpp>
 #include <memory>
 

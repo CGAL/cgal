@@ -27,7 +27,6 @@
 #include <utility>
 #include <iostream>
 #include <queue>
-#include <boost/next_prior.hpp>
 
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Unique_hash_map.h>
