@@ -78,12 +78,14 @@ public:
                                                  parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_sizing_field_param),
                                                                               parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(0)))),
                     parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_distance_param), FT(0)),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE)),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_min_size_param), FT(0))),
     cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param),
                                                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_param), FT(0))),
                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_size_param),
                                                 parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::cell_sizing_field_param),
-                                                                             parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::sizing_field_param), FT(0)))))
+                                                                             parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::sizing_field_param), FT(0)))),
+                   parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_min_size_param), FT(0)))
   { }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -261,6 +263,12 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *     \cgalParamDescription{a scalar field (resp. a constant) describing
  *                           a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_min_size}
+ *     \cgalParamDescription{a constant describing a uniform lower-bound for the radii of the surface Delaunay balls.
+ *                           Only facets with a radius larger than this bound will be refined.
+ *                           If a facet is too small with respect to this criterion,
+ *                           it will not be refined whether the other criteria are met or not.}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_distance}
  *     \cgalParamDescription{a scalar field (resp. a constant) describing a space varying (resp. a uniform)
  *                           upper bound for the distance between the facet circumcenter and the center of its surface
@@ -278,6 +286,13 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *   \cgalParamNBegin{cell_size}
  *     \cgalParamDescription{ a scalar field (resp. a constant) describing
  *                            a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{cell_min_size}
+ *     \cgalParamDescription{ a constant describing a uniform lower-bound for the radii of the circumradii
+ *                            of the mesh tetrahedra.
+ *                            Only tetrahedra with a circumradius larger than this bound will be refined.
+ *                            If a cell is too small with respect to this criterion,
+ *                            it will not be refined whether the other criteria are met or not.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */

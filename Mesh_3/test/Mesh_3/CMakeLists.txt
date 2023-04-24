@@ -34,6 +34,7 @@ if(CGAL_ImageIO_USE_ZLIB)
   create_single_source_cgal_program( "test_meshing_3D_image_with_features.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_gray_image.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_gray_image_deprecated.cpp" )
+  create_single_source_cgal_program( "test_min_size_criteria.cpp")
 else()
   message(STATUS "NOTICE: The test 'test_meshing_3D_image' requires the ZLIB library, and will not be compiled.")
 endif()
@@ -82,7 +83,9 @@ foreach(target
     test_mesh_3_issue_1554
     test_mesh_polyhedral_domain_with_features_deprecated
     test_mesh_cell_base_3
-    test_meshing_with_one_step.cpp)
+    test_meshing_with_one_step
+    test_min_size_criteria
+    )
   if(TARGET ${target})
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endif()
@@ -105,6 +108,7 @@ if(TARGET CGAL::TBB_support)
       test_mesh_3_issue_1554
       test_mesh_polyhedral_domain_with_features_deprecated
       test_mesh_cell_base_3
+      test_min_size_criteria
       )
     if(TARGET ${target})
       target_link_libraries(${target} PUBLIC CGAL::TBB_support)

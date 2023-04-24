@@ -203,7 +203,9 @@ private:
   int approx_decimals;
   double edges_sizing;
   double facets_sizing;
+  double facets_min_sizing;
   double tets_sizing;
+  double tets_min_sizing;
   double tets_shape;
   bool manifold_criterion;
   CGAL::Mesh_facet_topology facet_topology;
@@ -421,6 +423,8 @@ void Mesh_3_plugin::set_defaults() {
   facets_sizing = get_approximate(diag * 0.05, 2, sizing_decimals);
   edges_sizing = facets_sizing;
   tets_sizing = facets_sizing;
+  facets_min_sizing = 0.1 * facets_sizing;
+  tets_min_sizing = 0.1 * tets_sizing;
   angle = 25.;
   sharp_edges_angle_bound = 60.;
   approx = get_approximate(diag * 0.005, 2, approx_decimals);
@@ -491,12 +495,22 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.facetSizing,
           SLOT(setEnabled(bool)));
 
+  connect(ui.noFacetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.facetMinSizing,
+          SLOT(setEnabled(bool)));
+
   connect(
       ui.noAngle, SIGNAL(toggled(bool)), ui.facetAngle, SLOT(setEnabled(bool)));
 
   connect(ui.noTetSizing,
           SIGNAL(toggled(bool)),
           ui.tetSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noTetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.tetMinSizing,
           SLOT(setEnabled(bool)));
 
   connect(ui.noTetShape,
@@ -556,11 +570,13 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(facets_sizing);
+  ui.facetMinSizing->setValue(facets_min_sizing);
   ui.edgeSizing->setValue(edges_sizing);
 
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag);        // max
   ui.tetSizing->setValue(tets_sizing); // default value
+  ui.tetMinSizing->setValue(tets_min_sizing);
 
   ui.approx->setRange(diag * 10e-7, // min
                       diag);        // max
@@ -662,9 +678,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   edges_sizing =
       !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
+  facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
   tets_shape = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
+  tets_min_sizing = !ui.noTetMinSizing->isChecked() ? 0 : ui.tetMinSizing->value();
 
   const int pe_ci = ui.protectEdges->currentIndex();
   protect_borders = ui.protect->isChecked()
@@ -739,8 +757,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         item_name,
         angle,
         facets_sizing,
+        facets_min_sizing,
         approx,
         tets_sizing,
+        tets_min_sizing,
         edges_sizing,
         tets_shape,
         protect_features,
@@ -757,8 +777,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         item_name,
         angle,
         facets_sizing,
+        facets_min_sizing,
         approx,
         tets_sizing,
+        tets_min_sizing,
         edges_sizing,
         tets_shape,
         protect_features,
@@ -781,8 +803,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     thread = cgal_code_mesh_3(pFunction,
                               angle,
                               facets_sizing,
+                              facets_min_sizing,
                               approx,
                               tets_sizing,
+                              tets_min_sizing,
                               edges_sizing,
                               tets_shape,
                               manifold,
@@ -821,8 +845,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         (img_polylines_item == nullptr) ? plc : img_polylines_item->polylines,
         angle,
         facets_sizing,
+        facets_min_sizing,
         approx,
         tets_sizing,
+        tets_min_sizing,
         edges_sizing,
         tets_shape,
         protect_features,

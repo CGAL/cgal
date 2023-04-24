@@ -53,11 +53,15 @@ of the surface mesh facets.
 which have to be verified by each surface facet. See
 section \ref Mesh_3DelaunayRefinement for further details.
 Note that if one parameter is set to 0, then its corresponding criteria is ignored.
+\param min_radius_bound is a uniform lower bound for the radius of
+the surface Delaunay balls. Only facets with a radius larger than that
+bound will be refined.
 */
   Mesh_facet_criteria_3(const FT& angle_bound,
                         const FT& radius_bound,
                         const FT& distance_bound,
-                        Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE);
+                        Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
+                        const FT& min_radius_bound = 0.);
 
 /*!
 Returns an object to serve as criteria for facets. The types `SizingField` and
@@ -69,7 +73,8 @@ as above, except that the radius and distance bound parameters are functionals i
   Mesh_facet_criteria_3(const FT& angle_bound,
                         const SizingField& radius_bound,
                         const DistanceField& distance_bound,
-                        Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE);
+                        Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
+                        const FT& min_radius_bound = 0.);
 
 /// @}
 
