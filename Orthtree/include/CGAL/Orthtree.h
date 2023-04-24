@@ -564,32 +564,32 @@ public:
     \param point query point.
     \return the node which contains the point.
    */
-  const Node& locate(const Point& point) const {
+  const Node_index locate(const Point& point) const {
 
     // Make sure the point is enclosed by the orthtree
     CGAL_precondition (CGAL::do_intersect(point, bbox(root())));
 
     // Start at the root node
-    auto* node_for_point = &root();
+    Node_index node_for_point = index(root());
 
     // Descend the tree until reaching a leaf node
-    while (!node_for_point->is_leaf()) {
+    while (!is_leaf(node_for_point)) {
 
       // Find the point to split around
-      Point center = barycenter(index(*node_for_point));
+      Point center = barycenter(node_for_point);
 
       // Find the index of the correct sub-node
-      typename Node::Local_coordinates index;
+      typename Node::Local_coordinates local_coordinates;
       std::size_t dimension = 0;
       for (const auto& r: cartesian_range(center, point))
-        index[dimension++] = (get < 0 > (r) < get < 1 > (r));
+        local_coordinates[dimension++] = (get < 0 > (r) < get < 1 > (r));
 
       // Find the correct sub-node of the current node
-      node_for_point = &children(*node_for_point)[index.to_ulong()];
+      node_for_point = index(children(node_for_point)[local_coordinates.to_ulong()]);
     }
 
     // Return the result
-    return *node_for_point;
+    return node_for_point;
   }
 
   /*!
@@ -870,7 +870,7 @@ public:
       for (int i = 0; i < Degree::value; ++i) {
         // If any child cell is different, they're not the same
         if (!is_topology_equal(lhsTree[lhsNode].m_children_index.get() + i, lhsTree,
-                                rhsTree[rhsNode].m_children_index.get() + i, rhsTree))
+                               rhsTree[rhsNode].m_children_index.get() + i, rhsTree))
           return false;
       }
     }

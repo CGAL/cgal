@@ -53,7 +53,7 @@ int main(void) {
     assert(1 == nodes.size());
 
     // That node should be the node leaf that contains the point
-    assert(octree.index(octree.locate(Point(1, 1, 1))) == nodes[0]);
+    assert(octree.locate(Point(1, 1, 1)) == nodes[0]);
   }
 
   // Intersection with a sphere
