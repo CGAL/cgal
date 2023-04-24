@@ -70,6 +70,7 @@ class Mesh_3_plugin :
              READ get_sharp_edges_angle_bound
              WRITE set_sharp_edges_angle_bound)
   Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing)
+  Q_PROPERTY(double edges_min_sizing READ get_edges_min_sizing WRITE set_edges_min_sizing)
   Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
   Q_PROPERTY(double approx READ get_approx WRITE set_approx)
   Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
@@ -155,6 +156,7 @@ public Q_SLOTS:
     sharp_edges_angle_bound = v;
   }
   void set_edges_sizing(const double v) { edges_sizing = v; };
+  void set_edges_min_sizing(const double v) { edges_min_sizing = v; };
   void set_facets_sizing(const double v) { facets_sizing = v; };
   void set_approx(const double v) { approx = v; };
   void set_tets_sizing(const double v) { tets_sizing = v; };
@@ -167,6 +169,7 @@ public Q_SLOTS:
   double get_angle() { return angle; };
   double get_sharp_edges_angle_bound() { return sharp_edges_angle_bound; }
   double get_edges_sizing() { return edges_sizing; };
+  double get_edges_min_sizing() { return edges_min_sizing; };
   double get_facets_sizing() { return facets_sizing; };
   double get_approx() { return approx; };
   double get_tets_sizing() { return tets_sizing; };
@@ -202,6 +205,7 @@ private:
   double approx;
   int approx_decimals;
   double edges_sizing;
+  double edges_min_sizing;
   double facets_sizing;
   double facets_min_sizing;
   double tets_sizing;
@@ -422,6 +426,7 @@ void Mesh_3_plugin::set_defaults() {
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   facets_sizing = get_approximate(diag * 0.05, 2, sizing_decimals);
   edges_sizing = facets_sizing;
+  edges_min_sizing = 0.1 * facets_sizing;
   tets_sizing = facets_sizing;
   facets_min_sizing = 0.1 * facets_sizing;
   tets_min_sizing = 0.1 * tets_sizing;
@@ -518,6 +523,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.tetShape,
           SLOT(setEnabled(bool)));
 
+  //edge sizing
   connect(ui.protect,
           SIGNAL(toggled(bool)),
           ui.noEdgeSizing,
@@ -538,6 +544,28 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.edgeSizing,
           SLOT(setEnabled(bool)));
 
+  //edge min sizing
+  connect(ui.protect,
+          SIGNAL(toggled(bool)),
+          ui.noEdgeMinSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.protect,
+          SIGNAL(toggled(bool)),
+          ui.noEdgeMinSizing,
+          SLOT(setChecked(bool)));
+
+  connect(ui.noEdgeMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.edgeMinSizingLabel,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noEdgeMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.edgeMinSizing,
+          SLOT(setEnabled(bool)));
+
+  //sharp edges
   connect(ui.protect,
           SIGNAL(toggled(bool)),
           ui.sharpEdgesAngle,
@@ -572,6 +600,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.facetSizing->setValue(facets_sizing);
   ui.facetMinSizing->setValue(facets_min_sizing);
   ui.edgeSizing->setValue(edges_sizing);
+  ui.edgeMinSizing->setValue(edges_min_sizing);
 
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag);        // max
@@ -610,8 +639,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
            " automatically"));
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
+  ui.noEdgeMinSizing->setChecked(false);
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
+  ui.edgeMinSizingLabel->setEnabled(ui.noEdgeMinSizing->isChecked());
+  ui.edgeMinSizing->setEnabled(ui.noEdgeMinSizing->isChecked());
 
   const QString sharp_and_boundary("Sharp and Boundary edges");
   const QString boundary_only("Boundary edges only");
@@ -677,6 +709,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   std::cerr << "sharp_edges_angle_bound: " << sharp_edges_angle_bound << '\n';
   edges_sizing =
       !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
+  edges_min_sizing =
+      !ui.noEdgeMinSizing->isChecked() ? 0. : ui.edgeMinSizing->value();
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
@@ -685,12 +719,23 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   tets_min_sizing = !ui.noTetMinSizing->isChecked() ? 0 : ui.tetMinSizing->value();
 
   const int pe_ci = ui.protectEdges->currentIndex();
-  protect_borders = ui.protect->isChecked()
-    && (  pe_ci == ui.protectEdges->findText(on_cube, Qt::MatchContains)
-       || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
-  protect_features = ui.protect->isChecked()
-    && (  pe_ci == ui.protectEdges->findText(triple_lines, Qt::MatchContains)
-       || pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains));
+  if (items->which() == IMAGE_MESH_ITEMS)
+  {
+    protect_borders = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(on_cube, Qt::MatchContains)
+         || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
+    protect_features = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(triple_lines, Qt::MatchContains)
+         || pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains));
+  }
+  else if (items->which() == POLYHEDRAL_MESH_ITEMS)
+  {
+    protect_borders = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains)
+         || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
+    protect_features = ui.protect->isChecked()
+      && (  pe_ci == ui.protectEdges->findText(sharp_edges, Qt::MatchContains));
+  }
 
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = (ui.manifoldCheckBox->isChecked() ? 1 : 0) +
@@ -762,6 +807,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_sizing,
         tets_min_sizing,
         edges_sizing,
+        edges_min_sizing,
         tets_shape,
         protect_features,
         protect_borders,
@@ -782,6 +828,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_sizing,
         tets_min_sizing,
         edges_sizing,
+        edges_min_sizing,
         tets_shape,
         protect_features,
         protect_borders,
@@ -808,6 +855,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                               tets_sizing,
                               tets_min_sizing,
                               edges_sizing,
+                              edges_min_sizing,
                               tets_shape,
                               manifold,
                               mesh_type == Mesh_type::SURFACE_ONLY);
@@ -850,6 +898,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_sizing,
         tets_min_sizing,
         edges_sizing,
+        edges_min_sizing,
         tets_shape,
         protect_features,
         protect_borders,

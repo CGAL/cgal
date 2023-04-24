@@ -72,7 +72,8 @@ public:
   Mesh_criteria_3_impl(const CGAL_NP_CLASS& np)
     :edge_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_size_param),
                                                  parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_sizing_field_param),
-                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(DBL_MAX))))),
+                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(DBL_MAX)))),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_min_size_param), FT(0))),
     facet_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_angle_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_size_param),
                                                  parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_sizing_field_param),
@@ -254,6 +255,18 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                           (resp. a uniform)
  *                           upper bound for the lengths of curve edges. This parameter has to be set to a positive
  *                           value when 1-dimensional features protection is used.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{edge_min_size}
+ *     \cgalParamDescription{a desired uniform lower-bound for the lengths of curve edges.
+ *                           Only feature edges with a length larger than this bound will be refined.
+ *                           If a feature edge is too small with respect to this criterion,
+ *                           it will not be refined whether the other criteria are met or not.}
+ *     \cgalParamExtra{If this criterion is applied during the meshing process,
+ *                     the feature protection algorithm correctness is not guaranteed anymore,
+ *                     and the output mesh may contain incorrect polyline features,
+ *                     or have missing polyline features.}
+ *     \cgalParamExtra{Note this lower-bound may not be respected everywhere in the output mesh,
+ *                     to keep the feature graph valid.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_angle}
  *     \cgalParamDescription{a lower bound for the angles (in degrees) of the

@@ -60,6 +60,8 @@ for automatic detection and protection
 of 1D-curves that lie at the intersection of three or more subdomains,
 extracted from labeled images.
 
+- Added new meshing criterion `edge_min_size` to avoid subdividing sharp edges that are shorter than the prescribed size bound.
+
 ### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
 
 -   **Breaking change**: The region growing part of the package have been reworked to fix design issues introduced with the handling `FaceGraph` models.
