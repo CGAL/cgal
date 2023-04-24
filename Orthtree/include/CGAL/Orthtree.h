@@ -642,7 +642,7 @@ public:
    */
   template <typename Query, typename OutputIterator>
   OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
-    return intersected_nodes_recursive(query, root(), output);
+    return intersected_nodes_recursive(query, index(root()), output);
   }
 
   /// @}
@@ -1167,21 +1167,22 @@ private: // functions :
   }
 
   template <typename Query, typename Node_output_iterator>
-  Node_output_iterator intersected_nodes_recursive(const Query& query, const Node& node,
+  Node_output_iterator intersected_nodes_recursive(const Query& query, Node_index node,
                                                    Node_output_iterator output) const {
 
     // Check if the current node intersects with the query
     if (CGAL::do_intersect(query, bbox(node))) {
 
       // if this node is a leaf, then it's considered an intersecting node
-      if (node.is_leaf()) {
-        *output++ = &node;
+      if (is_leaf(node)) {
+        // todo: output iterator should hold indices instead of pointers
+        *output++ = &m_nodes[node];
         return output;
       }
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < Degree::value; ++i) {
-        intersected_nodes_recursive(query, children(node)[i], output);
+        intersected_nodes_recursive(query, index(children(node)[i]), output);
       }
     }
     return output;
