@@ -477,8 +477,8 @@ public:
       struct Gcd
         : public CGAL::cpp98::binary_function< Type, Type, Type > {
           Type operator()(
-              const Type& x,
-              const Type& y ) const {
+              const Type& /* x */,
+              const Type& /* y */ ) const {
             assert(false);
             return Type(); // cpp_float_gcd(x, y);
           }
@@ -494,8 +494,8 @@ public:
       struct Integral_division
         : public CGAL::cpp98::binary_function< Type, Type, Type > {
           Type operator()(
-              const Type& x,
-              const Type& y ) const {
+              const Type& /* x */,
+              const Type& /* y */ ) const {
             assert(false);
             return Type(); // x / y;
           }
@@ -503,7 +503,7 @@ public:
 
       struct Sqrt
         : public CGAL::cpp98::unary_function< Type, Type > {
-          Type operator()( const Type& x) const {
+          Type operator()( const Type& /* x */) const {
             assert(false);
             return Type(); // cpp_float_sqrt(x);
           }
@@ -511,12 +511,12 @@ public:
 
       struct Is_square
         : public CGAL::cpp98::binary_function< Type, Type&, bool > {
-          bool operator()( const Type& x, Type& y ) const {
+          bool operator()( const Type& /* x */, Type& /* y */ ) const {
             // TODO: avoid doing 2 calls.
             assert(false);
             return true;
           }
-          bool operator()( const Type& x) const {
+          bool operator()( const Type& /* x */) const {
             assert(false);
             return true;
           }
