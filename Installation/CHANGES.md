@@ -53,15 +53,6 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
 
-### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
-
-- Added two new named parameters to the named constructor `CGAL::create_labeled_image_mesh_domain()`
-for automatic detection and protection
-of 1D-curves that lie at the intersection of three or more subdomains,
-extracted from labeled images.
-
-- Added new meshing criterion `edge_min_size` to avoid subdividing sharp edges that are shorter than the prescribed size bound.
-
 ### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
 
 -   **Breaking change**: The region growing part of the package have been reworked to fix design issues introduced with the handling `FaceGraph` models.
@@ -106,6 +97,11 @@ extracted from labeled images.
 
 ### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
+-   Added two new named parameters to the named constructor `CGAL::create_labeled_image_mesh_domain()`
+for automatic detection and protection
+of 1D-curves that lie at the intersection of three or more subdomains,
+extracted from labeled images.
+-   Added new meshing criterion `edge_min_size` to avoid subdividing sharp edges that are shorter than the prescribed size bound.
 -   Added new meshing criteria `facet_min_size` and `cell_min_size` to prevent Delaunay refinement from creating simplices smaller than the prescribed bound.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
