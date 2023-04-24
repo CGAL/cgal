@@ -1176,7 +1176,7 @@ private: // functions :
       // if this node is a leaf, then it's considered an intersecting node
       if (is_leaf(node)) {
         // todo: output iterator should hold indices instead of pointers
-        *output++ = &m_nodes[node];
+        *output++ = node;
         return output;
       }
 
