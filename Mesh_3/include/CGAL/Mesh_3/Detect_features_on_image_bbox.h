@@ -52,7 +52,7 @@ detect_features_on_bbox(const CGAL::Image_3& image, CGAL::Image_3& weights)
       if (postprocess_weights)
       {
         internal::feature_voxels_on_image_bbox<Word>(image, black_voxels);
-        internal::set_voxels(weights, black_voxels, 0/*black*/);
+        internal::set_voxels<unsigned char/*weights type*/>(weights, black_voxels, 0/*black*/);
       }
 
       (CGAL::polylines_to_protect<Point_3, Word>(image, polylines_on_bbox));
