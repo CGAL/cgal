@@ -931,9 +931,9 @@ public:
     corresponding dimension: for an Octree in 3D, 010 means: negative
     direction in X, position direction in Y, negative direction in Z.
 
-    \return the adjacent node if it exists, a null node otherwise.
+    \return the index of the adjacent node if it exists, nothing otherwise.
   */
-  const Node* adjacent_node(const Node& node, typename Node::Local_coordinates direction) const {
+  boost::optional<Node_index> adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -942,7 +942,7 @@ public:
     CGAL_precondition(direction.to_ulong() < Dimension::value * 2);
 
     // The root node has no adjacent nodes!
-    if (node.is_root()) return nullptr;
+    if (is_root(n)) return {};
 
     // The least significant bit indicates the sign (which side of the node)
     bool sign = direction[0];
@@ -957,49 +957,30 @@ public:
     offset = (sign ? offset : -offset);
 
     // Check if this child has the opposite sign along the direction's axis
-    if (node.local_coordinates()[dimension] != sign) {
+    if (m_nodes[n].local_coordinates()[dimension] != sign) {
       // This means the adjacent node is a direct sibling, the offset can be applied easily!
-      return &children(parent(node))[node.local_coordinates().to_ulong() + offset];
+      return {index(children(parent(n))[m_nodes[n].local_coordinates().to_ulong() + offset])};
     }
 
     // Find the parent's neighbor in that direction, if it exists
-    const Node* adjacent_node_of_parent = adjacent_node(parent(node), direction);
+    auto adjacent_node_of_parent = adjacent_node(parent(n), direction);
 
     // If the parent has no neighbor, then this node doesn't have one
-    if (adjacent_node_of_parent == nullptr) return nullptr;
+    if (!adjacent_node_of_parent) return {};
 
     // If the parent's adjacent node has no children, then it's this node's adjacent node
-    if (adjacent_node_of_parent->is_leaf())
+    if (is_leaf(adjacent_node_of_parent.get()))
       return adjacent_node_of_parent;
 
     // Return the nearest node of the parent by subtracting the offset instead of adding
-    return &children(*adjacent_node_of_parent)[node.local_coordinates().to_ulong() - offset];
-
-  }
-
-  boost::optional<Node_index> adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
-    return {index(adjacent_node(m_nodes[n], direction))};
+    return {index(children(adjacent_node_of_parent.get())[m_nodes[n].local_coordinates().to_ulong() - offset])};
   }
 
   /*!
     \brief equivalent to `adjacent_node()`, with an adjacency direction rather than a bitset.
    */
-  const Node* adjacent_node(const Node& node, typename Node::Adjacency adjacency) const {
-    return adjacent_node(node, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
-  }
-
-  /*!
-   * \brief equivalent to adjacent_node, except non-const
-   */
-  Node* adjacent_node(Node& node, std::bitset<Dimension::value> direction) {
-    return const_cast<Node*>(const_cast<const Self*>(this)->adjacent_node(node, direction));
-  }
-
-  /*!
-   * \brief equivalent to adjacent_node, with a Direction rather than a bitset and non-const
-   */
-  Node* adjacent_node(Node& node, typename Node::Adjacency adjacency) {
-    return adjacent_node(node, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
+  boost::optional<Node_index> adjacent_node(Node_index n, typename Node::Adjacency adjacency) const {
+    return adjacent_node(n, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
   }
 
   /// @}
