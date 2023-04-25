@@ -392,7 +392,7 @@ public:
       for (int direction = 0; direction < 6; ++direction) {
 
         // Get the neighbor
-        auto neighbor = index(adjacent_node(node, direction));
+        auto neighbor = adjacent_node(node, direction);
 
         // If it doesn't exist, skip it
         if (!neighbor)
@@ -977,8 +977,8 @@ public:
 
   }
 
-  const Node* adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
-    return adjacent_node(m_nodes[n], direction);
+  boost::optional<Node_index> adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
+    return {index(adjacent_node(m_nodes[n], direction))};
   }
 
   /*!
@@ -986,10 +986,6 @@ public:
    */
   const Node* adjacent_node(const Node& node, typename Node::Adjacency adjacency) const {
     return adjacent_node(node, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
-  }
-
-  const Node* adjacent_node(Node_index n, typename Node::Adjacency adjacency) const {
-    return adjacent_node(m_nodes[n], adjacency);
   }
 
   /*!
