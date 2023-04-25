@@ -78,7 +78,7 @@ public:
     } else {
 
       // todo: this shouldn't be necessary, I'd prefer to directly get m_orthtree[n].m_children_index
-      return m_orthtree.index(m_orthtree.children(n)[0]);
+      return m_orthtree.child(n, 0);
 
     }
   }

@@ -514,9 +514,9 @@ public:
     return traverse<Traversal>({*this, std::forward<Args>(args)...});
   }
 
-  template <typename Traversal>
-  Node_index_range traverse_indices() const {
-    return traverse_indices<Traversal>({*this});
+  template <typename Traversal, typename ...Args>
+  Node_index_range traverse_indices(Args&& ...args) const {
+    return traverse_indices<Traversal>({*this, std::forward<Args>(args)...});
   }
 
   /*!
@@ -739,24 +739,6 @@ public:
   // todo: these types can probably be moved out of Node
   using Children = typename Node::Children;
   using Children_const = typename Node::Children_const;
-
-  Children children(Node& node) {
-    CGAL_precondition (!node.is_leaf());
-    return Children{&m_nodes[node.m_children_index.get()], Degree::value};
-  }
-
-  Children children(Node_index node) {
-    return children(m_nodes[node]);
-  }
-
-  Children_const children(const Node& node) const {
-    CGAL_precondition (!node.is_leaf());
-    return Children_const{&m_nodes[node.m_children_index.get()], Degree::value};
-  }
-
-  Children_const children(Node_index node) const {
-    return children(m_nodes[node]);
-  }
 
   const boost::optional<Node_index> next_sibling(Node_index n) const {
 

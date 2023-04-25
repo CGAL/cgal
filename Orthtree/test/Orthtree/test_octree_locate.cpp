@@ -52,24 +52,24 @@ void test_8_points() {
   octree.refine(10, 1);
 
   // Existing points should end up in the same place
-  assert(octree.index(octree.children(octree.root())[0]) == octree.locate({-1, -1, -1}));
-  assert(octree.index(octree.children(octree.root())[1]) == octree.locate({1, -1, -1}));
-  assert(octree.index(octree.children(octree.root())[2]) == octree.locate({-1, 1, -1}));
-  assert(octree.index(octree.children(octree.root())[3]) == octree.locate({1, 1, -1}));
-  assert(octree.index(octree.children(octree.root())[4]) == octree.locate({-1, -1, 1}));
-  assert(octree.index(octree.children(octree.root())[5]) == octree.locate({1, -1, 1}));
-  assert(octree.index(octree.children(octree.root())[6]) == octree.locate({-1, 1, 1}));
-  assert(octree.index(octree.children(octree.root())[7]) == octree.locate({1, 1, 1}));
+  assert(octree.child(octree.index(octree.root()), 0) == octree.locate({-1, -1, -1}));
+  assert(octree.child(octree.index(octree.root()), 1) == octree.locate({1, -1, -1}));
+  assert(octree.child(octree.index(octree.root()), 2) == octree.locate({-1, 1, -1}));
+  assert(octree.child(octree.index(octree.root()), 3) == octree.locate({1, 1, -1}));
+  assert(octree.child(octree.index(octree.root()), 4) == octree.locate({-1, -1, 1}));
+  assert(octree.child(octree.index(octree.root()), 5) == octree.locate({1, -1, 1}));
+  assert(octree.child(octree.index(octree.root()), 6) == octree.locate({-1, 1, 1}));
+  assert(octree.child(octree.index(octree.root()), 7) == octree.locate({1, 1, 1}));
 
   // Points adjacent to the existing points should also end up in the same place
-  assert(octree.index(octree.children(octree.root())[0]) == octree.locate({-1.1, -1.1, -1.1}));
-  assert(octree.index(octree.children(octree.root())[1]) == octree.locate({1.1, -1.1, -1.1}));
-  assert(octree.index(octree.children(octree.root())[2]) == octree.locate({-1.1, 1.1, -1.1}));
-  assert(octree.index(octree.children(octree.root())[3]) == octree.locate({1.1, 1.1, -1.1}));
-  assert(octree.index(octree.children(octree.root())[4]) == octree.locate({-1.1, -1.1, 1.1}));
-  assert(octree.index(octree.children(octree.root())[5]) == octree.locate({1.1, -1.1, 1.1}));
-  assert(octree.index(octree.children(octree.root())[6]) == octree.locate({-1.1, 1.1, 1.1}));
-  assert(octree.index(octree.children(octree.root())[7]) == octree.locate({1.1, 1.1, 1.1}));
+  assert(octree.child(octree.index(octree.root()), 0) == octree.locate({-1.1, -1.1, -1.1}));
+  assert(octree.child(octree.index(octree.root()), 1) == octree.locate({1.1, -1.1, -1.1}));
+  assert(octree.child(octree.index(octree.root()), 2) == octree.locate({-1.1, 1.1, -1.1}));
+  assert(octree.child(octree.index(octree.root()), 3) == octree.locate({1.1, 1.1, -1.1}));
+  assert(octree.child(octree.index(octree.root()), 4) == octree.locate({-1.1, -1.1, 1.1}));
+  assert(octree.child(octree.index(octree.root()), 5) == octree.locate({1.1, -1.1, 1.1}));
+  assert(octree.child(octree.index(octree.root()), 6) == octree.locate({-1.1, 1.1, 1.1}));
+  assert(octree.child(octree.index(octree.root()), 7) == octree.locate({1.1, 1.1, 1.1}));
 
 }
 
@@ -93,28 +93,28 @@ void test_10_points() {
   octree.refine(10, 1);
 
   // Existing points should end up in the same place
-  assert(octree.index(octree.children(octree.root())[0]) == octree.locate({-1, -1, -1}));
-  assert(octree.index(octree.children(octree.root())[1]) == octree.locate({1, -1, -1}));
-  assert(octree.index(octree.children(octree.root())[2]) == octree.locate({-1, 1, -1}));
-  assert(octree.index(octree.children(octree.children(octree.children(octree.root())[3])[3])[3]) ==
+  assert(octree.child(octree.index(octree.root()), 0) == octree.locate({-1, -1, -1}));
+  assert(octree.child(octree.index(octree.root()), 1) == octree.locate({1, -1, -1}));
+  assert(octree.child(octree.index(octree.root()), 2) == octree.locate({-1, 1, -1}));
+  assert(octree.child(octree.child(octree.child(octree.index(octree.root()), 3), 3), 3) ==
          octree.locate({1, 1, -1}));
-  assert(octree.index(octree.children(octree.children(octree.children(octree.root())[4])[4])[4]) ==
+  assert(octree.child(octree.child(octree.child(octree.index(octree.root()), 4), 4), 4) ==
          octree.locate({-1, -1, 1}));
-  assert(octree.index(octree.children(octree.root())[5]) == octree.locate({1, -1, 1}));
-  assert(octree.index(octree.children(octree.root())[6]) == octree.locate({-1, 1, 1}));
-  assert(octree.index(octree.children(octree.root())[7]) == octree.locate({1, 1, 1}));
+  assert(octree.child(octree.index(octree.root()), 5) == octree.locate({1, -1, 1}));
+  assert(octree.child(octree.index(octree.root()), 6) == octree.locate({-1, 1, 1}));
+  assert(octree.child(octree.index(octree.root()), 7) == octree.locate({1, 1, 1}));
 
   // Points adjacent to the existing points might end up in different places
-  assert(octree.index(octree.children(octree.root())[0]) == octree.locate({-1.1, -1.1, -1.1}));
-  assert(octree.index(octree.children(octree.root())[1]) == octree.locate({1.1, -1.1, -1.1}));
-  assert(octree.index(octree.children(octree.root())[2]) == octree.locate({-1.1, 1.1, -1.1}));
-  assert(octree.index(octree.children(octree.children(octree.children(octree.root())[3])[3])[3]) ==
+  assert(octree.child(octree.index(octree.root()), 0) == octree.locate({-1.1, -1.1, -1.1}));
+  assert(octree.child(octree.index(octree.root()), 1) == octree.locate({1.1, -1.1, -1.1}));
+  assert(octree.child(octree.index(octree.root()), 2) == octree.locate({-1.1, 1.1, -1.1}));
+  assert(octree.child(octree.child(octree.child(octree.index(octree.root()), 3), 3), 3) ==
          octree.locate({1.1, 1.1, -1.1}));
-  assert(octree.index(octree.children(octree.children(octree.children(octree.root())[4])[4])[4]) ==
+  assert(octree.child(octree.child(octree.child(octree.index(octree.root()), 4), 4), 4) ==
          octree.locate({-1.1, -1.1, 1.1}));
-  assert(octree.index(octree.children(octree.root())[5]) == octree.locate({1.1, -1.1, 1.1}));
-  assert(octree.index(octree.children(octree.root())[6]) == octree.locate({-1.1, 1.1, 1.1}));
-  assert(octree.index(octree.children(octree.root())[7]) == octree.locate({1.1, 1.1, 1.1}));
+  assert(octree.child(octree.index(octree.root()), 5) == octree.locate({1.1, -1.1, 1.1}));
+  assert(octree.child(octree.index(octree.root()), 6) == octree.locate({-1.1, 1.1, 1.1}));
+  assert(octree.child(octree.index(octree.root()), 7) == octree.locate({1.1, 1.1, 1.1}));
 
 }
 
