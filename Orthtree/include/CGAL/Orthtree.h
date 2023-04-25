@@ -823,7 +823,7 @@ public:
     Point center = barycenter(n);
 
     // Add the node's points to its children
-    reassign_points(m_nodes[n], m_nodes[n].points().begin(), m_nodes[n].points().end(), center);
+    reassign_points(n, m_nodes[n].points().begin(), m_nodes[n].points().end(), center);
   }
 
   /*!
@@ -987,15 +987,13 @@ public:
 
 private: // functions :
 
-  void reassign_points(Node& node, Range_iterator begin, Range_iterator end, const Point& center,
+  void reassign_points(Node_index n, Range_iterator begin, Range_iterator end, const Point& center,
                        std::bitset<Dimension::value> coord = {},
                        std::size_t dimension = 0) {
 
     // Root case: reached the last dimension
     if (dimension == Dimension::value) {
-
-      children(node)[coord.to_ulong()].points() = {begin, end};
-
+      children(n)[coord.to_ulong()].points() = {begin, end};
       return;
     }
 
@@ -1012,19 +1010,12 @@ private: // functions :
     // Further subdivide the first side of the split
     std::bitset<Dimension::value> coord_left = coord;
     coord_left[dimension] = false;
-    reassign_points(node, begin, split_point, center, coord_left, dimension + 1);
+    reassign_points(n, begin, split_point, center, coord_left, dimension + 1);
 
     // Further subdivide the second side of the split
     std::bitset<Dimension::value> coord_right = coord;
     coord_right[dimension] = true;
-    reassign_points(node, split_point, end, center, coord_right, dimension + 1);
-
-  }
-
-  void reassign_points(Node_index n, Range_iterator begin, Range_iterator end, const Point& center,
-                       std::bitset<Dimension::value> coord = {},
-                       std::size_t dimension = 0) {
-    reassign_points(m_nodes[n], begin, end, center, coord, dimension);
+    reassign_points(n, split_point, end, center, coord_right, dimension + 1);
   }
 
   bool do_intersect(Node_index n, const Sphere& sphere) const {
