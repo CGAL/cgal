@@ -1027,15 +1027,6 @@ private: // functions :
     reassign_points(m_nodes[n], begin, end, center, coord, dimension);
   }
 
-  bool do_intersect(const Node& node, const Sphere& sphere) const {
-
-    // Create a cubic bounding box from the node
-    Bbox node_cube = bbox(node);
-
-    // Check for intersection between the node and the sphere
-    return CGAL::do_intersect(node_cube, sphere);
-  }
-
   bool do_intersect(Node_index n, const Sphere& sphere) const {
 
     // Create a cubic bounding box from the node
@@ -1052,25 +1043,25 @@ private: // functions :
   };
 
   struct Node_index_with_distance {
-    typename Node::Local_coordinates index;
+    Node_index index;
     FT distance;
 
-    Node_index_with_distance(const typename Node::Local_coordinates& index,
-                             const FT& distance)
-      : index(index), distance(distance) {}
+    Node_index_with_distance(const Node_index& index, const FT& distance) :
+      index(index), distance(distance) {}
+
   };
 
-  void nearest_k_neighbors_recursive(Sphere& search_bounds, const Node& node,
+  void nearest_k_neighbors_recursive(Sphere& search_bounds, Node_index node,
                                      std::vector<Point_with_distance>& results, FT epsilon = 0) const {
 
     // Check whether the node has children
-    if (node.is_leaf()) {
+    if (is_leaf(node)) {
 
       // Base case: the node has no children
 
       // Loop through each of the points contained by the node
       // Note: there might be none, and that should be fine!
-      for (auto point_index: node.points()) {
+      for (auto point_index: m_nodes[node].points()) {
 
         // Retrieve each point from the orthtree's point map
         auto point = get(m_point_map, point_index);
@@ -1115,12 +1106,12 @@ private: // functions :
 
       // Fill the list with child nodes
       for (int i = 0; i < Degree::value; ++i) {
-        auto& child_node = children(node)[i];
+        auto child_node = index(children(node)[i]);
 
         // Add a child to the list, with its distance
         children_with_distances.emplace_back(
-          typename Node::Local_coordinates(i),
-          CGAL::squared_distance(search_bounds.center(), barycenter(index(child_node)))
+          child_node,
+          CGAL::squared_distance(search_bounds.center(), barycenter(child_node))
         );
       }
 
@@ -1131,13 +1122,12 @@ private: // functions :
 
       // Loop over the children
       for (auto child_with_distance: children_with_distances) {
-        auto& child_node = children(node)[child_with_distance.index.to_ulong()];
 
         // Check whether the bounding box of the child intersects with the search bounds
-        if (do_intersect(child_node, search_bounds)) {
+        if (do_intersect(child_with_distance.index, search_bounds)) {
 
           // Recursively invoke this function
-          nearest_k_neighbors_recursive(search_bounds, child_node, results);
+          nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results);
         }
       }
     }
@@ -1191,7 +1181,7 @@ private: // functions :
       points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbors_recursive(query_sphere, root(), points_list);
+    nearest_k_neighbors_recursive(query_sphere, index(root()), points_list);
 
     // Add all the points found to the output
     for (auto& item: points_list)
