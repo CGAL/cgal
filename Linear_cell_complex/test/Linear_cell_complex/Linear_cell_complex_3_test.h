@@ -974,10 +974,10 @@ bool test_LCC_3()
                           Point(10,0,4), Point(10,5,4));
   dh3=lcc.make_quadrangle(Point(5,2,2), Point(5,1,2),
                           Point(5,1,1), Point(5,2,1));
-  create_attributes_3(lcc);
   lcc.template sew<3>(lcc.template opposite<2>(lcc.next(lcc.next(dh1))),
                       lcc.other_orientation(lcc.template opposite<2>(dh2)));
   lcc.template sew<3>(dh3, lcc.make_combinatorial_polygon(4));
+  create_attributes_3(lcc);
 
   // Create an hole in the face between the two cubes
   lcc.insert_cell_1_between_two_cells_2(lcc.template opposite<2>(lcc.next(lcc.next(dh1))),

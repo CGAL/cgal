@@ -36,6 +36,9 @@
  *    non nullptr, we overide all the i-attribute of the second i-cell to the
  *    first i-attribute.
  *
+ * Group_neighboor_attribute to group the <i>-attributes of beta_i(d1) and
+ *    beta_i(d2) if they exist.
+ *
  * Degroup_attribute_functor_run<CMap> to degroup one i-attributes in two
  *   (except for j-adim).
  *
@@ -486,6 +489,22 @@ struct Group_attribute_functor
                   typename CMap::Dart_descriptor adart2)
   { CGAL::internal::Group_attribute_functor_run<CMap,i,j>::
         run(amap,adart1,adart2); }
+};
+// ************************************************************************
+/// Group i-attribute of beta_i(d1) and beta_i(d2) if they exist.
+template<typename CMap>
+struct Group_neighboor_attribute
+{
+  template<unsigned int i>
+  static void run(CMap& amap, typename CMap::Dart_descriptor d1,
+                  typename CMap::Dart_descriptor d2)
+  {
+    if(!amap.template is_free<i>(d1) && !amap.template is_free<i>(d2))
+    {
+      CGAL::internal::Group_attribute_functor_run<CMap, i>::run
+          (amap, amap.template opposite<i>(d1), amap.template opposite<i>(d2), false);
+    }
+  }
 };
 // ************************************************************************
 // Functor used to degroup one i-attribute of one i-cell in two, except the
@@ -1057,21 +1076,6 @@ struct Set_dart_of_attribute_if_marked<CMap, i, CGAL::Void>
   static void run(CMap&, typename CMap::Dart_descriptor,
                   typename CMap::size_type)
   {}
-};
-// ************************************************************************
-template<typename CMap>
-struct Toto // TODO UPDATE
-{
-  template<unsigned int i>
-  static void run(CMap& amap, typename CMap::Dart_descriptor d1,
-                  typename CMap::Dart_descriptor d2)
-  {
-    if(!amap.template is_free<i>(d1) && !amap.template is_free<i>(d2))
-    {
-      Group_attribute_functor_run<CMap, i>::run
-          (amap, amap.template beta<i>(d1), amap.template beta<i>(d2), false);
-    }
-  }
 };
 // ************************************************************************
 } // namespace internal

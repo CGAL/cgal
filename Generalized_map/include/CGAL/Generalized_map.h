@@ -3695,6 +3695,13 @@ namespace CGAL {
         Helper::template Foreach_enabled_attributes
           <internal::Group_attribute_functor<Self>, 2>::
             run(*this, adart1, adart2);
+        // And we need to group also alpha_i(adart1) and alpha_i(adart2) for all
+        // enabled attributes starting from 3 dimension. Indeed when two i-cells
+        // are grouped for adart1 and adart2, this group also all alpha_j two by two
+        // except for alpha_i.
+        Helper::template Foreach_enabled_attributes
+          <internal::Group_neighboor_attribute<Self>, 3>::run(*this, adart1, adart2);
+
       }
       else // Here we degroup 2-attributes
       {
