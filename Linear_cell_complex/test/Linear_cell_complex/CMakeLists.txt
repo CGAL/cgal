@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Linear_cell_complex_Tests)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 set(hfiles Linear_cell_complex_2_test.h
   Linear_cell_complex_3_test.h Linear_cell_complex_3_test.h)
@@ -25,6 +25,11 @@ add_executable(Linear_cell_complex_3_test_index Linear_cell_complex_3_test.cpp $
 target_compile_definitions(Linear_cell_complex_3_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
 target_link_libraries(Linear_cell_complex_3_test_index PUBLIC CGAL CGAL::Data)
 cgal_add_compilation_test(Linear_cell_complex_3_test_index)
+
+if(CGAL_Qt5_FOUND)
+  target_link_libraries(Linear_cell_complex_3_test PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(Linear_cell_complex_3_test_index PUBLIC CGAL::CGAL_Basic_viewer)
+endif()
 
 add_executable(Linear_cell_complex_4_test_index Linear_cell_complex_4_test.cpp ${hfiles})
 target_compile_definitions(Linear_cell_complex_4_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
