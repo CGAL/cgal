@@ -68,10 +68,10 @@ int main(void) {
 
     // Check the results
     assert(4 == nodes.size());
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::RIGHT_TOP_BACK) == nodes[0]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::RIGHT_BOTTOM_FRONT) == nodes[1]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::LEFT_TOP_FRONT) == nodes[2]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::RIGHT_TOP_FRONT) == nodes[3]);
+    assert(octree.child(octree.root(), Octree::Traits::RIGHT_TOP_BACK) == nodes[0]);
+    assert(octree.child(octree.root(), Octree::Traits::RIGHT_BOTTOM_FRONT) == nodes[1]);
+    assert(octree.child(octree.root(), Octree::Traits::LEFT_TOP_FRONT) == nodes[2]);
+    assert(octree.child(octree.root(), Octree::Traits::RIGHT_TOP_FRONT) == nodes[3]);
   }
 
   // Intersection with a ray
@@ -86,19 +86,19 @@ int main(void) {
 
     // Check the results
     assert(8 == nodes.size());
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::LEFT_BOTTOM_BACK) == nodes[0]);
+    assert(octree.child(octree.root(), Octree::Traits::LEFT_BOTTOM_BACK) == nodes[0]);
     assert(
-      octree.child(octree.child(octree.index(octree.root()),
+      octree.child(octree.child(octree.root(),
                                 Octree::Traits::RIGHT_BOTTOM_BACK),
                    Octree::Traits::LEFT_TOP_FRONT)
       == nodes[1]
     );
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::LEFT_TOP_BACK) == nodes[2]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::RIGHT_TOP_BACK) == nodes[3]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::LEFT_BOTTOM_FRONT) == nodes[4]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::RIGHT_BOTTOM_FRONT) == nodes[5]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::LEFT_TOP_FRONT) == nodes[6]);
-    assert(octree.child(octree.index(octree.root()), Octree::Traits::RIGHT_TOP_FRONT) == nodes[7]);
+    assert(octree.child(octree.root(), Octree::Traits::LEFT_TOP_BACK) == nodes[2]);
+    assert(octree.child(octree.root(), Octree::Traits::RIGHT_TOP_BACK) == nodes[3]);
+    assert(octree.child(octree.root(), Octree::Traits::LEFT_BOTTOM_FRONT) == nodes[4]);
+    assert(octree.child(octree.root(), Octree::Traits::RIGHT_BOTTOM_FRONT) == nodes[5]);
+    assert(octree.child(octree.root(), Octree::Traits::LEFT_TOP_FRONT) == nodes[6]);
+    assert(octree.child(octree.root(), Octree::Traits::RIGHT_TOP_FRONT) == nodes[7]);
   }
 
   return EXIT_SUCCESS;

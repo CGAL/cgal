@@ -52,11 +52,11 @@ public:
   Preorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
   const Node* first() const {
-    return &m_orthtree.root();
+    return &m_orthtree[m_orthtree.root()];
   }
 
   typename Tree::Node_index first_index() const {
-    return m_orthtree.index(first()).get();
+    return m_orthtree.root();
   }
 
   const Node* next(const Node* n) const {
@@ -210,7 +210,7 @@ public:
 
   typename Tree::Node_index first_index() const {
     // assumes the tree has at least one child at m_depth
-    return m_orthtree.first_child_at_depth(m_orthtree.index(m_orthtree.root()), m_depth).get();
+    return m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth).get();
   }
 
   template <typename Node>

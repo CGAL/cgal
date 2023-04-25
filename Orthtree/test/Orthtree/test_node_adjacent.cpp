@@ -42,37 +42,37 @@ int main(void) {
   std::cout << octree << std::endl;
 
   // Root node should have no siblings
-  assert(!octree.adjacent_node(octree.index(octree.root()), 0));
-  assert(!octree.adjacent_node(octree.index(octree.root()), 1));
-  assert(!octree.adjacent_node(octree.index(octree.root()), 2));
-  assert(!octree.adjacent_node(octree.index(octree.root()), 3));
-  assert(!octree.adjacent_node(octree.index(octree.root()), 4));
-  assert(!octree.adjacent_node(octree.index(octree.root()), 5));
+  assert(!octree.adjacent_node(octree.root(), 0));
+  assert(!octree.adjacent_node(octree.root(), 1));
+  assert(!octree.adjacent_node(octree.root(), 2));
+  assert(!octree.adjacent_node(octree.root(), 3));
+  assert(!octree.adjacent_node(octree.root(), 4));
+  assert(!octree.adjacent_node(octree.root(), 5));
 
   // Left Top Front node should have siblings to the Right, Down, and Back
-  auto left_top_back = octree.child(octree.index(octree.root()), Traits::LEFT_TOP_BACK);
+  auto left_top_back = octree.child(octree.root(), Traits::LEFT_TOP_BACK);
 
-  assert(octree.child(octree.index(octree.root()), Traits::RIGHT_TOP_BACK) ==
+  assert(octree.child(octree.root(), Traits::RIGHT_TOP_BACK) ==
          octree.adjacent_node(left_top_back, Traits::RIGHT).get());
-  assert(octree.child(octree.index(octree.root()), Traits::LEFT_BOTTOM_BACK) ==
+  assert(octree.child(octree.root(), Traits::LEFT_BOTTOM_BACK) ==
          octree.adjacent_node(left_top_back, Traits::DOWN).get());
-  assert(octree.child(octree.index(octree.root()), Traits::LEFT_TOP_FRONT) ==
+  assert(octree.child(octree.root(), Traits::LEFT_TOP_FRONT) ==
          octree.adjacent_node(left_top_back, Traits::FRONT));
   assert(!octree.adjacent_node(left_top_back, Traits::LEFT));
   assert(!octree.adjacent_node(left_top_back, Traits::UP));
   assert(!octree.adjacent_node(left_top_back, Traits::BACK));
 
-  std::cout << octree[octree.child(octree.index(octree.root()), Traits::LEFT_BOTTOM_BACK)] << std::endl;
+  std::cout << octree[octree.child(octree.root(), Traits::LEFT_BOTTOM_BACK)] << std::endl;
 
   auto right_top_back_of_left_bottom_back =
-    octree.child(octree.child(octree.index(octree.root()), Traits::LEFT_BOTTOM_BACK), Traits::RIGHT_TOP_BACK);
+    octree.child(octree.child(octree.root(), Traits::LEFT_BOTTOM_BACK), Traits::RIGHT_TOP_BACK);
 
   assert(
-    octree.child(octree.child(octree.index(octree.root()), Traits::LEFT_BOTTOM_BACK), Traits::LEFT_TOP_BACK) ==
+    octree.child(octree.child(octree.root(), Traits::LEFT_BOTTOM_BACK), Traits::LEFT_TOP_BACK) ==
     octree.adjacent_node(right_top_back_of_left_bottom_back, Traits::LEFT)
   );
   assert(
-    octree.child(octree.index(octree.root()), Traits::RIGHT_BOTTOM_BACK) ==
+    octree.child(octree.root(), Traits::RIGHT_BOTTOM_BACK) ==
     octree.adjacent_node(right_top_back_of_left_bottom_back, Traits::RIGHT)
   );
   assert(octree.adjacent_node(right_top_back_of_left_bottom_back, Traits::RIGHT).has_value());

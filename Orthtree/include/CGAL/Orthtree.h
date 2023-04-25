@@ -247,7 +247,7 @@ public:
     // save orthtree attributes
     m_bbox_min = construct_point_d_from_array(bbox_min);
     m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
-    points(index(root())) = {point_range.begin(), point_range.end()};
+    points(root()) = {point_range.begin(), point_range.end()};
   }
 
   /// @}
@@ -436,15 +436,8 @@ public:
 
     \return a const reference to the root node of the tree.
    */
-  const Node& root() const { return m_nodes[0]; }
-
-  /*!
-    \brief provides read-write access to the root node, and by
-    extension the rest of the tree.
-
-    \return a reference to the root node of the tree.
-   */
-  Node& root() { return m_nodes[0]; }
+  // todo: return index instead of ref
+  Node_index root() const { return 0; }
 
   Node_index index(const Node& node) const {
     return std::distance(m_nodes.data(), &node);
@@ -571,7 +564,7 @@ public:
     CGAL_precondition (CGAL::do_intersect(point, bbox(root())));
 
     // Start at the root node
-    Node_index node_for_point = index(root());
+    Node_index node_for_point = root();
 
     // Descend the tree until reaching a leaf node
     while (!is_leaf(node_for_point)) {
@@ -643,7 +636,7 @@ public:
    */
   template <typename Query, typename OutputIterator>
   OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
-    return intersected_nodes_recursive(query, index(root()), output);
+    return intersected_nodes_recursive(query, root(), output);
   }
 
   /// @}
@@ -716,16 +709,6 @@ public:
     \brief returns this node's parent.
     \pre `!is_root()`
    */
-  const Node& parent(const Node& node) const {
-    CGAL_precondition (!node.is_root());
-    return m_nodes[node.m_parent_index.get()];
-  }
-
-  Node& parent(Node& node) {
-    CGAL_precondition (!node.is_root());
-    return m_nodes[node.m_parent_index.get()];
-  }
-
   Node_index parent(Node_index node) const {
     CGAL_precondition (!is_root(node));
     return m_nodes[node].m_parent_index.get();
@@ -735,10 +718,6 @@ public:
     CGAL_precondition (!is_leaf(node));
     return m_nodes[node].m_children_index.get() + i;
   }
-
-  // todo: these types can probably be moved out of Node
-  using Children = typename Node::Children;
-  using Children_const = typename Node::Children_const;
 
   const boost::optional<Node_index> next_sibling(Node_index n) const {
 
@@ -883,7 +862,7 @@ public:
   }
 
   static bool is_topology_equal(const Self& lhs, const Self& rhs) {
-    return is_topology_equal(lhs.index(lhs.root()), lhs, rhs.index(rhs.root()), rhs);
+    return is_topology_equal(lhs.root(), lhs, rhs.root(), rhs);
   }
 
   /*!
@@ -1176,7 +1155,7 @@ private: // functions :
       points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbors_recursive(query_sphere, index(root()), points_list);
+    nearest_k_neighbors_recursive(query_sphere, root(), points_list);
 
     // Add all the points found to the output
     for (auto& item: points_list)

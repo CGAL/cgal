@@ -37,11 +37,11 @@ int main(void) {
   Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
-  std::cout << "root: " << octree.local_coordinates(octree.index(octree.root())) << std::endl;
-  std::cout << "first child: " << octree.local_coordinates(octree.child(octree.index(octree.root()), 0)) << std::endl;
-  std::cout << "fifth child: " << octree.local_coordinates(octree.child(octree.index(octree.root()), 4)) << std::endl;
+  std::cout << "root: " << octree.local_coordinates(octree.root()) << std::endl;
+  std::cout << "first child: " << octree.local_coordinates(octree.child(octree.root(), 0)) << std::endl;
+  std::cout << "fifth child: " << octree.local_coordinates(octree.child(octree.root(), 4)) << std::endl;
   std::cout << "fifth child of first child: "
-            << octree.local_coordinates(octree.child(octree.child(octree.index(octree.root()), 0), 4)) << std::endl;
+            << octree.local_coordinates(octree.child(octree.child(octree.root(), 0), 4)) << std::endl;
 
   // TODO
 
