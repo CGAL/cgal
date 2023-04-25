@@ -45,7 +45,7 @@ public:
   bool isGray();
   Image* m_image;
 
-  Image* const image_weights() const;
+  Image* image_weights() const;
   void set_image_weights(const Image& img, const float sigma);
   float sigma_weights() const;
 
