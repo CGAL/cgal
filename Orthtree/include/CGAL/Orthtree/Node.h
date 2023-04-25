@@ -55,15 +55,6 @@ public:
    */
   typedef typename Orthtree<Traits, PointRange, PointMap>::Node Self;
 
-
-  /// \cond SKIP_IN_MANUAL
-  /*!
-   * \brief Array for containing the child nodes of this node.
-   */
-  typedef boost::span<Self, Degree::value> Children;
-  typedef boost::span<const Self, Degree::value> Children_const;
-  /// \endcond
-
   /*!
     \brief Set of bits representing this node's relationship to its parent.
 
@@ -219,30 +210,11 @@ public:
   /// @{
 
   /*!
-    \brief checks whether the node is empty of points or not.
-   */
-  bool empty() const {
-    return m_points.empty();
-  }
-
-  /*!
     \brief returns the number of points of this node.
    */
   std::size_t size() const {
     return std::size_t(std::distance(m_points.begin(), m_points.end()));
   }
-
-  /*!
-    \brief returns the iterator at the start of the collection of
-    points held by this node.
-   */
-  const_iterator begin() const { return m_points.begin(); }
-
-  /*!
-    \brief returns the iterator at the end of the collection of
-    points held by this node.
-   */
-  const_iterator end() const { return m_points.end(); }
 
   /// @}
 
@@ -253,19 +225,10 @@ public:
   /*!
    * \brief compares the topology of this node to another node.
    *
-   * \todo This seems out of date, the implementation I see compares for direct equality
-   *
    * \param rhs node to compare with
    * \return whether the nodes have different topology.
    */
-  bool operator==(const Self& rhs) const {
-    // todo: This is a trivial implementation, maybe it can be set to =default in c++17?
-    return rhs.m_parent_index == m_parent_index &&
-           rhs.m_children_index == m_children_index &&
-           rhs.m_points == m_points &&
-           rhs.m_depth == m_depth &&
-           rhs.m_global_coordinates == m_global_coordinates;
-  }
+  bool operator==(const Self& rhs) const = default;
 
   friend std::ostream& operator<<(std::ostream& os, const Self& node) {
     return internal::print_orthtree_node(os, node);
