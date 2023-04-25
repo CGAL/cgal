@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.1...3.23)
 project(Point_set_3_Examples)
 
 # CGAL and its components
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 create_single_source_cgal_program("point_set.cpp")
 create_single_source_cgal_program("point_set_property.cpp")

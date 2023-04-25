@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Triangulation_3_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 include_directories(BEFORE "../../include")
 
@@ -26,7 +26,7 @@ create_single_source_cgal_program("draw_triangulation_3.cpp")
 if(CGAL_Qt5_FOUND)
   target_link_libraries(draw_triangulation_3 PUBLIC CGAL::CGAL_Basic_viewer)
 else()
-  message(STATUS "NOTICE: The example 'draw_triangulation_3' requires Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: The example 'draw_triangulation_3' requires Qt6, and will not be compiled.")
 endif()
 
 find_package(TBB QUIET)

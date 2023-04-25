@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Boolean_set_operations_2_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED COMPONENTS Core OPTIONAL_COMPONENTS Qt6)
 
 # create a target per cppfile
 file(

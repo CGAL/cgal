@@ -79,7 +79,7 @@ else()
 endif()
 
 if(WITH_CGAL_Qt5)
-  find_package(Qt5 QUIET COMPONENTS Core)
+  find_package(Qt6 QUIET COMPONENTS Core)
   if(Qt5_FOUND)
     create_link_to_program(CGAL_Qt5)
   endif()
@@ -146,7 +146,7 @@ set_tests_properties(
   test_find_package_version_fail-exact
   PROPERTIES WILL_FAIL TRUE)
 
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt6)
 
 file(MAKE_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install")
 file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/non_standard_build)
@@ -196,7 +196,7 @@ else()#CGAL_BRANCH_BUILD
 endif()#CGAL_BRANCH_BUILD
 list(APPEND test_config_lst "test_config_file_2")
 
-#configure cgal for a non standard install without qt5
+#configure cgal for a non standard install without Qt6
 get_filename_component(CORRECT_INSTALL_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install/dummy.txt" DIRECTORY)
 add_test(NAME config_non_standard_cgal
   COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${CORRECT_INSTALL_PATH} -DCGAL_INSTALL_LIB_DIR=lib
@@ -215,7 +215,7 @@ WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_3")
 list(APPEND test_config_lst "test_config_file_3")
 
 if(CGAL_Qt5_FOUND)
-  #configure cgal for a non standard install with qt5
+  #configure cgal for a non standard install with Qt6
   add_test(NAME config_non_standard_cgal_qt5
     COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib
     "${CGAL_SOURCE_DIR}"

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Surface_mesh_topology_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # add_definitions(-DCGAL_TRACE_PATH_TESTS)
 # add_definitions(-DCGAL_TRACE_CMAP_TOOLS)

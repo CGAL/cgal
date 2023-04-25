@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Linear_cell_complex_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")

@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Straight_skeleton_2_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Qt5 Core)
+find_package(CGAL REQUIRED COMPONENTS Qt6 Core)
 
 include_directories(BEFORE "include")
 
