@@ -345,7 +345,9 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     namespace p = CGAL::parameters;
 
     Image_mesh_domain* p_domain = nullptr;
-    CGAL::Image_3 weights = (pWeights == nullptr) ? CGAL::Image_3() : *pWeights;
+    CGAL::Image_3 null_weights;
+    CGAL::Image_3& weights = (pWeights == nullptr) ? null_weights : *pWeights;
+
     if (protect_features)
       {
         p_domain = new Image_mesh_domain
