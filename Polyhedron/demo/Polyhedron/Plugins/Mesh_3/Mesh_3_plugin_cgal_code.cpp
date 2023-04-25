@@ -302,7 +302,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  float iso_value,
                                  float value_outside,
                                  bool inside_is_less,
-                                 const Image* pWeights)
+                                 Image* const pWeights)
 {
   if (nullptr == pImage) { return nullptr; }
 

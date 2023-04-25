@@ -811,7 +811,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       image_item->set_image_weights(weights, sigma_weights);
     }
 #endif
-    const Image* pWeights = sigma_weights > 0
+    Image* const pWeights = sigma_weights > 0
       ? image_item->image_weights()
       : nullptr;
 

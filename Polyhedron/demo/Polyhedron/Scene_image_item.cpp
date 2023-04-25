@@ -500,7 +500,7 @@ Scene_image_item::compute_bbox() const
                 m_image->image()->tz+(m_image->zdim()-1) * m_image->vz()));
 }
 
-const Image*
+Image* const
 Scene_image_item::image_weights() const
 {
   return &d->m_image_weights;
