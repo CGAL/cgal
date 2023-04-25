@@ -42,6 +42,10 @@
  * Test_split_attribute_functor<CMap,i> to test if there is some i-attributes
  *   that are split after an operation. Modified darts are given in a
  *   std::deque.
+ *
+ * Set_dart_of_attribute_if_marked<CMap, i> to set the dart of the i-attribute
+ *   associated with a dart if the old dart is marked. Used in remove_cell
+ *   functions.
  */
 namespace CGAL
 {
@@ -1030,6 +1034,43 @@ struct Test_split_attribute_functor
   {
     CGAL::internal::Test_split_attribute_functor_run<CMap, i, j>::
         run(amap, modified_darts, modified_darts2, mark_modified_darts);
+  }
+};
+// ************************************************************************
+template<typename CMap, unsigned int i,
+         typename T=typename CMap::template Attribute_type<i>::type>
+struct Set_dart_of_attribute_if_marked
+{
+  static void run(CMap& amap, typename CMap::Dart_descriptor d1,
+                  typename CMap::size_type amark)
+  {
+    if(amap.template attribute<i>(d1)!=CMap::null_descriptor &&
+       amap.template dart<i>(d1)!=CMap::null_descriptor &&
+       amap.is_marked(amap.template dart<i>(d1), amark))
+    { amap.template dart<i>(d1)=d1; }
+  }
+};
+// Specialization for void attributes.
+template<typename CMap, unsigned int i>
+struct Set_dart_of_attribute_if_marked<CMap, i, CGAL::Void>
+{
+  static void run(CMap&, typename CMap::Dart_descriptor,
+                  typename CMap::size_type)
+  {}
+};
+// ************************************************************************
+template<typename CMap>
+struct Toto // TODO UPDATE
+{
+  template<unsigned int i>
+  static void run(CMap& amap, typename CMap::Dart_descriptor d1,
+                  typename CMap::Dart_descriptor d2)
+  {
+    if(!amap.template is_free<i>(d1) && !amap.template is_free<i>(d2))
+    {
+      Group_attribute_functor_run<CMap, i>::run
+          (amap, amap.template beta<i>(d1), amap.template beta<i>(d2), false);
+    }
   }
 };
 // ************************************************************************

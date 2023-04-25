@@ -91,8 +91,9 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !amap.template is_free<i+1>(it) && dg1==amap.null_descriptor )
-        { dg1=it; dg2=amap.template alpha<i+1>(it); }
+        if (dg1==amap.null_descriptor && !amap.template is_free<i+1>(it) &&
+            !amap.template is_free<i>(amap.template alpha<i+1>(it)))
+        { dg1=it; dg2=amap.template alpha<i+1, i>(it); }
         amap.mark(it, mark);
         ++res;
       }
@@ -136,6 +137,9 @@ namespace CGAL
               modified_darts.push_back(d2);
               amap.mark(d2, mark_modified_darts);
             }
+
+            internal::Set_dart_of_attribute_if_marked<GMap, i+1>::
+                run(amap, d1, mark);
           }
         }
       }

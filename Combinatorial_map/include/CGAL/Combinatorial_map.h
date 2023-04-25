@@ -4562,7 +4562,7 @@ namespace CGAL {
         }
         this->template basic_link_beta_for_involution<2>(d2, d1);
 
-        for ( unsigned int dim=3; dim<=dimension; ++dim)
+        for (unsigned int dim=3; dim<=dimension; ++dim)
         {
           if ( !is_free(it1, dim) &&
                is_marked(beta(it1, dim), treated) )
@@ -4583,6 +4583,8 @@ namespace CGAL {
         { // Here we group all enabled attributes starting from 2 to dimension
           Helper::template Foreach_enabled_attributes
             <internal::Group_attribute_functor<Self>, 2>::run(*this, adart1, adart2);
+          Helper::template Foreach_enabled_attributes
+            <internal::Toto<Self>, 3>::run(*this, adart1, adart2); // TODO DEBUG
         }
         else // Here we degroup 2-attributes
         { internal::Degroup_attribute_functor_run<Self, 2>::run(*this, adart1, adart2); }

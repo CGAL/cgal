@@ -150,6 +150,9 @@ namespace CGAL
 
           if ( d1!=amap.null_dart_descriptor )
           {
+            internal::Set_dart_of_attribute_if_marked<CMap, i+1>::
+                run(amap, d1, mark);
+
             if ( d2!=amap.null_dart_descriptor && d1!=d2 )
             {
               amap.template basic_link_beta<i>(d1, d2);
@@ -371,6 +374,9 @@ namespace CGAL
       {
         if ( !amap.template is_free<0>(*it) )
         {
+          internal::Set_dart_of_attribute_if_marked<CMap, 1>::
+              run(amap, amap.template beta<0>(*it), mark);
+
           if ( !amap.template is_free<1>(*it) &&
                amap.template beta<0>(*it)!=(*it) )
           {
