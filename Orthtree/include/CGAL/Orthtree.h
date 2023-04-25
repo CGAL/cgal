@@ -247,7 +247,7 @@ public:
     // save orthtree attributes
     m_bbox_min = construct_point_d_from_array(bbox_min);
     m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
-    root().points() = {point_range.begin(), point_range.end()};
+    points(index(root())) = {point_range.begin(), point_range.end()};
   }
 
   /// @}
@@ -296,6 +296,8 @@ public:
     returns a Boolean value (where `true` implies that a `Node` needs to
     be split, `false` that the `Node` should be a leaf).
 
+    todo: split predicate should work with node indices!
+
     This function may be called several times with different
     predicates: in that case, nodes already split are left unaltered,
     while nodes that were not split and for which `split_predicate`
@@ -321,7 +323,7 @@ public:
       if (split_predicate(m_nodes[current])) {
 
         // Check if we've reached a new max depth
-        if (m_nodes[current].depth() == depth()) {
+        if (depth(current) == depth()) {
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
@@ -333,11 +335,11 @@ public:
       }
 
       // Check if the node has children which need to be processed
-      if (!m_nodes[current].is_leaf()) {
+      if (!is_leaf(current)) {
 
         // Process each of its children
         for (int i = 0; i < Degree::value; ++i)
-          todo.push(m_nodes[current].m_children_index.get() + i);
+          todo.push(child(current, i));
       }
     }
   }
@@ -385,7 +387,7 @@ public:
       leaf_nodes.pop();
 
       // Skip this node if it isn't a leaf anymore
-      if (!m_nodes[node].is_leaf())
+      if (!is_leaf(node))
         continue;
 
       // Iterate over each of the neighbors
@@ -404,19 +406,19 @@ public:
           continue;
 
         // If it's already been split, skip it
-        if (!m_nodes[neighbor.get()].is_leaf())
+        if (!is_leaf(neighbor.get()))
           continue;
 
         // Check if the neighbor breaks our grading rule
         // TODO: could the rule be parametrized?
-        if ((m_nodes[node].depth() - m_nodes[neighbor.get()].depth()) > 1) {
+        if ((depth(node) - depth(neighbor.get())) > 1) {
 
           // Split the neighbor
           split(neighbor.get());
 
           // Add newly created children to the queue
           for (int i = 0; i < Degree::value; ++i) {
-            leaf_nodes.push(index(children(neighbor.get())[i]));
+            leaf_nodes.push(child(neighbor.get(), i));
           }
         }
       }
@@ -529,17 +531,16 @@ public:
   }
 
   Bbox bbox(Node_index n) const {
-    auto node = m_nodes[n];
 
     // Determine the side length of this node
-    FT size = m_side_per_depth[node.depth()];
+    FT size = m_side_per_depth[depth(n)];
 
     // Determine the location this node should be split
     Array min_corner;
     Array max_corner;
     for (int i = 0; i < Dimension::value; i++) {
 
-      min_corner[i] = m_bbox_min[i] + (node.global_coordinates()[i] * size);
+      min_corner[i] = m_bbox_min[i] + (global_coordinates(n)[i] * size);
       max_corner[i] = min_corner[i] + size;
     }
 
@@ -579,13 +580,13 @@ public:
       Point center = barycenter(node_for_point);
 
       // Find the index of the correct sub-node
-      typename Node::Local_coordinates local_coordinates;
+      typename Node::Local_coordinates local_coords;
       std::size_t dimension = 0;
       for (const auto& r: cartesian_range(center, point))
-        local_coordinates[dimension++] = (get < 0 > (r) < get < 1 > (r));
+        local_coords[dimension++] = (get < 0 > (r) < get < 1 > (r));
 
       // Find the correct sub-node of the current node
-      node_for_point = index(children(node_for_point)[local_coordinates.to_ulong()]);
+      node_for_point = child(node_for_point, local_coords.to_ulong());
     }
 
     // Return the result
@@ -695,6 +696,22 @@ public:
     return m_nodes[n].depth();
   }
 
+  typename Node::Point_range& points(Node_index n) {
+    return m_nodes[n].points();
+  }
+
+  const typename Node::Point_range& points(Node_index n) const {
+    return m_nodes[n].points();
+  }
+
+  typename Node::Global_coordinates global_coordinates(Node_index n) const {
+    return m_nodes[n].global_coordinates();
+  }
+
+  typename Node::Local_coordinates local_coordinates(Node_index n) const {
+    return m_nodes[n].local_coordinates();
+  }
+
   /*!
     \brief returns this node's parent.
     \pre `!is_root()`
@@ -710,8 +727,13 @@ public:
   }
 
   Node_index parent(Node_index node) const {
-    CGAL_precondition (!m_nodes[node].is_root());
+    CGAL_precondition (!is_root(node));
     return m_nodes[node].m_parent_index.get();
+  }
+
+  Node_index child(Node_index node, std::size_t i) const {
+    CGAL_precondition (!is_leaf(node));
+    return m_nodes[node].m_children_index.get() + i;
   }
 
   // todo: these types can probably be moved out of Node
@@ -742,14 +764,14 @@ public:
     if (is_root(n)) return {};
 
     // Find out which child this is
-    std::size_t local_coordinates = m_nodes[n].local_coordinates().to_ulong(); // todo: add local_coordinates(n) helper
+    std::size_t local_coords = local_coordinates(n).to_ulong(); // todo: add local_coordinates(n) helper
 
     // The last child has no more siblings
-    if (int(local_coordinates) == Node::Degree::value - 1)
+    if (int(local_coords) == Node::Degree::value - 1)
       return {};
 
     // The next sibling is the child of the parent with the following local coordinates
-    return index(children(parent(n))[local_coordinates + 1]);
+    return child(parent(n), local_coords + 1);
   }
 
   const boost::optional<Node_index> next_sibling_up(Node_index n) const {
@@ -772,7 +794,7 @@ public:
 
     auto first = n;
     while (!is_leaf(first))
-      first = index(children(first)[0]);
+      first = child(first, 0);
 
     return first;
   }
@@ -791,7 +813,7 @@ public:
 
       if (!is_leaf(node))
         for (int i = 0; i < Node::Degree::value; ++i)
-          todo.push(m_nodes[node].m_children_index.get() + i);
+          todo.push(child(node, i));
     }
 
     return {};
@@ -809,12 +831,12 @@ public:
   void split(Node_index n) {
 
     // Make sure the node hasn't already been split
-    CGAL_precondition (m_nodes[n].is_leaf());
+    CGAL_precondition (is_leaf(n));
 
     // Split the node to create children
     using Local_coordinates = typename Node::Local_coordinates;
     for (int i = 0; i < Degree::value; i++) {
-      m_nodes.emplace_back(n, m_nodes[n].global_coordinates(), m_nodes[n].depth() + 1, Local_coordinates{i});
+      m_nodes.emplace_back(n, global_coordinates(n), depth(n) + 1, Local_coordinates{i});
     }
     // todo: this assumes that the new nodes are always allocated at the end
     m_nodes[n].m_children_index = m_nodes.size() - Degree::value;
@@ -823,7 +845,7 @@ public:
     Point center = barycenter(n);
 
     // Add the node's points to its children
-    reassign_points(n, m_nodes[n].points().begin(), m_nodes[n].points().end(), center);
+    reassign_points(n, points(n).begin(), points(n).end(), center);
   }
 
   /*!
@@ -847,7 +869,7 @@ public:
     Array bary;
     std::size_t i = 0;
     for (const FT& f: cartesian_range(m_bbox_min)) {
-      bary[i] = FT(m_nodes[n].global_coordinates()[i]) * size + size / FT(2) + f;
+      bary[i] = FT(global_coordinates(n)[i]) * size + size / FT(2) + f;
       ++i;
     }
 
@@ -869,13 +891,13 @@ public:
       // Check all the children
       for (int i = 0; i < Degree::value; ++i) {
         // If any child cell is different, they're not the same
-        if (!is_topology_equal(lhsTree[lhsNode].m_children_index.get() + i, lhsTree,
-                               rhsTree[rhsNode].m_children_index.get() + i, rhsTree))
+        if (!is_topology_equal(lhsTree.child(lhsNode, i), lhsTree,
+                               rhsTree.child(rhsNode, i), rhsTree))
           return false;
       }
     }
 
-    return (lhsTree[lhsNode].global_coordinates() == rhsTree[rhsNode].global_coordinates());
+    return (lhsTree.global_coordinates(lhsNode) == rhsTree.global_coordinates(rhsNode));
   }
 
   static bool is_topology_equal(const Self& lhs, const Self& rhs) {
@@ -957,9 +979,9 @@ public:
     offset = (sign ? offset : -offset);
 
     // Check if this child has the opposite sign along the direction's axis
-    if (m_nodes[n].local_coordinates()[dimension] != sign) {
+    if (local_coordinates(n)[dimension] != sign) {
       // This means the adjacent node is a direct sibling, the offset can be applied easily!
-      return {index(children(parent(n))[m_nodes[n].local_coordinates().to_ulong() + offset])};
+      return {child(parent(n), local_coordinates(n).to_ulong() + offset)};
     }
 
     // Find the parent's neighbor in that direction, if it exists
@@ -973,7 +995,7 @@ public:
       return adjacent_node_of_parent;
 
     // Return the nearest node of the parent by subtracting the offset instead of adding
-    return {index(children(adjacent_node_of_parent.get())[m_nodes[n].local_coordinates().to_ulong() - offset])};
+    return {child(adjacent_node_of_parent.get(), local_coordinates(n).to_ulong() - offset)};
   }
 
   /*!
@@ -993,7 +1015,7 @@ private: // functions :
 
     // Root case: reached the last dimension
     if (dimension == Dimension::value) {
-      children(n)[coord.to_ulong()].points() = {begin, end};
+      points(child(n, coord.to_ulong())) = {begin, end};
       return;
     }
 
@@ -1052,7 +1074,7 @@ private: // functions :
 
       // Loop through each of the points contained by the node
       // Note: there might be none, and that should be fine!
-      for (auto point_index: m_nodes[node].points()) {
+      for (auto point_index: points(node)) {
 
         // Retrieve each point from the orthtree's point map
         auto point = get(m_point_map, point_index);
@@ -1097,7 +1119,7 @@ private: // functions :
 
       // Fill the list with child nodes
       for (int i = 0; i < Degree::value; ++i) {
-        auto child_node = index(children(node)[i]);
+        auto child_node = child(node, i);
 
         // Add a child to the list, with its distance
         children_with_distances.emplace_back(
@@ -1140,7 +1162,7 @@ private: // functions :
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < Degree::value; ++i) {
-        intersected_nodes_recursive(query, index(children(node)[i]), output);
+        intersected_nodes_recursive(query, child(node, i), output);
       }
     }
     return output;
