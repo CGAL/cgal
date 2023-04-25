@@ -49,6 +49,7 @@ public:
   typedef typename Enclosing::Dimension Dimension; ///< Dimension type.
   typedef typename Enclosing::Degree Degree; ///< Degree type.
   typedef typename Enclosing::Node_index Node_index; ///< Index type.
+  typedef typename Enclosing::Maybe_node_index Maybe_node_index; ///< Index type.
 
   /*!
     \brief Self typedef for convenience.
@@ -98,8 +99,8 @@ private:
   std::uint8_t m_depth = 0;
   Global_coordinates m_global_coordinates{};
 
-  boost::optional<Node_index> m_parent_index{};
-  boost::optional<Node_index> m_children_index{};
+  Maybe_node_index m_parent_index{};
+  Maybe_node_index m_children_index{};
 
   // Only the Orthtree class has access to the non-default
   // constructor, mutators, etc.

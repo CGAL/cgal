@@ -111,6 +111,11 @@ public:
   typedef std::size_t Node_index;
 
   /*!
+   * \brief Optional index of a node in the tree.
+   */
+  typedef boost::optional<Node_index> Maybe_node_index;
+
+  /*!
    * \brief The Sub-tree / Orthant type.
    */
   class Node;
@@ -443,7 +448,7 @@ public:
     return std::distance(m_nodes.data(), &node);
   }
 
-  boost::optional<Node_index> index(const Node* node) const {
+  Maybe_node_index index(const Node* node) const {
     if (node == nullptr) return {};
     return index(*node);
   }
@@ -480,7 +485,7 @@ public:
 
     auto first = traversal.first_index();
 
-    auto next = [=](const Self& tree, Node_index index) -> boost::optional<Node_index> {
+    auto next = [=](const Self& tree, Node_index index) -> Maybe_node_index {
       return traversal.next_index(index);
     };
 
@@ -493,7 +498,7 @@ public:
 
     Node_index first = traversal.first_index();
 
-    auto next = [=](const Self& tree, Node_index index) -> boost::optional<Node_index> {
+    auto next = [=](const Self& tree, Node_index index) -> Maybe_node_index {
       return traversal.next_index(index);
     };
 
@@ -719,7 +724,7 @@ public:
     return m_nodes[node].m_children_index.get() + i;
   }
 
-  const boost::optional<Node_index> next_sibling(Node_index n) const {
+  const Maybe_node_index next_sibling(Node_index n) const {
 
     // Root node has no siblings
     if (is_root(n)) return {};
@@ -735,17 +740,17 @@ public:
     return child(parent(n), local_coords + 1);
   }
 
-  const boost::optional<Node_index> next_sibling_up(Node_index n) const {
+  const Maybe_node_index next_sibling_up(Node_index n) const {
 
     // the root node has no next sibling up
     if (n == 0) return {};
 
-    auto up = boost::optional<Node_index>{parent(n)};
+    auto up = Maybe_node_index{parent(n)};
     while (up) {
 
       if (next_sibling(up.get())) return {next_sibling(up.get())};
 
-      up = is_root(up.get()) ? boost::optional<Node_index>{} : boost::optional<Node_index>{parent(up.get())};
+      up = is_root(up.get()) ? Maybe_node_index{} : Maybe_node_index{parent(up.get())};
     }
 
     return {};
@@ -760,7 +765,7 @@ public:
     return first;
   }
 
-  boost::optional<Node_index> first_child_at_depth(Node_index n, std::size_t d) const {
+  Maybe_node_index first_child_at_depth(Node_index n, std::size_t d) const {
 
     std::queue<Node_index> todo;
     todo.push(n);
@@ -916,7 +921,7 @@ public:
 
     \return the index of the adjacent node if it exists, nothing otherwise.
   */
-  boost::optional<Node_index> adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
+  Maybe_node_index adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -962,7 +967,7 @@ public:
   /*!
     \brief equivalent to `adjacent_node()`, with an adjacency direction rather than a bitset.
    */
-  boost::optional<Node_index> adjacent_node(Node_index n, typename Node::Adjacency adjacency) const {
+  Maybe_node_index adjacent_node(Node_index n, typename Node::Adjacency adjacency) const {
     return adjacent_node(n, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
   }
 
