@@ -69,7 +69,7 @@ public:
 
   template <class T1, class T2, class T3>
   VectorC3(T1 &&x, T2 &&y, T3 &&z)
-    : base(Rep{std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z)}) {}
+    : base(fwd_make_array<FT_>(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z))) {}
 
   VectorC3(const FT_ &x, const FT_ &y, const FT_ &z, const FT_ &w)
     : base( w != FT_(1) ? CGAL::make_array<FT_>(x/w, y/w, z/w)

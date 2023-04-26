@@ -54,6 +54,15 @@ make_array(const T & t, const Args & ... args)
   return a;
 }
 
+template< typename T, typename... Args >
+BOOST_CXX14_CONSTEXPR
+std::array< T, sizeof...(Args) >
+fwd_make_array(Args && ... args)
+{
+  std::array< T, sizeof...(Args) > a = { { static_cast<T>(args)... } };
+  return a;
+}
+
 
 // Functor version
 struct Construct_array
