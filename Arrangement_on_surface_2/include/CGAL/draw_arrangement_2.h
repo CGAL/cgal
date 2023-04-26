@@ -405,6 +405,7 @@ protected:
 
   /*! Compile time dispatching
    */
+#if 0
   template <typename T>
   auto draw_point_impl2(const Point& p, T const&, long) -> decltype(void())
   { add_point(p); }
@@ -422,14 +423,31 @@ protected:
   auto draw_point_impl1(const Point& p, T const& traits, int) ->
     decltype(traits.approximate_2_object(), void()) {
     using Approximate = typename Gt::Approximate_2;
-    draw_point_impl2<Approximate>(p, traits.approximate_2_object(), 0);
+    draw_point_impl2<Approximate>(p, traits.approximate_2_object(), true);
   }
+#else
+  template <typename T>
+  void draw_point_impl2(const Point& p, T const&, ...) { add_point(p); }
+
+  template <typename T, typename = decltype(T().approximate_2_object()(Point()))>
+  void draw_point_impl2(const Point& p, T const& traits, bool) {
+    auto approx = traits.approximate_2_object();
+    add_point(approx(p));
+  }
+
+  template <typename T>
+  void draw_point_impl1(const Point& p, T const&, ...) { add_point(p); }
+
+  template <typename T, typename = decltype(T().approximate_2_object())>
+  void draw_point_impl1(const Point& p, T const& traits, bool)
+  { draw_point_impl2<Gt>(p, traits, true); }
+#endif
 
   /*! Draw a point.
    */
   void draw_point(const Point& p) {
     const auto* traits = m_arr.geometry_traits();
-    draw_point_impl1(p, *traits, 0);
+    draw_point_impl1(p, *traits, true);
   }
 
   /*! Add a Connected Component of the Boundary.
