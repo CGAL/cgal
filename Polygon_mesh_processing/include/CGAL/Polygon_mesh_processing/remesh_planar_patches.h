@@ -57,7 +57,7 @@ struct Face_map
   friend
   void put(Face_map m, key_type k, value_type v)
   {
-    put(m.pm, v, m.face_ids[k]);
+    put(m.pm, v, static_cast<key_type>(m.face_ids[k]));
   }
 
   PM pm;
