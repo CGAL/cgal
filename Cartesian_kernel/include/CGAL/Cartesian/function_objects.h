@@ -3075,9 +3075,10 @@ namespace CartesianKernelFunctors {
       typedef const Point_2& type;
     };
 
+    template <typename ...Args>
     Rep // Point_2
-    operator()(Return_base_tag, Origin o) const
-    { return Rep(o); }
+    operator()(Return_base_tag, Args&& ...args) const
+    { return Rep(std::forward<Args>(args)...); }
 
     Rep // Point_2
     operator()(Return_base_tag, const RT& x, const RT& y) const
@@ -3151,23 +3152,10 @@ namespace CartesianKernelFunctors {
       typedef const Point_3& type;
     };
 
-
+    template <class ...Args>
     Rep // Point_3
-    operator()(Return_base_tag, Origin o) const
-    { return Rep(o); }
-
-    Rep // Point_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
-    { return Rep(x, y, z); }
-
-    template <class T1, class T2, class T3>
-    Rep // Point_3
-    operator()(Return_base_tag, T1&& x, T2&& y, T3&& z) const
-    { return Rep(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z)); }
-
-    Rep // Point_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
-    { return Rep(x, y, z, w); }
+    operator()(Return_base_tag, Args&& ...args) const
+    { return Rep(std::forward<Args>(args)...); }
 
     const Point_3&
     operator()(const Point_3 & p) const
