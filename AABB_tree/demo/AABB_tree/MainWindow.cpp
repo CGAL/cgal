@@ -16,7 +16,7 @@
 
 
 MainWindow::MainWindow(QWidget* parent)
-: CGAL::Qt::DemosMainWindow(parent)
+  : CGAL::Qt::DemosMainWindow(parent), myEngine(new QJSEngine())
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
@@ -40,14 +40,14 @@ MainWindow::MainWindow(QWidget* parent)
   connect(this, SIGNAL(openRecentFile(QString)),
     this, SLOT(open(QString)));
 
-  QJSValue mainWindow = myEngine.newQObject(this);
-  myEngine.globalObject().setProperty("main_window", mainWindow);
+  QJSValue mainWindow = myEngine->newQObject(this);
+  myEngine->globalObject().setProperty("main_window", mainWindow);
   readSettings();
   std::ifstream script("init.js");
   if(script.good()){
     std::string line;
     while(getline(script, line)){
-      myEngine.evaluate(line.c_str());
+      myEngine->evaluate(line.c_str());
     }
   }
 }
@@ -57,8 +57,8 @@ MainWindow::~MainWindow()
   m_pViewer->makeCurrent();
   // AF I thought this helps to avoid  the exception when the program
   // terminates, but it does not
-  myEngine.globalObject().setProperty("main_window", QJSValue());
-  myEngine.collectGarbage();
+  myEngine->globalObject().setProperty("main_window", QJSValue());
+  myEngine->collectGarbage();
   delete ui;
 }
 

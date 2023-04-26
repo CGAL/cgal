@@ -20,18 +20,19 @@ struct Foo : public QObject
 
   Q_OBJECT
 public:
-  QJSEngine myEngine;
+  QJSEngine* myEngine;
 
   Foo()
+    : myEngine(new QJSEngine())
   {
-      QJSValue baz = myEngine.newQObject(this);
-      myEngine.globalObject().setProperty("baz", baz);
+      QJSValue baz = myEngine->newQObject(this);
+      myEngine->.globalObject().setProperty("baz", baz);
   }
 
   void bar()
   {
       std::cout << "bar()" << std::endl;
-      myEngine.evaluate("baz.hello()");
+      myEngine->evaluate("baz.hello()");
   }
 
 public slots:
@@ -112,7 +113,7 @@ public:
       void on_actionView_cutting_plane_triggered();
 
 private:
-  QJSEngine myEngine;
+  QJSEngine* myEngine;
   Scene* m_pScene;
   Viewer* m_pViewer;
   Ui::MainWindow* ui;
