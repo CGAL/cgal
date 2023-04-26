@@ -517,8 +517,8 @@ public:
     operator Vertex_handle() const { return Base::base(); }
   };
 
-  typedef Iterator_range<Prevent_deref<Finite_cells_iterator> >    Finite_cell_handles;
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_cells_iterator, Cell_handle> >    Finite_cell_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,Vertex_handle> > Finite_vertex_handles;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
@@ -529,7 +529,7 @@ public:
   typedef Triangulation_segment_cell_iterator_3<Self>    Segment_cell_iterator;
   typedef Triangulation_segment_simplex_iterator_3<Self> Segment_simplex_iterator;
 
-  typedef Iterator_range<Prevent_deref<Segment_cell_iterator> >    Segment_traverser_cell_handles;
+  typedef Iterator_range<Prevent_deref<Segment_cell_iterator, Cell_handle> >    Segment_traverser_cell_handles;
   typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
 
 private:
@@ -1801,7 +1801,7 @@ public:
 
   Finite_cell_handles finite_cell_handles() const
   {
-    return make_prevent_deref_range(finite_cells_begin(), finite_cells_end());
+    return {finite_cells_begin(), finite_cells_end()};
   }
 
 
@@ -1831,7 +1831,7 @@ public:
 
   Finite_vertex_handles finite_vertex_handles() const
   {
-    return make_prevent_deref_range(finite_vertices_begin(), finite_vertices_end());
+    return { finite_vertices_begin(), finite_vertices_end()};
   }
 
   Vertex_iterator vertices_begin() const { return _tds.vertices_begin(); }
@@ -2266,15 +2266,13 @@ public:
   Segment_traverser_cell_handles segment_traverser_cell_handles(Vertex_handle vs,
                                                                 Vertex_handle vt) const
   {
-    return make_prevent_deref_range(segment_traverser_cells_begin(vs, vt),
-                                    segment_traverser_cells_end());
+    return {segment_traverser_cells_begin(vs, vt),segment_traverser_cells_end()};
   }
   Segment_traverser_cell_handles segment_traverser_cell_handles(const Point& ps,
                                                                 const Point& pt,
                                                                 Cell_handle hint = Cell_handle()) const
   {
-    return make_prevent_deref_range(segment_traverser_cells_begin(ps, pt, hint),
-                                    segment_traverser_cells_end());
+    return { segment_traverser_cells_begin(ps, pt, hint), segment_traverser_cells_end()};
   }
 
   //// Segment Simplex Iterator

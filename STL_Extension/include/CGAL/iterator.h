@@ -37,19 +37,23 @@
 
 namespace CGAL {
 
-template<typename I>
+  template<typename I, typename VT = I>
 class Prevent_deref
   : public boost::iterator_adaptor<
-  Prevent_deref<I>
+    Prevent_deref<I,VT>
   , I // base
-  , I // value
+  , VT // value
+  , boost::use_default
+  , VT // ref
   >
 {
 public:
   typedef boost::iterator_adaptor<
-  Prevent_deref<I>
+  Prevent_deref<I,VT>
   , I // base
-  , I // value
+  , VT // value
+  , boost::use_default
+  , VT // ref
   > Base;
   typedef typename Base::reference reference;
   typedef typename std::pair<I, I> range;
@@ -58,8 +62,15 @@ public:
   Prevent_deref(const I& i) : Base(i) {}
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<std::remove_reference_t<reference>&>(this->base_reference()); }
+  reference dereference() const {
+    return this->base_reference();
+  }
 };
+
+
+
+
+
 
 template<typename I>
 Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const Iterator_range<I>& range)

@@ -183,7 +183,7 @@ public:
   }
 
   Face_handles face_handles() const {
-    return make_prevent_deref_range(faces_begin(),faces_end());
+    return { faces_begin(),faces_end() };
   }
 
   Vertex_iterator vertices_begin() const  {
@@ -195,7 +195,7 @@ public:
   }
 
   Vertex_handles vertex_handles() const {
-    return make_prevent_deref_range(vertices_begin(),vertices_end());
+    return { vertices_begin(),vertices_end() };
   }
 
   Edge_iterator edges_begin() const {
