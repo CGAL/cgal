@@ -34,8 +34,7 @@ An edge descriptor must be `DefaultConstructible`, `Assignable`, `EqualityCompar
 
 \cgalAssociatedTypesEnd
 
-\cgalRefines `IncidenceGraph`
-\cgalRefines `PropertyGraph`
+\cgalRefines{IncidenceGraph,PropertyGraph}
 
 A model of `HalfedgeGraph` must have the interior property `vertex_point` attached to its vertices.
 

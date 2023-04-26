@@ -8,7 +8,7 @@ objects in <I>Qt</I>, and the other way round. Note that some objects have no eq
 For example the `CGAL::Circle_2<K>` cannot be converted to something in Qt,
 and the unbounded objects `CGAL::Ray_2<K>` and `CGAL::Line_2<K>` are clipped.
 Note also that \cgal and <I>Qt</I> sometimes also use the same word for different things.
-For example <I>line</I> denotes an unbounded line in \cgal, wheras it denotes a bounded
+For example <I>line</I> denotes an unbounded line in \cgal, whereas it denotes a bounded
 segment in <I>Qt</I>.
 
 \tparam K must be a model of `Kernel`.
@@ -40,6 +40,11 @@ QRectF operator()(Bbox_2);
 Converts a point.
 */
 QPointF operator()(K::Point_2);
+
+/*!
+Converts a circular arc point.
+*/
+QPointF operator()(K::Circular_arc_point_2);
 
 /*!
 Converts a segment.
@@ -94,7 +99,7 @@ K::Iso_rectangle_2 operator()(QRectF);
 /*!
 Converts a polygon to a list of points.
 */
-std::list<K::Point_2> operator()(QPolygonF);
+void operator()(std::list<K::Point_2>&, QPolygonF);
 
 /// @}
 

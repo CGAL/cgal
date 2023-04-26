@@ -351,7 +351,7 @@ inline bool possibly(Uncertain<bool> c);
 
 } //namespace CGAL
 
-// This comes last as it is dependant on the macros to be defined.
+// This comes last as it is dependent on the macros to be defined.
 // But the macros need CGAL::possibly().
 #include <CGAL/Uncertain.h>
 

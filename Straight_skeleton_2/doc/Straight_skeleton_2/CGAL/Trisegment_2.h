@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-A straight skeleton event is the simultaneous collision of three offseted oriented straight line segments
-`e0*`,`e1*`,`e2*` (`e*` denotes an _offseted_ edge).
+A straight skeleton event is the simultaneous collision of three offsetted oriented straight line segments
+`e0*`,`e1*`,`e2*` (`e*` denotes an _offsetted_ edge).
 
 This record stores the segments corresponding to the INPUT edges `(e0,e1,e2)` whose offsets intersect
 at the event along with their collinearity.

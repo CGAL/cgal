@@ -186,7 +186,7 @@ namespace CGAL {
                                      CGAL::Advancing_front_surface_reconstruction_vertex_base_3<
                                        CGAL::Exact_predicates_inexact_constructions_kernel>,
                                      CGAL::Advancing_front_surface_reconstruction_cell_base_3<
-                                       CGAL::Exact_predicates_inexact_constructions_kernel> > >`
+                                       CGAL::Exact_predicates_inexact_constructions_kernel> > >
   \endcode
 
   \tparam P must be a functor offering
@@ -370,19 +370,19 @@ namespace CGAL {
     coord_type K, min_K;
     const coord_type eps;
     const coord_type inv_eps_2; // 1/(eps^2)
-    const coord_type eps_3; // test de ^3 donc points tel 1e-7 soit petit
+    const coord_type eps_3; // tests using cubed eps so points such that 1e-7 is small
     const criteria STANDBY_CANDIDATE;
     const criteria STANDBY_CANDIDATE_BIS;
     const criteria NOT_VALID_CANDIDATE;
 
     //---------------------------------------------------------------------
-    //Pour une visu correcte
-    //pour retenir les facettes selectionnees
+    // For a correct visualization
+    // to retain the selected facets
     int _vh_number;
     int _facet_number;
 
     //---------------------------------------------------------------------
-    //Pour le post traitement
+    // For post-processing
     mutable int _postprocessing_counter;
     int _size_before_postprocessing;
 
@@ -501,9 +501,8 @@ namespace CGAL {
     }
 
     //-------------------------------------------------------------------
-    // pour gerer certaines aretes interieures: a savoir celle encore connectee au
-    // bord (en fait seule, les aretes interieures reliant 2 bords nous
-    // interressent...)
+    // to handle certain interior edges, meaning those still connected to the boundary
+    // (actually, only the interior edges linking two boundaries are relevant)
 
     inline void set_interior_edge(Vertex_handle w, Vertex_handle v)
     {
@@ -806,7 +805,7 @@ namespace CGAL {
 
               if ((number_of_facets() > static_cast<int>(T.number_of_vertices()))&&
                   (NB_BORDER_MAX > 0))
-                // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
+                // in theory 2*vertices_n = facets_n: plenty of room!!!
                 {
                   while(postprocessing()){
                     extend2_timer.start();
@@ -1068,9 +1067,8 @@ namespace CGAL {
 
     //---------------------------------------------------------------------
     bool is_interior_edge(const Edge_like& key) const
-    // pour gerer certaines aretes interieures: a savoir celle encore connectee au
-    // bord (en fait seule, les aretes interieures reliant 2 bords nous
-    // interressent...)
+    // to handle certain interior edges, meaning those still connected to the boundary
+    // (actually, only the interior edges linking two boundaries are relevant)
     {
       return (is_interior_edge(key.first, key.second)||
               is_interior_edge(key.second, key.first));
@@ -1299,7 +1297,6 @@ namespace CGAL {
 #ifdef AFSR_LAZY
                   value = lazy_squared_radius(cc);
 #else
-                  // qualified with CGAL, to avoid a compilation error with clang
                   if(volume(pp0, pp1, pp2, pp3) != 0){
                     value = T.geom_traits().compute_squared_radius_3_object()(pp0, pp1, pp2, pp3);
                   } else {
@@ -1337,7 +1334,6 @@ namespace CGAL {
                 {
                   value = compute_scalar_product(Vc, Vc) - ac*ac/norm_V;
                   if ((value < 0)||(norm_V > inv_eps_2)){
-                    // qualified with CGAL, to avoid a compilation error with clang
                     value = T.geom_traits().compute_squared_radius_3_object()(cp1, cp2, cp3);
                   }
                 }
@@ -1365,7 +1361,7 @@ namespace CGAL {
     /// @}
 
     //---------------------------------------------------------------------
-    // For a border edge e we determine the incident facet which has the highest
+    // For a border edge e, we determine the incident facet which has the highest
     // chance to be a natural extension of the surface
 
     Radius_edge_type
@@ -1425,8 +1421,7 @@ namespace CGAL {
                   P2Pn = construct_vector(p2, pn);
                   v2 = construct_cross_product(P2P1,P2Pn);
 
-                  //pas necessaire de normer pour un bon echantillon:
-                  //            on peut alors tester v1*v2 >= 0
+                  // no need to normalize for a correct sampling: one can then test v1*v2 >= 0
                   norm =  sqrt(norm1 * compute_scalar_product(v2,v2));
                   pscal = v1*v2;
                   // check if the triangle will produce a sliver on the surface
@@ -1437,7 +1432,8 @@ namespace CGAL {
                       if (tmp < min_valueA)
                         {
                           PnP1 = p1-pn;
-                          // DELTA represente la qualite d'echantillonnage du bord
+                          // DELTA encodes the quality of the border sampling
+                          //
                           // We skip triangles having an internal angle along e
                           // whose cosinus is smaller than -DELTA
                           // that is the angle is larger than arcos(-DELTA)
@@ -1462,37 +1458,36 @@ namespace CGAL {
 
       if ((min_valueA == infinity()) || border_facet) // bad facets case
         {
-          min_facet = Facet(c, i); // !!! sans aucune signification....
-          value = NOT_VALID_CANDIDATE; // Attention a ne pas inserer dans PQ
+          min_facet = Facet(c, i); // !!! without any meaning....
+          value = NOT_VALID_CANDIDATE; // Do not insert in the PQ
         }
       else
         {
           min_facet = min_facetA;
 
-          //si on considere seulement la pliure value appartient a [0, 2]
-          //value = coord_type(1) - min_valueP;
+          // If we only consider the fold value belongs to [0, 2]
+          // value = coord_type(1) - min_valueP;
 
-          // si la pliure est bonne on note suivant le alpha sinon on prend en compte la
-          // pliure seule... pour discriminer entre les bons slivers...
-          // si on veut discriminer les facettes de bonnes pliures plus finement
-          // alors -(1+1/min_valueA) app a [-inf, -1]
-          // -min_valueP app a [-1, 1]
-
+          // If the fold is OK, we rate based on the alpha value. Otherwise, take only the fold into account
+          // to discriminate between good slivers.
+          //
+          // If we wish to discriminate the facets with good folds more finely,
+          // then:
+          //  -(1+1/min_valueA) is within [-inf, -1]
+          //  -min_valueP is within [-1, 1]
+          //
           if (min_valueP > COS_BETA)
             value = -(coord_type(1) + coord_type(1)/min_valueA);
           else
             {
-              //on refuse une trop grande non-uniformite
+              // reject overly non-uniform values
               coord_type tmp = priority (*this, c, i);
               if (min_valueA <= K * tmp)
                 value = - min_valueP;
               else
                 {
-                  value = STANDBY_CANDIDATE; // tres mauvais candidat mauvaise pliure
-                  // + grand alpha... a traiter plus tard....
-                  min_K =
-                    (std::min)(min_K,
-                               min_valueA/tmp);
+                  value = STANDBY_CANDIDATE; // extremely bad candidate, bad fold + large alpha; handle later
+                  min_K = (std::min)(min_K, min_valueA/tmp);
                 }
             }
         }
@@ -1597,7 +1592,7 @@ namespace CGAL {
     }
 
     //---------------------------------------------------------------------
-    // test de reciprocite avant de recoller une oreille anti-singularite
+    // reciprocity test before glueing anti-singularity ear
     int
     test_merge(const Edge_like& ordered_key, const Border_elt& result,
                const Vertex_handle& v, const coord_type& ear_alpha)
@@ -1622,12 +1617,12 @@ namespace CGAL {
       coord_type norm = sqrt(compute_scalar_product(v1, v1) * compute_scalar_product(v2, v2));
 
       if (v1*v2 > COS_BETA*norm)
-        return 1; // label bonne pliure sinon:
+        return 1; // mark as good fold
 
       if (ear_alpha <= K * priority(*this, neigh, n_ind))
-        return 2; // label alpha coherent...
+        return 2; // mark alpha consistent
 
-      return 0; //sinon oreille a rejeter...
+      return 0; // ear to be rejected
     }
 
 
@@ -1753,7 +1748,7 @@ namespace CGAL {
       Edge_like ordered_key(v1,v2);
 
       if (!is_border_elt(ordered_key, result12))
-        std::cerr << "+++probleme coherence bord <validate>" << std::endl;
+        std::cerr << "+++issue with border consistency <validate>" << std::endl;
 
       bool is_border_el1 = is_border_elt(ordered_el1, result1),
         is_border_el2 = is_border_elt(ordered_el2, result2);
@@ -1782,8 +1777,7 @@ namespace CGAL {
                   return FINAL_CASE;
                 }
               //---------------------------------------------------------------------
-              //on peut alors marquer v1 et on pourrait essayer de merger
-              //sans faire de calcul inutile???
+              // we can then mark v1 and could try to merge without any useless computation???
               if (is_border_el1)
                 {
                   Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third),
@@ -1796,7 +1790,7 @@ namespace CGAL {
                   return EAR_CASE;
                 }
               //---------------------------------------------------------------------
-              //idem pour v2
+              //idem for v2
               if (is_border_el2)
                 {
                   Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second),
@@ -1852,9 +1846,9 @@ namespace CGAL {
                   // border incident to a point... _mark<1 even if th orientation
                   // may be such as one vh has 2 successorson the same border...
                   {
-                    // a ce niveau on peut tester si le recollement se fait en
-                    // maintenant la compatibilite d'orientation des bords (pour
-                    // surface orientable...) ou si elle est brisee...
+                    // at this level, we can test if glueing can be done while keeping
+                    // compatible orientations for the borders (for an orientable surface...)
+                    // or if it is broken
                     Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second),
                                                       edge_Efacet.second);
                     Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third),
@@ -1884,8 +1878,8 @@ namespace CGAL {
                     Border_elt result_ear2;
 
                     Edge_like ear1_e, ear2_e;
-                    // pour maintenir la reconstruction d'une surface orientable :
-                    // on verifie que les bords se recollent dans des sens opposes
+                    // to preserve the reconstruction of an orientable surface, we check that
+                    // borders glue to one another in opposite directions
                     if (ordered_key.first==v1)
                       {
                         ear1_e = Edge_like(c->vertex(i), ear1_c ->vertex(ear1_i));
@@ -1897,7 +1891,7 @@ namespace CGAL {
                         ear2_e = Edge_like(c->vertex(i), ear2_c ->vertex(ear2_i));
                       }
 
-                    //maintient la surface orientable
+                    // preserves orientability of the surface
                     bool is_border_ear1 = is_ordered_border_elt(ear1_e, result_ear1);
                     bool is_border_ear2 = is_ordered_border_elt(ear2_e, result_ear2);
                     bool ear1_valid(false), ear2_valid(false);
@@ -1931,8 +1925,7 @@ namespace CGAL {
                           {
                             Validation_case res = validate(ear1, e1.first);
                             if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-                              std::cerr << "+++probleme de recollement : cas "
-                                        << res << std::endl;
+                              std::cerr << "+++issue in glueing: case " << res << std::endl;
                             e2 = compute_value(edge_Ifacet_2);
 
                             if (ordered_key.first == v1)
@@ -1948,8 +1941,7 @@ namespace CGAL {
                           {
                             Validation_case res = validate(ear2, e2.first);
                             if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-                              std::cerr << "+++probleme de recollement : cas "
-                                        << res << std::endl;
+                              std::cerr << "+++issue in glueing : case " << res << std::endl;
                             e1 = compute_value(edge_Ifacet_1);
 
                             if (ordered_key.first == v1)
@@ -1962,25 +1954,23 @@ namespace CGAL {
                             _ordered_border.insert(Radius_ptr_type(e1.first, p1));
                           }
                       }
-                    else// les deux oreilles ne se recollent pas sur la meme arete...
+                    else // both ears do not glue on the same edge
                       {
-                        // on resoud la singularite.
+                        // resolve the singularity
                         if (ear1_valid)
                           {
                             Validation_case res = validate(ear1, e1.first);
                             if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-                              std::cerr << "+++probleme de recollement : cas "
-                                        << res << std::endl;
+                              std::cerr << "+++issue in glueing: case " << res << std::endl;
                           }
                         if (ear2_valid)
                           {
                             Validation_case res = validate(ear2, e2.first);
                             if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-                              std::cerr << "+++probleme de recollement : cas "
-                                        << res << std::endl;
+                              std::cerr << "+++issue in glueing : case " << res << std::endl;
                           }
-                        // on met a jour la PQ s'il y a lieu... mais surtout pas
-                        // avant la resolution de la singularite
+
+                        // Update the PQ if needed, but not before resolving the singularity
                         if (!ear1_valid)
                           {
                             _ordered_border.insert(Radius_ptr_type(e1.first, p1));
@@ -2020,7 +2010,7 @@ namespace CGAL {
 
               if (new_candidate.first == STANDBY_CANDIDATE)
                 {
-                  // a garder pour un K un peu plus grand...
+                  // put aside for a slightly larger K
                   new_candidate.first = STANDBY_CANDIDATE_BIS;
                 }
 
@@ -2042,8 +2032,8 @@ namespace CGAL {
     void
     extend()
     {
-      // initilisation de la variable globale K: qualite d'echantillonnage requise
-      K = K_init; // valeur d'initialisation de K pour commencer prudemment...
+      // Initialize the global variable K: required sampling quality
+      K = K_init; // initial value of K to start carefully
       coord_type K_prev = K;
 
       Vertex_handle v1, v2;
@@ -2052,7 +2042,7 @@ namespace CGAL {
       }
       do
         {
-          min_K = infinity(); // pour retenir le prochain K necessaire pour progresser...
+          min_K = infinity(); // to store the next K required to progress
           do
             {
 
@@ -2095,7 +2085,7 @@ namespace CGAL {
                         {
                           new_candidate = compute_value(mem_Ifacet);
                           if ((new_candidate != mem_e_it))
-                            //                               &&(new_candidate.first < NOT_VALID_CANDIDATE))
+                            // &&(new_candidate.first < NOT_VALID_CANDIDATE))
                             {
                               IO_edge_type* pnew =
                                 set_again_border_elt(key_tmp.first, key_tmp.second,
@@ -2111,8 +2101,7 @@ namespace CGAL {
                 (_ordered_border.begin()->first < STANDBY_CANDIDATE_BIS));
           K_prev = K;
           K += (std::max)(K_step, min_K - K + eps);
-          // on augmente progressivement le K mais on a deja rempli sans
-          // faire des betises auparavant...
+          // Progressively increase K, but having already filled without issue beforehand
         }
       while((!_ordered_border.empty())&&(K <= K)&&(min_K != infinity())&&(K!=K_prev));
 
@@ -2125,9 +2114,8 @@ namespace CGAL {
 
 
     //---------------------------------------------------------------------
-    // En principe, si l'allocateur de cellules etait bien fait on aurait pas besoin
-    // de mettre a jour les valeurs rajoutees pour les cellules a  la main...
-
+    // In theory, if the cell allocator were properly made, one would not need to manually update
+    // the values added for the cells
     void
     re_init_for_free_cells_cache(const Vertex_handle& vh)
     {
@@ -2152,9 +2140,8 @@ namespace CGAL {
           int index = c->index(vh);
           Cell_handle neigh = c->neighbor(index);
           int n_ind = neigh->index(c);
-          neigh->set_smallest_radius(n_ind, -1); // pour obliger le recalcul
-          // si c est selectionnee c'est qu'elle est aussi le mem_IFacet renvoye par
-          // compute_value... donc a swapper aussi
+          neigh->set_smallest_radius(n_ind, -1); // forces recomputation
+          // if c is selected, then it is also the mem_IFacet returned by compute_value... so to be swapped too
           if (c->is_selected_facet(index))
             {
               int fn = c->facet_number(index);
@@ -2214,8 +2201,8 @@ namespace CGAL {
           circ = next(circ);
         }
       while(circ.first.first != c);
-      // si on passe par la, alors y a eu un probleme....
-      std::cerr << "+++probleme dans la MAJ avant remove..." << std::endl;
+      // if we are here, something went wrong
+      std::cerr << "+++issue in the update before removal..." << std::endl;
       return Facet(c, start.second);
     }
 
@@ -2237,7 +2224,7 @@ namespace CGAL {
       ordered_map_erase(border_elt.second.first.first,
                         border_IO_elt(vh, vh_succ));
       remove_border_edge(vh, vh_succ);
-      // 1- a virer au cas ou car vh va etre detruit
+      // 1- remove just in case since vh is about to be destroyed
       remove_interior_edge(vh_succ, vh);
       bool while_cond(true);
       do
@@ -2266,14 +2253,14 @@ namespace CGAL {
             {
               ordered_map_erase(result.first.first, border_IO_elt(vh_int, vh));
               remove_border_edge(vh_int, vh);
-              // 1- a virer au cas ou car vh va etre detruit
+              // 1- remove just in case since vh is about to be destroyed
               remove_interior_edge(vh_int, vh);
               while_cond = false;
             }
-          // a titre  preventif... on essaye de s'assurer de marquer les aretes
-          // interieures au sens large...
 
-          // 2- a virer a tout pris pour que maintenir le sens de interior edge
+          // As a preventive measure, we try to ensure marking the interior edges in a broad sense
+
+          // 2- remove to preserve the interior edge
           remove_interior_edge(vh_int, vh_succ);
           remove_interior_edge(vh_succ, vh_int);
 
@@ -2304,16 +2291,16 @@ namespace CGAL {
     bool
     create_singularity(const Vertex_handle& vh)
     {
-      // Pour reperer le cas de triangle isole
+      // To detect the isolated triangle case
       if (vh->is_on_border())
         {
-          // vh sommet 0
+          // vh vertex 0
           Next_border_elt border_elt =  *(vh->first_incident());
-          Vertex_handle vh_1 = border_elt.first;// sommet 1
+          Vertex_handle vh_1 = border_elt.first;// vertex 1
           border_elt =  *(vh_1->first_incident());
-          Vertex_handle vh_2 = border_elt.first;// sommet 2
+          Vertex_handle vh_2 = border_elt.first;// vertex 2
           border_elt =  *(vh_2->first_incident());
-          Vertex_handle vh_3 = border_elt.first;// sommet 0 ???
+          Vertex_handle vh_3 = border_elt.first;// vertex 0 ???
           Cell_handle c;
           int i, j, k;
           if ((vh_3 == vh)&&(T.is_facet(vh, vh_1, vh_2, c, i ,j ,k)))
@@ -2328,7 +2315,7 @@ namespace CGAL {
         }
 
 
-      // Reperer le cas d'aretes interieures...
+      // Detect the interior edges case
       std::list<Vertex_handle> vh_list;
       T.incident_vertices(vh, std::back_inserter(vh_list));
 
@@ -2402,9 +2389,9 @@ namespace CGAL {
 
       std::list<Vertex_handle> L_v;
 
-      //  Pour controler les sommets choisis sur le bord...
+      // To control vertices chosen on the boundary
 
-      // nombre d'aretes a partir duquel on considere que c'est irrecuperable NB_BORDER_MAX
+      // NB_BORDER_MAX: number of edges from which we consider that things are irrecoverable
 
       int vh_on_border_inserted(0);
       for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
@@ -2445,7 +2432,7 @@ namespace CGAL {
 
       std::size_t itmp, L_v_size_mem;
       L_v_size_mem = L_v.size();
-      if ((vh_on_border_inserted != 0)&& // pour ne post-traiter que les bords
+      if ((vh_on_border_inserted != 0)&& // to post-process only the borders
           (L_v.size() < .1 * _size_before_postprocessing))
         {
           {
@@ -2460,7 +2447,7 @@ namespace CGAL {
           }
 #ifdef VERBOSE
           if(L_v.size() > 0){
-            std::cout << "   " << L_v.size() << " non regular points." << std::endl;
+            std::cout << "   " << L_v.size() << " non-regular points." << std::endl;
           }
 #endif // VERBOSE
           re_compute_values();
@@ -2469,7 +2456,7 @@ namespace CGAL {
         postprocess_timer.stop();
         return false;
       }
-      // we stop if we removed more than 10% of points or after 20 rounds
+      // we stop if we removed more than 10% of points, or after 20 rounds
       if ((L_v_size_mem == L_v.size())||
           ((_size_before_postprocessing - T.number_of_vertices()) >
            .1 * _size_before_postprocessing)||
@@ -2479,7 +2466,6 @@ namespace CGAL {
       }
 
       min_K = infinity();
-      // fin--
       //   if (_postprocessing_counter < 5)
       //     return true;
       postprocess_timer.stop();

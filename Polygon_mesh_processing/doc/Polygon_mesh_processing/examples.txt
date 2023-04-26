@@ -41,4 +41,6 @@
 \example Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp
 \example Polygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp
 \example Polygon_mesh_processing/cc_compatible_orientations.cpp
+\example Polygon_mesh_processing/remesh_planar_patches.cpp
+\example Polygon_mesh_processing/remesh_almost_planar_patches.cpp
 */

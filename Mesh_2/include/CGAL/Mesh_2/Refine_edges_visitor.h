@@ -24,7 +24,7 @@ namespace Mesh_2 {
 /**
  * This class is the visitor needed when Refine_edges<Tr> if called from
  * Refine_faces<Tr>.
- * \param Faces_mesher should be instanciated with Refine_face_base<Tr>.
+ * \param Faces_mesher should be instantiated with Refine_face_base<Tr>.
  */
 template <typename Faces_mesher>
 class Refine_edges_visitor : public ::CGAL::Null_mesh_visitor

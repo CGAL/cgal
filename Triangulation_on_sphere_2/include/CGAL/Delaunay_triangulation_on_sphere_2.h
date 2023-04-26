@@ -147,7 +147,7 @@ public:
   {
   }
 
-  // Assignement
+  // Assignment
   Delaunay_triangulation_on_sphere_2& operator=(Delaunay_triangulation_on_sphere_2 other) // intentional copy
   {
     Base::swap(static_cast<Base&>(other));

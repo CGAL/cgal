@@ -88,7 +88,7 @@ public:
 
 public:
   Linear_mask_3(Mesh* pmesh)
-    : Base(pmesh, get(vertex_point, pmesh))
+    : Base(pmesh, get(vertex_point, *pmesh))
   { }
 
   Linear_mask_3(Mesh* pmesh, VertexPointMap vpmap)
@@ -118,7 +118,7 @@ public:
   }
 
   void border_node(halfedge_descriptor edge, Point& ept, Point& /*vpt*/){
-    edge_node(edge, ept);
+   edge_node(edge, ept);
   }
 };
 

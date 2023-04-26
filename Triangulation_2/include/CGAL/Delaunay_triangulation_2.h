@@ -193,7 +193,7 @@ private:
   void propagating_flip(const Face_handle& f,int i);
 #endif
 
-// auxilliary functions for remove
+// auxiliary functions for remove
   void remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
          std::vector<Vertex_handle> &w, std::vector<int> &i,int&d,int&maxd);
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
@@ -269,7 +269,7 @@ private:
          std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
          std::vector<Vertex_handle> &w, std::vector<int> &i);
-// end of auxilliary functions for remove
+// end of auxiliary functions for remove
 
   Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
   Vertex_handle nearest_vertex_1D(const Point& p) const;
@@ -358,10 +358,8 @@ private:
       it = indices.begin(), end = indices.end();
       it != end; ++it) {
       v_hint = insert(points[*it], hint);
-      if(v_hint!=Vertex_handle()) {
-        v_hint->info()=infos[*it];
-        hint=v_hint->face();
-      }
+      v_hint->info()=infos[*it];
+      hint=v_hint->face();
     }
 
     return this->number_of_vertices() - n;

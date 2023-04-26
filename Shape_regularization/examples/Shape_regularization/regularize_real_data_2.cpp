@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
   // Angle regularization.
   const FT max_angle_2 = FT(80);
 
-  // Create neigbor query and angle-based regularization model.
+  // Create neighbor query and angle-based regularization model.
   Neighbor_query neighbor_query(segments);
   Angle_regularization angle_regularization(
     segments, CGAL::parameters::maximum_angle(max_angle_2));

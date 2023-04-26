@@ -598,7 +598,7 @@ namespace CGAL
       struct Attribute_range<d, CGAL::Void>
       { typedef CGAL::Void type; };
 
-      // Helper class allowing to retreive the d-cell-attribute const range
+      // Helper class allowing to retrieve the d-cell-attribute const range
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_range
       {

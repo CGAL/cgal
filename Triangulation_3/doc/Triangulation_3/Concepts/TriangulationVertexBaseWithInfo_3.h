@@ -6,7 +6,7 @@
 A type model of this concept can be used as vertex base by a triangulation
 and provides an additional information storage.
 
-\cgalRefines `TriangulationVertexBase_3`
+\cgalRefines{TriangulationVertexBase_3}
 
 \cgalHasModel `CGAL::Triangulation_vertex_base_with_info_3`
 

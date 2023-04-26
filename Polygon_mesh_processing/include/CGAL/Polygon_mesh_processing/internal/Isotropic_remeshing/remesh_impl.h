@@ -322,7 +322,7 @@ namespace internal {
     {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
-      CGAL_assertion_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
+      CGAL_warning_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
       CGAL_warning_msg(input_mesh_is_valid_,
         "The input mesh is not a valid polygon mesh. "
         "It could lead PMP::isotropic_remeshing() to fail.");
@@ -384,10 +384,6 @@ namespace internal {
     void split_long_edges(const EdgeRange& edge_range,
                           const double& high)
     {
-      typedef boost::bimap<
-        boost::bimaps::set_of<halfedge_descriptor>,
-        boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
-      typedef typename Boost_bimap::value_type                       long_edge;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")...";
@@ -396,12 +392,17 @@ namespace internal {
       double sq_high = high*high;
 
       //collect long edges
-      Boost_bimap long_edges;
+      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
+        long_edges(
+          [](const H_and_sql& p1, const H_and_sql& p2)
+          { return p1.second > p2.second; }
+        );
       for(edge_descriptor e : edge_range)
       {
         double sqlen = sqlength(e);
         if (sqlen > sq_high)
-          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          long_edges.emplace(halfedge(e, mesh_), sqlen);
       }
 
       //split long edges
@@ -411,10 +412,10 @@ namespace internal {
       while (!long_edges.empty())
       {
         //the edge with longest length
-        typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-        halfedge_descriptor he = eit->second;
-        double sqlen = eit->first;
-        long_edges.right.erase(eit);
+        auto eit = long_edges.begin();
+        halfedge_descriptor he = eit->first;
+        double sqlen = eit->second;
+        long_edges.erase(eit);
 
         //split edge
         Point refinement_point = this->midpoint(he);
@@ -438,8 +439,8 @@ namespace internal {
         if (sqlen_new > sq_high)
         {
           //if it was more than twice the "long" threshold, insert them
-          long_edges.insert(long_edge(hnew, sqlen_new));
-          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+          long_edges.emplace(hnew, sqlen_new);
+          long_edges.emplace(next(hnew, mesh_), sqlen_new);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
@@ -479,25 +480,26 @@ namespace internal {
     //is split at its midpoint and the two adjacent triangles are bisected (2-4 split)"
     void split_long_edges(const double& high)
     {
-      typedef boost::bimap<
-        boost::bimaps::set_of<halfedge_descriptor>,
-        boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
-      typedef typename Boost_bimap::value_type                       long_edge;
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")..." << std::endl;
 #endif
       double sq_high = high*high;
 
       //collect long edges
-      Boost_bimap long_edges;
+      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
+      long_edges(
+        [](const H_and_sql& p1, const H_and_sql& p2)
+        { return p1.second > p2.second; }
+      );
+
       for(edge_descriptor e : edges(mesh_))
       {
         if (!is_split_allowed(e))
           continue;
         double sqlen = sqlength(e);
         if(sqlen > sq_high)
-          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          long_edges.emplace(halfedge(e, mesh_), sqlen);
       }
 
       //split long edges
@@ -507,13 +509,13 @@ namespace internal {
       while (!long_edges.empty())
       {
         //the edge with longest length
-        typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-        halfedge_descriptor he = eit->second;
-        double sqlen = eit->first;
-        long_edges.right.erase(eit);
+        auto eit = long_edges.begin();
+        halfedge_descriptor he = eit->first;
+        double sqlen = eit->second;
+        long_edges.erase(eit);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
-        std::cout << "\r\t(" << long_edges.left.size() << " long edges, ";
+        std::cout << "\r\t(" << long_edges.size() << " long edges, ";
         std::cout << nb_splits << " splits)";
         std::cout.flush();
 #endif
@@ -550,8 +552,8 @@ namespace internal {
         if (sqlen_new > sq_high)
         {
           //if it was more than twice the "long" threshold, insert them
-          long_edges.insert(long_edge(hnew,              sqlen_new));
-          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+          long_edges.emplace(hnew, sqlen_new);
+          long_edges.emplace(next(hnew, mesh_), sqlen_new);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
@@ -573,7 +575,7 @@ namespace internal {
           {
             double sql = sqlength(hnew2);
             if (sql > sq_high)
-              long_edges.insert(long_edge(hnew2, sql));
+              long_edges.emplace(hnew2, sql);
           }
         }
 
@@ -596,7 +598,7 @@ namespace internal {
           {
             double sql = sqlength(hnew2);
             if (sql > sq_high)
-              long_edges.insert(long_edge(hnew2, sql));
+              long_edges.emplace(hnew2, sql);
           }
         }
       }
@@ -1219,7 +1221,7 @@ private:
       halfedge_descriptor hopp = opposite(h, mesh_);
 
       //check whether h is the longest edge in its associated face
-      //overwise refinement will go for an endless loop
+      //otherwise refinement will go into an endless loop
       double sqh = sqlength(h);
       return sqh >= sqlength(next(h, mesh_))
           && sqh >= sqlength(next(next(h, mesh_), mesh_))

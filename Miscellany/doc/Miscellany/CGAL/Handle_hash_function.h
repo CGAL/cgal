@@ -16,7 +16,7 @@ return a unique address.
 
 \cgalHeading{Implementation}
 
-Plain type cast of `&*key` to `std::size_t` and devided
+Plain type cast of `&*key` to `std::size_t` and divided
 by the size of the `std::iterator_traits<Handle>::%value_type` to
 avoid correlations with the internal table size, which is a power of
 two.

@@ -13,7 +13,7 @@
 
 /*!
   \file   arrangement_type_traits.h
-  \brief  The file contains meta-function related to the arrangement pakcage.
+  \brief  The file contains meta-function related to the arrangement package.
   Specifically, it contains the meta-function is_arrangement_2 that determines
   whether a given type is an arrangement.
 */

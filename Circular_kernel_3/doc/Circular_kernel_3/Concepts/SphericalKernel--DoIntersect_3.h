@@ -5,7 +5,7 @@
 
 \brief Testing whether two curves or surfaces intersect.
 
-\cgalRefines `Kernel::DoIntersect_3`
+\cgalRefines{Kernel::DoIntersect_3}
 
 \sa \link do_intersect_grp `CGAL::do_intersect()` \endlink
 

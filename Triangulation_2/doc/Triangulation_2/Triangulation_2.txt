@@ -1224,7 +1224,7 @@ at the different levels of the hierarchy.
 \cgalExample{Triangulation_2/hierarchy.cpp}
 
 The following program shows how to use
-a triangulation hierarchy in conjunction with a constrained triangulation with a constaint hierarchy.
+a triangulation hierarchy in conjunction with a constrained triangulation with a constraint hierarchy.
 
 \cgalExample{Triangulation_2/constrained_hierarchy_plus.cpp}
 

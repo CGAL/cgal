@@ -165,7 +165,7 @@ void project_points(C3T3& c3t3,
  *
  * \attention Note that the triangulation must form at all times a simplicial complex within
  * a single copy of the domain (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
- * of the manual of 3D periodic triangulations). It is the responsability of the user to provide
+ * of the manual of 3D periodic triangulations). It is the responsibility of the user to provide
  * a triangulation that satisfies this condition when calling the refinement
  * function `refine_periodic_3_mesh_3`. The underlying triangulation of a mesh
  * complex obtained through `make_periodic_3_mesh_3()` or `refine_periodic_3_mesh_3()`
@@ -298,7 +298,7 @@ void project_points(C3T3& c3t3,
  * \sa `odt_optimize_periodic_3_mesh_3()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
-void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
+void refine_periodic_3_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -328,7 +328,7 @@ template<typename C3T3, typename MeshDomain, typename MeshCriteria,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
          typename ... NP>
-void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria,
+void refine_periodic_3_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
                               const CGAL_NP_CLASS_1&  np1,
                               const CGAL_NP_CLASS_2&  np2,
                               const NP& ... nps)

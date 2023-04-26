@@ -387,7 +387,7 @@ namespace CGAL {
           error_msg <<
             boost::format("Surface_mesher ERROR: "
                           "A facet is not in conflict with its refinement point!\n"
-                          "Debugging informations:\n"
+                          "Debugging information:\n"
                           "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
                           "  Dual: (%3%, %4%)\n"
                           "  Refinement point: %5%\n")

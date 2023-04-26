@@ -7,8 +7,11 @@ include_directories(BEFORE "./include")
 
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
+
 create_single_source_cgal_program("test_triangulation_tds_3.cpp")
 create_single_source_cgal_program("test_io_tds3.cpp")
+
 if(TARGET CGAL::TBB_support)
+  message(STATUS "Found TBB")
   target_link_libraries(test_triangulation_tds_3 PUBLIC CGAL::TBB_support)
 endif()

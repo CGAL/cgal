@@ -1,7 +1,7 @@
 # Doxyfile 1.9.3
 
 # This file describes the settings to be used by the documentation system
-# doxygen (www.doxygen.org) for a project.
+# doxygen (https://www.doxygen.nl/) for a project.
 #
 # All text after a double hash (##) is considered a comment and is placed in
 # front of the TAG it is preceding.
@@ -321,7 +321,14 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalFigureCaptionEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
                          "cgalConcept=\details <div id=\"CGALConcept\"></div>^^ \brief" \
                          "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>^^ \brief" \
-                         "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\"" \
+                         "cgalRefines=Refines" \
+                         "cgalRefines{1}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd></dl>" \
+                         "cgalRefines{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd></dl>" \
+                         "cgalRefines{3}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd></dl>" \
+                         "cgalRefines{4}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd></dl>" \
+                         "cgalRefines{5}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
+                         "cgalRefinesBare{1}=<dl><dt>@cgalRefines</dt><dd>\1</dd></dl>" \
+                         "cgalRefinesBare{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>\2</dd></dl>" \
                          "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\"" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
                          "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\"" \
@@ -341,7 +348,7 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalPkgShortInfoBegin=<div class=\"PkgShortInfo\">" \
                          "cgalPkgShortInfoEnd=</div>" \
                          "cgalPkgAuthor{1}=<div class=\"PkgAuthors\">\1</div>" \
-                         "cgalPkgAuthors{1}=<div class=\"PkgAuthors\">\1</div>" \
+                         "cgalPkgAuthors{1}=\cgalPkgAuthor{\1}" \
                          "cgalPkgDesc{1}=<div class=\"PkgDescription\">\1</div>" \
                          "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>" \
                          "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>" \
@@ -1688,7 +1695,7 @@ USE_MATHJAX            = YES
 
 # When MathJax is enabled you can set the default output format to be used for
 # the MathJax output. See the MathJax site (see:
-# http://docs.mathjax.org/en/latest/output.html) for more details.
+# https://docs.mathjax.org/en/latest/output/index.html) for more details.
 # Possible values are: HTML-CSS (which is slower, but has the best
 # compatibility), NativeMML (i.e. MathML) and SVG.
 # The default value is: HTML-CSS.
@@ -1719,7 +1726,7 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath \
 
 # The MATHJAX_CODEFILE tag can be used to specify a file with javascript pieces
 # of code that will be used on startup of the MathJax code. See the MathJax site
-# (see: http://docs.mathjax.org/en/latest/output.html) for more details. For an
+# (see: https://docs.mathjax.org/en/latest/output/index.html) for more details. For an
 # example see the documentation.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
@@ -2151,7 +2158,7 @@ DOCBOOK_OUTPUT         = docbook
 #---------------------------------------------------------------------------
 
 # If the GENERATE_AUTOGEN_DEF tag is set to YES, doxygen will generate an
-# AutoGen Definitions (see http://autogen.sourceforge.net/) file that captures
+# AutoGen Definitions (see https://autogen.sourceforge.net/) file that captures
 # the structure of the code including all documentation. Note that this feature
 # is still experimental and incomplete at the moment.
 # The default value is: NO.
@@ -2261,7 +2268,7 @@ PREDEFINED             = DOXYGEN_RUNNING \
                          "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
                          "CGAL_NP_CLASS_2=NamedParameters2" \
                          CGAL_DEPRECATED
-                        
+
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
@@ -2347,7 +2354,7 @@ HIDE_UNDOC_RELATIONS   = YES
 
 # If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
 # available from the path. This tool is part of Graphviz (see:
-# http://www.graphviz.org/), a graph visualization toolkit from AT&T and Lucent
+# https://www.graphviz.org/), a graph visualization toolkit from AT&T and Lucent
 # Bell Labs. The other options in this section have no effect if this option is
 # set to NO
 # The default value is: NO.
@@ -2507,7 +2514,7 @@ DIRECTORY_GRAPH        = NO
 # The DOT_IMAGE_FORMAT tag can be used to set the image format of the images
 # generated by dot. For an explanation of the image formats see the section
 # output formats in the documentation of the dot tool (Graphviz (see:
-# http://www.graphviz.org/)).
+# https://www.graphviz.org/)).
 # Note: If you choose svg you need to set HTML_FILE_EXTENSION to xhtml in order
 # to make the SVG files visible in IE 9+ (other browsers do not have this
 # requirement).

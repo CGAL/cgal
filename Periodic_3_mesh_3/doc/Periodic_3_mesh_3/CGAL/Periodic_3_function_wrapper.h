@@ -43,7 +43,7 @@ Illustration in 2D (cut view) of a domain defined by an implicit function artifi
 Any value of the function outside of the canonical cube is ignored.
 \cgalFigureEnd
 
-Note also that when constructing artificially periodic functions, it is the responsability of the user
+Note also that when constructing artificially periodic functions, it is the responsibility of the user
 to provide an input function that is compatible with the canonical cube (that is, whose isovalues
 are <em>periodically</em> continuous and without intersections).
 \cgalFigureRef{Periodic_3_mesh_3ContinuityIssue} is an example of a bad choice

@@ -33,7 +33,7 @@ if(CGAL_Qt5_FOUND
 
   include_directories(BEFORE ./)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)
@@ -92,9 +92,6 @@ else(CGAL_Qt5_FOUND
         "${CGAL_QCOLLECTIONGENERATOR_TARGET}, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS} and will not be compiled.")
 
 endif()

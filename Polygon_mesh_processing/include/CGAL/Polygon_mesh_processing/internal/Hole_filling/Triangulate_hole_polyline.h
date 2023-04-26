@@ -15,6 +15,11 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
+# ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+#   define CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+# endif
+#endif
 
 #include <CGAL/value_type_traits.h>
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -383,9 +388,9 @@ class Weight_incomplete
 private:
   template<class Point_3, class LookupTable>
   Weight_incomplete(const std::vector<Point_3>& P,
-    const std::vector<Point_3>& Q,
-    int i, int j, int k,
-    const LookupTable& lambda)
+                    const std::vector<Point_3>& Q,
+                    int i, int j, int k,
+                    const LookupTable& lambda)
     : weight(P,Q,i,j,k,lambda), patch_size(1)
   { }
 
@@ -442,9 +447,9 @@ struct Weight_calculator
 
   template<class Point_3, class LookupTable>
   Weight operator()(const std::vector<Point_3>& P,
-    const std::vector<Point_3>& Q,
-    int i, int j, int k,
-    const LookupTable& lambda) const
+                    const std::vector<Point_3>& Q,
+                    int i, int j, int k,
+                    const LookupTable& lambda) const
   {
     if( !is_valid(P,i,j,k) )
     { return Weight::NOT_VALID(); }
@@ -1270,7 +1275,7 @@ bool is_planar_2(
 
   const double n = static_cast<double>(points.size() - 1); // the first equals to the last
   if (n < 3) {
-    return false; // cant be a plane!
+    return false; // can't be a plane!
   }
 
   // Compute centroid.
@@ -1442,11 +1447,19 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     vertices[v->info()] = v;
   }
 
-  for (std::size_t i = 0; i < size; ++i) {
-    const std::size_t ip = (i + 1) % size;
-    if (vertices[i] != vertices[ip]) {
-      cdt.insert_constraint(vertices[i], vertices[ip]);
+  try
+  {
+    for (std::size_t i = 0; i < size; ++i) {
+      const std::size_t ip = (i + 1) % size;
+      if (vertices[i] != vertices[ip]) {
+        cdt.insert_constraint(vertices[i], vertices[ip]);
+      }
     }
+  }
+  catch(const typename CDT::Intersection_of_constraints_exception&)
+  {
+    visitor.end_planar_phase(false);
+    return false;
   }
 
   // Mark external faces.

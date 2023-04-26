@@ -106,7 +106,7 @@ protected:
 
 public:
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!
@@ -945,7 +945,7 @@ public:
 
   /*!
    * Flip the arc.
-   * \return An arc with swapped source and target and a reverse orienation.
+   * \return An arc with swapped source and target and a reverse orientation.
    */
   Self flip() const
   {
@@ -1218,7 +1218,7 @@ private:
 
     // Check whether the conic is facing up or facing down:
     // Check whether the arc (which is x-monotone of degree 2) lies above or
-    // below the segement that contects its two end-points (x1,y1) and (x2,y2).
+    // below the segment that connects its two end-points (x1,y1) and (x2,y2).
     // To do that, we find the y coordinate of a point on the arc whose x
     // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
     Comparison_result res = ker.compare_y_2_object() (p_arc_mid, p_mid);
@@ -1239,7 +1239,7 @@ private:
 
   /*!
    * Check if the arc is a special segment connecting two algebraic endpoints
-   * (and has no undelying integer conic coefficients).
+   * (and has no underlying integer conic coefficients).
    */
   bool _is_special_segment () const
   {
@@ -1679,7 +1679,7 @@ private:
   }
 
   /*!
-   * Intersect the supporing conic curves of this arc and the given arc.
+   * Intersect the supporting conic curves of this arc and the given arc.
    * \param arc The arc to intersect with.
    * \param inter_list The list of intersection points.
    */
@@ -1703,7 +1703,7 @@ private:
     if (arc._is_special_segment()) {
       // The second arc is a special segment (a*x + b*y + c = 0).
       if (_is_special_segment()) {
-        // Both arc are sepcial segment, so they have at most one intersection
+        // Both arc are special segment, so they have at most one intersection
         // point.
         Algebraic denom = this->_extra_data_P->a * arc._extra_data_P->b -
           this->_extra_data_P->b * arc._extra_data_P->a;

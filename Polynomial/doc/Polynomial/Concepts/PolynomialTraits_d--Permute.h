@@ -15,9 +15,7 @@ change the order of the variables such that
 \f$ x_0 \mapsto x_2\f$, \f$ x_1 \mapsto x_0\f$, \f$ x_2 \mapsto x_1\f$ and \f$ x_3 \mapsto x_3\f$.
 In this case the iterator range should contain the sequence \f$ [2,0,1,3]\f$.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

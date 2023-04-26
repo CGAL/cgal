@@ -680,7 +680,7 @@ public:
   // ---------------------------------------------------------------------------
   // The following functions return objects of type Point and Periodic_point,
   // _not_ Point_3 and Periodic_point_3.
-  // They are templated by `construct_point` to distingush between Delaunay and
+  // They are templated by `construct_point` to distinguish between Delaunay and
   // regular triangulations
   // ---------------------------------------------------------------------------
 
@@ -3332,7 +3332,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
   _tds.delete_vertex(v);
   _tds.delete_cells(hole.begin(), hole.end());
   CGAL_expensive_assertion(is_valid());
-  return true; // sucessfully removed the vertex
+  return true; // successfully removed the vertex
 }
 
 // ############################################################################

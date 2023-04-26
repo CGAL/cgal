@@ -28,9 +28,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
 
-  #--------------------------------
-  # The "Segment Voronoi Linf" demo: Segment_voronoi_linf_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(CDT_UI_FILES Segment_voronoi_2.ui)
 
@@ -50,8 +47,5 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Segment_voronoi_linf_2)
 else()
-
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
-
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 endif()

@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `HalfedgeDSHalfedge`
+\cgalRefines{HalfedgeDSHalfedge}
 
 The concept `StraightSkeletonHalfedge_2` describes the requirements for the halfedge type of the
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSHalfedge` concept.

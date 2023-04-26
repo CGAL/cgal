@@ -4,7 +4,7 @@ option(CGAL_DEV_MODE
   "Activate the CGAL developers mode. See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE"
   $ENV{CGAL_DEV_MODE})
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
 # Just to avoid a warning from CMake if that variable is set on the command line...
 endif()
 
