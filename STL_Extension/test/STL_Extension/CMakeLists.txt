@@ -50,6 +50,12 @@ create_single_source_cgal_program("test_Uncertain.cpp")
 create_single_source_cgal_program("test_vector.cpp")
 create_single_source_cgal_program("test_join_iterators.cpp")
 create_single_source_cgal_program("test_for_each.cpp")
+
+if(cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+  create_single_source_cgal_program("test_fwd_make_array.cpp")
+  target_compile_features(test_fwd_make_array PUBLIC cxx_std_17)
+endif()
+
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
   target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)

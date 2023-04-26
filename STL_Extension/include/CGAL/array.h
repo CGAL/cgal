@@ -59,7 +59,7 @@ BOOST_CXX14_CONSTEXPR
 std::array< T, sizeof...(Args) >
 fwd_make_array(Args && ... args)
 {
-  std::array< T, sizeof...(Args) > a = { T(std::forward<Args>(args))... };
+  std::array< T, sizeof...(Args) > a = { static_cast<T>(std::forward<Args>(args))... };
   return a;
 }
 
