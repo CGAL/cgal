@@ -4,7 +4,7 @@
 
 The concept `GenericMap` defines a <I>d</I>-dimensional generic map. This concept is defined only to factorize the common notions between \link CombinatorialMap `CombinatorialMap`\endlink and \link GeneralizedMap `GeneralizedMap`\endlink concepts.
 
-\cgalRefines DefaultConstructible
+\cgalRefines{DefaultConstructible}
 
 A generic map has a set of darts <I>D</I>, and functions \f$ f_0\f$,\f$ \ldots\f$,\f$ f_{d}\f$ that link these darts between them.
 
@@ -450,28 +450,28 @@ template <unsigned int i>
 const Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_const_descriptor<i>::type ah) const;
 
 /*!
-A shorcut for \link GenericMap::info_of_attribute `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
+A shortcut for \link GenericMap::info_of_attribute `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
 \pre \link GenericMap::attribute `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
 typename Attribute_type<i>::type::Info & info(Dart_descriptor adart);
 
 /*!
-A shorcut for \link GenericMap::info_of_attribute(typename Attribute_const_descriptor<i>::type)const `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
+A shortcut for \link GenericMap::info_of_attribute(typename Attribute_const_descriptor<i>::type)const `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
 \pre \link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
 const typename Attribute_type<i>::type::Info & info(Dart_const_descriptor adart) const;
 
 /*!
-A shorcut for \link GenericMap::dart_of_attribute `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
+A shortcut for \link GenericMap::dart_of_attribute `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
 \pre `attribute<i>(adart)!=nullptr`.
 */
 template<unsigned int i>
 Dart_descriptor & dart(Dart_descriptor adart);
 
 /*!
-A shorcut for \link GenericMap::dart_of_attribute(typename Attribute_const_descriptor<i>::type)const `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
+A shortcut for \link GenericMap::dart_of_attribute(typename Attribute_const_descriptor<i>::type)const `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
 \pre `attribute<i>(adart)!=nullptr`.
 */
 template<unsigned int i>
@@ -679,7 +679,7 @@ Returns the status of the management of the attributes of the generic map. <code
 bool are_attributes_automatically_managed() const;
 
 /*!
-Set the status of the managment of the attributes of the generic map.
+Set the status of the management of the attributes of the generic map.
 
 \cgalAdvancedBegin
 After calling `set_automatic_attributes_management(false)`, all high level operations will not update non void attributes, until the call of `set_automatic_attributes_management(true)`. The call of `set_automatic_attributes_management(true)` call the \link GenericMap::correct_invalid_attributes `correct_invalid_attributes()`\endlink function.

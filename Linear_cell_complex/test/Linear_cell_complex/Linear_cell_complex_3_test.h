@@ -20,7 +20,6 @@
 #include "Linear_cell_complex_2_test.h"
 #include <fstream>
 #include <typeinfo>
-#include<CGAL/draw_linear_cell_complex.h>
 template<typename LCC>
 bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
                              unsigned int nbf, unsigned int nbvol,
@@ -218,7 +217,6 @@ bool test_LCC_3()
   if ( !check_number_of_cells_3(lcc, 11, 13, 8, 2, 2) )
     return false;
 
-  // CGAL::draw(lcc);
   trace_test_begin();
   lcc.template remove_cell<0>(dh9);
   if ( !check_number_of_cells_3(lcc, 10, 12, 8, 2, 2) )
@@ -983,7 +981,6 @@ bool test_LCC_3()
   lcc.insert_cell_1_between_two_cells_2(lcc.template opposite<2>(lcc.next(lcc.next(dh1))),
                                         lcc.next(lcc.next(dh3)));
 
-  CGAL::draw(lcc); // TODO remove
   if (!check_number_of_cells_3(lcc, 16, 25, 11, 2, 1) )
     return false;
 

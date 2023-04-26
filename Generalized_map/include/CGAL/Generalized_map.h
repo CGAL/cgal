@@ -193,7 +193,7 @@ namespace CGAL {
      *  @param dartinfoconverter functor to transform original information of darts into information of copies
      *  @param pointconverter functor to transform points in original map into points of copies.
      *  @param copy_perforated_darts true to copy also darts marked perforated (if any)
-     *  @param mark_perforated_darts true to mark darts wich are copies of perforated darts (if any)
+     *  @param mark_perforated_darts true to mark darts which are copies of perforated darts (if any)
      *  @post *this is valid.
      */
     template <typename GMap2, typename Dart_descriptor_2,
@@ -1415,7 +1415,7 @@ namespace CGAL {
        std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(args...);
      // Reinitialize the ref counting of the new attribute. This is normally
-     // not required except if create_attribute is used as "copy contructor".
+     // not required except if create_attribute is used as "copy constructor".
      this->template init_attribute_ref_counting<i>(res);
      internal::Init_id<typename Attribute_range<i>::type>::run
          (this->template attributes<i>(), res);
@@ -2635,7 +2635,7 @@ namespace CGAL {
                   <Self, Map2, 0>::run(*this, map2, current, other);
             }
 
-            // We test if the injection is valid with its neighboors.
+            // We test if the injection is valid with its neighbors.
             // We go out as soon as it is not satisfied.
             for (i = 0; match && i <= dimension; ++i)
             {
@@ -3024,7 +3024,7 @@ namespace CGAL {
 
     /** Test if a face is a combinatorial polygon of length alg
      *  (a cycle of alg edges alpha1 links together).
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the face containing adart is a polygon of length alg.
      */
     bool is_face_combinatorial_polygon(Dart_const_descriptor adart,
@@ -3118,7 +3118,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial tetrahedron.
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the volume containing adart is a combinatorial tetrahedron.
      */
     bool is_volume_combinatorial_tetrahedron(Dart_const_descriptor d1) const
@@ -3195,7 +3195,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial hexahedron.
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the volume containing adart is a combinatorial hexahedron.
      */
     bool is_volume_combinatorial_hexahedron(Dart_const_descriptor d1) const
@@ -3388,7 +3388,7 @@ namespace CGAL {
     }
 
     /** Insert a vertex in the given 2-cell which is split in triangles,
-     * once for each inital edge of the facet.
+     * once for each initial edge of the facet.
      * @param adart a dart of the facet to triangulate.
      * @return A dart incident to the new vertex.
      */
@@ -3643,10 +3643,13 @@ namespace CGAL {
       d2 = create_dart();
       mark(it1,treated);
 
+      if (!isfree1)
+      {
       d3 = create_dart();
       d4 = create_dart();
       this->template basic_link_alpha<2>(d1, d3);
       this->template basic_link_alpha<2>(d2, d4);
+      }
 
       for (unsigned int dim=3; dim<=dimension; ++dim)
       {
@@ -3654,21 +3657,30 @@ namespace CGAL {
              is_marked(alpha(it1, dim), treated) )
         {
           basic_link_alpha(alpha(it1, dim, 1), d1, dim);
-          basic_link_alpha(alpha(it1, dim, 1, 0), d2, dim);
+          basic_link_alpha(alpha(d1, dim, 0), d2, dim);
 
-          basic_link_alpha(alpha(it1, dim, 1, 2), d3, dim);
-          basic_link_alpha(alpha(it1, dim, 1, 2, 0), d4, dim);
+          if (!isfree1)
+          {
+            basic_link_alpha(alpha(it1, 1, dim, 1), d3, dim);
+            basic_link_alpha(alpha(d3, dim, 0), d4, dim);
+          }
         }
       }
 
       if (!isfree1)
-      { this->template link_alpha<1>(this->template alpha<1>(it1), d3); }
-      this->template link_alpha<1>(it1, d1);
+      {
+        this->template link_alpha<1>(this->template alpha<1>(it1), d3);
+        if ( adart2!=null_descriptor )
+        {
+          CGAL_assertion (it2.cont());
+          this->template link_alpha<1>(this->template alpha<1>(it2), d4);
+        }
+      }
 
+      this->template link_alpha<1>(it1, d1);
       if (adart2!=null_descriptor)
       {
         CGAL_assertion (it2.cont());
-        this->template link_alpha<1>(this->template alpha<1>(it2), d4);
         this->template link_alpha<1>(it2, d2);
         ++it2;
       }
@@ -3678,14 +3690,18 @@ namespace CGAL {
             update_attributes && ah!=null_descriptor)
         {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d2, ah);
-          internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d4, ah);
+          if (!isfree1)
+          {
+            internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d4, ah);
+          }
         }
       }
 
       // We do the link_alpha<0> after the link_alpha<1> to update the
       // possible attributes of d2.
       this->template link_alpha<0>(d1, d2);
-      this->template link_alpha<0>(d3, d4);
+      if (!isfree1)
+      { this->template link_alpha<0>(d3, d4); }
     }
 
     if (are_attributes_automatically_managed() && update_attributes)
@@ -3705,10 +3721,9 @@ namespace CGAL {
       }
       else // Here we degroup 2-attributes
       {
-        // TODO if ( !this->template is_free<2>(d1) && d2!=null_descriptor )
-        if (adart2!=null_descriptor)
+        if (!this->template is_free<2>(d1) && d2!=null_descriptor)
         { CGAL::internal::GMap_degroup_attribute_functor_run<Self, 2>::
-              run(*this, adart1, adart2); }
+              run(*this, d1, this->template alpha<2>(d1)); }
       }
     }
 

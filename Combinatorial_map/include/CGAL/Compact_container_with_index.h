@@ -755,8 +755,14 @@ public:
     return false;
   }
 
-  bool owns_dereferencable(const_iterator cit) const
+  bool owns(size_type i) const
+  { return i<capacity() && is_used(i); }
+
+  bool owns_dereferenceable(const_iterator cit) const
   { return cit!=end() && owns(cit); }
+
+  CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
+  { return owns_dereferenceable(cit); }
 
   /** Reserve method to ensure that the capacity of the Compact_container be
    * greater or equal than a given value n.
@@ -764,7 +770,6 @@ public:
   void reserve(size_type n)
   {
     if(capacity_>=n) return;
-    capacity_=n;
     increase_size();
   }
 
