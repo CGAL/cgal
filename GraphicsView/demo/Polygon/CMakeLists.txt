@@ -22,7 +22,7 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
@@ -49,7 +49,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polygon_2)
 
   target_link_libraries(Polygon_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                          CGAL::Eigen3_support Qt5::Gui)
+                                          CGAL::Eigen3_support Qt5::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Polygon_2)
