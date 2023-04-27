@@ -16,6 +16,7 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/utility.h>
+#include <CGAL/use.h>
 
 #include <boost/utility.hpp>
 #include <boost/version.hpp>
@@ -1164,6 +1165,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
 
     Vertex_handle lOppL = aOpp.first ;
     Vertex_handle lOppR = aOpp.second ;
+    CGAL_USE(lOppL);
 
     Halfedge_handle lOppOBisector_R = lOppR->primary_bisector();
     Halfedge_handle lOppIBisector_L = lOppOBisector_R->next();
