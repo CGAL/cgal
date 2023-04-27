@@ -458,7 +458,9 @@ public:
 
     \pre successful partition
   */
-  const std::vector<Point_3>& vertices() const;
+  const std::vector<Point_3>& vertices() const {
+    return m_data.vertices();
+  }
 
   /*!
   \brief Vertex indices of face.
@@ -471,7 +473,9 @@ public:
 
   \pre successful partition
   */
-  const std::vector<std::size_t>& vertices(std::size_t face_index) const;
+  const std::vector<std::size_t>& vertices(std::size_t face_index) const {
+    return m_data.face_to_vertices()[face_index];
+  }
 
   /*!
   \brief Face indices of the volume.
@@ -484,7 +488,7 @@ public:
 
   \pre successful partition
   */
-  const std::vector<std::size_t>& face(std::size_t volume_index) const {
+  const std::vector<std::size_t>& faces(std::size_t volume_index) const {
     CGAL_assertion(m_data.number_of_volumes() > volume_index);
     return m_data.volumes()[volume_index].faces;
   }
