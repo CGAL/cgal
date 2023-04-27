@@ -29,6 +29,8 @@ It is initialized to the circle with center `center`,
 squared radius `squared_radius` and orientation
 `ori`.
 \pre `ori != COLLINEAR` and `squared_radius >= 0`.
+
+\cgalEpicExact
 */
 Circle_2(const Point_2<Kernel> &center,
 const Kernel::FT &squared_radius,
@@ -65,6 +67,8 @@ It is initialized to the circle with center `center`, squared
 radius zero and orientation `ori`.
 \pre `ori != COLLINEAR`.
 \post `c.is_degenerate()` = `true`.
+
+\cgalEpicExact
 */
 Circle_2( const Point_2<Kernel> &center,
           const Orientation &ori = COUNTERCLOCKWISE);
@@ -77,18 +81,21 @@ Circle_2( const Point_2<Kernel> &center,
 /*!
 
 returns the center of `c`.
+\cgalEpicExact
 */
 const Point_2<Kernel> &center( ) const;
 
 /*!
 
 returns the squared radius of `c`.
+\cgalEpicExact
 */
 const Kernel::FT& squared_radius( ) const;
 
 /*!
 
 returns the orientation of `c`.
+\cgalEpicExact
 */
 Orientation orientation( ) const;
 
@@ -172,6 +179,7 @@ bool has_on_unbounded_side(const Point_2<Kernel> &p) const;
 
 returns the circle with the same center and squared radius as
 `c` but with opposite orientation.
+\cgalEpicExact
 */
 Circle_2<Kernel> opposite() const;
 

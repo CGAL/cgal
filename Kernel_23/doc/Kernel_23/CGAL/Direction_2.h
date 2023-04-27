@@ -26,6 +26,7 @@ public:
 
 /*!
 introduces the direction `d` of vector `v`.
+\cgalEpicExact
 */
 Direction_2(const Vector_2<Kernel> &v);
 
@@ -47,6 +48,7 @@ Direction_2(const Segment_2<Kernel> &s);
 /*!
 introduces a direction `d` passing through the origin
 and the point with %Cartesian coordinates \f$ (x, y)\f$.
+\cgalEpicExact
 */
 Direction_2(const Kernel::RT &x, const Kernel::RT &y);
 
@@ -61,16 +63,20 @@ Direction_2(const Kernel::RT &x, const Kernel::RT &y);
 /*!
 returns values, such that `d``== Direction_2<Kernel>(delta(0),delta(1))`.
 \pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::RT delta(int i) const;
 
 /*!
 returns `delta(0)`.
+\cgalEpicExact
 */
 Kernel::RT dx() const;
 
 /*!
 returns `delta(1)`.
+\cgalEpicExact
 */
 Kernel::RT dy() const;
 
