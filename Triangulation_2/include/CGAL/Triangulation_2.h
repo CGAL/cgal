@@ -214,8 +214,10 @@ public:
   typedef typename Tds::Vertex_handles         All_vertex_handles;
   typedef typename Tds::Edges                  All_edges;
 
-  typedef Iterator_range<Prevent_deref<Finite_faces_iterator, Face_handle> >    Finite_face_handles;
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator, Vertex_handle> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_faces_iterator,
+                                       Face_handle> >   Finite_face_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       Vertex_handle> > Finite_vertex_handles;
   typedef Iterator_range<Finite_edges_iterator>                    Finite_edges;
   typedef Iterator_range<Point_iterator>                           Points;
 
@@ -3267,7 +3269,7 @@ typename Triangulation_2<Gt, Tds>::Finite_face_handles
 Triangulation_2<Gt, Tds>::
 finite_face_handles() const
 {
-  return { finite_faces_begin(),finite_faces_end() };
+  return { finite_faces_begin(), finite_faces_end() };
 }
 
 template <class Gt, class Tds >
@@ -3296,7 +3298,7 @@ typename Triangulation_2<Gt, Tds>::Finite_vertex_handles
 Triangulation_2<Gt, Tds>::
 finite_vertex_handles() const
 {
-  return { finite_vertices_begin(),finite_vertices_end() };
+  return { finite_vertices_begin(), finite_vertices_end() };
 }
 
 template <class Gt, class Tds >
