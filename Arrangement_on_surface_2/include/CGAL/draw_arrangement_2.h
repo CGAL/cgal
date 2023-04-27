@@ -446,7 +446,7 @@ protected:
    */
   void draw_point(const Point& p) {
     const auto* traits = m_arr.geometry_traits();
-    draw_point_impl1(p, *traits, true);
+    draw_point_impl1(p, *traits, 0);
   }
 
   /*! Add a Connected Component of the Boundary.
