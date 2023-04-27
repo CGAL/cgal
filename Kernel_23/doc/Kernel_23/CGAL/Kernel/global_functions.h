@@ -2242,12 +2242,14 @@ const CGAL::Point_3<Kernel>& q);
 
 /*!
 computes the vertex with the lexicographically largest coordinates of the iso rectangle `ir`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_2<Kernel> max_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically largest coordinates of the iso cuboid `ic`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> max_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
@@ -2292,12 +2294,14 @@ CGAL::Point_3<Kernel> midpoint( const CGAL::Segment_3<Kernel>& s );
 
 /*!
 computes the vertex with the lexicographically smallest coordinates of the iso rectangle `ir`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_2<Kernel> min_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically smallest coordinates of the iso cuboid `ic`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> min_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );

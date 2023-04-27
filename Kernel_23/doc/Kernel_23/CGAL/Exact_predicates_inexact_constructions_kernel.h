@@ -204,6 +204,10 @@ are trivial:</p>
 <li> `FT Iso_cuboid_3::min_coord(int)`
 <li> `FT Iso_cuboid_3::max_coord(int)`
 <li> `Bbox_3 Iso_cuboid_3::bbox()`
+<li> `Point_2 min_vertex(Iso_rectangle_2)`
+<li> `Point_2 min_vertex(Iso_cuboid_3)`
+<li> `Point_2 max_vertex(Iso_rectangle_2)`
+<li> `Point_2 max_vertex(Iso_cuboid_3)`
 </ul>
 
 \cgalModels `Kernel`
