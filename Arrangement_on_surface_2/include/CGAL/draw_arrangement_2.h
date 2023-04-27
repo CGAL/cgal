@@ -122,9 +122,9 @@ public:
 
   /*! Compile time dispatching
    */
+#if 0
   template <typename T>
-  auto bounding_box_impl2(CGAL::Bbox_2& bbox, const Point& p, T const&, long)
-    -> decltype(void())
+  void bounding_box_impl2(CGAL::Bbox_2& bbox, const Point& p, T const&, long)
   { bbox += exact_bbox(p); }
 
   template <typename T>
@@ -133,8 +133,7 @@ public:
   { bbox += approximate_bbox(p, approx); }
 
   template <typename T>
-  auto bounding_box_impl1(CGAL::Bbox_2& bbox, const Point& p, T const&, long)
-    -> decltype(void())
+  void bounding_box_impl1(CGAL::Bbox_2& bbox, const Point& p, T const&, long)
   { bbox += exact_bbox(p); }
 
   template <typename T>
@@ -144,6 +143,12 @@ public:
     using Approximate = typename Gt::Approximate_2;
     bounding_box_impl2<Approximate>(bbox, p, traits.approximate_2_object(), 0);
   }
+#else
+  template <typename T>
+  void bounding_box_impl1(CGAL::Bbox_2& bbox, const Point& p, T const& traits,
+                          int)
+  { bbox += approximate_bbox(p, traits.approximate_2_object()); }
+#endif
 
   /*! Compute the bounding box.
    */
@@ -268,9 +273,9 @@ protected:
 
   /*! Compile time dispatching
    */
+#if 0
   template <typename T, typename I = void>
-  auto draw_region_impl2(Halfedge_const_handle curr, T const&, long) ->
-    decltype(void())
+  void draw_region_impl2(Halfedge_const_handle curr, T const&, long)
   { draw_exact_region(curr); }
 
   template <typename T, typename I>
@@ -280,8 +285,7 @@ protected:
   { draw_approximate_region(curr, approx); }
 
   template <typename T>
-  auto draw_region_impl1(Halfedge_const_handle curr, T const&, long) ->
-    decltype(void())
+  void draw_region_impl1(Halfedge_const_handle curr, T const&, long)
   { draw_exact_region(curr); }
 
   template <typename T>
@@ -290,6 +294,11 @@ protected:
     using Approximate = typename Gt::Approximate_2;
     draw_region_impl2<Approximate, int>(curr, traits.approximate_2_object(), 0);
   }
+#else
+  template <typename T>
+  void draw_region_impl1(Halfedge_const_handle curr, T const& traits, int)
+  { draw_approximate_region(curr, traits.approximate_2_object()); }
+#endif
 
   /*! Draw a region.
    */
@@ -346,9 +355,9 @@ protected:
 
   /*! Compile time dispatching
    */
+#if 0
   template <typename T, typename I = void>
-  auto draw_curve_impl2(const X_monotone_curve& xcv, T const&, long) ->
-    decltype(void())
+  void draw_curve_impl2(const X_monotone_curve& xcv, T const&, long)
   { draw_exact_curve(xcv); }
 
   template <typename T, typename I>
@@ -358,8 +367,7 @@ protected:
   { draw_approximate_curve(xcv, approx); }
 
   template <typename T>
-  auto draw_curve_impl1(const X_monotone_curve& xcv, T const&, long) ->
-    decltype(void())
+  void draw_curve_impl1(const X_monotone_curve& xcv, T const&, long)
   { draw_exact_curve(xcv); }
 
   template <typename T>
@@ -368,6 +376,11 @@ protected:
     using Approximate = typename Gt::Approximate_2;
     draw_curve_impl2<Approximate, int>(xcv, traits.approximate_2_object(), 0);
   }
+#else
+  template <typename T>
+  void draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, int)
+  { draw_approximate_curve(xcv, traits.approximate_2_object()); }
+#endif
 
   /*! Draw a curve.
    */
@@ -407,8 +420,7 @@ protected:
    */
 #if 0
   template <typename T>
-  auto draw_point_impl2(const Point& p, T const&, long) -> decltype(void())
-  { add_point(p); }
+  void draw_point_impl2(const Point& p, T const&, long) { add_point(p); }
 
   template <typename T>
   auto draw_point_impl2(const Point& p, T const& approx, int) ->
@@ -416,8 +428,7 @@ protected:
   { add_point(approx(p)); }
 
   template <typename T>
-  auto draw_point_impl1(const Point& p, T const&, long) -> decltype(void())
-  { add_point(p); }
+  void draw_point_impl1(const Point& p, T const&, long) { add_point(p); }
 
   template <typename T>
   auto draw_point_impl1(const Point& p, T const& traits, int) ->
@@ -427,20 +438,8 @@ protected:
   }
 #else
   template <typename T>
-  void draw_point_impl2(const Point& p, T const&, ...) { add_point(p); }
-
-  template <typename T, typename = decltype(T().approximate_2_object()(Point()))>
-  void draw_point_impl2(const Point& p, T const& traits, bool) {
-    auto approx = traits.approximate_2_object();
-    add_point(approx(p));
-  }
-
-  template <typename T>
-  void draw_point_impl1(const Point& p, T const&, ...) { add_point(p); }
-
-  template <typename T, typename = decltype(T().approximate_2_object())>
-  void draw_point_impl1(const Point& p, T const& traits, bool)
-  { draw_point_impl2<Gt>(p, traits, true); }
+  void draw_point_impl1(const Point& p, T const& traits, int)
+  { add_point(traits.approximate_2_object()(p)); }
 #endif
 
   /*! Draw a point.
