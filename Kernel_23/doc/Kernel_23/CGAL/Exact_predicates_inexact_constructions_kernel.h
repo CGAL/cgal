@@ -6,12 +6,12 @@ namespace CGAL {
 
 A typedef to a kernel that has the following properties:
 
-<UL> 
-<LI>It uses %Cartesian representation. 
-<LI>It supports constructions of points from `double` %Cartesian 
-coordinates. 
-<LI>It provides exact geometric predicates, but geometric 
-constructions are not exact in general. 
+<UL>
+<LI>It uses %Cartesian representation.
+<LI>It supports constructions of points from `double` %Cartesian
+coordinates.
+<LI>It provides exact geometric predicates, but geometric
+constructions are not exact in general.
 </UL>
 
 <dl class="section"><dt>Trivial Constructions</dt></dl>
