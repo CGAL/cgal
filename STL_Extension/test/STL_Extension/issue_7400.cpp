@@ -40,14 +40,15 @@ static_assert(is_same_v<range_value_t<decltype(t.all_vertex_handles())>, Vertex_
 // Triangulation::finite_vertex_handles() -> convertible to Vertex_handle
 static_assert(is_convertible_v<decltype(*std::begin(t.finite_vertex_handles())), Vertex_handle>);
 
-// But not equal to Vertex_handle
-// static_assert(is_same_v<range_value_t<decltype(t.finite_vertex_handles())>, Vertex_handle>);
+// But is it equal to Vertex_handle
+static_assert(is_same_v<range_value_t<decltype(t.finite_vertex_handles())>, Vertex_handle>);
 
 int main()
 {
   Vertex_handle v_inf = t.infinite_vertex();
   for(auto v: t.finite_vertex_handles()) {
     Vertex_handle v2 = v;
+    CGAL_USE(v2);
     if(v == v_inf) return 1;
   }
   return 0;
