@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Straight_skeleton_2.h>
 #include <sstream>
@@ -26,7 +26,7 @@ namespace draw_function_for_ss2 {
 
 template <typename BufferType=float, class SS2, class DrawingFunctor>
 void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_edge(ss2, eh))
@@ -48,7 +48,7 @@ void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
 template<typename BufferType=float, class SS2, class DrawingFunctor>
 void print_halfedge_labels(const SS2& ss2,
                            typename SS2::Halfedge_const_handle h,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
   // TODO? a functor different from draw_edge to allow to show only some labels ??
@@ -67,7 +67,7 @@ void print_halfedge_labels(const SS2& ss2,
 
 template <typename BufferType = float, class SS2, class DrawingFunctor>
 void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
-                    CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
                     const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_vertex(ss2, vh))
@@ -84,7 +84,7 @@ void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
 template <typename BufferType=float, class SS2, class DrawingFunctor>
 void print_vertex_label(const SS2& ss2,
                         typename SS2::Vertex_const_handle vh,
-                        CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                        CGAL::Graphic_storage<BufferType>& graphic_buffer,
                         const DrawingFunctor& drawing_functor)
 {
   // TODO? a functor different from draw_vertex to allow to show only some labels ??
@@ -98,7 +98,7 @@ void print_vertex_label(const SS2& ss2,
 
 template <typename BufferType=float, class SS2, class DrawingFunctor>
 void compute_elements(const SS2& ss2,
-                      CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                      CGAL::Graphic_storage<BufferType>& graphic_buffer,
                       const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.are_edges_enabled())
@@ -131,7 +131,7 @@ void compute_elements(const SS2& ss2,
 
 template <typename BufferType=float, class K, class DrawingFunctor>
 void add_in_graphic_buffer(const CGAL_SS_TYPE &ass2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
   draw_function_for_ss2::compute_elements(ass2, graphic_buffer,
@@ -140,7 +140,7 @@ void add_in_graphic_buffer(const CGAL_SS_TYPE &ass2,
 
 template <typename BufferType=float, class K>
 void add_in_graphic_buffer(const CGAL_SS_TYPE& ass2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   Drawing_functor<CGAL_SS_TYPE,
                   typename CGAL_SS_TYPE::Vertex_const_handle,
@@ -186,7 +186,7 @@ template <class K, class DrawingFunctor>
 void draw(const CGAL_SS_TYPE &ass2, const DrawingFunctor &drawingfunctor,
           const char *title="Straight Skeleton Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ass2, buffer, drawingfunctor);
   draw_buffer(buffer, title);
 }
@@ -195,7 +195,7 @@ template <class K>
 void draw(const CGAL_SS_TYPE &ass2,
           const char *title="Straight Skeleton Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ass2, buffer);
   draw_buffer(buffer, title);
 }

@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
   { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
 
   Drawing_functor_small_faces df(sm);
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
 
   add_in_graphic_buffer(sm, buffer, df);
   CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");

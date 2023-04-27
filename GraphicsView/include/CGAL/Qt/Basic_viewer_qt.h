@@ -49,7 +49,7 @@
 #include <cfloat>
 
 #include <CGAL/Basic_shaders.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/assertions.h>
@@ -69,11 +69,11 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
-  using GB=Graphic_buffer<BufferType>;
+  using GB=Graphic_storage<BufferType>;
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
-                  Graphic_buffer<BufferType>& buf,
+                  Graphic_storage<BufferType>& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -365,7 +365,7 @@ public:
   void face_end()
   { gBuffer.face_end(); }
 
-  Graphic_buffer<float>& get_graphic_buffer()
+  Graphic_storage<float>& get_graphic_buffer()
   { return gBuffer; }
 
   virtual void redraw()
@@ -1593,7 +1593,7 @@ public:
   std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> on_key_pressed;
 
 protected:
-  Graphic_buffer<BufferType>& gBuffer;
+  Graphic_storage<BufferType>& gBuffer;
 
   bool m_draw_vertices;
   bool m_draw_edges;
@@ -1667,7 +1667,7 @@ protected:
 };
 
 template <typename BufferType=float>
-void draw_buffer(Graphic_buffer<BufferType>& graphic_buffer,
+void draw_buffer(Graphic_storage<BufferType>& graphic_buffer,
                  const char *title="CGAL Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
@@ -1692,7 +1692,7 @@ void draw_buffer(Graphic_buffer<BufferType>& graphic_buffer,
 }
 
 // template <typename BufferType = float>
-// void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,
+// void draw_buffer(Graphic_storage<BufferType> &graphic_buffer,
 //                  const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress,
 //                  const char *title="CGAL Basic Viewer")
 // {
@@ -1722,7 +1722,7 @@ template <typename BufferType=float>
 class QApplication_and_basic_viewer
 {
 public:
-  QApplication_and_basic_viewer(CGAL::Graphic_buffer<BufferType>& buffer,
+  QApplication_and_basic_viewer(CGAL::Graphic_storage<BufferType>& buffer,
                                 const char* title="CGAL Basic Viewer"):
     m_application(nullptr),
     m_basic_viewer(nullptr),

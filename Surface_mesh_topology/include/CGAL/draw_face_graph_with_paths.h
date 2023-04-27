@@ -16,7 +16,7 @@
 #include <CGAL/license/Surface_mesh_topology.h>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 
 #include <iostream>
@@ -145,7 +145,7 @@ template <typename Mesh, typename BufferType=float, class DrawingFunctor>
 void compute_face(const Mesh& mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   DrawingFunctor& drawing_functor)
 {
   if(!drawing_functor.draw_face(lcc, dh))
@@ -193,7 +193,7 @@ void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                   typename Get_map<Mesh, Mesh>::type::size_type m_amark,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   DrawingFunctor& drawing_functor,
                   bool draw_marked_darts=true)
 {
@@ -224,7 +224,7 @@ void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                   const CGAL::IO::Color& color,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer)
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
   typedef typename LCC::Dart_const_descriptor     Dart_const_descriptor;
@@ -241,7 +241,7 @@ void compute_edge(const Mesh &mesh,
 template <typename Mesh, typename BufferType = float>
 void compute_vertex(const Mesh &mesh,
                     typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
-                    CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
                     DrawingFunctor& drawing_functor)
 {
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
@@ -253,7 +253,7 @@ void compute_vertex(const Mesh &mesh,
 template <typename Mesh, typename BufferType = float>
 void compute_path(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
-                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                  CGAL::Graphic_storage<BufferType> &graphic_buffer,
                   const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
                   std::size_t i,
                   typename Get_map<Mesh, Mesh>::type::size_type amark)
@@ -282,7 +282,7 @@ void compute_path(const Mesh &mesh,
 
 template <class Mesh, class DrawingFunctor, typename BufferType = float>
 void compute_elements(const Mesh &mesh,
-                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                      CGAL::Graphic_storage<BufferType> &graphic_buffer,
                       const DrawingFunctor &m_drawing_functor,
                       const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
                       typename Get_map<Mesh, Mesh>::type::size_type amark)
@@ -371,7 +371,7 @@ void compute_elements(const Mesh &mesh,
 
 template <typename BufferType=float, class Mesh, class DrawingFunctor>
 void add_in_graphic_buffer(const Mesh& mesh,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            const DrawingFunctor& drawing_functor,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
@@ -385,7 +385,7 @@ void add_in_graphic_buffer(const Mesh& mesh,
 
 template <typename BufferType = float, class Mesh>
 void add_in_graphic_buffer(const Mesh& mesh,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
                            typename Get_map<Mesh, Mesh>::type::INVALID_MARK)
@@ -409,7 +409,7 @@ void draw(const Mesh& mesh,
           (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           const char* title="Mesh Viewer With Path")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(mesh, buffer, &paths, amark);
   draw_buffer(buffer, title);
 }
@@ -422,7 +422,7 @@ void draw(const Mesh& mesh,
           (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           const char* title="Mesh Viewer With Path")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(mesh, buffer, drawing_functor, &paths, amark);
   draw_buffer(buffer, title);
 }
@@ -435,7 +435,7 @@ void draw(const Mesh& mesh,
           const char* title="Mesh Viewer With Path")
 {
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(mesh, buffer, &paths, amark);
   draw_buffer(buffer, title);
 }

@@ -55,7 +55,7 @@ int main(void)
     for(Pwn& it: points)
     { point_set.insert(it.first); }
 
-    CGAL::Graphic_buffer<float> graphic_buffer;
+    CGAL::Graphic_storage<float> graphic_buffer;
     CGAL::add_in_graphic_buffer(point_set, graphic_buffer, Drawing_functor_green_points());
     CGAL::add_in_graphic_buffer(output_mesh, graphic_buffer);
     CGAL::draw_buffer(graphic_buffer);

@@ -39,7 +39,7 @@ private:
                                          Dart_const_descriptor,
                                          Dart_const_descriptor,
                                          Dart_const_descriptor> m_drawing_functor;
-  CGAL::Graphic_buffer<float> m_graphic_buffer;
+  CGAL::Graphic_storage<float> m_graphic_buffer;
   Scene* scene;
   bool m_previous_scene_empty;
 };

@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
@@ -27,7 +27,7 @@ namespace draw_function_for_t2 {
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_face(const T2& t2,
                   typename T2::Finite_faces_iterator fh,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_face(t2, fh))
@@ -47,7 +47,7 @@ void compute_face(const T2& t2,
 
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_edge(t2, eh))
@@ -70,7 +70,7 @@ void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
 
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
-                    CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
                     const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_vertex(t2, vh))
@@ -88,7 +88,7 @@ void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
 
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_elements(const T2& t2,
-                      CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                      CGAL::Graphic_storage<BufferType>& graphic_buffer,
                       const DrawingFunctor& drawing_functor)
 {
   if (drawing_functor.are_faces_enabled())
@@ -119,7 +119,7 @@ void compute_elements(const T2& t2,
 
 template <class Gt, class Tds, typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
   draw_function_for_t2::compute_elements(at2, graphic_buffer, drawing_functor);
@@ -127,9 +127,9 @@ void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
 
 template <class Gt, class Tds, typename BufferType=float>
 void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   Drawing_functor<CGAL_T2_TYPE,
                   typename CGAL_T2_TYPE::Vertex_handle,
                   typename CGAL_T2_TYPE::Finite_edges_iterator,
@@ -157,7 +157,7 @@ template <class Gt, class Tds, class DrawingFunctor>
 void draw(const CGAL_T2_TYPE &at2, const DrawingFunctor &drawingfunctor,
           const char *title="Triangulation_2 Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(at2, buffer, drawingfunctor);
   draw_buffer(buffer, title);
 }
@@ -166,7 +166,7 @@ template <class Gt, class Tds>
 void draw(const CGAL_T2_TYPE& at2,
           const char *title="Triangulation_2 Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(at2, buffer);
   draw_buffer(buffer, title);
 }

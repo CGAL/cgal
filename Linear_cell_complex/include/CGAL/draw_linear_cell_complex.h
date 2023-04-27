@@ -14,7 +14,7 @@
 #define CGAL_DRAW_LCC_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Linear_cell_complex_base.h>
 #include <CGAL/Linear_cell_complex_operations.h>
@@ -61,7 +61,7 @@ template <typename BufferType=float, class LCC, class DrawingFunctorLCC>
 void compute_face(const LCC& lcc,
                   typename LCC::Dart_const_handle dh,
                   typename LCC::Dart_const_handle voldh,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   const DrawingFunctorLCC& drawing_functor)
 {
   if (!drawing_functor.are_faces_enabled() ||
@@ -105,7 +105,7 @@ void compute_face(const LCC& lcc,
 template <typename BufferType=float, class LCC, class DrawingFunctor>
 void compute_edge(const LCC& lcc,
                   typename LCC::Dart_const_handle dh,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.are_edges_enabled() ||
@@ -129,7 +129,7 @@ void compute_edge(const LCC& lcc,
 template <typename BufferType=float, class LCC, class DrawingFunctorLCC>
 void compute_vertex(const LCC& lcc,
                     typename LCC::Dart_const_handle dh,
-                    CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
                     const DrawingFunctorLCC& drawing_functor)
 {
   if (!drawing_functor.are_vertices_enabled() ||
@@ -147,7 +147,7 @@ void compute_vertex(const LCC& lcc,
 
 template <typename BufferType=float, class LCC, class DrawingFunctor>
 void compute_elements(const LCC& lcc,
-                      CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                      CGAL::Graphic_storage<BufferType>& graphic_buffer,
                       const DrawingFunctor& drawing_functor)
 {
   typename LCC::size_type markvolumes = lcc.get_new_mark();
@@ -240,7 +240,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Refs, class Storage_,
          typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
   draw_function_for_lcc::compute_elements(static_cast<const Refs&>(alcc),
@@ -254,7 +254,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_, typename BufferType=float>
 void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   CGAL::Drawing_functor_with_volume<CGAL_LCC_TYPE,
                                     typename CGAL_LCC_TYPE::Dart_const_handle,
@@ -288,7 +288,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
 void draw(const CGAL_LCC_TYPE& alcc, const DrawingFunctor& drawing_functor,
           const char *title="LCC Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(alcc, buffer, drawing_functor);
   draw_buffer(buffer, title);
 }
@@ -300,7 +300,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Refs, class Storage_>
 void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(alcc, buffer);
   draw_buffer(buffer, title);
 }

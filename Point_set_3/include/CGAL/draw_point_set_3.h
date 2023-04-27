@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Point_set_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Point_set_3.h>
 
@@ -44,7 +44,7 @@ namespace draw_function_for_PointSet {
 
 template <typename BufferType=float, class PointSet, class DrawingFunctor>
 void compute_elements(const PointSet& pointset,
-                      Graphic_buffer<BufferType>& graphic_buffer,
+                      Graphic_storage<BufferType>& graphic_buffer,
                       const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.are_vertices_enabled())
@@ -70,7 +70,7 @@ void compute_elements(const PointSet& pointset,
 
 template <class P, class V, typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
-                           Graphic_buffer<BufferType>& graphic_buffer,
+                           Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
   draw_function_for_PointSet::compute_elements(apointset,
@@ -80,7 +80,7 @@ void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
 
 template <class P, class V, typename BufferType=float>
 void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
-                           Graphic_buffer<BufferType>& graphic_buffer)
+                           Graphic_storage<BufferType>& graphic_buffer)
 {
   CGAL::Drawing_functor<Point_set_3<P, V>,
                         typename Point_set_3<P, V>::const_iterator,
@@ -96,7 +96,7 @@ void draw(const Point_set_3<P, V>& apointset,
           const DrawingFunctor& drawing_functor,
           const char *title="Point_set_3 Basic Viewer")
 {
-  Graphic_buffer<float> buffer;
+  Graphic_storage<float> buffer;
   add_in_graphic_buffer(apointset, buffer, drawing_functor);
   draw_buffer(buffer, title);
 }
@@ -105,7 +105,7 @@ template <class P, class V>
 void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
-  Graphic_buffer<float> buffer;
+  Graphic_storage<float> buffer;
   add_in_graphic_buffer(apointset, buffer);
   draw_buffer(buffer, title);
 }

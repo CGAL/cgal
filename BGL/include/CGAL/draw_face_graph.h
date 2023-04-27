@@ -14,7 +14,7 @@
 #ifndef CGAL_DRAW_FACE_GRAPH_H
 #define CGAL_DRAW_FACE_GRAPH_H
 
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Random.h>
@@ -26,7 +26,7 @@ namespace draw_function_for_FG {
 
 template <typename BufferType=float, typename FG, typename DrawingFunctor>
 void compute_elements(const FG &fg,
-                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                      CGAL::Graphic_storage<BufferType> &graphic_buffer,
                       const DrawingFunctor &m_drawing_functor)
 {
   using Point=typename boost::property_map_value<FG, CGAL::vertex_point_t>::type;
@@ -120,7 +120,7 @@ void compute_elements(const FG &fg,
 
 template <typename BufferType=float, class FG, class DrawingFunctor>
 void add_in_graphic_buffer_for_fg(const FG &fg,
-                                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                                  CGAL::Graphic_storage<BufferType> &graphic_buffer,
                                   const DrawingFunctor &drawing_functor)
 {
   draw_function_for_FG::compute_elements(fg, graphic_buffer, drawing_functor);
@@ -128,7 +128,7 @@ void add_in_graphic_buffer_for_fg(const FG &fg,
 
 template <typename BufferType=float, class FG>
 void add_in_graphic_buffer_for_fg(const FG &fg,
-                                  CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+                                  CGAL::Graphic_storage<BufferType> &graphic_buffer)
 {
   Drawing_functor<FG,
                   typename boost::graph_traits<FG>::vertex_descriptor,

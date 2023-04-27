@@ -19,7 +19,7 @@
 #define CGAL_DRAW_POLYGON_2_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Polygon_2.h>
 
@@ -48,7 +48,7 @@ namespace draw_function_for_p2 {
 
 template <typename BufferType=float, class P2, class DrawingFunctor>
 void compute_elements(const P2& p2,
-                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                      CGAL::Graphic_storage<BufferType> &graphic_buffer,
                       const DrawingFunctor& drawing_functor)
 {
   if (p2.is_empty())
@@ -103,13 +103,13 @@ void compute_elements(const P2& p2,
 
 template<typename BufferType=float, class T, class C, class DrawingFunctor>
 void add_in_graphic_buffer(const CGAL_P2_TYPE& ap2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawingfunctor)
 { draw_function_for_p2::compute_elements(ap2, graphic_buffer, drawingfunctor); }
 
 template<typename BufferType=float, class T, class C>
 void add_in_graphic_buffer(const CGAL_P2_TYPE& ap2,
-                           CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+                           CGAL::Graphic_storage<BufferType> &graphic_buffer)
 {
   CGAL::Drawing_functor<CGAL_P2_TYPE,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
@@ -126,7 +126,7 @@ template <class T, class C>
 void draw(const CGAL_P2_TYPE &ap2,
           const char *title="Polygon_2 Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ap2, buffer);
   draw_buffer(buffer, title);
 }
@@ -136,7 +136,7 @@ void draw(const CGAL_P2_TYPE &ap2,
           const DrawingFunctor& drawingfunctor,
           const char *title="Polygon_2 Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ap2, buffer, drawingfunctor);
   draw_buffer(buffer, title);
 }

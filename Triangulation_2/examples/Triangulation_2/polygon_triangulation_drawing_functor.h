@@ -61,7 +61,7 @@ struct Polygon_triangulation_drawing_functor :
 template <class K, class TDS, typename Itag,
           typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_buffer(const CGAL_CT2_TYPE& ct2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
   draw_function_for_t2::compute_elements(ct2, graphic_buffer, drawing_functor);
@@ -74,7 +74,7 @@ template <class K, class TDS, typename Itag, class DrawingFunctor>
 void draw(const CGAL_CT2_TYPE &ct2, const DrawingFunctor &drawingfunctor,
           const char *title="Constrained Triangulation_2 Basic Viewer")
 {
-  CGAL::Graphic_buffer<float> buffer;
+  CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ct2, buffer, drawingfunctor);
   draw_buffer(buffer, title);
 }

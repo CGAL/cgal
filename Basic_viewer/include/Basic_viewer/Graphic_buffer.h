@@ -56,14 +56,14 @@ inline CGAL::IO::Color get_random_color(CGAL::Random& random)
 // This class is responsible for dealing with available CGAL data structures and
 // handling buffers.
 template <typename BufferType = float>
-class Graphic_buffer
+class Graphic_storage
 {
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
 
-  Graphic_buffer()
+  Graphic_storage()
       : m_buffer_for_mono_points(&arrays[POS_MONO_POINTS], nullptr,
                                  &m_bounding_box, nullptr, nullptr, nullptr),
         m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS], nullptr,

@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Voronoi_diagram_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Voronoi_diagram_2.h>
@@ -72,7 +72,7 @@ typedef Local_kernel::Vector_3 Local_vector;
 template <typename BufferType=float, class V2, class DrawingFunctor>
 void compute_vertex(const V2& v2,
                     typename V2::Vertex_iterator vh,
-                    CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
                     const DrawingFunctor& drawing_functor)
 {
   if(!drawing_functor.draw_vertex(v2, vh))
@@ -87,14 +87,14 @@ void compute_vertex(const V2& v2,
 template <typename BufferType=float, class V2, class DrawingFunctor>
 void compute_dual_vertex(const V2& /*v2*/,
                          typename V2::Delaunay_graph::Finite_vertices_iterator vi,
-                         CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                         CGAL::Graphic_storage<BufferType> &graphic_buffer,
                          const DrawingFunctor& drawing_functor)
 { graphic_buffer.add_point(vi->point(), drawing_functor.dual_vertex_color); }
 
 template <typename BufferType=float, class V2, class DrawingFunctor>
 void add_segments_and_update_bounding_box(const V2& v2,
                                           typename V2::Halfedge_iterator he,
-                                          CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                                          CGAL::Graphic_storage<BufferType>& graphic_buffer,
                                           DrawingFunctor& drawing_functor)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -224,7 +224,7 @@ Local_kernel::Point_2 get_second_point(typename V2::Halfedge_handle ray,
 template <typename BufferType=float, class V2, class DrawingFunctor>
 void compute_rays_and_bisectors(const V2&,
                                 typename V2::Halfedge_iterator he,
-                                CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                                CGAL::Graphic_storage<BufferType>& graphic_buffer,
                                 const DrawingFunctor& drawing_functor)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -254,7 +254,7 @@ void compute_rays_and_bisectors(const V2&,
 template <typename BufferType=float, class V2, class DrawingFunctor>
 void compute_face(const V2& v2,
                   typename V2::Face_iterator fh,
-                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
                   const DrawingFunctor& m_drawing_functor)
 {
   if(fh->is_unbounded() || !m_drawing_functor.draw_face(v2, fh))
@@ -288,7 +288,7 @@ void compute_face(const V2& v2,
 
 template <typename BufferType=float, class V2, class DrawingFunctor>
 void compute_elements(const V2& v2,
-                      CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                      CGAL::Graphic_storage<BufferType>& graphic_buffer,
                       const DrawingFunctor& drawing_functor)
 {
   if(drawing_functor.are_vertices_enabled())
@@ -338,7 +338,7 @@ void compute_elements(const V2& v2,
 template <class DG, class AT, class AP,
           typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_buffer(const CGAL_VORONOI_TYPE &v2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& m_drawing_functor)
 {
   draw_function_for_v2::compute_elements(v2, graphic_buffer, m_drawing_functor);
@@ -346,7 +346,7 @@ void add_in_graphic_buffer(const CGAL_VORONOI_TYPE &v2,
 
 template <class DG, class AT, class AP, typename BufferType=float>
 void add_in_graphic_buffer(const CGAL_VORONOI_TYPE& v2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   // Default functor; user can add his own functor.
   CGAL::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
@@ -367,7 +367,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
           const DrawingFunctor& drawing_functor,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(av2, buffer, drawing_functor);
   draw_buffer(buffer, title);
 }
@@ -376,7 +376,7 @@ template<class DG, class AT, class AP, typename BufferType=float>
 void draw(const CGAL_VORONOI_TYPE& av2,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
 
   CGAL::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
                                 typename CGAL_VORONOI_TYPE::Vertex_iterator,

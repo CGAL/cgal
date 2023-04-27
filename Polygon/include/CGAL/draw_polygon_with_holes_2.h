@@ -19,7 +19,7 @@
 #define CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
@@ -49,7 +49,7 @@ namespace draw_function_for_ph2_with_holes {
 template <typename BufferType=float, class P2, class DrawingFunctor>
 void compute_one_loop_elements(const P2& ap2,
                                const typename P2::General_polygon_2& aloop,
-                               Graphic_buffer<BufferType> &graphic_buffer,
+                               Graphic_storage<BufferType> &graphic_buffer,
                                bool hole,
                                const DrawingFunctor& drawing_functor)
 {
@@ -92,7 +92,7 @@ void compute_one_loop_elements(const P2& ap2,
 }
 
 template <typename BufferType=float, class P2, class DrawingFunctor>
-void compute_elements(const P2& p2, Graphic_buffer<BufferType> &graphic_buffer,
+void compute_elements(const P2& p2, Graphic_storage<BufferType> &graphic_buffer,
                       const DrawingFunctor& drawing_functor)
 {
   if (p2.outer_boundary().is_empty()) return;
@@ -128,7 +128,7 @@ void compute_elements(const P2& p2, Graphic_buffer<BufferType> &graphic_buffer,
 
 template <class T, class C, typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_buffer(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor &drawing_functor)
 {
   draw_function_for_ph2_with_holes::compute_elements(p2, graphic_buffer,
@@ -137,7 +137,7 @@ void add_in_graphic_buffer(const CGAL_P2_WITH_HOLES_TYPE& p2,
 
 template <class T, class C, typename BufferType=float>
 void add_in_graphic_buffer(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphic_buffer<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   Drawing_functor<CGAL_P2_WITH_HOLES_TYPE,
                   typename CGAL_P2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
@@ -154,7 +154,7 @@ template<class T, class C, typename BufferType=float, class DrawingFunctor>
 void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const DrawingFunctor &drawing_functor,
           const char* title="Polygon with Holes Basic Viewer")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(ap2, buffer, drawing_functor);
   draw_buffer(buffer, title);
 }
@@ -163,7 +163,7 @@ template<class T, class C, typename BufferType=float>
 void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
           const char* title="Polygon with Holes Basic Viewer")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(ap2, buffer);
   draw_buffer(buffer, title);
 }

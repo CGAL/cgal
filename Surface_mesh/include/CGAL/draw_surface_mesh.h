@@ -30,7 +30,7 @@ void draw(const SM& asm);
 #else // DOXYGEN_RUNNING
 
 #include <CGAL/license/Surface_mesh.h>
-#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Graphic_storage.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
@@ -41,13 +41,13 @@ namespace CGAL
 
 template<class K, typename BufferType=float,  class DrawingFunctor>
 void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
-                           CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                           CGAL::Graphic_storage<BufferType> &graphic_buffer,
                            const DrawingFunctor &drawing_functor)
 { add_in_graphic_buffer_for_fg(amesh, graphic_buffer, drawing_functor); }
 
 template<class K, typename BufferType=float>
 void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
-                           CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+                           CGAL::Graphic_storage<BufferType> &graphic_buffer)
 { add_in_graphic_buffer_for_fg(amesh, graphic_buffer); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -57,7 +57,7 @@ template<class K, typename BufferType=float>
 void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer_for_fg(amesh, buffer);
   draw_buffer(buffer, title);
 }
@@ -67,7 +67,7 @@ void draw(const Surface_mesh<K>& amesh,
           const DrawingFunctor &drawing_functor,
           const char* title="Surface_mesh Basic Viewer")
 {
-  CGAL::Graphic_buffer<BufferType> buffer;
+  CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer_for_fg(amesh, buffer, drawing_functor);
   draw_buffer(buffer, title);
 }
