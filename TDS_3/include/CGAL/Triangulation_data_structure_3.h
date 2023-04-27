@@ -661,7 +661,7 @@ public:
 
   Cell_handles cell_handles() const
   {
-    return {cells_begin(), cells_end()};
+    return { cells_begin(), cells_end() };
   }
 
   Cell_iterator raw_cells_begin() const
@@ -720,7 +720,7 @@ public:
 
   Vertex_handles vertex_handles() const
   {
-    return {vertices_begin(), vertices_end()};
+    return { vertices_begin(), vertices_end() };
   }
 
   // CIRCULATOR METHODS
