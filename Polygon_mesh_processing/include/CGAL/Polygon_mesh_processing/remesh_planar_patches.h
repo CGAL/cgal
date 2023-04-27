@@ -604,6 +604,7 @@ bool decimate_impl(const TriangleMesh& tm,
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
   typedef std::pair<std::size_t, std::size_t> Id_pair;
+  typedef typename boost::property_traits<FaceCCIdMap>::value_type PID;
 
   // compute the new mesh
   std::vector< std::vector< boost::container::small_vector<std::size_t,3> > > faces_per_cc(nb_corners_and_nb_cc.second);
@@ -698,7 +699,6 @@ bool decimate_impl(const TriangleMesh& tm,
           // TODO this is not optimal at all since we already have the set of contraints,
           //      we could work on the graph on constraint and recover only the orientation
           //      of the edge. To be done if someone find it too slow.
-          typedef typename boost::property_traits<FaceCCIdMap>::value_type PID;
           std::vector<halfedge_descriptor> hborders;
           CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, static_cast<PID>(cc_id), face_cc_ids);
           extract_boundary_cycles(ffg, std::back_inserter(hborders));
@@ -739,7 +739,7 @@ bool decimate_impl(const TriangleMesh& tm,
 #endif
           all_patches_successfully_remeshed = false;
           // make all vertices of the patch a corner
-          CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, cc_id, face_cc_ids);
+          CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, static_cast<PID>(cc_id), face_cc_ids);
           std::vector<vertex_descriptor> new_corners;
           for (vertex_descriptor v : vertices(ffg))
           {
