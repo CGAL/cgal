@@ -1,47 +1,81 @@
-#include <CGAL/license/Surface_mesh.h>
-#include <CGAL/Graphic_buffer.h>
-#include <CGAL/Drawing_functor.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/draw_surface_mesh.h>
-#include "CGAL/draw_surface_mesh_small_faces.h"
-
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <fstream>
+#include <string>
+#include <cassert>
+#include <CGAL/draw_surface_mesh.h>
 
-typedef CGAL::Simple_cartesian<double>                       Kernel;
-typedef Kernel::Point_3                                      Point;
-typedef CGAL::Surface_mesh<Point>                            Mesh;
-typedef Kernel::FT                                             FT;
+typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Surface_mesh<K::Point_3> Mesh;
+typedef Mesh::Vertex_index             vertex_descriptor;
+typedef Mesh::Face_index               face_descriptor;
+typedef K::FT                          FT;
 
-struct Drawing_functor_small_face: public CGAL::Drawing_functor
-<Mesh, Mesh::Vertex_index, Mesh::Edge_index, Mesh::Face_index>
+template<class SM>
+struct Drawing_functor_small_faces:
+  public CGAL::Drawing_functor<SM,
+                               typename boost::graph_traits<SM>::vertex_descriptor,
+                               typename boost::graph_traits<SM>::edge_descriptor,
+                               typename boost::graph_traits<SM>::face_descriptor>
 {
- Drawing_functor_small_face() {
+  using Self=Drawing_functor_small_faces<SM>;
+  using Base=CGAL::Drawing_functor<SM,
+                               typename boost::graph_traits<SM>::vertex_descriptor,
+                               typename boost::graph_traits<SM>::edge_descriptor,
+                                   typename boost::graph_traits<SM>::face_descriptor>;
+  
+  Drawing_functor_small_faces(const SM& sm): Base(), m_sm(sm)
+  {
+    typename SM::template Property_map<face_descriptor, FT> faces_size;
+    boost::tie(faces_size, m_with_size)=sm.template property_map<face_descriptor, FT>("f:size");
+    if(!m_with_size) 
+    { return; }
+    
+    m_min_size=faces_size[*(sm.faces().begin())];
+    m_max_size=m_min_size;
+    FT cur_size;
+    for (typename SM::Face_range::iterator f=sm.faces().begin(); f!=sm.faces().end(); ++f)
+    {
+      cur_size=faces_size[*f];
+      if (cur_size<m_min_size) m_min_size=cur_size;
+      if (cur_size>m_max_size) m_max_size=cur_size;
+    }
 
-  // TODO: change threshold in realtime.
-  m_threshold = 2000;
+    this->face_color=[=](const SM& sm,
+                         typename boost::graph_traits<SM>::face_descriptor fh) -> CGAL::IO::Color
+    { return this->get_face_color(sm, fh); };
 
-  // Return false if face value less than threshold.
-  is_small = [=] (typename boost::graph_traits<Mesh>::face_descriptor fg) -> bool {
-    return fg <= m_threshold;
-  };
-
-  colored_face = [=](const Mesh&,
-             typename boost::graph_traits<Mesh>::face_descriptor fg) -> bool
-   { return is_small(fg); };
-
-  face_color = [] (const Mesh&,
-             typename boost::graph_traits<Mesh>::face_descriptor) -> CGAL::IO::Color
-  { return CGAL::IO::Color(200, 60, 60); }; // Red
-
+    this->colored_face = [](const SM&,
+                            typename boost::graph_traits<SM>::face_descriptor) -> bool
+    { return true; };
   }
 
-  std::function<bool(typename boost::graph_traits<Mesh>::face_descriptor)> is_small;
+  CGAL::IO::Color get_face_color(const SM& sm,
+                                 typename boost::graph_traits<SM>::face_descriptor fh)
+  {  
+    // Default color of faces
+    CGAL::IO::Color c(75,160,255);
+    if(!m_with_size) { return c; }
+    
+    // Compare the size of the face with the % m_threshold
+    bool exist;
+    typename SM::template Property_map<face_descriptor, FT> faces_size;
+    boost::tie(faces_size, exist)=sm.template property_map<face_descriptor, FT>("f:size");
+    assert(exist);
 
-  unsigned int m_threshold;
+    // If the face is small, color it in red.
+    if (get(faces_size, fh)<m_min_size+((m_max_size-m_min_size)/(100-m_threshold)))
+    { return CGAL::IO::Color(255,20,20); }
+
+    return c; // Default color
+  }
+  
+  const SM& m_sm;
+  bool m_with_size;
   FT m_min_size, m_max_size;
-  bool m_draw_small_faces;
-  bool m_draw_big_faces;
+  unsigned int m_threshold=85; // 85%
 };
 
 int main(int argc, char* argv[])
@@ -55,12 +89,66 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  Drawing_functor_small_face drawing_functor;
-  CGAL::draw(sm, drawing_functor);
+  CGAL::Polygon_mesh_processing::triangulate_faces(sm);
 
-  // setKeyDescription(Qt::Key_I, "Increment threshold for small faces");
-  // setKeyDescription(Qt::Key_D, "Decrement threshold for small faces");
-  // setKeyDescription(Qt::Key_S, "Draw small faces only , big faces only, both");
+  Mesh::Property_map<face_descriptor, FT> faces_size;
+  bool created;
+  boost::tie(faces_size, created)=sm.add_property_map<face_descriptor, FT>("f:size",0.);
+  assert(created);
+
+  for(face_descriptor fd : sm.faces())
+  { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
+
+  Drawing_functor_small_faces df(sm);
+  CGAL::Graphic_buffer<float> buffer;
+
+  add_in_graphic_buffer(sm, buffer, df);
+  CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");
+  if(app)
+  {
+    app.basic_viewer().on_key_pressed=
+      [&sm, &df, &buffer] (QKeyEvent* e, CGAL::Basic_viewer_qt<float>* basic_viewer) -> bool
+      {
+        const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+        if ((e->key() == ::Qt::Key_I) && (modifiers == ::Qt::NoButton))
+        {
+          df.m_threshold+=5;
+          if(df.m_threshold>100) { df.m_threshold=100; }
+          basic_viewer->displayMessage
+            (QString("Small faces threshold=%1.").arg(df.m_threshold));
+
+          basic_viewer->clear();
+          add_in_graphic_buffer(sm, buffer, df);
+          basic_viewer->redraw();
+        }
+        else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
+        {          
+          if(df.m_threshold<5) { df.m_threshold=0; }
+          else  { df.m_threshold-=5; } 
+          basic_viewer->displayMessage
+            (QString("Small faces threshold=%1.").arg(df.m_threshold));
+
+          basic_viewer->clear();
+          add_in_graphic_buffer(sm, buffer, df);
+          basic_viewer->redraw();
+        }
+        else
+        {
+          // Return false will call the base method to process others/classicals key
+          return false;
+        }
+        return true;
+      };
+
+    // Here we add shortcut descriptions
+    app.basic_viewer().setKeyDescription(::Qt::Key_I, "Increase threshold for small faces");
+    app.basic_viewer().setKeyDescription(::Qt::Key_D, "Decrease threshold for small faces");
+
+    // Then we run the app
+    app.run();
+  }
+  
+  sm.remove_property_map(faces_size);
 
   return EXIT_SUCCESS;
 }

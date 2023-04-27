@@ -7,15 +7,24 @@
 # Careful when modifying
 
 cmake_minimum_required(VERSION 3.1...3.23)
-project(CGAL_basic_viewers_Examples)
+project(Basic_viewer_Examples)
 
 #CGAL_Qt5 is needed for the drawing.
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(Eigen3 3.1.0)
+include(CGAL_Eigen3_support)
 
 create_single_source_cgal_program("draw_surface_mesh_small_faces.cpp")
+create_single_source_cgal_program("draw_mesh_and_points.cpp")
+
 if(CGAL_Qt5_FOUND)
   #link it with the required CGAL libraries
   target_link_libraries(draw_surface_mesh_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_mesh_and_points PUBLIC CGAL::CGAL_Basic_viewer)
+endif()
+
+if(TARGET CGAL::Eigen3_support)
+  target_link_libraries(draw_mesh_and_points PUBLIC CGAL::Eigen3_support)
 endif()
 
 #end of the file

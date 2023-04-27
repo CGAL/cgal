@@ -22,7 +22,6 @@ create_single_source_cgal_program("sm_iterators.cpp")
 create_single_source_cgal_program("sm_kruskal.cpp")
 create_single_source_cgal_program("sm_memory.cpp")
 create_single_source_cgal_program("sm_properties.cpp")
-create_single_source_cgal_program("sm_draw_small_faces.cpp")
 create_single_source_cgal_program("check_orientation.cpp")
 
 #create the executable of the application
@@ -32,7 +31,6 @@ if(CGAL_Qt5_FOUND)
   #link it with the required CGAL libraries
   target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Basic_viewer)
 
-  target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
 
 #end of the file
