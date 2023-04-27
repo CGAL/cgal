@@ -50,7 +50,7 @@ public:
   /*!
   introduces a weighted point from point `p` and weight `0`.
   \cgalEpicExact
-  
+
   \warning The `explicit` keyword is used to avoid accidental implicit conversions
            between Point_2 and Weighted_point_2.
   */
@@ -162,7 +162,7 @@ public:
   /*!
   returns the i'th %Cartesian coordinate of `p`.
   \pre  `0 <= i <= 1`
-  
+
   \cgalEpicExact
   */
   Kernel::FT cartesian(int i) const;
@@ -170,7 +170,7 @@ public:
   /*!
   returns `cartesian(i)`.
   \pre  `0 <= i <= 1`
-  
+
   \cgalEpicExact
   */
   Kernel::FT operator[](int i) const;
