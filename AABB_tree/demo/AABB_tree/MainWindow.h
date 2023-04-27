@@ -23,7 +23,7 @@ public:
   QJSEngine* myEngine;
 
   Foo()
-    : myEngine(new QJSEngine())
+    : myEngine(new QJSEngine(this))
   {
       QJSValue baz = myEngine->newQObject(this);
       myEngine->.globalObject().setProperty("baz", baz);

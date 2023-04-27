@@ -16,7 +16,7 @@
 
 
 MainWindow::MainWindow(QWidget* parent)
-  : CGAL::Qt::DemosMainWindow(parent), myEngine(new QJSEngine())
+  : CGAL::Qt::DemosMainWindow(parent), myEngine(new QJSEngine(this))
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
