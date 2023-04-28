@@ -10,6 +10,7 @@ Release date: October 2023
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
+- **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
 
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)

@@ -26,7 +26,7 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 \sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
 template<class FT, class PointIterator, class SsK>
-boost::shared_ptr< Straight_skeleton_2<SsK> >
+std::shared_ptr< Straight_skeleton_2<SsK> >
 create_exterior_straight_skeleton_2( FT max_offset,
                                      PointIterator vertices_begin,
                                      PointIterator vertices_end,
@@ -56,7 +56,7 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 \sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
 template<class FT, class Polygon, class SsK>
-boost::shared_ptr< Straight_skeleton_2<SsK> >
+std::shared_ptr< Straight_skeleton_2<SsK> >
 create_exterior_straight_skeleton_2 ( FT max_offset,
                                       const Polygon& P,
                                       SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
@@ -82,7 +82,7 @@ holes given by `[holes_begin,holes_end]`.
 \sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
 template<class PointIterator, class HoleIterator, class SsK>
-boost::shared_ptr< Straight_skeleton_2<SsK> >
+std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin,
                                       PointIterator outer_contour_vertices_end,
                                       HoleIterator holes_begin,
@@ -105,7 +105,7 @@ polygon whose outer boundary is given by the point sequence
 \sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
 template<class PointIterator, class SsK>
-boost::shared_ptr< Straight_skeleton_2<SsK> >
+std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin,
                                       PointIterator outer_contour_vertices_end,
                                       SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
@@ -127,7 +127,7 @@ polygon `outer_contour`.
 \sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
 template<class Polygon, class SsK>
-boost::shared_ptr< Straight_skeleton_2<SsK> >
+std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_straight_skeleton_2 ( const Polygon& outer_contour,
                                       SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
 

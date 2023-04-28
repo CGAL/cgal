@@ -15,7 +15,7 @@
 
 #include <CGAL/Polygon_with_holes_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 namespace CGAL_SS_i {
@@ -33,11 +33,11 @@ inline typename Poly::const_iterator vertices_end ( Poly const& aPoly )
 { return aPoly.end() ; }
 
 template<class Poly>
-inline typename Poly::const_iterator vertices_begin ( boost::shared_ptr<Poly> const& aPoly )
+inline typename Poly::const_iterator vertices_begin ( std::shared_ptr<Poly> const& aPoly )
 { return aPoly->begin() ; }
 
 template<class Poly>
-inline typename Poly::const_iterator vertices_end ( boost::shared_ptr<Poly> const& aPoly )
+inline typename Poly::const_iterator vertices_end ( std::shared_ptr<Poly> const& aPoly )
 { return aPoly->end() ; }
 
 // Polygon_2
@@ -52,11 +52,11 @@ vertices_end( Polygon_2<K,C> const& aPoly )
 { return aPoly.vertices_end() ; }
 
 template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( boost::shared_ptr<Polygon_2<K,C> > const& aPoly )
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( std::shared_ptr<Polygon_2<K,C> > const& aPoly )
 { return aPoly->vertices_begin() ; }
 
 template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( boost::shared_ptr<Polygon_2<K,C> > const& aPoly )
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( std::shared_ptr<Polygon_2<K,C> > const& aPoly )
 { return aPoly->vertices_end() ; }
 
 // Polygon_with_holes_2
@@ -72,12 +72,12 @@ vertices_end( Polygon_with_holes_2<K,C> const& aPoly )
 
 template<class K, class C>
 inline typename Polygon_with_holes_2<K,C>::Polygon_2::Vertex_const_iterator
-vertices_begin ( boost::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
+vertices_begin ( std::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
 { return aPoly->outer_boundary().vertices_begin() ; }
 
 template<class K, class C>
 inline typename Polygon_with_holes_2<K,C>::Polygon_2::Vertex_const_iterator
-vertices_end( boost::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
+vertices_end( std::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
 { return aPoly->outer_boundary().vertices_end() ; }
 
 } // namespace CGAL_SS_i

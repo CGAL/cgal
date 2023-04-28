@@ -17,7 +17,7 @@
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 
 #include <boost/optional/optional.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 
@@ -71,7 +71,7 @@ public :
 
   typedef boost::optional<Point_2> OptionalPoint_2 ;
 
-  typedef boost::shared_ptr<Container> ContainerPtr ;
+  typedef std::shared_ptr<Container> ContainerPtr ;
 
   Polygon_offset_builder_2( Ss const& aSs, Traits const& aTraits = Traits(), Visitor const& aVisitor = Visitor() )  ;
 

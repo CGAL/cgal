@@ -7,7 +7,7 @@
 #include <CGAL/compute_outer_frame_margin.h>
 #include "print.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 #include <cassert>
@@ -22,7 +22,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Kernel::Point_2 Point_2;
 typedef CGAL::Polygon_2<Kernel>    Contour;
-typedef boost::shared_ptr<Contour> ContourPtr;
+typedef std::shared_ptr<Contour> ContourPtr;
 typedef std::vector<ContourPtr>    ContourSequence ;
 
 typedef CGAL::Straight_skeleton_2<Kernel> Ss;
@@ -97,7 +97,7 @@ int main()
     ssb.enter_contour(star.rbegin(),star.rend());
 
     // Construct the skeleton
-    boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+    std::shared_ptr<Ss> ss = ssb.construct_skeleton();
 
     // Proceed only if the skeleton was correctly constructed.
     if ( ss )

@@ -3,7 +3,7 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <CGAL/draw_polygon_with_holes_2.h>
 
@@ -17,8 +17,8 @@ typedef K::Point_2                    Point ;
 typedef CGAL::Polygon_2<K>            Polygon_2 ;
 typedef CGAL::Polygon_with_holes_2<K> PolygonWithHoles ;
 
-typedef boost::shared_ptr<PolygonWithHoles> PolygonWithHolesPtr ;
-typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
+typedef std::shared_ptr<PolygonWithHoles> PolygonWithHolesPtr ;
+typedef std::shared_ptr<Polygon_2> PolygonPtr ;
 
 typedef std::vector<PolygonWithHolesPtr> PolygonWithHolesPtrVector;
 typedef std::vector<PolygonPtr> PolygonPtrVector;

@@ -1,5 +1,4 @@
 #include <fstream>
-#include<boost/shared_ptr.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
@@ -42,9 +41,9 @@ typedef CGAL::Polygon_with_holes_2<K,std::list< Point_2 > > Polygon_with_holes_2
 
 typedef CGAL::Straight_skeleton_2<K> Ss ;
 
-typedef boost::shared_ptr<Ss> SsPtr ;
+typedef std::shared_ptr<Ss> SsPtr ;
 
-typedef boost::shared_ptr<Polygon2> PolygonPtr ;
+typedef std::shared_ptr<Polygon2> PolygonPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtr_vector ;
 

@@ -24,7 +24,7 @@
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/scoped_ptr.hpp>
 #include <boost/mpl/bool.hpp>
 
@@ -111,7 +111,7 @@ public:
   typedef SSkel_   SSkel ;
   typedef Visitor_ Visitor ;
 
-  typedef boost::shared_ptr<SSkel> SSkelPtr ;
+  typedef std::shared_ptr<SSkel> SSkelPtr ;
 
 private :
 

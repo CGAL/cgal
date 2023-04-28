@@ -84,11 +84,11 @@ void dump_to_eps( CGAL::Straight_skeleton_2<K> const& aSkeleton, char const* aTy
 
 template<class K, class C>
 void dump_to_eps ( CGAL::Polygon_with_holes_2<K,C> const&                                     aInput
-                 , std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > const& aOutput
+                 , std::vector< std::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > const& aOutput
                  , std::ostream&                                                            rOut
                  )
 {
-  typedef std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > PolyWH_vector ;
+  typedef std::vector< std::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > PolyWH_vector ;
 
   CGAL::Bbox_2 lBbox = CGAL::bbox_2(aInput);
 
