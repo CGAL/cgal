@@ -24,7 +24,7 @@ endif()
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Gui Svg)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets OpenGL)
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
@@ -42,7 +42,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND AND TARGET CGAL::Eigen3_support)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Triangulation_on_sphere_2_Demo )
 
-  target_link_libraries( Triangulation_on_sphere_2_Demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 CGAL::Eigen3_support)
+  target_link_libraries( Triangulation_on_sphere_2_Demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGL Qt6::Widgets CGAL::Eigen3_support)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test( Triangulation_on_sphere_2_Demo )

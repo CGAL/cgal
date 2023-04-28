@@ -47,7 +47,7 @@ endif()
 # Find Qt6 itself
 find_package(Qt6 QUIET
              COMPONENTS OpenGLWidgets Widgets
-             OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
+             OPTIONAL_COMPONENTS WebSockets Network)
 
 set_package_properties(
   Qt6 PROPERTIES
@@ -381,13 +381,6 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(Polyhedron_3 PRIVATE polyhedron_demo)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polyhedron_3)
 
-  if(POLYHEDRON_QTSCRIPT_DEBUGGER)
-    if(TARGET Qt6::ScriptTools)
-      target_link_libraries(polyhedron_demo PUBLIC Qt6::ScriptTools)
-    else()
-      message(STATUS "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt6 ScriptTools library was not found.")
-    endif()
-  endif()
   target_link_libraries(Polyhedron_3 PRIVATE demo_framework)
 
   # Link with CGAL

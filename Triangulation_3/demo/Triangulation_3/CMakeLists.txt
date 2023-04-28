@@ -20,7 +20,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets OpenGL)
 
 if(Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -70,7 +70,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS T3_demo)
 
   target_link_libraries(T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
-  target_link_libraries(T3_demo PRIVATE Qt6::OpenGLWidgets)
+  target_link_libraries(T3_demo PRIVATE Qt6::OpenGLWidgets Qt6::OpenGL)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(T3_demo PUBLIC CGAL::TBB_support)
   endif()

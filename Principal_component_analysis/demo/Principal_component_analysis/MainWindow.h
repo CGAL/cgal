@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 
 class QDragEnterEvent;

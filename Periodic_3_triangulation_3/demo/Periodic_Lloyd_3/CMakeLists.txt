@@ -19,13 +19,9 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS Help OpenGLWidget Svg)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL OpenGLWidgets Help ToolsTools)
 
-if(Qt6Help_VERSION VERSION_LESS 5.12)
-  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qcollectiongenerator)
-else()
-  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qhelpgenerator)
-endif()
+set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qhelpgenerator)
 
 if(CGAL_Qt6_FOUND
    AND Qt6_FOUND
@@ -68,7 +64,7 @@ if(CGAL_Qt6_FOUND
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3)
 
   target_link_libraries(Periodic_Lloyd_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
-                                                 Qt6::OpenGLWidget)
+                                                 Qt6::OpenGLWidgets Qt6::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Periodic_Lloyd_3)

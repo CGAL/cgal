@@ -23,7 +23,7 @@ create_single_source_cgal_program("simple_triangulation_3.cpp")
 create_single_source_cgal_program("simplex.cpp")
 
 create_single_source_cgal_program("draw_triangulation_3.cpp")
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_triangulation_3 PUBLIC CGAL::CGAL_Basic_viewer)
 else()
   message(STATUS "NOTICE: The example 'draw_triangulation_3' requires Qt6, and will not be compiled.")
@@ -44,9 +44,9 @@ if(TARGET CGAL::TBB_support)
 
   if(BUILD_TESTING)
     set_property(TEST
-      execution___of__parallel_insertion_and_removal_in_regular_3
-      execution___of__parallel_insertion_in_delaunay_3
-      execution___of__sequential_parallel
+      "execution   of  parallel_insertion_and_removal_in_regular_3"
+      "execution   of  parallel_insertion_in_delaunay_3"
+      "execution   of  sequential_parallel"
       PROPERTY RUN_SERIAL 1)
   endif()
 else()

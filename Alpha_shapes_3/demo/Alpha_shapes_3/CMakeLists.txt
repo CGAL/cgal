@@ -19,7 +19,7 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Svg)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL OpenGLWidgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
@@ -40,7 +40,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Alpha_shape_3)
 
   target_link_libraries(Alpha_shape_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
-                                              Qt6::OpenGLWidgets Qt6::Gui)
+  Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Alpha_shape_3)

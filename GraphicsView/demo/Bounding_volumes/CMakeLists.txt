@@ -15,7 +15,7 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Svg)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)

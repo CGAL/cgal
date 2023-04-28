@@ -27,7 +27,7 @@ set(QT_USE_QTXML TRUE)
 set(QT_USE_QTMAIN TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTOPENGL TRUE)
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets ScriptTools)
+find_package(Qt6 QUIET COMPONENTS OpenGLWidgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   # put plugins (which are shared libraries) at the same location as

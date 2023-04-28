@@ -15,7 +15,7 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Svg)
+find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Widgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   set(CMAKE_AUTOMOC ON)
@@ -36,7 +36,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Snap_rounding_2)
 
   target_link_libraries(Snap_rounding_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
-                                                Qt6::Gui)
+                                                Qt6::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Snap_rounding_2)

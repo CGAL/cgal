@@ -25,7 +25,7 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets OpenGL)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
@@ -51,7 +51,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
                           ${CGAL_Qt6_MOC_FILES})
 
   target_link_libraries(PCA_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
-                                         CGAL::Eigen3_support Qt6::Gui)
+                                         CGAL::Eigen3_support Qt6::Widgets Qt6::OpenGL)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS PCA_demo)
 

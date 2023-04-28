@@ -17,7 +17,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Widgets Svg)
+find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Widgets)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
@@ -39,7 +39,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     ${CGAL_Qt6_RESOURCE_FILES} ${CGAL_Qt6_MOC_FILES})
 
   target_link_libraries(Polyline_simplification_2
-                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Gui)
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polyline_simplification_2)
 

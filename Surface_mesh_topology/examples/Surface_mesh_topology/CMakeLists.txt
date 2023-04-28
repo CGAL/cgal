@@ -31,7 +31,7 @@ foreach(cppfile ${SOURCE_FILES})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(edgewidth_lcc PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(edgewidth_surface_mesh PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(facewidth PUBLIC CGAL::CGAL_Basic_viewer)

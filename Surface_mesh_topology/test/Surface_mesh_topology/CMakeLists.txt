@@ -33,7 +33,7 @@ foreach(cppfile ${SOURCE_FILES})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(fundamental_group_of_the_circle PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(fundamental_group_of_the_torus PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(path_with_rle_deformation_tests PUBLIC CGAL::CGAL_Basic_viewer)

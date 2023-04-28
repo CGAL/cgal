@@ -13,7 +13,7 @@ set(CMAKE_AUTOMOC ON)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 ImageIO)
 # Find Qt6 itself
 find_package(Qt6 QUIET
-             COMPONENTS OpenGLWidget Svg
+             COMPONENTS OpenGLWidgets Svg
              OPTIONAL_COMPONENTS WebSockets)
 
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)

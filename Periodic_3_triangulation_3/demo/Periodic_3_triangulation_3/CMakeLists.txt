@@ -17,18 +17,14 @@ endif()
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Help Core)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL OpenGLWidgets Help ToolsTools)
 
 if(Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif(Qt6_FOUND)
 
-if(Qt6Help_VERSION VERSION_LESS 5.12)
-  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qcollectiongenerator)
-else()
-  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qhelpgenerator)
-endif()
+set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qhelpgenerator)
 
 if(CGAL_Qt6_FOUND
    AND Qt6_FOUND
@@ -73,7 +69,7 @@ if(CGAL_Qt6_FOUND
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   target_link_libraries(periodic_3_triangulation_3_demo
-                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets)
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(periodic_3_triangulation_3_demo)

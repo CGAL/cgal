@@ -20,7 +20,7 @@ set(QT_USE_QTMAIN TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTOPENGL TRUE)
 
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Svg)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
@@ -42,7 +42,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Segment_voronoi_linf_2)
 
   target_link_libraries(Segment_voronoi_linf_2 PRIVATE CGAL::CGAL
-                                                       CGAL::CGAL_Qt6 Qt6::Gui)
+                                                       CGAL::CGAL_Qt6 Qt6::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Segment_voronoi_linf_2)

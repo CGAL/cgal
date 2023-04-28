@@ -42,11 +42,9 @@ add_definitions(-DCMAP_WITH_INDEX) # to use cc with index (handle otherwise)
 ##################
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Svg)
+find_package(Qt6 COMPONENTS Widgets OpenGL OpenGLWidgets)
 
-if(NOT
-   (CGAL_Qt6_FOUND
-    AND Qt6_FOUND))
+if(NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND)
 
   message("NOTICE: This demo requires CGAL and Qt6, and will not be compiled.")
 
@@ -79,7 +77,7 @@ else()
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
   target_link_libraries(Linear_cell_complex_3_demo
-                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Gui Qt6::OpenGLWidgets)
+                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Linear_cell_complex_3_demo)

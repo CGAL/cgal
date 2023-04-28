@@ -40,10 +40,14 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   Added the function `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` to remove badly shaped triangles faces in a mesh.
 
+-   Added the function `CGAL::Polygon_mesh_processing::triangulate_polygons()`, which allows users to triangulate polygon soups.
+
 -   Added the functions `CGAL::Polygon_mesh_processing::remesh_planar_patches()` and
     `CGAL::Polygon_mesh_processing::remesh_almost_coplanar_patches()` to retriangulate patches of coplanar faces in a mesh.
 
 -   Added a named parameter to `CGAL::Polygon_mesh_processing::smooth_shape()` to disable scaling to compensate volume loss.
+
+-   Added the functions `CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect()` and `CGAL::Polygon_mesh_processing::triangle_soup_self_intersections()` to identify and report self-intersections in a triangle soup, similarly to existing functions on triangle meshes.
 
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
@@ -117,6 +121,7 @@ extracted from labeled images.
 
 ### [2D Minkowski Sums](https://doc.cgal.org/5.6/Manual/packages.html#PkgMinkowskiSum2)
 -   Fixed a bug that made holes in the Minkowski sum disappear
+-   Fixed hole filtering. The code used to erroneously remove holes from the container of holes of polygons with holes that did not affect the minkowsi sum. Now it simply adds those that do affect it.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------

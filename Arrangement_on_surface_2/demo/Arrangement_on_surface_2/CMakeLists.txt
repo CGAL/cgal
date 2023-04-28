@@ -13,7 +13,7 @@ if(POLICY CMP0071)
 endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
-find_package(Qt6 QUIET COMPONENTS Gui Widgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if (CGAL_Qt6_FOUND AND Qt6_FOUND)
   include(${CGAL_USE_FILE})
@@ -110,7 +110,7 @@ if (CGAL_Qt6_FOUND AND Qt6_FOUND)
                  ${CGAL_Qt6_RESOURCE_FILES}
                  ${CGAL_Qt6_MOC_FILES})
 
-  target_link_libraries(arrangement_2 PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
+  target_link_libraries(arrangement_2 PRIVATE Qt6::Widgets)
   target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
   if(CGAL_Core_FOUND)
     target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL_Core)

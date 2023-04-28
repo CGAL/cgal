@@ -37,7 +37,9 @@
 #include <QSettings>
 #include <QUrl>
 #include <QRegularExpression>
-#include <QSvgGenerator>
+#if QT_SVG_LIB
+#  include <QSvgGenerator>
+#endif
 #include <QtCore>
 #include <QtOpenGL>
 
@@ -158,6 +160,7 @@ DemosMainWindow::setupOptionsMenu(QMenu* menuOptions)
   actionUse_Antialiasing->setChecked(true);
 }
 
+#if QT_SVG_LIB
 CGAL_INLINE_FUNCTION
 void
 DemosMainWindow::setupExportSVG(QAction* action, QGraphicsView* view)
@@ -188,6 +191,7 @@ void DemosMainWindow::exportSVG()
   this->view->render(&painter);
   painter.end();
 }
+#endif // QT_SVG_LIB
 
 CGAL_INLINE_FUNCTION
 void
@@ -448,13 +452,7 @@ void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
   resize(settings.value("size", this->size()).toSize());
 
   QPoint pos = settings.value("pos", this->pos()).toPoint();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if(QGuiApplication::screenAt(pos)) {
-#else
-   QDesktopWidget* desktop = qApp->desktop();
-     if(desktop->availableGeometry(pos).contains(pos)) {
-#endif
-
     move(pos);
   }
   settings.endGroup();

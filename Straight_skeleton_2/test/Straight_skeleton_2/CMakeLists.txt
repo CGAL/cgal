@@ -17,6 +17,6 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(issue7149 PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

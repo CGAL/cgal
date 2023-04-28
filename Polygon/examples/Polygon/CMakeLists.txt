@@ -15,7 +15,7 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_polygon PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(draw_polygon_with_holes PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

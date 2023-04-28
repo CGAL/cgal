@@ -15,7 +15,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
 find_package(LEDA QUIET)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Gui)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
 
 if(CGAL_Qt6_FOUND
    AND Qt6_FOUND

@@ -19,7 +19,7 @@ include_directories(BEFORE ./ ./include)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 5.4 QUIET COMPONENTS OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
 if(Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -68,8 +68,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_executable(Otr2_demo ${SRCS} ${CGAL_Qt6_MOC_FILES} ${UI_FILES}
                            ${CGAL_Qt6_RESOURCE_FILES})
 
-  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Gui
-                                          Qt6::OpenGLWidgets)
+  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets)
 
   # Link with pthread if necessary
   if(CIMG_INCLUDE_DIR)
