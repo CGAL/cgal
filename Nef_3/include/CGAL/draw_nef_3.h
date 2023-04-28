@@ -236,10 +236,10 @@ void compute_elements(const Nef_Polyhedron &nef,
 
 #define CGAL_NEF3_TYPE Nef_polyhedron_3<Kernel_, Items_, Mark_>
 
-// add_in_graphic_buffer
+// add_in_graphic_storage
 template <typename Kernel_, typename Items_, typename Mark_,
           typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_NEF3_TYPE &anef,
+void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
                            CGAL::Graphic_storage<BufferType> &graphic_buffer,
                            const DrawingFunctor &drawing_functor)
 {
@@ -250,7 +250,7 @@ void add_in_graphic_buffer(const CGAL_NEF3_TYPE &anef,
 
 template <typename Kernel_, typename Items_, typename Mark_,
           typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_NEF3_TYPE &anef,
+void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
                            CGAL::Graphic_storage<BufferType> &graphic_buffer)
 {
   // Default functor; user can add his own functor.
@@ -274,7 +274,7 @@ void add_in_graphic_buffer(const CGAL_NEF3_TYPE &anef,
     return get_random_color(random);
   };
 
-  add_in_graphic_buffer(anef, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(anef, graphic_buffer, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -287,7 +287,7 @@ void draw(const CGAL_NEF3_TYPE &anef,
           const char *title="Nef Polyhedron Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(anef, buffer, drawing_functor);
+  add_in_graphic_storage(anef, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -297,7 +297,7 @@ void draw(const CGAL_NEF3_TYPE &anef,
           const char *title="Nef Polyhedron Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(anef, buffer);
+  add_in_graphic_storage(anef, buffer);
   draw_graphic_storage(buffer, title);
 }
 

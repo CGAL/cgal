@@ -370,7 +370,7 @@ void compute_elements(const Mesh &mesh,
 } // namespace draw_function_for_face_graph_with_paths
 
 template <typename BufferType=float, class Mesh, class DrawingFunctor>
-void add_in_graphic_buffer(const Mesh& mesh,
+void add_in_graphic_storage(const Mesh& mesh,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            const DrawingFunctor& drawing_functor,
@@ -384,7 +384,7 @@ void add_in_graphic_buffer(const Mesh& mesh,
 }
 
 template <typename BufferType = float, class Mesh>
-void add_in_graphic_buffer(const Mesh& mesh,
+void add_in_graphic_storage(const Mesh& mesh,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
@@ -397,7 +397,7 @@ void add_in_graphic_buffer(const Mesh& mesh,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*fh*/>
       drawing_functor;
 
-  add_in_graphic_buffer(mesh, graphic_buffer, drawing_functor, paths, amark);
+  add_in_graphic_storage(mesh, graphic_buffer, drawing_functor, paths, amark);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -410,7 +410,7 @@ void draw(const Mesh& mesh,
           const char* title="Mesh Viewer With Path")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(mesh, buffer, &paths, amark);
+  add_in_graphic_storage(mesh, buffer, &paths, amark);
   draw_graphic_storage(buffer, title);
 }
 
@@ -423,7 +423,7 @@ void draw(const Mesh& mesh,
           const char* title="Mesh Viewer With Path")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(mesh, buffer, drawing_functor, &paths, amark);
+  add_in_graphic_storage(mesh, buffer, drawing_functor, &paths, amark);
   draw_graphic_storage(buffer, title);
 }
 
@@ -436,7 +436,7 @@ void draw(const Mesh& mesh,
 {
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(mesh, buffer, &paths, amark);
+  add_in_graphic_storage(mesh, buffer, &paths, amark);
   draw_graphic_storage(buffer, title);
 }
 

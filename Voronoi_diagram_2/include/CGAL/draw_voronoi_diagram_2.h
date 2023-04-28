@@ -337,7 +337,7 @@ void compute_elements(const V2& v2,
 
 template <class DG, class AT, class AP,
           typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_VORONOI_TYPE &v2,
+void add_in_graphic_storage(const CGAL_VORONOI_TYPE &v2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& m_drawing_functor)
 {
@@ -345,7 +345,7 @@ void add_in_graphic_buffer(const CGAL_VORONOI_TYPE &v2,
 }
 
 template <class DG, class AT, class AP, typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_VORONOI_TYPE& v2,
+void add_in_graphic_storage(const CGAL_VORONOI_TYPE& v2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   // Default functor; user can add his own functor.
@@ -355,7 +355,7 @@ void add_in_graphic_buffer(const CGAL_VORONOI_TYPE& v2,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
     drawing_functor;
 
-  add_in_graphic_buffer(v2, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(v2, graphic_buffer, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -368,7 +368,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(av2, buffer, drawing_functor);
+  add_in_graphic_storage(av2, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -384,7 +384,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
     drawing_functor;
 
-  add_in_graphic_buffer(av2, buffer, drawing_functor);
+  add_in_graphic_storage(av2, buffer, drawing_functor);
 
   QApplication_and_basic_viewer app(buffer, title);
   if(app)

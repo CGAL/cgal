@@ -69,7 +69,7 @@ void compute_elements(const PointSet& pointset,
 } // namespace draw_function_for_PointSet
 
 template <class P, class V, typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
+void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
                            Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
@@ -79,13 +79,13 @@ void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
 }
 
 template <class P, class V, typename BufferType=float>
-void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
+void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
                            Graphic_storage<BufferType>& graphic_buffer)
 {
   CGAL::Drawing_functor<Point_set_3<P, V>,
                         typename Point_set_3<P, V>::const_iterator,
                         int, int> drawing_functor;
-  add_in_graphic_buffer(apointset, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(apointset, graphic_buffer, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -97,7 +97,7 @@ void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
   Graphic_storage<float> buffer;
-  add_in_graphic_buffer(apointset, buffer, drawing_functor);
+  add_in_graphic_storage(apointset, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -106,7 +106,7 @@ void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
   Graphic_storage<float> buffer;
-  add_in_graphic_buffer(apointset, buffer);
+  add_in_graphic_storage(apointset, buffer);
   draw_graphic_storage(buffer, title);
 }
 

@@ -118,7 +118,7 @@ void compute_elements(const T2& t2,
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
 
 template <class Gt, class Tds, typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
+void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
@@ -126,7 +126,7 @@ void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
 }
 
 template <class Gt, class Tds, typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
+void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   CGAL::Graphic_storage<float> buffer;
@@ -147,7 +147,7 @@ void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
         return get_random_color(random);
       };
 
-  add_in_graphic_buffer(at2, graphic_buffer, drawingFunctor);
+  add_in_graphic_storage(at2, graphic_buffer, drawingFunctor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -158,7 +158,7 @@ void draw(const CGAL_T2_TYPE &at2, const DrawingFunctor &drawingfunctor,
           const char *title="Triangulation_2 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(at2, buffer, drawingfunctor);
+  add_in_graphic_storage(at2, buffer, drawingfunctor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -167,7 +167,7 @@ void draw(const CGAL_T2_TYPE& at2,
           const char *title="Triangulation_2 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(at2, buffer);
+  add_in_graphic_storage(at2, buffer);
   draw_graphic_storage(buffer, title);
 }
 

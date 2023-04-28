@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   Drawing_functor_small_faces df(sm);
   CGAL::Graphic_storage<float> buffer;
 
-  add_in_graphic_buffer(sm, buffer, df);
+  add_in_graphic_storage(sm, buffer, df);
   CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");
   if(app)
   {
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
             (QString("Small faces threshold=%1.").arg(df.m_threshold));
 
           basic_viewer->clear();
-          add_in_graphic_buffer(sm, buffer, df);
+          add_in_graphic_storage(sm, buffer, df);
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
             (QString("Small faces threshold=%1.").arg(df.m_threshold));
 
           basic_viewer->clear();
-          add_in_graphic_buffer(sm, buffer, df);
+          add_in_graphic_storage(sm, buffer, df);
           basic_viewer->redraw();
         }
         else

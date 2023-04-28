@@ -197,7 +197,7 @@ void compute_elements(const P2T2& p2t2,
 #define CGAL_P2T2_TYPE CGAL::Periodic_2_triangulation_2<Gt, Tds >
 
 template <typename BufferType=float, class Gt, class Tds, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_P2T2_TYPE& p2t2,
+void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
@@ -205,7 +205,7 @@ void add_in_graphic_buffer(const CGAL_P2T2_TYPE& p2t2,
 }
 
 template <typename BufferType=float, class Gt, class Tds>
-void add_in_graphic_buffer(const CGAL_P2T2_TYPE& p2t2,
+void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   CGAL::Drawing_functor_periodic_2_triangulation_2
@@ -214,7 +214,7 @@ void add_in_graphic_buffer(const CGAL_P2T2_TYPE& p2t2,
      typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> drawing_functor;
 
-  add_in_graphic_buffer(p2t2, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(p2t2, graphic_buffer, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -226,7 +226,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
           const char* title="2D Periodic Triangulation Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(ap2t2, buffer, drawing_functor);
+  add_in_graphic_storage(ap2t2, buffer, drawing_functor);
   draw_graphic_storage(buffer);
 }
 
@@ -241,7 +241,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
      typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> drawing_functor;
 
-  add_in_graphic_buffer(ap2t2, buffer, drawing_functor);
+  add_in_graphic_storage(ap2t2, buffer, drawing_functor);
   QApplication_and_basic_viewer app(buffer, title);
   if(app)
   {

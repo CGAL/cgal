@@ -232,14 +232,14 @@ void compute_elements(const LCC& lcc,
   CGAL::Linear_cell_complex_base<d_, ambient_dim, Traits_, Items_, Alloc_,     \
                                  Map, Refs, Storage_>
 
-// add_in_graphic_buffer: to add a LCC in the given graphic buffer, with a
+// add_in_graphic_storage: to add a LCC in the given graphic buffer, with a
 // drawing functor.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
          typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
+void add_in_graphic_storage(const CGAL_LCC_TYPE& alcc,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
@@ -247,13 +247,13 @@ void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
                                           graphic_buffer, drawing_functor);
 }
 
-// add_in_graphic_buffer: to add a LCC in the given graphic buffer, without a
+// add_in_graphic_storage: to add a LCC in the given graphic buffer, without a
 // drawing functor. Use default drawing values.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_, typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
+void add_in_graphic_storage(const CGAL_LCC_TYPE& alcc,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   CGAL::Drawing_functor_with_volume<CGAL_LCC_TYPE,
@@ -274,7 +274,7 @@ void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
     return get_random_color(random);
   };
 
-  add_in_graphic_buffer(alcc, graphic_buffer, drawing_functor_with_volume);
+  add_in_graphic_storage(alcc, graphic_buffer, drawing_functor_with_volume);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -289,7 +289,7 @@ void draw(const CGAL_LCC_TYPE& alcc, const DrawingFunctor& drawing_functor,
           const char *title="LCC Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(alcc, buffer, drawing_functor);
+  add_in_graphic_storage(alcc, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -301,7 +301,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
 void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(alcc, buffer);
+  add_in_graphic_storage(alcc, buffer);
   draw_graphic_storage(buffer, title);
 }
 

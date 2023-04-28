@@ -26,7 +26,7 @@ namespace CGAL
 #define CGAL_POLY_TYPE CGAL::Polyhedron_3 \
   <PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>
 
-// Specialization of add_in_graphic_buffer function.
+// Specialization of add_in_graphic_storage function.
 template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
          template < class T, class I, class A>
@@ -34,10 +34,10 @@ template<class PolyhedronTraits_3,
          class Alloc,
          typename BufferType=float,
          class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_POLY_TYPE& apoly,
+void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
                            CGAL::Graphic_storage<BufferType> &graphic_buffer,
                            const DrawingFunctor &drawing_functor)
-{ add_in_graphic_buffer_for_fg(apoly, graphic_buffer, drawing_functor); }
+{ add_in_graphic_storage_for_fg(apoly, graphic_buffer, drawing_functor); }
 
 template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
@@ -45,9 +45,9 @@ template<class PolyhedronTraits_3,
          class T_HDS,
          class Alloc,
          typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_POLY_TYPE& apoly,
+void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
                            CGAL::Graphic_storage<BufferType> &graphic_buffer)
-{ add_in_graphic_buffer_for_fg(apoly, graphic_buffer); }
+{ add_in_graphic_storage_for_fg(apoly, graphic_buffer); }
 
 // Specialization of draw function: require Qt and the CGAL basic viewer.
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -62,7 +62,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
           const char* title="Polyhedron Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer_for_fg(apoly, buffer);
+  add_in_graphic_storage_for_fg(apoly, buffer);
   draw_graphic_storage(buffer, title);
 }
 
@@ -78,7 +78,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
           const char* title="Polyhedron Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer_for_fg(apoly, buffer, drawing_functor);
+  add_in_graphic_storage_for_fg(apoly, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 #endif // CGAL_USE_BASIC_VIEWER

@@ -7,6 +7,37 @@ namespace CGAL {
 \cgalAutoToc
 \author Guillaume Damiand, Mostafa Ashraf
 
+Two main use:
+
+1) draw
+draw(XXX)
+
+2) through graphic storage
+
+Graohic_storage gs;
+add_in_graphic_storage(XXX, gs);
+draw_graphic_storage(gs);
+
+3) basic interactions
+
+introduce qapplication and basic viewer class
+
+4) advanced interactions
+
+introduce basic viewer class
+
+5) examples
+
+5.1) simple draw 
+
+5.2) draw with drawing functor
+
+5.3) draw 2 different DS in a same viewer
+
+5.4) interaction  with qapplication and basic viewer
+
+5.5) mix different basic viewer in a same window (code laurent ?)
+
 
 
 */

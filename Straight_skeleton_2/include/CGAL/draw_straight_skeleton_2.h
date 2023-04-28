@@ -130,7 +130,7 @@ void compute_elements(const SS2& ss2,
 #define CGAL_SS_TYPE CGAL::Straight_skeleton_2<K>
 
 template <typename BufferType=float, class K, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_SS_TYPE &ass2,
+void add_in_graphic_storage(const CGAL_SS_TYPE &ass2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
@@ -139,7 +139,7 @@ void add_in_graphic_buffer(const CGAL_SS_TYPE &ass2,
 }
 
 template <typename BufferType=float, class K>
-void add_in_graphic_buffer(const CGAL_SS_TYPE& ass2,
+void add_in_graphic_storage(const CGAL_SS_TYPE& ass2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   Drawing_functor<CGAL_SS_TYPE,
@@ -176,7 +176,7 @@ void add_in_graphic_buffer(const CGAL_SS_TYPE& ass2,
      return CGAL::IO::Color(10, 180, 10); // green, but not flashy
   };
 
-  add_in_graphic_buffer(ass2, graphic_buffer, drawingFunctor);
+  add_in_graphic_storage(ass2, graphic_buffer, drawingFunctor);
 }
 
 // Specialization of draw function.
@@ -187,7 +187,7 @@ void draw(const CGAL_SS_TYPE &ass2, const DrawingFunctor &drawingfunctor,
           const char *title="Straight Skeleton Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(ass2, buffer, drawingfunctor);
+  add_in_graphic_storage(ass2, buffer, drawingfunctor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -196,7 +196,7 @@ void draw(const CGAL_SS_TYPE &ass2,
           const char *title="Straight Skeleton Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(ass2, buffer);
+  add_in_graphic_storage(ass2, buffer);
   draw_graphic_storage(buffer, title);
 }
 

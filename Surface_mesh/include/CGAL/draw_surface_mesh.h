@@ -40,15 +40,15 @@ namespace CGAL
 {
 
 template<class K, typename BufferType=float,  class DrawingFunctor>
-void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
+void add_in_graphic_storage(const Surface_mesh<K>& amesh,
                            CGAL::Graphic_storage<BufferType> &graphic_buffer,
                            const DrawingFunctor &drawing_functor)
-{ add_in_graphic_buffer_for_fg(amesh, graphic_buffer, drawing_functor); }
+{ add_in_graphic_storage_for_fg(amesh, graphic_buffer, drawing_functor); }
 
 template<class K, typename BufferType=float>
-void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
+void add_in_graphic_storage(const Surface_mesh<K>& amesh,
                            CGAL::Graphic_storage<BufferType> &graphic_buffer)
-{ add_in_graphic_buffer_for_fg(amesh, graphic_buffer); }
+{ add_in_graphic_storage_for_fg(amesh, graphic_buffer); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -58,7 +58,7 @@ void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer_for_fg(amesh, buffer);
+  add_in_graphic_storage_for_fg(amesh, buffer);
   draw_graphic_storage(buffer, title);
 }
 
@@ -68,7 +68,7 @@ void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer_for_fg(amesh, buffer, drawing_functor);
+  add_in_graphic_storage_for_fg(amesh, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 

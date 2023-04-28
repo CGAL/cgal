@@ -99,16 +99,16 @@ void compute_elements(const P2& p2,
 
 #define CGAL_P2_TYPE CGAL::Polygon_2<T, C>
 
-// Specializations of add_in_graphic_buffer function
+// Specializations of add_in_graphic_storage function
 
 template<typename BufferType=float, class T, class C, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_P2_TYPE& ap2,
+void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawingfunctor)
 { draw_function_for_p2::compute_elements(ap2, graphic_buffer, drawingfunctor); }
 
 template<typename BufferType=float, class T, class C>
-void add_in_graphic_buffer(const CGAL_P2_TYPE& ap2,
+void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
                            CGAL::Graphic_storage<BufferType> &graphic_buffer)
 {
   CGAL::Drawing_functor<CGAL_P2_TYPE,
@@ -127,7 +127,7 @@ void draw(const CGAL_P2_TYPE &ap2,
           const char *title="Polygon_2 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(ap2, buffer);
+  add_in_graphic_storage(ap2, buffer);
   draw_graphic_storage(buffer, title);
 }
 
@@ -137,7 +137,7 @@ void draw(const CGAL_P2_TYPE &ap2,
           const char *title="Polygon_2 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(ap2, buffer, drawingfunctor);
+  add_in_graphic_storage(ap2, buffer, drawingfunctor);
   draw_graphic_storage(buffer, title);
 }
 

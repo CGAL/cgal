@@ -127,7 +127,7 @@ void compute_elements(const P2& p2, Graphic_storage<BufferType> &graphic_buffer,
 #define CGAL_P2_WITH_HOLES_TYPE CGAL::Polygon_with_holes_2<T, C>
 
 template <class T, class C, typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_P2_WITH_HOLES_TYPE& p2,
+void add_in_graphic_storage(const CGAL_P2_WITH_HOLES_TYPE& p2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor &drawing_functor)
 {
@@ -136,7 +136,7 @@ void add_in_graphic_buffer(const CGAL_P2_WITH_HOLES_TYPE& p2,
 }
 
 template <class T, class C, typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_P2_WITH_HOLES_TYPE& p2,
+void add_in_graphic_storage(const CGAL_P2_WITH_HOLES_TYPE& p2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   Drawing_functor<CGAL_P2_WITH_HOLES_TYPE,
@@ -144,7 +144,7 @@ void add_in_graphic_buffer(const CGAL_P2_WITH_HOLES_TYPE& p2,
                   typename CGAL_P2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
                   void*> drawing_functor;
 
-  add_in_graphic_buffer(p2, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(p2, graphic_buffer, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -155,7 +155,7 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const DrawingFunctor &drawing_func
           const char* title="Polygon with Holes Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(ap2, buffer, drawing_functor);
+  add_in_graphic_storage(ap2, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -164,7 +164,7 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
           const char* title="Polygon with Holes Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_buffer(ap2, buffer);
+  add_in_graphic_storage(ap2, buffer);
   draw_graphic_storage(buffer, title);
 }
 

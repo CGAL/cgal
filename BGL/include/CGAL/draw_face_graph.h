@@ -119,7 +119,7 @@ void compute_elements(const FG &fg,
 } // draw_function_for_FG
 
 template <typename BufferType=float, class FG, class DrawingFunctor>
-void add_in_graphic_buffer_for_fg(const FG &fg,
+void add_in_graphic_storage_for_fg(const FG &fg,
                                   CGAL::Graphic_storage<BufferType> &graphic_buffer,
                                   const DrawingFunctor &drawing_functor)
 {
@@ -127,7 +127,7 @@ void add_in_graphic_buffer_for_fg(const FG &fg,
 }
 
 template <typename BufferType=float, class FG>
-void add_in_graphic_buffer_for_fg(const FG &fg,
+void add_in_graphic_storage_for_fg(const FG &fg,
                                   CGAL::Graphic_storage<BufferType> &graphic_buffer)
 {
   Drawing_functor<FG,
@@ -151,7 +151,7 @@ void add_in_graphic_buffer_for_fg(const FG &fg,
     return get_random_color(CGAL::get_default_random());
   };
 
-  add_in_graphic_buffer_for_fg(fg, graphic_buffer, drawing_functor);
+  add_in_graphic_storage_for_fg(fg, graphic_buffer, drawing_functor);
 }
 
 } // End namespace CGAL

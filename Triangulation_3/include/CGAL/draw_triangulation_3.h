@@ -117,7 +117,7 @@ void compute_elements(const T3* t3,
 
 template <class Gt, class Tds, class Lock_data_structure,
           typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_T3_TYPE& at3,
+void add_in_graphic_storage(const CGAL_T3_TYPE& at3,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
                            const DrawingFunctor& drawing_functor)
 {
@@ -126,7 +126,7 @@ void add_in_graphic_buffer(const CGAL_T3_TYPE& at3,
 
 template <class Gt, class Tds, class Lock_data_structure,
           typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_T3_TYPE& at3,
+void add_in_graphic_storage(const CGAL_T3_TYPE& at3,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer)
 {
   CGAL::Drawing_functor<CGAL_T3_TYPE,
@@ -151,7 +151,7 @@ void add_in_graphic_buffer(const CGAL_T3_TYPE& at3,
       return get_random_color(random);
     };
 
-  add_in_graphic_buffer(at3, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(at3, graphic_buffer, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -162,7 +162,7 @@ void draw(const CGAL_T3_TYPE &at3, const DrawingFunctor &drawingfunctor,
           const char *title="T3 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(at3, buffer, drawingfunctor);
+  add_in_graphic_storage(at3, buffer, drawingfunctor);
   draw_graphic_storage(buffer, title);
 }
 
@@ -170,7 +170,7 @@ template <class Gt, class Tds, class Lock_data_structure>
 void draw(const CGAL_T3_TYPE &at3, const char *title="T3 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_buffer(at3, buffer);
+  add_in_graphic_storage(at3, buffer);
   draw_graphic_storage(buffer, title);
 }
 
