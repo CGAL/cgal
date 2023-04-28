@@ -1691,32 +1691,6 @@ void draw_graphic_storage(Graphic_storage<BufferType>& graphic_buffer,
   }
 }
 
-// template <typename BufferType = float>
-// void draw_graphic_storage(Graphic_storage<BufferType> &graphic_buffer,
-//                  const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress,
-//                  const char *title="CGAL Basic Viewer")
-// {
-// #if defined(CGAL_TEST_SUITE)
-//   bool cgal_test_suite = true;
-// #else
-//   bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-// #endif
-
-//   if (!cgal_test_suite)
-//   {
-//     Qt::init_ogl_context(4, 3);
-
-//     int argc = 1;
-//     const char *argv[2] = {title, nullptr};
-//     QApplication app(argc, const_cast<char **>(argv));
-//     Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer, title);
-//     basic_viewer._onPress = onPress;
-
-//     basic_viewer.show();
-//     app.exec();
-//   }
-// }
-
 //------------------------------------------------------------------------------
 template <typename BufferType=float>
 class QApplication_and_basic_viewer
