@@ -2,7 +2,8 @@
 sudo apt-get update
 sudo apt-get install -y  libmpfr-dev \
  libeigen3-dev qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev \
- libqt5svg5-dev qttools5-dev qttools5-dev-tools libboost-dev libinsighttoolkit4-dev zsh
+ libqt5svg5-dev qttools5-dev qttools5-dev-tools libboost-dev libinsighttoolkit4-dev zsh \
+ qt6-base-dev qt6-declarative-dev
 #update cmake to 3.18.4
 sudo apt purge --auto-remove cmake
 cd /tmp
