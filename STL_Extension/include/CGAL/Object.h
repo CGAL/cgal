@@ -29,20 +29,20 @@
 
 #include <boost/variant.hpp>
 #include <optional>
-#include <boost/any.hpp>
+#include <any>
 #include <memory>
 
 namespace CGAL {
 
 class Object
 {
-    std::shared_ptr<boost::any> obj;
+    std::shared_ptr<std::any> obj;
 
     // returns an any pointer from a variant
-    struct Any_from_variant : public boost::static_visitor<boost::any*> {
+    struct Any_from_variant : public boost::static_visitor<std::any*> {
       template<typename T>
-      boost::any* operator()(const T& t) const {
-        return new boost::any(t);
+      std::any* operator()(const T& t) const {
+        return new std::any(t);
       }
     };
 
@@ -61,7 +61,7 @@ class Object
     Object() : obj() { }
 
     template <class T>
-    Object(T && t, private_tag) : obj(new boost::any(std::forward<T>(t))) { }
+    Object(T && t, private_tag) : obj(new std::any(std::forward<T>(t))) { }
 
     // implicit constructor from optionals containing variants
     template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
@@ -76,7 +76,7 @@ class Object
     template <class T>
     bool assign(T &t) const
     {
-      const T* res = boost::any_cast<T>(obj.get());
+      const T* res = std::any_cast<T>(obj.get());
       if (!res) return false;
       t = *res;
       return true;
@@ -105,7 +105,7 @@ class Object
     template <class T>
     bool is() const
     {
-      return obj && boost::any_cast<T>(obj.get());
+      return obj && std::any_cast<T>(obj.get());
     }
 
     const std::type_info & type() const
@@ -159,14 +159,14 @@ template <class T>
 inline
 const T * object_cast(const Object * o)
 {
-  return boost::any_cast<T>((o->obj).get());
+  return std::any_cast<T>((o->obj).get());
 }
 
 template <class T>
 inline
 T object_cast(const Object & o)
 {
-  const T * result = boost::any_cast<T>((o.obj).get());
+  const T * result = std::any_cast<T>((o.obj).get());
   if (!result)
     throw Bad_object_cast();
   return *result;

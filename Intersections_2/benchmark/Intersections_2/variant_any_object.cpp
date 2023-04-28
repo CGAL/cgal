@@ -12,7 +12,7 @@
 
 #include <boost/variant.hpp>
 #include <optional>
-#include <boost/any.hpp>
+#include <any>
 #include <boost/timer.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -78,7 +78,7 @@ intersection_variant(const typename K::Segment_2 &seg1,
 }
 
 template <class K>
-boost::any intersection_any(const typename K::Segment_2 &seg1,
+std::any intersection_any(const typename K::Segment_2 &seg1,
                             const typename K::Segment_2 &seg2,
                             const K&)
 {
@@ -88,11 +88,11 @@ boost::any intersection_any(const typename K::Segment_2 &seg1,
   switch (ispair.intersection_type()) {
   case is_t::NO_INTERSECTION:
   default:
-    return boost::any();
+    return std::any();
   case is_t::POINT:
-    return boost::any(ispair.intersection_point());
+    return std::any(ispair.intersection_point());
   case is_t::SEGMENT:
-    return boost::any(ispair.intersection_segment());
+    return std::any(ispair.intersection_segment());
   }
 }
 
@@ -165,10 +165,10 @@ struct Any_f : Vec_holder {
     Vec_holder(p, s) { }
 
   void operator()(const Segment& s1, const Segment& s2) {
-    boost::any obj = intersection_any(s1, s2, K());
-    if (const Point * point = boost::any_cast<Point>(&obj)) {
+    std::any obj = intersection_any(s1, s2, K());
+    if (const Point * point = std::any_cast<Point>(&obj)) {
        p->push_back(*point);
-    } else if (const Segment * segment = boost::any_cast<Segment>(&obj)) {
+    } else if (const Segment * segment = std::any_cast<Segment>(&obj)) {
       s->push_back(*segment);
     }
   }

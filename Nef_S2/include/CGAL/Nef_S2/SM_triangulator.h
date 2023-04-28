@@ -22,7 +22,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
@@ -213,7 +213,7 @@ public:
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     geninfo<vertex_info>::clear(info(v));
     #else
-    info(v)=boost::any();
+    info(v)=std::any();
     #endif
   }
 
@@ -223,7 +223,7 @@ public:
     return geninfo<vertex_info>::access(info(v));
     #else
     return
-      *boost::any_cast<vertex_info>(&info(v));
+      *std::any_cast<vertex_info>(&info(v));
     #endif
   }
 
@@ -258,8 +258,8 @@ public:
     geninfo<edge_info>::clear(info(e));
     geninfo<edge_info>::clear(info(e->twin()));
     #else
-    info(e)=boost::any();
-    info(e->twin())=boost::any();
+    info(e)=std::any();
+    info(e->twin())=std::any();
     #endif
   }
 
@@ -269,7 +269,7 @@ public:
     return geninfo<edge_info>::access(info(e));
     #else
     return
-      *boost::any_cast<edge_info>(&info(e));
+      *std::any_cast<edge_info>(&info(e));
     #endif
   }
 
@@ -288,7 +288,7 @@ public:
     return geninfo<edge_info>::const_access(info(e));
     #else
     return
-      *boost::any_cast<edge_info>(&info(e));
+      *std::any_cast<edge_info>(&info(e));
     #endif
   }
   const Mark& incident_mark(SHalfedge_const_handle e)  const

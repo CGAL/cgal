@@ -19,7 +19,7 @@ this is done with the global function `make_object()`. This
 encapsulation mechanism requires the use of `assign` or
 `object_cast` to use the functionality of the encapsulated class.
 
-This class is similar in spirit to `boost::any`.
+This class is similar in spirit to `std::any`.
 
 \cgalHeading{Example}
 

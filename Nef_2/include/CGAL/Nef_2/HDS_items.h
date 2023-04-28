@@ -22,7 +22,7 @@
 #include <optional>
 #include <boost/none.hpp>
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -62,7 +62,7 @@ public:
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     typedef void*  GenPtr;
     #else
-    typedef boost::any GenPtr;
+    typedef std::any GenPtr;
     #endif
 
     typedef typename Traits::Point Point;   // geometric embedding
@@ -151,7 +151,7 @@ public:
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     typedef void*  GenPtr;
     #else
-    typedef boost::any GenPtr;
+    typedef std::any GenPtr;
     #endif
 
     typedef typename std::list<Halfedge_handle>::iterator fc_iterator;
@@ -248,7 +248,7 @@ public:
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     typedef void*  GenPtr;
     #else
-    typedef boost::any GenPtr;
+    typedef std::any GenPtr;
     #endif
 
     typedef typename Traits::Mark  Mark;  // mark information

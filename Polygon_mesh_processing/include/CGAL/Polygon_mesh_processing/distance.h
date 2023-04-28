@@ -43,7 +43,7 @@
 #include <tbb/blocked_range.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-#include <boost/any.hpp>
+#include <any>
 
 #include <unordered_set>
 #include <algorithm>
@@ -1818,10 +1818,10 @@ struct Bounded_error_preprocessing
 #ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
 #endif
-  std::vector<boost::any>& tm_wrappers;
+  std::vector<std::any>& tm_wrappers;
 
   // Constructor.
-  Bounded_error_preprocessing(std::vector<boost::any>& tm_wrappers)
+  Bounded_error_preprocessing(std::vector<std::any>& tm_wrappers)
     : tm_wrappers(tm_wrappers)
   { }
 
@@ -1830,8 +1830,8 @@ struct Bounded_error_preprocessing
     : tm_wrappers(s.tm_wrappers)
   { }
 
-  bool is_tm1_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM1Wrapper); }
-  bool is_tm2_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM2Wrapper); }
+  bool is_tm1_wrapper(const std::any& operand) const { return operand.type() == typeid(TM1Wrapper); }
+  bool is_tm2_wrapper(const std::any& operand) const { return operand.type() == typeid(TM2Wrapper); }
 
   // TODO: make AABB tree build parallel!
   void operator()(const tbb::blocked_range<std::size_t>& range)
@@ -1849,12 +1849,12 @@ struct Bounded_error_preprocessing
       auto& tm_wrapper = tm_wrappers[i];
       if(is_tm1_wrapper(tm_wrapper))
       {
-        TM1Wrapper& object = boost::any_cast<TM1Wrapper&>(tm_wrapper);
+        TM1Wrapper& object = std::any_cast<TM1Wrapper&>(tm_wrapper);
         object.build_tree();
       }
       else if(is_tm2_wrapper(tm_wrapper))
       {
-        TM2Wrapper& object = boost::any_cast<TM2Wrapper&>(tm_wrapper);
+        TM2Wrapper& object = std::any_cast<TM2Wrapper&>(tm_wrapper);
         object.build_tree();
       }
       else
@@ -2031,7 +2031,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 
   std::vector<TMF> tm1_parts;
   std::vector<TMF_tree> tm1_trees;
-  std::vector<boost::any> tm_wrappers;
+  std::vector<std::any> tm_wrappers;
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
 #ifdef CGAL_HAUSDORFF_DEBUG
