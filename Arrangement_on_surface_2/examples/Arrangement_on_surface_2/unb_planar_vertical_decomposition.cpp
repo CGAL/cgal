@@ -10,7 +10,7 @@
 
 typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
                          Face_const_handle>              Cell_type;
-typedef boost::optional<Cell_type>                       Vert_decomp_type;
+typedef std::optional<Cell_type>                       Vert_decomp_type;
 typedef std::pair<Vert_decomp_type, Vert_decomp_type>    Vert_decomp_pair;
 typedef std::pair<Vertex_const_handle, Vert_decomp_pair> Vert_decomp_entry;
 typedef std::list<Vert_decomp_entry>                     Vert_decomp_list;

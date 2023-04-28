@@ -12,7 +12,7 @@ typedef std::back_insert_iterator<Coordinate_vector> Vector_insert_iterator;
 
 typedef CGAL::Barycentric_coordinates::Segment_coordinates_2<Kernel> Segment_coordinates;
 
-typedef boost::optional<Vector_insert_iterator> Output_type;
+typedef std::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 

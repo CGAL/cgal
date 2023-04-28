@@ -30,7 +30,7 @@
 #include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant.hpp>
 #ifdef CGAL_LAZY_KERNEL_DEBUG
 #  include <boost/optional/optional_io.hpp>
@@ -1196,7 +1196,7 @@ struct Lazy_construction_optional_for_polygonal_envelope
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
   typedef typename LK::E2A E2A;
-  typedef boost::optional<typename LK::Point_3> result_type;
+  typedef std::optional<typename LK::Point_3> result_type;
 
   CGAL_NO_UNIQUE_ADDRESS AC ac;
   CGAL_NO_UNIQUE_ADDRESS EC ec;
@@ -1209,9 +1209,9 @@ struct Lazy_construction_optional_for_polygonal_envelope
     {
       Protect_FPU_rounding<Protection> P;
       try {
-        boost::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2),CGAL::approx(l3));
-        if(oap == boost::none){
-          return boost::none;
+        std::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2),CGAL::approx(l3));
+        if(oap == std::nullopt){
+          return std::nullopt;
         }
         // Now we have to construct a rep for a lazy point with the three lazy planes.
         typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L1, L1> LazyPointRep;
@@ -1221,21 +1221,21 @@ struct Lazy_construction_optional_for_polygonal_envelope
         // rep = LazyPointRep(2,ap, ec, l1, l2, l3);
         rep.~LazyPointRep(); new (&rep) LazyPointRep(2, ap, ec, l1, l2, l3);
         typename LK::Point_3 lp(&rep);
-        return boost::make_optional(lp);
+        return std::make_optional(lp);
 
       } catch (Uncertain_conversion_exception&) {}
     }
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
-    if(oep == boost::none){
-      return boost::none;
+    std::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
+    if(oep == std::nullopt){
+      return std::nullopt;
     }
     typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
     const typename EK::Point_3 ep = *oep;
     LazyPointRep *rep = new LazyPointRep(ep);
     typename LK::Point_3 lp(rep);
-    return boost::make_optional(lp);
+    return std::make_optional(lp);
   }
 
   // for Intersect_point_3 with  Plane_3  Line_3
@@ -1246,9 +1246,9 @@ struct Lazy_construction_optional_for_polygonal_envelope
     {
       Protect_FPU_rounding<Protection> P;
       try {
-        boost::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2));
-        if(oap == boost::none){
-          return boost::none;
+        std::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2));
+        if(oap == std::nullopt){
+          return std::nullopt;
         }
         // Now we have to construct a rep for a lazy point with the line and the plane.
         typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
@@ -1258,21 +1258,21 @@ struct Lazy_construction_optional_for_polygonal_envelope
         // rep = LazyPointRep(2, ap, ec, l1, l2);
         rep.~LazyPointRep(); new (&rep) LazyPointRep(2, ap, ec, l1, l2);
         typename LK::Point_3 lp(&rep);
-        return boost::make_optional(lp);
+        return std::make_optional(lp);
 
       } catch (Uncertain_conversion_exception&) {}
     }
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2));
-    if(oep == boost::none){
-      return boost::none;
+    std::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2));
+    if(oep == std::nullopt){
+      return std::nullopt;
     }
     typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
     const typename EK::Point_3 ep = *oep;
     LazyPointRep *rep = new LazyPointRep(ep);
     typename LK::Point_3 lp(rep);
-    return boost::make_optional(lp);
+    return std::make_optional(lp);
   }
 };
 
@@ -1427,7 +1427,7 @@ struct Ith_for_intersection_with_variant {
 
   template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
   const T2&
-  operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const
+  operator()(const std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const
   {
     const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&(*o)));
     return (*ptr)[i];
@@ -1858,7 +1858,7 @@ struct Variant_cast {
 
   template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
   const T&
-  operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+  operator()(const std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
     // can throw but should never because we always build it inside
     // a static visitor with the right type
     return boost::get<T>(*o);
@@ -1866,7 +1866,7 @@ struct Variant_cast {
 
   template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
   T&
-  operator()(boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+  operator()(std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
     // can throw but should never because we always build it inside
     // a static visitor with the right type, if it throws bad_get
     return boost::get<T>(*o);

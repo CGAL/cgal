@@ -19,7 +19,7 @@
 // The macro CGAL_ARR_POINT_LOCATION_VERSION controls which version of the
 // point location is used. Currently two values are supported:
 // 1. Point location with CGAL::Object
-// 2. Point location with boost::optional<boost::variant<...> >
+// 2. Point location with std::optional<boost::variant<...> >
 // The default value is 2.
 
 #if !defined(CGAL_ARR_POINT_LOCATION_VERSION)
@@ -28,7 +28,7 @@
 
 #include <CGAL/Object.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant.hpp>
 
 #ifdef CGAL_CFG_BOOST_VARIANT_SWAP_BUG
@@ -73,7 +73,7 @@ struct Arr_point_location_result {
   // This function returns either make_object() or a result_type constructor
   // to generate return values. The Object version takes a dummy template
   // argument, which is needed for the return of the other option, e.g.,
-  // boost::optional<boost::variant> >.
+  // std::optional<boost::variant> >.
   // In theory a one parameter variant could be returned, but this _could_
   // lead to conversion overhead, and so we rather go for the real type.
   // Overloads for empty returns are also provided.
@@ -94,8 +94,8 @@ struct Arr_point_location_result {
   inline Type make_result(T t) { return Type(t); }
 
   static
-  inline boost::optional<Type> empty_optional_result()
-  { return boost::optional<Type>(); }
+  inline std::optional<Type> empty_optional_result()
+  { return std::optional<Type>(); }
 
   template <typename T>
   static

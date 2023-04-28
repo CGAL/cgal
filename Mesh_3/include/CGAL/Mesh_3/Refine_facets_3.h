@@ -43,7 +43,7 @@
 #include <CGAL/Object.h>
 
 #include <boost/format.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/optional/optional_io.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/if.hpp>
@@ -397,7 +397,7 @@ protected:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 
-  typedef typename boost::optional<
+  typedef typename std::optional<
     std::tuple<Surface_patch_index, Index, Bare_point> >
                                                       Facet_properties;
 
@@ -1624,7 +1624,7 @@ compute_facet_properties(const Facet& facet,
   CGAL_assertion( r_tr_.dimension() == 3 );
 
   // types
-  typedef boost::optional<typename MD::Surface_patch_index> Surface_patch;
+  typedef std::optional<typename MD::Surface_patch_index> Surface_patch;
   typedef typename MD::Intersection Intersection;
 
   // Functor

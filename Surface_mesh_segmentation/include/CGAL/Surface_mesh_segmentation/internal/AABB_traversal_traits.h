@@ -54,7 +54,7 @@ public:
 
     if ( GeomTraits().do_intersect_3_object()(query,
          primitive.datum(m_traits.shared_data())) ) {
-      boost::optional<Intersection_and_primitive_id> intersection
+      std::optional<Intersection_and_primitive_id> intersection
         = m_traits.intersection_object()(query, primitive);
       if(intersection) {
         *m_out_it++ = *intersection;

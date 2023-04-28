@@ -22,7 +22,7 @@
 
 #include <CGAL/config.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 #include <CGAL/iterator.h>
 #include <CGAL/Handle_with_policy.h>

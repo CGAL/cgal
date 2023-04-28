@@ -178,7 +178,7 @@ private:
   // The case distinction goes as follows:
   // result_type == FT                              => NT
   // result_type == Object                          => Object
-  // result_type == boost::optional                 => OPTIONAL_    Only for Intersect_point_3_for_polyhedral_envelope which returns a handle for a singleton
+  // result_type == std::optional                 => OPTIONAL_    Only for Intersect_point_3_for_polyhedral_envelope which returns a handle for a singleton
   // result_type == Bbox_2 || result_type == Bbox_3 => BBOX
   // default                                        => NONE
   // no result_type                                 => NONE
@@ -188,7 +188,7 @@ private:
   // specializations inside a non-namespace scope.
   // The default implementation does some default handling,
   // the special cases are filtered by partial specializations.
-  template <typename Construction, typename Dummy = boost::none_t>
+  template <typename Construction, typename Dummy = std::nullopt_t>
   struct Lazy_wrapper_traits :
     boost::mpl::eval_if< internal::Has_result_type<Construction>,
                          boost::mpl::eval_if< std::is_same< typename boost::remove_cv<

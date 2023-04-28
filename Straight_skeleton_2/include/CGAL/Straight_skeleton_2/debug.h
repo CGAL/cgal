@@ -42,11 +42,11 @@ bool sEnableTrace = true ;
        Straight_skeleton_external_trace(s); \
      }
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/intrusive_ptr.hpp>
 
 template<class T>
-inline std::string o2str( boost::optional<T> const& o )
+inline std::string o2str( std::optional<T> const& o )
 {
   std::ostringstream ss ; ss << std::setprecision(19)  ;
   if ( o )

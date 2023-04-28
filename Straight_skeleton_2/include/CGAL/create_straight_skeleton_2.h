@@ -21,7 +21,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include <memory>
 
 #include <algorithm>
@@ -159,7 +159,7 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 
   // @todo This likely should be done in the kernel K rather than the input kernel (i.e. the same
   // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
-  boost::optional<IFT> margin = compute_outer_frame_margin( aVerticesBegin,
+  std::optional<IFT> margin = compute_outer_frame_margin( aVerticesBegin,
                                                             aVerticesEnd,
                                                             lOffset );
 

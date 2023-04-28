@@ -154,7 +154,7 @@ typedef Traits::Point_2 Point_2;
 /*!
 constructs the builder class.
 */
-Straight_skeleton_builder_2(boost::optional<FT> max_time = boost::none,
+Straight_skeleton_builder_2(std::optional<FT> max_time = std::nullopt,
                             const Traits& traits = Traits(),
                             const Visitor& visitor = Visitor());
 

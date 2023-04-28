@@ -305,7 +305,7 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that wraps the curve end.
    */
-  boost::optional<boost::variant<Vertex*, Halfedge*> >
+  std::optional<boost::variant<Vertex*, Halfedge*> >
   place_boundary_vertex(Face*,
                         const X_monotone_curve_2&,
                         Arr_curve_end,
@@ -314,7 +314,7 @@ public:
   {
     // This function should never be called:
     CGAL_error();
-    return boost::none;
+    return std::nullopt;
   }
 
   /*! Locate the predecessor halfedge for the given curve around a given

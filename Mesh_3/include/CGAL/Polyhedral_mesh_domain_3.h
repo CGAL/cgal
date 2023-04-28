@@ -36,7 +36,7 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/tuple.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
@@ -136,7 +136,7 @@ public:
   //-------------------------------------------------------
   /// Type of indexes for cells of the input complex
   typedef int Subdomain_index;
-  typedef boost::optional<Subdomain_index> Subdomain;
+  typedef std::optional<Subdomain_index> Subdomain;
 
   /// Type of indexes for surface patch of the input complex
   typedef typename boost::property_map<Polyhedron,
@@ -144,7 +144,7 @@ public:
                                        >::type            Face_patch_id_pmap;
   typedef typename boost::property_traits<
     Face_patch_id_pmap>::value_type                       Surface_patch_index;
-  typedef boost::optional<Surface_patch_index>            Surface_patch;
+  typedef std::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
   typedef typename Mesh_3::internal::Index_generator<
@@ -388,7 +388,7 @@ public:
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
 
-      boost::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
+      std::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
       if ( primitive_id )
       {
         r_domain_.cache_primitive(q, *primitive_id);
@@ -430,7 +430,7 @@ public:
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
       typedef typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type
         Intersection_and_primitive_id;
-      typedef boost::optional<Intersection_and_primitive_id> AABB_intersection;
+      typedef std::optional<Intersection_and_primitive_id> AABB_intersection;
       typedef Point_3 Bare_point;
 
       AABB_intersection intersection;
@@ -447,7 +447,7 @@ public:
       {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         CGAL_precondition(r_domain_.do_intersect_surface_object()(q)
-                          != boost::none);
+                          != std::nullopt);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
         intersection = r_domain_.tree_.any_intersection(q);

@@ -34,7 +34,7 @@
   #endif
 #endif
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/random/lagged_fibonacci.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/variate_generator.hpp>

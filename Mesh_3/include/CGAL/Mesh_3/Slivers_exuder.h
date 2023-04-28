@@ -38,7 +38,7 @@
 
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/type_traits/is_convertible.hpp>
 
 #include <algorithm>
@@ -498,7 +498,7 @@ private:
   /**
    * Returns the umbrella of internal_facets vector
    */
-  boost::optional<Umbrella>
+  std::optional<Umbrella>
   get_umbrella(const Facet_vector& internal_facets,
                const Vertex_handle& v) const;
 
@@ -1351,7 +1351,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 
 
 template <typename C3T3, typename SC, typename V_>
-boost::optional<typename Slivers_exuder<C3T3,SC,V_>::Umbrella >
+std::optional<typename Slivers_exuder<C3T3,SC,V_>::Umbrella >
 Slivers_exuder<C3T3,SC,V_>::
 get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
              const Vertex_handle& /* v, no longer used */) const
@@ -1387,7 +1387,7 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
         {
           std::size_t count = (*uit).second.second;
           if(count == 2) //there will be more than 3 after insertion
-            return boost::none; //non-manifold configuration
+            return std::nullopt; //non-manifold configuration
 
           umbrella.insert(uit,
             std::make_pair(oe,
@@ -1563,8 +1563,8 @@ update_mesh(const Weighted_point& new_point,
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 
-  boost::optional<Umbrella> umbrella = get_umbrella(internal_facets, old_vertex);
-  if(umbrella == boost::none)
+  std::optional<Umbrella> umbrella = get_umbrella(internal_facets, old_vertex);
+  if(umbrella == std::nullopt)
     return false; //abort pumping this vertex
 
   // Delete old cells from queue (they aren't in the triangulation anymore)

@@ -296,7 +296,7 @@ are_equal(const Vertex *v,
 // represent the curve end along the face boundary.
 //
 template <typename GeomTraits, typename Dcel_>
-boost::optional
+std::optional
   <boost::variant
     <typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Vertex*,
      typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*> >
@@ -306,7 +306,7 @@ place_boundary_vertex(Face* f,
                       Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
   typedef boost::variant<Vertex*, Halfedge*>    Non_optional_result;
-  typedef boost::optional<Non_optional_result>  Result;
+  typedef std::optional<Non_optional_result>  Result;
 
   // Get a halfedge on the outer CCB of f and start traversing the CCB.
   Halfedge* first = *(f->outer_ccbs_begin());
@@ -331,7 +331,7 @@ place_boundary_vertex(Face* f,
   // If we reached here, we did not find a suitable halfedge, which should
   // never happen.
   CGAL_error();
-  return boost::none;
+  return std::nullopt;
 }
 
 //-----------------------------------------------------------------------------

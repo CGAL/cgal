@@ -55,7 +55,7 @@ the facet is good with regard to the criteria.
 In addition, an object of this type must contain an object of type
 `Facet_quality` if it represents
 a bad facet. `Facet_quality` must be accessible by
-`operator*()`. Note that `boost::optional<Facet_quality>` is
+`operator*()`. Note that `std::optional<Facet_quality>` is
 a natural model of this concept.
 */
 typedef unspecified_type Is_facet_bad;

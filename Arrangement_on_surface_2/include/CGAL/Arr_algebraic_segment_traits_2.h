@@ -25,7 +25,7 @@
 
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_impl.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 
 namespace CGAL {
@@ -267,8 +267,8 @@ public:
       template <typename OutputIterator> OutputIterator
       x_monotone_segment(Curve_2 cv,
                          Point_2 p,
-                         boost::optional<Point_2> start,
-                         boost::optional<Point_2> end,
+                         std::optional<Point_2> start,
+                         std::optional<Point_2> end,
                          OutputIterator out) const
       {
         typedef boost::variant<Point_2, X_monotone_curve_2>
@@ -407,19 +407,19 @@ public:
                         Site_of_point site_of_p,
                         OutputIterator out) const {
             if(site_of_p==POINT_IN_INTERIOR) {
-                return x_monotone_segment(cv,p,boost::none, boost::none,out);
+                return x_monotone_segment(cv,p,std::nullopt, std::nullopt,out);
             } else if(site_of_p==MIN_ENDPOINT) {
                 return x_monotone_segment(cv,
                                        p,
-                                       boost::optional<Point_2>(p),
-                                       boost::none,
+                                       std::optional<Point_2>(p),
+                                       std::nullopt,
                                        out);
             }
             CGAL_assertion(site_of_p==MAX_ENDPOINT);
             return x_monotone_segment(cv,
                                    p,
-                                   boost::none,
-                                   boost::optional<Point_2>(p),
+                                   std::nullopt,
+                                   std::optional<Point_2>(p),
                                    out);
         }
 
@@ -468,15 +468,15 @@ public:
                 return x_monotone_segment
                     (cv,
                      end_left,
-                     boost::optional<Point_2>(end_left),
-                     boost::optional<Point_2>(end_right),
+                     std::optional<Point_2>(end_left),
+                     std::optional<Point_2>(end_right),
                      out);
             } else {
                 return x_monotone_segment
                     (cv,
                      end_right,
-                     boost::optional<Point_2>(end_left),
-                     boost::optional<Point_2>(end_right),
+                     std::optional<Point_2>(end_left),
+                     std::optional<Point_2>(end_right),
                      out);
             }
         }

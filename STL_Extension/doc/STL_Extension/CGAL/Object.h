@@ -117,9 +117,9 @@ Object(boost::variant<T...>);
 
 /*!
 Implicit converting constructor for compatibility with
-`boost::optional` and `boost::variant`.
+`std::optional` and `boost::variant`.
  */
-Object(boost::optional< boost::variant<T...> >);
+Object(std::optional< boost::variant<T...> >);
 
 /// @}
 

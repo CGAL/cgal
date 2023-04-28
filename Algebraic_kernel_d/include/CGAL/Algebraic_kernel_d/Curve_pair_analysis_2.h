@@ -22,7 +22,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -136,9 +136,9 @@ public:
 
     typedef std::vector<Slice_element> Slice_info;
 
-    typedef boost::optional<Slice_info> Lazy_slice_info;
+    typedef std::optional<Slice_info> Lazy_slice_info;
 
-    typedef boost::optional<Bound> Lazy_bound;
+    typedef std::optional<Bound> Lazy_bound;
 
     typedef CGAL::internal::Event_indices<size_type> Event_indices;
 
@@ -151,11 +151,11 @@ public:
     typedef std::vector<std::vector<Intersection_info> >
         Intersection_info_container;
 
-    typedef boost::optional<Intersection_info_container>
+    typedef std::optional<Intersection_info_container>
         Lazy_intersection_info_container;
 
     // For lazy evaluation of Status_line_CPA_1s.
-    typedef boost::optional<Status_line_CPA_1> Lazy_status_line_CPA_1;
+    typedef std::optional<Status_line_CPA_1> Lazy_status_line_CPA_1;
 
     //! @}
 
@@ -191,31 +191,31 @@ private:
     Polynomial_2 g;
 
 
-    mutable boost::optional<std::vector<Polynomial_2> > subresultants;
+    mutable std::optional<std::vector<Polynomial_2> > subresultants;
 
-    mutable boost::optional<std::vector<Polynomial_1> >
+    mutable std::optional<std::vector<Polynomial_1> >
         principal_subresultants;
-    mutable boost::optional<std::vector<Polynomial_1> >
+    mutable std::optional<std::vector<Polynomial_1> >
         coprincipal_subresultants;
 
-    mutable boost::optional<Polynomial_1> resultant;
+    mutable std::optional<Polynomial_1> resultant;
 
-    mutable boost::optional<std::vector<Algebraic_real_1> > resultant_roots;
-    mutable boost::optional<std::vector<Algebraic_real_1> >
+    mutable std::optional<std::vector<Algebraic_real_1> > resultant_roots;
+    mutable std::optional<std::vector<Algebraic_real_1> >
         event_x_coordinates;
-    mutable boost::optional<std::vector<size_type> >
+    mutable std::optional<std::vector<size_type> >
         multiplicities_of_resultant_roots;
 
-    mutable boost::optional<std::vector<Bound> > stripe_values;
+    mutable std::optional<std::vector<Bound> > stripe_values;
 
     mutable std::vector< Lazy_status_line_CPA_1 > event_slices;
 
-    mutable boost::optional<std::vector< Lazy_bound > > intermediate_values;
+    mutable std::optional<std::vector< Lazy_bound > > intermediate_values;
 
-    mutable boost::optional< std::vector< Lazy_status_line_CPA_1 > >
+    mutable std::optional< std::vector< Lazy_status_line_CPA_1 > >
         intermediate_slices;
 
-    mutable boost::optional<std::vector<Event_indices> > event_indices;
+    mutable std::optional<std::vector<Event_indices> > event_indices;
 
     mutable Lazy_intersection_info_container intersection_info_container;
 
@@ -530,7 +530,7 @@ private:
     /*
      * \brief Computes the intermediate x-coordinates and their status lines
      *
-     * In fact, it only fills the data fields with boost::none instances,
+     * In fact, it only fills the data fields with std::nullopt instances,
      * according to the lazy philosophy of the whole class.
      */
     void compute_intermediate_values_and_slices() const;

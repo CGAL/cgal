@@ -571,7 +571,7 @@ let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
  * represent the curve end along the face boundary.
  */
 template <typename GeomTraits, typename Dcel>
-boost::optional
+std::optional
   <boost::variant
     <typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Vertex*,
      typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*> >
@@ -586,16 +586,16 @@ place_boundary_vertex(Face* /* f */,
                       Arr_parameter_space ps_y)
 {
   typedef boost::variant<Vertex*, Halfedge*>    Non_optional_result;
-  typedef boost::optional<Non_optional_result>  Result;
+  typedef std::optional<Non_optional_result>  Result;
 
   // std::cout << "place_boundary_vertex()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    if (m_south_pole == nullptr) return boost::none;
+    if (m_south_pole == nullptr) return std::nullopt;
     return Result(Non_optional_result(m_south_pole));
   }
 
   if (ps_y == ARR_TOP_BOUNDARY) {
-    if (m_north_pole == nullptr) return boost::none;
+    if (m_north_pole == nullptr) return std::nullopt;
     return Result(Non_optional_result(m_north_pole));
   }
 
@@ -611,7 +611,7 @@ place_boundary_vertex(Face* /* f */,
   }
 
   // The vertex hasn't been created yet, return a null object:
-  return boost::none;
+  return std::nullopt;
 }
 
 /*! \brief locate the predecessor halfedge for the given curve around a given

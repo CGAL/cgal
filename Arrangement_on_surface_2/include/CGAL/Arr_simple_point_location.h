@@ -26,7 +26,7 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -60,7 +60,7 @@ protected:
 #if CGAL_ARR_POINT_LOCATION_VERSION < 2
   typedef Result_type                                    Optional_result_type;
 #else
-  typedef typename boost::optional<Result_type>          Optional_result_type;
+  typedef typename std::optional<Result_type>          Optional_result_type;
 #endif
 
   typedef typename Topology_traits::Dcel                 Dcel;
@@ -75,8 +75,8 @@ protected:
   inline bool optional_empty(const CGAL::Object& obj) const { return obj.empty(); }
   inline const Result_type& optional_assign(const CGAL::Object& t) const { return t; }
 #else
-  inline bool optional_empty(const boost::optional<Result_type>& t) const { return (!t); }
-  inline const Result_type& optional_assign(const boost::optional<Result_type>& t) const { return *t; }
+  inline bool optional_empty(const std::optional<Result_type>& t) const { return (!t); }
+  inline const Result_type& optional_assign(const std::optional<Result_type>& t) const { return *t; }
 #endif
 
   template<typename T>

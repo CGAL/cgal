@@ -140,11 +140,11 @@ public:
     // visit to get the type, and copy construct inside the return type
     template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
     typename
-    Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
+    Type_mapper< std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
                  K1, K2 >::type
-    operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+    operator()(const std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
       typedef typename
-        Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
+        Type_mapper< std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
                      K1, K2 >::type result_type;
       result_type res;
       if(!o) {

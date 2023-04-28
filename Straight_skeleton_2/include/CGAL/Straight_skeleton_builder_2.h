@@ -218,7 +218,7 @@ private :
 
 public:
 
-  Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime = boost::none, Traits const& = Traits(), Visitor const& aVisitor = Visitor() ) ;
+  Straight_skeleton_builder_2 ( std::optional<FT> aMaxTime = std::nullopt, Traits const& = Traits(), Visitor const& aVisitor = Visitor() ) ;
 
   SSkelPtr construct_skeleton(  bool aNull_if_failed = true ) ;
 
@@ -1011,7 +1011,7 @@ private :
 
   boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Trisegment_2_ptr const& aS ) const
   {
-    boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
+    std::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
     CGAL_postcondition_msg(!!r, "Unable to compute skeleton node coordinates");
     return *r ;
   }
@@ -1179,7 +1179,7 @@ private:
   int mEventID  ;
   int mStepID   ;
 
-  boost::optional<FT> mMaxTime ;
+  std::optional<FT> mMaxTime ;
 
   PQ mPQ ;
 

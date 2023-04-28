@@ -32,7 +32,7 @@
 #include <boost/operators.hpp>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Sqrt_extension_fwd.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <CGAL/NT_converter.h>
 
 #include <type_traits>
@@ -92,7 +92,7 @@ template <>
 class Interval_optional_caching< ::CGAL::Tag_true >
 {
 protected:
-  typedef boost::optional< std::pair<double,double> > Cached_interval;
+  typedef std::optional< std::pair<double,double> > Cached_interval;
   mutable Cached_interval interval_;
   void invalidate_interval() {interval_=Cached_interval();}
   bool is_cached() const {return (interval_?true:false);}

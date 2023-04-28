@@ -63,7 +63,7 @@
 #include <boost/mpl/set/set0.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/none.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 //#include <boost/parameter.hpp>
 //#include <boost/parameter/binding.hpp>
 //#include <boost/parameter/config.hpp>

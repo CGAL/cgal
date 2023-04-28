@@ -19,8 +19,8 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef boost::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
-typedef boost::optional< Tree::Intersection_and_primitive_id<Plane>::Type > Plane_intersection;
+typedef std::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
+typedef std::optional< Tree::Intersection_and_primitive_id<Plane>::Type > Plane_intersection;
 typedef Tree::Primitive_id Primitive_id;
 
 int main()

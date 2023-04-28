@@ -495,7 +495,7 @@ especially integer types and rationals.
 
 Some functions, for example \link intersection_linear_grp `intersection()`\endlink,
 can return different types of objects. To achieve this in a type-safe way \cgal uses
-return values of type `boost::optional< boost::variant< T...  > >` where `T...` is a
+return values of type `std::optional< boost::variant< T...  > >` where `T...` is a
 list of all possible resulting geometric objects. The exact result type of an intersection
 can be specified through the placeholder type specifier `auto`.
 

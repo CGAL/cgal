@@ -109,7 +109,7 @@ split_trapezoid_by_vertex(Dag_node& split_node,
     //CGAL_warning(left_e.is_on_left_boundary() == e.is_on_left_boundary());
     //CGAL_warning(right_e.is_on_right_boundary() == e.is_on_right_boundary());
 
-    left_e.init_neighbors(boost::none);
+    left_e.init_neighbors(std::nullopt);
     //left_e.init_neighbors(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
     right_e.init_neighbors(e.next());
     //right_e.init_neighbors(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
@@ -307,9 +307,9 @@ split_trapezoid_by_halfedge(Dag_node& split_node,
   Td_active_trapezoid& top =
     boost::get<Td_active_trapezoid>(top_node.get_data());
 
-  top.init_neighbors(prev_top_tr, split_tr.lt(), boost::none , split_tr.rt());
+  top.init_neighbors(prev_top_tr, split_tr.lt(), std::nullopt , split_tr.rt());
   bottom.init_neighbors(split_tr.lb(), prev_bottom_tr, split_tr.rb(),
-                         boost::none);
+                         std::nullopt);
 
   if (!traits->is_empty_item(prev_bottom_tr)) {
     Td_active_trapezoid&
@@ -1524,7 +1524,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
   // create the Td_map_item iterator for traveling along the Trapezoids that
   // intersect the input Halfedge, using left-low to right-high order
   In_face_iterator it = follow_curve(p1_node,he,LARGER);
-  boost::optional<Td_active_trapezoid> curr_trp = boost::none;
+  std::optional<Td_active_trapezoid> curr_trp = std::nullopt;
   Td_map_item prev = p1_item;
   Td_map_item prev_bottom_tr = Td_map_item(0); //active_tr
   Td_map_item prev_top_tr = Td_map_item(0); //active_tr
@@ -1539,7 +1539,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
 
   while(!!it) { //this means as long as the iterator is valid
     curr_trp = it.trp();
-    CGAL_assertion(curr_trp != boost::none);
+    CGAL_assertion(curr_trp != std::nullopt);
     prev_bottom_tr = (*curr_trp).lb();
     prev_top_tr = (*curr_trp).lt();
 

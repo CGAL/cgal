@@ -32,7 +32,7 @@
 namespace CGAL {
 
 template<class Gt, class Ss, class V>
-Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime, Traits const& aTraits, Visitor const& aVisitor )
+Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( std::optional<FT> aMaxTime, Traits const& aTraits, Visitor const& aVisitor )
   :
   mTraits(aTraits)
  ,mVisitor(aVisitor)

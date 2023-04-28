@@ -1,7 +1,7 @@
 #include <vector>
 #include <CGAL/iterator.h>
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 int main()
 {

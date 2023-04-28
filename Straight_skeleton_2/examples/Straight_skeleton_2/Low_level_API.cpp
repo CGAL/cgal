@@ -66,7 +66,7 @@ int main()
 
   // First we need to determine the proper separation between the polygon and the frame.
   // We use this helper function provided in the package.
-  boost::optional<double> margin = CGAL::compute_outer_frame_margin(star.begin(),star.end(),offset);
+  std::optional<double> margin = CGAL::compute_outer_frame_margin(star.begin(),star.end(),offset);
 
   // Proceed only if the margin was computed (an extremely sharp corner might cause overflow)
   if ( margin )

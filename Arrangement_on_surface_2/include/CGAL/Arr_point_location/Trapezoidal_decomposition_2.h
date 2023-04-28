@@ -25,7 +25,7 @@
 #include <CGAL/Arr_point_location/Td_predicates.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_misc.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant.hpp>
 #include <memory>
 
@@ -272,7 +272,7 @@ public:
     Base_map_item_iterator() : traits(0), m_cur_item(Td_map_item(0)){ }
 
     Base_map_item_iterator(const Traits* traits_,
-                           boost::optional<Td_map_item&> curr = boost::none)
+                           std::optional<Td_map_item&> curr = std::nullopt)
       :traits(traits_), m_cur_item((curr) ? *curr : Td_map_item(0) ) { }
 
     Base_map_item_iterator(const Base_map_item_iterator &it)
@@ -332,12 +332,12 @@ public:
   public:
     //constructors
     In_face_iterator(const Traits* traits_, Halfedge_const_handle sep,
-                     boost::optional<Td_map_item&> curr = boost::none)
+                     std::optional<Td_map_item&> curr = std::nullopt)
             :Base_map_item_iterator(traits_,curr), m_sep(sep->curve())
     { }
 
     In_face_iterator(const Traits* traits_, const X_monotone_curve_2& sep,
-                     boost::optional<Td_map_item&> curr = boost::none)
+                     std::optional<Td_map_item&> curr = std::nullopt)
             :Base_map_item_iterator(traits_,curr), m_sep(sep)
     { }
 
@@ -790,25 +790,25 @@ public:
   };
 
   class curve_end_for_fict_vertex_visitor :
-    public boost::static_visitor<boost::optional<Curve_end> >
+    public boost::static_visitor<std::optional<Curve_end> >
   {
   public:
-    boost::optional<Curve_end> operator()(Td_active_fictitious_vertex& t) const
+    std::optional<Curve_end> operator()(Td_active_fictitious_vertex& t) const
     {
       return t.curve_end();
     }
 
-    boost::optional<Curve_end>
+    std::optional<Curve_end>
     operator()(Td_inactive_fictitious_vertex& t) const
     {
       return t.curve_end();
     }
 
     template < typename T >
-    boost::optional<Curve_end> operator()(T& /* t */) const
+    std::optional<Curve_end> operator()(T& /* t */) const
     {
       CGAL_assertion(false);
-      return boost::none;
+      return std::nullopt;
     }
   };
 
@@ -834,24 +834,24 @@ public:
   };
 
   class curve_end_for_active_vertex_visitor :
-    public boost::static_visitor<boost::optional<Curve_end> >
+    public boost::static_visitor<std::optional<Curve_end> >
   {
     public:
-    boost::optional<Curve_end> operator()(Td_active_vertex& t) const
+    std::optional<Curve_end> operator()(Td_active_vertex& t) const
     {
       return t.curve_end();
     }
 
-    boost::optional<Curve_end> operator()(Td_active_fictitious_vertex& t) const
+    std::optional<Curve_end> operator()(Td_active_fictitious_vertex& t) const
     {
       return t.curve_end();
     }
 
     template < typename T >
-    boost::optional<Curve_end> operator()(T& /* t */) const
+    std::optional<Curve_end> operator()(T& /* t */) const
     {
       CGAL_assertion(false);
-      return boost::none;
+      return std::nullopt;
     }
   };
 
@@ -878,26 +878,26 @@ public:
   };
 
   class cv_for_edge_visitor :
-    public boost::static_visitor<boost::optional<const X_monotone_curve_2&> >
+    public boost::static_visitor<std::optional<const X_monotone_curve_2&> >
   {
   public:
-    boost::optional<const X_monotone_curve_2&>
+    std::optional<const X_monotone_curve_2&>
     operator()(Td_active_edge& t) const
     {
       return t.halfedge()->curve();
     }
 
-    boost::optional<const X_monotone_curve_2&>
+    std::optional<const X_monotone_curve_2&>
     operator()(Td_inactive_edge& t) const
     {
       return t.curve();
     }
 
     template <typename T>
-    boost::optional<const X_monotone_curve_2&> operator()(T& /* t */) const
+    std::optional<const X_monotone_curve_2&> operator()(T& /* t */) const
     {
       CGAL_assertion(false);
-      return boost::none;
+      return std::nullopt;
     }
   };
 

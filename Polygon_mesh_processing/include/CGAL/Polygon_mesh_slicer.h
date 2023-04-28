@@ -63,7 +63,7 @@ namespace CGAL {
 ///        - `Point_3`
 ///        - `Segment_3`
 ///        - `Oriented_side_3` with `Oriented_side operator()(Plane_3, Point_3)`
-///        - `Do_intersect_3` with `boost::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
+///        - `Do_intersect_3` with `std::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
 ///        - `Do_intersect_3` with `bool operator()(Plane_3, Bbox_3)`
 ///
 /// \todo If we keep the traits for plane orthogonal to a frame axis, `Traits` must also provide:
@@ -277,7 +277,7 @@ class Polygon_mesh_slicer
           get(m_vpmap,target(ed, m_tmesh))
         );
         const auto inter = intersect_3(m_plane, s);
-        CGAL_assertion(inter != boost::none);
+        CGAL_assertion(inter != std::nullopt);
         const Point_3* pt_ptr = boost::get<Point_3>(&(*inter));
         current_poly.push_back( *pt_ptr );
       }

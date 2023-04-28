@@ -47,7 +47,7 @@
 #ifdef CGAL_MESH_3_VERBOSE
 #  include <boost/format.hpp>
 #endif
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
@@ -374,11 +374,11 @@ public:
   typedef typename Geom_traits::FT           FT;
 ///@}
 #else
-  typedef boost::optional<Subdomain_index>  Subdomain;
+  typedef std::optional<Subdomain_index>  Subdomain;
 
   // Type of indexes for cells of the input complex
   typedef Surface_patch_index_                  Surface_patch_index;
-  typedef boost::optional<Surface_patch_index>  Surface_patch;
+  typedef std::optional<Surface_patch_index>  Surface_patch;
 
   // Type of indexes to characterize the lowest dimensional face of the input
   // complex on which a vertex lie

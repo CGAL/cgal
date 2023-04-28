@@ -19,7 +19,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <list>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <boost/any.hpp>
@@ -73,7 +73,7 @@ private:
     Halfedge_handle              _h;
     Face_handle                  _f;
     Point                        _p;
-    boost::optional<iv_iterator> _ivit;
+    std::optional<iv_iterator> _ivit;
     Mark                         _m;
     GenPtr                       _i;
 public:
@@ -127,7 +127,7 @@ public:
 
     iv_iterator ivit() const { return *_ivit; }
     void set_ivit(iv_iterator it) { _ivit = it; }
-    void reset_ivit() { _ivit = boost::none; }
+    void reset_ivit() { _ivit = std::nullopt; }
 };
 
 
@@ -162,7 +162,7 @@ protected:
     Halfedge_handle              opp, prv, nxt;
     Vertex_handle                _v;
     Face_handle                  _f;
-    boost::optional<fc_iterator> _fcit;
+    std::optional<fc_iterator> _fcit;
     Mark                         _m;
     GenPtr                       _i;
 public:
@@ -223,7 +223,7 @@ public:
 
     fc_iterator fcit() const      { return *_fcit; }
     void set_fcit(fc_iterator it) { _fcit = it; }
-    void reset_fcit()             { _fcit = boost::none; }
+    void reset_fcit()             { _fcit = std::nullopt; }
 
     bool is_hole_entry() const
         /*{\Mop returns true iff |\Mvar| is entry point into a hole face

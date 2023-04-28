@@ -127,7 +127,7 @@ public:
     //Arc_pair _m_num_arcs;
 
     //! sequence of arcs crossing this status line (valid only event lines)
-    mutable boost::optional<Arc_container> _m_arcs;
+    mutable std::optional<Arc_container> _m_arcs;
 
     //! number of arcs intersecting this status line
     mutable int _m_total_arcs;
@@ -160,10 +160,10 @@ public:
     std::vector< int > multiplicities_;*/
 
     // stores algebraic real over the vertical line
-    mutable std::vector<boost::optional< Algebraic_real_2 > >_m_xy_coords;
+    mutable std::vector<std::optional< Algebraic_real_2 > >_m_xy_coords;
 
     // stores the isolator instance
-    mutable boost::optional<Bitstream_descartes> isolator;
+    mutable std::optional<Bitstream_descartes> isolator;
 
      // befriending the handle
     friend class Status_line_CA_1<Curve_analysis_2, Self>;

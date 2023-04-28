@@ -22,7 +22,7 @@
 #include <QScriptable>
 #include <QScriptContext>
 #include <QScriptEngine>
-#include <boost/optional.hpp>
+#include <optional>
 #include <QStringList>
 
 namespace CGAL{
@@ -44,7 +44,7 @@ public:
 
 template <typename T>
 struct Optional_or_bool {
-  typedef boost::optional<T> type;
+  typedef std::optional<T> type;
 
   template <typename Callable>
   static type invoke(Callable f) { return type(f()); }

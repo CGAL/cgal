@@ -127,8 +127,8 @@ public:
   typedef typename Geom_traits::Vector_3                                  Vector;
   typedef typename Geom_traits::Equal_3                                   Equal_3;
 
-  typedef boost::optional<FT>                                             Cost_type;
-  typedef boost::optional<Point>                                          Placement_type;
+  typedef std::optional<FT>                                             Cost_type;
+  typedef std::optional<Point>                                          Placement_type;
 
   struct Compare_id
   {
@@ -149,7 +149,7 @@ public:
 
     bool operator()(const halfedge_descriptor a, const halfedge_descriptor b) const
     {
-      // NOTE: A cost is a boost::optional<> value.
+      // NOTE: A cost is a std::optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
       // In consequence, edges with undefined costs will be promoted to the top of the priority queue and popped out first.
       return m_algorithm->get_data(a).cost() < m_algorithm->get_data(b).cost();
@@ -333,9 +333,9 @@ private:
     CGAL_expensive_assertion(!mPQ->contains(h));
   }
 
-  boost::optional<halfedge_descriptor> pop_from_PQ()
+  std::optional<halfedge_descriptor> pop_from_PQ()
   {
-    boost::optional<halfedge_descriptor> opt_h = mPQ->extract_top();
+    std::optional<halfedge_descriptor> opt_h = mPQ->extract_top();
     if(opt_h)
     {
       CGAL_assertion(is_primary_edge(*opt_h));
@@ -592,7 +592,7 @@ loop()
 
   // Pops and processes each edge from the PQ
 
-  boost::optional<halfedge_descriptor> opt_h;
+  std::optional<halfedge_descriptor> opt_h;
 
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
   int i_rm = 0;
@@ -630,7 +630,7 @@ loop()
           std::cout << "step " << i_rm << " " << get(m_vpm, source(*h, m_tm))
                                        << " " << get(m_vpm, target(*h, m_tm)) << "\n";
 #endif
-          if(m_should_ignore(profile, placement)!= boost::none){
+          if(m_should_ignore(profile, placement)!= std::nullopt){
             collapse(profile, placement);
           }
           else

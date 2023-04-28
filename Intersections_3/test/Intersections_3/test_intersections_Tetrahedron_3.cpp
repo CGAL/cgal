@@ -322,7 +322,7 @@ public:
     Tr tri(P(0.191630, -0.331630, -0.370000), P(-0.124185, -0.385815, -0.185000), P(-0.0700000, -0.0700000, 0.00000));
     Tet tet(P(0, -1, 0), P(-1, 0, 0), P(0, 0, 0), P(0, 0, -1));
     auto res = intersection(tri, tet);
-    assert(res != boost::none);
+    assert(res != std::nullopt);
     const std::vector<P> *vps = boost::get<std::vector<P>>(&*res);
     assert(vps!=nullptr);
   }

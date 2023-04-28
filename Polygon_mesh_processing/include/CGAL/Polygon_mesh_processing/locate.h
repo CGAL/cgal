@@ -1846,7 +1846,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                                 AABB_traits;
   typedef AABB_tree<AABB_traits>                                                             AABB_face_graph_tree;
   typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
-  typedef boost::optional<Intersection_type>                                                 Ray_intersection;
+  typedef std::optional<Intersection_type>                                                 Ray_intersection;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;

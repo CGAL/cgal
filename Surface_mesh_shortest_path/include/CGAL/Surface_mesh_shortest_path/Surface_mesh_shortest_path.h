@@ -3049,7 +3049,7 @@ public:
     typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
     typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
-    typedef boost::optional<Intersection_type> Ray_intersection;
+    typedef std::optional<Intersection_type> Ray_intersection;
 
     std::vector<Ray_intersection> intersections;
 

@@ -17,7 +17,7 @@
 #include <CGAL/Bbox_2.h>
 
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 
 namespace CGAL {
@@ -51,7 +51,7 @@ struct Intersection_traits<K, typename K::Triangle_2, typename K::Triangle_2>  {
   typedef typename
   boost::variant< typename K::Point_2, typename K::Segment_2,
                   typename K::Triangle_2, typename std::vector< typename K::Point_2 > > variant_type;
-  typedef typename boost::optional< variant_type > result_type;
+  typedef typename std::optional< variant_type > result_type;
 };
 
 
@@ -70,7 +70,7 @@ CGAL_INTERSECTION_TRAITS_2(Ray_2, Iso_rectangle_2, Point_2, Segment_2)
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>  {
   typedef typename boost::variant<typename K::Iso_rectangle_2> variant_type;
-  typedef boost::optional<variant_type> result_type;
+  typedef std::optional<variant_type> result_type;
 };
 
 
@@ -78,19 +78,19 @@ struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Iso_recta
 template<typename K, typename B>
 struct Intersection_traits<K, typename K::Point_2, B> {
   typedef typename boost::variant<typename K::Point_2> variant_type;
-  typedef boost::optional<variant_type> result_type;
+  typedef std::optional<variant_type> result_type;
 };
 
 template<typename K, typename A>
 struct Intersection_traits<K, A, typename K::Point_2> {
   typedef typename boost::variant<typename K::Point_2> variant_type;
-  typedef boost::optional<variant_type> result_type;
+  typedef std::optional<variant_type> result_type;
 };
 
 template<typename K>
 struct Intersection_traits<K, typename K::Point_2, typename K::Point_2> {
   typedef typename boost::variant<typename K::Point_2> variant_type;
-  typedef boost::optional<variant_type> result_type;
+  typedef std::optional<variant_type> result_type;
 };
 
 template<typename K>
@@ -99,7 +99,7 @@ struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_
   typedef typename boost::variant<typename K::Segment_2, typename K::Triangle_2,
                                   typename K::Point_2,
                                   typename std::vector< typename K::Point_2 > > variant_type;
-  typedef typename boost::optional < variant_type > result_type;
+  typedef typename std::optional < variant_type > result_type;
 };
 
 template<typename K>
@@ -119,13 +119,13 @@ struct Intersection_traits<K, A, CGAL::Bbox_2>  {
 template<typename K>
 struct Intersection_traits<K, CGAL::Bbox_2, typename K::Point_2>  {
   typedef typename boost::variant<typename K::Point_2> variant_type;
-  typedef boost::optional<variant_type> result_type;
+  typedef std::optional<variant_type> result_type;
 };
 
 template<typename K>
 struct Intersection_traits<K, typename K::Point_2, CGAL::Bbox_2>  {
   typedef typename boost::variant<typename K::Point_2> variant_type;
-  typedef boost::optional<variant_type> result_type;
+  typedef std::optional<variant_type> result_type;
 };
 
 } // namespace CGAL

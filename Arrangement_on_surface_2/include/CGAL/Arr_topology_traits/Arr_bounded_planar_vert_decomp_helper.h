@@ -49,7 +49,7 @@ public:
 
   typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
                          Face_const_handle>             Cell_type;
-  typedef boost::optional<Cell_type>                    Vert_type;
+  typedef std::optional<Cell_type>                    Vert_type;
 
 protected:
   // Data members:

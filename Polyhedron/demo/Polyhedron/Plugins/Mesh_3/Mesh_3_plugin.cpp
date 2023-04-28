@@ -29,7 +29,7 @@ auto make_not_null(T&& t) {
 }
 
 #include <boost/variant/variant.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include "Scene_polylines_item.h"
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -130,7 +130,7 @@ public:
   }
 
 public Q_SLOTS:
-  boost::optional<QString> get_items_or_return_error_string() const;
+  std::optional<QString> get_items_or_return_error_string() const;
   void set_defaults();
   void mesh_3_volume();
   void mesh_3_surface();
@@ -231,7 +231,7 @@ private:
     IMAGE_MESH_ITEMS,
     IMPLICIT_MESH_ITEMS
   };
-  mutable boost::optional<boost::variant<Polyhedral_mesh_items,
+  mutable std::optional<boost::variant<Polyhedral_mesh_items,
                                          Image_mesh_items,
                                          Implicit_mesh_items>>
       items;
@@ -277,7 +277,7 @@ void Mesh_3_plugin::mesh_3_volume()
   mesh_3(Mesh_type::VOLUME);
 }
 
-boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
+std::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
 {
   using boost::get;
   items = {};
@@ -355,7 +355,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
   //attach polylines_item to one or the other item
   //if it could not be done in the for loop
   //because of selection order
-  if (polylines_item != nullptr && items != boost::none)
+  if (polylines_item != nullptr && items != std::nullopt)
   {
     auto poly_items_ptr = get<Polyhedral_mesh_items>(&*items);
     auto image_items_ptr = get<Image_mesh_items>(&*items);

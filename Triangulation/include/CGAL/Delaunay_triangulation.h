@@ -130,12 +130,12 @@ private:
     // Wrapper
     struct Side_of_oriented_subsphere_d
     {
-      boost::optional<Flat_orientation_d>* fop;
+      std::optional<Flat_orientation_d>* fop;
       Construct_flat_orientation_d cfo;
       In_flat_side_of_oriented_sphere_d ifsoos;
 
       Side_of_oriented_subsphere_d(
-        boost::optional<Flat_orientation_d>& x,
+        std::optional<Flat_orientation_d>& x,
         Construct_flat_orientation_d const&y,
         In_flat_side_of_oriented_sphere_d const&z)
       : fop(&x), cfo(y), ifsoos(z) {}

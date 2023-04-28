@@ -18,7 +18,7 @@
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <vector>
 

@@ -24,7 +24,7 @@
 
 #include <CGAL/Bbox_3.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant.hpp>
 
 #include <utility>
@@ -39,13 +39,13 @@ do_intersect(const CGAL::Bbox_3& c,
   return CGAL::do_overlap(c, bbox);
 }
 
-typename boost::optional< typename boost::variant< Bbox_3> >
+typename std::optional< typename boost::variant< Bbox_3> >
 inline
 intersection(const CGAL::Bbox_3& a,
              const CGAL::Bbox_3& b)
 {
   typedef typename boost::variant<Bbox_3> variant_type;
-  typedef typename boost::optional<variant_type> result_type;
+  typedef typename std::optional<variant_type> result_type;
 
   if(!do_intersect(a,b))
     return result_type();

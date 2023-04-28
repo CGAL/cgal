@@ -69,7 +69,7 @@ public:
   typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
                          Face_const_handle>
     Cell_type;
-  typedef boost::optional<Cell_type>                    Vert_type;
+  typedef std::optional<Cell_type>                    Vert_type;
   typedef std::pair<Vert_type, Vert_type>               Vert_pair;
   typedef std::pair<Vertex_const_handle, Vert_pair>     Vert_entry;
 

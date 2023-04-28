@@ -197,7 +197,7 @@ private:
         size_type index_of_content_root;
         size_type mult_of_prim_lcoeff_root;
         size_type index_of_prim_lcoeff_root;
-        boost::optional<Status_line_1> stack;
+        std::optional<Status_line_1> stack;
     };
 
     // Functor to get the X_coordinate of an Event_coordinate
@@ -211,14 +211,14 @@ private:
 
 
     //! The object holding the information about events, as an optional
-    mutable boost::optional<std::vector<Event_coordinate_1> >
+    mutable std::optional<std::vector<Event_coordinate_1> >
         event_coordinates;
 
     //! The algebraic kernel to use
     Algebraic_kernel_with_analysis_2* _m_kernel;
 
     //! The polynomial defining the curve
-    boost::optional<Polynomial_2> f;
+    std::optional<Polynomial_2> f;
 
     //! How degenerate situations are handled
     CGAL::Degeneracy_strategy degeneracy_strategy;
@@ -231,24 +231,24 @@ private:
      * \c f/cont(f). The corresponding curve is equal to the curve of \c f,
      * only without vertical line components.
      */
-    mutable boost::optional<Polynomial_2> f_primitive;
+    mutable std::optional<Polynomial_2> f_primitive;
 
     //! the polynomial containing all roots of the resultant of the primitive
     //! part of f and its y-derivative
-    mutable boost::optional<Polynomial_1>
+    mutable std::optional<Polynomial_1>
         resultant_of_primitive_and_derivative_y;
 
     //! the polynomial containing all roots of the resultant of the primitive
     //! part of f and its x-derivative
-    mutable boost::optional<Polynomial_1>
+    mutable std::optional<Polynomial_1>
         resultant_of_primitive_and_derivative_x;
 
     //! The Sturm-Habicht polynomials of f
-    mutable boost::optional<std::vector<Polynomial_2> >
+    mutable std::optional<std::vector<Polynomial_2> >
         sturm_habicht_of_primitive;
 
     //! The content of f
-    mutable boost::optional<Polynomial_1> content;
+    mutable std::optional<Polynomial_1> content;
 
     //! The non-working shear factors, as far as known
     mutable std::set<Integer> bad_shears;
@@ -257,10 +257,10 @@ private:
     mutable std::map<Integer,Handle> sheared_curves;
 
     //! Has the curve vertical line components
-    mutable boost::optional<bool> has_vertical_component;
+    mutable std::optional<bool> has_vertical_component;
 
     //! The intermediate values
-    mutable boost::optional<std::vector<boost::optional<Bound> > >
+    mutable std::optional<std::vector<std::optional<Bound> > >
     intermediate_values;
 
     //! stores Y_values at rational coordinate
@@ -273,7 +273,7 @@ private:
      *   are asymptotic to y=beta,
      *   or go to +/- infty also in y-direction
      */
-    mutable boost::optional<std::vector<CGAL::Object> >
+    mutable std::optional<std::vector<CGAL::Object> >
     horizontal_asymptotes_left, horizontal_asymptotes_right;
 
     //! friends
@@ -547,7 +547,7 @@ private:
 
         if(! this->ptr()->intermediate_values) {
             this->ptr()->intermediate_values
-                = std::vector<boost::optional<Bound> >
+                = std::vector<std::optional<Bound> >
                     (number_of_status_lines_with_event()+1);
         }
 
@@ -1720,7 +1720,7 @@ private:
 private:
 
     // Returns the intermediate values for intervals between events
-    std::vector<boost::optional<Bound> >& intermediate_values() const
+    std::vector<std::optional<Bound> >& intermediate_values() const
       {
         if(! this->ptr()->intermediate_values) {
             // This is created during event_coordiantes()
@@ -1916,7 +1916,7 @@ private:
                        static_cast<size_type>(content_roots.size()));
 
         this->ptr()->intermediate_values
-            = std::vector<boost::optional<Bound> >
+            = std::vector<std::optional<Bound> >
             (event_coordinate_vector.size()+1);
         this->ptr()->event_coordinates = event_coordinate_vector;
 

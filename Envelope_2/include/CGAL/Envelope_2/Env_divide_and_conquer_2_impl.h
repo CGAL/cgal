@@ -19,7 +19,7 @@
  * Definitions of the functions of the Envelope_divide_and_conquer_2 class.
  */
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -610,8 +610,8 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
   // The intersection points/curves that interest us are the ones in
   // [v_leftmost, v].
   // Without using make_optional we get a "maybe uninitialized" warning with gcc -Wall
-  boost::optional<Vertex_const_handle>  v_leftmost =
-    boost::make_optional(false, Vertex_const_handle());
+  std::optional<Vertex_const_handle>  v_leftmost =
+    std::make_optional(false, Vertex_const_handle());
 
   if (is_leftmost1 == true) {
     if (is_leftmost2 == false)

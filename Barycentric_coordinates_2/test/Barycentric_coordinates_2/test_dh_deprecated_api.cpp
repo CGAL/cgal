@@ -19,7 +19,7 @@ typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_c
 typedef CGAL::Barycentric_coordinates::Discrete_harmonic_2<Kernel> Discrete_harmonic;
 typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Discrete_harmonic, Kernel> Discrete_harmonic_coordinates;
 
-typedef boost::optional<Vector_insert_iterator> Output_type;
+typedef std::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 

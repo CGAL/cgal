@@ -18,7 +18,7 @@
 #include <CGAL/predicates/Polygon_offset_pred_ftC2.h>
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -51,7 +51,7 @@ struct Construct_offset_point_2 : Functor_base_2<K>
   typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
-  typedef boost::optional<Point_2> result_type ;
+  typedef std::optional<Point_2> result_type ;
 
 
   result_type operator() ( FT                const& aT
@@ -60,7 +60,7 @@ struct Construct_offset_point_2 : Functor_base_2<K>
                          , Trisegment_2_ptr  const& aNode
                          ) const
   {
-    typedef boost::optional< Line_2<K> > Optional_line;
+    typedef std::optional< Line_2<K> > Optional_line;
     No_cache<Optional_line> lCoeff_cache;
 
     result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode,lCoeff_cache);

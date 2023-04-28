@@ -17,7 +17,7 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/Uncertain.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include <boost/intrusive_ptr.hpp>
 
 namespace CGAL {
@@ -38,12 +38,12 @@ compare_offset_against_isec_timeC2 ( typename K::FT const& t,
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
 
-  typedef boost::optional<Rational> Optional_rational ;
+  typedef std::optional<Rational> Optional_rational ;
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  No_cache<boost::optional<CGAL_SS_i::Rational<typename K::FT> > > lTime_cache ;
-  No_cache<boost::optional<Line_2<K> > > lCoeff_cache ;
+  No_cache<std::optional<CGAL_SS_i::Rational<typename K::FT> > > lTime_cache ;
+  No_cache<std::optional<Line_2<K> > > lCoeff_cache ;
 
   Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, lTime_cache, lCoeff_cache);
   if ( et_ )

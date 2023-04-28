@@ -358,8 +358,8 @@ public:
     projection.
   */
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const boost::optional<Point_2>& pLeft,
-                                  const boost::optional<Point_2>& pRight );
+                                  const std::optional<Point_2>& pLeft,
+                                  const std::optional<Point_2>& pRight );
 
 protected:
   const ArrTraits* traits;
@@ -406,8 +406,8 @@ public:
     Return the subcurve of curve bracketed by pLeft and pRight.
   */
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const boost::optional<Point_2>& pLeft,
-                                  const boost::optional<Point_2>& pRight );
+                                  const std::optional<Point_2>& pLeft,
+                                  const std::optional<Point_2>& pRight );
 
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
 
@@ -436,8 +436,8 @@ public:
     Return the subcurve of curve bracketed by pLeft and pRight.
   */
   X_monotone_curve_2 operator()(
-    const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-    const boost::optional<Point_2>& pRight);
+    const X_monotone_curve_2& curve, const std::optional<Point_2>& pLeft,
+    const std::optional<Point_2>& pRight);
 
 protected:
   const ArrTraits* traits;
@@ -478,8 +478,8 @@ public:
     projection.
   */
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const boost::optional<Point_2>& pLeft,
-                                  const boost::optional<Point_2>& pRight );
+                                  const std::optional<Point_2>& pLeft,
+                                  const std::optional<Point_2>& pRight );
 
 protected:
   const Traits* traits;

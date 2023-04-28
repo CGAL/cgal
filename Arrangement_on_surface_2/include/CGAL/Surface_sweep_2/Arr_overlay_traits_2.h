@@ -23,7 +23,7 @@
  */
 
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/Arr_tags.h>
 
@@ -107,19 +107,19 @@ public:
 
   typedef boost::variant<Halfedge_handle_red, Vertex_handle_red,
                          Face_handle_red>           Cell_handle_red;
-  typedef boost::optional<Cell_handle_red>          Optional_cell_red;
+  typedef std::optional<Cell_handle_red>          Optional_cell_red;
 
   typedef boost::variant<Halfedge_handle_blue, Vertex_handle_blue,
                          Face_handle_blue>          Cell_handle_blue;
-  typedef boost::optional<Cell_handle_blue>         Optional_cell_blue;
+  typedef std::optional<Cell_handle_blue>         Optional_cell_blue;
 
   template <typename Handle_red>
   Optional_cell_red make_optional_cell_red(Handle_red handle_red)
-  { return boost::make_optional(Cell_handle_red(handle_red)); }
+  { return std::make_optional(Cell_handle_red(handle_red)); }
 
   template <typename Handle_blue>
   Optional_cell_red make_optional_cell_blue(Handle_blue handle_blue)
-  { return boost::make_optional(Cell_handle_blue(handle_blue)); }
+  { return std::make_optional(Cell_handle_blue(handle_blue)); }
 
 private:
   const Gt2* m_base_traits;        // The base traits object.
@@ -450,16 +450,16 @@ public:
           if (xcv1.color() == RED) {
             CGAL_assertion(xcv2.color() == BLUE);
             red_cell =
-              boost::make_optional(Cell_handle_red(xcv1.red_halfedge_handle()));
+              std::make_optional(Cell_handle_red(xcv1.red_halfedge_handle()));
             blue_cell =
-              boost::make_optional(Cell_handle_blue(xcv2.blue_halfedge_handle()));
+              std::make_optional(Cell_handle_blue(xcv2.blue_halfedge_handle()));
           }
           else {
             CGAL_assertion((xcv2.color() == RED) && (xcv1.color() == BLUE));
             red_cell =
-              boost::make_optional(Cell_handle_red(xcv2.red_halfedge_handle()));
+              std::make_optional(Cell_handle_red(xcv2.red_halfedge_handle()));
             blue_cell =
-              boost::make_optional(Cell_handle_blue(xcv1.blue_halfedge_handle()));
+              std::make_optional(Cell_handle_blue(xcv1.blue_halfedge_handle()));
           }
 
           // Create the extended point and add the multiplicity.
@@ -574,15 +574,15 @@ public:
         red_cell =
           (! xcv.red_halfedge_handle()->target()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.red_halfedge_handle()->target()->point())) ?
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->target())) :
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->target())) :
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
 
       if ((xcv.color() == BLUE) || (xcv.color() == RB_OVERLAP))
         blue_cell =
           (! xcv.blue_halfedge_handle()->target()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.blue_halfedge_handle()->target()->point())) ?
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->target())) :
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->target())) :
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
 
       return Point_2(base_p, red_cell, blue_cell);
     }
@@ -631,15 +631,15 @@ public:
         red_cell =
           (! xcv.red_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.red_halfedge_handle()->source()->point())) ?
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->source())) :
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->source())) :
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
 
       if ((xcv.color() == BLUE) || (xcv.color() == RB_OVERLAP))
         blue_cell =
           (! xcv.blue_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.blue_halfedge_handle()->source()->point())) ?
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->source())) :
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->source())) :
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
 
       return (Point_2(base_p, red_cell, blue_cell));
     }

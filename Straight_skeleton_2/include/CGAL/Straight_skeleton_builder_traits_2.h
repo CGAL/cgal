@@ -22,7 +22,7 @@
 #include <CGAL/Filtered_construction.h>
 #include <CGAL/Uncertain.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include <boost/tuple/tuple.hpp>
 
 #include <iostream>
@@ -69,7 +69,7 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
     : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
   {}
 
-  Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, boost::optional<FT> aMaxTime ) const
+  Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, std::optional<FT> aMaxTime ) const
   {
     Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment,aMaxTime,mTime_cache,mCoeff_cache) ;
 
@@ -276,7 +276,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
   typedef boost::tuple<FT,Point_2> rtype ;
 
-  typedef boost::optional<rtype> result_type ;
+  typedef std::optional<rtype> result_type ;
 
   Construct_ss_event_time_and_point_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
     : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
@@ -289,13 +289,13 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    boost::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment,mTime_cache,mCoeff_cache);
+    std::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment,mTime_cache,mCoeff_cache);
 
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
 
-      boost::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment,mCoeff_cache);
+      std::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment,mCoeff_cache);
       if ( oi )
       {
         i = *oi ;
@@ -509,7 +509,7 @@ public:
     if ( mCoeff_cache.Get( aOtherID ) )
       mCoeff_cache.Set( aID, CGAL_SS_i::cgal_make_optional(*(mCoeff_cache.Get(aOtherID))) ) ;
     else
-      mCoeff_cache.Set( aID, boost::none ) ;
+      mCoeff_cache.Set( aID, std::nullopt ) ;
   }
 
   // functions and tag for filtering split events
@@ -523,7 +523,7 @@ public:
       return false;
 
     typename Base::Trisegment_2_ptr tri = lEvent->trisegment() ;
-    boost::optional<CGAL_SS_i::Rational<typename K::FT> > lOptTime =
+    std::optional<CGAL_SS_i::Rational<typename K::FT> > lOptTime =
         CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, mTime_cache, mCoeff_cache);
 
     if ( lOptTime && lOptTime->to_nt() > *mFilteringBound )
@@ -542,7 +542,7 @@ public:
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
-    mFilteringBound = boost::none;
+    mFilteringBound = std::nullopt;
 
     if ( ! aNode->is_contour() )
       return ;
@@ -556,8 +556,8 @@ public:
     Segment_2 s2(aNode->point(), lNext->point());
 
     // @todo? These are not input segments, but it might still worth caching (just gotta assign them an ID)
-    boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
-    boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
+    std::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
+    std::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
 
     Vector_2 lV1(l1->a(), l1->b()) ;
     Vector_2 lV2(l2->a(), l2->b()) ;
@@ -581,7 +581,7 @@ public:
         continue;
 
       // Note that we don't need the normalization
-      boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
+      std::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
 
       typename K::FT lBound = ( - lh->c() - lh->a()*aNode->point().x() - lh->b()*aNode->point().y() ) /
                                 ( lh->a()*lV12.x() + lh->b()*lV12.y() );
@@ -598,7 +598,7 @@ public:
   mutable std::size_t mTrisegment_ID = 0 ;
   mutable CGAL_SS_i::Time_cache<K> mTime_cache ;
   mutable CGAL_SS_i::Coeff_cache<K> mCoeff_cache ;
-  mutable boost::optional< typename K::FT > mFilteringBound ;
+  mutable std::optional< typename K::FT > mFilteringBound ;
 } ;
 
 template<class K>
@@ -817,7 +817,7 @@ public:
 
     try
     {
-      boost::optional<CGAL_SS_i::Rational<typename FK::FT> > lOptTime =
+      std::optional<CGAL_SS_i::Rational<typename FK::FT> > lOptTime =
           CGAL_SS_i::compute_offset_lines_isec_timeC2(
             tri, mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache);
 
@@ -840,7 +840,7 @@ public:
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
                              Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
-    mApproximate_traits.mFilteringBound = boost::none;
+    mApproximate_traits.mFilteringBound = std::nullopt;
 
     if ( ! aNode->is_contour() )
       return ;
@@ -860,8 +860,8 @@ public:
     Target_Segment_2 s2(laP, to_FK(lNext->point()));
 
     // @todo? These are not input segments, but it might still worth caching (just gotta assign them an ID)
-    boost::optional< Target_Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
-    boost::optional< Target_Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
+    std::optional< Target_Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
+    std::optional< Target_Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
 
     Target_Vector_2 lV1(l1->a(), l1->b()) ;
     Target_Vector_2 lV2(l2->a(), l2->b()) ;
@@ -887,7 +887,7 @@ public:
           continue;
 
         // Note that we don't need the normalization
-        boost::optional< Target_Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
+        std::optional< Target_Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
 
         typename FK::FT lBound = ( - lh->c() - lh->a()*laP.x() - lh->b()*laP.y() ) /
                                    ( lh->a()*lV12.x() + lh->b()*lV12.y() );

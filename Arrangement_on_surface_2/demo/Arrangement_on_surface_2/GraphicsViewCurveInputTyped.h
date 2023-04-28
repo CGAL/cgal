@@ -45,26 +45,26 @@ public:
 
   void setTraits(const ArrTraits* traits_);
 
-  boost::optional<Curve_2>
+  std::optional<Curve_2>
   generate(const std::vector<Point_2>& clickedPoints, CurveType type);
 
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateSegment(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateRay(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateLine(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generatePolyline(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateCircle(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateEllipse(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateThreePointCircularArc(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateFivePointConicArc(const std::vector<Point_2>&) { return {}; }
-  virtual boost::optional<Curve_2>
+  virtual std::optional<Curve_2>
   generateBezier(const std::vector<Point_2>&) { return {}; }
 
   const ArrTraits* traits;
@@ -85,7 +85,7 @@ struct CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>> :
   using Super = CurveGeneratorBase<ArrTraits>;
   using Point_2 = typename Super::Point_2;
 
-  boost::optional<Curve_2>
+  std::optional<Curve_2>
   generateSegment(const std::vector<Point_2>&) override;
 };
 
@@ -98,7 +98,7 @@ struct CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>> :
   using Super = CurveGeneratorBase<ArrTraits>;
   using Point_2 = typename Super::Point_2;
 
-  boost::optional<Curve_2>
+  std::optional<Curve_2>
   generatePolyline(const std::vector<Point_2>&) override;
 };
 
@@ -118,14 +118,14 @@ struct CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> :
   using Super = CurveGeneratorBase<ArrTraits>;
   using Point_2 = typename Super::Point_2;
 
-  boost::optional<Curve_2>
+  std::optional<Curve_2>
   generateSegment(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2> generateCircle(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2>
+  std::optional<Curve_2> generateCircle(const std::vector<Point_2>&) override;
+  std::optional<Curve_2>
   generateEllipse(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2>
+  std::optional<Curve_2>
   generateThreePointCircularArc(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2>
+  std::optional<Curve_2>
   generateFivePointConicArc(const std::vector<Point_2>&) override;
 };
 
@@ -143,10 +143,10 @@ struct CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>> :
   using Super = CurveGeneratorBase<ArrTraits>;
   using Point_2 = typename Super::Point_2;
 
-  boost::optional<Curve_2>
+  std::optional<Curve_2>
   generateSegment(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2> generateRay(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2> generateLine(const std::vector<Point_2>&) override;
+  std::optional<Curve_2> generateRay(const std::vector<Point_2>&) override;
+  std::optional<Curve_2> generateLine(const std::vector<Point_2>&) override;
 };
 
 template <typename Coefficient_>
@@ -165,13 +165,13 @@ struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
   using Super = CurveGeneratorBase<ArrTraits>;
   using Point_2 = typename Super::Point_2;
 
-  boost::optional<Curve_2> generateLine(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2> generateCircle(const std::vector<Point_2>&) override;
-  boost::optional<Curve_2>
+  std::optional<Curve_2> generateLine(const std::vector<Point_2>&) override;
+  std::optional<Curve_2> generateCircle(const std::vector<Point_2>&) override;
+  std::optional<Curve_2>
   generateEllipse(const std::vector<Point_2>&) override;
 
 private:
-  boost::optional<Curve_2> generateEllipse_(const Point_2&, Rational, Rational);
+  std::optional<Curve_2> generateEllipse_(const Point_2&, Rational, Rational);
 };
 
 template <
@@ -188,7 +188,7 @@ struct CurveGenerator<
   using Point_2 = typename Super::Point_2;
   using Curve_2 = typename ArrTraits::Curve_2;
 
-  boost::optional<Curve_2> generateBezier(const std::vector<Point_2>&) override;
+  std::optional<Curve_2> generateBezier(const std::vector<Point_2>&) override;
 };
 
 template <typename ArrTraits>

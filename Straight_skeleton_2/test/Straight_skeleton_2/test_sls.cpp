@@ -315,7 +315,7 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
   return rRegion ;
 }
 
-void update_bbox ( IRegionPtr const& aRegion, boost::optional<Bbox_2>& rBBox )
+void update_bbox ( IRegionPtr const& aRegion, std::optional<Bbox_2>& rBBox )
 {
   if ( aRegion )
   {
@@ -396,7 +396,7 @@ string change_extension ( string aFilename, string aNewExt )
 
 void dump_to_eps ( TestCase const& aCase )
 {
-  boost::optional<Bbox_2> lBBox ;
+  std::optional<Bbox_2> lBBox ;
 
   update_bbox(aCase.Inner.Input, lBBox ) ;
   update_bbox(aCase.Outer.Input, lBBox ) ;
@@ -577,7 +577,7 @@ IPolygonPtr create_outer_frame ( IPolygon const& aOuter )
 
     IFT lOffset = s * 0.3 ;
 
-    boost::optional<IFT> lOptMargin = compute_outer_frame_margin(aOuter.begin(),aOuter.end(),lOffset) ;
+    std::optional<IFT> lOptMargin = compute_outer_frame_margin(aOuter.begin(),aOuter.end(),lOffset) ;
 
     if ( lOptMargin )
     {
@@ -667,7 +667,7 @@ bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton, bool is_p
 }
 
 
-int create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost::optional<IFT>() )
+int create_skeleton ( Zone& rZone, std::optional<IFT> const& aMaxTime = std::optional<IFT>() )
 {
   int rStatus = cUnknown ;
 
@@ -742,7 +742,7 @@ int test_zone ( Zone& rZone )
 
   if ( sMaxTime > 0 )
   {
-    boost::optional<IFT> lMaxTime = static_cast<IFT>(sMaxTime) ;
+    std::optional<IFT> lMaxTime = static_cast<IFT>(sMaxTime) ;
     rStatus = create_skeleton(rZone,lMaxTime) ;
   }
   else

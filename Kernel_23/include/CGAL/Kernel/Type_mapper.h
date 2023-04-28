@@ -27,7 +27,7 @@
 #include <boost/mpl/transform.hpp>
 #include <boost/mpl/remove.hpp>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant.hpp>
 
 #include <boost/preprocessor/facilities/expand.hpp>
@@ -54,8 +54,8 @@ struct Type_mapper_impl<std::vector< T >, K1, K2 > {
 };
 
 template < typename T, typename K1, typename K2 >
-struct Type_mapper_impl<boost::optional<T>, K1, K2 > {
-  typedef boost::optional< typename Type_mapper_impl<T, K1, K2>::type > type;
+struct Type_mapper_impl<std::optional<T>, K1, K2 > {
+  typedef std::optional< typename Type_mapper_impl<T, K1, K2>::type > type;
 };
 
 

@@ -103,7 +103,7 @@ The following tables give the possible values for `Type1` and `Type2`.
 
 The return type of intersecting two objects of the types `Type1` and `Type2` can be
 specified through the placeholder type specifier `auto`. It is equivalent to
-`boost::optional< boost::variant< T... > >`, the last column in the table providing
+`std::optional< boost::variant< T... > >`, the last column in the table providing
 the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -193,7 +193,7 @@ the template parameter pack.
 </DIV>
 
 Additional overloads are provided for the type `Point_2` combined with any other type with the result type being
-`boost::optional< boost::variant< Point_2 > >`.
+`std::optional< boost::variant< Point_2 > >`.
 Overloads are also provided for the type `Bbox_2`, for all
 intersections existing with the type `Iso_rectangle_2`. Note that the return type for `Bbox_2` - `Bbox_2`
  is `Bbox_2` and not `Iso_rectangle_2`.
@@ -202,7 +202,7 @@ intersections existing with the type `Iso_rectangle_2`. Note that the return typ
 
 The return type of intersecting two objects of the types `Type1` and `Type2` can be
 specified through the placeholder type specifier `auto`. It is equivalent to
-`boost::optional< boost::variant< T... > >`, the last column in the table providing
+`std::optional< boost::variant< T... > >`, the last column in the table providing
 the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -351,7 +351,7 @@ the template parameter pack.
 </DIV>
 
 Additional overloads are provided for the type `Point_3` combined with any other type with the result type being
-`boost::optional< boost::variant< Point_3 > >`. Overloads are also provided for the type `Bbox_3`, for all
+`std::optional< boost::variant< Point_3 > >`. Overloads are also provided for the type `Bbox_3`, for all
 intersections existing with the type `Iso_cuboid_3`. Note that the return type for `Bbox_3` - `Bbox_3`
  is `Bbox_3` and not `Iso_cuboid_3`.
 
@@ -363,10 +363,10 @@ The following examples demonstrate the most common use of
 
 In the first two examples we intersect a segment and a line.
 The result type can be specified through the placeholder type specifier `auto`,
-but you must anyway know that the result type is a `boost::optional<boost::variant<..> >`,
+but you must anyway know that the result type is a `std::optional<boost::variant<..> >`,
 in order to unpack the point or segment.
 
-<A HREF="https://www.boost.org/libs/optional/">`boost::optional`</A> comes in
+<A HREF="https://www.boost.org/libs/optional/">`std::optional`</A> comes in
 as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A> comes in
 as, if there is an intersection, it is either a point or a segment.
 

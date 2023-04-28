@@ -14,7 +14,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/array.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant.hpp>
 
 
@@ -96,7 +96,7 @@ public:
     const typename Traits::Construct_target_3 m_target_3;
 
     typedef boost::variant<typename Traits::Point_3, typename Traits::Segment_3> Variant_type;
-    typedef boost::optional< Variant_type > result_type;
+    typedef std::optional< Variant_type > result_type;
 
     Intersect_3(const Axis_parallel_plane_traits<Traits>& traits)
       : m_cst_coord(traits.m_cst_coord)

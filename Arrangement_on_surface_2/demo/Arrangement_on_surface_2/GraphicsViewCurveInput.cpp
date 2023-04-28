@@ -131,7 +131,7 @@ template <typename Arr_>
 void GraphicsViewCurveInput<Arr_>::curveInputDoneEvent(
   const std::vector<Point_2>& clickedPoints, CurveType type)
 {
-  boost::optional<Curve_2> cv =
+  std::optional<Curve_2> cv =
     this->curveGenerator.generate(clickedPoints, type);
   if (cv)
   {
@@ -144,9 +144,9 @@ void GraphicsViewCurveInput<Arr_>::curveInputDoneEvent(
 template <typename ArrTraits_>
 auto CurveGeneratorBase<ArrTraits_>::generate(
   const std::vector<Point_2>& clickedPoints, CurveType type)
-  -> boost::optional<Curve_2>
+  -> std::optional<Curve_2>
 {
-  boost::optional<Curve_2> res;
+  std::optional<Curve_2> res;
   switch (type)
   {
   case CurveType::Segment:
@@ -190,7 +190,7 @@ void CurveGeneratorBase<ArrTraits_>::setTraits(const ArrTraits* traits_)
 // Curve Generator Segment Traits
 template <typename Kernel_>
 auto CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::generateSegment(
-  const std::vector<Point_2>& clickedPoints) -> boost::optional<Curve_2>
+  const std::vector<Point_2>& clickedPoints) -> std::optional<Curve_2>
 {
   Curve_2 res{clickedPoints[0], clickedPoints[1]};
   return res;
@@ -200,7 +200,7 @@ auto CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::generateSegment(
 template <typename SegmentTraits>
 auto CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
   generatePolyline(const std::vector<Point_2>& clickedPoints)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   if (clickedPoints.size() < 2) return {};
 
@@ -212,7 +212,7 @@ auto CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
 // Curve Generator Linear Traits
 template <typename Kernel_>
 auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateSegment(
-  const std::vector<Point_2>& points) -> boost::optional<Curve_2>
+  const std::vector<Point_2>& points) -> std::optional<Curve_2>
 {
   Curve_2 res = Curve_2(Segment_2(points[0], points[1]));
   return res;
@@ -220,7 +220,7 @@ auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateSegment(
 
 template <typename Kernel_>
 auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateRay(
-  const std::vector<Point_2>& points) -> boost::optional<Curve_2>
+  const std::vector<Point_2>& points) -> std::optional<Curve_2>
 {
   Curve_2 res = Curve_2(Ray_2(points[0], points[1]));
   return res;
@@ -228,7 +228,7 @@ auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateRay(
 
 template <typename Kernel_>
 auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateLine(
-  const std::vector<Point_2>& points) -> boost::optional<Curve_2>
+  const std::vector<Point_2>& points) -> std::optional<Curve_2>
 {
   Curve_2 res = Curve_2(Line_2(points[0], points[1]));
   return res;
@@ -238,7 +238,7 @@ auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateLine(
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   generateSegment(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   Curve_2 res = Curve_2(Rat_segment_2(points[0], points[1]));
   return res;
@@ -246,7 +246,7 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateCircle(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
+  generateCircle(const std::vector<Point_2>& points) -> std::optional<Curve_2>
 {
   auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
@@ -258,7 +258,7 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   generateEllipse(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   auto x1 = (CGAL::min)(points[0].x(), points[1].x());
   auto y1 = (CGAL::min)(points[0].y(), points[1].y());
@@ -286,7 +286,7 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   generateThreePointCircularArc(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   auto& qp1 = points[0];
   auto& qp2 = points[1];
@@ -310,7 +310,7 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   generateFivePointConicArc(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   auto& qp0 = points[0];
   auto& qp1 = points[1];
@@ -341,7 +341,7 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 // CurveGenerator Algebraic Traits
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateLine(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
+  generateLine(const std::vector<Point_2>& points) -> std::optional<Curve_2>
 {
   RationalTraits ratTraits;
 
@@ -379,7 +379,7 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateCircle(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
+  generateCircle(const std::vector<Point_2>& points) -> std::optional<Curve_2>
 {
   auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
@@ -390,7 +390,7 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   generateEllipse(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   auto rx =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) / 4.;
@@ -404,7 +404,7 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   generateEllipse_(const Point_2& center, Rational rxRat, Rational ryRat)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   RationalTraits ratTraits;
 
@@ -438,7 +438,7 @@ template <
 auto CurveGenerator<
   Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
   generateBezier(const std::vector<Point_2>& clickedPoints)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   if (clickedPoints.size() < 2) return {};
   return Curve_2{clickedPoints.begin(), clickedPoints.end()};

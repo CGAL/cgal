@@ -36,7 +36,7 @@ The following table gives the possible values for `Type1` and `Type2`.
 
 The return type of intersecting two objects of the types `Type1` and `Type2` can be
 specified through the placeholder type specifier `auto`. It is equivalent to
-`boost::optional< boost::variant< T... > >`, the last column in the table providing
+`std::optional< boost::variant< T... > >`, the last column in the table providing
 the template parameter pack.
 
 
@@ -155,7 +155,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 
 \sa `do_intersect`
 \sa `Kernel_d::Intersect_d`
-\sa <a HREF="https://www.boost.org/doc/libs/release/libs/optional/index.html">`boost::optional`</a>
+\sa <a HREF="https://www.boost.org/doc/libs/release/libs/optional/index.html">`std::optional`</a>
 \sa <a HREF="https://www.boost.org/doc/html/variant.html">`boost::variant`</a>
 
 */

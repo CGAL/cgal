@@ -19,7 +19,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <cstddef>
 
@@ -112,7 +112,7 @@ inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& lz)
 // POSTCONDITION: [a,b] is the leftward normal _unit_ (a²+b²=1) vector.
 // POSTCONDITION: In case of overflow, an empty optional<> is returned.
 template<class K>
-boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
+std::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
 {
   bool finite = true ;
 
@@ -201,13 +201,13 @@ boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const
 }
 
 template<class K, class CoeffCache>
-boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2_with_ID<K> const& e,
+std::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2_with_ID<K> const& e,
                                                               CoeffCache& aCoeff_cache )
 {
   if ( aCoeff_cache.IsCached(e.mID) )
     return aCoeff_cache.Get(e.mID) ;
 
-  boost::optional< Line_2<K> > rRes = compute_normalized_line_ceoffC2 ( static_cast<Segment_2<K> const&>(e) ) ;
+  std::optional< Line_2<K> > rRes = compute_normalized_line_ceoffC2 ( static_cast<Segment_2<K> const&>(e) ) ;
 
   aCoeff_cache.Set(e.mID, rRes) ;
 
@@ -266,7 +266,7 @@ construct_trisegment ( Segment_2_with_ID<K> const& e0,
 // NOTE: The segments (e0,e1,e2) are stored in the argument as the trisegment st.event()
 //
 template <class K, class CoeffCache>
-boost::optional< Rational< typename K::FT> >
+std::optional< Rational< typename K::FT> >
 compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                           CoeffCache& aCoeff_cache )
 {
@@ -274,7 +274,7 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 
   typedef Line_2<K> Line_2 ;
 
-  typedef boost::optional<Line_2> Optional_line_2 ;
+  typedef std::optional<Line_2> Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec time for: " << tri ) ;
 
@@ -332,7 +332,7 @@ compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, 
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
+std::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
                                                           Segment_2_with_ID<K> const& e1 )
 {
   bool ok = false ;
@@ -391,12 +391,12 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
 // If you request the point of such degenerate pseudo seed the oriented midpoint between e0 and e2 is returned.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+std::optional< Point_2<K> >
 compute_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                        typename Trisegment_2<K, Segment_2_with_ID<K> >::SEED_ID sid,
                        CoeffCache& aCoeff_cache)
 {
-  boost::optional< Point_2<K> > p ;
+  std::optional< Point_2<K> > p ;
 
   typedef Trisegment_2<K, Segment_2_with_ID<K> > Trisegment_2 ;
 
@@ -430,7 +430,7 @@ compute_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K
 // of the degenerate seed.
 // A normal collinearity occurs when e0,e1 or e1,e2 are collinear.
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+std::optional< Point_2<K> >
 compute_degenerate_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                   CoeffCache& aCoeff_cache )
 {
@@ -448,7 +448,7 @@ compute_degenerate_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template <class K, class CoeffCache>
-boost::optional< Rational< typename K::FT> >
+std::optional< Rational< typename K::FT> >
 compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                               CoeffCache& aCoeff_cache )
 {
@@ -457,8 +457,8 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   typedef Point_2<K> Point_2 ;
   typedef Line_2 <K> Line_2 ;
 
-  typedef boost::optional<Point_2> Optional_point_2 ;
-  typedef boost::optional<Line_2>  Optional_line_2 ;
+  typedef std::optional<Point_2> Optional_point_2 ;
+  typedef std::optional<Line_2>  Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec time for: " << tri ) ;
 
@@ -540,7 +540,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
 // Calls the appropriate function depending on the collinearity of the edges.
 //
 template<class K, class TimeCache, class CoeffCache>
-boost::optional< Rational< typename K::FT > >
+std::optional< Rational< typename K::FT > >
 compute_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                    TimeCache& aTime_cache,
                                    CoeffCache& aCoeff_cache)
@@ -550,7 +550,7 @@ compute_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment
 
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
 
-  boost::optional< Rational< typename K::FT > > rRes =
+  std::optional< Rational< typename K::FT > > rRes =
       tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? compute_normal_offset_lines_isec_timeC2    (tri, aCoeff_cache)
                                                           : compute_degenerate_offset_lines_isec_timeC2(tri, aCoeff_cache);
 
@@ -571,7 +571,7 @@ compute_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K, class CoeffCache>
-boost::optional< Point_2<K> >
+std::optional< Point_2<K> >
 construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                        CoeffCache& aCoeff_cache)
 {
@@ -579,7 +579,7 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 
   typedef Line_2<K>  Line_2 ;
 
-  typedef boost::optional<Line_2>  Optional_line_2 ;
+  typedef std::optional<Line_2>  Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec point for: " << tri ) ;
 
@@ -632,7 +632,7 @@ construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Seg
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+std::optional< Point_2<K> >
 construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                            CoeffCache& aCoeff_cache)
 {
@@ -641,8 +641,8 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
   typedef Point_2<K> Point_2 ;
   typedef Line_2<K>  Line_2 ;
 
-  typedef boost::optional<Point_2> Optional_point_2 ;
-  typedef boost::optional<Line_2>  Optional_line_2 ;
+  typedef std::optional<Point_2> Optional_point_2 ;
+  typedef std::optional<Line_2>  Optional_line_2 ;
 
   CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec point for: " << tri )  ;
 
@@ -694,7 +694,7 @@ construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K,
 // Calls the appropriate function depending on the collinearity of the edges.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> >
+std::optional< Point_2<K> >
 construct_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                 CoeffCache& aCoeff_cache)
 {

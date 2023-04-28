@@ -17,7 +17,7 @@
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 #include <CGAL/Kernel_traits.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <algorithm>
 #include <iterator>
@@ -25,7 +25,7 @@
 namespace CGAL {
 
 template<class ForwardPointIterator, class Traits>
-boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
+std::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
                                                                   , ForwardPointIterator aEnd
                                                                   , typename Traits::FT  aOffset
                                                                   , Traits const&        aTraits
@@ -44,7 +44,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   typename Kernel::Compute_squared_distance_2 squared_distance  = kernel.compute_squared_distance_2_object();
   typename Kernel::Construct_segment_2        construct_segment = kernel.construct_segment_2_object();
 
-  typedef boost::optional<Point_2> OptionalPoint_2 ;
+  typedef std::optional<Point_2> OptionalPoint_2 ;
 
   FT lMaxSDist(0) ;
 
@@ -89,15 +89,15 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   {
     FT lDist = CGAL_SS_i::inexact_sqrt(lMaxSDist) ;
 
-    return boost::optional<FT>( lDist + ( aOffset * FT(1.05) ) ) ; // Add a %5 gap
+    return std::optional<FT>( lDist + ( aOffset * FT(1.05) ) ) ; // Add a %5 gap
   }
   else
-    return boost::optional<FT>();
+    return std::optional<FT>();
 
 }
 
 template<class FT, class ForwardPointIterator>
-boost::optional<FT> compute_outer_frame_margin ( ForwardPointIterator aBegin, ForwardPointIterator aEnd,
+std::optional<FT> compute_outer_frame_margin ( ForwardPointIterator aBegin, ForwardPointIterator aEnd,
                                                  FT aOffset )
 {
   typedef typename std::iterator_traits<ForwardPointIterator>::value_type Point_2 ;

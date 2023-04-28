@@ -28,7 +28,7 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/tags.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include <boost/range/value_type.hpp>
 #include <memory>
 
@@ -126,7 +126,7 @@ create_partial_interior_straight_skeleton_2 ( FT const&     aMaxTime
   Cartesian_converter<InputKernel, K> conv ;
 
   typename InputKernel::FT lMaxTime = aMaxTime;
-  boost::optional<KFT> lOptMaxTime(conv(lMaxTime)) ;
+  std::optional<KFT> lOptMaxTime(conv(lMaxTime)) ;
 
   SsBuilder ssb( lOptMaxTime ) ;
 
@@ -160,7 +160,7 @@ create_partial_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 
   // @todo This likely should be done in the kernel K rather than the input kernel (i.e. the same
   // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
-  boost::optional<IFT> margin = compute_outer_frame_margin(aVerticesBegin,
+  std::optional<IFT> margin = compute_outer_frame_margin(aVerticesBegin,
                                                            aVerticesEnd,
                                                            lOffset);
 

@@ -26,7 +26,7 @@
 
 #include <functional>
 #include <boost/property_map/property_map.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 #include <climits> // for CHAR_BIT
 #include <boost/none.hpp>
@@ -79,13 +79,13 @@ private:
 
         /** The value associated with this group. This value is only valid
          *  when @c kind!=largest_key (which indicates a deleted
-         *  element). Note that the use of boost::optional increases the
+         *  element). Note that the use of std::optional increases the
          *  memory requirements slightly but does not result in extraneous
          *  memory allocations or deallocations. The optional could be
          *  eliminated when @c value_type is a model of
          *  DefaultConstructible.
          */
-        ::boost::optional< value_type > value;
+        ::std::optional< value_type > value;
 
         /**
          * The kind of key stored at this group. This may be @c
@@ -205,14 +205,14 @@ public:
     value_type& top()
     {
         find_smallest();
-        CGAL_assertion(smallest_value->value != boost::none);
+        CGAL_assertion(smallest_value->value != std::nullopt);
         return *smallest_value->value;
     }
 
     const value_type& top() const
     {
         find_smallest();
-        CGAL_assertion(smallest_value->value != boost::none);
+        CGAL_assertion(smallest_value->value != std::nullopt);
         return *smallest_value->value;
     }
 
@@ -238,7 +238,7 @@ public:
         rank_type r = x->rank;
         group* p = x->parent;
         {
-            CGAL_assertion(x->value != boost::none);
+            CGAL_assertion(x->value != std::nullopt);
 
             // Find x's group
             size_type start = get(id, *x->value) - get(id, *x->value) % log_n;
@@ -727,7 +727,7 @@ private:
      *  are each log_n long, with the last group potentially being
      *  smaller.
      */
-    std::vector< ::boost::optional< value_type > > groups;
+    std::vector< ::std::optional< value_type > > groups;
 
     /** The list of active groups, indexed by rank. When A[r] is null,
      *  there is no active group of rank r. Otherwise, A[r] is the active

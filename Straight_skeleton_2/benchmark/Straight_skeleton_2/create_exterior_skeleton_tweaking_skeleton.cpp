@@ -54,7 +54,7 @@ int main()
 
       if ( i->opposite()->vertex()->has_infinite_time() )
       {
-        boost::optional<Point> op=
+        std::optional<Point> op=
           builder.Construct_offset_point(offset , i->opposite());
         if(!op) continue;
         p=*op;
@@ -64,7 +64,7 @@ int main()
 
       if( i->vertex()->has_infinite_time() )
       {
-        boost::optional<Point> op=
+        std::optional<Point> op=
           builder.Construct_offset_point(offset , i);
         if(!op) continue;
         q=*op;

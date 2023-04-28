@@ -197,7 +197,7 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
 
 // @todo handle boundary edges
 template <class TriangleMesh, typename VPM, typename Traits>
-boost::optional<typename Traits::FT>
+std::optional<typename Traits::FT>
 get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
                     const TriangleMesh& tmesh,
                     const VPM& vpm,
@@ -244,7 +244,7 @@ get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descrip
       Vector_3 n1 = gt.construct_cross_product_vector_3_object()(v_ar, v_ab);
       Vector_3 n2 = gt.construct_cross_product_vector_3_object()(v_ak, v_ab);
       if(gt.compute_scalar_product_3_object()(n1, n2) <= 0)
-        return boost::none;
+        return std::nullopt;
 
       delta_vol += volume(b, a, removed, origin) + volume(a, b, kept, origin); // opposite orientation
     }
@@ -268,27 +268,27 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
 
   halfedge_descriptor h = halfedge(e, tmesh), ho = opposite(h, tmesh);
 
-  boost::optional<FT> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
-  boost::optional<FT> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
+  std::optional<FT> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
+  std::optional<FT> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
 
   // the resulting point of the collapse of a halfedge is the target of the halfedge before collapse
   if(get(vcm, source(h, tmesh)))
-     return dv2 != boost::none ? ho
+     return dv2 != std::nullopt ? ho
                                : boost::graph_traits<TriangleMesh>::null_halfedge();
 
   if(get(vcm, target(h, tmesh)))
-     return dv1 != boost::none ? h
+     return dv1 != std::nullopt ? h
                                : boost::graph_traits<TriangleMesh>::null_halfedge();
 
-  if(dv1 != boost::none)
+  if(dv1 != std::nullopt)
   {
-    if(dv2 != boost::none)
+    if(dv2 != std::nullopt)
       return (*dv1 < *dv2) ? h : ho;
 
     return h;
   }
 
-  if(dv2 != boost::none)
+  if(dv2 != std::nullopt)
     return ho;
 
   return boost::graph_traits<TriangleMesh>::null_halfedge();

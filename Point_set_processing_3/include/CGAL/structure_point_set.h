@@ -58,8 +58,8 @@ is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 \tparam Kernel a model of `EfficientRANSACTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
-- `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
-- `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
+- `std::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
+- `std::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 
 */
 template <typename Kernel>

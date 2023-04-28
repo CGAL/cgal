@@ -31,7 +31,7 @@ exterior_offset_of_disjoint_polygons_with_holes(double lOffset, const std::vecto
     outer_vertices.insert(outer_vertices.end(),
                           pwh.outer_boundary().container().begin(),
                           pwh.outer_boundary().container().end());
-  boost::optional<double> margin = compute_outer_frame_margin(outer_vertices.begin(),
+  std::optional<double> margin = compute_outer_frame_margin(outer_vertices.begin(),
                                                               outer_vertices.end(),
                                                               lOffset);
 

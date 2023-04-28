@@ -36,8 +36,8 @@ public:
 
   The argument `placement` is unused.
   */
-  boost::optional<typename Edge_profile::FT> operator()(const Edge_profile& profile,
-                                                        const boost::optional<typename Edge_profile::Point>& placement) const;
+  std::optional<typename Edge_profile::FT> operator()(const Edge_profile& profile,
+                                                        const std::optional<typename Edge_profile::Point>& placement) const;
 
   /// @}
 

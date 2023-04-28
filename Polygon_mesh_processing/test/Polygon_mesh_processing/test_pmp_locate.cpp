@@ -27,7 +27,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <fstream>
 #include <iostream>
@@ -393,8 +393,8 @@ void test_predicates(const G& g, CGAL::Random& rnd)
     loc.second[id_of_h] = FT(1);
     loc.second[(id_of_h+1)%3] = FT(0);
     loc.second[(id_of_h+2)%3] = FT(0);
-    boost::optional<halfedge_descriptor> opt_hd = CGAL::is_border(source(h, g), g);
-    assert(PMP::is_on_mesh_border<FT>(loc, g) == (opt_hd != boost::none));
+    std::optional<halfedge_descriptor> opt_hd = CGAL::is_border(source(h, g), g);
+    assert(PMP::is_on_mesh_border<FT>(loc, g) == (opt_hd != std::nullopt));
 
     loc.second[id_of_h] = FT(0.5);
     loc.second[(id_of_h+1)%3] = FT(0.5);

@@ -28,7 +28,7 @@
 #include <CGAL/use.h>
 
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/config.hpp>
 
 #include <vector>
@@ -1388,7 +1388,7 @@ public:
   }
 
   template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+  Self& operator=(const std::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
     internal::Output_visitor<Self> visitor(this);
     if(t)  boost::apply_visitor(visitor, *t);
     return *this;

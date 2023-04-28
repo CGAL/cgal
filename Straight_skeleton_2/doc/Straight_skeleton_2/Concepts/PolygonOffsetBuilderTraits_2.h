@@ -33,7 +33,7 @@ typedef unspecified_type Compare_offset_against_event_time_2;
 /*!
 A construction object type.
 
-Must provide `boost::optional<Point_2> operator()(const FT& t, const Segment_2& e0, Segment_2_with_ID const& e1, const Trisegment_2_ptr& et) const`,
+Must provide `std::optional<Point_2> operator()(const FT& t, const Segment_2& e0, Segment_2_with_ID const& e1, const Trisegment_2_ptr& et) const`,
 which constructs the point of intersection of the lines obtained by offsetting
 the oriented lines given by `e0` and `e0` an Euclidean distance `t`.
 

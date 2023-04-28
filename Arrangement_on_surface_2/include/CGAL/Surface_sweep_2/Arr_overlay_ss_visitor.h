@@ -23,7 +23,7 @@
  */
 
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant/apply_visitor.hpp>
 
 #include <unordered_map>
@@ -524,11 +524,11 @@ void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
     CGAL_assertion(sc->color() == Gt2::RED);
 
     Halfedge_handle_red red_he = sc->red_halfedge_handle();
-    pt.set_red_cell(boost::make_optional(Cell_handle_red(red_he)));
+    pt.set_red_cell(std::make_optional(Cell_handle_red(red_he)));
   }
   else if (pt.is_blue_cell_empty()) {
     Halfedge_handle_blue blue_he = sc->blue_halfedge_handle();
-    pt.set_blue_cell(boost::make_optional(Cell_handle_blue(blue_he)));
+    pt.set_blue_cell(std::make_optional(Cell_handle_blue(blue_he)));
   }
 }
 

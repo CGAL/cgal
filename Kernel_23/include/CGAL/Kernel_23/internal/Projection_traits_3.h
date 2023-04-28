@@ -428,7 +428,7 @@ public:
 
 
 
-  boost::optional< boost::variant<Point_3,Segment_3> >
+  std::optional< boost::variant<Point_3,Segment_3> >
   operator()(const Segment_3& s1, const Segment_3& s2) const
   {
     typedef  boost::variant<Point_3, Segment_3> variant_type;
@@ -447,7 +447,7 @@ public:
 
     auto o = intersection(s1_2,s2_2);
     if(! o){
-      return boost::none;
+      return std::nullopt;
     }
 
     if(const Segment_2* si = boost::get<Segment_2>(&*o)){
@@ -468,7 +468,7 @@ public:
       src[Projector<R,dim>::y_index] = si->source().y();
       tgt[Projector<R,dim>::x_index] = si->target().x();
       tgt[Projector<R,dim>::y_index] = si->target().y();
-      return boost::make_optional(variant_type(Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) ) );
+      return std::make_optional(variant_type(Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) ) );
     }
 
 
@@ -484,7 +484,7 @@ public:
 
     Point_3 res(coords[0],coords[1],coords[2]);
     CGAL_assertion(x(res)==pi->x() && y(res)==pi->y());
-    return boost::make_optional(variant_type(res));
+    return std::make_optional(variant_type(res));
   }
 };
 

@@ -19,7 +19,7 @@ typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_c
 typedef CGAL::Barycentric_coordinates::Mean_value_2<Kernel> Mean_value;
 typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
 
-typedef boost::optional<Vector_insert_iterator> Output_type;
+typedef std::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 

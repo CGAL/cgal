@@ -22,7 +22,7 @@
 
 #include <CGAL/circulator.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/use.h>
 
@@ -53,9 +53,9 @@ public:
 
 private:
 
-    boost::optional<I> m_begin;
-    boost::optional<I> m_end;
-    boost::optional<I> m_current;
+    std::optional<I> m_begin;
+    std::optional<I> m_end;
+    std::optional<I> m_current;
     bool m_empty;
 
 public:

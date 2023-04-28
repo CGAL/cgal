@@ -517,7 +517,7 @@ void test_offset_multiple_CCs()
   std::vector<Point_2> input(pts, pts+12);
 
   const FT offset = 50;
-  boost::optional<FT> margin = CGAL::compute_outer_frame_margin(input.begin(), input.end(), offset);
+  std::optional<FT> margin = CGAL::compute_outer_frame_margin(input.begin(), input.end(), offset);
   assert(margin);
 
   // Get the bbox of the polygon

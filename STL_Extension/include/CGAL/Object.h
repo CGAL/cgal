@@ -28,7 +28,7 @@
 #include <typeinfo>
 
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/any.hpp>
 #include <memory>
 
@@ -65,7 +65,7 @@ class Object
 
     // implicit constructor from optionals containing variants
     template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-    Object(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t)
+    Object(const std::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t)
       : obj( t ? boost::apply_visitor(Any_from_variant(), *t) : nullptr) { }
 
     // implicit constructor from  variants

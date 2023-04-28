@@ -11,7 +11,7 @@
 #include <functional>
 
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/any.hpp>
 #include <boost/timer.hpp>
 #include <boost/lexical_cast.hpp>
@@ -27,7 +27,7 @@ struct Intersection_traits;
 template<typename K>
 struct Intersection_traits<K, typename K::Segment_2, typename K::Segment_2> {
   typedef typename boost::variant<typename K::Segment_2, typename K::Point_2 > variant_type;
-  typedef typename boost::optional< variant_type > result_type;
+  typedef typename std::optional< variant_type > result_type;
 };
 
 
@@ -53,7 +53,7 @@ OutputIterator intersect_do_iterator(const typename K::Segment_2 &seg1,
 
 
 template <class K>
-boost::optional<
+std::optional<
   boost::variant<typename K::Segment_2, typename K::Point_2>
   >
 intersection_variant(const typename K::Segment_2 &seg1,
@@ -63,7 +63,7 @@ intersection_variant(const typename K::Segment_2 &seg1,
   typedef CGAL::internal::Segment_2_Segment_2_pair<K> is_t;
 
   typedef boost::variant<typename K::Segment_2, typename K::Point_2> Variant;
-  typedef boost::optional<Variant> OptVariant;
+  typedef std::optional<Variant> OptVariant;
 
   is_t ispair(&seg1, &seg2);
   switch (ispair.intersection_type()) {
