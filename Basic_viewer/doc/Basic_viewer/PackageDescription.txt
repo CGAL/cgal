@@ -1,0 +1,30 @@
+/// \defgroup PkgBasicViewerRef Basic Viewer Reference
+
+/// \defgroup PkgBasicViewerClasses Classes
+/// \ingroup PkgBasicViewerRef
+
+/*!
+\addtogroup PkgBasicViewerRef
+\cgalPkgDescriptionBegin{Basic Viewer,PkgBasicViewer}
+\cgalPkgPicture{TODO.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Guillaume Damiand}
+\cgalPkgDesc{This package implements basic viewer class.}
+\cgalPkgManuals{Chapter_Basic_Viewer,PkgBasicViewerRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.0}
+\cgalPkgBib{cgal:XXX}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Classes}
+- `CGAL::Drawing_functor<DS, Vertex_descriptor, Edge_descriptor, Face_descriptor>`
+- `CGAL::Drawing_functor_with_volume<DS, Vertex_descriptor, Edge_descriptor, Face_descriptor, Volume_descriptor>`
+- `CGAL::Graphic_storage<BufferType>`
+
+*/
+
