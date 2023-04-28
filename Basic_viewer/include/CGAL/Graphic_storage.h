@@ -10,8 +10,8 @@
 // Author(s): Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //            Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
-#ifndef CGAL_GRAPHIC_BUFFER_H
-#define CGAL_GRAPHIC_BUFFER_H
+#ifndef CGAL_GRAPHIC_STORAGE_H
+#define CGAL_GRAPHIC_STORAGE_H
 
 #include <CGAL/license/GraphicsView.h>
 #include <QString>
@@ -417,4 +417,4 @@ protected:
 
 } // namespace CGAL
 
-#endif // CGAL_GRAPHIC_BUFFER_H
+#endif // CGAL_GRAPHIC_STORAGE_H

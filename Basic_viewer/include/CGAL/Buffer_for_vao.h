@@ -10,8 +10,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_VBO_BUFFER_FILLER_H
-#define CGAL_VBO_BUFFER_FILLER_H
+#ifndef CGAL_BUFFER_FOR_VAO_H
+#define CGAL_BUFFER_FOR_VAO_H
 
 #include <CGAL/license/GraphicsView.h>
 
@@ -923,4 +923,4 @@ protected:
 
 } // End namespace CGAL
 
-#endif // CGAL_VBO_BUFFER_FILLER_H
+#endif // CGAL_BUFFER_FOR_VAO_H
