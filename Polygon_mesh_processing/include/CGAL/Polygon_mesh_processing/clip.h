@@ -444,7 +444,7 @@ generic_clip_impl(
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::type Vpm2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<Vpm>::value_type,
+  static_assert((std::is_same<typename boost::property_traits<Vpm>::value_type,
                                       typename boost::property_traits<Vpm>::value_type>::value));
 
   Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),

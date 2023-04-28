@@ -107,7 +107,7 @@ public:
 
 template<class Traits_, class SAVED_OBJECT>
 class Multiple_kd_tree {
-  CGAL_static_assertion_msg((boost::is_pointer<SAVED_OBJECT>::value), "SAVED_OBJECT is not a pointer.");
+  static_assert((boost::is_pointer<SAVED_OBJECT>::value), "SAVED_OBJECT is not a pointer.");
 private:
   typedef Traits_                                       Traits;
   typedef typename Traits::FT                           NT;

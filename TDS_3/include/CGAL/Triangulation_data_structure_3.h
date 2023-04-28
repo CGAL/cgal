@@ -130,7 +130,7 @@ public:
   >::type                                                Cell_range;
 
 # else
-  CGAL_static_assertion_msg
+  static_assert
     (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
      "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
      "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");

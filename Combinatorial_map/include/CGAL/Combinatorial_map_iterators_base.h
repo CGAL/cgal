@@ -305,7 +305,7 @@ namespace CGAL {
 
     typedef typename Map::size_type size_type;
 
-    CGAL_static_assertion( (Bi<=Map::dimension &&
+    static_assert( (Bi<=Map::dimension &&
                             std::is_same<Ite_has_stack,Tag_false>::value) );
 
   public:
@@ -493,7 +493,7 @@ namespace CGAL {
 
     typedef typename Map::size_type size_type;
 
-    CGAL_static_assertion( (std::is_same<typename Base::Basic_iterator,
+    static_assert( (std::is_same<typename Base::Basic_iterator,
                             Tag_true>::value) );
 
     /// Main constructor.
@@ -579,7 +579,7 @@ namespace CGAL {
     /// True iff this iterator is basic
     typedef Tag_false Basic_iterator;
 
-    CGAL_static_assertion( (std::is_same<typename Base::Basic_iterator,
+    static_assert( (std::is_same<typename Base::Basic_iterator,
                             Tag_true>::value) );
 
     /// Main constructor.

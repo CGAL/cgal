@@ -425,7 +425,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
                                         get_const_property_map(boost::vertex_point, tm1));
   VertexPointMap2 vpmap2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
-  CGAL_static_assertion(
+  static_assert(
       (std::is_same<
        typename boost::property_traits<VertexPointMap1>::value_type,
        typename boost::property_traits<VertexPointMap2>::value_type
@@ -543,7 +543,7 @@ compute_face_polyline_intersection(const FaceRange& face_range,
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                           get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
-  CGAL_static_assertion(
+  static_assert(
         (std::is_same<Point,
         typename boost::range_value<Polyline>::type>::value));
 
@@ -681,7 +681,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                           get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   typedef typename boost::range_value<PolylineRange>::type Polyline;
-  CGAL_static_assertion((std::is_same<Point, typename boost::range_value<Polyline>::type>::value));
+  static_assert((std::is_same<Point, typename boost::range_value<Polyline>::type>::value));
 
   std::vector<face_descriptor> faces;
   faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
@@ -1742,7 +1742,7 @@ surface_intersection(const TriangleMesh& tm1,
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VPM1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type VPM2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
+  static_assert((std::is_same<typename boost::property_traits<VPM1>::value_type,
                                       typename boost::property_traits<VPM2>::value_type>::value));
 
   VPM1 vpm1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point),

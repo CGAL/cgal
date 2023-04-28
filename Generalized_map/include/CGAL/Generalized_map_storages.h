@@ -229,7 +229,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_descriptor<i>::type attribute(Dart_descriptor ADart)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (ADart->mattribute_descriptors);
@@ -238,7 +238,7 @@ namespace CGAL {
     typename Attribute_const_descriptor<i>::type
     attribute(Dart_const_descriptor ADart) const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (ADart->mattribute_descriptors);
@@ -249,7 +249,7 @@ namespace CGAL {
     typename Attribute_descriptor<i>::type copy_attribute
     (typename Attribute_const_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "copy_attribute<i> called but i-attributes are disabled.");
       typename Attribute_descriptor<i>::type res=
         std::get<Helper::template Dimension_index<i>::value>

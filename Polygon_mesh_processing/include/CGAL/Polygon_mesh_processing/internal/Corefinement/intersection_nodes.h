@@ -49,7 +49,7 @@ public:
 private:
 //typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+  static_assert((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
                                       typename boost::property_traits<VertexPointMap2>::value_type>::value));
 
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
@@ -151,7 +151,7 @@ public:
 
 private:
   typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+  static_assert((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
                                       typename boost::property_traits<VertexPointMap2>::value_type>::value));
 
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
@@ -328,7 +328,7 @@ class Intersection_nodes<TriangleMesh, VertexPointMap1, VertexPointMap2,
 {
 //typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+  static_assert((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
                                       typename boost::property_traits<VertexPointMap2>::value_type>::value));
 
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;

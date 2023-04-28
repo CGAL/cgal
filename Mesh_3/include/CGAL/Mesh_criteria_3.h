@@ -98,7 +98,7 @@ public:
 
   template <typename Facet_criterion>
   void add_facet_criterion(Facet_criterion* criterion) {
-    CGAL_static_assertion((boost::is_base_of<
+    static_assert((boost::is_base_of<
                            typename Facet_criteria::Abstract_criterion,
                            Facet_criterion
                            >::value));
@@ -107,7 +107,7 @@ public:
 
   template <typename Cell_criterion>
   void add_cell_criterion(Cell_criterion* criterion) {
-    CGAL_static_assertion((boost::is_base_of<
+    static_assert((boost::is_base_of<
                            typename Cell_criteria::Abstract_criterion,
                            Cell_criterion
                            >::value));

@@ -139,7 +139,7 @@ class Lazy_alpha_nt_3{
   Approx_point to_approx(const Input_point& wp) const
   {
     // The traits class' Point_3 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_3<
+    static_assert((Is_traits_point_convertible_3<
                             Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
 
     To_approx converter;
@@ -149,7 +149,7 @@ class Lazy_alpha_nt_3{
   Exact_point to_exact(const Input_point& wp) const
   {
     // The traits class' Point_3 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_3<
+    static_assert((Is_traits_point_convertible_3<
                             Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
 
     To_exact converter;

@@ -198,7 +198,7 @@ private:
   void try_parallel (const F& func, std::size_t begin, std::size_t end)
   {
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)

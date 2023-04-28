@@ -34,7 +34,7 @@ namespace CGAL
                             typename Map::Dart_const_descriptor adart1,
                             typename Map::Dart_const_descriptor adart2)
   {
-    CGAL_static_assertion( (std::is_same<typename Iterator::Basic_iterator,
+    static_assert( (std::is_same<typename Iterator::Basic_iterator,
                                            Tag_false>::value) );
     bool found=false;
 
@@ -57,7 +57,7 @@ namespace CGAL
                              typename Map::Dart_const_descriptor adart,
                              typename Map::size_type amark)
   {
-    CGAL_static_assertion( (std::is_same<typename Iterator::Basic_iterator,
+    static_assert( (std::is_same<typename Iterator::Basic_iterator,
                                            Tag_false>::value) );
     bool res=true;
 
@@ -98,7 +98,7 @@ namespace CGAL
                                      typename Map::Dart_const_descriptor adart,
                                      typename Map::size_type amark)
   {
-    CGAL_static_assertion( (std::is_same<typename Iterator::Basic_iterator,
+    static_assert( (std::is_same<typename Iterator::Basic_iterator,
                             Tag_true>::value) );
     CGAL_assertion( (is_whole_orbit_unmarked<Map,
                      CMap_non_basic_iterator<Map,Iterator> >
@@ -305,7 +305,7 @@ namespace CGAL
                                               typename Map::size_type amark,
                                               typename Map::size_type amark2=Map::INVALID_MARK)
   {
-    CGAL_static_assertion( (std::is_same<typename Iterator::Basic_iterator,
+    static_assert( (std::is_same<typename Iterator::Basic_iterator,
                             Tag_true>::value) );
     CGAL_assertion( (is_whole_orbit_unmarked<Map,
                      CMap_non_basic_iterator<Map,Iterator> >

@@ -48,7 +48,7 @@ namespace CGAL {
     typedef typename std::list<Dart_descriptor>::iterator List_iterator;
     typedef typename LCC::Point Point;
 
-    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
+    static_assert( LCC::dimension>=2 && LCC::ambient_dimension==2 );
     CGAL_assertion(edge_indices.size() % 2 == 0);
 
     std::vector< typename LCC::Vertex_attribute_descriptor > initVertices;

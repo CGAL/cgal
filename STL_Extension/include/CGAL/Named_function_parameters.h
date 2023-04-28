@@ -179,7 +179,7 @@ typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::type
 get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 {
 #ifndef CGAL_NO_STATIC_ASSERTION_TEST
-  CGAL_static_assertion( (!std::is_same<Query_tag, Tag>::value) );
+  static_assert( (!std::is_same<Query_tag, Tag>::value) );
 #endif
   return get_parameter_impl(static_cast<const typename Base::base&>(np), tag);
 }
@@ -240,7 +240,7 @@ template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::reference
 get_parameter_reference_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 {
-  CGAL_static_assertion( (!std::is_same<Query_tag, Tag>::value) );
+  static_assert( (!std::is_same<Query_tag, Tag>::value) );
   return get_parameter_reference_impl(static_cast<const typename Base::base&>(np), tag);
 }
 
@@ -532,7 +532,7 @@ namespace boost
   template <typename T, typename Tag, typename Base, typename Tag2, bool B = false>
   void get_param(CGAL::Named_function_parameters<T,Tag,Base>, Tag2)
   {
-    CGAL_static_assertion(B && "You must use CGAL::parameters::get_parameter instead of boost::get_param");
+    static_assert(B && "You must use CGAL::parameters::get_parameter instead of boost::get_param");
   }
 }
 #endif

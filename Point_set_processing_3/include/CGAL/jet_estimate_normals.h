@@ -197,7 +197,7 @@ jet_estimate_normals(
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
   CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
-  CGAL_static_assertion_msg(!(std::is_same<SvdTraits,
+  static_assert(!(std::is_same<SvdTraits,
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 

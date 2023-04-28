@@ -82,7 +82,7 @@ namespace CGAL {
       Ite(amap, adart, amap.get_new_mark()),
       mcell_mark_number(amap.get_new_mark())
     {
-      CGAL_static_assertion( (std::is_same<typename Ite::Basic_iterator,
+      static_assert( (std::is_same<typename Ite::Basic_iterator,
                               Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mcell_mark_number));
 
@@ -196,7 +196,7 @@ namespace CGAL {
       Ite(amap, adart),
       mmark_number(amap.get_new_mark())
     {
-      CGAL_static_assertion( (std::is_same<typename Ite::Basic_iterator,
+      static_assert( (std::is_same<typename Ite::Basic_iterator,
                               Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, adart, mmark_number);
@@ -303,7 +303,7 @@ namespace CGAL {
       Base(amap),
       mmark_number(amap.get_new_mark())
     {
-      CGAL_static_assertion( (std::is_same<typename Base::Basic_iterator,
+      static_assert( (std::is_same<typename Base::Basic_iterator,
                               Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, (*this), mmark_number);
