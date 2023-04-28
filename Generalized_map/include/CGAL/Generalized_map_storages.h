@@ -457,17 +457,6 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
-
-#ifndef CGAL_CXX17
-  template<unsigned int d_, class Items_, class Alloc_>
-  constexpr typename Generalized_map_storage_1<d_, Items_, Alloc_>::Null_descriptor_type
-  Generalized_map_storage_1<d_, Items_, Alloc_>::null_descriptor;
-
-  template<unsigned int d_, class Items_, class Alloc_>
-  constexpr typename Generalized_map_storage_1<d_, Items_, Alloc_>::Null_descriptor_type
-  Generalized_map_storage_1<d_, Items_, Alloc_>::null_handle;
-#endif
-
 } // namespace CGAL
 
 #if defined(BOOST_GCC)

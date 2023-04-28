@@ -1572,17 +1572,10 @@ private:
   Cell_vector c3t3_cells(const Cell_vector& cells) const
   {
     Cell_vector c3t3_cells;
-#ifdef CGAL_CXX17
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not_fn(Is_in_c3t3<Cell_handle>(c3t3_)));
-#else
-    std::remove_copy_if(cells.begin(),
-                        cells.end(),
-                        std::back_inserter(c3t3_cells),
-                        std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
-#endif
     return c3t3_cells;
   }
 
@@ -3665,17 +3658,10 @@ incident_slivers(const Vertex_handle& v,
   std::vector<Cell_handle> incident_cells_;
   tr_.incident_cells(v, std::back_inserter(incident_cells_));
 
-#ifdef CGAL_CXX17
   std::remove_copy_if(incident_cells_.begin(),
                       incident_cells_.end(),
                       out,
                       std::not_fn(Is_sliver<Sc>(c3t3_, criterion, sliver_bound)));
-#else
-  std::remove_copy_if(incident_cells_.begin(),
-                      incident_cells_.end(),
-                      out,
-                      std::not1(Is_sliver<Sc>(c3t3_,criterion,sliver_bound)));
-#endif
 
   return out;
 }

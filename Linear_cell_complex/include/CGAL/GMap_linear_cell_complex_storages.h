@@ -493,18 +493,6 @@ namespace CGAL {
     typename Helper::Attribute_containers mattribute_containers;
   };
 
-#ifndef CGAL_CXX17
-  template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_>
-  constexpr typename GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_, Items_, Alloc_>::Null_descriptor_type
-  GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_, Items_, Alloc_>::null_descriptor;
-
-  template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_>
-  constexpr typename GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_, Items_, Alloc_>::Null_descriptor_type
-  GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_, Items_, Alloc_>::null_handle;
-#endif
-
 } // namespace CGAL
 
 #if defined(BOOST_GCC)
