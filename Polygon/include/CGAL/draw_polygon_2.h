@@ -128,7 +128,7 @@ void draw(const CGAL_P2_TYPE &ap2,
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ap2, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template <class T, class C, class DrawingFunctor>
@@ -138,7 +138,7 @@ void draw(const CGAL_P2_TYPE &ap2,
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ap2, buffer, drawingfunctor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

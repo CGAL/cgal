@@ -369,7 +369,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(av2, buffer, drawing_functor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template<class DG, class AT, class AP, typename BufferType=float>

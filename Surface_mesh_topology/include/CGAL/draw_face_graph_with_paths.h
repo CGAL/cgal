@@ -411,7 +411,7 @@ void draw(const Mesh& mesh,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(mesh, buffer, &paths, amark);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template<typename Mesh, typename DrawingFunctor, typename BufferType=float>
@@ -424,7 +424,7 @@ void draw(const Mesh& mesh,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(mesh, buffer, drawing_functor, &paths, amark);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template<class Mesh, typename BufferType=float >
@@ -437,7 +437,7 @@ void draw(const Mesh& mesh,
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(mesh, buffer, &paths, amark);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 } // End namespace CGAL

@@ -63,7 +63,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer_for_fg(apoly, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template<class PolyhedronTraits_3,
@@ -79,7 +79,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer_for_fg(apoly, buffer, drawing_functor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 #endif // CGAL_USE_BASIC_VIEWER
 

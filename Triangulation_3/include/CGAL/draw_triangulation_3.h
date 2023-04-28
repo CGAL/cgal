@@ -163,7 +163,7 @@ void draw(const CGAL_T3_TYPE &at3, const DrawingFunctor &drawingfunctor,
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(at3, buffer, drawingfunctor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template <class Gt, class Tds, class Lock_data_structure>
@@ -171,7 +171,7 @@ void draw(const CGAL_T3_TYPE &at3, const char *title="T3 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(at3, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

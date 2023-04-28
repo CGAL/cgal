@@ -290,7 +290,7 @@ void draw(const CGAL_LCC_TYPE& alcc, const DrawingFunctor& drawing_functor,
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(alcc, buffer, drawing_functor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 // Specialization of draw function for a LCC, without a drawing functor.
@@ -302,7 +302,7 @@ void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(alcc, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

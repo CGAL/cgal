@@ -59,7 +59,7 @@ void draw(const Surface_mesh<K>& amesh,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer_for_fg(amesh, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template<class K, typename BufferType=float, class DrawingFunctor>
@@ -69,7 +69,7 @@ void draw(const Surface_mesh<K>& amesh,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer_for_fg(amesh, buffer, drawing_functor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

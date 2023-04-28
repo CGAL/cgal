@@ -76,7 +76,7 @@ void draw(const CGAL_CT2_TYPE &ct2, const DrawingFunctor &drawingfunctor,
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ct2, buffer, drawingfunctor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

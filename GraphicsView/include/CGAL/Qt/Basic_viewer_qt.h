@@ -1667,7 +1667,7 @@ protected:
 };
 
 template <typename BufferType=float>
-void draw_buffer(Graphic_storage<BufferType>& graphic_buffer,
+void draw_graphic_storage(Graphic_storage<BufferType>& graphic_buffer,
                  const char *title="CGAL Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
@@ -1692,7 +1692,7 @@ void draw_buffer(Graphic_storage<BufferType>& graphic_buffer,
 }
 
 // template <typename BufferType = float>
-// void draw_buffer(Graphic_storage<BufferType> &graphic_buffer,
+// void draw_graphic_storage(Graphic_storage<BufferType> &graphic_buffer,
 //                  const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress,
 //                  const char *title="CGAL Basic Viewer")
 // {

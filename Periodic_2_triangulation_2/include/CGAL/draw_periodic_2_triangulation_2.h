@@ -227,7 +227,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(ap2t2, buffer, drawing_functor);
-  draw_buffer(buffer);
+  draw_graphic_storage(buffer);
 }
 
 template<class Gt, class Tds, class BufferType=float>

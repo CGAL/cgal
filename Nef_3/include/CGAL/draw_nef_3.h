@@ -288,7 +288,7 @@ void draw(const CGAL_NEF3_TYPE &anef,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(anef, buffer, drawing_functor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template <typename Kernel_, typename Items_, typename Mark_,
@@ -298,7 +298,7 @@ void draw(const CGAL_NEF3_TYPE &anef,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(anef, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

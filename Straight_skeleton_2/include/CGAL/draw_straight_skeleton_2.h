@@ -188,7 +188,7 @@ void draw(const CGAL_SS_TYPE &ass2, const DrawingFunctor &drawingfunctor,
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ass2, buffer, drawingfunctor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template <class K>
@@ -197,7 +197,7 @@ void draw(const CGAL_SS_TYPE &ass2,
 {
   CGAL::Graphic_storage<float> buffer;
   add_in_graphic_buffer(ass2, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

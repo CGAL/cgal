@@ -98,7 +98,7 @@ void draw(const Point_set_3<P, V>& apointset,
 {
   Graphic_storage<float> buffer;
   add_in_graphic_buffer(apointset, buffer, drawing_functor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template <class P, class V>
@@ -107,7 +107,7 @@ void draw(const Point_set_3<P, V>& apointset,
 {
   Graphic_storage<float> buffer;
   add_in_graphic_buffer(apointset, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

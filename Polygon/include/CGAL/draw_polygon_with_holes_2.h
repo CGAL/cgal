@@ -156,7 +156,7 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const DrawingFunctor &drawing_func
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(ap2, buffer, drawing_functor);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 template<class T, class C, typename BufferType=float>
@@ -165,7 +165,7 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
 {
   CGAL::Graphic_storage<BufferType> buffer;
   add_in_graphic_buffer(ap2, buffer);
-  draw_buffer(buffer, title);
+  draw_graphic_storage(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

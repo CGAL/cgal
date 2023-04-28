@@ -58,7 +58,7 @@ int main(void)
     CGAL::Graphic_storage<float> graphic_buffer;
     CGAL::add_in_graphic_buffer(point_set, graphic_buffer, Drawing_functor_green_points());
     CGAL::add_in_graphic_buffer(output_mesh, graphic_buffer);
-    CGAL::draw_buffer(graphic_buffer);
+    CGAL::draw_graphic_storage(graphic_buffer);
   }
   else
   { return EXIT_FAILURE; }
