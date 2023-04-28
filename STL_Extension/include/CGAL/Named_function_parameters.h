@@ -540,6 +540,6 @@ namespace boost
 // For disambiguation using SFINAE
 BOOST_MPL_HAS_XXX_TRAIT_DEF(CGAL_Named_function_parameters_class)
 template<class T>
-CGAL_CPP17_INLINE constexpr bool is_named_function_parameter = has_CGAL_Named_function_parameters_class<T>::value;
+inline constexpr bool is_named_function_parameter = has_CGAL_Named_function_parameters_class<T>::value;
 
 #endif // CGAL_BOOST_FUNCTION_PARAMS_HPP

@@ -488,12 +488,6 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if CGAL_CXX17
-#  define CGAL_CPP17_INLINE inline
-#else
-#  define CGAL_CPP17_INLINE
-#endif
-
 #ifndef CGAL_NO_ASSERTIONS
 #  define CGAL_NO_ASSERTIONS_BOOL false
 #else

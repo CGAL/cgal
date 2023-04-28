@@ -64,7 +64,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type             size_type;
 
     typedef std::nullptr_t Null_descriptor_type;
-    CGAL_CPP17_INLINE static constexpr Null_descriptor_type null_descriptor=nullptr;
+    inline static constexpr Null_descriptor_type null_descriptor=nullptr;
 
     using Type_for_compact_container=void*;
 
@@ -107,7 +107,7 @@ namespace CGAL {
     template<int i>
     using Attribute_const_handle=Attribute_const_descriptor<i>;
 
-    CGAL_CPP17_INLINE static constexpr Null_descriptor_type null_handle=null_descriptor;
+    inline static constexpr Null_descriptor_type null_handle=null_descriptor;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
