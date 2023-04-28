@@ -25,14 +25,14 @@ struct Drawing_functor_small_faces:
                                typename boost::graph_traits<SM>::vertex_descriptor,
                                typename boost::graph_traits<SM>::edge_descriptor,
                                    typename boost::graph_traits<SM>::face_descriptor>;
-  
+
   Drawing_functor_small_faces(const SM& sm): Base(), m_sm(sm)
   {
     typename SM::template Property_map<face_descriptor, FT> faces_size;
     boost::tie(faces_size, m_with_size)=sm.template property_map<face_descriptor, FT>("f:size");
-    if(!m_with_size) 
+    if(!m_with_size)
     { return; }
-    
+
     m_min_size=faces_size[*(sm.faces().begin())];
     m_max_size=m_min_size;
     FT cur_size;
@@ -54,11 +54,11 @@ struct Drawing_functor_small_faces:
 
   CGAL::IO::Color get_face_color(const SM& sm,
                                  typename boost::graph_traits<SM>::face_descriptor fh)
-  {  
+  {
     // Default color of faces
     CGAL::IO::Color c(75,160,255);
     if(!m_with_size) { return c; }
-    
+
     // Compare the size of the face with the % m_threshold
     bool exist;
     typename SM::template Property_map<face_descriptor, FT> faces_size;
@@ -71,7 +71,7 @@ struct Drawing_functor_small_faces:
 
     return c; // Default color
   }
-  
+
   const SM& m_sm;
   bool m_with_size;
   FT m_min_size, m_max_size;
@@ -122,9 +122,9 @@ int main(int argc, char* argv[])
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
-        {          
+        {
           if(df.m_threshold<5) { df.m_threshold=0; }
-          else  { df.m_threshold-=5; } 
+          else  { df.m_threshold-=5; }
           basic_viewer->displayMessage
             (QString("Small faces threshold=%1.").arg(df.m_threshold));
 
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
     // Then we run the app
     app.run();
   }
-  
+
   sm.remove_property_map(faces_size);
 
   return EXIT_SUCCESS;

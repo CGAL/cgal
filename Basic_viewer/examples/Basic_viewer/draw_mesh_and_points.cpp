@@ -9,7 +9,6 @@
 #include <vector>
 #include <fstream>
 
-// Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;

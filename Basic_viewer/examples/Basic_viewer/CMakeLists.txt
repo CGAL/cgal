@@ -16,15 +16,18 @@ include(CGAL_Eigen3_support)
 
 create_single_source_cgal_program("draw_surface_mesh_small_faces.cpp")
 create_single_source_cgal_program("draw_mesh_and_points.cpp")
+create_single_source_cgal_program("draw_several_windows.cpp")
 
 if(CGAL_Qt5_FOUND)
   #link it with the required CGAL libraries
   target_link_libraries(draw_surface_mesh_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(draw_mesh_and_points PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_several_windows PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
 
 if(TARGET CGAL::Eigen3_support)
   target_link_libraries(draw_mesh_and_points PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(draw_several_windows PUBLIC CGAL::Eigen3_support)
 endif()
 
 #end of the file
