@@ -14,15 +14,17 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 find_package(Eigen3 3.1.0)
 include(CGAL_Eigen3_support)
 
-create_single_source_cgal_program("draw_surface_mesh_small_faces.cpp")
 create_single_source_cgal_program("draw_mesh_and_points.cpp")
 create_single_source_cgal_program("draw_several_windows.cpp")
+create_single_source_cgal_program("draw_surface_mesh_small_faces.cpp")
+create_single_source_cgal_program("draw_surface_mesh_height.cpp")
 
 if(CGAL_Qt5_FOUND)
   #link it with the required CGAL libraries
-  target_link_libraries(draw_surface_mesh_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(draw_mesh_and_points PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(draw_several_windows PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_surface_mesh_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_surface_mesh_height PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
 
 if(TARGET CGAL::Eigen3_support)
