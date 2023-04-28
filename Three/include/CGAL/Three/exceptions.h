@@ -127,7 +127,7 @@ wrap_a_call_to_cpp(Callable f,
       return Return_type();
     }
 }
-#endif 
+#endif
 
 } // end namespace Three
 } // end namespace CGAL

@@ -451,7 +451,7 @@ public:
   //! Calls evaluate_script(script, filename, true).
   void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
-  #endif 
+  #endif
 
   QMutex mutex;
   QWaitCondition wait_condition;
