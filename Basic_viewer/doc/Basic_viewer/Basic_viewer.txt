@@ -3,41 +3,53 @@ namespace CGAL {
 
 \mainpage User Manual
 \anchor Chapter_Basic_viewer
-\anchor
-\cgalAutoToc
+\anchor ChapterBasicViewer
+
 \author Guillaume Damiand, Mostafa Ashraf
+\cgalAutoToc
 
-Two main use:
+\section Basic_viewerDoc
 
-1) draw
+\subsection Basic_viewerDoc_1 Direct Draw
+
 draw(XXX)
 
-2) through graphic storage
+\subsection Basic_viewerDoc_2 Customize the drawing
 
-Graohic_storage gs;
-add_in_graphic_storage(XXX, gs);
-draw_graphic_storage(gs);
+Drawing_functor
 
-3) basic interactions
+\subsection Basic_viewerDoc_3 Graphic storage
 
-introduce qapplication and basic viewer class
+\subsection Basic_viewerDoc_4 Basic viewer Qt
 
-4) advanced interactions
+\subsection Basic_viewerDoc_5 Application and basic viewer
 
-introduce basic viewer class
 
-5) examples
+\section Basic_viewerExamples Examples
 
-5.1) simple draw 
+\subsection Basic_viewerExamples_simple_draw Basic draw
 
-5.2) draw with drawing functor
+\cgalExample{Linear_cell_complex/draw_linear_cell_complex.cpp}
 
-5.3) draw 2 different DS in a same viewer
 
-5.4) interaction  with qapplication and basic viewer
+\subsection Basic_viewerExamples_custom_color Change Face Colors
 
-5.5) mix different basic viewer in a same window (code laurent ?)
+\cgalExample{Basic_viewer/draw_surface_mesh_height.cpp}
 
+
+\subsection Basic_viewerExamples_two_ds Draw two different CGAL data-structures in a same viewer
+
+\cgalExample{Basic_viewer/draw_mesh_and_points.cpp}
+
+
+\subsection Basic_viewerExamples_interact Interaction with the viewer
+
+\cgalExample{Basic_viewer/draw_surface_mesh_small_faces.cpp}
+
+
+\subsection Basic_viewerExamples_several_window Draw several basic viewers
+
+\cgalExample{Basic_viewer/draw_several_windows.cpp}
 
 
 */

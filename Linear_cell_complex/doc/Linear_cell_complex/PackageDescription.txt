@@ -76,6 +76,7 @@
 
 \cgalCRPSubsection{Draw a Linear Cell Complex}
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- \link PkgDrawLinearCellComplex CGAL::add_in_graphic_storage<LCC, BufferType, DrawingFunctor>() \endlink
 
 */
 

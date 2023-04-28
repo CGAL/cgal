@@ -1,4 +1,7 @@
 /*!
+\example Linear_cell_complex/draw_linear_cell_complex.cpp
 \example Basic_viewer/draw_mesh_and_points.cpp
+\example Basic_viewer/draw_several_windows.cpp
+\example Basic_viewer/draw_surface_mesh_height.cpp
 \example Basic_viewer/draw_surface_mesh_small_faces.cpp
 */
