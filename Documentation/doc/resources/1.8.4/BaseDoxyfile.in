@@ -365,6 +365,7 @@ ALIASES+= "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></t
 ALIASES+= "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}"
 ALIASES+= "cgalParamSectionEnd=\cgalParamNEnd"
 ALIASES+= "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>"
+ALIASES+= "cgalEpicExact=<dl class=\"section note\"><dt>Exactness</dt><dd>This construction is trivial and therefore always exact in `Exact_predicates_inexact_constructions_kernel`.</dd></dl>"
 
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
