@@ -434,7 +434,7 @@ private:
       }
 
       const Point* i_point;
-      if(!(i_point = boost::get<Point>(&object))) {
+      if(!(i_point = std::get_if<Point>(&object))) {
         continue;  // continue in case of segment.
       }
 
@@ -483,7 +483,7 @@ private:
     if(!min_intersection)
       return boost::make_tuple(false, false, 0.0, Primitive_id());
 
-    const Point* i_point = boost::get<Point>( &min_intersection->first );
+    const Point* i_point = std::get_if<Point>( &min_intersection->first );
     if (!i_point) //segment case ignored
       return boost::make_tuple(false, false, 0.0, Primitive_id());
 

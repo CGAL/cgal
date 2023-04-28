@@ -110,16 +110,16 @@ Object(const Object &o);
 
 /*!
 Implicit converting constructor for compatibility with
-`boost::variant`.
+`std::variant`.
 */
-Object(boost::variant<T...>);
+Object(std::variant<T...>);
 
 
 /*!
 Implicit converting constructor for compatibility with
-`std::optional` and `boost::variant`.
+`std::optional` and `std::variant`.
  */
-Object(std::optional< boost::variant<T...> >);
+Object(std::optional< std::variant<T...> >);
 
 /// @}
 

@@ -7,7 +7,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/use.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <optional>
 
 struct A{};
@@ -91,7 +91,7 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
 }
 
 void variant_test() {
-  typedef boost::variant<int, char, double> var;
+  typedef std::variant<int, char, double> var;
   typedef std::optional< var > ovar;
   std::vector<int> a;
   std::vector<double> b;

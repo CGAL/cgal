@@ -1426,7 +1426,7 @@ public:
 
     typedef unsigned int                              Multiplicity;
     typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-    typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
+    typedef std::variant<Intersection_point, Arc_2> Intersection_result;
 
     //! the result type
     typedef CGAL::cpp98::iterator<std::output_iterator_tag, Intersection_result>
@@ -1905,7 +1905,7 @@ public:
   {
     typedef typename Curved_kernel_via_analysis_2::Point_2      Point_2;
     typedef typename Curved_kernel_via_analysis_2::Arc_2        Arc_2;
-    typedef boost::variant<Point_2, Arc_2>      Make_x_monotone_result;
+    typedef std::variant<Point_2, Arc_2>      Make_x_monotone_result;
     *oi++ = Make_x_monotone_result(cv);
     return oi;
   }
@@ -1945,7 +1945,7 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Arc_2        Arc_2;
     typedef typename Curved_kernel_via_analysis_2::Non_x_monotone_arc_2
       Non_x_monotone_arc_2;
-    typedef boost::variant<Point_2, Arc_2>
+    typedef std::variant<Point_2, Arc_2>
       Make_x_monotone_result;
 
     Curve_analysis_2 curve;

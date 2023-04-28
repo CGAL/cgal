@@ -8,7 +8,7 @@
 
 #include "arr_linear.h"
 
-typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
+typedef std::variant<Vertex_const_handle, Halfedge_const_handle,
                          Face_const_handle>              Cell_type;
 typedef std::optional<Cell_type>                       Vert_decomp_type;
 typedef std::pair<Vert_decomp_type, Vert_decomp_type>    Vert_decomp_pair;
@@ -41,10 +41,10 @@ int main() {
     std::cout << " feature below: ";
     if (! curr.first) std::cout << "EMPTY";
     else {
-      auto* vh = boost::get<Vertex_const_handle>(&*(curr.first));;
+      auto* vh = std::get<Vertex_const_handle>(&*(curr.first));;
       if (vh) std::cout << '(' << (*vh)->point() << ')';
       else {
-        auto* hh = boost::get<Halfedge_const_handle>(&*(curr.first));
+        auto* hh = std::get<Halfedge_const_handle>(&*(curr.first));
         if (! (*hh)->is_fictitious())
           std::cout << '[' << (*hh)->curve() << ']';
         else std::cout << "NONE";
@@ -54,10 +54,10 @@ int main() {
     std::cout << "   feature above: ";
     if (! curr.second) std::cout << "EMPTY\n";
     else {
-      auto* vh = boost::get<Vertex_const_handle>(&*(curr.second));;
+      auto* vh = std::get<Vertex_const_handle>(&*(curr.second));;
       if (vh) std::cout << '(' << (*vh)->point() << ")\n";
       else {
-        auto* hh = boost::get<Halfedge_const_handle>(&*(curr.second));
+        auto* hh = std::get<Halfedge_const_handle>(&*(curr.second));
         if (! (*hh)->is_fictitious())
           std::cout << '[' << (*hh)->curve() << "]\n";
         else std::cout << "NONE\n";

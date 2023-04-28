@@ -297,7 +297,7 @@ are_equal(const Vertex *v,
 //
 template <typename GeomTraits, typename Dcel_>
 std::optional
-  <boost::variant
+  <std::variant
     <typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Vertex*,
      typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*> >
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
@@ -305,7 +305,7 @@ place_boundary_vertex(Face* f,
                       const X_monotone_curve_2& cv, Arr_curve_end ind,
                       Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  typedef boost::variant<Vertex*, Halfedge*>    Non_optional_result;
+  typedef std::variant<Vertex*, Halfedge*>    Non_optional_result;
   typedef std::optional<Non_optional_result>  Result;
 
   // Get a halfedge on the outer CCB of f and start traversing the CCB.
@@ -338,7 +338,7 @@ place_boundary_vertex(Face* f,
 // Locate a DCEL feature that contains the given unbounded curve end.
 //
 template <typename GeomTraits, typename Dcel_>
-boost::variant
+std::variant
 <typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Vertex*,
  typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*,
  typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Face*>
@@ -346,7 +346,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  typedef boost::variant<Vertex*, Halfedge*, Face*>     Result;
+  typedef std::variant<Vertex*, Halfedge*, Face*>     Result;
 
   // Start traversing the inner CCB of the fictitious face and try to locate
   // a feature that contains the curve end.

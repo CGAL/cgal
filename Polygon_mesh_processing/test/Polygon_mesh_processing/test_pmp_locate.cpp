@@ -209,19 +209,19 @@ void test_constructions(const G& g,
   // ---------------------------------------------------------------------------
   loc = std::make_pair(f, CGAL::make_array(FT(0.3), FT(0.4), FT(0.3)));
   descriptor_variant dv = PMP::get_descriptor_from_location(loc, g);
-  const face_descriptor* fd = boost::get<face_descriptor>(&dv);
+  const face_descriptor* fd = std::get_if<face_descriptor>(&dv);
   assert(fd);
 
   loc = std::make_pair(f, CGAL::make_array(FT(0.5), FT(0.5), FT(0)));
   dv = PMP::get_descriptor_from_location(loc, g);
-  const halfedge_descriptor* hd = boost::get<halfedge_descriptor>(&dv);
+  const halfedge_descriptor* hd = std::get_if<halfedge_descriptor>(&dv);
   assert(hd);
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
   assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
 
   dv = PMP::get_descriptor_from_location(loc, g);
-  if(const vertex_descriptor* v = boost::get<vertex_descriptor>(&dv)) { } else { assert(false); }
+  if(const vertex_descriptor* v = std::get_if<vertex_descriptor>(&dv)) { } else { assert(false); }
 
   // ---------------------------------------------------------------------------
   // just to check the API

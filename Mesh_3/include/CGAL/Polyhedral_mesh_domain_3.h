@@ -42,7 +42,7 @@
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/format.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/math/special_functions/round.hpp>
 
 #include <iostream>
@@ -459,7 +459,7 @@ public:
 
         // intersection may be either a point or a segment
         if ( const Bare_point* p_intersect_pt =
-             boost::get<Bare_point>( &(intersection->first) ) )
+             std::get_if<Bare_point>( &(intersection->first) ) )
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
@@ -467,7 +467,7 @@ public:
                               2);
         }
         else if ( const Segment_3* p_intersect_seg =
-                  boost::get<Segment_3>(&(intersection->first)))
+                  std::get_if<Segment_3>(&(intersection->first)))
         {
           CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
 
@@ -533,14 +533,14 @@ public:
    * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
-  { return boost::get<Surface_patch_index>(index); }
+  { return std::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
    *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); }
+  { return std::get<Subdomain_index>(index); }
 
   // -----------------------------------
   // Backward Compatibility
@@ -607,7 +607,7 @@ private:
   AABB_tree_* bounding_tree_;
 
   // cache queries and intersected primitive
-  typedef typename boost::make_variant_over<Allowed_query_types>::type Cached_query;
+  typedef typename std::variant<Segment_3, Ray_3, Line_3>::type Cached_query;
   struct Query_cache
   {
     Query_cache() : has_cache(false) {}

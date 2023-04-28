@@ -271,7 +271,7 @@ public:
                          std::optional<Point_2> end,
                          OutputIterator out) const
       {
-        typedef boost::variant<Point_2, X_monotone_curve_2>
+        typedef std::variant<Point_2, X_monotone_curve_2>
                                                         Make_x_monotone_result;
         //CGAL_assertion(is_one_one(cv,p));
 
@@ -286,11 +286,11 @@ public:
         this->_ckva()->make_x_monotone_2_object()(cv, std::back_inserter(arcs));
         auto it = arcs.begin();
         auto helper = it;
-        const auto* it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
+        const auto* it_seg_p = std::get<X_monotone_curve_2>(&(*it));
         while (it != arcs.end()) {
           if ( on_arc(p, *it_seg_p) ) break;
           it++;
-          it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
+          it_seg_p = std::get<X_monotone_curve_2>(&(*it));
         }
 
         bool left_on_arc = start && on_arc(start.get(), *it_seg_p);
@@ -348,11 +348,11 @@ public:
             }
             CGAL_assertion(it != arcs.begin());
             it--;
-            it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
+            it_seg_p = std::get<X_monotone_curve_2>(&(*it));
             while (! on_arc(point_it, *it_seg_p)) {
               CGAL_assertion(it != arcs.begin());
               it--;
-              it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
+              it_seg_p = std::get<X_monotone_curve_2>(&(*it));
             }
             if (start && on_arc(start.get(),*it_seg_p)) {
               segs.push_front(it_seg_p->trim(start.get(), right(*it_seg_p)));
@@ -365,7 +365,7 @@ public:
         }
         if (! right_on_arc) {
           it = helper; // reset
-          it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
+          it_seg_p = std::get<X_monotone_curve_2>(&(*it));
           Point_2 point_it;
           while (true) {
             if (it_seg_p->is_finite(CGAL::ARR_MAX_END) &&
@@ -378,11 +378,11 @@ public:
             }
             it++;
             CGAL_assertion(it != arcs.end());
-            it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
+            it_seg_p = std::get<X_monotone_curve_2>(&(*it));
             while(! on_arc(point_it, *it_seg_p)) {
               it++;
               CGAL_assertion(it != arcs.end());
-              it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
+              it_seg_p = std::get<X_monotone_curve_2>(&(*it));
             }
             if(end && on_arc(end.get(),*it_seg_p)) {
               segs.push_back(it_seg_p->trim(left(*it_seg_p),end.get()));

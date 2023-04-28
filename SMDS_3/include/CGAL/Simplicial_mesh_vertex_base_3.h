@@ -28,7 +28,7 @@
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <tuple>
 
 namespace CGAL {
@@ -53,7 +53,7 @@ public:
   using Vertex_handle = typename Vb::Vertex_handle;
 
   // Types
-  using Index = boost::variant<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
+  using Index = std::variant<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
   using FT = typename GT::FT;
 
   // Constructor

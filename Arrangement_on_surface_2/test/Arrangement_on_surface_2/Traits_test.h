@@ -913,7 +913,7 @@ make_x_monotone_wrapper(std::istringstream& str_stream)
   typedef Geom_traits_T                                 Traits;
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef boost::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
   CGAL_USE_TYPE(typename Traits::Curve_2);
 
   unsigned int id;
@@ -934,14 +934,14 @@ make_x_monotone_wrapper(std::istringstream& str_stream)
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
 
-    const auto* xcv_ptr = boost::get<X_monotone_curve_2>(&(objs[i]));
+    const auto* xcv_ptr = std::get_if<X_monotone_curve_2>(&(objs[i]));
     if (xcv_ptr != nullptr) {
       if (!this->compare(type, 1u, "type")) return false;
       if (!this->compare_curves(this->m_xcurves[id], *xcv_ptr)) return false;
       continue;
     }
 
-    const auto* pt_ptr = boost::get<Point_2>(&(objs[i]));
+    const auto* pt_ptr = std::get_if<Point_2>(&(objs[i]));
     assert(pt_ptr != nullptr);
     if (!this->compare(type, 0u, "type")) return false;
     if (!this->compare_points(this->m_points[id], *pt_ptr)) return false;
@@ -969,7 +969,7 @@ intersect_wrapper(std::istringstream& str_stream)
   typedef typename Traits::Multiplicity         Multiplicity;
 
   typedef std::pair<Point_2, Multiplicity>      Intersection_point;
-  typedef boost::variant<Intersection_point, X_monotone_curve_2>
+  typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                 Intersection_result;
 
   unsigned int id1, id2;
@@ -995,7 +995,7 @@ intersect_wrapper(std::istringstream& str_stream)
 
     unsigned int exp_type = 1;
     const X_monotone_curve_2* cv_p =
-      boost::get<X_monotone_curve_2>(&(xections[i]));
+      std::get_if<X_monotone_curve_2>(&(xections[i]));
 
     if (cv_p != nullptr) {
       if (! this->compare(type, exp_type, "type")) return false;
@@ -1005,7 +1005,7 @@ intersect_wrapper(std::istringstream& str_stream)
 
     exp_type = 0;
     const Intersection_point* p_p =
-      boost::get<Intersection_point>(&(xections[i]));
+      std::get_if<Intersection_point>(&(xections[i]));
     assert(p_p != nullptr);
     if (! this->compare(type, exp_type, "type")) return false;
     if (! this->compare_points(this->m_points[id], p_p->first)) return false;

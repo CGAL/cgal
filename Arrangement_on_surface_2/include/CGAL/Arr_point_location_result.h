@@ -19,7 +19,7 @@
 // The macro CGAL_ARR_POINT_LOCATION_VERSION controls which version of the
 // point location is used. Currently two values are supported:
 // 1. Point location with CGAL::Object
-// 2. Point location with std::optional<boost::variant<...> >
+// 2. Point location with std::optional<std::variant<...> >
 // The default value is 2.
 
 #if !defined(CGAL_ARR_POINT_LOCATION_VERSION)
@@ -29,7 +29,7 @@
 #include <CGAL/Object.h>
 
 #include <optional>
-#include <boost/variant.hpp>
+#include <variant>
 
 #ifdef CGAL_CFG_BOOST_VARIANT_SWAP_BUG
 #if CGAL_ARR_POINT_LOCATION_VERSION > 1
@@ -64,7 +64,7 @@ struct Arr_point_location_result {
 #if CGAL_ARR_POINT_LOCATION_VERSION < 2
   typedef CGAL::Object                                   Type;
 #else
-  typedef typename boost::variant<Vertex_const_handle,
+  typedef typename std::variant<Vertex_const_handle,
                                   Halfedge_const_handle,
                                   Face_const_handle>     Type;
 #endif
@@ -73,7 +73,7 @@ struct Arr_point_location_result {
   // This function returns either make_object() or a result_type constructor
   // to generate return values. The Object version takes a dummy template
   // argument, which is needed for the return of the other option, e.g.,
-  // std::optional<boost::variant> >.
+  // std::optional<std::variant> >.
   // In theory a one parameter variant could be returned, but this _could_
   // lead to conversion overhead, and so we rather go for the real type.
   // Overloads for empty returns are also provided.
@@ -99,7 +99,7 @@ struct Arr_point_location_result {
 
   template <typename T>
   static
-  inline const T* assign(const Type* obj) { return boost::get<T>(obj); }
+  inline const T* assign(const Type* obj) { return std::get<T>(obj); }
 #endif // CGAL_ARR_POINT_LOCATION_VERSION < 2
 
   //this one is only to remove warnings in functions

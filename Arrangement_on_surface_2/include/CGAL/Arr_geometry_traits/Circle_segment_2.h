@@ -996,7 +996,7 @@ public:
                            Intersection_map* inter_map = nullptr) const
   {
     typedef std::pair<Point_2, Multiplicity>            Intersection_point;
-    typedef boost::variant<Intersection_point, Self>    Intersection_result;
+    typedef std::variant<Intersection_point, Self>    Intersection_result;
 
     // First check whether the two arcs have the same supporting curve.
     if (has_same_supporting_curve(cv)) {

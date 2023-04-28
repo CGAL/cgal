@@ -501,7 +501,7 @@ struct Sizing_field_with_aabb_tree
         const auto int_res = CGAL::intersection(prim.datum(), curr_ortho_plane);
         if (int_res)
         {
-          if (const Point_3* pp = boost::get<Point_3>(&*int_res))
+          if (const Point_3* pp = std::get_if<Point_3>(&*int_res))
           {
             FT new_sqd = CGAL::squared_distance(p, *pp);
             FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));

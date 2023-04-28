@@ -1082,7 +1082,7 @@ private:
     {
       const auto cgalIntersection = i2(cl2(segment), cl2(leftBoundary));
 
-      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      if (!cgalIntersection || !std::get_if<Point_2>(&*cgalIntersection))
       {
         if (m_debugOutput)
         {
@@ -1092,7 +1092,7 @@ private:
       }
       else
       {
-        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 >= FT(1))
@@ -1140,7 +1140,7 @@ private:
     {
       const auto cgalIntersection = i2(cl2(segment), cl2(rightBoundary));
 
-      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      if (!cgalIntersection || !std::get_if<Point_2>(&*cgalIntersection))
       {
         if (m_debugOutput)
         {
@@ -1150,7 +1150,7 @@ private:
       }
       else
       {
-        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 <= FT(0))
@@ -1778,7 +1778,7 @@ private:
 
           CGAL_assertion(bool(cgalIntersection));
 
-          const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+          const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
           if (!result)
             result = &currentSourceImage;
 
@@ -3064,7 +3064,7 @@ public:
     {
       if (intersections[i])
       {
-        Point_3* intersectionPoint = boost::get<Point_3>(&(intersections[i]->first));
+        Point_3* intersectionPoint = std::get_if<Point_3>(&(intersections[i]->first));
 
         if (intersectionPoint)
         {

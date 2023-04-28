@@ -793,7 +793,7 @@ public:
     const auto result = intersection(lab, lts);
     if (result)
     {
-      const Point* iq = boost::get<Point>(&(*result));
+      const Point* iq = std::get_if<Point>(&(*result));
       if (iq)
         Dqt = CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
     }

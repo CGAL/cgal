@@ -1096,7 +1096,7 @@ public:
     {
       const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
-        if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
+        if(const Segment_3* s = std::get_if<Segment_3>(&*clipped))
           return this->operator()(*s);
 
       return Surface_patch();
@@ -1224,7 +1224,7 @@ public:
     {
       const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
-        if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
+        if(const Segment_3* s = std::get_if<Segment_3>(&*clipped))
           return this->operator()(*s);
 
       return Intersection();
@@ -1259,14 +1259,14 @@ public:
    * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
-  { return boost::get<Surface_patch_index>(index); }
+  { return std::get<Surface_patch_index>(index); }
 
   /*
    * Returns the index of the subdomain containing a vertex
    *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); }
+  { return std::get<Subdomain_index>(index); }
 
   // -----------------------------------
   // Backward Compatibility

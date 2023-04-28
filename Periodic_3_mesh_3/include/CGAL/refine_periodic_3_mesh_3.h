@@ -69,7 +69,7 @@ void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
       Vertex_handle v = c->vertex((ind+i)&3);
 
       typename C3T3::Index index = c3t3.index(v);
-      if(const int* i = boost::get<int>(&index))
+      if(const int* i = std::get_if<int>(&index))
       {
         if(*i == 0) // '0' is the index of dummies
           *vertices++ = v;

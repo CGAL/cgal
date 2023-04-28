@@ -51,7 +51,7 @@ min_intersection(const Tree& tree, const Ray& ray) {
     > mini = std::nullopt;
 
   for(IntersectionVector::iterator it2 = all_intersections.begin(); it2 != all_intersections.end(); ++it2) {
-    if(Point* point = boost::get<Point>(&(it2->first))) {
+    if(Point* point = std::get_if<Point>(&(it2->first))) {
       Vector i_ray(*point, ray.source());
       Tree::FT new_distance = i_ray.squared_length();
       if(new_distance < min_distance) {

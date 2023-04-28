@@ -311,7 +311,7 @@ public:
     {
       if(ov->type() == typeid(T))
       {
-        auto* r = boost::get<T>(&*ov); // ov is an optional<variant>
+        auto* r = std::get_if<T>(&*ov); // ov is an optional<variant>
         assert(r);
         return (t == *r);
       }
@@ -363,7 +363,7 @@ public:
         assert(ires12 && ires34);
 
         Variant_visitor<decltype(ires12)> vis(ires12);
-        boost::apply_visitor(vis, *ires34);
+        std::visit(vis, *ires34);
         assert(vis.equal);
       }
     }

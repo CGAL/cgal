@@ -2038,7 +2038,7 @@ public:
   OutputIterator intersect(const Self& arc, OutputIterator oi,
                            const Cache& cache) const
   {
-    typedef boost::variant<Intersection_point, Self>    Intersection_result;
+    typedef std::variant<Intersection_point, Self>    Intersection_result;
 
     CGAL_precondition(this->is_valid());
     CGAL_precondition(this->is_continuous());

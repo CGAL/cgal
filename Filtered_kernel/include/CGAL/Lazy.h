@@ -31,7 +31,7 @@
 #include <CGAL/transforming_iterator.h>
 
 #include <optional>
-#include <boost/variant.hpp>
+#include <variant>
 #ifdef CGAL_LAZY_KERNEL_DEBUG
 #  include <boost/optional/optional_io.hpp>
 #endif
@@ -1425,19 +1425,19 @@ struct Ith_for_intersection_with_variant {
     : i(i_)
   {}
 
-  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
+  template< typename ... U >
   const T2&
-  operator()(const std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const
+  operator()(const std::optional< std::variant< U ... > >& o) const
   {
-    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&(*o)));
+    const std::vector<T2>* ptr = (std::get_if<std::vector<T2> >(&(*o)));
     return (*ptr)[i];
   }
 
-  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
+  template< typename ... U >
   const T2&
-  operator()(const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >& o) const
+  operator()(const std::variant< U ... >& o) const
   {
-    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&o));
+    const std::vector<T2>* ptr = (std::get_if<std::vector<T2> >(&o));
     return (*ptr)[i];
   }
 };
@@ -1856,26 +1856,26 @@ template<typename T>
 struct Variant_cast {
   typedef T result_type;
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+  template<typename ... U>
   const T&
-  operator()(const std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+  operator()(const std::optional< std::variant< U ... > >& o) const {
     // can throw but should never because we always build it inside
     // a static visitor with the right type
-    return boost::get<T>(*o);
+    return std::get<T>(*o);
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+  template<typename ... U>
   T&
-  operator()(std::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+  operator()(std::optional< std::variant< U ... > >& o) const {
     // can throw but should never because we always build it inside
     // a static visitor with the right type, if it throws bad_get
-    return boost::get<T>(*o);
+    return std::get<T>(*o);
   }
 };
 
 
 template<typename Result, typename AK, typename LK, typename EK, typename Origin>
-struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
+struct Fill_lazy_variant_visitor_2 {
   Fill_lazy_variant_visitor_2(Result& r, Origin& o) : r(&r), o(&o) {}
   Result* r;
   Origin* o;
@@ -1912,7 +1912,7 @@ struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
 };
 
 template<typename Result, typename AK, typename LK, typename EK>
-struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
+struct Fill_lazy_variant_visitor_0 {
   Fill_lazy_variant_visitor_0(Result& r) : r(&r) {}
   Result* r;
 
@@ -1998,7 +1998,7 @@ struct Lazy_construction_variant {
 
         // the static visitor fills the result_type with the correct unwrapped type
         internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
-        boost::apply_visitor(visitor, *approx_v);
+        std::visit(visitor, *approx_v);
 
         return res;
       } catch (Uncertain_conversion_exception&) {}
@@ -2014,7 +2014,7 @@ struct Lazy_construction_variant {
     }
 
     internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK> visitor(res);
-    boost::apply_visitor(visitor, *exact_v);
+    std::visit(visitor, *exact_v);
     return res;
   }
 
@@ -2052,7 +2052,7 @@ struct Lazy_construction_variant {
 
         // the static visitor fills the result_type with the correct unwrapped type
         internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
-        boost::apply_visitor(visitor, *approx_v);
+        std::visit(visitor, *approx_v);
 
         return res;
       } catch (Uncertain_conversion_exception&) {}
@@ -2068,7 +2068,7 @@ struct Lazy_construction_variant {
     }
 
     internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK> visitor(res);
-    boost::apply_visitor(visitor, *exact_v);
+    std::visit(visitor, *exact_v);
     return res;
   }
 };

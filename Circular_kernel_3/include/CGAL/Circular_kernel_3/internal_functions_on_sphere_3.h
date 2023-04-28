@@ -223,7 +223,7 @@ namespace CGAL {
    // (again: converting to RT before assigning to the Iterator is
    // just to keep object working)
    template<typename SK, typename RT, typename OutputIterator>
-   struct Point_conversion_visitor : public boost::static_visitor<OutputIterator> {
+   struct Point_conversion_visitor {
      Point_conversion_visitor(const OutputIterator& it) : it(it) {}
      template<typename T>
      OutputIterator operator()(const T& t) { *it++ = RT(t); return it; }
@@ -291,7 +291,7 @@ namespace CGAL {
          if(typename Intersection_traits<SK, Sphere_3, Sphere_3>::result_type v =
             SK().intersect_3_object()(s1, s3)) {
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
-           return boost::apply_visitor(visitor,
+           return std::visit(visitor,
              *v);
          }
          return res;
@@ -300,7 +300,7 @@ namespace CGAL {
          if(typename Intersection_traits<SK, Sphere_3, Sphere_3>::result_type v =
             SK().intersect_3_object()(s1, s2)) {
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
-           return boost::apply_visitor(
+           return std::visit(
              visitor,
              *v);
          }
@@ -342,7 +342,7 @@ namespace CGAL {
                 const typename SK::Sphere_3 & s2,
                 OutputIterator res)
     {
-      typedef typename boost::variant< std::pair< typename SK::Circular_arc_point_3, unsigned int>,
+      typedef typename std::variant< std::pair< typename SK::Circular_arc_point_3, unsigned int>,
                                        typename SK::Circle_3 > result_type;
       typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
@@ -357,7 +357,7 @@ namespace CGAL {
         if(typename Intersection_traits<SK, Plane_3, Sphere_3>::result_type v =
             SK().intersect_3_object()(p, s1)) {
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
-           return boost::apply_visitor(
+           return std::visit(
              visitor,
              *v);
          }
@@ -368,7 +368,7 @@ namespace CGAL {
         if(typename Intersection_traits<SK, Plane_3, Sphere_3>::result_type v =
             SK().intersect_3_object()(p, s1)) {
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
-           return boost::apply_visitor(
+           return std::visit(
              visitor,
              *v);
          }
@@ -391,7 +391,7 @@ namespace CGAL {
                 const typename SK::Sphere_3 & s,
                 OutputIterator res)
     {
-      typedef typename boost::variant< std::pair< typename SK::Circular_arc_point_3, unsigned int>,
+      typedef typename std::variant< std::pair< typename SK::Circular_arc_point_3, unsigned int>,
                                        typename SK::Circle_3 > result_type;
       typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
@@ -406,7 +406,7 @@ namespace CGAL {
         if(typename Intersection_traits<SK, Plane_3, Sphere_3>::result_type v =
             SK().intersect_3_object()(p1, s)) {
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
-           return boost::apply_visitor(
+           return std::visit(
              visitor,
              *v);
          }

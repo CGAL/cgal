@@ -11,7 +11,7 @@ is included.
 
 - `CGAL_ARR_POINT_LOCATION_VERSION` == 1, the result type is set to be `CGAL::Object`.
 - `CGAL_ARR_POINT_LOCATION_VERSION` == 2, the result type is set to be
-`boost::variant<Vertex_const_handle,Halfedge_const_handle,Face_const_handle>`, where `Vertex_const_handle`, `Halfedge_const_handle`, and
+`std::variant<Vertex_const_handle,Halfedge_const_handle,Face_const_handle>`, where `Vertex_const_handle`, `Halfedge_const_handle`, and
 `Face_const_handle` are the corresponding nested types in a `CGAL::Arrangement_2` instance.
 
 
@@ -44,7 +44,7 @@ struct Arr_point_location_result
 {
   /*! The type of the arrangement feature that is the result of a
    * point-location query or a vertical ray-shoot query, namely,
-   * `boost::variant<Arrangement::Vertex_const_handle, Arrangement::Halfedge_const_handle, Arrangement::Face_const_handle>`
+   * `std::variant<Arrangement::Vertex_const_handle, Arrangement::Halfedge_const_handle, Arrangement::Face_const_handle>`
    * if `::CGAL_ARR_POINT_LOCATION_VERSION` == 2, which is the default, otherwise
    * `CGAL::Object`.
    */

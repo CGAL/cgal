@@ -25,7 +25,7 @@
 
 #include <fstream>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/tags.h>
@@ -565,7 +565,7 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the segment with a variant.
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       *oi++ = Make_x_monotone_result(cv);
       return oi;
@@ -705,7 +705,7 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       // Early ending with Bbox overlapping test
@@ -723,7 +723,7 @@ public:
       CGAL_assertion(bool(res));
 
       // Check if we have a single intersection point.
-      const Point_2* ip = boost::get<Point_2>(&*res);
+      const Point_2* ip = std::get<Point_2>(&*res);
       if (ip != nullptr) {
         CGAL_assertion(cv1.is_vertical() ?
                        m_traits.is_in_y_range_2_object()(cv1, *ip) :

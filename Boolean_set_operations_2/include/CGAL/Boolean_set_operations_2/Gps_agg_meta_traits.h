@@ -160,10 +160,10 @@ public:
 
       typedef const std::pair<Base_point_2, Multiplicity>
         Intersection_base_point;
-      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_base_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
       typedef const std::pair<Point_2, Multiplicity>    Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       const auto* base_traits = m_traits.m_base_traits;
@@ -183,7 +183,7 @@ public:
       // the extenede X_monotone_curve_2
       for (const auto& xection : xections) {
         const Intersection_base_point* base_pt =
-          boost::get<Intersection_base_point>(&xection);
+          std::get_if<Intersection_base_point>(&xection);
         if (base_pt != nullptr) {
           Point_2 point_plus(base_pt->first); // the extended point
           *oi++ =
@@ -192,7 +192,7 @@ public:
         }
 
         const Base_x_monotone_curve_2* overlap_cv =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(overlap_cv != nullptr);
         unsigned int ov_bc;
         unsigned int ov_twin_bc;

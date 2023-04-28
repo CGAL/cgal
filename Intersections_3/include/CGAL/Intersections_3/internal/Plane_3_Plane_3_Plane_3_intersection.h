@@ -19,7 +19,7 @@
 #include <CGAL/Intersections_3/internal/Line_3_Plane_3_intersection.h>
 
 #include <optional>
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace CGAL {
 namespace Intersections {
@@ -74,13 +74,13 @@ intersection_point(const typename K::Plane_3& plane1,
 }
 
 template <class K>
-std::optional<boost::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
+std::optional<std::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
 intersection(const typename K::Plane_3& plane1,
              const typename K::Plane_3& plane2,
              const typename K::Plane_3& plane3,
              const K& k)
 {
-  typedef typename std::optional<boost::variant<typename K::Point_3,
+  typedef typename std::optional<std::variant<typename K::Point_3,
                                                   typename K::Line_3,
                                                   typename K::Plane_3> > result_type;
 

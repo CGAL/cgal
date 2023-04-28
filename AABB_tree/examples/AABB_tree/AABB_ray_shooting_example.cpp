@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
     Ray_intersection intersection = tree.first_intersection(ray, skip);
     if(intersection)
     {
-      if(boost::get<Point>(&(intersection->first))){
-        const Point* p =  boost::get<Point>(&(intersection->first) );
+      if(std::get_if<Point>(&(intersection->first))){
+        const Point* p =  std::get_if<Point>(&(intersection->first) );
         std::cout <<  *p << std::endl;
       }
     }

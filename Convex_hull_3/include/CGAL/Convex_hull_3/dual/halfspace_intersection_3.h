@@ -67,7 +67,7 @@ namespace CGAL
               // Typedefs for intersection
               typedef typename Kernel::Plane_3 Plane_3;
               typedef typename Kernel::Line_3 Line_3;
-              typedef std::optional< boost::variant< Point_3,
+              typedef std::optional< std::variant< Point_3,
                                                        Line_3,
                                                        Plane_3 > > result_inter;
 
@@ -97,10 +97,10 @@ namespace CGAL
                 result_inter result = CGAL::intersection(pp1, pp2, pp3);
                 CGAL_assertion_msg(bool(result),
                                    "halfspace_intersection_3: no intersection");
-                CGAL_assertion_msg(boost::get<Point_3>(& *result) != nullptr,
+                CGAL_assertion_msg(std::get_if<Point_3>(& *result) != nullptr,
                                    "halfspace_intersection_3: intersection is not a point");
 
-                const Point_3* pp = boost::get<Point_3>(& *result);
+                const Point_3* pp = std::get_if<Point_3>(& *result);
 
                 // Primal vertex associated to the current dual plane
                 Point_3 ppp(origin.x() + pp->x(),

@@ -23,7 +23,7 @@
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/tuple.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <optional>
 
 
@@ -461,12 +461,12 @@ private:
 
     if (ptr()->rb.which() != 0)
     {
-      Self tr(boost::get<Self>(rb()));
+      Self tr(std::get<Self>(rb()));
       tr.set_lb(item);
     }
     if (ptr()->rt.which() != 0)
     {
-      Self tr(boost::get<Self>(rt()));
+      Self tr(std::get<Self>(rt()));
       tr.set_lt(item);
     }
     CGAL_assertion(is_on_right_boundary() == right.is_on_right_boundary());

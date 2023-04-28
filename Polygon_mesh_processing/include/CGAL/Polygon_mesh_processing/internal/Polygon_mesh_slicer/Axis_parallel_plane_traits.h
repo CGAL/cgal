@@ -15,7 +15,7 @@
 #include <CGAL/array.h>
 
 #include <optional>
-#include <boost/variant.hpp>
+#include <variant>
 
 
 #ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
@@ -95,7 +95,7 @@ public:
     const typename Traits::Construct_source_3 m_source_3;
     const typename Traits::Construct_target_3 m_target_3;
 
-    typedef boost::variant<typename Traits::Point_3, typename Traits::Segment_3> Variant_type;
+    typedef std::variant<typename Traits::Point_3, typename Traits::Segment_3> Variant_type;
     typedef std::optional< Variant_type > result_type;
 
     Intersect_3(const Axis_parallel_plane_traits<Traits>& traits)

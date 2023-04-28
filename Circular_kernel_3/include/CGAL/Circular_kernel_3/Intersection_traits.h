@@ -15,7 +15,7 @@
 
 #include <CGAL/Intersection_traits.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <utility>
 
 namespace CGAL {
@@ -36,7 +36,7 @@ struct SK3_Intersection_traits
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Sphere_3, typename SK::Line_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             std::pair< typename SK::Circular_arc_point_3, unsigned int >
             CGAL_ADDITIONAL_VARIANT_FOR_ICL
           > type;
@@ -49,7 +49,7 @@ struct SK3_Intersection_traits<SK, typename SK::Line_3, typename SK::Sphere_3>
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Plane_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             std::pair< typename SK::Circular_arc_point_3, unsigned int >,
             typename SK::Circle_3
             CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -63,7 +63,7 @@ struct SK3_Intersection_traits<SK, typename SK::Plane_3, typename SK::Circle_3>
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Sphere_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             std::pair< typename SK::Circular_arc_point_3, unsigned int >,
             typename SK::Circle_3
             CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -77,7 +77,7 @@ struct SK3_Intersection_traits<SK, typename SK::Sphere_3, typename SK::Circle_3>
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Circle_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
             typename SK::Circle_3
             CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -87,7 +87,7 @@ struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Circle_3>
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Line_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             std::pair <typename SK::Circular_arc_point_3, unsigned int >
             CGAL_ADDITIONAL_VARIANT_FOR_ICL
           > type;
@@ -100,7 +100,7 @@ struct SK3_Intersection_traits<SK, typename SK::Line_3, typename SK::Circle_3>
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Circular_arc_3, typename SK::Circular_arc_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             typename SK::Circle_3,
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
             typename SK::Circular_arc_3
@@ -111,7 +111,7 @@ struct SK3_Intersection_traits<SK, typename SK::Circular_arc_3, typename SK::Cir
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Circular_arc_3, typename SK::Plane_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
             typename SK::Circular_arc_3
             CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -125,7 +125,7 @@ struct SK3_Intersection_traits<SK, typename SK::Plane_3, typename SK::Circular_a
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Line_arc_3, typename SK::Line_arc_3>
 {
-  typedef boost::variant<
+  typedef std::variant<
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
             typename SK::Line_arc_3
             CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -136,7 +136,7 @@ struct SK3_Intersection_traits<SK, typename SK::Line_arc_3, typename SK::Line_ar
 template <typename SK>
 struct SK3_intersect_ternary
 {
-  typedef boost::variant<
+  typedef std::variant<
             typename SK::Circle_3,
             typename SK::Plane_3,
             typename SK::Sphere_3,

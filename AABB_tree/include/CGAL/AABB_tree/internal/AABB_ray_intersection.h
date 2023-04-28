@@ -20,7 +20,6 @@
 #include <functional>
 #include <type_traits>
 #include <optional>
-#include <boost/variant/apply_visitor.hpp>
 #  if defined(BOOST_MSVC)
 #    pragma warning(push)
 #    pragma warning(disable: 4996)
@@ -84,7 +83,7 @@ public:
         if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -96,7 +95,7 @@ public:
         if(!skip(current.node->right_data().id()) /* && do_intersect_obj(query, current.node->right_data()) */) {
           intersection = intersection_obj(query, current.node->right_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -111,7 +110,7 @@ public:
         if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;

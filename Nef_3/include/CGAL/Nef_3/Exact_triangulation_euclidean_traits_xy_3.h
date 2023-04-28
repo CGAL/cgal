@@ -34,7 +34,7 @@ struct Exact_intersect_xy_2 <R,Cartesian_tag>
   typedef typename R::Point_3     Point_3;
   typedef typename R::Segment_3   Segment_3;
 
-  typedef  boost::variant<Point_3, Segment_3> variant_type;
+  typedef  std::variant<Point_3, Segment_3> variant_type;
 
   std::optional<variant_type>
   operator() (const Segment_3& s3, const Segment_3& t3)
@@ -57,12 +57,12 @@ struct Exact_intersect_xy_2 <R,Cartesian_tag>
       if(! obj){
         return std::nullopt;
       }
-      if (const Point_2* pi =  boost::get<Point_2>(&*obj))
+      if (const Point_2* pi =  std::get_if<Point_2>(&*obj))
       {
         return std::make_optional(variant_type(Point_3(p2.x(),p2.y(),0)));
       }
 
-      const Segment_2* si = boost::get<Segment_2>(&*obj);
+      const Segment_2* si = std::get_if<Segment_2>(&*obj);
       p2 = si->source();
       q2 = si->target();
 
@@ -80,7 +80,7 @@ struct Exact_intersect_xy_2 <R,Homogeneous_tag>
    typedef typename R::Point_3     Point_3;
    typedef typename R::Segment_3   Segment_3;
 
-   typedef  boost::variant<Point_3, Segment_3> variant_type;
+   typedef  std::variant<Point_3, Segment_3> variant_type;
 
    std::optional<variant_type> operator() (Segment_3 s3, Segment_3 t3)
    {  Point_2 p2, q2;
@@ -104,12 +104,12 @@ struct Exact_intersect_xy_2 <R,Homogeneous_tag>
       if(! obj){
         return std::nullopt;
       }
-      if (const Point_2* pi =  boost::get<Point_2>(&*obj))
+      if (const Point_2* pi =  std::get_if<Point_2>(&*obj))
       {
         return std::make_optional(variant_type(Point_3(p2.hx(),p2.hy(),0,p2.hw())));
       }
 
-      const Segment_2* si = boost::get<Segment_2>(&*obj);
+      const Segment_2* si = std::get_if<Segment_2>(&*obj);
       p2 = si->source();
       q2 = si->target();
 

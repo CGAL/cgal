@@ -536,15 +536,15 @@ public:
         return std::nullopt;
       else {
         for(const Inter_and_prim& i_p: all_intersections) {
-          if(boost::get<Point_3>( &i_p.first) == 0) return AABB_primitive_id();
+          if(std::get_if<Point_3>( &i_p.first) == 0) return AABB_primitive_id();
         }
         auto it = std::min_element
           (all_intersections.begin(), all_intersections.end(),
            [p](const Inter_and_prim& a,
                const Inter_and_prim& b)
            {
-             const Point_3& pa = boost::get<Point_3>(a.first);
-             const Point_3& pb = boost::get<Point_3>(b.first);
+             const Point_3& pa = std::get<Point_3>(a.first);
+             const Point_3& pb = std::get<Point_3>(b.first);
              return compare_distance_to_point(p, pa, pb)
              == CGAL::SMALLER;
            });

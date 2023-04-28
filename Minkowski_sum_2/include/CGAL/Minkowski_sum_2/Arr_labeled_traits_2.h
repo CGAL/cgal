@@ -297,10 +297,10 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Base_point_2, Multiplicity>     Intersection_base_point;
-      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_base_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
       typedef std::pair<Point_2, Multiplicity>     Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       // In case the curves are adjacent in their curve sequence, we do
@@ -317,7 +317,7 @@ public:
       // Attach labels to the intersection objects.
       for (const auto& xection : xections) {
         const Intersection_base_point* base_pt =
-          boost::get<Intersection_base_point>(&xection);
+          std::get_if<Intersection_base_point>(&xection);
 
         if (base_pt != nullptr) {
           // Attach an invalid label to an itersection point.
@@ -327,7 +327,7 @@ public:
         }
 
         const Base_x_monotone_curve_2* base_xcv =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(base_xcv != nullptr);
 
         // Attach a merged label to the overlapping curve.

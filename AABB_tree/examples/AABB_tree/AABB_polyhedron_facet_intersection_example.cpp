@@ -57,7 +57,7 @@ int main()
     if(intersection)
     {
         // gets intersection object
-      const Point* p = boost::get<Point>(&(intersection->first));
+      const Point* p = std::get_if<Point>(&(intersection->first));
       if(p)
         std::cout << "intersection object is a point " << *p << std::endl;
 
@@ -81,7 +81,7 @@ int main()
     if(plane_intersection)
     {
 
-      if(boost::get<Segment>(&(plane_intersection->first)))
+      if(std::get_if<Segment>(&(plane_intersection->first)))
             std::cout << "intersection object is a segment" << std::endl;
     }
 

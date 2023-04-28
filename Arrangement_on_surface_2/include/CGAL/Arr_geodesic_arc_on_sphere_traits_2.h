@@ -26,7 +26,7 @@
 
 #include <fstream>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
@@ -2062,7 +2062,7 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& c, OutputIterator oi) const {
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       // std::cout << "full: " << c.is_full() << std::endl;
       // std::cout << "vert: " << c.is_vertical() << std::endl;
@@ -2320,7 +2320,7 @@ public:
                                         OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
       const Kernel& kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel.equal_2_object();
@@ -2559,7 +2559,7 @@ public:
       typedef typename Kernel::Equal_3                  Equal_3;
 
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       const Kernel& kernel = m_traits;

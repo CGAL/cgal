@@ -182,12 +182,12 @@ public:
     CGAL_TIME_PROFILER("Construct Projected_intersect_3")
   }
 
-  std::optional<boost::variant<Point,Segment> >
+  std::optional<std::variant<Point,Segment> >
   operator()(const Segment& s1, const Segment& s2)
   {
     CGAL_PROFILER("Projected_intersect_3::operator()")
     CGAL_TIME_PROFILER("Projected_intersect_3::operator()")
-    typedef boost::variant<Point, Segment> variant_type;
+    typedef std::variant<Point, Segment> variant_type;
     const Vector_3 u1 = cross_product(s1.to_vector(), normal);
     if(u1 == NULL_VECTOR)
       return K().intersect_3_object()(s1.supporting_line(), s2);
@@ -206,7 +206,7 @@ public:
 #endif
       return std::nullopt;
     }
-    if(const Line* line = boost::get<Line>(&*planes_intersection))
+    if(const Line* line = std::get_if<Line>(&*planes_intersection))
     {
       // check if the intersection line intersects both segments by
       // checking if a point on the intersection line is between
@@ -235,12 +235,12 @@ public:
         if(! inter){
           return std::nullopt;
         }
-        if(const Point* point = boost::get<Point>(&*inter)){
+        if(const Point* point = std::get_if<Point>(&*inter)){
           return std::make_optional(variant_type(*point));
         }
       }
     }
-    if(boost::get<Plane_3>(&*planes_intersection))
+    if(std::get_if<Plane_3>(&*planes_intersection))
     {
 #ifdef CGAL_T2_PTB_3_DEBUG
       std::cerr << "coplanar supporting lines\n";

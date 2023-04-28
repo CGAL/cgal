@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <fstream>
 #include "Input_data.h"
-#include <boost/variant.hpp>
+#include <variant>
 #include <exception>
 
 

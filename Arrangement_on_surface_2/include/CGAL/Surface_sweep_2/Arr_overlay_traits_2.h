@@ -22,7 +22,7 @@
  * Definition of the Arr_overlay_traits_2 class-template.
  */
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <optional>
 
 #include <CGAL/Arr_tags.h>
@@ -105,11 +105,11 @@ public:
     RB_OVERLAP    // Red-blue overlap.
   };
 
-  typedef boost::variant<Halfedge_handle_red, Vertex_handle_red,
+  typedef std::variant<Halfedge_handle_red, Vertex_handle_red,
                          Face_handle_red>           Cell_handle_red;
   typedef std::optional<Cell_handle_red>          Optional_cell_red;
 
-  typedef boost::variant<Halfedge_handle_blue, Vertex_handle_blue,
+  typedef std::variant<Halfedge_handle_blue, Vertex_handle_blue,
                          Face_handle_blue>          Cell_handle_blue;
   typedef std::optional<Cell_handle_blue>         Optional_cell_blue;
 
@@ -323,14 +323,14 @@ public:
     /*! Obtain the red vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_red* red_vertex_handle() const
     {
-      return m_red_cell ? boost::get<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
+      return m_red_cell ? std::get<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
     }
 
     /*! Obtain the blue vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_blue* blue_vertex_handle() const
     {
       return
-        m_blue_cell ? boost::get<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
+        m_blue_cell ? std::get<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
     }
   };
 
@@ -371,10 +371,10 @@ public:
                               OutputIterator oi)
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
       typedef std::pair<Base_point_2, Multiplicity>     Intersection_base_point;
-      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_base_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
 
       // In case the curves originate from the same arrangement, they are
@@ -440,7 +440,7 @@ public:
       // the extended X_monotone_curve_2.
       for (const auto& xection : xections) {
         const Intersection_base_point* base_ipt =
-          boost::get<Intersection_base_point>(&xection);
+          std::get<Intersection_base_point>(&xection);
         if (base_ipt != nullptr) {
           // We have a red-blue intersection point, so we attach the
           // intersecting red and blue halfedges to it.
@@ -470,7 +470,7 @@ public:
         }
 
         const Base_x_monotone_curve_2* overlap_xcv =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(overlap_xcv != nullptr);
 
         // We have a red-blue overlap, so we mark the curve accordingly.

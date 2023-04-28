@@ -318,7 +318,7 @@ public:
                            Bezier_cache& cache,
                            OutputIterator oi) const
   {
-    typedef boost::variant<Intersection_point, Self>    Intersection_result;
+    typedef std::variant<Intersection_point, Self>    Intersection_result;
 
     // In case we have two x-monotone subcurves of the same Bezier curve,
     // check if they have a common left endpoint.

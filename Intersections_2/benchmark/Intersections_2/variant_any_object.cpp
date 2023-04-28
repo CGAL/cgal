@@ -10,7 +10,7 @@
 #include <vector>
 #include <functional>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <optional>
 #include <any>
 #include <boost/timer.hpp>
@@ -26,7 +26,7 @@ struct Intersection_traits;
 
 template<typename K>
 struct Intersection_traits<K, typename K::Segment_2, typename K::Segment_2> {
-  typedef typename boost::variant<typename K::Segment_2, typename K::Point_2 > variant_type;
+  typedef typename std::variant<typename K::Segment_2, typename K::Point_2 > variant_type;
   typedef typename std::optional< variant_type > result_type;
 };
 
@@ -54,7 +54,7 @@ OutputIterator intersect_do_iterator(const typename K::Segment_2 &seg1,
 
 template <class K>
 std::optional<
-  boost::variant<typename K::Segment_2, typename K::Point_2>
+  std::variant<typename K::Segment_2, typename K::Point_2>
   >
 intersection_variant(const typename K::Segment_2 &seg1,
              const typename K::Segment_2 &seg2,
@@ -62,7 +62,7 @@ intersection_variant(const typename K::Segment_2 &seg1,
 {
   typedef CGAL::internal::Segment_2_Segment_2_pair<K> is_t;
 
-  typedef boost::variant<typename K::Segment_2, typename K::Point_2> Variant;
+  typedef std::variant<typename K::Segment_2, typename K::Point_2> Variant;
   typedef std::optional<Variant> OptVariant;
 
   is_t ispair(&seg1, &seg2);
@@ -122,7 +122,7 @@ protected:
   std::vector<Segment>* s;
 };
 
-struct Visitor : public boost::static_visitor<>, Vec_holder
+struct Visitor
 {
   Visitor(std::vector<Point>* p, std::vector<Segment>* s) :
     Vec_holder(p, s) { }
@@ -141,7 +141,7 @@ struct Variant_f {
   void operator()(const Segment& s1, const Segment& s2) {
     result_type obj = intersection_variant(s1, s2, K());
     if(obj) {
-      boost::apply_visitor(v, *obj);
+      std::visit(v, *obj);
     }
   }
 };
@@ -224,7 +224,7 @@ std::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) {
                           std::function<void(const Point&)>(
                             [&ret](const Point& p) { (void)p; ++(std::get<0>(ret)); })));
 
-        boost::apply_visitor(v, *obj);
+        std::visit(v, *obj);
       } else {
         ++(std::get<2>(ret));
       }

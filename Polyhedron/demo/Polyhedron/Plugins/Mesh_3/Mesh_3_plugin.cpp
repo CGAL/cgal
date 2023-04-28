@@ -231,7 +231,7 @@ private:
     IMAGE_MESH_ITEMS,
     IMPLICIT_MESH_ITEMS
   };
-  mutable std::optional<boost::variant<Polyhedral_mesh_items,
+  mutable std::optional<std::variant<Polyhedral_mesh_items,
                                          Image_mesh_items,
                                          Implicit_mesh_items>>
       items;

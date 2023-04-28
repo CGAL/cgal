@@ -143,7 +143,7 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/version.hpp>
 
 // CGAL

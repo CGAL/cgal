@@ -21,7 +21,7 @@
 #include <map>
 #include <ostream>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Arr_geometry_traits/Conic_intersections_2.h>
 
@@ -813,7 +813,7 @@ public:
                            Intersection_map& inter_map,
                            OutputIterator oi) const
   {
-    typedef boost::variant<Intersection_point, Self>  Intersection_result;
+    typedef std::variant<Intersection_point, Self>  Intersection_result;
 
     if (_has_same_supporting_conic(arc)) {
       // Check for overlaps between the two arcs.

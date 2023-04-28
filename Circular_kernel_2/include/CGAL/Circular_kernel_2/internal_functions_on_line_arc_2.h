@@ -497,7 +497,7 @@ namespace CircularFunctors {
   }
 
   template<typename CK, typename T>
-  struct Has_on_visitor : public boost::static_visitor<bool> {
+  struct Has_on_visitor {
     Has_on_visitor(const T* l) : l(l){}
     const T* l;
     bool operator()(const std::pair<typename CK::Circular_arc_point_2, unsigned>& pair) const {
@@ -527,7 +527,7 @@ namespace CircularFunctors {
 
     for (typename solutions_container::iterator it = solutions.begin();
          it != solutions.end(); ++it) {
-      if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it))
+      if(std::visit(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it))
         *res++ = *it;
     }
 
@@ -681,8 +681,8 @@ namespace CircularFunctors {
     for (typename solutions_container::iterator it = solutions.begin();
          it != solutions.end(); ++it)
     {
-      if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it) &&
-         boost::apply_visitor(Has_on_visitor<CK, typename CK::Circular_arc_2>(&c), *it) )
+      if(std::visit(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it) &&
+         std::visit(Has_on_visitor<CK, typename CK::Circular_arc_2>(&c), *it) )
       {
         *res++ = *it;
       }
@@ -757,7 +757,7 @@ namespace CircularFunctors {
       v = intersection(l, la.supporting_line());
 
     if(!v) return res;
-    const Point_2 *pt = boost::get<Point_2>(&*v);
+    const Point_2 *pt = std::get_if<Point_2>(&*v);
     if(pt == nullptr) return res;
 
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
@@ -790,7 +790,7 @@ namespace CircularFunctors {
 
     for (typename solutions_container::const_iterator it = solutions.begin();
          it != solutions.end(); ++it) {
-      if(boost::apply_visitor(Has_on_visitor<CK, Circular_arc_2>(&c), *it))
+      if(std::visit(Has_on_visitor<CK, Circular_arc_2>(&c), *it))
         *res++ = *it;
     }
     return res;

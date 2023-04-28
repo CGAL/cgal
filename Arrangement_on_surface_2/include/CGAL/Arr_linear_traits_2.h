@@ -26,7 +26,7 @@
 
 #include <fstream>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
@@ -1249,7 +1249,7 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the segment with a variant.
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       *oi++ = Make_x_monotone_result(cv);
       return oi;
@@ -1326,7 +1326,7 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       CGAL_precondition(! cv1.is_degenerate());
@@ -1340,7 +1340,7 @@ public:
       if (! res) return oi;
 
       // Check whether we have a single intersection point.
-      const Point_2* ip = boost::get<Point_2>(&*res);
+      const Point_2* ip = std::get<Point_2>(&*res);
       if (ip != nullptr) {
         // Check whether the intersection point ip lies on both segments.
         const bool ip_on_cv1 = cv1.is_vertical() ?

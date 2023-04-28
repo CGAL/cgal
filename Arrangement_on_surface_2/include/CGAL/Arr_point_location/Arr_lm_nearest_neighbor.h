@@ -26,7 +26,7 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <optional>
 
 namespace CGAL {

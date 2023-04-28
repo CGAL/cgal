@@ -465,7 +465,7 @@ public:
     CGAL_assertion(bool(intersectResult1));
     if (!intersectResult1) return CGAL::SMALLER;
 
-    const Point_2* p1_ptr = boost::get<Point_2>(&*intersectResult1);
+    const Point_2* p1_ptr = std::get_if<Point_2>(&*intersectResult1);
 
     CGAL_assertion(p1_ptr && "Intersection should have been a point");
     if (!p1_ptr) return CGAL::SMALLER;
@@ -477,7 +477,7 @@ public:
     CGAL_assertion(bool(intersectResult2));
     if (!intersectResult2) return CGAL::SMALLER;
 
-    const Point_2* p2_ptr = boost::get<Point_2>(&*intersectResult2);
+    const Point_2* p2_ptr = std::get_if<Point_2>(&*intersectResult2);
 
     CGAL_assertion(p2_ptr && "Intersection should have been a point");
     if (!p2_ptr) return CGAL::SMALLER;

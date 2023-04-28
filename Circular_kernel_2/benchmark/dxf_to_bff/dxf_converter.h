@@ -5,7 +5,7 @@
 #include <sstream>
 #include <cassert>
 #include <CGAL/Cartesian.h>
-#include <boost/variant.hpp>
+#include <variant>
 #include <CGAL/intersections.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Circular_kernel_2.h>

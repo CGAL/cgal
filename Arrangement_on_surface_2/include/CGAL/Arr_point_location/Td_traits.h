@@ -113,7 +113,7 @@ public:
                                           Td_inactive_fictitious_vertex;
 
   //! type of td map item (Td_halfedge, Td_vertex or Td_trapezoid)
-  typedef boost::variant< Td_nothing,
+  typedef std::variant< Td_nothing,
                           Td_active_trapezoid, Td_inactive_trapezoid,
                           Td_active_edge, Td_inactive_edge,
                           Td_active_vertex, Td_active_fictitious_vertex,
@@ -895,8 +895,8 @@ public:
     CGAL_precondition(is_active(left_item) && is_active(right_item));
     CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
 
-    Td_active_trapezoid left (boost::get<Td_active_trapezoid>(left_item));
-    Td_active_trapezoid right(boost::get<Td_active_trapezoid>(right_item));
+    Td_active_trapezoid left (std::get<Td_active_trapezoid>(left_item));
+    Td_active_trapezoid right(std::get<Td_active_trapezoid>(right_item));
 
     if (left.is_on_bottom_boundary())
       return (right.is_on_bottom_boundary());
@@ -915,8 +915,8 @@ public:
     CGAL_precondition(is_active(left_item) && is_active(right_item));
     CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
 
-    Td_active_trapezoid left (boost::get<Td_active_trapezoid>(left_item));
-    Td_active_trapezoid right(boost::get<Td_active_trapezoid>(right_item));
+    Td_active_trapezoid left (std::get<Td_active_trapezoid>(left_item));
+    Td_active_trapezoid right(std::get<Td_active_trapezoid>(right_item));
 
     if (left.is_on_top_boundary())
       return (right.is_on_top_boundary());
@@ -1049,7 +1049,7 @@ public:
     CGAL_precondition(is_active(item));
     //MICHAL: assumes item is of active edge item - also fails in case of a vertical asymptote
     //MICHAL: check when this is used exactly
-    Td_active_edge& e (boost::get<Td_active_edge>(item));
+    Td_active_edge& e (std::get<Td_active_edge>(item));
     Halfedge_const_handle he = e.halfedge();
     return (this->compare_curve_end_x_2_object()
                (Curve_end(he,ARR_MIN_END), Curve_end(he,ARR_MAX_END))== EQUAL);
@@ -1061,7 +1061,7 @@ public:
   {
     CGAL_precondition( is_active(item) );
     CGAL_precondition( is_td_trapezoid(item) );
-    Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));
+    Td_active_trapezoid tr (std::get<Td_active_trapezoid>(item));
 
     return
       ( tr.is_on_left_boundary() ||

@@ -27,7 +27,7 @@
 #include <iterator>
 #include <type_traits>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -185,9 +185,9 @@ public:
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
                                  Arr_all_sides_oblivious_tag) const
     {
-      typedef boost::variant<Point_2, X_monotone_subcurve_2>
+      typedef std::variant<Point_2, X_monotone_subcurve_2>
         Make_x_monotone_subresult;
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
 
       // If the polycurve is empty, return.
@@ -212,7 +212,7 @@ public:
       for (auto its = cv.subcurves_begin(); its != cv.subcurves_end(); ++its)
         make_seg_x_monotone(*its, std::back_inserter(x_seg_objects));
       auto it = x_seg_objects.begin();
-      const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+      const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
       CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -260,7 +260,7 @@ public:
 #endif
 
       for (++it; it != x_seg_objects.end(); ++it) {
-        const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+        const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
         CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -318,9 +318,9 @@ public:
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
                                  Arr_not_all_sides_oblivious_tag) const
     {
-      typedef boost::variant<Point_2, X_monotone_subcurve_2>
+      typedef std::variant<Point_2, X_monotone_subcurve_2>
         Make_x_monotone_subresult;
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
 
       // If the polycurve is empty, return.
@@ -350,7 +350,7 @@ public:
       for (auto its = cv.subcurves_begin(); its != cv.subcurves_end(); ++its)
         make_seg_x_monotone(*its, std::back_inserter(x_seg_objects));
       auto it = x_seg_objects.begin();
-      const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+      const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
       CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -398,7 +398,7 @@ public:
 #endif
 
       for (++it; it != x_seg_objects.end(); ++it) {
-        const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+        const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
         CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -696,9 +696,9 @@ public:
                OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>        Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_subcurve_2>
+      typedef std::variant<Intersection_point, X_monotone_subcurve_2>
                                                       Intersection_base_result;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                       Intersection_result;
 
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
@@ -824,7 +824,7 @@ public:
           intersect(cv1[i1], cv2[i2], std::back_inserter(xections));
           for (const auto& xection : xections) {
             const X_monotone_subcurve_2* subcv_p =
-              boost::get<X_monotone_subcurve_2>(&xection);
+              std::get<X_monotone_subcurve_2>(&xection);
             if (subcv_p != nullptr) {
               ocv.push_back(*subcv_p);
               oi = output_ocv (ocv, invert_ocv, oi);
@@ -832,7 +832,7 @@ public:
             }
 
             const Intersection_point* p_p =
-              boost::get<Intersection_point>(&xection);
+              std::get<Intersection_point>(&xection);
             if (p_p != nullptr) *oi++ = Intersection_result(*p_p);
           }
         }
@@ -846,7 +846,7 @@ public:
 
           for (const auto& item : sub_xections) {
             const X_monotone_subcurve_2* x_seg =
-              boost::get<X_monotone_subcurve_2>(&item);
+              std::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
               // We maintain the variant that if the input curves have opposite
@@ -863,7 +863,7 @@ public:
             }
 
             const Intersection_point* p_ptr =
-              boost::get<Intersection_point>(&item);
+              std::get<Intersection_point>(&item);
             if (p_ptr != nullptr) {
               // Any point that is not equal to the max_vertex of the
               // subcurve should be inserted into oi.
@@ -990,7 +990,7 @@ public:
     (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>        Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                       Intersection_result;
       X_monotone_curve_2 curve;
       if (invert_ocv)

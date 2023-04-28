@@ -17,7 +17,7 @@ public:
   /*! computes the intersections of `xc1` and `xc2` and writes them <I>in an
    * ascending lexicographic \f$xy\f$-order</I> into a range beginning at
    * `oi`. The type `OutputIterator` must dereference a polymorphic object of
-   * type `boost::variant` that wraps objects of type either type
+   * type `std::variant` that wraps objects of type either type
    * `pair<ArrTraits::Point_2, ArrTraits::Multiplicity>` or
    * `ArrTraits::X_monotone_curve_2`. An object of the former type represents an
    * intersection point with its multiplicity (in case the multiplicity is

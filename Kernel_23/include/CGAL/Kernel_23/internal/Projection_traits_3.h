@@ -428,10 +428,10 @@ public:
 
 
 
-  std::optional< boost::variant<Point_3,Segment_3> >
+  std::optional< std::variant<Point_3,Segment_3> >
   operator()(const Segment_3& s1, const Segment_3& s2) const
   {
-    typedef  boost::variant<Point_3, Segment_3> variant_type;
+    typedef  std::variant<Point_3, Segment_3> variant_type;
 
     Point_2 s1_source = project(s1.source());
     Point_2 s1_target = project(s1.target());
@@ -450,7 +450,7 @@ public:
       return std::nullopt;
     }
 
-    if(const Segment_2* si = boost::get<Segment_2>(&*o)){
+    if(const Segment_2* si = std::get_if<Segment_2>(&*o)){
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -472,7 +472,7 @@ public:
     }
 
 
-    const Point_2* pi = boost::get<Point_2>(&*o);
+    const Point_2* pi = std::get_if<Point_2>(&*o);
     FT coords[3];
     //compute the third coordinate of the projected intersection point onto 3D segments
     FT z1 = s1.source()[dim] + ( alpha(*pi, s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));

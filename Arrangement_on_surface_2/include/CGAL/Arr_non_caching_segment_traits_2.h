@@ -27,7 +27,7 @@
  * functors required by the concept it models.
  */
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/tags.h>
@@ -131,7 +131,7 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the segment with a variant.
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       *oi++ = Make_x_monotone_result(cv);
       return oi;
@@ -224,7 +224,7 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       const Kernel& kernel = m_traits;
@@ -234,7 +234,7 @@ public:
       if (! res) return oi;
 
       // Check if the intersection is a point:
-      const Point_2* p_p = boost::get<Point_2>(&*res);
+      const Point_2* p_p = std::get<Point_2>(&*res);
       if (p_p != nullptr) {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
@@ -246,7 +246,7 @@ public:
       }
 
       // The intersection is a segment.
-      const X_monotone_curve_2* cv_p = boost::get<X_monotone_curve_2>(&*res);
+      const X_monotone_curve_2* cv_p = std::get<X_monotone_curve_2>(&*res);
       CGAL_assertion(cv_p != nullptr);
 
       Comparison_result cmp1 = m_traits.compare_endpoints_xy_2_object()(cv1);

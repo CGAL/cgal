@@ -24,7 +24,7 @@
 #include <CGAL/determinant.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Hyperbolic_triangulation_2/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
 
@@ -69,9 +69,9 @@ namespace internal {
       Euclidean_line_2* l;
       Circle_2* c;
 
-      if(Circle_2* c_pq = boost::get<Circle_2>(&bis_pq))
+      if(Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq))
       {
-        if(Circle_2* c_qr = boost::get<Circle_2>(&bis_qr))
+        if(Circle_2* c_qr = std::get_if<Circle_2>(&bis_qr))
         {
           typedef typename CK2_Intersection_traits<Traits, Circle_2, Circle_2>::type Intersection_result;
           std::vector< Intersection_result > inters;
@@ -90,14 +90,14 @@ namespace internal {
         }
 
         // here bis_qr is a line
-        l = boost::get<Euclidean_line_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_qr);
         c = c_pq;
       }
       else
       {
         // here bis_pq is a line, and bis_qr is necessarily a circle
-        l = boost::get<Euclidean_line_2>(&bis_pq);
-        c = boost::get<Circle_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_pq);
+        c = std::get_if<Circle_2>(&bis_qr);
       }
 
       typedef typename CK2_Intersection_traits<Traits, Euclidean_line_2, Circle_2>::type Intersection_result;
@@ -157,7 +157,7 @@ namespace internal {
       }
 
       Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-      Circle_2* c = boost::get<Circle_2>(&bis_pq);
+      Circle_2* c = std::get_if<Circle_2>(&bis_pq);
 
       if(_gt.less_y_2_object()(po, c->center()))
         return Circular_arc_2(*c, l_inf, true, l_inf, false);
@@ -200,7 +200,7 @@ namespace internal {
 
       Euclidean_circle_or_line_2
           bis_pq = cclsb(p, q);
-      Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+      Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
       if(_gt.compare_distance_2_object()(po, p, q) == POSITIVE)
       {
@@ -251,7 +251,7 @@ namespace internal {
       }
 
       Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-      Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+      Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
       Hyperbolic_point_2 approx_a(to_double(a.x()),to_double(a.y()));
 
@@ -311,14 +311,14 @@ public:
   typedef typename R::Point_2                                 Hyperbolic_point_2;
   typedef typename R::Circle_2                                Circle_2;
   typedef typename R::Line_2                                  Euclidean_line_2;
-  typedef boost::variant<Circle_2, Euclidean_line_2>          Euclidean_circle_or_line_2;
+  typedef std::variant<Circle_2, Euclidean_line_2>          Euclidean_circle_or_line_2;
 
   typedef typename R::Circular_arc_2                          Circular_arc_2;
   typedef typename R::Line_arc_2                              Line_arc_2;
   typedef typename R::Circular_arc_point_2                    Circular_arc_point_2;
   typedef Circular_arc_point_2                                Hyperbolic_Voronoi_point_2;
   typedef typename R::Segment_2                               Euclidean_segment_2; // only used internally here
-  typedef boost::variant<Circular_arc_2, Line_arc_2>          Hyperbolic_segment_2;
+  typedef std::variant<Circular_arc_2, Line_arc_2>          Hyperbolic_segment_2;
 
   typedef typename R::Triangle_2                              Hyperbolic_triangle_2;
 
