@@ -993,7 +993,7 @@ void clear(FaceGraph& g)
 template<typename FaceGraph>
 bool is_empty(const FaceGraph& g)
 {
-  return std::empty(vertices(g));
+  return boost::empty(vertices(g));
 }
 
 /// \ingroup PkgBGLHelperFct
