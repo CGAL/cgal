@@ -65,7 +65,7 @@ namespace internal {
 
 template<typename Comparable,bool has_template_typedefs>
   struct Is_derived_from_Handle_with_policy {
-    typedef boost::false_type Tag;
+    typedef std::false_type Tag;
 };
 
 template<typename Comparable>
@@ -89,7 +89,7 @@ template<typename Comparable,typename Tag> struct Compare_for_vert_line_map_
 };
 
 template<typename Comparable>
-  struct Compare_for_vert_line_map_<Comparable,boost::true_type> {
+  struct Compare_for_vert_line_map_<Comparable,std::true_type> {
 
     bool operator() (const Comparable& a, const Comparable& b) const {
       return CGAL::Handle_id_less_than< Comparable >()(a,b);

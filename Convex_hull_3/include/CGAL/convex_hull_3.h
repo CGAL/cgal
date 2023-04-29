@@ -155,7 +155,7 @@ struct Default_traits_for_Chull_3{
 
 //FT is a floating point type and Kernel is a filtered kernel
 template <class Point_3, class PolygonMesh>
-struct Default_traits_for_Chull_3<Point_3, PolygonMesh, boost::true_type,Tag_true>{
+struct Default_traits_for_Chull_3<Point_3, PolygonMesh, std::true_type,Tag_true>{
   typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, PolygonMesh, Tag_true > type;
 };
 
@@ -172,7 +172,7 @@ struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, P, Tag> >{
 template <class T>
 struct Is_cartesian_kernel
 {
-  typedef boost::false_type type;
+  typedef std::false_type type;
 };
 
 template <class Kernel, class PolygonMesh>
@@ -233,7 +233,7 @@ public:
 //interval arithmetic (the protector must be created before using this predicate)
 //and in case of failure, exact arithmetic is used.
 template <class Kernel, class P>
-class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>, boost::true_type >{
+class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>, std::true_type >{
   typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  Exact_K;
   typedef Simple_cartesian<Interval_nt_advanced >                               Approx_K;
   typedef Convex_hull_traits_3<Kernel, P, Tag_true>                             Traits;

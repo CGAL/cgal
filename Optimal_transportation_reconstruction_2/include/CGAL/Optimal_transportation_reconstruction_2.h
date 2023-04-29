@@ -1184,9 +1184,9 @@ public:
   // number type (like a multiprecision), the coordinates of the points
   // will increase a lot due to the relocation step. These functions
   // simply turn a relocated point to a rounded to double version.
-  void relocate_on_the_double_grid(Point&, boost::true_type) const
+  void relocate_on_the_double_grid(Point&, std::true_type) const
   {}
-  void relocate_on_the_double_grid(Point& p, boost::false_type) const
+  void relocate_on_the_double_grid(Point& p, std::false_type) const
   {
     double x=to_double(m_traits.compute_x_2_object()(p));
     double y=to_double(m_traits.compute_y_2_object()(p));

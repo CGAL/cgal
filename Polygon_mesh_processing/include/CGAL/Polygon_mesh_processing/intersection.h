@@ -1147,7 +1147,7 @@ bool do_intersect(const PolylineRange& polylines1,
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
-                        boost::false_type >::type
+                        std::false_type >::type
                     >::value
                    >* = 0//end enable_if
 #endif
@@ -1194,7 +1194,7 @@ bool do_intersect(const Polyline& polyline1,
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<Polyline>,
                         boost::range_value<Polyline>,
-                        boost::false_type
+                        std::false_type
                       >::type
                     >::value
                   >* = 0//end enable_if
@@ -1365,7 +1365,7 @@ bool do_intersect(const TriangleMesh& tm,
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
-                        boost::false_type
+                        std::false_type
                       >::type
                     >::value
                   >* = 0//end enable_if
@@ -1435,7 +1435,7 @@ bool do_intersect(const TriangleMesh& tm,
                         typename boost::mpl::eval_if<
                           boost::has_range_iterator<Polyline>,
                           boost::range_value<Polyline>,
-                          boost::false_type
+                          std::false_type
                         >::type
                       >::type // not a range of a range
                     >::value

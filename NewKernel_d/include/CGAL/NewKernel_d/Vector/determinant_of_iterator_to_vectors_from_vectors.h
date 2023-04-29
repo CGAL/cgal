@@ -42,7 +42,7 @@ struct Add_determinant_of_iterator_to_vectors_from_vectors
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_iterator_to_vectors_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   template<class Iter>
   static NT determinant_of_iterator_to_vectors(Iter const&first, Iter const&end){
@@ -72,7 +72,7 @@ struct Add_determinant_of_iterator_to_vectors_from_vectors
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_iterator_to_vectors_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   template<class Iter>
   static NT determinant_of_iterator_to_vectors(Iter const&first, Iter const&end){
@@ -104,7 +104,7 @@ struct Add_determinant_of_iterator_to_vectors_from_vectors
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_iterator_to_vectors_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   template<class Iter>
   static NT determinant_of_iterator_to_vectors(Iter const&first, Iter const&end){
@@ -138,7 +138,7 @@ struct Add_determinant_of_iterator_to_vectors_from_vectors
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_iterator_to_vectors_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   template<class Iter>
   static NT determinant_of_iterator_to_vectors(Iter const&first, Iter const&end){
@@ -174,7 +174,7 @@ struct Add_determinant_of_iterator_to_vectors_from_vectors
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_iterator_to_vectors_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   template<class Iter>
   static NT determinant_of_iterator_to_vectors(Iter const&first, Iter const&end){

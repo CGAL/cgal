@@ -61,7 +61,7 @@ public:
 
 template<typename T>
 struct Has_result_type
-  : boost::integral_constant< bool,
+  : std::integral_constant< bool,
                               Has_result_type_helper< std::remove_cv_t<T>>::value>
 {};
 

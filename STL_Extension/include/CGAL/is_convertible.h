@@ -17,7 +17,7 @@
 #ifndef CGAL_IS_CONVERTIBLE_H
 #define CGAL_IS_CONVERTIBLE_H
 
-#include <boost/type_traits/integral_constant.hpp>
+#include <type_traits>
 #ifdef CGAL_USE_GMPXX
 #include <gmpxx.h>
 #endif
@@ -30,7 +30,7 @@ template<class From,class To>struct is_implicit_convertible
 #ifdef CGAL_USE_GMPXX
 // Work around a gmpxx misfeature
 template<class T>struct is_implicit_convertible<__gmp_expr<mpq_t,T>,mpz_class>
-        : boost::false_type {};
+        : std::false_type {};
 #endif
 
 // TODO: add is_explicit_convertible (using boost::is_constructible?)

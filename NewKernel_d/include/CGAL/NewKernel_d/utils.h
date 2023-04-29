@@ -35,7 +35,7 @@ namespace internal {
 }
 
 template <class T, class No, bool=internal::has_type<T>::value /*false*/>
-struct Has_type_different_from : boost::false_type {};
+struct Has_type_different_from : std::false_type {};
 template <class T, class No>
 struct Has_type_different_from <T, No, true>
 : boost::mpl::not_<std::is_same<typename T::type, No> > {};
