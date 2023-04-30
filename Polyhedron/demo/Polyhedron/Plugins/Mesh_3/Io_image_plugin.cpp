@@ -58,6 +58,7 @@
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkBMPReader.h>
+#include <vtkNIFTIImageReader.h>
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
@@ -1086,9 +1087,10 @@ private Q_SLOTS:
 QString Io_image_plugin::nameFilters() const
 {
   return QString("Inrimage files (*.inr *.inr.gz) ;; "
-                 "Analyze files (*.hdr *.img *img.gz) ;; "
+                 "Analyze files (*.hdr *.img *.img.gz) ;; "
                  "Stanford Exploration Project files (*.H *.HH) ;; "
-                 "NRRD image files (*.nrrd)");
+                 "NRRD image files (*.nrrd)"
+                 "NIFTI image files (*.nii)");
 }
 
 bool Io_image_plugin::canLoad(QFileInfo) const
@@ -1131,6 +1133,23 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
 #ifdef CGAL_USE_VTK
     vtkNew<vtkNrrdReader> reader;
+    reader->SetFileName(fileinfo.filePath().toUtf8());
+    reader->Update();
+    auto vtk_image = reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+#else
+    CGAL::Three::Three::warning("VTK is required to read NRRD files");
+    delete image;
+    return QList<Scene_item*>();
+#endif
+  }
+
+  // read a NIFTI file
+  if(fileinfo.suffix() == "nii")
+  {
+#ifdef CGAL_USE_VTK
+    vtkNew<vtkNIFTIImageReader> reader;
     reader->SetFileName(fileinfo.filePath().toUtf8());
     reader->Update();
     auto vtk_image = reader->GetOutput();
