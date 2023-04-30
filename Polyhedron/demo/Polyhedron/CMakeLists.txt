@@ -46,7 +46,7 @@ endif()
 
 # Find Qt6 itself
 find_package(Qt6 QUIET
-             COMPONENTS OpenGLWidgets Widgets
+             COMPONENTS OpenGLWidgets Widgets Qml
              OPTIONAL_COMPONENTS WebSockets Network)
 
 set_package_properties(
@@ -211,7 +211,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     Primitive_container.cpp
     Polyhedron_demo_plugin_helper.cpp
     CGAL_double_edit.cpp)
-  target_link_libraries(demo_framework PUBLIC Qt6::OpenGLWidgets Qt6::Widgets Qt6::Gui
+  target_link_libraries(demo_framework PUBLIC Qt6::OpenGLWidgets Qt6::Widgets Qt6::Gui Qt6::Qml
                                               CGAL::CGAL_Qt6)
   if(TARGET Qt6::WebSockets)
     target_link_libraries(demo_framework PUBLIC Qt6::WebSockets)

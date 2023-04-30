@@ -1,5 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+
+#define QT_SCRIPT_LIB
+
 #include "config.h"
 #include "MainWindow_config.h"
 
@@ -7,10 +10,7 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Three/Three.h>
 
-// AF @todo   Scripting has changed
-// #include <QScriptEngine>
-// #include <QScriptable>
-
+#include <QJSEngine>
 
 #include <QVector>
 #include <QList>
@@ -62,7 +62,6 @@ class MAINWINDOW_EXPORT MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface,
   public CGAL::Three::Three
-  // AF        , protected QScriptable
 {
   Q_OBJECT
   Q_INTERFACES(Messages_interface)
@@ -148,13 +147,12 @@ public Q_SLOTS:
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/
   void reloadItem();
-#if 0
+
   //! Loads a script. Returns true if it worked.
   bool loadScript(QString filename);
 
   //! Loads a script. Returns true if it worked.
   bool loadScript(QFileInfo);
-#endif
 
   /*!
    * Gives the keyboard input focus to the widget searchEdit.
@@ -259,11 +257,6 @@ public Q_SLOTS:
 
     //!Returns true if the target plugin is present. If not, returns false.
   bool hasPlugin(const QString&) const;
-  /*!
-   * If able, finds a script debugger and interrupts current action. Default
-   * value for parameter is true.
-   */
-  // void enableScriptDebugger(bool = true);
 
   /// This slot is used to test exception handling in Qt Scripts.
   void throw_exception();
@@ -331,7 +324,7 @@ protected Q_SLOTS:
   bool on_actionErase_triggered();
   //!Duplicates the selected item and selects the new item.
   void on_actionDuplicate_triggered();
-  //!If QT_SCRIPT_LIB is defined, opens a dialog to choose a script.
+  //!Opens a dialog to choose a script.
   void on_actionLoadScript_triggered();
   //!Loads a plugin from a specified directory
   void on_actionLoadPlugin_triggered();
@@ -439,8 +432,8 @@ private:
   bool verbose;
   void insertActionBeforeLoadPlugin(QMenu*, QAction *actionToInsert);
 
-#ifdef QT_SCRIPT_LIB
-  QScriptEngine* script_engine;
+
+  QJSEngine* script_engine;
 public:
   /*! Evaluates a script and search for uncaught exceptions. If quiet is false, prints the
    *backtrace of the uncaught exceptions.
@@ -451,7 +444,7 @@ public:
   //! Calls evaluate_script(script, filename, true).
   void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
-  #endif
+
 
   QMutex mutex;
   QWaitCondition wait_condition;
