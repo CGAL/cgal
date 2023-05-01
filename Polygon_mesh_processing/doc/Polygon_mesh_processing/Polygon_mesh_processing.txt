@@ -49,6 +49,7 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPCombinatorialRepair :  repair of polygon meshes and polygon soups.
 - \ref PMPGeometricRepair :  repair of the geometry of polygon meshes.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
+- \ref PMPICC : computing curvatures (mean, gaussian, principal) on a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
