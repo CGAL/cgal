@@ -898,18 +898,21 @@ they give accurate results, on the condition that the correct vertex normals are
 
 \subsection ICCBackground Brief Background
 
-Curvatures are quantities that describe the local geometry of a surface. They are important in many
-geometry processing applications. since surfaces are 2-dimensional objects (embedded in 3D), they can bend
+Surface curvatures are quantities that describe the local geometry of a surface. They are important in many
+geometry processing applications. As surfaces are 2-dimensional objects (embedded in 3D), they can bend
 in 2 independent directions. These directions are called principal directions, and the amount of bending
-in each direction is called the principal curvature: \f$ k_1 \f$ and \f$ k_2 \f$. Curvature is usually
-expressed as scalar quantities like the mean curvature \f$ H \f$ and the Gaussian curvature \f$ K \f$
-which are defined in terms of the principal curvatures.
+in each direction is called the principal curvature: \f$ k_1 \f$ and \f$ k_2 \f$ (denoting max and min
+curvatures). Curvature is usually expressed as scalar quantities like the mean curvature \f$ H \f$ and
+the Gaussian curvature \f$ K \f$ which are defined in terms of the principal curvatures.
 
-The algorithms are based on the following paper \cgalCite{lachaud2020}. It introduces a new way to
-compute curvatures on polygonal meshes. The main idea is based on decoupling the normal information from
-the position information, which is useful for dealing with digital surfaces, or meshes with noise on
-vertex positions. To compute the curvatures, we first compute interpolated curvature measures for each face
-as described below. For a triangle \f$ \tau_{ijk} \f$, with vertices \a i, \a j, \a k:
+The algorithms are based on the two papers \cgalCite{lachaud2022} and \cgalCite{lachaud2020}. They
+introduce a new way to compute curvatures on polygonal meshes. The main idea in \cgalCite{lachaud2022} is
+based on decoupling the normal information from the position information, which is useful for dealing with
+digital surfaces, or meshes with noise on vertex positions. \cgalCite{lachaud2020} introduces some
+extensions to this framework. As it uses linear interpolation on the corrected normal vector field
+to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
+curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
+with vertices \a i, \a j, \a k:
 
 \f[
   \begin{align*}
@@ -923,10 +926,10 @@ as described below. For a triangle \f$ \tau_{ijk} \f$, with vertices \a i, \a j,
 where \f$ \langle \cdot \mid \cdot \rangle \f$ denotes the usual scalar product,
 \f$ \bar{\mathbf{u}}=\frac{1}{3}( \mathbf{u}_i + \mathbf{u}_j + \mathbf{u}_k )\f$.
 
-The first measure \f$ \mu^{(0)} \f$ is the area measure of the triangle, and the second and third measures
-\f$ \mu^{(1)} \f$ and \f$ \mu^{(2)} \f$ are the mean and Gaussian corrected curvature measures of the triangle.
-The last measure \f$ \mu^{\mathbf{X},\mathbf{Y}} \f$ is the anisotropic corrected curvature measure of the triangle.
-The anisotropic measure is later used to compute the principal curvatures and directions through an eigenvalue
+The first measure \f$ \mu^{(0)} \f$ is the area measure of the triangle, and the measures \f$ \mu^{(1)} \f$ and
+\f$ \mu^{(2)} \f$ are the mean and Gaussian corrected curvature measures of the triangle. The last measure
+\f$ \mu^{\mathbf{X},\mathbf{Y}} \f$ is the anisotropic corrected curvature measure of the triangle. The
+anisotropic measure is later used to compute the principal curvatures and directions through an eigenvalue
 solver.
 
 The interpolated curvature measures are then computed for each vertex \f$ v \f$ as the sum of
