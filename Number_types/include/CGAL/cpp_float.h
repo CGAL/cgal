@@ -448,7 +448,7 @@ public:
     return CGAL::sign(man);
   }
 
-  int size() const
+  std::size_t size() const
   {
     return man.backend().size();
   }
