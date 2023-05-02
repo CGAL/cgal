@@ -33,6 +33,8 @@ namespace CGAL
 namespace Mesh_3
 {
 
+#define CGAL_SQRT65 8.06225774829854965236661323030
+
 template<typename P, typename Functor>
 std::vector<P> create_polyline(const double start,
     const double end,
@@ -1543,10 +1545,10 @@ return {
   create_polyline(0.,1., P(1./2,2./3,0.),P(1./2,1./2,1.),
                  [](double z) { return P(-(-7*z*z + 7*z + ((7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + std::sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 2)/(z*(3*z - 1)),(7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + std::sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)),z); },
                  prec),
-  create_polyline(1./2,(std::sqrt(65)-7.)/2, P(1./2,0.,2./3),P((std::sqrt(65)-7.)/2,1./3,(3.+std::sqrt(65))/14),
+  create_polyline(1./2,(CGAL_SQRT65-7.)/2, P(1./2,0.,2./3),P((CGAL_SQRT65-7.)/2,1./3,(3.+CGAL_SQRT65)/14),
                  [](double x) { return P(x,(2 - 5*x + x*x + std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x - std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
                  prec),
-  create_polyline(1./2,(std::sqrt(65)-7.)/2, P(1./2,1./2,1.),P((std::sqrt(65)-7.)/2,1./3,(3.+std::sqrt(65))/14),
+  create_polyline(1./2,(CGAL_SQRT65-7.)/2, P(1./2,1./2,1.),P((CGAL_SQRT65-7.)/2,1./3,(3.+CGAL_SQRT65)/14),
                  [](double x) { return P(x,(2 - 5*x + x*x - std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x + std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
                  prec),
 };
@@ -4001,6 +4003,9 @@ public:
             { 01234567_c, CGAL::Mesh_3::poly01234567 }
     };
 };// end triple_lines_extractor
+
+#undef CGAL_SQRT65
+
 }// end namespace Mesh 3
 }// end namespace CGAL
 
