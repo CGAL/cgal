@@ -134,7 +134,7 @@ public:
 
   struct Face_ids_traversal_traits {
     using Limits = std::numeric_limits<Patch_index>;
-    Patch_index min{Limits::max()};
+    Patch_index min{(Limits::max)()};
     Patch_index max{Limits::lowest()};
     Facet_patch_id_map index_map{};
 
