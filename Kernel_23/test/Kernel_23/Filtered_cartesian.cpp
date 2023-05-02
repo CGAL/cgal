@@ -25,6 +25,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/disable_warnings.h>
 
 #include <cassert>
 
@@ -76,8 +77,16 @@ main()
   test<Cls>();
   std::cout << "Testing with Double_precision_epick:\n";
   test<CGAL::Double_precision_epick>();
+
+#  if defined(BOOST_MSVC)
+#    pragma warning(push)
+#    pragma warning(disable: 4244)
+#  endif
   std::cout << "Testing with Simple_precision_epick:\n";
   test<CGAL::Single_precision_epick>();
+#  if defined(BOOST_MSVC)
+#    pragma warning(pop)
+#  endif
 
   return 0;
 }
