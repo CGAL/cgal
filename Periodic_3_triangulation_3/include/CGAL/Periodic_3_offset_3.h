@@ -20,6 +20,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian.h>
 
+#include <iostream>
+#include <type_traits>
+
 namespace CGAL {
 
 class Periodic_3_offset_3
@@ -43,18 +46,27 @@ public:
   int& z() { return _offz; }
   int z() const { return _offz; }
 
-  int &operator[](int i) {
+  // Use sfinae on the operator[] to accept only integral types as argument
+  template <typename T,
+            typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
+  int& operator[](T i)
+  {
     if (i==0) return _offx;
     if (i==1) return _offy;
     CGAL_assertion(i==2);
     return _offz;
   }
-  int operator[](int i) const {
+
+  template <typename T,
+            typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
+  int operator[](T i) const
+  {
     if (i==0) return _offx;
     if (i==1) return _offy;
     CGAL_assertion(i==2);
     return _offz;
   }
+
   void operator+=(const Periodic_3_offset_3 &other) {
     _offx += other._offx;
     _offy += other._offy;
