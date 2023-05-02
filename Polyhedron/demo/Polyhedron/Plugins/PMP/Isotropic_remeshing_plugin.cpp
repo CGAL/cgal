@@ -178,12 +178,13 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef std::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
-  struct Visitor
+  struct Selection_updater_visitor
+    : public CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor
   {
     typedef typename Scene_polyhedron_selection_item::Selection_set_facet Container;
     Container& faces;
 
-    Visitor(Container& container)
+    Selection_updater_visitor(Container& container)
       : faces(container)
     {}
 
@@ -493,7 +494,7 @@ public Q_SLOTS:
                        (QMessageBox::Ok | QMessageBox::Cancel),
                        QMessageBox::Ok))
                   {
-                    Visitor visitor(selection_item->selected_facets);
+                    Selection_updater_visitor visitor(selection_item->selected_facets);
                     CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets,
                       pmesh,
                       CGAL::parameters::visitor(visitor));
