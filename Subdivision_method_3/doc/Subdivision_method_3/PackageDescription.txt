@@ -39,12 +39,21 @@ The page \ref bgl_namedparameters describes their usage.
 - `DQQMask_3`
 - `Sqrt3Mask_3`
 
+\cgalCRPSection{Functions}
+- `CGAL::Subdivision_method_3::PQQ()`
+- `CGAL::Subdivision_method_3::PTQ()`
+- `CGAL::Subdivision_method_3::DQQ()`
+- `CGAL::Subdivision_method_3::Sqrt3()`
+- `CGAL::Subdivision_method_3::CatmullClark_subdivision()`
+- `CGAL::Subdivision_method_3::Loop_subdivision()`
+- `CGAL::Subdivision_method_3::DooSabin_subdivision()`
+- `CGAL::Subdivision_method_3::Sqrt3_subdivision()`
+
 \cgalCRPSection{Classes}
-- `CGAL::Subdivision_method_3`
 - `CGAL::CatmullClark_mask_3<PolygonMesh>`
 - `CGAL::Loop_mask_3<PolygonMesh>`
 - `CGAL::DooSabin_mask_3<PolygonMesh>`
 - `CGAL::Sqrt3_mask_3<PolygonMesh>`
+- `CGAL::Linear_mask_3<PolygonMesh>`
 
 */
-

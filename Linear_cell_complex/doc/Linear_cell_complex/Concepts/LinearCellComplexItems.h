@@ -5,7 +5,7 @@
 
 The concept `LinearCellComplexItems` refines the concept of `GenericMapItems` by adding the requirement that 0-attributes are enabled, and associated with attributes that are models of the `CellAttributeWithPoint` concept.
 
-\cgalRefines `GenericMapItems`
+\cgalRefines{GenericMapItems}
 
 The first type in `Attributes` tuple must be a model of the `CellAttributeWithPoint` concept.
 

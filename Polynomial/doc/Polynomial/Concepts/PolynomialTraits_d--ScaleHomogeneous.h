@@ -10,9 +10,7 @@ that is, it computes \f$ b^{degree(p)}\cdot p(a/b\cdot x)\f$.
 Note that this functor operates on the polynomial in the univariate view, that is,
 the polynomial is considered as a univariate homogeneous polynomial in one specific variable.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

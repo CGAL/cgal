@@ -806,6 +806,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 // if a vertex vc of t lies on segment ab
 // or if ab intersect some constrained edges
 {
+  if(vaa == vbb){
+    return;
+  }
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
 
