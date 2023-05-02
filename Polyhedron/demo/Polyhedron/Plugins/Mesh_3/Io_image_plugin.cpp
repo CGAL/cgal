@@ -1089,7 +1089,7 @@ QString Io_image_plugin::nameFilters() const
   return QString("Inrimage files (*.inr *.inr.gz) ;; "
                  "Analyze files (*.hdr *.img *.img.gz) ;; "
                  "Stanford Exploration Project files (*.H *.HH) ;; "
-                 "NRRD image files (*.nrrd)"
+                 "NRRD image files (*.nrrd) ;; "
                  "NIFTI image files (*.nii)");
 }
 
@@ -1156,7 +1156,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     vtk_image->Print(std::cerr);
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
 #else
-    CGAL::Three::Three::warning("VTK is required to read NRRD files");
+    CGAL::Three::Three::warning("VTK is required to read NIfTI files");
     delete image;
     return QList<Scene_item*>();
 #endif
