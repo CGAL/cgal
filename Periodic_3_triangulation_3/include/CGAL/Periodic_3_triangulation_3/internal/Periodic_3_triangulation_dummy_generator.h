@@ -185,8 +185,8 @@ insert_generic_dummy_points()
     {
       for (int k=0; k<nums_steps[max_pos]; ++k)
       {
-        coords[min_pos] = domain().min_coord(min_pos) + i * steps[min_pos];
-        coords[mid_pos] = domain().min_coord(mid_pos) + j * steps[mid_pos];
+        coords[min_pos] = domain().min_coord(static_cast<int>(min_pos)) + i * steps[min_pos];
+        coords[mid_pos] = domain().min_coord(static_cast<int>(mid_pos)) + j * steps[mid_pos];
 
         if(k % 2 != 0)
         {
@@ -194,7 +194,7 @@ insert_generic_dummy_points()
           coords[mid_pos] += steps[mid_pos] / FT(2);
         }
 
-        coords[max_pos] = domain().min_coord(max_pos) + k * steps[max_pos];
+        coords[max_pos] = domain().min_coord(static_cast<int>(max_pos)) + k * steps[max_pos];
 
 #if (CGAL_P3T3_DUMMY_GENERATION_DEBUG_VERBOSITY >= 2)
         std::cout << "Add dummy: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
