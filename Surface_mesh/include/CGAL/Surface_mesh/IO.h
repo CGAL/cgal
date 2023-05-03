@@ -30,7 +30,9 @@ namespace CGAL {
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_polygon_mesh()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+    `CGAL::IO::read_polygon_mesh(std::istream& is, Graph& g, const NamedParameters& np)`
+    should be used instead.
 */
 template <typename K>
 CGAL_DEPRECATED bool read_mesh(Surface_mesh<K>& sm, const std::string& filename)
@@ -40,7 +42,9 @@ CGAL_DEPRECATED bool read_mesh(Surface_mesh<K>& sm, const std::string& filename)
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_polygon_mesh()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+    `CGAL::IO::write_polygon_mesh(const std::string& fname, Graph& g,  const NamedParameters& np)`
+    should be used instead.
 */
 template <typename K>
 CGAL_DEPRECATED bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
