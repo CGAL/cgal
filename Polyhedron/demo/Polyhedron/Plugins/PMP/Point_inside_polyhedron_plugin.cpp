@@ -189,8 +189,7 @@ public Q_SLOTS:
   void on_Sample_random_points_from_bbox() {
 
     // calculate bbox of selected polyhedron items
-    std::optional<CGAL::Three::Scene_interface::Bbox> bbox
-      = std::make_optional(false, CGAL::Three::Scene_interface::Bbox());
+    std::optional<CGAL::Three::Scene_interface::Bbox> bbox;
     // Workaround a bug in g++-4.8.3:
     //   https://stackoverflow.com/a/21755207/1728537
     // Using std::make_optional to copy-initialize 'bbox' hides the

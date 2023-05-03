@@ -609,9 +609,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
   // This is the rightmost vertex in the current minimization diagram (out_d).
   // The intersection points/curves that interest us are the ones in
   // [v_leftmost, v].
-  // Without using make_optional we get a "maybe uninitialized" warning with gcc -Wall
-  std::optional<Vertex_const_handle>  v_leftmost =
-    std::make_optional(false, Vertex_const_handle());
+  std::optional<Vertex_const_handle>  v_leftmost;
 
   if (is_leftmost1 == true) {
     if (is_leftmost2 == false)

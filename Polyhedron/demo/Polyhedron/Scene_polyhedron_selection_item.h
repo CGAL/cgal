@@ -295,9 +295,7 @@ public:
 
     constVPmap vpm = get(CGAL::vertex_point, *polyhedron());
 
-    std::optional<CGAL::Bbox_3> item_bbox
-      = std::make_optional(false, CGAL::Bbox_3());
-
+    std::optional<CGAL::Bbox_3> item_bbox;
 
     for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin();
         v_it != selected_vertices.end(); ++v_it) {

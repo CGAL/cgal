@@ -167,8 +167,8 @@ void test_bool_op_no_copy(
   typedef std::optional<Triangle_mesh*> OTM;
   Triangle_mesh *ptr = nullptr;
   const std::array<OTM,4> output =
-    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), std::make_optional(false,ptr), std::make_optional(false,ptr))
-            : CGAL::make_array(OTM(&tm1), OTM(&tm2), std::make_optional(false,ptr), std::make_optional(false,ptr));
+    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>())
+            : CGAL::make_array(OTM(&tm1), OTM(&tm2), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>());
   PMP::corefine_and_compute_boolean_operations(tm1,
                                                tm2,
                                                output,
