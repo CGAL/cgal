@@ -3,7 +3,7 @@
 \ingroup PkgTDS3Concepts
 \cgalConcept
 
-\cgalRefines TriangulationDataStructure_3::Cell
+\cgalRefines{TriangulationDataStructure_3::Cell}
 
 The concept `TriangulationDSCellBase_3` describes the requirements for
 the cell base class of a `CGAL::Triangulation_data_structure_3<Vb,Cb>`.

@@ -1,9 +1,7 @@
 /*! \ingroup PkgPolygon2Concepts
  * \cgalConcept
  *
- * \cgalRefines `DefaultConstructible`
- * \cgalRefines `CopyConstructible`
- * \cgalRefines `Assignable`
+ * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * A model of this concept represents a general polygon with holes. The
  * concept requires the ability to access the general polygon that

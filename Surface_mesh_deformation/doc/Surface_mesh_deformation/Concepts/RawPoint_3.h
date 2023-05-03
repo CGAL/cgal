@@ -1,6 +1,6 @@
 /// \ingroup PkgSurfaceMeshDeformationConcepts
 /// \cgalConcept
-/// \cgalRefines `DefaultConstructible` and `Assignable`
+/// \cgalRefines{DefaultConstructible,Assignable}
 ///
 /// Concept describing the set of requirements of a simple point type.
 ///

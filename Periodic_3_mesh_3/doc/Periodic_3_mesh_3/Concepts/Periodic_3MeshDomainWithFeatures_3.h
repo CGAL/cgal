@@ -2,7 +2,7 @@
 \ingroup PkgPeriodic3Mesh3Concepts
 \cgalConcept
 
-\cgalRefines `MeshDomainWithFeatures_3` and `Periodic_3MeshDomain_3`
+\cgalRefines{MeshDomainWithFeatures_3,Periodic_3MeshDomain_3}
 
 The concept `Periodic_3MeshDomainWithFeatures_3` describes the knowledge required on the
 object to be discretized.

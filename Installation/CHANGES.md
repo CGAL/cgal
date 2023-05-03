@@ -10,6 +10,12 @@ Release date: June 2023
 
 - **Breaking change**: The per package assertions, pre- and postconditions are no longer supported.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.6/Manual/packages.html#PkgKernel23)
+-   Added the functor
+    [`CompareAngle_3`](https://doc.cgal.org/5.6/Kernel_23/classKernel_1_1CompareAngle__3.html)
+    to the concept [`Kernel`](https://doc.cgal.org/5.6/Kernel_23/classKernel.html) to compare
+    an angle defined by three points to the cosinus of another angle.
+
 ### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
 
 - Added a version that uses indices instead of handles as dart and attribute descriptors. As the indices are integers convertible from and to `std::size_t`, they can be used as index into vectors which store properties. To use the index version,  `Use_index` must be defined and be equal to `CGAL::Tag_true` in the item class.
@@ -34,7 +40,14 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   Added the function `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` to remove badly shaped triangles faces in a mesh.
 
+-   Added the function `CGAL::Polygon_mesh_processing::triangulate_polygons()`, which allows users to triangulate polygon soups.
+
+-   Added the functions `CGAL::Polygon_mesh_processing::remesh_planar_patches()` and
+    `CGAL::Polygon_mesh_processing::remesh_almost_coplanar_patches()` to retriangulate patches of coplanar faces in a mesh.
+
 -   Added a named parameter to `CGAL::Polygon_mesh_processing::smooth_shape()` to disable scaling to compensate volume loss.
+
+-   Added the functions `CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect()` and `CGAL::Polygon_mesh_processing::triangle_soup_self_intersections()` to identify and report self-intersections in a triangle soup, similarly to existing functions on triangle meshes.
 
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
@@ -108,6 +121,7 @@ extracted from labeled images.
 
 ### [2D Minkowski Sums](https://doc.cgal.org/5.6/Manual/packages.html#PkgMinkowskiSum2)
 -   Fixed a bug that made holes in the Minkowski sum disappear
+-   Fixed hole filtering. The code used to erroneously remove holes from the container of holes of polygons with holes that did not affect the minkowsi sum. Now it simply adds those that do affect it.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
@@ -180,7 +194,6 @@ Release date: June 2022
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
 
 -   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
-
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------

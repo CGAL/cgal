@@ -493,7 +493,7 @@ public:
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  template<typename Function, typename Bounding_object>
 #if !defined(BOOST_MSVC)
   CGAL_DEPRECATED
 #endif

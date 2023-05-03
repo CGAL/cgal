@@ -25,6 +25,34 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+namespace internal
+{
+  template <class GT, class Pair>
+  void fill_region_primitive_map(const std::vector<Pair>&, internal_np::Param_not_found) {}
+
+  template <class GT, class Pair, class RegionMap>
+  void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Vector_3)
+  {
+    typedef typename boost::property_traits<RegionMap>::key_type KT;
+    for (KT i = 0 ; i<static_cast<KT>(normals.size()); ++i)
+      put(region_map, i, normals[i].first.orthogonal_vector());
+  }
+
+  template <class GT, class Pair, class RegionMap>
+  void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Plane_3)
+  {
+    typedef typename boost::property_traits<RegionMap>::key_type KT;
+    for (KT i = 0; i < static_cast<KT>(normals.size()); ++i)
+      put(region_map, i, normals[i].first);
+  }
+
+  template <class GT, class Pair, class RegionMap>
+  void fill_region_primitive_map(const std::vector<Pair>& normals, RegionMap region_map)
+  {
+    fill_plane_or_vector_map<GT>(normals, region_map, typename boost::property_traits<RegionMap>::value_type());
+  }
+}
+
 /*!
   \ingroup PkgPolygonMeshProcessingRef
   \brief applies a region growing algorithm to fit planes on faces of a mesh.
@@ -53,10 +81,15 @@ namespace Polygon_mesh_processing {
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{25 degrees}
-      \cgalParamExtra{this parameter and `cosine_of_maxium_angle` are exclusive}
+      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
-    \cgalParamNBegin{cosine_of_maxium_angle}
-      \cgalParamDescription{The maximum angle, given as a cosine, between the normal of the supporting planes of adjacent faces
+    \cgalParamNBegin{postprocess_regions}
+      \cgalParamDescription{Apply a post-processing step to the output of the region growing algorithm.}
+      \cgalParamType{`bool`}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{cosine_of_maximum_angle}
+      \cgalParamDescription{The maximum angle, given as a cosine, between the normals of the supporting planes of adjacent faces
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{`cos(25 * PI / 180)`}
@@ -80,6 +113,14 @@ namespace Polygon_mesh_processing {
       \cgalParamType{a class model of `Kernel`}
       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+    \cgalParamNBegin{region_primitive_map}
+      \cgalParamDescription{a property map filled by this function and that will contain for each region
+                            the plane (or only its orthognonal vector) estimated that approximates it.}
+      \cgalParamType{a class model of `WritablePropertyMap` with the value type of `RegionMap` as key and
+                     `GeomTraits::Plane_3` or `GeomTraits::Vector_3` as value type,
+                     `GeomTraits` being the type of the parameter `geom_traits`}
+      \cgalParamDefault{None}
     \cgalParamNEnd
   \cgalNamedParamsEnd
  */
@@ -113,9 +154,72 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   std::vector<typename Region_growing::Primitive_and_region> regions;
   Region_growing region_growing(
     faces(mesh), sorting.ordered(), neighbor_query, region_type, region_map);
-  region_growing.detect(CGAL::Emptyset_iterator());
 
-  return region_growing.number_of_regions_detected();
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  std::vector<std::pair<typename Traits::Plane_3, std::vector<face_descriptor> > > tmp;
+  region_growing.detect(std::back_inserter(tmp));
+
+  if (choose_parameter(get_parameter(np, internal_np::postprocess_regions), false))
+  {
+    // first try for a post-processing: look at regions made of one face and check if a
+    // larger region contains its 3 vertices and if so assigned it to it.
+    typedef typename boost::property_traits<RegionMap>::value_type Id;
+    for (std::size_t i=0; i<tmp.size(); ++i)
+    {
+      if (tmp[i].second.size() == 1)
+      {
+        face_descriptor f0=tmp[i].second[0];
+        std::map<Id, int> vertex_incidence;
+        halfedge_descriptor h0 = halfedge(f0, mesh);
+        for (int k=0; k<3; ++k)
+        {
+          std::set<Id> ids_for_v;
+          for (halfedge_descriptor h : halfedges_around_target(h0, mesh))
+          {
+            if (!is_border(h, mesh))
+            {
+              Id id = get(region_map, face(h, mesh));
+              if (std::size_t(id)!=i)
+                ids_for_v.insert(id);
+            }
+          }
+          h0=next(h0, mesh);
+          for (Id id : ids_for_v)
+            vertex_incidence.insert(std::make_pair(id, 0)).first->second+=1;
+        }
+        std::set<Id> candidates;
+        for (const std::pair<const Id, int>& p : vertex_incidence)
+        {
+          if (p.second == 3)
+            candidates.insert(p.first);
+        }
+        if (candidates.size() == 1)
+        {
+          Id new_id = *candidates.begin();
+          put(region_map, f0, static_cast<Id>(new_id));
+          tmp[new_id].second.push_back(f0);
+          tmp[i].second.clear();
+        }
+      }
+    }
+    auto last = std::remove_if(tmp.begin(), tmp.end(),
+                               [](const std::pair<typename Traits::Plane_3, std::vector<face_descriptor>>& p)
+                               {return p.second.empty();});
+    tmp.erase(last, tmp.end());
+
+    //update region map
+    for (Id i=0; i<static_cast<Id>(tmp.size()); ++i)
+    {
+      for (face_descriptor f : tmp[i].second)
+        put(region_map, f, i);
+    }
+
+  }
+
+  internal::fill_region_primitive_map<Traits>(tmp, parameters::get_parameter(np, internal_np::region_primitive_map));
+
+  return tmp.size();
 }
 
 /*!
@@ -125,7 +229,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
     More precisely, a corner on the boundary of a region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
 
-  @tparam PolygonMesh a model of `FaceListGraph` and `EdgeListGaph`
+  @tparam PolygonMesh a model of `FaceListGraph` and `EdgeListGraph`
   @tparam RegionMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type.
   @tparam CornerIdMap a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `std::size_t` as value type.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -146,21 +250,23 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
                      as key type and `bool` as value type}
       \cgalParamDefault{Unused if not provided}
+      \cgalParamExtra{The value for each edge must be initialized to `false`.}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_distance}
-      \cgalParamDescription{the maximum distance from a point to a line such that it is considered part of the region of the line}
+      \cgalParamDescription{the maximum distance from a segment to a line such that it is considered part of the region of the line}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{1}
-      \cgalParamExtra{this parameter and `cosine_of_maxium_angle` are exclusive}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
       \cgalParamDescription{the maximum angle in degrees between two adjacent segments
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{25 degrees}
+      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
-    \cgalParamNBegin{cosine_of_maxium_angle}
-      \cgalParamDescription{The maximum angle, given as a cosine, between two adjacent segments
+    \cgalParamNBegin{cosine_of_maximum_angle}
+      \cgalParamDescription{The maximum angle, given as a cosine, for the smallest angle
+                            between the supporting line of a segment and an adjacent segment
                             such that they are considered part of the same region}
       \cgalParamType{`GeomTraits::FT` with `GeomTraits` being the type of the parameter `geom_traits`}
       \cgalParamDefault{`cos(25 * PI / 180)`}
@@ -205,7 +311,7 @@ detect_corners_of_regions(
   using face_descriptor = typename Graph_traits::face_descriptor;
   using vertex_descriptor = typename Graph_traits::vertex_descriptor;
 
-  using Default_ecm = typename boost::template property_map<PolygonMesh, CGAL::dynamic_edge_property_t<bool> >::type;
+  using Default_ecm = typename boost::template property_map<PolygonMesh, CGAL::dynamic_edge_property_t<bool> >::const_type;
   using Ecm = typename internal_np::Lookup_named_param_def <
                 internal_np::edge_is_constrained_t,
                 NamedParameters,
@@ -213,8 +319,12 @@ detect_corners_of_regions(
               > ::type;
 
   Default_ecm dynamic_ecm;
-  if(!(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value))
+  if(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value)
+  {
     dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
+    for (edge_descriptor e : edges(mesh))
+      put(dynamic_ecm, e, false);
+  }
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 
   using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh>;
@@ -270,7 +380,7 @@ detect_corners_of_regions(
   RG_lines rg_lines(
     segment_range, pgraph, line_region);
 
-  std::vector< std::pair<typename Line_region::Primitive, std::vector<edge_descriptor> > > subregions;
+  std::vector< std::pair<typename Line_region::Primitive, std::vector<edge_descriptor> > > subregions; // TODO dump into pmap lines
   rg_lines.detect(std::back_inserter(subregions));
 
 #ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS

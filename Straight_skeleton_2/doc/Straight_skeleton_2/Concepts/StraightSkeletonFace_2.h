@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `HalfedgeDSFace`
+\cgalRefines{HalfedgeDSFace}
 
 The concept `StraightSkeletonFace_2` describes the requirements for the face type of the
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSFace` concept

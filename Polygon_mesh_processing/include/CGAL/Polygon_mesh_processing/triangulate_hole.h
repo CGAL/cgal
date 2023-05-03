@@ -729,11 +729,8 @@ namespace Polygon_mesh_processing {
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
 
-    bool use_cdt =
-#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
-      false;
-#else
-      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+    bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
 #endif
 bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3

@@ -37,6 +37,8 @@ CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_hal
 CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
 CGAL_add_named_parameter(point_to_vertex_output_iterator_t, point_to_vertex_output_iterator, point_to_vertex_output_iterator)
 CGAL_add_named_parameter(polygon_to_face_output_iterator_t, polygon_to_face_output_iterator, polygon_to_face_output_iterator)
+CGAL_add_named_parameter(point_to_vertex_map_t, point_to_vertex_map, point_to_vertex_map)
+CGAL_add_named_parameter(polygon_to_face_map_t, polygon_to_face_map, polygon_to_face_map)
 
 CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to_vertex_map)
 CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
@@ -68,6 +70,7 @@ CGAL_add_named_parameter(vertex_incident_patches_t, vertex_incident_patches, ver
 CGAL_add_named_parameter(density_control_factor_t, density_control_factor, density_control_factor)
 CGAL_add_named_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)
 CGAL_add_named_parameter(do_not_use_cubic_algorithm_t, do_not_use_cubic_algorithm, do_not_use_cubic_algorithm)
+CGAL_add_named_parameter(do_not_triangulate_faces_t, do_not_triangulate_faces, do_not_triangulate_faces)
 CGAL_add_named_parameter(use_2d_constrained_delaunay_triangulation_t, use_2d_constrained_delaunay_triangulation, use_2d_constrained_delaunay_triangulation)
 CGAL_add_named_parameter(fairing_continuity_t, fairing_continuity, fairing_continuity)
 CGAL_add_named_parameter(sparse_linear_solver_t, sparse_linear_solver, sparse_linear_solver)
@@ -147,6 +150,10 @@ CGAL_add_named_parameter(mesh_facet_distance_t, mesh_facet_distance, mesh_facet_
 CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_topology)
 CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
 CGAL_add_named_parameter(do_scale_t, do_scale, do_scale)
+CGAL_add_named_parameter(vertex_corner_map_t, vertex_corner_map, vertex_corner_map)
+CGAL_add_named_parameter(patch_normal_map_t, patch_normal_map, patch_normal_map)
+CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_primitive_map)
+CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -259,7 +266,7 @@ CGAL_add_named_parameter(minimum_region_size_t, minimum_region_size, minimum_reg
 CGAL_add_named_parameter(sphere_radius_t, sphere_radius, sphere_radius)
 CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
 CGAL_add_named_parameter(item_map_t, item_map, item_map)
-CGAL_add_named_parameter(cosine_of_maxium_angle_t, cosine_of_maxium_angle, cosine_of_maxium_angle)
+CGAL_add_named_parameter(cosine_of_maximum_angle_t, cosine_of_maximum_angle, cosine_of_maximum_angle)
 CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
 CGAL_add_named_parameter(maximum_radius_t, maximum_radius, maximum_radius)
 
