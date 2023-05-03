@@ -123,6 +123,14 @@ extracted from labeled images.
 -   Fixed a bug that made holes in the Minkowski sum disappear
 -   Fixed hole filtering. The code used to erroneously remove holes from the container of holes of polygons with holes that did not affect the minkowsi sum. Now it simply adds those that do affect it.
 
+### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.6/Manual/packages.html#PkgStraightSkeleton2) (major changes)
+-   Added weighted straight skeletons: weighted straight skeletons are a generalization of
+    straight skeletons. Contour edges are assigned a positive weight, which can be understood
+    as assigning a speed to the wavefront spawned from the contour edge.
+-   Added straight skeleton extrusion: this CGAL package now implements the extrusion of weighted
+    straight skeletons of polygons with holes. The output is a closed, combinatorially 2-manifold
+    surface triangle mesh.
+
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
 
