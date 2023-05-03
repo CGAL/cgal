@@ -6,7 +6,7 @@
 \section seccompilers Supported Compilers
 
 In order to build a program using \cgal, you need a \cpp compiler
-supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
+supporting C++17 or later.
 \cgal \cgalReleaseNumber is supported (continuously tested) for the following compilers/operating systems:
 
 | Operating System | Compiler |
