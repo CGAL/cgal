@@ -144,6 +144,7 @@ log() const
   << QString("tet max size: %1").arg(tet_sizing)
   << QString("detect connected components: %1")
     .arg(detect_connected_components)
+  << QString("use weights: %1").arg(weights_ptr != nullptr)
   << QString("protect features: %1").arg(protect_features);
 }
 
