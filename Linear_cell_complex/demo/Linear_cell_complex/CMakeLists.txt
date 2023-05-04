@@ -42,7 +42,7 @@ add_definitions(-DCMAP_WITH_INDEX) # to use cc with index (handle otherwise)
 ##################
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 COMPONENTS Widgets OpenGL)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL)
 
 if(NOT CGAL_Qt5_FOUND OR NOT Qt5_FOUND)
 
