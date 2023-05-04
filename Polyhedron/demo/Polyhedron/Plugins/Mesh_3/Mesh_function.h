@@ -316,6 +316,11 @@ launch()
 #endif
 
 #if CGAL_MESH_3_MESHER_STATUS_ACTIVATED
+  // First we have to ensure that no old cell will be left in c3t3
+  // Second, the c3t3 object could have been corrupted,
+  // for example by inserting new vertices in the triangulation.
+  c3t3_.clear_cells_and_facets_from_c3t3();
+
   mesher_->initialize();
   while ( ! mesher_->is_algorithm_done() && ! stop_ )
   {
