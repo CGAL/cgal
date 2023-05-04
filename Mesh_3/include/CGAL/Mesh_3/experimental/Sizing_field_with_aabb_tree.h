@@ -270,7 +270,7 @@ struct Sizing_field_with_aabb_tree
                 << ", index=#" << CGAL::IO::oformat(id) << "): ";
     }
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-    double result = d_ptr->d_;
+    FT result = d_ptr->d_;
     if(dim == 0) {
       if(d_ptr->dt.dimension() < 1) {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -311,7 +311,7 @@ struct Sizing_field_with_aabb_tree
       }
       const FT dist = CGAL_NTS sqrt(CGAL::squared_distance( nearest, p));
       // std::cerr << (std::min)(dist / FT(1.5), d_) << "\n";
-      result = (std::min)(dist / FT(2), result);
+      result = (std::min)(dist * FT(0.5), result);
 
       // now search in the AABB tree
       typename Corners_indices::const_iterator ids_it =
@@ -327,10 +327,10 @@ struct Sizing_field_with_aabb_tree
 
         if(closest_point_and_primitive != boost::none) {
           result =
-            (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
+            (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                        CGAL_NTS
                        sqrt(CGAL::squared_distance(p,
-                                                   closest_point_and_primitive->first)),
+                                                   closest_point_and_primitive->first))),
                        result);
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           {
@@ -395,10 +395,10 @@ struct Sizing_field_with_aabb_tree
                                      closest_point_and_primitive->second)) == 0);
 
         result =
-          (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
+          (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                      CGAL_NTS
                      sqrt(CGAL::squared_distance(p,
-                                                 closest_point_and_primitive->first)),
+                                                 closest_point_and_primitive->first))),
                      result);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -562,9 +562,9 @@ struct Sizing_field_with_aabb_tree
         std::cerr << "  closest_point: " << closest_intersection << "\n"
                   << "  distance = " << CGAL_NTS sqrt(sqd_intersection) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-        double new_result =
-          (std::min)(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
-                     CGAL_NTS sqrt(sqd_intersection),
+        FT new_result =
+          (std::min)(FT(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
+                     CGAL_NTS sqrt(sqd_intersection)),
                      d_ptr->d_);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
