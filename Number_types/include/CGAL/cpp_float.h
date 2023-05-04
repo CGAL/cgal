@@ -109,7 +109,7 @@ public:
   cpp_float(const Mantissa& man, int exp)
       : man(man), exp(exp)
   {
-    CGAL_HISTOGRAM_PROFILER("size (man/exp)", man.backend().size());
+    CGAL_HISTOGRAM_PROFILER("size (man/exp)", static_cast<int>(man.backend().size()));
   }
 
 #ifndef CGAL_CPPF
@@ -117,7 +117,7 @@ public:
   cpp_float(const Expression& man, int exp)
     :man(man), exp(exp)
   {
-    CGAL_HISTOGRAM_PROFILER("size (expression/exp)", this->man.backend().size());
+    CGAL_HISTOGRAM_PROFILER("size (expression/exp)", static_cast<int>(this->man.backend().size()));
   }
 #endif
 
@@ -179,7 +179,7 @@ public:
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
 
-    CGAL_HISTOGRAM_PROFILER("size when constructed from double", man.backend().size());
+    CGAL_HISTOGRAM_PROFILER("size when constructed from double", static_cast<int>(man.backend().size()));
   }
 
 
