@@ -12,6 +12,8 @@ Facets in the domain are those with an odd nesting level.
 
 \tparam CT a constrained triangulation
 \tparam InDomainPmap a class model of `ReadWritePropertyMap` with `CT::Face_handle` as key type and `bool` as value type.
+
+\pre `ct.dimension() == 2`
 */
 template <typename CT, typename InDomainPmap>
 void
@@ -26,6 +28,8 @@ As the function above.
 Requires that the face type of `CT` has the methods `bool is_in_domain()`  and `void set_in_domain(bool)`.
 
 \tparam CT a constrained triangulation
+
+\pre `ct.dimension() == 2`
 */
 template <typename CT>
 void
