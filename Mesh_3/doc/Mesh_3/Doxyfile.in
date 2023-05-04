@@ -7,6 +7,8 @@ INPUT += \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_complex_mesh_domain_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_domain_with_polyline_features_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_3/generate_label_weights.h \
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Sizing_field_with_aabb_tree.h \
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_constant_domain_field_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/exude_mesh_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/odt_optimize_mesh_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/lloyd_optimize_mesh_3.h \

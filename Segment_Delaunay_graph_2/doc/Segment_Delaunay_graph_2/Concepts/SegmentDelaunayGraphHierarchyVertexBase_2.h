@@ -12,7 +12,7 @@ refines the concept `SegmentDelaunayGraphVertexBase_2`, by
 adding two vertex handles to the corresponding vertices for the
 next and previous level graphs.
 
-\cgalRefines `SegmentDelaunayGraphVertexBase_2`
+\cgalRefines{SegmentDelaunayGraphVertexBase_2}
 
 \cgalHeading{Types}
 

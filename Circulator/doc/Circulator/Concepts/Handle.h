@@ -16,7 +16,7 @@ Like iterators, the handle can be passed as template argument to
 the type of the element pointed to.
 The `iterator_category` is `void`.
 
-\cgalRefines Descriptor
+\cgalRefines{Descriptor}
 
 The default constructed object must be unique as far as the equality
 operator is concerned (this serves the same purpose as NULL for pointers).

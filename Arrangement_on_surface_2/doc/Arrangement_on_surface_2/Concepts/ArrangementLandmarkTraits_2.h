@@ -9,8 +9,7 @@
  * `CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits parameter
  * is substituted with a model of this concept.
  *
- * \cgalRefines `ArrangementApproximateTraits_2` and
- * `ArrangementConstructXMonotoneCurveTraits_2`
+ * \cgalRefines{ArrangementApproximateTraits_2,ArrangementConstructXMonotoneCurveTraits_2}
  *
  * \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
  * \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2`

@@ -28,7 +28,7 @@ arbitrary curves, which may be not \f$ x\f$-monotone must define the
 different types to allow proper dispatching of the free functions
 that accept such curves, such as `intsert()`.
 
-\cgalRefines `ArrangementXMonotoneTraits_2`
+\cgalRefines{ArrangementXMonotoneTraits_2}
 
 \cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
 \cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`

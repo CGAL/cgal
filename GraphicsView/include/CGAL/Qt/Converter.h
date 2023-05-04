@@ -167,6 +167,15 @@ public:
     return qp;
   }
 
+  QPolygonF operator()(const std::list< CGAL_Point_2 >& p) const
+  {
+    QPolygonF qp;
+    for(int i = 0; i < p.size(); i++){
+      qp << operator()(p[i]);
+    }
+    return qp;
+  }
+
 
   void operator()(std::list< CGAL_Point_2 >& p, const QPolygonF& qp) const
   {

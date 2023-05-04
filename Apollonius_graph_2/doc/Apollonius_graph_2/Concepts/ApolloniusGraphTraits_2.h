@@ -3,7 +3,7 @@
 \ingroup PkgApolloniusGraph2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines{TriangulationTraits_2}
 
 The concept `ApolloniusGraphTraits_2` provides the traits
 requirements for the `Apollonius_graph_2` class. In particular,

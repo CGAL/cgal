@@ -201,6 +201,13 @@ bool read_polygon_mesh(const std::string& fname,
  *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{This parameter is only meaningful for formats that support binary encoding.}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
  *     \cgalParamType{Boolean}

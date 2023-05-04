@@ -7,7 +7,7 @@ The concept `MeshTriangulationTraits_3` describes the requirements for
 the geometric traits class of the underlying regular triangulation used during
 a mesh generation process.
 
-\cgalRefines RegularTriangulationTraits_3
+\cgalRefines{RegularTriangulationTraits_3}
 
 \cgalHasModel All models of `Kernel`.
 

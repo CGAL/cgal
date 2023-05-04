@@ -791,6 +791,7 @@ public:
                                    Moving_vertices_set& moving_vertices);
 
   void update_restricted_facets();
+  void update_restricted_cells();
 
 #ifdef CGAL_INTRUSIVE_LIST
   template <typename OutdatedCells>
@@ -2924,6 +2925,18 @@ update_restricted_facets()
 }
 
 template <typename C3T3, typename MD>
+void
+C3T3_helpers<C3T3, MD>::
+update_restricted_cells()
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  for (typename C3T3::Triangulation::Finite_cells_iterator
+    cit = tr_.finite_cells_begin();
+    cit != tr_.finite_cells_end(); ++cit)
+    updater(cit);
+}
+
+template <typename C3T3, typename MD>
 template <typename OutdatedCellsOutputIterator,
           typename DeletedCellsOutputIterator>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
@@ -3463,7 +3476,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return std::make_pair(boost::none, Bare_point());
+    return std::make_pair(boost::none, Bare_point(ORIGIN));
 
   // Compute least square fitting plane
   Plane_3 plane;
@@ -3474,7 +3487,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                        point,
                                        Dimension_tag<2>(),
                                        tr_.geom_traits(),
-                                       Default_diagonalize_traits<FT, 3>());
+                                       Default_diagonalize_traits<double, 3>());
 
   // The surface center of a facet might have an offset in periodic triangulations
   const Bare_point& ref_facet_scp = ref_facet.first->get_facet_surface_center(ref_facet.second);
@@ -3744,7 +3757,7 @@ min_sliver_value(const Cell_vector& cells,
       it != cells.end();
       ++it)
   {
-    min_value = (std::min)(criterion(*it), min_value);
+    min_value = (std::min<FT>)(criterion(*it), min_value);
   }
   return min_value;
 }

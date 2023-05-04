@@ -4,7 +4,7 @@
 
 The concept `GenericMap` defines a <I>d</I>-dimensional generic map. This concept is defined only to factorize the common notions between \link CombinatorialMap `CombinatorialMap`\endlink and \link GeneralizedMap `GeneralizedMap`\endlink concepts.
 
-\cgalRefines DefaultConstructible
+\cgalRefines{DefaultConstructible}
 
 A generic map has a set of darts <I>D</I>, and functions \f$ f_0\f$,\f$ \ldots\f$,\f$ f_{d}\f$ that link these darts between them.
 

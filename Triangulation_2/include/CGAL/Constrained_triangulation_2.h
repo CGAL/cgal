@@ -352,8 +352,8 @@ public:
 template <class OutputIterator>
 void
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
-// forces the constrained [va,vb]
-// [va,vb] will eventually be split into several edges
+// forces the constrained [vaa,vbb]
+// [vaa,vbb] will potentially be split into several edges
 // if a vertex vc of t lies on segment ab
 // of if ab intersect some constrained edges
 {
@@ -828,6 +828,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 // if a vertex vc of t lies on segment ab
 // or if ab intersect some constrained edges
 {
+  if(vaa == vbb){
+    return;
+  }
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
 
