@@ -180,7 +180,7 @@ operator==(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
     }
     return false;
   case (3):
-    return (&(*s0.ch) == &(*s1.ch));
+    return s0.ch.operator->() == s1.ch.operator->();
   }
   CGAL_error();
   return false;
