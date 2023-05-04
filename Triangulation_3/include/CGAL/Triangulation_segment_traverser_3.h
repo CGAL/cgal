@@ -228,6 +228,8 @@ public:
          */
     const Point&    target() const      { return _target; }
 
+    Vertex_handle target_vertex() const { return _t_vertex; }
+
     //  gives a handle to the current cell.
     /*  By invariance, this cell is intersected by the segment
          *        between `source()` and `target()`.
@@ -809,7 +811,7 @@ public:
       else
         ch = _cell_iterator.previous();
 
-      Cell_handle chnext = Cell_handle(_cell_iterator);
+      const Cell_handle chnext = Cell_handle(_cell_iterator);
       //_cell_iterator is one step forward _curr_simplex
       CGAL_assertion(ch != chnext);
 
@@ -834,8 +836,13 @@ public:
         {
           if (prev == ch && ltprev == Locate_type::VERTEX)
           {
-            CGAL_assertion(prev->vertex(liprev) == get_vertex());
-            _curr_simplex = ch;
+            const auto current_vertex = get_vertex();
+            if(current_vertex == _cell_iterator.target_vertex()) {
+              _curr_simplex = Simplex_3();
+            } else {
+              CGAL_assertion(prev->vertex(liprev) == _cell_iterator.target_vertex());
+              _curr_simplex = ch;
+            }
           }
           else
           {

@@ -241,6 +241,7 @@ walk_to_next() {
         // The target is inside the cell.
         _prev = Simplex( cell(), Tr::VERTEX, ti, -1 );
         cell() = Cell_handle();
+        lt() = Locate_type::VERTEX;
         return;
     }
 
