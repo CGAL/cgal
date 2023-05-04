@@ -957,13 +957,13 @@ public:
   //returns true if the trapezoid is a curve
   bool is_empty_item(const Td_map_item& tr) const
   {
-    return (tr.which() == 0);
+    return (tr.index() == 0);
   }
 
   //returns true if the trapezoid is a point or a curve
   bool is_trapezoid(const Td_map_item& tr) const
   {
-    switch (tr.which())
+    switch (tr.index())
     {
     case TD_ACTIVE_TRAPEZOID:
     case TD_INACTIVE_TRAPEZOID:
@@ -976,7 +976,7 @@ public:
   //returns true if the map item is a vertex
   bool is_td_vertex(const Td_map_item& tr) const
   {
-    switch (tr.which())
+    switch (tr.index())
     {
     case TD_ACTIVE_VERTEX:
     case TD_ACTIVE_FICTITIOUS_VERTEX:
@@ -991,7 +991,7 @@ public:
   //returns true if the map item is an edge
   bool is_td_edge(const Td_map_item& tr) const
   {
-    switch (tr.which())
+    switch (tr.index())
     {
     case TD_ACTIVE_EDGE:
     case TD_INACTIVE_EDGE:
@@ -1004,7 +1004,7 @@ public:
   //returns true if the map item is an edge
   bool is_td_trapezoid(const Td_map_item& tr) const
   {
-    switch (tr.which())
+    switch (tr.index())
     {
     case TD_ACTIVE_TRAPEZOID:
     case TD_INACTIVE_TRAPEZOID:
@@ -1017,7 +1017,7 @@ public:
   //returns true if the trapezoid is a curve
   bool is_fictitious_vertex(const Td_map_item& tr) const
   {
-    switch (tr.which())
+    switch (tr.index())
     {
     case TD_ACTIVE_FICTITIOUS_VERTEX:
     case TD_INACTIVE_FICTITIOUS_VERTEX:
@@ -1030,7 +1030,7 @@ public:
   //returns true if the trapezoid is a curve
   bool is_active(const Td_map_item& tr) const
   {
-    switch (tr.which())
+    switch (tr.index())
     {
       case TD_ACTIVE_TRAPEZOID:
       case TD_ACTIVE_EDGE:

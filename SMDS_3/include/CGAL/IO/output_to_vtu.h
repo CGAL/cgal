@@ -314,7 +314,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
   os << "    <CellData Scalars=\""<<attributes.front().first<<"\">\n";
   for(std::size_t i = 0; i< attributes.size(); ++i)
   {
-    switch(attributes[i].second.which()){
+    switch(attributes[i].second.index()){
     case 0:
       write_attribute_tag(os,attributes[i].first, *std::get<const std::vector<double>* >(attributes[i].second), binary,offset);
       break;
@@ -334,7 +334,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
     write_c3t3_points(os,tr,V); // fills V if the mode is BINARY
     write_cells(os,c3t3,V);
     for(std::size_t i = 0; i< attributes.size(); ++i)
-      switch(attributes[i].second.which()){
+      switch(attributes[i].second.index()){
       case 0:
         write_attributes(os, *std::get<const std::vector<double>* >(attributes[i].second));
         break;

@@ -61,7 +61,7 @@ class Output_rep<std::variant<int,
 public:
   Output_rep(const Variant& v) : v(v) {}
   std::ostream& operator()( std::ostream& out) const {
-    if(v.which() == 1) {
+    if(v.index() == 1) {
       out << IO::oformat(std::get<std::pair<int, int> >(v));
     } else {
       out << std::get<int>(v);

@@ -717,6 +717,7 @@ public:
   /*! A visitor to set the cw halfedge of a vertex node.
    */
   class set_cw_he_visitor
+  {
   public:
     set_cw_he_visitor(Halfedge_const_handle he) : m_cw_he(he) {}
 
@@ -735,6 +736,7 @@ public:
   /*! A visitor to reset the cw halfedge of a vertex node.
    */
   class reset_cw_he_visitor
+  {
   public:
     void operator()(Td_active_vertex& t) const { t.reset_cw_he(); }
 

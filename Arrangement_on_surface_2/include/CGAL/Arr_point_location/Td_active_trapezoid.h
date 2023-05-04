@@ -459,12 +459,12 @@ private:
 
     Td_map_item item (*this);
 
-    if (ptr()->rb.which() != 0)
+    if (ptr()->rb.index() != 0)
     {
       Self tr(std::get<Self>(rb()));
       tr.set_lb(item);
     }
-    if (ptr()->rt.which() != 0)
+    if (ptr()->rt.index() != 0)
     {
       Self tr(std::get<Self>(rt()));
       tr.set_lt(item);

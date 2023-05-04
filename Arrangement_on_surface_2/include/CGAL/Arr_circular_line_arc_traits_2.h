@@ -339,7 +339,6 @@ namespace CGAL {
 
      template <class CircularKernel>
     class Variant_Construct_min_vertex_2
-      <const typename CircularKernel::Circular_arc_point_2&>
     {
       typedef typename CircularKernel::Circular_arc_point_2
                                                   Circular_arc_point_2;
