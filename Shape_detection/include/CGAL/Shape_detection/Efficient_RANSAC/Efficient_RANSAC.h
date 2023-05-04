@@ -895,7 +895,7 @@ public:
 
     for (std::size_t i = 0; i < m_extracted_shapes->size(); ++i) {
       std::shared_ptr<Plane_shape> pshape
-              = boost::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
+              = std::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
 
       // Ignore all shapes other than plane
       if (pshape != std::shared_ptr<Plane_shape>())

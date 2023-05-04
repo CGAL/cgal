@@ -73,7 +73,7 @@ bool test_torus_parameters() {
       continue;
 
     std::shared_ptr<Torus> torus =
-      boost::dynamic_pointer_cast<Torus>((*shapes.first));
+      std::dynamic_pointer_cast<Torus>((*shapes.first));
 
     // Check: shape detected is a torus.
     if (!torus)

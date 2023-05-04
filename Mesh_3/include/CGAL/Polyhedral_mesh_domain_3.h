@@ -607,7 +607,7 @@ private:
   AABB_tree_* bounding_tree_;
 
   // cache queries and intersected primitive
-  typedef typename std::variant<Segment_3, Ray_3, Line_3>::type Cached_query;
+  typedef std::variant<Segment_3, Ray_3, Line_3> Cached_query;
   struct Query_cache
   {
     Query_cache() : has_cache(false) {}

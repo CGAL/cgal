@@ -346,7 +346,7 @@ public:
         if(f_on_surface[i])
           m_c3t3.remove_from_complex(c, i);
         else
-          m_c3t3.add_to_complex(c, i, patch.get());
+          m_c3t3.add_to_complex(c, i, patch.value());
       }
 
       m_c3t3.remove_from_complex(c);

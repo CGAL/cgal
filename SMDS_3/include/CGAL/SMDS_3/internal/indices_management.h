@@ -141,9 +141,9 @@ struct Index_generator_with_features<T, T, T, T>
   typedef Index                                         type;
 };
 
-template <typename T, typename Boost_variant>
-const T& get_index(const Boost_variant& x,
-                   std::enable_if_t<!std::is_same<T, Boost_variant>::value > * = 0)
+template <typename T, typename Variant>
+const T& get_index(const Variant& x,
+                   std::enable_if_t<!std::is_same<T, Variant>::value > * = 0)
 { return std::get<T>(x); }
 
 template <typename T>

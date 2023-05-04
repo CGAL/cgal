@@ -732,7 +732,7 @@ private:
           ss << item->name().toStdString() << "_plane_";
 
           std::shared_ptr<CGAL::Shape_detection::Plane<Traits> > pshape
-            = boost::dynamic_pointer_cast<CGAL::Shape_detection::Plane<Traits> > (shape);
+            = std::dynamic_pointer_cast<CGAL::Shape_detection::Plane<Traits> > (shape);
 
           Kernel::Point_3 ref = CGAL::ORIGIN + pshape->plane_normal ();
 

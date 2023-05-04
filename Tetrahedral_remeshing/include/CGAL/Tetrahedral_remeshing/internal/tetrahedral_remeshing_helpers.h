@@ -535,7 +535,7 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     v->set_index(typename C3t3::Curve_index(1));
     break;
   case 0:
-    v->set_index(std::get<typename C3t3::Corner_index>(v->index()));
+    v->set_index(Mesh_3::internal::get_index<typename C3t3::Corner_index>(v->index()));
     break;
   default:
     CGAL_assertion(false);

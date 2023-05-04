@@ -620,7 +620,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                       indices(facet_circulator->second, i));
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
-          if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
+          if (is_edge_uv(vh, curr_vertex, o_inc_vh.value()))
           {
             is_edge = true;
             break;
@@ -778,7 +778,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     indices(facet_circulator->second, i));
       if (curr_vertex != vh0  && curr_vertex != vh1)
       {
-        if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
+        if (is_edge_uv(vh, curr_vertex, o_inc_vh.value()))
           return NOT_FLIPPABLE;
       }
     }
@@ -1202,7 +1202,7 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
 
     Cell_handle ch;
     int i0, i1;
-    if (is_edge_uv(vp.first, vp.second, boost::get(o_inc_vh), ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, o_inc_vh.value(), ch, i0, i1))
     {
       Edge edge(ch, i0, i1);
 
