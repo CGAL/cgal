@@ -252,7 +252,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   /// @todo It could make sense to also return the length of each cycle.
   /// @todo It should probably go into BGL package (like the rest of this file).
   template <typename PolygonMesh, typename OutputIterator>
-  OutputIterator extract_boundary_cycles(PolygonMesh& pm,
+  OutputIterator extract_boundary_cycles(const PolygonMesh& pm,
                                          OutputIterator out)
   {
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
