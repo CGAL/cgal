@@ -18,6 +18,7 @@ typedef CGAL::Ostream_iterator<Point,std::ostream>  OIterator;
 
 int main()
 {
+  CGAL::get_default_random() = CGAL::Random(1518508913);
   int n = 10;
   int p = 3;
   OIterator cout_ip(std::cout);
