@@ -124,7 +124,7 @@ bool test_vfefv(bool with_bbox = false)
   std::cerr << "## test_vfefv(" << std::boolalpha << with_bbox << ")\n";
   result_string.clear();
   static const std::vector<Point_3> points =
-  { 
+  {
     { -1,  0,  0 },
     {  0,  1,  0 },
     {  0, -1,  0 },
