@@ -44,9 +44,13 @@ echo
 if [[ $REPLY =~ ^YES$ ]]; then
 
   gh api repos/CGAL/cgal/labels -F name=Merged_in_${CURRENT_RELEASE}
-  for i in ${PR_LIST}; do
-    gh pr edit  $i --add-label Merged_in_${CURRENT_RELEASE}
-  done
+  if gh issue edit help | grep -q numbers; then 
+    gh pr edit ${PR_LIST} --add-label Merged_in_${CURRENT_RELEASE}
+  else
+    for i in ${PR_LIST}; do
+      gh pr edit  $i --add-label Merged_in_${CURRENT_RELEASE}
+    done
+  fi
 
 else
 
