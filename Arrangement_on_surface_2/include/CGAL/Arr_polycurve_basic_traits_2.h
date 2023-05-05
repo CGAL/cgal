@@ -1099,10 +1099,9 @@ public:
   // The following implementation is inspired by
   // https://stackoverflow.com/a/11816999/1915421
 
-  template <typename T>
-  struct Void { typedef void type; };
+  template <typename... Ts> using void_t = void;
 
-  template <typename T, typename _ = void>
+  template <typename T, typename = void>
   struct has_approximate_2 {
     // Generic implementation
     using Approximate_number_type = void;
@@ -1116,19 +1115,19 @@ public:
        * \return An approximation of p's x-coordinate (if i == 0), or an
        *         approximation of p's y-coordinate (if i == 1).
        */
-      Approximate_number_type operator()(const Point_2& p, int i) const
+      Approximate_number_type operator()(const Point_2&, int) const
       { CGAL_error_msg("The subtraits does not define Approximate_2!"); }
 
       /*! Obtain an approximation of a point.
        */
-      Approximate_point_2 operator()(const Point_2& p) const
+      Approximate_point_2 operator()(const Point_2&) const
       { CGAL_error_msg("The subtraits does not define Approximate_2!"); }
 
       /*! Obtain an approximation of an \f$x\f$-monotone curve.
        */
       template <typename OutputIterator>
-      OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
-                                OutputIterator oi, bool l2r = true) const {
+      OutputIterator operator()(const X_monotone_curve_2&, double,
+                                OutputIterator oi, bool = true) const {
         CGAL_error_msg("The subtraits does not define Approximate_2!");
         return oi;
       }
@@ -1136,7 +1135,7 @@ public:
   };
 
   template <typename T>
-  struct has_approximate_2<T, typename Void<typename T::Approximate_2>::type> {
+  struct has_approximate_2<T, void_t<typename T::Approximate_2>> {
     // Specialization for types holding a nested type T::Approximate_2
     using Approximate_number_type = typename T::Approximate_number_type;
     using Approximate_2 = typename T::Approximate_2;

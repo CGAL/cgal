@@ -625,7 +625,7 @@ public:
     /*! Obtain an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
                               OutputIterator oi, bool l2r = true) const {
       if (l2r) {
         for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) {
