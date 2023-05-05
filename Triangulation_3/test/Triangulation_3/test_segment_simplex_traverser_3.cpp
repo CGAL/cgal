@@ -106,6 +106,18 @@ auto debug_simplex(Simplex simplex) {
   return Debug_simplex<Simplex>{simplex};
 }
 
+static const std::vector<Point_3> bbox_points =
+{
+  {  -10.1, -10, -10  },
+  {  -10.2, 10, -10   },
+  {  10.3, 10, -10    },
+  {  10.4, -10, -10   },
+  {  -10.5, -10, 10   },
+  {  -10.6, 10, 10    },
+  {  10.7, 10, 10     },
+  {  10.8, -10, 10    },
+  };
+
 DT dt;
 std::string result_string;
 
@@ -133,18 +145,6 @@ bool test_vfefv(bool with_bbox = false)
     {  6, -2, -2 },
   };
 
-  static const std::vector<Point_3> bbox_points =
-  {
-    {  -10, -10, -10  },
-    {  -10, 10, -10   },
-    {  10, 10, -10    },
-    {  10, -10, -10   },
-    {  -10, -10, 10   },
-    {  -10, 10, 10    },
-    {  10, 10, 10     },
-    {  10, -10, 10    },
-  };
-
   dt.clear();
   insert(dt, points.begin(), points.end());
   if(with_bbox) insert(dt, bbox_points.begin(), bbox_points.end());
@@ -167,6 +167,62 @@ bool test_vfefv(bool with_bbox = false)
     std::cerr << "  result_string is " << result_string << " instead of "
               << expected_result_string << '\n';
   }
+  return ok;
+}
+
+bool test_a_simple_tetrahedron() {
+  std::cerr << "## test_a_simple_tetrahedron()\n";
+  bool ok = true;
+  auto test = [&](Point_3 a, Point_3 b, bool with_bbox, std::string expected_result) {
+    bool exception_thrown = false;
+    dt.clear();
+    dt.insert({0, 0, 0});
+    dt.insert({1, 0, 0});
+    dt.insert({0, 1, 0});
+    dt.insert({0, 0, 1});
+    if(with_bbox) insert(dt, bbox_points.begin(), bbox_points.end());
+    result_string.clear();
+    std::cerr << "### Case " << expected_result;
+    if(with_bbox) std::cerr << " with bbox";
+    std::cerr << '\n';
+    try {
+      for(auto s: dt.segment_traverser_simplices(a, b)) {
+        visit_simplex(s);
+      }
+    } catch(const CGAL::Assertion_exception& e) {
+      CGAL::get_static_warning_handler()("Assertion", e.expression().c_str(),
+                                         e.filename().c_str(),
+                                         e.line_number(),
+                                         e.message().c_str());
+      exception_thrown = true;
+    }
+    if(result_string != expected_result) {
+      std::cerr << "test_a_simple_tetrahedron failed\n";
+      std::cerr << "  result_string is " << result_string << " instead of "
+                << expected_result << '\n';
+      ok = false;
+    }
+    if(exception_thrown) {
+      std::cerr << "test_a_simple_tetrahedron failed\n";
+      std::cerr << "  exception thrown\n";
+      ok = false;
+    }
+  };
+
+  test({ 0,  0,  0}, { 1,  0,  0}, false, "010");
+  test({ 0,  0,  0}, { 2,  0,  0}, false, "010I");
+  test({-1,  0,  0}, { 2,  0,  0}, false, "I010I");
+  test({ 0,  0,  0}, {.5, .5,  0}, false, "021");
+  test({ 0,  0,  0}, { 1,  1,  0}, false, "021I");
+  test({-1, -1,  0}, { 1,  1,  0}, false, "I021I");
+
+  test({ 0,  0,  0}, { 1,  0,  0}, true, "010");
+  test({ 0,  0,  0}, { 2,  0,  0}, true, "0103");
+  test({-1,  0,  0}, { 2,  0,  0}, true, "30103");
+  test({ 0,  0,  0}, {.5, .5,  0}, true, "021");
+  test({ 0,  0,  0}, { 1,  1,  0}, true, "0213");
+  test({-1, -1,  0}, { 1,  1,  0}, true, "30213");
+
   return ok;
 }
 
@@ -231,6 +287,7 @@ int main(int, char* [])
   std::cout << "Done (" << queries.size() << " queries)\n";
   ok = test_vfefv() && ok;
   ok = test_vfefv(true) && ok;
+  ok = test_a_simple_tetrahedron() && ok;
   return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
