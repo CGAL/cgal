@@ -451,9 +451,10 @@ namespace internal {
       Item_map item_map_ = Item_helper::get(item_map);
 
       m_nb_regions = 0;
+      typename boost::property_traits<Region_map>::value_type init_value(-1);
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
         Item item = get(item_map_, it);
-        put(m_region_map, item, std::size_t(-1));
+        put(m_region_map, item, init_value);
       }
       // TODO if we want to allow subranges while NeighborQuery operates on the full range
       // (like for faces in a PolygonMesh) we should fill a non-visited map rather than a visited map
@@ -479,8 +480,9 @@ namespace internal {
     Boolean_property_map<VisitedMap> m_visited;
 
     void fill_region_map(std::size_t idx, const Region& region) {
+      typedef typename boost::property_traits<Region_map>::value_type Id;
       for (auto item : region) {
-        put(m_region_map, item, idx);
+        put(m_region_map, item, static_cast<Id>(idx));
       }
     }
 

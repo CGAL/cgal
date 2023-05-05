@@ -33,14 +33,16 @@ namespace internal
   template <class GT, class Pair, class RegionMap>
   void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Vector_3)
   {
-    for (std::size_t i = 0 ; i<normals.size(); ++i)
+    typedef typename boost::property_traits<RegionMap>::key_type KT;
+    for (KT i = 0 ; i<static_cast<KT>(normals.size()); ++i)
       put(region_map, i, normals[i].first.orthogonal_vector());
   }
 
   template <class GT, class Pair, class RegionMap>
   void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Plane_3)
   {
-    for (std::size_t i = 0 ; i<normals.size(); ++i)
+    typedef typename boost::property_traits<RegionMap>::key_type KT;
+    for (KT i = 0; i < static_cast<KT>(normals.size()); ++i)
       put(region_map, i, normals[i].first);
   }
 
@@ -195,7 +197,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
         if (candidates.size() == 1)
         {
           Id new_id = *candidates.begin();
-          put(region_map, f0, new_id);
+          put(region_map, f0, static_cast<Id>(new_id));
           tmp[new_id].second.push_back(f0);
           tmp[i].second.clear();
         }
@@ -207,7 +209,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
     tmp.erase(last, tmp.end());
 
     //update region map
-    for (std::size_t i=0; i<tmp.size(); ++i)
+    for (Id i=0; i<static_cast<Id>(tmp.size()); ++i)
     {
       for (face_descriptor f : tmp[i].second)
         put(region_map, f, i);

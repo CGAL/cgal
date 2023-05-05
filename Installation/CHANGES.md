@@ -101,6 +101,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 for automatic detection and protection
 of 1D-curves that lie at the intersection of three or more subdomains,
 extracted from labeled images.
+-   Added `CGAL::Sizing_field_with_aabb_tree`, a geometry-aware sizing field for feature edges in polyhedral domains.
 -   Added new meshing criterion `edge_min_size` to avoid subdividing sharp edges that are shorter than the prescribed size bound.
 -   Added new meshing criteria `facet_min_size` and `cell_min_size` to prevent Delaunay refinement from creating simplices smaller than the prescribed bound.
 
@@ -121,6 +122,14 @@ extracted from labeled images.
 ### [2D Minkowski Sums](https://doc.cgal.org/5.6/Manual/packages.html#PkgMinkowskiSum2)
 -   Fixed a bug that made holes in the Minkowski sum disappear
 -   Fixed hole filtering. The code used to erroneously remove holes from the container of holes of polygons with holes that did not affect the minkowsi sum. Now it simply adds those that do affect it.
+
+### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.6/Manual/packages.html#PkgStraightSkeleton2) (major changes)
+-   Added weighted straight skeletons: weighted straight skeletons are a generalization of
+    straight skeletons. Contour edges are assigned a positive weight, which can be understood
+    as assigning a speed to the wavefront spawned from the contour edge.
+-   Added straight skeleton extrusion: this CGAL package now implements the extrusion of weighted
+    straight skeletons of polygons with holes. The output is a closed, combinatorially 2-manifold
+    surface triangle mesh.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------

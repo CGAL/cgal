@@ -57,6 +57,10 @@ const QColor default_mesh_color(45,169,70);
 #include "split_polylines.h"
 #include <CGAL/Mesh_facet_topology.h>
 
+enum Protection { BORDERS = 1, FEATURES = 2 };
+using Protection_flags = QFlags<Protection>;
+Q_DECLARE_METATYPE(Protection_flags)
+
 class Mesh_3_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_interface
@@ -645,28 +649,32 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.edgeMinSizingLabel->setEnabled(ui.noEdgeMinSizing->isChecked());
   ui.edgeMinSizing->setEnabled(ui.noEdgeMinSizing->isChecked());
 
-  const QString sharp_and_boundary("Sharp and Boundary edges");
-  const QString boundary_only("Boundary edges only");
-  const QString sharp_edges("Sharp edges");
-  const QString input_polylines("Input polylines");
-  const QString on_cube("Polylines on cube");
-  const QString triple_lines("Triple+ lines");
+  using Item = std::pair<QString, Protection_flags>;
+  const Item sharp_and_boundary{"Sharp and Boundary edges", FEATURES};
+  const Item boundary_only{"Boundary edges only", BORDERS};
+  const Item sharp_edges{"Sharp edges", FEATURES};
+  const Item input_polylines{"Input polylines only", Protection_flags{}};
+  const Item on_cube{"Polylines on cube", BORDERS};
+  const Item triple_lines{"Triple+ lines", FEATURES};
   if (features_protection_available) {
     if (items->which() == POLYHEDRAL_MESH_ITEMS) {
+      auto v = [](Protection_flags f) { return QVariant::fromValue(f); };
       if (mesh_type == Mesh_type::SURFACE_ONLY) {
-        ui.protectEdges->addItem(sharp_and_boundary);
-        ui.protectEdges->addItem(boundary_only);
+        ui.protectEdges->addItem(sharp_and_boundary.first, v(sharp_and_boundary.second));
+        ui.protectEdges->addItem(boundary_only.first, v(boundary_only.second));
       } else
-        ui.protectEdges->addItem(sharp_edges);
+        ui.protectEdges->addItem(sharp_edges.first, v(sharp_edges.second));
     } else if (items->which() == IMAGE_MESH_ITEMS) {
       if (polylines_item != nullptr) {
-        ui.protectEdges->addItem(QString(input_polylines).append(" only"));
-        ui.protectEdges->addItem(QString(on_cube).append(" and input polylines"));
-        ui.protectEdges->addItem(QString(triple_lines).append(" and input polylines"));
+        ui.protectEdges->addItem(input_polylines.first, QVariant::fromValue(input_polylines.second));
+        ui.protectEdges->addItem(QString(on_cube.first).append(" and input polylines"),
+                                 QVariant::fromValue(on_cube.second));
+        ui.protectEdges->addItem(QString(triple_lines.first).append(" and input polylines"),
+                                 QVariant::fromValue(triple_lines.second));
       }
       else {
-        ui.protectEdges->addItem(on_cube);
-        ui.protectEdges->addItem(triple_lines);
+        ui.protectEdges->addItem(on_cube.first, QVariant::fromValue(on_cube.second));
+        ui.protectEdges->addItem(triple_lines.first, QVariant::fromValue(triple_lines.second));
       }
     }
   }
@@ -676,8 +684,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.weightsSigma, SLOT(setEnabled(bool)));
   connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
           ui.weightsSigma_label, SLOT(setEnabled(bool)));
-  ui.weightsSigma->setValue(1.);
   ui.labeledImgGroup->setVisible(input_is_labeled_img);
+  ui.weightsSigma->setValue((std::max)(image_item->image()->vx(),
+                            (std::max)(image_item->image()->vy(),
+                                       image_item->image()->vz())));
 
 #ifndef CGAL_USE_ITK
   if (input_is_labeled_img)
@@ -718,24 +728,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
   tets_min_sizing = !ui.noTetMinSizing->isChecked() ? 0 : ui.tetMinSizing->value();
 
-  const int pe_ci = ui.protectEdges->currentIndex();
-  if (items->which() == IMAGE_MESH_ITEMS)
-  {
-    protect_borders = ui.protect->isChecked()
-      && (  pe_ci == ui.protectEdges->findText(on_cube, Qt::MatchContains)
-         || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
-    protect_features = ui.protect->isChecked()
-      && (  pe_ci == ui.protectEdges->findText(triple_lines, Qt::MatchContains)
-         || pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains));
-  }
-  else if (items->which() == POLYHEDRAL_MESH_ITEMS)
-  {
-    protect_borders = ui.protect->isChecked()
-      && (  pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains)
-         || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
-    protect_features = ui.protect->isChecked()
-      && (  pe_ci == ui.protectEdges->findText(sharp_edges, Qt::MatchContains));
-  }
+  const auto pe_flags = ui.protectEdges->currentData().value<Protection_flags>();
+  protect_borders = ui.protect->isChecked() && pe_flags.testFlag(BORDERS);
+  protect_features = ui.protect->isChecked() && pe_flags.testFlag(FEATURES);
 
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = (ui.manifoldCheckBox->isChecked() ? 1 : 0) +
@@ -877,12 +872,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     if ( sigma_weights > 0
       && sigma_weights != image_item->sigma_weights())
     {
-      image_item->set_image_weights(
-        CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights),
-        sigma_weights);
+      CGAL::Image_3 weights = CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights);
+      image_item->set_image_weights(weights, sigma_weights);
     }
 #endif
-    const Image* pWeights = sigma_weights > 0
+    Image* pWeights = sigma_weights > 0
       ? image_item->image_weights()
       : nullptr;
 

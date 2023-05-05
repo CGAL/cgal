@@ -17,13 +17,15 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include "Facet_patch_id_map.h"
-#include "Get_curve_index.h"
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h> // for weight_modifier
 
 #include <cstddef>
 #include <memory>
 #include <limits>
+
+#include <CGAL/Mesh_3/experimental/Facet_patch_id_map.h>
+#include <CGAL/Mesh_3/experimental/Get_curve_index.h>
+#include <CGAL/Mesh_3/experimental/AABB_filtered_projection_traits.h>
 
 #include <boost/container/flat_set.hpp>
 #if defined(CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY) || defined(CGAL_NO_ASSERTIONS) == 0
@@ -31,20 +33,49 @@
 #  include <boost/format.hpp>
 #endif  // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY || (! CGAL_NO_ASSERTIONS)
 
-#include "AABB_filtered_projection_traits.h"
+namespace CGAL {
+/*!
+* @ingroup PkgMesh3DomainFields
+*
+* The class `Sizing_field_with_aabb_tree` is a model of concept `MeshDomainField_3`.
+* It provides a sizing field to be used in the meshing process of a polyhedral surface with features.
+*
+* At each query point `p`, the field value is the minimum of the distances to
+*   - the surface patches `p` does not belong to, and
+*   - for each curve `C` it does belong to, the intersection points of `C` with
+*     the plane orthogonal to `C` and passing through `p`.
+*
+* This sizing field is designed to be used for the edges of the mesh complex,
+* in `Mesh_edge_criteria_3` or as `edge_size` in `Mesh_criteria_3`.
+* Using this sizing field for complex edges provides a high-quality hint
+* to the protecting balls placement algorithm, since it ensures that no
+* protecting ball will intersect a surface patch to which the
+* corresponding vertex does not belong.
+*
+* @tparam GeomTraits is the geometric traits class. It must match the type `Triangulation::Geom_traits`,
+* where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used
+* in the meshing process.
+* @tparam MeshDomain is the type of the domain. It must be a model of `MeshDomainWithFeatures_3`,
+* and derive from `CGAL::Polyhedral_mesh_domain_with_features_3`
 
-template <typename GeomTraits, typename MeshDomain,
-          typename Input_facets_AABB_tree = typename MeshDomain::AABB_tree,
-          typename Get_curve_index_ = CGAL::Default,
-          typename Facet_patch_id_map_ = CGAL::Default
+
+* @cgalModels `MeshDomainField_3`
+*/
+template <typename GeomTraits,
+          typename MeshDomain
+#ifndef DOXYGEN_RUNNING
+        , typename Input_facets_AABB_tree_ = CGAL::Default
+        , typename Get_curve_index_ = CGAL::Default
+        , typename Facet_patch_id_map_ = CGAL::Default
+#endif
           >
 struct Sizing_field_with_aabb_tree
 {
-  typedef GeomTraits Kernel_;
-  typedef typename Kernel_::FT FT;
-  typedef typename Kernel_::Point_3 Point_3;
+  using FT      = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Index   = typename MeshDomain::Index;
 
-  typedef typename MeshDomain::Index               Index;
+private:
   typedef typename MeshDomain::Corner_index        Corner_index;
   typedef typename MeshDomain::Curve_index         Curve_index;
   typedef typename MeshDomain::Surface_patch_index Patch_index;
@@ -58,28 +89,52 @@ struct Sizing_field_with_aabb_tree
   typedef std::vector<Patches_ids> Corners_incident_patches;
   typedef std::vector<Patches_ids> Curves_incident_patches;
 
+  typedef GeomTraits Kernel_;
   typedef CGAL::Delaunay_triangulation_3<Kernel_> Dt;
 
-  typedef Input_facets_AABB_tree Input_facets_AABB_tree_;
-  typedef typename Input_facets_AABB_tree_::AABB_traits AABB_traits;
-  using Point_and_primitive_id = typename AABB_traits::Point_and_primitive_id;
-  typedef typename Input_facets_AABB_tree_::Primitive Input_facets_AABB_tree_primitive_;
-  typedef typename MeshDomain::Curves_AABB_tree Input_curves_AABB_tree_;
+  using Input_facets_AABB_tree = typename CGAL::Default::Get<
+    Input_facets_AABB_tree_,
+    typename MeshDomain::AABB_tree
+    >::type;
+  using AABB_traits                                 = typename Input_facets_AABB_tree::AABB_traits;
+  using Point_and_primitive_id                      = typename AABB_traits::Point_and_primitive_id;
+  typedef typename Input_facets_AABB_tree::Primitive  Input_facets_AABB_tree_primitive_;
+  typedef typename MeshDomain::Curves_AABB_tree       Input_curves_AABB_tree_;
   typedef typename Input_curves_AABB_tree_::Primitive Input_curves_AABB_tree_primitive_;
 
-  typedef typename CGAL::Default::Get<
+  using Get_curve_index = typename CGAL::Default::Get<
     Get_curve_index_,
     CGAL::Mesh_3::Get_curve_index<typename MeshDomain::Curves_AABB_tree::Primitive>
-    >::type Get_curve_index;
-  typedef typename CGAL::Default::Get<
+    >::type;
+  using Facet_patch_id_map = typename CGAL::Default::Get<
     Facet_patch_id_map_,
     CGAL::Mesh_3::Facet_patch_id_map<MeshDomain,
                                      typename Input_facets_AABB_tree::Primitive>
-    >::type Facet_patch_id_map;
+    >::type;
+
+public:
+  /// \name Creation
+  /// @{
+
+  /*!
+  * Constructor for the sizing field.
+  * @param d the maximal value returned by `operator()`, corresponding
+  * to an upper bound on feature edge lengths in the output mesh.
+  * @param domain the mesh domain to be meshed
+  */
+  Sizing_field_with_aabb_tree(const FT& d, const MeshDomain& domain)
+    : Sizing_field_with_aabb_tree(d,
+                                  domain,
+                                  domain.aabb_tree(),
+                                  Get_curve_index(),
+                                  Facet_patch_id_map())
+  {}
+
+  /// @}
 
   struct Face_ids_traversal_traits {
     using Limits = std::numeric_limits<Patch_index>;
-    Patch_index min{Limits::max()};
+    Patch_index min{(Limits::max)()};
     Patch_index max{Limits::lowest()};
     Facet_patch_id_map index_map{};
 
@@ -93,16 +148,17 @@ struct Sizing_field_with_aabb_tree
     }
   };
 
+#ifndef DOXYGEN_RUNNING
   Sizing_field_with_aabb_tree
-  (typename Kernel_::FT d,
-   const Input_facets_AABB_tree_& aabb_tree,
+  (const typename Kernel_::FT d,
    const MeshDomain& domain,
+   const Input_facets_AABB_tree& aabb_tree,
    Get_curve_index get_curve_index = Get_curve_index(),
    Facet_patch_id_map facet_patch_id_map = Facet_patch_id_map()
    )
     : d_ptr{std::make_shared<Private_data>(d,
-                                           aabb_tree,
                                            domain,
+                                           aabb_tree,
                                            get_curve_index,
                                            facet_patch_id_map)}
   {
@@ -258,7 +314,17 @@ struct Sizing_field_with_aabb_tree
     result = projection_traits.closest_point_and_primitive();
     return result;
   }
+#endif // DOXYGEN_RUNNING
 
+public:
+  /// \name Operations
+  /// @{
+
+  /*!
+  * returns the value of the sizing field at the point `p`,
+  * assumed to be included in the input complex feature with dimension `dimension`
+  * and mesh subcomplex index `id`.
+  */
   double operator()(const Point_3& p,
                     const int dim,
                     const Index& id) const
@@ -270,7 +336,7 @@ struct Sizing_field_with_aabb_tree
                 << ", index=#" << CGAL::IO::oformat(id) << "): ";
     }
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-    double result = d_ptr->d_;
+    FT result = d_ptr->d_;
     if(dim == 0) {
       if(d_ptr->dt.dimension() < 1) {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -311,7 +377,7 @@ struct Sizing_field_with_aabb_tree
       }
       const FT dist = CGAL_NTS sqrt(CGAL::squared_distance( nearest, p));
       // std::cerr << (std::min)(dist / FT(1.5), d_) << "\n";
-      result = (std::min)(dist / FT(2), result);
+      result = (std::min)(dist * FT(0.5), result);
 
       // now search in the AABB tree
       typename Corners_indices::const_iterator ids_it =
@@ -327,10 +393,10 @@ struct Sizing_field_with_aabb_tree
 
         if(closest_point_and_primitive != boost::none) {
           result =
-            (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
+            (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                        CGAL_NTS
                        sqrt(CGAL::squared_distance(p,
-                                                   closest_point_and_primitive->first)),
+                                                   closest_point_and_primitive->first))),
                        result);
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           {
@@ -395,10 +461,10 @@ struct Sizing_field_with_aabb_tree
                                      closest_point_and_primitive->second)) == 0);
 
         result =
-          (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
+          (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                      CGAL_NTS
                      sqrt(CGAL::squared_distance(p,
-                                                 closest_point_and_primitive->first)),
+                                                 closest_point_and_primitive->first))),
                      result);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -562,9 +628,9 @@ struct Sizing_field_with_aabb_tree
         std::cerr << "  closest_point: " << closest_intersection << "\n"
                   << "  distance = " << CGAL_NTS sqrt(sqd_intersection) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-        double new_result =
-          (std::min)(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
-                     CGAL_NTS sqrt(sqd_intersection),
+        FT new_result =
+          (std::min)(FT(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
+                     CGAL_NTS sqrt(sqd_intersection)),
                      d_ptr->d_);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -597,23 +663,27 @@ struct Sizing_field_with_aabb_tree
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
     return result;
   }
+
+  /// @}
+
 private:
   using Kd_tree = CGAL::AABB_search_tree<AABB_traits>;
   struct Private_data {
     using FT = typename Kernel_::FT;
-    Private_data(FT d, const Input_facets_AABB_tree_& aabb_tree,
+    Private_data(FT d,
                  const MeshDomain& domain,
+                 const Input_facets_AABB_tree& aabb_tree,
                  Get_curve_index get_curve_index,
                  Facet_patch_id_map facet_patch_id_map)
       : d_(d)
-      , aabb_tree(aabb_tree)
       , domain(domain)
+      , aabb_tree(aabb_tree)
       , get_curve_index(get_curve_index)
       , facet_patch_id_map(facet_patch_id_map)
     {}
     FT d_;
-    const Input_facets_AABB_tree_& aabb_tree;
     const MeshDomain& domain;
+    const Input_facets_AABB_tree& aabb_tree;
     Get_curve_index     get_curve_index;
     Facet_patch_id_map  facet_patch_id_map;
     Dt dt{};
@@ -627,5 +697,7 @@ private:
   };
   std::shared_ptr<Private_data> d_ptr;
 };
+
+}//end namespace CGAL
 
 #endif // CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H

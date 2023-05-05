@@ -2,7 +2,7 @@
 
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -42,7 +42,8 @@ int main()
   poly.add_hole( hole ) ;
 
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly);
-  print_straight_skeleton(*iss);
 
-  return 0;
+  CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*iss);
+
+  return EXIT_SUCCESS;
 }
