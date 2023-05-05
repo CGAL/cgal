@@ -3859,7 +3859,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_cell(const Vertex_handle* vh) const
 }
 
 /*! \brief gets the offset of tester.point() such that
- * this point is in conflict with c w.r.t tester.get_offset().
+ * this point is in conflict with c w.r.t. tester.get_offset().
  *
  * Implementation: Just try all eight possibilities.
  */

@@ -12,13 +12,6 @@ Release date: June 2023
     `CGAL_triangulation_assertion`) have been removed. Corresponding CGAL-wide versions (such as
     `CGAL_assertion`) should be used instead.
 
-### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
-
--   This new package wraps all the existing code that deals with a
-    [`MeshComplex_3InTriangulation_3`](https://doc.cgal.org/5.6/SMDS_3/classMeshComplex__3InTriangulation__3.html)
-    to describe 3D simplicial meshes, and makes the data structure independent
-    from the [tetrahedral mesh generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3) package.
-
 ### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (major changes)
 
 -   **Breaking change**: The region growing part of the package have been reworked to fix design
@@ -38,6 +31,16 @@ Release date: June 2023
     this graph into a set of user-defined regions.
 -   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
     and cylinders in 3D.
+
+### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.6/Manual/packages.html#PkgStraightSkeleton2) (major changes)
+-   Added weighted straight skeletons: weighted straight skeletons are a generalization of
+    straight skeletons. Contour edges are assigned a positive weight, which can be understood
+    as assigning a speed to the wavefront spawned from the contour edge.
+-   Added straight skeleton extrusion: this CGAL package now implements the extrusion of weighted
+    straight skeletons of polygons with holes. The output is a closed, combinatorially 2-manifold
+    surface triangle mesh.
+
+    See also the [announcement page](https://www.cgal.org/TODO).
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.6/Manual/packages.html#PkgKernel23)
 
@@ -147,12 +150,22 @@ Release date: June 2023
     [`CGAL::Hyperbolic_triangulation_face_base_2`](https://doc.cgal.org/5.6/Hyperbolic_triangulation_2/classCGAL_1_1Hyperbolic__triangulation__face__base__2.html)
     has been adapted correspondingly.
 
+### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
+
+-   This new package wraps all the existing code that deals with a
+    [`MeshComplex_3InTriangulation_3`](https://doc.cgal.org/5.6/SMDS_3/classMeshComplex__3InTriangulation__3.html)
+    to describe 3D simplicial meshes, and makes the data structure independent
+    from the [tetrahedral mesh generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3) package.
+
 ### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 
 -   Added two new named parameters to the named constructor
     [`CGAL::create_labeled_image_mesh_domain()`](https://doc.cgal.org/5.6/Mesh_3/classCGAL_1_1Labeled__mesh__domain__3.html#aec3f58e9883a8036a1b3e379df7d8fa9)
     for automatic detection and protection of 1D-curves that lie at the intersection of
     three or more subdomains extracted from labeled images.
+-   Added
+    [`CGAL::Sizing_field_with_aabb_tree`](TODO),
+    a geometry-aware sizing field for feature edges in polyhedral domains.
 -   Deprecated usage of boost parameters in favor of function named parameters.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
