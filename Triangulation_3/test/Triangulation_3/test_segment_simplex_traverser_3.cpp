@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/IO/io.h>
 
 #include <assert.h>
 #include <iostream>
@@ -17,13 +19,161 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point_3;
 
 // Define the structure.
-typedef CGAL::Delaunay_triangulation_3<Kernel> DT;
+typedef CGAL::Base_with_time_stamp<CGAL::Triangulation_vertex_base_3<Kernel>> Vb;
+typedef CGAL::Delaunay_triangulation_cell_base_3<Kernel> Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
+typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> DT;
 typedef DT::Cell_handle                        Cell_handle;
+typedef DT::Edge                               Edge;
+typedef DT::Facet                              Facet;
+typedef DT::Vertex_handle                      Vertex_handle;
 typedef DT::Segment_simplex_iterator           Segment_simplex_iterator;
+
+// a function to insert without spatial sorting
+template <typename Point_it>
+void insert(DT& dt, Point_it first, Point_it end) {
+  for(; first != end; ++first) {
+    dt.insert(*first);
+  }
+}
+// trick to avoid a conflict with CGAL-5.6
+//  -> specialization of Output_rep for `CC_iterator` *and* `My`
+struct My {};
+template <class DSC, bool Const >
+class CGAL::Output_rep<CGAL::internal::CC_iterator<DSC, Const>, My > {
+protected:
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+  CC_iterator it;
+public:
+  Output_rep( const CC_iterator it) : it(it) {}
+  std::ostream& operator()( std::ostream& out) const {
+    return out << '#' << it->time_stamp();
+  }
+};
+auto display_vert(Vertex_handle v) {
+  std::stringstream os;
+  os.precision(17);
+  os << CGAL::IO::oformat(v, My()) << "=(" << v->point() << ")";
+  return os.str();
+};
+template <typename Simplex>
+struct Debug_simplex {
+  Simplex simplex;
+
+  template<typename CharT, typename Traits>
+  friend
+  std::basic_ostream<CharT, Traits>&
+  operator<<(std::basic_ostream<CharT, Traits>& os, const Debug_simplex& d) {
+    auto&& simplex = d.simplex;
+    switch(simplex.dimension()) {
+      case 0: {
+        os << "   vertex " << display_vert(static_cast<Vertex_handle>(simplex));
+        break;
+      }
+      case 1: {
+        const auto [c, index1, index2] = static_cast<Edge>(simplex);
+        os << "   egde "
+           << display_vert(c->vertex(index1)) << " - "
+           << display_vert(c->vertex(index2));
+        break;
+      }
+      case 2: {
+        const auto [c, index] = static_cast<Facet>(simplex);
+        os << "   facet "
+           << display_vert(c->vertex(DT::vertex_triple_index(index, 0))) << " - "
+           << display_vert(c->vertex(DT::vertex_triple_index(index, 1))) << " - "
+           << display_vert(c->vertex(DT::vertex_triple_index(index, 2)));
+        break;
+      }
+      case 3: {
+        const auto c = static_cast<Cell_handle>(simplex);
+        os << "   cell "
+           << display_vert(c->vertex(0)) << " - "
+           << display_vert(c->vertex(1)) << " - "
+           << display_vert(c->vertex(2)) << " - "
+           << display_vert(c->vertex(3));
+        break;
+      }
+      default: CGAL_assume(false);
+    }
+    return os;
+  };
+};
+template <typename Simplex>
+auto debug_simplex(Simplex simplex) {
+  return Debug_simplex<Simplex>{simplex};
+}
+
+DT dt;
+std::string result_string;
+
+auto visit_simplex = [](auto s) {
+  auto d = s.dimension();
+  if(3 == d && dt.is_infinite(static_cast<Cell_handle>(s))) {
+    result_string += 'I';
+  } else {
+    result_string += std::to_string(d);
+  }
+  std::cout << debug_simplex(s) << '\n';
+};
+
+bool test_vfefv(bool with_bbox = false)
+{
+  std::cerr << "## test_vfefv(" << std::boolalpha << with_bbox << ")\n";
+  result_string.clear();
+  static const std::vector<Point_3> points =
+  { 
+    { -1,  0,  0 },
+    {  0,  1,  0 },
+    {  0, -1,  0 },
+    {  5,  0,  0 },
+    {  6,  2,  2 },
+    {  6, -2, -2 },
+  };
+
+  static const std::vector<Point_3> bbox_points =
+  {
+    {  -10, -10, -10  },
+    {  -10, 10, -10   },
+    {  10, 10, -10    },
+    {  10, -10, -10   },
+    {  -10, -10, 10   },
+    {  -10, 10, 10    },
+    {  10, 10, 10     },
+    {  10, -10, 10    },
+  };
+
+  dt.clear();
+  insert(dt, points.begin(), points.end());
+  if(with_bbox) insert(dt, bbox_points.begin(), bbox_points.end());
+
+  const auto v = dt.finite_vertex_handles().to<std::vector>();
+
+  Cell_handle c; int i, j, k;
+  assert(dt.is_facet(v[0], v[1], v[2], c, i, j, k));
+  assert(dt.is_facet(v[1], v[2], v[3], c, i, j, k));
+  assert(dt.is_cell (v[1], v[2], v[3], v[4], c));
+  assert(dt.is_cell (v[1], v[2], v[3], v[5], c));
+
+  for(auto s: dt.segment_traverser_simplices(v[0], v[3])) {
+    visit_simplex(s);
+  }
+  static const std::string expected_result_string = "02120";
+  bool ok = (result_string == expected_result_string);
+  if(!ok) {
+    std::cerr << "test_vfefv failed\n";
+    std::cerr << "  result_string is " << result_string << " instead of "
+              << expected_result_string << '\n';
+  }
+  return ok;
+}
 
 bool test(const DT& dt,
           const std::pair<Point_3, Point_3>& query,
           const std::array<unsigned, 4>& expected_result);
+
 
 int main(int, char* [])
 {
@@ -43,7 +193,7 @@ int main(int, char* [])
   };
   std::vector<DT::Vertex_handle> vertices;
   vertices.reserve(points.size());
-  DT dt;
+  dt.clear();
   for(auto p: points) vertices.push_back(dt.insert(p));
   Cell_handle c;
   assert(dt.is_valid());
@@ -79,6 +229,8 @@ int main(int, char* [])
     if(!test(dt, queries[i], expected_results[i])) ok = false;
   }
   std::cout << "Done (" << queries.size() << " queries)\n";
+  ok = test_vfefv() && ok;
+  ok = test_vfefv(true) && ok;
   return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -108,46 +260,17 @@ bool test(const DT& dt,
     else {
       ++fin;
 
+      visit_simplex(*st);
+
       switch (st->dimension()) {
-      case 2: {
-        ++nb_facets;
-        std::cout << "facet " << std::endl;
-        DT::Facet f = *st;
-        std::cout << "  ( " << f.first->vertex((f.second + 1) & 3)->point()
-                  << "  " << f.first->vertex((f.second + 2) & 3)->point()
-                  << "  " << f.first->vertex((f.second + 3) & 3)->point()
-                  << " )\n";
-        break;
+      case 2: ++nb_facets; break;
+      case 1: ++nb_edges; break;
+      case 0: ++nb_vertex; break;
+      case 3: ++nb_cells; break;
+      default: CGAL_unreachable();
       }
-      case 1: {
-        ++nb_edges;
-        std::cout << "edge " << std::endl;
-        DT::Edge e = *st;
-        std::cout << "  ( " << e.first->vertex(e.second)->point() << "  "
-                  << e.first->vertex(e.third)->point() << " )\n";
-        break;
-      }
-      case 0: {
-        ++nb_vertex;
-        std::cout << "vertex " << std::endl;
-        DT::Vertex_handle v = *st;
-        std::cout << "  ( " << v->point() << " )\n";
-        break;
-      }
-      case 3: {
-        ++nb_cells;
-        std::cout << "cell \n  ( ";
-        DT::Cell_handle ch = *st;
-        for (int i = 0; i < 4; ++i)
-          std::cout << ch->vertex(i)->point() << "  ";
-        std::cout << " )\n";
-        break;
-      }
-      default:
-        CGAL_unreachable();
-      } // end switch
+    }
   }
-}
 
 #ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "While traversing from " << st.source()
