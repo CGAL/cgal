@@ -8,7 +8,7 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
-#include <CGAL/Mesh_3/experimental/Sizing_field_with_aabb_tree.h>
+#include <CGAL/Sizing_field_with_aabb_tree.h>
 
 
 template <typename K,
@@ -49,7 +49,7 @@ struct Tester
 
     domain.detect_features(40);
 
-    Sizing_field_with_aabb_tree<K, Mesh_domain> sf(0.074, domain.aabb_tree(), domain);
+    CGAL::Sizing_field_with_aabb_tree<K, Mesh_domain> sf(0.074, domain);
 
     // Mesh criteria
     Mesh_criteria criteria(edge_size = sf,
