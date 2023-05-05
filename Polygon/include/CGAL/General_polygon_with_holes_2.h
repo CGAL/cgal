@@ -107,6 +107,8 @@ public:
 
   void erase_hole(Hole_iterator hit) { m_holes.erase(hit); }
 
+  void clear_holes() { m_holes.clear(); }
+
   bool has_holes() const { return (!m_holes.empty()); }
 
   Size number_of_holes() const { return static_cast<Size>(m_holes.size()); }
