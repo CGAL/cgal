@@ -31,9 +31,9 @@ namespace CGAL {
  * requires `CGAL_Qt5`, and is only available if the macro
  * `CGAL_USE_BASIC_VIEWER` is defined.  Linking with the cmake target
  * `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition
- * `CGAL_USE_BASIC_VIEWER`.  \tparam PH an instance of the
- * `CGAL::Polygon_with_holes_2` class.  \param aph the polygon with holes to
- * draw.
+ * `CGAL_USE_BASIC_VIEWER`.
+ * \tparam PH an instance of the `CGAL::Polygon_with_holes_2` class.
+ * \param aph the polygon with holes to draw.
  */
 
 template <typename PH>
@@ -60,7 +60,8 @@ class Pwh_2_basic_viewer_qt : public Basic_viewer_qt {
 
 public:
   /// Construct the viewer.
-  /// @param ap2 the polygon to view
+  /// @param parent the active window to draw
+  /// @param pwh the polygon to view
   /// @param title the title of the window
   Pwh_2_basic_viewer_qt(QWidget* parent, const Pwh& pwh,
                         const char* title = "Basic Polygon_with_holes_2 Viewer") :
@@ -89,7 +90,7 @@ public:
     add_elements();
   }
 
-  /*/ Obtain the pixel ratio.
+  /*! Obtain the pixel ratio.
    */
   double pixel_ratio() const { return m_pixel_ratio; }
 

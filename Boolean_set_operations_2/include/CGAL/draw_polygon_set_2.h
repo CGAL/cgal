@@ -30,8 +30,9 @@ namespace CGAL {
  * soon as the user closes the window. This function requires `CGAL_Qt5`, and is
  * only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.  Linking with
  * the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add
- * the definition `CGAL_USE_BASIC_VIEWER`.  \tparam PS an instance of the
- * `CGAL::Polygon_set_2` class.  \param aps the polygon set to draw.
+ * the definition `CGAL_USE_BASIC_VIEWER`.
+ * \tparam PS an instance of the `CGAL::Polygon_set_2` class.
+ * \param aps the polygon set to draw.
  */
 template<class PS>
 void draw(const PS& aps);
@@ -97,7 +98,7 @@ public:
     for (const auto& pwh : pwhs) add_elements(pwh);
   }
 
-  /*/ Obtain the pixel ratio.
+  /*! Obtain the pixel ratio.
    */
   double pixel_ratio() const { return m_pixel_ratio; }
 
