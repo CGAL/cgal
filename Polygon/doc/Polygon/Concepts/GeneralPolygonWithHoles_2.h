@@ -99,6 +99,10 @@ void add_hole(const Polygon_2& hole);
  */
 void erase_hole(Hole_iterator hit);
 
+/*! clears the output boundary.
+ */
+void clear_outer_boundary();
+
 /*! removes all the holes.
  */
 void clear_holes();
