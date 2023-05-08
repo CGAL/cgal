@@ -123,6 +123,12 @@ extracted from labeled images.
 -   Fixed a bug that made holes in the Minkowski sum disappear
 -   Fixed hole filtering. The code used to erroneously remove holes from the container of holes of polygons with holes that did not affect the minkowsi sum. Now it simply adds those that do affect it.
 
+### [2D Regularized Boolean Set Operations](https://doc.cgal.org/5.6/Manual/packages.html#PkgBooleanSetOperations2)
+-   Exposed all required member functions of the GeneralPolygonWithHoles_2 concept (e.g., `clear_outer_boundary()`, `clear_holes()`, and `clear()`).
+
+### [Polygon](https://doc.cgal.org/5.6/Manual/packages.html#PkgPolygon2)
+-   Fixed the function `draw(const CGAL::Polygon_with_holes_2<T, C>& pwh, const char* title)` to enable the correct drawing of unbounded polygons with holes.
+
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
 
