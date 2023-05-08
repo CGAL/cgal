@@ -81,5 +81,5 @@ Meshing_thread* cgal_code_mesh_3(const CGAL::Image_3* pImage,
                                  float iso_value = 3.f,
                                  float value_outside = 0.f,
                                  bool inside_is_less = true,
-                                 const CGAL::Image_3* pWeights = nullptr);
+                                 CGAL::Image_3* pWeights = nullptr);
 #endif

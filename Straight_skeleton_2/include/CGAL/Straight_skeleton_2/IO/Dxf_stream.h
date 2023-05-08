@@ -18,7 +18,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 
-#include <CGAL/IO/Dxf_writer.h>
+#include <CGAL/Straight_skeleton_2/IO/Dxf_writer.h>
 
 #include <vector>
 #include <fstream>

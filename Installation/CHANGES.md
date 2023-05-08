@@ -53,13 +53,6 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
 
-### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
-
-- Added two new named parameters to the named constructor `CGAL::create_labeled_image_mesh_domain()`
-for automatic detection and protection
-of 1D-curves that lie at the intersection of three or more subdomains,
-extracted from labeled images.
-
 ### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
 
 -   **Breaking change**: The region growing part of the package have been reworked to fix design issues introduced with the handling `FaceGraph` models.
@@ -104,6 +97,11 @@ extracted from labeled images.
 
 ### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
+-   Added two new named parameters to the named constructor `CGAL::create_labeled_image_mesh_domain()`
+for automatic detection and protection
+of 1D-curves that lie at the intersection of three or more subdomains,
+extracted from labeled images.
+-   Added `CGAL::Sizing_field_with_aabb_tree`, a geometry-aware sizing field for feature edges in polyhedral domains.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
@@ -122,6 +120,14 @@ extracted from labeled images.
 ### [2D Minkowski Sums](https://doc.cgal.org/5.6/Manual/packages.html#PkgMinkowskiSum2)
 -   Fixed a bug that made holes in the Minkowski sum disappear
 -   Fixed hole filtering. The code used to erroneously remove holes from the container of holes of polygons with holes that did not affect the minkowsi sum. Now it simply adds those that do affect it.
+
+### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.6/Manual/packages.html#PkgStraightSkeleton2) (major changes)
+-   Added weighted straight skeletons: weighted straight skeletons are a generalization of
+    straight skeletons. Contour edges are assigned a positive weight, which can be understood
+    as assigning a speed to the wavefront spawned from the contour edge.
+-   Added straight skeleton extrusion: this CGAL package now implements the extrusion of weighted
+    straight skeletons of polygons with holes. The output is a closed, combinatorially 2-manifold
+    surface triangle mesh.
 
 ### [2D Regularized Boolean Set Operations](https://doc.cgal.org/5.6/Manual/packages.html#PkgBooleanSetOperations2)
 -   Exposed all required member functions of the GeneralPolygonWithHoles_2 concept (e.g., `clear_outer_boundary()`, `clear_holes()`, and `clear()`).

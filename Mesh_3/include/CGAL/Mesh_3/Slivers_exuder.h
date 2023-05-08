@@ -563,7 +563,7 @@ private:
 
 
   /**
-   * Initialize cells_queue w.r.t sliver_bound_
+   * Initialize cells_queue w.r.t. sliver_bound_
    */
   void initialize_cells_priority_queue()
   {

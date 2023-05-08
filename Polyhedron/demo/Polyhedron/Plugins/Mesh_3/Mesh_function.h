@@ -144,6 +144,7 @@ log() const
   << QString("tet max size: %1").arg(tet_sizing)
   << QString("detect connected components: %1")
     .arg(detect_connected_components)
+  << QString("use weights: %1").arg(weights_ptr != nullptr)
   << QString("protect features: %1").arg(protect_features);
 }
 
@@ -243,7 +244,7 @@ edge_criteria(double b, Mesh_fnt::Domain_tag)
   return Edge_criteria(b);
 }
 
-#include <CGAL/Mesh_3/experimental/Sizing_field_with_aabb_tree.h>
+#include <CGAL/Sizing_field_with_aabb_tree.h>
 #include <CGAL/Mesh_3/experimental/Facet_topological_criterion_with_adjacency.h>
 
 template < typename D_, typename Tag >
@@ -253,7 +254,7 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
-    typedef Sizing_field_with_aabb_tree<Kernel, Domain> Mesh_sizing_field; // type of sizing field for 0D and 1D features
+    typedef CGAL::Sizing_field_with_aabb_tree<Kernel, Domain> Mesh_sizing_field; // type of sizing field for 0D and 1D features
     typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
     typedef typename Domain::Curve_index Curve_index;
     const Curve_index max_index = domain_->maximal_curve_index();
@@ -264,9 +265,7 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       (*patches_ids_vector_p)[curve_id] = domain_->get_incidences(curve_id);
     }
     Mesh_sizing_field* sizing_field_ptr =
-      new Mesh_sizing_field(edge_size,
-                            domain_->aabb_tree(),
-                            *domain_);
+      new Mesh_sizing_field(edge_size, *domain_, domain_->aabb_tree());
     // The sizing field object, as well as the `patch_ids_vector` are
     // allocated on the heap, and the following `boost::any` object,
     // containing two shared pointers, is used to make the allocated

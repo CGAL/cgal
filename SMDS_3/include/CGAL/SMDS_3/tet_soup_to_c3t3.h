@@ -585,7 +585,7 @@ bool build_triangulation_from_file(std::istream& is,
       is >> nv;
       for(int i=0; i<nv; ++i)
       {
-        double x,y,z;
+        typename Tr::Geom_traits::FT x,y,z;
         is >> x >> y >> z >> ref;
         points.push_back(Point_3(x,y,z));
       }
