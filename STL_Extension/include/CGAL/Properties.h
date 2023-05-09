@@ -29,7 +29,7 @@ public:
  *
  * @tparam T
  */
-template <typename T>
+template <typename Index, typename T>
 class Property_array : public Property_array_base {
 
   std::vector<T> m_data;
@@ -50,12 +50,12 @@ public:
     m_data.resize(n, m_default_value);
   };
 
-  virtual void swap(std::size_t a, std::size_t b) override {
+  virtual void swap(Index a, std::size_t b) override {
     CGAL_precondition(a < m_data.size() && b < m_data.size());
     std::iter_swap(m_data.begin() + a, m_data.begin() + b);
   };
 
-  virtual void reset(std::size_t i) override {
+  virtual void reset(Index i) override {
     CGAL_precondition(i < m_data.size());
     m_data[i] = m_default_value;
   };
@@ -76,14 +76,15 @@ public:
 
 public:
 
-  bool operator==(const Property_array<T>& other) const {
+  bool operator==(const Property_array<Index, T>& other) const {
     return &other == this;
   }
 
-  bool operator!=(const Property_array<T>& other) const { return !operator==(other); }
+  bool operator!=(const Property_array<Index, T>& other) const { return !operator==(other); }
 
 };
 
+template <typename Index = std::size_t>
 class Property_container {
 
   std::map<std::string, std::shared_ptr<Property_array_base>> m_property_arrays;
@@ -92,30 +93,30 @@ class Property_container {
 public:
 
   template <typename T>
-  std::pair<std::reference_wrapper<Property_array<T>>, bool>
+  std::pair<std::reference_wrapper<Property_array<Index, T>>, bool>
   add(const std::string& name, const T default_value = T()) {
     auto [it, created] = m_property_arrays.emplace(
       name,
-      std::make_shared<Property_array<T>>(
+      std::make_shared<Property_array<Index, T>>(
         m_active_indices,
         default_value
       )
     );
     auto [key, array] = *it;
-    auto& typed_array = dynamic_cast<Property_array<T>&>(*array);
+    auto& typed_array = dynamic_cast<Property_array<Index, T>&>(*array);
     return {{typed_array}, !created};
   }
 
   template <typename T>
-  const Property_array<T>& get(const std::string& name) const {
+  const Property_array<Index, T>& get(const std::string& name) const {
     CGAL_precondition(m_property_arrays.count(name) != 0);
-    return dynamic_cast<const Property_array<T>&>(*m_property_arrays.at(name));
+    return dynamic_cast<const Property_array<Index, T>&>(*m_property_arrays.at(name));
   }
 
   template <typename T>
-  Property_array<T>& get(const std::string& name) {
+  Property_array<Index, T>& get(const std::string& name) {
     CGAL_precondition(m_property_arrays.count(name) != 0);
-    return dynamic_cast<Property_array<T>&>(*m_property_arrays.at(name));
+    return dynamic_cast<Property_array<Index, T>&>(*m_property_arrays.at(name));
   }
 
   /*!
@@ -136,7 +137,12 @@ public:
       array->reserve(n);
   }
 
-  std::size_t emplace() {
+  std::size_t size() const { return std::count(m_active_indices.begin(), m_active_indices.end(), true); }
+
+  std::size_t capacity() const { return m_active_indices.size(); }
+
+
+  Index emplace() {
     // todo: should emplacing an element also reset it to default values?
 
     // If there are empty slots, return the index of one of them and mark it as full
@@ -153,26 +159,21 @@ public:
 
   }
 
-  void swap(std::size_t a, std::size_t b) {
+  void swap(Index a, Index b) {
     for (auto [name, array]: m_property_arrays)
       array->swap(a, b);
   }
 
-  void reset(std::size_t i) {
+  void reset(Index i) {
     for (auto [name, array]: m_property_arrays)
       array->reset(i);
   }
 
-  void erase(std::size_t i) {
+  void erase(Index i) {
     m_active_indices[i] = false;
     for (auto [name, array]: m_property_arrays)
       array->reset(i);
   }
-
-  std::size_t size() const { return std::count(m_active_indices.begin(), m_active_indices.end(), true); }
-
-  std::size_t capacity() const { return m_active_indices.size(); }
-
 };
 
 }

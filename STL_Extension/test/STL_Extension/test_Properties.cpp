@@ -9,12 +9,12 @@ void test_property_creation() {
 
   // Should return an integer array which didn't previously exist
   auto [integers, preexisting] = properties.add("integer", 5);
-  static_assert(std::is_same_v<decltype(integers), std::reference_wrapper<Property_array<int>>>);
+  static_assert(std::is_same_v<decltype(integers), std::reference_wrapper<Property_array<std::size_t, int>>>);
   assert(!preexisting);
   assert(properties.n_properties() == 1);
 
   auto [floats, _] = properties.add<float>("float");
-  static_assert(std::is_same_v<decltype(floats), std::reference_wrapper<Property_array<float>>>);
+  static_assert(std::is_same_v<decltype(floats), std::reference_wrapper<Property_array<std::size_t, float>>>);
   assert(properties.n_properties() == 2);
 
   // get() should retreive the same arrays

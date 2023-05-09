@@ -4,8 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(STL_Extension_Tests)
 
-set(CMAKE_CXX_STANDARD 17) # todo: this is the wrong place for this!
-
 find_package(CGAL REQUIRED)
 
 find_package(TBB QUIET)
