@@ -2861,8 +2861,8 @@ public:
     /*! Obtain an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
-                              OutputIterator oi, bool l2r = true) const {
+    OutputIterator operator()(const X_monotone_curve_2& /* xcv */, double /* error */,
+                              OutputIterator /* oi */, bool /* l2r */ = true) const {
       CGAL_error_msg("Not implemented yet!");
     }
   };
