@@ -77,9 +77,10 @@ int main(int argc, char* argv[])
 
   std::cout << "Sequential test" << std::endl;
   Tester<K, Surface_mesh, CGAL::Sequential_tag>()(fname, "out-dragknob-sequential");
-
+#ifdef CGAL_LINKED_WITH_TBB
   std::cout << "Parallel test" << std::endl;
   Tester<K, Surface_mesh, CGAL::Parallel_tag>()(fname, "out-dragknob-parallel");
+#endif
 
   return EXIT_SUCCESS;
 }
