@@ -27,6 +27,10 @@ void test_property_creation() {
   assert(removed);
   assert(properties.n_properties() == 1);
 
+  // Add a new property
+  auto [bools, bools_existed] = properties.add("bools", false);
+  static_assert(std::is_same_v<decltype(bools), std::reference_wrapper<Property_array<std::size_t, bool>>>);
+  Property_array<std::size_t, bool> &b = bools.get();
 }
 
 void test_property_array() {
@@ -96,12 +100,51 @@ void test_property_array() {
   assert(floats.get()[0] == 6.0f);
   assert(integers.get()[3] == 5);
   assert(floats.get()[3] == 1.0f);
+
+}
+
+void test_property_array_set_group() {
+
+  Property_container properties;
+
+  auto [a, a_existed] = properties.add("a", 5);
+
+  // Insert a group of 100 elements
+  properties.emplace_group<100>();
+  assert(properties.size() == 100);
+
+  // Eliminate a few regions
+  properties.erase(3);
+  assert(properties.size() == 99);
+  for (int i = 20; i < 25; ++i)
+    properties.erase(i);
+  assert(properties.size() == 94);
+  for (int i = 50; i < 80; ++i)
+    properties.erase(i);
+  assert(properties.size() == 64);
+
+  // A group of size 4 should only fit in the empty region fo size 5
+  assert(properties.emplace_group<4>() == 20);
+  assert(properties.size() == 68);
+  assert(properties.capacity() == 100);
+
+  // A group of size 16 should only fit in the empty region fo size 30
+  assert(properties.emplace_group<16>() == 50);
+  assert(properties.size() == 84);
+  assert(properties.capacity() == 100);
+
+  // Another group of size 16 should require the storage to expand, because the largest empty region is mostly full now
+  assert(properties.emplace_group<16>() == 100);
+  assert(properties.size() == 100);
+  assert(properties.capacity() == 116);
+
 }
 
 int main() {
 
   test_property_creation();
   test_property_array();
+  test_property_array_set_group();
 
   return 0;
 }

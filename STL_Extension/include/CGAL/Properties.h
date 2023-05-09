@@ -9,6 +9,7 @@
 
 namespace CGAL::Properties {
 
+template <typename Index>
 class Property_array_base {
 public:
 
@@ -18,9 +19,9 @@ public:
 
   virtual void reserve(std::size_t n) = 0;
 
-  virtual void swap(std::size_t a, std::size_t b) = 0;
+  virtual void swap(Index a, Index b) = 0;
 
-  virtual void reset(std::size_t i) = 0;
+  virtual void reset(Index i) = 0;
 
 };
 
@@ -30,7 +31,7 @@ public:
  * @tparam T
  */
 template <typename Index, typename T>
-class Property_array : public Property_array_base {
+class Property_array : public Property_array_base<Index> {
 
   std::vector<T> m_data;
   const std::vector<bool>& m_active_indices;
@@ -50,7 +51,7 @@ public:
     m_data.resize(n, m_default_value);
   };
 
-  virtual void swap(Index a, std::size_t b) override {
+  virtual void swap(Index a, Index b) override {
     CGAL_precondition(a < m_data.size() && b < m_data.size());
     std::iter_swap(m_data.begin() + a, m_data.begin() + b);
   };
@@ -87,7 +88,7 @@ public:
 template <typename Index = std::size_t>
 class Property_container {
 
-  std::map<std::string, std::shared_ptr<Property_array_base>> m_property_arrays;
+  std::map<std::string, std::shared_ptr<Property_array_base<Index>>> m_property_arrays;
   std::vector<bool> m_active_indices;
 
 public:
@@ -143,7 +144,6 @@ public:
 
 
   Index emplace() {
-    // todo: should emplacing an element also reset it to default values?
 
     // If there are empty slots, return the index of one of them and mark it as full
     auto first_unused = std::find_if(m_active_indices.begin(), m_active_indices.end(), [](bool used) { return !used; });
@@ -153,9 +153,55 @@ public:
     }
 
     // Otherwise, expand the storage and return the last element
-    reserve(size() + 1);
+    reserve(capacity() + 1);
     m_active_indices.back() = true;
-    return size() - 1;
+    // todo: should emplacing an element also reset it to default values?
+    reset(capacity() - 1);
+    return capacity() - 1;
+
+  }
+
+  template <std::size_t N>
+  Index emplace_group() {
+
+    auto search_start = m_active_indices.begin();
+    while (search_start != m_active_indices.end()) {
+
+      // Find the first unused cell
+      auto unused_begin = std::find_if(
+        search_start, m_active_indices.end(),
+        [](bool used) { return !used; }
+      );
+
+      // Determine if the group fits
+      auto unused_end = std::find_if(
+        unused_begin, std::min(unused_begin + N, m_active_indices.end()),
+        [](bool used) { return used; }
+      );
+
+      // If the discovered range was large enough
+      if (std::distance(unused_begin, unused_end) >= N) {
+
+        // Mark the indices as used, and reset the properties of each of them
+        // todo: it would be better to provide a function to set a range
+        for (auto it = unused_begin; it < unused_end; ++it) {
+          *it = true;
+          reset(std::distance(m_active_indices.begin(), it));
+        }
+
+        // Return the first index of the range
+        return std::distance(m_active_indices.begin(), unused_begin);
+      }
+
+      // If we didn't find a large enough region, continue our search after the end
+      search_start = unused_end;
+    }
+
+    // If no empty regions were found, expand the storage
+    reserve(capacity() + N);
+    for (auto it = m_active_indices.end() - N; it < m_active_indices.end(); ++it)
+      *it = true;
+    return capacity() - N;
 
   }
 
