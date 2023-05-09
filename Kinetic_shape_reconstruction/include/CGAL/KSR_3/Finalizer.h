@@ -37,6 +37,7 @@ public:
   using Kernel = GeomTraits;
 
 private:
+  using Intersection_kernel = IntersectionKernel;
   using FT = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
@@ -103,7 +104,7 @@ public:
 
     if (m_parameters.debug) {
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
-        dump_2d_surface_mesh(m_data, sp, "after-partition-sp" + std::to_string(sp));
+        dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-partition-sp" + std::to_string(sp));
     }
 
     std::cout.precision(20);
@@ -116,7 +117,7 @@ public:
 
     create_volumes();
 
-    if (m_parameters.debug) {
+    if (false) {
 /*
       boost::filesystem::path dir("volumes");
 
@@ -125,7 +126,7 @@ public:
       }*/
 
       for (const auto& v : m_data.volumes())
-        dump_volume(m_data, v.pfaces, "volumes/" + std::to_string(v.index), true, v.index);
+        dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
     }
     CGAL_assertion(m_data.check_faces());
   }
@@ -554,7 +555,7 @@ private:
     std::vector<E_constraint_map> edge_constraint_maps(m_data.number_of_support_planes());
 
     for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
-      dump_2d_surface_mesh(m_data, sp, "face_merge/" + std::to_string(sp) + "-before");
+      dump_2d_surface_mesh(m_data, sp, "face_merge/" + m_data.prefix() + std::to_string(sp) + "-before");
       typename Support_plane::Mesh& mesh = m_data.support_plane(sp).mesh();
 
       edge_constraint_maps[sp] = mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first;
@@ -572,7 +573,7 @@ private:
       mesh.collect_garbage();
 
       // Use a face property map? easier to copy to 3d mesh
-      dump_2d_surface_mesh(m_data, sp, "face_merge/" + std::to_string(sp) + "-after");
+      dump_2d_surface_mesh(m_data, sp, "face_merge/" + m_data.prefix() + std::to_string(sp) + "-after");
     }
   }
 
@@ -751,6 +752,7 @@ private:
     From_exact from_exact;
     std::vector<int>& ivertex2vertex = m_data.ivertex_to_index();
     std::vector<Point_3>& vertices = m_data.vertices();
+    std::vector<typename Intersection_kernel::Point_3>& exact_vertices = m_data.exact_vertices();
     std::vector<std::vector<std::size_t> >& face2vertices = m_data.face_to_vertices();
     std::vector<std::size_t>& face2sp = m_data.face_to_support_plane();
     cell.pvertices.clear();
@@ -768,6 +770,7 @@ private:
           ivertex2vertex[ivertex] = vertices.size();
           face2vertices[cell.faces[f]].push_back(vertices.size());
           vertices.push_back(from_exact(m_data.point_3(ivertex)));
+          exact_vertices.push_back(m_data.point_3(ivertex));
         }
         else face2vertices[cell.faces[f]].push_back(ivertex2vertex[ivertex]);
       }

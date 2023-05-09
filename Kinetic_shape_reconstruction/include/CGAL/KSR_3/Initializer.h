@@ -78,31 +78,26 @@ private:
   using Timer = CGAL::Real_timer;
 
 public:
-  Initializer(Data_structure& data, const Parameters& parameters) :
-  m_data(data), m_parameters(parameters)
+  Initializer(const std::vector<std::vector<Point_3> > &input_polygons, Data_structure &data, const Parameters& parameters) :
+    m_input_polygons(input_polygons), m_data(data), m_parameters(parameters)
   { }
 
-  void initialize() {
+  void initialize(const std::array<Point_3, 8> &bbox) {
 
     Timer timer;
     timer.reset();
     timer.start();
-    std::array<Point_3, 8> bbox;
-    create_bounding_box(
-      m_parameters.bbox_dilation_ratio,
-      m_parameters.reorient_bbox, bbox);
-
-    const double time_to_bbox = timer.time();
 
     std::vector< std::vector<Point_3> > bbox_faces;
     bounding_box_to_polygons(bbox, bbox_faces);
     const double time_to_bbox_poly = timer.time();
-    add_polygons(bbox_faces);
+    add_polygons(bbox, bbox_faces);
     const double time_to_add_polys = timer.time();
 
     m_data.igraph().finished_bbox();
 
-    if (m_parameters.verbose) std::cout << "* intersecting input polygons ... ";
+    if (m_parameters.verbose)
+      std::cout << "* intersecting input polygons ... ";
 
     // Fills in the ivertices on support plane intersections inside the bbox.
     make_polygons_intersection_free();
@@ -124,10 +119,11 @@ public:
     // Starting from here the intersection graph is const, it won't change anymore.
     const double time_to_set_k = timer.time();
 
-    if (m_parameters.verbose) std::cout << "done" << std::endl;
-    if (m_parameters.debug) {
-      KSR_3::dump(m_data, "intersected");
-    }
+    if (m_parameters.verbose)
+      std::cout << "done" << std::endl;
+
+    if (m_parameters.debug)
+      KSR_3::dump(m_data, m_data.prefix() + "intersected");
 
     CGAL_assertion(m_data.check_bbox());
     //m_data.set_limit_lines();
@@ -136,8 +132,7 @@ public:
     CGAL_assertion(m_data.check_intersection_graph());
 
     if (m_parameters.verbose) {
-      std::cout << time_to_bbox << "s for bbox" << std::endl;
-      std::cout << (time_to_bbox_poly - time_to_bbox) << "s for bbox poly" << std::endl;
+      std::cout << (time_to_bbox_poly) << "s for bbox poly" << std::endl;
       std::cout << (time_to_add_polys - time_to_bbox_poly) << "s for add poly" << std::endl;
       std::cout << (time_to_intersection - time_to_add_polys) << "s for intersection free" << std::endl;
       std::cout << (time_to_ifaces - time_to_intersection) << "s for ifaces" << std::endl;
@@ -155,37 +150,9 @@ public:
   }
 
 private:
+  const std::vector<std::vector<Point_3> >& m_input_polygons;
   Data_structure& m_data;
   const Parameters& m_parameters;
-
-  void create_bounding_box(
-    const FT enlarge_bbox_ratio,
-    const bool reorient,
-    std::array<Point_3, 8>& bbox) const {
-
-    if (reorient) {
-      initialize_optimal_box(bbox);
-    } else {
-      initialize_axis_aligned_box(bbox);
-    }
-
-    CGAL_assertion(bbox.size() == 8);
-
-    enlarge_bounding_box(enlarge_bbox_ratio, bbox);
-
-    const auto& minp = bbox.front();
-    const auto& maxp = bbox.back();
-    if (m_parameters.verbose) {
-      std::cout.precision(20);
-      std::cout << "* bounding box minp: " << std::fixed <<
-      minp.x() << "\t, " << minp.y() << "\t, " << minp.z() << std::endl;
-    }
-    if (m_parameters.verbose) {
-      std::cout.precision(20);
-      std::cout << "* bounding box maxp: " << std::fixed <<
-      maxp.x() << "\t, " << maxp.y() << "\t, " << maxp.z() << std::endl;
-    }
-  }
 
   void add_iface_from_iedge(std::size_t sp_idx, IEdge edge, IEdge next, bool cw) {
     IVertex s = m_data.source(edge);
@@ -554,182 +521,6 @@ private:
     }
   }
 
-  void initialize_optimal_box(
-    std::array<Point_3, 8>& bbox) const {
-
-    const std::vector<std::vector<Point_3> >& polys = m_data.input_polygons();
-
-    // Number of input points.
-    std::size_t num_points = 0;
-    for (const auto& poly : polys) {
-      num_points += poly.size();
-    }
-
-    // Set points.
-    std::vector<Point_3> points;
-    points.reserve(num_points);
-    for (const auto& poly : polys) {
-      for (const auto& point : poly) {
-        const Point_3 ipoint(
-          static_cast<FT>(CGAL::to_double(point.x())),
-          static_cast<FT>(CGAL::to_double(point.y())),
-          static_cast<FT>(CGAL::to_double(point.z())));
-        points.push_back(ipoint);
-      }
-    }
-
-    // Compute optimal bbox.
-    // The order of faces corresponds to the standard order from here:
-    // https://doc.cgal.org/latest/BGL/group__PkgBGLHelperFct.html#gad9df350e98780f0c213046d8a257358e
-    const OBB_traits obb_traits;
-    std::array<Point_3, 8> ibbox;
-    CGAL::oriented_bounding_box(
-      points, ibbox,
-      CGAL::parameters::use_convex_hull(true).
-      geom_traits(obb_traits));
-
-    for (std::size_t i = 0; i < 8; ++i) {
-      const auto& ipoint = ibbox[i];
-      const Point_3 point(
-        static_cast<FT>(ipoint.x()),
-        static_cast<FT>(ipoint.y()),
-        static_cast<FT>(ipoint.z()));
-      bbox[i] = point;
-    }
-
-    const FT bbox_length_1 = KSR::distance(bbox[0], bbox[1]);
-    const FT bbox_length_2 = KSR::distance(bbox[0], bbox[3]);
-    const FT bbox_length_3 = KSR::distance(bbox[0], bbox[5]);
-    CGAL_assertion(bbox_length_1 >= FT(0));
-    CGAL_assertion(bbox_length_2 >= FT(0));
-    CGAL_assertion(bbox_length_3 >= FT(0));
-    const FT tol = KSR::tolerance<FT>();
-    if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
-      if (m_parameters.verbose) {
-        std::cout << "* warning: optimal bounding box is flat, reverting ..." << std::endl;
-      }
-      initialize_axis_aligned_box(bbox);
-    } else {
-      if (m_parameters.verbose) {
-        std::cout << "* using optimal bounding box" << std::endl;
-      }
-    }
-  }
-
-  void initialize_axis_aligned_box(
-    std::array<Point_3, 8>& bbox) const {
-
-    const std::vector<std::vector<Point_3> >& polys = m_data.input_polygons();
-
-    Bbox_3 box;
-    for (const auto& poly : polys) {
-      box += CGAL::bbox_3(poly.begin(), poly.end());
-    }
-
-    // The order of faces corresponds to the standard order from here:
-    // https://doc.cgal.org/latest/BGL/group__PkgBGLHelperFct.html#gad9df350e98780f0c213046d8a257358e
-    bbox = {
-      Point_3(box.xmin(), box.ymin(), box.zmin()),
-      Point_3(box.xmax(), box.ymin(), box.zmin()),
-      Point_3(box.xmax(), box.ymax(), box.zmin()),
-      Point_3(box.xmin(), box.ymax(), box.zmin()),
-      Point_3(box.xmin(), box.ymax(), box.zmax()),
-      Point_3(box.xmin(), box.ymin(), box.zmax()),
-      Point_3(box.xmax(), box.ymin(), box.zmax()),
-      Point_3(box.xmax(), box.ymax(), box.zmax()) };
-
-    const FT bbox_length_1 = KSR::distance(bbox[0], bbox[1]);
-    const FT bbox_length_2 = KSR::distance(bbox[0], bbox[3]);
-    const FT bbox_length_3 = KSR::distance(bbox[0], bbox[5]);
-    CGAL_assertion(bbox_length_1 >= FT(0));
-    CGAL_assertion(bbox_length_2 >= FT(0));
-    CGAL_assertion(bbox_length_3 >= FT(0));
-    const FT tol = KSR::tolerance<FT>();
-    if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
-      const FT d = 0.1;
-
-      if (bbox_length_1 < tol) { // yz case
-        CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-
-        bbox[0] = Point_3(bbox[0].x() - d, bbox[0].y() - d, bbox[0].z() - d);
-        bbox[3] = Point_3(bbox[3].x() - d, bbox[3].y() + d, bbox[3].z() - d);
-        bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
-        bbox[5] = Point_3(bbox[5].x() - d, bbox[5].y() - d, bbox[5].z() + d);
-
-        bbox[1] = Point_3(bbox[1].x() + d, bbox[1].y() - d, bbox[1].z() - d);
-        bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
-        bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
-        bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
-        if (m_parameters.verbose) {
-          std::cout << "* setting x-based flat axis-aligned bounding box" << std::endl;
-        }
-
-      } else if (bbox_length_2 < tol) { // xz case
-        CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-
-        bbox[0] = Point_3(bbox[0].x() - d, bbox[0].y() - d, bbox[0].z() - d);
-        bbox[1] = Point_3(bbox[1].x() + d, bbox[1].y() - d, bbox[1].z() - d);
-        bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
-        bbox[5] = Point_3(bbox[5].x() - d, bbox[5].y() - d, bbox[5].z() + d);
-
-        bbox[3] = Point_3(bbox[3].x() - d, bbox[3].y() + d, bbox[3].z() - d);
-        bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
-        bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
-        bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
-        if (m_parameters.verbose) {
-          std::cout << "* setting y-based flat axis-aligned bounding box" << std::endl;
-        }
-
-      } else if (bbox_length_3 < tol) { // xy case
-        CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-
-        bbox[0] = Point_3(bbox[0].x() - d, bbox[0].y() - d, bbox[0].z() - d);
-        bbox[1] = Point_3(bbox[1].x() + d, bbox[1].y() - d, bbox[1].z() - d);
-        bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
-        bbox[3] = Point_3(bbox[3].x() - d, bbox[3].y() + d, bbox[3].z() - d);
-
-        bbox[5] = Point_3(bbox[5].x() - d, bbox[5].y() - d, bbox[5].z() + d);
-        bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
-        bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
-        bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
-        if (m_parameters.verbose) {
-          std::cout << "* setting z-based flat axis-aligned bounding box" << std::endl;
-        }
-
-      } else {
-        CGAL_assertion_msg(false, "ERROR: WRONG CASE!");
-      }
-    } else {
-      if (m_parameters.verbose) {
-        std::cout << "* using axis-aligned bounding box" << std::endl;
-      }
-    }
-  }
-
-  void enlarge_bounding_box(
-    const FT enlarge_bbox_ratio,
-    std::array<Point_3, 8>& bbox) const {
-
-    FT enlarge_ratio = enlarge_bbox_ratio;
-    const FT tol = KSR::tolerance<FT>();
-    if (enlarge_bbox_ratio == FT(1)) {
-      enlarge_ratio += FT(2) * tol;
-    }
-
-    const auto a = CGAL::centroid(bbox.begin(), bbox.end());
-    Transform_3 scale(CGAL::Scaling(), enlarge_ratio);
-    for (auto& point : bbox)
-      point = scale.transform(point);
-
-    const auto b = CGAL::centroid(bbox.begin(), bbox.end());
-    Transform_3 translate(CGAL::Translation(), a - b);
-    for (auto& point : bbox)
-      point = translate.transform(point);
-  }
-
   void bounding_box_to_polygons(
     const std::array<Point_3, 8>& bbox,
     std::vector< std::vector<Point_3> >& bbox_faces) const {
@@ -737,20 +528,20 @@ private:
     bbox_faces.clear();
     bbox_faces.reserve(6);
 
-    bbox_faces.push_back({bbox[0], bbox[1], bbox[2], bbox[3]});
-    bbox_faces.push_back({bbox[0], bbox[5], bbox[6], bbox[1]});
-    bbox_faces.push_back({bbox[1], bbox[6], bbox[7], bbox[2]});
-    bbox_faces.push_back({bbox[2], bbox[7], bbox[4], bbox[3]});
-    bbox_faces.push_back({bbox[3], bbox[4], bbox[5], bbox[0]});
-    bbox_faces.push_back({bbox[5], bbox[4], bbox[7], bbox[6]});
+    bbox_faces.push_back({bbox[0], bbox[1], bbox[2], bbox[3]}); // zmin
+    bbox_faces.push_back({bbox[0], bbox[5], bbox[6], bbox[1]}); // ymin
+    bbox_faces.push_back({bbox[1], bbox[6], bbox[7], bbox[2]}); // xmax
+    bbox_faces.push_back({bbox[2], bbox[7], bbox[4], bbox[3]}); // ymax
+    bbox_faces.push_back({bbox[3], bbox[4], bbox[5], bbox[0]}); // xmin
+    bbox_faces.push_back({bbox[5], bbox[4], bbox[7], bbox[6]}); // zmax
     CGAL_assertion(bbox_faces.size() == 6);
   }
 
   void add_polygons(
+    const std::array<Point_3, 8>& bbox,
     const std::vector< std::vector<Point_3> >& bbox_faces) {
 
     add_bbox_faces(bbox_faces);
-
     add_input_polygons();
   }
 
@@ -784,7 +575,7 @@ private:
       const Polygon_2& polygon = pair.first;
       const Indices& input_indices = pair.second;
       m_data.add_input_polygon(support_plane_idx, input_indices, polygon);
-      dump_polygons(m_data, polygons, "inserted-polygons");
+      dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons");
     }
 
     CGAL_assertion(m_data.number_of_support_planes() > 6);
@@ -818,12 +609,10 @@ private:
       std::vector<Point_2>,
       std::vector<std::size_t> > >& polygons) {
 
-    std::vector<std::vector<Point_3> > input_polygons = m_data.input_polygons();
-
     std::size_t input_index = 0;
     std::vector<Point_2> polygon_2;
     std::vector<std::size_t> input_indices;
-    for (const auto& poly : input_polygons) {
+    for (const auto& poly : m_input_polygons) {
 
       bool is_added = true;
       std::size_t support_plane_idx = KSR::no_element();
@@ -896,7 +685,7 @@ private:
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged) );
 
     CGAL_assertion(merged.size() >= 3);
-    CGAL_assertion(is_polygon_inside_bbox(support_plane_idx, merged));
+    //CGAL_assertion(is_polygon_inside_bbox(support_plane_idx, merged));
   }
 
   // Check if the newly created polygon goes beyond the bbox.

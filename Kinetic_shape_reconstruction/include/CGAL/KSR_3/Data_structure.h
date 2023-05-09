@@ -181,7 +181,7 @@ public:
   using Visibility_label = KSR::Visibility_label;
 
   struct Volume_cell {
-    std::vector<PFace> pfaces;
+    std::vector<PFace> pfaces;// index compatible to faces and neighbors
     std::vector<size_t> faces;// Indices into m_face2vertices in m_data.
     std::vector<bool> pface_oriented_outwards;
     std::vector<int> neighbors;
@@ -216,6 +216,7 @@ public:
     }
   };
 
+
 private:
   std::vector<Support_plane> m_support_planes;
   std::vector<typename Support_plane::Data> m_initial_support_planes;
@@ -228,8 +229,11 @@ private:
 
   const Parameters& m_parameters;
 
+  std::string m_prefix;
+
   std::vector<Volume_cell> m_volumes;
   std::vector<Point_3> m_vertices;
+  std::vector<typename Intersection_kernel::Point_3> m_exact_vertices;
   std::vector<int> m_ivertex2vertex; // Used to map ivertices to m_vertices which only contain vertices of the finalized kinetic partition.
   std::vector<std::pair<int, int> > m_face2volumes;
 
@@ -241,9 +245,12 @@ private:
   std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices. Todo: This should not be a map.
   Reconstructed_model m_reconstructed_model;
 
+public:
+  Data_structure(const Parameters& parameters, const std::string &prefix) : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix) { }
+
   template<typename Type1, typename Type2, typename ResultType>
-    inline bool intersection(
-      const Type1& t1, const Type2& t2, ResultType& result) const {
+  static bool intersection(
+    const Type1& t1, const Type2& t2, ResultType& result) {
 
     const auto inter = CGAL::intersection(t1, t2);
     if (!inter) return false;
@@ -254,13 +261,11 @@ private:
     return false;
   }
 
-public:
-  Data_structure(const Parameters& parameters) : to_exact(), from_exact(), m_parameters(parameters) { }
-
   /*******************************
   **      INITIALIZATION        **
   ********************************/
 
+/*
   template<typename InputRange, typename PolygonRange,
     typename NamedParameters = parameters::Default_named_parameters >
   void add_input_shape(InputRange input_range, PolygonRange polygon_range, const NamedParameters& np = CGAL::parameters::default_values()) {
@@ -286,6 +291,7 @@ public:
         m_input_polygons.back()[i] = pl.to_3d(ch[i]);
     }
   }
+*/
 
   void clear() {
     m_support_planes.clear();
@@ -378,6 +384,8 @@ public:
   const std::vector<std::pair<int, int> >& face_to_volumes() const { return m_face2volumes; }
   std::vector<Point_3>& vertices() { return m_vertices; }
   const std::vector<Point_3>& vertices() const { return m_vertices; }
+  std::vector<typename Intersection_kernel::Point_3>& exact_vertices() { return m_exact_vertices; }
+  const std::vector<typename Intersection_kernel::Point_3>& exact_vertices() const { return m_exact_vertices; }
   std::vector<std::vector<std::size_t> >& face_to_vertices() { return m_face2vertices; }
   const std::vector<std::vector<std::size_t> >& face_to_vertices() const { return m_face2vertices; }
 
@@ -389,6 +397,8 @@ public:
 
   const Intersection_graph& igraph() const { return m_intersection_graph; }
   Intersection_graph& igraph() { return m_intersection_graph; }
+
+  const std::string& prefix() const { return m_prefix; }
 
   void resize(const std::size_t number_of_items) {
     m_support_planes.resize(number_of_items);
@@ -916,7 +926,45 @@ public:
       support_plane(support_plane_idx).add_bbox_polygon(points, ivertices);
 
     for (std::size_t i = 0; i < 4; ++i) {
-      const auto pair = m_intersection_graph.add_edge(ivertices[i], ivertices[(i+1)%4], support_plane_idx);
+      const auto pair = m_intersection_graph.add_edge(ivertices[i], ivertices[(i + 1) % 4], support_plane_idx);
+      const auto& iedge = pair.first;
+      const bool is_inserted = pair.second;
+      if (is_inserted) {
+        typename Intersection_kernel::Line_3 line(to_exact(polygon[i]), to_exact(polygon[(i + 1) % 4]));
+        m_intersection_graph.set_line(iedge, m_intersection_graph.add_line(line));
+      }
+
+      support_plane(support_plane_idx).set_iedge(vertices[i], vertices[(i + 1) % 4], iedge);
+      support_plane(support_plane_idx).unique_iedges().insert(iedge);
+    }
+  }
+
+  template<typename PointRange>
+  void add_sub_partition_polygon(const PointRange& polygon) {
+    // The partition into subpartitions should not cut the space completely. Thus, if an octree is constructed, it needs to be build top-down. Inserting sub-bbox planes that split completely first.
+
+    // Create data structure for partition. Implement functions to split it (for now simply by a plane)
+    // Maybe an octree is not the best choice? Will not work well if there are many large shapes. May even go infinitely deep.
+    // Difficult example -> star configuration as input
+    // -> Only leaf nodes are used for the kinetic partition. But the tree is interesting for construction and merging in the end.
+    bool is_added = true;
+    std::size_t support_plane_idx = KSR::no_element();
+    std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true);
+    CGAL_assertion(is_added);
+    CGAL_assertion(support_plane_idx != KSR::no_element());
+
+    std::array<IVertex, 4> ivertices;
+    std::array<Point_2, 4> points;
+    for (std::size_t i = 0; i < 4; ++i) {
+      points[i] = support_plane(support_plane_idx).to_2d(polygon[i]);
+      ivertices[i] = m_intersection_graph.add_vertex(to_exact(polygon[i])).first;
+    }
+
+    const auto vertices =
+      support_plane(support_plane_idx).add_bbox_polygon(points, ivertices);
+
+    for (std::size_t i = 0; i < 4; ++i) {
+      const auto pair = m_intersection_graph.add_edge(ivertices[i], ivertices[(i + 1) % 4], support_plane_idx);
       const auto& iedge = pair.first;
       const bool is_inserted = pair.second;
       if (is_inserted) {

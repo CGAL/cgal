@@ -19,7 +19,6 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
-#include <CGAL/KSR/debug.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
 
