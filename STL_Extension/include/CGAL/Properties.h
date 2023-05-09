@@ -5,13 +5,18 @@
 
 #include <map>
 
-#include <boost/optional.hpp>
+// todo: maybe this could be avoided
+#include <boost/property_map/property_map.hpp>
 
 namespace CGAL::Properties {
 
 template <typename Index>
 class Property_array_base {
 public:
+
+  Property_array_base() = default;
+
+  Property_array_base(const Property_array_base<Index>& rhs) = delete;
 
   virtual ~Property_array_base() = default;
 
@@ -41,6 +46,12 @@ class Property_array : public Property_array_base<Index> {
 
 public:
 
+  // Necessary for use as a boost::property_type
+  using key_type = Index;
+  using value_type = T;
+  using reference = typename std::vector<T>::reference;
+  using category = boost::readable_property_map_tag;
+
   Property_array(const std::vector<bool>& active_indices, const T& default_value) :
     m_data(), m_active_indices(active_indices), m_default_value(default_value) {
 
@@ -60,13 +71,14 @@ public:
   };
 
   virtual void swap(Index a, Index b) override {
-    CGAL_precondition(a < m_data.size() && b < m_data.size());
+    // todo: maybe cast to index, instead of casting index to size?
+    CGAL_precondition(std::size_t(a) < m_data.size() && std::size_t(b) < m_data.size());
     std::iter_swap(m_data.begin() + a, m_data.begin() + b);
   };
 
   virtual void reset(Index i) override {
-    CGAL_precondition(i < m_data.size());
-    m_data[i] = m_default_value;
+    CGAL_precondition(std::size_t(i) < m_data.size());
+    m_data[std::size_t(i)] = m_default_value;
   };
 
   std::size_t capacity() const { return m_data.size(); }
@@ -80,7 +92,7 @@ public:
 
   T& operator[](std::size_t i) {
     CGAL_precondition(i < m_data.size());
-    return m_data[i];
+    return m_data[std::size_t(i)];
   }
 
 public:
@@ -103,7 +115,7 @@ public:
 
   template <typename T>
   std::pair<std::reference_wrapper<Property_array<Index, T>>, bool>
-  add(const std::string& name, const T default_value = T()) {
+  get_or_add(const std::string& name, const T default_value = T()) {
     auto [it, created] = m_property_arrays.emplace(
       name,
       std::make_shared<Property_array<Index, T>>(
@@ -113,7 +125,15 @@ public:
     );
     auto [key, array] = *it;
     auto& typed_array = dynamic_cast<Property_array<Index, T>&>(*array);
-    return {{typed_array}, !created};
+    return {{typed_array}, created};
+  }
+
+  template <typename T>
+  Property_array<Index, T>& add(const std::string& name, const T default_value = T()) {
+    // todo: I'm not settled on the naming, but it's really convenient to have a function like this
+    auto [array, created] = get_or_add(name, default_value);
+    CGAL_precondition(created);
+    return array.get();
   }
 
   template <typename T>
@@ -150,22 +170,35 @@ public:
 
   std::size_t capacity() const { return m_active_indices.size(); }
 
+  Index emplace_back() {
+
+    // Expand the storage and return the last element
+    reserve(capacity() + 1);
+    m_active_indices.back() = true;
+    Index first_new_index{capacity() - 1};
+    reset(first_new_index);
+    return first_new_index;
+  }
+
   Index emplace() {
 
     // If there are empty slots, return the index of one of them and mark it as full
     auto first_unused = std::find_if(m_active_indices.begin(), m_active_indices.end(), [](bool used) { return !used; });
     if (first_unused != m_active_indices.end()) {
       *first_unused = true;
-      return std::distance(m_active_indices.begin(), first_unused);
+      return Index(std::distance(m_active_indices.begin(), first_unused));
     }
 
-    // Otherwise, expand the storage and return the last element
-    reserve(capacity() + 1);
-    m_active_indices.back() = true;
-    // todo: should emplacing an element also reset it to default values?
-    reset(capacity() - 1);
-    return capacity() - 1;
+    return emplace_back();
+  }
 
+  Index emplace_group_back(std::size_t n) {
+
+    // Expand the storage and return the start of the new region
+    reserve(capacity() + n);
+    for (auto it = m_active_indices.end() - n; it < m_active_indices.end(); ++it)
+      *it = true;
+    return Index(capacity() - n);
   }
 
   Index emplace_group(std::size_t n) {
@@ -192,11 +225,11 @@ public:
         // todo: it would be better to provide a function to set a range
         for (auto it = unused_begin; it < unused_end; ++it) {
           *it = true;
-          reset(std::distance(m_active_indices.begin(), it));
+          reset(Index(std::distance(m_active_indices.begin(), it)));
         }
 
         // Return the first index of the range
-        return std::distance(m_active_indices.begin(), unused_begin);
+        return Index(std::distance(m_active_indices.begin(), unused_begin));
       }
 
       // If we didn't find a large enough region, continue our search after the end
@@ -204,11 +237,7 @@ public:
     }
 
     // If no empty regions were found, expand the storage
-    reserve(capacity() + n);
-    for (auto it = m_active_indices.end() - n; it < m_active_indices.end(); ++it)
-      *it = true;
-    return capacity() - n;
-
+    return emplace_group_back(n);
   }
 
   void swap(Index a, Index b) {
@@ -227,11 +256,22 @@ public:
       array->reset(i);
   }
 
+  bool is_erased(Index i) const {
+    return !m_active_indices[i];
+  }
+
+  // todo: I'd prefer to eliminate this, if possible
+  void mark_active(Index i) {
+    return m_active_indices[i] = true;
+  }
+
   /*!
    * Adds the elements of the other container to this container for each property which is present in this container.
    *
    * Gaps are preserved, and all elements of the other container are guaranteed
    * to appear after the elements of this container.
+   * Properties in this container which don't appear in the other container are extended with default values.
+   * Properties in the other container which don't appear in this one are not included.
    * todo: merge() would be useful as well, but could break contiguous regions in the other container
    *
    * @param other
