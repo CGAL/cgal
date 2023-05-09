@@ -17,6 +17,8 @@ public:
 
   // todo: Declare virtual functions here, for things which need to be done within the Property container
 
+  virtual void append(const Property_array_base<Index>& other) = 0;
+
   virtual void reserve(std::size_t n) = 0;
 
   virtual void swap(Index a, Index b) = 0;
@@ -44,6 +46,12 @@ public:
 
     m_data.reserve(active_indices.capacity());
     m_data.resize(active_indices.size(), m_default_value);
+  }
+
+  virtual void append(const Property_array_base<Index>& other_base) {
+    auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
+    CGAL_precondition(m_data.size() + other.m_data.size() == m_active_indices.size());
+    m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
   }
 
   virtual void reserve(std::size_t n) override {
@@ -142,7 +150,6 @@ public:
 
   std::size_t capacity() const { return m_active_indices.size(); }
 
-
   Index emplace() {
 
     // If there are empty slots, return the index of one of them and mark it as full
@@ -161,8 +168,7 @@ public:
 
   }
 
-  template <std::size_t N>
-  Index emplace_group() {
+  Index emplace_group(std::size_t n) {
 
     auto search_start = m_active_indices.begin();
     while (search_start != m_active_indices.end()) {
@@ -175,12 +181,12 @@ public:
 
       // Determine if the group fits
       auto unused_end = std::find_if(
-        unused_begin, std::min(unused_begin + N, m_active_indices.end()),
+        unused_begin, std::min(unused_begin + n, m_active_indices.end()),
         [](bool used) { return used; }
       );
 
       // If the discovered range was large enough
-      if (std::distance(unused_begin, unused_end) >= N) {
+      if (std::distance(unused_begin, unused_end) >= n) {
 
         // Mark the indices as used, and reset the properties of each of them
         // todo: it would be better to provide a function to set a range
@@ -198,10 +204,10 @@ public:
     }
 
     // If no empty regions were found, expand the storage
-    reserve(capacity() + N);
-    for (auto it = m_active_indices.end() - N; it < m_active_indices.end(); ++it)
+    reserve(capacity() + n);
+    for (auto it = m_active_indices.end() - n; it < m_active_indices.end(); ++it)
       *it = true;
-    return capacity() - N;
+    return capacity() - n;
 
   }
 
@@ -219,6 +225,28 @@ public:
     m_active_indices[i] = false;
     for (auto [name, array]: m_property_arrays)
       array->reset(i);
+  }
+
+  /*!
+   * Adds the elements of the other container to this container for each property which is present in this container.
+   *
+   * Gaps are preserved, and all elements of the other container are guaranteed
+   * to appear after the elements of this container.
+   * todo: merge() would be useful as well, but could break contiguous regions in the other container
+   *
+   * @param other
+   */
+  void append(const Property_container<Index>& other) {
+    // todo
+
+    m_active_indices.insert(m_active_indices.end(), other.m_active_indices.begin(), other.m_active_indices.end());
+    for (auto [name, array]: m_property_arrays) {
+      auto it = other.m_property_arrays.find(name);
+      if (it != other.m_property_arrays.end())
+        array->append(*it->second);
+      else
+        array->reserve(m_active_indices.size());
+    }
   }
 };
 
