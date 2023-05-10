@@ -10,6 +10,7 @@ Circulator
 Distance_2
 Distance_3
 Filtered_kernel
+GraphicsView
 HalfedgeDS
 Hash_map
 Homogeneous_kernel

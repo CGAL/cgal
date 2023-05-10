@@ -40,13 +40,15 @@ typedef std::list<Curve_2>                              CurveList;
 typedef std::list<Point_2>                              PointList;
 typedef PointList::iterator                             PointListIter;
 
-
 /*! Conic reader */
 template <typename Traits>
 class Conic_reader {
+private:
+  Traits_2 m_traits;
+
 public:
-  int ReadData(const char* filename, CurveList& curves, CGAL::Bbox_2& bbox)
-  {
+  int read_data(const char* filename, CurveList& curves, CGAL::Bbox_2& bbox,
+                const Traits& traits) {
     Curve_2 cv;
     char dummy[256];
 
@@ -58,10 +60,10 @@ public:
     int count;
     inp >> count;
     inp.getline(dummy, sizeof(dummy));
-    for (int i = 0; i < count; i++) {
-      ReadCurve(inp, cv);
+    for (int i = 0; i < count; ++i) {
+      read_curve(inp, cv);
       curves.push_back(cv);
-      CGAL::Bbox_2 curve_bbox = cv.bbox();
+      CGAL::Bbox_2 curve_bbox = traits.construct_bbox_2_object()(cv);
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;
     }
@@ -69,50 +71,47 @@ public:
     return 0;
   }
 
-  void ReadCurve(std::ifstream & is, Curve_2 & cv)
-  {
+  void read_curve(std::ifstream& is, Curve_2& cv) {
+    auto ctr_cv = m_traits.construct_curve_2_object();
+
     // Read a line from the input file.
     char one_line[128];
 
-    skip_comments (is, one_line);
+    skip_comments(is, one_line);
     std::string stringvalues(one_line);
-    std::istringstream str_line (stringvalues, std::istringstream::in);
+    std::istringstream str_line(stringvalues, std::istringstream::in);
 
     // Get the arc type.
     // Supported types are: 'f' - Full ellipse (or circle).
     //                      'e' - Elliptic arc (or circular arc).
     //                      's' - Line segment.
-    char         type;
-    bool         is_circle = false;              // Is this a circle.
+    bool is_circle(false);                      // Is this a circle.
     Rat_circle_2 circle;
-    Rational         r, s, t, u, v, w;               // The conic coefficients.
+    Rational r, s, t, u, v, w;                  // The conic coefficients.
 
+    char type;
     str_line >> type;
 
     // An ellipse (full ellipse or a partial ellipse):
-    if (type == 'f' || type == 'F' || type == 'e' || type == 'E')
-    {
+    if (type == 'f' || type == 'F' || type == 'e' || type == 'E') {
       // Read the ellipse (using the format "a b x0 y0"):
       //
       //     x - x0   2      y - y0   2
       //  ( -------- )  + ( -------- )  = 1
       //       a               b
       //
-      int     a, b, x0, y0;
-
+      int a, b, x0, y0;
       str_line >> a >> b >> x0 >> y0;
 
-      Rational     a_sq = Rational(a*a);
-      Rational     b_sq = Rational(b*b);
+      Rational a_sq = Rational(a*a);
+      Rational b_sq = Rational(b*b);
 
-      if (a == b)
-      {
+      if (a == b) {
         is_circle = true;
-        circle = Rat_circle_2 (Rat_point_2 (Rational(x0), Rational(y0)),
-                               Rational(a*b));
+        circle =
+          Rat_circle_2(Rat_point_2(Rational(x0), Rational(y0)), Rational(a*b));
       }
-      else
-      {
+      else {
         r = b_sq;
         s = a_sq;
         t = 0;
@@ -121,54 +120,43 @@ public:
         w = Rational(x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq);
       }
 
-      if (type == 'f' || type == 'F')
-      {
+      if (type == 'f' || type == 'F') {
         // Create a full ellipse (or circle).
-        if (is_circle)
-          cv = Curve_2 (circle);
-        else
-          cv = Curve_2 (r, s, t, u, v, w);
+        cv = (is_circle) ? ctr_cv(circle) : ctr_cv(r, s, t, u, v, w);
+        return;
       }
-      else
-      {
-        // Read the endpointd of the arc.
-        int       x1, y1, x2, y2;
 
-        str_line >> x1 >> y1 >> x2 >> y2;
+      // Read the endpointd of the arc.
+      int x1, y1, x2, y2;
+      str_line >> x1 >> y1 >> x2 >> y2;
 
-        Point_2   source = Point_2 (Algebraic(x1), Algebraic(y1));
-        Point_2   target = Point_2 (Algebraic(x2), Algebraic(y2));
+      Point_2 source = Point_2 (Algebraic(x1), Algebraic(y1));
+      Point_2 target = Point_2 (Algebraic(x2), Algebraic(y2));
 
-        // Create the arc. Note that it is always clockwise oriented.
-        if (is_circle)
-          cv = Curve_2 (circle,
-                        CGAL::CLOCKWISE,
-                        source, target);
-        else
-          cv = Curve_2 (r, s, t, u, v, w,
-                        CGAL::CLOCKWISE,
-                        source, target);
-      }
+      // Create the arc. Note that it is always clockwise oriented.
+      cv = (is_circle) ?
+        ctr_cv(circle, CGAL::CLOCKWISE, source, target) :
+        ctr_cv(r, s, t, u, v, w, CGAL::CLOCKWISE, source, target);
+      return;
     }
-    else if (type == 's' || type == 'S')
-    {
-      // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
-      int      x1, y1, x2, y2;
 
+    if (type == 's' || type == 'S') {
+      // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
+      int x1, y1, x2, y2;
       str_line >> x1 >> y1 >> x2 >> y2;
 
       // Create the segment.
-      Rat_point_2   source = Rat_point_2 (Rational(x1), Rational(y1));
-      Rat_point_2   target = Rat_point_2 (Rational(x2), Rational(y2));
+      Rat_point_2 source = Rat_point_2(Rational(x1), Rational(y1));
+      Rat_point_2 target = Rat_point_2(Rational(x2), Rational(y2));
 
-      cv = Curve_2(Rat_segment_2 (source, target));
+      cv = ctr_cv(Rat_segment_2(source, target));
+      return;
     }
 
-    return;
+    std::cerr << "Invalid type (" << type << ")" << std::endl;
   }
 
-  void skip_comments( std::ifstream& is, char* one_line )
-  {
+  void skip_comments( std::ifstream& is, char* one_line) {
     while( !is.eof() ){
       is.getline( one_line, 128 );
       if( one_line[0] != '#' ){
@@ -181,42 +169,39 @@ public:
 //---------------------------------------------------------------------------
 // The main:
 //
-int main (int argc, char** argv)
-{
+int main(int argc, char* argv[]) {
   bool verbose = false;
 
   // Define a test objects to read the conic arcs from it.
-  if (argc<2)
-  {
+  if (argc<2) {
     std::cerr << "Usage: Conic_traits_test <filename>" << std::endl;
     exit(1);
   }
 
+  Traits_2 traits;
   CGAL::Bbox_2 bbox;
   CurveList curves;
 
   Conic_reader<Traits_2> reader;
-  reader.ReadData(argv[1], curves, bbox);
+  reader.read_data(argv[1], curves, bbox, traits);
 
   // run the sweep
   std::list<X_monotone_curve_2> mylist;
 
   CGAL::compute_subcurves(curves.begin(), curves.end(),
-                   std::back_inserter(mylist), false);
+                          std::back_inserter(mylist), false);
 
 
   PointList point_list_with_ends;
   CGAL::compute_intersection_points(curves.begin(), curves.end(),
-                              std::back_inserter(point_list_with_ends), true);
+                                    std::back_inserter(point_list_with_ends),
+                                    true);
   std::size_t point_count_with_ends_calculated = point_list_with_ends.size();
 
   // generate the string for the output
   std::stringstream out1;
-  for ( std::list<X_monotone_curve_2>::iterator iter = mylist.begin() ;
-        iter != mylist.end() ; ++iter )
-  {
+  for (auto iter = mylist.begin(); iter != mylist.end(); ++iter)
     out1 << *iter << "\n";
-  }
 
   // read the output from the file
   std::stringstream out2;
@@ -226,12 +211,10 @@ int main (int argc, char** argv)
   std::ifstream in_file(argv[1]);
   in_file >> count;
   in_file.getline(buf, 1024); // to get rid of the new line
-  for ( int i = 0 ; i < count ; i++ ) {
-    in_file.getline(buf, 1024);
-  }
+  for (int i = 0 ; i < count ; ++i) in_file.getline(buf, 1024);
   in_file >> count;
   in_file.getline(buf, 1024); // to get rid of the new line
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < count; ++i) {
     in_file.getline(buf, 1024);
     out2 << buf << "\n";
   }
@@ -239,31 +222,28 @@ int main (int argc, char** argv)
   in_file >> point_count_with_ends_from_file;
   in_file.close();
 
-  if ( verbose )
-  {
+  if (verbose) {
     std::cout << "Result: \n" << mylist.size() << "\n";
-    for ( std::list<X_monotone_curve_2>::iterator i = mylist.begin() ;
-          i != mylist.end() ; ++i )
-    {
+    for (auto i = mylist.begin(); i != mylist.end() ; ++i)
       std::cout << *i << "\n";
-    }
   }
 
   std::string calculated = out1.str();
   std::string infile = out2.str();
 
-  if ( infile == calculated ) {
-    if ( point_count_with_ends_from_file !=
-         point_count_with_ends_calculated ) {
+  if (infile == calculated) {
+    if (point_count_with_ends_from_file != point_count_with_ends_calculated) {
       std::cout << "number of intersection points (with ends):"
                 << point_count_with_ends_calculated << ". Should be "
                 << point_count_with_ends_from_file << "\n";
       std::cout << argv[1] << " Error\n";
       return -1;
-    }  else {
+    }
+    else {
       std::cout << argv[1] << " OK!\n";
     }
-  } else {
+  }
+  else {
     std::cout << argv[1] << " Error\n";
     std::cout << "\ncalculated:\n";
     std::cout << calculated << std::endl;
