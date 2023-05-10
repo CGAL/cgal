@@ -206,6 +206,10 @@ struct Exact_ring_selector<Gmpzf>
 template <>
 struct Exact_field_selector<Gmpq>
 { typedef Gmpq  Type; };
+
+template <>
+struct Exact_ring_selector<Gmpq>
+{ typedef Gmpq  Type; };
 #endif
 
 #ifdef CGAL_USE_GMPXX
@@ -219,6 +223,10 @@ struct Exact_ring_selector< ::mpz_class>
 
 template <>
 struct Exact_field_selector< ::mpq_class>
+{ typedef ::mpq_class  Type; };
+
+template <>
+struct Exact_ring_selector< ::mpq_class>
 { typedef ::mpq_class  Type; };
 #endif
 
@@ -236,6 +244,10 @@ struct Exact_field_selector<leda_rational>
 { typedef leda_rational  Type; };
 
 template <>
+struct Exact_ring_selector<leda_rational>
+{ typedef leda_rational  Type; };
+
+template <>
 struct Exact_field_selector<leda_real>
 { typedef leda_real  Type; };
 #endif
@@ -244,6 +256,28 @@ struct Exact_field_selector<leda_real>
 template <>
 struct Exact_field_selector<CORE::Expr>
 { typedef CORE::Expr  Type; };
+
+template <>
+struct Exact_ring_selector<CORE::Expr>
+{ typedef CORE::Expr  Type; };
+#endif
+
+#ifdef CGAL_USE_BOOST_MP
+template <>
+struct Exact_field_selector<Exact_NT_backend<BOOST_BACKEND>::Integer>
+{ typedef Exact_NT_backend<BOOST_BACKEND>::Rational  Type; };
+
+template <>
+struct Exact_ring_selector<Exact_NT_backend<BOOST_BACKEND>::Integer>
+{ typedef Exact_NT_backend<BOOST_BACKEND>::Integer  Type; };
+
+template <>
+struct Exact_field_selector<Exact_NT_backend<BOOST_BACKEND>::Rational>
+{ typedef Exact_NT_backend<BOOST_BACKEND>::Rational  Type; };
+
+template <>
+struct Exact_ring_selector<Exact_NT_backend<BOOST_BACKEND>::Rational>
+{ typedef Exact_NT_backend<BOOST_BACKEND>::Rational  Type; };
 #endif
 
 template < typename ET >
