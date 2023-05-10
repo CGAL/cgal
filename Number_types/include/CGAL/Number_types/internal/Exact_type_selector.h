@@ -142,23 +142,21 @@ struct Exact_NT_backend<MP_FLOAT_BACKEND>
 
 #ifndef CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND
 constexpr ENT_backend_choice Default_exact_nt_backend =
-#if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
-  BOOST_BACKEND;
-#else // BOOST_VERSION > 107900
-  #ifdef CGAL_USE_GMPXX
-    GMPXX_BACKEND;
-  #elif defined(CGAL_USE_GMP)
-    #if defined(CGAL_USE_BOOST_MP)
-      BOOST_GMP_BACKEND;
-    #else
-      GMP_BACKEND;
-    #endif
-  #elif defined(CGAL_USE_LEDA)
-    LEDA_BACKEND;
+#ifdef CGAL_USE_GMPXX
+  GMPXX_BACKEND;
+#elif defined(CGAL_USE_GMP)
+  #if defined(CGAL_USE_BOOST_MP)
+    BOOST_GMP_BACKEND;
   #else
-    MP_FLOAT_BACKEND;
+    GMP_BACKEND;
   #endif
-#endif // BOOST_VERSION > 107900
+#elif BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
+  BOOST_BACKEND;
+#elif defined(CGAL_USE_LEDA)
+  LEDA_BACKEND;
+#else
+  MP_FLOAT_BACKEND;
+#endif
 #else
 constexpr ENT_backend_choice Default_exact_nt_backend = static_cast<ENT_backend_choice>(CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND);
 #endif
