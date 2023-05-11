@@ -625,7 +625,7 @@ private:
         _curr_simplex = cell;
       break;
     default:
-      CGAL_assertion(false);
+      CGAL_unreachable();
     };
   }
 
@@ -719,7 +719,7 @@ public:
         break;
 
       default:
-        CGAL_assertion(false);
+        CGAL_unreachable();
       };
       break;
     }
@@ -792,7 +792,7 @@ public:
         break;
       }
       default:
-        CGAL_assertion(false);//should not happen
+        CGAL_unreachable();//should not happen
       };
       break;
     }
@@ -863,7 +863,7 @@ public:
             Cell_handle ec;
             int ei = -1, ej = -1;
             if (!triangulation()->is_edge(get_vertex(), chnext->vertex(linext), ec, ei, ej))
-              CGAL_assertion(false);
+              CGAL_unreachable();
             _curr_simplex = Edge(ec, ei, ej);
           }
         }
@@ -916,7 +916,7 @@ public:
     break;
 
     default:
-      CGAL_assertion(false);
+      CGAL_unreachable();
     };
     return *this;
   }
@@ -1017,10 +1017,10 @@ private:
     case 3 ://cell
       return ch != get_cell();
     default:
-      CGAL_assertion(false);
+      CGAL_unreachable();
     }
     //should not be reached
-    CGAL_assertion(false);
+    CGAL_unreachable();
     return false;
   }
 
@@ -1074,7 +1074,7 @@ private:
       return v1b;
 
     std::cerr << "There is no vertex shared by e1 and e2" << std::endl;
-    CGAL_assertion(false);
+    CGAL_unreachable();
     return Vertex_handle();
   }
 
@@ -1100,7 +1100,7 @@ private:
     } while (++circ != end);
 
     std::cerr << "There is no facet shared by e1 and e2" << std::endl;
-    CGAL_assertion(false);
+    CGAL_unreachable();
     return Facet(Cell_handle(), 0);
   }
 
@@ -1118,7 +1118,7 @@ private:
     } while (++circ != end);
 
     std::cerr << "There is no facet shared by e and v" << std::endl;
-    CGAL_assertion(false);
+    CGAL_unreachable();
     return Facet(Cell_handle(), 0);
   }
 
@@ -1135,7 +1135,7 @@ private:
     } while (++circ != end);
 
     std::cerr << "There is no cell shared by e and v" << std::endl;
-    CGAL_assertion(false);
+    CGAL_unreachable();
     return Cell_handle();
   }
 

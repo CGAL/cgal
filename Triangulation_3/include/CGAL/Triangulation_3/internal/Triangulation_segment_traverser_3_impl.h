@@ -575,7 +575,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
                         return std::make_pair(prev_after_walk, cur_after_walk);
                     }
                 }
-                CGAL_triangulation_assertion( false );
+                CGAL_unreachable();
                 return std::make_pair(prev, cur);
             case 1:
                 if(regular_case)
@@ -593,10 +593,10 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
                         return std::make_pair(prev_after_walk, cur_after_walk);
                     }
                 }
-                CGAL_triangulation_assertion( false );
+                CGAL_unreachable();
                 return std::make_pair(prev, cur);
             default:
-                CGAL_triangulation_assertion( false );
+                CGAL_unreachable();
                 return std::make_pair(prev, cur);
         }
     }
@@ -626,8 +626,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       prev_after_walk = Simplex( std::get<0>(cur), Tr::VERTEX, pos, -1 );
       break;
     default:
-      prev_after_walk = Simplex( std::get<0>(cur), Tr::OUTSIDE_AFFINE_HULL, -1, -1 );
-      CGAL_triangulation_assertion( false );
+      CGAL_unreachable();
     }
 
     Simplex cur_after_walk(Cell_handle(), Tr::OUTSIDE_AFFINE_HULL, -1, -1);
@@ -726,7 +725,7 @@ walk_to_next_3_inf( int inf )
                     return;
                 }
             }
-            CGAL_triangulation_assertion( false );
+            CGAL_unreachable();
             return;
         case 1:
             prev_lt() = Tr::VERTEX;
@@ -738,10 +737,10 @@ walk_to_next_3_inf( int inf )
                     return;
                 }
             }
-            CGAL_triangulation_assertion( false );
+            CGAL_unreachable();
             return;
         default:
-            CGAL_triangulation_assertion( false );
+            CGAL_unreachable();
             return;
     }
 }
@@ -1007,7 +1006,7 @@ walk_to_next_2()
                         this->li() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         return;
                     default:
-                        CGAL_triangulation_assertion( false );
+                        CGAL_unreachable();
                         return;
                 }
             }
@@ -1018,7 +1017,7 @@ walk_to_next_2()
             return;
         }
         default:
-        CGAL_triangulation_assertion( false );
+        CGAL_unreachable();
     }
 }
 
