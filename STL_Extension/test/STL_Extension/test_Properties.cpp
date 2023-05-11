@@ -185,33 +185,39 @@ void test_constructors() {
   assert(a.n_properties() == 0);
 
   // Copy constructor should duplicate all properties
-  a.add("a.ints", 0);
-  a.add("a.floats", 0.0f);
+  a.add("ints", 0);
+  a.add("floats", 0.0f);
   a.emplace_group(10);
-  a.get<int>("a.ints")[3] = 1;
-  a.get<float>("a.floats")[3] = 1.0f;
+  a.get<int>("ints")[3] = 1;
+  a.get<float>("floats")[3] = 1.0f;
   Property_container<std::size_t> b{a};
   assert(b.n_properties() == a.n_properties() && b.n_properties() == 2);
-  assert(b.get<int>("a.ints")[3] == a.get<int>("a.ints")[3] && b.get<int>("a.ints")[3] == 1);
-  assert(b.get<float>("a.floats")[3] == a.get<float>("a.floats")[3] && b.get<float>("a.floats")[3] == 1.0f);
+  assert(b.get<int>("ints")[3] == a.get<int>("ints")[3] && b.get<int>("ints")[3] == 1);
+  assert(b.get<float>("floats")[3] == a.get<float>("floats")[3] && b.get<float>("floats")[3] == 1.0f);
 
   // Copy-assignment operator should do effectively the same thing as the copy constructor
   Property_container<std::size_t> c;
   c = a;
   assert(c.n_properties() == a.n_properties() && c.n_properties() == 2);
-  assert(c.get<int>("a.ints")[3] == a.get<int>("a.ints")[3] && c.get<int>("a.ints")[3] == 1);
-  assert(c.get<float>("a.floats")[3] == a.get<float>("a.floats")[3] && c.get<float>("a.floats")[3] == 1.0f);
+  assert(c.get<int>("ints")[3] == a.get<int>("ints")[3] && c.get<int>("ints")[3] == 1);
+  assert(c.get<float>("floats")[3] == a.get<float>("floats")[3] && c.get<float>("floats")[3] == 1.0f);
 
   // Copied property containers should not be synced with the original
-  a.add("a.ints2", 2);
+  a.add("more_ints", 2);
   assert(a.n_properties() == 3);
   assert(b.n_properties() == 2);
   assert(c.n_properties() == 2);
-  a.get<int>("a.ints")[4] = 2;
-  assert(a.get<int>("a.ints")[4] == 2);
-  assert(b.get<int>("a.ints")[4] == 0);
-  assert(c.get<int>("a.ints")[4] == 0);
+  a.get<int>("ints")[4] = 2;
+  assert(a.get<int>("ints")[4] == 2);
+  assert(b.get<int>("ints")[4] == 0);
+  assert(c.get<int>("ints")[4] == 0);
 
+  // Copy constructor should not invalidate previously obtained array references,
+  // but it should update their values
+  auto &b_ints = b.get<int>("ints");
+  assert(b_ints[4] == 0);
+  b = a;
+  assert(b_ints[4] == 2);
 }
 
 

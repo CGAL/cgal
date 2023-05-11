@@ -20,9 +20,12 @@ public:
 
   virtual ~Property_array_base() = default;
 
-  // todo: Declare virtual functions here, for things which need to be done within the Property container
+  // Declare virtual functions here, for things which need to be done within the Property container
+  // todo: maybe these should be private, and made available using friend
 
   virtual std::shared_ptr<Property_array_base<Index>> clone(const std::vector<bool>& active_indices) = 0;
+
+  virtual void copy(const Property_array_base<Index>& other) = 0;
 
   virtual void append(const Property_array_base<Index>& other) = 0;
 
@@ -63,6 +66,12 @@ public:
     auto new_array = std::make_shared<Property_array<Index, T>>(active_indices, m_default_value);
     new_array->m_data = m_data;
     return new_array;
+  }
+
+  virtual void copy(const Property_array_base<Index>& other_base) {
+    auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
+    m_data = other.m_data;
+    CGAL_precondition(m_active_indices.size() == m_data.size());
   }
 
   virtual void append(const Property_array_base<Index>& other_base) override {
@@ -163,7 +172,24 @@ public:
 
   Property_container<Index>& operator=(Property_container<Index> other) {
     std::swap(m_active_indices, other.m_active_indices);
-    std::swap(m_property_arrays, other.m_property_arrays);
+    for (auto [name, other_array]: other.m_property_arrays) {
+
+      // If this container has a property by the same name
+      auto it = m_property_arrays.find(name);
+      if (it != m_property_arrays.end()) {
+        auto [_, this_array] = *it;
+
+        // No naming collisions with different types allowed
+        CGAL_precondition(typeid(*this_array) == typeid(*other_array));
+
+        // Copy the data from the other array
+        this_array->copy(*other_array);
+
+      } else {
+        // Adds the new property
+        m_property_arrays.emplace(name, other_array);
+      }
+    }
     return *this;
   }
 
