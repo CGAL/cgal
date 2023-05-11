@@ -959,7 +959,12 @@ public:
             _curr_simplex = Simplex_3();
         }
         else if (ltprev == Locate_type::EDGE)//vertex-facet-edge-outside
-          _curr_simplex = Facet(prev, prev->index(get_vertex()));
+        {
+          if(prev->vertex(liprev) != get_vertex() && prev->vertex(ljprev) != get_vertex())
+            _curr_simplex = shared_facet(Edge(prev, liprev, ljprev), get_vertex());
+          else
+            _curr_simplex = Edge(prev, liprev, ljprev);
+        }
         else if (ltprev == Locate_type::FACET) //vertex-facet-outside
         {
           if(prev->vertex(liprev) != get_vertex()) //vertex-facet-outside
