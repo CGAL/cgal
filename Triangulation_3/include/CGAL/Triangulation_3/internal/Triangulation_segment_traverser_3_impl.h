@@ -422,7 +422,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
             degenerate = 2;
             case_segment_exits_cur_cell_by(44);
           }
-          else { 
+          else {
             case_target_is_inside_cur_cell(3);
             if(oi12 == ZERO) { // target is *on* EDGE i j0
               if(_tr->equal(_target, cur_cell->vertex(i)->point())) {

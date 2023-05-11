@@ -434,15 +434,15 @@ int main(int, char* [])
 
   bool ok = true;
   ok = test_a_simple_tetrahedron() && ok;
- 
+
   for(std::size_t i=0; i<queries.size(); ++i) {
     ok = test(dt, queries[i], expected_results[i]) && ok;
   }
   std::cout << "Done (" << queries.size() << " queries)\n";
-  
+
   ok = test_vfefv() && ok;
   ok = test_vfefv(true) && ok;
- 
+
   return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
