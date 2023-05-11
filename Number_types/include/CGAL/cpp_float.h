@@ -59,6 +59,10 @@ namespace internal {
   }
 #endif
 
+// It would have made sense to make this
+// boost::multiprecision::number<some_new_backend>, but we keep that
+// for later when we contribute to boost::mp
+
 class cpp_float {
 #ifdef CGAL_DEBUG_CPPF
   boost::multiprecision::cpp_rational rat;
@@ -233,6 +237,10 @@ public:
 #endif
   }
 
+  // Marc Glisse commented on github:
+  // We can sometimes end up with a mantissa that has quite a few zeros at the end,
+  // but the cases where the mantissa is too long by more than 1 limb should be negligible,
+  // and normalizing so the mantissa is always odd would have a cost.
   cpp_float operator+=(const cpp_float& other)
   {
 #ifdef CGAL_DEBUG_CPPF
@@ -331,6 +339,8 @@ public:
     return CGAL::is_negative(man);
   }
 
+  // Would it make sense to compare the sign of the exponent?
+  // to distinguish the interval between ]-1,1[  from the rest.
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
     if(((! a.is_positive()) && b.is_positive())
