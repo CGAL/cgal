@@ -12,7 +12,7 @@
 #ifndef CGAL_CPP_FLOAT_H
 #define CGAL_CPP_FLOAT_H
 
-//#define CGAL_CPPF
+//#define CGAL_DEBUG_CPPF
 
 #include <CGAL/boost_mp.h>
 #include <CGAL/assertions.h>
@@ -60,7 +60,7 @@ namespace internal {
 #endif
 
 class cpp_float {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
   boost::multiprecision::cpp_rational rat;
 #endif
 
@@ -71,7 +71,7 @@ class cpp_float {
 public:
   cpp_float()
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(),
 #endif
     man(), exp()
@@ -79,7 +79,7 @@ public:
 
   cpp_float(short i)
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(i),
 #endif
     man(i),exp(0)
@@ -87,7 +87,7 @@ public:
 
   cpp_float(int i)
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(i),
 #endif
     man(i),exp(0)
@@ -95,12 +95,12 @@ public:
 
   cpp_float(long i)
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(i),
 #endif
     man(i),exp(0)
   {}
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
   cpp_float(const Mantissa& man,  int exp, const boost::multiprecision::cpp_rational& rat)
     : rat(rat), man(man),exp(exp)
   {}
@@ -112,7 +112,7 @@ public:
     CGAL_HISTOGRAM_PROFILER("size (man/exp)", static_cast<int>(man.backend().size()));
   }
 
-#ifndef CGAL_CPPF
+#ifndef CGAL_DEBUG_CPPF
   template <typename Expression>
   cpp_float(const Expression& man, int exp)
     :man(man), exp(exp)
@@ -124,7 +124,7 @@ public:
 #endif
   cpp_float(double d)
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
    : rat(d)
 #endif
   {
@@ -173,7 +173,7 @@ public:
     if(u.s.sig){
       man.backend().negate();
     }
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     assert(rat.sign() == man.sign());
 #endif
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
@@ -188,7 +188,7 @@ public:
     return os << m.to_double();
 #if 0 // dehug output
     return os << m.man << " * 2 ^ " << m.exp << " ( " << m.to_double() << ") "
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
               << "  " << m.rat
 #endif
       ;
@@ -207,7 +207,7 @@ public:
 
   friend cpp_float operator-(cpp_float const&x)
   {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     return cpp_float(-x.man,x.exp, -x.rat);
 #else
     return cpp_float(-x.man,x.exp);
@@ -216,7 +216,7 @@ public:
 
   cpp_float& operator*=(const cpp_float& other)
   {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat *= other.rat;
 #endif
     man *= other.man;
@@ -226,7 +226,7 @@ public:
 
   friend
   cpp_float operator*(const cpp_float& a, const cpp_float&b){
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     return cpp_float(a.man*b.man, a.exp+b.exp, a.rat * b.rat);
 #else
       return cpp_float(a.man*b.man, a.exp+b.exp);
@@ -235,7 +235,7 @@ public:
 
   cpp_float operator+=(const cpp_float& other)
   {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat += other.rat;
 #endif
     int shift = exp - other.exp;
@@ -250,7 +250,7 @@ public:
     return *this;
   }
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
   friend
   cpp_float operator+(const cpp_float& a, const cpp_float&b){
     int shift = a.exp - b.exp;
@@ -278,7 +278,7 @@ public:
   cpp_float operator-=(const cpp_float& other)
   {
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat -= other.rat;
 #endif
     int shift = exp - other.exp;
@@ -294,7 +294,7 @@ public:
     return *this;
   }
 
-  #ifdef CGAL_CPPF
+  #ifdef CGAL_DEBUG_CPPF
   friend
   cpp_float operator-(const cpp_float& a, const cpp_float&b){
 
@@ -338,11 +338,11 @@ public:
     if(((! b.is_positive()) && a.is_positive())
        || (b.is_negative() && a.is_zero()))return false;
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     bool qres = a.rat < b.rat;
 #endif
     cpp_float d = b-a;
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     assert(qres == d.is_positive());
 #endif
     return d.is_positive();
@@ -361,25 +361,25 @@ public:
 
   friend bool operator==(cpp_float const&a, cpp_float const&b){
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     bool qres = a.rat == b.rat;
 #endif
    int shift = a.exp - b.exp;
    CGAL_HISTOGRAM_PROFILER("shift==", CGAL::abs(shift));
     if(shift > 0){
       Mantissa ac = a.man << shift;
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
       assert( qres == (ac == b.man));
 #endif
       return ac == b.man;
     }else if(shift < 0){
       Mantissa  bc = b.man << -shift;
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
       assert(qres == (a.man == bc));
 #endif
       return a.man == bc;
     }
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     assert(qres == (a.man == b.man));
 #endif
     return a.man==b.man;
