@@ -22,6 +22,8 @@ public:
 
   // todo: Declare virtual functions here, for things which need to be done within the Property container
 
+  virtual std::shared_ptr<Property_array_base<Index>> clone(const std::vector<bool>& active_indices) = 0;
+
   virtual void append(const Property_array_base<Index>& other) = 0;
 
   virtual void reserve(std::size_t n) = 0;
@@ -46,11 +48,9 @@ class Property_array : public Property_array_base<Index> {
 
 public:
 
-  // Necessary for use as a boost::property_type
-  using key_type = Index;
   using value_type = T;
   using reference = typename std::vector<T>::reference;
-  using category = boost::readable_property_map_tag;
+  using const_reference = typename std::vector<T>::const_reference;
 
   Property_array(const std::vector<bool>& active_indices, const T& default_value) :
     m_data(), m_active_indices(active_indices), m_default_value(default_value) {
@@ -59,7 +59,13 @@ public:
     m_data.resize(active_indices.size(), m_default_value);
   }
 
-  virtual void append(const Property_array_base<Index>& other_base) {
+  virtual std::shared_ptr<Property_array_base<Index>> clone(const std::vector<bool>& active_indices) override {
+    auto new_array = std::make_shared<Property_array<Index, T>>(active_indices, m_default_value);
+    new_array->m_data = m_data;
+    return new_array;
+  }
+
+  virtual void append(const Property_array_base<Index>& other_base) override {
     auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
     CGAL_precondition(m_data.size() + other.m_data.size() == m_active_indices.size());
     m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
@@ -105,13 +111,61 @@ public:
 
 };
 
+
+template <typename Index, typename T>
+class Property_array_handle : public boost::put_get_helper<
+  typename Property_array<Index, T>::reference,
+  Property_array_handle<Index, T>
+> {
+
+  Property_array<Index, T>& m_array;
+
+public:
+
+  // Necessary for use as a boost::property_type
+  using key_type = Index;
+  using value_type = T;
+  using reference = typename std::vector<T>::reference;
+  using category = boost::lvalue_property_map_tag;
+
+  Property_array_handle(Property_array<Index, T>& array) : m_array(array) {}
+
+  T& operator[](std::size_t i) const { return m_array[i]; }
+
+  T& operator[](std::size_t i) { return m_array[i]; }
+
+  bool operator==(const Property_array<Index, T>& other) const { return &other.m_array == m_array; }
+
+  bool operator!=(const Property_array<Index, T>& other) const { return !operator==(other); }
+
+};
+
 template <typename Index = std::size_t>
 class Property_container {
 
-  std::map<std::string, std::shared_ptr<Property_array_base<Index>>> m_property_arrays;
-  std::vector<bool> m_active_indices;
+  std::map<std::string, std::shared_ptr<Property_array_base<Index>>> m_property_arrays{};
+  std::vector<bool> m_active_indices{};
 
 public:
+
+  Property_container() = default;
+
+  Property_container(const Property_container<Index>& other) {
+    m_active_indices = other.m_active_indices;
+    for (auto [name, array]: other.m_property_arrays) {
+      // todo: this could probably be made faster using emplace_hint
+      m_property_arrays.emplace(
+        name,
+        array->clone(m_active_indices)
+      );
+    }
+  }
+
+  Property_container<Index>& operator=(Property_container<Index> other) {
+    std::swap(m_active_indices, other.m_active_indices);
+    std::swap(m_property_arrays, other.m_property_arrays);
+    return *this;
+  }
 
   template <typename T>
   std::pair<std::reference_wrapper<Property_array<Index, T>>, bool>

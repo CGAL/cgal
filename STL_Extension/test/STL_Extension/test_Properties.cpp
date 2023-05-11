@@ -37,7 +37,7 @@ void test_element_access() {
 
   Property_container properties;
 
-  auto &integers = properties.add("integers", 5);
+  auto& integers = properties.add("integers", 5);
 
   // Reserve space for 100 elements
   properties.reserve(100);
@@ -56,7 +56,7 @@ void test_element_access() {
   assert(integers[2] == 5);
 
   // Add a new property
-  auto &floats = properties.add("floats", 6.0f);
+  auto& floats = properties.add("floats", 6.0f);
 
   // The new property array should already be of the right size
   assert(floats.capacity() == 100);
@@ -107,7 +107,7 @@ void test_emplace_group() {
 
   Property_container properties;
 
-  auto &a = properties.add("a", 5);
+  auto& a = properties.add("a", 5);
 
   // Insert a group of 100 elements
   properties.emplace_group(100);
@@ -178,6 +178,42 @@ void test_append() {
 
 }
 
+void test_constructors() {
+
+  // Default constructor should have no properties
+  Property_container<std::size_t> a{};
+  assert(a.n_properties() == 0);
+
+  // Copy constructor should duplicate all properties
+  a.add("a.ints", 0);
+  a.add("a.floats", 0.0f);
+  a.emplace_group(10);
+  a.get<int>("a.ints")[3] = 1;
+  a.get<float>("a.floats")[3] = 1.0f;
+  Property_container<std::size_t> b{a};
+  assert(b.n_properties() == a.n_properties() && b.n_properties() == 2);
+  assert(b.get<int>("a.ints")[3] == a.get<int>("a.ints")[3] && b.get<int>("a.ints")[3] == 1);
+  assert(b.get<float>("a.floats")[3] == a.get<float>("a.floats")[3] && b.get<float>("a.floats")[3] == 1.0f);
+
+  // Copy-assignment operator should do effectively the same thing as the copy constructor
+  Property_container<std::size_t> c;
+  c = a;
+  assert(c.n_properties() == a.n_properties() && c.n_properties() == 2);
+  assert(c.get<int>("a.ints")[3] == a.get<int>("a.ints")[3] && c.get<int>("a.ints")[3] == 1);
+  assert(c.get<float>("a.floats")[3] == a.get<float>("a.floats")[3] && c.get<float>("a.floats")[3] == 1.0f);
+
+  // Copied property containers should not be synced with the original
+  a.add("a.ints2", 2);
+  assert(a.n_properties() == 3);
+  assert(b.n_properties() == 2);
+  assert(c.n_properties() == 2);
+  a.get<int>("a.ints")[4] = 2;
+  assert(a.get<int>("a.ints")[4] == 2);
+  assert(b.get<int>("a.ints")[4] == 0);
+  assert(c.get<int>("a.ints")[4] == 0);
+
+}
+
 
 int main() {
 
@@ -185,6 +221,7 @@ int main() {
   test_element_access();
   test_emplace_group();
   test_append();
+  test_constructors();
 
   return 0;
 }
