@@ -76,6 +76,12 @@ CGAL tetrahedral Delaunay refinement algorithm.
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
 
 -   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.
+-   Introduced an overload function template, namely `draw(arr)`, that renders arrangements based on the `Basic_viewer_qt` class template. At this point only 2D arrangements on the plane induced by (i) segments, (ii) conics, and (iii) circular arcs or (linear) segments are supported.
+-   Improved the traits class template that handles conics, namely `Arr_conic_traits_2`. This includes the following:
+    1. Fixed a couple of bugs and slightly optimized some functions.
+    2. Introduced functionality that approximates conics with polylines. (This is used to draw conic curves.)
+    3. **Breaking change**: Changed the interface to generate conic curves. In the past, curves where generated directly using the constructors of the conic and x-monotone conic constructs. Now, they are constructed via function objects provided by the traits. This eliminates the constructions of temporary kernels. The old functionality is obsolete, but still supported for a limited number of versions. It depends on a static member function of the traits. In a future version this function will no longer be static, implying that the old functionality will no longer be supported.
+- Introduced functionality that approximates circular segments with polylines. (This is used to draw conic curves.)
 
 ### [2D Convex Hulls](https://doc.cgal.org/5.6/Manual/packages.html#PkgConvexHull2)
 
