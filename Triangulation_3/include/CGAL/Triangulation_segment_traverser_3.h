@@ -236,7 +236,7 @@ public:
          *        \return a handle to the current cell.
          *        \sa `cell()`.
          */
-    Cell_handle     handle()
+    Cell_handle     handle() const
     {
       return std::get<0>(_cur);
     }
@@ -301,12 +301,20 @@ public:
     {
       lt = this->lt(); li = this->li(); lj = this->lj();
     }
+    std::tuple<Locate_type, int, int> entry() const
+    {
+      return { lt(), li(), lj() };
+    }
     //  gives the simplex through which the previous cell was exited.
     /*         \pre the current cell is not the initial cell.
          */
     void            exit( Locate_type& lt, int& li, int& lj ) const
     {
       lt = prev_lt(); li = prev_li(); lj = prev_lj();
+    }
+    std::tuple<Locate_type, int, int> exit() const
+    {
+      return { prev_lt(), prev_li(), prev_lj() };
     }
 
     //  gives the past-the-end iterator associated with this iterator.
@@ -588,18 +596,17 @@ private:
   {
     Locate_type lt;
     int li, lj;
-    Cell_handle cell;
+    Cell_handle cell = Cell_handle(_cell_iterator);
 
     //check what is the entry type of _cell_iterator
-    if (Cell_handle(_cell_iterator) == Cell_handle())
+    if (cell == Cell_handle())
     {
-      //where did the segment std::get out from previous cell
+      //where did the segment get out from previous cell
       cell = _cell_iterator.previous();
       _cell_iterator.exit(lt, li, lj);
     }
     else
     {
-      cell = Cell_handle(_cell_iterator);
       _cell_iterator.entry(lt, li, lj);
     }
 
