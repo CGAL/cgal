@@ -1,3 +1,4 @@
+#define CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Base_with_time_stamp.h>
@@ -61,19 +62,19 @@ struct Debug_simplex {
     auto&& simplex = d.simplex;
     switch(simplex.dimension()) {
       case 0: {
-        os << "   - vertex " << display_vert(static_cast<Vertex_handle>(simplex));
+        os << "- vertex " << display_vert(static_cast<Vertex_handle>(simplex));
         break;
       }
       case 1: {
         const auto [c, index1, index2] = static_cast<Edge>(simplex);
-        os << "   - egde "
+        os << "- egde "
            << display_vert(c->vertex(index1)) << " - "
            << display_vert(c->vertex(index2));
         break;
       }
       case 2: {
         const auto [c, index] = static_cast<Facet>(simplex);
-        os << "   - facet "
+        os << "- facet "
            << display_vert(c->vertex(DT::vertex_triple_index(index, 0))) << " - "
            << display_vert(c->vertex(DT::vertex_triple_index(index, 1))) << " - "
            << display_vert(c->vertex(DT::vertex_triple_index(index, 2)));
@@ -81,7 +82,7 @@ struct Debug_simplex {
       }
       case 3: {
         const auto c = static_cast<Cell_handle>(simplex);
-        os << "   - cell "
+        os << "- cell "
            << display_vert(c->vertex(0)) << " - "
            << display_vert(c->vertex(1)) << " - "
            << display_vert(c->vertex(2)) << " - "

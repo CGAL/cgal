@@ -127,6 +127,55 @@ public:
     template < class Tr2, class Inc2 >
     struct Rebind { typedef Triangulation_segment_cell_iterator_3<Tr2,Inc2>  Other; };
 
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+    static auto display_vert(Vertex_handle v)
+    {
+      std::stringstream os;
+      os.precision(17);
+      if(v->time_stamp() == 0) {
+        os << "inf";
+      } else {
+        os << '#' << v->time_stamp() << "=(" << v->point() << ")";
+      }
+      return os.str();
+    };
+
+    static auto display_lt(Locate_type lt) {
+      std::stringstream os;
+      switch(lt) {
+        case Locate_type::VERTEX: os << " VERTEX"; break;
+        case Locate_type::EDGE: os << " EDGE"; break;
+        case Locate_type::FACET: os << " FACET"; break;
+        case Locate_type::CELL: os << " CELL"; break;
+        case Locate_type::OUTSIDE_CONVEX_HULL: os << " OUTSIDE_CONVEX_HULL"; break;
+        case Locate_type::OUTSIDE_AFFINE_HULL: os << " OUTSIDE_AFFINE_HULL"; break;
+      }
+      return os.str();
+    }
+
+    static auto debug_simplex(Simplex s) {
+      std::stringstream os;
+      os.precision(17);
+      const auto [c, lt, i, j] = s;
+      if(c == Cell_handle{}) {
+        os << "end()";
+      } else {
+        os << display_vert(c->vertex(0)) << " - " << display_vert(c->vertex(1)) << " - "
+           << display_vert(c->vertex(2)) << " - " << display_vert(c->vertex(3));
+      }
+      os << display_lt(lt) << " " << i << " " << j;
+      return os.str();
+    }
+
+    auto debug_iterator() const
+    {
+      std::stringstream os;
+      os.precision(17);
+      os << "  cur: " << debug_simplex(_cur) << "\n  prev: " << debug_simplex(_prev);
+      return os.str();
+    }
+#endif // CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+
 private:
     typedef Segment_cell_iterator                       SCI;
 
@@ -594,6 +643,10 @@ private:
 private:
   void set_curr_simplex_to_entry()
   {
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+    std::cerr << "cell iterator is:\n" << _cell_iterator.debug_iterator() << std::endl;
+#endif // #if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+
     Locate_type lt;
     int li, lj;
     Cell_handle cell = Cell_handle(_cell_iterator);
@@ -646,6 +699,16 @@ public:
   //  provides the increment postfix operator.
   Simplex_iterator& operator++()
   {
+    auto increment_cell_iterator = [&]()
+    {
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+      std::cerr << "increment cell iterator from:\n" << _cell_iterator.debug_iterator();
+#endif
+      ++_cell_iterator;
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+      std::cerr << "\n > to:\n" << _cell_iterator.debug_iterator() << std::endl;
+#endif
+    };
     CGAL_assertion(_curr_simplex.incident_cell() != Cell_handle());
 
     switch(_curr_simplex.dimension())
@@ -664,7 +727,7 @@ public:
       else
       {
         if (!cell_iterator_is_ahead())
-          ++_cell_iterator;
+          increment_cell_iterator();
         set_curr_simplex_to_entry();
       }
       break;
@@ -678,7 +741,7 @@ public:
         //we cannot be in any of the degenerate cases, only detected by
         //taking cell_iterator one step forward
         CGAL_assertion(cell_has_facet(Cell_handle(_cell_iterator), get_facet()));
-        ++_cell_iterator;
+        increment_cell_iterator();
         if (Cell_handle(_cell_iterator) == Cell_handle())
         {
           _curr_simplex = _cell_iterator.previous();
@@ -744,7 +807,7 @@ public:
 
       if (!cell_iterator_is_ahead())
       {
-        ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
+        increment_cell_iterator();//cell_iterator needs to be ahead to detect degeneracies
         if (Cell_handle(_cell_iterator) == Cell_handle())
         {
           _curr_simplex = _cell_iterator.previous();
@@ -813,7 +876,7 @@ public:
       }
       if (!cell_iterator_is_ahead()) //_curr_simplex does contain v
       {
-        ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
+        increment_cell_iterator();//cell_iterator needs to be ahead to detect degeneracies
       }
       else
         ch = _cell_iterator.previous();
