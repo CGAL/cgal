@@ -27,6 +27,7 @@ typedef DT::Cell_handle                        Cell_handle;
 typedef DT::Edge                               Edge;
 typedef DT::Facet                              Facet;
 typedef DT::Vertex_handle                      Vertex_handle;
+typedef DT::Simplex                            Simplex;
 typedef DT::Segment_simplex_iterator           Segment_simplex_iterator;
 
 // a function to insert without spatial sorting
@@ -46,7 +47,7 @@ auto display_vert(Vertex_handle v) {
   }
   return os.str();
 };
-template <typename Simplex>
+
 struct Debug_simplex {
   Simplex simplex;
 
@@ -57,19 +58,19 @@ struct Debug_simplex {
     auto&& simplex = d.simplex;
     switch(simplex.dimension()) {
       case 0: {
-        os << "   vertex " << display_vert(static_cast<Vertex_handle>(simplex));
+        os << "   - vertex " << display_vert(static_cast<Vertex_handle>(simplex));
         break;
       }
       case 1: {
         const auto [c, index1, index2] = static_cast<Edge>(simplex);
-        os << "   egde "
+        os << "   - egde "
            << display_vert(c->vertex(index1)) << " - "
            << display_vert(c->vertex(index2));
         break;
       }
       case 2: {
         const auto [c, index] = static_cast<Facet>(simplex);
-        os << "   facet "
+        os << "   - facet "
            << display_vert(c->vertex(DT::vertex_triple_index(index, 0))) << " - "
            << display_vert(c->vertex(DT::vertex_triple_index(index, 1))) << " - "
            << display_vert(c->vertex(DT::vertex_triple_index(index, 2)));
@@ -77,7 +78,7 @@ struct Debug_simplex {
       }
       case 3: {
         const auto c = static_cast<Cell_handle>(simplex);
-        os << "   cell "
+        os << "   - cell "
            << display_vert(c->vertex(0)) << " - "
            << display_vert(c->vertex(1)) << " - "
            << display_vert(c->vertex(2)) << " - "
@@ -89,9 +90,8 @@ struct Debug_simplex {
     return os;
   };
 };
-template <typename Simplex>
 auto debug_simplex(Simplex simplex) {
-  return Debug_simplex<Simplex>{simplex};
+  return Debug_simplex{simplex};
 }
 
 static const std::vector<Point_3> bbox_points =
