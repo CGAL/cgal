@@ -226,7 +226,7 @@ public:
 
   template <typename T>
   std::pair<std::reference_wrapper<Property_array<Index, T>>, bool>
-  get_or_add(const std::string& name, const T default_value = T()) {
+  get_or_add_property(const std::string& name, const T default_value = T()) {
     auto [it, created] = m_property_arrays.emplace(
       name,
       std::make_shared<Property_array<Index, T>>(
@@ -240,21 +240,21 @@ public:
   }
 
   template <typename T>
-  Property_array<Index, T>& add(const std::string& name, const T default_value = T()) {
+  Property_array<Index, T>& add_property(const std::string& name, const T default_value = T()) {
     // todo: I'm not settled on the naming, but it's really convenient to have a function like this
-    auto [array, created] = get_or_add(name, default_value);
+    auto [array, created] = get_or_add_property(name, default_value);
     CGAL_precondition(created);
     return array.get();
   }
 
   template <typename T>
-  const Property_array<Index, T>& get(const std::string& name) const {
+  const Property_array<Index, T>& get_property(const std::string& name) const {
     CGAL_precondition(m_property_arrays.count(name) != 0);
     return dynamic_cast<const Property_array<Index, T>&>(*m_property_arrays.at(name));
   }
 
   template <typename T>
-  Property_array<Index, T>& get(const std::string& name) {
+  Property_array<Index, T>& get_property(const std::string& name) {
     CGAL_precondition(m_property_arrays.count(name) != 0);
     return dynamic_cast<Property_array<Index, T>&>(*m_property_arrays.at(name));
   }
@@ -265,7 +265,7 @@ public:
    * @param name
    * @return True if a container with this name existed, false otherwise
    */
-  bool remove(const std::string& name) { return m_property_arrays.erase(name) == 1; }
+  bool remove_property(const std::string& name) { return m_property_arrays.erase(name) == 1; }
 
   std::size_t num_properties() { return m_property_arrays.size(); }
 
