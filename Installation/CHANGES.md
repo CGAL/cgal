@@ -40,7 +40,7 @@ Release date: June 2023
     straight skeletons of polygons with holes. The output is a closed, combinatorially 2-manifold
     surface triangle mesh.
 
-    See also the [announcement page](https://www.cgal.org/TODO).
+    See also the [news entry](https://www.cgal.org/2023/05/09/improved_straight_skeleton/).
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.6/Manual/packages.html#PkgKernel23)
 
@@ -61,6 +61,24 @@ Release date: June 2023
 
 -   Added the class
     [`Linear_cell_complex_incremental_builder_3`](https://doc.cgal.org/5.6/Linear_cell_complex/classCGAL_1_1Linear__cell__complex__incremental__builder__3.html).
+
+### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Introduced an overload function template, namely `draw(arr)`, that renders arrangements based
+    on the `Basic_viewer_qt` class template. At this point only 2D arrangements on the plane induced
+    by (i) segments, (ii) conics, and (iii) circular arcs or (linear) segments are supported.
+-   Improved the traits class template that handles conics, namely
+    [`Arr_conic_traits_2`](https://doc.cgal.org/5.6/Arrangement_on_surface_2/classCGAL_1_1Arr__conic__traits__2.html).
+    This includes the following:
+    1. Fixed a couple of bugs and slightly optimized some functions.
+    2. Introduced functionality that approximates conics with polylines. (This is used to draw conic curves.)
+    3. **Breaking change**: Changed the interface to generate conic curves. In the past, curves where
+    generated directly using the constructors of the conic and x-monotone conic constructs. Now,
+    they are constructed via function objects provided by the traits. This eliminates the constructions
+    of temporary kernels. The old functionality is obsolete, but still supported for a limited number
+    of versions. It depends on a static member function of the traits. In a future version this function
+    will no longer be static, implying that the old functionality will no longer be supported.
+- Introduced functionality that approximates circular segments with polylines. (This is used to draw conic curves.)
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.6/Manual/packages.html#PkgPolygonMeshProcessing)
 
@@ -164,8 +182,17 @@ Release date: June 2023
     for automatic detection and protection of 1D-curves that lie at the intersection of
     three or more subdomains extracted from labeled images.
 -   Added
-    [`CGAL::Sizing_field_with_aabb_tree`](TODO),
+    [`CGAL::Sizing_field_with_aabb_tree`](https://doc.cgal.org/5.6/Mesh_3/structCGAL_1_1Sizing__field__with__aabb__tree.html),
     a geometry-aware sizing field for feature edges in polyhedral domains.
+-   Added new meshing criterion
+    [`edge_min_size`](TODO)
+    to avoid subdividing sharp edges that are shorter than the prescribed size bound.
+-   Added new meshing criteria
+    [`facet_min_size`](TODO)
+    and
+    [`cell_min_size`](TODO)
+    to prevent Delaunay refinement
+    from creating simplices smaller than the prescribed bound.
 -   Deprecated usage of boost parameters in favor of function named parameters.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
