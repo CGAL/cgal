@@ -350,7 +350,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       auto case_target_is_inside_cur_cell = [&](int case_nb) {
         inside = case_nb;
         prev_after_walk = { cur_cell, Tr::CELL, -1, -1 };
-        cur_after_walk  = { {},       Tr::OUTSIDE_AFFINE_HULL, -1, -1 };
+        cur_after_walk  = { {},       Tr::CELL, -1, -1 };
       };
       auto case_segment_exits_cur_cell_by = [&](int facet_nb) {
         outside = facet_nb;
@@ -679,7 +679,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       CGAL_unreachable();
     }
 
-    Simplex cur_after_walk(Cell_handle(), Tr::OUTSIDE_AFFINE_HULL, -1, -1);
+    Simplex cur_after_walk(Cell_handle(), std::get<1>(prev_after_walk), -1, -1);
     return std::make_pair(prev_after_walk, cur_after_walk);
 }
 
@@ -854,7 +854,7 @@ walk_to_next_2()
                         return;
                     default:
                         // The current vertex is the target.
-                        CGAL_triangulation_assertion(false);
+                        CGAL_unreachable();
                         return;
                 }
             }
@@ -881,8 +881,7 @@ walk_to_next_2()
                     _prev = Simplex( cell(), Tr::VERTEX, li(), -1 );
                 break;
             case 0:
-                CGAL_triangulation_assertion(false);
-                _prev = Simplex( cell(), Tr::OUTSIDE_AFFINE_HULL, -1, -1 );
+                CGAL_unreachable();
                 break;
             }
             cell() = Cell_handle();
@@ -1190,7 +1189,7 @@ Triangulation_segment_cell_iterator_3<Tr, Inc>::opposite_edge(
     case 5: return Edge(c, 2, 3);
   }
 
-  CGAL_triangulation_assertion(false);
+  CGAL_unreachable();
   return Edge();
 }
 
