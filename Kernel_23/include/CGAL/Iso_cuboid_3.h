@@ -30,6 +30,7 @@ template <class R_>
 class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
 {
   typedef typename R_::RT                 RT;
+  typedef typename R_::FT                 FT;
   typedef typename R_::Point_3            Point_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
@@ -85,8 +86,8 @@ public:
 
   Iso_cuboid_3(const Bbox_3& bbox)
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(),
-                                              R::Construct_point_3()(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-                                              R::Construct_point_3()(bbox.xmax(), bbox.ymax(), bbox.zmax()))) {}
+                                              typename R::Construct_point_3()(FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin())),
+                                              typename R::Construct_point_3()(FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax())))) {}
 
   decltype(auto)
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const
