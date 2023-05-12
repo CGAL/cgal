@@ -100,13 +100,13 @@ public:
 
 public:
 
-  const T& operator[](std::size_t i) const {
-    CGAL_precondition(i < m_data.size());
-    return m_data[i];
+  const_reference operator[](Index i) const {
+    CGAL_precondition(std::size_t(i) < m_data.size());
+    return m_data[std::size_t(i)];
   }
 
-  T& operator[](std::size_t i) {
-    CGAL_precondition(i < m_data.size());
+  reference operator[](Index i) {
+    CGAL_precondition(std::size_t(i) < m_data.size());
     return m_data[std::size_t(i)];
   }
 
@@ -122,10 +122,7 @@ public:
 
 
 template <typename Index, typename T>
-class Property_array_handle : public boost::put_get_helper<
-  typename Property_array<Index, T>::reference,
-  Property_array_handle<Index, T>
-> {
+class Property_array_handle {
 
   Property_array<Index, T>& m_array;
 
@@ -135,17 +132,22 @@ public:
   using key_type = Index;
   using value_type = T;
   using reference = typename std::vector<T>::reference;
+  using const_reference = typename std::vector<T>::const_reference;
   using category = boost::lvalue_property_map_tag;
 
   Property_array_handle(Property_array<Index, T>& array) : m_array(array) {}
 
-  T& operator[](std::size_t i) const { return m_array[i]; }
+  const_reference operator[](Index i) const { return m_array[i]; }
 
-  T& operator[](std::size_t i) { return m_array[i]; }
+  reference operator[](Index i) { return m_array[i]; }
 
   bool operator==(const Property_array<Index, T>& other) const { return &other.m_array == m_array; }
 
   bool operator!=(const Property_array<Index, T>& other) const { return !operator==(other); }
+
+  inline friend reference get(Property_array_handle<Index, T> p, const Index& i) { return p[i]; }
+
+  inline friend void put(Property_array_handle<Index, T> p, const Index& i, const T& v) { p[i] = v; }
 
 };
 
@@ -170,8 +172,11 @@ public:
     }
   }
 
-  Property_container<Index>& operator=(Property_container<Index> other) {
-    std::swap(m_active_indices, other.m_active_indices);
+  Property_container(Property_container<Index>&& other) { *this = std::move(other); }
+
+  // todo: maybe this could be implemented in terms of the move assignment operator?
+  Property_container<Index>& operator=(const Property_container<Index>& other) {
+    m_active_indices = other.m_active_indices;
     for (auto [name, other_array]: other.m_property_arrays) {
 
       // If this container has a property by the same name
@@ -187,9 +192,35 @@ public:
 
       } else {
         // Adds the new property
-        m_property_arrays.emplace(name, other_array);
+        m_property_arrays.emplace(name, other_array->clone(m_active_indices));
       }
     }
+    return *this;
+  }
+
+  Property_container<Index>& operator=(Property_container<Index>&& other) {
+    m_active_indices = std::move(other.m_active_indices);
+    for (auto [name, other_array]: other.m_property_arrays) {
+
+      // If this container has a property by the same name
+      auto it = m_property_arrays.find(name);
+      if (it != m_property_arrays.end()) {
+        auto [_, this_array] = *it;
+
+        // No naming collisions with different types allowed
+        CGAL_precondition(typeid(*this_array) == typeid(*other_array));
+
+        // Copy the data from the other array
+        this_array->copy(*other_array);
+
+      } else {
+        // Adds the new property
+        m_property_arrays.emplace(name, other_array->clone(m_active_indices));
+      }
+    }
+
+    // The moved-from property map should retain all of its properties, but contain 0 elements
+    other.reserve(0);
     return *this;
   }
 
@@ -236,7 +267,7 @@ public:
    */
   bool remove(const std::string& name) { return m_property_arrays.erase(name) == 1; }
 
-  std::size_t n_properties() { return m_property_arrays.size(); }
+  std::size_t num_properties() { return m_property_arrays.size(); }
 
 public:
 
@@ -266,7 +297,9 @@ public:
     auto first_unused = std::find_if(m_active_indices.begin(), m_active_indices.end(), [](bool used) { return !used; });
     if (first_unused != m_active_indices.end()) {
       *first_unused = true;
-      return Index(std::distance(m_active_indices.begin(), first_unused));
+      auto index = Index(std::distance(m_active_indices.begin(), first_unused));
+      reset(index);
+      return index;
     }
 
     return emplace_back();

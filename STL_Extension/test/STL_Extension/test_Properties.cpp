@@ -11,11 +11,11 @@ void test_property_creation() {
   auto [integers, created] = properties.get_or_add("integer", 5);
   static_assert(std::is_same_v<decltype(integers), std::reference_wrapper<Property_array<std::size_t, int>>>);
   assert(created);
-  assert(properties.n_properties() == 1);
+  assert(properties.num_properties() == 1);
 
   auto [floats, _] = properties.get_or_add<float>("float");
   static_assert(std::is_same_v<decltype(floats), std::reference_wrapper<Property_array<std::size_t, float>>>);
-  assert(properties.n_properties() == 2);
+  assert(properties.num_properties() == 2);
 
   // get() should retreive the same arrays
   assert(integers.get() == properties.get<int>("integer"));
@@ -25,7 +25,7 @@ void test_property_creation() {
   assert(!properties.remove("not-a-real-property"));
   auto removed = properties.remove("integer");
   assert(removed);
-  assert(properties.n_properties() == 1);
+  assert(properties.num_properties() == 1);
 
   // Add a new property
   auto [bools, bools_created] = properties.get_or_add("bools", false);
@@ -182,7 +182,7 @@ void test_constructors() {
 
   // Default constructor should have no properties
   Property_container<std::size_t> a{};
-  assert(a.n_properties() == 0);
+  assert(a.num_properties() == 0);
 
   // Copy constructor should duplicate all properties
   a.add("ints", 0);
@@ -191,33 +191,53 @@ void test_constructors() {
   a.get<int>("ints")[3] = 1;
   a.get<float>("floats")[3] = 1.0f;
   Property_container<std::size_t> b{a};
-  assert(b.n_properties() == a.n_properties() && b.n_properties() == 2);
+  assert(b.num_properties() == a.num_properties() && b.num_properties() == 2);
   assert(b.get<int>("ints")[3] == a.get<int>("ints")[3] && b.get<int>("ints")[3] == 1);
   assert(b.get<float>("floats")[3] == a.get<float>("floats")[3] && b.get<float>("floats")[3] == 1.0f);
 
   // Copy-assignment operator should do effectively the same thing as the copy constructor
   Property_container<std::size_t> c;
   c = a;
-  assert(c.n_properties() == a.n_properties() && c.n_properties() == 2);
+  assert(c.num_properties() == a.num_properties() && c.num_properties() == 2);
   assert(c.get<int>("ints")[3] == a.get<int>("ints")[3] && c.get<int>("ints")[3] == 1);
   assert(c.get<float>("floats")[3] == a.get<float>("floats")[3] && c.get<float>("floats")[3] == 1.0f);
 
   // Copied property containers should not be synced with the original
   a.add("more_ints", 2);
-  assert(a.n_properties() == 3);
-  assert(b.n_properties() == 2);
-  assert(c.n_properties() == 2);
+  assert(a.num_properties() == 3);
+  assert(b.num_properties() == 2);
+  assert(c.num_properties() == 2);
   a.get<int>("ints")[4] = 2;
   assert(a.get<int>("ints")[4] == 2);
   assert(b.get<int>("ints")[4] == 0);
   assert(c.get<int>("ints")[4] == 0);
 
-  // Copy constructor should not invalidate previously obtained array references,
+  // Copy assignment should not invalidate previously obtained array references,
   // but it should update their values
   auto &b_ints = b.get<int>("ints");
   assert(b_ints[4] == 0);
   b = a;
+  assert(b.num_properties() == 3);
   assert(b_ints[4] == 2);
+
+  // Move assignment shouldn't invalidate references either
+  Property_container<std::size_t> d{c};
+  auto &d_ints = d.get<int>("ints");
+  assert(d_ints[4] == 0);
+  d = std::move(a);
+  assert(d.num_properties() == 3);
+  assert(d_ints[4] == 2);
+
+  // Moved-from should be empty
+  // All properties are preserved, though
+  assert(a.num_properties() == 3);
+  assert(a.size() == 0);
+
+  // Move constructor should behave like move assignment
+  Property_container<std::size_t> e{std::move(b)};
+  assert(e.num_properties() == 3);
+  assert(b.num_properties() == 3);
+  assert(b.size() == 0);
 }
 
 
