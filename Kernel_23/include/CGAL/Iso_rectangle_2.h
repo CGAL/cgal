@@ -78,7 +78,9 @@ public:
     : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy, hw)) {}
 
   Iso_rectangle_2(const Bbox_2& bbox)
-    : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.xmax(), bbox.ymax())) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(),
+                                                  R::Construct_point_2()(FT(bbox.xmin()), FT(bbox.ymin())),
+                                                  R::Construct_point_2()(FT(bbox.xmax()), FT(bbox.ymax())))) {}
 
   decltype(auto)
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const

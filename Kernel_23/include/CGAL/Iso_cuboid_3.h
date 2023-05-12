@@ -84,8 +84,9 @@ public:
                                              max_hx, max_hy, max_hz)) {}
 
   Iso_cuboid_3(const Bbox_3& bbox)
-   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.zmin(),
-                                                                 bbox.xmax(), bbox.ymax(), bbox.zmax())) {}
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(),
+                                              R::Construct_point_3()(bbox.xmin(), bbox.ymin(), bbox.zmin()),
+                                              R::Construct_point_3()(bbox.xmax(), bbox.ymax(), bbox.zmax()))) {}
 
   decltype(auto)
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const
