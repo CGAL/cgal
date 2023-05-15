@@ -222,7 +222,7 @@ public:
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[1]);
     this->add_primitives(stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[1]);
-    if(CGAL::is_empty(bounding_p)) {
+    if(CGAL::is_empty(bounding_polyhedron)) {
       this->set_surface_only();
     } else {
       this->add_primitives_to_bounding_tree(stored_polyhedra[1]);

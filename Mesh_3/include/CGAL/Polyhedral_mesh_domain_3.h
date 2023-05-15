@@ -104,11 +104,39 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 }  // end namespace details
 }  // end namespace Mesh_3
 
-/**
- * @class Polyhedral_mesh_domain_3
- *
- *
- */
+
+/*!
+\ingroup PkgMesh3Domains
+
+The class `Polyhedral_mesh_domain_3` implements
+a domain defined by a simplicial polyhedral surface.
+
+The input polyhedral surface must be free of intersection.
+It must include (at least) one closed connected component
+that defines the boundary of the domain to be meshed.
+Inside this bounding component,
+the input polyhedral surface may contain
+several other components (closed or not)
+that will be represented in the final mesh.
+This class is a model of the concept `MeshDomain_3`.
+
+\tparam Polyhedron stands for the type of the input polyhedral surface(s),
+model of `FaceListGraph`.
+
+\tparam IGT stands for a geometric traits class
+providing the types and functors required to implement
+the intersection tests and intersection computations
+for polyhedral boundary surfaces. This parameter has to be instantiated
+with a model of the concept `IntersectionGeometricTraits_3`.
+
+\cgalModels `MeshDomain_3`
+
+\sa `IntersectionGeometricTraits_3`
+\sa `CGAL::make_mesh_3()`.
+
+*/
+
+
 template<class Polyhedron,/*FaceGraph*/
          class IGT_,
          class = CGAL::Default,
@@ -206,24 +234,36 @@ public:
   {
   }
 
-  /**
-   * @brief Constructor. Construction from a polyhedral surface
-   * @param polyhedron the polyhedron describing the polyhedral surface
-   */
-  Polyhedral_mesh_domain_3(const Polyhedron& p,
+
+/// \name Creation
+/// @{
+
+  /*!
+    Construction from a bounding polyhedral surface which must be closed, and free of intersections.
+    The inside of `bounding_polyhedron` will be meshed.
+  */
+
+  Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron,
                            CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
   {
-    this->add_primitives(p);
-    if(! is_triangle_mesh(p)) {
+    this->add_primitives(bounding_polyhedron);
+    if(! is_triangle_mesh(bounding_polyhedron)) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
       CGAL_error_msg("Your input polyhedron must be triangulated!");
     }
     this->build();
   }
 
+  /*!
+    Construction from a polyhedral surface, and a bounding polyhedral surface.
+    The first polyhedron must be entirely included inside `bounding_polyhedron`, which must be closed
+    and free of intersections.
+    Using this constructor allows to mesh a polyhedral surface which is not closed, or has holes.
+    The inside of `bounding_polyhedron` will be meshed.
+*/
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            const Polyhedron& bounding_polyhedron,
                            CGAL::Random* p_rng = nullptr)
@@ -241,7 +281,8 @@ public:
     this->build();
   }
 
-  /**
+  /*!
+   * @todo was not in doxygen
    * Constructor.
    *
    * Constructor from a sequence of polyhedral surfaces, and a bounding
@@ -274,7 +315,8 @@ public:
     this->build();
   }
 
-  /**
+  /*!
+   * @todo was not in doxygen
    * Constructor.
    *
    * Constructor from a sequence of polyhedral surfaces, without bounding
@@ -309,6 +351,8 @@ public:
   void set_surface_only() {
     bounding_tree_ = 0;
   }
+/// @}
+
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to

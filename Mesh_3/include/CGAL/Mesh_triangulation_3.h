@@ -122,8 +122,42 @@ public:
   }
 };
 
-// Struct Mesh_triangulation_3
-//
+
+/*!
+\ingroup PkgMesh3MeshClasses
+
+The class `Mesh_triangulation_3` is a class template which provides the triangulation
+type to be used for the 3D triangulation embedding the mesh.
+
+\tparam MD must be a model of `MeshDomain_3`.
+
+\tparam K_ must be a model of `MeshTriangulationTraits_3` or `Default`
+and defaults to `Kernel_traits<MD>::%Kernel`.
+
+\tparam Concurrency_tag_ enables sequential versus parallel meshing and optimization algorithms.
+                        Possible values are `Sequential_tag` (the default), `Parallel_tag`,
+                        and `Parallel_if_available_tag`.
+
+\tparam Vertex_base__ must be a model of `MeshVertexBase_3` or `Default`
+and defaults to `Mesh_vertex_base_3<K_, MD>`.
+
+\tparam Cell_base_ must be a model of `MeshCellBase_3` or `Default`
+and defaults to `Compact_mesh_cell_base_3<K_, MD>`.
+
+\warning To improve the robustness of the meshing process, the input traits `K_`
+         is wrapped with the traits class `Robust_weighted_circumcenter_filtered_traits_3`.
+         The class `Robust_weighted_circumcenter_filtered_traits_3<K_>` upgrades the functors
+         models of `Kernel::ConstructWeightedCircumcenter_3`, `Kernel::ComputeSquaredRadius_3`,
+         and `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3` that are
+         provided by `K_` to use exact computations when the geometric configuration
+         is close to degenerate (e.g. almost coplanar points). <br>
+         Users should therefore be aware that the traits class of the triangulation
+         will have type `Robust_weighted_circumcenter_filtered_traits_3<K_>`.
+
+\sa `make_mesh_3()`
+\sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+
+*/
 template<class MD,
          class K_ = Default,
          class Concurrency_tag_ = Sequential_tag,
@@ -156,8 +190,26 @@ private:
       Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
 
 public:
+
+#ifndef DOXYGEN_RUNNING
   using type = Triangulation;
   using Type = type;
+#else
+
+/// \name Types
+/// @{
+
+/*!
+The triangulation type to be used for the 3D triangulation embedding the mesh.
+This type is a wrapper around the type `CGAL::Regular_triangulation_3`, whose vertex
+and cell base classes are respectively `Vertex_base` and `Cell_base`.
+*/
+typedef unspecified_type type;
+
+#endif
+
+/// @}
+
 };  // end struct Mesh_triangulation_3
 }  // end namespace CGAL
 
