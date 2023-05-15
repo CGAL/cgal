@@ -21,7 +21,7 @@ BUILD_DIR_2="$4"
 NB_CORES="$(grep -c ^processor /proc/cpuinfo)"
 
 if [ -z $PATH_TO_1 ] || [ ! -e $PATH_TO_1 ]; then
-  echo "Please specify a valid path to a doxygen executable."
+  echo "Please specify a valid path to a doxygen executable: $PATH_TO_1 is not valid."
   echo "$0 --help for more information."
   exit 0
 fi
