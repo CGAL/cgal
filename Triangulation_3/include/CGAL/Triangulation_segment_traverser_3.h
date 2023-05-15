@@ -17,7 +17,6 @@
 
 #include <iostream>
 #include <utility>
-#include <tuple>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
@@ -113,7 +112,13 @@ public:
 
     typedef typename Tr::Locate_type                    Locate_type;            //< defines the simplex type returned from location.
 
-    typedef std::tuple<Cell_handle,Locate_type,int,int> Simplex;                //< defines the simplex type.
+    struct Simplex                                                              //< defines the simplex type
+    {
+      Cell_handle cell;
+      Locate_type lt;
+      int li;
+      int lj;
+    };
 
     typedef Cell                                        value_type;             //< defines the value type the iterator refers to.
     typedef Cell&                                       reference;              //< defines the reference type of the iterator.
@@ -287,7 +292,7 @@ public:
          */
     Cell_handle     handle() const
     {
-      return std::get<0>(_cur);
+      return _cur.cell;
     }
 
     //  gives the previous cell.
@@ -308,7 +313,7 @@ public:
          */
     Cell*           operator->()
     {
-      return &*std::get<0>(_cur);
+      return &*(_cur.cell);
     }
 
     //  provides an indirection operator.
@@ -316,7 +321,7 @@ public:
          */
     Cell&           operator*()
     {
-      return *std::get<0>(_cur);
+      return *(_cur.cell);
     }
 
     //  provides a conversion operator.
@@ -324,7 +329,7 @@ public:
          */
     operator Cell_handle() const
     {
-      return std::get<0>(_cur);
+      return _cur.cell;
     }
 
     //  provides a conversion operator.
@@ -423,7 +428,7 @@ public:
      */
     bool            operator==( const Cell_handle& ch ) const
     {
-      return ch == std::get<0>(_cur);
+      return ch == _cur.cell;
     }
 
     //  compares the current cell with `ch`.
@@ -434,7 +439,7 @@ public:
      */
     bool            operator!=( const Cell_handle& ch ) const
     {
-      return ch != std::get<0>(_cur);
+      return ch != _cur.cell;
     }
 // \}
 
@@ -498,32 +503,33 @@ private:
     Edge opposite_edge(Cell_handle c, int li, int lj) const;
     Edge opposite_edge(const Edge& e) const;
 
+protected:
     // ref-accessors to the simplex, for use in internal code
     // access _cur
-    Cell_handle& cell()             { return std::get<0>(_cur); }
-    Cell_handle const& cell() const { return std::get<0>(_cur); }
+    Cell_handle& cell()             { return _cur.cell; }
+    Cell_handle const& cell() const { return _cur.cell; }
 
-    Locate_type& lt()             { return std::get<1>(_cur); }
-    Locate_type const& lt() const { return std::get<1>(_cur); }
+    Locate_type& lt()             { return _cur.lt; }
+    Locate_type const& lt() const { return _cur.lt; }
 
-    int& li()             { return std::get<2>(_cur); }
-    int const& li() const { return std::get<2>(_cur); }
+    int& li()             { return _cur.li; }
+    int const& li() const { return _cur.li; }
 
-    int& lj()             { return std::get<3>(_cur); }
-    int const& lj() const { return std::get<3>(_cur); }
+    int& lj()             { return _cur.lj; }
+    int const& lj() const { return _cur.lj; }
 
     // access _prev
-    Cell_handle& prev_cell()             { return std::get<0>(_prev); }
-    Cell_handle const& prev_cell() const { return std::get<0>(_prev); }
+    Cell_handle& prev_cell()             { return _prev.cell; }
+    Cell_handle const& prev_cell() const { return _prev.cell; }
 
-    Locate_type& prev_lt()             { return std::get<1>(_prev); }
-    Locate_type const& prev_lt() const { return std::get<1>(_prev); }
+    Locate_type& prev_lt()             { return _prev.lt; }
+    Locate_type const& prev_lt() const { return _prev.lt; }
 
-    int& prev_li()             { return std::get<2>(_prev); }
-    int const& prev_li() const { return std::get<2>(_prev); }
+    int& prev_li()             { return _prev.li; }
+    int const& prev_li() const { return _prev.li; }
 
-    int& prev_lj()             { return std::get<3>(_prev); }
-    int const& prev_lj() const { return std::get<3>(_prev); }
+    int& prev_lj()             { return _prev.lj; }
+    int const& prev_lj() const { return _prev.lj; }
 
 }; // class Triangulation_segment_cell_iterator_3
 
