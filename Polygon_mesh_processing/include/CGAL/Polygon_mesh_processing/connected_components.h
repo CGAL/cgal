@@ -423,7 +423,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   if(nb_components_to_keep == 0)
   {
-    CGAL::clear(pmesh);
+    empty(pmesh);
     return num;
   }
 
