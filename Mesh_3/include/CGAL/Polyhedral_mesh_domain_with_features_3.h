@@ -57,11 +57,36 @@
 
 namespace CGAL {
 
-/**
- * @class Polyhedral_mesh_domain_with_features_3
- *
- *
- */
+/*!
+\ingroup PkgMesh3Domains
+
+The class `Polyhedral_mesh_domain_with_features_3` implements a domain whose
+boundary is a simplicial polyhedral surface.
+This surface must be free of intersection.
+It can either be closed,
+included inside another polyhedral surface which is closed and free of intersection,
+or open. In the latter case, the meshing process will only take care of the quality
+of the 1D (features and boundaries) and 2D (surfaces) components of the mesh.
+
+It is a model of the concept `MeshDomainWithFeatures_3`. It also
+provides a member function to automatically detect sharp features and boundaries from
+the input polyhedral surface(s).
+
+\tparam IGT stands for a geometric traits class providing the types
+and functors required to implement the intersection tests and intersection computations
+for polyhedral boundary surfaces. This parameter has to be
+instantiated with a model of the concept
+`IntersectionGeometricTraits_3`.
+
+
+\tparam Polyhedron stands for the type of the input polyhedral surface(s), model of `FaceListGraph`.
+
+\cgalModels `MeshDomainWithFeatures_3`
+
+\sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Mesh_polyhedron_3<IGT>`
+*/
 template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
            class TriangleAccessor= CGAL::Default,
@@ -114,27 +139,50 @@ public:
 
   typedef typename Base::R         R;
   typedef typename Base::Point_3   Point_3;
+
+
+  /// \name Types
+  /// @{
+
+  /*!
+    Numerical type.
+  */
   typedef typename Base::FT        FT;
+
+  /// @}
 
   typedef CGAL::Tag_true           Has_features;
 
   typedef std::vector<Point_3> Bare_polyline;
   typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_index,
                                         Bare_polyline > Polyline_with_context;
-  /// Constructors
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+
+/// \name Creation
+/// @{
+
+  /*!
+    Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface.
+    No feature detection is done at this level. Note that a copy of `bounding_polyhedron` will be done.
+    The polyhedron `bounding_polyhedron` has to be closed and free of intersections.
+    Its interior of `bounding_polyhedron` will be meshed.
+  */
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& bounding_polyhedron,
                                          CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     stored_polyhedra.resize(1);
-    stored_polyhedra[0] = p;
+    stored_polyhedra[0] = bounding_polyhedron;
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[0]);
     this->build();
   }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-
+  /*!
+    \deprecated Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature
+    detection is done at this level. Users must read the file into a `Polyhedron` and call the
+    constructor above.
+  */
   CGAL_DEPRECATED
   Polyhedral_mesh_domain_with_features_3(const std::string& filename,
                                          CGAL::Random* p_rng = nullptr)
@@ -155,14 +203,21 @@ public:
   }
 #endif // not CGAL_NO_DEPRECATED_CODE
 
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-                                         const Polyhedron& bounding_p,
+  /*!
+    Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface, and a bounding polyhedral surface.
+    The first polyhedron should be entirely included inside `bounding_polyhedron`, which has to be closed
+    and free of intersections.
+    Using this constructor enables to mesh a polyhedral surface which is not closed, or has holes.
+    The inside of `bounding_polyhedron` will be meshed.
+  */
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& polyhedron,
+                                         const Polyhedron& bounding_polyhedron,
                                          CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     stored_polyhedra.resize(2);
-    stored_polyhedra[0] = p;
-    stored_polyhedra[1] = bounding_p;
+    stored_polyhedra[0] = polyhedron;
+    stored_polyhedra[1] = bounding_polyhedron;
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[1]);
     this->add_primitives(stored_polyhedra[0]);
@@ -219,17 +274,40 @@ public:
   /// Destructor
   ~Polyhedral_mesh_domain_with_features_3() {}
 
+/// @}
+
   /// Detect features
   void initialize_ts(Polyhedron& p);
 
+
   void detect_features(FT angle_in_degree, std::vector<Polyhedron>& p);
+
+/// \name Operations
+/// @{
+
+  /*!
+    Detects sharp features and boundaries of the internal bounding polyhedron (and the potential internal polyhedron)
+    and inserts them as features of the domain. `angle_bound` gives the maximum
+    angle (in degrees) between the two normal vectors of adjacent triangles.
+    For an edge of the polyhedron, if the angle between the two normal vectors of its
+    incident facets is bigger than the given bound, then the edge is considered as
+    a feature edge.
+  */
   void detect_features(FT angle_in_degree = FT(60))
   {
     detect_features(angle_in_degree, stored_polyhedra);
   }
 
   void detect_borders(std::vector<Polyhedron>& p);
+
+  /*!
+    Detects border edges of the bounding polyhedron and inserts them as features of the domain.
+    This function should be called alone only, and not before or after `detect_features()`.
+  */
+
   void detect_borders() { detect_borders(stored_polyhedra); };
+
+  /// @}
 
   template <typename InputIterator>
   void
