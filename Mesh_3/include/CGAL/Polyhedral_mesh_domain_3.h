@@ -291,9 +291,11 @@ public:
    * Constructor from a sequence of polyhedral surfaces, and a bounding
    * polyhedral surface.
    *
-   * @tparam InputPolyhedraPtrIterator must an iterator of a sequence of
-   * pointers to polyhedra  @todo fix what the type is
+   * @tparam InputPolyhedraPtrIterator must be a model of
+   * `ForwardIterator` and value type `Polyhedron*`
    *
+   * @param begin iterator for a sequence of pointers to polyhedra
+   * @param end iterator for a sequence of pointers to polyhedra
    * @param bounding_polyhedron reference to the bounding surface
    */
   template <typename InputPolyhedraPtrIterator>
