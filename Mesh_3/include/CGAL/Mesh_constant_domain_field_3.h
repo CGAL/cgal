@@ -115,7 +115,7 @@ public:
   */
   void set_size(const FT& size, const int dim, const Index& index)
   {
-    values_.insert(std::make_pair(std::make_pair(dimension,index),size));
+    values_.insert(std::make_pair(std::make_pair(dim,index),size));
   }
   /// @}
 

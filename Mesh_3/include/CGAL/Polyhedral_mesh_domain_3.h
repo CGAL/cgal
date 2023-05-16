@@ -243,8 +243,11 @@ public:
     The inside of `bounding_polyhedron` will be meshed.
   */
 
-  Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = nullptr)
+  Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron
+#ifndef DOXYGEN_RUNNING
+                           , CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
@@ -288,16 +291,19 @@ public:
    * Constructor from a sequence of polyhedral surfaces, and a bounding
    * polyhedral surface.
    *
-   * @param InputPolyhedraPtrIterator must an iterator of a sequence of
-   * pointers to polyhedra
+   * @tparam InputPolyhedraPtrIterator must an iterator of a sequence of
+   * pointers to polyhedra  @todo fix what the type is
    *
    * @param bounding_polyhedron reference to the bounding surface
    */
   template <typename InputPolyhedraPtrIterator>
-  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
-                           InputPolyhedraPtrIterator end,
-                           const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = nullptr)
+  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin
+                           ,InputPolyhedraPtrIterator end
+                           ,const Polyhedron& bounding_polyhedron
+#ifndef DOXYGEN_RUNNING
+                           ,CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : p_rng_(p_rng)
     , delete_rng_(false)
   {
@@ -323,13 +329,16 @@ public:
    * surface. The domain will always answer false to "is_in_domain"
    * queries.
    *
-   * @param InputPolyhedraPtrIterator must an iterator of a sequence of
+   * @tparam InputPolyhedraPtrIterator must an iterator of a sequence of
    * pointers to polyhedra
    */
   template <typename InputPolyhedraPtrIterator>
-  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
-                           InputPolyhedraPtrIterator end,
-                           CGAL::Random* p_rng = nullptr)
+  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin
+                           , InputPolyhedraPtrIterator end
+#ifndef DOXYGEN_RUNNING
+                           , CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : p_rng_(p_rng)
   {
     if(begin != end) {
