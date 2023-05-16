@@ -149,7 +149,7 @@ public:
     Vertex_handle_and_point(Vertex_handle v) : vh(v), wpt(v->point())
     {}
     Vertex_handle_and_point& operator=(Vertex_handle v)
-    { 
+    {
       vh = v;
       wpt = v->point();
       return *this;
