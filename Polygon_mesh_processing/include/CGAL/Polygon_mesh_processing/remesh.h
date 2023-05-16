@@ -19,6 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Uniform_sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Adaptive_sizing_field.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -216,6 +217,23 @@ void isotropic_remeshing(const FaceRange& faces
     Default_sizing(target_edge_length, pmesh),
     pmesh,
     np);
+}
+
+template<typename PolygonMesh
+        , typename FaceRange
+        , typename NamedParameters = parameters::Default_named_parameters>
+void isotropic_remeshing(const FaceRange& faces
+                       , const std::pair<double, double>& edge_len_min_max //todo add defaults?
+                       , const double& tolerance                           //todo add defaults?
+                       , PolygonMesh& pmesh
+                       , const NamedParameters& np = parameters::default_values())
+{
+  typedef Adaptive_sizing_field<PolygonMesh> Adaptive_sizing;
+  isotropic_remeshing<PolygonMesh, FaceRange, Adaptive_sizing, NamedParameters>(
+          faces,
+          Adaptive_sizing(edge_len_min_max, tolerance, pmesh),
+          pmesh,
+          np);
 }
 
 template<typename PolygonMesh
