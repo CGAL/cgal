@@ -53,13 +53,6 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
 
-### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
-
-- Added two new named parameters to the named constructor `CGAL::create_labeled_image_mesh_domain()`
-for automatic detection and protection
-of 1D-curves that lie at the intersection of three or more subdomains,
-extracted from labeled images.
-
 ### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
 
 -   **Breaking change**: The region growing part of the package have been reworked to fix design issues introduced with the handling `FaceGraph` models.
@@ -83,6 +76,12 @@ extracted from labeled images.
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
 
 -   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.
+-   Introduced an overload function template, namely `draw(arr)`, that renders arrangements based on the `Basic_viewer_qt` class template. At this point only 2D arrangements on the plane induced by (i) segments, (ii) conics, and (iii) circular arcs or (linear) segments are supported.
+-   Improved the traits class template that handles conics, namely `Arr_conic_traits_2`. This includes the following:
+    1. Fixed a couple of bugs and slightly optimized some functions.
+    2. Introduced functionality that approximates conics with polylines. (This is used to draw conic curves.)
+    3. **Breaking change**: Changed the interface to generate conic curves. In the past, curves where generated directly using the constructors of the conic and x-monotone conic constructs. Now, they are constructed via function objects provided by the traits. This eliminates the constructions of temporary kernels. The old functionality is obsolete, but still supported for a limited number of versions. It depends on a static member function of the traits. In a future version this function will no longer be static, implying that the old functionality will no longer be supported.
+- Introduced functionality that approximates circular segments with polylines. (This is used to draw conic curves.)
 
 ### [2D Convex Hulls](https://doc.cgal.org/5.6/Manual/packages.html#PkgConvexHull2)
 
@@ -104,6 +103,13 @@ extracted from labeled images.
 
 ### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
+-   Added two new named parameters to the named constructor `CGAL::create_labeled_image_mesh_domain()`
+for automatic detection and protection
+of 1D-curves that lie at the intersection of three or more subdomains,
+extracted from labeled images.
+-   Added `CGAL::Sizing_field_with_aabb_tree`, a geometry-aware sizing field for feature edges in polyhedral domains.
+-   Added new meshing criterion `edge_min_size` to avoid subdividing sharp edges that are shorter than the prescribed size bound.
+-   Added new meshing criteria `facet_min_size` and `cell_min_size` to prevent Delaunay refinement from creating simplices smaller than the prescribed bound.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
@@ -122,6 +128,14 @@ extracted from labeled images.
 ### [2D Minkowski Sums](https://doc.cgal.org/5.6/Manual/packages.html#PkgMinkowskiSum2)
 -   Fixed a bug that made holes in the Minkowski sum disappear
 -   Fixed hole filtering. The code used to erroneously remove holes from the container of holes of polygons with holes that did not affect the minkowsi sum. Now it simply adds those that do affect it.
+
+### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.6/Manual/packages.html#PkgStraightSkeleton2) (major changes)
+-   Added weighted straight skeletons: weighted straight skeletons are a generalization of
+    straight skeletons. Contour edges are assigned a positive weight, which can be understood
+    as assigning a speed to the wavefront spawned from the contour edge.
+-   Added straight skeleton extrusion: this CGAL package now implements the extrusion of weighted
+    straight skeletons of polygons with holes. The output is a closed, combinatorially 2-manifold
+    surface triangle mesh.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------

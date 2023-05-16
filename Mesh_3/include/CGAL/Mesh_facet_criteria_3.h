@@ -52,7 +52,7 @@ namespace CGAL {
 
 */
 template<typename Tr,
-         typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_features<Tr> >
+         typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<Tr> >
 class Mesh_facet_criteria_3
 {
 public:
@@ -100,15 +100,23 @@ typedef Tr::FT FT;
     \param topology is the set of topological constraints
     which have to be verified by each surface facet. See
     section \ref Mesh_3DelaunayRefinement for further details.
-    Note that if one parameter is set to 0, then its corresponding criteria is ignored.
+    Note that if one parameter is set to 0, then its corresponding
+    criteria is ignored.
+    \param min_radius_bound is a uniform lower bound for the radius of
+    the surface Delaunay balls. Only facets with a radius larger than that
+    bound will be refined.
+@todo Does the Note also apply to min_radius_bound?
   */
   template < typename Sizing_field, typename Sizing_field2 >
   Mesh_facet_criteria_3(const FT& angle_bound,
                         const Sizing_field & radius_bound,
                         const Sizing_field2& distance_bound,
-                        const Mesh_facet_topology topology =
-                          FACET_VERTICES_ON_SURFACE)
+                        const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
+                        const FT& min_radius_bound = 0.)
   {
+    if (FT(0) != min_radius_bound)
+      init_min_radius(min_radius_bound);
+
     if ( FT(0) != angle_bound )
       init_aspect(angle_bound);
 
@@ -180,6 +188,12 @@ private:
   {
     typedef Mesh_3::Variable_size_criterion<Tr,Visitor,Sizing_field> Variable_size_criterion;
     criteria_.add(new Variable_size_criterion(radius_bound));
+  }
+
+  void init_min_radius(const FT& min_radius_bound)
+  {
+    typedef Mesh_3::Uniform_size_criterion<Tr, Visitor> Uniform_size_criterion;
+    criteria_.add(new Uniform_size_criterion(min_radius_bound, true/*lower bound*/));
   }
 
   void init_distance(const FT& distance_bound, Tag_false)

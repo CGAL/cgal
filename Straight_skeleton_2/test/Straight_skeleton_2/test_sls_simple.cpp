@@ -7,7 +7,7 @@
 //#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 100
 //#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE 10000000
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
+//#define CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 10000000
 
 void Straight_skeleton_external_trace(std::string m)
@@ -29,7 +29,7 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/draw_polygon_2.h>

@@ -50,7 +50,7 @@ and a sizing field which may be a uniform or variable field.
 */
 
 template <typename Tr,
-          typename Visitor_ = Mesh_3::Cell_criteria_visitor_with_features<Tr> >
+          typename Visitor_ = Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<Tr> >
 class Mesh_cell_criteria_3
 {
 public:
@@ -87,20 +87,27 @@ typedef Tr::FT FT;
 /// @{
 
   /*!
-   * @brief Constructor
-
+   * Returns an object to serve as default criteria for cells.
    * @param radius_edge_bound is the upper bound for the radius-edge
    *                          ratio of the tetrahedra.
    * @param radius_bound is a uniform upper bound
-                         for the circumradii of the tetrahedra in the
-   *                          mesh.
+                         for the circumradii of the tetrahedra in the mesh
+   *
+   * @param min_radius_bound is a uniform lower bound for the
+   *     circumradii of the tetrahedra in the mesh.
+   *     Only cells with a circumradius larger than that
+   *     bound will be refined.
    *
    * See Section \ref introsecparam for further details.
    * Note that if one parameter is set to 0, then its corresponding criteria is ignored.
    */
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
-                       const FT& radius_bound)
+                       const FT& radius_bound,
+                       const FT& min_radius_bound = 0.)
   {
+    if (FT(0) != min_radius_bound)
+      init_min_radius(min_radius_bound);
+
     if ( FT(0) != radius_bound )
       init_radius(radius_bound);
 
@@ -124,11 +131,15 @@ typedef Tr::FT FT;
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
+                       const FT& min_radius_bound = 0.,
                        std::enable_if_t<
                          Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
                        >* = 0
                        )
   {
+    if (FT(0) != min_radius_bound)
+      init_min_radius(min_radius_bound);
+
     init_radius(radius_bound);
 
     if ( FT(0) != radius_edge_bound )
@@ -176,6 +187,13 @@ private:
 
     criteria_.add(new Radius_criterion(radius_bound));
   }
+
+  void init_min_radius(const FT& min_radius_bound)
+  {
+    typedef Mesh_3::Cell_uniform_size_criterion<Tr, Visitor> Radius_criterion;
+    criteria_.add(new Radius_criterion(min_radius_bound, true/*lower bound*/));
+  }
+
 
 private:
   Criteria criteria_;

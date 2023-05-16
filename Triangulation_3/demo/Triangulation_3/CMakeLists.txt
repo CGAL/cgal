@@ -20,7 +20,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS OpenGL)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -70,7 +70,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS T3_demo)
 
   target_link_libraries(T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
-  target_link_libraries(T3_demo PRIVATE Qt5::OpenGL)
+  target_link_libraries(T3_demo PRIVATE Qt5::Widgets Qt5::OpenGL)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(T3_demo PUBLIC CGAL::TBB_support)
   endif()
