@@ -336,7 +336,6 @@ public:
    *
    * @param begin iterator for a sequence of pointers to polyhedra
    * @param end iterator for a sequence of pointers to polyhedra
-   * @param bounding_polyhedron reference to the bounding surface
    */
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin
