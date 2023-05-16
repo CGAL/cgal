@@ -126,15 +126,16 @@ typedef Tr::FT FT;
     The behavior and semantic of the arguments are the same
     as above, except that the radius bound parameter is a functional
     instead of a constant.
-    @todo hide the `enable_if_t`
   */
   template <typename Sizing_field>
-  Mesh_cell_criteria_3(const FT& radius_edge_bound,
-                       const Sizing_field& radius_bound,
-                       const FT& min_radius_bound = 0.,
-                       std::enable_if_t<
+  Mesh_cell_criteria_3(const FT& radius_edge_bound
+                       ,const Sizing_field& radius_bound
+                       ,const FT& min_radius_bound = 0.
+#ifndef DOXYGEN_RUNNING
+                       ,std::enable_if_t<
                          Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
                        >* = 0
+#endif
                        )
   {
     if (FT(0) != min_radius_bound)

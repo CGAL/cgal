@@ -206,9 +206,9 @@ and cell base classes are respectively `Vertex_base` and `Cell_base`.
 */
 typedef unspecified_type type;
 
-#endif
+  /// @}
 
-/// @}
+#endif
 
 };  // end struct Mesh_triangulation_3
 }  // end namespace CGAL

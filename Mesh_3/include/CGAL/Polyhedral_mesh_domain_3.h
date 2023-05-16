@@ -369,7 +369,7 @@ public:
 
 
   /**
-   * Constructs  a set of `n points on the surface, and output them to
+   * Constructs  a set of `n` points on the surface, and output them to
    *  the output iterator `pts` whose value type is required to be
    *  `std::pair<Points_3, Index>`.
    */
