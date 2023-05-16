@@ -950,12 +950,12 @@ void swap_edges(const typename boost::graph_traits<FaceGraph>::halfedge_descript
  *
  * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
  *
- * @param g the graph to empty
+ * @param g the graph whose elements will be removed
  *
  * @sa `CGAL::clear()`
  **/
 template<typename FaceGraph>
-void empty(FaceGraph& g)
+void remove_all_elements(FaceGraph& g)
 {
   while(std::begin(edges(g)) != std::end(edges(g)))
     remove_edge(*std::begin(edges(g)), g);
@@ -984,7 +984,7 @@ inline
 std::enable_if_t<!Has_member_clear<FaceGraph>::value, void>
 clear_impl(FaceGraph& g)
 {
-  empty(g);
+  remove_all_elements(g);
 }
 
 } // namespace internal
@@ -1008,7 +1008,7 @@ clear_impl(FaceGraph& g)
  *
  * @param g the graph to clear
  *
- * @sa `CGAL::empty()`
+ * @sa `CGAL::remove_all_elements()`
  **/
 template<typename FaceGraph>
 void clear(FaceGraph& g)

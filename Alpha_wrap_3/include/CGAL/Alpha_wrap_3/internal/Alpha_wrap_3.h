@@ -657,7 +657,7 @@ public:
     std::cout << "> Extract possibly non-manifold wrap... ()" << std::endl;
 #endif
 
-    empty(output_mesh);
+    remove_all_elements(output_mesh);
 
     CGAL_assertion_code(for(auto cit=m_dt.finite_cells_begin(), cend=m_dt.finite_cells_end(); cit!=cend; ++cit))
     CGAL_assertion(cit->tds_data().is_clear());
@@ -745,7 +745,7 @@ public:
     CGAL_assertion_code(for(Vertex_handle v : m_dt.finite_vertex_handles()))
     CGAL_assertion(!is_non_manifold(v));
 
-    empty(output_mesh);
+    remove_all_elements(output_mesh);
 
     // boundary faces to polygon soup
     std::vector<Point_3> points;

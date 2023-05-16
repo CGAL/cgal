@@ -1265,7 +1265,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     }
     CGAL_assertion(is_polygon_soup_a_polygon_mesh(all_faces[mesh_id]));
 
-    empty(tm);
+    remove_all_elements(tm);
     polygon_soup_to_polygon_mesh(all_corners[mesh_id], all_faces[mesh_id],
                                  tm, parameters::default_values(), parameters::vertex_point_map(vpms[mesh_id]));
   }
