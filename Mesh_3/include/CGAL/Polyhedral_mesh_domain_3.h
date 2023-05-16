@@ -355,9 +355,9 @@ public:
 
 
   /**
-   * Constructs  a set of \ccc{n} points on the surface, and output them to
-   *  the output iterator \ccc{pts} whose value type is required to be
-   *  \ccc{std::pair<Points_3, Index>}.
+   * Constructs  a set of `n points on the surface, and output them to
+   *  the output iterator `pts` whose value type is required to be
+   *  `std::pair<Points_3, Index>`.
    */
   struct Construct_initial_points
   {
@@ -386,9 +386,9 @@ public:
 
 
   /**
-   * Returns true if point~\ccc{p} is in the domain. If \ccc{p} is in the
+   * Returns true if point `p` is in the domain. If `p` is in the
    *  domain, the parameter index is set to the index of the subdomain
-   *  including $p$. It is set to the default value otherwise.
+   *  including `p`. It is set to the default value otherwise.
    */
   struct Is_in_domain
   {
@@ -411,12 +411,12 @@ public:
   typedef boost::mpl::vector<Segment_3, Ray_3, Line_3> Allowed_query_types;
 
   /**
-   * Returns true is the element \ccc{type} intersect properly any of the
+   * Returns true is the element `type` intersect properly any of the
    * surface patches describing the either the domain boundary or some
    * subdomain boundary.
-   * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    * Parameter index is set to the index of the intersected surface patch
-   * if \ccc{true} is returned and to the default \ccc{Surface_patch_index}
+   * if `true` is returned and to the default `Surface_patch_index`
    * value otherwise.
    */
   struct Do_intersect_surface
@@ -452,12 +452,12 @@ public:
   }
 
   /**
-   * Returns a point in the intersection of the primitive \ccc{type}
+   * Returns a point in the intersection of the primitive `type`
    * with some boundary surface.
-   * \ccc{Type1} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
-   * The integer \ccc{dimension} is set to the dimension of the lowest
+   * `Type1` is either `Segment_3`, `Ray_3` or `Line_3`.
+   * The integer `dimension` is set to the dimension of the lowest
    * dimensional face in the input complex containing the returned point, and
-   * \ccc{index} is set to the index to be stored at a mesh vertex lying
+   * `index` is set to the index to be stored at a mesh vertex lying
    * on this face.
    */
   struct Construct_intersection

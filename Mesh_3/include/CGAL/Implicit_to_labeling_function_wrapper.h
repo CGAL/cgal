@@ -217,13 +217,13 @@ public:
    * \param position_vectors the vector of vector of signs. Each vector of positions describes a component.
    * \sa `Sign`
    */
-  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::vector<Sign> >& vps)
-  : funcs(vf), bmasks(vps.size(), Bmask(funcs.size() * 2, false))
+  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::vector<Sign> >& position_vectors)
+  : funcs(implicit_functions), bmasks(position_vectors.size(), Bmask(funcs.size() * 2, false))
   {
     CGAL_assertion(funcs.size() != 0);
 
     std::size_t mask_index = 0;
-    for (std::vector<std::vector<Sign> >::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
+    for (std::vector<std::vector<Sign> >::const_iterator mask_iter = position_vectors.begin(), mask_end_iter = position_vectors.end();
          mask_iter != mask_end_iter;
          ++mask_iter)
     {
@@ -251,8 +251,8 @@ public:
    *
    * Position vectors are built automatically so that the union of components equals the union of the functions.
    */
-  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf)
-  : funcs(vf)
+  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions)
+  : funcs(implicit_functions)
   {
     CGAL_assertion(funcs.size() != 0);
 
@@ -282,13 +282,13 @@ public:
    * \param implicit_functions the vector of implicit functions.
    * \param position_strings the vector of strings. The strings contained in this vector must contain '+' or '-' only. Each string (vector of positions) describes a component.
    */
-  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::string>& vps)
-  : funcs(vf), bmasks(vps.size(), Bmask(funcs.size() * 2, false))
+  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::string>& position_strings)
+  : funcs(implicit_functions), bmasks(position_strings.size(), Bmask(funcs.size() * 2, false))
   {
     CGAL_assertion(funcs.size() != 0);
 
     std::size_t mask_index = 0;
-    for (std::vector<std::string>::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
+    for (std::vector<std::string>::const_iterator mask_iter = position_strings.begin(), mask_end_iter = position_strings.end();
          mask_iter != mask_end_iter;
          ++mask_iter)
     {
