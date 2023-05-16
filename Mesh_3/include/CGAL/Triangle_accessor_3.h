@@ -34,6 +34,26 @@ class Triangle_accessor_3 {
 };
 
 
+/*!
+\ingroup PkgMesh3Domains
+
+The class `Triangle_accessor_3` is a model for the concept `TriangleAccessor_3`. It is
+designed to serve as accessor for objects of type `Polyhedron_3<K>`.
+
+\attention Actually, the class `Triangle_accessor_3` is a partial specialization of the class
+template `template<typename Polyhedron, typename K>
+Triangle_accessor_3<Polyhedron, K>`. One may give another partial
+specialization of this class to handle one's own polyhedron data structure.
+
+@todo Document the other partial specializations
+
+\tparam K is the geometric traits class.
+
+\cgalModels `TriangleAccessor_3`
+
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+
+*/
 template < class K,class Items,
            template < class T, class I, class A>
            class T_HDS,
@@ -42,9 +62,24 @@ class Triangle_accessor_3<Polyhedron_3<K,Items,T_HDS,Alloc>, K >
 {
   typedef Polyhedron_3<K,Items,T_HDS,Alloc> Polyhedron;
 public:
+  /// \name Types
+  /// @{
+  /*!
+    Triangle type.
+  */
   typedef typename K::Triangle_3                    Triangle_3;
+
+  /*!
+    Triangle iterator.
+  */
   typedef typename Polyhedron::Facet_const_iterator Triangle_iterator;
+
+  /*!
+    Triangle handle.
+  */
   typedef typename Polyhedron::Facet_const_handle   Triangle_handle;
+
+  /// @}
 
   Triangle_accessor_3() { }
 
