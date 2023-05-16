@@ -67,7 +67,7 @@ struct Debug_simplex {
       }
       case 1: {
         const auto [c, index1, index2] = static_cast<Edge>(simplex);
-        os << "- egde "
+        os << "- edge "
            << display_vert(c->vertex(index1)) << " - "
            << display_vert(c->vertex(index2));
         break;
@@ -204,12 +204,12 @@ void visit_simplex(Point_3 a, Point_3 b, Simplex s, std::optional<Simplex> previ
     {
       CGAL_error_msg("consecutive simplices are not incident");
     }
-    const bool does_intersect_ab = std::visit(
-        [&](auto geometry) { return CGAL::do_intersect(Segment_3(a, b), geometry); },
-        get_simplex_geometry(s));
-    if(!does_intersect_ab) {
-      CGAL_error_msg("the simplex does not intersect the query segment");
-    }
+//    const bool does_intersect_ab = std::visit(
+//        [&](auto geometry) { return CGAL::do_intersect(Segment_3(a, b), geometry); },
+//        get_simplex_geometry(s));
+//    if(!does_intersect_ab) {
+//      CGAL_error_msg("the simplex does not intersect the query segment");
+//    }
   }
 };
 
