@@ -259,7 +259,6 @@ namespace Point_set {
 
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region& region) const {
 

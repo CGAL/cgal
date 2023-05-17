@@ -222,7 +222,6 @@ namespace Point_set {
       \return Boolean `true` or `false`
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region&) const {
 

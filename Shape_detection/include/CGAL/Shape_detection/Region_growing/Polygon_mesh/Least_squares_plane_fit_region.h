@@ -226,7 +226,6 @@ namespace Polygon_mesh {
       \pre `query` is a valid const_iterator of `input_range`
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region&) const {
 

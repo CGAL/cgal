@@ -528,7 +528,7 @@ namespace internal {
             for (Item neighbor : neighbors) {
 
               if (!get(m_visited, neighbor)) {
-                if (m_region_type.is_part_of_region(item, neighbor, region)) {
+                if (m_region_type.is_part_of_region(neighbor, region)) {
 
                   // Add this neighbor to the other queue so that we can visit it later.
                   put(m_visited, neighbor, true);
@@ -557,7 +557,7 @@ namespace internal {
           bool fits = true;
           Item former = region.front();
           for (Item item : region) {
-            if (!m_region_type.is_part_of_region(former, item, region)) {
+            if (!m_region_type.is_part_of_region(item, region)) {
               fits = false;
               break;
             }
@@ -574,7 +574,7 @@ namespace internal {
 
           // Try to continue growing the region by considering formerly rejected elements.
           for (const std::pair<const Item, const Item>& p : rejected) {
-            if (m_region_type.is_part_of_region(p.first, p.second, region)) {
+            if (m_region_type.is_part_of_region(p.second, region)) {
 
               // Add this neighbor to the other queue so that we can visit it later.
               put(m_visited, p.second, true);
