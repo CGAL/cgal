@@ -118,7 +118,6 @@ public:
     bisection is stopped when the length of the intersected
     segment is less than the product of `error_bound` by the
     radius of `bounding_sphere`.
-    @todo Fix for `p_rng`
   */
   Implicit_mesh_domain_3(Function_ f
                          ,const Sphere_3& bounding_sphere
