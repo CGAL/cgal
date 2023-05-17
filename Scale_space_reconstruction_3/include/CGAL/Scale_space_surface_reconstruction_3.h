@@ -57,9 +57,9 @@ public:
   typedef unspecified_type                      Point_iterator;         ///< defines an iterator over the points.
   typedef const unspecified_type                Point_const_iterator;   ///< defines a constant iterator over the points.
 #else
-  typedef typename std::vector<Point>           Point_vector;
-  typedef typename Point_vector::iterator       Point_iterator;
-  typedef typename Point_vector::const_iterator Point_const_iterator;
+  typedef typename std::vector<Point>           Point_range;
+  typedef typename Point_range::iterator        Point_iterator;
+  typedef typename Point_range::const_iterator  Point_const_iterator;
 #endif
 
 #ifdef DOXYGEN_RUNNING
@@ -67,9 +67,9 @@ public:
   typedef unspecified_type                      Facet_iterator;         ///< defines an iterator over the facets.
   typedef const unspecified_type                Facet_const_iterator;   ///< defines a constant iterator over the facets.
 #else
-  typedef typename std::vector<Facet>           Facet_vector;
-  typedef typename Facet_vector::iterator       Facet_iterator;
-  typedef typename Facet_vector::const_iterator Facet_const_iterator;
+  typedef typename std::vector<Facet>           Facet_range;
+  typedef typename Facet_range::iterator        Facet_iterator;
+  typedef typename Facet_range::const_iterator  Facet_const_iterator;
 #endif
 
   // Default algorithms used (same as in old API)
@@ -78,8 +78,8 @@ public:
 
 private:
 
-  Point_vector m_points;
-  Facet_vector m_facets;
+  Point_range m_points;
+  Facet_range m_facets;
 
   FT m_internal_squared_radius; // For backward compatibility
 
@@ -236,7 +236,7 @@ public:
   std::size_t number_of_points() const { return m_points.size(); }
 
   /// gives the range of points
-  const Point_range points() const { return m_points; }
+  const Point_range& points() const { return m_points; }
 
   /// gives an iterator to the first point at the current scale.
   /** \warning Changes to the scale-space do not cause an automatic update to
@@ -260,7 +260,7 @@ public:
   std::size_t number_of_facets() const { return m_facets.size(); }
 
   /// gives the range of facets
-  const Facet_range facets() const { return m_facets; }
+  const Facet_range& facets() const { return m_facets; }
 
   /// gives an iterator to the first triple in the surface.
   /** \warning Changes to the surface may change its topology.
