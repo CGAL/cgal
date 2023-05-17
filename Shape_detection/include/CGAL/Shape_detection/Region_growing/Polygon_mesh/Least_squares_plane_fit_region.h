@@ -219,7 +219,7 @@ namespace Polygon_mesh {
       \param query
       `Item` of the query face
 
-      The first and third parameters are not used in this implementation.
+      The last parameter is not used in this implementation.
 
       \return Boolean `true` or `false`
 

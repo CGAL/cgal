@@ -217,7 +217,7 @@ namespace Point_set {
       \param query
       item of the query point
 
-      The first and third parameters are not used in this implementation.
+      The last parameter is not used in this implementation.
 
       \return Boolean `true` or `false`
     */

@@ -252,8 +252,6 @@ namespace Point_set {
       \param region
       inlier items of the region
 
-      The first parameter is not used in this implementation.
-
       \return Boolean `true` or `false`
 
     */
