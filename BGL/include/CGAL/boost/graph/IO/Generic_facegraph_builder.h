@@ -105,10 +105,10 @@ public:
     // Default constructors should only be used when VNM, VCM, etc. are defined as Constant_property_maps
     // This fails in cases where get_parameter() succeeds
     // even though internal_np::Lookup_named_param_def defaulted to Constant_property_map
-    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), VNM());
-    VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
-    VTM vtm = choose_parameter(get_parameter(np, internal_np::vertex_texture_map), VTM());
-    FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+    VNM vnm = choose_parameter<VNM>(get_parameter(np, internal_np::vertex_normal_map));
+    VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
+    VTM vtm = choose_parameter<VTM>(get_parameter(np, internal_np::vertex_texture_map));
+    FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
 
     const bool has_vertex_normals = (is_vnm_requested && !(vertex_normals.empty()));
     const bool has_vertex_colors = (is_vcm_requested && !(vertex_colors.empty()));
