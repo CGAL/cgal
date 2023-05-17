@@ -115,14 +115,15 @@ public:
     @param value_outside the value attached to voxels outside of the domain
     to be meshed. It should be lower than `iso_value`
     @param error_bound is relative to the size of the image.
-
-    @todo deal with p_rng
   */
-  Gray_image_mesh_domain_3(const Image& image,
-                           const Image_word_type iso_value,
-                           const Image_word_type value_outside = 0.,
-                           const FT& error_bound = FT(1e-3),
-                           CGAL::Random* p_rng = nullptr)
+  Gray_image_mesh_domain_3(const Image& image
+                           ,const Image_word_type iso_value
+                           ,const Image_word_type value_outside = 0.
+                           ,const FT& error_bound = FT(1e-3)
+#ifndef DOXYGEN_RUNNING
+                           ,CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : Base(parameters::function = Wrapper(image,
                    Transform(iso_value),
                    Transform(iso_value)(value_outside)),

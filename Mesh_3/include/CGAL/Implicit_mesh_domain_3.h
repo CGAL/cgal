@@ -120,10 +120,13 @@ public:
     radius of `bounding_sphere`.
     @todo Fix for `p_rng`
   */
-  Implicit_mesh_domain_3(Function_ f,
-                         const Sphere_3& bounding_sphere,
-                         const FT& error_bound = FT(1e-6),
-                         CGAL::Random* p_rng = nullptr)
+  Implicit_mesh_domain_3(Function_ f
+                         ,const Sphere_3& bounding_sphere
+                         ,const FT& error_bound = FT(1e-6)
+#ifndef DOXYGEN_RUNNING
+                         ,CGAL::Random* p_rng = nullptr
+#endif
+                         )
     : Base(parameters::function = Wrapper(f), parameters::bounding_object = bounding_sphere, parameters::relative_error_bound = error_bound,
            parameters::null_subdomain_index = Null_subdomain_index(), parameters::p_rng = p_rng)  {}
 
