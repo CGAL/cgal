@@ -1,0 +1,4 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Polygon Repair"
+INPUT        = ${CMAKE_SOURCE_DIR}/Polygon_repair_2/doc/Polygon_repair_2/ \
+               ${CMAKE_SOURCE_DIR}/Polygon_repair_2/include

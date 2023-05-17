@@ -1,0 +1,29 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_2D_Polygon_repair
+
+\cgalAutoToc
+\author Ken Arroyo Ohori
+
+This chapter describes the ...
+
+\section SectionPolygonRepair2_Definitions Definitions
+
+Section on definitions here ...
+
+\section SectionPolygonRepair2_Examples Examples
+
+\subsection SubsectionPolygonRepair2_FirstExample First Example
+
+The following example shows ...
+
+\cgalExample{Polygon_repair_2/repair_polygon_2.cpp}
+
+\cgalFigureBegin{figPck,bench.png}
+Left: ...
+\cgalFigureEnd
+
+*/
+} /* namespace CGAL */
