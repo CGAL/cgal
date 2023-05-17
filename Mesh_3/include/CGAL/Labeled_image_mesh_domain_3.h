@@ -120,11 +120,14 @@ public:
     The parameter `error_bound` is relative to the size of the image.
     @todo Document or comment the other parameters
   */
-  Labeled_image_mesh_domain_3(const Image& image,
-                              const FT& error_bound = FT(1e-3),
-                              Subdomain_index value_outside = 0,
-                              Null null = Null(),
-                              CGAL::Random* p_rng = nullptr)
+  Labeled_image_mesh_domain_3(const Image& image
+                              ,const FT& error_bound = FT(1e-3)
+                              ,Subdomain_index value_outside = 0
+                              ,Null null = Null()
+#ifndef DOXYGEN_RUNNING
+                              ,CGAL::Random* p_rng = nullptr
+#endif
+                              )
     : Base(parameters::function = Wrapper(image, Identity(), value_outside),
            parameters::bounding_object = compute_bounding_box(image),
            parameters::relative_error_bound = error_bound,

@@ -267,9 +267,12 @@ public:
     Using this constructor allows to mesh a polyhedral surface which is not closed, or has holes.
     The inside of `bounding_polyhedron` will be meshed.
 */
-  Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = nullptr)
+  Polyhedral_mesh_domain_3(const Polyhedron& p
+                           ,const Polyhedron& bounding_polyhedron
+#ifndef DOXYGEN_RUNNING
+                           ,CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : tree_()
     , bounding_tree_(new AABB_tree_)
     , p_rng_(p_rng)
@@ -425,8 +428,8 @@ public:
   typedef boost::mpl::vector<Segment_3, Ray_3, Line_3> Allowed_query_types;
 
   /**
-   * Returns true is the element `type` intersect properly any of the
-   * surface patches describing the either the domain boundary or some
+   * Returns `true` if the element `type` intersects properly any of the
+   * surface patches describing either the domain boundary or some
    * subdomain boundary.
    * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    * Parameter index is set to the index of the intersected surface patch
