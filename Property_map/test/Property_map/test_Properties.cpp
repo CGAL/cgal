@@ -86,6 +86,8 @@ void test_element_access() {
   properties.erase(1);
   assert(properties.size() == 2);
   assert(properties.capacity() == 100);
+  assert(properties.active_list().size() == 2);
+  assert(properties.inactive_list().size() == 98);
 
   // A newly emplaced element should take the empty slot
   assert(properties.emplace() == 1);

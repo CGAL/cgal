@@ -277,9 +277,9 @@ public:
       array->reserve(n);
   }
 
-  std::size_t size() const { return std::count(m_active_indices.begin(), m_active_indices.end(), true); }
+  [[nodiscard]] std::size_t size() const { return std::count(m_active_indices.begin(), m_active_indices.end(), true); }
 
-  std::size_t capacity() const { return m_active_indices.size(); }
+  [[nodiscard]] std::size_t capacity() const { return m_active_indices.size(); }
 
   Index emplace_back() {
 
@@ -376,6 +376,20 @@ public:
   // todo: I'd prefer to eliminate this, if possible
   void mark_active(Index i) {
     return m_active_indices[i] = true;
+  }
+
+  std::vector<Index> active_list() const {
+    std::vector<Index> indices;
+    for (std::size_t i = 0; i < m_active_indices.size(); ++i)
+      if (m_active_indices[i]) indices.emplace_back(i);
+    return indices;
+  }
+
+  std::vector<Index> inactive_list() const {
+    std::vector<Index> indices;
+    for (std::size_t i = 0; i < m_active_indices.size(); ++i)
+      if (!m_active_indices[i]) indices.emplace_back(i);
+    return indices;
   }
 
   /*!

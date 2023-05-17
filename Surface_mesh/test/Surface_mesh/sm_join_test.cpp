@@ -19,35 +19,24 @@ typedef boost::graph_traits<Sm>::face_descriptor face_descriptor;
 void
 freelist(const Sm& sm, int vc, int fc, int ec)
 {
+  // vc should be the number of in-active vertex indices
   std::cout << "vertex freelist" << std::endl;
-  vertex_descriptor vd = sm.vertex_freelist();
-  while(vd != sm.null_vertex()){
-    --vc;
+  auto unused_vertices = sm.vertex_freelist();
+  for (auto vd: unused_vertices)
     std::cout << vd << std::endl;
-    halfedge_descriptor hd = halfedge(vd,sm);
-    vd = vertex_descriptor((Sm::size_type)hd);
-  }
-  assert(vc == 0);
+  assert(vc == unused_vertices.size());
 
   std::cout << "face freelist" << std::endl;
-  face_descriptor fd = sm.face_freelist();
-  while(fd != sm.null_face()){
-    --fc;
+  auto unused_faces = sm.face_freelist();
+  for (auto fd: unused_faces)
     std::cout << fd << std::endl;
-    halfedge_descriptor hd = halfedge(fd,sm);
-    fd = face_descriptor((Sm::size_type)hd);
-  }
-  assert(fc == 0);
+  assert(fc == unused_faces.size());
 
   std::cout << "edge freelist" << std::endl;
-  edge_descriptor ed = sm.edge_freelist();
-  while(ed != sm.null_edge()){
-    --ec;
+  auto unused_edges = sm.edge_freelist();
+  for (auto ed: unused_edges)
     std::cout << ed << std::endl;
-    halfedge_descriptor hd = next(halfedge(ed,sm),sm);
-    ed = edge(hd,sm);
-  }
-  assert(ec == 0);
+  assert(ec == unused_edges.size());
 }
 
 

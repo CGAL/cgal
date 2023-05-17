@@ -108,24 +108,11 @@ bool read_OFF_with_or_without_fcolors(std::istream& is,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  typename Mesh::template Property_map<Face_index, Color> fcm;
-
   bool is_fcm_requested = !(is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value);
-  if(!is_fcm_requested && scanner.has_colors())
-  {
-    bool created;
-    std::tie(fcm, created) = sm.template add_property_map<Face_index, Color>("f:color", Color(0,0,0));
-    CGAL_assertion(created);
-    is_fcm_requested = true;
-  }
-
-  if(is_fcm_requested)
-  {
-    FCM fcolors = choose_parameter(get_parameter(np, internal_np::face_color_map), fcm);
-    return CGAL::IO::internal::read_OFF_BGL(is, sm, np.face_color_map(fcolors));
-  }
-  else
-  {
+  if (is_fcm_requested || scanner.has_colors()) {
+    auto [fcm, created] = sm.template property_map<Face_index, Color>("f:color");
+    return CGAL::IO::internal::read_OFF_BGL(is, sm, np.face_color_map(fcm));
+  } else {
     return CGAL::IO::internal::read_OFF_BGL(is, sm, np);
   }
 }
@@ -147,24 +134,11 @@ bool read_OFF_with_or_without_vtextures(std::istream& is,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  typename Mesh::template Property_map<Vertex_index, Texture> vtm;
-
   bool is_vtm_requested = !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_texture_map_t>::value);
-  if(!is_vtm_requested && scanner.has_textures())
-  {
-    bool created;
-    std::tie(vtm, created) = sm.template add_property_map<Vertex_index, Texture>("v:texcoord");
-    CGAL_assertion(created);
-    is_vtm_requested = true;
-  }
-
-  if(is_vtm_requested)
-  {
-    VTM vtextures = choose_parameter(get_parameter(np, internal_np::vertex_texture_map), vtm);
-    return read_OFF_with_or_without_fcolors(is, sm, scanner, np.vertex_texture_map(vtextures));
-  }
-  else
-  {
+  if (is_vtm_requested || scanner.has_textures()) {
+    auto [vtm, created] = sm.template property_map<Vertex_index, Texture>("v:texcoord");
+    return read_OFF_with_or_without_fcolors(is, sm, scanner, np.vertex_texture_map(vtm));
+  } else {
     return read_OFF_with_or_without_fcolors(is, sm, scanner, np);
   }
 }
@@ -185,24 +159,11 @@ bool read_OFF_with_or_without_vcolors(std::istream& is,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  typename Mesh::template Property_map<Vertex_index, Color> vcm;
-
-  bool is_vcm_requested = !(is_default_parameter<CGAL_NP_CLASS,  internal_np::vertex_color_map_t>::value);
-  if(!is_vcm_requested && scanner.has_colors())
-  {
-    bool created;
-    std::tie(vcm, created) = sm.template add_property_map<Vertex_index, Color>("v:color", Color(0,0,0));
-    CGAL_assertion(created);
-    is_vcm_requested = true;
-  }
-
-  if(is_vcm_requested)
-  {
-    VCM vcolors = choose_parameter(get_parameter(np, internal_np::vertex_color_map), vcm);
-    return read_OFF_with_or_without_vtextures(is, sm, scanner, np.vertex_color_map(vcolors));
-  }
-  else
-  {
+  bool is_vcm_requested = !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value);
+  if (is_vcm_requested || scanner.has_colors()) {
+    auto [vcm, created] = sm.template property_map<Vertex_index, Color>("v:color");
+    return read_OFF_with_or_without_vtextures(is, sm, scanner, np.vertex_color_map(vcm));
+  } else {
     return read_OFF_with_or_without_vtextures(is, sm, scanner, np);
   }
 }
@@ -224,24 +185,11 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  typename Mesh::template Property_map<Vertex_index, Normal> vnm;
-
   bool is_vnm_requested = !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value);
-  if(!is_vnm_requested && scanner.has_normals())
-  {
-    bool created;
-    std::tie(vnm, created) = sm.template add_property_map<Vertex_index, Normal>("v:normal");
-    CGAL_assertion(created);
-    is_vnm_requested = true;
-  }
-
-  if(is_vnm_requested)
-  {
-    VNM vnormals = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), vnm);
-    return read_OFF_with_or_without_vcolors(is, sm, scanner, np.vertex_normal_map(vnormals));
-  }
-  else
-  {
+  if (is_vnm_requested || scanner.has_normals()) {
+    auto [vnm, created] = sm.template property_map<Vertex_index, Normal>("v:normal");
+    return read_OFF_with_or_without_vcolors(is, sm, scanner, np.vertex_normal_map(vnm));
+  } else {
     return read_OFF_with_or_without_vcolors(is, sm, scanner, np);
   }
 }

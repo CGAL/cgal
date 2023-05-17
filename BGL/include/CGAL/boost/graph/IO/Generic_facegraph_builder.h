@@ -102,6 +102,9 @@ public:
 
     // Construct the graph
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(CGAL::vertex_point, g));
+    // Default constructors should only be used when VNM, VCM, etc. are defined as Constant_property_maps
+    // This fails in cases where get_parameter() succeeds
+    // even though internal_np::Lookup_named_param_def defaulted to Constant_property_map
     VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), VNM());
     VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
     VTM vtm = choose_parameter(get_parameter(np, internal_np::vertex_texture_map), VTM());
