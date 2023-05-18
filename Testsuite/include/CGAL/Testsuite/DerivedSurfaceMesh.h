@@ -30,4 +30,4 @@ namespace CGAL { namespace Testsuite {
 #define CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME CGAL::Surface_mesh<P>
 #include <CGAL/boost/graph/graph_traits_inheritance_macros.h>
 
-#endif CGAL_TESTSUITE_DERIVED_SURFACE_MESH_H
+#endif //CGAL_TESTSUITE_DERIVED_SURFACE_MESH_H
