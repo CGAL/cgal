@@ -584,7 +584,7 @@ one should be cautious when using the unnormalized mean value weights. In that c
 The harmonic coordinates are computed by solving the Laplace equation
 
 <center>
-\f$\Delta \boldsymbol{b} = \boldsymbol{0}\f$
+\f$\Delta b = 0\f$
 </center>
 
 subject to suitable Dirichlet boundary conditions. Harmonic coordinates are the only coordinates
