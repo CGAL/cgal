@@ -19,13 +19,13 @@ int main()
   Sm m;
   Sm::vertex_index u;
 
-  assert(m.num_vertices() == 0);
+  assert(m.number_of_vertices() == 0);
   assert(m.number_of_removed_vertices() == 0);
   for(int i=0; i < 10; i++){
     u = m.add_vertex(Point_3(0,0,0));
     m.remove_vertex(u);
   }
-  assert(m.num_vertices() == 1);
+  assert(m.number_of_vertices() == 0);
   assert(m.number_of_removed_vertices() == 1);
 
 
@@ -34,16 +34,16 @@ int main()
   assert(! m.does_recycle_garbage());
 
   m.add_vertex(Point_3(0,0,0));
-  assert(m.num_vertices() == 2);
+  assert(m.number_of_vertices() == 1);
   assert(m.number_of_removed_vertices() == 1);
 
   m.set_recycle_garbage(true);
   m.add_vertex(Point_3(0,0,0));
-  assert(m.num_vertices() == 2);
+  assert(m.number_of_vertices() == 2);
   assert(m.number_of_removed_vertices() == 0);
 
 
-  std::cout << m.num_vertices() << "  " << m.number_of_removed_vertices() << std::endl;
+  std::cout << m.number_of_vertices() << "  " << m.number_of_removed_vertices() << std::endl;
 
   // make sure all is OK when clearing the mesh
 
@@ -51,9 +51,6 @@ int main()
   auto hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
   auto fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
   auto vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
-  auto vremoved = m.property_map<Vertex_index, bool>("v:removed").first;
-  auto eremoved = m.property_map<Edge_index, bool>("e:removed").first;
-  auto fremoved = m.property_map<Face_index, bool>("f:removed").first;
 
   // first call to squat the first available position
   m.add_property_map<Vertex_index, int>("vprop_dummy");
@@ -78,21 +75,15 @@ int main()
     auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
     auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
     auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
-    auto l_vremoved = m.property_map<Vertex_index, bool>("v:removed").first;
-    auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").first;
-    auto l_fremoved = m.property_map<Face_index, bool>("f:removed").first;
 
-    assert( &vconn.array() == &l_vconn.array() );
-    assert( &hconn.array() == &l_hconn.array() );
-    assert( &fconn.array() == &l_fconn.array() );
-    assert( &vpoint.array() == &l_vpoint.array() );
-    assert( &vremoved.array() == &l_vremoved.array() );
-    assert( &eremoved.array() == &l_eremoved.array() );
-    assert( &fremoved.array() == &l_fremoved.array() );
-    assert( &vprop.array() == &l_vprop.array() );
-    assert( &hprop.array() == &l_hprop.array() );
-    assert( &fprop.array() == &l_fprop.array() );
-    assert( &eprop.array() == &l_eprop.array() );
+    assert( vconn == l_vconn );
+    assert( hconn == l_hconn );
+    assert( fconn == l_fconn );
+    assert( vpoint == l_vpoint );
+    assert( vprop == l_vprop );
+    assert( hprop == l_hprop );
+    assert( fprop == l_fprop );
+    assert( eprop == l_eprop );
   }
 
   {
@@ -102,17 +93,11 @@ int main()
     auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
     auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
     auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
-    auto l_vremoved = m.property_map<Vertex_index, bool>("v:removed").first;
-    auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").first;
-    auto l_fremoved = m.property_map<Face_index, bool>("f:removed").first;
 
-    assert( &vconn.array() == &l_vconn.array() );
-    assert( &hconn.array() == &l_hconn.array() );
-    assert( &fconn.array() == &l_fconn.array() );
-    assert( &vpoint.array() == &l_vpoint.array() );
-    assert( &vremoved.array() == &l_vremoved.array() );
-    assert( &eremoved.array() == &l_eremoved.array() );
-    assert( &fremoved.array() == &l_fremoved.array() );
+    assert( vconn == l_vconn );
+    assert( hconn == l_hconn );
+    assert( fconn == l_fconn );
+    assert( vpoint == l_vpoint );
   }
 
   return 0;

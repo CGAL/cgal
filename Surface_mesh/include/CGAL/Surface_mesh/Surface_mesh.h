@@ -239,9 +239,10 @@ namespace CGAL {
     class SM_Edge_index
     {
     public:
+        // todo: why does Edge_index use a different size type from other indices?
         typedef std::size_t size_type;
 
-        SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
+        SM_Edge_index() = default;
 
         explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
@@ -310,7 +311,7 @@ namespace CGAL {
         }
 
     private:
-        SM_Halfedge_index halfedge_;
+        SM_Halfedge_index halfedge_{};
     };
 #endif
 
@@ -891,12 +892,6 @@ public:
     hconn_(hprops_.add_property<Halfedge_connectivity>("h:connectivity")),
     fconn_(fprops_.add_property<Face_connectivity>("f:connectivity")),
     vpoint_(vprops_.add_property<Point>("v:point")),
-    // todo: the following shouldn't be necessary
-    vremoved_(vprops_.add_property<bool>("v:removed", false)),
-    eremoved_(eprops_.add_property<bool>("e:removed", false)),
-    fremoved_(fprops_.add_property<bool>("f:removed", false)),
-    removed_vertices_(0), removed_edges_(0), removed_faces_(0),
-    garbage_(false),
     anonymous_property_(0) {}
 
   /// Copy constructor: copies `rhs` to `*this`. Performs a deep copy of all properties.
@@ -909,12 +904,6 @@ public:
     vpoint_(vprops_.get_property<Point>("v:point")),
     hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity")),
     fconn_(fprops_.get_property<Face_connectivity>("f:connectivity")),
-    // todo: the following shouldn't be necessary
-    vremoved_(vprops_.get_property<bool>("v:removed")),
-    eremoved_(eprops_.get_property<bool>("e:removed")),
-    fremoved_(fprops_.get_property<bool>("f:removed")),
-    removed_vertices_(0), removed_edges_(0), removed_faces_(0),
-    garbage_(false),
     anonymous_property_(0) {}
 
   /// Move constructor.
@@ -927,12 +916,6 @@ public:
     vpoint_(vprops_.get_property<Point>("v:point")),
     hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity")),
     fconn_(fprops_.get_property<Face_connectivity>("f:connectivity")),
-    // todo: the following shouldn't be necessary
-    vremoved_(vprops_.get_property<bool>("v:removed")),
-    eremoved_(eprops_.get_property<bool>("e:removed")),
-    fremoved_(fprops_.get_property<bool>("f:removed")),
-    removed_vertices_(0), removed_edges_(0), removed_faces_(0),
-    garbage_(false),
     anonymous_property_(0) {}
 
   /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
@@ -959,7 +942,10 @@ public:
 
   /// adds a new vertex, and resizes vertex properties if necessary.
   Vertex_index add_vertex() {
-    return vprops_.emplace();
+    if (recycle_)
+      return vprops_.emplace();
+    else
+      return vprops_.emplace_back();
   }
 
   /// adds a new vertex, resizes vertex properties if necessary,
@@ -978,11 +964,17 @@ public:
   Halfedge_index add_edge() {
 
     // Add properties for a new edge
-    eprops_.emplace();
+    if (recycle_)
+      eprops_.emplace();
+    else
+      eprops_.emplace_back();
 
     // Add properties for a pair of new half-edges
     // The new half-edges are placed adjacently, and we return the index of the first
-    return hprops_.emplace_group(2);
+    if (recycle_)
+      return hprops_.emplace_group(2);
+    else
+      return hprops_.emplace_group_back(2);
   }
 
   /// adds two opposite halfedges, and resizes edge and halfedge properties if necessary.
@@ -1003,7 +995,10 @@ public:
 
   /// adds a new face, and resizes face properties if necessary.
   Face_index add_face() {
-    return fprops_.emplace();
+    if (recycle_)
+      return fprops_.emplace();
+    else
+      return fprops_.emplace_back();
   }
 
   /// if possible, adds a new face with vertices from a range with value type `Vertex_index`.
@@ -1110,7 +1105,18 @@ public:
   ///
   /// After calling this method, the object is the same as a newly constructed object. The additional property maps are also removed and must thus be re-added if needed.
   void clear() {
-    // todo
+    clear_without_removing_property_maps();
+    vprops_.remove_all_properties_except({"v:connectivity", "v:point"});
+    hprops_.remove_all_properties_except({"h:connectivity"});
+    fprops_.remove_all_properties_except({"f:connectivity"});
+    eprops_.remove_all_properties_except({});
+  }
+
+  void clear_without_removing_property_maps() {
+    vprops_.reserve(0);
+    hprops_.reserve(0);
+    eprops_.reserve(0);
+    fprops_.reserve(0);
   }
 
 
@@ -1243,7 +1249,12 @@ public:
   /// checks if any vertices, halfedges, edges, or faces are marked as removed.
   /// \sa collect_garbage
   // todo: remove
-  bool has_garbage() const { return false; }
+  bool has_garbage() const {
+    return number_of_removed_vertices() != 0 ||
+           number_of_removed_edges() != 0 ||
+           number_of_removed_halfedges() != 0 ||
+           number_of_removed_faces() != 0;
+  }
 
   /// really removes vertices, halfedges, edges, and faces which are marked removed.
   /// \sa `has_garbage()`
@@ -1251,7 +1262,9 @@ public:
   /// In case you store indices in an auxiliary data structure
   /// or in a property these indices are potentially no longer
   /// referring to the right elements.
-  void collect_garbage();
+  void collect_garbage() {
+    // todo: this should compress the array
+  }
 
 //  //undocumented convenience function that allows to get old-index->new-index information
 //  template <typename Visitor>
@@ -1261,10 +1274,10 @@ public:
   /// upon addition of new elements.
   /// When set to `true` (default value), new elements are first picked in the garbage (if any)
   /// while if set to `false` only new elements are created.
-  void set_recycle_garbage(bool b);
+  void set_recycle_garbage(bool b) { recycle_ = b; }
 
   /// Getter
-  bool does_recycle_garbage() const;
+  bool does_recycle_garbage() const { return recycle_; }
 
   /// @cond CGAL_DOCUMENT_INTERNALS
   /// removes unused memory from vectors. This shrinks the storage
@@ -1856,24 +1869,9 @@ public:
   template <class I, class T>
   void remove_property_map(Property_map<I, T> p) {
     // todo: this is never used, but it should probably still work
+    // Maybe this could be replaced with removal by name?
   }
 
-
-//  /// removes all property maps for index type `I` added by a call to `add_property_map<I>()`.
-//  /// The memory allocated for those property maps is freed.
-//  template <class I>
-//  void remove_property_maps() {
-//    Property_selector<I>(this).resize_property_array();
-//  }
-
-//  /// removes all property maps for all index types added by a call to `add_property_map()`.
-//  /// The memory allocated for those property maps is freed.
-//  void remove_all_property_maps() {
-//    remove_property_maps<Vertex_index>();
-//    remove_property_maps<Face_index>();
-//    remove_property_maps<Edge_index>();
-//    remove_property_maps<Halfedge_index>();
-//  }
 
   /// @cond CGAL_DOCUMENT_INTERNALS
   /// returns the std::type_info of the value type of the
@@ -1884,7 +1882,7 @@ public:
 
   template <class I>
   const std::type_info& property_type(const std::string& name) {
-    return Property_selector<I>(this)().get_type(name);
+    return get_property_container<I>().property_type(name);
   }
   /// @endcond
 
@@ -1892,7 +1890,7 @@ public:
   /// @tparam I The key type of the properties.
   template <class I>
   std::vector<std::string> properties() const {
-    return Property_selector<I>(const_cast<Self*>(this))().properties();
+    return get_property_container<I>().properties();
   }
 
   /// returns the property for the string "v:point".
@@ -1981,19 +1979,10 @@ private: //------------------------------------------------------- private data
 
   Property_array<Vertex_index, Point>& vpoint_;
 
-  Property_array<Vertex_index, bool>& vremoved_;
-  Property_array<Edge_index, bool>& eremoved_;
-  Property_array<Face_index, bool>& fremoved_;
-
-  size_type removed_vertices_;
-  size_type removed_edges_;
-  size_type removed_faces_;
-
   size_type vertices_freelist_;
   size_type edges_freelist_;
   size_type faces_freelist_;
-  bool garbage_;
-  bool recycle_;
+  bool recycle_ = true;
 
   size_type anonymous_property_;
 };
@@ -2003,13 +1992,13 @@ private: //------------------------------------------------------- private data
  * @{
  */
 
-  /// \relates Surface_mesh
-  /// Inserts `other` into `sm`.
-  /// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
-  /// and analogously for halfedges, edges, and faces.
-  /// Copies entries of all property maps which have the same name in `sm` and `other`.
-  /// that is, property maps which are only in `other` are ignored.
-  /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`.
+/// \relates Surface_mesh
+/// Inserts `other` into `sm`.
+/// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
+/// and analogously for halfedges, edges, and faces.
+/// Copies entries of all property maps which have the same name in `sm` and `other`.
+/// that is, property maps which are only in `other` are ignored.
+/// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`.
 
 template <typename P>
 Surface_mesh<P>& operator+=(Surface_mesh<P>& sm, const Surface_mesh<P>& other) {
@@ -2058,13 +2047,9 @@ operator=(const Surface_mesh<P>& rhs) {
 
 
     // how many elements are removed?
-    removed_vertices_ = rhs.removed_vertices_;
-    removed_edges_ = rhs.removed_edges_;
-    removed_faces_ = rhs.removed_faces_;
     vertices_freelist_ = rhs.vertices_freelist_;
     edges_freelist_ = rhs.edges_freelist_;
     faces_freelist_ = rhs.faces_freelist_;
-    garbage_ = rhs.garbage_;
     recycle_ = rhs.recycle_;
     anonymous_property_ = rhs.anonymous_property_;
   }
@@ -2201,21 +2186,6 @@ degree(Face_index f) const {
     } while (++fvit != fvend);
 
   return count;
-}
-
-template <typename P>
-void
-Surface_mesh<P>::
-set_recycle_garbage(bool b) {
-  recycle_ = b;
-}
-
-
-template <typename P>
-bool
-Surface_mesh<P>::
-does_recycle_garbage() const {
-  return recycle_;
 }
 
 

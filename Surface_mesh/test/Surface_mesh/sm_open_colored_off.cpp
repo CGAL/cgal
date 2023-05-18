@@ -55,8 +55,8 @@ void OpenOFF(int i)
 int main()
 {
   OpenOFF(1);
-//  OpenOFF(2);
-//  OpenOFF(3);
-  std::cerr << "done" << std::endl;
+  OpenOFF(2);
+  OpenOFF(3);
+  std::cout << "done" << std::endl;
   return 0;
 }

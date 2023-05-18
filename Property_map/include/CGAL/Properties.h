@@ -35,6 +35,8 @@ public:
 
   virtual void reset(Index i) = 0;
 
+  virtual const std::type_info& type() = 0;
+
 };
 
 /*!
@@ -68,7 +70,7 @@ public:
     return new_array;
   }
 
-  virtual void copy(const Property_array_base<Index>& other_base) {
+  virtual void copy(const Property_array_base<Index>& other_base) override {
     auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
     m_data = other.m_data;
     CGAL_precondition(m_active_indices.size() == m_data.size());
@@ -96,9 +98,12 @@ public:
     m_data[std::size_t(i)] = m_default_value;
   };
 
-  std::size_t capacity() const { return m_data.size(); }
+  virtual const std::type_info& type() override { return typeid(T); };
 
 public:
+
+  // todo: there's not really a good reason to use this, maybe it should be removed
+  std::size_t capacity() const { return m_data.size(); }
 
   const_reference operator[](Index i) const {
     CGAL_precondition(std::size_t(i) < m_data.size());
@@ -141,9 +146,9 @@ public:
 
   reference operator[](Index i) { return m_array[i]; }
 
-  bool operator==(const Property_array<Index, T>& other) const { return &other.m_array == m_array; }
+  bool operator==(const Property_array_handle<Index, T>& other) const { return other.m_array == m_array; }
 
-  bool operator!=(const Property_array<Index, T>& other) const { return !operator==(other); }
+  bool operator!=(const Property_array_handle<Index, T>& other) const { return !operator==(other); }
 
   inline friend reference get(Property_array_handle<Index, T> p, const Index& i) { return p[i]; }
 
@@ -267,7 +272,33 @@ public:
    */
   bool remove_property(const std::string& name) { return m_property_arrays.erase(name) == 1; }
 
-  std::size_t num_properties() { return m_property_arrays.size(); }
+  void remove_all_properties_except(const std::vector<std::string>& preserved_names) {
+    // todo: if this is used often, it should take a parameter pack instead of a vector
+    // A fold expression could then be used in place of std::find for better performance
+    for (auto it = m_property_arrays.begin(); it != m_property_arrays.end();) {
+      auto const& [name, array] = *it;
+      if (std::find(preserved_names.begin(), preserved_names.end(), name) == preserved_names.end())
+        it = m_property_arrays.erase(it);
+      else
+        it++;
+    }
+  }
+
+  std::vector<std::string> properties() const {
+    std::vector<std::string> property_names{};
+    for (auto const&[name, _] : m_property_arrays)
+      property_names.emplace_back(name);
+    return property_names;
+  }
+
+  std::size_t num_properties() const{ return m_property_arrays.size(); }
+
+  const std::type_info& property_type(const std::string& name) const {
+    if (auto it = m_property_arrays.find(name); it != m_property_arrays.end())
+      return it->second->type();
+    else
+      return typeid(void);
+  }
 
 public:
 
@@ -286,7 +317,7 @@ public:
     // Expand the storage and return the last element
     reserve(capacity() + 1);
     m_active_indices.back() = true;
-    Index first_new_index{capacity() - 1};
+    auto first_new_index = Index(capacity() - 1);
     reset(first_new_index);
     return first_new_index;
   }
@@ -395,7 +426,7 @@ public:
   /*!
    * Adds the elements of the other container to this container for each property which is present in this container.
    *
-   * Gaps are preserved, and all elements of the other container are guaranteed
+   * Gaps in both containers are preserved, and all elements of the other container are guaranteed
    * to appear after the elements of this container.
    * Properties in this container which don't appear in the other container are extended with default values.
    * Properties in the other container which don't appear in this one are not included.
