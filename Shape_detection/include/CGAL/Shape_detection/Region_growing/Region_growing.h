@@ -555,13 +555,11 @@ namespace internal {
 
           // Verify that associated elements are still within the tolerance.
           bool fits = true;
-          Item former = region.front();
           for (Item item : region) {
             if (!m_region_type.is_part_of_region(item, region)) {
               fits = false;
               break;
             }
-            former = item;
           }
 
           // The refitted primitive does not fit all elements of the region, so the growing stops here.
