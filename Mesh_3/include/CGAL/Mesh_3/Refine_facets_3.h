@@ -464,6 +464,9 @@ protected:
   void set_facet_on_self_intersection(const Facet& f, const bool& b) const
   {
     f.first->set_facet_on_self_intersection(f.second, b);
+
+    const Facet mirror = mirror_facet(f);
+    mirror.first->set_facet_on_self_intersection(mirror.second, b);
   }
 
   /// Sets index and dimension of vertex `v`

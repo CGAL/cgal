@@ -668,7 +668,8 @@ public:
       has_self_intersections_ = true;
     }
     CGAL_assertion_code(const Facet& mf = tr.mirror_facet(f));
-    CGAL_assertion(has_self_intersections_ == mf.first->is_facet_on_self_intersection(mf.second));
+    CGAL_assertion(f.first->is_facet_on_self_intersection(f.second)
+                == mf.first->is_facet_on_self_intersection(mf.second));
   }
 
   // Destructor
