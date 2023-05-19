@@ -92,6 +92,8 @@ public:
                           get(vpmap, source(h, m_pmesh)));
   }
 
+  void update_sizing_map(const vertex_descriptor& vnew) const {} //todo ip- rewrite to remove this?
+
 private:
   FT m_sq_short;
   FT m_sq_long;

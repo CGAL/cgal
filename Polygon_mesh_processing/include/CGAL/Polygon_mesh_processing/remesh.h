@@ -38,7 +38,7 @@ template<typename PolygonMesh
        , typename SizingFunction
        , typename NamedParameters>
 void isotropic_remeshing(const FaceRange& faces
-                       , const SizingFunction& sizing
+                       , SizingFunction& sizing
                        , PolygonMesh& pmesh
                        , const NamedParameters& np);
 
@@ -224,14 +224,14 @@ template<typename PolygonMesh
         , typename NamedParameters = parameters::Default_named_parameters>
 void isotropic_remeshing(const FaceRange& faces
                        , const std::pair<double, double>& edge_len_min_max //todo add defaults?
-                       , const double& tolerance                           //todo add defaults?
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
   typedef Adaptive_sizing_field<PolygonMesh> Adaptive_sizing;
+  Adaptive_sizing sizing(edge_len_min_max, pmesh);
   isotropic_remeshing<PolygonMesh, FaceRange, Adaptive_sizing, NamedParameters>(
           faces,
-          Adaptive_sizing(edge_len_min_max, tolerance, pmesh),
+          sizing,
           pmesh,
           np);
 }
@@ -241,7 +241,7 @@ template<typename PolygonMesh
        , typename SizingFunction
        , typename NamedParameters>
 void isotropic_remeshing(const FaceRange& faces
-                       , const SizingFunction& sizing
+                       , SizingFunction& sizing
                        , PolygonMesh& pmesh
                        , const NamedParameters& np)
 {

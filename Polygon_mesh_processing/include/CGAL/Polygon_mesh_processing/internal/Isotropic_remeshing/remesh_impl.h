@@ -478,7 +478,7 @@ namespace internal {
     //if an edge is longer than the given threshold `high`, the edge
     //is split at its midpoint and the two adjacent triangles are bisected (2-4 split)"
     template<typename SizingFunction>
-    void split_long_edges(const SizingFunction& sizing)
+    void split_long_edges(SizingFunction& sizing)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges..." << std::endl;
@@ -536,6 +536,8 @@ namespace internal {
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
+        //todo ip-add
+        sizing.update_sizing_map(vnew);
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
         std::cout << "   Refinement point : " << refinement_point << std::endl;
 #endif
@@ -1080,6 +1082,7 @@ namespace internal {
 
         Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
+        //todo ip - also update sizing field here?
       }
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -1108,6 +1111,7 @@ namespace internal {
           continue;
         //note if v is constrained, it has not moved
         put(vpmap_, v,  proj(v));
+        //todo ip: also update sizing field here?
       }
       CGAL_assertion(is_valid(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -2010,6 +2014,7 @@ private:
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
     CGAL_assertion_code(bool input_mesh_is_valid_;)
+    //todo ip: maybe make sizing field member (reference) here? easier to handle updates
 
   };//end class Incremental_remesher
 }//end namespace internal

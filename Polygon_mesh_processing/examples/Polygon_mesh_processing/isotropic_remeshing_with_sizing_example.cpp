@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const std::pair<double, double> edge_min_max{0.1, 0.4};
-  const double tol = 0.1;
+  //todo ip - update
+  const std::pair<double, double> edge_min_max{0.1, 0.12};
   unsigned int nb_iter = 3;
 
   std::cout << "Start remeshing of " << filename
@@ -30,7 +30,6 @@ int main(int argc, char* argv[])
   PMP::isotropic_remeshing(
       faces(mesh),
       edge_min_max,
-      tol,
       mesh,
       PMP::parameters::number_of_iterations(nb_iter)
       );
