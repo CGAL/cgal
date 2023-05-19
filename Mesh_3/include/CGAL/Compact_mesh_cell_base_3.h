@@ -18,7 +18,6 @@
 
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
@@ -27,6 +26,9 @@
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
+
+#include <bitset>
+#include <array>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
@@ -652,7 +654,7 @@ private:
   std::array<Index, 4> surface_center_index_table_ = {};
   /// Stores whether a facet has its surface center on a facet involved
   /// in self-intersections
-  std::array<bool, 4> self_intersections_table_ = {};
+  std::bitset<4> self_intersections_table_ = {};
 
   std::array<Cell_handle, 4> N;
   std::array<Vertex_handle, 4> V;
