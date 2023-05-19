@@ -131,7 +131,7 @@ type to be used for the 3D triangulation embedding the mesh.
 
 \tparam MD must be a model of `MeshDomain_3`.
 
-\tparam K_ must be a model of `MeshTriangulationTraits_3` or `Default`
+\tparam Gt must be a model of `MeshTriangulationTraits_3` or `Default`
 and defaults to `Kernel_traits<MD>::%Kernel`.
 
 \tparam Concurrency_tag_ enables sequential versus parallel meshing and optimization algorithms.
@@ -139,51 +139,51 @@ and defaults to `Kernel_traits<MD>::%Kernel`.
                         and `Parallel_if_available_tag`.
 
 \tparam Vertex_base__ must be a model of `MeshVertexBase_3` or `Default`
-and defaults to `Mesh_vertex_base_3<K_, MD>`.
+and defaults to `Mesh_vertex_base_3<Gt, MD>`.
 
 \tparam Cell_base_ must be a model of `MeshCellBase_3` or `Default`
-and defaults to `Compact_mesh_cell_base_3<K_, MD>`.
+and defaults to `Compact_mesh_cell_base_3<Gt, MD>`.
 
-\warning To improve the robustness of the meshing process, the input traits `K_`
+\warning To improve the robustness of the meshing process, the input traits `Gt`
          is wrapped with the traits class `Robust_weighted_circumcenter_filtered_traits_3`.
-         The class `Robust_weighted_circumcenter_filtered_traits_3<K_>` upgrades the functors
+         The class `Robust_weighted_circumcenter_filtered_traits_3<Gt>` upgrades the functors
          models of `Kernel::ConstructWeightedCircumcenter_3`, `Kernel::ComputeSquaredRadius_3`,
          and `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3` that are
-         provided by `K_` to use exact computations when the geometric configuration
+         provided by `Gt` to use exact computations when the geometric configuration
          is close to degenerate (e.g. almost coplanar points). <br>
          Users should therefore be aware that the traits class of the triangulation
-         will have type `Robust_weighted_circumcenter_filtered_traits_3<K_>`.
+         will have type `Robust_weighted_circumcenter_filtered_traits_3<Gt>`.
 
 \sa `make_mesh_3()`
 \sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 
 */
 template<class MD,
-         class K_ = Default,
-         class Concurrency_tag_ = Sequential_tag,
-         class Vertex_base_ = Default,
-         class Cell_base_   = Default>
+         class Gt  = Default,
+         class ConcurrencyTag = Sequential_tag,
+         class VertexBase = Default,
+         class CellBase   = Default>
 struct Mesh_triangulation_3
 {
 private:
-  using K = typename Default::Lazy_get<K_, Kernel_traits<MD> >::type;
+  using K = typename Default::Lazy_get<Gt, Kernel_traits<MD> >::type;
 
   using Geom_traits = typename details::Mesh_geom_traits_generator<K>::type;
 
   using Indices_tuple = Mesh_3::internal::Indices_tuple_t<MD>;
   using Vertex_base = typename Default::Get<
-    Vertex_base_,
+    VertexBase,
     Mesh_vertex_generator_3<Geom_traits,
                             Indices_tuple,
                             typename MD::Index> >::type;
   using Cell_base = typename Default::Get<
-    Cell_base_,
+    CellBase,
     Compact_mesh_cell_generator_3<Geom_traits,
                                   typename MD::Subdomain_index,
                                   typename MD::Surface_patch_index,
                                   typename MD::Index> >::type;
   using Concurrency_tag =
-      typename Default::Get<Concurrency_tag_, Sequential_tag>::type;
+      typename Default::Get<ConcurrencyTag, Sequential_tag>::type;
   struct Tds : public Triangulation_data_structure_3<Vertex_base, Cell_base,
                                                      Concurrency_tag> {};
   using Triangulation =

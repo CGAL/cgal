@@ -523,7 +523,7 @@ features into any model of the `MeshDomain_3` concept.
 The 1-dimensional features are described as polylines
 whose endpoints are the added corners.
 
-\tparam MeshDomain_3 is the type
+\tparam MD is the type
 of the domain which should be extended.
 It has to be a model of the `MeshDomain_3` concept.
 
@@ -536,16 +536,17 @@ It has to be a model of the `MeshDomain_3` concept.
 \sa `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
 
 */
-template < typename MeshDomain_3 >
+template < typename MD >
 class Mesh_domain_with_polyline_features_3
-  : public MeshDomain_3
+  : public MD
 {
-  typedef Mesh_domain_with_polyline_features_3<MeshDomain_3> Self;
+  typedef Mesh_domain_with_polyline_features_3<MD> Self;
+
 public:
 /// \name Types
 /// @{
-  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index;
-  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index;
+  typedef typename MD::Surface_patch_index           Surface_patch_index;
+  typedef typename MD::Subdomain_index               Subdomain_index;
   typedef int                                        Curve_index;
   typedef int                                        Corner_index;
 
@@ -553,14 +554,14 @@ public:
   typedef unspecified_type                           Index;
 #else
   typedef typename Mesh_3::internal::Index_generator_with_features<
-    typename MeshDomain_3::Subdomain_index,
+    typename MD::Subdomain_index,
     Surface_patch_index,
     Curve_index,
     Corner_index>::type                              Index;
 #endif
 
   typedef CGAL::Tag_true                             Has_features;
-  typedef typename MeshDomain_3::R::FT               FT;
+  typedef typename MD::R::FT                         FT;
 /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -569,9 +570,9 @@ public:
   typedef Curve_index Curve_segment_index;
 #endif
 
-  typedef typename MeshDomain_3::R         Gt;
+  typedef typename MD::R           Gt;
   typedef Gt                       R;
-  typedef typename MeshDomain_3::Point_3   Point_3;
+  typedef typename MD::Point_3     Point_3;
 #endif // DOXYGEN_RUNNING
 
 /// \name Creation
@@ -581,7 +582,7 @@ public:
 
   template <typename ... T>
   Mesh_domain_with_polyline_features_3(const T& ...o)
-    : MeshDomain_3(o...)
+    : MD(o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}

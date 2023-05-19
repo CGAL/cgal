@@ -129,6 +129,8 @@ the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
 
+@todo Document TriangleAccessor as it was template parameter. What about the two others?
+
 \cgalModels `MeshDomain_3`
 
 \sa `IntersectionGeometricTraits_3`
@@ -139,7 +141,7 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 
 template<class Polyhedron,/*FaceGraph*/
          class IGT_,
-         class = CGAL::Default,
+         class TriangleAccessor = CGAL::Default,
          class Patch_id_ = void,
          class Use_exact_intersection_construction_tag = CGAL::Tag_true>
 class Polyhedral_mesh_domain_3
