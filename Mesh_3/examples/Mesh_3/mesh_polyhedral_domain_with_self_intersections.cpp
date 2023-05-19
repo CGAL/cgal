@@ -40,9 +40,10 @@ using Mesh_criteria = CGAL::Mesh_criteria_3<Tr,
 using namespace CGAL::parameters;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-int main(int argc, char*argv[])
+int main(int argc, char* argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/elephants_intersecting.off";
+  const std::string fname = (argc>1) ? argv[1]
+    : CGAL::data_file_path("meshes/elephants_intersecting.off");
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(fname);
