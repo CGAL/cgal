@@ -141,6 +141,25 @@ public:
   typedef typename Gt::Plane_3       Plane;
   typedef typename Gt::Object_3      Object;
 
+#ifdef CGAL_LINKED_WITH_TBB
+  // For parallel methods, one store a hint (a `Vertex_handle`).
+  // We need to have a copy of the point of that vertex as a cache, because
+  // calls to `hint->point()` might not be thread-safe.
+  struct Vertex_handle_and_point {
+    Vertex_handle_and_point(Vertex_handle v) : vh(v), wpt(v->point())
+    {}
+    Vertex_handle_and_point& operator=(Vertex_handle v)
+    {
+      vh = v;
+      wpt = v->point();
+      return *this;
+    }
+    Vertex_handle vh;
+    Weighted_point wpt;
+  };
+  using Hint = tbb::enumerable_thread_specific<Vertex_handle_and_point>;
+#endif // CGAL_LINKED_WITH_TBB
+
   //Tag to distinguish Delaunay from regular triangulations
   typedef Tag_true                   Weighted_tag;
 
@@ -400,7 +419,7 @@ public:
         ++i;
       }
 
-      tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
+      Hint tls_hint(hint->vertex(0));
       tbb::parallel_for(tbb::blocked_range<size_t>(i, num_points),
                         Insert_point<Self>(*this, points, tls_hint));
 
@@ -532,7 +551,7 @@ private:
         ++i;
       }
 
-      tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
+      Hint tls_hint(hint->vertex(0));
       tbb::parallel_for(tbb::blocked_range<size_t>(i, num_points),
                         Insert_point_with_info<Self>(*this, points, infos, indices, tls_hint));
 
@@ -1399,13 +1418,13 @@ protected:
 
     RT& m_rt;
     const std::vector<Weighted_point>& m_points;
-    tbb::enumerable_thread_specific<Vertex_handle>& m_tls_hint;
+    Hint& m_tls_hint;
 
   public:
     // Constructor
     Insert_point(RT& rt,
                  const std::vector<Weighted_point>& points,
-                 tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
+                 Hint& tls_hint)
       : m_rt(rt), m_points(points), m_tls_hint(tls_hint)
     {}
 
@@ -1417,7 +1436,9 @@ protected:
             "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
 
-      Vertex_handle& hint = m_tls_hint.local();
+      auto& vertex_hint_and_point = m_tls_hint.local();
+      Vertex_handle& hint = vertex_hint_and_point.vh;
+      Weighted_point& hint_point_mem = vertex_hint_and_point.wpt;
       Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
 
       for(size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
@@ -1431,14 +1452,12 @@ protected:
           // the hint.
           if(!vertex_validity_check(hint, m_rt.tds()))
           {
-            hint = m_rt.finite_vertices_begin();
+            vertex_hint_and_point = m_rt.finite_vertices_begin();
             continue;
           }
 
           // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
           // does not get its position changed to P2 != P1.
-          const Weighted_point hint_point_mem = hint->point();
-
           if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
           {
             // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
@@ -1447,7 +1466,7 @@ protected:
             if(!vertex_validity_check(hint, m_rt.tds()) ||
                hint->point() != hint_point_mem)
             {
-              hint = m_rt.finite_vertices_begin();
+              vertex_hint_and_point = m_rt.finite_vertices_begin();
               m_rt.unlock_all_elements();
               continue;
             }
@@ -1463,7 +1482,7 @@ protected:
 
             if(could_lock_zone)
             {
-              hint = (v == Vertex_handle() ? c->vertex(0) : v);
+              vertex_hint_and_point = (v == Vertex_handle() ? c->vertex(0) : v);
               m_rt.unlock_all_elements();
               success = true;
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
@@ -1502,7 +1521,7 @@ protected:
     const std::vector<Weighted_point>& m_points;
     const std::vector<Info>& m_infos;
     const std::vector<std::size_t>& m_indices;
-    tbb::enumerable_thread_specific<Vertex_handle>& m_tls_hint;
+    Hint& m_tls_hint;
 
   public:
     // Constructor
@@ -1510,7 +1529,7 @@ protected:
                            const std::vector<Weighted_point>& points,
                            const std::vector<Info>& infos,
                            const std::vector<std::size_t>& indices,
-                           tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
+                           Hint& tls_hint)
       : m_rt(rt), m_points(points), m_infos(infos), m_indices(indices),
         m_tls_hint(tls_hint)
     {}
@@ -1523,7 +1542,9 @@ protected:
             "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
 
-      Vertex_handle& hint = m_tls_hint.local();
+      auto& vertex_hint_and_point = m_tls_hint.local();
+      Vertex_handle& hint = vertex_hint_and_point.vh;
+      Weighted_point& hint_point_mem = vertex_hint_and_point.wpt;
       Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
 
       for(size_t i_idx = r.begin() ; i_idx != r.end() ; ++i_idx)
@@ -1538,14 +1559,12 @@ protected:
           // the hint.
           if(!vertex_validity_check(hint, m_rt.tds()))
           {
-            hint = m_rt.finite_vertices_begin();
+            vertex_hint_and_point = m_rt.finite_vertices_begin();
             continue;
           }
 
           // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
           // does not get its position changed to P2 != P1.
-          const Weighted_point hint_point_mem = hint->point();
-
           if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
           {
             // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
@@ -1554,7 +1573,7 @@ protected:
             if(!vertex_validity_check(hint, m_rt.tds()) ||
                hint->point() != hint_point_mem)
             {
-              hint = m_rt.finite_vertices_begin();
+              vertex_hint_and_point = m_rt.finite_vertices_begin();
               m_rt.unlock_all_elements();
               continue;
             }
@@ -1572,12 +1591,12 @@ protected:
             {
               if(v == Vertex_handle())
               {
-                hint = c->vertex(0);
+                vertex_hint_and_point = c->vertex(0);
               }
               else
               {
                 v->info() = m_infos[i_point];
-                hint = v;
+                vertex_hint_and_point = v;
               }
 
               m_rt.unlock_all_elements();
