@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katriopla, Sébastien Loriot, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -49,6 +49,7 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPCombinatorialRepair :  repair of polygon meshes and polygon soups.
 - \ref PMPGeometricRepair :  repair of the geometry of polygon meshes.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
+- \ref PMPICC : computing curvatures (mean, gaussian, principal) on a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
@@ -935,6 +936,128 @@ not provide storage for the normals.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}
 
+****************************************
+\section PMPICC Computing Curvatures
+
+This package provides methods to compute curvatures on polygonal meshes based on Interpolated
+Corrected Curvatures on Polyhedral Surfaces \cgalCite{lachaud2020}. This includes mean curvature,
+Gaussian curvature, principal curvatures and directions. These can be computed on triangle meshes,
+quad meshes, and meshes with n-gon faces (for n-gons, the centroid must be inside the n-gon face).
+The algorithms used prove to work well in general. Also, on meshes with noise on vertex positions,
+they give accurate results, on the condition that the correct vertex normals are provided.
+
+\subsection ICCBackground Brief Background
+
+Surface curvatures are quantities that describe the local geometry of a surface. They are important in many
+geometry processing applications. As surfaces are 2-dimensional objects (embedded in 3D), they can bend
+in 2 independent directions. These directions are called principal directions, and the amount of bending
+in each direction is called the principal curvature: \f$ k_1 \f$ and \f$ k_2 \f$ (denoting max and min
+curvatures). Curvature is usually expressed as scalar quantities like the mean curvature \f$ H \f$ and
+the Gaussian curvature \f$ K \f$ which are defined in terms of the principal curvatures.
+
+The algorithms are based on the two papers \cgalCite{lachaud2022} and \cgalCite{lachaud2020}. They
+introduce a new way to compute curvatures on polygonal meshes. The main idea in \cgalCite{lachaud2022} is
+based on decoupling the normal information from the position information, which is useful for dealing with
+digital surfaces, or meshes with noise on vertex positions. \cgalCite{lachaud2020} introduces some
+extensions to this framework. As it uses linear interpolation on the corrected normal vector field
+to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
+curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
+with vertices \a i, \a j, \a k:
+
+\f[
+  \begin{align*}
+  \mu^{(0)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{x}_j - \mathbf{x}_i) \times (\mathbf{x}_k - \mathbf{x}_i) \rangle, \\
+  \mu^{(1)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{u}_k - \mathbf{u}_j) \times \mathbf{x}_i + (\mathbf{u}_i - \mathbf{u}_k) \times \mathbf{x}_j + (\mathbf{u}_j - \mathbf{u}_i) \times \mathbf{x}_k \rangle, \\
+  \mu^{(2)}(\tau_{ijk}) = &\frac{1}{2} \langle \mathbf{u}_i \mid \mathbf{u}_j \times \mathbf{u}_k \rangle, \\
+  \mu^{\mathbf{X},\mathbf{Y}}(\tau_{ijk}) = & \frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_k -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_j - \mathbf{x}_i) \big\rangle
+    -\frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_j -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_k - \mathbf{x}_i) \big\rangle,
+  \end{align*}
+\f]
+where \f$ \langle \cdot \mid \cdot \rangle \f$ denotes the usual scalar product,
+\f$ \bar{\mathbf{u}}=\frac{1}{3}( \mathbf{u}_i + \mathbf{u}_j + \mathbf{u}_k )\f$.
+
+The first measure \f$ \mu^{(0)} \f$ is the area measure of the triangle, and the measures \f$ \mu^{(1)} \f$ and
+\f$ \mu^{(2)} \f$ are the mean and Gaussian corrected curvature measures of the triangle. The last measure
+\f$ \mu^{\mathbf{X},\mathbf{Y}} \f$ is the anisotropic corrected curvature measure of the triangle. The
+anisotropic measure is later used to compute the principal curvatures and directions through an eigenvalue
+solver.
+
+The interpolated curvature measures are then computed for each vertex \f$ v \f$ as the sum of
+the curvature measures of the faces in a ball around \f$ v \f$ weighted by the inclusion ratio of the
+triangle in the ball. if the ball radius is not specified, the sum is instead over the incident faces
+of \f$ v \f$.
+
+To get the final curvature value for a vertex \f$ v \f$, the respective interpolated curvature measure
+is divided by the interpolated area measure.
+
+\f[
+\mu^{(k)}( B ) = \sum_{\tau : \text{triangle} } \mu^{(k)}( \tau ) \frac{\mathrm{Area}( \tau \cap B )}{\mathrm{Area}(\tau)}.
+\f]
+
+\subsection ICCAPI API
+
+The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`,
+`Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
+
+These computations are performed using (on all vertices of the mesh):
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
+
+Where it is recommended to use the last function for computing multiple curvatures (for example: mean and
+Gaussian) as the implementation performs the shared computations only once, making it more efficient.
+
+Similarly, we can use the following functions to compute curvatures on a specific vertex:
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature_one_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_one_vertex()`
+
+\subsection ICCResults Results & Performance
+
+**To be updated**
+
+\cgalFigureRef{icc_diff_radius} shows how the mean curvature changes depending on
+the named parameter `ball_radius`, which can be set to a value > 0 to get a smoother
+distribution of values and "diffuses" the extreme values of curvatures across the mesh.
+
+\cgalFigureAnchor{icc_diff_radius}
+<center>
+<img src="icc_diff_radius.png" style="max-width:85%;"/>
+</center>
+\cgalFigureCaptionBegin{icc_diff_radius}
+The mean curvature on a mesh with different values for the ball radius
+parameter: (a) R = 0, (b) R = 0.025, (c) R = 0.05, (d) R = 0.16. Note that the max
+edge length is 0.031 and the size of the bounding box of the mesh is 1 x .7 x .8.
+\cgalFigureCaptionEnd
+
+\ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
+a curvature value to each vertex.
+
+\subsection ICCExampleSM Interpolated Corrected Curvatures on a Surface Mesh Example
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in the property maps provided by the class `Surface_mesh`.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_SM.cpp}
+
+\subsection ICCExamplePH Interpolated Corrected Curvatures on a Polyhedron Example
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in dynamic property maps as the class `Polyhedron_3` does
+not provide storage for the curvatures.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_PH.cpp}
+
+\subsection ICCExampleSV Interpolated Corrected Curvatures on a Vertex Example
+
+The following example illustrates how to
+compute the curvatures on a specific vertex
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp}
 
 ****************************************
 \section PMPSlicer Slicer
@@ -1143,6 +1266,10 @@ available on 7th of October 2020.  It only uses the high level algorithm of chec
 is covered by a set of prisms, where each prism is an offset for an input triangle.
 That is, the implementation in \cgal does not use indirect predicates.
 
+The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
+supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{lachaud2020}.
+<a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
+used as a reference during the project.
 
 */
 } /* namespace CGAL */

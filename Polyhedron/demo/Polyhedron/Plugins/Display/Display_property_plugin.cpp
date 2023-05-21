@@ -8,6 +8,7 @@
 #include <QColorDialog>
 #include <QPalette>
 #include <QColor>
+#include <QSlider>
 #include <QStyleFactory>
 #include <QMessageBox>
 #include <QAbstractItemView>
@@ -15,6 +16,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include "Scene_points_with_normal_item.h"
 
@@ -31,6 +33,7 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <type_traits>
 #include <unordered_map>
+#include <vector>
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
@@ -40,6 +43,8 @@
 //Item for heat values
 typedef CGAL::Three::Triangle_container Tri;
 typedef CGAL::Three::Viewer_interface VI;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 class Scene_heat_item
     : public CGAL::Three::Scene_item_rendering_helper
@@ -333,7 +338,10 @@ class DisplayPropertyPlugin :
   typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh, CGAL::Heat_method_3::Intrinsic_Delaunay> Heat_method_idt;
   typedef CGAL::dynamic_vertex_property_t<bool>                        Vertex_source_tag;
   typedef boost::property_map<SMesh, Vertex_source_tag>::type Vertex_source_map;
-
+  enum CurvatureType {
+    MEAN_CURVATURE,
+    GAUSSIAN_CURVATURE,
+};
 public:
 
   bool applicable(QAction* action) const Q_DECL_OVERRIDE
@@ -482,8 +490,10 @@ public:
     connect(scene_obj, SIGNAL(itemIndexSelected(int)),
             this,SLOT(detectScalarProperties(int)));
 
-    on_propertyBox_currentIndexChanged(0);
+    connect(dock_widget->expandingRadiusSlider, SIGNAL(valueChanged(int)),
+        this, SLOT(setExpandingRadius(int)));
 
+    on_propertyBox_currentIndexChanged(0);
 
   }
 private:
@@ -529,6 +539,8 @@ private Q_SLOTS:
         dock_widget->propertyBox->addItem("Scaled Jacobian");
         dock_widget->propertyBox->addItem("Heat Intensity");
         dock_widget->propertyBox->addItem("Heat Intensity (Intrinsic Delaunay)");
+        dock_widget->propertyBox->addItem("Interpolated Corrected Mean Curvature");
+        dock_widget->propertyBox->addItem("Interpolated Corrected Gaussian Curvature");
       detectSMScalarProperties(sm_item->face_graph());
 
     }
@@ -603,6 +615,14 @@ private Q_SLOTS:
         return;
       sm_item->setRenderingMode(Gouraud);
       break;
+    case 4: // Interpolated Corrected Mean Curvature
+        displayInterpolatedCurvatureMeasure(sm_item, MEAN_CURVATURE);
+        sm_item->setRenderingMode(Gouraud);
+        break;
+    case 5: // Interpolated Corrected Gaussian Curvature
+        displayInterpolatedCurvatureMeasure(sm_item, GAUSSIAN_CURVATURE);
+        sm_item->setRenderingMode(Gouraud);
+        break;
     default:
       if(dock_widget->propertyBox->currentText().contains("v:"))
       {
@@ -637,6 +657,14 @@ private Q_SLOTS:
           sm_item->face_graph()->property_map<face_descriptor,double>("f:angle");
       if(does_exist)
         sm_item->face_graph()->remove_property_map(pmap);
+      std::tie(pmap, does_exist) =
+        sm_item->face_graph()->property_map<face_descriptor, double>("v:interpolated_corrected_mean_curvature");
+      if (does_exist)
+          sm_item->face_graph()->remove_property_map(pmap);
+      std::tie(pmap, does_exist) =
+        sm_item->face_graph()->property_map<face_descriptor, double>("v:interpolated_corrected_Gaussian_curvature");
+      if (does_exist)
+        sm_item->face_graph()->remove_property_map(pmap);
     });
     QApplication::restoreOverrideCursor();
     sm_item->invalidateOpenGLBuffers();
@@ -668,12 +696,20 @@ private Q_SLOTS:
       switch(dock_widget->propertyBox->currentIndex())
       {
       case 0:
-        dock_widget->zoomToMinButton->setEnabled(angles_max.count(sm_item)>0 );
+        dock_widget->zoomToMinButton->setEnabled(angles_min.count(sm_item)>0 );
         dock_widget->zoomToMaxButton->setEnabled(angles_max.count(sm_item)>0 );
         break;
       case 1:
-        dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(sm_item)>0);
+        dock_widget->zoomToMinButton->setEnabled(jacobian_min.count(sm_item)>0);
         dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(sm_item)>0);
+        break;
+      case 4:
+        dock_widget->zoomToMinButton->setEnabled(mean_curvature_min.count(sm_item) > 0);
+        dock_widget->zoomToMaxButton->setEnabled(mean_curvature_max.count(sm_item) > 0);
+        break;
+      case 5:
+        dock_widget->zoomToMinButton->setEnabled(gaussian_curvature_min.count(sm_item) > 0);
+        dock_widget->zoomToMaxButton->setEnabled(gaussian_curvature_max.count(sm_item) > 0);
         break;
       default:
         break;
@@ -685,6 +721,10 @@ private Q_SLOTS:
   {
     Scene_surface_mesh_item* item =
         qobject_cast<Scene_surface_mesh_item*>(sender());
+
+    maxEdgeLength = -1;
+    setExpandingRadius(dock_widget->expandingRadiusSlider->value());
+
     if(!item)
       return;
     SMesh& smesh = *item->face_graph();
@@ -701,11 +741,22 @@ private Q_SLOTS:
     {
       smesh.remove_property_map(angles);
     }
+    SMesh::Property_map<vertex_descriptor, double> mean_curvature;
+    std::tie(mean_curvature, found) = smesh.property_map<vertex_descriptor, double>("v:interpolated_corrected_mean_curvature");
+    if (found)
+    {
+      smesh.remove_property_map(mean_curvature);
+    }
+    SMesh::Property_map<vertex_descriptor, double> gaussian_curvature;
+    std::tie(gaussian_curvature, found) = smesh.property_map<vertex_descriptor, double>("v:interpolated_corrected_Gaussian_curvature");
+    if (found)
+    {
+      smesh.remove_property_map(gaussian_curvature);
+    }
   }
 
   void displayScaledJacobian(Scene_surface_mesh_item* item)
   {
-
     SMesh& smesh = *item->face_graph();
     //compute and store the jacobian per face
     bool non_init;
@@ -742,16 +793,118 @@ private Q_SLOTS:
     treat_sm_property<face_descriptor>("f:jacobian", item->face_graph());
   }
 
-  bool resetScaledJacobian(Scene_surface_mesh_item* item)
+  void setExpandingRadius(int val_int)
   {
-    SMesh& smesh = *item->face_graph();
-    if(!smesh.property_map<face_descriptor, double>("f:jacobian").second)
+    double sliderMin = dock_widget->expandingRadiusSlider->minimum();
+    double sliderMax = dock_widget->expandingRadiusSlider->maximum() - sliderMin;
+    double val =  val_int - sliderMin;
+    sliderMin = 0;
+
+    SMesh& smesh = *(qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())))->face_graph();
+
+    auto vpm = get(CGAL::vertex_point, smesh);
+
+    if (maxEdgeLength < 0)
     {
-      return false;
+      auto edge_range = CGAL::edges(smesh);
+
+      if (edge_range.begin() == edge_range.end())
+      {
+        expand_radius = 0;
+        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+        return;
+      }
+
+      auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, smesh](auto l, auto r) {
+        auto res = EPICK().compare_squared_distance_3_object()(
+            get(vpm, source((l), smesh)),
+            get(vpm, target((l), smesh)),
+            get(vpm, source((r), smesh)),
+            get(vpm, target((r), smesh)));
+        return res == CGAL::SMALLER;
+      });
+
+      // if edge_reference is not derefrenceble
+      if (edge_reference == edge_range.end())
+      {
+        expand_radius = 0;
+        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+        return;
+      }
+
+      maxEdgeLength = sqrt(
+          (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
+          .squared_length()
+      );
+
     }
-    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
-    dock_widget->maxBox->setValue(jacobian_max[item].first);
-    return true;
+
+    double outMax = 5 * maxEdgeLength, base = 1.2;
+
+    expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
+    dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+
+  }
+
+  void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, CurvatureType mu_index)
+  {
+    if (mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE) return;
+
+    std::string tied_string = (mu_index == MEAN_CURVATURE)?
+        "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_Gaussian_curvature";
+    SMesh& smesh = *item->face_graph();
+
+    const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
+    const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").second;
+
+    //compute once and store the value per vertex
+    bool non_init;
+    SMesh::Property_map<vertex_descriptor, double> mu_i_map;
+        std::tie(mu_i_map, non_init) =
+            smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
+    if (non_init)
+    {
+      if (vnm_exists) {
+        if (mu_index == MEAN_CURVATURE)
+          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
+        else
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
+      }
+      else {
+        if (mu_index == MEAN_CURVATURE)
+          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+        else
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+      }
+      double res_min = ARBITRARY_DBL_MAX,
+             res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Vertex_index min_index, max_index;
+      for (SMesh::Vertex_index v : vertices(smesh))
+      {
+        if (mu_i_map[v] > res_max)
+        {
+          res_max = mu_i_map[v];
+          max_index = v;
+        }
+        if (mu_i_map[v] < res_min)
+        {
+          res_min = mu_i_map[v];
+          min_index = v;
+        }
+      }
+      if (mu_index == MEAN_CURVATURE){
+        mean_curvature_max[item] = std::make_pair(res_max, max_index);
+        mean_curvature_min[item] = std::make_pair(res_min, min_index);
+      }
+      else {
+        gaussian_curvature_max[item] = std::make_pair(res_max, max_index);
+        gaussian_curvature_min[item] = std::make_pair(res_min, min_index);
+      }
+
+      connect(item, &Scene_surface_mesh_item::itemChanged,
+          this, &DisplayPropertyPlugin::resetProperty);
+    }
+        treat_sm_property<vertex_descriptor>(tied_string, item->face_graph());
   }
 
 
@@ -1054,6 +1207,8 @@ private Q_SLOTS:
         break;
       }
       case 1:
+      case 4:
+      case 5:
         dock_widget->groupBox->  setEnabled(true);
         dock_widget->groupBox_3->setEnabled(true);
 
@@ -1113,6 +1268,26 @@ private Q_SLOTS:
                  dummy_fd,
                  dummy_p);
     }
+    break;
+    case 4:
+    {
+      ::zoomToId(*item->face_graph(),
+          QString("v%1").arg(mean_curvature_min[item].second),
+          getActiveViewer(),
+          dummy_fd,
+          dummy_p);
+    }
+    break;
+    case 5:
+    {
+      ::zoomToId(*item->face_graph(),
+          QString("v%1").arg(gaussian_curvature_min[item].second),
+          getActiveViewer(),
+          dummy_fd,
+          dummy_p);
+    }
+    break;
+    break;
       break;
     default:
       break;
@@ -1146,7 +1321,25 @@ private Q_SLOTS:
                  dummy_fd,
                  dummy_p);
     }
-      break;
+    break;
+    case 4:
+    {
+      ::zoomToId(*item->face_graph(),
+          QString("v%1").arg(mean_curvature_max[item].second),
+          getActiveViewer(),
+          dummy_fd,
+          dummy_p);
+    }
+    break;
+    case 5:
+    {
+      ::zoomToId(*item->face_graph(),
+          QString("v%1").arg(gaussian_curvature_max[item].second),
+          getActiveViewer(),
+          dummy_fd,
+          dummy_p);
+    }
+    break;
     default:
       break;
     }
@@ -1315,10 +1508,10 @@ private:
   void displayMapLegend(const std::vector<Value_type>& values)
   {
     // Create a legend_ and display it
-    const std::size_t size = (std::min)(color_map.size(), (std::size_t)256);
+    const std::size_t size = (std::min)(color_map.size(), (std::size_t)2048);
     const int text_height = 20;
     const int height = text_height*static_cast<int>(size) + text_height;
-    const int width = 140;
+    const int width = 170;
     const int cell_width = width/3;
     const int top_margin = 15;
     const int left_margin = 5;
@@ -1344,8 +1537,8 @@ private:
                        tick_height,
                        color);
       QRect text_rect(left_margin + cell_width+10, drawing_height - top_margin - j,
-                          50, text_height);
-      painter.drawText(text_rect, Qt::AlignCenter, tr("%1").arg(values[i], 0, 'f', 3, QLatin1Char(' ')));
+          100, text_height);
+      painter.drawText(text_rect, Qt::AlignCenter, tr("%1").arg(values[i], 0, 'f', 7, QLatin1Char(' ')));
     }
     if(color_map.size() > size){
       QRect text_rect(left_margin + cell_width+10, 0,
@@ -1364,7 +1557,7 @@ private:
   {
     // Create a legend_ and display it
     const int height = 256;
-    const int width = 140;
+    const int width = 170;
     const int cell_width = width/3;
     const int top_margin = 5;
     const int left_margin = 5;
@@ -1408,11 +1601,11 @@ private:
     painter.setPen(Qt::blue);
     QRect min_text_rect(left_margin + cell_width+10,drawing_height - top_margin,
                         100, text_height);
-    painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value, 0, 'f', 1));
+    painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value, 0, 'f', 7));
 
     QRect max_text_rect(left_margin + cell_width+10, drawing_height - top_margin - 200,
                         100, text_height);
-    painter.drawText(max_text_rect, Qt::AlignCenter, tr("%1").arg(max_value, 0, 'f', 1));
+    painter.drawText(max_text_rect, Qt::AlignCenter, tr("%1").arg(max_value, 0, 'f', 7));
 
     dock_widget->legendLabel->setPixmap(legend_);
   }
@@ -1436,9 +1629,17 @@ private:
 
   std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
   std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > mean_curvature_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > mean_curvature_max;
+
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > gaussian_curvature_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > gaussian_curvature_max;
+
   std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
-
+  double expand_radius = 0;
+  double maxEdgeLength = -1;
   double minBox;
   double maxBox;
   QPixmap legend_;
@@ -1718,7 +1919,7 @@ private:
     }
 
 
-    EPICK::Vector_3 unit_center_normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, mesh);
+    EPICK::Vector_3 unit_center_normal = PMP::compute_face_normal(f, mesh);
     unit_center_normal *= 1.0/CGAL::approximate_sqrt(unit_center_normal.squared_length());
 
     for(std::size_t i = 0; i < corner_areas.size(); ++i)

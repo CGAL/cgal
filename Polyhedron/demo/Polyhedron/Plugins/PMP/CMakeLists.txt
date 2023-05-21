@@ -9,6 +9,20 @@ else()
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif()
 
+if(TARGET CGAL::Eigen3_support)
+
+  polyhedron_demo_plugin(interpolated_corrected_principal_curvatures_plugin Interpolated_corrected_principal_curvatures_plugin)
+  target_link_libraries(
+    interpolated_corrected_principal_curvatures_plugin PUBLIC scene_surface_mesh_item scene_polylines_item
+                              CGAL::Eigen3_support)
+
+else()
+  message(
+    STATUS
+      "NOTICE: Eigen 3.1 (or greater) was not found. Interpolated corrected principal curvatures plugin will not be available."
+  )
+endif()
+
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item
                                             scene_selection_item)
