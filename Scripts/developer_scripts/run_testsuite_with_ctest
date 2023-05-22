@@ -392,7 +392,7 @@ run_test_on_host()
   for PLATFORM in ${PLATFORMS}; do
     run_test_on_platform "${PLATFORM}"
     publish_results "${PLATFORM}"
-    if [ -n "${COLLECT_DEMO_BINARIES}" ]; then
+    if [ -n "${COLLECT_DEMOS_BINARIES}" ]; then
       collect_demo_binaries "${PLATFORM}"
     fi
     if [ -z "${KEEP_TESTS}" ]; then
