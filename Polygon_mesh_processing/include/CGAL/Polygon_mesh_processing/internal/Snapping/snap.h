@@ -152,19 +152,19 @@ void simplify_range(HalfedgeRange& halfedge_range,
         }
 
         // check that the collapse does not create a new degenerate face
-        bool call_continue = false;
+        bool do_collapse = true;
         for(halfedge_descriptor he : halfedges_around_target(h, tm))
         {
           if(he != h &&
              !is_border(he, tm) &&
              collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
           {
-            call_continue = true;
+            do_collapse = false;
             break;
           }
         }
 
-        if(call_continue)
+        if(!do_collapse)
           continue;
 
         for(halfedge_descriptor he : halfedges_around_target(opposite(h,tm), tm))
@@ -173,12 +173,12 @@ void simplify_range(HalfedgeRange& halfedge_range,
              !is_border(he, tm) &&
              collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
           {
-            call_continue = true;
+            do_collapse = false;
             break;
           }
         }
 
-        if(call_continue)
+        if(!do_collapse)
           continue;
 
         if(!CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
@@ -731,15 +731,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       if(!first_split && new_position == previous_split_position)
         do_split = false;
 
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
-                << " Vs " << source(h_to_split, tm_T) << " (" << tm_T.point(source(h_to_split, tm_T)) << ")"
-                << " --- Vt " << target(h_to_split, tm_T) << " (" << tm_T.point(target(h_to_split, tm_T)) << ")" << std::endl;
-      std::cout << "With point: " << vnp.second << std::endl;
-      std::cout << "Actually split? " << do_split << std::endl;
-#endif
-
-      // check if the new faces after split will not be degenerated
+      // check if the new faces after split will not be degenerate
       const Point& p0 = new_position;
       Point_ref p1 = get(vpm_T, source(h_to_split, tm_T));
       Point_ref p2 = get(vpm_T, target(next(opposite(h_to_split, tm_T), tm_T), tm_T));
@@ -785,6 +777,14 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
         if(do_split)
           put(vpm_S, splitter_v, new_position);
       }
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
+                << " Vs " << source(h_to_split, tm_T) << " (" << tm_T.point(source(h_to_split, tm_T)) << ")"
+                << " --- Vt " << target(h_to_split, tm_T) << " (" << tm_T.point(target(h_to_split, tm_T)) << ")" << std::endl;
+      std::cout << "With point: " << new_position << " (init: " << vnp.second << ")" << std::endl;
+      std::cout << "Actually split? " << do_split << std::endl;
+#endif
 
       // Split and update positions
       vertex_descriptor new_v = boost::graph_traits<TriangleMesh>::null_vertex();
