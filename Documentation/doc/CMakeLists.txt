@@ -402,6 +402,15 @@ else()
   endforeach()
 endif()
 
+#special cases
+foreach(pkg "Mesh_level")
+  if(CGAL_BRANCH_BUILD)
+    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/${pkg}/include")
+  else()
+    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/include")
+  endif()
+endforeach()
+
 option(CGAL_BUILD_THREE_DOC "Build the documentation of the Three package" OFF)
 
 if(NOT CGAL_BUILD_THREE_DOC)
