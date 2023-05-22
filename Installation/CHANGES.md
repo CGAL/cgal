@@ -32,7 +32,7 @@ Release date: June 2023
 -   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
     and cylinders in 3D.
 
-### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.6/Manual/packages.html#PkgStraightSkeleton2) (major changes)
+### [2D Straight Skeleton and Polygon Offsetting](https://doc.cgal.org/5.6/Manual/packages.html#PkgStraightSkeleton2) (major changes)
 -   Added weighted straight skeletons: weighted straight skeletons are a generalization of
     straight skeletons. Contour edges are assigned a positive weight, which can be understood
     as assigning a speed to the wavefront spawned from the contour edge.
@@ -220,7 +220,7 @@ Release date: June 2023
 
 Release date: June 2022
 
-### [3D Alpha Wrapping (new package)](https://doc.cgal.org/5.5/Manual/packages.html#PkgAlphaWrap3)
+### [3D Alpha Wrapping](https://doc.cgal.org/5.5/Manual/packages.html#PkgAlphaWrap3) (new package)
 
 -   This component takes a 3D triangle mesh, soup, or point set as input, and generates a valid
     (watertight, intersection-free, and combinatorially 2-manifold) surface triangle mesh
@@ -234,7 +234,7 @@ Release date: June 2022
 
     See also the [announcement page](https://www.cgal.org/2022/05/18/alpha_wrap/).
 
-### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.5/Manual/packages.html#PkgStraightSkeleton2)
+### [2D Straight Skeleton and Polygon Offsetting](https://doc.cgal.org/5.5/Manual/packages.html#PkgStraightSkeleton2) (breaking change)
 -   Fix the output of the function [CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()](https://doc.cgal.org/5.5/Straight_skeleton_2/group__PkgStraightSkeleton2OffsetFunctions.html#gaa159f093e5d6d7fdb62c1660a44f95fe)
     to not take into account the offset of the outer frame.
 -   Fix the computation of the exterior offset of a polygon with holes that was not computing the offset of the holes
