@@ -145,7 +145,7 @@ public:
 
   /// @}
 
-  /// Destructor
+  // Destructor
   ~Mesh_cell_criteria_3() { }
 
   /**

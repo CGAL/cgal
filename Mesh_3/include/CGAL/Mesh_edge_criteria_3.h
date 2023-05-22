@@ -134,7 +134,7 @@ public:
   * break all the surface topology guarantees of the meshing algorithm.
   * It is not guaranteed to be exactly respected in the output mesh.
   *
-  * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
+  * \note if one parameter is set to 0, then its corresponding criterion is ignored.
   */
   Mesh_edge_criteria_3(const FT& length_bound,
                        const FT& min_length_bound = 0)

@@ -75,9 +75,12 @@ is a relative error bound expressed as a ratio to the bounding sphere radius.
 \sa `CGAL::make_mesh_3()`.
 
 */
-template<class Function_,
-  class BGT,
-  class Wrapper = Implicit_to_labeling_function_wrapper<Function_,BGT> >
+template<class Function_
+         ,class BGT
+#ifndef DOXYGEN_RUNNING
+         ,class Wrapper = Implicit_to_labeling_function_wrapper<Function_,BGT>
+#endif
+         >
 class
 CGAL_DEPRECATED_MSG
 ( "The class template `CGAL::Implicit_mesh_domain_3` is now deprecated. "
@@ -95,12 +98,6 @@ public:
   typedef typename Base::FT FT;
   typedef BGT Geom_traits;
 
-  /**
-   * Constructor
-   * @param f the function which negative values defines the domain
-   * @param bounding_sphere a bounding sphere of the domain
-   * @param error_bound the error bound relative to the sphere radius
-   */
   /// \name Creation
   /// @{
 
@@ -131,7 +128,7 @@ public:
 
   /// @}
 
-  /// Destructor
+  // Destructor
   virtual ~Implicit_mesh_domain_3() {}
 
   using Base::bbox;

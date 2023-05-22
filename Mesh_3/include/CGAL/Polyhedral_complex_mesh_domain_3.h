@@ -106,7 +106,7 @@ template < class IGT,
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron,
-                                IGT>
+                                IGT> >
 #else
 template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,

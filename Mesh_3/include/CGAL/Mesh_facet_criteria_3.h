@@ -43,11 +43,11 @@ namespace CGAL {
 
   \cgalModels `MeshFacetCriteria_3`
 
-  \sa `CGAL::Mesh_facet_topology`
   \sa `MeshCriteria_3`
   \sa `MeshFacetCriteria_3`
-  \sa `CGAL::Mesh_criteria_3<Tr>`
   \sa `MeshDomainField_3`
+  \sa `CGAL::Mesh_facet_topology`
+  \sa `CGAL::Mesh_criteria_3<Tr>`
   \sa `CGAL::make_mesh_3()`
 
 */

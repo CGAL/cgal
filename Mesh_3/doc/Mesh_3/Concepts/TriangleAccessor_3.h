@@ -19,19 +19,19 @@ public:
 /// @{
 
 /*!
-Triangle type. Must be a model of DefaultConstructible and
-CopyConstructible.
+Triangle type. Must be a model of `DefaultConstructible` and
+`CopyConstructible`.
 */
 typedef unspecified_type Triangle_3;
 
 /*!
-Triangle iterator type. Must be a model of InputIterator.
+Triangle iterator type. Must be a model of `InputIterator`.
 */
 typedef unspecified_type Triangle_iterator;
 
 /*!
-Handle to a `Triangle_3`. Must be
-constructible from `Triangle_iterator`. It may be `Triangle_Iterator` itself.
+%Handle to a `Triangle_3`. Must be
+constructible from `Triangle_iterator`. It may be `Triangle_iterator` itself.
 */
 typedef unspecified_type Triangle_handle;
 
