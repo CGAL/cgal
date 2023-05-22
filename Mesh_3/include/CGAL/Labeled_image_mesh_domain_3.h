@@ -71,19 +71,20 @@ with a model of the concept `BisectionGeometricTraits_3`.
 An executable that uses `Labeled_image_mesh_domain_3` must be linked with
 the <I>CGAL_ImageIO</I> library.
 
-@todo Document or comment the other parameters
-
 \sa `BisectionGeometricTraits_3`
 \sa `CGAL::make_mesh_3()`.
 
 */
 
-template<class Image,
-         class BGT,
-         typename Image_word_type_ = unsigned char,
-         typename Subdomain_index = int,
-         class Null_subdomain_index = Default,
-         class Wrapper_ = Default >
+template<class Image
+         ,class BGT
+#ifndef DOXYGEN_RUNNING
+         ,typename Image_word_type_ = unsigned char
+         ,typename Subdomain_index = int
+         ,class Null_subdomain_index = Default
+         ,class Wrapper_ = Default
+#endif
+         >
 class
 CGAL_DEPRECATED_MSG
 ( "The class template `CGAL::Labeled_image_mesh_domain_3` is now deprecated. "
@@ -117,14 +118,13 @@ public:
 
   /*!
     Construction from an image.
-    The parameter `error_bound` is relative to the size of the image.
-    @todo Document or comment the other parameters
+    @param error_bound is relative to the size of the image.
   */
   Labeled_image_mesh_domain_3(const Image& image
                               ,const FT& error_bound = FT(1e-3)
+#ifndef DOXYGEN_RUNNING
                               ,Subdomain_index value_outside = 0
                               ,Null null = Null()
-#ifndef DOXYGEN_RUNNING
                               ,CGAL::Random* p_rng = nullptr
 #endif
                               )
@@ -146,13 +146,13 @@ public:
            parameters::p_rng = p_rng)
   {}
 
-  /// Destructor
+  // Destructor
   virtual ~Labeled_image_mesh_domain_3() {}
 
   using Base::bbox;
 
 private:
-  /// Returns a box enclosing image `im`
+  // Returns a box enclosing image `im`
   Bbox_3 compute_bounding_box(const Image& im) const
   {
     return Bbox_3(-im.vx()+im.tx(),

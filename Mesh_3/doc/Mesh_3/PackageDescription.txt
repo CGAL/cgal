@@ -41,7 +41,6 @@
 
 /*!
 \addtogroup PkgMesh3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Mesh Generation,PkgMesh3}
 \cgalPkgPicture{Mesh_3/fig/multilabel_mesher_small.jpg}
 \cgalPkgSummaryBegin

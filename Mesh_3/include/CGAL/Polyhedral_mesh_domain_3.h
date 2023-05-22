@@ -129,7 +129,7 @@ the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
 
-@todo Document TriangleAccessor as it was template parameter. What about the two others?
+@todo Comment TriangleAccessor as well as the others
 
 \cgalModels `MeshDomain_3`
 
@@ -139,11 +139,14 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 */
 
 
-template<class Polyhedron,/*FaceGraph*/
-         class IGT_,
-         class TriangleAccessor = CGAL::Default,
-         class Patch_id_ = void,
-         class Use_exact_intersection_construction_tag = CGAL::Tag_true>
+template<class Polyhedron /*FaceGraph*/
+         ,class IGT_
+#ifndef DOXYGEN_RUNNING
+         ,class TriangleAccessor = CGAL::Default
+         ,class Patch_id_ = void
+         ,class Use_exact_intersection_construction_tag = CGAL::Tag_true
+#endif
+         >
 class Polyhedral_mesh_domain_3
 {
 public:
@@ -290,9 +293,6 @@ public:
   }
 
   /*!
-   * @todo was not in doxygen
-   * Constructor.
-   *
    * Constructor from a sequence of polyhedral surfaces, and a bounding
    * polyhedral surface.
    *
@@ -329,9 +329,6 @@ public:
   }
 
   /*!
-   * @todo was not in doxygen
-   * Constructor.
-   *
    * Constructor from a sequence of polyhedral surfaces, without bounding
    * surface. The domain will always answer `false` to `is_in_domain()`
    * queries.
@@ -360,7 +357,7 @@ public:
     bounding_tree_ = 0;
   }
 
-  /// Destructor
+  // Destructor
   ~Polyhedral_mesh_domain_3() {
     if(bounding_tree_ != 0 && bounding_tree_ != &tree_) {
       delete bounding_tree_;

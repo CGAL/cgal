@@ -194,7 +194,6 @@ public:
   typedef std::vector<Function>   Function_vector;
 #ifdef DOXYGEN_RUNNING
  //!
-  /// @todo different from code
   typedef typename Function::Point     Point_3;
 #endif
   /// @}

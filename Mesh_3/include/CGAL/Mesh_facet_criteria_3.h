@@ -51,11 +51,23 @@ namespace CGAL {
   \sa `CGAL::make_mesh_3()`
 
 */
-template<typename Tr,
-         typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<Tr> >
+template<typename Tr
+#ifndef DOXYGEN_RUNNING
+         ,typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<Tr>
+#endif
+         >
 class Mesh_facet_criteria_3
 {
 public:
+
+  /// \name Types
+  /// @{
+
+  /*!
+    Numerical type
+  */
+  typedef typename Tr::Geom_traits::FT FT;
+
   typedef Visitor_ Visitor;
   typedef typename Visitor::Facet_quality Facet_quality;
   typedef typename Visitor::Is_facet_bad  Is_facet_bad;
@@ -65,31 +77,21 @@ private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
 
   typedef typename Tr::Facet Facet;
-  typedef typename Tr::Geom_traits::FT FT;
+
 
   typedef Mesh_facet_criteria_3<Tr> Self;
 
 public:
   typedef CGAL::Tag_true Has_manifold_criterion;
 
-#ifdef DOXYGEN_RUNNING
-/// \name Types
-/// @{
-
-/*!
-Numerical type
-@todo:  In the code this typedef is private
-*/
-typedef Tr::FT FT;
-
 /// @}
-#endif
 
 
   /// \name Creation
   /// @{
 
-  /*!
+#ifdef DOXYGEN_RUNNING
+ /*!
     Returns an object to serve as criteria for facets.
     \param angle_bound is the lower bound for the angle in degrees of the
     surface mesh facets.
@@ -100,17 +102,32 @@ typedef Tr::FT FT;
     \param topology is the set of topological constraints
     which have to be verified by each surface facet. See
     section \ref Mesh_3DelaunayRefinement for further details.
-    Note that if one parameter is set to 0, then its corresponding
-    criteria is ignored.
     \param min_radius_bound is a uniform lower bound for the radius of
     the surface Delaunay balls. Only facets with a radius larger than that
     bound will be refined.
-@todo Does the Note also apply to min_radius_bound?
+    @note If one parameter is set to 0, then its corresponding
+    criterion is ignored.
   */
-  template < typename Sizing_field, typename Sizing_field2 >
+  Mesh_facet_criteria_3(const FT& angle_bound,
+                        const FT& radius_bound,
+                        const FT& distance_bound,
+                        const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
+                        const FT& min_radius_bound = 0.);
+
+#endif
+
+
+  /*!
+    Returns an object to serve as criteria for facets. The types `SizingField` and
+    `DistanceField` must
+    be models of the concept `MeshDomainField_3`. The behavior and semantic of the arguments are the same
+    as above, except that the radius and distance bound parameters are
+    functionals instead of constants.
+  */
+  template < typename Sizing_field, typename DistanceField >
   Mesh_facet_criteria_3(const FT& angle_bound,
                         const Sizing_field & radius_bound,
-                        const Sizing_field2& distance_bound,
+                        const DistanceField& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.)
   {
@@ -124,30 +141,15 @@ typedef Tr::FT FT;
                 Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>());
 
     init_distance(distance_bound,
-                  Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field2>());
+                  Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>());
 
     init_topo(topology);
   }
-#ifdef DOXYGEN_RUNNING
-  /*!
-    Returns an object to serve as criteria for facets. The types `SizingField` and
-    `DistanceField` must
-    be models of the concept `MeshDomainField_3`. The behavior and semantic of the arguments are the same
-    as above, except that the radius and distance bound parameters are
-    functionals instead of constants.
 
-    @todo This one is only in the doc
-  */
-  template <class SizingField, class DistanceField>
-  Mesh_facet_criteria_3(const FT& angle_bound,
-                        const SizingField& radius_bound,
-                        const DistanceField& distance_bound,
-                        Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE);
-#endif
   /// @}
 
 
-/// Destructor
+  // Destructor
   ~Mesh_facet_criteria_3() { }
 
    /**

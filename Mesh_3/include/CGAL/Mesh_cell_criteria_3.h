@@ -39,8 +39,6 @@ and a sizing field which may be a uniform or variable field.
 `Triangulation` of the instance used as model of
 `MeshComplex_3InTriangulation_3`.
 
-@todo What to do with `Visitor_`?
-
 \cgalModels `MeshCellCriteria_3`
 
 \sa `MeshCriteria_3`
@@ -49,11 +47,22 @@ and a sizing field which may be a uniform or variable field.
 
 */
 
-template <typename Tr,
-          typename Visitor_ = Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<Tr> >
+template <typename Tr
+#ifndef DOXYGEN_RUNNING
+          ,typename Visitor_ = Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<Tr>
+#endif
+          >
 class Mesh_cell_criteria_3
 {
 public:
+  /// \name Types
+  /// @{
+
+  /*!
+    Numerical type
+  */
+  typedef typename Tr::Geom_traits::FT FT;
+
   typedef Visitor_ Visitor;
   typedef typename Visitor::Cell_quality Cell_quality;
   typedef typename Visitor::Is_cell_bad  Is_cell_bad;
@@ -67,21 +76,9 @@ private:
 
   typedef Mesh_cell_criteria_3<Tr> Self;
 
+  /// @}
+
 public:
-
-#ifdef DOXYGEN_RUNNING
-/// \name Types
-/// @{
-
-/*!
-Numerical type
-@todo:  In the code this typedef is private
-*/
-typedef Tr::FT FT;
-
-/// @}
-#endif
-
 
   /// \name Creation
 /// @{
@@ -162,10 +159,12 @@ typedef Tr::FT FT;
     return criteria_(tr, cell);
   }
 
+#ifndef DOXYGEN_RUNNING
   void add(Abstract_criterion* criterion)
   {
     criteria_.add(criterion);
   }
+#endif
 
 private:
   void init_radius_edge(const FT& radius_edge_bound)

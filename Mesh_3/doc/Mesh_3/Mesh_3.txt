@@ -1428,6 +1428,6 @@ and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
 In 2013, Clément Jamin made the meshing and optimization algorithms parallel
 on multi-core shared-memory architectures.
-\todo Add reference to paper or research report when it is available.
+
 */
 } /* namespace CGAL */

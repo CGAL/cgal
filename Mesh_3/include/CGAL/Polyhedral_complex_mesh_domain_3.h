@@ -85,7 +85,7 @@ surface, the sub-domain indices on both sides are known.
 \tparam Polyhedron stands for the type of the input polyhedral surface(s),
 model of `FaceListGraph`.
 
-\tparam IGT_ stands for a geometric traits class
+\tparam IGT stands for a geometric traits class
 providing the types and functors required to implement
 the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
@@ -96,16 +96,16 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 \sa `IntersectionGeometricTraits_3`
 \sa `CGAL::make_mesh_3()`.
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT_,TriangleAccessor>`
-\sa `CGAL::Mesh_polyhedron_3<IGT_>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Mesh_polyhedron_3<IGT>`
 */
 template < class IGT_,
-           class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
+           class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
            class TriangleAccessor=CGAL::Default
            >
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
-      Polyhedral_mesh_domain_3< Polyhedron_,
+      Polyhedral_mesh_domain_3< Polyhedron,
                                 IGT_,
                                 CGAL::Default,
                                 int,   //Use_patch_id_tag
@@ -113,14 +113,14 @@ class Polyhedral_complex_mesh_domain_3
 {
 public:
   /// The base class
-  typedef Polyhedron_ Polyhedron;
+  typedef Polyhedron Polyhedron;
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
       Polyhedron, IGT_, CGAL::Default,
       int, Tag_true > > Base;
   /// @cond DEVELOPERS
 private:
-  typedef IGT_ IGT;
+
   typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
                                    int, Tag_true >       BaseBase;
   typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
@@ -178,7 +178,7 @@ protected:
     boost::setS, // this avoids parallel edges
     boost::vecS,
     boost::undirectedS,
-    typename IGT::Point_3,
+    typename IGT_::Point_3,
     Set_of_indices> Featured_edges_copy_graph;
 
   /// @endcond
@@ -378,7 +378,7 @@ public:
 
     typedef typename C3t3::Triangulation                  Tr;
     typedef typename Tr::Weighted_point                   Weighted_point;
-    typedef typename IGT::Sphere_3                        Sphere_3;
+    typedef typename IGT_::Sphere_3                        Sphere_3;
     typedef typename Polyhedron::Vertex_const_handle      Vertex_const_handle;
 
     Tr& tr = c3t3.triangulation();
@@ -565,8 +565,8 @@ public:
       }
 
       // Shoot ray
-      typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
-      typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
+      typename IGT_::Construct_ray_3 ray = IGT_().construct_ray_3_object();
+      typename IGT_::Construct_vector_3 vector = IGT_().construct_vector_3_object();
 
       while(true) {
         Random_points_on_sphere_3<Point_3> random_point(1.);
@@ -598,7 +598,7 @@ public:
           Surface_patch_index face_id = r_domain_.make_surface_index(*opt);
           const std::pair<Subdomain_index, Subdomain_index>& pair =
             r_domain_.incident_subdomains_indices(face_id);
-          const typename IGT::Triangle_3 triangle =
+          const typename IGT_::Triangle_3 triangle =
             BaseBase::template Primitive_type<Polyhedron_type>::datum(*opt);
           const Point_3& a = triangle[0];
           const Point_3& b = triangle[1];
@@ -723,7 +723,7 @@ detect_features(FT angle_in_degree,
   G_copy g_copy;
   typedef typename boost::graph_traits<G_copy>::vertex_descriptor
                                                       graph_vertex_descriptor;
-  typedef std::map<typename IGT::Point_3,
+  typedef std::map<Point_3,
                    graph_vertex_descriptor> P2vmap;
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;

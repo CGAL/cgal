@@ -1,4 +1,9 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+# custom options for this package
+
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false
 
 # macros to be used inside the code
 ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
