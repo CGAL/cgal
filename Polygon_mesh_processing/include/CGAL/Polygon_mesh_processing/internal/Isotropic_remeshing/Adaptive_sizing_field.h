@@ -17,6 +17,8 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Sizing_field.h>
 
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
+
 #include <CGAL/number_utils.h>
 
 namespace CGAL
@@ -30,26 +32,37 @@ private:
   typedef CGAL::Sizing_field<PolygonMesh> Base;
 
 public:
+  typedef typename Base::K          K;
   typedef typename Base::FT         FT;
   typedef typename Base::Point_3    Point_3;
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
   typedef typename Base::vertex_descriptor   vertex_descriptor;
-  typedef typename CGAL::dynamic_vertex_property_t<FT>            Vertex_property_tag;
+
+  typedef typename CGAL::dynamic_vertex_property_t<FT> Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh,
                                        Vertex_property_tag>::type VertexSizingMap;
 
-    Adaptive_sizing_field(const std::pair<FT, FT>& edge_len_min_max
+  //todo ip: set a property map that can calculate curvature in one go. I think I'm generating constant maps (without put)
+  // try 1
+  typedef Principal_curvatures_and_directions<K> Principal_curvatures;
+//  typedef Constant_property_map<vertex_descriptor, Principal_curvatures> Vertex_curvature_map;
+
+  // try 2
+  typedef Constant_property_map<vertex_descriptor, Principal_curvatures_and_directions<K>> Default_principal_map;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
+                                                       parameters::Default_named_parameters,
+                                                       Default_principal_map>::type
+                                                         Vertex_curvature_map;
+
+    Adaptive_sizing_field(const double tol
+                        , const std::pair<FT, FT>& edge_len_min_max
                         , PolygonMesh& pmesh)
-    : m_sq_short( CGAL::square(edge_len_min_max.first))
-    , m_sq_long(  CGAL::square(edge_len_min_max.second))
+    : tol(tol)
+    , m_sq_short(CGAL::square(edge_len_min_max.first))
+    , m_sq_long( CGAL::square(edge_len_min_max.second))
     , m_pmesh(pmesh)
   {
-      //todo ip: initialize sizing map with default values
-      //todo ip: might end up using directly the property map of the curvature calculation (if mutable)?
-      vertex_sizing_map_ = get(Vertex_property_tag(), m_pmesh);
-      for(vertex_descriptor v : vertices(m_pmesh)){
-          put(vertex_sizing_map_, v, m_sq_long);
-      }
+    m_vertex_sizing_map = get(Vertex_property_tag(), m_pmesh);
   }
 
 private:
@@ -69,21 +82,62 @@ private:
 public:
   void calc_sizing_map()
   {
-      //todo ip
-      // calculate curvature
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    int oversize  = 0;
+    int undersize = 0;
+    int insize    = 0;
+    std::cout << "Calculating sizing field..." << std::endl;
+#endif
 
-      // loop over curvature property field and calculate the target mesh size for a vertex
-      // don't forget to store squared length
+    //todo ip: how to make this work?
+//    Vertex_curvature_map vertex_curvature_map;
+//    interpolated_corrected_principal_curvatures_and_directions(m_pmesh
+//                                                               , vertex_curvature_map);
 
+    // calculate square vertex sizing field (L(x_i))^2 from curvature field
+    for(vertex_descriptor v : vertices(m_pmesh))
+    {
+//      auto vertex_curv = get(vertex_curvature_map, v); //todo ip: how to make this work?
+      //todo ip: temp solution
+      const Principal_curvatures vertex_curv = interpolated_corrected_principal_curvatures_and_directions_one_vertex(m_pmesh, v);
+      const FT max_absolute_curv = std::max(std::abs(vertex_curv.max_curvature), std::abs(vertex_curv.min_curvature));
+      const FT vertex_size_sq = 6 * tol / max_absolute_curv - 3 * CGAL::square(tol);
+      if (vertex_size_sq > m_sq_long)
+      {
+        put(m_vertex_sizing_map, v, m_sq_long);
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        ++oversize;
+#endif
+      }
+      else if (vertex_size_sq < m_sq_short)
+      {
+        put(m_vertex_sizing_map, v, m_sq_short);
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        ++undersize;
+#endif
+      }
+      else
+      {
+        put(m_vertex_sizing_map, v, vertex_size_sq);
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        ++insize;
+#endif
+      }
+    }
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    std::cout << " done (" << insize    << " from curvature, "
+                          << oversize  << " set to max, "
+                          << undersize << " set to min)" << std::endl;
+#endif
   }
 
   boost::optional<FT> is_too_long(const halfedge_descriptor& h) const
   {
     const FT sqlen = sqlength(h);
-    FT sqtarg_len = std::min(get(vertex_sizing_map_, source(h, m_pmesh)),
-                             get(vertex_sizing_map_, target(h, m_pmesh)));
-    CGAL_assertion(get(vertex_sizing_map_, source(h, m_pmesh)));
-    CGAL_assertion(get(vertex_sizing_map_, target(h, m_pmesh)));
+    FT sqtarg_len = std::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
+                             get(m_vertex_sizing_map, target(h, m_pmesh)));
+    CGAL_assertion(get(m_vertex_sizing_map, source(h, m_pmesh)));
+    CGAL_assertion(get(m_vertex_sizing_map, target(h, m_pmesh)));
     if(sqlen > sqtarg_len)
       return sqlen;
     else
@@ -94,11 +148,11 @@ public:
                                   const vertex_descriptor& vb) const
   {
     const FT sqlen = sqlength(va, vb);
-    FT sqtarg_len = std::min(get(vertex_sizing_map_, va),
-                             get(vertex_sizing_map_, vb));
-    CGAL_assertion(get(vertex_sizing_map_, va));
-    CGAL_assertion(get(vertex_sizing_map_, vb));
-    if (sqlen > sqtarg_len)
+    FT sqtarg_len = std::min(get(m_vertex_sizing_map, va),
+                             get(m_vertex_sizing_map, vb));
+    CGAL_assertion(get(m_vertex_sizing_map, va));
+    CGAL_assertion(get(m_vertex_sizing_map, vb));
+    if (sqlen > 16./9. * sqtarg_len)
       return sqlen;
     else
       return boost::none;
@@ -107,11 +161,11 @@ public:
   boost::optional<FT> is_too_short(const halfedge_descriptor& h) const
   {
     const FT sqlen = sqlength(h);
-    FT sqtarg_len = std::min(get(vertex_sizing_map_, source(h, m_pmesh)),
-                             get(vertex_sizing_map_, target(h, m_pmesh)));
-    CGAL_assertion(get(vertex_sizing_map_, source(h, m_pmesh)));
-    CGAL_assertion(get(vertex_sizing_map_, target(h, m_pmesh)));
-    if (sqlen < sqtarg_len)
+    FT sqtarg_len = std::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
+                             get(m_vertex_sizing_map, target(h, m_pmesh)));
+    CGAL_assertion(get(m_vertex_sizing_map, source(h, m_pmesh)));
+    CGAL_assertion(get(m_vertex_sizing_map, target(h, m_pmesh)));
+    if (sqlen < 16./25. * sqtarg_len)
       return sqlen;
     else
       return boost::none;
@@ -125,18 +179,31 @@ public:
                           get(vpmap, source(h, m_pmesh)));
   }
 
-  void update_sizing_map(const vertex_descriptor& vnew)
+  void update_sizing_map(const vertex_descriptor& v)
   {
-    //todo ip: calculate curvature for the vertex
-    //dummy
-    put(vertex_sizing_map_, vnew, m_sq_short);
+    // calculating it as the average of two vertices on other ends
+    // of halfedges as updating is done during an edge split
+    int i = 0;
+    FT vertex_size_sq = 0;
+    CGAL_assertion(CGAL::halfedges_around_target(v, m_pmesh) == 2);
+    for (halfedge_descriptor ha: CGAL::halfedges_around_target(v, m_pmesh))
+    {
+      vertex_size_sq += get(m_vertex_sizing_map, source(ha, m_pmesh));
+      ++i;
+    }
+    vertex_size_sq /= i;
+
+    put(m_vertex_sizing_map, v, vertex_size_sq);
   }
 
+  //todo ip: is_protected_constraint_too_long() from PR
+
 private:
-  FT m_sq_short;
-  FT m_sq_long;
+  const FT tol;
+  const FT m_sq_short;
+  const FT m_sq_long;
   PolygonMesh& m_pmesh;
-  VertexSizingMap vertex_sizing_map_;
+  VertexSizingMap m_vertex_sizing_map;
 };
 
 }//end namespace Polygon_mesh_processing

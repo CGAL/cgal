@@ -212,18 +212,22 @@ void isotropic_remeshing(const FaceRange& faces
                        , const NamedParameters& np = parameters::default_values())
 {
   typedef Uniform_sizing_field<PolygonMesh> Default_sizing;
+  Default_sizing sizing(target_edge_length, pmesh);
   isotropic_remeshing<PolygonMesh, FaceRange, Default_sizing, NamedParameters>(
     faces,
-    Default_sizing(target_edge_length, pmesh),
+    sizing,
     pmesh,
     np);
 }
 
+//todo ip: should I have the overload here?
+/*
 template<typename PolygonMesh
         , typename FaceRange
         , typename NamedParameters = parameters::Default_named_parameters>
 void isotropic_remeshing(const FaceRange& faces
-                       , const std::pair<double, double>& edge_len_min_max //todo add defaults?
+                       , const double& tol
+                       , const std::pair<double, double>& edge_len_min_max
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
@@ -235,6 +239,7 @@ void isotropic_remeshing(const FaceRange& faces
           pmesh,
           np);
 }
+ */
 
 template<typename PolygonMesh
        , typename FaceRange
@@ -356,6 +361,7 @@ void isotropic_remeshing(const FaceRange& faces
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
+    sizing.calc_sizing_map();
     if(do_split)
      remesher.split_long_edges(sizing);
     if(do_collapse)

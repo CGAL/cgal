@@ -30,9 +30,9 @@ private:
   typedef PolygonMesh                     PM;
   typedef typename boost::property_map<PM, boost::vertex_point_t>::const_type VPMap;
   typedef typename boost::property_traits<VPMap>::value_type Point;
-  typedef typename CGAL::Kernel_traits<Point>::Kernel K;
 
 public:
+  typedef typename CGAL::Kernel_traits<Point>::Kernel K;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
   typedef Point                                                 Point_3;

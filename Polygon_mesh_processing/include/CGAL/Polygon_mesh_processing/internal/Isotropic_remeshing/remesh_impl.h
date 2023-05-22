@@ -55,6 +55,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+//todo ip: temp
+#define CGAL_PMP_REMESHING_VERBOSE
+
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #define CGAL_DUMP_REMESHING_STEPS
@@ -536,8 +539,6 @@ namespace internal {
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
-        //todo ip-add
-        sizing.update_sizing_map(vnew);
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
         std::cout << "   Refinement point : " << refinement_point << std::endl;
 #endif
@@ -546,6 +547,9 @@ namespace internal {
         halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
         halfedge_added(hnew, status(he));
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
+
+        //todo ip-add: already updating sizing here because of is_too_long checks below
+        sizing.update_sizing_map(vnew);
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
@@ -2014,7 +2018,6 @@ private:
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
     CGAL_assertion_code(bool input_mesh_is_valid_;)
-    //todo ip: maybe make sizing field member (reference) here? easier to handle updates
 
   };//end class Incremental_remesher
 }//end namespace internal
