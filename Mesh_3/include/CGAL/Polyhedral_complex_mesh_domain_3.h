@@ -94,8 +94,8 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 \cgalModels `MeshDomainWithFeatures_3`
 
 \sa `IntersectionGeometricTraits_3`
-\sa `CGAL::make_mesh_3()`.
-\sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>`
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
 \sa `CGAL::Mesh_polyhedron_3<IGT>`
 */

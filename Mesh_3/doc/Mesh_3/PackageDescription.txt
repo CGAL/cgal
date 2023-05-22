@@ -85,7 +85,7 @@ related to the template parameters of some models of the main concepts:
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Mesh_triangulation_3<MD,Gt,Concurrency_tag,Vertex_base,Cell_base>`
+- `CGAL::Mesh_triangulation_3<MD,Gt,ConcurrencyTag,VertexBase,CellBase>`
 - `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>`
 - `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
 - `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
@@ -102,7 +102,7 @@ and their associated classes:
 - `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 - `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
-- `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
+- `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
 - `CGAL::Triangle_accessor_3<CGAL::Polyhedron_3<K>,K>`
 - `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<ImplicitFunction>`

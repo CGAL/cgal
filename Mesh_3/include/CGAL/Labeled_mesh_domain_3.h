@@ -340,8 +340,8 @@ The function type can be any model of the concept `Callable` compatible with the
 
 \cgalModels `MeshDomain_3`
 
-\sa `Implicit_multi_domain_to_labeling_function_wrapper`
-\sa `CGAL::make_mesh_3()`.
+\sa `CGAL::Implicit_multi_domain_to_labeling_function_wrapper`
+\sa `CGAL::make_mesh_3()`
 
 */
 template<class BGT,

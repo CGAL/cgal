@@ -161,7 +161,7 @@ The second one matches the locus of points satisfying f1(p)>0 and f2(p)<0 and f3
 This parameter stands for a model of the concept `ImplicitFunction` described in the surface mesh generation package.
 The number types `ImplicitFunction::FT` and `BGT::FT` are required to match.
 
-\sa `Labeled_mesh_domain_3`.
+\sa `CGAL::Labeled_mesh_domain_3`.
 
 */
 

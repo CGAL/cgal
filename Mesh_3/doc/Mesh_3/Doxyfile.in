@@ -9,6 +9,7 @@ WARN_IF_UNDOCUMENTED       =  false
 ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
 
 INPUT += \
+      ${CGAL_Mesher_level_INCLUDE_DIR}/CGAL/Mesh_optimization_return_code.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_triangulation_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_polyhedron_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_mesh_domain_3.h \
