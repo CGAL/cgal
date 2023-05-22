@@ -118,6 +118,7 @@ public:
 
   /*!
     Construction from an image.
+    @param image the image
     @param error_bound is relative to the size of the image.
   */
   Labeled_image_mesh_domain_3(const Image& image
