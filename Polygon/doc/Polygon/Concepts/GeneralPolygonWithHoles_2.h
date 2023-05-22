@@ -18,19 +18,15 @@ public:
 /// \name Types
 /// @{
 
-/*! the polygon type used to represent the outer boundary and each hole.
- */
+//! the polygon type used to represent the outer boundary and each hole.
 typedef unspecified_type Polygon_2;
 
-/*! a bidirectional iterator
- * over the polygonal holes. Its value type is `Polygon_2`.
+/*! a bidirectional iterator over the polygonal holes.
+ * Its value type is `Polygon_2`.
  */
 typedef unspecified_type Hole_const_iterator;
 
-
-/*!
-range type for iterating over holes.
-*/
+//! range type for iterating over holes.
 typedef unspecified_type Holes_container;
 
 /// @}
@@ -54,9 +50,17 @@ GeneralPolygonWithHoles_2(Polygon_2 & outer,
 /// \name Predicates
 /// @{
 
-/*! returns `true` if the outer boundary is empty, and `false` otherwise.
+/*! returns `true` if the outer boundary is empty and `false` otherwise.
  */
 bool is_unbounded();
+
+/*! returns `true` if the polygon with holes has holes and `false` otherwise.
+ */
+bool has_holes();
+
+/*! returns the number of holes.
+ */
+Size number_of_holes();
 
 /// @}
 
@@ -77,11 +81,35 @@ Hole_const_iterator holes_begin() const;
  */
 Hole_const_iterator holes_end() const;
 
-
-/*!
-returns the range of holes.
-*/
+/*! returns the range of holes.
+ */
 const Holes_container& holes() const;
+
+/// @}
+
+/// \name Modifiers
+/// @{
+
+/*! adds a given polygon as a hole.
+ * \pre the hole must be clockwise oriented.
+ */
+void add_hole(const Polygon_2& hole);
+
+/*! erases the specified hole.
+ */
+void erase_hole(Hole_iterator hit);
+
+/*! clears the output boundary.
+ */
+void clear_outer_boundary();
+
+/*! removes all the holes.
+ */
+void clear_holes();
+
+/*! removes the outer boundary and all holes.
+ */
+void clear();
 
 /// @}
 
