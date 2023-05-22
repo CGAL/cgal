@@ -760,17 +760,19 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       auto p0p2 = CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
       bool first_split_face = (p0p2 > p1p3);
 
-      if (first_split_face)
+      if(first_split_face)
       {
-        if(p0p2<0)
+        if(p0p2 < 0)
+        {
           do_split = false;
+        }
         else
         {
           bool is_deg = collinear(p0,p1,p2) || collinear(p0,p3,p2);
-          if (is_deg)
+          if(is_deg)
           {
-            if ( p1p3>0 && !(collinear(p0,p1,p3) || collinear(p1,p2,p3)))
-              first_split_face=false;
+            if(p1p3 > 0 && !(collinear(p0,p1,p3) || collinear(p1,p2,p3)))
+              first_split_face = false;
             else
               do_split = false;
           }
@@ -778,21 +780,22 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       }
       else
       {
-        if(p1p3<0)
+        if(p1p3 < 0)
+        {
           do_split = false;
+        }
         else
         {
           bool is_deg = collinear(p0,p1,p3) || collinear(p1,p2,p3);
-          if (is_deg)
+          if(is_deg)
           {
-            if ( p1p3>0 && !(collinear(p0,p1,p2) || collinear(p0,p3,p2)))
-              first_split_face=false;
+            if(p1p3 > 0 && !(collinear(p0,p1,p2) || collinear(p0,p3,p2)))
+              first_split_face = false;
             else
               do_split = false;
           }
         }
       }
-
 
       if(do_split && !is_source_mesh_fixed)
       {
@@ -822,7 +825,9 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
         visitor.after_vertex_edge_snap(new_v, tm_T);
       }
       else
+      {
         continue;
+      }
 
       first_split = false;
       previous_split_position = new_position;
