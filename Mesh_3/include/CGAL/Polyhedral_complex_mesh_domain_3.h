@@ -85,7 +85,7 @@ surface, the sub-domain indices on both sides are known.
 \tparam Polyhedron stands for the type of the input polyhedral surface(s),
 model of `FaceListGraph`.
 
-\tparam IGT stands for a geometric traits class
+\tparam IGT_ stands for a geometric traits class
 providing the types and functors required to implement
 the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
@@ -99,10 +99,15 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
 \sa `CGAL::Mesh_polyhedron_3<IGT>`
 */
+#ifdef DOXYGEN_RUNNING
+template < class IGT,
+           class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
+           class TriangleAccessor=CGAL::Default>
+#else
 template < class IGT_,
            class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor=CGAL::Default
-           >
+           class TriangleAccessor=CGAL::Default>
+#endif
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron,

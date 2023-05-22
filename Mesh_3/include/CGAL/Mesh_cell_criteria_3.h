@@ -72,7 +72,6 @@ private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
 
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Geom_traits::FT FT;
 
   typedef Mesh_cell_criteria_3<Tr> Self;
 

@@ -129,8 +129,6 @@ the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
 
-@todo Comment TriangleAccessor as well as the others
-
 \cgalModels `MeshDomain_3`
 
 \sa `IntersectionGeometricTraits_3`
@@ -138,15 +136,16 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 
 */
 
-
+#ifdef DOXYGEN_RUNNING
+template<class Polyhedron /*FaceGraph*/
+         ,class IGT>
+#else
 template<class Polyhedron /*FaceGraph*/
          ,class IGT_
-#ifndef DOXYGEN_RUNNING
          ,class TriangleAccessor = CGAL::Default
          ,class Patch_id_ = void
-         ,class Use_exact_intersection_construction_tag = CGAL::Tag_true
+         ,class Use_exact_intersection_construction_tag = CGAL::Tag_true>
 #endif
-         >
 class Polyhedral_mesh_domain_3
 {
 public:
