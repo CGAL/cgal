@@ -205,7 +205,7 @@ put_on_web()
 
 
 
-collect_demo_binaries()
+collect_demos_binaries()
 {
   PLATFORM=${1}
 
@@ -393,7 +393,7 @@ run_test_on_host()
     run_test_on_platform "${PLATFORM}"
     publish_results "${PLATFORM}"
     if [ -n "${COLLECT_DEMOS_BINARIES}" ]; then
-      collect_demo_binaries "${PLATFORM}"
+      collect_demos_binaries "${PLATFORM}"
     fi
     if [ -z "${KEEP_TESTS}" ]; then
       rm -rf $CGAL_DIR/cmake/platforms/${PLATFORM}
