@@ -90,13 +90,16 @@ instantiated with a model of the concept
 #ifdef DOXYGEN_RUNNING
 template < class IGT
            ,class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type>
+class Polyhedral_mesh_domain_with_features_3
+  : public Mesh_domain_with_polyline_features_3<
+      Polyhedral_mesh_domain_3< Polyhedron,
+                                IGT> >
 #else
 template < class IGT_
            ,class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type
            ,class TriangleAccessor= CGAL::Default
            ,class Patch_id=int
            ,class Use_exact_intersection_construction_tag = Tag_true>
-#endif
 class Polyhedral_mesh_domain_with_features_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron_,
@@ -104,6 +107,7 @@ class Polyhedral_mesh_domain_with_features_3
                                 TriangleAccessor,
                                 Patch_id,
                                 Use_exact_intersection_construction_tag > >
+#endif
 {
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<

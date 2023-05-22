@@ -101,24 +101,28 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 */
 #ifdef DOXYGEN_RUNNING
 template < class IGT,
-           class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
+           class Polyhedron = typename Mesh_polyhedron_3<IGT>::type,
            class TriangleAccessor=CGAL::Default>
-#else
-template < class IGT_,
-           class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor=CGAL::Default>
-#endif
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron,
+                                IGT>
+#else
+template < class IGT_,
+           class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
+           class TriangleAccessor=CGAL::Default>
+class Polyhedral_complex_mesh_domain_3
+  : public Mesh_domain_with_polyline_features_3<
+      Polyhedral_mesh_domain_3< Polyhedron_,
                                 IGT_,
                                 CGAL::Default,
                                 int,   //Use_patch_id_tag
                                 Tag_true > >//Use_exact_intersection_tag
+#endif
 {
 public:
   /// The base class
-  typedef Polyhedron Polyhedron;
+  typedef Polyhedron_ Polyhedron;
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
       Polyhedron, IGT_, CGAL::Default,
