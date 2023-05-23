@@ -66,18 +66,19 @@ $extrastylesheet
        insertion. That's why we have to do it manually here. Notice
        that we also take pngs from the Manual. -->
   <div id="MSearchBox" class="MSearchBoxInactive">
-    <span class="left">
-      <img id="MSearchSelect" src="../Manual/search/mag_sel.svg"
-           onmouseover="return searchBox.OnSearchSelectShow()"
-           onmouseout="return searchBox.OnSearchSelectHide()"
-           alt=""/>
-      <input type="text" id="MSearchField" value="Search" accesskey="S"
-             onfocus="searchBox.OnSearchFieldFocus(true)"
-             onblur="searchBox.OnSearchFieldFocus(false)"
-             onkeyup="searchBox.OnSearchFieldChange(event)"/>
-    </span><span class="right">
-      <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="../Manual/search/close.svg" alt=""/></a>
-    </span>
+      <span class="left">
+         <span id="MSearchSelect"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()">&#160;
+        </span>
+        <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)"
+               onblur="searchBox.OnSearchFieldFocus(false)"
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+      </span>
+      <span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="$relpath^../Manual/search/close.svg" alt=""/></a>
+      </span>
   </div>
 
 </div>
@@ -117,7 +118,7 @@ $extrastylesheet
      true. Notice that the path to the search directory is adjusted to
      the top-level.-->
 <script type="text/javascript">
-var searchBox = new SearchBox("searchBox", "../Manual/search",false,'Search');
+var searchBox = new SearchBox("searchBox", "../Manual/search/",'.html');
 </script>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -127,9 +128,16 @@ var searchBox = new SearchBox("searchBox", "../Manual/search",false,'Search');
 </div>
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0"
-        name="MSearchResults" id="MSearchResults">
-</iframe>
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
 </div>
 
 <!--END TITLEAREA-->
