@@ -54,7 +54,9 @@ class FrechetDistanceNearNeighborsDS
 public:
 	FrechetDistanceNearNeighborsDS() = default;
 
-	void fill(const Polylines& curves); // FIXME: should this be a range?
+	void insert(const Polyline& curve);
+	void insert(const Polylines& curve);
+
 	PolylineIDs get_close_curves(const Polyline& curve, NT distance);
 
 private:

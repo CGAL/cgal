@@ -30,7 +30,7 @@
 
 #include <iterator>
 
-namespace CGAL{
+namespace CGAL {
 
 template <typename PointRange>
 using PointRangeKernel = typename CGAL::Kernel_traits<
@@ -73,7 +73,8 @@ template <class PointRange,
           class Traits = PointRangeKernel<PointRange>>
 typename Traits::FT
 continuous_Frechet_distance(const PointRange& curve1,
-                            const PointRange& curve2)
+                            const PointRange& curve2,
+							const double precision)
 {
   auto icurve1 = toCurve(curve1);
   auto icurve2 = toCurve(curve2);
