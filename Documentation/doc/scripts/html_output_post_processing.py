@@ -242,7 +242,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     os.chdir(args.output)
 
     #workaround CGAL link on the main page
-    re_replace_in_file("<a class=\"elRef\" href=\"../Circular_kernel_3/namespaceCGAL.html\">CGAL</a>", "CGAL", "./Manual/index.html")
+    re_replace_in_file("<a class=\"elRef\" href=\"../.+/namespaceCGAL.+html\">CGAL</a>", "CGAL", "./Manual/index.html")
 
     #workaround issue with operator<< in pyquery
     all_pages=glob.glob('*/*.html')
