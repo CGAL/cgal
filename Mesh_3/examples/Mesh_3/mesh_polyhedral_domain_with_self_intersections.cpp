@@ -5,9 +5,9 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Mesh_polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
 
@@ -15,8 +15,8 @@
 
 // Domain
 using K           = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Polyhedron  = CGAL::Polyhedron_3<K>;
-using Mesh_domain = CGAL::Polyhedral_mesh_domain_3<Polyhedron, K>;
+using Polyhedron  = CGAL::Mesh_polyhedron_3<K>::type;
+using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<K, Polyhedron>;
 
 using Concurrency_tag =
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -82,7 +82,8 @@ int main(int argc, char* argv[])
   }
 
   // Create domain
-  Mesh_domain domain(polyhedron, nullptr, sif_pmap);
+  Mesh_domain domain(polyhedron, nullptr);
+  domain.set_self_intersections_pmap(sif_pmap);
 
   CGAL::Mesh_facet_criteria_3<Tr, Facet_SI_visitor> facet_criteria(
     25.,//angle_bound
@@ -99,20 +100,7 @@ int main(int argc, char* argv[])
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
   // Output
-  CGAL::dump_c3t3(c3t3, "out_self_intersections ");
-//  std::ofstream medit_file("out_1.mesh");
-//  c3t3.output_to_medit(medit_file);
-//  medit_file.close();
-//
-//  // Set tetrahedron size (keep cell_radius_edge_ratio), ignore facets
-//  Mesh_criteria new_criteria(cell_radius_edge_ratio=3, cell_size=0.03);
-//
-//  // Mesh refinement (and make the output manifold)
-//  CGAL::refine_mesh_3(c3t3, domain, new_criteria, manifold());
-//
-//  // Output
-//  medit_file.open("out_2.mesh");
-//  c3t3.output_to_medit(medit_file);
+  CGAL::dump_c3t3(c3t3, "out_self_intersections");
 
   return EXIT_SUCCESS;
 }

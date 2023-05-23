@@ -46,6 +46,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/optional.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -75,6 +76,9 @@ class Polyhedral_mesh_domain_with_features_3
                                 Patch_id,
                                 Use_exact_intersection_construction_tag > >
 {
+  typedef Polyhedral_mesh_domain_3<
+    Polyhedron_, IGT_, TriangleAccessor,
+    Patch_id, Use_exact_intersection_construction_tag >     BaseBase;
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
       Polyhedron_, IGT_, TriangleAccessor,
@@ -106,6 +110,7 @@ public:
                                        >::type            Face_patch_id_pmap;
   typedef typename boost::property_traits<
     Face_patch_id_pmap>::value_type                       P_id;
+  typedef typename BaseBase::SIMap                        SIMap;
 
   // Backward compatibility
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -276,6 +281,10 @@ public:
   const std::vector<Polyhedron>& polyhedra()const
   {
     return stored_polyhedra;
+  }
+
+  void set_self_intersections_pmap(const boost::optional<SIMap>& simap) {
+    BaseBase::set_self_intersections_pmap(simap);
   }
 
 private:

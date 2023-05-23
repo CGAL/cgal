@@ -196,7 +196,7 @@ public:
   typedef typename AABB_tree_::Primitive_id               AABB_primitive_id;
   typedef typename AABB_traits::Bounding_box              Bounding_box;
 
-private:
+protected:
   typedef typename boost::property_map<Polyhedron,
                                        CGAL::dynamic_face_property_t<bool> >::type SIMap;
 
@@ -321,6 +321,10 @@ public:
 
   void set_surface_only() {
     bounding_tree_ = 0;
+  }
+
+  void set_self_intersections_pmap(const boost::optional<SIMap>& simap) {
+    self_intersections_pmap_ = simap;
   }
 
   /**
