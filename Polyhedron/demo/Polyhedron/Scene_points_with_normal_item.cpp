@@ -27,29 +27,31 @@
 #include <QWidgetAction>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 
-#include <set>
-#include <stack>
-#include <algorithm>
-#include <boost/array.hpp>
-
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
+#include <boost/array.hpp>
+
+#include <set>
+#include <stack>
+#include <algorithm>
+
 const std::size_t limit_fast_drawing = 300000; //arbitraty large value
 
 typedef CGAL::Three::Point_container Pc;
 typedef CGAL::Three::Edge_container Ec;
 typedef CGAL::Three::Viewer_interface VI;
+
 typedef Scene_points_with_normal_item_priv Priv;
+
 struct Scene_points_with_normal_item_priv
 {
-  enum Point_container_id{
-    Points =0,
+  enum Point_container_id
+  {
+    Points = 0,
     Shaded_points,
     Selected_points,
     Selected_shaded_points
@@ -68,30 +70,28 @@ struct Scene_points_with_normal_item_priv
     point_Slider->setMinimum(1);
     point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
     point_Slider->setMaximum(25);
-    item->setPointContainer(Priv::Selected_shaded_points, new Pc(VI::PROGRAM_WITH_LIGHT,
-                                                 false));
-    item->setPointContainer(Priv::Selected_points, new Pc(VI::PROGRAM_NO_SELECTION,
-                                                 false));
-    item->setPointContainer(Priv::Shaded_points, new Pc(VI::PROGRAM_WITH_LIGHT,
-                                                 false));
-    item->setPointContainer(Priv::Points, new Pc(VI::PROGRAM_NO_SELECTION,
-                                                 false));
-    item->setEdgeContainer(0, new Ec(VI::PROGRAM_NO_SELECTION,
-                                                 false));
-
+    item->setPointContainer(Priv::Selected_shaded_points, new Pc(VI::PROGRAM_WITH_LIGHT, false));
+    item->setPointContainer(Priv::Selected_points, new Pc(VI::PROGRAM_NO_SELECTION, false));
+    item->setPointContainer(Priv::Shaded_points, new Pc(VI::PROGRAM_WITH_LIGHT, false));
+    item->setPointContainer(Priv::Points, new Pc(VI::PROGRAM_NO_SELECTION, false));
+    item->setEdgeContainer(0, new Ec(VI::PROGRAM_NO_SELECTION, false));
   }
+
   Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
-    :m_points(new Point_set)
+    : m_points(new Point_set)
   {
     init_values(parent);
   }
-  Scene_points_with_normal_item_priv(const Scene_points_with_normal_item& toCopy, Scene_points_with_normal_item* parent)
+
+  Scene_points_with_normal_item_priv(const Scene_points_with_normal_item& toCopy,
+                                     Scene_points_with_normal_item* parent)
     : m_points(new Point_set(*toCopy.d->m_points))
   {
     init_values(parent);
   }
 
-  Scene_points_with_normal_item_priv(const SMesh& input_mesh, Scene_points_with_normal_item* parent)
+  Scene_points_with_normal_item_priv(const SMesh& input_mesh,
+                                     Scene_points_with_normal_item* parent)
     : m_points(new Point_set)
   {
    init_values(parent);
@@ -118,6 +118,7 @@ struct Scene_points_with_normal_item_priv
     delete normal_Slider;
     delete point_Slider;
   }
+
   bool isPointSliderMoving() { return is_point_slider_moving; }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices() const;
@@ -143,9 +144,10 @@ struct Scene_points_with_normal_item_priv
   Scene_points_with_normal_item* item;
 };
 
-class Fill_buffers {
-
+class Fill_buffers
+{
   Point_set* point_set;
+
   std::vector<Point_set::Index>& indices;
   std::vector<CGAL_data_type>& positions_lines;
   std::vector<CGAL_data_type>& positions_normals;
@@ -212,19 +214,16 @@ public:
   }
 };
 
-
-
 Scene_points_with_normal_item::Scene_points_with_normal_item()
 {
-    setRenderingMode(Points);
-    is_selected = true;
-    d = new Scene_points_with_normal_item_priv(this);
+  setRenderingMode(Points);
+  is_selected = true;
+  d = new Scene_points_with_normal_item_priv(this);
 }
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
 {
-
   d = new Scene_points_with_normal_item_priv(toCopy, this);
 
   if (!has_normals())
@@ -232,7 +231,8 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     setRenderingMode(Points);
     is_selected = true;
   }
-  else{
+  else
+  {
     setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     is_selected = true;
   }
@@ -692,7 +692,6 @@ void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* vie
 void Scene_points_with_normal_item::
 drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-
   GLfloat point_size;
   viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
   viewer->setGlPointSize(GLfloat(d->point_Slider->value()));
@@ -735,18 +734,16 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
   {
     if(!d->m_points->has_colors())
       getPointContainer(Priv::Points)->setColor(color());
-    std::size_t real_size =
-        getPointContainer(Priv::Points)->getFlatDataSize();
+    std::size_t real_size = getPointContainer(Priv::Points)->getFlatDataSize();
     getPointContainer(Priv::Points)->setFlatDataSize(ratio_displayed * real_size);
     getPointContainer(Priv::Points)->setFlatDataSize(real_size);
-    getPointContainer(Priv::Points)->draw( viewer, !d->m_points->has_colors());
+    getPointContainer(Priv::Points)->draw(viewer, !d->m_points->has_colors());
 
-    real_size =
-        getPointContainer(Priv::Selected_points)->getFlatDataSize();
+    real_size = getPointContainer(Priv::Selected_points)->getFlatDataSize();
     getPointContainer(Priv::Selected_points)->setColor(QColor(Qt::red));
     getPointContainer(Priv::Selected_points)->setFlatDataSize(ratio_displayed * real_size);
     getPointContainer(Priv::Selected_points)->setFlatDataSize(real_size);
-    getPointContainer(Priv::Selected_points)->draw( viewer, true);
+    getPointContainer(Priv::Selected_points)->draw(viewer, true);
   }
 
   viewer->setGlPointSize(point_size);

@@ -751,7 +751,6 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
 
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
-
   item->getTriangleContainer(1)->initializeBuffers(viewer);
   item->getTriangleContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(1)->initializeBuffers(viewer);
@@ -2388,7 +2387,7 @@ void Scene_surface_mesh_item::setAlpha(int alpha)
 
 QSlider* Scene_surface_mesh_item::alphaSlider() { return d->alphaSlider; }
 
-void Scene_surface_mesh_item::computeElements()const
+void Scene_surface_mesh_item::computeElements() const
 {
   d->compute_elements(ALL);
   setBuffersFilled(true);
@@ -2396,7 +2395,7 @@ void Scene_surface_mesh_item::computeElements()const
 }
 
 void
-Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
+Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
 {
   const_cast<Scene_surface_mesh_item*>(this)->//temporary, until the drawing pipeline is not const anymore.
       d->initializeBuffers(viewer);
@@ -2416,8 +2415,9 @@ void Scene_surface_mesh_item::computeItemColorVectorAutomatically(bool b)
   this->setProperty("recompute_colors",b);
 }
 
-void write_in_vbo(Vbo* vbo, cgal_gl_data* data,
-               std::size_t size)
+void write_in_vbo(Vbo* vbo,
+                  cgal_gl_data* data,
+                  std::size_t size)
 {
   vbo->bind();
   vbo->vbo.write(static_cast<int>((3*size)*sizeof(cgal_gl_data)),
