@@ -94,18 +94,17 @@ struct Scene_points_with_normal_item_priv
                                      Scene_points_with_normal_item* parent)
     : m_points(new Point_set)
   {
-   init_values(parent);
-   boost::graph_traits<SMesh>::vertex_iterator v;
+    using vertex_descriptor = typename boost::graph_traits<SMesh>::vertex_descriptor;
+
+    init_values(parent);
+
+    auto vpm = get(CGAL::vertex_point, input_mesh);
+    auto vnormals = get(CGAL::dynamic_vertex_property_t<Kernel::Vector_3>(), input_mesh);
+    CGAL::Polygon_mesh_processing::compute_vertex_normals(input_mesh, vnormals);
+
     m_points->add_normal_map();
-    for (v = const_cast<SMesh&>(input_mesh).vertices_begin();
-         v != const_cast<SMesh&>(input_mesh).vertices_end(); v++)
-    {
-      boost::graph_traits<SMesh>::vertex_descriptor vd(*v);
-      const Kernel::Point_3& p = input_mesh.point(vd);
-      Kernel::Vector_3 n =
-        CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, input_mesh);
-      m_points->insert(p,n);
-    }
+    for(vertex_descriptor v : vertices(input_mesh))
+      m_points->insert(get(vpm, v), get(vnormals, v));
   }
 
   ~Scene_points_with_normal_item_priv()
