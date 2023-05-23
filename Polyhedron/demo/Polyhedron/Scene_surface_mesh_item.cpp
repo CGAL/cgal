@@ -296,45 +296,33 @@ struct Scene_surface_mesh_item_priv{
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
+
+void Scene_surface_mesh_item::initialize_priv()
+{
+  CGAL_precondition(d != nullptr);
+
+  d->floated = false;
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
+  d->checkFloat();
+  d->textVItems = new TextListItem(this);
+  d->textEItems = new TextListItem(this);
+  d->textFItems = new TextListItem(this);
+
+  are_buffers_filled = false;
+  invalidate(ALL);
+}
+
 Scene_surface_mesh_item::Scene_surface_mesh_item()
 {
   d = new Scene_surface_mesh_item_priv(new SMesh(), this);
-  d->floated = false;
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-
-  are_buffers_filled = false;
-  invalidate(ALL);
+  initialize_priv();
 }
 
-Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
-{
-  d = new Scene_surface_mesh_item_priv(other, this);
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->floated = false;
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-
-  are_buffers_filled = false;
-  invalidate(ALL);
-}
-
-void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
+Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
-  d->floated = false;
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-  are_buffers_filled = false;
-  invalidate(ALL);
+  initialize_priv();
+
   std::size_t isolated_v = 0;
   for(vertex_descriptor v : vertices(*sm))
   {
@@ -344,21 +332,20 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
     }
   }
   setNbIsolatedvertices(isolated_v);
-
-}
-Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
-{
-  standard_constructor(sm);
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(const SMesh& sm)
-{
-  standard_constructor(new SMesh(sm));
-}
+  : Scene_surface_mesh_item(new SMesh(sm))
+{ }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh&& sm)
+  : Scene_surface_mesh_item(new SMesh(std::move(sm)))
+{ }
+
+Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
 {
-  standard_constructor(new SMesh(std::move(sm)));
+  d = new Scene_surface_mesh_item_priv(other, this);
+  initialize_priv();
 }
 
 Scene_surface_mesh_item*

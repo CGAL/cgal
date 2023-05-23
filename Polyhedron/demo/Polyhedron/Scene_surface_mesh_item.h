@@ -104,10 +104,10 @@ public:
 
 
   void compute_bbox()const Q_DECL_OVERRIDE;
-  void standard_constructor(SMesh *sm);
   bool save(std::ostream& out) const;
   bool save_obj(std::ostream& out) const;
   bool load_obj(std::istream& in);
+
   //statistics
   enum STATS {
     NB_VERTICES = 0,
