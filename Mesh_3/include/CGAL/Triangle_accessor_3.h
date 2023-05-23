@@ -37,23 +37,26 @@ class Triangle_accessor_3 {
 /*!
 \ingroup PkgMesh3Domains
 
-The class `Triangle_accessor_3` is a model for the concept `TriangleAccessor_3`. It is
-designed to serve as accessor for objects of type `Polyhedron_3<K>`.
+The class `Triangle_accessor_3` is a model for the concept
+`TriangleAccessor_3`. It is no longer used in the 3D Mesh
+Generation package, and it is only kept for backward compatibility.
 
-\attention Actually, the class `Triangle_accessor_3` is a partial specialization of the class
-template `template<typename Polyhedron, typename K>
-Triangle_accessor_3<Polyhedron, K>`. One may give another partial
-specialization of this class to handle one's own polyhedron data structure.
+\attention Actually, the class generic class template of
+`Triangle_accessor_3` must not be used. Partial specializations
+are provided for `CGAL::Polyhedron<K>` and `CGAL::Graph_with_descriptor_with_graph<Surface_mesh<K::Point_3>>`.
 
-@todo Document the other partial specializations
-
+\tparam Polyhdron must be model of FaceGraph
 \tparam K is the geometric traits class.
 
 \cgalModels `TriangleAccessor_3`
-
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
-
 */
+
+#ifdef DOXYGEN_RUNNING
+template <typename Polyhedron, typename K>
+class Triangle_accessor_3
+{};
+
+#else
 template < class K,class Items,
            template < class T, class I, class A>
            class T_HDS,
@@ -142,7 +145,7 @@ public:
     return Triangle_3(a,b,c);
   }
 };
-
+#endif
 
 } // end namespace CGAL
 

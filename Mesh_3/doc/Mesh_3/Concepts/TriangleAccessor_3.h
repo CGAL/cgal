@@ -5,9 +5,8 @@
 The concept `TriangleAccessor_3` represents an accessor to a triangulated polyhedral
 surface, intersection free and without boundaries.
 
-\cgalHasModel `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>`
+\cgalHasModel `CGAL::Triangle_accessor_3<Polyhedron,,K>`
 
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
 \sa `CGAL::make_mesh_3()`
 
 */
@@ -36,7 +35,7 @@ constructible from `Triangle_iterator`. It may be `Triangle_iterator` itself.
 typedef unspecified_type Triangle_handle;
 
 /*!
-Polyhedron type.
+Polyhedron type which must be a model of `FaceGraph`.
 */
 typedef unspecified_type Polyhedron;
 

@@ -26,7 +26,7 @@ public:
 /// @{
 
 /*!
-Handle type for the cells of the
+%Handle type for the cells of the
 triangulation. Must match the `Cell_handle` type in the
 triangulation type used by the mesh generation function.
 */

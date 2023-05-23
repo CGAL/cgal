@@ -46,7 +46,7 @@ typedef unspecified_type FT;
 
 /*!
 
-Returns the value of the sizing field (i.e.\ the maximum edge length) at point `p`.
+Returns the value of the sizing field (i.e., the maximum edge length) at point `p`.
 */
 FT sizing_field(const Point_3& p);
 
