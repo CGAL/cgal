@@ -74,13 +74,13 @@ bool read_3MF(const std::string& fname,
   */
 
   // Create Model Reader
-  pReader = pModel->queryreader(sReaderName.c_str());
+  pReader = pModel->QueryReader(sReaderName.c_str());
 
   // Import Model from File
   pReader->ReadFromFile(fname.c_str());
 
   //Iterate Model
-  PObjectiterator pObjectIterator = pModel->GetObjects();
+  PObjectIterator pObjectIterator = pModel->GetObjects();
 
 
   /**************************************************
@@ -118,7 +118,7 @@ bool read_3MF(const std::string& fname,
             PComponent pComponent = pComponentsObject->GetComponent(nIndex);
             PObject pObject = pComponent->GetObjectResource();
 
-            bIsMeshObject = pObject->isMeshObject();
+            bIsMeshObject = pObject->IsMeshObject();
             if(bIsMeshObject)
               {
                 bool bHasTransform = pComponent->HasTransform();
@@ -135,8 +135,8 @@ bool read_3MF(const std::string& fname,
                 }
 
                 pMeshObject = pObject;
-                nbVertices = pMeshobject->GetVertexCount();
-                nbTriangles = pMeshObject->getTriangleCount();
+                nbVertices = pMeshObject->GetVertexCount();
+                nbTriangles = pMeshObject->GetTriangleCount();
                 PointRange points (nbVertices);
                 TriangleRange triangles(nbTriangles);
                 ColorRange colors(nbTriangles);
@@ -173,7 +173,7 @@ bool read_3MF(const std::string& fname,
 
 
     // Retrieve Resource
-    PObject * pObject = pBuildItem->GetObjectResource();
+    PObject pObject = pBuildItem->GetObjectResource();
 
 
     bool bIsMeshObject = pObject->IsMeshObject();
@@ -187,7 +187,7 @@ bool read_3MF(const std::string& fname,
         ColorRange colors(nbTriangles);
         std::string name;
 
-        if(pBuildItem->HasObjectTransform();)
+        if(pBuildItem->HasObjectTransform())
         {
           Transform = pBuildItem->GetObjectTransform();
         }
