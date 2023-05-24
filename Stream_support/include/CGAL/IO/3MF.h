@@ -108,7 +108,7 @@ bool read_3MF(const std::string& fname,
         bool bIsComponentsObject = pObject->IsComponentsObject();
         if(bIsComponentsObject)
         {
-          pComponentsObject = std::dynamic_pointer_cast<CComponentsObject>(pObject);
+          pComponentsObject = std::static_pointer_cast<CComponentsObject>(pObject);
           Lib3MF_uint32 nComponentCount = pComponentsObject->GetComponentCount();
 
           //for each component
@@ -134,7 +134,7 @@ bool read_3MF(const std::string& fname,
                   Transform = transform_nmr_internal::initMatrix();
                 }
 
-                pMeshObject = std::dynamic_pointer_cast<CMeshObject>(pObject);
+                pMeshObject = std::static_pointer_cast<CMeshObject>(pObject);
                 nbVertices = pMeshObject->GetVertexCount();
                 nbTriangles = pMeshObject->GetTriangleCount();
                 PointRange points (nbVertices);
@@ -176,10 +176,8 @@ bool read_3MF(const std::string& fname,
     PObject pObject = pBuildItem->GetObjectResource();
 
 
-    bool bIsMeshObject = pObject->IsMeshObject();
-      if(bIsMeshObject)
-      {
-        pMeshObject = std::dynamic_pointer_cast<CMeshObject>(pObject);
+      if(pObject->IsMeshObject()){
+        pMeshObject = std::static_pointer_cast<CMeshObject>(pObject);
         nbVertices = pMeshObject->GetVertexCount();
         nbTriangles = pMeshObject->GetTriangleCount();
         PointRange points (nbVertices);

@@ -49,5 +49,7 @@ int main()
   meshes.clear();
   CGAL::IO::read_3MF("m.3mf", meshes);
 
+  std::cout << meshes[0] << std::endl;
+
   return 0;
 }
