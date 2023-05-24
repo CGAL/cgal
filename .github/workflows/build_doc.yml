@@ -75,7 +75,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
           sudo pip install lxml
           sudo pip install pyquery
-          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_8_13_patched/doxygen
+          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_9_6_patched/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
           git config --global user.email "cgal@geometryfactory.com"
@@ -160,7 +160,7 @@ jobs:
           script: |
             const error = process.env.ERRORMSG
             const job_url = `${context.serverUrl}/CGAL/cgal/actions/runs/${context.runId}`
-            const msg = "There was an error while building the doc: \n"+error + "\n" + job_url
+            const msg = "There was an error while building the doc: \n```\n"+error + "\n```\n" + job_url
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

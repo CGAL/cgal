@@ -108,8 +108,8 @@ void IpeletMesh2::protected_run(int fn)
     mesher.refine_mesh();
   }
   else
-    CGAL::refine_Delaunay_mesh_2(cdt,list_of_seeds.begin(), list_of_seeds.end(),
-      Criteria(0.125, alpha));
+    CGAL::refine_Delaunay_mesh_2(cdt,
+        CGAL::parameters::criteria(Criteria(0.125, alpha)).seeds(list_of_seeds));
 
 
   for (CDT::Finite_edges_iterator it=cdt.finite_edges_begin(); it!=cdt.finite_edges_end();++it)

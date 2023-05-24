@@ -150,6 +150,10 @@ public:
   float ty() const { return image_ptr->ty; }
   float tz() const { return image_ptr->tz; }
 
+  float& tx(){ return image_ptr->tx; }
+  float& ty(){ return image_ptr->ty; }
+  float& tz(){ return image_ptr->tz; }
+
   float value(const std::size_t i,
               const std::size_t j,
               const std::size_t k) const
