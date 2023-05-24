@@ -131,7 +131,7 @@ bool read_3MF(const std::string& fname,
                 }
                 else
                 {
-                  Transform = transform_nmr_internal::initMatrix();
+                  Transform = wrapper->GetIdentityTransform();
                 }
 
                 pMeshObject = std::static_pointer_cast<CMeshObject>(pObject);
@@ -191,7 +191,7 @@ bool read_3MF(const std::string& fname,
         }
         else
         {
-          Transform = transform_nmr_internal::initMatrix();
+          Transform = wrapper->GetIdentityTransform();
         }
 
         if(func(pMeshObject, Transform, points, triangles, colors, name)){

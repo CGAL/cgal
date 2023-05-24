@@ -28,24 +28,6 @@
 #ifdef CGAL_LINKED_WITH_3MF
 
 namespace CGAL {
-namespace transform_nmr_internal {
-
-using namespace Lib3MF;
-
-sTransform initMatrix()
-{
-  sTransform mMatrix;
-  int i, j;
-  for(i = 0; i < 4; i++) {
-    for(j = 0; j < 3; j++) {
-      mMatrix.m_Fields[j][i] = (i == j) ? 1.0f : 0.0f;
-    }
-  }
-
-  return mMatrix;
-}
-
-} // namespace transform_nmr_internal
 
 using namespace Lib3MF;
 
@@ -65,15 +47,13 @@ bool extract_soups (PMeshObject pMeshObject,
 
   std::vector<char> pBuffer;
 
-  // Retrieve Mesh Name Length
   name = pMeshObject->GetName();
-
 
   typename Kernel::Aff_transformation_3 t(
         transform.m_Fields[0][0], transform.m_Fields[0][1], transform.m_Fields[0][2], transform.m_Fields[0][3],
-      transform.m_Fields[1][0], transform.m_Fields[1][1], transform.m_Fields[1][2], transform.m_Fields[1][3],
-      transform.m_Fields[2][0], transform.m_Fields[2][1], transform.m_Fields[2][2], transform.m_Fields[2][3]
-      );
+        transform.m_Fields[1][0], transform.m_Fields[1][1], transform.m_Fields[1][2], transform.m_Fields[1][3],
+        transform.m_Fields[2][0], transform.m_Fields[2][1], transform.m_Fields[2][2], transform.m_Fields[2][3]
+                                          );
 
   for(Lib3MF_uint32 vid = 0; vid < points.size(); ++vid)
   {
@@ -83,6 +63,10 @@ bool extract_soups (PMeshObject pMeshObject,
               pVertex.m_Coordinates[2]);
     points[vid] = t.transform(p);
   }
+
+  // AF:  How to get from the property to the color ??
+  // PColorGroupIterator pColorGroupIterator = model->GetColorGroups();
+  // PColorGroup g;    g->GetResourceID(); // test for this one in sTriangleColor
 
   for(Lib3MF_uint32 pid = 0; pid < triangles.size(); ++pid)
   {
@@ -97,7 +81,7 @@ bool extract_soups (PMeshObject pMeshObject,
 
     pMeshObject->GetTriangleProperties(pid, sTriangleColor);
 
-    /* AF  How to get from the property to the color ??
+    /*
     NMR::lib3mf_propertyhandler_getcolor(pPropertyHandler, pid, &pColor);
     NMR::MODELMESHCOLOR_SRGB mColor = pColor.m_Colors[0];
     colors[pid]=CGAL::IO::Color(mColor.m_Red, mColor.m_Green,
