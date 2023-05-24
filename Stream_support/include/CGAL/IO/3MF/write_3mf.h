@@ -18,7 +18,7 @@
 
 #include <CGAL/boost/graph/iterator.h>
 
-#include <Model/COM/NMR_DLLInterfaces.h>
+#include "lib3mf_implicit.hpp"
 
 #include <iostream>
 #include <vector>
@@ -30,29 +30,31 @@
 namespace CGAL {
 namespace tmf_internal {
 
+using namespace Lib3MF;
+
 // Utility functions to create vertices and triangles
-NMR::MODELMESHVERTEX fnCreateVertex(float x, float y, float z)
+sPosition fnCreateVertex(float x, float y, float z)
 {
-  NMR::MODELMESHVERTEX result;
-  result.m_fPosition[0] = x;
-  result.m_fPosition[1] = y;
-  result.m_fPosition[2] = z;
+  sPosition result;
+  result.m_Coordinates[0] = x;
+  result.m_Coordinates[1] = y;
+  result.m_Coordinates[2] = z;
   return result;
 }
 
-NMR::MODELMESHTRIANGLE fnCreateTriangle(int v0, int v1, int v2)
+sTriangle fnCreateTriangle(int v0, int v1, int v2)
 {
-  NMR::MODELMESHTRIANGLE result;
-  result.m_nIndices[0] = v0;
-  result.m_nIndices[1] = v1;
-  result.m_nIndices[2] = v2;
+  sTriangle result;
+  result.m_Indices[0] = v0;
+  result.m_Indices[1] = v1;
+  result.m_Indices[2] = v2;
   return result;
 }
 
-NMR::MODELMESHCOLOR_SRGB fnCreateColor(unsigned char red, unsigned char green,
-                                       unsigned char blue, unsigned char alpha=255)
+sColor fnCreateColor(unsigned char red, unsigned char green,
+                     unsigned char blue, unsigned char alpha=255)
 {
-  NMR::MODELMESHCOLOR_SRGB result;
+  sColor result;
   result.m_Red = red;
   result.m_Green = green;
   result.m_Blue = blue;
@@ -64,17 +66,20 @@ NMR::MODELMESHCOLOR_SRGB fnCreateColor(unsigned char red, unsigned char green,
 
 namespace IO {
 
-bool add_build_item(NMR::PLib3MFModel * pModel,
-                    NMR::PLib3MFModelMeshObject* pMeshObject)
+using namespace Lib3MF;
+
+bool add_build_item(PWrapper wrapper,
+                    PModel pModel,
+                    PMeshObject pMeshObject)
 {
+  /*
   HRESULT hResult;
   DWORD nErrorMessage;
   LPCSTR pszErrorMessage;
-
+  */
   // Add Build Item for Mesh
-  NMR::PLib3MFModelBuildItem * pBuildItem;
-  hResult = NMR::lib3mf_model_addbuilditem(pModel, pMeshObject, NULL, &pBuildItem);
-
+  PBuildItem pBuildItem = pModel->AddBuildItem(pMeshObject.get(), wrapper->GetIdentityTransform());
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not create build item: " << std::hex << hResult << std::endl;
@@ -84,25 +89,23 @@ bool add_build_item(NMR::PLib3MFModel * pModel,
     NMR::lib3mf_release(pModel);
     return false;
   }
-
-  // Release BuildItem and Mesh
-  NMR::lib3mf_release(pMeshObject);
-  NMR::lib3mf_release(pBuildItem);
+  */
   return true;
 }
 
 bool export_model_to_file(const std::string& file_name,
-                          NMR::PLib3MFModel * pModel)
+                          PModel pModel)
 {
+  /*
   HRESULT hResult;
   DWORD nErrorMessage;
   LPCSTR pszErrorMessage;
-
+  */
   // Output mesh as 3MF
   // Create Model Writer for 3MF
-  NMR::PLib3MFModelWriter * p3MFWriter;
-  hResult = NMR::lib3mf_model_querywriter(pModel, "3mf", &p3MFWriter);
-
+  PWriter writer = pModel->QueryWriter("3mf");
+  writer->WriteToFile(file_name.c_str());
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not create model reader: " << std::hex << hResult << std::endl;
@@ -122,9 +125,7 @@ bool export_model_to_file(const std::string& file_name,
     NMR::lib3mf_release(p3MFWriter);
     return false;
   }
-
-  // Release Model Writer
-  NMR::lib3mf_release(p3MFWriter);
+  */
   return true;
 }
 
@@ -133,19 +134,22 @@ bool write_mesh_to_model(const PointRange& points,
                          const TriangleRange& triangles,
                          const ColorRange& colors,
                          const std::string& name,
-                         NMR::PLib3MFModelMeshObject** pMeshObject,
-                         NMR::PLib3MFModel * pModel)
+                         PMeshObject pMeshObject,
+                         PModel  pModel,
+                         PWrapper wrapper)
 {
+  /*
   DWORD nErrorMessage;
   LPCSTR pszErrorMessage;
   HRESULT hResult;
-
+  */
   // Create mesh structure
-  std::vector<NMR::MODELMESHVERTEX> pVertices;
-  std::vector<NMR::MODELMESHTRIANGLE> pTriangles;
+  std::vector<sPosition> vertices;
+  std::vector<sTriangle> striangles;
 
   // Create Mesh Object
-  hResult = NMR::lib3mf_model_addmeshobject(pModel, pMeshObject);
+  pMeshObject = pModel->AddMeshObject();
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not add mesh object: " << std::hex << hResult << std::endl;
@@ -154,16 +158,15 @@ bool write_mesh_to_model(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return false;
   }
-
+  */
   for(const auto& point : points)
-    pVertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
+    vertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
 
   for(const auto& triangle : triangles)
-    pTriangles.push_back(tmf_internal::fnCreateTriangle(triangle[0], triangle[1], triangle[2]));
+    striangles.push_back(tmf_internal::fnCreateTriangle(triangle[0], triangle[1], triangle[2]));
 
-  hResult = NMR::lib3mf_meshobject_setgeometry(*pMeshObject, pVertices.data(),
-                                               pVertices.size(), pTriangles.data(),
-                                               pTriangles.size());
+  pMeshObject->SetGeometry(vertices, striangles);
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not set mesh geometry: " << std::hex << hResult << std::endl;
@@ -174,7 +177,8 @@ bool write_mesh_to_model(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return false;
   }
-
+  */
+  /*
   // Create color entries
   NMR::PLib3MFPropertyHandler * pPropertyHandler;
   hResult = NMR::lib3mf_meshobject_createpropertyhandler(*pMeshObject, &pPropertyHandler);
@@ -191,12 +195,12 @@ bool write_mesh_to_model(const PointRange& points,
   // define colors
   for(std::size_t pid = 0; pid<colors.size(); ++pid)
   {
-    NMR::MODELMESHCOLOR_SRGB sColor = tmf_internal::fnCreateColor (colors[pid].red(),
+    sColor scolor = tmf_internal::fnCreateColor (colors[pid].red(),
                                                                    colors[pid].green(),
                                                                    colors[pid].blue(),
                                                                    colors[pid].alpha());
     // One-colored Triangles
-    NMR::lib3mf_propertyhandler_setsinglecolor(pPropertyHandler, pid, &sColor);
+    NMR::lib3mf_propertyhandler_setsinglecolor(pPropertyHandler, pid, &scolor);
   }
 
   // make sure to define a default property
@@ -212,14 +216,16 @@ bool write_mesh_to_model(const PointRange& points,
     return false;
   }
 
-  NMR::MODELMESHCOLOR_SRGB default_color = tmf_internal::fnCreateColor(0,0,0,0);
+  sColor default_color = tmf_internal::fnCreateColor(0,0,0,0);
   NMR::lib3mf_defaultpropertyhandler_setcolor(pDefaultPropertyHandler, &default_color);
 
   // release default property handler
   NMR::lib3mf_release(pDefaultPropertyHandler);
+  */
 
   // Set name
-  hResult = NMR::lib3mf_object_setnameutf8(*pMeshObject, name.c_str());
+  pMeshObject->SetName(name.c_str());
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not set object name: " << std::hex << hResult << std::endl;
@@ -229,9 +235,9 @@ bool write_mesh_to_model(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return false;
   }
-
+  */
   //add a builditem to finish
-  return add_build_item(pModel, *pMeshObject);
+  return add_build_item(wrapper, pModel, pMeshObject);
 }
 
 //remember that it adds 3 demmy vertices in the beginning, and a dummy triangle to be ignored.
@@ -239,18 +245,20 @@ template<typename PointRange, typename Color>
 bool write_points(const PointRange& points,
                   const Color& color,
                   const std::string& name,
-                  NMR::PLib3MFModelMeshObject** pMeshObject,
-                  NMR::PLib3MFModel * pModel)
+                  PMeshObject pMeshObject,
+                  PModel pModel)
 {
+  /*
   DWORD nErrorMessage;
   LPCSTR pszErrorMessage;
   HRESULT hResult;
-
+  */
   // Create mesh structure
-  std::vector<NMR::MODELMESHVERTEX> pVertices;
-
+  std::vector<sPosition> vertices;
+  std::vector<sTriangle> triangles(1);
   // Create Mesh Object
-  hResult = NMR::lib3mf_model_addmeshobject(pModel, pMeshObject);
+   pMeshObject = pModel->AddMeshObject();
+   /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not add mesh object: " << std::hex << hResult << std::endl;
@@ -259,17 +267,17 @@ bool write_points(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return false;
   }
-
+   */
   //add 3 dummy vertices to be sure to have a valid triangle and accept point sets with fewer than 3 vertices.
   for(int i = 0; i< 3; ++i)
-    pVertices.push_back(tmf_internal::fnCreateVertex(0,0,0));
+    vertices.push_back(tmf_internal::fnCreateVertex(0,0,0));
 
   for(const auto& point : points)
-    pVertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
+    vertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
 
-  NMR::MODELMESHTRIANGLE dummy_triangle = tmf_internal::fnCreateTriangle(0,1,2); //add a triangle to avoid lib error.
-  hResult = NMR::lib3mf_meshobject_setgeometry(*pMeshObject, pVertices.data(),
-                                               pVertices.size(), &dummy_triangle, 1);
+  triangles[0] =  tmf_internal::fnCreateTriangle(0,1,2); //add a triangle to avoid lib error.
+  pMeshObject->setGeometry(vertices, triangles);
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not set mesh geometry: " << std::hex << hResult << std::endl;
@@ -279,7 +287,8 @@ bool write_points(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return false;
   }
-
+  */
+  /*
   // Create color entries
   NMR::PLib3MFPropertyHandler * pPropertyHandler;
   hResult = NMR::lib3mf_meshobject_createpropertyhandler(*pMeshObject, &pPropertyHandler);
@@ -294,12 +303,12 @@ bool write_points(const PointRange& points,
   }
 
   // define colors
-  NMR::MODELMESHCOLOR_SRGB sColor = tmf_internal::fnCreateColor (color.red(),
-                                                                 color.green(),
-                                                                 color.blue(),
-                                                                 color.alpha());
+  sColor scolor = tmf_internal::fnCreateColor (color.red(),
+                                               color.green(),
+                                               color.blue(),
+                                               color.alpha());
   // One-colored Triangles
-  NMR::lib3mf_propertyhandler_setsinglecolor(pPropertyHandler, 0, &sColor);
+  NMR::lib3mf_propertyhandler_setsinglecolor(pPropertyHandler, 0, &scolor);
 
   // make sure to define a default property
   NMR::PLib3MFDefaultPropertyHandler * pDefaultPropertyHandler;
@@ -314,15 +323,17 @@ bool write_points(const PointRange& points,
     return false;
   }
 
-  NMR::MODELMESHCOLOR_SRGB default_color = tmf_internal::fnCreateColor(0,0,0,0);
+  sColor default_color = tmf_internal::fnCreateColor(0,0,0,0);
   NMR::lib3mf_defaultpropertyhandler_setcolor(pDefaultPropertyHandler,
                                               &default_color);
 
   // release default property handler
   NMR::lib3mf_release(pDefaultPropertyHandler);
+  */
 
   // Set name
-  hResult = NMR::lib3mf_object_setnameutf8(*pMeshObject, name.c_str());
+  pMeshObject.setName(name.c_str());
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not set object name: " << std::hex << hResult << std::endl;
@@ -332,16 +343,17 @@ bool write_points(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return false;
   }
+  */
 
-  return add_build_item(pModel, *pMeshObject);
+  return add_build_item(pModel, pMeshObject);
 }
 
 template<typename PointRange, typename Color>
 bool write_point_cloud_to_model(const PointRange& points,
                                 const Color& color,
                                 const std::string& name,
-                                NMR::PLib3MFModelMeshObject** pMeshObject,
-                                NMR::PLib3MFModel * pModel)
+                                PMeshObject pMeshObject,
+                                PModel pModel)
 {
   std::string pc_name = name;
   pc_name.append("_cgal_pc");
@@ -352,8 +364,8 @@ template<typename PointRange, typename Color>
 bool write_polyline_to_model(const PointRange& points,
                              const Color& color,
                              const std::string& name,
-                             NMR::PLib3MFModelMeshObject** pMeshObject,
-                             NMR::PLib3MFModel * pModel)
+                             PMeshObject* pMeshObject,
+                             PModel  pModel)
 {
   std::string pc_name = name;
   pc_name.append("_cgal_pl");

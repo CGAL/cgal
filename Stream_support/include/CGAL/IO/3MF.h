@@ -11,16 +11,12 @@
 #ifndef CGAL_IO_3MF_H
 #define CGAL_IO_3MF_H
 
-#include <CGAL/IO/3MF/read_3mf.h>
+//#include <CGAL/IO/3MF/read_3mf.h>
 #include <CGAL/IO/3MF/write_3mf.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/iterator.h>
-
-#ifdef CGAL_LINKED_WITH_3MF
-#include <Model/COM/NMR_DLLInterfaces.h>
-#endif
 
 #include <boost/range/value_type.hpp>
 
@@ -39,6 +35,8 @@ namespace IO {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
+
+#if 0
 
 /// \cond SKIP_IN_MANUAL
 
@@ -428,6 +426,8 @@ bool read_3MF(const std::string& fname,
                                                          extract_soups<PointRange, TriangleRange, ColorRange>);
 }
 
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
@@ -457,18 +457,19 @@ bool write_3MF(const std::string& fname,
                const TriangleRanges& all_triangles,
                const std::vector<std::string>& names)
 {
+  PWrapper wrapper = CWrapper::loadLibrary();
   // Create Model Instance
-  NMR::PLib3MFModel * pModel;
-  HRESULT hResult = NMR::lib3mf_createmodel(&pModel);
+  PModel pModel =  wrapper->CreateModel();;
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not create model: " << std::hex << hResult << std::endl;
     return false;
   }
-
+  */
   for(std::size_t id = 0; id < all_points.size(); ++id)
   {
-    NMR::PLib3MFModelMeshObject* pMeshObject;
+    PMeshObject pMeshObject;
     std::string name;
     if(names.size() > id && ! names[id].empty())
     {
@@ -480,7 +481,7 @@ bool write_3MF(const std::string& fname,
     }
 
     std::vector<CGAL::IO::Color> colors(all_triangles[id].size());
-    IO::write_mesh_to_model(all_points[id], all_triangles[id], colors, name, &pMeshObject, pModel);
+    IO::write_mesh_to_model(all_points[id], all_triangles[id], colors, name, pMeshObject, pModel, wrapper);
   }
 
   return IO::export_model_to_file(fname, pModel);
