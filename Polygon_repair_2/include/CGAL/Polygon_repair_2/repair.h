@@ -19,6 +19,11 @@ namespace CGAL {
 
 namespace Polygon_repair_2 {
 
+/// \ingroup PkgPolygonRepair2Functions
+/// This is a place holder for a function
+template <class PolygonTraits_>
+bool repair(Polygon<PolygonTraits_>& p);
+
 } // namespace Polygon_repair_2
 } // namespace CGAL
 
