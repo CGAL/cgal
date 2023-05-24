@@ -480,7 +480,9 @@ bool write_3MF(const std::string& fname,
       name = std::string("");
     }
 
+    // AF: FIX this all triangles will have the default color
     std::vector<CGAL::IO::Color> colors(all_triangles[id].size());
+    colors[0] = CGAL::IO::Color(255,0,0,255);
     IO::write_mesh_to_model(all_points[id], all_triangles[id], colors, name, pMeshObject, pModel, wrapper);
   }
 

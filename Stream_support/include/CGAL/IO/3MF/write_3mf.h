@@ -62,6 +62,16 @@ sColor fnCreateColor(unsigned char red, unsigned char green,
   return result;
 }
 
+sTriangleProperties fnCreateTriangleColor(PColorGroup colorGroup, Lib3MF_uint32 colorID1, Lib3MF_uint32 colorID2, Lib3MF_uint32 colorID3)
+{
+        sTriangleProperties sTriangleProperty;
+        sTriangleProperty.m_ResourceID = colorGroup->GetResourceID();
+        sTriangleProperty.m_PropertyIDs[0] = colorID1;
+        sTriangleProperty.m_PropertyIDs[1] = colorID2;
+        sTriangleProperty.m_PropertyIDs[2] = colorID3;
+        return sTriangleProperty;
+}
+
 } // namespace tmf_internal
 
 namespace IO {
@@ -178,34 +188,28 @@ bool write_mesh_to_model(const PointRange& points,
     return false;
   }
   */
-  /*
-  // Create color entries
-  NMR::PLib3MFPropertyHandler * pPropertyHandler;
-  hResult = NMR::lib3mf_meshobject_createpropertyhandler(*pMeshObject, &pPropertyHandler);
-  if(hResult != LIB3MF_OK)
-  {
-    std::cerr << "could not create property handler: " << std::hex << hResult << std::endl;
-    NMR::lib3mf_getlasterror(*pMeshObject, &nErrorMessage, &pszErrorMessage);
-    std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
-    NMR::lib3mf_release(*pMeshObject);
-    NMR::lib3mf_release(pModel);
-    return false;
-  }
+
 
   // define colors
+  PColorGroup colorGroup = pModel->AddColorGroup();
+  // AF: We should only create as many properties as we have faces
   for(std::size_t pid = 0; pid<colors.size(); ++pid)
   {
-    sColor scolor = tmf_internal::fnCreateColor (colors[pid].red(),
-                                                                   colors[pid].green(),
-                                                                   colors[pid].blue(),
-                                                                   colors[pid].alpha());
-    // One-colored Triangles
-    NMR::lib3mf_propertyhandler_setsinglecolor(pPropertyHandler, pid, &scolor);
+    Lib3MF_uint32 col = colorGroup->AddColor(wrapper->RGBAToColor(colors[pid].red(),
+                                                                  colors[pid].green(),
+                                                                  colors[pid].blue(),
+                                                                  colors[pid].alpha()));
+
+    sTriangleProperties sTriangleColor = tmf_internal::fnCreateTriangleColor(colorGroup, col, col, col);
+    pMeshObject->SetTriangleProperties(pid, sTriangleColor);
   }
 
   // make sure to define a default property
-  NMR::PLib3MFDefaultPropertyHandler * pDefaultPropertyHandler;
-  hResult = NMR::lib3mf_object_createdefaultpropertyhandler(*pMeshObject, &pDefaultPropertyHandler);
+  Lib3MF_uint32 lightgrey = colorGroup->AddColor(wrapper->RGBAToColor(211, 211, 212, 255));
+  sTriangleProperties sTriangleColorLightgrey = tmf_internal::fnCreateTriangleColor(colorGroup, lightgrey, lightgrey, lightgrey);
+  pMeshObject->SetObjectLevelProperty(sTriangleColorLightgrey.m_ResourceID, sTriangleColorLightgrey.m_PropertyIDs[0]);
+
+  /*
   if(hResult != LIB3MF_OK)
   {
     std::cerr<< "could not create default property handler: " << std::hex << hResult << std::endl;
@@ -215,12 +219,6 @@ bool write_mesh_to_model(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return false;
   }
-
-  sColor default_color = tmf_internal::fnCreateColor(0,0,0,0);
-  NMR::lib3mf_defaultpropertyhandler_setcolor(pDefaultPropertyHandler, &default_color);
-
-  // release default property handler
-  NMR::lib3mf_release(pDefaultPropertyHandler);
   */
 
   // Set name
