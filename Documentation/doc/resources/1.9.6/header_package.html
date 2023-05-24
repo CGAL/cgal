@@ -1,15 +1,20 @@
-<!-- HTML header for doxygen 1.8.20-->
+<!-- HTML header for doxygen 1.9.6-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="$langISO">
 <head>
 <link rel="icon" type="image/png" href="$relpath$../Manual/g-196x196-doc.png"/>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen $doxygenversion"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 <!-- <link href="$relpath^../Manual/tabs.css" rel="stylesheet" type="text/css"/> -->
+<!--BEGIN DISABLE_INDEX-->
+  <!--BEGIN FULL_SIDEBAR-->
+<script type="text/javascript">var page_layout=1;</script>
+  <!--END FULL_SIDEBAR-->
+<!--END DISABLE_INDEX-->
 <script type="text/javascript" src="$relpath^../Manual/jquery.js"></script>
 <script type="text/javascript" src="$relpath^../Manual/dynsections.js"></script>
 <script src="$relpath^../Manual/hacks.js" type="text/javascript"></script>
@@ -36,16 +41,17 @@
 <link href="$relpath^../Manual/$stylesheet" rel="stylesheet" type="text/css" />
 <!-- This should probably be an extrastylesheet instead of hardcoded. -->
 <link href="$relpath$../Manual/cgal_stylesheet.css" rel="stylesheet" type="text/css" />
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
 $mathjax
+$darkmode
 <script src="$relpath^modules.js" type="text/javascript"></script>
 $extrastylesheet
 </head>
 <body>
+<!--BEGIN DISABLE_INDEX-->
+  <!--BEGIN FULL_SIDEBAR-->
+<div id="side-nav" class="ui-resizable side-nav-resizable"><!-- do not remove this div, it is closed by doxygen! -->
+  <!--END FULL_SIDEBAR-->
+<!--END DISABLE_INDEX-->
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="back-nav">
   <ul>
@@ -60,18 +66,19 @@ $extrastylesheet
        insertion. That's why we have to do it manually here. Notice
        that we also take pngs from the Manual. -->
   <div id="MSearchBox" class="MSearchBoxInactive">
-    <span class="left">
-      <img id="MSearchSelect" src="../Manual/search/mag_sel.svg"
-           onmouseover="return searchBox.OnSearchSelectShow()"
-           onmouseout="return searchBox.OnSearchSelectHide()"
-           alt=""/>
-      <input type="text" id="MSearchField" value="Search" accesskey="S"
-             onfocus="searchBox.OnSearchFieldFocus(true)"
-             onblur="searchBox.OnSearchFieldFocus(false)"
-             onkeyup="searchBox.OnSearchFieldChange(event)"/>
-    </span><span class="right">
-      <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="../Manual/search/close.svg" alt=""/></a>
-    </span>
+      <span class="left">
+         <span id="MSearchSelect"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()">&#160;
+        </span>
+        <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)"
+               onblur="searchBox.OnSearchFieldFocus(false)"
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+      </span>
+      <span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="$relpath^../Manual/search/close.svg" alt=""/></a>
+      </span>
   </div>
 
 </div>
@@ -79,21 +86,19 @@ $extrastylesheet
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">
  <tbody>
- <tr style="height: 56px;">
+ <tr id="projectrow">
   <!--BEGIN PROJECT_LOGO-->
   <td id="projectlogo"><img alt="Logo" src="$relpath^$projectlogo"/></td>
   <!--END PROJECT_LOGO-->
   <!--BEGIN PROJECT_NAME-->
-  <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">$projectname
-   <!--BEGIN PROJECT_NUMBER-->&#160;<span id="projectnumber">$projectnumber</span><!--END PROJECT_NUMBER-->
+  <td id="projectalign">
+   <div id="projectname">$projectname<!--BEGIN PROJECT_NUMBER--><span id="projectnumber">&#160;$projectnumber</span><!--END PROJECT_NUMBER-->
    </div>
    <!--BEGIN PROJECT_BRIEF--><div id="projectbrief">$projectbrief</div><!--END PROJECT_BRIEF-->
   </td>
   <!--END PROJECT_NAME-->
   <!--BEGIN !PROJECT_NAME-->
    <!--BEGIN PROJECT_BRIEF-->
-    <td style="padding-left: 0.5em;">
     <div id="projectbrief">$projectbrief</div>
     </td>
    <!--END PROJECT_BRIEF-->
@@ -113,7 +118,7 @@ $extrastylesheet
      true. Notice that the path to the search directory is adjusted to
      the top-level.-->
 <script type="text/javascript">
-var searchBox = new SearchBox("searchBox", "../Manual/search",false,'Search');
+var searchBox = new SearchBox("searchBox", "../Manual/search/",'.html');
 </script>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -123,9 +128,16 @@ var searchBox = new SearchBox("searchBox", "../Manual/search",false,'Search');
 </div>
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0"
-        name="MSearchResults" id="MSearchResults">
-</iframe>
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
 </div>
 
 <!--END TITLEAREA-->
