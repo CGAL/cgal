@@ -211,8 +211,9 @@ collect_demos_binaries()
   
   cd "${CGAL_TEST_DIR}"
 
-  if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then
-    echo 'COLLECTING DEMOS BINARIES';
+  echo "COLLECT_DEMOS_BINARIES=$COLLECT_DEMOS_BINARIES"
+  if [ -n "$COLLECT_DEMOS_BINARIES" ]; then
+    echo 'COLLECTING DEMOS BINARIES'
     echo "cp ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test"
     cp "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test"
 
