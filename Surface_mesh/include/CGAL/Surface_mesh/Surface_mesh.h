@@ -1074,6 +1074,21 @@ public:
   /// allocated for elements, and to clear the structure.
   ///@{
 
+#ifndef DOXYGEN_RUNNING
+  /// returns the number of used and removed vertices in the mesh.
+  size_type num_vertices() const { return (size_type) vprops_.size(); }
+
+  /// returns the number of used and removed halfedges in the mesh.
+  size_type num_halfedges() const { return (size_type) hprops_.size(); }
+
+  /// returns the number of used and removed edges in the mesh.
+  size_type num_edges() const { return (size_type) eprops_.size(); }
+
+  /// returns the number of used and removed faces in the mesh.
+  size_type num_faces() const { return (size_type) fprops_.size(); }
+
+#endif
+
   /// returns the number of vertices in the mesh.
   size_type number_of_vertices() const {
     return vprops_.size();
@@ -1798,6 +1813,18 @@ public: //--------------------------------------------------- property handling
 
   template <typename Index>
   Property_container<Index>& get_property_container() {
+    if constexpr (std::is_same_v<Index, Vertex_index>)
+      return vprops_;
+    if constexpr (std::is_same_v<Index, Halfedge_index>)
+      return hprops_;
+    if constexpr (std::is_same_v<Index, Edge_index>)
+      return eprops_;
+    if constexpr (std::is_same_v<Index, Face_index>)
+      return fprops_;
+  }
+
+  template <typename Index>
+  const Property_container<Index>& get_property_container() const {
     if constexpr (std::is_same_v<Index, Vertex_index>)
       return vprops_;
     if constexpr (std::is_same_v<Index, Halfedge_index>)
