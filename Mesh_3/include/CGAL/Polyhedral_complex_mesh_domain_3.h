@@ -114,7 +114,7 @@ class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron_,
                                 IGT_,
-                                CGAL::Default,
+                                TriangleAccessor,
                                 int,   //Use_patch_id_tag
                                 Tag_true > >//Use_exact_intersection_tag
 #endif
@@ -124,7 +124,7 @@ public:
   typedef Polyhedron_ Polyhedron;
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
-      Polyhedron, IGT_, CGAL::Default,
+      Polyhedron, IGT_, TriangleAccessor,
       int, Tag_true > > Base;
   /// @cond DEVELOPERS
 private:
