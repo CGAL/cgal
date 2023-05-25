@@ -214,13 +214,13 @@ collect_demos_binaries()
   echo "COLLECT_DEMOS_BINARIES=$COLLECT_DEMOS_BINARIES"
   if [ -n "$COLLECT_DEMOS_BINARIES" ]; then
     echo 'COLLECTING DEMOS BINARIES'
-    echo "cp ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test"
-    cp "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test"
+    echo "cp ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_TEST_DIR}"
+    cp "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_TEST_DIR}"
 
     for demo_dir in *_Demo; do
       echo "pushd ${demo_dir}"
       pushd "${demo_dir}"
-      bash "${CGAL_BINARY_DIR}/test/"cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
+      bash ${CGAL_TEST_DIR}/cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
       mv "${demo_dir}_with_dlls" ..
       popd
     done
