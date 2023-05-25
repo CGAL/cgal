@@ -104,7 +104,6 @@ and their associated classes:
 - `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
 - `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
-- `CGAL::Triangle_accessor_3<CGAL::Polyhedron_3<K>,K>`
 - `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<ImplicitFunction>`
 - `CGAL::Implicit_mesh_domain_3<Function,BGT>` (deprecated)
 - `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` (deprecated)
