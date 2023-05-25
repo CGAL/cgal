@@ -1116,7 +1116,7 @@ void autorefine_soup_output(const PointRange& input_points,
   typedef std::size_t Input_TID;
   typedef std::pair<Input_TID, Input_TID> Pair_of_triangle_ids;
 
-  std::vector<Pair_of_triangle_ids> si_pairs;
+  std::vector<Pair_of_triangle_ids> si_pairs; // TODO: check std::vector is fine with Parallel_tag
 
   // collect intersecting pairs of triangles
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
@@ -1170,6 +1170,7 @@ void autorefine_soup_output(const PointRange& input_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
 
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
+  //TODO: PARALLEL_FOR #2
   for (const Pair_of_triangle_ids& p : si_pairs)
   {
     int i1 = tri_inter_ids[p.first],
@@ -1217,6 +1218,7 @@ void autorefine_soup_output(const PointRange& input_points,
 
 #ifdef DEDUPLICATE_SEGMENTS
   // deduplicate inserted segments
+  //TODO: PARALLEL_FOR #3
   std::vector<std::vector<std::pair<std::size_t, std::size_t>>> all_segments_ids(all_segments.size());
   for(std::size_t ti=0; ti<triangles.size(); ++ti)
   {
@@ -1264,12 +1266,13 @@ void autorefine_soup_output(const PointRange& input_points,
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
   // now refine triangles
-  std::vector<std::array<EK::Point_3,3>> new_triangles;
+  std::vector<std::array<EK::Point_3,3>> new_triangles; // Need to be threadsafe
 
 #ifdef USE_PROGRESS_DISPLAY
   boost::timer::progress_display pd(triangles.size());
 #endif
 
+  //TODO: PARALLEL_FOR #1
   for(std::size_t ti=0; ti<triangles.size(); ++ti)
   {
     if (all_segments[ti].empty() && all_points[ti].empty())
@@ -1308,6 +1311,7 @@ void autorefine_soup_output(const PointRange& input_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("create output soup");
 
   Cartesian_converter<EK, GT> to_input;
+  // TODO: reuse the fact that maps per triangle are already sorted
   std::map<EK::Point_3, std::size_t> point_id_map;
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
   std::vector<EK::Point_3> exact_soup_points;
@@ -1348,6 +1352,7 @@ void autorefine_soup_output(const PointRange& input_points,
   }
 
   // import refined triangles
+    //TODO: PARALLEL_FOR #4
   for (const std::array<EK::Point_3,3>& t : new_triangles)
   {
     soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
@@ -1355,11 +1360,11 @@ void autorefine_soup_output(const PointRange& input_points,
 
 #ifndef CGAL_NDEBUG
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
-  CGAL_assertion( !does_triangle_soup_self_intersect(exact_soup_points, soup_triangles) );
+  CGAL_assertion( !does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles) );
 #else
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
-  if (does_triangle_soup_self_intersect(exact_soup_points, soup_triangles))
+  if (does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles))
     throw std::runtime_error("ERROR: invalid output, there is most probably a bug");
 #endif
 #endif
