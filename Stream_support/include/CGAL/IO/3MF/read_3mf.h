@@ -12,6 +12,8 @@
 #ifndef CGAL_IO_READ_3MF_H
 #define CGAL_IO_READ_3MF_H
 
+#ifdef CGAL_LINKED_WITH_3MF
+
 #include <CGAL/IO/Color.h>
 #include <CGAL/Kernel_traits.h>
 
@@ -23,9 +25,7 @@
 #include <string>
 #include <vector>
 
-#include "lib3mf_implicit.hpp"
-
-#ifdef CGAL_LINKED_WITH_3MF
+#include <lib3mf_implicit.hpp>
 
 namespace CGAL {
 

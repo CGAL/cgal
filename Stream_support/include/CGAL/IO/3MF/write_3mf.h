@@ -18,7 +18,7 @@
 
 #include <CGAL/boost/graph/iterator.h>
 
-#include "lib3mf_implicit.hpp"
+#include <lib3mf_implicit.hpp>
 
 #include <iostream>
 #include <vector>
@@ -274,7 +274,7 @@ bool write_points(const PointRange& points,
     vertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
 
   triangles[0] =  tmf_internal::fnCreateTriangle(0,1,2); //add a triangle to avoid lib error.
-  pMeshObject->setGeometry(vertices, triangles);
+  pMeshObject->SetGeometry(vertices, triangles);
   /*
   if(hResult != LIB3MF_OK)
   {
@@ -330,7 +330,7 @@ bool write_points(const PointRange& points,
   */
 
   // Set name
-  pMeshObject.setName(name.c_str());
+  pMeshObject->SetName(name.c_str());
   /*
   if(hResult != LIB3MF_OK)
   {
@@ -343,7 +343,8 @@ bool write_points(const PointRange& points,
   }
   */
 
-  return add_build_item(pModel, pMeshObject);
+  return true;
+  //return add_build_item(pModel, pMeshObject); // TODO: DOES NOT COMPILE!
 }
 
 template<typename PointRange, typename Color>
