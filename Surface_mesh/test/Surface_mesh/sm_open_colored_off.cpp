@@ -33,8 +33,8 @@ void OpenOFF(int i)
   assert(in && !surface_mesh.is_empty());
 
 
-  auto [fcolors, created_fcolors] = surface_mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color");
-  auto [vcolors, created_vcolors] = surface_mesh.property_map<vertex_descriptor, CGAL::IO::Color >("v:color");
+  auto [fcolors, created_fcolors] = surface_mesh.add_property_map<face_descriptor, CGAL::IO::Color >("f:color");
+  auto [vcolors, created_vcolors] = surface_mesh.add_property_map<vertex_descriptor, CGAL::IO::Color >("v:color");
 
   // Both color maps should have already existed, because they were loaded from the file
   assert(!created_fcolors);

@@ -273,6 +273,15 @@ public:
     return dynamic_cast<Property_array<Index, T>&>(*m_property_arrays.at(name));
   }
 
+  template <typename T>
+  std::optional<std::reference_wrapper<Property_array<Index, T>>> get_property_if_exists(const std::string& name) {
+    auto it = m_property_arrays.find(name);
+    if (it == m_property_arrays.end()) return {};
+    auto [_, array] = *it;
+    if (typeid(*array) != typeid(Property_array<Index, T>)) return {};
+    return dynamic_cast<Property_array<Index, T>&>(*m_property_arrays.at(name));
+  }
+
   /*!
    * Removes a property array from the container
    *

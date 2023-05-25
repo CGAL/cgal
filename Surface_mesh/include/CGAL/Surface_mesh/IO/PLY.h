@@ -458,12 +458,10 @@ bool fill_simplex_specific_header(std::ostream& os,
     return true;
   }
 
-  bool okay = false;
   if(prop == "v:normal")
   {
-    Vector_map pmap;
-    boost::tie(pmap, okay) = sm.template property_map<VIndex, Vector>(prop);
-    if(okay)
+    auto pmap = sm.template property_map<VIndex, Vector>(prop);
+    if(pmap)
     {
       if(std::is_same<FT, float>::value)
       {
@@ -477,23 +475,22 @@ bool fill_simplex_specific_header(std::ostream& os,
            << "property double ny" << std::endl
            << "property double nz" << std::endl;
       }
-      printers.push_back(new Property_printer<VIndex, Vector_map>(pmap));
+      printers.push_back(new Property_printer<VIndex, Vector_map>(pmap.value()));
       return true;
     }
   }
 
   if(prop == "v:color")
   {
-    Vcolor_map pmap;
-    boost::tie(pmap, okay) = sm.template property_map<VIndex, Color>(prop);
-    if(okay)
+    auto pmap = sm.template property_map<VIndex, Color>(prop);
+    if(pmap)
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back(new Property_printer<VIndex, Vcolor_map>(pmap));
+      printers.push_back(new Property_printer<VIndex, Vcolor_map>(pmap.value()));
       return true;
     }
   }
@@ -515,19 +512,17 @@ bool fill_simplex_specific_header(std::ostream& os,
   if(prop == "f:connectivity" || prop == "f:removed")
     return true;
 
-  bool okay = false;
   if(prop == "f:color")
   {
-    Fcolor_map pmap;
-    boost::tie(pmap, okay) = sm.template property_map<FIndex, Color>(prop);
-    if(okay)
+    auto pmap = sm.template property_map<FIndex, Color>(prop);
+    if(pmap)
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back(new Property_printer<FIndex, Fcolor_map>(pmap));
+      printers.push_back(new Property_printer<FIndex, Fcolor_map>(pmap.value()));
       return true;
     }
   }
@@ -652,44 +647,40 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
   typedef typename SMesh::Vertex_index                          VIndex;
 
   using VCM = typename internal_np::Lookup_named_param_def<
-    internal_np::vertex_color_map_t,
-    CGAL_NP_CLASS,
-    typename Surface_mesh<Point>::template Property_map<VIndex, CGAL::IO::Color> >::type;
-  //  typedef typename internal_np::Lookup_named_param_def<
-  //    internal_np::vertex_color_map_t, CGAL_NP_CLASS,
-  //    Constant_property_map<VIndex, Color> >::type                          VCM;
+    internal_np::vertex_color_map_t, CGAL_NP_CLASS,
+    typename Surface_mesh<Point>::template Property_map<VIndex, CGAL::IO::Color>
+  >::type;
+  using FCM = typename internal_np::Lookup_named_param_def<
+    internal_np::face_color_map_t, CGAL_NP_CLASS,
+    typename Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color>
+  >::type;
 
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
-  bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
-
-  using FCM = typename internal_np::Lookup_named_param_def<
-    internal_np::face_color_map_t,
-    CGAL_NP_CLASS,
-    typename Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color> >::type;
-  FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
-  bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
+  constexpr bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
+  constexpr bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
 
   std::vector<std::string> prop = sm.template properties<Simplex>();
 
-  if (std::is_same<Simplex, FIndex>::value && has_fcolor) {
+  if constexpr (std::is_same<Simplex, FIndex>::value && has_fcolor) {
     os << "property uchar red" << std::endl
       << "property uchar green" << std::endl
       << "property uchar blue" << std::endl
       << "property uchar alpha" << std::endl;
+    FCM fcm = get_parameter(np, internal_np::face_color_map);
     add_color_map<Point, Simplex, FIndex>()(printers, fcm);
   }
 
-  if (std::is_same<Simplex, VIndex>::value && has_vcolor)
+  if constexpr (std::is_same<Simplex, VIndex>::value && has_vcolor)
   {
     os << "property uchar red" << std::endl
       << "property uchar green" << std::endl
       << "property uchar blue" << std::endl
       << "property uchar alpha" << std::endl;
 
+    VCM vcm = get_parameter(np, internal_np::vertex_color_map);
     add_color_map<Point, Simplex, VIndex>()(printers, vcm);
   }
 
@@ -708,94 +699,93 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     // Cut the "v:" prefix
     std::string name = get_property_raw_name<Point>(prop[i], Simplex());
 
-    bool okay = false;
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::int8_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::int8_t>(prop[i]);
+      if(pmap)
       {
         os << "property char " << name << std::endl;
-        printers.push_back(new internal::Char_property_printer<Simplex,Int8_map>(pmap));
+        printers.push_back(new internal::Char_property_printer<Simplex,Int8_map>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::uint8_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::uint8_t>(prop[i]);
+      if(pmap)
       {
         os << "property uchar " << name << std::endl;
-        printers.push_back(new internal::Char_property_printer<Simplex,Uint8_map>(pmap));
+        printers.push_back(new internal::Char_property_printer<Simplex,Uint8_map>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::int16_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::int16_t>(prop[i]);
+      if(pmap)
       {
         os << "property short " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Int16_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Int16_map>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::uint16_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::uint16_t>(prop[i]);
+      if(pmap)
       {
         os << "property ushort " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Uint16_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Uint16_map>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::int32_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::int32_t>(prop[i]);
+      if(pmap)
       {
         os << "property int " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Int32_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Int32_map>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::uint32_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::uint32_t>(prop[i]);
+      if(pmap)
       {
         os << "property uint " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Uint32_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Uint32_map>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::int64_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::int64_t>(prop[i]);
+      if(pmap)
       {
         os << "property int " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Int64_map,boost::int32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Int64_map,boost::int32_t>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,boost::uint64_t>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,boost::uint64_t>(prop[i]);
+      if(pmap)
       {
         os << "property uint " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Uint64_map,boost::uint32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Uint64_map,boost::uint32_t>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,float>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,float>(prop[i]);
+      if(pmap)
       {
         os << "property float " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Float_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Float_map>(pmap.value()));
         continue;
       }
     }
     {
-      auto [pmap, okay] = sm.template property_map<Simplex,double>(prop[i]);
-      if(okay)
+      auto pmap = sm.template property_map<Simplex,double>(prop[i]);
+      if(pmap)
       {
         os << "property double " << name << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Simplex,Double_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Simplex,Double_map>(pmap.value()));
         continue;
       }
     }

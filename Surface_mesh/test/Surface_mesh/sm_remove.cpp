@@ -47,10 +47,10 @@ int main()
 
   // make sure all is OK when clearing the mesh
 
-  auto vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-  auto hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-  auto fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
-  auto vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
+  auto vconn = m.add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+  auto hconn = m.add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+  auto fconn = m.add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+  auto vpoint = m.add_property_map<Vertex_index, Point_3>("v:point").first;
 
   // first call to squat the first available position
   m.add_property_map<Vertex_index, int>("vprop_dummy");
@@ -71,10 +71,10 @@ int main()
     auto l_fprop = m.add_property_map<Face_index, int>("fprop").first;
     auto l_eprop = m.add_property_map<Edge_index, int>("eprop").first;
 
-    auto l_vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-    auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-    auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
-    auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
+    auto l_vconn = m.add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+    auto l_hconn = m.add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+    auto l_fconn = m.add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+    auto l_vpoint = m.add_property_map<Vertex_index, Point_3>("v:point").first;
 
     assert( vconn == l_vconn );
     assert( hconn == l_hconn );
@@ -89,10 +89,10 @@ int main()
   {
     m.clear();
 
-    auto l_vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-    auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-    auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
-    auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
+    auto l_vconn = m.add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+    auto l_hconn = m.add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+    auto l_fconn = m.add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+    auto l_vpoint = m.add_property_map<Vertex_index, Point_3>("v:point").first;
 
     assert( vconn == l_vconn );
     assert( hconn == l_hconn );
