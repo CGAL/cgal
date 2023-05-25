@@ -12,7 +12,7 @@ and construction of intersections between segments and triangles.
 \cgalHasModel All models of the `Kernel` concept.
 
 \sa `BisectionGeometricTraits_3`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 
 */
 class IntersectionGeometricTraits_3 {

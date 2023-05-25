@@ -96,13 +96,12 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 \sa `IntersectionGeometricTraits_3`
 \sa `CGAL::make_mesh_3()`
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 \sa `CGAL::Mesh_polyhedron_3<IGT>`
 */
 #ifdef DOXYGEN_RUNNING
 template < class IGT,
-           class Polyhedron = typename Mesh_polyhedron_3<IGT>::type,
-           class TriangleAccessor=CGAL::Default>
+           class Polyhedron = typename Mesh_polyhedron_3<IGT>::type>
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron,

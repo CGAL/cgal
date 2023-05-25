@@ -84,7 +84,7 @@ instantiated with a model of the concept
 \cgalModels `MeshDomainWithFeatures_3`
 
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 \sa `CGAL::Mesh_polyhedron_3<IGT>`
 */
 #ifdef DOXYGEN_RUNNING

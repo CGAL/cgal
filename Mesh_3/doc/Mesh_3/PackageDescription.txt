@@ -81,7 +81,6 @@ related to the template parameters of some models of the main concepts:
 - `MeshVertexBase_3`
 - `MeshDomainField_3`
 - `MeshPolyline_3`
-- `TriangleAccessor_3`
 
 \cgalCRPSection{Classes}
 
@@ -99,7 +98,7 @@ The following classes are models of domain concepts
 and their associated classes:
 
 - `CGAL::Labeled_mesh_domain_3<LabelingFunction,BGT>`
-- `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+- `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 - `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
 - `CGAL::Mesh_domain_with_polyline_features_3<MD>`

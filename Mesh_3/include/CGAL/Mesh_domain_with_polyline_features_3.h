@@ -532,7 +532,7 @@ It has to be a model of the `MeshDomain_3` concept.
 \sa `MeshDomain_3`
 \sa `MeshPolyline_3`
 \sa `CGAL::Implicit_mesh_domain_3<Function,BGT>`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 \sa `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
 
 */
