@@ -102,8 +102,11 @@ public:
 
 public:
 
-  // todo: there's not really a good reason to use this, maybe it should be removed
-  std::size_t capacity() const { return m_data.size(); }
+  // todo: there's not really a good reason to use these, maybe they should be removed
+
+  [[nodiscard]] std::size_t size() const { return std::count(m_active_indices.begin(), m_active_indices.end(), true); }
+
+  [[nodiscard]] std::size_t capacity() const { return m_data.size(); }
 
   const_reference operator[](Index i) const {
     CGAL_precondition(std::size_t(i) < m_data.size());
@@ -141,6 +144,12 @@ public:
   using category = boost::lvalue_property_map_tag;
 
   Property_array_handle(Property_array<Index, T>& array) : m_array(array) {}
+
+  //Property_array_handle(Property_array_handle<Index, T>& handle) : m_array(handle.m_array) {}
+
+  [[nodiscard]] std::size_t size() const { return m_array.size(); }
+
+  [[nodiscard]] std::size_t capacity() const { return m_array.capacity(); }
 
   const_reference operator[](Index i) const { return m_array[i]; }
 
