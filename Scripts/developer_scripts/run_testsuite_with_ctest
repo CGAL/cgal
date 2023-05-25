@@ -397,8 +397,8 @@ run_test_on_host()
 
   for PLATFORM in ${PLATFORMS}; do
     run_test_on_platform "${PLATFORM}"
-    publish_results "${PLATFORM}"
     collect_demos_binaries "${PLATFORM}"
+    publish_results "${PLATFORM}"
 
     if [ -z "${KEEP_TESTS}" ]; then
       rm -rf $CGAL_DIR/cmake/platforms/${PLATFORM}
