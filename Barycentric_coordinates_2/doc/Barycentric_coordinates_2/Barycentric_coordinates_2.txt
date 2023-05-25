@@ -563,7 +563,7 @@ After the normalization of these weights as before
 \f$b_i = \frac{w_i}{W^{mv}}\qquad\f$ with \f$\qquad W^{mv} = \sum_{j=1}^n w_j\f$
 </center>
 
-we obtain the max precision \f$O(n^2)\f$ algorithm. The max speed O(n) algorithm computes the
+we obtain the max precision \f$O(n^2)\f$ algorithm. The max speed \f$O(n)\f$ algorithm computes the
 weights \f$w_i\f$ using the pseudocode from <a href="https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf">here</a>.
 These weights
 
@@ -584,7 +584,7 @@ one should be cautious when using the unnormalized mean value weights. In that c
 The harmonic coordinates are computed by solving the Laplace equation
 
 <center>
-\f$\Delta \boldsymbol{b} = \boldsymbol{0}\f$
+\f$\Delta b = 0\f$
 </center>
 
 subject to suitable Dirichlet boundary conditions. Harmonic coordinates are the only coordinates
