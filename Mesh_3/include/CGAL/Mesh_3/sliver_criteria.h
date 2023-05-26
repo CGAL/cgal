@@ -36,9 +36,9 @@ template<typename Tr, //Triangulation
 class Sliver_criterion
 {
 public:
-  typedef typename Tr::Geom_traits Gt;
+  typedef typename Tr::Geom_traits GT;
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Gt::Tetrahedron_3 Tetrahedron_3;
+  typedef typename GT::Tetrahedron_3 Tetrahedron_3;
   typedef Cell_vector_ Cell_vector;
 
 public:
@@ -108,7 +108,7 @@ protected:
   typedef Sliver_criterion<Tr, update_sliver_cache> Base;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
-  typedef typename Base::Gt             Gt;
+  typedef typename Base::GT             GT;
 
 public:
   typedef typename Base::Cell_handle    Cell_handle;
@@ -163,7 +163,7 @@ class Radius_ratio_criterion
 {
 protected:
   typedef Sliver_criterion<Tr, update_sliver_cache> Base;
-  typedef typename Base::Gt             Gt;
+  typedef typename Base::GT             GT;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
   typedef Radius_ratio_criterion<Tr, update_sliver_cache> RR_criterion;

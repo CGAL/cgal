@@ -97,15 +97,13 @@ provides a bound for the size criterion.
 \sa `MeshCriteria_3`
 \sa `CGAL::Mesh_criteria_3<Tr>`
 \sa `MeshDomainField_3`
-
 */
-
 template < typename Tr >
 class Mesh_edge_criteria_3
 {
 private:
   typedef Mesh_edge_criteria_3 Self;
-  typedef typename Tr::Geom_traits Gt;
+  typedef typename Tr::Geom_traits GT;
 
 public:
 
@@ -140,7 +138,7 @@ public:
                        const FT& min_length_bound = 0)
 
     : p_size_(new Mesh_3::internal::Sizing_field_container<
-                Mesh_constant_domain_field_3<Gt,Index> ,
+                Mesh_constant_domain_field_3<GT,Index> ,
                 FT,
                 Point_3,
                 Index>(length_bound))

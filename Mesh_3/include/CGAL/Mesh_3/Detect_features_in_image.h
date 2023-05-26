@@ -57,9 +57,9 @@ std::vector<std::vector<P>>
 detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
                                              CGAL::Image_3& weights)
 {
-  using Gt = typename CGAL::Kernel_traits<P>::Kernel;
+  using GT = typename CGAL::Kernel_traits<P>::Kernel;
   using Point_3 = P;
-  using Vector_3 = typename Gt::Vector_3;
+  using Vector_3 = typename GT::Vector_3;
   using Polyline_type = std::vector<Point_3>;
   using Polylines = std::vector<Polyline_type>;
 
@@ -86,7 +86,7 @@ detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
 
   using CGAL::IMAGEIO::static_evaluate;
 
-  using Del = CGAL::Delaunay_triangulation_3<Gt>;
+  using Del = CGAL::Delaunay_triangulation_3<GT>;
   using Cell_handle = typename Del::Cell_handle;
   using Vertex_handle = typename Del::Vertex_handle;
   Del triangulation;

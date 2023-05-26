@@ -131,7 +131,7 @@ type to be used for the 3D triangulation embedding the mesh.
 
 \tparam MD must be a model of `MeshDomain_3`.
 
-\tparam Gt must be a model of `MeshTriangulationTraits_3` or `Default`
+\tparam GT must be a model of `MeshTriangulationTraits_3` or `Default`
 and defaults to `Kernel_traits<MD>::%Kernel`.
 
 \tparam Concurrency_tag_ enables sequential versus parallel meshing and optimization algorithms.
@@ -144,29 +144,29 @@ and defaults to `Mesh_vertex_base_3<Gt, MD>`.
 \tparam Cell_base_ must be a model of `MeshCellBase_3` or `Default`
 and defaults to `Compact_mesh_cell_base_3<Gt, MD>`.
 
-\warning To improve the robustness of the meshing process, the input traits `Gt`
+\warning To improve the robustness of the meshing process, the input traits `GT`
          is wrapped with the traits class `Robust_weighted_circumcenter_filtered_traits_3`.
-         The class `Robust_weighted_circumcenter_filtered_traits_3<Gt>` upgrades the functors
+         The class `Robust_weighted_circumcenter_filtered_traits_3<GT>` upgrades the functors
          models of `Kernel::ConstructWeightedCircumcenter_3`, `Kernel::ComputeSquaredRadius_3`,
          and `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3` that are
-         provided by `Gt` to use exact computations when the geometric configuration
-         is close to degenerate (e.g. almost coplanar points). <br>
+         provided by `GT` to use exact computations when the geometric configuration
+         is close to degenerate (e.g. almost coplanar points). <br><br>
          Users should therefore be aware that the traits class of the triangulation
-         will have type `Robust_weighted_circumcenter_filtered_traits_3<Gt>`.
+         will have type `Robust_weighted_circumcenter_filtered_traits_3<GT>`.
 
 \sa `make_mesh_3()`
 \sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 
 */
 template<class MD,
-         class Gt  = Default,
+         class GT = Default,
          class ConcurrencyTag = Sequential_tag,
          class VertexBase = Default,
          class CellBase   = Default>
 struct Mesh_triangulation_3
 {
 private:
-  using K = typename Default::Lazy_get<Gt, Kernel_traits<MD> >::type;
+  using K = typename Default::Lazy_get<GT, Kernel_traits<MD> >::type;
 
   using Geom_traits = typename details::Mesh_geom_traits_generator<K>::type;
 

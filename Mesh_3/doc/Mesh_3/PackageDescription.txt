@@ -84,15 +84,15 @@ related to the template parameters of some models of the main concepts:
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Mesh_triangulation_3<MD,Gt,ConcurrencyTag,VertexBase,CellBase>`
-- `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>`
-- `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
-- `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
+- `CGAL::Mesh_triangulation_3<MD,GT,ConcurrencyTag,VertexBase,CellBase>`
+- `CGAL::Mesh_vertex_base_3<GT,MD,Vb>`
+- `CGAL::Compact_mesh_cell_base_3<GT,MD,Tds>`
+- `CGAL::Mesh_cell_base_3<GT,MD,Cb>`
 - `CGAL::Mesh_criteria_3<Tr>`
 - `CGAL::Mesh_cell_criteria_3<Tr>`
 - `CGAL::Mesh_facet_criteria_3<Tr>`
 - `CGAL::Mesh_edge_criteria_3<Tr>`
-- `CGAL::Mesh_constant_domain_field_3<Gt,%Index>`
+- `CGAL::Mesh_constant_domain_field_3<GT,%Index>`
 
 The following classes are models of domain concepts
 and their associated classes:

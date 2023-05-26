@@ -79,25 +79,25 @@ max_length(const Bbox_3& b)
 // -----------------------------------
 // Geometric traits generator
 // -----------------------------------
-template < typename Gt,
+template < typename GT,
            typename Use_exact_intersection_construction_tag >
 struct IGT_generator {};
 
-template < typename Gt >
-struct IGT_generator<Gt,CGAL::Tag_true>
+template < typename GT >
+struct IGT_generator<GT,CGAL::Tag_true>
 {
 #ifdef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
-  typedef CGAL::Mesh_3::Robust_intersection_traits_3_new<Gt> type;
+  typedef CGAL::Mesh_3::Robust_intersection_traits_3_new<GT> type;
 #else // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
-  typedef CGAL::Mesh_3::Robust_intersection_traits_3<Gt> type;
+  typedef CGAL::Mesh_3::Robust_intersection_traits_3<GT> type;
 #endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
   typedef type Type;
 };
 
-template < typename Gt >
-struct IGT_generator<Gt,CGAL::Tag_false>
+template < typename GT >
+struct IGT_generator<GT,CGAL::Tag_false>
 {
-  typedef Gt type;
+  typedef GT type;
   typedef type Type;
 };
 

@@ -452,7 +452,7 @@ public:
 }; // end class Polyline
 
 
-template <typename Gt, typename MapIterator>
+template <typename GT, typename MapIterator>
 struct Mesh_domain_segment_of_curve_primitive{
   typedef typename std::iterator_traits<MapIterator>::value_type Map_value_type;
   typedef typename Map_value_type::first_type Curve_id;
@@ -464,7 +464,7 @@ struct Mesh_domain_segment_of_curve_primitive{
   typedef typename std::iterator_traits<
     typename Polyline::const_iterator>::value_type Point;
 
-  typedef typename Gt::Segment_3 Datum;
+  typedef typename GT::Segment_3 Datum;
 
   Id id_;
 
@@ -844,17 +844,17 @@ private:
 private:
   typedef std::map<Point_3,Corner_index> Corners;
 
-  typedef Mesh_3::internal::Polyline<Gt> Polyline;
+  typedef Mesh_3::internal::Polyline<GT> Polyline;
   typedef std::map<Curve_index, Polyline> Edges;
   typedef std::map<Curve_index, Surface_patch_index_set > Edges_incidences;
   typedef std::map<Corner_index, std::set<Curve_index> > Corners_tmp_incidences;
   typedef std::map<Corner_index, Surface_patch_index_set > Corners_incidences;
 
   typedef Mesh_3::internal::Mesh_domain_segment_of_curve_primitive<
-    Gt,
+    GT,
     typename Edges::const_iterator> Curves_primitives;
 
-  typedef CGAL::AABB_traits<Gt,
+  typedef CGAL::AABB_traits<GT,
                             Curves_primitives> AABB_curves_traits;
 
   Corners corners_;

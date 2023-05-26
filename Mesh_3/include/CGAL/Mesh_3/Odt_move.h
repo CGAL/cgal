@@ -34,7 +34,7 @@ template <typename C3T3,
 class Odt_move
 {
   typedef typename C3T3::Triangulation                        Tr;
-  typedef typename Tr::Geom_traits                            Gt;
+  typedef typename Tr::Geom_traits                            GT;
 
   typedef typename Tr::Vertex_handle                          Vertex_handle;
   typedef typename Tr::Facet                                  Facet;
@@ -46,8 +46,8 @@ class Odt_move
   typedef typename std::vector<Facet>                         Facet_vector;
   typedef typename std::vector<Cell_handle>                   Cell_vector;
 
-  typedef typename Gt::FT                                     FT;
-  typedef typename Gt::Vector_3                               Vector_3;
+  typedef typename GT::FT                                     FT;
+  typedef typename GT::Vector_3                               Vector_3;
 
 public:
   typedef SizingField                                         Sizing_field;
@@ -66,8 +66,8 @@ public:
     // Compute move
     const Tr& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-    typename Gt::Construct_vector_3 vector = tr.geom_traits().construct_vector_3_object();
+    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename GT::Construct_vector_3 vector = tr.geom_traits().construct_vector_3_object();
 
     Vector_3 move = CGAL::NULL_VECTOR;
     FT sum_volume(0);
@@ -117,8 +117,8 @@ private:
                        const Tr& tr,
                        const Sizing_field& sizing_field) const
   {
-    typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
-    typename Gt::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
+    typename GT::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
+    typename GT::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
 
     Bare_point c = centroid(tr.tetrahedron(cell));
     FT s = sizing_field(c, std::make_pair(cell, true));
@@ -195,8 +195,8 @@ private:
 //                     const Tr& tr,
 //                     const Sizing_field& sizing_field) const
 //  {
-//    typename Gt::Compute_area_3 area = tr.geom_traits().compute_area_3_object();
-//    typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
+//    typename GT::Compute_area_3 area = tr.geom_traits().compute_area_3_object();
+//    typename GT::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
 //
 //    Bare_point c = centroid(tr.triangle(facet));
 //    FT s = sizing_field(c, facet.first->vertex(0));
@@ -211,9 +211,9 @@ private:
 //                          const Tr& tr,
 //                          const Sizing_field& sizing_field) const
 //  {
-//    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-//    typename Gt::Construct_midpoint_3 midpoint = tr.geom_traits().construct_midpoint_3_object();
-//    typename Gt::Compute_squared_distance_3 sq_distance = tr.geom_traits().compute_squared_distance_3_object();
+//    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+//    typename GT::Construct_midpoint_3 midpoint = tr.geom_traits().construct_midpoint_3_object();
+//    typename GT::Compute_squared_distance_3 sq_distance = tr.geom_traits().compute_squared_distance_3_object();
 //
 //    const Weighted_point& wp1 = tr.point(cell, vertex_index_1);
 //    const Weighted_point& wp2 = tr.point(cell, vertex_index_2);
@@ -251,8 +251,8 @@ private:
 //
 //  Vector_3 normal_outside(const Facet& f, const C3T3& c3t3) const
 //  {
-//    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-//    typename Gt::Construct_normal_3 normal = c3t3.triangulation().geom_traits().construct_normal_3_object();
+//    typename GT::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+//    typename GT::Construct_normal_3 normal = c3t3.triangulation().geom_traits().construct_normal_3_object();
 //
 //    const Cell_handle& cell = f.first;
 //    const int& i = f.second;
