@@ -16,9 +16,6 @@ INPUT += \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_mesh_domain_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_mesh_domain_with_features_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_complex_mesh_domain_3.h \
-      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Gray_image_mesh_domain_3.h \
-      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Labeled_image_mesh_domain_3.h \
-      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Implicit_mesh_domain_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Implicit_to_labeling_function_wrapper.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_domain_with_polyline_features_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_3/generate_label_weights.h \

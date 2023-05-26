@@ -104,9 +104,6 @@ and their associated classes:
 - `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
 - `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<ImplicitFunction>`
-- `CGAL::Implicit_mesh_domain_3<Function,BGT>` (deprecated)
-- `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` (deprecated)
-- `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>` (deprecated)
 
 The following functors are available for feature detection:
 
