@@ -13,13 +13,14 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/assertions.h>
 
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
 
 namespace CGAL {
 
-template < class Refs >
+template < class Refs, class FT >
 class Straight_skeleton_halfedge_base_base_2
 {
 public:
@@ -38,36 +39,23 @@ public:
   typedef typename Refs::Vertex                Vertex;
   typedef typename Refs::Face                  Face;
 
-  typedef Straight_skeleton_halfedge_base_base_2<Refs> Base_base ;
+  typedef Straight_skeleton_halfedge_base_base_2<Refs, FT> Base_base ;
 
 protected:
 
-  Straight_skeleton_halfedge_base_base_2() : mF(Face_handle()), mID(-1), mSlope(ZERO) {}
+  Straight_skeleton_halfedge_base_base_2()
+    : mF(Face_handle()), mID(-1), mSlope(ZERO), mWeight(1)
+  {}
 
-  Straight_skeleton_halfedge_base_base_2( int aID ) : mF(Face_handle()), mID(aID), mSlope(ZERO) {}
+  Straight_skeleton_halfedge_base_base_2( int aID )
+    : mF(Face_handle()), mID(aID), mSlope(ZERO), mWeight(1)
+  {}
 
-  Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope ) : mF(Face_handle()), mID(aID), mSlope(aSlope) {}
+  Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope )
+    : mF(Face_handle()), mID(aID), mSlope(aSlope), mWeight(1)
+  {}
 
 public:
-
-  int id() const { return mID ; }
-
-  bool is_bisector() const
-  {
-    return !this->is_border() && !this->opposite()->is_border() ;
-  }
-
-  bool is_inner_bisector() const
-  {
-    return !this->vertex()->is_contour() && !this->opposite()->vertex()->is_contour();
-  }
-
-  bool has_null_segment() const { return this->vertex()->has_null_point() ; }
-
-  bool has_infinite_time() const { return this->vertex()->has_infinite_time() ; }
-
-  Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }
-  Halfedge_handle       defining_contour_edge()       { return this->face()->halfedge() ; }
 
   Halfedge_handle       opposite()       { return mOpp;}
   Halfedge_const_handle opposite() const { return mOpp;}
@@ -80,8 +68,6 @@ public:
   Face_handle           face    ()       { return mF; }
   Face_const_handle     face    () const { return mF; }
 
-  Sign slope() const { return mSlope ; }
-
   bool is_border() const { return mF == Face_handle();}
 
   void set_opposite( Halfedge_handle h) { mOpp = h; }
@@ -90,9 +76,29 @@ public:
   void set_vertex  ( Vertex_handle   w) { mV   = w; }
   void set_face    ( Face_handle     g) { mF   = g; }
 
+  int id() const { CGAL_assertion(mID != -1); return mID ; }
+  void reset_id ( int aID ) { mID = aID ; }
+
+  bool is_bisector() const
+  {
+    return !this->is_border() && !this->opposite()->is_border() ;
+  }
+
+  bool is_inner_bisector() const
+  {
+    return !this->vertex()->is_contour() && !this->opposite()->vertex()->is_contour();
+  }
+
+  bool has_infinite_time() const { return this->vertex()->has_infinite_time() ; }
+
+  Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }
+  Halfedge_handle       defining_contour_edge()       { return this->face()->halfedge() ; }
+
+  Sign slope() const { return mSlope ; }
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 
-  void reset_id ( int aID ) { mID = aID ; }
+  FT weight() const { return mWeight ; }
+  void set_weight( FT aWeight ) { mWeight = aWeight ; }
 
 private:
 
@@ -103,10 +109,11 @@ private:
   Face_handle      mF;
   int              mID ;
   Sign             mSlope ;
+  FT               mWeight ;
 };
 
-template < class Refs >
-class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs>
+template < class Refs, class FT >
+class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs, FT>
 {
 public:
 
@@ -114,8 +121,8 @@ public:
   typedef typename Refs::Halfedge_handle Halfedge_handle;
   typedef typename Refs::Face_handle     Face_handle;
 
-  typedef Straight_skeleton_halfedge_base_base_2<Refs> Base_base ;
-  typedef Straight_skeleton_halfedge_base_2<Refs>      Base ;
+  typedef Straight_skeleton_halfedge_base_base_2<Refs, FT> Base_base ;
+  typedef Straight_skeleton_halfedge_base_2<Refs, FT>      Base ;
 
   Straight_skeleton_halfedge_base_2() {}
 

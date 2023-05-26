@@ -51,7 +51,7 @@ public:
   //!
   //! \brief The `Gl_data_name` enum is used as a flag to specify what should be
   //! re-computed during `computeElements()`. The flag corresponding to this enum is
-  //! `Gl_data_names`, and multiple flags can be combined whith the operator `|`.
+  //! `Gl_data_names`, and multiple flags can be combined with the operator `|`.
   //! For instance, you can use `GEOMETRY|COLORS` as a single value.
   //! @todo Review Laurent Rineau We need to find a better name. 1. Do not refer to OpenGL. 2. Why "name"?
   //!

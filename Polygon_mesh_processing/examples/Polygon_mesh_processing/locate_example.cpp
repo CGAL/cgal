@@ -74,7 +74,7 @@ int main(int /*argc*/, char** /*argv*/)
   std::cout << "Is it on the face's border? " << (PMP::is_on_face_border(ray_location, tm) ? "Yes" : "No") << "\n\n";
 
   // -----------------------------------------------------------------------------------------------
-  // Now, we artifically project the mesh to the natural 2D dimensional plane, with a little translation
+  // Now, we artificially project the mesh to the natural 2D dimensional plane, with a little translation
   // via a custom vertex point property map
 
   typedef CGAL::dynamic_vertex_property_t<Point_2>                      Point_2_property;

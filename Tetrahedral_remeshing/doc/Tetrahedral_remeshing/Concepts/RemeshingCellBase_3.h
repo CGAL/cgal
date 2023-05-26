@@ -2,7 +2,7 @@
 \ingroup PkgTetrahedralRemeshingConcepts
 \cgalConcept
 
-\cgalRefines SimplicialMeshCellBase_3
+\cgalRefines{SimplicialMeshCellBase_3}
 
 Cell base concept to be used in the triangulation type given to the function `CGAL::tetrahedral_isotropic_remeshing()`.
 

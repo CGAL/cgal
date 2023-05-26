@@ -740,7 +740,7 @@ public:
 
   Filtered_bbox_circular_arc_2_base(const P_arc& arc) : P_arc(arc), bb(nullptr) {}
 
-  // otherwise it will lead to ambiguos definitions
+  // otherwise it will lead to ambiguous definitions
   explicit Filtered_bbox_circular_arc_2_base(const Circle_2 &c)
     : P_arc(c),bb(nullptr)
   {}

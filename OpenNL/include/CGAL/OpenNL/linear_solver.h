@@ -1,7 +1,7 @@
 // Copyright (c) 2005-2008  Inria Loria (France).
 /*
  * author:  Bruno Levy, INRIA, project ALICE
- * website: http://www.loria.fr/~levy/software
+ * website: https://www.loria.fr/~levy/software
  *
  * This file is part of CGAL (www.cgal.org)
  *
@@ -13,7 +13,7 @@
  *    TITLE  = Numerical Methods for Digital Geometry Processing,
  *    BOOKTITLE =Israel Korea Bi-National Conference,
  *    YEAR=November 2005,
- *    URL=http://www.loria.fr/~levy/php/article.php?pub=../publications/papers/2005/Numerics
+ *    URL=https://www.loria.fr/~levy/php/article.php?pub=../publications/papers/2005/Numerics
  * }
  *
  *  Laurent Saboret 2005-2006: Changes for CGAL:
@@ -77,7 +77,7 @@ private:
 
 // Public operations
 public:
-    // Default contructor, copy constructor, operator=() and destructor are fine
+    // Default constructor, copy constructor, operator=() and destructor are fine
 
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.
@@ -138,7 +138,7 @@ private:
 
 // Public operations
 public:
-    // Default contructor, copy constructor, operator=() and destructor are fine
+    // Default constructor, copy constructor, operator=() and destructor are fine
 
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.

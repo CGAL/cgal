@@ -5,7 +5,7 @@
 \ingroup PkgHyperbolicTriangulation2Concepts
 \cgalConcept
 
-\cgalRefines DelaunayTriangulationTraits_2
+\cgalRefines{DelaunayTriangulationTraits_2}
 
 The concept `HyperbolicDelaunayTriangulationTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template parameter of the class

@@ -640,7 +640,7 @@ void insert_curves(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
 // interior does not intersect with any existing edge or vertex in the
-// arragement (incremental insertion).
+// arrangement (incremental insertion).
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
@@ -796,7 +796,7 @@ insert_non_intersecting_curve
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
 // interior does not intersect with any existing edge or vertex in the
-// arragement (incremental insertion).
+// arrangement (incremental insertion).
 // Overloaded version with no point location object.
 //
 template <typename GeometryTraits_2, typename TopologyTraits>
@@ -1003,7 +1003,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
 //-----------------------------------------------------------------------------
 // Insert a range of pairwise interior-disjoint x-monotone curves into
 // the arrangement, such that the curve interiors do not intersect with
-// any existing edge or vertex in the arragement (aggregated insertion).
+// any existing edge or vertex in the arrangement (aggregated insertion).
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
@@ -1466,7 +1466,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
 
 //-----------------------------------------------------------------------------
 // Compute the zone of the given x-monotone curve in the existing arrangement.
-// Meaning, it output the arrangment's vertices, edges and faces that the
+// Meaning, it output the arrangement's vertices, edges and faces that the
 // x-monotone curve intersects.
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename OutputIterator, typename PointLocation>
@@ -1607,7 +1607,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     CGAL_assertion(iso_p != nullptr);
 
     // Check whether the isolated point lies inside a face (otherwise,
-    // it conincides with a vertex or an edge).
+    // it coincides with a vertex or an edge).
     auto obj = pl.locate(*iso_p);
     if (boost::get<Face_const_handle>(&x_obj) != nullptr) return true;
   }

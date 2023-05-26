@@ -545,7 +545,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property char " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Int8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int8_map>(pmap));
         continue;
       }
     }
@@ -555,7 +555,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property uchar " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Uint8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint8_map>(pmap));
         continue;
       }
     }

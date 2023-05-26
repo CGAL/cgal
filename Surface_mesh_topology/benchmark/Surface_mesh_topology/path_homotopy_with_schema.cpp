@@ -12,7 +12,7 @@
            <<"into a second path and test that the two paths are homotope."
            <<std::endl
            <<"   -nbdefo D: use D deformations to generate the second path (by default a random number between 10 and 100)."<<std::endl
-           <<"   -nbedges E: generate paths of length E (by default a random number beween 10 and 100)."<<std::endl
+           <<"   -nbedges E: generate paths of length E (by default a random number between 10 and 100)."<<std::endl
            <<"   -nbtests N: do N tests of homotopy (using 2*N random paths) (by default 1)."<<std::endl
            <<"   -seed S: uses S as seed of random generator. Otherwise use a different seed at each run (based on time)."<<std::endl
            <<"   -time: display computation times."<<std::endl

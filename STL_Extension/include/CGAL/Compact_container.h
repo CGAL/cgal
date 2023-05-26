@@ -33,6 +33,7 @@
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Has_member.h>
 #include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -537,9 +538,15 @@ public:
     return false;
   }
 
-  bool owns_dereferencable(const_iterator cit) const
+  bool owns_dereferenceable(const_iterator cit) const
   {
     return cit != end() && owns(cit);
+  }
+
+
+  CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
+  {
+    return owns_dereferenceable(cit);
   }
 
   /** Reserve method to ensure that the capacity of the Compact_container be
@@ -1146,6 +1153,20 @@ namespace handle {
 } // namespace handle
 
 } // namespace internal
+
+template <class DSC, bool Const >
+class Output_rep<CGAL::internal::CC_iterator<DSC, Const> > {
+protected:
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+  CC_iterator it;
+public:
+  Output_rep( const CC_iterator it) : it(it) {}
+  std::ostream& operator()( std::ostream& out) const {
+    return (out << Time_stamper::display_id(it.operator->()));
+  }
+};
 
 } //namespace CGAL
 

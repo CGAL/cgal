@@ -1,6 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
-#include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/Combinatorial_map_save_load.h>
 
 #include "Linear_cell_complex_3_test.h"

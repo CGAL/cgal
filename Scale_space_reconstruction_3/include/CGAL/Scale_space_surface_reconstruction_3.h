@@ -62,8 +62,8 @@ public:
 #endif
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type                      Facet_iterator;         ///< defines an iterator over the points.
-  typedef const unspecified_type                Facet_const_iterator;   ///< defines a constant iterator over the points.
+  typedef unspecified_type                      Facet_iterator;         ///< defines an iterator over the facets.
+  typedef const unspecified_type                Facet_const_iterator;   ///< defines a constant iterator over the facets.
 #else
   typedef typename std::vector<Facet>           Facet_vector;
   typedef typename Facet_vector::iterator       Facet_iterator;

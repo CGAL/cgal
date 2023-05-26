@@ -8,7 +8,7 @@ a policy clone idiom in form of a rebind struct-template.
 
 Instantiate a dcel class with many different possible types without ad-hoc limitations on type of the dcel classes.
 
-\cgalRefines `ArrangementDcel`
+\cgalRefines{ArrangementDcel}
 
 \cgalHasModel `CGAL::Arr_default_dcel<Traits>`
 \cgalHasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
@@ -39,7 +39,7 @@ typedef unspecified_type template <class T> rebind;
 /// @{
 
 /*!
-constructs an empty \dcel with one unbouned face.
+constructs an empty \dcel with one unbounded face.
 */
 Arr_dcel();
 

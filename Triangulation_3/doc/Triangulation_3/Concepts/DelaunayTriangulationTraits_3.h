@@ -8,7 +8,7 @@ The concept `DelaunayTriangulationTraits_3` is the first template parameter of t
 segments...) forming the triangulation together with a few geometric
 predicates and constructions on these objects.
 
-\cgalRefines `TriangulationTraits_3`
+\cgalRefines{TriangulationTraits_3}
 
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)
 \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel` (recommended for Voronoi)

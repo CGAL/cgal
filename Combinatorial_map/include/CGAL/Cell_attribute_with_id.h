@@ -42,11 +42,11 @@ namespace CGAL {
     friend class Concurrent_compact_container;
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_id()
     {}
 
-    /// Contructor with an info in parameter.
+    /// Constructor with an info in parameter.
     Cell_attribute_with_id(const Info_& ainfo) :
       Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, Tag_true>(ainfo)
     {}
@@ -64,7 +64,7 @@ namespace CGAL {
     friend class Concurrent_compact_container;
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_id()
     {}
   };

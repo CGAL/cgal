@@ -42,20 +42,17 @@ add_definitions(-DCMAP_WITH_INDEX) # to use cc with index (handle otherwise)
 ##################
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL)
 
-if(NOT
-   (CGAL_Qt5_FOUND
-    AND Qt5_FOUND))
+if(NOT CGAL_Qt5_FOUND OR NOT Qt5_FOUND)
 
-  message(STATUS "NOTICE: This demo requires CGAL, "
-                 "and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 else()
 
   add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
               CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
 
@@ -80,7 +77,7 @@ else()
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
   target_link_libraries(Linear_cell_complex_3_demo
-                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
+                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets Qt5::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Linear_cell_complex_3_demo)

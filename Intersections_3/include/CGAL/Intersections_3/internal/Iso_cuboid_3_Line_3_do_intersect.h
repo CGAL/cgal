@@ -23,7 +23,8 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-inline bool
+inline
+typename K::Boolean
 do_intersect(const typename K::Line_3& line,
              const typename K::Iso_cuboid_3& ic,
              const K&)
@@ -34,14 +35,15 @@ do_intersect(const typename K::Line_3& line,
   const Point_3& point = line.point();
   const Vector_3& v = line.to_vector();
 
-  return bbox_line_do_intersect_aux(point.x(), point.y(), point.z(),
-                                    v.x(), v.y(), v.z(),
-                                    (ic.min)().x(), (ic.min)().y(), (ic.min)().z(),
-                                    (ic.max)().x(), (ic.max)().y(), (ic.max)().z());
+  return bbox_line_do_intersect_aux<K>(point.x(), point.y(), point.z(),
+                                       v.x(), v.y(), v.z(),
+                                       (ic.min)().x(), (ic.min)().y(), (ic.min)().z(),
+                                       (ic.max)().x(), (ic.max)().y(), (ic.max)().z());
 }
 
 template <class K>
-inline bool
+inline
+typename K::Boolean
 do_intersect(const typename K::Iso_cuboid_3& ic,
              const typename K::Line_3& l,
              const K& k)

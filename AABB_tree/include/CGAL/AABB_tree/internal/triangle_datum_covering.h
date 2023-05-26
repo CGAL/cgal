@@ -143,18 +143,18 @@ struct AABB_covered_triangle_tree_traits
 
   // Primitive ID --> box vector pos --> Bounding Box
   using BPMB = internal::Vector_property_map<CGAL::Bbox_3>;
-  using BPM = CGAL::Property_map_binder<IDPM, BPMB>;
+  using BPM = CGAL::Compose_property_map<IDPM, BPMB>;
 
   // Primitive ID --> point vector pos --> Reference Point
   using RPPMB = internal::Vector_property_map<Point>;
-  using RPPM = CGAL::Property_map_binder<IDPM, RPPMB>;
+  using RPPM = CGAL::Compose_property_map<IDPM, RPPMB>;
 
   // Primitive ID --> Datum pos vector pos --> Datum pos --> Datum
   // The vector of data has size nf, but the vector of datum pos has size tree.size()
   using DPPMB = internal::Vector_property_map<std::size_t>; // pos --> Datum pos
-  using DPPM = CGAL::Property_map_binder<IDPM, DPPMB>; // PID --> Datum pos
+  using DPPM = CGAL::Compose_property_map<IDPM, DPPMB>; // PID --> Datum pos
   using DPMB = internal::Vector_property_map<Triangle_3>; // Datum pos --> Datum
-  using DPM = CGAL::Property_map_binder<DPPM, DPMB>; // PID --> Datum
+  using DPM = CGAL::Compose_property_map<DPPM, DPMB>; // PID --> Datum
 
   using Primitive = CGAL::AABB_primitive<ID, DPM, RPPM,
                                          CGAL::Tag_true /*external pmaps*/,
@@ -207,7 +207,7 @@ public:
     : Base(traits),
       m_sq_length(square(max_length)),
       m_dppmb(), m_bpm(), m_rppm(), m_dpmb(),
-      m_dpm(DPPM(m_dppmb/*first binder's value_map*/)/*second binder's key map*/, m_dpmb)
+      m_dpm(DPPM(Default(), m_dppmb/*first binder's value_map*/)/*second binder's key map*/, m_dpmb)
   {
     initialize_tree_property_maps();
   }

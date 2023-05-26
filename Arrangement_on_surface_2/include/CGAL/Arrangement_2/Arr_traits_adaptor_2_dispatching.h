@@ -258,7 +258,7 @@ namespace Is_on_y_identification_2 {
 
 namespace Compare_y_on_boundary_2 {
 
- // Poitns
+ // Points
  template < class ArrSideTag >
   struct Points {
     typedef Arr_use_dummy_tag type;

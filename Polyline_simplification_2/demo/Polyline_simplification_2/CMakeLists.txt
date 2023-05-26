@@ -17,7 +17,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Widgets Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -39,7 +39,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
   target_link_libraries(Polyline_simplification_2
-                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polyline_simplification_2)
 
@@ -48,7 +48,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

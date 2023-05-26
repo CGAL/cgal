@@ -81,6 +81,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   int i=0;
   std::unordered_map<vertex_descriptor,int> v_index;
   for(vertex_descriptor vh : p_vertices){
+    vertex_point_buffer[i] = get(vpm, vh);
     v_index[vh]= i++;
   }
 

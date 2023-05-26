@@ -54,7 +54,10 @@ static inline std::string get_file_extension(const std::string fname)
     return std::string();
 
   std::string ext = fname.substr(dot+1, fname.length() - dot - 1);
-  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+  std::transform(ext.begin(), ext.end(), ext.begin(),
+                 [](char c) {
+                   return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+                 });
 
   return ext;
 }

@@ -15,7 +15,7 @@
 #ifndef CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H
 #define CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>

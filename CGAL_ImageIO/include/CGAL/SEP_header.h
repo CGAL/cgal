@@ -72,7 +72,7 @@ private:
 
     template <typename T>
     void operator()(const T& t) {
-      // std::cerr << "My assignement ("
+      // std::cerr << "My assignment ("
       //           << typeid(t).name() << "): "
       //           << key << "=" << t << std::endl;
       self->add(key, t);

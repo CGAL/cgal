@@ -19,7 +19,7 @@
  *
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)
- * http://www.inria.fr/epidaure/personnel/malandain/
+ * https://www-sop.inria.fr/members/Gregoire.Malandain/
  *
  * CREATION DATE:
  * June, 9 1998
@@ -35,7 +35,7 @@
 
 
 
-/* Differents type coding for images and buffers.
+/* Different type coding for images and buffers.
  */
 typedef enum {
   TYPE_UNKNOWN /* unknown type */,
@@ -63,7 +63,7 @@ typedef double             r64;
 
 
 
-/* Typedef Booleen
+/* Typedef Boolean
  */
 typedef enum {
   False = 0,

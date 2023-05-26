@@ -33,13 +33,12 @@
 #include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-#include <boost/array.hpp>
+const std::size_t limit_fast_drawing = 300000; //arbitrary large value
 
 #include <set>
 #include <stack>
 #include <algorithm>
 
-const std::size_t limit_fast_drawing = 300000; //arbitraty large value
 
 typedef CGAL::Three::Point_container Pc;
 typedef CGAL::Three::Edge_container Ec;

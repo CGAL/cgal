@@ -89,7 +89,7 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
 /*!
 returns an approximation of the angle between `p-q` and `r-q`.
 The angle is given in degrees.
-\pre `p` and `r` are not equal to `q`.
+\pre `p != q` and `r != q`.
 */
 template <typename Kernel>
 Kernel::FT approximate_angle(const CGAL::Point_3<Kernel>& p,
@@ -341,7 +341,7 @@ const CGAL::Point_3<Kernel>& p4, const Kernel::FT&w4);
 /*!
 constructs the bisector line of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p` and `q` are not equal.
+positive side. \pre `p != q`.
 */
 template <typename Kernel>
 CGAL::Line_2<Kernel> bisector(const CGAL::Point_2<Kernel> &p,
@@ -367,7 +367,7 @@ const CGAL::Line_2<Kernel> &l2);
 /*!
 constructs the bisector plane of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p` and `q` are not equal.
+positive side. \pre `p != q'.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Point_3<Kernel> &p,
@@ -619,7 +619,19 @@ const CGAL::Point_3<Kernel>&r);
 
 /// @}
 
-
+/// \ingroup kernel_global_function
+/*!
+compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+\f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ of the triangle
+\f$ (a, b, c)\f$ at the vertex `b`, and \f$ \theta_2\f$ is
+the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
+\pre `a!=b && c!=b`.
+*/
+template <typename Kernel>
+Comparison_result compare_angle(const CGAL::Point_3<Kernel>& a,
+                                const CGAL::Point_3<Kernel>& b,
+                                const CGAL::Point_3<Kernel>& c,
+                                const Kernel::FT& cosine);
 
 /// \defgroup compare_dihedral_angle_grp CGAL::compare_dihedral_angle()
 /// \ingroup kernel_global_function

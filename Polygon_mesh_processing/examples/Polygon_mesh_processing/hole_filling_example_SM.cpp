@@ -79,8 +79,8 @@ int main(int argc, char* argv[])
     std::vector<vertex_descriptor> patch_vertices;
     bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
                                                                      h,
-                                                                     std::back_inserter(patch_facets),
-                                                                     std::back_inserter(patch_vertices)));
+                                                                     CGAL::parameters::face_output_iterator(std::back_inserter(patch_facets))
+                                                                                      .vertex_output_iterator(std::back_inserter(patch_vertices))));
 
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;

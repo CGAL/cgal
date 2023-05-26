@@ -61,7 +61,7 @@ cd "${CGAL_RELEASE_ID}"
 PATH=/home/cgal-testsuite/local/bin:$PATH
 export PATH
 cd "$PWD/doc/scripts"
-bash -$- ./process_doc.sh /home/cgal-testsuite/local/bin/doxygen /home/mgimeno/bin/doxygen /srv/CGAL/www/Members/Manual_doxygen_test
+bash -$- ./process_doc.sh /home/cgal-testsuite/bin/doxygen_1_8_13 /home/cgal-testsuite/bin/doxygen_1_9_6 /srv/CGAL/www/Members/Manual_doxygen_test
 if head -2 ../../.scm-branch | grep -q cgal/master; then
     rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/master/
 fi

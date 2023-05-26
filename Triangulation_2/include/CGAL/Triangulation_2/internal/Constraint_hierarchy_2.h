@@ -20,7 +20,7 @@
 #include <utility>
 #include <map>
 #include <list>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -208,7 +208,7 @@ template <class T, class Compare, class Data>
 void
 Constraint_hierarchy_2<T,Compare,Data>::
 copy(const Constraint_hierarchy_2& ch1, std::map<T,T>& vmap)
-  // copy with a tranfer vertex map
+  // copy with a transfer vertex map
 {
   clear();
   // copy c_to_sc_map
@@ -345,7 +345,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 context(T va, T vb)
 {
   H_context_iterator hcit, past;
-  if(!get_contexts(va,vb, hcit ,past)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va,vb, hcit ,past)) CGAL_assertion(false);
   return *hcit;
 }
 
@@ -355,7 +355,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 number_of_enclosing_constraints(T va, T vb)
 {
   H_context_list* hcl = get_contexts(va, vb);
-  CGAL_triangulation_assertion(hcl != nullptr);
+  CGAL_assertion(hcl != nullptr);
   return hcl->size();
 }
 
@@ -365,7 +365,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 contexts_begin(T va, T vb)
 {
    H_context_iterator first, last;
-   if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
+   if( !get_contexts(va,vb,first,last))  CGAL_assertion(false);
    return first;
 }
 
@@ -375,7 +375,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 contexts_end(T va, T vb)
 {
    H_context_iterator first, last;
-   if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
+   if( !get_contexts(va,vb,first,last))  CGAL_assertion(false);
    return last;
 }
 
@@ -385,7 +385,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 vertices_in_constraint_begin(T va, T vb)
 {
   H_c_iterator  cit = c_to_sc_map.find(make_edge(va,vb));
-  CGAL_triangulation_assertion( cit != c_to_sc_map.end());
+  CGAL_assertion( cit != c_to_sc_map.end());
   return cit->second->begin();
 }
 
@@ -395,7 +395,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 vertices_in_constraint_end(T va, T vb)
 {
   H_c_iterator  cit = c_to_sc_map.find(make_edge(va,vb));
-  CGAL_triangulation_assertion( cit != c_to_sc_map.end());
+  CGAL_assertion( cit != c_to_sc_map.end());
   return cit->second->end();
 }
 
@@ -444,7 +444,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 remove_constraint(T va, T vb){
   H_edge   he = make_edge(va, vb);
   typename H_c_to_sc_map::iterator c_to_sc_it = c_to_sc_map.find(he);
-  CGAL_triangulation_assertion(c_to_sc_it != c_to_sc_map.end());
+  CGAL_assertion(c_to_sc_it != c_to_sc_map.end());
 
   H_vertex_list *hvl = c_to_sc_it->second;
 
@@ -454,10 +454,10 @@ remove_constraint(T va, T vb){
       ++it){
     typename H_sc_to_c_map::iterator scit =
                                    sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     H_context_list* hcl = scit->second;
 
-    // and remove the contraint from the context list of the subcontraint
+    // and remove the constraint from the context list of the subconstraints
     for(H_context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == hvl){
             hcl->erase(ctit);
@@ -534,7 +534,7 @@ next_along_sc(T va, T vb, T& w) const
   // find the next vertex after vb along any enclosing constrained
   // return false if there is no ....
   H_context_iterator  ctxtit, past;
-  if(!get_contexts(va, vb, ctxtit, past)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va, vb, ctxtit, past)) CGAL_assertion(false);
 
   H_vertex_it pos;
   for( ; ctxtit != past; ctxtit++){
@@ -564,9 +564,9 @@ remove_Steiner(T v, T va, T vb)
   CGAL_precondition(!is_constrained_vertex(v));
 
   H_context_list*  hcl1 = get_contexts(va, v);
-  CGAL_triangulation_assertion(hcl1 != nullptr);
+  CGAL_assertion(hcl1 != nullptr);
   H_context_list*  hcl2 = get_contexts(v, vb);
-  CGAL_triangulation_assertion(hcl2 != nullptr);
+  CGAL_assertion(hcl2 != nullptr);
 
   H_vertex_it      pos;
   for(H_context_iterator ctit=hcl1->begin(); ctit != hcl1->end(); ctit++){
@@ -600,7 +600,7 @@ void
 Constraint_hierarchy_2<T,Compare,Data>::
 add_Steiner(T va, T vb, T vc){
   H_context_list* hcl = get_contexts(va, vb);
-  CGAL_triangulation_assertion(hcl != nullptr);
+  CGAL_assertion(hcl != nullptr);
 
   H_context_list* hcl2 = new  H_context_list;
 
@@ -701,7 +701,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 oriented_end(T va, T vb, T& vc) const
 {
   H_context_iterator ctxt, past;
-  if(!get_contexts(va,vb, ctxt, past) ) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va,vb, ctxt, past) ) CGAL_assertion(false);
   if(*(ctxt->pos) == va)
     vc = ctxt->enclosing->back();
   else

@@ -22,13 +22,14 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool _intersection_test_vertex(const typename K::Point_3* p,
-                               const typename K::Point_3* q,
-                               const typename K::Point_3* r,
-                               const typename K::Point_3* a,
-                               const typename K::Point_3* b,
-                               const typename K::Point_3* c,
-                               const K& k)
+typename K::Boolean
+_intersection_test_vertex(const typename K::Point_3* p,
+                          const typename K::Point_3* q,
+                          const typename K::Point_3* r,
+                          const typename K::Point_3* a,
+                          const typename K::Point_3* b,
+                          const typename K::Point_3* c,
+                          const K& k)
 {
   CGAL_kernel_precondition(k.coplanar_orientation_3_object()(*p,*q,*r) == POSITIVE);
   CGAL_kernel_precondition(k.coplanar_orientation_3_object()(*a,*b,*c) == POSITIVE);
@@ -64,13 +65,14 @@ bool _intersection_test_vertex(const typename K::Point_3* p,
 }
 
 template <class K>
-bool _intersection_test_edge(const typename K::Point_3* p,
-                             const typename K::Point_3* q,
-                             const typename K::Point_3* r,
-                             const typename K::Point_3* a,
-                             const typename K::Point_3* CGAL_kernel_precondition_code(b),
-                             const typename K::Point_3* c,
-                             const K& k)
+typename K::Boolean
+_intersection_test_edge(const typename K::Point_3* p,
+                        const typename K::Point_3* q,
+                        const typename K::Point_3* r,
+                        const typename K::Point_3* a,
+                        const typename K::Point_3* CGAL_kernel_precondition_code(b),
+                        const typename K::Point_3* c,
+                        const K& k)
 {
   CGAL_kernel_precondition(k.coplanar_orientation_3_object() (*p,*q,*r) == POSITIVE);
   CGAL_kernel_precondition(k.coplanar_orientation_3_object() (*a,*b,*c) == POSITIVE);
@@ -97,9 +99,10 @@ bool _intersection_test_edge(const typename K::Point_3* p,
 }
 
 template <class K>
-bool do_intersect_coplanar(const typename K::Triangle_3& t1,
-                           const typename K::Triangle_3& t2,
-                           const K& k)
+typename K::Boolean
+do_intersect_coplanar(const typename K::Triangle_3& t1,
+                      const typename K::Triangle_3& t2,
+                      const K& k)
 {
   typedef typename K::Point_3 Point_3;
 

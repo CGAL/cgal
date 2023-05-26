@@ -5,6 +5,7 @@
 \example Straight_skeleton_2/Create_skeleton_and_offset_polygons_with_holes_2.cpp
 \example Straight_skeleton_2/Create_straight_skeleton_2.cpp
 \example Straight_skeleton_2/Create_straight_skeleton_from_polygon_with_holes_2.cpp
+\example Straight_skeleton_2/extrude_skeleton.cpp
 \example Straight_skeleton_2/Low_level_API.cpp
 \example Straight_skeleton_2/Show_offset_polygon.cpp
 \example Straight_skeleton_2/Show_straight_skeleton.cpp

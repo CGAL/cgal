@@ -28,7 +28,7 @@ namespace CGAL {
       typedef typename Queue::size_type size_type;
 
     protected:
-      // --- protected datas ---
+      // --- protected data ---
       Queue q;
 
     public:

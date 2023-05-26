@@ -176,6 +176,8 @@ public:
     : m_free_id(0)
   {}
 
+  Rigid_triangle_mesh_collision_detection(const Rigid_triangle_mesh_collision_detection&) = default;
+
   //! move constructor
   Rigid_triangle_mesh_collision_detection(Rigid_triangle_mesh_collision_detection&& other)
   {
@@ -190,6 +192,8 @@ public:
       if (m_own_aabb_trees[id]) delete m_aabb_trees[id];
     }
   }
+
+  Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection& other) = default;
 
   //! move assignment operator
   Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection&& other)
@@ -575,7 +579,7 @@ public:
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
-          tm, bind_property_maps(fid_map, make_property_map(cc_ids)),
+          tm, make_compose_property_map(fid_map, make_property_map(cc_ids)),
           parameters::face_index_map(fid_map));
       if (nb_cc != 1)
       {

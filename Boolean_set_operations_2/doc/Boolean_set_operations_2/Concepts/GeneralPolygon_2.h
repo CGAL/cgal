@@ -3,7 +3,7 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-\cgalRefines `GpsTraitsGeneralPolygon_2`
+\cgalRefines{GpsTraitsGeneralPolygon_2}
 
 A model of this concept represents a simple general-polygon. The
 geometric mapping of the edges of the polygon must be \f$ x\f$-monotone curves.
