@@ -19,12 +19,23 @@ Scene_aff_transformed_point_set_item(Scene_points_with_normal_item* pts_item,
   setPointContainer(0, new Point_container(Viewer_interface::PROGRAM_NO_SELECTION, false));
   compute_bbox();
   invalidateOpenGLBuffers();
+
+  connect(pts_item, &Scene_points_with_normal_item::itemChanged ,
+          this, &Scene_aff_transformed_point_set_item::updateCache);
 }
 
 Scene_aff_transformed_point_set_item::
 ~Scene_aff_transformed_point_set_item()
 {
   delete d;
+}
+
+void
+Scene_aff_transformed_point_set_item::
+updateCache()
+{
+  compute_bbox();
+  invalidateOpenGLBuffers();
 }
 
 QString

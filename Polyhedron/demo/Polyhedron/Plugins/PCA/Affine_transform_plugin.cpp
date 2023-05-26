@@ -1,11 +1,13 @@
 #include "ui_Transformation_widget.h"
 #include "ui_MeshOnGrid_dialog.h"
 
-#include "Scene_aff_transformed_surface_mesh_item.h"
-#include "Scene_aff_transformed_point_set_item.h"
 #include "Scene_aff_transformed_item.h"
-#include "Scene_surface_mesh_item.h"
+#include "Scene_aff_transformed_point_set_item.h"
+#include "Scene_aff_transformed_polygon_soup_item.h"
+#include "Scene_aff_transformed_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
+#include "Scene_polygon_soup_item.h"
+#include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Point_container.h>
@@ -55,7 +57,7 @@ class Polyhedron_demo_affine_transform_plugin
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  enum class Item_type { UNKNOWN, POINT_SET, POLYGON_MESH };
+  enum class Item_type { UNKNOWN, POINT_SET, POLYGON_SOUP, POLYGON_MESH };
   using Generic_scene_aff_transformed_item = Scene_aff_transformed_item; // just for clarity
 
 private:
@@ -96,8 +98,9 @@ public:
     if(a == actionGenerateItemGrid)
       return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
 
-    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()))
-        || qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
+        || qobject_cast<Scene_polygon_soup_item*>(scene->item(scene->mainSelectionIndex()))
+        || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
   void init(QMainWindow* _mw,
@@ -157,6 +160,7 @@ public:
   void start(SceneItem*);
 
   void endPointSet(const QMatrix4x4& transform_matrix);
+  void endPolygonSoup(const QMatrix4x4& transform_matrix);
   void endPolygonMesh(const QMatrix4x4& transform_matrix);
   void end();
 
@@ -586,6 +590,13 @@ transformItem()
     return start<Scene_aff_transformed_point_set_item>(pts_item);
   }
 
+  Scene_polygon_soup_item* ps_item = qobject_cast<Scene_polygon_soup_item*>(item);
+  if(ps_item)
+  {
+    aff_transformed_item_type = Item_type::POLYGON_SOUP;
+    return start<Scene_aff_transformed_polygon_soup_item>(ps_item);
+  }
+
   Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
   if(sm_item)
   {
@@ -606,12 +617,42 @@ endPointSet(const QMatrix4x4& transform_matrix)
   for(Point_set::Index idx : *new_ps)
   {
     QVector3D vec = transform_matrix * QVector3D(new_ps->point(idx).x() - c.x,
-                                                  new_ps->point(idx).y() - c.y,
-                                                  new_ps->point(idx).z() - c.z);
+                                                 new_ps->point(idx).y() - c.y,
+                                                 new_ps->point(idx).z() - c.z);
     new_ps->point(idx) = Kernel::Point_3(vec.x(), vec.y(), vec.z());
   }
 
   new_item->setName(aff_transformed_item->name());
+  Q_EMIT new_item->itemChanged();
+  scene->replaceItem(scene->item_id(aff_transformed_item), new_item, true /*emit about to be destroyed*/);
+
+  delete aff_transformed_item;
+  aff_transformed_item = nullptr;
+}
+
+void
+Polyhedron_demo_affine_transform_plugin::
+endPolygonSoup(const QMatrix4x4& transform_matrix)
+{
+  Scene_aff_transformed_polygon_soup_item* aff_transformed_ps_item = static_cast<Scene_aff_transformed_polygon_soup_item*>(aff_transformed_item);
+  Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+  const auto& old_points = aff_transformed_ps_item->item()->points();
+
+  auto new_points = old_points;
+  CGAL::qglviewer::Vec c = aff_transformed_item->center();
+
+  for(Point_3& p : new_points)
+  {
+    QVector3D vec = transform_matrix * QVector3D(p.x() - c.x,
+                                                 p.y() - c.y,
+                                                 p.z() - c.z);
+    p = Kernel::Point_3(vec.x(), vec.y(), vec.z());
+  }
+
+  new_item->load(new_points, aff_transformed_ps_item->item()->polygons());
+  new_item->setName(aff_transformed_item->name());
+  new_item->invalidateOpenGLBuffers();
+  Q_EMIT new_item->itemChanged();
   scene->replaceItem(scene->item_id(aff_transformed_item), new_item, true /*emit about to be destroyed*/);
 
   delete aff_transformed_item;
@@ -630,8 +671,8 @@ endPolygonMesh(const QMatrix4x4& transform_matrix)
   auto transformation = [&c, &transform_matrix](const Kernel::Point_3& p) -> Kernel::Point_3
   {
     QVector3D vec = transform_matrix * QVector3D(p.x() - c.x,
-                                                  p.y() - c.y,
-                                                  p.z() - c.z);
+                                                 p.y() - c.y,
+                                                 p.z() - c.z);
     return { vec.x(), vec.y(), vec.z() };
   };
 
@@ -671,6 +712,9 @@ end()
   {
     case Item_type::POINT_SET:
       endPointSet(transform_matrix);
+    break;
+    case Item_type::POLYGON_SOUP:
+      endPolygonSoup(transform_matrix);
     break;
     case Item_type::POLYGON_MESH:
       endPolygonMesh(transform_matrix);

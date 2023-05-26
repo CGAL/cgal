@@ -31,7 +31,7 @@ struct Scene_aff_transformed_point_set_item_priv
   CGAL::qglviewer::Vec center_;
 
   Scene_aff_transformed_point_set_item_priv(Scene_points_with_normal_item *pts_item,
-                                        const CGAL::qglviewer::Vec& pos)
+                                            const CGAL::qglviewer::Vec& pos)
     : pts_item(pts_item),
       center_(pos)
   {
@@ -57,6 +57,8 @@ struct Scene_aff_transformed_point_set_item_priv
 class SCENE_AFF_TRANSFORMED_POINT_SET_ITEM_EXPORT Scene_aff_transformed_point_set_item
   : public Scene_aff_transformed_item
 {
+  Q_OBJECT
+
   using Point_set = Point_set_3<Kernel>;
 
 protected:
@@ -65,7 +67,7 @@ protected:
 
 public:
   Scene_aff_transformed_point_set_item(Scene_points_with_normal_item *pts_item,
-                                   const CGAL::qglviewer::Vec& pos);
+                                       const CGAL::qglviewer::Vec& pos);
 
   ~Scene_aff_transformed_point_set_item();
 
@@ -77,6 +79,8 @@ public:
   QString toolTip() const Q_DECL_OVERRIDE;
 
   bool isEmpty() const Q_DECL_OVERRIDE { return (d->nb_points == 0); }
+
+  void updateCache();
 
   virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE { return m == Points ; }
 

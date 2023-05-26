@@ -9,20 +9,31 @@
 using namespace CGAL::Three;
 
 Scene_aff_transformed_surface_mesh_item::
-Scene_aff_transformed_surface_mesh_item(Scene_surface_mesh_item* item,
+Scene_aff_transformed_surface_mesh_item(Scene_surface_mesh_item* sm_item,
                                     const CGAL::qglviewer::Vec& pos)
   : Scene_aff_transformed_item(pos)
 {
-  d = new Scene_aff_transformed_surface_mesh_item_priv(item, pos);
+  d = new Scene_aff_transformed_surface_mesh_item_priv(sm_item, pos);
   setEdgeContainer(0, new Edge_container(Viewer_interface::PROGRAM_NO_SELECTION, false));
   compute_bbox();
   invalidateOpenGLBuffers();
+
+  connect(sm_item, &Scene_surface_mesh_item::itemChanged ,
+          this, &Scene_aff_transformed_surface_mesh_item::updateCache);
 }
 
 Scene_aff_transformed_surface_mesh_item::
 ~Scene_aff_transformed_surface_mesh_item()
 {
   delete d;
+}
+
+void
+Scene_aff_transformed_surface_mesh_item::
+updateCache()
+{
+  compute_bbox();
+  invalidateOpenGLBuffers();
 }
 
 QString

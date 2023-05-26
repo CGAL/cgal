@@ -37,7 +37,7 @@ struct Scene_aff_transformed_surface_mesh_item_priv
 
 public:
   Scene_aff_transformed_surface_mesh_item_priv(Scene_surface_mesh_item* sm_item,
-                                           const CGAL::qglviewer::Vec& pos)
+                                               const CGAL::qglviewer::Vec& pos)
     : sm_item(sm_item),
       center_(pos)
   {
@@ -86,7 +86,7 @@ protected:
 
 public:
   Scene_aff_transformed_surface_mesh_item(Scene_surface_mesh_item* item,
-                                      const CGAL::qglviewer::Vec& pos);
+                                          const CGAL::qglviewer::Vec& pos);
 
   ~Scene_aff_transformed_surface_mesh_item();
 
@@ -98,6 +98,8 @@ public:
   QString toolTip() const Q_DECL_OVERRIDE;
 
   bool isEmpty() const Q_DECL_OVERRIDE { return (d->nb_lines == 0); }
+
+  void updateCache();
 
   virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE { return m == Wireframe ; }
   virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;

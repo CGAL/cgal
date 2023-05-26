@@ -11,8 +11,9 @@ polyhedron_demo_plugin(affine_transform_plugin Affine_transform_plugin
 target_link_libraries(affine_transform_plugin PUBLIC scene_surface_mesh_item
                                                      scene_points_with_normal_item
                                                      scene_aff_transformed_item
-                                                     scene_aff_transformed_surface_mesh_item
-                                                     scene_aff_transformed_point_set_item)
+                                                     scene_aff_transformed_point_set_item
+                                                     scene_aff_transformed_polygon_soup_item
+                                                     scene_aff_transformed_surface_mesh_item)
 
 polyhedron_demo_plugin(edit_box_plugin Edit_box_plugin)
 target_link_libraries(edit_box_plugin PUBLIC scene_edit_box_item
