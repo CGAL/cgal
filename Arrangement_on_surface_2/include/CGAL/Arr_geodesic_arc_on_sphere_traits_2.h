@@ -2837,7 +2837,7 @@ public:
   //@{
   typedef double                                        Approximate_number_type;
   typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
-  typedef Approximate_kernel::Point_2                   Approximate_point_2;
+  typedef Arr_extended_direction_3<Approximate_kernel>  Point_2;
 
   class Approximate_2 {
   public:
@@ -2849,14 +2849,17 @@ public:
      *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator()(const Point_2& p, int i) const {
-      CGAL_precondition((i == 0) || (i == 1));
-      return (i == 0) ? CGAL::to_double(p.x()) : CGAL::to_double(p.y());
+      CGAL_precondition((i == 0) || (i == 1) || (i == 2));
+      return (i == 0) ? CGAL::to_double(p.dx()) :
+        ((i == 1) ? CGAL::to_double(p.dy()) : CGAL::to_double(p.dz()));
     }
 
     /*! Obtain an approximation of a point.
      */
-    Approximate_point_2 operator()(const Point_2& p) const
-    { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
+    Approximate_point_2 operator()(const Point_2& p) const {
+      return Approximate_point_2(operator()(p, 0), operator()(p, 1),
+                                 operator()(p, 2));
+    }
 
     /*! Obtain an approximation of an \f$x\f$-monotone curve.
      */
