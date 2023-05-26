@@ -68,6 +68,8 @@ public:
   */
   typedef typename Tr::Geom_traits::FT FT;
 
+  /// @}
+
   typedef Visitor_ Visitor;
   typedef typename Visitor::Facet_quality Facet_quality;
   typedef typename Visitor::Is_facet_bad  Is_facet_bad;
@@ -84,15 +86,13 @@ private:
 public:
   typedef CGAL::Tag_true Has_manifold_criterion;
 
-/// @}
-
-
   /// \name Creation
   /// @{
 
 #ifdef DOXYGEN_RUNNING
  /*!
-    Returns an object to serve as criteria for facets.
+    returns an object to serve as criteria for facets.
+
     \param angle_bound is the lower bound for the angle in degrees of the
     surface mesh facets.
     \param radius_bound is a uniform upper bound
@@ -105,6 +105,7 @@ public:
     \param min_radius_bound is a uniform lower bound for the radius of
     the surface Delaunay balls. Only facets with a radius larger than that
     bound will be refined.
+
     @note If one parameter is set to 0, then its corresponding
     criterion is ignored.
   */
@@ -154,6 +155,7 @@ public:
 
    /**
    * @brief returns whether the facet `facet` is bad or not.
+   *
    * @param tr the triangulation within which `facet` lives
    * @param facet the facet
    */

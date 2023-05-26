@@ -67,7 +67,6 @@ with a model of the concept `BisectionGeometricTraits_3`.
 \tparam Image_word_type is the data type encoded in the `Image`
 input file
 
-
 \cgalModels `MeshDomain_3`
 
 \sa `BisectionGeometricTraits_3`
@@ -149,13 +148,12 @@ public:
     CGAL_assertion(transform(value_outside) == 0);
   }
 
-  /// Destructor
+  // Destructor
   virtual ~Gray_image_mesh_domain_3() {}
-};  // end class Gray_image_mesh_domain_3
+};
 
-}  // end namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
-
 
 #endif // CGAL_GRAY_IMAGE_MESH_DOMAIN_3_H

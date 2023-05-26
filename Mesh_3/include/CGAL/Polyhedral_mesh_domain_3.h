@@ -133,19 +133,17 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 
 \sa `IntersectionGeometricTraits_3`
 \sa `CGAL::make_mesh_3()`.
-
 */
-
 #ifdef DOXYGEN_RUNNING
 template<class Polyhedron /*FaceGraph*/
          ,class IGT>
-#else
-template<class Polyhedron /*FaceGraph*/
-         ,class IGT_
-         ,class TriangleAccessor = CGAL::Default
-         ,class Patch_id_ = void
-         ,class Use_exact_intersection_construction_tag = CGAL::Tag_true>
-#endif
+#else // DOXYGEN_RUNNING
+template<class Polyhedron, /*FaceGraph*/
+         class IGT_,
+         class TriangleAccessor = CGAL::Default,
+         class Patch_id_ = void,
+         class Use_exact_intersection_construction_tag = CGAL::Tag_true>
+#endif // DOXYGEN_RUNNING
 class Polyhedral_mesh_domain_3
 {
 public:
@@ -155,7 +153,7 @@ public:
 
   typedef Patch_id_ Patch_id;
 
-  /// Geometric object types
+  // Geometric object types
   typedef typename IGT::Point_3    Point_3;
   typedef typename IGT::Segment_3  Segment_3;
   typedef typename IGT::Ray_3      Ray_3;
@@ -166,24 +164,24 @@ public:
   //-------------------------------------------------------
   // Index Types
   //-------------------------------------------------------
-  /// Type of indexes for cells of the input complex
+  // Type of indexes for cells of the input complex
   typedef int Subdomain_index;
   typedef boost::optional<Subdomain_index> Subdomain;
 
-  /// Type of indexes for surface patch of the input complex
+  // Type of indexes for surface patch of the input complex
   typedef typename boost::property_map<Polyhedron,
                                        face_patch_id_t<Patch_id>
                                        >::type            Face_patch_id_pmap;
   typedef typename boost::property_traits<
     Face_patch_id_pmap>::value_type                       Surface_patch_index;
   typedef boost::optional<Surface_patch_index>            Surface_patch;
-  /// Type of indexes to characterize the lowest dimensional face of the input
-  /// complex on which a vertex lie
+
+  // Type of indexes to characterize the lowest dimensional face of the input
+  // complex on which a vertex lie
   typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
   typedef std::tuple<Point_3,Index,int> Intersection;
-
 
   typedef typename IGT::FT         FT;
 
@@ -229,8 +227,6 @@ public:
   typedef typename AABB_traits::Bounding_box              Bounding_box;
 
 public:
-
-  /// Default constructor
   Polyhedral_mesh_domain_3(CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_)
@@ -238,15 +234,13 @@ public:
   {
   }
 
-
-/// \name Creation
-/// @{
+  /// \name Creation
+  /// @{
 
   /*!
     Construction from a bounding polyhedral surface which must be closed, and free of intersections.
     The inside of `bounding_polyhedron` will be meshed.
   */
-
   Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron
 #ifndef DOXYGEN_RUNNING
                            , CGAL::Random* p_rng = nullptr
@@ -270,11 +264,11 @@ public:
     and free of intersections.
     Using this constructor allows to mesh a polyhedral surface which is not closed, or has holes.
     The inside of `bounding_polyhedron` will be meshed.
-*/
-  Polyhedral_mesh_domain_3(const Polyhedron& p
-                           ,const Polyhedron& bounding_polyhedron
+  */
+  Polyhedral_mesh_domain_3(const Polyhedron& p,
+                           const Polyhedron& bounding_polyhedron
 #ifndef DOXYGEN_RUNNING
-                           ,CGAL::Random* p_rng = nullptr
+                           , CGAL::Random* p_rng = nullptr
 #endif
                            )
     : tree_()
@@ -300,14 +294,14 @@ public:
    *
    * @param begin iterator for a sequence of pointers to polyhedra
    * @param end iterator for a sequence of pointers to polyhedra
-   * @param bounding_polyhedron reference to the bounding surface
+   * @param bounding_polyhedron the bounding surface
    */
   template <typename InputPolyhedraPtrIterator>
-  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin
-                           ,InputPolyhedraPtrIterator end
-                           ,const Polyhedron& bounding_polyhedron
+  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
+                           InputPolyhedraPtrIterator end,
+                           const Polyhedron& bounding_polyhedron
 #ifndef DOXYGEN_RUNNING
-                           ,CGAL::Random* p_rng = nullptr
+                           , CGAL::Random* p_rng = nullptr
 #endif
                            )
     : p_rng_(p_rng)
@@ -328,7 +322,7 @@ public:
   }
 
   /*!
-   * Constructor from a sequence of polyhedral surfaces, without bounding
+   * Constructor from a sequence of polyhedral surfaces, without a bounding
    * surface. The domain will always answer `false` to `is_in_domain()`
    * queries.
    *
@@ -356,6 +350,8 @@ public:
     bounding_tree_ = 0;
   }
 
+  /// @}
+
   // Destructor
   ~Polyhedral_mesh_domain_3() {
     if(bounding_tree_ != 0 && bounding_tree_ != &tree_) {
@@ -366,11 +362,9 @@ public:
   void set_surface_only() {
     bounding_tree_ = 0;
   }
-/// @}
-
 
   /**
-   * Constructs  a set of `n` points on the surface, and output them to
+   * constructs a set of `n` points on the surface, and output them to
    *  the output iterator `pts` whose value type is required to be
    *  `std::pair<Points_3, Index>`.
    */
@@ -422,7 +416,7 @@ public:
     return tree_.closest_point(p);
   }
 
-  /// Allowed query types
+  // Allowed query types
   typedef boost::mpl::vector<Segment_3, Ray_3, Line_3> Allowed_query_types;
 
   /**

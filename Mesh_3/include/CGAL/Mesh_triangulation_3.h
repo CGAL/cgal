@@ -134,15 +134,15 @@ type to be used for the 3D triangulation embedding the mesh.
 \tparam GT must be a model of `MeshTriangulationTraits_3` or `Default`
 and defaults to `Kernel_traits<MD>::%Kernel`.
 
-\tparam Concurrency_tag_ enables sequential versus parallel meshing and optimization algorithms.
-                        Possible values are `Sequential_tag` (the default), `Parallel_tag`,
-                        and `Parallel_if_available_tag`.
+\tparam ConcurrencyTag enables sequential versus parallel meshing and optimization algorithms.
+                       Possible values are `Sequential_tag` (the default), `Parallel_tag`,
+                       and `Parallel_if_available_tag`.
 
-\tparam Vertex_base__ must be a model of `MeshVertexBase_3` or `Default`
-and defaults to `Mesh_vertex_base_3<Gt, MD>`.
+\tparam VertexBase must be a model of `MeshVertexBase_3` or `Default`
+and defaults to `Mesh_vertex_base_3<GT, MD>`.
 
-\tparam Cell_base_ must be a model of `MeshCellBase_3` or `Default`
-and defaults to `Compact_mesh_cell_base_3<Gt, MD>`.
+\tparam CellBase must be a model of `MeshCellBase_3` or `Default`
+and defaults to `Compact_mesh_cell_base_3<GT, MD>`.
 
 \warning To improve the robustness of the meshing process, the input traits `GT`
          is wrapped with the traits class `Robust_weighted_circumcenter_filtered_traits_3`.
@@ -162,7 +162,7 @@ template<class MD,
          class GT = Default,
          class ConcurrencyTag = Sequential_tag,
          class VertexBase = Default,
-         class CellBase   = Default>
+         class CellBase = Default>
 struct Mesh_triangulation_3
 {
 private:
@@ -190,28 +190,25 @@ private:
       Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
 
 public:
-
 #ifndef DOXYGEN_RUNNING
   using type = Triangulation;
   using Type = type;
 #else
+  /// \name Types
+  /// @{
 
-/// \name Types
-/// @{
-
-/*!
-The triangulation type to be used for the 3D triangulation embedding the mesh.
-This type is a wrapper around the type `CGAL::Regular_triangulation_3`, whose vertex
-and cell base classes are respectively `Vertex_base` and `Cell_base`.
-*/
-typedef unspecified_type type;
+  /*!
+  The triangulation type to be used for the 3D triangulation embedding the mesh.
+  This type is a wrapper around the type `CGAL::Regular_triangulation_3`, whose vertex
+  and cell base classes are respectively `VertexBase` and `CellBase`.
+  */
+  typedef unspecified_type type;
 
   /// @}
+#endif // DOXYGEN_RUNNING
+};
 
-#endif
-
-};  // end struct Mesh_triangulation_3
-}  // end namespace CGAL
+} // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

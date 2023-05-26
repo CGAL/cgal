@@ -85,7 +85,7 @@ surface, the sub-domain indices on both sides are known.
 \tparam Polyhedron stands for the type of the input polyhedral surface(s),
 model of `FaceListGraph`.
 
-\tparam IGT_ stands for a geometric traits class
+\tparam IGT stands for a geometric traits class
 providing the types and functors required to implement
 the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
@@ -93,7 +93,6 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 
 \cgalModels `MeshDomainWithFeatures_3`
 
-\sa `IntersectionGeometricTraits_3`
 \sa `CGAL::make_mesh_3()`
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
@@ -104,53 +103,47 @@ template < class IGT,
            class Polyhedron = typename Mesh_polyhedron_3<IGT>::type>
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
-      Polyhedral_mesh_domain_3< Polyhedron,
-                                IGT> >
+             Polyhedral_mesh_domain_3<Polyhedron,
+                                      IGT> >
 #else
 template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor=CGAL::Default>
+           class TriangleAccessor = CGAL::Default>
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron_,
                                 IGT_,
                                 TriangleAccessor,
-                                int,   //Use_patch_id_tag
-                                Tag_true > >//Use_exact_intersection_tag
+                                int, // Use_patch_id_tag
+                                Tag_true > >// Use_exact_intersection_tag
 #endif
 {
 public:
-  /// The base class
+  // The base class
   typedef Polyhedron_ Polyhedron;
   typedef Mesh_domain_with_polyline_features_3<
-    Polyhedral_mesh_domain_3<
-      Polyhedron, IGT_, TriangleAccessor,
-      int, Tag_true > > Base;
-  /// @cond DEVELOPERS
-private:
+            Polyhedral_mesh_domain_3<
+              Polyhedron, IGT_, TriangleAccessor, int, Tag_true > > Base;
 
+private:
+  /// @cond DEVELOPERS
   typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
                                    int, Tag_true >       BaseBase;
   typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
   /// @endcond
 
 public:
-  /*!
-  Numerical type.
-  */
+  // Numerical type
   typedef typename Base::FT        FT;
 
-  /// The polyhedron type
+  // The polyhedron type
   typedef Polyhedron Polyhedron_type;
 
-  /// \name Index types
-  /// @{
-  /// The types are `int` or types compatible with `int`.
+  // The types are `int` or types compatible with `int`.
   typedef typename Base::Corner_index         Corner_index;
   typedef typename Base::Curve_index          Curve_index;
   typedef typename Base::Surface_patch_index  Surface_patch_index;
   typedef typename Base::Subdomain_index      Subdomain_index;
-  /// @}
 
   /// @cond DEVELOPERS
   typedef typename Base::Ray_3                Ray_3;
@@ -162,6 +155,7 @@ public:
   typedef typename Base::AABB_primitive       AABB_primitive;
   typedef typename Base::AABB_primitive_id    AABB_primitive_id;
   typedef typename Base::Surface_patch_index  Patch_id;
+
   // Backward compatibility
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index                 Surface_index;
@@ -192,9 +186,12 @@ protected:
   /// @endcond
 
 public:
-  /// Constructor
-  /*! Constructs a domain defined by a set of polyhedral surfaces,
-  describing a polyhedral complex.
+  /// \name Creation
+  /// @{
+
+  /*!
+  constructs a domain defined by a set of polyhedral surfaces, describing a polyhedral complex.
+
   @param begin first iterator on the input polyhedral surfaces
   @param end past the end iterator on the input polyhedral surfaces
   @param indices_begin first iterator on the pairs of subdomain indices
@@ -214,15 +211,14 @@ public:
   */
   template <typename InputPolyhedraIterator,
             typename InputPairOfSubdomainIndicesIterator>
-  Polyhedral_complex_mesh_domain_3
-  ( InputPolyhedraIterator begin,
-    InputPolyhedraIterator end,
-    InputPairOfSubdomainIndicesIterator indices_begin,
-    InputPairOfSubdomainIndicesIterator indices_end
+  Polyhedral_complex_mesh_domain_3(InputPolyhedraIterator begin,
+                                   InputPolyhedraIterator end,
+                                   InputPairOfSubdomainIndicesIterator indices_begin,
+                                   InputPairOfSubdomainIndicesIterator indices_end
 #ifndef DOXYGEN_RUNNING
-    , CGAL::Random* p_rng = nullptr
+                                   , CGAL::Random* p_rng = nullptr
 #endif
-    )
+                                   )
     : Base(p_rng)
     , patch_indices(indices_begin, indices_end)
     , borders_detected_(false)
@@ -254,7 +250,10 @@ public:
     this->build();
   }
 
+  /// @}
+
   /// @cond DEVELOPERS
+
   Polyhedral_complex_mesh_domain_3
     (
     CGAL::Random* p_rng = nullptr
@@ -266,17 +265,15 @@ public:
   const std::vector<Polyhedron>& polyhedra() const {
     return stored_polyhedra;
   }
-  /// @endcond
 
-  /// @cond DEVELOPERS
   /*!
   * construct_initial_points_object() is one of the very first functions called
-  * when make_mesh_3 starts
+  * when make_mesh_3 starts.
   * BEFORE make_mesh_3 starts, we have to make sure that (at least) the borders have
   * been detected, and the polyhedral complex internal data structures initialized
   * So, this function is overloaded to make sure they are (checking that
-  * borders_detected_ is false is enough)
-  * Then, call the base class function
+  * borders_detected_ is false is enough).
+  * Then, call the base class function.
   */
   typename BaseBase::Construct_initial_points construct_initial_points_object() const
   {
@@ -289,9 +286,13 @@ public:
   void detect_features(FT angle_in_degree,
                        std::vector<Polyhedron_type>& p,
                        const bool dont_protect);//if true, features will not be protected
+
+  void detect_borders(std::vector<Polyhedron_type>& p, const bool dont_protect);
+
   /// @endcond
+
   /*!
-  Detects sharp features and boundaries of the polyhedral components of the complex
+  detects sharp features and boundaries of the polyhedral components of the complex
   (including potential internal polyhedra),
   and inserts them as features of the domain. `angle_bound` gives the maximum
   angle (in degrees) between the two normal vectors of adjacent triangles.
@@ -303,13 +304,10 @@ public:
     detect_features(angle_bound, stored_polyhedra, false/*do protect*/);
   }
 
-  /// @cond DEVELOPERS
-  void detect_borders(std::vector<Polyhedron_type>& p, const bool dont_protect);
-  /// @endcond
   /*!
-  Detects border edges of the polyhedral components of the complex,
+  detects border edges of the polyhedral components of the complex,
   and inserts them as features of the domain.
-  This function should be called alone only, and not before or after `detect_features()`.
+  This function should only be called alone, and not before or after `detect_features()`.
   */
   void detect_borders() {
     detect_borders(stored_polyhedra, false/*do protect*/);
@@ -373,11 +371,10 @@ public:
         this->boundary_polyhedra_ids.push_back(poly_id);
     }
   }
-  /// @endcond
 
-  /// @cond DEVELOPERS
   template <typename C3t3>
-  void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const {
+  void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const
+  {
 #ifdef CGAL_MESH_3_VERBOSE
     std::cout << "add_vertices_to_c3t3_on_patch_without_feature_edges...";
     std::cout.flush();

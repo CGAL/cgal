@@ -122,7 +122,8 @@ public:
   /// \name Creation
   /// @{
   /*!
-  * Returns an object to serve as criteria for edges.
+  * returns an object to serve as criteria for edges.
+  *
   * \param length_bound is an upper bound
   * for the length of the edges which are used to discretize the curves.
   * \param min_length_bound is a desired lower bound
@@ -132,7 +133,7 @@ public:
   * break all the surface topology guarantees of the meshing algorithm.
   * It is not guaranteed to be exactly respected in the output mesh.
   *
-  * \note if one parameter is set to 0, then its corresponding criterion is ignored.
+  * \note If one parameter is set to 0, then its corresponding criterion is ignored.
   */
   Mesh_edge_criteria_3(const FT& length_bound,
                        const FT& min_length_bound = 0)
@@ -149,13 +150,12 @@ public:
   // as int.
 
   /*!
-  * @tparam SizingField a model of `MeshDomainField_3`
-  *
-  * Returns an object to serve as criteria for edges.
+  * returns an object to serve as criteria for edges.
   * The behavior and semantic of the argument are the same
   * as above, except that the `length_bound`
   * parameter is a functional instead of a constant.
-
+  *
+  * @tparam SizingField a model of `MeshDomainField_3`
   */
   template < typename SizingField >
   Mesh_edge_criteria_3

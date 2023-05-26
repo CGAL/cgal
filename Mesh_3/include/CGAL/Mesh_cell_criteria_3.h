@@ -44,9 +44,7 @@ and a sizing field which may be a uniform or variable field.
 \sa `MeshCriteria_3`
 \sa `CGAL::Mesh_criteria_3<Tr>`
 \sa `CGAL::make_mesh_3()`
-
 */
-
 template <typename Tr
 #ifndef DOXYGEN_RUNNING
           ,typename Visitor_ = Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<Tr>
@@ -63,6 +61,8 @@ public:
   */
   typedef typename Tr::Geom_traits::FT FT;
 
+  /// @}
+
   typedef Visitor_ Visitor;
   typedef typename Visitor::Cell_quality Cell_quality;
   typedef typename Visitor::Is_cell_bad  Is_cell_bad;
@@ -74,8 +74,6 @@ private:
   typedef typename Tr::Cell_handle Cell_handle;
 
   typedef Mesh_cell_criteria_3<Tr> Self;
-
-  /// @}
 
 public:
 

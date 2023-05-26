@@ -157,15 +157,17 @@ For example, the multidomain described by the three functions [f1,f2,f3] and the
 The first one matches the locus of points satisfying f1(p)<0 and f2(p)<0 and f3(p)>0.<br />
 The second one matches the locus of points satisfying f1(p)>0 and f2(p)<0 and f3(p)>0.<br />
 
-\tparam ImplicitFunction provides the definition of the function.
+\tparam Function provides the definition of the function.
 This parameter stands for a model of the concept `ImplicitFunction` described in the surface mesh generation package.
-The number types `ImplicitFunction::FT` and `BGT::FT` are required to match.
+The number types `Function::FT` and `BGT::FT` are required to match.
 
 \sa `CGAL::Labeled_mesh_domain_3`.
-
 */
-
+#ifdef DOXYGEN_RUNNING
+template <class Function>
+#else
 template <class ImplicitFunction>
+#endif
 class Implicit_multi_domain_to_labeling_function_wrapper
 {
   template <class T_>
@@ -184,20 +186,20 @@ class Implicit_multi_domain_to_labeling_function_wrapper
   };
 
 public:
-  typedef int                     return_type;
-  typedef ImplicitFunction        Function;
-  typedef typename Implicit_function_traits<ImplicitFunction>::Point   Point_3;
-
   /// \name Types
   /// @{
-  //!
-  typedef std::vector<Function>   Function_vector;
-#ifdef DOXYGEN_RUNNING
- //!
-  typedef typename Function::Point     Point_3;
-#endif
-  /// @}
 
+#ifdef DOXYGEN_RUNNING
+  typedef typename Function::Point                             Point_3;
+#else
+  typedef ImplicitFunction                                     Function;
+  typedef typename Implicit_function_traits<Function>::Point   Point_3;
+  typedef int                                                  return_type;
+#endif
+
+  typedef std::vector<Function>                                Function_vector;
+
+  /// @}
 
 private:
   std::vector<Function> funcs;
@@ -205,15 +207,15 @@ private:
   std::vector<Bmask> bmasks;
 
 public:
-
-
   /// \name Creation
   /// @{
 
   /*!
    * \brief Construction from a vector of implicit functions and a vector of vector of signs.
+   *
    * \param implicit_functions the vector of implicit functions.
    * \param position_vectors the vector of vector of signs. Each vector of positions describes a component.
+   *
    * \sa `Sign`
    */
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::vector<Sign> >& position_vectors)
@@ -246,6 +248,7 @@ public:
   }
   /*!
    * \brief Construction from a vector of implicit functions.
+
    * \param implicit_functions the vector of implicit functions.
    *
    * Position vectors are built automatically so that the union of components equals the union of the functions.
@@ -278,6 +281,7 @@ public:
 
   /*!
    * \brief Construction from a vector of implicit functions and a vector of strings.
+   *
    * \param implicit_functions the vector of implicit functions.
    * \param position_strings the vector of strings. The strings contained in this vector must contain '+' or '-' only. Each string (vector of positions) describes a component.
    */
@@ -337,9 +341,7 @@ public:
   }
 };
 
-}  // end namespace CGAL
-
-
+} // end namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

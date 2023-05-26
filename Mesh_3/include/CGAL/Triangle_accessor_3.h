@@ -19,7 +19,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
@@ -40,25 +39,13 @@ template < class K,class Items,
 class Triangle_accessor_3<Polyhedron_3<K,Items,T_HDS,Alloc>, K >
 {
   typedef Polyhedron_3<K,Items,T_HDS,Alloc> Polyhedron;
+
 public:
-  /// \name Types
-  /// @{
-  /*!
-    Triangle type.
-  */
   typedef typename K::Triangle_3                    Triangle_3;
 
-  /*!
-    Triangle iterator.
-  */
   typedef typename Polyhedron::Facet_const_iterator Triangle_iterator;
 
-  /*!
-    Triangle handle.
-  */
   typedef typename Polyhedron::Facet_const_handle   Triangle_handle;
-
-  /// @}
 
   Triangle_accessor_3() { }
 
@@ -82,8 +69,7 @@ public:
   }
 };
 
-
-  template <class P, class K>
+template <class P, class K>
 class Triangle_accessor_3<Graph_with_descriptor_with_graph<Surface_mesh<P> >, K >
 {
   typedef  Graph_with_descriptor_with_graph<Surface_mesh<P> > Polyhedron;
@@ -123,6 +109,5 @@ public:
 };
 
 } // end namespace CGAL
-
 
 #endif // POLYHEDRON_TRIANGLE_ACCESSOR_H

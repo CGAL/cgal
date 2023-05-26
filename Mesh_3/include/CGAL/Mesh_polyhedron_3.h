@@ -214,34 +214,40 @@ public:
 
 The class `Mesh_polyhedron_3` provides a customized `Polyhedron_3` type. This type uses
 as `PolyhedronItems_3` a customized type which adds data to the Vertex, Face and
-Halfedge class. Those data are required to use the detection of sharp features.
+Halfedge classes. Those data are required to use the detection of sharp features.
 
 \tparam IGT stands for the geometric traits associated
 to the meshing process. It must be a model of the two concepts
 `PolyhedronTraits_3` and `IntersectionGeometricTraits_3`.
 
-\sa `CGAL::Polyhedron_3<Gt>`
+\sa `CGAL::Polyhedron_3<GT>`
 \sa `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 
 */
-template <typename IGT, typename Patch_id=int>
+#ifdef DOXYGEN_RUNNING
+template <typename IGT>
 struct Mesh_polyhedron_3
 {
-#ifdef DOXYGEN_RUNNING
   /// \name Types
   /// @{
 
   /*!
-    `CGAL::Polyhedron_3<IGT>` type with customized `PolyhedronItems_3`
+    `CGAL::Polyhedron_3<IGT>` type with customized `PolyhedronItems_3` designed to handle sharp feature detection.
   */
   typedef unspecified_type type;
 
   /// @}
+};
 #else
+template <typename IGT,
+          typename Patch_id = int>
+struct Mesh_polyhedron_3
+{
   typedef Polyhedron_3<IGT, Mesh_3::Mesh_polyhedron_items<Patch_id> > type;
   typedef type Type;
-#endif
 };
+#endif
+
 } // end namespace CGAL
 
 #endif // CGAL_MESH_POLYHEDRON_3_H
