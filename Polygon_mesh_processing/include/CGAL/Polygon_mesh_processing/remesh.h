@@ -207,7 +207,7 @@ template<typename PolygonMesh
        , typename FaceRange
        , typename NamedParameters = parameters::Default_named_parameters>
 void isotropic_remeshing(const FaceRange& faces
-                       , const double& target_edge_length
+                       , const double target_edge_length
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
@@ -355,13 +355,15 @@ void isotropic_remeshing(const FaceRange& faces
   t.reset(); t.start();
 #endif
 
+//      sizing.calc_sizing_map();
   for (unsigned int i = 0; i < nb_iterations; ++i)
   {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
-    sizing.calc_sizing_map();
+    if (i < 2)
+      sizing.calc_sizing_map();
     if(do_split)
      remesher.split_long_edges(sizing);
     if(do_collapse)
