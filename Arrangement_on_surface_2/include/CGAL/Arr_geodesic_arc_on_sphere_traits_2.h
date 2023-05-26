@@ -2837,7 +2837,7 @@ public:
   //@{
   typedef double                                        Approximate_number_type;
   typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
-  typedef Arr_extended_direction_3<Approximate_kernel>  Point_2;
+  typedef Arr_extended_direction_3<Approximate_kernel>  Approximate_point_2;
 
   class Approximate_2 {
   public:
