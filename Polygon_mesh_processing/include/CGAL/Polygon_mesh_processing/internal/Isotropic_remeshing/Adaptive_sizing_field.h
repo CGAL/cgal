@@ -91,15 +91,19 @@ public:
 
     //todo ip: how to make this work?
 //    Vertex_curvature_map vertex_curvature_map;
-//    interpolated_corrected_principal_curvatures_and_directions(m_pmesh
-//                                                               , vertex_curvature_map);
+
+    //todo ip: temp workaround
+    auto vertex_curvature_map =
+      m_pmesh.template add_property_map<vertex_descriptor,Principal_curvatures_and_directions<K>>("v:curvature_map").first;
+    interpolated_corrected_principal_curvatures_and_directions(m_pmesh
+                                                               , vertex_curvature_map);
 
     // calculate square vertex sizing field (L(x_i))^2 from curvature field
     for(vertex_descriptor v : vertices(m_pmesh))
     {
-//      auto vertex_curv = get(vertex_curvature_map, v); //todo ip: how to make this work?
-      //todo ip: temp solution
-      const Principal_curvatures vertex_curv = interpolated_corrected_principal_curvatures_and_directions_one_vertex(m_pmesh, v);
+      auto vertex_curv = get(vertex_curvature_map, v); //todo ip: how to make this work?
+      //todo ip: alt solution - calculate curvature per vertex
+//      const Principal_curvatures vertex_curv = interpolated_corrected_principal_curvatures_and_directions_one_vertex(m_pmesh, v);
       const FT max_absolute_curv = std::max(std::abs(vertex_curv.max_curvature), std::abs(vertex_curv.min_curvature));
       const FT vertex_size_sq = 6 * tol / max_absolute_curv - 3 * CGAL::square(tol);
       if (vertex_size_sq > m_sq_long)

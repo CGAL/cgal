@@ -11,9 +11,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-//  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
+//  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/lion-head.off");
 //  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/hand.off");
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/nefertiti.off");
+//  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
   std::ifstream input(filename);
 
   Mesh mesh;
@@ -25,10 +26,10 @@ int main(int argc, char* argv[])
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
-  const double tol = 0.002;
+  const double tol = 0.001;
   const std::pair<double, double> edge_min_max{0.001, 0.5};
   PMP::Adaptive_sizing_field<Mesh> sizing_field(tol, edge_min_max, mesh);
-  unsigned int nb_iter = 3;
+  unsigned int nb_iter = 5;
 
   PMP::isotropic_remeshing(
       faces(mesh),
