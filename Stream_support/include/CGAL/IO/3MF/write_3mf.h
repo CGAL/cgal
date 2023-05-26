@@ -12,7 +12,7 @@
 #ifndef CGAL_IO_WRITE_3MF_H
 #define CGAL_IO_WRITE_3MF_H
 
-#ifdef CGAL_LINKED_WITH_3MF
+#ifdef CGAL_LINKED_WITH_LIB3MF
 
 #include <CGAL/IO/Color.h>
 
@@ -87,7 +87,6 @@ bool add_build_item(PWrapper wrapper,
   DWORD nErrorMessage;
   LPCSTR pszErrorMessage;
   */
-  // Add Build Item for Mesh
   PBuildItem pBuildItem = pModel->AddBuildItem(pMeshObject.get(), wrapper->GetIdentityTransform());
   /*
   if(hResult != LIB3MF_OK)
@@ -157,18 +156,6 @@ bool write_mesh_to_model(const PointRange& points,
   std::vector<sPosition> vertices;
   std::vector<sTriangle> striangles;
 
-  // Create Mesh Object
-  pMeshObject = pModel->AddMeshObject();
-  /*
-  if(hResult != LIB3MF_OK)
-  {
-    std::cerr << "could not add mesh object: " << std::hex << hResult << std::endl;
-    NMR::lib3mf_getlasterror(pModel, &nErrorMessage, &pszErrorMessage);
-    std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
-    NMR::lib3mf_release(pModel);
-    return false;
-  }
-  */
   for(const auto& point : points)
     vertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
 
@@ -244,7 +231,8 @@ bool write_points(const PointRange& points,
                   const Color& color,
                   const std::string& name,
                   PMeshObject pMeshObject,
-                  PModel pModel)
+                  PModel pModel,
+                  PWrapper wrapper)
 {
   /*
   DWORD nErrorMessage;
@@ -343,8 +331,7 @@ bool write_points(const PointRange& points,
   }
   */
 
-  return true;
-  //return add_build_item(pModel, pMeshObject); // TODO: DOES NOT COMPILE!
+  return add_build_item(wrapper, pModel, pMeshObject);
 }
 
 template<typename PointRange, typename Color>
@@ -352,28 +339,30 @@ bool write_point_cloud_to_model(const PointRange& points,
                                 const Color& color,
                                 const std::string& name,
                                 PMeshObject pMeshObject,
-                                PModel pModel)
+                                PModel pModel,
+                                PWrapper wrapper)
 {
   std::string pc_name = name;
   pc_name.append("_cgal_pc");
-  return write_points(points, color, pc_name, pMeshObject, pModel);
+  return write_points(points, color, pc_name, pMeshObject, pModel, wrapper);
 }
 
 template<typename PointRange, typename Color>
 bool write_polyline_to_model(const PointRange& points,
                              const Color& color,
                              const std::string& name,
-                             PMeshObject* pMeshObject,
-                             PModel  pModel)
+                             PMeshObject pMeshObject,
+                             PModel  pModel,
+                             PWrapper wrapper)
 {
   std::string pc_name = name;
   pc_name.append("_cgal_pl");
-  return write_points(points, color, pc_name, pMeshObject, pModel);
+  return write_points(points, color, pc_name, pMeshObject, pModel, wrapper);
 }
 
 } // namespace IO
 } // namespace CGAL
 
-#endif // CGAL_LINKED_WITH_3MF
+#endif // CGAL_LINKED_WITH_LIB3MF
 
 #endif // CGAL_IO_WRITE_3MF_H

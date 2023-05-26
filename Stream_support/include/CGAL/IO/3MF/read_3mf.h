@@ -12,7 +12,7 @@
 #ifndef CGAL_IO_READ_3MF_H
 #define CGAL_IO_READ_3MF_H
 
-#ifdef CGAL_LINKED_WITH_3MF
+#ifdef CGAL_LINKED_WITH_LIB3MF
 
 #include <CGAL/IO/Color.h>
 #include <CGAL/Kernel_traits.h>
@@ -94,6 +94,6 @@ bool extract_soups (PMeshObject pMeshObject,
 
 } // namespace CGAL
 
-#endif // CGAL_LINKED_WITH_3MF
+#endif // CGAL_LINKED_WITH_LIB3MF
 
 #endif // CGAL_IO_READ_3MF_H

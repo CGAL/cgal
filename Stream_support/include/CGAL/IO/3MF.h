@@ -26,7 +26,7 @@
 #include <vector>
 #include <type_traits>
 
-#if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
+#if defined(CGAL_LINKED_WITH_LIB3MF) || defined(DOXYGEN_RUNNING)
 
 namespace CGAL {
 
@@ -298,7 +298,7 @@ bool write_3MF(const std::string& fname,
   */
   for(std::size_t id = 0; id < all_points.size(); ++id)
   {
-    PMeshObject pMeshObject;
+    PMeshObject pMeshObject = pModel->AddMeshObject();
     std::string name;
     if(names.size() > id && ! names[id].empty())
     {
@@ -347,6 +347,6 @@ bool write_3MF(const std::string& fname, const PointRange& points, const Triangl
 
 } // namespace CGAL
 
-#endif // defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
+#endif // defined(CGAL_LINKED_WITH_LIB3MF) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_IO_3MF_H
