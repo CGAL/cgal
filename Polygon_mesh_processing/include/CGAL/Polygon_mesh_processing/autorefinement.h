@@ -39,6 +39,11 @@
 #define CGAL_PMP_AUTOREFINE_VERBOSE(MSG)
 #endif
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/concurrent_vector.h>
+#include <tbb/parallel_for.h>
+#endif
+
 #include <vector>
 
 #define TEST_RESOLVE_INTERSECTION
@@ -656,7 +661,12 @@ void generate_subtriangles(std::size_t ti,
                            const std::vector<std::size_t>& in_triangle_ids,
                            const std::set<std::pair<std::size_t, std::size_t> >& intersecting_triangles,
                            const std::vector<std::array<typename EK::Point_3,3>>& triangles,
-                           std::vector<std::array<typename EK::Point_3,3>>& new_triangles)
+#ifdef CGAL_LINKED_WITH_TBB
+                           tbb::concurrent_vector<std::array<typename EK::Point_3,3>>& new_triangles
+#else
+                           std::vector<std::array<typename EK::Point_3,3>>& new_triangles
+#endif
+                           )
 {
   // std::cout << "generate_subtriangles()\n";
   // std::cout << std::setprecision(17);
@@ -1266,46 +1276,67 @@ void autorefine_soup_output(const PointRange& input_points,
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
   // now refine triangles
-  std::vector<std::array<EK::Point_3,3>> new_triangles; // Need to be threadsafe
+#ifdef CGAL_LINKED_WITH_TBB
+    tbb::concurrent_vector<std::array<EK::Point_3, 3>> new_triangles;
+#else
+  std::vector<std::array<EK::Point_3,3>> new_triangles;
+#endif
 
 #ifdef USE_PROGRESS_DISPLAY
   boost::timer::progress_display pd(triangles.size());
 #endif
 
-  //TODO: PARALLEL_FOR #1
-  for(std::size_t ti=0; ti<triangles.size(); ++ti)
-  {
-    if (all_segments[ti].empty() && all_points[ti].empty())
-      new_triangles.push_back(triangles[ti]);
-    else
+
+  auto func = [&](std::size_t ti)
     {
-      #ifdef USE_FIXED_PROJECTION_TRAITS
-      const std::array<typename EK::Point_3, 3>& t = triangles[ti];
-      auto is_constant_in_dim = [](const std::array<typename EK::Point_3, 3>& t, int dim)
-      {
-        return t[0][dim]==t[1][dim] && t[0][dim]!=t[2][dim];
-      };
+      if (all_segments[ti].empty() && all_points[ti].empty())
+        new_triangles.push_back(triangles[ti]);
+      else
+        {
+#ifdef USE_FIXED_PROJECTION_TRAITS
+          const std::array<typename EK::Point_3, 3>& t = triangles[ti];
+          auto is_constant_in_dim = [](const std::array<typename EK::Point_3, 3>& t, int dim)
+          {
+            return t[0][dim] == t[1][dim] && t[0][dim] != t[2][dim];
+          };
 
-      typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
-      int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
-      c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
+          typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
+          int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
+          c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
 
-      if(c == 0) {
-        autorefine_impl::generate_subtriangles<EK, 0>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
-      } else if(c == 1) {
-        autorefine_impl::generate_subtriangles<EK, 1>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
-      } else if(c == 2) {
-        autorefine_impl::generate_subtriangles<EK, 2>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
-      }
-      #else
-      autorefine_impl::generate_subtriangles<EK>(ti, all_segments_ids[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
-      #endif
-    }
+          if (c == 0) {
+            autorefine_impl::generate_subtriangles<EK, 0>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+          }
+          else if (c == 1) {
+            autorefine_impl::generate_subtriangles<EK, 1>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+          }
+          else if (c == 2) {
+            autorefine_impl::generate_subtriangles<EK, 2>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+          }
+#else
+          autorefine_impl::generate_subtriangles<EK>(ti, all_segments_ids[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+#endif
+        }
 
 #ifdef USE_PROGRESS_DISPLAY
-    ++pd;
+      ++pd;
 #endif
+    };
+
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
+                    [&](const tbb::blocked_range<size_t>& r) {
+                      for (size_t ti = r.begin(); ti != r.end(); ++ti)
+                        func(ti);
+                    }
+                    );
+#else
+  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+    func(ti);
   }
+#endif
+
+
 
   // brute force output: create a soup, orient and to-mesh
   CGAL_PMP_AUTOREFINE_VERBOSE("create output soup");

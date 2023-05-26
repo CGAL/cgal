@@ -6,6 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/Real_timer.h>
 
 #include <boost/container/small_vector.hpp>
 
@@ -29,11 +30,13 @@ int main(int argc, char** argv)
   PMP::repair_polygon_soup(input_points, input_triangles);
   PMP::triangulate_polygons(input_points, input_triangles);
 
+  CGAL::Real_timer t;
+  t.start();
   std::vector<Point> output_points;
   std::vector<std::array<std::size_t, 3>> output_triangles;
   PMP::autorefine_soup_output(input_points, input_triangles, output_points, output_triangles);
-
-  CGAL::IO::write_polygon_soup("autorefined.off", output_points, output_triangles, CGAL::parameters::stream_precision(17));
+  std::cout << "#points = " << output_points.size() << " and #triangles = " << output_triangles.size() << " in " << t.time() << " sec." << std::endl;
+  // CGAL::IO::write_polygon_soup("autorefined.off", output_points, output_triangles, CGAL::parameters::stream_precision(17));
 
   return 0;
 }
