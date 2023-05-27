@@ -39,9 +39,87 @@
 
 namespace CGAL {
 
+/*! Represent an extended 3D direction that is used in turn to represent a
+ * spherical-arc endpoint. The extended data consists of two flags that
+ * indicate whether the point is on the x and on a y boundaries,
+ * respectively.
+ */
+template <typename Kernel>
+class Arr_extended_direction_3 : public Kernel::Direction_3 {
+public:
+  typedef typename Kernel::FT                           FT;
+  typedef typename Kernel::Direction_3                  Direction_3;
+
+  /*! Enumeration of discontinuity type */
+  enum Location_type {
+    NO_BOUNDARY_LOC = 0,
+    MIN_BOUNDARY_LOC,
+    MID_BOUNDARY_LOC,
+    MAX_BOUNDARY_LOC
+  };
+
+private:
+  typedef typename Kernel::Direction_2                  Direction_2;
+
+  /*! The point discontinuity type */
+  Location_type m_location;
+
+  inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
+
+  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
+
+  inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
+
+public:
+  /*! Default constructor */
+  Arr_extended_direction_3() :
+    Direction_3(0, 0, 1),
+    m_location(MAX_BOUNDARY_LOC)
+  {}
+
+  /*! Constructor */
+  Arr_extended_direction_3(const Direction_3& dir, Location_type location) :
+    Direction_3(dir),
+    m_location(location)
+  {}
+
+  /*! Copy constructor */
+  Arr_extended_direction_3(const Arr_extended_direction_3& other) :
+    Direction_3(static_cast<const Direction_3&>(other))
+  { m_location = other.discontinuity_type(); }
+
+  /*! Assignment operator */
+  Arr_extended_direction_3& operator=(const Arr_extended_direction_3& other)
+  {
+    *(static_cast<Direction_3*>(this)) = static_cast<const Direction_3&>(other);
+    m_location = other.discontinuity_type();
+    return (*this);
+  }
+
+  /*! Set the location of the point.
+   */
+  void set_location(Location_type location) { m_location = location; }
+
+  /*! Obtain the location of the point.
+   */
+  Location_type location() const { return m_location; }
+
+  /*! Obtain the discontinuity type of the point.
+   * \todo deprecate this one; use the above instead.
+   */
+  Location_type discontinuity_type() const { return m_location; }
+
+  bool is_no_boundary() const { return (m_location == NO_BOUNDARY_LOC); }
+
+  bool is_min_boundary() const { return (m_location == MIN_BOUNDARY_LOC); }
+
+  bool is_mid_boundary() const { return (m_location == MID_BOUNDARY_LOC); }
+
+  bool is_max_boundary() const { return (m_location == MAX_BOUNDARY_LOC); }
+};
+
 template <typename Kernel> class Arr_x_monotone_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_geodesic_arc_on_sphere_3;
-template <typename Kernel> class Arr_extended_direction_3;
 
 /*! A traits class-template for constructing and maintaining arcs of great
  * circles embedded on spheres. It is parameterized from a (linear) geometry
@@ -2940,85 +3018,6 @@ public:
     return is;
   }
 #endif
-};
-
-/*! Represent an extended 3D direction that is used in turn to represent a
- * spherical-arc endpoint. The extended data consists of two flags that
- * indicate whether the point is on the x and on a y boundaries,
- * respectively.
- */
-template <typename Kernel>
-class Arr_extended_direction_3 : public Kernel::Direction_3 {
-public:
-  typedef typename Kernel::FT                           FT;
-  typedef typename Kernel::Direction_3                  Direction_3;
-
-  /*! Enumeration of discontinuity type */
-  enum Location_type {
-    NO_BOUNDARY_LOC = 0,
-    MIN_BOUNDARY_LOC,
-    MID_BOUNDARY_LOC,
-    MAX_BOUNDARY_LOC
-  };
-
-private:
-  typedef typename Kernel::Direction_2                  Direction_2;
-
-  /*! The point discontinuity type */
-  Location_type m_location;
-
-  inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
-
-  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
-
-  inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
-
-public:
-  /*! Default constructor */
-  Arr_extended_direction_3() :
-    Direction_3(0, 0, 1),
-    m_location(MAX_BOUNDARY_LOC)
-  {}
-
-  /*! Constructor */
-  Arr_extended_direction_3(const Direction_3& dir, Location_type location) :
-    Direction_3(dir),
-    m_location(location)
-  {}
-
-  /*! Copy constructor */
-  Arr_extended_direction_3(const Arr_extended_direction_3& other) :
-    Direction_3(static_cast<const Direction_3&>(other))
-  { m_location = other.discontinuity_type(); }
-
-  /*! Assignment operator */
-  Arr_extended_direction_3& operator=(const Arr_extended_direction_3& other)
-  {
-    *(static_cast<Direction_3*>(this)) = static_cast<const Direction_3&>(other);
-    m_location = other.discontinuity_type();
-    return (*this);
-  }
-
-  /*! Set the location of the point.
-   */
-  void set_location(Location_type location) { m_location = location; }
-
-  /*! Obtain the location of the point.
-   */
-  Location_type location() const { return m_location; }
-
-  /*! Obtain the discontinuity type of the point.
-   * \todo deprecate this one; use the above instead.
-   */
-  Location_type discontinuity_type() const { return m_location; }
-
-  bool is_no_boundary() const { return (m_location == NO_BOUNDARY_LOC); }
-
-  bool is_min_boundary() const { return (m_location == MIN_BOUNDARY_LOC); }
-
-  bool is_mid_boundary() const { return (m_location == MID_BOUNDARY_LOC); }
-
-  bool is_max_boundary() const { return (m_location == MAX_BOUNDARY_LOC); }
 };
 
 /*! A Representation of an x-monotone great circular arc embedded on a sphere,
