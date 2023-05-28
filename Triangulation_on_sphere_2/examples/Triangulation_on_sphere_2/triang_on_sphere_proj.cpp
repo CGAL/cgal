@@ -34,7 +34,7 @@ int main(int, char**)
     std::cout << "The triangulation now has dimension: " << dtos.dimension() << " and\n";
     std::cout << dtos.number_of_vertices() << " vertices" << std::endl;
     std::cout << dtos.number_of_edges() << " edges" << std::endl;
-    std::cout << dtos.number_of_faces() << " solid faces" << std::endl;
+    std::cout << dtos.number_of_solid_faces() << " solid faces" << std::endl;
     std::cout << dtos.number_of_ghost_faces() << " ghost faces" << std::endl;
   }
 
