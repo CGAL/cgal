@@ -63,9 +63,11 @@ int main() {
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYCONIC_TRAITS
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_polycurve_traits_2.h>
 #else
 #error No traits defined for test
@@ -79,22 +81,39 @@ int main() {
 #include "Compare_curves.h"
 
 #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS
-  typedef CGAL::Gmpq                                    NT;
-  typedef CGAL::Cartesian<NT>                           Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
+typedef CGAL::Gmpq                                      NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Gmpq                                    NT;
-  typedef CGAL::Cartesian<NT>                           Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>            Seg_traits;
-  typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
+typedef CGAL::Gmpq                                      NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Seg_traits;
+typedef CGAL::Arr_polyline_traits_2<Seg_traits>         Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
-  typedef CGAL::Arr_conic_traits_2<xxx>                 Traits;
-
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef Rat_kernel::Point_2                             Rat_point_2;
+typedef Rat_kernel::Segment_2                           Rat_segment_2;
+typedef Rat_kernel::Circle_2                            Rat_circle_2;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Traits_2;
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYCURVE_TRAITS
-  typedef CGAL::Arr_conic_traits_2<xxx>                 Conic_traits;
-  typedef CGAL::Arr_polycurve_traits_2<Conic_traits>    Traits;
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef Rat_kernel::Point_2                             Rat_point_2;
+typedef Rat_kernel::Segment_2                           Rat_segment_2;
+typedef Rat_kernel::Circle_2                            Rat_circle_2;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Conic_traits;
+typedef CGAL::Arr_polycurve_traits_2<Conic_traits>      Traits;
 
 #endif
 
@@ -203,7 +222,8 @@ int main(int argc, char* argv[]) {
 
   if (! compare_lists(curves_with_overlap_out, curves_with_overlap, tr)) {
     std::cerr << "Curves w/ overlapping do not match!\n";
-    for (const auto& xcv : curves_with_overlap_out) std::cerr << xcv << std::endl;
+    for (const auto& xcv : curves_with_overlap_out)
+      std::cerr << xcv << std::endl;
     return -1;
   }
 

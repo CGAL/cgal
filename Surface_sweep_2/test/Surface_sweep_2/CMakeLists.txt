@@ -9,6 +9,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 set(CGAL_SEGMENT_TRAITS 1)
 set(CGAL_POLYLINE_TRAITS 11)
 set(CGAL_CONIC_TRAITS 21)
+set(CGAL_POLYCONIC_TRAITS 22)
 
 set(TRAP 1) # Trapezoidal decomposition
 set(NAIVE 2)
@@ -46,9 +47,9 @@ function(compile_and_run_sweep name source_file point_location traits data_set)
   endforeach()
 endfunction()
 
-# compile_and_run_sweep(test_sweep test_sweep.cpp ${NAIVE} ${CGAL_SEGMENT_TRAITS}
-#                       "DATA/segments_tight")
-# compile_and_run_sweep(test_sweep_conic test_sweep_conic.cpp ${NAIVE}
-#                       ${CGAL_CONIC_TRAITS} "DATA/conics")
+compile_and_run_sweep(test_sweep test_sweep.cpp ${NAIVE}
+                      ${CGAL_SEGMENT_TRAITS} "data/segments_tight")
+compile_and_run_sweep(test_sweep_conic test_sweep_conic.cpp ${NAIVE}
+                      ${CGAL_CONIC_TRAITS} "data/conics")
 compile_and_run_sweep(test_sweep_polyline test_sweep.cpp ${NAIVE}
-                      ${CGAL_POLYLINE_TRAITS} "DATA/polylines")
+                      ${CGAL_POLYLINE_TRAITS} "data/polylines")
