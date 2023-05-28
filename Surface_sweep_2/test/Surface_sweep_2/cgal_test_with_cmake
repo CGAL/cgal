@@ -1,4 +1,3 @@
 #! /bin/bash
 
 ./cgal_test_base -cmake
-
