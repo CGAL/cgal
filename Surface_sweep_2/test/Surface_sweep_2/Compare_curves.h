@@ -34,7 +34,7 @@ bool compare_lists(const List& list1, const List& list2, Traits& traits) {
   Equal_pred<Traits> eq(traits);
   auto rc = std::equal(list1.begin(), list1.end(), list2.begin(), eq);
   if (! rc) {
-    std::cerr << "Error: The curves do not match\n";
+    std::cerr << "Error: The lists do not match\n";
     return false;
   }
 

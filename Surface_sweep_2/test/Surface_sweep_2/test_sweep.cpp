@@ -146,76 +146,70 @@ int main(int argc, char* argv[]) {
   Curves curves;
   if (! read_curves(inp, curves, tr)) return -1;
 
-  // get subcurves w/o overlapping
+  // Test subcurves w/o overlapping
   X_monotone_curves curves_no_overlap_out;
   CGAL::compute_subcurves(curves.begin(), curves.end(),
                           std::back_inserter(curves_no_overlap_out),
                           false, tr);
 
 
-  // get subcurves w/ overlapping
-  X_monotone_curves curves_with_overlap_out;
-  CGAL::compute_subcurves(curves.begin(), curves.end(),
-                          std::back_inserter(curves_with_overlap_out),
-                          true, tr);
+  X_monotone_curves curves_no_overlap;
+  if (! read_xcurves(inp, curves_no_overlap, tr)) return -1;
 
-  /*std::copy(curves_no_overlap_out.begin(),
-            curves_no_overlap_out.end(),
-            std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
-  std::cout<<"\n\n*******************\n\n";
+  if (! compare_lists(curves_no_overlap_out, curves_no_overlap, tr)) {
+    std::cerr << "Curves w/o overlapping do not match!\n";
+    for (const auto& xcv : curves_no_overlap_out) std::cerr << xcv << std::endl;
+    return -1;
+  }
 
-  std::copy(curves_with_overlap_out.begin(),
-            curves_with_overlap_out.end(),
-            std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
-  return 0;*/
-
-  //std::cout << mylist1.size() << " curves\n";
-
-
-  // get intersection points (with endpoints)
+  // Test intersection points (with endpoints)
   Points points_with_ends_out;
   CGAL::compute_intersection_points(curves.begin(), curves.end(),
                                     std::back_inserter(points_with_ends_out),
                                     true, tr);
 
+  Points points_with_ends;
+  if (! read_points(inp, points_with_ends, tr)) return -1;
 
-  // get intersection points w/o end points
+  if (! compare_lists(points_with_ends_out, points_with_ends, tr)) {
+    std::cerr << "Endpoints do not match!\n";
+    for (const auto& p : points_with_ends_out) std::cerr << p << std::endl;
+    return -1;
+  }
+
+  // Test intersection points w/o end points
   Points points_without_ends_out;
   CGAL::compute_intersection_points(curves.begin(), curves.end(),
                                     std::back_inserter(points_without_ends_out),
                                     false, tr);
 
-  std::cout << points_without_ends_out.size()
-            << " points_without_ends_out(size)\n";
-
-  // check the do_curves_intersecting method
-  bool do_intersect_out =
-    CGAL::do_curves_intersect(curves.begin(), curves.end());
-
-  // read curves and points from file
-  X_monotone_curves curves_no_overlap;
-  if (! read_xcurves(inp, curves_no_overlap, tr)) return -1;
-
-  Points points_with_ends;
-  if (! read_points(inp, points_with_ends, tr)) return -1;
-
   Points points_without_ends;
   if (! read_points(inp, points_without_ends, tr)) return -1;
+
+  if (! compare_lists(points_without_ends_out, points_without_ends, tr)) {
+    std::cerr << "Intersection points do not match!\n";
+    for (const auto& p : points_without_ends_out) std::cerr << p << std::endl;
+    return -1;
+  }
+
+  // Test subcurves w/ overlapping
+  X_monotone_curves curves_with_overlap_out;
+  CGAL::compute_subcurves(curves.begin(), curves.end(),
+                          std::back_inserter(curves_with_overlap_out),
+                          true, tr);
 
   X_monotone_curves curves_with_overlap;
   if (! read_xcurves(inp, curves_with_overlap, tr)) return -1;
 
-  if (! compare_lists(curves_no_overlap_out, curves_no_overlap, tr))
+  if (! compare_lists(curves_with_overlap_out, curves_with_overlap, tr)) {
+    std::cerr << "Curves w/ overlapping do not match!\n";
+    for (const auto& xcv : curves_with_overlap_out) std::cerr << xcv << std::endl;
     return -1;
+  }
 
-  if (! compare_lists(curves_with_overlap_out, curves_with_overlap, tr))
-    return -1;
-
-  if (! compare_lists(points_with_ends_out, points_with_ends, tr))
-    return -1;
-
-  if (! compare_lists(points_without_ends_out, points_without_ends, tr))
-    return -1;
+  // Test the do_curves_intersecting method
+  bool do_intersect_out =
+    CGAL::do_curves_intersect(curves.begin(), curves.end());
 
   bool do_intersect = false;
   if ((points_without_ends.size() != 0) ||
@@ -227,7 +221,7 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  std::cout << "OK\n";
+  std::cout << "Passed\n";
   return 0;
 }
 
@@ -261,23 +255,27 @@ bool read_curves_(std::ifstream& inp, Curves_& curves, const Traits& traits,
                   const Ctr& ctr) {
   int count;
   inp >> skip_comment >> count;
-  std::cout << "read_curves " << count << "\n";
+  // std::cout << "read_curves " << count << "\n";
   for (int i = 0; i < count; ++i) {
     Points points;
     auto rc = read_points(inp, points, traits);
     if (! rc) return false;
     auto cv = ctr(points.begin(), points.end());
-    std::cout << cv << "\n";
+    // std::cout << cv << "\n";
     curves.push_back(cv);
   }
   return true;
 }
 
+/*! Read curves.
+ */
 bool read_curves(std::ifstream& inp, Curves& curves, const Traits& traits) {
   auto ctr_cv = traits.construct_curve_2_object();
   return read_curves_(inp, curves, traits, ctr_cv);
 }
 
+/*! Read x-monotone curves.
+ */
 bool read_xcurves(std::ifstream& inp, X_monotone_curves& xcurves,
                   const Traits& traits) {
   auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
@@ -293,13 +291,13 @@ bool read_points(std::ifstream& inp, Points& points, const Traits&) {
   inp >> skip_comment >> count;
   char ch;
 
-  std::cout << "read_points " << count << "\n";
+  // std::cout << "read_points " << count << "\n";
   for (int i = 0; i < count; i++) {
     NT x, y;
     inp >> skip_comment >> x >> y;
     Point_2 p(x, y);
+    // std::cout << p << "\n";
     points.push_back(p);
-    std::cout << p << "\n";
   }
   return true;
 }
