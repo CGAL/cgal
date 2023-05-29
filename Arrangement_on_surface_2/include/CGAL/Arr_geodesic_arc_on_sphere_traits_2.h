@@ -2935,8 +2935,10 @@ public:
     /*! Obtain an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const {
-      return Approximate_point_2(operator()(p, 0), operator()(p, 1),
-                                 operator()(p, 2));
+      Approximate_kernel::Direction_3 dir(operator()(p, 0), operator()(p, 1),
+                                          operator()(p, 2));
+      auto loc = static_cast<Approximate_point_2::Location_type>(p.location());
+      return Approximate_point_2(dir, loc);
     }
 
     /*! Obtain an approximation of an \f$x\f$-monotone curve.
