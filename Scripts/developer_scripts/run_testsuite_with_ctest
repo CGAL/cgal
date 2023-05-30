@@ -214,19 +214,22 @@ collect_demos_binaries()
   echo "COLLECT_DEMOS_BINARIES=$COLLECT_DEMOS_BINARIES"
   if [ -n "$COLLECT_DEMOS_BINARIES" ]; then
     echo 'COLLECTING DEMOS BINARIES'
-    echo "cp ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_TEST_DIR}"
-    cp "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_TEST_DIR}"
+
+    
+    DEMOS_TEST_DIR="${CGAL_DIR}/cmake/platforms/${PLATFORM}/test"
+    cp "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${DEMOS_TEST_DIR}"
+    
+    cd ${DEMOS_TEST_DIR}
 
     for demo_dir in *_Demo; do
       echo "pushd ${demo_dir}"
       pushd "${demo_dir}"
-      bash ${CGAL_TEST_DIR}/cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
-      mv "${demo_dir}_with_dlls" ..
+      bash ${DEMOS_TEST_DIR}/cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
       popd
     done
 
-    ${TAR} cf "${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar" *_Demo_with_dlls/*;
-    ${COMPRESSOR} -9f "${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar"
+    ${TAR} cf "${DEMOS_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar" *_Demo_with_dlls/*;
+    ${COMPRESSOR} -9f "${DEMOS_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar"
   else
     echo "Don't collect demos binaries for platform $PLATFORM";
   fi
