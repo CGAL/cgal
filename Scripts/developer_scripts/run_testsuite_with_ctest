@@ -225,6 +225,7 @@ collect_demos_binaries()
       echo "pushd ${demo_dir}"
       pushd "${demo_dir}"
       bash ${DEMOS_TEST_DIR}/cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
+      mv "${demo_dir}_with_dlls" ${DEMOS_TEST_DIR}
       popd
     done
 
