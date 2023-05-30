@@ -36,7 +36,7 @@ int main(int argc, char** argv)
   std::vector<std::array<std::size_t, 3>> output_triangles;
   PMP::autorefine_soup_output(input_points, input_triangles, output_points, output_triangles);
   std::cout << "#points = " << output_points.size() << " and #triangles = " << output_triangles.size() << " in " << t.time() << " sec." << std::endl;
-  // CGAL::IO::write_polygon_soup("autorefined.off", output_points, output_triangles, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_soup("autorefined.off", output_points, output_triangles, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

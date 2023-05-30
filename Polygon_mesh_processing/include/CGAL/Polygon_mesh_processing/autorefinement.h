@@ -1226,7 +1226,7 @@ void autorefine_soup_output(const PointRange& input_points,
       intersecting_triangles.insert(CGAL::make_sorted_pair(i1, i2));
     }
   }
-  std::cout << t.time() << " sec. for #2" << std::endl;
+  std::cout << t.time() << " sec. for compute_intersections()" << std::endl;
 
 #ifdef DEDUPLICATE_SEGMENTS
   // deduplicate inserted segments
@@ -1295,7 +1295,7 @@ void autorefine_soup_output(const PointRange& input_points,
 #endif
 
 
-  std::cout << t.time() << " sec. for #3" << std::endl;
+  std::cout << t.time() << " sec. for deduplicate_segments()" << std::endl;
 #endif
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
@@ -1311,7 +1311,7 @@ void autorefine_soup_output(const PointRange& input_points,
 #endif
 
 
-  auto func = [&](std::size_t ti)
+  auto refine_triangles = [&](std::size_t ti)
     {
       if (all_segments[ti].empty() && all_points[ti].empty())
         new_triangles.push_back(triangles[ti]);
@@ -1351,12 +1351,12 @@ void autorefine_soup_output(const PointRange& input_points,
   tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
                     [&](const tbb::blocked_range<size_t>& r) {
                       for (size_t ti = r.begin(); ti != r.end(); ++ti)
-                        func(ti);
+                        refine_triangles(ti);
                     }
                     );
 #else
   for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
-    func(ti);
+    refine_triangles(ti);
   }
 #endif
 
