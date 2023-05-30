@@ -658,10 +658,11 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 //////////////////////////////////
 //////////////////////////////////
 
-template <class EK
+template <class EK,
 #ifdef USE_FIXED_PROJECTION_TRAITS
-, int dim
+          int dim,
 #endif
+          class PointVector
 >
 void generate_subtriangles(std::size_t ti,
                            std::vector<std::pair<std::size_t, std::size_t>>& segments,
@@ -669,11 +670,7 @@ void generate_subtriangles(std::size_t ti,
                            const std::vector<std::size_t>& in_triangle_ids,
                            const std::set<std::pair<std::size_t, std::size_t> >& intersecting_triangles,
                            const std::vector<std::array<typename EK::Point_3,3>>& triangles,
-#ifdef CGAL_LINKED_WITH_TBB
-                           tbb::concurrent_vector<std::array<typename EK::Point_3,3>>& new_triangles
-#else
-                           std::vector<std::array<typename EK::Point_3,3>>& new_triangles
-#endif
+                           PointVector& new_triangles
                            )
 {
   // std::cout << "generate_subtriangles()\n";
@@ -1131,6 +1128,14 @@ void autorefine_soup_output(const PointRange& input_points,
     Sequential_tag
   > ::type Concurrency_tag;
 
+  constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
+
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (parallel_execution,
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#endif
+
+
   typedef std::size_t Input_TID;
   typedef std::pair<Input_TID, Input_TID> Pair_of_triangle_ids;
 
@@ -1294,16 +1299,20 @@ void autorefine_soup_output(const PointRange& input_points,
   };
 
 #ifdef CGAL_LINKED_WITH_TBB
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
-                    [&](const tbb::blocked_range<size_t>& r) {
-                      for (size_t ti = r.begin(); ti != r.end(); ++ti)
-                        deduplicate_inserted_segments(ti);
-                    }
-                    );
-#else
-  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
-    deduplicate_inserted_segments(ti);
+  if (parallel_execution)
+  {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
+                      [&](const tbb::blocked_range<size_t>& r) {
+                        for (size_t ti = r.begin(); ti != r.end(); ++ti)
+                          deduplicate_inserted_segments(ti);
+                      }
+                      );
   }
+  else
+#else
+    for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+      deduplicate_inserted_segments(ti);
+    }
 #endif
 
 #ifdef USE_DEBUG_PARALLEL_TIMERS
@@ -1314,7 +1323,9 @@ void autorefine_soup_output(const PointRange& input_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
   // now refine triangles
 #ifdef CGAL_LINKED_WITH_TBB
-    tbb::concurrent_vector<std::array<EK::Point_3, 3>> new_triangles;
+    std::conditional_t<parallel_execution,
+                       tbb::concurrent_vector<std::array<EK::Point_3, 3>>,
+                       std::vector<std::array<EK::Point_3,3>>> new_triangles;
 #else
   std::vector<std::array<EK::Point_3,3>> new_triangles;
 #endif
@@ -1325,40 +1336,40 @@ void autorefine_soup_output(const PointRange& input_points,
 
 
   auto refine_triangles = [&](std::size_t ti)
+  {
+    if (all_segments[ti].empty() && all_points[ti].empty())
+      new_triangles.push_back(triangles[ti]);
+    else
     {
-      if (all_segments[ti].empty() && all_points[ti].empty())
-        new_triangles.push_back(triangles[ti]);
-      else
-        {
 #ifdef USE_FIXED_PROJECTION_TRAITS
-          const std::array<typename EK::Point_3, 3>& t = triangles[ti];
-          auto is_constant_in_dim = [](const std::array<typename EK::Point_3, 3>& t, int dim)
-          {
-            return t[0][dim] == t[1][dim] && t[0][dim] != t[2][dim];
-          };
+      const std::array<typename EK::Point_3, 3>& t = triangles[ti];
+      auto is_constant_in_dim = [](const std::array<typename EK::Point_3, 3>& t, int dim)
+      {
+        return t[0][dim] == t[1][dim] && t[0][dim] != t[2][dim];
+      };
 
-          typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
-          int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
-          c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
+      typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
+      int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
+      c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
 
-          if (c == 0) {
-            autorefine_impl::generate_subtriangles<EK, 0>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
-          }
-          else if (c == 1) {
-            autorefine_impl::generate_subtriangles<EK, 1>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
-          }
-          else if (c == 2) {
-            autorefine_impl::generate_subtriangles<EK, 2>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
-          }
+      if (c == 0) {
+        autorefine_impl::generate_subtriangles<EK, 0>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      }
+      else if (c == 1) {
+        autorefine_impl::generate_subtriangles<EK, 1>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      }
+      else if (c == 2) {
+        autorefine_impl::generate_subtriangles<EK, 2>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      }
 #else
-          autorefine_impl::generate_subtriangles<EK>(ti, all_segments_ids[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      autorefine_impl::generate_subtriangles<EK>(ti, all_segments_ids[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
 #endif
-        }
+    }
 
 #ifdef USE_PROGRESS_DISPLAY
-      ++pd;
+    ++pd;
 #endif
-    };
+  };
 
 
 #ifdef USE_DEBUG_PARALLEL_TIMERS
@@ -1366,16 +1377,20 @@ void autorefine_soup_output(const PointRange& input_points,
   t.start();
 #endif
 #ifdef CGAL_LINKED_WITH_TBB
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
-                    [&](const tbb::blocked_range<size_t>& r) {
-                      for (size_t ti = r.begin(); ti != r.end(); ++ti)
-                        refine_triangles(ti);
-                    }
-                    );
-#else
-  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
-    refine_triangles(ti);
+  if (parallel_execution)
+  {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
+                      [&](const tbb::blocked_range<size_t>& r) {
+                        for (size_t ti = r.begin(); ti != r.end(); ++ti)
+                          refine_triangles(ti);
+                      }
+                      );
   }
+  else
+#else
+    for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+      refine_triangles(ti);
+    }
 #endif
 
 #ifdef USE_DEBUG_PARALLEL_TIMERS
@@ -1391,7 +1406,9 @@ void autorefine_soup_output(const PointRange& input_points,
   // TODO: reuse the fact that maps per triangle are already sorted
 
 #ifdef CGAL_LINKED_WITH_TBB
-  tbb::concurrent_map<EK::Point_3, std::size_t> point_id_map;
+  std::conditional_t<parallel_execution,
+                     tbb::concurrent_map<EK::Point_3, std::size_t>,
+                     std::map<EK::Point_3, std::size_t>> point_id_map;
 #else
   std::map<EK::Point_3, std::size_t> point_id_map;
 #endif
@@ -1444,63 +1461,59 @@ void autorefine_soup_output(const PointRange& input_points,
   t.start();
 #endif
 
-  bool sequential =
-#ifdef CGAL_LINKED_WITH_TBB
-    false;
-#else
-  true;
+  std::size_t offset = soup_triangles.size();
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  std::string mode = "parallel";
 #endif
 
+  //TODO: 100 should be fined tune and depends on #threads
+#ifdef CGAL_LINKED_WITH_TBB
+  if(parallel_execution && new_triangles.size() > 100)
+  {
+    tbb::concurrent_vector<Point_3> concurrent_soup_points;
+    /// Lambda concurrent_get_point_id()
+    auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
+    {
+        auto insert_res = point_id_map.insert(std::make_pair(pt, concurrent_soup_points.size()));
+        if (insert_res.second)
+        {
+            concurrent_soup_points.push_back(to_input(pt));
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+            exact_soup_points.push_back(pt);
+#endif
+        }
+        return insert_res.first->second;
+    };
 
-  std::size_t offset = soup_triangles.size();
-  std::string mode;
-  if(sequential || new_triangles.size() < 100){
-      mode = "sequential";
+
+    soup_triangles.resize(offset + new_triangles.size());
+    std::cout << "soup_triangles.size() = " << soup_triangles.size() << std::endl;
+    std::cout << "new_triangles.size() = " << new_triangles.size() << std::endl;
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
+            for (size_t ti = r.begin(); ti != r.end(); ++ti) {
+                if (offset + ti > soup_triangles.size()) {
+                    std::cout << "ti = " << ti << std::endl;
+                }
+                const std::array<EK::Point_3, 3>& t = new_triangles[ti];
+                soup_triangles[offset + ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
+            }
+        }
+    );
+
+    soup_points.reserve(soup_points.size() + concurrent_soup_points.size());
+    soup_points.insert(soup_points.end(), concurrent_soup_points.begin(), concurrent_soup_points.end());
+  }
+  else
+#endif
+  {
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+    mode = "sequential";
+#endif
     soup_triangles.reserve(offset + new_triangles.size());
     for (const std::array<EK::Point_3,3>& t : new_triangles)
-      {
-    soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
-      }
+      soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
   }
-  else {
-      mode = "parallel";
-#ifdef CGAL_LINKED_WITH_TBB
-
-      tbb::concurrent_vector<Point_3> concurrent_soup_points;
-      /// Lambda concurrent_get_point_id()
-      auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
-      {
-          auto insert_res = point_id_map.insert(std::make_pair(pt, concurrent_soup_points.size()));
-          if (insert_res.second)
-          {
-              concurrent_soup_points.push_back(to_input(pt));
-#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-              exact_soup_points.push_back(pt);
-#endif
-          }
-          return insert_res.first->second;
-      };
-
-
-      soup_triangles.resize(offset + new_triangles.size());
-      std::cout << "soup_triangles.size() = " << soup_triangles.size() << std::endl;
-      std::cout << "new_triangles.size() = " << new_triangles.size() << std::endl;
-      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-          [&](const tbb::blocked_range<size_t>& r) {
-              for (size_t ti = r.begin(); ti != r.end(); ++ti) {
-                  if (offset + ti > soup_triangles.size()) {
-                      std::cout << "ti = " << ti << std::endl;
-                  }
-                  const std::array<EK::Point_3, 3>& t = new_triangles[ti];
-                  soup_triangles[offset + ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
-              }
-          }
-      );
-
-      soup_points.reserve(soup_points.size() + concurrent_soup_points.size());
-      soup_points.insert(soup_points.end(), concurrent_soup_points.begin(), concurrent_soup_points.end());
-  }
-#endif
 
 
 
