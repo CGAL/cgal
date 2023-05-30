@@ -164,7 +164,9 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
     }
   }
 
+
   // supporting_line intersects: points are coplanar
+  // TODO: check if we can write a dedicated predicate taking advantage of p,q being shared
   ::CGAL::Orientation pqr = cpl_orient(p, q, r);
   ::CGAL::Orientation pqs = cpl_orient(p, q, s);
 
