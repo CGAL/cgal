@@ -2916,6 +2916,8 @@ public:
   typedef double                                        Approximate_number_type;
   typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
   typedef Arr_extended_direction_3<Approximate_kernel>  Approximate_point_2;
+  typedef CGAL::Vector_3<Approximate_kernel>            Approximate_Vector_3;
+  typedef Approximate_kernel::Direction_3               Approximate_Direction_3;
 
   class Approximate_2 {
   public:
@@ -2944,9 +2946,71 @@ public:
     /*! Obtain an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& /* xcv */, double /* error */,
-                              OutputIterator /* oi */, bool /* l2r */ = true) const {
-      CGAL_error_msg("Not implemented yet!");
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
+                              OutputIterator oi, bool l2r = true) const {
+        auto s = xcv.source();
+        auto t = xcv.target();
+        auto n = xcv.normal();
+
+        // get the approximate points;
+        auto as = (*this)(s);
+        auto at = (*this)(t);
+
+        // convert the approximate points to vectors with approximate-kernel
+        auto normalize = [](auto& x) { x /= sqrt(x.squared_length()); };
+        auto getVector_3 = [](const Approximate_point_2& ap) { return Approximate_Vector_3(ap.dx(), ap.dy(), ap.dz()); };
+        auto vs = getVector_3(as);
+        auto vt = getVector_3(at);
+        auto vn = Approximate_Vector_3(CGAL::to_double(n.dx()), CGAL::to_double(n.dy()), CGAL::to_double(n.dz()));
+        normalize(vs);
+        normalize(vt);
+        normalize(vn);
+
+        // direction vectors for the coordinate system where we are going to make the approximation:
+        auto axisX = vs; // x-axis will coincide with the vector from the origin to the normalized SOURCE-vector
+        auto axisZ = vn; // this will make sure that the orientation of the curve during approximation is consistent with the curve
+        auto axisY = CGAL::cross_product(axisZ, axisX);
+        normalize(axisY);
+
+        // In this coordinate system the source has local coords (0,0), hence its initial angle with the X-axis is 0
+        // now compute the local coordinates and the angle it makes with the X-axis
+        Approximate_number_type  theta;
+        if (xcv.is_full())
+        {
+            theta = 2.0 * CGAL_PI;
+        }
+        else
+        {
+            auto ltx = CGAL::scalar_product(axisX, vt);
+            auto lty = CGAL::scalar_product(axisY, vt);
+            theta = std::atan2(lty, ltx);
+        }
+
+        // compute the number of divisions given the error
+        const Approximate_number_type  R = 1.0; // radius is always 1
+        Approximate_number_type dtheta = 2.0 * acos(1 - error / R);
+        int N = ceil(theta / dtheta);
+        dtheta = theta / N;
+
+        // generate the points
+        vector<Approximate_Vector_3> pts;
+        pts.reserve(N + 1);
+        pts.push_back(vs);
+        for (int i = 1; i < N; i++)
+        {
+            const Approximate_number_type angle = i * dtheta;
+            auto p = cos(angle) * axisX + sin(angle) * axisY;
+            pts.push_back(p);
+        }
+        pts.push_back(vt);
+
+        for (const auto& p : pts)
+        {
+            Approximate_point_2 ap(Approximate_Direction_3(p.x(), p.y(), p.z()), Approximate_point_2::NO_BOUNDARY_LOC);
+            *oi++ = ap;
+        }
+
+        return oi;
     }
   };
 
