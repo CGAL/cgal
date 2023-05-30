@@ -41,6 +41,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>
+#include <tbb/concurrent_map.h>
 #include <tbb/parallel_for.h>
 #endif
 
@@ -1386,11 +1387,18 @@ void autorefine_soup_output(const PointRange& input_points,
 
   Cartesian_converter<EK, GT> to_input;
   // TODO: reuse the fact that maps per triangle are already sorted
+
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::concurrent_map<EK::Point_3, std::size_t> point_id_map;
+#else
   std::map<EK::Point_3, std::size_t> point_id_map;
+#endif
+
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
   std::vector<EK::Point_3> exact_soup_points;
 #endif
 
+  /// Lambda get_point_id()
   auto get_point_id = [&](const typename EK::Point_3& pt)
   {
     auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
@@ -1403,6 +1411,8 @@ void autorefine_soup_output(const PointRange& input_points,
     }
     return insert_res.first->second;
   };
+
+
 
   std::vector <std::size_t> input_point_ids;
   input_point_ids.reserve(input_points.size());
@@ -1431,13 +1441,70 @@ void autorefine_soup_output(const PointRange& input_points,
   t.reset();
   t.start();
 #endif
-  for (const std::array<EK::Point_3,3>& t : new_triangles)
-  {
+
+  bool sequential =
+#ifdef CGAL_LINKED_WITH_TBB
+    false;
+#else
+  true;
+#endif
+
+
+  std::size_t offset = soup_triangles.size();
+  std::string mode;
+  if(sequential || new_triangles.size() < 100){
+      mode = "sequential";
+    soup_triangles.reserve(offset + new_triangles.size());
+    for (const std::array<EK::Point_3,3>& t : new_triangles)
+      {
     soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
+      }
   }
+  else {
+      mode = "parallel";
+#ifdef CGAL_LINKED_WITH_TBB
+
+      tbb::concurrent_vector<Point_3> concurrent_soup_points;
+      /// Lambda concurrent_get_point_id()
+      auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
+      {
+          auto insert_res = point_id_map.insert(std::make_pair(pt, concurrent_soup_points.size()));
+          if (insert_res.second)
+          {
+              concurrent_soup_points.push_back(to_input(pt));
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+              exact_soup_points.push_back(pt);
+#endif
+          }
+          return insert_res.first->second;
+      };
+
+
+      soup_triangles.resize(offset + new_triangles.size());
+      std::cout << "soup_triangles.size() = " << soup_triangles.size() << std::endl;
+      std::cout << "new_triangles.size() = " << new_triangles.size() << std::endl;
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+          [&](const tbb::blocked_range<size_t>& r) {
+              for (size_t ti = r.begin(); ti != r.end(); ++ti) {
+                  if (offset + ti > soup_triangles.size()) {
+                      std::cout << "ti = " << ti << std::endl;
+                  }
+                  const std::array<EK::Point_3, 3>& t = new_triangles[ti];
+                  soup_triangles[offset + ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
+              }
+          }
+      );
+
+      soup_points.reserve(soup_points.size() + concurrent_soup_points.size());
+      soup_points.insert(soup_points.end(), concurrent_soup_points.begin(), concurrent_soup_points.end());
+  }
+#endif
+
+
+
 #ifdef USE_DEBUG_PARALLEL_TIMERS
   t.stop();
-  std::cout << t.time() << " sec. for #4" << std::endl;
+  std::cout << t.time() << " sec. for #4 (" << mode << ")" << std::endl;
   t.reset();
 #endif
 
