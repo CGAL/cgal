@@ -2984,6 +2984,8 @@ public:
             auto ltx = CGAL::scalar_product(axisX, vt);
             auto lty = CGAL::scalar_product(axisY, vt);
             theta = std::atan2(lty, ltx);
+            if (theta < 0)
+                theta += 2.0 * CGAL_PI;
         }
 
         // compute the number of divisions given the error
