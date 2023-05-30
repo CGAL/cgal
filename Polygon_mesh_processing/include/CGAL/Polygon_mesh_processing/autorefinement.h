@@ -48,15 +48,20 @@
 
 #define TEST_RESOLVE_INTERSECTION
 #define DEDUPLICATE_SEGMENTS
+#define USE_DEBUG_PARALLEL_TIMERS
 //#define DEBUG_COUNTERS
 //#define USE_FIXED_PROJECTION_TRAITS
 //#define DEBUG_DEPTH
+
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+#include <CGAL/Real_timer.h>
+#endif
 
 #ifdef USE_FIXED_PROJECTION_TRAITS
 #include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 #endif
 
-#ifdef DEBUG_COUNTERS
+#if defined(DEBUG_COUNTERS) || defined(USE_DEBUG_PARALLEL_TIMERS)
 #include <CGAL/Real_timer.h>
 #endif
 
@@ -1178,8 +1183,10 @@ void autorefine_soup_output(const PointRange& input_points,
   std::vector< std::vector<std::size_t> > all_in_triangle_ids(triangles.size());
 
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
+#ifdef USE_DEBUG_PARALLEL_TIMERS
   Real_timer t;
   t.start();
+#endif
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
   //TODO: PARALLEL_FOR #2
   for (const Pair_of_triangle_ids& p : si_pairs)
@@ -1226,7 +1233,9 @@ void autorefine_soup_output(const PointRange& input_points,
       intersecting_triangles.insert(CGAL::make_sorted_pair(i1, i2));
     }
   }
-  std::cout << t.time() << " sec. for compute_intersections()" << std::endl;
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  std::cout << t.time() << " sec. for #2" << std::endl;
+#endif
 
 #ifdef DEDUPLICATE_SEGMENTS
   // deduplicate inserted segments
@@ -1294,8 +1303,9 @@ void autorefine_soup_output(const PointRange& input_points,
   }
 #endif
 
-
-  std::cout << t.time() << " sec. for deduplicate_segments()" << std::endl;
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  std::cout << t.time() << " sec. for #3" << std::endl;
+#endif
 #endif
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
@@ -1347,6 +1357,11 @@ void autorefine_soup_output(const PointRange& input_points,
 #endif
     };
 
+
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  t.reset();
+  t.start();
+#endif
 #ifdef CGAL_LINKED_WITH_TBB
   tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
                     [&](const tbb::blocked_range<size_t>& r) {
@@ -1360,7 +1375,11 @@ void autorefine_soup_output(const PointRange& input_points,
   }
 #endif
 
-
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  t.stop();
+  std::cout << t.time() << " sec. for #1" << std::endl;
+  t.reset();
+#endif
 
   // brute force output: create a soup, orient and to-mesh
   CGAL_PMP_AUTOREFINE_VERBOSE("create output soup");
@@ -1408,10 +1427,19 @@ void autorefine_soup_output(const PointRange& input_points,
 
   // import refined triangles
     //TODO: PARALLEL_FOR #4
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  t.reset();
+  t.start();
+#endif
   for (const std::array<EK::Point_3,3>& t : new_triangles)
   {
     soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
   }
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  t.stop();
+  std::cout << t.time() << " sec. for #4" << std::endl;
+  t.reset();
+#endif
 
 #ifndef CGAL_NDEBUG
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
