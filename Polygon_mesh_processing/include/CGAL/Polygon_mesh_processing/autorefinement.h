@@ -1178,7 +1178,8 @@ void autorefine_soup_output(const PointRange& input_points,
   std::vector< std::vector<std::size_t> > all_in_triangle_ids(triangles.size());
 
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
-
+  Real_timer t;
+  t.start();
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
   //TODO: PARALLEL_FOR #2
   for (const Pair_of_triangle_ids& p : si_pairs)
@@ -1225,16 +1226,22 @@ void autorefine_soup_output(const PointRange& input_points,
       intersecting_triangles.insert(CGAL::make_sorted_pair(i1, i2));
     }
   }
+  std::cout << t.time() << " sec. for #2" << std::endl;
 
 #ifdef DEDUPLICATE_SEGMENTS
   // deduplicate inserted segments
   //TODO: PARALLEL_FOR #3
+  Real_timer t3;
+  t3.start();
   std::vector<std::vector<std::pair<std::size_t, std::size_t>>> all_segments_ids(all_segments.size());
-  for(std::size_t ti=0; ti<triangles.size(); ++ti)
+
+  auto deduplicate_inserted_segments = [&](std::size_t ti)
   {
     if (!all_segments[ti].empty())
     {
       std::map<EK::Point_3, std::size_t> point_id_map;
+
+
       auto get_point_id = [&](const typename EK::Point_3& pt)
       {
         auto insert_res = point_id_map.insert(std::make_pair(pt, all_points[ti].size()));
@@ -1242,6 +1249,7 @@ void autorefine_soup_output(const PointRange& input_points,
           all_points[ti].push_back(pt);
         return insert_res.first->second;
       };
+
 
       if (!all_points[ti].empty())
       {
@@ -1271,7 +1279,23 @@ void autorefine_soup_output(const PointRange& input_points,
       if (all_segments_ids[ti].size()!=nbs)
         filtered_in_triangle_ids.swap(all_in_triangle_ids[ti]);
     }
+  };
+
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
+                    [&](const tbb::blocked_range<size_t>& r) {
+                      for (size_t ti = r.begin(); ti != r.end(); ++ti)
+                        deduplicate_inserted_segments(ti);
+                    }
+                    );
+#else
+  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+    deduplicate_inserted_segments(ti);
   }
+#endif
+
+
+  std::cout << t.time() << " sec. for #3" << std::endl;
 #endif
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
