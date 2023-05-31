@@ -403,7 +403,7 @@ else()
 endif()
 
 #special cases
-foreach(pkg "Mesh_level")
+foreach(pkg "Mesher_level")
   if(CGAL_BRANCH_BUILD)
     set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/${pkg}/include")
   else()
