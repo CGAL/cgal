@@ -319,7 +319,6 @@ bool pull_file(ssh_session &session,
                const char* from_path,
                const char* to_path)
 {
-  int rc;
   std::size_t size;
   std::size_t processed = 0;
   std::vector<char> buffer;
@@ -386,10 +385,9 @@ bool explore_the_galaxy(ssh_session &session,
                         QStringList& files)
 {
   ssh_channel channel;
-  int rc;
   channel = ssh_channel_new(session);
   if (channel == nullptr) return false;
-  rc = ssh_channel_open_session(channel);
+  int rc = ssh_channel_open_session(channel);
   if (rc != SSH_OK)
   {
     ssh_channel_free(channel);
