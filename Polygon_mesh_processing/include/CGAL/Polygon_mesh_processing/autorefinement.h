@@ -1323,9 +1323,9 @@ void autorefine_soup_output(const PointRange& input_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
   // now refine triangles
 #ifdef CGAL_LINKED_WITH_TBB
-    std::conditional_t<parallel_execution,
-                       tbb::concurrent_vector<std::array<EK::Point_3, 3>>,
-                       std::vector<std::array<EK::Point_3,3>>> new_triangles;
+  std::conditional_t<parallel_execution,
+                     tbb::concurrent_vector<std::array<EK::Point_3, 3>>,
+                     std::vector<std::array<EK::Point_3,3>>> new_triangles;
 #else
   std::vector<std::array<EK::Point_3,3>> new_triangles;
 #endif
@@ -1487,8 +1487,6 @@ void autorefine_soup_output(const PointRange& input_points,
 
 
     soup_triangles.resize(offset + new_triangles.size());
-    std::cout << "soup_triangles.size() = " << soup_triangles.size() << std::endl;
-    std::cout << "new_triangles.size() = " << new_triangles.size() << std::endl;
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
         [&](const tbb::blocked_range<size_t>& r) {
             for (size_t ti = r.begin(); ti != r.end(); ++ti) {
