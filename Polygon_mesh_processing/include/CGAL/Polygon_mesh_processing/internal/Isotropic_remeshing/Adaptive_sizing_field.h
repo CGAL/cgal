@@ -101,10 +101,10 @@ public:
     // calculate square vertex sizing field (L(x_i))^2 from curvature field
     for(vertex_descriptor v : vertices(m_pmesh))
     {
-      auto vertex_curv = get(vertex_curvature_map, v); //todo ip: how to make this work?
+      auto vertex_curv = get(vertex_curvature_map, v);
       //todo ip: alt solution - calculate curvature per vertex
 //      const Principal_curvatures vertex_curv = interpolated_corrected_principal_curvatures_and_directions_one_vertex(m_pmesh, v);
-      const FT max_absolute_curv = std::max(std::abs(vertex_curv.max_curvature), std::abs(vertex_curv.min_curvature));
+      const FT max_absolute_curv = CGAL::max(CGAL::abs(vertex_curv.max_curvature), CGAL::abs(vertex_curv.min_curvature));
       const FT vertex_size_sq = 6 * tol / max_absolute_curv - 3 * CGAL::square(tol);
       if (vertex_size_sq > m_sq_long)
       {
@@ -138,8 +138,8 @@ public:
   boost::optional<FT> is_too_long(const halfedge_descriptor& h) const
   {
     const FT sqlen = sqlength(h);
-    FT sqtarg_len = std::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
-                             get(m_vertex_sizing_map, target(h, m_pmesh)));
+    FT sqtarg_len = CGAL::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
+                              get(m_vertex_sizing_map, target(h, m_pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, source(h, m_pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, target(h, m_pmesh)));
     if(sqlen > sqtarg_len)
@@ -152,8 +152,8 @@ public:
                                   const vertex_descriptor& vb) const
   {
     const FT sqlen = sqlength(va, vb);
-    FT sqtarg_len = std::min(get(m_vertex_sizing_map, va),
-                             get(m_vertex_sizing_map, vb));
+    FT sqtarg_len = CGAL::min(get(m_vertex_sizing_map, va),
+                              get(m_vertex_sizing_map, vb));
     CGAL_assertion(get(m_vertex_sizing_map, va));
     CGAL_assertion(get(m_vertex_sizing_map, vb));
     if (sqlen > 16./9. * sqtarg_len)
@@ -165,8 +165,8 @@ public:
   boost::optional<FT> is_too_short(const halfedge_descriptor& h) const
   {
     const FT sqlen = sqlength(h);
-    FT sqtarg_len = std::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
-                             get(m_vertex_sizing_map, target(h, m_pmesh)));
+    FT sqtarg_len = CGAL::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
+                              get(m_vertex_sizing_map, target(h, m_pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, source(h, m_pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, target(h, m_pmesh)));
     if (sqlen < 16./25. * sqtarg_len)
@@ -188,7 +188,7 @@ public:
     // calculating it as the average of two vertices on other ends
     // of halfedges as updating is done during an edge split
     FT vertex_size_sq = 0;
-    CGAL_assertion(CGAL::halfedges_around_target(v, m_pmesh) == 2);
+    CGAL_assertion(CGAL::halfedges_around_target(v, m_pmesh).size() == 2);
     for (halfedge_descriptor ha: CGAL::halfedges_around_target(v, m_pmesh))
     {
       vertex_size_sq += get(m_vertex_sizing_map, source(ha, m_pmesh));
