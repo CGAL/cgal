@@ -139,7 +139,6 @@ namespace CGAL {
                                 std::map<int, std::size_t> plane_index_remap;
 
                                 // Gets to know the number of plane from the plane indices
-                                int max_plane_index = 0;
                                 std::size_t idx = 0;
                                 for (typename PointRange::const_iterator it = points.begin(); it != points.end(); ++it) {
                                         Base_class::m_points[idx] = get(point_map, *it);
