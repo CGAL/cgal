@@ -146,13 +146,12 @@ namespace CGAL {
                                         Base_class::m_normals[idx] = get(normal_map, *it);
                                         int plane_index = get(plane_index_map, *it);
                                         if (plane_index != -1) {
-                                          auto it = plane_index_remap.find(plane_index);
-                                          if (it == plane_index_remap.end()) {
-                                            plane_index_remap[plane_index] = planar_segments_.size();
+                                          auto it_and_bool = plane_index_remap.emplace(plane_index, planar_segments_.size());
+                                          if (it_and_bool.second) {
                                             planar_segments_.push_back(new Planar_segment(this));
                                             planar_segments_.back()->push_back(idx);
                                           }
-                                          else planar_segments_[it->second]->push_back(idx);
+                                          else planar_segments_[it_and_bool.first->second]->push_back(idx);
                                         }
                                         idx++;
                                 }
