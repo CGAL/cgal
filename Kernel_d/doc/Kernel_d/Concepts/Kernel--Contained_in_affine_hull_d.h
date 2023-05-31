@@ -19,7 +19,7 @@ affine hull of the points in `A = tuple [first,last)`.
 
 \tparam ForwardIterator has `Kernel_d::Point_d` as value type.
 */
-template <class ForwardIterator> Bounded_side
+template <class ForwardIterator> bool
 operator()( ForwardIterator first, ForwardIterator last, const
 Kernel_d::Point_d& p);
 
