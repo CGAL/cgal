@@ -30,17 +30,14 @@ create_single_source_cgal_program( "test_without_detect_features.cpp" )
 
 if(CGAL_ImageIO_USE_ZLIB)
   create_single_source_cgal_program( "test_meshing_3D_image.cpp" )
-  create_single_source_cgal_program( "test_meshing_3D_image_deprecated.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_image_with_features.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_gray_image.cpp" )
-  create_single_source_cgal_program( "test_meshing_3D_gray_image_deprecated.cpp" )
   create_single_source_cgal_program( "test_min_size_criteria.cpp")
 else()
   message(STATUS "NOTICE: The test 'test_meshing_3D_image' requires the ZLIB library, and will not be compiled.")
 endif()
 
 create_single_source_cgal_program( "test_meshing_implicit_function.cpp" )
-create_single_source_cgal_program( "test_meshing_implicit_function_deprecated.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedral_complex.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
 create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
@@ -66,12 +63,9 @@ foreach(target
     test_mesh_criteria_creation
     test_without_detect_features
     test_meshing_3D_image
-    test_meshing_3D_image_deprecated
     test_meshing_3D_image_with_features
     test_meshing_3D_gray_image
-    test_meshing_3D_gray_image_deprecated
     test_meshing_implicit_function
-    test_meshing_implicit_function_deprecated
     test_meshing_polyhedral_complex
     test_meshing_polyhedron
     test_meshing_polylines_only
