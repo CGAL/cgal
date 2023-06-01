@@ -31,7 +31,7 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 *
-* \short smooths a triangulated region of a polygon mesh.
+* \brief smooths a triangulated region of a polygon mesh.
 *
 * This function aims to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
@@ -332,7 +332,7 @@ void angle_and_area_smoothing(const FaceRange& faces,
 /*!
 * \ingroup PMP_meshing_grp
 *
-* \short smooths a polygon mesh.
+* \brief smooths a polygon mesh.
 *
 * This function aims to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
@@ -345,7 +345,8 @@ void angle_and_area_smoothing(const FaceRange& faces,
 *
 * Optionally, the points are reprojected after each iteration.
 *
-* See the overload for a face range of this function for the template
+* The overload of this function which takes a face range as
+* additonal parameter documents the template
 * parameters, parameters, and named parameters.
 */
 template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
