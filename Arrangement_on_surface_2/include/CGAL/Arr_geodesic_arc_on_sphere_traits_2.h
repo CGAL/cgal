@@ -2964,7 +2964,7 @@ public:
       auto vn = get_approximate_vector_3(n);
       
       // normalize the vectors
-      auto normalize = [](auto& x) { x /= sqrt(x.squared_length()); };
+      auto normalize = [](auto& x) { x /= std::sqrt(x.squared_length()); };
       normalize(vs);
       normalize(vt);
       normalize(vn);
@@ -2997,18 +2997,18 @@ public:
 
       // compute the number of divisions given the requested error
       const Approximate_number_type  R = 1.0; // radius is always 1
-      Approximate_number_type dtheta = 2.0 * acos(1 - error / R);
-      int N = ceil(theta / dtheta);
+      Approximate_number_type dtheta = 2.0 * std::acos(1 - error / R);
+      int N = std::ceil(theta / dtheta);
       dtheta = theta / N;
 
       // generate the points
       std::vector<Approximate_vector_3> pts;
       pts.reserve(N + 1);
       pts.push_back(vs);
-      for (int i = 1; i < N; i++)
+      for (int i = 1; i < N; ++i)
       {
           const Approximate_number_type angle = i * dtheta;
-          auto p = cos(angle) * axisX + sin(angle) * axisY;
+          auto p = std::cos(angle) * axisX + std::sin(angle) * axisY;
           pts.push_back(p);
       }
       pts.push_back(vt);
