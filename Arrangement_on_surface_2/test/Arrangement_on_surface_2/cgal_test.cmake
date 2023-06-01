@@ -888,9 +888,11 @@ function(test_segment_traits)
     COMPARE_Y_AT_X_RIGHT CONSTRUCTOR IS_VERTICAL VERTEX)
 
   execute_commands_new_structure( segments segment_traits
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT ARE_MERGEABLE)
+    ARE_MERGEABLE
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
-  run_trapped_test( test_traits
+  run_trapped_test(test_traits
     data/segments/vertex.pt data/segments/xcurves
     data/empty.zero data/segments/vertex segment_traits)
 endfunction()
@@ -912,7 +914,8 @@ function(test_non_caching_segment_traits)
     IS_VERTICAL VERTEX)
 
   execute_commands_new_structure(segments segment_traits
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/segments/vertex.pt data/segments/xcurves
@@ -943,8 +946,18 @@ function(test_polycurve_conic_traits)
   execute_commands_new_structure(polycurves_conics polycurve_conic_traits
     ARE_MERGEABLE
     COMPARE_ENDPOINTS_XY COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
-    CONSTRUCT_OPPOSITE EQUAL INTERSECT IS_VERTICAL MAKE_X_MONOTONE MERGE
-    NUMBER_OF_POINTS SPLIT PUSH_BACK PUSH_FRONT TRIM VERTEX)
+    CONSTRUCT_OPPOSITE
+    EQUAL
+    INTERSECT
+    IS_VERTICAL
+    MAKE_X_MONOTONE
+    MERGE
+    NUMBER_OF_POINTS
+    SPLIT
+    PUSH_BACK
+    PUSH_FRONT
+    TRIM
+    VERTEX)
 
 endfunction()
 
@@ -963,8 +976,17 @@ function(test_polycurve_circular_arc_traits)
     polycurve_circular_arc_traits
     ARE_MERGEABLE
     COMPARE_ENDPOINTS_XY COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
-    CONSTRUCT_OPPOSITE EQUAL INTERSECT IS_VERTICAL MAKE_X_MONOTONE MERGE
-    NUMBER_OF_POINTS PUSH_BACK PUSH_FRONT SPLIT VERTEX)
+    CONSTRUCT_OPPOSITE
+    EQUAL
+    INTERSECT
+    IS_VERTICAL
+    MAKE_X_MONOTONE
+    MERGE
+    NUMBER_OF_POINTS
+    PUSH_BACK
+    PUSH_FRONT
+    SPLIT
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -983,15 +1005,15 @@ function(test_polycurve_bezier_traits)
   compile_test_with_flags(test_traits bezier_polycurve "${flags}")
 
   execute_commands_new_structure(polycurves_bezier test_polycurve_bezier_traits
-    MERGE
+    ARE_MERGEABLE
+    COMPARE_ENDPOINTS_XY
     EQUAL
     IS_VERTICAL
     NUMBER_OF_POINTS
+    MERGE
     PUSH_BACK
     PUSH_FRONT
     VERTEX
-    ARE_MERGEABLE
-    COMPARE_ENDPOINTS_XY
     # TODO (add data for these tests)
     # COMPARE_Y_AT_X
     # SPLIT
@@ -1053,7 +1075,8 @@ function(test_linear_traits)
     IS_VERTICAL VERTEX)
 
   execute_commands_new_structure(linear/segments linear_traits.segments
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/linear/segments/vertex.pt data/linear/segments/xcurves
@@ -1065,17 +1088,21 @@ function(test_linear_traits)
     IS_VERTICAL VERTEX)
 
   execute_commands_new_structure(linear/rays linear_traits.rays
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/linear/rays/vertex.pt data/linear/rays/xcurves
     data/empty.zero data/linear/rays/vertex linear_traits.rays)
 
   execute_commands_new_structure(linear/lines linear_traits.lines
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT
-    SPLIT MERGE
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
+    IS_VERTICAL
+    INTERSECT
+    MERGE
     PARAMETER_SPACE_X PARAMETER_SPACE_Y
-    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY)
+    SPLIT)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1098,7 +1125,9 @@ function(test_conic_traits)
     INTERSECT SPLIT MERGE)
 
   execute_commands_new_structure(conics conic_traits
-    INTERSECT SPLIT MERGE)
+    INTERSECT
+    MERGE
+    SPLIT)
 
   run_trapped_test(test_traits
     data/conics/compare.pt data/empty.zero
@@ -1122,7 +1151,8 @@ function(test_line_arc_traits)
     IS_VERTICAL MERGE VERTEX)
 
   execute_commands_new_structure(circular_lines line_arc_traits
-    IS_VERTICAL COMPARE_Y_AT_X)
+    COMPARE_Y_AT_X
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/circular_lines/compare.pt data/empty.zero
@@ -1150,7 +1180,9 @@ function(test_circular_arc_traits)
     IS_VERTICAL MERGE VERTEX)
 
   execute_commands_new_structure(circular_arcs circular_arc_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X)
+    COMPARE_Y_AT_X
+    IS_VERTICAL
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1170,7 +1202,8 @@ function(test_circular_line_arc_traits)
     IS_VERTICAL MERGE VERTEX)
 
   execute_commands_new_structure(circular_line_arcs circular_line_arc_traits
-    IS_VERTICAL COMPARE_Y_AT_X)
+    COMPARE_Y_AT_X
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/circular_line_arcs/vertex.pt data/circular_line_arcs/xcurves
@@ -1192,6 +1225,9 @@ function(test_circle_segments_traits)
     APPROXIMATE ARE_MERGEABLE
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
     IS_VERTICAL VERTEX)
+
+  execute_commands_new_structure(circle_segments circle_segments_traits
+    APPROXIMATE)
 
   run_trapped_test(test_traits
     data/circle_segments/points data/circle_segments/xcurves.8
@@ -1251,8 +1287,9 @@ function(test_spherical_arc_traits)
     MAKE_X_MONOTONE MERGE SPLIT)
 
   execute_commands_new_structure(spherical_arcs spherical_arc_traits
-    APPROXIMATE INTERSECT
-    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY)
+    APPROXIMATE
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
+    INTERSECT)
 
   run_trapped_test(test_traits
     data/spherical_arcs/compare.pt data/spherical_arcs/compare.xcv
@@ -1279,8 +1316,12 @@ function(test_rational_arc_traits)
     data/empty.zero data/compare rational_arc_traits)
 
   execute_commands_new_structure(rational_arcs rational_arc_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE
-    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
+    IS_VERTICAL
+    MERGE
+    SPLIT
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1301,8 +1342,13 @@ function(test_algebraic_traits_gmp)
 
   execute_commands_new_structure(algebraic algebraic_traits_gmp
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
-    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
-    PARAMETER_SPACE_X PARAMETER_SPACE_Y)
+    IS_VERTICAL
+    INTERSECT
+    MAKE_X_MONOTONE
+    MERGE
+    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    SPLIT
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1320,8 +1366,13 @@ function(test_algebraic_traits_leda)
 
   execute_commands_new_structure(algebraic algebraic_traits_leda
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
-    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
-    PARAMETER_SPACE_X PARAMETER_SPACE_Y)
+    IS_VERTICAL
+    INTERSECT
+    MAKE_X_MONOTONE
+    MERGE
+    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    SPLIT
+    VERTEX)
 endfunction()
 
 
@@ -1343,8 +1394,13 @@ function(test_algebraic_traits_core)
 
   execute_commands_new_structure(algebraic algebraic_traits_core
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
-    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
-    PARAMETER_SPACE_X PARAMETER_SPACE_Y)
+    IS_VERTICAL
+    INTERSECT
+    MAKE_X_MONOTONE
+    MERGE
+    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    SPLIT
+    VERTEX)
 endfunction()
 
 
