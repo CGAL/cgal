@@ -1,7 +1,7 @@
 #ifndef SCENE_AFF_TRANSFORMED_SURFACE_MESH_ITEM_H
 #define SCENE_AFF_TRANSFORMED_SURFACE_MESH_ITEM_H
 
-#if defined( scene_aff_transformed_item_EXPORTS)
+#if defined( scene_aff_transformed_surface_mesh_item_EXPORTS)
 #  define SCENE_AFF_TRANSFORMED_SURFACE_MESH_ITEM_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_AFF_TRANSFORMED_SURFACE_MESH_ITEM_EXPORT Q_DECL_IMPORT
