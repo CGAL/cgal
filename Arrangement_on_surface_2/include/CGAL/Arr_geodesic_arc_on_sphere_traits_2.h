@@ -36,7 +36,6 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/use.h>
-#include <vector>
 
 namespace CGAL {
 
@@ -2978,7 +2977,7 @@ public:
       auto axisY = CGAL::cross_product(axisZ, axisX);
       normalize(axisY);
 
-      // In this coordinate system the source has local coords (0,0), hence its 
+      // In this coordinate system the source has local coords (0,0), hence its
       //   initial angle with the X-axis is 0 degrees (radians)
       // Compute the local coordinates and the angle it makes with the X-axis
       Approximate_number_type  theta;
@@ -3001,23 +3000,16 @@ public:
       int N = std::ceil(theta / dtheta);
       dtheta = theta / N;
 
-      // generate the points
-      std::vector<Approximate_vector_3> pts;
-      pts.reserve(N + 1);
-      pts.push_back(vs);
+      // generate the points approximating the curve
+      const auto loc = Approximate_point_2::NO_BOUNDARY_LOC;
+      *oi++ = get_approximate_point_2(vs, loc); // source vector
       for (int i = 1; i < N; ++i)
       {
           const Approximate_number_type angle = i * dtheta;
           auto p = std::cos(angle) * axisX + std::sin(angle) * axisY;
-          pts.push_back(p);
+          *oi++ = get_approximate_point_2(p, loc);
       }
-      pts.push_back(vt);
-
-      const auto loc = Approximate_point_2::NO_BOUNDARY_LOC;
-      for (const auto& p : pts)
-      {
-        *oi++ = get_approximate_point_2(p, loc);
-      }
+      *oi++ = get_approximate_point_2(vt, loc); // target vector
 
       return oi;
     }
@@ -3033,9 +3025,8 @@ public:
         CGAL::to_double(d.dy()), CGAL::to_double(d.dz()));
     };
 
-    template<typename LocationType>
     Approximate_point_2 get_approximate_point_2(const Approximate_vector_3& v,
-                                                const LocationType loc) const {
+                          const Approximate_point_2::Location_type loc) const {
       Approximate_direction_3  d(v.x(), v.y(), v.z());
       return Approximate_point_2(d, loc);
     }
