@@ -42,6 +42,8 @@ public:
 /*!
  * \brief Indexed storage for arbitrary types
  *
+ * todo: make this effectively private, prioritize the use of Property_array_handle
+ *
  * @tparam T
  */
 template <typename Index, typename T>
@@ -56,6 +58,8 @@ public:
   using value_type = T;
   using reference = typename std::vector<T>::reference;
   using const_reference = typename std::vector<T>::const_reference;
+  using iterator = typename std::vector<T>::iterator;
+  using const_iterator = typename std::vector<T>::const_iterator;
 
   Property_array(const std::vector<bool>& active_indices, const T& default_value) :
     m_data(), m_active_indices(active_indices), m_default_value(default_value) {
@@ -118,6 +122,14 @@ public:
     return m_data[std::size_t(i)];
   }
 
+  iterator begin() { return m_data.begin(); }
+
+  iterator end() { return m_data.end(); }
+
+  const_iterator begin() const { return m_data.begin(); }
+
+  const_iterator end() const { return m_data.end(); }
+
 public:
 
   bool operator==(const Property_array<Index, T>& other) const {
@@ -128,11 +140,11 @@ public:
 
 };
 
-
+// todo: add const/read-only handle
 template <typename Index, typename T>
 class Property_array_handle {
 
-  Property_array<Index, T>& m_array;
+  std::reference_wrapper<Property_array<Index, T>> m_array;
 
 public:
 
@@ -143,19 +155,32 @@ public:
   using const_reference = typename std::vector<T>::const_reference;
   using category = boost::lvalue_property_map_tag;
 
+  using iterator = typename std::vector<T>::iterator;
+  using const_iterator = typename std::vector<T>::const_iterator;
+
   Property_array_handle(Property_array<Index, T>& array) : m_array(array) {}
 
-  //Property_array_handle(Property_array_handle<Index, T>& handle) : m_array(handle.m_array) {}
+  [[nodiscard]] std::size_t size() const { return m_array.get().size(); }
 
-  [[nodiscard]] std::size_t size() const { return m_array.size(); }
+  [[nodiscard]] std::size_t capacity() const { return m_array.get().capacity(); }
 
-  [[nodiscard]] std::size_t capacity() const { return m_array.capacity(); }
+  Property_array<Index, T>& array() const { return m_array.get(); }
 
-  const_reference operator[](Index i) const { return m_array[i]; }
+  // todo: This might not be needed, if the other operator[] is made const
+  const_reference operator[](Index i) const { return m_array.get()[i]; }
 
-  reference operator[](Index i) { return m_array[i]; }
+  reference operator[](Index i) { return m_array.get()[i]; }
 
-  bool operator==(const Property_array_handle<Index, T>& other) const { return other.m_array == m_array; }
+  // todo: maybe these can be const, in an lvalue property map?
+  iterator begin() { return m_array.get().begin(); }
+
+  iterator end() { return m_array.get().end(); }
+
+  const_iterator begin() const { return m_array.get().begin(); }
+
+  const_iterator end() const { return m_array.get().end(); }
+
+  bool operator==(const Property_array_handle<Index, T>& other) const { return other.m_array.get() == m_array.get(); }
 
   bool operator!=(const Property_array_handle<Index, T>& other) const { return !operator==(other); }
 
@@ -282,6 +307,15 @@ public:
     return dynamic_cast<Property_array<Index, T>&>(*m_property_arrays.at(name));
   }
 
+  template <typename T>
+  bool property_exists(const std::string& name) const {
+    auto it = m_property_arrays.find(name);
+    if (it == m_property_arrays.end()) return false;
+    auto [_, array] = *it;
+    if (typeid(*array) != typeid(Property_array<Index, T>)) return false;
+    return true;
+  }
+
   /*!
    * Removes a property array from the container
    *
@@ -289,6 +323,18 @@ public:
    * @return True if a container with this name existed, false otherwise
    */
   bool remove_property(const std::string& name) { return m_property_arrays.erase(name) == 1; }
+
+  template <typename T>
+  bool remove_property(const Property_array<Index, T>& arrayToRemove) {
+    for (auto it = m_property_arrays.begin(); it != m_property_arrays.end(); ++it) {
+      auto const& [name, array] = *it;
+      if (array.get() == dynamic_cast<const Property_array_base<Index>*>(&arrayToRemove)) {
+        m_property_arrays.erase(it);
+        return true;
+      }
+    }
+    return false;
+  }
 
   void remove_all_properties_except(const std::vector<std::string>& preserved_names) {
     // todo: if this is used often, it should take a parameter pack instead of a vector
@@ -304,12 +350,12 @@ public:
 
   std::vector<std::string> properties() const {
     std::vector<std::string> property_names{};
-    for (auto const&[name, _] : m_property_arrays)
+    for (auto const& [name, _]: m_property_arrays)
       property_names.emplace_back(name);
     return property_names;
   }
 
-  std::size_t num_properties() const{ return m_property_arrays.size(); }
+  std::size_t num_properties() const { return m_property_arrays.size(); }
 
   const std::type_info& property_type(const std::string& name) const {
     if (auto it = m_property_arrays.find(name); it != m_property_arrays.end())
@@ -427,6 +473,10 @@ public:
     return m_active_indices[i] = true;
   }
 
+  void mark_inactive(Index i) {
+    return m_active_indices[i] = false;
+  }
+
   std::vector<Index> active_list() const {
     std::vector<Index> indices;
     for (std::size_t i = 0; i < m_active_indices.size(); ++i)
@@ -464,6 +514,8 @@ public:
         array->reserve(m_active_indices.size());
     }
   }
+
+  // todo: maybe a compress() method?
 };
 
 }
