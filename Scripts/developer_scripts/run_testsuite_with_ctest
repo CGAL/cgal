@@ -229,8 +229,9 @@ collect_demos_binaries()
       popd
     done
 
-    ${TAR} cf "${DEMOS_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar" *_Demo_with_dlls/*;
-    ${COMPRESSOR} -9f "${DEMOS_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar"
+    ${TAR} cf "demos_${CGAL_TESTER}_${PLATFORM}.tar" *_Demo_with_dlls/*;
+    ${COMPRESSOR} -9f "demos_${CGAL_TESTER}_${PLATFORM}.tar"
+    mv "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" ${CGAL_TEST_DIR}
   else
     echo "Don't collect demos binaries for platform $PLATFORM";
   fi
