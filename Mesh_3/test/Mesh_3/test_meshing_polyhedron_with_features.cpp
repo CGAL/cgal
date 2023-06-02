@@ -21,6 +21,7 @@
 #include <CGAL/IO/File_tetgen.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/use.h>
+#include <CGAL/Real_timer.h>
 
 #include <fstream>
 #include <sstream>
@@ -153,6 +154,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   {
     std::cerr << "Mesh generation from a polyhedron with edges:\n";
     Polyhedron_with_features_tester<K_e_i> test_epic("sequential");
@@ -166,5 +168,6 @@ int main()
   }
 #endif
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

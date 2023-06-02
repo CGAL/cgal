@@ -21,6 +21,7 @@
 #include "test_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -340,6 +341,7 @@ struct Tester
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   std::cerr << "TESTING WITH Exact_predicates_inexact_constructions_kernel...\n";
   Tester<K_e_i> test_epic;
   test_epic.test_cell();
@@ -350,5 +352,6 @@ int main()
   test_epec.test_cell();
   test_epec.test_facet();
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

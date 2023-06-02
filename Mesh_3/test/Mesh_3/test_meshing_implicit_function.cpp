@@ -3,6 +3,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 
 #include <CGAL/disable_warnings.h>
+#include <CGAL/Real_timer.h>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Implicit_tester : public Tester<K>
@@ -91,6 +92,7 @@ struct Implicit_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   Implicit_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from an implicit function:\n";
   test_epic.implicit();
@@ -100,5 +102,6 @@ int main()
   std::cerr << "Parallel mesh generation from an implicit function:\n";
   test_epic_p.implicit();
 #endif
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

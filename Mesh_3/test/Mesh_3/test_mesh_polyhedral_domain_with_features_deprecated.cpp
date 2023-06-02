@@ -8,6 +8,7 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Real_timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -30,6 +31,8 @@ using namespace CGAL::parameters;
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
+  std::cout << "Start test_mesh_polyhedral_domain_with_features_deprecated"<< std::endl;
   // Create domain
   Mesh_domain domain(CGAL::data_file_path("meshes/cube.off"));
 
@@ -49,5 +52,6 @@ int main()
 //  CGAL::IO::write_MEDIT(medit_file, c3t3);
 //  medit_file.close();
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

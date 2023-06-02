@@ -21,6 +21,7 @@
 #include <CGAL/Mesh_3/Detect_features_in_image.h>
 #include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
 #include <CGAL/use.h>
+#include <CGAL/Real_timer.h>
 #include <vector>
 
 #include <cstddef>
@@ -165,6 +166,7 @@ public:
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image"
             << " with detection of triple lines:\n";
@@ -195,5 +197,6 @@ int main()
   test_epic_p.image_with_input_features();
 #endif
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

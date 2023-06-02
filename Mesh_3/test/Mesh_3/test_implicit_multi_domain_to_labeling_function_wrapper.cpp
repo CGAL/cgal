@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
-
+#include <CGAL/Real_timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
 typedef K_e_i::Point_3 Point_3;
@@ -134,8 +134,11 @@ void test_constructor_vfunc_vstr ()
 
 int main ()
 {
+  CGAL::Real_timer rt; rt.start(); {
+  std::cout << "Start test_implicit_multi_domain_to_labeling_function_wrapper" << std::endl;
   test_constructor_vfunc();
   test_constructor_vfunc_vvpos();
   test_constructor_vfunc_vstr();
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return 0;
 }

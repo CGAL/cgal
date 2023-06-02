@@ -9,6 +9,7 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <cassert>
 
@@ -33,6 +34,8 @@ using namespace CGAL::parameters;
 
 int main(int argc, char** argv)
 {
+  CGAL::Real_timer rt; rt.start(); {
+  std::cout << "Start test_meshing_polylines_only" << std::endl;
   if(argc != 2) {
     std::cerr << "This test needs a filename as argument.\n";
     return 1;
@@ -99,4 +102,5 @@ int main(int argc, char** argv)
             << c3t3.triangulation().number_of_vertices() << std::endl;
   assert(c3t3.triangulation().number_of_vertices() > 900);
   assert(c3t3.triangulation().number_of_vertices() < 1100);
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
 }

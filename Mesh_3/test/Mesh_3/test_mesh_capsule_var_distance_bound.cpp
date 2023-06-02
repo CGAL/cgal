@@ -6,6 +6,7 @@
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <boost/version.hpp>
 
@@ -49,6 +50,8 @@ auto field = [](const Point& p, const int, const Mesh_domain::Index)
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
+  std::cout << "Start test_mesh_capsule_var_distance_bound"<< std::endl;
   Mesh_domain domain =
     Mesh_domain::create_implicit_mesh_domain(function = capsule_function,
                                              bounding_object = K::Sphere_3(CGAL::ORIGIN, 49.));
@@ -65,6 +68,6 @@ int main()
 //  CGAL::IO::write_MEDIT(medit_file, c3t3);
 //  medit_file.close();
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return 0;
 }
-

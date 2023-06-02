@@ -1,4 +1,4 @@
-#define CGAL_MESH_3_VERBOSE 1
+//#define CGAL_MESH_3_VERBOSE 1
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include "test_meshing_utilities.h"
@@ -6,6 +6,7 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/Labeled_image_mesh_domain_3.h>
 #include <CGAL/use.h>
+#include <CGAL/Real_timer.h>
 
 template <typename Concurrency_tag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K_e_i>
@@ -59,6 +60,7 @@ public:
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();
@@ -69,5 +71,6 @@ int main()
   test_epic_p.image();
 #endif
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

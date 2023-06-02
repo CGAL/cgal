@@ -7,6 +7,7 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/SMDS_3/Dump_c3t3.h>
+#include <CGAL/Real_timer.h>
 
 #include <sstream>
 
@@ -86,6 +87,7 @@ struct Polyhedron_tester : public Tester<K>
 };
 
 int main() {
+  CGAL::Real_timer rt; rt.start(); {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   Polyhedron_tester<K> test_epic;
   std::cerr << "Mesh generation from a polyhedron:\n";
@@ -97,5 +99,6 @@ int main() {
   test_epic_p.polyhedron();
 #endif
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

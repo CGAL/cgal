@@ -20,6 +20,7 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <fstream>
 
@@ -110,6 +111,7 @@ struct Polyhedral_complex_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   Polyhedral_complex_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedral complex:\n";
   test_epic();
@@ -120,5 +122,6 @@ int main()
   test_epic_p();
 #endif
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

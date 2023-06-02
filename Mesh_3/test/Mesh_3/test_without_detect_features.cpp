@@ -62,13 +62,19 @@ struct Tester {
 
 int main(int argc, char*argv[])
 {
+    int res = 0;
+  CGAL::Real_timer rt; rt.start(); {
+    std::cout << "Start test_without_detect_features" << std::endl;
   const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/cube.off");
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Mesh_polyhedron_3<K>::type                    Polyhedron;
   typedef CGAL::Surface_mesh<K::Point_3>                      Surface_mesh;
 
-  return
-    Tester<K, Polyhedron>()(fname, "out-polyhedron.mesh") |
+  res =
+     Tester<K, Polyhedron>()(fname, "out-polyhedron.mesh") |
     Tester<K, Surface_mesh>()(fname, "out-surface_mesh.mesh");
+
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
+  return res;
 }

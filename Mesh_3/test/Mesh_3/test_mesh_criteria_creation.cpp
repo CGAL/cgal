@@ -2,6 +2,7 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#include <CGAL/Real_timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -23,6 +24,8 @@ using namespace CGAL::parameters;
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
+    std::cout << "Start test_mesh_criteria_creation"<< std::endl;
   Tr::Point p1(0,0,0);
   Tr::Point p2(1,0,0);
   Tr::Point p3(0,1,0);
@@ -210,4 +213,5 @@ int main()
   Mc cc12(cell_sizing_field = 12);
   Mc cc12b(cell_sizing_field = 12, cell_min_size = 2);
   Mc cc13(sizing_field = 13);
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
 }

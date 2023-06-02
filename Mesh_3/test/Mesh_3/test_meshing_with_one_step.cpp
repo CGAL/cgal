@@ -1,4 +1,4 @@
-#define CGAL_MESH_3_VERBOSE 1
+//#define CGAL_MESH_3_VERBOSE 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -9,6 +9,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
+#include <CGAL/Real_timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -36,6 +37,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
+  CGAL::Real_timer rt; rt.start(); {
   const char* fname = (argc>1)?argv[1]:"data/sphere.off";
   // Create input polyhedron
   Polyhedron polyhedron;
@@ -77,5 +79,6 @@ int main(int argc, char*argv[])
 //  CGAL::IO::write_MEDIT(medit_file, c3t3);
 //  medit_file.close();
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

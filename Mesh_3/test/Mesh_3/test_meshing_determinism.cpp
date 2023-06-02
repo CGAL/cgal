@@ -10,6 +10,7 @@
 #include <CGAL/perturb_mesh_3.h>
 #include <CGAL/exude_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/Real_timer.h>
 
 #include <cassert>
 #include <fstream>
@@ -156,6 +157,7 @@ void test()
 
 int main(int, char*[])
 {
+  CGAL::Real_timer rt; rt.start(); {
   std::cout << "Sequential test" << std::endl;
   test<CGAL::Sequential_tag>();
 
@@ -164,4 +166,5 @@ int main(int, char*[])
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test<CGAL::Parallel_tag>();
 #endif
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
 }

@@ -9,6 +9,7 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/Sizing_field_with_aabb_tree.h>
+#include <CGAL/Real_timer.h>
 
 
 template <typename K,
@@ -70,6 +71,8 @@ struct Tester
 
 int main(int argc, char* argv[])
 {
+  CGAL::Real_timer rt; rt.start(); {
+  std::cout << "Start test_min_edge_length"<< std::endl;
   const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/dragknob.off");
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -82,5 +85,6 @@ int main(int argc, char* argv[])
   Tester<K, Surface_mesh, CGAL::Parallel_tag>()(fname, "out-dragknob-parallel");
 #endif
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

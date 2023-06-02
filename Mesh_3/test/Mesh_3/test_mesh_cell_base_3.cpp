@@ -8,6 +8,7 @@
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/tags.h>
 
@@ -16,6 +17,8 @@
 #include <cassert>
 
 int main (int argc, char** argv){
+  CGAL::Real_timer rt; rt.start(); {
+  std::cout << "Start test_mesh_cell_base_3"<< std::endl;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel                 K;
   typedef CGAL::Polyhedral_mesh_domain_with_features_3<K>                     Polyhedral_mesh_domain;
 
@@ -97,5 +100,6 @@ int main (int argc, char** argv){
   out << poly;
 
   assert(is_valid(poly));
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

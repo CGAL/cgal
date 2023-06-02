@@ -16,7 +16,7 @@
 
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include "test_utilities.h"
-
+#include <CGAL/Real_timer.h>
 #include <vector>
 #include <list>
 #include <utility>
@@ -228,6 +228,7 @@ private:
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   std::cout << "Test corners" << std::endl;
   Domain_with_polyline_tester domain_corner_tester;
   domain_corner_tester.build_corners();
@@ -248,6 +249,6 @@ int main()
   domain_cycle_tester.test_cycle_corners();
   domain_cycle_tester.test_cycles();
   domain_cycle_tester.test_geodesic_distance();
-
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

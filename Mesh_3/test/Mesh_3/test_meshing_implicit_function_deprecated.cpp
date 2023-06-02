@@ -1,5 +1,6 @@
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/disable_warnings.h>
+#include <CGAL/Real_timer.h>
 
 #include "test_meshing_utilities.h"
 
@@ -89,6 +90,7 @@ struct Implicit_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   Implicit_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from an implicit function:\n";
   test_epic.implicit();
@@ -98,5 +100,6 @@ int main()
   std::cerr << "Parallel mesh generation from an implicit function:\n";
   test_epic_p.implicit();
 #endif
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

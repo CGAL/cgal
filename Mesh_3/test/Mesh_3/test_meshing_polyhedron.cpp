@@ -19,6 +19,7 @@
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/SMDS_3/Dump_c3t3.h>
 
@@ -109,6 +110,7 @@ struct Polyhedron_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer rt; rt.start(); {
   Polyhedron_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron:\n";
   test_epic.polyhedron();
@@ -122,5 +124,6 @@ int main()
             << "The parallel version cannot be tested.\n";
 #endif
 
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return EXIT_SUCCESS;
 }

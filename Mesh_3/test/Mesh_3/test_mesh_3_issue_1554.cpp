@@ -10,6 +10,7 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <fstream>
 
@@ -48,6 +49,9 @@ Tr::Bare_point wc_circumcenter(const Tr& tr,
 
 int main(int argc, char*argv[])
 {
+  int return_code = 0;
+  CGAL::Real_timer rt; rt.start(); {
+  std::cout << "Start test__mesh_3_issue_1554"<< std::endl;
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   // Create domain
   std::ifstream in(fname);
@@ -71,7 +75,7 @@ int main(int argc, char*argv[])
   Gt::Construct_weighted_circumcenter_3 w_circumcenter =
       c3t3.triangulation().geom_traits().construct_weighted_circumcenter_3_object();
 
-  int return_code = 0;
+
   for(C3t3::Cells_in_complex_iterator cit = c3t3.cells_in_complex_begin();
       cit != c3t3.cells_in_complex_end();
       ++cit)
@@ -102,5 +106,6 @@ int main(int argc, char*argv[])
   }
   std::cout << c3t3.triangulation().number_of_vertices() << std::endl;
   // Output
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
   return return_code;
 }
