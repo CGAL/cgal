@@ -89,10 +89,12 @@ public:
 		return vertex(i);
 	}
 
+	// TODO: need this?
     bool operator==(Polyline_d<Traits, Container> const& other) const {
 		return std::equal(points.cbegin(), points.cend(), other.points.cbegin(), other.points.cend());
 	}
 
+	// TODO: need this?
     bool operator!=(Polyline_d<Traits, Container> const& other) const {
 		return !(*this == other);
 	}
@@ -119,6 +121,7 @@ public:
 	// distance_t getUpperBoundDistance(Curve const& other) const;
     // 
 	// // TODO: have to handle "filename" member differently in the Fréchet code
+	// // -> or don't maintain at all as there should be another identifier
 	////////////////////
 
     Point_d front() const {
@@ -128,14 +131,19 @@ public:
 		return points.back();
 	}
 
-	// TODO: add other functions here?
 	// TODO: make sure to update bbox here
+	// TODO: add other functions here!
     void push_back(Point_d const& point);
 
 	Vertex_const_iterator begin() { return points.begin(); }
 	Vertex_const_iterator end() { return points.end(); }
 	Vertex_const_iterator begin() const { return points.cbegin(); }
 	Vertex_const_iterator end() const { return points.cend(); }
+
+	// TODO: for bounding box, either
+	// * completely recompute from scratch
+	// * maintain bounding box with "valid" flag and update directly on insert, on remove only flag not "valid"
+	// * do not include in this class and instead maintain in utility class
 
 	// TODO: use CGAL bounding box here
 	// struct ExtremePoints { distance_t min_x, min_y, max_x, max_y; };
