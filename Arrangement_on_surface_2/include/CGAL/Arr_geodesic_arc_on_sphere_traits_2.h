@@ -2916,8 +2916,8 @@ public:
   typedef double                                        Approximate_number_type;
   typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
   typedef Arr_extended_direction_3<Approximate_kernel>  Approximate_point_2;
-  typedef CGAL::Vector_3<Approximate_kernel>            Approximate_vector_3;
-  typedef Approximate_kernel::Direction_3               Approximate_direction_3;
+  typedef CGAL::Vector_3<Approximate_kernel>    Approximate_kernel_vector_3;
+  typedef Approximate_kernel::Direction_3       Approximate_kernel_direction_3;
 
   class Approximate_2 {
   public:
@@ -2970,12 +2970,12 @@ public:
 
       // Define the spanning vectors of the coordinate system where we are 
       //   going to make the approximation:
-      auto axisX = vs; // x-axis will coincide with the vector from the 
-                       //   origin to the normalized SOURCE-vector
-      auto axisZ = vn; // this will make sure that the orientation of the 
-                       //   approximated curve is consistent with the curve
-      auto axisY = CGAL::cross_product(axisZ, axisX);
-      normalize(axisY);
+      auto axis_x = vs; // x-axis will coincide with the vector from the 
+                        //   origin to the normalized SOURCE-vector
+      auto axis_z = vn; // this will make sure that the orientation of the 
+                        //   approximated curve is consistent with the curve
+      auto axis_y = CGAL::cross_product(axis_z, axis_x);
+      normalize(axis_y);
 
       // In this coordinate system the source has local coords (0,0), hence its
       //   initial angle with the X-axis is 0 degrees (radians)
@@ -2983,31 +2983,31 @@ public:
       Approximate_number_type  theta;
       if (xcv.is_full())
       {
-          theta = 2.0 * CGAL_PI;
+        theta = 2.0 * CGAL_PI;
       }
       else
       {
-          auto ltx = CGAL::scalar_product(axisX, vt);
-          auto lty = CGAL::scalar_product(axisY, vt);
-          theta = std::atan2(lty, ltx);
-          if (theta < 0)
-              theta += 2.0 * CGAL_PI;
+        auto ltx = CGAL::scalar_product(axis_x, vt);
+        auto lty = CGAL::scalar_product(axis_y, vt);
+        theta = std::atan2(lty, ltx);
+        if (theta < 0)
+          theta += 2.0 * CGAL_PI;
       }
 
       // compute the number of divisions given the requested error
       const Approximate_number_type  R = 1.0; // radius is always 1
       Approximate_number_type dtheta = 2.0 * std::acos(1 - error / R);
-      int N = std::ceil(theta / dtheta);
-      dtheta = theta / N;
+      int num_segs = std::ceil(theta / dtheta);
+      dtheta = theta / num_segs;
 
       // generate the points approximating the curve
       const auto loc = Approximate_point_2::NO_BOUNDARY_LOC;
       *oi++ = get_approximate_point_2(vs, loc); // source vector
-      for (int i = 1; i < N; ++i)
+      for (int i = 1; i < num_segs; ++i)
       {
-          const Approximate_number_type angle = i * dtheta;
-          auto p = std::cos(angle) * axisX + std::sin(angle) * axisY;
-          *oi++ = get_approximate_point_2(p, loc);
+        const Approximate_number_type angle = i * dtheta;
+        auto p = std::cos(angle) * axis_x + std::sin(angle) * axis_y;
+        *oi++ = get_approximate_point_2(p, loc);
       }
       *oi++ = get_approximate_point_2(vt, loc); // target vector
 
@@ -3015,19 +3015,21 @@ public:
     }
 
   private:
-    Approximate_vector_3 get_approximate_vector_3(const Approximate_point_2& p) 
+    Approximate_kernel_vector_3 get_approximate_vector_3(const 
+                                                Approximate_point_2& p) const {
+      return Approximate_kernel_vector_3(p.dx(), p.dy(), p.dz()); 
+    };
+
+    Approximate_kernel_vector_3 get_approximate_vector_3(const Direction_3& d) 
                                                                         const {
-      return Approximate_vector_3(p.dx(), p.dy(), p.dz()); 
+      return Approximate_kernel_vector_3(CGAL::to_double(d.dx()), 
+                              CGAL::to_double(d.dy()), CGAL::to_double(d.dz()));
     };
 
-    Approximate_vector_3 get_approximate_vector_3(const Direction_3& d) const {
-      return Approximate_vector_3(CGAL::to_double(d.dx()), 
-        CGAL::to_double(d.dy()), CGAL::to_double(d.dz()));
-    };
-
-    Approximate_point_2 get_approximate_point_2(const Approximate_vector_3& v,
+    Approximate_point_2 get_approximate_point_2(
+                          const Approximate_kernel_vector_3& v, 
                           const Approximate_point_2::Location_type loc) const {
-      Approximate_direction_3  d(v.x(), v.y(), v.z());
+      Approximate_kernel_direction_3  d(v.x(), v.y(), v.z());
       return Approximate_point_2(d, loc);
     }
   };
