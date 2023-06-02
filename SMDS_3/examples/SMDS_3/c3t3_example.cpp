@@ -33,13 +33,20 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation>;
 
 int main(int argc, char* argv[])
 {
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
   std::string filename = (argc > 1) ? std::string(argv[1])
                        : CGAL::data_file_path("meshes/elephant.mesh");
 
   Triangulation tr;
 
   std::ifstream is(filename, std::ios_base::in);
-  CGAL::IO::read_MEDIT(is, tr);
+  if(!CGAL::IO::read_MEDIT(is, tr))
+  {
+    std::cerr << "Failed to read" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // [call a remeshing algorithm]
 
@@ -49,8 +56,12 @@ int main(int argc, char* argv[])
 
   Triangulation tr2;
   std::ifstream is2("after_remeshing.mesh");
-  CGAL::IO::read_MEDIT(is2, tr2);
-  is2.close();
+  if(!CGAL::IO::read_MEDIT(is2, tr2))
+  {
+    std::cerr << "Failed to read (#2)" << std::endl;
+    return EXIT_FAILURE;
+  }
 
+  std::cout << "Done" << std::endl;
   return EXIT_SUCCESS;
 }

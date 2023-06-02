@@ -157,6 +157,7 @@ Release date: June 2023
 -   Deprecated two overloads of the function
     [`refine_Delaunay_mesh()`](https://doc.cgal.org/5.6/Mesh_2/group__PkgMesh2Functions.html),
     and replaced them with versions using function named parameters.
+-   Periodic Mesh Generation now supports non-cubic domains.
 
 ### [2D Hyperbolic Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgHyperbolicTriangulation2)
 

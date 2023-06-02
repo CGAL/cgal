@@ -27,7 +27,8 @@ MathJax.Hub.Config(
           aff: [ "{\\operatorname{aff}}", 0],
           Ac: [ "{\\cal A}", 0],
           Sc: [ "{\\cal S}", 0],
-      }
+      },
+      equationNumbers: { autoNumber: "AMS" }
   }
 }
 );
