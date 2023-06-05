@@ -1051,16 +1051,18 @@ public:
           previous_bitvalue[2] = is_patch_inside_tm1.test(patch_id_q1);
           previous_bitvalue[3] = is_patch_inside_tm1.test(patch_id_q2);
 
-#ifndef CGAL_NDEBUG
+/*
+          // Note that this code is commented as impossible_operation flag could be set thanks to
+          // another polyline and such a `continue` would make us miss it.
           if (is_tm1_closed && is_tm2_closed)
           {
-            if (!patch_status_was_not_already_set[0] &&
-                !patch_status_was_not_already_set[1] &&
-                !patch_status_was_not_already_set[2] &&
-                !patch_status_was_not_already_set[3])
-              continue; // all patches were already classified, no need to redo it
+             if (!patch_status_was_not_already_set[0] &&
+                 !patch_status_was_not_already_set[1] &&
+                 !patch_status_was_not_already_set[2] &&
+                 !patch_status_was_not_already_set[3])
+               continue; // all patches were already classified, no need to redo it
           }
-#endif
+*/
 
           // check incompatibility of patch classifications
           auto inconsistent_classification = [&]()
@@ -1084,6 +1086,25 @@ public:
             }
             return false;
           };
+#ifndef CGAL_NDEBUG
+          auto debug_check_consistency = [&]()
+          {
+            if (!used_to_clip_a_surface && !used_to_classify_patches)
+            {
+              CGAL_assertion( patch_status_was_not_already_set[0] || (previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1]) );
+              CGAL_assertion( patch_status_was_not_already_set[1] || (previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2]) );
+              CGAL_assertion( patch_status_was_not_already_set[2] || (previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1]) );
+              CGAL_assertion( patch_status_was_not_already_set[3] || (previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2]) );
+            }
+          };
+          is_patch_inside_tm2.reset(patch_id_p1);
+          is_patch_inside_tm2.reset(patch_id_p2);
+          is_patch_inside_tm1.reset(patch_id_q1);
+          is_patch_inside_tm1.reset(patch_id_q2);
+#else
+          auto debug_check_consistency = [&](){};
+
+#endif
 
           //indicates that patch status will be updated
           patch_status_not_set_tm1.reset(patch_id_p1);
@@ -1140,6 +1161,7 @@ public:
             if ( q2_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q2); //case 1
             else is_patch_inside_tm2.set(patch_id_p2); //case 2
             if (inconsistent_classification()) return;
+            debug_check_consistency();
             continue;
           }
           else{
@@ -1171,6 +1193,7 @@ public:
                 is_patch_inside_tm2.set(patch_id_p2);
               } //else case 4
               if (inconsistent_classification()) return;
+              debug_check_consistency();
               continue;
             }
             else
@@ -1202,6 +1225,7 @@ public:
                   is_patch_inside_tm2.set(patch_id_p1);
                 } // else case 6
                 if (inconsistent_classification()) return;
+                debug_check_consistency();
                 continue;
               }
               else{
@@ -1231,6 +1255,7 @@ public:
                   if ( q1_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q1);  //case 7
                   else is_patch_inside_tm2.set(patch_id_p1); //case 8
                   if (inconsistent_classification()) return;
+                  debug_check_consistency();
                   continue;
                 }
               }
@@ -1393,13 +1418,7 @@ public:
             }
           }
           if (inconsistent_classification()) return;
-          if (!used_to_clip_a_surface && !used_to_classify_patches)
-          {
-            CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
-            CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
-            CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
-            CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
-          }
+          debug_check_consistency();
         }
     }
 
