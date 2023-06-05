@@ -8,6 +8,7 @@ find_package(CGAL REQUIRED)
 
 # create a target per cppfile
 create_single_source_cgal_program("triangle_mesh_wrap.cpp")
+create_single_source_cgal_program("triangle_soup_wrap.cpp")
 create_single_source_cgal_program("point_set_wrap.cpp")
 create_single_source_cgal_program("wrap_from_cavity.cpp")
 create_single_source_cgal_program("mixed_inputs_wrap.cpp")

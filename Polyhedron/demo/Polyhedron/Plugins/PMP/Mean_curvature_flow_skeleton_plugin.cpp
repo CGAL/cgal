@@ -38,13 +38,6 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-namespace CGAL {
-
-template<>
-void set_halfedgeds_items_id (Scene_face_graph_item::Face_graph&)
-{}
-
-} // namespace CGAL
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
@@ -181,7 +174,7 @@ public:
             [this]{QMessageBox::about(mw, QString("Help"),
                                     QString("This widget gives access to the low level steps of the mean curvature flow sketonization algorithm. "
                                             "The algorithm is iterative. Each iteration consist in calls to Contract, Collapse, Split, "
-                                            "and Degeneracy (repectively mesh contraction, edge collapse, edge split, and degenerate edge"
+                                            "and Degeneracy (respectively mesh contraction, edge collapse, edge split, and degenerate edge"
                                             "removal). The skeleton extraction can be called at any time but for a better result it should be"
                                             "called when the iterations are converging. A segmentation of the surface can be extracted using"
                                             "the distance of the mesh to the skeleton computed.\n"
@@ -363,8 +356,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   QElapsedTimer time;
   time.start();
 
-    // init the polyhedron simplex indices
-  CGAL::set_halfedgeds_items_id(*item->input_triangle_mesh);
   boost::property_map<Face_graph, boost::vertex_index_t>::type
     vimap = get(boost::vertex_index, *item->input_triangle_mesh);
 

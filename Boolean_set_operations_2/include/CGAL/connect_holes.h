@@ -114,7 +114,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   General_polygon_set_2 gps(pwh);
   Arrangement_2         arr = gps.arrangement();
 
-  // The resulting arrangment contains a single hole in the unbounded face,
+  // The resulting arrangement contains a single hole in the unbounded face,
   // which comprises a face f, with several holes in its interior.
   // Go over these holes and pick the topmost vertex in each hole.
   const Face_handle                      uf = arr.unbounded_face();
@@ -133,7 +133,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   V_map top_vertices(false ,arr.number_of_faces());
 
   /*traversal of arrangement face holes - a hole in the face
-  in arranements is disjoint from the outer boundary (different from BOP
+  in arrangements is disjoint from the outer boundary (different from BOP
   where the hole can have vertices along the outer boundary). We look for
   holes only inside faces that are part of the point set. This
   guarantees that if the input PWH had holes with vertices on the outer
@@ -213,7 +213,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
     else if (CGAL::assign (he, vrs_iter->second.second))
     {
       // v_top lies below the interior of the hafledge he_above:
-      // Find the intersection of this halfegde with a vertical ray
+      // Find the intersection of this halfedge with a vertical ray
       // emanating from v_top.
       he_above = arr.non_const_handle (he);
 
@@ -329,7 +329,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
     This is true also for traversing starting with an antenna halfedge*/
     if (marking_hole_state) {
        /*Add current hole to search structure.
-       we traverse the hole fully an if we "incidently" traverse
+       we traverse the hole fully an if we "incidentally" traverse
        another hole as well (joined by a vertice) both will be traversed
        completely*/
 
@@ -432,7 +432,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
       } else {
         /*the case where target() is a part of several holes, and next is a
         boundary of a hole that has been traversed. This requires
-        to continue "traversal alongside all edges whose target is also
+        to continue traversal alongside all edges whose target is also
         curr->target() to keep looking for a hole that hasn't been traversed.
         we do not insert the target to the output set to avoid duplication
         with cases 2 and 3*/

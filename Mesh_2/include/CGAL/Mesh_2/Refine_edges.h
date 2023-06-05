@@ -41,7 +41,7 @@ namespace Mesh_2 {
 
   namespace details {
 
-    /** This class defines several auxiliary types for \c Refine_edges. */
+    /** This class defines several auxiliary types for `Refine_edges`. */
     template <typename Tr>
     struct Refine_edges_base_types
     {
@@ -50,7 +50,7 @@ namespace Mesh_2 {
       typedef std::pair<Vertex_handle,
                         Vertex_handle> Constrained_edge;
 
-      /** Object predicate that tests if a given \c Constrained_Edge is
+      /** Object predicate that tests if a given `Constrained_Edge` is
           really an edge of the triangulation and is constrained.
       */
       class Is_a_constrained_edge {
@@ -98,7 +98,7 @@ namespace Mesh_2 {
     typedef typename Tr::Point Point;
     typedef typename Tr::Geom_traits Geom_traits;
 
-    /** Operator that takes an edge (\c fh, \c index). */
+    /** Operator that takes an edge (`fh`, `index`). */
     bool operator()(const Tr& tr,
                     const Face_handle& fh,
                     const int i) const
@@ -117,7 +117,7 @@ namespace Mesh_2 {
               );
     }
 
-    /** Operator that takes an edge (\c va, \c vb). */
+    /** Operator that takes an edge (`va`, `vb`). */
     bool operator()(const Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb) const
@@ -132,7 +132,7 @@ namespace Mesh_2 {
     }
 
     /**
-     * Operator that takes an edge (\c fh, \c index) and a point \c p.
+     * Operator that takes an edge (`fh`, `index`) and a point `p`.
      * Tests if the point encroached the edge.
      */
     bool operator()(const Tr& tr,
@@ -147,7 +147,7 @@ namespace Mesh_2 {
     }
 
     /**
-     * Operator that takes an edge (\c va, \c vb) and a point \c p.
+     * Operator that takes an edge (`va`, `vb`) and a point `p`.
      * Tests if the point encroached the edge.
      */
     bool operator()(const Tr& tr,
@@ -179,7 +179,7 @@ namespace Mesh_2 {
     typedef typename Tr::Point Point;
     typedef typename Tr::Geom_traits Geom_traits;
 
-    /** Operator that takes an edge (\c fh, \c index). */
+    /** Operator that takes an edge (`fh`, `index`). */
     bool operator()(const Tr& tr,
                     const Face_handle& fh,
                     const int i) const
@@ -197,7 +197,7 @@ namespace Mesh_2 {
       return aux_outside_of_circle(tr, vi, vb, va, mvi);
     }
 
-    /** Operator that takes an edge (\c va, \c vb). */
+    /** Operator that takes an edge (`va`, `vb`). */
     bool operator()(const Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb) const
@@ -269,7 +269,7 @@ namespace Mesh_2 {
  * \param Is_locally_conform defines the locally conform criterion: Gabriel
  *        or Delaunay. It defaults to the Garbriel criterion.
  * \param Container is the type of container. It defaults to a filtered
- *        queue of \c Vertex_handle pair (see \c Filtered_queue_container).
+ *        queue of `Vertex_handle` pair (see `Filtered_queue_container`).
  */
 template <
   class Tr,
@@ -301,7 +301,7 @@ public:
   template <class Faces_level>
   friend class Refine_edges_visitor;
 protected:
-  /* --- protected datas --- */
+  /* --- protected data --- */
 
   Tr& tr; /**< The triangulation itself. */
 
@@ -569,7 +569,7 @@ public:
     std::cerr << "E";
 #endif
     // @todo Perhaps we should remove destroyed edges too.
-    // @warning This code has been rewroten!
+    // @warning This code has been rewritten!
 
     Face_circulator fc = tr.incident_faces(v), fcbegin(fc);
     if( fc == 0 ) return;
@@ -586,7 +586,7 @@ public:
     Face_handle fh;
     int index = 0; // Avoids a warning.
                    // We know that is_edge must return true, and is_edge will assign something to index
-                   // but the compiler does not so it will issue a maybe uninitialized warning
+                   // but the compiler does not so it will issue a maybe-uninitialized warning
 
     CGAL_assume_code(bool is_edge = )
     tr.is_edge(va, v, fh, index);
@@ -615,7 +615,7 @@ public:
 protected:
   /** \name Auxiliary functions */
 
-  /** Add an \c Edge \c e in the queue. */
+  /** Add an edge `e` in the queue. */
   void add_constrained_edge_to_be_conformed(const Edge& e)
   {
     const Vertex_handle& va = e.first->vertex(tr. cw(e.second));
@@ -624,7 +624,7 @@ protected:
                                                    // base class
   }
 
-  /** Add an edge (\c va,\c  vb) in the queue. */
+  /** Add an edge `(va, vb)` in the queue. */
   void add_constrained_edge_to_be_conformed(const Vertex_handle& va,
                                             const Vertex_handle& vb)
   {
@@ -632,7 +632,7 @@ protected:
                                                    // base class
   }
 
-private: /** \name DEBUGGING TYPES AND DATAS */
+private: /** \name DEBUGGING TYPES AND DATA */
   class From_pair_of_vertex_to_edge
     : public CGAL::cpp98::unary_function<Constrained_edge, Edge>
   {

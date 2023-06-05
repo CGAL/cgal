@@ -2,7 +2,7 @@
 # CGAL_SetupBoost
 # ---------------
 #
-# The module searchs for the `Boost` headers and library, by calling
+# The module searches for the `Boost` headers and library, by calling
 #
 # .. code-block:: cmake
 #

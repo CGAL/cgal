@@ -29,7 +29,7 @@
 #include <utility>
 #include <unordered_set>
 
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
@@ -67,8 +67,8 @@ public:
     , v0_init(e.first->vertex(e.second))
     , v1_init(e.first->vertex(e.third))
   {
-    typedef std::array<int, 3> Facet; // 3 = id
-    typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
+    typedef std::array<int, 3> Facet;
+    typedef std::array<int, 4> Tet;
 
     std::unordered_set<Vertex_handle> vertices_to_insert;
     for (Cell_handle ch : cells_to_insert)
@@ -96,23 +96,25 @@ public:
       }
     }
 
-    std::vector<Tet_with_ref> finite_cells;
+    std::vector<Tet> finite_cells;
+    std::vector<int> subdomains;
     for (Cell_handle ch : cells_to_insert)
     {
-      Tet_with_ref t = { { v2i.at(ch->vertex(0)),
-                           v2i.at(ch->vertex(1)),
-                           v2i.at(ch->vertex(2)),
-                           v2i.at(ch->vertex(3)),
-                           ch->subdomain_index() } };
-      finite_cells.push_back(t);
+      finite_cells.push_back( { v2i.at(ch->vertex(0)),
+                                v2i.at(ch->vertex(1)),
+                                v2i.at(ch->vertex(2)),
+                                v2i.at(ch->vertex(3)) } );
+      subdomains.push_back(ch->subdomain_index());
     }
 
     // finished
     std::vector<Vertex_handle> new_vertices;
     std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
-     if (CGAL::build_triangulation<Tr, false>(triangulation,
-                                              points, finite_cells, border_facets,
-                                              new_vertices, false/*verbose*/))
+    if (CGAL::SMDS_3::build_triangulation_impl(
+            triangulation, points, finite_cells, subdomains, border_facets,
+            new_vertices, /*verbose*/ false,
+            /*replace_domain_0*/ false,
+            /*allow_non_manifold*/false))
     {
       CGAL_assertion(triangulation.tds().is_valid());
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);

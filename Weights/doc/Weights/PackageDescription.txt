@@ -513,7 +513,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \cgalPkgPicture{weights_logo_120x120.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Dmitry Anisimov}
+\cgalPkgAuthor{Dmitry Anisimov}
 \cgalPkgDesc{Many geometric algorithms rely on weighted constructions. This package
 provides a simple and unified interface to different types of weights. In particular,
 it includes numerous weights with a simple analytic expression, generalized barycentric

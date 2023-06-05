@@ -24,13 +24,12 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 // Criteria
 using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
   /// [Loads image]
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/liver.inr.gz");
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/420.inr");// liver.inr.gz");
   CGAL::Image_3 image;
   if(!image.read(fname)){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
@@ -45,21 +44,24 @@ int main(int argc, char* argv[])
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-                                                    weights = img_weights,
-                                                    relative_error_bound = 1e-6);
+                                                    params::weights(img_weights).
+                                                            relative_error_bound(1e-6));
   /// [Domain creation]
 
-  // Mesh criteria
-  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=0.5,
-                         cell_radius_edge_ratio=3, cell_size=8);
+  /// [Mesh criteria]
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(6).facet_distance(0.5).
+                                 cell_radius_edge_ratio(3).cell_size(8));
+  /// [Mesh criteria]
 
   /// [Meshing]
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude(), params::no_perturb());
   /// [Meshing]
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
+
   std::ofstream bin_file("out.binary.cgal", std::ios_base::binary);
   CGAL::IO::save_binary_file(bin_file, c3t3);
 

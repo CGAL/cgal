@@ -38,6 +38,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_cell_primitive.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/IO/Color.h>
 
 #include "Scene_polygon_soup_item.h"
 
@@ -188,7 +189,7 @@ public :
   }
 
   void addTriangle(const Tr::Bare_point& pa, const Tr::Bare_point& pb,
-                   const Tr::Bare_point& pc, const CGAL::Color color)
+                   const Tr::Bare_point& pc, const CGAL::IO::Color color)
   {
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
@@ -704,6 +705,9 @@ create_histogram(const T3& triangulation, double& min_value, double& max_value)
     cit != triangulation.finite_cells_end();
     ++cit)
   {
+    if(cit->subdomain_index() == 0)
+      continue;
+
 #ifdef CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
     if (triangulation.in_dimension(cit->vertex(0)) <= 1
       || triangulation.in_dimension(cit->vertex(1)) <= 1
@@ -798,6 +802,8 @@ Scene_triangulation_3_item::build_histogram()
   {
     max_size = (std::max)(max_size, *it);
   }
+  if(max_size == 0)
+    return;
 
   // colored histogram
   int j = 0;
@@ -1253,7 +1259,7 @@ void Scene_triangulation_3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
-  CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
+  CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
   if(is_filterable)
   {
@@ -1355,7 +1361,7 @@ void Scene_triangulation_3_item_priv::computeSpheres()
     typedef unsigned char UC;
     tr_vertices.push_back(*vit);
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
-                        CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
+                        CGAL::IO::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
 
   }
   spheres->invalidateOpenGLBuffers();

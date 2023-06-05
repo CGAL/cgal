@@ -22,6 +22,7 @@
 #endif
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/use.h>
 #include <vector>
 
 namespace CGAL {
@@ -107,6 +108,11 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             Visitor& visitor,
             const typename Kernel::FT max_squared_distance)
 {
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+  CGAL_USE(use_cdt);
+  CGAL_USE(max_squared_distance);
+#endif
+
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -174,7 +180,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
 
 //#define CGAL_USE_WEIGHT_INCOMPLETE
 #ifdef CGAL_USE_WEIGHT_INCOMPLETE
-  typedef CGAL::internal::Weight_calculator<Weight_incomplete<CGAL::internal::Weight_min_max_dihedral_and_area>,
+  typedef CGAL::internal::Weight_calculator<CGAL::internal::Weight_incomplete<CGAL::internal::Weight_min_max_dihedral_and_area>,
         CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
 #else
   typedef CGAL::internal::Weight_calculator<CGAL::internal::Weight_min_max_dihedral_and_area,
@@ -195,7 +201,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   triangulate_hole_polyline(P, Q, tracer, WC(is_valid), visitor, use_delaunay_triangulation, skip_cubic_algorithm, k);
 #else
   // get actual weight in Weight_incomplete
-  triangulate_hole_polyline(P, Q, tracer, WC(is_valid), visitor, use_delaunay_triangulation, k).weight;
+  triangulate_hole_polyline(P, Q, tracer, WC(is_valid), visitor, use_delaunay_triangulation, skip_cubic_algorithm, k).weight;
 #endif
 
 #ifdef CGAL_PMP_HOLE_FILLING_DEBUG

@@ -44,7 +44,7 @@ int main()
             Splitter(),
             Traits(ppmap));
 
-  // search K nearest neighbours
+  // search K nearest neighbors
   Point_3 query(0.0, 0.0, 0.0);
   Distance tr_dist(ppmap);
 

@@ -16,7 +16,7 @@ It defaults to:
 \code
   CGAL::Triangulation_data_structure_2<
     CGAL::Apollonius_graph_vertex_base_2<Gt,true>,
-    CGAL::Triangulation_face_base_2<Gt> >`
+    CGAL::Triangulation_face_base_2<Gt> >
 \endcode
 
 \cgalHeading{Traversal of the Apollonius Graph}

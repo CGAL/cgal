@@ -85,7 +85,7 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
    case CDT::EDGE:
     {
       CGAL_TRG_PRINT_DEBUG("locate type = edge"<<li );
-      //li is the index of the vertex OPOSITE to the edge
+      //li is the index of the vertex OPPOSITE to the edge
       if ( cdt.is_constrained(CDT_Edge(fh,li)) )
       {  //the edge found is an edge in the plannar map
         CGAL_TRG_PRINT_DEBUG("the edge is a constrained");
@@ -207,7 +207,7 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
 
 
 //----------------------------------------------------
-/*! triangulate the arrangement into a cdt (Constaint Delauney Triangulation):
+/*! triangulate the arrangement into a cdt (Constraint Delauney Triangulation):
 go over all halfedges, and insert each halfedge as a constraint to the cdt.
 */
 template <class Arrangement_2>
@@ -217,7 +217,7 @@ void Arr_triangulation_point_location<Arrangement_2>::clear_triangulation ()
 }
 
 //----------------------------------------------------
-/*! triangulate the arrangement into a cdt (Constaint Delauney Triangulation):
+/*! triangulate the arrangement into a cdt (Constraint Delauney Triangulation):
 go over all halfedges, and insert each halfedge as a constraint to the cdt.
 */
 template <class Arrangement_2>

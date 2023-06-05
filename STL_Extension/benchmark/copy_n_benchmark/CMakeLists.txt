@@ -6,8 +6,5 @@ project(copy_n_benchmark_example)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 create_single_source_cgal_program("copy_n_benchmark.cpp")
-
 create_single_source_cgal_program("copy_n_use_case_benchmark.cpp")

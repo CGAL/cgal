@@ -7,35 +7,21 @@ project(Point_set_3_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("point_set.cpp")
 create_single_source_cgal_program("point_set_property.cpp")
 create_single_source_cgal_program("point_set_read_xyz.cpp")
 create_single_source_cgal_program("point_set_advanced.cpp")
 
 set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-create_single_source_cgal_program("point_set_read_ply.cpp" CXX_FEATURES
-                                  ${needed_cxx_features})
+create_single_source_cgal_program("point_set_read_ply.cpp" CXX_FEATURES ${needed_cxx_features})
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
-if(EIGEN3_FOUND)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("point_set_algo.cpp")
   target_link_libraries(point_set_algo PUBLIC CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: The example 'point_set_algo' requires the Eigen library, and will not be compiled.")
 endif()
 
 create_single_source_cgal_program("draw_point_set_3.cpp")

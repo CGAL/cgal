@@ -2,7 +2,7 @@
 # CGAL_SetupLEDA
 # --------------
 #
-# The module searchs for the `LEDA` headers and library, by calling
+# The module searches for the `LEDA` headers and library, by calling
 #
 # .. code-block:: cmake
 #

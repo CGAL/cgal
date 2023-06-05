@@ -45,7 +45,7 @@ point location time is either logarithmic when LEDA's persistent
 dictionaries are present or if not then the point location time is
 worst-case linear, but experiments show often sublinear runtimes. Ray
 shooting equals point location plus a walk in the constrained
-triangulation overlayed on the plane map representation. The cost of
+triangulation overlaid on the plane map representation. The cost of
 the walk is proportional to the number of triangles passed in
 direction `d` until an obstacle is met. In a minimum weight
 triangulation of the obstacles (the plane map representing the

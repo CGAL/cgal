@@ -27,6 +27,7 @@
 #include <QMimeData>
 #include <QOpenGLFramebufferObject>
 
+#include <unordered_set>
 
 Scene::Scene(QObject* parent)
     : QStandardItemModel(parent),
@@ -220,7 +221,7 @@ Scene::erase(QList<int> indices)
 {
   if(indices.empty())
     return -1;
-  QList<CGAL::Three::Scene_item*> to_be_removed;
+  std::unordered_set<CGAL::Three::Scene_item*> to_be_removed;
   int max_index = -1;
   Q_FOREACH(int index, indices) {
     if(index < 0 || index >= m_entries.size())
@@ -238,15 +239,13 @@ Scene::erase(QList<int> indices)
       Q_FOREACH(Item_id id, group->getChildren())
       {
         CGAL::Three::Scene_item* child = group->getChild(id);
-        if(!to_be_removed.contains(child))
-          to_be_removed.push_back(child);
+        to_be_removed.insert(child);
       }
     }
-    if(!to_be_removed.contains(item))
-      to_be_removed.push_back(item);
+    to_be_removed.insert(item);
   }
 
-  Q_FOREACH(Scene_item* item, to_be_removed) {
+  for(Scene_item* item : to_be_removed) {
     Item_id removed_item = item_id(item);
     if(removed_item == -1) //case of the selection_item, for example.
       continue;
@@ -740,7 +739,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       // we distinguish the case were there is no alpha, to let the viewer
       //perform it, and the case where the pixel is not found. In the first case,
       //we erase the property, in the latter we return an empty list.
-      //According ot that, in the viewer, either we perform the picking, either we do nothing.
+      //According to that, in the viewer, either we perform the picking, either we do nothing.
       if(has_alpha()) {
         bool found = false;
         CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(picked_pixel, found) - viewer->offset();
@@ -1929,6 +1928,7 @@ void Scene::removeViewer(Viewer_interface *viewer)
   if(viewer->property("is_destroyed").toBool())
     return;
 
+  viewer->makeCurrent();
   vaos[viewer]->destroy();
   vaos[viewer]->deleteLater();
   vaos.remove(viewer);

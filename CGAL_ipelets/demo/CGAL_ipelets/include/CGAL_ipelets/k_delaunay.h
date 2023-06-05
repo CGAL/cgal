@@ -68,7 +68,7 @@ void k_delaunay(Regular& rt,input_DS& input_wpt,int order){
       pt_x = pt_x + give_x<Kernel>((**it_it_wpt));
       pt_y = pt_y + give_y<Kernel>((**it_it_wpt));
       weight = weight + order * give_weight<Kernel>((**it_it_wpt));
-      //substract form the weight the sum of the squared distances between each pair of wpoints selected
+      //subtract form the weight the sum of the squared distances between each pair of wpoints selected
       for(typename std::vector<typename input_DS::iterator>::iterator le_WptI_cgal0 = it_it_wpt+1 ;le_WptI_cgal0!=Current_sel.end();++le_WptI_cgal0){
         weight = weight - CGAL::to_double(CGAL::squared_distance(
                                             typename Kernel::Construct_point_2()(**le_WptI_cgal0),

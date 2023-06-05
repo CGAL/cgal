@@ -90,7 +90,7 @@ also added more functionality in 2008.
 
 This work was partially supported by the IST Programme of the EU as a
 Shared-cost RTD (FET Open) Project under Contract No IST-2000-26473
-(<A HREF="http://www-sop.inria.fr/prisme/ECG/">ECG</A> - Effective
+(<A HREF="https://www-sop.inria.fr/prisme/ECG/">ECG</A> - Effective
 Computational Geometry for Curves and Surfaces) and by the IST
 Programme of the 6th Framework Programme of the EU as a STREP (FET
 Open Scheme) Project under Contract No IST-006413

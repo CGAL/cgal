@@ -111,7 +111,7 @@ respective curvature line, while \f$ b_1,b_2\f$ are the directional
 derivatives of \f$ k_1,k_2\f$ along the other curvature lines.
 
 The Monge coordinate system can be computed from any \f$ d\f$-jet (\f$ d\geq
-2\f$), and so are the Monge coefficients. These informations
+2\f$), and so are the Monge coefficients. These information
 characterize the local geometry of the surface in a canonical way, and
 are the quantities returned by our algorithm.
 
@@ -277,7 +277,7 @@ vertices of a given mesh. The neighborhood of a given vertex is
 computed using rings on the triangulation. Results are twofold:
 <UL>
 <LI>a human readable text file featuring the `::CGAL::Monge_via_jet_fitting::Monge_form` and
-numerical informations on the computation: condition number and the
+numerical information on the computation: condition number and the
 PCA basis;
 <LI>another text file that records raw data (better for a visualization
 post-processing).

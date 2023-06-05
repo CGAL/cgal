@@ -6,8 +6,6 @@ project(Point_set_processing_3_Examples)
 # Find CGAL
 find_package(CGAL REQUIRED)
 
-find_package(Boost QUIET)
-
 # VisualC++ optimization for applications dealing with large data
 if(MSVC)
   # Quit warning in the lasreader
@@ -18,28 +16,17 @@ if(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
   endif()
   # Prints new compilation options
-  message(
-    STATUS
-      "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'")
-  message(
-    STATUS
-      "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'"
-  )
-  message(
-    STATUS
-      "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'"
-  )
-  message(
-    STATUS
-      "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'"
-  )
+  message(STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'")
+  message(STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'")
+  message(STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'")
+  message(STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'")
 endif()
 
 # Activate concurrency?
 option(CGAL_ACTIVATE_CONCURRENT_PSP3 "Enable concurrency" OFF)
 
 set(CGAL_libs CGAL::CGAL)
-if(CGAL_ACTIVATE_CONCURRENT_PSP3 OR ENV{CGAL_ACTIVATE_CONCURRENT_PSP3})
+if(CGAL_ACTIVATE_CONCURRENT_PSP3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_PSP3}")
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
   if(TARGET CGAL::TBB_support)
@@ -67,19 +54,17 @@ foreach(
   target_link_libraries(${target} PRIVATE ${CGAL_libs})
 endforeach()
 
-find_package(LASLIB)
+find_package(LASLIB QUIET)
 include(CGAL_LASLIB_support)
 if(TARGET CGAL::LASLIB_support)
   create_single_source_cgal_program("read_las_example.cpp")
   target_link_libraries(read_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
 else()
-  message(
-    STATUS
-      "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
+  message(STATUS "NOTICE: the LAS reader example requires LASlib and will not be compiled.")
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   set(CGAL_libs ${CGAL_libs} CGAL::Eigen3_support)
@@ -104,6 +89,7 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(orient_scanlines_example PRIVATE ${CGAL_libs}
       CGAL::Eigen3_support CGAL::LASLIB_support)
   endif()
+
   # Executables that require libpointmatcher
   find_package(libpointmatcher QUIET)
   include(CGAL_pointmatcher_support)
@@ -112,11 +98,9 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(registration_with_pointmatcher PRIVATE ${CGAL_libs}
                           CGAL::pointmatcher_support)
   else()
-    message(
-      STATUS
-        "NOTICE : the registration_with_pointmatcher test requires libpointmatcher and will not be compiled."
-    )
+    message(STATUS "NOTICE: registration with pointmatcher requires libpointmatcher and will not be compiled.")
   endif()
+
   # Executables that require OpenGR
   find_package(OpenGR QUIET)
   include(CGAL_OpenGR_support)
@@ -125,10 +109,7 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(registration_with_OpenGR PRIVATE ${CGAL_libs}
                           CGAL::OpenGR_support)
   else()
-    message(
-      STATUS
-        "NOTICE : registration_with_OpenGR requires OpenGR, and will not be compiled."
-    )
+    message(STATUS "NOTICE: registration_with_OpenGR requires OpenGR, and will not be compiled.")
   endif()
 
   # Executables that require both libpointmatcher and OpenGR
@@ -139,15 +120,9 @@ if(TARGET CGAL::Eigen3_support)
       registration_with_opengr_pointmatcher_pipeline PRIVATE ${CGAL_libs}
       CGAL::pointmatcher_support CGAL::OpenGR_support)
   else()
-    message(
-      STATUS
-        "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled."
-    )
+    message(STATUS "NOTICE: registration with OpenGR and pointmatcher requires both libpointmatcher and OpenGR, and will not be compiled.")
   endif()
 
 else()
-  message(
-    STATUS
-      "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message(STATUS "NOTICE: Some of the executables in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

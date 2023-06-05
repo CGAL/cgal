@@ -68,7 +68,7 @@ TriangulationMovingPoint<T>::localize_and_insert_point(QPointF qt_point)
   if(lt != T::VERTEX){
     vh = dt->insert(p, lt, fh, li);
     insertedPoint = true;
-    emit(modelChanged());
+    Q_EMIT(modelChanged());
   } else {
     vh = fh->vertex(0);
     insertedPoint = false;
@@ -123,7 +123,7 @@ TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
   }
   vh = Vertex_handle();
 
-  emit(modelChanged());
+  Q_EMIT(modelChanged());
 
   movePointToInsert = false;
 }

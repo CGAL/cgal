@@ -299,7 +299,7 @@ InputIterator last );
 /// <LI>\f$ S\f$ is minimal, i.e.\ no support point is redundant. </UL>
 ///
 /// \note Under inexact arithmetic, the result of the
-/// validation is not realiable, because the checker itself can suffer
+/// validation is not reliable, because the checker itself can suffer
 /// from numerical problems.
 /// @{
 

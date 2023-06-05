@@ -623,7 +623,7 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   # copy it, else prepare for the special "skipped" case in the table.
   for PACKAGE in \$(ls "${CGAL_TEST_DIR}"); do
     if [ -d "${CGAL_TEST_DIR}/\$PACKAGE" ]; then
-      if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | egrep -q \$PACKAGE; then
+      if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | grep -E -q \$PACKAGE; then
         mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
         cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
       elif [ "\$PACKAGE" = "resources" ]; then

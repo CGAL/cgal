@@ -12,7 +12,6 @@
 
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
-#include <boost/static_assert.hpp>
 #include <iostream>
 
 namespace CGAL {

@@ -15,11 +15,13 @@
 #include <CGAL/license/Straight_skeleton_2.h>
 
 #include <CGAL/compute_outer_frame_margin.h>
+#include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Polygon_2.h>
 
 #include <boost/optional/optional.hpp>
 #include <boost/shared_ptr.hpp>
@@ -115,8 +117,8 @@ boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( Polygon const& aOutContour,
                                       K const& k,
-                                      typename std::enable_if<
-                                        ! CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>::type* = nullptr)
+                                      std::enable_if_t<
+                                        ! CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>* = nullptr)
 {
   return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
                                             ,CGAL_SS_i::vertices_end(aOutContour)
@@ -165,16 +167,15 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 
   if ( margin )
   {
-    const double lm = CGAL::to_double(*margin);
-    Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
+    const IFT lm = *margin;
+    const Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
 
-    FT fxmin = bbox.xmin() - lm ;
-    FT fxmax = bbox.xmax() + lm ;
-    FT fymin = bbox.ymin() - lm ;
-    FT fymax = bbox.ymax() + lm ;
+    const IFT fxmin = IFT(bbox.xmin()) - lm ;
+    const IFT fxmax = IFT(bbox.xmax()) + lm ;
+    const IFT fymin = IFT(bbox.ymin()) - lm ;
+    const IFT fymax = IFT(bbox.ymax()) + lm ;
 
     Point_2 frame[4] ;
-
     frame[0] = Point_2(fxmin,fymin) ;
     frame[1] = Point_2(fxmax,fymin) ;
     frame[2] = Point_2(fxmax,fymax) ;
@@ -232,6 +233,6 @@ create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly
                                             );
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
+#endif // CGAL_CREATE_STRAIGHT_SKELETON_2_H

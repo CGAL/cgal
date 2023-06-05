@@ -191,8 +191,6 @@ Inserts the line segment between the points `c.first` and `c.second` as  a const
 /*!
 Inserts the line segment whose endpoints are the vertices `va` and
 `vb` as a constraint in the triangulation.
-\pre `va` != `vb`.
-
 */
 void insert_constraint(Vertex_handle va, Vertex_handle vb);
 
@@ -224,7 +222,10 @@ std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last
 Same as above except that each constraints is given as a pair of indices of the points
 in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
 \tparam PointIterator is an `InputIterator` with the value type `Point`.
-\tparam IndicesIterator is an `InputIterator` with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+\tparam IndicesIterator is an `InputIterator` with `std::pair<Int,Int>`
+where `Int` is an integral type implicitly convertible to `std::size_t`
+\note points are inserted even if they are not endpoint of a constraint.
+\return the number of inserted points.
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,

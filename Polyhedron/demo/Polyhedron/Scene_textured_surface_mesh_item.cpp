@@ -1,6 +1,5 @@
 #include "Scene_textured_surface_mesh_item.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
@@ -95,12 +94,12 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
     CGAL_For_all(he,end)
     {
       //position [3]
-      const Point& p = get(positions, target(*he, *sm));
+      const auto p = get(positions, target(*he, *sm));
       faces_buffer.push_back(p.x() + offset.x);
       faces_buffer.push_back(p.y() + offset.y);
       faces_buffer.push_back(p.z() + offset.z);
       //normals [3]
-      const EPICK::Vector_3& n = get(fnormals, face(*he, *sm));
+      const auto n = get(fnormals, face(*he, *sm));
       faces_buffer.push_back(n[0]);
       faces_buffer.push_back(n[1]);
       faces_buffer.push_back(n[2]);

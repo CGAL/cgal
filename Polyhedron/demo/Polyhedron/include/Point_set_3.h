@@ -34,7 +34,7 @@
 /// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
 /// - Selecting points changes the order of the points in the
 ///   container. If selection is *not* empty, it becomes invalid after
-///   adding, moving or removing points, user is reponsible to call
+///   adding, moving or removing points, the user is responsible for calling
 ///   unselect_all() in those cases.
 ///
 /// @heading Parameters:
@@ -579,9 +579,9 @@ namespace CGAL
 {
 
 // specialization for default named parameters
-template <typename Gt, typename NamedParameters, typename NP_TAG>
-struct Point_set_processing_3_np_helper<::Point_set_3<Gt>, NamedParameters, NP_TAG>
-    : public Point_set_processing_3_np_helper<typename ::Point_set_3<Gt>::Base, NamedParameters, NP_TAG>
+template <typename Gt, typename NamedParameters, typename DPM, typename DVM>
+struct Point_set_processing_3_np_helper<::Point_set_3<Gt>, NamedParameters, DPM, DVM>
+    : public Point_set_processing_3_np_helper<typename ::Point_set_3<Gt>::Base, NamedParameters, DPM, DVM>
 {};
 
 }

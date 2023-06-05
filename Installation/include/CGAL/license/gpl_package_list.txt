@@ -77,6 +77,7 @@ Skin_surface_3 3D Skin Surface Meshing
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
 Straight_skeleton_2 2D Straight Skeleton and Polygon Offsetting
+Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
 Stream_lines_2 2D Placement of Streamlines
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
 Surface_mesher 3D Surface Mesh Generation
@@ -92,6 +93,7 @@ Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three
+SMDS_3 3D Simplicial Mesh Data Structure
 Triangulation_2 2D Triangulation
 Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations

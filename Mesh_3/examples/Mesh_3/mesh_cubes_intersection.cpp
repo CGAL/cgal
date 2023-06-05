@@ -19,13 +19,12 @@
 // IO
 #include <CGAL/IO/File_medit.h>
 
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
-typedef K::FT FT;
-typedef FT (*Function)(const Point&);
+typedef double (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;
@@ -76,22 +75,23 @@ int main()
   Mesh_domain domain(Function_wrapper(v, vps), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
 
   // Set mesh criteria
-  Mesh_criteria criteria(edge_size = 0.15,
-      facet_angle = 30, facet_size = 0.2,
-      cell_radius_edge_ratio = 2, cell_size = 0.4);
+  Mesh_criteria criteria(params::edge_size(0.15).
+                                 facet_angle(30).facet_size(0.2).
+                                 cell_radius_edge_ratio(2).cell_size(0.4));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb());
 
   // Perturbation (maximum cpu time: 10s, targeted dihedral angle: default)
-  CGAL::perturb_mesh_3(c3t3, domain, time_limit = 10);
+  CGAL::perturb_mesh_3(c3t3, domain, params::time_limit(10));
 
   // Exudation
-  CGAL::exude_mesh_3(c3t3,12);
+  CGAL::exude_mesh_3(c3t3,params::time_limit(12));
 
   // Output
   std::ofstream medit_file("out_cubes_intersection.mesh");
-  CGAL::IO::output_to_medit(medit_file, c3t3);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

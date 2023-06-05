@@ -12,8 +12,7 @@ priority queue.
 The placement returned is a `boost::optional` value (i.e., it can
 be absent). The value `boost::none` indicates that the edge should not be collapsed.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
+\cgalRefines{DefaultConstructible,CopyConstructible}
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<BasePlacementFilter>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<GeomTraits, BasePlacementFilter>`

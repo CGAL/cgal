@@ -9,7 +9,7 @@ namespace CGAL{
 namespace ssh_internal{
 //should be used inside a try/catch(ssh::SshException e)
 
-//give an unitialized session.
+//give an uninitialized session.
 bool establish_ssh_session(ssh_session& session,
                            const char *user,
                            const char *server,

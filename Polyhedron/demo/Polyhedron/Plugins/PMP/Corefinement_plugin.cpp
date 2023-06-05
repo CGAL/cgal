@@ -233,6 +233,7 @@ private:
     {
       CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
       QApplication::restoreOverrideCursor();
+      return;
     }
 
     first_item->invalidateOpenGLBuffers();
@@ -245,6 +246,8 @@ private:
     new_item->setColor(first_item->color());
     new_item->setRenderingMode(first_item->renderingMode());
     new_item->setVisible(first_item->visible());
+    first_item->setVisible(false);
+    item->setVisible(false);
     scene->addItem(new_item);
     new_item->invalidateOpenGLBuffers();
 

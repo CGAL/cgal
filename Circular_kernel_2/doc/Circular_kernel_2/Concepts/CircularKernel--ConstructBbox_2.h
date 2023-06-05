@@ -5,7 +5,7 @@
 
 A function object concept to construct a bounding box of geometric objects:
 
-\cgalRefines Kernel::ConstructBbox_2
+\cgalRefines{Kernel::ConstructBbox_2}
 
 */
 

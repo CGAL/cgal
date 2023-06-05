@@ -275,7 +275,7 @@ public Q_SLOTS:
       boost::property_map<FaceGraph, boost::face_index_t>::type>
       fccmap(static_cast<unsigned>(num_faces(poly)));
 
-    //get connected componant from the picked face
+    //get connected component from the picked face
     std::set<fg_face_descriptor> final_sel;
     //std::vector<Polyhedron::Face_handle> cc;
     std::size_t nb_cc = CGAL::Polygon_mesh_processing::connected_components(poly
