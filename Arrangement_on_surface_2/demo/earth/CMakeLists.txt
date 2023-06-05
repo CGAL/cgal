@@ -1,34 +1,42 @@
-# Projects Settings
-cmake_minimum_required (VERSION 3.1)
-#set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} )
+# Copyright (C) 2022 The Qt Company Ltd.
+# SPDX-License-Identifier: BSD-3-Clause
 
-project (earth)
+cmake_minimum_required(VERSION 3.16)
+project(earth LANGUAGES CXX)
 
-# The main executable
-add_executable(earth
-	main.cpp
+if(NOT DEFINED INSTALL_EXAMPLESDIR)
+    set(INSTALL_EXAMPLESDIR "examples")
+endif()
+
+set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/opengl/earth")
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets)
+
+qt_standard_project_setup()
+
+qt_add_executable(earth
+    main.cpp
+    mainwidget.cpp mainwidget.h
 )
 
-find_package(OpenGL REQUIRED)
+set_target_properties(earth PROPERTIES
+    WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
+)
 
-find_package(GLM REQUIRED)
-include_directories(${GLM_INCLUDE_DIRS})
-link_libraries(${GLM_LIBRARIES})
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
 
-find_package(GLFW REQUIRED)
-include_directories(${GLFW_INCLUDE_DIR})
-link_directories(${GLFW_LIBRARY})
-
-
-find_package(GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIRS})
-link_libraries(${GLEW_LIBRARIES})
+target_link_libraries(earth PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::OpenGL
+    Qt6::OpenGLWidgets
+    Qt6::Widgets
+)
 
 
-target_link_libraries(earth
-   opengl32
-   glu32
-   glfw3
-   GLEW::GLEW
-   glm::glm
+install(TARGETS earth
+    RUNTIME DESTINATION "${INSTALL_EXAMPLEDIR}"
+    BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
+    LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"
 )
