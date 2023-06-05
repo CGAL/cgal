@@ -1,3 +1,5 @@
+# Copy of https://github.com/NVIDIA/thrust/blob/9f1cddc62b1bebbaeb8d07d4476c285be5aa0adc/thrust/cmake/FindTBB.cmake
+#
 # - Find ThreadingBuildingBlocks include dirs and libraries
 # Use this module by invoking find_package with the form:
 #  find_package(TBB
@@ -11,6 +13,7 @@
 #                  malloc proxy
 #  TBB::tbb - imported target for the TBB library
 #
+#  TBB_VERSION - Product Version Number ("MAJOR.MINOR")
 #  TBB_VERSION_MAJOR - Major Product Version Number
 #  TBB_VERSION_MINOR - Minor Product Version Number
 #  TBB_INTERFACE_VERSION - Engineering Focused Version Number
@@ -107,48 +110,48 @@ endfunction()
 # Do the final processing for the package find.
 #===============================================
 macro(findpkg_finish PREFIX TARGET_NAME)
-  # skip if already processed during this run
-  if (NOT ${PREFIX}_FOUND)
-    if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
-      set(${PREFIX}_FOUND TRUE)
-      set (${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
-      set (${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
-    else ()
-      if (${PREFIX}_FIND_REQUIRED AND NOT ${PREFIX}_FIND_QUIETLY)
-        message(FATAL_ERROR "Required library ${PREFIX} not found.")
-      endif ()
-    endif ()
-
-    if (NOT TARGET "TBB::${TARGET_NAME}")
-      if (${PREFIX}_LIBRARY_RELEASE)
-        tbb_extract_real_library(${${PREFIX}_LIBRARY_RELEASE} real_release)
-      endif ()
-      if (${PREFIX}_LIBRARY_DEBUG)
-        tbb_extract_real_library(${${PREFIX}_LIBRARY_DEBUG} real_debug)
-      endif ()
-      add_library(TBB::${TARGET_NAME} UNKNOWN IMPORTED)
-      set_target_properties(TBB::${TARGET_NAME} PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${${PREFIX}_INCLUDE_DIR}")
-      if (${PREFIX}_LIBRARY_DEBUG AND ${PREFIX}_LIBRARY_RELEASE)
-        set_target_properties(TBB::${TARGET_NAME} PROPERTIES
-          IMPORTED_LOCATION "${real_release}"
-          IMPORTED_LOCATION_DEBUG "${real_debug}"
-          IMPORTED_LOCATION_RELEASE "${real_release}")
-      elseif (${PREFIX}_LIBRARY_RELEASE)
-        set_target_properties(TBB::${TARGET_NAME} PROPERTIES
-          IMPORTED_LOCATION "${real_release}")
-      elseif (${PREFIX}_LIBRARY_DEBUG)
-        set_target_properties(TBB::${TARGET_NAME} PROPERTIES
-          IMPORTED_LOCATION "${real_debug}")
-      endif ()
-    endif ()
-
-   #mark the following variables as internal variables
-   mark_as_advanced(${PREFIX}_INCLUDE_DIR
-                    ${PREFIX}_LIBRARY
-                    ${PREFIX}_LIBRARY_DEBUG
-                    ${PREFIX}_LIBRARY_RELEASE)
+  if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
+    set(${PREFIX}_FOUND TRUE)
+    set (${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
+    set (${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
+  else ()
+    if (${PREFIX}_FIND_REQUIRED)
+      message(FATAL_ERROR "Required library ${PREFIX} not found.")
+    elseif (NOT ${PREFIX}_FIND_QUIETLY)
+      message("Library ${PREFIX} not found.")
+    endif()
+    return()
   endif ()
+
+  if (NOT TARGET "TBB::${TARGET_NAME}")
+    if (${PREFIX}_LIBRARY_RELEASE)
+      tbb_extract_real_library(${${PREFIX}_LIBRARY_RELEASE} real_release)
+    endif ()
+    if (${PREFIX}_LIBRARY_DEBUG)
+      tbb_extract_real_library(${${PREFIX}_LIBRARY_DEBUG} real_debug)
+    endif ()
+    add_library(TBB::${TARGET_NAME} UNKNOWN IMPORTED)
+    set_target_properties(TBB::${TARGET_NAME} PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${${PREFIX}_INCLUDE_DIR}")
+    if (${PREFIX}_LIBRARY_DEBUG AND ${PREFIX}_LIBRARY_RELEASE)
+      set_target_properties(TBB::${TARGET_NAME} PROPERTIES
+        IMPORTED_LOCATION "${real_release}"
+        IMPORTED_LOCATION_DEBUG "${real_debug}"
+        IMPORTED_LOCATION_RELEASE "${real_release}")
+    elseif (${PREFIX}_LIBRARY_RELEASE)
+      set_target_properties(TBB::${TARGET_NAME} PROPERTIES
+        IMPORTED_LOCATION "${real_release}")
+    elseif (${PREFIX}_LIBRARY_DEBUG)
+      set_target_properties(TBB::${TARGET_NAME} PROPERTIES
+        IMPORTED_LOCATION "${real_debug}")
+    endif ()
+  endif ()
+
+  #mark the following variables as internal variables
+  mark_as_advanced(${PREFIX}_INCLUDE_DIR
+                   ${PREFIX}_LIBRARY
+                   ${PREFIX}_LIBRARY_DEBUG
+                   ${PREFIX}_LIBRARY_RELEASE)
 endmacro()
 
 #===============================================
@@ -188,8 +191,12 @@ endmacro()
 #=============================================================================
 #  Now to actually find TBB
 #
+
+# Get path, convert backslashes as ${ENV_${var}}
+getenv_path(TBB_ROOT)
+
 #start with looking for TBB_DIR and TBB_ROOT
-if((TBB_ROOT OR ENV{TBB_ROOT} OR ENV{TBB_DIR} ) AND NOT TBB_FOUND)
+if((TBB_ROOT OR "$ENV{TBB_ROOT}" OR "$ENV{TBB_DIR}" ) AND NOT TBB_FOUND)
   find_package(TBB QUIET NO_MODULE NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH)
 endif()
 if(TBB_FOUND)
@@ -201,9 +208,6 @@ find_package(TBB 2019.0.11005 QUIET NO_MODULE)
 if(TBB_FOUND)
   return()
 endif()#TBB_FOUND
-
-# Get path, convert backslashes as ${ENV_${var}}
-getenv_path(TBB_ROOT)
 
 if(NOT ENV_TBB_ROOT)
   getenv_path(TBBROOT)
@@ -253,8 +257,26 @@ if (WIN32 AND MSVC)
     set(COMPILER_PREFIX "vc11")
   elseif(MSVC_VERSION EQUAL 1800)
     set(COMPILER_PREFIX "vc12")
-  elseif(MSVC_VERSION EQUAL 1900)
+  elseif(MSVC_VERSION GREATER_EQUAL 1900 AND MSVC_VERSION LESS_EQUAL 1939)
+      # 1900-1925 actually spans three Visual Studio versions:
+      # 1900      = VS 14.0 (v140 toolset) a.k.a. MSVC 2015
+      # 1910-1919 = VS 15.0 (v141 toolset) a.k.a. MSVC 2017
+      # 1920-1929 = VS 16.0 (v142 toolset) a.k.a. MSVC 2019
+      # 1930-1939 = VS 17.0 (v143 toolset) a.k.a. MSVC 2022
+      #
+      # But these are binary compatible and TBB's open source distribution only
+      # ships a single vs14 lib (as of 2020.0)
     set(COMPILER_PREFIX "vc14")
+  else()
+    # The next poor soul who finds themselves having to decode visual studio
+    # version conventions may find these helpful:
+    # - https://cmake.org/cmake/help/latest/variable/MSVC_VERSION.html
+    # - https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering
+    message(AUTHOR_WARNING
+      "Unrecognized MSVC version (${MSVC_VERSION}). "
+      "Please update FindTBB.cmake. "
+      "Some TBB_* CMake variables may need to be set manually."
+    )
   endif ()
 
   # for each prefix path, add ia32/64\${COMPILER_PREFIX}\lib to the lib search path
@@ -351,7 +373,6 @@ endforeach ()
 set(TBB_LIBRARY_NAMES tbb)
 get_debug_names(TBB_LIBRARY_NAMES)
 
-
 find_path(TBB_INCLUDE_DIR
           NAMES tbb/tbb.h
           PATHS ${TBB_INC_SEARCH_PATH})
@@ -411,12 +432,18 @@ findpkg_finish(TBB_MALLOC_PROXY tbbmalloc_proxy)
 
 
 #=============================================================================
-#parse all the version numbers from tbb
+# Parse all the version numbers from tbb.
 if(NOT TBB_VERSION)
+  if(EXISTS "${TBB_INCLUDE_DIR}/tbb/version.h")
+    # The newer oneTBB provides tbb/version.h but no tbb/tbb_stddef.h.
+    set(version_file "${TBB_INCLUDE_DIR}/tbb/version.h")
+  else()
+    # Older TBB provides tbb/tbb_stddef.h but no tbb/version.h.
+    set(version_file "${TBB_INCLUDE_DIR}/tbb/tbb_stddef.h")
+  endif()
 
- #only read the start of the file
- file(STRINGS
-      "${TBB_INCLUDE_DIR}/tbb/tbb_stddef.h"
+  file(STRINGS
+      "${version_file}"
       TBB_VERSION_CONTENTS
       REGEX "VERSION")
 
@@ -436,4 +463,5 @@ if(NOT TBB_VERSION)
         ".*#define TBB_COMPATIBLE_INTERFACE_VERSION ([0-9]+).*" "\\1"
         TBB_COMPATIBLE_INTERFACE_VERSION "${TBB_VERSION_CONTENTS}")
 
+  set(TBB_VERSION "${TBB_VERSION_MAJOR}.${TBB_VERSION_MINOR}")
 endif()
