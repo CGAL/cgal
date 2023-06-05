@@ -3,7 +3,9 @@
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 
 #include <CGAL/IO/read_points.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <fstream>
 #include <iostream>
@@ -15,10 +17,10 @@ typedef CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother< Kernel > Smoo
 typedef CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher< Kernel >    Mesher;
 
 typedef Reconstruction::Point                                   Point;
-
 typedef Reconstruction::Facet_const_iterator                    Facet_iterator;
-typedef Mesher::Facet_const_iterator                            Mesher_iterator;
-typedef CGAL::Timer Timer;
+
+typedef CGAL::Surface_mesh<Point> Surface_mesh;
+typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 
 int main(int argc, char* argv[]) {
   // Read the data
@@ -34,9 +36,6 @@ int main(int argc, char* argv[]) {
 
   std::cerr << "done: " << points.size() << " points." << std::endl;
 
-  Timer t;
-  t.start();
-
   // Construct the mesh in a scale space.
   Reconstruction reconstruct(points.begin(), points.end() );
   Smoother smoother(10, 200 );
@@ -48,19 +47,25 @@ int main(int argc, char* argv[]) {
                );
   reconstruct.reconstruct_surface(mesher);
 
-  std::cerr << "Reconstruction done in " << t.time() << " sec." << std::endl;
+  Reconstruction::Point_range smoothed(reconstruct.points());
+  Reconstruction::Facet_range polygons(reconstruct.facets());
 
-  std::ofstream out("out.off");
-  // Write the reconstruction.
-  for(Facet_iterator it = reconstruct.facets_begin(); it != reconstruct.facets_end(); ++it )
-    // We write a '3' in front so that it can be assembled into an OFF file
-    out << "3 " << (*it)[0] << " " << (*it)[1] << " " << (*it)[2] << '\n';
-  out.close();
+  CGAL::Polygon_mesh_processing::orient_polygon_soup(smoothed, polygons);
 
-  std::ofstream garbage("garbage.off");
-  // Write facets that were removed to force manifold output
-  for(Mesher_iterator it = mesher.garbage_begin(); it != mesher.garbage_end(); ++it )
-    garbage << "3 " << (*it)[0] << " " << (*it)[1] << " " << (*it)[2] << '\n';
+  Surface_mesh mesh;
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(smoothed, polygons, mesh);
+
+  // Also store the input points as vertex property
+  Surface_mesh::Property_map<vertex_descriptor, Point> original;
+  bool created;
+  boost::tie(original, created) = mesh.add_property_map<vertex_descriptor,Point>("v:original");
+  assert(created);
+
+  int i = 0;
+  for(auto v : vertices(mesh)){
+    put(original, v, points[i++]);
+  }
+
 
   std::cerr << "Done." << std::endl;
 
