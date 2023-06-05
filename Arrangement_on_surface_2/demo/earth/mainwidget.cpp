@@ -19,13 +19,13 @@ layout (location = 0) in vec3 pos;
 //out vec4 vCol;
 //out vec3 vpos;
 
-//uniform mat4 MVP; 
+uniform mat4 MVP; 
 
 void main()
 {
 	//vpos = pos;
-	//gl_Position = MVP * vec4(pos.xyz, 1);
-  gl_Position = vec4(pos.xyz, 1);
+	gl_Position = MVP * vec4(pos.xyz, 1);
+  //gl_Position = vec4(pos.xyz, 1);
 }
 )vs";
 
@@ -81,13 +81,12 @@ MainWidget::~MainWidget()
     doneCurrent();
 }
 
-//! [0]
+
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
     mousePressPosition = QVector2D(e->position());
 }
-
 void MainWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     // Mouse release position - mouse press position
@@ -106,9 +105,6 @@ void MainWidget::mouseReleaseEvent(QMouseEvent *e)
     // Increase angular speed
     angularSpeed += acc;
 }
-//! [0]
-
-//! [1]
 void MainWidget::timerEvent(QTimerEvent *)
 {
     // Decrease angular speed (friction)
@@ -124,8 +120,10 @@ void MainWidget::timerEvent(QTimerEvent *)
         // Request an update
         update();
     }
+
+    // redraw every 12 miliseconds
+    update();
 }
-//! [1]
 
 
 
@@ -252,43 +250,50 @@ void MainWidget::initGeometry()
 //! [3]
 
 
-//! [5]
 void MainWidget::resizeGL(int w, int h)
 {
     // Calculate aspect ratio
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
-    // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-    const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+    // near and far plane locations and vertical field-of-view angle in degrees
+    const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
 
     // Reset projection
     projection.setToIdentity();
-
-    // Set perspective projection
-    projection.perspective(fov, aspect, zNear, zFar);
+    projection.perspective(fov, aspect, z_near, z_far);
 }
-//! [5]
 
 void MainWidget::paintGL()
 {
-    // Clear color and depth buffer
+  QMatrix4x4 view;
+  const QVector3D eye(0, 10, 10), center(0, 0, 0), up(0, 1, 0);
+  view.lookAt(eye, center, up);
+
+  QMatrix4x4 model;
+  static float angle = 0;
+  angle += 1;
+  model.rotate(angle, up);
+  
+  // Clear color and depth buffer
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  {
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+    glUseProgram(shader);
+    auto mvp = projection * view * model;
+    glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, mvp.data());
+
     {
-      glClearColor(0, 0, 0, 1);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-      glUseProgram(shader);
+      // DRAW TRIANGLE
+      glBindVertexArray(vao);
       {
-        // DRAW TRIANGLE
-        glBindVertexArray(vao);
-        {
-          //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-          glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-        }
-        glBindVertexArray(0);
+        //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
       }
-      glUseProgram(0);
+      glBindVertexArray(0);
     }
+    glUseProgram(0);
+  }
 }
