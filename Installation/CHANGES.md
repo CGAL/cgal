@@ -65,7 +65,7 @@ Release date: June 2023
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
 
 -   Introduced an overload function template, namely `draw(arr)`, that renders arrangements based
-    on the `Basic_viewer_qt` class template. At this point only 2D arrangements on the plane induced
+    on the `Basic_viewer_qt` class template. As of now, only 2D arrangements on the plane induced
     by (i) segments, (ii) conics, and (iii) circular arcs or (linear) segments are supported.
 -   Improved the traits class template that handles conics, namely
     [`Arr_conic_traits_2`](https://doc.cgal.org/5.6/Arrangement_on_surface_2/classCGAL_1_1Arr__conic__traits__2.html).
@@ -157,7 +157,6 @@ Release date: June 2023
 -   Deprecated two overloads of the function
     [`refine_Delaunay_mesh()`](https://doc.cgal.org/5.6/Mesh_2/group__PkgMesh2Functions.html),
     and replaced them with versions using function named parameters.
--   Periodic Mesh Generation now supports non-cubic domains.
 
 ### [2D Hyperbolic Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgHyperbolicTriangulation2)
 
@@ -197,6 +196,7 @@ Release date: June 2023
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
 
+-   Periodic Mesh Generation now supports non-cubic domains.
 -   Deprecated usage of boost parameters in favor of function named parameters.
 
 ### [Surface Mesh Simplification](https://doc.cgal.org/5.6/Manual/packages.html#PkgSurfaceMeshSimplification)
