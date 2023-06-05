@@ -36,12 +36,13 @@ protected:
     void paintGL() override;
 
 
-    GLuint vao, vbo, ibo, shader;
+    GLuint vao, vbo, ibo, shader, numIndices;
     GLuint uniformMVP; // ModelViewProjection
     void addShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
     void initShaderProgram();
     
     void initGeometry();
+    int  createSphere(int numSlices, int numStacks, float r);
 
 
 private:
