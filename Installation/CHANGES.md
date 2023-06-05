@@ -186,14 +186,13 @@ Release date: June 2023
     [`CGAL::Sizing_field_with_aabb_tree`](https://doc.cgal.org/5.6/Mesh_3/structCGAL_1_1Sizing__field__with__aabb__tree.html),
     a geometry-aware sizing field for feature edges in polyhedral domains.
 -   Added new meshing criterion
-    [`edge_min_size`](TODO)
-    to avoid subdividing sharp edges that are shorter than the prescribed size bound.
+    [`edge_min_size`](https://doc.cgal.org/5.6/Mesh_3/classCGAL_1_1Mesh__criteria__3.html#a5f1c2649cb7ea346a3b6a2a8724b4df1)
+    to avoid subdividing sharp edges that are shorter than a prescribed size bound.
 -   Added new meshing criteria
-    [`facet_min_size`](TODO)
+    [`facet_min_size`](https://doc.cgal.org/5.6/Mesh_3/classCGAL_1_1Mesh__criteria__3.html#a5f1c2649cb7ea346a3b6a2a8724b4df1)
     and
-    [`cell_min_size`](TODO)
-    to prevent Delaunay refinement
-    from creating simplices smaller than the prescribed bound.
+    [`cell_min_size`](https://doc.cgal.org/5.6/Mesh_3/classCGAL_1_1Mesh__criteria__3.html#a5f1c2649cb7ea346a3b6a2a8724b4df1)
+    to prevent Delaunay refinement from creating simplices smaller than a prescribed bound.
 -   Deprecated usage of boost parameters in favor of function named parameters.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
@@ -218,12 +217,12 @@ Release date: June 2023
 
 ### [2D Regularized Boolean Set Operations](https://doc.cgal.org/5.6/Manual/packages.html#PkgBooleanSetOperations2)
 -   Exposed all required member functions of the
-    [`GeneralPolygonWithHoles_2`](https://doc.cgal.org/latest/Polygon/classGeneralPolygonWithHoles__2.html)
+    [`GeneralPolygonWithHoles_2`](https://doc.cgal.org/5.6/Polygon/classGeneralPolygonWithHoles__2.html)
     concept (e.g.,
-    [`clear_outer_boundary()`](),
-    [`clear_holes()`](),
+    [`clear_outer_boundary()`](https://doc.cgal.org/5.6/Polygon/classGeneralPolygonWithHoles__2.html#a9f5f035047505a2ccab3e68770f51bc6),
+    [`clear_holes()`](https://cgal.geometryfactory.com/CGAL/doc/master/Polygon/classGeneralPolygonWithHoles__2.html#a2a507be648f127ac605da8c670ea2580),
     and
-    [`clear()`]()
+    [`clear()`](https://doc.cgal.org/5.6/Polygon/classGeneralPolygonWithHoles__2.html#a2ca4d9b43cc9216c1b2cdb080a915944)
     ).
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
