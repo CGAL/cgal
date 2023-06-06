@@ -158,6 +158,6 @@ int main(int, char*[])
   std::cout << "\n\nParallel with 1 thread test" << std::endl;
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test<CGAL::Parallel_tag>();
-  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
 #endif
+  } std::cout << "Execution took " << rt.time() << " sec." << std::endl;
 }
