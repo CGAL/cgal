@@ -21,7 +21,9 @@ public:
   virtual ~Property_array_base() = default;
 
   // Declare virtual functions here, for things which need to be done within the Property container
-  // todo: maybe these should be private, and made available using friend
+  // todo: these should mostly be private, and made available using friend
+
+  virtual std::shared_ptr<Property_array_base<Index>> empty_clone(const std::vector<bool>& active_indices) = 0;
 
   virtual std::shared_ptr<Property_array_base<Index>> clone(const std::vector<bool>& active_indices) = 0;
 
@@ -31,11 +33,15 @@ public:
 
   virtual void reserve(std::size_t n) = 0;
 
+  virtual void shrink_to_fit() = 0;
+
   virtual void swap(Index a, Index b) = 0;
 
   virtual void reset(Index i) = 0;
 
-  virtual const std::type_info& type() = 0;
+  virtual const std::type_info& type() const = 0;
+
+  virtual void transfer_from(const Property_array_base<Index>& other_base, Index other_index, Index this_index) = 0;
 
 };
 
@@ -68,6 +74,10 @@ public:
     m_data.resize(active_indices.size(), m_default_value);
   }
 
+  virtual std::shared_ptr<Property_array_base<Index>> empty_clone(const std::vector<bool>& active_indices) override {
+    return std::make_shared<Property_array<Index, T>>(active_indices, m_default_value);
+  }
+
   virtual std::shared_ptr<Property_array_base<Index>> clone(const std::vector<bool>& active_indices) override {
     auto new_array = std::make_shared<Property_array<Index, T>>(active_indices, m_default_value);
     new_array->m_data = m_data;
@@ -91,6 +101,10 @@ public:
     m_data.resize(n, m_default_value);
   };
 
+  virtual void shrink_to_fit() override {
+    m_data.shrink_to_fit();
+  }
+
   virtual void swap(Index a, Index b) override {
     // todo: maybe cast to index, instead of casting index to size?
     CGAL_precondition(std::size_t(a) < m_data.size() && std::size_t(b) < m_data.size());
@@ -102,7 +116,16 @@ public:
     m_data[std::size_t(i)] = m_default_value;
   };
 
-  virtual const std::type_info& type() override { return typeid(T); };
+  virtual const std::type_info& type() const override { return typeid(T); };
+
+  virtual void transfer_from(const Property_array_base<Index>& other_base,
+                             Index other_index, Index this_index) override {
+
+    CGAL_precondition(other_base.type() == type());
+    auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
+    CGAL_precondition(std::size_t(other_index) < other.capacity() && std::size_t(this_index) < capacity());
+    m_data[this_index] = other.m_data[other_index];
+  }
 
 public:
 
@@ -286,6 +309,15 @@ public:
     return array.get();
   }
 
+  // todo: misleading name, maybe it could be add_same_properties?
+  void copy_properties(const Property_container<Index>& other) {
+    for (auto [name, other_array]: other.m_property_arrays) {
+      // If this container doesn't have any property by this name, add it (with the same type as in other)
+      if (!property_exists(name))
+        m_property_arrays.emplace(name, other_array->empty_clone(m_active_indices));
+    }
+  }
+
   template <typename T>
   const Property_array<Index, T>& get_property(const std::string& name) const {
     CGAL_precondition(m_property_arrays.count(name) != 0);
@@ -314,6 +346,12 @@ public:
     auto [_, array] = *it;
     if (typeid(*array) != typeid(Property_array<Index, T>)) return false;
     return true;
+  }
+
+  // todo: maybe the non-type-strict version is useful?
+  bool property_exists(const std::string& name) const {
+    auto it = m_property_arrays.find(name);
+    return (it != m_property_arrays.end());
   }
 
   /*!
@@ -491,6 +529,11 @@ public:
     return indices;
   }
 
+  void shrink_to_fit() {
+    for (auto [name, array]: m_property_arrays)
+      array->shrink_to_fit();
+  }
+
   /*!
    * Adds the elements of the other container to this container for each property which is present in this container.
    *
@@ -503,7 +546,6 @@ public:
    * @param other
    */
   void append(const Property_container<Index>& other) {
-    // todo
 
     m_active_indices.insert(m_active_indices.end(), other.m_active_indices.begin(), other.m_active_indices.end());
     for (auto [name, array]: m_property_arrays) {
@@ -512,6 +554,15 @@ public:
         array->append(*it->second);
       else
         array->reserve(m_active_indices.size());
+    }
+  }
+
+  // todo: maybe should be renamed to transfer_from, but I'd rather remove this functionality entirely
+  void transfer(const Property_container<Index>& other, Index other_index, Index this_index) {
+    CGAL_precondition(other.m_property_arrays.size() == m_property_arrays.size());
+    for (auto [name, array]: m_property_arrays) {
+      auto other_array = other.m_property_arrays.at(name);
+      array->transfer_from(*other_array, other_index, this_index);
     }
   }
 

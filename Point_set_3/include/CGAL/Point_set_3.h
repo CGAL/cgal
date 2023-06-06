@@ -17,7 +17,7 @@
 
 #include <typeindex>
 
-#include <CGAL/Surface_mesh/Properties.h>
+#include <CGAL/Properties.h>
 
 #include <CGAL/Point_set_3/IO.h>
 
@@ -53,11 +53,7 @@ namespace internal {
     typedef CGAL::Point_set_3<Point, Vector> Point_set_3;
 
   private:
-    friend class CGAL::Point_set_3<Point, Vector>;
-    friend class Properties::Property_container<Point_set_3, Point_set_3_index>;
-    template <class> friend class Properties::Property_array;
-    template <class> friend struct Property_map;
-    friend class std::vector<Point_set_3_index>;
+
     size_type value;
 
   public:
@@ -130,18 +126,14 @@ public:
 
   using Index = internal::Point_set_3_index<Point, Vector>;
 
-  typedef typename Properties::Property_container<Point_set, Index> Base;
+  typedef typename Properties::Property_container<Index> Base;
 
   template <class Type>
-  struct Property_map
-    : public Properties::Property_map_base<Index, Type, Property_map<Type> >
-  {
-    typedef Properties::Property_map_base<Index, Type, Property_map<Type> > Base;
-    Property_map() : Base() {}
-    Property_map(const Base& pm): Base(pm) {}
-  };
+  using Property_map = Properties::Property_array_handle<Index, Type>;
+
   typedef Property_map<Index> Index_map;
 
+  // todo: apparently unused?
   template <typename Key, typename T>
   struct Get_property_map {
     typedef Property_map<T> type;
@@ -173,6 +165,7 @@ public:
   typedef Property_map<Vector> Vector_map; ///< Property map of vectors
 
   /// \cond SKIP_IN_MANUAL
+  // todo: CGAL should probably have a general "span" type
   template <class Type>
   class Property_range
   {
@@ -186,18 +179,17 @@ public:
   private:
     const_iterator m_begin;
     const_iterator m_end;
+    // todo: couldn't this be replaced by std::distance(begin, end)?
     std::size_t m_size;
 
   public:
     Property_range (const Property_map<Type>& pmap,
                     typename Point_set::const_iterator begin,
                     typename Point_set::const_iterator end,
-                    std::size_t size)
-    {
-      m_begin = boost::make_transform_iterator (begin, Unary_function(pmap));
-      m_end = boost::make_transform_iterator (end, Unary_function(pmap));
-      m_size = size;
-    }
+                    std::size_t size) :
+                    m_begin(boost::make_transform_iterator (begin, Unary_function(pmap))),
+                    m_end(boost::make_transform_iterator (end, Unary_function(pmap))),
+                    m_size(size) {}
 
     const_iterator begin() const { return m_begin; }
     const_iterator end() const { return m_end; }
@@ -212,11 +204,17 @@ public:
 protected:
 
   /// \cond SKIP_IN_MANUAL
-  Base m_base;
+  // todo: this shouldn't be necessary
+  mutable Base m_base;
   Index_map m_indices;
   Point_map m_points;
-  Vector_map m_normals;
-  std::size_t m_nb_removed;
+  std::optional<Vector_map> m_normals{};
+
+  // todo: this is redundant!
+  // Property_container has its own garbage management, but it's not contiguous
+  // It should eventually be replaced with something like a Contiguous_property_container
+  // which places deleted elements at the end
+  std::size_t m_nb_removed = 0;
   /// \endcond
 
 public:
@@ -232,9 +230,11 @@ public:
     added. If `false` (default value), the normal map can still be
     added later on (see `add_normal_map()`).
    */
-  Point_set_3 (bool with_normal_map = false) : m_base()
-  {
-    clear();
+  Point_set_3(bool with_normal_map = false) :
+    m_base(),
+    m_indices(m_base.template add_property<Index>("index", typename Index::size_type(-1))),
+    m_points(m_base.template add_property<Point>("point", CGAL::ORIGIN)) {
+
     if (with_normal_map)
       add_normal_map();
   }
@@ -244,6 +244,7 @@ public:
    */
   Point_set_3& operator= (const Point_set_3& ps)
   {
+    // todo: should be implemented via the copy-swap idiom
     m_base = ps.m_base;
     m_indices = this->property_map<Index> ("index").first;
     m_points = this->property_map<Point> ("point").first;
@@ -256,6 +257,7 @@ public:
   // copy constructor (same as assignment)
   Point_set_3 (const Point_set_3& ps)
   {
+    // todo: update to use new invalidation-avoiding copy behavior
     m_base = ps.m_base;
     m_indices = this->property_map<Index> ("index").first;
     m_points = this->property_map<Point> ("point").first;
@@ -268,6 +270,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   const Base& base() const { return m_base; }
+  Base& base() { return m_base; }
   /// \endcond
 
 
@@ -297,7 +300,7 @@ public:
     \note The method `size()` is also available (see `Range`) and
     does the same thing.
   */
-  std::size_t number_of_points () const { return m_base.size() - m_nb_removed; }
+  std::size_t number_of_points () const { return m_base.capacity() - m_nb_removed; }
   /// \cond SKIP_IN_MANUAL
   std::size_t size () const { return number_of_points(); }
   /// \endcond
@@ -312,6 +315,8 @@ public:
     the point set and `other`.  Property maps which are only in
     `other` are ignored.
 
+    todo: this seems backwards to me, isn't it clearer to have an append() function?
+
     \note If `copy_properties()` with `other` as argument is called
     before calling this method, then all the content of `other` will
     be copied and no property will be lost in the process.
@@ -322,8 +327,7 @@ public:
   {
     collect_garbage();
     other.collect_garbage();
-    resize (number_of_points() + other.number_of_points());
-    m_base.transfer (other.m_base);
+    other.m_base.append(m_base);
 
     // Reset indices
     for (std::size_t i = 0; i < this->m_base.size(); ++ i)
@@ -341,9 +345,8 @@ public:
    */
   void clear()
   {
-    m_base.clear();
-    m_indices = this->add_property_map<Index>("index", typename Index::size_type(-1)).first;
-    m_points = this->add_property_map<Point>("point", CGAL::ORIGIN).first;
+    m_base.reserve(0);
+    m_base.remove_all_properties_except({"index", "point"});
     m_nb_removed = 0;
   }
 
@@ -355,14 +358,8 @@ public:
    */
   void clear_properties()
   {
-    Base other;
-    other.template add<Index>("index", typename Index::size_type(-1));
-    other.template add<Point>("point", CGAL::ORIGIN);
-    other.resize(m_base.size());
-    other.transfer(m_base);
-    m_base.swap(other);
-    m_indices = this->property_map<Index>("index").first;
-    m_points = this->property_map<Point>("point").first;
+    // todo: The old version was pretty convoluted, but I'm pretty sure this is the intended behavior
+    m_base.remove_all_properties_except({"index", "point"});
   }
 
   /*!
@@ -374,7 +371,7 @@ public:
     \note This method does not change the content of the point set and
     is only used for optimization.
    */
-  void reserve (std::size_t s) { m_base.reserve (s); }
+  void reserve (std::size_t s) { m_base.reserve(s); }
 
   /*!
     \brief changes size of the point set.
@@ -431,7 +428,8 @@ public:
   {
     if (m_nb_removed == 0)
       {
-        m_base.push_back();
+        auto new_index = m_base.emplace_back();
+        CGAL_assertion(std::size_t(new_index) == size() - 1);
         m_indices[size()-1] = size()-1;
         return m_indices.end() - 1;
       }
@@ -504,6 +502,8 @@ public:
     In the case where two point sets have the same properties, this
     method allows the user to easily copy one point (along with the
     values of all its properties) from one point set to another.
+
+    todo: this must have been terribly slow, and the new implementation isn't any better.
 
     \param other Point set to which the point to copy belongs
     \param idx Index of the point to copy in `other`
@@ -585,7 +585,7 @@ public:
 
     \note The elements are just marked as removed and are not erased
     from the memory. `collect_garbage()` should be called if the
-    memory needs to be disallocated. Elements can be recovered with
+    memory needs to be deallocated. Elements can be recovered with
     `cancel_removals()`.
 
     \note All iterators, pointers and references related to the
@@ -606,6 +606,7 @@ public:
         while (source != last // All elements have been moved
                && dest != last - 1) // All elements are at the end of the container
           {
+            // todo: Why is this writing to cerr?
             std::cerr << "Swapping " << *source << " and " << *dest << std::endl;
             std::swap (*(source ++), *(dest --));
           }
@@ -632,6 +633,7 @@ public:
   */
   void remove (iterator it)
   {
+    // todo: Maybe some form of erase-by-iterator should exist?
     std::iter_swap (it, (end() - 1));
     ++ m_nb_removed;
   }
@@ -730,7 +732,7 @@ public:
     // Sorting based on the indices reorders the point set correctly
     quick_sort_on_indices ((std::ptrdiff_t)0, (std::ptrdiff_t)(m_base.size() - 1));
 
-    m_base.resize (size ());
+    m_base.reserve (size ());
     m_base.shrink_to_fit ();
     m_nb_removed = 0;
   }
@@ -784,11 +786,8 @@ public:
     \param name Name of the property.
   */
   template <typename T>
-  bool has_property_map (const std::string& name) const
-  {
-    std::pair<Property_map<T>, bool>
-      pm = m_base.template get<T> (name);
-    return pm.second;
+  bool has_property_map (const std::string& name) const {
+    return m_base.template property_exists<T>(name);
   }
 
   /*!
@@ -808,10 +807,8 @@ public:
   std::pair<Property_map<T>, bool>
   add_property_map (const std::string& name, const T t=T())
   {
-    Property_map<T> pm;
-    bool added = false;
-    std::tie (pm, added) = m_base.template add<T> (name, t);
-    return std::make_pair (pm, added);
+    auto [array, created] = m_base.template get_or_add_property<T>(name, t);
+    return {{array.get()}, created};
   }
 
   /*!
@@ -821,18 +818,26 @@ public:
 
     \param name Name of the property.
 
-    \return Returns a pair containing: the specified property map and a
-    Boolean set to `true` or an empty property map and a Boolean set
-    to `false` (if the property was not found).
+    \return Returns an optional containing: the specified property map
+    or an empty property map (if the property was not found).
   */
   template <class T>
-  std::pair<Property_map<T>,bool>
+  std::optional<Property_map<T>>
+  property_map (const std::string& name)
+  {
+    auto maybe_property_map = m_base.template get_property_if_exists<T>(name);
+    if (!maybe_property_map) return {};
+    else return {{maybe_property_map.value()}};
+  }
+
+  // todo: The const version should return a Const_property_map type
+  template <class T>
+  std::optional<Property_map<T>>
   property_map (const std::string& name) const
   {
-    Property_map<T> pm;
-    bool okay = false;
-    std::tie (pm, okay) = m_base.template get<T>(name);
-    return std::make_pair (pm, okay);
+    auto maybe_property_map = m_base.template get_property_if_exists<T>(name);
+    if (!maybe_property_map) return {};
+    else return {{maybe_property_map.value()}};
   }
 
   /*!
@@ -848,7 +853,7 @@ public:
   template <class T>
   bool remove_property_map (Property_map<T>& prop)
   {
-    return m_base.template remove<T> (prop);
+    return m_base.remove_property(prop.array());
   }
 
   /*!
@@ -859,8 +864,7 @@ public:
   */
   bool has_normal_map() const
   {
-    std::pair<Vector_map, bool> pm = this->property_map<Vector> ("normal");
-    return pm.second;
+    return m_base.template property_exists<Vector>("normal");
   }
   /*!
     \brief Convenience method that adds a normal property.
@@ -874,9 +878,9 @@ public:
   */
   std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = CGAL::NULL_VECTOR)
   {
-    bool out = false;
-    std::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
-    return std::make_pair (m_normals, out);
+    auto pair = this->add_property_map<Vector> ("normal", default_value);
+    m_normals = {pair.first};
+    return pair;
   }
   /*!
     \brief returns the property map of the normal property.
@@ -889,7 +893,7 @@ public:
   {
     if (!m_normals)
       add_normal_map();
-    return m_normals;
+    return m_normals.value();
   }
   /*!
     \brief returns the property map of the normal property (constant version).
@@ -897,9 +901,10 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
   */
-  const Vector_map normal_map () const
+  const Vector_map normal_map () const // todo: This is not how const works
   {
-    return m_normals;
+    CGAL_precondition(m_normals.has_value());
+    return m_normals.value();
   }
   /*!
     \brief Convenience method that removes the normal property.
@@ -909,7 +914,7 @@ public:
   */
   bool remove_normal_map()
   {
-    return m_base.template remove<Vector> (m_normals);
+    return m_base.remove_property("normal");
   }
   /*!
     \brief returns the property map of the point property.
@@ -938,7 +943,7 @@ public:
   {
     m_base.copy_properties (other.base());
 
-    m_normals = this->property_map<Vector> ("normal").first; // In case normal was added
+    m_normals = this->property_map<Vector> ("normal"); // In case normal was added
   }
 
 
@@ -964,7 +969,7 @@ public:
 
     std::vector<std::pair<std::string, std::type_index> > out; out.reserve (prop.size());
     for (std::size_t i = 0; i < prop.size(); ++ i)
-      out.push_back (std::make_pair (prop[i], std::type_index(m_base.get_type(prop[i]))));
+      out.push_back (std::make_pair (prop[i], std::type_index(m_base.property_type(prop[i]))));
     return out;
   }
 
@@ -1087,6 +1092,7 @@ public:
 #endif
 
   /// \cond SKIP_IN_MANUAL
+  // todo: these should probably be reconsidered.
   template <typename Property>
   class Property_back_inserter {
 
@@ -1121,6 +1127,7 @@ public:
 
   };
 
+  // todo: this should be provided by the Property system
   template <typename Property>
   class Push_property_map
   {
@@ -1142,8 +1149,12 @@ public:
 
     friend void put(const Push_property_map& pm, Index& i, const value_type& t)
     {
-      if(pm.ps->size() <= (pm.ind))
+      // todo: Why does this need to store ind?
+      auto s = pm.ps->size();
+      if(pm.ps->size() <= (pm.ind)) {
         pm.ps->insert();
+        pm.ind = pm.ps->size() - 1;
+      }
       put(*(pm.prop), pm.ind, t);
       i = pm.ind;
       ++pm.ind;
@@ -1219,7 +1230,8 @@ public:
   */
   Vector_push_map normal_push_map ()
   {
-    return Vector_push_map (this, &m_normals, size());
+    CGAL_precondition(m_normals.has_value());
+    return Vector_push_map (this, &m_normals.value(), size());
   }
   /*!
     \cgalAdvancedFunction

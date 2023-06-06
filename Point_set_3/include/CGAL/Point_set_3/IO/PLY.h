@@ -54,10 +54,9 @@ private:
     Pmap m_pmap;
     std::string m_name;
   public:
-    PLY_property_to_point_set_property(Point_set& ps, const std::string& name)
-      : m_name(name)
-    {
-      boost::tie(m_map, boost::tuples::ignore) = ps.add_property_map(name, Type());
+    PLY_property_to_point_set_property(Point_set& ps, const std::string& name) :
+      m_name(name),
+      m_map(ps.add_property_map(name, Type()).first) {
       m_pmap = ps.push_property_map(m_map);
     }
 
@@ -540,102 +539,92 @@ bool write_PLY(std::ostream& os,
 
     bool okay = false;
     {
-      Int8_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int8_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::int8_t>(prop[i]);
+      if(pmap)
       {
         os << "property char " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Int8_map>(pmap));
+        printers.push_back(new internal::Char_property_printer<Index,Int8_map>(pmap.value()));
         continue;
       }
     }
     {
-      Uint8_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint8_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::uint8_t>(prop[i]);
+      if(pmap)
       {
         os << "property uchar " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Uint8_map>(pmap));
+        printers.push_back(new internal::Char_property_printer<Index,Uint8_map>(pmap.value()));
         continue;
       }
     }
     {
-      Int16_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int16_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::int16_t>(prop[i]);
+      if(pmap)
       {
         os << "property short " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int16_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int16_map>(pmap.value()));
         continue;
       }
     }
     {
-      Uint16_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint16_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::uint16_t>(prop[i]);
+      if(pmap)
       {
         os << "property ushort " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint16_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint16_map>(pmap.value()));
         continue;
       }
     }
     {
-      Int32_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int32_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::int32_t>(prop[i]);
+      if(pmap)
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int32_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int32_map>(pmap.value()));
         continue;
       }
     }
     {
-      Uint32_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint32_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::uint32_t>(prop[i]);
+      if(pmap)
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint32_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint32_map>(pmap.value()));
         continue;
       }
     }
     {
-      Int64_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int64_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::int64_t>(prop[i]);
+      if(pmap)
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap.value()));
         continue;
       }
     }
     {
-      Uint64_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint64_t>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<boost::uint64_t>(prop[i]);
+      if(pmap)
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap.value()));
         continue;
       }
     }
     {
-      Float_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<float>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<float>(prop[i]);
+      if(pmap)
       {
         os << "property float " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Float_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Float_map>(pmap.value()));
         continue;
       }
     }
     {
-      Double_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<double>(prop[i]);
-      if(okay)
+      auto pmap = point_set.template property_map<double>(prop[i]);
+      if(pmap)
       {
         os << "property double " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Double_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Double_map>(pmap.value()));
         continue;
       }
     }
