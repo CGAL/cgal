@@ -42,7 +42,7 @@ protected:
     void initShaderProgram();
     
     void initGeometry();
-    int  createSphere(int numSlices, int numStacks, float r);
+    void createSphere(int numSlices, int numStacks, float r);
 
 
 private:

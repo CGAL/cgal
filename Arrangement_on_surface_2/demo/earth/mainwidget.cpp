@@ -215,6 +215,9 @@ void MainWidget::initShaderProgram()
   uniformMVP = glGetUniformLocation(shader, "MVP");
   cout << "uniform loc = " << uniformMVP << endl;
 }
+
+
+
 void MainWidget::initGeometry()
 {
   const float c = 0.5;
@@ -249,18 +252,18 @@ void MainWidget::initGeometry()
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-int MainWidget::createSphere(int numSlices, int numStacks, float r)
+void MainWidget::createSphere(int numSlices, int numStacks, float r)
 {
   numStacks = std::max<int>(2, numStacks);
-  vector<QVector3D> vertices, normals;
+  vector<QVector3D> vertices;
 
   // NORTH POLE
   vertices.push_back(QVector3D(0, 0, r));
-  normals.push_back(QVector3D(0, 0, 1));
+  vertices.push_back(QVector3D(0, 0, 1));
 
   // SOUTH POLE
   vertices.push_back(QVector3D(0, 0, -r));
-  normals.push_back(QVector3D(0, 0, -1));
+  vertices.push_back(QVector3D(0, 0, -1));
   int startingIndexOfMiddleVertices = vertices.size();
 
   for (int j = 1; j < numStacks; j++)
@@ -282,11 +285,12 @@ int MainWidget::createSphere(int numSlices, int numStacks, float r)
       auto p = QVector3D(x, y, z);
       auto n = p / p.length();
       vertices.push_back(p);
-      normals.push_back(n);
+      vertices.push_back(n);
     }
   }
 
-  // add the indices for all trinagles
+
+  // add the indices for all triangles
   vector<GLuint> indices;
 
   // NORTH CAP
@@ -362,9 +366,16 @@ int MainWidget::createSphere(int numSlices, int numStacks, float r)
     {
       glBufferData(GL_ARRAY_BUFFER, sizeof(QVector3D) * vertices.size(), reinterpret_cast<const void*>(vertices.data()), GL_STATIC_DRAW);
 
-      GLint index = 0;
-      glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, 0, 0);
-      glEnableVertexAttribArray(index);
+      // positions
+      GLint positionAttribIndex = 0;
+      GLsizei stride = 6 * sizeof(float);
+      glVertexAttribPointer(positionAttribIndex, 3, GL_FLOAT, GL_FALSE, stride, 0);
+      glEnableVertexAttribArray(positionAttribIndex);
+      //normals
+      GLint normalAttribIndex = 1;
+      auto* normal_offset = reinterpret_cast<const void*>(3 * sizeof(float));
+      glVertexAttribPointer(normalAttribIndex, 3, GL_FLOAT, GL_FALSE, stride, normal_offset);
+      glEnableVertexAttribArray(normalAttribIndex);
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -372,8 +383,6 @@ int MainWidget::createSphere(int numSlices, int numStacks, float r)
   glBindVertexArray(0);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-  return numIndices;
 }
 //! [3]
 
