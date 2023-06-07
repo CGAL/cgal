@@ -2613,8 +2613,17 @@ remove(Vertex_handle v, bool *could_lock_zone)
     if(!vertex_validity_check(v, tds()))
       return true; // vertex is already gone from the TDS, nothing to do
 
-    Vertex_handle hint = v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0);
-
+#ifndef CGAL_LINKED_WITH_TBB
+    using Vertex_handle_and_point = Vertex_handle;
+#endif // not CGAL_LINKED_WITH_TBB
+    Vertex_handle_and_point hint_and_point{v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0)};
+#ifdef CGAL_LINKED_WITH_TBB
+    const Vertex_handle& hint = hint_and_point.vh;
+    const Weighted_point& hint_point_mem = hint_and_point.wpt;
+#else // not CGAL_LINKED_WITH_TBB
+    const Vertex_handle& hint = hint_and_point;
+    const Weighted_point& hint_point_mem = hint_and_point->point();
+#endif // not CGAL_LINKED_WITH_TBB
     Self tmp;
     Vertex_remover<Self> remover(tmp);
     removed = Tr_Base::remove(v, remover, could_lock_zone);
@@ -2641,13 +2650,12 @@ remove(Vertex_handle v, bool *could_lock_zone)
           // the hint.
           if(!vertex_validity_check(hint, tds()))
           {
-            hint = finite_vertices_begin();
+            hint_and_point = finite_vertices_begin();
             continue;
           }
 
           // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
           // does not get its position changed to P2 != P1.
-          const Weighted_point hint_point_mem = hint->point();
 
           if(this->try_lock_point(hint_point_mem) && this->try_lock_point(wp))
           {
@@ -2657,7 +2665,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
             if(!vertex_validity_check(hint, tds()) ||
                hint->point() != hint_point_mem)
             {
-              hint = finite_vertices_begin();
+              hint_and_point = finite_vertices_begin();
               this->unlock_all_elements();
               continue;
             }
@@ -2668,7 +2676,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
             {
               success = true;
               if(hv != Vertex_handle())
-                hint = hv;
+                hint_and_point = hv;
             }
           }
 
