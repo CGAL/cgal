@@ -1343,6 +1343,7 @@ private:
     return true;
   }
 
+public:
   // Not the best complexity, but it's very cheap compared to the rest of the algorithm.
   void make_manifold()
   {
