@@ -47,7 +47,8 @@ void main()
 
 	// compute the normal for the current triangle
 	vec3 triNormal = normalize(cross(vpos[1]-vpos[0], vpos[2]-vpos[0]));
-	float c = clamp(dot(lightDir,triNormal), 0, 1);
+	//float c = clamp(dot(lightDir,triNormal), 0, 1);
+	float c = abs(dot(lightDir,triNormal));
 	vCol = vec4(.2, .2,0,1) + vec4(c,c,0,1);
 
 	gl_Position = gl_in[0].gl_Position; EmitVertex();
@@ -255,25 +256,25 @@ void MainWidget::initGeometry()
 void MainWidget::createSphere(int numSlices, int numStacks, float r)
 {
   numStacks = std::max<int>(2, numStacks);
-  vector<QVector3D> vertices;
+  std::vector<QVector3D> vertices, normals;
 
   // NORTH POLE
   vertices.push_back(QVector3D(0, 0, r));
-  vertices.push_back(QVector3D(0, 0, 1));
+  normals.push_back(QVector3D(0, 0, 1));
 
   // SOUTH POLE
   vertices.push_back(QVector3D(0, 0, -r));
-  vertices.push_back(QVector3D(0, 0, -1));
+  normals.push_back(QVector3D(0, 0, -1));
   int startingIndexOfMiddleVertices = vertices.size();
 
-  for (int j = 1; j < numStacks; j++)
+  for (int j = 1; j < numStacks; ++j)
   {
     // Calculate the latitude (vertical angle) for the current stack
     float lat = M_PI * j / numStacks;
     float rxy = r * sin(lat);
     float z = r * cos(lat);
 
-    for (int i = 0; i < numSlices; i++)
+    for (int i = 0; i < numSlices; ++i)
     {
       // Calculate the longitude (horizontal angle) for the current slice
       float lon = 2 * M_PI * i / numSlices;
@@ -285,13 +286,21 @@ void MainWidget::createSphere(int numSlices, int numStacks, float r)
       auto p = QVector3D(x, y, z);
       auto n = p / p.length();
       vertices.push_back(p);
-      vertices.push_back(n);
+      normals.push_back(n);
     }
+  }
+
+  // strided vertex-data
+  std::vector<QVector3D> vertex_data;
+  for (int i = 0; i < vertices.size(); ++i)
+  {
+    vertex_data.push_back(vertices[i]);
+    vertex_data.push_back(normals[i]);
   }
 
 
   // add the indices for all triangles
-  vector<GLuint> indices;
+  std::vector<GLuint> indices;
 
   // NORTH CAP
   const int northVertexIndex = 0;
@@ -364,7 +373,7 @@ void MainWidget::createSphere(int numSlices, int numStacks, float r)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     {
-      glBufferData(GL_ARRAY_BUFFER, sizeof(QVector3D) * vertices.size(), reinterpret_cast<const void*>(vertices.data()), GL_STATIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(QVector3D) * vertex_data.size(), reinterpret_cast<const void*>(vertex_data.data()), GL_STATIC_DRAW);
 
       // positions
       GLint positionAttribIndex = 0;
