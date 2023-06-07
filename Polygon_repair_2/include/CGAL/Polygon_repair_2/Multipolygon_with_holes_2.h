@@ -12,7 +12,7 @@
 #ifndef CGAL_MULTIPOLYGON_WITH_HOLES_2_H
 #define CGAL_MULTIPOLYGON_WITH_HOLES_2_H
 
-#include <deque>
+#include <CGAL/Polygon_with_holes_2.h>
 
 namespace CGAL {
 
@@ -27,22 +27,22 @@ namespace CGAL {
  *
  * \cgalModels `MultipolygonWithHoles_2`
  */
-template <typename Polygon_>
+template <class PolygonTraits_,
+          class PolygonContainer_ = std::vector<typename Kernel::Point_2>>
 class Multipolygon_with_holes_2 {
 public:
-/// \name Definition
+  /// \name Definition
 
-/// @{
   /// polygon with holes type
-  typedef Polygon_ Polygon_with_holes_2;
-/// @}
-
+  typedef CGAL::Polygon_with_holes_2<PolygonTraits_, PolygonContainer_> Polygon_with_holes_2;
+  
   typedef std::deque<Polygon_with_holes_2> Polygons_container;
 
   typedef typename Polygons_container::iterator Polygon_iterator;
   typedef typename Polygons_container::const_iterator Polygon_const_iterator;
 
   typedef unsigned int Size;
+  
 
   Multipolygon_with_holes_2() {}
 
@@ -81,4 +81,4 @@ protected:
 
 } //namespace CGAL
 
-#endif
+#endif // CGAL_MULTIPOLYGON_WITH_HOLES_2_H

@@ -14,17 +14,28 @@
 
 namespace CGAL {
 
+/*! \ingroup PkgPolygonRepair2Ref
+ *
+ * The class `Triangulation_with_odd_even_constraints_2` builds on a constrained
+ * triangulation to remove the parts of constraints that overlap an even number of times
+ *
+ * \tparam Triangulation_ must have support for constraints
+ */
 template <class Triangulation_>
 class Triangulation_with_odd_even_constraints_2 {
+public:
+  /// \name Definition
 
-  // the triangulation class.
+  /// @{
+  /// the triangulation class.
   typedef typename Triangulation_ Triangulation;
 
-  // handle to a vertex.
+  /// handle to a vertex.
   typedef typename Triangulation_::Vertex_handle Vertex_handle;
+  /// @}
   
   // iterator over interior faces.
-  class Interior_faces_iterator : Triangulation::All_faces_iterator {
+  class Interior_faces_iterator : public Triangulation::All_faces_iterator {
     Interior_faces_iterator operator++();
     Interior_faces_iterator operator--();
   }

@@ -8,7 +8,7 @@
  * \cgalHasModel `CGAL::Multipolygon_with_holes_2<Polygon>`
  */
 
-class MultiPolygonWithHoles_2 {
+class MultipolygonWithHoles_2 {
 public:
 
 /// \name Types
