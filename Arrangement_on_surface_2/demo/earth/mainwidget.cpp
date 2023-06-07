@@ -8,11 +8,10 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-using namespace std;
 
 namespace {
   // vertex shader
-  const char* vShader = R"vs(
+  const char* vertex_shader_code = R"vs(
 #version 330
 
 layout (location = 0) in vec3 pos;
@@ -32,7 +31,7 @@ void main()
 
   // GEOMETRY SHADER
   // * I am using the geometry shader to compute the face-normals in the GPU on the fly
-  const char* gShader = R"gs(
+  const char* geometry_shader_code = R"gs(
 #version 330
 
 in vec3 vpos[];
@@ -60,7 +59,7 @@ void main()
 
 
   // FRAGMENT SHADER
-  static const char* fShader = R"fs(
+  static const char* fragment_shader_code = R"fs(
 #version 330
 
 in vec4 vCol;
@@ -87,12 +86,12 @@ MainWidget::~MainWidget()
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
-    mousePressPosition = QVector2D(e->position());
+    m_mouse_press_position = QVector2D(e->position());
 }
 void MainWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     // Mouse release position - mouse press position
-    QVector2D diff = QVector2D(e->position()) - mousePressPosition;
+    QVector2D diff = QVector2D(e->position()) - m_mouse_press_position;
 
     // Rotation axis is perpendicular to the mouse position difference
     // vector
@@ -102,22 +101,23 @@ void MainWidget::mouseReleaseEvent(QMouseEvent *e)
     qreal acc = diff.length() / 100.0;
 
     // Calculate new rotation axis as weighted sum
-    rotationAxis = (rotationAxis * angularSpeed + n * acc).normalized();
+    m_rotation_axis = (m_rotation_axis * m_angular_speed + n * acc).normalized();
 
     // Increase angular speed
-    angularSpeed += acc;
+    m_angular_speed += acc;
 }
 void MainWidget::timerEvent(QTimerEvent *)
 {
     // Decrease angular speed (friction)
-    angularSpeed *= 0.99;
+    m_angular_speed *= 0.99;
 
     // Stop rotation when speed goes below threshold
-    if (angularSpeed < 0.01) {
-        angularSpeed = 0.0;
+    if (m_angular_speed < 0.01) {
+        m_angular_speed = 0.0;
     } else {
         // Update rotation
-        rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
+        m_rotation = QQuaternion::fromAxisAndAngle(m_rotation_axis, m_angular_speed) * 
+                                                                       m_rotation;
 
         // Request an update
         update();
@@ -146,51 +146,53 @@ void MainWidget::initializeGL()
     //glEnable(GL_CULL_FACE);
 
     // Use QBasicTimer because its faster than QTimer
-    timer.start(12, this);
+    m_timer.start(12, this);
 }
 
-void MainWidget::addShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
+void MainWidget::addShader(GLuint the_program, const char* shader_code, 
+                                                            GLenum shader_type)
 {
-  GLuint theShader = glCreateShader(shaderType);
+  GLuint the_shader = glCreateShader(shader_type);
 
-  const GLchar* theCode[] = { shaderCode };
-  GLint codeLength[] = { strlen(shaderCode) };
+  const GLchar* the_code[] = { shader_code };
+  GLint code_length[] = { strlen(shader_code) };
 
-  glShaderSource(theShader, 1, theCode, codeLength);
-  glCompileShader(theShader);
+  glShaderSource(the_shader, 1, the_code, code_length);
+  glCompileShader(the_shader);
 
 
   GLint result = 0;
   GLchar elog[1024] = { 0 };
-  glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(the_shader, GL_COMPILE_STATUS, &result);
   if (!result)
   {
-    string shaderTypeName;
-    switch (shaderType)
+    std::string shader_type_name;
+    switch (shader_type)
     {
-    case GL_VERTEX_SHADER:   shaderTypeName = "VERTEX"; break;
-    case GL_GEOMETRY_SHADER: shaderTypeName = "GEOMETRY"; break;
-    case GL_FRAGMENT_SHADER: shaderTypeName = "FRAGMENT"; break;
+    case GL_VERTEX_SHADER:   shader_type_name = "VERTEX"; break;
+    case GL_GEOMETRY_SHADER: shader_type_name = "GEOMETRY"; break;
+    case GL_FRAGMENT_SHADER: shader_type_name = "FRAGMENT"; break;
     }
-    glGetShaderInfoLog(theShader, sizeof(elog), NULL, elog);
-    cout << "! error compiling the " << shaderTypeName << " shader:\n" << elog << endl;
+    glGetShaderInfoLog(the_shader, sizeof(elog), NULL, elog);
+    std::cout << "! error compiling the " << shader_type_name << 
+                 " shader:\n" << elog << std::endl;
     return;
   }
 
-  glAttachShader(theProgram, theShader);
+  glAttachShader(the_program, the_shader);
 }
 void MainWidget::initShaderProgram()
 {
   shader = glCreateProgram();
   if (!shader)
   {
-    cout << "error creating shader program!\n";
+    std::cout << "error creating shader program!\n";
     return;
   }
 
-  addShader(shader, vShader, GL_VERTEX_SHADER);
-  addShader(shader, gShader, GL_GEOMETRY_SHADER);
-  addShader(shader, fShader, GL_FRAGMENT_SHADER);
+  addShader(shader, vertex_shader_code, GL_VERTEX_SHADER);
+  addShader(shader, geometry_shader_code, GL_GEOMETRY_SHADER);
+  addShader(shader, fragment_shader_code, GL_FRAGMENT_SHADER);
 
   GLint result = 0;
   GLchar elog[1024] = { 0 };
@@ -200,7 +202,7 @@ void MainWidget::initShaderProgram()
   if (!result)
   {
     glGetProgramInfoLog(shader, sizeof(elog), NULL, elog);
-    cout << "! error linking program:\n" << elog << endl;
+    std::cout << "! error linking program:\n" << elog << std::endl;
     return;
   }
 
@@ -209,12 +211,12 @@ void MainWidget::initShaderProgram()
   if (!result)
   {
     glGetProgramInfoLog(shader, sizeof(elog), NULL, elog);
-    cout << "! error validating program:\n" << elog << endl;
+    std::cout << "! error validating program:\n" << elog << std::endl;
     return;
   }
 
-  uniformMVP = glGetUniformLocation(shader, "MVP");
-  cout << "uniform loc = " << uniformMVP << endl;
+  m_uniform_mvp = glGetUniformLocation(shader, "MVP");
+  std::cout << "uniform loc = " << m_uniform_mvp << std::endl;
 }
 
 
@@ -230,15 +232,15 @@ void MainWidget::initGeometry()
 
   GLuint indices[] = { 0,1,2 };
 
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
+  glGenVertexArrays(1, &m_vao);
+  glBindVertexArray(m_vao);
   {
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glGenBuffers(1, &m_ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glGenBuffers(1, &m_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     {
       glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
@@ -253,9 +255,9 @@ void MainWidget::initGeometry()
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-void MainWidget::createSphere(int numSlices, int numStacks, float r)
+void MainWidget::createSphere(int num_slices, int num_stacks, float r)
 {
-  numStacks = std::max<int>(2, numStacks);
+  num_stacks = std::max<int>(2, num_stacks);
   std::vector<QVector3D> vertices, normals;
 
   // NORTH POLE
@@ -265,23 +267,23 @@ void MainWidget::createSphere(int numSlices, int numStacks, float r)
   // SOUTH POLE
   vertices.push_back(QVector3D(0, 0, -r));
   normals.push_back(QVector3D(0, 0, -1));
-  int startingIndexOfMiddleVertices = vertices.size();
+  int starting_index_of_middle_vertices = vertices.size();
 
-  for (int j = 1; j < numStacks; ++j)
+  for (int j = 1; j < num_stacks; ++j)
   {
     // Calculate the latitude (vertical angle) for the current stack
-    float lat = M_PI * j / numStacks;
-    float rxy = r * sin(lat);
-    float z = r * cos(lat);
+    float lat = M_PI * j / num_stacks;
+    float rxy = r * std::sin(lat);
+    float z = r * std::cos(lat);
 
-    for (int i = 0; i < numSlices; ++i)
+    for (int i = 0; i < num_slices; ++i)
     {
       // Calculate the longitude (horizontal angle) for the current slice
-      float lon = 2 * M_PI * i / numSlices;
+      float lon = 2 * M_PI * i / num_slices;
 
       // Convert spherical coordinates to Cartesian coordinates
-      float x = rxy * cos(lon);
-      float y = rxy * sin(lon);
+      float x = rxy * std::cos(lon);
+      float y = rxy * std::sin(lon);
 
       auto p = QVector3D(x, y, z);
       auto n = p / p.length();
@@ -303,13 +305,13 @@ void MainWidget::createSphere(int numSlices, int numStacks, float r)
   std::vector<GLuint> indices;
 
   // NORTH CAP
-  const int northVertexIndex = 0;
-  const int northCapVertexIndexStart = startingIndexOfMiddleVertices;
-  for (int i = 0; i < numSlices; i++)
+  const int north_vertex_index = 0;
+  const int north_cap_vertex_index_start = starting_index_of_middle_vertices;
+  for (int i = 0; i < num_slices; i++)
   {
-    indices.push_back(northVertexIndex);
-    indices.push_back(northCapVertexIndexStart + i);
-    indices.push_back(northCapVertexIndexStart + (i + 1) % numSlices);
+    indices.push_back(north_vertex_index);
+    indices.push_back(north_cap_vertex_index_start + i);
+    indices.push_back(north_cap_vertex_index_start + (i + 1) % num_slices);
   }
 
   // 0 = NORTH VERTEX
@@ -317,38 +319,42 @@ void MainWidget::createSphere(int numSlices, int numStacks, float r)
   // [2, 2 + (numSlices-1)] = bottom vertices of the stack #1
   // [2+numSlices, 2 + (2*numSlices - 1)] = bottom vertices of the stack #2
   // ...
-  // [2+(k-1)*numSlices, 2 + (k*numSlices -1) ] = bottom vertices of the stack #k
+  // [2+(k-1)*numSlices, 2 + (k*numSlices -1)] = bottom vertices of the stack #k
   // ..
-  // [2+(numStacks-1)*numSlices, 2+(numStacks*numSlices-1)] = bottom vertices of the last stack (# numStacks)
+  // [2+(numStacks-1)*numSlices, 2+(numStacks*numSlices-1)] = bottom vertices of
+  //                                                the last stack (# numStacks)
 
   // SOUTH CAP
-  const int southVertexIndex = 1;
-  const int southCapIndexStart = startingIndexOfMiddleVertices + (numStacks - 2) * numSlices;
-  for (int i = 0; i < numSlices; i++)
+  const int south_vertex_index = 1;
+  const int south_cap_index_start = starting_index_of_middle_vertices + 
+                                                  (num_stacks - 2) * num_slices;
+  for (int i = 0; i < num_slices; ++i)
   {
-    const auto vi0 = southVertexIndex;
-    const auto vi1 = southCapIndexStart + i;
-    const auto vi2 = southCapIndexStart + (i + 1) % numSlices;
+    const auto vi0 = south_vertex_index;
+    const auto vi1 = south_cap_index_start + i;
+    const auto vi2 = south_cap_index_start + (i + 1) % num_slices;
     indices.push_back(vi2);
     indices.push_back(vi1);
     indices.push_back(vi0);
   }
 
   // MIDDLE TRIANGLES
-  for (int k = 0; k < numStacks - 2; k++)
+  for (int k = 0; k < num_stacks - 2; ++k)
   {
-    const int stackStartIndex = startingIndexOfMiddleVertices + k * numSlices;
-    const int nextStackStartIndex = stackStartIndex + numSlices;
-    for (int i = 0; i < numSlices; i++)
+    const int stack_start_index = starting_index_of_middle_vertices + 
+                                                                k * num_slices;
+    const int next_stack_start_index = stack_start_index + num_slices;
+    for (int i = 0; i < num_slices; ++i)
     {
+      // check why the following code snippet does not work (winding order?)
       //int vi0 = stackStartIndex + i;
       //int vi1 = nextStackStartIndex + i;
       //int vi2 = nextStackStartIndex + (i + 1) % numSlices;
       //int vi3 = stackStartIndex + (i + 1) % numSlices;
-      int vi0 = stackStartIndex + i;
-      int vi1 = stackStartIndex + (i + 1) % numSlices;
-      int vi2 = nextStackStartIndex + i;
-      int vi3 = nextStackStartIndex + (i + 1) % numSlices;
+      int vi0 = stack_start_index + i;
+      int vi1 = stack_start_index + (i + 1) % num_slices;
+      int vi2 = next_stack_start_index + i;
+      int vi3 = next_stack_start_index + (i + 1) % num_slices;
 
       indices.push_back(vi0);
       indices.push_back(vi2);
@@ -359,41 +365,61 @@ void MainWidget::createSphere(int numSlices, int numStacks, float r)
       indices.push_back(vi1);
     }
   }
+  m_num_indices = indices.size();
 
-  numIndices = indices.size();
 
+  // DEFINE OPENGL BUFFERS
+  glGenVertexArrays(1, &m_vao);
+  glBindVertexArray(m_vao);
 
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-  {
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), reinterpret_cast<const void*>(indices.data()), GL_STATIC_DRAW);
+  // Index buffer
+  glGenBuffers(1, &m_ibo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+  auto indices_size = sizeof(GLuint) * indices.size();
+  auto indices_data = reinterpret_cast<const void*>(indices.data());
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
+               indices_size, 
+               indices_data,
+               GL_STATIC_DRAW);
 
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    {
-      glBufferData(GL_ARRAY_BUFFER, sizeof(QVector3D) * vertex_data.size(), reinterpret_cast<const void*>(vertex_data.data()), GL_STATIC_DRAW);
+  // Vertex Buffer
+  glGenBuffers(1, &m_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+  auto vertex_buffer_size = sizeof(QVector3D) * vertex_data.size();
+  auto vertex_buffer_data = reinterpret_cast<const void*>(vertex_data.data());
+  glBufferData(GL_ARRAY_BUFFER, 
+               vertex_buffer_size, 
+               vertex_buffer_data, 
+               GL_STATIC_DRAW);
 
-      // positions
-      GLint positionAttribIndex = 0;
-      GLsizei stride = 6 * sizeof(float);
-      glVertexAttribPointer(positionAttribIndex, 3, GL_FLOAT, GL_FALSE, stride, 0);
-      glEnableVertexAttribArray(positionAttribIndex);
-      //normals
-      GLint normalAttribIndex = 1;
-      auto* normal_offset = reinterpret_cast<const void*>(3 * sizeof(float));
-      glVertexAttribPointer(normalAttribIndex, 3, GL_FLOAT, GL_FALSE, stride, normal_offset);
-      glEnableVertexAttribArray(normalAttribIndex);
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // Position Vertex-Attribute
+    GLint position_attrib_index = 0;
+    const void* position_offset = 0;
+    GLsizei stride = 6 * sizeof(float);
+    glVertexAttribPointer(position_attrib_index, 
+                          3, 
+                          GL_FLOAT, GL_FALSE, 
+                          stride,
+                          position_offset);
+    glEnableVertexAttribArray(position_attrib_index);
+    
+    // Normal Vertex-Attribute
+    GLint normal_attrib_index = 1;
+    auto* normal_offset = reinterpret_cast<const void*>(3 * sizeof(float));
+    glVertexAttribPointer(normal_attrib_index, 
+                          3, 
+                          GL_FLOAT, 
+                          GL_FALSE, 
+                          stride, 
+                          normal_offset);
+    glEnableVertexAttribArray(normal_attrib_index);
 
-  }
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
+  // Note: calling this before glBindVertexArray(0) results in no output!
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-//! [3]
 
 
 void MainWidget::resizeGL(int w, int h)
@@ -405,8 +431,8 @@ void MainWidget::resizeGL(int w, int h)
     const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
 
     // Reset projection
-    projection.setToIdentity();
-    projection.perspective(fov, aspect, z_near, z_far);
+    m_projection.setToIdentity();
+    m_projection.perspective(fov, aspect, z_near, z_far);
 }
 
 void MainWidget::paintGL()
@@ -428,15 +454,15 @@ void MainWidget::paintGL()
 
 
     glUseProgram(shader);
-    auto mvp = projection * view * model;
-    glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, mvp.data());
+    auto mvp = m_projection * view * model;
+    glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, mvp.data());
 
     {
       // DRAW TRIANGLE
-      glBindVertexArray(vao);
+      glBindVertexArray(m_vao);
       {
         //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, m_num_indices, GL_UNSIGNED_INT, 0);
       }
       glBindVertexArray(0);
     }
