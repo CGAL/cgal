@@ -173,7 +173,7 @@ class Alpha_wrap_3
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Dt>, CGAL_BOOST_PAIRING_HEAP>;
 
 protected:
-  const Oracle& m_oracle;
+  const Oracle m_oracle;
   SC_Iso_cuboid_3 m_bbox;
 
   FT m_alpha, m_sq_alpha;
