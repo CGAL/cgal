@@ -49,16 +49,15 @@ private:
   class PLY_property_to_point_set_property : public Abstract_ply_property_to_point_set_property
   {
     typedef typename Point_set::template Property_map<Type> Map;
-    typedef typename Point_set::template Push_property_map<Map> Pmap;
+    typedef typename Point_set::template Push_property_map<Type> Pmap;
     Map m_map;
     Pmap m_pmap;
     std::string m_name;
   public:
     PLY_property_to_point_set_property(Point_set& ps, const std::string& name) :
       m_name(name),
-      m_map(ps.add_property_map(name, Type()).first) {
-      m_pmap = ps.push_property_map(m_map);
-    }
+      m_map(ps.add_property_map(name, Type()).first),
+      m_pmap(ps.push_property_map(m_map)) {}
 
     virtual void assign(PLY_element& element, typename Point_set::Index index)
     {

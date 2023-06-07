@@ -733,7 +733,6 @@ public:
     // Sorting based on the indices reorders the point set correctly
     quick_sort_on_indices ((std::ptrdiff_t)0, (std::ptrdiff_t)(m_base.size() - 1));
 
-    auto s = size();
     m_base.resize(size ());
     m_base.shrink_to_fit ();
     m_nb_removed = 0;
@@ -1100,30 +1099,27 @@ public:
 
   public:
     typedef std::output_iterator_tag iterator_category;
-    typedef typename Property::value_type value_type;
+    typedef Property value_type;
     typedef std::ptrdiff_t           difference_type;
     typedef void                     pointer;
     typedef void                     reference;
 
   private:
 
-    Point_set* ps;
-    Property* prop;
-    Index ind;
+    Point_set& ps;
+    Property_map<Property> map;
 
   public:
 
-    Property_back_inserter(Point_set* ps, Property* prop, Index ind=Index())
-      : ps(ps), prop (prop), ind(ind) {}
+    Property_back_inserter(Point_set& ps, Properties::Property_array<Point_set::Index, Property>& prop) :
+      ps(ps), map(prop) {}
     Property_back_inserter& operator++() { return *this; }
     Property_back_inserter& operator++(int) { return *this; }
     Property_back_inserter& operator*() { return *this; }
     Property_back_inserter& operator= (const value_type& p)
     {
-      if(ps->size() <= ind)
-        ps->insert();
-      put(*prop, ind, p);
-      ++ ind;
+      auto new_index = *ps.insert();
+      put(map, new_index, p);
       return *this;
     }
 
@@ -1136,35 +1132,25 @@ public:
 
   public:
     typedef Index key_type;
-    typedef typename Property::value_type value_type;
+    typedef Property value_type;
     typedef value_type& reference;
     typedef boost::read_write_property_map_tag category;
 
-    Point_set* ps;
-    Property* prop;
-    mutable Index ind;
+    Point_set& ps;
+    Property_map<Property> map;
 
-    Push_property_map(Point_set* ps = nullptr,
-                      Property* prop = nullptr,
-                      Index ind=Index())
-      : ps(ps), prop(prop), ind(ind) {}
+    Push_property_map(Point_set& ps, Properties::Property_array<Point_set::Index, Property>& prop) :
+      ps(ps), map(prop) {}
 
     friend void put(const Push_property_map& pm, Index& i, const value_type& t)
     {
-      // todo: Why does this need to store ind?
-      auto s = pm.ps->size();
-      if(pm.ps->size() <= (pm.ind)) {
-        pm.ps->insert();
-        pm.ind = pm.ps->size() - 1;
-      }
-      put(*(pm.prop), pm.ind, t);
-      i = pm.ind;
-      ++pm.ind;
+      i = *pm.ps.insert();
+      put(pm.map, i, t);
     }
 
     friend reference get (const Push_property_map& pm, const Index& i)
     {
-      return ((*(pm.prop))[i]);
+      return ((*(pm.map))[i]);
     }
 
   };
@@ -1174,7 +1160,7 @@ public:
   /// \cgalAdvancedBegin
   /// Back inserter on indices
   /// \cgalAdvancedEnd
-  typedef Property_back_inserter<Index_map> Index_back_inserter;
+  typedef Property_back_inserter<Index> Index_back_inserter;
   /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Back inserter on points
@@ -1184,12 +1170,12 @@ public:
   /// \cgalAdvancedBegin
   /// Property map for pushing new points
   /// \cgalAdvancedEnd
-  typedef Push_property_map<Point_map> Point_push_map;
+  typedef Push_property_map<Point> Point_push_map;
   /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Property map for pushing new vectors
   /// \cgalAdvancedEnd
-  typedef Push_property_map<Vector_map> Vector_push_map;
+  typedef Push_property_map<Vector> Vector_push_map;
 
   /*!
     \cgalAdvancedFunction
@@ -1206,10 +1192,10 @@ public:
     \cgalAdvancedEnd
   */
   template <class T>
-  Push_property_map<Property_map<T> >
+  Push_property_map<T>
   push_property_map (Property_map<T>& prop)
   {
-    return Push_property_map<Property_map<T> > (this, &prop, size());
+    return Push_property_map<T> (*this, prop.array());
   }
   /*!
     \cgalAdvancedFunction
@@ -1219,7 +1205,7 @@ public:
   */
   Point_push_map point_push_map ()
   {
-    return Point_push_map (this, &m_points, size());
+    return Point_push_map (*this, m_base.template get_property<Point>("point"));
   }
   /*!
     \cgalAdvancedFunction
@@ -1233,7 +1219,7 @@ public:
   Vector_push_map normal_push_map ()
   {
     CGAL_precondition(m_normals.has_value());
-    return Vector_push_map (this, &m_normals.value(), size());
+    return Vector_push_map (*this, m_base.template get_property<Vector>("normal"));
   }
   /*!
     \cgalAdvancedFunction
@@ -1243,7 +1229,7 @@ public:
   */
   Index_back_inserter index_back_inserter ()
   {
-    return Index_back_inserter (this, &m_indices, size());
+    return Index_back_inserter (*this, m_base.template get_property<Index>("index"));
   }
   /*!
     \cgalAdvancedFunction
@@ -1253,7 +1239,7 @@ public:
   */
   Point_back_inserter point_back_inserter ()
   {
-    return Point_back_inserter (this, &m_points, size());
+    return Point_back_inserter (*this, m_base.template get_property<Point>("point"));
   }
 
   /// @}
