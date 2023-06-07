@@ -41,7 +41,7 @@ also avoid CMake to link with the native threads support library on your system.
 
 \section Preliminaries_cc0x C++17 Support
 
-\cgal is based on a the version C++17 of the standard.
+\cgal is based on the version C++17 of the C++ standard.
 
 \section preliminaries_secchecks Checks
 
