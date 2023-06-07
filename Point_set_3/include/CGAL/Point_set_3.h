@@ -302,6 +302,7 @@ public:
   */
   std::size_t number_of_points () const { return m_base.capacity() - m_nb_removed; }
   /// \cond SKIP_IN_MANUAL
+  // todo: why is this undocumented, but mentioned in the number_of_points documentation?
   std::size_t size () const { return number_of_points(); }
   /// \endcond
 
@@ -327,7 +328,7 @@ public:
   {
     collect_garbage();
     other.collect_garbage();
-    other.m_base.append(m_base);
+    m_base.append(other.m_base);
 
     // Reset indices
     for (std::size_t i = 0; i < this->m_base.size(); ++ i)
@@ -345,7 +346,7 @@ public:
    */
   void clear()
   {
-    m_base.reserve(0);
+    m_base.resize(0);
     m_base.remove_all_properties_except({"index", "point"});
     m_nb_removed = 0;
   }
@@ -371,7 +372,7 @@ public:
     \note This method does not change the content of the point set and
     is only used for optimization.
    */
-  void reserve (std::size_t s) { m_base.reserve(s); }
+  void reserve (std::size_t s) { m_base.resize(s); }
 
   /*!
     \brief changes size of the point set.
@@ -463,7 +464,7 @@ public:
   iterator insert (const Point& p)
   {
     iterator out = insert();
-    m_points[size()-1] = p;
+    m_points[*out] = p;
     return out;
   }
 
@@ -732,7 +733,8 @@ public:
     // Sorting based on the indices reorders the point set correctly
     quick_sort_on_indices ((std::ptrdiff_t)0, (std::ptrdiff_t)(m_base.size() - 1));
 
-    m_base.reserve (size ());
+    auto s = size();
+    m_base.resize(size ());
     m_base.shrink_to_fit ();
     m_nb_removed = 0;
   }

@@ -163,6 +163,8 @@ public:
 
 };
 
+// todo: property maps/array handles should go in their own file
+
 // todo: add const/read-only handle
 template <typename Index, typename T>
 class Property_array_handle {
@@ -408,6 +410,11 @@ public:
     m_active_indices.resize(n);
     for (auto [name, array]: m_property_arrays)
       array->reserve(n);
+  }
+
+  void resize(std::size_t n) {
+    reserve(n);
+    std::fill(m_active_indices.begin(), m_active_indices.end(), true);
   }
 
   [[nodiscard]] std::size_t size() const { return std::count(m_active_indices.begin(), m_active_indices.end(), true); }
