@@ -1128,7 +1128,7 @@ void autorefine_soup_output(const PointRange& input_points,
     Sequential_tag
   > ::type Concurrency_tag;
 
-  constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
+  constexpr bool parallel_execution = std::is_same<Parallel_tag, Concurrency_tag>::value;
 
 #ifndef CGAL_LINKED_WITH_TBB
   CGAL_static_assertion_msg (parallel_execution,
