@@ -1307,11 +1307,10 @@ void autorefine_soup_output(const PointRange& input_points,
                       );
   }
   else
-#else
-    for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
-      deduplicate_inserted_segments(ti);
-    }
 #endif
+  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+    deduplicate_inserted_segments(ti);
+  }
 
 #ifdef USE_DEBUG_PARALLEL_TIMERS
   std::cout << t.time() << " sec. for #3" << std::endl;
@@ -1385,11 +1384,10 @@ void autorefine_soup_output(const PointRange& input_points,
                       );
   }
   else
-#else
-    for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
-      refine_triangles(ti);
-    }
 #endif
+  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+    refine_triangles(ti);
+  }
 
 #ifdef USE_DEBUG_PARALLEL_TIMERS
   t.stop();
