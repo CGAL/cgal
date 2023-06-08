@@ -49,7 +49,7 @@
 
 #define TEST_RESOLVE_INTERSECTION
 #define DEDUPLICATE_SEGMENTS
-#define USE_DEBUG_PARALLEL_TIMERS
+//#define USE_DEBUG_PARALLEL_TIMERS
 //#define DEBUG_COUNTERS
 //#define USE_FIXED_PROJECTION_TRAITS
 //#define DEBUG_DEPTH
@@ -1248,8 +1248,6 @@ void autorefine_soup_output(const PointRange& input_points,
 #ifdef DEDUPLICATE_SEGMENTS
   // deduplicate inserted segments
   //TODO: PARALLEL_FOR #3
-  Real_timer t3;
-  t3.start();
   std::vector<std::vector<std::pair<std::size_t, std::size_t>>> all_segments_ids(all_segments.size());
 
   auto deduplicate_inserted_segments = [&](std::size_t ti)
