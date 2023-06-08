@@ -146,9 +146,6 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     set(CGALConfig_all_targets_are_defined FALSE)
   endif()
 endforeach()
-
-list(APPEND CMAKE_MODULE_PATH ${CGAL_MODULES_DIR})
-
 if(CGALConfig_all_targets_are_defined)
   return()
 endif()
@@ -158,6 +155,8 @@ message(STATUS "Using header-only CGAL")
 if(NOT CGAL_FOUND)
   return()
 endif()
+
+list(APPEND CMAKE_MODULE_PATH ${CGAL_MODULES_DIR})
 
 include( ${CGAL_MODULES_DIR}/CGAL_SCM.cmake )
 CGAL_detect_git(${CGAL_CONFIG_DIR}/../../../..)
