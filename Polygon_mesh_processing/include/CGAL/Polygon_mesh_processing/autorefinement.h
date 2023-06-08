@@ -386,7 +386,7 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
 
   //intersect t2 with the three half planes which intersection defines t1
   K k;
-  intersection_coplanar_triangles_cutoff(p1,q1,r1,0,p2,q2,r2,k,l_inter_pts); //line p1q1
+  Intersections::internal::intersection_coplanar_triangles_cutoff(p1,q1,r1,0,p2,q2,r2,k,l_inter_pts); //line p1q1
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
   print_points();
@@ -401,7 +401,7 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
     }
   }
 #endif
-  intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,l_inter_pts); //line q1r1
+  Intersections::internal::intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,l_inter_pts); //line q1r1
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
   print_points();
@@ -416,7 +416,7 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
     }
   }
 #endif
-  intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,l_inter_pts); //line r1p1
+  Intersections::internal::intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,l_inter_pts); //line r1p1
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
   print_points();

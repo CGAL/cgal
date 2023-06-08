@@ -2150,6 +2150,37 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Compute_alpha_for_coplanar_triangle_intersection_3
+  {
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Vector_3 Vector_3;
+  public:
+    typedef typename K::FT  result_type;
+    result_type
+    operator()(const Point_3& p1, const Point_3& p2,       // segment 1
+               const Point_3& p3, const Point_3& p4) const // segment 2
+    {
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+      typename K::Construct_cross_product_vector_3 cross_product =
+        K().construct_cross_product_vector_3_object();
+
+      const Vector_3 v1 = vector(p1, p2);
+      const Vector_3 v2 = vector(p3, p4);
+
+      CGAL_assertion(K().coplanar_3_object()(p1,p2,p3,p4));
+
+      const Vector_3 v3 = vector(p1, p3);
+      const Vector_3 v3v2 = cross_product(v3,v2);
+      const Vector_3 v1v2 = cross_product(v1,v2);
+      const typename K::FT sl = K().compute_squared_length_3_object()(v1v2);
+      CGAL_assertion(!certainly(is_zero(sl)));
+
+      const typename K::FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
+      return t; // p1 + (p2-p1) * t
+    }
+  };
+
+  template <typename K>
   class Construct_point_on_2
   {
     typedef typename K::FT         FT;

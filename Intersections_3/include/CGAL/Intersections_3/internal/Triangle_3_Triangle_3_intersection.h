@@ -34,28 +34,6 @@ namespace CGAL {
 namespace Intersections {
 namespace internal{
 
-//TODO: move into a functor
-template <class K>
-typename K::FT
-coplanar_segment_segment_alpha_intersection(const typename K::Point_3& p1, const typename K::Point_3& p2, // segment 1
-                                            const typename K::Point_3& p3, const typename K::Point_3& p4, // segment 2
-                                            const K& k)
-{
-  const typename K::Vector_3 v1 = p2-p1;
-  const typename K::Vector_3 v2 = p4-p3;
-
-  CGAL_assertion(k.coplanar_3_object()(p1,p2,p3,p4));
-
-  const typename K::Vector_3 v3 = p3 - p1;
-  const typename K::Vector_3 v3v2 = cross_product(v3,v2);
-  const typename K::Vector_3 v1v2 = cross_product(v1,v2);
-  const typename K::FT sl = v1v2.squared_length();
-  CGAL_assertion(!certainly(is_zero(sl)));
-
-  const typename K::FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
-  return t; // p1 + (p2-p1) * t
-}
-
 template <class Kernel>
 struct Point_on_triangle
 {
@@ -179,6 +157,8 @@ intersection(const Point_on_triangle<Kernel>& p,
   std::cout << " (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) -";
   std::cout << " (" << q.id1() << "," << q.id2() << ",[" << q.alpha << "]) || e" << edge_id_t1;
 #endif
+  typename Kernel::Compute_alpha_for_coplanar_triangle_intersection_3 compute_alpha
+    = k.compute_alpha_for_coplanar_triangle_intersection_3_object();
   typedef Point_on_triangle<Kernel> Pot;
   switch(p.id1())
   {
@@ -193,10 +173,9 @@ intersection(const Point_on_triangle<Kernel>& p,
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
           std::cout << " -- case 1\n";
 #endif
-          typename Kernel::FT alpha =
-            coplanar_segment_segment_alpha_intersection(p1, q1,
-                                                        Pot::point_from_id(p2, q2, r2, p.id2()),
-                                                        Pot::point_from_id(p2, q2, r2, q.id2()), k);
+          typename Kernel::FT alpha = compute_alpha(p1, q1,
+                                                    Pot::point_from_id(p2, q2, r2, p.id2()),
+                                                    Pot::point_from_id(p2, q2, r2, q.id2()));
           int id2 = (p.id2()+1)%3 == q.id2() ? p.id2() : q.id2();
           return  Point_on_triangle<Kernel>(edge_id_t1, id2, alpha); // intersection with an original edge of t2
         }
@@ -209,10 +188,9 @@ intersection(const Point_on_triangle<Kernel>& p,
               std::cout << " -- case 2\n";
 #endif
               // points are on the same edge of t2 --> we shorten an already cut edge
-              typename Kernel::FT alpha =
-                coplanar_segment_segment_alpha_intersection(p1, q1,
-                                                            Pot::point_from_id(p2, q2, r2,  q.id2()),
-                                                            Pot::point_from_id(p2, q2, r2, (q.id2()+1)%3), k);
+              typename Kernel::FT alpha = compute_alpha(p1, q1,
+                                                        Pot::point_from_id(p2, q2, r2,  q.id2()),
+                                                        Pot::point_from_id(p2, q2, r2, (q.id2()+1)%3));
 
               return  Point_on_triangle<Kernel>(edge_id_t1, q.id2(), alpha);
             }
@@ -278,10 +256,9 @@ intersection(const Point_on_triangle<Kernel>& p,
                 std::cout << " -- case 7\n";
 #endif
                 // points are on the same edge of t2 --> we shorten an already cut edge
-                typename Kernel::FT alpha =
-                  coplanar_segment_segment_alpha_intersection(p1, q1,
-                                                              Pot::point_from_id(p2, q2, r2,  p.id2()),
-                                                              Pot::point_from_id(p2, q2, r2, (p.id2()+1)%3), k);
+                typename Kernel::FT alpha = compute_alpha(p1, q1,
+                                                          Pot::point_from_id(p2, q2, r2,  p.id2()),
+                                                          Pot::point_from_id(p2, q2, r2, (p.id2()+1)%3));
 
                 return  Point_on_triangle<Kernel>(edge_id_t1, p.id2(), alpha);
               }
@@ -314,10 +291,9 @@ intersection(const Point_on_triangle<Kernel>& p,
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
                     std::cout << " -- case 10\n";
 #endif
-                    typename Kernel::FT alpha =
-                      coplanar_segment_segment_alpha_intersection(p1, q1,
-                                                                  Pot::point_from_id(p2, q2, r2,  q.id2()),
-                                                                  Pot::point_from_id(p2, q2, r2, (q.id2()+1)%3), k);
+                    typename Kernel::FT alpha = compute_alpha(p1, q1,
+                                                              Pot::point_from_id(p2, q2, r2,  q.id2()),
+                                                              Pot::point_from_id(p2, q2, r2, (q.id2()+1)%3));
                     return  Point_on_triangle<Kernel>(edge_id_t1, q.id2(), alpha);
                   }
                   // we are intersecting an edge of t1
