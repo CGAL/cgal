@@ -220,22 +220,11 @@ public:
     CGAL_assertion(settings);
 
     // Structures.
-    OSQPWorkspace *work;
-    OSQPData *data = (OSQPData *) malloc(sizeof(OSQPData));
-    CGAL_assertion(data);
+    OSQPCscMatrix* P = static_cast<OSQPCscMatrix*>(malloc(sizeof(OSQPCscMatrix)));
+    OSQPCscMatrix* A = static_cast<OSQPCscMatrix*>(malloc(sizeof(OSQPCscMatrix)));
 
-    // Populate data.
-    data->n = static_cast<OSQPInt>(n);
-    data->m = static_cast<OSQPInt>(m);
-    data->P = csc_matrix(data->n, data->n, P_nnz, P_x.get(), P_i.get(), P_p.get());
-    CGAL_assertion(data->P);
-
-    data->q = q_x.get();
-    data->A = csc_matrix(data->m, data->n, A_nnz, A_x.get(), A_i.get(), A_p.get());
-    CGAL_assertion(data->A);
-
-    data->l = l_x.get();
-    data->u = u_x.get();
+    csc_set_data(A, m, n, A_nnz, A_x.get(), A_i.get(), A_p.get());
+    csc_set_data(P, n, n, P_nnz, P_x.get(), P_i.get(), P_p.get());
 
     // Set solver settings.
     osqp_set_default_settings(settings);
@@ -243,38 +232,33 @@ public:
     settings->eps_rel = eps_rel;
     settings->verbose = verbose;
 
-    // Set workspace.
-    osqp_setup(&work, data, settings);
+    OSQPSolver* solver = NULL;
+    OSQPInt exitflag = osqp_setup(&solver, P, q_x.get(), A, l_x.get(), u_x.get(), m, n, settings);
 
-    // Solve problem.
-    OSQPInt exitflag = -1;
     try
     {
-      exitflag = osqp_solve(work);
+      if (!exitflag)
+        exitflag = osqp_solve(solver);
+
+      const OSQPFloat* x = solver->solution->x;
+      for (std::size_t i = 0; i < n; ++i)
+      {
+        const FT value{ x[i] };
+        *(++solution) = value;
+      }
     }
-    catch(std::exception& e)
+    catch (std::exception& e)
     {
       std::cerr << "ERROR: OSQP solver has thrown an exception!" << std::endl;
       std::cerr << e.what() << std::endl;
     }
-    const bool success = (exitflag == 0);
 
-    // Create solution.
-    const OSQPFloat *x = work->solution->x;
-    for(std::size_t i=0; i<n; ++i)
-    {
-      const FT value{x[i]};
-      *(++solution) = value;
-    }
+    osqp_cleanup(solver);
+    if (A) free(A);
+    if (P) free(P);
+    if (settings) free(settings);
 
-    // Clean workspace.
-    osqp_cleanup(work);
-    c_free(data->A);
-    c_free(data->P);
-    c_free(data);
-    c_free(settings);
-
-    return success;
+    return (exitflag == 0);
   }
   /// \endcond
 
