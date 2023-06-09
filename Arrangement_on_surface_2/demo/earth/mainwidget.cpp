@@ -15,14 +15,18 @@ namespace {
 #version 330
 
 layout (location = 0) in vec3 pos;
+layout (location = 1) in vec3 normal;
+
 //out vec4 vCol;
-out vec3 vpos;
+//out vec3 vpos;
+out vec3 vNormal;
 
 uniform mat4 MVP; 
 
 void main()
 {
-	vpos = pos;
+	//vpos = pos;
+  vNormal = normal;
 	gl_Position = MVP * vec4(pos.xyz, 1);
   //gl_Position = vec4(pos.xyz, 1);
 }
@@ -62,13 +66,22 @@ void main()
   static const char* fragment_shader_code = R"fs(
 #version 330
 
-in vec4 vCol;
+//in vec4 vCol;
+in vec3 vNormal;
+
 out vec4 color;
 
 void main()
 {
+	const vec3 lightDir = normalize(vec3(1,.5,.5));
+
+	//float c = clamp(dot(lightDir,triNormal), 0, 1);
+	vec3 n = normalize(vNormal);
+  float c = abs( dot(lightDir, n) );
+	color = vec4(.2, .2,0,1) + vec4(c,c,0,1);
+
 	//color = vec4(1,1,0,1);
-  color = vCol;
+  //color = vCol;
 }
 )fs";
 }
@@ -135,9 +148,8 @@ void MainWidget::initializeGL()
 
     glClearColor(0, 0, 0, 1);
 
-    //initGeometry();
-    createSphere(20, 10, 3);
-    initShaderProgram();
+    init_geometry();
+    init_shader_program();
 
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
@@ -149,7 +161,7 @@ void MainWidget::initializeGL()
     m_timer.start(12, this);
 }
 
-void MainWidget::addShader(GLuint the_program, const char* shader_code, 
+void MainWidget::add_shader(GLuint the_program, const char* shader_code, 
                                                             GLenum shader_type)
 {
   GLuint the_shader = glCreateShader(shader_type);
@@ -181,7 +193,7 @@ void MainWidget::addShader(GLuint the_program, const char* shader_code,
 
   glAttachShader(the_program, the_shader);
 }
-void MainWidget::initShaderProgram()
+void MainWidget::init_shader_program()
 {
   shader = glCreateProgram();
   if (!shader)
@@ -190,9 +202,9 @@ void MainWidget::initShaderProgram()
     return;
   }
 
-  addShader(shader, vertex_shader_code, GL_VERTEX_SHADER);
-  addShader(shader, geometry_shader_code, GL_GEOMETRY_SHADER);
-  addShader(shader, fragment_shader_code, GL_FRAGMENT_SHADER);
+  add_shader(shader, vertex_shader_code, GL_VERTEX_SHADER);
+  //add_shader(shader, geometry_shader_code, GL_GEOMETRY_SHADER);
+  add_shader(shader, fragment_shader_code, GL_FRAGMENT_SHADER);
 
   GLint result = 0;
   GLchar elog[1024] = { 0 };
@@ -221,41 +233,15 @@ void MainWidget::initShaderProgram()
 
 
 
-void MainWidget::initGeometry()
+void MainWidget::init_geometry()
 {
-  const float c = 0.5;
-  GLfloat vertices[] = {
-    -c, -c,  0,
-     c, -c,  0,
-     0,  c,  0
-  };
-
-  GLuint indices[] = { 0,1,2 };
-
-  glGenVertexArrays(1, &m_vao);
-  glBindVertexArray(m_vao);
-  {
-    glGenBuffers(1, &m_ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &m_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    {
-      glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-      GLint index = 0;
-      glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, 0, 0);
-      glEnableVertexAttribArray(index);
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  }
-  glBindVertexArray(0);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  int num_slices, num_stacks;
+  num_slices = num_stacks = 64;
+  float r = 3;
+  create_sphere(num_slices, num_stacks, r);
 }
-void MainWidget::createSphere(int num_slices, int num_stacks, float r)
+
+void MainWidget::create_sphere(int num_slices, int num_stacks, float r)
 {
   num_stacks = std::max<int>(2, num_stacks);
   std::vector<QVector3D> vertices, normals;
@@ -424,15 +410,15 @@ void MainWidget::createSphere(int num_slices, int num_stacks, float r)
 
 void MainWidget::resizeGL(int w, int h)
 {
-    // Calculate aspect ratio
-    qreal aspect = qreal(w) / qreal(h ? h : 1);
+  // Calculate aspect ratio
+  qreal aspect = qreal(w) / qreal(h ? h : 1);
 
-    // near and far plane locations and vertical field-of-view angle in degrees
-    const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
+  // near and far plane locations and vertical field-of-view angle in degrees
+  const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
 
-    // Reset projection
-    m_projection.setToIdentity();
-    m_projection.perspective(fov, aspect, z_near, z_far);
+  // Reset projection
+  m_projection.setToIdentity();
+  m_projection.perspective(fov, aspect, z_near, z_far);
 }
 
 void MainWidget::paintGL()

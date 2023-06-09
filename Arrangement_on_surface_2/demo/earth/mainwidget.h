@@ -36,24 +36,27 @@ protected:
     void paintGL() override;
 
 
-    GLuint m_vao, m_vbo, m_ibo, shader, m_num_indices;
-    GLuint m_uniform_mvp; // uniform location for MVP-matrix in the shader
-    void addShader(GLuint program, const char* shader_code, GLenum shader_type);
-    void initShaderProgram();
+    void add_shader(GLuint the_program, 
+                    const char* shader_code, 
+                    GLenum shader_type);
+    void init_shader_program();
     
-    void initGeometry();
-    void createSphere(int num_slices, int num_stacks, float r);
+    void init_geometry();
+    void create_sphere(int num_slices, int num_stacks, float r);
 
 
 private:
-    QBasicTimer m_timer;
+  GLuint m_vao, m_vbo, m_ibo, shader, m_num_indices;
+  GLuint m_uniform_mvp; // uniform location for MVP-matrix in the shader
+  
+  QBasicTimer m_timer;
 
-    QMatrix4x4 m_projection;
+  QMatrix4x4 m_projection;
 
-    QVector2D m_mouse_press_position;
-    QVector3D m_rotation_axis;
-    qreal m_angular_speed = 0;
-    QQuaternion m_rotation;
+  QVector2D m_mouse_press_position;
+  QVector3D m_rotation_axis;
+  qreal m_angular_speed = 0;
+  QQuaternion m_rotation;
 };
 
 #endif // MAINWIDGET_H
