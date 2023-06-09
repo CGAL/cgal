@@ -78,7 +78,7 @@ void main()
 	//float c = clamp(dot(lightDir,triNormal), 0, 1);
 	vec3 n = normalize(vNormal);
   float c = abs( dot(lightDir, n) );
-	color = vec4(.2, .2,0,1) + vec4(c,c,0,1);
+	color = vec4(.2, .2,0,1) + 0.8*vec4(c,c,0,1);
 
 	//color = vec4(1,1,0,1);
   //color = vCol;
@@ -238,11 +238,57 @@ void MainWidget::init_geometry()
   int num_slices, num_stacks;
   num_slices = num_stacks = 64;
   float r = 3;
-  create_sphere(num_slices, num_stacks, r);
+  m_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
 }
 
-void MainWidget::create_sphere(int num_slices, int num_stacks, float r)
+
+
+void MainWidget::resizeGL(int w, int h)
 {
+  // Calculate aspect ratio
+  qreal aspect = qreal(w) / qreal(h ? h : 1);
+
+  // near and far plane locations and vertical field-of-view angle in degrees
+  const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
+
+  // Reset projection
+  m_projection.setToIdentity();
+  m_projection.perspective(fov, aspect, z_near, z_far);
+}
+
+void MainWidget::paintGL()
+{
+  QMatrix4x4 view;
+  const QVector3D eye(0, 10, 10), center(0, 0, 0), up(0, 1, 0);
+  view.lookAt(eye, center, up);
+
+  QMatrix4x4 model;
+  static float angle = 0;
+  angle += 1;
+  model.rotate(angle, up);
+  
+  // Clear color and depth buffer
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  {
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    glUseProgram(shader);
+    auto mvp = m_projection * view * model;
+    glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, mvp.data());
+    
+    m_sphere->draw();
+
+    glUseProgram(0);
+  }
+}
+
+
+Sphere::Sphere(int num_slices, int num_stacks, float r)
+{
+  initializeOpenGLFunctions();
+
   num_stacks = std::max<int>(2, num_stacks);
   std::vector<QVector3D> vertices, normals;
 
@@ -406,52 +452,13 @@ void MainWidget::create_sphere(int num_slices, int num_stacks, float r)
   // Note: calling this before glBindVertexArray(0) results in no output!
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-
-
-void MainWidget::resizeGL(int w, int h)
+void Sphere::draw()
 {
-  // Calculate aspect ratio
-  qreal aspect = qreal(w) / qreal(h ? h : 1);
-
-  // near and far plane locations and vertical field-of-view angle in degrees
-  const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
-
-  // Reset projection
-  m_projection.setToIdentity();
-  m_projection.perspective(fov, aspect, z_near, z_far);
-}
-
-void MainWidget::paintGL()
-{
-  QMatrix4x4 view;
-  const QVector3D eye(0, 10, 10), center(0, 0, 0), up(0, 1, 0);
-  view.lookAt(eye, center, up);
-
-  QMatrix4x4 model;
-  static float angle = 0;
-  angle += 1;
-  model.rotate(angle, up);
-  
-  // Clear color and depth buffer
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // DRAW TRIANGLES
+  glBindVertexArray(m_vao);
   {
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-    glUseProgram(shader);
-    auto mvp = m_projection * view * model;
-    glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, mvp.data());
-
-    {
-      // DRAW TRIANGLE
-      glBindVertexArray(m_vao);
-      {
-        //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        glDrawElements(GL_TRIANGLES, m_num_indices, GL_UNSIGNED_INT, 0);
-      }
-      glBindVertexArray(0);
-    }
-    glUseProgram(0);
+    //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_num_indices, GL_UNSIGNED_INT, 0);
   }
+  glBindVertexArray(0);
 }

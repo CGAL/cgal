@@ -4,6 +4,7 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
+#include <memory>
 
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
@@ -16,9 +17,11 @@
 #include <qopenglfunctions_4_5_core.h>
 
 
-class GeometryEngine;
+class Sphere;
+using OpenGLFunctionsBase = QOpenGLFunctions_3_3_Core;
 
-class MainWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
+
+class MainWidget : public QOpenGLWidget, protected OpenGLFunctionsBase
 {
     Q_OBJECT
 
@@ -42,11 +45,13 @@ protected:
     void init_shader_program();
     
     void init_geometry();
-    void create_sphere(int num_slices, int num_stacks, float r);
 
 
 private:
-  GLuint m_vao, m_vbo, m_ibo, shader, m_num_indices;
+
+  std::unique_ptr<Sphere>  m_sphere;
+
+  GLuint shader;
   GLuint m_uniform_mvp; // uniform location for MVP-matrix in the shader
   
   QBasicTimer m_timer;
@@ -57,6 +62,17 @@ private:
   QVector3D m_rotation_axis;
   qreal m_angular_speed = 0;
   QQuaternion m_rotation;
+};
+
+class Sphere : protected OpenGLFunctionsBase
+{
+public:
+  Sphere(int num_slices, int num_stacks, float r);
+  
+  void draw();
+
+private:
+  GLuint m_vao, m_vbo, m_ibo, m_num_indices;
 };
 
 #endif // MAINWIDGET_H
