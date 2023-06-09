@@ -55,6 +55,8 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
   //!
   Point_container(int program, bool indexed);
 
+  ~Point_container();
+
   //!
   //! \brief initGL creates the `Vbo`s and `Vao`s of this `Point_container`.
   //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
