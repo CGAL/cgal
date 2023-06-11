@@ -258,6 +258,7 @@ protected:
   template <typename Approximate>
   void draw_approximate_region(Halfedge_const_handle curr,
                                const Approximate& approx) {
+    // std::cout << "draw_approximate_region()\n";
     std::vector<typename Gt::Approximate_point_2> polyline;
     double error(this->pixel_ratio());
     bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
@@ -267,7 +268,7 @@ protected:
     auto prev = it++;
     for (; it != polyline.end(); prev = it++) {
       this->add_segment(*prev, *it);
-      // this->add_point_in_face(*prev);
+      this->add_point_in_face(*prev);
     }
   }
 
