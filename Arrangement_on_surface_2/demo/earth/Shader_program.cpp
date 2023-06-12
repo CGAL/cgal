@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "Tools.h"
+
 
 bool Shader_program::init()
 {
@@ -47,6 +49,12 @@ void Shader_program::add_shader(const char* shader_code, GLenum shader_type)
   }
 
   glAttachShader(m_program, the_shader);
+}
+void Shader_program::add_shader_from_file(const char* shader_file, 
+                                          GLenum shader_type)
+{
+  auto src = read_file(shader_file);
+  add_shader(src.c_str(), shader_type);
 }
 
 bool Shader_program::link()

@@ -13,6 +13,7 @@ public:
   bool init();
 
   void add_shader(const char* shader_code, GLenum shader_type);
+  void add_shader_from_file(const char* shader_file, GLenum shader_type);
 
   bool link();
   bool validate();

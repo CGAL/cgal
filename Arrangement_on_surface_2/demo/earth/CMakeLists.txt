@@ -16,12 +16,12 @@ qt_standard_project_setup()
 
 qt_add_executable(earth
     main.cpp
-    mainwidget.cpp      mainwidget.h
-    Camera.cpp          Camera.h
-                        Common_defs.h
-    
-    Shader_program.cpp  Shader_program.h
-    Sphere.cpp          Sphere.h
+    mainwidget.h      mainwidget.cpp
+    Camera.h          Camera.cpp
+    Common_defs.h
+    Shader_program.h  Shader_program.cpp
+    Sphere.h          Sphere.cpp
+    Tools.h
 )
 
 
@@ -41,6 +41,22 @@ target_link_libraries(earth PRIVATE
     Qt6::OpenGLWidgets
     Qt6::Widgets
 )
+
+
+# Resources:
+#set(shaders_resource_files
+#    "vertex_shader.glsl"
+#)
+#
+#qt6_add_resources(earth "shaders"
+#    PREFIX
+#        "/"
+#    FILES
+#        ${shaders_resource_files}
+#)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders 
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 
 install(TARGETS earth

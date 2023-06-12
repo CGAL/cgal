@@ -10,91 +10,12 @@
 #include <string>
 
 
-namespace {
-  // vertex shader
-  const char* vertex_shader_code = R"vs(
-#version 330
-
-layout (location = 0) in vec3 pos;
-layout (location = 1) in vec3 normal;
-
-//out vec4 vCol;
-//out vec3 vpos;
-flat out vec3 vNormal;
-
-uniform mat4 MVP; 
-
-void main()
-{
-	//vpos = pos;
-  vNormal = normal;
-	gl_Position = MVP * vec4(pos.xyz, 1);
-  //gl_Position = vec4(pos.xyz, 1);
-}
-)vs";
-
-
-  // GEOMETRY SHADER
-  // * I am using the geometry shader to compute the face-normals in the GPU on the fly
-  const char* geometry_shader_code = R"gs(
-#version 330
-
-in vec3 vpos[];
-out vec4 vCol;
-
-layout (triangles) in;
-layout (triangle_strip, max_vertices = 3) out;
-
-void main()
-{ 
-	const vec3 lightDir = normalize(vec3(1,.5,.5));
-
-	// compute the normal for the current triangle
-	vec3 triNormal = normalize(cross(vpos[1]-vpos[0], vpos[2]-vpos[0]));
-	//float c = clamp(dot(lightDir,triNormal), 0, 1);
-	float c = abs(dot(lightDir,triNormal));
-	vCol = vec4(.2, .2,0,1) + vec4(c,c,0,1);
-
-	gl_Position = gl_in[0].gl_Position; EmitVertex();
-	gl_Position = gl_in[1].gl_Position; EmitVertex();
-	gl_Position = gl_in[2].gl_Position; EmitVertex();
-	EndPrimitive();
-}
-)gs";
-
-
-  // FRAGMENT SHADER
-  static const char* fragment_shader_code = R"fs(
-#version 330
-
-//in vec4 vCol;
-flat in vec3 vNormal;
-
-out vec4 color;
-
-void main()
-{
-	const vec3 lightDir = normalize(vec3(1,.5,.5));
-
-	//float c = clamp(dot(lightDir,triNormal), 0, 1);
-	vec3 n = normalize(vNormal);
-  float c = abs( dot(lightDir, n) );
-	color = vec4(.2, .2,0,1) + 0.8*vec4(c,c,0,1);
-
-	//color = vec4(1,1,0,1);
-  //color = vCol;
-}
-)fs";
-}
-
-
 MainWidget::~MainWidget()
 {
   // Make sure the context is current when deleting the texture and the buffers.
   makeCurrent();
   doneCurrent();
 }
-
 
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
@@ -145,7 +66,6 @@ void MainWidget::initializeGL()
   m_timer.start(12, this);
 }
 
-
 void MainWidget::init_camera()
 {
   m_camera.set_pos(0, 0, 10);
@@ -161,9 +81,12 @@ void MainWidget::init_shader_program()
 {
   m_shader_program.init();
 
-  m_shader_program.add_shader(vertex_shader_code, GL_VERTEX_SHADER);
-  //m_program.add_shader(geometry_shader_code, GL_GEOMETRY_SHADER);
-  m_shader_program.add_shader(fragment_shader_code, GL_FRAGMENT_SHADER);
+  const char* vs = "shaders/vertex.glsl";
+  const char* gs = "shaders/geometry.glsl";
+  const char* fs = "shaders/fragment.glsl";
+  m_shader_program.add_shader_from_file(vs, GL_VERTEX_SHADER);
+  //m_shader_program.add_shader_from_file(gs, GL_GEOMETRY_SHADER);
+  m_shader_program.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
 
   m_shader_program.link();
   m_shader_program.validate();
@@ -171,16 +94,11 @@ void MainWidget::init_shader_program()
 
 
 
-
 void MainWidget::resizeGL(int w, int h)
 {
-  // Calculate aspect ratio
-  qreal aspect = qreal(w) / qreal(h ? h : 1);
-
-  // near and far plane locations and vertical field-of-view angle in degrees
-  const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
-
   // Reset projection
+  qreal aspect = qreal(w) / qreal(h ? h : 1);
+  const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
   m_camera.perspective(fov, aspect, z_near, z_far);
 }
 
