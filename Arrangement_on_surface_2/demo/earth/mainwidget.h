@@ -16,6 +16,7 @@
 
 #include "Camera.h"
 #include "Common_defs.h"
+#include "Shader_program.h"
 #include "Sphere.h"
 
 
@@ -41,17 +42,15 @@ protected:
     void add_shader(GLuint the_program, 
                     const char* shader_code, 
                     GLenum shader_type);
-    void init_shader_program();
     
+    void init_camera();
     void init_geometry();
-
+    void init_shader_program();
 
 private:
-
   std::unique_ptr<Sphere>  m_sphere;
 
-  GLuint m_shader;
-  GLuint m_uniform_mvp; // uniform location for MVP-matrix in the shader
+  Shader_program  m_shader_program;
   
   // camera & controls
   Camera m_camera;

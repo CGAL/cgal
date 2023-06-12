@@ -101,10 +101,6 @@ void MainWidget::mousePressEvent(QMouseEvent *e)
   m_mouse_pressed = true;
   m_last_mouse_pos = QVector2D(e->position());
 }
-
-
-
-
 void MainWidget::mouseMoveEvent(QMouseEvent* e)
 {
   auto current_mouse_pos = QVector2D(e->position());
@@ -135,96 +131,25 @@ void MainWidget::timerEvent(QTimerEvent *)
 
 void MainWidget::initializeGL()
 {
-    initializeOpenGLFunctions();
+  initializeOpenGLFunctions();
 
-    glClearColor(0, 0, 0, 1);
+  init_camera();
+  init_geometry();
+  init_shader_program();
 
-    m_camera.set_pos(0,0,10);
-    init_geometry();
-    init_shader_program();
+  glClearColor(0, 0, 0, 1);
+  glEnable(GL_DEPTH_TEST);  // Enable depth buffer
+  //glEnable(GL_CULL_FACE); // Enable back face culling
 
-    // Enable depth buffer
-    glEnable(GL_DEPTH_TEST);
-
-    // Enable back face culling
-    //glEnable(GL_CULL_FACE);
-
-    // Use QBasicTimer because its faster than QTimer
-    m_timer.start(12, this);
+  // Use QBasicTimer because its faster than QTimer
+  m_timer.start(12, this);
 }
 
-void MainWidget::add_shader(GLuint the_program, const char* shader_code, 
-                                                            GLenum shader_type)
+
+void MainWidget::init_camera()
 {
-  GLuint the_shader = glCreateShader(shader_type);
-
-  const GLchar* the_code[] = { shader_code };
-  GLint code_length[] = { strlen(shader_code) };
-
-  glShaderSource(the_shader, 1, the_code, code_length);
-  glCompileShader(the_shader);
-
-
-  GLint result = 0;
-  GLchar elog[1024] = { 0 };
-  glGetShaderiv(the_shader, GL_COMPILE_STATUS, &result);
-  if (!result)
-  {
-    std::string shader_type_name;
-    switch (shader_type)
-    {
-    case GL_VERTEX_SHADER:   shader_type_name = "VERTEX"; break;
-    case GL_GEOMETRY_SHADER: shader_type_name = "GEOMETRY"; break;
-    case GL_FRAGMENT_SHADER: shader_type_name = "FRAGMENT"; break;
-    }
-    glGetShaderInfoLog(the_shader, sizeof(elog), NULL, elog);
-    std::cout << "! error compiling the " << shader_type_name << 
-                 " shader:\n" << elog << std::endl;
-    return;
-  }
-
-  glAttachShader(the_program, the_shader);
+  m_camera.set_pos(0, 0, 10);
 }
-void MainWidget::init_shader_program()
-{
-  m_shader = glCreateProgram();
-  if (!m_shader)
-  {
-    std::cout << "error creating shader program!\n";
-    return;
-  }
-
-  add_shader(m_shader, vertex_shader_code, GL_VERTEX_SHADER);
-  //add_shader(shader, geometry_shader_code, GL_GEOMETRY_SHADER);
-  add_shader(m_shader, fragment_shader_code, GL_FRAGMENT_SHADER);
-
-  GLint result = 0;
-  GLchar elog[1024] = { 0 };
-
-  glLinkProgram(m_shader);
-  glGetProgramiv(m_shader, GL_LINK_STATUS, &result);
-  if (!result)
-  {
-    glGetProgramInfoLog(m_shader, sizeof(elog), NULL, elog);
-    std::cout << "! error linking program:\n" << elog << std::endl;
-    return;
-  }
-
-  glValidateProgram(m_shader);
-  glGetProgramiv(m_shader, GL_VALIDATE_STATUS, &result);
-  if (!result)
-  {
-    glGetProgramInfoLog(m_shader, sizeof(elog), NULL, elog);
-    std::cout << "! error validating program:\n" << elog << std::endl;
-    return;
-  }
-
-  m_uniform_mvp = glGetUniformLocation(m_shader, "MVP");
-  std::cout << "uniform loc = " << m_uniform_mvp << std::endl;
-}
-
-
-
 void MainWidget::init_geometry()
 {
   int num_slices, num_stacks;
@@ -232,6 +157,18 @@ void MainWidget::init_geometry()
   float r = 3;
   m_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
 }
+void MainWidget::init_shader_program()
+{
+  m_shader_program.init();
+
+  m_shader_program.add_shader(vertex_shader_code, GL_VERTEX_SHADER);
+  //m_program.add_shader(geometry_shader_code, GL_GEOMETRY_SHADER);
+  m_shader_program.add_shader(fragment_shader_code, GL_FRAGMENT_SHADER);
+
+  m_shader_program.link();
+  m_shader_program.validate();
+}
+
 
 
 
@@ -254,21 +191,15 @@ void MainWidget::paintGL()
   const auto view = m_camera.get_view_matrix();
   const auto projection = m_camera.get_projection_matrix();
   const auto mvp = projection * view * model;
-  
 
   // Clear color and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   {
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glUseProgram(m_shader);
-    glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, mvp.data());
+    m_shader_program.use();
+    m_shader_program.set_uniform("MVP", mvp);
     
     m_sphere->draw();
 
-    glUseProgram(0);
+    m_shader_program.unuse();
   }
 }
-
-
