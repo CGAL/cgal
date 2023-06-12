@@ -321,7 +321,7 @@ template <typename VertexRange
         , class TriangleMesh
         , typename SizingFunction
         , class NamedParameters = parameters::Default_named_parameters>
-void tangential_relaxation(const VertexRange& vertices,
+void tangential_relaxation_with_sizing(const VertexRange& vertices,
   TriangleMesh& tm,
   const SizingFunction& sizing,
   const NamedParameters& np = parameters::default_values())
@@ -362,6 +362,12 @@ void tangential_relaxation(const VertexRange& vertices,
 
   typedef typename GT::Vector_3 Vector_3;
   typedef typename GT::Point_3 Point_3;
+
+  //todo ip: alt calc
+  typename GT::Construct_vector_3 vector = gt.construct_vector_3_object();
+  typename GT::Compute_scalar_product_3 scalar_product = gt.compute_scalar_product_3_object();
+  typename GT::Compute_squared_length_3 squared_length = gt.compute_squared_length_3_object();
+  typename GT::Construct_cross_product_vector_3 cross_product = gt.construct_cross_product_vector_3_object();
 
   auto check_normals = [&](vertex_descriptor v)
   {
@@ -420,12 +426,15 @@ void tangential_relaxation(const VertexRange& vertices,
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
     auto gt_barycenter = gt.construct_barycenter_3_object();
+    auto gt_centroid = gt.construct_centroid_3_object();
+    auto gt_area = gt.compute_area_3_object();
 
     // at each vertex, compute vertex normal
     std::unordered_map<vertex_descriptor, Vector_3> vnormals;
     compute_vertex_normals(tm, boost::make_assoc_property_map(vnormals), np);
 
-    // at each vertex, compute barycenter of neighbors
+    // at each vertex, compute centroids of neighbouring faces weighted by
+    // area and sizing field
     for(vertex_descriptor v : vertices)
     {
       if (get(vcm, v) || CGAL::internal::is_isolated(v, tm))
@@ -441,18 +450,37 @@ void tangential_relaxation(const VertexRange& vertices,
           interior_hedges.push_back(h);
       }
 
+      //todo ip: handle border edges with sizing field
       if (border_halfedges.empty())
       {
         const Vector_3& vn = vnormals.at(v);
         Vector_3 move = CGAL::NULL_VECTOR;
-        unsigned int star_size = 0;
+        double weight = 0;
+//        unsigned int star_size = 0;
         for(halfedge_descriptor h :interior_hedges)
         {
-          move = move + Vector_3(get(vpm, v), get(vpm, source(h, tm)));
-          ++star_size;
+          // calculate weight
+          // need v0, v1 and v2
+          const vertex_descriptor v1 = target(next(h, tm), tm);
+          const vertex_descriptor v2 = source(h, tm);
+
+          //todo ip- alt calc
+          const Vector_3 vec0 = vector(get(vpm, v), get(vpm, v1));
+          const Vector_3 vec1 = vector(get(vpm, v), get(vpm, v2));
+          const double sqarea = squared_length(cross_product(vec0, vec1));
+          const double face_weight = CGAL::approximate_sqrt(sqarea)
+                                     / pow(1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)), 2);
+
+          //todo ip- paper implementation
+         // const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
+         // const double face_weight = tri_area
+         //                          / (1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)));
+          weight += face_weight;
+
+          const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));
+          move = move + Vector_3(get(vpm, v), centroid) * face_weight;
         }
-        CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-        move = (1. / static_cast<double>(star_size)) * move;
+        move = move / weight; //todo ip: what if weight ends up being close to 0?
 
         barycenters.emplace_back(v, vn, get(vpm, v) + move);
       }
@@ -533,9 +561,9 @@ void tangential_relaxation(TriangleMesh& tm, const CGAL_NP_CLASS& np = parameter
 template <class TriangleMesh
         , typename SizingFunction
         , typename CGAL_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation(TriangleMesh& tm, const SizingFunction& sizing, const CGAL_NP_CLASS& np = parameters::default_values())
+void tangential_relaxation_with_sizing(TriangleMesh& tm, const SizingFunction& sizing, const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  tangential_relaxation(vertices(tm), tm, sizing, np);
+  tangential_relaxation_with_sizing(vertices(tm), tm, sizing, np);
 }
 
 } } // CGAL::Polygon_mesh_processing

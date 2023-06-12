@@ -1046,8 +1046,9 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      //todo IP temp: I have to rewrite to include original implementation
-      /*
+      //todo IP temp: I have to rewrite to include original implementation, hardcoded for now
+      const bool use_sizing = true;
+      if (!use_sizing)
       tangential_relaxation(
         vertices(mesh_),
         mesh_,
@@ -1058,8 +1059,9 @@ namespace internal {
                          .vertex_is_constrained_map(constrained_vertices_pmap)
                          .relax_constraints(relax_constraints)
       );
-       */
-      tangential_relaxation(
+
+      else
+      tangential_relaxation_with_sizing(
         vertices(mesh_),
         mesh_,
         sizing,

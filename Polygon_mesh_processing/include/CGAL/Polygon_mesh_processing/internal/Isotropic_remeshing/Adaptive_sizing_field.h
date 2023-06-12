@@ -80,6 +80,11 @@ private:
   }
 
 public:
+  FT get_sizing(const vertex_descriptor& v) const {
+      CGAL_assertion(get(m_vertex_sizing_map, v));
+      return get(m_vertex_sizing_map, v);
+    }
+
   void calc_sizing_map()
   {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
