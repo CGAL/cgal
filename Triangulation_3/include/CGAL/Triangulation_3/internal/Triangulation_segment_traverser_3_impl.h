@@ -342,7 +342,10 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
 
     int inside=0,outside=0,regular_case=0,degenerate=0;
 
-    if (cur.lt == Tr::FACET) {
+    if (cur.lt == Tr::FACET && prev.cell != Cell_handle()) {
+      // [source, target] entered the cell `cur` via a facet.
+      // Note that, if prev.cell == Cell_handle(), that means `source` is *on*
+      // the facet, and the block of this `if` cannot be applied.
       Simplex prev_after_walk;
       Simplex cur_after_walk;
 
