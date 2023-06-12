@@ -15,7 +15,7 @@
 #include <qopenglwidget.h>
 #include <qopenglfunctions_3_3_core.h>
 #include <qopenglfunctions_4_5_core.h>
-
+#include "Camera.h"
 
 class Sphere;
 using OpenGLFunctionsBase = QOpenGLFunctions_3_3_Core;
@@ -52,17 +52,17 @@ private:
 
   std::unique_ptr<Sphere>  m_sphere;
 
-  GLuint shader;
+  GLuint m_shader;
   GLuint m_uniform_mvp; // uniform location for MVP-matrix in the shader
   
-  QBasicTimer m_timer;
-
+  // camera & controls
+  Camera m_camera;
+  bool m_mouse_pressed = false;
+  QVector2D m_last_mouse_pos;
   QMatrix4x4 m_projection;
 
-  QVector2D m_mouse_press_position;
-  QVector3D m_rotation_axis;
-  qreal m_angular_speed = 0;
-  QQuaternion m_rotation;
+
+  QBasicTimer m_timer;
 };
 
 class Sphere : protected OpenGLFunctionsBase

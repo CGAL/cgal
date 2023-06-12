@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 
+
 namespace {
   // vertex shader
   const char* vertex_shader_code = R"vs(
@@ -89,63 +90,40 @@ void main()
 
 MainWidget::~MainWidget()
 {
-    // Make sure the context is current when deleting the texture
-    // and the buffers.
-    makeCurrent();
-    doneCurrent();
+  // Make sure the context is current when deleting the texture and the buffers.
+  makeCurrent();
+  doneCurrent();
 }
 
-bool mouse_pressed = false;
-QVector2D last_mouse_pos;
 
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
-  // Save mouse press position
-  m_mouse_press_position = QVector2D(e->position());
-
-  mouse_pressed = true;
-  last_mouse_pos = QVector2D(e->position());
+  m_mouse_pressed = true;
+  m_last_mouse_pos = QVector2D(e->position());
 }
 
 
-QVector3D cam_pos(0, 0, 10);
-QVector3D cam_ux(1, 0, 0);
-QVector3D cam_uy(0, 1, 0);
-QVector3D cam_uz(0, 0, 1);
 
 
 void MainWidget::mouseMoveEvent(QMouseEvent* e)
 {
-  //last_mouse_pos = QVector2D(e->position());
   auto current_mouse_pos = QVector2D(e->position());
 
-  if (mouse_pressed)
-  {
-    
-    auto diff = current_mouse_pos - last_mouse_pos;
+  if (m_mouse_pressed)
+  {  
+    const auto diff = current_mouse_pos - m_last_mouse_pos;
     const float scale_factor = 0.1f;
-    auto angle = scale_factor * QVector2D(diff.y(), diff.x());
+    const float theta_around_x = scale_factor * diff.y();
+    const float theta_around_y = scale_factor * diff.x();
   
-    // rotate the camera around its x-axis
-    QMatrix4x4 rot;
-    rot.rotate(angle.x(), cam_ux);
-    cam_pos = cam_pos * rot;
-    cam_uy = cam_uy * rot;
-    cam_uz = cam_uz * rot;
-
-    // rotate the camera around its y-axis
-    rot.setToIdentity();
-    rot.rotate(angle.y(), cam_uy);
-    cam_pos = cam_pos * rot;
-    cam_ux = cam_ux * rot;
-    cam_uz = cam_uz * rot;
+    m_camera.rotate(theta_around_x, theta_around_y);
   }
 
-  last_mouse_pos = current_mouse_pos;
+  m_last_mouse_pos = current_mouse_pos;
 }
 void MainWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-  mouse_pressed = false;
+  m_mouse_pressed = false;
 
 }
 void MainWidget::timerEvent(QTimerEvent *)
@@ -161,6 +139,7 @@ void MainWidget::initializeGL()
 
     glClearColor(0, 0, 0, 1);
 
+    m_camera.set_pos(0,0,10);
     init_geometry();
     init_shader_program();
 
@@ -208,39 +187,39 @@ void MainWidget::add_shader(GLuint the_program, const char* shader_code,
 }
 void MainWidget::init_shader_program()
 {
-  shader = glCreateProgram();
-  if (!shader)
+  m_shader = glCreateProgram();
+  if (!m_shader)
   {
     std::cout << "error creating shader program!\n";
     return;
   }
 
-  add_shader(shader, vertex_shader_code, GL_VERTEX_SHADER);
+  add_shader(m_shader, vertex_shader_code, GL_VERTEX_SHADER);
   //add_shader(shader, geometry_shader_code, GL_GEOMETRY_SHADER);
-  add_shader(shader, fragment_shader_code, GL_FRAGMENT_SHADER);
+  add_shader(m_shader, fragment_shader_code, GL_FRAGMENT_SHADER);
 
   GLint result = 0;
   GLchar elog[1024] = { 0 };
 
-  glLinkProgram(shader);
-  glGetProgramiv(shader, GL_LINK_STATUS, &result);
+  glLinkProgram(m_shader);
+  glGetProgramiv(m_shader, GL_LINK_STATUS, &result);
   if (!result)
   {
-    glGetProgramInfoLog(shader, sizeof(elog), NULL, elog);
+    glGetProgramInfoLog(m_shader, sizeof(elog), NULL, elog);
     std::cout << "! error linking program:\n" << elog << std::endl;
     return;
   }
 
-  glValidateProgram(shader);
-  glGetProgramiv(shader, GL_VALIDATE_STATUS, &result);
+  glValidateProgram(m_shader);
+  glGetProgramiv(m_shader, GL_VALIDATE_STATUS, &result);
   if (!result)
   {
-    glGetProgramInfoLog(shader, sizeof(elog), NULL, elog);
+    glGetProgramInfoLog(m_shader, sizeof(elog), NULL, elog);
     std::cout << "! error validating program:\n" << elog << std::endl;
     return;
   }
 
-  m_uniform_mvp = glGetUniformLocation(shader, "MVP");
+  m_uniform_mvp = glGetUniformLocation(m_shader, "MVP");
   std::cout << "uniform loc = " << m_uniform_mvp << std::endl;
 }
 
@@ -275,8 +254,9 @@ void MainWidget::paintGL()
   //const QVector3D eye(0, 10, 10), center(0, 0, 0), up(0, 1, 0);
   // view.lookAt(eye, center, up);
 
-  const QVector3D center(0, 0, 0);
-  view.lookAt(cam_pos, center, cam_uy);
+  //const QVector3D center(0, 0, 0);
+  //view.lookAt(camera.pos, center, cam_uy);
+  view = m_camera.get_view_matrix();
 
   QMatrix4x4 model;
   //static float angle = 0;
@@ -290,7 +270,7 @@ void MainWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glUseProgram(shader);
+    glUseProgram(m_shader);
     auto mvp = m_projection * view * model;
     glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, mvp.data());
     

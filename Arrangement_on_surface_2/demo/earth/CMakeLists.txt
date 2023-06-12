@@ -17,14 +17,18 @@ qt_standard_project_setup()
 qt_add_executable(earth
     main.cpp
     mainwidget.cpp mainwidget.h
+    Camera.h
 )
+
 
 set_target_properties(earth PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
+if (MSVC)
+   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
+endif (MSVC)
 
 target_link_libraries(earth PRIVATE
     Qt6::Core

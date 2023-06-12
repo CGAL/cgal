@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     format.setDepthBufferSize(24);
     QSurfaceFormat::setDefaultFormat(format);
 
-    app.setApplicationName("cube");
+    app.setApplicationName("Earth");
     app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
     MainWidget widget;
