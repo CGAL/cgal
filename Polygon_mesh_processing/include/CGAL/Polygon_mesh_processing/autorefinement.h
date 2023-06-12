@@ -43,6 +43,9 @@
 #include <tbb/concurrent_vector.h>
 #include <tbb/concurrent_map.h>
 #include <tbb/parallel_for.h>
+#ifdef SET_POINT_IDS_USING_MUTEX
+#include <CGAL/mutex.h>
+#endif
 #endif
 
 #include <vector>
@@ -1242,12 +1245,17 @@ void autorefine_soup_output(const PointRange& input_points,
     }
   }
 #ifdef USE_DEBUG_PARALLEL_TIMERS
+  t.stop();
   std::cout << t.time() << " sec. for #2" << std::endl;
+  t.reset();
 #endif
 
 #ifdef DEDUPLICATE_SEGMENTS
+#ifdef USE_DEBUG_PARALLEL_TIMERS
+  t.start();
+#endif
+
   // deduplicate inserted segments
-  //TODO: PARALLEL_FOR #3
   std::vector<std::vector<std::pair<std::size_t, std::size_t>>> all_segments_ids(all_segments.size());
 
   auto deduplicate_inserted_segments = [&](std::size_t ti)
@@ -1313,7 +1321,9 @@ void autorefine_soup_output(const PointRange& input_points,
   }
 
 #ifdef USE_DEBUG_PARALLEL_TIMERS
+  t.stop();
   std::cout << t.time() << " sec. for #3" << std::endl;
+  t.reset();
 #endif
 #endif
 
@@ -1370,7 +1380,6 @@ void autorefine_soup_output(const PointRange& input_points,
 
 
 #ifdef USE_DEBUG_PARALLEL_TIMERS
-  t.reset();
   t.start();
 #endif
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1427,8 +1436,7 @@ void autorefine_soup_output(const PointRange& input_points,
     return insert_res.first->second;
   };
 
-
-
+  // TODO: parallel_for?
   std::vector <std::size_t> input_point_ids;
   input_point_ids.reserve(input_points.size());
   for (const auto& p : input_points)
@@ -1451,9 +1459,7 @@ void autorefine_soup_output(const PointRange& input_points,
   }
 
   // import refined triangles
-    //TODO: PARALLEL_FOR #4
 #ifdef USE_DEBUG_PARALLEL_TIMERS
-  t.reset();
   t.start();
 #endif
 
@@ -1466,37 +1472,108 @@ void autorefine_soup_output(const PointRange& input_points,
 #ifdef CGAL_LINKED_WITH_TBB
   if(parallel_execution && new_triangles.size() > 100)
   {
-    tbb::concurrent_vector<Point_3> concurrent_soup_points;
+
+#ifdef SET_POINT_IDS_USING_MUTEX
+    //option 1 (using a mutex)
+    CGAL_MUTEX point_container_mutex;
     /// Lambda concurrent_get_point_id()
-    auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
+    auto concurrent_get_point_id = [&](const typename EK::Point_3 pt)
     {
-        auto insert_res = point_id_map.insert(std::make_pair(pt, concurrent_soup_points.size()));
-        if (insert_res.second)
-        {
-            concurrent_soup_points.push_back(to_input(pt));
+      auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
+
+      if (insert_res.second)
+      {
+        CGAL_SCOPED_LOCK(point_container_mutex);
+        insert_res.first->second=soup_points.size();
+        soup_points.push_back(to_input(pt));
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-            exact_soup_points.push_back(pt);
+        exact_soup_points.push_back(pt);
 #endif
-        }
-        return insert_res.first->second;
+      }
+      return insert_res.first;
     };
 
-
     soup_triangles.resize(offset + new_triangles.size());
+    //use map iterator triple for triangles to create them concurrently and safely
+    std::vector<std::array<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator, 3>> triangle_buffer(new_triangles.size());
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-        [&](const tbb::blocked_range<size_t>& r) {
-            for (size_t ti = r.begin(); ti != r.end(); ++ti) {
-                if (offset + ti > soup_triangles.size()) {
-                    std::cout << "ti = " << ti << std::endl;
-                }
-                const std::array<EK::Point_3, 3>& t = new_triangles[ti];
-                soup_triangles[offset + ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
-            }
+      [&](const tbb::blocked_range<size_t>& r) {
+        for (size_t ti = r.begin(); ti != r.end(); ++ti) {
+          const std::array<EK::Point_3, 3>& t = new_triangles[ti];
+          triangle_buffer[ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
+        }
+      }
+    );
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+      [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t ti = r.begin(); ti != r.end(); ++ti)
+          {
+            soup_triangles[offset + ti] =
+              CGAL::make_array(triangle_buffer[ti][0]->second,
+                               triangle_buffer[ti][1]->second,
+                               triangle_buffer[ti][2]->second);
+          }
         }
     );
+#else
+    //option 2 (without mutex)
+    /// Lambda concurrent_get_point_id()
+    tbb::concurrent_vector<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator> iterators;
+    auto concurrent_get_point_id = [&](const typename EK::Point_3 pt)
+    {
+      auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
+      if (insert_res.second)
+        iterators.push_back(insert_res.first);
+      return insert_res.first;
+    };
 
-    soup_points.reserve(soup_points.size() + concurrent_soup_points.size());
-    soup_points.insert(soup_points.end(), concurrent_soup_points.begin(), concurrent_soup_points.end());
+    //use map iterator triple for triangles to create them concurrently and safely
+    soup_triangles.resize(offset + new_triangles.size());
+    std::vector<std::array<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator, 3>> triangle_buffer(new_triangles.size());
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+      [&](const tbb::blocked_range<size_t>& r) {
+        for (size_t ti = r.begin(); ti != r.end(); ++ti) {
+          if (offset + ti > soup_triangles.size()) {
+              std::cout << "ti = " << ti << std::endl;
+          }
+          const std::array<EK::Point_3, 3>& t = new_triangles[ti];
+          triangle_buffer[ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
+        }
+      }
+    );
+
+    // the map is now filled we can safely set the point ids
+    std::size_t pid_offset=soup_points.size();
+    soup_points.resize(pid_offset+iterators.size());
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+    exact_soup_points.resize(soup_points.size());
+#endif
+
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, iterators.size()),
+      [&](const tbb::blocked_range<size_t>& r) {
+        for (size_t ti = r.begin(); ti != r.end(); ++ti)
+        {
+          soup_points[pid_offset+ti] = to_input(iterators[ti]->first);
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+          exact_soup_points[pid_offset+ti] = iterators[ti]->first;
+#endif
+          iterators[ti]->second=pid_offset+ti;
+        }
+      }
+    );
+
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+      [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t ti = r.begin(); ti != r.end(); ++ti)
+          {
+            soup_triangles[offset + ti] =
+              CGAL::make_array(triangle_buffer[ti][0]->second,
+                               triangle_buffer[ti][1]->second,
+                               triangle_buffer[ti][2]->second);
+          }
+        }
+    );
+#endif
   }
   else
 #endif
