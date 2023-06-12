@@ -188,6 +188,13 @@ void visit_simplex(Point_3 a, Point_3 b, Simplex s, std::optional<Simplex> previ
     result_string += std::to_string(d);
   }
   std::cout << debug_simplex(s) << '\n';
+  const bool does_intersect_ab = (3 == d && dt.is_infinite(static_cast<Cell_handle>(s))) ||
+    std::visit(
+      [&](auto geometry) { return CGAL::do_intersect(Segment_3(a, b), geometry); },
+      get_simplex_geometry(s));
+  if(!does_intersect_ab) {
+    CGAL_error_msg("the simplex does not intersect the query segment");
+  }
   if(previous_simplex_optional) {
     // this block checks that consecutive simplices are incident
     using Set = std::array<Vertex_handle, 4>;
@@ -204,12 +211,6 @@ void visit_simplex(Point_3 a, Point_3 b, Simplex s, std::optional<Simplex> previ
     {
       CGAL_error_msg("consecutive simplices are not incident");
     }
-//    const bool does_intersect_ab = std::visit(
-//        [&](auto geometry) { return CGAL::do_intersect(Segment_3(a, b), geometry); },
-//        get_simplex_geometry(s));
-//    if(!does_intersect_ab) {
-//      CGAL_error_msg("the simplex does not intersect the query segment");
-//    }
   }
 };
 
