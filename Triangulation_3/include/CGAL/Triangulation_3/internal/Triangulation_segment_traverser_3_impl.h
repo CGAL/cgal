@@ -634,7 +634,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
           break;
         case 2:
           if( pos < 3 )
-            return { cur_cell, Tr::EDGE, 0, pos+1 };
+            return { cur_cell, Tr::EDGE, 0, pos };
           else if( pos < 5 )
             return { cur_cell, Tr::EDGE, 1, pos-1 };
           else
