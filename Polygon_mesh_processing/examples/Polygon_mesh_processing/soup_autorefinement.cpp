@@ -37,6 +37,7 @@ int main(int argc, char** argv)
   PMP::autorefine_soup_output(input_points, input_triangles,
                               output_points, output_triangles,
                               CGAL::parameters::concurrency_tag(CGAL::Parallel_if_available_tag()));
+  t.stop();
   std::cout << "#points = " << output_points.size() << " and #triangles = " << output_triangles.size() << " in " << t.time() << " sec." << std::endl;
   CGAL::IO::write_polygon_soup("autorefined.off", output_points, output_triangles, CGAL::parameters::stream_precision(17));
 
