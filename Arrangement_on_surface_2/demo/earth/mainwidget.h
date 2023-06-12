@@ -4,8 +4,6 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <memory>
-
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
 #include <QQuaternion>
@@ -13,12 +11,12 @@
 #include <QBasicTimer>
 
 #include <qopenglwidget.h>
-#include <qopenglfunctions_3_3_core.h>
-#include <qopenglfunctions_4_5_core.h>
-#include "Camera.h"
 
-class Sphere;
-using OpenGLFunctionsBase = QOpenGLFunctions_3_3_Core;
+#include <memory>
+
+#include "Camera.h"
+#include "Common_defs.h"
+#include "Sphere.h"
 
 
 class MainWidget : public QOpenGLWidget, protected OpenGLFunctionsBase
@@ -59,21 +57,9 @@ private:
   Camera m_camera;
   bool m_mouse_pressed = false;
   QVector2D m_last_mouse_pos;
-  //QMatrix4x4 m_projection;
 
 
   QBasicTimer m_timer;
-};
-
-class Sphere : protected OpenGLFunctionsBase
-{
-public:
-  Sphere(int num_slices, int num_stacks, float r);
-  
-  void draw();
-
-private:
-  GLuint m_vao, m_vbo, m_ibo, m_num_indices;
 };
 
 #endif // MAINWIDGET_H
