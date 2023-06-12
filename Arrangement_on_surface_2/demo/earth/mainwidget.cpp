@@ -19,7 +19,7 @@ layout (location = 1) in vec3 normal;
 
 //out vec4 vCol;
 //out vec3 vpos;
-out vec3 vNormal;
+flat out vec3 vNormal;
 
 uniform mat4 MVP; 
 
@@ -67,7 +67,7 @@ void main()
 #version 330
 
 //in vec4 vCol;
-in vec3 vNormal;
+flat in vec3 vNormal;
 
 out vec4 color;
 
@@ -95,49 +95,62 @@ MainWidget::~MainWidget()
     doneCurrent();
 }
 
+bool mouse_pressed = false;
+QVector2D last_mouse_pos;
 
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
-    // Save mouse press position
-    m_mouse_press_position = QVector2D(e->position());
+  // Save mouse press position
+  m_mouse_press_position = QVector2D(e->position());
+
+  mouse_pressed = true;
+  last_mouse_pos = QVector2D(e->position());
+}
+
+
+QVector3D cam_pos(0, 0, 10);
+QVector3D cam_ux(1, 0, 0);
+QVector3D cam_uy(0, 1, 0);
+QVector3D cam_uz(0, 0, 1);
+
+
+void MainWidget::mouseMoveEvent(QMouseEvent* e)
+{
+  //last_mouse_pos = QVector2D(e->position());
+  auto current_mouse_pos = QVector2D(e->position());
+
+  if (mouse_pressed)
+  {
+    
+    auto diff = current_mouse_pos - last_mouse_pos;
+    const float scale_factor = 0.1f;
+    auto angle = scale_factor * QVector2D(diff.y(), diff.x());
+  
+    // rotate the camera around its x-axis
+    QMatrix4x4 rot;
+    rot.rotate(angle.x(), cam_ux);
+    cam_pos = cam_pos * rot;
+    cam_uy = cam_uy * rot;
+    cam_uz = cam_uz * rot;
+
+    // rotate the camera around its y-axis
+    rot.setToIdentity();
+    rot.rotate(angle.y(), cam_uy);
+    cam_pos = cam_pos * rot;
+    cam_ux = cam_ux * rot;
+    cam_uz = cam_uz * rot;
+  }
+
+  last_mouse_pos = current_mouse_pos;
 }
 void MainWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-    // Mouse release position - mouse press position
-    QVector2D diff = QVector2D(e->position()) - m_mouse_press_position;
+  mouse_pressed = false;
 
-    // Rotation axis is perpendicular to the mouse position difference
-    // vector
-    QVector3D n = QVector3D(diff.y(), diff.x(), 0.0).normalized();
-
-    // Accelerate angular speed relative to the length of the mouse sweep
-    qreal acc = diff.length() / 100.0;
-
-    // Calculate new rotation axis as weighted sum
-    m_rotation_axis = (m_rotation_axis * m_angular_speed + n * acc).normalized();
-
-    // Increase angular speed
-    m_angular_speed += acc;
 }
 void MainWidget::timerEvent(QTimerEvent *)
 {
-    // Decrease angular speed (friction)
-    m_angular_speed *= 0.99;
-
-    // Stop rotation when speed goes below threshold
-    if (m_angular_speed < 0.01) {
-        m_angular_speed = 0.0;
-    } else {
-        // Update rotation
-        m_rotation = QQuaternion::fromAxisAndAngle(m_rotation_axis, m_angular_speed) * 
-                                                                       m_rotation;
-
-        // Request an update
-        update();
-    }
-
-    // redraw every 12 miliseconds
-    update();
+  update();
 }
 
 
@@ -259,13 +272,16 @@ void MainWidget::resizeGL(int w, int h)
 void MainWidget::paintGL()
 {
   QMatrix4x4 view;
-  const QVector3D eye(0, 10, 10), center(0, 0, 0), up(0, 1, 0);
-  view.lookAt(eye, center, up);
+  //const QVector3D eye(0, 10, 10), center(0, 0, 0), up(0, 1, 0);
+  // view.lookAt(eye, center, up);
+
+  const QVector3D center(0, 0, 0);
+  view.lookAt(cam_pos, center, cam_uy);
 
   QMatrix4x4 model;
-  static float angle = 0;
-  angle += 1;
-  model.rotate(angle, up);
+  //static float angle = 0;
+  //angle += 1;
+  //model.rotate(angle, up);
   
   // Clear color and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
