@@ -59,7 +59,7 @@ private:
   Camera m_camera;
   bool m_mouse_pressed = false;
   QVector2D m_last_mouse_pos;
-  QMatrix4x4 m_projection;
+  //QMatrix4x4 m_projection;
 
 
   QBasicTimer m_timer;

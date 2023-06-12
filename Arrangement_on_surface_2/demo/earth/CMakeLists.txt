@@ -16,8 +16,8 @@ qt_standard_project_setup()
 
 qt_add_executable(earth
     main.cpp
-    mainwidget.cpp mainwidget.h
-    Camera.h
+    mainwidget.cpp  mainwidget.h
+    Camera.cpp      Camera.h
 )
 
 

@@ -244,34 +244,25 @@ void MainWidget::resizeGL(int w, int h)
   const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
 
   // Reset projection
-  m_projection.setToIdentity();
-  m_projection.perspective(fov, aspect, z_near, z_far);
+  m_camera.perspective(fov, aspect, z_near, z_far);
 }
+
 
 void MainWidget::paintGL()
 {
-  QMatrix4x4 view;
-  //const QVector3D eye(0, 10, 10), center(0, 0, 0), up(0, 1, 0);
-  // view.lookAt(eye, center, up);
-
-  //const QVector3D center(0, 0, 0);
-  //view.lookAt(camera.pos, center, cam_uy);
-  view = m_camera.get_view_matrix();
-
   QMatrix4x4 model;
-  //static float angle = 0;
-  //angle += 1;
-  //model.rotate(angle, up);
+  const auto view = m_camera.get_view_matrix();
+  const auto projection = m_camera.get_projection_matrix();
+  const auto mvp = projection * view * model;
   
+
   // Clear color and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
     glUseProgram(m_shader);
-    auto mvp = m_projection * view * model;
     glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, mvp.data());
     
     m_sphere->draw();
