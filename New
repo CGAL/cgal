@@ -1,0 +1,57 @@
+name: Documentation
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install system dependencies
+        run: |
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            sudo apt-get update
+            sudo apt-get install -y graphviz ssh
+          fi
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Configure CMake
+        run: |
+          mkdir -p build_doc
+          cd build_doc
+          cmake ../Documentation/doc
+
+      - name: Build and Upload Doc
+        id: build_and_run
+        run: |
+          PR_NUMBER=${{ github.event.issue.number }}
+          TMP_ROUND=${{ steps.get_round.outputs.result }}
+          ROUND=$(echo $TMP_ROUND | cut -d ":" -f 1)
+          force=$(echo $TMP_ROUND | cut -d ":" -f 2)
+          wget --no-verbose cgal.github.io -O tmp.html
+          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html || [ "$force" = "yes" ]; then
+            # List impacted packages
+            LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD | cut -s -d/ -f1 | sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null | cut -d/ -f1 | egrep -v Installation || true)
+            if [ -z "$LIST_OF_PKGS" ]; then
+              echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
+              exit 1
+            fi
+            cd build_doc
+            make -j2 doc
+            make -j2 doc_with_postprocessing 2>tmp.log
+            if [ -s tmp.log ]; then
+              content=$(cat ./tmp.log)
+              delimiter="$(openssl rand -hex 8)"
+              echo "DoxygenError<<${delimiter}" >> "${GITHUB_OUTPUT}"
+              cat tmp.log >> "${GITHUB_OUTPUT}"
+.
