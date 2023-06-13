@@ -109,7 +109,7 @@ std::ostream&
 operator<<(std::ostream &os, const Triangulation_vertex_base_2<GT, Vb> &v)
   // non combinatorial information. Default = point
 {
-  return os << static_cast<const Vb&>(v) << v.point();
+  return os << static_cast<const Vb&>(v) << IO::serialize(v.point());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

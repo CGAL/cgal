@@ -61,6 +61,7 @@ private:
   Point _p;
 };
 
+
 template < class GT, class DSVb >
 std::istream&
 operator>>(std::istream &is, Triangulation_vertex_base_3<GT, DSVb> &v)
@@ -74,7 +75,7 @@ std::ostream&
 operator<<(std::ostream &os, const Triangulation_vertex_base_3<GT, DSVb> &v)
   // non combinatorial information. Default = point
 {
-  return os << static_cast<const DSVb&>(v) << v.point();
+  return os << static_cast<const DSVb&>(v) << IO::serialize(v.point());
 }
 
 } //namespace CGAL

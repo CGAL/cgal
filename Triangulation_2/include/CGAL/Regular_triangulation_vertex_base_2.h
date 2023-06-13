@@ -81,7 +81,7 @@ operator<<(std::ostream &os,
            const Regular_triangulation_vertex_base_2<GT, Vb> &v)
   // non combinatorial information. Default = point
 {
-  return os << static_cast<const Vb&>(v) << v.point();
+  return os << static_cast<const Vb&>(v) << IO::serialize(v.point());
 }
 
 } //namespace CGAL
