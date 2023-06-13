@@ -82,6 +82,13 @@ void MainWidget::initializeGL()
   m_timer.start(12, this);
 }
 
+
+
+
+#include "World_coordinate_axes.h"
+std::unique_ptr<World_coord_axes> m_world_coord_axes;
+
+
 void MainWidget::init_camera()
 {
   m_camera.set_pos(0, 0, 10);
@@ -94,6 +101,9 @@ void MainWidget::init_geometry()
   m_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
   const float c = 0.8;
   m_sphere->set_color(c, c, c, 1);
+
+
+  m_world_coord_axes = std::make_unique<World_coord_axes>(5);
 }
 void MainWidget::init_shader_programs()
 {
@@ -147,15 +157,26 @@ void MainWidget::paintGL()
   const auto mvp = projection * view * model;
 
   // Clear color and depth buffer
-  //auto& sp = m_sp_smooth;
-  auto& sp = m_sp_color_only;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // SPHERE
   {
+    auto& sp = m_sp_smooth;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
     sp.set_uniform("u_color", m_sphere->get_color());
     
     m_sphere->draw();
+
+    sp.unuse();
+  }
+
+  // WORLD COORDINATE AXES
+  {
+    auto& sp = m_sp_color_only;
+    sp.use();
+    sp.set_uniform("u_mvp", mvp);
+
+    m_world_coord_axes->draw();
 
     sp.unuse();
   }

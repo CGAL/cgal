@@ -22,6 +22,7 @@ qt_add_executable(earth
     Shader_program.h  Shader_program.cpp
     Sphere.h          Sphere.cpp
     Tools.h
+    World_coordinate_axes.h   World_coordinate_axes.cpp
 )
 
 
