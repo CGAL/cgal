@@ -97,9 +97,6 @@ function(CGAL_setup_CGAL_dependencies target)
     target_compile_definitions(${target} INTERFACE CGAL_TEST_SUITE=1)
   endif()
 
-  # CGAL now requires C++14. `decltype(auto)` is used as a marker of C++14.
-  target_compile_features(${target} INTERFACE cxx_decltype_auto)
-
   use_CGAL_Boost_support(${target} INTERFACE)
 
   # Make CGAL depend on threads-support (for Epeck and Epeck_d)
@@ -119,6 +116,14 @@ function(CGAL_setup_CGAL_dependencies target)
     target_link_options(${target} INTERFACE -fsanitize=address)
   endif()
   # Now setup compilation flags
+  CGAL_setup_CGAL_flags(${target})
+endfunction()
+
+function(CGAL_setup_CGAL_flags target)
+  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
+  # C++14.
+  target_compile_features(${target} INTERFACE cxx_decltype_auto)
+
   if(MSVC)
     target_compile_options(${target} INTERFACE
       "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
