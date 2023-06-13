@@ -786,10 +786,10 @@ public:
           else
             _curr_simplex = prev;
         }
-        else
+        else // facet-cell then end
         {
           CGAL_assertion(lt == Locate_type::CELL);
-          _curr_simplex = Simplex_3();
+          _curr_simplex = prev;
         }
         break;
       }
