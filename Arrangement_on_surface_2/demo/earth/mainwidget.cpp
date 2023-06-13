@@ -1,5 +1,3 @@
-// Copyright (C) 2016 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
 #include "mainwidget.h"
 
@@ -17,18 +15,23 @@ MainWidget::~MainWidget()
   doneCurrent();
 }
 
-void MainWidget::mousePressEvent(QMouseEvent *e)
+
+void MainWidget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 {
   switch (e->button())
   {
   case Qt::LeftButton:
-    m_left_mouse_button_down = true;
+    m_left_mouse_button_down = flag;
     break;
 
   case Qt::MiddleButton:
-    m_middle_mouse_button_down = true;
+    m_middle_mouse_button_down = flag;
     break;
   }
+}
+void MainWidget::mousePressEvent(QMouseEvent *e)
+{
+  set_mouse_button_pressed_flag(e, true);
   m_last_mouse_pos = QVector2D(e->position());
 }
 void MainWidget::mouseMoveEvent(QMouseEvent* e)
@@ -41,10 +44,9 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
     const float rotation_scale_factor = 0.1f;
     const float theta_around_x = rotation_scale_factor * diff.y();
     const float theta_around_y = rotation_scale_factor * diff.x();
-  
     m_camera.rotate(theta_around_x, theta_around_y);
   }
-  else
+  else if(m_middle_mouse_button_down)
   {
     const float zoom_scale_factor = 0.01f;
     const auto distance = zoom_scale_factor * diff.y();
@@ -53,23 +55,9 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
 
   m_last_mouse_pos = current_mouse_pos;
 }
-void MainWidget::wheelEvent(QWheelEvent* e)
-{
-  auto distance = e->angleDelta();
-  m_camera.move_forward(distance.x());
-}
 void MainWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-  switch (e->button())
-  {
-  case Qt::LeftButton:
-    m_left_mouse_button_down = false;
-    break;
-
-  case Qt::MiddleButton:
-    m_middle_mouse_button_down = false;
-    break;
-  }
+  set_mouse_button_pressed_flag(e, false);
 }
 void MainWidget::timerEvent(QTimerEvent *)
 {

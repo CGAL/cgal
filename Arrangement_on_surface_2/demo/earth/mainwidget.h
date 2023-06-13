@@ -22,31 +22,32 @@
 
 class MainWidget : public QOpenGLWidget, protected OpenGLFunctionsBase
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    using QOpenGLWidget::QOpenGLWidget;
-    ~MainWidget();
+  using QOpenGLWidget::QOpenGLWidget;
+  ~MainWidget();
 
 protected:
-    void mousePressEvent(QMouseEvent *e) override;
-    void mouseMoveEvent(QMouseEvent* e) override;
-    void wheelEvent(QWheelEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void timerEvent(QTimerEvent *e) override;
-
-    void initializeGL() override;
-    void resizeGL(int w, int h) override;
-    void paintGL() override;
+  void set_mouse_button_pressed_flag(QMouseEvent* e, bool flag);
+  void mousePressEvent(QMouseEvent *e) override;
+  void mouseMoveEvent(QMouseEvent* e) override;
+  void mouseReleaseEvent(QMouseEvent *e) override;
+  void timerEvent(QTimerEvent *e) override;
 
 
-    void add_shader(GLuint the_program, 
-                    const char* shader_code, 
-                    GLenum shader_type);
+  void initializeGL() override;
+  void resizeGL(int w, int h) override;
+  void paintGL() override;
+
+
+  void add_shader(GLuint the_program, 
+                  const char* shader_code, 
+                  GLenum shader_type);
     
-    void init_camera();
-    void init_geometry();
-    void init_shader_program();
+  void init_camera();
+  void init_geometry();
+  void init_shader_program();
 
 private:
   std::unique_ptr<Sphere>  m_sphere;
