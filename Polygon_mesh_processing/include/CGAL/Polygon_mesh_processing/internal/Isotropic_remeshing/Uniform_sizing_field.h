@@ -42,8 +42,8 @@ public:
   {}
 
 private:
-  FT sqlength(const vertex_descriptor& va,
-              const vertex_descriptor& vb) const
+  FT sqlength(const vertex_descriptor va,
+              const vertex_descriptor vb) const
   {
     typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
       vpmap = get(CGAL::vertex_point, m_pmesh);
@@ -60,7 +60,7 @@ public:
   void calc_sizing_map() const {}
   void update_sizing_map(const vertex_descriptor& vnew) const {}
 
-  boost::optional<FT> is_too_long(const halfedge_descriptor& h) const
+  boost::optional<FT> is_too_long(const halfedge_descriptor h) const
   {
     const FT sqlen = sqlength(h);
     if(sqlen > m_sq_long)
@@ -69,8 +69,8 @@ public:
       return boost::none;
   }
 
-  boost::optional<FT> is_too_long(const vertex_descriptor& va,
-                                  const vertex_descriptor& vb) const
+  boost::optional<FT> is_too_long(const vertex_descriptor va,
+                                  const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
     if (sqlen > m_sq_long)
@@ -79,7 +79,7 @@ public:
       return boost::none;
   }
 
-  boost::optional<FT> is_too_short(const halfedge_descriptor& h) const
+  boost::optional<FT> is_too_short(const halfedge_descriptor h) const
   {
     const FT sqlen = sqlength(h);
     if (sqlen < m_sq_long)
@@ -88,7 +88,7 @@ public:
       return boost::none;
   }
 
-  virtual Point_3 split_placement(const halfedge_descriptor& h) const
+  virtual Point_3 split_placement(const halfedge_descriptor h) const
   {
     typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
       vpmap = get(CGAL::vertex_point, m_pmesh);

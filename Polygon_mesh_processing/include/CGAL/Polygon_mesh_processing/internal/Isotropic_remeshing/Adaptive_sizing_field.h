@@ -66,8 +66,8 @@ public:
   }
 
 private:
-  FT sqlength(const vertex_descriptor& va,
-              const vertex_descriptor& vb) const
+  FT sqlength(const vertex_descriptor va,
+              const vertex_descriptor vb) const
   {
     typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
       vpmap = get(CGAL::vertex_point, m_pmesh);
@@ -80,7 +80,7 @@ private:
   }
 
 public:
-  FT get_sizing(const vertex_descriptor& v) const {
+  FT get_sizing(const vertex_descriptor v) const {
       CGAL_assertion(get(m_vertex_sizing_map, v));
       return get(m_vertex_sizing_map, v);
     }
@@ -140,7 +140,7 @@ public:
 #endif
   }
 
-  boost::optional<FT> is_too_long(const halfedge_descriptor& h) const
+  boost::optional<FT> is_too_long(const halfedge_descriptor h) const
   {
     const FT sqlen = sqlength(h);
     FT sqtarg_len = CGAL::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
@@ -153,8 +153,8 @@ public:
       return boost::none;
   }
 
-  boost::optional<FT> is_too_long(const vertex_descriptor& va,
-                                  const vertex_descriptor& vb) const
+  boost::optional<FT> is_too_long(const vertex_descriptor va,
+                                  const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
     FT sqtarg_len = CGAL::min(get(m_vertex_sizing_map, va),
@@ -167,7 +167,7 @@ public:
       return boost::none;
   }
 
-  boost::optional<FT> is_too_short(const halfedge_descriptor& h) const
+  boost::optional<FT> is_too_short(const halfedge_descriptor h) const
   {
     const FT sqlen = sqlength(h);
     FT sqtarg_len = CGAL::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
@@ -180,7 +180,7 @@ public:
       return boost::none;
   }
 
-  virtual Point_3 split_placement(const halfedge_descriptor& h) const
+  virtual Point_3 split_placement(const halfedge_descriptor h) const
   {
     typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
       vpmap = get(CGAL::vertex_point, m_pmesh);
@@ -188,7 +188,7 @@ public:
                           get(vpmap, source(h, m_pmesh)));
   }
 
-  void update_sizing_map(const vertex_descriptor& v)
+  void update_sizing_map(const vertex_descriptor v)
   {
     // calculating it as the average of two vertices on other ends
     // of halfedges as updating is done during an edge split
