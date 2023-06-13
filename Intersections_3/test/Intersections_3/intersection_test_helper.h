@@ -309,10 +309,8 @@ public:
     template<typename T>
     bool compare_to_other_variant(const T& t) const
     {
-      if(ov->type() == typeid(T))
+      if(auto* r = std::get_if<T>(&*ov))
       {
-        auto* r = std::get_if<T>(&*ov); // ov is an optional<variant>
-        assert(r);
         return (t == *r);
       }
 

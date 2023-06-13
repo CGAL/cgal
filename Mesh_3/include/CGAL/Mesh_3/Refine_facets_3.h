@@ -1053,7 +1053,7 @@ Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 number_of_bad_elements_impl()
 {
   typedef typename MD::Subdomain_index        Subdomain_index;
-  typedef boost::optional<Subdomain_index>    Subdomain;
+  typedef std::optional<Subdomain_index>    Subdomain;
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
   int count = 0, count_num_bad_surface_facets = 0;
@@ -1735,7 +1735,7 @@ is_facet_encroached(const Facet& facet,
                     const Weighted_point& point) const
 {
   typedef typename MD::Subdomain_index        Subdomain_index;
-  typedef boost::optional<Subdomain_index>    Subdomain;
+  typedef std::optional<Subdomain_index>    Subdomain;
 
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
     return false;

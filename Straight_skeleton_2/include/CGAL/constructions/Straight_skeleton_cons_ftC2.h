@@ -572,7 +572,7 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
 
   FT t;
 
-  if(const Segment_2* seg = std::get<Segment_2>(&*inter_res))
+  if(const Segment_2* seg = std::get_if<Segment_2>(&*inter_res))
   {
     // get the segment extremity closest to the seed
     Boolean res = (K().compare_distance_2_object()(*seed, seg->source(), seg->target()) == CGAL::SMALLER);
@@ -581,7 +581,7 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   }
   else
   {
-    const Point_2* inter_pt = std::get<const Point_2>(&*inter_res);
+    const Point_2* inter_pt = std::get_if<Point_2>(&*inter_res);
     if(!CGAL_NTS is_finite(inter_pt->x()) || !CGAL_NTS is_finite(inter_pt->y()))
       return std::nullopt;
     t = l0->a() * inter_pt->x() + l0->b() * inter_pt->y() + l0->c() ;
@@ -879,12 +879,12 @@ construct_artifical_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID
   if (!inter_res) // shouldn't be here if there is no intersection
     return std::nullopt;
 
-  if(const Point_2* inter_pt = std::get<Point_2>(&*inter_res))
+  if(const Point_2* inter_pt = std::get_if<Point_2>(&*inter_res))
   {
     bool ok = CGAL_NTS is_finite(inter_pt->x()) && CGAL_NTS is_finite(inter_pt->y()) ;
     return cgal_make_optional(ok, *inter_pt) ;
   }
-  else if(const Segment_2* seg = std::get<Segment_2>(&*inter_res))
+  else if(const Segment_2* seg = std::get_if<Segment_2>(&*inter_res))
   {
     // get the segment extremity closest to the seed
     const Point_2& pt = (K().compare_distance_2_object()(*seed,
