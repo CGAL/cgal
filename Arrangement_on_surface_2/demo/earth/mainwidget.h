@@ -52,7 +52,7 @@ protected:
 private:
   std::unique_ptr<Sphere>  m_sphere;
 
-  Shader_program  m_shader_program;
+  Shader_program  m_sp_smooth;
   
   // camera & controls
   Camera m_camera;

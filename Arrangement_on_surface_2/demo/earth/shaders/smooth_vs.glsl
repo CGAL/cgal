@@ -6,7 +6,7 @@ layout (location = 1) in vec3 normal;
 
 //out vec4 vCol;
 //out vec3 vpos;
-flat out vec3 vNormal;
+out vec3 vNormal;
 
 uniform mat4 MVP; 
 

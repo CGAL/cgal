@@ -174,6 +174,10 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   // Note: calling this before glBindVertexArray(0) results in no output!
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+void Sphere::set_color(float r, float g, float b, float a)
+{
+  m_color = QVector4D(r, g, b, a);
+}
 void Sphere::draw()
 {
   // DRAW TRIANGLES

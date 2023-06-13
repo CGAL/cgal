@@ -92,20 +92,22 @@ void MainWidget::init_geometry()
   num_slices = num_stacks = 64;
   float r = 3;
   m_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
+  const float c = 0.8;
+  m_sphere->set_color(c, c, c, 1);
 }
 void MainWidget::init_shader_program()
 {
-  m_shader_program.init();
+  m_sp_smooth.init();
 
-  const char* vs = "shaders/vertex.glsl";
+  const char* vs = "shaders/smooth_vs.glsl";
   const char* gs = "shaders/geometry.glsl";
-  const char* fs = "shaders/fragment.glsl";
-  m_shader_program.add_shader_from_file(vs, GL_VERTEX_SHADER);
+  const char* fs = "shaders/smooth_fs.glsl";
+  m_sp_smooth.add_shader_from_file(vs, GL_VERTEX_SHADER);
   //m_shader_program.add_shader_from_file(gs, GL_GEOMETRY_SHADER);
-  m_shader_program.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
+  m_sp_smooth.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
 
-  m_shader_program.link();
-  m_shader_program.validate();
+  m_sp_smooth.link();
+  m_sp_smooth.validate();
 }
 
 
@@ -129,11 +131,12 @@ void MainWidget::paintGL()
   // Clear color and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   {
-    m_shader_program.use();
-    m_shader_program.set_uniform("MVP", mvp);
+    m_sp_smooth.use();
+    m_sp_smooth.set_uniform("MVP", mvp);
+    m_sp_smooth.set_uniform("uColor", m_sphere->get_color());
     
     m_sphere->draw();
 
-    m_shader_program.unuse();
+    m_sp_smooth.unuse();
   }
 }
