@@ -41,3 +41,10 @@ void Camera::rotate(float theta_around_x, float theta_around_y)
   m_ux = m_ux * rot;
   m_uz = m_uz * rot;
 }
+
+void Camera::move_forward(float distance)
+{
+  // recall that in OpenGL camera model, camera's z-axis points always
+  // out of the screen (towards the user).
+  m_pos -= distance * m_uz;
+}

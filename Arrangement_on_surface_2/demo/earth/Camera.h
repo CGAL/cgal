@@ -24,6 +24,9 @@ public:
   // rotate the camera around its own axes
   void rotate(float theta_around_x, float theta_around_y);
 
+  // move the camera forward around its own z-axis
+  void move_forward(float distance);
+
 private:
   QVector3D m_pos;
   QVector3D m_ux;

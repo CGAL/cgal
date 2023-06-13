@@ -19,29 +19,57 @@ MainWidget::~MainWidget()
 
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
-  m_mouse_pressed = true;
+  switch (e->button())
+  {
+  case Qt::LeftButton:
+    m_left_mouse_button_down = true;
+    break;
+
+  case Qt::MiddleButton:
+    m_middle_mouse_button_down = true;
+    break;
+  }
   m_last_mouse_pos = QVector2D(e->position());
 }
 void MainWidget::mouseMoveEvent(QMouseEvent* e)
 {
   auto current_mouse_pos = QVector2D(e->position());
+  const auto diff = current_mouse_pos - m_last_mouse_pos;
 
-  if (m_mouse_pressed)
+  if (m_left_mouse_button_down)
   {  
-    const auto diff = current_mouse_pos - m_last_mouse_pos;
-    const float scale_factor = 0.1f;
-    const float theta_around_x = scale_factor * diff.y();
-    const float theta_around_y = scale_factor * diff.x();
+    const float rotation_scale_factor = 0.1f;
+    const float theta_around_x = rotation_scale_factor * diff.y();
+    const float theta_around_y = rotation_scale_factor * diff.x();
   
     m_camera.rotate(theta_around_x, theta_around_y);
+  }
+  else
+  {
+    const float zoom_scale_factor = 0.01f;
+    const auto distance = zoom_scale_factor * diff.y();
+    m_camera.move_forward(distance);
   }
 
   m_last_mouse_pos = current_mouse_pos;
 }
+void MainWidget::wheelEvent(QWheelEvent* e)
+{
+  auto distance = e->angleDelta();
+  m_camera.move_forward(distance.x());
+}
 void MainWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-  m_mouse_pressed = false;
+  switch (e->button())
+  {
+  case Qt::LeftButton:
+    m_left_mouse_button_down = false;
+    break;
 
+  case Qt::MiddleButton:
+    m_middle_mouse_button_down = false;
+    break;
+  }
 }
 void MainWidget::timerEvent(QTimerEvent *)
 {

@@ -31,6 +31,7 @@ public:
 protected:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent* e) override;
+    void wheelEvent(QWheelEvent* event) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void timerEvent(QTimerEvent *e) override;
 
@@ -54,7 +55,8 @@ private:
   
   // camera & controls
   Camera m_camera;
-  bool m_mouse_pressed = false;
+  bool m_left_mouse_button_down = false;
+  bool m_middle_mouse_button_down = false;
   QVector2D m_last_mouse_pos;
 
 
