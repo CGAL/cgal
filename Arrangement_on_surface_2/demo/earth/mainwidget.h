@@ -4,8 +4,6 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <memory>
-
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
 #include <QQuaternion>
@@ -13,12 +11,13 @@
 #include <QBasicTimer>
 
 #include <qopenglwidget.h>
-#include <qopenglfunctions_3_3_core.h>
-#include <qopenglfunctions_4_5_core.h>
 
+#include <memory>
 
-class Sphere;
-using OpenGLFunctionsBase = QOpenGLFunctions_3_3_Core;
+#include "Camera.h"
+#include "Common_defs.h"
+#include "Shader_program.h"
+#include "Sphere.h"
 
 
 class MainWidget : public QOpenGLWidget, protected OpenGLFunctionsBase
@@ -31,6 +30,8 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent* e) override;
+    void wheelEvent(QWheelEvent* event) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void timerEvent(QTimerEvent *e) override;
 
@@ -42,37 +43,24 @@ protected:
     void add_shader(GLuint the_program, 
                     const char* shader_code, 
                     GLenum shader_type);
-    void init_shader_program();
     
+    void init_camera();
     void init_geometry();
-
+    void init_shader_program();
 
 private:
-
   std::unique_ptr<Sphere>  m_sphere;
 
-  GLuint shader;
-  GLuint m_uniform_mvp; // uniform location for MVP-matrix in the shader
+  Shader_program  m_shader_program;
   
+  // camera & controls
+  Camera m_camera;
+  bool m_left_mouse_button_down = false;
+  bool m_middle_mouse_button_down = false;
+  QVector2D m_last_mouse_pos;
+
+
   QBasicTimer m_timer;
-
-  QMatrix4x4 m_projection;
-
-  QVector2D m_mouse_press_position;
-  QVector3D m_rotation_axis;
-  qreal m_angular_speed = 0;
-  QQuaternion m_rotation;
-};
-
-class Sphere : protected OpenGLFunctionsBase
-{
-public:
-  Sphere(int num_slices, int num_stacks, float r);
-  
-  void draw();
-
-private:
-  GLuint m_vao, m_vbo, m_ibo, m_num_indices;
 };
 
 #endif // MAINWIDGET_H
