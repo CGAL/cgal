@@ -11,6 +11,7 @@ class Shader_program : protected OpenGLFunctionsBase
 public:
 
   bool init();
+  bool init(const char* vs, const char* gs, const char* fs);
 
   void add_shader(const char* shader_code, GLenum shader_type);
   void add_shader_from_file(const char* shader_file, GLenum shader_type);

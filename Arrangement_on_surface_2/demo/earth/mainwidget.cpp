@@ -72,7 +72,7 @@ void MainWidget::initializeGL()
 
   init_camera();
   init_geometry();
-  init_shader_program();
+  init_shader_programs();
 
   glClearColor(0, 0, 0, 1);
   glEnable(GL_DEPTH_TEST);  // Enable depth buffer
@@ -95,19 +95,37 @@ void MainWidget::init_geometry()
   const float c = 0.8;
   m_sphere->set_color(c, c, c, 1);
 }
-void MainWidget::init_shader_program()
+void MainWidget::init_shader_programs()
 {
-  m_sp_smooth.init();
+  // SMOOTH SHADER PROGRAM
+  {
+    m_sp_smooth.init();
 
-  const char* vs = "shaders/smooth_vs.glsl";
-  const char* gs = "shaders/geometry.glsl";
-  const char* fs = "shaders/smooth_fs.glsl";
-  m_sp_smooth.add_shader_from_file(vs, GL_VERTEX_SHADER);
-  //m_shader_program.add_shader_from_file(gs, GL_GEOMETRY_SHADER);
-  m_sp_smooth.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
+    const char* vs = "shaders/smooth_vs.glsl";
+    const char* gs = "shaders/geometry.glsl";
+    const char* fs = "shaders/smooth_fs.glsl";
+    m_sp_smooth.add_shader_from_file(vs, GL_VERTEX_SHADER);
+    //m_shader_program.add_shader_from_file(gs, GL_GEOMETRY_SHADER);
+    m_sp_smooth.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
 
-  m_sp_smooth.link();
-  m_sp_smooth.validate();
+    m_sp_smooth.link();
+    m_sp_smooth.validate();
+  }
+
+
+  // COLOR ONLY SHADER PROGRAM
+  {
+    m_sp_color_only.init();
+
+    const char* vs = "shaders/color_only_vs.glsl";
+    const char* fs = "shaders/color_only_fs.glsl";
+    m_sp_color_only.add_shader_from_file(vs, GL_VERTEX_SHADER);
+    //m_shader_program.add_shader_from_file(gs, GL_GEOMETRY_SHADER);
+    m_sp_color_only.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
+
+    m_sp_color_only.link();
+    m_sp_color_only.validate();
+  }
 }
 
 
@@ -129,14 +147,16 @@ void MainWidget::paintGL()
   const auto mvp = projection * view * model;
 
   // Clear color and depth buffer
+  //auto& sp = m_sp_smooth;
+  auto& sp = m_sp_color_only;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   {
-    m_sp_smooth.use();
-    m_sp_smooth.set_uniform("MVP", mvp);
-    m_sp_smooth.set_uniform("uColor", m_sphere->get_color());
+    sp.use();
+    sp.set_uniform("u_mvp", mvp);
+    sp.set_uniform("u_color", m_sphere->get_color());
     
     m_sphere->draw();
 
-    m_sp_smooth.unuse();
+    sp.unuse();
   }
 }

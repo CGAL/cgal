@@ -19,6 +19,10 @@ bool Shader_program::init()
 
   return true;
 }
+bool Shader_program::init(const char* vs, const char* gs, const char* fs)
+{
+  return false;
+}
 void Shader_program::add_shader(const char* shader_code, GLenum shader_type)
 {
   GLuint the_shader = glCreateShader(shader_type);

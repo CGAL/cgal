@@ -47,12 +47,13 @@ protected:
     
   void init_camera();
   void init_geometry();
-  void init_shader_program();
+  void init_shader_programs();
 
 private:
   std::unique_ptr<Sphere>  m_sphere;
 
   Shader_program  m_sp_smooth;
+  Shader_program  m_sp_color_only;
   
   // camera & controls
   Camera m_camera;
