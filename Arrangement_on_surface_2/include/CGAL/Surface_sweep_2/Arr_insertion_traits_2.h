@@ -120,13 +120,13 @@ public:
       // X_monotone_curve_2
       for (const auto& xection : xections) {
         const Intersection_point*
-          p_p = std::get<Intersection_point>(&xection);
+          p_p = std::get_if<Intersection_point>(&xection);
         if (p_p != nullptr) {
-          *oi++ = Intersection_result(xection);
+          *oi++ = Intersection_result(*p_p);
           continue;
         }
         const Base_x_monotone_curve_2* base_cv_p =
-          std::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(base_cv_p);
 
         // Add halfedge handles to the resulting curve.

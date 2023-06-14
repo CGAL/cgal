@@ -99,7 +99,7 @@ struct Arr_point_location_result {
 
   template <typename T>
   static
-  inline const T* assign(const Type* obj) { return std::get<T>(obj); }
+  inline const T* assign(const Type* obj) { return std::get_if<T>(obj); }
 #endif // CGAL_ARR_POINT_LOCATION_VERSION < 2
 
   //this one is only to remove warnings in functions

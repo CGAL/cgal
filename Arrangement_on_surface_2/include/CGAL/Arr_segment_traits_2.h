@@ -724,7 +724,7 @@ public:
       CGAL_assertion(bool(res));
 
       // Check if we have a single intersection point.
-      const Point_2* ip = std::get<Point_2>(&*res);
+      const Point_2* ip = std::get_if<Point_2>(&*res);
       if (ip != nullptr) {
         CGAL_assertion(cv1.is_vertical() ?
                        m_traits.is_in_y_range_2_object()(cv1, *ip) :

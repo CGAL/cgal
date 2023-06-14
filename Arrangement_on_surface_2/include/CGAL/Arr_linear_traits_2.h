@@ -1340,7 +1340,7 @@ public:
       if (! res) return oi;
 
       // Check whether we have a single intersection point.
-      const Point_2* ip = std::get<Point_2>(&*res);
+      const Point_2* ip = std::get_if<Point_2>(&*res);
       if (ip != nullptr) {
         // Check whether the intersection point ip lies on both segments.
         const bool ip_on_cv1 = cv1.is_vertical() ?

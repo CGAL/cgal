@@ -85,23 +85,23 @@ namespace CGAL {
                    const std::variant< Arc1, Arc2 > &a2,
                    const Circular_arc_point_2 &p) const
       {
-        if ( const Arc1* arc1 = std::get<Arc1>( &a1 ) ){
-          if ( const Arc1* arc2 = std::get<Arc1>( &a2 ) ){
+        if ( const Arc1* arc1 = std::get_if<Arc1>( &a1 ) ){
+          if ( const Arc1* arc2 = std::get_if<Arc1>( &a2 ) ){
             return CircularKernel()
               .compare_y_to_right_2_object()(*arc1, *arc2, p);
           }
           else {
-            const Arc2* arc2e = std::get<Arc2>( &a2 );
+            const Arc2* arc2e = std::get_if<Arc2>( &a2 );
             return CircularKernel()
               .compare_y_to_right_2_object()(*arc1, *arc2e, p);
           }
         }
-        const Arc2* arc1 = std::get<Arc2>( &a1 );
-        if ( const Arc1* arc2 = std::get<Arc1>( &a2 ) ){
+        const Arc2* arc1 = std::get_if<Arc2>( &a1 );
+        if ( const Arc1* arc2 = std::get_if<Arc1>( &a2 ) ){
           return CircularKernel()
             .compare_y_to_right_2_object()(*arc1, *arc2, p);
         }
-        const Arc2* arc2e = std::get<Arc2>( &a2 );
+        const Arc2* arc2e = std::get_if<Arc2>( &a2 );
         return CircularKernel()
           .compare_y_to_right_2_object()(*arc1, *arc2e, p);
       }
@@ -189,11 +189,11 @@ namespace CGAL {
       operator() (const Circular_arc_point_2 &p,
                   const std::variant< Arc1, Arc2 > &A1) const
       {
-        if ( const Arc1* arc1 = std::get<Arc1>( &A1 ) ){
+        if ( const Arc1* arc1 = std::get_if<Arc1>( &A1 ) ){
           return CircularKernel().compare_y_at_x_2_object()(p, *arc1);
         }
         else {
-          const Arc2* arc2 = std::get<Arc2>( &A1 );
+          const Arc2* arc2 = std::get_if<Arc2>( &A1 );
           return CircularKernel().compare_y_at_x_2_object()(p, *arc2);
         }
       }
@@ -250,7 +250,7 @@ namespace CGAL {
       operator()(const std::variant<Arc1, Arc2, Not_X_Monotone> &A,
                  OutputIterator res) const
       {
-        if ( const Arc1* arc1 = std::get<Arc1>( &A ) ) {
+        if ( const Arc1* arc1 = std::get_if<Arc1>( &A ) ) {
           std::vector<CGAL::Object> container;
           CircularKernel().
             make_x_monotone_2_object()(*arc1,std::back_inserter(container));
@@ -258,7 +258,7 @@ namespace CGAL {
                                           (container, res);
         }
         else {
-          const Arc2* arc2 = std::get<Arc2>( &A );
+          const Arc2* arc2 = std::get_if<Arc2>( &A );
           std::vector<CGAL::Object> container;
           CircularKernel().
             make_x_monotone_2_object()(*arc2,std::back_inserter(container));
@@ -281,19 +281,19 @@ namespace CGAL {
                    const std::variant< Arc1, Arc2 > &c2,
                    OutputIterator oi) const
       {
-        if ( const Arc1* arc1 = std::get<Arc1>( &c1 ) ){
-          if ( const Arc1* arc2 = std::get<Arc1>( &c2 ) ){
+        if ( const Arc1* arc1 = std::get_if<Arc1>( &c1 ) ){
+          if ( const Arc1* arc2 = std::get_if<Arc1>( &c2 ) ){
             return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
           }
-          const Arc2* arc2 = std::get<Arc2>( &c2 );
+          const Arc2* arc2 = std::get_if<Arc2>( &c2 );
           return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
         }
 
-        const Arc2* arc1e = std::get<Arc2>( &c1 );
-        if ( const Arc1* arc2 = std::get<Arc1>( &c2 ) ){
+        const Arc2* arc1e = std::get_if<Arc2>( &c1 );
+        if ( const Arc1* arc2 = std::get_if<Arc1>( &c2 ) ){
           return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
         }
-        const Arc2* arc2 = std::get<Arc2>( &c2 );
+        const Arc2* arc2 = std::get_if<Arc2>( &c2 );
         return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
       }
 
@@ -314,7 +314,7 @@ namespace CGAL {
                    std::variant< Arc1, Arc2 > &ca2) const
       {
         // TODO : optimize by extracting the references from the variants ?
-        if ( const Arc1* arc1 = std::get<Arc1>( &A ) ){
+        if ( const Arc1* arc1 = std::get_if<Arc1>( &A ) ){
           Arc1 carc1;
           Arc1 carc2;
           CircularKernel().split_2_object()(*arc1, p, carc1, carc2);
@@ -324,7 +324,7 @@ namespace CGAL {
 
         }
         else{
-          const Arc2* arc2 = std::get<Arc2>( &A );
+          const Arc2* arc2 = std::get_if<Arc2>( &A );
           Arc2 cline1;
           Arc2 cline2;
           CircularKernel().split_2_object()(*arc2, p, cline1, cline2);

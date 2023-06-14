@@ -323,14 +323,14 @@ public:
     /*! Obtain the red vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_red* red_vertex_handle() const
     {
-      return m_red_cell ? std::get<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
+      return m_red_cell ? std::get_if<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
     }
 
     /*! Obtain the blue vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_blue* blue_vertex_handle() const
     {
       return
-        m_blue_cell ? std::get<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
+        m_blue_cell ? std::get_if<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
     }
   };
 
@@ -440,7 +440,7 @@ public:
       // the extended X_monotone_curve_2.
       for (const auto& xection : xections) {
         const Intersection_base_point* base_ipt =
-          std::get<Intersection_base_point>(&xection);
+          std::get_if<Intersection_base_point>(&xection);
         if (base_ipt != nullptr) {
           // We have a red-blue intersection point, so we attach the
           // intersecting red and blue halfedges to it.
@@ -470,7 +470,7 @@ public:
         }
 
         const Base_x_monotone_curve_2* overlap_xcv =
-          std::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(overlap_xcv != nullptr);
 
         // We have a red-blue overlap, so we mark the curve accordingly.

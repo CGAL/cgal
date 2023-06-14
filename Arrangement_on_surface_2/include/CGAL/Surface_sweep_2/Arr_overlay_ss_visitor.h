@@ -937,8 +937,8 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
     const Cell_handle_red* red_handle_p = pt.red_cell_handle();
     if (red_handle_p) info.first = *red_handle_p;
 
-    if (!std::get<Face_handle_red>(&(info.first)) &&
-        !std::get<Face_handle_blue>(&(info.second)))
+    if (!std::get_if<Face_handle_red>(&(info.first)) &&
+        !std::get_if<Face_handle_blue>(&(info.second)))
     {
       // If both, the red and blue, variants do not represent face handles,
       // they must represt either vertex or edge handles. In this case it is

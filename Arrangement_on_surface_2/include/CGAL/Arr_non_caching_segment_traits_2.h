@@ -234,7 +234,7 @@ public:
       if (! res) return oi;
 
       // Check if the intersection is a point:
-      const Point_2* p_p = std::get<Point_2>(&*res);
+      const Point_2* p_p = std::get_if<Point_2>(&*res);
       if (p_p != nullptr) {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
@@ -246,7 +246,7 @@ public:
       }
 
       // The intersection is a segment.
-      const X_monotone_curve_2* cv_p = std::get<X_monotone_curve_2>(&*res);
+      const X_monotone_curve_2* cv_p = std::get_if<X_monotone_curve_2>(&*res);
       CGAL_assertion(cv_p != nullptr);
 
       Comparison_result cmp1 = m_traits.compare_endpoints_xy_2_object()(cv1);

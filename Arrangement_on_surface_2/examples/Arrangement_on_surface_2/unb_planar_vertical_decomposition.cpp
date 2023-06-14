@@ -41,10 +41,10 @@ int main() {
     std::cout << " feature below: ";
     if (! curr.first) std::cout << "EMPTY";
     else {
-      auto* vh = std::get<Vertex_const_handle>(&*(curr.first));;
+      auto* vh = std::get_if<Vertex_const_handle>(&*(curr.first));;
       if (vh) std::cout << '(' << (*vh)->point() << ')';
       else {
-        auto* hh = std::get<Halfedge_const_handle>(&*(curr.first));
+        auto* hh = std::get_if<Halfedge_const_handle>(&*(curr.first));
         if (! (*hh)->is_fictitious())
           std::cout << '[' << (*hh)->curve() << ']';
         else std::cout << "NONE";
@@ -54,10 +54,10 @@ int main() {
     std::cout << "   feature above: ";
     if (! curr.second) std::cout << "EMPTY\n";
     else {
-      auto* vh = std::get<Vertex_const_handle>(&*(curr.second));;
+      auto* vh = std::get_if<Vertex_const_handle>(&*(curr.second));;
       if (vh) std::cout << '(' << (*vh)->point() << ")\n";
       else {
-        auto* hh = std::get<Halfedge_const_handle>(&*(curr.second));
+        auto* hh = std::get_if<Halfedge_const_handle>(&*(curr.second));
         if (! (*hh)->is_fictitious())
           std::cout << '[' << (*hh)->curve() << "]\n";
         else std::cout << "NONE\n";

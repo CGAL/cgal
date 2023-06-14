@@ -212,7 +212,7 @@ public:
       for (auto its = cv.subcurves_begin(); its != cv.subcurves_end(); ++its)
         make_seg_x_monotone(*its, std::back_inserter(x_seg_objects));
       auto it = x_seg_objects.begin();
-      const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
+      const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
       CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -260,7 +260,7 @@ public:
 #endif
 
       for (++it; it != x_seg_objects.end(); ++it) {
-        const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
+        const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
         CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -350,7 +350,7 @@ public:
       for (auto its = cv.subcurves_begin(); its != cv.subcurves_end(); ++its)
         make_seg_x_monotone(*its, std::back_inserter(x_seg_objects));
       auto it = x_seg_objects.begin();
-      const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
+      const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
       CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -398,7 +398,7 @@ public:
 #endif
 
       for (++it; it != x_seg_objects.end(); ++it) {
-        const auto* x_seg_p = std::get<X_monotone_subcurve_2>(&(*it));
+        const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(*it));
 #if ! defined (CGAL_NO_ASSERTIONS)
         CGAL_assertion(x_seg_p != nullptr);
 #endif
@@ -824,7 +824,7 @@ public:
           intersect(cv1[i1], cv2[i2], std::back_inserter(xections));
           for (const auto& xection : xections) {
             const X_monotone_subcurve_2* subcv_p =
-              std::get<X_monotone_subcurve_2>(&xection);
+              std::get_if<X_monotone_subcurve_2>(&xection);
             if (subcv_p != nullptr) {
               ocv.push_back(*subcv_p);
               oi = output_ocv (ocv, invert_ocv, oi);
@@ -832,7 +832,7 @@ public:
             }
 
             const Intersection_point* p_p =
-              std::get<Intersection_point>(&xection);
+              std::get_if<Intersection_point>(&xection);
             if (p_p != nullptr) *oi++ = Intersection_result(*p_p);
           }
         }
@@ -846,7 +846,7 @@ public:
 
           for (const auto& item : sub_xections) {
             const X_monotone_subcurve_2* x_seg =
-              std::get<X_monotone_subcurve_2>(&item);
+              std::get_if<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
               // We maintain the variant that if the input curves have opposite
@@ -863,7 +863,7 @@ public:
             }
 
             const Intersection_point* p_ptr =
-              std::get<Intersection_point>(&item);
+              std::get_if<Intersection_point>(&item);
             if (p_ptr != nullptr) {
               // Any point that is not equal to the max_vertex of the
               // subcurve should be inserted into oi.

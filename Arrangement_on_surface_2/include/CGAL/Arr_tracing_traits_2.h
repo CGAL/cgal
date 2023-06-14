@@ -540,12 +540,12 @@ public:
 
       size_t i = 0;
       for (auto it = container.begin(); it != container.end(); ++it) {
-        if (const auto* xcv = std::get<X_monotone_curve_2>(&*it)) {
+        if (const auto* xcv = std::get_if<X_monotone_curve_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        if (const auto* p = std::get<Point_2>(&*it)) {
+        if (const auto* p = std::get_if<Point_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
           continue;
         }
@@ -632,13 +632,13 @@ public:
 
       unsigned int i = 0;
       for (const auto& item : container) {
-        const X_monotone_curve_2* xcv = std::get<X_monotone_curve_2>(&item);
+        const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&item);
         if (xcv != nullptr) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        const Intersection_point* ip = std::get<Intersection_point>(&item);
+        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
         if (ip != nullptr) {
           std::cout << "  result[" << i++ << "]: p: " << ip->first
                     << ", multiplicity: " << ip->second << std::endl;

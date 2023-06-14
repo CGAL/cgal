@@ -46,13 +46,13 @@ void print_point_location
   const Face_const_handle* f;
 
   std::cout << "The point (" << q << ") is located ";
-  if ((f = std::get<Face_const_handle>(&obj)))          // inside a face
+  if ((f = std::get_if<Face_const_handle>(&obj)))          // inside a face
     std::cout << "inside "
               << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
               << " face." << std::endl;
-  else if ((e = std::get<Halfedge_const_handle>(&obj))) // on an edge
+  else if ((e = std::get_if<Halfedge_const_handle>(&obj))) // on an edge
     std::cout << "on an edge: " << (*e)->curve() << std::endl;
-  else if ((v = std::get<Vertex_const_handle>(&obj)))   // on a vertex
+  else if ((v = std::get_if<Vertex_const_handle>(&obj)))   // on a vertex
     std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
@@ -101,12 +101,12 @@ void shoot_vertical_ray(const VerticalRayShooting& vrs,
 
   std::cout << "Shooting up from (" << q << ") : hit ";
 
-  if ((v = std::get<Vertex_const_handle>(&obj)))         // hit a vertex
+  if ((v = std::get_if<Vertex_const_handle>(&obj)))         // hit a vertex
     std::cout << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
-  else if ((e = std::get<Halfedge_const_handle>(&obj)) ) // hit an edge
+  else if ((e = std::get_if<Halfedge_const_handle>(&obj)) ) // hit an edge
     std::cout << "an edge: " << (*e)->curve() << std::endl;
-  else if ((f = std::get<Face_const_handle>(&obj))) {    // hit nothing
+  else if ((f = std::get_if<Face_const_handle>(&obj))) {    // hit nothing
     assert((*f)->is_unbounded());
     std::cout << "nothing." << std::endl;
   }
