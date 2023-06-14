@@ -844,17 +844,42 @@ public:
         int liprev, ljprev;
         _cell_iterator.exit(ltprev, liprev, ljprev);
 
-        if (ltprev == Locate_type::VERTEX) //edge-vertex-outside
-        {
+        switch(ltprev) {
+        case Locate_type::VERTEX: { //edge-vertex-outside
           if(edge_has_vertex(get_edge(), chprev->vertex(liprev)))
             _curr_simplex = chprev->vertex(liprev);
           else
             _curr_simplex = shared_facet(get_edge(), chprev->vertex(liprev));
+          break;
         }
-        else if(ltprev == Locate_type::CELL)
+        case Locate_type::EDGE: { //edge-outside or edge-cell-edge-outside
+          const Vertex_handle vi = chprev->vertex(liprev);
+          const Vertex_handle vj = chprev->vertex(ljprev);
+          const bool vi_is_vertex_of_edge = edge_has_vertex(get_edge(), vi);
+          const bool vj_is_vertex_of_edge = edge_has_vertex(get_edge(), vj);
+          if(vi_is_vertex_of_edge && vj_is_vertex_of_edge) {
+            _curr_simplex = Simplex_3();
+          } else if(vi_is_vertex_of_edge && !vj_is_vertex_of_edge) {
+            _curr_simplex = shared_facet(get_edge(), vj);
+          } else if(vj_is_vertex_of_edge && !vi_is_vertex_of_edge) {
+            _curr_simplex = shared_facet(get_edge(), vi);
+          } else {
+            CGAL_assertion(!vi_is_vertex_of_edge && !vj_is_vertex_of_edge);
+            Facet f = shared_facet(get_edge(), vi);
+            _curr_simplex = shared_cell(f, vj);
+          }
+          break;
+        }
+        case Locate_type::FACET:
+          _curr_simplex = chprev; //query goes through the cell
+          break;
+        case Locate_type::CELL:
           _curr_simplex = ch; //edge-cell-outside
-        else
+          break;
+        default:
           _curr_simplex = Simplex_3(); //edge-outside
+          break;
+        }
         break;
       }
 
