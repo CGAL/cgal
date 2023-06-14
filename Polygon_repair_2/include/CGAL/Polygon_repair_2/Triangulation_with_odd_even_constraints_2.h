@@ -22,33 +22,39 @@ namespace CGAL {
  * \tparam Triangulation_ must have support for constraints
  */
 template <class Triangulation_>
-class Triangulation_with_odd_even_constraints_2 {
+class Triangulation_with_odd_even_constraints_2 : public Triangulation_ {
 public:
   /// \name Definition
 
   /// @{
   /// the triangulation class.
-  typedef typename Triangulation_ Triangulation;
+  typedef Triangulation_ Base_triangulation;
 
   /// handle to a vertex.
   typedef typename Triangulation_::Vertex_handle Vertex_handle;
   /// @}
   
   // iterator over interior faces.
-  class Interior_faces_iterator : public Triangulation::All_faces_iterator {
+  class Interior_faces_iterator : public Base_triangulation::All_faces_iterator {
     Interior_faces_iterator operator++();
     Interior_faces_iterator operator--();
-  }
+  };
 
   // Add constraint from va to vb using the odd-even rule
-  void odd_even_insert_constraint(Vertex_handle va, Vertex_handle vb);
+  void odd_even_insert_constraint(Vertex_handle va, Vertex_handle vb) {
+    if (va == vb) return;
+  }
 
   // Starts at an arbitrary interior face
-  Interior_faces_iterator interior_faces_begin();
+  Interior_faces_iterator interior_faces_begin() {
+
+  }
 
   // Past-the-end iterator
-  Interior_faces_iterator interior_faces_end();
-}
+  Interior_faces_iterator interior_faces_end() {
+    
+  }
+};
 
 } // namespace CGAL
 

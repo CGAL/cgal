@@ -27,14 +27,14 @@ namespace CGAL {
  *
  * \cgalModels `MultipolygonWithHoles_2`
  */
-template <class PolygonTraits_,
-          class PolygonContainer_ = std::vector<typename Kernel::Point_2>>
+template <class Kernel,
+          class Container = std::vector<typename Kernel::Point_2>>
 class Multipolygon_with_holes_2 {
 public:
   /// \name Definition
 
   /// polygon with holes type
-  typedef CGAL::Polygon_with_holes_2<PolygonTraits_, PolygonContainer_> Polygon_with_holes_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
   
   typedef std::deque<Polygon_with_holes_2> Polygons_container;
 
