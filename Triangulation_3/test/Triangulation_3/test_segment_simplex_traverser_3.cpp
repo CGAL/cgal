@@ -345,13 +345,13 @@ bool test_a_simple_tetrahedron() {
   test({-1, -1,  0}, {.5, .5,  0}, "I021");
   test({-1, -1,  0}, {.2, .2,  0}, "I02");
 
-  // queries entering by a vertex and exiting by a facet, one the line x==y==0.25-0.25z
+  // queries entering by a vertex and exiting by a facet, on the line x==y==0.25-0.25z
   test({  0,   0,   1}, { .25, .25,  .25},  "03");
-  test({  0,   0,   1}, { .25, .25,   0},  "032");
-  test({  0,   0,   1}, { .5,  .5, -.1 },  "032I");
-  test({-.25,-.25,  2}, { .5,  .5, -.1 }, "I032I");
-  test({-.25,-.25,  2}, { .25, .25,   0}, "I032");
-  test({-.25,-.25,  2}, { .05, .05,  .8}, "I03");
+  test({  0,   0,   1}, { .25, .25, 0   },  "032");
+  test({  0,   0,   1}, { .5,  .5,  -.1 },  "032I");
+  test({-.25,-.25,  2}, { .28125, .28125, -.125}, "I032I");
+  test({-.25,-.25,  2}, { .25, .25, 0   }, "I032");
+  test({-.25,-.25,  2}, { .125, .125,  .5 }, "I03");
 
   // queries entering by an edge and exiting by an edge, on the line (x,.5,0)
   test({ 0, .5,  0}, {.2, .5,  0},  "12");
@@ -386,6 +386,8 @@ bool test(const DT& dt,
 
 int main(int, char* [])
 {
+  std::cerr.precision(17);
+  std::cout.precision(17);
   const std::vector<Point_3> points = { { -2,  0,  0 },
                                         {  2,  0,  0 },
                                         {  0,  1,  -1 },
@@ -408,8 +410,6 @@ int main(int, char* [])
   assert(dt.is_valid());
   assert(dt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));
   assert(dt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
-
-  std::cerr << dt.number_of_finite_cells() << '\n';
 
   const std::vector < std::pair<Point_3, Point_3>> queries = {
       {{-1, 0,  0}, { 1, 0,  0}}, // CFC
