@@ -65,6 +65,10 @@ void MainWidget::timerEvent(QTimerEvent *)
 }
 
 
+#include "Geodesic_arcs.h"
+
+
+std::unique_ptr<Geodesic_arcs>  m_geodesic_arcs;
 
 void MainWidget::initializeGL()
 {
@@ -73,6 +77,12 @@ void MainWidget::initializeGL()
   init_camera();
   init_geometry();
   init_shader_programs();
+
+  {
+    // has to be defined after camera has been defined:
+    // because we want to compute the error based on camera parameters!
+    m_geodesic_arcs = std::make_unique<Geodesic_arcs>();
+  }
 
   glClearColor(0, 0, 0, 1);
   glEnable(GL_DEPTH_TEST);  // Enable depth buffer
@@ -151,13 +161,14 @@ void MainWidget::paintGL()
     sp.unuse();
   }
 
-  // WORLD COORDINATE AXES
+  // WORLD COORDINATE AXES &  GEODESIC ARCS
   {
     auto& sp = m_sp_color_only;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
 
     m_world_coord_axes->draw();
+    m_geodesic_arcs->draw();
 
     sp.unuse();
   }

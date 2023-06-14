@@ -39,11 +39,12 @@ qt_standard_project_setup()
 
 qt_add_executable(earth
     main.cpp
-    mainwidget.h      mainwidget.cpp
-    Camera.h          Camera.cpp
+    mainwidget.h              mainwidget.cpp
+    Camera.h                  Camera.cpp
     Common_defs.h
-    Shader_program.h  Shader_program.cpp
-    Sphere.h          Sphere.cpp
+    Geodesic_arcs.h           Geodesic_arcs.cpp
+    Shader_program.h          Shader_program.cpp
+    Sphere.h                  Sphere.cpp
     Tools.h
     World_coordinate_axes.h   World_coordinate_axes.cpp
 )
