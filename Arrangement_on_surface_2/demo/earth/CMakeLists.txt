@@ -12,6 +12,29 @@ set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/opengl/earth")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets)
 
+# CGAL and its components
+find_package( CGAL QUIET COMPONENTS  )
+
+if ( NOT CGAL_FOUND )
+
+  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  return()  
+
+endif()
+
+
+# Boost and its components
+find_package( Boost REQUIRED )
+
+if ( NOT Boost_FOUND )
+
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  return()  
+
+endif()
+
+
 qt_standard_project_setup()
 
 qt_add_executable(earth
@@ -41,6 +64,7 @@ target_link_libraries(earth PRIVATE
     Qt6::OpenGL
     Qt6::OpenGLWidgets
     Qt6::Widgets
+    CGAL::CGAL
 )
 
 
