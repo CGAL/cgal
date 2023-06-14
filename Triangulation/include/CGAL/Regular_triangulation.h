@@ -144,7 +144,7 @@ private:
     {
       if(!*fop)
         *fop=cfo(a,b);
-      return ifpt(fop->get(),a,b,p);
+      return ifpt(fop->value(),a,b,p);
     }
   };
 

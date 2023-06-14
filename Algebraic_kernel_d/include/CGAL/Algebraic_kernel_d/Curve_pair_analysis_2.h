@@ -1030,7 +1030,7 @@ public:
             this->ptr()->event_slices[i] = create_event_slice(i);
         }
         CGAL_assertion(bool(this->ptr()->event_slices[i]));
-        return this->ptr()->event_slices[i].get();
+        return this->ptr()->event_slices[i].value();
     }
 
 
@@ -1045,7 +1045,7 @@ public:
 
         }
 
-        return intermediate_slices()[i].get();
+        return intermediate_slices()[i].valuen();
     }
 
     //!  Returns bound representative value at the <tt>i</tt>th interval
@@ -1074,7 +1074,7 @@ public:
             }
         }
         CGAL_assertion(bool(intermediate_values()[i]));
-        return intermediate_values()[i].get();
+        return intermediate_values()[i].value();
 
     }
 

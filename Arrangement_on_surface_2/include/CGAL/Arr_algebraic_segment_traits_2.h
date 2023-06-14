@@ -293,39 +293,39 @@ public:
           it_seg_p = std::get<X_monotone_curve_2>(&(*it));
         }
 
-        bool left_on_arc = start && on_arc(start.get(), *it_seg_p);
-        bool right_on_arc = end && on_arc(end.get(), *it_seg_p);
+        bool left_on_arc = start && on_arc(start.value(), *it_seg_p);
+        bool right_on_arc = end && on_arc(end.value(), *it_seg_p);
 
         if ( left_on_arc && right_on_arc ) {
-          segs.push_back(it_seg_p->trim(start.get(),end.get()));
+          segs.push_back(it_seg_p->trim(start.value(),end.value()));
         }
         if (left_on_arc && (!right_on_arc)) {
           if (!it_seg_p->is_finite(CGAL::ARR_MAX_END) ||
-             !equal(start.get(),right(*it_seg_p))) {
+             !equal(start.value(),right(*it_seg_p))) {
             if (it_seg_p->is_finite(CGAL::ARR_MIN_END) &&
-                equal(start.get(),left(*it_seg_p)))
+                equal(start.value(),left(*it_seg_p)))
             {
               segs.push_back(*it_seg_p);
             }
             else {
               X_monotone_curve_2 split1,split2;
-              it_seg_p->split(start.get(),split1,split2);
+              it_seg_p->split(start.value(),split1,split2);
               segs.push_back(split2);
             }
           }
         }
         if ((!left_on_arc) && right_on_arc) {
           if (!it_seg_p->is_finite(CGAL::ARR_MIN_END) ||
-              ! equal(left(*it_seg_p), end.get()))
+              ! equal(left(*it_seg_p), end.value()))
           {
             if (it_seg_p->is_finite(CGAL::ARR_MAX_END) &&
-                equal(end.get(), right(*it_seg_p)))
+                equal(end.value(), right(*it_seg_p)))
             {
               segs.push_back(*it_seg_p);
             }
             else {
               X_monotone_curve_2 split1,split2;
-              it_seg_p->split(end.get(), split1, split2);
+              it_seg_p->split(end.value(), split1, split2);
               segs.push_back(split1);
             }
           }
@@ -354,8 +354,8 @@ public:
               it--;
               it_seg_p = std::get<X_monotone_curve_2>(&(*it));
             }
-            if (start && on_arc(start.get(),*it_seg_p)) {
-              segs.push_front(it_seg_p->trim(start.get(), right(*it_seg_p)));
+            if (start && on_arc(start.value(),*it_seg_p)) {
+              segs.push_front(it_seg_p->trim(start.value(), right(*it_seg_p)));
               break;
             }
             else {
@@ -384,8 +384,8 @@ public:
               CGAL_assertion(it != arcs.end());
               it_seg_p = std::get<X_monotone_curve_2>(&(*it));
             }
-            if(end && on_arc(end.get(),*it_seg_p)) {
-              segs.push_back(it_seg_p->trim(left(*it_seg_p),end.get()));
+            if(end && on_arc(end.value(),*it_seg_p)) {
+              segs.push_back(it_seg_p->trim(left(*it_seg_p),end.value()));
               break;
             }
             else {

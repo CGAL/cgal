@@ -584,7 +584,7 @@ public:
      */
     void set_f(Polynomial_2 f) {
         CGAL_precondition(! has_defining_polynomial());
-        if((! this->ptr()->f) || f!=this->ptr()->f.get()) {
+        if((! this->ptr()->f) || f!=this->ptr()->f.value()) {
             this->copy_on_write();
             this->ptr()->f=f;
         }
@@ -639,7 +639,7 @@ public:
     //! Returns the defining polynomial
     Polynomial_2 polynomial_2() const {
         CGAL_precondition(bool(this->ptr()->f));
-        return this->ptr()->f.get();
+        return this->ptr()->f.value();
     }
 
 public:
@@ -714,8 +714,8 @@ public:
                 = event_line;
             event_coordinates()[i].stack = event_line;
         }
-        CGAL_postcondition(event_coordinates()[i].stack.get().is_event());
-        return event_coordinates()[i].stack.get();
+        CGAL_postcondition(event_coordinates()[i].stack.value().is_event());
+        return event_coordinates()[i].stack.value();
     }
 
 public:
@@ -1349,7 +1349,7 @@ public:
                 }
             }
         }
-        return intermediate_values()[i].get();
+        return intermediate_values()[i].value();
     }
 
 
@@ -1370,7 +1370,7 @@ public:
         if(! this->ptr()->content) {
             compute_content_and_primitive_part();
         }
-        return this->ptr()->content.get();
+        return this->ptr()->content.value();
     }
 
 public:
@@ -1389,7 +1389,7 @@ public:
         if(! this->ptr()->f_primitive) {
             compute_content_and_primitive_part();
         }
-        return this->ptr()->f_primitive.get();
+        return this->ptr()->f_primitive.value();
     }
 
     Algebraic_kernel_with_analysis_2* kernel() const {
@@ -1582,7 +1582,7 @@ private:
         if(! this->ptr()->resultant_of_primitive_and_derivative_y) {
             compute_resultant_of_primitive_and_derivative_y();
         }
-        return this->ptr()->resultant_of_primitive_and_derivative_y.get();
+        return this->ptr()->resultant_of_primitive_and_derivative_y.value();
     }
 
 private:
@@ -1714,7 +1714,7 @@ private:
         if(! this->ptr()->event_coordinates) {
             compute_event_coordinates();
         }
-        return this->ptr()->event_coordinates.get();
+        return this->ptr()->event_coordinates.value();
     }
 
 private:
@@ -1727,7 +1727,7 @@ private:
             event_coordinates();
             CGAL_assertion(bool(this->ptr()->intermediate_values));
         }
-        return this->ptr()->intermediate_values.get();
+        return this->ptr()->intermediate_values.value();
     }
 
 

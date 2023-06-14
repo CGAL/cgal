@@ -145,7 +145,7 @@ private:
       {
         if(!*fop)
           *fop=cfo(a,b);
-        return ifsoos(fop->get(),a,b,p);
+        return ifsoos(fop->value(),a,b,p);
       }
     };
 public:
