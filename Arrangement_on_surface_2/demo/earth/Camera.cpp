@@ -25,21 +25,26 @@ QMatrix4x4 Camera::get_view_matrix() const
 }
 
 
-void Camera::rotate(float theta_around_x, float theta_around_y)
+void Camera::rotate_around_x(float theta)
 {
-  // rotate the camera around its x-axis
   QMatrix4x4 rot;
-  rot.rotate(theta_around_x, m_ux);
+  rot.rotate(theta, m_ux);
   m_pos = m_pos * rot;
   m_uy = m_uy * rot;
   m_uz = m_uz * rot;
-
-  // rotate the camera around its y-axis
-  rot.setToIdentity();
-  rot.rotate(theta_around_y, m_uy);
+}
+void Camera::rotate_around_y(float theta)
+{
+  QMatrix4x4 rot;
+  rot.rotate(theta, m_uy);
   m_pos = m_pos * rot;
   m_ux = m_ux * rot;
   m_uz = m_uz * rot;
+}
+void Camera::rotate(float theta_around_x, float theta_around_y)
+{
+  rotate_around_x(theta_around_x);
+  rotate_around_y(theta_around_y);
 }
 
 void Camera::move_forward(float distance)

@@ -84,26 +84,22 @@ void MainWidget::initializeGL()
 
 
 
-
-#include "World_coordinate_axes.h"
-std::unique_ptr<World_coord_axes> m_world_coord_axes;
-
-
 void MainWidget::init_camera()
 {
-  m_camera.set_pos(0, 0, 10);
+  m_camera.set_pos(0, 0, 3);
+  m_camera.rotate_around_x(-90);
 }
 void MainWidget::init_geometry()
 {
   int num_slices, num_stacks;
   num_slices = num_stacks = 64;
-  float r = 3;
+  float r = 1;
   m_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
   const float c = 0.8;
   m_sphere->set_color(c, c, c, 1);
 
 
-  m_world_coord_axes = std::make_unique<World_coord_axes>(5);
+  m_world_coord_axes = std::make_unique<World_coord_axes>(2);
 }
 void MainWidget::init_shader_programs()
 {

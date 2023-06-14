@@ -18,6 +18,7 @@
 #include "Common_defs.h"
 #include "Shader_program.h"
 #include "Sphere.h"
+#include "World_coordinate_axes.h"
 
 
 class MainWidget : public QOpenGLWidget, protected OpenGLFunctionsBase
@@ -50,18 +51,21 @@ protected:
   void init_shader_programs();
 
 private:
-  std::unique_ptr<Sphere>  m_sphere;
+  // Objects in the scene
+  std::unique_ptr<Sphere>           m_sphere;
+  std::unique_ptr<World_coord_axes> m_world_coord_axes;
 
+  // Shaders
   Shader_program  m_sp_smooth;
   Shader_program  m_sp_color_only;
   
-  // camera & controls
+  // Camera & controls
   Camera m_camera;
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;
   QVector2D m_last_mouse_pos;
 
-
+  // Timer for continuous screen-updates
   QBasicTimer m_timer;
 };
 

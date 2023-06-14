@@ -22,6 +22,8 @@ public:
   QMatrix4x4 get_projection_matrix() const { return m_projection; }
 
   // rotate the camera around its own axes
+  void rotate_around_x(float theta);
+  void rotate_around_y(float theta);
   void rotate(float theta_around_x, float theta_around_y);
 
   // move the camera forward around its own z-axis
