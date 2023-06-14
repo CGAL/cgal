@@ -21,7 +21,17 @@ bool Shader_program::init()
 }
 bool Shader_program::init(const char* vs, const char* gs, const char* fs)
 {
-  return false;
+  if (init() == false)
+    return false;
+
+  add_shader_from_file(vs, GL_VERTEX_SHADER);
+  add_shader_from_file(gs, GL_GEOMETRY_SHADER);
+  add_shader_from_file(fs, GL_FRAGMENT_SHADER);
+
+  link();
+  validate();
+
+  return true;
 }
 void Shader_program::add_shader(const char* shader_code, GLenum shader_type)
 {
@@ -57,6 +67,9 @@ void Shader_program::add_shader(const char* shader_code, GLenum shader_type)
 void Shader_program::add_shader_from_file(const char* shader_file, 
                                           GLenum shader_type)
 {
+  if (strlen(shader_file) == 0)
+    return;
+
   auto src = read_file(shader_file);
   add_shader(src.c_str(), shader_type);
 }

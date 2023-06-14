@@ -36,19 +36,17 @@ protected:
   void mouseReleaseEvent(QMouseEvent *e) override;
   void timerEvent(QTimerEvent *e) override;
 
-
   void initializeGL() override;
   void resizeGL(int w, int h) override;
   void paintGL() override;
 
-
-  void add_shader(GLuint the_program, 
-                  const char* shader_code, 
-                  GLenum shader_type);
     
   void init_camera();
   void init_geometry();
+  
   void init_shader_programs();
+  void init_sp_smooth();
+  void init_sp_color_only();
 
 private:
   // Objects in the scene

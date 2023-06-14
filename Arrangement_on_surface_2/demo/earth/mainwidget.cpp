@@ -99,39 +99,26 @@ void MainWidget::init_geometry()
   m_sphere->set_color(c, c, c, 1);
 
 
-  m_world_coord_axes = std::make_unique<World_coord_axes>(2);
+  const float axes_length = 2;
+  m_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
 }
 void MainWidget::init_shader_programs()
 {
-  // SMOOTH SHADER PROGRAM
-  {
-    m_sp_smooth.init();
+  init_sp_smooth();
+  init_sp_color_only();
+}
+void MainWidget::init_sp_smooth()
+{
+  const char* vs = "shaders/smooth_vs.glsl";
+  const char* fs = "shaders/smooth_fs.glsl";
+  m_sp_smooth.init(vs, "", fs);
 
-    const char* vs = "shaders/smooth_vs.glsl";
-    const char* gs = "shaders/geometry.glsl";
-    const char* fs = "shaders/smooth_fs.glsl";
-    m_sp_smooth.add_shader_from_file(vs, GL_VERTEX_SHADER);
-    //m_shader_program.add_shader_from_file(gs, GL_GEOMETRY_SHADER);
-    m_sp_smooth.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
-
-    m_sp_smooth.link();
-    m_sp_smooth.validate();
-  }
-
-
-  // COLOR ONLY SHADER PROGRAM
-  {
-    m_sp_color_only.init();
-
-    const char* vs = "shaders/color_only_vs.glsl";
-    const char* fs = "shaders/color_only_fs.glsl";
-    m_sp_color_only.add_shader_from_file(vs, GL_VERTEX_SHADER);
-    //m_shader_program.add_shader_from_file(gs, GL_GEOMETRY_SHADER);
-    m_sp_color_only.add_shader_from_file(fs, GL_FRAGMENT_SHADER);
-
-    m_sp_color_only.link();
-    m_sp_color_only.validate();
-  }
+}
+void MainWidget::init_sp_color_only()
+{
+  const char* vs = "shaders/color_only_vs.glsl";
+  const char* fs = "shaders/color_only_fs.glsl";
+  m_sp_color_only.init(vs, "", fs);
 }
 
 
@@ -143,8 +130,6 @@ void MainWidget::resizeGL(int w, int h)
   const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
   m_camera.perspective(fov, aspect, z_near, z_far);
 }
-
-
 void MainWidget::paintGL()
 {
   QMatrix4x4 model;
