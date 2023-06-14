@@ -132,6 +132,11 @@ void MainWidget::init_sp_color_only()
 }
 
 
+std::ostream& operator << (std::ostream& os, const QVector4D& v)
+{
+  os << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w();
+  return os;
+}
 
 void MainWidget::resizeGL(int w, int h)
 {
@@ -151,6 +156,8 @@ void MainWidget::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // SPHERE
   {
+    glEnable(GL_DEPTH_TEST);
+
     auto& sp = m_sp_smooth;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
@@ -163,12 +170,29 @@ void MainWidget::paintGL()
 
   // WORLD COORDINATE AXES &  GEODESIC ARCS
   {
+    glDisable(GL_DEPTH_TEST);
+
     auto& sp = m_sp_color_only;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
-
-    m_world_coord_axes->draw();
+   
+    // compute the cutting plane
+    auto c = m_camera.get_pos();
+    const auto d = c.length();
+    const auto r = 1.0f;
+    const auto sin_alpha = r / d;
+    const auto n = (c / d); // plane unit normal vector
+    const auto cos_beta = sin_alpha;
+    const auto p = (r * cos_beta) * n;
+    QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p,n));
+    std::cout << plane << std::endl;
+    sp.set_uniform("u_plane", plane);
+    glEnable(GL_DEPTH_TEST);
     m_geodesic_arcs->draw();
+
+    glEnable(GL_DEPTH_TEST);
+    sp.set_uniform("u_plane", QVector4D(0,0,0,0));// ad-hoc
+    m_world_coord_axes->draw();
 
     sp.unuse();
   }

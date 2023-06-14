@@ -76,7 +76,7 @@ Geodesic_arcs::Geodesic_arcs()
   const double error = 0.001;
   std::vector<Approximate_point_2> v;
     
-  const auto& xcv = xcvs[0];
+  const auto& xcv = xcvs[1];
   //for (const auto& xcv : xcvs)
   {
     auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
@@ -155,7 +155,7 @@ void Geodesic_arcs::draw()
 {
   glBindVertexArray(m_vao);
   {
-    glDrawArrays(GL_LINES, 0, m_num_arc_points);
+    glDrawArrays(GL_LINE_STRIP, 0, m_num_arc_points);
   }
   glBindVertexArray(0);
 }

@@ -15,6 +15,7 @@ public:
 
   void set_pos(const QVector3D& pos) { m_pos = pos; }
   void set_pos(float x, float y, float z) { m_pos = QVector3D(x,y,z); }
+  const QVector3D& get_pos() const { return m_pos; }
 
   void perspective(float fov, float aspect_ratio, float z_near, float z_far);
 
