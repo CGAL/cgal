@@ -1208,7 +1208,7 @@ private:
         && edge_has_vertex(e1, e2.first->vertex(e2.third));
   }
 
-  std::optional<Vertex_handle> shared_vertex(const Edge& e1, const Edge& e2) const
+  boost::optional<Vertex_handle> shared_vertex(const Edge& e1, const Edge& e2) const
   {
     Vertex_handle v1a = e1.first->vertex(e1.second);
     Vertex_handle v1b = e1.first->vertex(e1.third);
@@ -1223,7 +1223,7 @@ private:
       return {};
   }
 
-  std::optional<Facet> shared_facet(const Edge& e1, const Edge& e2) const
+  boost::optional<Facet> shared_facet(const Edge& e1, const Edge& e2) const
   {
     Vertex_handle v2a = e2.first->vertex(e2.second);
     Vertex_handle v2b = e2.first->vertex(e2.third);
