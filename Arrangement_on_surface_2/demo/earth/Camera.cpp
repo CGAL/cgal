@@ -29,17 +29,33 @@ void Camera::rotate_around_x(float theta)
 {
   QMatrix4x4 rot;
   rot.rotate(theta, m_ux);
-  m_pos = m_pos * rot;
-  m_uy = m_uy * rot;
-  m_uz = m_uz * rot;
+  auto pos = m_pos.toVector4D();  pos.setW(1);
+  auto uy = m_uy.toVector4D();    uy.setW(0);
+  auto uz = m_uz.toVector4D();    uz.setW(0);
+
+  pos = pos * rot;
+  uy = uy * rot;
+  uz = uz * rot;
+
+  m_pos = pos.toVector3D();
+  m_uy = uy.toVector3D();
+  m_uz = uz.toVector3D();
 }
 void Camera::rotate_around_y(float theta)
 {
   QMatrix4x4 rot;
   rot.rotate(theta, m_uy);
-  m_pos = m_pos * rot;
-  m_ux = m_ux * rot;
-  m_uz = m_uz * rot;
+  auto pos = m_pos.toVector4D();  pos.setW(1);
+  auto ux = m_ux.toVector4D();    ux.setW(0);
+  auto uz = m_uz.toVector4D();    uz.setW(0);
+
+  pos = pos * rot;
+  ux = ux * rot;
+  uz = uz * rot;
+
+  m_pos = pos.toVector3D();
+  m_ux = ux.toVector3D();
+  m_uz = uz.toVector3D();
 }
 void Camera::rotate(float theta_around_x, float theta_around_y)
 {

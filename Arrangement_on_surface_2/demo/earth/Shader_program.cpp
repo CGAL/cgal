@@ -38,7 +38,7 @@ void Shader_program::add_shader(const char* shader_code, GLenum shader_type)
   GLuint the_shader = glCreateShader(shader_type);
 
   const GLchar* the_code[] = { shader_code };
-  GLint code_length[] = { strlen(shader_code) };
+  GLint code_length[] = { static_cast<GLint>(strlen(shader_code)) };
 
   glShaderSource(the_shader, 1, the_code, code_length);
   glCompileShader(the_shader);
