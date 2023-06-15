@@ -664,10 +664,14 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
           return { cur_cell, Tr::FACET, 6 - pos };
           break;
         case 2:
-          if( pos < 3 )
+          if( pos < 3 ) // first is 0
             return { cur_cell, Tr::EDGE, 0, pos };
-          else if( pos < 5 )
-            return { cur_cell, Tr::EDGE, 1, pos-1 };
+          else if( pos < 5 ) { // could be (0, pos), or (1, pos-1)
+            if(op[0] == POSITIVE)
+              return { cur_cell, Tr::EDGE, 0, pos };
+            else
+              return { cur_cell, Tr::EDGE, 1, pos-1 };
+          }
           else
             return { cur_cell, Tr::EDGE, 2, 3 };
           break;
