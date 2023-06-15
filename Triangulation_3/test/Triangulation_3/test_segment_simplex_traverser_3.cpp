@@ -255,13 +255,11 @@ bool test_vfefv(bool with_bbox = false)
   return ok;
 }
 
-bool test_a_simple_tetrahedron() {
-  std::cerr << "## test_a_simple_tetrahedron()\n";
+bool test_a_simple_tetrahedron(const std::vector<Point_3>& points) {
+
   DT dt2;
-  dt2.insert({0, 0, 0});
-  dt2.insert({1, 0, 0});
-  dt2.insert({0, 1, 0});
-  dt2.insert({0, 0, 1});
+  for(const auto& p: points) dt2.insert(p);
+
   bool ok = true;
   auto test = [&](Point_3 a, Point_3 b, std::string expected_result) {
     // This test function calls `do_test` with four configurations:
@@ -401,6 +399,27 @@ bool test_a_simple_tetrahedron() {
   test({-.05, .45, .2}, {.5,  0,    .2}, "I232");
   test({-.05, .45, .2}, {.2,   .3,  .2}, "I23");
 
+  return ok;
+}
+
+bool test_a_simple_tetrahedron() {
+  bool ok = true;
+  std::cerr << "## test_a_simple_tetrahedron()\n";
+
+  std::vector<Point_3> points = {
+      {0., 0., 0.},
+      {1., 0., 0.},
+      {0., 1., 0.},
+      {0., 0., 1.},
+  };
+  std::sort(points.begin(), points.end());
+  do {
+    std::cerr << "### new permutation of the four points\n";
+    for(const auto& p: points) std::cout << "    " << p << '\n';
+    std::cerr << '\n';
+    ok = test_a_simple_tetrahedron(points) && ok;
+  }
+  while (std::next_permutation(points.begin(), points.end()));
   return ok;
 }
 
