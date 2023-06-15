@@ -85,27 +85,13 @@ Geodesic_arcs::Geodesic_arcs()
       cout << *it << endl;
     cout << "num points output = " << v.size() << endl;
   }
-  
-
-  //const float c = 0.0;
-  //std::vector<QVector3D> vertex_data {
-  //  QVector3D(0,0,0), QVector3D(1,0,0),
-  //  QVector3D(a,0,0), QVector3D(1,0,0),
-
-  //  QVector3D(0,0,0), QVector3D(0,1,0),
-  //  QVector3D(0,a,0), QVector3D(0,1,0),
-
-  //  QVector3D(0,0,0), QVector3D(c,c,1),
-  //  QVector3D(0,0,a), QVector3D(c,c,1)
-  //};
+ 
 
   std::vector<QVector3D> vertex_data;
-  const QVector3D red(1, 0, 0);
   for (const auto& p : v)
   {
     const QVector3D arc_point(p.dx(), p.dy(), p.dz());
     vertex_data.push_back(arc_point);
-    vertex_data.push_back(red);
   }
   m_num_arc_points = v.size(); // CAREFUL: not size of vertex_data!!!
 
@@ -136,16 +122,16 @@ Geodesic_arcs::Geodesic_arcs()
                         position_offset);
   glEnableVertexAttribArray(position_attrib_index);
 
-  // Color Vertex-Attribute
-  GLint color_attrib_index = 1;
-  auto* color_offset = reinterpret_cast<const void*>(3 * sizeof(float));
-  glVertexAttribPointer(color_attrib_index,
-                        3,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        stride,
-                        color_offset);
-  glEnableVertexAttribArray(color_attrib_index);
+  //// Color Vertex-Attribute
+  //GLint color_attrib_index = 1;
+  //auto* color_offset = reinterpret_cast<const void*>(3 * sizeof(float));
+  //glVertexAttribPointer(color_attrib_index,
+  //                      3,
+  //                      GL_FLOAT,
+  //                      GL_FALSE,
+  //                      stride,
+  //                      color_offset);
+  //glEnableVertexAttribArray(color_attrib_index);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);

@@ -116,6 +116,7 @@ void MainWidget::init_shader_programs()
 {
   init_sp_smooth();
   init_sp_per_vertex_color();
+  init_sp_arc();
 }
 void MainWidget::init_sp_smooth()
 {
@@ -129,6 +130,12 @@ void MainWidget::init_sp_per_vertex_color()
   const char* vs = "shaders/color_only_vs.glsl";
   const char* fs = "shaders/color_only_fs.glsl";
   m_sp_per_vertex_color.init(vs, "", fs);
+}
+void MainWidget::init_sp_arc()
+{
+  const char* vs = "shaders/arc_vs.glsl";
+  const char* fs = "shaders/arc_fs.glsl";
+  m_sp_arc.init(vs, "", fs);
 }
 
 
@@ -183,7 +190,7 @@ void MainWidget::paintGL()
   {
     glDisable(GL_DEPTH_TEST);
 
-    auto& sp = m_sp_per_vertex_color;
+    auto& sp = m_sp_arc;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
 
@@ -196,6 +203,8 @@ void MainWidget::paintGL()
     const auto cos_beta = sin_alpha;
     const auto p = (r * cos_beta) * n;
     QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p, n));
+    const QVector4D red(1, 0, 0, 1);
+    sp.set_uniform("u_color", red);
     sp.set_uniform("u_plane", plane);
     m_geodesic_arcs->draw();
 

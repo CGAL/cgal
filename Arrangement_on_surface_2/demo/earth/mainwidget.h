@@ -47,6 +47,7 @@ protected:
   void init_shader_programs();
   void init_sp_smooth();
   void init_sp_per_vertex_color();
+  void init_sp_arc();
 
 private:
   // Objects in the scene
