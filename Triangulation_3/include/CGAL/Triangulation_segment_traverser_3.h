@@ -176,7 +176,7 @@ public:
     {
       std::stringstream os;
       os.precision(17);
-      os << "  cur: " << debug_simplex(_cur) << "\n  prev: " << debug_simplex(_prev);
+      os << "  prev: " << debug_simplex(_prev) << "\n  cur: " << debug_simplex(_cur);
       return os.str();
     }
 #endif // CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
