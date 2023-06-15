@@ -70,6 +70,7 @@ Geodesic_arcs::Geodesic_arcs()
   vector<Curve>  xcvs;
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0), Dir3(0, 0, -1)));
+  //xcvs.push_back(ctr_cv(Dir3(0, 0, -1)));
 
   auto approx = traits.approximate_2_object();
 
@@ -114,24 +115,13 @@ Geodesic_arcs::Geodesic_arcs()
   // Position Vertex-Attribute
   GLint position_attrib_index = 0;
   const void* position_offset = 0;
-  GLsizei stride = 6 * sizeof(float);
+  GLsizei stride = 0;
   glVertexAttribPointer(position_attrib_index,
                         3,
                         GL_FLOAT, GL_FALSE,
                         stride,
                         position_offset);
   glEnableVertexAttribArray(position_attrib_index);
-
-  //// Color Vertex-Attribute
-  //GLint color_attrib_index = 1;
-  //auto* color_offset = reinterpret_cast<const void*>(3 * sizeof(float));
-  //glVertexAttribPointer(color_attrib_index,
-  //                      3,
-  //                      GL_FLOAT,
-  //                      GL_FALSE,
-  //                      stride,
-  //                      color_offset);
-  //glEnableVertexAttribArray(color_attrib_index);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
