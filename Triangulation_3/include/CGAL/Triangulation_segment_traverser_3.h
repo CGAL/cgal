@@ -26,6 +26,7 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
+#include <boost/optional.hpp>
 
 // If defined, type casting is done statically,
 // reducing type-safety overhead.
@@ -913,8 +914,11 @@ public:
           _curr_simplex = Simplex_3();//should not be reached
         else if (triangulation()->is_infinite(chnext) && is_same_edge(get_edge(), e_exit))
           _curr_simplex = chnext;
-        else
-          _curr_simplex = shared_facet(get_edge(), e_exit);
+        else {
+          auto facet_opt = shared_facet(get_edge(), e_exit);
+          if(static_cast<bool>(facet_opt)) _curr_simplex = *facet_opt;
+          else _curr_simplex = shared_cell(get_edge(), e_exit);
+        }
         break;
       }
 
@@ -1204,7 +1208,7 @@ private:
         && edge_has_vertex(e1, e2.first->vertex(e2.third));
   }
 
-  Vertex_handle shared_vertex(const Edge& e1, const Edge& e2) const
+  std::optional<Vertex_handle> shared_vertex(const Edge& e1, const Edge& e2) const
   {
     Vertex_handle v1a = e1.first->vertex(e1.second);
     Vertex_handle v1b = e1.first->vertex(e1.third);
@@ -1215,18 +1219,18 @@ private:
       return v1a;
     else if (v1b == v2a || v1b == v2b)
       return v1b;
-
-    std::cerr << "There is no vertex shared by e1 and e2" << std::endl;
-    CGAL_unreachable();
-    return Vertex_handle();
+    else
+      return {};
   }
 
-  Facet shared_facet(const Edge& e1, const Edge& e2) const
+  std::optional<Facet> shared_facet(const Edge& e1, const Edge& e2) const
   {
     Vertex_handle v2a = e2.first->vertex(e2.second);
     Vertex_handle v2b = e2.first->vertex(e2.third);
 
-    Vertex_handle sv = shared_vertex(e1, e2);
+    auto sv_opt = shared_vertex(e1, e2);
+    if(!sv_opt) return {};
+    Vertex_handle sv = *sv_opt;
     Vertex_handle nsv2 = (sv == v2a) ? v2b : v2a;
 
     typename Tr::Facet_circulator circ
@@ -1242,9 +1246,7 @@ private:
       }
     } while (++circ != end);
 
-    std::cerr << "There is no facet shared by e1 and e2" << std::endl;
-    CGAL_unreachable();
-    return Facet(Cell_handle(), 0);
+    return {};
   }
 
   Facet shared_facet(const Edge& e, const Vertex_handle v) const
@@ -1293,6 +1295,11 @@ private:
       CGAL_assertion(c->has_vertex(v));
       return c;
     }
+  }
+
+  Cell_handle shared_cell(const Edge e1, const Edge e2) const {
+    auto facet = shared_facet(e1, e2.first->vertex(e2.second));
+    return shared_cell(facet, e2.first->vertex(e2.third));
   }
 
 };//class Triangulation_segment_simplex_iterator_3
