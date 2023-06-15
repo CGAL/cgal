@@ -3191,8 +3191,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                              tr("Enter the name of your scene file."));
     if(path.isEmpty())
       return;
-    if(!path.contains("Polyhedron_demo_"))
-      path.prepend("Polyhedron_demo_");
+    if(!path.contains("/tmp/Polyhedron_demo_"))
+      path.prepend("/tmp/Polyhedron_demo_");
     try{
       ssh_session session = nullptr;
       bool res = establish_ssh_session_from_agent(session,

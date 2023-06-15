@@ -127,7 +127,7 @@ public:
                     const Eigen_vector& bx, const Eigen_vector& by, const Eigen_vector& bz,
                     SparseLinearSolver& solver)
   {
-    FT D;
+    double D;
 
     // calls compute once to factorize with the preconditioner
     if(!solver.factor(A, D))

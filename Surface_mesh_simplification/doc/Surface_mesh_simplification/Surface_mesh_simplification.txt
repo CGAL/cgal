@@ -306,7 +306,7 @@ int r = edge_collapse(surface_mesh, stop_predicate,
                                        .edge_is_border_map(ebmap)
                                        .get_cost(cf)
                                        .get_placement(pf)
-                                       .filter(filter
+                                       .filter(filter)
                                        .visitor(vis));
 
 \endcode

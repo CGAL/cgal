@@ -106,7 +106,7 @@ public:
     return R().construct_bbox_3_object()(*this);
   }
 
-  FT squared_area() const // TODO : use Qrt
+  decltype(auto) squared_area() const
   {
     return R().compute_squared_area_3_object()(*this);
   }

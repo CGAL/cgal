@@ -21,7 +21,7 @@ typedef Mesher::Facet_const_iterator                            Mesher_iterator;
 typedef CGAL::Timer Timer;
 
 int main(int argc, char* argv[]) {
-  // Read the dat
+  // Read the data
   std::string fname = argc==1?CGAL::data_file_path("points_3/kitten.off"):argv[1];
 
   std::cerr << "Reading " << std::flush;
@@ -49,22 +49,18 @@ int main(int argc, char* argv[]) {
   reconstruct.reconstruct_surface(mesher);
 
   std::cerr << "Reconstruction done in " << t.time() << " sec." << std::endl;
-  t.reset();
+
   std::ofstream out("out.off");
   // Write the reconstruction.
   for(Facet_iterator it = reconstruct.facets_begin(); it != reconstruct.facets_end(); ++it )
-    out << "3 "<< *it << '\n'; // We write a '3' in front so that it can be assembled into an OFF file
-
-  std::cerr << "Writing result in " << t.time() << " sec." << std::endl;
-
+    // We write a '3' in front so that it can be assembled into an OFF file
+    out << "3 " << (*it)[0] << " " << (*it)[1] << " " << (*it)[2] << '\n';
   out.close();
 
-  t.reset();
   std::ofstream garbage("garbage.off");
   // Write facets that were removed to force manifold output
   for(Mesher_iterator it = mesher.garbage_begin(); it != mesher.garbage_end(); ++it )
-    garbage << "3 "<< *it << '\n'; // We write a '3' in front so that it can be assembled into an OFF file
-  std::cerr << "Writing garbage facets in " << t.time() << " sec." << std::endl;
+    garbage << "3 " << (*it)[0] << " " << (*it)[1] << " " << (*it)[2] << '\n';
 
   std::cerr << "Done." << std::endl;
 

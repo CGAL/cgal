@@ -593,6 +593,7 @@ polylines_to_protect
                                   (*scalar_interpolation_value));
               }
               ++pixel_values_set[square[ii][jj].domain];
+
             }
           }
 
@@ -1132,6 +1133,22 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      existing_polylines_begin,
      existing_polylines_end);
 }
+
+template <typename P,
+          typename Image_word_type,
+          typename PolylineInputIterator>
+void
+polylines_to_protect_on_bbox(const CGAL::Image_3& cgal_image,
+                     std::vector<std::vector<P> >& polylines,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
+{
+  polylines_to_protect<P, Image_word_type>(cgal_image,
+                                           polylines,
+                                           existing_polylines_begin,
+                                           existing_polylines_end);
+}
+
 
 
 template <typename PolylineRange1, typename PolylineRange2>

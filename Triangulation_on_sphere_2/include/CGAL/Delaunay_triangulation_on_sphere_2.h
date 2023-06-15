@@ -27,7 +27,6 @@
 #include <CGAL/spatial_sort_on_sphere.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 
-#include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/function_property_map.hpp>
 
 #include <algorithm>

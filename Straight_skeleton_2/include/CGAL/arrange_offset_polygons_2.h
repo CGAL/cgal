@@ -46,10 +46,6 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
                                , const K&
                                )
 {
-  bool bk_poly_assert_mode = get_use_assertions();
-  set_use_assertions(false); // disable assertions in Polygon_2 function as we may
-                             // manipulate strictly simple polygons
-
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::difference_type difference_type ;
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::value_type PolygonPtr ;
 
@@ -65,7 +61,9 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
 
     const PolygonPtr lPoly = *it ;
 
-    Orientation lOrient = lPoly->orientation();
+    Orientation lOrient = CGAL::Polygon::internal::orientation_2_no_precondition(lPoly->vertices().begin(),
+                                                                                 lPoly->vertices().end(),
+                                                                                 lPoly->traits_member());
 
     // It's an outer boundary
     if ( lOrient == COUNTERCLOCKWISE )
@@ -100,15 +98,12 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
       }
 
       if (lParent == nullptr)
-      {
-        set_use_assertions(bk_poly_assert_mode);
         return false;
-      }
 
       lParent->add_hole(*lPoly);
     }
   }
-  set_use_assertions(bk_poly_assert_mode);
+
   return true;
 }
 
@@ -142,6 +137,6 @@ arrange_offset_polygons_2 ( std::vector<std::shared_ptr<Polygon> > const& aPolyg
   return arrange_offset_polygons_2<PolygonWithHoles>(aPolygons, no_error);
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_ARRANGE_OFFSET_POLYGONS_2_H

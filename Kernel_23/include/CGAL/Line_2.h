@@ -89,18 +89,17 @@ public:
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,v)) {}
 
 
-  // FIXME : Use Qrt<> here.
-  RT a() const
+  decltype(auto) a() const
   {
     return R().compute_a_2_object()(*this);
   }
 
-  RT b() const
+  decltype(auto) b() const
   {
     return R().compute_b_2_object()(*this);
   }
 
-  RT c() const
+  decltype(auto) c() const
   {
     return R().compute_c_2_object()(*this);
   }

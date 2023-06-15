@@ -313,8 +313,7 @@ The elements of the enum have the following meaning:
 /// @{
 
 /*!
-Introduces an empty triangulation `t` with `domain` as
-original domain.
+Introduces an empty triangulation `t` with `domain` as original domain.
 \pre `domain` is a cube.
 */
 Periodic_3_triangulation_3(const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),

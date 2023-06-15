@@ -30,6 +30,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <vector>
 #include <boost/mpl/lambda.hpp>
@@ -106,6 +107,12 @@ public:
     operator()(Null_vector n) const
     {
         return n;
+    }
+
+    Return_base_tag
+    operator()(Return_base_tag o) const
+    {
+        return o;
     }
 
     const Bbox_2&

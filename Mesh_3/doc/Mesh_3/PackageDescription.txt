@@ -20,6 +20,10 @@
 /// \ingroup PkgMesh3Ref
 /// The functors in this group perform polyline features detection in input domains.
 
+/// \defgroup PkgMesh3DomainFields Mesh Domain Fields
+/// \ingroup PkgMesh3Ref
+/// The classes in this group are models of `MeshDomainField_3`
+
 /// \defgroup PkgMesh3Functions Mesh Generation Functions
 /// \ingroup PkgMesh3Ref
 /// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`.

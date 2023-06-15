@@ -483,7 +483,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, std::fun
   {
     std::vector<face_descriptor> link_faces;
     collect_link_faces(e, link_faces);
-    Functor f = std::move(m_make_envelope(link_faces));
+    Functor f = m_make_envelope(link_faces);
     Base base(m_tm, m_vpm, f);
     return base.collapse(e);
   }

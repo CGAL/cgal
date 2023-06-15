@@ -290,7 +290,7 @@ by the user at runtime with the second argument.
 
 \section TutorialsReconstruction_pipeline Full Pipeline Images
 
-The following figure an example of a full reconstruction pipeline
+The following figures show a full reconstruction pipeline
 applied to a bear statue (courtesy _EPFL Computer Graphics and
 Geometry Laboratory_ \cgalCite{cgal:e-esmr}). Two mesh processing
 algorithms (hole filling and isotropic remeshing) are also applied

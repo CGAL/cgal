@@ -29,6 +29,7 @@
 #include <variant>
 
 #include <CGAL/config.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/tss.h>
 #include <CGAL/intersections.h>
@@ -2834,11 +2835,12 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef double                          Approximate_number_type;
+  typedef double                                        Approximate_number_type;
+  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  typedef Approximate_kernel::Point_2                   Approximate_point_2;
 
   class Approximate_2 {
   public:
-
     /*! Return an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
@@ -2846,10 +2848,22 @@ public:
      * \return an approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
-    Approximate_number_type operator()(const Point_2& p, int i) const
-    {
-      CGAL_precondition(i == 0 || i == 1);
+    Approximate_number_type operator()(const Point_2& p, int i) const {
+      CGAL_precondition((i == 0) || (i == 1));
       return (i == 0) ? CGAL::to_double(p.x()) : CGAL::to_double(p.y());
+    }
+
+    /*! Obtain an approximation of a point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
+
+    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& /* xcv */, double /* error */,
+                              OutputIterator /* oi */, bool /* l2r */ = true) const {
+      CGAL_error_msg("Not implemented yet!");
     }
   };
 

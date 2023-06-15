@@ -1,6 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/circular_arc.cpp
 // Constructing an arrangement of various circular arcs and line segments.
 
+#include <CGAL/draw_arrangement_2.h>
+
 #include "arr_circular.h"
 #include "arr_print.h"
 
@@ -56,5 +58,6 @@ int main() {
   Arrangement  arr;
   insert(arr, curves.begin(), curves.end());
   print_arrangement_size(arr);
+  CGAL::draw(arr);
   return 0;
 }
