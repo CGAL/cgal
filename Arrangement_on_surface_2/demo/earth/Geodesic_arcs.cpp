@@ -1,52 +1,51 @@
 
 #include "Geodesic_arcs.h"
 
-#include <qvector3d.h>
-
 #include <iostream>
 #include <iterator>
 #include <vector>
-using namespace std;
 
+#include <qvector3d.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
+#include <CGAL/Vector_3.h>
+
 #include "arr_print.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel         Kernel;
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>         Geom_traits;
-typedef Geom_traits::Point_2                                      Point;
-typedef Geom_traits::Curve_2                                      Curve;
-typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits>        Topol_traits;
-typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits> Arrangement;
+
+using Kernel        = CGAL::Exact_predicates_exact_constructions_kernel;
+using Geom_traits   = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+using Point         = Geom_traits::Point_2;
+using Curve         = Geom_traits::Curve_2;
+using Topol_traits  = CGAL::Arr_spherical_topology_traits_2<Geom_traits>;
+using Arrangement   = CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>;
 
 
-typedef Kernel::Direction_3	Dir3;
-ostream& operator << (ostream& os, const Dir3& d)
+using Dir3 =  Kernel::Direction_3	;
+std::ostream& operator << (std::ostream& os, const Dir3& d)
 {
   os << d.dx() << ", " << d.dy() << ", " << d.dz();
   return os;
 }
 
-typedef Geom_traits::Approximate_point_2	Approximate_point_2;
-ostream& operator << (ostream& os, const Approximate_point_2& d)
+using Approximate_point_2 = Geom_traits::Approximate_point_2;
+std::ostream& operator << (std::ostream& os, const Approximate_point_2& d)
 {
   os << d.dx() << ", " << d.dy() << ", " << d.dz();
   return os;
 }
 
-#include <CGAL/Vector_3.h>
-typedef Geom_traits::Approximate_number_type	Approximate_number_type;
-typedef Geom_traits::Approximate_kernel			Approximate_kernel;
-typedef CGAL::Vector_3<Approximate_kernel>		Approximate_Vector_3;
-typedef Approximate_kernel::Direction_3         Approximate_Direction_3;
-
-typedef Kernel::Direction_3                Direction_3;
+using Approximate_number_type = Geom_traits::Approximate_number_type;
+using Approximate_kernel      = Geom_traits::Approximate_kernel;
+using Approximate_Vector_3    = CGAL::Vector_3<Approximate_kernel>;
+using Approximate_Direction_3 = Approximate_kernel::Direction_3;
+using Direction_3             = Kernel::Direction_3;
 
 
-ostream& operator << (ostream& os, const Approximate_Vector_3& v)
+std::ostream& operator << (std::ostream& os, const Approximate_Vector_3& v)
 {
   os << v.x() << ", " << v.y() << ", " << v.z();
   //os << v.hx() << ", " << v.hy() << ", " << v.hz() << ", " << v.hw();
@@ -67,7 +66,7 @@ Geodesic_arcs::Geodesic_arcs()
   auto ctr_cv = traits.construct_curve_2_object();
 
   
-  vector<Curve>  xcvs;
+  std::vector<Curve>  xcvs;
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 0, 1)));
   xcvs.push_back(ctr_cv(ctr_p(0, 1, 0), ctr_p(0, 0, 1)));
@@ -87,21 +86,15 @@ Geodesic_arcs::Geodesic_arcs()
     std::vector<Approximate_point_2> v;
     auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
 
-    //for (auto it = v.begin(); it != v.end(); ++it)
-    //  cout << *it << endl;
-    //cout << "num points output = " << v.size() << endl;
     for (const auto& p : v)
     {
       const QVector3D arc_point(p.dx(), p.dy(), p.dz());
       vertex_data.push_back(arc_point);
     }
-    //m_num_arc_points = v.size(); // CAREFUL: not size of vertex_data!!!
     const auto current_vertex_data_size = vertex_data.size();
     m_arc_offsets.push_back(current_vertex_data_size);
-    std::cout << "current_vertex_data_size = " << current_vertex_data_size << std::endl;
-
   }
-  std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
+  //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
 
 
   // DEFINE OPENGL BUFFERS

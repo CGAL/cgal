@@ -1,9 +1,9 @@
 
 #include "World_coordinate_axes.h"
 
-#include <qvector3d.h>
-
 #include <vector>
+
+#include <qvector3d.h>
 
 
 World_coord_axes::World_coord_axes(float length)

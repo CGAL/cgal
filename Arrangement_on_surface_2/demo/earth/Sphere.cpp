@@ -1,10 +1,10 @@
 
 #include "Sphere.h"
 
-#include <qvector3d.h>
-
 #include <cmath>
 #include <vector>
+
+#include <qvector3d.h>
 
 
 Sphere::Sphere(int num_slices, int num_stacks, float r)

@@ -45,7 +45,7 @@ qt_add_executable(earth
     Geodesic_arcs.h           Geodesic_arcs.cpp
     Shader_program.h          Shader_program.cpp
     Sphere.h                  Sphere.cpp
-    Tools.h
+    Tools.h                   Tools.cpp
     World_coordinate_axes.h   World_coordinate_axes.cpp
 )
 

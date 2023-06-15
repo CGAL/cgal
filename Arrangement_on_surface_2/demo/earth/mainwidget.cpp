@@ -1,11 +1,11 @@
 
 #include "mainwidget.h"
 
-#include <QMouseEvent>
-
 #include <cmath>
 #include <iostream>
 #include <string>
+
+#include <QMouseEvent>
 
 
 MainWidget::~MainWidget()
@@ -29,7 +29,7 @@ void MainWidget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
     break;
   }
 }
-void MainWidget::mousePressEvent(QMouseEvent *e)
+void MainWidget::mousePressEvent(QMouseEvent* e)
 {
   set_mouse_button_pressed_flag(e, true);
   m_last_mouse_pos = QVector2D(e->position());
@@ -55,20 +55,15 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
 
   m_last_mouse_pos = current_mouse_pos;
 }
-void MainWidget::mouseReleaseEvent(QMouseEvent *e)
+void MainWidget::mouseReleaseEvent(QMouseEvent* e)
 {
   set_mouse_button_pressed_flag(e, false);
 }
-void MainWidget::timerEvent(QTimerEvent *)
+void MainWidget::timerEvent(QTimerEvent*)
 {
   update();
 }
 
-
-#include "Geodesic_arcs.h"
-
-
-std::unique_ptr<Geodesic_arcs>  m_geodesic_arcs;
 
 void MainWidget::initializeGL()
 {

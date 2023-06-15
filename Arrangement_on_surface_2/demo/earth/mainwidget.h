@@ -10,12 +10,13 @@
 #include <QVector2D>
 #include <QBasicTimer>
 
-#include <qopenglwidget.h>
-
 #include <memory>
+
+#include <qopenglwidget.h>
 
 #include "Camera.h"
 #include "Common_defs.h"
+#include "Geodesic_arcs.h"
 #include "Shader_program.h"
 #include "Sphere.h"
 #include "World_coordinate_axes.h"
@@ -31,10 +32,10 @@ public:
 
 protected:
   void set_mouse_button_pressed_flag(QMouseEvent* e, bool flag);
-  void mousePressEvent(QMouseEvent *e) override;
+  void mousePressEvent(QMouseEvent* e) override;
   void mouseMoveEvent(QMouseEvent* e) override;
-  void mouseReleaseEvent(QMouseEvent *e) override;
-  void timerEvent(QTimerEvent *e) override;
+  void mouseReleaseEvent(QMouseEvent* e) override;
+  void timerEvent(QTimerEvent* e) override;
 
   void initializeGL() override;
   void resizeGL(int w, int h) override;
@@ -53,6 +54,7 @@ private:
   // Objects in the scene
   std::unique_ptr<Sphere>           m_sphere;
   std::unique_ptr<World_coord_axes> m_world_coord_axes;
+  std::unique_ptr<Geodesic_arcs>    m_geodesic_arcs;
 
   // Shaders
   Shader_program  m_sp_smooth;
