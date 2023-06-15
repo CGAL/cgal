@@ -870,9 +870,13 @@ public:
           }
           break;
         }
-        case Locate_type::FACET:
-          _curr_simplex = chprev; //query goes through the cell
+        case Locate_type::FACET: {
+          if(facet_has_edge(Facet(chprev, liprev), get_edge()))
+            _curr_simplex = Facet(chprev, liprev); //edge-facet-outside
+          else
+            _curr_simplex = chprev; //query goes through the cell
           break;
+        }
         case Locate_type::CELL:
           _curr_simplex = ch; //edge-cell-outside
           break;
@@ -915,7 +919,10 @@ public:
       }
 
       case Locate_type::FACET:
-        _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
+          if(facet_has_edge(Facet(ch, li_exit), get_edge()))
+            _curr_simplex = Facet(ch, li_exit); //edge-facet-outside
+          else
+            _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
         break;
 
       default:
