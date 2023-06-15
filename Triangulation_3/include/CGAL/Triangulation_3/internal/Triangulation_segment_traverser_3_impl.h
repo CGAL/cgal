@@ -379,7 +379,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
           }
           else {
             case_target_is_inside_cur_cell(1); // o0 > 0, o1 <= 0, oi01 <= 0
-            if(oi01 == ZERO) { // on FACET i j0 j1
+            if(oi01 == ZERO) { // on FACET j2 (i, j0, j1)
               if(o1 == ZERO) { // on EDGE i j1
                 if(_tr->equal(_target, cur_cell->vertex(i)->point())) {
                   prev_after_walk = { cur_cell, Tr::VERTEX,  i, -1 };
@@ -462,12 +462,40 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       else {
         Orientation o2 = _tr->orientation(_source, *vert[i], *vert[j2], _target);
         if (o2 != NEGATIVE) {
-          if (_tr->orientation(*vert[i], *vert[j2], *vert[j0], _target) == POSITIVE) {
+          // o2 >= 0
+          Orientation oi20 = _tr->orientation(*vert[i], *vert[j2], *vert[j0], _target);
+          if ( oi20 == POSITIVE) {
             case_segment_exits_cur_cell_by(j1);
             if (o2 == ZERO) degenerate = 4; // EDGE i j2
           }
-          else
+          else {
             case_target_is_inside_cur_cell(5);
+            if(oi20 == ZERO) { // on FACET j1 (i, j2, j0)
+              if(o2 == ZERO) { // one edge i j2
+                if(_tr->equal(_target, cur_cell->vertex(i)->point())) {
+                  prev_after_walk = { cur_cell, Tr::VERTEX,  i, -1 };
+                  cur_after_walk  = { {},       Tr::VERTEX, -1, -1 };
+                } else if(_tr->equal(_target, cur_cell->vertex(j2)->point())) {
+                  prev_after_walk = { cur_cell, Tr::VERTEX,  j2, -1 };
+                  cur_after_walk  = { {},       Tr::VERTEX, -1, -1 };
+                } else {
+                  prev_after_walk = { cur_cell, Tr::EDGE,  i, j2 };
+                  cur_after_walk  = { {},       Tr::EDGE, -1, -1 };
+                }
+              } else { // o0 < 0, o2 > 0
+                // on FACET j1 (i, j2, j0) but not on edges i-j0 or i-j2
+                Orientation o012 = _tr->orientation(*vert[j0], *vert[j1], *vert[j2], _target);
+                CGAL_assertion(o012 != NEGATIVE);
+                if(o012 == ZERO) { // on edge j1-j2
+                  prev_after_walk = { cur_cell, Tr::EDGE, j1, j2};
+                  cur_after_walk =  { {},       Tr::EDGE, -1, -1};
+                } else { // on facet j1 (i, j2, j0)
+                  prev_after_walk = { cur_cell, Tr::FACET, j1, -1};
+                  cur_after_walk  = { {},       Tr::FACET, -1, -1};
+                }
+              }
+            }
+          }
         }
         else {
           if (_tr->orientation(*vert[i], *vert[j1], *vert[j2], _target) == POSITIVE) {
