@@ -122,8 +122,8 @@ void MainWidget::init_sp_smooth()
 }
 void MainWidget::init_sp_per_vertex_color()
 {
-  const char* vs = "shaders/color_only_vs.glsl";
-  const char* fs = "shaders/color_only_fs.glsl";
+  const char* vs = "shaders/per_vertex_color_vs.glsl";
+  const char* fs = "shaders/per_vertex_color_fs.glsl";
   m_sp_per_vertex_color.init(vs, "", fs);
 }
 void MainWidget::init_sp_arc()
