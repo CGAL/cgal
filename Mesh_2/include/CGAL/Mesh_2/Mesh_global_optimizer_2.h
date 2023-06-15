@@ -271,7 +271,7 @@ private:
 
     FT local_move_sq_ratio = (move * move) / local_sq_size;
 
-    // Move point only if displacement is big enough w.r.t local size
+    // Move point only if displacement is big enough w.r.t. local size
     if ( local_move_sq_ratio < sq_freeze_ratio_ )
       return CGAL::NULL_VECTOR;
 

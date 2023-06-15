@@ -218,29 +218,29 @@ and clicking with the left button of the mouse.
 The displacement of the vertices is triggered when the <i>Ctrl</i> button is pressed.
 
 \anchor SModelingVideo_1
-\htmlonly
+\htmlonly[block]
 <center>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/akpYaDLuaUI?rel=0" frameborder="0" allowfullscreen></iframe>
-</center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/akpYaDLuaUI?rel=0" frameborder="0" allowfullscreen="true"></iframe>
 <div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_1">Video 1</a> Grouping of control vertices.</div>
+</center>
 \endhtmlonly
 
 \anchor SModelingVideo_2
-\htmlonly
+\htmlonly[block]
 <center>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1cpnkx_YG5E?rel=0" frameborder="0" allowfullscreen></iframe>
-</center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1cpnkx_YG5E?rel=0" frameborder="0" allowfullscreen="true"></iframe>
 <div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_2">Video 2</a>
 Convergence: this video shows that upon fast changes of the positions of the control vertices,
 more iteration steps are needed to reach the convergence.</div>
+</center>
 \endhtmlonly
 
 \anchor SModelingVideo_3
-\htmlonly
+\htmlonly[block]
 <center>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/-1rO-RdbudM?rel=0" frameborder="0" allowfullscreen></iframe>
-</center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-1rO-RdbudM?rel=0" frameborder="0" allowfullscreen="true"></iframe>
 <div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_3">Video 3</a> A complete example: changing the pose of a dinausor.</div>
+</center>
 \endhtmlonly
 
 

@@ -80,7 +80,7 @@ result_txt_footer=r"""</td>
 """
 
 pre_html=r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="https://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <link rel="icon" type="image/png" href="../Manual/g-196x196-doc.png"/>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>

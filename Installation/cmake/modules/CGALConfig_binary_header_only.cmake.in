@@ -2,4 +2,4 @@
 # This file points to the CGALConfig.cmake for header-only CGAL.
 #
 
-include(@CGAL_INSTALLATION_PACKAGE_DIR@/lib/cmake/CGAL/CGALConfig.cmake)
+include("@CGAL_INSTALLATION_PACKAGE_DIR@/lib/cmake/CGAL/CGALConfig.cmake")

@@ -1576,6 +1576,9 @@ triangulate_hole_polyline(const PointRange1& points,
      w == WeightCalculator::Weight::NOT_VALID()
      &&!skip_cubic_algorithm)
   {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
+    std::cerr << "Delaunay failed\n";
+#endif
     w = Fill().operator()(P, Q, tracer, WC, visitor);
   }
 #endif

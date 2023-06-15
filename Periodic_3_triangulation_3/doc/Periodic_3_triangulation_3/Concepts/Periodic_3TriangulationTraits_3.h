@@ -84,6 +84,41 @@ A predicate object that must provide the function operator
 
 `Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
 
+which returns `SMALLER` (`EQUAL`, `LARGER`) if the x-coordinate of `p` is smaller (equal, larger) than
+the x-coordinate of `q`.
+
+\pre `p`, `q` lie inside the domain.
+*/
+typedef unspecified_type Compare_x_3;
+
+/*!
+A predicate object that must provide the function operator
+
+`Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
+
+which returns `SMALLER` (`EQUAL`, `LARGER`) if the y-coordinate of `p` is smaller (equal, larger) than
+the y-coordinate of `q`.
+\pre `p`, `q` lie inside the domain.
+*/
+typedef unspecified_type Compare_y_3;
+
+/*!
+A predicate object that must provide the function operator
+
+`Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
+
+which returns `SMALLER` (`EQUAL`, `LARGER`) if the z-coordinate of `p` is smaller (equal, larger) than
+the z-coordinate of `q`.
+
+\pre `p`, `q` lie inside the domain.
+*/
+typedef unspecified_type Compare_z_3;
+
+/*!
+A predicate object that must provide the function operator
+
+`Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
+
 which returns `EQUAL` if the two point-offset pairs are equal.
 Otherwise it must return a consistent order for any two points chosen
 in a same line.

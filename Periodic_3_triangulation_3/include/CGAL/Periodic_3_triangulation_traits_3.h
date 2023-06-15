@@ -78,6 +78,12 @@ public:
       Construct_point_3;
 
   // Triangulation predicates
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_x_3>
+      Compare_x_3;
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_y_3>
+      Compare_y_3;
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_z_3>
+      Compare_z_3;
   typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_xyz_3>
       Compare_xyz_3;
   typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Orientation_3>
@@ -96,6 +102,15 @@ public:
     return Construct_point_3(&_domain, this->Kernel::construct_point_3_object());
   }
 
+  Compare_x_3 compare_x_3_object() const {
+    return Compare_x_3(this->Kernel::compare_x_3_object(), construct_point_3_object());
+  }
+  Compare_y_3 compare_y_3_object() const {
+    return Compare_y_3(this->Kernel::compare_y_3_object(), construct_point_3_object());
+  }
+  Compare_z_3 compare_z_3_object() const {
+    return Compare_z_3(this->Kernel::compare_z_3_object(), construct_point_3_object());
+  }
   Compare_xyz_3 compare_xyz_3_object() const {
     return Compare_xyz_3(this->Kernel::compare_xyz_3_object(), construct_point_3_object());
   }

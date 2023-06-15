@@ -25,7 +25,7 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
@@ -51,7 +51,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                           ${CGAL_Qt5_MOC_FILES})
 
   target_link_libraries(PCA_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                         CGAL::Eigen3_support Qt5::Gui)
+                                         CGAL::Eigen3_support Qt5::Widgets Qt5::OpenGL)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS PCA_demo)
 

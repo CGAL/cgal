@@ -44,6 +44,26 @@ StraightSkeletonHalfedge_2( int id );
 /// @{
 
 /*!
+returns the ID of the halfedge
+*/
+int id() const;
+
+/*!
+resets the ID of the halfedge to `aID`
+*/
+void reset_id ( int aID );
+
+/*!
+returns the weight of the halfedge
+*/
+FT weight() const;
+
+/*!
+sets the weight of the halfedge to `aWeight`
+*/
+void set_weight( FT aWeight );
+
+/*!
 
 */
 Halfedge_handle defining_contour_edge();
