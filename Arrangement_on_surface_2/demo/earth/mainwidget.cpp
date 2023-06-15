@@ -115,7 +115,7 @@ void MainWidget::init_geometry()
 void MainWidget::init_shader_programs()
 {
   init_sp_smooth();
-  init_sp_color_only();
+  init_sp_per_vertex_color();
 }
 void MainWidget::init_sp_smooth()
 {
@@ -124,11 +124,11 @@ void MainWidget::init_sp_smooth()
   m_sp_smooth.init(vs, "", fs);
 
 }
-void MainWidget::init_sp_color_only()
+void MainWidget::init_sp_per_vertex_color()
 {
   const char* vs = "shaders/color_only_vs.glsl";
   const char* fs = "shaders/color_only_fs.glsl";
-  m_sp_color_only.init(vs, "", fs);
+  m_sp_per_vertex_color.init(vs, "", fs);
 }
 
 
@@ -170,12 +170,23 @@ void MainWidget::paintGL()
 
   // WORLD COORDINATE AXES &  GEODESIC ARCS
   {
-    glDisable(GL_DEPTH_TEST);
-
-    auto& sp = m_sp_color_only;
+    auto& sp = m_sp_per_vertex_color;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
-   
+
+    m_world_coord_axes->draw();
+
+    sp.unuse();
+  }
+
+  // GEODESIC ARCS
+  {
+    glDisable(GL_DEPTH_TEST);
+
+    auto& sp = m_sp_per_vertex_color;
+    sp.use();
+    sp.set_uniform("u_mvp", mvp);
+
     // compute the cutting plane
     auto c = m_camera.get_pos();
     const auto d = c.length();
@@ -184,15 +195,9 @@ void MainWidget::paintGL()
     const auto n = (c / d); // plane unit normal vector
     const auto cos_beta = sin_alpha;
     const auto p = (r * cos_beta) * n;
-    QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p,n));
-    std::cout << plane << std::endl;
+    QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p, n));
     sp.set_uniform("u_plane", plane);
-    glEnable(GL_DEPTH_TEST);
     m_geodesic_arcs->draw();
-
-    glEnable(GL_DEPTH_TEST);
-    sp.set_uniform("u_plane", QVector4D(0,0,0,0));// ad-hoc
-    m_world_coord_axes->draw();
 
     sp.unuse();
   }

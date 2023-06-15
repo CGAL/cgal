@@ -46,7 +46,7 @@ protected:
   
   void init_shader_programs();
   void init_sp_smooth();
-  void init_sp_color_only();
+  void init_sp_per_vertex_color();
 
 private:
   // Objects in the scene
@@ -55,7 +55,8 @@ private:
 
   // Shaders
   Shader_program  m_sp_smooth;
-  Shader_program  m_sp_color_only;
+  Shader_program  m_sp_per_vertex_color;
+  Shader_program  m_sp_arc;
   
   // Camera & controls
   Camera m_camera;
