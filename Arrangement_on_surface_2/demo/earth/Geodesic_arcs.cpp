@@ -69,32 +69,39 @@ Geodesic_arcs::Geodesic_arcs()
   
   vector<Curve>  xcvs;
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
-  xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0), Dir3(0, 0, -1)));
+  xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 0, 1)));
+  xcvs.push_back(ctr_cv(ctr_p(0, 1, 0), ctr_p(0, 0, 1)));
+  //xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0), Dir3(0, 0, -1)));
   //xcvs.push_back(ctr_cv(Dir3(0, 0, -1)));
 
   auto approx = traits.approximate_2_object();
 
   const double error = 0.001;
-  std::vector<Approximate_point_2> v;
-    
-  const auto& xcv = xcvs[1];
-  //for (const auto& xcv : xcvs)
+  
+  std::vector<QVector3D> vertex_data;
+
+  m_arc_offsets.clear();
+  m_arc_offsets.push_back(0);
+  for (const auto& xcv : xcvs)
   {
+    std::vector<Approximate_point_2> v;
     auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
 
-    for (auto it = v.begin(); it != v.end(); ++it)
-      cout << *it << endl;
-    cout << "num points output = " << v.size() << endl;
-  }
- 
+    //for (auto it = v.begin(); it != v.end(); ++it)
+    //  cout << *it << endl;
+    //cout << "num points output = " << v.size() << endl;
+    for (const auto& p : v)
+    {
+      const QVector3D arc_point(p.dx(), p.dy(), p.dz());
+      vertex_data.push_back(arc_point);
+    }
+    //m_num_arc_points = v.size(); // CAREFUL: not size of vertex_data!!!
+    const auto current_vertex_data_size = vertex_data.size();
+    m_arc_offsets.push_back(current_vertex_data_size);
+    std::cout << "current_vertex_data_size = " << current_vertex_data_size << std::endl;
 
-  std::vector<QVector3D> vertex_data;
-  for (const auto& p : v)
-  {
-    const QVector3D arc_point(p.dx(), p.dy(), p.dz());
-    vertex_data.push_back(arc_point);
   }
-  m_num_arc_points = v.size(); // CAREFUL: not size of vertex_data!!!
+  std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
 
 
   // DEFINE OPENGL BUFFERS
@@ -131,7 +138,12 @@ void Geodesic_arcs::draw()
 {
   glBindVertexArray(m_vao);
   {
-    glDrawArrays(GL_LINE_STRIP, 0, m_num_arc_points);
+    for (int i = 1; i < m_arc_offsets.size(); i++)
+    {
+      const auto first = m_arc_offsets[i - 1];
+      const auto count = m_arc_offsets[i] - first;
+      glDrawArrays(GL_LINE_STRIP, first, count);
+    }
   }
   glBindVertexArray(0);
 }

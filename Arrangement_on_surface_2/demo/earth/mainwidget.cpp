@@ -203,7 +203,8 @@ void MainWidget::paintGL()
     const auto cos_beta = sin_alpha;
     const auto p = (r * cos_beta) * n;
     QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p, n));
-    const QVector4D arc_color(1, 0.5, 0, 1);
+    const QVector4D arc_color(0, 0.5, 1, 1);
+    glLineWidth(5);
     sp.set_uniform("u_color", arc_color);
     sp.set_uniform("u_plane", plane);
     m_geodesic_arcs->draw();
