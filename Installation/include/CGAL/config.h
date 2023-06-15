@@ -117,6 +117,7 @@
 #include <boost/version.hpp>
 
 #include <CGAL/version.h>
+#include <CGAL/version_enforcer.h>
 
 //----------------------------------------------------------------------//
 //  platform specific workaround flags (CGAL_CFG_...)
