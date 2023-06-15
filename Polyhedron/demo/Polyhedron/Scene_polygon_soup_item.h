@@ -9,6 +9,7 @@
 #include <iostream>
 
 struct Scene_polygon_soup_item_priv;
+
 struct Polygon_soup
 {
     typedef EPICK::Point_3 Point_3;

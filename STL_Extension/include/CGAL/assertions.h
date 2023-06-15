@@ -59,7 +59,7 @@ inline void set_use_assertions(bool b)
 }
 }
 
-#else
+#elif !defined(CGAL_USER_DEFINED_USE_ASSERTIONS)
 
 namespace CGAL{
 inline void set_use_assertions(bool){}

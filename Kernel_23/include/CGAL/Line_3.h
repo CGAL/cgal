@@ -106,7 +106,7 @@ public:
 
   Point_3 point() const
   {
-    return R().construct_point_on_3_object()(*this, 0);
+    return R().construct_point_on_3_object()(*this);
   }
 
   Point_3 point(const FT i) const

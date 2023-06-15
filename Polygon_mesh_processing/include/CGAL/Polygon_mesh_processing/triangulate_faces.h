@@ -93,7 +93,8 @@ private:
     // use hole filling
     typedef CGAL::Triple<int, int, int> Face_indices;
     std::vector<Face_indices> patch;
-    PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch), np);
+    PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch),
+                                   np.use_2d_constrained_delaunay_triangulation(true));
 
     if(patch.empty())
       return false;
