@@ -329,7 +329,8 @@ bool test_a_simple_tetrahedron() {
     do_with_or_without_bbox(b, a, true, expected_result_reversed);
   }; // end test() lambda
 
-  // [010] queries entering by a vertex and exiting by a vertex, on the line (x,0,0)
+  // [010] queries entering by a vertex and exiting by the other vertex of an incident edge,
+  // on the line (x,0,0)
   test({ 0,  0,  0}, {.5,  0,  0},  "01");
   test({ 0,  0,  0}, { 1,  0,  0},  "010");
   test({ 0,  0,  0}, { 2,  0,  0},  "010I");
@@ -337,7 +338,10 @@ bool test_a_simple_tetrahedron() {
   test({-1,  0,  0}, { 1,  0,  0}, "I010");
   test({-1,  0,  0}, {.5,  0,  0}, "I01");
 
-  // [021] queries entering by a vertex and exiting by an edge, on the line (x,x,0) (y==x)
+  // x [020] is not possible, because that would have passed through the edge -> see [010]
+
+  // [021] queries entering by a vertex and exiting by the opposite edge of a same face,
+  // on the line (x,x,0) (y==x)
   test({ 0,  0,  0}, {.2, .2,  0},  "02");
   test({ 0,  0,  0}, {.5, .5,  0},  "021");
   test({ 0,  0,  0}, { 1,  1,  0},  "021I");
@@ -345,19 +349,24 @@ bool test_a_simple_tetrahedron() {
   test({-1, -1,  0}, {.5, .5,  0}, "I021");
   test({-1, -1,  0}, {.2, .2,  0}, "I02");
 
-  // [032] queries entering by a vertex and exiting by a facet, on the line x==y==0.25-0.25z
-  test({  0,   0,   1}, { .25, .25,  .25},  "03");
-  test({  0,   0,   1}, { .25, .25, 0   },  "032");
-  test({  0,   0,   1}, { .5,  .5,  -.1 },  "032I");
+  // x [030] (entering by a vertex and exiting by a non-adjacent vertex) is not possible
+  //   because that would have passed by the common edge -> see [010]
+
+  // x [031] (entering by a vertex and exiting by a non-incident edge), is not possible
+  //   because that would have passed by the face -> see [021]
+
+  // [032] queries entering by a vertex and exiting by the opposite facet,
+  // on the line x==y==0.25-0.25z
+  test({  0,   0,   1}, { .25,    .25,     .25 },  "03");
+  test({  0,   0,   1}, { .25,    .25,     0   },  "032");
+  test({  0,   0,   1}, { .5,     .5,     -.1  },  "032I");
   test({-.25,-.25,  2}, { .28125, .28125, -.125}, "I032I");
-  test({-.25,-.25,  2}, { .25, .25, 0   }, "I032");
-  test({-.25,-.25,  2}, { .125, .125,  .5 }, "I03");
+  test({-.25,-.25,  2}, { .25,    .25,     0   }, "I032");
+  test({-.25,-.25,  2}, { .125,   .125,    .5  }, "I03");
 
-  // TODO: case [031]
-  // TODO: case [030]
-
-  // [121] queries entering by an edge and exiting by an edge, on the line (x,.5,0)
-  test({0,   .5,  0}, {.2, .5,  0},  "12");
+  // [121] queries entering by an edge and exiting by an edge of the same face,
+  // on the line (x,.5,0)
+  test({0,   .5,  0}, {.2,  .5,  0},  "12");
   test({0,   .5,  0}, {.5 , .5,  0},  "121");
   test({0,   .5,  0}, {.6 , .5,  0},  "121I");
   test({-.1, .5,  0}, {.6 , .5,  0}, "I121I");
@@ -365,8 +374,10 @@ bool test_a_simple_tetrahedron() {
   test({-.1, .5,  0}, {.25, .5,  0}, "I12");
 
 
-  // TODO: case 130
-  // TODO: case 131 (entering by and edge into a cell, and exiting by the opposite edge in the cell)
+  // x [130] (entering by an edge and exiting by a non-incident vertex) is not possible
+  //   because that would have passed by the common face -> see [120] ([021] in reverse)
+
+  // TODO: case [131] (entering by an edge and exiting by the opposite edge in the cell)
 
   // [132] queries entering by an edge and exiting by a facet, on the line (x, .25-x, x)
   test({  0, .25,  0}, { .20, .05,  .20},  "13");
