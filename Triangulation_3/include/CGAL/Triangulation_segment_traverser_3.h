@@ -919,10 +919,10 @@ public:
       }
 
       case Locate_type::FACET:
-          if(facet_has_edge(Facet(ch, li_exit), get_edge()))
-            _curr_simplex = Facet(ch, li_exit); //edge-facet-outside
-          else
-            _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
+        if(facet_has_edge(Facet(ch, li_exit), get_edge()))
+          _curr_simplex = Facet(ch, li_exit); //edge-facet-outside
+        else
+          _curr_simplex = ch;//query goes through the cell
         break;
 
       default:
