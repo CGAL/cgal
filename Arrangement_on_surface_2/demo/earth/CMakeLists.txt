@@ -39,7 +39,7 @@ qt_standard_project_setup()
 
 qt_add_executable(earth
     main.cpp
-    mainwidget.h              mainwidget.cpp
+    Main_widget.h             Main_widget.cpp
     Camera.h                  Camera.cpp
     Common_defs.h
     Geodesic_arcs.h           Geodesic_arcs.cpp
@@ -67,19 +67,6 @@ target_link_libraries(earth PRIVATE
     Qt6::Widgets
     CGAL::CGAL
 )
-
-
-# Resources:
-#set(shaders_resource_files
-#    "vertex_shader.glsl"
-#)
-#
-#qt6_add_resources(earth "shaders"
-#    PREFIX
-#        "/"
-#    FILES
-#        ${shaders_resource_files}
-#)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders 
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -5,14 +5,14 @@
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Deniz Diktas <denizdiktas@gmail.com>
+// Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
 
 #include <QApplication>
 #include <QLabel>
 #include <QSurfaceFormat>
 
 #ifndef QT_NO_OPENGL
-#include "mainwidget.h"
+#include "Main_widget.h"
 #endif
 
 
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   app.setApplicationName("Earth");
   app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
-  MainWidget widget;
+  Main_widget widget;
   widget.show();
 #else
   QLabel note("OpenGL Support required");

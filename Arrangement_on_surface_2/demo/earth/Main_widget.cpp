@@ -1,5 +1,5 @@
 
-#include "mainwidget.h"
+#include "Main_widget.h"
 
 #include <cmath>
 #include <iostream>
@@ -8,16 +8,13 @@
 #include <QMouseEvent>
 
 
-MainWidget::~MainWidget()
+Main_widget::~Main_widget()
 {
   // Make sure the context is current when deleting the texture and the buffers.
   makeCurrent();
   doneCurrent();
 }
 
-
-float theta = 0, phi = 0;
-int vp_width=0, vp_height=0;
 
 std::ostream& operator << (std::ostream& os, const QVector2D& v)
 {
@@ -31,7 +28,7 @@ std::ostream& operator << (std::ostream& os, const QVector3D& v)
 }
 
 
-void MainWidget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
+void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 {
   switch (e->button())
   {
@@ -44,12 +41,12 @@ void MainWidget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
     break;
   }
 }
-void MainWidget::mousePressEvent(QMouseEvent* e)
+void Main_widget::mousePressEvent(QMouseEvent* e)
 {
   set_mouse_button_pressed_flag(e, true);
   m_last_mouse_pos = QVector2D(e->position());
 }
-void MainWidget::mouseMoveEvent(QMouseEvent* e)
+void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
   auto current_mouse_pos = QVector2D(e->position());
   const auto diff = current_mouse_pos - m_last_mouse_pos;
@@ -58,21 +55,18 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
   {
     const float rotation_scale_factor = 0.1f;
 
-    if(0)
+    if(1)
     {
       // OUR CUSTOM AD-HOC CAMERA ROTATION
-      //const float theta_around_x = rotation_scale_factor * diff.y();
-      //const float theta_around_y = rotation_scale_factor * diff.x();
-      //m_camera.rotate(theta_around_x, theta_around_y);
-      theta += rotation_scale_factor * diff.x();
-      phi += rotation_scale_factor * diff.y();
-      m_camera.rotate(-theta, -phi);
+      m_theta += rotation_scale_factor * diff.x();
+      m_phi += rotation_scale_factor * diff.y();
+      m_camera.rotate(-m_theta, -m_phi);
     }
     else
     {
-      // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR!
-      QVector3D p0(m_last_mouse_pos.x(), vp_height - m_last_mouse_pos.y(), 0);
-      QVector3D p1(current_mouse_pos.x(), vp_height - current_mouse_pos.y(), 0);
+      // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR
+      QVector3D p0(m_last_mouse_pos.x(), m_vp_height - m_last_mouse_pos.y(), 0);
+      QVector3D p1(current_mouse_pos.x(), m_vp_height - current_mouse_pos.y(), 0);
       auto dp = p1 - p0; // difference vector in OpenGL window coords.
       QVector3D rdp(-dp.y(), dp.x(), 0); // rotate diff-vector CCW by 90-deg
       QVector3D rp = p0 + rdp; // r1 rotated CCW by 90 deg
@@ -81,7 +75,7 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
       auto proj = m_camera.get_projection_matrix();
       auto view = m_camera.get_view_matrix();
       auto model_view = view * model;
-      QRect viewport(0, 0, vp_width, vp_height);
+      QRect viewport(0, 0, m_vp_width, m_vp_height);
       auto wp0 = p0.unproject(model_view, proj, viewport);
       auto wrp = rp.unproject(model_view, proj, viewport);
 
@@ -106,17 +100,17 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
 
   m_last_mouse_pos = current_mouse_pos;
 }
-void MainWidget::mouseReleaseEvent(QMouseEvent* e)
+void Main_widget::mouseReleaseEvent(QMouseEvent* e)
 {
   set_mouse_button_pressed_flag(e, false);
 }
-void MainWidget::timerEvent(QTimerEvent*)
+void Main_widget::timerEvent(QTimerEvent*)
 {
   update();
 }
 
 
-void MainWidget::initializeGL()
+void Main_widget::initializeGL()
 {
   initializeOpenGLFunctions();
 
@@ -140,12 +134,12 @@ void MainWidget::initializeGL()
 
 
 
-void MainWidget::init_camera()
+void Main_widget::init_camera()
 {
   m_camera.set_pos(0, 0, 3);
   //m_camera.rotate_around_x(-90);
 }
-void MainWidget::init_geometry()
+void Main_widget::init_geometry()
 {
   int num_slices, num_stacks;
   num_slices = num_stacks = 64;
@@ -158,25 +152,25 @@ void MainWidget::init_geometry()
   const float axes_length = 2;
   m_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
 }
-void MainWidget::init_shader_programs()
+void Main_widget::init_shader_programs()
 {
   init_sp_smooth();
   init_sp_per_vertex_color();
   init_sp_arc();
 }
-void MainWidget::init_sp_smooth()
+void Main_widget::init_sp_smooth()
 {
   const char* vs = "shaders/smooth_vs.glsl";
   const char* fs = "shaders/smooth_fs.glsl";
   m_sp_smooth.init(vs, "", fs);
 }
-void MainWidget::init_sp_per_vertex_color()
+void Main_widget::init_sp_per_vertex_color()
 {
   const char* vs = "shaders/per_vertex_color_vs.glsl";
   const char* fs = "shaders/per_vertex_color_fs.glsl";
   m_sp_per_vertex_color.init(vs, "", fs);
 }
-void MainWidget::init_sp_arc()
+void Main_widget::init_sp_arc()
 {
   const char* vs = "shaders/arc_vs.glsl";
   const char* fs = "shaders/arc_fs.glsl";
@@ -190,17 +184,17 @@ std::ostream& operator << (std::ostream& os, const QVector4D& v)
   return os;
 }
 
-void MainWidget::resizeGL(int w, int h)
+void Main_widget::resizeGL(int w, int h)
 {
-  vp_width = w;
-  vp_height = h;
+  m_vp_width = w;
+  m_vp_height = h;
 
   // Reset projection
   qreal aspect = qreal(w) / qreal(h ? h : 1);
   const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
   m_camera.perspective(fov, aspect, z_near, z_far);
 }
-void MainWidget::paintGL()
+void Main_widget::paintGL()
 {
   QMatrix4x4 model;
   model.rotate(-90, 1,0,0); // this makes z-axes point upwards!

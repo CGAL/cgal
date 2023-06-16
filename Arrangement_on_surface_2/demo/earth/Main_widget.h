@@ -1,8 +1,8 @@
 // Copyright (C) 2016 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
-#ifndef MAINWIDGET_H
-#define MAINWIDGET_H
+#ifndef MAIN_WIDGET_H
+#define MAIN_WIDGET_H
 
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
@@ -22,13 +22,13 @@
 #include "World_coordinate_axes.h"
 
 
-class MainWidget : public QOpenGLWidget, protected OpenGLFunctionsBase
+class Main_widget : public QOpenGLWidget, protected OpenGLFunctionsBase
 {
   Q_OBJECT
 
 public:
   using QOpenGLWidget::QOpenGLWidget;
-  ~MainWidget();
+  ~Main_widget();
 
 protected:
   void set_mouse_button_pressed_flag(QMouseEvent* e, bool flag);
@@ -66,9 +66,11 @@ private:
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;
   QVector2D m_last_mouse_pos;
+  float m_theta = 0, m_phi = 0;
+  int   m_vp_width = 0, m_vp_height = 0;
 
   // Timer for continuous screen-updates
   QBasicTimer m_timer;
 };
 
-#endif // MAINWIDGET_H
+#endif
