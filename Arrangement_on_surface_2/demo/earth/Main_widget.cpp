@@ -7,6 +7,8 @@
 
 #include <QMouseEvent>
 
+#include "Tools.h"
+
 
 Main_widget::~Main_widget()
 {
@@ -14,19 +16,6 @@ Main_widget::~Main_widget()
   makeCurrent();
   doneCurrent();
 }
-
-
-std::ostream& operator << (std::ostream& os, const QVector2D& v)
-{
-  os << v.x() << ", " << v.y();
-  return os;
-}
-std::ostream& operator << (std::ostream& os, const QVector3D& v)
-{
-  os << v.x() << ", " << v.y() << ", " << v.z();
-  return os;
-}
-
 
 void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 {
@@ -89,7 +78,6 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
       
       m_camera.rotate(rot_matrix);
     }
-
   }
   else if(m_middle_mouse_button_down)
   {
@@ -154,34 +142,10 @@ void Main_widget::init_geometry()
 }
 void Main_widget::init_shader_programs()
 {
-  init_sp_smooth();
-  init_sp_per_vertex_color();
-  init_sp_arc();
-}
-void Main_widget::init_sp_smooth()
-{
-  const char* vs = "shaders/smooth_vs.glsl";
-  const char* fs = "shaders/smooth_fs.glsl";
-  m_sp_smooth.init(vs, "", fs);
-}
-void Main_widget::init_sp_per_vertex_color()
-{
-  const char* vs = "shaders/per_vertex_color_vs.glsl";
-  const char* fs = "shaders/per_vertex_color_fs.glsl";
-  m_sp_per_vertex_color.init(vs, "", fs);
-}
-void Main_widget::init_sp_arc()
-{
-  const char* vs = "shaders/arc_vs.glsl";
-  const char* fs = "shaders/arc_fs.glsl";
-  m_sp_arc.init(vs, "", fs);
-}
-
-
-std::ostream& operator << (std::ostream& os, const QVector4D& v)
-{
-  os << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w();
-  return os;
+  Shader_program::set_shader_path("shaders/");
+  m_sp_smooth.init_with_vs_fs("smooth");;
+  m_sp_per_vertex_color.init_with_vs_fs("per_vertex_color");
+  m_sp_arc.init_with_vs_fs("arc");
 }
 
 void Main_widget::resizeGL(int w, int h)

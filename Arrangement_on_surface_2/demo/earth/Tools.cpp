@@ -25,3 +25,19 @@ std::string read_file(const std::string& file_name)
 
   return std::string(&bytes[0], file_size);
 }
+
+std::ostream& operator << (std::ostream& os, const QVector2D& v)
+{
+  os << v.x() << ", " << v.y();
+  return os;
+}
+std::ostream& operator << (std::ostream& os, const QVector3D& v)
+{
+  os << v.x() << ", " << v.y() << ", " << v.z();
+  return os;
+}
+std::ostream& operator << (std::ostream& os, const QVector4D& v)
+{
+  os << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w();
+  return os;
+}

@@ -6,6 +6,14 @@
 #include "Tools.h"
 
 
+std::string  Shader_program::s_shader_path;
+
+
+void Shader_program::set_shader_path(const char* path)
+{
+  s_shader_path = std::string(path);
+}
+
 bool Shader_program::init()
 {
   initializeOpenGLFunctions();
@@ -32,6 +40,19 @@ bool Shader_program::init(const char* vs, const char* gs, const char* fs)
   validate();
 
   return true;
+}
+bool Shader_program::init(const std::string& vs, 
+                          const std::string& gs, 
+                          const std::string& fs)
+{
+  return init(vs.c_str(), gs.c_str(), fs.c_str());
+}
+bool Shader_program::init_with_vs_fs(const char* shader_file_prefix)
+{
+  std::string prefix(shader_file_prefix);
+  std::string vs = s_shader_path + prefix + "_vs.glsl";
+  std::string fs = s_shader_path + prefix + "_fs.glsl";
+  return init(vs, "", fs);
 }
 void Shader_program::add_shader(const char* shader_code, GLenum shader_type)
 {
