@@ -432,6 +432,10 @@ int main(int, char* [])
 {
   std::cerr.precision(17);
   std::cout.precision(17);
+
+  bool ok = true;
+  ok = test_a_simple_tetrahedron() && ok;
+
   const std::vector<Point_3> points = { { -2,  0,  0 },
                                         {  2,  0,  0 },
                                         {  0,  1,  -1 },
@@ -476,9 +480,6 @@ int main(int, char* [])
       {2, 1, 1, 0}, // VEVF
       {2, 1, 1, 0} // reverse case: FVEV
   };
-
-  bool ok = true;
-  ok = test_a_simple_tetrahedron() && ok;
 
   for(std::size_t i=0; i<queries.size(); ++i) {
     ok = test(dt, queries[i], expected_results[i]) && ok;
