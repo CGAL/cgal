@@ -369,16 +369,16 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       const int j1 = Tr::vertex_triple_index(i, 1);
       const int j2 = Tr::vertex_triple_index(i, 2);
       Orientation o0 = _tr->orientation(_source, *vert[i], *vert[j0], _target);
-      if (o0 == POSITIVE) {
+      if (o0 == POSITIVE) { // o0 > 0
         Orientation o1 = _tr->orientation(_source, *vert[i], *vert[j1], _target);
-        if (o1 != POSITIVE) {
+        if (o1 != POSITIVE) { // o1 <= 0
           Orientation oi01 = _tr->orientation(*vert[i], *vert[j0], *vert[j1], _target);
           if (oi01 == POSITIVE) {
             case_segment_exits_cur_cell_by(j2);
             if (o1 == ZERO) degenerate = 1; //EDGE i j1
           }
-          else {
-            case_target_is_inside_cur_cell(1); // o0 > 0, o1 <= 0, oi01 <= 0
+          else { // o0 > 0, o1 <= 0, oi01 <= 0
+            case_target_is_inside_cur_cell(1);
             if(oi01 == ZERO) { // on FACET j2 (i, j0, j1)
               if(o1 == ZERO) { // on EDGE i j1
                 if(_tr->equal(_target, cur_cell->vertex(i)->point())) {
@@ -405,17 +405,18 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
                   cur_after_walk =  { {},       Tr::FACET, -1, -1};
                 }
               }
-            }
+            } // end oi01 == ZERO
           }
-        }
-        else {
-          if (_tr->orientation(*vert[i], *vert[j1], *vert[j2], _target) == POSITIVE) {
+        } // end  o1 <= 0
+        else { // o1 > 0
+          Orientation oi12 = _tr->orientation(*vert[i], *vert[j1], *vert[j2], _target);
+          if ( oi12 == POSITIVE) {
             case_segment_exits_cur_cell_by(j0);
           }
           else
             case_target_is_inside_cur_cell(2);
         }
-      }
+      }  // end o0 > 0
       else if (o0 == ZERO) {
         // target is on plane (source, vert[i], vert[j0])
         Orientation o1 = _tr->orientation(_source, *vert[i], *vert[j1], _target);
@@ -458,8 +459,8 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
           else
             case_target_is_inside_cur_cell(4);
         }
-      }
-      else {
+      } // end o0 == 0
+      else { // o0 < 0
         Orientation o2 = _tr->orientation(_source, *vert[i], *vert[j2], _target);
         if (o2 != NEGATIVE) {
           // o2 >= 0
