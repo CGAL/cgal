@@ -1326,8 +1326,6 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       CGAL_precondition(! cv1.is_degenerate());
       CGAL_precondition(! cv2.is_degenerate());
@@ -1354,7 +1352,7 @@ public:
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
             Intersection_point ip_mult(*ip, 1);
-            *oi++ = Intersection_result(ip_mult);
+            *oi++ = ip_mult;
           }
         }
         return oi;
@@ -1398,14 +1396,14 @@ public:
 
       if (cmp_res == SMALLER) {
         // We have discovered a true overlapping subcurve:
-        *oi++ = Intersection_result(ovlp);
+        *oi++ = ovlp;
       }
       else if (cmp_res == EQUAL) {
         // The two objects have the same supporting line, but they just share
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
         Intersection_point ip_mult(ovlp.left(), 0);
-        *oi++ = Intersection_result(ip_mult);
+        *oi++ = ip_mult;
       }
 
       return oi;

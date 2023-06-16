@@ -208,8 +208,6 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
       typedef std::variant<Intersection_point, Base_x_monotone_curve_2>
         Intersection_base_result;
 
@@ -223,19 +221,19 @@ public:
       // Go over all intersection objects and prepare the output.
       for (const auto& item : base_objects) {
         const Base_x_monotone_curve_2* base_cv =
-          std::get<Base_x_monotone_curve_2>(&item);
+          std::get_if<Base_x_monotone_curve_2>(&item);
         if (base_cv != nullptr) {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
           X_monotone_curve_2 cv(*base_cv, Merge()(cv1.data(), cv2.data()));
-          *oi++ = Intersection_result(cv);
+          *oi++ = cv;
           continue;
         }
         // The current intersection object is an intersection point:
         // Copy it as is.
-        const Intersection_point* ip = std::get<Intersection_point>(&item);
-        *oi++ = Intersection_result(*ip);
+        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
+        *oi++ = *ip;
       }
 
       return oi;

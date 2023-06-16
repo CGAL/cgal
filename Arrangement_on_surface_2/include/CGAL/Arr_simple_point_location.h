@@ -57,11 +57,7 @@ public:
   typedef Result_type                                    result_type;
 
 protected:
-#if CGAL_ARR_POINT_LOCATION_VERSION < 2
-  typedef Result_type                                    Optional_result_type;
-#else
   typedef typename std::optional<Result_type>          Optional_result_type;
-#endif
 
   typedef typename Topology_traits::Dcel                 Dcel;
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
@@ -71,13 +67,8 @@ protected:
   const Traits_adaptor_2* m_geom_traits;    // Its associated geometry traits.
   const Topology_traits*  m_topol_traits;   // Its associated topology traits.
 
-#if CGAL_ARR_POINT_LOCATION_VERSION < 2
-  inline bool optional_empty(const CGAL::Object& obj) const { return obj.empty(); }
-  inline const Result_type& optional_assign(const CGAL::Object& t) const { return t; }
-#else
   inline bool optional_empty(const std::optional<Result_type>& t) const { return (!t); }
   inline const Result_type& optional_assign(const std::optional<Result_type>& t) const { return *t; }
-#endif
 
   template<typename T>
   Result_type make_result(T t) const { return Result::make_result(t); }

@@ -631,7 +631,7 @@ public:
             event_coordinates();
             CGAL_assertion(this->ptr()->has_vertical_component);
         }
-        return this->ptr()->has_vertical_component.get();
+        return this->ptr()->has_vertical_component.value();
     }
 
 public:
@@ -1437,7 +1437,7 @@ private:
         if(! this->ptr()->sturm_habicht_of_primitive) {
             compute_sturm_habicht_of_primitive();
         }
-        return this->ptr()->sturm_habicht_of_primitive.get();
+        return this->ptr()->sturm_habicht_of_primitive.value();
     }
 
 public:
@@ -1558,7 +1558,7 @@ private:
         if(! this->ptr()->resultant_of_primitive_and_derivative_y) {
             this->ptr()->resultant_of_primitive_and_derivative_y = stha[0][0];
             if(this->ptr()->resultant_of_primitive_and_derivative_y.
-                   get().is_zero()) {
+                   value().is_zero()) {
                 throw internal::Zero_resultant_exception<Polynomial_2>
                     (polynomial_2());
             }
@@ -1593,7 +1593,7 @@ private:
         if(! this->ptr()->resultant_of_primitive_and_derivative_x) {
             compute_resultant_of_primitive_and_derivative_x();
         }
-        return this->ptr()->resultant_of_primitive_and_derivative_x.get();
+        return this->ptr()->resultant_of_primitive_and_derivative_x.value();
     }
 
 private:
@@ -2111,7 +2111,7 @@ public:
                 compute_horizontal_asymptotes();
             }
             std::vector<Asymptote_y>& asym_info
-                = this->ptr()->horizontal_asymptotes_left.get();
+                = this->ptr()->horizontal_asymptotes_left.value();
             CGAL_precondition(arcno>=0 &&
                               arcno<static_cast<size_type>(asym_info.size()));
             return asym_info[arcno];
@@ -2121,7 +2121,7 @@ public:
             compute_horizontal_asymptotes();
         }
         std::vector<Asymptote_y>& asym_info
-            = this->ptr()->horizontal_asymptotes_right.get();
+            = this->ptr()->horizontal_asymptotes_right.value();
         CGAL_precondition(arcno>=0 &&
                           arcno<static_cast<size_type>(asym_info.size()));
         return asym_info[arcno];

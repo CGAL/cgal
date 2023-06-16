@@ -29,7 +29,6 @@ of issued queries is not large.
 \sa `ArrangementPointLocation_2`
 \sa `ArrangementVerticalRayShoot_2`
 \sa `CGAL::Arr_point_location_result<Arrangement>`
-\sa `CGAL_ARR_POINT_LOCATION_VERSION`
 
 */
 template< typename Arrangement >

@@ -707,15 +707,6 @@ function(test_point_location_segments)
 endfunction()
 
 # For backward compatibility
-function(test_point_location_segments_version)
-  set(nt ${CGAL_GMPQ_NT})
-  set(kernel ${CARTESIAN_KERNEL})
-  set(geom_traits ${SEGMENT_GEOM_TRAITS})
-  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DCGAL_ARR_POINT_LOCATION_VERSION=1")
-  compile_and_run_with_flags(test_point_location segments "${flags}" segments_version)
-endfunction()
-
-# For backward compatibility
 function(test_point_location_segments_conversion)
   set(nt ${CGAL_GMPQ_NT})
   set(kernel ${CARTESIAN_KERNEL})
@@ -1366,7 +1357,6 @@ test_overlay_segments()
 test_overlay_spherical_arcs()
 
 test_point_location_segments()
-test_point_location_segments_version()
 test_point_location_segments_conversion()
 test_point_location_circle_segments()
 test_point_location_linear()

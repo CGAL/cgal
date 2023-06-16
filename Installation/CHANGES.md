@@ -14,6 +14,14 @@ Release date: October 2023
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 
+#### 2D Arrangements
+
+- **Breaking change**: The type of the result of point location queries changed to
+    `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
+    has been removed.
+
+#### Envelopes of Surfaces in 3D
+- ** Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

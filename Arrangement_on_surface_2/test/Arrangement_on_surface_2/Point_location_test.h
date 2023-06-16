@@ -901,12 +901,7 @@ bool Point_location_test<GeomTraits, TopolTraits>::attach_pl_strategies()
 template <typename GeomTraits, typename TopolTraits>
 bool Point_location_test<GeomTraits, TopolTraits>::perform()
 {
-#if ((CGAL_ARR_POINT_LOCATION_VERSION < 2) || \
-     defined(CGAL_ARR_POINT_LOCATION_CONVERSION))
-  Objects_vector objs[NUM_PL_STRATEGIES];
-#else
   Variants_vector objs[NUM_PL_STRATEGIES];
-#endif
 
   // Locate the points in the list using all point location strategies.
 

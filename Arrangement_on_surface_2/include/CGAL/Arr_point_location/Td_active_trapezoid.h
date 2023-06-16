@@ -163,8 +163,8 @@ private:
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
   /*! Initialize the trapezoid's neighbors. */
-   inline void init_neighbors(std::optional<Td_map_item&> lb, std::optional<Td_map_item&> lt,
-                              std::optional<Td_map_item&> rb, std::optional<Td_map_item&> rt)
+   inline void init_neighbors(std::optional<std::reference_wrapper<Td_map_item>> lb, std::optional<std::reference_wrapper<Td_map_item>> lt,
+                              std::optional<std::reference_wrapper<Td_map_item>> rb, std::optional<std::reference_wrapper<Td_map_item>> rt)
   {
     set_lb((lb) ? *lb : Td_map_item(0));
     set_lt((lt) ? *lt : Td_map_item(0));
@@ -173,8 +173,8 @@ private:
   }
   /*! \copydoc init_neighbors
    *  \deprecated please use #init_neighbors */
-   CGAL_DEPRECATED inline void init_neighbours(std::optional<Td_map_item&> lb, std::optional<Td_map_item&> lt,
-                                               std::optional<Td_map_item&> rb, std::optional<Td_map_item&> rt)
+   CGAL_DEPRECATED inline void init_neighbours(std::optional<std::reference_wrapper<Td_map_item>> lb, std::optional<std::reference_wrapper<Td_map_item>> lt,
+                                               std::optional<std::reference_wrapper<Td_map_item>> rb, std::optional<std::reference_wrapper<Td_map_item>> rt)
   { init_neighbors(lb, lt, rb, rt); }
 
   /*! Set the DAG node. */
@@ -267,10 +267,10 @@ private:
   /*! Constructor given Vertex & Halfedge handles. */
   Td_active_trapezoid (Vertex_const_handle l, Vertex_const_handle r,
                   Halfedge_const_handle b, Halfedge_const_handle t,
-                  std::optional<Td_map_item&> lb = std::nullopt,
-                  std::optional<Td_map_item&> lt = std::nullopt,
-                  std::optional<Td_map_item&> rb = std::nullopt,
-                  std::optional<Td_map_item&> rt = std::nullopt,
+                  std::optional<std::reference_wrapper<Td_map_item>> lb = std::nullopt,
+                  std::optional<std::reference_wrapper<Td_map_item>> lt = std::nullopt,
+                  std::optional<std::reference_wrapper<Td_map_item>> rb = std::nullopt,
+                  std::optional<std::reference_wrapper<Td_map_item>> rt = std::nullopt,
                   Dag_node* node = 0)
   {
     PTR = new Data (l, r, b, t, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0),

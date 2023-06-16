@@ -4,33 +4,6 @@
 //-----------------------------------------------------------------------------
 // Print the result of a point-location query.
 //
-#if CGAL_ARR_POINT_LOCATION_VERSION < 2
-template <typename Arrangement_>
-void print_point_location(const typename Arrangement_::Point_2& q,
-                          CGAL::Object obj)
-{
-  typedef Arrangement_                                  Arrangement_2;
-  typename Arrangement_2::Vertex_const_handle v;
-  typename Arrangement_2::Halfedge_const_handle e;
-  typename Arrangement_2::Face_const_handle f;
-
-  std::cout << "The point (" << q << ") is located ";
-  if (CGAL::assign(f, obj)) {           // q is located inside a face
-    if (f->is_unbounded())
-      std::cout << "inside the unbounded face." << std::endl;
-    else std::cout << "inside a bounded face." << std::endl;
-  }
-  else if (CGAL::assign(e, obj)) {      // q is located on an edge
-    std::cout << "on an edge: " << e->curve() << std::endl;
-  }
-  else if (CGAL::assign(v, obj)) {      // q is located on a vertex
-    if (v->is_isolated())
-      std::cout << "on an isolated vertex: " << v->point() << std::endl;
-    else std::cout << "on a vertex: " << v->point() << std::endl;
-  }
-  else CGAL_error_msg( "Invalid object.");
-}
-#else
 template <typename Arrangement_>
 void print_point_location
 (const typename Arrangement_::Point_2& q,
@@ -57,7 +30,6 @@ void print_point_location
               << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
 }
-#endif
 
 //-----------------------------------------------------------------------------
 // Perform a point-location query and print the result.

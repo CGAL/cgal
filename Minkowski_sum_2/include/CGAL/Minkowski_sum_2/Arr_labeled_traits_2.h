@@ -299,9 +299,6 @@ public:
       typedef std::pair<Base_point_2, Multiplicity>     Intersection_base_point;
       typedef std::variant<Intersection_base_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
-      typedef std::pair<Point_2, Multiplicity>     Intersection_point;
-      typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       // In case the curves are adjacent in their curve sequence, we do
       // not have to compute their intersection (we already know that they
@@ -321,8 +318,7 @@ public:
 
         if (base_pt != nullptr) {
           // Attach an invalid label to an itersection point.
-          *oi++ = Intersection_result(std::make_pair(Point_2(base_pt->first),
-                                                     base_pt->second));
+          *oi++ = std::make_pair(Point_2(base_pt->first), base_pt->second);
           continue;
         }
 
@@ -331,10 +327,9 @@ public:
         CGAL_assertion(base_xcv != nullptr);
 
         // Attach a merged label to the overlapping curve.
-        *oi++ =
-          Intersection_result(X_monotone_curve_2(*base_xcv,
-                                                 X_curve_label(cv1.label(),
-                                                               cv2.label())));
+        *oi++ = X_monotone_curve_2(*base_xcv,
+                                   X_curve_label(cv1.label(),
+                                   cv2.label()));
       }
 
       return oi;

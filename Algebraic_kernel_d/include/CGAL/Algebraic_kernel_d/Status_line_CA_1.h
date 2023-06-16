@@ -555,7 +555,7 @@ public:
     //! Returns the isolator instance
     Bitstream_descartes& isolator() const {
         CGAL_assertion(bool(this->ptr()->isolator));
-        return this->ptr()->isolator.get();
+        return this->ptr()->isolator.value();
     }
 
     //! Returns whether an isolator has been given for that status line

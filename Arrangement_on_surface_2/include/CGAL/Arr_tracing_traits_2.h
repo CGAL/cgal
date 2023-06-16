@@ -635,6 +635,7 @@ public:
         const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&item);
         if (xcv != nullptr) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
+          *oi++ = *xcv;
           continue;
         }
 
@@ -642,12 +643,11 @@ public:
         if (ip != nullptr) {
           std::cout << "  result[" << i++ << "]: p: " << ip->first
                     << ", multiplicity: " << ip->second << std::endl;
+          *oi++ = *ip;
           continue;
         }
       }
 
-      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
-      container.clear();
       return oi;
     }
   };

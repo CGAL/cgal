@@ -145,13 +145,13 @@ public:
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
   /*! Initialize the trapezoid's neighbors. */
-  inline void init_neighbors(std::optional<Td_map_item&> next)
+  inline void init_neighbors(std::optional<std::reference_wrapper<Td_map_item>> next)
   {
     set_next((next) ? *next : Td_map_item(0));
   }
   /*! \copydoc init_neighbors
    *  \deprecated please use #init_neighbors */
-  CGAL_DEPRECATED inline void init_neighbours(std::optional<Td_map_item&> next)
+  CGAL_DEPRECATED inline void init_neighbours(std::optional<std::reference_wrapper<Td_map_item>> next)
   { init_neighbors(next); }
 
   /*! Set the DAG node. */
@@ -199,7 +199,7 @@ public:
    /*! Constructor given Vertex & Halfedge handles. */
   Td_active_edge (Halfedge_const_handle he ,
                   Dag_node* node = 0,
-                  std::optional<Td_map_item&> next = std::nullopt)
+                  std::optional<std::reference_wrapper<Td_map_item>> next = std::nullopt)
   {
 
     PTR = new Data(he, (next) ? *next : Td_map_item(0), node);

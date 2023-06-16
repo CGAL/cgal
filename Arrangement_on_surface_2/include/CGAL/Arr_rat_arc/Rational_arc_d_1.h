@@ -2047,7 +2047,7 @@ public:
 
     if (this->equals(arc)) {
       Self overlap_arc(*this);
-      *oi++ = Intersection_result(overlap_arc);
+      *oi++ = overlap_arc;
       return oi;
     }
 
@@ -2170,7 +2170,7 @@ public:
               (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
           {
             Intersection_point ip(p_left, 0);
-            *oi++ = Intersection_result(ip);
+            *oi++ = ip;
           }
 
           return oi;
@@ -2189,7 +2189,7 @@ public:
                            this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS |
                            this->IS_VALID);
 
-      *oi++ = Intersection_result(overlap_arc);
+      *oi++ = overlap_arc;
       return oi;
     }
 
@@ -2221,7 +2221,7 @@ public:
         Algebraic_point_2 p(this->_f, *x_iter);
         // Output the intersection point:
         Intersection_point ip(p, *m_iter);
-        *oi++ = Intersection_result(ip);
+        *oi++ = ip;
       }
     }
 

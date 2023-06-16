@@ -1469,13 +1469,13 @@ public:
         // point-wise intersections
         std::vector<Arc_2> arcs;
         if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) {
-            for (const auto& item : arcs) *oi++ = Intersection_result(item);
+            for (const auto& item : arcs) *oi++ = item;
             return oi;
         }
         // process non-ov erlapping case
         std::vector<Intersection_point> vec;
         Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
-        for (const auto& item : vec) *oi++ = Intersection_result(item);
+        for (const auto& item : vec) *oi++ = item;
         return oi;
     }
 

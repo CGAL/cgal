@@ -272,7 +272,7 @@ public:
     Base_map_item_iterator() : traits(0), m_cur_item(Td_map_item(0)){ }
 
     Base_map_item_iterator(const Traits* traits_,
-                           std::optional<Td_map_item&> curr = std::nullopt)
+                           std::optional<std::reference_wrapper<Td_map_item>> curr = std::nullopt)
       :traits(traits_), m_cur_item((curr) ? *curr : Td_map_item(0) ) { }
 
     Base_map_item_iterator(const Base_map_item_iterator &it)
@@ -332,12 +332,12 @@ public:
   public:
     //constructors
     In_face_iterator(const Traits* traits_, Halfedge_const_handle sep,
-                     std::optional<Td_map_item&> curr = std::nullopt)
+                     std::optional<std::reference_wrapper<Td_map_item>> curr = std::nullopt)
             :Base_map_item_iterator(traits_,curr), m_sep(sep->curve())
     { }
 
     In_face_iterator(const Traits* traits_, const X_monotone_curve_2& sep,
-                     std::optional<Td_map_item&> curr = std::nullopt)
+                     std::optional<std::reference_wrapper<Td_map_item>> curr = std::nullopt)
             :Base_map_item_iterator(traits_,curr), m_sep(sep)
     { }
 
@@ -879,20 +879,20 @@ public:
   class cv_for_edge_visitor
   {
   public:
-    std::optional<const X_monotone_curve_2&>
+    std::optional<std::reference_wrapper<const X_monotone_curve_2>>
     operator()(Td_active_edge& t) const
     {
       return t.halfedge()->curve();
     }
 
-    std::optional<const X_monotone_curve_2&>
+    std::optional<std::reference_wrapper<const X_monotone_curve_2>>
     operator()(Td_inactive_edge& t) const
     {
       return t.curve();
     }
 
     template <typename T>
-    std::optional<const X_monotone_curve_2&> operator()(T& /* t */) const
+    std::optional<std::reference_wrapper<const X_monotone_curve_2>> operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return std::nullopt;

@@ -912,16 +912,6 @@ test_point_location_segments()
 }
 
 # For backward compatibility
-test_point_location_segments_version()
-{
-  local nt=$CGAL_GMPQ_NT;
-  local kernel=$CARTESIAN_KERNEL;
-  local geom_traits=$SEGMENT_GEOM_TRAITS;
-  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DCGAL_ARR_POINT_LOCATION_VERSION=1";
-  compile_and_run_with_flags test_point_location segments "$flags"
-}
-
-# For backward compatibility
 test_point_location_segments_conversion()
 {
   local nt=$CGAL_GMPQ_NT;
@@ -1706,7 +1696,6 @@ test_overlay_segments
 test_overlay_spherical_arcs
 
 test_point_location_segments
-test_point_location_segments_version
 test_point_location_segments_conversion
 test_point_location_circle_segments
 test_point_location_linear

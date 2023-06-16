@@ -47,7 +47,6 @@ public:
   typedef typename Kernel::Ray_2               Ray_2;
   typedef typename Kernel::Line_2              Line_2;
   typedef typename Kernel::Line_3              Line_3;
-  typedef typename Kernel::Object_3            Object_3;
   typedef std::pair<Curve_2, Multiplicity>     Intersection_curve;
 
   typedef typename Base::Left_side_category    Left_side_category;
@@ -326,8 +325,8 @@ public:
 
         const Plane_3& h = s.plane();
         Line_2 proj_line(h.a(), h.b(), h.d());
-        *o++ = make_object(std::make_pair(X_monotone_curve_2(proj_line),
-                                          ON_ORIENTED_BOUNDARY));
+        *o++ = std::make_pair(X_monotone_curve_2(proj_line),
+                              ON_ORIENTED_BOUNDARY);
         return o;
       }
 
@@ -339,7 +338,7 @@ public:
 
       Oriented_side side =
         (res == SMALLER) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
-      *o++ = make_object(std::make_pair(X_monotone_curve_2(s.line()), side));
+      *o++ = std::make_pair(X_monotone_curve_2(s.line()), side);
       return o;
     }
   };
@@ -369,11 +368,10 @@ public:
       {
         Line_2 l1(h1.a(), h1.b(), h1.d());
         Line_2 l2(h2.a(), h2.b(), h2.d());
-        Object obj = k.intersect_2_object()(l1, l2);
+        auto obj = k.intersect_2_object()(l1, l2);
 
-        Point_2 p;
-        if(assign(p, obj))
-          *o++ = make_object(p);
+        if(const Point_2* p = std::get_if<Point_2>(&(*obj)))
+          *o++ = *p;
 
         // otherwise, the vertical planes are parallel or overlap, so we return
         // nothing.
@@ -382,90 +380,82 @@ public:
 
       if(s1.is_all_plane() && s2.is_all_plane())
       {
-        Object obj = k.intersect_3_object()(h1, h2);
-        Line_3 l;
-        if(assign(l, obj))
-          *o++ = make_object(Intersection_curve(project_xy(l, k), 1));
+        auto obj = k.intersect_3_object()(h1, h2);
+        CGAL_assertion(obj != std::nullopt);
+        if(const Line_3* l = std::get_if<Line_3>(&(*obj)))
+          *o++ = Intersection_curve(project_xy(*l, k), 1);
 
         return o;
       }
 
       if(s1.is_all_plane() && !s2.is_all_plane())
       {
-        Object obj = plane_half_plane_proj_intersection(h1,
-                                                        h2,
-                                                        s2.line(),
-                                                        k);
-        if(obj.is_empty())
+        auto obj = plane_half_plane_proj_intersection(h1,
+                                                      h2,
+                                                      s2.line(),
+                                                      k);
+        if(obj ==std::nullopt)
           return o;
-        Line_2 temp_l;
-        if(assign(temp_l, obj))
+        if(const Line_2* line = std::get_if<Line_2>(&(*obj)))
         {
-          *o++ = make_object(Intersection_curve(temp_l, 1));
+          *o++ = Intersection_curve(*line, 1);
           return o;
         }
-        Ray_2 ray;
-        if(assign(ray, obj))
+        if(const Ray_2* ray = std::get_if<Ray_2>(&(*obj)))
         {
-          *o++ = make_object(Intersection_curve(ray, 1));
+          *o++ = Intersection_curve(*ray, 1);
           return o;
         }
         return o;
       }
       if(!s2.is_all_plane() && s2.is_all_plane())
       {
-        Object obj = plane_half_plane_proj_intersection(h2,
-                                                        h1,
-                                                        s1.line(),
-                                                        k);
-        if(obj.is_empty())
+        auto obj = plane_half_plane_proj_intersection(h2,
+                                                      h1,
+                                                      s1.line(),
+                                                      k);
+        if(obj == std::nullopt)
           return o;
-        Line_2 line;
-        if(assign(line, obj))
+        if(const Line_2* line = std::get_if<Line_2>(&(*obj)))
         {
-          *o++ = make_object(Intersection_curve(line, 1));
+          *o++ = Intersection_curve(*line, 1);
           return o;
         }
-        Ray_2 ray;
-        if(assign(ray, obj))
+        if(const Ray_2* ray = std::get_if<Ray_2>(&(*obj)))
         {
-          *o++ = make_object(Intersection_curve(ray, 1));
+          *o++ = Intersection_curve(*ray, 1);
           return o;
         }
         return o;
-
       }
 
       CGAL_assertion(!s2.is_all_plane() && !s2.is_all_plane());
-      Object obj =
+      auto obj =
         half_plane_half_plane_proj_intersection(h1, s1.line(), h2, s2.line(), k);
 
-      if(obj.is_empty())
+      if(obj ==std::nullopt )
         return o;
-      Line_2 line;
-      if(assign(line, obj))
+
+      if(const Line_2* line = std::get_if<Line_2>(&(*obj)))
       {
-        *o++ = make_object(Intersection_curve(line, 1));
+        *o++ = Intersection_curve(*line, 1);
         return o;
       }
-      Ray_2 ray;
-      if(assign(ray, obj))
+      if(const Ray_2* ray = std::get_if<Ray_2>(&(*obj)))
       {
-        *o++ = make_object(Intersection_curve(ray, 1));
+        *o++ = Intersection_curve(*ray, 1);
         return o;
       }
 
-      Segment_2 seg;
-      if(assign(seg, obj))
+      if(const Segment_2* seg = std::get_if<Segment_2>(&(*obj)))
       {
-        *o++ = make_object(Intersection_curve(seg, 1));
+        *o++ = Intersection_curve(*seg, 1);
         return o;
       }
 
-      Point_2 p;
-      if(assign(p, obj))
+      if(const Point_2* p = std::get_if<Point_2>(&(*obj)))
       {
-        *o++ = make_object(p);
+        *o++ = *p;
         return o;
       }
       return o;
