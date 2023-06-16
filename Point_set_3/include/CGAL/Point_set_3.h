@@ -242,27 +242,23 @@ public:
   /*!
     \brief Assignment operator, all properties with their content are copied.
    */
-  Point_set_3& operator= (const Point_set_3& ps)
-  {
-    // todo: should be implemented via the copy-swap idiom
+  Point_set_3& operator=(const Point_set_3 &ps){
     m_base = ps.m_base;
-    m_indices = this->property_map<Index> ("index").first;
-    m_points = this->property_map<Point> ("point").first;
-    m_normals = this->property_map<Vector> ("normal").first;
     m_nb_removed = ps.m_nb_removed;
+    if (has_normal_map())
+      add_normal_map();
     return *this;
   }
 
   /// \cond SKIP_IN_MANUAL
   // copy constructor (same as assignment)
-  Point_set_3 (const Point_set_3& ps)
-  {
-    // todo: update to use new invalidation-avoiding copy behavior
-    m_base = ps.m_base;
-    m_indices = this->property_map<Index> ("index").first;
-    m_points = this->property_map<Point> ("point").first;
-    m_normals = this->property_map<Vector> ("normal").first;
-    m_nb_removed = ps.m_nb_removed;
+  Point_set_3(const Point_set_3& ps) :
+    m_base(ps.m_base),
+    m_indices(m_base.template get_property<Index>("index")),
+    m_points(m_base.template get_property<Point>("point")),
+    m_nb_removed(ps.m_nb_removed) {
+    if (has_normal_map())
+      add_normal_map();
   }
   /// \endcond
 
