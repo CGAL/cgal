@@ -187,7 +187,7 @@ void visit_simplex(Point_3 a, Point_3 b, Simplex s, std::optional<Simplex> previ
   } else {
     result_string += std::to_string(d);
   }
-  std::cout << debug_simplex(s) << '\n';
+  std::clog << debug_simplex(s) << '\n';
   const bool does_intersect_ab = (3 == d && dt.is_infinite(static_cast<Cell_handle>(s))) ||
     std::visit(
       [&](auto geometry) { return CGAL::do_intersect(Segment_3(a, b), geometry); },
@@ -267,9 +267,6 @@ bool test_a_simple_tetrahedron(const std::vector<Point_3>& points) {
     //  - and with or without a bbox around the central tetrahedron.
     dt = dt2;
     auto do_with_or_without_bbox = [&](Point_3 a, Point_3 b, bool with_bbox, std::string expected_result) {
-      std::cerr << "### Case " << expected_result;
-      if(with_bbox) std::cerr << " with bbox";
-      std::cerr << '\n';
       auto do_it = [&](auto from, auto to) {
         bool exception_thrown = false;
         result_string.clear();
@@ -300,7 +297,10 @@ bool test_a_simple_tetrahedron(const std::vector<Point_3>& points) {
         }
       }; // end do_it
 
-      std::cerr << "from (" << a << ") to (" << b << ")\n";
+      std::clog << "### Case " << expected_result;
+      if(with_bbox) std::clog << " with bbox";
+      std::clog << '\n';
+      std::clog << "from (" << a << ") to (" << b << ")\n";
       do_it(a, b);
 
       // then re-test using vertex handles, if possible
@@ -313,7 +313,7 @@ bool test_a_simple_tetrahedron(const std::vector<Point_3>& points) {
       c = dt.locate(b, lt, i, j);
       if(lt == DT::VERTEX) vb = c->vertex(i);
       if(va != Vertex_handle{} && vb != Vertex_handle{}) {
-        std::cerr << "from vertex" << display_vert(va) << " to vertex" << display_vert(vb) << ")\n";
+        std::clog << "from vertex" << display_vert(va) << " to vertex" << display_vert(vb) << ")\n";
         do_it(va, vb);
       };
     }; // end do_with_or_without_bbox
@@ -404,8 +404,31 @@ bool test_a_simple_tetrahedron(const std::vector<Point_3>& points) {
 
 bool test_a_simple_tetrahedron() {
   bool ok = true;
-  std::cerr << "## test_a_simple_tetrahedron()\n";
+  std::cout << "## test_a_simple_tetrahedron()\n"
+            << R"#(
+This test uses with a trivial tetrahedron, and is launched with all the
+24 permutations of the four vertices. There are 7 test cases, and for each of
+them 6 different segments are tested:
+- The segment starts at the incoming boundary of the tetrahedron and ends
+  inside.
+- The segment starts at the incoming boundary of the tetrahedron and ends
+  at the outgoing boundary.
+- The segment starts at the incoming boundary of the tetrahedron, goes out
+  and beyond.
+- The segment starts before the tetrahedron, goes through it, and comes out.
+- The segment starts before the tetrahedron and ends at the outgoing boundary.
+- The segment starts before the tetrahedron and ends inside.
 
+For each of those query segments, 4 tests are performed:
+  - with/without 8 extra vertices in the triangulation, forming a bounding
+    box,
+  - and in the direct and reverse direction.
+
+In total, 4032 tests are performed...
+
+
+)#";
+  std::cout.flush();
   std::vector<Point_3> points = {
       {0., 0., 0.},
       {1., 0., 0.},
@@ -414,9 +437,9 @@ bool test_a_simple_tetrahedron() {
   };
   std::sort(points.begin(), points.end());
   do {
-    std::cerr << "### new permutation of the four points\n";
+    std::cout << "### new permutation of the four points\n";
     for(const auto& p: points) std::cout << "    " << p << '\n';
-    std::cerr << '\n';
+    std::cout << std::endl;
     ok = test_a_simple_tetrahedron(points) && ok;
   }
   while (std::next_permutation(points.begin(), points.end()));
@@ -431,6 +454,7 @@ bool test(const DT& dt,
 int main(int, char* [])
 {
   std::cerr.precision(17);
+  std::clog.precision(17);
   std::cout.precision(17);
 
   bool ok = true;
