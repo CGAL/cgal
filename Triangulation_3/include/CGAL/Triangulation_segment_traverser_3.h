@@ -760,17 +760,15 @@ public:
         CGAL_assertion(_cell_iterator == _cell_iterator.end());
         if (lt == Locate_type::VERTEX) //facet-cell?-vertex-outside
         {
-          int i;
-          if (triangulation().has_vertex(get_facet(), chprev->vertex(li), i))
+          if (triangulation().tds().has_vertex(get_facet(), chprev->vertex(li)))
             _curr_simplex = chprev->vertex(li);
           else
             _curr_simplex = chprev;
         }
         else if (lt == Locate_type::EDGE)//facet-cell?-edge-outside
         {
-          int i, j;
-          if ( triangulation().has_vertex(get_facet(), chprev->vertex(li), i)
-            && triangulation().has_vertex(get_facet(), chprev->vertex(lj), j))
+          if ( triangulation().tds().has_vertex(get_facet(), chprev->vertex(li))
+            && triangulation().tds().has_vertex(get_facet(), chprev->vertex(lj)))
             _curr_simplex = Edge(chprev, li, lj);
           else
             _curr_simplex = chprev;
@@ -796,8 +794,7 @@ public:
       case Locate_type::VERTEX:
       {
         //if the entry vertex is a vertex of current facet
-        int i;
-        if (triangulation().has_vertex(get_facet(), chprev->vertex(li), i))
+        if (triangulation().tds().has_vertex(get_facet(), chprev->vertex(li)))
           set_curr_simplex_to_entry();
         else
           _curr_simplex = chprev;
@@ -1253,8 +1250,7 @@ private:
     do
     {
       Facet f = *circ;
-      int i;
-      if (triangulation().has_vertex(f, v, i))
+      if (triangulation().tds().has_vertex(f, v))
         return f;
     } while (++circ != end);
 
