@@ -154,6 +154,7 @@ void MainWidget::resizeGL(int w, int h)
 void MainWidget::paintGL()
 {
   QMatrix4x4 model;
+  model.rotate(-90, 1,0,0); // this makes z-axes point upwards!
   const auto view = m_camera.get_view_matrix();
   const auto projection = m_camera.get_projection_matrix();
   const auto mvp = projection * view * model;
@@ -194,7 +195,10 @@ void MainWidget::paintGL()
     sp.set_uniform("u_mvp", mvp);
 
     // compute the cutting plane
-    auto c = m_camera.get_pos();
+    // remember that we are passing the local vertex positions of the sphere 
+    // between the vertex and fragment shader stages, so we need to convert
+    // the camera-pos in world coords to sphere's local coords!
+    auto c =  model.inverted() * m_camera.get_pos();
     const auto d = c.length();
     const auto r = 1.0f;
     const auto sin_alpha = r / d;
