@@ -1,4 +1,4 @@
-#define CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3 1
+//#define CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Base_with_time_stamp.h>

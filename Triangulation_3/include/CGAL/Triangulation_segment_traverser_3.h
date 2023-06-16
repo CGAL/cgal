@@ -638,7 +638,7 @@ public:
   const Point&    source() const      { return _cell_iterator.source(); }
   const Point&    target() const      { return _cell_iterator.target(); }
 
-  const Tr* triangulation() const     { return _cell_iterator.triangulation(); }
+  const Tr& triangulation() const     { return *_cell_iterator.triangulation(); }
 
 private:
   Triangulation_segment_simplex_iterator_3
@@ -725,7 +725,7 @@ public:
       Cell_handle ch = Cell_handle(_cell_iterator);
       if (ch == Cell_handle())
       {
-        if(!triangulation()->is_infinite(Cell_handle(_curr_simplex)))
+        if(!triangulation().is_infinite(Cell_handle(_curr_simplex)))
           set_curr_simplex_to_entry();
         else
           _curr_simplex = Simplex_3();
@@ -761,7 +761,7 @@ public:
         if (lt == Locate_type::VERTEX) //facet-cell?-vertex-outside
         {
           int i;
-          if (triangulation()->has_vertex(get_facet(), chprev->vertex(li), i))
+          if (triangulation().has_vertex(get_facet(), chprev->vertex(li), i))
             _curr_simplex = chprev->vertex(li);
           else
             _curr_simplex = chprev;
@@ -769,8 +769,8 @@ public:
         else if (lt == Locate_type::EDGE)//facet-cell?-edge-outside
         {
           int i, j;
-          if ( triangulation()->has_vertex(get_facet(), chprev->vertex(li), i)
-            && triangulation()->has_vertex(get_facet(), chprev->vertex(lj), j))
+          if ( triangulation().has_vertex(get_facet(), chprev->vertex(li), i)
+            && triangulation().has_vertex(get_facet(), chprev->vertex(lj), j))
             _curr_simplex = Edge(chprev, li, lj);
           else
             _curr_simplex = chprev;
@@ -778,7 +778,7 @@ public:
         else if (lt == Locate_type::FACET) //facet-cell-facet-outside
         {
           if (Facet(chprev, li) == get_facet()
-            || triangulation()->mirror_facet(Facet(chprev, li)) == get_facet())
+            || triangulation().mirror_facet(Facet(chprev, li)) == get_facet())
             _curr_simplex = Simplex_3();
           else
             _curr_simplex = chprev;
@@ -797,7 +797,7 @@ public:
       {
         //if the entry vertex is a vertex of current facet
         int i;
-        if (triangulation()->has_vertex(get_facet(), chprev->vertex(li), i))
+        if (triangulation().has_vertex(get_facet(), chprev->vertex(li), i))
           set_curr_simplex_to_entry();
         else
           _curr_simplex = chprev;
@@ -903,12 +903,12 @@ public:
       {
         const Edge e_exit(ch, li_exit, lj_exit);
         CGAL_assertion(_cell_iterator == _cell_iterator.end()
-          || triangulation()->is_infinite(chnext)
+          || triangulation().is_infinite(chnext)
           || _curr_simplex != Simplex_3(e_exit));
 
         if (_cell_iterator == _cell_iterator.end())
           _curr_simplex = Simplex_3();//should not be reached
-        else if (triangulation()->is_infinite(chnext) && is_same_edge(get_edge(), e_exit))
+        else if (triangulation().is_infinite(chnext) && is_same_edge(get_edge(), e_exit))
           _curr_simplex = chnext;
         else {
           auto facet_opt = shared_facet(get_edge(), e_exit);
@@ -992,7 +992,7 @@ public:
       {
         CGAL_assertion(_cell_iterator == _cell_iterator.end()
                      || get_vertex() != prev->vertex(liprev)
-                     || triangulation()->is_infinite(chnext));
+                     || triangulation().is_infinite(chnext));
         if (_cell_iterator == _cell_iterator.end())
         {
           if (prev == ch && ltprev == Locate_type::VERTEX)
@@ -1017,13 +1017,13 @@ public:
         }
         else
         {
-          if (triangulation()->is_infinite(chnext) && get_vertex() == prev->vertex(liprev))
+          if (triangulation().is_infinite(chnext) && get_vertex() == prev->vertex(liprev))
             _curr_simplex = chnext;
           else
           {
             Cell_handle ec;
             int ei = -1, ej = -1;
-            if (!triangulation()->is_edge(get_vertex(), prev->vertex(liprev), ec, ei, ej))
+            if (!triangulation().is_edge(get_vertex(), prev->vertex(liprev), ec, ei, ej))
               CGAL_unreachable();
             _curr_simplex = Edge(ec, ei, ej);
           }
@@ -1230,7 +1230,7 @@ private:
     Vertex_handle nsv2 = (sv == v2a) ? v2b : v2a;
 
     typename Tr::Facet_circulator circ
-      = triangulation()->incident_facets(e1);
+      = triangulation().incident_facets(e1);
     typename Tr::Facet_circulator end = circ;
     do
     {
@@ -1248,13 +1248,13 @@ private:
   Facet shared_facet(const Edge& e, const Vertex_handle v) const
   {
     typename Tr::Facet_circulator circ
-      = triangulation()->incident_facets(e);
+      = triangulation().incident_facets(e);
     typename Tr::Facet_circulator end = circ;
     do
     {
       Facet f = *circ;
       int i;
-      if (triangulation()->has_vertex(f, v, i))
+      if (triangulation().has_vertex(f, v, i))
         return f;
     } while (++circ != end);
 
@@ -1266,7 +1266,7 @@ private:
   Cell_handle shared_cell(const Edge& e, const Vertex_handle v) const
   {
     typename Tr::Cell_circulator circ
-      = triangulation()->incident_cells(e);
+      = triangulation().incident_cells(e);
     typename Tr::Cell_circulator end = circ;
     do
     {
