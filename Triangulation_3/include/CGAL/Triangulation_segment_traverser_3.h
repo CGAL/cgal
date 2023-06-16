@@ -728,26 +728,19 @@ public:
     _cell_iterator.exit(lt_prev, li_prev, lj_prev);
 
     switch(_curr_simplex.dimension()) {
-    case 3 :/*Cell_handle*/
-    {
-      if (ch_next == Cell_handle())
-      {
+    case 3: { /*Cell_handle*/
+      if (ch_next == Cell_handle()) {
         if(!triangulation().is_infinite(Cell_handle(_curr_simplex)))
           set_curr_simplex_to_entry();
         else
           _curr_simplex = Simplex_3();
-        break;
-      }
-      else
-      {
+      } else {
         if (!cell_iterator_is_ahead())
           increment_cell_iterator();
         set_curr_simplex_to_entry();
       }
-      break;
-    }
-    case 2 :/*Facet*/
-    {
+    } break;
+    case 2: { /*Facet*/
       CGAL_assertion((ch_next == Cell_handle()) == (_cell_iterator == _cell_iterator.end()));
 
       switch(lt_prev) {
@@ -766,10 +759,11 @@ public:
           _curr_simplex = ch_prev;
       } break;
       case Locate_type::FACET: { // facet-cell-facet-outside
-        if(ch_next == Cell_handle() &&
-           (Facet(ch_prev, li_prev) == get_facet() || triangulation().mirror_facet(Facet(ch_prev, li_prev)) == get_facet()))
+        if(ch_next == Cell_handle() && (Facet(ch_prev, li_prev) == get_facet() ||
+                                        triangulation().mirror_facet(Facet(ch_prev, li_prev)) == get_facet()))
+        {
           _curr_simplex = Simplex_3();
-        else
+        } else
           _curr_simplex = ch_prev;
       } break;
       case Locate_type::CELL: { // facet-cell then end
@@ -779,10 +773,8 @@ public:
       default:
         CGAL_unreachable();
       }
-      break;
-    }
-    case 1:/*Edge*/
-    {
+    } break;
+    case 1: {/*Edge*/
       switch(lt_prev) {
       case Locate_type::VERTEX: { //edge-vertex-outside
         if(edge_has_vertex(get_edge(), ch_prev->vertex(li_prev)))
@@ -792,9 +784,6 @@ public:
       } break;
       case Locate_type::EDGE: { //edge-outside or edge-cell-edge-outside
         const Edge e_prev(ch_prev, li_prev, lj_prev);
-        CGAL_assertion(_cell_iterator == _cell_iterator.end()
-          || triangulation().is_infinite(ch_next)
-          || _curr_simplex != Simplex_3(e_prev));
         if(is_same_edge(get_edge(), e_prev)) {
           _curr_simplex = Simplex_3();
         } else {
@@ -820,8 +809,7 @@ public:
       default:
         CGAL_unreachable();
       }
-      break;
-    }
+    } break;
     case 0 :/*Vertex_handle*/
     {
       switch(lt_prev) {
@@ -844,13 +832,13 @@ public:
           _curr_simplex = ch_prev;
       } break;
       case Locate_type::CELL: {
+        CGAL_assertion(ch_next == Cell_handle());
         _curr_simplex = ch_prev;
       } break;
       default:
         CGAL_unreachable();
       }
-      break;
-    }
+    } break;
     default:
       CGAL_unreachable();
     };
