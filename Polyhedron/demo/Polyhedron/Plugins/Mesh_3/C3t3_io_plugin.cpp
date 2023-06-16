@@ -138,7 +138,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->set_valid(false);
 
       if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
-         /*verbose = */true, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
+         /*verbose = */false, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
       {
         update_c3t3(item->c3t3());
 
