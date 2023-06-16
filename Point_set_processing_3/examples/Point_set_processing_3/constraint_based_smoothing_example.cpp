@@ -36,7 +36,6 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int k = 10;
   const int iter_number = 120;
 
   for(int i = 0; i < iter_number; ++i)
@@ -44,7 +43,6 @@ int main(int argc, char*argv[])
     /* double error = */
     CGAL::constraint_based_smooth_point_set <Concurrency_tag>(
       points,
-      k,
       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
                        .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
   }
