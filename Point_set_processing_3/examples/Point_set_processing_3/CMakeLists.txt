@@ -39,6 +39,7 @@ foreach(
   target
   average_spacing_example
   bilateral_smooth_point_set_example
+  constraint_based_smoothing_example
   grid_simplification_example
   grid_simplify_indices
   property_map
