@@ -16,6 +16,8 @@ MainWidget::~MainWidget()
 }
 
 
+float theta = 0, phi = 0;
+
 void MainWidget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 {
   switch (e->button())
@@ -42,9 +44,12 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
   if (m_left_mouse_button_down)
   {  
     const float rotation_scale_factor = 0.1f;
-    const float theta_around_x = rotation_scale_factor * diff.y();
-    const float theta_around_y = rotation_scale_factor * diff.x();
-    m_camera.rotate(theta_around_x, theta_around_y);
+    //const float theta_around_x = rotation_scale_factor * diff.y();
+    //const float theta_around_y = rotation_scale_factor * diff.x();
+    //m_camera.rotate(theta_around_x, theta_around_y);
+    theta += rotation_scale_factor * diff.x();
+    phi += rotation_scale_factor * diff.y();
+    m_camera.rotate(-theta, -phi);
   }
   else if(m_middle_mouse_button_down)
   {
@@ -92,7 +97,7 @@ void MainWidget::initializeGL()
 void MainWidget::init_camera()
 {
   m_camera.set_pos(0, 0, 3);
-  m_camera.rotate_around_x(-90);
+  //m_camera.rotate_around_x(-90);
 }
 void MainWidget::init_geometry()
 {
@@ -118,7 +123,6 @@ void MainWidget::init_sp_smooth()
   const char* vs = "shaders/smooth_vs.glsl";
   const char* fs = "shaders/smooth_fs.glsl";
   m_sp_smooth.init(vs, "", fs);
-
 }
 void MainWidget::init_sp_per_vertex_color()
 {

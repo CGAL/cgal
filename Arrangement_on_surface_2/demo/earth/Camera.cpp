@@ -57,10 +57,29 @@ void Camera::rotate_around_y(float theta)
   m_ux = ux.toVector3D();
   m_uz = uz.toVector3D();
 }
-void Camera::rotate(float theta_around_x, float theta_around_y)
+//void Camera::rotate(float theta_around_x, float theta_around_y)
+//{
+//  rotate_around_x(theta_around_x);
+//  rotate_around_y(theta_around_y);
+//}
+void Camera::rotate(float theta, float phi)
 {
-  rotate_around_x(theta_around_x);
-  rotate_around_y(theta_around_y);
+  QMatrix4x4 r1;
+  QVector3D ey(0, 1, 0);
+  r1.rotate(theta, ey);
+
+  // rx = rotated x axis
+  auto rx = r1 * QVector3D(1,0,0);
+  QMatrix4x4 r2;
+  r2.rotate(phi, rx);
+
+  // total rotation:
+  auto r = r2 * r1;
+
+  m_pos = r * QVector3D(0, 0, 3);
+  m_ux = r * QVector3D(1, 0, 0); // should be the same as rx (sanity check?)
+  m_uy = r * QVector3D(0, 1, 0);
+  m_uz = r * QVector3D(0, 0, 1);
 }
 
 void Camera::move_forward(float distance)

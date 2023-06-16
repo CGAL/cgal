@@ -25,7 +25,11 @@ public:
   // rotate the camera around its own axes
   void rotate_around_x(float theta);
   void rotate_around_y(float theta);
-  void rotate(float theta_around_x, float theta_around_y);
+  //void rotate(float theta_around_x, float theta_around_y);
+  
+  // theta: angle around y-axis
+  // phi: angle from the xz-plane (= rotated x-axis after the above rotation)
+  void rotate(float theta, float phi);
 
   // move the camera forward around its own z-axis
   void move_forward(float distance);
