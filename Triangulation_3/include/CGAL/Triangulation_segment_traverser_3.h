@@ -706,8 +706,7 @@ public:
   //  provides the increment postfix operator.
   Simplex_iterator& operator++()
   {
-    auto increment_cell_iterator = [&]()
-    {
+    auto increment_cell_iterator = [&]() {
 #if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
       std::cerr << "increment cell iterator from:\n" << _cell_iterator.debug_iterator();
 #endif
@@ -718,12 +717,20 @@ public:
     };
     CGAL_assertion(_curr_simplex.incident_cell() != Cell_handle());
 
-    switch(_curr_simplex.dimension())
-    {
+    if(!cell_iterator_is_ahead()) {
+      increment_cell_iterator(); // cell_iterator needs to be ahead
+    }
+
+    Cell_handle ch_next = Cell_handle(_cell_iterator);
+    Cell_handle ch_prev = _cell_iterator.previous();
+    Locate_type lt_prev;
+    int li_prev, lj_prev;
+    _cell_iterator.exit(lt_prev, li_prev, lj_prev);
+
+    switch(_curr_simplex.dimension()) {
     case 3 :/*Cell_handle*/
     {
-      Cell_handle ch = Cell_handle(_cell_iterator);
-      if (ch == Cell_handle())
+      if (ch_next == Cell_handle())
       {
         if(!triangulation().is_infinite(Cell_handle(_curr_simplex)))
           set_curr_simplex_to_entry();
@@ -741,319 +748,115 @@ public:
     }
     case 2 :/*Facet*/
     {
-      if (!cell_iterator_is_ahead())
-      {
-        //cell_iterator is not ahead. get_facet() is part of cell_iterator
-        //we cannot be in any of the degenerate cases, only detected by
-        //taking cell_iterator one step forward
-        CGAL_assertion(cell_has_facet(Cell_handle(_cell_iterator), get_facet()));
-        increment_cell_iterator();
-      }
-      Cell_handle chprev = _cell_iterator.previous();
-      Cell_handle chnext = Cell_handle(_cell_iterator);
-      Locate_type lt;
-      int li, lj;
-      _cell_iterator.exit(lt, li, lj);
+      CGAL_assertion((ch_next == Cell_handle()) == (_cell_iterator == _cell_iterator.end()));
 
-      if (chnext == Cell_handle())
-      {
-        CGAL_assertion(_cell_iterator == _cell_iterator.end());
-        if (lt == Locate_type::VERTEX) //facet-cell?-vertex-outside
-        {
-          if (triangulation().tds().has_vertex(get_facet(), chprev->vertex(li)))
-            _curr_simplex = chprev->vertex(li);
-          else
-            _curr_simplex = chprev;
-        }
-        else if (lt == Locate_type::EDGE)//facet-cell?-edge-outside
-        {
-          if ( triangulation().tds().has_vertex(get_facet(), chprev->vertex(li))
-            && triangulation().tds().has_vertex(get_facet(), chprev->vertex(lj)))
-            _curr_simplex = Edge(chprev, li, lj);
-          else
-            _curr_simplex = chprev;
-        }
-        else if (lt == Locate_type::FACET) //facet-cell-facet-outside
-        {
-          if (Facet(chprev, li) == get_facet()
-            || triangulation().mirror_facet(Facet(chprev, li)) == get_facet())
-            _curr_simplex = Simplex_3();
-          else
-            _curr_simplex = chprev;
-        }
-        else // facet-cell then end
-        {
-          CGAL_assertion(lt == Locate_type::CELL);
-          _curr_simplex = chprev;
-        }
-        break;
-      }
-
-      switch (lt)//entry simplex in next cell is exit simplex in current cell
-      {
-      case Locate_type::VERTEX:
-      {
-        //if the entry vertex is a vertex of current facet
-        if (triangulation().tds().has_vertex(get_facet(), chprev->vertex(li)))
-          set_curr_simplex_to_entry();
+      switch(lt_prev) {
+      case Locate_type::VERTEX: { // facet-cell?-vertex-outside
+        Vertex_handle v_prev{ch_prev->vertex(li_prev)};
+        if(triangulation().tds().has_vertex(get_facet(), v_prev))
+          _curr_simplex = v_prev;
         else
-          _curr_simplex = chprev;
-        break;
-      }
-
-      case Locate_type::EDGE:
-        if (facet_has_edge(get_facet(), Edge(chprev, li, lj)))
-          set_curr_simplex_to_entry();
+          _curr_simplex = ch_prev;
+      } break;
+      case Locate_type::EDGE: { // facet-cell?-edge-outside
+        Edge edge_prev{ch_prev, li_prev, lj_prev};
+        if(facet_has_edge(get_facet(), edge_prev))
+          _curr_simplex = edge_prev;
         else
-          _curr_simplex = chprev;
-        break;
-
-      case Locate_type::FACET:
-        _curr_simplex = chprev;
-        break;
-
+          _curr_simplex = ch_prev;
+      } break;
+      case Locate_type::FACET: { // facet-cell-facet-outside
+        if(ch_next == Cell_handle() &&
+           (Facet(ch_prev, li_prev) == get_facet() || triangulation().mirror_facet(Facet(ch_prev, li_prev)) == get_facet()))
+          _curr_simplex = Simplex_3();
+        else
+          _curr_simplex = ch_prev;
+      } break;
+      case Locate_type::CELL: { // facet-cell then end
+        CGAL_assertion(ch_next == Cell_handle());
+        _curr_simplex = ch_prev;
+      } break;
       default:
         CGAL_unreachable();
-      };
+      }
       break;
     }
     case 1:/*Edge*/
     {
-      Cell_handle ch = Cell_handle(_cell_iterator);
-      if (ch == _cell_iterator.previous())
-      {
-        _curr_simplex = Simplex_3();
-        break;
-      }
-      if (!cell_iterator_is_ahead())
-      {
-        increment_cell_iterator();//cell_iterator needs to be ahead to detect degeneracies
-      }
-
-      Cell_handle chnext = Cell_handle(_cell_iterator);
-      if (chnext == Cell_handle())
-      {
-        Cell_handle chprev = _cell_iterator.previous();
-        Locate_type ltprev;
-        int liprev, ljprev;
-        _cell_iterator.exit(ltprev, liprev, ljprev);
-
-        switch(ltprev) {
-        case Locate_type::VERTEX: { //edge-vertex-outside
-          if(edge_has_vertex(get_edge(), chprev->vertex(liprev)))
-            _curr_simplex = chprev->vertex(liprev);
-          else
-            _curr_simplex = shared_facet(get_edge(), chprev->vertex(liprev));
-          break;
-        }
-        case Locate_type::EDGE: { //edge-outside or edge-cell-edge-outside
-          const Vertex_handle vi = chprev->vertex(liprev);
-          const Vertex_handle vj = chprev->vertex(ljprev);
-          const bool vi_is_vertex_of_edge = edge_has_vertex(get_edge(), vi);
-          const bool vj_is_vertex_of_edge = edge_has_vertex(get_edge(), vj);
-          if(vi_is_vertex_of_edge && vj_is_vertex_of_edge) {
-            _curr_simplex = Simplex_3();
-          } else if(vi_is_vertex_of_edge && !vj_is_vertex_of_edge) {
-            _curr_simplex = shared_facet(get_edge(), vj);
-          } else if(vj_is_vertex_of_edge && !vi_is_vertex_of_edge) {
-            _curr_simplex = shared_facet(get_edge(), vi);
-          } else {
-            CGAL_assertion(!vi_is_vertex_of_edge && !vj_is_vertex_of_edge);
-            Facet f = shared_facet(get_edge(), vi);
-            _curr_simplex = shared_cell(f, vj);
-          }
-          break;
-        }
-        case Locate_type::FACET: {
-          if(facet_has_edge(Facet(chprev, liprev), get_edge()))
-            _curr_simplex = Facet(chprev, liprev); //edge-facet-outside
-          else
-            _curr_simplex = chprev; //query goes through the cell
-          break;
-        }
-        case Locate_type::CELL:
-          _curr_simplex = ch; //edge-cell-outside
-          break;
-        default:
-          _curr_simplex = Simplex_3(); //edge-outside
-          break;
-        }
-        break;
-      }
-
-      ch = _cell_iterator.previous();
-      Locate_type lt_exit;
-      int li_exit, lj_exit;
-      _cell_iterator.exit(lt_exit, li_exit, lj_exit);
-      switch (lt_exit)//entry simplex in next cell is exit simplex in current cell
-      {
-      case Locate_type::VERTEX:
-      {
-        const Vertex_handle v_exit = ch->vertex(li_exit);
-        if (edge_has_vertex(get_edge(), v_exit))
-          _curr_simplex = v_exit;
+      switch(lt_prev) {
+      case Locate_type::VERTEX: { //edge-vertex-outside
+        if(edge_has_vertex(get_edge(), ch_prev->vertex(li_prev)))
+          _curr_simplex = ch_prev->vertex(li_prev);
         else
-          _curr_simplex = shared_facet(get_edge(), v_exit);
-        break;
-      }
-      case Locate_type::EDGE:
-      {
-        const Edge e_exit(ch, li_exit, lj_exit);
+          _curr_simplex = shared_facet(get_edge(), ch_prev->vertex(li_prev));
+      } break;
+      case Locate_type::EDGE: { //edge-outside or edge-cell-edge-outside
+        const Edge e_prev(ch_prev, li_prev, lj_prev);
         CGAL_assertion(_cell_iterator == _cell_iterator.end()
-          || triangulation().is_infinite(chnext)
-          || _curr_simplex != Simplex_3(e_exit));
-
-        if (_cell_iterator == _cell_iterator.end())
-          _curr_simplex = Simplex_3();//should not be reached
-        else if (triangulation().is_infinite(chnext) && is_same_edge(get_edge(), e_exit))
-          _curr_simplex = chnext;
-        else {
-          auto facet_opt = shared_facet(get_edge(), e_exit);
-          if(static_cast<bool>(facet_opt)) _curr_simplex = *facet_opt;
-          else _curr_simplex = shared_cell(get_edge(), e_exit);
+          || triangulation().is_infinite(ch_next)
+          || _curr_simplex != Simplex_3(e_prev));
+        if(is_same_edge(get_edge(), e_prev)) {
+          _curr_simplex = Simplex_3();
+        } else {
+          auto facet_opt = shared_facet(get_edge(), e_prev);
+          if(static_cast<bool>(facet_opt)) {
+            _curr_simplex = *facet_opt;
+          }
+          else {
+            _curr_simplex = shared_cell(get_edge(), e_prev);
+          }
         }
-        break;
-      }
-
-      case Locate_type::FACET:
-        if(facet_has_edge(Facet(ch, li_exit), get_edge()))
-          _curr_simplex = Facet(ch, li_exit); //edge-facet-outside
+      } break;
+      case Locate_type::FACET: {
+        if(facet_has_edge(Facet(ch_prev, li_prev), get_edge()))
+          _curr_simplex = Facet(ch_prev, li_prev); //edge-facet-outside
         else
-          _curr_simplex = ch;//query goes through the cell
+          _curr_simplex = ch_prev; //query goes through the cell
+      } break;
+      case Locate_type::CELL:
+        CGAL_assertion(ch_next == Cell_handle());
+        _curr_simplex = ch_prev; //edge-cell-outside
         break;
-
       default:
-        CGAL_unreachable();//should not happen
-      };
+        CGAL_unreachable();
+      }
       break;
     }
     case 0 :/*Vertex_handle*/
     {
-      Cell_handle ch = Cell_handle(_cell_iterator);
-      if (ch == _cell_iterator.previous())
-      {
-        _curr_simplex = Simplex_3();
-        break;
-      }
-      if (!cell_iterator_is_ahead()) //_curr_simplex does contain v
-      {
-        increment_cell_iterator();//cell_iterator needs to be ahead to detect degeneracies
-      }
-      else
-        ch = _cell_iterator.previous();
-
-      const Cell_handle chnext = Cell_handle(_cell_iterator);
-      //_cell_iterator is one step forward _curr_simplex
-      CGAL_assertion(ch != chnext);
-
-      Cell_handle prev = _cell_iterator.previous();
-      Locate_type ltprev;
-      int liprev, ljprev;
-      _cell_iterator.exit(ltprev, liprev, ljprev);
-
-      if (chnext == Cell_handle())
-      {
-        CGAL_assertion(_cell_iterator == _cell_iterator.end());
-        if (ltprev == Locate_type::VERTEX) //vertex-edge-vertex-outside
-        {
-          if (prev->vertex(liprev) != get_vertex())//avoid infinite loop edge-vertex-same edge-...
-            _curr_simplex = Edge(prev, liprev, prev->index(get_vertex()));
-          else
-            _curr_simplex = Simplex_3();
-        }
-        else if (ltprev == Locate_type::EDGE)//vertex-facet-edge-outside
-        {
-          if (prev->vertex(liprev) != get_vertex() && prev->vertex(ljprev) != get_vertex())
-            _curr_simplex = shared_facet(Edge(prev, liprev, ljprev), get_vertex());
-          else
-            _curr_simplex = Edge(prev, liprev, ljprev);
-        }
-        else if (ltprev == Locate_type::FACET) //vertex-facet-outside
-        {
-          if (prev->vertex(liprev) != get_vertex()) //vertex-facet-outside
-            _curr_simplex = Facet(prev, liprev);
-          else //vertex-cell-facet-outside
-            _curr_simplex = prev;
-        }
+      switch(lt_prev) {
+      case Locate_type::VERTEX: {
+        if(ch_prev->vertex(li_prev) != get_vertex()) // avoid infinite loop edge-vertex-same edge-...
+          _curr_simplex = Edge(ch_prev, li_prev, ch_prev->index(get_vertex()));
         else
-        {
-          CGAL_assertion(ltprev == Locate_type::CELL);//vertex-cell-outside
-          _curr_simplex = prev;
-        }
-        break;
-      }
-
-      switch (ltprev)
-      {
-      case Locate_type::VERTEX:
-      {
-        CGAL_assertion(_cell_iterator == _cell_iterator.end()
-                     || get_vertex() != prev->vertex(liprev)
-                     || triangulation().is_infinite(chnext));
-        if (_cell_iterator == _cell_iterator.end())
-        {
-          if (prev == ch && ltprev == Locate_type::VERTEX)
-          {
-            const auto current_vertex = get_vertex();
-            if(current_vertex == _cell_iterator.target_vertex()) {
-              _curr_simplex = Simplex_3();
-            } else {
-              CGAL_assertion(prev->vertex(liprev) == _cell_iterator.target_vertex());
-              _curr_simplex = ch;
-            }
-          }
-          else
-          {
-            if(ltprev == Locate_type::FACET)
-              _curr_simplex = Facet(prev, liprev);
-            else if(ltprev == Locate_type::EDGE)
-              _curr_simplex = Edge(prev, liprev, ljprev);
-            else
-              CGAL_assertion(false);
-          }
-        }
-        else
-        {
-          if (triangulation().is_infinite(chnext) && get_vertex() == prev->vertex(liprev))
-            _curr_simplex = chnext;
-          else
-          {
-            Cell_handle ec;
-            int ei = -1, ej = -1;
-            if (!triangulation().is_edge(get_vertex(), prev->vertex(liprev), ec, ei, ej))
-              CGAL_unreachable();
-            _curr_simplex = Edge(ec, ei, ej);
-          }
-        }
-        break;
-      }
-
-      case Locate_type::EDGE:
-      {
-        //facet shared by get_vertex() and the edge
-        //none of ch and chnext is certainly shared by both endpoints
-        _curr_simplex = shared_facet(Edge(prev, liprev, ljprev), get_vertex());
-        break;
-      }
-
-      case Locate_type::FACET :
-        if (chnext == Cell_handle())
           _curr_simplex = Simplex_3();
+      } break;
+      case Locate_type::EDGE: {
+        if(ch_prev->vertex(li_prev) != get_vertex() && ch_prev->vertex(lj_prev) != get_vertex())
+          _curr_simplex = shared_facet(Edge(ch_prev, li_prev, lj_prev), get_vertex());
         else
-          _curr_simplex = shared_cell(Facet(prev, liprev), get_vertex());
-        break;
-
+          _curr_simplex = Edge(ch_prev, li_prev, lj_prev);
+      } break;
+      case Locate_type::FACET: {
+        if(ch_prev->vertex(li_prev) != get_vertex()) // vertex-facet-outside
+          _curr_simplex = Facet(ch_prev, li_prev);
+        else // vertex-cell-facet-outside
+          _curr_simplex = ch_prev;
+      } break;
+      case Locate_type::CELL: {
+        _curr_simplex = ch_prev;
+      } break;
       default:
         CGAL_unreachable();
-      };
+      }
+      break;
     }
-    break;
-
     default:
       CGAL_unreachable();
     };
     return *this;
   }
+
   //  provides the increment prefix operator.
   Simplex_iterator operator++(int)
   {

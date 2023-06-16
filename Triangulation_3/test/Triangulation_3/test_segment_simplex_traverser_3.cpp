@@ -512,8 +512,13 @@ int main(int, char* [])
 
   ok = test_vfefv() && ok;
   ok = test_vfefv(true) && ok;
-
-  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
+  if(ok) {
+    std::cout << "All tests passed\n";
+    return EXIT_SUCCESS;
+  } else {
+    std::cout << "Some tests failed\n";
+    return EXIT_FAILURE;
+  }
 }
 
 bool test(const DT& dt,
