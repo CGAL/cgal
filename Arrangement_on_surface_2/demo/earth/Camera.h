@@ -30,6 +30,7 @@ public:
   // theta: angle around y-axis
   // phi: angle from the xz-plane (= rotated x-axis after the above rotation)
   void rotate(float theta, float phi);
+  void rotate(QMatrix4x4 rot);
 
   // move the camera forward around its own z-axis
   void move_forward(float distance);

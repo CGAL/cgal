@@ -82,6 +82,14 @@ void Camera::rotate(float theta, float phi)
   m_uz = r * QVector3D(0, 0, 1);
 }
 
+void Camera::rotate(QMatrix4x4 rot)
+{
+  m_pos = rot * m_pos;
+  m_ux = rot * m_ux;
+  m_uy = rot * m_uy;
+  m_uz = rot * m_uz;
+}
+
 void Camera::move_forward(float distance)
 {
   // recall that in OpenGL camera model, camera's z-axis points always

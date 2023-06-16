@@ -17,6 +17,19 @@ MainWidget::~MainWidget()
 
 
 float theta = 0, phi = 0;
+int vp_width=0, vp_height=0;
+
+std::ostream& operator << (std::ostream& os, const QVector2D& v)
+{
+  os << v.x() << ", " << v.y();
+  return os;
+}
+std::ostream& operator << (std::ostream& os, const QVector3D& v)
+{
+  os << v.x() << ", " << v.y() << ", " << v.z();
+  return os;
+}
+
 
 void MainWidget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 {
@@ -42,14 +55,47 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e)
   const auto diff = current_mouse_pos - m_last_mouse_pos;
 
   if (m_left_mouse_button_down)
-  {  
+  {
     const float rotation_scale_factor = 0.1f;
-    //const float theta_around_x = rotation_scale_factor * diff.y();
-    //const float theta_around_y = rotation_scale_factor * diff.x();
-    //m_camera.rotate(theta_around_x, theta_around_y);
-    theta += rotation_scale_factor * diff.x();
-    phi += rotation_scale_factor * diff.y();
-    m_camera.rotate(-theta, -phi);
+
+    if(0)
+    {
+      // OUR CUSTOM AD-HOC CAMERA ROTATION
+      //const float theta_around_x = rotation_scale_factor * diff.y();
+      //const float theta_around_y = rotation_scale_factor * diff.x();
+      //m_camera.rotate(theta_around_x, theta_around_y);
+      theta += rotation_scale_factor * diff.x();
+      phi += rotation_scale_factor * diff.y();
+      m_camera.rotate(-theta, -phi);
+    }
+    else
+    {
+      // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR!
+      QVector3D p0(m_last_mouse_pos.x(), vp_height - m_last_mouse_pos.y(), 0);
+      QVector3D p1(current_mouse_pos.x(), vp_height - current_mouse_pos.y(), 0);
+      auto dp = p1 - p0; // difference vector in OpenGL window coords.
+      QVector3D rdp(-dp.y(), dp.x(), 0); // rotate diff-vector CCW by 90-deg
+      QVector3D rp = p0 + rdp; // r1 rotated CCW by 90 deg
+     
+      QMatrix4x4 model; // this is different from Sphere's model matrix!!!
+      auto proj = m_camera.get_projection_matrix();
+      auto view = m_camera.get_view_matrix();
+      auto model_view = view * model;
+      QRect viewport(0, 0, vp_width, vp_height);
+      auto wp0 = p0.unproject(model_view, proj, viewport);
+      auto wrp = rp.unproject(model_view, proj, viewport);
+
+      // rotation axis & angle
+      auto rot_axis = wrp - wp0;
+      rot_axis.normalize();
+      const auto rot_angle = rotation_scale_factor * dp.length();
+    
+      QMatrix4x4 rot_matrix;
+      rot_matrix.rotate(-rot_angle, rot_axis);
+      
+      m_camera.rotate(rot_matrix);
+    }
+
   }
   else if(m_middle_mouse_button_down)
   {
@@ -146,6 +192,9 @@ std::ostream& operator << (std::ostream& os, const QVector4D& v)
 
 void MainWidget::resizeGL(int w, int h)
 {
+  vp_width = w;
+  vp_height = h;
+
   // Reset projection
   qreal aspect = qreal(w) / qreal(h ? h : 1);
   const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
