@@ -741,7 +741,6 @@ public:
     }
     case 2 :/*Facet*/
     {
-      Cell_handle ch = Cell_handle(_cell_iterator);
       if (!cell_iterator_is_ahead())
       {
         //cell_iterator is not ahead. get_facet() is part of cell_iterator
@@ -750,9 +749,7 @@ public:
         CGAL_assertion(cell_has_facet(Cell_handle(_cell_iterator), get_facet()));
         increment_cell_iterator();
       }
-      else
-        ch = _cell_iterator.previous();
-
+      Cell_handle chprev = _cell_iterator.previous();
       Cell_handle chnext = Cell_handle(_cell_iterator);
       Locate_type lt;
       int li, lj;
@@ -761,36 +758,35 @@ public:
       if (chnext == Cell_handle())
       {
         CGAL_assertion(_cell_iterator == _cell_iterator.end());
-        Cell_handle prev = _cell_iterator.previous();
         if (lt == Locate_type::VERTEX) //facet-cell?-vertex-outside
         {
           int i;
-          if (triangulation()->has_vertex(get_facet(), prev->vertex(li), i))
-            _curr_simplex = prev->vertex(li);
+          if (triangulation()->has_vertex(get_facet(), chprev->vertex(li), i))
+            _curr_simplex = chprev->vertex(li);
           else
-            _curr_simplex = prev;
+            _curr_simplex = chprev;
         }
         else if (lt == Locate_type::EDGE)//facet-cell?-edge-outside
         {
           int i, j;
-          if ( triangulation()->has_vertex(get_facet(), prev->vertex(li), i)
-            && triangulation()->has_vertex(get_facet(), prev->vertex(lj), j))
-            _curr_simplex = Edge(prev, li, lj);
+          if ( triangulation()->has_vertex(get_facet(), chprev->vertex(li), i)
+            && triangulation()->has_vertex(get_facet(), chprev->vertex(lj), j))
+            _curr_simplex = Edge(chprev, li, lj);
           else
-            _curr_simplex = prev;
+            _curr_simplex = chprev;
         }
         else if (lt == Locate_type::FACET) //facet-cell-facet-outside
         {
-          if (Facet(prev, li) == get_facet()
-            || triangulation()->mirror_facet(Facet(prev, li)) == get_facet())
+          if (Facet(chprev, li) == get_facet()
+            || triangulation()->mirror_facet(Facet(chprev, li)) == get_facet())
             _curr_simplex = Simplex_3();
           else
-            _curr_simplex = prev;
+            _curr_simplex = chprev;
         }
         else // facet-cell then end
         {
           CGAL_assertion(lt == Locate_type::CELL);
-          _curr_simplex = prev;
+          _curr_simplex = chprev;
         }
         break;
       }
@@ -801,22 +797,22 @@ public:
       {
         //if the entry vertex is a vertex of current facet
         int i;
-        if (triangulation()->has_vertex(get_facet(), ch->vertex(li), i))
+        if (triangulation()->has_vertex(get_facet(), chprev->vertex(li), i))
           set_curr_simplex_to_entry();
         else
-          _curr_simplex = ch;
+          _curr_simplex = chprev;
         break;
       }
 
       case Locate_type::EDGE:
-        if (facet_has_edge(get_facet(), Edge(ch, li, lj)))
+        if (facet_has_edge(get_facet(), Edge(chprev, li, lj)))
           set_curr_simplex_to_entry();
         else
-          _curr_simplex = ch;
+          _curr_simplex = chprev;
         break;
 
       case Locate_type::FACET:
-        _curr_simplex = ch;
+        _curr_simplex = chprev;
         break;
 
       default:
