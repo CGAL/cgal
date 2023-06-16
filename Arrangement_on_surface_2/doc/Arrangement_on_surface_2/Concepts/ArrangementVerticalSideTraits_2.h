@@ -9,7 +9,7 @@
  * remaining boundary sides (that is, bottom and top) are purposeful, and can
  * have models.
  *
- * \cgalRefines `ArrangementBasicTraits_2`
+ * \cgalRefines{ArrangementBasicTraits_2}
  *
  * \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
  * \cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`

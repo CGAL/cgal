@@ -33,7 +33,7 @@
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
-#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
 #include <Eigen/UmfPackSupport>
 #endif
 #endif
@@ -65,7 +65,7 @@ namespace Surface_mesh_parameterization {
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// reads a series of cones from an input stream. Cones are passed as an
-/// integer value that is the index of a vertex handle in the mesh tm`, using
+/// integer value that is the index of a vertex handle in the mesh `tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
 /// \attention The mesh is here `tm`, it is the base mesh of the `CGAL::Seam_mesh`
@@ -368,7 +368,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 ///   CGAL::Eigen_solver_traits<
 ///           Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
 /// \endcode
-///         Moreover, if SparseSuite solvers are available, which is greatly preferable for speed,
+///         Moreover, if SuiteSparse solvers are available, which is greatly preferable for speed,
 ///         then the default parameter is:
 /// \code
 ///   CGAL::Eigen_solver_traits<
@@ -391,7 +391,7 @@ public:
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
-    #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+    #ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
       CGAL::Eigen_solver_traits<
         Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
     #else

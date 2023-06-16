@@ -640,7 +640,7 @@ public:
     but are isolated from the complex at the end of the meshing process.
 
     This function removes these so-called \em isolated vertices, that belong to the
-    triangulation but not to any cell of the `C3T3`, from the triangulation.
+    triangulation but not to any simplex of the `C3T3`, from the triangulation.
   */
   void remove_isolated_vertices()
   {
@@ -669,7 +669,8 @@ public:
     std::vector<Vertex_handle> isolated;
     for (Vertex_handle v : tr.finite_vertex_handles())
     {
-      if (v->meshing_info() == 0.)
+      if (v->meshing_info() == 0.
+        && (v->in_dimension() > 1 || v->in_dimension() < 0))
         isolated.push_back(v);
     }
 

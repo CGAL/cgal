@@ -117,7 +117,7 @@ It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it s
 This section describes how to add a dock widget to the application.\n
 You can make your plugin inherit from CGAL::Three::Polyhedron_demo_plugin_helper, which gives access to the function CGAL::Three::Polyhedron_demo_plugin_helper#addDockWidget.
 This will manage automatically the position and tabification of a dock widget. \n
-Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets
+Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget` in Widgets
 *  \image html menu_6.png
 Add it to the project in the CMakeLists.txt :
 

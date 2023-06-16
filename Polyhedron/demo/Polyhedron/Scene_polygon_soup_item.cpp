@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/version.h>
 
@@ -417,6 +418,32 @@ void Scene_polygon_soup_item::inside_out()
     d->soup->inverse_orientation(i);
   }
   invalidateOpenGLBuffers();
+}
+
+void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
+{
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+  CGAL::Polygon_mesh_processing::repair_polygon_soup(
+        d->soup->points,
+        d->soup->polygons,
+        CGAL::parameters::erase_all_duplicates(erase_dup)
+                         .require_same_orientation(req_same_orientation));
+  QApplication::restoreOverrideCursor();
+  invalidateOpenGLBuffers();
+}
+
+bool Scene_polygon_soup_item::triangulate()
+{
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+
+  bool success = true;
+
+  CGAL::Polygon_mesh_processing::triangulate_polygons(d->soup->points, d->soup->polygons);
+
+  QApplication::restoreOverrideCursor();
+  invalidateOpenGLBuffers();
+
+  return success;
 }
 
 bool
@@ -892,20 +919,6 @@ void Scene_polygon_soup_item::computeElements() const
 
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
-}
-
-void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
-{
-  QApplication::setOverrideCursor(Qt::BusyCursor);
-  CGAL::Polygon_mesh_processing::repair_polygon_soup(
-        d->soup->points,
-        d->soup->polygons,
-        CGAL::parameters::
-        erase_all_duplicates(erase_dup)
-        .require_same_orientation(req_same_orientation));
-  QApplication::restoreOverrideCursor();
-
- // CGAL::Three::Three::information(
 }
 
 CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const

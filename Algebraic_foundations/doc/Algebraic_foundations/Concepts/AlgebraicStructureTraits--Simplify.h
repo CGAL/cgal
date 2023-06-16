@@ -7,7 +7,7 @@ namespace AlgebraicStructureTraits_{
 
 This `AdaptableUnaryFunction` may simplify a given object.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

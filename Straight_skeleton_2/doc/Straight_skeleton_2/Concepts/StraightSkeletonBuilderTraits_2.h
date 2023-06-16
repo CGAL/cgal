@@ -2,8 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
+\cgalRefines{DefaultConstructible,CopyConstructible}
 
 The concept `StraightSkeletonBuilderTraits_2` describes the requirements
 for the geometric traits class required by the algorithm class `CGAL::Straight_skeleton_builder_2`.

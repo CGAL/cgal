@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `HalfedgeDS`
+\cgalRefines{HalfedgeDS}
 
 The concept `StraightSkeleton_2` describes the requirements for the data structure
 used to represent a straight skeleton. It refines the concept
