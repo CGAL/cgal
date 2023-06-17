@@ -7,6 +7,7 @@
 
 #include <QMouseEvent>
 
+#include "Geodesic_arcs.h"
 #include "Tools.h"
 
 
@@ -109,7 +110,10 @@ void Main_widget::initializeGL()
   {
     // has to be defined after camera has been defined:
     // because we want to compute the error based on camera parameters!
-    m_geodesic_arcs = std::make_unique<Geodesic_arcs>();
+    Geodesic_arcs ga;
+    const double error = 0.001; // calculate this from cam parameters!
+    auto lsa = ga.get_approximate_arcs(error);
+    m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
   }
 
   glClearColor(0, 0, 0, 1);
@@ -195,7 +199,7 @@ void Main_widget::paintGL()
 
   // GEODESIC ARCS
   {
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
 
     auto& sp = m_sp_arc;
     sp.use();

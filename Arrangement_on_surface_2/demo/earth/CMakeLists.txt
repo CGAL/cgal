@@ -43,6 +43,7 @@ qt_add_executable(earth
     Camera.h                  Camera.cpp
     Common_defs.h
     Geodesic_arcs.h           Geodesic_arcs.cpp
+    Line_strips.h             Line_strips.cpp
     Shader_program.h          Shader_program.cpp
     Sphere.h                  Sphere.cpp
     Tools.h                   Tools.cpp

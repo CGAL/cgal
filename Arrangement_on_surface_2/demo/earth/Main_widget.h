@@ -16,7 +16,7 @@
 
 #include "Camera.h"
 #include "Common_defs.h"
-#include "Geodesic_arcs.h"
+#include "Line_strips.h"
 #include "Shader_program.h"
 #include "Sphere.h"
 #include "World_coordinate_axes.h"
@@ -51,7 +51,7 @@ private:
   // Objects in the scene
   std::unique_ptr<Sphere>           m_sphere;
   std::unique_ptr<World_coord_axes> m_world_coord_axes;
-  std::unique_ptr<Geodesic_arcs>    m_geodesic_arcs;
+  std::unique_ptr<Line_strips>      m_geodesic_arcs;
 
   // Shaders
   Shader_program  m_sp_smooth;
