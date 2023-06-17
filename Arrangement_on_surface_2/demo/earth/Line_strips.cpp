@@ -2,12 +2,21 @@
 #include "Line_strips.h"
 
 
-Line_strips::Line_strips(Line_strip_approx& lsa)
+Line_strips::Line_strips(std::vector<std::vector<QVector3D>>& arcs)
 {
   initializeOpenGLFunctions();
 
-  const auto& vertex_data = lsa.points;
-  m_offsets = lsa.offsets;
+  std::vector<QVector3D> vertex_data;
+  m_offsets.push_back(0);
+  for (const auto& arc : arcs)
+  {
+    for(const auto& p : arc)
+      vertex_data.push_back(p);
+    
+    const auto end_of_current_arc_points = vertex_data.size();
+    m_offsets.push_back(end_of_current_arc_points);
+  }
+
 
   // DEFINE OPENGL BUFFERS
   glGenVertexArrays(1, &m_vao);

@@ -35,6 +35,14 @@ if ( NOT Boost_FOUND )
 endif()
 
 
+file(GLOB source_files_geometry   
+  Line_strips.h             Line_strips.cpp
+  Sphere.h                  Sphere.cpp
+  World_coordinate_axes.h   World_coordinate_axes.cpp
+ )
+source_group( "geometry"  FILES ${source_files_geometry} )
+
+
 qt_standard_project_setup()
 
 qt_add_executable(earth
@@ -43,11 +51,9 @@ qt_add_executable(earth
     Camera.h                  Camera.cpp
     Common_defs.h
     Geodesic_arcs.h           Geodesic_arcs.cpp
-    Line_strips.h             Line_strips.cpp
     Shader_program.h          Shader_program.cpp
-    Sphere.h                  Sphere.cpp
     Tools.h                   Tools.cpp
-    World_coordinate_axes.h   World_coordinate_axes.cpp
+    ${source_files_geometry}
 )
 
 

@@ -53,7 +53,8 @@ std::ostream& operator << (std::ostream& os, const Approximate_Vector_3& v)
 }
 
 
-Line_strip_approx Geodesic_arcs::get_approximate_arcs(double error)
+std::vector<std::vector<QVector3D>> Geodesic_arcs::get_approximate_arcs(double 
+                                                                          error)
 {
   // Construct the arrangement from 12 geodesic arcs.
   Geom_traits traits;
@@ -73,22 +74,21 @@ Line_strip_approx Geodesic_arcs::get_approximate_arcs(double error)
   auto approx = traits.approximate_2_object();
 
 
-  Line_strip_approx  lsa;
-  lsa.offsets.push_back(0);
+  std::vector<std::vector<QVector3D>>  arcs;
   for (const auto& xcv : xcvs)
   {
     std::vector<Approximate_point_2> v;
     auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
-
+    
+    std::vector<QVector3D> arc_points;
     for (const auto& p : v)
     {
       const QVector3D arc_point(p.dx(), p.dy(), p.dz());
-      lsa.points.push_back(arc_point);
+      arc_points.push_back(arc_point);
     }
-    const auto current_vertex_data_size = lsa.points.size();
-    lsa.offsets.push_back(current_vertex_data_size);
+    arcs.push_back(std::move(arc_points));
   }
   //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
   
-  return lsa;
+  return arcs;
 }

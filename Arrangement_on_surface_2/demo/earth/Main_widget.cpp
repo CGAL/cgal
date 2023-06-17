@@ -199,7 +199,7 @@ void Main_widget::paintGL()
 
   // GEODESIC ARCS
   {
-    //glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
 
     auto& sp = m_sp_arc;
     sp.use();
