@@ -278,7 +278,7 @@ public:
      */
     const Point&    source() const      { return _source; }
 
-    //  gives the target point of the segment follwoed.
+    //  gives the target point of the segment followed.
     /*  \return the target point.
          */
     const Point&    target() const      { return _target; }
@@ -334,7 +334,7 @@ public:
     }
 
     //  provides a conversion operator.
-    /*         \return the simplex through wich the current cell was entered.
+    /*         \return the simplex through which the current cell was entered.
          */
     operator Simplex() const { return _cur; }
 
