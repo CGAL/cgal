@@ -545,8 +545,8 @@ public:
      *  Also available as non-member function.
      */
     CGAL::Sign sign() const {
-//        static_assert( (std::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
-//                              CGAL::Tag_true>::value) );
+//        static_assert(std::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
+//                              CGAL::Tag_true>::value);
       return CGAL::sign(lcoeff());
     }
 

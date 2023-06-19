@@ -1037,7 +1037,7 @@ sample_triangle_soup(const PointRange& points,
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
 
-  static_assert((std::is_same<Point_3, typename GeomTraits::Point_3>::value), "Wrong point type.");
+  static_assert(std::is_same<Point_3, typename GeomTraits::Point_3>::value, "Wrong point type.");
 
   CGAL_precondition(!triangles.empty());
 

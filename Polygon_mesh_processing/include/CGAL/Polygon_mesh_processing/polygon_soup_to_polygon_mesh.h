@@ -43,7 +43,7 @@ namespace internal {
 template <typename PM_Point, typename PS_Point>
 PM_Point convert_to_pm_point(const PS_Point& p)
 {
-  static_assert((std::is_convertible<PS_Point, PM_Point>::value));
+  static_assert(std::is_convertible<PS_Point, PM_Point>::value);
   return PM_Point(p);
 }
 

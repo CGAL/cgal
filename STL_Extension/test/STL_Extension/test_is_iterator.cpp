@@ -23,11 +23,11 @@ int main() {
   static_assert(!is_iterator<int>::value);
   static_assert(is_iterator<int_p>::value);
 
-  static_assert((is_iterator_type<vector_it,std::bidirectional_iterator_tag>::value));
-  static_assert((!is_iterator_type<list_it,std::random_access_iterator_tag>::value));
-  static_assert((!is_iterator_type<short,std::output_iterator_tag>::value));
+  static_assert(is_iterator_type<vector_it,std::bidirectional_iterator_tag>::value);
+  static_assert(!is_iterator_type<list_it,std::random_access_iterator_tag>::value);
+  static_assert(!is_iterator_type<short,std::output_iterator_tag>::value);
 
-  static_assert((is_iterator_to<int_p,double>::value));
-  static_assert((!is_iterator_to<A,int>::value));
-  static_assert((!is_iterator_to<A*,int>::value));
+  static_assert(is_iterator_to<int_p,double>::value);
+  static_assert(!is_iterator_to<A,int>::value);
+  static_assert(!is_iterator_to<A*,int>::value);
 }

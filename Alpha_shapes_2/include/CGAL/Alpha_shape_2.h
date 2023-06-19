@@ -76,8 +76,8 @@ public:
   typedef Type_of_alpha               FT;
 
   // check that simplices are correctly instantiated
-  static_assert( (std::is_same<NT, typename Dt::Face::NT>::value) );
-  static_assert( (std::is_same<NT, typename Dt::Vertex::NT>::value) );
+  static_assert(std::is_same<NT, typename Dt::Face::NT>::value);
+  static_assert(std::is_same<NT, typename Dt::Vertex::NT>::value);
 
   typedef typename Dt::Point Point;
 

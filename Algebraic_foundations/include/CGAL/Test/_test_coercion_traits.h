@@ -346,9 +346,9 @@ void test_explicit_interoperable_one_way(){
   typedef typename CT::Cast Cast;
   typedef typename Cast::result_type result_type;
   CGAL_USE_TYPE(result_type);
-  static_assert((::std::is_same<result_type,Type>::value));
-  static_assert((::std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
-  static_assert((::std::is_same<Type,RT>::value));
+  static_assert(::std::is_same<result_type,Type>::value);
+  static_assert(::std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value);
+  static_assert(::std::is_same<Type,RT>::value);
   typename CT::Cast cast;
 
   A a(3);

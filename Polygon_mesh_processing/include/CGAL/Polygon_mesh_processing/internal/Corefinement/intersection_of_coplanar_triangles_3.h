@@ -32,8 +32,8 @@ struct Intersect_coplanar_faces_3
  // typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type Point;
 
-  static_assert((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
-                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                             typename boost::property_traits<VertexPointMap2>::value_type>::value);
 
   typedef typename CGAL::Kernel_traits<Point>::Kernel Input_kernel;
 

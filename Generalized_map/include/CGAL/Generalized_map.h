@@ -1347,8 +1347,8 @@ namespace CGAL {
     template < class Ite >
     std::ostream& display_orbits(std::ostream & aos) const
     {
-      static_assert( (std::is_same<typename Ite::Basic_iterator,
-                              Tag_true>::value) );
+      static_assert(std::is_same<typename Ite::Basic_iterator,
+                              Tag_true>::value);
       unsigned int nb = 0;
       size_type amark = get_new_mark();
       for ( typename Dart_range::const_iterator it1(darts().begin()),

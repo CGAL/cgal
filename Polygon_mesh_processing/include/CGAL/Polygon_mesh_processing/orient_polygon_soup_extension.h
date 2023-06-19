@@ -159,7 +159,7 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   typedef typename boost::property_traits<PointMap2>::reference PM2_Point_ref;
 
   typedef typename boost::property_traits<PointMap1>::value_type Point_3;
-  static_assert((std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value));
+  static_assert(std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value);
 
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
   typedef typename K::Triangle_3 Triangle;
@@ -309,7 +309,7 @@ void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_re
 
   PointMap point_map = NP_helper::get_const_point_map(points, np2);
 
-  static_assert((std::is_same<Point_3, typename boost::property_traits<PointMap>::value_type>::value));
+  static_assert(std::is_same<Point_3, typename boost::property_traits<PointMap>::value_type>::value);
 
   K k = choose_parameter<K>(get_parameter(np1, internal_np::geom_traits));
 

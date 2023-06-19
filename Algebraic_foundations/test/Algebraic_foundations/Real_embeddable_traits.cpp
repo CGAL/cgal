@@ -16,11 +16,11 @@ int main(){
 
     typedef RET::Type Type;
     CGAL_USE_TYPE(Type);
-    static_assert((::std::is_same<void,Type>::value));
+    static_assert(::std::is_same<void,Type>::value);
 
     typedef RET::Is_real_embeddable Is_real_embeddable;
     CGAL_USE_TYPE(Is_real_embeddable);
-    static_assert((::std::is_same<CGAL::Tag_false,Is_real_embeddable>::value));
+    static_assert(::std::is_same<CGAL::Tag_false,Is_real_embeddable>::value);
 
     CGAL_IS_RET_NULL_FUNCTOR(Abs);
     CGAL_IS_RET_NULL_FUNCTOR(Sgn);

@@ -730,7 +730,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
 
-  static_assert((std::is_same<Point, typename GT::Point_3>::value));
+  static_assert(std::is_same<Point, typename GT::Point_3>::value);
 
   GT gt = choose_parameter<GT>(get_parameter(np_A, internal_np::geom_traits));
   VPM_A vpm_A = choose_parameter(get_parameter(np_A, internal_np::vertex_point),

@@ -224,14 +224,14 @@ template<typename Poly_coer_1,typename Polynomial_1>
   void cast_back_utcf(const Poly_coer_1& p,Polynomial_1& q) {
   // We can assume that both template arguments are polynomial types
   typedef CGAL::Fraction_traits<Poly_coer_1> FT;
-  static_assert((::std::is_same<typename FT::Is_fraction,
-                       CGAL::Tag_true>::value));
+  static_assert(::std::is_same<typename FT::Is_fraction,
+                       CGAL::Tag_true>::value);
   typedef typename FT::Numerator_type Numerator;
   typedef typename FT::Denominator_type Denominator;
   typedef CGAL::Coercion_traits<Numerator,Polynomial_1> Num_coercion;
-  static_assert((::std::is_same
+  static_assert(::std::is_same
                        <Polynomial_1,
-                       typename Num_coercion::Type>::value));
+                       typename Num_coercion::Type>::value);
   Numerator p_num;
   Denominator p_denom;
   typename FT::Decompose()(p,p_num,p_denom);

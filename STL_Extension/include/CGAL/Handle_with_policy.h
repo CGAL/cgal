@@ -355,8 +355,8 @@ namespace Intern {
             typedef ::CGAL::Reference_counted_hierarchy_with_union<Alloc>
                 Reference_counted_hierarchy_with_union;
             CGAL_USE_TYPE(Reference_counted_hierarchy_with_union);
-            static_assert((
-              ::CGAL::is_same_or_derived< Reference_counted_hierarchy_with_union, T >::value ));
+            static_assert(
+              ::CGAL::is_same_or_derived< Reference_counted_hierarchy_with_union, T >::value );
         }
         typedef T Rep;
     };
@@ -855,8 +855,8 @@ protected:
     //! argument, and the single argument template constructor no other
     //! constructor will work for class hierarchies of representations.
     Handle_with_policy( Rep* p) : ptr_( p) {
-        static_assert((
-           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
+        static_assert(
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value );
         //Bind bind_; // trigger compile-time check
         //(void)bind_;
         (void)Bind();
@@ -869,8 +869,8 @@ protected:
     //! version of \c initialize_with is applicable in this case except
     //! the template version with one argument.
     void initialize_with( Rep* p) {
-        static_assert((
-           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
+        static_assert(
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value );
         //Bind bind_; // trigger compile-time check
         //(void)bind_;
         (void)Bind();

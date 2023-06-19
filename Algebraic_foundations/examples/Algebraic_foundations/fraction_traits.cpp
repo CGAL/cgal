@@ -9,8 +9,8 @@ int main(){
     typedef FT::Numerator_type Numerator_type;
     typedef FT::Denominator_type Denominator_type;
 
-    static_assert((std::is_same<Numerator_type,CGAL::Gmpz>::value));
-    static_assert((std::is_same<Denominator_type,CGAL::Gmpz>::value));
+    static_assert(std::is_same<Numerator_type,CGAL::Gmpz>::value);
+    static_assert(std::is_same<Denominator_type,CGAL::Gmpz>::value);
 
     Numerator_type numerator;
     Denominator_type denominator;

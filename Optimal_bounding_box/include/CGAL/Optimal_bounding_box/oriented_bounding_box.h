@@ -202,7 +202,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 {
   typedef typename Traits::Point_3                                   Point;
 
-  static_assert((std::is_same<typename boost::range_value<PointRange>::type, Point>::value));
+  static_assert(std::is_same<typename boost::range_value<PointRange>::type, Point>::value);
 
   if(use_ch) // construct the convex hull to reduce the number of points
   {

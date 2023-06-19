@@ -101,19 +101,19 @@ public:
 
   template <typename Facet_criterion>
   void add_facet_criterion(Facet_criterion* criterion) {
-    static_assert((boost::is_base_of<
+    static_assert(boost::is_base_of<
                            typename Facet_criteria::Abstract_criterion,
                            Facet_criterion
-                           >::value));
+                           >::value);
     facet_criteria_.add(criterion);
   }
 
   template <typename Cell_criterion>
   void add_cell_criterion(Cell_criterion* criterion) {
-    static_assert((boost::is_base_of<
+    static_assert(boost::is_base_of<
                            typename Cell_criteria::Abstract_criterion,
                            Cell_criterion
-                           >::value));
+                           >::value);
     cell_criteria_.add(criterion);
   }
 

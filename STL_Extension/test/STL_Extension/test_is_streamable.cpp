@@ -27,6 +27,6 @@ int main() {
   static_assert(!is_streamable<D>::value);
   static_assert(is_streamable<int>::value);
   static_assert(is_streamable<double>::value);
-  static_assert(! (is_streamable<std::pair<int, int> >::value) );
-  static_assert(  (is_streamable<boost::tuple<int, int> >::value) );
+  static_assert(!is_streamable<std::pair<int, int> >::value);
+  static_assert(is_streamable<boost::tuple<int, int> >::value);
 }

@@ -108,8 +108,8 @@ public:
   typedef typename Gt::FT Coord_type;
 
   //checks whether tags are correctly set in Vertex and Cell classes
-  static_assert( (std::is_same<NT,typename Dt::Cell::NT>::value) );
-  static_assert( (std::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
+  static_assert(std::is_same<NT,typename Dt::Cell::NT>::value);
+  static_assert(std::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value);
 
   typedef typename Dt::Point Point;
 

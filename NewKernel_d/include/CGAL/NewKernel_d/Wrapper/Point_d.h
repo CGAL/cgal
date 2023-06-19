@@ -40,7 +40,7 @@ class Point_d : public Get_type<typename R_::Kernel_base, Point_tag>::type
 
 
   typedef Point_d                            Self;
-  static_assert((std::is_same<Self, typename Get_type<R_, Point_tag>::type>::value));
+  static_assert(std::is_same<Self, typename Get_type<R_, Point_tag>::type>::value);
 
 public:
 

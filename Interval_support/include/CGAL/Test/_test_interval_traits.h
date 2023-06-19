@@ -74,8 +74,8 @@ void test_interval_traits() {
     typedef typename IT::With_empty_interval With_empty_interval;
     CGAL_USE_TYPE(Is_interval);
     using CGAL::Tag_true;
-    static_assert(( ::std::is_same< Is_interval, Tag_true>::value));
-    static_assert(( ::std::is_same< Interval_, Interval>::value));
+    static_assert(::std::is_same< Is_interval, Tag_true>::value);
+    static_assert(::std::is_same< Interval_, Interval>::value);
 
     test_with_empty_interval<Interval>(With_empty_interval());
 

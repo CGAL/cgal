@@ -154,7 +154,7 @@ namespace CGAL {
     typedef Tag_false Use_mark;      ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    static_assert( (0<=Ai && Ai+delta<=Map::dimension && delta>1) );
+    static_assert(0<=Ai && Ai+delta<=Map::dimension && delta>1);
 
   public:
     /// Main constructor.
@@ -468,9 +468,9 @@ namespace CGAL {
     typedef Tag_false Use_mark;      ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    static_assert( (0<=Ai && delta1<delta2 &&
+    static_assert(0<=Ai && delta1<delta2 &&
                             Ai+delta2<=Map::dimension &&
-                            delta1>1) );
+                            delta1>1);
 
   public:
     /// Main constructor.

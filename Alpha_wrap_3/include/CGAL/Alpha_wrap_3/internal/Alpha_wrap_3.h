@@ -193,7 +193,7 @@ public:
   {
     // Due to the Steiner point computation being a dichotomy, the algorithm is inherently inexact
     // and passing exact kernels is explicitly disabled to ensure no misunderstanding.
-    static_assert((std::is_floating_point<FT>::value));
+    static_assert(std::is_floating_point<FT>::value);
   }
 
 public:
