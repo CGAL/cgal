@@ -108,6 +108,23 @@ void Main_widget::initializeGL()
   init_shader_programs();
 
   {
+    //// compute the back-projected error
+    //QRect vp(0, 0, m_vp_width, m_vp_height);
+    //auto proj = m_camera.get_projection_matrix();
+    //auto view = m_camera.get_view_matrix();
+    //QMatrix4x4 model;
+    //auto model_view = view * model;
+    //
+    //QVector3D p0(m_vp_width / 2, m_vp_height / 2, 0);
+    //QVector3D p1(p0.x() + 1, p0.y(), 0);
+    //auto wp0 = p0.unproject(model_view, proj, vp);
+    //auto wp1 = p1.unproject(model_view, proj, vp);
+    //const float z_near = 1.f;
+    //const float r = 1.f; // sphere radius
+    //const float d = m_camera.get_pos().distanceToPoint(QVector3D(0, 0, 0)) - r;
+    //float err = wp0.distanceToPoint(wp1) * (d / z_near);
+    //std::cout << "error = " << err << std::endl;
+
     // has to be defined after camera has been defined:
     // because we want to compute the error based on camera parameters!
     Geodesic_arcs ga;
@@ -152,6 +169,90 @@ void Main_widget::init_shader_programs()
   m_sp_arc.init_with_vs_fs("arc");
 }
 
+void Main_widget::find_minimum_projected_error_on_sphere(float we)
+{
+  QRect vp(0, 0, m_vp_width, m_vp_height);
+  auto proj = m_camera.get_projection_matrix();
+  auto view = m_camera.get_view_matrix();
+  QMatrix4x4 model;
+  auto model_view = view * model;
+
+  float max_err = 0;
+  float max_theta = -1;
+  float max_phi = -1;
+
+  int num_divs = 200;
+  const float dtheta = M_PI_2 / num_divs;
+  const float dphi = M_PI_2 / num_divs;
+
+  const float r1 = 1.f;
+  const float r2 = r1 - we;
+  for (int i = 0; i <= num_divs; i++)
+  {
+    const float theta = dtheta * i;
+    const float cos_theta = std::cos(theta);
+    const float sin_theta = std::sin(theta);
+
+    for (int j = 0; j <= num_divs; j++)
+    {
+      QVector3D p1, p2;
+      const float phi = dphi * j;
+      const float cos_phi = std::cos(phi);
+      const float sin_phi = std::sin(phi);
+
+      // p1
+      const float r1xz = r1 * sin_phi;
+      p1.setY(r1 * cos_phi);
+      p1.setX(r1xz * cos_theta);
+      p1.setZ(r1xz * sin_theta);
+
+      // p2
+      const float r2xz = r2 * sin_phi;
+      p2.setY(r2 * cos_phi);
+      p2.setX(r2xz * cos_theta);
+      p2.setZ(r2xz * sin_theta);
+
+      auto wp1 = p1.project(model_view, proj, vp);
+      auto wp2 = p2.project(model_view, proj, vp);
+
+      const auto pe = wp1.distanceToPoint(wp2);
+      if (max_err < pe)
+      {
+        max_err = pe;
+        max_theta = theta;
+        max_phi = phi;
+      }
+    }
+  }
+
+  std::cout << "max err = " << max_err << std::endl;
+  std::cout << "max phi = " << max_phi * 180 / M_PI << std::endl;
+  std::cout << "max theta = " << max_theta * 180 / M_PI << std::endl;
+
+  auto wp1 = QVector3D(0, r1, 0).project(model_view, proj, vp);
+  auto wp2 = QVector3D(0, r2, 0).project(model_view, proj, vp);
+  auto pe = wp1.distanceToPoint(wp2);
+  std::cout << "polar err = " << pe << std::endl;
+
+  wp1 = QVector3D(r1, 0, 0).project(model_view, proj, vp);
+  wp2 = QVector3D(r2, 0, 0).project(model_view, proj, vp);
+  pe = wp1.distanceToPoint(wp2);
+  std::cout << "x-axis err = " << pe << std::endl;
+
+  wp1 = QVector3D(0, 0, 1).project(model_view, proj, vp);
+  wp2 = QVector3D(we, 0, 1).project(model_view, proj, vp);
+  pe = wp1.distanceToPoint(wp2);
+  std::cout << "nearest proj err = " << pe << std::endl;
+
+  wp1 = QVector3D(0, 0, -1).project(model_view, proj, vp);
+  wp2 = QVector3D(we, 0, -1).project(model_view, proj, vp);
+  pe = wp1.distanceToPoint(wp2);
+  std::cout << "farthest proj err = " << pe << std::endl;
+
+  // project the origin on the screen (to check if it projects to the mid-vp)
+  //std::cout << QVector3D(0, 0, 0).project(model_view, proj, vp) << std::endl;
+}
+
 void Main_widget::resizeGL(int w, int h)
 {
   m_vp_width = w;
@@ -161,6 +262,33 @@ void Main_widget::resizeGL(int w, int h)
   qreal aspect = qreal(w) / qreal(h ? h : 1);
   const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
   m_camera.perspective(fov, aspect, z_near, z_far);
+
+  {
+    // compute the back-projected error
+    QRect vp(0, 0, m_vp_width, m_vp_height);
+    auto proj = m_camera.get_projection_matrix();
+    auto view = m_camera.get_view_matrix();
+    QMatrix4x4 model;
+    auto model_view = view * model;
+
+    QVector3D p0(m_vp_width / 2, m_vp_height / 2, 0);
+    QVector3D p1(p0.x() + 1, p0.y(), 0);
+    auto wp0 = p0.unproject(model_view, proj, vp);
+    auto wp1 = p1.unproject(model_view, proj, vp);
+    const float z_near = 1.f;
+    const float r = 1.f; // sphere radius
+    const QVector3D origin(0, 0, 0);
+    const float dist_to_cam = m_camera.get_pos().distanceToPoint(origin);
+    
+    float d = dist_to_cam - r;
+    float err = wp0.distanceToPoint(wp1) * (d / z_near);
+    std::cout << "error = " << err << std::endl;
+
+
+    // find the minimum error over the sphere
+    //find_minimum_projected_error_on_sphere(err);
+  }
+
 }
 void Main_widget::paintGL()
 {

@@ -11,6 +11,7 @@ endif()
 set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/opengl/earth")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets)
+add_definitions(-DQT_NO_VERSION_TAGGING)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
