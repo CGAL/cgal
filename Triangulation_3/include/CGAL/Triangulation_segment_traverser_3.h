@@ -729,16 +729,7 @@ public:
 
     switch(_curr_simplex.dimension()) {
     case 3: { /*Cell_handle*/
-      if (ch_next == Cell_handle()) {
-        if(!triangulation().is_infinite(Cell_handle(_curr_simplex)))
-          set_curr_simplex_to_entry();
-        else
-          _curr_simplex = Simplex_3();
-      } else {
-        if (!cell_iterator_is_ahead())
-          increment_cell_iterator();
-        set_curr_simplex_to_entry();
-      }
+      set_curr_simplex_to_entry();
     } break;
     case 2: { /*Facet*/
       CGAL_assertion((ch_next == Cell_handle()) == (_cell_iterator == _cell_iterator.end()));
@@ -746,7 +737,7 @@ public:
       switch(lt_prev) {
       case Locate_type::VERTEX: { // facet-cell?-vertex-outside
         Vertex_handle v_prev{ch_prev->vertex(li_prev)};
-        if(triangulation().tds().has_vertex(get_facet(), v_prev))
+        if(facet_has_vertex(get_facet(), v_prev))
           _curr_simplex = v_prev;
         else
           _curr_simplex = ch_prev;
@@ -759,10 +750,12 @@ public:
           _curr_simplex = ch_prev;
       } break;
       case Locate_type::FACET: { // facet-cell-facet-outside
-        if(ch_next == Cell_handle() && (Facet(ch_prev, li_prev) == get_facet() ||
-                                        triangulation().mirror_facet(Facet(ch_prev, li_prev)) == get_facet()))
-        {
-          _curr_simplex = Simplex_3();
+        Facet f_prev{ch_prev, li_prev};
+        if(is_same_facet(f_prev, get_facet())) {
+          if(ch_next == Cell_handle())
+            _curr_simplex = Simplex_3();
+          else
+            _curr_simplex = ch_next;
         } else
           _curr_simplex = ch_prev;
       } break;
@@ -777,15 +770,20 @@ public:
     case 1: {/*Edge*/
       switch(lt_prev) {
       case Locate_type::VERTEX: { //edge-vertex-outside
-        if(edge_has_vertex(get_edge(), ch_prev->vertex(li_prev)))
-          _curr_simplex = ch_prev->vertex(li_prev);
+        Vertex_handle v_prev{ch_prev->vertex(li_prev)};
+        if(edge_has_vertex(get_edge(), v_prev))
+          _curr_simplex = v_prev;
         else
-          _curr_simplex = shared_facet(get_edge(), ch_prev->vertex(li_prev));
+          _curr_simplex = shared_facet(get_edge(), v_prev);
       } break;
       case Locate_type::EDGE: { //edge-outside or edge-cell-edge-outside
         const Edge e_prev(ch_prev, li_prev, lj_prev);
         if(is_same_edge(get_edge(), e_prev)) {
-          _curr_simplex = Simplex_3();
+          if(ch_next == Cell_handle()) {
+            _curr_simplex = Simplex_3();
+          } else {
+            _curr_simplex = ch_next;
+          }
         } else {
           auto facet_opt = shared_facet(get_edge(), e_prev);
           if(static_cast<bool>(facet_opt)) {
@@ -797,8 +795,9 @@ public:
         }
       } break;
       case Locate_type::FACET: {
-        if(facet_has_edge(Facet(ch_prev, li_prev), get_edge()))
-          _curr_simplex = Facet(ch_prev, li_prev); //edge-facet-outside
+        Facet f_prev{ch_prev, li_prev};
+        if(facet_has_edge(f_prev, get_edge()))
+          _curr_simplex = f_prev; //edge-facet-outside
         else
           _curr_simplex = ch_prev; //query goes through the cell
       } break;
@@ -816,14 +815,17 @@ public:
       case Locate_type::VERTEX: {
         if(ch_prev->vertex(li_prev) != get_vertex()) // avoid infinite loop edge-vertex-same edge-...
           _curr_simplex = Edge(ch_prev, li_prev, ch_prev->index(get_vertex()));
-        else
+        else {
+          CGAL_assertion(ch_next == Cell_handle());
           _curr_simplex = Simplex_3();
+        }
       } break;
       case Locate_type::EDGE: {
-        if(ch_prev->vertex(li_prev) != get_vertex() && ch_prev->vertex(lj_prev) != get_vertex())
-          _curr_simplex = shared_facet(Edge(ch_prev, li_prev, lj_prev), get_vertex());
+        const Edge e_prev(ch_prev, li_prev, lj_prev);
+        if(edge_has_vertex(e_prev, get_vertex()))
+          _curr_simplex = e_prev;
         else
-          _curr_simplex = Edge(ch_prev, li_prev, lj_prev);
+          _curr_simplex = shared_facet(Edge(ch_prev, li_prev, lj_prev), get_vertex());
       } break;
       case Locate_type::FACET: {
         if(ch_prev->vertex(li_prev) != get_vertex()) // vertex-facet-outside
@@ -980,6 +982,11 @@ private:
     return false;
   }
 
+  bool facet_has_vertex(const Facet& f, const Vertex_handle v) const
+  {
+    return triangulation().tds().has_vertex(f, v);
+  }
+
   bool edge_has_vertex(const Edge& e, const Vertex_handle v) const
   {
     return e.first->vertex(e.second) == v
@@ -990,6 +997,11 @@ private:
   {
     return edge_has_vertex(e1, e2.first->vertex(e2.second))
         && edge_has_vertex(e1, e2.first->vertex(e2.third));
+  }
+
+  bool is_same_facet(const Facet& f1, const Facet& f2) const
+  {
+    return f1 == f2 || triangulation().mirror_facet(f1) == f2;
   }
 
   boost::optional<Vertex_handle> shared_vertex(const Edge& e1, const Edge& e2) const
@@ -1041,7 +1053,7 @@ private:
     do
     {
       Facet f = *circ;
-      if (triangulation().tds().has_vertex(f, v))
+      if (facet_has_vertex(f, v))
         return f;
     } while (++circ != end);
 
