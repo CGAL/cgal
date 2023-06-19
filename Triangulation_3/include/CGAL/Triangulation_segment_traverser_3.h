@@ -727,10 +727,17 @@ public:
     int li_prev, lj_prev;
     _cell_iterator.exit(lt_prev, li_prev, lj_prev);
 
-    switch(_curr_simplex.dimension()) {
-    case 3: { /*Cell_handle*/
+    if(_curr_simplex.dimension() == 3) {
       set_curr_simplex_to_entry();
-    } break;
+      return *this;
+    }
+    if(lt_prev == Locate_type::CELL) {
+      CGAL_assertion(ch_next == Cell_handle());
+      _curr_simplex = ch_prev;
+      return *this;
+    }
+
+    switch(_curr_simplex.dimension()) {
     case 2: { /*Facet*/
       CGAL_assertion((ch_next == Cell_handle()) == (_cell_iterator == _cell_iterator.end()));
 
@@ -758,10 +765,6 @@ public:
             _curr_simplex = ch_next;
         } else
           _curr_simplex = ch_prev;
-      } break;
-      case Locate_type::CELL: { // facet-cell then end
-        CGAL_assertion(ch_next == Cell_handle());
-        _curr_simplex = ch_prev;
       } break;
       default:
         CGAL_unreachable();
@@ -801,10 +804,6 @@ public:
         else
           _curr_simplex = ch_prev; //query goes through the cell
       } break;
-      case Locate_type::CELL:
-        CGAL_assertion(ch_next == Cell_handle());
-        _curr_simplex = ch_prev; //edge-cell-outside
-        break;
       default:
         CGAL_unreachable();
       }
@@ -832,10 +831,6 @@ public:
           _curr_simplex = Facet(ch_prev, li_prev);
         else // vertex-cell-facet-outside
           _curr_simplex = ch_prev;
-      } break;
-      case Locate_type::CELL: {
-        CGAL_assertion(ch_next == Cell_handle());
-        _curr_simplex = ch_prev;
       } break;
       default:
         CGAL_unreachable();
