@@ -25,8 +25,12 @@ public:
   
   // theta: angle around y-axis
   // phi: angle from the xz-plane (= rotated x-axis after the above rotation)
-  void rotate(float theta, float phi);
+  void rotate_from_init_config(float theta, float phi);
   void rotate(QMatrix4x4 rot);
+
+  // save config & rotate from saved config (move to separate class?)
+  void save_config();
+  void rotate_from_saved_config(QMatrix4x4 rot);
 
   // move the camera forward around its own z-axis
   void move_forward(float distance);
@@ -36,6 +40,11 @@ private:
   QVector3D m_ux;
   QVector3D m_uy;
   QVector3D m_uz;
+
+  QVector3D m_saved_pos;
+  QVector3D m_saved_ux;
+  QVector3D m_saved_uy;
+  QVector3D m_saved_uz;
 
   float m_z_near, m_z_far;
 

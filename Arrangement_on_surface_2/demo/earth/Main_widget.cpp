@@ -34,7 +34,13 @@ void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
   set_mouse_button_pressed_flag(e, true);
-  m_last_mouse_pos = QVector2D(e->position());
+  m_mouse_press_pos = m_last_mouse_pos = QVector2D(e->position());
+
+  // for the backprojected diff-vector method:
+  if (m_left_mouse_button_down)
+  {
+    m_camera.save_config();
+  }
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
@@ -50,12 +56,13 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
       // OUR CUSTOM AD-HOC CAMERA ROTATION
       m_theta += rotation_scale_factor * diff.x();
       m_phi += rotation_scale_factor * diff.y();
-      m_camera.rotate(-m_theta, -m_phi);
+      m_camera.rotate_from_init_config(-m_theta, -m_phi);
     }
     else
     {
       // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR
-      QVector3D p0(m_last_mouse_pos.x(), m_vp_height - m_last_mouse_pos.y(), 0);
+      //QVector3D p0(m_last_mouse_pos.x(), m_vp_height - m_last_mouse_pos.y(), 0);
+      QVector3D p0(m_mouse_press_pos.x(), m_vp_height - m_mouse_press_pos.y(), 0);
       QVector3D p1(current_mouse_pos.x(), m_vp_height - current_mouse_pos.y(), 0);
       auto dp = p1 - p0; // difference vector in OpenGL window coords.
       QVector3D rdp(-dp.y(), dp.x(), 0); // rotate diff-vector CCW by 90-deg
@@ -77,7 +84,7 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
       QMatrix4x4 rot_matrix;
       rot_matrix.rotate(-rot_angle, rot_axis);
       
-      m_camera.rotate(rot_matrix);
+      m_camera.rotate_from_saved_config(rot_matrix);
     }
   }
   else if(m_middle_mouse_button_down)
@@ -108,23 +115,7 @@ void Main_widget::initializeGL()
   init_shader_programs();
 
   {
-    //// compute the back-projected error
-    //QRect vp(0, 0, m_vp_width, m_vp_height);
-    //auto proj = m_camera.get_projection_matrix();
-    //auto view = m_camera.get_view_matrix();
-    //QMatrix4x4 model;
-    //auto model_view = view * model;
-    //
-    //QVector3D p0(m_vp_width / 2, m_vp_height / 2, 0);
-    //QVector3D p1(p0.x() + 1, p0.y(), 0);
-    //auto wp0 = p0.unproject(model_view, proj, vp);
-    //auto wp1 = p1.unproject(model_view, proj, vp);
-    //const float z_near = 1.f;
-    //const float r = 1.f; // sphere radius
-    //const float d = m_camera.get_pos().distanceToPoint(QVector3D(0, 0, 0)) - r;
-    //float err = wp0.distanceToPoint(wp1) * (d / z_near);
-    //std::cout << "error = " << err << std::endl;
-
+    // TO-DO: move this code to resizeGL (when viewport is initialized)
     // has to be defined after camera has been defined:
     // because we want to compute the error based on camera parameters!
     Geodesic_arcs ga;

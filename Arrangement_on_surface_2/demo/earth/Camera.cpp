@@ -28,7 +28,7 @@ QMatrix4x4 Camera::get_view_matrix() const
 }
 
 
-void Camera::rotate(float theta, float phi)
+void Camera::rotate_from_init_config(float theta, float phi)
 {
   // TO-DO: use the following logic to eliminate the QT-deprecation warnings!
   //QMatrix4x4 rot;
@@ -70,6 +70,22 @@ void Camera::rotate(QMatrix4x4 rot)
   m_ux = rot * m_ux;
   m_uy = rot * m_uy;
   m_uz = rot * m_uz;
+}
+
+void Camera::save_config()
+{
+  m_saved_pos = m_pos;
+  m_saved_ux  = m_ux;
+  m_saved_uy  = m_uy;
+  m_saved_uz  = m_uz;
+}
+
+void Camera::rotate_from_saved_config(QMatrix4x4 rot)
+{
+  m_pos = rot * m_saved_pos;
+  m_ux =  rot * m_saved_ux;
+  m_uy =  rot * m_saved_uy;
+  m_uz =  rot * m_saved_uz;
 }
 
 void Camera::move_forward(float distance)

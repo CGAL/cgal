@@ -66,6 +66,7 @@ private:
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;
   QVector2D m_last_mouse_pos;
+  QVector2D m_mouse_press_pos;
   float m_theta = 0, m_phi = 0;
   int   m_vp_width = 0, m_vp_height = 0;
 
