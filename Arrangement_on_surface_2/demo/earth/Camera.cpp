@@ -11,6 +11,9 @@ Camera::Camera() :
 
 void Camera::perspective(float fov, float aspect, float z_near, float z_far)
 {
+  m_z_near = z_near;
+  m_z_far = z_far;
+
   m_projection.setToIdentity();
   m_projection.perspective(fov, aspect, z_near, z_far);
 }
@@ -25,45 +28,23 @@ QMatrix4x4 Camera::get_view_matrix() const
 }
 
 
-void Camera::rotate_around_x(float theta)
-{
-  QMatrix4x4 rot;
-  rot.rotate(theta, m_ux);
-  auto pos = m_pos.toVector4D();  pos.setW(1);
-  auto uy = m_uy.toVector4D();    uy.setW(0);
-  auto uz = m_uz.toVector4D();    uz.setW(0);
-
-  pos = pos * rot;
-  uy = uy * rot;
-  uz = uz * rot;
-
-  m_pos = pos.toVector3D();
-  m_uy = uy.toVector3D();
-  m_uz = uz.toVector3D();
-}
-void Camera::rotate_around_y(float theta)
-{
-  QMatrix4x4 rot;
-  rot.rotate(theta, m_uy);
-  auto pos = m_pos.toVector4D();  pos.setW(1);
-  auto ux = m_ux.toVector4D();    ux.setW(0);
-  auto uz = m_uz.toVector4D();    uz.setW(0);
-
-  pos = pos * rot;
-  ux = ux * rot;
-  uz = uz * rot;
-
-  m_pos = pos.toVector3D();
-  m_ux = ux.toVector3D();
-  m_uz = uz.toVector3D();
-}
-//void Camera::rotate(float theta_around_x, float theta_around_y)
-//{
-//  rotate_around_x(theta_around_x);
-//  rotate_around_y(theta_around_y);
-//}
 void Camera::rotate(float theta, float phi)
 {
+  // TO-DO: use the following logic to eliminate the QT-deprecation warnings!
+  //QMatrix4x4 rot;
+  //rot.rotate(theta, m_ux);
+  //auto pos = m_pos.toVector4D();  pos.setW(1);
+  //auto uy = m_uy.toVector4D();    uy.setW(0);
+  //auto uz = m_uz.toVector4D();    uz.setW(0);
+
+  //pos = pos * rot;
+  //uy = uy * rot;
+  //uz = uz * rot;
+
+  //m_pos = pos.toVector3D();
+  //m_uy = uy.toVector3D();
+  //m_uz = uz.toVector3D();
+
   QMatrix4x4 r1;
   QVector3D ey(0, 1, 0);
   r1.rotate(theta, ey);
@@ -76,7 +57,8 @@ void Camera::rotate(float theta, float phi)
   // total rotation:
   auto r = r2 * r1;
 
-  m_pos = r * QVector3D(0, 0, 3);
+  const auto dist_cam_to_origin = m_pos.length();
+  m_pos = r * QVector3D(0, 0, dist_cam_to_origin);
   m_ux = r * QVector3D(1, 0, 0); // should be the same as rx (sanity check?)
   m_uy = r * QVector3D(0, 1, 0);
   m_uz = r * QVector3D(0, 0, 1);

@@ -19,13 +19,9 @@ public:
 
   void perspective(float fov, float aspect_ratio, float z_near, float z_far);
 
+  float get_z_near() const { return m_z_near; }
   QMatrix4x4 get_view_matrix() const;
   QMatrix4x4 get_projection_matrix() const { return m_projection; }
-
-  // rotate the camera around its own axes
-  void rotate_around_x(float theta);
-  void rotate_around_y(float theta);
-  //void rotate(float theta_around_x, float theta_around_y);
   
   // theta: angle around y-axis
   // phi: angle from the xz-plane (= rotated x-axis after the above rotation)
@@ -40,6 +36,8 @@ private:
   QVector3D m_ux;
   QVector3D m_uy;
   QVector3D m_uz;
+
+  float m_z_near, m_z_far;
 
   QMatrix4x4 m_projection;
 };

@@ -275,7 +275,7 @@ void Main_widget::resizeGL(int w, int h)
     QVector3D p1(p0.x() + 1, p0.y(), 0);
     auto wp0 = p0.unproject(model_view, proj, vp);
     auto wp1 = p1.unproject(model_view, proj, vp);
-    const float z_near = 1.f;
+    const float z_near = m_camera.get_z_near();
     const float r = 1.f; // sphere radius
     const QVector3D origin(0, 0, 0);
     const float dist_to_cam = m_camera.get_pos().distanceToPoint(origin);
@@ -314,7 +314,7 @@ void Main_widget::paintGL()
     sp.unuse();
   }
 
-  // WORLD COORDINATE AXES &  GEODESIC ARCS
+  // WORLD COORDINATE AXES
   {
     auto& sp = m_sp_per_vertex_color;
     sp.use();
