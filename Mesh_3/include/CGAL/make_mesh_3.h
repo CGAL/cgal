@@ -112,6 +112,7 @@ void init_c3t3_with_features(C3T3& c3t3,
                   domain,
                   Sizing_field(criteria.edge_criteria_object()),
                   criteria.edge_criteria_object().min_length_bound(),
+                  criteria.edge_criteria_object().distance_bound(),
                   maximal_number_of_vertices,
                   pointer_to_error_code
 #ifndef CGAL_NO_ATOMIC

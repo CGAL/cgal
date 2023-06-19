@@ -140,6 +140,7 @@ public:
                              const MeshDomain& domain,
                              SizingFunction size=SizingFunction(),
                              const FT minimal_size = FT(),
+                             const FT edge_distance = FT(),
                              std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
@@ -255,6 +256,11 @@ private:
   /// an edge of the complex.
   bool non_adjacent_but_intersect(const Vertex_handle& va,
                                   const Vertex_handle& vb) const;
+  
+  /// Returns `true` if the edge `(va,vb)` is a not good enough approimation
+  /// of it's feature.
+  bool approx_is_too_large(const Vertex_handle& va,
+                           const Vertex_handle& vb) const;
 
   /// Returns `true` if the balls of `va` and `vb` intersect.
   bool do_balls_intersect(const Vertex_handle& va,
@@ -461,6 +467,7 @@ private:
   SizingFunction size_;
   FT minimal_size_;
   Weight minimal_weight_;
+  FT edge_distance_;
   std::set<Curve_index> treated_edges_;
   Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
@@ -478,6 +485,7 @@ template <typename C3T3, typename MD, typename Sf>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
                            Sf size, const FT minimal_size,
+                           const FT edge_distance,
                            std::size_t maximal_number_of_vertices,
                            Mesh_error_code* error_code
 #ifndef CGAL_NO_ATOMIC
@@ -489,6 +497,7 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , size_(size)
   , minimal_size_(minimal_size)
   , minimal_weight_(CGAL::square(minimal_size))
+  , edge_distance_(edge_distance)
   , refine_balls_iteration_nb(0)
   , nonlinear_growth_of_balls(false)
   , maximal_number_of_vertices_(maximal_number_of_vertices)
@@ -1363,7 +1372,8 @@ refine_balls()
       const Vertex_handle& vb = eit->first->vertex(eit->third);
 
       // If those vertices are not adjacent
-      if( non_adjacent_but_intersect(va, vb) )
+      if( non_adjacent_but_intersect(va, vb)
+        || approx_is_too_large(va, vb))
       {
         using CGAL::Mesh_3::internal::distance_divisor;
 
@@ -1468,6 +1478,15 @@ non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) con
   }
 
   return false;
+}
+
+template <typename C3T3, typename MD, typename Sf>
+bool
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb) const
+{
+    // TODO
+    return false;
 }
 
 

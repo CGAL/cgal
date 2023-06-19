@@ -130,17 +130,21 @@ public:
   * this lower bound can be handy on some domains, but using it may
   * break all the surface topology guarantees of the meshing algorithm.
   * It is not guaranteed to be exactly respected in the output mesh.
+  * \param distance_bound is an upper bound for the distances of the
+  * edge to the input feature.
   *
   * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
   */
   Mesh_edge_criteria_3(const FT& length_bound,
-                       const FT& min_length_bound = 0)
+                       const FT& min_length_bound = 0,
+                       const FT& distance_bound = 0)
     : p_size_(new Mesh_3::internal::Sizing_field_container<
                 Mesh_constant_domain_field_3<Gt,Index> ,
                 FT,
                 Point_3,
                 Index>(length_bound))
     , min_length_bound_(min_length_bound)
+    , distance_bound_(distance_bound)
   {}
 
   // Nb: SFINAE to avoid wrong matches with built-in numerical types
@@ -157,12 +161,14 @@ public:
   Mesh_edge_criteria_3
   (
    const SizingField& length_bound,
-   const FT& min_length_bound = 0
+   const FT& min_length_bound = 0,
+   const FT& distance_bound = 0
 #ifndef DOXYGEN_RUNNING
     , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>::value>* = 0
 #endif
    )
    : min_length_bound_(min_length_bound)
+   , distance_bound_(distance_bound)
   {
     p_size_ = new Mesh_3::internal::Sizing_field_container<SizingField,
                                                            FT,
@@ -176,6 +182,7 @@ public:
   Mesh_edge_criteria_3(const Self& rhs)
     : p_size_(rhs.p_size_->clone())
     , min_length_bound_(rhs.min_length_bound_)
+    , distance_bound_(rhs.distance_bound_)
   {}
 
   /// Destructor
@@ -193,6 +200,11 @@ public:
   {
     return min_length_bound_;
   }
+  
+  const FT& distance_bound() const
+  {
+    return distance_bound_;
+  }
 #endif
 
 private:
@@ -203,6 +215,7 @@ private:
   // real Sizing_field type
   Sizing_field_interface* p_size_;
   const FT min_length_bound_;
+  const FT distance_bound_;
 };
 
 } // end namespace CGAL

@@ -73,7 +73,8 @@ public:
     :edge_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_size_param),
                                                  parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_sizing_field_param),
                                                                               parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(DBL_MAX)))),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_min_size_param), FT(0))),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_min_size_param), FT(0)),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_distance_param), FT(0))),
     facet_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_angle_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_size_param),
                                                  parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_sizing_field_param),
@@ -267,6 +268,10 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                     or have missing polyline features.}
  *     \cgalParamExtra{Note this lower-bound may not be respected everywhere in the output mesh,
  *                     to keep the feature graph valid.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{edge_distance}
+ *     \cgalParamDescription{a constant describing a upper bound for the distances between the
+ *                           edge and it's coresponding input feature.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_angle}
  *     \cgalParamDescription{a lower bound for the angles (in degrees) of the
