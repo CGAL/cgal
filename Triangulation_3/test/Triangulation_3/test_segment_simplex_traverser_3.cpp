@@ -345,6 +345,12 @@ bool test_a_simple_tetrahedron(const std::vector<Point_3>& points) {
   test({-.05, .45, .2}, {.5,  0,    .2}, "I232");
   test({-.05, .45, .2}, {.2,   .3,  .2}, "I23");
 
+  // special case: queries stay in a single simplex
+  test({ -.125, -.125,  .625}, { -.125, -.125,  .6251},    "I");
+  test({ .25, .25,  .25},      { .20, .25,  .25},      "3");
+  test({ 0,   .5,  .2},        { 0,   .4,  .2},        "2");
+  test({ 0,   .5,  .0},        { 0,   .6,  .0},        "1");
+
   return ok;
 }
 
