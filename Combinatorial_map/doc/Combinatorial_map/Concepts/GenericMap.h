@@ -820,9 +820,9 @@ void free_mark(size_type m) const;
 Creates a combinatorial hexahedron (six combinatorial quadrangles 2-sewn together), and adds it in the generic map. Returns a descriptor on one dart of this combinatorial hexahedron.
 \pre `dimension` \f$\geq\f$ 2.
 
-\sa `make_edge`
-\sa `make_combinatorial_polygon`
-\sa `make_combinatorial_tetrahedron`
+\sa `make_edge()`
+\sa `make_combinatorial_polygon()`
+\sa `make_combinatorial_tetrahedron()`
 
 */
 Dart_descriptor make_combinatorial_hexahedron();
@@ -831,9 +831,9 @@ Dart_descriptor make_combinatorial_hexahedron();
 Creates a combinatorial polygon of length `lg` (a cycle of `lg` edges), and adds it in the generic map. Returns a descriptor on one dart of this combinatorial polygon.
 \pre `dimension`\f$ \geq\f$ 1 and `lg`\f$ >\f$ 0.
 
-\sa `make_edge`
-\sa `make_combinatorial_tetrahedron`
-\sa `make_combinatorial_hexahedron`
+\sa `make_edge()`
+\sa `make_combinatorial_tetrahedron()`
+\sa `make_combinatorial_hexahedron()`
 */
 Dart_descriptor make_combinatorial_polygon(unsigned int lg);
 
@@ -841,9 +841,9 @@ Dart_descriptor make_combinatorial_polygon(unsigned int lg);
 Creates a combinatorial tetrahedron (four combinatorial triangles 2-sewn together), and adds it in the generic map. Returns a descriptor on one dart of this combinatorial tetrahedron.
 \pre `dimension`\f$ \geq\f$ 2.
 
-\sa `make_edge`
-\sa `make_combinatorial_polygon`
-\sa `make_combinatorial_hexahedron`
+\sa `make_edge()`
+\sa `make_combinatorial_polygon()`
+\sa `make_combinatorial_hexahedron()`
 */
 Dart_descriptor make_combinatorial_tetrahedron();
 
@@ -851,9 +851,9 @@ Dart_descriptor make_combinatorial_tetrahedron();
 Creates an isolated edge (two darts sewn to represent one edge and two vertices) and adds it in the generic map. Returns a descriptor on one dart of this edge.
 \pre `dimension`\f$ \geq\f$ 2.
 
-\sa `make_combinatorial_polygon`
-\sa `make_combinatorial_tetrahedron`
-\sa `make_combinatorial_hexahedron`
+\sa `make_combinatorial_polygon()`
+\sa `make_combinatorial_tetrahedron()`
+\sa `make_combinatorial_hexahedron()`
 */
 Dart_descriptor make_edge();
 
@@ -874,12 +874,12 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 
-\sa `insert_cell_0_in_cell_2`
-\sa `insert_cell_1_in_cell_2`
-\sa `insert_cell_1_between_two_cells_2`
-\sa `insert_dangling_cell_1_in_cell_2`
-\sa `insert_cell_2_in_cell_3<InputIterator>`
-\sa `remove_cell<i>`
+\sa `insert_cell_0_in_cell_2()`
+\sa `insert_cell_1_in_cell_2()`
+\sa `insert_cell_1_between_two_cells_2()`
+\sa `insert_dangling_cell_1_in_cell_2()`
+\sa `insert_cell_2_in_cell_3<InputIterator>()`
+\sa `remove_cell<i>()`
 */
 Dart_descriptor insert_cell_0_in_cell_1(Dart_descriptor d);
 
@@ -895,12 +895,12 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 
-\sa `insert_cell_0_in_cell_2`
-\sa `insert_cell_1_in_cell_2`
-\sa `insert_cell_1_between_two_cells_2`
-\sa `insert_dangling_cell_1_in_cell_2`
-\sa `insert_cell_2_in_cell_3<InputIterator>`
-\sa `remove_cell<i>`
+\sa `insert_cell_0_in_cell_2()`
+\sa `insert_cell_1_in_cell_2()`
+\sa `insert_cell_1_between_two_cells_2()`
+\sa `insert_dangling_cell_1_in_cell_2()`
+\sa `insert_cell_2_in_cell_3<InputIterator>()`
+\sa `remove_cell<i>()`
 */
 Dart_descriptor insert_cell_0_in_cell_2(Dart_descriptor d);
 
@@ -916,13 +916,13 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 
-\sa `is_insertable_cell_1_in_cell_2`
-\sa `insert_cell_0_in_cell_1`
-\sa `insert_cell_0_in_cell_2`
-\sa `insert_cell_1_between_two_cells_2`
-\sa `insert_dangling_cell_1_in_cell_2`
-\sa `insert_cell_2_in_cell_3<InputIterator>`
-\sa `remove_cell<i>`
+\sa `is_insertable_cell_1_in_cell_2()`
+\sa `insert_cell_0_in_cell_1()`
+\sa `insert_cell_0_in_cell_2()`
+\sa `insert_cell_1_between_two_cells_2()`
+\sa `insert_dangling_cell_1_in_cell_2()`
+\sa `insert_cell_2_in_cell_3<InputIterator>()`
+\sa `remove_cell<i>()`
 */
 Dart_descriptor insert_cell_1_in_cell_2(Dart_descriptor d1, Dart_descriptor d2);
 
@@ -936,20 +936,20 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 
-\sa `is_insertable_cell_1_between_two_cells_2`
-\sa `insert_cell_0_in_cell_1`
-\sa `insert_cell_0_in_cell_2`
-\sa `insert_cell_1_in_cell_2`
-\sa `insert_dangling_cell_1_in_cell_2`
-\sa `insert_cell_2_in_cell_3<InputIterator>`
-\sa `remove_cell<i>`
+\sa `is_insertable_cell_1_between_two_cells_2()`
+\sa `insert_cell_0_in_cell_1()`
+\sa `insert_cell_0_in_cell_2()`
+\sa `insert_cell_1_in_cell_2()`
+\sa `insert_dangling_cell_1_in_cell_2()`
+\sa `insert_cell_2_in_cell_3<InputIterator>()`
+\sa `remove_cell<i>()`
 */
 Dart_descriptor insert_cell_1_between_two_cells_2(Dart_descriptor d1, Dart_descriptor d2);
 
-/*! Call `insert_cell_1_in_cell_2` if `is_insertable_cell_1_in_cell_2(d1, d2)`, otherwise call `insert_cell_1_between_two_cells_2`.
-\sa `insert_cell_1_in_cell_2`
-\sa `insert_cell_1_between_two_cells_2`
-\sa `is_insertable_cell_1_in_cell_2`
+/*! Call `insert_cell_1_in_cell_2()` if `is_insertable_cell_1_in_cell_2(d1, d2)`, otherwise call `insert_cell_1_between_two_cells_2()`.
+\sa `insert_cell_1_in_cell_2()`
+\sa `insert_cell_1_between_two_cells_2()`
+\sa `is_insertable_cell_1_in_cell_2()`
 */
 Dart_descriptor insert_cell_1(Dart_descriptor d1, Dart_descriptor d2);
 
@@ -965,13 +965,13 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 
-\sa `is_insertable_cell_2_in_cell_3<InputIterator>`
-\sa `insert_cell_0_in_cell_1`
-\sa `insert_cell_0_in_cell_2`
-\sa `insert_cell_1_in_cell_2`
-\sa `insert_cell_1_between_two_cells_2`
-\sa `insert_dangling_cell_1_in_cell_2`
-\sa `remove_cell<i>`
+\sa `is_insertable_cell_2_in_cell_3<InputIterator>()`
+\sa `insert_cell_0_in_cell_1()`
+\sa `insert_cell_0_in_cell_2()`
+\sa `insert_cell_1_in_cell_2()`
+\sa `insert_cell_1_between_two_cells_2()`
+\sa `insert_dangling_cell_1_in_cell_2()`
+\sa `remove_cell<i>()`
 */
 template <class InputIterator>
 Dart_descriptor insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
@@ -986,12 +986,12 @@ See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_edge} and f
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 
-\sa `insert_cell_0_in_cell_1`
-\sa `insert_cell_0_in_cell_2`
-\sa `insert_cell_1_in_cell_2`
-\sa `insert_cell_1_between_two_cells_2`
-\sa `insert_cell_2_in_cell_3<InputIterator>`
-\sa `remove_cell<i>`
+\sa `insert_cell_0_in_cell_1()`
+\sa `insert_cell_0_in_cell_2()`
+\sa `insert_cell_1_in_cell_2()`
+\sa `insert_cell_1_between_two_cells_2()`
+\sa `insert_cell_2_in_cell_3<InputIterator>()`
+\sa `remove_cell<i>()`
 
 */
 Dart_descriptor insert_dangling_cell_1_in_cell_2(Dart_descriptor d);
@@ -1002,8 +1002,8 @@ Returns `true` iff it is possible to insert a 1-cell in the generic map between 
 This is possible if `d1`\f$ \neq \f$ `d2` and `d1` can be reached from `d2` by using some `previous` and `next` calls.
 \pre \link GenericMap::dimension `dimension`\endlink \f$ \geq\f$ 2, `d1`\f$ \in \f$ \link GenericMap::darts `darts()`\endlink, and `d2`\f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
-\sa `insert_cell_1_in_cell_2`
-\sa `is_insertable_cell_2_in_cell_3<InputIterator>`
+\sa `insert_cell_1_in_cell_2()`
+\sa `is_insertable_cell_2_in_cell_3<InputIterator>()`
 
 */
 bool is_insertable_cell_1_in_cell_2(Dart_const_descriptor d1, Dart_const_descriptor d2);
@@ -1014,7 +1014,7 @@ Returns `true` iff it is possible to insert a 1-cell in the generic map between 
 This is possible if `d1`\f$ \neq \f$ `d2` and `d1` can not be reached from `d2` by using some `previous` and `next` calls.
 \pre \link GenericMap::dimension `dimension`\endlink \f$ \geq\f$ 2, `d1`\f$ \in \f$ \link GenericMap::darts `darts()`\endlink, and `d2`\f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
-\sa `insert_cell_1_between_two_cells_2`
+\sa `insert_cell_1_between_two_cells_2()`
 
 */
 bool is_insertable_cell_1_between_two_cells_2(Dart_const_descriptor d1, Dart_const_descriptor d2);
@@ -1023,8 +1023,8 @@ bool is_insertable_cell_1_between_two_cells_2(Dart_const_descriptor d1, Dart_con
 Returns `true` iff it is possible to insert a 2-cell in the generic map along the path of darts given by the range `[afirst,alast)`. The 2-cell can be inserted iff the ordered list of darts form a closed path of edges inside a same volume.
 \pre \link GenericMap::dimension `dimension`\endlink \f$ \geq\f$ 3.
 
-\sa `insert_cell_2_in_cell_3<InputIterator>`
-\sa `is_insertable_cell_1_in_cell_2`
+\sa `insert_cell_2_in_cell_3<InputIterator>()`
+\sa `is_insertable_cell_1_in_cell_2()`
 
 */
 template <class InputIterator>
@@ -1036,7 +1036,7 @@ Returns `true` iff the <I>i</I>-cell containing `d` can be removed.
 An <I>i</I>-cell can be removed if `i`==\link GenericMap::dimension `dimension`\endlink or if `i`==\link GenericMap::dimension `dimension`\endlink-1 or if `i`\f$ < \f$ \link GenericMap::dimension `dimension`\endlink-1 and the <I>i</I>-cell containing `d` is incident to at most two (<I>i+1</I>)-cells.
 \pre 0\f$ \leq \f$ `i`\f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and `d`\f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
-\sa `remove_cell<i>`
+\sa `remove_cell<i>()`
 */
 template <unsigned int i>
 bool is_removable(Dart_const_descriptor d);
@@ -1055,13 +1055,13 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 
-\sa `is_removable<i>`
-\sa `insert_cell_0_in_cell_1`
-\sa `insert_cell_0_in_cell_2`
-\sa `insert_cell_1_in_cell_2`
-\sa `insert_cell_1_between_two_cells_2`
-\sa `insert_dangling_cell_1_in_cell_2`
-\sa `insert_cell_2_in_cell_3<InputIterator>`
+\sa `is_removable<i>()`
+\sa `insert_cell_0_in_cell_1()`
+\sa `insert_cell_0_in_cell_2()`
+\sa `insert_cell_1_in_cell_2()`
+\sa `insert_cell_1_between_two_cells_2()`
+\sa `insert_dangling_cell_1_in_cell_2()`
+\sa `insert_cell_2_in_cell_3<InputIterator>()`
 */
 template <unsigned int i>
 size_type remove_cell(Dart_descriptor d);
