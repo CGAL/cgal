@@ -1513,7 +1513,6 @@ bool
   Curve_index curve_index = c3t3_.curve_index(va, vb);
   Point_3 pa = va->point().point();
   Point_3 pb = vb->point().point();
-  bool is_loop = domain_.is_loop(curve_index);
   CGAL::Sign orientation = domain_.distance_sign(pa, pb, curve_index);
   FT geodesic_distance = domain_.curve_segment_length(pa, pb, curve_index, orientation);
   Point_3 geodesic_middle;
