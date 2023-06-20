@@ -731,7 +731,10 @@ public:
       set_curr_simplex_to_entry();
       return *this;
     }
-    if(lt_prev == Locate_type::CELL) {
+    if(lt_prev == Locate_type::CELL ||
+       lt_prev == Locate_type::OUTSIDE_CONVEX_HULL ||
+       lt_prev == Locate_type::OUTSIDE_AFFINE_HULL)
+    {
       CGAL_assertion(ch_next == Cell_handle());
       _curr_simplex = ch_prev;
       return *this;
