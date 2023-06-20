@@ -569,7 +569,7 @@ The following running times were observed:
 ***************************************
 \section PMPPredicates Predicates
 
-This packages provides several predicates to be evaluated with respect to a triangle mesh.
+This package provides several predicates to be evaluated with respect to a triangle mesh.
 
 \subsection PMPDoIntersect Intersections Detection
 Intersection tests between triangle meshes and/or polylines can be done using

@@ -111,7 +111,7 @@ are provided too.
 The example continues with a test if the halfedge
 actually refers to a tetrahedron. This test checks the connected
 component referred to by the halfedge `h` and not the polyhedral
-surface as a whole. This examples works only on the combinatorial
+surface as a whole. This example works only on the combinatorial
 level of a polyhedral surface. The next example adds the geometry.
 
 \cgalExample{Polyhedron/polyhedron_prog_simple.cpp}
