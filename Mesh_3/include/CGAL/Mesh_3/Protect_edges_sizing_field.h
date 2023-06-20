@@ -1483,16 +1483,6 @@ non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) con
 template <typename C3T3, typename MD, typename Sf>
 bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb) const
-{
-    // TODO
-    return false;
-}
-
-
-template <typename C3T3, typename MD, typename Sf>
-bool
-Protect_edges_sizing_field<C3T3, MD, Sf>::
 do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
   typename Gt::Construct_sphere_3 sphere =
@@ -1507,6 +1497,38 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
   const Weighted_point& wa = c3t3_.triangulation().point(va);
   const Weighted_point& wb = c3t3_.triangulation().point(vb);
   return do_intersect(sphere(cp(wa), cw(wa)), sphere(cp(wb), cw(wb)));
+}
+
+template <typename C3T3, typename MD, typename Sf>
+bool
+    Protect_edges_sizing_field<C3T3, MD, Sf>::
+    approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb) const
+{
+  if ( ! c3t3_.is_in_complex(va, vb) || edge_distance_ == 0)
+  {
+    return false;
+  }
+  typedef typename Kernel::Point_3 Point_3;
+
+  Curve_index curve_index = c3t3_.curve_index(va, vb);
+  Point_3 pa = va->point().point();
+  Point_3 pb = vb->point().point();
+  bool is_loop = domain_.is_loop(curve_index);
+  CGAL::Sign orientation = domain_.distance_sign(pa, pb, curve_index);
+  FT geodesic_distance = domain_.curve_segment_length(pa, pb, curve_index, orientation);
+  Point_3 geodesic_middle;
+  if (orientation >= 0)
+  {
+    geodesic_middle = domain_.construct_point_on_curve(pa, curve_index, geodesic_distance / 2);
+  }
+  else
+  {
+    geodesic_middle = domain_.construct_point_on_curve(pb, curve_index, geodesic_distance / 2);
+  }
+  Point_3 segment_middle = CGAL::midpoint(pa, pb);
+  FT squared_evaluated_distance = CGAL::squared_distance(segment_middle, geodesic_middle);
+
+  return squared_evaluated_distance > edge_distance_ * edge_distance_;
 }
 
 template <typename C3T3, typename MD, typename Sf>
