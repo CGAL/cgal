@@ -144,7 +144,11 @@ public:
                 Point_3,
                 Index>(length_bound))
     , min_length_bound_(min_length_bound)
-    , distance_bound_(distance_bound)
+    , distance_bound_(new Mesh_3::internal::Sizing_field_container<
+                        Mesh_constant_domain_field_3<Gt,Index> ,
+                        FT,
+                        Point_3,
+                        Index>(distance_bound))
   {}
 
   // Nb: SFINAE to avoid wrong matches with built-in numerical types
@@ -168,12 +172,74 @@ public:
 #endif
    )
    : min_length_bound_(min_length_bound)
-   , distance_bound_(distance_bound)
+   , distance_bound_(new Mesh_3::internal::Sizing_field_container<
+                        Mesh_constant_domain_field_3<Gt,Index> ,
+                        FT,
+                        Point_3,
+                        Index>(distance_bound))
   {
     p_size_ = new Mesh_3::internal::Sizing_field_container<SizingField,
                                                            FT,
                                                            Point_3,
                                                            Index>(length_bound);
+  }
+
+  /*!
+  * @tparam SizingField a model of `MeshDomainField_3`
+  *
+  * Returns an object to serve as criteria for edges.
+  * The behavior and semantic of the argument are the same
+  * as above, except that the `distance_bound`
+  * parameter is a functional instead of a constant.
+  */
+  template < typename DistanceField >
+  Mesh_edge_criteria_3(const FT& length_bound,
+                       const FT& min_length_bound = 0,
+                       const DistanceField& distance_bound = 0
+#ifndef DOXYGEN_RUNNING
+                       , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>::value>* = 0
+#endif
+                       )
+      : p_size_(new Mesh_3::internal::Sizing_field_container<
+                Mesh_constant_domain_field_3<Gt,Index> ,
+                FT,
+                Point_3,
+                Index>(length_bound))
+      , min_length_bound_(min_length_bound)
+  {
+    distance_bound_ = new Mesh_3::internal::Sizing_field_container<DistanceField,
+                                                           FT,
+                                                           Point_3,
+                                                           Index>(distance_bound);
+  }
+
+  /*!
+  * @tparam SizingField a model of `MeshDomainField_3`
+  *
+  * Returns an object to serve as criteria for edges.
+  * The behavior and semantic of the argument are the same
+  * as above, except that the `distance_bound` and `length_bound`
+  * parameters are functional instead of a constant.
+  */
+  template < typename SizingField, typename DistanceField>
+  Mesh_edge_criteria_3(const SizingField& length_bound,
+                       const FT& min_length_bound = 0,
+                       const DistanceField& distance_bound = 0
+#ifndef DOXYGEN_RUNNING
+                       , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>::value>* = 0
+                       , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>::value>* = 0
+#endif
+                       )
+      : min_length_bound_(min_length_bound)
+  {
+    p_size_ = new Mesh_3::internal::Sizing_field_container<SizingField,
+                                                           FT,
+                                                           Point_3,
+                                                           Index>(length_bound);
+    distance_bound_ = new Mesh_3::internal::Sizing_field_container<DistanceField,
+                                                                   FT,
+                                                                   Point_3,
+                                                                   Index>(distance_bound);
   }
 
   /// @}
@@ -195,16 +261,15 @@ public:
   FT sizing_field(const Point_3& p, const int dim, const Index& index) const
   { return (*p_size_)(p,dim,index); }
 
+  FT distance_bound_field(const Point_3& p, const int dim, const Index& index) const
+  { return (*distance_bound_)(p,dim,index); }
+
 public:
   const FT& min_length_bound() const
   {
     return min_length_bound_;
   }
-  
-  const FT& distance_bound() const
-  {
-    return distance_bound_;
-  }
+
 #endif
 
 private:
@@ -215,7 +280,7 @@ private:
   // real Sizing_field type
   Sizing_field_interface* p_size_;
   const FT min_length_bound_;
-  const FT distance_bound_;
+  Sizing_field_interface* distance_bound_;
 };
 
 } // end namespace CGAL
