@@ -75,7 +75,11 @@
 #endif
 
 namespace CGAL {
+
 namespace Polygon_mesh_processing {
+
+template <typename PM> class Uniform_sizing_field;
+
 namespace internal {
 
   enum Halfedge_status {
@@ -1012,7 +1016,7 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    template <typename SizingFunction>
+    template <class SizingFunction>
     void tangential_relaxation_impl(const bool relax_constraints/*1d smoothing*/
                                   , const unsigned int nb_iterations
                                   , const SizingFunction& sizing)
@@ -1046,32 +1050,29 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      //todo IP temp: I have to rewrite to include original implementation, hardcoded for now
-      const bool use_sizing = true;
-      if (!use_sizing)
-      tangential_relaxation(
-        vertices(mesh_),
-        mesh_,
-        CGAL::parameters::number_of_iterations(nb_iterations)
-                         .vertex_point_map(vpmap_)
-                         .geom_traits(gt_)
-                         .edge_is_constrained_map(constrained_edges_pmap)
-                         .vertex_is_constrained_map(constrained_vertices_pmap)
-                         .relax_constraints(relax_constraints)
-      );
-
+      if (std::is_same<SizingFunction, Uniform_sizing_field<PM>>::value)
+        tangential_relaxation(
+                vertices(mesh_),
+                mesh_,
+                CGAL::parameters::number_of_iterations(nb_iterations)
+                        .vertex_point_map(vpmap_)
+                        .geom_traits(gt_)
+                        .edge_is_constrained_map(constrained_edges_pmap)
+                        .vertex_is_constrained_map(constrained_vertices_pmap)
+                        .relax_constraints(relax_constraints)
+        );
       else
-      tangential_relaxation_with_sizing(
-        vertices(mesh_),
-        mesh_,
-        sizing,
-        CGAL::parameters::number_of_iterations(nb_iterations)
-          .vertex_point_map(vpmap_)
-          .geom_traits(gt_)
-          .edge_is_constrained_map(constrained_edges_pmap)
-          .vertex_is_constrained_map(constrained_vertices_pmap)
-          .relax_constraints(relax_constraints)
-      );
+        tangential_relaxation_with_sizing(
+          vertices(mesh_),
+          mesh_,
+          sizing,
+          CGAL::parameters::number_of_iterations(nb_iterations)
+            .vertex_point_map(vpmap_)
+            .geom_traits(gt_)
+            .edge_is_constrained_map(constrained_edges_pmap)
+            .vertex_is_constrained_map(constrained_vertices_pmap)
+            .relax_constraints(relax_constraints)
+        );
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 

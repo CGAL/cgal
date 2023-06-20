@@ -59,6 +59,7 @@ public:
   //todo ip: rewrite to remove this?
   void calc_sizing_map() const {}
   void update_sizing_map(const vertex_descriptor& vnew) const {}
+  double get_sizing(vertex_descriptor v) const {return 1.;}
 
   boost::optional<FT> is_too_long(const halfedge_descriptor h) const
   {

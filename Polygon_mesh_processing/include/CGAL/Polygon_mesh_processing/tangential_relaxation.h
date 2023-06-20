@@ -317,14 +317,14 @@ void tangential_relaxation(const VertexRange& vertices,
 #endif
 }
 
-template <typename VertexRange
-        , class TriangleMesh
-        , typename SizingFunction
-        , class NamedParameters = parameters::Default_named_parameters>
+template <typename VertexRange,
+          class TriangleMesh,
+          class SizingFunction,
+          class NamedParameters = parameters::Default_named_parameters>
 void tangential_relaxation_with_sizing(const VertexRange& vertices,
-  TriangleMesh& tm,
-  const SizingFunction& sizing,
-  const NamedParameters& np = parameters::default_values())
+                                       TriangleMesh& tm,
+                                       const SizingFunction& sizing,
+                                       const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -558,10 +558,12 @@ void tangential_relaxation(TriangleMesh& tm, const CGAL_NP_CLASS& np = parameter
   tangential_relaxation(vertices(tm), tm, np);
 }
 
-template <class TriangleMesh
-        , typename SizingFunction
-        , typename CGAL_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation_with_sizing(TriangleMesh& tm, const SizingFunction& sizing, const CGAL_NP_CLASS& np = parameters::default_values())
+template <class TriangleMesh,
+          typename SizingFunction,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+void tangential_relaxation_with_sizing(TriangleMesh& tm,
+                                       const SizingFunction& sizing,
+                                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   tangential_relaxation_with_sizing(vertices(tm), tm, sizing, np);
 }

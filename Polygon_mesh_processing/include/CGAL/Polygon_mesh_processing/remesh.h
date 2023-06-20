@@ -220,27 +220,6 @@ void isotropic_remeshing(const FaceRange& faces
     np);
 }
 
-//todo ip: should I have the overload here?
-/*
-template<typename PolygonMesh
-        , typename FaceRange
-        , typename NamedParameters = parameters::Default_named_parameters>
-void isotropic_remeshing(const FaceRange& faces
-                       , const double& tol
-                       , const std::pair<double, double>& edge_len_min_max
-                       , PolygonMesh& pmesh
-                       , const NamedParameters& np = parameters::default_values())
-{
-  typedef Adaptive_sizing_field<PolygonMesh> Adaptive_sizing;
-  Adaptive_sizing sizing(edge_len_min_max, pmesh);
-  isotropic_remeshing<PolygonMesh, FaceRange, Adaptive_sizing, NamedParameters>(
-          faces,
-          sizing,
-          pmesh,
-          np);
-}
- */
-
 template<typename PolygonMesh
        , typename FaceRange
        , typename SizingFunction
@@ -355,7 +334,8 @@ void isotropic_remeshing(const FaceRange& faces
   t.reset(); t.start();
 #endif
 
-      sizing.calc_sizing_map();
+    sizing.calc_sizing_map();
+
   for (unsigned int i = 0; i < nb_iterations; ++i)
   {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -371,7 +351,6 @@ void isotropic_remeshing(const FaceRange& faces
     if(do_flip)
       remesher.flip_edges_for_valence_and_shape();
     remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing);
-//    remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));
 #ifdef CGAL_PMP_REMESHING_VERBOSE
