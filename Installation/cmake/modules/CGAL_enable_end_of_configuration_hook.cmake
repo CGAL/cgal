@@ -6,86 +6,80 @@
 # the configuration.
 #
 # See https://stackoverflow.com/a/43300621/1728537 for the starting point.
+cmake_minimum_required(VERSION 3.3...3.24)
 
+if(CGAL_SKIP_CMAKE_HOOKS)
+  return()
+endif()
 get_property(PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED
   GLOBAL PROPERTY CGAL_run_at_the_end_of_configuration_INCLUDED)
-if(CGAL_SKIP_CMAKE_HOOKS OR PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED)
+if(PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED)
+  CGAL_install_hooks()
   return()
 endif()
 
-function(CGAL_run_at_the_end_of_configuration variable access value current_list_file stack)
-  if(NOT access STREQUAL "MODIFIED_ACCESS")
+function(CGAL_hook_check_targets)
+  if(NOT CGAL_CHECK_UNREFERENCES_TARGETS)
     return()
-  endif()
-  if(current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
-        AND NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
-        OR NOT stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
-        AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
-        OR stack MATCHES doc/CMakeLists.txt
-        OR stack MATCHES demo/Polyhedron/)
-      return()
   endif()
   get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
-  if(CGAL_CHECK_UNREFERENCES_TARGETS)
-    set(_list_of_deps)
-    set(_special_targets  demos examples tests ALL_CGAL_TARGETS CGAL_Qt5_moc_and_resources uninstall install_FindCGAL)
-    foreach(t ${_special_targets})
-      if(NOT TARGET ${t})
-        continue()
-      endif()
-      get_property(_deps TARGET ${t} PROPERTY MANUALLY_ADDED_DEPENDENCIES)
-#      message("  deps of ${t}: ${_deps}")
-      list(APPEND _list_of_deps ${_deps})
-    endforeach()
-    list(APPEND _list_of_deps ${CGAL_EXECUTABLE_TARGETS})
-#    message(STATUS "  all deps: ${_list_of_deps}")
-    foreach(target ${_targets})
-#      message(STATUS "  new target: ${target}")
-      if(${target} IN_LIST _special_targets)
-        continue()
-      endif()
-      if(NOT ${target} IN_LIST _list_of_deps)
-        message(AUTHOR_WARNING "  orphan target: ${target}")
-      endif()
-    endforeach()
-  endif()
-  if(CGAL_CHECK_UNUSED_CPP_FILES
-      AND NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
-      AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
-    file(GLOB _cppfiles ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-    if(_targets AND _cppfiles)
-      set(_sources)
-      foreach(_target ${_targets})
-        get_property(_target_type TARGET ${_target} PROPERTY TYPE)
-        if(_target_type STREQUAL INTERFACE_LIBRARY)
-          continue()
-        endif()
-        get_property(_target_sources TARGET ${_target} PROPERTY SOURCES)
-        list(APPEND _sources ${_target_sources})
-      endforeach()
-      if(_sources)
-        list(REMOVE_ITEM _cppfiles ${_sources})
-      endif()
-      if(_cppfiles)
-        set(_warning "In ${CMAKE_CURRENT_SOURCE_DIR}, the following files are unused:")
-        foreach(_cppfile ${_cppfiles})
-          set(_warning "${_warning}
-  ${_cppfile}")
-        endforeach()
-        set(_warning  "${_warning}
-")
-        message(AUTHOR_WARNING "${_warning}")
-      endif()
+  set(_list_of_deps)
+  set(_special_targets  demos examples tests ALL_CGAL_TARGETS CGAL_Qt5_moc_and_resources uninstall install_FindCGAL)
+  foreach(t ${_special_targets})
+    if(NOT TARGET ${t})
+      continue()
     endif()
-  endif()
+    get_property(_deps TARGET ${t} PROPERTY MANUALLY_ADDED_DEPENDENCIES)
+    # message("  deps of ${t}: ${_deps}")
+    list(APPEND _list_of_deps ${_deps})
+  endforeach()
+  list(APPEND _list_of_deps ${CGAL_EXECUTABLE_TARGETS})
+  # message(STATUS "  all deps: ${_list_of_deps}")
+  foreach(target ${_targets})
+    # message(STATUS "  new target: ${target}")
+    if(${target} IN_LIST _special_targets)
+      continue()
+    endif()
+    if(NOT ${target} IN_LIST _list_of_deps)
+      message(AUTHOR_WARNING "  orphan target: ${target}")
+    endif()
+  endforeach()
+endfunction()
 
-  if(value)
-    # Only do the following at the end of the CMake process, when the
-    # value of variable CMAKE_CURRENT_LIST_DIR is changed to the empty
-    # string.
+function(CGAL_hook_check_unused_cpp_files)
+  if(NOT CGAL_CHECK_UNUSED_CPP_FILES)
     return()
   endif()
+  get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
+  file(GLOB _cppfiles ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+  if(NOT _targets OR NOT _cppfiles)
+    return()
+  endif()
+  set(_sources)
+  foreach(_target ${_targets})
+    get_property(_target_type TARGET ${_target} PROPERTY TYPE)
+    if(_target_type STREQUAL INTERFACE_LIBRARY)
+      continue()
+    endif()
+    get_property(_target_sources TARGET ${_target} PROPERTY SOURCES)
+    list(APPEND _sources ${_target_sources})
+  endforeach()
+  if(_sources)
+    list(REMOVE_ITEM _cppfiles ${_sources})
+  endif()
+  if(_cppfiles)
+    set(_warning "In ${CMAKE_CURRENT_SOURCE_DIR}, the following files are unused:")
+    foreach(_cppfile ${_cppfiles})
+      set(_warning "${_warning}
+  ${_cppfile}")
+    endforeach()
+    set(_warning  "${_warning}
+  ")
+    message(AUTHOR_WARNING "${_warning}")
+  endif()
+endfunction()
 
+function(CGAL_hook_check_CMAKE_BUILD_TYPE)
   # Warn when CMAKE_BUILD_TYPE is empty or Debug
   if(DEFINED CMAKE_BUILD_TYPE AND ( NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "Debug") )
     set(keyword WARNING)
@@ -109,6 +103,68 @@ disable this ${type}.\n\
   endif()
 endfunction()
 
-variable_watch("CMAKE_CURRENT_LIST_DIR" CGAL_run_at_the_end_of_configuration)
+function(CGAL_hook_fix_ctest_depending_on_Qt5)
+  get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
+  foreach(_target ${_targets})
+    if(NOT TEST "compilation of  ${_target}")
+      continue()
+    endif()
+    get_property(_target_links TARGET ${_target} PROPERTY LINK_LIBRARIES)
+    if("CGAL_Qt5" IN_LIST _target_links OR "CGAL::CGAL_Qt5" IN_LIST _target_links)
+      set_property(TEST "compilation of  ${_target}" APPEND PROPERTY FIXTURES_REQUIRED CGAL_Qt5_moc_and_resources_Fixture)
+    endif()
+    endforeach()
+endfunction()
+
+function(CGAL_hooks_at_end_of_all_directories)
+  CGAL_hook_check_targets()
+  CGAL_hook_check_unused_cpp_files()
+  if(BUILD_TESTING)
+    CGAL_hook_fix_ctest_depending_on_Qt5()
+  endif()
+endfunction()
+
+function(CGAL_run_at_the_end_of_configuration variable access value current_list_file stack)
+  if(NOT access STREQUAL "MODIFIED_ACCESS")
+    return()
+  endif()
+  if(current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        AND NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        OR NOT stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        OR stack MATCHES doc/CMakeLists.txt
+        OR stack MATCHES demo/Polyhedron/)
+      return()
+  endif()
+
+
+  if(NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+     AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
+    CGAL_hooks_at_end_of_all_directories()
+  endif()
+
+  if(value)
+    # Only do the following at the end of the CMake process, when the
+    # value of variable CMAKE_CURRENT_LIST_DIR is changed to the empty
+    # string.
+    return()
+  endif()
+
+  CGAL_hook_check_CMAKE_BUILD_TYPE()
+
+endfunction()
+
+function(CGAL_install_hooks)
+  if(CMAKE_VERSION VERSION_LESS 3.19)
+    variable_watch("CMAKE_CURRENT_LIST_DIR" CGAL_run_at_the_end_of_configuration)
+  else()
+    cmake_language(DEFER CALL CGAL_hooks_at_end_of_all_directories)
+    if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+      cmake_language(DEFER CALL CGAL_hook_check_CMAKE_BUILD_TYPE)
+    endif()
+  endif()
+endfunction()
+
+CGAL_install_hooks()
 
 set_property(GLOBAL PROPERTY CGAL_run_at_the_end_of_configuration_INCLUDED TRUE)

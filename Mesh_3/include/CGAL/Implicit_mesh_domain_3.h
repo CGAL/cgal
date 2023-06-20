@@ -24,6 +24,7 @@
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {
@@ -65,8 +66,8 @@ public:
                          const Sphere_3& bounding_sphere,
                          const FT& error_bound = FT(1e-6),
                          CGAL::Random* p_rng = nullptr)
-    : Base(Wrapper(f), bounding_sphere, error_bound,
-           Null_subdomain_index(), p_rng)  {}
+    : Base(parameters::function = Wrapper(f), parameters::bounding_object = bounding_sphere, parameters::relative_error_bound = error_bound,
+           parameters::null_subdomain_index = Null_subdomain_index(), parameters::p_rng = p_rng)  {}
 
   /// Destructor
   virtual ~Implicit_mesh_domain_3() {}

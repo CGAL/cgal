@@ -9,11 +9,10 @@ if(CGAL_MESH_3_VERBOSE)
 endif()
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
-find_package(Boost)
 
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
   add_definitions(-DCGAL_CONCURRENT_MESH_3)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
@@ -23,9 +22,9 @@ endif()
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message( STATUS "NOTICE: All examples need the Eigen3 library, and will not be compiled." )
+  message("NOTICE: All examples require the Eigen3 library, and will not be compiled.")
   return()
-endif() #CGAL::Eigen_3_support
+endif()
 
 find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
 if(VTK_FOUND)
@@ -51,12 +50,10 @@ create_single_source_cgal_program("mesh_implicit_sphere.cpp")
 target_link_libraries(mesh_implicit_sphere PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_implicit_sphere_variable_size.cpp")
-target_link_libraries(mesh_implicit_sphere_variable_size
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(mesh_implicit_sphere_variable_size PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_two_implicit_spheres_with_balls.cpp")
-target_link_libraries(mesh_two_implicit_spheres_with_balls
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(mesh_two_implicit_spheres_with_balls PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_implicit_domains_2.cpp"
                                   "implicit_functions.cpp")
@@ -66,8 +63,7 @@ create_single_source_cgal_program("mesh_cubes_intersection.cpp")
 target_link_libraries(mesh_cubes_intersection PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_cubes_intersection_with_features.cpp")
-target_link_libraries(mesh_cubes_intersection_with_features
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(mesh_cubes_intersection_with_features PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_implicit_domains.cpp"
                                   "implicit_functions.cpp")
@@ -98,6 +94,10 @@ target_link_libraries(remesh_polyhedral_surface_sm PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_polyhedral_domain_with_features.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_features
+                      PUBLIC CGAL::Eigen3_support)
+
+create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sizing.cpp")
+target_link_libraries(mesh_polyhedral_domain_with_features_sizing
                       PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sm.cpp")
@@ -137,6 +137,12 @@ if(TARGET CGAL::CGAL_ImageIO)
   create_single_source_cgal_program("mesh_3D_image_with_features.cpp")
   target_link_libraries(mesh_3D_image_with_features PUBLIC CGAL::Eigen3_support)
 
+  create_single_source_cgal_program("mesh_3D_image_with_input_features.cpp")
+  target_link_libraries(mesh_3D_image_with_input_features PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program("mesh_3D_image_with_detection_of_features.cpp")
+  target_link_libraries(mesh_3D_image_with_detection_of_features PUBLIC CGAL::Eigen3_support)
+
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program("mesh_optimization_example.cpp")
     target_link_libraries(mesh_optimization_example PUBLIC CGAL::Eigen3_support)
@@ -162,28 +168,26 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PUBLIC CGAL::Eigen3_support)
 
-    find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+    find_package(ITK NAMES ITK InsightToolkit QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
       include(CGAL_ITK_support)
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
       target_link_libraries(mesh_3D_weighted_image
                             PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
+
+      create_single_source_cgal_program("mesh_3D_weighted_image_with_detection_of_features.cpp")
+      target_link_libraries(mesh_3D_weighted_image_with_detection_of_features
+                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
     else(ITK_FOUND)
-        message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
+      message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
     endif(ITK_FOUND)
 
   else()
-    message(
-      STATUS
-        "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_weighted_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled."
-    )
+    message(STATUS "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_weighted_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled.")
   endif()
 
 else()
-  message(
-    STATUS
-      "NOTICE: Some examples need the CGAL_ImageIO library, and will not be compiled."
-  )
+  message(STATUS "NOTICE: Some examples need the CGAL_ImageIO library, and will not be compiled.")
 endif()
 
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
@@ -195,6 +199,8 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_3D_image_with_custom_initialization
     mesh_3D_gray_image_with_custom_initialization
     mesh_3D_image_with_features
+    mesh_3D_image_with_detection_of_features
+    mesh_3D_image_with_input_features
     mesh_implicit_domains
     mesh_implicit_sphere
     mesh_implicit_sphere_variable_size
@@ -205,6 +211,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_polyhedral_domain
     mesh_polyhedral_domain_sm
     mesh_polyhedral_domain_with_features
+    mesh_polyhedral_domain_with_features_sizing
     mesh_polyhedral_domain_with_features_sm
     mesh_polyhedral_domain_with_lipschitz_sizing
     mesh_two_implicit_spheres_with_balls)

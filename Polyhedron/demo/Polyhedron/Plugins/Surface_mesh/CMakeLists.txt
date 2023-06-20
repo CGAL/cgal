@@ -18,15 +18,12 @@ if(NOT CGAL_DISABLE_GMP)
 
     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
-        compilation_of__parameterization_plugin
+        "compilation of  parameterization_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
 
   else()
-    message(
-      STATUS
-        "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available."
-    )
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
   endif()
 
   qt5_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)
@@ -36,7 +33,7 @@ if(NOT CGAL_DISABLE_GMP)
 
   if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     set_tests_properties(
-      compilation_of__mesh_segmentation_plugin
+      "compilation of  mesh_segmentation_plugin"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 

@@ -461,7 +461,6 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     color_fixed_points.clear();
     positions_fixed_points.clear();
-    int i=0;
 
     constVPmap vpm = get(CGAL::vertex_point,*polyhedron());
 
@@ -487,7 +486,6 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
         color_fixed_points.push_back(0.0);
         color_fixed_points.push_back(0.0);
       }
-      i++;
     }
   }
 
@@ -509,10 +507,10 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
         positions_temp_points.data(),
         static_cast<int>(positions_temp_points.size()*sizeof(float)));
 
-item->getPointContainer(Fixed_points)->allocate(
-      Pc::Vertices,
-      positions_fixed_points.data(),
-      static_cast<int>(positions_fixed_points.size()*sizeof(float)));
+  item->getPointContainer(Fixed_points)->allocate(
+        Pc::Vertices,
+        positions_fixed_points.data(),
+        static_cast<int>(positions_fixed_points.size()*sizeof(float)));
 
   item->getPointContainer(Fixed_points)->allocate(
         Pc::Colors,
@@ -1119,7 +1117,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
       invalidateOpenGLBuffers();
       poly_item->invalidateOpenGLBuffers();
       compute_normal_maps();
-      d->tempInstructions("Edge splitted.",
+      d->tempInstructions("Edge split.",
                           "Select the edge you want to split.");
       break;
     }
@@ -1401,7 +1399,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
             set_active_handle_type(static_cast<Active_handle::Type>(0));
             poly_item->resetColors();
             poly_item->invalidateOpenGLBuffers();
-            d->tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
+            d->tempInstructions("Vertex split.", "Select the vertex you want to split. (1/3)");
           }
           else if(h1 == h2)
           {
@@ -1601,7 +1599,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
   static Scene_polyhedron_selection_item_priv::vertex_on_path first;
   if(!d->first_selected)
   {
-    //if the path doesnt exist, add the vertex as the source of the path.
+    //if the path doesn't exist, add the vertex as the source of the path.
     if(!replace)
     {
       d->addVertexToPath(vh, first);
@@ -1702,11 +1700,11 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
       //get first's index
       for(it = d->path.begin(); it!=d->path.end(); ++it)
       {
-        bool end_of_path_is_prio = true;//makes the end of the path prioritary over the other points when there is a conflict
+        bool end_of_path_is_prio = true;//makes the end of the path priority over the other points when there is a conflict
         if(first.vertex == (d->path.end()-1)->vertex)
           if(it != d->path.end()-1)
             end_of_path_is_prio = false;
-        //makes the end of the path prioritary over the other points when there is a conflict
+        //makes the end of the path priority over the other points when there is a conflict
         if(it->vertex == first.vertex &&
            !(it == d->path.begin())&&// makes the beginning of the path impossible to move
            end_of_path_is_prio)
@@ -2360,9 +2358,9 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
   {
   case MIN_LENGTH:
   case MAX_LENGTH:
-  case MID_LENGTH:
+  case MED_LENGTH:
   case MEAN_LENGTH:
-  case NB_NULL_LENGTH:
+  case NB_DEGENERATE_EDGES:
     if(selected_edges.size() == 0)
       return QString("n/a");
     else
@@ -2488,7 +2486,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
   case GENUS:
     return QString("n/a");
     break;
-  case NB_DEGENERATED_FACES:
+  case NB_DEGENERATE_FACES:
   {
     if(is_triangle_mesh(*d->poly))
     {
@@ -2529,11 +2527,11 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     return QString::number(minl);
   case MAX_LENGTH:
     return QString::number(maxl);
-  case MID_LENGTH:
+  case MED_LENGTH:
     return QString::number(midl);
   case MEAN_LENGTH:
     return QString::number(meanl);
-  case NB_NULL_LENGTH:
+  case NB_DEGENERATE_EDGES:
     return QString::number(number_of_null_length_edges);
 
   case MIN_ANGLE:
@@ -2542,7 +2540,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     return QString::number(maxi);
   case MEAN_ANGLE:
     return QString::number(ave);
-  case HOLES:
+  case NB_HOLES:
   {
     return QString("n/a");
   }
@@ -2592,24 +2590,26 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_selection_item::header() c
   CGAL::Three::Scene_item::Header_data data;
   //categories
 
-  data.categories.append(std::pair<QString,int>(QString("Properties"),10));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),8));
+  data.categories.append(std::pair<QString,int>(QString("Vertices"),1));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
   data.categories.append(std::pair<QString,int>(QString("Edges"),7));
-  data.categories.append(std::pair<QString,int>(QString("Angles"),2));
-
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
   //titles
-  data.titles.append(QString("#Vertices"));
   data.titles.append(QString("#Connected Components"));
-  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Connected Components of the Boundary"));
+  data.titles.append(QString("Genus"));
   data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("Pure Quad"));
-  data.titles.append(QString("#Degenerate Faces"));
-  data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
   data.titles.append(QString("Self-Intersecting"));
+
+  data.titles.append(QString("#Vertices"));
+
   data.titles.append(QString("#Faces"));
+  data.titles.append(QString("#Degenerate Faces"));
   data.titles.append(QString("Min Area"));
   data.titles.append(QString("Max Area"));
   data.titles.append(QString("Median Area"));
@@ -2618,16 +2618,19 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_selection_item::header() c
   data.titles.append(QString("Min Aspect-Ratio"));
   data.titles.append(QString("Max Aspect-Ratio"));
   data.titles.append(QString("Mean Aspect-Ratio"));
-  data.titles.append(QString("Genus"));
+
   data.titles.append(QString("#Edges"));
+  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Degenerate Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
-  data.titles.append(QString("#Degenerate Edges"));
+
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
+
   return data;
 }
 

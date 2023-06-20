@@ -6,8 +6,11 @@
 #endif
 #include "Kernel_type.h"
 #include "Meshing_thread.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 #include <QList>
+
+class Scene_surface_mesh_item;
 
 struct Mesh_parameters;
 namespace CGAL { namespace Three {
@@ -23,9 +26,12 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  bool protect_features,
                                  bool protect_border,
@@ -38,9 +44,12 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  bool protect_features,
                                  bool protect_border,
@@ -52,9 +61,12 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  const int manifold,
                                  const bool surface_only);
@@ -65,11 +77,15 @@ Meshing_thread* cgal_code_mesh_3(const CGAL::Image_3* pImage,
                                  const Polylines_container& polylines,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  bool protect_features,
+                                 const bool protect_borders,
                                  const int manifold,
                                  const bool surface_only,
                                  bool detect_connected_components,
@@ -77,5 +93,5 @@ Meshing_thread* cgal_code_mesh_3(const CGAL::Image_3* pImage,
                                  float iso_value = 3.f,
                                  float value_outside = 0.f,
                                  bool inside_is_less = true,
-                                 const CGAL::Image_3* pWeights = nullptr);
+                                 CGAL::Image_3* pWeights = nullptr);
 #endif

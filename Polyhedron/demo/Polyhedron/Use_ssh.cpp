@@ -26,6 +26,10 @@
 #include <QMessageBox>
 #include <QStringList>
 
+
+#include <libssh/sftp.h>
+#include <fcntl.h>
+
 bool test_result(int res)
 {
   switch(res){
@@ -240,21 +244,22 @@ bool push_file(ssh_session &session,
                const char* dest_path,
                const char* filepath)
 {
+  std::size_t processed = 0;
+  sftp_file sftpfile;
   //copy a file
-  ssh_scp scp = ssh_scp_new(
-        session, SSH_SCP_WRITE | SSH_SCP_RECURSIVE, "/tmp");
-  if (scp == nullptr)
+  sftp_session sftp = sftp_new(session);
+  if (sftp == nullptr)
   {
-    std::cerr<<"Error allocating scp session: %s\n"
+    std::cerr<<"Error allocating sftp session:\n"
             << ssh_get_error(session)<<std::endl;
     return false;
   }
-  int res = ssh_scp_init(scp);
-  if(res != SSH_OK)
+  int res = sftp_init(sftp);
+  if(res < 0)
   {
-    std::cerr<< "Error initializing scp session: %s\n"
+    std::cerr<< "Error initializing sftp session:\n"
              << ssh_get_error(session)<<std::endl;
-    ssh_scp_free(scp);
+    sftp_free(sftp);
     ssh_disconnect(session);
     return false;
   }
@@ -263,7 +268,7 @@ bool push_file(ssh_session &session,
   if(!file)
   {
     std::cerr<<"File not found."<<std::endl;
-    ssh_scp_free(scp);
+    sftp_free(sftp);
     ssh_disconnect(session);
     return false;
   }
@@ -274,44 +279,39 @@ bool push_file(ssh_session &session,
   if (!file.read(buffer.data(), size))
   {
     std::cerr<<"error while reading file."<<std::endl;
-    ssh_scp_free(scp);
+    sftp_free(sftp);
     ssh_disconnect(session);
     return false;
   }
   //push a file to /tmp
-  res = ssh_scp_push_directory(scp, ".", 0755);
-  if (res != SSH_OK)
+  sftpfile = sftp_open(sftp, dest_path, O_WRONLY | O_CREAT, 0644);
+  if (sftpfile == NULL)
   {
-    std::cerr<<"Can't create remote directory: %s\n"
-            <<ssh_get_error(session)<<std::endl;
-    ssh_scp_free(scp);
-    ssh_disconnect(session);
-    return false;
-  }
-  res = ssh_scp_push_file
-      (scp, dest_path, size, 0644);
-  if (res != SSH_OK)
-  {
-    std::cerr<< "Can't open remote file: %s\n"
+    std::cerr<< "Can't open remote file:\n"
              << ssh_get_error(session)<<std::endl;
-    ssh_scp_free(scp);
+    sftp_free(sftp);
     ssh_disconnect(session);
     return false;
   }
-  res = ssh_scp_write(scp, buffer.data(), size);
-  //some versions of libssh don't copy everything without this.
-  //This is the case for the official version on Ubuntu 18.04
-  std::chrono::duration<int, std::micro> timespan(size);
-  std::this_thread::sleep_for(timespan);
-  if (res != SSH_OK)
+  while ( size > 0 )
   {
-    std::cerr<< "Can't write to remote file: %s\n"
-             << ssh_get_error(session)<<std::endl;
-    ssh_scp_free(scp);
-    ssh_disconnect(session);
-    return false;
+    int s = size;
+    if (s > 16384)
+      s = 16384;
+    res = sftp_write(sftpfile, buffer.data() + processed, s);
+    if ( res < 0)
+    {
+      std::cerr<< "Can't write data to file:\n"
+               << ssh_get_error(session)<<std::endl;
+      sftp_free(sftp);
+      ssh_disconnect(session);
+      return false;
+    }
+    size -= res;
+    processed += res;
   }
-  ssh_scp_free(scp);
+  sftp_close(sftpfile);
+  sftp_free(sftp);
   return true;
 }
 
@@ -319,67 +319,65 @@ bool pull_file(ssh_session &session,
                const char* from_path,
                const char* to_path)
 {
-  int rc;
   std::size_t size;
   std::size_t processed = 0;
   std::vector<char> buffer;
-
-  ssh_scp scp = ssh_scp_new(
-        session, SSH_SCP_READ | SSH_SCP_RECURSIVE, from_path);
-  if (scp == nullptr)
+  sftp_file sftpfile;
+  sftp_session sftp = sftp_new(session);
+  if (sftp == nullptr)
   {
-    std::cerr<<"Error allocating scp session: %s\n"
+    std::cerr<<"Error allocating sftp session:\n"
             << ssh_get_error(session)<<std::endl;
     return false;
   }
-  int res = ssh_scp_init(scp);
-  if(res != SSH_OK)
+  int res = sftp_init(sftp);
+  if(res < 0)
   {
-    std::cerr<< "Error initializing scp session: %s\n"
+    std::cerr<< "Error initializing sftp session:\n"
              << ssh_get_error(session)<<std::endl;
-    ssh_scp_free(scp);
+    sftp_free(sftp);
     ssh_disconnect(session);
     return false;
   }
-  rc = ssh_scp_pull_request(scp);
-  if (rc != SSH_SCP_REQUEST_NEWFILE)
+  sftpfile = sftp_open(sftp, from_path, O_RDONLY, 0);
+  if (sftpfile == NULL)
   {
-    std::cerr<< "Error receiving information about file: %s\n"
+    std::cerr<< "Can't open remote file:\n"
              << ssh_get_error(session)<<std::endl;
-    ssh_scp_free(scp);
+    sftp_free(sftp);
     ssh_disconnect(session);
     return false;
   }
-  size = ssh_scp_request_get_size64(scp);
+  sftp_attributes sftpattr;
+  sftpattr = sftp_stat(sftp,from_path);
+  size=sftpattr->size;
   buffer.resize(size);
-  if(ssh_scp_accept_request(scp) != SSH_OK)
+  while ( size > 0 )
   {
-    std::cerr<< "Could not accept request."<<std::endl;
-    ssh_scp_free(scp);
-    ssh_disconnect(session);
-    return false;
-  }
-
-  do{
-    rc = ssh_scp_read(scp, buffer.data() + processed, size-processed);
-    if (rc == SSH_ERROR)
+    int s = size;
+    if (s > 16384)
+      s = 16384;
+    res = sftp_read(sftpfile, buffer.data() + processed, s);
+    if ( res < 0)
     {
-      std::cerr<< "Error receiving file data: %s\n"<< ssh_get_error(session)<<std::endl;
-      //free(buffer);
-      ssh_scp_free(scp);
+      std::cerr<< "Can't read data to file:\n"
+               << ssh_get_error(session)<<std::endl;
+      sftp_free(sftp);
       ssh_disconnect(session);
       return false;
     }
-    else
-      processed += rc;
-  }while(processed != size);
+    size -= res;
+    processed += res;
+  }
+  size=sftpattr->size;
   std::ofstream file(to_path, std::ios::binary |std::ios::trunc);
   if(!file.write(buffer.data(), size))
   {
     std::cerr<<"Error while writing file."<<std::endl;
   }
   file.close();
-  ssh_scp_free(scp);
+  sftp_close(sftpfile);
+  sftp_free(sftp);
   return true;
 }
 
@@ -387,10 +385,9 @@ bool explore_the_galaxy(ssh_session &session,
                         QStringList& files)
 {
   ssh_channel channel;
-  int rc;
   channel = ssh_channel_new(session);
   if (channel == nullptr) return false;
-  rc = ssh_channel_open_session(channel);
+  int rc = ssh_channel_open_session(channel);
   if (rc != SSH_OK)
   {
     ssh_channel_free(channel);

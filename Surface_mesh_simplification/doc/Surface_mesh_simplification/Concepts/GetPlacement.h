@@ -12,8 +12,7 @@ be absent). An absent result indicates that the edge should not be collapsed.
 This could be the result of a computational limitation (such as an overflow),
 or can be intentionally returned to prevent the edge from being collapsed.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
+\cgalRefines{DefaultConstructible,CopyConstructible}
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`

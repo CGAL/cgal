@@ -50,6 +50,12 @@ Returns the value of the sizing field (i.e.\ the maximum edge length) at point `
 */
 FT sizing_field(const Point_3& p);
 
+/*!
+Returns the lower bound on edge length, set by the user.
+The lower bound is ignored when its value is 0.
+*/
+const FT& min_length_bound() const;
+
 /// @}
 
 }; /* end MeshEdgeCriteria_3 */

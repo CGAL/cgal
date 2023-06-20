@@ -413,7 +413,7 @@ Triangulation_2 operator=(const Triangulation_2<Traits,Tds>& tr);
 
 /*!
 The triangulations `tr` and `*this` are swapped.
-This method should be used instead of assignment of copy construtor.
+This method should be used instead of assignment of copy constructor.
 if `tr` is deleted after that.
 */
 void swap(Triangulation_2& tr);
@@ -545,12 +545,12 @@ int & i);
 
 /*!
 `true` if the line segment from `va` to `vb` includes
-an edge `e` incident to `va`. If `true`, `vbr` becomes
+an edge `e` incident to `va`. If `true`, `vbb` becomes
 the other vertex of `e`, `e` is the edge `(fr,i)` where
 `fr` is a handle to the face incident to `e` and
 on the right side `e` oriented from `va` to `vb`.
 */
-bool includes_edge(Vertex_handle va, Vertex_handle vb, Vertex_handle & vbr,
+bool includes_edge(Vertex_handle va, Vertex_handle vb, Vertex_handle & vbb,
 Face_handle& fr, int & i);
 
 /*!

@@ -2,13 +2,12 @@ Subject: CGAL 5.5 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
-The CGAL Open Source Project is pleased to announce the release 5.5
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the release 5.5 of
+CGAL, the Computational Geometry Algorithms Library.
 
 
-Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 5.4:
-
+Besides fixes and general enhancement to existing packages, the
+following has changed since CGAL 5.4:
 
 3D Alpha Wrapping (new package)
 
@@ -24,6 +23,14 @@ has changed since CGAL 5.4:
     trade fidelity to the input for complexity of the output.
 
     See also https://www.cgal.org/2022/05/18/alpha_wrap/.
+
+2D Straight Skeleton and Polygon Offsetting (breaking change)
+
+-   Fix the output of the function
+    CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2() to
+    not take into account the offset of the outer frame.
+-   Fix the computation of the exterior offset of a polygon with holes
+    that was not computing the offset of the holes
 
 3D Convex Hulls
 
@@ -112,8 +119,12 @@ CGAL and the Boost Graph Library (BGL)
     selected faces are deselected, and unselected faces are selected.
 
 
-See https://www.cgal.org/2022/07/04/cgal55/ for a
+See https://www.cgal.org/2022/07/15/cgal55/ for a
 complete list of changes.
+
+
+The same day, we also published CGAL-5.4.2 is the second bug-fix release for
+CGAL-5.4. See https://www.cgal.org/2022/07/15/cgal5.4.2/.
 
 
 The CGAL project is a collaborative effort to develop a robust,
@@ -148,7 +159,7 @@ Most modules are distributed under the terms of the GPL Open Source
 license (GNU General Public License v3 or later versions).
 If your intended usage does not meet the criteria of the
 aforementioned licenses, a commercial license can be purchased from
-GeometryFactory (http://www.geometryfactory.com/).
+GeometryFactory (https://www.geometryfactory.com/).
 
 
 For further information and for downloading the library and its

@@ -72,9 +72,9 @@ public:
   ~Image_to_labeled_function_wrapper() {}
 
   /**
-   * Returns an int corresponding to the label at point \c p
+   * Returns an int corresponding to the label at point `p`.
    * @param p the input point
-   * @return the label at point \c p
+   * @return the label at point `p`
    */
   template <typename Point_3>
   return_type operator()(const Point_3& p) const

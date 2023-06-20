@@ -221,7 +221,7 @@ void Scene_item_rendering_helper::setEdgeContainer(std::size_t id,
 }
 
 void Scene_item_rendering_helper::setPointContainer(std::size_t id,
-                                                   Point_container* pc)
+                                                    Point_container* pc)
 {
   if(priv->point_containers.size() <= id)
   {

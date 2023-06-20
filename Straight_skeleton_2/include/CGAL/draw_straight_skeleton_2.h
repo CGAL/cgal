@@ -96,6 +96,8 @@ protected:
       add_point(vh->point(), CGAL::IO::Color(10,10,180)); // blue, but not flashy
     else if(vh->has_infinite_time())
       add_point(vh->point(), CGAL::IO::orange());
+    else if(vh->is_contour())
+      add_point(vh->point(), CGAL::IO::black());
     else
       add_point(vh->point(), CGAL::IO::Color(10,180,10)); // green, but not flashy
   }

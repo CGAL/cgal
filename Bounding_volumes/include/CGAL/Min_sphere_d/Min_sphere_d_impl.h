@@ -62,7 +62,7 @@ operator << ( std::ostream& os, const Min_sphere_d<Traits>& min_sphere)
         break;
 
       default:
-        CGAL_optimisation_assertion_msg
+        CGAL_assertion_msg
             ( false, "IO::get_mode( os) invalid!");
         break; }
 
@@ -93,7 +93,7 @@ operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
       } break;
 
       default:
-        CGAL_optimisation_assertion_msg( false, "IO::mode invalid!");
+        CGAL_assertion_msg( false, "IO::mode invalid!");
         break;
  }
 

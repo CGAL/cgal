@@ -19,10 +19,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
-if(NOT CGAL_Qt5_FOUND
-   OR NOT Qt5_FOUND)
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+if(NOT CGAL_Qt5_FOUND OR NOT Qt5_FOUND)
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
   return()
 endif()
 

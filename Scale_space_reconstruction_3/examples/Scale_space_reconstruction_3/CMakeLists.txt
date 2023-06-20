@@ -7,35 +7,35 @@ find_package(CGAL REQUIRED)
 option(ACTIVATE_CONCURRENCY "Enable concurrency" ON)
 
 if(ACTIVATE_CONCURRENCY)
-  find_package(TBB)
+  find_package(TBB QUIET)
   include(CGAL_TBB_support)
   if(NOT TARGET CGAL::TBB_support)
-    message(
-      STATUS
-        "NOTICE: Intel TBB NOT found! The example is faster if TBB is linked.")
+    message(STATUS "NOTICE: Intel TBB not found. Examples are faster if TBB is linked.")
   endif()
 endif()
 
-find_package(Eigen3 3.1.0)
+find_package(Eigen3 3.1.0 QUIET)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("scale_space.cpp")
   target_link_libraries(scale_space PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("scale_space_sm.cpp")
+  target_link_libraries(scale_space_sm PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("scale_space_incremental.cpp")
   target_link_libraries(scale_space_incremental PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("scale_space_manifold.cpp")
   target_link_libraries(scale_space_manifold PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("scale_space_advancing_front.cpp")
   target_link_libraries(scale_space_advancing_front PUBLIC CGAL::Eigen3_support)
+
   if(ACTIVATE_CONCURRENCY AND TARGET CGAL::TBB_support)
+    message(STATUS "Found TBB")
+
     target_link_libraries(scale_space PUBLIC CGAL::TBB_support)
     target_link_libraries(scale_space_incremental PUBLIC CGAL::TBB_support)
     target_link_libraries(scale_space_manifold PUBLIC CGAL::TBB_support)
     target_link_libraries(scale_space_advancing_front PUBLIC CGAL::TBB_support)
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE: The example needs Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message("NOTICE: Examples require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

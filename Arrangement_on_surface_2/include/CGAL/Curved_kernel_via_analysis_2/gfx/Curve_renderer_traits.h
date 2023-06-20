@@ -67,7 +67,7 @@ struct Max_coeff
 };
 
 /*!\brief
- * divides an input value by a contant
+ * divides an input value by a constant
  *
  * provided that there is a coercion between \c Input and \c Result types
  */

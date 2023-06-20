@@ -8,42 +8,34 @@ project(Tetrahedral_remeshing_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
-# Use Eigen for Mesh_3
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-include(CGAL_Eigen3_support)
-find_package(TBB QUIET)
-include(CGAL_TBB_support)
+create_single_source_cgal_program("tetrahedral_remeshing_example.cpp" )
+create_single_source_cgal_program("tetrahedral_remeshing_with_features.cpp")
+create_single_source_cgal_program("tetrahedral_remeshing_of_one_subdomain.cpp")
+create_single_source_cgal_program("tetrahedral_remeshing_from_mesh.cpp")
 
 # Concurrent Mesh_3
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
   add_definitions(-DCGAL_CONCURRENT_MESH_3)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
+else()
+  find_package(TBB QUIET)
+  include(CGAL_TBB_support)
 endif()
 
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-create_single_source_cgal_program( "tetrahedral_remeshing_example.cpp" )
-create_single_source_cgal_program( "tetrahedral_remeshing_with_features.cpp")
-create_single_source_cgal_program( "tetrahedral_remeshing_of_one_subdomain.cpp")
-create_single_source_cgal_program( "tetrahedral_remeshing_from_mesh.cpp")
-
+# Use Eigen for Mesh_3
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
-create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_features.cpp" )
+  create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_features.cpp" )
   target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen3_support)
+
   if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
+    message(STATUS "Found TBB")
     target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PRIVATE CGAL::TBB_support)
   endif()
 else()
-  message(STATUS "Some examples need the Eigen3 library, and will not be compiled.")
+  message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
 

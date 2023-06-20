@@ -14,9 +14,7 @@ such that \f$ p = a \cdot g_1^{m_1} \cdot ... \cdot g_n^{m_n}\f$, where all \f$ 
 Given this decomposition, the square free part is defined as the product \f$ g_1 \cdot ... \cdot g_n\f$,
 which is computed by this functor.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

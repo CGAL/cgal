@@ -14,7 +14,6 @@
 #include <CGAL/Gmpfi.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include "exact_signat_1.h"
-//#include <boost/mpl/assert.hpp>
 #include <gmp.h>
 
 namespace CGAL{
@@ -40,7 +39,7 @@ Signat_1<Polynomial_,Bound_>::operator()(const Bound_ &x)const{
         //typedef Algebraic_structure_traits<Bound>               AStraits;
         // This generic signat works only when Bound_ is an exact type. For
         // non-exact types, an implementation must be provided.
-        //BOOST_MPL_ASSERT((boost::is_same<AStraits::Is_exact,Tag_true>));
+        //static_assert(std::is_same<AStraits::Is_exact,Tag_true>::value);
         int d=Degree()(pol);
         Bound h(pol[d]);
         for(int i=1;i<=d;++i)

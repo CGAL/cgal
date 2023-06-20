@@ -34,7 +34,7 @@ of the `SegmentDelaunayGraphLinfTraits_2` concept
 with respect to the
 `SegmentDelaunayGraphTraits_2` concept.
 
-\cgalRefines `SegmentDelaunayGraphTraits_2`
+\cgalRefines{SegmentDelaunayGraphTraits_2}
 
 \cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
 \cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`

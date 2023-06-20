@@ -23,19 +23,19 @@
 #define CGAL_COERCION_TRAITS_H 1
 
 #include <iterator>
+#include <type_traits>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/tags.h>
 
-// Makro to define an additional operator for binary functors which takes
+// Macro to define an additional operator for binary functors which takes
 // two number types as parameters that are interoperable with the
 // number type
 #define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, Result_type  ) \
   template < class CT_Type_1, class CT_Type_2 >                         \
   Result_type operator()( const CT_Type_1& x, const CT_Type_2& y ) const { \
-    CGAL_static_assertion((::boost::is_same<                              \
+    CGAL_static_assertion((::std::is_same<                              \
             typename Coercion_traits< CT_Type_1, CT_Type_2 >::Type, NT  \
             >::value));                                                 \
                                                                         \

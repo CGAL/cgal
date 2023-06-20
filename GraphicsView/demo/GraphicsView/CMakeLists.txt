@@ -14,7 +14,7 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
@@ -25,13 +25,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS min)
 
-  target_link_libraries(min PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
+  target_link_libraries(min PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(min)
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

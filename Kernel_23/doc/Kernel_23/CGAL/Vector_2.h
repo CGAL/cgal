@@ -71,7 +71,7 @@ Vector_2(double x, double y);
 
 /*!
 introduces a vector `v` initialized to `(hx/hw,hy/hw)`.
-\pre \f$ hw\neq0\f$.
+\pre `hw != 0`.
 */
 Vector_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1));
 
@@ -126,19 +126,19 @@ Kernel::FT y() const;
 
 /*!
 returns the i'th homogeneous coordinate of `v`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th Cartesian coordinate of `v`.
-\pre \f$ 0\leq i \leq1\f$.
+\pre `0 <= i <= 1`.
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq1\f$.
+\pre `0 <= i <= 1`.
 */
 Kernel::FT operator[](int i) const;
 

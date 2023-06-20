@@ -20,6 +20,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/use.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -327,7 +328,7 @@ void orient_scanline (Iterator begin, Iterator end,
     const Point_3& p = get (point_map, *it);
     mean_x += p.x();
     mean_y += p.y();
-    max_z = (std::max)(max_z, p.z());
+    max_z = (std::max)(max_z, CGAL::to_double(p.z()));
     ++ nb;
   }
 
@@ -372,7 +373,7 @@ void orient_scanline (Iterator begin, Iterator end,
    iterating on `points`:
 
    - if the named parameter `scanline_id_map` is provided, the range
-     is cutted everytime the id changes.
+     is cut everytime the id changes.
 
    - if no scanline ID map is provided, a fallback method simply cuts
      the range everytime 3 consecutive points form an acute angle on
@@ -545,6 +546,8 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np = pa
   std::cerr << nb_scanlines << " scanline(s) identified (mean length = "
             << std::size_t(points.size() / double(nb_scanlines))
             << " point(s))" << std::endl;
+#else
+  CGAL_USE(nb_scanlines);
 #endif
 }
 

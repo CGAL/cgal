@@ -18,7 +18,7 @@ Two kinds of point generators are provided: first, random point
 generators and second deterministic point generators. Most random
 point generators and a few deterministic point generators are provided
 as input iterators. The input iterators model an infinite sequence of
-points. The function `CGAL::copy_n()` can be used to copy a
+points. The algorithm `std::copy_n` can be used to copy a
 finite sequence. The iterator adaptor
 `Counting_iterator` can be used to create finite iterator
 ranges.

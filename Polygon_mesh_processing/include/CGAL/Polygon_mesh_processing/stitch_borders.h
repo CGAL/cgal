@@ -20,7 +20,7 @@
 #include <CGAL/boost/graph/properties.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
@@ -33,7 +33,6 @@
 #include <CGAL/use.h>
 
 #include <boost/range.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <iostream>
@@ -44,6 +43,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 #ifdef CGAL_PMP_STITCHING_DEBUG_PP
 # ifndef CGAL_PMP_STITCHING_DEBUG
@@ -1063,7 +1063,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor>             halfedges_pair;
 
-  CGAL_precondition(h != boost::graph_traits<PolygonMesh>::null_halfedge());
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pmesh));
   CGAL_precondition(is_border(h, pmesh));
   CGAL_precondition(is_valid(pmesh));
 
@@ -1119,7 +1119,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 
 } //end of namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief stitches together, whenever possible, two halfedges belonging to the boundary cycle
 /// described by the halfedge `h`.
@@ -1191,7 +1191,7 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief stitches together, whenever possible, two halfedges belonging to the same boundary cycle.
 ///
@@ -1265,7 +1265,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
 // The VPM is only used here for debugging info purposes as in this overload, the halfedges
 // to stitch are already provided and all further checks are combinatorial and not geometrical.
 /*!
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
 *
 * \brief stitches together border halfedges in a polygon mesh.
 *
@@ -1306,9 +1306,9 @@ template <typename PolygonMesh,
 std::size_t stitch_borders(PolygonMesh& pmesh,
                            const HalfedgePairsRange& hedge_pairs_to_stitch,
                            const CGAL_NP_CLASS& np = parameters::default_values(),
-                           typename boost::enable_if<
-                             typename boost::has_range_iterator<HalfedgePairsRange>
-                           >::type* = 0)
+                           std::enable_if_t<
+                             boost::has_range_iterator<HalfedgePairsRange>::value
+                           >* = 0)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1389,7 +1389,7 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief Same as the other overload, but the pairs of halfedges to be stitched
 /// are automatically found amongst all border halfedges.
@@ -1448,7 +1448,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
   return stitch_borders(boundary_cycle_representatives, pmesh, dummy_maintainer, np);
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief Same as the other overload, but the pairs of halfedges to be stitched
 /// are automatically found amongst halfedges in cycles described by `boundary_cycle_representatives`.
@@ -1511,9 +1511,9 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
                            PolygonMesh& pmesh,
                            const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                           , typename boost::enable_if<
-                               typename boost::has_range_iterator<BorderHalfedgeRange>
-                           >::type* = 0
+                           , std::enable_if_t<
+                               boost::has_range_iterator<BorderHalfedgeRange>::value
+                           >* = 0
 #endif
                            )
 {

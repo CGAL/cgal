@@ -37,7 +37,7 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PkgPolygonMeshProcessingRef
  * This class provides methods to perform some intersection tests between triangle meshes
  * that undergo affine transformations (rotation, translation, and scaling).
  * Meshes are added to an internal set and are referenced using an id assigned when added to the set.
@@ -250,7 +250,7 @@ public:
   {
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion( (boost::is_same<Local_vpm,Vpm>::value) );
+    CGAL_static_assertion( (std::is_same<Local_vpm,Vpm>::value) );
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -562,7 +562,7 @@ public:
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion((boost::is_same<Local_vpm,Vpm>::value));
+    CGAL_static_assertion((std::is_same<Local_vpm,Vpm>::value));
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -579,7 +579,7 @@ public:
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
-          tm, bind_property_maps(fid_map, make_property_map(cc_ids)),
+          tm, make_compose_property_map(fid_map, make_property_map(cc_ids)),
           parameters::face_index_map(fid_map));
       if (nb_cc != 1)
       {

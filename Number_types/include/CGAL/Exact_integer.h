@@ -14,20 +14,10 @@
 //
 // Author(s)     : Laurent Rineau
 
-#include <CGAL/config.h>
-#include <CGAL/boost_mp.h>
-#if CGAL_USE_GMPXX
-#  include <CGAL/gmpxx.h>
-#elif CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#elif CGAL_USE_LEDA
-#  include <CGAL/leda_integer.h>
-#elif CGAL_USE_CORE
-#  include <CGAL/CORE_BigInt.h>
-#elif defined CGAL_USE_BOOST_MP
-#else
-#  error CGAL is configured with none of GMP, LEDA, Boost.Multiprecision and CORE. <CGAL/Exact_integer.h> cannot be used.
-#endif
+#ifndef CGAL_EXACT_INTEGER_H
+#define CGAL_EXACT_INTEGER_H
+
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 namespace CGAL {
 
@@ -50,30 +40,10 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-#if ( (defined(CGAL_TEST_SUITE) && CGAL_VERSION_NR == 1050500900) || defined(CGAL_FORCE_USE_BOOST_MP))\
-    && BOOST_VERSION > 107800 && defined(CGAL_USE_BOOST_MP)
-// use boost-mp by default in the testsuite until 5.5-beta is out
-typedef BOOST_cpp_arithmetic_kernel::Integer Exact_integer;
-#else // BOOST_VERSION > 107800
-#ifdef CGAL_USE_GMPXX
-typedef mpz_class Exact_integer;
-#elif defined(CGAL_USE_GMP)
-#if defined(CGAL_USE_BOOST_MP)
-typedef BOOST_gmp_arithmetic_kernel::Integer Exact_integer;
-#else
-typedef Gmpz Exact_integer;
-#endif
-#elif defined(CGAL_USE_LEDA)
-typedef leda_integer Exact_integer;
-#elif defined(CGAL_USE_BOOST_MP)
-typedef BOOST_cpp_arithmetic_kernel::Integer Exact_integer;
-#elif defined(CGAL_USE_CORE)
-typedef CORE::BigInt Exact_integer;
-#else
-#error "ERROR: Cannot determine a BigInt type!"
-#endif // CGAL_USE_CORE
-#endif // BOOST_VERSION > 107800
+typedef internal::Exact_ring_selector<int>::Type Exact_integer;
 
 #endif // not DOXYGEN_RUNNING
 
 } /* end namespace CGAL */
+
+#endif // CGAL_EXACT_INTEGER_H

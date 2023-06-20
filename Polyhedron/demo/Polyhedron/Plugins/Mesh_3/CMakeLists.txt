@@ -28,7 +28,7 @@ target_link_libraries(
          ${OPENGL_gl_LIBRARY})
 target_include_directories(mesh_3_plugin PRIVATE include)
 
-find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+find_package(ITK NAMES ITK InsightToolkit QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
 if(ITK_FOUND)
   include(CGAL_ITK_support)
   target_link_libraries(mesh_3_plugin PUBLIC CGAL::ITK_support)
@@ -44,22 +44,13 @@ if(VTK_FOUND)
       set(VTK_LIBRARIES VTK::IOImage VTK::ImagingGeneral)
     endif()
     if(NOT VTK_LIBRARIES)
-      message(
-        STATUS
-          "NOTICE : the DICOM files (.dcm) need VTK libraries to be open and will not be able to."
-      )
+      message(STATUS "NOTICE: DICOM files (.dcm) require the VTK libraries, and will not be readable.")
     endif()
   else()
-    message(
-      STATUS
-        "NOTICE : the DICOM files (.dcm) need VTK libraries to be open and will not be able to."
-    )
+    message(STATUS "NOTICE: DICOM files (.dcm) require the VTK libraries, and will not be readable.")
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE : the DICOM files (.dcm) need VTK libraries to be open and will not be able to."
-  )
+  message(STATUS "NOTICE: DICOM files (.dcm) require the VTK libraries, and will not be readable.")
 endif()
 
 find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
@@ -73,7 +64,7 @@ if(Boost_FILESYSTEM_FOUND)
     KEYWORDS Viewer Mesh_3)
   target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBRARIES} CGAL::CGAL_ImageIO)
   if(VTK_LIBRARIES)
-    target_compile_definitions(io_image_plugin PRIVATE CGAL_USE_VTK)
+    target_compile_definitions(io_image_plugin PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
   endif()
   if(TARGET Boost::filesystem)
     target_link_libraries(io_image_plugin PUBLIC Boost::filesystem
@@ -82,10 +73,7 @@ if(Boost_FILESYSTEM_FOUND)
     target_link_libraries(io_image_plugin PUBLIC ${Boost_LIBRARIES})
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE : the Io_image_plugin needs boost-filesystem to work and will not be compiled"
-  )
+  message(STATUS "NOTICE: the Io_image_plugin requires boost-filesystem, and will not be compiled")
 endif()
 polyhedron_demo_plugin(
   mesh_3_optimization_plugin
@@ -101,17 +89,14 @@ target_link_libraries(
          scene_implicit_function_item)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
-
 if(TARGET CGAL::Eigen3_support)
   target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen3_support)
-else() #eigen
-  message(
-    STATUS
-      "The Mesh_3_optimization_plugin requires Eigen, which was not found, and will use a deprecated class to replace it. Warnings are to be expected."
-  )
-endif() #eigen
+else()
+  message(STATUS "NOTICE: The Mesh_3_optimization_plugin requires Eigen, which was not found."
+                 "A deprecated class will be used to replace it. Warnings are to be expected.")
+endif()
 
 polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)

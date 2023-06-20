@@ -24,8 +24,7 @@ include(GNUInstallDirs)
 
 if(CGAL_BRANCH_BUILD)
 
-  message(
-    STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
+  message(STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
 
   # list packages
   file(
@@ -75,10 +74,8 @@ if(CGAL_BRANCH_BUILD)
       "${CGAL_SOURCE_DIR}/GraphicsView"
       CACHE INTERNAL "Directory containing the GraphicsView package")
 
-  message(
-    STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
-  message(
-    STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
+  message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
+  message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
   message(STATUS "Core package directory: ${CGAL_CORE_PACKAGE_DIR}")
 
 else(CGAL_BRANCH_BUILD)
@@ -933,6 +930,9 @@ if(CGAL_BRANCH_BUILD)
     find_package(Eigen3 REQUIRED)
     find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
     find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+    if(VTK_FOUND)
+      get_target_property(VTK_INCLUDE_DIRS VTK::IOImage INTERFACE_INCLUDE_DIRECTORIES)
+    endif()
     find_package(IPE)
     find_package(RS3)
     find_package(LEDA)
@@ -1200,8 +1200,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
       endif()
     endforeach() # loop on packages
     #Now check that a cpp file including all documented headers compiles
-    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp
-         "#define  BOOST_PARAMETER_MAX_ARITY 12 \n")
+    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp "#include <CGAL/Periodic_3_mesh_3/config.h>\n")
     foreach(header ${list_of_headers_to_test})
       file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
     endforeach() #loop on headers to include in test file

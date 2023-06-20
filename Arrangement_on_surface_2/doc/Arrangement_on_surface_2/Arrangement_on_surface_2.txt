@@ -1937,8 +1937,8 @@ perform a point-location query on the resulting arrangement. The query
 point \f$q\f$ is drawn as a plus sign. The face that contains it is
 drawn with a shaded texture. The program calls an instance of the
 function template `print_arrangement_size()`, which prints
-quantitative measures of the arrangement; see \ref lst_paz "code
-example" for its listing in Section \ref aos_ssec-basic-arr_class.
+quantitative measures of the arrangement; see \ref lst_paz
+"code example" for its listing in Section \ref aos_ssec-basic-arr_class.
 
 \cgalExample{Arrangement_on_surface_2/incremental_insertion.cpp}
 
@@ -2058,7 +2058,7 @@ insertion.
 
 The example below shows how to construct the same arrangement of five
 line segments built incrementally in \ref
-Arrangement_on_surface_2/incremental_insertion.cpp` depicted in
+Arrangement_on_surface_2/incremental_insertion.cpp depicted in
 \cgalFigureRef{aos_fig-incremental_insertion} using the aggregate
 insertion function \link CGAL::insert<>() `insert()`\endlink.  Note
 that no point-location object needs to be defined and attached to the
@@ -2266,7 +2266,7 @@ description of geometric objects from a file and constructs them. It
 accepts the name of an input file that contains the plain-text
 description of the geometric objects and an output iterator for
 storing the newly constructed objects.  When the function is
-instantiated, the first template parameter, namely Type`, must be
+instantiated, the first template parameter, namely `Type`, must be
 substituted with the type of objects to read. It is assumed that an
 extractor operator (`>>`) that extracts objects of the given type from
 the input stream is available. The listing of the function template,
@@ -4819,21 +4819,19 @@ defined in the header file `arr_conics.h`.
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_2                           Rat_point;
-typedef Rat_kernel::Segment_2                         Rat_segment;
-typedef Rat_kernel::Circle_2                          Rat_circle;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-                                                      Traits;
-typedef Traits::Point_2                               Point;
-typedef Traits::Curve_2                               Conic_arc;
-typedef Traits::X_monotone_curve_2                    X_monotone_conic_arc;
-typedef CGAL::Arrangement_2<Traits>                   Arrangement;
+using Nt_traits = CGAL::CORE_algebraic_number_traits;
+using Rational = Nt_traits::Rational;
+using Rat_kernel = CGAL::Cartesian<Rational>;
+using Rat_point = Rat_kernel::Point_2;
+using Rat_segment = Rat_kernel::Segment_2;
+using Rat_circle = Rat_kernel::Circle_2;
+using Algebraic = Nt_traits::Algebraic;
+using Alg_kernel = CGAL::Cartesian<Algebraic>;
+using Traits = CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+using Point = Traits::Point_2;
+using Conic_arc = Traits::Curve_2;
+using X_monotone_conic_arc = Traits::X_monotone_curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 \endcode
 
 <!-- ------------------------------------------------------------------------- -->
@@ -4953,7 +4951,7 @@ nested type `Algebraic_real_1` of the \f$y\f$-coordinate is only
 computed upon request, as it can be a rather costly operation.
 
 The aforementioned types, `Polynomial_1`, `Coefficient`,
-`Bound, and `Algebraic_real_1`, are conveniently nested in
+`Bound`, and `Algebraic_real_1`, are conveniently nested in
 the `Arr_rational_function_traits_2` class template among
 the others and obtained from there in the type definitions used
 in the examples given in this section and listed below. These types
@@ -5510,7 +5508,7 @@ nested types are defined as follows:
   The latter ensures that every instance of the class template
   `Arr_curve_data_traits_2` obtained by substituting the `BaseTraits`
   template parameter with a model of the `ArrangementLandmarkTraits_2`
-  concept models the ArrangementLandmarkTraits_2` concept as well
+  concept models the `ArrangementLandmarkTraits_2` concept as well
 
 </UL>
 
@@ -6599,7 +6597,7 @@ member functions when operating on an arrangement-with-history object.
 \cgalExample{Arrangement_on_surface_2/edge_manipulation_curve_history.cpp}
 
 <!-- ========================================================================= -->
-\section aos_sec-io Input/Output Streams
+\section aos_sec-io Input/Output Streams and Visualization
 <!-- ========================================================================= -->
 
 In some cases, one would like to save an arrangement object
@@ -6743,6 +6741,24 @@ format. The package contains a template called,
 arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 \cgalAdvancedEnd
+
+<!-- ------------------------------------------------------------------------- -->
+\subsection arr_ssecarr_io_vis Drawing an Arrangement
+<!-- ------------------------------------------------------------------------- -->
+
+An arrangement data structure can be visualized by calling the \link PkgArrangementOnSurface2Draw CGAL::draw<arr>() \endlink function as shown in the following example. This function opens a new window showing the given arrangement. A call to this function is blocking; that is, the program continues execution only after the user closes the window.
+
+\cgalExample{Arrangement_on_surface_2/draw_arr.cpp}
+
+This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\cgalFigureBegin{aos_fig-draw_arr,draw_arr.png}
+A snapshot of the window created by the program
+\ref Arrangement_on_surface_2/draw_arr.cpp. The constructed arrangement consists
+of 14 vertices, 15 edges, and 3 faces. Notice that the colors are generated at random.
+\cgalFigureEnd
+
 
 <!-- ========================================================================= -->
 \section aos_sec-bgl Adapting to Boost Graphs
@@ -6936,7 +6952,7 @@ demonstrates the application of the breadth-first search} (BFS)
 algorithm on a dual arrangement. It uses the functor template
 `Extended_face_property_map<Arrangement, Type>` to directly access
 information stored inside the faces. The functor implements a property
-map that utilizes the `data()` and `set_data() member functions of the
+map that utilizes the `data()` and `set_data()` member functions of the
 extended face to update or obtain the property. When the property map
 is instantiated, the `Type` parameter must be substituted with the
 same type that is used to extend the arrangement face; see Section

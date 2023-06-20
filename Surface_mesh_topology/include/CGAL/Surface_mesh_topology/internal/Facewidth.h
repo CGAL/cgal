@@ -31,11 +31,11 @@ public:
   using Mesh=Mesh_;
 
   using Original_map_wrapper=internal::Generic_map_selector<Mesh, Items_for_shortest_noncontractible_cycle>;
-  using Original_dart_const_handle=typename Original_map_wrapper::Dart_const_handle_original;
+  using Original_dart_const_descriptor=typename Original_map_wrapper::Dart_const_descriptor_original;
 
   using Local_map        =typename Original_map_wrapper::Generic_map;
-  using Dart_handle      =typename Local_map::Dart_handle;
-  using Dart_const_handle=typename Local_map::Dart_const_handle;
+  using Dart_descriptor      =typename Local_map::Dart_descriptor;
+  using Dart_const_descriptor=typename Local_map::Dart_const_descriptor;
   using size_type        = typename Local_map::size_type;
 
   using Path             = CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
@@ -73,7 +73,7 @@ public:
           m_radial_map.is_marked(it, original_darts))
       {
         m_radial_map.template mark_cell<2>(it, face_treated);
-        Dart_handle new_vertex=m_radial_map.insert_cell_0_in_cell_2(it);
+        Dart_descriptor new_vertex=m_radial_map.insert_cell_0_in_cell_2(it);
         for (auto itv=m_radial_map.template darts_of_cell_basic<0>(new_vertex, m_mark_new_vertex).begin(),
              itvend=m_radial_map.template darts_of_cell_basic<0>(new_vertex, m_mark_new_vertex).end();
              itv!=itvend; ++itv)
@@ -112,7 +112,7 @@ public:
     }
   }
 
-  std::vector<Original_dart_const_handle> compute_face_width(bool display_time=false)
+  std::vector<Original_dart_const_descriptor> compute_face_width(bool display_time=false)
   {
     CGAL::Timer t;
     if (display_time)
@@ -122,11 +122,11 @@ public:
     Path_on_surface<Local_map> edgewidth_of_radial_map=
         m_snc_to_find_facewidth->compute_edge_width();
 
-    std::vector<Original_dart_const_handle> cycle;
+    std::vector<Original_dart_const_descriptor> cycle;
     cycle.reserve(edgewidth_of_radial_map.length());
     for (std::size_t i=0, n=edgewidth_of_radial_map.length(); i<n; i++)
     {
-      Dart_handle dh=m_radial_map.dart_handle
+      Dart_descriptor dh=m_radial_map.dart_descriptor
           (const_cast<typename Local_map::Dart&>(*edgewidth_of_radial_map.get_ith_real_dart(i)));
       if (!m_radial_map.is_marked(dh, m_mark_new_vertex))
       { cycle.push_back(m_radial_to_original[dh]); }

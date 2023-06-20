@@ -11,12 +11,11 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt5)
 find_package(LEDA QUIET)
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS OpenGL Gui)
-
+find_package(Qt5 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt5_FOUND
    AND Qt5_FOUND
@@ -40,8 +39,5 @@ if(CGAL_Qt5_FOUND
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test( HDT2 )
 else()
-  message(
-    STATUS
-      "NOTICE: This demo requires CGAL, CGAL_Core (or LEDA), and Qt5 and will not be compiled."
-  )
+  message("NOTICE: This demo requires CGAL_Core (or LEDA), and Qt5 and will not be compiled.")
 endif()

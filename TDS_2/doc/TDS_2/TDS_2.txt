@@ -24,7 +24,7 @@ of the space the triangulation is embedded in.
 
 The representation of \cgal 2D triangulations is based on faces and vertices,
 Edges are only implicitly
-represented trough the adjacency relations between two
+represented through the adjacency relations between two
 faces.
 
 The triangulation data structure can be seen

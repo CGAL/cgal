@@ -337,7 +337,7 @@ why we highly recommend reading this section in order to learn what can be expec
 each coordinate function. If you want to get more mathematical details about each coordinate
 function as well as the complete history and theory behind barycentric coordinates, you should
 read \cgalCite{cgal:bc:hs-gbcicg-17}. You can also read an overview
-<a href="https://www.anisimovdmitry.com/assets/files/phd_thesis_anisimov.pdf">here</a>
+<a href="https://susi.usi.ch/usi/documents/318813">here</a>
 (chapters 1 and 2).
 
 
@@ -563,7 +563,7 @@ After the normalization of these weights as before
 \f$b_i = \frac{w_i}{W^{mv}}\qquad\f$ with \f$\qquad W^{mv} = \sum_{j=1}^n w_j\f$
 </center>
 
-we obtain the max precision \f$O(n^2)\f$ algorithm. The max speed O(n) algorithm computes the
+we obtain the max precision \f$O(n^2)\f$ algorithm. The max speed \f$O(n)\f$ algorithm computes the
 weights \f$w_i\f$ using the pseudocode from <a href="https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf">here</a>.
 These weights
 
@@ -584,7 +584,7 @@ one should be cautious when using the unnormalized mean value weights. In that c
 The harmonic coordinates are computed by solving the Laplace equation
 
 <center>
-\f$\Delta \boldsymbol{b} = \boldsymbol{0}\f$
+\f$\Delta b = 0\f$
 </center>
 
 subject to suitable Dirichlet boundary conditions. Harmonic coordinates are the only coordinates
