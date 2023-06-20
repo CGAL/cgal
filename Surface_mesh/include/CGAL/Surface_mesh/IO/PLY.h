@@ -460,7 +460,7 @@ bool fill_simplex_specific_header(std::ostream& os,
 
   if(prop == "v:normal")
   {
-    auto pmap = sm.template property_map<VIndex, Vector>(prop);
+    auto pmap = sm.template get_property_map<VIndex, Vector>(prop);
     if(pmap)
     {
       if(std::is_same<FT, float>::value)
@@ -482,7 +482,7 @@ bool fill_simplex_specific_header(std::ostream& os,
 
   if(prop == "v:color")
   {
-    auto pmap = sm.template property_map<VIndex, Color>(prop);
+    auto pmap = sm.template get_property_map<VIndex, Color>(prop);
     if(pmap)
     {
       os << "property uchar red" << std::endl
@@ -514,7 +514,7 @@ bool fill_simplex_specific_header(std::ostream& os,
 
   if(prop == "f:color")
   {
-    auto pmap = sm.template property_map<FIndex, Color>(prop);
+    auto pmap = sm.template get_property_map<FIndex, Color>(prop);
     if(pmap)
     {
       os << "property uchar red" << std::endl
@@ -700,7 +700,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     std::string name = get_property_raw_name<Point>(prop[i], Simplex());
 
     {
-      auto pmap = sm.template property_map<Simplex,boost::int8_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::int8_t>(prop[i]);
       if(pmap)
       {
         os << "property char " << name << std::endl;
@@ -709,7 +709,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,boost::uint8_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::uint8_t>(prop[i]);
       if(pmap)
       {
         os << "property uchar " << name << std::endl;
@@ -718,7 +718,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,boost::int16_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::int16_t>(prop[i]);
       if(pmap)
       {
         os << "property short " << name << std::endl;
@@ -727,7 +727,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,boost::uint16_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::uint16_t>(prop[i]);
       if(pmap)
       {
         os << "property ushort " << name << std::endl;
@@ -736,7 +736,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,boost::int32_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::int32_t>(prop[i]);
       if(pmap)
       {
         os << "property int " << name << std::endl;
@@ -745,7 +745,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,boost::uint32_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::uint32_t>(prop[i]);
       if(pmap)
       {
         os << "property uint " << name << std::endl;
@@ -754,7 +754,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,boost::int64_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::int64_t>(prop[i]);
       if(pmap)
       {
         os << "property int " << name << std::endl;
@@ -763,7 +763,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,boost::uint64_t>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,boost::uint64_t>(prop[i]);
       if(pmap)
       {
         os << "property uint " << name << std::endl;
@@ -772,7 +772,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,float>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,float>(prop[i]);
       if(pmap)
       {
         os << "property float " << name << std::endl;
@@ -781,7 +781,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       }
     }
     {
-      auto pmap = sm.template property_map<Simplex,double>(prop[i]);
+      auto pmap = sm.template get_property_map<Simplex,double>(prop[i]);
       if(pmap)
       {
         os << "property double " << name << std::endl;

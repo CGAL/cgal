@@ -338,7 +338,7 @@ bool write_OFF_with_or_without_fcolors(std::ostream& os,
 
   const bool has_fcolors = !(is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value);
 
-  auto fcolors = sm.template property_map<Face_index, CGAL::IO::Color>("f:color");
+  auto fcolors = sm.template get_property_map<Face_index, CGAL::IO::Color>("f:color");
 
   if(!has_fcolors && fcolors && fcolors->size() > 0)
     return write_OFF_BGL(os, sm, np.face_color_map(fcolors.value()));
@@ -361,7 +361,7 @@ bool write_OFF_with_or_without_vtextures(std::ostream& os,
 
   const bool has_vtextures = !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_texture_map_t>::value);
 
-  auto vtextures = sm.template property_map<Vertex_index, Texture>("v:texcoord");
+  auto vtextures = sm.template get_property_map<Vertex_index, Texture>("v:texcoord");
 
   if(!has_vtextures && vtextures && vtextures->size() > 0)
     return write_OFF_with_or_without_fcolors(os, sm, np.vertex_texture_map(vtextures.value()));
@@ -382,7 +382,7 @@ bool write_OFF_with_or_without_vcolors(std::ostream& os,
 
   const bool has_vcolors = !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value);
 
-  auto vcolors = sm.template property_map<Vertex_index, CGAL::IO::Color>("v:color");
+  auto vcolors = sm.template get_property_map<Vertex_index, CGAL::IO::Color>("v:color");
 
   if(!has_vcolors && vcolors && vcolors->size() > 0)
     return write_OFF_with_or_without_vtextures(os, sm, np.vertex_color_map(vcolors.value()));
@@ -405,7 +405,7 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 
   const bool has_vnormals = !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value);
 
-  auto vnormals = sm.template property_map<Vertex_index, Normal>("v:normal");
+  auto vnormals = sm.template get_property_map<Vertex_index, Normal>("v:normal");
 
   if(!has_vnormals && vnormals && vnormals->size() > 0)
     return write_OFF_with_or_without_vcolors(os, sm, np.vertex_normal_map(vnormals.value()));
