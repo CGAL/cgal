@@ -168,8 +168,8 @@ public:
       } else {
         os << display_vert(c->vertex(0)) << " - " << display_vert(c->vertex(1)) << " - "
            << display_vert(c->vertex(2)) << " - " << display_vert(c->vertex(3));
+        os << display_lt(lt) << " " << i << " " << j;
       }
-      os << display_lt(lt) << " " << i << " " << j;
       return os.str();
     }
 
@@ -707,12 +707,9 @@ public:
   Simplex_iterator& operator++()
   {
     auto increment_cell_iterator = [&]() {
-#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
-      std::cerr << "increment cell iterator from:\n" << _cell_iterator.debug_iterator();
-#endif
       ++_cell_iterator;
 #if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
-      std::cerr << "\n > to:\n" << _cell_iterator.debug_iterator() << std::endl;
+      std::cerr << "increment cell iterator to:\n" << _cell_iterator.debug_iterator() << '\n';
 #endif
     };
     CGAL_assertion(_curr_simplex.incident_cell() != Cell_handle());
