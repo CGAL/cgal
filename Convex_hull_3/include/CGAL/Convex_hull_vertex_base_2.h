@@ -18,6 +18,7 @@
 #include <CGAL/license/Convex_hull_3.h>
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
+#include <CGAL/IO/io.h>
 
 #include <iostream>
 

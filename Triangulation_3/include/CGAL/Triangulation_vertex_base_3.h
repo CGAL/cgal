@@ -17,6 +17,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
