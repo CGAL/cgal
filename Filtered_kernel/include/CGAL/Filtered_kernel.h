@@ -21,8 +21,6 @@
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Exact_kernel_selector.h>
 
-#include <CGAL/Lazy_exact_nt.h>
-
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filters.h>
 #include <boost/type_traits.hpp>
 
