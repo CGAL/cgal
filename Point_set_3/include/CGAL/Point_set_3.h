@@ -368,7 +368,13 @@ public:
     \note This method does not change the content of the point set and
     is only used for optimization.
    */
-  void reserve (std::size_t s) { m_base.resize(s); }
+  void reserve (std::size_t s) {
+    std::size_t initial_size = m_base.size();
+    m_base.resize(s);
+    m_nb_removed = m_base.size() - initial_size;
+    for (std::size_t i = initial_size; i < m_base.size(); ++ i)
+      m_indices[i] = i;
+  }
 
   /*!
     \brief changes size of the point set.

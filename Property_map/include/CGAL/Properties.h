@@ -223,6 +223,9 @@ class Property_container {
 
 public:
 
+  template<typename T>
+  using Array = Property_array<Index, T>;
+
   Property_container() = default;
 
   Property_container(const Property_container<Index>& other) {
