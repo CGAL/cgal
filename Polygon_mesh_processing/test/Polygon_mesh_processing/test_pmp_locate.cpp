@@ -223,7 +223,7 @@ void test_constructions(const G& g,
   // ---------------------------------------------------------------------------
   // just to check the API
   PMP::construct_point(loc, g);
-  PMP::construct_point(loc, g, CGAL::parameters::all_default());
+  PMP::construct_point(loc, g, CGAL::parameters::default_values());
 }
 
 template<typename K, typename G>

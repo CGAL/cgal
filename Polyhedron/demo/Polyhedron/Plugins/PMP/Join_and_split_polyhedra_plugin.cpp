@@ -22,7 +22,7 @@
 #include <CGAL/property_map.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include "Color_map.h"
 
 typedef Scene_surface_mesh_item Scene_facegraph_item;
@@ -47,7 +47,7 @@ public:
     msg_interface = m;
 
     actionJoinPolyhedra= new QAction(tr("Join Selected Polyhedra"), mainWindow);
-    actionJoinPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
+    actionJoinPolyhedra->setProperty("subMenuName", "Polygon Mesh Processing");
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
 
     actionSplitPolyhedra= new QAction(tr("Split Selected Polyhedra"), mainWindow);
@@ -144,11 +144,11 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
     if(item)
     {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-      std::vector<FaceGraph> new_polyhedra;
+      std::list<FaceGraph> new_polyhedra;
       CGAL::Polygon_mesh_processing::split_connected_components(*item->face_graph(),
                                                                 new_polyhedra);
       //sort polyhedra by number of faces
-      std::sort(new_polyhedra.begin(), new_polyhedra.end(), Compare());
+      new_polyhedra.sort(Compare());
 
 
       if (new_polyhedra.size()==1)
@@ -168,7 +168,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
        scene->addItem(group);
       for(FaceGraph& poly : new_polyhedra)
       {
-        Scene_facegraph_item* new_item=new Scene_facegraph_item(poly);
+        Scene_facegraph_item* new_item=new Scene_facegraph_item(std::move(poly));
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
         new_item->setColor(color_map[cc]);
         ++cc;
@@ -253,7 +253,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
 
         int nb_patch_ids = PMP::connected_components(pmesh
                                                      , fccmap
-                                                     , PMP::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                                                     , CGAL::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
                                                      .face_index_map(fim));
 
         for(face_descriptor f : faces(pmesh))

@@ -1,6 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/face_extension_overlay.cpp
 // A face overlay of two arrangements with extended face records.
 
+#include <cassert>
+
 #include <CGAL/basic.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
@@ -21,7 +23,8 @@ int main() {
   insert_non_intersecting_curve(arr1, Segment(Point(6, 2), Point(6, 6)));
   insert_non_intersecting_curve(arr1, Segment(Point(6, 6), Point(2, 6)));
   insert_non_intersecting_curve(arr1, Segment(Point(2, 6), Point(2, 2)));
-  CGAL_assertion(arr1.number_of_faces() == 2);
+  // 2 because the bounded and the unbounded one
+  assert(arr1.number_of_faces() == 2);
 
   // Mark just the bounded face.
   for (auto fit = arr1.faces_begin(); fit != arr1.faces_end(); ++fit)
@@ -33,7 +36,6 @@ int main() {
   insert_non_intersecting_curve(arr2, Segment(Point(7, 4), Point(4, 7)));
   insert_non_intersecting_curve(arr2, Segment(Point(4, 7), Point(1, 4)));
   insert_non_intersecting_curve(arr2, Segment(Point(1, 4), Point(4, 1)));
-  CGAL_assertion(arr2.number_of_faces() == 2);
 
   for (auto fit = arr2.faces_begin(); fit != arr2.faces_end(); ++fit)
     fit->set_data(fit != arr2.unbounded_face());    // mark the bounded face.

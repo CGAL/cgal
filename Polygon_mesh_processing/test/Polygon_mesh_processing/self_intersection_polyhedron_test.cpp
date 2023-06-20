@@ -38,7 +38,7 @@ test_self_intersections(const std::string filename, const bool expected)
   CGAL::Polygon_mesh_processing::self_intersections(
     poly,
     std::back_inserter(intersected_tris),
-    CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
+    CGAL::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
   bool intersecting_1 = !intersected_tris.empty();
 
   std::cout << "Self-intersection test took " << timer.time() << " sec." << std::endl;
@@ -46,7 +46,7 @@ test_self_intersections(const std::string filename, const bool expected)
 
   timer.reset();
   bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect(poly,
-    CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
+    CGAL::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
 
   std::cout << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
   std::cout << (intersecting_2 ? "There is a self-intersection." :

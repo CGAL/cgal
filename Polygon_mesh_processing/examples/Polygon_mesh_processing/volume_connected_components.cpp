@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3>                   Surface_mesh;

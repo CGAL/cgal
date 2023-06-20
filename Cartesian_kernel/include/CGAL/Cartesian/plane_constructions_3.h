@@ -53,6 +53,15 @@ plane_from_point_direction(const typename R::Point_3 &p,
   return PlaneC3<R>(A, B, C, D);
 }
 
+  template <class R>
+CGAL_KERNEL_LARGE_INLINE
+PlaneC3<R>
+plane_from_point_direction(Origin,
+                           const typename R::Direction_3 &d)
+{
+  return PlaneC3<R>(d.dx(), d.dy(), d.dz(), 0);
+}
+
 } //namespace CGAL
 
 #endif // CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H

@@ -6,7 +6,7 @@
 #include <fstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 template <class TriangleMesh, class VertexPointMap, class EdgeIsConstrainedMap>
 std::size_t

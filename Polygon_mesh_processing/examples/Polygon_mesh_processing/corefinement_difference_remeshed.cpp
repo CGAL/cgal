@@ -9,6 +9,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <iterator>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 
@@ -18,7 +20,7 @@ typedef boost::graph_traits<Mesh>::edge_descriptor            edge_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 struct Vector_pmap_wrapper
 {
@@ -56,8 +58,8 @@ int main(int argc, char* argv[])
     PMP::corefine_and_compute_difference(mesh1,
                                          mesh2,
                                          mesh1,
-                                         params::all_default(), // default parameters for mesh1
-                                         params::all_default(), // default parameters for mesh2
+                                         params::default_values(), // default parameters for mesh1
+                                         params::default_values(), // default parameters for mesh2
                                          params::edge_is_constrained_map(is_constrained_map));
 
   if (valid_difference)

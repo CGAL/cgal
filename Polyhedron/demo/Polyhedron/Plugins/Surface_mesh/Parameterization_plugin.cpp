@@ -37,16 +37,14 @@
 #include <CGAL/Surface_mesh_parameterization/Orbifold_Tutte_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/container/flat_map.hpp>
 
 #include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <vector>
-
+#include <unordered_map>
+#include <unordered_set>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
@@ -63,7 +61,7 @@ typedef EPICK Traits;
 
 namespace SMP = CGAL::Surface_mesh_parameterization;
 
-typedef boost::unordered_set<boost::graph_traits<Base_face_graph>::face_descriptor> Component;
+typedef std::unordered_set<boost::graph_traits<Base_face_graph>::face_descriptor> Component;
 typedef std::vector<Component> Components;
 
 struct Is_selected_property_map{
@@ -209,11 +207,11 @@ typedef boost::graph_traits<Seam_mesh>::face_descriptor             s_face_descr
 
 typedef boost::graph_traits<Seam_mesh>::edges_size_type             s_edges_size_type;
 
-typedef boost::unordered_set<boost::graph_traits<Base_face_graph>::
+typedef std::unordered_set<boost::graph_traits<Base_face_graph>::
 face_descriptor>                                                    Component;
 typedef std::vector<Component>                                      Components;
 
-typedef boost::unordered_set<s_face_descriptor>                       SComponent;
+typedef std::unordered_set<s_face_descriptor>                       SComponent;
 typedef std::vector<SComponent>                                     SComponents;
 
 class UVItem : public QGraphicsItem
@@ -665,7 +663,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 
   // map the cones from the selection plugin to the textured polyhedron
-  boost::unordered_set<T_vertex_descriptor> unordered_cones;
+  std::unordered_set<T_vertex_descriptor> unordered_cones;
   if(method == PARAM_OTE) {
     for(P_vertex_descriptor vd : sel_item->selected_vertices) {
       boost::graph_traits<Face_graph>::vertex_descriptor pvd(vd);
@@ -698,7 +696,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       CGAL::Polygon_mesh_processing::connected_components(
         tMesh,
         fccmap,
-        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+        CGAL::parameters::edge_is_constrained_map(
           edge_pmap));
 
   // Next is the gathering of the border halfedges of the connected component.
@@ -736,7 +734,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
     // find longest border in the connected component
     s_halfedge_descriptor bhd; // a halfedge on the (possibly virtual) border
-    boost::unordered_set<s_halfedge_descriptor> visited;
+    std::unordered_set<s_halfedge_descriptor> visited;
     FT result_len = 0;
     for(s_halfedge_descriptor hd : border)
     {
@@ -877,7 +875,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       Parameterizer parameterizer(orb);
 
       // Mark cones in the seam mesh
-      boost::unordered_map<s_vertex_descriptor, SMP::Cone_type> cmap;
+      std::unordered_map<s_vertex_descriptor, SMP::Cone_type> cmap;
       if(!SMP::locate_unordered_cones(sMesh, unordered_cones.begin(), unordered_cones.end(), cmap))
       {
         std::cerr << "Error: invalid cone or seam selection" << std::endl;
@@ -888,7 +886,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       // Fill the index property map
-      typedef boost::unordered_map<s_vertex_descriptor, int> Indices;
+      typedef std::unordered_map<s_vertex_descriptor, int> Indices;
       Indices indices;
       CGAL::Polygon_mesh_processing::connected_component(
              face(opposite(bhd, sMesh), sMesh),

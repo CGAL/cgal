@@ -326,6 +326,13 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
         if (c3t3.number_of_facets() == 0) {
           need_more_init = true;
         }
+        else
+        {
+          helper.update_restricted_cells();
+          if(c3t3.number_of_cells() == 0) {
+            need_more_init = true;
+          }
+        }
       }
       if(need_more_init) {
         init_c3t3(c3t3, domain, criteria,

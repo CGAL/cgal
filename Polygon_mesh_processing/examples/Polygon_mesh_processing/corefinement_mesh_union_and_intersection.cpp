@@ -4,14 +4,16 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-#include <fstream>
+#include <array>
 #include <iostream>
+#include <string>
+#include <tuple>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3>                      Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = CGAL::Polygon_mesh_processing::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -36,13 +38,13 @@ int main(int argc, char* argv[])
     PMP::corefine_and_compute_boolean_operations(
       mesh1, mesh2,
       output,
-      params::all_default(), // mesh1 named parameters
-      params::all_default(), // mesh2 named parameters
+      params::default_values(), // mesh1 named parameters
+      params::default_values(), // mesh2 named parameters
       std::make_tuple(
         params::vertex_point_map(get(boost::vertex_point, out_union)), // named parameters for out_union
         params::vertex_point_map(get(boost::vertex_point, out_intersection)), // named parameters for out_intersection
-        params::all_default(), // named parameters for mesh1-mesh2 not used
-        params::all_default() )// named parameters for mesh2-mesh1 not used)
+        params::default_values(), // named parameters for mesh1-mesh2 not used
+        params::default_values() )// named parameters for mesh2-mesh1 not used)
     );
 
   if (res[PMP::Corefinement::UNION])

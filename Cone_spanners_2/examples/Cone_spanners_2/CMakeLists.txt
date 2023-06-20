@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Cone_spanners_2_Examples)
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)

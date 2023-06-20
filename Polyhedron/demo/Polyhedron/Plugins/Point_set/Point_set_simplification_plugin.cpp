@@ -49,17 +49,20 @@ struct Grid_simplify_functor
 {
   Point_set* points;
   double grid_size;
+  unsigned int min_points_per_cell;
   boost::shared_ptr<Point_set::iterator> result;
 
-  Grid_simplify_functor (Point_set* points, double grid_size)
-    : points (points), grid_size (grid_size), result (new Point_set::iterator) { }
+  Grid_simplify_functor (Point_set* points, double grid_size, unsigned min_points_per_cell)
+    : points (points), grid_size (grid_size), min_points_per_cell(min_points_per_cell)
+    , result (new Point_set::iterator) { }
 
   void operator()()
   {
     *result = CGAL::grid_simplify_point_set(*points,
                                             grid_size,
                                             points->parameters().
-                                            callback (*(this->callback())));
+                                            callback (*(this->callback())).
+                                            min_points_per_cell (min_points_per_cell));
   }
 };
 
@@ -144,6 +147,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
   }
   double randomSimplificationPercentage() const { return m_randomSimplificationPercentage->value(); }
   double gridCellSize() const { return m_gridCellSize->value(); }
+  unsigned int minPointsPerCell() const { return m_minPointsPerCell->value(); }
   unsigned int maximumClusterSize() const { return m_maximumClusterSize->value(); }
   double maximumSurfaceVariation() const { return m_maximumSurfaceVariation->value(); }
 
@@ -153,6 +157,7 @@ public Q_SLOTS:
   {
     m_randomSimplificationPercentage->setEnabled (toggled);
     m_gridCellSize->setEnabled (!toggled);
+    m_minPointsPerCell->setEnabled (!toggled);
     m_maximumClusterSize->setEnabled (!toggled);
     m_maximumSurfaceVariation->setEnabled (!toggled);
   }
@@ -160,6 +165,7 @@ public Q_SLOTS:
   {
     m_randomSimplificationPercentage->setEnabled (!toggled);
     m_gridCellSize->setEnabled (toggled);
+    m_minPointsPerCell->setEnabled (toggled);
     m_maximumClusterSize->setEnabled (!toggled);
     m_maximumSurfaceVariation->setEnabled (!toggled);
   }
@@ -167,6 +173,7 @@ public Q_SLOTS:
   {
     m_randomSimplificationPercentage->setEnabled (!toggled);
     m_gridCellSize->setEnabled (!toggled);
+    m_minPointsPerCell->setEnabled (!toggled);
     m_maximumClusterSize->setEnabled (toggled);
     m_maximumSurfaceVariation->setEnabled (toggled);
   }
@@ -211,7 +218,8 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     }
     else if (method == 1)
     {
-      std::cerr << "Point set grid simplification (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
+      std::cerr << "Point set grid simplification (cell size = " << dialog.gridCellSize() <<" * average spacing, "
+                << dialog.minPointsPerCell() << " minimum point(s) per cell)" << std::endl;
 
       // Computes average spacing
       Compute_average_spacing_functor functor_as (points, 6);
@@ -219,7 +227,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
 
       double average_spacing = *functor_as.result;
 
-      Grid_simplify_functor functor (points, dialog.gridCellSize() * average_spacing);
+      Grid_simplify_functor functor (points, dialog.gridCellSize() * average_spacing, dialog.minPointsPerCell());
       run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Grid simplyfing...", mw);
 
       // Computes points to remove by Grid Clustering

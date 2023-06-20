@@ -397,7 +397,7 @@ void MainWindow::loadWKT(QString fileName)
       m_pct.insert_constraint(poly.begin(), poly.end());
     }
   }
- for(Polygon_with_holes_2 poly : polygons){
+ for(const Polygon_with_holes_2& poly : polygons){
    m_pct.insert_constraint(poly.outer_boundary().vertices_begin(), poly.outer_boundary().vertices_end());
    for(Polygon_with_holes_2::Hole_const_iterator it = poly.holes_begin(); it != poly.holes_end(); ++it){
      const Polygon_2& hole = *it;

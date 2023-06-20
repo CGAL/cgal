@@ -43,8 +43,8 @@ BOOST_PARAMETER_FUNCTION(
   (required (in_out(c3t3),*) (domain,*))
   (optional
     (time_limit_, *, 0)
-    (sliver_bound_, *, parameters::default_values::perturb_sliver_bound)
-    (sliver_criterion_, *, parameters::default_values::default_sliver_criterion(c3t3, sliver_bound_))
+    (sliver_bound_, *, parameters::default_values_for_mesh_3::perturb_sliver_bound)
+    (sliver_criterion_, *, parameters::default_values_for_mesh_3::default_sliver_criterion(c3t3, sliver_bound_))
     (perturbation_vector_, *, default_perturbation_vector(c3t3,domain,sliver_criterion_))
   )
 )
@@ -63,7 +63,7 @@ BOOST_PARAMETER_FUNCTION(
   (required (in_out(c3t3),*))
   (optional
     (time_limit_, *, 0)
-    (sliver_bound_, *, parameters::default_values::exude_sliver_bound)
+    (sliver_bound_, *, parameters::default_values_for_mesh_3::exude_sliver_bound)
   )
 )
 {
@@ -81,9 +81,9 @@ BOOST_PARAMETER_FUNCTION(
   (optional
     (time_limit_, *, 0)
     (max_iteration_number_, *, 0)
-    (convergence_, *, parameters::default_values::odt_convergence_ratio)
-    (freeze_bound_, *, parameters::default_values::odt_freeze_ratio)
-    (do_freeze_, *, parameters::default_values::do_freeze)
+    (convergence_, *, parameters::default_values_for_mesh_3::odt_convergence_ratio)
+    (freeze_bound_, *, parameters::default_values_for_mesh_3::odt_freeze_ratio)
+    (do_freeze_, *, parameters::default_values_for_mesh_3::do_freeze)
    )
 )
 {
@@ -103,9 +103,9 @@ BOOST_PARAMETER_FUNCTION(
   (optional
     (time_limit_, *, 0)
     (max_iteration_number_, *, 0)
-    (convergence_, *, parameters::default_values::lloyd_convergence_ratio)
-    (freeze_bound_, *, parameters::default_values::lloyd_freeze_ratio)
-    (do_freeze_, *, parameters::default_values::do_freeze)
+    (convergence_, *, parameters::default_values_for_mesh_3::lloyd_convergence_ratio)
+    (freeze_bound_, *, parameters::default_values_for_mesh_3::lloyd_freeze_ratio)
+    (do_freeze_, *, parameters::default_values_for_mesh_3::do_freeze)
    )
 )
 {

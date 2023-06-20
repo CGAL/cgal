@@ -62,7 +62,7 @@ public:
 
     }
   QString name() const override{ return "polylines_io_plugin"; }
-  QString nameFilters() const override{ return "Polylines files (*.polylines.txt *.cgal)"; }
+  QString nameFilters() const override{ return "Polylines files (*.polylines.txt);; CGAL Polylines files (*.cgal)"; }
   bool canLoad(QFileInfo fileinfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 

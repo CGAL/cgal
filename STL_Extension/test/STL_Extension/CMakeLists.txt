@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project( STL_Extension_Tests )
 
 
@@ -39,6 +39,7 @@ create_single_source_cgal_program( "test_is_streamable.cpp" )
 create_single_source_cgal_program( "test_lexcompare_outputrange.cpp" )
 create_single_source_cgal_program( "test_Modifiable_priority_queue.cpp" )
 create_single_source_cgal_program( "test_multiset.cpp" )
+create_single_source_cgal_program("test_cgal_named_params.cpp")
 
 add_executable( test_multiset_cc "test_multiset.cpp" )
 target_link_libraries( test_multiset_cc PUBLIC CGAL::CGAL )

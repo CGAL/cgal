@@ -54,7 +54,7 @@ The assertion flags for the polygons and polygon operations use
 \cgalCRPSection{Classes}
 - `CGAL::Polygon_2<PolygonTraits_2, Container>`
 - `CGAL::Polygon_with_holes_2<PolygonTraits_2,Container>`
-- `CGAL::General_polygon_with_holes_2<General_polygon>`
+- `CGAL::General_polygon_with_holes_2<Polygon>`
 
 \cgalCRPSection{Global Functions}
 - `CGAL::area_2()`
@@ -76,4 +76,3 @@ The assertion flags for the polygons and polygon operations use
 - \link  PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink
 
 */
-

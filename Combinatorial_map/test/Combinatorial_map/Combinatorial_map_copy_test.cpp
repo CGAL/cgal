@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <cassert>
 
 using namespace std;
 
@@ -291,7 +292,7 @@ void create2Dmap(Map& map)
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 template<typename Map>
 void create3Dmap(Map& map)
@@ -342,7 +343,7 @@ void create4Dmap(Map& map)
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
   CreateAttributes<Map,4>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 
 bool testCopy()

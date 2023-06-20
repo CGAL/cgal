@@ -43,4 +43,4 @@ for file in "${files[@]}"; do
   done; #check dependencies
 done #loop over directories
 mkdir -p "$target_directory/platforms"
-cp "$Qt5_DIR/../../../plugins/platforms/qwindows.dll" "$target_directory/platforms"
+cp "$Qt5_INSTALLATION_DIR/plugins/platforms/qwindows.dll" "$target_directory/platforms"

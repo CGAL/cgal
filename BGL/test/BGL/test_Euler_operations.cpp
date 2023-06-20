@@ -479,7 +479,7 @@ test_swap_edges()
       halfedge_descriptor h1 = *std::next(boost::begin(halfedges(g)), i);
       halfedge_descriptor h2 = *std::next(boost::begin(halfedges(g)), j);
       CGAL::internal::swap_edges(h1, h2, g);
-      CGAL_assertion(CGAL::is_valid_polygon_mesh(g));
+      assert(CGAL::is_valid_polygon_mesh(g));
     }
   }
 }

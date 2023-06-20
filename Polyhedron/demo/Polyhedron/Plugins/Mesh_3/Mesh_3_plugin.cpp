@@ -65,18 +65,18 @@ class Mesh_3_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "mesh_3_plugin.json")
 
-  Q_PROPERTY(double angle READ get_angle WRITE set_angle);
+  Q_PROPERTY(double angle READ get_angle WRITE set_angle)
   Q_PROPERTY(double sharp_edges_angle_bound
              READ get_sharp_edges_angle_bound
-             WRITE set_sharp_edges_angle_bound);
-  Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing);
-  Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing);
-  Q_PROPERTY(double approx READ get_approx WRITE set_approx);
-  Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing);
-  Q_PROPERTY(double tets_shape READ get_tets_shape WRITE set_tets_shape);
-  Q_PROPERTY(bool protect_features READ get_protect_features WRITE set_protect_features);
-  Q_PROPERTY(bool protect_borders READ get_protect_borders WRITE set_protect_borders);
-  Q_PROPERTY(bool manifold_criterion READ get_manifold_criterion WRITE set_manifold_criterion);
+             WRITE set_sharp_edges_angle_bound)
+  Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing)
+  Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
+  Q_PROPERTY(double approx READ get_approx WRITE set_approx)
+  Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
+  Q_PROPERTY(double tets_shape READ get_tets_shape WRITE set_tets_shape)
+  Q_PROPERTY(bool protect_features READ get_protect_features WRITE set_protect_features)
+  Q_PROPERTY(bool protect_borders READ get_protect_borders WRITE set_protect_borders)
+  Q_PROPERTY(bool manifold_criterion READ get_manifold_criterion WRITE set_manifold_criterion)
 
   typedef CGAL::Mesh_facet_topology Mesh_facet_topology;
   Q_ENUMS(Mesh_facet_topology)
@@ -374,27 +374,6 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
     auto& image_item = image_mesh_items->image_item;
     item = image_item;
     features_protection_available = true;
-
-    bool fit_wrdtp = true;
-    std::size_t img_wdim = image_item->image()->image()->wdim;
-    WORD_KIND img_wordKind = image_item->image()->image()->wordKind;
-    // check if the word type fits the hardcoded values in the plugin
-    if (image_item->isGray()) {
-      if (img_wordKind != WK_FLOAT)
-        fit_wrdtp = false;
-      else if (img_wdim != 4)
-        fit_wrdtp = false;
-    } else {
-      if (img_wordKind != WK_FIXED)
-        fit_wrdtp = false;
-      else if (img_wdim != 1)
-        fit_wrdtp = false;
-    }
-    if (!fit_wrdtp) {
-      return tr(
-          "Selected object can't be meshed because the image's word type is "
-          "not supported by this plugin.");
-    }
   }
 #  endif
 

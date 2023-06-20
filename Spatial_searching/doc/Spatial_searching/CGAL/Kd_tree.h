@@ -223,7 +223,7 @@ Returns the number of points that are stored in the tree.
 size_type size() const;
 
 /*!
-return the instance of the traits used to construct the tree.
+Returns the instance of the traits used to construct the tree.
 */
 Traits traits() const;
 
@@ -247,6 +247,12 @@ const Kd_tree_rectangle<FT,D>& bounding_box() const;
 Inserts statistics of the tree into the output stream `s`.
 */
 std::ostream& statistics(std::ostream& s) const;
+
+/*!
+Inserts the tree in the <a href="https://graphviz.org/">`Graphviz`</a> format
+into the output stream `s`.
+*/
+std::ostream& write_graphviz(std::ostream& s) const;
 
 /// @}
 

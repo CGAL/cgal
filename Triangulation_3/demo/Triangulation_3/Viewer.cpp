@@ -1754,7 +1754,7 @@ void Viewer::beginSelection(const QPoint &point)
 {
   picking_pos = point;
   CGAL::QGLViewer::beginSelection(point);
-};
+}
 void Viewer::endSelection(const QPoint& p)
 {
   CGAL::QGLViewer::endSelection(p);

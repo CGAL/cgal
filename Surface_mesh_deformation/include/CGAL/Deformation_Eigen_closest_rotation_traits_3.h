@@ -80,8 +80,13 @@ public:
   /// Computes the closest rotation to `m` and places it into `R`
   void compute_close_rotation(const Matrix& m, Matrix& R)
   {
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> solver;
+    solver.compute(m);
+#else
     Eigen::JacobiSVD<Eigen::Matrix3d> solver;
-    solver.compute( m, Eigen::ComputeFullU | Eigen::ComputeFullV );
+    solver.compute(m, Eigen::ComputeFullU | Eigen::ComputeFullV);
+#endif
 
     const Matrix& u = solver.matrixU(); const Matrix& v = solver.matrixV();
     R = v * u.transpose();

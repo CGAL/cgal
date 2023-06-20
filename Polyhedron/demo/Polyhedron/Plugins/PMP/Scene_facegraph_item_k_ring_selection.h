@@ -280,7 +280,7 @@ public Q_SLOTS:
     //std::vector<Polyhedron::Face_handle> cc;
     std::size_t nb_cc = CGAL::Polygon_mesh_processing::connected_components(poly
           , fccmap
-          , CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(spmap));
+          , CGAL::parameters::edge_is_constrained_map(spmap));
     std::vector<bool> is_cc_done(nb_cc, false);
 
     for(fg_face_descriptor f : face_sel)

@@ -59,7 +59,6 @@ int main() {
     std::vector<Make_x_monotone_result> obj_vector;
     bezier_traits.make_x_monotone_2_object()(B, std::back_inserter(obj_vector));
     auto* x_seg_p = boost::get<Bezier_x_monotone_curve>(&obj_vector[0]);
-    CGAL_assertion(x_seg_p);
     x_curves.push_back(*x_seg_p);
   }
 

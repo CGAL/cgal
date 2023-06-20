@@ -60,15 +60,11 @@ namespace CGAL {
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 
-#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
-    typedef typename Dart_wrapper::Dart                   Dart;
-#else
     typedef typename internal::template Get_dart_info<Dart_wrapper>::type
                                                            Dart_info;
     typedef typename internal::template Get_darts_with_id<Dart_wrapper>::type
                                                            Darts_with_id;
     typedef CGAL::Dart<d_, Self, Dart_info, Darts_with_id> Dart;
-#endif
 
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
@@ -324,13 +320,11 @@ namespace CGAL {
       ah->set_dart(adart);
     }
 
-#if !defined(CGAL_CMAP_DART_DEPRECATED) || defined(CGAL_NO_DEPRECATED_CODE)
     // Get the information associated with a given dart
     Dart_info& info(Dart_handle adart)
     { return adart->info(); }
     const Dart_info& info(Dart_const_handle adart) const
     { return adart->info(); }
-#endif
 
     // Get the info of the given attribute
     template<unsigned int i>

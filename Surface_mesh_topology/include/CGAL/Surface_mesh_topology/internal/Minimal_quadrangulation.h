@@ -670,7 +670,7 @@ protected:
     }
     res.update_is_closed();
     CGAL_assertion(res.is_empty() || res.is_closed());
-    CGAL_assertion(res.is_valid());
+    CGAL_expensive_assertion(res.is_valid());
     return res;
   }
 
@@ -702,7 +702,7 @@ protected:
     if (!res.is_empty())
     { res.merge_last_flat_with_next_if_possible(); }
     CGAL_assertion(res.is_closed() || res.is_empty());
-    CGAL_assertion(res.is_valid());
+    CGAL_expensive_assertion(res.is_valid());
     return res;
   }
 

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(BGL_Tests)
 
 # CGAL and its components
@@ -70,8 +70,6 @@ create_single_source_cgal_program("test_helpers.cpp")
 create_single_source_cgal_program("test_Has_member_clear.cpp")
 
 create_single_source_cgal_program("test_Has_member_id.cpp")
-
-create_single_source_cgal_program("test_cgal_bgl_named_params.cpp")
 
 create_single_source_cgal_program("test_bgl_read_write.cpp")
 

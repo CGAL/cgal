@@ -14,7 +14,7 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
@@ -25,7 +25,8 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
 
-template<class TM,
+template<bool use_relaxed_order,
+         class TM,
          class GT,
          class ShouldStop,
          class VertexIndexMap,
@@ -52,7 +53,7 @@ int edge_collapse(TM& tmesh,
 {
   typedef EdgeCollapse<TM, GT, ShouldStop,
                        VertexIndexMap, VertexPointMap, HalfedgeIndexMap, EdgeIsConstrainedMap,
-                       GetCost, GetPlacement, ShouldIgnore, Visitor> Algorithm;
+                       GetCost, GetPlacement, ShouldIgnore, Visitor,use_relaxed_order> Algorithm;
 
   Algorithm algorithm(tmesh, traits, should_stop, vim, vpm, him, ecm, get_cost, get_placement, should_ignore, visitor);
 
@@ -81,17 +82,20 @@ struct Dummy_visitor
 
 } // namespace internal
 
-template<class TM, class ShouldStop,class NamedParameters>
+template<class TM, class ShouldStop,class NamedParameters = parameters::Default_named_parameters>
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type                   Geom_traits;
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::use_relaxed_order_t, NamedParameters, Tag_false> ::type  Use_relaxed_order;
 
-  return internal::edge_collapse(tmesh, should_stop,
+  return internal::edge_collapse<Use_relaxed_order::value>
+                                (tmesh, should_stop,
                                  choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits)),
                                  CGAL::get_initialized_vertex_index_map(tmesh, np),
                                  choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -103,12 +107,6 @@ int edge_collapse(TM& tmesh,
                                  choose_parameter<internal::Dummy_filter>(get_parameter(np, internal_np::filter)),
                                  choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::visitor)));
 
-}
-
-template<class TM, class ShouldStop>
-int edge_collapse(TM& tmesh, const ShouldStop& should_stop)
-{
-  return edge_collapse(tmesh, should_stop, CGAL::parameters::all_default());
 }
 
 } // namespace Surface_mesh_simplification

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Voronoi_diagram_2_Tests)
 
 find_package(CGAL REQUIRED)
@@ -20,14 +20,4 @@ include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("vda_tos2.cpp")
   target_link_libraries(vda_tos2 PUBLIC CGAL::Eigen3_support)
-endif()
-
-if(BUILD_TESTING)
-    set_tests_properties(
-      execution___of__vda_ag
-      execution___of__vda_dt
-      execution___of__vda_pt
-      execution___of__vda_rt
-      execution___of__vda_sdg
-      PROPERTIES RESOURCE_LOCK VDA_Tests_IO)
 endif()

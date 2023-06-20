@@ -671,7 +671,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
       roi_facets
     , target_length
     , *mesh
-    , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+    , CGAL::parameters::number_of_iterations(nb_iter)
     .protect_constraints(false)
     .vertex_point_map(vpmap)
     .edge_is_constrained_map(border_pmap)

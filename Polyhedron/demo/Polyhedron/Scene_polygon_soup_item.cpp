@@ -900,7 +900,7 @@ void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
   CGAL::Polygon_mesh_processing::repair_polygon_soup(
         d->soup->points,
         d->soup->polygons,
-        CGAL::Polygon_mesh_processing::parameters::
+        CGAL::parameters::
         erase_all_duplicates(erase_dup)
         .require_same_orientation(req_same_orientation));
   QApplication::restoreOverrideCursor();

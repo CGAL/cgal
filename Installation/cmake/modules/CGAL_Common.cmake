@@ -17,13 +17,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     message( FATAL_ERROR "CMAKE_ROOT environment variable not set. It should point to the directory where CMake is installed.")
   endif()
 
-  # CMAKE_VERSION was introduced in 2.6.3 so we use it to detect the fact
-  if ( CMAKE_VERSION )
-    set( CMAKE_2_6_3_OR_ABOVE TRUE )
-  else()
-    set( CMAKE_2_6_3_OR_ABOVE FALSE )
-  endif()
-
   if ( WIN32 )
     find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
     if(CMAKE_UNAME)

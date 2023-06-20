@@ -975,7 +975,7 @@ update_mesh(const Moves_vector& moves,
         FT size = std::get<2>(*it);
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-        std::cout << "Moving #" << it - moves.begin()
+        std::cerr << "Moving #" << it - moves.begin()
                   << " addr: " << &*v
                   << " pt: " << tr_.point(v)
                   << " move: " << move << std::endl;

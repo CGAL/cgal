@@ -124,7 +124,7 @@ int main()
 
   {
     std::ostringstream os(std::ios_base::binary);
-    CGAL::write_las_points(os, ps, CGAL::parameters::all_default());
+    CGAL::write_las_points(os, ps);
     assert(ok);
     os.flush();
     input = os.str();
@@ -133,7 +133,7 @@ int main()
   {
     ps.clear();
     std::istringstream is(input, std::ios::binary);
-    ok = CGAL::read_las_points(is, std::back_inserter (ps),CGAL::parameters::all_default());
+    ok = CGAL::read_las_points(is, std::back_inserter (ps));
     assert(ok);
     assert(ps.size() == 3);
   }
@@ -177,7 +177,7 @@ int main()
   {
     std::ostringstream os;
     assert(os.good());
-    ok = CGAL::write_ply_points(os, ps, CGAL::parameters::all_default());
+    ok = CGAL::write_ply_points(os, ps);
     assert(! os.fail());
     assert(ok);
     os.flush();
@@ -188,8 +188,7 @@ int main()
     std::istringstream is(input);
     assert(is.good());
     ps.clear();
-    ok = CGAL::read_ply_points(is, std::back_inserter (ps),
-                               CGAL::parameters::all_default());
+    ok = CGAL::read_ply_points(is, std::back_inserter (ps));
     assert(! is.fail());
     assert(ok);
     assert(ps.size() == 3);
@@ -199,7 +198,7 @@ int main()
   {
     std::ostringstream os;
     assert(os.good());
-    ok = CGAL::write_off_points(os, ps, CGAL::parameters::all_default());
+    ok = CGAL::write_off_points(os, ps);
     assert(! os.fail());
     assert(ok);
     os.flush();
@@ -210,8 +209,7 @@ int main()
     std::istringstream is(input);
     assert(is.good());
     ps.clear();
-    ok = CGAL::read_off_points(is, std::back_inserter (ps),
-                               CGAL::parameters::all_default());
+    ok = CGAL::read_off_points(is, std::back_inserter (ps));
     assert(! is.fail());
     assert(ok);
     assert(ps.size() == 3);
@@ -221,7 +219,7 @@ int main()
   {
     std::ostringstream os;
     assert(os.good());
-    ok = CGAL::write_xyz_points(os, ps, CGAL::parameters::all_default());
+    ok = CGAL::write_xyz_points(os, ps);
     assert(! os.fail());
     assert(ok);
     os.flush();
@@ -232,8 +230,7 @@ int main()
     std::istringstream is(input);
     assert(is.good());
     ps.clear();
-    ok = CGAL::read_xyz_points(is, std::back_inserter (ps),
-                               CGAL::parameters::all_default());
+    ok = CGAL::read_xyz_points(is, std::back_inserter (ps));
     assert(! is.fail());
     assert(ok);
     assert(ps.size() == 3);

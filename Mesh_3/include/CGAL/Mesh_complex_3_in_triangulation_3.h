@@ -229,47 +229,105 @@ public:
     far_vertices_.push_back(vh);
   }
 
+  void remove_isolated_vertex(Vertex_handle v)
+  {
+    Triangulation& tr = triangulation();
+
+    std::vector<Cell_handle> new_cells;
+    new_cells.reserve(32);
+    tr.remove_and_give_new_cells(v, std::back_inserter(new_cells));
+
+    typename std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
+    typename std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
+    for (; nc_it != nc_it_end; ++nc_it)
+    {
+      Cell_handle c = *nc_it;
+      for (int i = 0; i < 4; ++i)
+      {
+        Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
+        if (is_in_complex(mirror_facet))
+        {
+          set_surface_patch_index(c, i,
+            surface_patch_index(mirror_facet));
+          c->set_facet_surface_center(i,
+            mirror_facet.first->get_facet_surface_center(mirror_facet.second));
+        }
+      }
+      /*int i_inf;
+      if (c->has_vertex(tr.infinite_vertex(), i_inf))
+      {
+        Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
+        if (is_in_complex(mirror_facet))
+        {
+          set_surface_patch_index(c, i_inf,
+                                  surface_patch_index(mirror_facet));
+        }
+      }*/
+    }
+  }
+
   void remove_far_points()
   {
-    Triangulation &tr = triangulation();
     //triangulation().remove(far_vertices_.begin(), far_vertices_.end());
     typename Far_vertices_vec::const_iterator it = far_vertices_.begin();
     typename Far_vertices_vec::const_iterator it_end = far_vertices_.end();
     for ( ; it != it_end ; ++it)
     {
-      std::vector<Cell_handle> new_cells;
-      new_cells.reserve(32);
-      tr.remove_and_give_new_cells(*it, std::back_inserter(new_cells));
-
-      typename std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
-      typename std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
-      for ( ; nc_it != nc_it_end ; ++nc_it)
-      {
-        Cell_handle c = *nc_it;
-        for (int i = 0 ; i < 4 ; ++i)
-        {
-          Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
-          if (is_in_complex(mirror_facet))
-          {
-            set_surface_patch_index(c, i,
-                                    surface_patch_index(mirror_facet));
-            c->set_facet_surface_center(i,
-              mirror_facet.first->get_facet_surface_center(mirror_facet.second));
-          }
-        }
-        /*int i_inf;
-        if (c->has_vertex(tr.infinite_vertex(), i_inf))
-        {
-          Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
-          if (is_in_complex(mirror_facet))
-          {
-            set_surface_patch_index(c, i_inf,
-                                    surface_patch_index(mirror_facet));
-          }
-        }*/
-      }
+      remove_isolated_vertex(*it);
     }
     far_vertices_.clear();
+  }
+
+  void remove_isolated_vertices()
+  {
+    Triangulation& tr = triangulation();
+    for (Vertex_handle v : tr.finite_vertex_handles())
+      v->set_meshing_info(0);
+
+    for (typename Base::Cells_in_complex_iterator c = this->cells_in_complex_begin();
+         c != this->cells_in_complex_end();
+         ++c)
+    {
+      for (int i = 0; i < 4; ++i)
+      {
+        Vertex_handle vi = c->vertex(i);
+        vi->set_meshing_info(vi->meshing_info() + 1);
+      }
+    }
+
+    for (typename Base::Facets_in_complex_iterator fit = this->facets_in_complex_begin();
+         fit != this->facets_in_complex_end();
+         ++fit)
+    {
+      Facet f = *fit;
+      for (int i = 1; i < 4; ++i)
+      {
+        Vertex_handle vi = f.first->vertex((f.second + i) % 4);
+        vi->set_meshing_info(vi->meshing_info() + 1);
+      }
+    }
+
+    std::vector<Vertex_handle> isolated;
+    for (Vertex_handle v : tr.finite_vertex_handles())
+    {
+      if (v->meshing_info() == 0.)
+        isolated.push_back(v);
+    }
+
+#ifdef CGAL_MESH_3_VERBOSE
+    std::cout << "Remove " << isolated.size() << " isolated vertices...";
+    std::cout.flush();
+#endif
+
+    CGAL_assertion(far_vertices_.size() <= isolated.size());
+    far_vertices_.clear();
+
+    for (Vertex_handle v : isolated)
+      remove_isolated_vertex(v);
+
+#ifdef CGAL_MESH_3_VERBOSE
+    std::cout << "\nRemove " << isolated.size() << " isolated vertices done." << std::endl;
+#endif
   }
 
   /**

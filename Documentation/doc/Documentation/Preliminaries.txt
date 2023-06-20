@@ -44,16 +44,6 @@ also avoid CMake to link with the native threads support library on your system.
 After being based on the \CC standard released in 1998 (and later refined in 2003) for a long time,
 \cgal is now based on a newer major version of the standard, <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a>.
 
-\section Preliminaries_functor Functor Return Types
-
-\cgal functors support the
-<a href="https://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</a>
-protocol. If a functor `F` has the same return type across all
-overloads of `operator()`, the nested type
-`F::result_type` is defined to be that type. Otherwise the
-return type of calling the functor with an argument of type
-`Arg` can be accessed through \link CGAL::cpp11::result_of::type `CGAL::cpp11::result_of<F(Arg)>::type` \endlink.
-
 \section preliminaries_secchecks Checks
 
 Much of the \cgal code contains assert statements for preconditions, and postconditions of functions

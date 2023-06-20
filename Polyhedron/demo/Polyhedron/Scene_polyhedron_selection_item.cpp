@@ -12,8 +12,6 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/statistics_helpers.h>
 
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/range.hpp>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
@@ -27,6 +25,8 @@
 #include <utility>
 #include <vector>
 #include <functional>
+#include <unordered_map>
+#include <unordered_set>
 
 #include "triangulate_primitive.h"
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -77,12 +77,9 @@ public:
 struct Scene_polyhedron_selection_item_priv{
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
-  typedef boost::unordered_set<fg_vertex_descriptor
-  , CGAL::Handle_hash_function>    Selection_set_vertex;
-  typedef boost::unordered_set<fg_face_descriptor,
-  CGAL::Handle_hash_function>      Selection_set_facet;
-  typedef boost::unordered_set<fg_edge_descriptor,
-  CGAL::Handle_hash_function>    Selection_set_edge;
+  typedef std::unordered_set<fg_vertex_descriptor>    Selection_set_vertex;
+  typedef std::unordered_set<fg_face_descriptor>      Selection_set_facet;
+  typedef std::unordered_set<fg_edge_descriptor>    Selection_set_edge;
   struct vertex_on_path
   {
     fg_vertex_descriptor vertex;
@@ -322,7 +319,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
       return;
 
     VPmap vpm = get(CGAL::vertex_point,*poly);
-    for(Selection_set_facet::iterator
+    for(Selection_set_facet::const_iterator
         it = p_sel_facets.begin(),
         end = p_sel_facets.end();
         it != end; it++)
@@ -396,7 +393,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
     //The Lines
     {
 
-        for(Selection_set_edge::iterator it = p_sel_edges.begin(); it != p_sel_edges.end(); ++it) {
+        for(Selection_set_edge::const_iterator it = p_sel_edges.begin(); it != p_sel_edges.end(); ++it) {
           const Point& a = get(vpm, target(halfedge(*it,*poly),*poly));
           const Point& b = get(vpm, target(opposite((halfedge(*it,*poly)),*poly),*poly));
             p_lines.push_back(a.x()+offset.x);
@@ -411,7 +408,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
     }
     //The points
     {
-        for(Selection_set_vertex::iterator
+        for(Selection_set_vertex::const_iterator
             it = p_sel_vertices.begin(),
             end = p_sel_vertices.end();
             it != end; ++it)
@@ -1528,7 +1525,7 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
   item->temp_selected_edges.clear();
   path.clear();
 
-  typedef boost::unordered_map<fg_vertex_descriptor, fg_vertex_descriptor>     Pred_umap;
+  typedef std::unordered_map<fg_vertex_descriptor, fg_vertex_descriptor>     Pred_umap;
   typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
 
   Pred_umap predecessor;

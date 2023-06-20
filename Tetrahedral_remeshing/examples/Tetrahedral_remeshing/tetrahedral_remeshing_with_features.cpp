@@ -5,10 +5,10 @@
 
 #include <CGAL/property_map.h>
 
-#include <boost/unordered_set.hpp>
-
+#include <unordered_set>
 #include <iostream>
 #include <utility>
+#include <cassert>
 
 #include "tetrahedral_remeshing_generate_input.h"
 
@@ -30,13 +30,13 @@ public:
   typedef boost::read_write_property_map_tag category;
 
 private:
-  boost::unordered_set<key_type>* m_set_ptr;
+  std::unordered_set<key_type, boost::hash<key_type>>* m_set_ptr;
 
 public:
   Constrained_edges_property_map()
     : m_set_ptr(nullptr)
   {}
-  Constrained_edges_property_map(boost::unordered_set<key_type>* set_)
+  Constrained_edges_property_map(std::unordered_set<key_type, boost::hash<key_type>>* set_)
     : m_set_ptr(set_)
   {}
 
@@ -45,8 +45,8 @@ public:
                   const key_type& k,
                   const bool b)
   {
-    CGAL_assertion(map.m_set_ptr != nullptr);
-    CGAL_assertion(k.first < k.second);
+    assert(map.m_set_ptr != nullptr);
+    assert(k.first < k.second);
     if (b)  map.m_set_ptr->insert(k);
     else    map.m_set_ptr->erase(k);
   }
@@ -54,8 +54,8 @@ public:
   friend value_type get(const Constrained_edges_property_map& map,
                         const key_type& k)
   {
-    CGAL_assertion(map.m_set_ptr != nullptr);
-    CGAL_assertion(k.first < k.second);
+    assert(map.m_set_ptr != nullptr);
+    assert(k.first < k.second);
     return (map.m_set_ptr->count(k) > 0);
   }
 };
@@ -76,11 +76,11 @@ int main(int argc, char* argv[])
   const int nbv = (argc > 3) ? atoi(argv[3]) : 500;
 
   Remeshing_triangulation t3;
-  boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
+  typedef std::pair<Vertex_handle, Vertex_handle> Vertex_pair;
+  std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>> constraints;
 
   CGAL::Tetrahedral_remeshing::generate_input_cube(nbv, t3, constraints);
   make_constraints_from_cube_edges(t3, constraints);
-  CGAL_assertion(t3.is_valid());
 
   CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
@@ -89,4 +89,3 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;
 }
-

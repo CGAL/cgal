@@ -26,7 +26,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Iterator_range.h>
@@ -341,7 +341,7 @@ public:
   {
     typedef Properties::Property_map_base<I, T, Property_map<I, T> > Base;
     typedef typename Base::reference reference;
-    Property_map() : Base() {}
+    Property_map() = default;
     Property_map(const Base& pm): Base(pm) {}
   };
 
@@ -914,8 +914,57 @@ public:
     /// Copy constructor: copies `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh(const Surface_mesh& rhs) { *this = rhs; }
 
+    Surface_mesh(Surface_mesh&& sm)
+      : vprops_(std::move(sm.vprops_))
+      , hprops_(std::move(sm.hprops_))
+      , eprops_(std::move(sm.eprops_))
+      , fprops_(std::move(sm.fprops_))
+      , vconn_(std::move(sm.vconn_))
+      , hconn_(std::move(sm.hconn_))
+      , fconn_(std::move(sm.fconn_))
+      , vremoved_(std::move(sm.vremoved_))
+      , eremoved_(std::move(sm.eremoved_))
+      , fremoved_(std::move(sm.fremoved_))
+      , vpoint_(std::move(sm.vpoint_))
+      , removed_vertices_(std::exchange(sm.removed_vertices_, 0))
+      , removed_edges_(std::exchange(sm.removed_edges_, 0))
+      , removed_faces_(std::exchange(sm.removed_faces_, 0))
+      , vertices_freelist_(std::exchange(sm.vertices_freelist_,(std::numeric_limits<size_type>::max)()))
+      , edges_freelist_(std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)()))
+      , faces_freelist_(std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)()))
+      , garbage_(std::exchange(sm.garbage_, false))
+      , recycle_(std::exchange(sm.recycle_, true))
+      , anonymous_property_(std::exchange(sm.anonymous_property_, 0))
+    {}
+
     /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh& operator=(const Surface_mesh& rhs);
+
+
+    Surface_mesh& operator=(Surface_mesh&& sm)
+    {
+      vprops_ = std::move(sm.vprops_);
+      hprops_ = std::move(sm.hprops_);
+      eprops_ = std::move(sm.eprops_);
+      fprops_ = std::move(sm.fprops_);
+      vconn_ = std::move(sm.vconn_);
+      hconn_ = std::move(sm.hconn_);
+      fconn_ = std::move(sm.fconn_);
+      vremoved_ = std::move(sm.vremoved_);
+      eremoved_ = std::move(sm.eremoved_);
+      fremoved_ = std::move(sm.fremoved_);
+      vpoint_ = std::move(sm.vpoint_);
+      removed_vertices_ = std::exchange(sm.removed_vertices_, 0);
+      removed_edges_ = std::exchange(sm.removed_edges_, 0);
+      removed_faces_ = std::exchange(sm.removed_faces_, 0);
+      vertices_freelist_ = std::exchange(sm.vertices_freelist_, (std::numeric_limits<size_type>::max)());
+      edges_freelist_ = std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)());
+      faces_freelist_ = std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)());
+      garbage_ = std::exchange(sm.garbage_, false);
+      recycle_ = std::exchange(sm.recycle_, true);
+      anonymous_property_ = std::exchange(sm.anonymous_property_, 0);
+      return *this;
+    }
 
     /// assigns `rhs` to `*this`. Does not copy custom properties.
     Surface_mesh& assign(const Surface_mesh& rhs);
@@ -1529,6 +1578,9 @@ public:
 
     /// performs a validity check on a single vertex.
     bool is_valid(Vertex_index v) const {
+        if(!has_valid_index(v))
+         return false;
+
         Halfedge_index h = vconn_[v].halfedge_;
         if(h!= null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
           std::cerr << "Vertex connectivity halfedge error in " << (size_type)v
@@ -1540,6 +1592,9 @@ public:
 
     /// performs a validity check on a single halfedge.
     bool is_valid(Halfedge_index h) const {
+        if(!has_valid_index(h))
+          return false;
+
         Face_index f = hconn_[h].face_;
         Vertex_index v = hconn_[h].vertex_;
         Halfedge_index hn = hconn_[h].next_halfedge_;
@@ -1581,6 +1636,9 @@ public:
 
     /// performs a validity check on a single edge.
     bool is_valid(Edge_index e) const {
+      if(!has_valid_index(e))
+        return false;
+
       Halfedge_index h = halfedge(e);
       return is_valid(h) && is_valid(opposite(h));
     }
@@ -1588,6 +1646,9 @@ public:
 
     /// performs a validity check on a single face.
     bool is_valid(Face_index f) const {
+        if(!has_valid_index(f))
+          return false;
+
         Halfedge_index h = fconn_[f].halfedge_;
         if(!has_valid_index(h) || is_removed(h)) {
           std::cerr << "Face connectivity halfedge error in " << (size_type)f

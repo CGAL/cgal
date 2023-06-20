@@ -18,10 +18,9 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/utility.h>
+#include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_set.hpp>
-#include <CGAL/property_map.h>
 
 #include <QElapsedTimer>
 #include <QAction>
@@ -37,6 +36,7 @@
 #include <queue>
 #include <sstream>
 #include <cmath>
+#include <unordered_set>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/parallel_for.h"
@@ -177,7 +177,7 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-  typedef boost::unordered_set<edge_descriptor>    Edge_set;
+  typedef std::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
   struct Visitor
@@ -318,7 +318,7 @@ public:
             p_edges
             , target_length
             , *selection_item->polyhedron()
-            , PMP::parameters::geom_traits(EPICK())
+            , CGAL::parameters::geom_traits(EPICK())
             .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
     else
       std::cout << "No selected or boundary edges to be split" << std::endl;
@@ -462,7 +462,7 @@ public Q_SLOTS:
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
                    , target_length
                    , *selection_item->polyhedron()
-                   , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                   , CGAL::parameters::number_of_iterations(nb_iter)
                    .protect_constraints(protect)
                    .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                    .relax_constraints(smooth_features)
@@ -473,7 +473,7 @@ public Q_SLOTS:
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
                    , target_length
                    , *selection_item->polyhedron()
-                   , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                   , CGAL::parameters::number_of_iterations(nb_iter)
                    .protect_constraints(protect)
                    .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                    .relax_constraints(smooth_features)
@@ -498,7 +498,7 @@ public Q_SLOTS:
                     Visitor visitor(selection_item->selected_facets);
                     CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets,
                       pmesh,
-                      CGAL::Polygon_mesh_processing::parameters::visitor(visitor));
+                      CGAL::parameters::visitor(visitor));
                     break;
                   }
                   else
@@ -512,7 +512,7 @@ public Q_SLOTS:
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
                   , target_length
                   , *selection_item->polyhedron()
-                  , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                  , CGAL::parameters::number_of_iterations(nb_iter)
                   .protect_constraints(protect)
                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                   .relax_constraints(smooth_features)
@@ -523,7 +523,7 @@ public Q_SLOTS:
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
                   , target_length
                   , *selection_item->polyhedron()
-                  , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                  , CGAL::parameters::number_of_iterations(nb_iter)
                   .protect_constraints(protect)
                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
                   .relax_constraints(smooth_features)
@@ -569,7 +569,7 @@ public Q_SLOTS:
                 edges_to_split
                 , target_length
                 , pmesh
-                , PMP::parameters::geom_traits(EPICK())
+                , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif)
                 . face_patch_map(fpmap));
             else
@@ -577,7 +577,7 @@ public Q_SLOTS:
                 edges_to_split
                 , target_length
                 , pmesh
-                , PMP::parameters::geom_traits(EPICK())
+                , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif));
           }
           else
@@ -640,7 +640,7 @@ public Q_SLOTS:
                  faces(*poly_item->polyhedron())
                , target_length
                , *poly_item->polyhedron()
-               , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+               , CGAL::parameters::number_of_iterations(nb_iter)
                .protect_constraints(protect)
                .number_of_relaxation_steps(nb_smooth)
                .edge_is_constrained_map(ecm)
@@ -651,7 +651,7 @@ public Q_SLOTS:
                  faces(*poly_item->polyhedron())
                , target_length
                , *poly_item->polyhedron()
-               , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+               , CGAL::parameters::number_of_iterations(nb_iter)
                .protect_constraints(protect)
                .number_of_relaxation_steps(nb_smooth)
                .edge_is_constrained_map(ecm)
@@ -861,7 +861,7 @@ private:
             faces(*poly_item->polyhedron())
           , target_length_
           , *poly_item->polyhedron()
-          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
+          , CGAL::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
           .edge_is_constrained_map(ecm)
           .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))

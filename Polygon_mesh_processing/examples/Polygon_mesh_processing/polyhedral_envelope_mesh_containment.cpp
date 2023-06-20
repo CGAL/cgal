@@ -3,6 +3,8 @@
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <algorithm>
+#include <iostream>
 #include <fstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
