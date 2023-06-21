@@ -1533,22 +1533,21 @@ bool
   }
   typedef typename Kernel::Point_3 Point_3;
 
-  Curve_index curve_index = c3t3_.curve_index(va, vb);
+  Curve_index curve_index = domain_.curve_index((va->in_dimension() < vb->in_dimension()) ? vb->index() : va->index());
+
   Point_3 pa = va->point().point();
   Point_3 pb = vb->point().point();
   Point_3 segment_middle = CGAL::midpoint(pa, pb);
-  // Obtain the geodesic distance between a and b and the orientation to follow
-  CGAL::Sign orientation = domain_.distance_sign(pa, pb, curve_index);
-  FT geodesic_distance = domain_.curve_segment_length(pa, pb, curve_index, orientation);
   // Obtain the geodesic middle point
+  FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
   Point_3 geodesic_middle;
-  if (orientation >= 0)
+  if (signed_geodesic_distance >= FT(0))
   {
-    geodesic_middle = domain_.construct_point_on_curve(pa, curve_index, geodesic_distance / 2);
+    geodesic_middle = domain_.construct_point_on_curve(pa, curve_index, signed_geodesic_distance / 2);
   }
   else
   {
-    geodesic_middle = domain_.construct_point_on_curve(pb, curve_index, geodesic_distance / 2);
+    geodesic_middle = domain_.construct_point_on_curve(pb, curve_index, -signed_geodesic_distance / 2);
   }
   // Compare distance to the parameter's distance
   FT squared_evaluated_distance = CGAL::squared_distance(segment_middle, geodesic_middle);
