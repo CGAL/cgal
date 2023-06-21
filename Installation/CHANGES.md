@@ -1,6 +1,15 @@
 Release History
 ===============
 
+[Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
+-----------
+
+Release date: XXX
+
+### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps)
+
+- Added the function `insert_cell_1_between_two_cells_2()` to the `GenericMap` concept, which enables users to insert an edge between two different faces in order to create faces with holes.
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
