@@ -334,6 +334,7 @@ void isotropic_remeshing(const FaceRange& faces
   t.reset(); t.start();
 #endif
 
+  if constexpr (!std::is_same<SizingFunction, Uniform_sizing_field<PM>>::value)
     sizing.calc_sizing_map();
 
   for (unsigned int i = 0; i < nb_iterations; ++i)

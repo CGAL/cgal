@@ -553,7 +553,8 @@ namespace internal {
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
         //todo ip-add: already updating sizing here because of is_too_long checks below
-        sizing.update_sizing_map(vnew);
+        if constexpr (!std::is_same<SizingFunction, Uniform_sizing_field<PM>>::value)
+          sizing.update_sizing_map(vnew);
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
@@ -1050,18 +1051,29 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      if (std::is_same<SizingFunction, Uniform_sizing_field<PM>>::value)
+      if constexpr (std::is_same<SizingFunction, Uniform_sizing_field<PM>>::value)
+      {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << " using tangential relaxation with weights equal to 1";
+        std::cout << std::endl;
+#endif
         tangential_relaxation(
-                vertices(mesh_),
-                mesh_,
-                CGAL::parameters::number_of_iterations(nb_iterations)
-                        .vertex_point_map(vpmap_)
-                        .geom_traits(gt_)
-                        .edge_is_constrained_map(constrained_edges_pmap)
-                        .vertex_is_constrained_map(constrained_vertices_pmap)
-                        .relax_constraints(relax_constraints)
+          vertices(mesh_),
+          mesh_,
+          CGAL::parameters::number_of_iterations(nb_iterations)
+            .vertex_point_map(vpmap_)
+            .geom_traits(gt_)
+            .edge_is_constrained_map(constrained_edges_pmap)
+            .vertex_is_constrained_map(constrained_vertices_pmap)
+            .relax_constraints(relax_constraints)
         );
+      }
       else
+      {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << " using tangential relaxation weighted with the sizing field";
+        std::cout << std::endl;
+#endif
         tangential_relaxation_with_sizing(
           vertices(mesh_),
           mesh_,
@@ -1073,6 +1085,7 @@ namespace internal {
             .vertex_is_constrained_map(constrained_vertices_pmap)
             .relax_constraints(relax_constraints)
         );
+      }
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 

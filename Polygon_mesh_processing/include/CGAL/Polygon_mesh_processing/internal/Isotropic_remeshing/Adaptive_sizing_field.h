@@ -147,7 +147,7 @@ public:
                               get(m_vertex_sizing_map, target(h, m_pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, source(h, m_pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, target(h, m_pmesh)));
-    if(sqlen > sqtarg_len)
+    if(sqlen > 16./9. * sqtarg_len)
       return sqlen;
     else
       return boost::none;
