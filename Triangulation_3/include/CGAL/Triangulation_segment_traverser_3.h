@@ -815,8 +815,11 @@ public:
         if(ch_prev->vertex(li_prev) != get_vertex()) // avoid infinite loop edge-vertex-same edge-...
           _curr_simplex = Edge(ch_prev, li_prev, ch_prev->index(get_vertex()));
         else {
-          CGAL_assertion(ch_next == Cell_handle());
-          _curr_simplex = Simplex_3();
+          if(ch_next == Cell_handle()) {
+            _curr_simplex = Simplex_3();
+          } else {
+            _curr_simplex = ch_next;
+          }
         }
       } break;
       case Locate_type::EDGE: {
