@@ -1881,10 +1881,20 @@ public:
   }
 
   /// returns a property map named `name` with key type `I` and value type `T`,
+  /// and a Boolean that is `true` if the property was created.
+  template <class I, class T>
+  std::pair<Property_map<I, T>, bool>
+  property_map(const std::string& name) const {
+    auto [array, created] =
+      const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template get_or_add_property<T>(name);
+    return {{array.get()}, created};
+  }
+
+  /// returns a property map named `name` with key type `I` and value type `T`,
   /// if such a property map exists
   template <class I, class T>
   std::optional<Property_map<I, T>>
-  property_map(const std::string& name) {
+  get_property_map(const std::string& name) {
     auto maybe_property_map = get_property_container<I>().template get_property_if_exists<T>(name);
     if (!maybe_property_map) return {};
     else return {{maybe_property_map.value()}};
@@ -1892,7 +1902,7 @@ public:
 
   template <class I, class T>
   std::optional<Property_map<I, T>>
-  property_map(const std::string& name) const {
+  get_property_map(const std::string& name) const {
     auto maybe_property_map = const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template get_property_if_exists<T>(name);
     if (!maybe_property_map) return {};
     else return {{maybe_property_map.value()}};
