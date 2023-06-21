@@ -20,6 +20,7 @@
 #include <CGAL/Orthtree/Traversal_iterator.h>
 #include <CGAL/Orthtree/IO.h>
 
+#include <CGAL/Properties.h>
 #include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
@@ -110,6 +111,8 @@ public:
    */
   typedef std::size_t Node_index;
 
+  typedef Properties::Property_container<Node_index> Node_property_container;
+
   /*!
    * \brief Optional index of a node in the tree.
    */
@@ -161,6 +164,13 @@ private: // data members :
 
   std::vector<Node> m_nodes;    /* nodes of the tree; root is always at index 0 */
 
+  Node_property_container m_node_properties;
+  Node_property_container::Array<boost::iterator_range<typename PointRange::iterator>> &m_node_points;
+  Node_property_container::Array<std::uint8_t> &m_node_depths;
+  Node_property_container::Array<std::array<std::uint32_t, Dimension::value>> &m_node_coordinates;
+  Node_property_container::Array<Maybe_node_index> &m_node_parents;
+  Node_property_container::Array<Maybe_node_index> &m_node_children;
+
   Point m_bbox_min;                  /* input bounding box min value */
 
   std::vector<FT> m_side_per_depth;      /* side length per node's depth */
@@ -202,10 +212,13 @@ public:
   Orthtree(PointRange& point_range,
            PointMap point_map = PointMap(),
            const FT enlarge_ratio = 1.2,
-           Traits traits = Traits())
-    : m_traits(traits)
-      , m_range(point_range)
-      , m_point_map(point_map) {
+           Traits traits = Traits()) :
+    m_traits(traits), m_range(point_range), m_point_map(point_map),
+    m_node_points(m_node_properties.add_property<boost::iterator_range<typename PointRange::iterator>>("points")),
+    m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
+    m_node_coordinates(m_node_properties.add_property<std::array<std::uint32_t, Dimension::value>>("coordinates")),
+    m_node_parents(m_node_properties.add_property<Maybe_node_index>("parents")),
+    m_node_children(m_node_properties.add_property<Maybe_node_index>("children")) {
 
     m_nodes.emplace_back();
 
@@ -260,22 +273,26 @@ public:
   /// \cond SKIP_IN_MANUAL
 
   // copy constructor
-  Orthtree(const Orthtree& other)
-    : m_traits(other.m_traits)
-      , m_range(other.m_range)
-      , m_point_map(other.m_point_map)
-      , m_nodes(other.m_nodes) // todo: copying will require some extra management
-      , m_bbox_min(other.m_bbox_min)
-      , m_side_per_depth(other.m_side_per_depth) {}
+  Orthtree(const Orthtree& other) :
+    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map), m_nodes(other.m_nodes),
+    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
+    m_node_properties(other.m_node_properties),
+    m_node_points(m_node_properties.get_property<boost::iterator_range<typename PointRange::iterator>>("points")),
+    m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
+    m_node_coordinates(m_node_properties.get_property<std::array<std::uint32_t, Dimension::value>>("coordinates")),
+    m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
+    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {}
 
   // move constructor
-  Orthtree(Orthtree&& other)
-    : m_traits(other.m_traits)
-      , m_range(other.m_range)
-      , m_point_map(other.m_point_map)
-      , m_nodes(std::move(other.m_nodes))
-      , m_bbox_min(other.m_bbox_min)
-      , m_side_per_depth(other.m_side_per_depth) {
+  Orthtree(Orthtree&& other):
+    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map), m_nodes(std::move(other.m_nodes)),
+    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
+    m_node_properties(other.m_node_properties),
+    m_node_points(m_node_properties.get_property<boost::iterator_range<typename PointRange::iterator>>("points")),
+    m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
+    m_node_coordinates(m_node_properties.get_property<std::array<std::uint32_t, Dimension::value>>("coordinates")),
+    m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
+    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {
 
     // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
     other.m_nodes.emplace_back();
