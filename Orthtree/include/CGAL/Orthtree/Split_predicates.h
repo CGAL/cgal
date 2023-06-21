@@ -45,6 +45,15 @@ public:
   bool operator()(const Node &n) const {
     return (n.size() > m_bucket_size);
   }
+
+  /*!
+    \brief returns `true` if `i` should be split, `false` otherwise.
+   */
+  template<typename Node_index, typename Tree>
+  bool operator()(Node_index i, const Tree &tree) const {
+    return (tree.points(i).size() > m_bucket_size);
+  }
+
 };
 
 /*!
@@ -71,6 +80,15 @@ public:
   bool operator()(const Node &n) const {
     return n.depth() < m_max_depth;
   }
+
+  /*!
+    \brief returns `true` if `i` should be split, `false` otherwise.
+   */
+  template<typename Node_index, typename Tree>
+  bool operator()(Node_index i, const Tree &tree) const {
+    return (tree.depth(i) < m_max_depth);
+  }
+
 };
 
 /*!
@@ -108,6 +126,17 @@ public:
     std::size_t depth = n.depth();
     return (num_points > m_bucket_size && depth < m_max_depth);
   }
+
+  /*!
+    \brief returns `true` if `i` should be split, `false` otherwise.
+   */
+  template<typename Node_index, typename Tree>
+  bool operator()(Node_index i, const Tree &tree) const {
+    std::size_t num_points = tree.points(i).size();
+    std::size_t depth = tree.depth(i);
+    return (num_points > m_bucket_size && depth < m_max_depth);
+  }
+
 };
 
 } // Orthtrees

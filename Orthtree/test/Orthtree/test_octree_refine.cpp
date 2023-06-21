@@ -24,6 +24,11 @@ public:
   bool operator()(const Node& node) const {
     return (node.depth() == 1 && node.local_coordinates().to_ulong() == m_n);
   }
+
+  template<typename Node_index, typename Tree>
+  bool operator()(Node_index i, const Tree &tree) const {
+    return (tree.depth(i) == 1 && tree.local_coordinates(i).to_ulong() == m_n);
+  }
 };
 
 void test_1_point() {

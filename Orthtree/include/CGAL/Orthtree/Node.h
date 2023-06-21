@@ -229,7 +229,7 @@ public:
    * \param rhs node to compare with
    * \return whether the nodes have different topology.
    */
-  bool operator==(const Self& rhs) const = default;
+  bool operator==(const Self& rhs) const = default; // todo: this doesn't work in C++17
 
   friend std::ostream& operator<<(std::ostream& os, const Self& node) {
     return internal::print_orthtree_node(os, node);

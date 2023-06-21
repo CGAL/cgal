@@ -72,7 +72,7 @@ bool test_level_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse_indices<Level_traversal>(1);
+  auto nodes = octree.traverse_indices<Level_traversal>(static_cast<std::size_t>(1));
 
   // Check each item in the range
   auto iter = nodes.begin();

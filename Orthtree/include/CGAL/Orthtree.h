@@ -126,7 +126,7 @@ public:
   /*!
    * \brief A predicate that determines whether a node must be split when refining a tree.
    */
-  typedef std::function<bool(Node)> Split_predicate;
+  typedef std::function<bool(Node_index, const Self &)> Split_predicate;
 
   /*!
    * \brief A model of `ConstRange` whose value type is `Node`.
@@ -342,7 +342,7 @@ public:
       todo.pop();
 
       // Check if this node needs to be processed
-      if (split_predicate(m_nodes[current])) {
+      if (split_predicate(current, *this)) {
 
         // Check if we've reached a new max depth
         if (depth(current) == depth()) {
@@ -458,7 +458,6 @@ public:
 
     \return a const reference to the root node of the tree.
    */
-  // todo: return index instead of ref
   Node_index root() const { return 0; }
 
   Node_index index(const Node& node) const {
@@ -819,7 +818,7 @@ public:
     // Split the node to create children
     using Local_coordinates = typename Node::Local_coordinates;
     for (int i = 0; i < Degree::value; i++) {
-      m_nodes.emplace_back(n, global_coordinates(n), depth(n) + 1, Local_coordinates{i});
+      m_nodes.emplace_back(n, global_coordinates(n), depth(n) + 1, Local_coordinates{(unsigned long) i});
     }
     // todo: this assumes that the new nodes are always allocated at the end
     m_nodes[n].m_children_index = m_nodes.size() - Degree::value;
