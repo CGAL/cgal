@@ -458,11 +458,13 @@ The second line is the result after the removal operations. We retrieve the orig
 Example of high level operations. Left: Initial 3D combinatorial map after the creation of the combinatorial hexahedron. Middle: Combinatorial map obtained after the two 1-cell insertions. The two 2-cells were split in two. Right: Combinatorial map obtained after the 2-cell insertion. The 3-cell was split in two.
 \cgalFigureEnd
 
-\subsection Combinatorial_mapHighLevelOperations Insert an edge between two different faces
+\subsection Combinatorial_mapInsertion Insert an edge between two different faces
 
 \anchor ssecexempleinsertion
 
 This example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation. First we create a combinatorial hexahedron and a face with 4 edges. This face is inserted in the face of the hexahedron containing dart d1. We display the characteristics of the combinatorial map and check its validity. Then we count and display the number of 2-free darts.
+
+\cgalExample{Combinatorial_map/map_3_insert.cpp}
 
 The output is:
 \verbatim
