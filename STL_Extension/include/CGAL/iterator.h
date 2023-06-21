@@ -1457,6 +1457,19 @@ public:
   template <class T>
   Self& operator=(const T&) { return *this; }
 
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    std::visit(visitor, t);
+    return *this;
+  }
+
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t)  std::visit(visitor, *t);
+    return *this;
+  }
 };
 
 
