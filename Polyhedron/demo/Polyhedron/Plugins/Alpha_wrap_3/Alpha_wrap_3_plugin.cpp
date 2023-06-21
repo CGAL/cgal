@@ -485,7 +485,7 @@ public Q_SLOTS:
   // This is for the message box and thread interruption
   void wrapping_done(Wrapper_thread* wrapper_thread)
   {
-    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrapper_thread->wrap);
+    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(std::move(wrapper_thread->wrap));
     wrap_item->setName(tr("Wrap with alpha %2 offset %3").arg(wrapper_thread->alpha)
                                                          .arg(wrapper_thread->offset));
     wrap_item->setColor(Qt::gray);
