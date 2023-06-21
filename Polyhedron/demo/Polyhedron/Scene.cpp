@@ -172,20 +172,22 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
-  if(index <0 || index >= numberOfEntries())
+  if(index < 0 || index >= numberOfEntries())
     return -1;
 
   CGAL::Three::Scene_item* item = m_entries[index];
+
   if(qobject_cast<Scene_group_item*>(item))
   {
-    setSelectedItemsList(QList<Scene_interface::Item_id>()<<item_id(item));
+    setSelectedItemIndices(QList<Scene_interface::Item_id>() << item_id(item));
     return erase(selectionIndices());
   }
+
   m_groups.removeAll(index);
-  if(item->parentGroup()
-     && item->parentGroup()->isChildLocked(item))
+  if(item->parentGroup() && item->parentGroup()->isChildLocked(item))
     return -1;
-  //clears the Scene_view
+
+  // clears the Scene_view
   clear();
   index_map.clear();
   if(item->parentGroup())
@@ -286,12 +288,12 @@ Scene::erase(QList<int> indices)
 
 void Scene::remove_item_from_groups(Scene_item* item)
 {
-    CGAL::Three::Scene_group_item* group = item->parentGroup();
-    if(group)
-    {
-        group->removeChild(item);
-        children.push_back(item_id(item));
-    }
+  CGAL::Three::Scene_group_item* group = item->parentGroup();
+  if(group)
+  {
+    group->removeChild(item);
+    children.push_back(item_id(item));
+  }
 }
 Scene::~Scene()
 {
@@ -315,19 +317,19 @@ Scene::~Scene()
 CGAL::Three::Scene_item*
 Scene::item(Item_id index) const
 {
-    return m_entries.value(index); // QList::value checks bounds
+  return m_entries.value(index); // QList::value checks bounds
 }
 
 Scene::Item_id
 Scene::item_id(CGAL::Three::Scene_item* scene_item) const
 {
-    return m_entries.indexOf(scene_item);
+  return m_entries.indexOf(scene_item);
 }
 
 int
 Scene::numberOfEntries() const
 {
-    return m_entries.size();
+  return m_entries.size();
 }
 
 // Duplicate a scene item.
@@ -335,20 +337,23 @@ Scene::numberOfEntries() const
 Scene::Item_id
 Scene::duplicate(Item_id index)
 {
-    if(index < 0 || index >= m_entries.size())
-        return -1;
+  if(index < 0 || index >= m_entries.size())
+    return -1;
 
-    const CGAL::Three::Scene_item* item = m_entries[index];
-    CGAL::Three::Scene_item* new_item = item->clone();
-    if(new_item) {
-        new_item->setName(tr("%1 (copy)").arg(item->name()));
-        new_item->setColor(item->color());
-        new_item->setVisible(item->visible());
-        addItem(new_item);
-        return m_entries.size() - 1;
-    }
-    else
-        return -1;
+  const CGAL::Three::Scene_item* item = m_entries[index];
+  CGAL::Three::Scene_item* new_item = item->clone();
+  if(new_item)
+  {
+    new_item->setName(tr("%1 (copy)").arg(item->name()));
+    new_item->setColor(item->color());
+    new_item->setVisible(item->visible());
+    addItem(new_item);
+    return m_entries.size() - 1;
+  }
+  else
+  {
+    return -1;
+  }
 }
 
 void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
@@ -486,33 +491,33 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
 
 void Scene::s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *rmv_itm)
 {
- Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
- {
-   if(item == rmv_itm)
-     item->itemAboutToBeDestroyed(item);
- }
+  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+  {
+    if(item == rmv_itm)
+      item->itemAboutToBeDestroyed(item);
+  }
 }
 bool
-Scene::keyPressEvent(QKeyEvent* e){
-    bool res=false;
-    for (QList<int>::iterator it=selected_items_list.begin(),endit=selected_items_list.end();
-         it!=endit;++it)
-    {
-        CGAL::Three::Scene_item* item=m_entries[*it];
-        res |= item->keyPressEvent(e);
-    }
-    return res;
+Scene::keyPressEvent(QKeyEvent* e)
+{
+  bool res = false;
+  Q_FOREACH(int i, selected_items_list)
+  {
+    CGAL::Three::Scene_item* item = m_entries[i];
+    res |= item->keyPressEvent(e);
+  }
+  return res;
 }
 
 void
 Scene::draw(CGAL::Three::Viewer_interface* viewer)
 {
-    draw_aux(false, viewer);
+  draw_aux(false, viewer);
 }
 void
 Scene::drawWithNames(CGAL::Three::Viewer_interface* viewer)
 {
-    draw_aux(true, viewer);
+  draw_aux(true, viewer);
 }
 
 bool item_should_be_skipped_in_draw(Scene_item* item) {
@@ -615,12 +620,10 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
                viewer->setGlPointSize(2.f);
                if(index == selected_item || selected_items_list.contains(index))
                {
-
                  item.selection_changed(true);
                }
                else
                {
-
                  item.selection_changed(false);
                }
                item.drawEdges(viewer);
@@ -1122,12 +1125,14 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     if(group)
     {
       Q_FOREACH(int id, selected_items_list)
+      {
         if(group->getChildren().contains(id))
         {
           one_contained = true;
           break;
 
         }
+      }
     }
     //if the drop item is not a group_item or if it already contains the item, then the drop action must be ignored
     if(!group ||one_contained)

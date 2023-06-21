@@ -58,7 +58,6 @@ namespace Three{
  * */
 class Scene_interface {
 public:
-
   //!A bounding box is a box with each face corresponding to an extremum of its contents.
 
   typedef CGAL::Bbox_3 Bbox;

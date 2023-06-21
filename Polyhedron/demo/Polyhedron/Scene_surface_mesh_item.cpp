@@ -1175,11 +1175,11 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
 
 void
 Scene_surface_mesh_item::select(double orig_x,
-                              double orig_y,
-                              double orig_z,
-                              double dir_x,
-                              double dir_y,
-                              double dir_z)
+                                double orig_y,
+                                double orig_z,
+                                double dir_x,
+                                double dir_y,
+                                double dir_z)
 {
   SMesh *sm = d->smesh_;
   std::size_t vertex_to_emit = 0;
@@ -2005,7 +2005,7 @@ void Scene_surface_mesh_item::resetColors()
     d->has_feature_edges = false;
   }
   invalidate(COLORS);
-  itemChanged();
+  itemChanged(); // @fixme really shouldn't call something that strong
 }
 
 QMenu* Scene_surface_mesh_item::contextMenu()
@@ -2387,7 +2387,6 @@ void Scene_surface_mesh_item::computeElements() const
 {
   d->compute_elements(ALL);
   setBuffersFilled(true);
-  const_cast<Scene_surface_mesh_item*>(this)->itemChanged();
 }
 
 void
