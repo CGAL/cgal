@@ -685,9 +685,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
           ui.weightsSigma_label, SLOT(setEnabled(bool)));
   ui.labeledImgGroup->setVisible(input_is_labeled_img);
-  ui.weightsSigma->setValue((std::max)(image_item->image()->vx(),
-                            (std::max)(image_item->image()->vy(),
-                                       image_item->image()->vz())));
+  if(image_item != nullptr && input_is_labeled_img)
+    ui.weightsSigma->setValue(image_item->default_sigma_weights());
 
 #ifndef CGAL_USE_ITK
   if (input_is_labeled_img)
