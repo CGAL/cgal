@@ -3,6 +3,7 @@
  */
 
 #include <CGAL/config.h>
+#include <CGAL/iterator.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
@@ -108,22 +109,13 @@ bool read_bezier(char const* aFileName, Bezier_polygon_set& rSet)
           for (unsigned int k = 0; k < n_curves; ++k) {
             // Read the current curve and subdivide it into x-monotone subcurves.
 
-            std::list<CGAL::Object>                 x_objs;
-            std::list<CGAL::Object>::const_iterator xoit;
-            Bezier_X_monotone_curve                 xcv;
             Bezier_traits                           traits;
             Bezier_traits::Make_x_monotone_2        make_x_monotone =
               traits.make_x_monotone_2_object();
 
             Bezier_curve B = read_bezier_curve(in_file, lDoubleFormat);
             if (B.number_of_control_points() >= 2) {
-
-              make_x_monotone(B, std::back_inserter(x_objs));
-
-              for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
-                if (CGAL::assign(xcv, *xoit))
-                  xcvs.push_back(xcv);
-              }
+              make_x_monotone(B, CGAL::dispatch_or_drop_output<Bezier_X_monotone_curve>(std::back_inserter(xcvs)));
             }
           }
 
