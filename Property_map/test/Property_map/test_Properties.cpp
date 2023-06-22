@@ -187,8 +187,8 @@ void test_constructors() {
   assert(a.num_properties() == 0);
 
   // Copy constructor should duplicate all properties
-  a.add_property("ints", 0);
-  a.add_property("floats", 0.0f);
+  auto& a_ints = a.add_property("ints", 0);
+  auto& a_floats = a.add_property("floats", 0.0f);
   a.emplace_group(10);
   a.get_property<int>("ints")[3] = 1;
   a.get_property<float>("floats")[3] = 1.0f;
@@ -217,6 +217,7 @@ void test_constructors() {
   // Copy assignment should not invalidate previously obtained array references,
   // but it should update their values
   auto &b_ints = b.get_property<int>("ints");
+  auto &b_floats = b.get_property<float>("floats");
   assert(b_ints[4] == 0);
   b = a;
   assert(b.num_properties() == 3);
@@ -234,12 +235,16 @@ void test_constructors() {
   // All properties are preserved, though
   assert(a.num_properties() == 3);
   assert(a.size() == 0);
+  assert(a_ints.capacity() == 0);
+  assert(a_floats.capacity() == 0);
 
   // Move constructor should behave like move assignment
   Property_container<std::size_t> e{std::move(b)};
   assert(e.num_properties() == 3);
   assert(b.num_properties() == 3);
   assert(b.size() == 0);
+  assert(b_ints.capacity() == 0);
+  assert(b_floats.capacity() == 0);
 }
 
 
