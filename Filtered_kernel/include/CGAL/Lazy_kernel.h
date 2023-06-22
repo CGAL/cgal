@@ -31,6 +31,7 @@
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
+#include <CGAL/Lazy_exact_nt.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
