@@ -168,7 +168,7 @@ Considering these different advantages and drawbacks, you can choose to use gene
 
 The diagram in \cgalFigureRef{fig_cmap_diagramme_class} shows the different classes of the package. `Combinatorial_map` is the main class (see Section \ref sseccombinatorialmap "Combinatorial Maps"). It allows to manage darts and attributes (see Section \ref ssecattributes "Cell Attributes"). Users can customize a combinatorial map thanks to an items class (see Section \ref ssecitem "Combinatorial Map Items"), which defines the information associated with darts and the attribute types. These types may be different for different dimensions, and they may also be void (note that the main concepts of `GenericMap`, `GenericMapItems` and `CellAttribute` are shared between combinatorial maps and generalized maps).
 
-The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `std::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to std::size_t. Indices can be used as index into vectors which store properties (cf. one example in Section \ref ssecexample3DCMWI "3D Combinatorial Map using Indices").
+The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `std::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to std::size_t. Indices can be used as index into vectors which store properties (cf. one example in Section \ref ssecexample3DCMWI "3D Combinatorial Map Using Indices").
 
 \cgalFigureBegin{fig_cmap_diagramme_class,cmap_diagramme_class.svg}
 UML diagram of the main classes of the package. k is the number of non void attributes.
@@ -520,7 +520,7 @@ Lastly we remove the dynamic onmerge functor (step 7). This is done by initializ
 
 \cgalExample{Combinatorial_map/map_3_dynamic_onmerge.cpp}
 
-\subsection ssecexample3DCMWI 3D Combinatorial Map using Indices
+\subsection ssecexample3DCMWI 3D Combinatorial Map Using Indices
 
 In this example, a 3-dimensional combinatorial map is used, but using indices instead of handles. Two vectors are created to store some external information associated with darts and 3-attributes. Since descriptors are indices, they can directly be used to access elements of the vector.
 
