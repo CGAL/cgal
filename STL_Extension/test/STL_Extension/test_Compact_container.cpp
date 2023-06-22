@@ -344,7 +344,7 @@ int main()
   }
 
   // Check that Compact_container does not require a complete type.
-  CGAL_static_assertion(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
+  static_assert(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
 
   // Test increment policy
   CGAL::Compact_container<Node_2, CGAL::Default, CGAL::Constant_size_policy<1024> > C5;

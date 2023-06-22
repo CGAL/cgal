@@ -566,7 +566,7 @@ public:
     template <class Input_iterator, class NT> Polynomial_d
     construct_value_type(Input_iterator begin, Input_iterator end, NT) const {
       typedef CGAL::Coercion_traits<NT,Coefficient_type> CT;
-      CGAL_static_assertion((std::is_same<typename CT::Type,Coefficient_type>::value));
+      static_assert(std::is_same<typename CT::Type,Coefficient_type>::value);
       typename CT::Cast cast;
       return Polynomial_d(
           boost::make_transform_iterator(begin,cast),
@@ -667,7 +667,7 @@ public:
         typedef Polynomial_traits_d<Coefficient_type> PT;
         typename PT::Construct_polynomial construct;
 
-        CGAL_static_assertion(PT::d != 0); // Coefficient_type is a Polynomial
+        static_assert(PT::d != 0); // Coefficient_type is a Polynomial
         std::vector<Coefficient_type> coefficients;
 
         Coefficient_type zero(0);

@@ -64,11 +64,15 @@ pushd Segment_Delaunay_graph_Linf_2_Demo_with_dlls; zip -r ../segment_voronoi_di
 
 # CGAL-4.8
 pushd Optimal_transportation_reconstruction_2_Demo_with_dlls; zip -r ../otr2.zip *;               popd
+
 #missing demos
 pushd Polygon_Demo_with_dlls; zip -r ../polygon.zip *;               popd
 pushd Principal_component_analysis_Demo_with_dlls; zip -r ../pca.zip *;               popd
 pushd Hyperbolic_triangulation_2_Demo_with_dlls; zip -r ../Hyperbolic_Delaunay_triangulation_2.zip *;               popd
 pushd Periodic_4_hyperbolic_triangulation_2_Demo_with_dlls; zip -r ../Periodic_4_hyperbolic_Delaunay_triangulation_2.zip *;               popd
+
+# CGAL-5.3
+pushd Triangulation_on_sphere_2_Demo_with_dlls; zip -r ../triangulation_on_sphere_2.zip *;         popd
 
 # check
 echo CHECK now. The following lines should be empty.

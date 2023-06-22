@@ -50,7 +50,7 @@ static CGAL::Random my_rnd(346); // some seed
 
 
 #define ASSERT_IS_NULL_FUNCTOR(T)                                       \
-  CGAL_static_assertion((std::is_same<T,CGAL::Null_functor >::value))
+  static_assert(std::is_same<T,CGAL::Null_functor >::value)
 
 
 
@@ -178,10 +178,10 @@ void test_construct_polynomial(const Polynomial_traits_d&){
   }
   { // Construct_polynomial
     typedef typename PT::Construct_polynomial Constructor;
-    CGAL_static_assertion(
+    static_assert(
         !(std::is_same< Constructor , CGAL::Null_functor >::value));
     typedef typename Constructor::result_type result_type;
-    CGAL_static_assertion(
+    static_assert(
         (std::is_same< result_type , Polynomial_d >::value));
     CGAL_USE_TYPE(result_type);
     typedef typename PT::Shift Shift;
@@ -1802,23 +1802,23 @@ void test_rebind(const PT& /*traits*/){
 {
   typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1;
   CGAL_USE_TYPE(PT_IC_1);
-  CGAL_static_assertion((std::is_same< typename PT_IC_1::Innermost_coefficient_type,
-            IC>::value));
-  CGAL_static_assertion((PT_IC_1::d==1));
+  static_assert(std::is_same< typename PT_IC_1::Innermost_coefficient_type,
+            IC>::value);
+  static_assert(PT_IC_1::d==1);
 }
 {
   typedef typename PT:: template Rebind<IC,2>::Other PT_IC_2;
   CGAL_USE_TYPE(PT_IC_2);
-  CGAL_static_assertion((std::is_same< typename PT_IC_2::Innermost_coefficient_type,
-            IC>::value));
-  CGAL_static_assertion((PT_IC_2::d==2));
+  static_assert(std::is_same< typename PT_IC_2::Innermost_coefficient_type,
+            IC>::value);
+  static_assert(PT_IC_2::d==2);
 }
 {
   typedef typename PT:: template Rebind<IC,3>::Other PT_IC_3;
   CGAL_USE_TYPE(PT_IC_3);
-  CGAL_static_assertion((std::is_same< typename PT_IC_3::Innermost_coefficient_type,
-          IC>::value));
-  CGAL_static_assertion((PT_IC_3::d==3));
+  static_assert(std::is_same< typename PT_IC_3::Innermost_coefficient_type,
+          IC>::value);
+  static_assert(PT_IC_3::d==3);
 }
 {
   typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1;
@@ -1831,12 +1831,12 @@ void test_rebind(const PT& /*traits*/){
   typedef typename  PT_IC_1::Polynomial_d Poly1;
   typedef typename  PT_IC_2::Polynomial_d Poly2;
 
-  CGAL_static_assertion((std::is_same< typename PT_IC_1::Coefficient_type,
-          IC>::value));
-  CGAL_static_assertion((std::is_same< typename PT_IC_2::Coefficient_type,
-          Poly1>::value));
-  CGAL_static_assertion((std::is_same< typename PT_IC_3::Coefficient_type,
-          Poly2>::value));
+  static_assert(std::is_same< typename PT_IC_1::Coefficient_type,
+          IC>::value);
+  static_assert(std::is_same< typename PT_IC_2::Coefficient_type,
+          Poly1>::value);
+  static_assert(std::is_same< typename PT_IC_3::Coefficient_type,
+          Poly2>::value);
 
 }
 
@@ -1850,12 +1850,12 @@ void test_rebind(const PT& /*traits*/){
   CGAL_USE_TYPE(PT_Integer_4);
   typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
   CGAL_USE_TYPE(PT_Rational_4);
-  CGAL_static_assertion((std::is_same< typename PT_Integer_4::Innermost_coefficient_type,
-          Integer>::value));
-  CGAL_static_assertion((std::is_same< typename PT_Rational_4::Innermost_coefficient_type,
-          Rational>::value));
-  CGAL_static_assertion((PT_Integer_4::d==dimension));
-  CGAL_static_assertion((PT_Rational_4::d==dimension));
+  static_assert(std::is_same< typename PT_Integer_4::Innermost_coefficient_type,
+          Integer>::value);
+  static_assert(std::is_same< typename PT_Rational_4::Innermost_coefficient_type,
+          Rational>::value);
+  static_assert(PT_Integer_4::d==dimension);
+  static_assert(PT_Rational_4::d==dimension);
 }
 #endif
 #ifdef CGAL_USE_CORE
@@ -1867,12 +1867,12 @@ void test_rebind(const PT& /*traits*/){
   typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
   CGAL_USE_TYPE(PT_Integer_4);
   CGAL_USE_TYPE(PT_Rational_4);
-  CGAL_static_assertion((std::is_same< typename PT_Integer_4::Innermost_coefficient_type,
-          Integer>::value));
-  CGAL_static_assertion((std::is_same< typename PT_Rational_4::Innermost_coefficient_type,
-          Rational>::value));
-  CGAL_static_assertion((PT_Integer_4::d==4));
-  CGAL_static_assertion((PT_Rational_4::d==4));
+  static_assert(std::is_same< typename PT_Integer_4::Innermost_coefficient_type,
+          Integer>::value);
+  static_assert(std::is_same< typename PT_Rational_4::Innermost_coefficient_type,
+          Rational>::value);
+  static_assert(PT_Integer_4::d==4);
+  static_assert(PT_Rational_4::d==4);
 }
 #endif
 {
@@ -1880,12 +1880,12 @@ void test_rebind(const PT& /*traits*/){
   typedef typename PT:: template Rebind<double,4>::Other PT_Rational_4;
   CGAL_USE_TYPE(PT_Integer_4);
   CGAL_USE_TYPE(PT_Rational_4);
-  CGAL_static_assertion((std::is_same< typename PT_Integer_4::Innermost_coefficient_type,
-          int>::value));
-  CGAL_static_assertion((std::is_same< typename PT_Rational_4::Innermost_coefficient_type,
-          double>::value));
-  CGAL_static_assertion((PT_Integer_4::d==4));
-  CGAL_static_assertion((PT_Rational_4::d==4));
+  static_assert(std::is_same< typename PT_Integer_4::Innermost_coefficient_type,
+          int>::value);
+  static_assert(std::is_same< typename PT_Rational_4::Innermost_coefficient_type,
+          double>::value);
+  static_assert(PT_Integer_4::d==4);
+  static_assert(PT_Rational_4::d==4);
 }
 }
 

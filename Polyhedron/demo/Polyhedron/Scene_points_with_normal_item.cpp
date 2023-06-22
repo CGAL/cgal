@@ -321,7 +321,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       positions_selected_normals.resize(m_points->nb_selected_points() * 3);
 
       // we can't afford computing real average spacing just for display, 0.5% of bbox will do
-      average_spacing = 0.005 * item->diagonalBbox();
+      average_spacing = 0.005 * item->bboxDiagonal();
       normal_length = (std::min)(average_spacing, std::sqrt(
                                    region_of_interest.squared_radius() / 1000.));
       length_factor = 10.0/100*normal_Slider->value();

@@ -58,10 +58,10 @@ _test_cls_point_2(const R& )
  CGAL::Weighted_point_2<R> wp(p1);
  CGAL::Point_2<R> p7(wp);
 
- CGAL_static_assertion(!(std::is_convertible<CGAL::Weighted_point_2<R>,
-                                               CGAL::Point_2<R> >::value));
- CGAL_static_assertion(!(std::is_convertible<CGAL::Point_2<R>,
-                                               CGAL::Weighted_point_2<R> >::value));
+ static_assert(!std::is_convertible<CGAL::Weighted_point_2<R>,
+                                    CGAL::Point_2<R> >::value);
+ static_assert(!std::is_convertible<CGAL::Point_2<R>,
+                                    CGAL::Weighted_point_2<R> >::value);
 
  std::cout << '.';
 

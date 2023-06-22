@@ -21,7 +21,7 @@ namespace CGAL {
 namespace internal {
 template <class Cat1, class Cat2, bool=std::is_convertible<Cat1,Cat2>::value>
 struct Min_category {
-        CGAL_static_assertion((std::is_convertible<Cat2,Cat1>::value));
+        static_assert(std::is_convertible<Cat2,Cat1>::value);
         typedef Cat1 type;
 };
 

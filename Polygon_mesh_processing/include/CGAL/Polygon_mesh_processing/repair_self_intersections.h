@@ -178,7 +178,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
                                             VertexPointMap vpm,
                                             FaceOutputIterator out)
 {
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap>::value_type, Point>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap>::value_type, Point>::value);
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;

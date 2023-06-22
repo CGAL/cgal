@@ -98,7 +98,7 @@ void test_vertex_index_map_uniqueness(const Graph& g,
   typedef typename CGAL::GetInitializedVertexIndexMap<Graph, NamedParameters>::const_type CVIM;
 
   // in the case where the map is passed by NP, its type doesn't depend on whether the mesh is const or not
-  static_assert((std::is_same<VIM, CVIM>::value), "VIM, CVIM must be the same type");
+  static_assert(std::is_same<VIM, CVIM>::value, "VIM, CVIM must be the same type");
 
   VIM ivim = CGAL::get_initialized_vertex_index_map(g, np);
 
@@ -114,7 +114,7 @@ void test_halfedge_index_map_uniqueness(const Graph& g,
   typedef typename CGAL::GetInitializedHalfedgeIndexMap<Graph, NamedParameters>::const_type CHIM;
 
   // in the case where the map is passed by NP, its type doesn't depend on whether the mesh is const or not
-  static_assert((std::is_same<HIM, CHIM>::value), "HIM, CHIM must be the same type");
+  static_assert(std::is_same<HIM, CHIM>::value, "HIM, CHIM must be the same type");
 
   HIM ihim = CGAL::get_initialized_halfedge_index_map(g, np);
 
@@ -130,7 +130,7 @@ void test_edge_index_map_uniqueness(const Graph& g,
   typedef typename CGAL::GetInitializedEdgeIndexMap<Graph, NamedParameters>::const_type CEIM;
 
   // in the case where the map is passed by NP, its type doesn't depend on whether the mesh is const or not
-  static_assert((std::is_same<EIM, CEIM>::value), "EIM, CEIM must be the same type");
+  static_assert(std::is_same<EIM, CEIM>::value, "EIM, CEIM must be the same type");
 
   EIM ieim = CGAL::get_initialized_edge_index_map(g, np);
 
@@ -146,7 +146,7 @@ void test_face_index_map_uniqueness(const Graph& g,
   typedef typename CGAL::GetInitializedFaceIndexMap<Graph, NamedParameters>::const_type CFIM;
 
   // in the case where the map is passed by NP, its type doesn't depend on whether the mesh is const or not
-  static_assert((std::is_same<FIM, CFIM>::value), "FIM, CFIM must be the same type");
+  static_assert(std::is_same<FIM, CFIM>::value, "FIM, CFIM must be the same type");
 
   FIM ifim = CGAL::get_initialized_face_index_map(g, np);
 

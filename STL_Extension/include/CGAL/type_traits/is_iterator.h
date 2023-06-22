@@ -65,7 +65,7 @@ struct is_iterator
 { };
 
 template <class T>
-CGAL_CPP17_INLINE constexpr bool is_iterator_v = is_iterator<T>::value;
+inline constexpr bool is_iterator_v = is_iterator<T>::value;
 
 template <class T, class Tag>
 struct is_iterator_type
@@ -73,7 +73,7 @@ struct is_iterator_type
 { };
 
 template <class T, class Tag>
-CGAL_CPP17_INLINE constexpr bool is_iterator_type_v = is_iterator_type<T,Tag>::value;
+inline constexpr bool is_iterator_type_v = is_iterator_type<T,Tag>::value;
 
 
 template <class T, class U, bool = is_iterator<T>::value>
@@ -87,7 +87,7 @@ struct is_iterator_to<T, U, true>
 { };
 
 template <class T, class U>
-CGAL_CPP17_INLINE constexpr bool is_iterator_to_v = is_iterator_to<T,U>::value;
+inline constexpr bool is_iterator_to_v = is_iterator_to<T,U>::value;
 
 
 } // namespace CGAL

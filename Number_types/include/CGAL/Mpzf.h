@@ -148,7 +148,7 @@ template <class T, class = void> struct pool2 {
   static bool empty() { return data() == 0; }
   static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
   private:
-  CGAL_static_assertion(sizeof(T) >= sizeof(T*));
+  static_assert(sizeof(T) >= sizeof(T*));
   static T& data () {
     static CGAL_MPZF_TLS T data_ = 0;
     return data_;
@@ -162,7 +162,7 @@ template <class T, class = void> struct pool3 {
   static bool empty() { return data() == 0; }
   static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
   private:
-  CGAL_static_assertion(sizeof(T) >= sizeof(T*));
+  static_assert(sizeof(T) >= sizeof(T*));
   struct cleaner {
     T data_ = 0;
     ~cleaner(){
@@ -455,7 +455,7 @@ struct Mpzf {
     }
     int e1 = (int)dexp+13;
     // FIXME: make it more general! But not slower...
-    CGAL_static_assertion(GMP_NUMB_BITS == 64);
+    static_assert(GMP_NUMB_BITS == 64);
     int e2 = e1 % 64;
     exp = e1 / 64 - 17;
     // 52+1023+13==17*64 ?

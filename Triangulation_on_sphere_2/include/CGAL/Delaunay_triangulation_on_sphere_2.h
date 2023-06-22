@@ -631,8 +631,8 @@ insert(InputIterator first, InputIterator beyond,
 {
   typedef Point_3_with_iterator<Self>                                P3_wit;
 
-  CGAL_static_assertion((std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value));
-  CGAL_static_assertion(!(std::is_same<Point, Point_3>::value));
+  static_assert(std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value);
+  static_assert(!std::is_same<Point, Point_3>::value);
 
   const size_type n = number_of_vertices();
 

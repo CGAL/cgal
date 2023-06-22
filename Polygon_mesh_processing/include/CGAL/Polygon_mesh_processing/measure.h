@@ -989,8 +989,8 @@ void match_faces(const PolygonMesh1& m1,
                                        get_const_property_map(vertex_point, m1));
   const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                        get_const_property_map(vertex_point, m2));
-  CGAL_static_assertion_msg((std::is_same<typename boost::property_traits<VPMap1>::value_type,
-                             typename boost::property_traits<VPMap2>::value_type>::value),
+  static_assert(std::is_same<typename boost::property_traits<VPMap1>::value_type,
+                             typename boost::property_traits<VPMap2>::value_type>::value,
                             "Both vertex point maps must have the same point type.");
 
   const VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
