@@ -718,6 +718,18 @@ public:
     return m_node_children[node].get() + i;
   }
 
+  Node_index descendant(Node_index node, std::size_t i) { return child(node, i); }
+
+  template <typename... Indices>
+  Node_index descendant(Node_index node, std::size_t i, Indices... remaining_indices) {
+    return descendant(child(node, i), remaining_indices...);
+  }
+
+  template <typename... Indices>
+  Node_index node(Indices... indices) {
+    return descendant(root(), indices...);
+  }
+
   const Maybe_node_index next_sibling(Node_index n) const {
 
     // Root node has no siblings

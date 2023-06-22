@@ -54,7 +54,7 @@ bool test_preorder_9_nodes() {
   assert(*iter == octree.root());
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert(*iter == octree.child(octree.root(), i));
+    assert(*iter == octree.node(i));
   }
 
   return true;
@@ -77,7 +77,7 @@ bool test_level_9_nodes() {
   // Check each item in the range
   auto iter = nodes.begin();
   for (int i = 0; i < 8; ++i) {
-    assert(*iter == octree.child(octree.root(), i));
+    assert(*iter == octree.node(i));
     iter++;
   }
 
@@ -104,28 +104,28 @@ bool test_preorder_25_nodes() {
   auto iter = nodes.begin();
   assert(*iter == octree.root());
   iter++;
-  assert(*iter == octree.child(octree.root(), 0));
+  assert(*iter == octree.node(0));
   iter++;
-  assert(*iter == octree.child(octree.root(), 1));
+  assert(*iter == octree.node(1));
   iter++;
-  assert((*iter == octree.child(octree.root(), 2)));
+  assert((*iter == octree.node(2)));
   iter++;
-  assert(*iter == octree.child(octree.root(), 3));
+  assert(*iter == octree.node(3));
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert(*iter == octree.child(octree.child(octree.root(), 3), i));
+    assert(*iter == octree.node(3, i));
   }
   iter++;
-  assert((*iter == octree.child(octree.root(), 4)));
+  assert((*iter == octree.node(4)));
   iter++;
-  assert((*iter == octree.child(octree.root(), 5)));
+  assert((*iter == octree.node(5)));
   iter++;
-  assert((*iter == octree.child(octree.root(), 6)));
+  assert((*iter == octree.node(6)));
   iter++;
-  assert((*iter == octree.child(octree.root(), 7)));
+  assert((*iter == octree.node(7)));
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert(*iter == octree.child(octree.child(octree.root(), 7), i));
+    assert(*iter == octree.node(7, i));
   }
 
   return true;
