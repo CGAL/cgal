@@ -9,6 +9,7 @@
 #include <iostream>
 
 struct Scene_polygon_soup_item_priv;
+
 struct Polygon_soup
 {
     typedef EPICK::Point_3 Point_3;
@@ -187,6 +188,7 @@ public Q_SLOTS:
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
     void repair(bool erase_dup, bool req_same_orientation);
+    bool triangulate();
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;

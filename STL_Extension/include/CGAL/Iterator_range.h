@@ -78,6 +78,13 @@ namespace CGAL {
   {
     return std::tuple<const I&, const I&>{this->first, this->second};
   }
+
+  template <template<class...> class Container>
+  auto to() const
+  {
+    using V = std::remove_cv_t<std::remove_reference_t<decltype(*begin())>>;
+    return Container<V>(begin(), end());
+  }
 };
 
   template <typename T>

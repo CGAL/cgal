@@ -272,11 +272,11 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
     const Point_2& p1 = get(uvmap, vd1);
     const Point_2& p2 = get(uvmap, vd2);
 
-    Bbox_2 b = p0.bbox();
-    b += p1.bbox();
-    b += p2.bbox();
-
-    boxes.push_back(Box(b, fd));
+    NT bx[2] = { (std::min)(p0[0], (std::min)(p1[0], p2[0])),
+                 (std::min)(p0[1], (std::min)(p1[1], p2[1])) };
+    NT by[2] = { (std::max)(p0[0], (std::max)(p1[0], p2[0])),
+                 (std::max)(p0[1], (std::max)(p1[1], p2[1])) };
+    boxes.emplace_back(bx, by, fd);
   }
 
   std::vector<const Box*> boxes_ptr;

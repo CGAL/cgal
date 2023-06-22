@@ -1,8 +1,8 @@
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/create_offset_polygons_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -41,8 +41,8 @@ int main()
   PolygonPtrVector inner_offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,poly);
   PolygonPtrVector outer_offset_polygons = CGAL::create_exterior_skeleton_and_offset_polygons_2(lOffset,poly);
 
-  print_polygons(inner_offset_polygons);
-  print_polygons(outer_offset_polygons);
+  CGAL::Straight_skeletons_2::IO::print_polygons(inner_offset_polygons);
+  CGAL::Straight_skeletons_2::IO::print_polygons(outer_offset_polygons);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

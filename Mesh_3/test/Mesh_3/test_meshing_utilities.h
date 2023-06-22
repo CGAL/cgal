@@ -381,7 +381,7 @@ struct Tester
         continue;
 
       max_sqd = (std::max)(max_sqd,
-        aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f))));
+        CGAL::to_double(aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f)))));
     }
     double hdist = std::sqrt(max_sqd);
     std::cout << "\tHausdorff distance to polyhedron is " << hdist << std::endl;

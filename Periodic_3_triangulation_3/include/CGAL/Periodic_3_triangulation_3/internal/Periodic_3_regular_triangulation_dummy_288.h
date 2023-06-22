@@ -37,7 +37,7 @@ std::vector<Weighted_point> dummy_points()
 
         FT z = (FT(k) * domain_z / FT(8)) + domain().zmin();
 
-        dummy_points.push_back(Weighted_point(Bare_point(x, y, z), 0));
+        dummy_points.emplace_back(Bare_point(x, y, z), 0);
       }
     }
   }

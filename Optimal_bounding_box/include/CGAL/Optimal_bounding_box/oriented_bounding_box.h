@@ -361,7 +361,7 @@ void oriented_bounding_box(const PointRange& points,
   // @todo handle those cases (or call min_rectangle_2 with a projection)
   if(points.size() <= 3)
   {
-    std::cerr << "The oriented bounding box cannot (yet) be computed for a mesh with fewer than 4 vertices!\n";
+    std::cerr << "The oriented bounding box cannot be computed with fewer than 4 vertices!\n";
     return;
   }
 

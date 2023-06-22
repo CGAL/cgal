@@ -36,11 +36,11 @@ class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
 
 public:
   Scene_points_with_normal_item();
+  Scene_points_with_normal_item(const SMesh& input_mesh);
   Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy);
 
-  Scene_points_with_normal_item(const SMesh& input_mesh);
-
   ~Scene_points_with_normal_item();
+
   Scene_points_with_normal_item* clone() const Q_DECL_OVERRIDE;
 
   // Is selection empty?

@@ -1,0 +1,1 @@
+Given a 2D stricly simple polygon, possibly with weights, and a set of angles associated to edges, construct the extruded polygon using a straight skeleton.
