@@ -44,7 +44,7 @@ namespace draw_function_for_PointSet {
 
 template <typename BufferType=float, class PointSet, class DrawingFunctor>
 void compute_elements(const PointSet& pointset,
-                      Graphic_storage<BufferType>& graphic_buffer,
+                      Graphic_storage<BufferType>& graphic_storage,
                       const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.are_vertices_enabled())
@@ -57,11 +57,11 @@ void compute_elements(const PointSet& pointset,
     {
       if (drawing_functor.colored_vertex(pointset, it))
       {
-        graphic_buffer.add_point(pointset.point(*it),
+        graphic_storage.add_point(pointset.point(*it),
                                  drawing_functor.vertex_color(pointset, it));
       }
       else
-      { graphic_buffer.add_point(pointset.point(*it)); }
+      { graphic_storage.add_point(pointset.point(*it)); }
     }
   }
 }
@@ -70,22 +70,22 @@ void compute_elements(const PointSet& pointset,
 
 template <class P, class V, typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
-                           Graphic_storage<BufferType>& graphic_buffer,
+                           Graphic_storage<BufferType>& graphic_storage,
                            const DrawingFunctor& drawing_functor)
 {
   draw_function_for_PointSet::compute_elements(apointset,
-                                               graphic_buffer,
+                                               graphic_storage,
                                                drawing_functor);
 }
 
 template <class P, class V, typename BufferType=float>
 void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
-                           Graphic_storage<BufferType>& graphic_buffer)
+                           Graphic_storage<BufferType>& graphic_storage)
 {
   CGAL::Drawing_functor<Point_set_3<P, V>,
                         typename Point_set_3<P, V>::const_iterator,
                         int, int> drawing_functor;
-  add_in_graphic_storage(apointset, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(apointset, graphic_storage, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER

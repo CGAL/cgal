@@ -69,7 +69,7 @@ namespace draw_function_for_P2T2
 template <typename BufferType=float, class P2T2, class DrawingFunctor>
 void compute_vertex(const P2T2 &p2t2,
                     typename P2T2::Periodic_point_iterator pi,
-                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_storage,
                     const DrawingFunctor& drawing_functor)
 {
   // Construct the point in 9-sheeted covering space and add to viewer
@@ -77,16 +77,16 @@ void compute_vertex(const P2T2 &p2t2,
   { return; }
 
   if(drawing_functor.colored_vertex(p2t2, pi))
-  { graphic_buffer.add_point(p2t2.point(*pi),
+  { graphic_storage.add_point(p2t2.point(*pi),
                              drawing_functor.vertex_color(p2t2, pi)); }
   else
-  { graphic_buffer.add_point(p2t2.point(*pi)); }
+  { graphic_storage.add_point(p2t2.point(*pi)); }
 }
 
 template <typename BufferType=float, class P2T2, class DrawingFunctor>
 void compute_edge(const P2T2 &p2t2,
                   typename P2T2::Periodic_segment_iterator si,
-                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_storage,
                   const DrawingFunctor& drawing_functor)
 {
   if(!drawing_functor.draw_edge(p2t2, si))
@@ -95,16 +95,16 @@ void compute_edge(const P2T2 &p2t2,
   // Construct the segment in 9-sheeted covering space and add to viewer
   typename P2T2::Segment s(p2t2.segment(*si));
   if(drawing_functor.colored_edge(p2t2, si))
-  { graphic_buffer.add_segment(s[0], s[1],
+  { graphic_storage.add_segment(s[0], s[1],
                                drawing_functor.edge_color(p2t2, si)); }
   else
-  { graphic_buffer.add_segment(s[0], s[1]); }
+  { graphic_storage.add_segment(s[0], s[1]); }
 }
 
 template <typename BufferType=float, class P2T2, class DrawingFunctor>
 void compute_face(const P2T2 &p2t2,
                   typename P2T2::Periodic_triangle_iterator ti,
-                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_storage,
                   const DrawingFunctor& drawing_functor)
 {
   if(!drawing_functor.draw_face(p2t2, ti))
@@ -114,19 +114,19 @@ void compute_face(const P2T2 &p2t2,
   typename P2T2::Triangle t(p2t2.triangle(*ti));
 
   if(drawing_functor.colored_face(p2t2, ti))
-  { graphic_buffer.face_begin(drawing_functor.face_color(p2t2, ti)); }
+  { graphic_storage.face_begin(drawing_functor.face_color(p2t2, ti)); }
   else
-  { graphic_buffer.face_begin(); }
+  { graphic_storage.face_begin(); }
 
-  graphic_buffer.add_point_in_face(t[0]);
-  graphic_buffer.add_point_in_face(t[1]);
-  graphic_buffer.add_point_in_face(t[2]);
-  graphic_buffer.face_end();
+  graphic_storage.add_point_in_face(t[0]);
+  graphic_storage.add_point_in_face(t[1]);
+  graphic_storage.add_point_in_face(t[2]);
+  graphic_storage.face_end();
 }
 
 template <typename BufferType=float, class P2T2, class DrawingFunctor>
 void compute_domain(const P2T2& p2t2,
-                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_storage,
                     const DrawingFunctor& drawing_functor)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -145,17 +145,17 @@ void compute_domain(const P2T2& p2t2,
       Kernel::Point_2 p3(orig_domain.xmax(), orig_domain.ymin());
       Kernel::Point_2 p4((orig_domain.max)());
 
-      graphic_buffer.add_segment(p1 + shift, p2 + shift, drawing_functor.domain_color);
-      graphic_buffer.add_segment(p1 + shift, p3 + shift, drawing_functor.domain_color);
-      graphic_buffer.add_segment(p2 + shift, p4 + shift, drawing_functor.domain_color);
-      graphic_buffer.add_segment(p3 + shift, p4 + shift, drawing_functor.domain_color);
+      graphic_storage.add_segment(p1 + shift, p2 + shift, drawing_functor.domain_color);
+      graphic_storage.add_segment(p1 + shift, p3 + shift, drawing_functor.domain_color);
+      graphic_storage.add_segment(p2 + shift, p4 + shift, drawing_functor.domain_color);
+      graphic_storage.add_segment(p3 + shift, p4 + shift, drawing_functor.domain_color);
     }
   }
 }
 
 template <typename BufferType=float, class P2T2, class DrawingFunctor>
 void compute_elements(const P2T2& p2t2,
-                      CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                      CGAL::Graphic_storage<BufferType>& graphic_storage,
                       const DrawingFunctor& drawing_functor)
 {
   // Get the display type, iterate through periodic elements according
@@ -168,27 +168,27 @@ void compute_elements(const P2T2& p2t2,
   {
     for (typename P2T2::Periodic_point_iterator it=p2t2.periodic_points_begin(it_type);
          it!=p2t2.periodic_points_end(it_type); ++it)
-    { compute_vertex(p2t2, it, graphic_buffer, drawing_functor); }
+    { compute_vertex(p2t2, it, graphic_storage, drawing_functor); }
   }
 
   if(drawing_functor.are_edges_enabled())
   {
     for (typename P2T2::Periodic_segment_iterator it=p2t2.periodic_segments_begin(it_type);
          it!=p2t2.periodic_segments_end(it_type); ++it)
-    { compute_edge(p2t2, it, graphic_buffer, drawing_functor); }
+    { compute_edge(p2t2, it, graphic_storage, drawing_functor); }
   }
 
   if (drawing_functor.are_faces_enabled())
   {
     for (typename P2T2::Periodic_triangle_iterator it=p2t2.periodic_triangles_begin(it_type);
          it!=p2t2.periodic_triangles_end(it_type); ++it)
-    { compute_face(p2t2, it, graphic_buffer, drawing_functor); }
+    { compute_face(p2t2, it, graphic_storage, drawing_functor); }
   }
 
   if(drawing_functor.get_draw_domain())
   {
     // Compute the (9-sheet covering space) domain of the periodic triangulation
-    compute_domain(p2t2, graphic_buffer, drawing_functor);
+    compute_domain(p2t2, graphic_storage, drawing_functor);
   }
 }
 
@@ -198,15 +198,15 @@ void compute_elements(const P2T2& p2t2,
 
 template <typename BufferType=float, class Gt, class Tds, class DrawingFunctor>
 void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
-                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_storage,
                            const DrawingFunctor& drawing_functor)
 {
-  draw_function_for_P2T2::compute_elements(p2t2, graphic_buffer, drawing_functor);
+  draw_function_for_P2T2::compute_elements(p2t2, graphic_storage, drawing_functor);
 }
 
 template <typename BufferType=float, class Gt, class Tds>
 void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
-                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
   CGAL::Drawing_functor_periodic_2_triangulation_2
     <CGAL_P2T2_TYPE,
@@ -214,7 +214,7 @@ void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
      typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> drawing_functor;
 
-  add_in_graphic_storage(p2t2, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(p2t2, graphic_storage, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -260,7 +260,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
                                                "Unique cover"))));
           basic_viewer->clear();
           draw_function_for_P2T2::compute_elements(ap2t2,
-                                                   basic_viewer->get_graphic_buffer(),
+                                                   basic_viewer->get_graphic_storage(),
                                                    drawing_functor);
           basic_viewer->redraw();
         }

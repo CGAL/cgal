@@ -27,27 +27,27 @@ namespace draw_function_for_t2 {
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_face(const T2& t2,
                   typename T2::Finite_faces_iterator fh,
-                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_storage,
                   const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_face(t2, fh))
   { return; }
 
   if (drawing_functor.colored_face(t2, fh))
-  { graphic_buffer.face_begin(drawing_functor.face_color(t2, fh)); }
+  { graphic_storage.face_begin(drawing_functor.face_color(t2, fh)); }
   else
-  { graphic_buffer.face_begin(); }
+  { graphic_storage.face_begin(); }
 
-  graphic_buffer.add_point_in_face(fh->vertex(0)->point());
-  graphic_buffer.add_point_in_face(fh->vertex(1)->point());
-  graphic_buffer.add_point_in_face(fh->vertex(2)->point());
+  graphic_storage.add_point_in_face(fh->vertex(0)->point());
+  graphic_storage.add_point_in_face(fh->vertex(1)->point());
+  graphic_storage.add_point_in_face(fh->vertex(2)->point());
 
-  graphic_buffer.face_end();
+  graphic_storage.face_end();
 }
 
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
-                  CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                  CGAL::Graphic_storage<BufferType>& graphic_storage,
                   const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_edge(t2, eh))
@@ -55,14 +55,14 @@ void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
 
   if (drawing_functor.colored_edge(t2, eh))
   {
-    graphic_buffer.add_segment
+    graphic_storage.add_segment
       (eh->first->vertex(eh->first->cw(eh->second))->point(),
        eh->first->vertex(eh->first->ccw(eh->second))->point(),
        drawing_functor.edge_color(t2, eh));
   }
   else
   {
-    graphic_buffer.add_segment
+    graphic_storage.add_segment
       (eh->first->vertex(eh->first->cw(eh->second))->point(),
        eh->first->vertex(eh->first->ccw(eh->second))->point());
   }
@@ -70,7 +70,7 @@ void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
 
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
-                    CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                    CGAL::Graphic_storage<BufferType>& graphic_storage,
                     const DrawingFunctor& drawing_functor)
 {
   if (!drawing_functor.draw_vertex(t2, vh))
@@ -78,38 +78,38 @@ void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
 
   if (drawing_functor.colored_vertex(t2, vh))
   {
-    graphic_buffer.add_point(vh->point(), drawing_functor.vertex_color(t2, vh));
+    graphic_storage.add_point(vh->point(), drawing_functor.vertex_color(t2, vh));
   }
   else
   {
-    graphic_buffer.add_point(vh->point());
+    graphic_storage.add_point(vh->point());
   }
 }
 
 template <typename BufferType=float, class T2, class DrawingFunctor>
 void compute_elements(const T2& t2,
-                      CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                      CGAL::Graphic_storage<BufferType>& graphic_storage,
                       const DrawingFunctor& drawing_functor)
 {
   if (drawing_functor.are_faces_enabled())
   {
     for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
          it!=t2.finite_faces_end(); ++it)
-    { compute_face(t2, it, graphic_buffer, drawing_functor); }
+    { compute_face(t2, it, graphic_storage, drawing_functor); }
   }
 
   if (drawing_functor.are_edges_enabled())
   {
     for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();
          it!=t2.finite_edges_end(); ++it)
-    { compute_edge(t2, it, graphic_buffer, drawing_functor); }
+    { compute_edge(t2, it, graphic_storage, drawing_functor); }
   }
 
   if (drawing_functor.are_vertices_enabled())
   {
     for (typename T2::Finite_vertices_iterator it=t2.finite_vertices_begin();
          it!=t2.finite_vertices_end(); ++it)
-    { compute_vertex(t2, it, graphic_buffer, drawing_functor); }
+    { compute_vertex(t2, it, graphic_storage, drawing_functor); }
   }
 }
 
@@ -119,15 +119,15 @@ void compute_elements(const T2& t2,
 
 template <class Gt, class Tds, typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
-                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_storage,
                            const DrawingFunctor& drawing_functor)
 {
-  draw_function_for_t2::compute_elements(at2, graphic_buffer, drawing_functor);
+  draw_function_for_t2::compute_elements(at2, graphic_storage, drawing_functor);
 }
 
 template <class Gt, class Tds, typename BufferType=float>
 void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
-                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
   CGAL::Graphic_storage<float> buffer;
   Drawing_functor<CGAL_T2_TYPE,
@@ -147,7 +147,7 @@ void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
         return get_random_color(random);
       };
 
-  add_in_graphic_storage(at2, graphic_buffer, drawingFunctor);
+  add_in_graphic_storage(at2, graphic_storage, drawingFunctor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER

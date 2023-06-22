@@ -48,7 +48,7 @@ namespace draw_function_for_p2 {
 
 template <typename BufferType=float, class P2, class DrawingFunctor>
 void compute_elements(const P2& p2,
-                      CGAL::Graphic_storage<BufferType> &graphic_buffer,
+                      CGAL::Graphic_storage<BufferType> &graphic_storage,
                       const DrawingFunctor& drawing_functor)
 {
   if (p2.is_empty())
@@ -59,9 +59,9 @@ void compute_elements(const P2& p2,
   if (drawing_functor.are_faces_enabled())
   {
     if(drawing_functor.colored_face(p2, nullptr))
-    { graphic_buffer.face_begin(drawing_functor.face_color(p2, nullptr)); }
+    { graphic_storage.face_begin(drawing_functor.face_color(p2, nullptr)); }
     else
-    { graphic_buffer.face_begin(); }
+    { graphic_storage.face_begin(); }
   }
 
   for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
@@ -71,28 +71,28 @@ void compute_elements(const P2& p2,
        drawing_functor.draw_vertex(p2, i))
     { // Add vertex
       if(drawing_functor.colored_vertex(p2, i))
-      { graphic_buffer.add_point(*i, drawing_functor.vertex_color(p2, i)); }
+      { graphic_storage.add_point(*i, drawing_functor.vertex_color(p2, i)); }
       else
-      { graphic_buffer.add_point(*i); }
+      { graphic_storage.add_point(*i); }
     }
 
     if(drawing_functor.are_edges_enabled() &&
        drawing_functor.draw_edge(p2, i))
     { // Add edge with previous point
       if(drawing_functor.colored_vertex(p2, i))
-      { graphic_buffer.add_segment(prev, *i, drawing_functor.edge_color(p2, i)); }
+      { graphic_storage.add_segment(prev, *i, drawing_functor.edge_color(p2, i)); }
       else
-      { graphic_buffer.add_segment(prev, *i); }
+      { graphic_storage.add_segment(prev, *i); }
     }
 
     if(drawing_functor.are_faces_enabled())
-    { graphic_buffer.add_point_in_face(*i); } // Add point in face
+    { graphic_storage.add_point_in_face(*i); } // Add point in face
 
     prev = *i;
   }
 
   if (drawing_functor.are_faces_enabled())
-  { graphic_buffer.face_end(); }
+  { graphic_storage.face_end(); }
 }
 
 } // namespace draw_function_for_p2
@@ -103,19 +103,19 @@ void compute_elements(const P2& p2,
 
 template<typename BufferType=float, class T, class C, class DrawingFunctor>
 void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
-                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_storage,
                            const DrawingFunctor& drawingfunctor)
-{ draw_function_for_p2::compute_elements(ap2, graphic_buffer, drawingfunctor); }
+{ draw_function_for_p2::compute_elements(ap2, graphic_storage, drawingfunctor); }
 
 template<typename BufferType=float, class T, class C>
 void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
-                           CGAL::Graphic_storage<BufferType> &graphic_buffer)
+                           CGAL::Graphic_storage<BufferType> &graphic_storage)
 {
   CGAL::Drawing_functor<CGAL_P2_TYPE,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
                         void*> drawingfunctor;
-  draw_function_for_p2::compute_elements(ap2, graphic_buffer, drawingfunctor);
+  draw_function_for_p2::compute_elements(ap2, graphic_storage, drawingfunctor);
 }
 
 // Specialization of draw function.

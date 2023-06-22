@@ -95,11 +95,11 @@ class Nef_Visitor {
 
 public:
   Nef_Visitor(const Nef_Polyhedron&_nef,
-              CGAL::Graphic_storage<BufferType>& _graphic_buffer,
+              CGAL::Graphic_storage<BufferType>& _graphic_storage,
               const DrawingFunctor&_drawing_functor) :
     n_faces(0), n_edges(0),
     nef(_nef),
-    graphic_buffer(_graphic_buffer),
+    graphic_storage(_graphic_storage),
     drawing_functor(_drawing_functor)
   {}
 
@@ -110,10 +110,10 @@ public:
     { return; }
 
     if(drawing_functor.colored_vertex(nef, vh))
-    { graphic_buffer.add_point(vh->point(),
+    { graphic_storage.add_point(vh->point(),
                                drawing_functor.vertex_color(nef, vh)); }
     else
-    { graphic_buffer.add_point(vh->point()); }
+    { graphic_storage.add_point(vh->point()); }
   }
 
   void visit(Halffacet_const_handle opposite_facet)
@@ -135,9 +135,9 @@ public:
     { return; } //return if not-shalfedge
 
     if(drawing_functor.colored_face(nef, f))
-    { graphic_buffer.face_begin(drawing_functor.face_color(nef, f)); }
+    { graphic_storage.face_begin(drawing_functor.face_color(nef, f)); }
     else
-    { graphic_buffer.face_begin(); }
+    { graphic_storage.face_begin(); }
 
     SHalfedge_around_facet_const_circulator hc_start(se);
     SHalfedge_around_facet_const_circulator hc_end(hc_start);
@@ -146,7 +146,7 @@ public:
     {
       Vertex_const_handle vh=hc_start->source()->center_vertex();
       lastvh=vh;
-      graphic_buffer.add_point_in_face(vh->point(),
+      graphic_storage.add_point_in_face(vh->point(),
                                        get_vertex_normal<Nef_Polyhedron>(vh));
     }
 
@@ -160,18 +160,18 @@ public:
       CGAL_For_all(hc_start, hc_end)
       {
         Vertex_const_handle vh=hc_start->source()->center_vertex();
-        graphic_buffer.add_point_in_face(vh->point(),
+        graphic_storage.add_point_in_face(vh->point(),
                                          get_vertex_normal<Nef_Polyhedron>(vh));
       }
-      graphic_buffer.add_point_in_face(hc_start->source()->center_vertex()->point(),
+      graphic_storage.add_point_in_face(hc_start->source()->center_vertex()->point(),
                                        get_vertex_normal<Nef_Polyhedron>
                                        (hc_start->source()->center_vertex()));
-      graphic_buffer.add_point_in_face(lastvh->point(),
+      graphic_storage.add_point_in_face(lastvh->point(),
                                        get_vertex_normal<Nef_Polyhedron>(lastvh));
       ++fc;
     }
 
-    graphic_buffer.face_end();
+    graphic_storage.face_end();
     facets_done[f]=true;
     ++n_faces;
   }
@@ -188,10 +188,10 @@ public:
     { return; } // Edge already added
 
     if(drawing_functor.colored_edge(nef, he))
-    { graphic_buffer.add_segment(he->source()->point(), he->target()->point(),
+    { graphic_storage.add_segment(he->source()->point(), he->target()->point(),
                                  drawing_functor.edge_color(nef, he)); }
     else
-    { graphic_buffer.add_segment(he->source()->point(), he->target()->point()); }
+    { graphic_storage.add_segment(he->source()->point(), he->target()->point()); }
     edges_done[he]=true;
     ++n_edges;
   }
@@ -204,14 +204,14 @@ public:
 protected:
   std::unordered_map<Halffacet_const_handle, bool> facets_done;
   std::unordered_map<Halfedge_const_handle, bool> edges_done;
-  CGAL::Graphic_storage<BufferType>& graphic_buffer;
+  CGAL::Graphic_storage<BufferType>& graphic_storage;
   const DrawingFunctor& drawing_functor;
   const Nef_Polyhedron& nef;
 };
 
 template <typename BufferType=float, class Nef_Polyhedron, class DrawingFunctor>
 void compute_elements(const Nef_Polyhedron &nef,
-                      CGAL::Graphic_storage<BufferType> &graphic_buffer,
+                      CGAL::Graphic_storage<BufferType> &graphic_storage,
                       const DrawingFunctor &drawing_functor)
 {
 
@@ -221,7 +221,7 @@ void compute_elements(const Nef_Polyhedron &nef,
 
   Volume_const_iterator c;
   Nef_Visitor<Nef_Polyhedron, DrawingFunctor, BufferType>
-    V(nef, graphic_buffer, drawing_functor);
+    V(nef, graphic_storage, drawing_functor);
   CGAL_forall_volumes(c, nef)
   {
     Shell_entry_const_iterator it;
@@ -229,7 +229,7 @@ void compute_elements(const Nef_Polyhedron &nef,
     { nef.visit_shell_objects(SFace_const_handle(it), V); }
   }
 
-  graphic_buffer.negate_all_normals();
+  graphic_storage.negate_all_normals();
 }
 
 } // namespace draw_function_for_nef_polyhedron
@@ -240,18 +240,18 @@ void compute_elements(const Nef_Polyhedron &nef,
 template <typename Kernel_, typename Items_, typename Mark_,
           typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
-                           CGAL::Graphic_storage<BufferType> &graphic_buffer,
+                           CGAL::Graphic_storage<BufferType> &graphic_storage,
                            const DrawingFunctor &drawing_functor)
 {
   draw_function_for_nef_polyhedron::compute_elements(anef,
-                                                     graphic_buffer,
+                                                     graphic_storage,
                                                      drawing_functor);
 }
 
 template <typename Kernel_, typename Items_, typename Mark_,
           typename BufferType=float>
 void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
-                           CGAL::Graphic_storage<BufferType> &graphic_buffer)
+                           CGAL::Graphic_storage<BufferType> &graphic_storage)
 {
   // Default functor; user can add his own functor.
   Drawing_functor<CGAL_NEF3_TYPE,
@@ -274,7 +274,7 @@ void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
     return get_random_color(random);
   };
 
-  add_in_graphic_storage(anef, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(anef, graphic_storage, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER

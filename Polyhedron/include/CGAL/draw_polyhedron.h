@@ -35,9 +35,9 @@ template<class PolyhedronTraits_3,
          typename BufferType=float,
          class DrawingFunctor>
 void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphic_storage<BufferType> &graphic_buffer,
+                           CGAL::Graphic_storage<BufferType> &graphic_storage,
                            const DrawingFunctor &drawing_functor)
-{ add_in_graphic_storage_for_fg(apoly, graphic_buffer, drawing_functor); }
+{ add_in_graphic_storage_for_fg(apoly, graphic_storage, drawing_functor); }
 
 template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
@@ -46,8 +46,8 @@ template<class PolyhedronTraits_3,
          class Alloc,
          typename BufferType=float>
 void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphic_storage<BufferType> &graphic_buffer)
-{ add_in_graphic_storage_for_fg(apoly, graphic_buffer); }
+                           CGAL::Graphic_storage<BufferType> &graphic_storage)
+{ add_in_graphic_storage_for_fg(apoly, graphic_storage); }
 
 // Specialization of draw function: require Qt and the CGAL basic viewer.
 #ifdef CGAL_USE_BASIC_VIEWER

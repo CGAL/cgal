@@ -49,12 +49,12 @@ namespace draw_function_for_ph2_with_holes {
 template <typename BufferType=float, class P2, class DrawingFunctor>
 void compute_one_loop_elements(const P2& ap2,
                                const typename P2::General_polygon_2& aloop,
-                               Graphic_storage<BufferType> &graphic_buffer,
+                               Graphic_storage<BufferType> &graphic_storage,
                                bool hole,
                                const DrawingFunctor& drawing_functor)
 {
   if (hole && drawing_functor.are_faces_enabled())
-  { graphic_buffer.add_point_in_face(aloop.vertex(aloop.size()-1)); }
+  { graphic_storage.add_point_in_face(aloop.vertex(aloop.size()-1)); }
 
   typename P2::General_polygon_2::Vertex_const_iterator prev;
   for(typename P2::General_polygon_2::Vertex_const_iterator i=aloop.vertices_begin();
@@ -64,9 +64,9 @@ void compute_one_loop_elements(const P2& ap2,
        drawing_functor.draw_vertex(ap2, i))
      { // Add vertex
         if(drawing_functor.colored_vertex(ap2, i))
-      { graphic_buffer.add_point(*i, drawing_functor.vertex_color(ap2, i)); }
+      { graphic_storage.add_point(*i, drawing_functor.vertex_color(ap2, i)); }
       else
-      { graphic_buffer.add_point(*i); }
+      { graphic_storage.add_point(*i); }
      }
 
     if(i!=aloop.vertices_begin() &&
@@ -74,13 +74,13 @@ void compute_one_loop_elements(const P2& ap2,
        drawing_functor.draw_edge(ap2, i))
     { // Add segment with previous point
           if(drawing_functor.colored_vertex(ap2, i))
-      { graphic_buffer.add_segment(*prev, *i, drawing_functor.edge_color(ap2, i)); }
+      { graphic_storage.add_segment(*prev, *i, drawing_functor.edge_color(ap2, i)); }
       else
-      { graphic_buffer.add_segment(*prev, *i); }
+      { graphic_storage.add_segment(*prev, *i); }
     }
 
     if(drawing_functor.are_faces_enabled())
-    { graphic_buffer.add_point_in_face(*i); } // Add point in face
+    { graphic_storage.add_point_in_face(*i); } // Add point in face
 
     prev=i;
   }
@@ -88,11 +88,11 @@ void compute_one_loop_elements(const P2& ap2,
   // Add the last segment between the last point and the first one
   if(drawing_functor.are_edges_enabled() &&
      drawing_functor.draw_edge(ap2, aloop.vertices_begin()))
-  { graphic_buffer.add_segment(*prev, *(aloop.vertices_begin())); }
+  { graphic_storage.add_segment(*prev, *(aloop.vertices_begin())); }
 }
 
 template <typename BufferType=float, class P2, class DrawingFunctor>
-void compute_elements(const P2& p2, Graphic_storage<BufferType> &graphic_buffer,
+void compute_elements(const P2& p2, Graphic_storage<BufferType> &graphic_storage,
                       const DrawingFunctor& drawing_functor)
 {
   if (p2.outer_boundary().is_empty()) return;
@@ -100,26 +100,26 @@ void compute_elements(const P2& p2, Graphic_storage<BufferType> &graphic_buffer,
   if (drawing_functor.are_faces_enabled())
   {
     if(drawing_functor.colored_face(p2, nullptr))
-    { graphic_buffer.face_begin(drawing_functor.face_color(p2, nullptr)); }
+    { graphic_storage.face_begin(drawing_functor.face_color(p2, nullptr)); }
     else
-    { graphic_buffer.face_begin(); }
+    { graphic_storage.face_begin(); }
   }
 
-  compute_one_loop_elements<BufferType, P2>(p2, p2.outer_boundary(), graphic_buffer,
+  compute_one_loop_elements<BufferType, P2>(p2, p2.outer_boundary(), graphic_storage,
                                             false, drawing_functor);
 
   for (typename P2::Hole_const_iterator it=p2.holes_begin(); it!=p2.holes_end(); ++it)
   {
-    compute_one_loop_elements<BufferType, P2>(p2, *it, graphic_buffer,
+    compute_one_loop_elements<BufferType, P2>(p2, *it, graphic_storage,
                                               true, drawing_functor);
     if (drawing_functor.are_faces_enabled())
-    { graphic_buffer.add_point_in_face(p2.outer_boundary().vertex
+    { graphic_storage.add_point_in_face(p2.outer_boundary().vertex
                                        (p2.outer_boundary().size()-1));
     }
   }
 
  if (drawing_functor.are_faces_enabled())
- { graphic_buffer.face_end(); }
+ { graphic_storage.face_end(); }
 }
 
 } // draw_function_for_ph2
@@ -128,23 +128,23 @@ void compute_elements(const P2& p2, Graphic_storage<BufferType> &graphic_buffer,
 
 template <class T, class C, typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_storage(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphic_storage<BufferType>& graphic_buffer,
+                           CGAL::Graphic_storage<BufferType>& graphic_storage,
                            const DrawingFunctor &drawing_functor)
 {
-  draw_function_for_ph2_with_holes::compute_elements(p2, graphic_buffer,
+  draw_function_for_ph2_with_holes::compute_elements(p2, graphic_storage,
                                                      drawing_functor);
 }
 
 template <class T, class C, typename BufferType=float>
 void add_in_graphic_storage(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphic_storage<BufferType>& graphic_buffer)
+                           CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
   Drawing_functor<CGAL_P2_WITH_HOLES_TYPE,
                   typename CGAL_P2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
                   typename CGAL_P2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
                   void*> drawing_functor;
 
-  add_in_graphic_storage(p2, graphic_buffer, drawing_functor);
+  add_in_graphic_storage(p2, graphic_storage, drawing_functor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER

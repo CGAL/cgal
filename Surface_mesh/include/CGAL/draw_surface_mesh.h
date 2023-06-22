@@ -41,14 +41,14 @@ namespace CGAL
 
 template<class K, typename BufferType=float,  class DrawingFunctor>
 void add_in_graphic_storage(const Surface_mesh<K>& amesh,
-                           CGAL::Graphic_storage<BufferType> &graphic_buffer,
+                           CGAL::Graphic_storage<BufferType> &graphic_storage,
                            const DrawingFunctor &drawing_functor)
-{ add_in_graphic_storage_for_fg(amesh, graphic_buffer, drawing_functor); }
+{ add_in_graphic_storage_for_fg(amesh, graphic_storage, drawing_functor); }
 
 template<class K, typename BufferType=float>
 void add_in_graphic_storage(const Surface_mesh<K>& amesh,
-                           CGAL::Graphic_storage<BufferType> &graphic_buffer)
-{ add_in_graphic_storage_for_fg(amesh, graphic_buffer); }
+                           CGAL::Graphic_storage<BufferType> &graphic_storage)
+{ add_in_graphic_storage_for_fg(amesh, graphic_storage); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
