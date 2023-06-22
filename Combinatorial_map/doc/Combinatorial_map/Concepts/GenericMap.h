@@ -910,7 +910,7 @@ Inserts a 1-cell in the 2-cell containing `d1` and `d2`. Returns `previous(d1)`,
 
 See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_edge} and for generalized map in \cgalFigureRef{fig_gmap_insert_edge}.
 
-If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \link CellAttribute::On_split `Attribute_type<2>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `d` and <I>a'</I> the new 2-attribute created during the operation. If set, the dynamic on-split function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
+If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \link CellAttribute::On_split `Attribute_type<2>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `d1` and <I>a'</I> the new 2-attribute created during the operation. If set, the dynamic on-split function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
 
 \cgalAdvancedBegin
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
@@ -930,7 +930,7 @@ Dart_descriptor insert_cell_1_in_cell_2(Dart_descriptor d1, Dart_descriptor d2);
 Inserts a 1-cell between the 2-cell containing `d1` and the one containing `d2`. Returns `previous(d1)`, a descriptor on one dart belonging to the new 1-cell.
 \pre `is_insertable_cell_1_between_two_cells_2(d1,d2)`.
 
-If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, call \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink(<I>a</I>,<I>a'</I>) is called for all enabled i-attributes, for i>=2, with <I>a</I> the original 2-attribute associated with `d` and <I>a'</I> the new 2-attribute created during the operation. If set, the dynamic on-merge function of i-attributes is also called on <I>a</I> and <I>a'</I>.
+If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, call \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink(<I>a</I>,<I>a'</I>) is called for all enabled i-attributes, for i>=2, with <I>a</I> the original 2-attribute associated with `d1` and <I>a'</I> the original 2-attribute associated with `d2`. If set, the dynamic on-merge function of i-attributes is also called on <I>a</I> and <I>a'</I>.
 
 \cgalAdvancedBegin
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
