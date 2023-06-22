@@ -28,7 +28,7 @@ target_link_libraries(
          ${OPENGL_gl_LIBRARY})
 target_include_directories(mesh_3_plugin PRIVATE include)
 
-find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+find_package(ITK NAMES ITK InsightToolkit QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
 if(ITK_FOUND)
   include(CGAL_ITK_support)
   target_link_libraries(mesh_3_plugin PUBLIC CGAL::ITK_support)
@@ -115,4 +115,17 @@ if(TBB_FOUND)
   target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::TBB_support)
   target_link_libraries(c3t3_io_plugin PUBLIC CGAL::TBB_support)
   target_link_libraries(c3t3_rib_exporter_plugin PUBLIC CGAL::TBB_support)
+endif()
+
+qt5_wrap_ui(offsetMeshingUI_FILES Offset_meshing_dialog.ui)
+polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin
+                       ${offsetMeshingUI_FILES})
+target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item
+                                                   scene_polygon_soup_item
+                                                   scene_polylines_item)
+if(TARGET CGAL::Eigen3_support)
+  target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen3_support)
+endif()
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(offset_meshing_plugin PUBLIC CGAL::TBB_support)
 endif()

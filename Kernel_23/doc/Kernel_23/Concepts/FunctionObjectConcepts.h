@@ -5945,6 +5945,11 @@ public:
                              const Kernel::FT i);
 
   /*!
+    returns `point(0)` on `l`, identical to `operator()(l,0)`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Line_3& l);
+
+  /*!
     returns an arbitrary point on `h`.
   */
   Kernel::Point_3 operator()(const Kernel::Plane_3& h);
@@ -7249,6 +7254,20 @@ public:
                              const Kernel::Weighted_point_3& q,
                              const Kernel::Weighted_point_3& r,
                              const Kernel::Weighted_point_3& s);
+
+  /*!
+  constructs the point which is the center of the smallest orthogonal sphere to the input weighted points.
+  */
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q,
+                             const Kernel::Weighted_point_3& r);
+
+  /*!
+  constructs the point which is the center of the smallest orthogonal sphere to the input weighted points.
+  */
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q);
+
   /// @}
 }; /* end Kernel::ConstructWeightedCircumcenter_3 */
 

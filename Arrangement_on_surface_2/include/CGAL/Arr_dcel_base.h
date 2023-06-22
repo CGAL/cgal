@@ -38,7 +38,7 @@ namespace CGAL {
 
 inline void* _clean_pointer(const void* p)
 {
-  CGAL_static_assertion(sizeof(void*) == sizeof(size_t));
+  static_assert(sizeof(void*) == sizeof(size_t));
   const size_t  mask = ~1;
   const size_t  val = (reinterpret_cast<size_t>(p) & mask);
 

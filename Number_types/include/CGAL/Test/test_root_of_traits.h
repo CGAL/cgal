@@ -28,8 +28,8 @@ void test_root_of_traits(){
     typedef typename RoT::Root_of_1 Root_of_1;
     typedef typename RoT::Root_of_2 Root_of_2;
 
-    CGAL_static_assertion((::std::is_same<RootOf1,Root_of_1>::value));
-    CGAL_static_assertion((::std::is_same<RootOf2,Root_of_2>::value));
+    static_assert(::std::is_same<RootOf1,Root_of_1>::value);
+    static_assert(::std::is_same<RootOf2,Root_of_2>::value);
 
     typedef typename RoT::Make_root_of_2 Make_root_of_2;
     typedef typename RoT::Make_sqrt      Make_sqrt;
@@ -41,10 +41,10 @@ void test_root_of_traits(){
     const Inverse&        inverse        = Inverse();
     const Square&         square         = Square();
 
-    CGAL_static_assertion((::std::is_same<Root_of_2,typename Make_root_of_2::result_type>::value));
-    CGAL_static_assertion((::std::is_same<Root_of_2,typename Make_sqrt::result_type>::value));
-    CGAL_static_assertion((::std::is_same<Root_of_2,typename Inverse::result_type>::value));
-    CGAL_static_assertion((::std::is_same<Root_of_2,typename Square::result_type>::value));
+    static_assert(::std::is_same<Root_of_2,typename Make_root_of_2::result_type>::value);
+    static_assert(::std::is_same<Root_of_2,typename Make_sqrt::result_type>::value);
+    static_assert(::std::is_same<Root_of_2,typename Inverse::result_type>::value);
+    static_assert(::std::is_same<Root_of_2,typename Square::result_type>::value);
 
 
     {

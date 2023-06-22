@@ -34,7 +34,7 @@ class Weighted_point_3 : public R_::Kernel_base::Weighted_point_3
   typedef typename R_::FT                    FT;
 
   typedef Weighted_point_3                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Weighted_point_3>::value));
+  static_assert(std::is_same<Self, typename R_::Weighted_point_3>::value);
 
 public:
 

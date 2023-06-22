@@ -84,7 +84,7 @@ struct is_Range
 { };
 
 template <class T>
-CGAL_CPP17_INLINE constexpr bool is_Range_v = is_Range<T>::value;
+inline constexpr bool is_Range_v = is_Range<T>::value;
 
 // For polygon meshes
 template <typename T>
@@ -93,7 +93,7 @@ struct is_Point_set_or_Range_or_Iterator
 { };
 
 template <class T>
-CGAL_CPP17_INLINE constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
+inline constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
 
 } // end namespace internal
 } // end namespace IO

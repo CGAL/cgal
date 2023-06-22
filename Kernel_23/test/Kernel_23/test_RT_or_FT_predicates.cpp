@@ -229,12 +229,12 @@ void generate_atomic_compilation_test(const std::string& FT_name,
 
   if(check != NO_CHECK)
   {
-    out << "  static_assert((std::is_same<decltype(";
+    out << "  static_assert(std::is_same<decltype(";
 
     out << "p(";
     for(std::size_t j=0, i=parameters.size(); j<i; ++j)
       out << ((j != 0) ? ", o" : "o") << j;
-    out << "))";
+    out << ")";
 
     if(check == CHECK_NO_NEEDS_FT)
       out << ", B>::value));\n";

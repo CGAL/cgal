@@ -28,6 +28,7 @@ create_single_source_cgal_program("test_segment_simplex_traverser_3.cpp" )
 create_single_source_cgal_program("test_static_filters.cpp")
 create_single_source_cgal_program("test_triangulation_3.cpp")
 create_single_source_cgal_program("test_io_triangulation_3.cpp")
+create_single_source_cgal_program("test_triangulation_serialization_3.cpp")
 
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")

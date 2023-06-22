@@ -39,10 +39,9 @@ If you are using CMake, then you can set the CMake option `CGAL_HAS_NO_THREADS` 
 `TRUE`. In addition to defining the preprocessor macro `CGAL_HAS_NO_THREADS`, it will
 also avoid CMake to link with the native threads support library on your system.
 
-\section Preliminaries_cc0x C++14 Support
+\section Preliminaries_cc0x C++17 Support
 
-After being based on the \CC standard released in 1998 (and later refined in 2003) for a long time,
-\cgal is now based on a newer major version of the standard, <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a>.
+\cgal is based on the version C++17 of the C++ standard.
 
 \section preliminaries_secchecks Checks
 

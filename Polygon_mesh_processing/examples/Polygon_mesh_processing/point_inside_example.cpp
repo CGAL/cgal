@@ -22,9 +22,9 @@ double max_coordinate(const Polyhedron& poly)
   for(Polyhedron::Vertex_handle v : vertices(poly))
   {
     Point p = v->point();
-    max_coord = (std::max)(max_coord, p.x());
-    max_coord = (std::max)(max_coord, p.y());
-    max_coord = (std::max)(max_coord, p.z());
+    max_coord = (std::max)(max_coord, CGAL::to_double(p.x()));
+    max_coord = (std::max)(max_coord, CGAL::to_double(p.y()));
+    max_coord = (std::max)(max_coord, CGAL::to_double(p.z()));
   }
   return max_coord;
 }

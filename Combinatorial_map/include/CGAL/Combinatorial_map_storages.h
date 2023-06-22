@@ -64,7 +64,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type             size_type;
 
     typedef std::nullptr_t Null_descriptor_type;
-    CGAL_CPP17_INLINE static constexpr Null_descriptor_type null_descriptor=nullptr;
+    inline static constexpr Null_descriptor_type null_descriptor=nullptr;
 
     using Type_for_compact_container=void*;
 
@@ -107,7 +107,7 @@ namespace CGAL {
     template<int i>
     using Attribute_const_handle=Attribute_const_descriptor<i>;
 
-    CGAL_CPP17_INLINE static constexpr Null_descriptor_type null_handle=null_descriptor;
+    inline static constexpr Null_descriptor_type null_handle=null_descriptor;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
@@ -232,7 +232,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_descriptor<i>::type attribute(Dart_descriptor ADart)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (ADart->mattribute_descriptors);
@@ -241,7 +241,7 @@ namespace CGAL {
     typename Attribute_const_descriptor<i>::type
     attribute(Dart_const_descriptor ADart) const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (ADart->mattribute_descriptors);
@@ -252,7 +252,7 @@ namespace CGAL {
     typename Attribute_descriptor<i>::type copy_attribute
     (typename Attribute_const_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "copy_attribute<i> called but i-attributes are disabled.");
       typename Attribute_descriptor<i>::type res=
         std::get<Helper::template Dimension_index<i>::value>
@@ -466,16 +466,6 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
-
-#ifndef CGAL_CXX17
-  template<unsigned int d_, class Items_, class Alloc_>
-  constexpr typename Combinatorial_map_storage_1<d_, Items_, Alloc_>::Null_descriptor_type
-  Combinatorial_map_storage_1<d_, Items_, Alloc_>::null_descriptor;
-
-  template<unsigned int d_, class Items_, class Alloc_>
-  constexpr typename Combinatorial_map_storage_1<d_, Items_, Alloc_>::Null_descriptor_type
-  Combinatorial_map_storage_1<d_, Items_, Alloc_>::null_handle;
-#endif
 
 } // namespace CGAL
 

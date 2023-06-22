@@ -29,7 +29,7 @@ void test_rational_traits(){
 
     typedef Rational_traits<Rational> Rational_traits;
     typedef typename Rational_traits::RT RT;
-    CGAL_static_assertion((::std::is_same<RT,RT>::value));
+    static_assert(::std::is_same<RT,RT>::value);
 
     assert( Rational_traits().numerator(x) == RT(7));
     assert( Rational_traits().denominator(x) == RT(2));

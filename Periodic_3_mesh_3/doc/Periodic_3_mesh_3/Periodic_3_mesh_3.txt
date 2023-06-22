@@ -24,7 +24,7 @@ The domain to be meshed is a subset of the three-dimensional flat torus
 The domain may be connected or composed of multiple components
 and/or subdivided in several subdomains.
 The current implementation provides classes to represent
-domains bounded by isosurfaces of implicit functions defined over a cube.
+domains bounded by isosurfaces of implicit functions defined over a cuboid.
 
 Boundary and subdivision surfaces are either
 smooth or piecewise-smooth surfaces, formed with planar or curved surface patches.
@@ -66,16 +66,20 @@ meshes discretizing (non-periodic) 3D domains and to the \ref PkgPeriodic3Triang
 which are used as underlying triangulation structures of the mesh.
 
 A periodic mesh extends, by definition, infinitely in space. We consider the flat torus \f$ \mathbb T_c^3\f$,
-whose <I>canonical cube</I> has side length `c` (this canonical cube is named <I>original domain</I>
-in Chapter \ref PkgPeriodic3Triangulation3; we rename it here to avoid the confusion
-with the domain defined in Chapter \ref PkgMesh3). Well-chosen "dummy" points
+whose <I>canonical cuboid</I> has side lengths `(c_x, c_y, c_z)`. This canonical cuboid is named
+<I>original domain</I> in Chapter \ref PkgPeriodic3Triangulation3; we rename it here to avoid the confusion
+with the domain defined in Chapter \ref PkgMesh3. Well-chosen "dummy" points
 are inserted at the beginning of the meshing process, ensuring that the projection
 of the periodic triangulation into the flat torus \f$ \mathbb T_c^3\f$ forms at all times a simplicial complex
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
 of the manual of 3D periodic triangulations).
-Thanks to this construction, the meshing process can be exclusively conducted
-within the canonical cube.
-The mesh can then be created using the \ref PkgMesh3 package of \cgal.
+
+\warning These dummy points are spread on a grid whose density depends on the shortest side
+of the canonical cuboid. If the anisotropy of the canonical cuboid is too important, the grid may be
+very dense, and the meshing process may be slow and memory consuming.
+
+Using dummy points, one can constrain the periodic mesh generation to be exclusively conducted
+within the canonical cuboid. The mesh can then be created using the \ref PkgMesh3 package of \cgal.
 As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interface
 is necessary between the packages \ref PkgMesh3 and \ref PkgPeriodic3Triangulation3.
 This package provides this interface.
@@ -149,23 +153,23 @@ the function has negative values.
 \subsubsection Periodic_3_mesh_3InputDomainPeriodicity Periodicity of the Input Domain
 
 As described in Section \ref Periodic_3_mesh_3Mesh_3, the periodic mesh is in fact
-constructed over a single cube of side `c` in \f$ \mathbb R^3\f$, the <I>canonical cube</I>
+constructed over a single cube of sides `(c_x, c_y, c_z)` in \f$ \mathbb R^3\f$, the <I>canonical cuboid</I>
 of the flat torus \f$ \mathbb T_c^3\f$. The origin (given by three coordinates \f$ \alpha\f$, \f$ \beta\f$,
-and \f$ \gamma\f$) of this cube and the period `c` are input parameters chosen
-by the user. The cube \f$ [\alpha,\alpha+c)\times[\beta,\beta+c)\times[\gamma,\gamma+c)\f$
+and \f$ \gamma\f$) of this cube and the periods `c_x`, `c_y` and `c_z` are input parameters chosen
+by the user. The cuboid \f$ [\alpha,\alpha+c_x)\times[\beta,\beta+c_y)\times[\gamma,\gamma+c_z)\f$
 contains exactly one representative of each element in \f$ \mathbb T_c^3\f$.
-Although the mesh is only constructed over the canonical cube, some of the oracles
-used during the generation of the mesh must sometimes be evaluated outside of the canonical cube.
+Although the mesh is only constructed over the canonical cuboid, some of the oracles
+used during the generation of the mesh must sometimes be evaluated outside of the canonical cuboid.
 The implicit function describing the domain to be meshed must thus be defined
-over the whole Euclidean space and be periodic, with a period compatible with the canonical cube.
+over the whole Euclidean space and be periodic, with a period compatible with the canonical cuboid.
 
 \subsubsection Periodic_3_mesh_3ArtificialPeriodicity Enforcing Domain Periodicity
 
 The specifications of the input implicit function described in the previous section are quite restrictive.
 To relax these requirements, this package also offers a wrapper class,
 `CGAL::Periodic_3_function_wrapper`, to artificially construct
-periodic functions compatible with the user-defined canonical cube,
-from the values of an implicit function over the canonical cube.
+periodic functions compatible with the user-defined canonical cuboid,
+from the values of an implicit function over the canonical cuboid.
 It is thus possible to construct periodic domains described by implicit functions
 that are not intrinsically periodic, for example a sphere (see \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere})
 or a cone (see Section \ref Periodic_3_mesh_3ConeWithSharpFeatures).
@@ -187,7 +191,7 @@ whose dual Voronoi edges intersect the surface patch. Such mesh facets are calle
 are approximated by sequences of mesh edges and the 0-dimensional exposed features
 are represented by mesh vertices.
 
-It is possible to extract the facets of the complex (restricted to the canonical cube)
+It is possible to extract the facets of the complex (restricted to the canonical cuboid)
 as a `FaceGraph`, using the function `facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Periodic_3_mesh_3DelaunayRefinement Delaunay Refinement
@@ -371,7 +375,7 @@ Specifically, it is
 either a constant or a spatially variable scalar field. It
 provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
-<LI><I>`facet_topology`.</I> This parameters controls the set of topological constraints
+<LI><I>`facet_topology`.</I> This parameter controls the set of topological constraints
 which have to be verified by each surface facet. By default, each vertex of a surface
 facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same
@@ -456,7 +460,7 @@ Cut view (middle). Another cut is shown, using 8 copies (right).
 
 While the implicit function used in the previous example is defined and periodic
 over the complete space, it is also possible to consider non-periodic implicit functions
-defined entirely within the canonical cube (or over the whole space) by using the wrapper class
+defined entirely within the canonical cuboid (or over the whole space) by using the wrapper class
 `CGAL::Periodic_3_function_wrapper`. Values will then be periodically duplicated, creating
 a periodic function. For example, replacing the previous domain with the following
 non-periodic implicit function (a sphere):
@@ -482,7 +486,7 @@ will yield the mesh shown on \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_s
 <img src="periodic_implicit_spheres.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_sphere}
-Periodic mesh of an implicit sphere that is entirely contained in the input cube,
+Periodic mesh of an implicit sphere that is entirely contained in the input cuboid,
 shown with 8 copies (left). A cut view along one of the axes (right).
 \cgalFigureCaptionEnd
 
@@ -502,7 +506,7 @@ and wrapping the function as follows:
 \code{.cpp}
 ...
 Function_wrapper wrapper(schwarz_p);
-Periodic_mesh_domain domain(wrapper, canonical_cube);
+Periodic_mesh_domain domain(wrapper, canonical_cuboid);
 ...
 \endcode
 
@@ -587,9 +591,9 @@ and corners that are specified by the user:
 - Two curves cannot intersect, except at a common endpoint.
 
 \warning For conveniency, curves and corners do not need to be restricted
-to the canonical cube, but users should be mindful that curves and corners will exist
+to the canonical cuboid, but users should be mindful that curves and corners will exist
 in all periodic copies and the requirements described above must be satisfied.
-For example, if considering the unit cube as canonical cube, it is not valid
+For example, if considering the unit cube as canonical cuboid, it is not valid
 to add the segment `(2,2,2)--(3,3,3)` as feature and the point `(1.5, 1.5, 1.5)`
 as corner: once the periodicity is taken in account, the point is actually the middle
 of the segment.
@@ -625,11 +629,11 @@ see Section \ref Periodic_3_mesh_3SubMultipleCopies for more details.)
 It is possible to prescribe features that will, due to periodicity, form a
 continuous polyline that extends infinitely in space.
 A simple example of such occurrence is the segment `(0,0,0) -- (1,1,1)` when
-considering the unit cube as canonical cube.
+considering the unit cube as canonical cuboid.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_protection} shows an implicit function
 describing a square-based prism such that the axis of the prism is the (Oz) axis.
 (The prism is thus 'cut' into 4 pieces when considered within a single copy of the periodic space.)
-The canonical cube is the unit cube and the following polylines have been specified to protect edges:
+The canonical cuboid is the unit cube and the following polylines have been specified to protect edges:
 \code
   // These are four vertical edges (orthogonal to xOy), strictly in the domain.
   // They correspond to the four sharp edges of the prism.

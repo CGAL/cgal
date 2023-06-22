@@ -275,25 +275,37 @@ public:
   }
 };
 
-template <typename Index, typename PropertyMap>
-class Char_property_printer
+template <typename Index,
+          typename PropertyMap,
+          typename VectorType = typename boost::property_traits<PropertyMap>::value_type,
+          typename ElementType = typename VectorType::value_type>
+class Simple_property_vector_printer
   : public Abstract_property_printer<Index>
 {
-  typedef typename boost::property_traits<PropertyMap>::value_type Type;
-
   PropertyMap m_pmap;
-
 public:
-  Char_property_printer(const PropertyMap& pmap) : m_pmap(pmap) { }
+  Simple_property_vector_printer(const PropertyMap& pmap) : m_pmap(pmap) { }
 
   virtual void print(std::ostream& stream, const Index& index)
   {
+    const VectorType& vec = get(m_pmap, index);
     if(get_mode(stream) == CGAL::IO::ASCII)
-      stream << int(get(m_pmap, index));
+    {
+      stream << vec.size();
+      for(const ElementType& v : vec)
+      {
+        stream << " " << v;
+      }
+    }
     else
     {
-      Type t = get(m_pmap, index);
-      stream.write(reinterpret_cast<char*>(&t), sizeof(t));
+      unsigned char size = (unsigned char)(vec.size());
+      stream.write(reinterpret_cast<char*>(&size), sizeof(size));
+      for(const ElementType& v : vec)
+      {
+        ElementType t = ElementType(v);
+        stream.write(reinterpret_cast<char*>(&t), sizeof(t));
+      }
     }
   }
 };
