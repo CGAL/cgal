@@ -162,8 +162,6 @@ private: // data members :
   PointRange& m_range;              /* input point range */
   PointMap m_point_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
-  std::vector<Node> m_nodes;    /* nodes of the tree; root is always at index 0 */
-
   Node_property_container m_node_properties;
   Node_property_container::Array<boost::iterator_range<typename PointRange::iterator>> &m_node_points;
   Node_property_container::Array<std::uint8_t> &m_node_depths;
@@ -220,7 +218,6 @@ public:
     m_node_parents(m_node_properties.add_property<Maybe_node_index>("parents")),
     m_node_children(m_node_properties.add_property<Maybe_node_index>("children")) {
 
-    m_nodes.emplace_back();
     m_node_properties.emplace();
 
     Array bbox_min;
@@ -275,7 +272,7 @@ public:
 
   // copy constructor
   Orthtree(const Orthtree& other) :
-    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map), m_nodes(other.m_nodes),
+    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(other.m_node_properties),
     m_node_points(m_node_properties.get_property<boost::iterator_range<typename PointRange::iterator>>("points")),
@@ -286,7 +283,7 @@ public:
 
   // move constructor
   Orthtree(Orthtree&& other):
-    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map), m_nodes(std::move(other.m_nodes)),
+    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(std::move(other.m_node_properties)),
     m_node_points(m_node_properties.get_property<boost::iterator_range<typename PointRange::iterator>>("points")),
@@ -296,7 +293,6 @@ public:
     m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {
 
     // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
-    other.m_nodes.emplace_back();
     other.m_node_properties.emplace();
   }
 
@@ -316,11 +312,10 @@ public:
   /*!
     \brief recursively subdivides the orthtree until it meets the given criteria.
 
+    todo: split predicate now works with node indices!
     The split predicate is a `std::function` that takes a `Node` and
     returns a Boolean value (where `true` implies that a `Node` needs to
     be split, `false` that the `Node` should be a leaf).
-
-    todo: split predicate should work with node indices!
 
     This function may be called several times with different
     predicates: in that case, nodes already split are left unaltered,
@@ -462,24 +457,6 @@ public:
    */
   Node_index root() const { return 0; }
 
-  Node_index index(const Node& node) const {
-    return std::distance(m_nodes.data(), &node);
-  }
-
-  Maybe_node_index index(const Node* node) const {
-    if (node == nullptr) return {};
-    return index(*node);
-  }
-
-
-  const Node& operator[](Node_index index) const {
-    return m_nodes[index];
-  }
-
-  Node& operator[](Node_index index) {
-    return m_nodes[index];
-  }
-
   /*!
     \brief returns the deepest level reached by a leaf node in this tree (root being level 0).
    */
@@ -542,10 +519,6 @@ public:
     subset inside the node, but the bounding box of the node itself
     (cubic).
    */
-  Bbox bbox(const Node& node) const {
-    return bbox(index(node));
-  }
-
   Bbox bbox(Node_index n) const {
 
     // Determine the side length of this node
@@ -702,7 +675,6 @@ public:
 
   bool is_leaf(Node_index n) const {
     return !m_node_children[n].has_value();
-    return m_nodes[n].is_leaf();
   }
 
   bool is_root(Node_index n) const {
@@ -711,22 +683,18 @@ public:
 
   std::size_t depth(Node_index n) const {
     return m_node_depths[n];
-    return m_nodes[n].depth();
   }
 
   typename Node::Point_range& points(Node_index n) {
     return m_node_points[n];
-    return m_nodes[n].points();
   }
 
   const typename Node::Point_range& points(Node_index n) const {
     return m_node_points[n];
-    return m_nodes[n].points();
   }
 
   typename Node::Global_coordinates global_coordinates(Node_index n) const {
     return m_node_coordinates[n];
-    return m_nodes[n].global_coordinates();
   }
 
   typename Node::Local_coordinates local_coordinates(Node_index n) const {
@@ -734,7 +702,6 @@ public:
     for (std::size_t i = 0; i < Dimension::value; ++i)
       result[i] = global_coordinates(n)[i] & 1;
     return result;
-    return m_nodes[n].local_coordinates();
   }
 
   /*!
@@ -744,13 +711,11 @@ public:
   Node_index parent(Node_index node) const {
     CGAL_precondition (!is_root(node));
     return m_node_parents[node].get();
-    return m_nodes[node].m_parent_index.get();
   }
 
   Node_index child(Node_index node, std::size_t i) const {
     CGAL_precondition (!is_leaf(node));
     return m_node_children[node].get() + i;
-    return m_nodes[node].m_children_index.get() + i;
   }
 
   const Maybe_node_index next_sibling(Node_index n) const {
@@ -832,7 +797,6 @@ public:
     using Local_coordinates = typename Node::Local_coordinates;
     m_node_children[n] = m_node_properties.emplace_group(Degree::value);
     for (std::size_t i = 0; i < Degree::value; i++) {
-      m_nodes.emplace_back(n, global_coordinates(n), depth(n) + 1, Local_coordinates{i});
 
       Node_index c = m_node_children[n].get() + i;
 
@@ -842,12 +806,9 @@ public:
       Local_coordinates local_coordinates{i};
       for (int i = 0; i < Dimension::value; i++)
         m_node_coordinates[c][i] = (2 * m_node_coordinates[n][i]) + local_coordinates[i];
-      CGAL_assertion(m_node_coordinates[c] == m_nodes.back().global_coordinates());
       m_node_depths[c] = m_node_depths[n] + 1;
       m_node_parents[c] = n;
     }
-    // todo: this assumes that the new nodes are always allocated at the end
-    m_nodes[n].m_children_index = m_nodes.size() - Degree::value;
 
     // Find the point around which the node is split
     Point center = barycenter(n);
@@ -864,7 +825,6 @@ public:
    * Idempotent, un-splitting a leaf node has no effect.
    */
   void unsplit(Node_index n) {
-    m_nodes[n].m_children_index.reset();
     // todo: the child nodes should be de-allocated!
   }
 
@@ -1265,15 +1225,14 @@ public:
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Self& orthtree) {
-    // Create a range of nodes
-    auto nodes = orthtree.traverse(Orthtrees::Preorder_traversal<Self>(orthtree));
-    // Iterate over the range
-    for (auto& n: nodes) {
+    // Iterate over all nodes
+    for (auto n: orthtree.traverse_indices(Orthtrees::Preorder_traversal<Self>(orthtree))) {
       // Show the depth
-      for (int i = 0; i < n.depth(); ++i)
+      for (int i = 0; i < orthtree.depth(n); ++i)
         os << ". ";
       // Print the node
-      os << n << std::endl;
+      internal::print_orthtree_node(os, n, orthtree);
+      os << std::endl;
     }
     return os;
   }

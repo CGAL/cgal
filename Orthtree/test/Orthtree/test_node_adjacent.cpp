@@ -62,7 +62,7 @@ int main(void) {
   assert(!octree.adjacent_node(left_top_back, Traits::UP));
   assert(!octree.adjacent_node(left_top_back, Traits::BACK));
 
-  std::cout << octree[octree.child(octree.root(), Traits::LEFT_BOTTOM_BACK)] << std::endl;
+  //std::cout << octree[octree.child(octree.root(), Traits::LEFT_BOTTOM_BACK)] << std::endl;
 
   auto right_top_back_of_left_bottom_back =
     octree.child(octree.child(octree.root(), Traits::LEFT_BOTTOM_BACK), Traits::RIGHT_TOP_BACK);
