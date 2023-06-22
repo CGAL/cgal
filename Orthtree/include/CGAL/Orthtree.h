@@ -221,6 +221,7 @@ public:
     m_node_children(m_node_properties.add_property<Maybe_node_index>("children")) {
 
     m_nodes.emplace_back();
+    m_node_properties.emplace();
 
     Array bbox_min;
     Array bbox_max;
@@ -296,6 +297,7 @@ public:
 
     // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
     other.m_nodes.emplace_back();
+    other.m_node_properties.emplace();
   }
 
   // Non-necessary but just to be clear on the rule of 5:
@@ -699,6 +701,7 @@ public:
   /// @{
 
   bool is_leaf(Node_index n) const {
+    return !m_node_children[n].has_value();
     return m_nodes[n].is_leaf();
   }
 
@@ -707,22 +710,30 @@ public:
   }
 
   std::size_t depth(Node_index n) const {
+    return m_node_depths[n];
     return m_nodes[n].depth();
   }
 
   typename Node::Point_range& points(Node_index n) {
+    return m_node_points[n];
     return m_nodes[n].points();
   }
 
   const typename Node::Point_range& points(Node_index n) const {
+    return m_node_points[n];
     return m_nodes[n].points();
   }
 
   typename Node::Global_coordinates global_coordinates(Node_index n) const {
+    return m_node_coordinates[n];
     return m_nodes[n].global_coordinates();
   }
 
   typename Node::Local_coordinates local_coordinates(Node_index n) const {
+    typename Node::Local_coordinates result;
+    for (std::size_t i = 0; i < Dimension::value; ++i)
+      result[i] = global_coordinates(n)[i] & 1;
+    return result;
     return m_nodes[n].local_coordinates();
   }
 
@@ -732,11 +743,13 @@ public:
    */
   Node_index parent(Node_index node) const {
     CGAL_precondition (!is_root(node));
+    return m_node_parents[node].get();
     return m_nodes[node].m_parent_index.get();
   }
 
   Node_index child(Node_index node, std::size_t i) const {
     CGAL_precondition (!is_leaf(node));
+    return m_node_children[node].get() + i;
     return m_nodes[node].m_children_index.get() + i;
   }
 
@@ -817,8 +830,21 @@ public:
 
     // Split the node to create children
     using Local_coordinates = typename Node::Local_coordinates;
-    for (int i = 0; i < Degree::value; i++) {
-      m_nodes.emplace_back(n, global_coordinates(n), depth(n) + 1, Local_coordinates{(unsigned long) i});
+    m_node_children[n] = m_node_properties.emplace_group(Degree::value);
+    for (std::size_t i = 0; i < Degree::value; i++) {
+      m_nodes.emplace_back(n, global_coordinates(n), depth(n) + 1, Local_coordinates{i});
+
+      Node_index c = m_node_children[n].get() + i;
+
+      // Make sure the node isn't one of its own children
+      CGAL_assertion(n != m_node_children[n].get() + i);
+
+      Local_coordinates local_coordinates{i};
+      for (int i = 0; i < Dimension::value; i++)
+        m_node_coordinates[c][i] = (2 * m_node_coordinates[n][i]) + local_coordinates[i];
+      CGAL_assertion(m_node_coordinates[c] == m_nodes.back().global_coordinates());
+      m_node_depths[c] = m_node_depths[n] + 1;
+      m_node_parents[c] = n;
     }
     // todo: this assumes that the new nodes are always allocated at the end
     m_nodes[n].m_children_index = m_nodes.size() - Degree::value;
