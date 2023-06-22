@@ -53,7 +53,7 @@ public:
   /// start a new colored face.
   void face_begin(const CGAL::IO::Color &acolor);
 
-  /// @return true iff a face is started.
+  /// @return `true` iff a face is started.
   bool is_a_face_started() const;
 
   /// add the given point in the current face.
@@ -66,7 +66,7 @@ public:
   /// end the current face.
   void face_end();
 
-  /// @return true iff the storage has no element.
+  /// @return `true` iff the storage has no element.
   bool is_empty() const;
 
   /// clear the storage, i.e. remove all points, segments, triangles and text.
