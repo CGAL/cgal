@@ -242,7 +242,7 @@ public:
 
 //------------------------------------------------------------------------------
 /*!
-  opens a new window and draws the given `Graphic_storage` (which must be have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
+  opens a new window and draws the given `Graphic_storage` (which must have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
 */
 template <typename BufferType=float>
 void draw_graphic_storage(Graphic_storage<BufferType>& graphic_buffer,
