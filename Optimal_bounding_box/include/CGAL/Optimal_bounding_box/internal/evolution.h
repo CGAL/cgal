@@ -85,7 +85,7 @@ public:
       Simplex offspring;
       for(int j=0; j<4; ++j)
       {
-        const FT r{m_rng.get_double()};
+        const FT r{m_rng.uniform_01<FT>()};
         const FT fitnessA = m_population[group1[i]][j].fitness();
         const FT fitnessB = m_population[group2[i]][j].fitness();
         const FT threshold = (fitnessA < fitnessB) ? uweight : lweight;

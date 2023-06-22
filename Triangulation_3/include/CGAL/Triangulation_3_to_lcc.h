@@ -49,7 +49,7 @@ namespace CGAL {
    std::map<typename Triangulation::Cell_handle,
             typename LCC::Dart_descriptor >* avol_to_dart=nullptr)
   {
-    CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
+    static_assert( LCC::dimension>=3 && LCC::ambient_dimension==3 );
 
     // Case of empty triangulations.
     if (atr.number_of_vertices() == 0) return LCC::null_descriptor;

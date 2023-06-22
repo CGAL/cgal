@@ -16,7 +16,7 @@ struct PRIV{
   PRIV(Scene_item_rendering_helper* item)
     : item(item),
       is_bbox_computed(false),
-      is_diag_bbox_computed(false),
+      is_bbox_diag_computed(false),
       _diag_bbox(0),
       alphaSlider(nullptr),
       are_buffers_filled(false)
@@ -44,7 +44,7 @@ struct PRIV{
   Scene_item_rendering_helper* item;
   Scene_item::Bbox _bbox;
   bool is_bbox_computed;
-  bool is_diag_bbox_computed;
+  bool is_bbox_diag_computed;
   double _diag_bbox;
   QSlider* alphaSlider;
   bool are_buffers_filled;
@@ -67,10 +67,10 @@ Scene_item_rendering_helper::~Scene_item_rendering_helper()
     delete priv;
 }
 
-double Scene_item_rendering_helper::diagonalBbox() const {
-  if(!priv->is_diag_bbox_computed)
+double Scene_item_rendering_helper::bboxDiagonal() const {
+  if(!priv->is_bbox_diag_computed)
     priv->compute_diag_bbox();
-  priv->is_diag_bbox_computed = true;
+  priv->is_bbox_diag_computed = true;
   return priv->_diag_bbox;
 }
 
@@ -221,7 +221,7 @@ void Scene_item_rendering_helper::setEdgeContainer(std::size_t id,
 }
 
 void Scene_item_rendering_helper::setPointContainer(std::size_t id,
-                                                   Point_container* pc)
+                                                    Point_container* pc)
 {
   if(priv->point_containers.size() <= id)
   {

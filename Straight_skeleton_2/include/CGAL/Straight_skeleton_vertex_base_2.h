@@ -161,7 +161,7 @@ public:
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
   typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
-  typedef boost::intrusive_ptr<Trisegment_2> Trisegment_2_ptr;
+  typedef CGAL::Trisegment_2_ptr<Trisegment_2> Trisegment_2_ptr;
 
 public:
 
@@ -251,7 +251,7 @@ public:
   // of these trisegments will become incoherent with the straight skeleton, but
   // that's OK because it is still valid to compute purely geometrical information
   // such as the node position and its time, which is all that is required for offset tracing.
-  Trisegment_2_ptr trisegment() const { return mTrisegment ; }
+  Trisegment_2_ptr const& trisegment() const { return mTrisegment ; }
   void set_trisegment( Trisegment_2_ptr const& aTrisegment ) { mTrisegment = aTrisegment ; }
 
 public :
@@ -263,11 +263,10 @@ private:
 
   int              mID ;
   Halfedge_handle  mHE ;
-  Triedge          mEventTriedge ;
-  Trisegment_2_ptr mTrisegment ;
   Point_2          mP;
   FT               mTime ;
   unsigned char    mFlags ;
+  Trisegment_2_ptr mTrisegment ;
 };
 
 template < class Refs, class P, class N >
@@ -303,8 +302,6 @@ public:
   {}
 } ;
 
-} // end namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H //
-// EOF //
-

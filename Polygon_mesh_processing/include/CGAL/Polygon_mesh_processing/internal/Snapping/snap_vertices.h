@@ -371,7 +371,7 @@ void find_vertex_vertex_matches_with_kd_tree(Unique_positions& unique_positions_
   tree.insert(unique_positions_Bv.begin(), unique_positions_Bv.end());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   // parallel
@@ -596,7 +596,7 @@ void find_vertex_vertex_matches_with_box_d(const Unique_positions& unique_positi
     boxes_B_ptr.push_back(&b);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else // CGAL_LINKED_WITH_TBB
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
@@ -706,6 +706,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters_A>::type         GT;
   typedef typename GT::FT                                                      FT;
   typedef typename boost::property_traits<VPM_B>::value_type                   Point;
+  typedef typename boost::property_traits<VPM_B>::reference                    Point_ref;
 
   typedef std::vector<halfedge_descriptor>                                     Vertex_container;
   typedef std::pair<Vertex_container, FT>                                      Unique_vertex;
@@ -729,7 +730,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
 
-  CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
+  static_assert(std::is_same<Point, typename GT::Point_3>::value);
 
   GT gt = choose_parameter<GT>(get_parameter(np_A, internal_np::geom_traits));
   VPM_A vpm_A = choose_parameter(get_parameter(np_A, internal_np::vertex_point),
@@ -955,8 +956,23 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     {
       if(is_second_mesh_fixed)
       {
+        const Point_ref new_p = get(vpm_B, vb);
         for(const halfedge_descriptor ha : vs_a)
-          put(vpm_A, target(ha, tm_A), get(vpm_B, vb));
+        {
+          bool skip = false;
+          for(halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+          {
+            if(!is_border(haa,tm_A) &&
+               collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+            {
+              skip = true;
+              break;
+            }
+          }
+
+          if(!skip)
+            put(vpm_A, target(ha, tm_A), new_p);
+        }
       }
       else
       {
@@ -972,12 +988,40 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 #endif
 
         for(const halfedge_descriptor ha : vs_a)
-          put(vpm_A, target(ha, tm_A), new_p);
+        {
+          bool skip = false;
+          for(halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+          {
+            if(!is_border(haa,tm_A) &&
+               collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+            {
+              skip = true;
+              break;
+            }
+          }
+
+          if(!skip)
+            put(vpm_A, target(ha, tm_A), new_p);
+        }
 
         for(const halfedge_descriptor hb : vs_b)
-          put(vpm_B, target(hb, tm_B), new_p);
-      }
+        {
+          bool skip = false;
+          for(halfedge_descriptor hbb : halfedges_around_target(hb, tm_B))
+          {
+            if(!is_border(hbb,tm_B) &&
+               collinear(get(vpm_B, source(hbb,tm_B)), new_p, get(vpm_B, target(next(hbb,tm_B),tm_B))))
+            {
+              skip = true;
+              break;
+            }
+          }
 
+          if(!skip)
+            put(vpm_B, target(hb, tm_B), new_p);
+        }
+      }
+      //TODO: the counter shall depend on skip?
       ++counter;
     }
 

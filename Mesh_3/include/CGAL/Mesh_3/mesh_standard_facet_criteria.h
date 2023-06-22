@@ -398,7 +398,16 @@ private:
 public:
   // Nb: the default bound of the criterion is such that the criterion
   // is always fulfilled
-  Uniform_size_criterion(const FT b = 1e20) : B_(b * b) {}
+  Uniform_size_criterion(const FT b = 1e20,
+                         const bool is_lower_bound = false)
+   : B_(b * b)
+   , is_lower_bound_(is_lower_bound)
+   {}
+
+  bool is_lower_bound() const
+  {
+    return is_lower_bound_;
+  }
 
 protected:
   virtual void do_accept(Visitor_& v) const
@@ -429,11 +438,19 @@ protected:
 
     const FT sq_radius = tr.min_squared_distance(p1, ball_center);
 
-    if ( sq_radius > B_ )
+    if (!is_lower_bound() && sq_radius > B_ )
     {
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
       std::cerr << "Bad facet (uniform size): sq_radius[" << sq_radius
                 << "] bound[" << B_ << "]\n";
+#endif
+      return Is_bad(Quality(B_/sq_radius));
+    }
+    else if(is_lower_bound() && sq_radius <= B_)
+    {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "Facet too small (uniform size): sq_radius[" << sq_radius
+      << "] bound[" << B_ << "]\n";
 #endif
       return Is_bad(Quality(B_/sq_radius));
     }
@@ -443,6 +460,7 @@ protected:
 
 private:
   FT B_;
+  const bool is_lower_bound_;
 
 };  // end Uniform_size_criterion
 
@@ -635,13 +653,6 @@ class Facet_criterion_visitor_with_features
   typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
   typedef Facet_criterion_visitor_with_features<Tr> Self;
 
-  typedef Mesh_3::Abstract_criterion<Tr, Self>                Criterion;
-  typedef Mesh_3::Curvature_size_criterion<Tr, Self>          Curvature_size_criterion;
-  typedef Mesh_3::Aspect_ratio_criterion<Tr, Self>            Aspect_ratio_criterion;
-  typedef Mesh_3::Facet_on_surface_criterion<Tr, Self>        Facet_on_surface_criterion;
-  typedef Mesh_3::Facet_size_criterion<Tr, Self>              Facet_size_criterion;
-  typedef Mesh_3::Facet_on_same_surface_criterion<Tr, Self>   Facet_on_same_surface_criterion;
-
   typedef typename Tr::Geom_traits  Gt;
   typedef typename Gt::FT           FT;
 
@@ -736,11 +747,9 @@ public:
     }
   }
 
-  // Destructor
-  ~Facet_criterion_visitor_with_features() {}
-
   // visit functions
-  void visit(const Criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
   {
     if ( 3 == wp_nb_ && do_spheres_intersect_ )
     {
@@ -751,7 +760,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Curvature_size_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Curvature_size_criterion<T, V>& criterion)
   {
     if (   ratio_ < approx_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_ ) )
@@ -763,7 +773,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Aspect_ratio_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Aspect_ratio_criterion<T, V>& criterion)
   {
     if (   ratio_ < angle_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )
@@ -775,7 +786,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Facet_size_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Facet_size_criterion<T, V>& criterion)
   {
     if (   ratio_ < size_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )
@@ -796,6 +808,74 @@ private:
   FT size_ratio_;
 
 };  // end class Facet_criterion_visitor
+
+
+template <typename Tr>
+class Facet_criterion_visitor_with_radius_lower_bound
+  : public Facet_criterion_visitor_with_features<Tr>
+{
+  typedef Facet_criterion_visitor_with_features<Tr> Base;
+  typedef Facet_criterion_visitor_with_radius_lower_bound<Tr> Self;
+
+  typedef typename Tr::Geom_traits  Gt;
+  typedef typename Gt::FT           FT;
+
+public:
+  typedef typename Base::Quality  Facet_quality;
+  typedef typename Base::Is_bad   Is_facet_bad;
+  typedef typename Base::Handle   Handle;
+  typedef Handle                  Facet;
+
+  // Constructor
+  Facet_criterion_visitor_with_radius_lower_bound(const Tr& tr, const Facet& fh)
+    : Base(tr, fh)
+    , dont_go_further_(false)
+  {}
+
+  Is_facet_bad is_bad() const
+  {
+    if (dont_go_further_)
+      return Is_facet_bad();
+    else
+      return Base::is_bad();
+  }
+
+  bool go_further() const
+  {
+    if (dont_go_further_)
+      return false;
+    else
+      return Base::go_further();
+  }
+
+  // visit functions
+  template<typename Criterion>
+  void visit(const Criterion& criterion)
+  {
+    Base::visit(criterion);
+  }
+
+  template<typename T, typename V>
+  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+  {
+    Base::visit(criterion);
+  }
+
+  template<typename T, typename V>
+  void visit(const Mesh_3::Uniform_size_criterion<T, V>& criterion)
+  {
+    Base::visit(criterion);
+
+    if (criterion.is_lower_bound() && Base::is_bad())
+      dont_go_further_ = true;
+  }
+
+private:
+  bool dont_go_further_;
+
+
+};// end class Facet_criterion_visitor_with_radius_lower_bound
+
 
 
 }  // end namespace Mesh_3
