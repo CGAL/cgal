@@ -10,8 +10,8 @@ The class `Graphic_storage` store points, segments and triangles. Elements can b
 
 */   
 template <typename BufferType=float>
-class Graphic_storage
-{
+class Graphic_storage {
+public:
   /// Add the given point in this storage.
   template <typename KPoint>
   void add_point(const KPoint &p);
