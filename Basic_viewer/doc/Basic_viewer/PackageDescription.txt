@@ -25,9 +25,12 @@
 - `CGAL::Drawing_functor<DS, Vertex_descriptor, Edge_descriptor, Face_descriptor>`
 - `CGAL::Drawing_functor_with_volume<DS, Vertex_descriptor, Edge_descriptor, Face_descriptor, Volume_descriptor>`
 - `CGAL::Graphic_storage<BufferType>`
+- `CGAL::Basic_viewer_qt<BufferType>`
+- `CGAL::QApplication_and_basic_viewer<BufferType>`
 
 \cgalCRPSubsection{Draw functions}
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- CGAL::draw_graphic_storage()
 
 \cgalCRPSubsection{Fill graphic storage functions}
 - \link PkgDrawLinearCellComplex CGAL::CGAL::add_in_graphic_storage<LCC, BufferType, DrawingFunctor>() \endlink
