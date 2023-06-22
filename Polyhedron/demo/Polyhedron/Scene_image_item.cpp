@@ -542,7 +542,16 @@ Scene_image_item::sigma_weights() const
 {
   return d->m_sigma_weights;
 }
-
+float
+Scene_image_item::default_sigma_weights() const
+{
+  if(!m_image)
+    return 0.f;
+  else
+    return (std::max)(m_image->image()->vx,
+           (std::max)(m_image->image()->vy,
+                      m_image->image()->vz));
+}
 
 void
 Scene_image_item::draw(Viewer_interface* viewer) const
