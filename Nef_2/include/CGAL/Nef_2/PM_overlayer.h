@@ -959,7 +959,7 @@ bool is_forward_edge(const Const_decorator& N,
 
 void assert_type_precondition() const
 { typename PM_decorator_::Point p1; Point p2;
-  CGAL_static_assertion((std::is_same<typename PM_decorator_::Point, Point>::value)); }
+  static_assert(std::is_same<typename PM_decorator_::Point, Point>::value); }
 
 
 

@@ -110,10 +110,10 @@ class Umbilic_approximation
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator  Vertex_const_iterator;
 
   //requirements for the templates TriangleMesh and VertexFTMap or VertexVectorMap
-  CGAL_static_assertion((std::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value));
-  CGAL_static_assertion((std::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value));
-  CGAL_static_assertion((std::is_same<FT, typename VertexFTMap::value_type>::value));
-  CGAL_static_assertion((std::is_same<Vector_3, typename VertexVectorMap::value_type>::value));
+  static_assert(std::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value);
+  static_assert(std::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value);
+  static_assert(std::is_same<FT, typename VertexFTMap::value_type>::value);
+  static_assert(std::is_same<Vector_3, typename VertexVectorMap::value_type>::value);
 
   typedef CGAL::Umbilic<TriangleMesh> Umbilic;
 

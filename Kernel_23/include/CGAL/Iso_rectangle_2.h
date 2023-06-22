@@ -33,7 +33,7 @@ class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
   typedef Iso_rectangle_2                    Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Iso_rectangle_2>::value));
+  static_assert(std::is_same<Self, typename R_::Iso_rectangle_2>::value);
 
 public:
 

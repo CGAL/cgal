@@ -553,7 +553,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
                                                       >::type             FaceSizeMap;
   typedef typename boost::property_traits<FaceSizeMap>::value_type        Face_size;
 
-  CGAL_static_assertion((std::is_convertible<ThresholdValueType, Face_size>::value));
+  static_assert(std::is_convertible<ThresholdValueType, Face_size>::value);
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,

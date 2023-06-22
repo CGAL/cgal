@@ -81,9 +81,9 @@ void test_lazy_exact_nt() {
         typedef CGAL::Lazy_exact_nt< typename AK::Integer > LI;
         typedef CGAL::Lazy_exact_nt< typename AK::Rational > LR;
         typedef CGAL::Coercion_traits<LI,LR> CT;
-        CGAL_static_assertion((std::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
-        CGAL_static_assertion((std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
-        CGAL_static_assertion((std::is_same< typename CT::Type,LR>::value));
+        static_assert(std::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value);
+        static_assert(std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value);
+        static_assert(std::is_same< typename CT::Type,LR>::value);
 
         LI  i(4);
         LR  r(4);
@@ -99,8 +99,8 @@ void test_lazy_exact_nt() {
         typedef CGAL::Lazy_exact_nt<leda_integer> T1;
         typedef CGAL::Lazy_exact_nt<CORE::Expr> T2;
         typedef CGAL::Coercion_traits<T1, T2> CT;
-        CGAL_static_assertion((std::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_false>::value));
-        CGAL_static_assertion((std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_false>::value));
+        static_assert(std::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_false>::value);
+        static_assert(std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_false>::value);
 #endif
 #endif
     }

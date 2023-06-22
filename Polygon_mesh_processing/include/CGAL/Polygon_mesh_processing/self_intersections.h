@@ -423,7 +423,7 @@ self_intersections_impl(const FaceRange& face_range,
   Throwing_filter throwing_filter(tmesh, vpmap, gt, Throwing_output_iterator());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
