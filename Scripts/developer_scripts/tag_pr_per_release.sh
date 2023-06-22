@@ -43,9 +43,9 @@ read -p "Please confirm operation by typing YES? " -n 4 -r
 echo
 if [[ $REPLY =~ ^YES$ ]]; then
 
-  gh api repos/CGAL/cgal/labels -F name=Merged_in_${CURRENT_RELEASE}
-  if gh issue edit help | grep -q numbers; then 
-    gh pr edit ${PR_LIST} --add-label Merged_in_${CURRENT_RELEASE}
+  gh api repos/CGAL/cgal/labels -F name=Merged_in_${CURRENT_RELEASE} || true
+  if gh issue edit --help 2>&1 | grep -q numbers; then
+    gh issue edit ${PR_LIST} --add-label Merged_in_${CURRENT_RELEASE}
   else
     for i in ${PR_LIST}; do
       gh pr edit  $i --add-label Merged_in_${CURRENT_RELEASE}
