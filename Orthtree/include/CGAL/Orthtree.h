@@ -288,7 +288,7 @@ public:
   Orthtree(Orthtree&& other):
     m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map), m_nodes(std::move(other.m_nodes)),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
-    m_node_properties(other.m_node_properties),
+    m_node_properties(std::move(other.m_node_properties)),
     m_node_points(m_node_properties.get_property<boost::iterator_range<typename PointRange::iterator>>("points")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<std::array<std::uint32_t, Dimension::value>>("coordinates")),
