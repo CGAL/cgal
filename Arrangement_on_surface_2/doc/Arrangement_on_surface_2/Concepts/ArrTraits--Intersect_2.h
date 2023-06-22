@@ -3,7 +3,7 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines Functor
+ * \cgalRefines{Functor}
  *
  * \cgalHasModel ArrangementXMonotoneTraits_2::Intersect_2
  */
@@ -37,8 +37,8 @@ public:
    */
   template <typename OutputIterator>
   OutputIterator operator()(ArrTraits::X_monotone_curve_2 xc1,
-                             ArrTraits::X_monotone_curve_2 xc2,
-                             OutputIterator& oi);
+                            ArrTraits::X_monotone_curve_2 xc2,
+                            OutputIterator& oi);
 
 /// @}
 

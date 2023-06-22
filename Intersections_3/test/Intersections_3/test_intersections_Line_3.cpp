@@ -339,12 +339,15 @@ public:
     {
       P tet0 = random_point(), tet1 = random_point(), tet2 = random_point(), tet3 = random_point();
 
-      const Tet tet(tet0, tet1, tet2, tet3);
+      Tet tet(tet0, tet1, tet2, tet3);
       if(tet.is_degenerate())
         continue;
 
-      P l0 = tet0 - CGAL::cross_product(V(tet0, tet1), V(tet0, tet2));
-      P l1 = tet3 + CGAL::cross_product(V(tet3, tet1), V(tet3, tet2));
+      if(tet.orientation() == CGAL::NEGATIVE)
+        tet = Tet(tet1, tet0, tet2, tet3);
+
+      P l0 = tet[0] - CGAL::cross_product(V(tet[0], tet[1]), V(tet[0], tet[2]));
+      P l1 = tet[3] + CGAL::cross_product(V(tet[3], tet[1]), V(tet[3], tet[2]));
 
       assert(tet.has_on_unbounded_side(l0) && tet.has_on_unbounded_side(l1));
 

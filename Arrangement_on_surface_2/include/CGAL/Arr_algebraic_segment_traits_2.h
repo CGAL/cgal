@@ -61,7 +61,7 @@ public:
     // Copy constructor
     Arr_algebraic_segment_traits_2 (const  Self& /* s */) { /* No state...*/}
 
-    // Assignement operator
+    // Assignment operator
     const Self& operator= (const Self& s)
         {return s;}
 
@@ -254,7 +254,7 @@ public:
             return std::make_pair(std::make_pair(0,0),vertical);
         }
 
-        // abbrevation for convenience
+        // abbreviation for convenience
         bool is_one_one(Curve_2 cv, Point_2 p) const {
 
             std::pair<std::pair<int,int>,bool> branches

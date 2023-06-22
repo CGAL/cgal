@@ -69,7 +69,7 @@ struct Tester
       // Construct the locking data-structure, using the bounding-box of the points
       typename RT_parallel::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
 
-      // Contruct the triangulation in parallel
+      // Construct the triangulation in parallel
       RT_parallel R(static_cast<Cast_type&>(points).begin(), static_cast<Cast_type&>(points).end(), &locking_ds);
       assert(R.number_of_vertices() == 9);
 
@@ -124,7 +124,7 @@ struct Tester
       // Construct the locking data-structure, using the bounding-box of the points
       typename RT_parallel::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
 
-      // Contruct the triangulation in parallel
+      // Construct the triangulation in parallel
       RT_parallel R(boost::make_zip_iterator(boost::make_tuple(static_cast<Cast_type&>(points).begin(), indices.begin())),
                     boost::make_zip_iterator(boost::make_tuple(static_cast<Cast_type&>(points).end(), indices.end())),
                     &locking_ds);
@@ -183,7 +183,7 @@ struct Tester
       // Construct the locking data-structure, using the bounding-box of the points
       typename RT_parallel::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
 
-      // Contruct the triangulation in parallel
+      // Construct the triangulation in parallel
       RT_parallel R(boost::make_transform_iterator(static_cast<Cast_type&>(points).begin(), Auto_count()),
                     boost::make_transform_iterator(static_cast<Cast_type&>(points).end(), Auto_count()),
                     &locking_ds);

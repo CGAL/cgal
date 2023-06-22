@@ -20,11 +20,11 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <boost/type_traits/is_same.hpp>
-
 #include <CGAL/SMDS_3/Dump_c3t3.h>
 
 #include <CGAL/disable_warnings.h>
+
+#include <type_traits>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
@@ -35,10 +35,10 @@ struct Polyhedron_tester : public Tester<K>
     typedef CGAL::Polyhedron_3<Gt> Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
 
-    CGAL_static_assertion((boost::is_same<
+    static_assert(std::is_same<
                             typename Mesh_domain::Surface_patch_index,
                             std::pair<int, int>
-                           >::value));
+                           >::value);
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,

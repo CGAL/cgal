@@ -505,7 +505,7 @@ bool write_PLY(std::ostream& os,
 
     if(prop[i] == "point")
     {
-      if(boost::is_same<typename Get_FT_from_map<typename Point_set::Point_map>::type, float>::value)
+      if(std::is_same<typename Get_FT_from_map<typename Point_set::Point_map>::type, float>::value)
       {
         os << "property float x" << std::endl
            << "property float y" << std::endl
@@ -522,7 +522,7 @@ bool write_PLY(std::ostream& os,
     }
     if(prop[i] == "normal")
     {
-      if(boost::is_same<typename Get_FT_from_map<typename Point_set::Vector_map>::type, float>::value)
+      if(std::is_same<typename Get_FT_from_map<typename Point_set::Vector_map>::type, float>::value)
       {
         os << "property float nx" << std::endl
            << "property float ny" << std::endl
@@ -545,7 +545,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property char " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Int8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int8_map>(pmap));
         continue;
       }
     }
@@ -555,7 +555,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property uchar " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Uint8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint8_map>(pmap));
         continue;
       }
     }

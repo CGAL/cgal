@@ -945,7 +945,7 @@ public:
 };
 
 /*!\brief
- * Functor that computes the relative vertical aligment of two arcs left
+ * Functor that computes the relative vertical alignment of two arcs left
  * of a point
  */
 template < class CurvedKernelViaAnalysis_2 >
@@ -1056,7 +1056,7 @@ public:
 
 
 /*!\brief
- * Functor that computes the relative vertical aligment of two arcs right
+ * Functor that computes the relative vertical alignment of two arcs right
  * of a point
  */
 template < class CurvedKernelViaAnalysis_2 >
@@ -1932,7 +1932,7 @@ public:
   /*!\brief
    * Splits an input object \c obj into x-monotone arcs and isolated points
    *
-   * \param obj the polymorph input object: can represet \c Point_2,
+   * \param obj the polymorph input object: can represent \c Point_2,
    * \c Arc_2, \c Non_x_monotone_arc_2 or \c Curve_analysis_2
    * \param oi Output iterator that stores CGAL::Object, which either
    *           encapsulates \c Point_2 or \c Arc_2

@@ -8,13 +8,6 @@ endif()
 
 find_package(CGAL REQUIRED)
 
-find_package(Boost 1.43.0)
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-else()
-  set(USE_IN_SOURCE_TREE_BOOST true)
-endif()
-
 add_subdirectory(openvolumemesh)
 
 include_directories(BEFORE openvolumemesh/src)

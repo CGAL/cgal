@@ -11,8 +11,17 @@ Let
 is the outermost variable.
 The \f$ i\f$-th subresultant (with \f$ i=0,\ldots,\min\{n,m\}\f$) is defined by
 
-\image html subresultant_def.png
-\image latex subresultant_def.png
+\f[
+\mathrm{Sres}_{i}(p,q) = \det
+\begin{pmatrix}
+    p_{n} & \dots & & \dots & p_{2i-m+2} & x^{m-i-1}p  \\
+    & \ddots & & & \vdots & \vdots\\
+    & & p_{n} & \dots & p_{i+1} & p \\
+    q_{m} & \dots & & \dots & q_{2i-n+2} & x^{n-i-1}q  \\
+    & \ddots & & & \vdots & \vdots\\
+    & & q_{m} & \dots & q_{i+1} & q
+\end{pmatrix}
+\f]
 
 where \f$ p_i\f$ and \f$ q_i\f$ are set to zero if \f$ i<0\f$.
 In the case that \f$ n=m\f$, \f$ \mathrm{Sres_n}\f$ is set to \f$ q\f$.
@@ -23,9 +32,7 @@ The result is written in an output range, starting with the \f$ 0\f$-th subresul
 
 \note This functor is optional.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

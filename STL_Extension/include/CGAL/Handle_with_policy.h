@@ -279,7 +279,7 @@ public:
     //! pointer. One example would be cleaning up dynamically allocated
     //! data, or another example would be overwriting a \c leda::real with
     //! a default constructed value to free its old expression tree. However,
-    //! this function can also be savely ignored and kept empty.
+    //! this function can also be safely ignored and kept empty.
     virtual void clear() {}
 };
 
@@ -355,8 +355,8 @@ namespace Intern {
             typedef ::CGAL::Reference_counted_hierarchy_with_union<Alloc>
                 Reference_counted_hierarchy_with_union;
             CGAL_USE_TYPE(Reference_counted_hierarchy_with_union);
-            CGAL_static_assertion((
-              ::CGAL::is_same_or_derived< Reference_counted_hierarchy_with_union, T >::value ));
+            static_assert(
+              ::CGAL::is_same_or_derived< Reference_counted_hierarchy_with_union, T >::value );
         }
         typedef T Rep;
     };
@@ -396,7 +396,7 @@ public:
      * of representations.
      *
      * The base classes can be used directly, but this
-     * rebind mechamism allows the implementation of handle-rep classes
+     * rebind mechanism allows the implementation of handle-rep classes
      * that are parameterized with the policy class only and adapt to
      * the necessary base class.
      */
@@ -456,7 +456,7 @@ public:
      * of representations.
      *
      * The base classes can be used directly, but this
-     * rebind mechamism allows the implementation of handle-rep classes
+     * rebind mechanism allows the implementation of handle-rep classes
      * that are parameterized with the policy class only and adapt to
      * the necessary base class.
      */
@@ -589,7 +589,7 @@ public:
      * of representations.
      *
      * The base classes can be used directly, but this
-     * rebind mechamism allows the implementation of handle-rep classes
+     * rebind mechanism allows the implementation of handle-rep classes
      * that are parameterized with the policy class only and adapt to
      * the necessary base class.
      */
@@ -760,7 +760,7 @@ private:
     static Rep_allocator allocator;
 
     static Rep* new_rep( const Rep& rep) {
-        CGAL_static_assertion( !(
+        static_assert( !(
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
         Rep* p = allocator.allocate(1);
         std::allocator_traits<Rep_allocator>::construct(allocator, p, rep);
@@ -855,8 +855,8 @@ protected:
     //! argument, and the single argument template constructor no other
     //! constructor will work for class hierarchies of representations.
     Handle_with_policy( Rep* p) : ptr_( p) {
-        CGAL_static_assertion((
-           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
+        static_assert(
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value );
         //Bind bind_; // trigger compile-time check
         //(void)bind_;
         (void)Bind();
@@ -869,8 +869,8 @@ protected:
     //! version of \c initialize_with is applicable in this case except
     //! the template version with one argument.
     void initialize_with( Rep* p) {
-        CGAL_static_assertion((
-           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
+        static_assert(
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value );
         //Bind bind_; // trigger compile-time check
         //(void)bind_;
         (void)Bind();
@@ -1138,7 +1138,7 @@ template <class T_, class Allocator_>
 class Handle_with_policy<T_, Handle_policy_in_place, Allocator_> {
 public:
 
-    //! first template paramter
+    //! first template parameter
     typedef T_ Handled_type;
 
     //! the handle type itself.

@@ -18,7 +18,6 @@
 #define CGAL_DIRECTION_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
@@ -39,7 +38,7 @@ class Direction_2 : public R_::Kernel_base::Direction_2
   typedef typename R_::Kernel_base::Direction_2      RDirection_2;
 
   typedef Direction_2                        Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Direction_2>::value));
+  static_assert(std::is_same<Self, typename R_::Direction_2>::value);
 
 public:
 

@@ -57,7 +57,7 @@ def write_out_html(d, fn):
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
     f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
     if d.html() is not None:
-      f.write(d.html())
+      f.write(d.html(method='html'))
     f.write('\n')
     f.write('</html>\n')
     f.close()
@@ -79,13 +79,11 @@ def clean_doc():
     duplicate_files.extend(package_glob('./*/citelist.doc'))
     duplicate_files.extend(package_glob('./*/doxygen.bst'))
     duplicate_files.extend(package_glob('./*/geom.bib'))
-    duplicate_files.extend(package_glob('./*/ftv2cl.png'))
-    duplicate_files.extend(package_glob('./*/ftv2ns.png'))
 
     for fn in duplicate_files:
         os.remove(fn)
 
-# from http://stackoverflow.com/a/1597755/105672
+# from https://stackoverflow.com/a/1597755/105672
 def re_replace_in_file(pat, s_after, fname):
     # first, see if the pattern is even in the file.
     with codecs.open(fname, encoding='utf-8') as f:
@@ -132,17 +130,6 @@ def is_concept_file(filename):
   d = pq(file_content.read(),parser="html")
   ident = d('#CGALConcept')
   return ident.size() == 1
-
-def rearrange_img(i, dir_name):
-    img = pq(this)
-    if img.attr("src") == "ftv2cl.png":
-        parser=pq(this).parent()
-        for link_class in ['a.el', 'a.elRef']:
-            links=parser(link_class)
-            if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
-                img.attr("src","ftv2cpt.png")
-    srcpath=img.attr("src")
-    img.attr("src", "../Manual/" + srcpath.split('/')[-1])
 
 def rearrange_icon(i, dir_name):
     icon = pq(this)
@@ -236,6 +223,7 @@ def automagically_number_figures():
     d = pq(file_content.read(), parser="html")
     d('a.el').each( lambda i: update_figure_ref(i,global_anchor_map) )
     d('a.elRef').each( lambda i: update_figure_ref(i,global_anchor_map) )
+    file_content.close()
     write_out_html(d, fname)
 
 ###############################################################################
@@ -254,6 +242,9 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     resources_absdir=args.resources
     os.chdir(args.output)
 
+    #workaround CGAL link on the main page
+    re_replace_in_file("<a class=\"elRef\" href=\"../.+/namespaceCGAL.+html\">CGAL</a>", "CGAL", "./Manual/index.html")
+
     #workaround issue with operator<< in pyquery
     all_pages=glob.glob('*/*.html')
     for f in all_pages:
@@ -263,10 +254,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     automagically_number_figures()
 
     #replace icons with CGAL colored ones
-    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("Manual", "ftv2cl.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("Manual", "ftv2ns.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("Manual", "ftv2cpt.png"))
-
     annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
       re_replace_in_file("<span class=\"icon\">N</span>", "<span class=\"icon-namespace\">N</span>", fn)
@@ -274,10 +261,9 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       dir_name=path.dirname(fn)
       file_content = codecs.open(fn, 'r', encoding='utf-8')
       d = pq(file_content.read(), parser="html")
-      tr_tags = d('table.directory tr img')
-      tr_tags.each(lambda i: rearrange_img(i, dir_name))
       span_tags = d('table.directory tr span')
       span_tags.each(lambda i: rearrange_icon(i, dir_name))
+      file_content.close()
       write_out_html(d,fn)
     class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
@@ -293,6 +279,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         ident = d('#nav-path .navelem').eq(0).children().eq(0)
         if ident and ident.attr('href') == 'namespaceCGAL.html':
             ident.attr('href', '../Manual/namespaceCGAL.html')
+        file_content.close()
         write_out_html(d, fn)
 
     namespace_files=package_glob('./*/namespace*.html')
@@ -303,6 +290,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         if ident.size() == 1:
             conceptify_ns(d);
             d.remove("#CGALConceptNS")
+        file_content.close()
         write_out_html(d, fn)
 
     # in a group we only need to change the nested-classes
@@ -311,6 +299,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         file_content = codecs.open(fn, 'r', encoding='utf-8')
         d = pq(file_content.read(), parser="html")
         conceptify_nested_classes(d)
+        file_content.close()
         write_out_html(d, fn)
 
     # fix up Files
@@ -323,6 +312,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         if row_id != None:
             # figure out the rowid and then drop everything from the table that matches
             table("tr").filter(lambda i: re.match(row_id + '*', pq(this).attr('id'))).remove()
+            file_content.close()
             write_out_html(d, fn)
 
     #Rewrite the code for index trees images
@@ -355,6 +345,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         # in hasModels.html, generalizes.html and refines.html, it is always Class. If this changes in
         # future versions of doxygen, the regular expression will be ready
         dts.each(lambda i: pq(this).html(re.sub("((Class )|(Struct ))", "Concept ", pq(this).html())))
+        file_content.close()
         write_out_html(d, fn)
 
     # throw out nav-sync
@@ -364,6 +355,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         d = pq(file_content.read(), parser="html")
         d('#nav-sync').hide()
         # TODO count figures
+        file_content.close()
         write_out_html(d, fn)
 
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
@@ -390,6 +382,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
           text = pq(el).text()
           if text[0:9]=="template<" and text.find('=')==-1:
             pq(el).remove()
+        file_content.close()
         write_out_html(d, fn)
 
     #add a canonical link to all pages

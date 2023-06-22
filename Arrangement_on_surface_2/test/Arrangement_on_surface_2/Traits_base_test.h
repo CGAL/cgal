@@ -34,7 +34,7 @@
  * that throws a special exceptions, which indicates whether the violation was
  * expected or not unexpected. Depending on abort_on_error the right exceptions
  * is thrown. the exceptions are caught in perform function.
- * so basiclly we have 4 cases:
+ * so basically we have 4 cases:
  *
  *                          | violation occurred       | violation did
  *                          |                          |  not occurred
@@ -228,7 +228,7 @@ void Traits_base_test<Geom_traits_T>::clear()
 }
 
 /*!
- * Command dispatcher. Retrieves a line from the input file and performes
+ * Command dispatcher. Retrieves a line from the input file and performs
  * some action. See comments for suitable function in order to know specific
  * command arguments.
  */

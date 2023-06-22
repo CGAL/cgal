@@ -10,7 +10,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 using LCC_3            =CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
-using Dart_const_handle=LCC_3::Dart_const_handle;
+using Dart_const_descriptor=LCC_3::Dart_const_descriptor;
 using Path_on_surface  =CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<
 {
   std::cout<<"Usage "<<argv[0]<<" [-draw] [-dist] [-time] [-seed S] file.off"<<std::endl
            <<"  Compute the shortest non contractible cycle passing through a vertex on the given mesh."
-           <<"  Vertex is choosen randomly."<<std::endl
+           <<"  Vertex is chosen randomly."<<std::endl
            <<"   -draw: draw the mesh and the cycle."<<std::endl
            <<"   -dist: use Euclidean distance (instead of bfs by default)."<<std::endl
            <<"   -time: show computation times."<<std::endl
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
   CST            cst(lcc, time);
 
   /// Change the value of `root` to test the algorithm at another vertex
-  Dart_const_handle root=lcc.dart_handle(random.get_int(0,  static_cast<int>(lcc.number_of_darts())));
+  Dart_const_descriptor root=lcc.dart_descriptor(random.get_int(0,  static_cast<int>(lcc.number_of_darts())));
   std::cout<<"Finding the shortest noncontractible cycle..."<<std::endl;
   Path_on_surface cycle(lcc);
   if (dist)

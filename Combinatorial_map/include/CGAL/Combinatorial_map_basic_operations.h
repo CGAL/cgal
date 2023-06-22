@@ -15,7 +15,7 @@
 #include <CGAL/Combinatorial_map_iterators_base.h>
 #include <CGAL/tags.h>
 
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL
 {
@@ -31,11 +31,11 @@ namespace CGAL
    */
   template < class Map, class Iterator >
   bool belong_to_same_orbit(const Map & amap,
-                            typename Map::Dart_const_handle adart1,
-                            typename Map::Dart_const_handle adart2)
+                            typename Map::Dart_const_descriptor adart1,
+                            typename Map::Dart_const_descriptor adart2)
   {
-    CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
-                                           Tag_false>::value) );
+    static_assert(std::is_same<typename Iterator::Basic_iterator,
+                                           Tag_false>::value);
     bool found=false;
 
     for (Iterator it(amap, adart1); !found && it.cont(); ++it)
@@ -54,11 +54,11 @@ namespace CGAL
    */
   template < class Map, class Iterator >
   bool is_whole_orbit_marked(const Map & amap,
-                             typename Map::Dart_const_handle adart,
+                             typename Map::Dart_const_descriptor adart,
                              typename Map::size_type amark)
   {
-    CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
-                                           Tag_false>::value) );
+    static_assert(std::is_same<typename Iterator::Basic_iterator,
+                                           Tag_false>::value);
     bool res=true;
 
     for ( Iterator it(amap, adart); res && it.cont(); ++it )
@@ -77,7 +77,7 @@ namespace CGAL
    */
   template < class Map, class Iterator >
   bool is_whole_orbit_unmarked(const Map & amap,
-                               typename Map::Dart_const_handle adart,
+                               typename Map::Dart_const_descriptor adart,
                                typename Map::size_type amark)
   {
     amap.negate_mark(amark);
@@ -95,11 +95,11 @@ namespace CGAL
    */
   template < class Map, class Iterator >
   typename Map::size_type mark_orbit(const Map & amap,
-                                     typename Map::Dart_const_handle adart,
+                                     typename Map::Dart_const_descriptor adart,
                                      typename Map::size_type amark)
   {
-    CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
-                            Tag_true>::value) );
+    static_assert(std::is_same<typename Iterator::Basic_iterator,
+                            Tag_true>::value);
     CGAL_assertion( (is_whole_orbit_unmarked<Map,
                      CMap_non_basic_iterator<Map,Iterator> >
                      (amap, adart, amark)) );
@@ -123,7 +123,7 @@ namespace CGAL
    */
   template < class Map, class Iterator >
   typename Map::size_type unmark_orbit(const Map & amap,
-                                       typename Map::Dart_const_handle adart,
+                                       typename Map::Dart_const_descriptor adart,
                                        typename Map::size_type amark)
   {
     amap.negate_mark(amark);
@@ -141,8 +141,8 @@ namespace CGAL
    */
   template < class Map, unsigned int i, unsigned int d>
   bool belong_to_same_cell(const Map & amap,
-                           typename Map::Dart_const_handle adart1,
-                           typename Map::Dart_const_handle adart2)
+                           typename Map::Dart_const_descriptor adart1,
+                           typename Map::Dart_const_descriptor adart2)
   {
     return CGAL::belong_to_same_orbit<Map,
         typename Map::template Dart_of_cell_range<i,d>::const_iterator>
@@ -151,8 +151,8 @@ namespace CGAL
 
   template < class Map, unsigned int i>
   bool belong_to_same_cell(const Map & amap,
-                           typename Map::Dart_const_handle adart1,
-                           typename Map::Dart_const_handle adart2)
+                           typename Map::Dart_const_descriptor adart1,
+                           typename Map::Dart_const_descriptor adart2)
   {
     return CGAL::template belong_to_same_cell<Map,i,Map::dimension>(amap,adart1,adart2);
   }
@@ -166,7 +166,7 @@ namespace CGAL
    */
   template < class Map, unsigned int i, unsigned int d>
   bool is_whole_cell_marked(const Map & amap,
-                            typename Map::Dart_const_handle adart,
+                            typename Map::Dart_const_descriptor adart,
                             typename Map::size_type amark)
   {
     return CGAL::template is_whole_orbit_marked<Map,
@@ -176,7 +176,7 @@ namespace CGAL
 
   template < class Map, unsigned int i>
   bool is_whole_cell_marked(const Map & amap,
-                            typename Map::Dart_const_handle adart,
+                            typename Map::Dart_const_descriptor adart,
                             typename Map::size_type amark)
   {
     return CGAL::template is_whole_cell_marked<Map,i,Map::dimension>
@@ -191,7 +191,7 @@ namespace CGAL
    */
   template < class Map, unsigned int i, unsigned int d >
   bool is_whole_cell_unmarked(const Map & amap,
-                              typename Map::Dart_const_handle adart,
+                              typename Map::Dart_const_descriptor adart,
                               typename Map::size_type amark)
   {
     return CGAL::template is_whole_orbit_unmarked<Map,
@@ -201,7 +201,7 @@ namespace CGAL
 
   template < class Map, unsigned int i>
   bool is_whole_cell_unmarked(const Map & amap,
-                              typename Map::Dart_const_handle adart,
+                              typename Map::Dart_const_descriptor adart,
                               typename Map::size_type amark)
   {
     return CGAL::template is_whole_cell_unmarked<Map,i,Map::dimension>
@@ -217,7 +217,7 @@ namespace CGAL
    */
   template < class Map, unsigned int i, unsigned int d >
   typename Map::size_type mark_cell(const Map & amap,
-                                    typename Map::Dart_const_handle adart,
+                                    typename Map::Dart_const_descriptor adart,
                                     typename Map::size_type amark)
   { return CGAL::template mark_orbit<Map,
         typename Map::template Dart_of_cell_basic_range<i,d>::const_iterator>
@@ -225,7 +225,7 @@ namespace CGAL
 
   template < class Map, unsigned int i>
   typename Map::size_type mark_cell(const Map & amap,
-                                    typename Map::Dart_const_handle adart,
+                                    typename Map::Dart_const_descriptor adart,
                                     typename Map::size_type amark)
   { return CGAL::template mark_cell<Map,i,Map::dimension>(amap, adart, amark);}
 
@@ -238,7 +238,7 @@ namespace CGAL
    */
   template < class Map, unsigned int i, unsigned int d >
   typename Map::size_type unmark_cell(const Map & amap,
-                                      typename Map::Dart_const_handle adart,
+                                      typename Map::Dart_const_descriptor adart,
                                       typename Map::size_type amark)
   { return CGAL::template unmark_orbit<Map,
         typename Map::template Dart_of_cell_basic_range<i,d>::const_iterator>
@@ -246,7 +246,7 @@ namespace CGAL
 
   template < class Map, unsigned int i >
   typename Map::size_type unmark_cell(const Map & amap,
-                                      typename Map::Dart_const_handle adart,
+                                      typename Map::Dart_const_descriptor adart,
                                       typename Map::size_type amark)
   { return CGAL::template unmark_cell<Map,i,Map::dimension>(amap, adart, amark); }
 
@@ -256,7 +256,7 @@ namespace CGAL
   struct Need_to_mark_for_oriented_cell
   {
     static bool run(const Map & /*amap*/,
-                    typename Map::Dart_const_handle /*adart*/,
+                    typename Map::Dart_const_descriptor /*adart*/,
                     typename Map::size_type /*amark*/,
                     OperationState /*op*/)
     { return true; }
@@ -269,7 +269,7 @@ namespace CGAL
   struct Need_to_mark_for_oriented_cell<Map, CGAL::Generalized_map_tag>
   {
     static bool run(const Map & amap,
-                    typename Map::Dart_const_handle adart,
+                    typename Map::Dart_const_descriptor adart,
                     typename Map::size_type amark,
                     OperationState op)
     {
@@ -301,12 +301,12 @@ namespace CGAL
    */
   template < class Map, class Iterator >
   typename Map::size_type mark_oriented_orbit(const Map & amap,
-                                              typename Map::Dart_const_handle adart,
+                                              typename Map::Dart_const_descriptor adart,
                                               typename Map::size_type amark,
                                               typename Map::size_type amark2=Map::INVALID_MARK)
   {
-    CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
-                            Tag_true>::value) );
+    static_assert(std::is_same<typename Iterator::Basic_iterator,
+                            Tag_true>::value);
     CGAL_assertion( (is_whole_orbit_unmarked<Map,
                      CMap_non_basic_iterator<Map,Iterator> >
                      (amap, adart, amark)) );
@@ -334,7 +334,7 @@ namespace CGAL
 
   template < class Map, class Iterator >
   typename Map::size_type unmark_oriented_orbit(const Map & amap,
-                                                typename Map::Dart_const_handle adart,
+                                                typename Map::Dart_const_descriptor adart,
                                                 typename Map::size_type amark,
                                                 typename Map::size_type amark2=Map::INVALID_MARK)
   {
@@ -360,7 +360,7 @@ namespace CGAL
    */
   template < class Map, unsigned int i, unsigned int d >
   typename Map::size_type mark_oriented_cell(const Map & amap,
-                                             typename Map::Dart_const_handle adart,
+                                             typename Map::Dart_const_descriptor adart,
                                              typename Map::size_type amark,
                                              typename Map::size_type amark2=Map::INVALID_MARK)
   { return CGAL::template mark_oriented_orbit
@@ -369,7 +369,7 @@ namespace CGAL
 
   template < class Map, unsigned int i>
   typename Map::size_type mark_oriented_cell(const Map & amap,
-                                             typename Map::Dart_const_handle adart,
+                                             typename Map::Dart_const_descriptor adart,
                                              typename Map::size_type amark,
                                              typename Map::size_type amark2=Map::INVALID_MARK)
   { return CGAL::template mark_oriented_cell<Map,i,Map::dimension>
@@ -384,7 +384,7 @@ namespace CGAL
    */
   template < class Map, unsigned int i, unsigned int d >
   typename Map::size_type unmark_oriented_cell(const Map & amap,
-                                               typename Map::Dart_const_handle adart,
+                                               typename Map::Dart_const_descriptor adart,
                                                typename Map::size_type amark,
                                                typename Map::size_type amark2=Map::INVALID_MARK)
   { return CGAL::template unmark_oriented_orbit
@@ -393,7 +393,7 @@ namespace CGAL
 
   template < class Map, unsigned int i >
   typename Map::size_type unmark_oriented_cell(const Map & amap,
-                                               typename Map::Dart_const_handle adart,
+                                               typename Map::Dart_const_descriptor adart,
                                                typename Map::size_type amark,
                                                typename Map::size_type amark2=Map::INVALID_MARK)
   { return CGAL::template unmark_oriented_cell<Map,i,Map::dimension>
@@ -407,9 +407,9 @@ namespace CGAL
    */
   template < class Map, unsigned int i >
   typename Map::size_type degree(const Map & amap,
-                                 typename Map::Dart_const_handle adart)
+                                 typename Map::Dart_const_descriptor adart)
   {
-    CGAL_assertion(adart != nullptr);
+    CGAL_assertion(adart!=amap.null_descriptor);
 
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;
@@ -456,9 +456,9 @@ namespace CGAL
    */
   template < class Map, unsigned int i >
   typename Map::size_type codegree(const Map & amap,
-                                   typename Map::Dart_const_handle adart)
+                                   typename Map::Dart_const_descriptor adart)
   {
-    CGAL_assertion(adart != nullptr);
+    CGAL_assertion(adart!=amap.null_descriptor);
 
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;

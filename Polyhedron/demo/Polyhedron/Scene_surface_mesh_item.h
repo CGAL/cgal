@@ -28,32 +28,36 @@
 
 #include "properties.h"
 
-
 class QSlider;
+
 struct Scene_surface_mesh_item_priv;
+
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
-    : public CGAL::Three::Scene_item_rendering_helper,
+  : public CGAL::Three::Scene_item_rendering_helper,
     public CGAL::Three::Scene_item_with_properties,
     public CGAL::Three::Scene_zoomable_item_interface,
-    public CGAL::Three::Scene_print_item_interface{
+    public CGAL::Three::Scene_print_item_interface
+{
   Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
+
 public:
   typedef SMesh Face_graph;
   typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
   typedef SMesh::Property_map<face_descriptor,int> Face_selection_map;
+
+  void initialize_priv();
   Scene_surface_mesh_item();
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);
   Scene_surface_mesh_item(const SMesh&);
-    Scene_surface_mesh_item(SMesh&&);
+  Scene_surface_mesh_item(SMesh&&);
   Scene_surface_mesh_item(const Scene_surface_mesh_item& other);
 
   ~Scene_surface_mesh_item();
-
 
   Scene_surface_mesh_item* clone() const Q_DECL_OVERRIDE;
   void draw(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
@@ -74,7 +78,7 @@ public:
   //of the colors_ vector to scale on min_patch value.
   // For example, the Mesh_segmentation_plugin computes the colors_
   // vector itself, so it must set recompute_colors to false to avoid
-  // having it ovewritten
+  // having it overwritten
   // in the code of this item.
   void computeItemColorVectorAutomatically(bool);
   bool isItemMulticolor();
@@ -100,24 +104,31 @@ public:
 
 
   void compute_bbox()const Q_DECL_OVERRIDE;
-  void standard_constructor(SMesh *sm);
   bool save(std::ostream& out) const;
   bool save_obj(std::ostream& out) const;
   bool load_obj(std::istream& in);
+
   //statistics
-  enum STATS {
-    NB_VERTICES = 0,
-    HAS_NM_VERTICES,
-    NB_CONNECTED_COMPOS,
-    NB_BORDER_EDGES,
+  enum STATS
+  {
+    // Properties
+    NB_CONNECTED_COMPOS = 0,
+    NB_HOLES,
+    GENUS,
     IS_PURE_TRIANGLE,
     IS_PURE_QUAD,
-    NB_DEGENERATED_FACES,
-    HOLES,
     AREA,
     VOLUME,
     SELFINTER,
+    HAS_NM_VERTICES,
+
+    // Vertices
+    NB_VERTICES,
+    NB_ISOLATED_VERTICES,
+
+    // Facets
     NB_FACETS,
+    NB_DEGENERATE_FACES,
     MIN_AREA,
     MAX_AREA,
     MED_AREA,
@@ -126,13 +137,17 @@ public:
     MIN_ASPECT_RATIO,
     MAX_ASPECT_RATIO,
     MEAN_ASPECT_RATIO,
-    GENUS,
+
+    // Edges
     NB_EDGES,
+    NB_BORDER_EDGES,
+    NB_DEGENERATE_EDGES,
     MIN_LENGTH,
     MAX_LENGTH,
-    MID_LENGTH,
+    MED_LENGTH,
     MEAN_LENGTH,
-    NB_NULL_LENGTH,
+
+    // Angles
     MIN_ANGLE,
     MAX_ANGLE,
     MEAN_ANGLE

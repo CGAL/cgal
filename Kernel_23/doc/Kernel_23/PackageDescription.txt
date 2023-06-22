@@ -27,7 +27,7 @@
 /// \defgroup kernel_enums Enumerations and Related Functions
 /// \ingroup PkgKernel23Ref
 
-/// \defgroup kernel_conversion Cartesian/Homogenous Conversion
+/// \defgroup kernel_conversion Cartesian/Homogeneous Conversion
 /// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_dimension Dimension Handling Tools
@@ -160,6 +160,7 @@
 - \link compare_signed_distance_to_line_grp `CGAL::compare_signed_distance_to_line()` \endlink
 - \link compare_signed_distance_to_plane_grp `CGAL::compare_signed_distance_to_plane()` \endlink
 - \link compare_slopes_grp `CGAL::compare_slopes()` \endlink
+- `CGAL::compare_angle()`
 - \link compare_dihedral_angle_grp `CGAL::compare_dihedral_angle()` \endlink
 - \link compare_squared_distance_grp `CGAL::compare_squared_distance()` \endlink
 - \link compare_squared_radius_grp `CGAL::compare_squared_radius()` \endlink

@@ -27,6 +27,11 @@ Point_container::Point_container(int program, bool indexed)
 
 }
 
+Point_container::~Point_container()
+{
+  delete d;
+}
+
 void Point_container::initGL(Viewer_interface *viewer)
 {
   viewer->makeCurrent();
@@ -64,7 +69,6 @@ void Point_container::initGL(Viewer_interface *viewer)
         setVbo(Colors,
                new Vbo("colors",
                        Vbo::COLORS));
-      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
       if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
       {
         if(!getVbo(Normals))

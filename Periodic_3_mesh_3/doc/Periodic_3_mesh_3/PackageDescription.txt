@@ -50,9 +50,9 @@ at the beginning of the meshing process, thus ensuring that the underlying perio
 triangulation forms at all times a simplicial complex within a single copy of the periodic space \f$ \mathbb T_c^3\f$
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
 of the package \ref PkgPeriodic3Triangulation3).
-By identifying a single copy of the flat torus \f$ \mathbb T_c^3\f$ (where `c`
-denotes the period) with a cube of side `c` in \f$ \mathbb R^3\f$, the meshing process
-can be exclusively conducted within a cube of side `c`.
+By identifying a single copy of the flat torus \f$ \mathbb T_{c_x,c_y,c_y}^3\f$ (where `c_x`,`c_y`,
+and `c_z` denote the period along the canonical axes) with a cuboid of side lengths `c_x`,`c_y`,
+and`c_z` in \f$ \mathbb R^3\f$, the meshing process can be exclusively conducted within a cuboid.
 The mesh within a single copy is created using \cgal's \ref PkgMesh3 package, but
 because \cgal's \ref PkgMesh3 package aims to mesh traditional (non-periodic)
 domains, an interface is necessary between \cgal's \ref PkgMesh3 package
@@ -80,7 +80,7 @@ and \cgal's three-dimensional mesh generator:
 The following class allows to construct a periodic implicit function from an implicit function that is not periodic:
 - `CGAL::Periodic_3_function_wrapper<Function,BGT>`
 
-The following class allows to split the canonical cube in two subdomains,
+The following class allows to split the canonical cuboid in two subdomains,
 separated by the zero-level of an implicit function:
 - `CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function,BGT>`
 

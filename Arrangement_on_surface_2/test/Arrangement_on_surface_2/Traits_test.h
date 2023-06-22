@@ -131,7 +131,7 @@ private:
    * Cut the given curve into x-monotone subcurves and insert them into the
    * given output iterator.
    * Degenerate cases for polylines: The first segment is vertical. The last
-   * segment is vertical. Both firt and last are vertical. An internal segment
+   * segment is vertical. Both first and last are vertical. An internal segment
    * is vertical.
    */
   bool make_x_monotone_wrapper(std::istringstream& line);
@@ -408,7 +408,7 @@ push_back_wrapper(std::istringstream& str_stream)
 
   if (type == 0) {
     /* THERE IS NO WAY AS OF NOW TO CHECK IF THE POLYCURVE (NON X-MONOTONE) IS
-     * EQUAL. HENCE, UNTILL THAT COMPARISON IS NOT AVAILABLE IN THE
+     * EQUAL. HENCE, UNTIL THAT COMPARISON IS NOT AVAILABLE IN THE
      * ARR_POLYCURVE_TRAITS, THIS TEST WILL PASS ONLY IF THE PRINTED RESULT
      * OF THE EXPECTED CURVE AND THE ACTUAL OBTAINED CURVE IS IDENTICAL.
      */
@@ -481,7 +481,7 @@ push_front_wrapper(std::istringstream& str_stream)
 
   if (type == 0) {
     /* THERE IS NO WAY AS OF NOW TO CHECK IF THE POLYCURVE (NON X-MONOTONE) IS
-     * EQUAL. HENCE, UNTILL THAT COMPARISON IS NOT AVAILABLE IN THE
+     * EQUAL. HENCE, UNTIL THAT COMPARISON IS NOT AVAILABLE IN THE
      * ARR_POLYCURVE_TRAITS, THIS TEST WILL PASS ONLY IF THE PRINTED RESULT
      * OF THE EXPECTED CURVE AND THE ACTUAL OBTAINED CURVE IS IDENTICAL.
      */
@@ -903,7 +903,7 @@ equal_curves_wrapper(std::istringstream& str_stream)
  * Cut the given curve into x-monotone subcurves and insert them into the
  * given output iterator.
  * Degenerate cases for polylines: The first segment is vertical. The last
- * segment is vertical. Both firt and last are vertical. An internal segment
+ * segment is vertical. Both first and last are vertical. An internal segment
  * is vertical.
  */
 template <typename Geom_traits_T>

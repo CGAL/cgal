@@ -9,7 +9,7 @@ class. The `DelaunayGraph_2` concept essentially defines the
 requirements that a class representing a Delaunay graph must obey so
 that the Voronoi diagram adaptor can adapt it.
 
-\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHeading{Traversal of the Delaunay graph}
 

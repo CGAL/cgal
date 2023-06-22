@@ -21,7 +21,7 @@ class QGraphicsView;
 class GraphicsSceneMixin
 {
 public:
-  /*! Costructor */
+  /*! Constructor */
   GraphicsSceneMixin(QGraphicsScene* scene_ = nullptr);
 
   /*! Destructor (virtual) */

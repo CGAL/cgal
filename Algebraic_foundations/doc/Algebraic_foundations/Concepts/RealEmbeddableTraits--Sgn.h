@@ -7,7 +7,7 @@ namespace RealEmbeddableTraits_ {
 
 This `AdaptableUnaryFunction` computes the sign of a real embeddable number.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `RealEmbeddableTraits`
 

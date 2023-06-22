@@ -429,6 +429,13 @@ setup_dirs()
 
   for PLATFORM in ${PLATFORMS}; do
 
+    # MSVC2015 does not support C++17
+    if [ "$CGAL_RELEASE_ID" \> "CGAL-6.0" ]; then
+      if [ "$PLATFORMS" = "MSVC2015-Release-64bits" ]; then
+        continue
+      fi
+    fi
+
     CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
 
     if [ ! -d "${CGAL_BINARY_DIR}" ]; then

@@ -111,7 +111,7 @@ struct Allow_all_moves{
 *   \cgalParamNBegin{allow_move_functor}
 *     \cgalParamDescription{A function object used to determinate if a vertex move should be allowed or not}
 *     \cgalParamType{Unary functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)` returning `true`
-*                    if the vertex `v` can be moved from `src` to `tgt`; %Point_3` being the value type of the vertex point map }
+*                    if the vertex `v` can be moved from `src` to `tgt`; `Point_3` being the value type of the vertex point map }
 *     \cgalParamDefault{If not provided, all moves are allowed.}
 *   \cgalParamNEnd
 *
@@ -132,6 +132,7 @@ void tangential_relaxation(const VertexRange& vertices,
   using parameters::choose_parameter;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -187,6 +188,10 @@ void tangential_relaxation(const VertexRange& vertices,
       }
       prev = n;
     }
+
+    if (first_run)
+      return true; //vertex incident only to degenerate faces
+
     if (!get(ecm, edge(first_h, tm)))
       if (to_double(first * prev) <= 0)
         return false;
@@ -212,6 +217,7 @@ void tangential_relaxation(const VertexRange& vertices,
 
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
+    auto gt_barycenter = gt.construct_barycenter_3_object();
 
     // at each vertex, compute vertex normal
     std::unordered_map<vertex_descriptor, Vector_3> vnormals;
@@ -263,7 +269,8 @@ void tangential_relaxation(const VertexRange& vertices,
           //check squared cosine is < 0.25 (~120 degrees)
           if (0.25 < dot*dot / ( squared_distance(get(vpm,ph0), get(vpm, v)) *
                                  squared_distance(get(vpm,ph1), get(vpm, v))) )
-            barycenters.emplace_back(v, vn, barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5));
+            barycenters.emplace_back(v, vn,
+              gt_barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5));
         }
       }
     }

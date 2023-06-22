@@ -29,7 +29,9 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/range/empty.hpp>
 
+#include <CGAL/IO/io.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_cell_primitive.h>
@@ -276,7 +278,7 @@ void Scene_c3t3_item::show_cnc(bool b)
 
 bool Scene_c3t3_item::load_binary(std::istream& is)
 {
-  if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
+  if(!CGAL::IO::load_binary_file(is, c3t3())) return false;
   resetCutPlane();
   if(is.good()) {
     c3t3_changed();
@@ -303,6 +305,17 @@ void Scene_c3t3_item::compute_bbox() const
     }
     _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
                  result.xmax(), result.ymax(), result.zmax());
+
+    if (boost::empty(c3t3().cells_in_complex()))
+    {
+      for (Tr::Vertex_handle v : c3t3().triangulation().finite_vertex_handles())
+      {
+        if(v->in_dimension() != -1) //skip far points
+          result += v->point().bbox();
+      }
+      _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
+                   result.xmax(), result.ymax(), result.zmax());
+    }
   }
 }
 

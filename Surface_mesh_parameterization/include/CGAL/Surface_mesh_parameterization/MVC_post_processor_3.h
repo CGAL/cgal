@@ -460,7 +460,7 @@ private:
     CGAL_precondition(!ct.is_infinite(fh));
     typedef typename CT::Vertex_handle                    Vertex_handle;
 
-    // Doing it explicitely rather than a loop for clarity
+    // Doing it explicitly rather than a loop for clarity
     Vertex_handle vh0 = fh->vertex(0);
     Vertex_handle vh1 = fh->vertex(1);
     Vertex_handle vh2 = fh->vertex(2);
@@ -598,7 +598,7 @@ private:
   {
     Error_code status = OK;
 
-    NT Du, Dv;
+    double Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
       status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
@@ -726,8 +726,8 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
   ///
   template <typename VertexUVMap,
             typename VertexIndexMap>

@@ -13,8 +13,6 @@
 #include <QInputDialog>
 #include <CGAL/Three/Three.h>
 
-#include <boost/iterator/transform_iterator.hpp>
-
 #include <list>
 #include <fstream>
 

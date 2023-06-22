@@ -94,7 +94,7 @@ int main(int argc, char** argv)
   if(input)
     {
       CGAL::IO::read_triangle_poly_file(t, input);
-      CGAL::refine_Delaunay_mesh_2(t, criteria);
+      CGAL::refine_Delaunay_mesh_2(t, CGAL::parameters::criteria(criteria));
 
       if(argc==arg_count+1)
         {

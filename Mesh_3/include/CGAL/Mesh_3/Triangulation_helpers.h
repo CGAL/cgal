@@ -25,9 +25,7 @@
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -35,6 +33,8 @@
 #include <limits>
 #include <utility>
 #include <vector>
+#include <type_traits>
+
 
 namespace CGAL {
 
@@ -109,8 +109,8 @@ public:
   ~Triangulation_helpers() {}
 
   /**
-   * Returns true if moving \c v to \c p makes no topological
-   * change in \c tr
+   * Returns `true` if moving `v` to `p` makes no topological
+   * change in `tr`.
    */
   bool no_topological_change(Tr& tr,
                              const Vertex_handle v,
@@ -137,7 +137,7 @@ public:
                                const Bare_point& p) const;
 
   /**
-   * Returns the squared distance from \c vh to its closest vertex
+   * Returns the squared distance from `vh` to its closest vertex.
    *
    * \pre `vh` is not the infinite vertex
    */
@@ -145,18 +145,18 @@ public:
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::enable_if_c<Tag::value>::type* = nullptr) const;
+                                       typename std::enable_if_t<Tag::value>* = nullptr) const;
 
   // @todo are the two versions really worth it, I can't tell the difference from a time POV...
   template<typename Tag>
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::disable_if_c<Tag::value>::type* = nullptr) const;
+                                       typename std::enable_if_t<!Tag::value>* = nullptr) const;
 
 private:
   /**
-   * Returns true if \c v is well_oriented on each cell of \c cell_tos
+   * Returns `true` if `v` is well_oriented on each cell of `cell_tos`.
    */
   // For sequential version
   bool well_oriented(const Tr& tr,
@@ -187,7 +187,7 @@ no_topological_change(Tr& tr,
   //
   // Note that the function was nevertheless adapted to work with periodic triangulation
   // so this hack can be disabled if one day 'side_of_power_sphere()' is improved.
-  if(boost::is_same<typename Tr::Periodic_tag, Tag_true>::value)
+  if(std::is_same<typename Tr::Periodic_tag, Tag_true>::value)
     return false;
 
   typename Gt::Construct_opposite_vector_3 cov =
@@ -407,14 +407,14 @@ Triangulation_helpers<Tr>::
 get_sq_distance_to_closest_vertex(const Tr& tr,
                                   const Vertex_handle& vh,
                                   const Cell_vector& incident_cells,
-                                  typename boost::enable_if_c<Tag::value>::type*) const
+                                  typename std::enable_if_t<Tag::value>*) const
 {
   CGAL_precondition(!tr.is_infinite(vh));
 
   typedef std::vector<Vertex_handle>              Vertex_container;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
-  // distances between 'v' and a neighbor within their common cell, which means
+  // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
   typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
@@ -466,7 +466,7 @@ Triangulation_helpers<Tr>::
 get_sq_distance_to_closest_vertex(const Tr& tr,
                                   const Vertex_handle& vh,
                                   const Cell_vector& incident_cells,
-                                  typename boost::disable_if_c<Tag::value>::type*) const
+                                  typename std::enable_if_t<!Tag::value>*) const
 {
   CGAL_precondition(!tr.is_infinite(vh));
 
@@ -475,7 +475,7 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   typedef typename Vertex_container::iterator                VC_it;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
-  // distances between 'v' and a neighbor within their common cell, which means
+  // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
   typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();

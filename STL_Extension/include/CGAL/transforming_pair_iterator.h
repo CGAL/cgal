@@ -25,7 +25,7 @@ namespace CGAL {
 namespace internal {
 template <class Cat1, class Cat2, bool=boost::is_convertible<Cat1,Cat2>::value>
 struct Min_category {
-        CGAL_static_assertion((boost::is_convertible<Cat2,Cat1>::value));
+        static_assert(std::is_convertible<Cat2,Cat1>::value);
         typedef Cat1 type;
 };
 
@@ -97,9 +97,9 @@ private internal::Functor_as_base<F>
         template<class F2,class J1,class J2,class R2,class V2>
         transforming_pair_iterator(
                 transforming_pair_iterator<F2,J1,J2,R2,V2> const&i,
-                typename boost::enable_if_convertible<J1, It1>::type* = 0,
-                typename boost::enable_if_convertible<J2, It2>::type* = 0,
-                typename boost::enable_if_convertible<F2, F>::type* = 0)
+                std::enable_if_t<boost::is_convertible<J1, It1>::value>* = 0,
+                std::enable_if_t<boost::is_convertible<J2, It2>::value>* = 0,
+                std::enable_if_t<boost::is_convertible<F2, F>::value>* = 0)
                 : Functor_base(i.functor()),iter1(i.iter1),iter2(i.iter2) {}
 
 };

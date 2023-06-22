@@ -21,7 +21,7 @@ a three dimensional triangulation type
 The concept `SurfaceMeshVertexBase_3` describes the vertex base type
 required in this triangulation type.
 
-\cgalRefines `TriangulationVertexBase_3`
+\cgalRefines{TriangulationVertexBase_3}
 The surface mesher algorithm issues frequent queries about
 the status of the vertices with respect to the two dimensional complex
 that represents the current surface approximation.  The class

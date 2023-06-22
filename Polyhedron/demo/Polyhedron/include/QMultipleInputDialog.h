@@ -35,7 +35,7 @@ public:
   {
     QObjectType* out = nullptr;
 
-    if (boost::is_same<QObjectType, QRadioButton>::value)
+    if (std::is_same<QObjectType, QRadioButton>::value)
     {
       out = dynamic_cast<QObjectType*>(new QRadioButton (QString(name), dialog));
       form->addRow (out);

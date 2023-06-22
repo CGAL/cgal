@@ -19,7 +19,6 @@
 #define CGAL_CIRCLE_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
@@ -36,7 +35,7 @@ class Circle_2 : public R_::Kernel_base::Circle_2
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
   typedef Circle_2                           Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Circle_2>::value));
+  static_assert(std::is_same<Self, typename R_::Circle_2>::value);
 
 public:
 

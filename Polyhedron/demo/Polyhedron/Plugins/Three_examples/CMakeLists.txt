@@ -12,12 +12,11 @@ set(CMAKE_AUTOMOC ON)
 #Find CGAL
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 ImageIO)
 # Find Qt5 itself
-find_package(
-  Qt5 QUIET
-  COMPONENTS OpenGL Script Svg
-  OPTIONAL_COMPONENTS ScriptTools WebSockets)
+find_package(Qt5 QUIET
+             COMPONENTS OpenGL Script Svg
+             OPTIONAL_COMPONENTS ScriptTools WebSockets)
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   if(Qt5_FOUND)
     include(${CGAL_USE_FILE})
   endif()

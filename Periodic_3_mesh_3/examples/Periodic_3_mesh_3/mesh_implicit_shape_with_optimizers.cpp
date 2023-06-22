@@ -34,7 +34,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Implicit function
 FT double_p(const Point& p)
@@ -62,35 +62,37 @@ int main(int argc, char** argv)
   Periodic_mesh_domain domain =
     Periodic_mesh_domain::create_implicit_mesh_domain(double_p, canonical_cube);
 
-  Periodic_mesh_criteria criteria(facet_angle = 30,
-                                  facet_size = 0.05 * domain_size,
-                                  facet_distance = 0.025 * domain_size,
-                                  cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.05);
+  Periodic_mesh_criteria criteria(params::facet_angle(30)
+                                         .facet_size(0.05 * domain_size)
+                                         .facet_distance(0.025 * domain_size)
+                                         .cell_radius_edge_ratio(2.)
+                                         .cell_size(0.05 * domain_size));
 
   // Mesh generation with optimizers
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
-                                                 odt(convergence=0.03, freeze_bound=0.02, time_limit=30),
-                                                 lloyd(max_iteration_number=10),
-                                                 perturb(sliver_bound=10, time_limit=30),
-                                                 exude(sliver_bound=10, time_limit=0));
+                                                 params::odt(params::convergence(0.03).freeze_bound(0.02).time_limit(30)),
+                                                 params::lloyd(params::max_iteration_number(10)),
+                                                 params::perturb(params::sliver_bound(10).time_limit(30)),
+                                                 params::exude(params::sliver_bound(10).time_limit(0)));
 
   std::ofstream medit_file("output_implicit_shape_optimized.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3);
 
   // Below, the mesh generation and the optimizations are done in several calls
   C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
-                                                     no_odt(), no_lloyd(),
-                                                     no_perturb(), no_exude());
+                                                     params::no_odt().
+                                                             no_lloyd().
+                                                             no_perturb().
+                                                             no_exude());
 
   std::ofstream medit_file_bis("output_implicit_shape_non-optimized.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 
   // Now, call each optimizer with its global function
-  CGAL::odt_optimize_periodic_3_mesh_3(c3t3_bis, domain, convergence=0.03, freeze_bound=0.02, time_limit=30);
-  CGAL::lloyd_optimize_periodic_3_mesh_3(c3t3_bis, domain, max_iteration_number=10);
-  CGAL::perturb_periodic_3_mesh_3(c3t3_bis, domain, sliver_bound=10, time_limit=30);
-  CGAL::exude_periodic_3_mesh_3(c3t3_bis, sliver_bound=10, time_limit=0);
+  CGAL::odt_optimize_periodic_3_mesh_3(c3t3_bis, domain, params::convergence(0.03).freeze_bound(0.02).time_limit(30));
+  CGAL::lloyd_optimize_periodic_3_mesh_3(c3t3_bis, domain, params::max_iteration_number(10));
+  CGAL::perturb_periodic_3_mesh_3(c3t3_bis, domain, params::sliver_bound(10).time_limit(30));
+  CGAL::exude_periodic_3_mesh_3(c3t3_bis, params::sliver_bound(10).time_limit(0));
 
   std::ofstream medit_file_ter("output_implicit_shape_two_steps.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file_ter, c3t3_bis, number_of_copies_in_output);

@@ -3,12 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableBinaryFunction
+ * \cgalRefines{AdaptableBinaryFunction}
  *
  * \cgalHasModel ArrangementClosedLeftTraits_2::Compare_y_on_boundary_2
  * \cgalHasModel ArrangementClosedRightTraits_2::Compare_y_on_boundary_2
  * \cgalHasModel ArrangementIdentifiedVerticalTraits_2::Compare_y_on_boundary_2
- * \cgalHasModel ArrangementOpenBoundaryTraits_2::Compare_y_on_boundary_2
  * \cgalHasModel ArrangementSphericalBoundaryTraits_2::Compare_y_on_boundary_2
  */
 class CompareYOnBoundary_2 {

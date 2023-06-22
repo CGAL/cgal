@@ -7,7 +7,7 @@
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 
 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
   std::ifstream is(argc > 1 ? argv[1] : "data/helmet.off");
   is >> input_mesh;
 
-  SMS::Count_stop_predicate<Surface> stop(0); // go as far as you can while in the envelope
+  SMS::Edge_count_stop_predicate<Surface> stop(0); // go as far as you can while in the envelope
 
   Stats stats;
   My_visitor vis(&stats);
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
 
 
   std::cout << "\nEdges collected: "  << stats.collected
-            << "\nEdges proccessed: " << stats.processed
+            << "\nEdges processed: "  << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
             << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable

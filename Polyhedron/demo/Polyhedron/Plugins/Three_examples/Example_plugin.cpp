@@ -109,7 +109,7 @@ void Scene_triangle_item::draw(CGAL::Three::Viewer_interface* viewer) const
   }
 
   //set the uniform properties for the TriangleContainer.
-  //Uniform values are setted at each draw call and are defined for the whole item.
+  //Uniform values are set at each draw call and are defined for the whole item.
   //Values per simplex are computed as buffers in ComputeElements() and bound in initializeBuffers().
   getTriangleContainer(0)->setColor(this->color());
   getTriangleContainer(0)->draw(viewer, true);

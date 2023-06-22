@@ -6,5 +6,3 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Triangulated Surface Mesh Approximati
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
-
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Surface_mesh_approximation/internal

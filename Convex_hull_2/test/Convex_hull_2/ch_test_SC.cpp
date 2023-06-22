@@ -25,9 +25,5 @@ int main()
   CGAL::ch__batch_test(ch_C_Qgmp);
 #endif
 
-  CGAL::Cartesian<double> ch_C_double;
-  std::cout << "Cartesian<double>:" << std::endl;
-  CGAL::ch__batch_test(ch_C_double);
-
   return EXIT_SUCCESS;
 }

@@ -145,8 +145,8 @@ std::size_t cluster_point_set (PointRange& points,
   typedef typename NP_helper::Geom_traits Kernel;
   typedef typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::type Adjacencies;
 
-  CGAL_static_assertion_msg(!(boost::is_same<typename GetSvdTraits<NamedParameters>::type,
-                                             typename GetSvdTraits<NamedParameters>::NoTraits>::value),
+  static_assert(!(std::is_same<typename GetSvdTraits<NamedParameters>::type,
+                                           typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
   PointMap point_map = NP_helper::get_point_map(points, np);
@@ -169,7 +169,7 @@ std::size_t cluster_point_set (PointRange& points,
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   // If no radius is given, init with 1% of bbox diagonal
   if (neighbor_radius < 0)

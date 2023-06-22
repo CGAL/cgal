@@ -203,7 +203,7 @@ public :
     //!
     //! When a `Scene_group_item` is added to the selection of the scene,
     //! this function defines which of its children will be added too.
-    //! Typically overriden to allow applying an operation from the
+    //! Typically overridden to allow applying an operation from the
     //! Operation menu only to the parent item and not to its children.
     virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return *children;}
     //!Removes a Scene_item from the list of children.

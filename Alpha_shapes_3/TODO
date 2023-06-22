@@ -1,4 +1,4 @@
-- deprectate the following function 
+- deprecate the following function 
 Classification_type   	  A.classify ( Cell_handle f, int i, FT alpha = get_alpha())
 because it is ambiguous with
 Classification_type   	  A.classify ( Cell_handle f, FT alpha = get_alpha())
@@ -12,7 +12,7 @@ when alpha is given as an int.
   Alpha_shape_3(Dt& dt, bool swap=true, NT alpha = 0, Mode m = REGULARIZED)
   The triangulation is swapped  if swap=true and copied otherwise.
 
-- test the  taking into account of paramater alpha in functions
+- test the taking into account of parameter alpha in functions
 get_alpha_shape_edges
 get_alpha_shape_facets
 get_alpha_shape_vertices

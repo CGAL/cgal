@@ -26,7 +26,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/spatial_sort.h>
@@ -155,7 +155,7 @@ double max_distance_to_mesh_impl(const PointRange& sample_points,
   using FT = typename Kernel::FT;
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+  static_assert (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if(boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
@@ -1037,7 +1037,7 @@ sample_triangle_soup(const PointRange& points,
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
 
-  CGAL_static_assertion_msg((std::is_same<Point_3, typename GeomTraits::Point_3>::value), "Wrong point type.");
+  static_assert(std::is_same<Point_3, typename GeomTraits::Point_3>::value, "Wrong point type.");
 
   CGAL_precondition(!triangles.empty());
 
@@ -1995,7 +1995,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
                                                         OutputIterator& out)
 {
 #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+  static_assert(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
                             "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
 #endif
 
@@ -2270,7 +2270,7 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
                                                         OutputIterator2& out2)
 {
 #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+  static_assert(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
                             "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
 #endif
 

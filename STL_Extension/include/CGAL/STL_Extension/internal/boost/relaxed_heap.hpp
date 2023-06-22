@@ -3,7 +3,7 @@
 // Copyright 2004 The Trustees of Indiana University.
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// https://www.boost.org/LICENSE_1_0.txt)
 //
 // Authors: Douglas Gregor
 //          Andrew Lumsdaine
@@ -194,7 +194,7 @@ public:
     void remove(const value_type& x)
     {
         group* a = &index_to_group[get(id, x) / log_n];
-        CGAL_assertion(groups[get(id, x)]);
+        CGAL_assertion(static_cast< bool >(groups[get(id, x)]));
         a->value = x;
         a->kind = smallest_key;
         promote(a);

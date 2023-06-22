@@ -30,6 +30,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <vector>
 #include <boost/mpl/lambda.hpp>
@@ -108,6 +109,12 @@ public:
         return n;
     }
 
+    Return_base_tag
+    operator()(Return_base_tag o) const
+    {
+        return o;
+    }
+
     const Bbox_2&
     operator()(const Bbox_2& b) const
     {
@@ -129,7 +136,7 @@ public:
     template <typename T>
     T
     operator()(const T t,
-               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr) const
+               std::enable_if_t<std::is_fundamental<T>::value>* = nullptr) const
     {
         return t;
     }

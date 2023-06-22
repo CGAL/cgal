@@ -32,9 +32,6 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Container_helper.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/tuple.h>
-
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>
@@ -42,7 +39,7 @@
 #include <CGAL/tuple.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing{
@@ -418,11 +415,12 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fimap);
-  std::size_t num = connected_components(pmesh, face_cc, np);
 
   // Even if we do not want to keep anything we need to first
   // calculate the number of existing connected_components to get the
   // correct return value.
+  const std::size_t num = connected_components(pmesh, face_cc, np);
+
   if(nb_components_to_keep == 0)
   {
     CGAL::clear(pmesh);
@@ -445,12 +443,12 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   if(dry_run)
   {
-    std::vector<bool> is_to_be_removed(num, false);
+    std::vector<bool> is_to_be_kept(num, false);
     for(std::size_t i=0; i<nb_components_to_keep; ++i)
-      is_to_be_removed[component_size[i].first] = true;
+      is_to_be_kept[component_size[i].first] = true;
 
     for(face_descriptor f : faces(pmesh))
-      if(is_to_be_removed[face_cc[f]])
+      if(!is_to_be_kept[face_cc[f]])
         *out++ = f;
   }
   else
@@ -555,7 +553,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
                                                       >::type             FaceSizeMap;
   typedef typename boost::property_traits<FaceSizeMap>::value_type        Face_size;
 
-  CGAL_static_assertion((std::is_convertible<ThresholdValueType, Face_size>::value));
+  static_assert(std::is_convertible<ThresholdValueType, Face_size>::value);
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,

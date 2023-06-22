@@ -13,21 +13,21 @@ A `CLOCKWISE` oriented polygon `H` is a hole of a `COUNTERCLOCKWISE` polygon `P`
 
 This function should not be used to arrange arbitrary polygons into polygons with holes unless they meet the requirements specified below.
 
+\pre The input polygons must be simple.
+\pre The set of input polygons are unique and interior disjoint. That is, given distinct polygons
+`P` and `Q`, there are vertices of `P` which are not on the boundary of `Q` and are all on the
+bounded or unbounded side of `Q` (but not both).
+
 \tparam K must be a model of `Kernel`.
 \tparam InputPolygonPtrIterator must be a model of `InputIterator` whose `value_type` is a smart pointer
 (such as `boost::shared_ptr`) whose `element_type` is a model of `SequenceContainer` with value type `K::Point_2`.
 \tparam OutputPolygonWithHolesPtrIterator must be a model of `OutputIterator` whose `value_type` is a smart pointer
 (such as `boost::shared_ptr`) whose `element_type` is a model of `GeneralPolygonWithHoles_2`.
 
-\pre The input polygons must be simple.
-\pre The set of input polygons are unique and interior disjoint. That is, given distinct polygons
-`P` and `Q`, there are vertices of `P` which are not on the boundary of `Q` and are all on the
-bounded or unbounded side of `Q` (but not both).
-
 \return `true` if no error was encountered, and `false` otherwise.
 
-\sa `create_exterior_straight_skeleton_2()`
-\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
+\sa `CGAL::create_exterior_straight_skeleton_2()`
+\sa `CGAL::Straight_skeleton_builder_2`
 
 */
 template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtrIterator>
