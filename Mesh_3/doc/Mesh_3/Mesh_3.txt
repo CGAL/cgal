@@ -897,10 +897,10 @@ surface. The output mesh conforms to the sharp features of the input surface.
 View of a 3D mesh with sharp features. Code from subsection \ref Mesh_3_subsection_example_polyhedral_with_edges generates this mesh.
 \cgalFigureEnd
 
-\subsubsection Mesh_33DPolyhedralDomainwithEdges Refining with edge_distance criterion
+\subsubsection Mesh_WithEdgeDistanceCriterion Refining with edge_distance criterion
 
 The following example shows how to generate a mesh with an edge_distance criterion.
-This allows the subdivision of edges that are too far away from the sharp feature.
+This enables the subdivision of edges that are too far away from the sharp feature.
 The output mesh have smaller edges along the curved sharp features.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_distancing.cpp}
