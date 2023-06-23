@@ -8,7 +8,7 @@
 \cgalPkgDescriptionBegin{Basic Viewer,PkgBasicViewer}
 \cgalPkgPicture{TODO.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Guillaume Damiand}
+\cgalPkgAuthor{Guillaume Damiand, Mostafa Ashraf}
 \cgalPkgDesc{This package implements basic viewer class.}
 \cgalPkgManuals{Chapter_Basic_viewer,PkgBasicViewerRef}
 \cgalPkgSummaryEnd
