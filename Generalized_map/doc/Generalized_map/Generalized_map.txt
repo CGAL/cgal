@@ -399,6 +399,8 @@ Example of \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\e
 
 `gm.`\link GenericMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2(d0)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`.  This operation is possible if `d0` \f$ \in \f$ \link GenericMap::darts `gm.darts()`\endlink.
 
+`gm.`\link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2(d1,d2)`\endlink adds a 1-cell between the two faces containing containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cells are merged in one. This operation is possible if <I>d1</I>\f$ \not \in \f$ \f$ \langle{}\f$\f$ \alpha_0, \alpha_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `gm.`\link GenericMap::is_insertable_cell_1_between_two_cells_2 `is_insertable_cell_1_between_two_cells_2(d1,d2)`\endlink.
+
 `gm.`\link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3(itbegin,itend)`\endlink adds a 2-cell in the 3-cell containing all the darts between `itbegin` and `itend`, along the path of 1-cells containing darts in [`itbegin`,`itend`). The 3-cell is split in two. This operation is possible if all the  darts in [`itbegin`,`itend`) form a closed path inside a same 3-cell  which can be tested thanks to `gm.`\link GenericMap::is_insertable_cell_2_in_cell_3 `is_insertable_cell_2_in_cell_3(itbegin,itend)`\endlink (see example on \cgalFigureRef{fig_gmap_insert_facet}).
 
 \cgalFigureBegin{fig_gmap_insert_facet,gmap_insert_facet.svg}
@@ -477,6 +479,24 @@ The second line is the result after the removal operations. We retrieve the orig
 \cgalFigureBegin{fig_gmap_example_insertions,gmap_example_insertions.svg}
 Example of high level operations. Left: Initial 3D generalized map after the creation of the generalized hexahedron. Middle: Generalized map obtained after the two 1-cell insertions. The two 2-cells were split in two. Right: Generalized map obtained after the 2-cell insertion. The 3-cell was split in two.
 \cgalFigureEnd
+
+\subsection Generalized_mapInsertion Insert an edge between two different faces
+
+\anchor ssecexempleinsertiongmap
+
+This example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation. First we create a combinatorial hexahedron and a face with 4 edges. This face is inserted in the face of the hexahedron containing dart d1. We display the characteristics of the generalized map and check its validity. Then we count and display the number of 2-free darts.
+
+\cgalExample{Generalized_map/gmap_3_insert.cpp}
+
+The output is:
+\verbatim
+#Darts=60, #0-cells=12, #1-cells=17, #2-cells=6, #3-cells=1, #ccs=1, orientable=true, valid=1
+Number of 2-free darts: 8
+\endverbatim
+
+We can verify that there are 6 2-cells after the insertion since the squared face was inserted as a hole in one face of the hexahedron. We can also see that there are 8 2-free darts, which are the darts of the squared face. Since they bound an hole, there is no face filling the hole and thus 8 darts are 2-free.
+
+See also a similar example for Linear cell complex \ref Linear_cell_complexInsert "Insert an Edge Between Two Different Faces".
 
 \subsection Generalized_mapA4DGeneralizedMap A 4D Generalized Map
 

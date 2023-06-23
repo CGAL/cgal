@@ -458,7 +458,7 @@ The second line is the result after the removal operations. We retrieve the orig
 Example of high level operations. Left: Initial 3D combinatorial map after the creation of the combinatorial hexahedron. Middle: Combinatorial map obtained after the two 1-cell insertions. The two 2-cells were split in two. Right: Combinatorial map obtained after the 2-cell insertion. The 3-cell was split in two.
 \cgalFigureEnd
 
-\subsection Combinatorial_mapInsertion Insert an edge between two different faces
+\subsection Combinatorial_mapInsertion Insert an Edge Between Two Different Faces
 
 \anchor ssecexempleinsertion
 
@@ -472,7 +472,9 @@ The output is:
 Number of 2-free darts: 4
 \endverbatim
 
-We can verify that there are 6 2-cells after the insertion since the squared face was inserted as a hole in one face of the hexahedron. We can also see that there are 4 2-free darts, which are the 4 darts of the squared face. Since they bound an hole, there is no face filling the hole and thus 4 darts are 2-free.
+We can verify that there are 6 2-cells after the insertion since the squared face was inserted as a hole in one face of the hexahedron. We can also see that there are 4 2-free darts, which are the darts of the squared face. Since they bound an hole, there is no face filling the hole and thus 4 darts are 2-free.
+
+See also a similar example for Linear cell complex \ref Linear_cell_complexInsert "Insert an Edge Between Two Different Faces".
 
 \subsection Combinatorial_mapA4DGenericMap A 4D Combinatorial Map
 
