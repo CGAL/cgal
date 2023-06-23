@@ -246,7 +246,8 @@ public:
 */
 template <typename BufferType=float>
 void draw_graphic_storage(Graphic_storage<BufferType>& graphic_buffer,
-                          const char *title="CGAL Basic Viewer");
+                          const char *title="CGAL Basic Viewer")
+{}
 
 } // End namespace CGAL
 

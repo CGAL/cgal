@@ -29,7 +29,7 @@ Drawing_functor
 
 \subsection Basic_viewerExamples_simple_draw Basic draw
 
-\cgalExample{Linear_cell_complex/draw_linear_cell_complex.cpp}
+\cgalExample{Surface_mesh/draw_surface_mesh.cpp}
 
 
 \subsection Basic_viewerExamples_custom_color Change Face Colors

@@ -10,7 +10,7 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
 \cgalPkgDesc{This package implements basic viewer class.}
-\cgalPkgManuals{Chapter_Basic_Viewer,PkgBasicViewerRef}
+\cgalPkgManuals{Chapter_Basic_viewer,PkgBasicViewerRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.0}
@@ -28,12 +28,12 @@
 - `CGAL::Basic_viewer_qt<BufferType>`
 - `CGAL::QApplication_and_basic_viewer<BufferType>`
 
-\cgalCRPSubsection{Draw functions of a graphic storage}
+\cgalCRPSubsection{Draw a Graphic Storage}
 
 - `CGAL::draw_graphic_storage()`
 
 
-\cgalCRPSubsection{Draw functions for different packages}
+\cgalCRPSubsection{Draw for Different Packages}
 
 - \link PkgDrawTriangulation2 Constrained_triangulation_2 CGAL::draw<CT2>() \endlink
 - \link PkgDrawLinearCellComplex Linear_cell_complex CGAL::draw<LCC>() \endlink
@@ -50,8 +50,22 @@
 - \link PkgDrawTriangulation3 Triangulation_3 CGAL::draw<T3>() \endlink
 - \link PkgDrawVoronoiDiagram2 Voronoi_diagram_2 CGAL::draw<V2>() \endlink
 
-\cgalCRPSubsection{Fill graphic storage functions}
-- \link PkgDrawLinearCellComplex CGAL::CGAL::add_in_graphic_storage<LCC, BufferType, DrawingFunctor>() \endlink
+\cgalCRPSubsection{Fill Graphic Storage for Different Packages}
+
+- \link PkgDrawTriangulation2 Constrained_triangulation_2 CGAL::add_in_graphic_storage<CT2>() \endlink
+- \link PkgDrawLinearCellComplex Linear_cell_complex CGAL::add_in_graphic_storage<LCC>() \endlink
+- \link PkgDrawNef3 Nef_polyhedron_3 CGAL::add_in_graphic_storage<Nef3>() \endlink
+- \link PkgDrawPeriodic2Triangulation2 Periodic_2_Triangulation_2 CGAL::add_in_graphic_storage<P2T2>() \endlink
+- \link PkgDrawPointSet3D Point_set_3 CGAL::add_in_graphic_storage<PS>() \endlink
+- \link PkgDrawPolygon2 Polygon_2 CGAL::add_in_graphic_storage<P2>() \endlink
+- \link PkgDrawPolygonSet2 Polygon_set_2 CGAL::add_in_graphic_storage<PS>() \endlink
+- \link PkgDrawPolygonWithHoles2 Polygon_with_holes_2 CGAL::add_in_graphic_storage<PH2>() \endlink
+- \link PkgDrawPolyhedron Polyhedron_3 CGAL::add_in_graphic_storage<POLY>() \endlink
+- \link PkgDrawSurfaceMesh Surface_mesh CGAL::add_in_graphic_storage<SM>() \endlink
+- \link PkgDrawFaceGraphWithPaths Surface_mesh_topology CGAL::add_in_graphic_storage<SMT>() \endlink
+- \link PkgDrawTriangulation2 Triangulation_2 CGAL::add_in_graphic_storage<T2>() \endlink
+- \link PkgDrawTriangulation3 Triangulation_3 CGAL::add_in_graphic_storage<T3>() \endlink
+- \link PkgDrawVoronoiDiagram2 Voronoi_diagram_2 CGAL::add_in_graphic_storage<V2>() \endlink
 
 */
 
