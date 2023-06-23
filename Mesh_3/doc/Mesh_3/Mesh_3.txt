@@ -909,7 +909,7 @@ The output mesh have smaller edges along the curved sharp features.
 <center>
 <table border=0>
 <tr>
-<td><img border="0" src="./no-u_arch_no_edge_distance.png" alt="u_arch mesh without edge_distance criterion"></td>
+<td><img border="0" src="./u_arch_no_edge_distance.png" alt="u_arch mesh without edge_distance criterion"></td>
 <td><img border="0" src="./u_arch_with_edge_distance.png" alt="u_arch mesh with edge_distance criterion"></td>
 </tr>
 </table>
