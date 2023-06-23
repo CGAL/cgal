@@ -39,7 +39,6 @@ foreach(
   target
   average_spacing_example
   bilateral_smooth_point_set_example
-  constraint_based_smoothing_example
   grid_simplification_example
   grid_simplify_indices
   property_map
@@ -74,6 +73,7 @@ if(TARGET CGAL::Eigen3_support)
   foreach(
     target
     jet_smoothing_example
+    constraint_based_smoothing_example
     normal_estimation
     clustering_example
     edges_example

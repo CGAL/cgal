@@ -17,10 +17,17 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
-#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+// #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/iterator/zip_iterator.hpp>
+
+#include <CGAL/Eigen_vector.h>
+#include <CGAL/Eigen_matrix.h>
+#include <CGAL/Kernel/global_functions.h>
 
 namespace CGAL {
 
@@ -41,6 +48,7 @@ namespace internal {
 
 // decompose_nvt(nvt)
 // get eigenvalues/vectors and perform BEO
+// use diagonalize_selfadjoint_covariance_matrix()
 // return "optimized" nvt
 
 // nvt_normal_denoising(points, optimized nvts)
@@ -57,6 +65,46 @@ namespace internal {
 // update_position(point, classification)
 // implements the formulas to update position
 // modifies point
+
+template <typename Kernel, typename PointRange,
+          typename PointMap, typename VectorMap>
+Eigen::MatrixXd construct_nvt(
+  const typename PointRange::iterator::value_type& vt,
+  PointMap point_map,
+  VectorMap normal_map,
+  const std::vector<typename PointRange::iterator>& neighbor_pwns,
+  typename Kernel::FT normal_threshold)
+{
+  // basic geometric types
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Point_3 Point;
+
+  unsigned int w = 0; // cumulative weight
+  Eigen::MatrixXd nvt(3, 3);
+
+  const Point& p = get(point_map, vt);
+  const Vector& n = get(normal_map, vt);
+
+  for (typename PointRange::iterator it : neighbor_pwns)
+  {
+    const Point& np = get(point_map, *it);
+    const Vector& nn = get(normal_map, *it);
+
+    FT angle_difference = CGAL::approximate_angle(n, nn);
+    if(angle_difference >= normal_threshold) {
+      w += 1;
+      Eigen::Vector3d vn(n.x(), n.y(), n.z());
+      Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
+
+      nvt += vn * vnn.transpose();
+    }
+  }
+
+  std::cout << nvt << std::endl;
+
+  return nvt;
+}
 
 
 } /* namespace internal */
@@ -95,19 +143,11 @@ constraint_based_smooth_point_set(
 
   typedef typename Kernel::FT FT;
 
-  // double neighbour_threshold = choose_parameter(get_parameter(np, internal_np::neighbour_threshold), 1.);
-  // double normal_threshold = choose_parameter(get_parameter(np, internal_np::normal_threshold), 0.5);
-  // double damping_factor = choose_parameter(get_parameter(np, internal_np::damping_factor), 3.);
-  // double eigenvalue_threshold = choose_parameter(get_parameter(np, internal_np::eigenvalue_threshold), 1.);
-  // double update_threshold = choose_parameter(get_parameter(np, internal_np::update_threshold), 2.);
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                                 std::function<bool(double)>());
-
-  double neighbour_threshold = 1.;
-  double normal_threshold = 0.5;
-  double damping_factor = 3.;
-  double eigenvalue_threshold = 1.;
-  double update_threshold = 2.;
+  FT neighbor_radius = 1.;
+  FT normal_threshold = 90.;
+  FT damping_factor = 3.;
+  FT eigenvalue_threshold = 1.;
+  FT update_threshold = 2.;
 
   CGAL_precondition(points.begin() != points.end());
 
@@ -118,6 +158,51 @@ constraint_based_smooth_point_set(
   NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
   std::size_t nb_points = points.size();
+
+  // initiate a KD-tree search for points
+  Neighbor_query neighbor_query (points, point_map);
+
+  // compute all neighbors
+  typedef std::vector<iterator> iterators;
+  std::vector<iterators> pwns_neighbors;
+  pwns_neighbors.resize(nb_points);
+
+  typedef boost::zip_iterator<boost::tuple<iterator, typename std::vector<iterators>::iterator> > Zip_iterator;
+
+  CGAL::for_each<ConcurrencyTag>
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), pwns_neighbors.begin())),
+                      boost::make_zip_iterator (boost::make_tuple (points.end(), pwns_neighbors.end()))),
+    [&](const typename Zip_iterator::reference& t)
+    {
+      neighbor_query.get_iterators (get(point_map, get<0>(t)), 0, neighbor_radius,
+                                    std::back_inserter (get<1>(t)));
+      return true;
+    });
+
+  std::vector<Eigen::MatrixXd> pwns_nvts(nb_points);
+
+  typedef boost::zip_iterator
+    <boost::tuple<iterator,
+                  typename std::vector<iterators>::iterator,
+                  typename std::vector<Eigen::MatrixXd>::iterator> > Zip_iterator_2;
+
+  CGAL::for_each<ConcurrencyTag>
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple
+                                                (points.begin(), pwns_neighbors.begin(), pwns_nvts.begin())),
+                      boost::make_zip_iterator (boost::make_tuple
+                                                (points.end(), pwns_neighbors.end(), pwns_nvts.end()))),
+    [&](const typename Zip_iterator_2::reference& t)
+    {
+      get<2>(t) = internal::construct_nvt<Kernel, PointRange>
+          (get<0>(t),
+           point_map, normal_map,
+           get<1>(t),
+           normal_threshold);
+      return true;
+    });
+  
+
+    
 
 
 
