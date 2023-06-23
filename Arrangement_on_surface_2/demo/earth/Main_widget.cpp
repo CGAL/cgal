@@ -105,9 +105,174 @@ void Main_widget::timerEvent(QTimerEvent*)
   update();
 }
 
+#include <qfile.h>
+#include <qiodevice.h>
+#include <QJsonArray.h>
+#include <qjsonobject.h>
+#include <QJsonParseError>
+#include <qstring.h>
+
+
+#include <QtXml/qdom.h>
+#include <qxmlstream.h>
+
+namespace {
+  struct Node
+  {
+    double lon, lat;
+  };
+
+  struct LinearRing
+  {
+    std::vector<Node> nodes;
+    QString str;
+  };
+
+  struct MultiGeometry
+  {
+    std::vector<LinearRing> polygons;
+  };
+  
+  struct Placemark
+  {
+    MultiGeometry geometry;
+    QString name;
+  };
+}
+
 
 void Main_widget::initializeGL()
 {
+  QString file_name("C:/work/gsoc2023/data/world_countries.kml");
+  
+  if(0)
+  {
+    QDomDocument doc("mydoc");
+    QFile file(file_name);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) 
+    {
+      qDebug() << "could not open file!";
+      return;
+    }
+    if (!doc.setContent(&file)) {
+      file.close();
+      return;
+    }
+    file.close();
+
+    //QDomElement docElem = doc.documentElement();
+    //QDomNode n = docElem.firstChild();
+    //qDebug() << n.nodeName();
+    //qDebug() << n.isElement();
+    //auto doc_elem = n.toElement();
+
+    auto placemarks = doc.elementsByTagName("Placemark");
+    qDebug() << placemarks.count();
+
+  }
+  else
+  {
+    std::vector<Placemark> placemarks;
+
+    Placemark placemark;
+    MultiGeometry mgeometry;
+    LinearRing   lring;
+
+
+    QFile file(file_name);
+    if (file.open(QIODevice::ReadOnly)) 
+    {
+      QXmlStreamReader xmlReader;
+      xmlReader.setDevice(&file);
+      
+      xmlReader.readNext();
+      
+      // Reading from the file
+      while (!xmlReader.isEndDocument())
+      {
+        QString name = xmlReader.name().toString();
+       // qDebug() << "----------------------";
+       // qDebug() << name;
+       // qDebug() << xmlReader.text();
+
+
+        if (xmlReader.isStartElement())
+        {
+         // qDebug() << "START ELEMENT";
+          if (name == "Placemark")
+          {
+           // qDebug() << "Placemark - Start";
+            placemark = Placemark{};
+          }
+          else if (name == "MultiGeometry")
+          {
+           // qDebug() << "MultiGeometry - Start";
+            mgeometry = MultiGeometry{};
+          }
+          else if (name == "LinearRing")
+          {
+           // qDebug() << "LinearRing - Start";
+            lring = LinearRing{};
+          }
+          else if (name == "coordinates")
+          {
+           // qDebug() << "coordinates - Start";
+            xmlReader.readNext();
+            lring.str = xmlReader.text().toString();
+           // qDebug() << lring.str;
+          }
+          else if (name == "SimpleData")
+          {
+           // qDebug() << "SimpleData - Start";
+            auto attributes = xmlReader.attributes();
+            auto attr_name = attributes[0].name().toString();
+            auto attr_value = attributes[0].value().toString();
+            if ((attr_name == "name") && (attr_value == "name"))
+            {
+              xmlReader.readNext();
+              placemark.name = xmlReader.text().toString();
+             // qDebug() << "country name = " << placemark.name;
+            }
+            //qDebug() << "num attribues = " << attributes.size();
+            //qDebug() << "attribute[0].name = " << attributes[0].name();
+            //qDebug() << "attribute[0].value = " << attributes[0].value();
+          }
+        }
+        else if (xmlReader.isEndElement())
+        {
+         // qDebug() << "END ELEMENT";
+          if (name == "Placemark")
+          {
+           // qDebug() << "Placemark - End";
+            placemarks.push_back(placemark); // move?
+          }
+          else if (name == "MultiGeometry")
+          {
+           // qDebug() << "MultiGeometry - End";
+            placemark.geometry = mgeometry; // move?
+          }
+          else if (name == "LinearRing")
+          {
+           // qDebug() << "LinearRing - End";
+            mgeometry.polygons.push_back(lring); // move?
+          }
+          else if (name == "coordinates")
+          {
+           // qDebug() << "coordinates - End";
+            // no need to do anything here: the coordinates are read above!
+          }
+        }
+
+        xmlReader.readNext();
+      }
+
+      if (xmlReader.hasError())
+      {
+        std::cout << "XML error: " << xmlReader.errorString().data() << std::endl;
+      }
+    }
+  }
+
   initializeOpenGLFunctions();
 
   init_camera();
