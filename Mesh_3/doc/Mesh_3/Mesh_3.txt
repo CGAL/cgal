@@ -422,7 +422,7 @@ Specifically, it is
 either a constant or a spatially variable scalar field. It
 provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
-<LI><I>`facet_topology`.</I> This parameters controls the set of topological constraints
+<LI><I>`facet_topology`.</I> This parameter controls the set of topological constraints
 which have to be verified by each surface facet. By default, each vertex of a surface
 facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same

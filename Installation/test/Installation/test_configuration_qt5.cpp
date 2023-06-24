@@ -13,7 +13,7 @@ template <typename A, typename B>
 typename CGAL::Coercion_traits<A,B>::Type
 binary_func(const A& a , const B& b){
   typedef CGAL::Coercion_traits<A,B> CT;
-  CGAL_static_assertion((CT::Are_explicit_interoperable::value));
+  static_assert(CT::Are_explicit_interoperable::value);
   typename CT::Cast cast;
   return cast(a)*cast(b);
 }

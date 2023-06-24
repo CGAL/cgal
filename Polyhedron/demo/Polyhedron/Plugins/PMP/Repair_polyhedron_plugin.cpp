@@ -192,7 +192,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_tri
   QDialog dialog;
   Ui::NeedleDialog ui;
   ui.setupUi(&dialog);
-  ui.collapseBox->setValue(sm_item->diagonalBbox()*0.01);
+  ui.collapseBox->setValue(sm_item->bboxDiagonal()*0.01);
   if(dialog.exec() != QDialog::Accepted)
     return;
   CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(*sm_item->face_graph(),

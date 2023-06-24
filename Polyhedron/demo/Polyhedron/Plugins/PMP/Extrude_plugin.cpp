@@ -404,8 +404,8 @@ private Q_SLOTS:
     // compute centroid
     Point c = CGAL::centroid(triangles.begin(),triangles.end());
 
-    oliver_queen = new Scene_arrow_item(Vec(c.x(),c.y(),c.z()), fg_item->diagonalBbox() / 50.0f,
-                                        fg_item->diagonalBbox()/3.0f);
+    oliver_queen = new Scene_arrow_item(Vec(c.x(),c.y(),c.z()), fg_item->bboxDiagonal() / 50.0f,
+                                        fg_item->bboxDiagonal()/3.0f);
     Vec dir(plane.orthogonal_vector().x(),
             plane.orthogonal_vector().y(),
             plane.orthogonal_vector().z());

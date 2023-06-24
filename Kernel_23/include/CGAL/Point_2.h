@@ -37,7 +37,7 @@ class Point_2 : public R_::Kernel_base::Point_2
   typedef typename R_::Kernel_base::Point_2  RPoint_2;
 
   typedef Point_2                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Point_2>::value));
+  static_assert(std::is_same<Self, typename R_::Point_2>::value);
 
 public:
 

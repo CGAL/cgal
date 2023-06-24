@@ -67,10 +67,10 @@ protected:
   typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
-  CGAL_static_assertion((Arr_sane_identified_tagging<Left_side_category,
+  static_assert(Arr_sane_identified_tagging<Left_side_category,
                                                     Bottom_side_category,
                                                     Top_side_category,
-                                                    Right_side_category>::value));
+                                                    Right_side_category>::value);
 
 public:
   typedef ZoneVisitor_                                   Visitor;

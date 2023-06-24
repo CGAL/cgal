@@ -3,7 +3,7 @@
 \cgalAutoToc
 
 \cgal \cgalReleaseNumber is supported for the following \ms Visual `C++` compilers:
-14.0, 15.9, 16.0, 17.0 (\visualstudio 2015, 2017, 2019, and 2022).
+15.9, 16.0, 17.0 (\visualstudio 2017, 2019, and 2022).
 
 \cgal is a library that has mandatory dependencies that must be first installed:
 \ref thirdpartyBoost and \ref thirdpartyMPFR.

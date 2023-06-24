@@ -15,6 +15,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Lazy.h>
+#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Default.h>
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
 #include <CGAL/iterator_from_indices.h>

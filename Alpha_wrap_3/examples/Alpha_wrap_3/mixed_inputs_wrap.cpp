@@ -25,8 +25,6 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the inputs
   const std::string ts_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off"); // triangle soup
   const std::string ss_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup

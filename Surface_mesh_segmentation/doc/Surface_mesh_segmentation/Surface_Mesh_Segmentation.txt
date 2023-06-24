@@ -126,9 +126,10 @@ where:
   </tr>
   </table>
 
+Note both terms of the energy function, \f$ e_1 \f$ and \f$ e_2 \f$, are always non-negative.
 The first term of the energy function provides the contribution of the soft clustering probabilities.
-The second term of the energy function is a geometric criterion that is larger when two adjacent facets sharing a sharp and concave edge are in the same cluster.
-The smoothness parameter makes this geometric criteria more or less prevalent.
+The second term of the energy function is a geometric criterion that is larger when two adjacent facets sharing a sharp and concave edge are not in the same cluster.
+The smoothness parameter makes this geometric criterion more or less prevalent.
 
 Assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets that are placed under different clusters is less expensive than separating them and creating boundaries.
@@ -216,7 +217,7 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
 <!-- \subsection SMSRuntime Runtime of the functions sdf_values() and segmentation_from_sdf_values() -->
 
 The following tables provide the runtime of the functions `sdf_values()` and `segmentation_from_sdf_values()`.
-The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 GHz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
 The models used for the benchmarks are the <i>dinosaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
 

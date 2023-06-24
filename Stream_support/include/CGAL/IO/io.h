@@ -698,6 +698,25 @@ inline const char* mode_name( IO::Mode m )
   return names[m];
 }
 
+namespace internal {
+
+template <class P> constexpr auto has_exact(int) -> decltype(exact(P()), bool()) { return true; }
+template <class P> constexpr bool has_exact(...) { return false; }
+
+}
+
+template <class P>
+auto
+serialize(const P& p) {
+  if constexpr (internal::has_exact<P>(0)) {
+    return exact(p);
+  } else {
+    return p;
+  }
+}
+
+
+
 } // IO namespace
 
 #ifndef CGAL_NO_DEPRECATED_CODE

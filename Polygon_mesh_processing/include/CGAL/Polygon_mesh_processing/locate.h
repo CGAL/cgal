@@ -1661,12 +1661,12 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                               AABB_traits;
 
   typedef typename Primitive::Point                                                        Point_3;
-  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
+  static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type            VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>                     WrappedVPM;
 
-  const Point_3& p3 = P_to_P3()(p);
+  const Point_3 p3 = P_to_P3()(p);
   typename AABB_tree<AABB_traits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p3);
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                     Geom_traits;
@@ -1754,7 +1754,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
+  static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
 
   const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                           get_const_property_map(boost::vertex_point, tm));
@@ -1763,7 +1763,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   AABB_tree<AABB_face_graph_traits> tree;
   build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm));
 
-  const Point_3& p3 = P_to_P3()(p);
+  const Point_3 p3 = P_to_P3()(p);
   return locate_with_AABB_tree(p3, tree, tm, parameters::vertex_point_map(wrapped_vpm));
 }
 
