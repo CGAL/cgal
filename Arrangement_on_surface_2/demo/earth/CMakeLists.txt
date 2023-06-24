@@ -47,11 +47,12 @@ source_group( "geometry"  FILES ${source_files_geometry} )
 qt_standard_project_setup()
 
 qt_add_executable(earth
-    main.cpp
-    Main_widget.h             Main_widget.cpp
     Camera.h                  Camera.cpp
     Common_defs.h
     Geodesic_arcs.h           Geodesic_arcs.cpp
+    Kml_reader.h              Kml_reader.cpp
+                              main.cpp
+    Main_widget.h             Main_widget.cpp
     Shader_program.h          Shader_program.cpp
     Tools.h                   Tools.cpp
     ${source_files_geometry}

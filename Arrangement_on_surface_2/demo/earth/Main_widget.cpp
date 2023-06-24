@@ -125,7 +125,6 @@ namespace {
   struct LinearRing
   {
     std::vector<Node> nodes;
-    QString str;
   };
 
   struct MultiGeometry
@@ -136,7 +135,7 @@ namespace {
   struct Placemark
   {
     MultiGeometry geometry;
-    QString name;
+    std::string name;
   };
 }
 
@@ -145,32 +144,6 @@ void Main_widget::initializeGL()
 {
   QString file_name("C:/work/gsoc2023/data/world_countries.kml");
   
-  if(0)
-  {
-    QDomDocument doc("mydoc");
-    QFile file(file_name);
-    if (!file.open(QFile::ReadOnly | QFile::Text)) 
-    {
-      qDebug() << "could not open file!";
-      return;
-    }
-    if (!doc.setContent(&file)) {
-      file.close();
-      return;
-    }
-    file.close();
-
-    //QDomElement docElem = doc.documentElement();
-    //QDomNode n = docElem.firstChild();
-    //qDebug() << n.nodeName();
-    //qDebug() << n.isElement();
-    //auto doc_elem = n.toElement();
-
-    auto placemarks = doc.elementsByTagName("Placemark");
-    qDebug() << placemarks.count();
-
-  }
-  else
   {
     std::vector<Placemark> placemarks;
 
@@ -191,74 +164,65 @@ void Main_widget::initializeGL()
       while (!xmlReader.isEndDocument())
       {
         QString name = xmlReader.name().toString();
-       // qDebug() << "----------------------";
-       // qDebug() << name;
-       // qDebug() << xmlReader.text();
-
 
         if (xmlReader.isStartElement())
         {
-         // qDebug() << "START ELEMENT";
           if (name == "Placemark")
           {
-           // qDebug() << "Placemark - Start";
             placemark = Placemark{};
           }
           else if (name == "MultiGeometry")
           {
-           // qDebug() << "MultiGeometry - Start";
             mgeometry = MultiGeometry{};
           }
           else if (name == "LinearRing")
           {
-           // qDebug() << "LinearRing - Start";
             lring = LinearRing{};
           }
           else if (name == "coordinates")
           {
-           // qDebug() << "coordinates - Start";
             xmlReader.readNext();
-            lring.str = xmlReader.text().toString();
-           // qDebug() << lring.str;
+            auto str = xmlReader.text().toString();
+            auto node_strs = str.split(" ");
+            for (const auto& node_str : node_strs)
+            {
+              if (node_str.isEmpty())
+                continue;
+
+              auto coord_strs = node_str.split(",");
+              const auto lon = coord_strs[0].toDouble();
+              const auto lat = coord_strs[1].toDouble();
+              lring.nodes.push_back(Node{ lon, lat });
+            }
           }
           else if (name == "SimpleData")
           {
-           // qDebug() << "SimpleData - Start";
             auto attributes = xmlReader.attributes();
             auto attr_name = attributes[0].name().toString();
             auto attr_value = attributes[0].value().toString();
             if ((attr_name == "name") && (attr_value == "name"))
             {
               xmlReader.readNext();
-              placemark.name = xmlReader.text().toString();
-             // qDebug() << "country name = " << placemark.name;
+              placemark.name = xmlReader.text().toString().toStdString();;
             }
-            //qDebug() << "num attribues = " << attributes.size();
-            //qDebug() << "attribute[0].name = " << attributes[0].name();
-            //qDebug() << "attribute[0].value = " << attributes[0].value();
           }
         }
         else if (xmlReader.isEndElement())
         {
-         // qDebug() << "END ELEMENT";
           if (name == "Placemark")
           {
-           // qDebug() << "Placemark - End";
-            placemarks.push_back(placemark); // move?
+            placemarks.push_back(std::move(placemark));
           }
           else if (name == "MultiGeometry")
           {
-           // qDebug() << "MultiGeometry - End";
-            placemark.geometry = mgeometry; // move?
+            placemark.geometry = std::move(mgeometry);
           }
           else if (name == "LinearRing")
           {
-           // qDebug() << "LinearRing - End";
-            mgeometry.polygons.push_back(lring); // move?
+            mgeometry.polygons.push_back(std::move(lring));
           }
           else if (name == "coordinates")
           {
-           // qDebug() << "coordinates - End";
             // no need to do anything here: the coordinates are read above!
           }
         }
