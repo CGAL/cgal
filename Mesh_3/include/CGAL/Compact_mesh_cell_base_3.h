@@ -437,7 +437,7 @@ public:
 
   // CHECKING
 
-  // the following trivial is_valid allows
+  // the following trivial is_valid enables
   // the user of derived cell base classes
   // to add their own purpose checking
   bool is_valid(bool = false, int = 0) const

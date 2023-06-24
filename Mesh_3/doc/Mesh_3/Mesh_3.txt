@@ -494,7 +494,7 @@ protecting ball centers that are consecutive on a 1-feature. This parameter has 
 
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
-and allow the user to tune the parameters of the activated optimization processes.
+and enables the user to tune the parameters of the activated optimization processes.
 These parameters have internal types which are not described
 but the library provides global functions to generate
 appropriate values of these types:
@@ -679,7 +679,7 @@ View of 3D meshes produced from a polyhedral domain with a nested surface.
 
 The following code creates a polyhedral domain, with only one polyhedron,
 and no "bounding polyhedron", so the volumetric part of the domain will be empty.
-This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
+This enables to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
 

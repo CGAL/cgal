@@ -77,7 +77,7 @@ public:
   // because of Periodic_3_mesh_3: they are functions for which both triangulations
   // have fundamentally different implementations (usually, Periodic_3_mesh_3
   // does not know the offset of a point and must brute-force check for all
-  // possibilities). To allow Periodic_3_mesh_3 to use Mesh_3's files,
+  // possibilities). To enable Periodic_3_mesh_3 to use Mesh_3's files,
   // each mesh triangulation implements its own version.
 
   const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
