@@ -9,7 +9,27 @@
 class Kml
 {
 public:
+  struct Node
+  {
+    double lon, lat;
+  };
 
+  struct LinearRing
+  {
+    std::vector<Node> nodes;
+  };
+
+ 
+  struct Placemark
+  {
+    std::vector<LinearRing> polygons;
+    std::string name;
+  };
+
+  using Placemarks = std::vector<Placemark>;
+
+
+  static Placemarks read(const std::string& file_name);
 };
 
 

@@ -7,6 +7,7 @@
 
 #include <QMouseEvent>
 
+#include "Kml_reader.h"
 #include "Geodesic_arcs.h"
 #include "Tools.h"
 
@@ -105,137 +106,14 @@ void Main_widget::timerEvent(QTimerEvent*)
   update();
 }
 
-#include <qfile.h>
-#include <qiodevice.h>
-#include <QJsonArray.h>
-#include <qjsonobject.h>
-#include <QJsonParseError>
-#include <qstring.h>
-
-
-#include <QtXml/qdom.h>
-#include <qxmlstream.h>
-
-namespace {
-  struct Node
-  {
-    double lon, lat;
-  };
-
-  struct LinearRing
-  {
-    std::vector<Node> nodes;
-  };
-
-  struct MultiGeometry
-  {
-    std::vector<LinearRing> polygons;
-  };
-  
-  struct Placemark
-  {
-    MultiGeometry geometry;
-    std::string name;
-  };
-}
-
-
 void Main_widget::initializeGL()
 {
-  QString file_name("C:/work/gsoc2023/data/world_countries.kml");
-  
+
   {
-    std::vector<Placemark> placemarks;
-
-    Placemark placemark;
-    MultiGeometry mgeometry;
-    LinearRing   lring;
-
-
-    QFile file(file_name);
-    if (file.open(QIODevice::ReadOnly)) 
-    {
-      QXmlStreamReader xmlReader;
-      xmlReader.setDevice(&file);
-      
-      xmlReader.readNext();
-      
-      // Reading from the file
-      while (!xmlReader.isEndDocument())
-      {
-        QString name = xmlReader.name().toString();
-
-        if (xmlReader.isStartElement())
-        {
-          if (name == "Placemark")
-          {
-            placemark = Placemark{};
-          }
-          else if (name == "MultiGeometry")
-          {
-            mgeometry = MultiGeometry{};
-          }
-          else if (name == "LinearRing")
-          {
-            lring = LinearRing{};
-          }
-          else if (name == "coordinates")
-          {
-            xmlReader.readNext();
-            auto str = xmlReader.text().toString();
-            auto node_strs = str.split(" ");
-            for (const auto& node_str : node_strs)
-            {
-              if (node_str.isEmpty())
-                continue;
-
-              auto coord_strs = node_str.split(",");
-              const auto lon = coord_strs[0].toDouble();
-              const auto lat = coord_strs[1].toDouble();
-              lring.nodes.push_back(Node{ lon, lat });
-            }
-          }
-          else if (name == "SimpleData")
-          {
-            auto attributes = xmlReader.attributes();
-            auto attr_name = attributes[0].name().toString();
-            auto attr_value = attributes[0].value().toString();
-            if ((attr_name == "name") && (attr_value == "name"))
-            {
-              xmlReader.readNext();
-              placemark.name = xmlReader.text().toString().toStdString();;
-            }
-          }
-        }
-        else if (xmlReader.isEndElement())
-        {
-          if (name == "Placemark")
-          {
-            placemarks.push_back(std::move(placemark));
-          }
-          else if (name == "MultiGeometry")
-          {
-            placemark.geometry = std::move(mgeometry);
-          }
-          else if (name == "LinearRing")
-          {
-            mgeometry.polygons.push_back(std::move(lring));
-          }
-          else if (name == "coordinates")
-          {
-            // no need to do anything here: the coordinates are read above!
-          }
-        }
-
-        xmlReader.readNext();
-      }
-
-      if (xmlReader.hasError())
-      {
-        std::cout << "XML error: " << xmlReader.errorString().data() << std::endl;
-      }
-    }
+    const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
+    auto countries = Kml::read(file_name);
   }
+  
 
   initializeOpenGLFunctions();
 
