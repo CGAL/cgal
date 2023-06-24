@@ -5,6 +5,7 @@
 #include <iterator>
 #include <vector>
 
+#include <qmath.h>
 #include <qvector3d.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -53,8 +54,7 @@ std::ostream& operator << (std::ostream& os, const Approximate_Vector_3& v)
 }
 
 
-std::vector<std::vector<QVector3D>> Geodesic_arcs::get_approximate_arcs(double 
-                                                                          error)
+Geodesic_arcs::Approx_arcs Geodesic_arcs::get_approx_arcs(double error)
 {
   // Construct the arrangement from 12 geodesic arcs.
   Geom_traits traits;
@@ -90,5 +90,76 @@ std::vector<std::vector<QVector3D>> Geodesic_arcs::get_approximate_arcs(double
   }
   //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
   
+  return arcs;
+}
+
+
+Geodesic_arcs::Approx_arcs Geodesic_arcs::get_approx_arcs(
+                                const Kml::Placemarks& placemarks, double error)
+{
+  // Construct the arrangement from 12 geodesic arcs.
+  Geom_traits traits;
+  Arrangement arr(&traits);
+
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+
+  std::vector<Curve>  xcvs;
+  for (const auto& pm : placemarks)
+  {
+    for (const auto& lring : pm.polygons)
+    {
+      // convert the nodes to points on unit-sphere
+      std::vector<Approximate_Vector_3> sphere_points;
+      for (const auto& node : lring.nodes)
+      {
+        const auto phi = qDegreesToRadians(node.lat);
+        const auto theta = qDegreesToRadians(node.lon);
+        const auto z = sin(phi);
+        const auto rxy = cos(phi);
+        const auto x = rxy * cos(theta);
+        const auto y = rxy * sin(theta);
+        Approximate_Vector_3 v(x,y,z);
+        sphere_points.push_back(v);
+      }
+
+      // add curves
+      int num_points = sphere_points.size();
+      for (int i = 0; i < sphere_points.size(); i++)
+      {
+        const auto p1 = sphere_points[i];
+        const auto p2 = sphere_points[(i+1) % num_points];
+        xcvs.push_back(ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()), 
+                              ctr_p(p2.x(), p2.y(), p2.z())));
+      }
+    }
+  }
+
+  //xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
+  //xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 0, 1)));
+  //xcvs.push_back(ctr_cv(ctr_p(0, 1, 0), ctr_p(0, 0, 1)));
+  //xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0), Dir3(0, 0, -1)));
+  //xcvs.push_back(ctr_cv(Dir3(0, 0, -1)));
+
+  auto approx = traits.approximate_2_object();
+
+
+  std::vector<std::vector<QVector3D>>  arcs;
+  for (const auto& xcv : xcvs)
+  {
+    std::vector<Approximate_point_2> v;
+    auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+
+    std::vector<QVector3D> arc_points;
+    for (const auto& p : v)
+    {
+      const QVector3D arc_point(p.dx(), p.dy(), p.dz());
+      arc_points.push_back(arc_point);
+    }
+    arcs.push_back(std::move(arc_points));
+  }
+  //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
+
   return arcs;
 }

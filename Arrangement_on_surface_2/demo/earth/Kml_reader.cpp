@@ -3,9 +3,31 @@
 
 #include <iostream>
 
+#include <qdebug.h>
 #include <qfile.h>
 #include <qxmlstream.h>
 
+namespace {
+ 
+  std::vector<std::string> split(const std::string& str, const char *delim)
+  {
+    std::string sc = str;
+    char* token = strtok(sc.data(), delim);
+    char* str_end = token + str.length();
+
+    // Keep printing tokens while one of the delimiters present in str[].
+    std::vector<std::string> results;
+    while (token != NULL)
+    {
+      const auto first = token;
+      //printf("%s\n", token);
+      token = strtok(NULL, " ");
+      results.push_back(std::string(first, token==nullptr ? str_end : token));
+    }
+
+    return results;
+  }
+}
 
 Kml::Placemarks  Kml::read(const std::string& file_name)
 {
@@ -42,18 +64,40 @@ Kml::Placemarks  Kml::read(const std::string& file_name)
         else if (name == "coordinates")
         {
           xmlReader.readNext();
-          auto str = xmlReader.text().toString();
-          auto node_strs = str.split(" ");
+          auto qstr = xmlReader.text().toString();
+          auto ptr = qstr.data();
+          auto str = qstr.toUtf8().toStdString();
+          auto node_strs = split(str, " ");
+          
           for (const auto& node_str : node_strs)
           {
-            if (node_str.isEmpty())
+            if (node_str.empty())
               continue;
 
-            auto coord_strs = node_str.split(",");
-            const auto lon = coord_strs[0].toDouble();
-            const auto lat = coord_strs[1].toDouble();
+            auto coord_strs = split(node_str, ",");
+            const auto lon = std::stod(coord_strs[0]);
+            const auto lat = std::stod(coord_strs[1]);
             lring.nodes.push_back(Node{ lon, lat });
           }
+
+
+          //qDebug() << "---------------------------------------";
+          //for (const auto& node_str : node_strs)
+          //  std::cout << node_str << std::endl;
+
+          //qDebug() << qstr;
+          //auto node_qstrs = qstr.split(" ");
+          //qDebug() << node_qstrs.size();
+          //for (const auto& node_str : node_strs)
+          //{
+          //  if (node_str.isEmpty())
+          //    continue;
+
+          //  auto coord_strs = node_str.split(",");
+          //  const auto lon = coord_strs[0].toDouble();
+          //  const auto lat = coord_strs[1].toDouble();
+          //  lring.nodes.push_back(Node{ lon, lat });
+          //}
         }
         else if (name == "SimpleData")
         {

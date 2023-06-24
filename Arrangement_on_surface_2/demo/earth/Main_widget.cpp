@@ -108,11 +108,8 @@ void Main_widget::timerEvent(QTimerEvent*)
 
 void Main_widget::initializeGL()
 {
-
-  {
-    const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
-    auto countries = Kml::read(file_name);
-  }
+  const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
+  auto countries = Kml::read(file_name);
   
 
   initializeOpenGLFunctions();
@@ -127,7 +124,8 @@ void Main_widget::initializeGL()
     // because we want to compute the error based on camera parameters!
     Geodesic_arcs ga;
     const double error = 0.001; // calculate this from cam parameters!
-    auto lsa = ga.get_approximate_arcs(error);
+    auto lsa = ga.get_approx_arcs(countries, error);
+    //auto lsa = ga.get_approx_arcs(error);
     m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
   }
 
@@ -258,7 +256,7 @@ void Main_widget::resizeGL(int w, int h)
 
   // Reset projection
   qreal aspect = qreal(w) / qreal(h ? h : 1);
-  const qreal z_near = 1.0, z_far = 100.0, fov = 45.0;
+  const qreal z_near = 0.1, z_far = 100.0, fov = 45.0;
   m_camera.perspective(fov, aspect, z_near, z_far);
 
   {
