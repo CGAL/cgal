@@ -30,8 +30,24 @@ public:
   /// the triangulation class.
   typedef Triangulation_ Base_triangulation;
 
-  /// handle to a vertex.
+  /// Point type
+  typedef typename Triangulation_::Point Point;
+
+  /// Edge type
+  typedef typename Triangulation_::Edge Edge;
+
+  /// handle to a vertex
   typedef typename Triangulation_::Vertex_handle Vertex_handle;
+
+  /// handle to a face
+  typedef typename Triangulation_::Face_handle Face_handle;
+
+  /// list of edges
+  typedef typename Triangulation_::List_edges List_edges;
+  
+  /// list of faces
+  typedef typename Triangulation_::List_faces List_faces;
+
   /// @}
   
   // iterator over interior faces.
@@ -40,9 +56,53 @@ public:
     Interior_faces_iterator operator--();
   };
 
+  // Inserts point p in the triangulation and returns the corresponding vertex.
+  Vertex_handle insert(const Point &p, Face_handle f = Face_handle()) {
+    return Base_triangulation::insert(p, f);
+  }
+
   // Add constraint from va to vb using the odd-even rule
   void odd_even_insert_constraint(Vertex_handle va, Vertex_handle vb) {
+
+    // Degenerate edge
     if (va == vb) return;
+
+    // [va, vb] is an existing edge OR it is composed of shorter edges
+    Vertex_handle vc; // [va, vc] is the first edge along [va, vb]
+    Face_handle incident_face; // incident to [va, vc]
+    int opposite_vertex; // opposite to [va, vc]
+    if (Base_triangulation::includes_edge(va, vb, vc, incident_face, opposite_vertex)) {
+      if (Base_triangulation::is_constrained(Edge(incident_face, opposite_vertex))) {
+        Base_triangulation::remove_constrained_edge(incident_face, opposite_vertex);
+      } else Base_triangulation::mark_constraint(incident_face, opposite_vertex);
+      if (vc != vb) odd_even_insert_constraint(vc, vb); // process edges along [vc, vb]
+      return;
+    }
+
+    // [va, vb] intersects a constrained edge or an existing vertex
+    List_faces intersected_faces;
+    List_edges conflict_boundary_ab, conflict_boundary_ba;
+    Vertex_handle intersection;
+    if (Base_triangulation::find_intersected_faces(va, vb, intersected_faces, conflict_boundary_ab, conflict_boundary_ba, intersection)) {
+      if (intersection != va && intersection != vb) {
+        odd_even_insert_constraint(va, intersection);
+        odd_even_insert_constraint(intersection, vb);
+      } else odd_even_insert_constraint(va, vb);
+      return;
+    }
+
+    // Otherwise
+    Base_triangulation::triangulate_hole(intersected_faces, conflict_boundary_ab, conflict_boundary_ba);
+    if (intersection != vb) {
+      odd_even_insert_constraint(intersection, vb);
+    }
+  }
+
+  // Add constraint from pa to pb using the odd-even rule
+  void odd_even_insert_constraint(Point pa, Point pb) {
+    Vertex_handle va = insert(pa);
+    Vertex_handle vb = insert(pb);
+    odd_even_insert_constraint(va, vb);
   }
 
   // Starts at an arbitrary interior face

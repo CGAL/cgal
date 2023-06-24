@@ -33,6 +33,9 @@ class Multipolygon_with_holes_2 {
 public:
   /// \name Definition
 
+  /// polygon type
+  typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
+
   /// polygon with holes type
   typedef CGAL::Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
   
@@ -63,6 +66,8 @@ public:
   Polygon_const_iterator polygons_begin() const { return m_polygons.begin(); }
 
   Polygon_const_iterator polygons_end() const { return m_polygons.end(); }
+
+  void add_polygon(const Polygon_2& pgn) { m_polygons.push_back(Polygon_with_holes_2(pgn)); }
 
   void add_polygon(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 

@@ -32,6 +32,10 @@ class Polygon_repair_2;
 template <class Kernel, class PolygonContainer>
 Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const CGAL::Polygon_2<Kernel, PolygonContainer>& p) {
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
+  pr.add_to_triangulation(p);
+  pr.label_triangulation();
+  pr.reconstruct_polygon();
+  return pr.multipolygon();
 }
 
 /// \ingroup PkgPolygonRepair2Functions
@@ -39,13 +43,21 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const CGAL::Polygon_2
 template <class Kernel, class PolygonContainer>
 Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const CGAL::Polygon_with_holes_2<Kernel, PolygonContainer>& p) {
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
+  pr.add_to_triangulation(p);
+  pr.label_triangulation();
+  pr.reconstruct_polygon();
+  return pr.multipolygon();
 }
 
 /// \ingroup PkgPolygonRepair2Functions
 /// Repair a multipolygon with holes
 template <class Kernel, class PolygonContainer>
-Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& p) {
+Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& mp) {
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
+  pr.add_to_triangulation(mp);
+  pr.label_triangulation();
+  pr.reconstruct_polygon();
+  return pr.multipolygon();
 }
 
 /*! \ingroup PkgPolygonRepair2Ref
@@ -84,24 +96,35 @@ public:
 
 	// Add edges of the polygon to the triangulation
 	void add_to_triangulation(const Polygon_2<Kernel, PolygonContainer>& p) {
-
+    for (auto const& e: p.edges()) {
+      t.odd_even_insert_constraint(e.source(), e.target());
+    }
   }
 
 	// Add edges of the polygon to the triangulation
 	void add_to_triangulation(const Polygon_with_holes_2<Kernel, PolygonContainer>& p) {
-
+    add_to_triangulation(p.outer_boundary());
+    for (auto const& h: p.holes()) {
+       add_to_triangulation(h);
+    }
   }
 
 	// Add edges of the polygon to the triangulation
-	void add_to_triangulation(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& p) {
-
+	void add_to_triangulation(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& mp) {
+    for (auto const &p: mp.polygons()) {
+      add_to_triangulation(p);
+    }
   }
 
 	// Label triangles in triangulation as inside or outside the polygon
-	void label_triangulation();
+	void label_triangulation() {
+
+  }
 
   // Reconstruct multipolygon based on the triangles labelled as inside the polygon
-  void reconstruct_polygon();
+  void reconstruct_polygon() {
+    
+  }
 
   // Erases the triangulation.
   void clear() {
@@ -113,9 +136,13 @@ public:
 	/// \name Access Functions
   /// @{
 
-  Triangulation_with_odd_even_constraints_2<Triangulation> triangulation();
+  Triangulation_with_odd_even_constraints_2<Triangulation>& triangulation() {
+    return t;
+  }
 
-  Multipolygon_with_holes_2<Kernel, PolygonContainer> multipolygon();
+  Multipolygon_with_holes_2<Kernel, PolygonContainer> multipolygon() {
+
+  }
 
   /// @}
 	
