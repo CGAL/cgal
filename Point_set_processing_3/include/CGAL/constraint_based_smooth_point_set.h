@@ -82,6 +82,7 @@ Eigen::MatrixXd construct_nvt(
 
   unsigned int w = 0; // cumulative weight
   Eigen::MatrixXd nvt(3, 3);
+  nvt.setZero();
 
   const Point& p = get(point_map, vt);
   const Vector& n = get(normal_map, vt);
@@ -92,18 +93,46 @@ Eigen::MatrixXd construct_nvt(
     const Vector& nn = get(normal_map, *it);
 
     FT angle_difference = CGAL::approximate_angle(n, nn);
-    if(angle_difference >= normal_threshold) {
+    // std::cout << angle_difference << std::endl;
+    if(angle_difference <= normal_threshold) {
       w += 1;
-      Eigen::Vector3d vn(n.x(), n.y(), n.z());
+      // Eigen::Vector3d vn(n.x(), n.y(), n.z());
       Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
 
-      nvt += vn * vnn.transpose();
+      nvt += vnn * vnn.transpose();
     }
   }
 
-  std::cout << nvt << std::endl;
+  if(w == 0) {
+    std::cout << "hmmmm" << std::endl;
+  } else {
+    nvt /= w;
+  }
+
+  // std::cout << nvt << std::endl;s
 
   return nvt;
+}
+
+template <typename Kernel>
+std::pair<Eigen::VectorXd, Eigen::MatrixXd> do_binary_optimization(
+  Eigen::MatrixXd nvt,
+  typename Kernel::FT eigenvalue_threshold
+) {
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(nvt);
+  std::pair<Eigen::VectorXd, Eigen::MatrixXd> eigens = std::make_pair(
+    solver.eigenvalues().cast<double>(),
+    solver.eigenvectors().cast<double>());
+
+  std::cout << eigens.first << std::endl << std::endl;
+
+  for(size_t i=0 ; i<eigens.first.rows() ; ++i) {
+    eigens.first[i] = eigens.first[i] > eigenvalue_threshold ? 1 : 0;
+  }
+
+  // std::cout << eigens.first << std::endl << std::endl;
+
+  return eigens;
 }
 
 
@@ -143,10 +172,10 @@ constraint_based_smooth_point_set(
 
   typedef typename Kernel::FT FT;
 
-  FT neighbor_radius = 1.;
-  FT normal_threshold = 90.;
+  FT neighbor_radius = 5.;
+  FT normal_threshold = 30.;
   FT damping_factor = 3.;
-  FT eigenvalue_threshold = 1.;
+  FT eigenvalue_threshold = .2;
   FT update_threshold = 2.;
 
   CGAL_precondition(points.begin() != points.end());
@@ -200,9 +229,22 @@ constraint_based_smooth_point_set(
            normal_threshold);
       return true;
     });
-  
 
-    
+  std::vector<std::pair<Eigen::VectorXd, Eigen::MatrixXd>> optimized_eigens(nb_points);
+
+  // CGAL::for_each<ConcurrencyTag>
+  //   (CGAL::make_range (pwns_nvts.begin(), pwns_nvts.end()),
+  //   [&](typename std::iterator_traits<typename std::pair<Kernel::FT, Eigen::VectorXd>>::reference> t)
+  //   {
+      
+  //     return true;
+  //   });
+
+  for (auto it = pwns_nvts.begin() ; it < pwns_nvts.end() ; ++it)
+  {
+    optimized_eigens.emplace_back(internal::do_binary_optimization<Kernel>(*it, eigenvalue_threshold));
+  }
+  
 
 
 
