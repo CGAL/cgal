@@ -85,12 +85,19 @@ public:
   typedef typename Traits::Point_d Point; ///< Point type.
   typedef typename Traits::Bbox_d Bbox; ///< Bounding box type.
   typedef typename Traits::Sphere_d Sphere; ///< Sphere type.
+  typedef typename Traits::Adjacency Adjacency; ///< Adjacency type.
 
   /// \cond SKIP_IN_MANUAL
   typedef typename Traits::Array Array; ///< Array type.
   typedef typename Traits::Construct_point_d_from_array Construct_point_d_from_array;
   typedef typename Traits::Construct_bbox_d Construct_bbox_d;
   /// \endcond
+  /// @}
+
+  /// \name Types specific to Point_set_3
+  /// todo: should be moved to Traits
+  /// @{
+  typedef boost::iterator_range<typename PointRange::iterator> Node_point_range;
   /// @}
 
   /// \name Public Types
@@ -111,15 +118,36 @@ public:
    */
   typedef std::size_t Node_index;
 
-  typedef Properties::Property_container<Node_index> Node_property_container;
-
   /*!
    * \brief Optional index of a node in the tree.
    */
   typedef boost::optional<Node_index> Maybe_node_index;
 
+  // todo: maybe this could be private?
+  typedef Properties::Property_container<Node_index> Node_property_container;
+
+  /*!
+    \brief Set of bits representing this node's relationship to its parent.
+
+    Equivalent to an array of Booleans, where index[0] is whether `x`
+    is greater, index[1] is whether `y` is greater, index[2] is whether
+    `z` is greater, and so on for higher dimensions if needed.
+    Used to represent a node's relationship to the center of its parent.
+   */
+  typedef std::bitset<Dimension::value> Local_coordinates;
+
+  /*!
+    \brief Coordinates representing this node's relationship
+    with the rest of the tree.
+
+    Each value `(x, y, z, ...)` of global coordinates is calculated by doubling
+    the parent's global coordinates and adding the local coordinates.
+   */
+  typedef std::array<std::uint32_t, Dimension::value> Global_coordinates;
+
   /*!
    * \brief The Sub-tree / Orthant type.
+   * todo: this should be removed
    */
   class Node;
 
@@ -163,9 +191,9 @@ private: // data members :
   PointMap m_point_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
   Node_property_container m_node_properties;
-  Node_property_container::Array <boost::iterator_range<typename PointRange::iterator>>& m_node_points;
+  Node_property_container::Array <Node_point_range>& m_node_points;
   Node_property_container::Array <std::uint8_t>& m_node_depths;
-  Node_property_container::Array <std::array<std::uint32_t, Dimension::value>>& m_node_coordinates;
+  Node_property_container::Array <Global_coordinates>& m_node_coordinates;
   Node_property_container::Array <Maybe_node_index>& m_node_parents;
   Node_property_container::Array <Maybe_node_index>& m_node_children;
 
@@ -212,9 +240,9 @@ public:
            const FT enlarge_ratio = 1.2,
            Traits traits = Traits()) :
     m_traits(traits), m_range(point_range), m_point_map(point_map),
-    m_node_points(m_node_properties.add_property<boost::iterator_range<typename PointRange::iterator>>("points")),
+    m_node_points(m_node_properties.add_property<Node_point_range>("points")),
     m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
-    m_node_coordinates(m_node_properties.add_property<std::array<std::uint32_t, Dimension::value>>("coordinates")),
+    m_node_coordinates(m_node_properties.add_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.add_property<Maybe_node_index>("parents")),
     m_node_children(m_node_properties.add_property<Maybe_node_index>("children")) {
 
@@ -275,9 +303,9 @@ public:
     m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(other.m_node_properties),
-    m_node_points(m_node_properties.get_property<boost::iterator_range<typename PointRange::iterator>>("points")),
+    m_node_points(m_node_properties.get_property<Node_point_range>("points")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
-    m_node_coordinates(m_node_properties.get_property<std::array<std::uint32_t, Dimension::value>>("coordinates")),
+    m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
     m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {}
 
@@ -286,9 +314,9 @@ public:
     m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(std::move(other.m_node_properties)),
-    m_node_points(m_node_properties.get_property<boost::iterator_range<typename PointRange::iterator>>("points")),
+    m_node_points(m_node_properties.get_property<Node_point_range>("points")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
-    m_node_coordinates(m_node_properties.get_property<std::array<std::uint32_t, Dimension::value>>("coordinates")),
+    m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
     m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {
 
@@ -312,10 +340,9 @@ public:
   /*!
     \brief recursively subdivides the orthtree until it meets the given criteria.
 
-    todo: split predicate now works with node indices!
-    The split predicate is a `std::function` that takes a `Node` and
-    returns a Boolean value (where `true` implies that a `Node` needs to
-    be split, `false` that the `Node` should be a leaf).
+    The split predicate is an `std::function` that takes a `Node_index` and an Orthtree reference, and
+    returns a Boolean value (where `true` implies that the corresponding node needs to
+    be split, `false` that the node should be a leaf).
 
     This function may be called several times with different
     predicates: in that case, nodes already split are left unaltered,
@@ -600,7 +627,7 @@ public:
       Point center = barycenter(node_for_point);
 
       // Find the index of the correct sub-node
-      typename Node::Local_coordinates local_coords;
+      Local_coordinates local_coords;
       std::size_t dimension = 0;
       for (const auto& r: cartesian_range(center, point))
         local_coords[dimension++] = (get < 0 > (r) < get < 1 > (r));
@@ -657,7 +684,7 @@ public:
     This function finds all the intersecting nodes and returns them as const pointers.
 
     \tparam Query the primitive class (e.g. sphere, ray)
-    \tparam OutputIterator a model of `OutputIterator` that accepts `Node` objects
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
     \param query the intersecting primitive.
     \param output output iterator.
    */
@@ -676,7 +703,6 @@ public:
 
     Trees may be considered equivalent even if they contain different points.
     Equivalent trees must have the same bounding box and the same node structure.
-    Node structure is evaluated by comparing the root nodes using the node equality operator.
    */
   bool operator==(const Self& rhs) const {
 
@@ -716,20 +742,20 @@ public:
     return m_node_depths[n];
   }
 
-  typename Node::Point_range& points(Node_index n) {
+  Node_point_range& points(Node_index n) {
     return m_node_points[n];
   }
 
-  const typename Node::Point_range& points(Node_index n) const {
+  const Node_point_range& points(Node_index n) const {
     return m_node_points[n];
   }
 
-  typename Node::Global_coordinates global_coordinates(Node_index n) const {
+  Global_coordinates global_coordinates(Node_index n) const {
     return m_node_coordinates[n];
   }
 
-  typename Node::Local_coordinates local_coordinates(Node_index n) const {
-    typename Node::Local_coordinates result;
+  Local_coordinates local_coordinates(Node_index n) const {
+    Local_coordinates result;
     for (std::size_t i = 0; i < Dimension::value; ++i)
       result[i] = global_coordinates(n)[i] & 1;
     return result;
@@ -770,7 +796,7 @@ public:
     std::size_t local_coords = local_coordinates(n).to_ulong(); // todo: add local_coordinates(n) helper
 
     // The last child has no more siblings
-    if (int(local_coords) == Node::Degree::value - 1)
+    if (int(local_coords) == Degree::value - 1)
       return {};
 
     // The next sibling is the child of the parent with the following local coordinates
@@ -815,7 +841,7 @@ public:
         return node;
 
       if (!is_leaf(node))
-        for (int i = 0; i < Node::Degree::value; ++i)
+        for (int i = 0; i < Degree::value; ++i)
           todo.push(child(node, i));
     }
 
@@ -837,7 +863,7 @@ public:
     CGAL_precondition (is_leaf(n));
 
     // Split the node to create children
-    using Local_coordinates = typename Node::Local_coordinates;
+    using Local_coordinates = Local_coordinates;
     m_node_children[n] = m_node_properties.emplace_group(Degree::value);
     for (std::size_t i = 0; i < Degree::value; i++) {
 
@@ -966,7 +992,7 @@ public:
 
     \return the index of the adjacent node if it exists, nothing otherwise.
   */
-  Maybe_node_index adjacent_node(Node_index n, typename Node::Local_coordinates direction) const {
+  Maybe_node_index adjacent_node(Node_index n, Local_coordinates direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -1012,7 +1038,7 @@ public:
   /*!
     \brief equivalent to `adjacent_node()`, with an adjacency direction rather than a bitset.
    */
-  Maybe_node_index adjacent_node(Node_index n, typename Node::Adjacency adjacency) const {
+  Maybe_node_index adjacent_node(Node_index n, Adjacency adjacency) const {
     return adjacent_node(n, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
   }
 
@@ -1285,7 +1311,5 @@ public:
 }; // end class Orthtree
 
 } // namespace CGAL
-
-#include <CGAL/Orthtree/Node.h>
 
 #endif // CGAL_ORTHTREE_H
