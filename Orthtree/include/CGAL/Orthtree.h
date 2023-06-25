@@ -126,7 +126,7 @@ public:
   /*!
    * \brief A predicate that determines whether a node must be split when refining a tree.
    */
-  typedef std::function<bool(Node_index, const Self &)> Split_predicate;
+  typedef std::function<bool(Node_index, const Self&)> Split_predicate;
 
   /*!
    * \brief A model of `ConstRange` whose value type is `Node`.
@@ -163,11 +163,11 @@ private: // data members :
   PointMap m_point_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
   Node_property_container m_node_properties;
-  Node_property_container::Array<boost::iterator_range<typename PointRange::iterator>> &m_node_points;
-  Node_property_container::Array<std::uint8_t> &m_node_depths;
-  Node_property_container::Array<std::array<std::uint32_t, Dimension::value>> &m_node_coordinates;
-  Node_property_container::Array<Maybe_node_index> &m_node_parents;
-  Node_property_container::Array<Maybe_node_index> &m_node_children;
+  Node_property_container::Array <boost::iterator_range<typename PointRange::iterator>>& m_node_points;
+  Node_property_container::Array <std::uint8_t>& m_node_depths;
+  Node_property_container::Array <std::array<std::uint32_t, Dimension::value>>& m_node_coordinates;
+  Node_property_container::Array <Maybe_node_index>& m_node_parents;
+  Node_property_container::Array <Maybe_node_index>& m_node_children;
 
   Point m_bbox_min;                  /* input bounding box min value */
 
@@ -282,7 +282,7 @@ public:
     m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {}
 
   // move constructor
-  Orthtree(Orthtree&& other):
+  Orthtree(Orthtree&& other) :
     m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(std::move(other.m_node_properties)),
@@ -468,6 +468,8 @@ public:
     This method allows to iterate on the nodes of the tree with a
     user-selected order (preorder, postorder, leaves-only, etc.).
 
+    todo: this should be removed, replaced with traverse_indices
+
     \tparam Traversal model of `OrthtreeTraversal` that provides functions
     compatible with the type of the orthree
 
@@ -538,6 +540,35 @@ public:
       = m_traits.construct_bbox_d_object();
     return construct_bbox(min_corner, max_corner);
   }
+
+  /// @}
+
+  /// \name Custom Properties
+  /// @{
+
+  template <typename T>
+  std::pair<std::reference_wrapper<Node_property_container::Array < T>>, bool>
+  get_or_add_node_property(const std::string& name, const T default_value = T()) {
+    return m_node_properties.get_or_add_property(name, default_value);
+  }
+
+  template <typename T>
+  Node_property_container::Array <T>& add_node_property(const std::string& name, const T default_value = T()) {
+    return m_node_properties.add_property(name, default_value);
+  }
+
+  template <typename T>
+  Node_property_container::Array <T>& get_node_property(const std::string& name) {
+    return m_node_properties.get_property<T>(name);
+  }
+
+  template <typename T>
+  std::optional<std::reference_wrapper<Node_property_container::Array<T>>>
+  get_node_property_if_exists(const std::string& name) {
+    return m_node_properties.get_property_if_exists<T>(name);
+  }
+
+  // todo: is it ever useful to be able to delete/reset properties?
 
   /// @}
 
