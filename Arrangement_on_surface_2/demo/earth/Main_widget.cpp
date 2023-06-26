@@ -111,8 +111,19 @@ void Main_widget::initializeGL()
 {
   const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
   auto countries = Kml::read(file_name);
-  Kml::check_duplicates(countries);
+  auto dup_nodes = Kml::get_duplicates(countries);
   
+  {
+    std::vector<QVector3D> vertices;
+    for (const auto& node : dup_nodes)
+    {
+      //qDebug() << node.get_coords_3d();
+      vertices.push_back(node.get_coords_3d());
+    }
+  
+    m_vertices = std::make_unique<Vertices>(vertices);
+  }
+
 
   initializeOpenGLFunctions();
 
@@ -323,7 +334,7 @@ void Main_widget::paintGL()
     sp.unuse();
   }
 
-  // GEODESIC ARCS
+  // VERTICES & GEODESIC ARCS
   {
     glDisable(GL_DEPTH_TEST);
 
@@ -348,6 +359,10 @@ void Main_widget::paintGL()
     sp.set_uniform("u_color", arc_color);
     sp.set_uniform("u_plane", plane);
     m_geodesic_arcs->draw();
+
+    const QVector4D vertex_color(1, 0, 0, 1);
+    sp.set_uniform("u_color", vertex_color);
+    m_vertices->draw();
 
     sp.unuse();
   }

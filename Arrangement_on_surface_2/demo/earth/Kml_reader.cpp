@@ -9,6 +9,19 @@
 #include <qxmlstream.h>
 
 
+QVector3D Kml::Node::get_coords_3d(const double r) const
+{
+  const auto phi = qDegreesToRadians(lat);
+  const auto theta = qDegreesToRadians(lon);
+  const auto z = r * std::sin(phi);
+  const auto rxy = r * std::cos(phi);
+  const auto x = rxy * std::cos(theta);
+  const auto y = rxy * std::sin(theta);
+
+  return QVector3D(x, y, z);
+}
+
+
 Kml::Placemarks  Kml::read(const std::string& file_name)
 {
   Placemarks    placemarks;
@@ -100,7 +113,7 @@ Kml::Placemarks  Kml::read(const std::string& file_name)
   return placemarks;
 }
 
-void Kml::check_duplicates(const Placemarks& placemarks)
+Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks)
 {
   // collect all nodes into a single vector
   int polygon_count = 0;
@@ -124,16 +137,18 @@ void Kml::check_duplicates(const Placemarks& placemarks)
   // this keeps track of how many nodes there are with certain dup-count
   std::unordered_map<int, int> dup_count_map;
 
+  Nodes duplicate_nodes;
   for (int i = 0; i < count; ++i)
   {
     // if the current node has been detected as duplicate skip it
     if (num_duplicates[i] > 0)
       continue;
 
+    const auto& curr_node = nodes[i];
     std::vector<int> curr_dup; // current set of duplicates
     for (int j = i + 1; j < count; ++j)
     {
-      if (nodes[i] == nodes[j])
+      if (curr_node == nodes[j])
       {
         curr_dup.push_back(j);
       }
@@ -148,6 +163,7 @@ void Kml::check_duplicates(const Placemarks& placemarks)
       for (const auto di : curr_dup)
         num_duplicates[di] = num_dup;
 
+      duplicate_nodes.push_back(curr_node);
       dup_count_map[num_dup]++;
     }
   }
@@ -158,4 +174,6 @@ void Kml::check_duplicates(const Placemarks& placemarks)
     const auto num_nodes_with_this_dup_count = p.second;
     qDebug() << dup_count << ": " << num_nodes_with_this_dup_count;
   }
+
+  return duplicate_nodes;
 }

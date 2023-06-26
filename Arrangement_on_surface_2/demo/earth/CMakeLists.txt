@@ -39,6 +39,7 @@ endif()
 file(GLOB source_files_geometry   
   Line_strips.h             Line_strips.cpp
   Sphere.h                  Sphere.cpp
+  Vertices.h                Vertices.cpp
   World_coordinate_axes.h   World_coordinate_axes.cpp
  )
 source_group( "geometry"  FILES ${source_files_geometry} )

@@ -19,6 +19,7 @@
 #include "Line_strips.h"
 #include "Shader_program.h"
 #include "Sphere.h"
+#include "Vertices.h"
 #include "World_coordinate_axes.h"
 
 
@@ -55,6 +56,7 @@ private:
   std::unique_ptr<Sphere>           m_sphere;
   std::unique_ptr<World_coord_axes> m_world_coord_axes;
   std::unique_ptr<Line_strips>      m_geodesic_arcs;
+  std::unique_ptr<Vertices>         m_vertices;
 
   // Shaders
   Shader_program  m_sp_smooth;

@@ -116,10 +116,10 @@ Geodesic_arcs::Approx_arcs Geodesic_arcs::get_approx_arcs(
       {
         const auto phi = qDegreesToRadians(node.lat);
         const auto theta = qDegreesToRadians(node.lon);
-        const auto z = sin(phi);
-        const auto rxy = cos(phi);
-        const auto x = rxy * cos(theta);
-        const auto y = rxy * sin(theta);
+        const auto z = std::sin(phi);
+        const auto rxy = std::cos(phi);
+        const auto x = rxy * std::cos(theta);
+        const auto y = rxy * std::sin(theta);
         Approximate_Vector_3 v(x,y,z);
         sphere_points.push_back(v);
       }
