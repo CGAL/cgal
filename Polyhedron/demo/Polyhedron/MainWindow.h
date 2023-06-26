@@ -9,6 +9,7 @@
 #include <QOpenGLWidget>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_item.h>
 
 #include <QJSEngine>
 
