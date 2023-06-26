@@ -2,7 +2,6 @@
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Orthtree.h>
-#include <CGAL/Orthtree_traits_d.h>
 #include <CGAL/Random.h>
 
 // Type Declarations

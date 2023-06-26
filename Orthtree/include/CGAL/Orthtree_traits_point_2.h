@@ -9,14 +9,14 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_3_H
-#define ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_3_H
+#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_2_H
+#define ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_2_H
 
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Dimension.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/Point_set_3.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 
 namespace CGAL {
@@ -24,7 +24,7 @@ namespace CGAL {
 /*!
   \ingroup PkgOrthtreeTraits
 
-  The class `Orthtree_traits_point_3` can be used as a template parameter of
+  The class `Orthtree_traits_point_2` can be used as a template parameter of
   the `Orthtree` class.
 
   \tparam GeomTraits model of `Kernel`.
@@ -39,82 +39,64 @@ namespace CGAL {
 template <
   typename GeomTraits,
   typename PointSet,
-  typename PointMap = Identity_property_map<typename GeomTraits::Point_3>
+  typename PointMap = Identity_property_map<typename GeomTraits::Point_2>
 >
-struct Orthtree_traits_point_3 {
+struct Orthtree_traits_point_2 {
 public:
 
   /// \name Types
   /// @{
 
-  using Self = Orthtree_traits_point_3<GeomTraits, PointSet, PointMap>;
+  using Self = Orthtree_traits_point_2<GeomTraits, PointSet, PointMap>;
 
-  using Dimension = Dimension_tag<3>;
-  using Bbox_d = Bbox_3;
+  using Dimension = Dimension_tag<2>;
+  using Bbox_d = Bbox_2;
   using FT = typename GeomTraits::FT;
-  using Point_d = typename GeomTraits::Point_3;
-  using Sphere_d = typename GeomTraits::Sphere_3;
-  using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_3;
+  using Point_d = typename GeomTraits::Point_2;
+  using Sphere_d = typename GeomTraits::Sphere_2;
+  using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_2;
   using Array = std::array<FT, Dimension::value>; // todo: This should have a more descriptive name
 
   // todo: looking for better names
   using Node_data = boost::iterator_range<typename PointSet::iterator>;
   using Node_data_element = typename std::iterator_traits<typename PointSet::iterator>::value_type;
 
-
   /*!
    * \brief Two directions along each axis in Cartesian space, relative to a node.
    *
-   * Directions are mapped to numbers as 3-bit integers,
-   * though the numbers 6 and 7 are not used because there are only 6 different directions.
+   * Directions are mapped to numbers as 2-bit integers.
    *
-   * The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
-   * the third bit indicates the direction along that axis (0 = -, 1 = +).
+   * The first bit indicates the axis (0 = x, 1 = y),
+   * the second bit indicates the direction along that axis (0 = -, 1 = +).
    *
    * The following diagram may be a useful reference:
    *
    *            3 *
-   *              |  * 5
-   *              | /                  y+
-   *              |/                   *  z+
-   *     0 *------+------* 1           | *
-   *             /|                    |/
-   *            / |                    +-----* x+
-   *         4 *  |
+   *              |
+   *              |                    y+
+   *              |                    *
+   *     0 *------+------* 1           |
+   *              |                    |
+   *              |                    +-----* x+
+   *              |
    *              * 2
    *
    * This lookup table may also be helpful:
    *
    * | Direction | bitset | number | Enum  |
    * | --------- | ------ | ------ | ----- |
-   * | `-x`      | 000    | 0      | LEFT  |
-   * | `+x`      | 001    | 1      | RIGHT |
-   * | `-y`      | 010    | 2      | DOWN  |
-   * | `+y`      | 011    | 3      | UP    |
-   * | `-z`      | 100    | 4      | BACK  |
-   * | `+z`      | 101    | 5      | FRONT |
+   * | `-x`      |  00    | 0      | LEFT  |
+   * | `+x`      |  01    | 1      | RIGHT |
+   * | `-y`      |  10    | 2      | DOWN  |
+   * | `+y`      |  11    | 3      | UP    |
    */
-  enum Adjacency {
+  enum Adjacency
+  {
     LEFT,
     RIGHT,
     DOWN,
-    UP,
-    BACK,
-    FRONT
+    UP
   };
-
-  /// \cond SKIP_IN_MANUAL
-  enum Child {
-    LEFT_BOTTOM_BACK,
-    RIGHT_BOTTOM_BACK,
-    LEFT_TOP_BACK,
-    RIGHT_TOP_BACK,
-    LEFT_BOTTOM_FRONT,
-    RIGHT_BOTTOM_FRONT,
-    LEFT_TOP_FRONT,
-    RIGHT_TOP_FRONT
-  };
-  /// \endcond
 
 #ifdef DOXYGEN_RUNNING
   /*!
@@ -122,14 +104,15 @@ public:
   */
   typedef unspecified_type Construct_point_d_from_array;
 #else
-
-  struct Construct_point_d_from_array {
-    Point_d operator()(const Array& array) const {
-      return Point_d(array[0], array[1], array[2]);
+  struct Construct_point_d_from_array
+  {
+    Point_d operator() (const Array& array) const
+    {
+      return Point_d (array[0], array[1]);
     }
   };
-
 #endif
+
 
 #ifdef DOXYGEN_RUNNING
   /*!
@@ -137,19 +120,19 @@ public:
   */
   typedef unspecified_type Construct_bbox_d;
 #else
-
-  struct Construct_bbox_d {
-    Bbox_d operator()(const Array& min,
-                      const Array& max) const {
-      return Bbox_d(min[0], min[1], min[2], max[0], max[1], max[2]);
+  struct Construct_bbox_d
+  {
+    Bbox_d operator() (const Array& min,
+                       const Array& max) const
+    {
+      return Bbox_d (min[0], min[1], max[0], max[1]);
     }
   };
-
 #endif
 
   /// @}
 
-  Orthtree_traits_point_3(
+  Orthtree_traits_point_2(
     PointSet& point_set,
     PointMap point_map = PointMap()
   ) : m_point_set(point_set), m_point_map(point_map) {}
@@ -253,4 +236,5 @@ private:
 
 }
 
-#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_3_H
+
+#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_2_H
