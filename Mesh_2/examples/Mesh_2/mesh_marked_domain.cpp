@@ -4,7 +4,7 @@
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/mark_domain_in_triangulation.h>
-#include <CGAL/draw_triangulation_2.h>
+#include <CGAL/draw_constrained_triangulation_2.h>
 
 #include <iostream>
 

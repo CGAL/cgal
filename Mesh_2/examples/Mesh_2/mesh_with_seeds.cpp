@@ -2,7 +2,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/draw_triangulation_2.h>
+#include <CGAL/draw_constrained_triangulation_2.h>
 
 #include <iostream>
 
