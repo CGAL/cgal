@@ -24,7 +24,7 @@ int main(void)
   for (std::size_t i = 0; i < nb_pts; ++i)
     points.insert(*(generator++));
 
-  Octree base (points, points.point_map());
+  Octree base ({points, points.point_map()});
   assert (base.is_leaf(base.root())); // base is not refined yet
 
   Octree copy1 (base);

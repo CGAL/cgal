@@ -73,7 +73,7 @@ split.
 
 \subsection Section_Orthtree_Point_Vector Building an Octree
 
-The `Orthtree` class may be templated with `Orthtree_traits_point_set_3` and thus
+The `Orthtree` class may be templated with `Orthtree_traits_point_3` and thus
 behave as an %octree. For convenience, the alias `Octree` is provided.
 
 The following example shows how to create an %octree from a vector of

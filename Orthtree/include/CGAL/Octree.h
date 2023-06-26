@@ -16,6 +16,7 @@
 
 #include <CGAL/Orthtree.h>
 #include <CGAL/Orthtree_traits_3.h>
+#include <CGAL/Orthtree_traits_point_3.h>
 
 namespace CGAL {
 
@@ -43,7 +44,7 @@ template <
 #ifdef DOXYGEN_RUNNING
   class Octree;
 #else
-using Octree = Orthtree<Orthtree_traits_3<GeomTraits>, PointRange, PointMap>;
+using Octree = Orthtree<Orthtree_traits_point_3<GeomTraits, PointRange, PointMap>>;
 #endif
 
 } // namespace CGAL

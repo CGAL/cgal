@@ -34,7 +34,7 @@ int main(void) {
   points.emplace_back(-0.9, -1, -1);
 
   // Create an octree from the vector
-  Octree octree(points);
+  Octree octree(Octree::Traits{points});
 
   // Build the octree
   octree.refine(10, 2);

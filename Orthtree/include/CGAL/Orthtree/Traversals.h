@@ -25,7 +25,7 @@ namespace CGAL {
 /// \cond SKIP_IN_MANUAL
 // todo: is this necessary?
 // Forward declaration
-template <typename T, typename PR, typename PM>
+template <typename T>
 class Orthtree;
 /// \endcond
 

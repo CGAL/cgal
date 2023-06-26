@@ -23,7 +23,7 @@ int main(void) {
   for (std::size_t i = 0; i < nb_pts; ++i)
     points.insert(*(generator++));
 
-  Octree tree(points, points.point_map());
+  Octree tree({points, points.point_map()});
 
   // Default value should be respected
   auto &node_int_property = tree.add_node_property<int>("int", 5);

@@ -62,11 +62,8 @@ namespace CGAL {
   \sa `CGAL::Octree`
 
   \tparam Traits_ must be a model of `OrthtreeTraits`
-  \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap_`
-  \tparam PointMap_ must be a model of `ReadablePropertyMap` whose value type is `Traits_::Point_d`
  */
-template <typename Traits_, typename PointRange_,
-  typename PointMap_ = Identity_property_map<typename Traits_::Point_d> >
+template <typename Traits_>
 class Orthtree {
 
 public:
@@ -74,8 +71,6 @@ public:
   /// \name Template Types
   /// @{
   typedef Traits_ Traits; ///< Geometry traits
-  typedef PointRange_ PointRange; ///< Point range
-  typedef PointMap_ PointMap; ///< Point map
   /// @}
 
   /// \name Traits Types
@@ -87,17 +82,14 @@ public:
   typedef typename Traits::Sphere_d Sphere; ///< Sphere type.
   typedef typename Traits::Adjacency Adjacency; ///< Adjacency type.
 
+  typedef typename Traits::Node_data Node_data;
+  typedef typename Traits::Node_data_element Node_data_element;
+
   /// \cond SKIP_IN_MANUAL
   typedef typename Traits::Array Array; ///< Array type.
   typedef typename Traits::Construct_point_d_from_array Construct_point_d_from_array;
   typedef typename Traits::Construct_bbox_d Construct_bbox_d;
   /// \endcond
-  /// @}
-
-  /// \name Types specific to Point_set_3
-  /// todo: should be moved to Traits
-  /// @{
-  typedef boost::iterator_range<typename PointRange::iterator> Node_point_range;
   /// @}
 
   /// \name Public Types
@@ -106,7 +98,7 @@ public:
   /*!
    * \brief Self typedef for convenience.
    */
-  typedef Orthtree<Traits, PointRange, PointMap> Self;
+  typedef Orthtree<Traits> Self;
 
   /*!
    * \brief Degree of the tree (number of children of non-leaf nodes).
@@ -168,17 +160,6 @@ public:
 #endif
 
   /// \cond SKIP_IN_MANUAL
-
-  /*!
-   * \brief A function that determines the next node in a traversal given the current one.
-   */
-  typedef std::function<const Node*(const Node*)> Node_traversal_method_const;
-
-  /// \endcond
-
-  /// \cond SKIP_IN_MANUAL
-  typedef typename PointRange::iterator Range_iterator;
-  typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
   typedef Orthtrees::internal::Cartesian_ranges<Traits> Cartesian_ranges;
   /// \endcond
 
@@ -187,11 +168,9 @@ public:
 private: // data members :
 
   Traits m_traits; /* the tree traits */
-  PointRange& m_range;              /* input point range */
-  PointMap m_point_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
   Node_property_container m_node_properties;
-  Node_property_container::Array <Node_point_range>& m_node_points;
+  Node_property_container::Array <Node_data>& m_node_points;
   Node_property_container::Array <std::uint8_t>& m_node_depths;
   Node_property_container::Array <Global_coordinates>& m_node_coordinates;
   Node_property_container::Array <Maybe_node_index>& m_node_parents;
@@ -235,12 +214,10 @@ public:
     \param enlarge_ratio ratio to which the bounding box should be enlarged.
     \param traits the traits object.
   */
-  Orthtree(PointRange& point_range,
-           PointMap point_map = PointMap(),
-           const FT enlarge_ratio = 1.2,
-           Traits traits = Traits()) :
-    m_traits(traits), m_range(point_range), m_point_map(point_map),
-    m_node_points(m_node_properties.add_property<Node_point_range>("points")),
+  Orthtree(Traits traits,
+           const FT enlarge_ratio = 1.2) :
+    m_traits(traits),
+    m_node_points(m_node_properties.add_property<Node_data>("points")),
     m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
     m_node_coordinates(m_node_properties.add_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.add_property<Maybe_node_index>("parents")),
@@ -248,30 +225,11 @@ public:
 
     m_node_properties.emplace();
 
-    Array bbox_min;
-    Array bbox_max;
 
     // init bbox with first values found
-    {
-      const Point& p = get(m_point_map, *(point_range.begin()));
-      std::size_t i = 0;
-      for (const FT& x: cartesian_range(p)) {
-        bbox_min[i] = x;
-        bbox_max[i] = x;
-        ++i;
-      }
-    }
+    auto [bbox_min, bbox_max] = m_traits.root_node_bbox();
 
-    for (const Range_type& r: point_range) {
-      const Point& p = get(m_point_map, r);
-      std::size_t i = 0;
-      for (const FT& x: cartesian_range(p)) {
-        bbox_min[i] = (std::min)(x, bbox_min[i]);
-        bbox_max[i] = (std::max)(x, bbox_max[i]);
-        ++i;
-      }
-    }
-
+    // Dilate the bounding box
     Array bbox_centroid;
     FT max_length = FT(0);
     for (std::size_t i = 0; i < Dimension::value; ++i) {
@@ -279,7 +237,6 @@ public:
       max_length = (std::max)(max_length, bbox_max[i] - bbox_min[i]);
     }
     max_length *= enlarge_ratio / FT(2);
-
     for (std::size_t i = 0; i < Dimension::value; ++i) {
       bbox_min[i] = bbox_centroid[i] - max_length;
       bbox_max[i] = bbox_centroid[i] + max_length;
@@ -291,7 +248,7 @@ public:
     // save orthtree attributes
     m_bbox_min = construct_point_d_from_array(bbox_min);
     m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
-    points(root()) = {point_range.begin(), point_range.end()};
+    points(root()) = m_traits.root_node_contents();
   }
 
   /// @}
@@ -300,10 +257,10 @@ public:
 
   // copy constructor
   Orthtree(const Orthtree& other) :
-    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map),
+    m_traits(other.m_traits),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(other.m_node_properties),
-    m_node_points(m_node_properties.get_property<Node_point_range>("points")),
+    m_node_points(m_node_properties.get_property<Node_data>("points")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
@@ -311,10 +268,10 @@ public:
 
   // move constructor
   Orthtree(Orthtree&& other) :
-    m_traits(other.m_traits), m_range(other.m_range), m_point_map(other.m_point_map),
+    m_traits(other.m_traits),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(std::move(other.m_node_properties)),
-    m_node_points(m_node_properties.get_property<Node_point_range>("points")),
+    m_node_points(m_node_properties.get_property<Node_data>("points")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
@@ -742,11 +699,11 @@ public:
     return m_node_depths[n];
   }
 
-  Node_point_range& points(Node_index n) {
+  Node_data& points(Node_index n) {
     return m_node_points[n];
   }
 
-  const Node_point_range& points(Node_index n) const {
+  const Node_data& points(Node_index n) const {
     return m_node_points[n];
   }
 
@@ -883,7 +840,8 @@ public:
     Point center = barycenter(n);
 
     // Add the node's points to its children
-    reassign_points(n, points(n).begin(), points(n).end(), center);
+    m_traits.distribute_node_contents(n, *this, center);
+    //reassign_points(n, points(n).begin(), points(n).end(), center);
   }
 
   /*!
@@ -1046,37 +1004,6 @@ public:
 
 private: // functions :
 
-  void reassign_points(Node_index n, Range_iterator begin, Range_iterator end, const Point& center,
-                       std::bitset<Dimension::value> coord = {},
-                       std::size_t dimension = 0) {
-
-    // Root case: reached the last dimension
-    if (dimension == Dimension::value) {
-      points(child(n, coord.to_ulong())) = {begin, end};
-      return;
-    }
-
-    // Split the point collection around the center point on this dimension
-    Range_iterator split_point = std::partition(
-      begin, end,
-      [&](const Range_type& a) -> bool {
-        // This should be done with cartesian iterator,
-        // but it seems complicated to do efficiently
-        return (get(m_point_map, a)[int(dimension)] < center[int(dimension)]);
-      }
-    );
-
-    // Further subdivide the first side of the split
-    std::bitset<Dimension::value> coord_left = coord;
-    coord_left[dimension] = false;
-    reassign_points(n, begin, split_point, center, coord_left, dimension + 1);
-
-    // Further subdivide the second side of the split
-    std::bitset<Dimension::value> coord_right = coord;
-    coord_right[dimension] = true;
-    reassign_points(n, split_point, end, center, coord_right, dimension + 1);
-  }
-
   bool do_intersect(Node_index n, const Sphere& sphere) const {
 
     // Create a cubic bounding box from the node
@@ -1087,8 +1014,8 @@ private: // functions :
   }
 
   // TODO: There has to be a better way than using structs like these!
-  struct Point_with_distance {
-    Point point;
+  struct Node_element_with_distance {
+    Node_data_element point;
     FT distance;
   };
 
@@ -1102,7 +1029,7 @@ private: // functions :
   };
 
   void nearest_k_neighbors_recursive(Sphere& search_bounds, Node_index node,
-                                     std::vector<Point_with_distance>& results, FT epsilon = 0) const {
+                                     std::vector<Node_element_with_distance>& results, FT epsilon = 0) const {
 
     // Check whether the node has children
     if (is_leaf(node)) {
@@ -1111,14 +1038,11 @@ private: // functions :
 
       // Loop through each of the points contained by the node
       // Note: there might be none, and that should be fine!
-      for (auto point_index: points(node)) {
-
-        // Retrieve each point from the orthtree's point map
-        auto point = get(m_point_map, point_index);
+      for (auto p: points(node)) {
 
         // Pair that point with its distance from the search point
-        Point_with_distance current_point_with_distance =
-          {point, squared_distance(point, search_bounds.center())};
+        Node_element_with_distance current_point_with_distance =
+          {p, squared_distance(m_traits.get_element(p), search_bounds.center())};
 
         // Check if the new point is within the bounds
         if (current_point_with_distance.distance < search_bounds.squared_radius()) {
@@ -1226,7 +1150,7 @@ private: // functions :
   OutputIterator nearest_k_neighbors_in_radius(Sphere& query_sphere, std::size_t k, OutputIterator output) const {
 
     // Create an empty list of points
-    std::vector<Point_with_distance> points_list;
+    std::vector<Node_element_with_distance> points_list;
     if (k != (std::numeric_limits<std::size_t>::max)())
       points_list.reserve(k);
 

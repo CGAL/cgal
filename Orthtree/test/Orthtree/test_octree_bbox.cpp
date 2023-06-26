@@ -20,7 +20,7 @@ void test_1_node() {
   points.insert({-1, -1, -1});
 
   // Create the octree
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
   octree.refine(10, 1);
 
   // Compare the top (only) node
@@ -35,7 +35,7 @@ void test_9_nodes() {
   points.insert({1, 1, 1});
 
   // Create the octree
-  Octree octree(points, points.point_map(), 1.1);
+  Octree octree({points, points.point_map()}, 1.1);
   octree.refine(10, 1);
 
   // Compare the top node
@@ -62,7 +62,7 @@ void test_25_nodes() {
   points.insert({1, 0.5, 1});
 
   // Create the octree
-  Octree octree(points, points.point_map(), 1.5);
+  Octree octree({points, points.point_map()}, 1.5);
   octree.refine(10, 1);
 
   // Compare the top node
