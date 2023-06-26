@@ -807,7 +807,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         sharp_edges_angle_bound,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY);
-    } 
+    }
     else
     {
       thread = cgal_code_mesh_3(
