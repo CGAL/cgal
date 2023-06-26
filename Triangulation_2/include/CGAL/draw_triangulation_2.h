@@ -129,7 +129,6 @@ template <class Gt, class Tds, typename BufferType=float>
 void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
                             CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
-  CGAL::Graphic_storage<float> buffer;
   Drawing_functor<CGAL_T2_TYPE,
                   typename CGAL_T2_TYPE::Vertex_handle,
                   typename CGAL_T2_TYPE::Finite_edges_iterator,

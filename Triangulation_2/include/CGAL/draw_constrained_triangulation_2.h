@@ -13,56 +13,76 @@
 #define CGAL_DRAW_CT2_H
 
 #include <CGAL/license/Triangulation_2.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_2/internal/In_domain.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/Qt/init_ogl_context.h>
+#include <CGAL/draw_triangulation_2.h>
 
 namespace CGAL
 {
-
-  template<class InDomainPmap>
-  CGAL::IO::Color color_of_face(Facet_const_handle fh, InDomainPmap ipm)
-  { return get(ipm, fh)? CGAL::IO::yellow() : CGAL::IO::white(); }
-
-  CGAL::IO::Color color_of_edge(Edge_const_handle eh)
-  { return t2.is_constrained(*eh)? CGAL::IO::green() : CGAL::IO::black(); }
-
-
 // Specialization of draw function.
 #define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
 
-template<class Gt, class Tds, class Itag, class InDomainPmap>
-void draw(const CGAL_T2_TYPE& at2, InDomainPmap ipm)
+template <class Gt, class Tds, class Itag, class InDomainPmap, typename BufferType=float>
+void add_in_graphic_storage(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
+                            CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
+  using BASET2=CGAL::Triangulation_2<Gt, Tds>;
+
+  Drawing_functor<BASET2, //CGAL_T2_TYPE,
+                  typename CGAL_T2_TYPE::Vertex_handle,
+                  typename CGAL_T2_TYPE::Finite_edges_iterator,
+                  typename CGAL_T2_TYPE::Finite_faces_iterator>
+    drawingFunctor;
+
+  drawingFunctor.colored_edge =
+    [](const BASET2& t2, typename CGAL_T2_TYPE::Finite_edges_iterator eh) -> bool
+    { return static_cast<const CGAL_T2_TYPE&>(t2).is_constrained(*eh); };
+
+  drawingFunctor.edge_color =
+    [](const BASET2& t2, typename CGAL_T2_TYPE::Finite_edges_iterator eh) -> CGAL::IO::Color
+  { return static_cast<const CGAL_T2_TYPE&>(t2).is_constrained(*eh)? CGAL::IO::green() : CGAL::IO::black(); };
+
+  drawingFunctor.colored_face =
+    [](const BASET2&, typename CGAL_T2_TYPE::Finite_faces_iterator) -> bool
+    { return true; };
+
+  drawingFunctor.face_color =
+    [&ipm](const BASET2&, typename CGAL_T2_TYPE::Finite_faces_iterator fh) -> CGAL::IO::Color
+  { return get(ipm, fh)? CGAL::IO::yellow() : CGAL::IO::white(); };
+
+  add_in_graphic_storage(at2, graphic_storage, drawingFunctor);
+}
+
+template <class Gt, class Tds, class Itag, typename BufferType=float>
+void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
+                            CGAL::Graphic_storage<BufferType>& graphic_storage)
+{
+  internal::In_domain<CGAL_T2_TYPE> in_domain;
+  add_in_graphic_storage(at2, in_domain, graphic_storage);
+}
+
+template<class Gt, class Tds, class Itag, class InDomainPmap>
+void draw(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
+          const char *title="Constrained Triangulation_2 Basic Viewer")
+{
+  CGAL::Graphic_storage<float> buffer;
+  add_in_graphic_storage(at2, ipm, buffer);
+  draw_graphic_storage(buffer, title);
 }
 
 
 template<class Gt, class Tds, class Itag>
-void draw(const CGAL_T2_TYPE& at2)
+void draw(const CGAL_T2_TYPE& at2,
+          const char *title="Constrained Triangulation_2 Basic Viewer")
 {
   internal::In_domain<CGAL_T2_TYPE> in_domain;
-  draw(at2, in_domain);
+  draw(at2, in_domain, title);
 }
 
-#undef CGAL_T2_TYPE
-
-} // End namespace CGAL
-
-#else
-
-namespace CGAL {
-// Specialization of draw function.
-#define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
-
-template<class Gt, class Tds, class Itag, class InDomainPmap>
-void draw(const CGAL_T2_TYPE& ,
-          InDomainPmap )
-{}
 #undef CGAL_T2_TYPE
 
 } // End namespace CGAL
