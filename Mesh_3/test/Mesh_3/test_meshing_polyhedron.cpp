@@ -35,10 +35,10 @@ struct Polyhedron_tester : public Tester<K>
     typedef CGAL::Polyhedron_3<Gt> Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
 
-    CGAL_static_assertion((std::is_same<
+    static_assert(std::is_same<
                             typename Mesh_domain::Surface_patch_index,
                             std::pair<int, int>
-                           >::value));
+                           >::value);
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,

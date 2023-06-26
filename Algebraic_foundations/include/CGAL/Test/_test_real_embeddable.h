@@ -48,9 +48,9 @@ namespace CGAL {
         void operator() (const ToDouble& to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            CGAL_static_assertion(( ::std::is_same<Type, Argument_type>::value));
+            static_assert( ::std::is_same<Type, Argument_type>::value);
             CGAL_USE_TYPE(Argument_type);
-            CGAL_static_assertion(( ::std::is_same<double, Result_type>::value));
+            static_assert( ::std::is_same<double, Result_type>::value);
             CGAL_USE_TYPE(Result_type);
             assert(42.0 == to_double(Type(42)));
         }
@@ -71,9 +71,9 @@ namespace CGAL {
             typedef typename To_interval::argument_type Argument_type;
             typedef typename To_interval::result_type   Result_type;
             typedef std::pair<double,double>  Interval_type;
-            CGAL_static_assertion(( ::std::is_same<Type, Argument_type>::value));
+            static_assert( ::std::is_same<Type, Argument_type>::value);
             CGAL_USE_TYPE(Argument_type);
-            CGAL_static_assertion(( ::std::is_same<Interval_type, Result_type>::value));
+            static_assert( ::std::is_same<Interval_type, Result_type>::value);
             CGAL_USE_TYPE(Result_type); CGAL_USE_TYPE(Interval_type);
 
 //            assert(NiX::in(42.0,to_Interval(Type(42))));
@@ -84,7 +84,7 @@ namespace CGAL {
             assert(to_interval(Type(42)).first > 41.99);
             assert(to_interval(Type(42)).second < 42.01);
 
-            // test neagtive numbers as well to catch obvious sign
+            // test negative numbers as well to catch obvious sign
             // errors
             assert( -42.0 >= to_interval( -Type(42) ).first );
             assert( -42.0 <= to_interval( -Type(42) ).second );
@@ -139,7 +139,7 @@ void test_real_embeddable() {
     CGAL_SNAP_RET_FUNCTORS(RET);
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_true;
-    CGAL_static_assertion(( ::std::is_same< Is_real_embeddable, Tag_true>::value));
+    static_assert(::std::is_same< Is_real_embeddable, Tag_true>::value);
     CGAL_USE_TYPE(Is_real_embeddable);
 
     typedef typename RET::Boolean Boolean;
@@ -246,7 +246,7 @@ void test_not_real_embeddable() {
     typedef CGAL::Real_embeddable_traits<Type> RET;
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_false;
-    CGAL_static_assertion(( ::std::is_same< Is_real_embeddable, Tag_false>::value));
+    static_assert(::std::is_same< Is_real_embeddable, Tag_false>::value);
     CGAL_USE_TYPE(Is_real_embeddable);
 }
 
@@ -254,13 +254,13 @@ void test_not_real_embeddable() {
 //template <class Type, class CeilLog2Abs>
 //void test_rounded_log2_abs(Type zero, CGAL::Null_functor, CeilLog2Abs) {
 //    typedef CGAL::Null_functor Null_functor;
-//    CGAL_static_assertion(( ::std::is_same< CeilLog2Abs, Null_functor>::value));
+//    static_assert(::std::is_same< CeilLog2Abs, Null_functor>::value);
 //}
 //
 //template <class Type, class FloorLog2Abs, class CeilLog2Abs>
 //void test_rounded_log2_abs(Type zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
 //    typedef CGAL::Null_functor Null_functor;
-//    CGAL_static_assertion((!::std::is_same< CeilLog2Abs, Null_functor>::value));
+//    static_assert(!::std::is_same< CeilLog2Abs, Null_functor>::value);
 //
 //    assert( fl_log(Type( 7)) == 2 );
 //    assert( cl_log(Type( 7)) == 3 );

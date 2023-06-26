@@ -215,16 +215,16 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 
     /*! We identify 2 main cases:
      * 1. The vertical ray intersects the boundary at a halfedge. In this
-     * case the x-possition of p is strictly larger than the x-possition of
-     * the current-curve source, and strictly smaller than x-possition of
-     * the current-curve target, or vise versa.
+     * case the x-position of p is strictly larger than the x-position of
+     * the current-curve source, and strictly smaller than x-position of
+     * the current-curve target, or vice versa.
      * 2. The vertical ray intersects the boundary at a vertex. In this case:
-     * a. the x-possition of p is strictly smaller than the x-position of the
+     * a. the x-position of p is strictly smaller than the x-position of the
      * current-curve source, and equal to the x-position of the current-curve
      * target, and
-     * b. the x-possition of p is equal to the x-position of the next-curve
+     * b. the x-position of p is equal to the x-position of the next-curve
      * source (not counting vertical curves in between), and strictly larger
-     * than the x-possition of the next-curve target, or vise verase (that is,
+     * than the x-position of the next-curve target, or vice verase (that is,
      * the "smaller" and "larger" interchanged).
      */
 
@@ -902,7 +902,7 @@ _locate_around_pole(Vertex* v,
     next = curr->next()->opposite();
   } while (curr != first);
 
-  // We sould never reach here:
+  // We should never reach here:
   CGAL_error();
   return nullptr;
 }

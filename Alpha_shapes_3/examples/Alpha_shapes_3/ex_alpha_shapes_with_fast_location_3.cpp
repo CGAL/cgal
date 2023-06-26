@@ -37,7 +37,7 @@ int main()
 
   // compute alpha shape
   Alpha_shape_3 as(dt);
-  std::cout << "Alpha shape computed in REGULARIZED mode by defaut."
+  std::cout << "Alpha shape computed in REGULARIZED mode by default."
             << std::endl;
 
    // find optimal alpha values

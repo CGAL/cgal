@@ -1641,7 +1641,7 @@ protected:
 
   QGLBuffer buffers[NB_VBO_BUFFERS];
 
-  // The following enum gives the indices of the differents vao.
+  // The following enum gives the indices of the different vao.
   enum
     { VAO_MONO_POINTS=0,
       VAO_COLORED_POINTS,
@@ -1762,14 +1762,8 @@ protected:
 namespace CGAL
 {
 
-  template<class T>
-  void draw(const T&, const char* ="")
-  {
-    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
-  }
-
-  template<class T, class DrawingFunctor>
-  void draw(const T&, const DrawingFunctor &, const char* ="")
+  template<class ... T>
+  void draw(T...)
   {
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }

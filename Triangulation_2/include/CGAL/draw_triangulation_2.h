@@ -119,15 +119,15 @@ void compute_elements(const T2& t2,
 
 template <class Gt, class Tds, typename BufferType=float, class DrawingFunctor>
 void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
-                           CGAL::Graphic_storage<BufferType>& graphic_storage,
-                           const DrawingFunctor& drawing_functor)
+                            CGAL::Graphic_storage<BufferType>& graphic_storage,
+                            const DrawingFunctor& drawing_functor)
 {
   draw_function_for_t2::compute_elements(at2, graphic_storage, drawing_functor);
 }
 
 template <class Gt, class Tds, typename BufferType=float>
 void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
-                           CGAL::Graphic_storage<BufferType>& graphic_storage)
+                            CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
   CGAL::Graphic_storage<float> buffer;
   Drawing_functor<CGAL_T2_TYPE,

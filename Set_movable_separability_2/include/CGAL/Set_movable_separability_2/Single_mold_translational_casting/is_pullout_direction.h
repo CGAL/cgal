@@ -151,7 +151,7 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
                                     segment_outer_circle.second,
                                     segment_outer_circle.first);
     if (!isordered) {
-      // unlikely, this if must be true atleast once for any polygon - add ref
+      // unlikely, this if must be true at least once for any polygon - add ref
       // to paper
       if (top_edge== pgn.edges_end()) top_edge=e_it;
       else return pgn.edges_end();
@@ -198,7 +198,7 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
 }
 
 } // namespace Single_mold_translational_casting
-} // namesapce Set_movable_separability_2
-} // namesapce CGAL
+} // namespace Set_movable_separability_2
+} // namespace CGAL
 
 #endif

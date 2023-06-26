@@ -36,10 +36,10 @@ void test_with_empty_interval(CGAL::Tag_false) {
     typedef CGAL::Interval_traits<Interval> IT;
     typedef typename IT::Empty Empty;
     CGAL_USE_TYPE(Empty);
-    CGAL_static_assertion(
+    static_assert(
             (::std::is_same< Empty, CGAL::Null_functor>::value));
 
-    // this part chages in case we allow empty intersection
+    // this part changes in case we allow empty intersection
     // which seems to be not possible for CORE::BigFloat as Interval
     try{
         try{
@@ -74,8 +74,8 @@ void test_interval_traits() {
     typedef typename IT::With_empty_interval With_empty_interval;
     CGAL_USE_TYPE(Is_interval);
     using CGAL::Tag_true;
-    CGAL_static_assertion(( ::std::is_same< Is_interval, Tag_true>::value));
-    CGAL_static_assertion(( ::std::is_same< Interval_, Interval>::value));
+    static_assert(::std::is_same< Is_interval, Tag_true>::value);
+    static_assert(::std::is_same< Interval_, Interval>::value);
 
     test_with_empty_interval<Interval>(With_empty_interval());
 

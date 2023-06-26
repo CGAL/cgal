@@ -100,11 +100,9 @@ static constexpr TraitsType enumFromArrType()
   return details::EnumFromTraits<typename T::Geometry_traits_2>::value;
 }
 
-template <class Lambda, class Types=DemoTypes>
-static void visitArrangementType(TraitsType tt, Lambda&& lambda)
-{
-  switch (tt)
-  {
+template <class Lambda, class Types = DemoTypes>
+static void visitArrangementType(TraitsType tt, Lambda&& lambda) {
+  switch (tt) {
   case TraitsType::SEGMENT_TRAITS:
     lambda(TypeHolder<typename Types::Seg_arr>{});
     break;

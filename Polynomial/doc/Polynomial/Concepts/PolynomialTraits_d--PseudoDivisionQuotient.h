@@ -12,9 +12,7 @@ where \f$ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}\f$
 
 This functor computes \f$ q\f$.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

@@ -54,7 +54,10 @@ static inline std::string get_file_extension(const std::string fname)
     return std::string();
 
   std::string ext = fname.substr(dot+1, fname.length() - dot - 1);
-  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+  std::transform(ext.begin(), ext.end(), ext.begin(),
+                 [](char c) {
+                   return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+                 });
 
   return ext;
 }
@@ -81,7 +84,7 @@ struct is_Range
 { };
 
 template <class T>
-CGAL_CPP17_INLINE constexpr bool is_Range_v = is_Range<T>::value;
+inline constexpr bool is_Range_v = is_Range<T>::value;
 
 // For polygon meshes
 template <typename T>
@@ -90,7 +93,7 @@ struct is_Point_set_or_Range_or_Iterator
 { };
 
 template <class T>
-CGAL_CPP17_INLINE constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
+inline constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
 
 } // end namespace internal
 } // end namespace IO

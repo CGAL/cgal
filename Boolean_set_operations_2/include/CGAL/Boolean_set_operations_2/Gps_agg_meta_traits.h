@@ -32,10 +32,10 @@ protected:
   typedef Curve_with_halfedge<Arrangement_>        Base;
 
   const Arrangement* m_arr; // pointer to the arrangement containing the edge.
-  unsigned int m_bc;        // the boudary counter of the halfedge with the same
+  unsigned int m_bc;        // the boundary counter of the halfedge with the same
                             // direction as the curve
 
-  unsigned int m_twin_bc;   // the boudary counter of the halfedge with the same
+  unsigned int m_twin_bc;   // the boundary counter of the halfedge with the same
                             // direction as the curve
 
 public:
@@ -123,14 +123,14 @@ public:
   typedef typename Arr::Right_side_category     Right_side_category;
 
   // a side is either oblivious or open (unbounded)
-  CGAL_static_assertion((std::is_same<Left_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Left_side_category, Arr_open_side_tag>::value));
-  CGAL_static_assertion((std::is_same<Bottom_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Bottom_side_category, Arr_open_side_tag>::value));
-  CGAL_static_assertion((std::is_same<Top_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Top_side_category, Arr_open_side_tag>::value));
-  CGAL_static_assertion((std::is_same<Right_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same<Right_side_category, Arr_open_side_tag>::value));
+  static_assert(std::is_same<Left_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Left_side_category, Arr_open_side_tag>::value);
+  static_assert(std::is_same<Bottom_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Bottom_side_category, Arr_open_side_tag>::value);
+  static_assert(std::is_same<Top_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Top_side_category, Arr_open_side_tag>::value);
+  static_assert(std::is_same<Right_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Right_side_category, Arr_open_side_tag>::value);
 
   typedef typename Arr::Halfedge_handle         Halfedge_handle;
   typedef typename Arr::Vertex_handle           Vertex_handle;

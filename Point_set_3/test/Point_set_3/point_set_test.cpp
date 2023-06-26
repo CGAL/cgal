@@ -3,6 +3,8 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/grid_simplify_point_set.h>
 
+#include <boost/unordered_set.hpp>
+
 #include <fstream>
 #include <limits>
 
@@ -125,6 +127,9 @@ int main (int, char**)
   Point p_after = *(point_set.points().begin());
 
   test (p_before == p_after, "points should not change when clearing properties.");
+
+  std::unordered_set<Point_set::Index> std_hash;
+  boost::unordered_set<Point_set::Index> boost_hash;
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
 

@@ -39,8 +39,8 @@ namespace internal {
         void operator() (ToDouble to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            CGAL_static_assertion((::std::is_same<NT, Argument_type>::value));
-            CGAL_static_assertion((::std::is_same<double, Result_type>::value));
+            static_assert(::std::is_same<NT, Argument_type>::value);
+            static_assert(::std::is_same<double, Result_type>::value);
             assert(42.0 == to_double(NT(42)));
         }
     };
@@ -59,8 +59,8 @@ namespace internal {
         void operator() (ToInterval to_Interval) {
             typedef typename ToInterval::argument_type Argument_type;
             typedef typename ToInterval::result_type   Result_type;
-            CGAL_static_assertion((::std::is_same<NT, Argument_type>::value));
-            CGAL_static_assertion((::std::is_same< typename Argument_type::Interval, Result_type>::value));
+            static_assert(::std::is_same<NT, Argument_type>::value);
+            static_assert(::std::is_same< typename Argument_type::Interval, Result_type>::value);
 
             // TODO: NiX::in not available!?
             //assert(NiX::in(42.0,to_Interval(NT(42))));
@@ -99,7 +99,7 @@ void test_real_comparable() {
     typedef CGAL::Real_embeddable_traits<NT> Traits;
     typedef typename Traits::Is_real_embeddable Is_real_comparable;
     using ::CGAL::Tag_true;
-    CGAL_static_assertion((::std::is_same< Is_real_comparable, Tag_true>::value));
+    static_assert(::std::is_same< Is_real_comparable, Tag_true>::value);
     typename Traits::Compare compare;
     typename Traits::Sign    sign;
     typename Traits::Abs     abs;
@@ -168,20 +168,20 @@ void test_not_real_comparable() {
     typedef CGAL::Real_embeddable_traits<NT> Traits;
     typedef typename Traits::Is_real_embeddable Is_real_comparable;
     using ::CGAL::Tag_false;
-    CGAL_static_assertion((::std::is_same< Is_real_comparable, Tag_false>::value));
+    static_assert(::std::is_same< Is_real_comparable, Tag_false>::value);
 }
 
 
 template <class NT, class CeilLog2Abs>
 void test_rounded_log2_abs(NT zero, ::CGAL::Null_functor, CeilLog2Abs) {
     typedef ::CGAL::Null_functor Nulltype;
-    CGAL_static_assertion((::std::is_same< CeilLog2Abs, Nulltype>::value));
+    static_assert(::std::is_same< CeilLog2Abs, Nulltype>::value);
 }
 
 template <class NT, class FloorLog2Abs, class CeilLog2Abs>
 void test_rounded_log2_abs(NT zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
     typedef ::CGAL::Null_functor Null_functor;
-    CGAL_static_assertion((!::std::is_same< CeilLog2Abs, Null_functor>::value));
+    static_assert(!::std::is_same< CeilLog2Abs, Null_functor>::value);
 
     assert( fl_log(NT( 7)) == 2 );
     assert( cl_log(NT( 7)) == 3 );

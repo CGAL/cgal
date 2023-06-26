@@ -196,7 +196,7 @@ register_point_sets(const PointRange1& range1,    PointRange2& range2,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing set `point_set_2`}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `point_set_2`}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange2` and whose value type is `geom_traits::Vector_3`}
        \cgalParamDefault{Normals are computed and stored internally.}
@@ -222,14 +222,14 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
   typedef Point_set_processing_3_np_helper<PointRange2, NamedParameters2> NP_helper2;
   typedef typename NP_helper1::Const_point_map PointMap1;
   typedef typename NP_helper2::Const_point_map PointMap2;
-  CGAL_static_assertion_msg((std::is_same< typename boost::property_traits<PointMap1>::value_type,
-                                           typename boost::property_traits<PointMap2>::value_type> ::value),
+  static_assert(std::is_same< typename boost::property_traits<PointMap1>::value_type,
+                                           typename boost::property_traits<PointMap2>::value_type> ::value,
                             "The point type of input ranges must be the same");
 
   typedef typename NP_helper1::Normal_map NormalMap1;
   typedef typename NP_helper2::Normal_map NormalMap2;
-  CGAL_static_assertion_msg((std::is_same< typename boost::property_traits<NormalMap1>::value_type,
-                                           typename boost::property_traits<NormalMap2>::value_type> ::value),
+  static_assert(std::is_same< typename boost::property_traits<NormalMap1>::value_type,
+                                           typename boost::property_traits<NormalMap2>::value_type> ::value,
                             "The vector type of input ranges must be the same");
 
   typedef typename NP_helper1::Geom_traits Kernel;

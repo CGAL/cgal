@@ -19,7 +19,6 @@
 
 #include <list>
 #include <CGAL/basic.h>
-#include <CGAL/predicates_on_points_2.h>
 #include <iostream>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
@@ -108,7 +107,7 @@ public:
 
 template<class Traits_, class SAVED_OBJECT>
 class Multiple_kd_tree {
-  CGAL_static_assertion_msg((boost::is_pointer<SAVED_OBJECT>::value), "SAVED_OBJECT is not a pointer.");
+  static_assert(boost::is_pointer<SAVED_OBJECT>::value, "SAVED_OBJECT is not a pointer.");
 private:
   typedef Traits_                                       Traits;
   typedef typename Traits::FT                           NT;
@@ -411,7 +410,7 @@ public:
     int * kd_counter = new int[number_of_trees];
     std::size_t number_of_segments = seg_list.size();
 
-    // auxilary directions
+    // auxiliary directions
     Direction_list directions;
     double buffer_angle;
     Line_2 li;

@@ -138,7 +138,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->set_valid(false);
 
       if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
-         /*verbose = */true, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
+         /*verbose = */false, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
       {
         update_c3t3(item->c3t3());
 
@@ -337,9 +337,9 @@ struct Fake_CDT_3_cell_base : public Cb
   int constrained_facet[4];
   bool _restoring[6];
   int to_edge_index( int li, int lj ) const {
-    CGAL_triangulation_precondition( li >= 0 && li < 4 );
-    CGAL_triangulation_precondition( lj >= 0 && lj < 4 );
-    CGAL_triangulation_precondition( li != lj );
+    CGAL_precondition( li >= 0 && li < 4 );
+    CGAL_precondition( lj >= 0 && lj < 4 );
+    CGAL_precondition( li != lj );
     return ( li==0 || lj==0 ) ? li+lj-1 : li+lj;
   }
 

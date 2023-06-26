@@ -18,7 +18,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Iterator_range.h>
 #include <functional>
 #include <boost/functional/hash.hpp>
@@ -66,7 +66,7 @@ public:
     Hash_epsilon_points_3 (double epsilon, PointMap p_map)
         : m_epsilon (epsilon), point_map(p_map)
     {
-        CGAL_point_set_processing_precondition(epsilon > 0);
+        CGAL_precondition(epsilon > 0);
     }
 
   std::size_t operator() (const Point_3& a) const
@@ -96,7 +96,7 @@ public:
     Equal_epsilon_points_3 (const double& epsilon, PointMap p_map)
         : m_epsilon (epsilon), point_map(p_map)
     {
-        CGAL_point_set_processing_precondition(epsilon > 0);
+        CGAL_precondition(epsilon > 0);
     }
 
     bool operator() (const Point_3& a, const Point_3& b) const
@@ -155,7 +155,7 @@ public:
            internal::Equal_epsilon_points_3<Point_3, PointMap>(epsilon, point_map))
     , min_points_per_cell (min_points_per_cell)
   {
-    CGAL_point_set_processing_precondition(epsilon > 0);
+    CGAL_precondition(epsilon > 0);
   }
 
   bool insert (const Point_3& p)
@@ -249,7 +249,7 @@ grid_simplify_point_set(
   // actual type of input points
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
 
-  CGAL_point_set_processing_precondition(epsilon > 0);
+  CGAL_precondition(epsilon > 0);
 
   if (min_points_per_cell == 1)
   {

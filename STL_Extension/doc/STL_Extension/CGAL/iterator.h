@@ -61,8 +61,6 @@ from input iterators.
 `Iterator` is a model for
 `InputIterator`.
 
-\sa `CGAL::copy_n()`
-
 
 */
 template< typename Iterator, typename Value >

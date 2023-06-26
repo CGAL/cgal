@@ -154,20 +154,23 @@ public:
     ++fc;
     while(fc!=f->facet_cycles_end())
     {
-      se = SHalfedge_const_handle(fc);
-      hc_start=se;
-      hc_end=hc_start;
-      CGAL_For_all(hc_start, hc_end)
+      if(fc.is_shalfedge())
       {
-        Vertex_const_handle vh=hc_start->source()->center_vertex();
-        graphic_storage.add_point_in_face(vh->point(),
-                                         get_vertex_normal<Nef_Polyhedron>(vh));
+        se = SHalfedge_const_handle(fc);
+        hc_start=se;
+        hc_end=hc_start;
+        CGAL_For_all(hc_start, hc_end)
+        {
+          Vertex_const_handle vh=hc_start->source()->center_vertex();
+          graphic_storage.add_point_in_face(vh->point(),
+                                            get_vertex_normal<Nef_Polyhedron>(vh));
+        }
+        graphic_storage.add_point_in_face(hc_start->source()->center_vertex()->point(),
+                                          get_vertex_normal<Nef_Polyhedron>
+                                          (hc_start->source()->center_vertex()));
+        graphic_storage.add_point_in_face(lastvh->point(),
+                                          get_vertex_normal<Nef_Polyhedron>(lastvh));
       }
-      graphic_storage.add_point_in_face(hc_start->source()->center_vertex()->point(),
-                                       get_vertex_normal<Nef_Polyhedron>
-                                       (hc_start->source()->center_vertex()));
-      graphic_storage.add_point_in_face(lastvh->point(),
-                                       get_vertex_normal<Nef_Polyhedron>(lastvh));
       ++fc;
     }
 

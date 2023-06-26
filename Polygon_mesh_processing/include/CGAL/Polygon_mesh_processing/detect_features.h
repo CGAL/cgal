@@ -57,6 +57,8 @@ is_sharp(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
 
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pmesh));
+
   if(is_border_edge(h, pmesh))
     return false;
 

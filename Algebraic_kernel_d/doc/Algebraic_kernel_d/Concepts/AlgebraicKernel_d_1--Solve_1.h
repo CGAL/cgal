@@ -5,8 +5,7 @@
 
 Computes the real roots of a univariate polynomial.
 
-\cgalRefines `Assignable`
-\cgalRefines `CopyConstructible`
+\cgalRefines{Assignable,CopyConstructible}
 
 */
 

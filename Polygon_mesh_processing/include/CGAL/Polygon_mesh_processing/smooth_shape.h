@@ -61,6 +61,25 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{`1`}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex cannot be modified at all during smoothing.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_scale}
+*     \cgalParamDescription{Whether to apply rescaling after smoothing. This is useful because
+*                           the mean curvature flow tends to shrink the surface.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*     \cgalParamExtra{Scaling can only be applied if the mesh is closed and if there is no more than
+*                     a single constrained vertex.}
+*     \cgalParamExtra{If a vertex is constrained, it is the fixed point of the scaling, otherwise
+*                     the centroid is used.}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -77,14 +96,6 @@ namespace Polygon_mesh_processing {
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{vertex_is_constrained_map}
-*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`.}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-*                    as key type and `bool` as value type. It must be default constructible.}
-*     \cgalParamDefault{a default property map where no vertex is constrained}
-*     \cgalParamExtra{A constrained vertex cannot be modified at all during smoothing.}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{sparse_linear_solver}
 *     \cgalParamDescription{an instance of the sparse linear solver used for smoothing}
 *     \cgalParamType{a class model of `SparseLinearAlgebraWithFactorTraits_d`}
@@ -97,9 +108,10 @@ namespace Polygon_mesh_processing {
 *
 * @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
 *
-* @see `smooth_mesh()`
+* @see `angle_and_area_smoothing()`
 */
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
+template<typename TriangleMesh, typename FaceRange,
+         typename NamedParameters = parameters::Default_named_parameters>
 void smooth_shape(const FaceRange& faces,
                   TriangleMesh& tmesh,
                   const double time,
@@ -125,6 +137,7 @@ void smooth_shape(const FaceRange& faces,
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                  Static_boolean_property_map<vertex_descriptor, false>());
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
+  const bool scale_after_smoothing = choose_parameter(get_parameter(np, internal_np::do_scale), true);
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #if EIGEN_VERSION_AT_LEAST(3,2,0)
@@ -141,11 +154,11 @@ void smooth_shape(const FaceRange& faces,
 #endif
 
 #if defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(
+  static_assert(
       (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "Eigen3 version 3.2 or later is required.");
 #else
-  CGAL_static_assertion_msg(
+  static_assert(
       (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "Eigen3 version 3.2 or later is required.");
 #endif
@@ -161,11 +174,11 @@ void smooth_shape(const FaceRange& faces,
   Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
   std::vector<CGAL::Triple<std::size_t, std::size_t, double> > stiffness;
 
-  internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
+  internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap, scale_after_smoothing, gt);
 
   smoother.init_smoothing(faces);
 
-  // For robustness reasons, the laplacian coefficients are computed only once (only the mass
+  // For robustness reasons, the Laplacian coefficients are computed only once (only the mass
   // matrix is updated at every iteration). See Kazdhan et al. "Can Mean-Curvature Flow Be Made Non-Singular?".
   smoother.calculate_stiffness_matrix_elements(stiffness);
 

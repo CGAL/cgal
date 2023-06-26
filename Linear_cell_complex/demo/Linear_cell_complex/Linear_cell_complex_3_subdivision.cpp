@@ -134,11 +134,10 @@ subdivide_lcc_3 (LCC & m)
 
   // 2) We subdivide each facet.
   m.negate_mark (treated);  // All the darts are marked in O(1).
-  unsigned int nb = 0;
+
   for (LCC::Dart_range::iterator it (m.darts().begin ());
        m.number_of_marked_darts (treated) > 0; ++it)
   {
-    ++nb;
     if (m.is_marked (it, treated))
     {
       // We unmark the darts of the facet to process only once dart/facet.

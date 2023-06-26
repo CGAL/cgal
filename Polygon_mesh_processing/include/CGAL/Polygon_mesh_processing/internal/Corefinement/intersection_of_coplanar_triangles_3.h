@@ -32,8 +32,8 @@ struct Intersect_coplanar_faces_3
  // typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type Point;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
-                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                             typename boost::property_traits<VertexPointMap2>::value_type>::value);
 
   typedef typename CGAL::Kernel_traits<Point>::Kernel Input_kernel;
 
@@ -81,7 +81,7 @@ struct Intersect_coplanar_faces_3
   //an intersection point between two edges. Otherwise, the point is a vertex of the second facet included into
   //the first facet.
   //
-  //(V,F) : point initialy constructed
+  //(V,F) : point initially constructed
   //(V,E) : (V,F) updated by get_orientation_and_update_info_2 (i.e lies on one edge)
   //(V,V) : (V,E) updated by get_orientation_and_update_info_2 (i.e lies on two edges)
   //(E,E) : created in the following function when prev and curr lie on the same edge

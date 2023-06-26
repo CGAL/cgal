@@ -201,7 +201,7 @@ template<typename Ray, typename SkipFunctor>
 boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
 AABB_tree<AABBTraits>::first_intersection(const Ray& query,
                                           const SkipFunctor& skip) const {
-  CGAL_static_assertion_msg((std::is_same<Ray, typename AABBTraits::Ray_3>::value),
+  static_assert(std::is_same<Ray, typename AABBTraits::Ray_3>::value,
                             "Ray and Ray_3 must be the same type");
 
   switch(size()) // copy-paste from AABB_tree::traversal

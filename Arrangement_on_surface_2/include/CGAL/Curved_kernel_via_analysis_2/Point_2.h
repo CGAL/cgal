@@ -76,8 +76,7 @@ public:
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
 
     //! default constructor
-    Point_2_rep() {
-    }
+    Point_2_rep() : _m_location(CGAL::ARR_INTERIOR) {}
 
     //! constructs a "finite" point on curve,
     //! implies CGAL::NO_BOUNDARY in x/y
@@ -326,7 +325,7 @@ protected:
     //!@{
 
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     /*!\brief
      * Constructor for for rebind

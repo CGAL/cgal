@@ -36,7 +36,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Function
 FT schwarz_p(const Point& p)
@@ -67,11 +67,11 @@ int main(int argc, char** argv)
   size.set_size(0.1, volume_dimension, domain.index_from_subdomain_index(2)); // exterior
   size.set_size(0.03, volume_dimension, domain.index_from_subdomain_index(1)); // interior
 
-  Periodic_mesh_criteria criteria(facet_angle = 30.,
-                                  facet_size = 0.05,
-                                  facet_distance = 0.025,
-                                  cell_radius_edge_ratio = 2.,
-                                  cell_size = size);
+  Periodic_mesh_criteria criteria(params::facet_angle(30.)
+                                         .facet_size(0.05)
+                                         .facet_distance(0.025)
+                                         .cell_radius_edge_ratio(2.)
+                                         .cell_size(size));
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);

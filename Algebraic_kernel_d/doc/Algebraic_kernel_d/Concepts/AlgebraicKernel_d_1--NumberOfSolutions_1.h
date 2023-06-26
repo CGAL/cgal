@@ -5,7 +5,7 @@
 
 Computes the number of real solutions of the given univariate polynomial.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicKernel_d_1::ConstructAlgebraicReal_1`
 

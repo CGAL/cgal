@@ -273,9 +273,9 @@ class Polynomial_algebraic_structure_traits_base< POLY, Field_tag >
         template < class NT1, class NT2 >
         void operator()( const NT1& x, const NT2& y,
                          POLY& q, POLY& r ) const {
-          CGAL_static_assertion((::std::is_same<
+          static_assert(::std::is_same<
                   typename Coercion_traits< NT1, NT2 >::Type, POLY
-                                               >::value));
+                                               >::value);
 
           typename Coercion_traits< NT1, NT2 >::Cast cast;
           operator()( cast(x), cast(y), q, r );

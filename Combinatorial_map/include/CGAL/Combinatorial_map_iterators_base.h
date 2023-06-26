@@ -28,7 +28,7 @@ namespace CGAL {
    * Basic classes that serve as tools for definition of iterators.
    There are 3 classes:
    *  - CMap_dart_iterator<Map,Const> is the basic generic class defining
-   *    what is an interator on darts.
+   *    what is an iterator on darts.
    *  - CMap_extend_iterator<Map,Ite,Bi> to extend the given iterator by adding
    *    the involution Bi.
    *  - CMap_non_basic_iterator<Map_,Ite> to transform the basic iterator Ite
@@ -305,8 +305,8 @@ namespace CGAL {
 
     typedef typename Map::size_type size_type;
 
-    CGAL_static_assertion( (Bi<=Map::dimension &&
-                            std::is_same<Ite_has_stack,Tag_false>::value) );
+    static_assert(Bi<=Map::dimension &&
+                            std::is_same<Ite_has_stack,Tag_false>::value);
 
   public:
     /// Main constructor.
@@ -493,8 +493,8 @@ namespace CGAL {
 
     typedef typename Map::size_type size_type;
 
-    CGAL_static_assertion( (std::is_same<typename Base::Basic_iterator,
-                            Tag_true>::value) );
+    static_assert(std::is_same<typename Base::Basic_iterator,
+                            Tag_true>::value);
 
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_descriptor adart1):
@@ -579,8 +579,8 @@ namespace CGAL {
     /// True iff this iterator is basic
     typedef Tag_false Basic_iterator;
 
-    CGAL_static_assertion( (std::is_same<typename Base::Basic_iterator,
-                            Tag_true>::value) );
+    static_assert(std::is_same<typename Base::Basic_iterator,
+                            Tag_true>::value);
 
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_descriptor adart):

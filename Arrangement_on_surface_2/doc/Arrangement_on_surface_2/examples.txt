@@ -43,4 +43,9 @@
 \example Arrangement_on_surface_2/unbounded_non_intersecting.cpp
 \example Arrangement_on_surface_2/unbounded_rational_functions.cpp
 \example Arrangement_on_surface_2/vertical_ray_shooting.cpp
+\example Arrangement_on_surface_2/draw_arr.cpp
+\example Arrangement_on_surface_2/linear_conics.cpp
+\example Arrangement_on_surface_2/parabolas.cpp
+\example Arrangement_on_surface_2/ellipses.cpp
+\example Arrangement_on_surface_2/hyperbolas.cpp
 */

@@ -10,9 +10,7 @@ where the monomial order is the lexicographic order giving outer
 variables a higher priority. In particular, this is the monomial
 that belongs to the innermost leading coefficient of \f$ p\f$.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

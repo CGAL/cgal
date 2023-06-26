@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #include <CGAL/make_surface_mesh.h>
 
@@ -111,7 +112,7 @@ struct Test_with_kernel {
     timer.stop();
 
     std::cout << "Final number of points: " << tr.number_of_vertices()
-              << "  (elasped time: " << timer.time() << ")\n\n";
+              << "  (elapsed time: " << timer.time() << ")\n\n";
 
     // same test, with a Sphere_3
     std::cout << "   Kernel::Sphere_3(ORIGIN, 1.)\n";
@@ -125,7 +126,7 @@ struct Test_with_kernel {
                       initial_number_of_points);
     timer.stop();
     std::cout << "Final number of points: " << tr_2.number_of_vertices()
-              << "  (elasped time: " << timer.time() << ")\n\n";
+              << "  (elapsed time: " << timer.time() << ")\n\n";
 
     typedef CGAL::Implicit_surface_3<K, Two_spheres<K> > Surface2;
     typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::Type Surface_mesh_traits;
@@ -154,7 +155,7 @@ struct Test_with_kernel {
                       initial_number_of_points);
     timer.stop();
     std::cout << "Final number of points: " << tr_3.number_of_vertices()
-              << "  (elasped time: " << timer.time() << ")\n\n";
+              << "  (elapsed time: " << timer.time() << ")\n\n";
 
 
   }

@@ -21,7 +21,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 
 namespace CGAL {
@@ -63,7 +63,7 @@ public:
 
   const Vertex_handle& vertex(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3 );
+    CGAL_precondition( i >= 0 && i <= 3 );
     CGAL_assume( i >= 0 && i <= 3 );
     return V[i];
   }
@@ -87,13 +87,13 @@ public:
     if (v == V[0]) { return 0; }
     if (v == V[1]) { return 1; }
     if (v == V[2]) { return 2; }
-    CGAL_triangulation_assertion( v == V[3] );
+    CGAL_assertion( v == V[3] );
     return 3;
   }
 
   const Cell_handle& neighbor(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     return N[i];
   }
 
@@ -116,13 +116,13 @@ public:
     if (n == N[0]) return 0;
     if (n == N[1]) return 1;
     if (n == N[2]) return 2;
-    CGAL_triangulation_assertion( n == N[3] );
+    CGAL_assertion( n == N[3] );
     return 3;
   }
 
   int offset(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3 );
+    CGAL_precondition( i >= 0 && i <= 3 );
     return ((off>>3*i)&7);
   }
 
@@ -130,13 +130,13 @@ public:
 
   void set_vertex(int i, const Vertex_handle& v)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     V[i] = v;
   }
 
   void set_neighbor(int i, const Cell_handle& n)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     N[i] = n;
   }
 
@@ -170,7 +170,7 @@ public:
 
   void set_offset(const Vertex_handle vh, int o)
   {
-    CGAL_triangulation_precondition(has_vertex(vh));
+    CGAL_precondition(has_vertex(vh));
     int vhi = index(vh);
 
     unsigned int offo[3] = {static_cast<unsigned int>((o&1)),
@@ -189,6 +189,11 @@ public:
 
   void set_offsets(int o0,int o1,int o2,int o3)
   {
+    CGAL_precondition(o0 >= 0 && o0 <= 7);
+    CGAL_precondition(o1 >= 0 && o1 <= 7);
+    CGAL_precondition(o2 >= 0 && o2 <= 7);
+    CGAL_precondition(o3 >= 0 && o3 <= 7);
+
     off = 0;
     // The following explicit cast are needed according to the Intel
     // Compiler version 12.
@@ -242,7 +247,7 @@ public:
   // TODO: Get rid of this flag! Used in convert_to_1_sheeted_covering.
   // Either use the conflict flag or a std::map.
   void set_additional_flag(unsigned char f) {
-    CGAL_triangulation_assertion(f < 4);
+    CGAL_assertion(f < 4);
     _additional_flag = f;
   }
   unsigned char get_additional_flag() const {

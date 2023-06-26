@@ -34,7 +34,7 @@
  * GMap_group_attribute_functor<GMap> to group the <i>-attributes of two
  *    given i-cells (except for j-adim). If one i-attribute is nullptr, we set the
  *    darts of its i-cell to the second attribute. If both i-attributes are
- *    non nullptr, we overide all the i-attribute of the second i-cell to the
+ *    non nullptr, we override all the i-attribute of the second i-cell to the
  *    first i-attribute.
  *
  * GMap_degroup_attribute_functor_run<GMap> to degroup one i-attributes in two
@@ -65,9 +65,9 @@ struct GMap_group_attribute_functor_of_dart_run
                   typename GMap::Dart_descriptor dh1,
                   typename GMap::Dart_descriptor dh2)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg(GMap::Helper::template
+    static_assert( i<=GMap::dimension );
+    static_assert( i!=j );
+    static_assert(GMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "GMap_group_attribute_functor_of_dart_run<i> but "
                               "i-attributes are disabled");
@@ -134,9 +134,9 @@ struct GMap_group_attribute_functor_run
                   typename GMap::Dart_descriptor adart1,
                   typename GMap::Dart_descriptor adart2)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg
+    static_assert( i<=GMap::dimension );
+    static_assert( i!=j );
+    static_assert
         ( GMap::Helper::template Dimension_index<i>::value>=0,
           "GMap_group_attribute_functor_run<i> but i-attributes are disabled" );
     typename GMap::template Attribute_descriptor<i>::type
@@ -212,9 +212,9 @@ struct GMap_degroup_attribute_functor_run
                   typename GMap::Dart_descriptor adart1,
                   typename GMap::Dart_descriptor adart2)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg
+    static_assert( i<=GMap::dimension );
+    static_assert( i!=j );
+    static_assert
         ( GMap::Helper::template Dimension_index<i>::value>=0,
           "GMap_degroup_attribute_functor_run<i> but i-attributes are disabled" );
 
@@ -276,7 +276,7 @@ void GMap_test_split_attribute_functor_one_dart
                         unsigned int, typename GMap::Hash_function> &
   found_attributes, typename GMap::size_type mark )
 {
-  CGAL_static_assertion_msg(GMap::Helper::template
+  static_assert(GMap::Helper::template
                             Dimension_index<i>::value>=0,
                             "GMap_test_split_attribute_functor_one_dart<i> but "
                             "i-attributes are disabled");
@@ -293,6 +293,13 @@ void GMap_test_split_attribute_functor_one_dart
   Attribute_descriptor_i a1 = amap.template attribute<i>(adart);
   if ( found_attributes.is_defined(a1) )
   {  // Here the attribute was already present in the hash_map
+
+    // We need to call reserve for the cc with index case. Indeed, if the vector
+    // is reallocated, the reference returned by get_attribute<i>(a1) will be
+    // invalidated, and the copy will be wrong. Note that there is no overhead
+    // since the creation of the attribute need one allocation.
+    amap.template attributes<i>().reserve(amap.template attributes<i>().size()+1);
+
     Attribute_descriptor_i a2 = amap.template
       create_attribute<i>(amap.template get_attribute<i>(a1));
 
@@ -333,9 +340,9 @@ struct GMap_test_split_attribute_functor_run
                    &modified_darts,
                    typename GMap::size_type mark_modified_darts=GMap::INVALID_MARK)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
+    static_assert( i<=GMap::dimension );
     CGAL_assertion( i!=j );
-    CGAL_static_assertion_msg(GMap::Helper::template
+    static_assert(GMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "GMap_test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");
@@ -376,9 +383,9 @@ struct GMap_test_split_attribute_functor_run
                    &modified_darts2,
                    typename GMap::size_type mark_modified_darts=GMap::INVALID_MARK)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
+    static_assert( i<=GMap::dimension );
     CGAL_assertion( i!=j );
-    CGAL_static_assertion_msg(GMap::Helper::template
+    static_assert(GMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "GMap_test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");

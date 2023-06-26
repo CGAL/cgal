@@ -13,9 +13,7 @@ the polynomial is considered as a univariate polynomial in one specific variable
 This functor is provided for efficiency reasons, since this operation just inverts the
 order of the coefficients with respect to the specified variable.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

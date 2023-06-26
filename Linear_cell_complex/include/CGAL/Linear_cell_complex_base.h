@@ -775,7 +775,7 @@ namespace CGAL {
     Dart_descriptor insert_point_in_cell(Dart_descriptor dh, const Point& p,
                                      bool update_attributes=true)
     {
-      CGAL_static_assertion(1<=i && i<=2);
+      static_assert(1<=i && i<=2);
       if (i==1) return insert_point_in_cell_1(dh, p, update_attributes);
       return insert_point_in_cell_2(dh, p, update_attributes);
     }
@@ -834,7 +834,7 @@ namespace CGAL {
       return res;
     }
 
-    /** Set the status of the managment of the attributes of the Map
+    /** Set the status of the management of the attributes of the Map
      */
     void set_update_attributes(bool newval)
     {

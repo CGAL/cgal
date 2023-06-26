@@ -143,7 +143,7 @@ Two traits classes are offered with this package as models of the concept `Delau
       for points on the sphere: given a point `p` in 3D space, this traits class manipulates directly
       its projection on the sphere (that is, the intersection of the sphere and the segment with endpoints
       `p` and the center of the sphere). Consequently, all points to be inserted are on the sphere.
-      This traits enable manipulating points that are not on the sphere, but whose triangulation
+      This traits class enables manipulating points that are not on the sphere, but whose triangulation
       on the sphere is still interesting, such as geographical coordinates with altitude.
   </li>
 </ul>
@@ -181,7 +181,7 @@ is also interesting. The two natural embedding of edges and faces of a triangula
 of points on \f$ \mathbb{S}\f$ are to use either <em>straight</em> simplex, that is using
 three-dimensional segments and triangles for the edges and faces of the triangulation, or
 to use a <em>curved</em> embedding, where the edges are arc segments of great circles over \f$ \mathbb{S}\f$.
-In the latter choice, the geometrical embedding of the face is defined implicitely by its three edges.
+In the latter choice, the geometrical embedding of the face is defined implicitly by its three edges.
 
 Both choices are available to users, for example using either `Triangulation_on_sphere_2::segment()`
 or `Triangulation_on_sphere_2::segment_on_sphere()`. Similar choices are available in the construction

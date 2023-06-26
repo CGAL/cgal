@@ -3,7 +3,7 @@
 \ingroup PkgSegmentDelaunayGraph2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDSVertexBase_2`
+\cgalRefines{TriangulationDSVertexBase_2}
 
 The concept `SegmentDelaunayGraphVertexBase_2` describes the
 requirements for the vertex base class of the

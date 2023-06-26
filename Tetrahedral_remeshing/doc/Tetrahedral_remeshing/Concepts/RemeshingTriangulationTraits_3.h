@@ -3,7 +3,7 @@
 \ingroup PkgTetrahedralRemeshingConcepts
 \cgalConcept
 
-\cgalRefines TriangulationTraits_3
+\cgalRefines{TriangulationTraits_3}
 
 The concept `RemeshingTriangulationTraits_3` is the first template parameter
 of the class `Remeshing_triangulation_3`. It defines the geometric objects
@@ -67,7 +67,7 @@ A constructor object model of `ConstructMidpoint_3`
 typedef unspecified_type Construct_midpoint_3;
 
 /*!
-A constructor obeject model of `ComputeApproximateDihedralAngle_3`
+A constructor object model of `ComputeApproximateDihedralAngle_3`
 */
 typedef unspecified_type Compute_approximate_dihedral_angle_3;
 

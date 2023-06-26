@@ -6,9 +6,7 @@
 A type representing an iterator to the Cartesian coordinates of a point
 in `d` dimensions.
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalModels `BidirectionalIterator`
 

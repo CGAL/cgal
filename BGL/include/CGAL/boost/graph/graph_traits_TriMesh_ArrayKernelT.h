@@ -11,7 +11,7 @@
 #ifndef CGAL_BOOST_GRAPH_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H
 #define CGAL_BOOST_GRAPH_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H
 
-// http://openmesh.org/Documentation/OpenMesh-Doc-Latest/classOpenMesh_1_1Concepts_1_1KernelT.html
+// https://www.graphics.rwth-aachen.de/media/openmesh_static/Documentations/OpenMesh-Doc-Latest/a02182.html
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>

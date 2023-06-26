@@ -18,7 +18,7 @@
 #include <CGAL/IO/PLY.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Iterator_range.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -111,7 +111,7 @@ template <typename PointRange,
                                  const PointRange& points, ///< input point range.
                                  PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {
@@ -201,7 +201,7 @@ bool write_PLY(std::ostream& os,
   typedef typename NP_helper::Const_point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
 
-  bool has_normals = NP_helper::has_normal_map();
+  const bool has_normals = NP_helper::has_normal_map(points, np);
 
   PointMap point_map = NP_helper::get_const_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);

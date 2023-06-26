@@ -13,9 +13,7 @@ Hence the iterator range is required to be of length `PolynomialTraits_d::d+1`.
 For instance the polynomial \f$ p(x_0,x_1) = x_0^2x_1^3+x_1^4\f$ is interpreted as the homogeneous
 polynomial \f$ p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1\f$.
 
-\cgalRefines Assignable
-\cgalRefines CopyConstructible
-\cgalRefines DefaultConstructible
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHeading{Types}
 

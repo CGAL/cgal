@@ -144,12 +144,12 @@ class Lazy_alpha_nt_2
   typedef typename Types::Exact_point                                      Exact_point;
   typedef typename Types::Input_point                                      Input_point;
 
-  //Convertion functions
+  //Conversion functions
   Approx_point to_approx(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_2<
-                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+    static_assert(Is_traits_point_convertible_2<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value);
 
     To_approx converter;
     return converter(wp);
@@ -158,8 +158,8 @@ class Lazy_alpha_nt_2
   Exact_point to_exact(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_2<
-                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+    static_assert(Is_traits_point_convertible_2<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value);
 
     To_exact converter;
     return converter(wp);

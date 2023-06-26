@@ -1283,6 +1283,8 @@ template < typename D, typename V = std::tuple<>, typename O = std::tuple<> >
 struct Derivator
 {
   typedef Derivator<D, V, O> Self;
+  Derivator() = default;
+  Derivator(const Self&) = default;
   Self& operator=(const Self&) = delete;
   template <class Tuple>
   void tuple_dispatch(const Tuple&)
@@ -1296,6 +1298,8 @@ struct Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> >
   typedef Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> > Self;
   typedef Derivator<D, std::tuple<V...>, std::tuple<O...> > Base;
 
+  Derivator() = default;
+  Derivator(const Self&) = default;
   Self& operator=(const Self&) = delete;
 
   using Base::operator=;
@@ -1336,7 +1340,7 @@ class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...> >
  : private internal::Derivator<Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >, std::tuple<V...>, std::tuple<O...> >
  , public std::tuple<O...>
 {
-  CGAL_static_assertion_msg(sizeof...(V) == sizeof...(O),
+  static_assert(sizeof...(V) == sizeof...(O),
                 "The number of explicit template parameters has to match the number of arguments");
 
   static const int size = sizeof...(V);

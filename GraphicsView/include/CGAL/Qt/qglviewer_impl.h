@@ -3370,7 +3370,7 @@ void CGAL::QGLViewer::copyBufferToTexture(GLint , GLenum ) {
 Use glBindTexture() to use this texture. Note that this is already done by
 copyBufferToTexture().
 
-Returns \c 0 is copyBufferToTexture() was never called or if the texure was
+Returns \c 0 is copyBufferToTexture() was never called or if the texture was
 deleted using glDeleteTextures() since then. */
 CGAL_INLINE_FUNCTION
 GLuint CGAL::QGLViewer::bufferTextureId() const {
