@@ -578,7 +578,7 @@ insert_corners()
     Index p_index = domain_.index_from_corner_index(cit->first);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      std::cerr << "** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
+      std::cerr << "\n** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
 #endif
 
     // Get weight (the ball radius is given by the 'query_size' function)
@@ -833,7 +833,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "smart_insert_point: weight " << w
                 << " reduced to " << min_sq_d
-                << "\n (near existing point: " << nearest_point << " )\n";
+                << " (near existing point: " << nearest_point << " )\n";
 #endif
       w = min_sq_d;
       add_handle_to_unchecked = true;
@@ -873,11 +873,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
             special_ball = true;
             insert_a_special_ball = true;
           }
+
           if( ! is_special(it) ) {
             *out++ = it;
             change_ball_size(it, sq_d, special_ball);
             restart = true;
           }
+
           break;
         }
       }
@@ -903,7 +905,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "smart_insert_point: weight " << w
                 << " reduced to " << min_sq_d
-                << "\n (near existing point: " << nearest_point << " )\n";
+                << " (near existing point: " << nearest_point << " )\n";
 #endif
       w = min_sq_d;
       add_handle_to_unchecked = true;
@@ -957,7 +959,7 @@ insert_balls_on_edges()
     if ( ! is_treated(curve_index) )
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      std::cerr << "** treat curve #" << curve_index << std::endl;
+      std::cerr << "\n** treat curve #" << curve_index << std::endl;
 #endif
       const Bare_point& p = std::get<1>(*fit).first;
       const Bare_point& q = std::get<2>(*fit).first;
