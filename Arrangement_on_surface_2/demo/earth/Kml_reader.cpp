@@ -2,6 +2,7 @@
 #include "Kml_reader.h"
 
 #include <iostream>
+#include <unordered_map>
 
 #include <qdebug.h>
 #include <qfile.h>
@@ -97,4 +98,64 @@ Kml::Placemarks  Kml::read(const std::string& file_name)
   }
 
   return placemarks;
+}
+
+void Kml::check_duplicates(const Placemarks& placemarks)
+{
+  // collect all nodes into a single vector
+  int polygon_count = 0;
+  std::vector<Kml::Node> nodes;
+  for (const auto& pm : placemarks)
+  {
+    for (const auto& pg : pm.polygons)
+    {
+      polygon_count++;
+      for (const auto& node : pg.nodes)
+        nodes.push_back(node);
+    }
+  }
+  qDebug() << "polygon count = " << polygon_count;
+
+  int count = nodes.size();
+  std::vector<int> num_duplicates(count, 0);
+  qDebug() << "node count (with duplicates) = " << count;
+  int dup_count = 0;
+
+  // this keeps track of how many nodes there are with certain dup-count
+  std::unordered_map<int, int> dup_count_map;
+
+  for (int i = 0; i < count; ++i)
+  {
+    // if the current node has been detected as duplicate skip it
+    if (num_duplicates[i] > 0)
+      continue;
+
+    std::vector<int> curr_dup; // current set of duplicates
+    for (int j = i + 1; j < count; ++j)
+    {
+      if (nodes[i] == nodes[j])
+      {
+        curr_dup.push_back(j);
+      }
+    }
+
+    // if duplicates found
+    if (!curr_dup.empty())
+    {
+      dup_count++;
+      int num_dup = curr_dup.size() + 1; // +1 for the i'th node
+      num_duplicates[i] = num_dup;
+      for (const auto di : curr_dup)
+        num_duplicates[di] = num_dup;
+
+      dup_count_map[num_dup]++;
+    }
+  }
+  qDebug() << "dup count = " << dup_count;
+  for (const auto& p : dup_count_map)
+  {
+    const auto dup_count = p.first;
+    const auto num_nodes_with_this_dup_count = p.second;
+    qDebug() << dup_count << ": " << num_nodes_with_this_dup_count;
+  }
 }

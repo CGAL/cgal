@@ -106,10 +106,12 @@ void Main_widget::timerEvent(QTimerEvent*)
   update();
 }
 
+
 void Main_widget::initializeGL()
 {
   const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
   auto countries = Kml::read(file_name);
+  Kml::check_duplicates(countries);
   
 
   initializeOpenGLFunctions();
