@@ -866,7 +866,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
         if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
         {
           bool special_ball = false;
-          if(minimal_weight_ != Weight() && sq_d > minimal_weight_) {
+          if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
+          {
             sq_d = minimal_weight_;
             w = minimal_weight_;
             special_ball = true;
