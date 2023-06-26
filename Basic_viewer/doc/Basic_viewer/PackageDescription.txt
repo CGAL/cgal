@@ -35,37 +35,37 @@
 
 \cgalCRPSubsection{Draw for Different Packages}
 
-- \link PkgDrawTriangulation2 Constrained_triangulation_2 CGAL::draw<CT2>() \endlink
-- \link PkgDrawLinearCellComplex Linear_cell_complex CGAL::draw<LCC>() \endlink
-- \link PkgDrawNef3 Nef_polyhedron_3 CGAL::draw<Nef3>() \endlink
-- \link PkgDrawPeriodic2Triangulation2 Periodic_2_Triangulation_2 CGAL::draw<P2T2>() \endlink
-- \link PkgDrawPointSet3D Point_set_3 CGAL::draw<PS>() \endlink
-- \link PkgDrawPolygon2 Polygon_2 CGAL::draw<P2>() \endlink
-- \link PkgDrawPolygonSet2 Polygon_set_2 CGAL::draw<PS>() \endlink
-- \link PkgDrawPolygonWithHoles2 Polygon_with_holes_2 CGAL::draw<PH2>() \endlink
-- \link PkgDrawPolyhedron Polyhedron_3 CGAL::draw<POLY>() \endlink
-- \link PkgDrawSurfaceMesh Surface_mesh CGAL::draw<SM>() \endlink
-- \link PkgDrawFaceGraphWithPaths Surface_mesh_topology CGAL::draw<SMT>() \endlink
-- \link PkgDrawTriangulation2 Triangulation_2 CGAL::draw<T2>() \endlink
-- \link PkgDrawTriangulation3 Triangulation_3 CGAL::draw<T3>() \endlink
-- \link PkgDrawVoronoiDiagram2 Voronoi_diagram_2 CGAL::draw<V2>() \endlink
+- Constrained_triangulation_2 \link PkgDrawTriangulation2 CGAL::draw<CT2>() \endlink
+- Linear_cell_complex \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- Nef_polyhedron_3 \link PkgDrawNef3 CGAL::draw<Nef3>() \endlink
+- Periodic_2_Triangulation_2 \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- Point_set_3 \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink
+- Polygon_2 \link PkgDrawPolygon2 CGAL::draw<P2>() \endlink
+- Polygon_set_2 \link PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
+- Polygon_with_holes_2 \link PkgDrawPolygonWithHoles2 CGAL::draw<PH2>() \endlink
+- Polyhedron_3 \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink
+- Surface_mesh \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
+- Surface_mesh_topology \link PkgDrawFaceGraphWithPaths CGAL::draw<SMT>() \endlink
+- Triangulation_2 \link PkgDrawTriangulation2 CGAL::draw<T2>() \endlink
+- Triangulation_3 \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
+- Voronoi_diagram_2 \link PkgDrawVoronoiDiagram2 CGAL::draw<V2>() \endlink
 
 \cgalCRPSubsection{Fill Graphic Storage for Different Packages}
 
-- \link PkgDrawTriangulation2 Constrained_triangulation_2 CGAL::add_in_graphic_storage<CT2>() \endlink
-- \link PkgDrawLinearCellComplex Linear_cell_complex CGAL::add_in_graphic_storage<LCC>() \endlink
-- \link PkgDrawNef3 Nef_polyhedron_3 CGAL::add_in_graphic_storage<Nef3>() \endlink
-- \link PkgDrawPeriodic2Triangulation2 Periodic_2_Triangulation_2 CGAL::add_in_graphic_storage<P2T2>() \endlink
-- \link PkgDrawPointSet3D Point_set_3 CGAL::add_in_graphic_storage<PS>() \endlink
-- \link PkgDrawPolygon2 Polygon_2 CGAL::add_in_graphic_storage<P2>() \endlink
-- \link PkgDrawPolygonSet2 Polygon_set_2 CGAL::add_in_graphic_storage<PS>() \endlink
-- \link PkgDrawPolygonWithHoles2 Polygon_with_holes_2 CGAL::add_in_graphic_storage<PH2>() \endlink
-- \link PkgDrawPolyhedron Polyhedron_3 CGAL::add_in_graphic_storage<POLY>() \endlink
-- \link PkgDrawSurfaceMesh Surface_mesh CGAL::add_in_graphic_storage<SM>() \endlink
-- \link PkgDrawFaceGraphWithPaths Surface_mesh_topology CGAL::add_in_graphic_storage<SMT>() \endlink
-- \link PkgDrawTriangulation2 Triangulation_2 CGAL::add_in_graphic_storage<T2>() \endlink
-- \link PkgDrawTriangulation3 Triangulation_3 CGAL::add_in_graphic_storage<T3>() \endlink
-- \link PkgDrawVoronoiDiagram2 Voronoi_diagram_2 CGAL::add_in_graphic_storage<V2>() \endlink
+- Constrained_triangulation_2 \link PkgDrawTriangulation2 CGAL::add_in_graphic_storage<CT2>() \endlink
+- Linear_cell_complex \link PkgDrawLinearCellComplex CGAL::add_in_graphic_storage<LCC>() \endlink
+- Nef_polyhedron_3 \link PkgDrawNef3 CGAL::add_in_graphic_storage<Nef3>() \endlink
+- Periodic_2_Triangulation_2 \link PkgDrawPeriodic2Triangulation2 CGAL::add_in_graphic_storage<P2T2>() \endlink
+- Point_set_3 \link PkgDrawPointSet3D CGAL::add_in_graphic_storage<PS>() \endlink
+- Polygon_2 \link PkgDrawPolygon2 CGAL::add_in_graphic_storage<P2>() \endlink
+- Polygon_set_2 \link PkgDrawPolygonSet2 CGAL::add_in_graphic_storage<PS>() \endlink
+- Polygon_with_holes_2 \link PkgDrawPolygonWithHoles2 CGAL::add_in_graphic_storage<PH2>() \endlink
+- Polyhedron_3 \link PkgDrawPolyhedron CGAL::add_in_graphic_storage<POLY>() \endlink
+- Surface_mesh \link PkgDrawSurfaceMesh CGAL::add_in_graphic_storage<SM>() \endlink
+- Surface_mesh_topology \link PkgDrawFaceGraphWithPaths CGAL::add_in_graphic_storage<SMT>() \endlink
+- Triangulation_2 \link PkgDrawTriangulation2 CGAL::add_in_graphic_storage<T2>() \endlink
+- Triangulation_3 \link PkgDrawTriangulation3 CGAL::add_in_graphic_storage<T3>() \endlink
+- Voronoi_diagram_2 \link PkgDrawVoronoiDiagram2 CGAL::add_in_graphic_storage<V2>() \endlink
 
 */
 
