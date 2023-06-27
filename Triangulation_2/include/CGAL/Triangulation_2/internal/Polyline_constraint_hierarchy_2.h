@@ -85,7 +85,7 @@ public:
     Vertex_it
     , typename Vertex_list::skip_iterator
     , Vertex_handle
-    , boost::use_default
+    , std::bidirectional_iterator_tag
     , Vertex_handle>
   {
   public:
