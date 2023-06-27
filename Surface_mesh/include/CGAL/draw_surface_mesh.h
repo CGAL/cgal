@@ -38,9 +38,9 @@ void draw(const SM& asm);
 
 namespace CGAL {
 
-// Check if there are any color maps that could be used, random otherwise
+// Check if there are any color maps that could be used
 template <typename K>
-struct Surface_mesh_basic_viewer_color_map
+struct Drawing_functor_surface_mesh
   : public Drawing_functor<Surface_mesh<K>,
                            typename boost::graph_traits<::CGAL::Surface_mesh<K>>::vertex_descriptor,
                            typename boost::graph_traits<::CGAL::Surface_mesh<K>>::edge_descriptor,
@@ -51,43 +51,47 @@ struct Surface_mesh_basic_viewer_color_map
   using edge_descriptor = typename boost::graph_traits<SM>::edge_descriptor;
   using face_descriptor = typename boost::graph_traits<SM>::face_descriptor;
 
-  using Base=Drawing_functor<SM, vertex_descriptor, edge_descriptor, face_descriptor>;
-
-  using vertex_colors = typename SM::template Property_map<vertex_descriptor, CGAL::IO::Color>;
-  using edge_colors = typename SM::template Property_map<edge_descriptor, CGAL::IO::Color>;
-  using face_colors = typename SM::template Property_map<face_descriptor, CGAL::IO::Color>;
-
-  Surface_mesh_basic_viewer_color_map(const SM& amesh)
+  Drawing_functor_surface_mesh(const SM& amesh)
   {
-    bool found = false;
-    std::tie(vcolors, found) = amesh.template property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
-    std::tie(ecolors, found) = amesh.template property_map<edge_descriptor, CGAL::IO::Color>("e:color");
-    std::tie(fcolors, found) = amesh.template property_map<face_descriptor, CGAL::IO::Color>("f:color");
-    CGAL_USE(found);
-  }
+    bool found=false;
+    std::tie(vcolors, found)=
+        amesh.template property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
+    if(found)
+    {
+      this->colored_vertex=[](const SM &, vertex_descriptor)->bool { return true; };
+      this->vertex_color=[this](const SM &, vertex_descriptor v)->CGAL::IO::Color
+      { return get(vcolors, v); };
+    }
+    else
+    { this->colored_vertex=[](const SM &, vertex_descriptor)->bool { return false; }; }
 
-  CGAL::IO::Color operator()(const Surface_mesh<K>& amesh,
-                             const vertex_descriptor v) const
-  {
-    return vcolors ? get(vcolors, v) : Base::operator()(amesh, v);
-  }
+    std::tie(ecolors, found)=
+        amesh.template property_map<edge_descriptor, CGAL::IO::Color>("e:color");
+    if(found)
+    {
+      this->colored_edge=[](const SM &, edge_descriptor)->bool { return true; };
+      this->edge_color=[this](const SM &, edge_descriptor e)->CGAL::IO::Color
+      { return get(ecolors, e); };
+    }
+    else
+    { this->colored_edge=[](const SM &, edge_descriptor)->bool { return false; }; }
 
-  CGAL::IO::Color operator()(const Surface_mesh<K>& amesh,
-                             const edge_descriptor e) const
-  {
-    return ecolors ? get(ecolors, e) : Base::operator()(amesh, e);
-  }
-
-  CGAL::IO::Color operator()(const Surface_mesh<K>& amesh,
-                             const face_descriptor f) const
-  {
-    return fcolors ? get(fcolors, f) : Base::operator()(amesh, f);
+    std::tie(fcolors, found)=
+        amesh.template property_map<face_descriptor, CGAL::IO::Color>("f:color");
+    if(found)
+    {
+      this->colored_face=[](const SM &, face_descriptor)->bool { return true; };
+      this->face_color=[this](const SM &, face_descriptor f)->CGAL::IO::Color
+      { return get(fcolors, f); };
+    }
+    else
+    { this->colored_face=[](const SM &, face_descriptor)->bool { return false; }; }
   }
 
 private:
-  vertex_colors vcolors;
-  edge_colors ecolors;
-  face_colors fcolors;
+  typename SM::template Property_map<vertex_descriptor, CGAL::IO::Color> vcolors;
+  typename SM::template Property_map<edge_descriptor, CGAL::IO::Color> ecolors;
+  typename SM::template Property_map<face_descriptor, CGAL::IO::Color> fcolors;
 };
 
 template<class K, typename BufferType=float,  class DrawingFunctor>
@@ -100,7 +104,7 @@ template<class K, typename BufferType=float>
 void add_in_graphic_storage(const Surface_mesh<K>& amesh,
                            CGAL::Graphic_storage<BufferType> &graphic_storage)
 { add_in_graphic_storage_for_fg(amesh, graphic_storage,
-                                Surface_mesh_basic_viewer_color_map<K>(amesh)); }
+                                Drawing_functor_surface_mesh<K>(amesh)); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -110,7 +114,7 @@ void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_storage_for_fg(amesh, buffer);
+  add_in_graphic_storage(amesh, buffer);
   draw_graphic_storage(buffer, title);
 }
 
@@ -120,7 +124,7 @@ void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_storage_for_fg(amesh, buffer, drawing_functor);
+  add_in_graphic_storage(amesh, buffer, drawing_functor);
   draw_graphic_storage(buffer, title);
 }
 
