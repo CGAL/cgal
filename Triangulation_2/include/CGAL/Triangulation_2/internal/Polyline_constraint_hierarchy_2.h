@@ -51,7 +51,7 @@ private:
       : vertex_(vh), point_(vertex_->point()), input(input)
     {}
     const Point& point() const { return point_; }
-    Vertex_handle vertex() const { return vertex_; }
+    const Vertex_handle& vertex() const { return vertex_; }
   private:
     Vertex_handle vertex_;
     Point point_;
@@ -68,7 +68,7 @@ public:
     : public boost::iterator_adaptor<
     Point_it
     , typename Vertex_list::all_iterator
-    , const Point
+    , const Point&
     >
   {
   public:
@@ -85,8 +85,8 @@ public:
     Vertex_it
     , typename Vertex_list::skip_iterator
     , Vertex_handle
-    , std::bidirectional_iterator_tag
-    , Vertex_handle>
+    , boost::use_default
+    , const Vertex_handle&>
   {
   public:
     Vertex_it() : Vertex_it::iterator_adaptor_() {}
@@ -95,7 +95,7 @@ public:
     bool& input() { return this->base()->input; }
   private:
     friend class boost::iterator_core_access;
-    Vertex_handle dereference() const { return this->base()->vertex(); }
+    const Vertex_handle& dereference() const { return this->base()->vertex(); }
   };
 
   typedef typename Constraint_list::iterator Constraint_it;

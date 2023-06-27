@@ -32,6 +32,10 @@ int main(int argc,char* argv[])
   VertexIndexMap vertex_id_map;
   VertexIdPropertyMap vertex_index_pmap(vertex_id_map);
   int index = 0;
+  {
+      vertex_iterator vit = vertices(tr).begin();
+      vit = std::prev(vit);
+  }
 
   for(vertex_descriptor vd : vertices(tr))
     vertex_id_map[vd] = index++;
