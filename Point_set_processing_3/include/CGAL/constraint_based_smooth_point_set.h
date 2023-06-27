@@ -124,15 +124,50 @@ std::pair<Eigen::VectorXd, Eigen::MatrixXd> do_binary_optimization(
     solver.eigenvalues().cast<double>(),
     solver.eigenvectors().cast<double>());
 
-  std::cout << eigens.first << std::endl << std::endl;
+  // std::cout << eigens.first << std::endl << std::endl;
 
-  for(size_t i=0 ; i<eigens.first.rows() ; ++i) {
+  for(size_t i=0 ; i<3 ; ++i) {
     eigens.first[i] = eigens.first[i] > eigenvalue_threshold ? 1 : 0;
   }
 
   // std::cout << eigens.first << std::endl << std::endl;
 
   return eigens;
+}
+
+template <typename Kernel, typename PointRange,
+          typename PointMap, typename VectorMap>
+typename Kernel::Vector_3 nvt_normal_denoising(
+  const typename PointRange::iterator::value_type& vt,
+  PointMap point_map,
+  VectorMap normal_map,
+  const std::pair<Eigen::VectorXd, Eigen::MatrixXd>& eigens,
+  typename Kernel::FT damping_factor)
+{
+  // basic geometric types
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Point_3 Point;
+
+  const Point& p = get(point_map, vt);
+  const Vector& n = get(normal_map, vt);
+
+  Eigen::Matrix3d new_nvt;
+  new_nvt.setZero();
+
+  // std::cout << eigens.first.rows() << std::endl << std::endl;
+
+  for(size_t i=0 ; i<eigens.first.rows() ; ++i) {
+    if(eigens.first[i] == 1) {
+      new_nvt += eigens.second.col(i) * eigens.second.col(i).transpose();
+    }
+  }
+
+  Eigen::Vector3d vn(n.x(), n.y(), n.z());
+  Eigen::Vector3d delta_vn = new_nvt * vn;
+  Vector delta_n(delta_vn[0], delta_vn[1], delta_vn[2]);
+
+  return damping_factor * n + delta_n;
 }
 
 
@@ -230,7 +265,7 @@ constraint_based_smooth_point_set(
       return true;
     });
 
-  std::vector<std::pair<Eigen::VectorXd, Eigen::MatrixXd>> optimized_eigens(nb_points);
+  std::vector<std::pair<Eigen::VectorXd, Eigen::MatrixXd>> optimized_eigens;
 
   // CGAL::for_each<ConcurrencyTag>
   //   (CGAL::make_range (pwns_nvts.begin(), pwns_nvts.end()),
@@ -242,10 +277,43 @@ constraint_based_smooth_point_set(
 
   for (auto it = pwns_nvts.begin() ; it < pwns_nvts.end() ; ++it)
   {
-    optimized_eigens.emplace_back(internal::do_binary_optimization<Kernel>(*it, eigenvalue_threshold));
+    optimized_eigens.push_back(internal::do_binary_optimization<Kernel>(*it, eigenvalue_threshold));
   }
-  
 
+  std::vector<typename Kernel::Vector_3> new_normals(nb_points);
+
+  typedef boost::zip_iterator
+    <boost::tuple<iterator,
+                  typename std::vector<std::pair<Eigen::VectorXd, Eigen::MatrixXd>>::iterator,
+                  typename std::vector<typename Kernel::Vector_3>::iterator> > Zip_iterator_3;
+  
+  CGAL::for_each<ConcurrencyTag>
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple
+                                                (points.begin(), optimized_eigens.begin(), new_normals.begin())),
+                      boost::make_zip_iterator (boost::make_tuple
+                                                (points.end(), optimized_eigens.end(), new_normals.end()))),
+    [&](const typename Zip_iterator_3::reference& t)
+    {
+      get<2>(t) = internal::nvt_normal_denoising<Kernel, PointRange>
+          (get<0>(t),
+           point_map, normal_map,
+           get<1>(t),
+           damping_factor);
+      return true;
+    });
+
+
+  typedef boost::zip_iterator
+    <boost::tuple<iterator,
+                  typename std::vector<typename Kernel::Vector_3>::iterator> > Zip_iterator_4;
+  CGAL::for_each<ConcurrencyTag>
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), new_normals.begin())),
+                       boost::make_zip_iterator (boost::make_tuple (points.end(), new_normals.end()))),
+     [&](const typename Zip_iterator_4::reference& t)
+     {
+       put (normal_map, get<0>(t), get<1>(t));
+       return true;
+     });
 
 
   std::cout << "fn complete" << std::endl;
