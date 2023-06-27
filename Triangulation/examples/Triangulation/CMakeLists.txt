@@ -21,6 +21,8 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("triangulation.cpp")
   create_single_source_cgal_program("triangulation_data_structure_dynamic.cpp")
   create_single_source_cgal_program("triangulation_data_structure_static.cpp")
+  create_single_source_cgal_program("triangulation1.cpp")
+  create_single_source_cgal_program("triangulation2.cpp")
 
   foreach(
     target
@@ -30,7 +32,9 @@ if(TARGET CGAL::Eigen3_support)
     regular_triangulation
     triangulation
     triangulation_data_structure_dynamic
-    triangulation_data_structure_static)
+    triangulation_data_structure_static
+    triangulation1
+    triangulation2)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 else()

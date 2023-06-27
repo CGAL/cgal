@@ -19,6 +19,7 @@ create_single_source_cgal_program("skin_surface_subdiv.cpp")
 create_single_source_cgal_program("skin_surface_subdiv_with_normals.cpp")
 create_single_source_cgal_program("union_of_balls_simple.cpp")
 create_single_source_cgal_program("union_of_balls_subdiv.cpp")
+create_single_source_cgal_program("skin_surface_retrieve_defining_weighted_points.cpp")
 
 find_package(ESBTL QUIET)
 if(ESBTL_FOUND)

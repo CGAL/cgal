@@ -63,6 +63,8 @@ create_single_source_cgal_program("_test_valid_finite_float.cpp")
 create_single_source_cgal_program("to_interval_test.cpp")
 create_single_source_cgal_program("unsigned.cpp")
 create_single_source_cgal_program("utilities.cpp")
+create_single_source_cgal_program("Exact_rational.cpp")
+create_single_source_cgal_program("Mpzf_new.cpp")
 
 find_package( GMP )
 if( GMP_FOUND AND NOT CGAL_DISABLE_GMP )
