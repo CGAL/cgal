@@ -51,7 +51,7 @@ public:
    */
   template<typename Node_index, typename Tree>
   bool operator()(Node_index i, const Tree &tree) const {
-    return (tree.points(i).size() > m_bucket_size);
+    return (tree.data(i).size() > m_bucket_size);
   }
 
 };
@@ -132,7 +132,7 @@ public:
    */
   template<typename Node_index, typename Tree>
   bool operator()(Node_index i, const Tree &tree) const {
-    std::size_t num_points = tree.points(i).size();
+    std::size_t num_points = tree.data(i).size();
     std::size_t depth = tree.depth(i);
     return (num_points > m_bucket_size && depth < m_max_depth);
   }

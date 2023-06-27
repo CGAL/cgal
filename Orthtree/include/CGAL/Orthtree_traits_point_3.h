@@ -202,7 +202,7 @@ public:
   template <typename Node_index, typename Tree>
   void distribute_node_contents(Node_index n, Tree& tree, const Point_d& center) {
     CGAL_precondition(!tree.is_leaf(n));
-    reassign_points(n, tree, center, tree.points(n));
+    reassign_points(n, tree, center, tree.data(n));
   }
 
   Point_d get_element(const Node_data_element& index) const {
@@ -224,7 +224,7 @@ private:
 
     // Root case: reached the last dimension
     if (dimension == Dimension::value) {
-      tree.points(tree.child(n, coord.to_ulong())) = points;
+      tree.data(tree.child(n, coord.to_ulong())) = points;
       return;
     }
 

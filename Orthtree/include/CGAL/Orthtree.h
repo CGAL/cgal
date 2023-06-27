@@ -248,7 +248,7 @@ public:
     // save orthtree attributes
     m_bbox_min = construct_point_d_from_array(bbox_min);
     m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
-    points(root()) = m_traits.root_node_contents();
+    data(root()) = m_traits.root_node_contents();
   }
 
   /// @}
@@ -699,11 +699,11 @@ public:
     return m_node_depths[n];
   }
 
-  Node_data& points(Node_index n) {
+  Node_data& data(Node_index n) {
     return m_node_points[n];
   }
 
-  const Node_data& points(Node_index n) const {
+  const Node_data& data(Node_index n) const {
     return m_node_points[n];
   }
 
@@ -841,7 +841,6 @@ public:
 
     // Add the node's points to its children
     m_traits.distribute_node_contents(n, *this, center);
-    //reassign_points(n, points(n).begin(), points(n).end(), center);
   }
 
   /*!
@@ -1038,7 +1037,7 @@ private: // functions :
 
       // Loop through each of the points contained by the node
       // Note: there might be none, and that should be fine!
-      for (auto p: points(node)) {
+      for (auto p: data(node)) {
 
         // Pair that point with its distance from the search point
         Node_element_with_distance current_point_with_distance =

@@ -47,7 +47,7 @@ std::ostream& print_orthtree_node(std::ostream& os, const Node_index& node, cons
      << ") ";
 
   os << "("
-     << tree.points(node).size()
+     << tree.data(node).size()
      << ") ";
 
   // If a node is a leaf, mark it
