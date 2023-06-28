@@ -18,8 +18,7 @@ int main(int argc, char* argv[])
   for(int i = 1; i < argc; ++i) {
     Surface_mesh mesh;
     if(!PMP::IO::read_polygon_mesh(argv[i], mesh)) {
-      std::cerr << "Invalid input." << std::endl;
-      return 1;
+      std::cerr << "Invalid input: " << argv[i] << '\n';
     }
     if(!is_triangle_mesh(mesh)) {
       std::cout << argv[i] << std::endl;

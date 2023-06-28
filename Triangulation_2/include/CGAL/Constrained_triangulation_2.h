@@ -825,7 +825,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
               << " , " << display_vertex(vbb)
               << " ) remaining stack size: "
               << stack.size() << '\n';
-    CGAL_assertion(this->is_valid());
+    CGAL_assertion(this->is_valid(true));
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
     Vertex_handle vi;
 
