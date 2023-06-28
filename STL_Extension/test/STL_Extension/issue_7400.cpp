@@ -51,5 +51,10 @@ int main()
     CGAL_USE(v2);
     if(v == v_inf) return 1;
   }
+  for (auto v : t.all_vertex_handles()) {
+      Vertex_handle v2 = v;
+      CGAL_USE(v2);
+      if (v == v_inf) std::cout << "found inf" << std::endl;
+  }
   return 0;
 }
