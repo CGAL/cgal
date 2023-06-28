@@ -9,7 +9,7 @@
 #include <qxmlstream.h>
 
 
-QVector3D Kml::Node::get_coords_3d(const double r) const
+Kml::Vec3d Kml::Node::get_coords_3d(const double r) const
 {
   const auto phi = qDegreesToRadians(lat);
   const auto theta = qDegreesToRadians(lon);
@@ -18,7 +18,12 @@ QVector3D Kml::Node::get_coords_3d(const double r) const
   const auto x = rxy * std::cos(theta);
   const auto y = rxy * std::sin(theta);
 
-  return QVector3D(x, y, z);
+  return Vec3d{ x, y, z };
+}
+QVector3D Kml::Node::get_coords_3f(const double r) const
+{
+  const auto v = get_coords_3d(r);
+  return QVector3D(v.x, v.y, v.z);
 }
 
 

@@ -114,13 +114,8 @@ Geodesic_arcs::Approx_arcs Geodesic_arcs::get_approx_arcs(
       std::vector<Approximate_Vector_3> sphere_points;
       for (const auto& node : lring.nodes)
       {
-        const auto phi = qDegreesToRadians(node.lat);
-        const auto theta = qDegreesToRadians(node.lon);
-        const auto z = std::sin(phi);
-        const auto rxy = std::cos(phi);
-        const auto x = rxy * std::cos(theta);
-        const auto y = rxy * std::sin(theta);
-        Approximate_Vector_3 v(x,y,z);
+        const auto p = node.get_coords_3d();
+        Approximate_Vector_3 v(p.x, p.y, p.z);
         sphere_points.push_back(v);
       }
 

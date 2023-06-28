@@ -7,6 +7,7 @@
 
 #include <QMouseEvent>
 
+#include "Aos.h"
 #include "Kml_reader.h"
 #include "Geodesic_arcs.h"
 #include "Tools.h"
@@ -107,21 +108,36 @@ void Main_widget::timerEvent(QTimerEvent*)
 }
 
 
+auto func()
+{
+  double x, y, z;
+  return std::make_tuple(x,y,z); 
+}
+
 void Main_widget::initializeGL()
 {
-  const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
+  auto [x, y, z] = func();
+
+  //const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
+  const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
   auto countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(countries);
   
+  // initialize rendering of DUPLICATE VERTICES
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
     {
       //qDebug() << node.get_coords_3d();
-      vertices.push_back(node.get_coords_3d());
+      vertices.push_back(node.get_coords_3f());
     }
   
     m_vertices = std::make_unique<Vertices>(vertices);
+  }
+
+  // check the arrangement constructed from the GIS data-set
+  {
+    Aos::check(countries);
   }
 
 
@@ -292,7 +308,6 @@ void Main_widget::resizeGL(int w, int h)
     float d = dist_to_cam - r;
     float err = wp0.distanceToPoint(wp1) * (d / z_near);
     std::cout << "error = " << err << std::endl;
-
 
     // find the minimum error over the sphere
     //find_minimum_projected_error_on_sphere(err);

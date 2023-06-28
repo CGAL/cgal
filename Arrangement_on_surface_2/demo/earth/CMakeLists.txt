@@ -48,6 +48,7 @@ source_group( "geometry"  FILES ${source_files_geometry} )
 qt_standard_project_setup()
 
 qt_add_executable(earth
+    Aos.h                     Aos.cpp
     Camera.h                  Camera.cpp
     Common_defs.h
     Geodesic_arcs.h           Geodesic_arcs.cpp

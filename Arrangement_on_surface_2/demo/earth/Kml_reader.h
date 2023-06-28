@@ -10,6 +10,12 @@
 class Kml
 {
 public:
+  // double precision 3D-point (QVector3D has float coordinates)
+  struct Vec3d
+  {
+    double x, y, z;
+  };
+
   struct Node
   {
     double lon, lat;
@@ -19,7 +25,8 @@ public:
       return  (lon == r.lon) && (lat == r.lat);
     }
 
-    QVector3D get_coords_3d(const double r=1.0) const;
+    Vec3d get_coords_3d(const double r = 1.0) const;
+    QVector3D get_coords_3f(const double r=1.0) const;
   };
 
   struct LinearRing
