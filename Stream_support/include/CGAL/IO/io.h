@@ -1006,8 +1006,10 @@ struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::bas
     const auto end = ctx.end();
     if(it == end)
       return it;
-    if(*it != CharT('.'))
-      return it;
+    if(*it != CharT('.')) {
+      if(*it == CharT('}')) return it;
+      throw std::format_error("formatter for CGAL::Output_rep only support precision, like `{:.6}`");
+    }
     if(++it == end)
       throw std::format_error("Missing precision");
     if(*it < CharT('0') || *it > CharT('9'))
