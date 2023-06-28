@@ -43,7 +43,7 @@ class Prevent_deref
     Prevent_deref<I,Value_type>
   , I // base
   , Value_type // value
-  , boost::use_default
+  , typename std::iterator_traits<I>::iterator_category
   , Value_type // ref
   >
 {
@@ -52,7 +52,7 @@ public:
   Prevent_deref<I,Value_type>
   , I // base
   , Value_type // value
-  , boost::use_default
+  , typename std::iterator_traits<I>::iterator_category
   , Value_type // ref
   > Base;
   typedef typename Base::reference reference;
