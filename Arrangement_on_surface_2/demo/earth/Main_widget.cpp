@@ -108,16 +108,8 @@ void Main_widget::timerEvent(QTimerEvent*)
 }
 
 
-auto func()
-{
-  double x, y, z;
-  return std::make_tuple(x,y,z); 
-}
-
 void Main_widget::initializeGL()
 {
-  auto [x, y, z] = func();
-
   //const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
   const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
   auto countries = Kml::read(file_name);
@@ -137,7 +129,7 @@ void Main_widget::initializeGL()
 
   // check the arrangement constructed from the GIS data-set
   {
-    Aos::check(countries);
+    Aos::ext_check(countries);
   }
 
 
