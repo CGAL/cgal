@@ -5,6 +5,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/draw_triangulation_3.h>
 
 #include <vector>
@@ -13,7 +14,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Triangulation_data_structure_3<
-  CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>,
+  CGAL::Base_with_time_stamp<CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>>,
   CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> >                 Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                  Delaunay;
 typedef Delaunay::Point                                         Point;

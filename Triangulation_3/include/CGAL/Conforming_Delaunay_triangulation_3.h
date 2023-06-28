@@ -68,6 +68,8 @@ template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
 public:
   using Vertex_handle = typename T_3::Vertex_handle;
+  using Edge = typename T_3::Edge;
+  using Facet = typename T_3::Facet;
   using Cell_handle = typename T_3::Cell_handle;
   using Point = typename T_3::Point;
   using Locate_type = typename T_3::Locate_type;
@@ -160,11 +162,23 @@ protected:
                                              Visitor& visitor) {
     if(va != vb) {
       const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
-      va->c_id = c_id.vl_ptr();
-      vb->c_id = c_id.vl_ptr();
-      ++va->nb_of_incident_constraints;
-      ++vb->nb_of_incident_constraints;
-      add_to_subconstraints_to_conform(va, vb, c_id);
+      // traverse all the vertices along [va, vb] and add pairs of consecutive
+      // vertices as sub-constraints.
+      std::for_each(tr.segment_traverser_simplices_begin(va, vb), tr.segment_traverser_simplices_end(),
+                    [&, prev = Vertex_handle{}](auto simplex) mutable {
+                      if(simplex.dimension() == 0) {
+                        const auto v = static_cast<Vertex_handle>(simplex);
+                        v->c_id = c_id.vl_ptr();
+                        ++v->nb_of_incident_constraints;
+                        if(prev != Vertex_handle{}) {
+                          if(v != vb) {
+                            constraint_hierarchy.add_Steiner(prev, vb, v);
+                          }
+                          add_to_subconstraints_to_conform(prev, v, c_id);
+                        }
+                        prev = v;
+                      }
+                    });
       restore_Delaunay(visitor);
       return c_id;
     }
@@ -206,8 +220,6 @@ protected:
     }
     if(split_constrained_edge) {
       constraint_hierarchy.split_constraint(v1, v2, new_vertex);
-      debug_dump("dump-bug");
-      CGAL_error_msg("case not yet handled");
     }
     return new_vertex;
   }
@@ -242,10 +254,10 @@ public:
                          const auto vb = sc.first.second;
                          const auto is_edge = this->tr.tds().is_edge(va, vb);
 #if CGAL_DEBUG_CDT_3 & 128 && __has_include(<format>)
-                         std::cerr << std::format("is_conforming>> Edge is 3D: {:6}  ({} , {})\n",
+                         std::cerr << std::format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
                                                   is_edge,
-                                                  oformat(this->point(va)),
-                                                  oformat(this->point(vb)));
+                                                  CGAL::IO::oformat(this->point(va)),
+                                                  CGAL::IO::oformat(this->point(vb)));
 #endif // CGAL_DEBUG_CDT_3
                          return is_edge;
                        });
@@ -350,8 +362,12 @@ protected:
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
     if (!tr.tds().is_edge(va, vb)) {
-      const auto& [steiner_pt, hint] = construct_Steiner_point(subconstraint);
-      (void)insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
+      const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(subconstraint);
+      [[maybe_unused]] const auto v =
+          insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
+#ifdef CGAL_DEBUG_CDT_3
+      std::cerr << "  new vertex " << display_vert(v) << '\n';
+#endif // CGAL_DEBUG_CDT_3
       return true;
     }
 
@@ -377,7 +393,7 @@ protected:
                                this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
                      this->constraint_hierarchy.vertices_in_constraint_end(c_id));
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 8
       std::cerr << "constraint " << (void*) c_id.vl_ptr() << " has "
                 << c_id.vl_ptr()->skip_size() << " vertices\n";
 #endif // CGAL_DEBUG_CDT_3
@@ -414,6 +430,7 @@ protected:
   struct Construct_Steiner_point_return_type {
     typename T_3::Geom_traits::Point_3 point;
     Cell_handle hint;
+    Vertex_handle reference_vertex;
   };
 
   Construct_Steiner_point_return_type construct_Steiner_point(Subconstraint subconstraint)
@@ -441,21 +458,94 @@ protected:
     std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
               << display_vert(vb) << " )\n";
 #endif // CGAL_DEBUG_CDT_3
-    const CGAL::Triangulation_segment_cell_iterator_3<T_3> cell_traverser_begin{&tr, va, vb};
-    const auto cell_traverser_end = cell_traverser_begin.end();
+
+#ifdef CGAL_DEBUG_CDT_3
+    [[maybe_unused]] auto debug_simplex = [&](auto simplex) {
+      switch(simplex.dimension()) {
+        case 0: {
+          std::cerr << "   vertex " << display_vert(static_cast<Vertex_handle>(simplex)) << '\n';
+          break;
+        }
+        case 1: {
+          const auto [c, index1, index2] = static_cast<Edge>(simplex);
+          std::cerr << "   egde " << display_vert(c->vertex(index1)) << " - "
+                    << display_vert(c->vertex(index2)) << '\n';
+          break;
+        }
+        case 2: {
+          const auto [c, index] = static_cast<Facet>(simplex);
+          std::cerr << "   facet "
+                    << display_vert(c->vertex(T_3::vertex_triple_index(index, 0))) << " - "
+                    << display_vert(c->vertex(T_3::vertex_triple_index(index, 1))) << " - "
+                    << display_vert(c->vertex(T_3::vertex_triple_index(index, 2))) << '\n';
+          break;
+        }
+        case 3: {
+          const auto c = static_cast<Cell_handle>(simplex);
+          std::cerr << "   cell "
+                    << display_vert(c->vertex(0)) << " - "
+                    << display_vert(c->vertex(1)) << " - "
+                    << display_vert(c->vertex(2)) << " - "
+                    << display_vert(c->vertex(3)) << '\n';
+          break;
+        }
+        default: CGAL_assume(false);
+      }
+    };
+#endif // CGAL_DEBUG_CDT_3
 
     namespace bc = boost::container;
     bc::flat_set<Vertex_handle, std::less<Vertex_handle>,
                  bc::small_vector<Vertex_handle, 256>>
         encroaching_vertices;
-    auto fill_encroaching_vertices = [this,
-                                      &encroaching_vertices](const auto &cell) {
-      for (int i = 0, end = this->tr.dimension(); i < end; ++i) {
-        const auto v = cell.vertex(i);
-        encroaching_vertices.insert(v);
-      }
+    auto register_vertex = [this,&encroaching_vertices](Vertex_handle v) {
+      if(tr.is_infinite(v)) return;
+      // std::cerr << "register_vertex " << display_vert(v) << '\n';
+      encroaching_vertices.insert(v);
     };
-    std::for_each(cell_traverser_begin, cell_traverser_end,
+    auto fill_encroaching_vertices = [&](const auto simplex) {
+#ifdef CGAL_DEBUG_CDT_3
+      debug_simplex(simplex);
+#endif // CGAL_DEBUG_CDT_3
+      auto visit_cell = [&](Cell_handle cell) {
+        for(int i = 0, end = this->tr.dimension() + 1; i < end; ++i) {
+          const auto v = cell->vertex(i);
+          register_vertex(v);
+        }
+      };
+      switch(simplex.dimension()) {
+      case 3: {
+        const auto cell = static_cast<Cell_handle>(simplex);
+        visit_cell(cell);
+      } break;
+      case 2: {
+        const auto [cell, facet_index] = static_cast<Facet>(simplex);
+        visit_cell(cell);
+        const auto [other_cell, other_index] = tr.mirror_facet({cell, facet_index});
+        register_vertex(other_cell->vertex(other_index));
+        break;
+      }
+      case 1: {
+        auto circ = tr.incident_cells(static_cast<Edge>(simplex));
+        CGAL_assertion(circ != nullptr);
+        const auto end = circ;
+        do {
+          visit_cell(circ);
+        } while(++circ != end);
+      } break;
+      case 0: {
+        const auto v = static_cast<Vertex_handle>(simplex);
+        if(v != va && v != vb) {
+          std::cerr << "!! The constraint passes through a vertex! ";
+          std::cerr << "  -> " << display_vert(v) << '\n';
+          CGAL_error();
+          register_vertex(v);
+        }
+      } break;
+      default: CGAL_unreachable();
+      } // end switch
+    };
+    std::for_each(tr.segment_traverser_simplices_begin(va, vb), tr.segment_traverser_simplices_end(),
                   fill_encroaching_vertices);
     auto vector_of_encroaching_vertices = encroaching_vertices.extract_sequence();
 #ifdef CGAL_DEBUG_CDT_3
@@ -468,7 +558,8 @@ protected:
 #endif // CGAL_DEBUG_CDT_3
     auto end = std::remove_if(vector_of_encroaching_vertices.begin(),
                               vector_of_encroaching_vertices.end(),
-                              [pa, pb, &angle_functor, this](Vertex_handle v) {
+                              [va, vb, pa, pb, &angle_functor, this](Vertex_handle v) {
+                               if(va == v || vb == v) return true;
                                return angle_functor(pa,
                                                     this->tr.point(v),
                                                     pb) == ACUTE;
@@ -482,7 +573,7 @@ protected:
 #endif // CGAL_DEBUG_CDT_3
     CGAL_assertion(vector_of_encroaching_vertices.begin() != end);
 
-    auto reference_point_it = std::max_element(
+    const auto reference_point_it = std::max_element(
         vector_of_encroaching_vertices.begin(), end,
         [pa, pb, &compare_angle_functor, this](Vertex_handle v1,
                                                Vertex_handle v2) {
@@ -511,7 +602,7 @@ protected:
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_DEBUG_CDT_3
-    return { result_point, cell_incident_to_reference_point };
+    return { result_point, cell_incident_to_reference_point, *reference_point_it };
   }
 
 protected:
