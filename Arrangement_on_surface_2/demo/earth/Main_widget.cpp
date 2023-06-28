@@ -107,6 +107,20 @@ void Main_widget::timerEvent(QTimerEvent*)
   update();
 }
 
+bool show_map = true;
+void Main_widget::keyPressEvent(QKeyEvent* event)
+{
+  switch (event->key())
+  {
+  case Qt::Key_A:
+    show_map = false;
+    break;
+  case Qt::Key_S:
+    show_map = true;
+    break;
+  }
+}
+
 
 void Main_widget::initializeGL()
 {
@@ -116,20 +130,19 @@ void Main_widget::initializeGL()
   auto dup_nodes = Kml::get_duplicates(countries);
   
   // initialize rendering of DUPLICATE VERTICES
+  if(0)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
-    {
-      //qDebug() << node.get_coords_3d();
       vertices.push_back(node.get_coords_3f());
-    }
   
     m_vertices = std::make_unique<Vertices>(vertices);
   }
-
-  // check the arrangement constructed from the GIS data-set
+  else
   {
-    Aos::ext_check(countries);
+    // check the arrangement constructed from the GIS data-set
+    auto created_vertices = Aos::ext_check(countries);
+    m_vertices = std::make_unique<Vertices>(created_vertices);
   }
 
 
@@ -365,7 +378,8 @@ void Main_widget::paintGL()
     glLineWidth(5);
     sp.set_uniform("u_color", arc_color);
     sp.set_uniform("u_plane", plane);
-    m_geodesic_arcs->draw();
+    if(show_map)
+      m_geodesic_arcs->draw();
 
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);

@@ -17,6 +17,7 @@
 #include <CGAL/Vector_3.h>
 
 #include "arr_print.h"
+#include "Tools.h"
 
 namespace {
   using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -136,7 +137,7 @@ void Aos::check(const Kml::Placemarks& placemarks)
   std::cout << "num arr faces = " << arr.number_of_faces() << std::endl;
 }
 
-void Aos::ext_check(const Kml::Placemarks& placemarks)
+std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
 {
   // Construct the arrangement from 12 geodesic arcs.
   Geom_traits traits;
@@ -196,6 +197,7 @@ void Aos::ext_check(const Kml::Placemarks& placemarks)
 
   // extract all vertices that are ADDED when inserting the arcs!
   int num_created_vertices = 0;
+  std::vector<QVector3D> created_vertices;
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
     auto& d = vit->data();
@@ -206,6 +208,8 @@ void Aos::ext_check(const Kml::Placemarks& placemarks)
       const auto x = CGAL::to_double(p.dx());
       const auto y = CGAL::to_double(p.dy());
       const auto z = CGAL::to_double(p.dz());
+      std::cout << QVector3D(x, y, z) << std::endl;
+      created_vertices.emplace_back(x, y, z);
     }
   }
   std::cout << "*** num created vertices = " << num_created_vertices << std::endl;
@@ -221,4 +225,6 @@ void Aos::ext_check(const Kml::Placemarks& placemarks)
   std::cout << "-------------------------------\n";
   std::cout << "num polygons = " << num_counted_polygons << std::endl;
   std::cout << "num arr faces = " << arr.number_of_faces() << std::endl;
+
+  return created_vertices;
 }

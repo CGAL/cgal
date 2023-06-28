@@ -18,7 +18,7 @@ public:
   // what is going on with the additional vertices and faces.
   // INPUT: GIS data
   // OUTPUT: vertices created during arrangement construction
-  static void ext_check(const Kml::Placemarks& placemarks);
+  static std::vector<QVector3D> ext_check(const Kml::Placemarks& placemarks);
 };
 
 

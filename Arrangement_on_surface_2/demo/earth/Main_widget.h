@@ -37,6 +37,7 @@ protected:
   void mouseMoveEvent(QMouseEvent* e) override;
   void mouseReleaseEvent(QMouseEvent* e) override;
   void timerEvent(QTimerEvent* e) override;
+  void keyPressEvent(QKeyEvent* event) override;
 
   void initializeGL() override;
   void resizeGL(int w, int h) override;
