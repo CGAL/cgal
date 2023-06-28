@@ -984,7 +984,7 @@ private:
     pointer operator->() const { return *(this->base()); }
     reference operator*() const { return **(this->base()); }
 
-    operator Vertex_handle() { return Vertex_handle(*(this->base())); }
+    operator Vertex_handle() const { return Vertex_handle(*(this->base())); }
   };
 
 public:

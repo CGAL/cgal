@@ -130,7 +130,7 @@ struct Tester
         break;
       }
     }
-    /*
+
     {
       Vertex_handle vh =  *c3t3.vertices_in_complex().begin();
       for (auto v : c3t3.vertices_in_complex()) {
@@ -138,7 +138,7 @@ struct Tester
         break;
       }
     }
-    */
+
     //-------------------------------------------------------
     // Test move construction
     //-------------------------------------------------------
