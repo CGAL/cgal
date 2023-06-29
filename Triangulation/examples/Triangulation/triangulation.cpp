@@ -36,8 +36,8 @@ int main()
     std::cout << "There are " << edges.size()
               << " vertices on the convex hull." << std::endl;
 
-#include "triangulation1.cpp" // See below
-#include "triangulation2.cpp"
+#include "triangulation1.h" // See below
+#include "triangulation2.h"
 
     return 0;
 }
