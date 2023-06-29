@@ -32,6 +32,8 @@
 #include <string>
 #include <locale>
 #include <iostream>
+#include <optional>
+#include <variant>
 
 namespace CGAL {
 
@@ -184,6 +186,30 @@ public:
   Output_rep( const T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& os) const { return (os << t); }
+};
+
+template <class T, class F>
+class Output_rep<std::optional<T>, F>
+{
+   const std::optional<T>& t;
+
+public:
+  Output_rep( const std::optional<T>& tt) : t(tt) {}
+  std::ostream& operator()( std::ostream& os) const {
+    if (t==std::nullopt) return (os << "--");
+    return (os << t.value()); }
+};
+
+template <class ... T, class F>
+class Output_rep<std::variant<T...>, F>
+{
+   const std::variant<T...>& t;
+
+public:
+  Output_rep( const std::variant<T...>& tt) : t(tt) {}
+  std::ostream& operator()( std::ostream& os) const {
+    return (os << "--");
+  }
 };
 
 /*!
