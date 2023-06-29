@@ -3580,7 +3580,7 @@ public:
       // Verify the first intersection is an overlap, remove it, and
       // recursively call.
       const X_monotone_curve_2* xcv =
-        std::get<X_monotone_curve_2>(&(intersections.front()));
+        std::get_if<X_monotone_curve_2>(&(intersections.front()));
       if (! xcv) {
         CGAL_error_msg("The first intersection is not an overlap!");
         return SMALLER;

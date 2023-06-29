@@ -368,7 +368,7 @@ public:
        result_type operator() (const argument_type& arg) const {
          CGAL_assertion(bool(_inner));
          CGAL_assertion(bool(_outer));
-         return _outer.get()(_inner.get()(arg));
+         return _outer.value()(_inner.value()(arg));
        }
     private:
        ::std::optional<InnerFunctor> _inner;
