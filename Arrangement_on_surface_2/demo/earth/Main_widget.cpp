@@ -130,7 +130,7 @@ void Main_widget::initializeGL()
   auto dup_nodes = Kml::get_duplicates(countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(0)
+  if(1)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
@@ -199,6 +199,29 @@ void Main_widget::init_shader_programs()
   m_sp_arc.init_with_vs_fs("arc");
 }
 
+float Main_widget::compute_backprojected_error(float pixel_error)
+{
+  // compute the back-projected error
+  QRect vp(0, 0, m_vp_width, m_vp_height);
+  auto proj = m_camera.get_projection_matrix();
+  auto view = m_camera.get_view_matrix();
+  QMatrix4x4 model;
+  auto model_view = view * model;
+
+  QVector3D p0(m_vp_width / 2, m_vp_height / 2, 0);
+  QVector3D p1(p0.x() + pixel_error, p0.y(), 0);
+  auto wp0 = p0.unproject(model_view, proj, vp);
+  auto wp1 = p1.unproject(model_view, proj, vp);
+  const float z_near = m_camera.get_z_near();
+  const float r = 1.f; // sphere radius
+  const QVector3D origin(0, 0, 0);
+  const float dist_to_cam = m_camera.get_pos().distanceToPoint(origin);
+
+  float d = dist_to_cam - r;
+  float err = wp0.distanceToPoint(wp1) * (d / z_near);
+  //find_minimum_projected_error_on_sphere(err);
+  return err;
+}
 void Main_widget::find_minimum_projected_error_on_sphere(float we)
 {
   QRect vp(0, 0, m_vp_width, m_vp_height);
@@ -293,31 +316,9 @@ void Main_widget::resizeGL(int w, int h)
   const qreal z_near = 0.1, z_far = 100.0, fov = 45.0;
   m_camera.perspective(fov, aspect, z_near, z_far);
 
-  {
-    // compute the back-projected error
-    QRect vp(0, 0, m_vp_width, m_vp_height);
-    auto proj = m_camera.get_projection_matrix();
-    auto view = m_camera.get_view_matrix();
-    QMatrix4x4 model;
-    auto model_view = view * model;
-
-    QVector3D p0(m_vp_width / 2, m_vp_height / 2, 0);
-    QVector3D p1(p0.x() + 1, p0.y(), 0);
-    auto wp0 = p0.unproject(model_view, proj, vp);
-    auto wp1 = p1.unproject(model_view, proj, vp);
-    const float z_near = m_camera.get_z_near();
-    const float r = 1.f; // sphere radius
-    const QVector3D origin(0, 0, 0);
-    const float dist_to_cam = m_camera.get_pos().distanceToPoint(origin);
-    
-    float d = dist_to_cam - r;
-    float err = wp0.distanceToPoint(wp1) * (d / z_near);
-    std::cout << "error = " << err << std::endl;
-
-    // find the minimum error over the sphere
-    //find_minimum_projected_error_on_sphere(err);
-  }
-
+  // compute the world-space error for the given pixel-error
+  const auto err = compute_backprojected_error(0.5f);
+  std::cout << "error = " << err << std::endl;
 }
 void Main_widget::paintGL()
 {
@@ -383,6 +384,7 @@ void Main_widget::paintGL()
 
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
+    glPointSize(5);
     m_vertices->draw();
 
     sp.unuse();

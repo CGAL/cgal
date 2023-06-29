@@ -198,6 +198,7 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
   // extract all vertices that are ADDED when inserting the arcs!
   int num_created_vertices = 0;
   std::vector<QVector3D> created_vertices;
+  auto approx = traits.approximate_2_object();
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
     auto& d = vit->data();
@@ -205,11 +206,10 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
     {
       num_created_vertices++;
       auto p = vit->point();
-      const auto x = CGAL::to_double(p.dx());
-      const auto y = CGAL::to_double(p.dy());
-      const auto z = CGAL::to_double(p.dz());
-      std::cout << QVector3D(x, y, z) << std::endl;
-      created_vertices.emplace_back(x, y, z);
+      auto ap = approx(p);
+      QVector3D new_vertex(ap.dx(), ap.dy(), ap.dz());
+      std::cout << new_vertex << std::endl;
+      created_vertices.push_back(new_vertex);
     }
   }
   std::cout << "*** num created vertices = " << num_created_vertices << std::endl;
