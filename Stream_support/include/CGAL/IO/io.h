@@ -191,13 +191,15 @@ public:
 template <class T, class F>
 class Output_rep<std::optional<T>, F>
 {
-   const std::optional<T>& t;
+  const std::optional<T>& t;
 
 public:
   Output_rep( const std::optional<T>& tt) : t(tt) {}
-  std::ostream& operator()( std::ostream& os) const {
+  std::ostream& operator()( std::ostream& os) const
+  {
     if (t==std::nullopt) return (os << "--");
-    return (os << t.value()); }
+    return (os << t.value());
+  }
 };
 
 template <class ... T, class F>
@@ -207,8 +209,10 @@ class Output_rep<std::variant<T...>, F>
 
 public:
   Output_rep( const std::variant<T...>& tt) : t(tt) {}
-  std::ostream& operator()( std::ostream& os) const {
-    return (os << "--");
+  std::ostream& operator()( std::ostream& os) const
+  {
+    std::visit([&os](auto&& v) { os << v; }, t);
+    return os;
   }
 };
 
