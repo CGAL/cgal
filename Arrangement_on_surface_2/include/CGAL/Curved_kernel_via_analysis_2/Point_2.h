@@ -736,13 +736,13 @@ public:
     swallow(is, '(');
 
     // read values
-    is >> rep._m_xy;
+    is >> iformat(rep._m_xy);
     swallow(is, ',');
-    is >> rep._m_x;
+    is >> iformat(rep._m_x);
     swallow(is, ',');
-    is >> rep._m_curve;
+    is >> iformat(rep._m_curve);
     swallow(is, ',');
-    is >> rep._m_arcno;
+    is >> iformat(rep._m_arcno);
     swallow(is, ',');
     is >> rep._m_location;
 
