@@ -247,7 +247,7 @@ void generate_random_weights(const PolygonWithHoles& p,
 
     std::vector<FT> weights;
     for(auto it=c.begin(); it<c.end(); ++it)
-      weights.push_back(weight[it]);
+      weights.push_back(FT(weight[it]));
 
     return weights;
   };
