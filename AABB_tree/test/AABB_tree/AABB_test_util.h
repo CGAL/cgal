@@ -98,6 +98,9 @@ void test_all_intersection_query_types(Tree& tree)
     std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > r = tree.any_intersection(ray);
     std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);
     std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > s = tree.any_intersection(segment);
+    CGAL_USE(r);
+    CGAL_USE(l);
+    CGAL_USE(s);
 
     // any_intersected_primitive
     std::optional<typename Primitive::Id> optional_primitive;
