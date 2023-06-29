@@ -1083,11 +1083,11 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
   // Assign and check results
   for (size_t qi = 0; qi < size; ++qi) {
     // Assign object to a face
-    Face_const_handle* fh_ref = std::get_ifFace_const_handle>(&(objs[0][qi]));
+    Face_const_handle* fh_ref = std::get_if<Face_const_handle>(&(objs[0][qi]));
     if (fh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
         Face_const_handle* fh_cur =
-          std::get_ifFace_const_handle>(&(objs[pl][qi]));
+          std::get_if<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           if ((*fh_cur) != (*fh_ref)) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -1102,13 +1102,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Expected: a face." << std::endl;
         result += -1;
         Halfedge_const_handle* hh_cur =
-          std::get_ifHalfedge_const_handle>(&(objs[pl][qi]));
+          std::get_if<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
         }
         Vertex_const_handle* vh_cur =
-          std::get_ifVertex_const_handle>(&(objs[pl][qi]));
+          std::get_if<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
           continue;
@@ -1124,11 +1124,11 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
 
     // Assign object to a halfedge
     Halfedge_const_handle* hh_ref =
-      std::get_ifHalfedge_const_handle>(&(objs[0][qi]));
+      std::get_if<Halfedge_const_handle>(&(objs[0][qi]));
     if (hh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
         Halfedge_const_handle* hh_cur =
-          std::get_ifHalfedge_const_handle>(&(objs[pl][qi]));
+          std::get_if<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           if (((*hh_cur) != (*hh_ref)) && ((*hh_cur)->twin() != (*hh_ref))) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -1145,13 +1145,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
                   << std::endl;
         result += -1;
         Face_const_handle* fh_cur =
-          std::get_ifFace_const_handle>(&(objs[pl][qi]));
+          std::get_if<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
         Vertex_const_handle* vh_cur =
-          std::get_ifVertex_const_handle>(&(objs[pl][qi]));
+          std::get_if<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
           continue;
@@ -1163,11 +1163,11 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
 
     // Assign object to a vertex
     Vertex_const_handle* vh_ref =
-      std::get_ifVertex_const_handle>(&(objs[0][qi]));
+      std::get_if<Vertex_const_handle>(&(objs[0][qi]));
     if (vh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
         Vertex_const_handle* vh_cur =
-          std::get_ifVertex_const_handle>(&(objs[pl][qi]));
+          std::get_if<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           if ((*vh_cur) != (*vh_ref)) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -1183,13 +1183,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Expected: a vertex: "<< (*vh_ref)->point() << std::endl;
         result += -1;
         Face_const_handle* fh_cur =
-          std::get_ifFace_const_handle>(&(objs[pl][qi]));
+          std::get_if<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
         Halfedge_const_handle* hh_cur =
-          std::get_ifHalfedge_const_handle>(&(objs[pl][qi]));
+          std::get_if<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
