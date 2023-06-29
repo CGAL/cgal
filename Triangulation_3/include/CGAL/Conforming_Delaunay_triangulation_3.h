@@ -451,7 +451,7 @@ protected:
     const auto& pb = tr.point(vb);
 
     if(this->dimension() < 2) {
-      return {midpoint_functor(pa, pb), va->cell()};
+      return {midpoint_functor(pa, pb), va->cell(), va};
     }
 
 #ifdef CGAL_DEBUG_CDT_3
