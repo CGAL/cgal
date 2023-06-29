@@ -825,6 +825,9 @@ private:
 
     bool edges_only_;
     double target_length_;
+    double error_tol_;
+    double min_length_;
+    double max_length_;
     unsigned int nb_iter_;
     bool protect_;
     bool smooth_features_;
@@ -986,6 +989,32 @@ public Q_SLOTS:
     }
   }
 
+  void on_edgeSizing_type_combo_box_changed(int index)
+  {
+    if (index == 0)
+    {
+      ui.edgeLength_label->show();
+      ui.edgeLength_dspinbox->show();
+      ui.errorTol_label->hide();
+      ui.errorTol_edit->hide();
+      ui.minEdgeLength_label->hide();
+      ui.minEdgeLength_edit->hide();
+      ui.maxEdgeLength_label->hide();
+      ui.maxEdgeLength_edit->hide();
+    }
+    else if (index == 1)
+    {
+      ui.edgeLength_label->hide();
+      ui.edgeLength_dspinbox->hide();
+      ui.errorTol_label->show();
+      ui.errorTol_edit->show();
+      ui.minEdgeLength_label->show();
+      ui.minEdgeLength_edit->show();
+      ui.maxEdgeLength_label->show();
+      ui.maxEdgeLength_edit->show();
+    }
+  }
+
 public:
   void
   initialize_remeshing_dialog(QDialog* dialog,
@@ -1004,6 +1033,8 @@ public:
 
     connect(ui.protect_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_protect_checkbox_click()));
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_splitEdgesOnly_click()));
+    connect(ui.edgeSizing_type_combo_box, SIGNAL(currentIndexChanged(int)),
+      this, SLOT(on_edgeSizing_type_combo_box_changed(int)));
 
     //Set default parameters
     Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
@@ -1025,17 +1056,29 @@ public:
 
 
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
+    //todo ip - check and adjust these
+    ui.errorTol_edit->setValue(0.001 * diago_length);
+    ui.minEdgeLength_edit->setValue(0.001 * diago_length);
+    ui.maxEdgeLength_edit->setValue(0.5 * diago_length);
 
-    std::ostringstream oss;
-    oss << "Diagonal length of the Bbox of the selection to remesh is ";
-    oss << diago_length << "." << std::endl;
-    oss << "Default is 5% of it" << std::endl;
-    ui.edgeLength_dspinbox->setToolTip(QString::fromStdString(oss.str()));
+    std::string diag_general_info = "Diagonal length of the Bbox of the selection to remesh is "
+                                    + std::to_string(diago_length) + ".\n";
+    std::string specific_info;
+    specific_info = "Default is 5% of it\n";
+    ui.edgeLength_dspinbox->setToolTip(QString::fromStdString(diag_general_info + specific_info));
+    specific_info = "Default is 0.1% of it\n";
+    ui.errorTol_edit->setToolTip(QString::fromStdString(diag_general_info + specific_info));
+    specific_info = "Default is 0.1% of it\n";
+    ui.minEdgeLength_edit->setToolTip(QString::fromStdString(diag_general_info + specific_info));
+    specific_info = "Default is 50% of it\n";
+    ui.maxEdgeLength_edit->setToolTip(QString::fromStdString(diag_general_info + specific_info));
 
     ui.nbIterations_spinbox->setSingleStep(1);
     ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
     ui.nbIterations_spinbox->setValue(1);
 
+    ui.edgeSizing_type_combo_box->setCurrentIndex(0);
+    on_edgeSizing_type_combo_box_changed(0); //todo ip otherwise it shows all remeshing variables
     ui.protect_checkbox->setChecked(false);
     ui.smooth1D_checkbox->setChecked(true);
 
@@ -1046,7 +1089,6 @@ public:
       ui.preserveDuplicates_checkbox->setChecked(false);
     }
   }
-
 
 private:
   QAction* actionIsotropicRemeshing_;
