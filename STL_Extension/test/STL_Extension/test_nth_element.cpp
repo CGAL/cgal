@@ -12,18 +12,18 @@ int test() {
   CGAL::nth_element(nbs, nbs+pivot, nbs+sizeof(nbs) / sizeof(int), cmp);
   std::cerr << "After nth_element, nbs["<< pivot << "] = " << nbs[pivot] << std::endl;
   assert(nbs[pivot]==expected_value);
-  for(int i = 0; i < sizeof(nbs) / sizeof(int); ++i) {
+  for(std::size_t i = 0; i < sizeof(nbs) / sizeof(int); ++i) {
     std::cerr << " " << nbs[i];
   }
   std::cerr << std::endl;
   for(pivot=0; pivot < 10; ++pivot)
     CGAL::nth_element(nbs, nbs+pivot, nbs+sizeof(nbs) / sizeof(int), cmp);
   std::cerr << "After sort:\n";
-  for(int i = 0; i < sizeof(nbs) / sizeof(int); ++i) {
+  for(std::size_t i = 0; i < sizeof(nbs) / sizeof(int); ++i) {
     std::cerr << " " << nbs[i];
   }
   std::cerr << std::endl;
-  for(int i = 1; i < sizeof(nbs) / sizeof(int); ++i) {
+  for(std::size_t i = 1; i < sizeof(nbs) / sizeof(int); ++i) {
     assert(nbs[i]>=nbs[i-1]);
   }
   return 0;
