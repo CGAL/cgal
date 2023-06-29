@@ -21,7 +21,7 @@ void test_cgal_solver() {
 
   using NQ = SR::Segments::Delaunay_neighbor_query_2<Traits, Segments>;
   using AR = SR::Segments::Angle_regularization_2<Traits, Segments>;
-  using QP = CGAL::CGAL_quadratic_program_traits<FT>;
+  using QP = CGAL::OSQP_quadratic_program_traits<FT>;
 
   using QP_AR = SR::QP_regularization<Traits, Segments, NQ, AR, QP>;
 
