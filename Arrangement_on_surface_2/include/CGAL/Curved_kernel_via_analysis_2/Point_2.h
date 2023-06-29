@@ -700,14 +700,13 @@ public:
         default:
           // ASCII
           os << "Point_2(";
-
-          os << this->ptr()->_m_xy;
+          os << oformat(this->ptr()->_m_xy);
           os << ",";
-          os << this->ptr()->_m_x;
+          os << oformat(this->ptr()->_m_x);
           os << ",";
-          os << this->ptr()->_m_curve;
+          os << oformat(this->ptr()->_m_curve);
           os << ",";
-          os << this->ptr()->_m_arcno;
+          os << oformat(this->ptr()->_m_arcno);
           os << ",";
           os << this->ptr()->_m_location;
 
