@@ -26,18 +26,19 @@ struct Test_functor
   Test_functor (const X_monotone_polyline& reference)
     : reference (&reference) { }
 
-  void operator() (const CGAL::Object& obj) const
+  void operator()(std::pair<Point_2, unsigned int>)
   {
-     const X_monotone_polyline* poly
-      = CGAL::object_cast<X_monotone_polyline>(&obj);
-     assert(poly != nullptr); //  Intersection is not a polyline
+    assert(!"This overload should not be called");
+  }
 
+  void operator() (const X_monotone_polyline& poly) const
+  {
     typename X_monotone_polyline::Point_const_iterator
       itref = reference->points_begin(),
-      itpoly = poly->points_begin();
+      itpoly = poly.points_begin();
 
     for (; itref != reference->points_end()
-           && itpoly != poly->points_end();
+           && itpoly != poly.points_end();
          ++ itref, ++ itpoly)
       assert(*itref == *itpoly);
   }

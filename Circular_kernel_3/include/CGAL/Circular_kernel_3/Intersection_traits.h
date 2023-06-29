@@ -167,25 +167,4 @@ struct SK3_Intersection_traits<SK, typename SK::Sphere_3, typename SK::Plane_3, 
 
 } //end of namespace CGAL
 
-namespace CGAL{
-namespace internal{
-
-// this function is used to call either make_object or a
-// CK2_Intersection_traits::result_type constructor to create return
-// values. The Object version takes some dummy template arguments
-// that are needed for the return of the Intersection_traits. In
-// theory a one parameter variant could be returned, but this
-// _could_ come with conversion overhead and so we rather go for
-// the real type.
-// Overloads for empty returns are also provided.
-  template<typename RT, typename T>
-  inline RT
-  sk3_intersection_return(T&& t) { return RT(std::forward<T>(t)); }
-  template<typename RT>
-  inline RT
-  sk3_intersection_return() { return RT(); }
-
-} } //end of namespace CGAL::internal
-
-
 #endif // CGAL_CIRCULAR_KERNEL_2_INTERSECTION_TRAITS_H

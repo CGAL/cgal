@@ -224,8 +224,6 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       const Kernel& kernel = m_traits;
       auto res = kernel.intersect_2_object()(cv1, cv2);
@@ -241,7 +239,7 @@ public:
         // If the two segments intersect at their endpoints, then the
         // multiplicity is undefined, but we deliberately ignore it for
         // efficiency reasons.
-        *oi++ = Intersection_result(Intersection_point(*p_p, 1));
+        *oi++ = Intersection_point(*p_p, 1);
         return oi;
       }
 
@@ -257,11 +255,11 @@ public:
         // in the overlap segment
         if (m_traits.compare_endpoints_xy_2_object()(*cv_p) != cmp1) {
           auto ctr_opposite = kernel.construct_opposite_segment_2_object();
-          *oi++ = Intersection_result(ctr_opposite(*cv_p));
+          *oi++ = ctr_opposite(*cv_p);
           return oi;
         }
       }
-      *oi++ = Intersection_result(*cv_p);
+      *oi++ = *cv_p;
       return oi;
     }
   };

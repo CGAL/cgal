@@ -251,19 +251,13 @@ namespace CGAL {
                  OutputIterator res) const
       {
         if ( const Arc1* arc1 = std::get_if<Arc1>( &A ) ) {
-          std::vector<CGAL::Object> container;
-          CircularKernel().
-            make_x_monotone_2_object()(*arc1,std::back_inserter(container));
-          return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                          (container, res);
+          return CircularKernel().
+            make_x_monotone_2_object()(*arc1, res);
         }
         else {
           const Arc2* arc2 = std::get_if<Arc2>( &A );
-          std::vector<CGAL::Object> container;
-          CircularKernel().
-            make_x_monotone_2_object()(*arc2,std::back_inserter(container));
-          return object_to_object_variant<CircularKernel, Arc1, Arc2>
-                                          (container, res);
+            return CircularKernel().
+              make_x_monotone_2_object()(*arc2, res);
         }
       }
     };

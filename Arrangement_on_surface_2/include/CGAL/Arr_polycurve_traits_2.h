@@ -698,8 +698,7 @@ public:
       typedef std::pair<Point_2, Multiplicity>        Intersection_point;
       typedef std::variant<Intersection_point, X_monotone_subcurve_2>
                                                       Intersection_base_result;
-      typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                      Intersection_result;
+
 
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
@@ -744,7 +743,7 @@ public:
             // cv1's right endpoint equals cv2's left endpoint
             // Thus we can return this single(!) intersection point
             Intersection_point p(max_vertex(cv1[i1]), 0);
-            *oi++ = Intersection_result(p);
+            *oi++ = p;
             return oi;
           }
           dir1 == SMALLER ?
@@ -767,7 +766,7 @@ public:
             // cv2's right endpoint equals cv1's left endpoint
             // Thus we can return this single(!) intersection point
             Intersection_point p(max_vertex(cv2[i2]), 0);
-            *oi++ = Intersection_result(p);
+            *oi++ = p;
             return oi;
           }
 
@@ -833,7 +832,7 @@ public:
 
             const Intersection_point* p_p =
               std::get_if<Intersection_point>(&xection);
-            if (p_p != nullptr) *oi++ = Intersection_result(*p_p);
+            if (p_p != nullptr) *oi++ = *p_p;
           }
         }
         else if (right_coincides && left_coincides) {
@@ -871,7 +870,7 @@ public:
               // will be taken care of as the min_vertex of in the next
               // iteration.
               if (! equal(p_ptr->first, max_vertex(cv1[i1])))
-                *oi++ = Intersection_result(*p_ptr);
+                *oi++ = *p_ptr;
             }
           }
         }
@@ -896,11 +895,11 @@ public:
             // it multiplicity 0.
             if (left_res == SMALLER) {
               Intersection_point p(min_vertex(cv2[i2]), 0);
-              *oi++ = Intersection_result(p);
+              *oi++ = p;
             }
             else {
               Intersection_point p(min_vertex(cv1[i1]), 0);
-              *oi++ = Intersection_result(p);
+              *oi++ = p;
             }
           }
         }
@@ -941,7 +940,7 @@ public:
             (i1 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv1[i1+1]), 0) :
             return_point(max_vertex(cv1[0]), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
         else if (right_res == LARGER) {
           ip = (dir2 == SMALLER) ?
@@ -949,7 +948,7 @@ public:
             (i2 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv2[i2+1]), 0) :
             return_point(max_vertex(cv2[0]), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
         else if (((i1 > 0) && (dir1 == SMALLER)) ||
                  ((i1 < n1) && (dir1 != SMALLER)) ||
@@ -961,7 +960,7 @@ public:
             (i1 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv1[i1+1]), 0) :
             return_point(max_vertex(cv1[0]), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
         else {
           CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
@@ -976,7 +975,7 @@ public:
             (i2 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv2[i2+1]), 0) :
             return_point(max_vertex(cv2[0]), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
       }
 
@@ -989,15 +988,12 @@ public:
     inline OutputIterator output_ocv
     (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
     {
-      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
-      typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                      Intersection_result;
       X_monotone_curve_2 curve;
       if (invert_ocv)
         std::reverse (ocv.begin(), ocv.end());
       for (X_monotone_subcurve_2& sc : ocv)
         curve.push_back (sc);
-      *(oi ++) = Intersection_result(curve);
+      *(oi ++) = curve;
 
       ocv.clear();
 

@@ -2038,8 +2038,6 @@ public:
   OutputIterator intersect(const Self& arc, OutputIterator oi,
                            const Cache& cache) const
   {
-    typedef std::variant<Intersection_point, Self>    Intersection_result;
-
     CGAL_precondition(this->is_valid());
     CGAL_precondition(this->is_continuous());
     CGAL_precondition(arc.is_valid());
