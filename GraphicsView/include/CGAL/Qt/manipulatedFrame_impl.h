@@ -93,10 +93,10 @@ illustration. */
 CGAL_INLINE_FUNCTION
 void ManipulatedFrame::checkIfGrabsMouse(int x, int y,
                                          const Camera *const camera) {
-  const int thresold = 10;
+  const int threshold = 10;
   const Vec proj = camera->projectedCoordinatesOf(position());
-  setGrabsMouse(keepsGrabbingMouse_ || ((fabs(x - proj.x) < thresold) &&
-                                        (fabs(y - proj.y) < thresold)));
+  setGrabsMouse(keepsGrabbingMouse_ || ((fabs(x - proj.x) < threshold) &&
+                                        (fabs(y - proj.y) < threshold)));
 }
 
 
@@ -219,8 +219,8 @@ int ManipulatedFrame::mouseOriginalDirection(const QMouseEvent *const e) {
 CGAL_INLINE_FUNCTION
 qreal ManipulatedFrame::deltaWithPrevPos(QMouseEvent *const event,
                                          Camera *const camera) const {
-  qreal dx = qreal(event->x() - prevPos_.x()) / camera->screenWidth();
-  qreal dy = qreal(event->y() - prevPos_.y()) / camera->screenHeight();
+  qreal dx = qreal(event->position().x() - prevPos_.x()) / camera->screenWidth();
+  qreal dy = qreal(event->position().y() - prevPos_.y()) / camera->screenHeight();
 
   qreal value = fabs(dx) > fabs(dy) ? dx : dy;
   return value * zoomSensitivity();
@@ -319,7 +319,7 @@ void ManipulatedFrame::mouseMoveEvent(QMouseEvent *const event,
 
     const qreal prev_angle =
         atan2(prevPos_.y() - trans[1], prevPos_.x() - trans[0]);
-    const qreal angle = atan2(event->y() - trans[1], event->x() - trans[0]);
+    const qreal angle = atan2(event->position().y() - trans[1], event->position().x() - trans[0]);
 
     const Vec axis =
         transformOf(camera->frame()->inverseTransformOf(Vec(0.0, 0.0, -1.0)));
@@ -336,9 +336,9 @@ void ManipulatedFrame::mouseMoveEvent(QMouseEvent *const event,
     Vec trans;
     int dir = mouseOriginalDirection(event);
     if (dir == 1)
-      trans.setValue(event->x() - prevPos_.x(), 0.0, 0.0);
+      trans.setValue(event->position().x() - prevPos_.x(), 0.0, 0.0);
     else if (dir == -1)
-      trans.setValue(0.0, prevPos_.y() - event->y(), 0.0);
+      trans.setValue(0.0, prevPos_.y() - event->position().y(), 0.0);
 
     switch (camera->type()) {
     case Camera::PERSPECTIVE:
@@ -367,7 +367,7 @@ void ManipulatedFrame::mouseMoveEvent(QMouseEvent *const event,
 
   case ROTATE: {
     Vec trans = camera->projectedCoordinatesOf(position());
-    Quaternion rot = deformedBallQuaternion(event->x(), event->y(), trans[0],
+    Quaternion rot = deformedBallQuaternion(event->position().x(), event->position().y(), trans[0],
                                             trans[1], camera);
     trans = Vec(-rot[0], -rot[1], -rot[2]);
     trans = camera->frame()->orientation().rotate(trans);
