@@ -461,36 +461,7 @@ protected:
 
 #ifdef CGAL_DEBUG_CDT_3
     [[maybe_unused]] auto debug_simplex = [&](auto simplex) {
-      switch(simplex.dimension()) {
-        case 0: {
-          std::cerr << "   vertex " << display_vert(static_cast<Vertex_handle>(simplex)) << '\n';
-          break;
-        }
-        case 1: {
-          const auto [c, index1, index2] = static_cast<Edge>(simplex);
-          std::cerr << "   egde " << display_vert(c->vertex(index1)) << " - "
-                    << display_vert(c->vertex(index2)) << '\n';
-          break;
-        }
-        case 2: {
-          const auto [c, index] = static_cast<Facet>(simplex);
-          std::cerr << "   facet "
-                    << display_vert(c->vertex(T_3::vertex_triple_index(index, 0))) << " - "
-                    << display_vert(c->vertex(T_3::vertex_triple_index(index, 1))) << " - "
-                    << display_vert(c->vertex(T_3::vertex_triple_index(index, 2))) << '\n';
-          break;
-        }
-        case 3: {
-          const auto c = static_cast<Cell_handle>(simplex);
-          std::cerr << "   cell "
-                    << display_vert(c->vertex(0)) << " - "
-                    << display_vert(c->vertex(1)) << " - "
-                    << display_vert(c->vertex(2)) << " - "
-                    << display_vert(c->vertex(3)) << '\n';
-          break;
-        }
-        default: CGAL_assume(false);
-      }
+      std::cerr << " - " << oformat(simplex, With_point_tag{});
     };
 #endif // CGAL_DEBUG_CDT_3
 
@@ -548,7 +519,7 @@ protected:
     std::for_each(tr.segment_traverser_simplices_begin(va, vb), tr.segment_traverser_simplices_end(),
                   fill_encroaching_vertices);
     auto vector_of_encroaching_vertices = encroaching_vertices.extract_sequence();
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 16
     std::cerr << "  -> vector_of_encroaching_vertices (before filter):\n";
     std::for_each(vector_of_encroaching_vertices.begin(),
                   vector_of_encroaching_vertices.end(),
@@ -564,7 +535,7 @@ protected:
                                                     this->tr.point(v),
                                                     pb) == ACUTE;
                              });
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 16
     std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
     std::for_each(vector_of_encroaching_vertices.begin(), end,
                   [this](Vertex_handle v){
