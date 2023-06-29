@@ -22,8 +22,8 @@ std::tuple<float, float, float>
 hsv_to_rgb(float hue, float sat, float value) {
   float red, green, blue;
   float fc = value * sat; // Chroma
-  float hue_prime = fmod(hue / 60.0, 6);
-  float fx = fc * (1.0 - fabs(fmod(hue_prime, 2) - 1.0));
+  float hue_prime = fmod(hue / 60.0f, 6);
+  float fx = fc * (1.0f - fabs(fmod(hue_prime, 2) - 1.0));
   float fm = value - fc;
 
   if(0 <= hue_prime && hue_prime < 1) {
@@ -98,12 +98,13 @@ int main() {
 
   std::size_t id(0);
   CGAL::draw(arr, [&] (Arrangement_2::Face_const_handle) -> CGAL::IO::Color {
-                    float h = 360.0 * id++ / arr.number_of_faces();
+                    float h = 360.0f * id++ / arr.number_of_faces();
                     float s = 0.5;
                     float v = 0.5;
                     float r, g, b;
+                    typedef unsigned char uchar;
                     std::tie(r, g, b) = hsv_to_rgb(h, s, v);
-                    return CGAL::IO::Color(r, g, b);
+                    return CGAL::IO::Color(uchar(r*255), uchar(g*255), uchar(b*255));
                   }, "hsv colors", true);
 
   return EXIT_SUCCESS;
