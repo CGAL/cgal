@@ -27,9 +27,9 @@ int main()
 
   std::stringstream buffer;
   buffer << dt3;
-  //~ std::ofstream out ("test_dt_deterministic_3.in");
-  //~ out << dt3;
-
+  //std::ofstream out ("test_dt_deterministic_3.in");
+  //out << dt3;
+  //out.close();
 
   //reading the result from a file
   std::ifstream file ("test_dt_deterministic_3.in");
