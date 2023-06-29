@@ -267,6 +267,19 @@ public:
   std::istream& operator()( std::istream& is) const { return (is >> t); }
 };
 
+template <class T>
+class Input_rep<std::optional<T>>
+{
+  std::optional<T>& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( std::optional<T>& tt) : t(tt) {}
+
+  //! perform the input, calls \c operator\>\> by default.
+  std::istream& operator()( std::istream& is) const { return (is >> t.value()); }
+};
+
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
   ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
 
