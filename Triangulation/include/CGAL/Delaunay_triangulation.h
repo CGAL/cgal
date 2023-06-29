@@ -416,7 +416,7 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_triangulation dark_side(
       maximal_dimension(),
       flat_orientation_ ?
-      std::pair<int, const Flat_orientation_d *>(current_dimension(), flat_orientation_.get_ptr())
+      std::pair<int, const Flat_orientation_d *>(current_dimension(), &flat_orientation_.value())
       : std::pair<int, const Flat_orientation_d *>((std::numeric_limits<int>::max)(), (Flat_orientation_d*) nullptr) );
 
     Dark_s_handle dark_s;
