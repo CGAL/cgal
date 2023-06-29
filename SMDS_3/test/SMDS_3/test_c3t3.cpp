@@ -132,10 +132,13 @@ struct Tester
     }
 
     {
-      Vertex_handle vh =  *c3t3.vertices_in_complex().begin();
-      for (auto v : c3t3.vertices_in_complex()) {
-        assert(v == vh);
-        break;
+      if (!c3t3.vertices_in_complex().empty())
+      {
+        Vertex_handle vh =  *c3t3.vertices_in_complex().begin();
+        for (auto v : c3t3.vertices_in_complex()) {
+          assert(v == vh);
+          break;
+        }
       }
     }
 
