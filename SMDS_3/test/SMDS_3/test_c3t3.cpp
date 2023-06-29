@@ -123,22 +123,12 @@ struct Tester
     assert(c3t3.is_in_complex(ch));
     assert(c3t3.subdomain_index(ch) == subdomain_index);
 
+    // Test iterator range
     {
       Cell_handle ch = *c3t3.cells_in_complex().begin();
       for (auto c : c3t3.cells_in_complex()) {
         assert(c == ch);
         break;
-      }
-    }
-
-    {
-      if (!c3t3.vertices_in_complex().empty())
-      {
-        Vertex_handle vh =  *c3t3.vertices_in_complex().begin();
-        for (auto v : c3t3.vertices_in_complex()) {
-          assert(v == vh);
-          break;
-        }
       }
     }
 

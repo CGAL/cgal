@@ -218,6 +218,18 @@ struct Tester
            || ( v == vp4 && tr.point(vit) == p4 ) );
 
     assert ( tv1.in_dimension() == tv2.in_dimension() );
+
+
+    // Test iterator range
+    {
+      Vertex_handle vh =  *c3t3.vertices_in_complex().begin();
+      for (auto v : c3t3.vertices_in_complex()) {
+        assert(v == vh);
+        break;
+      }
+    }
+
+
     //-------------------------------------------------------
     // Check adjacencies
     //-------------------------------------------------------
