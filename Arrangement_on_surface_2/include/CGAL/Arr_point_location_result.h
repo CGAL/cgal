@@ -15,6 +15,7 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 #include <CGAL/disable_warnings.h>
+#include <CGAL/assertions.h>
 
 #include <optional>
 #include <variant>
