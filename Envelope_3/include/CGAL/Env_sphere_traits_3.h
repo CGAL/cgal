@@ -25,6 +25,8 @@
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/int.h>
 
+#include <memory>
+
 namespace CGAL {
 
 template <typename ConicTraits_2>
