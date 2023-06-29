@@ -23,6 +23,7 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <cstdint>
 
 namespace CGAL {
 
