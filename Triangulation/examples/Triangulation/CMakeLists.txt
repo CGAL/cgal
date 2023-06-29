@@ -30,9 +30,7 @@ if(TARGET CGAL::Eigen3_support)
     regular_triangulation
     triangulation
     triangulation_data_structure_dynamic
-    triangulation_data_structure_static
-    triangulation1
-    triangulation2)
+    triangulation_data_structure_static)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 else()
