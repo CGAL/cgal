@@ -55,7 +55,6 @@ create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_de
 create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
 create_single_source_cgal_program( "test_mesh_cell_base_3.cpp")
 create_single_source_cgal_program( "test_min_edge_length.cpp")
-create_single_source_cgal_program( "implicit_functions.cpp")
 
 foreach(target
     test_boost_has_xxx
