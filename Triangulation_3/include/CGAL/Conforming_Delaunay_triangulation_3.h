@@ -591,8 +591,7 @@ protected:
     // compute the projection of the reference point
     const auto vector_ab = vector_functor(pa, pb);
     const auto vector_a_ref = vector_functor(pa, reference_point);
-    const auto lambda = sc_product_functor(vector_a_ref, vector_ab) /
-                        CGAL::approximate_sqrt(sq_length_functor(vector_ab));
+    const auto lambda = sc_product_functor(vector_a_ref, vector_ab) / sq_length_functor(vector_ab);
 
     const auto result_point =
      (lambda < 0.2 || lambda > 0.8) ?
