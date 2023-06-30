@@ -36,7 +36,7 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int iter_number = 100;
+  const int iter_number = 120;
 
   for(int i = 0; i < iter_number; ++i)
   {

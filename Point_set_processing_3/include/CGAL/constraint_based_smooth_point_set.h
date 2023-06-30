@@ -271,6 +271,8 @@ point_type_t feature_detection(
     dominant_eigenvalue_count = 0; //corner  
   }
 
+  std::cout << dominant_eigenvalue_count << std::endl;
+
   return static_cast<point_type_t>(dominant_eigenvalue_count);
 }
 
@@ -293,7 +295,7 @@ typename Kernel::Point_3 calculate_new_point(
   const Vector& n = get(normal_map, vt);
 
   Point new_point;
-  Eigen::Vector3d t(3, 3);
+  Eigen::Vector3d t(0, 0, 0);
   t.setZero();
   Eigen::Matrix3d m_temp(3, 3);
   m_temp.setZero();
@@ -484,7 +486,8 @@ constraint_based_smooth_point_set(
       return true;
     });
 
-  std::vector<internal::point_type_t> point_classifications(nb_points);
+  std::vector<internal::point_type_t> point_classifications;
+  point_classifications.reserve(nb_points);
 
   for (auto it = pwns_nvts.begin() ; it < pwns_nvts.end() ; ++it)
   {
@@ -516,17 +519,17 @@ constraint_based_smooth_point_set(
       return true;
     });
 
-  typedef boost::zip_iterator
-    <boost::tuple<iterator,
-                  typename std::vector<typename Kernel::Point_3>::iterator> > Zip_iterator_6;
-  CGAL::for_each<ConcurrencyTag>
-    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), new_points.begin())),
-                       boost::make_zip_iterator (boost::make_tuple (points.end(), new_points.end()))),
-     [&](const typename Zip_iterator_6::reference& t)
-     {
-       put (point_map, get<0>(t), get<1>(t));
-       return true;
-     });
+  // typedef boost::zip_iterator
+  //   <boost::tuple<iterator,
+  //                 typename std::vector<typename Kernel::Point_3>::iterator> > Zip_iterator_6;
+  // CGAL::for_each<ConcurrencyTag>
+  //   (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), new_points.begin())),
+  //                      boost::make_zip_iterator (boost::make_tuple (points.end(), new_points.end()))),
+  //    [&](const typename Zip_iterator_6::reference& t)
+  //    {
+  //      put (point_map, get<0>(t), get<1>(t));
+  //      return true;
+  //    });
 
 
   std::cout << "fn complete" << std::endl;
