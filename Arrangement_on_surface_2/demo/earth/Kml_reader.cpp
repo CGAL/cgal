@@ -9,6 +9,10 @@
 #include <qxmlstream.h>
 
 
+bool Kml::Node::operator == (const Node& r) const
+{
+  return  (lon == r.lon) && (lat == r.lat);
+}
 Kml::Vec3d Kml::Node::get_coords_3d(const double r) const
 {
   const auto phi = qDegreesToRadians(lat);
@@ -80,7 +84,7 @@ Kml::Placemarks  Kml::read(const std::string& file_name)
           auto attributes = xmlReader.attributes();
           auto attr_name = attributes[0].name().toString();
           auto attr_value = attributes[0].value().toString();
-          if ((attr_name == "name") && (attr_value == "name"))
+          if ((attr_name == "name") && (attr_value == "ADMIN"))
           {
             xmlReader.readNext();
             placemark.name = xmlReader.text().toString().toStdString();;

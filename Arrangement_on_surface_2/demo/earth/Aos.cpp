@@ -210,6 +210,14 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
       QVector3D new_vertex(ap.dx(), ap.dy(), ap.dz());
       std::cout << new_vertex << std::endl;
       created_vertices.push_back(new_vertex);
+
+      // find the arcs that are adjacent to this vertex
+      const auto first = vit->incident_halfedges();
+      auto curr = first;
+      do {
+
+      } while (++curr != first);
+
     }
   }
   std::cout << "*** num created vertices = " << num_created_vertices << std::endl;

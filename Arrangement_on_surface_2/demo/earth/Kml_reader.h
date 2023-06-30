@@ -7,6 +7,7 @@
 
 #include <qvector3d.h>
 
+
 class Kml
 {
 public:
@@ -20,11 +21,7 @@ public:
   {
     double lon, lat;
 
-    bool operator == (const Node& r) const  
-    { 
-      return  (lon == r.lon) && (lat == r.lat);
-    }
-
+    bool operator == (const Node& r) const;
     Vec3d get_coords_3d(const double r = 1.0) const;
     QVector3D get_coords_3f(const double r=1.0) const;
   };

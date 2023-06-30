@@ -17,6 +17,7 @@ public:
   Approx_arcs get_approx_arcs(double error);
   
   // generate approximate arcs from KML data
+  Approx_arcs get_approx_arcs(const Kml::Placemark& placemark, double error);
   Approx_arcs get_approx_arcs(const Kml::Placemarks& placemarks, double error);
 };
 

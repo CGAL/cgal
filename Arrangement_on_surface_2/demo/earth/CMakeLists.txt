@@ -10,6 +10,7 @@ endif()
 
 set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/opengl/earth")
 
+#find_package(shapelib REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
 add_definitions(-DQT_NO_VERSION_TAGGING)
 
@@ -34,6 +35,14 @@ if ( NOT Boost_FOUND )
   return()  
 
 endif()
+
+
+set(SHAPELIB_INCLUDE_DIR "" CACHE PATH "DEFINE ME!!!")
+#target_include_directories(earth PRIVATE ${SHAPELIB_INCLUDE_DIR})
+include_directories(${SHAPELIB_INCLUDE_DIR})
+set(SHAPELIB_LIB_DIR "" CACHE PATH "DEFINE ME!!!")
+#target_link_directories(earth PRIVATE ${SHAPELIB_LIB_DIR})
+link_directories(earth PRIVATE ${SHAPELIB_LIB_DIR})
 
 
 file(GLOB source_files_geometry   
@@ -78,6 +87,7 @@ target_link_libraries(earth PRIVATE
     Qt6::Widgets
     Qt6::Xml
     CGAL::CGAL
+    shp
 )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders 

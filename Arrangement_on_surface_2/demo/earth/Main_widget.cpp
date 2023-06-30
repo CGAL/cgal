@@ -118,6 +118,21 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
   case Qt::Key_S:
     show_map = true;
     break;
+
+  case Qt::Key_Up:
+    std::cout << "UP \n";
+    //m_selected_country++;
+    //if (m_selected_country == m_country_names.size())
+    //  m_selected_country--;
+    //std::cout << m_country_names[m_selected_country] << std::endl;
+    break;
+
+  case Qt::Key_Down:
+    std::cout << "DOWN \n";
+
+    break;
+
+
   }
 }
 
@@ -160,7 +175,15 @@ void Main_widget::initializeGL()
     const double error = 0.001; // calculate this from cam parameters!
     auto lsa = ga.get_approx_arcs(countries, error);
     //auto lsa = ga.get_approx_arcs(error);
-    m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
+    // m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
+    for (const auto& country : countries)
+    {
+      m_country_names.push_back(country.name);
+      auto approx_arcs = ga.get_approx_arcs(country, error);
+      auto country_border = std::make_unique<Line_strips>(approx_arcs);
+      m_country_borders.push_back(std::move(country_border));
+    }
+    m_selected_country = 0;
   }
 
   glClearColor(0, 0, 0, 1);
@@ -379,13 +402,14 @@ void Main_widget::paintGL()
     glLineWidth(5);
     sp.set_uniform("u_color", arc_color);
     sp.set_uniform("u_plane", plane);
-    if(show_map)
-      m_geodesic_arcs->draw();
+    if (show_map)
+      m_country_borders[m_selected_country]->draw();
+      //m_geodesic_arcs->draw();
 
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
     glPointSize(5);
-    m_vertices->draw();
+    //m_vertices->draw();
 
     sp.unuse();
   }
