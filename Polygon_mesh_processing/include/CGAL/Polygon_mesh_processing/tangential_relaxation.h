@@ -465,16 +465,16 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
           const vertex_descriptor v2 = source(h, tm);
 
           //todo ip- alt calc
-          const Vector_3 vec0 = vector(get(vpm, v), get(vpm, v1));
-          const Vector_3 vec1 = vector(get(vpm, v), get(vpm, v2));
-          const double sqarea = squared_length(cross_product(vec0, vec1));
-          const double face_weight = CGAL::approximate_sqrt(sqarea)
-                                     / pow(1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)), 2);
+//          const Vector_3 vec0 = vector(get(vpm, v), get(vpm, v1));
+//          const Vector_3 vec1 = vector(get(vpm, v), get(vpm, v2));
+//          const double sqarea = squared_length(cross_product(vec0, vec1));
+//          const double face_weight = CGAL::approximate_sqrt(sqarea)
+//                                     / pow(1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)), 2);
 
           //todo ip- paper implementation
-         // const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
-         // const double face_weight = tri_area
-         //                          / (1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)));
+          const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
+          const double face_weight = tri_area
+                                   / (1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)));
           weight += face_weight;
 
           const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));
