@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   const double tol = 0.001;
-  const std::pair<double, double> edge_min_max{0.001, 0.5};
-  PMP::Adaptive_sizing_field<Mesh> sizing_field(tol, edge_min_max, mesh);
+  const std::pair edge_min_max{0.001, 0.5};
+  PMP::Adaptive_sizing_field sizing_field(tol, edge_min_max, mesh);
   unsigned int nb_iter = 5;
 
   PMP::isotropic_remeshing(
