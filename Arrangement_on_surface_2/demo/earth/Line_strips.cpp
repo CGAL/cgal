@@ -1,6 +1,8 @@
 
 #include "Line_strips.h"
 
+#include <iostream>
+
 
 Line_strips::Line_strips(std::vector<QVector3D>& line_strip_points)
 {
@@ -89,6 +91,21 @@ Line_strips::Line_strips(std::vector<std::vector<QVector3D>>& arcs)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
+
+int Line_strips::get_num_line_strips() const
+{
+  return m_offsets.size() - 1;
+}
+
+void Line_strips::draw(int line_strip_index)
+{
+  glBindVertexArray(m_vao);
+    const auto first = m_offsets[line_strip_index];
+    const auto count = m_offsets[line_strip_index + 1] - first;
+    glDrawArrays(GL_LINE_STRIP, first, count);
+  glBindVertexArray(0);
+}
+
 
 void Line_strips::draw()
 {

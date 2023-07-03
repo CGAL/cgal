@@ -112,33 +112,84 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
 {
   switch (event->key())
   {
-  case Qt::Key_A:
-    show_map = false;
+  case Qt::Key_Q:
+  {
+    auto num_arcs = m_country_borders[m_selected_country]->get_num_line_strips();
+    if (++m_selected_arc == num_arcs)
+      m_selected_arc--;
+    std::cout << "selected arc = " << m_selected_arc << std::endl;
+  }
     break;
-  case Qt::Key_S:
-    show_map = true;
+  case Qt::Key_A:
+  {
+    auto num_arcs = m_country_borders[m_selected_country]->get_num_line_strips();
+    if (--m_selected_arc < 0)
+      m_selected_arc = 0;
+    std::cout << "selected arc = " << m_selected_arc << std::endl;
+  }
     break;
 
   case Qt::Key_Up:
-    std::cout << "UP \n";
-    //m_selected_country++;
-    //if (m_selected_country == m_country_names.size())
-    //  m_selected_country--;
-    //std::cout << m_country_names[m_selected_country] << std::endl;
+    m_selected_country++;
+    if (m_selected_country == m_country_names.size())
+      m_selected_country--;
+    std::cout << m_selected_country << ": " << m_country_names[m_selected_country] << std::endl;
+    m_selected_arc = 0;
     break;
 
   case Qt::Key_Down:
-    std::cout << "DOWN \n";
-
+    m_selected_country--;
+    if (m_selected_country < 0)
+      m_selected_country = 0;
+    std::cout << m_selected_country << ": " << m_country_names[m_selected_country] << std::endl;
+    m_selected_arc = 0;
     break;
 
 
   }
 }
 
+#include <shapefil.h>
+
+void readShapefile(const std::string& filename) {
+  // Open the shapefile
+  SHPHandle shp = SHPOpen(filename.c_str(), "rb");
+  if (shp == nullptr) {
+    std::cerr << "Failed to open shapefile: " << filename << std::endl;
+    return;
+  }
+
+  // Get shapefile information
+  int numEntities, shapeType;
+  double minBounds[4], maxBounds[4];
+  SHPGetInfo(shp, &numEntities, &shapeType, minBounds, maxBounds);
+  std::cout << "Number of entities: " << numEntities << std::endl;
+  std::cout << "Shape type: " << shapeType << std::endl;
+  std::cout << "Bounds: (" << minBounds[0] << ", " << minBounds[1] << "), ("
+    << maxBounds[0] << ", " << maxBounds[1] << ")" << std::endl;
+  //SHPT_POLYGON
+  // Read individual shapes
+  for (int i = 0; i < numEntities; ++i) {
+    SHPObject* shape = SHPReadObject(shp, i);
+
+    // Process the shape data
+    // Example: Print the shape's type and number of points
+    std::cout << "Shape " << i << ": Type " << shape->nSHPType
+      << ", Number of parts: " << shape->nParts 
+      << ", Number of points: " << shape->nVertices << std::endl;
+
+    // Clean up the shape object
+    SHPDestroyObject(shape);
+  }
+
+  // Close the shapefile
+  SHPClose(shp);
+}
 
 void Main_widget::initializeGL()
 {
+  readShapefile("C:/work/gsoc2023/data/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp");
+
   //const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
   const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
   auto countries = Kml::read(file_name);
@@ -173,7 +224,7 @@ void Main_widget::initializeGL()
     // because we want to compute the error based on camera parameters!
     Geodesic_arcs ga;
     const double error = 0.001; // calculate this from cam parameters!
-    auto lsa = ga.get_approx_arcs(countries, error);
+    //auto lsa = ga.get_approx_arcs(countries, error);
     //auto lsa = ga.get_approx_arcs(error);
     // m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
     for (const auto& country : countries)
@@ -183,7 +234,8 @@ void Main_widget::initializeGL()
       auto country_border = std::make_unique<Line_strips>(approx_arcs);
       m_country_borders.push_back(std::move(country_border));
     }
-    m_selected_country = 0;
+    m_selected_country = 25;
+    m_selected_arc = 0;
   }
 
   glClearColor(0, 0, 0, 1);
@@ -400,11 +452,16 @@ void Main_widget::paintGL()
     QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p, n));
     const QVector4D arc_color(0, 0.5, 1, 1);
     glLineWidth(5);
-    sp.set_uniform("u_color", arc_color);
     sp.set_uniform("u_plane", plane);
-    if (show_map)
-      m_country_borders[m_selected_country]->draw();
-      //m_geodesic_arcs->draw();
+
+    // draw all countries 
+    float a = 0.0;
+    sp.set_uniform("u_color", QVector4D(a, a, a, 1));
+    for(auto& country_border : m_country_borders)
+      country_border->draw();
+
+    sp.set_uniform("u_color", arc_color);
+      m_country_borders[m_selected_country]->draw(m_selected_arc);
 
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);

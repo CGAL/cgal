@@ -61,7 +61,7 @@ private:
   std::unique_ptr<Vertices>         m_vertices;
 
   // now we draw boundary-arcs by country
-  int                                         m_selected_country;
+  int   m_selected_country, m_selected_arc;
   std::vector<std::string>                    m_country_names;
   std::vector<std::unique_ptr<Line_strips>>   m_country_borders;
 
