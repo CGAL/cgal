@@ -104,7 +104,7 @@ void Aos::check(const Kml::Placemarks& placemarks)
 
       // add curves
       int num_points = sphere_points.size();
-      for (int i = 0; i < sphere_points.size()-1; i++)
+      for (int i = 0; i < num_points -1; i++)
       {
         num_counted_arcs++;
         const auto p1 = sphere_points[i];

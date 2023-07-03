@@ -45,28 +45,47 @@ set(SHAPELIB_LIB_DIR "" CACHE PATH "DEFINE ME!!!")
 link_directories(earth PRIVATE ${SHAPELIB_LIB_DIR})
 
 
+# AOS
+file(GLOB source_files_aos   
+  Aos.h                     Aos.cpp
+  Geodesic_arcs.h           Geodesic_arcs.cpp
+ )
+source_group( "Aos"  FILES ${source_files_aos} )
+
+
+# GEOMETRY (Graphics-related)
 file(GLOB source_files_geometry   
   Line_strips.h             Line_strips.cpp
   Sphere.h                  Sphere.cpp
   Vertices.h                Vertices.cpp
   World_coordinate_axes.h   World_coordinate_axes.cpp
  )
-source_group( "geometry"  FILES ${source_files_geometry} )
+source_group( "Geometry"  FILES ${source_files_geometry} )
+# GRAPHICS
+file(GLOB source_files_graphics   
+  Camera.h                  Camera.cpp
+  Shader_program.h          Shader_program.cpp
+ )
+source_group( "Graphics"  FILES ${source_files_graphics} )
 
+
+#SOURCE FILES (NOT CATEGORIZED YET)
+file(GLOB source_files   
+  Common_defs.h
+  Kml_reader.h              Kml_reader.cpp
+                            main.cpp
+  Main_widget.h             Main_widget.cpp
+  Tools.h                   Tools.cpp
+ )
+source_group( "Source Files"  FILES ${source_files} )
 
 qt_standard_project_setup()
 
 qt_add_executable(earth
-    Aos.h                     Aos.cpp
-    Camera.h                  Camera.cpp
-    Common_defs.h
-    Geodesic_arcs.h           Geodesic_arcs.cpp
-    Kml_reader.h              Kml_reader.cpp
-                              main.cpp
-    Main_widget.h             Main_widget.cpp
-    Shader_program.h          Shader_program.cpp
-    Tools.h                   Tools.cpp
+    ${source_files_aos}
     ${source_files_geometry}
+    ${source_files_graphics}
+    ${source_files}
 )
 
 
