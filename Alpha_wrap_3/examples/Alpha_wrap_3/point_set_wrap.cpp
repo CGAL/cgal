@@ -8,8 +8,6 @@
 #include <iostream>
 #include <string>
 
-namespace AW3 = CGAL::Alpha_wraps_3;
-
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
 
@@ -18,8 +16,6 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the input
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
   std::cout << "Reading " << filename << "..." << std::endl;

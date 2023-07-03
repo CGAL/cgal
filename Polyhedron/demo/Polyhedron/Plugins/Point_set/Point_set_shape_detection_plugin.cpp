@@ -928,7 +928,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
     dialog.m_cluster_epsilon_field->setEnabled(false);
     dialog.groupBox_3->setEnabled(false);
     //todo: check default values
-    dialog.m_epsilon_field->setValue(0.01*sm_item->diagonalBbox());
+    dialog.m_epsilon_field->setValue(0.01*sm_item->bboxDiagonal());
     std::size_t nb_faces = mesh->number_of_faces();
     dialog.m_min_pts_field->setValue((std::max)(static_cast<int>(0.01*nb_faces), 1));
     if(!dialog.exec()) return;

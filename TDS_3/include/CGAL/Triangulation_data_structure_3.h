@@ -130,7 +130,7 @@ public:
   >::type                                                Cell_range;
 
 # else
-  CGAL_static_assertion_msg
+  static_assert
     (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
      "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
      "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
@@ -3935,21 +3935,21 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
           int j1n=4,j2n=4,j3n=4;
           if ( ! n->has_vertex(c->vertex((i+1)&3),j1n) ) {
-            if (verbose) { std::cerr << "vertex " << ((i+1)&3)
+            if (verbose) { std::cerr << "vertex (+1) " << ((i+1)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
             CGAL_assertion(false);
             return false;
           }
           if ( ! n->has_vertex(c->vertex((i+2)&3),j2n) ) {
-            if (verbose) { std::cerr << "vertex " << ((i+2)&3)
+            if (verbose) { std::cerr << "vertex (+2) " << ((i+2)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
             CGAL_assertion(false);
             return false;
           }
           if ( ! n->has_vertex(c->vertex((i+3)&3),j3n) ) {
-            if (verbose) { std::cerr << "vertex " << ((i+3)&3)
+            if (verbose) { std::cerr << "vertex (+3) " << ((i+3)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
             CGAL_assertion(false);

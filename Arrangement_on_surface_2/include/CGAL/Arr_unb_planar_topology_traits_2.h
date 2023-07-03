@@ -87,14 +87,14 @@ public:
   typedef typename Gt_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Gt_adaptor_2::Right_side_category  Right_side_category;
 
-  CGAL_static_assertion((std::is_same< Left_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Left_side_category, Arr_open_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Bottom_side_category, Arr_open_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Top_side_category, Arr_oblivious_side_tag>::value ||
-                         std::is_same< Top_side_category, Arr_open_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Right_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Right_side_category, Arr_open_side_tag >::value));
+  static_assert(std::is_same< Left_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Left_side_category, Arr_open_side_tag >::value);
+  static_assert(std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Bottom_side_category, Arr_open_side_tag >::value);
+  static_assert(std::is_same< Top_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same< Top_side_category, Arr_open_side_tag >::value);
+  static_assert(std::is_same< Right_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Right_side_category, Arr_open_side_tag >::value);
   //@}
 
   /*! \struct

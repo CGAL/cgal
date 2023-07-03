@@ -210,7 +210,7 @@ int main(int argc, char*argv[])
     for (Point_set::Index idx : points)
       f << points.point (idx) << std::endl;
     for (const auto& facet : CGAL::make_range (reconstruct.facets_begin(), reconstruct.facets_end()))
-      f << "3 "<< facet << std::endl;
+      f << "3 "<< facet[0] << " " << facet[1] << " " << facet[2] << std::endl;
     f.close ();
 
     //! [Output scale space]

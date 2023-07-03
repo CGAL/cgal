@@ -1572,17 +1572,10 @@ private:
   Cell_vector c3t3_cells(const Cell_vector& cells) const
   {
     Cell_vector c3t3_cells;
-#ifdef CGAL_CXX17
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not_fn(Is_in_c3t3<Cell_handle>(c3t3_)));
-#else
-    std::remove_copy_if(cells.begin(),
-                        cells.end(),
-                        std::back_inserter(c3t3_cells),
-                        std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
-#endif
     return c3t3_cells;
   }
 
@@ -1776,15 +1769,15 @@ private:
 
   template <typename OutputIterator>
   OutputIterator
-  get_conflict_zone_topo_change(const Vertex_handle& vertex,
-                                const Weighted_point& conflict_point,
-                                OutputIterator conflict_cells) const;
+  get_conflict_zone_after_move_topo_change(const Vertex_handle& new_vertex,
+                                           const Weighted_point& old_position,
+                                           OutputIterator conflict_cells) const;
 
   template <typename CellsOutputIterator,
             typename FacetsOutputIterator>
   void
-  get_conflict_zone_topo_change(const Vertex_handle& v,
-                                const Weighted_point& conflict_point,
+  get_conflict_zone_topo_change(const Vertex_handle& old_vertex,
+                                const Weighted_point& new_position,
                                 CellsOutputIterator insertion_conflict_cells,
                                 FacetsOutputIterator insertion_conflict_boundary,
                                 CellsOutputIterator removal_conflict_cells,
@@ -2617,12 +2610,11 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
   }
   else
   {
-    // Removing from c3t3 cells which will be destroyed by revert_move
+    // Removing from c3t3 the cells which will be destroyed by revert_move
     // is done by move_point_topo_change_conflict_zone_known, called by revert_move
 
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-     std::cerr << "update_mesh_topo_change: revert move to "
-               << old_position << "\n";
+     std::cerr << "update_mesh_topo_change: revert move to " << old_position << "\n";
 #endif
 
     //reset caches in case cells are re-used by the compact container
@@ -2632,7 +2624,7 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
 
     // Revert move
     Vertex_handle revert_vertex = revert_move(new_vertex, old_position,
-                          std::inserter(outdated_cells, outdated_cells.end()));
+                                              std::inserter(outdated_cells, outdated_cells.end()));
 
     //restore meta-data (cells should have same connectivity as before move)
     //cells should be the same (connectivity-wise) as before initial move
@@ -2662,8 +2654,8 @@ update_mesh(const Vertex_handle& old_vertex,
   Vertex_handle new_vertex = move_point(old_vertex, move,
                                         std::back_inserter(outdated_cells),
                                         CGAL::Emptyset_iterator());
-  // move_point has invalidated caches
 
+  // move_point has invalidated caches
   restore_mesh(outdated_cells.begin(), outdated_cells.end());
 
   // Fill modified vertices
@@ -3150,7 +3142,8 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 could_lock_zone);
   if (insertion_conflict_cells.empty())
     return old_vertex;//new_position coincides with an existing vertex (not old_vertex)
-                      //and old_vertex should not be removed of the nb_vertices will change
+                      //and old_vertex should not be removed if the nb_vertices will change
+
   reset_circumcenter_cache(removal_conflict_cells);
   reset_sliver_cache(removal_conflict_cells);
   reset_circumcenter_cache(insertion_conflict_cells);
@@ -3260,7 +3253,9 @@ move_point_topo_change_conflict_zone_known(
   // Remove conflict zone cells from c3t3 (they will be deleted by insert/remove)
   remove_cells_and_facets_from_c3t3(conflict_zone.begin(), conflict_zone.end());
 
-// Start Move point // Insert new_vertex, remove old_vertex
+// Start Move point
+
+  // Insert new_vertex, remove old_vertex
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertex_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
@@ -3285,14 +3280,16 @@ move_point_topo_change_conflict_zone_known(
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertex_index);
   new_vertex->set_meshing_info(meshing_info);
-  // End Move point
+
+// End Move point
 
   //// Fill outdated_cells
-  // Get conflict zone in new triangulation and set cells outdated
+  // Get the union of the cells impacted by the insertion and the removal
   Cell_vector new_conflict_cells;
   new_conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(new_vertex, old_position,
-                                std::back_inserter(new_conflict_cells));
+  get_conflict_zone_after_move_topo_change(new_vertex, old_position,
+                                           std::back_inserter(new_conflict_cells));
+
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
   // Fill deleted_cells
@@ -3432,6 +3429,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                Surface_patch_index patch_index) const
 {
   typedef typename C3T3::Triangulation::Triangle Triangle;
+
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   // Get incident facets
@@ -3461,42 +3459,34 @@ get_least_square_surface_plane(const Vertex_handle& v,
          (patch_index == Surface_patch_index() ||
           c3t3_.surface_patch_index(f) == patch_index) )
     {
-      ref_facet = f;
+      if(ref_facet.first == Cell_handle())
+        ref_facet = f;
 
-      // In the case of a periodic triangulation, the incident facets of a point
-      // do not necessarily have the same offsets. Worse, the surface centers
-      // might not have the same offset as their facet. Thus, no solution except
-      // calling a function 'get_closest_triangle(p, t)' that simply returns t
-      // for a non-periodic triangulation, and checks all possible offsets for
-      // periodic triangulations
-
-      Triangle t = c3t3_.triangulation().triangle(f);
-      Triangle ct = tr_.get_closest_triangle(cp(position), t);
+      const Triangle ct = tr_.get_incident_triangle(f, v);
       triangles.push_back(ct);
     }
   }
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return std::make_pair(boost::none, Bare_point());
+    return std::make_pair(boost::none, Bare_point(ORIGIN));
 
   // Compute least square fitting plane
   Plane_3 plane;
   Bare_point point;
-
   CGAL::linear_least_squares_fitting_3(triangles.begin(),
                                        triangles.end(),
                                        plane,
                                        point,
                                        Dimension_tag<2>(),
                                        tr_.geom_traits(),
-                                       Default_diagonalize_traits<FT, 3>());
+                                       Default_diagonalize_traits<double, 3>());
 
-   return std::make_pair(plane,
-     ref_facet.first->get_facet_surface_center(ref_facet.second));
+  // The surface center of a facet might have an offset in periodic triangulations
+  const Bare_point& ref_facet_scp = ref_facet.first->get_facet_surface_center(ref_facet.second);
+  const Bare_point& ref_point = tr_.get_closest_point(cp(position), ref_facet_scp);
+  return std::make_pair(plane, ref_point);
 }
-
-
 
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Bare_point
@@ -3519,6 +3509,7 @@ project_on_surface_if_possible(const Vertex_handle& v,
                                const Bare_point& p,
                                Surface_patch_index index) const
 {
+  // @todo should call below if it's available...
   // return domain_.project_on_surface(p);
 
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
@@ -3665,17 +3656,10 @@ incident_slivers(const Vertex_handle& v,
   std::vector<Cell_handle> incident_cells_;
   tr_.incident_cells(v, std::back_inserter(incident_cells_));
 
-#ifdef CGAL_CXX17
   std::remove_copy_if(incident_cells_.begin(),
                       incident_cells_.end(),
                       out,
                       std::not_fn(Is_sliver<Sc>(c3t3_, criterion, sliver_bound)));
-#else
-  std::remove_copy_if(incident_cells_.begin(),
-                      incident_cells_.end(),
-                      out,
-                      std::not1(Is_sliver<Sc>(c3t3_,criterion,sliver_bound)));
-#endif
 
   return out;
 }
@@ -3759,7 +3743,7 @@ min_sliver_value(const Cell_vector& cells,
       it != cells.end();
       ++it)
   {
-    min_value = (std::min)(criterion(*it), min_value);
+    min_value = (std::min<FT>)(criterion(*it), min_value);
   }
   return min_value;
 }
@@ -3848,8 +3832,8 @@ template <typename CellsOutputIterator,
           typename FacetsOutputIterator>
 void
 C3T3_helpers<C3T3,MD>::
-get_conflict_zone_topo_change(const Vertex_handle& v,
-                              const Weighted_point& conflict_point,
+get_conflict_zone_topo_change(const Vertex_handle& old_vertex,
+                              const Weighted_point& new_position,
                               CellsOutputIterator insertion_conflict_cells,
                               FacetsOutputIterator insertion_conflict_boundary,
                               CellsOutputIterator removal_conflict_cells,
@@ -3863,21 +3847,20 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
 // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tr_.incident_cells_threadsafe(v, removal_conflict_cells);
+    tr_.incident_cells_threadsafe(old_vertex, removal_conflict_cells);
   }
   // Sequential
   else
 # endif // CGAL_LINKED_WITH_TBB
   {
-    tr_.incident_cells(v, removal_conflict_cells);
+    tr_.incident_cells(old_vertex, removal_conflict_cells);
   }
 
   // Get conflict_point conflict zone
   int li=0;
   int lj=0;
   typename Tr::Locate_type lt;
-  Cell_handle cell = tr_.locate(
-    conflict_point, lt, li, lj, v->cell(), could_lock_zone);
+  Cell_handle cell = tr_.locate(new_position, lt, li, lj, old_vertex->cell(), could_lock_zone);
 
   if (could_lock_zone && *could_lock_zone == false)
     return;
@@ -3886,7 +3869,7 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
     return;
 
   // Find conflict zone
-  tr_.find_conflicts(conflict_point,
+  tr_.find_conflicts(new_position,
                      cell,
                      insertion_conflict_boundary,
                      insertion_conflict_cells,
@@ -3897,34 +3880,45 @@ template <typename C3T3, typename MD>
 template <typename OutputIterator>
 OutputIterator
 C3T3_helpers<C3T3,MD>::
-get_conflict_zone_topo_change(const Vertex_handle& vertex,
-                              const Weighted_point& conflict_point,
-                              OutputIterator conflict_cells) const
+get_conflict_zone_after_move_topo_change(const Vertex_handle& new_vertex,
+                                         const Weighted_point& old_position,
+                                         OutputIterator conflict_cells) const
 {
-  // Get triangulation_vertex incident cells
+  // Gather the impacted cells: the union of `old_point` conflict zone and `new_vertex` incident cells
+
+  // Get the incident cells of `new_vertex`
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-  tr_.incident_cells(vertex, std::back_inserter(incident_cells_));
+  tr_.incident_cells(new_vertex, std::back_inserter(incident_cells_));
 
-  // Get conflict_point conflict zone
+  // Get the conflict zone of `old_point`
   Cell_vector deleted_cells;
   deleted_cells.reserve(64);
 
-  // Vertex removal is forbidden
   int li=0;
   int lj=0;
-  typename Tr::Locate_type locate_type;
-  Cell_handle cell = tr_.locate(conflict_point, locate_type, li, lj, vertex->cell());
+  typename Tr::Locate_type lt;
+  Cell_handle cell = tr_.locate(old_position, lt, li, lj, new_vertex->cell());
 
-  if ( Tr::VERTEX == locate_type )
-    return conflict_cells;
+  // `Periodic_mesh_triangulation::remove()` can refuse to remove a point if this removal
+  // would compromise the 1-cover property (i.e., no too-long edges).
+  // The cells incident to `old_vertex` have not been modified at the TDS level if removal
+  // was rejected, but they still must be gathered here because of the call to
+  // `remove_cells_and_facets_from_c3t3()`
+  if (lt == Tr::VERTEX)
+  {
+    CGAL_assertion((std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+    tr_.incident_cells(cell->vertex(li), std::back_inserter(deleted_cells));
+  }
+  else
+  {
+    tr_.find_conflicts(old_position,
+                       cell,
+                       CGAL::Emptyset_iterator(),
+                       std::back_inserter(deleted_cells),
+                       CGAL::Emptyset_iterator());
+  }
 
-  // Find conflict zone
-  tr_.find_conflicts(conflict_point,
-                     cell,
-                     CGAL::Emptyset_iterator(),
-                     std::back_inserter(deleted_cells),
-                     CGAL::Emptyset_iterator());
 
   // Compute union of conflict_point conflict zone and triangulation_vertex
   // incident cells
@@ -3937,7 +3931,6 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
 
   return conflict_cells;
 }
-
 
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Facet_boundary

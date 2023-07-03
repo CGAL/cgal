@@ -561,6 +561,12 @@ insert_corners()
   Initial_corners corners;
   domain_.get_corners(std::back_inserter(corners));
 
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+  std::cout << corners.size() << " corners to treat" << std::endl;
+  for(const auto& e : corners)
+    std::cout << "Corner #" << CGAL::IO::oformat(e.first) << ", " <<  e.second << std::endl;
+#endif
+
   Dt dt;
   for ( typename Initial_corners::iterator it = corners.begin(),
        end = corners.end() ; it != end ; ++it )
@@ -1366,8 +1372,8 @@ refine_balls()
 
         FT ra = get_radius(va);
         FT rb = get_radius(vb);
-        FT sa_new = (std::min)(ab/distance_divisor, ra);
-        FT sb_new = (std::min)(ab/distance_divisor, rb);
+        FT sa_new = (std::min)(FT(ab/distance_divisor), ra);
+        FT sb_new = (std::min)(FT(ab/distance_divisor), rb);
 
         // In case of va or vb have already been in conflict, keep minimal size
         if ( new_sizes.find(va) != new_sizes.end() )

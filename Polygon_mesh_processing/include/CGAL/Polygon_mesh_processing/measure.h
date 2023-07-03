@@ -857,34 +857,38 @@ centroid(const TriangleMesh& tmesh,
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type Kernel;
-  typedef typename Kernel::Point_3                                      Point_3;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type     Kernel;
+  Kernel k = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename Kernel::FT                                           FT;
+  typedef typename boost::property_traits<Vpm>::reference               Point_3_ref;
   typedef typename Kernel::Vector_3                                     Vector_3;
+
   typedef typename Kernel::Construct_translated_point_3                 Construct_translated_point_3;
   typedef typename Kernel::Construct_vector_3                           Construct_vector_3;
   typedef typename Kernel::Construct_normal_3                           Construct_normal_3;
   typedef typename Kernel::Compute_scalar_product_3                     Scalar_product;
   typedef typename Kernel::Construct_scaled_vector_3                    Scale;
   typedef typename Kernel::Construct_sum_of_vectors_3                   Sum;
+
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor   face_descriptor;
-  typedef typename Kernel::FT FT;
 
   FT volume = 0;
 
   Vector_3 centroid(NULL_VECTOR);
 
-  Construct_translated_point_3 point;
-  Construct_vector_3 vector;
-  Construct_normal_3 normal;
-  Scalar_product scalar_product;
-  Scale scale;
-  Sum sum;
+  Construct_translated_point_3 point = k.construct_translated_point_3_object();
+  Construct_vector_3 vector = k.construct_vector_3_object();
+  Construct_normal_3 normal = k.construct_normal_3_object();
+  Scalar_product scalar_product = k.compute_scalar_product_3_object();
+  Scale scale = k.construct_scaled_vector_3_object();
+  Sum sum = k.construct_sum_of_vectors_3_object();
 
   for(face_descriptor fd : faces(tmesh))
   {
-    const Point_3& p = get(vpm, target(halfedge(fd, tmesh), tmesh));
-    const Point_3& q = get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh));
-    const Point_3& r = get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh));
+    const Point_3_ref p = get(vpm, target(halfedge(fd, tmesh), tmesh));
+    const Point_3_ref q = get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh));
+    const Point_3_ref r = get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh));
     Vector_3 vp = vector(ORIGIN, p),
              vq = vector(ORIGIN, q),
              vr = vector(ORIGIN, r);
@@ -985,8 +989,8 @@ void match_faces(const PolygonMesh1& m1,
                                        get_const_property_map(vertex_point, m1));
   const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                        get_const_property_map(vertex_point, m2));
-  CGAL_static_assertion_msg((std::is_same<typename boost::property_traits<VPMap1>::value_type,
-                             typename boost::property_traits<VPMap2>::value_type>::value),
+  static_assert(std::is_same<typename boost::property_traits<VPMap1>::value_type,
+                             typename boost::property_traits<VPMap2>::value_type>::value,
                             "Both vertex point maps must have the same point type.");
 
   const VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);

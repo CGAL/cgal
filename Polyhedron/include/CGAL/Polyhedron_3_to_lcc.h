@@ -30,7 +30,7 @@ namespace CGAL {
   typename LCC::Dart_descriptor import_from_polyhedron_3(LCC& alcc,
                                                      const Polyhedron &apoly)
   {
-    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==3 );
+    static_assert( LCC::dimension>=2 && LCC::ambient_dimension==3 );
 
     typedef typename Polyhedron::Halfedge_const_handle  Halfedge_handle;
     typedef typename Polyhedron::Facet_const_iterator   Facet_iterator;
