@@ -98,10 +98,11 @@ void Aos::check(const Kml::Placemarks& placemarks)
       for (const auto& inner_boundary : polygon.inner_boundaries)
         linear_rings.push_back(inner_boundary);
 
-      // convert the nodes to points on unit-sphere
-      std::vector<Approximate_Vector_3>  sphere_points;
+      // loop on outer and inner boundaries 
       for(const auto& lring : linear_rings)
       {
+        // convert the nodes to points on unit-sphere
+        std::vector<Approximate_Vector_3>  sphere_points;
         for (const auto& node : lring.nodes)
         {
           num_counted_nodes++;
@@ -110,18 +111,18 @@ void Aos::check(const Kml::Placemarks& placemarks)
           sphere_points.push_back(v);
           CGAL::insert_point(arr, ctr_p(p.x, p.y, p.z));
         }
-      }
 
-      // add curves
-      int num_points = sphere_points.size();
-      for (int i = 0; i < num_points -1; i++)
-      {
-        num_counted_arcs++;
-        const auto p1 = sphere_points[i];
-        const auto p2 = sphere_points[i + 1];
-        auto xcv = ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
-                          ctr_p(p2.x(), p2.y(), p2.z()));
-        xcvs.push_back(xcv);
+        // add curves
+        int num_points = sphere_points.size();
+        for (int i = 0; i < num_points - 1; i++)
+        {
+          num_counted_arcs++;
+          const auto p1 = sphere_points[i];
+          const auto p2 = sphere_points[i + 1];
+          auto xcv = ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
+                            ctr_p(p2.x(), p2.y(), p2.z()));
+          xcvs.push_back(xcv);
+        }
       }
     }
   }
@@ -173,10 +174,11 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
       for (const auto& inner_boundary : polygon.inner_boundaries)
         linear_rings.push_back(inner_boundary);
 
-      // convert the nodes to points on unit-sphere
-      std::vector<Approximate_Vector_3>  sphere_points;
+      // loop on all linear-rings (outer and inner rings)
       for (const auto& lring : linear_rings)
       {
+        // convert the nodes to points on unit-sphere
+        std::vector<Approximate_Vector_3>  sphere_points;
         for (const auto& node : lring.nodes)
         {
           num_counted_nodes++;
@@ -185,18 +187,18 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
           sphere_points.push_back(v);
           CGAL::insert_point(arr, ctr_p(p.x, p.y, p.z));
         }
-      }
 
-      // add curves
-      int num_points = sphere_points.size();
-      for (int i = 0; i < sphere_points.size() - 1; i++)
-      {
-        num_counted_arcs++;
-        const auto p1 = sphere_points[i];
-        const auto p2 = sphere_points[i + 1];
-        auto xcv = ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
-          ctr_p(p2.x(), p2.y(), p2.z()));
-        xcvs.push_back(xcv);
+        // add curves
+        int num_points = sphere_points.size();
+        for (int i = 0; i < num_points - 1; ++i)
+        {
+          num_counted_arcs++;
+          const auto p1 = sphere_points[i];
+          const auto p2 = sphere_points[i + 1];
+          auto xcv = ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
+            ctr_p(p2.x(), p2.y(), p2.z()));
+          xcvs.push_back(xcv);
+        }
       }
     }
   }
