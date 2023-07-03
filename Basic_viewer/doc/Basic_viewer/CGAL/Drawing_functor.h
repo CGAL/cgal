@@ -4,8 +4,8 @@ namespace CGAL {
 /*!
 \ingroup PkgBasicViewerClasses
 
-The class `Drawing_functor` is used to tune the way that a given data-structure of CGAL is drawn.
-The different std::function can be modified to change the behavior of the drawing.
+The class `Cell_parameters` is used to tune the way that the cells of a given data-structure of CGAL are considered.
+The different std::function can be modified to change for example the behavior of the drawing.
 
 \tparam DS a data structure of CGAL.
 \tparam VertexDescriptor a descriptor of vertices of DS.
@@ -17,20 +17,20 @@ template <typename DS,
           typename VertexDescriptor,
           typename EdgeDescriptor,
           typename FaceDescriptor>
-struct Drawing_functor
+struct Cell_parameters
 {
 public:
-  /// std::function that returns `true` if the given vertex must be drawn, `false` otherwise.
-  /// Returns `true` by default.
-  std::function<bool(const DS &, VertexDescriptor)> draw_vertex;
+  /// std::function that returns `true` if the given vertex must be ignored, `false` otherwise.
+  /// Returns `false` by default.
+  std::function<bool(const DS &, VertexDescriptor)> ignore_vertex;
 
-  /// std::function that returns `true` if the given edge must be drawn, `false` otherwise.
+  /// std::function that returns `true` if the given edge must be ignored, `false` otherwise.
   /// Returns `true` by default.
-  std::function<bool(const DS &, EdgeDescriptor)>   draw_edge;
+  std::function<bool(const DS &, EdgeDescriptor)> ignore_edge;
 
-  /// std::function that returns `true` if the given face must be drawn, `false` otherwise.
+  /// std::function that returns `true` if the given face must be ignored, `false` otherwise.
   /// Returns `true` by default.
-  std::function<bool(const DS &, FaceDescriptor)>   draw_face;
+  std::function<bool(const DS &, FaceDescriptor)> ignore_face;
 
   /// std::function that returns `true` if the given vertex is colored, `false` otherwise.
   /// Returns `false` by default.
@@ -44,7 +44,7 @@ public:
   /// Returns `false` by default.
   std::function<bool(const DS &, FaceDescriptor)>   colored_face;
 
-  /// std::function that returns `true` if the given face is drawn in wireframe, `false` otherwise.
+  /// std::function that returns `true` if the given face is in wireframe, `false` otherwise.
   /// Returns `false` by default.
   std::function<bool(const DS &, FaceDescriptor)> face_wireframe;
 
@@ -60,30 +60,21 @@ public:
   /// nullptr by default.
   std::function<CGAL::IO::Color(const DS &, FaceDescriptor)>   face_color;
 
-  /// Disable the drawing of vertices.
-  void disable_vertices();
+  /// Ignore all vertices when `b` is `true`; otherwise ignore only vertices for which `ignore_vertex` returns `true`.
+  void ignore_all_vertices(bool b);
 
-  /// Enable the drawing of vertices.
-  void enable_vertices();
-
-  /// Disable the drawing of edges.
-  void disable_edges();
-
-  /// Enable the drawing of edges.
-  void enable_edges();
-
-    /// Disable the drawing of faces.
-  void disable_faces();
-
-  /// Enable the drawing of faces.
-  void enable_faces();
+  /// Ignore all edges when `b` is `true`; otherwise ignore only edges for which `ignore_edge` returns `true`.
+  void ignore_all_vertices(bool b);
+  
+  /// Ignore all faces when `b` is `true`; otherwise ignore only faces for which `ignore_face` returns `true`.
+  void ignore_all_vertices(bool b);
 };
 
 /*!
 \ingroup PkgBasicViewerClasses
 
-The class `Drawing_functor_with_volume` is used to tune the way that a given data-structure of CGAL is drawn, for a data-structure that contains volumes.
-The different std::function can be modified to change the behavior of the drawing.
+The class `Cell_parameters_with_volume` is used to tune the way that the cells of a given data-structure of CGAL are considered, for a data-structure that contains volumes.
+The different std::function can be modified to change for example the behavior of the drawing.
 
 \tparam DS a data structure of CGAL.
 \tparam VertexDescriptor a descriptor of vertices of DS.
@@ -93,26 +84,25 @@ The different std::function can be modified to change the behavior of the drawin
 
 */
 
-// Drawing functor for a 3D data structure
-// (with vertices, edges, faces and volumes)
+// Cell parameters for a 3D data structure (with vertices, edges, faces and volumes)
 template <typename DS,
           typename VertexDescriptor,
           typename EdgeDescriptor,
           typename FaceDescriptor,
           typename VolumeDescriptor>
-struct Drawing_functor_with_volume :
-    public Drawing_functor<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor>
+struct Cell_parameters_with_volume :
+    public Cell_parameters<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor>
 {
 public:
-  /// std::function that returns `true` if the given volume must be drawn, `false` otherwise.
-  /// Returns `true` by default.
-  std::function<bool(const DS &, VolumeDescriptor)> draw_volume;
+  /// std::function that returns `true` if the given volume must be ignored, `false` otherwise.
+  /// Returns `false` by default.
+  std::function<bool(const DS &, VolumeDescriptor)> ignore_volume;
 
-  /// std::function that returns the color of the given volume.
+  /// std::function that returns `true` if the given volume is colored, `false` otherwise.
   /// Returns `false` by default.
   std::function<bool(const DS &, VolumeDescriptor)> colored_volume;
 
-  /// std::function that returns `true` if the given volume is drawn in wireframe, `false` otherwise.
+  /// std::function that returns `true` if the given volume is in wireframe, `false` otherwise.
   /// Returns `false` by default.
   std::function<bool(const DS &, VolumeDescriptor)> volume_wireframe;
 
@@ -120,11 +110,8 @@ public:
   /// nullptr by default.
   std::function<CGAL::IO::Color(const DS &, VolumeDescriptor)> volume_color;
 
-  /// Disable the drawing of volumes.
-  void disable_volumes();
-
-  /// Enable the drawing of volumes.
-  void enable_volumes();
+  /// Ignore all volumes when `b` is `true`; otherwise ignore only volumes for which `ignore_volume` returns `true`.
+  void ignore_all_volumes(bool b);
 };
 
 } // End namespace CGAL
