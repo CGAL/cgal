@@ -33,9 +33,10 @@ QVector3D Kml::Node::get_coords_3f(const double r) const
 
 Kml::Placemarks  Kml::read(const std::string& file_name)
 {
-  Placemarks    placemarks;
-  Placemark     placemark;
   LinearRing    lring;
+  Polygon       polygon;
+  Placemark     placemark;
+  Placemarks    placemarks;
 
   QFile file(file_name.c_str());
   if (file.open(QIODevice::ReadOnly))
@@ -58,10 +59,11 @@ Kml::Placemarks  Kml::read(const std::string& file_name)
         }
         else if (name == "Polygon")
         {
-          lring = LinearRing{};
+          polygon = Polygon{};
         }
         else if (name == "LinearRing")
         {
+          lring = LinearRing{};
         }
         else if (name == "coordinates")
         {
@@ -99,10 +101,19 @@ Kml::Placemarks  Kml::read(const std::string& file_name)
         }
         else if (name == "Polygon")
         {
-          placemark.polygons.push_back(std::move(lring));
+          placemark.polygons.push_back(std::move(polygon));
+        }
+        else if (name == "outerBoundaryIs")
+        {
+          polygon.outer_boundary = std::move(lring);
+        }
+        else if (name == "innerBoundaryIs")
+        {
+          polygon.inner_boundaries.push_back(std::move(lring));
         }
         else if (name == "LinearRing")
         {
+          // LinearRing is moved to the correct locations via other tags above
         }
         else if (name == "coordinates")
         {
@@ -129,11 +140,20 @@ Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks)
   std::vector<Kml::Node> nodes;
   for (const auto& pm : placemarks)
   {
-    for (const auto& pg : pm.polygons)
+    for (const auto& polygon : pm.polygons)
     {
       polygon_count++;
-      for (const auto& node : pg.nodes)
-        nodes.push_back(node);
+      
+      Kml::LinearRings linear_rings;
+      linear_rings.push_back(polygon.outer_boundary);
+      for (const auto& inner_boundary : polygon.inner_boundaries)
+        linear_rings.push_back(inner_boundary);
+      
+      for(const auto& lring : linear_rings)
+      {
+        for (const auto& node : lring.nodes)
+          nodes.push_back(node);
+      }
     }
   }
   qDebug() << "polygon count = " << polygon_count;

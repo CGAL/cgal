@@ -30,11 +30,18 @@ public:
   {
     std::vector<Node> nodes;
   };
+  using LinearRings = std::vector<LinearRing>;
 
+
+  struct Polygon
+  {
+    LinearRing outer_boundary;
+    LinearRings inner_boundaries;
+  };
  
   struct Placemark
   {
-    std::vector<LinearRing> polygons;
+    std::vector<Polygon> polygons;
     std::string name;
   };
 

@@ -102,15 +102,26 @@ Geodesic_arcs::Approx_arcs Geodesic_arcs::get_approx_arcs(const Kml::Placemark&
   auto ctr_cv = traits.construct_curve_2_object();
 
   std::vector<Curve>  xcvs;
-  for (const auto& lring : placemark.polygons)
+  for (const auto& polygon : placemark.polygons)
   {
+    // colect all rings into a single list (FOR NOW!!!)
+    // TO-DO: PROCESS OUTER & INNER BOUNDARIES SEPARATELY!!!
+    Kml::LinearRings linear_rings;
+    linear_rings.push_back(polygon.outer_boundary);
+    for (const auto& inner_boundary : polygon.inner_boundaries)
+      linear_rings.push_back(inner_boundary);
+
+
     // convert the nodes to points on unit-sphere
     std::vector<Approximate_Vector_3> sphere_points;
-    for (const auto& node : lring.nodes)
+    for (const auto& lring : linear_rings)
     {
-      const auto p = node.get_coords_3d();
-      Approximate_Vector_3 v(p.x, p.y, p.z);
-      sphere_points.push_back(v);
+      for (const auto& node : lring.nodes)
+      {
+        const auto p = node.get_coords_3d();
+        Approximate_Vector_3 v(p.x, p.y, p.z);
+        sphere_points.push_back(v);
+      }
     }
 
     // add curves
