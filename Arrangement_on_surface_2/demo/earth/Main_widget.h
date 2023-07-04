@@ -10,12 +10,14 @@
 #include <QVector2D>
 #include <QBasicTimer>
 
+#include <functional>
 #include <memory>
 
 #include <qopenglwidget.h>
 
 #include "Camera.h"
 #include "Common_defs.h"
+#include "Kml_reader.h"
 #include "Line_strips.h"
 #include "Shader_program.h"
 #include "Sphere.h"
@@ -60,10 +62,18 @@ private:
   std::unique_ptr<Line_strips>      m_geodesic_arcs;
   std::unique_ptr<Vertices>         m_vertices;
 
-  // now we draw boundary-arcs by country
-  int   m_selected_country, m_selected_arc;
+  // COUNTRY DATA
+  Kml::Placemarks                             m_countries;
   std::vector<std::string>                    m_country_names;
   std::vector<std::unique_ptr<Line_strips>>   m_country_borders;
+
+  // now we draw boundary-arcs by country
+  int             m_selected_country_index, m_selected_arc_index;
+  Kml::Nodes      m_selected_country_nodes;
+  Kml::Arcs       m_selected_country_arcs;
+  Kml::Placemark* m_selected_country;
+ 
+
 
   // Shaders
   Shader_program  m_sp_smooth;

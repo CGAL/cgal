@@ -113,40 +113,59 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
   {
   case Qt::Key_Q:
   {
-    auto num_arcs = m_country_borders[m_selected_country]->get_num_line_strips();
-    if (++m_selected_arc == num_arcs)
-      m_selected_arc--;
-    std::cout << "selected arc = " << m_selected_arc << std::endl;
+    auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
+    if (++m_selected_arc_index == num_arcs)
+      m_selected_arc_index--;
+    qDebug() << "---------------------------------------";
+    qDebug() << "selected arc index = " << m_selected_arc_index;
+    
+    const auto& arc = m_selected_country_arcs[m_selected_arc_index];
+    std::cout << arc.from << "  TO  " << arc.to << std::endl;
   }
     break;
   case Qt::Key_A:
   {
-    auto num_arcs = m_country_borders[m_selected_country]->get_num_line_strips();
-    if (--m_selected_arc < 0)
-      m_selected_arc = 0;
-    std::cout << "selected arc = " << m_selected_arc << std::endl;
+    auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
+    if (--m_selected_arc_index < 0)
+      m_selected_arc_index = 0;
+    std::cout << "selected arc = " << m_selected_arc_index << std::endl;
   }
     break;
 
   case Qt::Key_Up:
-    m_selected_country++;
-    if (m_selected_country == m_country_names.size())
-      m_selected_country--;
-    std::cout << m_selected_country << ": " << m_country_names[m_selected_country] << std::endl;
-    m_selected_arc = 0;
+    m_selected_country_index++;
+    if (m_selected_country_index == m_country_names.size())
+      m_selected_country_index--;
+    std::cout << m_selected_country_index << ": " 
+              << m_country_names[m_selected_country_index] << std::endl;
+    
+    m_selected_arc_index = 0;
+    m_selected_country = &m_countries[m_selected_country_index];
+    m_selected_country_nodes = m_selected_country->get_all_nodes();
+    m_selected_country_arcs = m_selected_country->get_all_arcs();
+
+    {
+      auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
+      
+      qDebug() << "num KML arcs = " << m_selected_country_arcs.size();
+      qDebug() << "num arcs = " << num_arcs;
+    }
     break;
 
   case Qt::Key_Down:
-    m_selected_country--;
-    if (m_selected_country < 0)
-      m_selected_country = 0;
-    std::cout << m_selected_country << ": " << m_country_names[m_selected_country] << std::endl;
-    m_selected_arc = 0;
+    m_selected_country_index--;
+    if (m_selected_country_index < 0)
+      m_selected_country_index = 0;
+    std::cout << m_selected_country_index << ": " 
+              << m_country_names[m_selected_country_index] << std::endl;
+    
+    m_selected_arc_index = 0;
+    m_selected_country = &m_countries[m_selected_country_index];
+    m_selected_country_nodes = m_selected_country->get_all_nodes();
     break;
-
-
   }
 }
+
 
 #include <shapefil.h>
 
@@ -191,11 +210,11 @@ void Main_widget::initializeGL()
 
   //const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
   const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
-  auto countries = Kml::read(file_name);
-  auto dup_nodes = Kml::get_duplicates(countries);
+  m_countries = Kml::read(file_name);
+  auto dup_nodes = Kml::get_duplicates(m_countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(0)
+  if(1)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
@@ -206,7 +225,7 @@ void Main_widget::initializeGL()
   else
   {
     // check the arrangement constructed from the GIS data-set
-    auto created_vertices = Aos::ext_check(countries);
+    auto created_vertices = Aos::ext_check(m_countries);
     m_vertices = std::make_unique<Vertices>(created_vertices);
   }
 
@@ -226,15 +245,18 @@ void Main_widget::initializeGL()
     //auto lsa = Aos::get_approx_arcs(countries, error);
     //auto lsa = Aos::get_approx_arcs(error);
     //m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
-    for (const auto& country : countries)
+    for (const auto& country : m_countries)
     {
       m_country_names.push_back(country.name);
       auto approx_arcs = Aos::get_approx_arcs(country, error);
       auto country_border = std::make_unique<Line_strips>(approx_arcs);
       m_country_borders.push_back(std::move(country_border));
     }
-    m_selected_country = 25;
-    m_selected_arc = 0;
+    m_selected_country_index = 159; // ANTARCTICA
+    m_selected_country = &m_countries[m_selected_country_index];
+    m_selected_country_nodes = m_selected_country->get_all_nodes();
+    m_selected_country_arcs = m_selected_country->get_all_arcs();
+    m_selected_arc_index = 0;
   }
 
   glClearColor(0, 0, 0, 1);
@@ -459,13 +481,19 @@ void Main_widget::paintGL()
     for(auto& country_border : m_country_borders)
       country_border->draw();
 
-    sp.set_uniform("u_color", arc_color);
-      m_country_borders[m_selected_country]->draw(m_selected_arc);
+    // draw the selected country in blue color
+    auto& selected_countru = m_country_borders[m_selected_country_index];
+    sp.set_uniform("u_color", QVector4D(0, .6, 1, 1));
+    selected_countru->draw();
+
+    // draw the current arc of the selected country in YELLOW
+    sp.set_uniform("u_color", QVector4D(1, 1, 0, 1));
+    selected_countru->draw(m_selected_arc_index);
 
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
     glPointSize(5);
-    m_vertices->draw();
+    //m_vertices->draw();
 
     sp.unuse();
   }

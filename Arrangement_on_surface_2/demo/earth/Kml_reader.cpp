@@ -206,3 +206,67 @@ Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks)
 
   return duplicate_nodes;
 }
+
+Kml::Nodes Kml::Polygon::get_all_nodes() const
+{
+  Nodes all_nodes;
+  auto source_first = outer_boundary.nodes.begin();
+  auto source_last = outer_boundary.nodes.end();
+  all_nodes.insert(all_nodes.begin(), source_first, source_last);
+
+  for (const auto& inner_boundary : inner_boundaries)
+  {
+    auto source_first = inner_boundary.nodes.begin();
+    auto source_last = inner_boundary.nodes.end();
+    all_nodes.insert(all_nodes.begin(), source_first, source_last);
+  }
+
+  return all_nodes;
+}
+
+Kml::Nodes Kml::Placemark::get_all_nodes() const
+{
+  Nodes all_nodes;
+  for (const auto& polygon : polygons)
+  {
+    auto polygon_nodes = polygon.get_all_nodes();
+    auto first = std::make_move_iterator(polygon_nodes.begin());
+    auto last = std::make_move_iterator(polygon_nodes.end());
+    all_nodes.insert(all_nodes.end(), first, last);
+  }
+
+  return all_nodes;
+}
+
+Kml::Arcs Kml::LinearRing::get_arcs() const
+{
+  Arcs arcs;
+  const int num_nodes = nodes.size();
+  for (int i = 0; i < num_nodes - 1; ++i)
+  {
+    const auto from = nodes[i];
+    const auto to = nodes[i + 1];
+    arcs.push_back(Arc{ from, to });
+  }
+  return arcs;
+}
+void Kml::LinearRing::get_arcs(Arcs& arcs) const
+{
+  auto a = get_arcs();
+  arcs.insert(arcs.end(), a.begin(), a.end());
+}
+
+Kml::Arcs Kml::Placemark::get_all_arcs() const
+{
+  Arcs all_arcs;
+
+  for (const auto& polygon : polygons)
+  {
+    polygon.outer_boundary.get_arcs(all_arcs);
+    for (const auto& inner_boundary : polygon.inner_boundaries)
+      inner_boundary.get_arcs(all_arcs);
+  }
+
+  return all_arcs;
+}
+
