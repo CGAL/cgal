@@ -334,7 +334,7 @@ protected:
     {
       const auto point = self.point(v_Steiner);
       if(!self.cdt_2_are_initialized) return;
-      for(const auto [constraint_id, poly_id] : CGAL::make_range(self.constraint_to_faces.equal_range(constraint))) {
+      for(const auto [_, poly_id] : CGAL::make_range(self.constraint_to_faces.equal_range(constraint))) {
         auto& cdt_2 = self.face_cdt_2[poly_id];
 
         auto opt_edge = self.edge_of_cdt_2(cdt_2, va, vb);
@@ -1662,7 +1662,10 @@ private:
                                         IO::oformat(va_3d, with_point_and_info),
                                         IO::oformat(vb_3d, with_point_and_info));
 #endif // CGAL_DEBUG_CDT_3
-              const auto constraint_id = this->constraint_from_extremities(va_3d, vb_3d);
+              auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
+              CGAL_assertion(std::next(contexts.begin()) == contexts.end());
+              const auto& context = *contexts.begin();
+              const auto constraint_id = context.id();
               CGAL_assertion(constraint_id != Constraint_id{});
               this->insert_Steiner_point_on_subconstraint(mid, va_3d->cell(), {va_3d, vb_3d}, constraint_id,
                                                           insert_in_conflict_visitor);

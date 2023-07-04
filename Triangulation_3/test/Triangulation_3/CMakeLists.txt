@@ -67,6 +67,7 @@ add_test(NAME "execution   of  cdt_3_from_off mpi"     COMMAND cdt_3_from_off ${
 add_test(NAME "execution   of  cdt_3_from_off 3torus"  COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/3torus.off  ${CMAKE_CURRENT_BINARY_DIR}/dump_output_3torus.off)
 add_test(NAME "execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" COMMAND cdt_3_from_off_CGAL_DEBUG_CDT_3 ${CGAL_DATA_DIR}/meshes/3torus.off)
 add_test(NAME "execution   of  cdt_3_from_off cheese-selection"     COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/cheese-selection.off     ${CMAKE_CURRENT_BINARY_DIR}/dump_output_cheese-selection.off)
+add_test(NAME "execution   of  cdt_3_from_off cheese-selection-2"     COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/cheese-selection-2.off     ${CMAKE_CURRENT_BINARY_DIR}/dump_output_cheese-selection-2.off)
 
 
 cgal_setup_test_properties("execution   of  cdt_3_from_off cube" cdt_3_from_off)
@@ -74,6 +75,7 @@ cgal_setup_test_properties("execution   of  cdt_3_from_off sphere" cdt_3_from_of
 cgal_setup_test_properties("execution   of  cdt_3_from_off fandisk" cdt_3_from_off)
 cgal_setup_test_properties("execution   of  cdt_3_from_off mpi" cdt_3_from_off)
 cgal_setup_test_properties("execution   of  cdt_3_from_off cheese-selection" cdt_3_from_off)
+cgal_setup_test_properties("execution   of  cdt_3_from_off cheese-selection-2" cdt_3_from_off)
 cgal_setup_test_properties("execution   of  cdt_3_from_off 3torus" cdt_3_from_off)
 cgal_setup_test_properties("execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" cdt_3_from_off_CGAL_DEBUG_CDT_3)
 
