@@ -5,7 +5,7 @@ namespace CGAL {
 \brief This class is a model of the concept `Visibility_2` can answer visibility queries within a polygon that may have holes.
 
 
-\details The algorithm does not require preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \f$O (n \log n)\f$ in the number of vertices.
+\details The algorithm does not require preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \cgalBigO{n \log n} in the number of vertices.
 
 
 \tparam Arrangement_2_ is the type used to represent the input environment.
@@ -63,7 +63,7 @@ public:
 /*!
 Attaches the given arrangement to the visibility object.
 
-This operation takes \f$O(1)\f$ as the class does no pre-processing.
+This operation takes \cgalBigO{1} as the class does no pre-processing.
 
 In case the object is already attached to another arrangement,
 the visibility object gets detached before being attached to `arr`.

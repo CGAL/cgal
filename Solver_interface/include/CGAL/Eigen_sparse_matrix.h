@@ -202,8 +202,8 @@ public:
   /// Read access to a matrix coefficient.
   ///
   /// \warning Complexity:
-  /// - O(log(n)) if the matrix is already built.
-  /// - O(n) if the matrix is not built.
+  /// - \cgalBigO{log(n)} if the matrix is already built.
+  /// - \cgalBigO{n} if the matrix is not built.
   /// `n` being the number of entries in the matrix.
   ///
   /// \pre 0 <= i < row_dimension().

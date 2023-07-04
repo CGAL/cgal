@@ -46,7 +46,7 @@ with the representation type determined by `std::iterator_traits<InputIterator1>
 This function implements the algorithm of Hertel and Mehlhorn
 \cgalCite{hm-ftsp-83} and is based on the class
 `Constrained_triangulation_2`. Given a triangulation of
-the polygon, the function requires \f$ O(n)\f$ time and
+the polygon, the function requires \cgalBigO{n} time and
 space for a polygon with \f$ n\f$ vertices.
 
 \cgalHeading{Example}
@@ -116,7 +116,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \cgalHeading{Implementation}
 
 This function implements the approximation algorithm of
-Greene \cgalCite{g-dpcp-83} and requires \f$ O(n \log n)\f$ time and \f$ O(n)\f$ space
+Greene \cgalCite{g-dpcp-83} and requires \cgalBigO{n \log n} time and \cgalBigO{n} space
 to produce a convex partitioning given a \f$ y\f$-monotone partitioning of a
 polygon with \f$ n\f$ vertices. The function `y_monotone_partition_2()`
 is used to produce the monotone partition.
@@ -184,7 +184,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \cgalHeading{Implementation}
 
 This function implements the dynamic programming algorithm of Greene
-\cgalCite{g-dpcp-83}, which requires \f$ O(n^4)\f$ time and \f$ O(n^3)\f$ space to
+\cgalCite{g-dpcp-83}, which requires \cgalBigO{n^4} time and \cgalBigO{n^3} space to
 produce a partitioning of a polygon with \f$ n\f$ vertices.
 
 \cgalHeading{Example}
@@ -254,8 +254,8 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \cgalHeading{Implementation}
 
 This function implements the algorithm presented by de Berg <I>et al.</I>
-\cgalCite{bkos-cgaa-97} which requires \f$ O(n \log n)\f$ time
-and \f$ O(n)\f$ space for a polygon with \f$ n\f$ vertices.
+\cgalCite{bkos-cgaa-97} which requires \cgalBigO{n \log n} time
+and \cgalBigO{n} space for a polygon with \f$ n\f$ vertices.
 
 \cgalHeading{Example}
 

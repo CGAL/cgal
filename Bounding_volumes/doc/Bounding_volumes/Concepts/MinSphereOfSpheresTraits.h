@@ -79,7 +79,7 @@ The recommended choice is the first, which is a synonym to the one
 of the other two methods which we consider "the best in practice."
 In case of `CGAL::LP_algorithm`, the minsphere will be computed
 using the LP-algorithm \cgalCite{msw-sblp-92}, which in our
-implementation has maximal expected running time \f$ O(2^d n)\f$ (in the
+implementation has maximal expected running time \cgalBigO{2^d n} (in the
 number of operations on the number type `FT`). In case of
 `CGAL::Farthest_first_heuristic`, a simple heuristic will be
 used instead which seems to work fine in practice, but comes without

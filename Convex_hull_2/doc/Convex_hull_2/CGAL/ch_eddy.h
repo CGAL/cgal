@@ -47,7 +47,7 @@ This function implements Eddy's algorithm
 \cgalCite{e-nchap-77}, which is the two-dimensional version of the quickhull
 algorithm \cgalCite{bdh-qach-96}.
 
-This algorithm requires \f$ O(n h)\f$ time
+This algorithm requires \cgalBigO{n h} time
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points.
 
 */

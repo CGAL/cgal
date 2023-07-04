@@ -17,11 +17,11 @@ orientation of the defining points, i.e., `orientation(A)`.
 
 Spheres are implemented by a vector of points as a handle type. All
 operations like creation, initialization, tests, input and output of a
-sphere \f$ s\f$ take time \f$ O(s.dimension()) \f$. `dimension()`,
+sphere \f$ s\f$ take time \cgalBigO{s.dimension()}$. `dimension()`,
 point access take constant time. The `center()`-operation takes
-time \f$ O(d^3)\f$ on its first call and constant time thereafter. The
-sidedness and orientation tests take time \f$ O(d^3)\f$. The space
-requirement for spheres is \f$ O(s.dimension())\f$ neglecting the
+time \cgalBigO{d^3} on its first call and constant time thereafter. The
+sidedness and orientation tests take time \cgalBigO{d^3}. The space
+requirement for spheres is \cgalBigO{s.dimension()} neglecting the
 storage room of the points.
 
 */

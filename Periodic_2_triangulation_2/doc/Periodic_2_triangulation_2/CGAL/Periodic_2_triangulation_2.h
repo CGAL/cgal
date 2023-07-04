@@ -55,7 +55,7 @@ optional parameter is given).
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face. Apart from the location,
-insertion takes a time \f$ O(1)\f$.
+insertion takes a time \cgalBigO{1}.
 
 Removal of a vertex is more difficult than in the Euclidean space,
 since the star of a vertex may not be disjoint from the star of a

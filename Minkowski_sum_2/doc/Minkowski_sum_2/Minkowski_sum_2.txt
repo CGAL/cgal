@@ -53,7 +53,7 @@ they form with the \f$ x\f$-axis; see the figure above.
 The Minkowski sum can therefore be computed using an operation similar to the
 merge step of the merge-sort algorithm\cgalFootnote{See, for example,
 <a href="https://en.wikipedia.org/wiki/Merge_sort">
-https://en.wikipedia.org/wiki/Merge_sort</a>.} in \f$ O(m + n)\f$ time,
+https://en.wikipedia.org/wiki/Merge_sort</a>.} in \cgalBigO{m + n} time,
 starting from the two bottommost vertices in \f$ P\f$ and in \f$ Q\f$ and
 merging the ordered list of edges.
 
@@ -294,7 +294,7 @@ the dynamic-programming algorithm of Greene \cgalCite{g-dpcp-83} for
 computing an optimal decomposition of a polygon into a minimal number
 of convex sub-polygons. While this algorithm results in a small number
 of convex polygons, it consumes rather many resources, as it runs in
-\f$ O(n^4) \f$ time and \f$ O(n^3) \f$ space in the worst case, where
+\cgalBigO{n^4} time and \cgalBigO{n^3} space in the worst case, where
 \f$ n \f$ is the number of vertices in the input polygon.
 
 <LI>The `Hertel_Mehlhorn_convex_decomposition_2<Kernel>` class
@@ -302,7 +302,7 @@ template implements the approximation algorithm suggested by Hertel and
 Mehlhorn \cgalCite{hm-ftsp-83}, which triangulates the input polygon
 and then discards unnecessary triangulation edges. After triangulation
 (carried out by the constrained-triangulation procedure of CGAL) the
-algorithm runs in \f$ O(n) \f$ time and space, and guarantees that the
+algorithm runs in \cgalBigO{n} time and space, and guarantees that the
 number of sub-polygons it generates is not more than four times the
 optimum.
 
@@ -310,7 +310,7 @@ optimum.
 implementation of Greene's approximation algorithm
 \cgalCite{g-dpcp-83}, which computes a convex decomposition of the
 polygon based on its partitioning into \f$ y\f$-monotone polygons.
-This algorithm runs in \f$ O(n \log n)\f$ time and \f$ O(n)\f$ space,
+This algorithm runs in \cgalBigO{n \log n} time and \cgalBigO{n} space,
 and has the same guarantee on the quality of approximation as Hertel
 and Mehlhorn's algorithm.
 
@@ -318,7 +318,7 @@ and Mehlhorn's algorithm.
 template is an implementation of a decomposition algorithm introduced
 in \cgalCite{cgal:afh-pdecm-02}. It is based on the angle-bisector
 decomposition method suggested by Chazelle and Dobkin
-\cgalCite{cd-ocd-85}, which runs in \f$ O(n^2)\f$ time. In addition,
+\cgalCite{cd-ocd-85}, which runs in \cgalBigO{n^2} time. In addition,
 it applies a heuristic by Flato that reduces the number of output
 polygons in many common cases.  The convex decompositions that it
 produces usually yield efficient running times for Minkowski sum

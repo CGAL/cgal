@@ -39,7 +39,7 @@ is a polygon whose vertices \f$ v_1, \ldots, v_n\f$ can be divided into two chai
 intersects either chain at most once. For producing a \f$ y\f$-monotone partition
 of a given polygon, the sweep-line algorithm
 presented in \cgalCite{bkos-cgaa-97} is implemented by the function
-`y_monotone_partition_2()`. This algorithm runs in \f$ O(n \log n)\f$ time and requires \f$ O(n)\f$ space.
+`y_monotone_partition_2()`. This algorithm runs in \cgalBigO{n \log n} time and requires \cgalBigO{n} space.
 This algorithm does not guarantee a bound on the number of polygons
 produced with respect to the optimal number.
 
@@ -72,7 +72,7 @@ An optimal convex partition can be produced using the function `optimal_convex_p
 This function provides an
 implementation of Greene's dynamic programming algorithm for optimal
 partitioning \cgalCite{g-dpcp-83}.
-This algorithm requires \f$ O(n^4)\f$ time and \f$ O(n^3)\f$ space in the worst case.
+This algorithm requires \cgalBigO{n^4} time and \cgalBigO{n^3} space in the worst case.
 
 The function `approx_convex_partition_2()` implements the simple approximation
 algorithm of Hertel and Mehlhorn \cgalCite{hm-ftsp-83} that
@@ -81,12 +81,12 @@ throwing out unnecessary triangulation edges.
 The triangulation used in this function is one produced by the
 2-dimensional constrained triangulation
 package of \cgal. For a given triangulation, this convex partitioning
-algorithm requires \f$ O(n)\f$ time and space to construct a decomposition into
+algorithm requires \cgalBigO{n} time and space to construct a decomposition into
 no more than four times the optimal number of convex pieces.
 
 The sweep-line approximation algorithm of Greene \cgalCite{g-dpcp-83}, which,
 given a monotone partition of a polygon, produces a convex partition in
-\f$ O(n \log n)\f$ time and \f$ O(n)\f$ space, is implemented
+\cgalBigO{n \log n} time and \cgalBigO{n} space, is implemented
 by the function `greene_approx_convex_partition_2()`. The function
 `y_monotone_partition_2()` described in
 Section \ref secpartition_2_monotone is used to produce the monotone

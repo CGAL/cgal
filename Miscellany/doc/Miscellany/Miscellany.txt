@@ -47,7 +47,7 @@ global macro `CGAL_PROFILE`.
 
 The class `Unique_hash_map` implements an injective mapping between
 a set of unique keys and a set of data values. This is implemented using
-a chained hashing scheme and access operations take \f$ O(1)\f$ expected time.
+a chained hashing scheme and access operations take \cgalBigO{1} expected time.
 Such a mapping is useful, for example, when keys are pointers,
 handles, iterators or circulators that refer to unique memory locations.
 In this case, the default hash function is `Handle_hash_function`.
@@ -57,7 +57,7 @@ In this case, the default hash function is `Handle_hash_function`.
 \cgal also provides a class `Union_find` that implements a partition
 of values into disjoint sets. This is implemented with union by rank and
 path compression. The running time for \f$ m\f$ set operations on \f$ n\f$ elements
-is \f$ O(n\alpha(m,n))\f$ where \f$ \alpha(m,n)\f$ is the extremely slowly growing
+is \cgalBigO{n\alpha(m,n)} where \f$ \alpha(m,n)\f$ is the extremely slowly growing
 inverse of Ackermann's function.
 
 \section MiscellanyProtected Protected Access to Internal Representations

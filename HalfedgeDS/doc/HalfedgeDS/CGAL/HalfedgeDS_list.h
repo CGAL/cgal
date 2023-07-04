@@ -20,7 +20,7 @@ iterators that supports removal.
 \cgalHeading{Implementation}
 
 `HalfedgeDS_list` uses internally the `CGAL::In_place_list` container class.
-The copy constructor and the assignment operator need \f$ O(n)\f$ time with
+The copy constructor and the assignment operator need \cgalBigO{n} time with
 \f$ n\f$ the total number of vertices, halfedges, and faces.
 
 `CGAL_ALLOCATOR(int)` is used as default argument for the

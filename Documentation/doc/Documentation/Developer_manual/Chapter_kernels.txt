@@ -7,7 +7,7 @@
 \authors Stefan Schirra
 
 The layer of geometry kernels provides
-basic geometric entities of constant size\cgalFootnote{In dimension \f$ d\f$, an entity of size \f$ O(d)\f$ is considered to be of constant size.} and
+basic geometric entities of constant size\cgalFootnote{In dimension \f$ d\f$, an entity of size \cgalBigO{d} is considered to be of constant size.} and
 primitive operations on them. Each entity is provided as both a
 stand-alone class, which is parameterized by a kernel class, and as a
 type in the kernel class. Each operation in the kernel is provided via

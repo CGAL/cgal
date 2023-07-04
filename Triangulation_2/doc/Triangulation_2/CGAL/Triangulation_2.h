@@ -137,20 +137,20 @@ for faces of maximal dimension instead of faces.
 Locate is implemented by a line walk from a vertex of the face given
 as optional parameter (or from a finite vertex of
 `infinite_face()` if no optional parameter is given). It takes
-time \f$ O(n)\f$ in the worst case, but only \f$ O(\sqrt{n})\f$
+time \cgalBigO{n} in the worst case, but only \cgalBigO{\sqrt{n}}
 on average if the vertices are distributed uniformly at random.
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face.
 If the point falls outside the convex hull, the triangulation
 is restored by flips. Apart from the location, insertion takes a time
-time \f$ O(1)\f$. This bound is only an amortized bound
+time \cgalBigO{1}. This bound is only an amortized bound
 for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
-re-triangulating the hole. Removal takes time \f$ O(d^2)\f$ in the worst
+re-triangulating the hole. Removal takes time \cgalBigO{d^2} in the worst
 case, if \f$ d\f$ is the degree of the removed vertex,
-which is \f$ O(1)\f$ for a random vertex.
+which is \cgalBigO{1} for a random vertex.
 
 The face, edge, and vertex iterators on finite features
 are derived from their counterparts visiting all (finite and infinite)

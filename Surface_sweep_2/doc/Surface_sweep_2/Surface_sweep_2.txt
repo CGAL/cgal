@@ -13,7 +13,7 @@ namespace CGAL {
 Let \f$ {\mathcal C} = \{C_1, C_2, \ldots, C_n\}\f$ be a set of
 curves.  We wish to compute all intersection points between two curves
 in the set in an output-sensitive manner, without having to go over
-all \f$ O(n^2)\f$ curve pairs. To this end, we sweep an imaginary line
+all \cgalBigO{n^2} curve pairs. To this end, we sweep an imaginary line
 \f$ l\f$ from \f$ x = -\infty\f$ to \f$ x = \infty\f$ over the
 plane. While sweeping the plane, we keep track of the order of curves
 intersecting it.  This order changes at a finite number of <I>event
@@ -36,8 +36,8 @@ employs certified computations. This traits class must be a model of
 the `ArrangementTraits_2` concept - see the Chapter \ref
 chapterArrangement_on_surface_2 "2D Arrangements" for more details.
 
-The complexity of the surface-sweep algorithm is \f$ O((n +
-k)\log{n})\f$ where \f$ n\f$ is the number of the input curves and \f$
+The complexity of the surface-sweep algorithm is \cgalBigO{(n +
+k)\log{n}} where \f$ n\f$ is the number of the input curves and \f$
 k\f$ is the number of intersection points induced by these curves.
 
 \section Surface_sweep_2Example Example

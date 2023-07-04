@@ -24,9 +24,9 @@ dimensional interface `x()`, `y()`, `z()`, `hx()`,
 
 Points are implemented by arrays of `RT` items. All operations
 like creation, initialization, tests, point - vector arithmetic, input
-and output on a point \f$ p\f$ take time \f$ O(p.dimension())\f$.
+and output on a point \f$ p\f$ take time \cgalBigO{p.dimension()}.
 `dimension()`, coordinate access and conversions take constant
-time. The space requirement for points is \f$ O(p.dimension())\f$.
+time. The space requirement for points is \cgalBigO{p.dimension()}.
 
 */
 template< typename Kernel >

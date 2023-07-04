@@ -73,12 +73,12 @@ less-than operator (`operator<`).
 
 `Multiset` uses a proprietary implementation of a red-black tree
 data-structure. The red-black tree invariants guarantee that the height of a
-tree containing \f$ n\f$ elements is \f$ O(\log{n})\f$ (more precisely, it is bounded by
+tree containing \f$ n\f$ elements is \cgalBigO{\log{n}} (more precisely, it is bounded by
 \f$ 2 \log_{2}{n}\f$). As a consequence, all methods that accept an element and need
 to locate it in the tree (namely `insert(x)`, `erase(x)`,
 `find(x)`, `count(x)`, `lower_bound(x)` , `upper_bound(x)`,
-`find_lower(x)` and `equal_range(x)`) take \f$ O(\log{n})\f$ time and
-perform \f$ O(\log{n})\f$ comparison operations.
+`find_lower(x)` and `equal_range(x)`) take \cgalBigO{\log{n}} time and
+perform \cgalBigO{\log{n}} comparison operations.
 
 On the other hand, the set operations that accept a position iterator (namely
 `insert_before(pos, x)`, `insert_after(pos, x)` and `erase(pos)`)
@@ -87,12 +87,12 @@ cost (see \cgalCite{gs-dfbt-78} and \cgalCite{t-dsna-83} for more details).
 More important, these set operations require <I>no</I> comparison operations.
 Therefore, it is highly recommended to maintain the set via iterators
 to the stored elements, whenever possible. The function `insert(pos, x)`
-is safer to use, but it takes amortized \f$ O(\min\{d,\log{n}\})\f$ time, where \f$ d\f$
+is safer to use, but it takes amortized \cgalBigO{\min\{d,\log{n}\}} time, where \f$ d\f$
 is the distance between the given position and the true position of `x`.
 In addition, it always performs at least two comparison operations.
 
 The `catenate()` and `split()` functions are also very efficient, and
-can be performed in \f$ O(\log{n})\f$ time, where \f$ n\f$ is the total number of
+can be performed in \cgalBigO{\log{n}} time, where \f$ n\f$ is the total number of
 elements in the sets, and without performing any comparison operations
 (see \cgalCite{t-dsna-83} for the details).
 Note however that the size of two sets resulting from a split operation is

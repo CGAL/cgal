@@ -53,7 +53,7 @@ Given a cycle drawn on a surface one can ask if the cycle can be continuously de
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
 - Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is homotopic to a simple one on \f$\cal{M}\f$.
 
-The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \f$O(n + l\log{l})\f$-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
+The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \cgalBigO{n + l\log{l}}-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
 
 \section SMTopology_HowToUse API Description
 
@@ -322,7 +322,7 @@ As the algorithm inductively builds orderings, it has to determine a relative or
  The red edge is being processed and is compared against the pink edge which is the first edge of the path. The blue and green edges are the first diverging pair when tracing backward. The dashed line means that edges have not been processed yet. Since the green edge lies to the right of the blue edge around the vertex, the red edge must be to the right of the pink edge in the ordering.
     \cgalFigureEnd
 
-The transverse orderings are stored in red-black trees, one for each edge of the quadrangulation. So each insertion or search takes \f$O(\log{l})\f$ time, where \f$l\f$ is the length of the closed curve.
+The transverse orderings are stored in red-black trees, one for each edge of the quadrangulation. So each insertion or search takes \cgalBigO{\log{l}} time, where \f$l\f$ is the length of the closed curve.
 
 \subsubsection SMTopology_Simplicity_Test_Verification Verify Ordering
 After computing a tentative ordering within the edges of the path, we have to verify that such an ordering could result in an intersection free arrangement. Since there is no intersection within an edge, we only need to verify this for each vertex in the quadrangulation. Each vertex is naturally associated with a circular ordering of the incident path edges by concatenating clockwise the orderings computed for every incident edge in the quadrangulation. We consider the two consecutive edges composing a turn (one going in the vertex, one going out of the vertex) at the vertex being verified as a <em>pair</em>. The ordering at the vertex is intersection free if and only if there is no two pairs crossing each other according to the clockwise ordering around the vertex. In other words, for any two pairs \f$(a, a')\f$ and \f$(b, b')\f$, none of the subsequences \f$a, b, a', b'\f$ or \f$a, b', a', b\f$ should appear in the clockwise ordering. This is very similar to verifying balanced parentheses in a string. We traverse clockwise at each vertex and use a stack-based algorithm to verify in linear time that the ordering produces a cycle without self-intersection.

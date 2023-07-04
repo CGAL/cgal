@@ -13,7 +13,7 @@ a convex polygon or not.
 
 \cgalHeading{Implementation}
 
-This test requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices.
+This test requires \cgalBigO{n} time for a polygon with \f$ n\f$ vertices.
 
 */
 template< typename Traits >
@@ -62,7 +62,7 @@ Function object class that indicates all sequences of points are valid.
 
 \cgalHeading{Implementation}
 
-This test requires \f$ O(1)\f$ time.
+This test requires \cgalBigO{1} time.
 
 */
 template< typename Traits >
@@ -110,7 +110,7 @@ a \f$ y\f$-monotone polygon or not.
 
 \cgalHeading{Implementation}
 
-This test requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices.
+This test requires \cgalBigO{n} time for a polygon with \f$ n\f$ vertices.
 
 */
 template< typename Traits >

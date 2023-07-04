@@ -6,7 +6,7 @@
 \cgalPkgPicture{Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Peter Hachenberger}
-\cgalPkgDesc{This packages provides a function for decomposing a bounded polyhedron into convex sub-polyhedra. The decomposition yields \f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges, whose adjacent facets form an angle of more than 180 degrees with respect to the polyhedron's interior. This bound is worst-case optimal. }
+\cgalPkgDesc{This packages provides a function for decomposing a bounded polyhedron into convex sub-polyhedra. The decomposition yields \cgalBigO{r^2} convex pieces, where \f$ r\f$ is the number of edges, whose adjacent facets form an angle of more than 180 degrees with respect to the polyhedron's interior. This bound is worst-case optimal. }
 \cgalPkgManuals{Chapter_Convex_Decomposition_of_Polyhedra,PkgConvexDecomposition3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

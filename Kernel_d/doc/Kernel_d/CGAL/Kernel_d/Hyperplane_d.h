@@ -27,8 +27,8 @@ other.
 Hyperplanes are implemented by arrays of integers as an item type.
 All operations like creation, initialization, tests, vector
 arithmetic, input and output on a hyperplane \f$ h\f$ take time
-\f$ O(h.dimension())\f$. coordinate access and `dimension()` take
-constant time. The space requirement is \f$ O(h.dimension())\f$.
+\cgalBigO{h.dimension()}. coordinate access and `dimension()` take
+constant time. The space requirement is \cgalBigO{h.dimension()}.
 
 */
 template< typename Kernel >

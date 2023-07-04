@@ -28,8 +28,8 @@ The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(
 
 The implementation is based on an incremental construction of a convex hull. At each step, we choose a number of points to pick uniformly at random in the disc. Then, a subset of these points, that won't change the convex hull, is evaluated using a Binomial law.
 As these points won't be generated, the time and size complexities are reduced \cgalCite{Devillers2014Generator}.
-A tradeoff between time and memory is provided with the option `fast`, true by default. Using the `fast` option, both time and size expected complexities are \f$O\left(n^\frac{1}{3}\log^\frac{2}{3}n \right)\f$.
- If this option is disabled, the expected size complexity becomes \f$O\left(n^\frac{1}{3}\right)\f$ but the expected time complexity becomes \f$O\left(n^\frac{1}{3}\log^2 n \right)\f$.
+A tradeoff between time and memory is provided with the option `fast`, true by default. Using the `fast` option, both time and size expected complexities are \cgalBigOLarge{n^\frac{1}{3}\log^\frac{2}{3}n}.
+ If this option is disabled, the expected size complexity becomes \cgalBigOLarge{n^\frac{1}{3}} but the expected time complexity becomes \cgalBigOLarge{n^\frac{1}{3}\log^2 n}.
 
 \cgalHeading{Example}
 

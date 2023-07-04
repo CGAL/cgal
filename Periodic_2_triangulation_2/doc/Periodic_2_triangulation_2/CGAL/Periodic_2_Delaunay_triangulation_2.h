@@ -28,19 +28,19 @@ CGAL::Triangulation_data_structure_2<
 \cgalHeading{Implementation}
 
 Insertion is implemented by inserting in the triangulation, then
-performing a sequence of Delaunay flips. The number of flips is \f$ O(d)\f$
+performing a sequence of Delaunay flips. The number of flips is \cgalBigO{d}
 if the new vertex is of degree \f$ d\f$ in the new triangulation. For
-points distributed uniformly at random, insertion takes time \f$ O(1)\f$ on
+points distributed uniformly at random, insertion takes time \cgalBigO{1} on
 average.
 
 Removal calls the removal in the triangulation and then
 re-triangulates the hole in such a way that the Delaunay criterion is
-satisfied. Removal of a vertex of degree \f$ d\f$ takes time \f$ O(d^2)\f$. The
-expected degree \f$ d\f$ is \f$ O(1)\f$ for a random vertex in the
+satisfied. Removal of a vertex of degree \f$ d\f$ takes time \cgalBigO{d^2}. The
+expected degree \f$ d\f$ is \cgalBigO{1} for a random vertex in the
 triangulation.
 
 After a point location step, the nearest neighbor is found in time
-\f$ O(n)\f$ in the worst case, but in expected time \f$ O(1)\f$ on average for
+\cgalBigO{n} in the worst case, but in expected time \cgalBigO{1} on average for
 vertices distributed uniformly at random and any query point.
 
 \sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`

@@ -841,7 +841,7 @@ system when clearing or destroying the triangulation. This can be important
 for algorithms like simplifications of data sets which will produce fragmented
 memory usage (doing fresh copies of the data structures are one way out in such
 cases). The asymptotic memory overhead of `Compact_container` for its
-internal bookkeeping is otherwise on the order of \f$ O(\sqrt{n})\f$.
+internal bookkeeping is otherwise on the order of \cgalBigO{\sqrt{n}}.
 
 \cgalFigureRef{Triangulation3figmemory} shows the number of bytes used per
 points, as measured empirically using `Memory_sizer` for large triangulations
