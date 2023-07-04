@@ -9,7 +9,6 @@
 
 #include "Aos.h"
 #include "Kml_reader.h"
-//#include "Geodesic_arcs.h"
 #include "Tools.h"
 
 
@@ -196,7 +195,7 @@ void Main_widget::initializeGL()
   auto dup_nodes = Kml::get_duplicates(countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(1)
+  if(0)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
@@ -466,7 +465,7 @@ void Main_widget::paintGL()
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
     glPointSize(5);
-    //m_vertices->draw();
+    m_vertices->draw();
 
     sp.unuse();
   }
