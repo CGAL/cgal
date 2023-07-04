@@ -72,6 +72,105 @@ namespace {
 }
 
 
+Aos::Approx_arcs Aos::get_approx_arcs(double error)
+{
+  // Construct the arrangement from 12 geodesic arcs.
+  Geom_traits traits;
+  Arrangement arr(&traits);
+
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+
+  std::vector<Curve>  xcvs;
+  xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
+  xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 0, 1)));
+  xcvs.push_back(ctr_cv(ctr_p(0, 1, 0), ctr_p(0, 0, 1)));
+  //xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0), Dir3(0, 0, -1)));
+  //xcvs.push_back(ctr_cv(Dir3(0, 0, -1)));
+
+  auto approx = traits.approximate_2_object();
+
+
+  std::vector<std::vector<QVector3D>>  arcs;
+  for (const auto& xcv : xcvs)
+  {
+    std::vector<Approximate_point_2> v;
+    auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+
+    std::vector<QVector3D> arc_points;
+    for (const auto& p : v)
+    {
+      const QVector3D arc_point(p.dx(), p.dy(), p.dz());
+      arc_points.push_back(arc_point);
+    }
+    arcs.push_back(std::move(arc_points));
+  }
+  //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
+
+  return arcs;
+}
+
+Aos::Approx_arcs Aos::get_approx_arcs(const Kml::Placemark& placemark, double error)
+{
+  Geom_traits traits;
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+  std::vector<Curve>  xcvs;
+  for (const auto& polygon : placemark.polygons)
+  {
+    // colect all rings into a single list (FOR NOW!!!)
+    // TO-DO: PROCESS OUTER & INNER BOUNDARIES SEPARATELY!!!
+    Kml::LinearRings linear_rings;
+    linear_rings.push_back(polygon.outer_boundary);
+    for (const auto& inner_boundary : polygon.inner_boundaries)
+      linear_rings.push_back(inner_boundary);
+
+
+    // convert the nodes to points on unit-sphere
+    for (const auto& lring : linear_rings)
+    {
+      std::vector<Approximate_Vector_3>  sphere_points;
+      for (const auto& node : lring.nodes)
+      {
+        const auto p = node.get_coords_3d();
+        Approximate_Vector_3 v(p.x, p.y, p.z);
+        sphere_points.push_back(v);
+      }
+
+      // add geodesic arcs for the current LinearRing
+      int num_points = sphere_points.size();
+      for (int i = 0; i < num_points - 1; i++)
+      {
+        const auto p1 = sphere_points[i];
+        const auto p2 = sphere_points[i + 1];
+        xcvs.push_back(ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
+          ctr_p(p2.x(), p2.y(), p2.z())));
+      }
+    }
+  }
+
+  auto approx = traits.approximate_2_object();
+  std::vector<std::vector<QVector3D>>  arcs;
+  for (const auto& xcv : xcvs)
+  {
+    std::vector<Approximate_point_2> v;
+    auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+
+    std::vector<QVector3D> arc_points;
+    for (const auto& p : v)
+    {
+      const QVector3D arc_point(p.dx(), p.dy(), p.dz());
+      arc_points.push_back(arc_point);
+    }
+    arcs.push_back(std::move(arc_points));
+  }
+  //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
+
+  return arcs;
+}
+
 void Aos::check(const Kml::Placemarks& placemarks)
 {
   // Construct the arrangement from 12 geodesic arcs.

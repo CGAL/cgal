@@ -11,6 +11,16 @@
 class Aos
 {
 public:
+  using Approx_arcs = std::vector<std::vector<QVector3D>>;
+
+  // this constructs some sample arcs manually (used to check the visual output)
+  static Approx_arcs get_approx_arcs(double error);
+
+  // this is used to construct approximate arcs from KML-Placemark data
+  static Approx_arcs get_approx_arcs(const Kml::Placemark& placemark, double error);
+
+
+  static void get_curves();
 
   static void check(const Kml::Placemarks& placemarks);
 

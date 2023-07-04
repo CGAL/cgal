@@ -9,7 +9,7 @@
 
 #include "Aos.h"
 #include "Kml_reader.h"
-#include "Geodesic_arcs.h"
+//#include "Geodesic_arcs.h"
 #include "Tools.h"
 
 
@@ -196,7 +196,7 @@ void Main_widget::initializeGL()
   auto dup_nodes = Kml::get_duplicates(countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(0)
+  if(1)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
@@ -222,15 +222,15 @@ void Main_widget::initializeGL()
     // TO-DO: move this code to resizeGL (when viewport is initialized)
     // has to be defined after camera has been defined:
     // because we want to compute the error based on camera parameters!
-    Geodesic_arcs ga;
+    //Geodesic_arcs ga;
     const double error = 0.001; // calculate this from cam parameters!
-    //auto lsa = ga.get_approx_arcs(countries, error);
-    //auto lsa = ga.get_approx_arcs(error);
-    // m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
+    //auto lsa = Aos::get_approx_arcs(countries, error);
+    //auto lsa = Aos::get_approx_arcs(error);
+    //m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
     for (const auto& country : countries)
     {
       m_country_names.push_back(country.name);
-      auto approx_arcs = ga.get_approx_arcs(country, error);
+      auto approx_arcs = Aos::get_approx_arcs(country, error);
       auto country_border = std::make_unique<Line_strips>(approx_arcs);
       m_country_borders.push_back(std::move(country_border));
     }
@@ -466,7 +466,7 @@ void Main_widget::paintGL()
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
     glPointSize(5);
-    m_vertices->draw();
+    //m_vertices->draw();
 
     sp.unuse();
   }
