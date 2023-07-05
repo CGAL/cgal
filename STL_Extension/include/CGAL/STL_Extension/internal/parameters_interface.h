@@ -47,6 +47,7 @@ CGAL_add_named_parameter(implementation_tag_t, implementation_tag, implementatio
 CGAL_add_named_parameter(prevent_unselection_t, prevent_unselection, prevent_unselection)
 
 CGAL_add_named_parameter(verbose_t, verbose, verbose)
+CGAL_add_named_parameter(concurrency_tag_t, concurrency_tag, concurrency_tag)
 
 // List of named parameters used for IO
 CGAL_add_named_parameter(vertex_normal_output_iterator_t, vertex_normal_output_iterator, vertex_normal_output_iterator)
