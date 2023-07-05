@@ -41,8 +41,8 @@ namespace CGAL {
  * of `VertexPointPMap` (using the `Kernel_traits` mechanism).
  * The segment type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Segment_3`.
  *
- * \cgalModels `AABBPrimitive` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_false`,
- *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
+ * \cgalModelsBare{AABBPrimitive if `OneHalfedgeGraphPerTree` is `CGAL::Tag_false`,
+ *                 AABBPrimitiveWithSharedData if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`}
  *
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
  *   as key type and a \cgal Kernel `Point_3` as value type.

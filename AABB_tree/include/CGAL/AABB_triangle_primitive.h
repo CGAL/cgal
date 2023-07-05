@@ -55,7 +55,7 @@ namespace internal {
  * The iterator from which the primitive is built should not be invalided
  * while the AABB tree holding the primitive is in use.
  *
- * \cgalModels `AABBPrimitive`
+ * \cgalModels{AABBPrimitive}
  *
  * \tparam GeomTraits is a traits class providing the nested type `Point_3` and `Triangle_3`.
  *         It also provides the functor `Construct_vertex_3` that has an operator taking a `Triangle_3`
