@@ -35,10 +35,9 @@ public:
   typedef typename Base::K          K;
   typedef typename Base::FT         FT;
   typedef typename Base::Point_3    Point_3;
+  typedef typename Base::face_descriptor     face_descriptor;
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
   typedef typename Base::vertex_descriptor   vertex_descriptor;
-  //todo ip: send this over to Sizing_field to be consistent
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
   typedef typename CGAL::dynamic_vertex_property_t<FT> Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh,
@@ -81,7 +80,7 @@ public:
     }
 
   template <typename FaceRange>
-  void calc_sizing_map(const FaceRange& faces_)
+  void calc_sizing_map(const FaceRange& face_range)
   {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     int oversize  = 0;
@@ -90,22 +89,16 @@ public:
     std::cout << "Calculating sizing field..." << std::endl;
 #endif
 
-    ///// FaceRange->expand->Face_filtered_graph->use ffg onwards
-    std::vector<face_descriptor> selection(faces_.begin(), faces_.end());
-    auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
-    for (face_descriptor f : faces(m_pmesh))
-      put(is_selected, f, false);
-    CGAL::expand_face_selection(selection, m_pmesh, 1, is_selected, std::back_inserter(selection));
-
+    // expand face selection for curvature calculation
+    std::set<face_descriptor> selection(face_range.begin(), face_range.end());
+    CGAL::expand_face_selection(selection, m_pmesh, 1
+                              , make_boolean_property_map(selection), Emptyset_iterator());
     CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
-    ///////
 
-    Vertex_curvature_map vertex_curvature_map;
-    vertex_curvature_map = get(Vertex_curvature_tag(), ffg);
-
+    // calculate curvature
+    Vertex_curvature_map vertex_curvature_map = get(Vertex_curvature_tag(), ffg);
     interpolated_corrected_principal_curvatures_and_directions(ffg
                                                              , vertex_curvature_map);
-
     // calculate vertex sizing field L(x_i) from curvature field
     for(vertex_descriptor v : vertices(ffg))
     {

@@ -33,6 +33,7 @@ private:
 
 public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
+  typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
   typedef Point                                                 Point_3;
