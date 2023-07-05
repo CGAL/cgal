@@ -18,10 +18,14 @@ int main(int argc, char* argv[]) {
   // Square
   // Point ps[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
   // Polygon p(ps, ps+4);
+  // Multipolygon mp;
+  // mp.add_polygon(p);
 
   // Bowtie
-  // Point ps[] = {Point(0,0), Point(1,1), Point(1,0), Point(0,1)};
-  // Polygon p(ps, ps+4);
+  Point ps[] = {Point(0,0), Point(1,1), Point(1,0), Point(0,1)};
+  Polygon p(ps, ps+4);
+  Multipolygon mp;
+  mp.add_polygon(p);
 
   // Overlapping edge
   // Point ps1[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
@@ -42,20 +46,20 @@ int main(int argc, char* argv[]) {
   // mp.add_polygon(p2);
 
   // Edge partly overlapping (middle)
-  Point ps1[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
-  Polygon p1(ps1, ps1+4);
-  Point ps2[] = {Point(1,0.25), Point(2,0.25), Point(2,0.75), Point(1,0.75)};
-  Polygon p2(ps2, ps2+4);
-  Multipolygon mp;
-  mp.add_polygon(p1);
-  mp.add_polygon(p2);
+  // Point ps1[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
+  // Polygon p1(ps1, ps1+4);
+  // Point ps2[] = {Point(1,0.25), Point(2,0.25), Point(2,0.75), Point(1,0.75)};
+  // Polygon p2(ps2, ps2+4);
+  // Multipolygon mp;
+  // mp.add_polygon(p1);
+  // mp.add_polygon(p2);
 
   Polygon_repair pr;
   pr.add_to_triangulation(mp);
+  pr.label_triangulation();
+  pr.reconstruct_multipolygon();
+  std::cout << pr.multipolygon();
 
-  for (auto const& ce: pr.triangulation().constrained_edges()) {
-    std::cout << ce.first->vertex(ce.first->cw(ce.second))->point() << " to " << ce.first->vertex(ce.first->ccw(ce.second))->point() <<  std::endl;
-  }
 
   // CGAL::Polygon_repair_2::repair(mp);
 

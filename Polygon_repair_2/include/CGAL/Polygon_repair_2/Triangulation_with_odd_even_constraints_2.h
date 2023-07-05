@@ -52,8 +52,14 @@ public:
   
   // iterator over interior faces.
   class Interior_faces_iterator : public Base_triangulation::All_faces_iterator {
-    Interior_faces_iterator operator++();
-    Interior_faces_iterator operator--();
+    
+    Interior_faces_iterator operator++() {
+      
+    }
+
+    Interior_faces_iterator operator--() {
+
+    }
   };
 
   // Inserts point p in the triangulation and returns the corresponding vertex.
