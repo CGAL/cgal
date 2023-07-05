@@ -30,8 +30,6 @@
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 #endif

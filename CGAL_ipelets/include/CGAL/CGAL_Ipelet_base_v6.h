@@ -317,10 +317,10 @@ public:
     IpeSegmentSubPath*
     create_polyline(const iterator first, const iterator last,bool setclose=false) const
     {
-      if (boost::next(first)!=last){
+      if (std::next(first)!=last){
         IpeSegmentSubPath* SSP_ipe = new IpeSegmentSubPath();
         IpeVector Prev_pt=IpeVector(CGAL::to_double(first->x()),CGAL::to_double(first->y())) ;
-        for (iterator it = boost::next(first);it!=last;++it){
+        for (iterator it = std::next(first);it!=last;++it){
           IpeVector Cur_pt=IpeVector(CGAL::to_double(it->x()),CGAL::to_double(it->y()));
           SSP_ipe -> AppendSegment(Prev_pt,Cur_pt);
           Prev_pt=Cur_pt;

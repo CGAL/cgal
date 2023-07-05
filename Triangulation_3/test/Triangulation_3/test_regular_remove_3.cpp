@@ -329,7 +329,7 @@ int main(int argc, char **argv)
     }
 
     // Hardcoded seeds so that the test-suite is deterministic.
-    boost::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
+    std::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
 
     // You can also pass seeds on the command line.
     if (argc > 1) { std::istringstream iss(argv[1]); iss >>seed0; }

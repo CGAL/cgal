@@ -417,7 +417,7 @@ struct Alpha_nt_selector_3
              GeomTraits,
              // If the base traits is already exact then we don't need to do anything,
              // and we can simply directly use the traits class
-             Boolean_tag<boost::is_floating_point<typename GeomTraits::FT>::value &&
+             Boolean_tag<std::is_floating_point<typename GeomTraits::FT>::value &&
                          ExactAlphaComparisonTag::value >,
              Weighted_tag>
 { };

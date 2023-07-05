@@ -22,7 +22,6 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
-#include <boost/next_prior.hpp>
 
 namespace CGAL {
 namespace internal{
@@ -124,7 +123,7 @@ public:
 
   void sort()
   {
-std::sort(m_data.begin(), boost::next(m_data.begin(),m_count), m_comp);
+std::sort(m_data.begin(), std::next(m_data.begin(),m_count), m_comp);
   }
 
 protected:

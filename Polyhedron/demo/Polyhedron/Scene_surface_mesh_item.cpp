@@ -1202,7 +1202,7 @@ Scene_surface_mesh_item::select(double orig_x,
       const EPICK::Point_3* closest_point =
           boost::get<EPICK::Point_3>(&(closest->first));
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1417,7 +1417,7 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
       const EPICK::Point_3* closest_point =
           CGAL::object_cast<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1911,7 +1911,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
       const EPICK::Point_3* closest_point =
           boost::get<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {

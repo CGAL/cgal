@@ -848,12 +848,12 @@ inline
 std::enable_if_t<!Has_member_clear<FaceGraph>::value, void>
 clear_impl(FaceGraph& g)
 {
-  while(boost::begin(edges(g))!=boost::end(edges(g)))
-    remove_edge(*boost::begin(edges(g)), g);
-  while(boost::begin(faces(g))!=boost::end(faces(g)))
-    remove_face(*boost::begin(faces(g)), g);
-  while(boost::begin(vertices(g))!=boost::end(vertices(g)))
-    remove_vertex(*boost::begin(vertices(g)), g);
+  while(std::begin(edges(g))!=std::end(edges(g)))
+    remove_edge(*std::begin(edges(g)), g);
+  while(std::begin(faces(g))!=std::end(faces(g)))
+    remove_face(*std::begin(faces(g)), g);
+  while(std::begin(vertices(g))!=std::end(vertices(g)))
+    remove_vertex(*std::begin(vertices(g)), g);
 }
 
 template <class FaceGraph>
@@ -975,9 +975,9 @@ template<typename FaceGraph>
 void clear(FaceGraph& g)
 {
   internal::clear_impl(g);
-  CGAL_postcondition(std::distance(boost::begin(edges(g)),boost::end(edges(g))) == 0);
-  CGAL_postcondition(std::distance(boost::begin(vertices(g)),boost::end(vertices(g))) == 0);
-  CGAL_postcondition(std::distance(boost::begin(faces(g)),boost::end(faces(g))) == 0);
+  CGAL_postcondition(std::distance(std::begin(edges(g)),std::end(edges(g))) == 0);
+  CGAL_postcondition(std::distance(std::begin(vertices(g)),std::end(vertices(g))) == 0);
+  CGAL_postcondition(std::distance(std::begin(faces(g)),std::end(faces(g))) == 0);
 }
 
 /**

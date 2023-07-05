@@ -582,7 +582,7 @@ public:
       insert_incident_faces(vcit, out);
     }
     //AF    vertices_in_constraint_begin(ca)->fixed() = true;
-    // Vertices_in_constraint_iterator end = boost::prior(vertices_in_constraint_end(ca));
+    // Vertices_in_constraint_iterator end = std::prev(vertices_in_constraint_end(ca));
     // end->fixed() = true;
     fc.write_faces(out);
 
@@ -753,8 +753,8 @@ public:
 
   void simplify(Vertices_in_constraint_iterator v)
   {
-    Vertices_in_constraint_iterator u = boost::prior(v);
-    Vertices_in_constraint_iterator w = boost::next(v);
+    Vertices_in_constraint_iterator u = std::prev(v);
+    Vertices_in_constraint_iterator w = std::next(v);
     bool unew = (*u != *w);
     hierarchy.simplify(u,v,w);
 

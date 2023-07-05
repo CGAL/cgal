@@ -219,7 +219,7 @@ private:
           Point_location _pl(_pm);
         try{
                     this->start();
-                      insert(_pm,ac.begin(),ac.end(),boost::false_type());
+                      insert(_pm,ac.begin(),ac.end(),std::false_type());
                     this->stop();
           } catch (std::exception &e) {
                     this->fail();

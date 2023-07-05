@@ -2104,7 +2104,7 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
     // `check_and_repopulate_edges()::vertices` before it is passed itself
     // to `repopulate_edges_around_corner()`.
     if(c3t3_.is_in_complex(to_repopulate.back()))
-      std::copy(to_repopulate.begin(), boost::prior(to_repopulate.end()), out);
+      std::copy(to_repopulate.begin(), std::prev(to_repopulate.end()), out);
     else
       std::copy(to_repopulate.begin(), to_repopulate.end(), out);
 

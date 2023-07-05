@@ -122,8 +122,8 @@ void split_long_duplicated_edge(const HedgeRange& hedge_range,
 {
   typedef typename HedgeRange::value_type Pair;
   typedef typename Pair::first_type halfedge_descriptor;
-  typedef typename boost::remove_pointer<
-    typename Pair::second_type>::type TriangleMesh;
+  typedef std::remove_pointer_t<
+    typename Pair::second_type> TriangleMesh;
   typedef typename boost::property_map<TriangleMesh,
     CGAL::vertex_point_t>::type PointPMap;
   typedef typename boost::property_traits<PointPMap>::value_type Point_3;

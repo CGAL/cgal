@@ -29,7 +29,7 @@
 #include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <boost/utility.hpp> // for boost::prior
+#include <boost/utility.hpp> // for std::prev
 #include <boost/optional.hpp>
 
 #include <CGAL/Search_traits_3.h>
@@ -387,8 +387,8 @@ void snap_graph_vertices(Graph& graph,
   {
     if(poly_it->begin() != poly_it->end()) {
       tree.insert(*poly_it->begin());
-      if(boost::next(poly_it->begin()) != poly_it->end()) {
-        tree.insert(*boost::prior(poly_it->end()));
+      if(std::next(poly_it->begin()) != poly_it->end()) {
+        tree.insert(*std::prev(poly_it->end()));
       }
     }
   }
@@ -1049,10 +1049,10 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
       continue;
 
     typename Polyline::const_iterator pit = polyline.begin();
-    while (boost::next(pit) != polyline.end())
+    while (std::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }
@@ -1182,10 +1182,10 @@ merge_and_snap_polylines(const CGAL::Image_3& image,
       continue;
 
     auto pit = polyline.begin();
-    while (boost::next(pit) != polyline.end())
+    while (std::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }
@@ -1194,7 +1194,7 @@ merge_and_snap_polylines(const CGAL::Image_3& image,
   // snap graph to existing_polylines
   snap_graph_vertices(graph,
     image.vx(), image.vy(), image.vz(),
-    boost::begin(existing_polylines), boost::end(existing_polylines),
+    std::begin(existing_polylines), std::end(existing_polylines),
     K());
 
   // rebuild polylines_to_snap

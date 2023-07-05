@@ -721,7 +721,7 @@ bool clip(TriangleMesh& tm,
   using params::get_parameter;
   using params::choose_parameter;
 
-  if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
+  if(std::begin(faces(tm))==std::end(faces(tm))) return true;
 
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
 
@@ -831,7 +831,7 @@ bool clip(TriangleMesh& tm,
   using params::get_parameter;
   using params::choose_parameter;
 
-  if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
+  if(std::begin(faces(tm))==std::end(faces(tm))) return true;
   TriangleMesh clipper;
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],

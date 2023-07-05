@@ -308,7 +308,7 @@ bool write_STL(std::ostream& os,
   if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
-    const boost::uint32_t N32 = static_cast<boost::uint32_t>(facets.size());
+    const std::uint32_t N32 = static_cast<std::uint32_t>(facets.size());
     os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
     for(const Triangle& face : facets)

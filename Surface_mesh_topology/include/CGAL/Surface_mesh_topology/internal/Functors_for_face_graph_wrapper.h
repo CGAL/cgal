@@ -71,7 +71,7 @@ struct Get_beta<HEG, 2>
 template<typename Mesh>
 struct Index_from_halfedge_descriptor
 {
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -88,7 +88,7 @@ template<typename P>
 struct Index_from_halfedge_descriptor<CGAL::Surface_mesh<P> >
 {
   using Mesh=CGAL::Surface_mesh<P>;
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -99,7 +99,7 @@ struct Index_from_halfedge_descriptor<CGAL::Surface_mesh<P> >
 template<typename Mesh>
 struct Halfedge_descriptor_from_index
 {
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -115,7 +115,7 @@ template<typename P>
 struct Halfedge_descriptor_from_index<CGAL::Surface_mesh<P> >
 {
   using Mesh=CGAL::Surface_mesh<P>;
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -126,7 +126,7 @@ struct Halfedge_descriptor_from_index<CGAL::Surface_mesh<P> >
 template<typename Mesh>
 struct Is_index_used
 {
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
 
   static bool run(const Mesh& m, size_type i)
   { return i<m.size_of_halfedges(); }
@@ -135,7 +135,7 @@ template<typename P>
 struct Is_index_used<CGAL::Surface_mesh<P> >
 {
   using Mesh=CGAL::Surface_mesh<P>;
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
 
   static bool run(const Mesh& m, size_type i)
   { return i<(m.number_of_halfedges()+m.number_of_removed_halfedges()) &&

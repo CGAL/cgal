@@ -264,7 +264,7 @@ bool write_STL(std::ostream& os,
   if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
-    const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(g).size());
+    const std::uint32_t N32 = static_cast<std::uint32_t>(faces(g).size());
     os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
     for(const face_descriptor f : faces(g))

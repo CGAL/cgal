@@ -10,8 +10,6 @@
 #ifndef CGAL_IS_STREAMABLE_H
 #define CGAL_IS_STREAMABLE_H
 
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/remove_cv.hpp>
 #include <iostream>
 
 namespace CGAL {
@@ -50,8 +48,8 @@ namespace is_streamable
   template <class T>
   struct is_streamable_impl
   {
-    static typename boost::remove_cv<typename boost::remove_reference<T>::type>::type const & x;
-    static typename boost::remove_cv<typename boost::remove_reference<T>::type>::type  & y;
+    static std::remove_cv_t<std::remove_reference_t<T>> const & x;
+    static std::remove_cv_t<std::remove_reference_t<T>>  & y;
 
     static const bool value =
       sizeof(is_streamable::check(std::cout << x)) == sizeof(is_streamable::yes) &&

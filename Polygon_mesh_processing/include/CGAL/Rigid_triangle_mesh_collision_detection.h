@@ -260,7 +260,7 @@ public:
     CGAL_assertion( m_aabb_trees[id] == nullptr );
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = true;
-    Tree* t = new Tree(boost::begin(faces(tm)), boost::end(faces(tm)), tm, vpm);
+    Tree* t = new Tree(std::begin(faces(tm)), std::end(faces(tm)), tm, vpm);
     t->build();
     m_aabb_trees[id] = t;
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
@@ -600,7 +600,7 @@ public:
       }
     }
     // only one CC
-    points.push_back( get(vpm, *boost::begin(vertices(tm))) );
+    points.push_back( get(vpm, *std::begin(vertices(tm))) );
   }
 
  /*!

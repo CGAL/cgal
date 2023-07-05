@@ -140,7 +140,7 @@ struct Point_accessor<Handle, ValueType, ConstReference, true>
   typedef ValueType                      value_type;
   typedef Handle                         key_type;
 
-  typedef typename boost::mpl::if_< boost::is_reference<ConstReference>,
+  typedef typename boost::mpl::if_< std::is_reference<ConstReference>,
                                     ValueType&,
                                     ValueType >::type Reference;
 

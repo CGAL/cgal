@@ -24,7 +24,6 @@
 #include <iterator>
 #include <boost/mpl/and.hpp>
 #include <CGAL/type_traits/is_iterator.h>
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/mpl/if.hpp>
 
 #include <CGAL/Default.h>

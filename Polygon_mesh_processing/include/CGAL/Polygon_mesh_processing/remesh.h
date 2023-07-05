@@ -199,7 +199,7 @@ void isotropic_remeshing(const FaceRange& faces
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
-  if (boost::begin(faces)==boost::end(faces))
+  if (std::begin(faces)==std::end(faces))
     return;
 
   typedef PolygonMesh PM;

@@ -67,8 +67,8 @@ void pcaIpelet::protected_run(int fn)
   for (std::list<Polygon_2>::iterator it=poly_list.begin();it!=poly_list.end();++it)
     if (it->size()==3){
       tri_list.push_back(Kernel::Triangle_2(*(it->vertices_begin()),
-                                            *boost::next(it->vertices_begin()),
-                                            *boost::next(it->vertices_begin(),2)
+                                            *std::next(it->vertices_begin()),
+                                            *std::next(it->vertices_begin(),2)
                                             ));
     }
     else{

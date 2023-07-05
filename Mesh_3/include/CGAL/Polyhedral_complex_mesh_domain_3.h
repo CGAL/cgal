@@ -456,9 +456,9 @@ public:
         // here we have a new free vertex on patch #`patch_id`
 
         if(random.uniform_smallint(
-               boost::uint32_t(0),
-               boost::uint32_t(nb_of_free_vertices_on_patch[patch_id]))
-           < boost::uint32_t(needed_vertices_on_patch[patch_id]))
+               std::uint32_t(0),
+               std::uint32_t(nb_of_free_vertices_on_patch[patch_id]))
+           < std::uint32_t(needed_vertices_on_patch[patch_id]))
         {
           several_vertices_on_patch[patch_id].push_back(vit);
           --needed_vertices_on_patch[patch_id];
@@ -884,7 +884,7 @@ merge_duplicated_points(const PointSet& duplicated_points)
     typename Union_find_t::handle first_handle =
       handles[range_begin->second];
     // In a second loop on the equal-range, update new_ids around p
-    for (it = boost::next(range_begin); it != range_end; ++it)
+    for (it = std::next(range_begin); it != range_end; ++it)
     {
 #if CGAL_MESH_3_VERBOSE > 10
       std::cerr << " - #" << it->second << "\n";

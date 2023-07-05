@@ -61,7 +61,7 @@ namespace Ss2 = Surface_sweep_2;
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and
 // Curve_2 are the same class.
-// The last parameter should be boost::false_type but we used a
+// The last parameter should be std::false_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
@@ -132,7 +132,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the
-// same class. The last parameter should be boost::true_type but we used a
+// same class. The last parameter should be std::true_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
@@ -406,7 +406,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and
 // Curve_2 are the same class.
-// The last parameter should be boost::false_type but we used a
+// The last parameter should be std::false_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
@@ -460,7 +460,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // The last parameter is used to resolve ambiguity between this function and
 // insert of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the
-// same class. The last parameter should be boost::true_type but we used a
+// same class. The last parameter should be std::true_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
@@ -1522,7 +1522,7 @@ zone(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // Checks whether the given x-monotone curve intersects the existing arrangement.
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the
-// same class. The last parameter should be boost::true_type but we used a
+// same class. The last parameter should be std::true_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_on_surface_2<>&,
@@ -1559,7 +1559,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and
 // Curve_2 are the same class.
-// The last parameter should be boost::false_type but we used a
+// The last parameter should be std::false_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to

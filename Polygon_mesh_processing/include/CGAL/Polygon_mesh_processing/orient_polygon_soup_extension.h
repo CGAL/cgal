@@ -215,8 +215,8 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   };
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  static_assert (!(std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  static_assert (!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                 "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if(std::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
     tbb::parallel_for(std::size_t(0), faces.size(), std::size_t(1), process_facet);
@@ -352,10 +352,10 @@ void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_re
   };
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  static_assert (!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  static_assert (!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                 "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  if (boost::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
     tbb::parallel_for(std::size_t(0), triangles.size(), std::size_t(1), process_facet);
   else
 #endif
