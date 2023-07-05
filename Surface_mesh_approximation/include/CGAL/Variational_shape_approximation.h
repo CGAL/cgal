@@ -795,6 +795,12 @@ public:
    *     \cgalParamDefault{`5.0`}
    *   \cgalParamNEnd
    *
+   *   \cgalParamNBegin{boundary_subdivision_ratio}
+   *     \cgalParamDescription{the chord subdivision ratio threshold to the chord length or average edge length for boundary edges}
+   *     \cgalParamType{`geom_traits::FT`}
+   *     \cgalParamDefault{`5.0`}
+   *   \cgalParamNEnd
+   *
    *   \cgalParamNBegin{relative_to_chord}
    *     \cgalParamDescription{If `true`, the `subdivision_ratio` is the ratio of the furthest vertex distance
    *                           to the chord length, otherwise is the average edge length}
@@ -827,6 +833,7 @@ public:
     using parameters::choose_parameter;
 
     const FT subdivision_ratio = choose_parameter(get_parameter(np, internal_np::subdivision_ratio), FT(5.0));
+    const FT boundary_subdivision_ratio = choose_parameter(get_parameter(np, internal_np::boundary_subdivision_ratio), FT(5.0));
     const bool relative_to_chord = choose_parameter(get_parameter(np, internal_np::relative_to_chord), false);
     const bool with_dihedral_angle = choose_parameter(get_parameter(np, internal_np::with_dihedral_angle), false);
     const bool optimize_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_anchor_location), true);
@@ -848,7 +855,7 @@ public:
 
     // generate anchors
     find_anchors();
-    find_edges(subdivision_ratio, relative_to_chord, with_dihedral_angle);
+    find_edges(subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
     add_anchors();
 
     // discrete constrained Delaunay triangulation
@@ -1519,6 +1526,7 @@ private:
    * @param with_dihedral_angle if set to `true`, add dihedral angle weight to the distance.
    */
   void find_edges(const FT subdivision_ratio,
+    const FT boundary_subdivision_ratio,
     const bool relative_to_chord,
     const bool with_dihedral_angle) {
     // collect candidate halfedges in a set
@@ -1550,7 +1558,7 @@ private:
         Boundary_chord chord;
         walk_to_next_anchor(he_start, chord);
         m_bcycles.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
-          subdivision_ratio, relative_to_chord, with_dihedral_angle);
+            subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
@@ -1846,6 +1854,7 @@ private:
     const Boundary_chord_iterator &chord_begin,
     const Boundary_chord_iterator &chord_end,
     const FT subdivision_ratio,
+    const FT boundary_subdivision_ratio,
     const bool relative_to_chord,
     const bool with_dihedral_angle) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
@@ -1853,6 +1862,8 @@ private:
     const halfedge_descriptor he_last = *(chord_end - 1);
     const std::size_t anchor_first = get(m_vanchor_map, source(he_first, *m_ptm));
     const std::size_t anchor_last = get(m_vanchor_map, target(he_last, *m_ptm));
+
+    bool is_boundary = is_border_edge(he_first, *m_ptm);
 
     // do not subdivide trivial non-circular chord
     if ((anchor_first != anchor_last) && (chord_size < 4))
@@ -1879,67 +1890,71 @@ private:
       if_subdivide = true;
     }
     else {
-      FT dist_max(0.0);
-      Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
-      const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
-      bool degenerate_chord = false;
-      if (chord_len > FT(0.0)) {
-        chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
-        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-          vec = cross_product_functor(chord_vec, vec);
-          const FT dist = CGAL::approximate_sqrt(vec.squared_length());
-          if (dist > dist_max) {
-            chord_max = citr;
-            dist_max = dist;
-          }
+        FT dist_max(0.0);
+        Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
+        const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
+        bool degenerate_chord = false;
+        if (chord_len > FT(0.0)) {
+            chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
+            for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+                Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
+                vec = cross_product_functor(chord_vec, vec);
+                const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+                if (dist > dist_max) {
+                    chord_max = citr;
+                    dist_max = dist;
+                }
+            }
         }
-      }
-      else {
-        degenerate_chord = true;
-        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
-            pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
-          if (dist > dist_max) {
-            chord_max = citr;
-            dist_max = dist;
-          }
+        else {
+            degenerate_chord = true;
+            for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+                const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+                    pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
+                if (dist > dist_max) {
+                    chord_max = citr;
+                    dist_max = dist;
+                }
+            }
         }
-      }
 
-      FT criterion = dist_max;
-      if (relative_to_chord && !degenerate_chord)
-        criterion /= chord_len;
-      else
-        criterion /= m_average_edge_length;
+        FT criterion = dist_max;
+        if (relative_to_chord && !degenerate_chord)
+            criterion /= chord_len;
+        else
+            criterion /= m_average_edge_length;
 
-      if (with_dihedral_angle) {
-        // suppose the proxy normal angle is acute
-        std::size_t px_left = get(m_fproxy_map, face(he_first, *m_ptm));
-        std::size_t px_right = px_left;
-        if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm))
-          px_right = get(m_fproxy_map, face(opposite(he_first, *m_ptm), *m_ptm));
-        FT norm_sin(1.0);
-        if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
-          Vector_3 vec = cross_product_functor(
-            m_px_planes[px_left].normal, m_px_planes[px_right].normal);
-          norm_sin = CGAL::approximate_sqrt(vec.squared_length());
+        if (with_dihedral_angle) {
+            // suppose the proxy normal angle is acute
+            std::size_t px_left = get(m_fproxy_map, face(he_first, *m_ptm));
+            std::size_t px_right = px_left;
+            if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm))
+                px_right = get(m_fproxy_map, face(opposite(he_first, *m_ptm), *m_ptm));
+            FT norm_sin(1.0);
+            if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
+                Vector_3 vec = cross_product_functor(
+                    m_px_planes[px_left].normal, m_px_planes[px_right].normal);
+                norm_sin = CGAL::approximate_sqrt(vec.squared_length());
+            }
+            criterion *= norm_sin;
         }
-        criterion *= norm_sin;
-      }
-
-      if (criterion > subdivision_ratio)
-        if_subdivide = true;
+        if (is_boundary) {
+            if (criterion > boundary_subdivision_ratio)
+                if_subdivide = true;
+        }
+        else {
+            if (criterion > subdivision_ratio)
+                if_subdivide = true;
+        }
     }
-
     if (if_subdivide) {
       // subdivide at the most remote vertex
       attach_anchor(*chord_max);
 
       const std::size_t num_left = subdivide_chord(chord_begin, chord_max + 1,
-        subdivision_ratio, relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
       const std::size_t num_right = subdivide_chord(chord_max + 1, chord_end,
-        subdivision_ratio, relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
       return num_left + num_right;
     }

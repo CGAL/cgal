@@ -222,6 +222,7 @@ CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_
 CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
 
 // meshing parameters
+CGAL_add_named_parameter(boundary_subdivision_ratio_t, boundary_subdivision_ratio, boundary_subdivision_ratio)
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
 CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)
 CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedral_angle)
