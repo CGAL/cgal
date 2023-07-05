@@ -128,7 +128,7 @@ where:
 
 Note both terms of the energy function, \f$ e_1 \f$ and \f$ e_2 \f$, are always non-negative.
 The first term of the energy function provides the contribution of the soft clustering probabilities.
-The second term of the energy function is a geometric criterion that is larger the closer to \f$\pm\pi\f$, i.e. the flatter, the dihedral angle between two adjacent facets not in the same cluster is.
+The second term of the energy function is a geometric criterion that is larger the closer to \f$\pm\pi\f$ the dihedral angle between two adjacent facets not in the same cluster is.
 The smoothness parameter makes this geometric criterion more or less prevalent.
 
 Assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
