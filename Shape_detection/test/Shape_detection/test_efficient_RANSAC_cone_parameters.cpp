@@ -74,7 +74,7 @@ bool test_cone_parameters() {
     if (shapes.size() != 1)
       continue;
 
-    boost::shared_ptr<Cone> cone = boost::dynamic_pointer_cast<Cone>((*shapes.first));
+    std::shared_ptr<Cone> cone = std::dynamic_pointer_cast<Cone>((*shapes.first));
 
     // Check: shape detected is a cone.
     if (!cone)

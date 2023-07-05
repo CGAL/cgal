@@ -25,6 +25,7 @@
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/squared_distance_2.h>
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 
@@ -97,29 +98,19 @@ public:
     typename Traits_2::Make_x_monotone_2 make_x_monotone =
                                              traits.make_x_monotone_2_object();
     typename Dxf_circles_list::iterator  circ_it;
-    CGAL::Object                         obj_vec[3];
-    CGAL::Object                        *obj_begin = (obj_vec + 0);
-    CGAL::Object                        *obj_end;
-    X_monotone_curve_2                   cv1, cv2;
 
     for (circ_it = circles.begin(); circ_it != circles.end(); ++circ_it)
     {
       // Break the circle into two x-monotone circular arcs.
       const Dxf_circle_2&  dxf_circ = *circ_it;
       Curve_2              circ (dxf_circ.first, dxf_circ.second);
-
-      obj_end = make_x_monotone (circ, obj_begin);
-      CGAL_assertion(obj_end - obj_begin == 2);
-
-      CGAL::assign(cv1, obj_vec[0]);
-      CGAL::assign(cv2, obj_vec[1]);
-
-      // Generate the corresponding polygon.
       Circ_polygon_2       pgn;
-      pgn.push_back (cv1);
-      pgn.push_back (cv2);
-      *pgns = pgn;
-      ++pgns;
+
+      make_x_monotone (circ,
+        CGAL::dispatch_or_drop_output<X_monotone_curve_2>(std::back_inserter(pgn)));
+      CGAL_assertion(pgn.size() == 2);
+
+      *pgns++ = pgn;
     }
 
     circles.clear();
@@ -131,8 +122,6 @@ public:
     typename Dxf_polygon_2::iterator      curr, next;
     Point_2                               ps, pt;
     Circle_2                              supp_circ;
-    std::size_t                           n_subarcs;
-    std::size_t                           i;
 
     for (pgn_it = polygons.begin(); pgn_it != polygons.end(); ++pgn_it)
     {
@@ -184,15 +173,8 @@ public:
 
           // Break the arc into x-monotone subarcs (there can be at most
           // three subarcs) and add them to the polygon.
-          obj_end = make_x_monotone (circ_arc, obj_begin);
-          n_subarcs = (obj_end - obj_begin);
-          CGAL_assertion (n_subarcs <= 3);
-
-          for (i = 0; i < n_subarcs; i++)
-          {
-            if (CGAL::assign (cv1, obj_vec[i]))
-              pgn.push_back (cv1);
-          }
+          make_x_monotone (circ_arc,
+            CGAL::dispatch_or_drop_output<X_monotone_curve_2>(std::back_inserter(pgn)));
         }
         else
         {

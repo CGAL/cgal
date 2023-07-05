@@ -34,9 +34,9 @@ struct Exact_intersect_xy_2 <R,Cartesian_tag>
   typedef typename R::Point_3     Point_3;
   typedef typename R::Segment_3   Segment_3;
 
-  typedef  boost::variant<Point_3, Segment_3> variant_type;
+  typedef  std::variant<Point_3, Segment_3> variant_type;
 
-  boost::optional<variant_type>
+  std::optional<variant_type>
   operator() (const Segment_3& s3, const Segment_3& t3)
    {  Point_2 p2, q2;
       Point_3 p3, q3;
@@ -55,18 +55,18 @@ struct Exact_intersect_xy_2 <R,Cartesian_tag>
       //       so all third components are faked!
       auto obj = intersection (s2,t2);
       if(! obj){
-        return boost::none;
+        return std::nullopt;
       }
-      if (const Point_2* pi =  boost::get<Point_2>(&*obj))
+      if (const Point_2* pi =  std::get_if<Point_2>(&*obj))
       {
-        return boost::make_optional(variant_type(Point_3(p2.x(),p2.y(),0)));
+        return std::make_optional(variant_type(Point_3(p2.x(),p2.y(),0)));
       }
 
-      const Segment_2* si = boost::get<Segment_2>(&*obj);
+      const Segment_2* si = std::get_if<Segment_2>(&*obj);
       p2 = si->source();
       q2 = si->target();
 
-      return boost::make_optional(variant_type(Segment_3(Point_3(p2.x(),p2.y(),0),
+      return std::make_optional(variant_type(Segment_3(Point_3(p2.x(),p2.y(),0),
                                                          Point_3(q2.x(),q2.y(),0) ) ));
    }
 };
@@ -80,9 +80,9 @@ struct Exact_intersect_xy_2 <R,Homogeneous_tag>
    typedef typename R::Point_3     Point_3;
    typedef typename R::Segment_3   Segment_3;
 
-   typedef  boost::variant<Point_3, Segment_3> variant_type;
+   typedef  std::variant<Point_3, Segment_3> variant_type;
 
-   boost::optional<variant_type> operator() (Segment_3 s3, Segment_3 t3)
+   std::optional<variant_type> operator() (Segment_3 s3, Segment_3 t3)
    {  Point_2 p2, q2;
       Point_3 p3, q3;
 
@@ -102,18 +102,18 @@ struct Exact_intersect_xy_2 <R,Homogeneous_tag>
       //       so all third components are faked!
       auto obj = intersection (s2,t2);
       if(! obj){
-        return boost::none;
+        return std::nullopt;
       }
-      if (const Point_2* pi =  boost::get<Point_2>(&*obj))
+      if (const Point_2* pi =  std::get_if<Point_2>(&*obj))
       {
-        return boost::make_optional(variant_type(Point_3(p2.hx(),p2.hy(),0,p2.hw())));
+        return std::make_optional(variant_type(Point_3(p2.hx(),p2.hy(),0,p2.hw())));
       }
 
-      const Segment_2* si = boost::get<Segment_2>(&*obj);
+      const Segment_2* si = std::get_if<Segment_2>(&*obj);
       p2 = si->source();
       q2 = si->target();
 
-      return boost::make_optional(variant_type(Segment_3(Point_3 (p2.hx(),p2.hy(),0,p2.hw()),
+      return std::make_optional(variant_type(Segment_3(Point_3 (p2.hx(),p2.hy(),0,p2.hw()),
                                                          Point_3 (q2.hx(),q2.hy(),0,q2.hw())) ));
    }
 };

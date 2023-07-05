@@ -216,13 +216,13 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
         CGAL::cpp11::result_of<Kernel::Intersect_3(Kernel::Segment_3, Kernel::Segment_3)>::type
             result = CGAL::intersection(segA, segB);
         if (result) {
-          if (const Kernel::Segment_3* s = boost::get<Kernel::Segment_3>(&*result)) {
+          if (const Kernel::Segment_3* s = std::get_if<Kernel::Segment_3>(&*result)) {
             Polyline_3 p;
             p.push_back(s->point(0));
             p.push_back(s->point(1));
             new_pol_item->polylines.push_back(p);
           } else {
-            const Kernel::Point_3* p = boost::get<Kernel::Point_3 >(&*result);
+            const Kernel::Point_3* p = std::get_if<Kernel::Point_3 >(&*result);
             new_point_item->point_set()->insert(*p);
           }
         }
@@ -326,13 +326,13 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
     CGAL::cpp11::result_of<Kernel::Intersect_3(Kernel::Segment_3, Kernel::Segment_3)>::type
         result = CGAL::intersection(triangle, segment);
     if (result) {
-      if (const Kernel::Segment_3* s = boost::get<Kernel::Segment_3>(&*result)) {
+      if (const Kernel::Segment_3* s = std::get_if<Kernel::Segment_3>(&*result)) {
         Polyline_3 p;
         p.push_back(s->point(0));
         p.push_back(s->point(1));
         new_pol_item->polylines.push_back(p);
       } else {
-        const Kernel::Point_3* p = boost::get<Kernel::Point_3 >(&*result);
+        const Kernel::Point_3* p = std::get_if<Kernel::Point_3 >(&*result);
         new_point_item->point_set()->insert(*p);
       }
     }

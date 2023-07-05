@@ -168,12 +168,10 @@ protected:
     typename Kernel::Orientation_2    f_orient = ker.orientation_2_object();
 
     Traits_2                        traits;
-    std::list<Object>               xobjs;
-    std::list<Object>::iterator     xobj_it;
+    std::list<std::variant<Tr_point_2, X_monotone_curve_2>>               xobjs;
     typename Traits_2::Make_x_monotone_2
                        f_make_x_monotone = traits.make_x_monotone_2_object();
     Curve_2                         arc;
-    X_monotone_curve_2              xarc;
 
     do
     {
@@ -517,12 +515,11 @@ protected:
           // convolution cycle.
           xobjs.clear();
           f_make_x_monotone (arc, std::back_inserter(xobjs));
-          for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it) {
-            assign_success = CGAL::assign (xarc, *xobj_it);
-            CGAL_assertion (assign_success);
-            CGAL_USE(assign_success);
-            *oi++ = Labeled_curve_2 (xarc,
-                                     X_curve_label (xarc.is_directed_right(),
+          for (auto xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it) {
+            const X_monotone_curve_2* xarc = std::get_if<X_monotone_curve_2>(&(*xobj_it));
+            CGAL_assertion(xarc!=nullptr);
+            *oi++ = Labeled_curve_2 (*xarc,
+                                     X_curve_label (xarc->is_directed_right(),
                                                     cycle_id, curve_index++));
           }
         }
@@ -571,18 +568,17 @@ protected:
     xobjs.clear();
     f_make_x_monotone (arc, std::back_inserter(xobjs));
 
-    xobj_it = xobjs.begin();
+    auto xobj_it = xobjs.begin();
     while (xobj_it != xobjs.end())
     {
-      assign_success = CGAL::assign (xarc, *xobj_it);
-      CGAL_assertion (assign_success);
-      CGAL_USE(assign_success);
+      const X_monotone_curve_2* xarc = std::get_if<X_monotone_curve_2>(&(*xobj_it));
+      CGAL_assertion (xarc != nullptr);
 
       ++xobj_it;
       bool is_last = (xobj_it == xobjs.end());
 
-      *oi++ = Labeled_curve_2 (xarc,
-                               X_curve_label (xarc.is_directed_right(),
+      *oi++ = Labeled_curve_2 (*xarc,
+                               X_curve_label (xarc->is_directed_right(),
                                               cycle_id, curve_index++, is_last));
     }
 

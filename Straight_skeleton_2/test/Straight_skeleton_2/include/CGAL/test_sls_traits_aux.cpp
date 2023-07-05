@@ -36,7 +36,7 @@ void report( int idx, bool ok, std::string const& info = std::string("") )
 
 bool exist_event( Traits const&  aTraits, triple const& aTriple )
 {
-  boost::optional<FT> lMaxTime ;
+  std::optional<FT> lMaxTime ;
   return aTraits.do_ss_event_exist_2_object()(aTriple.trisegment(), lMaxTime );
 }
 

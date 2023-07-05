@@ -15,7 +15,7 @@
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -31,7 +31,7 @@ namespace CGAL_SS_i {
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K, class Caches>
-boost::optional< typename K::Point_2 >
+std::optional< typename K::Point_2 >
 construct_offset_pointC2 ( typename K::FT const& t,
                            Segment_2_with_ID<K> const& e0,
                            typename K::FT const& w0,
@@ -45,8 +45,8 @@ construct_offset_pointC2 ( typename K::FT const& t,
   typedef typename K::Point_2  Point_2 ;
   typedef typename K::Line_2   Line_2 ;
 
-  typedef boost::optional<Point_2> Optional_point_2 ;
-  typedef boost::optional<Line_2>  Optional_line_2 ;
+  typedef std::optional<Point_2> Optional_point_2 ;
+  typedef std::optional<Line_2>  Optional_line_2 ;
 
   FT x(0.0),y(0.0) ;
 

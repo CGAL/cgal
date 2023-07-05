@@ -32,7 +32,7 @@ int main() {
   // the boundary of the face that contains it.
   Point q(4, 1);
   auto obj = pl.locate(q);
-  auto* f = boost::get<Arrangement::Face_const_handle>(&obj);
+  auto* f = std::get_if<Arrangement::Face_const_handle>(&obj);
 
   std::cout << "The query point (" << q << ") is located in: ";
   print_face<Arrangement>(*f);

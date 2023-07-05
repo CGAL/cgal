@@ -624,7 +624,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
         intersector(xc, (*sc_it)->last_curve(), vector_inserter(xections));
         CGAL_assertion(xections.size() == 1);
         auto& item = xections.front();
-        xc = *boost::get<X_monotone_curve_2>(&item);
+        xc = *std::get_if<X_monotone_curve_2>(&item);
       }
 
       CGAL_assertion
@@ -667,7 +667,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
       this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
       this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
   {
-    if ((boost::get<Intersection_point>(&(*vi)) != nullptr) &&
+    if ((std::get_if<Intersection_point>(&(*vi)) != nullptr) &&
         this->m_traits->equal_2_object()(ctr_min(c1->last_curve()),
                                          ctr_min(c2->last_curve())))
     {
@@ -685,7 +685,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
     vector_inserter vi_last = vi_end;
 
     --vi_last;
-    if (boost::get<Intersection_point>(&(*vi_last)) != nullptr) {
+    if (std::get_if<Intersection_point>(&(*vi_last)) != nullptr) {
       CGAL_SS_PRINT_TEXT("Skipping common right endpoint...");
       CGAL_SS_PRINT_EOL();
       --vi_end;
@@ -712,7 +712,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
         vector_inserter vi_last = vi_end;
 
         --vi_last;
-        if (boost::get<Intersection_point>(&(*vi_last)) != nullptr) {
+        if (std::get_if<Intersection_point>(&(*vi_last)) != nullptr) {
           CGAL_SS_PRINT_TEXT("Skipping common right endpoint on boundary...");
           CGAL_SS_PRINT_EOL();
           --vi_end;
@@ -725,7 +725,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
   // SL: curves are split and no event strictly before the current event should
   //     be reported
   if (vi != vi_end) {
-    const Intersection_point* xp_point = boost::get<Intersection_point>(&(*vi));
+    const Intersection_point* xp_point = std::get_if<Intersection_point>(&(*vi));
     if (xp_point != nullptr) {
       // Skip the intersection point if it is not larger than the current event.
       // To correctly do so, we have to set the ps_x and ps_y for xp_point->first
@@ -744,7 +744,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
   bool first_i = true;
   for (; vi != vi_end; ++vi) {
     Multiplicity multiplicity = 0;
-    const Intersection_point* xp_point = boost::get<Intersection_point>(&(*vi));
+    const Intersection_point* xp_point = std::get_if<Intersection_point>(&(*vi));
     if (xp_point != nullptr) {
       Point_2 xp = xp_point->first;
       multiplicity = xp_point->second;
@@ -753,7 +753,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
       _create_intersection_point(xp, multiplicity, c1, c2);
     }
     else {
-      const X_monotone_curve_2 icv = *boost::get<X_monotone_curve_2>(&(*vi));
+      const X_monotone_curve_2 icv = *std::get_if<X_monotone_curve_2>(&(*vi));
       // CGAL_assertion(icv != nullptr);
 
       CGAL_SS_PRINT_TEXT("Found an overlap");

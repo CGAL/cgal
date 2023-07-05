@@ -26,7 +26,7 @@
 #include <iostream>
 #include <list>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
@@ -531,7 +531,7 @@ public:
       std::cout << "make_x_monotone" << std::endl
                 << "  cv: " << cv << std::endl;
 
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
 
       std::list<Make_x_monotone_result> container;
@@ -540,12 +540,12 @@ public:
 
       size_t i = 0;
       for (auto it = container.begin(); it != container.end(); ++it) {
-        if (const auto* xcv = boost::get<X_monotone_curve_2>(&*it)) {
+        if (const auto* xcv = std::get_if<X_monotone_curve_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        if (const auto* p = boost::get<Point_2>(&*it)) {
+        if (const auto* p = std::get_if<Point_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
           continue;
         }
@@ -618,7 +618,7 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       if (! m_enabled) return m_object(xcv1, xcv2, oi);
@@ -632,22 +632,22 @@ public:
 
       unsigned int i = 0;
       for (const auto& item : container) {
-        const X_monotone_curve_2* xcv = boost::get<X_monotone_curve_2>(&item);
+        const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&item);
         if (xcv != nullptr) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
+          *oi++ = *xcv;
           continue;
         }
 
-        const Intersection_point* ip = boost::get<Intersection_point>(&item);
+        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
         if (ip != nullptr) {
           std::cout << "  result[" << i++ << "]: p: " << ip->first
                     << ", multiplicity: " << ip->second << std::endl;
+          *oi++ = *ip;
           continue;
         }
       }
 
-      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
-      container.clear();
       return oi;
     }
   };

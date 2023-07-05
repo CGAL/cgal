@@ -227,7 +227,7 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
   {
     if (!e->is_empty())
     {
-      boost::optional<Point_2> leftPoint, rightPoint;
+      std::optional<Point_2> leftPoint, rightPoint;
       if (e->left())
         leftPoint = e->left()->point();
 

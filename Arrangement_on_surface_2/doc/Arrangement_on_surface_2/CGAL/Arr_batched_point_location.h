@@ -22,19 +22,7 @@ the output sequence.
 `std::pair<Arrangement_2::Point_2, Arr_point_location_result<Arrangement_2>::%Type>`.
 </UL>
 
-\cgalHeading{A Note on Backwards Compatibility}
-This function used to return `CGAL::Object` up to
-\cgal version 4.2. Starting with \cgal version 4.3 the return type
-is determined by the metafunction `CGAL::Arr_point_location_result`.
-To preserve backwards compatibility
-`CGAL::Object` can be constructed from the new return type
-implicitly, but switching to the new style is recommended. To enable
-the old style without any overhead, the macro
-`::CGAL_ARR_POINT_LOCATION_VERSION` can be defined to 1 before any
-\cgal header is included.
-
 \sa `CGAL::Arr_point_location_result<Arrangement>`
-\sa `CGAL_ARR_POINT_LOCATION_VERSION`
 
 */
 template<typename Traits, typename Dcel,

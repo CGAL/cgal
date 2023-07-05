@@ -1891,16 +1891,16 @@ compute_intersection(const Gt& gt,
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   typedef typename Gt::Segment_2 Segment_2;
   if(result){
-    if (const Segment_2* s = boost::get<Segment_2>(&*result)){
+    if (const Segment_2* s = std::get_if<Segment_2>(&*result)){
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *s << '\n';
-    }else if(const Point_2* p = boost::get<Point_2 >(&*result))
+    }else if(const Point_2* p = std::get_if<Point_2 >(&*result))
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *p << '\n';
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   if(result){
-    if(const Point_2* p = boost::get<Point_2 >(&*result)){
+    if(const Point_2* p = std::get_if<Point_2 >(&*result)){
       pi = *p;
       return true;
     }

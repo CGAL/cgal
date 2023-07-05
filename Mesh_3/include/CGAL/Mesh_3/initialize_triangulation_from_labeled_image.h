@@ -159,8 +159,8 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         : domain.is_in_domain_object()(
             seed_cell->weighted_circumcenter(tr.geom_traits()));
 
-    if ( seed_label != boost::none
-      && seed_cell_label != boost::none
+    if ( seed_label != std::nullopt
+      && seed_cell_label != std::nullopt
       && *seed_label == *seed_cell_label)
         continue; //this means the connected component has already been initialized
 

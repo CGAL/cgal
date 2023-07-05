@@ -19,7 +19,7 @@ typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_c
 typedef CGAL::Barycentric_coordinates::Wachspress_2<Kernel> Wachspress;
 typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Wachspress, Kernel> Wachspress_coordinates;
 
-typedef boost::optional<Vector_insert_iterator> Output_type;
+typedef std::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 

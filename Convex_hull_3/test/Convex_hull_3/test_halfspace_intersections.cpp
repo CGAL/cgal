@@ -32,7 +32,7 @@ void test()
   CGAL::halfspace_intersection_3(planes.begin(),
                                  planes.end(),
                                  P1,
-                                 boost::make_optional(Point(0, 0, 0)) );
+                                 std::make_optional(Point(0, 0, 0)) );
 
   // test halfspace_intersection_3 with non point inside
   CGAL::halfspace_intersection_3(planes.begin(),
@@ -43,7 +43,7 @@ void test()
   CGAL::halfspace_intersection_with_constructions_3( planes.begin(),
                                                      planes.end(),
                                                      P3,
-                                                     boost::make_optional(Point(0, 0, 0)) );
+                                                     std::make_optional(Point(0, 0, 0)) );
 
   // test halfspace_intersection_with_constructions_3 with non point inside
   CGAL::halfspace_intersection_with_constructions_3( planes.begin(),
@@ -54,7 +54,7 @@ void test()
   CGAL::halfspace_intersection_with_constructions_3( planes.begin(),
                                                      planes.end(),
                                                      P5,
-                                                     boost::optional<Point>(),
+                                                     std::optional<Point>(),
                                                      K());
 
   assert(num_vertices(P1)==8 && num_faces(P1)==6);

@@ -98,7 +98,7 @@ class Cluster_classification : public Item_classification_base
 
   void add_cluster_features ()
   {
-    m_eigen = boost::make_shared<Local_eigen_analysis>
+    m_eigen = std::make_shared<Local_eigen_analysis>
       (Local_eigen_analysis::create_from_point_clusters(m_clusters,
                                                         Concurrency_tag()));
 
@@ -388,7 +388,7 @@ class Cluster_classification : public Item_classification_base
 
   int m_index_color;
 
-  boost::shared_ptr<Local_eigen_analysis> m_eigen;
+  std::shared_ptr<Local_eigen_analysis> m_eigen;
 
   bool m_input_is_las;
 

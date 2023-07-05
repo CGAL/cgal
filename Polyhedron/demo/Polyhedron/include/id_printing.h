@@ -153,7 +153,7 @@ bool find_primitive_id(const QPoint& point,
     return false;
   typename Intersections::iterator closest = intersections.begin();
   const Point* closest_point =
-      boost::get<Point>(&closest->first);
+      std::get_if<Point>(&closest->first);
   for(typename Intersections::iterator
       it = std::next(intersections.begin()),
       end = intersections.end();
@@ -164,7 +164,7 @@ bool find_primitive_id(const QPoint& point,
     }
     else {
       const Point* it_point =
-          boost::get<Point>(&it->first);
+          std::get_if<Point>(&it->first);
       if(it_point &&
          (ray_dir * (*it_point - *closest_point)) < 0)
       {

@@ -32,9 +32,9 @@ public:
   {}
 
   template <typename Profile>
-  boost::optional<typename Profile::FT>
+  std::optional<typename Profile::FT>
   operator()(const Profile& profile,
-             const boost::optional<typename Profile::Point>& placement) const
+             const std::optional<typename Profile::Point>& placement) const
   {
     return internal::LindstromTurkCore<TM, Profile>(m_LT_params, profile).compute_cost(placement);
   }

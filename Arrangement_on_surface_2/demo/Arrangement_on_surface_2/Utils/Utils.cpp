@@ -391,8 +391,8 @@ Construct_x_monotone_subcurve_2<ArrTraits>::Construct_x_monotone_subcurve_2(
 //
 template <typename ArrTraits>
 auto Construct_x_monotone_subcurve_2<ArrTraits>::operator()(
-  const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-  const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+  const X_monotone_curve_2& curve, const std::optional<Point_2>& pLeft,
+  const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   Point_2 pMin, pMax;
   bool unbounded_min = false;
@@ -442,8 +442,8 @@ template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto Construct_x_monotone_subcurve_2
 <CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 operator()(const X_monotone_curve_2& curve,
-           const boost::optional<Point_2>& pLeft,
-           const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+           const std::optional<Point_2>& pLeft,
+           const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   // TODO: handle when pLeft or pRight is null
 
@@ -486,8 +486,8 @@ template <typename RatKernel, typename AlgKernel, typename NtTraits,
 auto Construct_x_monotone_subcurve_2<CGAL::Arr_Bezier_curve_traits_2<
   RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
 operator()(
-  const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-  const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+  const X_monotone_curve_2& curve, const std::optional<Point_2>& pLeft,
+  const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   auto pMin = this->construct_min_vertex_2(curve);
   auto pMax = this->construct_max_vertex_2(curve);
@@ -545,8 +545,8 @@ template <typename AlgebraicKernel_d_1>
 auto Construct_x_monotone_subcurve_2<
   CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>::
 operator()(
-  const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-  const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+  const X_monotone_curve_2& curve, const std::optional<Point_2>& pLeft,
+  const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   Point_2 pMin, pMax;
   bool unbounded_min = false;

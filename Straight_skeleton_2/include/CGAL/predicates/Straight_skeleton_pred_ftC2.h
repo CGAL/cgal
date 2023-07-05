@@ -23,7 +23,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Uncertain.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <stdexcept>
 
@@ -129,12 +129,12 @@ Uncertain<Sign> certified_side_of_oriented_lineC2(const FT &a, const FT &b, cons
 //
 template<class K, class FT, class Caches>
 Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
-                                           boost::optional<FT> const& aMaxTime,
+                                           std::optional<FT> const& aMaxTime,
                                            Caches& aCaches )
 {
 
   typedef Rational<FT>              Rational ;
-  typedef boost::optional<Rational> Optional_rational ;
+  typedef std::optional<Rational> Optional_rational ;
   typedef Quotient<FT>              Quotient ;
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
@@ -203,7 +203,7 @@ compare_offset_lines_isec_timesC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_
 
   typedef Rational<FT>       Rational ;
   typedef Quotient<FT>       Quotient ;
-  typedef boost::optional<Rational> Optional_rational ;
+  typedef std::optional<Rational> Optional_rational ;
 
   CGAL_STSKEL_TRAITS_TRACE("compare_offset_lines_isec_timesC2(\n" << m << "\n" << n << "\n) [" << typeid(FT).name() << "]" );
 
@@ -259,7 +259,7 @@ Uncertain<Comparison_result> compare_isec_anglesC2 ( Vector_2<K> const& aBV1
 // Returns true if the point aP is on the positive side of the line supporting the edge
 //
 template<class K>
-Uncertain<bool> is_edge_facing_pointC2 ( boost::optional< typename K::Point_2 > const& aP,
+Uncertain<bool> is_edge_facing_pointC2 ( std::optional< typename K::Point_2 > const& aP,
                                          Segment_2_with_ID<K> const& aEdge )
 {
   typedef typename K::FT FT ;
@@ -486,8 +486,8 @@ Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2_ptr< Trisegment_2<K, Se
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
 
-  typedef boost::optional<Rational> Optional_rational ;
-  typedef boost::optional<Point_2>  Optional_point_2 ;
+  typedef std::optional<Rational> Optional_rational ;
+  typedef std::optional<Point_2>  Optional_point_2 ;
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 

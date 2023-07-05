@@ -38,7 +38,7 @@ typedef std::vector<CircularKArc> CircularKArcContainer;
 typedef CircularKernel::Circular_arc_2 Circular_arc_2;
 typedef CircularKernel::Line_arc_2 Line_arc_2;
 typedef CGAL::Arr_circular_line_arc_traits_2<CircularKernel>   CircularK_Variant_Traits;
-typedef boost::variant< Circular_arc_2, Line_arc_2 > CircularKVarArc;
+typedef std::variant< Circular_arc_2, Line_arc_2 > CircularKVarArc;
 typedef std::vector<CircularKVarArc> CircularKVarArcContainer;
 
 
@@ -55,7 +55,7 @@ typedef BBCircularKernel::Circular_arc_2
   Circular_arc_6;
 typedef BBCircularKernel::Line_arc_2
   Line_arc_6;
-typedef boost::variant<Circular_arc_6,Line_arc_6 >
+typedef std::variant<Circular_arc_6,Line_arc_6 >
   BBCircVarArc;
 typedef std::vector<BBCircVarArc>
   BBCircVarContainer;

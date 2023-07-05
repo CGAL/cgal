@@ -67,7 +67,7 @@ bool test_plane_parameters() {
     if (shapes.size() != 1)
       continue;
 
-    boost::shared_ptr<Plane> pl = boost::dynamic_pointer_cast<Plane>((*shapes.first));
+    std::shared_ptr<Plane> pl = std::dynamic_pointer_cast<Plane>((*shapes.first));
 
     if (!pl)
       continue;

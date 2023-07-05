@@ -50,7 +50,7 @@ public:
 protected:
   PointSnapperBase(QGraphicsScene* scene, GridGraphicsItem* grid);
   Point_2 snapToGrid(const QPointF& qpt);
-  virtual boost::optional<Point_2> snapToArrangement(const QPointF& qpt) = 0;
+  virtual std::optional<Point_2> snapToArrangement(const QPointF& qpt) = 0;
 
   GridGraphicsItem* gridGraphicsItem;
   bool snapToGridEnabled;

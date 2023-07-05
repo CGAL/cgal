@@ -94,9 +94,9 @@ namespace CGAL {
          // l must intersect s in 2 points
          CGAL_kernel_precondition(sols.size() == 2);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-           *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+           *std::get_if<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[1]);
+            *std::get_if<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[1]);
          if(less_xyz_first) {
            *this = Line_arc_3(l, pair1.first, pair2.first);
          } else {
@@ -115,9 +115,9 @@ namespace CGAL {
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
+            *std::get_if<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
+            *std::get_if<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
          // the source and target must be different
          CGAL_kernel_precondition(pair1.first != pair2.first);
          *this = Line_arc_3(l, pair1.first, pair2.first);
@@ -134,8 +134,8 @@ namespace CGAL {
          typedef typename SK3_Intersection_traits<SK, Line_3, Plane_3>::type Intersection;
          Intersection i1 = SK().intersect_3_object()(l, p1);
          Intersection i2 = SK().intersect_3_object()(l, p2);
-         const typename SK::Point_3* point1=boost::get<typename SK::Point_3>( & *i1 );
-         const typename SK::Point_3* point2=boost::get<typename SK::Point_3>( & *i2 );
+         const typename SK::Point_3* point1=std::get_if<typename SK::Point_3>( & *i1 );
+         const typename SK::Point_3* point2=std::get_if<typename SK::Point_3>( & *i2 );
          CGAL_assertion(point1!=nullptr);
          CGAL_assertion(point2!=nullptr);
          // the source and target must be different

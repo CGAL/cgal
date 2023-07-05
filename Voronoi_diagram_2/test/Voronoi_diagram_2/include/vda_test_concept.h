@@ -17,7 +17,7 @@
 #include <cassert>
 #include "helper_functions.h"
 #include <list>
-#include <boost/variant.hpp>
+#include <variant>
 
 
 template<class DG, class AS>
@@ -567,11 +567,11 @@ void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
 
   result_type qr = ns(dg, p);
 
-  if ( Face_handle* f = boost::get<Face_handle>(&qr) ) {
+  if ( Face_handle* f = std::get_if<Face_handle>(&qr) ) {
     kill_warning(f);
-  } else if ( Edge* e = boost::get<Edge>(&qr) ) {
+  } else if ( Edge* e = std::get_if<Edge>(&qr) ) {
     kill_warning(e);
-  } else if ( Vertex_handle* v = boost::get<Vertex_handle>(&qr) ) {
+  } else if ( Vertex_handle* v = std::get_if<Vertex_handle>(&qr) ) {
     kill_warning(v);
   } else {
     // we should have reached this line

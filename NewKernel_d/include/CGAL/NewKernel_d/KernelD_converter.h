@@ -182,7 +182,7 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
                 return Object_converter<Possibilities>()(obj,*this);
         }
 
-        //TODO: convert boost::variant
+        //TODO: convert std::variant
 
 };
 

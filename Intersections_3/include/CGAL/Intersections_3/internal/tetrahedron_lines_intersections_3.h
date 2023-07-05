@@ -68,7 +68,7 @@ struct Tetrahedron_lines_intersection_3_base
       if(do_intersect(o, triangle))
       {
         tr_seg[i] = typename K::Intersect_3()(o, triangle);
-        if(boost::get<typename K::Segment_3>(&*tr_seg[i]) != nullptr)
+        if(std::get_if<typename K::Segment_3>(&*tr_seg[i]) != nullptr)
         {
           res_id = i;
           break;
@@ -91,7 +91,7 @@ struct Tetrahedron_lines_intersection_3_base
     {
       if(tr_seg[i])
       {
-        if(const typename K::Point_3* p = boost::get<typename K::Point_3>(&*tr_seg[i]))
+        if(const typename K::Point_3* p = std::get_if<typename K::Point_3>(&*tr_seg[i]))
         {
           if(res_points.empty())
           {

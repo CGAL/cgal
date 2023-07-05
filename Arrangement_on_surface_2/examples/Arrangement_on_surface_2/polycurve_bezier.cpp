@@ -24,7 +24,7 @@ typedef Polycurve_bezier_traits::Point_2                Point;
 typedef Polycurve_bezier_traits::X_monotone_curve_2     X_mono_polycurve;
 typedef CGAL::Arrangement_2<Polycurve_bezier_traits>    Arrangement_2;
 
-typedef boost::variant<Point, Bezier_x_monotone_curve>  Make_x_monotone_result;
+typedef std::variant<Point, Bezier_x_monotone_curve>  Make_x_monotone_result;
 
 int main() {
   Polycurve_bezier_traits pc_traits;
@@ -58,7 +58,7 @@ int main() {
     // convert it into x-monotone bezier curve.
     std::vector<Make_x_monotone_result> obj_vector;
     bezier_traits.make_x_monotone_2_object()(B, std::back_inserter(obj_vector));
-    auto* x_seg_p = boost::get<Bezier_x_monotone_curve>(&obj_vector[0]);
+    auto* x_seg_p = std::get_if<Bezier_x_monotone_curve>(&obj_vector[0]);
     x_curves.push_back(*x_seg_p);
   }
 

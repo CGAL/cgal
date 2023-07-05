@@ -10,9 +10,9 @@
 #include <vector>
 #include <functional>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
-#include <boost/any.hpp>
+#include <variant>
+#include <optional>
+#include <any>
 #include <boost/timer.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -26,8 +26,8 @@ struct Intersection_traits;
 
 template<typename K>
 struct Intersection_traits<K, typename K::Segment_2, typename K::Segment_2> {
-  typedef typename boost::variant<typename K::Segment_2, typename K::Point_2 > variant_type;
-  typedef typename boost::optional< variant_type > result_type;
+  typedef typename std::variant<typename K::Segment_2, typename K::Point_2 > variant_type;
+  typedef typename std::optional< variant_type > result_type;
 };
 
 
@@ -53,8 +53,8 @@ OutputIterator intersect_do_iterator(const typename K::Segment_2 &seg1,
 
 
 template <class K>
-boost::optional<
-  boost::variant<typename K::Segment_2, typename K::Point_2>
+std::optional<
+  std::variant<typename K::Segment_2, typename K::Point_2>
   >
 intersection_variant(const typename K::Segment_2 &seg1,
              const typename K::Segment_2 &seg2,
@@ -62,8 +62,8 @@ intersection_variant(const typename K::Segment_2 &seg1,
 {
   typedef CGAL::internal::Segment_2_Segment_2_pair<K> is_t;
 
-  typedef boost::variant<typename K::Segment_2, typename K::Point_2> Variant;
-  typedef boost::optional<Variant> OptVariant;
+  typedef std::variant<typename K::Segment_2, typename K::Point_2> Variant;
+  typedef std::optional<Variant> OptVariant;
 
   is_t ispair(&seg1, &seg2);
   switch (ispair.intersection_type()) {
@@ -78,7 +78,7 @@ intersection_variant(const typename K::Segment_2 &seg1,
 }
 
 template <class K>
-boost::any intersection_any(const typename K::Segment_2 &seg1,
+std::any intersection_any(const typename K::Segment_2 &seg1,
                             const typename K::Segment_2 &seg2,
                             const K&)
 {
@@ -88,11 +88,11 @@ boost::any intersection_any(const typename K::Segment_2 &seg1,
   switch (ispair.intersection_type()) {
   case is_t::NO_INTERSECTION:
   default:
-    return boost::any();
+    return std::any();
   case is_t::POINT:
-    return boost::any(ispair.intersection_point());
+    return std::any(ispair.intersection_point());
   case is_t::SEGMENT:
-    return boost::any(ispair.intersection_segment());
+    return std::any(ispair.intersection_segment());
   }
 }
 
@@ -122,7 +122,7 @@ protected:
   std::vector<Segment>* s;
 };
 
-struct Visitor : public boost::static_visitor<>, Vec_holder
+struct Visitor
 {
   Visitor(std::vector<Point>* p, std::vector<Segment>* s) :
     Vec_holder(p, s) { }
@@ -141,7 +141,7 @@ struct Variant_f {
   void operator()(const Segment& s1, const Segment& s2) {
     result_type obj = intersection_variant(s1, s2, K());
     if(obj) {
-      boost::apply_visitor(v, *obj);
+      std::visit(v, *obj);
     }
   }
 };
@@ -165,10 +165,10 @@ struct Any_f : Vec_holder {
     Vec_holder(p, s) { }
 
   void operator()(const Segment& s1, const Segment& s2) {
-    boost::any obj = intersection_any(s1, s2, K());
-    if (const Point * point = boost::any_cast<Point>(&obj)) {
+    std::any obj = intersection_any(s1, s2, K());
+    if (const Point * point = std::any_cast<Point>(&obj)) {
        p->push_back(*point);
-    } else if (const Segment * segment = boost::any_cast<Segment>(&obj)) {
+    } else if (const Segment * segment = std::any_cast<Segment>(&obj)) {
       s->push_back(*segment);
     }
   }
@@ -224,7 +224,7 @@ std::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) {
                           std::function<void(const Point&)>(
                             [&ret](const Point& p) { (void)p; ++(std::get<0>(ret)); })));
 
-        boost::apply_visitor(v, *obj);
+        std::visit(v, *obj);
       } else {
         ++(std::get<2>(ret));
       }

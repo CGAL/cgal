@@ -23,7 +23,7 @@
 
 #include <list>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/mpl/has_xxx.hpp>
 
 #include <CGAL/tags.h>
@@ -126,9 +126,9 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
-      typedef boost::variant<Point_2, Base_x_monotone_curve_2>
+      typedef std::variant<Point_2, Base_x_monotone_curve_2>
         Base_make_x_monotone_result;
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
 
       // Make the original curve x-monotone.
@@ -138,12 +138,12 @@ public:
       // Attach the data to each of the resulting x-monotone curves.
       X_monotone_curve_data xdata = Convert()(cv.data());
       for (const auto& base_obj : base_objects) {
-        if (const auto* bxcv = boost::get<Base_x_monotone_curve_2>(&base_obj)) {
+        if (const auto* bxcv = std::get_if<Base_x_monotone_curve_2>(&base_obj)) {
           *oi++ = Make_x_monotone_result(X_monotone_curve_2(*bxcv, xdata));
           continue;
         }
         // Current object is an isolated point: Leave it as is.
-        const auto* bp = boost::get<Point_2>(&base_obj);
+        const auto* bp = std::get_if<Point_2>(&base_obj);
         CGAL_assertion(bp);
         *oi++ = Make_x_monotone_result(*bp);
       }
@@ -208,9 +208,7 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
-      typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_point, Base_x_monotone_curve_2>
         Intersection_base_result;
 
       // Use the base functor to obtain all intersection objects.
@@ -223,19 +221,19 @@ public:
       // Go over all intersection objects and prepare the output.
       for (const auto& item : base_objects) {
         const Base_x_monotone_curve_2* base_cv =
-          boost::get<Base_x_monotone_curve_2>(&item);
+          std::get_if<Base_x_monotone_curve_2>(&item);
         if (base_cv != nullptr) {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
           X_monotone_curve_2 cv(*base_cv, Merge()(cv1.data(), cv2.data()));
-          *oi++ = Intersection_result(cv);
+          *oi++ = cv;
           continue;
         }
         // The current intersection object is an intersection point:
         // Copy it as is.
-        const Intersection_point* ip = boost::get<Intersection_point>(&item);
-        *oi++ = Intersection_result(*ip);
+        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
+        *oi++ = *ip;
       }
 
       return oi;

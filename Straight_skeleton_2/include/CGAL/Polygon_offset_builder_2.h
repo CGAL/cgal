@@ -16,8 +16,8 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 
-#include <boost/optional/optional.hpp>
-#include <boost/shared_ptr.hpp>
+#include <optional>
+#include <memory>
 
 #include <vector>
 
@@ -69,9 +69,9 @@ public :
   typedef typename Traits::FT      FT ;
   typedef typename Traits::Point_2 Point_2 ;
 
-  typedef boost::optional<Point_2> OptionalPoint_2 ;
+  typedef std::optional<Point_2> OptionalPoint_2 ;
 
-  typedef boost::shared_ptr<Container> ContainerPtr ;
+  typedef std::shared_ptr<Container> ContainerPtr ;
 
   Polygon_offset_builder_2( Ss const& aSs, Traits const& aTraits = Traits(), Visitor const& aVisitor = Visitor() )  ;
 
@@ -150,7 +150,7 @@ public:
     return r ;
   }
 
-  boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
+  std::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
     CGAL_assertion(handle_assigned(aBisector->opposite()));

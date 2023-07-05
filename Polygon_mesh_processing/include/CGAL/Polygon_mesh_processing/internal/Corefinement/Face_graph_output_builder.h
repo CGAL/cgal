@@ -181,7 +181,7 @@ class Face_graph_output_builder
   Node_id_map vertex_to_node_id1, vertex_to_node_id2;
 
   // output meshes
-  const std::array<boost::optional<TriangleMesh*>, 4>& requested_output;
+  const std::array<std::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
   /// \todo do we really need this?
   bool is_tm1_closed;
@@ -411,7 +411,7 @@ public:
                             const VpmOutTuple& output_vpms,
                             EdgeMarkMapTuple& out_edge_mark_maps,
                             UserVisitor& user_visitor,
-                            const std::array<boost::optional<TriangleMesh*>, 4 >& requested_output)
+                            const std::array<std::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
     , vpm1(vpm1), vpm2(vpm2)
     , fids1(fids1), fids2(fids2)
@@ -513,10 +513,10 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-    const bool used_to_classify_patches =  requested_output[UNION]==boost::none &&
-                                           requested_output[TM1_MINUS_TM2]==boost::none &&
-                                           requested_output[TM2_MINUS_TM1]==boost::none &&
-                                           requested_output[INTERSECTION]==boost::none;
+    const bool used_to_classify_patches =  requested_output[UNION]==std::nullopt &&
+                                           requested_output[TM1_MINUS_TM2]==std::nullopt &&
+                                           requested_output[TM2_MINUS_TM1]==std::nullopt &&
+                                           requested_output[INTERSECTION]==std::nullopt;
 
     CGAL_assertion( vertex_to_node_id1.size() <= nodes.size() );
     CGAL_assertion( vertex_to_node_id2.size() <= nodes.size() );
@@ -1680,8 +1680,8 @@ public:
         // special code to handle non-manifold vertices on the boundary
         for (vertex_descriptor vd : vertices(tm1))
         {
-          boost::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
-          if (op_h == boost::none) continue;
+          std::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
+          if (op_h == std::nullopt) continue;
           halfedge_descriptor h = *op_h;
           CGAL_assertion( target(h, tm1) == vd);
           // check if the target of h is a non-manifold vertex

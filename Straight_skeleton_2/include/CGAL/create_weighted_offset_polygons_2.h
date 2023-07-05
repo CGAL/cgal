@@ -30,9 +30,7 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/tags.h>
 
-#include <boost/optional/optional.hpp>
 #include <boost/range/value_type.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -62,7 +60,7 @@ namespace CGAL_SS_i {
 template <typename FT, typename PointIterator, typename HoleIterator,
           typename WeightIterator, typename HoleWeightsIterator,
           typename K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
                                                       PointIterator aOuterContour_VerticesBegin,
                                                       PointIterator aOuterContour_VerticesEnd,
@@ -94,7 +92,7 @@ create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
   NT_converter<InputFT, KFT> wconv;
 
   InputFT lMaxTime = aMaxTime;
-  boost::optional<KFT> lOptMaxTime(conv(lMaxTime)) ;
+  std::optional<KFT> lOptMaxTime(conv(lMaxTime)) ;
 
   SsBuilder ssb( lOptMaxTime ) ;
 
@@ -113,7 +111,7 @@ create_partial_interior_weighted_straight_skeleton_2 ( const FT& aMaxTime,
 }
 
 template <typename FT, typename PointIterator, typename WeightIterator, typename K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
                                                      PointIterator aVerticesBegin,
                                                      PointIterator aVerticesEnd,
@@ -129,7 +127,7 @@ create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
   typedef typename Kernel_traits<Point_2>::Kernel                    IK;
   typedef typename IK::FT                                            IFT;
 
-  boost::shared_ptr<Straight_skeleton_2<K> > rSkeleton;
+  std::shared_ptr<Straight_skeleton_2<K> > rSkeleton;
 
   // That's because we might not have FT == IK::FT (e.g. `double` and `Core`)
   // Note that we can also have IK != K (e.g. `Simple_cartesian<Core>` and `EPICK`)
@@ -137,7 +135,7 @@ create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
 
   // @todo This likely should be done in the kernel K rather than the input kernel (i.e. the same
   // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
-  boost::optional<IFT> margin = compute_outer_frame_margin(aVerticesBegin,
+  std::optional<IFT> margin = compute_outer_frame_margin(aVerticesBegin,
                                                            aVerticesEnd,
                                                            aWeightsBegin,
                                                            aWeightsEnd,
@@ -205,7 +203,7 @@ create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
 template<class FT, class APolygon, class HoleIterator, class Weights, class HoleWeightsIterator,
          class OfK, class SsK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
-std::vector< boost::shared_ptr<OutPolygon> >
+std::vector< std::shared_ptr<OutPolygon> >
 inline
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aOuterBoundary,
@@ -256,7 +254,7 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 
 template<class FT, class APolygon, class HoleIterator, class Weights, class OfK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
-std::vector< boost::shared_ptr<OutPolygon> >
+std::vector< std::shared_ptr<OutPolygon> >
 inline
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aOuterBoundary,
@@ -275,7 +273,7 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 // Overload where Polygon actually is a simple polygon (no holes)
 template<class FT, class APolygon, class Weights, class OfK, class SsK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
-std::vector< boost::shared_ptr<OutPolygon> >
+std::vector< std::shared_ptr<OutPolygon> >
 inline
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aPoly,
@@ -295,7 +293,7 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 // Overloads common to both polygons with and without holes, a simple polygon is returned in any case
 template<class FT, class APolygon, class Weights, class OfK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
-std::vector<boost::shared_ptr<OutPolygon> >
+std::vector<std::shared_ptr<OutPolygon> >
 inline
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aPoly,
@@ -309,7 +307,7 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 template<class FT, class APolygon, class Weights,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<
                               APolygon, Exact_predicates_inexact_constructions_kernel>::type>
-std::vector<boost::shared_ptr<OutPolygon> >
+std::vector<std::shared_ptr<OutPolygon> >
 inline
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aPoly,
@@ -329,7 +327,7 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 // Overload where Polygon actually is a simple polygon (no holes)
 template<class FT, class APolygon, class Weights, class OfK, class SsK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
-std::vector< boost::shared_ptr<OutPolygon> >
+std::vector< std::shared_ptr<OutPolygon> >
 inline
 create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aPoly,
@@ -355,7 +353,7 @@ create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 // Overloads common to both polygons with and without holes, a simple polygons is returned in any case
 template<class FT, class APolygon, class Weights, class OfK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
-std::vector< boost::shared_ptr<OutPolygon> >
+std::vector< std::shared_ptr<OutPolygon> >
 inline
 create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aPoly,
@@ -369,7 +367,7 @@ create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
 template<class FT, class APolygon, class Weights,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<
                               APolygon, Exact_predicates_inexact_constructions_kernel>::type>
-std::vector< boost::shared_ptr<OutPolygon> >
+std::vector< std::shared_ptr<OutPolygon> >
 inline
 create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                         const APolygon& aPoly,

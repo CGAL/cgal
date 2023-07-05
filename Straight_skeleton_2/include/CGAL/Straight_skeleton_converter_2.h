@@ -19,7 +19,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 #include <vector>
 
@@ -179,7 +180,7 @@ struct Straight_skeleton_converter_2
   typedef typename Source_skeleton::Traits Source_traits ;
   typedef typename Target_skeleton::Traits Target_traits ;
 
-  typedef boost::shared_ptr<Target_skeleton> Target_skeleton_ptr ;
+  typedef std::shared_ptr<Target_skeleton> Target_skeleton_ptr ;
 
   typedef typename Source_skeleton::Vertex_const_iterator   Source_vertex_const_iterator ;
   typedef typename Source_skeleton::Halfedge_const_iterator Source_halfedge_const_iterator ;
@@ -349,7 +350,7 @@ private :
 } ;
 
 template<class Target_skeleton, class Source_skeleton, class Items_converter>
-boost::shared_ptr<Target_skeleton>
+std::shared_ptr<Target_skeleton>
 convert_straight_skeleton_2 ( Source_skeleton const& aSrc, Items_converter const& ic )
 {
   typedef Straight_skeleton_converter_2<Source_skeleton,Target_skeleton,Items_converter> Skeleton_converter ;
@@ -361,7 +362,7 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc, Items_converter const
 }
 
 template<class Target_skeleton, class Source_skeleton>
-boost::shared_ptr<Target_skeleton>
+std::shared_ptr<Target_skeleton>
 convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
 {
   typedef Straight_skeleton_items_converter_2<Source_skeleton,Target_skeleton> Items_converter ;

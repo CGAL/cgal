@@ -114,13 +114,13 @@ public:
     auto obj = p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
 
     // Return a handle to the DCEL feature.
-    DFace** f_p = boost::get<DFace*>(&obj);
+    DFace** f_p = std::get_if<DFace*>(&obj);
     if (f_p) return (Pl_result::make_result(p_arr->_const_handle_for(*f_p)));
 
-    DHalfedge** he_p = boost::get<DHalfedge*>(&obj);
+    DHalfedge** he_p = std::get_if<DHalfedge*>(&obj);
     if (he_p) return (Pl_result::make_result(p_arr->_const_handle_for(*he_p)));
 
-    DVertex** v_p = boost::get<DVertex*>(&obj);
+    DVertex** v_p = std::get_if<DVertex*>(&obj);
     if (v_p) return (Pl_result::make_result(p_arr->_const_handle_for(*v_p)));
 
     // We should never reach here:

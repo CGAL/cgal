@@ -44,7 +44,7 @@ public:
     Weights are computed with respect to a query point of the type `Traits::Point_2` and
     stored in the output iterator `output`. The function returns a pointer to the last stored element.
   */
-  boost::optional<OutputIterator>
+  std::optional<OutputIterator>
   weights(
     const Traits::Point_2& query_point, OutputIterator& output) {
 
@@ -57,7 +57,7 @@ public:
     are computed with respect to a query point of the type `Traits::Point_2` and stored
     in the output iterator `output`. The function returns a pointer to the last stored element.
   */
-  boost::optional<OutputIterator>
+  std::optional<OutputIterator>
   coordinates_on_bounded_side(
     const Traits::Point_2& query_point,
     OutputIterator& output,
@@ -72,7 +72,7 @@ public:
     are computed with respect to a query point of the type `Traits::Point_2` and stored
     in the output iterator `output`. The function returns a pointer to the last stored element.
   */
-  boost::optional<OutputIterator>
+  std::optional<OutputIterator>
   coordinates_on_unbounded_side(
     const Traits::Point_2& query_point,
     OutputIterator& output,

@@ -13,11 +13,10 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Real_timer.h>
 
-#include <boost/shared_ptr.hpp>
-
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 namespace SS = CGAL::CGAL_SS_i;
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -42,7 +41,7 @@ using Polygon_2 = CGAL::Polygon_2<K>;
 using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
 
 using Straight_skeleton_2 = CGAL::Straight_skeleton_2<K>;
-using Straight_skeleton_2_ptr = boost::shared_ptr<Straight_skeleton_2>;
+using Straight_skeleton_2_ptr = std::shared_ptr<Straight_skeleton_2>;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
 

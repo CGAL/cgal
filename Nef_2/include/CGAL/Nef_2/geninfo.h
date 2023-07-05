@@ -17,7 +17,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Nef_2/geninfo.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "Something like boost::any or boost::variant should be used instead."
+  "Something like std::any or std::variant should be used instead."
 #include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/config.h>

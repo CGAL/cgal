@@ -42,7 +42,7 @@ and `create_offset_polygons_2()` instead.
 */
 template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights,
           typename HoleIterator, typename OfK, typename SsK>
-std::vector< boost::shared_ptr<OfKPolygon> >
+std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_weighted_skeleton_and_offset_polygons_2(FT offset,
                                                         const InKPolygon& outer_boundary,
                                                         const InKWeights& outer_boundary_weights,
@@ -84,7 +84,7 @@ and `create_offset_polygons_2()` instead.
 \sa `Polygon_offset_builder_2`
 */
 template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights, typename OfK, typename SsK>
-std::vector< boost::shared_ptr<OfKPolygon> >
+std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_weighted_skeleton_and_offset_polygons_2(FT offset,
                                                         const InKPolygon& poly,
                                                         const InKWeights& weights,
@@ -130,7 +130,7 @@ therefore, to construct offsets at more than one single distance, use the separa
 \sa `Polygon_offset_builder_2`
 */
 template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights, typename OfK, typename SsK>
-std::vector< boost::shared_ptr<OfKPolygon> >
+std::vector< std::shared_ptr<OfKPolygon> >
 create_exterior_weighted_skeleton_and_offset_polygons_2(FT offset,
                                                         const InKPolygon& poly,
                                                         const InKWeights& weights,

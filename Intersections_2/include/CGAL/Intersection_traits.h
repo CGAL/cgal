@@ -18,24 +18,24 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <type_traits>
 
 #define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)                \
   template<typename K>     \
   struct Intersection_traits<K, typename K::A, typename K::B>  { \
-    typedef typename boost::variant<typename K::R1, typename K::R2 >    \
+    typedef typename std::variant<typename K::R1, typename K::R2 >    \
                      variant_type;                                      \
-    typedef typename boost::optional< variant_type > result_type;       \
+    typedef typename std::optional< variant_type > result_type;       \
   };
 
 #define CGAL_INTERSECTION_TRAITS_3(A, B, R1, R2, R3)            \
   template<typename K>     \
   struct Intersection_traits<K, typename K::A, typename K::B>  { \
-    typedef typename boost::variant<typename K::R1, typename K::R2,     \
+    typedef typename std::variant<typename K::R1, typename K::R2,     \
                                     typename K::R3> variant_type;       \
-    typedef typename boost::optional< variant_type > result_type;       \
+    typedef typename std::optional< variant_type > result_type;       \
   };
 
 #define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
@@ -118,16 +118,16 @@ const T* intersect_get(const CGAL::Object& o) {
   return CGAL::object_cast<T>(&o);
 }
 
-template<typename T, BOOST_VARIANT_ENUM_PARAMS(typename U)>
+template<typename T, typename ... U>
 inline
-const T* intersect_get(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)> >& v) {
-  return boost::get<T>(&*v);
+const T* intersect_get(const std::optional< std::variant<U...> >& v) {
+  return std::get_if<T>(&*v);
 }
 
-template<typename T, BOOST_VARIANT_ENUM_PARAMS(typename U)>
+template<typename T, typename ... U>
 inline
-const T* intersect_get(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)> & v) {
-  return boost::get<T>(&v);
+const T* intersect_get(const std::variant<U...> & v) {
+  return std::get_if<T>(&v);
 }
 
 template<typename A, typename B>

@@ -226,7 +226,7 @@ public:
 
       Tr tr(p(-2,2,0), p(2,2,0), P(0.25,0.25,0));
       auto res = CGAL::intersection(tet, tr);
-      const Poly* poly = boost::get<Poly>(&*res);
+      const Poly* poly = std::get_if<Poly>(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
       for(const P& pt : *poly) {
@@ -235,7 +235,7 @@ public:
 
       tr = Tr(P(0.45, 0.20, 0.1), P(0.1, 0.20, 0.5), P(-0.5, 0.25, -0.5));
       res = CGAL::intersection(tet, tr);
-      const Poly* inter = boost::get<Poly>(&*res);
+      const Poly* inter = std::get_if<Poly>(&*res);
       assert(inter != nullptr);
       assert(inter->size() == 5);
       for(const P& pt : *inter) {
@@ -287,22 +287,22 @@ public:
         auto res = CGAL::intersection(tet, tr);
 
         std::vector<P> points;
-        if(const P* pt = boost::get<P>(&*res))
+        if(const P* pt = std::get_if<P>(&*res))
         {
           points.push_back(*pt);
         }
-        else if(const S* s = boost::get<S>(&*res))
+        else if(const S* s = std::get_if<S>(&*res))
         {
           points.push_back(s->source());
           points.push_back(s->target());
         }
-        else if(const Tr* itr = boost::get<Tr>(&*res))
+        else if(const Tr* itr = std::get_if<Tr>(&*res))
         {
           points.push_back(itr->operator[](0));
           points.push_back(itr->operator[](1));
           points.push_back(itr->operator[](2));
         }
-        else if(const Poly* poly = boost::get<Poly>(&*res))
+        else if(const Poly* poly = std::get_if<Poly>(&*res))
         {
           points = *poly;
 
@@ -322,8 +322,8 @@ public:
     Tr tri(P(0.191630, -0.331630, -0.370000), P(-0.124185, -0.385815, -0.185000), P(-0.0700000, -0.0700000, 0.00000));
     Tet tet(P(0, -1, 0), P(-1, 0, 0), P(0, 0, 0), P(0, 0, -1));
     auto res = intersection(tri, tet);
-    assert(res != boost::none);
-    const std::vector<P> *vps = boost::get<std::vector<P>>(&*res);
+    assert(res != std::nullopt);
+    const std::vector<P> *vps = std::get_if<std::vector<P>>(&*res);
     assert(vps!=nullptr);
   }
 

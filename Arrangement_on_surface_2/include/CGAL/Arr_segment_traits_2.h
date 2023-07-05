@@ -25,7 +25,7 @@
 
 #include <fstream>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian.h>
@@ -566,7 +566,7 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the segment with a variant.
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       *oi++ = Make_x_monotone_result(cv);
       return oi;
@@ -706,8 +706,6 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       // Early ending with Bbox overlapping test
       if (! do_bboxes_overlap(cv1, cv2)) return oi;
@@ -724,7 +722,7 @@ public:
       CGAL_assertion(bool(res));
 
       // Check if we have a single intersection point.
-      const Point_2* ip = boost::get<Point_2>(&*res);
+      const Point_2* ip = std::get_if<Point_2>(&*res);
       if (ip != nullptr) {
         CGAL_assertion(cv1.is_vertical() ?
                        m_traits.is_in_y_range_2_object()(cv1, *ip) :
@@ -733,7 +731,7 @@ public:
                        m_traits.is_in_y_range_2_object()(cv2, *ip) :
                        m_traits.is_in_x_range_2_object()(cv2, *ip));
         Intersection_point ip_mult(*ip, 1);
-        *oi++ = Intersection_result(ip_mult);
+        *oi++ = ip_mult;
         return oi;
       }
 
@@ -754,7 +752,7 @@ public:
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
         Intersection_point ip_mult(p_r, 0);
-        *oi++ = Intersection_result(ip_mult);
+        *oi++ = ip_mult;
         return oi;
       }
 
@@ -765,17 +763,17 @@ public:
         // in the overlap segment
         if (cv1.is_directed_right()) {
           X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
-          *oi++ = Intersection_result(overlap_seg);
+          *oi++ = overlap_seg;
           return oi;
         }
         X_monotone_curve_2 overlap_seg(cv1.line(), p_r, p_l);
-        *oi++ = Intersection_result(overlap_seg);
+        *oi++ = overlap_seg;
         return oi;
       }
       // cv1 and cv2 have opposite directions, the overlap segment
       // will be directed from left to right
       X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
-      *oi++ = Intersection_result(overlap_seg);
+      *oi++ = overlap_seg;
       return oi;
     }
   };

@@ -29,15 +29,13 @@
 #include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <boost/utility.hpp> // for std::prev
-#include <boost/optional.hpp>
-
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
 
 #include <type_traits>
+#include <optional>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -452,7 +450,7 @@ polylines_to_protect
  InterpolationFunctor interpolate,
  PolylineInputIterator existing_polylines_begin,
  PolylineInputIterator existing_polylines_end,
- boost::optional<Image_word_type> scalar_interpolation_value = boost::none,
+ std::optional<Image_word_type> scalar_interpolation_value = std::nullopt,
  int prec = 10)
 {
   typedef typename DomainFunctor::result_type Domain_type;
@@ -587,7 +585,7 @@ polylines_to_protect
                  pixel[1],
                  pixel[2]);
               square[ii][jj].domain = domain_fct(square[ii][jj].word);
-              if(scalar_interpolation_value != boost::none) {
+              if(scalar_interpolation_value != std::nullopt) {
                 square[ii][jj].word =
                   Image_word_type(square[ii][jj].word -
                                   (*scalar_interpolation_value));
@@ -736,7 +734,7 @@ case_1_2_1:
                                                        square[1][0], null);
 
               Isoline_equation equation =
-                (scalar_interpolation_value == boost::none) ?
+                (scalar_interpolation_value == std::nullopt) ?
                 Isoline_equation(1, -1, -1, 0) :
                 Isoline_equation(v00, v10, v01, v11);
               insert_curve_in_graph.insert_curve(equation,
@@ -746,7 +744,7 @@ case_1_2_1:
                                                  p00,
                                                  p10 - p00,
                                                  p01 - p00);
-              if(scalar_interpolation_value == boost::none) {
+              if(scalar_interpolation_value == std::nullopt) {
                 equation = Isoline_equation(0, -1, -1, 1);
               }
               insert_curve_in_graph.insert_curve(equation,
@@ -873,7 +871,7 @@ case_1_2_1:
                                                          square[1][1], null);
                 vertex_descriptor bottom = g_manip.split(square[0][0],
                                                          square[1][0], null);
-                if(scalar_interpolation_value == boost::none) {
+                if(scalar_interpolation_value == std::nullopt) {
                   g_manip.try_add_edge(top, bottom);
                 } else {
                   insert_curve_in_graph.insert_curve(Isoline_equation(v00, v10,
@@ -892,7 +890,7 @@ case_1_2_1:
                 CGAL_assertion(square[1][0].domain==square[0][1].domain);
                 CGAL_assertion(square[0][0].domain!=square[0][1].domain);
 
-                if(scalar_interpolation_value != boost::none) {
+                if(scalar_interpolation_value != std::nullopt) {
                   // Compute the squared distance between the two branches of
                   // the hyperbola.
                   const double discrimant = double(v00) * v11 - double(v01) * v10;
@@ -965,7 +963,7 @@ case_1_2_1:
                                                        square[1][1], null);
 
               Isoline_equation equation =
-                (scalar_interpolation_value == boost::none) ?
+                (scalar_interpolation_value == std::nullopt) ?
                 Isoline_equation(1, -1, 1, 1) :
                 Isoline_equation(v00, v10, v01, v11);
 

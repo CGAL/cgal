@@ -4,7 +4,7 @@
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 #include <CGAL/Straight_skeleton_2/IO/print.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cassert>
 #include <vector>
@@ -16,8 +16,8 @@ typedef CGAL::Polygon_2<K>            Polygon_2 ;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 typedef CGAL::Straight_skeleton_2<K>  Ss ;
 
-typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
-typedef boost::shared_ptr<Ss> SsPtr ;
+typedef std::shared_ptr<Polygon_2> PolygonPtr ;
+typedef std::shared_ptr<Ss> SsPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtrVector ;
 

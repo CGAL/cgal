@@ -29,7 +29,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Traversal_traits.h>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/mpl/if.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
@@ -63,7 +63,7 @@ namespace CGAL {
 ///        - `Point_3`
 ///        - `Segment_3`
 ///        - `Oriented_side_3` with `Oriented_side operator()(Plane_3, Point_3)`
-///        - `Do_intersect_3` with `boost::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
+///        - `Do_intersect_3` with `std::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
 ///        - `Do_intersect_3` with `bool operator()(Plane_3, Bbox_3)`
 ///
 /// \todo If we keep the traits for plane orthogonal to a frame axis, `Traits` must also provide:
@@ -102,7 +102,7 @@ class Polygon_mesh_slicer
   typedef typename Traits::FT                                                FT;
 
 /// typedefs for internal graph to get connectivity of the polylines
-  typedef boost::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
+  typedef std::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
   typedef boost::adjacency_list <
                               boost::vecS,
                               boost::vecS,
@@ -181,9 +181,9 @@ class Polygon_mesh_slicer
       AL_vertex_info v1 = al_graph[nodes_for_orient.first];
       AL_vertex_info v2 = al_graph[nodes_for_orient.second];
 
-      if (const vertex_descriptor* vd1_ptr = boost::get<vertex_descriptor>(&v1) )
+      if (const vertex_descriptor* vd1_ptr = std::get_if<vertex_descriptor>(&v1) )
       {
-        if (const vertex_descriptor* vd2_ptr = boost::get<vertex_descriptor>(&v2) )
+        if (const vertex_descriptor* vd2_ptr = std::get_if<vertex_descriptor>(&v2) )
         {
           CGAL_assertion( halfedge(*vd1_ptr, *vd2_ptr, m_tmesh).second );
           halfedge_descriptor h_opp = halfedge(*vd1_ptr, *vd2_ptr, m_tmesh).first;
@@ -207,7 +207,7 @@ class Polygon_mesh_slicer
         else
         {
           // e2 is intersected in its interior
-          edge_descriptor e2 = boost::get<edge_descriptor>(v2);
+          edge_descriptor e2 = std::get<edge_descriptor>(v2);
           halfedge_descriptor h2 = halfedge(e2, m_tmesh);
           if ( target(next(h2, m_tmesh), m_tmesh) != *vd1_ptr )
             h2=opposite(h2, m_tmesh);
@@ -216,9 +216,9 @@ class Polygon_mesh_slicer
       }
       else
       {
-        edge_descriptor e1 = boost::get<edge_descriptor>(v1);
+        edge_descriptor e1 = std::get<edge_descriptor>(v1);
         halfedge_descriptor h1 = halfedge(e1, m_tmesh);
-        if (const vertex_descriptor* vd2_ptr = boost::get<vertex_descriptor>(&v2) )
+        if (const vertex_descriptor* vd2_ptr = std::get_if<vertex_descriptor>(&v2) )
         {
           // e1 is intersected in its interior
           if ( target(next(h1, m_tmesh), m_tmesh) != *vd2_ptr )
@@ -228,7 +228,7 @@ class Polygon_mesh_slicer
         else
         {
           // intersection in the interior of both edges
-          edge_descriptor e2 = boost::get<edge_descriptor>(v2);
+          edge_descriptor e2 = std::get<edge_descriptor>(v2);
           halfedge_descriptor h2 = halfedge(e2, m_tmesh);
           if ( face(h1, m_tmesh) != face(h2,m_tmesh) )
           {
@@ -265,20 +265,20 @@ class Polygon_mesh_slicer
           nodes_for_orient.second=node_id;
 
       AL_vertex_info v = al_graph[node_id];
-      if (const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&v) )
+      if (const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&v) )
       {
         current_poly.push_back( get(m_vpmap, *vd_ptr) );
       }
       else
       {
-        edge_descriptor ed = boost::get<edge_descriptor>(v);
+        edge_descriptor ed = std::get<edge_descriptor>(v);
         Segment_3 s(
           get(m_vpmap, source(ed, m_tmesh)),
           get(m_vpmap,target(ed, m_tmesh))
         );
         const auto inter = intersect_3(m_plane, s);
-        CGAL_assertion(inter != boost::none);
-        const Point_3* pt_ptr = boost::get<Point_3>(&(*inter));
+        CGAL_assertion(inter != std::nullopt);
+        const Point_3* pt_ptr = std::get_if<Point_3>(&(*inter));
         current_poly.push_back( *pt_ptr );
       }
     }

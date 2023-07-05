@@ -92,7 +92,7 @@ convert_polygon(const Polygon_2<Kernel, Container>& polygon,
   if (polygon.is_empty()) return General_polygon_2<ArrTraits>();
   using Point = typename ArrTraits::Point_2;
   using X_monotone_curve = typename ArrTraits::X_monotone_curve_2;
-  using Make_x_monotone_result = boost::variant<Point, X_monotone_curve>;
+  using Make_x_monotone_result = std::variant<Point, X_monotone_curve>;
   auto cv = ctr(boost::range::join(CGAL::make_range(polygon.vertices_begin(),
                                                     polygon.vertices_end()),
                                    CGAL::make_single(*polygon.vertices_begin())));
@@ -101,7 +101,7 @@ convert_polygon(const Polygon_2<Kernel, Container>& polygon,
   make_x_mtn(cv,
              boost::make_function_output_iterator
              ([&](const Make_x_monotone_result& obj)
-              { gpgn.push_back(*(boost::get<X_monotone_curve>(&obj))); }));
+              { gpgn.push_back(*(std::get_if<X_monotone_curve>(&obj))); }));
   return gpgn;
 }
 

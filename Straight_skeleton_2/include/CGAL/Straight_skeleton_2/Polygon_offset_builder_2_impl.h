@@ -308,7 +308,7 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::construct_offset_co
 
   mVisitor.on_construction_started(aTime);
 
-  mLastPoint = boost::none ;
+  mLastPoint = std::nullopt ;
 
   ResetBisectorData();
 

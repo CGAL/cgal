@@ -23,7 +23,7 @@ typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
+typedef std::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
 
 struct Skip
 {
@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
     Ray_intersection intersection = tree.first_intersection(ray, skip);
     if(intersection)
     {
-      if(boost::get<Point>(&(intersection->first))){
-        const Point* p =  boost::get<Point>(&(intersection->first) );
+      if(std::get_if<Point>(&(intersection->first))){
+        const Point* p =  std::get_if<Point>(&(intersection->first) );
         std::cout <<  *p << std::endl;
       }
     }

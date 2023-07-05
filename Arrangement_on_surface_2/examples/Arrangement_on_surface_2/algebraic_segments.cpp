@@ -29,7 +29,7 @@ typedef Traits::Algebraic_real_1                      Algebraic_real;
 typedef Traits::X_monotone_curve_2                    X_monotone_curve;
 typedef Traits::Point_2                               Point;
 
-typedef boost::variant<Point, X_monotone_curve>       Make_x_monotone_result;
+typedef std::variant<Point, X_monotone_curve>       Make_x_monotone_result;
 
 int main() {
   Traits traits;
@@ -52,7 +52,7 @@ int main() {
   // but not in this case).
   std::vector<X_monotone_curve> segs;
   for(size_t i = 0; i < pre_segs.size(); ++i) {
-    auto* curr_p = boost::get<X_monotone_curve>(&pre_segs[i]);
+    auto* curr_p = std::get_if<X_monotone_curve>(&pre_segs[i]);
     assert(curr_p);
     segs.push_back(*curr_p);
   }

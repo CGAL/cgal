@@ -28,7 +28,7 @@
 #include <queue>
 #include <cmath>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/double.h>
@@ -63,8 +63,8 @@ public:
   void operator()(const Polyhedron& mesh,
                   std::size_t window_size,
                   ValuePropertyMap values,
-                  boost::optional<double> spatial_parameter = boost::optional<double>(),
-                  boost::optional<double> range_parameter = boost::optional<double>()
+                  std::optional<double> spatial_parameter = std::optional<double>(),
+                  std::optional<double> range_parameter = std::optional<double>()
                  ) const {
     typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;

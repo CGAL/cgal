@@ -41,7 +41,7 @@ namespace Ss2 = Surface_sweep_2;
  * \param oi Output: An output iterator for the query results.
  * \pre The value-type of PointsIterator is Arrangement::Point_2,
  *      and the value-type of OutputIterator is is pair<Point_2, Result>,
- *      where Result is boost::optional<boost::variant<Vertex_const_handle,
+ *      where Result is std::optional<std::variant<Vertex_const_handle,
  *                                      Halfedge_const_handle,
  *                                      Face_const_handle> >.
  *      It represents the arrangement feature containing the point.

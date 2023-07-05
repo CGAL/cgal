@@ -318,13 +318,11 @@ public:
                            Bezier_cache& cache,
                            OutputIterator oi) const
   {
-    typedef boost::variant<Intersection_point, Self>    Intersection_result;
-
     // In case we have two x-monotone subcurves of the same Bezier curve,
     // check if they have a common left endpoint.
     if (_curve.is_same(cv._curve)) {
       if (left().is_same(cv.left()) || left().is_same(cv.right()))
-        *oi++ = Intersection_result(Intersection_point(left(), 0));
+        *oi++ = Intersection_point(left(), 0);
     }
 
     // Compute the intersections of the two sucurves. Note that for caching
@@ -341,7 +339,7 @@ public:
 
     // In case of overlap, just report the overlapping subcurve.
     if (do_ovlp) {
-      *oi++ = Intersection_result(ovlp_cv);
+      *oi++ = ovlp_cv;
       return oi;
     }
 
@@ -349,14 +347,14 @@ public:
     // xy-lexicorgraphical order, and insert them to the output iterator.
     std::sort(ipts.begin(), ipts.end(), Less_intersection_point(cache));
     for (auto ip_it = ipts.begin(); ip_it != ipts.end(); ++ip_it) {
-      *oi++ = Intersection_result(*ip_it);
+      *oi++ = *ip_it;
     }
 
     // In case we have two x-monotone subcurves of the same Bezier curve,
     // check if they have a common right endpoint.
     if (_curve.is_same(cv._curve)) {
       if (right().is_same(cv.left()) || right().is_same(cv.right())) {
-        *oi++ = Intersection_result(Intersection_point(right(), 0));
+        *oi++ = Intersection_point(right(), 0);
       }
     }
 

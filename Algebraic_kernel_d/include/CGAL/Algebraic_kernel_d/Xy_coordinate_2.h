@@ -81,10 +81,10 @@ public:
     mutable int _m_arcno;
 
     // y-coordinate
-    mutable boost::optional< Algebraic_real_1 > _m_y;
+    mutable std::optional< Algebraic_real_1 > _m_y;
 
     //! A bounding box for the given point
-    mutable boost::optional< std::pair<double,Bbox_2> > _m_bbox_2_pair;
+    mutable std::optional< std::pair<double,Bbox_2> > _m_bbox_2_pair;
 
 };
 

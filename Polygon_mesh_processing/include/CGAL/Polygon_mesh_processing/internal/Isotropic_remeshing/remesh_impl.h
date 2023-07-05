@@ -43,7 +43,7 @@
 #include <boost/range/join.hpp>
 #include <memory>
 #include <boost/container/flat_set.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/property_map/function_property_map.hpp>
 
 #include <map>
@@ -1944,7 +1944,7 @@ private:
     bool check_normals(const HalfedgeRange& hedges) const
     {
       std::size_t nb_patches = patch_id_to_index_map.size();
-      //std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
+      //std::vector<std::optional<Vector_3> > normal_per_patch(nb_patches,std::nullopt);
       std::vector<bool> initialized(nb_patches,false);
       std::vector<Vector_3> normal_per_patch(nb_patches);
 
@@ -1968,7 +1968,7 @@ private:
             return false;
           }
         }
-        //normal_per_patch[index] = boost::make_optional(n);
+        //normal_per_patch[index] = std::make_optional(n);
         normal_per_patch[index] = n;
         initialized[index] = true;
       }

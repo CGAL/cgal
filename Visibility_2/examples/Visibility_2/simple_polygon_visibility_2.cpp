@@ -38,7 +38,7 @@ int main() {
   CGAL::Arr_naive_point_location<Arrangement_2> pl(env);
   CGAL::Arr_point_location_result<Arrangement_2>::Type obj = pl.locate(q);
   // The query point locates in the interior of a face
-  face = boost::get<Arrangement_2::Face_const_handle> (&obj);
+  face = std::get_if<Arrangement_2::Face_const_handle> (&obj);
 
   // compute non regularized visibility area
   // Define visibility object type that computes non-regularized visibility area

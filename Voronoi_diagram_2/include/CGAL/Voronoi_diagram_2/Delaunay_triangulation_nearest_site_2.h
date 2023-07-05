@@ -19,7 +19,7 @@
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Triangulation_utils_2.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace CGAL {
 
@@ -48,7 +48,7 @@ class Delaunay_triangulation_nearest_site_2
   typedef typename Delaunay_graph::Edge_circulator    Edge_circulator;
 
  public:
-  typedef boost::variant<Vertex_handle,Edge,Face_handle>  result_type;
+  typedef std::variant<Vertex_handle,Edge,Face_handle>  result_type;
 
   result_type operator()(const Delaunay_graph& dg, const Point_2& p) const {
     CGAL_precondition( dg.dimension() >= 0 );

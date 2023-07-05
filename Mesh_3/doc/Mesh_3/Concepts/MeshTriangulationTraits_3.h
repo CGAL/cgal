@@ -334,11 +334,11 @@ public:
   /*!
   A constructor object that must provide the function operators:
 
-  `boost::optional< boost::variant< T... > > operator()(Segment_3 s, Plane_3 p)`
+  `std::optional< std::variant< T... > > operator()(Segment_3 s, Plane_3 p)`
 
-  `boost::optional< boost::variant< T... > > operator()(Ray_3 r, Iso_cuboid i)`
+  `std::optional< std::variant< T... > > operator()(Ray_3 r, Iso_cuboid i)`
 
-  `boost::optional< boost::variant< T... > > operator()(Segment_3 s, Iso_cuboid i)`
+  `std::optional< std::variant< T... > > operator()(Segment_3 s, Iso_cuboid i)`
 
   which returns the intersection region of two geometrical objects.
   */

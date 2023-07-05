@@ -289,15 +289,13 @@ public:
   {
     // Workaround a bug in g++-4.8.3:
     //   https://stackoverflow.com/a/21755207/1728537
-    // Using boost::make_optional to copy-initialize 'item_bbox' hides the
+    // Using std::make_optional to copy-initialize 'item_bbox' hides the
     //   warning about '*item_bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
     constVPmap vpm = get(CGAL::vertex_point, *polyhedron());
 
-    boost::optional<CGAL::Bbox_3> item_bbox
-      = boost::make_optional(false, CGAL::Bbox_3());
-
+    std::optional<CGAL::Bbox_3> item_bbox;
 
     for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin();
         v_it != selected_vertices.end(); ++v_it) {
@@ -488,7 +486,7 @@ public:
     clear<fg_edge_descriptor>();
   }
 
-  boost::optional<std::size_t> get_minimum_isolated_component() {
+  std::optional<std::size_t> get_minimum_isolated_component() {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
       return get_minimum_isolated_component<fg_vertex_descriptor>();
@@ -499,7 +497,7 @@ public:
     }
   }
   template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
-  boost::optional<std::size_t> get_minimum_isolated_component() {
+  std::optional<std::size_t> get_minimum_isolated_component() {
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     Travel_isolated_components<Face_graph>::Minimum_visitor visitor;
     Travel_isolated_components<Face_graph>(*polyhedron()).travel<HandleType>
@@ -507,7 +505,7 @@ public:
     return visitor.minimum;
   }
 
-  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
       return select_isolated_components<fg_vertex_descriptor>(threshold);
@@ -518,7 +516,7 @@ public:
     }
   }
   template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
-  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
     typedef std::insert_iterator<typename Tr::Container> Output_iterator;

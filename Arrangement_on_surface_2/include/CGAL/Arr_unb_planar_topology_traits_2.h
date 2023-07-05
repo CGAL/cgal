@@ -291,7 +291,7 @@ public:
    * \return An object that contains the curve end.
    *         In our case this object always wraps a fictitious edge.
    */
-  boost::optional<boost::variant<Vertex*, Halfedge*> >
+  std::optional<std::variant<Vertex*, Halfedge*> >
   place_boundary_vertex(Face* f,
                         const X_monotone_curve_2& cv,
                         Arr_curve_end ind,
@@ -330,7 +330,7 @@ public:
    *         In our case this object may either wrap an unbounded face,
    *         or an edge with an end-vertex at infinity (in case of an overlap).
    */
-  boost::variant<Vertex*, Halfedge*, Face*>
+  std::variant<Vertex*, Halfedge*, Face*>
   locate_curve_end(const X_monotone_curve_2& cv,
                    Arr_curve_end ind,
                    Arr_parameter_space ps_x,

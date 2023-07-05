@@ -56,12 +56,12 @@ public:
   {
     using boost::get;
     visitor vis(this, get<0>(tuple));
-    boost::apply_visitor(vis, get<1>(tuple));
+    std::visit(vis, get<1>(tuple));
     return *this;
   }
 
 private:
-  struct visitor : public boost::static_visitor<> {
+  struct visitor {
     SEP_header_aux* self;
     std::string key;
     visitor(SEP_header_aux* header, std::string key)
@@ -261,7 +261,7 @@ private:
 #endif // CGAL_SEP_READER_DEBUG
     } // end constructor of sep_header_grammar
 
-    typedef boost::variant<double,
+    typedef std::variant<double,
                            int,
                            std::string> value;
     typedef boost::tuple<std::string, value> entry_type;

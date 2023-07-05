@@ -22,8 +22,7 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/none.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <iostream>
 #include <type_traits>

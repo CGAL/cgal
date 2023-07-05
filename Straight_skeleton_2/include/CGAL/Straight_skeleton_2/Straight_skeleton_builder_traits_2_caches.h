@@ -83,13 +83,13 @@ struct Info_cache
 };
 
 template <typename K>
-using Coeff_cache = Info_cache<boost::optional<typename K::Line_2> > ;
+using Coeff_cache = Info_cache<std::optional<typename K::Line_2> > ;
 
 template <typename K>
-using Time_cache = Info_cache<boost::optional<Rational<typename K::FT> > > ;
+using Time_cache = Info_cache<std::optional<Rational<typename K::FT> > > ;
 
 template <typename K>
-using Point_cache = Info_cache<boost::optional<typename K::Point_2> > ;
+using Point_cache = Info_cache<std::optional<typename K::Point_2> > ;
 
 template <typename K>
 struct Caches
@@ -118,9 +118,9 @@ struct No_caches
 {
   void Reset ( std::size_t ) { }
 
-  No_cache<boost::optional<typename K::Line_2> > mCoeff_cache;
-  No_cache<boost::optional<Rational<typename K::FT> > > mTime_cache;
-  No_cache<boost::optional<typename K::Point_2> > mPoint_cache;
+  No_cache<std::optional<typename K::Line_2> > mCoeff_cache;
+  No_cache<std::optional<Rational<typename K::FT> > > mTime_cache;
+  No_cache<std::optional<typename K::Point_2> > mPoint_cache;
 };
 
 } // namespace CGAL_SS_i

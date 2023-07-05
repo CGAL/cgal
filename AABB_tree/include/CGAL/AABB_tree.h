@@ -26,7 +26,7 @@
 #include <CGAL/AABB_tree/internal/AABB_search_tree.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -270,7 +270,7 @@ public:
     /// \tparam Query must be a type for which `Do_intersect` operators are
     ///               defined in the traits class `AABBTraits`.
     template <typename Query>
-    boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
+    std::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
     ///@}
 
     /// \name Intersections
@@ -293,7 +293,7 @@ public:
     /// \tparam Query must be a type for which `Do_intersect` and `Intersection` operators are
     ///               defined in the traits class `AABBTraits`.
     template <typename Query>
-    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
+    std::optional< typename Intersection_and_primitive_id<Query>::Type >
     any_intersection(const Query& query) const;
 
 
@@ -317,12 +317,12 @@ public:
     /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     /// call this member function.
     template<typename Ray, typename SkipFunctor>
-    boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
+    std::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query, const SkipFunctor& skip) const;
 
     /// \cond
     template<typename Ray>
-    boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
+    std::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query) const
     {
       return first_intersection(query, [](Primitive_id){ return false; });
@@ -342,12 +342,12 @@ public:
     /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     /// call this member function.
     template<typename Ray, typename SkipFunctor>
-    boost::optional<Primitive_id>
+    std::optional<Primitive_id>
     first_intersected_primitive(const Ray& query, const SkipFunctor& skip) const;
 
     /// \cond
     template<typename Ray>
-    boost::optional<Primitive_id>
+    std::optional<Primitive_id>
     first_intersected_primitive(const Ray& query) const
     {
       return first_intersected_primitive(query, [](Primitive_id){ return false; });
@@ -963,7 +963,7 @@ public:
 
   template <typename Tr>
   template <typename Query>
-  boost::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
+  std::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
     AABB_tree<Tr>::any_intersection(const Query& query) const
   {
     using namespace CGAL::internal::AABB_tree;
@@ -975,7 +975,7 @@ public:
 
   template <typename Tr>
   template <typename Query>
-  boost::optional<typename AABB_tree<Tr>::Primitive_id>
+  std::optional<typename AABB_tree<Tr>::Primitive_id>
     AABB_tree<Tr>::any_intersected_primitive(const Query& query) const
   {
     using namespace CGAL::internal::AABB_tree;

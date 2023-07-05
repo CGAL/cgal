@@ -31,7 +31,7 @@
  * class-template.
  */
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/function_objects.h>
 #include <CGAL/use.h>
@@ -2253,7 +2253,7 @@ _place_and_set_curve_end(DFace* f,
     return v;
   }
 
-  DHalfedge** fict_he_p = boost::get<DHalfedge*>(&*obj);
+  DHalfedge** fict_he_p = std::get_if<DHalfedge*>(&*obj);
   if (fict_he_p != nullptr) {
     DHalfedge* fict_he = *fict_he_p;
     CGAL_assertion(fict_he != nullptr);
@@ -2273,7 +2273,7 @@ _place_and_set_curve_end(DFace* f,
                                         Halfedge_handle((*p_pred)->next()));
     return v;
   }
-  DVertex** v_p = boost::get<DVertex*>(&*obj);
+  DVertex** v_p = std::get_if<DVertex*>(&*obj);
   CGAL_assertion(v_p != nullptr);
   DVertex* v = *v_p;
   CGAL_assertion(v != nullptr);

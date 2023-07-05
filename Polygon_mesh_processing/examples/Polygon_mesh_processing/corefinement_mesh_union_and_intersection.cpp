@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   }
 
   Mesh out_union, out_intersection;
-  std::array<boost::optional<Mesh*>, 4> output;
+  std::array<std::optional<Mesh*>, 4> output;
   output[PMP::Corefinement::UNION] = &out_union;
   output[PMP::Corefinement::INTERSECTION] = &out_intersection;
 

@@ -62,17 +62,17 @@ int main()
               << ") lies on a Voronoi " << std::flush;
 
     Locate_result lr = vd.locate(p);
-    if ( Vertex_handle* v = boost::get<Vertex_handle>(&lr) ) {
+    if ( Vertex_handle* v = std::get_if<Vertex_handle>(&lr) ) {
       std::cout << "vertex." << std::endl;
       std::cout << "The Voronoi vertex is:" << std::endl;
       std::cout << "\t" << (*v)->point() << std::endl;
-    } else if ( Halfedge_handle* e = boost::get<Halfedge_handle>(&lr) ) {
+    } else if ( Halfedge_handle* e = std::get_if<Halfedge_handle>(&lr) ) {
       std::cout << "edge." << std::endl;
       std::cout << "The source and target vertices "
                 << "of the Voronoi edge are:" << std::endl;
       print_endpoint(*e, true);
       print_endpoint(*e, false);
-    } else if ( Face_handle* f = boost::get<Face_handle>(&lr) ) {
+    } else if ( Face_handle* f = std::get_if<Face_handle>(&lr) ) {
       std::cout << "face." << std::endl;
       std::cout << "The vertices of the Voronoi face are"
                 << " (in counterclockwise order):" << std::endl;

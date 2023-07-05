@@ -16,8 +16,8 @@ typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef boost::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
-typedef boost::optional< Tree::Intersection_and_primitive_id<Plane>::Type > Plane_intersection;
+typedef std::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
+typedef std::optional< Tree::Intersection_and_primitive_id<Plane>::Type > Plane_intersection;
 typedef Tree::Primitive_id Primitive_id;
 
 int main()
@@ -53,8 +53,8 @@ int main()
         tree.any_intersection(segment_query);
     if(intersection){
       // gets intersection object
-      if(boost::get<Point>(&(intersection->first))){
-        Point* p = boost::get<Point>(&(intersection->first));
+      if(std::get_if<Point>(&(intersection->first))){
+        Point* p = std::get_if<Point>(&(intersection->first));
         std::cout << "intersection object is a point " << *p <<  std::endl;
         std::cout << "with face "<< intersection->second  <<  std::endl;
       }
@@ -77,8 +77,8 @@ int main()
     // (generally a segment)
     Plane_intersection plane_intersection = tree.any_intersection(plane_query);
     if(plane_intersection){
-      if(boost::get<Segment>(&(plane_intersection->first))){
-        Segment* s = boost::get<Segment>(&(plane_intersection->first));
+      if(std::get_if<Segment>(&(plane_intersection->first))){
+        Segment* s = std::get_if<Segment>(&(plane_intersection->first));
         std::cout << "one intersection object is the segment " << s << std::endl;
         std::cout << "with face "<< intersection->second  <<  std::endl;
       }
