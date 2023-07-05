@@ -37,33 +37,28 @@ public:
   typedef typename Base::Point_3    Point_3;
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
   typedef typename Base::vertex_descriptor   vertex_descriptor;
+  //todo ip: send this over to Sizing_field to be consistent
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
   typedef typename CGAL::dynamic_vertex_property_t<FT> Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh,
-                                       Vertex_property_tag>::type VertexSizingMap;
+                                       Vertex_property_tag>::type Vertex_sizing_map;
 
-  //todo ip: set a property map that can calculate curvature in one go. I think I'm generating constant maps (without put)
-  // try 1
   typedef Principal_curvatures_and_directions<K> Principal_curvatures;
-//  typedef Constant_property_map<vertex_descriptor, Principal_curvatures> Vertex_curvature_map;
-
-  // try 2
-  typedef Constant_property_map<vertex_descriptor, Principal_curvatures_and_directions<K>> Default_principal_map;
-  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
-                                                       parameters::Default_named_parameters,
-                                                       Default_principal_map>::type
-                                                         Vertex_curvature_map;
+  typedef typename CGAL::dynamic_vertex_property_t<Principal_curvatures> Vertex_curvature_tag;
+  typedef typename boost::property_map<CGAL::Face_filtered_graph<PolygonMesh>,
+                                       Vertex_curvature_tag>::type Vertex_curvature_map;
 
     Adaptive_sizing_field(const double tol
                         , const std::pair<FT, FT>& edge_len_min_max
                         , PolygonMesh& pmesh)
-    : tol(tol)
-    , m_short(edge_len_min_max.first)
-    , m_long(edge_len_min_max.second)
-    , m_pmesh(pmesh)
-  {
-    m_vertex_sizing_map = get(Vertex_property_tag(), m_pmesh);
-  }
+      : tol(tol)
+      , m_short(edge_len_min_max.first)
+      , m_long(edge_len_min_max.second)
+      , m_pmesh(pmesh)
+    {
+      m_vertex_sizing_map = get(Vertex_property_tag(), m_pmesh);
+    }
 
 private:
   FT sqlength(const vertex_descriptor va,
@@ -85,7 +80,8 @@ public:
       return get(m_vertex_sizing_map, v);
     }
 
-  void calc_sizing_map()
+  template <typename FaceRange>
+  void calc_sizing_map(const FaceRange& faces)
   {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     int oversize  = 0;
@@ -94,22 +90,32 @@ public:
     std::cout << "Calculating sizing field..." << std::endl;
 #endif
 
-    //todo ip: how to make this work?
-//    Vertex_curvature_map vertex_curvature_map;
+    ////// IP: How to sort this out?
+    ///// FaceRange->expand->Face_filtered_graph->use ffg onwards
+//    CGAL::make_boolean_property_map(faces); // IP: this does not compile
+    std::vector<face_descriptor> selection;
+    auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
+    for (face_descriptor f : faces)
+      put(is_selected, f, false);
 
-    //todo ip: temp workaround
-    auto vertex_curvature_map =
-      m_pmesh.template add_property_map<vertex_descriptor,Principal_curvatures_and_directions<K>>("v:curvature_map").first;
-    interpolated_corrected_principal_curvatures_and_directions(m_pmesh
-                                                               , vertex_curvature_map);
+    CGAL::expand_face_selection(selection, m_pmesh, 1, is_selected, std::back_inserter(selection));
+    // IP: expand_face_selection is not happy with ffg either
 
-    // calculate square vertex sizing field (L(x_i))^2 from curvature field
-    for(vertex_descriptor v : vertices(m_pmesh))
+    CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
+    ///////
+
+    Vertex_curvature_map vertex_curvature_map;
+    vertex_curvature_map = get(Vertex_curvature_tag(), ffg);
+
+    interpolated_corrected_principal_curvatures_and_directions(ffg
+                                                             , vertex_curvature_map);
+
+    // calculate vertex sizing field L(x_i) from curvature field
+    for(vertex_descriptor v : vertices(ffg))
     {
       auto vertex_curv = get(vertex_curvature_map, v);
-      //todo ip: alt solution - calculate curvature per vertex
-//      const Principal_curvatures vertex_curv = interpolated_corrected_principal_curvatures_and_directions_one_vertex(m_pmesh, v);
-      const FT max_absolute_curv = CGAL::max(CGAL::abs(vertex_curv.max_curvature), CGAL::abs(vertex_curv.min_curvature));
+      const FT max_absolute_curv = CGAL::max(CGAL::abs(vertex_curv.max_curvature)
+                                           , CGAL::abs(vertex_curv.min_curvature));
       const FT vertex_size_sq = 6 * tol / max_absolute_curv - 3 * CGAL::square(tol);
       if (vertex_size_sq > CGAL::square(m_long))
       {
@@ -210,7 +216,7 @@ private:
   const FT m_short;
   const FT m_long;
   PolygonMesh& m_pmesh;
-  VertexSizingMap m_vertex_sizing_map;
+  Vertex_sizing_map m_vertex_sizing_map;
 };
 
 }//end namespace Polygon_mesh_processing
