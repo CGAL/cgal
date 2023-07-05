@@ -81,7 +81,7 @@ public:
     }
 
   template <typename FaceRange>
-  void calc_sizing_map(const FaceRange& faces)
+  void calc_sizing_map(const FaceRange& faces_)
   {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     int oversize  = 0;
@@ -90,16 +90,12 @@ public:
     std::cout << "Calculating sizing field..." << std::endl;
 #endif
 
-    ////// IP: How to sort this out?
     ///// FaceRange->expand->Face_filtered_graph->use ffg onwards
-//    CGAL::make_boolean_property_map(faces); // IP: this does not compile
-    std::vector<face_descriptor> selection;
+    std::vector<face_descriptor> selection(faces_.begin(), faces_.end());
     auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
-    for (face_descriptor f : faces)
+    for (face_descriptor f : faces(m_pmesh))
       put(is_selected, f, false);
-
     CGAL::expand_face_selection(selection, m_pmesh, 1, is_selected, std::back_inserter(selection));
-    // IP: expand_face_selection is not happy with ffg either
 
     CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
     ///////
