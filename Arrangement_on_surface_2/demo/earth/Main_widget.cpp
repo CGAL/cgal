@@ -206,7 +206,7 @@ void readShapefile(const std::string& filename) {
 
 void Main_widget::initializeGL()
 {
-  readShapefile("C:/work/gsoc2023/data/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp");
+  //readShapefile("C:/work/gsoc2023/data/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp");
 
   //const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
   const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
@@ -214,7 +214,7 @@ void Main_widget::initializeGL()
   auto dup_nodes = Kml::get_duplicates(m_countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(1)
+  if(0)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
@@ -493,7 +493,7 @@ void Main_widget::paintGL()
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
     glPointSize(5);
-    //m_vertices->draw();
+    m_vertices->draw();
 
     sp.unuse();
   }

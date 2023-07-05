@@ -29,6 +29,11 @@ QVector3D Kml::Node::get_coords_3f(const double r) const
   const auto v = get_coords_3d(r);
   return QVector3D(v.x, v.y, v.z);
 }
+std::ostream& operator << (std::ostream& os, const Kml::Node& n)
+{
+  os << n.lon << ", " << n.lat;
+  return os;
+}
 
 
 Kml::Placemarks  Kml::read(const std::string& file_name)

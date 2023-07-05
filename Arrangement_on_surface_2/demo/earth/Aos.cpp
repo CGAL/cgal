@@ -306,11 +306,23 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
     auto& d = vit->data();
     if (vit->data().v == false)
     {
+      if (2 == vit->degree())
+        ;//continue;
+
+      if (1 == vit->degree())
+      {
+        std::cout << "1-deg vertex: " << std::boolalpha << vit->incident_halfedges()->target()->data().v << std::endl;
+      }
+
+
       num_created_vertices++;
       auto p = vit->point();
       auto ap = approx(p);
       QVector3D new_vertex(ap.dx(), ap.dy(), ap.dz());
+      new_vertex.normalize();
       std::cout << new_vertex << std::endl;
+      std::cout << "degree = " << vit->degree() << std::endl;
+      
       created_vertices.push_back(new_vertex);
 
       // find the arcs that are adjacent to this vertex

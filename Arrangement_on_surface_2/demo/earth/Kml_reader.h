@@ -25,11 +25,7 @@ public:
     bool operator == (const Node& r) const;
     Vec3d get_coords_3d(const double r = 1.0) const;
     QVector3D get_coords_3f(const double r=1.0) const;
-    friend std::ostream& operator << (std::ostream& os, const Node& n)
-    {
-      os << n.lon << ", " << n.lat;
-      return os;
-    }
+    friend std::ostream& operator << (std::ostream& os, const Node& n);
   };
   using Nodes = std::vector<Node>;
 
