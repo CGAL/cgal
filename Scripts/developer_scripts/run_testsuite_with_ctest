@@ -105,13 +105,6 @@ collect_all_current_platforms()
 build_platforms_list()
 {
   for LOCAL_PLATFORM in $1; do
-    # MSVC2015 does not support C++17
-    if [ $2 \> "CGAL-6.0" ]; then
-      if [ "LOCAL_PLATFORM" = "MSVC2015-Release-64bits" ]; then
-        continue
-      fi
-    fi
-
     if [ "${LOCAL_PLATFORM}" = "all" ] ; then
       USE_REFERENCE_PLATFORMS='y'
     else
@@ -177,14 +170,21 @@ setup_dirs()
   # directories existing in the reference release are added to $PLATFORMS
   #
   PLATFORMS=""
-  build_platforms_list "`value_of BUILD_ON_${HOST}`" "${CGAL_RELEASE_ID}"
-  build_platforms_list "`value_of COMPILERS_${HOST}`" "${CGAL_RELEASE_ID}"
+  build_platforms_list "`value_of BUILD_ON_${HOST}`"
+  build_platforms_list "`value_of COMPILERS_${HOST}`"
 
   if [ -n "${USE_REFERENCE_PLATFORMS}" ]; then
     collect_all_reference_platforms
   fi
 
   for PLATFORM in ${PLATFORMS}; do
+
+    # MSVC2015 does not support C++17
+    if [ "${CGAL_RELEASE_ID}" \> "CGAL-6.0" ]; then
+      if [ "PLATFORM" = "MSVC2015-Release-64bits" ]; then
+        continue
+      fi
+    fi
 
     CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
 
