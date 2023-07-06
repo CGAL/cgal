@@ -400,6 +400,8 @@ CGAL_Kernel_cons(Construct_plane_line_intersection_point_3,
                  construct_plane_line_intersection_point_3_object)
 CGAL_Kernel_cons(Construct_planes_intersection_point_3,
                  construct_planes_intersection_point_3_object)
+CGAL_Kernel_cons(Construct_coplanar_segments_intersection_point_3,
+                 construct_coplanar_segments_intersection_point_3_object)
 CGAL_Kernel_cons(Compute_alpha_for_coplanar_triangle_intersection_3,
                  compute_alpha_for_coplanar_triangle_intersection_3_object)
 CGAL_Kernel_cons(Construct_point_on_2,
