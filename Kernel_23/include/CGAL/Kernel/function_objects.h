@@ -2193,6 +2193,42 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Construct_planes_intersection_point_3
+  {
+    typedef typename K::Plane_3 Plane;
+    typedef typename K::Point_3 Point;
+    typename K::Construct_plane_3 construct_plane;
+  public:
+    typedef Point result_type;
+
+    Point
+    operator()(const Point& p1, const Point& q1, const Point& r1,
+               const Point& p2, const Point& q2, const Point& r2,
+               const Point& p3, const Point& q3, const Point& r3) const
+    {
+      Plane plane1 = construct_plane(p1, q1, r1);
+      Plane plane2 = construct_plane(p2, q2, r2);
+      Plane plane3 = construct_plane(p3, q3, r3);
+
+      const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
+      CGAL_assertion(res!=boost::none);
+      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+
+    Point
+    operator()(const Plane& plane1, const Plane& plane2, const Plane& plane3) const
+    {
+      const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
+      CGAL_assertion(res!=boost::none);
+      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+  };
+
+  template <typename K>
   class Compute_alpha_for_coplanar_triangle_intersection_3
   {
     typedef typename K::Point_3 Point_3;
