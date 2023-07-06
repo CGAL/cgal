@@ -347,8 +347,8 @@ ask the triangulation to construct the set of edges
 (\f$ 1\f$ dimensional faces) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices
-(include files <tt>triangulation1.cpp</tt> and
-<tt>triangulation2.cpp</tt> are given and commented below).
+(include files <tt>triangulation1.h</tt> and
+<tt>triangulation2.h</tt> are given and commented below).
 
 \cgalExample{triangulation.cpp}
 
