@@ -24,7 +24,7 @@ jobs:
       with:
         args: spdx
     - name: install dependencies
-      run: sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
+      run: sudo apt-get install -y cmake
     - name: Create CGAL internal release
       run: |
         cmake -DCGAL_VERSION=9.9 -P ./Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
