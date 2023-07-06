@@ -60,7 +60,6 @@ BOOST_FIXTURE_TEST_CASE( test_insert, Fixture )
                                 skips.begin(), skips.end());
 
   // the same goes for inserting at an arbitrary position
-  skip::all_iterator pos = boost::next(l.all_begin(), 3);
   l.insert(boost::next(l.all_begin(), 3)
            , 20);
   all.insert(boost::next(all.begin(), 3)
