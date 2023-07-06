@@ -959,7 +959,6 @@ void generate_subtriangles(std::size_t ti,
     {
       if(!points_on_segments[i].empty())
       {
-        // TODO: predicate on input triangles
         int coord = 0;
         std::size_t src_id = segments[i].first, tgt_id = segments[i].second;
         typename EK::Point_3 src = points[src_id], tgt=points[tgt_id];
