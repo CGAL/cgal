@@ -167,9 +167,7 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
     }
   }
 
-
   // supporting_line intersects: points are coplanar
-  // TODO: check if we can write a dedicated predicate taking advantage of p,q being shared
   ::CGAL::Orientation pqr = cpl_orient(p, q, r);
   ::CGAL::Orientation pqs = cpl_orient(p, q, s);
 
@@ -609,7 +607,7 @@ void test_edge(const typename K::Point_3& p, const typename K::Point_3& q,
 }
 
 template <class K>
-void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
+bool collect_intersections(const std::array<typename K::Point_3, 3>& t1,
                            const std::array<typename K::Point_3, 3>& t2,
                            std::vector<typename K::Point_3>& inter_pts)
 {
@@ -626,7 +624,7 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
       if (depth(p)>2) throw std::runtime_error("Depth is not 4: "+std::to_string(depth(p)));
 #endif
 
-    return;
+    return true;
   }
 
   for (int i=0; i<3; ++i)
@@ -653,6 +651,8 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   for (auto p : inter_pts)
     if (depth(p)>2) throw std::runtime_error("Depth is not 2: "+std::to_string(depth(p)));
 #endif
+
+  return false;
 }
 
 //////////////////////////////////
@@ -672,6 +672,7 @@ void generate_subtriangles(std::size_t ti,
                            std::vector<typename EK::Point_3>& points,
                            const std::vector<std::size_t>& in_triangle_ids,
                            const std::set<std::pair<std::size_t, std::size_t> >& intersecting_triangles,
+                           const std::set<std::pair<std::size_t, std::size_t> >& coplanar_triangles,
                            const std::vector<std::array<typename EK::Point_3,3>>& triangles,
                            PointVector& new_triangles
                            )
@@ -789,11 +790,6 @@ void generate_subtriangles(std::size_t ti,
   {
     std::size_t nbs = segments.size();
 
-    auto supporting_plane = [](const std::array<typename EK::Point_3, 3>& t)
-    {
-      return typename EK::Plane_3(t[0], t[1], t[2]);
-    };
-
     std::vector< std::vector<std::size_t> > points_on_segments(nbs);
 
     COUNTER_INSTRUCTION(counter.timer1.start();)
@@ -868,17 +864,19 @@ void generate_subtriangles(std::size_t ti,
             }
             case POINT_INTERSECTION:
             {
-              // TODO: use version with no variant
-              COUNTER_INSTRUCTION(counter.timer6.start();)
-              auto res = CGAL::intersection(supporting_plane(triangles[in_triangle_ids[i]]),
-                                            supporting_plane(triangles[in_triangle_ids[j]]),
-                                            supporting_plane(triangles[ti]));
-              COUNTER_INSTRUCTION(counter.timer6.stop();)
-
-              if (const typename EK::Point_3* pt_ptr = boost::get<typename EK::Point_3>(&(*res)))
+              if (   coplanar_triangles.count(CGAL::make_sorted_pair(in_triangle_ids[i], in_triangle_ids[j])) == 0
+                  &&  coplanar_triangles.count(CGAL::make_sorted_pair(ti, in_triangle_ids[j])) == 0
+                  &&  coplanar_triangles.count(CGAL::make_sorted_pair(in_triangle_ids[i], ti)) == 0)
               {
+                COUNTER_INSTRUCTION(counter.timer6.start();)
+                typename EK::Point_3 pt = typename EK::Construct_planes_intersection_point_3()(
+                  triangles[in_triangle_ids[i]][0], triangles[in_triangle_ids[i]][1],triangles[in_triangle_ids[i]][2],
+                  triangles[in_triangle_ids[j]][0], triangles[in_triangle_ids[j]][1],triangles[in_triangle_ids[j]][2],
+                  triangles[ti][0], triangles[ti][1],triangles[ti][2]);
+                COUNTER_INSTRUCTION(counter.timer6.stop();)
+
                 COUNTER_INSTRUCTION(++counter.c1;)
-                std::size_t pid = get_point_id(*pt_ptr);
+                std::size_t pid = get_point_id(pt);
                 points_on_segments[i].push_back(pid);
                 points_on_segments[j].push_back(pid);
               }
@@ -1198,7 +1196,8 @@ void autorefine_soup_output(const PointRange& input_points,
   Real_timer t;
   t.start();
 #endif
-  std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
+  std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles; // TODO replace with vector<boost::flat_set<>>>
+  std::set<std::pair<std::size_t, std::size_t> > coplanar_triangles; // TODO replace with vector<boost::flat_set<>>>
   //TODO: PARALLEL_FOR #2
   for (const Pair_of_triangle_ids& p : si_pairs)
   {
@@ -1211,7 +1210,7 @@ void autorefine_soup_output(const PointRange& input_points,
     const std::array<typename EK::Point_3, 3>& t2 = triangles[i2];
 
     std::vector<typename EK::Point_3> inter_pts;
-    autorefine_impl::collect_intersections<EK>(t1, t2, inter_pts);
+    bool triangles_are_coplanar = autorefine_impl::collect_intersections<EK>(t1, t2, inter_pts);
 
     CGAL_assertion(
       CGAL::do_intersect(typename EK::Triangle_3(t1[0], t1[1], t1[2]), typename EK::Triangle_3(t2[0], t2[1], t2[2]))
@@ -1242,6 +1241,8 @@ void autorefine_soup_output(const PointRange& input_points,
           }
       }
       intersecting_triangles.insert(CGAL::make_sorted_pair(i1, i2));
+      if (triangles_are_coplanar)
+        coplanar_triangles.insert(CGAL::make_sorted_pair(i1, i2));
     }
   }
 #ifdef USE_DEBUG_PARALLEL_TIMERS
@@ -1369,7 +1370,7 @@ void autorefine_soup_output(const PointRange& input_points,
         autorefine_impl::generate_subtriangles<EK, 2>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
       }
 #else
-      autorefine_impl::generate_subtriangles<EK>(ti, all_segments_ids[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
+      autorefine_impl::generate_subtriangles<EK>(ti, all_segments_ids[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
 #endif
     }
 
