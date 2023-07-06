@@ -169,7 +169,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   bool is_part_of_edge(Vertex_handle v) {
-    /* determines if a vertex v is part of a edge, checking at its local
+    /* determines if a vertex v is part of an edge, checking at its local
        graph for exactly two antipodal vertices  */
 
     SM_decorator SD(&*v);

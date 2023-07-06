@@ -42,7 +42,7 @@ namespace CGAL {
    * <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/filtered_graph.html"><code>boost::filtered_graph</code></a>,
    * this class only requires a way to access the selected faces and will automatically select the
    * edges/halfedges and vertices present in the adapted graph. A vertex is selected if it is incident to at least one
-   * selected face. A edge is selected if it is incident to at least a selected face. A halfedge is selected if its edge
+   * selected face. An edge is selected if it is incident to at least a selected face. A halfedge is selected if its edge
    * is selected.
    *
    * Since this class is a model of the `FaceGraph` concept, there is a restriction on the set of selected faces:
