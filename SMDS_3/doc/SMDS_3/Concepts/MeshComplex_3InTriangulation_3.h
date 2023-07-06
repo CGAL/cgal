@@ -42,7 +42,8 @@ the current approximation of each subdomain
 and each boundary surface patch.
 The data structure encodes the final mesh at the end of the meshing process.
 
-\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+\cgalHasModelsBegin CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>
+\cgalHasModelsEnd
 
 \sa `MeshDomain_3`
 \sa `MeshComplexWithFeatures_3InTriangulation_3`

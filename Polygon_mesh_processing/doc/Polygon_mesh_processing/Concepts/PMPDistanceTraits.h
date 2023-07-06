@@ -7,7 +7,7 @@
 /// `sample_triangle_mesh()`, `approximate_Hausdorff_distance()` and `max_distance_to_triangle_mesh()`
 ///
 /// \cgalRefines{AABBGeomTraits,SpatialSortingTraits_3}
-/// \cgalHasModel Any 3D Kernel is a model of this concept.
+/// \cgalHasModelsBare{Any 3D Kernel is a model of this concept}
 
 class PMPDistanceTraits{
 public:

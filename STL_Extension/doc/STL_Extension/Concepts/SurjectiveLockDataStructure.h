@@ -21,7 +21,8 @@ We call `S` the surjective function such that `S(object)`
 is the \"thing\" that is locked when one tries to lock `object`.
 In the previous example, `S(point)` is the voxel containing `point`.
 
-\cgalHasModel `CGAL::Spatial_lock_grid_3`
+\cgalHasModelsBegin CGAL::Spatial_lock_grid_3
+\cgalHasModelsEnd
 
 */
 class SurjectiveLockDataStructure {

@@ -28,7 +28,8 @@ algebraic operations within that structure.
 \sa `CGAL::Field_with_kth_root_tag`
 \sa `CGAL::Field_with_root_of_tag`
 
-\cgalHasModel `CGAL::Algebraic_structure_traits<T>`
+\cgalHasModelsBegin CGAL::Algebraic_structure_traits<T>
+\cgalHasModelsEnd
 
 */
 

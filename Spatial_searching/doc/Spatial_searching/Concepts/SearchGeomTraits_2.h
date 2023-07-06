@@ -5,7 +5,7 @@
 The concept `SearchGeomTraits_2` defines the requirements for the template
 parameter of the search traits classes.
 
-\cgalHasModel Any \cgal Kernel
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
 */
 
 class SearchGeomTraits_2 {

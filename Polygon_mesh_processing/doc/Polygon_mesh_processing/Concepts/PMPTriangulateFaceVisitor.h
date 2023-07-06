@@ -6,7 +6,8 @@
 /// the creation of new faces.
 ///
 /// \cgalRefines{CopyConstructible}
-/// \cgalHasModel `CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor`.
+/// \cgalHasModelsBegin CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor
+/// \cgalHasModelsEnd
 
 
 class PMPTriangulateFaceVisitor {

@@ -5,7 +5,8 @@ namespace ArrTraits {
  *
  * \cgalRefines{Functor}
  *
- * \cgalHasModel ArrangementXMonotoneTraits_2::Are_mergeable_2
+ * \cgalHasModelsBegin ArrangementXMonotoneTraits_2::Are_mergeable_2
+ * \cgalHasModelsEnd
  */
 class AreMergeable_2 {
 public:

@@ -5,8 +5,7 @@
 A concept that describes the set of requirements of classes used in the computation
 of analytic weights in 3D.
 
-\cgalHasModel
-- All models of `Kernel`
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
 */
 class AnalyticWeightTraits_3 {
 

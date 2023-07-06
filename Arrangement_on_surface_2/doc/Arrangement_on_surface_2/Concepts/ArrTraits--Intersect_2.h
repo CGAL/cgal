@@ -5,7 +5,8 @@ namespace ArrTraits {
  *
  * \cgalRefines{Functor}
  *
- * \cgalHasModel ArrangementXMonotoneTraits_2::Intersect_2
+ * \cgalHasModelsBegin ArrangementXMonotoneTraits_2::Intersect_2
+ * \cgalHasModelsEnd
  */
 class Intersect_2 {
 public:

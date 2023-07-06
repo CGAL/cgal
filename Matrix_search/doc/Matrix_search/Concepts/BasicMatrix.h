@@ -8,7 +8,8 @@ A class `BasicMatrix` has to provide the following
 types and operations in order to be a model for
 `BasicMatrix`.
 
-\cgalHasModel `CGAL::Dynamic_matrix<M>`
+\cgalHasModelsBegin CGAL::Dynamic_matrix<M>
+\cgalHasModelsEnd
 
 \sa `MonotoneMatrixSearchTraits`
 \sa `SortedMatrixSearchTraits`

@@ -7,8 +7,7 @@ A constant iterator range. Refer to the `Range` concept for more details.
 
 \cgalRefinesBare{Boost's %Range concept}
 
-\cgalHasModel STL containers
-\cgalHasModel <A HREF="https://www.boost.org/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>
+\cgalHasModelsBare{STL containers,<A HREF="https://www.boost.org/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>}
 
 \sa `Range`
 

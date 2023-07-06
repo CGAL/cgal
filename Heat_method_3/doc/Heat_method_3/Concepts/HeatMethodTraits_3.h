@@ -7,7 +7,7 @@ The concept `HeatMethodTraits_3` describes the types,
 predicates, and constructions required by the traits class parameter of
 `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`.
 
-\cgalHasModel All the \cgal kernels
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
 
 
 */

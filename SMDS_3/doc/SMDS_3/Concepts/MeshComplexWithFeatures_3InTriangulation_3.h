@@ -48,7 +48,8 @@ of the input complex.
 
 \cgalRefines{MeshComplex_3InTriangulation_3}
 
-\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+\cgalHasModelsBegin CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>
+\cgalHasModelsEnd
 
 \sa `MeshComplex_3InTriangulation_3`
 \sa `MeshDomainWithFeatures_3`

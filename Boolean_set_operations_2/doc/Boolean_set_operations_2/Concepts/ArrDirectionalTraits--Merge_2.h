@@ -5,7 +5,8 @@ namespace ArrDirectionalTraits {
 
 \cgalRefines{AdaptableBinaryFunction}
 
-\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Merge_2`
+\cgalHasModelsBegin ArrangementDirectionalXMonotoneTraits_2::Merge_2
+\cgalHasModelsEnd
 
 */
 

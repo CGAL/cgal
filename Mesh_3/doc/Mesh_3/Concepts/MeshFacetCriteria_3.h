@@ -9,7 +9,8 @@ that concern either mesh tetrahedra or surface facets.
 The concept `MeshFacetCriteria_3` describes the types that
 handle the refinement criteria for surface facets.
 
-\cgalHasModel `CGAL::Mesh_facet_criteria_3<Tr>`
+\cgalHasModelsBegin CGAL::Mesh_facet_criteria_3<Tr>
+\cgalHasModelsEnd
 
 \sa `MeshCellCriteria_3`
 \sa `MeshEdgeCriteria_3`

@@ -19,7 +19,8 @@ follows:
 \tparam FT Number type
 \tparam dim Dimension of the matrices and vectors
 
-\cgalHasModel `CGAL::Eigen_diagonalize_traits`
+\cgalHasModelsBegin CGAL::Eigen_diagonalize_traits
+\cgalHasModelsEnd
 */
 template <typename FT, unsigned int dim = 3>
 class DiagonalizeTraits

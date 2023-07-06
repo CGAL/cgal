@@ -6,10 +6,8 @@
 A type `Key` is a model of the concept `Hashable` if the
 specializations `boost::hash<Key>` and `std::hash<Key>` exist.
 
-\cgalHasModel All handles and indices of \cgal data structures.
-\cgalHasModel All handles of OpenMesh, by including the specializations
-of the `graph_traits` header files provided by \cgal.
-They can be disables by defining the macro `CGAL_DISABLE_HASH_OPENMESH`.
+\cgalHasModelsBare{All handles and indices of \cgal data structures,
+    All handles of OpenMesh\, by including the specializations of the `graph_traits` header files provided by \cgal. They can be disables by defining the macro `CGAL_DISABLE_HASH_OPENMESH`.}
 
 \sa `CGAL::Unique_hash_map<Key,Mapped,Hash>`
 \sa <A HREF="https://en.cppreference.com/w/cpp/container/unordered_set">`std::unordered_set`</a>

@@ -28,10 +28,11 @@ is recommended. To enable the old style without any overhead, the macro
 `CGAL_ARR_POINT_LOCATION_VERSION` can be defined to 1 before any
 \cgal header is included.
 
-\cgalHasModel `CGAL::Arr_naive_point_location<Arrangement>`
-\cgalHasModel `CGAL::Arr_walk_along_line_point_location<Arrangement>`
-\cgalHasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>`
-\cgalHasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>`
+\cgalHasModelsBegin CGAL::Arr_naive_point_location<Arrangement>
+\cgalHasModels CGAL::Arr_walk_along_line_point_location<Arrangement>
+\cgalHasModels CGAL::Arr_trapezoid_ric_point_location<Arrangement>
+\cgalHasModels CGAL::Arr_landmarks_point_location<Arrangement,Generator>
+\cgalHasModelsEnd
 
 \sa `CGAL::Arr_naive_point_location<Arrangement>`
 \sa `CGAL::Arr_walk_along_line_point_location<Arrangement>`

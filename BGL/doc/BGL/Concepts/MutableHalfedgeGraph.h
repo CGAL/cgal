@@ -8,7 +8,7 @@ update the incidence information between vertices and halfedges.
 
 \cgalRefines{HalfedgeGraph}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

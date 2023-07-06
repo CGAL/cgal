@@ -7,7 +7,8 @@ class MixedIntegerProgramTraits
 `MixedIntegerProgramVariable` is a concept of a variable in
 a Mixed Integer Programming (MIP) problem.
 
-\cgalHasModel `CGAL::Variable<FT>`
+\cgalHasModelsBegin CGAL::Variable<FT>
+\cgalHasModelsEnd
 */
 template <typename FT>
 class MixedIntegerProgramVariable
@@ -112,7 +113,8 @@ public:
 `MixedIntegerProgramLinearConstraint` is a concept of a linear
 constraint in a Mixed Integer Programming (MIP) problem.
 
-\cgalHasModel `CGAL::Linear_constraint<FT>`
+\cgalHasModelsBegin CGAL::Linear_constraint<FT>
+\cgalHasModelsEnd
 */
 template <typename FT>
 class MixedIntegerProgramLinearConstraint
@@ -209,7 +211,8 @@ public:
 `MixedIntegerProgramLinearObjective` is a concept of the linear
 objective function in a Mixed Integer Programming (MIP) problem.
 
-\cgalHasModel `CGAL::Linear_objective<FT>`
+\cgalHasModelsBegin CGAL::Linear_objective<FT>
+\cgalHasModelsEnd
 */
 template <typename FT>
 class MixedIntegerProgramLinearObjective
@@ -277,9 +280,10 @@ Mixed Integer Programming (MIP) problems. A model of this concept stores the int
 variables, linear objective, and linear constraints (if any) and provides a method
 to solve the problem.
 
-\cgalHasModel `CGAL::Mixed_integer_program_traits<T>`
-\cgalHasModel `CGAL::GLPK_mixed_integer_program_traits<T>`
-\cgalHasModel `CGAL::SCIP_mixed_integer_program_traits<T>`
+\cgalHasModelsBegin CGAL::Mixed_integer_program_traits<T>
+\cgalHasModels CGAL::GLPK_mixed_integer_program_traits<T>
+\cgalHasModels CGAL::SCIP_mixed_integer_program_traits<T>
+\cgalHasModelsEnd
 */
 template <typename FT>
 class MixedIntegerProgramTraits

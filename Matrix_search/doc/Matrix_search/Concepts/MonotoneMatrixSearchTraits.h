@@ -21,7 +21,8 @@ add most of the functionality described above to arbitrary
 matrix classes.
 </UL>
 
-\cgalHasModel `CGAL::Dynamic_matrix<M>`
+\cgalHasModelsBegin CGAL::Dynamic_matrix<M>
+\cgalHasModelsEnd
 
 \sa `CGAL::monotone_matrix_search()`
 

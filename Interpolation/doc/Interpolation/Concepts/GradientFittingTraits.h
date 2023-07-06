@@ -7,7 +7,8 @@
 traits class that defines the primitives used by the algorithm. The
 concept `GradientFittingTraits` defines this common set of requirements.
 
-\cgalHasModel `CGAL::Interpolation_gradient_fitting_traits_2<K>`
+\cgalHasModelsBegin CGAL::Interpolation_gradient_fitting_traits_2<K>
+\cgalHasModelsEnd
 
 \sa `InterpolationTraits`
 \sa `CGAL::Interpolation_traits_2<K>`

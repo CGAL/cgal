@@ -5,8 +5,8 @@
 The concept `WeightFunctor` defines a functor to calculate the weight of an edge.
 
 
-  \cgalHasModel \link CGAL::Surface_mesh_topology::Unit_weight_functor `CGAL::Surface_mesh_topology::Unit_weight_functor`\endlink
-  \cgalHasModel \link CGAL::Surface_mesh_topology::Euclidean_length_weight_functor `CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<Mesh>`\endlink
+  \cgalHasModelsBare{\link CGAL::Surface_mesh_topology::Unit_weight_functor `CGAL::Surface_mesh_topology::Unit_weight_functor`\endlink,
+               \link CGAL::Surface_mesh_topology::Euclidean_length_weight_functor `CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<Mesh>`\endlink}
 */
 class WeightFunctor {
 public:

@@ -32,7 +32,8 @@ coefficient is a `Field` the polynomial is model of `EuclideanRing`.
 \sa `AlgebraicStructureTraits`
 \sa `PolynomialTraits_d`
 
-\cgalHasModel `CGAL::Polynomial<Coeff>`
+\cgalHasModelsBegin CGAL::Polynomial<Coeff>
+\cgalHasModelsEnd
 
 */
 

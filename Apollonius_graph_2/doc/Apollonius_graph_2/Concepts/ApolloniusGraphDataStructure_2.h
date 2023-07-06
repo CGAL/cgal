@@ -27,7 +27,8 @@ We only describe the additional requirements with respect to the
 
 \cgalRefines{TriangulationDataStructure_2}
 
-\cgalHasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>`
+\cgalHasModelsBegin CGAL::Triangulation_data_structure_2<Vb,Fb>
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `ApolloniusGraphVertexBase_2`

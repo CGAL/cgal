@@ -5,7 +5,8 @@
   The concept `SvdTraits` describes the linear algebra types and algorithms needed
   to solve in the least square sense a linear system with a singular value decomposition
 
-  \cgalHasModel `CGAL::Eigen_svd`
+\cgalHasModelsBegin galHasModel `CGAL::Eigen_svd
+\cgalHasModelsEnd
 */
 class SvdTraits
 {
@@ -51,7 +52,8 @@ public:
 \cgalConcept
 Concept of vector type used by the concept `SvdTraits`.
 
-\cgalHasModel `CGAL::Eigen_vector<T>`
+\cgalHasModelsBegin CGAL::Eigen_vector<T>
+\cgalHasModelsEnd
 */
 class SvdTraits::Vector
 {
@@ -88,7 +90,8 @@ Concept of matrix type used by the concept `SvdTraits`.
 
 \cgalRefines{DefaultConstructible,Assignable}
 
-\cgalHasModel `CGAL::Eigen_matrix<T>`
+\cgalHasModelsBegin CGAL::Eigen_matrix<T>
+\cgalHasModelsEnd
 */
 class SvdTraits::Matrix
 {

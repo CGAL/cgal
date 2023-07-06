@@ -5,7 +5,8 @@ namespace ArrDirectionalTraits {
 
 \cgalRefines{AdaptableUnaryFunction}
 
-\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Split_2`
+\cgalHasModelsBegin ArrangementDirectionalXMonotoneTraits_2::Split_2
+\cgalHasModelsEnd
 
 */
 

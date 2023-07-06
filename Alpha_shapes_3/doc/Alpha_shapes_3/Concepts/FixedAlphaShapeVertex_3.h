@@ -9,7 +9,7 @@ The concept `FixedAlphaShapeVertex_3` describes the requirements for the base ve
   RegularTriangulationVertexBase_3 if the underlying triangulation of the alpha shape is a regular triangulation,
   Periodic_3TriangulationDSVertexBase_3 if the underlying triangulation of the alpha shape is a periodic triangulation}
 
-\cgalHasModel `CGAL::Fixed_alpha_shape_vertex_base_3` (templated with the appropriate triangulation vertex base class).
+\cgalHasModelsBare{`CGAL::Fixed_alpha_shape_vertex_base_3` (templated with the appropriate triangulation vertex base class)}
 */
 
 class FixedAlphaShapeVertex_3 {

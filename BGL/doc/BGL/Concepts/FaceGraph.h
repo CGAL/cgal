@@ -20,7 +20,7 @@ A face descriptor must be `DefaultConstructible`, `Assignable`, `EqualityCompara
 
 \cgalRefines{HalfedgeGraph}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

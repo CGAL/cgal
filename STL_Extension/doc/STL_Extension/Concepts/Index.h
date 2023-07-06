@@ -6,8 +6,9 @@ The concept `Index` is a refinement of `Descriptor` which must be convertible fr
 
 \cgalRefines{Descriptor}
 
-\cgalHasModel int
-\cgalHasModel size_t
+\cgalHasModelsBegin int
+\cgalHasModels size_t
+\cgalHasModelsEnd
 
 \cgalHeading{Notation}
 

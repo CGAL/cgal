@@ -22,12 +22,12 @@ required if the  method `nearest_vertex()` is used.
 \cgalRefines{TriangulationTraits_2}
 
 
-\cgalHasModel \cgal kernels
-\cgalHasModel `CGAL::Projection_traits_3<K>` (not for dual Voronoi functions)
-\cgalHasModel `CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)
-\cgalHasModel `CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)
-\cgalHasModel `CGAL::Projection_traits_yz_3<K>` (not for dual Voronoi functions)
-\cgalHasModel `CGAL::Projection_traits_xz_3<K>` (not for dual Voronoi functions)
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`\n
+              `CGAL::Projection_traits_3<K>` (not for dual Voronoi functions)\n
+              `CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)\n
+              `CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)\n
+              `CGAL::Projection_traits_yz_3<K>` (not for dual Voronoi functions)\n
+              `CGAL::Projection_traits_xz_3<K>` (not for dual Voronoi functions)}
 
 \sa `TriangulationTraits_2`
 */

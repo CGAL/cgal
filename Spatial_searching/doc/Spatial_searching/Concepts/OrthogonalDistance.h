@@ -8,8 +8,9 @@ E.g., for an Euclidean distance the transformed distance is the squared Euclidea
 
 \cgalRefines{GeneralDistance}
 
-\cgalHasModel `CGAL::Euclidean_distance<Traits>`
-\cgalHasModel `CGAL::Weighted_Minkowski_distance<Traits>`
+\cgalHasModelsBegin CGAL::Euclidean_distance<Traits>
+\cgalHasModels CGAL::Weighted_Minkowski_distance<Traits>
+\cgalHasModelsEnd
 
 */
 

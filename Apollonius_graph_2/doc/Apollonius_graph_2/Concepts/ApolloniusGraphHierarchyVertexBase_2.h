@@ -19,7 +19,8 @@ next and previous level graphs.
 `ApolloniusGraphHierarchyVertexBase_2` does not introduce any
 types in addition to those of `ApolloniusGraphVertexBase_2`.
 
-\cgalHasModel `CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >`
+\cgalHasModelsBegin CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >
+\cgalHasModelsEnd
 
 \sa `ApolloniusGraphDataStructure_2`
 \sa `CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>`

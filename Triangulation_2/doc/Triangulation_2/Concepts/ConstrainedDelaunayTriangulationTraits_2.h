@@ -17,10 +17,10 @@ The concept `ConstrainedDelaunayTriangulationTraits_2` refines both the concept
 
 \cgalRefines{DelaunayTriangulationTraits_2,ConstrainedTriangulationTraits_2}
 
-\cgalHasModel All \cgal Kernels
-\cgalHasModel `CGAL::Projection_traits_xy_3<K>`
-\cgalHasModel `CGAL::Projection_traits_yz_3<K>`
-\cgalHasModel `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModelsBareBegin{All models of the \cgal concept `Kernel`} CGAL::Projection_traits_xy_3<K>
+\cgalHasModels CGAL::Projection_traits_yz_3<K>
+\cgalHasModels CGAL::Projection_traits_xz_3<K>
+\cgalHasModelsEnd
 
 
 \sa `TriangulationTraits_2`

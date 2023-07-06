@@ -18,7 +18,7 @@ of Delaunay triangulations.
 
 \cgalRefines{TriangulationTraits_2}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
 
 \sa `CGAL::Regular_triangulation_2`
 

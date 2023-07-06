@@ -7,7 +7,8 @@
 
 The concept `Periodic_2Offset_2` describes a two-/dimensional integer vector with some specialized access functions and operations.
 
-\cgalHasModel `CGAL::Periodic_2_offset_2`
+\cgalHasModelsBegin CGAL::Periodic_2_offset_2
+\cgalHasModelsEnd
 
 \sa `Periodic_2TriangulationTraits_2`
 \sa `Periodic_2DelaunayTriangulationTraits_2`

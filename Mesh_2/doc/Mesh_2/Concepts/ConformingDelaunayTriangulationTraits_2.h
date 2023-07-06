@@ -17,8 +17,8 @@ points on constrained edges.
 
 \cgalRefines{DelaunayTriangulationTraits_2}
 
-\cgalHasModel Any model of `Kernel` concept. In particular, all \cgal kernels
-\cgalHasModel `Projection_traits_xy_3<K>`
+\cgalHasModelsBareBegin{All models of the \cgal concept `Kernel`} CGAL::Projection_traits_xy_3<K>
+\cgalHasModelsEnd
 
 
 */

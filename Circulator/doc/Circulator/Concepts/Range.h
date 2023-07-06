@@ -31,7 +31,7 @@ difference with iterators which are typically passed by value.
 
 \cgalRefinesBare{ConstRange,Boost's %Range concept}
 
-\cgalHasModel STL containers
+\cgalHasModelsBare{STL containers}
 
 */
 

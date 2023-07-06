@@ -9,7 +9,7 @@ the template parameter of the class
 This concept provides the types handled by the
 `CGAL::Stream_lines_2<VectorField_2, Integrator_2>` class.
 
-\cgalHasModel The kernels of \cgal are models for this traits class.
+\cgalHasModelsBare{The kernels of \cgal are models for this traits class.}
 
 */
 class StreamLinesTraits_2 {

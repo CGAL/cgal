@@ -11,7 +11,7 @@ together with a few geometric predicates and constructions on these objects.
 
 \cgalRefines{DelaunayTriangulationTraits_3}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBare{All models of the concept `Kernel`}
 */
 class AdvancingFrontSurfaceReconstructionTraits_3
 {

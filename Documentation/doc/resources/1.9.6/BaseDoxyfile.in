@@ -145,18 +145,19 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalRefinesBare{1}=<dl><dt>@cgalRefines</dt><dd>\1</dd></dl>" \
                          "cgalRefinesBare{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>\2</dd></dl>" \
                          "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\"" \
-                         "cgalModelsHeader=Is Model Of" \
+                         "cgalModelsHeader=Is model of" \
                          "cgalModels{1}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd></dl>" \
                          "cgalModels{2}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd></dl>" \
                          "cgalModelsBare{1}=<dl><dt>@cgalModelsHeader</dt><dd>\1</dd></dl>" \
-                         "cgalModelsBare{2}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>\2</dd></dl>" \
+                         "cgalModelsBare{2}=<dl><dt>@cgalModelsHeader</dt><dd>\1</dd><dt></dt><dd>\2</dd></dl>" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
-                         "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\"" \
-                         "cgalHasModelsHeader=Has Models" \
+                         "cgalHasModelsHeader=Has models" \
                          "cgalHasModelsBegin=<dl><dt>@cgalHasModelsHeader</dt><dd>`" \
                          "cgalHasModels=`</dd><dt></dt><dd>`" \
                          "cgalHasModelsEnd=`</dd></dl>" \
                          "cgalHasModelsBare{1}=<dl><dt>@cgalHasModelsHeader</dt><dd>\1</dd></dl>" \
+                         "cgalHasModelsBare{2}=<dl><dt>@cgalHasModelsHeader</dt><dd>\1</dd><dt></dt><dd>\2</dd></dl>" \
+                         "cgalHasModelsBareBegin{1}=<dl><dt>@cgalHasModelsHeader</dt><dd>\1</dd><dt></dt><dd>`" \
                          "cgalDebugBegin=\htmlonly[block] <div class=\"CGALDebug\"> <div>Debugging Support</div> \endhtmlonly ^^" \
                          "cgalDebugEnd=\htmlonly[block] </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \

@@ -38,7 +38,7 @@ An edge descriptor must be `DefaultConstructible`, `Assignable`, `EqualityCompar
 
 A model of `HalfedgeGraph` must have the interior property `vertex_point` attached to its vertices.
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

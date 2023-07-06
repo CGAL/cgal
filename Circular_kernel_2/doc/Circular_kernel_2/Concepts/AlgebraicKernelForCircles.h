@@ -7,7 +7,8 @@ The `AlgebraicKernelForCircles` concept is meant to provide the
 curved kernel with all the algebraic functionalities required for the
 manipulation of circular arcs.
 
-\cgalHasModel `CGAL::Algebraic_kernel_for_circles_2_2`
+\cgalHasModelsBegin CGAL::Algebraic_kernel_for_circles_2_2
+\cgalHasModelsEnd
 
 \sa `CircularKernel`
 \sa `CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>`

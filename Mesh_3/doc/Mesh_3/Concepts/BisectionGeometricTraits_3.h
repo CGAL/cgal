@@ -16,7 +16,7 @@ function from \f$ \mathbb{R}^3\f$ to \f$ \mathbb{R}\f$), the do-intersect predic
 is computed by evaluations of the function values at both end points
 of the segment.
 
-\cgalHasModel Any \cgal Kernel.
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
 
 \sa `ImplicitSurfaceTraits_3`
 \sa `IntersectionGeometricTraits_3`

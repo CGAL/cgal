@@ -8,7 +8,8 @@ and provides an additional information storage.
 
 \cgalRefines{TriangulationVertexBase_3}
 
-\cgalHasModel `CGAL::Triangulation_vertex_base_with_info_3`
+\cgalHasModelsBegin CGAL::Triangulation_vertex_base_with_info_3
+\cgalHasModelsEnd
 
 */
 

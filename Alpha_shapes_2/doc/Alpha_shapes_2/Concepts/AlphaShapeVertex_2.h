@@ -9,7 +9,7 @@ The concept `AlphaShapeVertex_2` describes the requirements for the base vertex 
   RegularTriangulationVertexBase_2 if the underlying triangulation of the alpha shape is a regular triangulation,
   Periodic_2TriangulationVertexBase_2 if the underlying triangulation of the alpha shape is a periodic triangulation}
 
-\cgalHasModel `CGAL::Alpha_shape_vertex_base_2` (templated with the appropriate triangulation vertex base class).
+\cgalHasModelsBare{`CGAL::Alpha_shape_vertex_base_2` (templated with the appropriate triangulation vertex base class)}
 */
 class AlphaShapeVertex_2 {
 public:

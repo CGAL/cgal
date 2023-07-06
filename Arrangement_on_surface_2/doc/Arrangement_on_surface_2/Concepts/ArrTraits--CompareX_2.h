@@ -4,7 +4,8 @@ namespace ArrTraits {
  *
  * \cgalRefines{AdaptableBinaryFunction}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Compare_x_2
+ * \cgalHasModelsBegin ArrangementBasicTraits_2::Compare_x_2
+ * \cgalHasModelsEnd
  */
 class CompareX_2 {
 public:

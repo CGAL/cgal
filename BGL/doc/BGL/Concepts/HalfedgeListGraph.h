@@ -16,7 +16,7 @@ halfedge iterator must be the same as the halfedge descriptor of the graph.
 
 \cgalRefines{HalfedgeGraph}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

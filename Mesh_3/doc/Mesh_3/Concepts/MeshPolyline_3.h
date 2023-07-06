@@ -6,7 +6,7 @@ The concept `MeshPolyline_3` implements a container of points designed to repres
 Types and functions provided in this concept are such as standard template library containers
 are natural models of this concept.
 
-\cgalHasModel `std::vector<Kernel::Point_3>` for any Kernel of \cgal is a natural model of this concept.
+\cgalHasModelsBare{`std::vector<Kernel::Point_3>` for any Kernel of \cgal is a natural model of this concept.}
 
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 

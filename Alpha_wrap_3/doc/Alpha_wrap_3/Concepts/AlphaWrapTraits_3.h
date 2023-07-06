@@ -11,7 +11,7 @@ you require Kernel. Stitch_borders doesn't even have clear geometric traits requ
 The concept `AlphaWrapTraits_3` defines the requirements for the geometric traits class
 of an alpha wrap oracle.
 
-\cgalHasModel Any 3D %kernel is a model of this traits concept.
+\cgalHasModelsBare{Any 3D %kernel is a model of this traits concept}
 */
 
 class AlphaWrapTraits_3

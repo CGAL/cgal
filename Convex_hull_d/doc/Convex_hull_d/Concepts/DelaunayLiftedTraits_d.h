@@ -7,8 +7,9 @@
 Requirements of the second traits class to be used with the
 class `CGAL::Delaunay_d`.
 
-\cgalHasModel `CGAL::Cartesian_d<FT,LA>`
-\cgalHasModel `CGAL::Homogeneous_d<RT,LA>`
+\cgalHasModelsBegin CGAL::Cartesian_d<FT,LA>
+\cgalHasModels CGAL::Homogeneous_d<RT,LA>
+\cgalHasModelsEnd
 
 */
 class DelaunayLiftedTraits_d {

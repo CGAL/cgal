@@ -8,7 +8,8 @@ an optimal convex partition of a polygon.
 
 \cgalRefines{PartitionTraits_2}
 
-\cgalHasModel `CGAL::Partition_traits_2<R>`
+\cgalHasModelsBegin CGAL::Partition_traits_2<R>
+\cgalHasModelsEnd
 
 \sa `CGAL::convex_partition_is_valid_2()`
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
