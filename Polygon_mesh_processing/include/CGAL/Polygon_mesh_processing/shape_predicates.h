@@ -420,7 +420,7 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
   const int res = pred(get(vpmap, source(h, tm)),
                        get(vpmap, target(h, tm)),
                        get(vpmap, target(next(h, tm), tm)),
-                       square(threshold));
+                       typename Traits::FT(square(threshold)));
 
   if(res == -1)
     return boost::graph_traits<TriangleMesh>::null_halfedge();
@@ -570,7 +570,7 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   const int res = pred(get(vpmap, source(h, tm)),
                        get(vpmap, target(h, tm)),
                        get(vpmap, target(next(h, tm), tm)),
-                       square(threshold));
+                       typename Traits::FT(square(threshold)));
 
   if(res == -1)
     return boost::graph_traits<TriangleMesh>::null_halfedge();
