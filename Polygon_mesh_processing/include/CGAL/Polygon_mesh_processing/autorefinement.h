@@ -884,20 +884,13 @@ void generate_subtriangles(std::size_t ti,
               {
                 COUNTER_INSTRUCTION(++counter.c2;)
                 COUNTER_INSTRUCTION(counter.timer4.start();)
-                //TODO find better!
-                typename EK::Segment_3 s1(points[segments[i].first], points[segments[i].second]);
-                typename EK::Segment_3 s2(points[segments[j].first], points[segments[j].second]);// TODO: avoid this construction
-                auto inter = CGAL::intersection(s1, s2);
-                if (inter == boost::none) throw std::runtime_error("Unexpected case #2");
-                if (const typename EK::Point_3* pt_ptr = boost::get<typename EK::Point_3>(&(*inter)))
-                {
-                  std::size_t pid = get_point_id(*pt_ptr);
-                  points_on_segments[i].push_back(pid);
-                  points_on_segments[j].push_back(pid);
-                  break;
-                }
-                else
-                  throw std::runtime_error("Unexpected case 1");
+                typename EK::Point_3 pt = typename EK::Construct_coplanar_segments_intersection_point_3()(
+                  points[segments[i].first], points[segments[i].second],
+                  points[segments[j].first], points[segments[j].second]);
+
+                std::size_t pid = get_point_id(pt);
+                points_on_segments[i].push_back(pid);
+                points_on_segments[j].push_back(pid);
                 COUNTER_INSTRUCTION(counter.timer4.stop();)
                 //~ std::ofstream debug ("/tmp/triangles.polylines.txt");
                 //~ debug << "4 " << triangles[ti][0] << " " << triangles[ti][1] << " " << triangles[ti][2] << " " << triangles[ti][0] << "\n";
