@@ -90,16 +90,19 @@ public:
 #endif
 
     // expand face selection for curvature calculation
-    std::set<face_descriptor> selection(face_range.begin(), face_range.end());
+    std::vector<face_descriptor> selection(face_range.begin(), face_range.end());
+    auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
+    for (face_descriptor f : faces(m_pmesh)) put(is_selected, f, false);
+    for (face_descriptor f : face_range)  put(is_selected, f, true);
     CGAL::expand_face_selection(selection, m_pmesh, 1
-                              , make_boolean_property_map(selection), Emptyset_iterator());
+                              , is_selected, std::back_inserter(selection));
     CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
 
     // calculate curvature
     Vertex_curvature_map vertex_curvature_map = get(Vertex_curvature_tag(), ffg);
     interpolated_corrected_principal_curvatures_and_directions(ffg
                                                              , vertex_curvature_map);
-    // calculate vertex sizing field L(x_i) from curvature field
+    // calculate vertex sizing field L(x_i) from the curvature field
     for(vertex_descriptor v : vertices(ffg))
     {
       auto vertex_curv = get(vertex_curvature_map, v);
