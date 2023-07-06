@@ -27,8 +27,9 @@ jobs:
       run: sudo apt-get install -y cmake
     - name: Create CGAL internal release
       run: |
-        cmake -DCGAL_VERSION=9.9 -P ./Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+        mkdir -p $HOME/release
+        cmake -DDESTINATION=$HOME/release -DCGAL_VERSION=9.9 -P ./Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
     - name: REUSE lint release tarball
       uses: fsfe/reuse-action@v1
       with:
-        args: --root /tmp/CGAL-9.9 --include-submodules lint
+        args: --root $HOME/release/CGAL-9.9 --include-submodules lint
