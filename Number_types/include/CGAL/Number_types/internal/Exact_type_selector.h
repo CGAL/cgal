@@ -278,6 +278,26 @@ struct Exact_field_selector<Exact_NT_backend<BOOST_BACKEND>::Rational>
 template <>
 struct Exact_ring_selector<Exact_NT_backend<BOOST_BACKEND>::Rational>
 { typedef Exact_NT_backend<BOOST_BACKEND>::Rational  Type; };
+
+
+#ifdef CGAL_USE_GMP
+template <>
+struct Exact_field_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Integer>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Rational  Type; };
+
+template <>
+struct Exact_ring_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Integer>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Integer  Type; };
+
+template <>
+struct Exact_field_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Rational>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Rational  Type; };
+
+template <>
+struct Exact_ring_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Rational>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Rational  Type; };
+#endif
+
 #endif
 
 template < typename ET >
