@@ -217,19 +217,19 @@ void test_iterators()
     }
   assert(size == t_const.number_of_stored_vertices());
   size = 0;
-  for (typename T::Unique_vertex_iterator uvit = t_const.unique_vertices_begin();
-       uvit != t_const.unique_vertices_end(); ++uvit)
-    {
-      ++size;
-    }
-  assert(size == t_const.number_of_vertices());
-  size = 0;
   for (typename T::Vertex_iterator vit = t_const.all_vertices_begin();
        vit != t_const.all_vertices_end(); ++vit)
     {
       ++size;
     }
   assert(size == t_const.number_of_stored_vertices());
+  size = 0;
+  for (typename T::Unique_vertex_iterator uvit = t_const.unique_vertices_begin();
+       uvit != t_const.unique_vertices_end(); ++uvit)
+    {
+      ++size;
+    }
+  assert(size == t_const.number_of_vertices());
 
   // edges
   size = 0;
@@ -246,6 +246,13 @@ void test_iterators()
       ++size;
     }
   assert(size == t_const.number_of_stored_edges());
+  size = 0;
+  for (typename T::Unique_edge_iterator uvit = t_const.unique_edges_begin();
+       uvit != t_const.unique_edges_end(); ++uvit)
+    {
+      ++size;
+    }
+  assert(size == t_const.number_of_edges());
 
   // faces
   size = 0;
@@ -262,6 +269,13 @@ void test_iterators()
       ++size;
     }
   assert(size == t_const.number_of_stored_faces());
+  size = 0;
+  for (typename T::Unique_face_iterator uvit = t_const.unique_faces_begin();
+       uvit != t_const.unique_faces_end(); ++uvit)
+    {
+      ++size;
+    }
+  assert(size == t_const.number_of_faces());
 
   /// Geometric iterators
   for (typename T::Periodic_point_iterator ppit = t_const.periodic_points_begin();
