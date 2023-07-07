@@ -21,7 +21,7 @@ given in Botsch et al.'s book on polygon mesh processing \cgalCite{botsch2010PMP
 A \a polygon \a mesh is a consistent and orientable surface mesh, that can have
 one or more boundaries.
 The \a faces are simple polygons.
-The \an edges are segments. Each edge connects two \a vertices,
+The \a edges are segments. Each edge connects two \a vertices,
 and is shared by two faces (including the \a null \a face for boundary edges).
 A polygon mesh can have any number of connected components, and also some self-intersections.
 In this package, a polygon mesh is considered to have the topology of a 2-manifold.
