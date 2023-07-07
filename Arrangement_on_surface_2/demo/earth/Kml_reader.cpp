@@ -1,6 +1,7 @@
 
 #include "Kml_reader.h"
 
+#include <algorithm>
 #include <iostream>
 #include <unordered_map>
 
@@ -212,6 +213,51 @@ Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks)
   return duplicate_nodes;
 }
 
+
+Kml::Nodes Kml::generate_ids(Placemarks& placemarks)
+{
+  // collect all nodes into a single vector
+  int polygon_count = 0;
+  std::vector<Node> nodes;
+  for (auto& pm : placemarks)
+  {
+    for (auto& polygon : pm.polygons)
+    {
+      polygon_count++;
+
+      std::vector<LinearRing*> linear_rings;
+      linear_rings.push_back(&polygon.outer_boundary);
+      for (auto& inner_boundary : polygon.inner_boundaries)
+        linear_rings.push_back(&inner_boundary);
+
+      for (auto* lring : linear_rings)
+      {
+        for (const auto& node : lring->nodes)
+        {
+          // check if the node is in the nodes
+          auto it = std::find(nodes.begin(), nodes.end(), node);
+          if (nodes.end() == it)
+          {
+            // insert new node
+            nodes.push_back(node);
+            const int node_id = nodes.size() - 1;
+            lring->ids.push_back(node_id);
+          }
+          else
+          {
+            // get the existing node
+            const int node_id = std::distance(nodes.begin(), it);
+            lring->ids.push_back(node_id);
+          }
+        }
+      }
+    }
+  }
+
+  return nodes;
+}
+
+
 Kml::Nodes Kml::Polygon::get_all_nodes() const
 {
   Nodes all_nodes;
@@ -227,6 +273,15 @@ Kml::Nodes Kml::Polygon::get_all_nodes() const
   }
 
   return all_nodes;
+}
+std::vector<Kml::LinearRing*>  Kml::Polygon::get_all_boundaries()
+{
+  std::vector<LinearRing*>  linear_rings;
+  linear_rings.push_back(&outer_boundary);
+  for (auto& inner_boundary : inner_boundaries)
+    linear_rings.push_back(&inner_boundary);
+
+  return linear_rings;
 }
 
 Kml::Nodes Kml::Placemark::get_all_nodes() const

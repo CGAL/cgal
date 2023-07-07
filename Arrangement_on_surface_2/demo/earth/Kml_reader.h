@@ -38,6 +38,7 @@ public:
   struct LinearRing
   {
     std::vector<Node> nodes;
+    std::vector<int>  ids;
 
     Arcs get_arcs() const;
     void get_arcs(Arcs& arcs) const;
@@ -53,6 +54,8 @@ public:
     // when collecting nodes start from the outer boundary and then get nodes
     // from individual inner boundaries in the order
     Nodes get_all_nodes() const;
+  
+    std::vector<LinearRing*> get_all_boundaries();
   };
  
 
@@ -72,6 +75,11 @@ public:
   static Placemarks read(const std::string& file_name);
 
   static Nodes get_duplicates(const Placemarks& placemarks);
+
+
+  // Outputs all used nodes without duplications!
+  // NOTE: this function modifies Placemarks data-structure!
+  static Nodes generate_ids(Placemarks& placemarks);
 };
 
 

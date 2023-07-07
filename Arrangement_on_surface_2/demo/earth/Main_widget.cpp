@@ -212,9 +212,11 @@ void Main_widget::initializeGL()
   const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
+
+  auto all_nodes = Kml::generate_ids(m_countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(0)
+  if(1)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
