@@ -133,6 +133,7 @@ public:
   typedef Face_iterator Finite_faces_iterator;
   typedef Edge_iterator Finite_edges_iterator;
   typedef Vertex_iterator Finite_vertices_iterator;
+  typedef Vertex_iterator All_vertices_iterator;
   typedef Face_iterator All_faces_iterator;
   // \}
 
@@ -389,10 +390,11 @@ public:
   /// Checks whether the triangulation is a valid simplicial complex in the one cover.
   bool is_triangulation_in_1_sheet() const;
 
-  /// Convert a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
+  /// Converts a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
   /// \pre !is_1_cover();
   void convert_to_1_sheeted_covering();
-  /// Convert a single sheeted cover (used for dense triangulations) to a 9 sheeted cover.
+
+  /// Converts a single sheeted cover (used for dense triangulations) to a 9 sheeted cover.
   /// \pre is_1_cover();
   void convert_to_9_sheeted_covering();
   // \}

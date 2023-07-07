@@ -208,6 +208,8 @@ void test_iterators()
   Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
   CGAL_USE(vh2);
 
+  std::cout << "Cover = " << t.number_of_sheets()[0] << " " << t.number_of_sheets()[1] << std::endl;
+
   // vertices
   size_t size = 0;
   for (typename T::Vertex_iterator vit = t_const.vertices_begin();

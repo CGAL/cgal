@@ -198,7 +198,7 @@ public:
 
 /// \name
 /// A point-offset pair (`p`,`off`) is said to be in conflict with a
-/// cell `c` iff `dt`.`side_of_circle(c, p, off)` returns
+/// face `f` iff `dt`.`side_of_circle(f, p, off)` returns
 /// `ON_BOUNDED_SIDE`. The set of faces that are in conflict with
 /// (`p`,`off`) is star-shaped.
 /// @{
@@ -309,7 +309,7 @@ public:
   Checks the combinatorial validity of the triangulation and the
   validity of its geometric embedding (see
   Section \ref P2Triangulation2secintro). Also checks that all the
-  circumscribing circles of cells are empty.
+  circumscribing circles of faces are empty.
 
   When `verbose` is set to true, messages describing the first
   invalidity encountered are printed.
@@ -321,9 +321,9 @@ public:
   /*!
   \cgalAdvancedFunction
   \cgalAdvancedBegin
-  Checks the combinatorial and geometric validity of the cell (see
+  Checks the combinatorial and geometric validity of the face (see
   Section \ref P2Triangulation2secintro). Also checks that the
-  circumscribing circle of cells is empty.
+  circumscribing circle of faces is empty.
 
   When `verbose` is set to true, messages are printed to give
   a precise indication of the kind of invalidity encountered.

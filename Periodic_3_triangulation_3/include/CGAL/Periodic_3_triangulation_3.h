@@ -1703,6 +1703,8 @@ public:
     return _tds.facets_end();
   }
 
+  // Finite iterators (= all iterators, for periodic triangulations)
+
   Cell_iterator finite_cells_begin() const {
     return _tds.cells_begin();
   }
@@ -1730,6 +1732,8 @@ public:
   Facet_iterator finite_facets_end() const {
     return _tds.facets_end();
   }
+
+  // All iterators (= finite, for periodic triangulations)
 
   All_cells_iterator all_cells_begin() const {
     return _tds.cells_begin();
@@ -1831,6 +1835,7 @@ public:
   }
 
   // Circulators
+
   Cell_circulator incident_cells(const Edge& e) const {
     return _tds.incident_cells(e);
   }
@@ -3451,7 +3456,7 @@ periodic_remove(Vertex_handle v,
     nr_vec.push_back(boost::make_tuple(o_ch,o_i,new_ch));
     nr_vec.push_back(boost::make_tuple(new_ch,i_i,o_ch));
 
-    // for the other faces check, if they can also be glued
+    // for the other facets check, if they can also be glued
     for(unsigned int i = 0; i < 4; i++) {
       if(i != i_i) {
         Facet f = std::pair<Cell_handle,int>(new_ch,i);
@@ -3463,7 +3468,7 @@ periodic_remove(Vertex_handle v,
           std::swap(vt.second,vt.third);
           outer_map[vt]= f;
         } else {
-        // glue the faces
+        // glue the facets
           typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
           Cell_handle o_ch2 = o_vt_f_pair2.second.first;
           int o_i2 = o_vt_f_pair2.second.second;

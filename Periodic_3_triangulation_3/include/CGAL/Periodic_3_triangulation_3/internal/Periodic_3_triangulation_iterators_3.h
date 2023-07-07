@@ -918,15 +918,15 @@ public:
 // between a normal Vertex_iterator and this iterator
 template <class T>
 class Periodic_3_triangulation_unique_vertex_iterator_3
-  : public Filter_iterator<typename T::Vertex_iterator, Domain_tester<T> > {
-
+  : public Filter_iterator<typename T::Vertex_iterator, Domain_tester<T> >
+{
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Vertex_iterator Vertex_iterator;
 
   typedef Filter_iterator<Vertex_iterator, Domain_tester<T> > Base;
   typedef Periodic_3_triangulation_unique_vertex_iterator_3 Self;
-public:
 
+public:
   Periodic_3_triangulation_unique_vertex_iterator_3() : Base() {}
   Periodic_3_triangulation_unique_vertex_iterator_3(const Base &b) : Base(b) {}
 

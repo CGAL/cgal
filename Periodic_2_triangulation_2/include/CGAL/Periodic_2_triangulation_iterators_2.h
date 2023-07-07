@@ -14,13 +14,11 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-
 #include <CGAL/assertions.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
 template < class T >
 class Periodic_2_triangulation_triangle_iterator_2
@@ -234,7 +232,7 @@ private:
     // intersect the boundary of the periodic domain. In UNIQUE mode
     // this means that the offset with respect to drawing should
     // differ in some entries. Otherwise we consider the offsets
-    // internally stored inside the cell telling us that this cell
+    // internally stored inside the face telling us that this face
     // wraps around the domain.
     if (_it == T::UNIQUE_COVER_DOMAIN)
       _t->get_offsets(pos, off0, off1, off2);
@@ -502,7 +500,7 @@ private:
     // intersect the boundary of the periodic domain. In UNIQUE mode
     // this means that the offset with respect to drawing should
     // differ in some entries. Otherwise we consider the offsets
-    // internally stored inside the cell telling us that this cell
+    // internally stored inside the face telling us that this face
     // wraps around the domain.
     if (_it == T::UNIQUE_COVER_DOMAIN)
       _t->get_offsets(*pos, off0, off1);
@@ -797,7 +795,6 @@ template <class T>
 class Periodic_2_triangulation_unique_vertex_iterator_2
         : public Filter_iterator<typename T::Vertex_iterator, Periodic_2_triangulation_2_internal::Domain_tester<T> >
 {
-
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Vertex_iterator Vertex_iterator;
 
@@ -805,8 +802,8 @@ class Periodic_2_triangulation_unique_vertex_iterator_2
 
   typedef Filter_iterator<Vertex_iterator, Tester > Base;
   typedef Periodic_2_triangulation_unique_vertex_iterator_2 Self;
-public:
 
+public:
   Periodic_2_triangulation_unique_vertex_iterator_2() : Base() {}
   Periodic_2_triangulation_unique_vertex_iterator_2(const Base &b) : Base(b) {}
 
