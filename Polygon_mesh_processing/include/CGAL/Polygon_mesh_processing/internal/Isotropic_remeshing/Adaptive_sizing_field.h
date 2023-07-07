@@ -82,6 +82,29 @@ public:
   template <typename FaceRange>
   void calc_sizing_map(const FaceRange& face_range)
   {
+    if (face_range.size() == faces(m_pmesh).size())
+    {
+      // calculate curvature from the whole mesh
+      calc_sizing_map(m_pmesh);
+    }
+    else
+    {
+      // expand face selection and calculate curvature from it
+      std::vector<face_descriptor> selection(face_range.begin(), face_range.end());
+      auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
+      for (face_descriptor f : faces(m_pmesh)) put(is_selected, f, false);
+      for (face_descriptor f : face_range)  put(is_selected, f, true);
+      CGAL::expand_face_selection(selection, m_pmesh, 1
+                                , is_selected, std::back_inserter(selection));
+      CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
+
+      calc_sizing_map(ffg);
+    }
+  }
+
+  template <typename FaceGraph>
+  void calc_sizing_map(FaceGraph& face_graph)
+  {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     int oversize  = 0;
     int undersize = 0;
@@ -89,21 +112,11 @@ public:
     std::cout << "Calculating sizing field..." << std::endl;
 #endif
 
-    // expand face selection for curvature calculation
-    std::vector<face_descriptor> selection(face_range.begin(), face_range.end());
-    auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
-    for (face_descriptor f : faces(m_pmesh)) put(is_selected, f, false);
-    for (face_descriptor f : face_range)  put(is_selected, f, true);
-    CGAL::expand_face_selection(selection, m_pmesh, 1
-                              , is_selected, std::back_inserter(selection));
-    CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
-
-    // calculate curvature
-    Vertex_curvature_map vertex_curvature_map = get(Vertex_curvature_tag(), ffg);
-    interpolated_corrected_principal_curvatures_and_directions(ffg
+    Vertex_curvature_map vertex_curvature_map = get(Vertex_curvature_tag(), face_graph);
+    interpolated_corrected_principal_curvatures_and_directions(face_graph
                                                              , vertex_curvature_map);
     // calculate vertex sizing field L(x_i) from the curvature field
-    for(vertex_descriptor v : vertices(ffg))
+    for(vertex_descriptor v : vertices(face_graph))
     {
       auto vertex_curv = get(vertex_curvature_map, v);
       const FT max_absolute_curv = CGAL::max(CGAL::abs(vertex_curv.max_curvature)
@@ -133,8 +146,8 @@ public:
     }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << " done (" << insize    << " from curvature, "
-                          << oversize  << " set to max, "
-                          << undersize << " set to min)" << std::endl;
+              << oversize  << " set to max, "
+              << undersize << " set to min)" << std::endl;
 #endif
   }
 
