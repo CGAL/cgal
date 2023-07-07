@@ -169,7 +169,16 @@ struct Exact_ring_selector<double>
 };
 
 template <>
+struct Exact_field_selector<double>
+{
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational;
+};
+
+template <>
 struct Exact_ring_selector<float> : Exact_ring_selector<double> { };
+
+template <>
+struct Exact_field_selector<float> : Exact_field_selector<double> { };
 
 template <>
 struct Exact_field_selector<MP_Float>
