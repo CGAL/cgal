@@ -181,7 +181,7 @@ struct Exact_ring_selector<MP_Float>
 
 template <>
 struct Exact_field_selector<Quotient<MP_Float> >
-{ typedef Quotient<MP_Float> Type; }
+{ typedef Quotient<MP_Float> Type; };
 
 template <>
 struct Exact_ring_selector<Quotient<MP_Float> >
