@@ -157,16 +157,10 @@ constexpr ENT_backend_choice Default_exact_nt_backend = static_cast<ENT_backend_
 #endif
 
 template < typename >
-struct Exact_field_selector
-{
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational;
-};
+struct Exact_field_selector;
 
 template < typename >
-struct Exact_ring_selector
-{
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Integer;
-};
+struct Exact_ring_selector;
 
 template <>
 struct Exact_ring_selector<double>
