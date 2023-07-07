@@ -11,7 +11,11 @@
 class Aos
 {
 public:
-  using Approx_arcs = std::vector<std::vector<QVector3D>>;
+  using Approx_arc = std::vector<QVector3D>;
+  using Approx_arcs = std::vector<Approx_arc>;
+
+
+  static Approx_arc get_approx_identification_curve(double error);
 
   // this constructs some sample arcs manually (used to check the visual output)
   static Approx_arcs get_approx_arcs(double error);

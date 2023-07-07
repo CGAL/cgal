@@ -276,6 +276,7 @@ void Main_widget::init_camera()
 }
 void Main_widget::init_geometry()
 {
+  // SPHERE
   int num_slices, num_stacks;
   num_slices = num_stacks = 64;
   float r = 1;
@@ -283,6 +284,10 @@ void Main_widget::init_geometry()
   const float c = 0.8;
   m_sphere->set_color(c, c, c, 1);
 
+  // IDENTIFICATION CURVE
+  const double error = 0.001;
+  auto approx_ident_curve = Aos::get_approx_identification_curve(error);
+  m_identification_curve = std::make_unique<Line_strips>(approx_ident_curve);
 
   const float axes_length = 2;
   m_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
@@ -474,6 +479,10 @@ void Main_widget::paintGL()
     const QVector4D arc_color(0, 0.5, 1, 1);
     glLineWidth(5);
     sp.set_uniform("u_plane", plane);
+
+    // IDENTIFICATION CURVE
+    sp.set_uniform("u_color", QVector4D(0, 1, 1, 1));
+    m_identification_curve->draw(m_selected_arc_index);
 
     // draw all countries 
     float a = 0.0;

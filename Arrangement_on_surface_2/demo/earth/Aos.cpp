@@ -183,9 +183,32 @@ namespace {
 }
 
 
+Aos::Approx_arc Aos::get_approx_identification_curve(double error)
+{
+  Geom_traits traits;
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+  // identification curve (meridian pierced by NEGATIVE Y-AXIS)
+  auto xcv = ctr_cv(ctr_p(0, 0, -1), ctr_p(0, 0, 1), Dir3(0,1,0));
+
+  auto approx = traits.approximate_2_object();
+  Approx_arc approx_arc;
+  {
+    std::vector<Approximate_point_2> v;
+    auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+    for (const auto& p : v)
+    {
+      const QVector3D arc_point(p.dx(), p.dy(), p.dz());
+      approx_arc.push_back(arc_point);
+    }
+  }
+
+  return approx_arc;
+}
+
 Aos::Approx_arcs Aos::get_approx_arcs(double error)
 {
-  // Construct the arrangement from 12 geodesic arcs.
   Geom_traits traits;
   Arrangement arr(&traits);
 
@@ -311,7 +334,10 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
 
       if (1 == vit->degree())
       {
-        std::cout << "1-deg vertex: " << std::boolalpha << vit->incident_halfedges()->target()->data().v << std::endl;
+        auto p = vit->point();
+        auto p2 = p.location();
+        std::cout << "deg-1 vertex = " << p << std::endl;
+        std::cout << "deg-1 vertex: " << std::boolalpha << vit->incident_halfedges()->target()->data().v << std::endl;
       }
 
 
