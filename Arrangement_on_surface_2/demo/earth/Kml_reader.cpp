@@ -248,8 +248,16 @@ Kml::Nodes Kml::generate_ids(Placemarks& placemarks)
             // get the existing node
             const int node_id = std::distance(nodes.begin(), it);
             lring->ids.push_back(node_id);
+            assert(nodes[node_id] == node);
           }
         }
+      
+        assert(lring->nodes.size() == lring->ids.size());
+        for (int i = 0; i < lring->nodes.size(); ++i)
+        {
+          assert(lring->nodes[i] == nodes[lring->ids[i]]);
+        }
+
       }
     }
   }

@@ -33,6 +33,9 @@ public:
   // INPUT: GIS data
   // OUTPUT: vertices created during arrangement construction
   static std::vector<QVector3D> ext_check(const Kml::Placemarks& placemarks);
+
+
+  static std::vector<QVector3D> ext_check_id_based(Kml::Placemarks& placemarks);
 };
 
 

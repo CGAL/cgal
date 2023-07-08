@@ -27,6 +27,11 @@ namespace {
   using Topol_traits = CGAL::Arr_spherical_topology_traits_2<Geom_traits>;
   using Arrangement = CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>;
 
+  // the following is from "arr_inexact_construction_segments.h":
+  using Segment = Geom_traits::X_monotone_curve_2;
+  using Vertex_handle = Arrangement::Vertex_handle;
+
+
   // Extended DCEL & Arrangement
   struct Flag
   {
@@ -364,6 +369,160 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
 
   std::cout << "-------------------------------\n";
   std::cout << "num nodes = " << num_counted_nodes << std::endl;
+  std::cout << "num arr vertices = " << arr.number_of_vertices() << std::endl;
+
+  std::cout << "-------------------------------\n";
+  std::cout << "num counted arcs = " << num_counted_arcs << std::endl;
+  std::cout << "num arr edges = " << arr.number_of_edges() << std::endl;
+
+  std::cout << "-------------------------------\n";
+  std::cout << "num polygons = " << num_counted_polygons << std::endl;
+  std::cout << "num arr faces = " << arr.number_of_faces() << std::endl;
+
+  return created_vertices;
+}
+
+
+std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
+{
+  // Construct the arrangement from 12 geodesic arcs.
+  Geom_traits traits, traits2;
+  Ext_aos arr(&traits), arr2(&traits2);
+
+  // 
+  auto nodes = Kml::generate_ids(placemarks);
+
+  //Segment s()
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+  int num_counted_arcs = 0;
+  int num_counted_polygons = 0;
+  // 
+  std::vector<Point> points;
+  using Vertex_handle = decltype(CGAL::insert_point(arr2, ctr_p(1, 0, 0)));
+  std::vector<Vertex_handle> vertices;
+  for (const auto& node : nodes)
+  {
+    auto n = node.get_coords_3d();
+    auto p = ctr_p(n.x, n.y, n.z);
+    auto v = CGAL::insert_point(arr, p);
+    points.push_back(p);
+    vertices.push_back(v);
+    //arr.insert_at_vertices(Segment(p, p), v, v);
+  }
+  std::cout << "num nodes = " << nodes.size()   << std::endl;
+  std::cout << "num points = " << points.size() << std::endl;
+
+  for (auto& placemark : placemarks)
+  {
+    for (auto& polygon : placemark.polygons)
+    {
+      num_counted_polygons++;
+
+      //auto& pnodes = polygon.outer_boundary.nodes;
+      //int num_nodes = pnodes.size();
+      //for (int i = 0; i < num_nodes - 1; ++i)
+      //{
+      //  num_counted_arcs++;
+      //  const auto node1 = pnodes[i];
+      //  const auto node2 = pnodes[i + 1];
+      //  auto n1 = node1.get_coords_3d();
+      //  auto n2 = node2.get_coords_3d();
+      //  auto p1 = ctr_p(n1.x, n1.y, n1.z);
+      //  auto p2 = ctr_p(n2.x, n2.y, n2.z);
+      //  
+      //  //std::cout << p1 << std::endl;
+      //  //std::cout << p2 << std::endl;
+      //  //Segment s(p1, p2);
+      //  //auto v1 = vertices[nid1];
+      //  //auto v2 = vertices[nid2];
+      //  //arr.insert_at_vertices(Segment(p1, p2), v1, v2);
+      //  CGAL::insert(arr, ctr_cv(p1, p2));
+      //}
+
+      // TO DO : ADD the outer boundaries!
+      auto& ids = polygon.outer_boundary.ids;
+      int num_nodes = ids.size();
+      for (int i = 0; i < num_nodes - 1; ++i)
+      {
+        num_counted_arcs++;
+        const auto nid1 = ids[i];
+        const auto nid2 = ids[i + 1];
+        assert(nodes[nid1] == polygon.outer_boundary.nodes[i]);
+        assert(nodes[nid2] == polygon.outer_boundary.nodes[i+1]);
+        auto p1 = points[nid1];
+        auto p2 = points[nid2];
+        //std::cout << p1 << std::endl;
+        //std::cout << p2 << std::endl;
+        //Segment s(p1, p2);
+        auto v1 = vertices[nid1];
+        auto v2 = vertices[nid2];
+        Segment s(v1->point(), v2->point());
+        //arr.insert_from_left_vertex()
+        arr.insert_at_vertices(s, v1, v2);
+        //arr.insert_at_vertices(Segment(p1, p2), v1, v2);
+        //CGAL::insert(arr, ctr_cv(p1,p2));
+      }
+    }
+  }
+
+
+  // MARK all vertices as true
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  {
+    vit->set_data(Flag(true));
+  }
+
+  std::cout << "-------------------------------\n";
+  std::cout << "num arr vertices (before adding arcs) = " <<
+    arr.number_of_vertices() << std::endl;
+
+
+  // extract all vertices that are ADDED when inserting the arcs!
+  int num_created_vertices = 0;
+  std::vector<QVector3D> created_vertices;
+  auto approx = traits.approximate_2_object();
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  {
+    auto& d = vit->data();
+    if (vit->data().v == false)
+    {
+      if (2 == vit->degree())
+        ;//continue;
+
+      if (1 == vit->degree())
+      {
+        auto p = vit->point();
+        auto p2 = p.location();
+        std::cout << "deg-1 vertex = " << p << std::endl;
+        std::cout << "deg-1 vertex: " << std::boolalpha << vit->incident_halfedges()->target()->data().v << std::endl;
+      }
+
+
+      num_created_vertices++;
+      auto p = vit->point();
+      auto ap = approx(p);
+      QVector3D new_vertex(ap.dx(), ap.dy(), ap.dz());
+      new_vertex.normalize();
+      std::cout << new_vertex << std::endl;
+      std::cout << "degree = " << vit->degree() << std::endl;
+
+      created_vertices.push_back(new_vertex);
+
+      //// find the arcs that are adjacent to this vertex
+      //const auto first = vit->incident_halfedges();
+      //auto curr = first;
+      //do {
+
+      //} while (++curr != first);
+
+    }
+  }
+  std::cout << "*** num created vertices = " << num_created_vertices << std::endl;
+
+  std::cout << "-------------------------------\n";
+  std::cout << "num nodes = " << nodes.size() << std::endl;
   std::cout << "num arr vertices = " << arr.number_of_vertices() << std::endl;
 
   std::cout << "-------------------------------\n";

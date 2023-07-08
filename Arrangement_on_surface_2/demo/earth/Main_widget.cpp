@@ -213,10 +213,10 @@ void Main_widget::initializeGL()
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
 
-  auto all_nodes = Kml::generate_ids(m_countries);
+  //auto all_nodes = Kml::generate_ids(m_countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(1)
+  if(0)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
@@ -227,7 +227,8 @@ void Main_widget::initializeGL()
   else
   {
     // check the arrangement constructed from the GIS data-set
-    auto created_vertices = Aos::ext_check(m_countries);
+    //auto created_vertices = Aos::ext_check(m_countries);
+    auto created_vertices = Aos::ext_check_id_based(m_countries);
     m_vertices = std::make_unique<Vertices>(created_vertices);
   }
 
