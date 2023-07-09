@@ -294,7 +294,7 @@ class Polygon_mesh_slicer
 
 /// member variables
   const AABBTree* m_tree_ptr;
-  TriangleMesh& m_tmesh;
+  TriangleMesh m_tmesh;
   VertexPointMap m_vpmap;
   Traits m_traits;
   bool m_own_tree;
@@ -397,15 +397,13 @@ public:
   * Constructor using `edges(tmesh)` to initialize the
   * internal `AABB_tree`.
   * @param tmesh the triangulated surface mesh to be sliced.
-  *              It must be valid and non modified as long
-  *              as the functor is used.
   * @param vpmap an instance of the vertex point property map associated to `tmesh`
   * @param traits a traits class instance, can be omitted
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
                       VertexPointMap vpmap,
                       const Traits& traits = Traits())
-  : m_tmesh(const_cast<TriangleMesh&>(tmesh))
+  : m_tmesh(tmesh)
   , m_vpmap(vpmap)
   , m_traits(traits)
   , m_own_tree(true)
@@ -419,8 +417,6 @@ public:
   /**
   * Constructor using a pre-built `AABB_tree` of edges provided by the user.
   * @param tmesh the triangulated surface mesh to be sliced.
-  *              It must be valid and non modified as long
-  *              as the functor is used.
   * @param tree must be initialized with all the edges of `tmesh`
   * @param vpmap an instance of the vertex point property map associated to `tmesh`
   * @param traits a traits class instance, can be omitted
@@ -430,7 +426,7 @@ public:
                       VertexPointMap vpmap,
                       const Traits& traits = Traits())
     : m_tree_ptr(&tree)
-    , m_tmesh(const_cast<TriangleMesh&>(tmesh))
+    , m_tmesh(tmesh)
     , m_vpmap(vpmap)
     , m_traits(traits)
     , m_own_tree(false)
@@ -441,13 +437,11 @@ public:
   * internal `AABB_tree`. The vertex point property map used
   * is `get(CGAL::vertex_point, tmesh)`
   * @param tmesh the triangulated surface mesh to be sliced.
-  *              It must be valid and non modified as long
-  *              as the functor is used.
   * @param traits a traits class instance, can be omitted
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
                       const Traits& traits = Traits())
-  : m_tmesh(const_cast<TriangleMesh&>(tmesh))
+  : m_tmesh(tmesh)
   , m_vpmap(get(boost::vertex_point, m_tmesh))
   , m_traits(traits)
   , m_own_tree(true)
@@ -462,8 +456,6 @@ public:
   * Constructor using a `AABB_tree` provided by the user.
   * The vertex point property map used is `get(CGAL::vertex_point, tmesh)`
   * @param tmesh the triangulated surface mesh to be sliced.
-  *              It must be valid and non modified as long
-  *              as the functor is used.
   * @param tree must be initialized with all the edges of `tmesh`
   * @param traits a traits class instance, can be omitted
   */
@@ -471,7 +463,7 @@ public:
                       const AABBTree& tree,
                       const Traits& traits = Traits())
     : m_tree_ptr(&tree)
-    , m_tmesh(const_cast<TriangleMesh&>(tmesh))
+    , m_tmesh(tmesh)
     , m_vpmap(get(boost::vertex_point, m_tmesh))
     , m_traits(traits)
     , m_own_tree(false)
