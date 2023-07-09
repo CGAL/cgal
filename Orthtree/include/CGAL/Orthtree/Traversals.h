@@ -61,10 +61,10 @@ public:
 
   const Node* next(const Node* n) const {
     if (n == nullptr || !next_index(m_orthtree.index(*n))) return nullptr;
-    return &m_orthtree[next_index(m_orthtree.index(*n)).get()];
+    return &m_orthtree[*next_index(m_orthtree.index(*n))];
   }
 
-  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
 
     if (m_orthtree.is_leaf(n)) {
 
@@ -76,10 +76,7 @@ public:
       return next;
 
     } else {
-
-      // todo: this shouldn't be necessary, I'd prefer to directly get m_orthtree[n].m_children_index
       return m_orthtree.child(n, 0);
-
     }
   }
 
@@ -110,7 +107,7 @@ public:
   }
 
   typename Tree::Node_index first_index() const {
-    return m_orthtree.index(first()).get();
+    return *m_orthtree.index(first());
   }
 
   const Node* next(const Node* n) const {
@@ -123,7 +120,7 @@ public:
     return next;
   }
 
-  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
     return m_orthtree.index(next(&m_orthtree[n]));
   }
 };
@@ -166,13 +163,13 @@ public:
     return next;
   }
 
-  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
 
     if (m_orthtree.next_sibling(n))
-      return m_orthtree.deepest_first_child(m_orthtree.next_sibling(n).get());
+      return m_orthtree.deepest_first_child(*m_orthtree.next_sibling(n));
 
     if (m_orthtree.next_sibling_up(n))
-      return m_orthtree.deepest_first_child(m_orthtree.next_sibling_up(n).get());
+      return m_orthtree.deepest_first_child(*m_orthtree.next_sibling_up(n));
 
     return {};
   }
@@ -210,7 +207,7 @@ public:
 
   typename Tree::Node_index first_index() const {
     // assumes the tree has at least one child at m_depth
-    return m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth).get();
+    return *m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth);
   }
 
   template <typename Node>
@@ -231,7 +228,7 @@ public:
     return next;
   }
 
-  boost::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
 
     auto next = m_orthtree.next_sibling(n);
 
@@ -243,7 +240,7 @@ public:
         if (!m_orthtree.next_sibling_up(up))
           return {};
 
-        up = m_orthtree.next_sibling_up(up).get();
+        up = *m_orthtree.next_sibling_up(up);
         next = m_orthtree.first_child_at_depth(up, m_depth);
 
       } while (!next);

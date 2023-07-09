@@ -113,7 +113,7 @@ public:
   /*!
    * \brief Optional index of a node in the tree.
    */
-  typedef boost::optional<Node_index> Maybe_node_index;
+  typedef std::optional<Node_index> Maybe_node_index;
 
   // todo: maybe this could be private?
   typedef Properties::Property_container<Node_index> Node_property_container;
@@ -405,23 +405,23 @@ public:
 
         // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
         // TODO: This check might be redundant, if it doesn't affect performance maybe I could remove it
-        if (parent(neighbor.get()) == parent(node))
+        if (parent(*neighbor) == parent(node))
           continue;
 
         // If it's already been split, skip it
-        if (!is_leaf(neighbor.get()))
+        if (!is_leaf(neighbor))
           continue;
 
         // Check if the neighbor breaks our grading rule
         // TODO: could the rule be parametrized?
-        if ((depth(node) - depth(neighbor.get())) > 1) {
+        if ((depth(node) - depth(*neighbor)) > 1) {
 
           // Split the neighbor
-          split(neighbor.get());
+          split(*neighbor);
 
           // Add newly created children to the queue
           for (int i = 0; i < Degree::value; ++i) {
-            leaf_nodes.push(child(neighbor.get(), i));
+            leaf_nodes.push(child(*neighbor, i));
           }
         }
       }
@@ -478,6 +478,7 @@ public:
   Node_index_range traverse_indices(Traversal traversal) const {
 
     Node_index first = traversal.first_index();
+    std::cout << first << std::endl;
 
     auto next = [=](const Self& tree, Node_index index) -> Maybe_node_index {
       return traversal.next_index(index);
@@ -696,6 +697,9 @@ public:
   }
 
   std::size_t depth(Node_index n) const {
+//    std::cerr << n
+//              << " " << m_node_depths.size()
+//              << std::endl;
     return m_node_depths[n];
   }
 
@@ -724,12 +728,12 @@ public:
    */
   Node_index parent(Node_index node) const {
     CGAL_precondition (!is_root(node));
-    return m_node_parents[node].get();
+    return *m_node_parents[node];
   }
 
   Node_index child(Node_index node, std::size_t i) const {
     CGAL_precondition (!is_leaf(node));
-    return m_node_children[node].get() + i;
+    return *m_node_children[node] + i;
   }
 
   Node_index descendant(Node_index node, std::size_t i) { return child(node, i); }
@@ -768,9 +772,9 @@ public:
     auto up = Maybe_node_index{parent(n)};
     while (up) {
 
-      if (next_sibling(up.get())) return {next_sibling(up.get())};
+      if (next_sibling(*up)) return {next_sibling(*up)};
 
-      up = is_root(up.get()) ? Maybe_node_index{} : Maybe_node_index{parent(up.get())};
+      up = is_root(*up) ? Maybe_node_index{} : Maybe_node_index{parent(*up)};
     }
 
     return {};
@@ -824,10 +828,10 @@ public:
     m_node_children[n] = m_node_properties.emplace_group(Degree::value);
     for (std::size_t i = 0; i < Degree::value; i++) {
 
-      Node_index c = m_node_children[n].get() + i;
+      Node_index c = *m_node_children[n] + i;
 
       // Make sure the node isn't one of its own children
-      CGAL_assertion(n != m_node_children[n].get() + i);
+      CGAL_assertion(n != *m_node_children[n] + i);
 
       Local_coordinates local_coordinates{i};
       for (int i = 0; i < Dimension::value; i++)
@@ -985,11 +989,11 @@ public:
     if (!adjacent_node_of_parent) return {};
 
     // If the parent's adjacent node has no children, then it's this node's adjacent node
-    if (is_leaf(adjacent_node_of_parent.get()))
+    if (is_leaf(*adjacent_node_of_parent))
       return adjacent_node_of_parent;
 
     // Return the nearest node of the parent by subtracting the offset instead of adding
-    return {child(adjacent_node_of_parent.get(), local_coordinates(n).to_ulong() - offset)};
+    return {child(*adjacent_node_of_parent, local_coordinates(n).to_ulong() - offset)};
   }
 
   /*!

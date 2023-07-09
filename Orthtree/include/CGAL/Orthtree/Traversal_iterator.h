@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Orthtree.h>
 
+#include <optional>
+
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -118,7 +120,7 @@ public:
    *
    * \todo
    */
-  typedef std::function<boost::optional<std::size_t>(const Tree&, std::size_t)> Traversal_function;
+  typedef std::function<std::optional<std::size_t>(const Tree&, std::size_t)> Traversal_function;
 
   typedef typename Tree::Node_index Node_index;
 
@@ -160,18 +162,18 @@ private:
 
   void increment() {
     // invoking increment on the sentinel is undefined behavior
-    m_index = m_next(*m_tree, m_index.get());
+    m_index = m_next(*m_tree, *m_index);
   }
 
   Node_index dereference() const {
-    return m_index.get();
+    return *m_index;
   }
 
 private:
 
   Traversal_function m_next;
 
-  boost::optional<std::size_t> m_index = {};
+  std::optional<std::size_t> m_index;
   const Tree* m_tree = nullptr;
 
 };
