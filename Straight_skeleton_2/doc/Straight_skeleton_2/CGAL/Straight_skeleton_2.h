@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-\cgalModels `StraightSkeleton_2`
+\cgalModels{StraightSkeleton_2}
 
 \brief The class `Straight_skeleton_2` provides a model for the `StraightSkeleton_2` concept
 which is the class type used to represent a straight skeleton.

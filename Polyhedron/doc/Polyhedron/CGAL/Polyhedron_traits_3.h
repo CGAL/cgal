@@ -10,7 +10,7 @@ in the polyhedral surface data structure
 `Polyhedron_3<PolyhedronTraits_3>` in terms of the \cgal `Kernel`. It keeps a local copy of the kernel which makes
 it suitable for kernels with local state.
 
-\cgalModels `PolyhedronTraits_3`
+\cgalModels{PolyhedronTraits_3}
 
 \sa `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
 

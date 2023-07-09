@@ -8,7 +8,7 @@ the three-dimensional Euclidean space \f$ \E^3\f$. As the triangle is not
 a full-dimensional object there is only a test whether a point lies on
 the triangle or not.
 
-\cgalModels `Kernel::Triangle_3`
+\cgalModels{Kernel::Triangle_3}
 
 */
 template< typename Kernel >

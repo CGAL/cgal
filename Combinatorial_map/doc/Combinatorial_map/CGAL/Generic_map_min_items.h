@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Generic_map_min_items` defines `void` as the information associated with darts, and no attribute is enabled.
 
-\cgalModels `GenericMapItems`
+\cgalModels{GenericMapItems}
 
 \cgalHeading{Example}
 

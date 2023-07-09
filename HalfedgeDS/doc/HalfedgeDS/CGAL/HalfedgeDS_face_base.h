@@ -35,7 +35,7 @@ without a reference to an incident halfedge and it stores a plane
 equation of type `Plane`. It can be used as a face for a
 model of the `PolyhedronItems_3` concept.
 
-\cgalModels `HalfedgeDSFace`
+\cgalModels{HalfedgeDSFace}
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`
 \sa `HalfedgeDSItems`

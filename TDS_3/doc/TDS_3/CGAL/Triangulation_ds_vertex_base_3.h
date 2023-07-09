@@ -18,7 +18,7 @@ This base class can be used directly or can serve as a base to derive
 other base classes with some additional attributes (a color for
 example) tuned for a specific application.
 
-\cgalModels `TriangulationDSVertexBase_3`
+\cgalModels{TriangulationDSVertexBase_3}
 
 \tparam TDS should not be specified (see Section \ref tds3cyclic and examples)
 

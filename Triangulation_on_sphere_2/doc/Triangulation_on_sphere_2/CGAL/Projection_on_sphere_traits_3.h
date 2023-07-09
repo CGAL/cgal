@@ -12,7 +12,7 @@ and the center of the sphere.
 \tparam LK a linear kernel type; must be a model of `Kernel`.
 \tparam SK a spherical kernel type; must be a model of `SphericalKernel`.
 
-\cgalModels `DelaunayTriangulationOnSphereTraits_2`
+\cgalModels{DelaunayTriangulationOnSphereTraits_2}
 
 \sa `CGAL::Delaunay_triangulation_on_sphere_traits_2`
 */

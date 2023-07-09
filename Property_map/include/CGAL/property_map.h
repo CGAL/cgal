@@ -102,7 +102,7 @@ make_OR_property_map(const PM1& pm1, const PM2& pm2)
 
 /// Property map that accesses a value from an iterator
 ///
-/// \cgalModels `ReadablePropertyMap`
+/// \cgalModels{ReadablePropertyMap}
 ///
 /// \tparam InputIterator an input iterator
 /// \endcond
@@ -287,7 +287,7 @@ make_compose_property_map(const KeyMap& km, const ValueMap& vm)
 /// Property map that converts a `T*` pointer (or in general an iterator
 /// over `T` elements) to the `T` object.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 template <typename T, typename Iter = T*>
 struct Dereference_property_map
   : public boost::put_get_helper<typename std::iterator_traits<Iter>::reference, Dereference_property_map<T, Iter> >
@@ -319,7 +319,7 @@ make_dereference_property_map(Iter)
 /// A `LvaluePropertyMap` property map mapping a key to itself (by reference).
 /// It is mutable if `T` is not `const` and non-mutable otherwise.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 template <typename T>
 struct Identity_property_map
 {
@@ -385,7 +385,7 @@ Identity_property_map<T>
 /// \ingroup PkgPropertyMapRef
 /// Property map that accesses the first item of a `std::pair`.
 /// \tparam Pair Instance of `std::pair`.
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 /// \sa `CGAL::Second_of_pair_property_map<Pair>`
 template <typename Pair>
@@ -425,7 +425,7 @@ First_of_pair_property_map<Pair>
 ///
 /// \tparam Pair Instance of `std::pair`.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 /// \sa `CGAL::First_of_pair_property_map<Pair>`
 template <typename Pair>
@@ -466,7 +466,7 @@ Second_of_pair_property_map<Pair>
 /// \tparam N %Index of the item to access.
 /// \tparam Tuple Instance of `boost::tuple` or `std::tuple`.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 template <int N, typename Tuple>
 struct Nth_of_tuple_property_map
 {
@@ -611,7 +611,7 @@ make_property_map(const std::vector<T>& v)
 /// Note that this value is chosen when the map is constructed and cannot
 /// be changed afterwards. Specifically, the free function `put()` does nothing.
 ///
-/// \cgalModels `ReadWritePropertyMap`
+/// \cgalModels{ReadWritePropertyMap}
 template<class KeyType, class ValueType>
 struct Constant_property_map
 {
@@ -640,7 +640,7 @@ struct Constant_property_map
 /// return `true` if the key is inside the set and `false` otherwise. The `put`
 /// function will insert an element in the set if `true` is passed and erase it
 /// otherwise.
-/// \cgalModels `ReadWritePropertyMap`
+/// \cgalModels{ReadWritePropertyMap}
 template<class Set>
 struct Boolean_property_map
 {
@@ -688,7 +688,7 @@ make_boolean_property_map(Set& set_)
 /// a geometric object of the same type as `GeomObject` but possibly from
 /// another kernel.
 /// Conversions between the two geometric objects are done using `Cartesian_converter`.
-/// \cgalModels `ReadWritePropertyMap`
+/// \cgalModels{ReadWritePropertyMap}
 template<class GeomObject, class Vpm>
 struct Cartesian_converter_property_map
 {
@@ -726,7 +726,7 @@ make_cartesian_converter_property_map(Vpm vpm)
 /// \ingroup PkgPropertyMapRef
 /// A property map with `std::size_t` as key-type that can be used
 /// to access the i'th element in a container with random access.
-/// \cgalModels `LvaluePropertyMap`, constness being than of `Container`.
+/// \cgalModels{LvaluePropertyMap constness being than of `Container`.}
 template<typename Container>
 class Random_access_property_map
 {

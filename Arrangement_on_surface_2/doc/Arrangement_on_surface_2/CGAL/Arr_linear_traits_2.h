@@ -21,9 +21,7 @@ namespace CGAL {
  * we can find out its actual type and convert it to the respective kernel
  * object (say, to a `Kernel::Ray_2`).
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementLandmarkTraits_2`
- * \cgalModels `ArrangementOpenBoundaryTraits_2`
+ * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementOpenBoundaryTraits_2}
  */
 template< typename Kernel >
 class Arr_linear_traits_2 {

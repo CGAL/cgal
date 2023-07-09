@@ -106,13 +106,13 @@ typedef unspecified_type Face_data;
 
 /*!
 Handle to a vertex.
-\cgalModels `Handle`
+\cgalModels{Handle}
 */
 typedef unspecified_type Vertex_handle;
 
 /*!
 Handle to a face.
-\cgalModels `Handle`
+\cgalModels{Handle}
 */
 typedef unspecified_type Face_handle;
 

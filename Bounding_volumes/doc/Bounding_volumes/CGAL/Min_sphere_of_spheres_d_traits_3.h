@@ -8,7 +8,7 @@ The class
 model for concept `MinSphereOfSpheresTraits`. It uses a pair of \cgal
 `Point_3` and `FT` to represent spheres.
 
-\cgalModels `MinSphereOfSpheresTraits`
+\cgalModels{MinSphereOfSpheresTraits}
 
 
 \tparam K must be a model for `Kernel`.

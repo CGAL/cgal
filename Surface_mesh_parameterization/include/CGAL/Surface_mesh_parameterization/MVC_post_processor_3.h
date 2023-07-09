@@ -61,7 +61,7 @@ namespace Surface_mesh_parameterization {
 /// the convexification of the initial (2D) parameterization and the resolution
 /// of a linear system with coefficients based on Mean Value Coordinates.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///

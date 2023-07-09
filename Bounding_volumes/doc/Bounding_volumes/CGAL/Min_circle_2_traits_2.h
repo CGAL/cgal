@@ -9,7 +9,7 @@ using the two-dimensional \cgal kernel.
 
 \tparam K must be a model for `Kernel`.
 
-\cgalModels `MinCircle2Traits`
+\cgalModels{MinCircle2Traits}
 
 \sa `CGAL::Min_circle_2<Traits>`
 \sa `MinCircle2Traits`

@@ -12,7 +12,7 @@ normal vector from `Kernel` for the plane equation in facets. It
 keeps a local copy of the kernel which makes it suitable for kernels
 with local state.
 
-\cgalModels `PolyhedronTraits_3`
+\cgalModels{PolyhedronTraits_3}
 
 \sa `CGAL::Polyhedron_traits_3<Kernel>`
 

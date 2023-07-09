@@ -7,7 +7,7 @@ The class `HalfedgeDS_list` is a model for the `HalfedgeDS` concept.
 `HalfedgeDS_list` is a list-based representation with bidirectional
 iterators that supports removal.
 
-\cgalModels `HalfedgeDS<Traits,Items,Alloc>`
+\cgalModelsBare{`HalfedgeDS<Traits,Items,Alloc>`}
 
 \sa `CGAL::HalfedgeDS_default`
 \sa `CGAL::HalfedgeDS_vector`

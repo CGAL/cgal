@@ -53,10 +53,7 @@ The default values for the template parameters are as follows:
  <li> If the \gmp package is  installed with \cgal, the template parameter `EK` has the default   value: `EK = Simple_cartesian<Gmpq>`, otherwise its   default value is   `EK = Simple_cartesian<Quotient<MP_Float> >`.
 </ul>
 
-\cgalModels `SegmentDelaunayGraphTraits_2`
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
-\cgalModels `Assignable`
+\cgalModels{SegmentDelaunayGraphTraits_2,DefaultConstructible,CopyConstructible,Assignable}
 
 \sa `SegmentDelaunayGraphTraits_2`
 \sa `CGAL::Field_tag`
@@ -211,10 +208,7 @@ default value is
 `EK = CGAL::Simple_cartesian<CGAL::MP_Float>`.
 </ul>
 
-\cgalModels `SegmentDelaunayGraphTraits_2`
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
-\cgalModels `Assignable`
+\cgalModels{SegmentDelaunayGraphTraits_2,DefaultConstructible,CopyConstructible,Assignable}
 
 \sa `Kernel`
 \sa `SegmentDelaunayGraphTraits_2`

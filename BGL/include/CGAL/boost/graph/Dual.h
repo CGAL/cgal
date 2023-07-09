@@ -44,7 +44,7 @@ error.
 
 \tparam Primal_ must be a model of `FaceGraph`
 
-\cgalModels `FaceGraph`
+\cgalModels{FaceGraph}
 
 */
 template <typename Primal_>

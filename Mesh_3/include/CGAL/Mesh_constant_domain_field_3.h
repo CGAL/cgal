@@ -44,7 +44,7 @@ namespace CGAL {
 * @tparam Index_ is the type of index of the vertices of the triangulation.
 * It must match the type `%Index` of the model of `MeshDomain_3` used in the meshing process.
 *
-* @cgalModels `MeshDomainField_3`
+* @cgalModels{MeshDomainField_3}
 */
 template <typename Gt, typename Index_>
 class Mesh_constant_domain_field_3

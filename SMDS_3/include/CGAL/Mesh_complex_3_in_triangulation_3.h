@@ -170,7 +170,7 @@ namespace CGAL {
   if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
   is only a model of the concept `MeshDomain_3`).
 
-  \cgalModels `MeshComplexWithFeatures_3InTriangulation_3`
+  \cgalModels{MeshComplexWithFeatures_3InTriangulation_3}
 
   \sa \link make_mesh_3() `CGAL::make_mesh_3()`\endlink
   \sa \link refine_mesh_3() `CGAL::refine_mesh_3()`\endlink

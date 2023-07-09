@@ -13,8 +13,7 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 
 
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
+\cgalModels{DefaultConstructible,CopyConstructible}
 
 \sa `Location_policy`
 \sa `Fast`
@@ -45,8 +44,7 @@ more memory usage.
 
 
 
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
+\cgalModels{DefaultConstructible,CopyConstructible}
 
 \sa `Location_policy`
 \sa `Compact`

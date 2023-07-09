@@ -9,7 +9,7 @@ declare the minimal required incidences for a `HalfedgeDS`, which
 are the `next()` and the `opposite()` member function for
 halfedges.
 
-\cgalModels `HalfedgeDSItems`
+\cgalModels{HalfedgeDSItems}
 
 \sa `CGAL::HalfedgeDS_items_2`
 \sa `CGAL::Polyhedron_items_3`

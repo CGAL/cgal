@@ -11,8 +11,7 @@ and the search classes.
 \tparam Dim must be a `Dimension_tag`
 (default value is `Dynamic_dimension_tag`).
 
-\cgalModels `SearchTraits`
-\cgalModels `RangeSearchTraits`
+\cgalModels{SearchTraits,RangeSearchTraits}
 
 \sa `Search_traits_2<Kernel>`
 \sa `Search_traits_3<Kernel>`

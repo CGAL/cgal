@@ -6,7 +6,7 @@ namespace CGAL {
 
 This geometric traits concept is used in the `Linear_cell_complex_for_combinatorial_map` and `Linear_cell_complex_for_generalized_map` classes. It can take as parameter any model of the concept `Kernel` (for example any \cgal kernel), and defines inner types and functors corresponding to the given dimension.
 
-\cgalModels `LinearCellComplexTraits`
+\cgalModels{LinearCellComplexTraits}
 
 \tparam d the dimension of the kernel,
 \tparam K a model of the concept `Kernel` if `d==2` or `d==3`; a model of the concept `Kernel_d` otherwise. Equal by default to `CGAL::Exact_predicates_inexact_constructions_kernel` if `d` is 2 or 3, and is `CGAL::Cartesian_d<double>` otherwise.

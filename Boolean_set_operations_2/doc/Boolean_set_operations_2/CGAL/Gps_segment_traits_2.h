@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgBooleanSetOperations2Ref
 
-\cgalModels `GeneralPolygonSetTraits_2`
+\cgalModels{GeneralPolygonSetTraits_2}
 
 \sa `CGAL::Arr_segment_traits_2<Kernel>`
 

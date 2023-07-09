@@ -77,7 +77,7 @@ struct Node_access
   A `Node` is a lightweight object and thus generally passed by
   copy. It is also a model of `ConstRange` with value type `Traits::Point_d`.
 
-  \cgalModels `ConstRange`
+  \cgalModels{ConstRange}
  */
 template<typename Traits, typename PointRange, typename PointMap>
 class Orthtree<Traits, PointRange, PointMap>::Node

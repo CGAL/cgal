@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-\cgalModels `StraightSkeletonBuilderTraits_2`
+\cgalModels{StraightSkeletonBuilderTraits_2}
 
 The class `Straight_skeleton_builder_traits_2` provides a model for the
 concept `StraightSkeletonBuilderTraits_2`, which is the traits class

@@ -34,7 +34,7 @@ intersection tests and intersection computations
 through a bisection method. This parameter must be instantiated
 with a model of the concept `BisectionGeometricTraits_3`.
 
-\cgalModels `MeshDomain_3`
+\cgalModels{MeshDomain_3}
 
 An executable that uses `Labeled_image_mesh_domain_3` must be linked with
 the <I>CGAL_ImageIO</I> library.

@@ -146,7 +146,7 @@ struct Intrinsic_Delaunay_triangulation_3_vertex_iterator_functor
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam Traits a model of `HeatMethodTraits_3`
  *
- * \cgalModels `FaceListGraph`
+ * \cgalModels{FaceListGraph}
  */
 
 template <typename TriangleMesh,

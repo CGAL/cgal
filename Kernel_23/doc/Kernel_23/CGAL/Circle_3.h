@@ -7,7 +7,7 @@ An object `c` of type `Circle_3` is a circle in the
 three-dimensional Euclidean space \f$ \E^3\f$. Note that the
 circle can be degenerate, i.e.\ the squared radius may be zero.
 
-\cgalModels `Kernel::Circle_3`
+\cgalModels{Kernel::Circle_3}
 
 */
 template< typename Kernel >

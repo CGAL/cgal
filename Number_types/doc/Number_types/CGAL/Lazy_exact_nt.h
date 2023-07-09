@@ -26,9 +26,8 @@ least model of concept `IntegralDomainWithoutDivision`.
 Note that some filtering mechanism is available at the predicate level
 using `Filtered_predicate` and `Filtered_kernel`.
 
-\cgalModels `IntegralDomainWithoutDivision` same as `NT`
-\cgalModels `RealEmbeddable`
-\cgalModels `Fraction`, if `NT` is a `Fraction`
+\cgalModels{IntegralDomainWithoutDivision same as `NT`,RealEmbeddable,
+             Fraction, if `NT` is a `Fraction`}
 
 \cgalHeading{Example}
 

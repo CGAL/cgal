@@ -45,7 +45,7 @@ namespace Polygon_mesh {
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,

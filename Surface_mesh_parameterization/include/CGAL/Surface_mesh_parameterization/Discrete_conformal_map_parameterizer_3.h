@@ -50,7 +50,7 @@ namespace Surface_mesh_parameterization {
 /// - implements `compute_w_ij()` to compute `w_ij`, the `(i,j)`-coefficient of matrix `A`,
 ///   for `j` neighbor vertex of `i`, based on Discrete Conformal Map method.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`
 ///

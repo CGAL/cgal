@@ -34,9 +34,9 @@ third parameter be specified. It also accepts the tag `CGAL::Default` as
 third parameter. In both cases, `TriangulationDSFullCell_` defaults to
 `CGAL::Triangulation_ds_full_cell<>`.
 
-\cgalModels `TriangulationDataStructure`. In addition, the class
+\cgalModels{TriangulationDataStructure. In addition, the class
 `Triangulation_data_structure` provides the following types and
-methods.
+methods.}
 
 \sa `Triangulation_ds_vertex`
 \sa `Triangulation_ds_full_cell`

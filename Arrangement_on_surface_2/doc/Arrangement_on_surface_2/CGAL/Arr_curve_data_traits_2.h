@@ -49,7 +49,7 @@ namespace CGAL {
  * `d1` and `d2`. The \f$ x\f$-monotone curve that represents the overlap is
  * associated with the output of this functor.
  *
- * \cgalModels `ArrangementTraits_2`
+ * \cgalModels{ArrangementTraits_2}
  */
 template <typename Tr, typename XData, typename Mrg, typename CData, typename Cnv>
 class Arr_curve_data_traits_2 : public Tr {

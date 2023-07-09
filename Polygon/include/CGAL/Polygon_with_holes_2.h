@@ -33,7 +33,7 @@ types (`Kernel` and `Container`) that are used to instantiate
 the type `Polygon_2<Kernel,Container>`. The latter is used to
 represents the outer boundary and the boundary of the holes (if any exist).
 
-\cgalModels `GeneralPolygonWithHoles_2`
+\cgalModels{GeneralPolygonWithHoles_2}
 
 */
 template <class Kernel,

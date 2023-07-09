@@ -10,8 +10,7 @@ matrix search.
 
 \tparam M is a model of `BasicMatrix`.
 
-\cgalModels `MonotoneMatrixSearchTraits`
-\cgalModels `BasicMatrix`
+\cgalModels{MonotoneMatrixSearchTraits,BasicMatrix}
 
 \sa `CGAL::monotone_matrix_search()`
 \sa `MonotoneMatrixSearchTraits`

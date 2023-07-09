@@ -36,7 +36,7 @@ namespace CGAL {
 /// constrained or unconstrained mixed integer programs using
 /// \ref thirdpartySCIP (which must be available on the system).
 ///
-/// \cgalModels `MixedIntegerProgramTraits`
+/// \cgalModels{MixedIntegerProgramTraits}
 ///
 /// \sa `GLPK_mixed_integer_program_traits`
 template <typename FT>

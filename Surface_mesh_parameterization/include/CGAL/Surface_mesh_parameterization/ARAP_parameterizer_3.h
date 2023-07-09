@@ -134,7 +134,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// A one-to-one mapping is *not* guaranteed.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///

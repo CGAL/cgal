@@ -210,7 +210,7 @@ public:
 
   The vertices and faces of the triangulations are accessed through
   `handles`, `iterators` and `circulators`. The handles are %CGAL
-  \ref models "models" of
+  models of
   the concept `Handle` which basically offers the two dereference
   operators and `->`. The iterators and circulators are all
   bidirectional and non-mutable. The circulators and iterators are

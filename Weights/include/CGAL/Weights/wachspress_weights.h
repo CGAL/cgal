@@ -136,7 +136,7 @@ typename Kernel::FT wachspress_weight(const CGAL::Point_3<Kernel>& p0,
   \tparam PointMap a model of `ReadablePropertyMap` whose key type is `VertexRange::value_type` and
                    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
-  \cgalModels `BarycentricWeights_2`
+  \cgalModels{BarycentricWeights_2}
 */
 template<typename VertexRange,
          typename GeomTraits,

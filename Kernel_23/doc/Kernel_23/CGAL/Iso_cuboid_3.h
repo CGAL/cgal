@@ -16,8 +16,7 @@ difference however is that bounding boxes have always double coordinates,
 whereas the coordinate type of an iso-oriented cuboid is chosen by
 the user.
 
-\cgalModels `Kernel::IsoCuboid_3`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::IsoCuboid_3,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >

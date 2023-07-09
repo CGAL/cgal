@@ -72,10 +72,9 @@ namespace CGAL {
    * set the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
    * included.
    *
-   * \cgalModels `ArrangementTraits_2`
-   * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
-   * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
-   *   the template parameter `SubcurveTraits_2` models the concept as well)
+   * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,
+   *             ArrangementApproximateTraits_2 (if the type that substitutes
+   *   the template parameter `SubcurveTraits_2` models the concept as well)}
    *
    * \sa `Arr_algebraic_segment_traits_2<Coefficient>`
    * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`

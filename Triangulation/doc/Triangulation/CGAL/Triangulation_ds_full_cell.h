@@ -41,7 +41,7 @@ indices are stored.
 </UL>
 See the user manual for how to choose the second option.
 
-\cgalModels `TriangulationDSFullCell`
+\cgalModels{TriangulationDSFullCell}
 
 \cgalHeading{Rebind mechanism}
 

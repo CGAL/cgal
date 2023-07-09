@@ -48,7 +48,7 @@ namespace Barycentric_coordinates {
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
-\cgalModels `BarycentricCoordinates_2`
+\cgalModels{BarycentricCoordinates_2}
 
 \pre The provided polygon is strictly convex.
 

@@ -13,7 +13,7 @@ and a `d`-dimensional iso-box defined as a `k-d` tree rectangle.
 \tparam Traits must be a model for the concept
 `SearchTraits`, for example `Search_traits_3<Simple_cartesian<double> >`.
 
-\cgalModels `GeneralDistance`
+\cgalModels{GeneralDistance}
 
 \sa `GeneralDistance`
 

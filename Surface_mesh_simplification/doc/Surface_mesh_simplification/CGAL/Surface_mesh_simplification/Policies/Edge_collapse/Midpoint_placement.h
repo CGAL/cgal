@@ -10,7 +10,7 @@ which  computes the placement as the midpoint position along the edge.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `GetPlacement`
+\cgalModels{GetPlacement}
 
 */
 template <typename TriangleMesh>

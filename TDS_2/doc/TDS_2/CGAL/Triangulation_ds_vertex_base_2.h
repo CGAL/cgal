@@ -20,7 +20,7 @@ and `Triangulation_ds_vertex_base_2` cannot be plugged in.
 
 \tparam TDS should not be specified (see Section \ref TDS_2TheRebindMechanism and examples)
 
-\cgalModels `TriangulationDSVertexBase_2`
+\cgalModels{TriangulationDSVertexBase_2}
 
 \sa `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
 \sa `CGAL::Triangulation_ds_face_base_2<TDS>`

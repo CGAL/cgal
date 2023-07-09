@@ -12,7 +12,7 @@ type required by the `Straight_skeleton_builder_2` algorithm class.
 This class is the default visitor parameter of the straight skeleton builder.
 All its methods are empty.
 
-\cgalModels `StraightSkeletonBuilder_2_Visitor`
+\cgalModels{StraightSkeletonBuilder_2_Visitor}
 
 \sa `Straight_skeleton_builder_2`
 */

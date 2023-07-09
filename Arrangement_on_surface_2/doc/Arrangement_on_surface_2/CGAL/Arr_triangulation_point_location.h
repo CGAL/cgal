@@ -15,8 +15,7 @@ namespace CGAL {
  * (especially when the number of modifications applied to the arrangement is
  * high) and provided only for educational purposes.
  *
- * \cgalModels `ArrangementPointLocation_2`
- * \cgalModels `ArrangementVerticalRayShoot_2`
+ * \cgalModels{ArrangementPointLocation_2,ArrangementVerticalRayShoot_2}
  *
  * \sa `ArrangementPointLocation_2`
  * \sa `ArrangementVerticalRayShoot_2`

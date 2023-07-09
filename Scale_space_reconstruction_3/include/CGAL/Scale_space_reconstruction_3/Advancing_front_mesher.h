@@ -33,7 +33,7 @@ namespace Scale_space_reconstruction_3
  *  with the possibility of using an upper bound on the length of the
  *  produced facets.
  *
- *  \cgalModels CGAL::Scale_space_reconstruction_3::Mesher
+ *  \cgalModels{CGAL::Scale_space_reconstruction_3::Mesher}
  *
  *  \tparam Geom_traits geometric traits class. It must be a
  *  model of `DelaunayTriangulationTraits_3`. It must have a

@@ -27,7 +27,7 @@ and thus not inserted, or guaranteed to not be hidden upon insertion.
 \tparam LK a linear kernel type; it must be a model of `Kernel`.
 \tparam SK a spherical kernel type; it must be a model of `SphericalKernel` refining `LK`.
 
-\cgalModels `DelaunayTriangulationOnSphereTraits_2`
+\cgalModels{DelaunayTriangulationOnSphereTraits_2}
 
 \sa `CGAL::Projection_on_sphere_traits_3`
 */

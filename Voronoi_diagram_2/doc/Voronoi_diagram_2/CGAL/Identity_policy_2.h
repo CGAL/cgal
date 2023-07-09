@@ -18,7 +18,7 @@ Delaunay graph, that is adapted, allows for site insertions through an
 `AT::Site_2`. The site inserter functor provided by this policy
 uses the aforementioned `insert` method.
 
-\cgalModels `AdaptationPolicy_2`
+\cgalModels{AdaptationPolicy_2}
 
 \sa `AdaptationTraits_2`
 \sa `DelaunayGraph_2`

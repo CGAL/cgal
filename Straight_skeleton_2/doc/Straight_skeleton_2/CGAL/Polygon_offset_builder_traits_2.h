@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-\cgalModels `PolygonOffsetBuilderTraits_2`
+\cgalModels{PolygonOffsetBuilderTraits_2}
 
 The class `Polygon_offset_builder_traits_2` provides a model for the
 concept `PolygonOffsetBuilderTraits_2`, which is the traits class

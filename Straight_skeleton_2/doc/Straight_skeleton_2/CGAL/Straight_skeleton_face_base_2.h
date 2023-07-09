@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Auxiliary
 
-\cgalModels `StraightSkeletonFace_2`
+\cgalModels{StraightSkeletonFace_2}
 
 The class `Straight_skeleton_face_base_2` provides a model for the
 concept `StraightSkeletonFace_2`, which is the face type required by the `StraightSkeleton_2` concept.

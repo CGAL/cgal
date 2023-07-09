@@ -9,7 +9,7 @@ concept. The template parameter of the `Apollonius_graph_adaptation_traits_2` cl
 model of the `DelaunayGraph_2` concept, and in particular it has
 the semantics of a (triangulated) 2D Apollonius graph.
 
-\cgalModels `AdaptationTraits_2`
+\cgalModels{AdaptationTraits_2}
 
 \sa `AdaptationTraits_2`
 \sa `DelaunayGraph_2`

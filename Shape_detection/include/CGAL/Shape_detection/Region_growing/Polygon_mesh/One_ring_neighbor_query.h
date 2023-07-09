@@ -38,7 +38,7 @@ namespace Polygon_mesh {
     a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
     value type is the face type of a polygon mesh
 
-    \cgalModels `NeighborQuery`
+    \cgalModels{NeighborQuery}
   */
   template<typename PolygonMesh>
   class One_ring_neighbor_query

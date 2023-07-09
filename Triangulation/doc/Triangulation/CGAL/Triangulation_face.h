@@ -12,7 +12,7 @@ Actually, `Triangulation_face` needs only that this concept defines the types
 `Vertex_handle`, and
 `Maximal_dimension`.
 
-\cgalModels `TriangulationDSFace`
+\cgalModels{TriangulationDSFace}
 
 \sa `TriangulationDSFace`
 \sa `TriangulationDataStructure`

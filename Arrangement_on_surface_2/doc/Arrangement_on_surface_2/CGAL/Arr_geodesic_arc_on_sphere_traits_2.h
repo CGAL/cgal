@@ -39,9 +39,7 @@ namespace CGAL {
    * normalized vector \f$(x,y)\f$ in the \f$xy\f$-plane that bisects the
    * identification curve.
 
-   * \cgalModels `ArrangementTraits_2`
-   * \cgalModels `ArrangementLandmarkTraits_2`
-   * \cgalModels `ArrangementSphericalBoundaryTraits_2`
+   * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementSphericalBoundaryTraits_2}
    */
 
   template <typename Kernel, typename X, typename Y>
@@ -52,9 +50,7 @@ namespace CGAL {
      * not-necessarily normalized 3D direction extended with information that
      * specifies the location of the point pre-image in the parameter space.
      *
-     * \cgalModels `Assignable`
-     * \cgalModels `DefaultConstructible`
-     * \cgalModels `CopyConstructible`
+     * \cgalModels{Assignable,DefaultConstructible,CopyConstructible}
      */
     class Point_2 {
     public:
@@ -118,9 +114,7 @@ namespace CGAL {
      * intersect the identified left and right sides of the boundary of the
      * parameter space.
      *
-     * \cgalModels `Assignable`
-     * \cgalModels `DefaultConstructible`
-     * \cgalModels `CopyConstructible`
+     * \cgalModels{Assignable,DefaultConstructible,CopyConstructible}
      */
     class X_monotone_curve_2 {
     public:
@@ -287,10 +281,7 @@ namespace CGAL {
 
     /*! Construction functor of a point.
      *
-     * \cgalModels `Assignable`
-     * \cgalModels `CopyConstructible`
-     * \cgalModels `AdaptableUnaryFunction`
-     * \cgalModels `AdaptableTernaryFunction`
+     * \cgalModels{Assignable,CopyConstructible,AdaptableUnaryFunction,AdaptableTernaryFunction}
      */
     /*!
      */
@@ -325,11 +316,7 @@ namespace CGAL {
 
     /*! Construction functor of \f$x\f$-monotone geodesic arcs.
      *
-     * \cgalModels `Assignable`
-     * \cgalModels `CopyConstructible`
-     * \cgalModels `AdaptableUnaryFunction`
-     * \cgalModels `AdaptableBinaryFunction`
-     * \cgalModels `AdaptableTernaryFunction`
+     * \cgalModels{Assignable,CopyConstructible,AdaptableUnaryFunction,AdaptableBinaryFunction,AdaptableTernaryFunction}
      */
     class Construct_x_monotone_curve_2 {
     public:
@@ -393,11 +380,7 @@ namespace CGAL {
 
     /*! Construction functor of geodesic arcs.
      *
-     * \cgalModels `Assignable`
-     * \cgalModels `CopyConstructible`
-     * \cgalModels `AdaptableUnaryFunction`
-     * \cgalModels `AdaptableBinaryFunction`
-     * \cgalModels `AdaptableTernaryFunction`
+     * \cgalModels{Assignable,CopyConstructible,AdaptableUnaryFunction,AdaptableBinaryFunction,AdaptableTernaryFunction}
      */
     class Construct_curve_2 {
     public:

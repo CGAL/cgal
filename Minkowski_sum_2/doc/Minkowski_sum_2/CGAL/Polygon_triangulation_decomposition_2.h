@@ -8,7 +8,7 @@ decomposition of a polygon or a polygon with holes into triangles using
 the Delaunay constrained triangulation functionality of the
 \ref Chapter_2D_Triangulations "2D Triangulation" package.
 
-\cgalModels `PolygonWithHolesConvexDecomposition_2`
+\cgalModels{PolygonWithHolesConvexDecomposition_2}
 
 */
 template <typename Kernel, typename Container>

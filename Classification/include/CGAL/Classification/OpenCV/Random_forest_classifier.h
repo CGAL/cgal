@@ -47,7 +47,7 @@ namespace OpenCV {
 
   \note This class requires the \ref thirdpartyOpenCV library.
 
-  \cgalModels `CGAL::Classification::Classifier`
+  \cgalModels{CGAL::Classification::Classifier}
 */
 class Random_forest_classifier
 {

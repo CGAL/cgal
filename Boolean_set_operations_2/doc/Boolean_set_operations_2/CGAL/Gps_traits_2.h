@@ -13,7 +13,7 @@ the concept `ArrangementXMonotoneTraits_2`). The template parameter
 of `GpsTraitsGeneralPolygon_2`. By default, the latter is instantiated by
 `CGAL::General_polygon_2<ArrTraits>`.
 
-\cgalModels `GeneralPolygonSetTraits_2`
+\cgalModels{GeneralPolygonSetTraits_2}
 
 */
 template< typename ArrTraits, typename GeneralPolygon_t >

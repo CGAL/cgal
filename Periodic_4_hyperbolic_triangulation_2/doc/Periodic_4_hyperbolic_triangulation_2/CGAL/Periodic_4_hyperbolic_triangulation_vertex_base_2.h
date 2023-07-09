@@ -21,7 +21,7 @@ concept `Periodic_4HyperbolicTriangulationVertexBase_2`. It accepts two template
 data structure of a periodic hyperbolic triangulation, or used as a base class to derive other
 base vertex classes tuned for specific applications.
 
-\cgalModels `Periodic_4HyperbolicTriangulationVertexBase_2`
+\cgalModels{Periodic_4HyperbolicTriangulationVertexBase_2}
 
 \sa `Periodic_4_hyperbolic_triangulation_face_base_2`
 */

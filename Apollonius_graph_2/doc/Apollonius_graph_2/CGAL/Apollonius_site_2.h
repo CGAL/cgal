@@ -8,7 +8,7 @@ The class `Apollonius_site_2` is a model for the concept
 `ApolloniusSite_2`. It is parametrized by a template parameter
 `K` which must be a model of the `Kernel` concept.
 
-\cgalModels `ApolloniusSite_2`
+\cgalModels{ApolloniusSite_2}
 
 \cgalHeading{Types}
 

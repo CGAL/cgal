@@ -9,7 +9,7 @@ using the three-dimensional \cgal kernel.
 
 \tparam K must be a model for `Kernel`.
 
-\cgalModels `WidthTraits_3`
+\cgalModels{WidthTraits_3}
 
 \sa `CGAL::Width_3<Traits>`
 \sa `WidthTraits_3`

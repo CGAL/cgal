@@ -14,7 +14,7 @@ More details about the filtering technique can be found in  \cgalCite{cgal:bbp-i
 In contrast to `Filtered_kernel`,
 the global functions are those of `CK`.
 
-\cgalModels `Kernel`
+\cgalModels{Kernel}
 
 \cgalHeading{Example}
 
@@ -71,7 +71,7 @@ activates or not an additional layer of semi-static filters. It defaults to
 defined. This option is mostly for debugging and testing, there should be no
 production use for deactivating static filters.
 
-\cgalModels `Kernel`
+\cgalModels{Kernel}
 
 \cgalHeading{Example}
 

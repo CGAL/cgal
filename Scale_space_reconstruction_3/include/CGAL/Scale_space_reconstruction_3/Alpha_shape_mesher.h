@@ -47,7 +47,7 @@ namespace Scale_space_reconstruction_3
  *  component of the surface where connected facets are locally oriented
  *  towards the same side of the surface.
  *
- *  \cgalModels CGAL::Scale_space_reconstruction_3::Mesher
+ *  \cgalModels{CGAL::Scale_space_reconstruction_3::Mesher}
  *
  *  \tparam Geom_traits is the geometric traits class. It must be a
  *  model of `DelaunayTriangulationTraits_3`. It must have a

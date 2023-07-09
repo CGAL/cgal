@@ -13,7 +13,7 @@ if any triangle in the profile is not inside the polyhedral envelope, in this or
 \tparam Filter must be a model of the concept `PlacementFilter`.  It defaults to a class that does
 not filter any placement.
 
-\cgalModels `PlacementFilter`
+\cgalModels{PlacementFilter}
 
 \sa `Polyhedral_envelope`
 

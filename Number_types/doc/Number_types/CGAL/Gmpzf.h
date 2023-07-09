@@ -11,8 +11,7 @@ is of type `long`. This type can be considered exact, even if the
 exponent is not a multiple-precision number. This number type offers
 functionality very similar to `MP_Float` but is generally faster.
 
-\cgalModels `EuclideanRing`
-\cgalModels `RealEmbeddable`
+\cgalModels{EuclideanRing,RealEmbeddable}
 
 \cgalHeading{Implementation}
 

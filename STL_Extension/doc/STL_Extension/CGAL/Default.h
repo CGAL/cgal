@@ -26,8 +26,7 @@ same when instantiating it using `Default` instead of the type of the default
 argument, even though their interfaces will otherwise be the same. This may
 have consequences in some cases.
 
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
+\cgalModels{DefaultConstructible,CopyConstructible}
 
 In order to help the template class writer, `Default` provides a convenient
 way to extract the desired type for a template parameter which may be defaulted

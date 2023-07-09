@@ -14,7 +14,7 @@ A point `p` with %Cartesian coordinates \f$ (px, py, pz)\f$ is on the
 positive side of `h`, iff \f$ a\, px +b\, py +c\, pz + d > 0\f$.
 It is on the negative side, iff \f$ a\, px +b\, py\, +c\, pz + d < 0\f$.
 
-\cgalModels `Kernel::Plane_3`
+\cgalModels{Kernel::Plane_3}
 
 */
 template< typename Kernel >

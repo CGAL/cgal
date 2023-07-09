@@ -23,8 +23,7 @@ The class `Eigen_vector` is a wrapper around `Eigen`
 <a href="https://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">vector type</a>,
 which is a simple array of numbers.
 
-\cgalModels `SvdTraits::Vector`
-\cgalModels `SparseLinearAlgebraTraits_d::Vector`.
+\cgalModels{SvdTraits::Vector,SparseLinearAlgebraTraits_d::Vector}
 
 \tparam T Number type.
 

@@ -6,7 +6,7 @@ namespace CGAL {
 An object `l` of the data type `Line_3` is a directed
 straight line in the three-dimensional Euclidean space \f$ \E^3\f$.
 
-\cgalModels `Kernel::Line_3`
+\cgalModels{Kernel::Line_3}
 
 */
 template< typename Kernel >

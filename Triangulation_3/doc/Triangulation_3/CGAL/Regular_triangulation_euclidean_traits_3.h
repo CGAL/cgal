@@ -13,7 +13,7 @@ compatibility, but ignores the template parameter `Weight`.
 \tparam Weight This template parameter is ignored, as `Kernel::Weighted_point_3`
                uses the type `Kernel::FT`.
 
-\cgalModels `RegularTriangulationTraits_3`
+\cgalModels{RegularTriangulationTraits_3}
 
 */
 template< typename K, typename Weight >

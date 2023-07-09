@@ -15,7 +15,7 @@ of `RegularTriangulationTraits_2`.
 of the concept `TriangulationVertexBase_2` and is by default
 instantiated by `Triangulation_vertex_base_2<Traits>`.
 
-\cgalModels `RegularTriangulationVertexBase_2`
+\cgalModels{RegularTriangulationVertexBase_2}
 
 \sa `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
 \sa `CGAL::Regular_triangulation_2<Traits,Tds>`

@@ -309,7 +309,7 @@ of the concept `MeshDomain_3`.
 of the concept `RegularTriangulationVertexBase_3` and defaults to
 `Regular_triangulation_vertex_base_3<GT>`.
 
-\cgalModels `MeshVertexBase_3`
+\cgalModels{MeshVertexBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 */

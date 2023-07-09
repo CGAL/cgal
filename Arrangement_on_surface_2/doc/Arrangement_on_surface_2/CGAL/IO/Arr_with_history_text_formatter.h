@@ -15,8 +15,7 @@ the base arrangement, while the derived class is responsible for reading and
 writing the set of curves inducing the arrangement and maintaining the
 relations between these curves and the edges they induce.
 
-\cgalModels `ArrangementWithHistoryInputFormatter`
-\cgalModels `ArrangementWithHistoryOutputFormatter`
+\cgalModels{ArrangementWithHistoryInputFormatter,ArrangementWithHistoryOutputFormatter}
 
 \sa `PkgArrangementOnSurface2Read`
 \sa `PkgArrangementOnSurface2Write`

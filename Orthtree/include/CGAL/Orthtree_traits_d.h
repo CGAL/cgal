@@ -28,7 +28,7 @@ namespace CGAL
   \tparam GeomTraits model of `Kernel`.
   \tparam DimensionTag specialization of `CGAL::Dimension_tag`.
 
-  \cgalModels `OrthtreeTraits`
+  \cgalModels{OrthtreeTraits}
   \sa `CGAL::Orthtree`
   \sa `CGAL::Orthtree_traits_2`
   \sa `CGAL::Orthtree_traits_3`

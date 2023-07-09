@@ -15,9 +15,7 @@ A `Quotient<NT>` `q` is represented as a pair of
 \tparam NT must be at least model of concept `IntegralDomainWithoutDivision`
 and a model of concept `RealEmbeddable`.
 
-\cgalModels `Field`
-\cgalModels `RealEmbeddable`
-\cgalModels `Fraction`
+\cgalModels{Field,RealEmbeddable,Fraction}
 
 \cgalHeading{Operations}
 

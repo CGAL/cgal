@@ -17,7 +17,7 @@ It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2:
 \tparam RegularizationCategory indicates whether the output should be regularized. It can be
 specified by one of the following: `#Tag_true` or `#Tag_false`, where `#Tag_false` is the default value.
 
-\cgalModels `Visibility_2`
+\cgalModels{Visibility_2}
 
 \sa `CGAL::Simple_polygon_visibility_2`
 \sa `CGAL::Rotational_sweep_visibility_2`

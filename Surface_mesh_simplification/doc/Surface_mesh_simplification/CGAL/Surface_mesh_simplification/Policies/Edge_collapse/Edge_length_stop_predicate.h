@@ -11,7 +11,7 @@ This predicate is meant to be used with `Edge_length_cost`.
 
 \tparam FT is the number type of the point coordinates, and must be equal to `Edge_profile::FT`.
 
-\cgalModels `StopPredicate`
+\cgalModels{StopPredicate}
 
 */
 template <typename FT>

@@ -19,7 +19,7 @@ exact computations.
 `Tag_true`  (Examples of such a
 number-type are `MP_Float`, `CORE::Expr`, and `Gmpq`.)
 
-\cgalModels `ApproximateMinEllipsoid_d_Traits_d`
+\cgalModels{ApproximateMinEllipsoid_d_Traits_d}
 
 \sa `CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>`
 \sa `CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>`

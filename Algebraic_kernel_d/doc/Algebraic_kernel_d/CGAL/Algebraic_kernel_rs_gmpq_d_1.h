@@ -12,7 +12,7 @@ rational univariate polynomial root isolation. It is a model of the
 isolate integer polynomials, the operations of this kernel have the
 overhead of converting the polynomials to integer.
 
-\cgalModels `AlgebraicKernel_d_1`
+\cgalModels{AlgebraicKernel_d_1}
 
 \sa `Algebraic_kernel_rs_gmpz_d_1`
 

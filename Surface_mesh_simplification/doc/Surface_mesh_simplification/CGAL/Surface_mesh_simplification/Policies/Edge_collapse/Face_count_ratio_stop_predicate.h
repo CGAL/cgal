@@ -5,7 +5,7 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-\cgalModels `StopPredicate`
+\cgalModels{StopPredicate}
 
 The class `Face_count_ratio_stop_predicate` is a model for the `StopPredicate` concept
 which returns `true` when the relation between the initial and current number of faces drops below a certain ratio.

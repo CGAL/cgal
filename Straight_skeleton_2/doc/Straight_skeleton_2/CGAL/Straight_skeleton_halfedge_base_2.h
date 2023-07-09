@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Auxiliary
 
-\cgalModels `StraightSkeletonHalfedge_2`
+\cgalModels{StraightSkeletonHalfedge_2}
 
 The class `Straight_skeleton_halfedge_base_2` provides a model for the concept `StraightSkeletonHalfedge_2`,
 which is the halfedge type required by the `StraightSkeleton_2` concept.

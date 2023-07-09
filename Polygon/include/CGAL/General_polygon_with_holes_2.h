@@ -34,7 +34,7 @@ namespace CGAL {
  *
  * \tparam Polygon_ must have input and output operators.
  *
- * \cgalModels `GeneralPolygonWithHoles_2`
+ * \cgalModels{GeneralPolygonWithHoles_2}
  */
 template <typename Polygon_>
 class General_polygon_with_holes_2 {

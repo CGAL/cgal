@@ -34,7 +34,7 @@ To define a line `l` we write:
 Line_2< Cartesian<double> > l(p,q);
 \endcode
 
-\cgalModels `Kernel::Line_2`
+\cgalModels{Kernel::Line_2}
 
 */
 template< typename Kernel >

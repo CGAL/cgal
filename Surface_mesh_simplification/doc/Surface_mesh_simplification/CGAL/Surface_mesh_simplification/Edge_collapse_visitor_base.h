@@ -16,7 +16,7 @@ and hide a non-virtual method in the context of the static polymorphism used in 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model
 of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `EdgeCollapseSimplificationVisitor`
+\cgalModels{EdgeCollapseSimplificationVisitor}
 
 */
 template <typename TriangleMesh>

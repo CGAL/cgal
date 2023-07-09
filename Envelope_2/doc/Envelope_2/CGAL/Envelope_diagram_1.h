@@ -15,7 +15,7 @@ model of the `ArrangementXMonotoneTraits_2` concept, in case we handle
 only envelopes of \f$ x\f$-monotone curves, or of the refined
 `ArrangementTraits_2` concept in case we handle arbitrary planar curves.
 
-\cgalModels `EnvelopeDiagram_1`
+\cgalModels{EnvelopeDiagram_1}
 
 */
 template< typename Traits >

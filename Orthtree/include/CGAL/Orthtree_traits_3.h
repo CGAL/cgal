@@ -28,7 +28,7 @@ namespace CGAL
 
   \tparam GeomTraits model of `Kernel`.
 
-  \cgalModels `OrthtreeTraits`
+  \cgalModels{OrthtreeTraits}
   \sa `CGAL::Octree`
   \sa `CGAL::Orthtree_traits_2`
   \sa `CGAL::Orthtree_traits_d`

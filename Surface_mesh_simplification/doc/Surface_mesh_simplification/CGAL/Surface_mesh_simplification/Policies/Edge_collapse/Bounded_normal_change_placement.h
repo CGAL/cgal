@@ -15,7 +15,7 @@ triangle in the profile changes the normal by more than 90 degree.
 
 \tparam Get_placement_ must be a model of the concept `GetPlacement`.
 
-\cgalModels `GetPlacement`
+\cgalModels{GetPlacement}
 
 */
 template <typename Get_placement_>

@@ -56,7 +56,7 @@ int bound_type(FT lb, FT ub)
 ///      `CGAL::SCIP_mixed_integer_program_traits`, or derive a new
 ///      model from `CGAL::Mixed_integer_program_traits`.
 ///
-/// \cgalModels `MixedIntegerProgramTraits`
+/// \cgalModels{MixedIntegerProgramTraits}
 ///
 /// \sa `SCIP_mixed_integer_program_traits`
 template <typename FT>

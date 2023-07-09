@@ -18,7 +18,7 @@ reasonable and valid values of the template parameters
 and should be preferred over
 `Segment_Delaunay_graph_Linf_traits_2`.
 
-\cgalModels `SegmentDelaunayGraphLinfTraits_2`
+\cgalModels{SegmentDelaunayGraphLinfTraits_2}
 
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>`
@@ -53,7 +53,7 @@ reasonable and valid values of the template parameters
 and should be preferred over
 `Segment_Delaunay_graph_Linf_traits_without_intersections_2`.
 
-\cgalModels `SegmentDelaunayGraphLinfTraits_2`
+\cgalModels{SegmentDelaunayGraphLinfTraits_2}
 
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`

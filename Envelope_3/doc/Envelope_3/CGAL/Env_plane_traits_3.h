@@ -28,7 +28,7 @@ in case of an entire plane, or from `Kernel::Plane_3` and
 `Kernel::Line_2` in case of a half-plane. The line orientation
 determines which half is considered.
 
-\cgalModels `EnvelopeTraits_3`
+\cgalModels{EnvelopeTraits_3}
 
 */
 template< typename Kernel >

@@ -30,8 +30,7 @@ p = q;
 std::cout << p.x() << " " << p.y() << std::endl;
 \endcode
 
-\cgalModels `Kernel::Point_2`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Point_2,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >

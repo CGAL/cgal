@@ -6,7 +6,7 @@ namespace CGAL {
 Function object class for testing if a sequence of points represents
 a convex polygon or not.
 
-\cgalModels `PolygonIsValid`
+\cgalModels{PolygonIsValid}
 
 \sa `CGAL::convex_partition_is_valid_2()`
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
@@ -55,7 +55,7 @@ namespace CGAL {
 
 Function object class that indicates all sequences of points are valid.
 
-\cgalModels `PolygonIsValid`
+\cgalModels{PolygonIsValid}
 
 \sa `CGAL::partition_is_valid_2()`
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
@@ -103,7 +103,7 @@ namespace CGAL {
 Function object class that tests whether a sequence of points represents
 a \f$ y\f$-monotone polygon or not.
 
-\cgalModels `PolygonIsValid`
+\cgalModels{PolygonIsValid}
 
 \sa `CGAL::convex_partition_is_valid_2()`
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`

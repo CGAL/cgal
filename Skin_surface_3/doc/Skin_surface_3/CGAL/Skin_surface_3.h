@@ -12,7 +12,7 @@ The template argument must be a model of the concept
 to construct a regular triangulation of the weighted points and for
 point location in the mixed complex.
 
-\cgalModels `SkinSurface_3`
+\cgalModels{SkinSurface_3}
 
 */
 template< typename SkinSurfaceTraits_3 >

@@ -14,7 +14,7 @@ than four times the size of the optimal decomposition.
 \tparam Container must be a container that can be used for the polygon.
 It is by default `std::vector<typename Kernel::Point_2>`.
 
-\cgalModels `PolygonConvexDecomposition_2`
+\cgalModels{PolygonConvexDecomposition_2}
 
 \sa `CGAL::greene_approx_convex_partition_2()`
 
@@ -47,7 +47,7 @@ optimal decomposition.
 \tparam Container must be a container that can be used for the polygon.
 It is by default `std::vector<typename Kernel::Point_2>`.
 
-\cgalModels `PolygonConvexDecomposition_2`
+\cgalModels{PolygonConvexDecomposition_2}
 
 \sa `CGAL::approx_convex_partition_2()`
 
@@ -77,7 +77,7 @@ the worst case, where \f$ n\f$ is the size of the input polygon.
 \tparam Container must be a container that can be used for the polygon.
 It is by default `std::vector<typename Kernel::Point_2>`.
 
-\cgalModels `PolygonConvexDecomposition_2`
+\cgalModels{PolygonConvexDecomposition_2}
 
 \sa `CGAL::optimal_convex_partition_2()`
 

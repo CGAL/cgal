@@ -49,7 +49,7 @@ namespace Surface_mesh_parameterization {
 ///   the matrix `A` for `j` neighbor vertex of `i`, based on Tutte Barycentric
 ///   Mapping method.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///

@@ -9,7 +9,7 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `GetCost`
+\cgalModels{GetCost}
 
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 

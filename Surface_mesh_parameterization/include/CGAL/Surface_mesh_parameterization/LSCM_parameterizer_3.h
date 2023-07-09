@@ -57,7 +57,7 @@ namespace Surface_mesh_parameterization {
 /// of the surface onto a convex polygon (only two pinned vertices are needed
 /// to ensure a unique solution), but a one-to-one mapping is *not* guaranteed.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
