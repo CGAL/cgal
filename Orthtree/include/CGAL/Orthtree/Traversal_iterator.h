@@ -108,7 +108,8 @@ template <class Tree>
 class Index_traversal_iterator : public boost::iterator_facade<
   Index_traversal_iterator<Tree>,
   const typename Tree::Node_index,
-  boost::forward_traversal_tag
+  boost::forward_traversal_tag,
+  const typename Tree::Node_index
 > {
 public:
 
