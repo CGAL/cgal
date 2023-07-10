@@ -22,29 +22,31 @@ void dump_as_polylines(const Octree& ot)
         continue;
       CGAL::Bbox_3 bb = ot.bbox(node);
       out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmin()
-          << "  " << bb.xmax() << " " << bb.ymin() << " " << bb.zmin();
+          << "  " << bb.xmax() << " " << bb.ymin() << " " << bb.zmin() << "\n";
       out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmin()
-          << "  " << bb.xmin() << " " << bb.ymax() << " " << bb.zmin();
+          << "  " << bb.xmin() << " " << bb.ymax() << " " << bb.zmin() << "\n";
+      out << "2 " << bb.xmax() << " " << bb.ymin() << " " << bb.zmin()
+          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmin() << "\n";
+      out << "2 " << bb.xmin() << " " << bb.ymax() << " " << bb.zmin()
+          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmin() << "\n";
+//
       out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmin()
-          << "  " << bb.xmin() << " " << bb.ymin() << " " << bb.zmax();
+          << "  " << bb.xmin() << " " << bb.ymin() << " " << bb.zmax() << "\n";
       out << "2 " << bb.xmax() << " " << bb.ymin() << " " << bb.zmin()
-          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmin();
-      out << "2 " << bb.xmax() << " " << bb.ymin() << " " << bb.zmin()
-          << "  " << bb.xmax() << " " << bb.ymin() << " " << bb.zmax();
+          << "  " << bb.xmax() << " " << bb.ymin() << " " << bb.zmax() << "\n";
       out << "2 " << bb.xmin() << " " << bb.ymax() << " " << bb.zmin()
-          << "  " << bb.xmin() << " " << bb.ymax() << " " << bb.zmax();
-      out << "2 " << bb.xmin() << " " << bb.ymax() << " " << bb.zmin()
-          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmin();
+          << "  " << bb.xmin() << " " << bb.ymax() << " " << bb.zmax() << "\n";
       out << "2 " << bb.xmax() << " " << bb.ymax() << " " << bb.zmin()
-          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmax();
+          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmax() << "\n";
+//
       out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmax()
-          << "  " << bb.xmax() << " " << bb.ymin() << " " << bb.zmax();
-      out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmin()
-          << "  " << bb.xmin() << " " << bb.ymax() << " " << bb.zmin();
+          << "  " << bb.xmax() << " " << bb.ymin() << " " << bb.zmax() << "\n";
+      out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmax()
+          << "  " << bb.xmin() << " " << bb.ymax() << " " << bb.zmax() << "\n";
       out << "2 " << bb.xmax() << " " << bb.ymin() << " " << bb.zmax()
-          << "  " << bb.xmin() << " " << bb.ymin() << " " << bb.zmax();
-      out << "2 " << bb.xmax() << " " << bb.ymin() << " " << bb.zmax()
-          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmax();
+          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmax() << "\n";
+      out << "2 " << bb.xmin() << " " << bb.ymax() << " " << bb.zmax()
+          << "  " << bb.xmax() << " " << bb.ymax() << " " << bb.zmax() << "\n";
     }
 }
 
