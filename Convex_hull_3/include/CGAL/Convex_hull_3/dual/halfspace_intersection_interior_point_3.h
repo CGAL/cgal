@@ -180,7 +180,7 @@ halfspace_intersection_interior_point_3(PlaneIterator begin, PlaneIterator end)
   typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
 
   // choose exact integral type
-  typedef typename internal::Exact_field_selector<void*>::Type ET;
+  typedef typename internal::Exact_field_selector<typename K::FT>::Type ET;
 
   // find a point inside the intersection
   internal::Interior_polyhedron_3<K, ET> interior;
