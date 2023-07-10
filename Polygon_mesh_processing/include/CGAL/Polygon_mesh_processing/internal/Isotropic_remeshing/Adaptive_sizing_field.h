@@ -43,21 +43,16 @@ public:
   typedef typename boost::property_map<PolygonMesh,
                                        Vertex_property_tag>::type Vertex_sizing_map;
 
-  typedef Principal_curvatures_and_directions<K> Principal_curvatures;
-  typedef typename CGAL::dynamic_vertex_property_t<Principal_curvatures> Vertex_curvature_tag;
-  typedef typename boost::property_map<CGAL::Face_filtered_graph<PolygonMesh>,
-                                       Vertex_curvature_tag>::type Vertex_curvature_map;
-
-    Adaptive_sizing_field(const double tol
-                        , const std::pair<FT, FT>& edge_len_min_max
-                        , PolygonMesh& pmesh)
-      : tol(tol)
-      , m_short(edge_len_min_max.first)
-      , m_long(edge_len_min_max.second)
-      , m_pmesh(pmesh)
-    {
-      m_vertex_sizing_map = get(Vertex_property_tag(), m_pmesh);
-    }
+  Adaptive_sizing_field(const double tol
+                      , const std::pair<FT, FT>& edge_len_min_max
+                      , PolygonMesh& pmesh)
+    : tol(tol)
+    , m_short(edge_len_min_max.first)
+    , m_long(edge_len_min_max.second)
+    , m_pmesh(pmesh)
+  {
+    m_vertex_sizing_map = get(Vertex_property_tag(), m_pmesh);
+  }
 
 private:
   FT sqlength(const vertex_descriptor va,
@@ -105,6 +100,11 @@ public:
   template <typename FaceGraph>
   void calc_sizing_map(FaceGraph& face_graph)
   {
+    typedef Principal_curvatures_and_directions<K> Principal_curvatures;
+    typedef typename CGAL::dynamic_vertex_property_t<Principal_curvatures> Vertex_curvature_tag;
+    typedef typename boost::property_map<FaceGraph,
+      Vertex_curvature_tag>::type Vertex_curvature_map;
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     int oversize  = 0;
     int undersize = 0;
@@ -145,7 +145,7 @@ public:
       }
     }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-    std::cout << " done (" << insize    << " from curvature, "
+    std::cout << " done (" << insize << " from curvature, "
               << oversize  << " set to max, "
               << undersize << " set to min)" << std::endl;
 #endif
