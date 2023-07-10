@@ -228,8 +228,8 @@ void Main_widget::initializeGL()
   else
   {
     // check the arrangement constructed from the GIS data-set
-    //auto created_vertices = Aos::ext_check(m_countries);
-    auto created_vertices = Aos::ext_check_id_based(m_countries);
+    auto created_vertices = Aos::ext_check(m_countries);
+    //auto created_vertices = Aos::ext_check_id_based(m_countries);
     m_vertices = std::make_unique<Vertices>(created_vertices);
   }
 

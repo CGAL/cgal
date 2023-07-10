@@ -392,12 +392,12 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
 std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
 {
   // Construct the arrangement from 12 geodesic arcs.
-  Geom_traits traits, traits2;
-  Ext_aos arr(&traits), arr2(&traits2);
+  Geom_traits traits;
+  Ext_aos arr(&traits);
 
   // 
-  //auto nodes = Kml::generate_ids(placemarks);
-  auto nodes = Kml::generate_ids_approx(placemarks, 0.001);
+  auto nodes = Kml::generate_ids(placemarks);
+  //auto nodes = Kml::generate_ids_approx(placemarks, 0.001);
 
   //Segment s()
   auto ctr_p = traits.construct_point_2_object();
@@ -407,8 +407,7 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
   int num_counted_polygons = 0;
   // 
   std::vector<Point> points;
-  using Vertex_handle = decltype(CGAL::insert_point(arr2, ctr_p(1, 0, 0)));
-  std::vector<Vertex_handle> vertices;
+  std::vector<Ext_aos::Vertex_handle> vertices;
   for (const auto& node : nodes)
   {
     auto n = node.get_coords_3d();
