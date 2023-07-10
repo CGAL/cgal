@@ -350,6 +350,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     Simplex cur_after_walk;
 
     auto case_target_is_inside_cur_cell = [&](int case_nb) {
+      CGAL_USE(case_nb);
       CGAL_assertion_code(inside = case_nb;)
       prev_after_walk = {cur_cell, Tr::CELL, -1, -1};
       cur_after_walk = {{}, Tr::CELL, -1, -1};
