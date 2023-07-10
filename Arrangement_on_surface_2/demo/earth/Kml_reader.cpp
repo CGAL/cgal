@@ -16,14 +16,14 @@ bool Kml::Node::operator == (const Node& r) const
 }
 Kml::Vec3d Kml::Node::get_coords_3d(const double r) const
 {
-  const auto phi = qDegreesToRadians(lat);
-  const auto theta = qDegreesToRadians(lon);
+  const long double phi = qDegreesToRadians(lat);
+  const long double theta = qDegreesToRadians(lon);
   const auto z = r * std::sin(phi);
   const auto rxy = r * std::cos(phi);
   const auto x = rxy * std::cos(theta);
   const auto y = rxy * std::sin(theta);
 
-  return Vec3d{ x, y, z };
+  return Vec3d{ (double)x, (double)y, (double)z };
 }
 QVector3D Kml::Node::get_coords_3f(const double r) const
 {
@@ -120,6 +120,7 @@ Kml::Placemarks  Kml::read(const std::string& file_name)
         else if (name == "LinearRing")
         {
           // LinearRing is moved to the correct locations via other tags above
+         assert(*lring.nodes.begin() == *(--lring.nodes.end()));
         }
         else if (name == "coordinates")
         {

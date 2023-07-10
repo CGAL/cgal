@@ -334,6 +334,9 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
     auto& d = vit->data();
     if (vit->data().v == false)
     {
+      std::cout << "-------------------------------------\n";
+      std::cout << vit->point() << std::endl;
+
       if (2 == vit->degree())
         ;//continue;
 
@@ -341,8 +344,8 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
       {
         auto p = vit->point();
         auto p2 = p.location();
-        std::cout << "deg-1 vertex = " << p << std::endl;
-        std::cout << "deg-1 vertex: " << std::boolalpha << vit->incident_halfedges()->target()->data().v << std::endl;
+        std::cout << "   deg-1 vertex = " << p << std::endl;
+        std::cout << "   deg-1 vertex: " << std::boolalpha << vit->incident_halfedges()->target()->data().v << std::endl;
       }
 
 
@@ -362,9 +365,12 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
       do {
 
       } while (++curr != first);
-
+    
+      std::cout << "\n";
     }
   }
+  Kml::Node n{ 180.0, -84.71338 };
+  std::cout << "Node itself = " << n.get_coords_3d() << std::endl;
   std::cout << "*** num created vertices = " << num_created_vertices << std::endl;
 
   std::cout << "-------------------------------\n";

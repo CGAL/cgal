@@ -16,11 +16,20 @@ public:
   struct Vec3d
   {
     double x, y, z;
+
+    friend std::ostream& operator << (std::ostream& os, const Vec3d& v)
+    {
+      os << v.x << ", " << v.y << ", " << v.z;
+      return os;
+    }
   };
 
   struct Node
   {
     double lon, lat;
+
+    Node() : lon(-1111), lat(-1111) {};
+    Node(double longitude, double latitude) : lon(longitude), lat(latitude) {};
 
     bool operator == (const Node& r) const;
     Vec3d get_coords_3d(const double r = 1.0) const;
