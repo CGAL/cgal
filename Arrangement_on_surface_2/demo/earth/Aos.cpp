@@ -396,7 +396,8 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
   Ext_aos arr(&traits), arr2(&traits2);
 
   // 
-  auto nodes = Kml::generate_ids(placemarks);
+  //auto nodes = Kml::generate_ids(placemarks);
+  auto nodes = Kml::generate_ids_approx(placemarks, 0.001);
 
   //Segment s()
   auto ctr_p = traits.construct_point_2_object();
@@ -419,6 +420,12 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
   }
   std::cout << "num nodes = " << nodes.size()   << std::endl;
   std::cout << "num points = " << points.size() << std::endl;
+  // MARK all vertices as true
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  {
+    vit->set_data(Flag(true));
+  }
+
 
   for (auto& placemark : placemarks)
   {
@@ -455,30 +462,24 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
         num_counted_arcs++;
         const auto nid1 = ids[i];
         const auto nid2 = ids[i + 1];
-        assert(nodes[nid1] == polygon.outer_boundary.nodes[i]);
-        assert(nodes[nid2] == polygon.outer_boundary.nodes[i+1]);
+        //assert(nodes[nid1] == polygon.outer_boundary.nodes[i]);
+        //assert(nodes[nid2] == polygon.outer_boundary.nodes[i+1]);
         auto p1 = points[nid1];
         auto p2 = points[nid2];
         //std::cout << p1 << std::endl;
         //std::cout << p2 << std::endl;
         //Segment s(p1, p2);
-        auto v1 = vertices[nid1];
-        auto v2 = vertices[nid2];
-        Segment s(v1->point(), v2->point());
+        //auto v1 = vertices[nid1];
+        //auto v2 = vertices[nid2];
+        //Segment s(v1->point(), v2->point());
         //arr.insert_from_left_vertex()
-        arr.insert_at_vertices(s, v1, v2);
+        //arr.insert_at_vertices(s, v1, v2);
         //arr.insert_at_vertices(Segment(p1, p2), v1, v2);
-        //CGAL::insert(arr, ctr_cv(p1,p2));
+        CGAL::insert(arr, ctr_cv(p1,p2));
       }
     }
   }
 
-
-  // MARK all vertices as true
-  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-  {
-    vit->set_data(Flag(true));
-  }
 
   std::cout << "-------------------------------\n";
   std::cout << "num arr vertices (before adding arcs) = " <<
@@ -494,6 +495,9 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
     auto& d = vit->data();
     if (vit->data().v == false)
     {
+      std::cout << "-------------------------------------\n";
+      std::cout << vit->point() << std::endl;
+
       if (2 == vit->degree())
         ;//continue;
 
@@ -522,7 +526,7 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
       //do {
 
       //} while (++curr != first);
-
+      std::cout << std::endl;
     }
   }
   std::cout << "*** num created vertices = " << num_created_vertices << std::endl;

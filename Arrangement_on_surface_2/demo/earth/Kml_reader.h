@@ -31,6 +31,8 @@ public:
     Node() : lon(-1111), lat(-1111) {};
     Node(double longitude, double latitude) : lon(longitude), lat(latitude) {};
 
+    double distance_to(const Node& r) const;
+
     bool operator == (const Node& r) const;
     Vec3d get_coords_3d(const double r = 1.0) const;
     QVector3D get_coords_3f(const double r=1.0) const;
@@ -89,6 +91,9 @@ public:
   // Outputs all used nodes without duplications!
   // NOTE: this function modifies Placemarks data-structure!
   static Nodes generate_ids(Placemarks& placemarks);
+
+  // same as above but by collapsing close-by nodes based on distance bound
+  static Nodes generate_ids_approx(Placemarks& placemarks, const double eps);
 };
 
 

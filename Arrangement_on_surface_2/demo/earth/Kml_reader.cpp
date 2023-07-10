@@ -10,6 +10,13 @@
 #include <qxmlstream.h>
 
 
+double Kml::Node::distance_to(const Node& r) const
+{
+  const auto dx = lon - r.lon;
+  const auto dy = lat - r.lat;
+  return sqrt(dx * dx + dy * dy);
+}
+
 bool Kml::Node::operator == (const Node& r) const
 {
   return  (lon == r.lon) && (lat == r.lat);
@@ -262,6 +269,91 @@ Kml::Nodes Kml::generate_ids(Placemarks& placemarks)
       }
     }
   }
+
+  return nodes;
+}
+
+Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps)
+{
+  // collect all nodes into a single vector
+  int polygon_count = 0;
+  std::vector<Node> nodes;
+  for (auto& pm : placemarks)
+  {
+    for (auto& polygon : pm.polygons)
+    {
+      polygon_count++;
+
+      std::vector<LinearRing*> linear_rings;
+      linear_rings.push_back(&polygon.outer_boundary);
+      for (auto& inner_boundary : polygon.inner_boundaries)
+        linear_rings.push_back(&inner_boundary);
+
+      for (auto* lring : linear_rings)
+      {
+        lring->ids.clear();
+
+        for (const auto& node : lring->nodes)
+        {
+          // check if there is a node sufficiently close to the current one
+          int node_index = -1;
+          for (int i = 0; i < nodes.size(); ++i)
+          {
+            const auto dist = node.distance_to(nodes[i]);
+            if (dist < eps)
+            {
+              node_index = i;
+              break;
+            }
+          }
+
+
+          if (node_index < 0)
+          {
+            // insert new node
+            nodes.push_back(node);
+            const int node_id = nodes.size() - 1;
+            lring->ids.push_back(node_id);
+          }
+          else
+          {
+            // get the existing node
+            const int node_id = node_index;
+            lring->ids.push_back(node_id);
+          }
+
+          auto it = std::unique(lring->ids.begin(), lring->ids.end());
+          std::vector<int> new_ids(lring->ids.begin(), it);
+          if (new_ids.size() < lring->ids.size())
+            std::cout << "** REDUCED!\n";
+          lring->ids = std::move(new_ids);
+        }
+      }
+    }
+  }
+
+  // find the pair of closest nodes
+  double min_dist = std::numeric_limits<double>::max();
+  int ni1, ni2;
+  int num_nodes = nodes.size();
+  for (int i = 0; i < num_nodes - 1; ++i)
+  {
+    for (int j = i + 1; j < num_nodes; ++j)
+    {
+      const auto dist = nodes[i].distance_to(nodes[j]);
+      if (min_dist > dist)
+      {
+        min_dist = dist;
+        ni1 = i;
+        ni2 = j;
+      }
+    }
+  }
+  std::cout << "min dist = " << min_dist << std::endl;
+  std::cout << "node 1 = " << nodes[ni1] << std::endl;
+  std::cout << "node 2 = " << nodes[ni2] << std::endl;
+  std::cout << "node 1 = " << nodes[ni1].get_coords_3d() << std::endl;
+  std::cout << "node 2 = " << nodes[ni2].get_coords_3d() << std::endl;
 
   return nodes;
 }
