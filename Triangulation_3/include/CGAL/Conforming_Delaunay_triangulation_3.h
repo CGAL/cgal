@@ -495,7 +495,7 @@ protected:
       encroaching_vertices.insert(v);
     };
     auto fill_encroaching_vertices = [&](const auto simplex) {
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 16
       debug_simplex(simplex);
 #endif // CGAL_DEBUG_CDT_3
       auto visit_cell = [&](Cell_handle cell) {
