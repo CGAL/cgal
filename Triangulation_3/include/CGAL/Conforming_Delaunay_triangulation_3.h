@@ -166,6 +166,7 @@ protected:
       // vertices as sub-constraints.
       std::for_each(tr.segment_traverser_simplices_begin(va, vb), tr.segment_traverser_simplices_end(),
                     [&, prev = Vertex_handle{}](auto simplex) mutable {
+                      // std::cerr << "- " << oformat(simplex, With_point_tag{}) << '\n';
                       if(simplex.dimension() == 0) {
                         const auto v = static_cast<Vertex_handle>(simplex);
                         v->c_id = c_id.vl_ptr();
@@ -457,6 +458,7 @@ protected:
     const auto& pb = tr.point(vb);
 
     if(this->dimension() < 2) {
+      std::cerr << "dim < 2: midpoint\n";
       return {midpoint_functor(pa, pb), va->cell(), va};
     }
 
@@ -467,7 +469,7 @@ protected:
 
 #ifdef CGAL_DEBUG_CDT_3
     [[maybe_unused]] auto debug_simplex = [&](auto simplex) {
-      std::cerr << " - " << oformat(simplex, With_point_tag{});
+      std::cerr << " - " << oformat(simplex, With_point_tag{}) << '\n';
     };
 #endif // CGAL_DEBUG_CDT_3
 
@@ -515,8 +517,8 @@ protected:
         if(v != va && v != vb) {
           std::cerr << "!! The constraint passes through a vertex! ";
           std::cerr << "  -> " << display_vert(v) << '\n';
+          debug_dump("bug-through-vertex");
           CGAL_error();
-          register_vertex(v);
         }
       } break;
       default: CGAL_unreachable();
@@ -611,6 +613,7 @@ protected:
                                   : translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
 
 #ifdef CGAL_DEBUG_CDT_3
+    std::cerr << "lambda = " << lambda << '\n';
     std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_DEBUG_CDT_3
     return {result_point, reference_vertex->cell(), reference_vertex};

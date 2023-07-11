@@ -151,10 +151,12 @@ int main(int argc, char* argv[])
       // std::ofstream dump("dump.binary.cgal");
       // CGAL::Mesh_3::save_binary_file(dump, cdt);
     }
+    std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
     assert(cdt.is_conforming());
     if(exit_code == EXIT_SUCCESS) {
       try {
         cdt.restore_constrained_Delaunay();
+        std::cerr << "Number of vertices after CDT: " << cdt.number_of_vertices() << '\n';
       } catch(int error) {
         exit_code = error;
       }
