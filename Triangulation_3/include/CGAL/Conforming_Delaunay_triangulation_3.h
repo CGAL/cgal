@@ -36,6 +36,8 @@
 
 namespace CGAL {
 
+enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
+
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
 class Conforming_Delaunay_triangulation_vertex_base_3 : public Vb {
 public:
@@ -58,9 +60,16 @@ public:
     return C_id(static_cast<Vertex_list_ptr>(c_id));
   }
 
+  CDT_3_vertex_type vertex_type() const { return m_vertex_type; }
+  void set_vertex_type(CDT_3_vertex_type type) { m_vertex_type = type; }
+  bool is_Steiner_vertex_on_edge() const { return m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE; }
+  bool is_Steiner_vertex_in_face() const { return m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE; }
+
   static std::string io_signature() {
     return Get_io_signature<Vb>()();
   }
+private:
+  CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
 };
 
 
@@ -173,6 +182,7 @@ protected:
                         ++v->nb_of_incident_constraints;
                         if(prev != Vertex_handle{}) {
                           if(v != vb) {
+                            v->set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
                             constraint_hierarchy.add_Steiner(prev, vb, v);
                           }
                           add_to_subconstraints_to_conform(prev, v, c_id);
@@ -342,6 +352,7 @@ protected:
     int li, lj;
     const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
     const Vertex_handle v = this->insert_impl(steiner_pt, lt, c, li, lj, visitor);
+    v->set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
     if(lt != T_3::VERTEX) {
       v->nb_of_incident_constraints = 1;
       v->c_id = constraint.vl_ptr();
@@ -567,7 +578,7 @@ protected:
     const auto reference_vertex = *reference_vertex_it;
     const auto& reference_point = tr.point(reference_vertex);
 
-    if(!reference_vertex->original_point && reference_vertex->nb_of_incident_constraints > 0) {
+    if(reference_vertex->is_Steiner_vertex_on_edge()) {
       CGAL_assertion(reference_vertex->nb_of_incident_constraints == 1);
       const auto ref_constraint_id = reference_vertex->constraint_id(*this);
       const auto [ref_va, ref_vb] = constraint_extremitites(ref_constraint_id);

@@ -52,9 +52,6 @@ int main()
     Delaunay::Cell_handle ch;
     int li, lj;
     assert(!cdt.is_edge(vertices[0], vertices[1], ch, li, lj));
-    for(int i: {0, 1, 5, 11}) {
-      vertices[i]->original_point = true;
-    }
     cdt.insert_constrained_edge(vertices[0], vertices[1]);
     cdt.insert_constrained_edge(vertices[5], vertices[1]);
     cdt.insert_constrained_edge(vertices[5], vertices[11]);

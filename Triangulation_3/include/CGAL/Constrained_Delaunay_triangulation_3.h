@@ -73,8 +73,6 @@ class Constrained_Delaunay_triangulation_vertex_base_3
 {
   using Base = Conforming_Delaunay_triangulation_vertex_base_3<Gt, Vb>;
 public:
-  bool original_point = false;
-
   // To get correct vertex type in TDS
   template < class TDS3 >
   struct Rebind_TDS {
@@ -180,7 +178,9 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
   std::ostream& operator()(std::ostream& out) const {
     Base::operator()(out);
     if(this->it.operator->() != nullptr)
-      return  out << (this->it->original_point ? "(orig)" : "") << "= " << this->it->point();
+      return  out << (this->it->is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
+                  << (this->it->is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
+                  << "= " << this->it->point();
     else
       return out;
   }
@@ -391,20 +391,19 @@ protected:
 
 public:
   Vertex_handle insert(const Point_3 &p, Locate_type lt, Cell_handle c,
-                       int li, int lj, bool is_original_point = false)
+                       int li, int lj)
   {
     auto v = Conforming_Dt::insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
-    v->original_point = is_original_point;
     Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
     return v;
   }
 
-  Vertex_handle insert(const Point_3 &p, Cell_handle start = {}, bool is_original_point = false) {
+  Vertex_handle insert(const Point_3 &p, Cell_handle start = {}) {
     Locate_type lt;
     int li, lj;
 
     Cell_handle c = tr.locate(p, lt, li, lj, start);
-    return insert(p, lt, c, li, lj, is_original_point);
+    return insert(p, lt, c, li, lj);
   }
 
   Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
@@ -425,9 +424,8 @@ public:
     handles.reserve(polygon.size());
     boost::optional<Cell_handle> hint;
     for(const auto& p : polygon) {
-      const auto v = this->insert(p, hint.value_or(Cell_handle{}), true);
+      const auto v = this->insert(p, hint.value_or(Cell_handle{}));
       handles.push_back(v);
-      v->original_point = true;
       hint = v->cell();
     }
     return insert_constrained_face(std::move(handles));
@@ -1687,6 +1685,7 @@ private:
                                     IO::oformat(cdt_2.triangle(e.fh_2d)));
 #endif // CGAL_DEBUG_CDT_3
           const auto v = this->insert(circ);
+          v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
           const auto v_2d = non_const_cdt_2.insert(circ, other_fh);
           v_2d->info().vertex_handle_3d = v;
         }

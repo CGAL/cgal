@@ -51,7 +51,6 @@ int main(int argc, char* argv[])
       get(CGAL::dynamic_vertex_property_t<Delaunay::Vertex_handle>(), mesh);
   for(auto vertex_descriptor: vertices(mesh)) {
     auto vertex_handle = cdt_edge.insert(get(point_map, vertex_descriptor));
-    vertex_handle->original_point = true;
     put(dt_vertex_handle_map, vertex_descriptor, vertex_handle);
   }
 
