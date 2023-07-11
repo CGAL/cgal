@@ -3,7 +3,6 @@
 #include <iterator>
 
 #include <boost/functional/value_factory.hpp>
-#include <boost/array.hpp>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/point_generators_3.h>

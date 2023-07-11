@@ -285,7 +285,7 @@ public:
 
 namespace std {
 
-// workaround a bug detected on at least g++ 4.4 where boost::next(Iterator)
+// workaround a bug detected on at least g++ 4.4 where std::next(Iterator)
 // is picked as a candidate for next(h,g)
 template <typename TDS>
 struct iterator_traits< CGAL::internal::TDS2_halfedge_descriptor<TDS> >

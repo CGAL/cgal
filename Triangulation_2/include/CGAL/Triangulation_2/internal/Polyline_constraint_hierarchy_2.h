@@ -68,7 +68,7 @@ public:
     : public boost::iterator_adaptor<
     Point_it
     , typename Vertex_list::all_iterator
-    , const Point
+    , const Point&
     >
   {
   public:
@@ -85,7 +85,7 @@ public:
     Vertex_it
     , typename Vertex_list::skip_iterator
     , Vertex_handle
-    , boost::use_default
+    , std::bidirectional_iterator_tag
     , Vertex_handle>
   {
   public:
@@ -612,7 +612,7 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
       // Remove the list item which points to v
       Vertex_list* vertex_list = it->id().vl_ptr();
       Vertex_it vc_in_context = it->current();
-      vc_in_context = boost::next(vc_in_context);
+      vc_in_context = std::next(vc_in_context);
       vertex_list->skip(vc_in_context.base());
       ++it;
     }
@@ -625,7 +625,7 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
       // Remove the list item which points to v
       Vertex_list* vertex_list = it->id().vl_ptr();
       Vertex_it vc_in_context = it->current();
-      vc_in_context = boost::next(vc_in_context);
+      vc_in_context = std::next(vc_in_context);
       vertex_list->skip(vc_in_context.base());
       ++it;
     }

@@ -542,7 +542,16 @@ Scene_image_item::sigma_weights() const
 {
   return d->m_sigma_weights;
 }
-
+float
+Scene_image_item::default_sigma_weights() const
+{
+  if(!m_image)
+    return 0.f;
+  else
+    return (std::max)(m_image->image()->vx,
+           (std::max)(m_image->image()->vy,
+                      m_image->image()->vz));
+}
 
 void
 Scene_image_item::draw(Viewer_interface* viewer) const
@@ -574,11 +583,11 @@ template <typename T> const char* whatType(T) { return "unknown"; }    // defaul
 template <> const char* whatType(float) { return "float"; }
 template <> const char* whatType(double) { return "double"; }
 template <> const char* whatType(char) { return "int8_t (char)"; }
-template <> const char* whatType(boost::uint8_t) { return "uint8_t (unsigned char)"; }
-template <> const char* whatType(boost::int16_t) { return "int16_t (short)"; }
-template <> const char* whatType(boost::uint16_t) { return "uint16_t (unsigned short)"; }
-template <> const char* whatType(boost::int32_t) { return "int32_t (int)"; }
-template <> const char* whatType(boost::uint32_t) { return "uint32_t (unsigned int)"; }
+template <> const char* whatType(std::uint8_t) { return "uint8_t (unsigned char)"; }
+template <> const char* whatType(std::int16_t) { return "int16_t (short)"; }
+template <> const char* whatType(std::uint16_t) { return "uint16_t (unsigned short)"; }
+template <> const char* whatType(std::int32_t) { return "int32_t (int)"; }
+template <> const char* whatType(std::uint32_t) { return "uint32_t (unsigned int)"; }
 
 template<typename Word>
 QString explicitWordType()

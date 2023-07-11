@@ -309,10 +309,10 @@ polylines_to_split(std::vector<std::vector<P> >& polylines,
       continue;
 
     typename Polyline::iterator pit = polyline.begin();
-    while (boost::next(pit) != polyline.end())
+    while (std::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }

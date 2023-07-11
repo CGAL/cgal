@@ -18,7 +18,6 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
@@ -34,6 +33,8 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/tss.h>
 #include <CGAL/type_traits.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
+
 
 #include<type_traits>
 
@@ -383,7 +384,7 @@ public :
   // Also check that ET and AT are constructible from T?
   template<class T>
   Lazy_exact_nt (T i, std::enable_if_t<boost::mpl::and_<
-      boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
+      boost::mpl::or_<std::is_arithmetic<T>, std::is_enum<T> >,
       boost::mpl::not_<std::is_same<T,ET> > >::value,void*> = 0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
@@ -1427,7 +1428,24 @@ class Modular_traits<Lazy_exact_nt<ET> >
 #undef CGAL_int
 #undef CGAL_To_interval
 
-} //namespace CGAL
+namespace internal {
+
+template < typename ET >
+struct Exact_field_selector<Lazy_exact_nt<ET> >
+: Exact_field_selector<ET>
+{
+  // We have a choice here :
+  // - using ET gets rid of the DAG computation as well as redoing the interval
+  // - using Lazy_exact_nt<ET> might use sharper intervals.
+  // typedef ET  Type;
+  // typedef Lazy_exact_nt<ET>  Type;
+};
+template < typename ET >
+struct Exact_ring_selector<Lazy_exact_nt<ET> >
+: Exact_ring_selector<ET>
+{};
+
+} } //namespace CGAL::internal
 
 namespace Eigen {
   template<class> struct NumTraits;

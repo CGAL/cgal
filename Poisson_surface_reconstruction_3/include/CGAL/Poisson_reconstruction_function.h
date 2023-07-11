@@ -45,8 +45,6 @@
 #include <CGAL/Timer.h>
 
 #include <memory>
-#include <boost/array.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 
 /*!
@@ -381,7 +379,7 @@ public:
     InputIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
     std::enable_if_t<
-      boost::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>::value
+      std::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>::value
     >* = 0
   )
     : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)

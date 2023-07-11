@@ -398,7 +398,7 @@ Result of the run of the draw_surface_mesh program. A window shows the surface m
 
 \section sectionSurfaceMeshImplementation Implementation Details
 
-As integer type for the indices we have chosen `boost::uint32_t`. On 64 bit operating systems they
+As integer type for the indices we have chosen `std::uint32_t`. On 64 bit operating systems they
 take only half the size of a pointer. They still allow to have meshes with 2 billion elements.
 
 We use `std::vector` for storing properties. So by accessing the address

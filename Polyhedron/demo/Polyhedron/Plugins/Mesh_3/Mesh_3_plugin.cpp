@@ -685,9 +685,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
           ui.weightsSigma_label, SLOT(setEnabled(bool)));
   ui.labeledImgGroup->setVisible(input_is_labeled_img);
-  ui.weightsSigma->setValue((std::max)(image_item->image()->vx(),
-                            (std::max)(image_item->image()->vy(),
-                                       image_item->image()->vz())));
+  if(image_item != nullptr && input_is_labeled_img)
+    ui.weightsSigma->setValue(image_item->default_sigma_weights());
 
 #ifndef CGAL_USE_ITK
   if (input_is_labeled_img)
@@ -788,7 +787,28 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         return item->polyhedron();
       });
 
-    if(bounding_polyhedron != nullptr)
+    if(!incident_sub.empty())
+    {
+      thread = cgal_code_mesh_3(
+        polyhedrons,
+        incident_sub,
+        item_name,
+        angle,
+        facets_sizing,
+        facets_min_sizing,
+        approx,
+        tets_sizing,
+        tets_min_sizing,
+        edges_sizing,
+        edges_min_sizing,
+        tets_shape,
+        protect_features,
+        protect_borders,
+        sharp_edges_angle_bound,
+        manifold,
+        mesh_type == Mesh_type::SURFACE_ONLY);
+    }
+    else
     {
       thread = cgal_code_mesh_3(
         polyhedrons,
@@ -810,27 +830,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY);
     }
-    else if(!incident_sub.empty())
-    {
-      thread = cgal_code_mesh_3(
-        polyhedrons,
-        incident_sub,
-        item_name,
-        angle,
-        facets_sizing,
-        facets_min_sizing,
-        approx,
-        tets_sizing,
-        tets_min_sizing,
-        edges_sizing,
-        edges_min_sizing,
-        tets_shape,
-        protect_features,
-        protect_borders,
-        sharp_edges_angle_bound,
-        manifold,
-        mesh_type == Mesh_type::SURFACE_ONLY);
-     }
     break;
   }//end case POLYHEDRAL_MESH_ITEMS
   // Implicit functions

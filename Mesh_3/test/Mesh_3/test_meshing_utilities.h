@@ -399,7 +399,7 @@ struct Tester
     // Parallel
     typedef typename C3t3::Concurrency_tag Concurrency_tag;
 
-    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
       assert(hdist <= reference_value*4.);
     else
 #endif //CGAL_LINKED_WITH_TBB

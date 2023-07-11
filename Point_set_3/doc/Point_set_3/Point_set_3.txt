@@ -117,7 +117,7 @@ For example, if the following line is found in the PLY header:
 
 > property uchar red
 
-Then a property named `red` and with type `boost::uint8_t` (`boost`
+Then a property named `red` and with type `std::uint8_t` (`boost`
 types are used because of their fixed memory size) will be
 instantiated in the point set and filled with the corresponding
 values.

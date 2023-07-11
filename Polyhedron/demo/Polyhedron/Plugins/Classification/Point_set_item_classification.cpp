@@ -14,7 +14,6 @@
 #include <set>
 #include <stack>
 #include <algorithm>
-#include <boost/array.hpp>
 
 Point_set_item_classification::Point_set_item_classification(Scene_points_with_normal_item* points)
   : m_points (points)
@@ -532,11 +531,11 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
 
   bool colors = (m_color != Point_set::Property_map<CGAL::IO::Color>());
 
-  Point_set::Property_map<boost::uint8_t> echo_map;
+  Point_set::Property_map<std::uint8_t> echo_map;
   bool echo;
-  boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
+  boost::tie (echo_map, echo) = m_points->point_set()->template property_map<std::uint8_t>("echo");
   if (!echo)
-    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
+    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<std::uint8_t>("number_of_returns");
 
   m_generator = new Generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales, voxel_size);
 
@@ -668,17 +667,17 @@ void Point_set_item_classification::add_remaining_point_set_properties_as_featur
         prop[i] == "r" || prop[i] == "g" || prop[i] == "b")
       continue;
 
-    if (try_adding_simple_feature<boost::int8_t>(prop[i]))
+    if (try_adding_simple_feature<std::int8_t>(prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::uint8_t>(prop[i]))
+    if (try_adding_simple_feature<std::uint8_t>(prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int16_t>(prop[i]))
+    if (try_adding_simple_feature<std::int16_t>(prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::uint16_t>(prop[i]))
+    if (try_adding_simple_feature<std::uint16_t>(prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int32_t>(prop[i]))
+    if (try_adding_simple_feature<std::int32_t>(prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::uint32_t>(prop[i]))
+    if (try_adding_simple_feature<std::uint32_t>(prop[i]))
       continue;
     if (try_adding_simple_feature<float>(prop[i]))
       continue;
