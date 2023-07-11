@@ -890,7 +890,11 @@ public Q_SLOTS:
       tbb::parallel_for(
         tbb::blocked_range<std::size_t>(0, selection.size()),
         Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
-                                                                        selection, edges_to_protect, edges_only, target_length, nb_iter, protect, smooth_features));
+                                                                        selection, edges_to_protect, edges_only
+                                                                      , edge_sizing_type, target_length, error_tol
+                                                                      , min_length , max_length, nb_iter
+                                                                      , protect, smooth_features)
+                                                                        );
 
     total_time = time.elapsed();
 
