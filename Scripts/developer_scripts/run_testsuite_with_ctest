@@ -414,6 +414,13 @@ run_test_on_host()
   fi
 
   for PLATFORM in ${PLATFORMS}; do
+
+    if [ "${CGAL_RELEASE_ID}" \> "CGAL-6.0" ]; then
+      if [ "${PLATFORM}" = "MSVC2015-Release-64bits" ]; then
+        continue
+      fi
+    fi
+
     run_test_on_platform "${PLATFORM}"
     collect_demos_binaries "${PLATFORM}"
     publish_results "${PLATFORM}"
