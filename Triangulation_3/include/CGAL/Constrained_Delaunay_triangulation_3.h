@@ -408,7 +408,9 @@ public:
 
   Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
   {
-    return this->insert_constrained_edge_impl(va, vb, insert_in_conflict_visitor);
+    const auto id = this->insert_constrained_edge_impl(va, vb, insert_in_conflict_visitor);
+    this->restore_Delaunay(insert_in_conflict_visitor);
+    return id;
   }
 
   bool is_constrained(Facet f) const {
