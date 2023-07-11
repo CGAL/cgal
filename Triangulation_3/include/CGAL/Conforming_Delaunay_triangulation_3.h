@@ -362,7 +362,7 @@ protected:
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
     if (!tr.tds().is_edge(va, vb)) {
-      const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(subconstraint);
+      const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
 #ifdef CGAL_DEBUG_CDT_3
@@ -387,8 +387,7 @@ protected:
     return c_id;
   }
 
-  Constraint_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive = true) const {
-    auto constraint_id_goes_to_vb = [this, va, vb](Constraint_id c_id) {
+  auto constraint_extremitites(Constraint_id c_id) const {
       CGAL_assertion(std::find(this->constraint_hierarchy.c_begin(),
                                this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
@@ -403,6 +402,12 @@ protected:
       while(std::next(it) != end)
         ++it;
       const auto c_vb = *it;
+    return std::make_pair(c_va, c_vb);
+  }
+
+  Constraint_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive = true) const {
+    auto constraint_id_goes_to_vb = [this, va, vb](Constraint_id c_id) {
+      const auto [c_va, c_vb] = constraint_extremitites(c_id);
       if (va == c_va && vb == c_vb)
         return true;
       if (vb == c_va && va == c_vb)
@@ -433,7 +438,8 @@ protected:
     Vertex_handle reference_vertex;
   };
 
-  Construct_Steiner_point_return_type construct_Steiner_point(Subconstraint subconstraint)
+  Construct_Steiner_point_return_type
+  construct_Steiner_point(Constraint_id constraint_id, Subconstraint subconstraint)
   {
     auto& gt = tr.geom_traits();
     auto angle_functor = gt.angle_3_object();
@@ -544,35 +550,70 @@ protected:
 #endif // CGAL_DEBUG_CDT_3
     CGAL_assertion(vector_of_encroaching_vertices.begin() != end);
 
-    const auto reference_point_it = std::max_element(
+    const auto reference_vertex_it = std::max_element(
         vector_of_encroaching_vertices.begin(), end,
         [pa, pb, &compare_angle_functor, this](Vertex_handle v1,
                                                Vertex_handle v2) {
           return compare_angle_functor(pa, this->tr.point(v1), pb, pa,
                                        this->tr.point(v2), pb) == SMALLER;
         });
-    CGAL_assertion(reference_point_it != end);
+    CGAL_assertion(reference_vertex_it != end);
 #ifdef CGAL_DEBUG_CDT_3
-    std::cerr << "  -> reference point: " << display_vert(*reference_point_it)
+    std::cerr << "  -> reference point: " << display_vert(*reference_vertex_it)
               << '\n';
 #endif // CGAL_DEBUG_CDT_3
-    const auto &reference_point = tr.point(*reference_point_it);
-    const auto cell_incident_to_reference_point = (*reference_point_it)->cell();
+    const auto reference_vertex = *reference_vertex_it;
+    const auto& reference_point = tr.point(reference_vertex);
 
+    if(!reference_vertex->original_point && reference_vertex->nb_of_incident_constraints > 0) {
+      CGAL_assertion(reference_vertex->nb_of_incident_constraints == 1);
+      const auto ref_constraint_id = reference_vertex->constraint_id(*this);
+      const auto [ref_va, ref_vb] = constraint_extremitites(ref_constraint_id);
+      const auto [orig_va, orig_vb] = constraint_extremitites(constraint_id);
+      const auto& orig_pa = tr.point(orig_va);
+      const auto& orig_pb = tr.point(orig_vb);
+      const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
+      auto return_orig_result_point =
+          [&](auto lambda, Point orig_pa, Point orig_pb)
+              -> Construct_Steiner_point_return_type
+          {
+            const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
+            const auto result_point = (lambda < 0.2 || lambda > 0.8)
+                                          ? midpoint_functor(pa, pb)
+                                          : translate_functor(orig_pa, scaled_vector_functor(vector_orig_ab, lambda));
+
+#ifdef CGAL_DEBUG_CDT_3
+            std::cerr << "ref lambda = " << lambda << '\n';
+            std::cerr << "  -> Steiner point: " << result_point << '\n';
+#endif // CGAL_DEBUG_CDT_3
+            return {result_point, reference_vertex->cell(), reference_vertex};
+          };
+
+      const auto length_orig_ab = CGAL::sqrt(sq_length_functor(vector_orig_ab));
+      if(ref_va == orig_va || ref_vb == orig_va) {
+        const auto vector_orig_a_ref = vector_functor(orig_pa, reference_point);
+        const auto length_orig_a_ref = CGAL::sqrt(sq_length_functor(vector_orig_a_ref));
+        const auto lambda = length_orig_a_ref / length_orig_ab;
+        return return_orig_result_point(lambda, orig_pa, orig_pb);
+      } else if(ref_va == orig_vb || ref_vb == orig_vb) {
+        const auto vector_orig_b_ref = vector_functor(orig_pb, reference_point);
+        const auto length_orig_b_ref = CGAL::sqrt(sq_length_functor(vector_orig_b_ref));
+        const auto lambda = length_orig_b_ref / length_orig_ab;
+        return return_orig_result_point(lambda, orig_pb, orig_pa);
+      }
+    }
     // compute the projection of the reference point
     const auto vector_ab = vector_functor(pa, pb);
     const auto vector_a_ref = vector_functor(pa, reference_point);
     const auto lambda = sc_product_functor(vector_a_ref, vector_ab) / sq_length_functor(vector_ab);
-
-    const auto result_point =
-     (lambda < 0.2 || lambda > 0.8) ?
-      midpoint_functor(pa, pb) :
-      translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
+    const auto result_point = (lambda < 0.2 || lambda > 0.8)
+                                  ? midpoint_functor(pa, pb)
+                                  : translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
 
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_DEBUG_CDT_3
-    return { result_point, cell_incident_to_reference_point, *reference_point_it };
+    return {result_point, reference_vertex->cell(), reference_vertex};
   }
 
 protected:

@@ -391,19 +391,20 @@ protected:
 
 public:
   Vertex_handle insert(const Point_3 &p, Locate_type lt, Cell_handle c,
-                               int li, int lj)
+                       int li, int lj, bool is_original_point = false)
   {
     auto v = Conforming_Dt::insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
+    v->original_point = is_original_point;
     Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
     return v;
   }
 
-  Vertex_handle insert(const Point_3 &p, Cell_handle start = {}) {
+  Vertex_handle insert(const Point_3 &p, Cell_handle start = {}, bool is_original_point = false) {
     Locate_type lt;
     int li, lj;
 
     Cell_handle c = tr.locate(p, lt, li, lj, start);
-    return insert(p, lt, c, li, lj);
+    return insert(p, lt, c, li, lj, is_original_point);
   }
 
   Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
@@ -424,7 +425,7 @@ public:
     handles.reserve(polygon.size());
     boost::optional<Cell_handle> hint;
     for(const auto& p : polygon) {
-      const auto v = this->insert(p, hint.value_or(Cell_handle{}));
+      const auto v = this->insert(p, hint.value_or(Cell_handle{}), true);
       handles.push_back(v);
       v->original_point = true;
       hint = v->cell();
@@ -437,6 +438,12 @@ public:
       std::ranges::common_range<Vertex_handles>
       && (std::is_convertible_v<std::ranges::range_value_t<Vertex_handles>, Vertex_handle>))
   boost::optional<Face_index> insert_constrained_face(Vertex_handles&& vertex_handles) {
+#if CGAL_DEBUG_CDT_3 & 2
+    std::cerr << "insert_constrained_face (" << std::size(vertex_handles) << " vertices):\n";
+    for(auto v: vertex_handles) {
+      std::cerr << "  - " << this->display_vert(v) << '\n';
+    }
+#endif // CGAL_DEBUG_CDT_3 & 2
     using std::begin;
     using std::endl;
     const auto first_it = begin(vertex_handles);
