@@ -168,7 +168,7 @@ protected:
 
   template <typename Visitor>
   Constraint_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb,
-                                             Visitor& visitor) {
+                                             Visitor&) {
     if(va != vb) {
       const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
       // traverse all the vertices along [va, vb] and add pairs of consecutive
