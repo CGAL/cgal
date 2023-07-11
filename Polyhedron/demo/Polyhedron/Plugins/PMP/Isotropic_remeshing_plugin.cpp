@@ -491,6 +491,7 @@ public Q_SLOTS:
                 std::pair<double, double> edge_min_max{min_length, max_length};
                 PMP::Adaptive_sizing_field adaptive_sizing_field(error_tol
                                                                , edge_min_max
+                                                               , faces(*selection_item->polyhedron())
                                                                , *selection_item->polyhedron());
                 if (fpmap_valid)
                   CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
@@ -573,6 +574,7 @@ public Q_SLOTS:
                 std::pair<double, double> edge_min_max{min_length, max_length};
                 PMP::Adaptive_sizing_field adaptive_sizing_field(error_tol
                                                                , edge_min_max
+                                                               , faces(*selection_item->polyhedron())
                                                                , *selection_item->polyhedron());
                 if (fpmap_valid)
                   CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
@@ -732,6 +734,7 @@ public Q_SLOTS:
             std::pair<double, double> edge_min_max{min_length, max_length};
             PMP::Adaptive_sizing_field adaptive_sizing_field(error_tol
                     , edge_min_max
+                    , faces(*poly_item->polyhedron())
                     , *poly_item->polyhedron());
             if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
@@ -985,6 +988,7 @@ private:
           std::pair<double, double> edge_min_max{min_length_, max_length_};
           PMP::Adaptive_sizing_field adaptive_sizing_field(error_tol_
                                                          , edge_min_max
+                                                         , faces(*poly_item->polyhedron())
                                                          , *poly_item->polyhedron());
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
               faces(*poly_item->polyhedron())

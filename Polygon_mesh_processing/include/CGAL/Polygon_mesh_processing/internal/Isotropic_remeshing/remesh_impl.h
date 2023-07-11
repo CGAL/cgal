@@ -553,7 +553,7 @@ namespace internal {
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
         //todo ip-add: already updating sizing here because of is_too_long checks below
-        if constexpr (!std::is_same<SizingFunction, Uniform_sizing_field<PM>>::value)
+        if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM>>)
           sizing.update_sizing_map(vnew);
 
         //check sub-edges

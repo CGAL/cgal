@@ -43,8 +43,10 @@ public:
   typedef typename boost::property_map<PolygonMesh,
                                        Vertex_property_tag>::type Vertex_sizing_map;
 
+  template <typename FaceRange>
   Adaptive_sizing_field(const double tol
                       , const std::pair<FT, FT>& edge_len_min_max
+                      , const FaceRange& face_range
                       , PolygonMesh& pmesh)
     : tol(tol)
     , m_short(edge_len_min_max.first)
@@ -52,31 +54,7 @@ public:
     , m_pmesh(pmesh)
   {
     m_vertex_sizing_map = get(Vertex_property_tag(), m_pmesh);
-  }
 
-private:
-  FT sqlength(const vertex_descriptor va,
-              const vertex_descriptor vb) const
-  {
-    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
-      vpmap = get(CGAL::vertex_point, m_pmesh);
-    return FT(CGAL::squared_distance(get(vpmap, va), get(vpmap, vb)));
-  }
-
-  FT sqlength(const halfedge_descriptor& h) const
-  {
-    return sqlength(target(h, m_pmesh), source(h, m_pmesh));
-  }
-
-public:
-  FT get_sizing(const vertex_descriptor v) const {
-      CGAL_assertion(get(m_vertex_sizing_map, v));
-      return get(m_vertex_sizing_map, v);
-    }
-
-  template <typename FaceRange>
-  void calc_sizing_map(const FaceRange& face_range)
-  {
     if (face_range.size() == faces(m_pmesh).size())
     {
       // calculate curvature from the whole mesh
@@ -97,6 +75,7 @@ public:
     }
   }
 
+private:
   template <typename FaceGraph>
   void calc_sizing_map(FaceGraph& face_graph)
   {
@@ -149,6 +128,48 @@ public:
               << oversize  << " set to max, "
               << undersize << " set to min)" << std::endl;
 #endif
+  }
+
+  FT sqlength(const vertex_descriptor va,
+              const vertex_descriptor vb) const
+  {
+    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
+      vpmap = get(CGAL::vertex_point, m_pmesh);
+    return FT(CGAL::squared_distance(get(vpmap, va), get(vpmap, vb)));
+  }
+
+  FT sqlength(const halfedge_descriptor& h) const
+  {
+    return sqlength(target(h, m_pmesh), source(h, m_pmesh));
+  }
+
+public:
+  FT get_sizing(const vertex_descriptor v) const {
+      CGAL_assertion(get(m_vertex_sizing_map, v));
+      return get(m_vertex_sizing_map, v);
+    }
+
+  template <typename FaceRange>
+  void calc_sizing_map(const FaceRange& face_range)
+  {
+    if (face_range.size() == faces(m_pmesh).size())
+    {
+      // calculate curvature from the whole mesh
+      calc_sizing_map(m_pmesh);
+    }
+    else
+    {
+      // expand face selection and calculate curvature from it
+      std::vector<face_descriptor> selection(face_range.begin(), face_range.end());
+      auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
+      for (face_descriptor f : faces(m_pmesh)) put(is_selected, f, false);
+      for (face_descriptor f : face_range)  put(is_selected, f, true);
+      CGAL::expand_face_selection(selection, m_pmesh, 1
+                                , is_selected, std::back_inserter(selection));
+      CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
+
+      calc_sizing_map(ffg);
+    }
   }
 
   boost::optional<FT> is_too_long(const halfedge_descriptor h) const
