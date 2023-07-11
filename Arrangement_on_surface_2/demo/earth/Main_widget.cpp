@@ -90,7 +90,7 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
   }
   else if(m_middle_mouse_button_down)
   {
-    const float zoom_scale_factor = 0.01f;
+    const float zoom_scale_factor = 0.001f;
     const auto distance = zoom_scale_factor * diff.y();
     m_camera.move_forward(distance);
   }
@@ -206,10 +206,36 @@ void readShapefile(const std::string& filename) {
 
 void Main_widget::initializeGL()
 {
+  // verify that the node (180.0, -84.71338) in Antarctica is redundant
+  {
+    Kml::Node n1(178.277211542064, -84.4725179992025),
+              n2(180.0, -84.71338),
+              n3(-179.942499356179, -84.7214433735525);
+
+    // 1) check if it is collinear with its neighboring nodes:
+    // all of the vectors in 3D must lie in the same plane
+    auto v1 = n1.get_coords_3f();
+    auto v2 = n2.get_coords_3f();
+    auto v3 = n3.get_coords_3f();
+    auto n = QVector3D::crossProduct(v1, v3);
+    n.normalize();
+    std::cout << "*** DOT PRODUCT = " << QVector3D::dotProduct(n, v2) << std::endl;
+
+    // 2) check if it is between its neighbors (check if r,s > 0)
+    auto det = [](float ax, float ay, float bx, float by) { return ax * by - ay * bx; };
+    auto D  = det(v1.x(), v1.y(), v3.x(), v3.y());
+    auto Dr = det(v2.x(), v2.y(), v3.x(), v3.y());
+    auto Ds = det(v1.x(), v1.y(), v2.x(), v2.y());
+    auto r = Dr / D;
+    auto s = Ds / D;
+    std::cout << "r = " << r << "\ns=" << s << std::endl;
+  }
+
   //readShapefile("C:/work/gsoc2023/data/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp");
 
   //const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
-  const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
+  //const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
+  const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
 
@@ -231,6 +257,20 @@ void Main_widget::initializeGL()
     auto created_vertices = Aos::ext_check(m_countries);
     //auto created_vertices = Aos::ext_check_id_based(m_countries);
     m_vertices = std::make_unique<Vertices>(created_vertices);
+  }
+
+  // init problematic vertices: these are the vertices incident to deg-4 vertex
+  {
+    Kml::Nodes prob_nodes = {
+      {23.8058134294668,8.66631887454253},
+      {24.1940677211877,8.7286964724039 },
+      {24.5673690121521,8.22918793378547},
+      {23.8869795808607,8.61972971293307}
+    };
+    std::vector<QVector3D> prob_vertices;
+    for (const auto& node : prob_nodes)
+      prob_vertices.push_back(node.get_coords_3f());
+    m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
   }
 
 
@@ -256,7 +296,8 @@ void Main_widget::initializeGL()
       auto country_border = std::make_unique<Line_strips>(approx_arcs);
       m_country_borders.push_back(std::move(country_border));
     }
-    m_selected_country_index = 159; // ANTARCTICA
+    m_selected_country_index = 0;     
+    //m_selected_country_index = 159; // ANTARCTICA
     m_selected_country = &m_countries[m_selected_country_index];
     m_selected_country_nodes = m_selected_country->get_all_nodes();
     m_selected_country_arcs = m_selected_country->get_all_arcs();
@@ -505,8 +546,13 @@ void Main_widget::paintGL()
 
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
-    glPointSize(5);
+    glPointSize(3);
     m_vertices->draw();
+
+    sp.set_uniform("u_color", QVector4D(0,1,0,1));
+    glPointSize(2);
+    m_problematic_vertices->draw();
+
 
     sp.unuse();
   }

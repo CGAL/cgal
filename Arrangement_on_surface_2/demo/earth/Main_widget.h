@@ -60,7 +60,7 @@ private:
   std::unique_ptr<Sphere>           m_sphere;
   std::unique_ptr<World_coord_axes> m_world_coord_axes;
   std::unique_ptr<Line_strips>      m_geodesic_arcs;
-  std::unique_ptr<Vertices>         m_vertices;
+  std::unique_ptr<Vertices>         m_vertices, m_problematic_vertices;
   std::unique_ptr<Line_strips>      m_identification_curve;
 
   // COUNTRY DATA

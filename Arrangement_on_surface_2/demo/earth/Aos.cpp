@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <iterator>
+#include <map>
+#include <set>
 #include <vector>
 
 #include <qmath.h>
@@ -131,6 +133,8 @@ namespace {
   int num_counted_nodes = 0;
   int num_counted_arcs = 0;
   int num_counted_polygons = 0;
+  std::map<Ext_aos::Vertex_handle, Kml::Node>  vertex_node_map;
+  
   template<typename Arr_type>
   Curves  get_arcs(const Kml::Placemarks& placemarks, Arr_type& arr)
   {
@@ -166,7 +170,11 @@ namespace {
             const auto p = node.get_coords_3d();
             Approximate_Vector_3  v(p.x, p.y, p.z);
             sphere_points.push_back(v);
-            CGAL::insert_point(arr, ctr_p(p.x, p.y, p.z));
+            auto vh = CGAL::insert_point(arr, ctr_p(p.x, p.y, p.z));
+            if constexpr (std::is_same<Arr_type, Ext_aos>::value)
+            {
+              vertex_node_map.insert(std::make_pair(vh, node));
+            }
           }
 
           // add curves
@@ -359,12 +367,22 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
       
       created_vertices.push_back(new_vertex);
 
-      // find the arcs that are adjacent to this vertex
-      const auto first = vit->incident_halfedges();
-      auto curr = first;
-      do {
-
-      } while (++curr != first);
+      // find the arcs that are adjacent to the vertex of degree 4
+      if(4 == vit->degree())
+      {
+        std::cout << "**************************\n DEGREE 4 VERTEX: \n";
+        const auto first = vit->incident_halfedges();
+        auto curr = first;
+        do {
+          auto tvh = curr->twin()->target();
+          //std::cout << std::boolalpha << svh->data().v << " - " << tvh->data().v << std::endl;
+          auto it = vertex_node_map.find(tvh);
+          if (it != vertex_node_map.end())
+            std::cout << std::setprecision(16) << it->second << std::endl;
+          else
+            std::cout << "NOT FOUND!!\n";
+        } while (++curr != first);
+      }
     
       std::cout << "\n";
     }
