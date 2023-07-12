@@ -52,26 +52,31 @@ file(GLOB source_files_aos
 source_group( "Aos"  FILES ${source_files_aos} )
 
 
-# GEOMETRY (Graphics-related)
-file(GLOB source_files_geometry   
-  Line_strips.h             Line_strips.cpp
-  Sphere.h                  Sphere.cpp
-  Vertices.h                Vertices.cpp
-  World_coordinate_axes.h   World_coordinate_axes.cpp
- )
-source_group( "Geometry"  FILES ${source_files_geometry} )
 # GRAPHICS
 file(GLOB source_files_graphics   
   Camera.h                  Camera.cpp
   Shader_program.h          Shader_program.cpp
  )
 source_group( "Graphics"  FILES ${source_files_graphics} )
+# GRAPHICS-GEOMETRY (Graphics-related)
+file(GLOB source_files_graphics_geometry
+  Line_strips.h             Line_strips.cpp
+  Sphere.h                  Sphere.cpp
+  Vertices.h                Vertices.cpp
+  World_coordinate_axes.h   World_coordinate_axes.cpp
+ )
+source_group( "Graphics_Geometry"  FILES ${source_files_graphics_geometry} )
 
+# GIS
+file(GLOB source_files_gis
+  Kml_reader.h    Kml_reader.cpp
+  Shapefile.h     Shapefile.cpp
+ )
+source_group( "GIS"  FILES ${source_files_gis} )
 
 #SOURCE FILES (NOT CATEGORIZED YET)
 file(GLOB source_files   
   Common_defs.h
-  Kml_reader.h              Kml_reader.cpp
                             main.cpp
   Main_widget.h             Main_widget.cpp
   Tools.h                   Tools.cpp
@@ -82,8 +87,9 @@ qt_standard_project_setup()
 
 qt_add_executable(earth
     ${source_files_aos}
-    ${source_files_geometry}
+    ${source_files_gis}
     ${source_files_graphics}
+    ${source_files_graphics_geometry}
     ${source_files}
 )
 

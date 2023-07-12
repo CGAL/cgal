@@ -1,5 +1,5 @@
 
-#include "Main_widget.h"
+#include "Scene.h"
 
 #include <cmath>
 #include <iostream>
@@ -9,18 +9,17 @@
 
 #include "Aos.h"
 #include "Kml_reader.h"
-#include "Shapefile.h"
 #include "Tools.h"
 
 
-Main_widget::~Main_widget()
+
+
+Scene::Scene(QOpenGLWidget* parent) : 
+  m_parent(parent)
 {
-  // Make sure the context is current when deleting the texture and the buffers.
-  makeCurrent();
-  doneCurrent();
 }
 
-void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
+void Scene::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 {
   switch (e->button())
   {
@@ -33,7 +32,7 @@ void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
     break;
   }
 }
-void Main_widget::mousePressEvent(QMouseEvent* e)
+void Scene::mousePressEvent(QMouseEvent* e)
 {
   set_mouse_button_pressed_flag(e, true);
   m_mouse_press_pos = m_last_mouse_pos = QVector2D(e->position());
@@ -44,7 +43,7 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
     m_camera.save_config();
   }
 }
-void Main_widget::mouseMoveEvent(QMouseEvent* e)
+void Scene::mouseMoveEvent(QMouseEvent* e)
 {
   auto current_mouse_pos = QVector2D(e->position());
   const auto diff = current_mouse_pos - m_last_mouse_pos;
@@ -98,16 +97,17 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
 
   m_last_mouse_pos = current_mouse_pos;
 }
-void Main_widget::mouseReleaseEvent(QMouseEvent* e)
+void Scene::mouseReleaseEvent(QMouseEvent* e)
 {
   set_mouse_button_pressed_flag(e, false);
 }
-void Main_widget::timerEvent(QTimerEvent*)
+void Scene::timerEvent(QTimerEvent*)
 {
-  update();
+  m_parent->update();
 }
 
-void Main_widget::keyPressEvent(QKeyEvent* event)
+bool show_map = true;
+void Scene::keyPressEvent(QKeyEvent* event)
 {
   switch (event->key())
   {
@@ -167,9 +167,47 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
 }
 
 
+#include <shapefil.h>
 
-void Main_widget::initializeGL()
+void readShapefile(const std::string& filename) {
+  // Open the shapefile
+  SHPHandle shp = SHPOpen(filename.c_str(), "rb");
+  if (shp == nullptr) {
+    std::cerr << "Failed to open shapefile: " << filename << std::endl;
+    return;
+  }
+
+  // Get shapefile information
+  int numEntities, shapeType;
+  double minBounds[4], maxBounds[4];
+  SHPGetInfo(shp, &numEntities, &shapeType, minBounds, maxBounds);
+  std::cout << "Number of entities: " << numEntities << std::endl;
+  std::cout << "Shape type: " << shapeType << std::endl;
+  std::cout << "Bounds: (" << minBounds[0] << ", " << minBounds[1] << "), ("
+    << maxBounds[0] << ", " << maxBounds[1] << ")" << std::endl;
+  //SHPT_POLYGON
+  // Read individual shapes
+  for (int i = 0; i < numEntities; ++i) {
+    SHPObject* shape = SHPReadObject(shp, i);
+
+    // Process the shape data
+    // Example: Print the shape's type and number of points
+    std::cout << "Shape " << i << ": Type " << shape->nSHPType
+      << ", Number of parts: " << shape->nParts 
+      << ", Number of points: " << shape->nVertices << std::endl;
+
+    // Clean up the shape object
+    SHPDestroyObject(shape);
+  }
+
+  // Close the shapefile
+  SHPClose(shp);
+}
+
+void Scene::initializeGL()
 {
+  initializeOpenGLFunctions();
+
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
   {
     Kml::Node n1(178.277211542064, -84.4725179992025),
@@ -195,23 +233,21 @@ void Main_widget::initializeGL()
     std::cout << "r = " << r << "\ns=" << s << std::endl;
   }
 
-  std::string data_path = "C:/work/gsoc2023/data/";
-  std::string shape_file_path = data_path + "ne_110m_admin_0_countries/";
-  auto shape_file_name = shape_file_path + "ne_110m_admin_0_countries.shp";
-  Shapefile::read(shape_file_name);
+  //readShapefile("C:/work/gsoc2023/data/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp");
 
-  //const auto file_name = data_path + "world_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  //const auto file_name = "C:/work/gsoc2023/data/world_countries.kml";
+  const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries.kml";
+  //const auto file_name = "C:/work/gsoc2023/data/ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
-  auto dup_nodes = Kml::get_duplicates(m_countries);
-
-  qDebug() << "identifying duplicate nodes";
   //auto all_nodes = Kml::generate_ids(m_countries);
   
-  // initialize rendering of DUPLICATE VERTICES
+  
   if(0)
   {
+    // initialize rendering of DUPLICATE VERTICES
+    qDebug() << "identifying duplicate nodes";
+    auto dup_nodes = Kml::get_duplicates(m_countries);
+
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
       vertices.push_back(node.get_coords_3f());
@@ -240,8 +276,6 @@ void Main_widget::initializeGL()
     m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
   }
 
-
-  initializeOpenGLFunctions();
 
   init_camera();
   init_geometry();
@@ -274,19 +308,16 @@ void Main_widget::initializeGL()
   glClearColor(0, 0, 0, 1);
   glEnable(GL_DEPTH_TEST);  // Enable depth buffer
   //glEnable(GL_CULL_FACE); // Enable back face culling
-
-  // Use QBasicTimer because its faster than QTimer
-  m_timer.start(12, this);
 }
 
 
 
-void Main_widget::init_camera()
+void Scene::init_camera()
 {
   m_camera.set_pos(0, 0, 3);
   //m_camera.rotate_around_x(-90);
 }
-void Main_widget::init_geometry()
+void Scene::init_geometry()
 {
   // SPHERE
   int num_slices, num_stacks;
@@ -304,7 +335,7 @@ void Main_widget::init_geometry()
   const float axes_length = 2;
   m_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
 }
-void Main_widget::init_shader_programs()
+void Scene::init_shader_programs()
 {
   Shader_program::set_shader_path("shaders/");
   m_sp_smooth.init_with_vs_fs("smooth");;
@@ -312,7 +343,7 @@ void Main_widget::init_shader_programs()
   m_sp_arc.init_with_vs_fs("arc");
 }
 
-float Main_widget::compute_backprojected_error(float pixel_error)
+float Scene::compute_backprojected_error(float pixel_error)
 {
   // compute the back-projected error
   QRect vp(0, 0, m_vp_width, m_vp_height);
@@ -335,7 +366,7 @@ float Main_widget::compute_backprojected_error(float pixel_error)
   //find_minimum_projected_error_on_sphere(err);
   return err;
 }
-void Main_widget::find_minimum_projected_error_on_sphere(float we)
+void Scene::find_minimum_projected_error_on_sphere(float we)
 {
   QRect vp(0, 0, m_vp_width, m_vp_height);
   auto proj = m_camera.get_projection_matrix();
@@ -419,7 +450,7 @@ void Main_widget::find_minimum_projected_error_on_sphere(float we)
   //std::cout << QVector3D(0, 0, 0).project(model_view, proj, vp) << std::endl;
 }
 
-void Main_widget::resizeGL(int w, int h)
+void Scene::resizeGL(int w, int h)
 {
   m_vp_width = w;
   m_vp_height = h;
@@ -433,7 +464,7 @@ void Main_widget::resizeGL(int w, int h)
   const auto err = compute_backprojected_error(0.5f);
   std::cout << "error = " << err << std::endl;
 }
-void Main_widget::paintGL()
+void Scene::paintGL()
 {
   QMatrix4x4 model;
   model.rotate(-90, 1,0,0); // this makes z-axes point upwards!
