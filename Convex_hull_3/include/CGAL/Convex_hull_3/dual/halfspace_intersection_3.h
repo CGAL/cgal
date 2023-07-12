@@ -30,7 +30,6 @@
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 #include <unordered_map>
-#include <boost/type_traits/is_floating_point.hpp>
 #include <deque>
 
 namespace CGAL
@@ -261,7 +260,7 @@ namespace CGAL
         // The check is done only if the number type is not float or double because in that
         // case we know the construction of dual points is not exact
         CGAL_assertion_msg(
-          boost::is_floating_point<typename K::FT>::value ||
+          std::is_floating_point<typename K::FT>::value ||
           Convex_hull_3::internal::point_inside_convex_polyhedron(P, *origin),
           "halfspace_intersection_3: origin not in the polyhedron"
         );

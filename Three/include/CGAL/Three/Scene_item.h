@@ -187,11 +187,11 @@ public:
   //! If the diagonal's length has never been computed, computes it and
   //! saves the result for further calls.
   //! @returns the item's bounding box's diagonal length.
-  virtual double diagonalBbox() const {
-   if(!is_diag_bbox_computed)
-       compute_diag_bbox();
-   is_diag_bbox_computed = true;
-   return _diag_bbox;
+  virtual double bboxDiagonal() const {
+    if(!is_bbox_diag_computed)
+      compute_diag_bbox();
+    is_bbox_diag_computed = true;
+    return _diag_bbox;
   }
 
   // Function about manipulation
@@ -413,7 +413,7 @@ protected:
   mutable Bbox _bbox;
   mutable double _diag_bbox;
   mutable bool is_bbox_computed;
-  mutable bool is_diag_bbox_computed;
+  mutable bool is_bbox_diag_computed;
   virtual void compute_bbox()const{}
   virtual void compute_diag_bbox()const;
   // The four basic properties

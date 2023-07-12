@@ -520,7 +520,7 @@ Step 2 defines the onsplit and onmerge dynamic functors. We can see here that wi
 
 The next operations will call these functors when 2-cells are split or merged. The \link GeneralizedMap::sew `sew<3>`\endlink operation calls 1 onmerge as two faces are identified; the \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink operation calls 3 onsplit as one face is split in 4.
 
-Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
+Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the functor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
 
 \cgalExample{Generalized_map/gmap_3_dynamic_onmerge.cpp}
 

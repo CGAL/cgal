@@ -79,7 +79,7 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
-  //typedef boost::true_type                Has_line_segment_constructor;
+  //typedef std::true_type                Has_line_segment_constructor;
 
   typedef Arr_oblivious_side_tag          Left_side_category;
   typedef Arr_oblivious_side_tag          Bottom_side_category;

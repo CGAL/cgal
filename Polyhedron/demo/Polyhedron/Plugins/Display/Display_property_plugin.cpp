@@ -1338,22 +1338,22 @@ call_on_PS_property(const std::string& name,
                     const Point_set& ps,
                     const Functor& functor) const
 {
-  if(ps.template property_map<boost::int8_t>(name).second)
-    return functor(ps.template property_map<boost::int8_t>(name).first);
-  else if(ps.template property_map<boost::uint8_t>(name).second)
-    return functor(ps.template property_map<boost::uint8_t>(name).first);
-  else if(ps.template property_map<boost::int16_t>(name).second)
-    return functor(ps.template property_map<boost::int16_t>(name).first);
-  else if(ps.template property_map<boost::uint16_t>(name).second)
-    return functor(ps.template property_map<boost::uint16_t>(name).first);
-  else if(ps.template property_map<boost::int32_t>(name).second)
-    return functor(ps.template property_map<boost::int32_t>(name).first);
-  else if(ps.template property_map<boost::uint32_t>(name).second)
-    return functor(ps.template property_map<boost::uint32_t>(name).first);
-  else if(ps.template property_map<boost::int64_t>(name).second)
-    return functor(ps.template property_map<boost::int64_t>(name).first);
-  else if(ps.template property_map<boost::uint64_t>(name).second)
-    return functor(ps.template property_map<boost::uint64_t>(name).first);
+  if(ps.template property_map<std::int8_t>(name).second)
+    return functor(ps.template property_map<std::int8_t>(name).first);
+  else if(ps.template property_map<std::uint8_t>(name).second)
+    return functor(ps.template property_map<std::uint8_t>(name).first);
+  else if(ps.template property_map<std::int16_t>(name).second)
+    return functor(ps.template property_map<std::int16_t>(name).first);
+  else if(ps.template property_map<std::uint16_t>(name).second)
+    return functor(ps.template property_map<std::uint16_t>(name).first);
+  else if(ps.template property_map<std::int32_t>(name).second)
+    return functor(ps.template property_map<std::int32_t>(name).first);
+  else if(ps.template property_map<std::uint32_t>(name).second)
+    return functor(ps.template property_map<std::uint32_t>(name).first);
+  else if(ps.template property_map<std::int64_t>(name).second)
+    return functor(ps.template property_map<std::int64_t>(name).first);
+  else if(ps.template property_map<std::uint64_t>(name).second)
+    return functor(ps.template property_map<std::uint64_t>(name).first);
   else if(ps.template property_map<float>(name).second)
     return functor(ps.template property_map<float>(name).first);
   else if(ps.template property_map<double>(name).second)
@@ -1369,22 +1369,22 @@ call_on_SM_property(const std::string& name,
                     const SMesh& mesh,
                     const Functor& functor) const
 {
-  if(mesh.template property_map<Simplex, boost::int8_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::int8_t>(name).first);
-  else if(mesh.template property_map<Simplex, boost::uint8_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::uint8_t>(name).first);
-  else if(mesh.template property_map<Simplex, boost::int16_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::int16_t>(name).first);
-  else if(mesh.template property_map<Simplex, boost::uint16_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::uint16_t>(name).first);
-  else if(mesh.template property_map<Simplex, boost::int32_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::int32_t>(name).first);
-  else if(mesh.template property_map<Simplex, boost::uint32_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::uint32_t>(name).first);
-  else if(mesh.template property_map<Simplex, boost::int64_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::int64_t>(name).first);
-  else if(mesh.template property_map<Simplex, boost::uint64_t>(name).second)
-    return functor(mesh.template property_map<Simplex, boost::uint64_t>(name).first);
+  if(mesh.template property_map<Simplex, std::int8_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::int8_t>(name).first);
+  else if(mesh.template property_map<Simplex, std::uint8_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::uint8_t>(name).first);
+  else if(mesh.template property_map<Simplex, std::int16_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::int16_t>(name).first);
+  else if(mesh.template property_map<Simplex, std::uint16_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::uint16_t>(name).first);
+  else if(mesh.template property_map<Simplex, std::int32_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::int32_t>(name).first);
+  else if(mesh.template property_map<Simplex, std::uint32_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::uint32_t>(name).first);
+  else if(mesh.template property_map<Simplex, std::int64_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::int64_t>(name).first);
+  else if(mesh.template property_map<Simplex, std::uint64_t>(name).second)
+    return functor(mesh.template property_map<Simplex, std::uint64_t>(name).first);
   else if(mesh.template property_map<Simplex, float>(name).second)
     return functor(mesh.template property_map<Simplex, float>(name).first);
   else if(mesh.template property_map<Simplex, double>(name).second)

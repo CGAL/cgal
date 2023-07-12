@@ -47,7 +47,7 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
   const std::size_t nz = image.zdim();
   const std::size_t size = nx * ny * nz;
 
-  typedef boost::uint16_t uint;
+  typedef std::uint16_t uint;
 
   if(nx > 65535 || ny > 65535 || nz > 65535)
   {

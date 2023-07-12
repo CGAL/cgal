@@ -34,9 +34,9 @@ to_rational(double x)
     typedef typename FT::Denominator_type Denominator_type;
     typename FT::Compose compose;
 
-    CGAL_static_assertion((::std::is_same<Is_fraction,Tag_true>::value));
+    static_assert(::std::is_same<Is_fraction,Tag_true>::value);
     CGAL_USE_TYPE(Is_fraction);
-    CGAL_static_assertion((::std::is_same<Numerator_type,Denominator_type>::value));
+    static_assert(::std::is_same<Numerator_type,Denominator_type>::value);
     CGAL_USE_TYPE(Denominator_type);
 
     Numerator_type num(0),den(1);

@@ -371,7 +371,7 @@ void find_vertex_vertex_matches_with_kd_tree(Unique_positions& unique_positions_
   tree.insert(unique_positions_Bv.begin(), unique_positions_Bv.end());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   // parallel
@@ -596,7 +596,7 @@ void find_vertex_vertex_matches_with_box_d(const Unique_positions& unique_positi
     boxes_B_ptr.push_back(&b);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else // CGAL_LINKED_WITH_TBB
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
@@ -730,7 +730,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
 
-  CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
+  static_assert(std::is_same<Point, typename GT::Point_3>::value);
 
   GT gt = choose_parameter<GT>(get_parameter(np_A, internal_np::geom_traits));
   VPM_A vpm_A = choose_parameter(get_parameter(np_A, internal_np::vertex_point),

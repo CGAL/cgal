@@ -21,9 +21,6 @@
 
 #include <vector>
 
-#include <boost/type_traits/remove_cv.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-
 #include <boost/mpl/transform.hpp>
 #include <boost/mpl/remove.hpp>
 
@@ -111,9 +108,9 @@ struct Type_mapper_impl < typename K1::FT, K1, K2 >
 
 template < typename T, typename K1, typename K2 >
 struct Type_mapper :
-    internal::Type_mapper_impl< typename boost::remove_cv<
-                                  typename boost::remove_reference < T >::type
-                                  >::type, K1, K2 >
+    internal::Type_mapper_impl< std::remove_cv_t<
+                                  std::remove_reference_t< T >
+                                  >, K1, K2 >
 { };
 
 } //namespace CGAL

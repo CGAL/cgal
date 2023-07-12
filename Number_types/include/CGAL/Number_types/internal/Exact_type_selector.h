@@ -22,7 +22,6 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Lazy_exact_nt.h>
 
 #include <CGAL/boost_mp.h>
 
@@ -279,21 +278,6 @@ template <>
 struct Exact_ring_selector<Exact_NT_backend<BOOST_BACKEND>::Rational>
 { typedef Exact_NT_backend<BOOST_BACKEND>::Rational  Type; };
 #endif
-
-template < typename ET >
-struct Exact_field_selector<Lazy_exact_nt<ET> >
-: Exact_field_selector<ET>
-{
-  // We have a choice here :
-  // - using ET gets rid of the DAG computation as well as redoing the interval
-  // - using Lazy_exact_nt<ET> might use sharper intervals.
-  // typedef ET  Type;
-  // typedef Lazy_exact_nt<ET>  Type;
-};
-template < typename ET >
-struct Exact_ring_selector<Lazy_exact_nt<ET> >
-: Exact_ring_selector<ET>
-{};
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 // Added for backward compatibility

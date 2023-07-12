@@ -174,7 +174,7 @@ public:
   //! saves the result for further calls.
   //! @returns the item's bounding box's diagonal length.
   //! @todo must replace the one from Scene_item eventually
-  virtual double diagonalBbox() const Q_DECL_OVERRIDE;
+  virtual double bboxDiagonal() const Q_DECL_OVERRIDE;
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //! \param viewer the new viewer.

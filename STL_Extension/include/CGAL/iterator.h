@@ -58,7 +58,7 @@ public:
   Prevent_deref(const I& i) : Base(i) {}
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
+  reference dereference() const { return const_cast<std::remove_reference_t<reference>&>(this->base_reference()); }
 };
 
 template<typename I>
@@ -1340,7 +1340,7 @@ class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...> >
  : private internal::Derivator<Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >, std::tuple<V...>, std::tuple<O...> >
  , public std::tuple<O...>
 {
-  CGAL_static_assertion_msg(sizeof...(V) == sizeof...(O),
+  static_assert(sizeof...(V) == sizeof...(O),
                 "The number of explicit template parameters has to match the number of arguments");
 
   static const int size = sizeof...(V);

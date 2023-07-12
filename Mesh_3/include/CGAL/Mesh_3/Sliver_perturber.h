@@ -59,7 +59,6 @@
 #include <boost/format.hpp>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 
 #include <boost/unordered_map.hpp>
 
@@ -928,7 +927,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_task_group();
 

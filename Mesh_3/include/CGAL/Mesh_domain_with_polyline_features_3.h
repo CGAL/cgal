@@ -37,7 +37,6 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 #include <memory>
 
@@ -883,7 +882,7 @@ public:
   }
   Curve_index maximal_curve_index() const {
     if(edges_incidences_.empty()) return Curve_index();
-    return boost::prior(edges_incidences_.end())->first;
+    return std::prev(edges_incidences_.end())->first;
   }
 
   void build_curves_aabb_tree() const {
@@ -1458,9 +1457,9 @@ insert_edge(InputIterator first, InputIterator end)
   // 'compute_corners_incidences()', that corner is incident only to a
   // loop, then it will be removed from the set of corners.
   register_corner(*first, curve_index);
-  if ( *first != *boost::prior(end) )
+  if ( *first != *std::prev(end) )
   {
-    register_corner(*boost::prior(end), curve_index);
+    register_corner(*std::prev(end), curve_index);
   }
 
   // Create a new polyline
