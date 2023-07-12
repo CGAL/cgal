@@ -40,7 +40,7 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-using Exact_integer = Exact_NT_backend<Default_exact_nt_backend>::Integer;
+using Exact_integer = internal::Exact_NT_backend<Default_exact_nt_backend>::Integer;
 
 #endif // not DOXYGEN_RUNNING
 
