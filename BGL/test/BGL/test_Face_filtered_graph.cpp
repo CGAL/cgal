@@ -20,7 +20,7 @@ typedef std::unordered_set<std::size_t> id_map;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename Graph>
-void test_halfedge_around_vertex_iterator(const  Graph& g)
+void test_halfedge_around_vertex_iterator(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
