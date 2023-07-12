@@ -743,8 +743,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #endif
 
     // if sq_d < nearest_vh's weight
-    while ( cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER &&
-            ! is_special(nearest_vh) )
+    while ( ! is_special(nearest_vh) &&
+            cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
       CGAL_assertion( minimal_size_ > 0 || sq_d > 0 );
 
