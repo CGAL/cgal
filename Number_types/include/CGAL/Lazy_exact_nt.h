@@ -18,7 +18,6 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
@@ -385,7 +384,7 @@ public :
   // Also check that ET and AT are constructible from T?
   template<class T>
   Lazy_exact_nt (T i, std::enable_if_t<boost::mpl::and_<
-      boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
+      boost::mpl::or_<std::is_arithmetic<T>, std::is_enum<T> >,
       boost::mpl::not_<std::is_same<T,ET> > >::value,void*> = 0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 

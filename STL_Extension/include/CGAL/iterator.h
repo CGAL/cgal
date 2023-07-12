@@ -58,7 +58,7 @@ public:
   Prevent_deref(const I& i) : Base(i) {}
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
+  reference dereference() const { return const_cast<std::remove_reference_t<reference>&>(this->base_reference()); }
 };
 
 template<typename I>

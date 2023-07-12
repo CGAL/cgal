@@ -68,9 +68,9 @@ void test_uniqueness(const Graph&,
 #endif
 
   typename boost::range_iterator<ForwardRange>::type
-    begin = boost::begin(range),
-    begin2 = boost::begin(range),
-    end = boost::end(range);
+    begin = std::begin(range),
+    begin2 = std::begin(range),
+    end = std::end(range);
 
   typedef std::unordered_set<typename IndexPropertyMap::value_type> id_map;
   typedef std::pair<typename id_map::iterator, bool> resultp;

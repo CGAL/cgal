@@ -42,7 +42,7 @@ struct Add_determinant_of_points_from_vectors_and_minus
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_points_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   static NT determinant_of_points(Vector const&a, Vector const&b,
       Vector const&c){
@@ -66,7 +66,7 @@ struct Add_determinant_of_points_from_vectors_and_minus
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_points_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   static NT determinant_of_points(Vector const&a, Vector const&b,
       Vector const&c, Vector const&d){
@@ -90,7 +90,7 @@ struct Add_determinant_of_points_from_vectors_and_minus
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_points_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   static NT determinant_of_points(Vector const&a, Vector const&b,
       Vector const&c, Vector const&d, Vector const&e){
@@ -114,7 +114,7 @@ struct Add_determinant_of_points_from_vectors_and_minus
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_points_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   static NT determinant_of_points(Vector const&a, Vector const&b,
       Vector const&c, Vector const&d, Vector const&e, Vector const&f){
@@ -138,7 +138,7 @@ struct Add_determinant_of_points_from_vectors_and_minus
     };
   template<class P,class=void> struct Property : LA::template Property<P> {};
   template<class D> struct Property<Has_determinant_of_points_tag, D> :
-    boost::true_type {};
+    std::true_type {};
 
   static NT determinant_of_points(Vector const&a, Vector const&b,
       Vector const&c, Vector const&d, Vector const&e, Vector const&f,

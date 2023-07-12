@@ -17,7 +17,6 @@
 
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <boost/type_traits/is_floating_point.hpp>
 #include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
@@ -31,7 +30,7 @@ template <class TriangleMesh,
           class VertexPointMap1, class VertexPointMap2,
           bool Predicates_on_constructions_needed,
           bool Has_exact_constructions =
-          !boost::is_floating_point<
+          !std::is_floating_point<
             typename Kernel_traits<
               typename boost::property_traits<VertexPointMap1>::value_type
             >::Kernel::FT

@@ -26,7 +26,7 @@ fills the face graph `tm` with the <A HREF="https://en.wikipedia.org/wiki/Simpli
 
 */
 template <class Triangulation, class TriangleMesh>
-typename boost::graph_trait<FG>::vertex_descriptor
+typename boost::graph_traits<FG>::vertex_descriptor
 link_to_face_graph(const Triangulation& t,
                    typename Triangulation::Vertex_handle vh,
                    TriangleMesh& tm,
