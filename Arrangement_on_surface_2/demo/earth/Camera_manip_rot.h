@@ -5,28 +5,25 @@
 #include <qevent.h>
 #include <qvector2d.h>
 
-#include "Camera.h"
+#include "Camera_manip.h"
 
 
-class Camera_manip_rot
+class Camera_manip_rot : public Camera_manip
 {
 public:
   Camera_manip_rot(Camera& camera);
 
-  void mousePressEvent(QMouseEvent* e);
-  void mouseMoveEvent(QMouseEvent* e);
-  void mouseReleaseEvent(QMouseEvent* e);
-
 protected:
-  void set_mouse_button_pressed_flag(QMouseEvent* e, bool flag);
+  void mouse_press_event(QMouseEvent* e) override;
+  void mouse_move_event(QMouseEvent* e) override;
+  void mouse_release_event(QMouseEvent* e) override;
 
 private:
-  Camera& m_camera;
   float m_theta = 0, m_phi = 0;
 
-  bool m_left_mouse_button_down = false;
-  QVector2D m_last_mouse_pos;
-  QVector2D m_mouse_press_pos;
+  //bool m_left_mouse_button_down = false;
+  //QVector2D m_last_mouse_pos;
+  //QVector2D m_mouse_press_pos;
 };
 
 

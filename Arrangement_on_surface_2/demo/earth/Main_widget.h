@@ -16,7 +16,7 @@
 #include <qopenglwidget.h>
 
 #include "Camera.h"
-#include "Camera_manip_rot.h"
+#include "Camera_manip.h"
 #include "Common_defs.h"
 #include "Kml_reader.h"
 #include "Line_strips.h"
@@ -84,7 +84,7 @@ private:
   
   // Camera & controls
   Camera  m_camera;
-  std::unique_ptr<Camera_manip_rot> m_camera_manip_rot;
+  std::unique_ptr<Camera_manip>  m_camera_manip_rot;
 
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;

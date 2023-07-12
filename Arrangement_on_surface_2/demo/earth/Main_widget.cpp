@@ -286,7 +286,7 @@ void Main_widget::initializeGL()
   m_timer.start(12, this);
 }
 
-
+#include "Camera_manip_rot.h"
 
 void Main_widget::init_camera()
 {
