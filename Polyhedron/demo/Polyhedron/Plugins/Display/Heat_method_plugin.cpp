@@ -137,7 +137,6 @@ public:
 
     auto vpm = CGAL::get(CGAL::vertex_point, *sm);
     auto vnormals = sm->property_map<vertex_descriptor, EPICK::Vector_3>("v:normal").first;
-    auto fnormals = sm->property_map<face_descriptor, EPICK::Vector_3>("f:normal").first;
 
     auto [vcolors, vcolors_found] = sm->property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
     CGAL_assertion(vcolors_found);
