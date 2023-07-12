@@ -984,7 +984,7 @@ verify(Objects_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         if (CGAL::assign(fh_cur, objs[pl][qi])) {
           if (fh_cur != fh_ref) {
             std::cout << "Error: point location number " << pl << std::endl;
-            std::cout << "Expecte: a face." << std::endl;
+            std::cout << "Expected: a face." << std::endl;
             std::cout << "Actual: a different face" << std::endl;
             result += -1;
           }
@@ -992,7 +992,7 @@ verify(Objects_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         }
 
         std::cout << "Error: point location number " << pl << std::endl;
-        std::cout << "Expecte: a face." << std::endl;
+        std::cout << "Expected: a face." << std::endl;
         result += -1;
         if (CGAL::assign(hh_cur, objs[pl][qi])) {
           std::cout << "Actual: a halfedge." << std::endl;

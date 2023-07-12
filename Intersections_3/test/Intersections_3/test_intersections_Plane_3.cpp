@@ -440,7 +440,7 @@ int main(int, char**)
   std::cout << " |||||||| Test Simple_cartesian<double> ||||||||" << std::endl;
   Plane_3_intersection_tester< CGAL::Simple_cartesian<double> >(r).run();
 
-  // Homogenous is broken for projection and Pln-Sphere
+  // Homogeneous is broken for projection and Pln-Sphere
 //  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::MP_Float> ||||||||" << std::endl;
 //  Plane_3_intersection_tester< CGAL::Homogeneous<CGAL::MP_Float> >(r).run();
 

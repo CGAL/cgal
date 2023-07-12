@@ -1,10 +1,10 @@
-#include<vector>
+#include <vector>
 
-#include<boost/shared_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Polygon_2.h>
-#include<CGAL/create_offset_polygons_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/create_offset_polygons_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 

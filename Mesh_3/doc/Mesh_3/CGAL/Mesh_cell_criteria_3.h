@@ -37,15 +37,21 @@ typedef Tr::FT FT;
 /// @{
 
 /*!
-Returns an object to serve as default criteria for cells. The argument
-`radius_edge_bound` is the upper bound for the radius-edge ratio
-of the tetrahedra. The argument `radius_bound` is a uniform upper bound
-for the circumradii of the tetrahedra in the mesh. See
-section \ref introsecparam for further details.
-Note that if one parameter is set to 0, then its corresponding criteria is ignored.
+* Returns an object to serve as default criteria for cells.
+* @param radius_edge_bound is the upper bound for the radius-edge ratio
+*     of the tetrahedra.
+* @param radius_bound is a uniform upper bound
+*     for the circumradii of the tetrahedra in the mesh. See
+*     section \ref introsecparam for further details.
+* @param min_radius_bound is a uniform lower bound for the
+*     circumradii of the tetrahedra in the mesh.
+*     Only cells with a circumradius larger than that
+*     bound will be refined.
+* Note that if one parameter is set to 0, then its corresponding criteria is ignored.
 */
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
-                       const FT& radius_bound);
+                       const FT& radius_bound,
+                       const FT& min_radius_bound = 0.);
 
 /*!
 Returns an object to serve as default criteria for facets. The type `SizingField` must
@@ -54,7 +60,8 @@ as above, except that the radius bound parameter is a functional instead of a co
 */
   template<class SizingField>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
-                       const SizingField& radius_bound);
+                       const SizingField& radius_bound,
+                       const FT& min_radius_bound = 0.);
 
 /// @}
 

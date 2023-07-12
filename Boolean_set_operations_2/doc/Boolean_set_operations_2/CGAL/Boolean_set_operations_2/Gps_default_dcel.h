@@ -24,9 +24,9 @@ class Gps_face_base : public Arr_face_base {};
 /*!
 \ingroup PkgBooleanSetOperations2Ref
 
-An instance of this teplate serves as a basis type for any halfedge record
+An instance of this template serves as a basis type for any halfedge record
 of the \dcel class used by instances of the
-General_polygon_set_2` and `General_polygon_with_holes_2` class templates.
+`General_polygon_set_2` and `General_polygon_with_holes_2` class templates.
 
 The `X_monotone_curve_2` template parameter is the type of
 \f$ x\f$-monotone curves associated with the halfedges.

@@ -76,31 +76,31 @@ endfunction()
 function(cgal_add_compilation_test exe_name)
   cmake_policy(SET CMP0064 NEW)
   if(NOT CMAKE_VS_MSBUILD_COMMAND)
-    if(TEST compilation_of__${exe_name})
+    if(TEST "compilation of  ${exe_name}")
       return()
     endif()
-    add_test(NAME "compilation_of__${exe_name}"
+    add_test(NAME "compilation of  ${exe_name}"
       COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
-    set_property(TEST "compilation_of__${exe_name}"
+    set_property(TEST "compilation of  ${exe_name}"
       APPEND PROPERTY LABELS "${PROJECT_NAME}")
-    set_property(TEST "compilation_of__${exe_name}"
+    set_property(TEST "compilation of  ${exe_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
-  elseif(NOT TARGET compilation_of__${PROJECT_NAME})#CMAKE_VS_MSBUILD_COMMAND
+  elseif(NOT TARGET "compilation_of__${PROJECT_NAME}")#CMAKE_VS_MSBUILD_COMMAND
     #this target is just a flag, to deal with the scope problem with the tests
-    add_custom_target(compilation_of__${PROJECT_NAME})
-    add_test(NAME "compilation_of__${PROJECT_NAME}"
+    add_custom_target("compilation_of__${PROJECT_NAME}")
+    add_test(NAME "compilation of  ${PROJECT_NAME}"
       COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
-    set_property(TEST "compilation_of__${PROJECT_NAME}"
+    set_property(TEST "compilation of  ${PROJECT_NAME}"
       APPEND PROPERTY LABELS "${PROJECT_NAME}")
-    set_property(TEST "compilation_of__${PROJECT_NAME}"
+    set_property(TEST "compilation of  ${PROJECT_NAME}"
       APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
-    set_tests_properties("compilation_of__${PROJECT_NAME}"
+    set_tests_properties("compilation of  ${PROJECT_NAME}"
       PROPERTIES RUN_SERIAL TRUE)
     #because of the scope of the tests, this part cannot go in the relevant CMakeLists
     if("${PROJECT_NAME}" STREQUAL "Polyhedron_Demo")
-      set_tests_properties(compilation_of__Polyhedron_Demo PROPERTIES TIMEOUT 2400)
+      set_tests_properties("compilation of  Polyhedron_Demo" PROPERTIES TIMEOUT 2400)
     elseif("${PROJECT_NAME}" STREQUAL "Mesh_3_Tests" OR "${PROJECT_NAME}" STREQUAL "Mesh_3_Examples")
-      set_tests_properties(compilation_of__${PROJECT_NAME} PROPERTIES TIMEOUT 1600)
+      set_tests_properties("compilation of  ${PROJECT_NAME}" PROPERTIES TIMEOUT 1600)
     endif()
 
   endif()#CMAKE_VS_MSBUILD_COMMAND
@@ -110,11 +110,11 @@ function(cgal_add_compilation_test exe_name)
   if(NOT TARGET cgal_check_build_system)
     add_custom_target(cgal_check_build_system)
     add_dependencies( ALL_CGAL_TARGETS cgal_check_build_system )
-    add_test(NAME "check_build_system"
+    add_test(NAME "check build system"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
-    set_property(TEST "check_build_system"
+    set_property(TEST "check build system"
       APPEND PROPERTY LABELS "CGAL_build_system")
-    set_property(TEST "check_build_system"
+    set_property(TEST "check build system"
        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
   endif()
   if(TARGET CGAL_Qt5_moc_and_resources) # if CGAL_Qt5 was searched, and is header-only
@@ -122,19 +122,19 @@ function(cgal_add_compilation_test exe_name)
     #  message(STATUS "${exe_name} depends on ${linked_libraries}")
     string(FIND "${linked_libraries}" "CGAL::CGAL_Qt5" link_with_CGAL_Qt5)
     if(link_with_CGAL_Qt5 STRGREATER "-1" AND
-        NOT TARGET compilation_of__CGAL_Qt5_moc_and_resources)
+        NOT TARGET "compilation_of__CGAL_Qt5_moc_and_resources")
       # This custom target is useless. It is used only as a flag to
       # detect that the test has already been created.
-      add_custom_target(compilation_of__CGAL_Qt5_moc_and_resources)
-      add_dependencies( compilation_of__CGAL_Qt5_moc_and_resources CGAL_Qt5_moc_and_resources )
-      add_test(NAME "compilation_of__CGAL_Qt5_moc_and_resources"
+      add_custom_target("compilation_of__CGAL_Qt5_moc_and_resources")
+      add_dependencies( "compilation_of__CGAL_Qt5_moc_and_resources" CGAL_Qt5_moc_and_resources )
+      add_test(NAME "compilation of  CGAL_Qt5_moc_and_resources"
         COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt5_moc_and_resources" --config "$<CONFIG>")
-      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
+      set_property(TEST "compilation of  CGAL_Qt5_moc_and_resources"
         APPEND PROPERTY LABELS "CGAL_build_system")
-      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
-        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
-      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
-        APPEND PROPERTY DEPENDS "check_build_system")
+      set_property(TEST "compilation of  CGAL_Qt5_moc_and_resources"
+        PROPERTY FIXTURES_SETUP "CGAL_Qt5_moc_and_resources_Fixture")
+      set_property(TEST "compilation of  CGAL_Qt5_moc_and_resources"
+        APPEND PROPERTY DEPENDS "check build system")
     endif()
   endif()
 endfunction(cgal_add_compilation_test)
@@ -158,10 +158,10 @@ function(cgal_setup_test_properties test_name)
   if(exe_name)
     if(NOT CMAKE_VS_MSBUILD_COMMAND)
       set_property(TEST "${test_name}"
-        APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+        APPEND PROPERTY DEPENDS "compilation of  ${exe_name}")
     else()#CMAKE_VS_MSBUILD_COMMAND
       set_property(TEST "${test_name}"
-        APPEND PROPERTY DEPENDS "compilation_of__${PROJECT_NAME}")
+        APPEND PROPERTY DEPENDS "compilation of  ${PROJECT_NAME}")
     endif()#CMAKE_VS_MSBUILD_COMMAND
   endif()
 
@@ -170,9 +170,9 @@ function(cgal_setup_test_properties test_name)
   string(FIND "${_binary_dir_abs}" "${_source_dir_abs}" _search_binary_in_source)
 
   if(_search_binary_in_source EQUAL "-1")
-    if(NOT TEST ${PROJECT_NAME}_SetupFixture)
+    if(NOT TEST "copy source_dir of ${PROJECT_NAME}")
       if(ANDROID)
-        add_test(NAME ${PROJECT_NAME}_SetupFixture
+        add_test(NAME "copy source_dir of ${PROJECT_NAME}"
           COMMAND
           ${adb_executable} push
           ${CMAKE_CURRENT_SOURCE_DIR}
@@ -185,51 +185,51 @@ function(cgal_setup_test_properties test_name)
           ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
           )
         set_property(TEST ${PROJECT_NAME}_copy_GMP_MPFR
-          APPEND PROPERTY DEPENDS ${PROJECT_NAME}_SetupFixture)
+          APPEND PROPERTY DEPENDS "copy source_dir of ${PROJECT_NAME}")
         set_property(TEST ${PROJECT_NAME}_copy_GMP_MPFR
           PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
       elseif(CGAL_RUN_TESTS_THROUGH_SSH)
-        add_test(NAME ${PROJECT_NAME}_SetupFixture
+        add_test(NAME "copy source_dir of ${PROJECT_NAME}"
           COMMAND
           ${scp_executable} -r
           ${CMAKE_CURRENT_SOURCE_DIR}
           ${SSH_HOST}:${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
           )
       else()
-        add_test(NAME ${PROJECT_NAME}_SetupFixture
+        add_test(NAME "copy source_dir of ${PROJECT_NAME}"
           COMMAND
           ${CMAKE_COMMAND} -E copy_directory
           ${CMAKE_CURRENT_SOURCE_DIR}
           ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
           )
       endif()
-      set_property(TEST ${PROJECT_NAME}_SetupFixture
+      set_property(TEST "copy source_dir of ${PROJECT_NAME}"
         PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
 
       if(ANDROID)
-        add_test(NAME ${PROJECT_NAME}_CleanupFixture
+        add_test(NAME "cleanup of ${PROJECT_NAME}"
           COMMAND
           ${adb_executable} shell rm -rf
           ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
           )
       elseif(CGAL_RUN_TESTS_THROUGH_SSH)
-        add_test(NAME ${PROJECT_NAME}_CleanupFixture
+        add_test(NAME "cleanup of ${PROJECT_NAME}"
           COMMAND
           ${ssh_executable} ${SSH_HOST} rm -rf
           ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
           )
       else()
-        add_test(NAME ${PROJECT_NAME}_CleanupFixture
+        add_test(NAME "cleanup of ${PROJECT_NAME}"
           COMMAND
           ${CMAKE_COMMAND} -E remove_directory
           ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
           )
       endif()
-      set_property(TEST ${PROJECT_NAME}_CleanupFixture
+      set_property(TEST "cleanup of ${PROJECT_NAME}"
         PROPERTY FIXTURES_CLEANUP ${PROJECT_NAME})
 
       set_property(TEST
-        ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
+        "cleanup of ${PROJECT_NAME}" "copy source_dir of ${PROJECT_NAME}"
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
     endif()
     if(NOT ANDROID AND NOT CGAL_RUN_TESTS_THROUGH_SSH)
@@ -244,10 +244,10 @@ function(cgal_setup_test_properties test_name)
       set_property(TEST ${test_name}
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
       if(NOT CMAKE_VS_MSBUILD_COMMAND)
-        set_property(TEST "compilation_of__${exe_name}"
+        set_property(TEST "compilation of  ${exe_name}"
           PROPERTY FIXTURES_SETUP "${exe_name}")
       else()#CMAKE_VS_MSBUILD_COMMAND
-        set_property(TEST "compilation_of__${PROJECT_NAME}"
+        set_property(TEST "compilation of  ${PROJECT_NAME}"
           PROPERTY FIXTURES_SETUP "${exe_name}")
       endif()#CMAKE_VS_MSBUILD_COMMAND
       if((ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH) AND NOT TEST push_of__${exe_name})
@@ -259,7 +259,7 @@ function(cgal_setup_test_properties test_name)
             COMMAND ${scp_executable} $<TARGET_FILE:${exe_name}> ${SSH_HOST}:${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/)
         endif()
         set_property(TEST "push_of__${exe_name}"
-          APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+          APPEND PROPERTY DEPENDS "compilation of  ${exe_name}")
         set_property(TEST "push_of__${exe_name}"
           APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
         set_property(TEST "push_of__${exe_name}"
@@ -283,7 +283,7 @@ function(cgal_add_test exe_name)
   set(test_name ${cgal_add_test_TEST_NAME})
 #  message("  test_name: ${test_name}")
   if(NOT test_name)
-    set(test_name "execution___of__${exe_name}")
+    set(test_name "execution   of  ${exe_name}")
   endif()
 #  message("  test_name: ${test_name}")
   if(cgal_add_test_NO_EXECUTION OR TEST ${test_name})

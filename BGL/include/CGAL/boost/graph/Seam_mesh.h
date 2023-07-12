@@ -177,7 +177,7 @@ public:
 
 /// \ingroup PkgBGLAdaptors
 ///
-/// This class is a data structure that takes a triangle mesh, further refered
+/// This class is a data structure that takes a triangle mesh, further referred
 /// to as `underlying mesh` and turns some marked edges of that mesh into
 /// virtual boundary edges.
 ///

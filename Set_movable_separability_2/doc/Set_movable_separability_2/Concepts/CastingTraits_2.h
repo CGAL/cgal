@@ -5,8 +5,7 @@
 
   This concept generalizes the concept of a 2D Kernel.
 
-  \cgalRefines `DefaultConstructible`
-  \cgalRefines `PolygonTraits_2`
+  \cgalRefines{DefaultConstructible,PolygonTraits_2}
 
   \cgalHasModel Any CGAL kernel, e.g., CGAL::Exact_predicates_exact_constructions_kernel.
 

@@ -228,7 +228,7 @@ struct Polygon_soup_orienter
   /// If the polygon was already marked as oriented, then we cut the dual edge
   /// in the graph and the primal edge is marked.
   /// At the same time, we assign an id to each polygon in the same connected
-  /// componenet of the dual graph.
+  /// component of the dual graph.
   void orient()
   {
     std::vector<bool> oriented;
@@ -311,7 +311,7 @@ struct Polygon_soup_orienter
               V_ID i1 = polygons[index][(j+1)%size];
               edges[i0][i1].insert(index);
             }
-            // "inverse the orientation of polygon #index
+            // inverse the orientation of polygon #index
             oriented[index] = true;
             stack.push(index);
           }
@@ -323,7 +323,7 @@ struct Polygon_soup_orienter
               const P_ID index = *(it_other_orient->second.begin());
               if(oriented[index]) continue; //nothing todo already processed and correctly oriented
               oriented[index] = true;
-              // "keep the orientation of polygon #index
+              // keep the orientation of polygon #index
               stack.push(index);
             }
           }
@@ -520,7 +520,7 @@ struct Polygon_soup_orienter
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * @return `true`  if the orientation operation succeded.
+ * @return `true`  if the orientation operation succeeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
  * @sa `orient_triangle_soup_with_reference_triangle_mesh()`

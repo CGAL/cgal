@@ -145,6 +145,8 @@ public:
   bool empty() const { return m_tree_ptr->empty(); }
   bool do_call() const { return (!empty() || base().do_call()); }
 
+  void clear() { m_tree_ptr->clear() && base().clear(); }
+
 public:
   typename AABB_tree::Bounding_box bbox() const
   {
@@ -312,6 +314,8 @@ public:
 
   bool empty() const { return m_tree_ptr->empty(); }
   bool do_call() const { return !empty(); }
+
+  void clear() { m_tree_ptr->clear(); }
 
 public:
   typename AABB_tree::Bounding_box bbox() const

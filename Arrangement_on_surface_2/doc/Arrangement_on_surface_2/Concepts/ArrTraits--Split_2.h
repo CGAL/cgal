@@ -2,7 +2,7 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines Functor
+ * \cgalRefines{Functor}
  *
  * \cgalHasModel ArrangementXMonotoneTraits_2::Split_2
  */

@@ -61,7 +61,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -182,9 +182,9 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The vertices must be indexed (`vimap` must be initialized).

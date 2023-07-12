@@ -208,7 +208,7 @@ public:
 
 protected:
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     Status_line_CPA_1(Rep rep) :
         Base(rep) {

@@ -47,7 +47,7 @@ struct Random_access_circulator_tag
 };
 
 template <typename Tag, typename T, typename Distance = std::ptrdiff_t,
-          /* size is so awkwardly placed to faciliate using the
+          /* size is so awkwardly placed to facilitate using the
            * default arguments from the derived classes */
           typename Size = std::size_t, typename Pointer = T*,
           typename Reference = T&>

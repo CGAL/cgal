@@ -44,7 +44,7 @@ namespace internal{
 
 // struct used to avoid recursive deletion of elements of
 // Td_map_item. Td_active_edge and Td_active_edge_item are
-// both refering to elements of the same type creating
+// both referring to elements of the same type creating
 // recursive call to ~Handle() if we let the regular
 // calls of destructors. Here elements are copied in
 // a vector and the true deletion is done when the vector
@@ -326,7 +326,7 @@ public:
 #endif
 
   protected:
-    //reference to the seperating X_monotone_curve_2
+    //reference to the separating X_monotone_curve_2
     const X_monotone_curve_2& m_sep;
 
   public:
@@ -356,15 +356,15 @@ public:
 
     /*
       destription:
-      advances m_cur_item to one of the right neighbours according to the relation
-      between the seperating Halfedge (m_sep) and the right() trapezoid point.
+      advances m_cur_item to one of the right neighbors according to the relation
+      between the separating Halfedge (m_sep) and the right() trapezoid point.
       precoditions:
       m_sep doesn't intersect any existing edges except possibly on common end
       points.
       postconditions:
       if the rightmost trapezoid was traversed m_cur_item is set to nullptr.
       remark:
-      if the seperator is vertical, using the precondition assumptions it
+      if the separator is vertical, using the precondition assumptions it
       follows that there is exactly one trapezoid to travel.
     */
     In_face_iterator& operator++()
@@ -1196,7 +1196,7 @@ protected:
                                     Dag_node* node);
   //---------------------------------------------------------------------------
   // Description:
-  //  the opposite operation for spliting the trapezoid with
+  //  the opposite operation for splitting the trapezoid with
   //  vertical line through ce
   // Precondition:
   //  The root trapezoid is degenerate point (ce) and is active
@@ -1214,7 +1214,7 @@ protected:
   //  trapezoidal tree with an input halfedge he
   // Precondition:
   //  The root trapezoid is active
-  //  The root trapezoid is devided by he or is equal to it and is vertical.
+  //  The root trapezoid is divided by he or is equal to it and is vertical.
   Dag_node& split_trapezoid_by_halfedge(Dag_node& split_node,
                                         Td_map_item& prev_e,
                                         Td_map_item& prev_bottom_tr,
@@ -1504,7 +1504,7 @@ public:
   // Remark:
   //  Given an edge-degenerate trapezoid representing a Halfedge,
   //  all the other trapezoids representing the Halfedge can be extracted
-  //  via moving continously to the left and right neighbours.
+  //  via moving continuously to the left and right neighbors.
   Td_map_item insert(Halfedge_const_handle he);
 
 
@@ -2015,7 +2015,7 @@ public:
     if (static_cast<unsigned long>(std::rand()) >
         RAND_MAX / ( num_of_cv + 1))
       return false;
-    /*       INTERNAL COMPILER ERROR overide
+    /*       INTERNAL COMPILER ERROR override
              #ifndef __GNUC__
     */
 #ifdef CGAL_TD_REBUILD_DEBUG

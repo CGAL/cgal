@@ -113,7 +113,7 @@ int main()
   mesh_cube2.collect_garbage();
   // the second parameter of operator+= should not have garbage, or merge will crash
   mesh_merged += mesh_cube2;
-  std::cout << "Mege done \n#F "
+  std::cout << "Merge done \n#F "
     << std::distance(faces(mesh_merged).first, faces(mesh_merged).second)
     << "\n#V " << std::distance(vertices(mesh_merged).first, vertices(mesh_merged).second)
     <<  std::endl;

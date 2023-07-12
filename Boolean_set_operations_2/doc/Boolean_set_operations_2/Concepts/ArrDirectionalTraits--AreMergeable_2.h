@@ -3,7 +3,7 @@ namespace ArrDirectionalTraits {
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Are_mergeable_2`
 

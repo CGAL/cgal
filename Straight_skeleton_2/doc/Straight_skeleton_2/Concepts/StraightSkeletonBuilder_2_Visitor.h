@@ -7,7 +7,7 @@ required by the algorithm class `CGAL::Straight_skeleton_builder_2` in its third
 
 \cgalHasModel `CGAL::Dummy_straight_skeleton_builder_2_visitor`
 
-\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
+\sa `CGAL::Straight_skeleton_builder_2`
 */
 class StraightSkeletonBuilder_2_Visitor {
 public:
@@ -73,7 +73,7 @@ Called after all initial events have been discovered.
 void on_initialization_finished() const;
 
 /*!
-Called before the propagation stage (when events are poped off the queue and processed)
+Called before the propagation stage (when events are popped off the queue and processed)
 is started.
 */
 void on_propagation_started() const;

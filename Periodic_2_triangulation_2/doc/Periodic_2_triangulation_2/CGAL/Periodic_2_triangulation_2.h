@@ -100,7 +100,7 @@ public:
     UNIQUE_COVER_DOMAIN
   };
 
-/// The enum `@` is defined by `Periodic_2_triangulation_2` to
+/// The enum `Locate_type` is defined by `Periodic_2_triangulation_2` to
 /// specify which case occurs when locating a point in the
 /// triangulation. If the triangulation does not contain any points
 /// `EMPTY` is returned.

@@ -20,7 +20,7 @@
 
 /*! \file
  *
- * Defintion of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
+ * Definition of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
  */
 
 #include <CGAL/Arr_tags.h>

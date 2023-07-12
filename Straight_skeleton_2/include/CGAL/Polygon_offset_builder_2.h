@@ -39,7 +39,7 @@ struct Default_polygon_offset_builder_2_visitor
 
   void on_offset_contour_started() const {}
 
-  void on_offset_point ( Point_2 const& ) const {}
+  void on_offset_point ( Point_2 const&, Halfedge_const_handle ) const {}
 
   Point_2 on_offset_point_overflowed( Halfedge_const_handle aBisector ) const
   {
@@ -139,16 +139,17 @@ private:
 
   Trisegment_2_ptr GetTrisegment ( Vertex_const_handle aNode ) const ;
 
+public:
   Comparison_result Compare_offset_against_event_time( FT aT, Vertex_const_handle aNode ) const
   {
     CGAL_precondition( aNode->is_skeleton() ) ;
 
     Comparison_result r = aNode->has_infinite_time() ? SMALLER
-                                                     : static_cast<Comparison_result>(Compare_offset_against_event_time_2(mTraits)(aT,GetTrisegment(aNode)));
+                                                     : static_cast<Comparison_result>(mTraits.compare_offset_against_event_time_2_object()(aT,GetTrisegment(aNode)));
 
     return r ;
   }
-public:
+
   boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
@@ -175,26 +176,12 @@ public:
       CGAL_POLYOFFSET_TRACE(3,"Seed node for " << e2str(*aBisector) << " is " << v2str(*lSeedNode) << " event=" << lSeedEvent ) ;
     }
 
-    OptionalPoint_2 p = Construct_offset_point_2(mTraits)(aT
-                                                         ,CreateSegment(lBorderA)
-                                                         ,CreateSegment(lBorderB)
-                                                         ,lSeedEvent
-                                                         );
-    CGAL_stskel_intrinsic_test_assertion
-    (
-      !p
-      ||
-      ( p && !CGAL_SS_i::is_possibly_inexact_distance_clearly_not_zero
-              ( CGAL_SS_i::squared_distance_from_point_to_lineC2(p->x()
-                                                                ,p->y()
-                                                                ,lNodeS->point().x()
-                                                                ,lNodeS->point().y()
-                                                                ,lNodeT->point().x()
-                                                                ,lNodeT->point().y()
-                                                                ).to_nt()
-              )
-      )
-    ) ;
+    OptionalPoint_2 p = mTraits.construct_offset_point_2_object()( aT,
+                                                                   CreateSegment(lBorderA),
+                                                                   lBorderA->weight(),
+                                                                   CreateSegment(lBorderB),
+                                                                   lBorderB->weight(),
+                                                                   lSeedEvent );
 
     return p ;
   }

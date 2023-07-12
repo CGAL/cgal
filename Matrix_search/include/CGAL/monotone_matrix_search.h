@@ -16,7 +16,7 @@
 #include <CGAL/license/Matrix_search.h>
 
 
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <vector>
 #include <functional>
 
@@ -57,9 +57,9 @@ monotone_matrix_search(
   // ------
   // get even rows of M:
   Matrix* M_new = M.extract_all_even_rows();
-  CGAL_optimisation_assertion(
+  CGAL_assertion(
     M_new->number_of_columns() == M.number_of_columns());
-  CGAL_optimisation_assertion(
+  CGAL_assertion(
     M_new->number_of_rows() == 0 ||
       M_new->number_of_rows() == ( M.number_of_rows() + 1) >> 1);
 
@@ -75,7 +75,7 @@ monotone_matrix_search(
     reduction_table[M_new->number_of_rows()] =
       M.number_of_columns() - 1;
     _reduce_matrix( *M_new, reduction_table, compare_strictly);
-    CGAL_optimisation_assertion(
+    CGAL_assertion(
       M_new->number_of_columns() == M_new->number_of_rows());
 
   } // if ( M_new->number_of_rows() < M_new->number_of_columns())
@@ -92,7 +92,7 @@ monotone_matrix_search(
 
   // recursion:
 
-  CGAL_optimisation_assertion(
+  CGAL_assertion(
     M_new->number_of_rows() >= M_new->number_of_columns());
 
   // table to store the rmax values of M_new:
@@ -160,7 +160,7 @@ _reduce_matrix(
 // and returns for each column of the resulting
 // matrix its column index in the original matrix
 {
-  CGAL_optimisation_precondition(
+  CGAL_precondition(
     M.number_of_columns() >= M.number_of_rows());
   // active columns are 0, ..., j1, j2, ..., M.x_dim()-1
   int j1( 0), j2( 1);
@@ -191,7 +191,7 @@ _reduce_matrix(
   // have been deleted, now move columns
   // j2 .. M.number_of_columns()-1 to the first part
   while ( j1 < M.number_of_rows() - 1) {
-    CGAL_optimisation_assertion( j2 < M.number_of_columns());
+    CGAL_assertion( j2 < M.number_of_columns());
     M.replace_column( ++j1, j2);
     *(t+j1) = j2++;
   }

@@ -28,7 +28,7 @@ introduces a variable `c` of type `Sphere_3`.
 It is initialized to the sphere with center `center`,
 squared radius `squared_radius` and orientation
 `orientation`.
-\pre `orientation` \f$ \neq\f$ \ref COPLANAR, and furthermore, `squared_radius` \f$ \geq\f$ 0.
+\pre `orientation != COPLANAR` and `squared_radius >= 0`.
 */
 Sphere_3( const Point_3<Kernel> & center,
           const Kernel::FT & squared_radius,
@@ -53,7 +53,7 @@ const Point_3<Kernel> & s);
 introduces a variable `c` of type `Sphere_3`.
 It is initialized to the smallest sphere which passes through
 the points `p`, `q`, and `r`. The orientation of
-the sphere is `o`. \pre `o` is not \ref COPLANAR.
+the sphere is `o`. \pre `o != COPLANAR`.
 */
 Sphere_3( const Point_3<Kernel> & p,
 const Point_3<Kernel> & q,
@@ -65,7 +65,7 @@ const Orientation& o = COUNTERCLOCKWISE);
 introduces a variable `c` of type `Sphere_3`.
 It is initialized to the smallest sphere which passes through
 the points `p` and `q`. The orientation of
-the sphere is `o`. \pre `o` is not \ref COPLANAR.
+the sphere is `o`. \pre `o != COPLANAR`.
 */
 Sphere_3( const Point_3<Kernel> & p,
 const Point_3<Kernel> & q,
@@ -76,7 +76,7 @@ const Orientation& o = COUNTERCLOCKWISE);
 introduces a variable `c` of type `Sphere_3`.
 It is initialized to the sphere with center `center`, squared
 radius zero and orientation `orientation`.
-\pre `orientation` \f$ \neq\f$ \ref COPLANAR.
+\pre `orientation != COPLANAR`.
 \post `c.is_degenerate()` = `true`.
 */
 Sphere_3( const Point_3<Kernel> & center,

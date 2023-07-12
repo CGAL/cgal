@@ -4,13 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Minkowski_sum_2_Tests)
 
-# Commented out C++11 for now
-# list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
-# if (has_cpp11 LESS 0)
-#   message(STATUS "NOTICE: These examples requires a C++11 compiler and will not be compiled.")
-#   return()
-# endif()
-
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 # create a target per cppfile

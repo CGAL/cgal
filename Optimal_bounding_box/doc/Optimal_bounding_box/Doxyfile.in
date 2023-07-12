@@ -5,7 +5,6 @@ EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  true
 
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Optimal_bounding_box/internal
 EXCLUDE_SYMBOLS += experimental
 
 HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/aabb_vs_obb.jpg \

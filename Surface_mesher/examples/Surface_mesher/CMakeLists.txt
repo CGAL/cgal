@@ -15,9 +15,6 @@ else()
     # Just to avoid a warning from CMake if that variable is set on the command line...
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This program requires the CGAL and CGAL ImageIO libraries, and will not be compiled."
-  )
+  message("NOTICE: This project requires the CGAL and CGAL ImageIO libraries, and will not be compiled.")
 
 endif()

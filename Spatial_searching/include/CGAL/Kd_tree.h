@@ -175,7 +175,7 @@ private:
 #endif
   }
 
-  // TODO: Similiar to the leaf_init function above, a part of the code should be
+  // TODO: Similar to the leaf_init function above, a part of the code should be
   //       moved to a the class Kd_tree_node.
   //       It is not proper yet, but the goal was to see if there is
   //       a potential performance gain through the Compact_container
@@ -335,7 +335,7 @@ public:
     }
 
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 

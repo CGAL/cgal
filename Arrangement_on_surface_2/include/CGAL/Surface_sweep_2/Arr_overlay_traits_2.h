@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the Arr_overlay_traits_2 class-template.
+ * Definition of the Arr_overlay_traits_2 class-template.
  */
 
 #include <boost/variant.hpp>
@@ -437,7 +437,7 @@ public:
         intersector(xcv2.base(), xcv1.base(), std::back_inserter(xections));
 
       // Convert objects that are associated with Base_x_monotone_curve_2 to
-      // the exteneded X_monotone_curve_2.
+      // the extended X_monotone_curve_2.
       for (const auto& xection : xections) {
         const Intersection_base_point* base_ipt =
           boost::get<Intersection_base_point>(&xection);
@@ -753,7 +753,7 @@ public:
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      // Check if there wither points represent red or blue vertices.
+      // Check if there whether points represent red or blue vertices.
       const Vertex_handle_red* vr1 = p1.red_vertex_handle();
       const Vertex_handle_red* vr2 = p2.red_vertex_handle();
       const Vertex_handle_blue* vb1 = p1.blue_vertex_handle();
@@ -983,7 +983,7 @@ public:
   Is_on_x_identification_2 is_on_x_identification_2_object() const
   { return Is_on_x_identification_2(m_base_traits); }
 
-  /*! A functor that compares the y-values of pointss on the
+  /*! A functor that compares the y-values of points on the
    * boundary of the parameter space.
    */
   class Compare_y_on_boundary_2 {
@@ -1115,7 +1115,7 @@ public:
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(m_base_traits); }
 
-  /*! A functor that compares the y-values of pointss on the
+  /*! A functor that compares the y-values of points on the
    * boundary of the parameter space.
    */
   class Compare_x_on_boundary_2 {

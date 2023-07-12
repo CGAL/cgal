@@ -13,6 +13,7 @@
 #define CGAL_TIME_STAMPER_H
 
 #include <CGAL/Has_timestamp.h>
+#include <string>
 
 namespace CGAL {
 
@@ -66,6 +67,11 @@ struct Time_stamper
     return pt->time_stamp();
   }
 
+  static auto display_id(const T* pt)
+  {
+    return std::string("#") + std::to_string(pt->time_stamp());
+  }
+
   static std::size_t hash_value(const T* p) {
     if(nullptr == p)
       return std::size_t(-1);
@@ -99,6 +105,11 @@ public:
   static std::size_t time_stamp(const T*)
   {
     return 0;
+  }
+
+  static auto display_id(const T* pt)
+  {
+    return static_cast<const void*>(pt);
   }
 
   static std::size_t hash_value(const T* p) {

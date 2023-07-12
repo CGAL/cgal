@@ -62,11 +62,8 @@ public:
 
 void set_subdomain(Remeshing_triangulation& tr, const int index)
 {
-  for (Remeshing_triangulation::Finite_cells_iterator cit = tr.finite_cells_begin();
-       cit != tr.finite_cells_end(); ++cit)
-  {
+  for (auto cit : tr.finite_cell_handles())
     cit->set_subdomain_index(index);
-  }
 }
 
 int main(int argc, char* argv[])

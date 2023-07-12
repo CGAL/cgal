@@ -9,7 +9,7 @@
 \cgalPkgPicture{polyfit.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Liangliang Nan}
+\cgalPkgAuthor{Liangliang Nan}
 \cgalPkgDesc{This package provides a method for piecewise planar object reconstruction from point clouds.
 The method takes as input an unordered point set (and optionally planar segments) of a piecewise planar
 object and outputs a lightweight and watertight surface mesh interpolating the input point set. The

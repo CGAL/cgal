@@ -7,14 +7,14 @@
  *
  * File: CoreAux.h
  * Synopsis:
- *      Auxilliary functions
+ *      Auxiliary functions
  *
  * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$

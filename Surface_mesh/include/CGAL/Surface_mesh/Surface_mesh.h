@@ -29,11 +29,11 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Handle_hash_function.h>
+#include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/property_map.h>
 
 #include <boost/cstdint.hpp>
-#include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 #include <algorithm>
@@ -59,7 +59,7 @@ namespace CGAL {
     class SM_Index
     {
     public:
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -80,6 +80,10 @@ namespace CGAL {
 
         // Compatibility with OpenMesh handle
         size_type idx() const {
+          return idx_;
+        }
+        // For convenience
+        size_type id() const {
           return idx_;
         }
 
@@ -234,7 +238,7 @@ namespace CGAL {
     class SM_Edge_index
     {
     public:
-        typedef boost::uint32_t size_type;
+        typedef std::uint32_t size_type;
 
         SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
 
@@ -359,7 +363,7 @@ public:
     typedef P Point;
 
     /// The type used to represent an index.
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
 
     ///@}
 
@@ -506,13 +510,14 @@ private: //------------------------------------------------------ iterator types
     class Index_iterator
       : public boost::iterator_facade< Index_iterator<Index_>,
                                        Index_,
-                                       std::random_access_iterator_tag
+                                       std::random_access_iterator_tag,
+                                       Index_
                                        >
     {
         typedef boost::iterator_facade< Index_iterator<Index_>,
                                         Index_,
-                                        std::random_access_iterator_tag
-                                        > Facade;
+                                        std::random_access_iterator_tag,
+                                        Index_> Facade;
     public:
         Index_iterator() : hnd_(), mesh_(nullptr) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
@@ -590,7 +595,7 @@ private: //------------------------------------------------------ iterator types
             return this->hnd_ == other.hnd_;
         }
 
-        Index_& dereference() const { return const_cast<Index_&>(hnd_); }
+        Index_ dereference() const { return hnd_; }
 
         Index_ hnd_;
         const Surface_mesh* mesh_;
@@ -914,6 +919,7 @@ public:
     /// Copy constructor: copies `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh(const Surface_mesh& rhs) { *this = rhs; }
 
+    /// Move constructor.
     Surface_mesh(Surface_mesh&& sm)
       : vprops_(std::move(sm.vprops_))
       , hprops_(std::move(sm.hprops_))
@@ -940,7 +946,7 @@ public:
     /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh& operator=(const Surface_mesh& rhs);
 
-
+    /// move assignment
     Surface_mesh& operator=(Surface_mesh&& sm)
     {
       vprops_ = std::move(sm.vprops_);
@@ -1077,7 +1083,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
-        boost::array<Vertex_index, 3>
+        std::array<Vertex_index, 3>
             v = {{v0, v1, v2}};
         return add_face(v);
     }
@@ -1086,7 +1092,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3)
     {
-        boost::array<Vertex_index, 4>
+        std::array<Vertex_index, 4>
             v = {{v0, v1, v2, v3}};
         return add_face(v);
     }
@@ -1208,6 +1214,10 @@ public:
         fprops_.resize(nfaces);
     }
 
+  /// copies the simplices from `other`, and copies values of
+  /// properties that already exist under the same name in `*this`.
+  /// In case `*this` has a property that does not exist in `other`
+  /// the copied simplices get the default value of the property.
   bool join(const Surface_mesh& other)
   {
     // increase capacity
@@ -1321,7 +1331,7 @@ public:
     /// Note however that by garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
-    /// refering to the right elements.
+    /// referring to the right elements.
     /// When adding elements, by default elements that are marked as removed
     /// are recycled.
 
@@ -1389,7 +1399,7 @@ public:
     /// \attention By garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
-    /// refering to the right elements.
+    /// referring to the right elements.
     void collect_garbage();
 
     //undocumented convenience function that allows to get old-index->new-index information
@@ -1465,7 +1475,7 @@ public:
 
     /// perform an expensive validity check on the data structure and
     /// print found errors to `std::cerr` when `verbose == true`.
-  bool is_valid(bool verbose = true) const
+    bool is_valid(bool verbose = false) const
     {
         bool valid = true;
         size_type vcount = 0, hcount = 0, fcount = 0;
@@ -1577,23 +1587,37 @@ public:
     }
 
     /// performs a validity check on a single vertex.
-    bool is_valid(Vertex_index v) const {
+    bool is_valid(Vertex_index v,
+                  bool verbose = false) const
+    {
+        Verbose_ostream verr(verbose);
+
         if(!has_valid_index(v))
-         return false;
+        {
+          verr << "Vertex has invalid index: " << (size_type)v << std::endl;
+          return false;
+        }
 
         Halfedge_index h = vconn_[v].halfedge_;
-        if(h!= null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
-          std::cerr << "Vertex connectivity halfedge error in " << (size_type)v
-                    << " with " << (size_type)h << std::endl;
-            return false;
+        if(h != null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
+          verr << "Vertex connectivity halfedge error: Vertex " << (size_type)v
+               << " with " << (size_type)h << std::endl;
+          return false;
         }
         return true;
     }
 
     /// performs a validity check on a single halfedge.
-    bool is_valid(Halfedge_index h) const {
+    bool is_valid(Halfedge_index h,
+                  bool verbose = false) const
+    {
+        Verbose_ostream verr(verbose);
+
         if(!has_valid_index(h))
+        {
+          verr << "Halfedge has invalid index: " << (size_type)h << std::endl;
           return false;
+        }
 
         Face_index f = hconn_[h].face_;
         Vertex_index v = hconn_[h].vertex_;
@@ -1604,30 +1628,30 @@ public:
         // don't validate the face if this is a border halfedge
         if(!is_border(h)) {
             if(!has_valid_index(f) || is_removed(f)) {
-                std::cerr << "Halfedge connectivity Face "
-                          << (!has_valid_index(f) ? "invalid" : "removed")
-                          << " in " << (size_type)h << std::endl;
+                verr << "Halfedge connectivity error: Face "
+                     << (!has_valid_index(f) ? "invalid" : "removed")
+                     << " in " << (size_type)h << std::endl;
                 valid = false;
             }
         }
 
         if(!has_valid_index(v) || is_removed(v)) {
-            std::cerr << "Halfedge connectivity Vertex "
-                      << (!has_valid_index(v) ? "invalid" : "removed")
-                      << " in " << (size_type)h << std::endl;
+            verr << "Halfedge connectivity error: Vertex "
+                 << (!has_valid_index(v) ? "invalid" : "removed")
+                 << " in " << (size_type)h << std::endl;
             valid = false;
         }
 
         if(!has_valid_index(hn) || is_removed(hn)) {
-            std::cerr << "Halfedge connectivity hnext "
-                      << (!has_valid_index(hn) ? "invalid" : "removed")
-                      << " in " << (size_type)h << std::endl;
+            verr << "Halfedge connectivity error: hnext "
+                 << (!has_valid_index(hn) ? "invalid" : "removed")
+                 << " in " << (size_type)h << std::endl;
             valid = false;
         }
         if(!has_valid_index(hp) || is_removed(hp)) {
-            std::cerr << "Halfedge connectivity hprev "
-                      << (!has_valid_index(hp) ? "invalid" : "removed")
-                      << " in " << (size_type)h << std::endl;
+            verr << "Halfedge connectivity error: hprev "
+                 << (!has_valid_index(hp) ? "invalid" : "removed")
+                 << " in " << (size_type)h << std::endl;
             valid = false;
         }
         return valid;
@@ -1635,25 +1659,39 @@ public:
 
 
     /// performs a validity check on a single edge.
-    bool is_valid(Edge_index e) const {
+    bool is_valid(Edge_index e,
+                  bool verbose = false) const
+    {
+      Verbose_ostream verr(verbose);
+
       if(!has_valid_index(e))
+      {
+        verr << "Edge has invalid index: " << (size_type)e << std::endl;
         return false;
+      }
 
       Halfedge_index h = halfedge(e);
-      return is_valid(h) && is_valid(opposite(h));
+      return is_valid(h, verbose) && is_valid(opposite(h), verbose);
     }
 
 
     /// performs a validity check on a single face.
-    bool is_valid(Face_index f) const {
+    bool is_valid(Face_index f,
+                  bool verbose = false) const
+    {
+        Verbose_ostream verr(verbose);
+
         if(!has_valid_index(f))
+        {
+          verr << "Face has invalid index: " << (size_type)f << std::endl;
           return false;
+        }
 
         Halfedge_index h = fconn_[f].halfedge_;
         if(!has_valid_index(h) || is_removed(h)) {
-          std::cerr << "Face connectivity halfedge error in " << (size_type)f
-                      << " with " << (size_type)h << std::endl;
-            return false;
+          verr << "Face connectivity halfedge error: Face " << (size_type)f
+               << " with " << (size_type)h << std::endl;
+          return false;
         }
         return true;
     }
@@ -2214,7 +2252,7 @@ private: //------------------------------------------------------- private data
   /// \relates Surface_mesh
   /// Inserts `other` into `sm`.
   /// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
-  /// and analoguously for halfedges, edges, and faces.
+  /// and analogously for halfedges, edges, and faces.
   /// Copies entries of all property maps which have the same name in `sm` and `other`.
   /// that is, property maps which are only in `other` are ignored.
   /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`.
@@ -2684,6 +2722,7 @@ collect_garbage(Visitor &visitor)
     garbage_ = false;
 }
 
+#ifndef DOXYGEN_RUNNING
 namespace collect_garbage_internal {
 struct Dummy_visitor{
   template<typename A, typename B, typename C>
@@ -2692,6 +2731,7 @@ struct Dummy_visitor{
 };
 
 }
+#endif
 
 template <typename P>
 void

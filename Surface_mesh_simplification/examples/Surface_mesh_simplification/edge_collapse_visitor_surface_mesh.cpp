@@ -8,7 +8,7 @@
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 
 #include <iostream>
 #include <fstream>
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
   // In this example, the simplification stops when the number of undirected edges
   // drops below xx% of the initial count
   const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
+  SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
   Stats stats;
   My_visitor vis(&stats);
@@ -120,12 +120,12 @@ int main(int argc, char** argv)
   // The index maps are not explicitelty passed as in the previous
   // example because the surface mesh items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
-  // function which differ from the default policies, ommited in
+  // function which differ from the default policies, omitted in
   // the previous example.
   int r = SMS::edge_collapse(surface_mesh, stop, CGAL::parameters::visitor(vis));
 
   std::cout << "\nEdges collected: "  << stats.collected
-            << "\nEdges proccessed: " << stats.processed
+            << "\nEdges processed: "  << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
             << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable

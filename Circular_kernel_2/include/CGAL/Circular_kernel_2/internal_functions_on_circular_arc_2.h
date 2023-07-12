@@ -1302,7 +1302,7 @@ template < class CK, class OutputIterator >
   }
 
 // This is the make_x_monotone function returning extra information:
-// The ouput iterator refers to pairs, the first part of which is an
+// The output iterator refers to pairs, the first part of which is an
 // object containing the x-monotone arc and the second part is a
 // boolean defining whether the arc is on the upper part of the
 // circle or not. This extra information returned by make_x_monotone
@@ -1457,7 +1457,7 @@ template < class CK, class OutputIterator >
 // In the same as the advanced_make_x_monotone works, this make_xy_function
 // returns extra information, descriptive of the position of the returned
 // xy-monotone arcs on the circle: The output iterator refers to pairs, the
-// first part of which is the object containing tha arc and the second part
+// first part of which is the object containing the arc and the second part
 // is another pair containing 2 booleans which equavalently describe whether the
 // returned xy-monotone arc is on the upper part and the left side of the circle
 

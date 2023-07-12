@@ -183,7 +183,7 @@ public:
   }
 
   // compute the envelope of surfaces in 3D, using the default arbitrary
-  // dividor
+  // divider
   template <class SurfaceIterator>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2& result)
@@ -193,7 +193,7 @@ public:
   }
 
 
-  // compute the envelope of surfaces in 3D using the given set dividor
+  // compute the envelope of surfaces in 3D using the given set divider
   template <class SurfaceIterator, class SetDividor>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2& result,
@@ -219,7 +219,7 @@ public:
   }
 
   // compute the envelope of xy-monotone surfaces in 3D,
-  // using the default arbitrary dividor
+  // using the default arbitrary divider
   template <class SurfaceIterator>
   void construct_envelope_xy_monotone(SurfaceIterator begin,
                                       SurfaceIterator end,
@@ -230,7 +230,7 @@ public:
   }
 
   // compute the envelope of xy-monotone surfaces in 3D using the given
-  // set dividor
+  // set divider
   template <class SurfaceIterator, class SetDividor>
   void construct_envelope_xy_monotone(SurfaceIterator begin,
                                       SurfaceIterator end,
@@ -366,7 +366,7 @@ protected:
             he->twin()->face()->set_no_data();
           }
 
-          // init auxiliary data for f and its boundarys.
+          // init auxiliary data for f and its boundaries.
           for(Outer_ccb_iterator ocit = f->outer_ccbs_begin();
               ocit != f->outer_ccbs_end(); ocit++){
             Ccb_halfedge_circulator face_hec = *ocit;
@@ -475,7 +475,7 @@ public:
     {
       Halfedge_handle hh = ei;
       // there must be data from at least one map, because all the surfaces
-      // are continous
+      // are continuous
       if (!get_aux_is_set(hh, 0) || !get_aux_is_set(hh, 1))
         continue;
       CGAL_assertion(get_aux_is_set(hh, 0));
@@ -604,7 +604,7 @@ public:
       if (vh->is_decision_set())
         continue;
       // there must be data from at least one map, because all the surfaces
-      // are continous
+      // are continuous
       CGAL_assertion(get_aux_is_set(vh, 0));
       CGAL_assertion(get_aux_is_set(vh, 1));
       CGAL_assertion(!aux_has_no_data(vh, 1) || !aux_has_no_data(vh, 0));

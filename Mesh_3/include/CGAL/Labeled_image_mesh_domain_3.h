@@ -26,6 +26,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 
@@ -75,9 +76,9 @@ public:
                               Subdomain_index value_outside = 0,
                               Null null = Null(),
                               CGAL::Random* p_rng = nullptr)
-    : Base(Wrapper(image, Identity(), value_outside),
-           compute_bounding_box(image),
-           error_bound,
+    : Base(parameters::function = Wrapper(image, Identity(), value_outside),
+           parameters::bounding_object = compute_bounding_box(image),
+           parameters::relative_error_bound = error_bound,
            parameters::null_subdomain_index = null,
            parameters::p_rng = p_rng)
   {}
@@ -85,10 +86,10 @@ public:
   Labeled_image_mesh_domain_3(const Image& image,
                               const FT error_bound,
                               CGAL::Random* p_rng)
-    : Base(Wrapper(image),
-           compute_bounding_box(image),
-           error_bound,
-           p_rng)
+    : Base(parameters::function = Wrapper(image),
+           parameters::bounding_object = compute_bounding_box(image),
+           parameters::relative_error_bound = error_bound,
+           parameters::p_rng = p_rng)
   {}
 
   /// Destructor
@@ -97,7 +98,7 @@ public:
   using Base::bbox;
 
 private:
-  /// Returns a box enclosing image \c im
+  /// Returns a box enclosing image `im`
   Bbox_3 compute_bounding_box(const Image& im) const
   {
     return Bbox_3(-im.vx()+im.tx(),

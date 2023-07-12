@@ -8,18 +8,18 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#include<cstdio>
-#include<cstdlib>
-#include<string>
-#include<vector>
-#include<set>
-#include<map>
-#include<iostream>
-#include<fstream>
-#include<sstream>
-#include<iomanip>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
 
-#include<boost/tokenizer.hpp>
+#include <boost/tokenizer.hpp>
 
 #include <CGAL/assertions_behaviour.h>
 
@@ -55,11 +55,9 @@ double sScale = 1.0 ;
 
 double sTimeout = 0.0 ;
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
-
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 4
 //#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
+//#define CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 3
 
 //#define CGAL_STRAIGHT_SKELETON_PROFILING_ENABLED
@@ -68,13 +66,13 @@ bool lAppToLog = false ;
 void Straight_skeleton_external_trace ( std::string m )
 {
   std::ofstream out("sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) );
-  out << std::setprecision(19) << m << std::endl << std::flush ;
+  out << std::setprecision(17) << m << std::endl << std::flush ;
   lAppToLog = true ;
 }
 void Straight_skeleton_traits_external_trace ( std::string m )
 {
   std::ofstream out("sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) ) ;
-  out << std::setprecision(19) << m << std::endl << std::flush ;
+  out << std::setprecision(17) << m << std::endl << std::flush ;
   lAppToLog = true ;
 }
 
@@ -114,8 +112,7 @@ void register_construction_success ( std::string cons) { ++ sConsSuccessMap[cons
 
 #include <CGAL/test_sls_types.h>
 
-
-#include <CGAL/IO/Dxf_stream.h>
+#include <CGAL/Straight_skeleton_2/IO/Dxf_stream.h>
 
 typedef CGAL::Dxf_stream<IK> DxfStream ;
 
@@ -1065,8 +1062,8 @@ int test( TestCase& rCase )
 int main( int argc, char const* argv[] )
 {
   cout << "Straight skeleton test program" << endl ;
-  cout << setprecision(19);
-  cerr << setprecision(19);
+  cout << setprecision(17);
+  cerr << setprecision(17);
 
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);

@@ -203,7 +203,7 @@ MainWindow::animate() {
         break;
       }
     }
-    //std::cout << "  DONE! " << (found ? "Fount it!" : "Didn't find it!") << std::endl;
+    //std::cout << "  DONE! " << (found ? "Found it!" : "Didn't find it!") << std::endl;
 
 
     // If the correct translation is NOT one of the generators, it will

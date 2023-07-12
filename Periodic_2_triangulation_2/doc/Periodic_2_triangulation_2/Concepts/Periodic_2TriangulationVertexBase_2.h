@@ -14,7 +14,7 @@ to one of its incident faces through a handle.
 
 The storage of the offset is only needed when a triangulation is copied.
 
-\cgalRefines `TriangulationVertexBase_2`
+\cgalRefines{TriangulationVertexBase_2}
 
 \cgalHasModel` CGAL::Periodic_2_triangulation_vertex_base_2`
 

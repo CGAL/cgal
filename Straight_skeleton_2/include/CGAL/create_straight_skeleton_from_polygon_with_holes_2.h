@@ -31,8 +31,8 @@ boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( Polygon const& aPolyWithHoles,
                                       K const& k,
-                                      typename std::enable_if<
-                                        CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>::type* = nullptr)
+                                      std::enable_if_t<
+                                        CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>* = nullptr)
 {
   return create_interior_straight_skeleton_2(aPolyWithHoles.outer_boundary().vertices_begin()
                                             ,aPolyWithHoles.outer_boundary().vertices_end  ()
@@ -45,6 +45,6 @@ create_interior_straight_skeleton_2 ( Polygon const& aPolyWithHoles,
 // create_exterior_straight_skeleton_2() for polygon with holes is simply in create_straight_skeleton_2.h
 // as the holes do not matter.
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
+#endif // CGAL_CREATE_STRAIGHT_SKELETON_FROM_POLYGON_WITH_HOLES_2_H

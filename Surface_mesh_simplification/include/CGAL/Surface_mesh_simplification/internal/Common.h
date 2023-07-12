@@ -48,7 +48,7 @@ namespace internal {
 
 };
 
-} // namesapce internal
+} // namespace internal
 
 template<class Handle>
 inline bool handle_assigned(Handle h) { Handle null; return h != null; }

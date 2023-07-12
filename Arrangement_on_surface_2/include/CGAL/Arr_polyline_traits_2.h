@@ -29,8 +29,7 @@
 
 #include <list>
 #include <iterator>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -99,7 +98,6 @@ public:
   typedef typename Base::Equal_2                      Equal_2;
   typedef typename Base::Compare_endpoints_xy_2       Compare_endpoints_xy_2;
   typedef typename Base::Construct_opposite_2         Construct_opposite_2;
-  typedef typename Base::Approximate_2                Approximate_2;
   typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
@@ -381,7 +379,7 @@ public:
     Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      typedef typename std::is_same<VT, Point_2>::type Is_point;
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
@@ -401,7 +399,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::false_type) const
+                             std::false_type) const
     { return Base::Construct_curve_2::operator()(begin, end); }
 
     /*! Construction of a polyline from a range of points.
@@ -414,7 +412,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::true_type) const
+                             std::true_type) const
     {
       // The range must not contain a single point.
       CGAL_precondition_msg(std::distance(begin, end) != 1,
@@ -503,7 +501,7 @@ public:
       const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      typedef typename std::is_same<VT, Point_2>::type Is_point;
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
@@ -526,7 +524,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::false_type) const
+                                        std::false_type) const
     { return Base::Construct_x_monotone_curve_2::operator()(begin, end); }
 
     /*! Construction of an x-monotone polyline from a range of points.
@@ -541,7 +539,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::true_type) const
+                                        std::true_type) const
     {
       // The range must not contain a single point.
       CGAL_precondition_msg(std::distance(begin, end) != 1,
@@ -595,6 +593,62 @@ public:
   /*! Obtain a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
+
+  //
+  using Approximate_number_type = typename Base::Approximate_number_type;
+  using Approximate_point_2 = typename Base::Approximate_point_2;
+
+  class Approximate_2 : public Base::Approximate_2 {
+  protected:
+    using Traits = Arr_polyline_traits_2<Segment_traits_2>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits.
+     */
+    Approximate_2(const Traits& traits) :
+      Base::Approximate_2(*(traits.subcurve_traits_2())),
+      m_traits(traits)
+    {}
+
+    friend class Arr_polyline_traits_2<Segment_traits_2>;
+
+  public:
+    Approximate_number_type operator()(const Point_2& p, int i) const
+    { return Base::Approximate_2::operator()(p, i); }
+
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return Base::Approximate_2::operator()(p); }
+
+    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
+                              OutputIterator oi, bool l2r = true) const {
+      if (l2r) {
+        for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) {
+          const auto& p = *it;
+          auto x = CGAL::to_double(p.x());
+          auto y = CGAL::to_double(p.y());
+          *oi++ = Approximate_point_2(x, y);
+        }
+        return oi;
+      }
+
+      for (auto it = xcv.points_rbegin(); it != xcv.points_rend(); ++it) {
+        const auto& p = *it;
+        auto x = CGAL::to_double(p.x());
+        auto y = CGAL::to_double(p.y());
+        *oi++ = Approximate_point_2(x, y);
+      }
+      return oi;
+    }
+  };
+
+  /*! Obtain an Approximate_2 functor object. */
+  Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
 
   /*! Deprecated!
    * Obtain the segment traits.

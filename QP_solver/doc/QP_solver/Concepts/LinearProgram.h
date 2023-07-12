@@ -82,7 +82,7 @@ The value type of `FL_iterator` is `bool`.
 typedef unspecified_type FL_iterator;
 
 /*!
-A random acess iterator type to go over
+A random access iterator type to go over
 the entries of the lower bound vector \f$ \qpl\f$.
 */
 typedef unspecified_type L_iterator;
@@ -95,7 +95,7 @@ The value type of `UL_iterator` is `bool`.
 typedef unspecified_type UL_iterator;
 
 /*!
-A random acess iterator type to go over
+A random access iterator type to go over
 the entries of the upper bound vector \f$ \qpu\f$.
 */
 typedef unspecified_type U_iterator;

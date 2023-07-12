@@ -139,7 +139,7 @@ typedef unspecified_type Is_numerical_sensitive;
 This type specifies the return type of the predicates provided
 by this traits. The type must be convertible to `bool` and
 typically the type indeed maps to `bool`. However, there are also
-cases such as interval arithmetic, in which it is `Uncertain<bool>`
+cases such as interval arithmetic, in which it is `CGAL::Uncertain<bool>`
 or some similar type.
 
 */
@@ -300,4 +300,3 @@ typedef unspecified_type Root_of;
 /// @}
 
 }; /* end AlgebraicStructureTraits */
-

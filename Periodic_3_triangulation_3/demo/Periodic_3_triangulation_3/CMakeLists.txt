@@ -17,7 +17,7 @@ endif()
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS OpenGL Help Core)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL Help)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -73,7 +73,7 @@ if(CGAL_Qt5_FOUND
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   target_link_libraries(periodic_3_triangulation_3_demo
-                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL)
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets Qt5::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(periodic_3_triangulation_3_demo)
@@ -97,9 +97,6 @@ else()
     )
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled.")
 
 endif()

@@ -19,7 +19,7 @@ provides geometric types and predicates for use in the
 \tparam Data is an optional type of data to be stored in the full cell class. The
 class template `Triangulation_full_cell` accepts that no second parameter be specified. In
 this case, `Data` defaults to `CGAL::No_full_cell_data`.
-`CGAL::No_full_cell_data` can explicitely be specified to access the third parameter.
+`CGAL::No_full_cell_data` can explicitly be specified to access the third parameter.
 
 \tparam TriangulationDSFullCell_ must be a model of the concept
 `TriangulationDSFullCell`.

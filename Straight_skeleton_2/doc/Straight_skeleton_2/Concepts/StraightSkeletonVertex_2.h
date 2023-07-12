@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `HalfedgeDSVertex`
+\cgalRefines{HalfedgeDSVertex}
 
 The concept `StraightSkeletonVertex_2` describes the requirements for the vertex type of the
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSVertex` concept

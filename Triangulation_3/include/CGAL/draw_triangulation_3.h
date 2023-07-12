@@ -56,7 +56,7 @@ public:
   /// @param at3 the t3 to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big object where this time could be long)
   SimpleTriangulation3ViewerQt(QWidget* parent,
                                const T3& at3,
                                const char* title="Basic T3 Viewer",

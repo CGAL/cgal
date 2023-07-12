@@ -29,17 +29,15 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Mesh_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>
 #include <map>
 #include <algorithm>
+#include <type_traits>
 
-#include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <memory>
 
 namespace CGAL {
@@ -228,7 +226,7 @@ public:
     return result;
   }
 
-  /// Returns signed geodesic distance between \c p and \c q
+  /// Returns signed geodesic distance between `p` and `q`.
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q) const
   {
     // Locate p & q on polyline
@@ -260,7 +258,7 @@ public:
   }
 
 
-  /// Returns a point at geodesic distance \c distance from p along the
+  /// Returns a point at geodesic distance `distance` from p along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
   Point_3 point_at(const Point_3& p, FT distance) const
@@ -524,7 +522,7 @@ features into any model of the `MeshDomain_3` concept.
 The 1-dimensional features are described as polylines
 whose endpoints are the added corners.
 
-\tparam MeshDomain_3 is the type
+\tparam MeshDomain is the type
 of the domain which should be extended.
 It has to be a model of the `MeshDomain_3` concept.
 
@@ -537,27 +535,31 @@ It has to be a model of the `MeshDomain_3` concept.
 \sa `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
 
 */
-template < typename MeshDomain_3 >
+template < typename MeshDomain >
 class Mesh_domain_with_polyline_features_3
-  : public MeshDomain_3
+  : public MeshDomain
 {
-  typedef Mesh_domain_with_polyline_features_3<MeshDomain_3> Self;
+  typedef Mesh_domain_with_polyline_features_3<MeshDomain> Self;
 public:
 /// \name Types
 /// @{
-  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index;
-  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index;
+  typedef typename MeshDomain::Surface_patch_index   Surface_patch_index;
+  typedef typename MeshDomain::Subdomain_index       Subdomain_index;
   typedef int                                        Curve_index;
   typedef int                                        Corner_index;
 
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                           Index;
+#else
   typedef typename Mesh_3::internal::Index_generator_with_features<
-    typename MeshDomain_3::Subdomain_index,
+    typename MeshDomain::Subdomain_index,
     Surface_patch_index,
     Curve_index,
     Corner_index>::type                              Index;
+#endif
 
   typedef CGAL::Tag_true                             Has_features;
-  typedef typename MeshDomain_3::R::FT               FT;
+  typedef typename MeshDomain::R::FT                 FT;
 /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -566,9 +568,9 @@ public:
   typedef Curve_index Curve_segment_index;
 #endif
 
-  typedef typename MeshDomain_3::R         Gt;
-  typedef Gt                       R;
-  typedef typename MeshDomain_3::Point_3   Point_3;
+  typedef typename MeshDomain::R         Gt;
+  typedef Gt                             R;
+  typedef typename MeshDomain::Point_3   Point_3;
 #endif // DOXYGEN_RUNNING
 
 /// \name Creation
@@ -578,7 +580,7 @@ public:
 
   template <typename ... T>
   Mesh_domain_with_polyline_features_3(const T& ...o)
-    : MeshDomain_3(o...)
+    : MeshDomain(o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
@@ -596,7 +598,7 @@ public:
   /// Add a 0-dimensional feature in the domain.
   Corner_index add_corner(const Point_3& p);
 
-  /// Overloads where the last parameter \c out is not `CGAL::Emptyset_iterator()`.
+  /// Overload where the last parameter `out` is not `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_corners(InputIterator first, InputIterator end,
@@ -614,7 +616,7 @@ public:
   Corner_index register_corner(const Point_3& p, const Curve_index& index);
   Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
 
-  /// Overloads where the last parameter \c out is not
+  /// Overload where the last parameter `out` is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
@@ -744,14 +746,14 @@ public:
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
-   * by \c index.
+   * by `index`.
    */
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
   /**
    * Returns the index to be stored in a vertex lying in the subdomain
-   * identified by \c index.
+   * identified by `index`.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
   { return Index(index); }
@@ -765,15 +767,15 @@ public:
   { return Index(index); }
 
   /**
-   * Returns the \c Surface_patch_index of the surface patch
-   * where lies a vertex with dimension 2 and index \c index.
+   * Returns the `Surface_patch_index` of the surface patch
+   * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
   { return boost::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
-   *  with dimension 3 and index \c index.
+   *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
@@ -880,11 +882,11 @@ public:
   }
   Curve_index maximal_curve_index() const {
     if(edges_incidences_.empty()) return Curve_index();
-    return boost::prior(edges_incidences_.end())->first;
+    return std::prev(edges_incidences_.end())->first;
   }
 
   void build_curves_aabb_tree() const {
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "Building curves AABB tree...";
     CGAL::Real_timer timer;
     timer.start();
@@ -910,7 +912,7 @@ public:
     }
     curves_aabb_tree_ptr_->build();
     curves_aabb_tree_is_built = true;
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     timer.stop();
     std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 #endif
@@ -1455,9 +1457,9 @@ insert_edge(InputIterator first, InputIterator end)
   // 'compute_corners_incidences()', that corner is incident only to a
   // loop, then it will be removed from the set of corners.
   register_corner(*first, curve_index);
-  if ( *first != *boost::prior(end) )
+  if ( *first != *std::prev(end) )
   {
-    register_corner(*boost::prior(end), curve_index);
+    register_corner(*std::prev(end), curve_index);
   }
 
   // Create a new polyline

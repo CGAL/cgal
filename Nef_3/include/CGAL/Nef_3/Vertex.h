@@ -128,7 +128,7 @@ class Vertex_base {
       Refs*& sncp() { return sncp_; }
 
       /* all sobjects of the local graph are stored in a global list
-         where each vertex has a continous range in each list for its
+         where each vertex has a continuous range in each list for its
          sobjects. All objects of the range [sxxx_begin_,sxxx_last_]
          belong to a vertex. This range is empty iff
          sxxx_begin_ == sxxx_last_ == sncp()->sxxx_end()

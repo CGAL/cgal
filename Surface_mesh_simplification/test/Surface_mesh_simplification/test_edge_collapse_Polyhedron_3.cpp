@@ -378,7 +378,7 @@ bool Test (string aName)
 
           set_halfedgeds_items_id(lSurface);
 
-          SMS::Count_stop_predicate<Surface> stop(sStop);
+          SMS::Edge_count_stop_predicate<Surface> stop(sStop);
 
           Real_timer t; t.start();
 
@@ -487,7 +487,7 @@ int main(int argc, char** argv)
     }
 
     cout << endl
-         << lOK                    << " cases succedded." << endl
+         << lOK                    << " cases succeeded." << endl
          << (lCases.size() - lOK) << " cases failed." << endl;
 
     return lOK == lCases.size() ? 0 : 1;

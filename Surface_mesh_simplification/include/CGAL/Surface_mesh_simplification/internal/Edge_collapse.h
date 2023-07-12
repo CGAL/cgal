@@ -151,7 +151,7 @@ public:
     {
       // NOTE: A cost is a boost::optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
-      // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
+      // In consequence, edges with undefined costs will be promoted to the top of the priority queue and popped out first.
       return m_algorithm->get_data(a).cost() < m_algorithm->get_data(b).cost();
     }
 
@@ -179,7 +179,7 @@ public:
                                                : CGAL_BOOST_PENDING_MUTABLE_QUEUE;
   typedef Modifiable_priority_queue<halfedge_descriptor, Compare_cost, edge_id, hp>     PQ;
 
-  // An Edge_data is associated with EVERY _ edge in the mesh (collapsable or not).
+  // An Edge_data is associated with EVERY _ edge in the mesh (collapsible or not).
   // It contains the edge status wrt the priority queue
   // It also relates the edge with a policy-based cache
   struct Edge_data
@@ -499,7 +499,7 @@ collect()
     if(is_constrained(h))
     {
       CGAL_assertion_code(++num_not_inserted);
-      continue; // no not insert constrainted edges
+      continue; // no not insert constrained edges
     }
 
     const Profile profile = create_profile(h);
@@ -639,7 +639,7 @@ loop()
 
             m_visitor.OnNonCollapsable(profile);
 
-            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsable" );
+            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible" );
           }
 
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
@@ -660,7 +660,7 @@ loop()
 
         m_visitor.OnNonCollapsable(profile);
 
-        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsable" );
+        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible" );
       }
     }
     else
@@ -696,7 +696,7 @@ is_constrained(const vertex_descriptor v) const
   return false;
 }
 
-// Some edges are NOT collapsable: doing so would break the topological consistency of the mesh.
+// Some edges are NOT collapsible: doing so would break the topological consistency of the mesh.
 // This function returns true if a edge 'p->q' can be collapsed.
 //
 // An edge p->q can be collapsed iff it satisfies the "link condition"
@@ -1183,7 +1183,7 @@ collapse(const Profile& profile,
                       << "(V" << get(m_vim, profile.v0())
                       << "->V" << get(m_vim, profile.v1()) << ")");
 
-  // Perform the actuall collapse.
+  // Perform the actual collapse.
   // This is an external function.
   // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ, PT and QB
   // (PT and QB are removed if they are not null).

@@ -534,7 +534,7 @@ private:
     long log_bdry_den_;
     Integer_vector coeff_; // wrt [lower_, upper_], approximate
     int min_var_, max_var_;
-    // "state data" (copied en bloc by .copy_state_from())
+    // "state data" (copied en block by .copy_state_from())
     long subdiv_tries_, subdiv_fails_;
     long recdepth_;
     long log_sep_, delta_log_sep_, log_eps_, log_C_eps_;
@@ -737,7 +737,7 @@ public:
     <b>Supplying a traits class</b>
 
     This class is actually a class template.
-    To use it, you need to instanciate it with a traits class
+    To use it, you need to instantiate it with a traits class
     that defines the following three types and the various
     functors on them listed below.
      - \c Coefficient: The type of coefficients supplied
@@ -750,7 +750,7 @@ public:
      - \c Bound:  \c lower() and \c upper() return
        interval boundaries in this type.  Must be \c Assignable.
        The canonical choice is \c NiX::Exact_float_number<Integer>.
-       If you never instanciate \c lower() and \c upper()
+       If you never instantiate \c lower() and \c upper()
        (maybe use \c boundaries() instead), you might be lucky
        and get away with typedef'ing this to \c void.
 
@@ -773,7 +773,7 @@ public:
      - \c Lower_bound_log2_abs: A \c UnaryFunction with signature
        <tt>long l = Lower_bound_log2_abs()(Coefficient x)</tt>.
        The result \c l must be a lower bound to log<sub>2</sub>(|<i>x</i>|).
-       If \c Coefficient posesses \c NiX::NT_traits::Floor_log2_abs,
+       If \c Coefficient possesses \c NiX::NT_traits::Floor_log2_abs,
        you can simply use that.
      - \c lower_bound_log2_abs_object(): A \c const member function
        taking no arguments and returning a function object

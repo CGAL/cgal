@@ -44,8 +44,6 @@
 #include <list>
 #include <limits>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 # include <mutex>
@@ -313,19 +311,19 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set \c moving_vertices
+   * Returns moves for vertices of set `moving_vertices`.
    */
   Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
 
   /**
-   * Returns the move for vertex \c v
+   * Returns the move for vertex `v`.
    * \warning This function should be called only on moving vertices
    *          even for frozen vertices, it could return a non-zero vector
    */
   Vector_3 compute_move(const Vertex_handle& v);
 
   /**
-   * Updates mesh using moves of \c moves vector. Updates moving_vertices with
+   * Updates mesh using moves of `moves` vector. Updates moving_vertices with
    * the new set of moving vertices after the move.
    */
   void update_mesh(const Moves_vector& moves,
@@ -343,17 +341,17 @@ private:
   bool check_convergence() const;
 
   /**
-   * Returns the average circumradius length of cells incident to \c v
+   * Returns the average circumradius length of cells incident to `v`.
    */
   FT average_circumradius_length(const Vertex_handle& v) const;
 
   /**
-   * Returns the minimum cicumradius length of cells incident to \c v
+   * Returns the minimum cicumradius length of cells incident to `v`.
    */
   FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;
 
   /**
-   * Returns the squared circumradius length of cell \c cell
+   * Returns the squared circumradius length of cell `cell`.
    */
   FT sq_circumradius_length(const Cell_handle& cell,
                             const Vertex_handle& v) const;
@@ -802,7 +800,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
 
@@ -888,7 +886,7 @@ compute_move(const Vertex_handle& v)
   incident_cells.reserve(64);
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tr_.incident_cells_threadsafe(v, std::back_inserter(incident_cells));
   }
@@ -947,7 +945,7 @@ update_mesh(const Moves_vector& moves,
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // Apply moves in triangulation
     tbb::parallel_for(tbb::blocked_range<size_t>(0, moves.size()),
@@ -974,7 +972,7 @@ update_mesh(const Moves_vector& moves,
       {
         FT size = std::get<2>(*it);
 
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+#ifdef CGAL_MESH_3_OPTIMIZER_VERY_VERBOSE
         std::cerr << "Moving #" << it - moves.begin()
                   << " addr: " << &*v
                   << " pt: " << tr_.point(v)
@@ -1040,7 +1038,7 @@ fill_sizing_field()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     typedef tbb::enumerable_thread_specific<
       std::vector< std::pair<Bare_point, FT> > > Local_list;
@@ -1111,7 +1109,7 @@ average_circumradius_length(const Vertex_handle& v) const
   incident_cells.reserve(64);
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tr_.incident_cells_threadsafe(v, std::back_inserter(incident_cells));
   }

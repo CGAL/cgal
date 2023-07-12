@@ -93,7 +93,7 @@ template <> class Algebraic_structure_traits< leda_integer >
     // Div defined via base using Div_mod
     // Mod defined via base using Div_mod
 
-    // This code results in an inconsisten div/mod for some leda versions
+    // This code results in an inconsistent div/mod for some leda versions
     // TODO: reactivate this code
 
 //     typedef INTERN_AST::Div_per_operator< Type > Div;

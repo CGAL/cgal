@@ -3,7 +3,7 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableUnaryFunction
+ * \cgalRefines{AdaptableUnaryFunction}
  *
  * \cgalHasModel ArrangementBasicTraits_2::Is_vertical_2
  */

@@ -27,7 +27,7 @@ Many functors consider the polynomial as a univariate polynomial in one variable
 By default this is the outermost variable \f$ x_{d-1}\f$. However, in general it
 is possible to select a certain variable.
 
-\cgalRefines `AlgebraicStructureTraits`
+\cgalRefines{AlgebraicStructureTraits}
 
 \sa `Polynomial_d`
 

@@ -15,16 +15,13 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
 
-  #--------------------------------
-  # The demo: Circular_kernel_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Circular_kernel_2.ui)
 
@@ -41,7 +38,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Circular_kernel_2)
 
   target_link_libraries(Circular_kernel_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                                  Qt5::Gui)
+                                                  Qt5::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Circular_kernel_2)
@@ -51,7 +48,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

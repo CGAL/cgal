@@ -1043,7 +1043,7 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
       CGAL_assertion(n<3);
 
       CGAL_NEF_TRACEN("n " << n);
-      CGAL_NEF_TRACEN("number of coordinats =0:" << n);
+      CGAL_NEF_TRACEN("number of coordinates =0:" << n);
       if(n==0) {
         if((chsp&60)!=60 &&
            it->sphere_circle().orthogonal_vector().x()!=0) chsp|=60;

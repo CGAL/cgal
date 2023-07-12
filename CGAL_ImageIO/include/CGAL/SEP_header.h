@@ -20,7 +20,6 @@
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/fusion/adapted/boost_tuple.hpp>
-#include <boost/array.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/phoenix/core.hpp>
 #include <boost/phoenix/operator.hpp>
@@ -72,7 +71,7 @@ private:
 
     template <typename T>
     void operator()(const T& t) {
-      // std::cerr << "My assignement ("
+      // std::cerr << "My assignment ("
       //           << typeid(t).name() << "): "
       //           << key << "=" << t << std::endl;
       self->add(key, t);
@@ -106,9 +105,9 @@ namespace CGAL {
 
 class SEP_header {
 
-  boost::array<std::size_t, 3> _n;
-  boost::array<double, 3> _d;
-  boost::array<double, 3> _o;
+  std::array<std::size_t, 3> _n;
+  std::array<double, 3> _d;
+  std::array<double, 3> _o;
 
   SEP_header_aux::String_dict _string_dict;
 

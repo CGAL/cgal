@@ -8,7 +8,7 @@ A CombinationElement can be used as template parameter for the class
 \cgalHasModel Pointers
 \cgalHasModel Random access iterators
 
-\sa `Combination_enumerator<CombinationElement>`
+\sa `CGAL::Combination_enumerator<CombinationElement>`
 
 
 */
@@ -76,8 +76,3 @@ int operator-(const CombinationElement & e2);
 /// @}
 
 }; /* end CombinationElement */
-
-
-
-
-

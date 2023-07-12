@@ -9,9 +9,7 @@ order with preference to the outermost variable.
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is
 `RealEmbeddable`.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

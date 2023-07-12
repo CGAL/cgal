@@ -21,7 +21,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/Polygon_2/polygon_assertions.h>
+#include <CGAL/assertions.h>
 #include <set>
 #include <vector>
 #include <algorithm>
@@ -156,9 +156,9 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
     std::cout << "less_than_in_tree; new: " << new_edge.as_int() << " tree edge: " << tree_edge.as_int() << std::endl;
 #endif
-    CGAL_polygon_precondition(
+    CGAL_precondition(
        m_vertex_data->edges[tree_edge.as_int()].is_in_tree);
-    CGAL_polygon_precondition(
+    CGAL_precondition(
        !m_vertex_data->edges[new_edge.as_int()].is_in_tree);
     Vertex_index left, mid, right;
     m_vertex_data->left_and_right_index(left, right, tree_edge);
@@ -172,10 +172,10 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
       case RIGHT_TURN: return false;
       case COLLINEAR: break;
     }
-    CGAL_polygon_assertion(m_vertex_data->less_xy_2(
+    CGAL_assertion(m_vertex_data->less_xy_2(
                                m_vertex_data->point(left),
                                m_vertex_data->point(mid)));
-    CGAL_polygon_assertion( m_vertex_data->less_xy_2(
+    CGAL_assertion( m_vertex_data->less_xy_2(
                                 m_vertex_data->point(mid),
                                 m_vertex_data->point(right)));
     m_vertex_data->is_simple_result = false;
@@ -321,23 +321,23 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     std::pair<typename Tree::iterator, bool> result;
     if (left_turn) {
         result = tree->insert(prev_vt);
-        // CGAL_polygon_assertion(result.second)
+        // CGAL_assertion(result.second)
         td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
         if (!this->is_simple_result) return false;
         result = tree->insert(mid_vt);
-        // CGAL_polygon_assertion(result.second)
+        // CGAL_assertion(result.second)
         td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
         if (!this->is_simple_result) return false;
     } else {
         result = tree->insert(mid_vt);
-        // CGAL_polygon_assertion(result.second)
+        // CGAL_assertion(result.second)
         td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
         if (!this->is_simple_result) return false;
         result = tree->insert(prev_vt);
-        // CGAL_polygon_assertion(result.second)
+        // CGAL_assertion(result.second)
         td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
         if (!this->is_simple_result) return false;
@@ -374,7 +374,7 @@ replacement_event(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
     // check if continuation point is on the right side of neighbor segments
     typedef typename Tree::iterator It;
     Edge_data &td = edges[cur_edge.as_int()];
-    CGAL_polygon_assertion(td.is_in_tree);
+    CGAL_assertion(td.is_in_tree);
     It cur_seg = td.tree_it;
     Vertex_index cur_vt = (td.is_left_to_right) ? next_edge : cur_edge;
     if (cur_seg != tree->begin()) {
@@ -613,7 +613,7 @@ void make_simple_polygon(Iterator points_begin, Iterator points_end,
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
         std::cout << "To swap: " << swap_interval.first << " "
                                  << swap_interval.second << std::endl;
-        CGAL_polygon_assertion(swap_interval.first >= -1 &&
+        CGAL_assertion(swap_interval.first >= -1 &&
                                swap_interval.second >= -1 &&
                                swap_interval.first < size &&
                                swap_interval.second < size);

@@ -6,7 +6,7 @@
 A type model of this concept can be used as cell base by a triangulation
 and provides an additional information storage.
 
-\cgalRefines `TriangulationCellBase_3`
+\cgalRefines{TriangulationCellBase_3}
 
 \cgalHasModel `CGAL::Triangulation_cell_base_with_info_3`
 

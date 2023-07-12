@@ -527,7 +527,6 @@ private:
   {
     CGAL::Timer timer;
     timer.start();
-    int nb_test = 0;
     while ( timer.time() < duration )
     {
       Point a = random_point_in<K>(m_tree.bbox());
@@ -539,8 +538,6 @@ private:
       test(segment, m_polyhedron, m_tree, m_naive);
       test(ray, m_polyhedron, m_tree, m_naive);
       test(line, m_polyhedron, m_tree, m_naive);
-
-      ++nb_test;
     }
     timer.stop();
 

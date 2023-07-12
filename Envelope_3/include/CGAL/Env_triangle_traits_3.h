@@ -259,7 +259,7 @@ public:
     }
 
     /*!
-     * Check if the triangel is vertical.
+     * Check if the triangle is vertical.
      */
     bool is_vertical() const
     {
@@ -457,7 +457,7 @@ public:
       // the points should not be collinear
       CGAL_assertion(s1 != 0);
 
-      // should also take care for the original and trasformed direction of
+      // should also take care for the original and transformed direction of
       // the segment
       Sign s2 = CGAL_NTS sign(w3 - w1);
       Sign s = CGAL_NTS sign(int(s1 * s2));
@@ -756,7 +756,7 @@ public:
     // upper envelope)
     // precondition: the surfaces are defined above cv (to the left of cv,
     //               if cv is directed from min point to max point)
-    //               the choise between surf1 and surf2 for the envelope is
+    //               the choice between surf1 and surf2 for the envelope is
     //               the same for every point in the infinitesimal region
     //               above cv
     //               the surfaces are EQUAL over the curve cv
@@ -1019,7 +1019,7 @@ public:
     return b;
   }
 
-  // check whethe two xy-monotone surfaces (3D-triangles or segments)
+  // check whether two xy-monotone surfaces (3D-triangles or segments)
   // intersect
   bool do_intersect(const Xy_monotone_surface_3& s1,
                     const Xy_monotone_surface_3& s2) const
@@ -1057,7 +1057,7 @@ public:
       return Object();
 
     // if intersecting two segment - alculate the intersection
-    // as in the case of dimention 2
+    // as in the case of dimension 2
     if (s1.is_segment() && s2.is_segment())
     {
       Object res = intersection_of_segments(s1, s2);

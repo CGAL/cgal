@@ -71,8 +71,8 @@ protected:
   Dcel m_dcel;                           // The DCEL.
 
   const Traits_adaptor_2* m_geom_traits; // The geometry-traits adaptor.
-  bool m_own_geom_traits;                // Inidicate whether we should
-                                         // evetually free the traits object.
+  bool m_own_geom_traits;                // Indicate whether we should
+                                         // eventually free the traits object.
 
   // Copy constructor and assignment operator - not supported.
   Arr_planar_topology_traits_base_2(const Self&);

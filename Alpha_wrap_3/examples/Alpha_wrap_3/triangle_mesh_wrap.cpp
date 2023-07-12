@@ -9,7 +9,6 @@
 #include <iostream>
 #include <string>
 
-namespace AW3 = CGAL::Alpha_wraps_3;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -19,8 +18,6 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the input
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
   std::cout << "Reading " << filename << "..." << std::endl;
@@ -45,6 +42,7 @@ int main(int argc, char** argv)
 
   const double alpha = diag_length / relative_alpha;
   const double offset = diag_length / relative_offset;
+  std::cout << "alpha: " << alpha << ", offset: " << offset << std::endl;
 
   // Construct the wrap
   CGAL::Real_timer t;

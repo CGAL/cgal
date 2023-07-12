@@ -62,7 +62,7 @@
 - `CGAL::Linear_cell_complex_traits<d,K>`
 - `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Cell_attribute_with_point_and_id<LCC,Info_,Tag,OnMerge,OnSplit>`
-- `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
+- `CGAL::Linear_cell_complex_incremental_builder_3<LCC>`
 
 \cgalCRPSection{Global Functions}
 \cgalCRPSubsection{Constructions for Linear Cell Complex}
@@ -78,4 +78,3 @@
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
 
 */
-

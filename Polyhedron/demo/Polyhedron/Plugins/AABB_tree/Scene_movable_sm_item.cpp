@@ -203,7 +203,7 @@ void Scene_movable_sm_item::invalidateOpenGLBuffers()
 CGAL::Three::Scene_item::ManipulatedFrame* Scene_movable_sm_item::manipulatedFrame() { return d->frame; }
 const CGAL::qglviewer::Vec& Scene_movable_sm_item::center() const { return d->center_; }
 Scene_movable_sm_item::~Scene_movable_sm_item() { delete d; Q_EMIT killed(); }
-void Scene_movable_sm_item::setFMatrix(const GLdouble matrix[])
+void Scene_movable_sm_item::setFMatrix(const GLdouble matrix[16])
 {
   for (int i=0; i<16; ++i)
     d->f_matrix.data()[i] = (float)matrix[i];

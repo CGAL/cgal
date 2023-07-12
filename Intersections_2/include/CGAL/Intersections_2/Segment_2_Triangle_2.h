@@ -52,19 +52,26 @@ protected:
 };
 
 template <class K>
-inline bool do_intersect(
-    const typename K::Segment_2 &p1,
-    const typename K::Triangle_2 &p2,
-    const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Segment_2& s,
+             const typename K::Triangle_2& tr,
+             const K&)
 {
-    typedef Segment_2_Triangle_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  typedef Segment_2_Triangle_2_pair<K> pair_t;
+  pair_t pair(&s, &tr);
+  return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
-
-
-
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Triangle_2& tr,
+             const typename K::Segment_2& s,
+             const K& k)
+{
+  return do_intersect(s, tr, k);
+}
 
 template <class K>
 typename Segment_2_Triangle_2_pair<K>::Intersection_results
@@ -174,24 +181,12 @@ intersection(const typename K::Triangle_2&tr,
   return internal::intersection(seg, tr, k);
 }
 
-
-template <class K>
-inline bool do_intersect(
-    const typename K::Triangle_2 &p1,
-    const typename K::Segment_2 &p2,
-    const K&)
-{
-    typedef Segment_2_Triangle_2_pair<K> pair_t;
-    pair_t pair(&p2, &p1);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
-}
-
 } // namespace internal
 } // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION(Segment_2, Triangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Segment_2, Triangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_SEGMENT_2_TRIANGLE_2_H

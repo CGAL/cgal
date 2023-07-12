@@ -25,20 +25,19 @@ namespace internal {
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Point_2 &pt,
-             const typename K::Circle_2 &circle,
+typename K::Boolean
+do_intersect(const typename K::Point_2& pt,
+             const typename K::Circle_2& circle,
              const K&)
 {
   return circle.has_on_boundary(pt);
 }
 
-
 template <class K>
 inline
-bool
-do_intersect(const typename K::Circle_2 &circle,
-             const typename K::Point_2 &pt,
+typename K::Boolean
+do_intersect(const typename K::Circle_2& circle,
+             const typename K::Point_2& pt,
              const K&)
 {
   return circle.has_on_boundary(pt);
@@ -48,8 +47,8 @@ do_intersect(const typename K::Circle_2 &circle,
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Point_2, typename K::Circle_2>::result_type
-intersection(const typename K::Point_2 &pt,
-             const typename K::Circle_2 &circle,
+intersection(const typename K::Point_2& pt,
+             const typename K::Circle_2& circle,
              const K& k)
 {
   if (do_intersect(pt,circle, k))
@@ -60,8 +59,8 @@ intersection(const typename K::Point_2 &pt,
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Circle_2, typename K::Point_2>::result_type
-intersection(const typename K::Circle_2 &circle,
-             const typename K::Point_2 &pt,
+intersection(const typename K::Circle_2& circle,
+             const typename K::Point_2& pt,
              const K& k)
 {
   return internal::intersection(pt, circle, k);
@@ -73,5 +72,6 @@ intersection(const typename K::Circle_2 &circle,
 CGAL_INTERSECTION_FUNCTION(Point_2, Circle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Circle_2, Point_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_2_POINT_2_CIRCLE_2_H

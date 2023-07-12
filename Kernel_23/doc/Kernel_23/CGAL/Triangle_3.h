@@ -32,7 +32,7 @@ const Point_3<Kernel> &r);
 
 /*!
 Test for equality: two triangles `t1` and `t2` are equal, iff there
-exists a cyclic permutation of the vertices of  t2`, such that
+exists a cyclic permutation of the vertices of `t2`, such that
 they are equal to the vertices of `t1`.
 */
 bool operator==(const Triangle_3<Kernel> &t2) const;

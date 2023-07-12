@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel`
+\cgalRefines{Kernel}
 
 \cgalHasModel `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`
 \cgalHasModel CGAL::Exact_spherical_kernel_3

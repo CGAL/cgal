@@ -15,10 +15,13 @@
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
+#include <CGAL/draw_constrained_triangulation_2.h>
+
+#include <CGAL/Triangulation_2.h>
+
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -51,7 +54,7 @@ public:
   /// @param at2 the t2 to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big object where this time could be long)
   SimpleTriangulation2ViewerQt(QWidget* parent, const T2& at2,
                                const char* title="Basic T2 Viewer",
                                bool anofaces=false,
@@ -133,10 +136,10 @@ protected:
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
 
 template<class Gt, class Tds>
-void draw(const CGAL_T2_TYPE& at2,
-          const char* title="Triangulation_2 Basic Viewer",
-          bool nofill=false)
+void draw(const CGAL_T2_TYPE& at2)
 {
+  const char* title="Triangulation_2 Basic Viewer";
+  bool nofill=false;
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else

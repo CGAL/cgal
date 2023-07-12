@@ -267,7 +267,7 @@ void check_push_back(Traits_2::Make_x_monotone_2
             << polycurve.number_of_subcurves() << std::endl;
 
   push_back_2(polycurve, curves[1]);
-  //throws a warning "size is depricated"
+  //throws a warning "size is deprecated"
   std::cout << "size of polycurve after 2 push_backs: "
             << polycurve.number_of_subcurves() << std::endl;
 }

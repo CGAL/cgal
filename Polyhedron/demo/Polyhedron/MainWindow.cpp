@@ -1806,7 +1806,7 @@ void MainWindow::updateInfo() {
     QString item_filename = item->property("source filename").toString();
     CGAL::Bbox_3 bbox = item->bbox();
     if(bbox !=CGAL::Bbox_3())
-      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6), dimensions (%7, %8, %9)</div>")
+      item_text += QString("<div>Bounding box:<br>&nbsp;min (%1, %2, %3),<br>&nbsp;max (%4, %5, %6),<br>&nbsp;dimensions (%7, %8, %9)</div>")
           .arg(bbox.xmin(),0, 'g', 17)
           .arg(bbox.ymin(),0, 'g', 17)
           .arg(bbox.zmin(),0, 'g', 17)
@@ -2544,7 +2544,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::recenterScene()
 {
-  //force the recomputaion of the bbox
+  //force the recomputation of the bbox
   bbox_need_update = true;
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
@@ -2621,7 +2621,7 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
   if(id.isValid())
   {
     // mapFromSource is necessary to convert the QModelIndex received
-    // from the Scene into a valid QModelIndex in the view, beacause of
+    // from the Scene into a valid QModelIndex in the view, because of
     // the proxymodel
     sceneView->scrollTo(proxyModel->mapFromSource(id));
   }
@@ -3191,8 +3191,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                              tr("Enter the name of your scene file."));
     if(path.isEmpty())
       return;
-    if(!path.contains("Polyhedron_demo_"))
-      path.prepend("Polyhedron_demo_");
+    if(!path.contains("/tmp/Polyhedron_demo_"))
+      path.prepend("/tmp/Polyhedron_demo_");
     try{
       ssh_session session = nullptr;
       bool res = establish_ssh_session_from_agent(session,

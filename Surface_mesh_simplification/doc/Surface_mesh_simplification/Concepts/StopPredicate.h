@@ -4,8 +4,10 @@
 
 The concept `StopPredicate` describes the requirements for the predicate which indicates if the simplification process must finish.
 
-\cgalHasModel `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Edge_count_stop_predicate<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Face_count_stop_predicate<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Edge_count_ratio_stop_predicate<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Face_count_ratio_stop_predicate<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<FT>`
 
 */

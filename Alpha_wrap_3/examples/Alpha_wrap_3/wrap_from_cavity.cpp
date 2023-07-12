@@ -8,7 +8,6 @@
 #include <iostream>
 #include <string>
 
-namespace AW3 = CGAL::Alpha_wraps_3;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -18,8 +17,6 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the input
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
   std::cout << "Reading " << filename << "..." << std::endl;
@@ -47,15 +44,8 @@ int main(int argc, char** argv)
   const double offset = diag_length / relative_offset;
 
   // Construct the wrap
-  using Oracle = CGAL::Alpha_wraps_3::internal::Triangle_mesh_oracle<K>;
-  Oracle oracle;
-  oracle.add_triangle_mesh(input);
-
   CGAL::Real_timer t;
   t.start();
-
-  Mesh wrap;
-  CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
 
   // There is no limit on how many seeds can be used.
   // However, the algorithm automatically determines whether a seed can be used
@@ -66,7 +56,8 @@ int main(int argc, char** argv)
     Point_3(0, 50, 0) // a point within the armadillo surface
   };
 
-  aw3(alpha, offset, wrap, CGAL::parameters::seed_points(std::ref(seeds)));
+  Mesh wrap;
+  alpha_wrap_3(input, alpha, offset, wrap, CGAL::parameters::seed_points(std::ref(seeds)));
 
   t.stop();
   std::cout << "Result: " << num_vertices(wrap) << " vertices, " << num_faces(wrap) << " faces" << std::endl;

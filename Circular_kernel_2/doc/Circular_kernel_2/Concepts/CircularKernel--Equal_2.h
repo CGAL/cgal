@@ -5,7 +5,7 @@
 
 Testing equality between objects.
 
-\cgalRefines `Kernel::Equal_2`
+\cgalRefines{Kernel::Equal_2}
 
 \sa `CircularKernel::CompareX_2`
 \sa `CircularKernel::CompareY_2`

@@ -3,7 +3,7 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableTernaryFunction
+ * \cgalRefines{AdaptableTernaryFunction}
  *
  * \cgalHasModel ArrangementOpenBoundaryTraits_2::Compare_x_near_boundary_2
  */

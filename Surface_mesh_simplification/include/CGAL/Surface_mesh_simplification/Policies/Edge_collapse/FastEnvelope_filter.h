@@ -43,7 +43,7 @@ private:
   template <typename Profile>
   void initialize_envelope(const Profile& profile) const
   {
-    CGAL_static_assertion((std::is_same<GeomTraits, typename Profile::Geom_traits>::value));
+    static_assert(std::is_same<GeomTraits, typename Profile::Geom_traits>::value);
 
     typedef typename Profile::Triangle_mesh                                   Triangle_mesh;
     typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
@@ -133,7 +133,7 @@ public:
         std::array<Vector3, 3> triangle = { vecp, vecv, vecw};
 
         if(m_fast_envelope->is_outside(triangle)){
-          // the triange intersects the envelope
+          // the triangle intersects the envelope
           return boost::none;
         }
         vecv = vecw;

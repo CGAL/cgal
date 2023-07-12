@@ -7,25 +7,6 @@ project(Hash_map)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-# include for local directory
-
-# include for local package
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("hm.cpp")
 create_single_source_cgal_program("foreach.cpp")
 create_single_source_cgal_program("triangulation.cpp")

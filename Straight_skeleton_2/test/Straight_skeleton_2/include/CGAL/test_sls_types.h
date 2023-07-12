@@ -143,7 +143,7 @@ public:
 
   void on_offset_contour_started() const { check_timeout(); }
 
-  void on_offset_point ( IPoint const& ) const { check_timeout(); }
+  void on_offset_point ( IPoint const&, Halfedge_const_handle ) const { check_timeout(); }
 
   IPoint on_offset_point_overflowed( Halfedge_const_handle ) const { return CGAL::ORIGIN ; }
 

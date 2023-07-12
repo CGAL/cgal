@@ -29,8 +29,7 @@
 // the version of MPFR is one of those buggy versions, abort the compilation
 // and instruct the user to update MPFR or don't use RS3.
 #ifdef CGAL_USE_RS3
-#include <boost/static_assert.hpp>
-BOOST_STATIC_ASSERT_MSG(
+static_assert(
         MPFR_VERSION_MAJOR!=3 ||
         MPFR_VERSION_MINOR!=1 ||
         MPFR_VERSION_PATCHLEVEL<3 || MPFR_VERSION_PATCHLEVEL>6,

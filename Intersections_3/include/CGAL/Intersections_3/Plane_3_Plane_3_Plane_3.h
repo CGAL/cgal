@@ -30,7 +30,8 @@
 namespace CGAL {
 
 template <class K>
-inline bool
+inline
+typename K::Boolean
 do_intersect(const Plane_3<K>& plane1,
              const Plane_3<K>& plane2,
              const Plane_3<K>& plane3)

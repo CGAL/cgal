@@ -18,8 +18,5 @@ endforeach()
 if(CGAL_Qt5_FOUND)
   target_link_libraries(draw_polygon_set PUBLIC CGAL::CGAL_Basic_viewer)
 else()
-  message(
-    STATUS
-      "NOTICE: The example draw_polygon_set requires Qt and drawing will be disabled."
-  )
+  message(STATUS "NOTICE: The example 'draw_polygon_set' requires Qt and drawing will be disabled.")
 endif()

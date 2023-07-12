@@ -18,8 +18,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL {
     // \ingroup PkgAABBTreeRef
@@ -68,9 +67,9 @@ namespace CGAL {
             : m_facet(*ptr)  { }
         template <class Iterator>
         AABB_triangulation_3_triangle_primitive( Iterator it,
-                                            typename boost::enable_if<
-                                                       boost::is_same<Id,typename Iterator::value_type>
-                                            >::type* =0
+                                            std::enable_if_t<
+                                                std::is_same<Id,typename Iterator::value_type>::value
+                                            >* =0
         ) : m_facet(*it)  { }
 
 

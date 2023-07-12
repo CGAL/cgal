@@ -5,8 +5,7 @@
 The concept `MutableFaceGraph` refines the concepts `FaceGraph` and `MutableHalfedgeGraph` and adds
 the requirement for operations to add faces and to modify face-halfedge relations.
 
-\cgalRefines `FaceGraph`
-\cgalRefines `MutableHalfedgeGraph`
+\cgalRefines{FaceGraph,MutableHalfedgeGraph}
 
 \cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
 

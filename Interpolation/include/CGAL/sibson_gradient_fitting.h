@@ -24,13 +24,11 @@
 
 #include <boost/any.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/utility/result_of.hpp>
 
 #include <iterator>
 #include <utility>
 #include <vector>
-
 #include <type_traits>
 #include <functional>
 
@@ -229,11 +227,11 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              const Traits& traits,
                              // Some SFINAE to distinguish whether the argument type
                              // of the value functor is 'DT::Point' or 'DT::Vertex_handle'
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
                                  std::function<boost::any(typename Dt::Point)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Dt::Point                                         VF_arg_type;
@@ -255,11 +253,11 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              OutputFunctor fct,
                              ValueFunctor value_function,
                              const Traits& traits,
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
                                  std::function<boost::any(typename Dt::Vertex_handle)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Dt::Vertex_handle                                 VF_arg_type;
@@ -299,11 +297,11 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              const Traits& traits,
                              // Some SFINAE to distinguish whether the argument type
                              // of the value functor is 'Rt::Point' (weighted point) or 'Rt::Vertex_handle'
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
                                  std::function<boost::any(typename Rt::Point)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Rt::Point                                         VF_arg_type;
@@ -325,11 +323,11 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              OutputFunctor fct,
                              ValueFunctor value_function,
                              const Traits& traits,
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
                                  std::function<boost::any(typename Rt::Vertex_handle)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Rt::Vertex_handle                                 VF_arg_type;

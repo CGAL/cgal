@@ -54,7 +54,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code

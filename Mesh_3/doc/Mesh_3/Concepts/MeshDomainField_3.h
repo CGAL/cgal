@@ -46,10 +46,9 @@ on the input feature including the query point.
 /// @{
 
 /*!
-
 returns the value of the sizing field at the point `p`,
 assumed to be included in the input complex feature with dimension `dimension`
-and mesh vertex index `index`.
+and mesh subcomplex index `index`.
 */
 FT operator()(const Point_3& p, int dimension, const Index& index) const;
 

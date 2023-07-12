@@ -352,14 +352,11 @@ public:
 
   };
 
-  /*! Obtain a Compare_y_at_x_2 functor object. */
+  /*! Obtain a Compare_curve_end_x_2 functor object. */
   Compare_curve_end_x_2 compare_curve_end_x_2_object () const
   {
     return Compare_curve_end_x_2(this);
   }
-
-
-
 
  /*! A functor that compares the y-coordinates of an edge end and a curve at
    * the point x-coordinate
@@ -1080,7 +1077,7 @@ public:
   }
 
   /*! returns true if the end point is inside the closure of the trapezoid
-      (inlcude all boundaries) */
+      (include all boundaries) */
   bool is_in_closure  (const Td_active_trapezoid& tr, const Curve_end& ce ) const
   {
     // test left and right sides
@@ -1110,7 +1107,7 @@ public:
     return false;
   }
   /*! returns true if the end point is inside the closure of the trapezoid
-      (inlcude all boundaries) */
+      (include all boundaries) */
   bool is_in_closure (const Td_active_edge& e, const Curve_end& ce ) const
   {
     // test left and right sides

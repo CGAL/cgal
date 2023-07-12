@@ -75,7 +75,7 @@ The class `Eigen_solver_traits` provides an interface to the sparse solvers of \
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
-\sa http://eigen.tuxfamily.org/index.php?title=Main_Page
+\sa https://eigen.tuxfamily.org/index.php?title=Main_Page
 
 \cgalHeading{Instantiation Example}
 
@@ -242,7 +242,12 @@ class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType
 public:
   typedef EigenSolverT                                                  Solver;
   typedef Scalar                                                        NT;
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                                              Matrix;
+#else
   typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type             Matrix;
+#endif
+
   typedef Eigen_vector<Scalar>                                          Vector;
 
   // Public operations

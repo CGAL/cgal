@@ -19,12 +19,12 @@
 #include <iterator>
 #include <algorithm>
 #include <vector>
+#include <type_traits>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <CGAL/int.h>
 
 #include <boost/operators.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -59,7 +59,7 @@ public:
     :v(begin,end){
     typedef typename std::iterator_traits<InputIterator>::value_type value_type;
     CGAL_USE_TYPE(value_type);
-    CGAL_static_assertion(( ::boost::is_same<value_type, int>::value));
+    static_assert(::std::is_same<value_type, int>::value);
   }
 
 

@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::Intersect_2`
+\cgalRefines{Kernel::Intersect_2}
 
 \sa \link intersection_grp `CGAL::intersection()` \endlink
 

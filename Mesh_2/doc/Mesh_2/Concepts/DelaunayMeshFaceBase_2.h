@@ -11,7 +11,7 @@ The concept `DelaunayMeshFaceBase_2` refines the concept
 to a Boolean marker, that indicates if the face is in the
 meshing domain or not.
 
-\cgalRefines `ConstrainedTriangulationFaceBase_2`
+\cgalRefines{ConstrainedTriangulationFaceBase_2}
 
 \cgalHasModel `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>`
 
@@ -65,7 +65,7 @@ sets the edge that makes this face blind.
 \pre is_blind() returns `true`
 \pre e is a constrained edge
 */
-void set_blinding_constraint(const Egde& e);
+void set_blinding_constraint(const Edge& e);
 
 
 /// @}

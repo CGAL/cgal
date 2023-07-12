@@ -116,7 +116,7 @@ struct Make_x_monotone_2 :
 
   //!@}
 
-  //!\name Functor invokation
+  //!\name Functor invocation
   //!@{
 
   // TODO add operator for non-x-monotone arc

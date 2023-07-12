@@ -84,7 +84,7 @@ public:
 
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
-  void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
+  void enableClippingBox(QVector4D box[6]) Q_DECL_OVERRIDE;
   void disableClippingBox() Q_DECL_OVERRIDE;
   void set2DSelectionMode(bool) Q_DECL_OVERRIDE;
   void setStaticImage(QImage image) Q_DECL_OVERRIDE;

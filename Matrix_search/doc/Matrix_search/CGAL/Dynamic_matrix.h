@@ -69,7 +69,7 @@ void replace_column( int old, int new);
 
 /*!
 returns
-a new matrix consisting of all rows of the dynmic matrix with even index,
+a new matrix consisting of all rows of the dynamic matrix with even index,
 (i.e.\ first row is row \f$ 0\f$ of the dynamic matrix, second row is row \f$ 2\f$ of
 the dynamic matrix, etc.). \pre `number_of_rows()` \f$ > 0\f$.
 */

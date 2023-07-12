@@ -25,9 +25,9 @@
 #include <CGAL/tags.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Unfiltered_predicate_adaptor.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/intrusive_ptr.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -121,6 +121,19 @@ private:
            has_enough_precision(boost::get<1>(time_and_point), precision);
   }
 
+  bool has_enough_precision(const CGAL::Trisegment_2<FK, CGAL_SS_i::Segment_2_with_ID<FK> >& trisegment, double precision) const
+  {
+    return has_enough_precision(trisegment.e0().source(), precision) &&
+           has_enough_precision(trisegment.e0().target(), precision) &&
+           has_smaller_relative_precision(trisegment.w0(), precision) &&
+           has_enough_precision(trisegment.e1().source(), precision) &&
+           has_enough_precision(trisegment.e1().target(), precision) &&
+           has_smaller_relative_precision(trisegment.w1(), precision) &&
+           has_enough_precision(trisegment.e2().source(), precision) &&
+           has_enough_precision(trisegment.e2().target(), precision) &&
+           has_smaller_relative_precision(trisegment.w2(), precision);
+  }
+
 public:
 
   Exceptionless_filtered_construction() {}
@@ -190,24 +203,20 @@ class Rational
     NT mN, mD ;
 } ;
 
-template <class Info>
-struct No_cache
-{
-  bool IsCached ( std::size_t ) { return false; }
-
-  Info Get ( std::size_t )
-  {
-    CGAL_error();
-    return Info();
-  }
-
-  void Set ( std::size_t, Info const& ) { }
-  void Reset ( std::size_t ) { }
-};
 
 // Debug struct
 template <class Info>
 struct FPU_checker;
+
+template <class K>
+struct FPU_checker<boost::optional< Line_2<K> > >
+{
+  static bool is_valid()
+  {
+    return !std::is_same<typename K::FT, CGAL::Interval_nt<false> >::value ||
+           FPU_get_cw() == CGAL_FE_UPWARD;
+  }
+};
 
 template <class FT>
 struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
@@ -220,7 +229,7 @@ struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
 };
 
 template <class K>
-struct FPU_checker<boost::optional< Line_2<K> > >
+struct FPU_checker<boost::optional< Point_2<K> > >
 {
   static bool is_valid()
   {
@@ -229,50 +238,6 @@ struct FPU_checker<boost::optional< Line_2<K> > >
   }
 };
 
-//TODO: call reserve, but how? #input vertices + n*m estimation?
-template <class Info>
-struct Info_cache
-{
-  std::vector<Info> mValues ;
-  std::vector<bool> mAlreadyComputed ;
-
-  bool IsCached ( std::size_t i )
-  {
-    return ( (mAlreadyComputed.size() > i) && mAlreadyComputed[i] ) ;
-  }
-
-  Info const& Get(std::size_t i)
-  {
-    CGAL_precondition ( IsCached(i) ) ;
-    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
-    return mValues[i] ;
-  }
-
-  void Set ( std::size_t i, Info const& aValue)
-  {
-    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
-    if (mValues.size() <= i )
-    {
-      mValues.resize(i+1) ;
-      mAlreadyComputed.resize(i+1, false) ;
-    }
-
-    mAlreadyComputed[i] = true ;
-    mValues[i] = aValue ;
-  }
-
-  void Reset ( std::size_t i )
-  {
-    if ( IsCached(i) ) // needed if approx info is set but not exact info
-      mAlreadyComputed[i] = false ;
-  }
-};
-
-template <typename K>
-using Time_cache = Info_cache< boost::optional< CGAL_SS_i::Rational< typename K::FT > > > ;
-
-template <typename K>
-using Coeff_cache = Info_cache< boost::optional< Line_2<K> > > ;
 
 template<class K>
 struct Functor_base_2
@@ -368,8 +333,11 @@ struct SS_converter : Converter
     CGAL_precondition( tri!= Source_trisegment_2_ptr() ) ;
 
     return Target_trisegment_2_ptr ( new Target_trisegment_2(cvt_s(tri->e0())
+                                                            ,cvt_n(tri->w0())
                                                             ,cvt_s(tri->e1())
+                                                            ,cvt_n(tri->w1())
                                                             ,cvt_s(tri->e2())
+                                                            ,cvt_n(tri->w2())
                                                             ,tri->collinearity()
                                                             ,tri->id()
                                                             )
@@ -449,9 +417,10 @@ struct SS_converter : Converter
 };
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Filters_split_events_tag)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Protector)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Segment_2_with_ID)
 
-template <class GT, bool has_filters_split_events_tag = has_Filters_split_events_tag<GT>::value>
+template <class GT, bool has_Protector = has_Protector<GT>::value>
 struct Get_protector{ struct type{}; };
 
 template <class GT>
@@ -460,29 +429,7 @@ struct Get_protector<GT, true>
   typedef typename GT::Protector type;
 };
 
-
 } // namespace CGAL_SS_i
+} // namespace CGAL
 
-
-//
-// This macro defines a global functor adapter which allows users to use it in the followig ways:
-//
-// Given a 'Functor' provided by a given 'Traits' (or Kernel):
-//
-//   typedef typename CGAL::Functor<Traits>::type Functor ;
-//   result r = CGAL::Functor<Traits>(traits)(a,b,c);
-//
-#define CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(functor) \
-        template<class K> \
-        typename K :: functor functor ( K const& aK ) \
-        { \
-          return aK.get((typename K :: functor const*)0);  \
-        }
-
-
-} // end namespace CGAL
-
-
-#endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H //
-
-// EOF //
+#endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H

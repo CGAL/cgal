@@ -53,7 +53,7 @@ void OnCollected(const Edge_profile& profile,
 Called during the <I>processing phase</I> (when edges are collapsed),
 for each edge that is selected.
 
-This method is called before the algorithm checks if the edge is collapsable.
+This method is called before the algorithm checks if the edge is collapsible.
 
 `cost` indicates the current collapse cost for the edge.
 If absent (meaning that it could not be computed)

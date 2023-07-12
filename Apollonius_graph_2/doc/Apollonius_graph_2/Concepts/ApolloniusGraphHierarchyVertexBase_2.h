@@ -12,7 +12,7 @@ refines the concept `ApolloniusGraphVertexBase_2`, by
 adding two vertex handles to the corresponding vertices for the
 next and previous level graphs.
 
-\cgalRefines `ApolloniusGraphVertexBase_2`
+\cgalRefines{ApolloniusGraphVertexBase_2}
 
 \cgalHeading{Types}
 

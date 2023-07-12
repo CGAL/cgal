@@ -7,7 +7,7 @@ The concept `MeshTriangulationTraits_3` describes the requirements for
 the geometric traits class of the underlying regular triangulation used during
 a mesh generation process.
 
-\cgalRefines RegularTriangulationTraits_3
+\cgalRefines{RegularTriangulationTraits_3}
 
 \cgalHasModel All models of `Kernel`.
 
@@ -77,6 +77,15 @@ public:
   which return `true` iff the object is degenerate.
   */
   typedef unspecified_type Is_degenerate_3;
+
+  /*!
+  A predicate object that must provide the function operator:
+
+  `bool operator()(Point_3 p, Point_3 q, Point_3 r)`
+
+  which returns `true` iff `p`, `q`, and `r` are collinear.
+  */
+  typedef unspecified_type Collinear_3;
 
   /*!
   A constructor object that must provide the function operators:
@@ -224,6 +233,19 @@ public:
   which returns the center of the sphere `s`.
   */
   typedef unspecified_type Construct_center_3;
+
+  /*!
+  A constructor object that must provide the function operators:
+
+  `Point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s)`,
+
+  `Point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s)`,
+
+  `Point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s)`,
+
+  which return the center of the smallest orthogonal sphere to the input weighted points.
+  */
+  typedef unspecified_type Construct_weighted_circumcenter_3;
 
   /*!
   A constructor object that must provide the function operators:

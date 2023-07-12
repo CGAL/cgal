@@ -20,7 +20,7 @@ set(QT_USE_QTMAIN TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTOPENGL TRUE)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -29,9 +29,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
 
-  #--------------------------------
-  # The "Segment Voronoi" demo: Segment_voronoi_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(CDT_UI_FILES Segment_voronoi_2.ui)
 
@@ -46,14 +43,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Segment_voronoi_2)
 
   target_link_libraries(Segment_voronoi_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                                  Qt5::Gui)
+                                                  Qt5::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Segment_voronoi_2)
-
 else()
-
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
-
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 endif()

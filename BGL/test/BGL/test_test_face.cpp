@@ -23,9 +23,9 @@ int main()
     vertex_descriptor vs = CGAL::add_vertex(sm);
     std::array<vertex_descriptor,0> face0;
     assert( ! CGAL::Euler::can_add_face(face0,sm) );
-    std::array<vertex_descriptor,1> face1;
+    std::array<vertex_descriptor,1> face1 = { vp };
     assert( ! CGAL::Euler::can_add_face(face1,sm) );
-    std::array<vertex_descriptor,2> face2;
+    std::array<vertex_descriptor,2> face2 = { vp, vq };
     assert( ! CGAL::Euler::can_add_face(face2,sm) );
 
     std::array<vertex_descriptor,3> face = { vp, vq, vr };
@@ -55,6 +55,8 @@ int main()
     std::swap(face[0],face[1]);
     assert( ! CGAL::Euler::can_add_face(face,sm) );
   }
+
+  std::cout << "Done" << std::endl;
 
   return 0;
 }

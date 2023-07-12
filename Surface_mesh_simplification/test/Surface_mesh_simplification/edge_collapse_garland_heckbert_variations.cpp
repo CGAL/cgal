@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 
@@ -102,7 +102,7 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
   const Cost& cost = p.get_cost();
   const Placement& unbounded_placement = p.get_placement();
   Bounded_placement bounded_placement(unbounded_placement);
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
+  SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
   std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
 

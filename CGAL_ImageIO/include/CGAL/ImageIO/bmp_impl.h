@@ -200,7 +200,7 @@ void *_readBmpImage( const char *name,
         numImages = 1;
 
         /*
-         * Now that we have our arrays allocted, read the image into them.
+         * Now that we have our arrays allocated, read the image into them.
          */
         switch (fileType) {
         case TYPE_BMP:

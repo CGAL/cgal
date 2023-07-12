@@ -530,7 +530,7 @@ All the free function-templates that apply Boolean set operations
 accept an optional traits argument; see next Section for more
 information. If a traits class is not provided, a default one that can
 handle the type of the curves that comprise the boundaries of the
-input polygons is selected. You somwhow can influence this selection
+input polygons is selected. You somehow can influence this selection
 using a template parameter as described below.
 
 The set of free function-templates that handle (linear) polygons

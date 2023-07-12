@@ -73,17 +73,17 @@ public:
   Triangulation_sizing_field(const Tr& tr);
 
   /**
-   * Fill sizing field, using size associated to point in \c value_map.
+   * Fills the sizing field, using size associated to point in `value_map`.
    */
   void fill(const std::map<Weighted_point, FT>& value_map);
 
   /**
-   * Returns size at point \c p.
+   * Returns size at point `p`.
    */
   FT operator()(const Weighted_point& p) const;
 
   /**
-   * Returns size at point \c p. (needed for compatibility)
+   * Returns size at point `p`. (needed for compatibility)
    */
   template <typename Handle>
   FT operator()(const Weighted_point& p, const Handle&) const
@@ -91,20 +91,20 @@ public:
 
 private:
   /**
-   * Returns size at point \c p, by interpolation into tetrahedron.
+   * Returns size at point `p`, by interpolation into tetrahedron.
    */
   FT interpolate_on_cell_vertices(const Weighted_point& p,
                                   const CCell_handle& cell) const;
 
   /**
-   * Returns size at point \c p, by interpolation into facet (\c cell is assumed
+   * Returns size at point `p`, by interpolation into facet (`cell` is assumed
    * to be an infinite cell).
    */
   FT interpolate_on_facet_vertices(const Weighted_point& p,
                                    const CCell_handle& cell) const;
 
   /**
-   * Returns a hint for \c p location.
+   * Returns a hint for `p` location.
    */
   CCell_handle get_hint(const Weighted_point& p) const
   { return last_cell_; }

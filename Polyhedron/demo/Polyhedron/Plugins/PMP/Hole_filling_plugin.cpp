@@ -701,14 +701,16 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   CGAL::Timer timer; timer.start();
   std::vector<fg_face_descriptor> patch;
   if(action_index == 0) {
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly,
-             it, std::back_inserter(patch),
-             CGAL::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, it,
+             CGAL::parameters::
+             face_output_iterator(std::back_inserter(patch)).
+             use_delaunay_triangulation(use_DT));
   }
   else if(action_index == 1) {
-    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly,
-             it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-             CGAL::parameters::density_control_factor(alpha).
+    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, it,
+             CGAL::parameters::
+             face_output_iterator(std::back_inserter(patch)).
+             density_control_factor(alpha).
              use_delaunay_triangulation(use_DT));
   }
   else {
@@ -716,9 +718,9 @@ bool Polyhedron_demo_hole_filling_plugin::fill
 
     bool success;
     if(weight_index == 0) {
-      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
-              it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
+      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly, it,
               CGAL::parameters::
+              face_output_iterator(std::back_inserter(patch)).
               weight_calculator(CGAL::Weights::Uniform_weight<Face_graph>()).
               density_control_factor(alpha).
               fairing_continuity(continuity).
@@ -728,12 +730,12 @@ bool Polyhedron_demo_hole_filling_plugin::fill
       auto vpm = get_property_map(CGAL::vertex_point, poly);
       auto weight_calc = CGAL::Weights::Secure_cotangent_weight_with_voronoi_area<Face_graph, decltype(vpm), EPICK>(poly, vpm, EPICK());
 
-      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
-              it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::parameters::weight_calculator(weight_calc).
-                                density_control_factor(alpha).
-                                fairing_continuity(continuity).
-                                use_delaunay_triangulation(use_DT)));
+      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,it,
+                CGAL::parameters::face_output_iterator(std::back_inserter(patch)).
+                weight_calculator(weight_calc).
+                density_control_factor(alpha).
+                fairing_continuity(continuity).
+                use_delaunay_triangulation(use_DT)));
     }
 
     if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }

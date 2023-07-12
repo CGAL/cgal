@@ -88,7 +88,7 @@ public:
 
      \param k     Number of cones to divide space into
      \param initial_direction  A direction denoting one of the rays dividing the
-                   cones. This allows arbitary rotations of the rays that divide
+                   cones. This allows arbitrary rotations of the rays that divide
                    the plane.  (default: positive x-axis)
      \param cones_selected  Indicates whether even, odd or all cones are
                    selected to construct graph.

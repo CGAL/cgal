@@ -23,8 +23,8 @@
 #include <CGAL/Kernel/global_functions_3.h>
 
 #include <boost/range/value_type.hpp>
-#include <boost/utility/enable_if.hpp>
 
+#include <type_traits>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -74,7 +74,7 @@ bool read_STL(std::istream& is,
               TriangleRange& facets,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
               )
 {
@@ -193,7 +193,7 @@ bool read_STL(const std::string& fname,
               TriangleRange& facets,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
               )
 {
@@ -282,7 +282,7 @@ bool write_STL(std::ostream& os,
                const TriangleRange& facets,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
                )
 {
@@ -308,7 +308,7 @@ bool write_STL(std::ostream& os,
   if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
-    const boost::uint32_t N32 = static_cast<boost::uint32_t>(facets.size());
+    const std::uint32_t N32 = static_cast<std::uint32_t>(facets.size());
     os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
     for(const Triangle& face : facets)
@@ -392,7 +392,7 @@ bool write_STL(const std::string& fname,
                const TriangleRange& facets,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
                )
 {

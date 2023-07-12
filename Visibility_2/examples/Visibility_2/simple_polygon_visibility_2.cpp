@@ -41,7 +41,7 @@ int main() {
   face = boost::get<Arrangement_2::Face_const_handle> (&obj);
 
   // compute non regularized visibility area
-  // Define visibiliy object type that computes non-regularized visibility area
+  // Define visibility object type that computes non-regularized visibility area
   typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false> NSPV;
   Arrangement_2 non_regular_output;
   NSPV non_regular_visibility(env);
@@ -56,7 +56,7 @@ int main() {
 
 
   // compute non regularized visibility area
-  // Define visibiliy object type that computes regularized visibility area
+  // Define visibility object type that computes regularized visibility area
   typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_true> RSPV;
   Arrangement_2 regular_output;
   RSPV regular_visibility(env);

@@ -264,7 +264,7 @@ compute_placement()
   // 'Ai' is a (row) vector and 'bi' a scalar.
   //
   // The vertex is completely determined with 3 such constraints,
-  // so is the solution to the folloing system:
+  // so is the solution to the following system:
   //
   //  A.r0(). * v = b0
   //  A1 * v = b1

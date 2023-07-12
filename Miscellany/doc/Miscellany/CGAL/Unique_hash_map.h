@@ -162,7 +162,7 @@ const Data& operator[](const Key& key) const;
 /*!
 
 inserts all keys from the range `[first1,beyond1)`.
-The data variable for each inserted `key` is initilized with the
+The data variable for each inserted `key` is initialized with the
 corresponding value from the range `[first2, first2 +
 (beyond1-first1))`. Returns `first2 + (beyond1-first1)`.
 \pre The increment operator must be defined for values

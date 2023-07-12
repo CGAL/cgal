@@ -18,7 +18,6 @@
 #include <CGAL/Uncertain.h>
 
 #include <boost/optional/optional.hpp>
-#include <boost/intrusive_ptr.hpp>
 
 namespace CGAL {
 
@@ -26,12 +25,12 @@ namespace CGAL_SS_i {
 
 // Given a triple of oriented straight line segments: (e0,e1,e2) such that
 // there exists a distance 'et' for which the offsets lines at 'et' (e0',e1',e2') intersect in a single point;
-// returns the relative order of 't' w.r.t 'et'.
+// returns the relative order of 't' w.r.t. 'et'.
 // PRECONDITION: There exists a positive distance et for which the offset triple intersect at a single point.
 template<class K>
 Uncertain<Comparison_result>
 compare_offset_against_isec_timeC2 ( typename K::FT const& t,
-                                     boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri )
+                                     Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri )
 {
   typedef typename K::FT FT ;
 
@@ -42,10 +41,9 @@ compare_offset_against_isec_timeC2 ( typename K::FT const& t,
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  No_cache<boost::optional<CGAL_SS_i::Rational<typename K::FT> > > lTime_cache ;
-  No_cache<boost::optional<Line_2<K> > > lCoeff_cache ;
+  No_caches<K> no_caches;
 
-  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, lTime_cache, lCoeff_cache);
+  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, no_caches);
   if ( et_ )
   {
     Quotient et = et_->to_quotient();

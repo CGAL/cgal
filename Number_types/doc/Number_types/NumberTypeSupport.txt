@@ -210,6 +210,7 @@ This package was naturally one of the first packages implemented in \cgal.
 It initially contained the `Quotient`, `Gmpz` and `Gmpq` classes,
 together with the interfaces to the number types provided by \leda, which were
 implemented by Stefan Schirra and Andreas Fabri.
+\leda's class `rational` has been the basis for `Quotient`.
 
 Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`,
 `MP_Float` and `Lazy_exact_nt`, together with the interfaces to
@@ -231,4 +232,3 @@ Luis Pe&ntilde;aranda and Sylvain Lazard contributed the `Gmpfi` and
 
 */
 } /* namespace CGAL */
-

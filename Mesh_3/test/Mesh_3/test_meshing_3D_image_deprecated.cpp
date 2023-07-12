@@ -1,3 +1,4 @@
+#define CGAL_MESH_3_VERBOSE 1
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include "test_meshing_utilities.h"
@@ -33,7 +34,7 @@ public:
 
     std::cout << "\tSeed is\t"
       << CGAL::get_default_random().get_seed() << std::endl;
-    Mesh_domain domain(image, 1e-9, &CGAL::get_default_random());
+    Mesh_domain domain(image, 1e-6, &CGAL::get_default_random());
 
     // Set mesh criteria
     Facet_criteria facet_criteria(25, 20*image.vx(), 5*image.vx());
@@ -50,7 +51,7 @@ public:
     this->verify(c3t3,domain,criteria, Bissection_tag());
 
     typedef typename Mesh_domain::Surface_patch_index Patch_id;
-    CGAL_static_assertion(CGAL::Output_rep<Patch_id>::is_specialized);
+    static_assert(CGAL::Output_rep<Patch_id>::is_specialized);
     CGAL_USE_TYPE(Patch_id);
   }
 

@@ -11,7 +11,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithRootOf >` is a model of `A
 - \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Algebraic_category` \endlink derived from `CGAL::Field_with_kth_root_tag`
 - \link AlgebraicStructureTraits::Root_of `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Root_of` \endlink  which is a model of `AlgebraicStructureTraits_::RootOf`
 
-\cgalRefines `FieldWithKthRoot`
+\cgalRefines{FieldWithKthRoot}
 
 \sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`

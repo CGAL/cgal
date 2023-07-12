@@ -137,14 +137,8 @@
 #include <boost/type_traits.hpp>
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_reference.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/variant.hpp>
 #include <boost/version.hpp>
 
@@ -255,7 +249,6 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Triangle_accessor_3.h>
 //#include <CGAL/Triangulation_3.h>
-//#include <CGAL/triangulation_assertions.h>
 //#include <CGAL/Triangulation_cell_base_3.h>
 //#include <CGAL/Triangulation_data_structure_3.h>
 //#include <CGAL/Triangulation_ds_cell_base_3.h>

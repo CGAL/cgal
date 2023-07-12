@@ -553,7 +553,6 @@ MainWindow::on_actionLoadConstraints_triggered()
 void
 MainWindow::loadWKT(QString filename)
 {
-  //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
 
   typedef CGAL::Polygon_with_holes_2<K> Polygon;
@@ -783,9 +782,9 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   timer.start();
 
   CGAL::refine_Delaunay_mesh_2(cdt,
-      m_seeds.begin(), m_seeds.end(),
-      Criteria(shape, edge_len),
-      false);//mesh the subdomains including NO seed
+                               CGAL::parameters::seeds(m_seeds)
+                               .criteria(Criteria(shape, edge_len))
+                               .seeds_are_in_domain(false));//mesh the subdomains including NO seed
 
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
@@ -906,9 +905,7 @@ MainWindow::on_actionLloyd_optimization_triggered()
   }
 
   CGAL::lloyd_optimize_mesh_2(cdt,
-      max_iteration_number = nb,
-      seeds_begin = m_seeds.begin(),
-      seeds_end = m_seeds.end());
+      CGAL::parameters::number_of_iterations(nb).seeds(m_seeds));
 
   // default cursor
   QApplication::restoreOverrideCursor();

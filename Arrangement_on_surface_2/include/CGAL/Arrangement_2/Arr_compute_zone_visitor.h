@@ -26,7 +26,7 @@ namespace CGAL {
 
 /*! \class
  * A visitor class for Arrangement_zone_2 that outputs the zone of an
- * x-monotone curve. Specifically, it outputs handles to the the arrangment
+ * x-monotone curve. Specifically, it outputs handles to the the arrangement
  * cells that the x-monotone curve intersects.
  * The class should be templated by an Arrangement_2 class, and by an
  * output iterator of a variant of types of handles to the arrangement cells
@@ -54,11 +54,11 @@ private:
   const Halfedge_handle      invalid_he;   // Invalid halfedge.
   const Vertex_handle        invalid_v;    // Invalid vertex.
 
-  OutputIterator&            out_iter;     // for outputing the zone objects.
+  OutputIterator&            out_iter;     // for outputting the zone objects.
                                            // Its value type is boost::variant.
-  bool                       output_left;  // Determines wheter we should
+  bool                       output_left;  // Determines whether we should
                                            // output the left end point of a
-                                           // subcurve (to avoid outputing
+                                           // subcurve (to avoid outputting
                                            // the same feature twice).
 
 public:

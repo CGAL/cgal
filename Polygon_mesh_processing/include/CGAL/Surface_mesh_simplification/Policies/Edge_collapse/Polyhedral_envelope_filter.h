@@ -42,7 +42,7 @@ namespace internal {
 
 };
 
-} // namesapce internal
+} // namespace internal
 
 template<typename GeomTraits,typename BaseFilter = internal::Dummy_filter2>
 class Polyhedral_envelope_filter
@@ -58,7 +58,7 @@ private:
   template <typename Profile>
   void initialize_envelope(const Profile& profile) const
   {
-    CGAL_static_assertion((std::is_same<GeomTraits, typename Profile::Geom_traits>::value));
+    static_assert(std::is_same<GeomTraits, typename Profile::Geom_traits>::value);
 
     typedef typename Profile::Triangle_mesh                                   Triangle_mesh;
     typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
@@ -140,7 +140,7 @@ public:
         Point pw = get(profile.vertex_point_map(),w);
 
         if(! (*m_envelope)(p, pv, pw)){
-          // the triange intersects the envelope
+          // the triangle intersects the envelope
           return boost::none;
         }
         pv = pw;

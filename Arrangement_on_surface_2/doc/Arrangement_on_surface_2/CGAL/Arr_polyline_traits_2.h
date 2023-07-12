@@ -15,7 +15,7 @@ namespace CGAL {
  * curves, commonly referred to as polylines. Each polyline is a
  * chain of segments, where each two neighboring segments in the
  * chain share a common endpoint; that is, the polyline is
- * continuous. Furthermore, the target of the \f$i\f$th segement of
+ * continuous. Furthermore, the target of the \f$i\f$th segment of
  * a polyline has to coincide with the source of the \f$i+1\f$st
  * segment; that is, the polyline has to be \a well-oriented. Note
  * that it is possible to construct general polylines that are

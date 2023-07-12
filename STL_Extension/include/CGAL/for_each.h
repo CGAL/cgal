@@ -102,8 +102,8 @@ void for_each (const Range& range,
                                         <typename Range::const_iterator>::reference)>& functor)
 {
 #ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                 "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
   internal::for_each<const Range&>
@@ -118,8 +118,8 @@ void for_each (Range& range,
                                         <typename Range::iterator>::reference)>& functor)
 {
 #ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                 "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
   internal::for_each<Range&>

@@ -19,7 +19,7 @@ and are required only if the dual functions are called.
 The additional predicate type `Compare_distance_2` is
 required if the  method `nearest_vertex()` is used.
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines{TriangulationTraits_2}
 
 
 \cgalHasModel \cgal kernels

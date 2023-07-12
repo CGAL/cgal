@@ -56,7 +56,7 @@ Point_3(double x, double y, double z);
 
 /*!
 introduces a point `p` initialized to `(hx/hw,hy/hw, hz/hw)`.
-\pre `hw` \f$ \neq\f$ 0.
+\pre `hw != 0`.
 */
 Point_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));
 
@@ -154,19 +154,19 @@ Kernel::FT z() const;
 
 /*!
 returns the i'th homogeneous coordinate of `p`.
-\pre \f$ 0\leq i \leq3\f$.
+\pre `0 <= i <= 3`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `p`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::FT operator[](int i) const;
 

@@ -85,7 +85,7 @@ Option_parser::Option_parser() :
   m_generic_opts.add_options()
     ("author,a", "print author name(s)")
     ("help,h", "print help message")
-    ("license,l", "print licence information")
+    ("license,l", "print license information")
     ("version,v", "print version string")
     ;
 

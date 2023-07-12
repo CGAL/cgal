@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <set>
+#include <type_traits>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Traversal_traits.h>
@@ -30,7 +31,6 @@
 
 #include <boost/variant.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -56,7 +56,7 @@ namespace CGAL {
 ///         orthogonal to a frame axis, the non-null coefficient being 1 or -1.
 ///         The default is `true`.
 ///
-/// The implemenation of this class depends on the package \ref PkgAABBTree.
+/// The implementation of this class depends on the package \ref PkgAABBTree.
 /// \todo Shall we document more in details what is required?
 ///       `Traits` must provide:
 ///        - `Plane_3`
@@ -80,7 +80,7 @@ template<class TriangleMesh,
                        AABB_traits<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh,
                                                                 typename boost::mpl::if_<
-                                                                  typename boost::is_same<
+                                                                  typename std::is_same<
                                                                     VertexPointMap,
                                                                     typename boost::property_map< TriangleMesh, vertex_point_t>::type >::type,
                                                                   Default,
@@ -316,7 +316,7 @@ class Polygon_mesh_slicer
   }
 /// Other private functions
   /// handle edge insertion in the adjacency_list graph
-  /// we add an edge betweem two edge_descriptor if they
+  /// we add an edge between two edge_descriptor if they
   /// share a common facet
   void update_al_graph_connectivity(
     edge_descriptor ed,

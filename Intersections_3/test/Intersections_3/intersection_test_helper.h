@@ -237,8 +237,8 @@ public:
 
     const auto ires12 = CGAL::intersection(o1, o2);
 
-     Res tmp;
-    if(has_exact_p)
+    Res tmp;
+    if(has_exact_c)
     {
       assert(CGAL::assign(tmp, ires12));
       assert(approx_equal(tmp, result));
@@ -246,7 +246,7 @@ public:
     else
     {
       if(CGAL::assign(tmp, ires12))
-        assert(approx_equal(tmp, result));
+        CGAL_warning(approx_equal(tmp, result));
       else
         CGAL_warning_msg(false, "Expected an intersection, but it was not found!");
     }

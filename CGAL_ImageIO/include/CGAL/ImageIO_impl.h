@@ -887,7 +887,7 @@ _image* _readNonInterlacedImage(const char *name) {
 
 
 /* Write inrimage given in inr in file name. If file name's suffix is
-   .gz, the image is gziped. If file name's suffix is .hdr, the image
+   .gz, the image is gzipped. If file name's suffix is .hdr, the image
    is written in ANALYZE format. If file name is nullptr, image is written
    on stdout */
 CGAL_INLINE_FUNCTION

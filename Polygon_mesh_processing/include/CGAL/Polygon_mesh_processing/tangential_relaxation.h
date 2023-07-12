@@ -111,7 +111,7 @@ struct Allow_all_moves{
 *   \cgalParamNBegin{allow_move_functor}
 *     \cgalParamDescription{A function object used to determinate if a vertex move should be allowed or not}
 *     \cgalParamType{Unary functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)` returning `true`
-*                    if the vertex `v` can be moved from `src` to `tgt`; %Point_3` being the value type of the vertex point map }
+*                    if the vertex `v` can be moved from `src` to `tgt`; `Point_3` being the value type of the vertex point map }
 *     \cgalParamDefault{If not provided, all moves are allowed.}
 *   \cgalParamNEnd
 *
@@ -188,6 +188,10 @@ void tangential_relaxation(const VertexRange& vertices,
       }
       prev = n;
     }
+
+    if (first_run)
+      return true; //vertex incident only to degenerate faces
+
     if (!get(ecm, edge(first_h, tm)))
       if (to_double(first * prev) <= 0)
         return false;

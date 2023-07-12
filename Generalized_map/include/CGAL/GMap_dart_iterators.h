@@ -47,7 +47,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const> Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -55,12 +55,12 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart):
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart,
                                               size_type /*amark*/):
       Base(amap, adart)
     {}
@@ -69,7 +69,7 @@ namespace CGAL {
     Self& operator++()
     {
       CGAL_assertion(this->cont());
-      this->set_current_dart(this->mmap->null_handle);
+      this->set_current_dart(this->mmap->null_descriptor);
       this->mprev_op = OP_END;
       return *this;
     }
@@ -90,22 +90,22 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai> Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
     typedef Tag_false Use_mark;      ///< True iff this iterator uses mark
 
-    CGAL_static_assertion( Ai>=0 && Ai<=Map::dimension );
+    static_assert( Ai>=0 && Ai<=Map::dimension );
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart):
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart,
                                               size_type /*amark*/):
       Base(amap, adart)
     {}
@@ -116,7 +116,7 @@ namespace CGAL {
       CGAL_assertion(this->cont());
       if ((*this)!=this->mfirst_dart || this->mmap->is_free(*this, Ai))
       {
-        this->set_current_dart(this->mmap->null_handle);
+        this->set_current_dart(this->mmap->null_descriptor);
         this->mprev_op = OP_END;
       }
       else
@@ -147,24 +147,24 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_two_alpha<Map_,Const,Ai,delta> Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
     typedef Tag_false Use_mark;      ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    CGAL_static_assertion( (0<=Ai && Ai+delta<=Map::dimension && delta>1) );
+    static_assert(0<=Ai && Ai+delta<=Map::dimension && delta>1);
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_handle adart):
+    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_descriptor adart):
       Base(amap, adart),
       mcurdart(0)
     {}
 
     /// Main constructor.
-    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_descriptor adart,
                                           size_type /*amark*/):
       Base(amap, adart),
       mcurdart(0)
@@ -201,7 +201,7 @@ namespace CGAL {
           else
           {
             this->mprev_op = OP_END;
-            this->set_current_dart(this->mmap->null_handle);
+            this->set_current_dart(this->mmap->null_descriptor);
           }
         }
       }
@@ -216,7 +216,7 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
+          this->set_current_dart(this->mmap->null_descriptor);
         }
       }
       else if (mcurdart==2)
@@ -230,7 +230,7 @@ namespace CGAL {
       {
         CGAL_assertion (mcurdart==3);
         this->mprev_op = OP_END;
-        this->set_current_dart(this->mmap->null_handle);
+        this->set_current_dart(this->mmap->null_descriptor);
       }
 
       return *this;
@@ -262,25 +262,25 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_two_alpha<Map_,Const,Ai,1> Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
     typedef Tag_false Use_mark;      ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    CGAL_static_assertion(0<=Ai && Ai+1<=Map_::dimension);
+    static_assert(0<=Ai && Ai+1<=Map_::dimension);
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_handle adart):
+    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_descriptor adart):
       Base(amap, adart),
       mfirst_dir(true),
       mnext_try_first_alpha(true)
     {}
 
     /// Main constructor.
-    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_two_alpha(Map& amap, Dart_descriptor adart,
                                           size_type /*amark*/):
       Base(amap, adart),
       mfirst_dir(true),
@@ -310,7 +310,7 @@ namespace CGAL {
             if (this->mmap->template is_free<Ai+1>(this->mfirst_dart))
             {
               this->mprev_op = OP_END;
-              this->set_current_dart(this->mmap->null_handle);
+              this->set_current_dart(this->mmap->null_descriptor);
             }
             else
             {
@@ -334,7 +334,7 @@ namespace CGAL {
             if (this->mmap->template is_free<Ai+1>(this->mfirst_dart))
             {
               this->mprev_op = OP_END;
-              this->set_current_dart(this->mmap->null_handle);
+              this->set_current_dart(this->mmap->null_descriptor);
             }
             else
             {
@@ -350,7 +350,7 @@ namespace CGAL {
             if ((*this)==this->mfirst_dart)
             {
               this->mprev_op = OP_END;
-              this->set_current_dart(this->mmap->null_handle);
+              this->set_current_dart(this->mmap->null_descriptor);
             }
             else
             {
@@ -367,7 +367,7 @@ namespace CGAL {
           if (this->mmap->is_free(*this, Ai))
           {
             this->mprev_op = OP_END;
-            this->set_current_dart(this->mmap->null_handle);
+            this->set_current_dart(this->mmap->null_descriptor);
           }
           else
           {
@@ -381,7 +381,7 @@ namespace CGAL {
           if (this->mmap->template is_free<Ai+1>(*this))
           {
             this->mprev_op = OP_END;
-            this->set_current_dart(this->mmap->null_handle);
+            this->set_current_dart(this->mmap->null_descriptor);
           }
           else
           {
@@ -420,7 +420,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Aj> Self;
     typedef GMap_dart_iterator_basic_of_two_alpha<Map_,Const,Ai,Aj-Ai> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -428,12 +428,12 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart) :
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart) :
       Base(amap, adart)
     {}
 
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart,
                                               size_type amark):
       Base(amap, adart, amark)
     {}
@@ -461,25 +461,25 @@ namespace CGAL {
                                                     delta1,delta2> Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
     typedef Tag_false Use_mark;      ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    CGAL_static_assertion( (0<=Ai && delta1<delta2 &&
+    static_assert(0<=Ai && delta1<delta2 &&
                             Ai+delta2<=Map::dimension &&
-                            delta1>1) );
+                            delta1>1);
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_three_alpha(Map& amap, Dart_handle adart):
+    GMap_dart_iterator_basic_of_three_alpha(Map& amap, Dart_descriptor adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
-    GMap_dart_iterator_basic_of_three_alpha(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_three_alpha(Map& amap, Dart_descriptor adart,
                                             size_type):
       Base(amap, adart)
     {}
@@ -502,17 +502,17 @@ namespace CGAL {
     typedef GMap_extend_iterator<Map_,GMap_dart_iterator_basic_of_orbit_generic
                                  <Map_,Const,Ai,Aj>, Ak> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map         Map;
     typedef typename Map::size_type size_type;
 
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    CGAL_static_assertion( Ai<Aj && Aj<Ak && Ak<=Map::dimension );
+    static_assert( Ai<Aj && Aj<Ak && Ak<=Map::dimension );
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart,
                                               size_type amark):
       Base(amap, adart, amark)
     {}
@@ -534,7 +534,7 @@ namespace CGAL {
                                  <Map_,Const,Aj,Alpha...>,
                                  Ai> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -542,7 +542,7 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart,
                                               size_type amark):
       Base(amap, adart, amark)
     {}
@@ -557,18 +557,18 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_orbit<Map,Ai,Aj,Alpha...> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map,false,Ai,Aj,Alpha...> Base;
 
-    typedef typename Map::Dart_handle Dart_handle;
+    typedef typename Map::Dart_descriptor Dart_descriptor;
     typedef typename Base::Use_mark Use_mark; ///< True iff this iterator uses mark
     typedef typename Map::size_type size_type;
 
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit(Map& amap,Dart_handle adart):
+    GMap_dart_iterator_basic_of_orbit(Map& amap,Dart_descriptor adart):
       Base(amap,adart)
     {}
     /// Main constructor.
-    GMap_dart_iterator_basic_of_orbit(Map& amap,Dart_handle adart,size_type amark):
+    GMap_dart_iterator_basic_of_orbit(Map& amap,Dart_descriptor adart,size_type amark):
       Base(amap,adart,amark)
     {}
   };
@@ -583,24 +583,24 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_cell<Map_,i,d,Const> Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
     typedef Tag_true Use_mark; ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    CGAL_static_assertion( i>=0 && i<=Map::dimension+1 );
+    static_assert( i>=0 && i<=Map::dimension+1 );
 
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart,
+                                     Dart_descriptor adart,
                                      size_type amark):
       Base(amap, adart),
       mmark_number(amark)
     {
-      if (adart!=this->mmap->null_handle)
+      if (adart!=this->mmap->null_descriptor)
         this->mmap->mark(adart, mmark_number);
     }
 
@@ -609,7 +609,7 @@ namespace CGAL {
     {
       CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
-      mto_treat = std::queue<Dart_handle>();
+      mto_treat = std::queue<Dart_descriptor>();
       this->mmap->mark(*this, mmark_number);
     }
 
@@ -618,7 +618,7 @@ namespace CGAL {
     {
       CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
-      Dart_handle nd = this->mmap->null_handle;
+      Dart_descriptor nd = this->mmap->null_descriptor;
 
       for ( unsigned int k=0; k<=d; ++k )
       {
@@ -627,7 +627,7 @@ namespace CGAL {
              !this->mmap->is_marked(this->mmap->alpha(*this, k),
                                     this->mmark_number) )
         {
-          if (nd == this->mmap->null_handle)
+          if (nd == this->mmap->null_descriptor)
           {
             CGAL_assertion(!this->mmap->is_free(*this, k));
             nd = this->mmap->alpha(*this, k);
@@ -642,7 +642,7 @@ namespace CGAL {
         }
       }
 
-      if (nd == this->mmap->null_handle)
+      if (nd == this->mmap->null_descriptor)
       {
         if (!mto_treat.empty())
         {
@@ -666,7 +666,7 @@ namespace CGAL {
 
   protected:
     /// Queue of darts to process.
-    std::queue<Dart_handle> mto_treat;
+    std::queue<Dart_descriptor> mto_treat;
 
     /// Index of the used mark.
     size_type mmark_number;
@@ -681,19 +681,19 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_cell<Map_,0,2,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,1,2> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart):
+                                     Dart_descriptor adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart,
+                                     Dart_descriptor adart,
                                      size_type /*amark*/): Base(amap, adart)
     {}
   };
@@ -707,20 +707,20 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_cell<Map_,1,2,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0,2> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
     typedef typename Map::size_type size_type;
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart):
+                                     Dart_descriptor adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart,
+                                     Dart_descriptor adart,
                                      size_type /*amark*/): Base(amap, adart)
     {}
   };
@@ -734,20 +734,20 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_cell<Map_,2,2,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0,1> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
     typedef typename Map::size_type size_type;
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart):
+                                     Dart_descriptor adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart,
+                                     Dart_descriptor adart,
                                      size_type /*amark*/):
       Base(amap, adart)
     {}
@@ -762,7 +762,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_cell<Map_,1,3,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0,2,3> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
     typedef typename Map::size_type size_type;
@@ -772,13 +772,13 @@ namespace CGAL {
     /// GMap_dart_iterator_basic_of_orbit_generic
     /// with 3 non consecutive args
     /*GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart):
+                                     Dart_descriptor adart):
       Base(amap, adart)
     {}*/
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart,
+                                     Dart_descriptor adart,
                                      size_type amark): Base(amap, adart, amark)
     {}
   };
@@ -792,7 +792,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_cell<Map_,2,3,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0,1,3> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
     typedef typename Map::size_type size_type;
@@ -802,13 +802,13 @@ namespace CGAL {
     /// GMap_dart_iterator_basic_of_orbit_generic
     /// with 3 non consecutive args
     /*GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart):
+                                     Dart_descriptor adart):
       Base(amap, adart)
     {}*/
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_cell(Map& amap,
-                                     Dart_handle adart,
+                                     Dart_descriptor adart,
                                      size_type amark): Base(amap, adart, amark)
     {}
   };
@@ -823,7 +823,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_all Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -842,11 +842,11 @@ namespace CGAL {
     {}
 
     /// Constructor with a dart in parameter (for end iterator).
-    GMap_dart_iterator_basic_of_all(Map& amap, Dart_handle adart):
+    GMap_dart_iterator_basic_of_all(Map& amap, Dart_descriptor adart):
       Base(amap, adart)
     {}
     /// Constructor with a dart in parameter (for end iterator).
-    GMap_dart_iterator_basic_of_all(Map& amap, Dart_handle adart,
+    GMap_dart_iterator_basic_of_all(Map& amap, Dart_descriptor adart,
                                     size_type /*amark*/):
       Base(amap, adart)
     {}
@@ -861,7 +861,7 @@ namespace CGAL {
       { this->mprev_op = OP_POP; }
       else
       {
-        this->set_current_dart(this->mmap->null_handle);
+        this->set_current_dart(this->mmap->null_descriptor);
         this->mprev_op = OP_END;
       }
       return *this;
@@ -887,11 +887,11 @@ namespace CGAL {
                                     <Map_,Const,Alpha...> > Base;
 
     typedef typename Base::Map Map;
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef Tag_false Basic_iterator; ///< True iff this iterator is basic
 
     /// Main constructor.
-    GMap_dart_iterator_of_orbit_generic(Map& amap, Dart_handle adart1):
+    GMap_dart_iterator_of_orbit_generic(Map& amap, Dart_descriptor adart1):
       Base(amap, adart1)
     {}
   };
@@ -904,11 +904,11 @@ namespace CGAL {
     typedef GMap_dart_iterator_of_orbit<Map_,Alpha...> Self;
     typedef GMap_dart_iterator_of_orbit_generic<Map_,false,Alpha...> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef Tag_false Basic_iterator; ///< True iff this iterator is basic
 
     /// Main constructor.
-    GMap_dart_iterator_of_orbit(Map_& amap, Dart_handle adart):
+    GMap_dart_iterator_of_orbit(Map_& amap, Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -924,12 +924,12 @@ namespace CGAL {
                                     GMap_dart_iterator_basic_of_cell
                                     <Map_,i,d,Const> > Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef Tag_false Basic_iterator; ///< True iff this iterator is basic
 
     /// Main constructor.
-    GMap_dart_iterator_of_cell(Map& amap, Dart_handle adart1):
+    GMap_dart_iterator_of_cell(Map& amap, Dart_descriptor adart1):
       Base(amap, adart1)
     {}
   };
@@ -950,7 +950,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,i,d,Const> Self;
     typedef CMap_dart_iterator<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -960,14 +960,14 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type amark):
       Base(amap, adart),
       mmark_number(amark)
     {
       CGAL_assertion( d<=Map::dimension );
       CGAL_assertion( i<=Map::dimension );
-      if (adart!=this->mmap->null_handle)
+      if (adart!=this->mmap->null_descriptor)
         this->mmap->mark(adart, mmark_number);
     }
 
@@ -976,7 +976,7 @@ namespace CGAL {
     {
       CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
-      mto_treat = std::queue<Dart_handle>();
+      mto_treat = std::queue<Dart_descriptor>();
       this->mmap->mark((*this), mmark_number);
     }
 
@@ -986,7 +986,7 @@ namespace CGAL {
       CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
-      Dart_handle nd = this->mmap->null_handle;
+      Dart_descriptor nd = this->mmap->null_descriptor;
 
       for ( int k=0; k<i-1; ++k )
       {
@@ -994,7 +994,7 @@ namespace CGAL {
              !this->mmap->is_marked(this->mmap->alpha(*this, k),
                                     this->mmark_number) )
         {
-          if (nd == this->mmap->null_handle)
+          if (nd == this->mmap->null_descriptor)
           {
             CGAL_assertion(!this->mmap->is_free(*this, k));
             nd = this->mmap->alpha(*this, k);
@@ -1015,7 +1015,7 @@ namespace CGAL {
              !this->mmap->is_marked(this->mmap->alpha(*this, k),
                                     this->mmark_number) )
         {
-          if (nd == this->mmap->null_handle)
+          if (nd == this->mmap->null_descriptor)
           {
             CGAL_assertion(!this->mmap->is_free(*this, k));
             nd = this->mmap->alpha(*this, k);
@@ -1030,7 +1030,7 @@ namespace CGAL {
         }
       }
 
-      if (nd == this->mmap->null_handle)
+      if (nd == this->mmap->null_descriptor)
       {
         if (!mto_treat.empty())
         {
@@ -1054,7 +1054,7 @@ namespace CGAL {
 
   protected:
     /// Queue of darts to process.
-    std::queue<Dart_handle> mto_treat;
+    std::queue<Dart_descriptor> mto_treat;
 
     /// Index of the used mark.
     size_type mmark_number;
@@ -1070,7 +1070,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,1,2,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,2> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -1079,13 +1079,13 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart):
+                                           Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -1100,7 +1100,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,1,2,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -1109,13 +1109,13 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart):
+                                           Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -1130,7 +1130,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,2,2,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -1139,13 +1139,13 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart):
+                                           Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -1160,7 +1160,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,0,3,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,2,3> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -1169,13 +1169,13 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart):
+                                           Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -1190,7 +1190,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,1,3,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,3> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -1199,13 +1199,13 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart):
+                                           Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -1220,7 +1220,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,2,3,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -1229,13 +1229,13 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type /* amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart):
+                                           Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -1250,7 +1250,7 @@ namespace CGAL {
     typedef GMap_dart_iterator_basic_of_involution<Map_,3,3,Const> Self;
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0,1> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
     typedef typename Map::size_type size_type;
 
@@ -1259,13 +1259,13 @@ namespace CGAL {
   public:
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart,
+                                           Dart_descriptor adart,
                                            size_type /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_involution(Map& amap,
-                                           Dart_handle adart):
+                                           Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -1284,7 +1284,7 @@ namespace CGAL {
 
     /// Main constructor.
     GMap_dart_iterator_of_involution(typename Base::Map& amap,
-                                     typename Base::Dart_handle adart1):
+                                     typename Base::Dart_descriptor adart1):
       Base(amap, adart1)
     {}
   };

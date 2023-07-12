@@ -1,20 +1,15 @@
 cmake_minimum_required(VERSION 3.1...3.23)
-project( Polyhedron_Demo )
+project(Polyhedron_Demo)
 include(FeatureSummary)
+
+
+add_definitions ( -DCGAL_NO_DEPRECATED_CODE )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-
-list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
-if(has_cpp11 LESS 0)
-  message(
-    STATUS
-      "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
-  return()
-endif()
 
 #Defines flags to emulate windows behavior for linking error generation
 if(CMAKE_CXX_COMPILER_ID EQUAL Clang
@@ -29,6 +24,7 @@ if(CMAKE_CXX_COMPILER_ID EQUAL Clang
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z defs")
   endif()
 endif()
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
@@ -36,95 +32,82 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 include_directories(BEFORE ./ ./include ./CGAL_demo)
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}")
 
-# Find CGAL
-
 option(POLYHEDRON_QTSCRIPT_DEBUGGER
        "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
+# Find CGAL
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 ImageIO)
 set_package_properties(CGAL PROPERTIES TYPE REQUIRED)
 include(${CGAL_USE_FILE})
-# Find Qt5 itself
 
-find_package(
-  Qt5 QUIET
-  COMPONENTS OpenGL Script Widgets
-  OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
+# Find Qt5 itself
+find_package(Qt5 QUIET
+             COMPONENTS OpenGL Script Widgets
+             OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
 
 set_package_properties(
   Qt5 PROPERTIES
   TYPE REQUIRED
   PURPOSE "Enables the 3D Features, for GUI and visualization."
-  DESCRIPTION
-    "To find this package, it should be sufficient to fill the Qt5_DIR variable with : <Qt_dir>/<Qt_version>/<Compilator>/lib/cmake/Qt5"
-)
+  DESCRIPTION "To find this package, it should be sufficient to fill the Qt5_DIR variable with: <Qt_dir>/<Qt_version>/<Compilator>/lib/cmake/Qt5")
 
 if(Qt5_FOUND)
-
   add_definitions(-DQT_NO_KEYWORDS)
   add_definitions(-DSCENE_IMAGE_GL_BUFFERS_AVAILABLE)
 endif(Qt5_FOUND)
 
-find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 set_package_properties(
   Eigen3 PROPERTIES
-  DESCRIPTION "A library for mathematical tools."
-  PURPOSE
-    "Requiered for the Polyhedron Edit, Parameterization, Jet fitting, Classification plugin, Surface reconstruction, Normal estimation, Smoothing, Average spacing, Feature detection, Hole Filling and Fairing plugins ."
-)
+  DESCRIPTION "A library for linear algebra."
+  PURPOSE "Required for most plugins (Meshing, Mesh and Point Set Processing, etc.).")
 include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message(STATUS "NOTICE: Eigen was not found.")
+endif()
 
-find_package(METIS)
+find_package(METIS QUIET)
 include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
-  DESCRIPTION "A library for partitioning."
-  PURPOSE "Requiered for the partition plugin.")
+  DESCRIPTION "A library for graph partitioning."
+  PURPOSE "Required for the partition plugin.")
 
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
-
 if(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY)
-  find_package(TBB)
+  find_package(TBB QUIET)
   include(CGAL_TBB_support)
   if(NOT TARGET CGAL::TBB_support)
-    message(
-      STATUS
-        "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked."
-    )
+    message(STATUS "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked.")
   endif()
 endif()
 
 #find libssh for scene sharing
-find_package(LibSSH)
+find_package(LibSSH QUIET)
 set_package_properties(
   LibSSH PROPERTIES
-  DESCRIPTION "A library used to enable the SSH features. "
-  PURPOSE "Requiered for loading (saving) a scene to (from) a distant server.")
-
+  DESCRIPTION "A library implementing the SSH protocol on client and server side. "
+  PURPOSE "Required for loading (saving) a scene to (from) a distant server.")
 if(NOT LIBSSH_FOUND)
-  message("NOTICE : The SSH features will be disabled.")
+  message(STATUS "NOTICE: The SSH features will be disabled.")
 endif()
 
 # Activate concurrency ? (turned OFF by default)
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
   add_definitions(-DCGAL_CONCURRENT_MESH_3)
   if(NOT TBB_FOUND)
     find_package(TBB REQUIRED)
     include(CGAL_TBB_support)
     if(NOT TARGET CGAL::TBB_support)
-      message(
-        STATUS
-          "NOTICE: Intel TBB was not found. Mesh_3 is faster if TBB is linked.")
+      message(STATUS "NOTICE: Intel TBB was not found. Mesh_3 is faster if TBB is linked.")
     endif()
   endif()
-
-else(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
-  option(LINK_WITH_TBB
-         "Link with TBB anyway so we can use TBB timers for profiling" ON)
+else(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
+  option(LINK_WITH_TBB "Link with TBB anyway so we can use TBB timers for profiling" ON)
   if(LINK_WITH_TBB)
     find_package(TBB)
     include(CGAL_TBB_support)
@@ -133,9 +116,8 @@ endif()
 
 set_package_properties(
   TBB PROPERTIES
-  DESCRIPTION
-    "A library for parallelism. Mesh_3, Bilateral smoothing and WLOP plugins are faster if TBB is linked."
-  PURPOSE "Requiered for running some algorithms in parallel.")
+  DESCRIPTION "A library for parallel programming."
+  PURPOSE "Plugins such as Mesh_3, Bilateral smoothing, and WLOP are faster if TBB is linked.")
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
@@ -181,7 +163,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   # AUXILIARY LIBRARIES
 
-  # put s (which are shared libraries) at the same location as
+  # put plugins (which are shared libraries) at the same location as
   # executable files
   set(CGAL_POLYHEDRON_DEMO_PLUGINS_DIR "${RUNTIME_OUTPUT_PATH}")
   set(LIBRARY_OUTPUT_PATH "${CGAL_POLYHEDRON_DEMO_PLUGINS_DIR}")
@@ -213,8 +195,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                                               Qt5::Script CGAL::CGAL_Qt5)
   if(TARGET Qt5::WebSockets)
     target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
-    message(
-      STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+    message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
   #compilation_of__demo_framework is defined in polyhedron_demo_macros.cmake
@@ -269,8 +250,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
   target_link_libraries(scene_tetrahedra_item PUBLIC scene_c3t3_item)
 
-  add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp)
+  add_item(scene_aff_transformed_item Plugins/PCA/Scene_aff_transformed_item.cpp)
+
+  add_item(scene_aff_transformed_point_set_item Plugins/PCA/Scene_aff_transformed_point_set_item.cpp)
+  target_link_libraries(scene_aff_transformed_point_set_item PUBLIC scene_points_with_normal_item
+                                                                    scene_aff_transformed_item)
+  add_item(scene_aff_transformed_polygon_soup_item Plugins/PCA/Scene_aff_transformed_polygon_soup_item.cpp)
+  target_link_libraries(scene_aff_transformed_polygon_soup_item PUBLIC scene_polygon_soup_item
+                                                                       scene_aff_transformed_item)
+  add_item(scene_aff_transformed_surface_mesh_item Plugins/PCA/Scene_aff_transformed_surface_mesh_item.cpp)
+  target_link_libraries(scene_aff_transformed_surface_mesh_item PUBLIC scene_surface_mesh_item
+                                                                       scene_aff_transformed_item)
+
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp)
+
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
@@ -384,10 +377,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     if(TARGET Qt5::ScriptTools)
       target_link_libraries(polyhedron_demo PUBLIC Qt5::ScriptTools)
     else()
-      message(
-        STATUS
-          "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt5 ScriptTools library was not found."
-      )
+      message(STATUS "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt5 ScriptTools library was not found.")
     endif()
   endif()
   target_link_libraries(Polyhedron_3 PRIVATE demo_framework)
@@ -434,8 +424,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   if(TARGET Qt5::WebSockets AND TARGET Qt5::Network)
     add_executable(WS_server Server_ws.cpp)
     target_link_libraries(WS_server PUBLIC Qt5::WebSockets Qt5::Widgets Qt5::Network)
-    message(
-      STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+    message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
   #
   # Exporting
@@ -475,30 +464,25 @@ else(CGAL_Qt5_FOUND AND Qt5_FOUND)
   set(POLYHEDRON_MISSING_DEPS "")
 
   if(NOT CGAL_Qt5_FOUND)
-    set(POLYHEDRON_MISSING_DEPS
-        "the CGAL Qt5 library, ${POLYHEDRON_MISSING_DEPS}")
+    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt5 library, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
   if(NOT Qt5_FOUND)
     set(POLYHEDRON_MISSING_DEPS "Qt5, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS} and will not be compiled.")
 
 endif(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
 feature_summary(
   WHAT REQUIRED_PACKAGES_NOT_FOUND
   INCLUDE_QUIET_PACKAGES
-  DESCRIPTION
-    "NOTICE: Missing required packages that prevent the demo from being compiled:"
+  DESCRIPTION "NOTICE: Missing required packages that prevent the demo from being compiled:"
   QUIET_ON_EMPTY
   VAR NotFound_REQ_PACKAGES)
 if(NOT ${NotFound_REQ_PACKAGES} STREQUAL "")
-  message(STATUS "${NotFound_REQ_PACKAGES}")
+  message("${NotFound_REQ_PACKAGES}")
 endif()
 
 feature_summary(

@@ -58,24 +58,26 @@ protected:
 };
 
 template <class K>
-inline bool do_intersect(const typename K::Line_2 &p1,
-                         const typename K::Iso_rectangle_2 &p2,
-                         const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Line_2& l,
+             const typename K::Iso_rectangle_2& ir,
+             const K&)
 {
-    typedef Line_2_Iso_rectangle_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  typedef Line_2_Iso_rectangle_2_pair<K> pair_t;
+  pair_t pair(&l, &ir);
+  return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 template <class K>
-inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
-                         const typename K::Line_2 &p1,
-                         const K& k)
+inline
+typename K::Boolean
+do_intersect(const typename K::Iso_rectangle_2& ir,
+             const typename K::Line_2& l,
+             const K& k)
 {
-  return internal::do_intersect(p1, p2, k);
+  return internal::do_intersect(l, ir, k);
 }
-
-
 
 template <class K>
 typename Line_2_Iso_rectangle_2_pair<K>::Intersection_results
@@ -217,4 +219,4 @@ CGAL_DO_INTERSECT_FUNCTION(Line_2, Iso_rectangle_2, 2)
 
 #include <CGAL/enable_warnings.h>
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_ISO_RECTANGLE_2_LINE_2_H

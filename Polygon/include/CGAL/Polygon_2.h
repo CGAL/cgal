@@ -27,6 +27,7 @@
 #include <list>
 #include <iterator>
 
+#include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
@@ -42,11 +43,11 @@
 namespace CGAL {
 
 /// \ingroup PkgPolygon2Ref
-/// The class Polygon_2 implements polygons. The Polygon_2 is
+/// The class `Polygon_2` implements polygons. The `Polygon_2` is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL
-/// container, and has a function `resize()` that takes an std::size_t as argument
-///  . It defaults to the std::vector class.
+/// container, and has a function `resize()` that takes an `std::size_t` as argument.
+/// It defaults to the `std::vector` class.
 ///
 /// \cgalHeading{Implementation}
 ///
@@ -154,14 +155,16 @@ class Polygon_2 {
     /// @{
 
     /// Creates an empty polygon.
-    Polygon_2() : traits() {}
+    Polygon_2() = default;
 
     /// Creates an empty polygon.
     Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
     /// Copy constructor.
-    Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
-      : d_container(polygon.d_container), traits(polygon.traits) {}
+    Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon) = default;
+
+    /// Move constructor
+    Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon) = default;
 
     /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).
@@ -173,7 +176,8 @@ class Polygon_2 {
     {}
 
 #ifndef DOXYGEN_RUNNING
-  Polygon_2& operator=(const Polygon_2&)=default;
+  Polygon_2& operator=(const Polygon_2&) = default;
+  Polygon_2& operator=(Polygon_2&& p) = default;
 #endif
 
     /// @}
@@ -370,7 +374,7 @@ class Polygon_2 {
     /// `p.is_simple()`.
     Bounded_side bounded_side(const Point_2& value) const
     {
-      CGAL_polygon_precondition(is_simple());
+      CGAL_precondition(is_simple());
       return bounded_side_2(d_container.begin(), d_container.end(),
                                  value, traits);
     }
@@ -573,7 +577,7 @@ operator!=(const Polygon_2<Traits_P,Container1_P> &p1,
            const Polygon_2<Traits_P,Container2_P> &p2);
 
 /// Returns the image of the polygon \c p under the transformation \c t.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Transformation, class Traits_P, class Container_P>
 Polygon_2<Traits_P,Container_P>
 transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
@@ -587,13 +591,13 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
 
 /// Reads a polygon from stream `is` and assigns it to `p`.
 /// \pre The extract operator must be defined for `Point_2`.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Traits_P, class Container_P>
 std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p);
 
 /// Inserts the polygon `p` into the stream `os`.
 /// \pre The insert operator must be defined for `Point_2`.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Traits_P, class Container_P>
 std::ostream &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
 

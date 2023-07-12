@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Orthtree_Tests)
 
-find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
 
 create_single_source_cgal_program("test_octree_equality.cpp")
 create_single_source_cgal_program("test_octree_refine.cpp")

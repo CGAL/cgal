@@ -44,8 +44,8 @@ create_interior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const PolygonWithHoles& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
   return create_interior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(),
                                                         aPoly.holes_begin(), aPoly.holes_end(),
@@ -114,21 +114,9 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
     create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly, ofk, ssk);
 
   // filter offset of the outer frame
-  typename OfK::Point_2 xtrm_pt = *(raw_output[0]->begin());
-  std::size_t outer_id=0;
-  for(std::size_t i=0; i<raw_output.size(); ++i)
-    if (raw_output[i]->orientation() == COUNTERCLOCKWISE)
-    {
-      for (const typename OfK::Point_2& p : raw_output[i]->container())
-        if (p < xtrm_pt)
-        {
-          xtrm_pt=p;
-          outer_id=i;
-        }
-    }
-  if (outer_id != (raw_output.size()-1))
-    std::swap(raw_output[outer_id], raw_output.back());
+  std::swap(raw_output[0], raw_output.back());
   raw_output.pop_back();
+
   for (boost::shared_ptr<Polygon_> ptr : raw_output)
     ptr->reverse_orientation();
 
@@ -146,8 +134,8 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const PolygonWithHoles& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
   std::vector<boost::shared_ptr<OutPolygon> > polygons =
     create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(), ofk, ssk);
@@ -190,6 +178,6 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                                    Exact_predicates_inexact_constructions_kernel());
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_CREATE_OFFSET_POLYGONS_FROM_POLYGON_WITH_HOLES_2_H

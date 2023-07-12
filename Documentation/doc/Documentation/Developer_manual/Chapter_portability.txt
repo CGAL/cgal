@@ -57,14 +57,14 @@ is used only internally.  Requirements are lower for code that
 is not released such as the test-suite. Boost libraries already accepted
 in the C++ Standard Library Technical Report will be the first easy
 candidates (these are marked <TT>[TR1]</TT> in the list below). However,
-wrapping the use within \cgal is generally adviced (like what is done
+wrapping the use within \cgal is generally advised (like what is done
 in the `cpp11` namespace).
 Finally, the policy is that if a better alternative exists in Boost and is
 allowed, then \cgal code must use it instead of a \cgal version (which
 probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
 
-A list of reasonnable Boost libraries to use in the \cgal API is
+A list of reasonable Boost libraries to use in the \cgal API is
 Graph, Optional, Parameter (for packages already using it),
 Property Map, Smart Pointers (for packages already using it),
 Variant.

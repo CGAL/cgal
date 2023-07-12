@@ -215,15 +215,6 @@ public:
     Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
 
     /*!
-      Inserts the point p at the location given by `(lt,loc,li)`.
-      The handle to the new vertex is returned.
-
-      \sa locate()
-    */
-    Vertex_handle insert(const Point& p, typename Locate_type lt, Face_handle loc, int li);
-
-
-    /*!
       Inserts the points in the range [first,last) into the triangulation.
       Returns the number of inserted points. Note that this function is not
       guaranteed to insert the points following the order of `InputIterator`,

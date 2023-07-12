@@ -21,7 +21,7 @@
 namespace CGAL {
 
 /*! \class
- * A meta-traits class that adds lables to points and to x-monotone curves,
+ * A meta-traits class that adds labels to points and to x-monotone curves,
  * such that the comparison of two points, as well as the computation of the
  * intersections between two segments can be easily filtered.
  */
@@ -115,7 +115,7 @@ public:
                                                         Compare_y_at_x_right_2;
   typedef typename Base_traits_2::Equal_2               Equal_2;
 
-  /// \name Overriden functors.
+  /// \name Overridden functors.
   //@{
   class Compare_x_2 {
   private:

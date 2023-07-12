@@ -34,7 +34,7 @@
 // The algorithm projects the surfaces on the plane, and projects all the
 // intersections between surfaces, to get an arrangement that is a partition
 // of the real envelope.
-// Then it computes for each part in the arragement the surfaces on the
+// Then it computes for each part in the arrangement the surfaces on the
 // envelope over it by comparing them all.
 
 namespace CGAL {
@@ -222,7 +222,7 @@ public:
     Halfedge_iterator hi = result.halfedges_begin();
     for (; hi != result.halfedges_end(); ++hi, ++hi) {
       Halfedge_handle hh = hi;
-      // first we find the surfaces that are defined over the egde
+      // first we find the surfaces that are defined over the edge
       std::list<Xy_monotone_surface_3> defined_surfaces;
       for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_edge(hh, surfaces[i]))

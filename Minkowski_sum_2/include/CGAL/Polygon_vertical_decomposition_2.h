@@ -93,7 +93,7 @@ private:
 
   // Data members:
   const Traits_2* m_traits;
-  bool m_own_traits;    // inidicates whether the kernel should be freed up.
+  bool m_own_traits;    // indicates whether the kernel should be freed up.
 
   Compare_x_2 f_cmp_x;
   Intersect_2 f_intersect;
@@ -274,13 +274,13 @@ private:
   // Construct the vertical decomposition of the given arrangement.
   void vertical_decomposition(Arrangement_2& arr) const
   {
-    // For each vertex in the arrangment, locate the feature that lies
+    // For each vertex in the arrangement, locate the feature that lies
     // directly below it and the feature that lies directly above it.
     Vert_decomp_list vd_list;
     CGAL::decompose(arr, std::back_inserter(vd_list));
 
     // Go over the vertices (given in ascending lexicographical xy-order),
-    // and add segements to the feautres below and above it.
+    // and add segments to the feautres below and above it.
     typename Vert_decomp_list::iterator it, prev = vd_list.end();
     for (it = vd_list.begin(); it != vd_list.end(); ++it) {
       // If the feature above the previous vertex is not the current vertex,

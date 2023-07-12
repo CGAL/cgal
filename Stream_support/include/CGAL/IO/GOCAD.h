@@ -24,11 +24,11 @@
 #include <CGAL/use.h>
 
 #include <boost/range/value_type.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -195,7 +195,7 @@ bool read_GOCAD(std::istream& is,
                 PolygonRange& polygons,
                 const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+                , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                 )
 {
@@ -240,7 +240,7 @@ bool read_GOCAD(const std::string& fname,
                 PolygonRange& polygons,
                 const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+                , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                 )
 {
@@ -348,7 +348,7 @@ bool write_GOCAD(std::ostream& os,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                 , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+                 , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                  )
 {
@@ -390,7 +390,7 @@ bool write_GOCAD(const std::string& fname,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                 , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+                 , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                  )
 {

@@ -20,10 +20,11 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -36,7 +37,7 @@ class Point_2 : public R_::Kernel_base::Point_2
   typedef typename R_::Kernel_base::Point_2  RPoint_2;
 
   typedef Point_2                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Point_2>::value));
+  static_assert(std::is_same<Self, typename R_::Point_2>::value);
 
 public:
 

@@ -11,8 +11,6 @@
 // Author(s)     : Stephane Tayeb
 //
 
-#include <string>
-
 #include <CGAL/config.h>
 
 #if defined(BOOST_MSVC)
@@ -22,17 +20,19 @@
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
 typedef CGAL::Exact_rational         Rational;
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Kernel_traits.h>
-
-#include <iomanip>
+#include <CGAL/intersection_3.h>
 
 #include <boost/math/special_functions/next.hpp> // for nextafter
 
+#include <iomanip>
+#include <string>
 
 double random_in(const double a,
                  const double b)

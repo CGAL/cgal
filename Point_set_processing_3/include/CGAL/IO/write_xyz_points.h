@@ -17,18 +17,17 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Iterator_range.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#include <boost/utility/enable_if.hpp>
-
 #include <iostream>
 #include <fstream>
 #include <iterator>
+#include <type_traits>
 
 namespace CGAL {
 namespace Point_set_processing_3 {
@@ -52,7 +51,7 @@ bool write_XYZ_PSP(std::ostream& os,
   PointMap point_map = NP_helper::get_const_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {
@@ -127,7 +126,7 @@ bool write_XYZ(std::ostream& os,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
@@ -180,7 +179,7 @@ bool write_XYZ(const std::string& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {

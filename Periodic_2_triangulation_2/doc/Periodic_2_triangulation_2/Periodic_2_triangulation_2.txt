@@ -261,7 +261,7 @@ the faces and vertices maintaining incidence and adjacency relations (see
 Chapter \ref Chapter_2D_Triangulation_Data_Structure). In addition, the concepts
 `TriangulationDataStructure_2::Vertex` and `TriangulationDataStructure_2::Face` are extended
 to support periodicity: the vertex and face must be models of
-`Periodic_2TriangulationVertexBase_2` and Periodic_2TriangulationFaceBase_2`.
+`Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
 A model of such concept is `CGAL::Triangulation_data_structure_2`. It is
 parameterized by a vertex base class and a face base class, which gives the
 possibility to customize the vertices and cells used by the triangulation data

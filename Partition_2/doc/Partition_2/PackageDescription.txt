@@ -53,8 +53,6 @@ primitive types and predicates used by the algorithms.
 
 \cgalCRPSection{Assertions}
 
-The assertion flags for this package use `PARTITION` in their names
-(<I>e.g.</I>, `CGAL_PARTITION_NO_POSTCONDITIONS`).
 The precondition checks for the planar polygon partitioning functions
 are: counterclockwise ordering of the input vertices and simplicity of the
 polygon these vertices represent.
@@ -99,4 +97,3 @@ original polygon).
 - `CGAL::y_monotone_partition_is_valid_2()`
 
 */
-

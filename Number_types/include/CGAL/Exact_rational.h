@@ -14,6 +14,9 @@
 //
 // Author(s)     : Laurent Rineau
 
+#ifndef CGAL_EXACT_RATIONAL_H
+#define CGAL_EXACT_RATIONAL_H
+
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 namespace CGAL {
@@ -44,3 +47,5 @@ typedef internal::Exact_field_selector<double>::Type Exact_rational;
 #endif
 
 } /* end namespace CGAL */
+
+#endif // CGAL_EXACT_RATIONAL_H

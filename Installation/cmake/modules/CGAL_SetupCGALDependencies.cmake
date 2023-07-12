@@ -2,7 +2,7 @@
 # CGAL_SetupCGALDependencies
 # --------------------------
 #
-# The module searchs for the dependencies of the CGAL library:
+# The module searches for the dependencies of the CGAL library:
 #   - the `GMP/MPFR` couple,
 #   - `LEDA` (optional)
 #   - the `Boost` libraries (mostly the header-only libraries)
@@ -75,6 +75,13 @@ endif()
 #   keyword.
 #
 function(CGAL_setup_CGAL_dependencies target)
+  foreach(dir ${CGAL_INCLUDE_DIRS})
+    target_include_directories(${target} INTERFACE
+      $<BUILD_INTERFACE:${dir}>)
+  endforeach()
+  target_include_directories(${target} INTERFACE
+    $<INSTALL_INTERFACE:include>)
+
   if(CGAL_DISABLE_GMP)
     target_compile_definitions(${target} INTERFACE CGAL_DISABLE_GMP=1)
   else()
@@ -90,18 +97,7 @@ function(CGAL_setup_CGAL_dependencies target)
     target_compile_definitions(${target} INTERFACE CGAL_TEST_SUITE=1)
   endif()
 
-  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
-  # C++14.
-  target_compile_features(${target} INTERFACE cxx_decltype_auto)
-
   use_CGAL_Boost_support(${target} INTERFACE)
-
-  foreach(dir ${CGAL_INCLUDE_DIRS})
-    target_include_directories(${target} INTERFACE
-      $<BUILD_INTERFACE:${dir}>)
-  endforeach()
-  target_include_directories(${target} INTERFACE
-    $<INSTALL_INTERFACE:include>)
 
   # Make CGAL depend on threads-support (for Epeck and Epeck_d)
   if(CGAL_HAS_NO_THREADS)
@@ -114,7 +110,19 @@ function(CGAL_setup_CGAL_dependencies target)
     target_link_libraries(${target} INTERFACE Threads::Threads)
   endif()
 
+  if(CGAL_USE_ASAN OR "$ENV{CGAL_USE_ASAN}")
+    set(CMAKE_DISABLE_FIND_PACKAGE_TBB TRUE CACHE BOOL "CGAL_USE_ASAN (AddressSanitizer) and TBB are incompatible")
+    target_compile_options(${target} INTERFACE -fsanitize=address)
+    target_link_options(${target} INTERFACE -fsanitize=address)
+  endif()
   # Now setup compilation flags
+  CGAL_setup_CGAL_flags(${target})
+endfunction()
+
+function(CGAL_setup_CGAL_flags target)
+  # CGAL now requires C++17
+  target_compile_features(${target} INTERFACE cxx_std_17)
+
   if(MSVC)
     target_compile_options(${target} INTERFACE
       "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
@@ -123,11 +131,6 @@ function(CGAL_setup_CGAL_dependencies target)
       $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
       $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
       )
-    if(MSVC_TOOLSET_VERSION VERSION_LESS_EQUAL 140) # for MSVC 2015
-      target_compile_options(${target} INTERFACE
-        $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
-        )
-    endif()
   elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
       message(STATUS "Apple Clang version ${CMAKE_CXX_COMPILER_VERSION} compiler detected")

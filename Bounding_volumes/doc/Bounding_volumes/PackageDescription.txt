@@ -20,12 +20,6 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\cgalCRPSection{Assertions}
-
-The optimization code uses infix `OPTIMISATION` in the assertions,
-e.g. defining the compiler flag
-`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
-checking off, cf. Section  \ref secchecks.
 
 \cgalClassifedRefPages
 
@@ -62,4 +56,3 @@ checking off, cf. Section  \ref secchecks.
 - `CGAL::Min_sphere_of_spheres_d<Traits>`
 - `MinSphereOfSpheresTraits`
 */
-

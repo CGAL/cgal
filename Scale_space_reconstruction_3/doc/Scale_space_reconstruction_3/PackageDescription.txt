@@ -12,7 +12,7 @@
 \cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3}
 \cgalPkgPicture{knot_thumb.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Thijs van Lankveld}
+\cgalPkgAuthor{Thijs van Lankveld}
 \cgalPkgDesc{This method allows to reconstruct a surface that interpolates a set of 3D points using either an alpha shape or the advancing front surface reconstruction method. The output interpolates the point set (as opposed to approximating the point set). How the surface connects the points depends on a scale variable, which can be estimated semi-automatically.}
 \cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3Ref}
 \cgalPkgSummaryEnd

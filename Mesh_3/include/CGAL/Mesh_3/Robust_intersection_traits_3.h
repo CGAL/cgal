@@ -94,7 +94,7 @@ struct Vector_plane_orientation_3_static_filter :
         fit_in_double(get_approx(b).z(), bz) &&
         fit_in_double(get_approx(c).x(), cx) && fit_in_double(get_approx(c).y(), cy) &&
         fit_in_double(get_approx(c).z(), cz))
-    { // This bloc is not indented because it was added in a second step,
+    { // This block is not indented because it was added in a second step,
       // and one wants to avoid the reindentation of the whole code
 
     double abx = bx - ax;

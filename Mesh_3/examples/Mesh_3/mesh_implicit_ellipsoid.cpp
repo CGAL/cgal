@@ -35,8 +35,7 @@ FT ellipsoid_function (const Point& p)
   return x2+2*y2+4*z2-1;
 }
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main()
 {
@@ -51,22 +50,23 @@ int main()
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Mesh generation (without optimization)
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_perturb().no_exude());
 
   // Output
   std::ofstream medit_file("out_wo.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
   // Perturbation (5s, 12degree)
-  CGAL::perturb_mesh_3(c3t3, domain, time_limit=5, sliver_bound=12);
+  CGAL::perturb_mesh_3(c3t3, domain, params::time_limit(5).sliver_bound(12));
 
   // Exudation
   CGAL::exude_mesh_3(c3t3);
 
   // Output
   medit_file.open("out_optimized.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

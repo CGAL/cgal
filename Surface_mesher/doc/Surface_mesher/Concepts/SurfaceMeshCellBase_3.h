@@ -21,7 +21,7 @@ a three dimensional triangulation type
 The concept `SurfaceMeshCellBase_3` describes the cell base type
 required in this triangulation type.
 
-\cgalRefines `DelaunayTriangulationCellBase_3`
+\cgalRefines{DelaunayTriangulationCellBase_3}
 
 The concept `SurfaceMeshCellBase_3` adds four markers to mark
 the facets of the triangulation that belong to the two dimensional

@@ -138,7 +138,7 @@ public:
     m_owner (false)
   {}
 
-  /*! Assignmnet operator. */
+  /*! Assignment operator. */
   Self& operator= (const Self& tr)
   {
     if (this == &tr)
@@ -809,7 +809,7 @@ public:
                              m_traits.compare_y_at_x_2_object());
       CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
       Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
-      // Check whether source and taget are two distinct points and they lie
+      // Check whether source and taeget are two distinct points and they lie
       // on the line.
       CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);

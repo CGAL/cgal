@@ -9,8 +9,8 @@ The resulting sequence is placed starting at position
 `result`, and the past-the-end iterator for the resulting
 sequence is returned. It is not specified at which point the
 cyclic sequence of extreme points is cut into a linear sequence.
-\pre The source range [`first`,`beyond`) does not contain `result`.
 
+\pre The source range [`first`,`beyond`) does not contain `result`.
 
 The default traits class `Default_traits` is the kernel in which the
 value type of  `InputIteratore` is defined.
@@ -34,7 +34,6 @@ functions that return instances of these types:
 \sa `CGAL::ch_akl_toussaint()`
 \sa `CGAL::ch_bykat()`
 \sa `CGAL::ch_eddy()`
-\sa `CGAL::ch_graham_andrew_scan()`
 \sa `CGAL::ch_jarvis()`
 \sa `CGAL::ch_melkman()`
 \sa `CGAL::convex_hull_2()`
@@ -52,10 +51,9 @@ in the worst case for \f$ n\f$ input points.
 */
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_graham_andrew( InputIterator first,
-InputIterator beyond,
-OutputIterator result,
-const Traits & ch_traits = Default_traits);
+ch_graham_andrew(InputIterator first, InputIterator beyond,
+                 OutputIterator result,
+                 const Traits& ch_traits = Default_traits);
 
 } /* namespace CGAL */
 
@@ -125,8 +123,8 @@ template <class BidirectionalIterator, class OutputIterator,
 class Traits>
 OutputIterator
 ch_graham_andrew_scan( BidirectionalIterator first,
-BidirectionalIterator beyond,
-OutputIterator result,
-const Traits& ch_traits = Default_traits);
+                       BidirectionalIterator beyond,
+                       OutputIterator result,
+                       const Traits& ch_traits = Default_traits);
 
 } /* namespace CGAL */

@@ -265,8 +265,8 @@ public:
     std::set<Point_data *,Less_yx> *right_tent;
     std::set<Point_data *,Less_yx> *left_tent;
 
-    /* detemine whether the point is a bounding box corner
-       (thus not implicitely inserted as a point, or not.
+    /* determine whether the point is a bounding box corner
+       (thus not implicitly inserted as a point, or not).
     */
 
     Point_type type;
@@ -893,7 +893,7 @@ Largest_empty_iso_rectangle_2<T>::phase_1_on_x()
   }
 
   // traverse over all possibilities for finding a larger empty rectangle
-  // rectangles here touch the top and the buttom of the bounding box
+  // rectangles here touch the top and the bottom of the bounding box
   while(iter != last_iter) {
     // filter false points
     if((*iter)->type != TOP_RIGHT && (*iter)->type != TOP_LEFT) {

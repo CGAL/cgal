@@ -54,7 +54,7 @@ public:
   Do_not_refine_edges(Tr& tr_)
     : Super(tr_) {}
 
-  /** \name FUNCTIONS NEEDED BY Mesher_level OVERIDDEN BY THIS CLASS. */
+  /** \name FUNCTIONS NEEDED BY Mesher_level OVERRIDDEN BY THIS CLASS. */
 
   void scan_triangulation_impl()
   {

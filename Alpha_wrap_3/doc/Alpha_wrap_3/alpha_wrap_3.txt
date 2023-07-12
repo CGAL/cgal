@@ -332,7 +332,7 @@ and values of alpha smaller than the size of the holes.
 Two-sided wrap.
 (Left) Wrapping a Bunny in 2D, with decreasing values for alpha.
 (Right) Wrapping a defect-laden Bunny in 3D. The rightmost column depicts a clipped visualization
-of the inside. When alpha is small enough with respect the diamater of the holes, the algorithm generates a two-sided wrap.
+of the inside. When alpha is small enough with respect the diameter of the holes, the algorithm generates a two-sided wrap.
 \cgalFigureCaptionEnd
 
 \section aw3_performance Performance
@@ -358,6 +358,12 @@ Here is an example with an input triangle mesh, with alpha set to 1/20 of the bo
 and offset set to 1/30 of alpha (i.e., 1/600 of the bounding box diagonal edge length).
 
 \cgalExample{Alpha_wrap_3/triangle_mesh_wrap.cpp}
+
+Some triangle soups might not be representable as a mesh due to non-manifoldness or incompatible orientations.
+Such triangle soup is nevertheless a valid input for the wrapping algorithm, as illustrated
+in the following example.
+
+\cgalExample{Alpha_wrap_3/triangle_soup_wrap.cpp}
 
 Here is an example with a point cloud.
 

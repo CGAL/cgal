@@ -29,7 +29,7 @@
 
 #include <CGAL/license/Alpha_wrap_3.h>
 
-#include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_AABB_traits.h>
+#include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_AABB_geom_traits.h>
 #include <CGAL/Alpha_wrap_3/internal/gate_priority_queue.h>
 #include <CGAL/Alpha_wrap_3/internal/geometry_utils.h>
 #include <CGAL/Alpha_wrap_3/internal/oracles.h>
@@ -173,7 +173,7 @@ class Alpha_wrap_3
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Dt>, CGAL_BOOST_PAIRING_HEAP>;
 
 protected:
-  const Oracle& m_oracle;
+  const Oracle m_oracle;
   SC_Iso_cuboid_3 m_bbox;
 
   FT m_alpha, m_sq_alpha;
@@ -192,8 +192,8 @@ public:
       m_queue(4096)
   {
     // Due to the Steiner point computation being a dichotomy, the algorithm is inherently inexact
-    // and passing exact kernels is explicitely disabled to ensure no misunderstanding.
-    CGAL_static_assertion((std::is_floating_point<FT>::value));
+    // and passing exact kernels is explicitly disabled to ensure no misunderstanding.
+    static_assert(std::is_floating_point<FT>::value);
   }
 
 public:
@@ -229,11 +229,14 @@ private:
   }
 
 public:
-  template <typename OutputMesh, typename NamedParameters>
+  template <typename OutputMesh,
+            typename InputNamedParameters = parameters::Default_named_parameters,
+            typename OutputNamedParameters = parameters::Default_named_parameters>
   void operator()(const double alpha, // = default_alpha()
                   const double offset, // = alpha / 30.
                   OutputMesh& output_mesh,
-                  const NamedParameters& np)
+                  const InputNamedParameters& in_np = parameters::default_values(),
+                  const OutputNamedParameters& out_np = parameters::default_values())
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -241,25 +244,25 @@ public:
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
 
-    using OVPM = typename CGAL::GetVertexPointMap<OutputMesh, NamedParameters>::type;
-    OVPM ovpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+    using OVPM = typename CGAL::GetVertexPointMap<OutputMesh, OutputNamedParameters>::type;
+    OVPM ovpm = choose_parameter(get_parameter(out_np, internal_np::vertex_point),
                                  get_property_map(vertex_point, output_mesh));
 
     typedef typename internal_np::Lookup_named_param_def <
       internal_np::visitor_t,
-      NamedParameters,
+      InputNamedParameters,
       Wrapping_default_visitor // default
     >::reference                                                                 Visitor;
 
     Wrapping_default_visitor default_visitor;
-    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+    Visitor visitor = choose_parameter(get_parameter_reference(in_np, internal_np::visitor), default_visitor);
 
     std::vector<Point_3> no_seeds;
     using Seeds = typename internal_np::Lookup_named_param_def<
-                    internal_np::seed_points_t, NamedParameters, std::vector<Point_3> >::reference;
-    Seeds seeds = choose_parameter(get_parameter_reference(np, internal_np::seed_points), no_seeds);
+                    internal_np::seed_points_t, InputNamedParameters, std::vector<Point_3> >::reference;
+    Seeds seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), no_seeds);
 
-    const bool do_enforce_manifoldness = choose_parameter(get_parameter(np, internal_np::do_enforce_manifoldness), true);
+    const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
 #ifdef CGAL_AW3_TIMER
     CGAL::Real_timer t;
@@ -360,14 +363,6 @@ public:
   }
 
   // Convenience overloads
-  template <typename OutputMesh>
-  void operator()(const double alpha,
-                  const double offset,
-                  OutputMesh& output_mesh)
-  {
-    return operator()(alpha, offset, output_mesh, parameters::default_values());
-  }
-
   template <typename OutputMesh>
   void operator()(const double alpha,
                   OutputMesh& output_mesh)
@@ -949,7 +944,7 @@ private:
       return IRRELEVANT;
     }
 
-    // push if facet is connected to artifical vertices
+    // push if facet is connected to artificial vertices
     for(int i=0; i<3; ++i)
     {
       const Vertex_handle vh = ch->vertex(Dt::vertex_triple_index(id, i));
@@ -1054,7 +1049,7 @@ private:
       check_queue_sanity();
 #endif
 
-      // const& to something that will be poped, but safe as `ch` && `id` are extracted before the pop
+      // const& to something that will be popped, but safe as `ch` && `id` are extracted before the pop
       const Gate& gate = m_queue.top();
       const Facet& f = gate.facet();
       CGAL_precondition(!m_dt.is_infinite(f));
@@ -1348,6 +1343,7 @@ private:
     return true;
   }
 
+public:
   // Not the best complexity, but it's very cheap compared to the rest of the algorithm.
   void make_manifold()
   {

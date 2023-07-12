@@ -1,7 +1,0 @@
-export CGAL_DIR='/cygdrive/c/CGAL/reference_platforms/x64_Cygwin-Windows8_MSVC2013-Release-64bits'
-export VC_VERSION="12"
-export ARCH="64"
-export PLATFORM_REFERENCE="/cygdrive/c/CGAL/reference_platforms"
-export BOOST_VERSION=1_57_0
-export TBB_ARCH="intel64"
-source "${PLATFORM_REFERENCE}/setup_common"

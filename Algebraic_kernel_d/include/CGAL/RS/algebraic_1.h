@@ -34,7 +34,7 @@ namespace RS_AK1{
 //      Refiner_()(const Polynomial_&,Bound_&,Bound_&,int p);
 //
 // The fourth template argument is a comparator, a function object that
-// receives the polynomials and bounds defining two algebraic numbres and
+// receives the polynomials and bounds defining two algebraic numbers and
 // just compares them, returning a CGAL::Comparison_result. The signature
 // of a comparator must be:
 //      CGAL::Comparison_result

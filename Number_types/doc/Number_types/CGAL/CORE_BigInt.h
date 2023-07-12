@@ -4,7 +4,7 @@ namespace CORE {
 /*!
 \ingroup nt_core
 
-The class `CORE::BigInt` provides exact computation in \f$ \Z\f$.
+The class `CORE::BigInt` provides exact computation in \f$ \mathbb{Z}\f$.
 Operations and comparisons between objects of this type are guaranteed
 to be exact.
 This number type is provided by the \core library \cgalCite{klpy-clp-99}.

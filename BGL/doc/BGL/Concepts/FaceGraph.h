@@ -18,7 +18,7 @@ A face descriptor must be `DefaultConstructible`, `Assignable`, `EqualityCompara
 
 \cgalAssociatedTypesEnd
 
-\cgalRefines `HalfedgeGraph`
+\cgalRefines{HalfedgeGraph}
 
 \cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
 

@@ -6,11 +6,10 @@ project(Optimal_bounding_box_Tests)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS "This project requires the Eigen library, and will not be compiled.")
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
 

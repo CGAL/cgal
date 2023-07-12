@@ -177,7 +177,7 @@ affinely independent.
 template <class R>
 Comparison_result compare_lexicographically(
   const Point_d<R>& p1, const Point_d<R>& p2)
-/*{\Mfunc compares the Cartesian coordiantes of points |p1| and |p2|
+/*{\Mfunc compares the Cartesian coordinates of points |p1| and |p2|
    lexicographically.}*/
 { typename R::Compare_lexicographically_d cmp;
   return cmp(p1,p2); }

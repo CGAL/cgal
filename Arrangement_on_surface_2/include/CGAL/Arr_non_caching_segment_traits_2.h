@@ -22,7 +22,7 @@
  * This traits class handles general segments. It is a model of the
  * ArrangementTraits_2 concept, a refinement of the ArrangementBasicTraits_2
  * concept. The class is templated by a kernel and inherits from the
- * Arr_non_caching_segment_basic_traits_2 class instanciated with the kernel -
+ * Arr_non_caching_segment_basic_traits_2 class instantiated with the kernel -
  * a model of the ArrangementBasicTraits_2 concept. It defined a few additional
  * functors required by the concept it models.
  */
@@ -143,7 +143,7 @@ public:
   { return Make_x_monotone_2(); }
 
   /*! \class
-   * A functor for splitting a segment into two segements.
+   * A functor for splitting a segment into two segments.
    */
   class Split_2 {
     typedef Arr_non_caching_segment_traits_2<Kernel_T>    Self;
@@ -233,14 +233,14 @@ public:
       // There is no intersection:
       if (! res) return oi;
 
-      // Chack if the intersection is a point:
+      // Check if the intersection is a point:
       const Point_2* p_p = boost::get<Point_2>(&*res);
       if (p_p != nullptr) {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
         // If the two segments intersect at their endpoints, then the
         // multiplicity is undefined, but we deliberately ignore it for
-        // efficieny reasons.
+        // efficiency reasons.
         *oi++ = Intersection_result(Intersection_point(*p_p, 1));
         return oi;
       }

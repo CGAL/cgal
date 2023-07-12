@@ -194,7 +194,7 @@ private:
 
     template <class Point>
     Plane(const Point& p, const Point& q, const Point& r,
-          typename std::enable_if<!std::is_same<Point,ePoint_3>::value>::type* = 0)
+          std::enable_if_t<!std::is_same<Point,ePoint_3>::value>* = 0)
       : ep(p.x(),p.y(),p.z()), eq(q.x(),q.y(),q.z()), er(r.x(),r.y(),r.z()), eplane(ep,eq,er)
     {}
     ePoint_3 ep, eq, er;
@@ -358,7 +358,7 @@ public:
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -458,7 +458,7 @@ public:
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -467,7 +467,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+                      , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
   )
   {
@@ -572,7 +572,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+                      , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
                       )
   {
@@ -1032,7 +1032,7 @@ private:
 
 
   bool
-  is_two_facets_neighbouring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
+  is_two_facets_neighboring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
   {
     std::size_t facesize = halfspace[pid].size();
     if (i == j) return false;
@@ -1046,6 +1046,9 @@ private:
     if (j == 2 && i == facesize - 1) return true;
     return false;
   }
+  CGAL_DEPRECATED bool
+  is_two_facets_neighbouring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
+  { return is_two_facets_neighboring(pid, i, j); }
 
 
   int
@@ -1187,7 +1190,7 @@ private:
               continue;
 
             if (true /* USE_ADJACENT_INFORMATION*/ ) {
-              bool neib = is_two_facets_neighbouring(cindex, cutp[i], cutp[j]);
+              bool neib = is_two_facets_neighboring(cindex, cutp[i], cutp[j]);
               if (neib == false) continue;
             }
 
@@ -1295,7 +1298,7 @@ private:
                       const int &prismid, const unsigned int &faceid)const
   {
     for (unsigned int i = 0; i < halfspace[prismid].size(); i++) {
-      /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
+      /*bool neib = is_two_facets_neighboring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbor facets are coplanar
         if (neib == false) continue;*/
       if (i == faceid) continue;
       if(oriented_side(halfspace[prismid][i].eplane, ip) == ON_POSITIVE_SIDE){
@@ -1722,11 +1725,11 @@ private:
     idlist.emplace_back(filtered_intersection[queue[0]]);// idlist contains the id in prismid//it is fine maybe it is not really intersected
     coverlist[queue[0]] = 1 ;//when filtered_intersection[i] is already in the cover list, coverlist[i]=true
 
-    std::vector<unsigned int> neighbours;//local id
+    std::vector<unsigned int> neighbors;//local id
     std::vector<unsigned int > list;
-    std::vector<std::vector<unsigned int>*> neighbour_facets;
+    std::vector<std::vector<unsigned int>*> neighbor_facets;
     std::vector<std::vector<unsigned int>>  idlistorder;
-    std::vector<int> neighbour_cover;
+    std::vector<int> neighbor_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
     for (unsigned int i = 0; i < queue.size(); i++) {
@@ -1810,14 +1813,14 @@ private:
 
       localtree.all_intersected_primitives(bounding_boxes[jump1], std::back_inserter(list));
 
-      neighbours.resize(list.size());
-      neighbour_facets.resize(list.size());
-      neighbour_cover.resize(list.size());
+      neighbors.resize(list.size());
+      neighbor_facets.resize(list.size());
+      neighbor_cover.resize(list.size());
       for (unsigned int j = 0; j < list.size(); j++) {
-        neighbours[j] = filtered_intersection[list[j]];
-        neighbour_facets[j] = &(intersect_face[list[j]]);
-        if (coverlist[list[j]] == 1) neighbour_cover[j] = 1;
-        else neighbour_cover[j] = 0;
+        neighbors[j] = filtered_intersection[list[j]];
+        neighbor_facets[j] = &(intersect_face[list[j]]);
+        if (coverlist[list[j]] == 1) neighbor_cover[j] = 1;
+        else neighbor_cover[j] = 0;
       }
 
       for (unsigned int j = 0; j < i; j++) {
@@ -1864,7 +1867,7 @@ private:
             if (inter == 1) {
 
 
-              inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, neighbours, neighbour_facets, neighbour_cover, jump1, jump2, check_id);
+              inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, neighbors, neighbor_facets, neighbor_cover, jump1, jump2, check_id);
 
 
               if (inter == 1) {
@@ -2234,7 +2237,7 @@ public:
   operator()(const TriangleMesh& tmesh,
              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+             , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
     ) const
   {
@@ -2326,7 +2329,7 @@ public:
   bool
   operator()(const TriangleRange& triangle_range
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+             , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
     ) const
   {

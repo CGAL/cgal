@@ -18,13 +18,12 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <type_traits>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
@@ -305,7 +304,7 @@ struct Side_of_helper
 
     typedef CGAL::Pointer_property_map<CGAL::Bbox_3>::type Id_to_box;
     Id_to_box id_to_box = CGAL::make_property_map(face_bboxes);
-    typedef Property_map_binder<FaceIdMap, Id_to_box> BPM;
+    typedef Compose_property_map<FaceIdMap, Id_to_box> BPM;
     BPM bpm(fid, id_to_box);
     Compute_bbox<BPM> compute_bbox(bpm);
 
@@ -386,7 +385,7 @@ struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
                                      NamedParameters>::type Default_map;
-  typedef typename boost::is_same<Point_3,
+  typedef typename std::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
   typedef typename boost::mpl::if_<
@@ -399,7 +398,7 @@ struct TweakedGetVertexPointMap
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
+get_vpm(const NP& np, boost::optional<PM*> opm, std::true_type)
 {
   if (boost::none == opm) return boost::none;
   return parameters::choose_parameter(
@@ -409,7 +408,7 @@ get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP&, boost::optional<PM*> opm, boost::false_type)
+get_vpm(const NP&, boost::optional<PM*> opm, std::false_type)
 {
   if (boost::none == opm) return boost::none;
   return typename TweakedGetVertexPointMap<PT, NP, PM>::type();
@@ -943,7 +942,7 @@ void import_polyline(
   halfedge_descriptor prev1=h1;
   halfedge_descriptor prev2=h2;
 
-  //set the correspondance
+  //set the correspondence
   pm1_to_output_edges.insert(
     std::make_pair(edge(prev1, pm1), edge(prev_out, output)) );
   pm2_to_output_edges.insert(
@@ -1362,7 +1361,7 @@ void fill_new_triangle_mesh(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
 
-  // this is the miminal number of edges that will be marked (intersection edge).
+  // this is the minimal number of edges that will be marked (intersection edge).
   // We cannot easily have the total number since some patch interior edges might be marked
   output_shared_edges.reserve(
                               std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),std::size_t(0)) );

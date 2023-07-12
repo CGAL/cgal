@@ -107,7 +107,7 @@ approximates the rotation over the angle indicated by direction
 `d`, such that the differences between the sines and cosines
 of the rotation given by d and the approximating rotation
 are at most \f$ num/den\f$ each.
-\pre \f$ num/den>0\f$ and \f$ d != 0\f$.
+\pre `num/den > 0` and  `d != 0`.
 */
 Aff_transformation_2(const Rotation,
 const Direction_2<Kernel> &d,
@@ -116,7 +116,7 @@ const Kernel::RT &den = RT(1));
 
 /*!
 introduces a rotation by the angle `rho`.
-\pre \f$ sine\_rho^2 + cosine\_rho^2 == hw^2\f$.
+\pre <tt>sine\_rho<sup>2</sup> + cosine\_rho<sup>2</sup> == hw<sup>2</sup></tt>.
 */
 Aff_transformation_2(const Rotation,
 const Kernel::RT &sine_rho,

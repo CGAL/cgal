@@ -15,23 +15,12 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Mesh_vertex_base_3.h>
+#include <CGAL/Simplicial_mesh_vertex_base_3.h>
 
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-namespace internal
-{
-
-struct Fake_MD_V
-{
-  typedef int Subdomain_index;
-  typedef int Surface_patch_index;
-  typedef int Index;
-};
-
-} // internal
 
 /*!
 \ingroup PkgTetrahedralRemeshingClasses
@@ -47,18 +36,22 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 It must be a model of the `TriangulationVertexBase_3` concept.
 It has the default value `Triangulation_vertex_base_3<Gt>`.
 
-\cgalModels `MeshVertexBase_3`
+\cgalModels `RemeshingVertexBase_3`
+\cgalModels `SimplicialMeshVertexBase_3`
 */
-#ifndef DOXYGEN_RUNNING
 template<typename GT,
-         typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
+  typename Subdomain_index = int,
+  typename Surface_patch_index = int,
+  typename Curve_index = int,
+  typename Corner_index = int,
+  typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
 using Remeshing_vertex_base_3
-  = CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>;
-#else
-template<typename GT,
-         typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
-class Remeshing_vertex_base_3;
-#endif
+  = CGAL::Simplicial_mesh_vertex_base_3<GT,
+                                        Subdomain_index,
+                                        Surface_patch_index,
+                                        Curve_index,
+                                        Corner_index,
+                                        Vb>;
 
 }//end namespace Tetrahedral_remeshing
 

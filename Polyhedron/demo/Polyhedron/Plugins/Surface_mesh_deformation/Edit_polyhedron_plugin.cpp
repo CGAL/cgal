@@ -45,7 +45,7 @@ public:
 public Q_SLOTS:
   void on_actionDeformation_triggered();
   /////// Dock window signal handlers //////
-  // what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object
+  // what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
   void on_AddCtrlVertPushButton_clicked();
   void on_PrevCtrlVertPushButton_clicked();
   void on_NextCtrlVertPushButton_clicked();

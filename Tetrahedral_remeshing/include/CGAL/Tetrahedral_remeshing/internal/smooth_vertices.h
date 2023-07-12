@@ -48,6 +48,7 @@ class Tetrahedral_remeshing_smoother
   typedef typename Tr::Geom_traits           Gt;
   typedef typename Gt::Vector_3              Vector_3;
   typedef typename Gt::Point_3               Point_3;
+  typedef typename Gt::FT                    FT;
 
 private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
@@ -347,9 +348,9 @@ private:
                                 const CellRange& inc_cells,
                                 const Tr& /* tr */,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-                                double& total_move)
+                                FT& total_move)
 #else
-                                double&)
+                                FT&)
 #endif
   {
     const typename Tr::Point backup = v->point(); //backup v's position
@@ -396,15 +397,13 @@ private:
     std::unordered_map<Vertex_handle,
     std::vector<Surface_patch_index> >& vertices_surface_indices)
   {
-    for (typename C3t3::Facets_in_complex_iterator
-         fit = c3t3.facets_in_complex_begin();
-         fit != c3t3.facets_in_complex_end(); ++fit)
+    for (Facet fit : c3t3.facets_in_complex())
     {
-      const Surface_patch_index& surface_index = c3t3.surface_patch_index(*fit);
+      const Surface_patch_index& surface_index = c3t3.surface_patch_index(fit);
 
       for (int i = 0; i < 3; i++)
       {
-        const Vertex_handle vi = fit->first->vertex(indices(fit->second, i));
+        const Vertex_handle vi = fit.first->vertex(indices(fit.second, i));
 
         std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vi];
         if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index) == v_surface_indices.end())
@@ -431,10 +430,11 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Smooth vertices...";
     std::cout.flush();
-#endif
+
     std::size_t nb_done_3d = 0;
     std::size_t nb_done_2d = 0;
     std::size_t nb_done_1d = 0;
+#endif
     FT total_move = 0.;
 
     Tr& tr = c3t3.triangulation();
@@ -557,8 +557,11 @@ public:
 #endif
           // move vertex
           const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move))
+          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
             nb_done_1d++;
+#endif
+          }
         }
         else if (neighbors[vid] > 0)
         {
@@ -591,8 +594,11 @@ public:
 #endif
           // move vertex
           const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move))
+          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
             nb_done_1d++;
+#endif
+          }
         }
       }
     }
@@ -664,8 +670,11 @@ public:
           os_surf << "2 " << current_pos << " " << final_position << std::endl;
 #endif
           const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move))
+          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
             nb_done_2d++;
+#endif
+          }
         }
         else if (neighbors[vid] > 0)
         {
@@ -677,8 +686,11 @@ public:
           if (boost::optional<Vector_3> mls_projection = project(si, current_pos))
           {
             const typename Tr::Point new_pos(CGAL::ORIGIN + *mls_projection);
-            if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move))
+            if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
               nb_done_2d++;
+#endif
+            }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
             os_surf0 << "2 " << current_pos << " " << new_pos << std::endl;
@@ -732,8 +744,11 @@ public:
 #endif
         const Vector_3 p = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
         typename Tr::Point new_pos(p.x(), p.y(), p.z());
-        if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move))
+        if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
           nb_done_3d++;
+#endif
+        }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         os_vol << " " << point(v->point()) << std::endl;

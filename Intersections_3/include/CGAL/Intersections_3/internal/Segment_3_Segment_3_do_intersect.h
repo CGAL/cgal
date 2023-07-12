@@ -23,7 +23,7 @@ namespace internal {
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Segment_3& s1,
              const typename K::Segment_3& s2,
              const K& k)

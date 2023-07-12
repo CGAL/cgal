@@ -2,7 +2,7 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines TriangulationOnSphereTraits_2
+\cgalRefines{TriangulationOnSphereTraits_2}
 
 The concept `DelaunayTriangulationOnSphereTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template

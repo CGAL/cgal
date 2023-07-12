@@ -124,7 +124,7 @@ void test_CC_with_default_size_map(Mesh sm,
     if (i!=id_of_cc_to_remove)
       ff.push_back(one_face_per_cc[i]);
 
-  // default face size map, but explicitely passed
+  // default face size map, but explicitly passed
   PMP::keep_connected_components(copy1, ff,
      CGAL::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy1, k, bound))
                       .face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));

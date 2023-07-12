@@ -209,7 +209,7 @@ public:
     int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_bbox.xmin()) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
     index_x =
-      (index_x < 0 ?
+      (index_x < 0 ? /// @TODO: use std::clamp
         0
         : (index_x >= m_num_grid_cells_per_axis ?
             m_num_grid_cells_per_axis - 1
@@ -556,7 +556,7 @@ public:
         }
         else if (old_value > this_thread_priority)
         {
-          // Another "more prioritary" thread owns the lock, we back off
+          // Another "more priority" thread owns the lock, we back off
           return false;
         }
         else

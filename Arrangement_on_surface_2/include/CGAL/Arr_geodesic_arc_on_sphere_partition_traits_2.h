@@ -87,7 +87,7 @@ public:
 
     /*! Compare two points lexigoraphically: by x, then by y.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - y(p1) < y(p2);
      *         true - y(p1) = y(p2) and x(p1) < x(p2);
@@ -129,7 +129,7 @@ public:
 
     /*! Compare two points lexigoraphically: by y, then by x.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - x(p1) < x(p2);
      *         true - x(p1) = x(p2) and y(p1) < y(p2);
@@ -250,7 +250,7 @@ public:
 
     /*! Compare two points by y coordinate.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         EQUAL   - x(p1) = x(p2);
@@ -395,7 +395,7 @@ public:
 
     /*! Compare two points lexigoraphically: by x, then by y.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - y(p1) < y(p2);
      *         true - y(p1) = y(p2) and x(p1) < x(p2);
@@ -436,7 +436,7 @@ public:
 
     /*! Compare two points lexigoraphically: by y, then by x.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - x(p1) < x(p2);
      *         true - x(p1) = x(p2) and y(p1) < y(p2);
@@ -556,7 +556,7 @@ public:
 
     /*! Compare two points by y coordinate.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         EQUAL   - x(p1) = x(p2);

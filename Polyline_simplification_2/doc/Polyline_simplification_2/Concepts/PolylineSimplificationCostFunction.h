@@ -10,8 +10,7 @@ sets before and after removal. The smaller the error the lower the
 cost. The algorithm processes vertices in increasing cost order to
 preserve the overall polyline set shape as much as possible
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable}
 
 \cgalHasModel `CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost`
 \cgalHasModel `CGAL::Polyline_simplification_2::Scaled_squared_distance_cost`

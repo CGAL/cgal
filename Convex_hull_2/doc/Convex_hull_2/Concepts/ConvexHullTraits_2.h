@@ -16,8 +16,6 @@ is specified with each function.
 \cgalHasModel `CGAL::Projection_traits_yz_3<K>`
 \cgalHasModel `CGAL::Projection_traits_xz_3<K>`
 
-\sa `IsStronglyConvexTraits_3`
-
 */
 
 class ConvexHullTraits_2 {
@@ -66,18 +64,12 @@ typedef unspecified_type Left_turn_2;
 
 /*!
 Predicate object type that must provide
-`bool operator()(Point_2 p, Point_2 q,
-Point_2 r,Point_2 s)`, which returns `true` iff
-the signed distance from \f$ r\f$ to the line \f$ l_{pq}\f$ through \f$ p\f$ and \f$ q\f$
-is smaller than the distance from \f$ s\f$ to \f$ l_{pq}\f$. It is used to
-compute the point right of a line with maximum unsigned distance to
-the line. The predicate must provide a total order compatible
-with convexity, <I>i.e.</I>, for any line segment \f$ s\f$ one of the
-endpoints
-of \f$ s\f$ is the smallest point among the points on \f$ s\f$, with respect to
-the order given by `Less_signed_distance_to_line_2`.
+`bool operator()(Point_2 p, Point_2 q, Point_2 r,Point_2 s)`,
+which compares the signed distance of \f$ r\f$ and \f$ s\f$ to the directed line \f$ l_{pq}\f$
+through \f$ p\f$ and \f$ q\f$.
+It is used to compute the point right of a line with maximum unsigned distance to the line.
 */
-typedef unspecified_type Less_signed_distance_to_line_2;
+typedef unspecified_type Compare_signed_distance_to_line_2;
 
 /*!
 Predicate object type that must provide
@@ -135,7 +127,7 @@ Less_yx_2 less_yx_2_object();
 /*!
 
 */
-Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object();
+Compare_signed_distance_to_line_2 compare_signed_distance_to_line_2_object();
 
 /*!
 

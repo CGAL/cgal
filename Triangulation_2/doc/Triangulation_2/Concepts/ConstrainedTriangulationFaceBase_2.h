@@ -13,7 +13,7 @@ has to be a model of the concept
 providing functionalities to deal with
 constraints.
 
-\cgalRefines `TriangulationFaceBase_2`
+\cgalRefines{TriangulationFaceBase_2}
 
 \cgalHeading{Types}
 

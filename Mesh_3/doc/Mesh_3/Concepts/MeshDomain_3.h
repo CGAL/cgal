@@ -124,7 +124,7 @@ following operators:
 
 `template<typename OutputIterator>`
 <br>
-`OutputIterator operator()(int n, OutputIterator pts)`
+`OutputIterator operator()(OutputIterator pts, int n)`
 
 Those two operators output a set of (`n`) surface points to the
 output iterator `pts`, as objects of type `std::pair<Point_3,

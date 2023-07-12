@@ -4,7 +4,6 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 // HalfedgeGraph adapters for Polyhedron_3
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 // #define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
 #include <CGAL/Surface_mesh_deformation.h>
 

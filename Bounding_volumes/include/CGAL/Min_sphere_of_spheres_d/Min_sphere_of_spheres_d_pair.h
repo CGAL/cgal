@@ -42,7 +42,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       {
           // That constant is embedded in an inline static function, to
           // workaround a bug of g++>=4.1
-          //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+          //   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
           // g++ does not like const floating expression when -frounding-math
           // is used.
           static double result() {
@@ -55,7 +55,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       {
           // That constant is embedded in an inline static function, to
           // workaround a bug of g++>=4.1
-          //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+          //   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
           // g++ does not like const floating expression when -frounding-math
           // is used.
           static float result() {
@@ -68,7 +68,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       {
         // That constant is embedded in an inline static function, to
         // workaround a bug of g++>=4.1
-        //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+        //   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
         // g++ does not like const floating expression when -frounding-math
         // is used.
         static double result() {
@@ -81,7 +81,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       {
         // That constant is embedded in an inline static function, to
         // workaround a bug of g++>=4.1
-        //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+        //   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
         // g++ does not like const floating expression when -frounding-math
         // is used.
         static float result() {
@@ -141,7 +141,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       return *this;
     }
 
-  public:  // arithmetic and comparision:
+  public:  // arithmetic and comparison:
     inline Pair operator+(const Pair& a) const {
       return Pair(this->first+a.first,this->second+a.second);
     }

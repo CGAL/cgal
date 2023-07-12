@@ -69,7 +69,7 @@ void MP_Float::construct_from_builtin_fp_type(T d)
 
     CGAL_assertion(is_finite(d));
 
-    // This is subtle, because ints are not symetric against 0.
+    // This is subtle, because ints are not symmetric against 0.
 
     // First, scale d, and adjust exp accordingly.
     while (d <  INTERN_MP_FLOAT::trunc_min || d >  INTERN_MP_FLOAT::trunc_max) {

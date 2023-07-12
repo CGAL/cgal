@@ -12,8 +12,8 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
-// Ouput
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+// Output
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 // Read 1D features from input file
 #include "read_polylines.h"
@@ -190,8 +190,7 @@ FT sphere_centered_at_111 (const Point& p)
   return dx*dx+dy*dy+dz*dz-1;
 }
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main()
 {
@@ -215,8 +214,7 @@ int main()
   // (Warning: Sphere_3 constructor uses square radius !)
   Implicit_domain sphere_domain =
     Implicit_domain::create_implicit_mesh_domain(sphere_centered_at_111,
-                                                 K::Sphere_3(K::Point_3(1, 1, 1),
-                                                             2.));
+                                                 K::Sphere_3(K::Point_3(1, 1, 1), K::FT(2)));
 
   Domain domain(sphere_domain, polyhedron_domain);
 
@@ -240,7 +238,7 @@ int main()
 
   // Mesh generation (without optimization)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      no_perturb(), no_exude());
+                                      params::no_perturb().no_exude());
 
   // Output
   dump_c3t3(c3t3, "out");

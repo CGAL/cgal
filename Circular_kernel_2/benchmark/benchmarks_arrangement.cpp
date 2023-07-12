@@ -116,9 +116,9 @@ else
 
 
 
- //Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);            // If you want to do benchmarks only with dxf files, you supose to use this defenition
+ //Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);            // If you want to do benchmarks only with dxf files, you suppose to use this definition
 
-Bench bench;                        //If you want create table with all datasets you supose to use this.
+Bench bench;                        //If you want create table with all datasets you suppose to use this.
 
 
 

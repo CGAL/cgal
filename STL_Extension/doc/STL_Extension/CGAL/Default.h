@@ -11,7 +11,7 @@ to use the default argument of a template parameter of a class template.
 This can be useful in several cases: (a) when one needs a non-default value for
 another template parameter coming next (since \cpp only supports defaults at
 the end of lists), (b) when the default is actually a complex expression, e.g.
-refering to previous template parameters (in this case, it shortens compiler
+referring to previous template parameters (in this case, it shortens compiler
 error messages and mangled symbol names), (c) when defining the default
 involves circular dependencies of type instantiations (there, it breaks the
 cycle in a nice way).

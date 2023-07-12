@@ -23,7 +23,7 @@
 \cgalPkgPicture{Periodic_4_hyperbolic_triangulation_2/fig/new-triangulation-120px.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Iordan Iordanov and Monique Teillaud}
+\cgalPkgAuthors{Iordan Iordanov and Monique Teillaud}
 \cgalPkgDesc{This package enables building and handling triangulations of point sets on the two dimensional
 hyperbolic Bolza surface. Triangulations are built incrementally and can be modified by insertion or
 removal of vertices. Point location facilities are also offered. The package provides Delaunay

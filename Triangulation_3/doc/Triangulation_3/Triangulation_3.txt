@@ -543,7 +543,7 @@ be hidden and do not result in vertices in the triangulation.
 \subsubsection Triangulation_3RegularTriangulationInfo Regular Triangulation with Custom Vertex
 
 This example shows that one must use the class `Regular_triangulation_vertex_base_3` as vertex base class,
-if one has to specifiy the template parameter.
+if one has to specify the template parameter.
 
 \cgalExample{Triangulation_3/regular_with_info_3.cpp}
 

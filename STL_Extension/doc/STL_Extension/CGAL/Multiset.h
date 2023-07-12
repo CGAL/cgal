@@ -69,12 +69,6 @@ less-than operator (`operator<`).
 \tparam Allocator the allocator type. `CGAL_ALLOCATOR` is used by default.
 
 
-\cgalHeading{Assertions}
-
-The assertion and precondition flags for the `Multiset` class
-use `MULTISET` in their names (i.e., `CGAL_MULTISET_NO_ASSERTIONS` and
-`CGAL_MULTISET_NO_PRECONDITIONS`).
-
 \cgalHeading{Implementation}
 
 `Multiset` uses a proprietary implementation of a red-black tree

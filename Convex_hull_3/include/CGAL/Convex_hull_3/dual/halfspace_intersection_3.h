@@ -30,7 +30,6 @@
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 #include <unordered_map>
-#include <boost/type_traits/is_floating_point.hpp>
 #include <deque>
 
 namespace CGAL
@@ -73,7 +72,6 @@ namespace CGAL
 
 
               std::unordered_map <Facet_const_handle, vertex_descriptor> primal_vertices;
-              size_t n = 0;
 
               // First, computing the primal vertices
               for(Facet_const_handle fd : faces(_dual)){
@@ -111,7 +109,6 @@ namespace CGAL
                 vertex_descriptor vd = add_vertex(primal);
                 primal_vertices[fd] = vd;
                 put(vpm, vd, ppp);
-                ++n;
               }
 
               // Then, add facets to the primal polyhedron
@@ -244,7 +241,7 @@ namespace CGAL
           // find a point inside the intersection
           origin = halfspace_intersection_interior_point_3(begin, end);
 
-          CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_3: problem when determing a point inside the intersection");
+          CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_3: problem when determining a point inside the intersection");
           if (origin==boost::none)
             return;
         }
@@ -263,7 +260,7 @@ namespace CGAL
         // The check is done only if the number type is not float or double because in that
         // case we know the construction of dual points is not exact
         CGAL_assertion_msg(
-          boost::is_floating_point<typename K::FT>::value ||
+          std::is_floating_point<typename K::FT>::value ||
           Convex_hull_3::internal::point_inside_convex_polyhedron(P, *origin),
           "halfspace_intersection_3: origin not in the polyhedron"
         );
@@ -283,4 +280,3 @@ namespace CGAL
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_HALFSPACE_INTERSECTION_3_H
-

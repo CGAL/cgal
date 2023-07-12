@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <vector>
 #include <map>
 #include <utility> // std::swap
@@ -23,16 +22,22 @@
 
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/squared_distance_3.h>
+
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/Labeled_mesh_domain_3.h> // for CGAL::Null_subdomain_index
-#include <CGAL/number_utils.h>
-#include <boost/utility.hpp> // for boost::prior
+
+#include <boost/utility.hpp> // for std::prev
 #include <boost/optional.hpp>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
+
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
+
+#include <type_traits>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -382,8 +387,8 @@ void snap_graph_vertices(Graph& graph,
   {
     if(poly_it->begin() != poly_it->end()) {
       tree.insert(*poly_it->begin());
-      if(boost::next(poly_it->begin()) != poly_it->end()) {
-        tree.insert(*boost::prior(poly_it->end()));
+      if(std::next(poly_it->begin()) != poly_it->end()) {
+        tree.insert(*std::prev(poly_it->end()));
       }
     }
   }
@@ -588,6 +593,7 @@ polylines_to_protect
                                   (*scalar_interpolation_value));
               }
               ++pixel_values_set[square[ii][jj].domain];
+
             }
           }
 
@@ -1038,15 +1044,15 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   for (PolylineInputIterator poly_it = existing_polylines_begin;
        poly_it != existing_polylines_end; ++poly_it)
   {
-    Polyline polyline = *poly_it;
+    const Polyline& polyline = *poly_it;
     if (polyline.size() < 2)
       continue;
 
-    typename Polyline::iterator pit = polyline.begin();
-    while (boost::next(pit) != polyline.end())
+    typename Polyline::const_iterator pit = polyline.begin();
+    while (std::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }
@@ -1127,6 +1133,79 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      existing_polylines_begin,
      existing_polylines_end);
 }
+
+template <typename P,
+          typename Image_word_type,
+          typename PolylineInputIterator>
+void
+polylines_to_protect_on_bbox(const CGAL::Image_3& cgal_image,
+                     std::vector<std::vector<P> >& polylines,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
+{
+  polylines_to_protect<P, Image_word_type>(cgal_image,
+                                           polylines,
+                                           existing_polylines_begin,
+                                           existing_polylines_end);
+}
+
+
+
+template <typename PolylineRange1, typename PolylineRange2>
+void
+merge_and_snap_polylines(const CGAL::Image_3& image,
+                         PolylineRange1& polylines_to_snap,
+                         const PolylineRange2& existing_polylines)
+{
+  static_assert(std::is_same<typename PolylineRange1::value_type::value_type,
+                             typename PolylineRange2::value_type::value_type>::value,
+                "Polyline ranges should have same point type");
+  using P = typename PolylineRange1::value_type::value_type;
+  using K = typename Kernel_traits<P>::Kernel;
+
+  using CGAL::internal::polylines_to_protect_namespace::Vertex_info;
+  using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS,
+                                      Vertex_info<P> >;
+  using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
+
+  // build graph of polylines_to_snap
+  Graph graph;
+  typedef Mesh_3::internal::Returns_midpoint<K, int> Midpoint_fct;
+  Mesh_3::internal::Graph_manipulations<Graph,
+    P,
+    int,
+    Midpoint_fct> g_manip(graph);
+
+  for (const auto& polyline : polylines_to_snap)
+  {
+    if (polyline.size() < 2)
+      continue;
+
+    auto pit = polyline.begin();
+    while (std::next(pit) != polyline.end())
+    {
+      vertex_descriptor v = g_manip.get_vertex(*pit, false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
+      g_manip.try_add_edge(v, w);
+      ++pit;
+    }
+  }
+
+  // snap graph to existing_polylines
+  snap_graph_vertices(graph,
+    image.vx(), image.vy(), image.vz(),
+    std::begin(existing_polylines), std::end(existing_polylines),
+    K());
+
+  // rebuild polylines_to_snap
+  polylines_to_snap.clear();
+  Mesh_3::Polyline_visitor<P, Graph> visitor(polylines_to_snap, graph);
+  Less_for_Graph_vertex_descriptors<Graph> less(graph);
+  const Graph& const_graph = graph;
+  Mesh_3::Angle_tester<K> angle_tester(90.);
+  split_graph_into_polylines(const_graph, visitor, angle_tester, less);
+}
+
 
 } // namespace CGAL
 

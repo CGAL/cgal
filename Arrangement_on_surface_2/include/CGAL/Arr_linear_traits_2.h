@@ -592,7 +592,7 @@ public:
       Compare_y_at_x_2 compare_y_at_x = m_traits.compare_y_at_x_2_object();
 
       //preconditions
-      //check if source and taget are distinct points and they lie on the line.
+      //check if source and target are distinct points and they lie on the line.
       CGAL_precondition(!equal(src, tgt));
       CGAL_precondition(compare_y_at_x(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x(tgt, xcv) == EQUAL);

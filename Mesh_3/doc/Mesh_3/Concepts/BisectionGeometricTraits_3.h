@@ -143,7 +143,7 @@ source to the target.
 typedef unspecified_type Construct_segment_3;
 
 /*!
-Model of `::Kernel::ConstructScaledVector_3``.
+Model of `::Kernel::ConstructScaledVector_3`.
 
 That function object must provide the operator:
 - `Vector_3 operator()(Vector_3 v, FT scale)` which returns
@@ -174,7 +174,7 @@ Model of `::Kernel::HasOnBoundedSide_3`.
 
 That function object must provide the operator:
 - `bool operator()(Sphere_3 s, Point_3 p)` which
-returns true iff `p` lies on the bounded side of `s.
+returns true iff `p` lies on the bounded side of `s`.
 */
 typedef unspecified_type Has_on_bounded_side_3;
 

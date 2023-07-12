@@ -4,7 +4,7 @@
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_distance_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   std::ifstream is(argc > 1 ? argv[1] : "data/helmet.off");
   is >> ref_mesh;
 
-  SMS::Count_stop_predicate<Surface> stop(num_halfedges(ref_mesh)/10);
+  SMS::Edge_count_stop_predicate<Surface> stop(num_halfedges(ref_mesh)/10);
 
   std::cout << "input has " << num_vertices(ref_mesh) << " vertices." << std::endl;
   CGAL::Iso_cuboid_3<Kernel> bbox(CGAL::Polygon_mesh_processing::bbox(ref_mesh));

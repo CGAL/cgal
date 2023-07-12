@@ -4,6 +4,8 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
+\deprecated This class is deprecated since \cgal 5.6, the class `Edge_count_stop_predicate` should be used instead.
+
 The class `Count_stop_predicate` is a model for the `StopPredicate` concept,
 which returns `true` when the number of current edges drops below a certain threshold.
 
@@ -11,8 +13,8 @@ which returns `true` when the number of current edges drops below a certain thre
 
 \cgalModels `StopPredicate`
 
-\sa `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TriangleMesh>`
-
+\sa `CGAL::Surface_mesh_simplification::Edge_count_stop_predicate<TriangleMesh>`
+\sa `CGAL::Surface_mesh_simplification::Face_count_stop_predicate<TriangleMesh>`
 */
 template <typename TriangleMesh>
 class Count_stop_predicate

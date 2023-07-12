@@ -39,7 +39,6 @@
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/optional.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 
 #include <algorithm>
 #include <iomanip> // std::setprecision
@@ -157,7 +156,7 @@ protected:
   }
 
   /**
-   * A functor to remove one \c Cell_handle from a priority queue
+   * A functor to remove one `Cell_handle` from a priority queue
    */
   class Erase_from_queue
   {
@@ -172,7 +171,7 @@ protected:
   };
 
   /**
-   * Delete cells of \c cells from \c cells_queue
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -288,7 +287,7 @@ protected:
   }
 
   /**
-   * A functor to remove one \c Cell_handle from a priority queue
+   * A functor to remove one `Cell_handle` from a priority queue
    */
   class Erase_from_queue
   {
@@ -300,7 +299,7 @@ protected:
   };
 
   /**
-   * Delete cells of \c cells from \c cells_queue
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -525,7 +524,7 @@ private:
                                const Vertex_handle& new_vertex);
 
   /**
-   * Orders handles \c h1 & \c h2
+   * Orders handles `h1` & `h2`
    */
   template <typename Handle>
   static
@@ -563,7 +562,7 @@ private:
 
 
   /**
-   * Initialize cells_queue w.r.t sliver_bound_
+   * Initialize cells_queue w.r.t. sliver_bound_
    */
   void initialize_cells_priority_queue()
   {
@@ -594,8 +593,8 @@ private:
 
 
   /**
-   * Returns the \c Boundary_facets_from_outside object containing mirror facets
-   * of \c facets
+   * Returns the `Boundary_facets_from_outside` object containing mirror facets
+   * of `facets`.
    */
   Boundary_facets_from_outside
   get_boundary_facets_from_outside(const Facet_vector& facets) const
@@ -616,14 +615,14 @@ private:
   }
 
   /**
-   * Add a cell \c ch to \c cells_queue
+   * Adds a cell `ch` to `cells_queue`.
    */
   template <bool pump_vertices_on_surfaces>
   void add_cell_to_queue(Cell_handle ch, FT criterion_value)
   {
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
         ch, this->erase_counter(ch), criterion_value);
     // Sequential
@@ -651,7 +650,7 @@ private:
   };
 
   /**
-   * Removes objects of [begin,end[ range from \c c3t3_
+   * Removes objects of [begin,end[ range from `c3t3_`.
    */
   template<typename ForwardIterator>
   void remove_from_c3t3(ForwardIterator begin, ForwardIterator end)
@@ -852,8 +851,8 @@ private:
                       const Vertex_handle& vh) const;
 
   /**
-   * Checks if the sliver criterion values from \c criterion_values are the same as
-   * those that will be found if wp is inserted in the triangulation
+   * Checks if the sliver criterion values from `criterion_values` are the same as
+   * those that will be found if wp is inserted in the triangulation.
    */
   bool check_ratios(const Sliver_values& criterion_values,
                     const Weighted_point& wp,
@@ -920,7 +919,7 @@ pump_vertices(FT sliver_criterion_limit,
 
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_task_group();
 
@@ -964,9 +963,9 @@ pump_vertices(FT sliver_criterion_limit,
       bool vertex_pumped = false;
       for( int i = 0; i < 4; ++i )
       {
-        // pump_vertices_on_surfaces is a boolean template parameter.  The
-        // following condition is pruned at compiled time, if
-        // pump_vertices_on_surfaces==false.
+        // pump_vertices_on_surfaces is a Boolean template parameter.
+        // The following condition is pruned at compile time,
+        // if pump_vertices_on_surfaces is `false`.
         if( pump_vertices_on_surfaces || c3t3_.in_dimension(c->vertex(i)) > 2 )
         {
           if( pump_vertex<pump_vertices_on_surfaces>(c->vertex(i)) )
@@ -976,7 +975,9 @@ pump_vertices(FT sliver_criterion_limit,
             break;
           }
           else
+          {
             ++num_of_ignored_vertices_;
+          }
 
           ++num_of_treated_vertices_;
         }
@@ -987,14 +988,14 @@ pump_vertices(FT sliver_criterion_limit,
         this->cells_queue_pop_front();
 
       visitor.after_cell_pumped(this->cells_queue_size());
-  #ifdef CGAL_MESH_3_EXUDER_VERBOSE
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
         % this->cells_queue_size()
         % num_of_pumped_vertices_
         % num_of_ignored_vertices_
         % (num_of_treated_vertices_ / running_time_.time());
-  #endif // CGAL_MESH_3_EXUDER_VERBOSE
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
     }
   }
 
@@ -1054,12 +1055,12 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   {
     typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
-    const Weighted_point& pwp = tr_.point(pumped_vertex);
-    Weighted_point wp(cp(pwp), best_weight);
+    const Weighted_point& old_position = tr_.point(pumped_vertex);
+    Weighted_point new_point(cp(old_position), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
-    return update_mesh<pump_vertices_on_surfaces>(wp,
+    return update_mesh<pump_vertices_on_surfaces>(new_point,
                                                   pumped_vertex,
                                                   could_lock_zone);
   }
@@ -1559,7 +1560,7 @@ update_mesh(const Weighted_point& new_point,
   if (could_lock_zone && *could_lock_zone == false)
     return false;
 
-  // Get some datas to restore mesh
+  // Get some data to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 

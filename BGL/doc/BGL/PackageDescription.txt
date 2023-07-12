@@ -706,6 +706,7 @@ user might encounter.
 - `CGAL::Halfedge_around_target_circulator`
 - `CGAL::Halfedge_around_face_circulator`
 - `CGAL::Vertex_around_target_circulator`
+- `CGAL::Vertex_around_face_circulator`
 - `CGAL::Face_around_target_circulator`
 - `CGAL::Face_around_face_circulator`
 

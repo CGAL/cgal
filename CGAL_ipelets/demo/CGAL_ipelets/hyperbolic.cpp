@@ -38,8 +38,8 @@ const std::string sublabel[] = {
 };
 
 const std::string helpmsg[] = {
-  "Draw the hyperbolic line trough two points in Poincare disk",
-  "Draw the hyperbolic segment trough two points in Poincare disk",
+  "Draw the hyperbolic line through two points in Poincare disk",
+  "Draw the hyperbolic segment through two points in Poincare disk",
   "Draw the hyperbolic bisector of two points in Poincare disk",
   "Draw the hyperbolic circle given the center (primary selection) and a point in Poincare disk",
   "Draw the hyperbolic center given a circle (primary selection) in Poincare disk",

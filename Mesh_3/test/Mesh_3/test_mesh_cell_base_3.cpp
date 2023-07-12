@@ -4,7 +4,7 @@
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
@@ -49,7 +49,7 @@ int main (int argc, char** argv){
     return 1;
   }
   C3t3 c3t3;
-  if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, c3t3.triangulation()))
+  if(CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation()))
   {
     for( C3t3::Triangulation::Finite_cells_iterator
          cit = c3t3.triangulation().finite_cells_begin();

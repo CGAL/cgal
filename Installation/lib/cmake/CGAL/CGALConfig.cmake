@@ -111,8 +111,21 @@ include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+
+include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
+
+# Temporary? Change the CMAKE module path
+cgal_setup_module_path()
+
+include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
+
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+endif()
 
 foreach(comp ${CGAL_FIND_COMPONENTS})
   if(NOT comp MATCHES "Core|ImageIO|Qt5")
@@ -183,21 +196,17 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer)
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
 endif()
 
-include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 
-#
-#
-#
+#warning: the order in this list has to match the enum in Exact_type_selector
+set(CGAL_CMAKE_EXACT_NT_BACKEND_OPTIONS GMP_BACKEND GMPXX_BACKEND BOOST_GMP_BACKEND BOOST_BACKEND LEDA_BACKEND MP_FLOAT_BACKEND Default)
+set(CGAL_CMAKE_EXACT_NT_BACKEND "Default" CACHE STRING "Setting for advanced users that what to change the default number types used in filtered kernels. Some options might not be working depending on how you configured your build.")
+set_property(CACHE CGAL_CMAKE_EXACT_NT_BACKEND PROPERTY STRINGS ${CGAL_CMAKE_EXACT_NT_BACKEND_OPTIONS})
 
-# Temporary? Change the CMAKE module path
-cgal_setup_module_path()
-
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
-include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
-
-if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
-  # Do not use -isystem for CGAL include paths
-  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+if ( NOT "${CGAL_CMAKE_EXACT_NT_BACKEND}" STREQUAL "Default" )
+  list(FIND CGAL_CMAKE_EXACT_NT_BACKEND_OPTIONS ${CGAL_CMAKE_EXACT_NT_BACKEND} DEB_VAL)
+  set_property(
+      TARGET CGAL
+      APPEND PROPERTY
+          INTERFACE_COMPILE_DEFINITIONS "CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND=${DEB_VAL}"
+  ) # do not use set_target_properties to avoid overwritting
 endif()
-
-include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

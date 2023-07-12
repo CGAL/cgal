@@ -12,11 +12,11 @@ The template argument `Coeff` must be at
 least a model of `IntegralDomainWithoutDivision`.
 For all operations naturally involving division, an `IntegralDomain`
 is required.
-`Polynomial` offers a full set of algebraic operators, i.e.\
+`Polynomial` offers a full set of algebraic operators, i.e.
 binary <TT>+</TT>, <TT>-</TT>, <TT>*</TT>, <TT>/</TT> as well as
 <TT>+=</TT>, <TT>-=</TT>, <TT>*=</TT>, <TT>/=</TT>; not only for polynomials
 but also for a polynomial and a number of the coefficient type.
-(The <TT>/</TT> operator must only be used for integral divisions, i.e.\
+(The <TT>/</TT> operator must only be used for integral divisions, i.e.
 those with remainder zero.)
 The operations are implemented naively: <TT>+</TT> and <TT>-</TT> need a number of `Coeff`
 operations which is linear in the degree while * is quadratic.

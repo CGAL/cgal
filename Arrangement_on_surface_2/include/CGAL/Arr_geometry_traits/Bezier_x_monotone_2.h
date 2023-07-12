@@ -533,7 +533,7 @@ private:
   /*! Compute the exact vertical position of the given point with respect to
    * the x-monotone curve.
    * \param p The point.
-   * \param force_exact Sould we force an exact result.
+   * \param force_exact Should we force an exact result.
    * \return SMALLER if the point is below the curve;
    *         LARGER if the point is above the curve;
    *         EQUAL if p lies on the curve.
@@ -751,7 +751,7 @@ point_position(const Point_2& p, Bezier_cache& cache) const
     in_range = _is_in_range(p, correct_res);
 
     if (! correct_res) {
-      // Perform the comparsion in an exact manner.
+      // Perform the comparison in an exact manner.
       if (! p.is_exact())
         p.make_exact(cache);
 
@@ -764,7 +764,7 @@ point_position(const Point_2& p, Bezier_cache& cache) const
   }
 
   // Call the vertical-position function that uses the bounding-boxes
-  // to evaluate the comparsion result.
+  // to evaluate the comparison result.
   typename Bounding_traits::Control_points cp;
 
   std::copy(_curve.control_points_begin(), _curve.control_points_end(),
@@ -1192,7 +1192,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
     return (slope_res);
 
   // Compare the two subcurves by choosing some point to the left of p
-  // and compareing the vertical position there.
+  // and comparing the vertical position there.
   Comparison_result   left_res;
 
   if (left().compare_x(cv.left(), cache) != SMALLER)
@@ -1376,7 +1376,7 @@ _is_in_range(const Algebraic& t, Bezier_cache& cache) const
     return (false);
   }
 
-  // Obtain the exact t-range of the curve and peform an exact comparison.
+  // Obtain the exact t-range of the curve and perform an exact comparison.
   std::pair<Algebraic, Algebraic> range = _t_range (cache);
   const Algebraic&                t_src = range.first;
   const Algebraic&                t_trg = range.second;
@@ -1923,7 +1923,7 @@ _clip_control_polygon(typename Bounding_traits::Control_points& ctrl,
   if (! (org_min->point_bound().type == Bez_point_bound::RATIONAL_PT &&
          CGAL::sign(org_min->point_bound().t_min) == CGAL::ZERO))
   {
-    // It is possible that the paramater range of the originator is too large.
+    // It is possible that the parameter range of the originator is too large.
     // We therefore make sure it fits the current bounding box of the point
     // (which we know is tight enough).
     p_min.fit_to_bbox();
@@ -1951,7 +1951,7 @@ _clip_control_polygon(typename Bounding_traits::Control_points& ctrl,
   if (! (org_max->point_bound().type == Bez_point_bound::RATIONAL_PT &&
          CGAL::compare (org_max->point_bound().t_max, 1) == CGAL::EQUAL))
   {
-    // It is possible that the paramater range of the originator is too large.
+    // It is possible that the parameter range of the originator is too large.
     // We therefore make sure it fits the current bounding box of the point
     // (which we know is tight enough).
     p_max.fit_to_bbox();
@@ -2435,7 +2435,7 @@ _exact_vertical_position(const Point_2& p,
 #endif
                          ) const
 {
-  // If it is a rational point, obtain its rational reprsentation.
+  // If it is a rational point, obtain its rational representation.
   Rat_point_2              rat_p;
 
   if (p.is_rational())

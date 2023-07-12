@@ -168,7 +168,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
 
     Polynomial<NT> q, r;
 
-    // TODO measure preformance of both methodes with respect to
+    // TODO measure performance of both methodes with respect to
     // univariat polynomials on Integeres
     // univariat polynomials on Sqrt_extension<Integer,Integer>
     // multivariat polynomials
@@ -190,7 +190,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
         CGAL::internal::hgdelta_update(h, g, delta);
     }
 #else
-    // implentaion using just the 'naive' methode
+    // implementation using just the 'naive' method
     // but performed much better as the one by Cohen
     // (for univariat polynomials with Sqrt_extension coeffs )
     NT dummy;

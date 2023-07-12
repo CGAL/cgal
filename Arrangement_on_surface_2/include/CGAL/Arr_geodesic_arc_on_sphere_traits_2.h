@@ -29,6 +29,7 @@
 #include <boost/variant.hpp>
 
 #include <CGAL/config.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/tss.h>
 #include <CGAL/intersections.h>
@@ -65,7 +66,7 @@ public:
   typedef Arr_contracted_side_tag               Top_side_category;
   typedef Arr_identified_side_tag               Right_side_category;
 
-  typedef boost::integral_constant<bool, atan_y==0>       Zero_atan_y;
+  typedef std::integral_constant<bool, atan_y==0>       Zero_atan_y;
 
   // Traits objects
   typedef Arr_extended_direction_3<Kernel>                Point_2;
@@ -231,7 +232,7 @@ protected:
 
 public:
   /*! Compare two endpoint directions by v.
-   * \param d1 the first enpoint direction.
+   * \param d1 the first endpoint direction.
    * \param d2 the second endpoint direction.
    * \return SMALLER - v(d1) < v(d2);
    *         EQUAL   - v(d1) = v(d2);
@@ -283,7 +284,7 @@ public:
   }
 
   /*! Compare two endpoint directions by u.
-   * \param d1 the first enpoint direction.
+   * \param d1 the first endpoint direction.
    * \param d2 the second endpoint direction.
    * \return SMALLER - u(d1) < u(d2);
    *         EQUAL   - u(d1) = u(d2);
@@ -301,7 +302,7 @@ public:
   }
 
   /*! Compare two endpoint directions lexigoraphically: by u, then by v.
-   * \param d1 the first enpoint direction.
+   * \param d1 the first endpoint direction.
    * \param d2 the second endpoint direction.
    * \return SMALLER - u(d1) < u(d2);
    *         SMALLER - u(d1) = u(d2) and v(d1) < v(d2);
@@ -357,7 +358,7 @@ public:
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
-                                        boost::true_type) const
+                                        std::true_type) const
   {
     const Direction_3& normal = xcv.normal();
     dp = (CGAL::sign(normal.dz()) == POSITIVE) ?
@@ -370,7 +371,7 @@ public:
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
-                                        boost::false_type) const
+                                        std::false_type) const
   {
     const Direction_3& normal = xcv.normal();
     FT z((atan_x * normal.dx() + atan_y * normal.dy()) /
@@ -382,7 +383,7 @@ public:
    * \param[in] cv the curve
    */
   bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   boost::true_type) const
+                                   std::true_type) const
   {
     const Direction_3& normal = xcv.normal();
     return ((x_sign(normal) == ZERO) &&
@@ -394,7 +395,7 @@ public:
    * \param[in] cv the curve
    */
   bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   boost::false_type) const
+                                   std::false_type) const
   {
     const Direction_3& normal = xcv.normal();
     const Direction_3& iden_normal = identification_normal();
@@ -440,7 +441,7 @@ public:
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(x, y, z);
-      init(p, boost::integral_constant<bool, atan_y==0>());
+      init(p, std::integral_constant<bool, atan_y==0>());
       return p;
     }
 
@@ -453,14 +454,14 @@ public:
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(other);
-      init(p, boost::integral_constant<bool, atan_y==0>());
+      init(p, std::integral_constant<bool, atan_y==0>());
       return p;
     }
 
     /*! Initialize a point on the sphere,
      * \param[in] p the point to initialize.
      */
-    void init(Point_2& p, boost::true_type) const
+    void init(Point_2& p, std::true_type) const
     {
       const Direction_3& dir = p;
       if (y_sign(dir) != ZERO) {
@@ -479,7 +480,7 @@ public:
     /*! Initialize a point on the sphere,
      * \param[in] p the point to initialize.
      */
-    void init(Point_2& p, boost::false_type) const
+    void init(Point_2& p, std::false_type) const
     {
       const Direction_3& dir = p;
       if ((x_sign(dir) == ZERO) && (y_sign(dir) == ZERO)) {
@@ -640,7 +641,7 @@ public:
         return;
       }
 
-      // None of the enpoints coincide with a pole:
+      // None of the endpoints coincide with a pole:
       Direction_2 s = Traits::project_xy(source);
       Direction_2 t = Traits::project_xy(target);
 
@@ -763,7 +764,7 @@ public:
         return cv;
       }
 
-      // None of the enpoints coincide with a pole:
+      // None of the endpoints coincide with a pole:
       if (z_sign(normal) == ZERO) {
         // The arc is vertical
         cv.set_is_vertical(true);
@@ -992,8 +993,8 @@ public:
   };
 
 protected:
-  /*! Obtain the possitive (north) pole
-   * \return the possitive (north) pole
+  /*! Obtain the positive (north) pole
+   * \return the positive (north) pole
    */
   inline static const Point_2& pos_pole()
   {
@@ -1033,7 +1034,7 @@ public:
 
   public:
     /*! Compare two directional points lexigoraphically: by x, then by y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
@@ -1127,7 +1128,7 @@ public:
      * \return SMALLER - y(p) < xc(x(p)), i.e. the point is below the curve;
      *         EQUAL   - p lies on the curve.
      *         LARGER  - y(p) > xc(x(p)), i.e. the point is above the curve;
-     * \pre p is not a construction point.
+     * \pre p is not a contraction point.
      * \pre p is in the x-range of xc.
      */
     Comparison_result operator()(const Point_2& p,
@@ -2140,7 +2141,7 @@ public:
           return oi;
         }
 
-        // None of the enpoints coincide with a pole.
+        // None of the endpoints coincide with a pole.
         bool s_is_positive, t_is_positive, plane_is_positive;
         CGAL::Sign xsign = Traits::x_sign(normal);
         if (xsign == ZERO) {
@@ -2172,7 +2173,7 @@ public:
         return oi;
       }
 
-      // The curve is not vertical, (none of the enpoints coincide with a pole)
+      // The curve is not vertical, (none of the endpoints coincide with a pole)
       Direction_3 dp;
       m_traits.intersection_with_identification(c, dp, Zero_atan_y());
       Point_2 p(dp, Point_2::MID_BOUNDARY_LOC);
@@ -2589,7 +2590,7 @@ public:
             return oi;
           }
 
-          /*! If the endpoints of one arc coinside with the 2 poles resp,
+          /*! If the endpoints of one arc coincide with the 2 poles resp,
            * the other arc is completely overlapping.
            */
           if (xc1.left().is_min_boundary() && xc1.right().is_max_boundary()) {
@@ -2834,11 +2835,12 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef double                          Approximate_number_type;
+  typedef double                                        Approximate_number_type;
+  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  typedef Approximate_kernel::Point_2                   Approximate_point_2;
 
   class Approximate_2 {
   public:
-
     /*! Return an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
@@ -2846,10 +2848,22 @@ public:
      * \return an approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
-    Approximate_number_type operator()(const Point_2& p, int i) const
-    {
-      CGAL_precondition(i == 0 || i == 1);
+    Approximate_number_type operator()(const Point_2& p, int i) const {
+      CGAL_precondition((i == 0) || (i == 1));
       return (i == 0) ? CGAL::to_double(p.x()) : CGAL::to_double(p.y());
+    }
+
+    /*! Obtain an approximation of a point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
+
+    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& /* xcv */, double /* error */,
+                              OutputIterator /* oi */, bool /* l2r */ = true) const {
+      CGAL_error_msg("Not implemented yet!");
     }
   };
 
@@ -3166,7 +3180,7 @@ public:
       return;
     }
 
-    // None of the enpoints coincide with a pole:
+    // None of the endpoints coincide with a pole:
     Direction_2 s = Traits::project_xy(m_source);
     Direction_2 t = Traits::project_xy(m_target);
 

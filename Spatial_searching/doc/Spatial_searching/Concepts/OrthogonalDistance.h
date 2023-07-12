@@ -6,7 +6,7 @@ Requirements of an orthogonal distance class supporting incremental distance upd
 To optimize distance computations transformed distances are used.
 E.g., for an Euclidean distance the transformed distance is the squared Euclidean distance.
 
-\cgalRefines `GeneralDistance`
+\cgalRefines{GeneralDistance}
 
 \cgalHasModel `CGAL::Euclidean_distance<Traits>`
 \cgalHasModel `CGAL::Weighted_Minkowski_distance<Traits>`

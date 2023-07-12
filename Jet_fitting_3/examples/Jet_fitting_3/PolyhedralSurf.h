@@ -59,7 +59,7 @@ public:
 
   //My_facet(): ring_index(-1) {}
   //void setNormal(Vector_3  n) { normal = n; }
-//   //this is for collecting i-th ring neighbours
+//   //this is for collecting i-th ring neighbors
 //   void setRingIndex(int i) { ring_index = i; }
 //   int getRingIndex() { return ring_index; }
 //   void resetRingIndex() { ring_index = -1; }

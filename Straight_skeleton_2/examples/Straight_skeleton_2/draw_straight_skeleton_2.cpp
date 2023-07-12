@@ -4,7 +4,7 @@
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 
-#include<boost/shared_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <cassert>
 
