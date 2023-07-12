@@ -633,6 +633,13 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 {
   using CGAL::Mesh_3::internal::weight_modifier;
 
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+  std::cerr << "insert_point( (" << p
+            << "), w=" << w
+            << ", dim=" << dim
+            << ", index=" << CGAL::IO::oformat(index) << ")\n";
+#endif
+
   // Convert the dimension if it was set to a negative value (marker for special balls).
   if(dim < 0)
     dim = -1 - dim;
@@ -709,6 +716,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
             << "), w=" << w
             << ", dim=" << dim
             << ", index=" << CGAL::IO::oformat(index) << ")\n";
+  std::cerr << "triangulation dimension is " << c3t3_.triangulation().dimension() << std::endl;
 #endif
   const Tr& tr = c3t3_.triangulation();
 
@@ -877,10 +885,12 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       }
     }
 
+    // Change w in order to be sure that no existing point will be included in (p,w)
     FT min_sq_d = w;
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     typename Tr::Point nearest_point;
-    // Change w in order to be sure that no existing point will be included
-    // in (p,w)
+#endif
+
     for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
@@ -888,7 +898,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       FT sq_d = tr.min_squared_distance(p, cp(it_wp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
         nearest_point = c3t3_.triangulation().point(it);
+#endif
       }
     }
 
@@ -916,6 +928,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   }
 
   if( w < minimal_weight_) {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+    std::cerr << "smart_insert_point: weight " << w
+              << " was smaller than minimal weight (" << minimal_weight_ << ")\n";
+#endif
+
     w = minimal_weight_;
     insert_a_special_ball = true;
   }
