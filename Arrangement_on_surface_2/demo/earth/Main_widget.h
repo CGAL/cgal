@@ -16,6 +16,7 @@
 #include <qopenglwidget.h>
 
 #include "Camera.h"
+#include "Camera_manip_rot.h"
 #include "Common_defs.h"
 #include "Kml_reader.h"
 #include "Line_strips.h"
@@ -82,7 +83,9 @@ private:
   Shader_program  m_sp_arc;
   
   // Camera & controls
-  Camera m_camera;
+  Camera  m_camera;
+  std::unique_ptr<Camera_manip_rot> m_camera_manip_rot;
+
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;
   QVector2D m_last_mouse_pos;

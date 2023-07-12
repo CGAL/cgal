@@ -35,6 +35,9 @@ void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 }
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
+  // forward the event to the camera manipulator
+  m_camera_manip_rot->mousePressEvent(e);
+
   set_mouse_button_pressed_flag(e, true);
   m_mouse_press_pos = m_last_mouse_pos = QVector2D(e->position());
 
@@ -46,6 +49,9 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
+  // forward the event to the camera manipulator
+  m_camera_manip_rot->mouseMoveEvent(e);
+
   auto current_mouse_pos = QVector2D(e->position());
   const auto diff = current_mouse_pos - m_last_mouse_pos;
 
@@ -56,9 +62,9 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
     if(1)
     {
       // OUR CUSTOM AD-HOC CAMERA ROTATION
-      m_theta += rotation_scale_factor * diff.x();
-      m_phi += rotation_scale_factor * diff.y();
-      m_camera.rotate_from_init_config(-m_theta, -m_phi);
+      //m_theta += rotation_scale_factor * diff.x();
+      //m_phi += rotation_scale_factor * diff.y();
+      //m_camera.rotate_from_init_config(-m_theta, -m_phi);
     }
     else
     {
@@ -100,6 +106,9 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
 }
 void Main_widget::mouseReleaseEvent(QMouseEvent* e)
 {
+  // forward the event to the camera manipulator
+  m_camera_manip_rot->mouseReleaseEvent(e);
+
   set_mouse_button_pressed_flag(e, false);
 }
 void Main_widget::timerEvent(QTimerEvent*)
@@ -165,8 +174,6 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
     break;
   }
 }
-
-
 
 void Main_widget::initializeGL()
 {
@@ -284,7 +291,7 @@ void Main_widget::initializeGL()
 void Main_widget::init_camera()
 {
   m_camera.set_pos(0, 0, 3);
-  //m_camera.rotate_around_x(-90);
+  m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
 }
 void Main_widget::init_geometry()
 {

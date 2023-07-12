@@ -55,6 +55,7 @@ source_group( "Aos"  FILES ${source_files_aos} )
 # GRAPHICS
 file(GLOB source_files_graphics   
   Camera.h                  Camera.cpp
+  Camera_manip_rot.h        Camera_manip_rot.cpp
   Shader_program.h          Shader_program.cpp
  )
 source_group( "Graphics"  FILES ${source_files_graphics} )
