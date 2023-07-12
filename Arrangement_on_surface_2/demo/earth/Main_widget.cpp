@@ -196,9 +196,9 @@ void Main_widget::initializeGL()
   }
 
   std::string data_path = "C:/work/gsoc2023/data/";
-  std::string shape_file_path = data_path + "ne_110m_admin_0_countries/";
-  auto shape_file_name = shape_file_path + "ne_110m_admin_0_countries.shp";
-  Shapefile::read(shape_file_name);
+  //std::string shape_file_path = data_path + "ne_110m_admin_0_countries/";
+  //auto shape_file_name = shape_file_path + "ne_110m_admin_0_countries.shp";
+  //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
   //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";

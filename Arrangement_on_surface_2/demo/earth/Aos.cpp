@@ -316,6 +316,10 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
   // Construct the arrangement from 12 geodesic arcs.
   Geom_traits traits;
   Ext_aos arr(&traits);
+  
+  std::cout << "-------------------------------\n";
+  std::cout << "** num arr FACES (before adding arcs) = " << 
+                                             arr.number_of_faces() << std::endl;
 
   auto xcvs = get_arcs(placemarks, arr);
 

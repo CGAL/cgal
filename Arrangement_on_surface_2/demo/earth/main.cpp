@@ -13,6 +13,7 @@
 
 #ifndef QT_NO_OPENGL
 #include "Main_widget.h"
+#include "Main_widget2.h"
 #endif
 
 
@@ -32,7 +33,8 @@ int main(int argc, char* argv[])
   app.setApplicationName("Earth");
   app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
-  Main_widget widget;
+  //Main_widget widget;
+  Main_widget2 widget;
   widget.show();
 #else
   QLabel note("OpenGL Support required");
