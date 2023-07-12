@@ -42,7 +42,7 @@ typedef unspecified_type Exact_rational;
 
 #else // not DOXYGEN_RUNNING
 
-using Exact_rational = internal::Exact_NT_backend<Default_exact_nt_backend>::Rational;
+using Exact_rational = internal::Exact_NT_backend<internal::Default_exact_nt_backend>::Rational;
 
 #endif
 
