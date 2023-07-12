@@ -7,6 +7,6 @@ Files: .* *.cmake *.md .github/* Maintenance/* */TODO */doc/* */deb/* */applicat
 Copyright: 1995-2023 The CGAL Project
 License: CC0-1.0
 
-Files: CMakeLists.txt GraphicsView/include/CGAL/Qt/resources/ImageInterface.ui GraphicsView/include/CGAL/Qt/resources/qglviewer-icon.xpm Installation/AUTHORS Installation/CMakeLists.txt Installation/README Installation/auxiliary/cgal_create_cmake_script.1 Installation/auxiliary/gmp/README Installation/include/CGAL/license/gpl_package_list.txt MacOSX/auxiliary/cgal_app.icns copyright
+Files: CMakeLists.txt GraphicsView/include/CGAL/Qt/ImageInterface.ui GraphicsView/include/CGAL/Qt/resources/qglviewer-icon.xpm Installation/AUTHORS Installation/CMakeLists.txt Installation/README Installation/auxiliary/cgal_create_cmake_script.1 Installation/auxiliary/gmp/README Installation/include/CGAL/license/gpl_package_list.txt MacOSX/auxiliary/cgal_app.icns copyright
 Copyright: 1995-2023 The CGAL Project
 License: CC0-1.0
