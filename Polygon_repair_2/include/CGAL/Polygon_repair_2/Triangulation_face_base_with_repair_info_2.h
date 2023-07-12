@@ -17,7 +17,7 @@ namespace CGAL {
 template <typename Kernel, typename FaceBase = Triangulation_face_base_2<Kernel>>
 class Triangulation_face_base_with_repair_info_2 : public FaceBase {
   int _label;
-  bool _added_to_list;
+  bool _processed;
 public:
   typedef typename FaceBase::Vertex_handle Vertex_handle;
   typedef typename FaceBase::Face_handle Face_handle;
@@ -37,8 +37,8 @@ public:
                                              Face_handle   n0, Face_handle   n1, Face_handle   n2 )
     : FaceBase(v0, v1, v2, n0, n1, n2) {}
 
-  const bool& added_to_list() const { return _added_to_list; }
-  bool& added_to_list() { return _added_to_list; }
+  const bool& processed() const { return _processed; }
+  bool& processed() { return _processed; }
   const int& label() const { return _label; }
   int& label() { return _label; }
 };

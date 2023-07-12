@@ -16,16 +16,16 @@ int main(int argc, char* argv[]) {
   // std::ifstream ifs( (argc==1)?"data/polygon.wkt":argv[1]);
 
   // Square
-  // Point ps[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
-  // Polygon p(ps, ps+4);
-  // Multipolygon mp;
-  // mp.add_polygon(p);
-
-  // Bowtie
-  Point ps[] = {Point(0,0), Point(1,1), Point(1,0), Point(0,1)};
+  Point ps[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
   Polygon p(ps, ps+4);
   Multipolygon mp;
   mp.add_polygon(p);
+
+  // Bowtie
+  // Point ps[] = {Point(0,0), Point(1,1), Point(1,0), Point(0,1)};
+  // Polygon p(ps, ps+4);
+  // Multipolygon mp;
+  // mp.add_polygon(p);
 
   // Overlapping edge
   // Point ps1[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
