@@ -854,33 +854,25 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   else // tr.dimension() <= 2
   {
     // change size of existing balls which include p
-    bool restart = true;
-    while ( restart )
+    for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
+          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
-      restart = false;
-      for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
-           end = tr.finite_vertices_end() ; it != end ; ++it )
+      const Weighted_point& it_wp = tr.point(it);
+      FT sq_d = tr.min_squared_distance(p, cp(it_wp));
+      if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
-        const Weighted_point& it_wp = tr.point(it);
-        FT sq_d = tr.min_squared_distance(p, cp(it_wp));
-        if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
+        bool special_ball = false;
+        if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
         {
-          bool special_ball = false;
-          if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
-          {
-            sq_d = minimal_weight_;
-            w = minimal_weight_;
-            special_ball = true;
-            insert_a_special_ball = true;
-          }
+          sq_d = minimal_weight_;
+          w = minimal_weight_;
+          special_ball = true;
+          insert_a_special_ball = true;
+        }
 
-          if( ! is_special(it) ) {
-            *out++ = it;
-            change_ball_size(it, sq_d, special_ball);
-            restart = true;
-          }
-
-          break;
+        if( ! is_special(it) ) {
+          *out++ = it;
+          change_ball_size(it, sq_d, special_ball);
         }
       }
     }
