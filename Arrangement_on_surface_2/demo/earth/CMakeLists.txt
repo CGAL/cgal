@@ -57,6 +57,7 @@ file(GLOB source_files_graphics
   Camera.h                  Camera.cpp
   Camera_manip.h            Camera_manip.cpp
   Camera_manip_rot.h        Camera_manip_rot.cpp
+  Camera_manip_rot_bpa.h    Camera_manip_rot_bpa.cpp
   Shader_program.h          Shader_program.cpp
  )
 source_group( "Graphics"  FILES ${source_files_graphics} )

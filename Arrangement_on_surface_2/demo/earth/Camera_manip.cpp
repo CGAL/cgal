@@ -46,4 +46,8 @@ void Camera_manip::mouseReleaseEvent(QMouseEvent* e)
   // call the function overridden by the derived class
   mouse_release_event(e);
 }
+void Camera_manip::resizeGL(int w, int h)
+{
+  resize(w, h);
+}
 

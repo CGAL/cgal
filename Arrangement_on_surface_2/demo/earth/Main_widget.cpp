@@ -8,6 +8,8 @@
 #include <QMouseEvent>
 
 #include "Aos.h"
+#include "Camera_manip_rot.h"
+#include "Camera_manip_rot_bpa.h"
 #include "Kml_reader.h"
 #include "Shapefile.h"
 #include "Tools.h"
@@ -36,68 +38,22 @@ void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
-  m_camera_manip_rot->mousePressEvent(e);
+  m_camera_manip->mousePressEvent(e);
 
   set_mouse_button_pressed_flag(e, true);
   m_mouse_press_pos = m_last_mouse_pos = QVector2D(e->position());
-
-  // for the backprojected diff-vector method:
-  if (m_left_mouse_button_down)
-  {
-    m_camera.save_config();
-  }
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
-  m_camera_manip_rot->mouseMoveEvent(e);
+  m_camera_manip->mouseMoveEvent(e);
 
   auto current_mouse_pos = QVector2D(e->position());
   const auto diff = current_mouse_pos - m_last_mouse_pos;
 
-  if (m_left_mouse_button_down)
+  if(m_middle_mouse_button_down)
   {
-    const float rotation_scale_factor = 0.1f;
-
-    if(1)
-    {
-      // OUR CUSTOM AD-HOC CAMERA ROTATION
-      //m_theta += rotation_scale_factor * diff.x();
-      //m_phi += rotation_scale_factor * diff.y();
-      //m_camera.rotate_from_init_config(-m_theta, -m_phi);
-    }
-    else
-    {
-      // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR
-      //QVector3D p0(m_last_mouse_pos.x(), m_vp_height - m_last_mouse_pos.y(), 0);
-      QVector3D p0(m_mouse_press_pos.x(), m_vp_height - m_mouse_press_pos.y(), 0);
-      QVector3D p1(current_mouse_pos.x(), m_vp_height - current_mouse_pos.y(), 0);
-      auto dp = p1 - p0; // difference vector in OpenGL window coords.
-      QVector3D rdp(-dp.y(), dp.x(), 0); // rotate diff-vector CCW by 90-deg
-      QVector3D rp = p0 + rdp; // r1 rotated CCW by 90 deg
-     
-      QMatrix4x4 model; // this is different from Sphere's model matrix!!!
-      auto proj = m_camera.get_projection_matrix();
-      auto view = m_camera.get_view_matrix();
-      auto model_view = view * model;
-      QRect viewport(0, 0, m_vp_width, m_vp_height);
-      auto wp0 = p0.unproject(model_view, proj, viewport);
-      auto wrp = rp.unproject(model_view, proj, viewport);
-
-      // rotation axis & angle
-      auto rot_axis = wrp - wp0;
-      rot_axis.normalize();
-      const auto rot_angle = rotation_scale_factor * dp.length();
-    
-      QMatrix4x4 rot_matrix;
-      rot_matrix.rotate(-rot_angle, rot_axis);
-      
-      m_camera.rotate_from_saved_config(rot_matrix);
-    }
-  }
-  else if(m_middle_mouse_button_down)
-  {
-    const float zoom_scale_factor = 0.001f;
+    const float zoom_scale_factor = 0.01f;
     const auto distance = zoom_scale_factor * diff.y();
     m_camera.move_forward(distance);
   }
@@ -107,7 +63,7 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e)
 void Main_widget::mouseReleaseEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
-  m_camera_manip_rot->mouseReleaseEvent(e);
+  m_camera_manip->mouseReleaseEvent(e);
 
   set_mouse_button_pressed_flag(e, false);
 }
@@ -208,8 +164,8 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
 
@@ -217,7 +173,7 @@ void Main_widget::initializeGL()
   //auto all_nodes = Kml::generate_ids(m_countries);
   
   // initialize rendering of DUPLICATE VERTICES
-  if(0)
+  if(1)
   {
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
@@ -286,12 +242,12 @@ void Main_widget::initializeGL()
   m_timer.start(12, this);
 }
 
-#include "Camera_manip_rot.h"
 
 void Main_widget::init_camera()
 {
   m_camera.set_pos(0, 0, 3);
-  m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
+  //m_camera_manip = std::make_unique<Camera_manip_rot>(m_camera);
+  m_camera_manip = std::make_unique<Camera_manip_rot_bpa>(m_camera);
 }
 void Main_widget::init_geometry()
 {
@@ -428,6 +384,8 @@ void Main_widget::find_minimum_projected_error_on_sphere(float we)
 
 void Main_widget::resizeGL(int w, int h)
 {
+  m_camera_manip->resizeGL(w, h);
+  
   m_vp_width = w;
   m_vp_height = h;
 

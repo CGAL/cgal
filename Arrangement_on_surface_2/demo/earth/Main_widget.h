@@ -84,7 +84,7 @@ private:
   
   // Camera & controls
   Camera  m_camera;
-  std::unique_ptr<Camera_manip>  m_camera_manip_rot;
+  std::unique_ptr<Camera_manip>  m_camera_manip;
 
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;

@@ -17,16 +17,18 @@ public:
   void mousePressEvent(QMouseEvent* e);
   void mouseMoveEvent(QMouseEvent* e);
   void mouseReleaseEvent(QMouseEvent* e);
+  void resizeGL(int w, int h);
 
 protected:
   void set_mouse_button_pressed_flag(QMouseEvent* e, bool flag);
 
-  virtual void mouse_press_event(QMouseEvent* e) = 0;
-  virtual void mouse_move_event(QMouseEvent* e) = 0;
-  virtual void mouse_release_event(QMouseEvent* e) = 0;
+  virtual void mouse_press_event(QMouseEvent* e) {}
+  virtual void mouse_move_event(QMouseEvent* e) {}
+  virtual void mouse_release_event(QMouseEvent* e) {}
+  virtual void resize(int w, int h) {}
+
 
   Camera& m_camera;
-  float m_theta = 0, m_phi = 0;
 
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;
