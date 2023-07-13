@@ -326,7 +326,7 @@ void test_constructors(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
 
   Adapter fg0(g);
-  Adapter fg1(g, CGAL::parameters::all_default());
+  Adapter fg1(g, CGAL::parameters::default_values());
 
   std::map<g_face_descriptor, std::size_t> map;
   PMP::connected_components(g, boost::make_assoc_property_map(map));
@@ -344,7 +344,7 @@ void test_constructors(const Graph& g)
   assert(CGAL::is_valid_polygon_mesh(color_fg));
   assert(num_faces(g) == num_faces(color_fg));
 
-  Adapter color_fg2(g, CGAL::IO::red(), color_map, CGAL::parameters::all_default());
+  Adapter color_fg2(g, CGAL::IO::red(), color_map, CGAL::parameters::default_values());
   assert(color_fg2.is_selection_valid());
   assert(CGAL::is_valid_polygon_mesh(color_fg2));
   assert(num_faces(color_fg2) == 0);
