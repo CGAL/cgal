@@ -23,53 +23,23 @@ Main_widget::~Main_widget()
   doneCurrent();
 }
 
-void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
-{
-  switch (e->button())
-  {
-  case Qt::LeftButton:
-    m_left_mouse_button_down = flag;
-    break;
-
-  case Qt::MiddleButton:
-    m_middle_mouse_button_down = flag;
-    break;
-  }
-}
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulators
   m_camera_manip_rot->mousePressEvent(e);
   m_camera_manip_zoom->mousePressEvent(e);
-
-  set_mouse_button_pressed_flag(e, true);
-  m_mouse_press_pos = m_last_mouse_pos = QVector2D(e->position());
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseMoveEvent(e);
   m_camera_manip_zoom->mouseMoveEvent(e);
-
-  auto current_mouse_pos = QVector2D(e->position());
-  const auto diff = current_mouse_pos - m_last_mouse_pos;
-
-  //if(m_middle_mouse_button_down)
-  //{
-  //  const float zoom_scale_factor = 0.01f;
-  //  const auto distance = zoom_scale_factor * diff.y();
-  //  m_camera.move_forward(distance);
-  //}
-
-  m_last_mouse_pos = current_mouse_pos;
 }
 void Main_widget::mouseReleaseEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseReleaseEvent(e);
   m_camera_manip_zoom->mouseReleaseEvent(e);
-
-  set_mouse_button_pressed_flag(e, false);
 }
 void Main_widget::timerEvent(QTimerEvent*)
 {

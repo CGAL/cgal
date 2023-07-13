@@ -35,7 +35,6 @@ public:
   ~Main_widget();
 
 protected:
-  void set_mouse_button_pressed_flag(QMouseEvent* e, bool flag);
   void mousePressEvent(QMouseEvent* e) override;
   void mouseMoveEvent(QMouseEvent* e) override;
   void mouseReleaseEvent(QMouseEvent* e) override;
@@ -76,7 +75,6 @@ private:
   Kml::Placemark* m_selected_country;
  
 
-
   // Shaders
   Shader_program  m_sp_smooth;
   Shader_program  m_sp_per_vertex_color;
@@ -87,12 +85,8 @@ private:
   std::unique_ptr<Camera_manip>  m_camera_manip_rot;
   std::unique_ptr<Camera_manip>  m_camera_manip_zoom;
 
-  bool m_left_mouse_button_down = false;
-  bool m_middle_mouse_button_down = false;
-  QVector2D m_last_mouse_pos;
-  QVector2D m_mouse_press_pos;
-  float m_theta = 0, m_phi = 0;
-  int   m_vp_width = 0, m_vp_height = 0;
+  // view-port 
+  int m_vp_width = 0, m_vp_height = 0;
 
   // Timer for continuous screen-updates
   QBasicTimer m_timer;
