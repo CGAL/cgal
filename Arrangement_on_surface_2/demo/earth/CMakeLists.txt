@@ -52,12 +52,17 @@ file(GLOB source_files_aos
 source_group( "Aos"  FILES ${source_files_aos} )
 
 
+# GIS
+file(GLOB source_files_gis
+  Kml_reader.h    Kml_reader.cpp
+  Shapefile.h     Shapefile.cpp
+ )
+source_group( "GIS"  FILES ${source_files_gis} )
+
+
 # GRAPHICS
 file(GLOB source_files_graphics   
   Camera.h                  Camera.cpp
-  Camera_manip.h            Camera_manip.cpp
-  Camera_manip_rot.h        Camera_manip_rot.cpp
-  Camera_manip_rot_bpa.h    Camera_manip_rot_bpa.cpp
   Shader_program.h          Shader_program.cpp
  )
 source_group( "Graphics"  FILES ${source_files_graphics} )
@@ -70,12 +75,16 @@ file(GLOB source_files_graphics_geometry
  )
 source_group( "Graphics_Geometry"  FILES ${source_files_graphics_geometry} )
 
-# GIS
-file(GLOB source_files_gis
-  Kml_reader.h    Kml_reader.cpp
-  Shapefile.h     Shapefile.cpp
+
+# GUI
+file(GLOB source_files_gui
+  Camera_manip.h            Camera_manip.cpp
+  Camera_manip_rot.h        Camera_manip_rot.cpp
+  Camera_manip_rot_bpa.h    Camera_manip_rot_bpa.cpp
+  Camera_manip_zoom.h       Camera_manip_zoom.cpp
  )
-source_group( "GIS"  FILES ${source_files_gis} )
+source_group( "GUI"  FILES ${source_files_gui} )
+
 
 #SOURCE FILES (NOT CATEGORIZED YET)
 file(GLOB source_files   
@@ -93,6 +102,7 @@ qt_add_executable(earth
     ${source_files_gis}
     ${source_files_graphics}
     ${source_files_graphics_geometry}
+    ${source_files_gui}
     ${source_files}
 )
 

@@ -10,6 +10,7 @@
 #include "Aos.h"
 #include "Camera_manip_rot.h"
 #include "Camera_manip_rot_bpa.h"
+#include "Camera_manip_zoom.h"
 #include "Kml_reader.h"
 #include "Shapefile.h"
 #include "Tools.h"
@@ -37,8 +38,9 @@ void Main_widget::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag)
 }
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
-  // forward the event to the camera manipulator
-  m_camera_manip->mousePressEvent(e);
+  // forward the event to the camera manipulators
+  m_camera_manip_rot->mousePressEvent(e);
+  m_camera_manip_zoom->mousePressEvent(e);
 
   set_mouse_button_pressed_flag(e, true);
   m_mouse_press_pos = m_last_mouse_pos = QVector2D(e->position());
@@ -46,24 +48,26 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
-  m_camera_manip->mouseMoveEvent(e);
+  m_camera_manip_rot->mouseMoveEvent(e);
+  m_camera_manip_zoom->mouseMoveEvent(e);
 
   auto current_mouse_pos = QVector2D(e->position());
   const auto diff = current_mouse_pos - m_last_mouse_pos;
 
-  if(m_middle_mouse_button_down)
-  {
-    const float zoom_scale_factor = 0.01f;
-    const auto distance = zoom_scale_factor * diff.y();
-    m_camera.move_forward(distance);
-  }
+  //if(m_middle_mouse_button_down)
+  //{
+  //  const float zoom_scale_factor = 0.01f;
+  //  const auto distance = zoom_scale_factor * diff.y();
+  //  m_camera.move_forward(distance);
+  //}
 
   m_last_mouse_pos = current_mouse_pos;
 }
 void Main_widget::mouseReleaseEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
-  m_camera_manip->mouseReleaseEvent(e);
+  m_camera_manip_rot->mouseReleaseEvent(e);
+  m_camera_manip_zoom->mouseReleaseEvent(e);
 
   set_mouse_button_pressed_flag(e, false);
 }
@@ -246,8 +250,9 @@ void Main_widget::initializeGL()
 void Main_widget::init_camera()
 {
   m_camera.set_pos(0, 0, 3);
-  //m_camera_manip = std::make_unique<Camera_manip_rot>(m_camera);
-  m_camera_manip = std::make_unique<Camera_manip_rot_bpa>(m_camera);
+  m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
+  //m_camera_manip_rot = std::make_unique<Camera_manip_rot_bpa>(m_camera);
+  m_camera_manip_zoom = std::make_unique<Camera_manip_zoom>(m_camera);
 }
 void Main_widget::init_geometry()
 {
@@ -384,7 +389,7 @@ void Main_widget::find_minimum_projected_error_on_sphere(float we)
 
 void Main_widget::resizeGL(int w, int h)
 {
-  m_camera_manip->resizeGL(w, h);
+  m_camera_manip_rot->resizeGL(w, h);
   
   m_vp_width = w;
   m_vp_height = h;
