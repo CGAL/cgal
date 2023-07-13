@@ -10,7 +10,6 @@
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/alpha_wrap_3.h>
-#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 
 #include <QAction>
 #include <QApplication>
@@ -20,6 +19,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QString>
+#include <QThread>
+#include <QTimer>
 #include <QTranslator>
 #include <QtPlugin>
 
@@ -31,44 +32,85 @@
 
 #include "ui_alpha_wrap_3_dialog.h"
 
+using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Kernel>;
+using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Kernel, TS_Oracle>;
+using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Kernel, SS_Oracle>;
+using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>;
+
+// Here is the pipeline for the interruption box:
+// - The main window is connected to a wrapping thread, which performs the wrapping.
+// - The wrapping has a visitor, AW3_interrupter_visitor, which has a shared_ptr to a Boolean
+// - When the user clicks the box, the Boolean is switched to *false*, and the visitor throws
+// - The wrapping thread catches the exception, and creates the wip mesh
+
+// Here is the pipeline for the iterative visualization:
+// - The main window is connected to a wrapping thread, which performs the wrapping.
+// - The wrapping has a visitor, Iterative_AW3_visualization_visitor
+// - The visitor has a shared pointer to an emiter (can't emit directly from the visitor)
+// - The visitor has shared pointers to a polygon soup (+ colors), which it updates itself
+//   before emitting a signal
+// - There is a pause in the emition because it needs to wait for the main thread to draw the
+//   polygon soup before the visitor updates the polygon soup.
+
+struct Iterative_update_emiter
+  : public QObject
+{
+  Q_OBJECT
+
+public:
+  void emit_new_iteration(int sid)
+  {
+    Q_EMIT new_iteration(sid);
+    CGAL::Three::Three::getMutex()->lock();
+    Three::getWaitCondition()->wait(CGAL::Three::Three::getMutex());
+    CGAL::Three::Three::getMutex()->unlock();
+  }
+
+  void emit_last_iteration(int sid)
+  {
+    // Last iteration only updates the (existing) soup item's properties, but there is no change
+    // in geometry, so there is no need to wait for the main thread to update the main window.
+    Q_EMIT last_iteration(sid);
+  }
+
+Q_SIGNALS:
+  void new_iteration(int);
+  void last_iteration(int sid);
+};
+
 struct Iterative_AW3_visualization_visitor
+  : public CGAL::Alpha_wraps_3::internal::Wrapping_default_visitor
 {
 private:
-  bool m_do_snapshot;
-  Scene_polygon_soup_item* m_iterative_wrap_item = nullptr;
+  const bool visualize_iterations;
+
+  std::shared_ptr<std::vector<Kernel::Point_3> > points;
+  std::shared_ptr<std::vector<std::vector<std::size_t> > > faces;
+  std::shared_ptr<std::vector<CGAL::IO::Color> > fcolors;
+  std::shared_ptr<std::vector<CGAL::IO::Color> > vcolors;
+  std::shared_ptr<Iterative_update_emiter> emiter;
   int sid = 0;
 
 public:
-  template <typename Scene>
-  Iterative_AW3_visualization_visitor(Scene* scene,
-                                      const bool visualize_iterations,
-                                      const bool do_snapshot)
-    : m_do_snapshot(do_snapshot)
-  {
-    if(!visualize_iterations)
-      return;
-
-    m_iterative_wrap_item = new Scene_polygon_soup_item();
-    m_iterative_wrap_item->setName(QString("Iterative wrap"));
-    scene->addItem(m_iterative_wrap_item);
-  }
-
-public:
-  template <typename AlphaWrapper>
-  void on_alpha_wrapping_begin(const AlphaWrapper&) { }
-
-  template <typename AlphaWrapper>
-  void on_flood_fill_begin(const AlphaWrapper&) { }
-
-  template <typename AlphaWrapper, typename Facet>
-  void before_facet_treatment(const AlphaWrapper&,
-                              const Facet&) { }
+  Iterative_AW3_visualization_visitor(const bool visualize_iterations,
+                                      std::shared_ptr<std::vector<Kernel::Point_3> > points,
+                                      std::shared_ptr<std::vector<std::vector<std::size_t> > > faces,
+                                      std::shared_ptr<std::vector<CGAL::IO::Color> > fcolors,
+                                      std::shared_ptr<std::vector<CGAL::IO::Color> > vcolors,
+                                      std::shared_ptr<Iterative_update_emiter> emiter)
+    : visualize_iterations(visualize_iterations),
+      points(points), faces(faces), fcolors(fcolors), vcolors(vcolors),
+      emiter(emiter)
+  { }
 
   template <typename AlphaWrapper, typename Point>
   void before_Steiner_point_insertion(const AlphaWrapper& wrapper,
                                       const Point& /* p */)
   {
-    if(m_iterative_wrap_item == nullptr)
+    if(!visualize_iterations)
+      return;
+
+    if(!points || !faces || !fcolors || !vcolors)
       return;
 
     // If the next top of the queue has vertices on the bbox, don't draw (as to avoid producing
@@ -82,18 +124,20 @@ public:
       return;
 
     // Extract the wrap as a triangle soup
+    points->clear();
+    faces->clear();
+    fcolors->clear();
+    vcolors->clear();
 
     using Dt = typename std::decay<decltype(wrapper.triangulation())>::type;
     using Vertex_handle = typename Dt::Vertex_handle;
     using Facet = typename Dt::Facet;
     using Cell_handle = typename Dt::Cell_handle;
 
-    std::vector<Kernel::Point_3> points;
-    std::vector<std::vector<std::size_t> > faces;
-
     std::unordered_map<Vertex_handle, std::size_t> vertex_to_id;
     std::size_t nv = 0;
 
+#if 0
     // This is used to compute colors depending on what is old and what is new.
     // It is not currently used (a uniform gray color is used), but leaving it as it might be useful.
     std::size_t min_time_stamp = -1, max_time_stamp = 0;
@@ -104,9 +148,7 @@ public:
       if(cit->time_stamp() < min_time_stamp)
         min_time_stamp = cit->time_stamp();
     }
-
-    std::vector<CGAL::IO::Color> vcolors;
-    std::vector<CGAL::IO::Color> fcolors;
+#endif
 
     for(auto fit=wrapper.triangulation().finite_facets_begin(), fend=wrapper.triangulation().finite_facets_end(); fit!=fend; ++fit)
     {
@@ -127,85 +169,143 @@ public:
         auto insertion_res = vertex_to_id.emplace(vh, nv);
         if(insertion_res.second) // successful insertion, never-seen-before vertex
         {
-          points.push_back(wrapper.triangulation().point(vh));
-          vcolors.push_back(CGAL::IO::Color(0, 0, 0));
+          points->push_back(wrapper.triangulation().point(vh));
+          vcolors->push_back(CGAL::IO::Color(0, 0, 0));
           ++nv;
         }
 
         ids[pos] = insertion_res.first->second;
       }
 
-      faces.emplace_back(std::vector<std::size_t>{ids[0], ids[1], ids[2]});
+      faces->emplace_back(std::vector<std::size_t>{ids[0], ids[1], ids[2]});
+
+#if 0
       double color_val = double(c->time_stamp() - min_time_stamp) / double(max_time_stamp - min_time_stamp);
-      color_val = int(256. * color_val);
-
-      // fcolors.push_back(CGAL::IO::Color(color_val, 10, 150)); // young is red, old is blue
+       color_val = int(256. * color_val);
+      fcolors.push_back(CGAL::IO::Color(color_val, 10, 150)); // young is red, old is blue
       // fcolors.push_back(CGAL::IO::Color(256 - color_val, 256 - color_val, 256 - color_val)); // young is light, old is dark
-      fcolors.push_back(CGAL::IO::Color(100, 100, 100)); // uniform darkish gray
+#endif
+      fcolors->push_back(CGAL::IO::Color(100, 100, 100)); // uniform darkish gray
     }
 
-    // Update the wrap item's visualization
-    m_iterative_wrap_item->load(points, faces, fcolors, vcolors);
-    m_iterative_wrap_item->setName(QString("Iterative wrap #%1").arg(sid));
-    m_iterative_wrap_item->setAlpha(255 / 2);
-
-    m_iterative_wrap_item->invalidateOpenGLBuffers();
-    m_iterative_wrap_item->redraw();
-    m_iterative_wrap_item->itemChanged();
-
-    // Refresh the view
-    QApplication::processEvents();
-
-    if(m_do_snapshot)
-    {
-      std::stringstream oss;
-      oss << "Wrap_iteration-" << sid << ".png" << std::ends;
-      QString filename = QString::fromStdString(oss.str().c_str());
-
-      CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
-      viewer->saveSnapshot(filename, 1920, 1080, true /*expand*/, 2.0 /*oversampling*/);
-    }
-
-    ++sid;
+    emiter->emit_new_iteration(sid++);
   }
-
-  template <typename AlphaWrapper, typename VertexHandle>
-  void after_Steiner_point_insertion(const AlphaWrapper&,
-                                     const VertexHandle) { }
-
-  template <typename AlphaWrapper>
-  void on_flood_fill_end(const AlphaWrapper&) { }
 
   template <typename AlphaWrapper>
   void on_alpha_wrapping_end(const AlphaWrapper&)
   {
-    if(m_iterative_wrap_item == nullptr)
+    if(!visualize_iterations)
       return;
 
-    m_iterative_wrap_item->setName(QString("Iterative wrap #%1").arg(sid));
+    emiter->emit_last_iteration(sid);
+  }
+};
 
-    m_iterative_wrap_item->setAlpha(255);
-    m_iterative_wrap_item->invalidateOpenGLBuffers();
-    m_iterative_wrap_item->redraw();
-    m_iterative_wrap_item->itemChanged();
+// Use a throw to get out of the AW3 refinement loop
+class Out_of_patience_exception : public std::exception { };
 
-    QApplication::processEvents();
+template <typename BaseVisitor>
+struct AW3_interrupter_visitor
+  : BaseVisitor
+{
+  // shared pointer because visitors are copied
+  std::shared_ptr<bool> should_stop = std::make_shared<bool>(false);
 
-    if(m_do_snapshot)
+  AW3_interrupter_visitor(const BaseVisitor base)
+    : BaseVisitor(base)
+  { }
+
+  // Only overload this one because it gives a better state of the wrap (for other visitor calls,
+  // we often get tetrahedral spikes because there are artificial gates in the queue)
+  template <typename Wrapper, typename Point>
+  void before_Steiner_point_insertion(const Wrapper& wrapper, const Point& p)
+  {
+    if(*should_stop)
+      throw Out_of_patience_exception();
+
+    return BaseVisitor::before_Steiner_point_insertion(wrapper, p);
+  }
+};
+
+struct Wrapper_thread
+  : public QThread
+{
+  Q_OBJECT
+
+  using Visitor = AW3_interrupter_visitor<Iterative_AW3_visualization_visitor>;
+
+public:
+  Wrapper wrapper;
+  const Oracle oracle;
+  const double alpha, offset;
+  const bool enforce_manifoldness;
+  Visitor visitor;
+
+  SMesh wrap;
+
+  QTimer* timer;
+
+public:
+  Wrapper_thread(const Oracle& oracle,
+                 const double alpha,
+                 const double offset,
+                 const bool enforce_manifoldness,
+                 Visitor visitor)
+    : wrapper(oracle),
+      alpha(alpha), offset(offset),
+      enforce_manifoldness(enforce_manifoldness),
+      visitor(visitor),
+      timer(new QTimer(this))
+  {
+    connect(timer, SIGNAL(timeout()),
+            this,  SLOT(emit_status()));
+
+    timer->start(1000);
+  }
+
+  ~Wrapper_thread()
+  {
+    delete timer;
+  }
+
+  void run() override
+  {
+    QElapsedTimer elapsed_timer;
+    elapsed_timer.start();
+
+    // try-catch because the stop visitor currently uses a throw
+    try
     {
-      std::stringstream oss;
-      oss << "Wrap_iteration-" << sid << ".png" << std::ends;
-      QString filename = QString::fromStdString(oss.str().c_str());
+      wrapper(alpha, offset, wrap,
+              CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
+                               .visitor(visitor));
 
-      CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
-      viewer->saveSnapshot(filename);
+      Q_EMIT done(this);
+    }
+    catch(const Out_of_patience_exception&)
+    {
+      if(enforce_manifoldness)
+        wrapper.make_manifold();
+
+      // extract the wrap in its current state
+      wrapper.extract_surface(wrap, CGAL::get(CGAL::vertex_point, wrap), !enforce_manifoldness);
+
+      Q_EMIT interrupted(this);
     }
 
-    m_iterative_wrap_item->setVisible(false);
-
-    // Refresh the view
-    QApplication::processEvents();
+    std::cout << "Wrapping took " << elapsed_timer.elapsed() / 1000. << "s" << std::endl;
   }
+
+public Q_SLOTS:
+  void emit_status()
+  {
+    Q_EMIT status_report(QString("%1 vertices").arg(wrapper.triangulation().number_of_vertices()));
+  }
+
+Q_SIGNALS:
+  void interrupted(Wrapper_thread*);
+  void done(Wrapper_thread*);
+  void status_report(QString);
 };
 
 class Polyhedron_demo_alpha_wrap_3_plugin
@@ -220,16 +320,23 @@ class Polyhedron_demo_alpha_wrap_3_plugin
   using Segments = std::vector<Kernel::Segment_3>;
   using Points = std::vector<Kernel::Point_3>;
 
-  using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Kernel>;
-  using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Kernel, TS_Oracle>;
-  using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Kernel, SS_Oracle>;
-
 private:
-  CGAL::Bbox_3 wrap_bbox;
-  double wrap_bbox_diag_length;
+  CGAL::Bbox_3 m_wrap_bbox;
+  double m_wrap_bbox_diag_length;
 
-  QAction* actionAlpha_wrap_3_;
+  QAction* actionAlpha_wrap_3_ = nullptr;
   Ui::alpha_wrap_3_dialog ui;
+
+  // GUI for the interruption
+  QMessageBox* m_message_box = nullptr;
+
+  // storage of intermediate wraps for iterative visualization
+  std::shared_ptr<std::vector<Kernel::Point_3> > m_iter_points;
+  std::shared_ptr<std::vector<std::vector<std::size_t> > > m_iter_faces;
+  std::shared_ptr<std::vector<CGAL::IO::Color> > m_iter_fcolors;
+  std::shared_ptr<std::vector<CGAL::IO::Color> > m_iter_vcolors;
+  Scene_polygon_soup_item* m_iterative_wrap_item = nullptr;
+  bool m_do_snapshot = false;
 
 public:
   void init(QMainWindow* mainWindow,
@@ -241,26 +348,30 @@ public:
 
     actionAlpha_wrap_3_ = new QAction("3D Alpha Wrapping", this->mw);
     if(actionAlpha_wrap_3_)
-      connect(actionAlpha_wrap_3_, SIGNAL(triggered()), this, SLOT(on_actionAlpha_wrap_3_triggered()));
+    {
+      connect(actionAlpha_wrap_3_, SIGNAL(triggered()),
+              this,                SLOT(on_actionAlpha_wrap_3_triggered()));
+    }
   }
 
   bool applicable(QAction*) const
   {
+    if(scene->selectionIndices().empty())
+      return false;
+
     Q_FOREACH(int index, scene->selectionIndices())
     {
-      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
-        return true;
-      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
-        return true;
-      if(qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index)))
-        return true;
-      if(qobject_cast<Scene_polylines_item*>(scene->item(index)))
-        return true;
-      if(qobject_cast<Scene_points_with_normal_item*>(scene->item(index)))
-        return true;
+      if(!qobject_cast<Scene_polygon_soup_item*>(scene->item(index)) &&
+         !qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) &&
+         !qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index)) &&
+         !qobject_cast<Scene_polylines_item*>(scene->item(index)) &&
+         !qobject_cast<Scene_points_with_normal_item*>(scene->item(index)))
+      {
+        return false;
+      }
     }
 
-    return false;
+    return true;
   }
 
   QList<QAction*> actions() const
@@ -275,28 +386,29 @@ private:
   }
 
 public Q_SLOTS:
+  // This is UI stuff
   void on_alphaValue_changed(double)
   {
     QSignalBlocker block(ui.relativeAlphaValue);
-    ui.relativeAlphaValue->setValue(wrap_bbox_diag_length / ui.alphaValue->value());
+    ui.relativeAlphaValue->setValue(m_wrap_bbox_diag_length / ui.alphaValue->value());
   }
 
   void on_relativeAlphaValue_changed(double)
   {
     QSignalBlocker block(ui.alphaValue);
-    ui.alphaValue->setValue(wrap_bbox_diag_length / ui.relativeAlphaValue->value());
+    ui.alphaValue->setValue(m_wrap_bbox_diag_length / ui.relativeAlphaValue->value());
   }
 
   void on_offsetValue_changed(double)
   {
     QSignalBlocker block(ui.relativeOffsetValue);
-    ui.relativeOffsetValue->setValue(wrap_bbox_diag_length / ui.offsetValue->value());
+    ui.relativeOffsetValue->setValue(m_wrap_bbox_diag_length / ui.offsetValue->value());
   }
 
   void on_relativeOffsetValue_changed(double)
   {
     QSignalBlocker block(ui.offsetValue);
-    ui.offsetValue->setValue(wrap_bbox_diag_length / ui.relativeOffsetValue->value());
+    ui.offsetValue->setValue(m_wrap_bbox_diag_length / ui.relativeOffsetValue->value());
   }
 
   void update_iteration_snapshot_checkbox()
@@ -304,6 +416,108 @@ public Q_SLOTS:
     ui.snapshotIterations->setCheckable(ui.visualizeIterations->isChecked());
   }
 
+  // This is for the visualization
+  void update_iterative_wrap_item(int sid)
+  {
+    if(m_iterative_wrap_item == nullptr)
+      return;
+
+    // Update the wrap item's visualization
+    m_iterative_wrap_item->load(*m_iter_points, *m_iter_faces, *m_iter_fcolors, *m_iter_vcolors);
+    m_iterative_wrap_item->setName(QString("Iterative wrap #%1").arg(sid));
+    m_iterative_wrap_item->setAlpha(255 / 2);
+    m_iterative_wrap_item->setRenderingMode(FlatPlusEdges);
+
+    m_iterative_wrap_item->invalidateOpenGLBuffers();
+    m_iterative_wrap_item->redraw();
+    m_iterative_wrap_item->itemChanged();
+
+    // Refresh the view
+    CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
+    viewer->update();
+
+    CGAL::Three::Three::getWaitCondition()->wakeAll();
+
+    if(m_do_snapshot)
+    {
+      std::stringstream oss;
+      oss << "Wrap_iteration-" << sid << ".png" << std::ends;
+      QString filename = QString::fromStdString(oss.str().c_str());
+
+      viewer->saveSnapshot(filename, 1920, 1080, true /*expand*/, 2.0 /*oversampling*/);
+    }
+  }
+
+  void finish_iterative_wrap_item(int sid)
+  {
+    if(m_iterative_wrap_item == nullptr)
+      return;
+
+    if(m_do_snapshot)
+    {
+      m_iterative_wrap_item->setName(QString("Iterative wrap #%1").arg(sid));
+
+      m_iterative_wrap_item->setAlpha(255);
+      m_iterative_wrap_item->invalidateOpenGLBuffers();
+      m_iterative_wrap_item->redraw();
+      m_iterative_wrap_item->itemChanged();
+
+      // Refresh the view
+      CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
+      viewer->update();
+
+      std::stringstream oss;
+      oss << "Wrap_iteration-" << sid << ".png" << std::ends;
+      QString filename = QString::fromStdString(oss.str().c_str());
+
+      viewer->saveSnapshot(filename);
+    }
+
+    CGAL_assertion(m_iterative_wrap_item);
+    scene->erase(scene->item_id(m_iterative_wrap_item));
+  }
+
+  void reset_iterative_wrap_item()
+  {
+    m_iterative_wrap_item = nullptr;
+  }
+
+  // This is for the message box and thread interruption
+  void wrapping_done(Wrapper_thread* wrapper_thread)
+  {
+    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(std::move(wrapper_thread->wrap));
+    wrap_item->setName(tr("Wrap with alpha %2 offset %3").arg(wrapper_thread->alpha)
+                                                         .arg(wrapper_thread->offset));
+    wrap_item->setColor(Qt::gray);
+    const int wrap_item_id = scene->addItem(wrap_item);
+    scene->setSelectedItem(wrap_item_id);
+
+    wrapper_thread->terminate();
+    wrapper_thread->wait();
+    delete wrapper_thread;
+
+    if(m_message_box)
+    {
+      m_message_box->done(0);
+      m_message_box = nullptr;
+    }
+  }
+
+  // In case we wish to do something more one day
+  void wrapping_interrupted(Wrapper_thread* wrapper_thread)
+  {
+    wrapping_done(wrapper_thread);
+  }
+
+  void status_report(const QString& msg)
+  {
+    if(m_message_box == nullptr)
+      return;
+
+    m_message_box->setInformativeText(msg);
+  }
+
+  // Main call
   void on_actionAlpha_wrap_3_triggered()
   {
     QDialog dialog(mw);
@@ -341,7 +555,7 @@ public Q_SLOTS:
           boost::graph_traits<SMesh>::halfedge_descriptor h = halfedge(f, *pMesh);
           if(!is_triangle(h, *pMesh))
           {
-            print_message("Warning: non-triangular face in input");
+            print_message("Warning: a non-triangular face in input has been ignored");
             continue;
           }
 
@@ -349,7 +563,7 @@ public Q_SLOTS:
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
 
-          wrap_bbox += triangles.back().bbox();
+          m_wrap_bbox += triangles.back().bbox();
         }
 
         continue;
@@ -365,7 +579,7 @@ public Q_SLOTS:
         {
           if(p.size() != 3)
           {
-            print_message("Warning: non-triangular face in input");
+            print_message("Warning: a non-triangular face in input has been ignored");
             continue;
           }
 
@@ -373,7 +587,7 @@ public Q_SLOTS:
                                  soup_item->points()[p[1]],
                                  soup_item->points()[p[2]]);
 
-          wrap_bbox += triangles.back().bbox();
+          m_wrap_bbox += triangles.back().bbox();
         }
 
         continue;
@@ -393,7 +607,7 @@ public Q_SLOTS:
           boost::graph_traits<SMesh>::halfedge_descriptor h = halfedge(f, *pMesh);
           if(!is_triangle(h, *pMesh))
           {
-            print_message("Warning: non-triangular face in input");
+            print_message("Warning: a non-triangular face in input has been ignored");
             continue;
           }
 
@@ -401,7 +615,7 @@ public Q_SLOTS:
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
 
-          wrap_bbox += triangles.back().bbox();
+          m_wrap_bbox += triangles.back().bbox();
         }
 
         segments.reserve(segments.size() + selection_item->selected_edges.size());
@@ -410,7 +624,7 @@ public Q_SLOTS:
           segments.emplace_back(get(vpm, target(halfedge(e, *pMesh), *pMesh)),
                                 get(vpm, target(opposite(halfedge(e, *pMesh), *pMesh), *pMesh)));
 
-          wrap_bbox += segments.back().bbox();
+          m_wrap_bbox += segments.back().bbox();
         }
 
         points.reserve(points.size() + selection_item->selected_vertices.size());
@@ -418,7 +632,7 @@ public Q_SLOTS:
         {
           points.push_back(get(vpm, v));
 
-          wrap_bbox += points.back().bbox();
+          m_wrap_bbox += points.back().bbox();
         }
 
         continue;
@@ -460,14 +674,14 @@ public Q_SLOTS:
     // The relative value uses the bbox of the full scene and not that of selected items to wrap
     // This is intentional, both because it's tedious to make it otherwise, and because it seems
     // to be simpler to compare between "all wrapped" / "some wrapped"
-    wrap_bbox_diag_length = std::sqrt(CGAL::square(wrap_bbox.xmax() - wrap_bbox.xmin()) +
-                                      CGAL::square(wrap_bbox.ymax() - wrap_bbox.ymin()) +
-                                      CGAL::square(wrap_bbox.zmax() - wrap_bbox.zmin()));
+    m_wrap_bbox_diag_length = std::sqrt(CGAL::square(m_wrap_bbox.xmax() - m_wrap_bbox.xmin()) +
+                                        CGAL::square(m_wrap_bbox.ymax() - m_wrap_bbox.ymin()) +
+                                        CGAL::square(m_wrap_bbox.zmax() - m_wrap_bbox.zmin()));
 
     ui.relativeAlphaValue->setValue(20.);
     ui.relativeOffsetValue->setValue(600.);
-    ui.alphaValue->setValue(wrap_bbox_diag_length / ui.relativeAlphaValue->value());
-    ui.offsetValue->setValue(wrap_bbox_diag_length / ui.relativeOffsetValue->value());
+    ui.alphaValue->setValue(m_wrap_bbox_diag_length / ui.relativeAlphaValue->value());
+    ui.offsetValue->setValue(m_wrap_bbox_diag_length / ui.relativeOffsetValue->value());
 
     // EXECUTION
     int i = dialog.exec();
@@ -475,16 +689,6 @@ public Q_SLOTS:
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    Q_FOREACH(int index, this->scene->selectionIndices())
-    {
-      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
-      if(sm_item != nullptr)
-        sm_item->setRenderingMode(Flat);
-      Scene_polygon_soup_item* soup_item = qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
-      if(soup_item != nullptr)
-        soup_item->setRenderingMode(Flat);
-    }
 
     const bool wrap_triangles = ui.wrapTriangles->isChecked();
     const bool wrap_segments = ui.wrapSegments->isChecked();
@@ -495,9 +699,12 @@ public Q_SLOTS:
 
     const bool enforce_manifoldness = ui.runManifoldness->isChecked();
     const bool visualize_iterations = ui.visualizeIterations->isChecked();
-    const bool do_snapshot_iterations = ui.snapshotIterations->isChecked();
+    m_do_snapshot = ui.snapshotIterations->isChecked();
 
-    std::cout << "do wrap edges/faces: " << wrap_segments << " " << wrap_triangles << std::endl;
+    const bool use_message_box = ui.enableMessageBox->isChecked();
+
+    std::cout << "Wrapping edges? " << std::boolalpha << wrap_segments << std::endl;
+    std::cout << "Wrapping faces? " << std::boolalpha << wrap_triangles << std::endl;
 
     if(!wrap_triangles)
     {
@@ -554,22 +761,91 @@ public Q_SLOTS:
       return;
     }
 
-    // Oracles are now set up, main function call
-    CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
+    // Switch from 'wait' to 'busy'
+    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    Iterative_AW3_visualization_visitor visitor(scene,
-                                                visualize_iterations,
-                                                do_snapshot_iterations);
+    Q_FOREACH(int index, this->scene->selectionIndices())
+    {
+      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
+      if(sm_item != nullptr)
+        sm_item->setRenderingMode(Flat);
+      Scene_polygon_soup_item* soup_item = qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+      if(soup_item != nullptr)
+        soup_item->setRenderingMode(Flat);
+    }
 
-    SMesh wrap;
-    aw3(alpha, offset, wrap,
-        CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
-                         .visitor(visitor));
+    if(visualize_iterations)
+    {
+      m_iterative_wrap_item = new Scene_polygon_soup_item();
+      m_iterative_wrap_item->setName(QString("Iterative wrap"));
+      const int iterative_wrap_item_id = scene->addItem(m_iterative_wrap_item);
+      scene->setSelectedItem(iterative_wrap_item_id);
 
-    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrap);
-    wrap_item->setName(tr("Wrap with alpha %2 offset %3").arg(alpha).arg(offset));
-    wrap_item->setColor(Qt::gray);
-    scene->addItem(wrap_item);
+      // Deal with independent (e.g. manual from the main window) destruction of the iterative item
+      connect(m_iterative_wrap_item, SIGNAL(aboutToBeDestroyed()),
+              this, SLOT(reset_iterative_wrap_item()));
+    }
+
+    // Visitors
+    m_iter_points = std::make_shared<std::vector<Kernel::Point_3> >();
+    m_iter_faces = std::make_shared<std::vector<std::vector<std::size_t> > >();
+    m_iter_fcolors = std::make_shared<std::vector<CGAL::IO::Color> >();
+    m_iter_vcolors = std::make_shared<std::vector<CGAL::IO::Color> >();
+    std::shared_ptr<Iterative_update_emiter> emiter = std::make_shared<Iterative_update_emiter>();
+    Iterative_AW3_visualization_visitor visu_visitor(visualize_iterations, m_iter_points, m_iter_faces, m_iter_fcolors, m_iter_vcolors, emiter);
+    AW3_interrupter_visitor<Iterative_AW3_visualization_visitor> visitor(visu_visitor);
+
+    connect(emiter.get(), SIGNAL(new_iteration(int)),
+            this,         SLOT(update_iterative_wrap_item(int)));
+    connect(emiter.get(), SIGNAL(last_iteration(int)),
+            this,         SLOT(finish_iterative_wrap_item(int)));
+
+    Wrapper_thread* wrapper_thread = new Wrapper_thread(oracle, alpha, offset, enforce_manifoldness, visitor);
+    if(wrapper_thread == nullptr)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: failed to create thread"));
+      return;
+    }
+
+    // Connect main thread to wrapping thread
+    QObject::connect(wrapper_thread, SIGNAL(done(Wrapper_thread*)),
+                     this,           SLOT(wrapping_done(Wrapper_thread*)));
+    QObject::connect(wrapper_thread, SIGNAL(interrupted(Wrapper_thread*)),
+                     this,           SLOT(wrapping_interrupted(Wrapper_thread*)));
+    QObject::connect(wrapper_thread, SIGNAL(status_report(QString)),
+                     this,           SLOT(status_report(QString)));
+
+    // Launch thread
+    CGAL::Three::Three::getMutex()->lock();
+    CGAL::Three::Three::isLocked() = true;
+    CGAL::Three::Three::getMutex()->unlock();
+
+    // Create message box with stop button
+    if(use_message_box)
+    {
+      m_message_box = new QMessageBox(QMessageBox::NoIcon,
+                                     "Wrapping",
+                                     "Wrapping in progress...",
+                                     QMessageBox::Cancel,
+                                     mw);
+      m_message_box->setDefaultButton(QMessageBox::Cancel);
+      QAbstractButton* cancelButton = m_message_box->button(QMessageBox::Cancel);
+      cancelButton->setText(tr("Stop"));
+
+      // Connect the message box to the thread
+      connect(cancelButton, &QAbstractButton::clicked,
+              this, [wrapper_thread]() { *(wrapper_thread->visitor.should_stop) = true; });
+
+      m_message_box->open();
+    }
+
+    // Actual start
+    wrapper_thread->start();
+
+    CGAL::Three::Three::getMutex()->lock();
+    CGAL::Three::Three::isLocked() = false;
+    CGAL::Three::Three::getMutex()->unlock();
 
     QApplication::restoreOverrideCursor();
   }

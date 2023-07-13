@@ -24,7 +24,7 @@ removal.
 \cgalHeading{Implementation}
 
 Currently, `HalfedgeDS_default` is derived from `CGAL::HalfedgeDS_list<Traits>`.
-The copy constructor and the assignment operator need \f$ O(n)\f$ time with
+The copy constructor and the assignment operator need \cgalBigO{n} time with
 \f$ n\f$ the total number of vertices, halfedges, and faces.
 
 */

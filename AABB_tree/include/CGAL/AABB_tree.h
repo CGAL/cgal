@@ -142,7 +142,7 @@ namespace CGAL {
     /// An explicit call to `build()` must be made to ensure that the next call to
     /// a query function will not trigger the construction of the data structure.
     /// A call to `AABBTraits::set_shared_data(t...)` is made using the internally stored traits.
-    /// This procedure has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// This procedure has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.
     template<typename ... T>
     void build(T&& ...);
