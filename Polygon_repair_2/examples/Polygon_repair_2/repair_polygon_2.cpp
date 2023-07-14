@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_repair_2/Polygon_repair_2.h>
-#include <CGAL/draw_polygon_2.h>
+#include <CGAL/Polygon_repair_2/draw_multipolygon_with_holes_2.h>
 
 // #include <CGAL/IO/WKT.h>
 
@@ -24,10 +24,10 @@ int main(int argc, char* argv[]) {
   // mp.add_polygon(p);
 
   // Bowtie
-  // Point ps[] = {Point(0,0), Point(1,1), Point(1,0), Point(0,1)};
-  // Polygon p(ps, ps+4);
-  // Multipolygon mp;
-  // mp.add_polygon(p);
+  Point ps[] = {Point(0,0), Point(1,1), Point(1,0), Point(0,1)};
+  Polygon p(ps, ps+4);
+  Multipolygon mp;
+  mp.add_polygon(p);
 
   // Overlapping edge
   // Point ps1[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
@@ -92,6 +92,7 @@ int main(int argc, char* argv[]) {
 
   pr.reconstruct_multipolygon();
   std::cout << pr.multipolygon() << std::endl;
+  CGAL::draw(pr.multipolygon());
 
 
   // CGAL::Polygon_repair_2::repair(mp);
