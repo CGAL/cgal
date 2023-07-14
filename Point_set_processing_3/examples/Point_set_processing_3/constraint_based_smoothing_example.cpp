@@ -36,7 +36,7 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int iter_number = 120;
+  const int iter_number = 50;
 
   for(int i = 0; i < iter_number; ++i)
   {
@@ -45,6 +45,8 @@ int main(int argc, char*argv[])
       points,
       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
                        .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+
+    std::cout << i << std::endl;
   }
 
   //// Save point set.

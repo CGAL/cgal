@@ -112,7 +112,7 @@ Eigen::MatrixXd construct_nvt(
     nvt /= w;
   }
 
-  // std::cout << nvt << std::endl;s
+  // std::cout << nvt << std::endl;
 
   return nvt;
 }
@@ -127,6 +127,7 @@ std::pair<Eigen::VectorXd, Eigen::MatrixXd> do_binary_optimization(
     solver.eigenvalues().cast<double>(),
     solver.eigenvectors().cast<double>());
 
+  // std::cout << nvt << std::endl << std::endl;
   // std::cout << eigens.first << std::endl << std::endl;
 
   for(size_t i=0 ; i<3 ; ++i) {
@@ -256,7 +257,8 @@ point_type_t feature_detection(
     solver.eigenvalues().cast<double>(),
     solver.eigenvectors().cast<double>());
 
-  // std::cout << eigens.first << std::endl << std::endl;
+  // std::cout << covm << std::endl << std::endl;
+  std::cout << eigens.first << std::endl << std::endl;
 
   int dominant_eigenvalue_count = 0;
 
@@ -266,7 +268,6 @@ point_type_t feature_detection(
     }
   }
 
-  // std::cout << eigens.first << std::endl << std::endl;
   if(dominant_eigenvalue_count == 3) {
     dominant_eigenvalue_count = 0; //corner  
   }
@@ -285,44 +286,77 @@ typename Kernel::Point_3 calculate_new_point(
   const std::vector<typename PointRange::iterator>& neighbor_pwns,
   const point_type_t point_type,
   typename Kernel::FT update_threshold)
-{
+{ 
   // basic geometric types
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::Point_3 Point;
 
+  FT delta = 1.5;
+  FT alpha = 0.1;
+
   const Point& p = get(point_map, vt);
   const Vector& n = get(normal_map, vt);
+
+  Eigen::Vector3d vp(p.x(), p.y(), p.z());
+  Eigen::Vector3d vn(n.x(), n.y(), n.z());
 
   Point new_point;
   Eigen::Vector3d t(0, 0, 0);
   t.setZero();
-  Eigen::Matrix3d m_temp(3, 3);
-  m_temp.setZero();
-  Eigen::Vector3d v_temp (0, 0, 0);
 
-  switch(point_type) {
-    case point_type_t::corner:
-      for (typename PointRange::iterator it : neighbor_pwns)
-      {
-        const Point& np = get(point_map, *it);
-        const Vector& nn = get(normal_map, *it);
+  if (point_type == point_type_t::corner) {
+    Eigen::Matrix3d m_temp(3, 3);
+    m_temp.setZero();
+    Eigen::Vector3d v_temp (0, 0, 0);
+    for (typename PointRange::iterator it : neighbor_pwns)
+    {
+      const Point& np = get(point_map, *it);
+      const Vector& nn = get(normal_map, *it);
 
-        Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
-        Eigen::Vector3d vp(p.x(), p.y(), p.z());
+      Eigen::Vector3d vnp(np.x(), np.y(), np.z());
+      Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
 
-        m_temp += vnn * vnn.transpose();
-        v_temp += vnn * vnn.transpose() * vp;
-      }
+      m_temp += vnn * vnn.transpose();
+      v_temp += vnn * vnn.transpose() * vp;
+    } 
 
-      t = m_temp.inverse() * v_temp;
-      break;
-    case point_type_t::edge:
+    t = m_temp.inverse() * v_temp;
+  } else if (point_type == point_type_t::edge) {
+    Eigen::Matrix3d m_temp_left(3, 3);
+    m_temp_left.setZero();
+    Eigen::Matrix3d m_temp_right(3, 3);
+    m_temp_right.setZero();
+    for (typename PointRange::iterator it : neighbor_pwns)
+    {
+      const Point& np = get(point_map, *it);
+      const Vector& nn = get(normal_map, *it);
 
-      break;
+      Eigen::Vector3d vnp(np.x(), np.y(), np.z());
+      Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
+
+    } 
+
+  } else if (point_type == point_type_t::flat) {
+    Eigen::Vector3d v_temp(0, 0, 0);
+    FT cum_w = 0;
+
+    for (typename PointRange::iterator it : neighbor_pwns) {
+      const Point& np = get(point_map, *it);
+      const Vector& nn = get(normal_map, *it);
+      
+      Eigen::Vector3d vnp(np.x(), np.y(), np.z());
+      Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
+
+      FT curr_w = std::exp(-16*(vn - vnn).squaredNorm()/(delta*delta)) * std::exp(-4*(vnp - vp).squaredNorm()/(delta*delta));
+      v_temp += curr_w * (vn*vnn.transpose()*(vnp-vp));
+      cum_w += curr_w;
+    }
+
+    t = vp + (alpha/cum_w)*v_temp;
   }
 
-  return Point();
+  return Point(t[0], t[1], t[2]);
 }
 
 } /* namespace internal */
@@ -361,9 +395,9 @@ constraint_based_smooth_point_set(
 
   typedef typename Kernel::FT FT;
 
-  FT neighbor_radius = 10.;
+  FT neighbor_radius = 1.;
   FT normal_threshold = 30.;
-  FT damping_factor = 1.;
+  FT damping_factor = 3.;
   FT eigenvalue_threshold = .3;
   FT update_threshold = 2.;
 
@@ -478,7 +512,7 @@ constraint_based_smooth_point_set(
                                                 (points.end(), pwns_neighbors.end(), pwns_covms.end()))),
     [&](const typename Zip_iterator_2::reference& t)
     {
-      get<2>(t) = internal::construct_nvt<Kernel, PointRange>
+      get<2>(t) = internal::calculate_covariance_matrix<Kernel, PointRange>
           (get<0>(t),
            point_map, normal_map,
            get<1>(t),
@@ -519,17 +553,17 @@ constraint_based_smooth_point_set(
       return true;
     });
 
-  // typedef boost::zip_iterator
-  //   <boost::tuple<iterator,
-  //                 typename std::vector<typename Kernel::Point_3>::iterator> > Zip_iterator_6;
-  // CGAL::for_each<ConcurrencyTag>
-  //   (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), new_points.begin())),
-  //                      boost::make_zip_iterator (boost::make_tuple (points.end(), new_points.end()))),
-  //    [&](const typename Zip_iterator_6::reference& t)
-  //    {
-  //      put (point_map, get<0>(t), get<1>(t));
-  //      return true;
-  //    });
+  typedef boost::zip_iterator
+    <boost::tuple<iterator,
+                  typename std::vector<typename Kernel::Point_3>::iterator> > Zip_iterator_6;
+  CGAL::for_each<ConcurrencyTag>
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), new_points.begin())),
+                       boost::make_zip_iterator (boost::make_tuple (points.end(), new_points.end()))),
+     [&](const typename Zip_iterator_6::reference& t)
+     {
+       put (point_map, get<0>(t), get<1>(t));
+       return true;
+     });
 
 
   std::cout << "fn complete" << std::endl;
