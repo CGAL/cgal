@@ -69,7 +69,7 @@ template <class Kernel = CGAL::Exact_predicates_inexact_constructions_kernel,
           class PolygonContainer = std::vector<typename Kernel::Point_2>>
 class Polygon_repair_2 {
   int number_of_polygons, number_of_holes;
-  std::unordered_map<int, int> hole_nesting;
+  std::vector<int> hole_nesting;
 public:
   typedef CGAL::Triangulation_vertex_base_2<Kernel> Vertex_base;
   typedef CGAL::Constrained_triangulation_face_base_2<Kernel> Face_base;
@@ -80,7 +80,7 @@ public:
   typedef Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation> Triangulation;
 
   /// \name Creation
-  Polygon_repair_2(): number_of_polygons(0), number_of_holes(0) {}
+  Polygon_repair_2() : number_of_polygons(0), number_of_holes(0) {}
 
   /// \name Modifiers
   /// @{
@@ -107,92 +107,70 @@ public:
     }
   }
 
+  // Label a region of adjacent triangles without passing through constraints
+  // adjacent triangles that involve passing through constraints are added to to_check
+  void label_region(typename Triangulation::Face_handle face, int label,
+                    std::list<typename Triangulation::Face_handle>& to_check,
+                    std::list<int>& to_check_added_by) {
+    std::cout << "Labelling region with " << label << std::endl;
+    std::list<typename Triangulation::Face_handle> to_check_in_region;
+    face->label() = label;
+    to_check_in_region.push_back(face);
+    face->processed() = true; // processed means added to a list (to ensure elements are only added once)
+
+    while (!to_check_in_region.empty()) {
+      for (int neighbour = 0; neighbour < 3; ++neighbour) {
+        if (!t.is_constrained(typename Triangulation::Edge(to_check_in_region.front(), neighbour))) {
+          if (to_check_in_region.front()->neighbor(neighbour)->label() == 0) {
+            to_check_in_region.front()->neighbor(neighbour)->label() = label;
+            to_check_in_region.push_back(to_check_in_region.front()->neighbor(neighbour));
+            to_check_in_region.front()->neighbor(neighbour)->processed() = true;
+          }
+        } else {
+          if (!to_check_in_region.front()->neighbor(neighbour)->processed()) {
+            to_check.push_back(to_check_in_region.front()->neighbor(neighbour));
+            to_check_added_by.push_back(label);
+            to_check_in_region.front()->neighbor(neighbour)->processed() = true;
+          } 
+        }
+      } to_check_in_region.pop_front();
+    }
+  }
+
   // Label triangles in triangulation
   void label_triangulation() {
-    std::list<typename Triangulation::Face_handle> to_check_exterior, to_check_interior, to_check;
-    std::list<int> to_check_exterior_added_by;
     for (auto const face: t.all_face_handles()) {
       face->label() = 0;
       face->processed() = false;
     } 
 
-    // Mark exterior as processed and put interior triangles adjacent to it in to_check_interior
-    // these are used as starting points for the reconstruction
-    // Note: exterior triangles are already labelled with 0
-    to_check_exterior.push_back(t.infinite_face());
-    t.infinite_face()->processed() = true; // processed means added to a list (to ensure elements are only added once)
-    while (!to_check_exterior.empty()) {
-      for (int neighbour = 0; neighbour < 3; ++neighbour) {
-        if (!to_check_exterior.front()->neighbor(neighbour)->processed()) {
-          if (!t.is_constrained(typename Triangulation::Edge(to_check_exterior.front(), neighbour))) {
-            to_check_exterior.push_back(to_check_exterior.front()->neighbor(neighbour));
-          } else {
-            to_check_interior.push_back(to_check_exterior.front()->neighbor(neighbour));
-          } to_check_exterior.front()->neighbor(neighbour)->processed() = true;
+    // Mark exterior as processed and put interior triangles adjacent to it in to_check
+    std::list<typename Triangulation::Face_handle> to_check;
+    std::list<int> to_check_added_by;
+    label_region(t.infinite_face(), -1, to_check, to_check_added_by);
+
+    // Label region of front element to_check list
+    while (!to_check.empty()) {
+
+      if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+        if (to_check_added_by.front() < 0) {
+          label_region(to_check.front(), number_of_polygons+1, to_check, to_check_added_by);
+          ++number_of_polygons;
+        } else {
+          hole_nesting.push_back(to_check_added_by.front()); // record nesting of current hole
+          label_region(to_check.front(), -(number_of_holes+2), to_check, to_check_added_by);
+          ++number_of_holes;
         }
-      } to_check_exterior.pop_front();
-    }
-
-    // Label region of front element of interior and exterior lists (alternating)
-    while (!to_check_interior.empty() || !to_check_exterior.empty()) {
-
-      // Interior triangle
-      if (!to_check_interior.empty()) {
-        if (to_check_interior.front()->label() == 0) { // label = 0 means not labelled yet
-          to_check_interior.front()->label() = number_of_polygons+1;
-          to_check.push_back(to_check_interior.front());
-          while (!to_check.empty()) {
-            for (int neighbour = 0; neighbour < 3; ++neighbour) {
-              if (!t.is_constrained(typename Triangulation::Edge(to_check.front(), neighbour))) {
-                if (to_check.front()->neighbor(neighbour)->label() == 0) {
-                  to_check.front()->neighbor(neighbour)->label() = number_of_polygons+1;
-                  to_check.push_back(to_check.front()->neighbor(neighbour));
-                  to_check.front()->neighbor(neighbour)->processed() = true;
-                } 
-              } else { // constrained -> exterior or hole
-                if (!to_check.front()->neighbor(neighbour)->processed()) { // only add holes (not processed) to list once
-                  to_check_exterior.push_back(to_check.front()->neighbor(neighbour));
-                  to_check.front()->neighbor(neighbour)->processed() = true;
-                  to_check_exterior_added_by.push_back(number_of_polygons+1);
-                } 
-              }
-            } to_check.pop_front();
-          } ++number_of_polygons;
-        } to_check_interior.pop_front();
-      }
-
-      // Exterior triangle (hole)
-      if (!to_check_exterior.empty()) {
-        if (to_check_exterior.front()->label() == 0) { // label = 0 means not labelled yet
-          to_check_exterior.front()->label() = -number_of_holes+1;
-          to_check.push_back(to_check_exterior.front());
-          hole_nesting[-number_of_holes+1] = to_check_exterior_added_by.front(); // record nesting of current hole
-          while (!to_check.empty()) {
-            for (int neighbour = 0; neighbour < 3; ++neighbour) {
-              if (!t.is_constrained(typename Triangulation::Edge(to_check.front(), neighbour))) {
-                if (to_check.front()->neighbor(neighbour)->label() == 0) {
-                  to_check.front()->neighbor(neighbour)->label() = number_of_polygons+1;
-                  to_check.push_back(to_check.front()->neighbor(neighbour));
-                  to_check.front()->neighbor(neighbour)->processed() = true;
-                }
-              } else { // constrained -> interior
-                if (!to_check.front()->neighbor(neighbour)->processed()) { // interior triangles only added once
-                  to_check_interior.push_back(to_check.front()->neighbor(neighbour));
-                  to_check.front()->neighbor(neighbour)->processed() = true;
-                }
-              }
-            } to_check.pop_front();
-          } ++number_of_holes;
-        } to_check_exterior.pop_front();
-        to_check_exterior_added_by.pop_front();
-      }
+      } to_check.pop_front();
+      to_check_added_by.pop_front();
 
     } std::cout << number_of_polygons << " polygons with " << number_of_holes << " holes in triangulation" << std::endl;
   }
 
   // Reconstruct ring boundary starting from an edge (face + opposite vertex) that is part of it
-  void reconstruct_ring(Polygon_2<Kernel, PolygonContainer>& ring,
-                        typename Triangulation::Face_handle face_adjacent_to_boundary, int opposite_vertex) {
+  void reconstruct_ring(std::list<typename Kernel::Point_2>& ring,
+                        typename Triangulation::Face_handle face_adjacent_to_boundary, 
+                        int opposite_vertex) {
     typename Triangulation::Face_handle current_face = face_adjacent_to_boundary;
     int current_opposite_vertex = opposite_vertex;
     do {
@@ -212,24 +190,29 @@ public:
   // Reconstruct multipolygon based on the triangles labelled as inside the polygon
   void reconstruct_multipolygon() {
     mp.clear();
-    std::vector<Polygon_2<Kernel, PolygonContainer>> polygons, holes;
-    polygons.reserve(number_of_polygons);
-    holes.reserve(number_of_holes);
+    std::vector<Polygon_2<Kernel, PolygonContainer>> polygons;
+    std::vector<std::list<Polygon_2<Kernel, PolygonContainer>>> holes;
+    for (int i = 0; i < number_of_polygons; ++i) {
+      polygons.emplace_back();
+      holes.emplace_back();
+    }
 
     for (auto const face: t.all_face_handles()) {
       face->processed() = false;
     } for (auto const &face: t.finite_face_handles()) {
-      if (face->label() == 0) continue; // exterior triangle
+      if (face->label() == -1) continue; // exterior triangle
       if (face->processed()) continue; // already reconstructed
       for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
         if (face->label() != face->neighbor(opposite_vertex)->label()) {
 
+          std::list<typename Kernel::Point_2> ring;
+          reconstruct_ring(ring, face, opposite_vertex);
           if (face->label() > 0) {
-            polygons.emplace_back();
-            reconstruct_ring(polygons.back(), face, opposite_vertex);
+            polygons[face->label()-1].insert(polygons[face->label()-1].vertices_end(),
+                                             ring.begin(), ring.end());
           } else {
-            holes.emplace_back();
-            reconstruct_ring(holes.back(), face, opposite_vertex);
+            // std::cout << "Label: " << face->label() << " -> item " << -face->label()-2 << " -> in polygon " << hole_nesting[-face->label()-2] << std::endl;
+            holes[hole_nesting[-face->label()-2]-1].emplace_back(ring.begin(), ring.end());
           } 
 
           std::list<typename Triangulation::Face_handle> to_check;
@@ -249,9 +232,8 @@ public:
       }
     }
 
-    for (auto& polygon: polygons) {
-      // std::cout << "Adding polygon " << polygon << std::endl;
-      mp.add_polygon(Polygon_with_holes_2<Kernel, PolygonContainer>(polygon));
+    for (int i = 0; i < polygons.size(); ++i) {
+      mp.add_polygon(Polygon_with_holes_2<Kernel, PolygonContainer>(polygons[i], holes[i].begin(), holes[i].end()));
     }
   }
 
