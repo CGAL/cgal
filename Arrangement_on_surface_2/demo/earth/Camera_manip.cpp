@@ -31,13 +31,13 @@ void Camera_manip::mousePressEvent(QMouseEvent* e)
 }
 void Camera_manip::mouseMoveEvent(QMouseEvent* e)
 {
-  auto current_mouse_pos = QVector2D(e->position());
-  const auto diff = current_mouse_pos - m_last_mouse_pos;
+  m_current_mouse_pos = QVector2D(e->position());
+  m_diff = m_current_mouse_pos - m_last_mouse_pos;
 
   // call the function overridden by the derived class
   mouse_move_event(e);
 
-  m_last_mouse_pos = current_mouse_pos;
+  m_last_mouse_pos = m_current_mouse_pos;
 }
 void Camera_manip::mouseReleaseEvent(QMouseEvent* e)
 {

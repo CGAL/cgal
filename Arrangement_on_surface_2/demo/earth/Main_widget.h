@@ -49,11 +49,18 @@ protected:
   void init_camera();
   void init_geometry();  
   void init_shader_programs();
+  
 
   float compute_backprojected_error(float pixel_error);
   // Use this to find the approximate of the true minimum projected error.
   // we are ot using this complicated method, but provide it for completeness.
   void find_minimum_projected_error_on_sphere(float we);
+
+  // verify that the node (180.0, -84.71338) in Antarctica is redundant
+  void verify_antarctica_node_is_redundant();
+
+  // init problematic vertices: these are the vertices incident to deg-4 vertex
+  void init_problematic_nodes();
 
 private:
   // Objects in the scene

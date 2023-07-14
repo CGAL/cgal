@@ -17,14 +17,12 @@ void Camera_manip_rot_bpa::mouse_press_event(QMouseEvent* e)
 }
 void Camera_manip_rot_bpa::mouse_move_event(QMouseEvent* e)
 {
-  auto current_mouse_pos = QVector2D(e->position());
-  const auto diff = current_mouse_pos - m_last_mouse_pos;
   const float rotation_scale_factor = 0.1f;
 
   // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR
   //QVector3D p0(m_last_mouse_pos.x(), m_vp_height - m_last_mouse_pos.y(), 0);
   QVector3D p0(m_mouse_press_pos.x(), m_vp_height - m_mouse_press_pos.y(), 0);
-  QVector3D p1(current_mouse_pos.x(), m_vp_height - current_mouse_pos.y(), 0);
+  QVector3D p1(m_current_mouse_pos.x(), m_vp_height - m_current_mouse_pos.y(), 0);
   auto dp = p1 - p0; // difference vector in OpenGL window coords.
   QVector3D rdp(-dp.y(), dp.x(), 0); // rotate diff-vector CCW by 90-deg
   QVector3D rp = p0 + rdp; // r1 rotated CCW by 90 deg

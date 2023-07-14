@@ -17,7 +17,6 @@ protected:
   virtual void mouse_move_event(QMouseEvent* e) override;
 
 private:
-  float m_theta = 0, m_phi = 0;
 };
 
 #endif

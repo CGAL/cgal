@@ -105,32 +105,52 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
   }
 }
 
+
+void Main_widget::verify_antarctica_node_is_redundant()
+{
+  Kml::Node n1(178.277211542064, -84.4725179992025),
+    n2(180.0, -84.71338),
+    n3(-179.942499356179, -84.7214433735525);
+
+  // 1) check if it is collinear with its neighboring nodes:
+  // all of the vectors in 3D must lie in the same plane
+  auto v1 = n1.get_coords_3f();
+  auto v2 = n2.get_coords_3f();
+  auto v3 = n3.get_coords_3f();
+  auto n = QVector3D::crossProduct(v1, v3);
+  n.normalize();
+  std::cout << "*** DOT PRODUCT = " << QVector3D::dotProduct(n, v2) << std::endl;
+
+  // 2) check if it is between its neighbors (check if r,s > 0)
+  auto det = [](float ax, float ay, float bx, float by) { return ax * by - ay * bx; };
+  auto D = det(v1.x(), v1.y(), v3.x(), v3.y());
+  auto Dr = det(v2.x(), v2.y(), v3.x(), v3.y());
+  auto Ds = det(v1.x(), v1.y(), v2.x(), v2.y());
+  auto r = Dr / D;
+  auto s = Ds / D;
+  std::cout << "r = " << r << "\ns=" << s << std::endl;
+}
+void Main_widget::init_problematic_nodes()
+{
+  Kml::Nodes prob_nodes = {
+    {23.8058134294668,8.66631887454253},
+    {24.1940677211877,8.7286964724039 },
+    {24.5673690121521,8.22918793378547},
+    {23.8869795808607,8.61972971293307}
+  };
+  std::vector<QVector3D> prob_vertices;
+  for (const auto& node : prob_nodes)
+    prob_vertices.push_back(node.get_coords_3f());
+  m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
+}
+
 void Main_widget::initializeGL()
 {
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
-  {
-    Kml::Node n1(178.277211542064, -84.4725179992025),
-              n2(180.0, -84.71338),
-              n3(-179.942499356179, -84.7214433735525);
+  verify_antarctica_node_is_redundant();
 
-    // 1) check if it is collinear with its neighboring nodes:
-    // all of the vectors in 3D must lie in the same plane
-    auto v1 = n1.get_coords_3f();
-    auto v2 = n2.get_coords_3f();
-    auto v3 = n3.get_coords_3f();
-    auto n = QVector3D::crossProduct(v1, v3);
-    n.normalize();
-    std::cout << "*** DOT PRODUCT = " << QVector3D::dotProduct(n, v2) << std::endl;
+  //init_problematic_nodes();
 
-    // 2) check if it is between its neighbors (check if r,s > 0)
-    auto det = [](float ax, float ay, float bx, float by) { return ax * by - ay * bx; };
-    auto D  = det(v1.x(), v1.y(), v3.x(), v3.y());
-    auto Dr = det(v2.x(), v2.y(), v3.x(), v3.y());
-    auto Ds = det(v1.x(), v1.y(), v2.x(), v2.y());
-    auto r = Dr / D;
-    auto s = Ds / D;
-    std::cout << "r = " << r << "\ns=" << s << std::endl;
-  }
 
   std::string data_path = "C:/work/gsoc2023/data/";
   //std::string shape_file_path = data_path + "ne_110m_admin_0_countries/";
@@ -138,17 +158,16 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
-
-  qDebug() << "identifying duplicate nodes";
   //auto all_nodes = Kml::generate_ids(m_countries);
   
   // initialize rendering of DUPLICATE VERTICES
   if(1)
   {
+    qDebug() << "identifying duplicate nodes";
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
       vertices.push_back(node.get_coords_3f());
@@ -161,20 +180,6 @@ void Main_widget::initializeGL()
     auto created_vertices = Aos::ext_check(m_countries);
     //auto created_vertices = Aos::ext_check_id_based(m_countries);
     m_vertices = std::make_unique<Vertices>(created_vertices);
-  }
-
-  // init problematic vertices: these are the vertices incident to deg-4 vertex
-  {
-    Kml::Nodes prob_nodes = {
-      {23.8058134294668,8.66631887454253},
-      {24.1940677211877,8.7286964724039 },
-      {24.5673690121521,8.22918793378547},
-      {23.8869795808607,8.61972971293307}
-    };
-    std::vector<QVector3D> prob_vertices;
-    for (const auto& node : prob_nodes)
-      prob_vertices.push_back(node.get_coords_3f());
-    m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
   }
 
 
@@ -373,6 +378,14 @@ void Main_widget::resizeGL(int w, int h)
   const auto err = compute_backprojected_error(0.5f);
   std::cout << "error = " << err << std::endl;
 }
+
+template<typename T>
+void draw_safe(T& ptr)
+{
+  if (ptr)
+    ptr->draw();
+}
+
 void Main_widget::paintGL()
 {
   QMatrix4x4 model;
@@ -458,8 +471,8 @@ void Main_widget::paintGL()
 
     sp.set_uniform("u_color", QVector4D(0,1,0,1));
     glPointSize(2);
-    m_problematic_vertices->draw();
-
+    //m_problematic_vertices->draw();
+    draw_safe(m_problematic_vertices);
 
     sp.unuse();
   }

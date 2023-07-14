@@ -32,9 +32,10 @@ protected:
 
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;
-  //QVector2D m_current_mouse_pos;
+  QVector2D m_current_mouse_pos;
   QVector2D m_last_mouse_pos;
   QVector2D m_mouse_press_pos;
+  QVector2D m_diff;
 };
 
 
