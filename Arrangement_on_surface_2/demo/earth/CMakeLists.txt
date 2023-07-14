@@ -91,6 +91,7 @@ file(GLOB source_files
   Common_defs.h
                             main.cpp
   Main_widget.h             Main_widget.cpp
+  Timer.h
   Tools.h                   Tools.cpp
  )
 source_group( "Source Files"  FILES ${source_files} )

@@ -49,6 +49,8 @@ protected:
   void init_camera();
   void init_geometry();  
   void init_shader_programs();
+
+  void init_country_borders();
   
 
   float compute_backprojected_error(float pixel_error);

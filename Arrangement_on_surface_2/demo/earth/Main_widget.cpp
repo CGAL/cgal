@@ -13,6 +13,7 @@
 #include "Camera_manip_zoom.h"
 #include "Kml_reader.h"
 #include "Shapefile.h"
+#include "Timer.h"
 #include "Tools.h"
 
 
@@ -144,6 +145,8 @@ void Main_widget::init_problematic_nodes()
   m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
 }
 
+
+
 void Main_widget::initializeGL()
 {
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
@@ -158,8 +161,8 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
@@ -190,27 +193,8 @@ void Main_widget::initializeGL()
   init_shader_programs();
 
   {
-    // TO-DO: move this code to resizeGL (when viewport is initialized)
-    // has to be defined after camera has been defined:
-    // because we want to compute the error based on camera parameters!
-    //Geodesic_arcs ga;
-    const double error = 0.001; // calculate this from cam parameters!
-    //auto lsa = Aos::get_approx_arcs(countries, error);
-    //auto lsa = Aos::get_approx_arcs(error);
-    //m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
-    for (const auto& country : m_countries)
-    {
-      m_country_names.push_back(country.name);
-      auto approx_arcs = Aos::get_approx_arcs(country, error);
-      auto country_border = std::make_unique<Line_strips>(approx_arcs);
-      m_country_borders.push_back(std::move(country_border));
-    }
-    m_selected_country_index = 0;     
-    //m_selected_country_index = 159; // ANTARCTICA
-    m_selected_country = &m_countries[m_selected_country_index];
-    m_selected_country_nodes = m_selected_country->get_all_nodes();
-    m_selected_country_arcs = m_selected_country->get_all_arcs();
-    m_selected_arc_index = 0;
+    ScopedTimer("init_country_borders");
+    init_country_borders();
   }
 
   glClearColor(0, 0, 0, 1);
@@ -253,6 +237,31 @@ void Main_widget::init_shader_programs()
   m_sp_smooth.init_with_vs_fs("smooth");;
   m_sp_per_vertex_color.init_with_vs_fs("per_vertex_color");
   m_sp_arc.init_with_vs_fs("arc");
+}
+
+void Main_widget::init_country_borders()
+{
+  // TO-DO: move this code to resizeGL (when viewport is initialized)
+  // has to be defined after camera has been defined:
+  // because we want to compute the error based on camera parameters!
+  //Geodesic_arcs ga;
+  const double error = 0.001; // calculate this from cam parameters!
+  //auto lsa = Aos::get_approx_arcs(countries, error);
+  //auto lsa = Aos::get_approx_arcs(error);
+  //m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
+  for (const auto& country : m_countries)
+  {
+    m_country_names.push_back(country.name);
+    auto approx_arcs = Aos::get_approx_arcs(country, error);
+    auto country_border = std::make_unique<Line_strips>(approx_arcs);
+    m_country_borders.push_back(std::move(country_border));
+  }
+  m_selected_country_index = 0;
+  //m_selected_country_index = 159; // ANTARCTICA
+  m_selected_country = &m_countries[m_selected_country_index];
+  m_selected_country_nodes = m_selected_country->get_all_nodes();
+  m_selected_country_arcs = m_selected_country->get_all_arcs();
+  m_selected_arc_index = 0;
 }
 
 float Main_widget::compute_backprojected_error(float pixel_error)
