@@ -27,39 +27,39 @@ public:
   /// \name Definition
 
   /// @{
-  /// the triangulation class.
   typedef Triangulation_ Base_triangulation;
-
-  /// Point type
   typedef typename Triangulation_::Point Point;
-
-  /// Edge type
   typedef typename Triangulation_::Edge Edge;
-
-  /// handle to a vertex
   typedef typename Triangulation_::Vertex_handle Vertex_handle;
-
-  /// handle to a face
   typedef typename Triangulation_::Face_handle Face_handle;
-
-  /// list of edges
   typedef typename Triangulation_::List_edges List_edges;
-  
-  /// list of faces
   typedef typename Triangulation_::List_faces List_faces;
-
+  typedef typename Triangulation_::All_faces_iterator All_faces_iterator;
   /// @}
+
+  class Interior_tester {
+    const Triangulation_with_odd_even_constraints_2 *t;
+  public:
+    Interior_tester() {}
+    Interior_tester(const Triangulation_with_odd_even_constraints_2 *tr) : t(tr) {}
+
+    bool operator()(const All_faces_iterator & fit) const {
+      return fit->label() < 1;
+    }
+  };
   
   // iterator over interior faces.
-  class Interior_faces_iterator : public Base_triangulation::All_faces_iterator {
-    
-    Interior_faces_iterator operator++() {
-      
-    }
-
-    Interior_faces_iterator operator--() {
-
-    }
+  class Interior_faces_iterator : public Filter_iterator<All_faces_iterator, Interior_tester> {
+    typedef Filter_iterator<All_faces_iterator, Interior_tester> Base;
+    typedef Interior_faces_iterator Self;
+  public:
+    Interior_faces_iterator() : Base() {}
+    Interior_faces_iterator(const Base &b) : Base(b) {}
+    Self& operator++() { Base::operator++(); return *this; }
+    Self& operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator Face_handle() const { return Base::base(); }
   };
 
   // Inserts point p in the triangulation and returns the corresponding vertex.
@@ -113,12 +113,15 @@ public:
 
   // Starts at an arbitrary interior face
   Interior_faces_iterator interior_faces_begin() {
-
+    return CGAL::filter_iterator(Base_triangulation::all_faces_end(),
+                                 Interior_tester(this),
+                                 Base_triangulation::all_faces_begin());
   }
 
   // Past-the-end iterator
   Interior_faces_iterator interior_faces_end() {
-    
+    return CGAL::filter_iterator(Base_triangulation::all_faces_end(),
+                                 Interior_tester(this));
   }
 };
 

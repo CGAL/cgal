@@ -86,9 +86,9 @@ int main(int argc, char* argv[]) {
   pr.add_to_triangulation(mp);
   pr.label_triangulation();
 
-  // for (auto const f: pr.triangulation().all_face_handles()) {
-  //   std::cout << f->label() << " ";
-  // } std::cout << std::endl;
+  for (auto f = pr.triangulation().interior_faces_begin(); f != pr.triangulation().interior_faces_end(); ++f) {
+    std::cout << f->label() << " ";
+  } std::cout << std::endl;
 
   pr.reconstruct_multipolygon();
   std::cout << pr.multipolygon() << std::endl;
