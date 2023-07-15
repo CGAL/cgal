@@ -82,20 +82,20 @@ int main(int argc, char* argv[]) {
   // Multipolygon mp;
   // mp.add_polygon(p);
 
-  Polygon_repair pr;
-  pr.add_to_triangulation(mp);
-  pr.label_triangulation();
+  // Polygon_repair pr;
+  // pr.add_to_triangulation(mp);
+  // pr.label_triangulation();
 
-  for (auto f = pr.triangulation().interior_faces_begin(); f != pr.triangulation().interior_faces_end(); ++f) {
-    std::cout << f->label() << " ";
-  } std::cout << std::endl;
+  // for (auto f = pr.triangulation().interior_faces_begin(); f != pr.triangulation().interior_faces_end(); ++f) {
+  //   std::cout << f->label() << " ";
+  // } std::cout << std::endl;
 
-  pr.reconstruct_multipolygon();
-  std::cout << pr.multipolygon() << std::endl;
-  CGAL::draw(pr.multipolygon());
+  // pr.reconstruct_multipolygon();
+  // std::cout << pr.multipolygon() << std::endl;
+  // CGAL::draw(pr.multipolygon());
 
-
-  // CGAL::Polygon_repair_2::repair(mp);
+  std::cout << CGAL::Polygon_repair_2::repair(p) << std::endl;
+  std::cout << CGAL::Polygon_repair_2::repair(mp) << std::endl;
 
   return 0;
 }

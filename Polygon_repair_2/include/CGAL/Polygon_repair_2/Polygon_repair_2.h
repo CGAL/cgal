@@ -34,7 +34,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_2<Kerne
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
   pr.add_to_triangulation(p);
   pr.label_triangulation();
-  pr.reconstruct_polygon();
+  pr.reconstruct_multipolygon();
   return pr.multipolygon();
 }
 
@@ -45,7 +45,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_with_ho
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
   pr.add_to_triangulation(p);
   pr.label_triangulation();
-  pr.reconstruct_polygon();
+  pr.reconstruct_multipolygon();
   return pr.multipolygon();
 }
 
@@ -56,7 +56,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Multipolygon_wi
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
   pr.add_to_triangulation(mp);
   pr.label_triangulation();
-  pr.reconstruct_polygon();
+  pr.reconstruct_multipolygon();
   return pr.multipolygon();
 }
 
@@ -112,7 +112,7 @@ public:
   void label_region(typename Triangulation::Face_handle face, int label,
                     std::list<typename Triangulation::Face_handle>& to_check,
                     std::list<int>& to_check_added_by) {
-    std::cout << "Labelling region with " << label << std::endl;
+    // std::cout << "Labelling region with " << label << std::endl;
     std::list<typename Triangulation::Face_handle> to_check_in_region;
     face->label() = label;
     to_check_in_region.push_back(face);
@@ -164,7 +164,7 @@ public:
       } to_check.pop_front();
       to_check_added_by.pop_front();
 
-    } std::cout << number_of_polygons << " polygons with " << number_of_holes << " holes in triangulation" << std::endl;
+    } // std::cout << number_of_polygons << " polygons with " << number_of_holes << " holes in triangulation" << std::endl;
   }
 
   // Reconstruct ring boundary starting from an edge (face + opposite vertex) that is part of it
