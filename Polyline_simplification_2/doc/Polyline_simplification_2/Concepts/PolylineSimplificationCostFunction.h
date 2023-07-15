@@ -12,9 +12,10 @@ preserve the overall polyline set shape as much as possible
 
 \cgalRefines{CopyConstructible,Assignable}
 
-\cgalHasModelsBegin CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost
-\cgalHasModels CGAL::Polyline_simplification_2::Scaled_squared_distance_cost
-\cgalHasModels CGAL::Polyline_simplification_2::Squared_distance_cost
+\cgalHasModelsBegin
+\cgalModels{CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost}
+\cgalModels{CGAL::Polyline_simplification_2::Scaled_squared_distance_cost}
+\cgalModels{CGAL::Polyline_simplification_2::Squared_distance_cost}
 \cgalHasModelsEnd
 
 */

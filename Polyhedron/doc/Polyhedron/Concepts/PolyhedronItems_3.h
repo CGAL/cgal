@@ -13,9 +13,10 @@ polyhedral surface renames faces to facets.
 
 \cgalRefines{HalfedgeDSItems}
 
-\cgalHasModelsBegin CGAL::Polyhedron_items_3
-\cgalHasModels CGAL::Polyhedron_min_items_3
-\cgalHasModels CGAL::Polyhedron_items_with_id_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::Polyhedron_items_3}
+\cgalModels{CGAL::Polyhedron_min_items_3}
+\cgalModels{CGAL::Polyhedron_items_with_id_3}
 \cgalHasModelsEnd
 
 \sa `CGAL::Polyhedron_3<Traits>`

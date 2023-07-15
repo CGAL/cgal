@@ -6,9 +6,10 @@
 A model of the concept `FromIntConstructible` is required
 to be constructible from int.
 
-\cgalHasModelsBegin int
-\cgalHasModels long
-\cgalHasModels double
+\cgalHasModelsBegin
+\cgalModels{int}
+\cgalModels{long}
+\cgalModels{double}
 \cgalHasModelsEnd
 
 */

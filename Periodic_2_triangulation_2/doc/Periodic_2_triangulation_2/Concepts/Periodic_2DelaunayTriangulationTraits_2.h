@@ -27,7 +27,8 @@ dual functions are called. The additional predicate type
 `::Periodic_2DelaunayTriangulationTraits_2::Compare_distance_2` is required if calls to
 `nearest_vertex(..)` are issued.
 
-\cgalHasModelsBegin CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>}
 \cgalHasModelsEnd
 
 \sa `DelaunayTriangulationTraits_2`

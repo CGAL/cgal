@@ -18,7 +18,8 @@ does not contain any information.
 
 \cgalRefines{TriangulationDSCellBase_3}
 
-\cgalHasModelsBegin CGAL::Periodic_3_triangulation_ds_cell_base_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::Periodic_3_triangulation_ds_cell_base_3}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_3`

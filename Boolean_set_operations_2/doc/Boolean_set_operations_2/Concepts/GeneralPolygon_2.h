@@ -16,7 +16,8 @@ accordingly. Only counterclockwise oriented polygons are valid operands
 of Boolean set-operations. General polygon that represent holes must be
 clockwise oriented.
 
-\cgalHasModelsBegin CGAL::General_polygon_2<ArrTraits>
+\cgalHasModelsBegin
+\cgalModels{CGAL::General_polygon_2<ArrTraits>}
 \cgalHasModelsEnd
 
 */

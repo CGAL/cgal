@@ -11,7 +11,8 @@
  * \cgalRefines{ArrangementBasicTraits_2,ArrangementIdentifiedVerticalTraits_2,
  *   ArrangementContractedBottomTraits_2,ArrangementContractedTopTraits_2}
  *
- * \cgalHasModelsBegin CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>
+ * \cgalHasModelsBegin
+ * \cgalModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>}
  * \cgalHasModelsEnd
  *
  * \sa `ArrangementOpenBoundaryTraits_2`

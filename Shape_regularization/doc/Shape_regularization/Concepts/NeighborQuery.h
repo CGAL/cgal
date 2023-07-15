@@ -9,7 +9,8 @@ A concept that describes the set of methods used by the class
 `QP_regularization` to access neighbors of
 a geometric object being regularized.
 
-\cgalHasModelsBegin Segments::Delaunay_neighbor_query_2
+\cgalHasModelsBegin
+\cgalModels{Segments::Delaunay_neighbor_query_2}
 \cgalHasModelsEnd
 */
 class NeighborQuery {

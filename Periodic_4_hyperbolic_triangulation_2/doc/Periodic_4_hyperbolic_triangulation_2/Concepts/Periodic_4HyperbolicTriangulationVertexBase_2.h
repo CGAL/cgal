@@ -14,7 +14,8 @@ translation during the insertion process.
 A boolean flag indicates whether the face stores a translation or not. The value of the flag is automatically
 set when storing or removing a translation.
 
-\cgalHasModelsBegin CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2
+\cgalHasModelsBegin
+\cgalModels{CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`

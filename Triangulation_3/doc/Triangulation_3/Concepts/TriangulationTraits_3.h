@@ -11,7 +11,9 @@ triangles and tetrahedra) forming the triangulation together with a few
 geometric predicates and constructions on these objects: lexicographical
 comparison, orientation in case of coplanar points and orientation in space.
 
+\cgalHasModelsBegin
 \cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_3`
 */

@@ -12,7 +12,8 @@ The only geometric embedding used by the Straight Skeleton Data Structure are th
 in the contour and skeleton vertices. However, for any halfedge, there is a 2D segment implicitly
 given by its `source` and `target` vertices.
 
-\cgalHasModelsBegin CGAL::Straight_skeleton_halfedge_base_2
+\cgalHasModelsBegin
+\cgalModels{CGAL::Straight_skeleton_halfedge_base_2}
 \cgalHasModelsEnd
 
 \sa `StraightSkeleton_2`

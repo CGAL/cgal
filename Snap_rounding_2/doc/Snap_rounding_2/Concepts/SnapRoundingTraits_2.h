@@ -11,7 +11,8 @@ some function object types for the required predicates on those primitives.
 
 \cgalRefines{ArrangementTraits_2}
 
-\cgalHasModelsBegin CGAL::Snap_rounding_traits_2<Kernel>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Snap_rounding_traits_2<Kernel>}
 \cgalHasModelsEnd
 */
 
@@ -172,7 +173,9 @@ namespace SRTraits_2{
   \cgalConcept
   Represents an iso rectangle
   \cgalRefines{DefaultConstructible,CopyConstructible,Assignable}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Iso_rectangle_2 `Snap_rounding_traits_2::Iso_rectangle_2` \endlink}
+  \cgalHasModelsEnd
 */
 class IsoRectangle_2
 {};
@@ -181,7 +184,9 @@ class IsoRectangle_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Construct_vertex_2 `Snap_rounding_traits_2::Construct_vertex_2` \endlink}
+  \cgalHasModelsEnd
 */
 class ConstructVertex_2
 {
@@ -198,7 +203,9 @@ class ConstructVertex_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Construct_segment_2 `Snap_rounding_traits_2::Construct_segment_2`  \endlink}
+  \cgalHasModelsEnd
 */
 class ConstructSegment_2
 {
@@ -215,7 +222,9 @@ class ConstructSegment_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableQuaternaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Construct_iso_rectangle_2 `Snap_rounding_traits_2::Construct_iso_rectangle_2` \endlink}
+  \cgalHasModelsEnd
 */
 class ConstructIsoRectangle_2
 {
@@ -236,7 +245,9 @@ class ConstructIsoRectangle_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Compare_x_2 `Snap_rounding_traits_2::Compare_x_2` \endlink}
+  \cgalHasModelsEnd
 */
 class CompareX_2
 {
@@ -252,7 +263,9 @@ class CompareX_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Compare_y_2 `Snap_rounding_traits_2::Compare_y_2` \endlink}
+  \cgalHasModelsEnd
 */
 class CompareY_2
 {
@@ -269,7 +282,9 @@ class CompareY_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableQuaternaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Snap_2 `Snap_rounding_traits_2::Snap_2` \endlink}
+  \cgalHasModelsEnd
 */
 class Snap_2
 {
@@ -288,7 +303,9 @@ class Snap_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Integer_grid_point_2 `Snap_rounding_traits_2::Integer_grid_point_2` \endlink}
+  \cgalHasModelsEnd
 
 */
 class IntegerGridPoint_2
@@ -309,7 +326,9 @@ class IntegerGridPoint_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalRefines{AdaptableTernaryFunction}
+  \cgalHasModelsBegin
   \cgalHasModelsBare{\link SnapRoundingTraits_2::Minkowski_sum_with_pixel_2 `Snap_rounding_traits_2::Minkowski_sum_with_pixel_2` \endlink}
+  \cgalHasModelsEnd
 */
 class MinkowskiSumWithPixel_2
 {

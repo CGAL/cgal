@@ -7,7 +7,8 @@ the 1-dimensional features of the domain.
 It provides an upper bound for the distance between two protecting ball centers
 that are consecutive on a 1-feature.
 
-\cgalHasModelsBegin CGAL::Mesh_edge_criteria_3<Tr>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Mesh_edge_criteria_3<Tr>}
 \cgalHasModelsEnd
 
 \sa `MeshCellCriteria_3`

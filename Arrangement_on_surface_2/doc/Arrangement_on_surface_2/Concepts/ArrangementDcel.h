@@ -14,10 +14,11 @@
  * `ArrangementDcelHalfedge`, `ArrangementDcelFace`, `ArrangementDcelOuterCcb`,
  * `ArrangementDcelInnerCcb`, and `ArrangementDcelIsolatedVertex` respectively.)
  *
- * \cgalHasModelsBegin CGAL::Arr_dcel_base<V,H,F>
- * \cgalHasModels CGAL::Arr_default_dcel<Traits>
- * \cgalHasModels CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>
- * \cgalHasModels CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>
+ * \cgalHasModelsBegin
+ * \cgalModels{CGAL::Arr_dcel_base<V,H,F>}
+ * \cgalModels{CGAL::Arr_default_dcel<Traits>}
+ * \cgalModels{CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>}
+ * \cgalModels{CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>}
  * \cgalHasModelsEnd
  *
  * \sa `ArrangementDcelVertex`

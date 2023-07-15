@@ -16,9 +16,10 @@ and `Face` respectively. The requirements on these
 types are described on the manual pages of the concepts `HalfedgeDSVertex`,
 `HalfedgeDSHalfedge`, and `HalfedgeDSFace` respectively.
 
-\cgalHasModelsBegin CGAL::HalfedgeDS_min_items
-\cgalHasModels CGAL::HalfedgeDS_items_2
-\cgalHasModels CGAL::Polyhedron_items_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::HalfedgeDS_min_items}
+\cgalModels{CGAL::HalfedgeDS_items_2}
+\cgalModels{CGAL::Polyhedron_items_3}
 \cgalHasModelsEnd
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`

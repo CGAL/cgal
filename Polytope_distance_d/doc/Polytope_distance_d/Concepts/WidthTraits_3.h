@@ -12,7 +12,8 @@ Whatever the coordinates of the points are, it is required for the
 width-algorithm to have access to the homogeneous representation of
 points.
 
-\cgalHasModelsBegin CGAL::Width_default_traits_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::Width_default_traits_3}
 \cgalHasModelsEnd
 
 \sa `CGAL::Width_3<Traits>`

@@ -14,7 +14,8 @@ that describes the requirements, in terms of sizing, for the discretization of t
 
 \cgalRefines{MeshCriteria_3}
 
-\cgalHasModelsBegin CGAL::Mesh_criteria_3<Tr>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Mesh_criteria_3<Tr>}
 \cgalHasModelsEnd
 
 \sa `MeshEdgeCriteria_3`

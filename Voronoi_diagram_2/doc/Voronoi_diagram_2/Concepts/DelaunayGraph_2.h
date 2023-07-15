@@ -18,12 +18,14 @@ iterators and circulators that allow to traverse it (completely or
 partially). All iterators and circulators must be convertible to the
 corresponding handles.
 
-\cgalHasModelsBareBegin{ `CGAL::Triangulation_hierarchy_2<Tr>` provided that `Tr` is a model of `DelaunayGraph_2`} CGAL::Delaunay_triangulation_2<Traits,Tds>
-\cgalHasModels CGAL::Regular_triangulation_2<Traits,Tds>
-\cgalHasModels CGAL::Segment_Delaunay_graph_2<Gt,DS>
-\cgalHasModels CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>
-\cgalHasModels CGAL::Apollonius_graph_2<Gt,Agds>
-\cgalHasModels CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>
+\cgalHasModelsBegin
+\cgalHasModelsBare{ `CGAL::Triangulation_hierarchy_2<Tr>` provided that `Tr` is a model of `DelaunayGraph_2`}
+\cgalHasModels{CGAL::Delaunay_triangulation_2<Traits,Tds>}
+\cgalHasModels{CGAL::Regular_triangulation_2<Traits,Tds>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_2<Gt,DS>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}
+\cgalHasModels{CGAL::Apollonius_graph_2<Gt,Agds>}
+\cgalHasModels{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}
 \cgalHasModelsEnd
 
 \sa `AdaptationTraits_2`

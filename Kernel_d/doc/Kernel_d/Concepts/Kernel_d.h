@@ -18,10 +18,11 @@ predicates. The former replace constructors of the kernel classes and
 constructive procedures in the kernel. There are also function objects
 replacing operators, especially for equality testing.
 
-\cgalHasModelsBegin CGAL::Cartesian_d<FieldNumberType>
-\cgalHasModels CGAL::Homogeneous_d<RingNumberType>
-\cgalHasModels CGAL::Epick_d<DimensionTag>
-\cgalHasModels CGAL::Epeck_d<DimensionTag>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Cartesian_d<FieldNumberType>}
+\cgalModels{CGAL::Homogeneous_d<RingNumberType>}
+\cgalModels{CGAL::Epick_d<DimensionTag>}
+\cgalModels{CGAL::Epeck_d<DimensionTag>}
 \cgalHasModelsEnd
 */
 class Kernel_d {

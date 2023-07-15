@@ -11,7 +11,8 @@ policy concept of geometric computations is used in
 
 \cgalRefines{SubdivisionMask_3}
 
-\cgalHasModelsBegin CGAL::DooSabin_mask_3<PolygonMesh, VertexPointMap>
+\cgalHasModelsBegin
+\cgalModels{CGAL::DooSabin_mask_3<PolygonMesh, VertexPointMap>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Subdivision_method_3`

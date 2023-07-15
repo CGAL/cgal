@@ -6,9 +6,10 @@
 This concept defines the requirements for traits classes of \f$ d\f$-dimensional
 optimisation algorithms.
 
-\cgalHasModelsBegin CGAL::Polytope_distance_d_traits_2<K,ET,NT>
-\cgalHasModels CGAL::Polytope_distance_d_traits_3<K,ET,NT>
-\cgalHasModels CGAL::Polytope_distance_d_traits_d<K,ET,NT>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Polytope_distance_d_traits_2<K,ET,NT>}
+\cgalModels{CGAL::Polytope_distance_d_traits_3<K,ET,NT>}
+\cgalModels{CGAL::Polytope_distance_d_traits_d<K,ET,NT>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Polytope_distance_d<Traits>`

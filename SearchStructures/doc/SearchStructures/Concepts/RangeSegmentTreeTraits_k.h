@@ -9,12 +9,13 @@ the keys and intervals, and provide comparison functions that
 are needed for window queries.
 
 
-\cgalHasModelsBegin CGAL::Range_segment_tree_set_traits_2
-\cgalHasModels CGAL::Range_segment_tree_set_traits_3
-\cgalHasModels CGAL::Range_tree_map_traits_2
-\cgalHasModels CGAL::Range_tree_map_traits_3
-\cgalHasModels CGAL::Segment_tree_map_traits_2
-\cgalHasModels CGAL::Segment_tree_map_traits_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::Range_segment_tree_set_traits_2}
+\cgalModels{CGAL::Range_segment_tree_set_traits_3}
+\cgalModels{CGAL::Range_tree_map_traits_2}
+\cgalModels{CGAL::Range_tree_map_traits_3}
+\cgalModels{CGAL::Segment_tree_map_traits_2}
+\cgalModels{CGAL::Segment_tree_map_traits_3}
 \cgalHasModelsEnd
 
 \cgalHeading{Example}

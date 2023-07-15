@@ -9,16 +9,17 @@ for Cartesian kernels.
 
 \cgalRefines{Field,RealEmbeddable}
 
-\cgalHasModelsBegin float
-\cgalHasModels double
-\cgalHasModels CGAL::Gmpq
-\cgalHasModels CGAL::Interval_nt
-\cgalHasModels CGAL::Interval_nt_advanced
-\cgalHasModels CGAL::Lazy_exact_nt<FieldNumberType>
-\cgalHasModels CGAL::Quotient<RingNumberType>
-\cgalHasModels leda_rational
-\cgalHasModels leda_bigfloat
-\cgalHasModels leda_real
+\cgalHasModelsBegin
+\cgalModels{float}
+\cgalModels{double}
+\cgalModels{CGAL::Gmpq}
+\cgalModels{CGAL::Interval_nt}
+\cgalModels{CGAL::Interval_nt_advanced}
+\cgalModels{CGAL::Lazy_exact_nt<FieldNumberType>}
+\cgalModels{CGAL::Quotient<RingNumberType>}
+\cgalModels{leda_rational}
+\cgalModels{leda_bigfloat}
+\cgalModels{leda_real}
 \cgalHasModelsEnd
 
 \sa `RingNumberType`

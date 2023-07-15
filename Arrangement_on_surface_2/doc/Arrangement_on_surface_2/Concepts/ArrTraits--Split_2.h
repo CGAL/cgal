@@ -4,7 +4,8 @@ namespace ArrTraits {
  *
  * \cgalRefines{Functor}
  *
- * \cgalHasModelsBegin ArrangementXMonotoneTraits_2::Split_2
+ * \cgalHasModelsBegin
+ * \cgalModels{ArrangementXMonotoneTraits_2::Split_2}
  * \cgalHasModelsEnd
  */
 class Split_2 {

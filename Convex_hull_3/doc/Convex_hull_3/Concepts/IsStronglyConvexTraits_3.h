@@ -6,7 +6,9 @@ Requirements of the traits class used by the function
 `CGAL::is_strongly_convex_3()`, which is used for postcondition checking
 by `CGAL::convex_hull_3()`.
 
-\cgalHasModelsBareBegin{All models of `Kernel`} CGAL::Convex_hull_traits_3<R>
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of `Kernel`}
+\cgalHasModels{CGAL::Convex_hull_traits_3<R>}
 \cgalHasModelsEnd
 
 \sa `ConvexHullTraits_3`

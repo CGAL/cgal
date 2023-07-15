@@ -33,7 +33,8 @@ cell classes. The <I>rebound</I> base classes so obtained are the classes
 which are used as base classes for the final vertex and cell classes.
 More information can be found in Section \ref TDS3secdesign.
 
-\cgalHasModelsBegin CGAL::Triangulation_ds_cell_base_3<TDS>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Triangulation_ds_cell_base_3<TDS>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSVertexBase_3`

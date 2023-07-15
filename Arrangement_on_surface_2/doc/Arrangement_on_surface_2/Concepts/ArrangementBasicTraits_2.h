@@ -27,21 +27,22 @@
  *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
- * \cgalHasModelsBegin CGAL::Arr_segment_traits_2<Kernel>
- * \cgalHasModels CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>
- * \cgalHasModels CGAL::Arr_non_caching_segment_traits_2<Kernel>
- * \cgalHasModels CGAL::Arr_linear_traits_2<Kernel>
- * \cgalHasModels CGAL::Arr_polyline_traits_2<SegmentTraits>
- * \cgalHasModels CGAL::Arr_circle_segment_traits_2<Kernel>
- * \cgalHasModels CGAL::Arr_line_arc_traits_2<CircularKernel>
- * \cgalHasModels CGAL::Arr_circular_arc_traits_2<CircularKernel>
- * \cgalHasModels CGAL::Arr_circular_line_arc_traits_2<CircularKernel>
- * \cgalHasModels CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>
- * \cgalHasModels CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>
- * \cgalHasModels CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>
- * \cgalHasModels CGAL::Arr_algebraic_segment_traits_2<Coefficient>
- * \cgalHasModels CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>
- * \cgalHasModels CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>
+ * \cgalHasModelsBegin
+ * \cgalModels{CGAL::Arr_segment_traits_2<Kernel>}
+ * \cgalModels{CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>}
+ * \cgalModels{CGAL::Arr_non_caching_segment_traits_2<Kernel>}
+ * \cgalModels{CGAL::Arr_linear_traits_2<Kernel>}
+ * \cgalModels{CGAL::Arr_polyline_traits_2<SegmentTraits>}
+ * \cgalModels{CGAL::Arr_circle_segment_traits_2<Kernel>}
+ * \cgalModels{CGAL::Arr_line_arc_traits_2<CircularKernel>}
+ * \cgalModels{CGAL::Arr_circular_arc_traits_2<CircularKernel>}
+ * \cgalModels{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}
+ * \cgalModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
+ * \cgalModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
+ * \cgalModels{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
+ * \cgalModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
+ * \cgalModels{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}
+ * \cgalModels{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
  * \cgalHasModelsEnd
  */
 

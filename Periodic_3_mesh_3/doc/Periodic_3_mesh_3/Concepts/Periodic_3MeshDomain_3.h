@@ -20,7 +20,8 @@ The class `CGAL::Labeled_mesh_domain_3<BGT>` paired with a periodic labeling fun
 is a model of this concept. It is possible to create artificially periodic functions
 through the class `CGAL::Periodic_3_function_wrapper<Function,BGT>`.
 
-\cgalHasModelsBegin CGAL::Labeled_mesh_domain_3<BGT>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Labeled_mesh_domain_3<BGT>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Labeled_mesh_domain_3<BG>`

@@ -7,8 +7,9 @@ Most interpolation functions are parameterized by a traits class that
 defines the primitives used in the interpolation algorithms. The concept
 `InterpolationTraits` defines this common set of requirements.
 
-\cgalHasModelsBegin CGAL::Interpolation_traits_2<K>
-\cgalHasModels CGAL::Interpolation_gradient_fitting_traits_2<K>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Interpolation_traits_2<K>}
+\cgalModels{CGAL::Interpolation_gradient_fitting_traits_2<K>}
 \cgalHasModelsEnd
 
 \sa `GradientFittingTraits`

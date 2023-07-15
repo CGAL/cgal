@@ -36,10 +36,11 @@ with respect to the
 
 \cgalRefines{SegmentDelaunayGraphTraits_2}
 
-\cgalHasModelsBegin CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>
-\cgalHasModels CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>
-\cgalHasModels CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>
-\cgalHasModels CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>}
+\cgalModels{CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>}
+\cgalModels{CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\cgalModels{CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 \cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphSite_2`

@@ -8,7 +8,8 @@ capable of storing equations of lines.
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModelsBegin CGAL::Polynomials_for_lines_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::Polynomials_for_lines_3}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForSpheres`

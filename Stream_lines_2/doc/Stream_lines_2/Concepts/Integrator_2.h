@@ -9,8 +9,9 @@ the second template parameter of the class
 provides the operation that integrates a new point from a given point
 with a predefined step, and according to a specified vector.
 
-\cgalHasModelsBegin CGAL::Euler_integrator_2<VectorField_2>
-\cgalHasModels CGAL::Runge_kutta_integrator_2<VectorField_2>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Euler_integrator_2<VectorField_2>}
+\cgalModels{CGAL::Runge_kutta_integrator_2<VectorField_2>}
 \cgalHasModelsEnd
 
 */

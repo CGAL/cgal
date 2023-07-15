@@ -30,7 +30,9 @@ special construction for extensions of degree 2:
 \cgalRefines{DefaultConstructible,CopyConstructible,FromIntConstructible,
   ImplicitInteroperable with `RT`,ImplicitInteroperable with `FT`}
 
-\cgalHasModelsBareBegin{`double` (not exact)} CGAL::Sqrt_extension
+\cgalHasModelsBegin
+\cgalHasModelsBare{`double` (not exact)}
+\cgalHasModels{CGAL::Sqrt_extension}
 \cgalHasModelsEnd
 
 \sa `CGAL::make_root_of_2<RT>`

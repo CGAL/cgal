@@ -14,7 +14,8 @@ functor the version without offsets.
 
 \cgalRefines{TriangulationTraits_3}
 
-\cgalHasModelsBegin CGAL::Periodic_3_triangulation_traits_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::Periodic_3_triangulation_traits_3}
 \cgalHasModelsEnd
 
 \sa `Periodic_3DelaunayTriangulationTraits_3`

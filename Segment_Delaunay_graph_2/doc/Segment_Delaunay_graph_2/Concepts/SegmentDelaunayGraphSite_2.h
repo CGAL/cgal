@@ -8,7 +8,8 @@ requirements for the sites of a segment Delaunay graph.
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModelsBegin CGAL::Segment_Delaunay_graph_site_2<K>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Segment_Delaunay_graph_site_2<K>}
 \cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphTraits_2`

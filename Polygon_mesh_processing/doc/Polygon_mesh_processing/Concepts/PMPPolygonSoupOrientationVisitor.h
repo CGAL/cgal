@@ -7,7 +7,8 @@
 /// during the orientation process.
 ///
 /// \cgalRefines{CopyConstructible}
-/// \cgalHasModelsBegin CGAL::Polygon_mesh_processing::Default_orientation_visitor
+/// \cgalHasModelsBegin
+/// \cgalModels{CGAL::Polygon_mesh_processing::Default_orientation_visitor}
 /// \cgalHasModelsEnd
 
 class PMPPolygonSoupOrientationVisitor{

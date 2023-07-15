@@ -13,8 +13,9 @@ triangulation and the function object types for the required predicates on those
 In particular, the traits class is expected to contain information about the sphere (center and radius)
 on which the points of the triangulation lie, as well as to provide means to change this information.
 
-\cgalHasModelsBegin CGAL::Delaunay_triangulation_on_sphere_traits_2
-\cgalHasModels CGAL::Projection_on_sphere_traits_3
+\cgalHasModelsBegin
+\cgalModels{CGAL::Delaunay_triangulation_on_sphere_traits_2}
+\cgalModels{CGAL::Projection_on_sphere_traits_3}
 \cgalHasModelsEnd
 
 \sa `DelaunayTriangulationOnSphereTraits_2`

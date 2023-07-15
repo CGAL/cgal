@@ -11,7 +11,8 @@ are of a type that is a model of the concept
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModelsBegin GAL::Polynomial_for_spheres_2_
+\cgalHasModelsBegin
+\cgalModels{GAL::Polynomial_for_spheres_2_}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForSpheres`

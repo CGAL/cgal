@@ -5,8 +5,9 @@
 
 \cgalRefines{RegularTriangulationCellBase_3,Periodic_3TriangulationDSCellBase_3}
 
-\cgalHasModelsBegin CGAL::Regular_triangulation_cell_base_3<Periodic_3RegularTriangulationTraits_3, Periodic_3_triangulation_ds_cell_base_3< > >
-\cgalHasModels CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<Periodic_3RegularTriangulationTraits_3, Periodic_3_triangulation_ds_cell_base_3< > >
+\cgalHasModelsBegin
+\cgalModels{CGAL::Regular_triangulation_cell_base_3<Periodic_3RegularTriangulationTraits_3, Periodic_3_triangulation_ds_cell_base_3< > >}
+\cgalModels{CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<Periodic_3RegularTriangulationTraits_3, Periodic_3_triangulation_ds_cell_base_3< > >}
 \cgalHasModelsEnd
 
 The template parameter `Periodic_3RegularTriangulationTraits_3` is expected to be the same as the

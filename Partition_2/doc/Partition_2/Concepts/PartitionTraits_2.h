@@ -8,7 +8,8 @@ common
 to all traits classes. The concept `PartitionTraits_2` defines this common set of
 requirements.
 
-\cgalHasModelsBegin CGAL::Partition_traits_2<R>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Partition_traits_2<R>}
 \cgalHasModelsEnd
 
 \sa `CGAL::approx_convex_partition_2()`

@@ -10,8 +10,10 @@ and can be used directly as template argument.
 
 \cgalRefines{CopyConstructible,Assignable}
 
-\cgalHasModelsBareBegin{All models of the `Kernel` concept, e.g. `CGAL::Simple_cartesian<FieldNumberType>`} CGAL::Polyhedron_traits_3<Kernel>
-\cgalHasModels CGAL::Polyhedron_traits_with_normals_3<Kernel>
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the `Kernel` concept, e.g. `CGAL::Simple_cartesian<FieldNumberType>`}
+\cgalHasModels{CGAL::Polyhedron_traits_3<Kernel>}
+\cgalHasModels{CGAL::Polyhedron_traits_with_normals_3<Kernel>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Polyhedron_3<Traits>`

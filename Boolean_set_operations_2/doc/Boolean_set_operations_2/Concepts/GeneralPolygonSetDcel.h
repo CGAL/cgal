@@ -16,7 +16,8 @@ respectively
 
 \cgalRefines{ArrangementDcel}
 
-\cgalHasModelsBegin CGAL::Gps_default_dcel<Traits>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Gps_default_dcel<Traits>}
 \cgalHasModelsEnd
 
 \sa `GeneralPolygonSetDcelFace`

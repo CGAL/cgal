@@ -6,9 +6,10 @@
 This concept defines the requirements for traits classes of \f$ d\f$-dimensional
 min sphere and min annulus algorithms.
 
-\cgalHasModelsBegin CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>
-\cgalHasModels CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>
-\cgalHasModels CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>}
+\cgalModels{CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>}
+\cgalModels{CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Min_sphere_d<Traits>`

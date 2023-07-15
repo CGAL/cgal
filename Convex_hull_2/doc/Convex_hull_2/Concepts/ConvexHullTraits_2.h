@@ -9,12 +9,13 @@ primitives (objects and predicates) that the convex hull algorithms use.
 functions. The specific subset of these primitives required by each function
 is specified with each function.
 
-\cgalHasModelsBegin CGAL::Convex_hull_constructive_traits_2<R>
-\cgalHasModels CGAL::Convex_hull_traits_2<R>
-\cgalHasModels CGAL::Convex_hull_traits_adapter_2<R>
-\cgalHasModels CGAL::Projection_traits_xy_3<K>
-\cgalHasModels CGAL::Projection_traits_yz_3<K>
-\cgalHasModels CGAL::Projection_traits_xz_3<K>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Convex_hull_constructive_traits_2<R>}
+\cgalModels{CGAL::Convex_hull_traits_2<R>}
+\cgalModels{CGAL::Convex_hull_traits_adapter_2<R>}
+\cgalModels{CGAL::Projection_traits_xy_3<K>}
+\cgalModels{CGAL::Projection_traits_yz_3<K>}
+\cgalModels{CGAL::Projection_traits_xz_3<K>}
 \cgalHasModelsEnd
 
 */

@@ -11,7 +11,8 @@ are of a type that is a model of the concept
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModelsBegin CGAL::Polynomial_for_circles_2_2
+\cgalHasModelsBegin
+\cgalModels{CGAL::Polynomial_for_circles_2_2}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForCircles`

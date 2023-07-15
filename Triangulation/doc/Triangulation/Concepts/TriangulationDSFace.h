@@ -15,7 +15,8 @@ The dimension of a face is implicitly set when
 `TriangulationDSFace::set_index` is called two times to set the
 first two vertices (`i = 0` and `i = 1`), then the dimension is 1.
 
-\cgalHasModelsBegin CGAL::Triangulation_face<TriangulationDataStructure_>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Triangulation_face<TriangulationDataStructure_>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSFullCell`

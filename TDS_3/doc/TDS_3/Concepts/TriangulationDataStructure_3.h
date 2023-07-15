@@ -65,7 +65,8 @@ neighbors of each cell, where the index corresponds to the preceding
 list of cells. When dimension < 3, the same information is stored
 for faces of maximal dimension instead of cells.
 
-\cgalHasModelsBegin CGAL::Triangulation_data_structure_3<Vb, Cb>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Triangulation_data_structure_3<Vb, Cb>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_3::Vertex`

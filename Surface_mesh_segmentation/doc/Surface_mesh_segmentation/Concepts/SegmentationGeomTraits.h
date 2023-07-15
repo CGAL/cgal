@@ -5,7 +5,9 @@
 The concept `SegmentationGeomTraits` describes the set of requirements
 of the geometric traits needed by the segmentation functions.
 
+\cgalHasModelsBegin
 \cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \cgalRefines{AABBGeomTraits}
 

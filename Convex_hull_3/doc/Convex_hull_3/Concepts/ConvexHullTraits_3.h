@@ -4,8 +4,9 @@
 
 Requirements of the traits class of the function `CGAL::convex_hull_3()`.
 
-\cgalHasModelsBegin CGAL::Convex_hull_traits_3<K>
-\cgalHasModels CGAL::Extreme_points_traits_adapter_3<PPM, GT>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Convex_hull_traits_3<K>}
+\cgalModels{CGAL::Extreme_points_traits_adapter_3<PPM, GT>}
 \cgalHasModelsEnd
 
 */

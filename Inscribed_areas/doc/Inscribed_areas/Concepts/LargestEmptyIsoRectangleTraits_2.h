@@ -10,8 +10,9 @@ This concept provides the types of the geometric primitives used in
 this class and some function object types for the required
 predicates on those primitives.
 
-\cgalHasModelsBegin CGAL::Cartesian
-\cgalHasModels CGAL::Homogeneous
+\cgalHasModelsBegin
+\cgalModels{CGAL::Cartesian}
+\cgalModels{CGAL::Homogeneous}
 \cgalHasModelsEnd
 
 \sa `CGAL::Largest_empty_iso_rectangle_2<Traits>`

@@ -8,8 +8,9 @@ general kernel concept. It adds 2 functors, the meaning of which would be
 unclear in kernels of fixed dimension.
 
 \cgalRefines{Kernel_d}
-\cgalHasModelsBegin CGAL::Cartesian_d<FieldNumberType>
-\cgalHasModels CGAL::Homogeneous_d<RingNumberType>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Cartesian_d<FieldNumberType>}
+\cgalModels{CGAL::Homogeneous_d<RingNumberType>}
 \cgalHasModelsEnd
 */
 class KernelWithLifting_d {

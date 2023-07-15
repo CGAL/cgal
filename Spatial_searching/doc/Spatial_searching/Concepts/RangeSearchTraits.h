@@ -8,12 +8,13 @@ range search queries in a model of `SpatialTree`.
 
 \cgalRefines{SearchTraits}
 
-\cgalHasModelsBegin CGAL::Cartesian_d<FT>
-\cgalHasModels CGAL::Homogeneous_d<RT>
-\cgalHasModels CGAL::Epick_d<DimensionTag>
-\cgalHasModels CGAL::Epeck_d<DimensionTag>
-\cgalHasModels CGAL::Search_traits_2<Kernel>
-\cgalHasModels CGAL::Search_traits_3<Kernel>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Cartesian_d<FT>}
+\cgalModels{CGAL::Homogeneous_d<RT>}
+\cgalModels{CGAL::Epick_d<DimensionTag>}
+\cgalModels{CGAL::Epeck_d<DimensionTag>}
+\cgalModels{CGAL::Search_traits_2<Kernel>}
+\cgalModels{CGAL::Search_traits_3<Kernel>}
 \cgalHasModelsEnd
 
 \sa `SearchTraits`

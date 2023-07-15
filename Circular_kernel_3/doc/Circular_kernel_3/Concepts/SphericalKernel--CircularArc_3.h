@@ -7,7 +7,8 @@ Concept for arcs of circles.
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModelsBegin CGAL::Circular_arc_3<SphericalKernel>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Circular_arc_3<SphericalKernel>}
 \cgalHasModelsEnd
 
 */

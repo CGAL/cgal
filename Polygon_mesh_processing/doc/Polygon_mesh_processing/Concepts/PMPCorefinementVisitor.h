@@ -6,7 +6,8 @@
 /// the creation of new faces and new edges.
 ///
 /// \cgalRefines{CopyConstructible}
-/// \cgalHasModelsBegin CGAL::Polygon_mesh_processing::Corefinement::Default_visitor
+/// \cgalHasModelsBegin
+/// \cgalModels{CGAL::Polygon_mesh_processing::Corefinement::Default_visitor}
 /// \cgalHasModelsEnd
 
 class PMPCorefinementVisitor{

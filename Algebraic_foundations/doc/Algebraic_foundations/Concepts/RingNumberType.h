@@ -10,18 +10,20 @@ for Homogeneous kernels.
 
 \cgalRefines{IntegralDomainWithoutDivision,RealEmbeddable}
 
-\cgalHasModelsBareBegin{\cpp built-in number types} CGAL::Gmpq
-\cgalHasModels CGAL::Gmpz
-\cgalHasModels CGAL::Interval_nt
-\cgalHasModels CGAL::Interval_nt_advanced
-\cgalHasModels CGAL::Lazy_exact_nt<RingNumberType>
-\cgalHasModels CGAL::MP_Float
-\cgalHasModels CGAL::Gmpzf
-\cgalHasModels CGAL::Quotient<RingNumberType>
-\cgalHasModels leda_integer
-\cgalHasModels leda_rational
-\cgalHasModels leda_bigfloat
-\cgalHasModels leda_real
+\cgalHasModelsBegin
+\cgalHasModelsBare{\cpp built-in number types}
+\cgalHasModels{CGAL::Gmpq}
+\cgalHasModels{CGAL::Gmpz}
+\cgalHasModels{CGAL::Interval_nt}
+\cgalHasModels{CGAL::Interval_nt_advanced}
+\cgalHasModels{CGAL::Lazy_exact_nt<RingNumberType>}
+\cgalHasModels{CGAL::MP_Float}
+\cgalHasModels{CGAL::Gmpzf}
+\cgalHasModels{CGAL::Quotient<RingNumberType>}
+\cgalHasModels{leda_integer}
+\cgalHasModels{leda_rational}
+\cgalHasModels{leda_bigfloat}
+\cgalHasModels{leda_real}
 \cgalHasModelsEnd
 
 \sa `FieldNumberType`

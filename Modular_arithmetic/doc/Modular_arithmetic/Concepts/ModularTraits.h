@@ -8,7 +8,8 @@ In case this associated type is a model of `Modularizable`, this is indicated by
 Boolean tag `ModularTraits::Is_modularizable`. The mapping into the `Residue_type` is
 provided by the functor `ModularTraits::Modular_image`.
 
-\cgalHasModelsBegin CGAL::Modular_traits<T>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Modular_traits<T>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Residue`

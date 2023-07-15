@@ -9,7 +9,9 @@ define the Intersection_distance functor.
 
 \cgalRefines{AABBGeomTraits}
 
+\cgalHasModelsBegin
 \cgalHasModelsBare{All models of the concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`

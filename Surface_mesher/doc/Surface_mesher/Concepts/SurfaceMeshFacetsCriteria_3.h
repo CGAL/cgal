@@ -33,7 +33,8 @@ is just a lexicographical comparison. The meshing algorithm handles facets
 with lowest quality first. The qualities are computed by a function
 `is_bad(const Facet& f, const Quality& q)`.
 
-\cgalHasModelsBegin CGAL::Surface_mesh_default_criteria_3<Tr>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Surface_mesh_default_criteria_3<Tr>}
 \cgalHasModelsEnd
 
 \sa `CGAL::make_surface_mesh()`

@@ -11,7 +11,8 @@ and to compute some intersection
 points if any exists. The concept `SurfaceMeshTraits_3` also includes a funcctor able to provide
 a small set of initial points on the surface.
 
-\cgalHasModelsBegin CGAL::Surface_mesh_traits_generator_3::type
+\cgalHasModelsBegin
+\cgalModels{CGAL::Surface_mesh_traits_generator_3::type}
 \cgalHasModelsEnd
 
 \sa `CGAL::make_surface_mesh()`

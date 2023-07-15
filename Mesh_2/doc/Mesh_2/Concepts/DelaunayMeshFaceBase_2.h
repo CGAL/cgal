@@ -13,7 +13,8 @@ meshing domain or not.
 
 \cgalRefines{ConstrainedTriangulationFaceBase_2}
 
-\cgalHasModelsBegin CGAL::Delaunay_mesh_face_base_2<Traits, Fb>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Delaunay_mesh_face_base_2<Traits, Fb>}
 \cgalHasModelsEnd
 
 

@@ -9,8 +9,9 @@ The concept does not specify, whether the interval is open or
 closed. It is up to the implementer of a model for this concept
 to define that.
 
-\cgalHasModelsBegin CGAL::Interval_skip_list_interval<Value>
-\cgalHasModels CGAL::Level_interval
+\cgalHasModelsBegin
+\cgalModels{CGAL::Interval_skip_list_interval<Value>}
+\cgalModels{CGAL::Level_interval}
 \cgalHasModelsEnd
 
 \sa `Interval_skip_list`

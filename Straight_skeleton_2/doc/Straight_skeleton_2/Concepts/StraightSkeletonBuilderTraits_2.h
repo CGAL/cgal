@@ -7,7 +7,8 @@
 The concept `StraightSkeletonBuilderTraits_2` describes the requirements
 for the geometric traits class required by the algorithm class `CGAL::Straight_skeleton_builder_2`.
 
-\cgalHasModelsBegin CGAL::Straight_skeleton_builder_traits_2<K>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Straight_skeleton_builder_traits_2<K>}
 \cgalHasModelsEnd
 */
 class StraightSkeletonBuilderTraits_2 {

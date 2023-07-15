@@ -34,7 +34,8 @@ in the face a list to store hidden vertices.
 
 \cgalRefines{TriangulationFaceBase_2}
 
-\cgalHasModelsBegin CGAL::Regular_triangulation_face_base_2
+\cgalHasModelsBegin
+\cgalModels{CGAL::Regular_triangulation_face_base_2}
 \cgalHasModelsEnd
 
 \sa `TriangulationFaceBase_2`

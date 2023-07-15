@@ -12,7 +12,8 @@ to `Periodic_4HyperbolicTriangulationTraits_2` that needs to be fulfilled
 by any class used to instantiate the first template parameter of the class
 `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`.
 
-\cgalHasModelsBegin CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
+\cgalHasModelsBegin
+\cgalModels{CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2}
 \cgalHasModelsEnd
 */
 

@@ -9,7 +9,8 @@
  * represent the arrangement cells (i.e., vertices, edges, and facets) and the
  * incident relations between them.
  *
- * \cgalHasModelsBegin CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2, Dcel>
+ * \cgalHasModelsBegin
+ * \cgalModels{CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2, Dcel>}
  * \cgalHasModelsEnd
  */
 

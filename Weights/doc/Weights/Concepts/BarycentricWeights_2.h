@@ -5,9 +5,10 @@
 A concept that describes the set of methods required in all classes used in
 the computation of 2D generalized barycentric weights.
 
-\cgalHasModelsBegin CGAL::Weights::Wachspress_weights_2
-\cgalHasModels CGAL::Weights::Mean_value_weights_2
-\cgalHasModels CGAL::Weights::Discrete_harmonic_weights_2
+\cgalHasModelsBegin
+\cgalModels{CGAL::Weights::Wachspress_weights_2}
+\cgalModels{CGAL::Weights::Mean_value_weights_2}
+\cgalModels{CGAL::Weights::Discrete_harmonic_weights_2}
 \cgalHasModelsEnd
 */
 class BarycentricWeights_2 {

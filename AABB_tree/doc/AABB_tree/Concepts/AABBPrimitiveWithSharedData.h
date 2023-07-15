@@ -21,9 +21,10 @@ The `Datum` would be a `Triangle_3` and the `Id` a `std::size_t`. The shared dat
 `std::vector<Triangle_3>`.
 The method `datum(const Shared_data&)` then returns a triangle from the vector.
 
-\cgalHasModelsBegin CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_true,CacheDatum>
-\cgalHasModels CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_true,CacheDatum>
-\cgalHasModels CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_true,CacheDatum>
+\cgalHasModelsBegin
+\cgalModels{CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_true,CacheDatum>}
+\cgalModels{CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_true,CacheDatum>}
+\cgalModels{CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_true,CacheDatum>}
 \cgalHasModelsEnd
 */
 

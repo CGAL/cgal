@@ -19,10 +19,12 @@ to compute the squared distance between a point and a line
 
 \cgalRefines{TriangulationTraits_2}
 
-\cgalHasModelsBareBegin{All models of the \cgal concept `Kernel`} CGAL::Projection_traits_3<K>
-\cgalHasModels CGAL::Projection_traits_xy_3<K>
-\cgalHasModels CGAL::Projection_traits_yz_3<K>
-\cgalHasModels CGAL::Projection_traits_xz_3<K>
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModels{CGAL::Projection_traits_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xy_3<K>}
+\cgalHasModels{CGAL::Projection_traits_yz_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xz_3<K>}
 \cgalHasModelsEnd
 
 \sa `TriangulationTraits_2`

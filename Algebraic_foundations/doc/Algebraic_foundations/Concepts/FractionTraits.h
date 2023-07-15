@@ -8,7 +8,8 @@ A model of `FractionTraits` is associated with a type `Type`.
 In case the associated type is a `Fraction`, a model of `FractionTraits` provides the relevant functionality for decomposing and re-composing as well
 as the numerator and denominator type.
 
-\cgalHasModelsBegin CGAL::Fraction_traits<T>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Fraction_traits<T>}
 \cgalHasModelsEnd
 
 \sa `FractionTraits_::Decompose`

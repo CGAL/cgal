@@ -6,7 +6,8 @@ Requirements of a traits class that is used
 by `y_monotone_partition_is_valid_2` for testing the validity of a
 \f$ y\f$-monotone partition of a polygon.
 
-\cgalHasModelsBegin CGAL::Partition_traits_2<R>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Partition_traits_2<R>}
 \cgalHasModelsEnd
 
 \sa `CGAL::partition_is_valid_2()`

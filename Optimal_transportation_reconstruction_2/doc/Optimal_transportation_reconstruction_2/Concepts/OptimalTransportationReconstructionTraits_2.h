@@ -8,8 +8,10 @@ for the traits class of `CGAL::Optimal_transportation_reconstruction_2`.
 
 \cgalRefines{DelaunayTriangulationTraits_2}
 
-\cgalHasModelsBare{All models of the \cgal concept `Kernel`,
-                   `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)}
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsBare{`CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)}
+\cgalHasModelsEnd
 
 \sa `CGAL::Optimal_transportation_reconstruction_2`
 

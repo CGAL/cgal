@@ -9,7 +9,9 @@ primitives (objects and predicates) that the sorting algorithms use.
 `SpatialSortingTraits_2` defines the complete set of primitives required in these
 functions and functors.
 
-\cgalHasModelsBareBegin{All models of the \cgal concept `Kernel`} CGAL::Spatial_sort_traits_adapter_2<Base_traits,PointPropertyMap>
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModels{CGAL::Spatial_sort_traits_adapter_2<Base_traits,PointPropertyMap>}
 \cgalHasModelsEnd
 
 */

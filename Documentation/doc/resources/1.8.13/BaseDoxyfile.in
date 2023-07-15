@@ -146,12 +146,10 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalModelsBare{2}=<dl><dt>@cgalModelsHeader</dt><dd>\1</dd><dt></dt><dd>\2</dd></dl>" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
                          "cgalHasModelsHeader=Has models" \
-                         "cgalHasModelsBegin=<dl><dt>@cgalHasModelsHeader</dt><dd>`" \
-                         "cgalHasModels=`</dd><dt></dt><dd>`" \
-                         "cgalHasModelsEnd=`</dd></dl>" \
-                         "cgalHasModelsBare{1}=<dl><dt>@cgalHasModelsHeader</dt><dd>\1</dd></dl>" \
-                         "cgalHasModelsBare{2}=<dl><dt>@cgalHasModelsHeader</dt><dd>\1</dd><dt></dt><dd>\2</dd></dl>" \
-                         "cgalHasModelsBareBegin{1}=<dl><dt>@cgalHasModelsHeader</dt><dd>\1</dd><dt></dt><dd>`" \
+                         "cgalHasModelsBegin=<dl><dt>@cgalHasModelsHeader</dt><dd></dd>" \
+                         "cgalHasModels{1}=<dt></dt><dd>`\1`</dd>" \
+                         "cgalHasModelsBare{1}=<dt></dt><dd>\1</dd>" \
+                         "cgalHasModelsEnd=</dl>" \
                          "cgalDebugBegin=\htmlonly <div class=\"CGALDebug\"> <div>Debugging Support</div> \endhtmlonly \n" \
                          "cgalDebugEnd=\htmlonly </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \

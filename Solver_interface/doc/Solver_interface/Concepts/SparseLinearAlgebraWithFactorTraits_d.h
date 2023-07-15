@@ -8,7 +8,8 @@ method to solve the system for different right-hand vectors.
 
 \cgalRefines{SparseLinearAlgebraTraits_d}
 
-\cgalHasModelsBegin CGAL::Eigen_solver_traits<T>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Eigen_solver_traits<T>}
 \cgalHasModelsEnd
 */
 class SparseLinearAlgebraWithFactorTraits_d {

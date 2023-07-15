@@ -12,7 +12,8 @@ We only list below the additional specific requirements of ::TriangulationVertex
 Compared to ::TriangulationDSVertex, the main difference is the addition of
 an association of the vertex with a geometric point.
 
-\cgalHasModelsBegin CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>}
 \cgalHasModelsEnd
 
 \cgalHeading{Input/Output}

@@ -13,7 +13,8 @@ elements, which share common edges and vertices. These finite elements are then
 used to approximate certain types of generalized barycentric coordinate functions.
 The domain is bounded by the polygon.
 
-\cgalHasModelsBegin Delaunay_domain_2
+\cgalHasModelsBegin
+\cgalModels{Delaunay_domain_2}
 \cgalHasModelsEnd
 */
 class DiscretizedDomain_2 {

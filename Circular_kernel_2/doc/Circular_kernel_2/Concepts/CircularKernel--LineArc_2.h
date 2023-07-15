@@ -9,7 +9,8 @@ Concept for line segments supported by a line that is a model of
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModelsBegin CGAL::Line_arc_2<CircularKernel>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Line_arc_2<CircularKernel>}
 \cgalHasModelsEnd
 
 */

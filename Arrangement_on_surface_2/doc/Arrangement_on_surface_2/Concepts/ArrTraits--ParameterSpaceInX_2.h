@@ -5,9 +5,10 @@ namespace ArrTraits {
  *
  * \cgalRefines{AdaptableBinaryFunction}
  *
- * \cgalHasModelsBegin ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
- * \cgalHasModels ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2
- * \cgalHasModels ArrangementSphericalBoundaryTraits_2::Parameter_space_in_x_2
+ * \cgalHasModelsBegin
+ * \cgalModels{ArrangementVerticalSideTraits_2::Parameter_space_in_x_2}
+ * \cgalModels{ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2}
+ * \cgalModels{ArrangementSphericalBoundaryTraits_2::Parameter_space_in_x_2}
  * \cgalHasModelsEnd
  */
 class ParameterSpaceInX_2 {

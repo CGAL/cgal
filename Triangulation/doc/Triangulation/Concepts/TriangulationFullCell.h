@@ -10,7 +10,8 @@ represent a full cell.
 \cgalRefines{TriangulationDSFullCell We only list below the
 additional specific requirements of `TriangulationFullCell`}
 
-\cgalHasModelsBegin CGAL::Triangulation_full_cell<TriangulationTraits_, TriangulationDSFullCell_>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Triangulation_full_cell<TriangulationTraits_, TriangulationDSFullCell_>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`

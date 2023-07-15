@@ -9,7 +9,8 @@ to represent the underlying internal `Arrangement_2` data structure.
 
 \cgalRefines{ArrangementDcelFace}
 
-\cgalHasModelsBegin CGAL::Gps_face_base
+\cgalHasModelsBegin
+\cgalModels{CGAL::Gps_face_base}
 \cgalHasModelsEnd
 
 \sa `ArrangementDcel`

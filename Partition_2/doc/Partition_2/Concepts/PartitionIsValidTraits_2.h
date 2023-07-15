@@ -14,7 +14,8 @@ function `CGAL::is_convex_2()`
 and the concept `YMonotonePartitionTraits_2` for the additional requirements
 for testing for convexity and \f$ y\f$-monotonicity, respectively.
 
-\cgalHasModelsBegin CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
 \cgalHasModelsEnd
 
 \sa `CGAL::approx_convex_partition_2()`

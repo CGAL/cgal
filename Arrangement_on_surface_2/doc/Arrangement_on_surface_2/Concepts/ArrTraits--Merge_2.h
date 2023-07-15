@@ -5,7 +5,8 @@ namespace ArrTraits {
  *
  * \cgalRefines{Functor}
  *
- * \cgalHasModelsBegin ArrangementXMonotoneTraits_2::Merge_2
+ * \cgalHasModelsBegin
+ * \cgalModels{ArrangementXMonotoneTraits_2::Merge_2}
  * \cgalHasModelsEnd
  */
 class Merge_2 {

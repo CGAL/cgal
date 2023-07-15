@@ -9,7 +9,9 @@ primitives (objects and predicates) that the sorting algorithms use.
 `SpatialSortingTraits_d` defines the complete set of primitives required in these
 functions and functors.
 
-\cgalHasModelsBareBegin{Any \cgal `d`-dimensional kernel.} CGAL::Spatial_sort_traits_adapter_d<Base_traits,PointPropertyMap>
+\cgalHasModelsBegin
+\cgalHasModelsBare{Any \cgal `d`-dimensional kernel.}
+\cgalHasModels{CGAL::Spatial_sort_traits_adapter_d<Base_traits,PointPropertyMap>}
 \cgalHasModelsEnd
 
 */

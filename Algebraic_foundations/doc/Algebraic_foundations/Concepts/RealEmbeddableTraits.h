@@ -7,7 +7,8 @@ A model of `RealEmbeddableTraits` is associated to a number type
 `Type` and reflects the properties of this type with respect
 to the concept `RealEmbeddable`.
 
-\cgalHasModelsBegin CGAL::Real_embeddable_traits<T>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Real_embeddable_traits<T>}
 \cgalHasModelsEnd
 */
 

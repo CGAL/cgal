@@ -12,8 +12,9 @@ it provides a type `Site_2`, which must be a model of the concept
 constructions for sites and several function object
 types for the predicates.
 
-\cgalHasModelsBegin CGAL::Apollonius_graph_traits_2<K,Method_tag>
-\cgalHasModels CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Apollonius_graph_traits_2<K,Method_tag>}
+\cgalModels{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>`

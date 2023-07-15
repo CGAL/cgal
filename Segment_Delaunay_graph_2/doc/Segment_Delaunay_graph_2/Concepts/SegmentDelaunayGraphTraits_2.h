@@ -14,10 +14,11 @@ the concept `SegmentDelaunayGraphSite_2`. It also provides
 constructions for sites and several function object
 types for the predicates.
 
-\cgalHasModelsBegin CGAL::Segment_Delaunay_graph_traits_2<K,MTag>
-\cgalHasModels CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>
-\cgalHasModels CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>
-\cgalHasModels CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}
+\cgalModels{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}
+\cgalModels{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\cgalModels{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 \cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphSite_2`

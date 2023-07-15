@@ -14,8 +14,9 @@ traits must refine `SpatialSortingTraits_d`. The insertion is
 then optimized using spatial sorting.
 This is not required if the points are inserted one by one.
 
-\cgalHasModelsBegin CGAL::Epick_d<Dim>
-\cgalHasModels CGAL::Epeck_d<Dim>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Epick_d<Dim>}
+\cgalModels{CGAL::Epeck_d<Dim>}
 \cgalHasModelsEnd
 
 \sa `DelaunayTriangulationTraits`

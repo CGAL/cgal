@@ -5,9 +5,10 @@
   The concept `OrthtreeTraits` defines the requirements for the
   template parameter of the `CGAL::Orthtree` class.
 
-  \cgalHasModelsBegin galHasModel `CGAL::Orthtree_traits_2<GeomTraits>
-  \cgalHasModels CGAL::Orthtree_traits_3<GeomTraits>
-  \cgalHasModels CGAL::Orthtree_traits_d<GeomTraits,Dimension>
+  \cgalHasModelsBegin
+  \cgalModels{CGAL::Orthtree_traits_2<GeomTraits>}
+  \cgalModels{CGAL::Orthtree_traits_3<GeomTraits>}
+  \cgalModels{CGAL::Orthtree_traits_d<GeomTraits,Dimension>}
   \cgalHasModelsEnd
 */
 class OrthtreeTraits

@@ -19,7 +19,8 @@ then the triangulation is not an orientable triangulated surface without boundar
 In this case, fictitious faces are added to the triangulation, called <i>ghost faces</i>,
 such that the triangulation is a topological sphere.
 
-\cgalHasModelsBegin CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`

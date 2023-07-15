@@ -7,9 +7,10 @@
 Requirements of the traits class to be used with the
 class `CGAL::Convex_hull_d`.
 
-\cgalHasModelsBegin CGAL::Cartesian_d<FT,LA>
-\cgalHasModels CGAL::Homogeneous_d<RT,LA>
-\cgalHasModels CGAL::Convex_hull_d_traits_3<R>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Cartesian_d<FT,LA>}
+\cgalModels{CGAL::Homogeneous_d<RT,LA>}
+\cgalModels{CGAL::Convex_hull_d_traits_3<R>}
 \cgalHasModelsEnd
 
 */

@@ -6,7 +6,8 @@ namespace ArrTraits {
  * represents a general planar curve.
  *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
- * \cgalHasModelsBegin ArrangementTraits_2::Curve_2
+ * \cgalHasModelsBegin
+ * \cgalModels{ArrangementTraits_2::Curve_2}
  * \cgalHasModelsEnd
  */
 class Curve_2 {

@@ -7,7 +7,8 @@ The concept `AABBRayIntersectionTraits` is a refinement of the concept
 `AABBTraits` it also requires function objects to calculate the
 distance of an intersection along a ray.
 
-\cgalHasModelsBegin CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>
+\cgalHasModelsBegin
+\cgalModels{CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>}
 \cgalHasModelsEnd
 
 \sa `CGAL::AABB_tree<AABBTraits>`

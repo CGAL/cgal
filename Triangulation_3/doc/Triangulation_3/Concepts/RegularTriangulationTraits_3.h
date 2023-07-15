@@ -15,7 +15,9 @@ or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 
 \cgalRefines{TriangulationTraits_3}
 
+\cgalHasModelsBegin
 \cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Regular_triangulation_3`
 

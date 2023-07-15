@@ -16,13 +16,14 @@ as its <I>source</I> and the other as its <I>target</I>.
 
 \cgalRefines{ArrangementXMonotoneTraits_2}
 
-\cgalHasModelsBegin CGAL::Arr_segment_traits_2<Kernel>
-\cgalHasModels CGAL::Arr_non_caching_segment_traits_2<Kernel>
-\cgalHasModels CGAL::Arr_circle_segment_traits_2<Kernel>
-\cgalHasModels CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>
-\cgalHasModels CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>
-\cgalHasModels CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>
-\cgalHasModels CGAL::Arr_algebraic_segment_traits_2<Coefficient>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Arr_segment_traits_2<Kernel>}
+\cgalModels{CGAL::Arr_non_caching_segment_traits_2<Kernel>}
+\cgalModels{CGAL::Arr_circle_segment_traits_2<Kernel>}
+\cgalModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
+\cgalModels{CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>}
+\cgalModels{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
+\cgalModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
 \cgalHasModelsEnd
 
 \sa `ArrangementXMonotoneTraits_2`

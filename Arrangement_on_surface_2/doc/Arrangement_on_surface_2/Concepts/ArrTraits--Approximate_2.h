@@ -5,7 +5,8 @@ namespace ArrTraits {
  *
  * \cgalRefines{Functor}
  *
- * \cgalHasModelsBegin ArrangementApproximateTraits_2::Approximate_2
+ * \cgalHasModelsBegin
+ * \cgalModels{ArrangementApproximateTraits_2::Approximate_2}
  * \cgalHasModelsEnd
  */
 class Approximate_2 {

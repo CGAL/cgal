@@ -12,7 +12,8 @@ sites. The container stores the hidden sites related to the vertex.
 
 \cgalRefines{TriangulationVertexBase_2}
 
-\cgalHasModelsBegin CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>
+\cgalHasModelsBegin
+\cgalModels{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
 \cgalHasModelsEnd
 
 \sa `ApolloniusGraphDataStructure_2`

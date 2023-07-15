@@ -9,7 +9,8 @@
 /// If that fails, it uses an algorithm with cubic running time (*cubic phase*).
 ///
 /// \cgalRefines{CopyConstructible}
-/// \cgalHasModelsBegin CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor
+/// \cgalHasModelsBegin
+/// \cgalModels{CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor}
 /// \cgalHasModelsEnd
 
 class PMPHolefillingVisitor{

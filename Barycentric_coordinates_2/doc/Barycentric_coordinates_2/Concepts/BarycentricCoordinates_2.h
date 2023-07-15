@@ -8,9 +8,10 @@ namespace Barycentric_coordinates {
 A concept that describes the set of methods that should be defined for all coordinate
 models used to parameterize the class `Generalized_barycentric_coordinates_2`.
 
-\cgalHasModelsBegin Wachspress_2
-\cgalHasModels Mean_value_2
-\cgalHasModels Discrete_harmonic_2
+\cgalHasModelsBegin
+\cgalModels{Wachspress_2}
+\cgalModels{Mean_value_2}
+\cgalModels{Discrete_harmonic_2}
 \cgalHasModelsEnd
 
 \deprecated This part of the package is deprecated since the version 5.4 of \cgal.

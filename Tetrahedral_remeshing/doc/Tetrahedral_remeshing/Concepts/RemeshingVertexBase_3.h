@@ -6,7 +6,8 @@
 
 Vertex base concept to be used in the triangulation type given to the function `CGAL::tetrahedral_isotropic_remeshing()`.
 
-\cgalHasModelsBegin Tetrahedral_remeshing::Remeshing_vertex_base_3
+\cgalHasModelsBegin
+\cgalModels{Tetrahedral_remeshing::Remeshing_vertex_base_3}
 \cgalHasModelsEnd
 
 */

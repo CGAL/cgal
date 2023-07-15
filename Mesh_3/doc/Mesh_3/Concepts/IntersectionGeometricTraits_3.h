@@ -9,7 +9,9 @@ forming its boundary.
 The concept `IntersectionGeometricTraits_3` mainly provides the detection
 and construction of intersections between segments and triangles.
 
+\cgalHasModelsBegin
 \cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `BisectionGeometricTraits_3`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
