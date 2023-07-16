@@ -172,7 +172,7 @@ typename Kernel::Vector_3 nvt_normal_denoising(
   Eigen::Vector3d delta_vn = new_nvt * vn;
   Vector delta_n(delta_vn[0], delta_vn[1], delta_vn[2]);
 
-  Vector new_normal = damping_factor * n + delta_n;\
+  Vector new_normal = damping_factor * n + delta_n;
   new_normal = new_normal / (CGAL::approximate_sqrt(new_normal.squared_length()));
 
   return new_normal;
@@ -200,23 +200,29 @@ Eigen::MatrixXd calculate_covariance_matrix(
   const Point& p = get(point_map, vt);
   const Vector& n = get(normal_map, vt);
 
+  // std::cout << p << std::endl;
+
   for (typename PointRange::iterator it : neighbor_pwns)
   {
     const Point& np = get(point_map, *it);
     const Vector& nn = get(normal_map, *it);
+
+    // std::cout << np << std::endl;
 
     FT angle_difference = CGAL::approximate_angle(n, nn);
     // std::cout << angle_difference << std::endl;
     if(angle_difference <= normal_threshold) {
       w += 1;
       // Eigen::Vector3d vn(n.x(), n.y(), n.z());
-      Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
+      Eigen::Vector3d vnp(np.x(), np.y(), np.z());
 
-      vbar += vnn;
+      vbar += vnp;
     }
   }
 
   vbar /= w;
+
+  // std::cout << vbar << std::endl << std::endl;
 
   for (typename PointRange::iterator it : neighbor_pwns)
   {
@@ -227,9 +233,12 @@ Eigen::MatrixXd calculate_covariance_matrix(
     // std::cout << angle_difference << std::endl;
     if(angle_difference <= normal_threshold) {
       // Eigen::Vector3d vn(n.x(), n.y(), n.z());
-      Eigen::Vector3d vnn(nn.x(), nn.y(), nn.z());
+      Eigen::Vector3d vnp(np.x(), np.y(), np.z());
+      Eigen::Vector3d cov_temp = vnp - vbar;
 
-      covm += (vnn - vbar) * (vnn - vbar).transpose();
+      covm += cov_temp * (cov_temp.transpose());
+
+      // std::cout << (vnp - vbar) << std::endl << std::endl;
     }
   }
 
@@ -258,6 +267,7 @@ point_type_t feature_detection(
 
   std::cout << covm << std::endl << std::endl;
   std::cout << eigens.first << std::endl << std::endl;
+  // std::cout << eigens.second << std::endl << std::endl;
 
   int dominant_eigenvalue_count = 0;
 
