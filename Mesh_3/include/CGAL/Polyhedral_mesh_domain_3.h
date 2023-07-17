@@ -687,54 +687,112 @@ Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Construct_initial_points::operator()(OutputIterator pts,
                                      const int n) const
 {
-  typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
-  typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
+  typedef typename std::pair<Point_3, Index> Point_with_index;
 
-  const Bounding_box bbox = r_domain_.tree_.bbox();
-  const Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
-                        FT( (bbox.ymin() + bbox.ymax()) / 2),
-                        FT( (bbox.zmin() + bbox.zmax()) / 2) );
-
-  CGAL::Random& rng = *(r_domain_.p_rng_ != 0 ?
-                        r_domain_.p_rng_ :
-                        new Random(0));
-  Random_points_on_sphere_3<Point_3> random_point(1., rng);
-
-  int i = n;
 # ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "construct initial points:" << std::endl;
 # endif
-  // Point construction by ray shooting from the center of the enclosing bbox
-  while ( i > 0 )
+
+  CGAL_precondition(!r_domain_.tree_.empty());
+
+  const Bounding_box bbox = r_domain_.tree_.bbox();
+
+  // The initialization proceeds as follows:
+  // - Generate a grid of n' points with n' > n, to get good candidates
+  // - Project them onto the surface
+  // - Grid snap to avoid very close points (ideally that would depend on the sizing field)
+  // - Keep the n closest points
+
+  const int n_prime = 10 * n;
+  const int n_dir = std::ceil(std::cbrt(n_prime));
+
+  std::vector<Point_3> grid_points;
+  grid_points.reserve(n_dir * n_dir * n_dir);
+
+  // generate points in the bounding bbox
+  for(int i=0; i<n_dir; ++i) {
+    for(int j=0; j<n_dir; ++j) {
+      for(int k=0; k<n_dir; ++k)
+      {
+        grid_points.emplace_back(bbox.xmin() + (bbox.xmax() - bbox.xmin()) * i / (n_dir - 1),
+                                 bbox.ymin() + (bbox.ymax() - bbox.ymin()) * j / (n_dir - 1),
+                                 bbox.zmin() + (bbox.zmax() - bbox.zmin()) * k / (n_dir - 1));
+      }
+    }
+  }
+
+  // project the points onto the domain
+  std::set<Point_with_index> projected_points;
+
+  // @todo trivial to parallelize
+  for(const Point_3& gp : grid_points)
   {
-    const Ray_3 ray_shot = ray(center, vector(CGAL::ORIGIN,*random_point));
+    typename AABB_tree_::Point_and_primitive_id cp_and_p = r_domain_.tree_.closest_point_and_primitive(gp);
+    auto index = r_domain_.index_from_surface_patch_index(
+                   r_domain_.make_surface_index(cp_and_p.second /*primitive ID*/));
+    projected_points.emplace(cp_and_p.first, index);
+  }
 
-#ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-    Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
-    if(std::get<2>(intersection) != 0) {
-#else
-    if(r_domain_.do_intersect_surface_object()(ray_shot)) {
-      Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
-#endif
-      *pts++ = std::make_pair(std::get<0>(intersection),
-                              std::get<1>(intersection));
+  CGAL_warning(projected_points.size() > n);
 
-      --i;
+  // n farthest points
+  std::vector<Point_with_index> initial_points;
+
+  // start with a random point
+  CGAL::Random& rng = *(r_domain_.p_rng_ != 0 ? r_domain_.p_rng_ : new Random(0));
+
+  auto it = projected_points.begin();
+  std::advance(it, rng.get_int(0, projected_points.size()));
+  initial_points.push_back(*it);
+
+  // for each next initial point, take the point farthest from all existing initial points
+  while(initial_points.size() < static_cast<std::size_t>(n))
+  {
+    const Point_with_index* next_ip = nullptr;
+    FT farthest_distance = FT(0);
+
+    for(const Point_with_index& pp : projected_points)
+    {
+      FT min_distance = FT(std::numeric_limits<double>::max());
+      for(const Point_with_index& ip : initial_points)
+        min_distance = (std::min)(min_distance, CGAL::squared_distance(pp.first, ip.first));
+
+      if(min_distance > farthest_distance)
+      {
+        farthest_distance = min_distance;
+        next_ip = &pp;
+      }
+    }
+
+    if(is_zero(farthest_distance))
+      break;
+
+    initial_points.emplace_back(*next_ip);
 
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "%1%/%2% initial point(s) found...")
-        % (n - i)
+        % initial_points.size()
         % n;
 # endif
-    }
-    ++random_point;
   }
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << std::endl;
+
+  for(const Point_with_index& ip : initial_points)
+    std::cerr << "\t" << ip.first << std::endl;
+
+  if(initial_points.size() != n)
+    std::cerr << "Warning: failed to construct " << n << " initial points" << std::endl;
 #endif
-  if(r_domain_.p_rng_ == 0) delete &rng;
+
+  for(const Point_with_index& ip : initial_points)
+    *pts++ = ip;
+
+  if(r_domain_.p_rng_ == nullptr)
+    delete &rng;
+
   return pts;
 }
 
