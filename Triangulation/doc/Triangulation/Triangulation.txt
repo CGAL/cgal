@@ -347,8 +347,8 @@ ask the triangulation to construct the set of edges
 (\f$ 1\f$ dimensional faces) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices
-(include files <tt>triangulation1.cpp</tt> and
-<tt>triangulation2.cpp</tt> are given and commented below).
+(include files <tt>triangulation1.h</tt> and
+<tt>triangulation2.h</tt> are given and commented below).
 
 \cgalExample{triangulation.cpp}
 
@@ -368,14 +368,14 @@ there are (at least) two possibilities:
 The first is to iterate over the full cells of the triangulation and check if they
 are infinite or not:
 
-\cgalExample{triangulation1.cpp}
+\cgalExample{triangulation1.h}
 
 A second possibility is to ask the triangulation to gather all the full cells
 incident to the infinite vertex: they form precisely the set of infinite
 full cells:
 
 
-\cgalExample{triangulation2.cpp}
+\cgalExample{triangulation2.h}
 
 One important difference between the two examples above is that the first uses
 <I>little</I> memory but traverses <I>all</I> the full cells, while the second
