@@ -227,6 +227,7 @@ CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_rat
 CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)
 CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedral_angle)
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
+CGAL_add_named_parameter(optimize_boundary_anchor_location_t, optimize_boundary_anchor_location, optimize_boundary_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 
 // tetrahedral remeshing parameters
