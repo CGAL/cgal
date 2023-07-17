@@ -15,6 +15,7 @@ public:
 
 protected:
   virtual void mouse_move_event(QMouseEvent* e) override;
+  virtual void mouse_release_event(QMouseEvent* e) override;
 
 private:
 };

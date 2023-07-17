@@ -89,10 +89,11 @@ source_group( "GUI"  FILES ${source_files_gui} )
 #SOURCE FILES (NOT CATEGORIZED YET)
 file(GLOB source_files   
   Common_defs.h
-                            main.cpp
-  Main_widget.h             Main_widget.cpp
+                      main.cpp
+  Main_widget.h       Main_widget.cpp
+  Message_manager.h   Message_manager.cpp
   Timer.h
-  Tools.h                   Tools.cpp
+  Tools.h             Tools.cpp
  )
 source_group( "Source Files"  FILES ${source_files} )
 

@@ -12,6 +12,7 @@
 #include "Camera_manip_rot_bpa.h"
 #include "Camera_manip_zoom.h"
 #include "Kml_reader.h"
+#include "Message_manager.h"
 #include "Shapefile.h"
 #include "Timer.h"
 #include "Tools.h"
@@ -46,6 +47,15 @@ void Main_widget::timerEvent(QTimerEvent*)
 {
   update();
 }
+
+//class GUI_event_handler
+//{
+//public:
+//  void keyPressEvent(QKeyEvent* event);
+//
+//protected:
+//  virtual void key_press_event(QKeyEvent* event);
+//};
 
 void Main_widget::keyPressEvent(QKeyEvent* event)
 {
@@ -192,10 +202,8 @@ void Main_widget::initializeGL()
   init_geometry();
   init_shader_programs();
 
-  {
-    ScopedTimer("init_country_borders");
-    init_country_borders();
-  }
+  init_country_borders(0.001);
+  init_country_selection();
 
   glClearColor(0, 0, 0, 1);
   glEnable(GL_DEPTH_TEST);  // Enable depth buffer
@@ -205,13 +213,22 @@ void Main_widget::initializeGL()
   m_timer.start(12, this);
 }
 
-
 void Main_widget::init_camera()
 {
   m_camera.set_pos(0, 0, 3);
   m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
   //m_camera_manip_rot = std::make_unique<Camera_manip_rot_bpa>(m_camera);
   m_camera_manip_zoom = std::make_unique<Camera_manip_zoom>(m_camera);
+
+  // register the zoom-changed function
+  Message_manager::add("zoom_changed", [&] 
+    { 
+      qDebug() << "ZOOM CHANGED!!!"; 
+      const auto error = compute_backprojected_error(0.5);
+      qDebug() << "new error = " << error;
+      //qDebug() << "re-initializing the country borders..";
+      //init_country_borders(error);
+    });
 }
 void Main_widget::init_geometry()
 {
@@ -239,16 +256,17 @@ void Main_widget::init_shader_programs()
   m_sp_arc.init_with_vs_fs("arc");
 }
 
-void Main_widget::init_country_borders()
+void Main_widget::init_country_borders(float error)
 {
   // TO-DO: move this code to resizeGL (when viewport is initialized)
   // has to be defined after camera has been defined:
   // because we want to compute the error based on camera parameters!
   //Geodesic_arcs ga;
-  const double error = 0.001; // calculate this from cam parameters!
+  //const double error = 0.001; // calculate this from cam parameters!
   //auto lsa = Aos::get_approx_arcs(countries, error);
   //auto lsa = Aos::get_approx_arcs(error);
   //m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
+  m_country_borders.clear();
   for (const auto& country : m_countries)
   {
     m_country_names.push_back(country.name);
@@ -256,6 +274,9 @@ void Main_widget::init_country_borders()
     auto country_border = std::make_unique<Line_strips>(approx_arcs);
     m_country_borders.push_back(std::move(country_border));
   }
+}
+void Main_widget::init_country_selection()
+{
   m_selected_country_index = 0;
   //m_selected_country_index = 159; // ANTARCTICA
   m_selected_country = &m_countries[m_selected_country_index];

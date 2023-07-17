@@ -50,7 +50,8 @@ protected:
   void init_geometry();  
   void init_shader_programs();
 
-  void init_country_borders();
+  void init_country_borders(float error);
+  void init_country_selection();
   
 
   float compute_backprojected_error(float pixel_error);
