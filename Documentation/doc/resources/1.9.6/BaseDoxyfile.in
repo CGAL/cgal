@@ -793,5 +793,5 @@ GENERATE_LEGEND        = NO
 # NO_ADDITIONAL_DETAILS tag is set to YES. This tag has no effect if
 # the EXTRACT_ALL tag is set to NO.
 # The default value is: NO.
-NO_ADDITIONAL_DETAILS = YES
+${CGAL_OPT_NO_ADDITIONAL_DETAILS}
 
