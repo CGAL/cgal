@@ -558,8 +558,8 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     switch(Or) {
     case 3: {
       if(regular_case) {
-        CGAL_triangulation_assertion(li == outside); CGAL_USE(outside);
-        CGAL_triangulation_assertion(!inside); CGAL_USE(inside);
+        CGAL_triangulation_assertion(li == outside);
+        CGAL_triangulation_assertion(!inside);
       }
       return {{cur_cell, Tr::FACET, li}, {next, Tr::FACET, next->index(cur_cell)}};
     }
