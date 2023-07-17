@@ -34,8 +34,18 @@ public:
   // OUTPUT: vertices created during arrangement construction
   static std::vector<QVector3D> ext_check(const Kml::Placemarks& placemarks);
 
-
+  // Same as above function but works by identifying the duplicate nodes 
   static std::vector<QVector3D> ext_check_id_based(Kml::Placemarks& placemarks);
+
+  // This function is used to find the newly-created faces during arrangement
+  // construction. It uses the extended DCEL structure (see: above 2 functions).
+  // NOTE: The need for this function arises due to the following observation:
+  // when constructing the arrangement from our data-set I observed a newly
+  // created face which is not defined explicitly in the data-set. My intiution
+  // tells me that this is the Caspian sea, because it is the only land-locked
+  // polygon whose boundaries are not defined in the data-set and its boundaries
+  // are defined indirecly by its surrounding countries.
+  static Approx_arcs find_new_faces(Kml::Placemarks& placemarks);
 };
 
 

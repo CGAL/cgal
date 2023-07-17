@@ -454,27 +454,6 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
     {
       num_counted_polygons++;
 
-      //auto& pnodes = polygon.outer_boundary.nodes;
-      //int num_nodes = pnodes.size();
-      //for (int i = 0; i < num_nodes - 1; ++i)
-      //{
-      //  num_counted_arcs++;
-      //  const auto node1 = pnodes[i];
-      //  const auto node2 = pnodes[i + 1];
-      //  auto n1 = node1.get_coords_3d();
-      //  auto n2 = node2.get_coords_3d();
-      //  auto p1 = ctr_p(n1.x, n1.y, n1.z);
-      //  auto p2 = ctr_p(n2.x, n2.y, n2.z);
-      //  
-      //  //std::cout << p1 << std::endl;
-      //  //std::cout << p2 << std::endl;
-      //  //Segment s(p1, p2);
-      //  //auto v1 = vertices[nid1];
-      //  //auto v2 = vertices[nid2];
-      //  //arr.insert_at_vertices(Segment(p1, p2), v1, v2);
-      //  CGAL::insert(arr, ctr_cv(p1, p2));
-      //}
-
       // TO DO : ADD the outer boundaries!
       auto& ids = polygon.outer_boundary.ids;
       int num_nodes = ids.size();
@@ -483,29 +462,16 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
         num_counted_arcs++;
         const auto nid1 = ids[i];
         const auto nid2 = ids[i + 1];
-        //assert(nodes[nid1] == polygon.outer_boundary.nodes[i]);
-        //assert(nodes[nid2] == polygon.outer_boundary.nodes[i+1]);
         auto p1 = points[nid1];
         auto p2 = points[nid2];
-        //std::cout << p1 << std::endl;
-        //std::cout << p2 << std::endl;
-        //Segment s(p1, p2);
-        //auto v1 = vertices[nid1];
-        //auto v2 = vertices[nid2];
-        //Segment s(v1->point(), v2->point());
-        //arr.insert_from_left_vertex()
-        //arr.insert_at_vertices(s, v1, v2);
-        //arr.insert_at_vertices(Segment(p1, p2), v1, v2);
         CGAL::insert(arr, ctr_cv(p1,p2));
       }
     }
   }
 
-
   std::cout << "-------------------------------\n";
   std::cout << "num arr vertices (before adding arcs) = " <<
     arr.number_of_vertices() << std::endl;
-
 
   // extract all vertices that are ADDED when inserting the arcs!
   int num_created_vertices = 0;
@@ -565,4 +531,96 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
   std::cout << "num arr faces = " << arr.number_of_faces() << std::endl;
 
   return created_vertices;
+}
+
+
+Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
+{
+  Geom_traits traits;
+  Ext_aos arr(&traits);
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+  using Face_handle = Ext_aos::Face_handle;
+  auto fh = arr.faces_begin();
+  std::cout << "num faces = " << arr.number_of_faces() << std::endl;
+  
+
+  num_counted_nodes = 0;
+  num_counted_arcs = 0;
+  num_counted_polygons = 0;
+  std::vector<Curve>  xcvs;
+  for (auto& pm : placemarks)
+  {
+    // define a set of vertex-handles: use this to check if the face is 
+    // obtained from the polygon definition, or if it is an additional face
+    std::set<Ext_aos::Vertex_handle> polygon_vertices;
+
+    for (auto& polygon : pm.polygons)
+    {
+      num_counted_polygons++;
+
+      // mark all faces as TRUE (= as existing faces)
+      for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+      {
+        fh->data().v = true;
+      }
+
+      // colect all rings into a single list (FOR NOW!!!)
+      // TO-DO: PROCESS OUTER & INNER BOUNDARIES SEPARATELY!!!
+      auto linear_rings = polygon.get_all_boundaries();
+      //Kml::LinearRings linear_rings;
+      //linear_rings.push_back(polygon.outer_boundary);
+      //for (const auto& inner_boundary : polygon.inner_boundaries)
+      //  linear_rings.push_back(inner_boundary);
+
+      // loop on outer and inner boundaries 
+      for (auto* lring : linear_rings)
+      {
+        // convert the nodes to points on unit-sphere
+        std::vector<Approximate_Vector_3>  sphere_points;
+        for (const auto& node : lring->nodes)
+        {
+          num_counted_nodes++;
+          const auto p = node.get_coords_3d();
+          Approximate_Vector_3  v(p.x, p.y, p.z);
+          sphere_points.push_back(v);
+          auto vh = CGAL::insert_point(arr, ctr_p(p.x, p.y, p.z));
+          polygon_vertices.insert(vh);
+          //if constexpr (std::is_same<Arr_type, Ext_aos>::value)
+          //{
+          //  vertex_node_map.insert(std::make_pair(vh, node));
+          //}
+        }
+
+        // add curves
+        int num_points = sphere_points.size();
+        for (int i = 0; i < num_points - 1; i++)
+        {
+          num_counted_arcs++;
+          const auto p1 = sphere_points[i];
+          const auto p2 = sphere_points[i + 1];
+          auto xcv = ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
+                            ctr_p(p2.x(), p2.y(), p2.z()));
+          //xcvs.push_back(xcv);
+          CGAL::insert(arr, xcv);
+        }
+
+        // check newly created faces
+        int num_new_faces = 0;
+        for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+        {
+          if (false == fh->data().v)
+            num_new_faces++;
+        }
+        std::cout << "num new faces = " << num_new_faces << std::endl;
+        if (num_new_faces != 1)
+        {
+          std::cout << "*** country = " << pm.name << std::endl;
+        }
+      }
+    }
+  }
+
+  return Approx_arcs{};
 }

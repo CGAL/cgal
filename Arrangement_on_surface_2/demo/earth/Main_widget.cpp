@@ -176,6 +176,10 @@ void Main_widget::initializeGL()
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
+
+  {
+    Aos::find_new_faces(m_countries);
+  }
   
   // initialize rendering of DUPLICATE VERTICES
   if(1)
