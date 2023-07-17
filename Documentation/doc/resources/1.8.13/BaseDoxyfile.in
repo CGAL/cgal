@@ -276,7 +276,7 @@ EXTRACT_ALL            = YES
 # the EXTRACT_ALL tag is set to NO.
 # The default value is: NO.
 
-EXTRACT_ALL_NO_DETAILED_IF_EMPTY                                        = YES
+${CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY}
 
 # If the EXTRACT_STATIC tag is set to YES, all static members of a file will be
 # included in the documentation.
