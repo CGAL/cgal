@@ -256,6 +256,10 @@ struct Exact_ring_selector<leda_rational>
 template <>
 struct Exact_field_selector<leda_real>
 { typedef leda_real  Type; };
+
+template <>
+struct Exact_ring_selector<leda_real>
+{ typedef leda_real  Type; };
 #endif
 
 #ifdef CGAL_USE_CORE
