@@ -202,7 +202,8 @@ void Main_widget::initializeGL()
   init_geometry();
   init_shader_programs();
 
-  init_country_borders(0.001);
+  m_current_approx_error = 0.001;
+  init_country_borders(m_current_approx_error);
   init_country_selection();
 
   glClearColor(0, 0, 0, 1);
@@ -212,6 +213,7 @@ void Main_widget::initializeGL()
   // Use QBasicTimer because its faster than QTimer
   m_timer.start(12, this);
 }
+
 
 void Main_widget::init_camera()
 {
@@ -224,8 +226,9 @@ void Main_widget::init_camera()
   Message_manager::add("zoom_changed", [&] 
     { 
       qDebug() << "ZOOM CHANGED!!!"; 
-      const auto error = compute_backprojected_error(0.5);
-      qDebug() << "new error = " << error;
+      //const auto error = compute_backprojected_error(0.5);
+      //qDebug() << "new error = " << error;
+      m_update_approx_error = true;
       //qDebug() << "re-initializing the country borders..";
       //init_country_borders(error);
     });
@@ -404,9 +407,8 @@ void Main_widget::resizeGL(int w, int h)
   const qreal z_near = 0.1, z_far = 100.0, fov = 45.0;
   m_camera.perspective(fov, aspect, z_near, z_far);
 
-  // compute the world-space error for the given pixel-error
-  const auto err = compute_backprojected_error(0.5f);
-  std::cout << "error = " << err << std::endl;
+  // signal to look into the approximation error
+  m_update_approx_error = true;
 }
 
 template<typename T>
@@ -418,6 +420,19 @@ void draw_safe(T& ptr)
 
 void Main_widget::paintGL()
 {
+  if (m_update_approx_error)
+  {
+    const auto error = compute_backprojected_error(0.5);
+    qDebug() << "new approx error = " << error;
+    qDebug() << "current error = " << m_current_approx_error;
+    if(error < m_current_approx_error)
+    {
+      init_country_borders(error);
+      m_current_approx_error = error;
+    }
+    m_update_approx_error = false;
+  }
+
   QMatrix4x4 model;
   model.rotate(-90, 1,0,0); // this makes z-axes point upwards!
   const auto view = m_camera.get_view_matrix();

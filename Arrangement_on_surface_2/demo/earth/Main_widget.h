@@ -98,6 +98,13 @@ private:
   // view-port 
   int m_vp_width = 0, m_vp_height = 0;
 
+  // After zooming in or making the viewport larger, the approximation-error
+  // needs to be updated and checked against the old value. If a lower approxi-
+  // mation error is needed the necessary graphics-side updates need to be made
+  // INSIDE the paintGL (or whereever the OpenGL context is active)!
+  bool m_update_approx_error = false;
+  float m_current_approx_error;
+
   // Timer for continuous screen-updates
   QBasicTimer m_timer;
 };
