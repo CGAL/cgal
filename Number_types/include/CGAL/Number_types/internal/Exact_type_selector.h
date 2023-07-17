@@ -162,23 +162,22 @@ struct Exact_field_selector;
 template < typename >
 struct Exact_ring_selector;
 
-template <>
-struct Exact_ring_selector<double>
-{
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Ring_for_float;
+#define CGAL_EXACT_SELECTORS_SPECS(X) \
+template <> \
+struct Exact_ring_selector<X> \
+{ \
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Ring_for_float; \
+}; \
+\
+template <> \
+struct Exact_field_selector<X> \
+{ \
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational; \
 };
 
-template <>
-struct Exact_field_selector<double>
-{
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational;
-};
-
-template <>
-struct Exact_ring_selector<float> : Exact_ring_selector<double> { };
-
-template <>
-struct Exact_field_selector<float> : Exact_field_selector<double> { };
+CGAL_EXACT_SELECTORS_SPECS(double)
+CGAL_EXACT_SELECTORS_SPECS(float)
+CGAL_EXACT_SELECTORS_SPECS(int)
 
 template <>
 struct Exact_field_selector<MP_Float>
@@ -329,5 +328,7 @@ struct Exact_type_selector : Exact_field_selector< ET > {};
 #endif
 
 } } // namespace CGAL::internal
+
+#undef CGAL_EXACT_SELECTORS_SPECS
 
 #endif // CGAL_INTERNAL_EXACT_TYPE_SELECTOR_H
