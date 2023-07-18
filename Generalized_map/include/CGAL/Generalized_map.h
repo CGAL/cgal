@@ -1038,7 +1038,7 @@ namespace CGAL {
     }
 
     /** Unmark all the darts of the map for a given mark.
-     * If all the darts are marked or unmarked, this operation takes O(1)
+     * If all the darts are marked or unmarked, this operation takes \cgalBigO{1}
      * operations, otherwise it traverses all the darts of the map.
      * @param amark the given mark.
      */

@@ -1370,7 +1370,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
 void MainWindow::selectionChanged()
 {
   scene->setSelectedItemIndex(getSelectedSceneItemIndex());
-  scene->setSelectedItemsList(getSelectedSceneItemIndices());
+  scene->setSelectedItemIndices(getSelectedSceneItemIndices());
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   Q_FOREACH(CGAL::QGLViewer* vi, CGAL::QGLViewer::QGLViewerPool())
   {
@@ -2134,7 +2134,7 @@ void MainWindow::on_actionEraseAll_triggered()
   QList<int> all_ids;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
     all_ids.push_back(i);
-  scene->setSelectedItemsList(all_ids);
+  scene->setSelectedItemIndices(all_ids);
   on_actionErase_triggered();
 }
 

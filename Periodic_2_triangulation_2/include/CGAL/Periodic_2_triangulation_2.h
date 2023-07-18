@@ -119,12 +119,21 @@ public:
   /// Unique_vertex_iterator iterates over exactly one representative.
   typedef Periodic_2_triangulation_unique_vertex_iterator_2<Self>
   Unique_vertex_iterator;
+  /// Iterator over the canonical edges, i.e. for each set of periodic copies the
+  /// Unique_edge_iterator iterates over exactly one representative.
+  typedef Periodic_2_triangulation_unique_edge_iterator_2<Self>
+  Unique_edge_iterator;
+  /// Iterator over the canonical faces, i.e. for each set of periodic copies the
+  /// Unique_face_iterator iterates over exactly one representative.
+  typedef Periodic_2_triangulation_unique_face_iterator_2<Self>
+  Unique_face_iterator;
 
   /// \name For compatibility with the Triangulation_2 class
   // \{
   typedef Face_iterator Finite_faces_iterator;
   typedef Edge_iterator Finite_edges_iterator;
   typedef Vertex_iterator Finite_vertices_iterator;
+  typedef Vertex_iterator All_vertices_iterator;
   typedef Face_iterator All_faces_iterator;
   // \}
 
@@ -381,10 +390,11 @@ public:
   /// Checks whether the triangulation is a valid simplicial complex in the one cover.
   bool is_triangulation_in_1_sheet() const;
 
-  /// Convert a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
+  /// Converts a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
   /// \pre !is_1_cover();
   void convert_to_1_sheeted_covering();
-  /// Convert a single sheeted cover (used for dense triangulations) to a 9 sheeted cover.
+
+  /// Converts a single sheeted cover (used for dense triangulations) to a 9 sheeted cover.
   /// \pre is_1_cover();
   void convert_to_9_sheeted_covering();
   // \}
@@ -673,6 +683,32 @@ public:
   Unique_vertex_iterator unique_vertices_end() const
   {
     return CGAL::filter_iterator(vertices_end(),
+                                 Periodic_2_triangulation_2_internal::Domain_tester<Self>(this));
+  }
+
+  Unique_edge_iterator unique_edges_begin() const
+  {
+    return CGAL::filter_iterator(edges_end(),
+                                 Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
+                                 edges_begin());
+  }
+  /// past-the-end iterator over the canonical edges
+  Unique_edge_iterator unique_edges_end() const
+  {
+    return CGAL::filter_iterator(edges_end(),
+                                 Periodic_2_triangulation_2_internal::Domain_tester<Self>(this));
+  }
+
+  Unique_face_iterator unique_faces_begin() const
+  {
+    return CGAL::filter_iterator(faces_end(),
+                                 Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
+                                 faces_begin());
+  }
+  /// past-the-end iterator over the non-virtual vertices
+  Unique_face_iterator unique_faces_end() const
+  {
+    return CGAL::filter_iterator(faces_end(),
                                  Periodic_2_triangulation_2_internal::Domain_tester<Self>(this));
   }
 
@@ -972,6 +1008,32 @@ public:
       return Offset();
   }
 
+  // Gets the canonicalized offsets of a face.
+  void get_offsets(Face_handle fh,
+                   Offset& off0, Offset& off1, Offset& off2) const
+  {
+    Offset face_off0 = int_to_off(fh->offset(0));
+    Offset face_off1 = int_to_off(fh->offset(1));
+    Offset face_off2 = int_to_off(fh->offset(2));
+    Offset diff_off((face_off0.x() == 1 && face_off1.x() == 1 && face_off2.x() == 1) ? -1 : 0,
+                    (face_off0.y() == 1 && face_off1.y() == 1 && face_off2.y() == 1) ? -1 : 0);
+    off0 = combine_offsets(get_offset(fh, 0), diff_off);
+    off1 = combine_offsets(get_offset(fh, 1), diff_off);
+    off2 = combine_offsets(get_offset(fh, 2), diff_off);
+  }
+
+  // Gets the canonicalized offsets of an edge.
+  void get_offsets(const Edge& e,
+                   Offset& off0, Offset& off1) const
+  {
+    Offset edge_off0 = int_to_off(e.first->offset(cw(e.second)));
+    Offset edge_off1 = int_to_off(e.first->offset(ccw(e.second)));
+    Offset diff_off((edge_off0.x() == 1 && edge_off1.x() == 1) ? -1 : 0,
+                    (edge_off0.y() == 1 && edge_off1.y() == 1) ? -1 : 0);
+    off0 = combine_offsets(get_offset(e.first, cw(e.second)), diff_off);
+    off1 = combine_offsets(get_offset(e.first, ccw(e.second)), diff_off);
+  }
+
   /// Converts an offset to a bit pattern where bit1==offx and bit0==offy.
   int off_to_int(const Offset & off) const
   {
@@ -986,13 +1048,12 @@ public:
     return Offset((i >> 1) & 1, i & 1);
   }
 
-  // \}
-  // Protected functions of Periodic_2_triangulation_2
-  /// Const accessor to the virtual vertices reverse map,
-  /// used to optimize point location for periodic copies.
-  const Virtual_vertex_reverse_map &virtual_vertices_reverse() const
+  /// Tests whether a vertex is a periodic copy of a vertex in the 3-cover.
+    bool is_virtual(Vertex_handle v) const
   {
-    return _virtual_vertices_reverse;
+    if (is_1_cover())
+      return false;
+    return (_virtual_vertices.find(v) != _virtual_vertices.end());
   }
 
   /// [Undoc] Returns the non-virtual copy of the vertex.
@@ -1007,15 +1068,6 @@ public:
       return vh;
   }
 
-
-  /// Tests whether a vertex is a periodic copy of a vertex in the 3-cover.
-  bool is_virtual(Vertex_handle v)
-  {
-    if (is_1_cover())
-      return false;
-    return (_virtual_vertices.find(v) != _virtual_vertices.end());
-  }
-
   const std::vector<Vertex_handle>& periodic_copies(const Vertex_handle v) const
   {
     CGAL_precondition(number_of_sheets() != make_array(1, 1) );
@@ -1024,6 +1076,77 @@ public:
     return _virtual_vertices_reverse.find(v)->second;
   }
 
+  // Protected functions of Periodic_2_triangulation_2
+  /// Const accessor to the virtual vertices reverse map,
+  /// used to optimize point location for periodic copies.
+  const Virtual_vertex_reverse_map& virtual_vertices_reverse() const
+  {
+    return _virtual_vertices_reverse;
+  }
+
+  // check whether pos points onto a unique edge or not.
+  // If we are computing in 1-sheeted covering this should
+  // always be true.
+  bool is_canonical(Face_handle fh) const
+  {
+    if(is_1_cover())
+      return true;
+
+    Offset off0, off1, off2;
+    get_offsets(fh, off0, off1, off2);
+
+    // If there is one offset with entries larger than 1 then we are
+    // talking about a vertex that is too far away from the original
+    // domain to belong to a canonical triangle.
+    if (off0.x() > 1) return false;
+    if (off0.y() > 1) return false;
+    if (off1.x() > 1) return false;
+    if (off1.y() > 1) return false;
+    if (off2.x() > 1) return false;
+    if (off2.y() > 1) return false;
+
+    // If there is one direction of space for which all offsets are
+    // non-zero then the edge is not canonical because we can
+    // take the copy closer towards the origin in that direction.
+    int offx = off0.x() & off1.x() & off2.x();
+    int offy = off0.y() & off1.y() & off2.y();
+
+    return (offx == 0 && offy == 0);
+  }
+
+  bool is_canonical(const Edge& e) const
+  {
+    if(is_1_cover())
+      return true;
+
+    // fetch all offsets
+    Offset off0, off1;
+    get_offsets(e, off0, off1);
+
+    // If there is one offset with entries larger than 1 then we are
+    // talking about a vertex that is too far away from the original
+    // domain to belong to a canonical edge.
+    if (off0.x() > 1) return false;
+    if (off0.y() > 1) return false;
+    if (off1.x() > 1) return false;
+    if (off1.y() > 1) return false;
+
+    // If there is one direction of space for which all offsets are
+    // non-zero then the edge is not canonical because we can
+    // take the copy closer towards the origin in that direction.
+    int offx = off0.x() & off1.x();
+    int offy = off0.y() & off1.y();
+
+    return (offx == 0 && offy == 0);
+  }
+
+  // checks whether pos points onto a vertex inside the original domain
+  bool is_canonical(Vertex_handle vh) const
+  {
+    return !is_virtual(vh);
+  }
+
+public:
   template<class Stream>
   Stream& draw_triangulation(Stream& os) const
   {

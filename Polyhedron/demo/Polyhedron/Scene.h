@@ -195,8 +195,10 @@ public Q_SLOTS:
       ++i;
     }
   }
+
   //! Sets the target list of indices as the selected indices.
-  QList<int> setSelectedItemsList(QList<int> l )
+  const QList<int>& setSelectedItemIndices(QList<int> l,
+                                           const bool do_emit = true)
   {
     Q_FOREACH(int i,l)
     {
@@ -206,13 +208,38 @@ public Q_SLOTS:
        {
          QList<int> list;
          Q_FOREACH(Item_id id, group->getChildrenForSelection())
-           list<<id;
-         l << setSelectedItemsList(list);
+           list << id;
+         l << setSelectedItemIndices(list, false /*do not emit*/);
        }
 
     }
     selected_items_list = l;
-    return l;
+    if(do_emit)
+      Q_EMIT itemIndicesSelected(selected_items_list);
+    return selected_items_list;
+  }
+
+    //! Sets the target list of indices as the selected indices.
+  const QList<int>& setSelectedItemList(QList<int> l,
+                                        const bool do_emit = true)
+  {
+    Q_FOREACH(int i,l)
+    {
+       CGAL::Three::Scene_group_item* group =
+               qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
+       if(group)
+       {
+         QList<int> list;
+         Q_FOREACH(Item_id id, group->getChildrenForSelection())
+           list << id;
+         l << setSelectedItemList(list, false /*do not emit*/);
+       }
+    }
+
+    selected_items_list = l;
+    if(do_emit)
+      Q_EMIT selectionChanged(selected_items_list);
+    return selected_items_list;
   }
 
   // Accessors (setters)
@@ -249,6 +276,8 @@ Q_SIGNALS:
   void selectionChanged(QList<int> is);
   //! Used when you don't want to update the selectedItem in the Geometric Objects view.
   void itemIndexSelected(int i);
+  //! Used when you don't want to update the selectedItem in the Geometric Objects view.
+  void itemIndicesSelected(QList<int> is);
   //! Emit this to reset the collapsed state of all groups after the Geometric Objects view has been redrawn.
   void restoreCollapsedState();
   //! Is emitted when draw() is finished.
