@@ -697,6 +697,8 @@ Construct_initial_points::operator()(OutputIterator pts,
 
   const Bounding_box bbox = r_domain_.tree_.bbox();
 
+  CGAL::Random& rng = *(r_domain_.p_rng_ != 0 ? r_domain_.p_rng_ : new Random(0));
+
   // The initialization proceeds as follows:
   // - Generate a grid of n' points with n' > n, to get good candidates
   // - Project them onto the surface
@@ -714,9 +716,20 @@ Construct_initial_points::operator()(OutputIterator pts,
     for(int j=0; j<n_dir; ++j) {
       for(int k=0; k<n_dir; ++k)
       {
-        grid_points.emplace_back(bbox.xmin() + (bbox.xmax() - bbox.xmin()) * i / (n_dir - 1),
-                                 bbox.ymin() + (bbox.ymax() - bbox.ymin()) * j / (n_dir - 1),
-                                 bbox.zmin() + (bbox.zmax() - bbox.zmin()) * k / (n_dir - 1));
+#if 0
+        Point_3 ip(bbox.xmin() + (bbox.xmax() - bbox.xmin()) * i / (n_dir - 1),
+                   bbox.ymin() + (bbox.ymax() - bbox.ymin()) * j / (n_dir - 1),
+                   bbox.zmin() + (bbox.zmax() - bbox.zmin()) * k / (n_dir - 1));
+#else
+        Point_3 ip(bbox.xmin() + (bbox.xmax() - bbox.xmin()) * i / (n_dir - 1) +
+                     0.1 * rng.get_double(-1., 1.) * (bbox.xmax() - bbox.xmin()) / n_dir,
+                   bbox.ymin() + (bbox.ymax() - bbox.ymin()) * j / (n_dir - 1) +
+                     0.1 * rng.get_double(-1., 1.) * (bbox.ymax() - bbox.ymin()) / n_dir,
+                   bbox.zmin() + (bbox.zmax() - bbox.zmin()) * k / (n_dir - 1) +
+                     0.1 * rng.get_double(-1., 1.) * (bbox.zmax() - bbox.zmin()) / n_dir);
+#endif
+
+        grid_points.push_back(ip);
       }
     }
   }
@@ -739,8 +752,6 @@ Construct_initial_points::operator()(OutputIterator pts,
   std::vector<Point_with_index> initial_points;
 
   // start with a random point
-  CGAL::Random& rng = *(r_domain_.p_rng_ != 0 ? r_domain_.p_rng_ : new Random(0));
-
   auto it = projected_points.begin();
   std::advance(it, rng.get_int(0, projected_points.size()));
   initial_points.push_back(*it);
