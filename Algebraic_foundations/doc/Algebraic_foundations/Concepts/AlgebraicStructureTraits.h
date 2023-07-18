@@ -29,7 +29,7 @@ algebraic operations within that structure.
 \sa `CGAL::Field_with_root_of_tag`
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Algebraic_structure_traits<T>}
+\cgalHasModels{CGAL::Algebraic_structure_traits<T>}
 \cgalHasModelsEnd
 
 */

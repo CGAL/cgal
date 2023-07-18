@@ -10,7 +10,7 @@ The concept `MeshCellCriteria_3` describes the types that
 handle the refinement criteria for mesh tetrahedra.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Mesh_cell_criteria_3<Tr>}
+\cgalHasModels{CGAL::Mesh_cell_criteria_3<Tr>}
 \cgalHasModelsEnd
 
 \sa `MeshEdgeCriteria_3`

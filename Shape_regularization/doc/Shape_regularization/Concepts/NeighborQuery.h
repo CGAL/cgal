@@ -10,7 +10,7 @@ A concept that describes the set of methods used by the class
 a geometric object being regularized.
 
 \cgalHasModelsBegin
-\cgalModels{Segments::Delaunay_neighbor_query_2}
+\cgalHasModels{Segments::Delaunay_neighbor_query_2}
 \cgalHasModelsEnd
 */
 class NeighborQuery {

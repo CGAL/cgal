@@ -12,7 +12,7 @@ some function object types for the required predicates on those primitives.
 \cgalRefines{ArrangementTraits_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Snap_rounding_traits_2<Kernel>}
+\cgalHasModels{CGAL::Snap_rounding_traits_2<Kernel>}
 \cgalHasModelsEnd
 */
 

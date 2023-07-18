@@ -7,7 +7,7 @@ This concept defines the requirements for traits classes of
 `CGAL::Min_circle_2<Traits>`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Min_circle_2_traits_2<K>}
+\cgalHasModels{CGAL::Min_circle_2_traits_2<K>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Min_circle_2<Traits>`

@@ -17,9 +17,9 @@ and to an index characteristic of this face.
 \cgalRefines{TriangulationVertexBase_3}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Mesh_vertex_base_3}
-\cgalModels{CGAL::Simplicial_mesh_vertex_base_3}
-\cgalModels{CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3}
+\cgalHasModels{CGAL::Mesh_vertex_base_3}
+\cgalHasModels{CGAL::Simplicial_mesh_vertex_base_3}
+\cgalHasModels{CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3}
 \cgalHasModelsEnd
 
 */

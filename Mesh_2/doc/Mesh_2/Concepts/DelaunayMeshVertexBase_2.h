@@ -14,7 +14,7 @@ the mesh density everywhere while modifying the mesh.
 \cgalRefines{TriangulationVertexBase_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Delaunay_mesh_vertex_base_2<Traits, Vb>}
+\cgalHasModels{CGAL::Delaunay_mesh_vertex_base_2<Traits, Vb>}
 \cgalHasModelsEnd
 
 

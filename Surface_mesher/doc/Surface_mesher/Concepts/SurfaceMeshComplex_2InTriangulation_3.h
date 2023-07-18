@@ -31,7 +31,7 @@ parameter in the
 function template `CGAL::make_surface_mesh()`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>}
+\cgalHasModels{CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>}
 \cgalHasModelsEnd
 
 \sa `CGAL::make_surface_mesh()`

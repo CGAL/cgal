@@ -13,7 +13,7 @@ in the contour and skeleton vertices. However, for any halfedge, there is a 2D s
 given by its `source` and `target` vertices.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Straight_skeleton_halfedge_base_2}
+\cgalHasModels{CGAL::Straight_skeleton_halfedge_base_2}
 \cgalHasModelsEnd
 
 \sa `StraightSkeleton_2`

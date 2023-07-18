@@ -10,7 +10,7 @@ used to represent a straight skeleton. It refines the concept
 `Vertex`, `Halfedge`, and `Face` of the halfedge data structure.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Straight_skeleton_2}
+\cgalHasModels{CGAL::Straight_skeleton_2}
 \cgalHasModelsEnd
 
 \attention This concept explicitly protects all the modifying

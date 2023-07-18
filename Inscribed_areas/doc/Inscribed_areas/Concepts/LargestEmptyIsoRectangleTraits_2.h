@@ -11,8 +11,8 @@ this class and some function object types for the required
 predicates on those primitives.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Cartesian}
-\cgalModels{CGAL::Homogeneous}
+\cgalHasModels{CGAL::Cartesian}
+\cgalHasModels{CGAL::Homogeneous}
 \cgalHasModelsEnd
 
 \sa `CGAL::Largest_empty_iso_rectangle_2<Traits>`

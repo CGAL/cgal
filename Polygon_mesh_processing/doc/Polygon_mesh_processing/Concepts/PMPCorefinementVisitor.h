@@ -7,7 +7,7 @@
 ///
 /// \cgalRefines{CopyConstructible}
 /// \cgalHasModelsBegin
-/// \cgalModels{CGAL::Polygon_mesh_processing::Corefinement::Default_visitor}
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Corefinement::Default_visitor}
 /// \cgalHasModelsEnd
 
 class PMPCorefinementVisitor{

@@ -12,8 +12,8 @@ To the requirements listed within the concept `TriangulationOnSphereTraits_2`,
 this concept adds types and functors requirements related to build the dual on the sphere.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Delaunay_triangulation_on_sphere_traits_2}
-\cgalModels{CGAL::Projection_on_sphere_traits_3}
+\cgalHasModels{CGAL::Delaunay_triangulation_on_sphere_traits_2}
+\cgalHasModels{CGAL::Projection_on_sphere_traits_3}
 \cgalHasModelsEnd
 */
 class DelaunayTriangulationOnSphereTraits_2

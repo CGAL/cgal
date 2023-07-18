@@ -8,7 +8,7 @@ in three variables `x`, `y` and `z` that are models of concept
 `AlgebraicKernelForSpheres::PolynomialForSpheres_2_3`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Root_for_spheres_2_3}
+\cgalHasModels{CGAL::Root_for_spheres_2_3}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForSpheres`

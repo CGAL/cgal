@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableBinaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementBasicTraits_2::Equal_2}
+ * \cgalHasModels{ArrangementBasicTraits_2::Equal_2}
  * \cgalHasModelsEnd
  */
 class Equal_2 {

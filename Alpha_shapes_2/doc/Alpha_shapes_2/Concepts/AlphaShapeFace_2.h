@@ -10,7 +10,7 @@ The concept `AlphaShapeFace_2` describes the requirements for the base face of a
   Periodic_2TriangulationFaceBase_2 if the underlying triangulation of the alpha shape is a periodic triangulation}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Alpha_shape_face_base_2 (templated with the appropriate triangulation face base class)}
+\cgalHasModels{CGAL::Alpha_shape_face_base_2 (templated with the appropriate triangulation face base class)}
 \cgalHasModelsEnd
 
 */

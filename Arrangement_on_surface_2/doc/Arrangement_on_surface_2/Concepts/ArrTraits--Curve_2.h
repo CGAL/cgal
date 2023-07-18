@@ -7,7 +7,7 @@ namespace ArrTraits {
  *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementTraits_2::Curve_2}
+ * \cgalHasModels{ArrangementTraits_2::Curve_2}
  * \cgalHasModelsEnd
  */
 class Curve_2 {

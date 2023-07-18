@@ -9,7 +9,7 @@ set using the functions `min_rectangle_2()`,
 `min_parallelogram_2()` and `min_strip_2()`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Min_quadrilateral_default_traits_2<K>}
+\cgalHasModels{CGAL::Min_quadrilateral_default_traits_2<K>}
 \cgalHasModelsEnd
 
 \sa `CGAL::min_rectangle_2()`

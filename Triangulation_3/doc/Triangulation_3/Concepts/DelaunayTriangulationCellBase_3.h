@@ -12,8 +12,8 @@ in the cell an operator that computes its circumcenter.
 \cgalRefines{TriangulationCellBase_3}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Delaunay_triangulation_cell_base_3}
-\cgalModels{CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3}
+\cgalHasModels{CGAL::Delaunay_triangulation_cell_base_3}
+\cgalHasModels{CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3}
 \cgalHasModelsEnd
 
 \sa `DelaunayTriangulationTraits_3`

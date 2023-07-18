@@ -9,8 +9,8 @@
  * the holes.
  *
  * \cgalHasModelsBegin
- * \cgalModels{CGAL::General_polygon_with_holes_2<Polygon>}
- * \cgalModels{CGAL::Polygon_with_holes_2<Kernel,Container>}
+ * \cgalHasModels{CGAL::General_polygon_with_holes_2<Polygon>}
+ * \cgalHasModels{CGAL::Polygon_with_holes_2<Kernel,Container>}
  * \cgalHasModelsEnd
  */
 

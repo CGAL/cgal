@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementXMonotoneTraits_2::Intersect_2}
+ * \cgalHasModels{ArrangementXMonotoneTraits_2::Intersect_2}
  * \cgalHasModelsEnd
  */
 class Intersect_2 {

@@ -6,7 +6,7 @@ The concept `RandomConvexSetTraits_2` describes the requirements of the traits
 class for the function `random_convex_set_2()`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Random_convex_set_traits_2<Kernel>}
+\cgalHasModels{CGAL::Random_convex_set_traits_2<Kernel>}
 \cgalHasModelsEnd
 
 */

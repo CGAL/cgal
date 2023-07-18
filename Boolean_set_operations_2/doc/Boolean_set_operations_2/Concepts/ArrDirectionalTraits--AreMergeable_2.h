@@ -6,7 +6,7 @@ namespace ArrDirectionalTraits {
 \cgalRefines{AdaptableBinaryFunction}
 
 \cgalHasModelsBegin
-\cgalModels{ArrangementDirectionalXMonotoneTraits_2::Are_mergeable_2}
+\cgalHasModels{ArrangementDirectionalXMonotoneTraits_2::Are_mergeable_2}
 \cgalHasModelsEnd
 
 */

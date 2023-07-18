@@ -21,7 +21,7 @@ is a model of this concept. It is possible to create artificially periodic funct
 through the class `CGAL::Periodic_3_function_wrapper<Function,BGT>`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Labeled_mesh_domain_3<BGT>}
+\cgalHasModels{CGAL::Labeled_mesh_domain_3<BGT>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Labeled_mesh_domain_3<BG>`

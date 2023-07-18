@@ -14,8 +14,8 @@ In particular, the traits class is expected to contain information about the sph
 on which the points of the triangulation lie, as well as to provide means to change this information.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Delaunay_triangulation_on_sphere_traits_2}
-\cgalModels{CGAL::Projection_on_sphere_traits_3}
+\cgalHasModels{CGAL::Delaunay_triangulation_on_sphere_traits_2}
+\cgalHasModels{CGAL::Projection_on_sphere_traits_3}
 \cgalHasModelsEnd
 
 \sa `DelaunayTriangulationOnSphereTraits_2`

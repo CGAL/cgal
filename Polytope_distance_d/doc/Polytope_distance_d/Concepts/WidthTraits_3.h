@@ -13,7 +13,7 @@ width-algorithm to have access to the homogeneous representation of
 points.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Width_default_traits_3}
+\cgalHasModels{CGAL::Width_default_traits_3}
 \cgalHasModelsEnd
 
 \sa `CGAL::Width_3<Traits>`

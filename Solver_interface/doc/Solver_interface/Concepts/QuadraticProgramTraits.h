@@ -25,7 +25,7 @@ where \f$ u_i \in \mathbb{R} \cup \{+\infty\} \f$ for all \f$ i \f$.
 </UL>
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::OSQP_quadratic_program_traits<T>}
+\cgalHasModels{CGAL::OSQP_quadratic_program_traits<T>}
 \cgalHasModelsEnd
 */
 class QuadraticProgramTraits {

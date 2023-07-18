@@ -13,9 +13,9 @@ or can be intentionally returned to prevent the edge from being collapsed.
 \cgalRefines{DefaultConstructible,CopyConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Surface_mesh_simplification::Edge_length_cost<TriangleMesh>}
-\cgalModels{CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>}
-\cgalModels{CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::Edge_length_cost<TriangleMesh>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>}
 \cgalHasModelsEnd
 
 */

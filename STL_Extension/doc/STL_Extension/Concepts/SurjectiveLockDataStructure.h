@@ -22,7 +22,7 @@ is the \"thing\" that is locked when one tries to lock `object`.
 In the previous example, `S(point)` is the voxel containing `point`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Spatial_lock_grid_3}
+\cgalHasModels{CGAL::Spatial_lock_grid_3}
 \cgalHasModelsEnd
 
 */

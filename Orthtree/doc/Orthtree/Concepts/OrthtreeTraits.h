@@ -6,9 +6,9 @@
   template parameter of the `CGAL::Orthtree` class.
 
   \cgalHasModelsBegin
-  \cgalModels{CGAL::Orthtree_traits_2<GeomTraits>}
-  \cgalModels{CGAL::Orthtree_traits_3<GeomTraits>}
-  \cgalModels{CGAL::Orthtree_traits_d<GeomTraits,Dimension>}
+  \cgalHasModels{CGAL::Orthtree_traits_2<GeomTraits>}
+  \cgalHasModels{CGAL::Orthtree_traits_3<GeomTraits>}
+  \cgalHasModels{CGAL::Orthtree_traits_d<GeomTraits,Dimension>}
   \cgalHasModelsEnd
 */
 class OrthtreeTraits

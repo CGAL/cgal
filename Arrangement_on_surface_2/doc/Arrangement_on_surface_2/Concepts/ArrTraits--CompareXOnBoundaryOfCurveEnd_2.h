@@ -6,9 +6,9 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableFunctor}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2}
- * \cgalModels{ArrangementOpenBoundaryTraits_2::Compare_x_on_boundary_2}
- * \cgalModels{ArrangementSphericalBoundaryTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{ArrangementOpenBoundaryTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{ArrangementSphericalBoundaryTraits_2::Compare_x_on_boundary_2}
  * \cgalHasModelsEnd
  */
 class CompareXOnBoundaryOfCurveEnd_2 {

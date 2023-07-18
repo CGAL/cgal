@@ -32,7 +32,7 @@ is possible to select a certain variable.
 \sa `Polynomial_d`
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Polynomial_traits_d<Polynomial_d>}
+\cgalHasModels{CGAL::Polynomial_traits_d<Polynomial_d>}
 \cgalHasModelsEnd
 
 */

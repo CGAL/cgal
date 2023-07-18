@@ -27,7 +27,7 @@ introduce any constructors in addition to those of the
 `SegmentDelaunayGraphVertexBase_2` concept.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<CGAL::Segment_Delaunay_graph_vertex_base_2<St> >}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<CGAL::Segment_Delaunay_graph_vertex_base_2<St> >}
 \cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphDataStructure_2`

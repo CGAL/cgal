@@ -6,7 +6,7 @@
   to solve in the least square sense a linear system with a singular value decomposition
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Eigen_svd}
+\cgalHasModels{CGAL::Eigen_svd}
 \cgalHasModelsEnd
 */
 class SvdTraits
@@ -54,7 +54,7 @@ public:
 Concept of vector type used by the concept `SvdTraits`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Eigen_vector<T>}
+\cgalHasModels{CGAL::Eigen_vector<T>}
 \cgalHasModelsEnd
 */
 class SvdTraits::Vector
@@ -93,7 +93,7 @@ Concept of matrix type used by the concept `SvdTraits`.
 \cgalRefines{DefaultConstructible,Assignable}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Eigen_matrix<T>}
+\cgalHasModels{CGAL::Eigen_matrix<T>}
 \cgalHasModelsEnd
 */
 class SvdTraits::Matrix

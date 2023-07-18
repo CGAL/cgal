@@ -13,7 +13,7 @@ Point and normal property maps have to be provided to extract the points
 and the normals from the input.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Shape_detection::Efficient_RANSAC_traits}
+\cgalHasModels{CGAL::Shape_detection::Efficient_RANSAC_traits}
 \cgalHasModelsEnd
 */
 class EfficientRANSACTraits{

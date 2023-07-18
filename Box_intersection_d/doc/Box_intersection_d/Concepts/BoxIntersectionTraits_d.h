@@ -10,7 +10,7 @@ the boxes manipulated in these algorithms.
 \cgalRefines{Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Box_intersection_d::Box_traits_d}
+\cgalHasModels{CGAL::Box_intersection_d::Box_traits_d}
 \cgalHasModelsEnd
 
 \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink

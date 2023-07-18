@@ -30,8 +30,8 @@ methods to coordinates `x()`, `y()`, `z()` are needed for the point and
 vector types.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Cartesian<FieldNumberType>}
-\cgalModels{CGAL::Simple_cartesian<FieldNumberType>}
+\cgalHasModels{CGAL::Cartesian<FieldNumberType>}
+\cgalHasModels{CGAL::Simple_cartesian<FieldNumberType>}
 \cgalHasModelsEnd
 
 \sa `DataKernel`

@@ -12,10 +12,10 @@ tag is provided for determining whether this functor is defined or not.
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}
-\cgalModels{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}
-\cgalModels{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}
-\cgalModels{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}
+\cgalHasModels{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}
+\cgalHasModels{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}
+\cgalHasModels{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}
 \cgalHasModelsEnd
 
 \sa `DelaunayGraph_2`

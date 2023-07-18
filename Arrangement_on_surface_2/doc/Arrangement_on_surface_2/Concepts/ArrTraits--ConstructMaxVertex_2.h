@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableUnaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementBasicTraits_2::Construct_max_vertex_2}
+ * \cgalHasModels{ArrangementBasicTraits_2::Construct_max_vertex_2}
  * \cgalHasModelsEnd
  */
 class ConstructMaxVertex_2 {

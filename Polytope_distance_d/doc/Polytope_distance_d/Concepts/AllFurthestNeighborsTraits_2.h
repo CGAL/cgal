@@ -8,10 +8,10 @@ needed to compute all furthest neighbors for the vertices of a
 convex polygon using the function `all_furthest_neighbors_2()`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Cartesian<FieldNumberType>}
-\cgalModels{CGAL::Homogeneous<RingNumberType>}
-\cgalModels{CGAL::Simple_cartesian<FieldNumberType>}
-\cgalModels{CGAL::Simple_homogeneous<RingNumberType>}
+\cgalHasModels{CGAL::Cartesian<FieldNumberType>}
+\cgalHasModels{CGAL::Homogeneous<RingNumberType>}
+\cgalHasModels{CGAL::Simple_cartesian<FieldNumberType>}
+\cgalHasModels{CGAL::Simple_homogeneous<RingNumberType>}
 \cgalHasModelsEnd
 
 \sa `CGAL::all_furthest_neighbors_2()`

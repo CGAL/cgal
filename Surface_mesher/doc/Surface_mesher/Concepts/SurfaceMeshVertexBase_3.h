@@ -32,8 +32,8 @@ complex facets incident to the vertex and the number of connected
 components of the adjacency graph of those facets.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Surface_mesh_vertex_base_3<Gt,Vb>}
-\cgalModels{CGAL::Surface_mesh_default_triangulation_3::Vertex}
+\cgalHasModels{CGAL::Surface_mesh_vertex_base_3<Gt,Vb>}
+\cgalHasModels{CGAL::Surface_mesh_default_triangulation_3::Vertex}
 \cgalHasModelsEnd
 
 \sa `SurfaceMeshComplex_2InTriangulation_3`

@@ -8,13 +8,13 @@ The concept `Splitter` defines the requirements for a function object class impl
 \cgalAdvancedEnd
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Fair<Traits, SpatialSeparator>}
-\cgalModels{CGAL::Median_of_rectangle<Traits, SpatialSeparator>}
-\cgalModels{CGAL::Median_of_max_spread<Traits, SpatialSeparator>}
-\cgalModels{CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>}
-\cgalModels{CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>}
-\cgalModels{CGAL::Sliding_fair<Traits, SpatialSeparator>}
-\cgalModels{CGAL::Sliding_midpoint<Traits, SpatialSeparator>}
+\cgalHasModels{CGAL::Fair<Traits, SpatialSeparator>}
+\cgalHasModels{CGAL::Median_of_rectangle<Traits, SpatialSeparator>}
+\cgalHasModels{CGAL::Median_of_max_spread<Traits, SpatialSeparator>}
+\cgalHasModels{CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>}
+\cgalHasModels{CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>}
+\cgalHasModels{CGAL::Sliding_fair<Traits, SpatialSeparator>}
+\cgalHasModels{CGAL::Sliding_midpoint<Traits, SpatialSeparator>}
 \cgalHasModelsEnd
 
 */

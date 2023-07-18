@@ -8,8 +8,8 @@ defines the primitives used in the interpolation algorithms. The concept
 `InterpolationTraits` defines this common set of requirements.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Interpolation_traits_2<K>}
-\cgalModels{CGAL::Interpolation_gradient_fitting_traits_2<K>}
+\cgalHasModels{CGAL::Interpolation_traits_2<K>}
+\cgalHasModels{CGAL::Interpolation_gradient_fitting_traits_2<K>}
 \cgalHasModelsEnd
 
 \sa `GradientFittingTraits`

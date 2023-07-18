@@ -10,7 +10,7 @@ It refines the concept `TriangulationDSVertexBase_2`, adding geometric informati
 the vertex base of a triangulation stores a point.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_on_sphere_vertex_base_2<Traits,Vb>}
+\cgalHasModels{CGAL::Triangulation_on_sphere_vertex_base_2<Traits,Vb>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`

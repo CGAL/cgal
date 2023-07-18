@@ -9,8 +9,8 @@ unclear in kernels of fixed dimension.
 
 \cgalRefines{Kernel_d}
 \cgalHasModelsBegin
-\cgalModels{CGAL::Cartesian_d<FieldNumberType>}
-\cgalModels{CGAL::Homogeneous_d<RingNumberType>}
+\cgalHasModels{CGAL::Cartesian_d<FieldNumberType>}
+\cgalHasModels{CGAL::Homogeneous_d<RingNumberType>}
 \cgalHasModelsEnd
 */
 class KernelWithLifting_d {

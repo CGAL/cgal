@@ -14,7 +14,7 @@ used to approximate certain types of generalized barycentric coordinate function
 The domain is bounded by the polygon.
 
 \cgalHasModelsBegin
-\cgalModels{Delaunay_domain_2}
+\cgalHasModels{Delaunay_domain_2}
 \cgalHasModelsEnd
 */
 class DiscretizedDomain_2 {

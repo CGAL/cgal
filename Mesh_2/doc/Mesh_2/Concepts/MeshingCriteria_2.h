@@ -38,8 +38,8 @@ to split those with smallest quality first. The predicate `Is_bad`
 computes the quality of the triangle as a by-product.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Delaunay_mesh_criteria_2<CDT>}
-\cgalModels{CGAL::Delaunay_mesh_size_criteria_2<CDT>}
+\cgalHasModels{CGAL::Delaunay_mesh_criteria_2<CDT>}
+\cgalHasModels{CGAL::Delaunay_mesh_size_criteria_2<CDT>}
 \cgalHasModelsEnd
 
 

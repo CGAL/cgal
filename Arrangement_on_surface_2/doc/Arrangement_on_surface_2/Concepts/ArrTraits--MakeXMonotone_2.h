@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementTraits_2::Make_x_monotone_2}
+ * \cgalHasModels{ArrangementTraits_2::Make_x_monotone_2}
  * \cgalHasModelsEnd
  */
 class MakeXMonotone_2 {

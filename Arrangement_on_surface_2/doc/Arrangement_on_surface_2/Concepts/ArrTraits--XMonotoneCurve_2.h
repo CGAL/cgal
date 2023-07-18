@@ -7,7 +7,7 @@ namespace ArrTraits {
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementBasicTraits_2::X_monotone_curve_2}
+ * \cgalHasModels{ArrangementBasicTraits_2::X_monotone_curve_2}
  * \cgalHasModelsEnd
  */
 class XMonotoneCurve_2 {

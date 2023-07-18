@@ -16,7 +16,7 @@ The dimension of a face is implicitly set when
 first two vertices (`i = 0` and `i = 1`), then the dimension is 1.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_face<TriangulationDataStructure_>}
+\cgalHasModels{CGAL::Triangulation_face<TriangulationDataStructure_>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSFullCell`

@@ -9,8 +9,8 @@ e.g., for a Euclidean distance the transformed distance is the squared
 Euclidean distance.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Manhattan_distance_iso_box_point<Traits>}
-\cgalModels{CGAL::Euclidean_distance_sphere_point<Traits>}
+\cgalHasModels{CGAL::Manhattan_distance_iso_box_point<Traits>}
+\cgalHasModels{CGAL::Euclidean_distance_sphere_point<Traits>}
 \cgalHasModelsEnd
 
 */

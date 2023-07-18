@@ -9,7 +9,7 @@ an optimal convex partition of a polygon.
 \cgalRefines{PartitionTraits_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Partition_traits_2<R>}
+\cgalHasModels{CGAL::Partition_traits_2<R>}
 \cgalHasModelsEnd
 
 \sa `CGAL::convex_partition_is_valid_2()`

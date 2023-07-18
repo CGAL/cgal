@@ -40,11 +40,11 @@
  * \cgalRefines{ArrangementBasicTraits_2}
  *
  * \cgalHasModelsBegin
- * \cgalModels{CGAL::Arr_linear_traits_2<Kernel>}
- * \cgalModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
- * \cgalModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
- * \cgalModels{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}
- * \cgalModels{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+ * \cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
+ * \cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
+ * \cgalHasModels{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}
+ * \cgalHasModels{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
  * \cgalHasModelsEnd
  *
  * \sa `ArrangementBasicTraits_2`

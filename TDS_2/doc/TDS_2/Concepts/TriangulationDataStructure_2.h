@@ -65,7 +65,7 @@ When dimension \f$ <\f$ 2, the same information is output
 for faces of maximal dimension instead of faces.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+\cgalHasModels{CGAL::Triangulation_data_structure_2<Vb,Fb>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2::Face`
@@ -729,7 +729,7 @@ call the `create_vertex()` and `delete_vertex()` methods of the
 triangulation data structure.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_ds_vertex_base_2<Tds>}
+\cgalHasModels{CGAL::Triangulation_ds_vertex_base_2<Tds>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSVertexBase_2`
@@ -852,7 +852,7 @@ have to be used to
 define new faces and to delete no longer used faces.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_ds_face_base_2<Tds>}
+\cgalHasModels{CGAL::Triangulation_ds_face_base_2<Tds>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSFaceBase_2`

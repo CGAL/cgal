@@ -14,9 +14,9 @@ types.
 \cgalRefines{ArrangementDirectionalXMonotoneTraits_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}
-\cgalModels{CGAL::Gps_circle_segment_traits_2<Kernel>}
-\cgalModels{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>}
+\cgalHasModels{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}
+\cgalHasModels{CGAL::Gps_circle_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>}
 \cgalHasModelsEnd
 
 \sa `ArrangementDirectionalXMonotoneTraits_2`

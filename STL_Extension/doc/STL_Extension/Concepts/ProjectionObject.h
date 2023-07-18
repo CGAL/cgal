@@ -13,19 +13,19 @@ concept `UnaryFunction`, but takes also care of (const)
 references.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Identity}
-\cgalModels{CGAL::Dereference}
-\cgalModels{CGAL::Get_address}
-\cgalModels{CGAL::Cast_function_object}
-\cgalModels{CGAL::Project_vertex}
-\cgalModels{CGAL::Project_facet}
-\cgalModels{CGAL::Project_point}
-\cgalModels{CGAL::Project_normal}
-\cgalModels{CGAL::Project_plane}
-\cgalModels{CGAL::Project_next}
-\cgalModels{CGAL::Project_prev}
-\cgalModels{CGAL::Project_next_opposite}
-\cgalModels{CGAL::Project_opposite_prev}
+\cgalHasModels{CGAL::Identity}
+\cgalHasModels{CGAL::Dereference}
+\cgalHasModels{CGAL::Get_address}
+\cgalHasModels{CGAL::Cast_function_object}
+\cgalHasModels{CGAL::Project_vertex}
+\cgalHasModels{CGAL::Project_facet}
+\cgalHasModels{CGAL::Project_point}
+\cgalHasModels{CGAL::Project_normal}
+\cgalHasModels{CGAL::Project_plane}
+\cgalHasModels{CGAL::Project_next}
+\cgalHasModels{CGAL::Project_prev}
+\cgalHasModels{CGAL::Project_next_opposite}
+\cgalHasModels{CGAL::Project_opposite_prev}
 \cgalHasModelsEnd
 
 

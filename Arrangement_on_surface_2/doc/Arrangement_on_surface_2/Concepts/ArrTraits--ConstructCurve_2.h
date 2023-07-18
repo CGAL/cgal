@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementConstructCurveTraits_2::Construct_curve_2}
+ * \cgalHasModels{ArrangementConstructCurveTraits_2::Construct_curve_2}
  * \cgalHasModelsEnd
  */
 class ConstructCurve_2 {

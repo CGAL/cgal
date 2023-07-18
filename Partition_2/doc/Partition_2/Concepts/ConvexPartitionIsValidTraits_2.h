@@ -7,7 +7,7 @@ by `convex_partition_is_valid_2` for testing the validity of a
 convex partition of a polygon.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Partition_traits_2<R>}
+\cgalHasModels{CGAL::Partition_traits_2<R>}
 \cgalHasModelsEnd
 
 \sa `CGAL::approx_convex_partition_2()`

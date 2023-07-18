@@ -16,8 +16,8 @@ namespace Scale_space_reconstruction_3 {
  * reconstruction algorithm.
  *
  * \cgalHasModelsBegin
- * \cgalModels{CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother}
- * \cgalModels{CGAL::Scale_space_reconstruction_3::Jet_smoother}
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother}
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Jet_smoother}
  * \cgalHasModelsEnd
  */
 class Smoother

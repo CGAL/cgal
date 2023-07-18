@@ -9,7 +9,7 @@ types and operations in order to be a model for
 `BasicMatrix`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Dynamic_matrix<M>}
+\cgalHasModels{CGAL::Dynamic_matrix<M>}
 \cgalHasModelsEnd
 
 \sa `MonotoneMatrixSearchTraits`

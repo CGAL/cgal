@@ -12,7 +12,7 @@ other part of space is said to be on the positive side of the
 separator.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Plane_separator<FT>}
+\cgalHasModels{CGAL::Plane_separator<FT>}
 \cgalHasModelsEnd
 
 */

@@ -16,8 +16,8 @@ precondition checking only. Therefore, they need not to be
 specified, in case that precondition checking is disabled.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Extremal_polygon_area_traits_2<K>}
-\cgalModels{CGAL::Extremal_polygon_perimeter_traits_2<K>}
+\cgalHasModels{CGAL::Extremal_polygon_area_traits_2<K>}
+\cgalHasModels{CGAL::Extremal_polygon_perimeter_traits_2<K>}
 \cgalHasModelsEnd
 
 \sa `CGAL::maximum_area_inscribed_k_gon_2()`

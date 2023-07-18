@@ -17,10 +17,10 @@ Note however, that these operations usually involve the projection of
 \cgalRefines{ArrangementXMonotoneTraits_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Env_triangle_traits_3<Kernel>}
-\cgalModels{CGAL::Env_sphere_traits_3<ConicTraits>}
-\cgalModels{CGAL::Env_plane_traits_3<Kernel>}
-\cgalModels{CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>}
+\cgalHasModels{CGAL::Env_triangle_traits_3<Kernel>}
+\cgalHasModels{CGAL::Env_sphere_traits_3<ConicTraits>}
+\cgalHasModels{CGAL::Env_plane_traits_3<Kernel>}
+\cgalHasModels{CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>}
 \cgalHasModelsEnd
 
 */

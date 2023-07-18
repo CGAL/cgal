@@ -9,7 +9,7 @@ Boolean tag `ModularTraits::Is_modularizable`. The mapping into the `Residue_typ
 provided by the functor `ModularTraits::Modular_image`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Modular_traits<T>}
+\cgalHasModels{CGAL::Modular_traits<T>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Residue`

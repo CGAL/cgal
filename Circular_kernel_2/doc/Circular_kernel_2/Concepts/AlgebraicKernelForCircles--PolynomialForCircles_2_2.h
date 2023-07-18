@@ -12,7 +12,7 @@ are of a type that is a model of the concept
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Polynomial_for_circles_2_2}
+\cgalHasModels{CGAL::Polynomial_for_circles_2_2}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForCircles`

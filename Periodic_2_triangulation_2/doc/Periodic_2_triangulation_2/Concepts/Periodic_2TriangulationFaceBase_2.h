@@ -14,7 +14,7 @@ vertex \f$ i\f$.
 \cgalRefines{TriangulationFaceBase_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Periodic_2_triangulation_face_base_2}
+\cgalHasModels{CGAL::Periodic_2_triangulation_face_base_2}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`

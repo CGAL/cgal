@@ -8,8 +8,8 @@ Requirements of the first traits class to be used with the
 class `CGAL::Delaunay_d`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Cartesian_d<FT,LA>}
-\cgalModels{CGAL::Homogeneous_d<RT,LA>}
+\cgalHasModels{CGAL::Cartesian_d<FT,LA>}
+\cgalHasModels{CGAL::Homogeneous_d<RT,LA>}
 \cgalHasModelsEnd
 
 */

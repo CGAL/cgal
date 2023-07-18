@@ -5,7 +5,7 @@
 The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems <I>A\f$ \times \f$ X = B</I>.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Eigen_solver_traits<T>}
+\cgalHasModels{CGAL::Eigen_solver_traits<T>}
 \cgalHasModelsEnd
 */
 class SparseLinearAlgebraTraits_d
@@ -65,7 +65,7 @@ by a sparse matrix.
 \cgalRefines{DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Eigen_vector<T>}
+\cgalHasModels{CGAL::Eigen_vector<T>}
 \cgalHasModelsEnd
 
 \sa `SparseLinearAlgebraTraits_d`
@@ -134,8 +134,8 @@ NT& operator[](Index row);
 \cgalRefines{Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Eigen_sparse_matrix<T>}
-\cgalModels{CGAL::Eigen_sparse_symmetric_matrix<T>}
+\cgalHasModels{CGAL::Eigen_sparse_matrix<T>}
+\cgalHasModels{CGAL::Eigen_sparse_symmetric_matrix<T>}
 \cgalHasModelsEnd
 
 \sa `SparseLinearAlgebraTraits_d`

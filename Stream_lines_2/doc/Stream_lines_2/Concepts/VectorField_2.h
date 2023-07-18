@@ -10,8 +10,8 @@ provides the types of the geometric primitives used in the placement
 of streamlines and some functions for answering different queries.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Regular_grid_2<StreamLinesTraits_2>}
-\cgalModels{CGAL::Triangular_field_2<StreamLinesTraits_2>}
+\cgalHasModels{CGAL::Regular_grid_2<StreamLinesTraits_2>}
+\cgalHasModels{CGAL::Triangular_field_2<StreamLinesTraits_2>}
 \cgalHasModelsEnd
 
 */

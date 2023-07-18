@@ -11,13 +11,13 @@ predicates and constructions on these objects.
 \cgalRefines{TriangulationTraits_3}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Exact_predicates_inexact_constructions_kernel (recommended)}
-\cgalModels{CGAL::Exact_predicates_exact_constructions_kernel (recommended for Voronoi)}
-\cgalModels{CGAL::Filtered_kernel}
-\cgalModels{CGAL::Cartesian}
-\cgalModels{CGAL::Simple_cartesian}
-\cgalModels{CGAL::Homogeneous}
-\cgalModels{CGAL::Simple_homogeneous}
+\cgalHasModels{CGAL::Exact_predicates_inexact_constructions_kernel (recommended)}
+\cgalHasModels{CGAL::Exact_predicates_exact_constructions_kernel (recommended for Voronoi)}
+\cgalHasModels{CGAL::Filtered_kernel}
+\cgalHasModels{CGAL::Cartesian}
+\cgalHasModels{CGAL::Simple_cartesian}
+\cgalHasModels{CGAL::Homogeneous}
+\cgalHasModels{CGAL::Simple_homogeneous}
 \cgalHasModelsEnd
 
 In addition to the requirements described for the traits class of

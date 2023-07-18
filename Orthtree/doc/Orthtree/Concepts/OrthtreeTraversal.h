@@ -10,10 +10,10 @@
   (e.g. preorder, postorder).
 
   \cgalHasModelsBegin
-  \cgalModels{CGAL::Orthtrees::Preorder_traversal}
-  \cgalModels{CGAL::Orthtrees::Postorder_traversal}
-  \cgalModels{CGAL::Orthtrees::Leaves_traversal}
-  \cgalModels{CGAL::Orthtrees::Level_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Preorder_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Postorder_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Leaves_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Level_traversal}
   \cgalHasModelsEnd
  */
 class OrthtreeTraversal {

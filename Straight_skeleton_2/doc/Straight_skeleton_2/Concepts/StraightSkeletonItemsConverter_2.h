@@ -7,7 +7,7 @@ as the third template argument to the class `Straight_skeleton_converter_2<SrcSs
 It converts the `HDS` items from one type of straight skeleton to another.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Straight_skeleton_items_converter_2}
+\cgalHasModels{CGAL::Straight_skeleton_items_converter_2}
 \cgalHasModelsEnd
 
 \sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>`

@@ -35,9 +35,9 @@ iterators over the program data, see below. The program therefore
 comes in <I>dense</I> representation which includes zero entries.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Quadratic_program<NT>}
-\cgalModels{CGAL::Quadratic_program_from_mps<NT>}
-\cgalModels{CGAL::Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+\cgalHasModels{CGAL::Quadratic_program<NT>}
+\cgalHasModels{CGAL::Quadratic_program_from_mps<NT>}
+\cgalHasModels{CGAL::Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
 \cgalHasModelsEnd
 
 The value types of all iterator types (nested iterator

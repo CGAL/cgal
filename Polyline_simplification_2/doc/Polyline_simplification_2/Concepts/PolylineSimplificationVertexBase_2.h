@@ -9,7 +9,7 @@ whether a vertex can be removed, and the cost of the removal.
 \cgalRefines{TriangulationVertexBase_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Polyline_simplification_2::Vertex_base_2<Vb>}
+\cgalHasModels{CGAL::Polyline_simplification_2::Vertex_base_2<Vb>}
 \cgalHasModelsEnd
 
 \sa `TriangulationFaceBase_2`

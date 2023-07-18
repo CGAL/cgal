@@ -24,10 +24,10 @@ operator is concerned (this serves the same purpose as NULL for pointers).
 standard containers.)
 
 \cgalHasModelsBegin
-\cgalModels{T* (pointer)}
-\cgalModels{const T* (const pointers)}
-\cgalModels{Iterator}
-\cgalModels{Circulator}
+\cgalHasModels{T* (pointer)}
+\cgalHasModels{const T* (const pointers)}
+\cgalHasModels{Iterator}
+\cgalHasModels{Circulator}
 \cgalHasModelsEnd
 */
 class Handle {

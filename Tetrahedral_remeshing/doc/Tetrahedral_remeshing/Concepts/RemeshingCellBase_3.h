@@ -7,7 +7,7 @@
 Cell base concept to be used in the triangulation type given to the function `CGAL::tetrahedral_isotropic_remeshing()`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3}
+\cgalHasModels{CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3}
 \cgalHasModelsEnd
 
 */

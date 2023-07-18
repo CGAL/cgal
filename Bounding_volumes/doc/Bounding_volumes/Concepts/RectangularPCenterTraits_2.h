@@ -8,7 +8,7 @@ needed to compute rectilinear \f$ p\f$-centers of a planar point set
 using the function `CGAL::rectangular_p_center_2()`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Rectangular_p_center_default_traits_2<K>}
+\cgalHasModels{CGAL::Rectangular_p_center_default_traits_2<K>}
 \cgalHasModelsEnd
 
 \sa `CGAL::rectangular_p_center_2()`

@@ -20,7 +20,7 @@ constraints.
 Defines the same types as the `TriangulationFaceBase_2` concept
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Constrained_triangulation_face_base_2<Traits>}
+\cgalHasModels{CGAL::Constrained_triangulation_face_base_2<Traits>}
 \cgalHasModelsEnd
 
 \sa `TriangulationFaceBase_2`

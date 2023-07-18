@@ -20,7 +20,7 @@ next and previous level graphs.
 types in addition to those of `ApolloniusGraphVertexBase_2`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >}
+\cgalHasModels{CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >}
 \cgalHasModelsEnd
 
 \sa `ApolloniusGraphDataStructure_2`

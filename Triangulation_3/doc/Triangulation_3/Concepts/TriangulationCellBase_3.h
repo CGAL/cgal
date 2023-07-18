@@ -11,8 +11,8 @@ structure apply.
 \cgalRefines{TriangulationDSCellBase_3}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_cell_base_3}
-\cgalModels{CGAL::Triangulation_cell_base_with_info_3}
+\cgalHasModels{CGAL::Triangulation_cell_base_3}
+\cgalHasModels{CGAL::Triangulation_cell_base_with_info_3}
 \cgalHasModelsEnd
 
 \sa `TriangulationVertexBase_3`

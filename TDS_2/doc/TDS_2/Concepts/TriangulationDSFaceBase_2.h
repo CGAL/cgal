@@ -49,7 +49,7 @@ actually uses as a base class for the class
 `CGAL::Triangulation_data_structure_2::Face`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_ds_face_base_2<TDS>}
+\cgalHasModels{CGAL::Triangulation_ds_face_base_2<TDS>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSVertexBase_2`

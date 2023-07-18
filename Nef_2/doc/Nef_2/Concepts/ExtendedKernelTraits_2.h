@@ -39,9 +39,9 @@ geometry. At the same time it provides extensible geometric primitives
 on the extended geometric objects.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Extended_cartesian<FT>}
-\cgalModels{CGAL::Extended_homogeneous<RT>}
-\cgalModels{CGAL::Filtered_extended_homogeneous<RT>}
+\cgalHasModels{CGAL::Extended_cartesian<FT>}
+\cgalHasModels{CGAL::Extended_homogeneous<RT>}
+\cgalHasModels{CGAL::Filtered_extended_homogeneous<RT>}
 \cgalHasModelsEnd
 
 */

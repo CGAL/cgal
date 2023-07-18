@@ -14,8 +14,8 @@ Only constructors (from 3 scalars and copy constructors) and access
 methods to coordinates `x()`, `y()`, `z()` are needed.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Cartesian<FieldNumberType>}
-\cgalModels{CGAL::Simple_cartesian<FieldNumberType>}
+\cgalHasModels{CGAL::Cartesian<FieldNumberType>}
+\cgalHasModels{CGAL::Simple_cartesian<FieldNumberType>}
 \cgalHasModelsEnd
 
 \sa `LocalKernel`

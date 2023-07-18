@@ -20,7 +20,7 @@ In this case, fictitious faces are added to the triangulation, called <i>ghost f
 such that the triangulation is a topological sphere.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>}
+\cgalHasModels{CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`

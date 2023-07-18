@@ -10,8 +10,8 @@ weighted points and a shrink factor. By default the input balls are
 grown in such that the skin surface wraps around the input balls.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}
-\cgalModels{CGAL::Union_of_balls_3<SkinSurfaceTraits_3>}
+\cgalHasModels{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}
+\cgalHasModels{CGAL::Union_of_balls_3<SkinSurfaceTraits_3>}
 \cgalHasModelsEnd
 
 */

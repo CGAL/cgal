@@ -10,7 +10,7 @@ policy concept of geometric computations is used in
 \cgalRefines{SubdivisionMask_3}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Sqrt3_mask_3<PolygonMesh, VertexPointMap>}
+\cgalHasModels{CGAL::Sqrt3_mask_3<PolygonMesh, VertexPointMap>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Subdivision_method_3`

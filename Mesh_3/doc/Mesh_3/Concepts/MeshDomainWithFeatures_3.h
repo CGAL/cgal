@@ -18,8 +18,8 @@ between two ordered points on the same curve.
 \cgalRefines{MeshDomain_3}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>}
-\cgalModels{CGAL::Polyhedral_mesh_domain_with_features_3<IGT>}
+\cgalHasModels{CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>}
+\cgalHasModels{CGAL::Polyhedral_mesh_domain_with_features_3<IGT>}
 \cgalHasModelsEnd
 
 \sa `MeshDomain_3`

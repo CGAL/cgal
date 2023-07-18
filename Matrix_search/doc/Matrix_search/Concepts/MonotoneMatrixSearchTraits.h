@@ -22,7 +22,7 @@ matrix classes.
 </UL>
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Dynamic_matrix<M>}
+\cgalHasModels{CGAL::Dynamic_matrix<M>}
 \cgalHasModelsEnd
 
 \sa `CGAL::monotone_matrix_search()`

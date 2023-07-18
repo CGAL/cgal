@@ -7,9 +7,9 @@ A model of the `Visibility_2` concept can be attached to an `Arrangement_2` inst
 answer visibility queries within the faces of this arrangement.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Simple_polygon_visibility_2}
-\cgalModels{CGAL::Rotational_sweep_visibility_2}
-\cgalModels{CGAL::Triangular_expansion_visibility_2}
+\cgalHasModels{CGAL::Simple_polygon_visibility_2}
+\cgalHasModels{CGAL::Rotational_sweep_visibility_2}
+\cgalHasModels{CGAL::Triangular_expansion_visibility_2}
 \cgalHasModelsEnd
 
 */

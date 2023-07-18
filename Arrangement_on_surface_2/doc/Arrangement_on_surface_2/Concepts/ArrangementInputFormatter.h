@@ -6,9 +6,9 @@
  * specific format.
  *
  * \cgalHasModelsBegin
- * \cgalModels{CGAL::Arr_text_formatter<Arrangement>}
- * \cgalModels{CGAL::Arr_face_extended_text_formatter<Arrangement>}
- * \cgalModels{CGAL::Arr_extended_dcel_text_formatter<Arrangement>}
+ * \cgalHasModels{CGAL::Arr_text_formatter<Arrangement>}
+ * \cgalHasModels{CGAL::Arr_face_extended_text_formatter<Arrangement>}
+ * \cgalHasModels{CGAL::Arr_extended_dcel_text_formatter<Arrangement>}
  * \cgalHasModelsEnd
  *
  */

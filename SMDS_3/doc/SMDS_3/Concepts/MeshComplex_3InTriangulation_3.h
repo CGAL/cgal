@@ -43,7 +43,7 @@ and each boundary surface patch.
 The data structure encodes the final mesh at the end of the meshing process.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>}
+\cgalHasModels{CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>}
 \cgalHasModelsEnd
 
 \sa `MeshDomain_3`

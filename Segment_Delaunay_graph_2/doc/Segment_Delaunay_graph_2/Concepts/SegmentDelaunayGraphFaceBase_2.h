@@ -10,7 +10,7 @@ requirements for the face base class of the
 \cgalRefines{TriangulationFaceBase_2}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Segment_Delaunay_graph_face_base_2<Gt>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_face_base_2<Gt>}
 \cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphDataStructure_2`

@@ -34,8 +34,8 @@ function. The base class `Base_base` provides access to it. (The
 protection could be bypassed also by an user, but not by accident.)
 
 \cgalHasModelsBegin
-\cgalModels{::CGAL::HalfedgeDS_halfedge_base}
-\cgalModels{::CGAL::HalfedgeDS_halfedge_min_base}
+\cgalHasModels{::CGAL::HalfedgeDS_halfedge_base}
+\cgalHasModels{::CGAL::HalfedgeDS_halfedge_min_base}
 \cgalHasModelsEnd
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`

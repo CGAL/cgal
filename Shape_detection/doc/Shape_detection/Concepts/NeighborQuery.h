@@ -6,10 +6,10 @@ A concept that describes the set of methods used by the `CGAL::Shape_detection::
 to access neighbors of an item.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Shape_detection::Point_set::K_neighbor_query}
-\cgalModels{CGAL::Shape_detection::Point_set::Sphere_neighbor_query}
-\cgalModels{CGAL::Shape_detection::Polygon_mesh::Polyline_graph}
-\cgalModels{CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query}
+\cgalHasModels{CGAL::Shape_detection::Point_set::K_neighbor_query}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Sphere_neighbor_query}
+\cgalHasModels{CGAL::Shape_detection::Polygon_mesh::Polyline_graph}
+\cgalHasModels{CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query}
 \cgalHasModelsEnd
 */
 class NeighborQuery {

@@ -29,7 +29,7 @@ are used as base classes for the final vertex and cell classes.
 More information can be found in Section \ref TDS3secdesign.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_ds_vertex_base_3<TDS>}
+\cgalHasModels{CGAL::Triangulation_ds_vertex_base_3<TDS>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSCellBase_3`

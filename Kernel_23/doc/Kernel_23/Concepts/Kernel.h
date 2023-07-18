@@ -21,14 +21,14 @@
   When the result type is not determined, no prefix is used.
 
   \cgalHasModelsBegin
-  \cgalModels{CGAL::Cartesian<FieldNumberType>}
-  \cgalModels{CGAL::Homogeneous<RingNumberType>}
-  \cgalModels{CGAL::Simple_cartesian<FieldNumberType>}
-  \cgalModels{CGAL::Simple_homogeneous<RingNumberType>}
-  \cgalModels{CGAL::Filtered_kernel<CK>}
-  \cgalModels{CGAL::Exact_predicates_exact_constructions_kernel}
-  \cgalModels{CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt}
-  \cgalModels{CGAL::Exact_predicates_inexact_constructions_kernel}
+  \cgalHasModels{CGAL::Cartesian<FieldNumberType>}
+  \cgalHasModels{CGAL::Homogeneous<RingNumberType>}
+  \cgalHasModels{CGAL::Simple_cartesian<FieldNumberType>}
+  \cgalHasModels{CGAL::Simple_homogeneous<RingNumberType>}
+  \cgalHasModels{CGAL::Filtered_kernel<CK>}
+  \cgalHasModels{CGAL::Exact_predicates_exact_constructions_kernel}
+  \cgalHasModels{CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt}
+  \cgalHasModels{CGAL::Exact_predicates_inexact_constructions_kernel}
   \cgalHasModelsEnd
 
   \sa `Kernel_d`

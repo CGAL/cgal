@@ -13,7 +13,7 @@ Compared to ::TriangulationDSVertex, the main difference is the addition of
 an association of the vertex with a geometric point.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>}
+\cgalHasModels{CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>}
 \cgalHasModelsEnd
 
 \cgalHeading{Input/Output}

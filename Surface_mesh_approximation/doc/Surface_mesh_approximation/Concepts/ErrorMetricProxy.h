@@ -7,8 +7,8 @@ computes the fitting error from a face to a proxy,
 and fits a proxy from a range of faces.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Surface_mesh_approximation::L21_metric_plane_proxy}
-\cgalModels{CGAL::Surface_mesh_approximation::L2_metric_plane_proxy}
+\cgalHasModels{CGAL::Surface_mesh_approximation::L21_metric_plane_proxy}
+\cgalHasModels{CGAL::Surface_mesh_approximation::L2_metric_plane_proxy}
 \cgalHasModelsEnd
 */
 

@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableUnaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2}
+ * \cgalHasModels{ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2}
  * \cgalHasModelsEnd
  */
 class IsOnYIdentification_2 {

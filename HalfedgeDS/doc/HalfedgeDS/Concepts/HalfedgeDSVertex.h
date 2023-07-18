@@ -24,8 +24,8 @@ could be bypassed by an user, but not by accident.)
 \cgalRefines{CopyConstructible,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::HalfedgeDS_vertex_base<Refs>}
-\cgalModels{CGAL::HalfedgeDS_vertex_min_base<Refs>}
+\cgalHasModels{CGAL::HalfedgeDS_vertex_base<Refs>}
+\cgalHasModels{CGAL::HalfedgeDS_vertex_min_base<Refs>}
 \cgalHasModelsEnd
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`

@@ -12,7 +12,7 @@ points if any exists. The concept `SurfaceMeshTraits_3` also includes a funcctor
 a small set of initial points on the surface.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Surface_mesh_traits_generator_3::type}
+\cgalHasModels{CGAL::Surface_mesh_traits_generator_3::type}
 \cgalHasModelsEnd
 
 \sa `CGAL::make_surface_mesh()`

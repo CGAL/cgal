@@ -11,7 +11,7 @@ represent a full cell.
 additional specific requirements of `TriangulationFullCell`}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_full_cell<TriangulationTraits_, TriangulationDSFullCell_>}
+\cgalHasModels{CGAL::Triangulation_full_cell<TriangulationTraits_, TriangulationDSFullCell_>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`

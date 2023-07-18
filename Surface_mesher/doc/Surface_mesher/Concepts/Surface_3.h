@@ -9,7 +9,7 @@ are required to be copy constructible
 and assignable.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Implicit_surface_3<Traits, Function>}
+\cgalHasModels{CGAL::Implicit_surface_3<Traits, Function>}
 \cgalHasModelsEnd
 
 \sa `CGAL::make_surface_mesh()`

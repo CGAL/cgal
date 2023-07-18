@@ -10,7 +10,7 @@ The concept `MeshFacetCriteria_3` describes the types that
 handle the refinement criteria for surface facets.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Mesh_facet_criteria_3<Tr>}
+\cgalHasModels{CGAL::Mesh_facet_criteria_3<Tr>}
 \cgalHasModelsEnd
 
 \sa `MeshCellCriteria_3`

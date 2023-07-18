@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementConstructXMonotoneCurveTraits_2::Construct_x_monotone_curve_2}
+ * \cgalHasModels{ArrangementConstructXMonotoneCurveTraits_2::Construct_x_monotone_curve_2}
  * \cgalHasModelsEnd
  */
 class ConstructXMonotoneCurve_2 {

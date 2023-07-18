@@ -12,7 +12,7 @@ site of the segment Delaunay graph and provides access to one of its
 incident faces through a `Face_handle`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Segment_Delaunay_graph_vertex_base_2<St>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_vertex_base_2<St>}
 \cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphTraits_2`

@@ -30,8 +30,8 @@ if it includes points which are strictly inside
 and strictly outside the domain (resp. the subdomain).
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}
-\cgalModels{CGAL::Labeled_mesh_domain_3<BGT>}
+\cgalHasModels{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}
+\cgalHasModels{CGAL::Labeled_mesh_domain_3<BGT>}
 \cgalHasModelsEnd
 
 \sa `MeshVertexBase_3`

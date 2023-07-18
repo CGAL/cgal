@@ -8,7 +8,7 @@ curved kernel with all the algebraic functionalities required for the
 manipulation of circular arcs.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Algebraic_kernel_for_circles_2_2}
+\cgalHasModels{CGAL::Algebraic_kernel_for_circles_2_2}
 \cgalHasModelsEnd
 
 \sa `CircularKernel`

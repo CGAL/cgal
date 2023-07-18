@@ -21,7 +21,7 @@ Hyperbolic translations are represented by a nested type which is provided by th
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Periodic_4_hyperbolic_triangulation_face_base_2}
+\cgalHasModels{CGAL::Periodic_4_hyperbolic_triangulation_face_base_2}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`

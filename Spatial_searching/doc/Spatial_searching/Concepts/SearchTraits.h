@@ -6,14 +6,14 @@ The concept `SearchTraits` defines the requirements for the template
 parameter of the search classes.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Cartesian_d<FT>}
-\cgalModels{CGAL::Homogeneous_d<RT>}
-\cgalModels{CGAL::Epick_d<DimensionTag>}
-\cgalModels{CGAL::Epeck_d<DimensionTag>}
-\cgalModels{CGAL::Search_traits_2<Kernel>}
-\cgalModels{CGAL::Search_traits_3<Kernel>}
-\cgalModels{CGAL::Search_traits_d<Kernel,Dim>}
-\cgalModels{CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>}
+\cgalHasModels{CGAL::Cartesian_d<FT>}
+\cgalHasModels{CGAL::Homogeneous_d<RT>}
+\cgalHasModels{CGAL::Epick_d<DimensionTag>}
+\cgalHasModels{CGAL::Epeck_d<DimensionTag>}
+\cgalHasModels{CGAL::Search_traits_2<Kernel>}
+\cgalHasModels{CGAL::Search_traits_3<Kernel>}
+\cgalHasModels{CGAL::Search_traits_d<Kernel,Dim>}
+\cgalHasModels{CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>}
 \cgalHasModelsEnd
 
 \sa `RangeSearchTraits`

@@ -12,8 +12,8 @@ namespace Scale_space_reconstruction_3 {
  * points and that returns a set of facets.
  *
  * \cgalHasModelsBegin
- * \cgalModels{CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher}
- * \cgalModels{CGAL::Scale_space_reconstruction_3::Advancing_front_mesher}
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher}
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Advancing_front_mesher}
  * \cgalHasModelsEnd
  *
  */

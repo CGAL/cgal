@@ -9,7 +9,7 @@ predicates, and constructions required by the traits class parameter of
 
 \cgalRefines{CopyConstructible,Assignable}
 \cgalHasModelsBegin
-\cgalModels{CGAL::Surface_mesh_shortest_path_traits<K,P>}
+\cgalHasModels{CGAL::Surface_mesh_shortest_path_traits<K,P>}
 \cgalHasModelsEnd
 
 */

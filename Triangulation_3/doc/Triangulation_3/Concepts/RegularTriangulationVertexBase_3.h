@@ -10,7 +10,7 @@ by adding a geometric point member.
 \cgalRefines{TriangulationDSVertexBase_3}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Regular_triangulation_vertex_base_3}
+\cgalHasModels{CGAL::Regular_triangulation_vertex_base_3}
 \cgalHasModelsEnd
 
 \sa `RegularTriangulationCellBase_3`

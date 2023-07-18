@@ -6,10 +6,10 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableBinaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalModels{ArrangementClosedLeftTraits_2::Compare_y_on_boundary_2}
- * \cgalModels{ArrangementClosedRightTraits_2::Compare_y_on_boundary_2}
- * \cgalModels{ArrangementIdentifiedVerticalTraits_2::Compare_y_on_boundary_2}
- * \cgalModels{ArrangementSphericalBoundaryTraits_2::Compare_y_on_boundary_2}
+ * \cgalHasModels{ArrangementClosedLeftTraits_2::Compare_y_on_boundary_2}
+ * \cgalHasModels{ArrangementClosedRightTraits_2::Compare_y_on_boundary_2}
+ * \cgalHasModels{ArrangementIdentifiedVerticalTraits_2::Compare_y_on_boundary_2}
+ * \cgalHasModels{ArrangementSphericalBoundaryTraits_2::Compare_y_on_boundary_2}
  * \cgalHasModelsEnd
  */
 class CompareYOnBoundary_2 {

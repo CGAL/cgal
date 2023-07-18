@@ -7,8 +7,8 @@ used with the function `is_y_monotone_2()` that tests whether a sequence of
 2D points defines a \f$ y\f$-monotone polygon or not.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Partition_traits_2<R>}
-\cgalModels{CGAL::Kernel_traits_2}
+\cgalHasModels{CGAL::Partition_traits_2<R>}
+\cgalHasModels{CGAL::Kernel_traits_2}
 \cgalHasModelsEnd
 
 \sa `CGAL::Is_y_monotone_2<Traits>`

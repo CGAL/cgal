@@ -19,10 +19,10 @@ of the triangulation that are surface facets.
 \cgalRefines{TriangulationCellBase_3,CopyConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Compact_mesh_cell_base_3}
-\cgalModels{CGAL::Mesh_cell_base_3}
-\cgalModels{CGAL::Simplicial_mesh_cell_base_3}
-\cgalModels{CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3}
+\cgalHasModels{CGAL::Compact_mesh_cell_base_3}
+\cgalHasModels{CGAL::Mesh_cell_base_3}
+\cgalHasModels{CGAL::Simplicial_mesh_cell_base_3}
+\cgalHasModels{CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3}
 \cgalHasModelsEnd
 
 */

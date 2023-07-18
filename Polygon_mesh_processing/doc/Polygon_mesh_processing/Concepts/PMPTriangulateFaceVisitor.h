@@ -7,7 +7,7 @@
 ///
 /// \cgalRefines{CopyConstructible}
 /// \cgalHasModelsBegin
-/// \cgalModels{CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor}
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor}
 /// \cgalHasModelsEnd
 
 

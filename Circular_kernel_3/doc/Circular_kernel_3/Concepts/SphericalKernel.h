@@ -6,8 +6,8 @@
 \cgalRefines{Kernel}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}
-\cgalModels{CGAL::Exact_spherical_kernel_3}
+\cgalHasModels{CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}
+\cgalHasModels{CGAL::Exact_spherical_kernel_3}
 \cgalHasModelsEnd
 
 \sa `Kernel`

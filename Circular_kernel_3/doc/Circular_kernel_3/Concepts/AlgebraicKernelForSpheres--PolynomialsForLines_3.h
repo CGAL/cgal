@@ -9,7 +9,7 @@ capable of storing equations of lines.
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Polynomials_for_lines_3}
+\cgalHasModels{CGAL::Polynomials_for_lines_3}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForSpheres`

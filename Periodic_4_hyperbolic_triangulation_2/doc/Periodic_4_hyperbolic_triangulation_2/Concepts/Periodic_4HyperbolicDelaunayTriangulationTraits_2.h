@@ -13,7 +13,7 @@ by any class used to instantiate the first template parameter of the class
 `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2}
+\cgalHasModels{CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2}
 \cgalHasModelsEnd
 */
 

@@ -9,9 +9,9 @@ This concept defines the requirements for traits classes of
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>}
-\cgalModels{CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>}
-\cgalModels{CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>}
+\cgalHasModels{CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>}
+\cgalHasModels{CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>}
+\cgalHasModels{CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Min_ellipse_2<Traits>`

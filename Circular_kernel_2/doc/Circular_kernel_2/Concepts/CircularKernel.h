@@ -6,8 +6,8 @@
 \cgalRefines{Kernel}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>}
-\cgalModels{CGAL::Exact_circular_kernel_2}
+\cgalHasModels{CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>}
+\cgalHasModels{CGAL::Exact_circular_kernel_2}
 \cgalHasModelsEnd
 
 \sa `Kernel`

@@ -29,10 +29,10 @@ is recommended. To enable the old style without any overhead, the macro
 \cgal header is included.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Arr_naive_point_location<Arrangement>}
-\cgalModels{CGAL::Arr_walk_along_line_point_location<Arrangement>}
-\cgalModels{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}
-\cgalModels{CGAL::Arr_landmarks_point_location<Arrangement,Generator>}
+\cgalHasModels{CGAL::Arr_naive_point_location<Arrangement>}
+\cgalHasModels{CGAL::Arr_walk_along_line_point_location<Arrangement>}
+\cgalHasModels{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}
+\cgalHasModels{CGAL::Arr_landmarks_point_location<Arrangement,Generator>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Arr_naive_point_location<Arrangement>`

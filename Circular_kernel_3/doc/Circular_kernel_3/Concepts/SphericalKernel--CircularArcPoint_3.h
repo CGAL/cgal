@@ -8,7 +8,7 @@ Concept for points on spheres, circles, circular arcs or line arcs.
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Circular_arc_point_3<SphericalKernel>}
+\cgalHasModels{CGAL::Circular_arc_point_3<SphericalKernel>}
 \cgalHasModelsEnd
 
 */

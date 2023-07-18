@@ -23,7 +23,7 @@ Wrapping any model of `Periodic_3MeshDomain_3` with the class
 of `Periodic_3MeshDomainWithFeatures_3`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Mesh_domain_with_polyline_features_3<CGAL::Labeled_mesh_domain_3<BGT> >}
+\cgalHasModels{CGAL::Mesh_domain_with_polyline_features_3<CGAL::Labeled_mesh_domain_3<BGT> >}
 \cgalHasModelsEnd
 
 \sa `CGAL::Periodic_3_function_wrapper<Function,BGT>`

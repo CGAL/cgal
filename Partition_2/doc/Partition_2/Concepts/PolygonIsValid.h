@@ -7,8 +7,8 @@ valid partition polygon or not, where "valid" can assume any of several
 meanings (e.g., convex or \f$ y\f$-monotone).
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Is_convex_2<Traits>}
-\cgalModels{CGAL::Is_y_monotone_2<Traits>}
+\cgalHasModels{CGAL::Is_convex_2<Traits>}
+\cgalHasModels{CGAL::Is_y_monotone_2<Traits>}
 \cgalHasModelsEnd
 
 \sa `CGAL::approx_convex_partition_2()`

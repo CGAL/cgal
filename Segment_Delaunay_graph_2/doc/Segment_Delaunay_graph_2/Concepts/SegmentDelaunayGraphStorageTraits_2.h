@@ -16,7 +16,7 @@ See section \ref Segment_Delaunay_graph_2StronglyIntersecting for more informati
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Segment_Delaunay_graph_storage_traits_2<K>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_storage_traits_2<K>}
 \cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphTraits_2`

@@ -45,7 +45,7 @@ actually uses as a base class for the class
 of `CGAL::Triangulation_data_structure_2::Vertex`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Triangulation_ds_vertex_base_2<Tds>}
+\cgalHasModels{CGAL::Triangulation_ds_vertex_base_2<Tds>}
 \cgalHasModelsEnd
 
 \sa `TriangulationDSFaceBase_2`

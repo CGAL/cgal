@@ -12,7 +12,7 @@ are of a type that is a model of the concept
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModelsBegin
-\cgalModels{GAL::Polynomial_for_spheres_2_}
+\cgalHasModels{GAL::Polynomial_for_spheres_2_}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForSpheres`

@@ -6,7 +6,7 @@
 The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>}
+\cgalHasModels{CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>}
 \cgalHasModelsEnd
 
 \cgalRefines{SearchGeomTraits_3}

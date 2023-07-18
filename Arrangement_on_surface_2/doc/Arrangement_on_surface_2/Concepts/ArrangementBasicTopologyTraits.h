@@ -10,7 +10,7 @@
  * incident relations between them.
  *
  * \cgalHasModelsBegin
- * \cgalModels{CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2, Dcel>}
+ * \cgalHasModels{CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2, Dcel>}
  * \cgalHasModelsEnd
  */
 

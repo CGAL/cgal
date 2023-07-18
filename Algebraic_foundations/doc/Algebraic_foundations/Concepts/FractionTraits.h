@@ -9,7 +9,7 @@ In case the associated type is a `Fraction`, a model of `FractionTraits` provide
 as the numerator and denominator type.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Fraction_traits<T>}
+\cgalHasModels{CGAL::Fraction_traits<T>}
 \cgalHasModelsEnd
 
 \sa `FractionTraits_::Decompose`

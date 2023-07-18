@@ -12,7 +12,7 @@
  *   ArrangementContractedBottomTraits_2,ArrangementContractedTopTraits_2}
  *
  * \cgalHasModelsBegin
- * \cgalModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>}
+ * \cgalHasModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>}
  * \cgalHasModelsEnd
  *
  * \sa `ArrangementOpenBoundaryTraits_2`

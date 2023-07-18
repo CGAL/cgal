@@ -10,7 +10,7 @@
 ///
 /// \cgalRefines{CopyConstructible}
 /// \cgalHasModelsBegin
-/// \cgalModels{CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor}
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor}
 /// \cgalHasModelsEnd
 
 class PMPHolefillingVisitor{

@@ -38,8 +38,8 @@ triangulation.  In the following we call surface center of a facet,
 the center of its biggest Delaunay surface ball.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Surface_mesh_cell_base_3<Gt,Vb>}
-\cgalModels{CGAL::Surface_mesh_default_triangulation_3::Cell}
+\cgalHasModels{CGAL::Surface_mesh_cell_base_3<Gt,Vb>}
+\cgalHasModels{CGAL::Surface_mesh_default_triangulation_3::Cell}
 \cgalHasModelsEnd
 
 \sa `SurfaceMeshTriangulation_3`

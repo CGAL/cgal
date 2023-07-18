@@ -8,7 +8,7 @@ in two variables `x` and `y` that are models of concept
 `AlgebraicKernelForCircles::PolynomialForCircles_2_2`
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Root_for_circles_2_2}
+\cgalHasModels{CGAL::Root_for_circles_2_2}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernelForCircles`

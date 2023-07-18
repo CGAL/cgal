@@ -9,7 +9,7 @@ The concept `StraightSkeletonFace_2` describes the requirements for the face typ
 with support for storage of the incident halfedge.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Straight_skeleton_face_base_2}
+\cgalHasModels{CGAL::Straight_skeleton_face_base_2}
 \cgalHasModelsEnd
 
 \sa `StraightSkeletonVertex_2`

@@ -19,20 +19,20 @@ This is due to the fact that the denominator may be zero modulo the prime,
 which can not be represented.
 
 \cgalHasModelsBegin
-\cgalModels{int}
-\cgalModels{long}
-\cgalModels{CORE::BigInt}
-\cgalModels{CGAL::Gmpz}
-\cgalModels{leda_integer}
-\cgalModels{mpz_class}
+\cgalHasModels{int}
+\cgalHasModels{long}
+\cgalHasModels{CORE::BigInt}
+\cgalHasModels{CGAL::Gmpz}
+\cgalHasModels{leda_integer}
+\cgalHasModels{mpz_class}
 \cgalHasModelsEnd
 
 The following types are `Modularizable` iff their template arguments are.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Lazy_exact_nt<NT>}
-\cgalModels{CGAL::Sqrt_extension<NT,ROOT>}
-\cgalModels{CGAL::Polynomial<Coeff>}
+\cgalHasModels{CGAL::Lazy_exact_nt<NT>}
+\cgalHasModels{CGAL::Sqrt_extension<NT,ROOT>}
+\cgalHasModels{CGAL::Polynomial<Coeff>}
 \cgalHasModelsEnd
 
 \sa `CGAL::Residue`

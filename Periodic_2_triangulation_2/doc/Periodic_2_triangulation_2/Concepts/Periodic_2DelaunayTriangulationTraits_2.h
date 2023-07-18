@@ -28,7 +28,7 @@ dual functions are called. The additional predicate type
 `nearest_vertex(..)` are issued.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>}
+\cgalHasModels{CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>}
 \cgalHasModelsEnd
 
 \sa `DelaunayTriangulationTraits_2`

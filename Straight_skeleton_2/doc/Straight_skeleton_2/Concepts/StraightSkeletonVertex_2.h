@@ -10,7 +10,7 @@ with support for storage of the incident halfedge. The `StraightSkeletonVertex_2
 requires the geometric embedding to be a 2D point.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Straight_skeleton_vertex_base_2}
+\cgalHasModels{CGAL::Straight_skeleton_vertex_base_2}
 \cgalHasModelsEnd
 
 \sa `StraightSkeletonHalfedge_2`

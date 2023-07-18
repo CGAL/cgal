@@ -10,8 +10,8 @@ a regular triangulation. It corresponds to the first template parameter of the c
 \cgalRefines{TriangulationTraits}
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Epick_d<Dim>}
-\cgalModels{CGAL::Epeck_d<Dim>}
+\cgalHasModels{CGAL::Epick_d<Dim>}
+\cgalHasModels{CGAL::Epeck_d<Dim>}
 \cgalHasModelsEnd
 
 \sa `TriangulationTraits`

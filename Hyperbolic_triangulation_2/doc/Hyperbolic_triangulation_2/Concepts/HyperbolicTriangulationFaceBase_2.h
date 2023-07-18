@@ -42,7 +42,7 @@ Delaunay triangulations in the hyperbolic plane. The function `tds_data()` is us
 internally by the triangulation class during the insertion of points in the triangulation.
 
 \cgalHasModelsBegin
-\cgalModels{CGAL::Hyperbolic_triangulation_face_base_2}
+\cgalHasModels{CGAL::Hyperbolic_triangulation_face_base_2}
 \cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
