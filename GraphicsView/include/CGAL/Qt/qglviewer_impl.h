@@ -186,6 +186,7 @@ CGAL::QGLViewer::~QGLViewer() {
     helpWidget()->close();
     delete helpWidget_;
   }
+  disconnect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &CGAL::QGLViewer::contextIsDestroyed);
 }
 
 
