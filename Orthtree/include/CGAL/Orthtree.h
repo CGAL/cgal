@@ -478,7 +478,6 @@ public:
   Node_index_range traverse_indices(Traversal traversal) const {
 
     Node_index first = traversal.first_index();
-    std::cout << first << std::endl;
 
     auto next = [=](const Self& tree, Node_index index) -> Maybe_node_index {
       return traversal.next_index(index);

@@ -53,7 +53,7 @@ public:
   using Bbox_d = Bbox_2;
   using FT = typename GeomTraits::FT;
   using Point_d = typename GeomTraits::Point_2;
-  using Sphere_d = typename GeomTraits::Sphere_2;
+  using Sphere_d = typename GeomTraits::Circle_2;
   using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_2;
   using Array = std::array<FT, Dimension::value>; // todo: This should have a more descriptive name
 
