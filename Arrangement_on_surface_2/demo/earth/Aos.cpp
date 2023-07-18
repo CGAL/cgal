@@ -616,7 +616,8 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
         // convert the nodes to points on unit-sphere
         std::vector<Approximate_Vector_3>  sphere_points;
         //for (const auto& node : lring->nodes)
-        for(int i=0; i<lring->ids.size(); ++i)
+        //std::cout << "   NUM POLYGON-NODES SIZE = " << lring->ids.size() << std::endl;
+        for(int i=0; i< lring->ids.size(); ++i)
         {
           num_counted_nodes++;
           const auto id = lring->ids[i];
@@ -636,7 +637,11 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
           //  }
           //}
           vertex_id_map[vh] = id;
+          vh->data().v = true;
         }
+        //std::cout << "   POLYGON-NODES SET SIZE = " << polygon_node_ids.size() << std::endl;
+        if (lring->ids.size() != (1 + polygon_node_ids.size()))
+          std::cout << "*** ASSERTION ERROR!!!!\n";
 
         all_polygon_node_ids.insert(std::move(polygon_node_ids));
 
@@ -655,39 +660,6 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
 
         int num_faces_after = arr.number_of_faces();
         int num_new_faces = num_faces_after - num_faces_before;
-
-        //if (num_new_faces <= 1)
-        //  continue;
-
-        //// check newly created faces
-        //for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
-        //{
-        //  // NEWLY-CREATED FACE
-        //  if (false == fh->data().v)
-        //  {
-        //    //num_new_faces++;
-        //    // add all node-ids to the newly created face
-        //    std::set<int> new_face_node_ids;
-        //    auto first = fh->outer_ccb();
-        //    auto curr = first;
-        //    int num_vertices = 0;
-        //    do {
-        //      num_vertices++;
-        //      auto vh = curr->source();
-        //      auto id = vertex_id_map[vh];
-        //      new_face_node_ids.insert(id);
-        //    } while (++curr != first);
-        //    std::cout << "counted vertices = " << num_vertices << std::endl;
-        //    //std::cout << "vertices in the set = " << polygon_node_ids.size() << std::endl;
-        //    all_new_face_node_ids.push_back(std::move(new_face_node_ids));
-        //    all_new_face_names.push_back(pm.name);
-        //  }
-        //}
-        //std::cout << "num new faces = " << num_new_faces << std::endl;
-        //if (num_new_faces != 1)
-        //{
-        //  std::cout << "*** country = " << pm.name << std::endl;
-        //}
       }
     }
   }
@@ -715,6 +687,10 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
     auto curr = first;
     do {
       auto vh = curr->source();
+      // skip if the vertex is due to intersection with the identification curve
+      if ((vh->data().v == false) && (vh->degree() == 2))
+        continue;
+
       auto id = vertex_id_map[vh];
       face_node_ids_set.insert(id);
 
