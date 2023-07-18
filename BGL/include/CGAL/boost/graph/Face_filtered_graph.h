@@ -49,9 +49,11 @@ namespace CGAL {
    * the adapted graph must define a manifold mesh. In order to check that this condition is verified, you can
    * use the function `is_selection_valid()`.
    *
-   * There are two different ways to initialize this class. You can directly provide the set of faces selected, or
-   * if you have a face patch map, select the patches of faces. The latter option is convenient if you want to access
-   * some connected components of a graph after having called `CGAL::Polygon_mesh_processing::connected_components()`.
+   * There are two different ways to initialize this class: you can directly provide a set of selected faces,
+   * or provide a set of patch identifiers as well as a map between faces and patch identifiers.
+   * The latter option is convenient if you want to access some connected components of a graph
+   * after having called `CGAL::Polygon_mesh_processing::connected_components()`, or if you want
+   * to select only faces of a given color, for example.
    *
    * The documented interface of this class is limited on purpose and free functions of the concept
    * this class is a model of must be used to manipulate it.
