@@ -193,6 +193,37 @@ namespace {
     }
     return xcvs;
   }
+
+
+  Aos::Approx_arc  get_approx_curve(Curve xcv, double error)
+  {
+    Geom_traits traits;
+    auto approx = traits.approximate_2_object();
+    std::vector<QVector3D>  approx_curve;
+    {
+      std::vector<Approximate_point_2> v;
+      auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+
+      for (const auto& p : v)
+      {
+        const QVector3D arc_point(p.dx(), p.dy(), p.dz());
+        approx_curve.push_back(arc_point);
+      }
+    }
+
+    return approx_curve;
+  }
+  Aos::Approx_arcs get_approx_curves(std::vector<Curve>& xcvs, double error)
+  {
+    Aos::Approx_arcs  approx_curves;
+    for (const auto& xcv : xcvs)
+    {
+      auto approx_curve = get_approx_curve(xcv, error);
+      approx_curves.push_back(std::move(approx_curve));
+    }
+
+    return approx_curves;
+  }
 }
 
 
@@ -228,7 +259,6 @@ Aos::Approx_arcs Aos::get_approx_arcs(double error)
   auto ctr_p = traits.construct_point_2_object();
   auto ctr_cv = traits.construct_curve_2_object();
 
-
   std::vector<Curve>  xcvs;
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 0, 1)));
@@ -238,24 +268,24 @@ Aos::Approx_arcs Aos::get_approx_arcs(double error)
 
   auto approx = traits.approximate_2_object();
 
-
-  std::vector<std::vector<QVector3D>>  arcs;
-  for (const auto& xcv : xcvs)
-  {
-    std::vector<Approximate_point_2> v;
-    auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
-
-    std::vector<QVector3D> arc_points;
-    for (const auto& p : v)
-    {
-      const QVector3D arc_point(p.dx(), p.dy(), p.dz());
-      arc_points.push_back(arc_point);
-    }
-    arcs.push_back(std::move(arc_points));
-  }
+  auto approx_arcs = get_approx_curves(xcvs, error);
+  //std::vector<std::vector<QVector3D>>  arcs;
+  //for (const auto& xcv : xcvs)
+  //{
+  //  std::vector<Approximate_point_2> v;
+  //  auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+  //
+  //  std::vector<QVector3D> arc_points;
+  //  for (const auto& p : v)
+  //  {
+  //    const QVector3D arc_point(p.dx(), p.dy(), p.dz());
+  //    arc_points.push_back(arc_point);
+  //  }
+  //  arcs.push_back(std::move(arc_points));
+  //}
   //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
 
-  return arcs;
+  return approx_arcs;
 }
 Aos::Approx_arcs Aos::get_approx_arcs(const Kml::Placemark& placemark, double error)
 {
@@ -543,6 +573,7 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
 
   using Face_handle = Ext_aos::Face_handle;
   auto fh = arr.faces_begin();
+  fh->data().v = true;
   std::cout << "num faces = " << arr.number_of_faces() << std::endl;
   
   auto nodes = Kml::generate_ids(placemarks);
@@ -553,8 +584,7 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
   // obtained from the polygon definition, or if it is an additional face
   using Vertex_handle = Ext_aos::Vertex_handle;
   std::map<Vertex_handle, int>  vertex_id_map;
-  std::vector<std::set<int>>  all_polygon_node_ids, all_new_face_node_ids;
-  std::vector<std::string> all_polygon_names, all_new_face_names;
+  std::set<std::set<int>>  all_polygon_node_ids;
 
 
   num_counted_nodes = 0;
@@ -563,16 +593,10 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
   std::vector<Curve>  xcvs;
   for (auto& pm : placemarks)
   {
+    std::cout << pm.name << std::endl;
     for (auto& polygon : pm.polygons)
     {
       num_counted_polygons++;
-      all_polygon_names.push_back(pm.name);
-
-      // mark all faces as TRUE (= as existing faces)
-      for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
-      {
-        fh->data().v = true;
-      }
 
       // colect all rings into a single list (FOR NOW!!!)
       // TO-DO: PROCESS OUTER & INNER BOUNDARIES SEPARATELY!!!
@@ -614,8 +638,7 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
           vertex_id_map[vh] = id;
         }
 
-        all_polygon_node_ids.push_back(std::move(polygon_node_ids));
-        //all_polygon_node_ids.push_back(polygon_node_ids);
+        all_polygon_node_ids.insert(std::move(polygon_node_ids));
 
         // add curves
         int num_points = sphere_points.size();
@@ -633,76 +656,86 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
         int num_faces_after = arr.number_of_faces();
         int num_new_faces = num_faces_after - num_faces_before;
 
-        if (num_new_faces <= 1)
-          continue;
+        //if (num_new_faces <= 1)
+        //  continue;
 
-        // check newly created faces
-        for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
-        {
-          // NEWLY-CREATED FACE
-          if (false == fh->data().v)
-          {
-            //num_new_faces++;
-            // add all node-ids to the newly created face
-            std::set<int> new_face_node_ids;
-            auto first = fh->outer_ccb();
-            auto curr = first;
-            int num_vertices = 0;
-            do {
-              num_vertices++;
-              auto vh = curr->source();
-              auto id = vertex_id_map[vh];
-              new_face_node_ids.insert(id);
-            } while (++curr != first);
-            std::cout << "counted vertices = " << num_vertices << std::endl;
-            //std::cout << "vertices in the set = " << polygon_node_ids.size() << std::endl;
-            all_new_face_node_ids.push_back(std::move(new_face_node_ids));
-            all_new_face_names.push_back(pm.name);
-          }
-        }
-        std::cout << "num new faces = " << num_new_faces << std::endl;
-        if (num_new_faces != 1)
-        {
-          std::cout << "*** country = " << pm.name << std::endl;
-        }
+        //// check newly created faces
+        //for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+        //{
+        //  // NEWLY-CREATED FACE
+        //  if (false == fh->data().v)
+        //  {
+        //    //num_new_faces++;
+        //    // add all node-ids to the newly created face
+        //    std::set<int> new_face_node_ids;
+        //    auto first = fh->outer_ccb();
+        //    auto curr = first;
+        //    int num_vertices = 0;
+        //    do {
+        //      num_vertices++;
+        //      auto vh = curr->source();
+        //      auto id = vertex_id_map[vh];
+        //      new_face_node_ids.insert(id);
+        //    } while (++curr != first);
+        //    std::cout << "counted vertices = " << num_vertices << std::endl;
+        //    //std::cout << "vertices in the set = " << polygon_node_ids.size() << std::endl;
+        //    all_new_face_node_ids.push_back(std::move(new_face_node_ids));
+        //    all_new_face_names.push_back(pm.name);
+        //  }
+        //}
+        //std::cout << "num new faces = " << num_new_faces << std::endl;
+        //if (num_new_faces != 1)
+        //{
+        //  std::cout << "*** country = " << pm.name << std::endl;
+        //}
       }
     }
   }
 
-  std::cout << "num faces = " << arr.number_of_faces() << std::endl;
-  std::cout << "polygon count = " << num_counted_polygons << std::endl;
-  std::cout << "size of all_polygon_node_ids: " << all_polygon_node_ids.size() << std::endl;
+
+  // mark all faces as TRUE (= as existing faces)
+  int num_found = 0;
   int num_not_found = 0;
-  //for (auto& new_face_node_ids : all_new_face_node_ids)
-  for (int i = 0; i < all_new_face_node_ids.size(); ++i)
+  std::vector<Curve>  new_face_arcs;
+  for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
   {
-    auto& new_face_node_ids = all_new_face_node_ids[i];
-
-    // check if the current new-face in the country data-set
-    bool found = false;
-    auto it = find(all_polygon_node_ids.begin(),
-                   all_polygon_node_ids.end(), 
-                   new_face_node_ids);
-    if (it == all_polygon_node_ids.end())
+    // skip the spherical face
+    std::cout << "num outer_ccbs = " << fh->number_of_outer_ccbs() << std::endl;
+    if (fh->number_of_outer_ccbs() == 0)
     {
-      num_not_found++;
-      std::cout << "SOMETHING NOT FOUND while adding " << all_new_face_names[i] << "\n";
-
-      // find out which polygon has the same number of nodes
-      std::cout << "list of polygons having the same number of nodes:" << std::endl;
-      for (int j = 0; j < all_polygon_node_ids.size(); j++)
-      {
-        auto& polygon_node_ids = all_polygon_node_ids[j];
-        if (polygon_node_ids.size() == new_face_node_ids.size())
-          std::cout << "   " << all_polygon_names[j] << std::endl;
-      }
+      continue;
     }
-    //for (auto& polygon_node_ids : all_polygon_node_ids)
-    //{
-    //  if(polygon_node_ids.)
-    //}
+
+
+    // construct the set of all node-ids for the current face
+    std::set<int>  face_node_ids_set;
+    std::vector<int>  face_node_ids;
+    std::vector<Curve>  face_arcs;
+    auto first = fh->outer_ccb();
+    auto curr = first;
+    do {
+      auto vh = curr->source();
+      auto id = vertex_id_map[vh];
+      face_node_ids_set.insert(id);
+
+      face_arcs.push_back( ctr_cv(curr->source()->point(), curr->target()->point()));
+    } while (++curr != first);
+    //std::cout << "counted vertices = " << num_vertices << std::endl;
+    //std::cout << "vertices in the set = " << polygon_node_ids.size() << std::endl;
+    
+    auto it = all_polygon_node_ids.find(face_node_ids_set);
+    if (it == all_polygon_node_ids.cend())
+    {
+      std::cout << "NOT FOUND!!!\n";
+      std::cout << "num nodes = " << face_node_ids_set.size() << std::endl;
+      num_not_found++;
+      new_face_arcs.insert(new_face_arcs.end(), face_arcs.begin(), face_arcs.end());
+    }
+    else
+      num_found++;
   }
   std::cout << "num not found = " << num_not_found << std::endl;
 
-  return Approx_arcs{};
+  auto approx_arcs = get_approx_curves(new_face_arcs, 0.001);
+  return approx_arcs;
 }

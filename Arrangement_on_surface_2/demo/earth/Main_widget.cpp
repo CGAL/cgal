@@ -157,6 +157,9 @@ void Main_widget::init_problematic_nodes()
 
 
 
+std::unique_ptr<Line_strips>   new_faces;
+
+
 void Main_widget::initializeGL()
 {
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
@@ -178,7 +181,8 @@ void Main_widget::initializeGL()
   //auto all_nodes = Kml::generate_ids(m_countries);
 
   {
-    Aos::find_new_faces(m_countries);
+    auto created_faces = Aos::find_new_faces(m_countries);
+    new_faces = std::make_unique<Line_strips>(created_faces);
   }
   
   // initialize rendering of DUPLICATE VERTICES
@@ -504,24 +508,29 @@ void Main_widget::paintGL()
     for(auto& country_border : m_country_borders)
       country_border->draw();
 
-    // draw the selected country in blue color
+    // draw the SELECTED COUNTRY in BLUE
     auto& selected_countru = m_country_borders[m_selected_country_index];
     sp.set_uniform("u_color", QVector4D(0, .6, 1, 1));
     selected_countru->draw();
 
-    // draw the current arc of the selected country in YELLOW
+    // draw the CURRENT ARC of the selected country in YELLOW
     sp.set_uniform("u_color", QVector4D(1, 1, 0, 1));
     selected_countru->draw(m_selected_arc_index);
 
     const QVector4D vertex_color(1, 0, 0, 1);
     sp.set_uniform("u_color", vertex_color);
     glPointSize(3);
-    m_vertices->draw();
+    //m_vertices->draw();
 
     sp.set_uniform("u_color", QVector4D(0,1,0,1));
     glPointSize(2);
     //m_problematic_vertices->draw();
     draw_safe(m_problematic_vertices);
+
+    // NEW FACES in RED
+    sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
+    new_faces->draw();
+
 
     sp.unuse();
   }
