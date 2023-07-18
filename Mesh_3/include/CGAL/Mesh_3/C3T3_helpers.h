@@ -36,12 +36,9 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
 #include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1572,17 +1569,10 @@ private:
   Cell_vector c3t3_cells(const Cell_vector& cells) const
   {
     Cell_vector c3t3_cells;
-#ifdef CGAL_CXX17
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not_fn(Is_in_c3t3<Cell_handle>(c3t3_)));
-#else
-    std::remove_copy_if(cells.begin(),
-                        cells.end(),
-                        std::back_inserter(c3t3_cells),
-                        std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
-#endif
     return c3t3_cells;
   }
 
@@ -1938,7 +1928,7 @@ private:
   {
 # ifdef CGAL_LINKED_WITH_TBB
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for_each(
         outdated_cells.begin(), outdated_cells.end(),
@@ -1966,7 +1956,7 @@ private:
   {
 # ifdef CGAL_LINKED_WITH_TBB
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for
       (
@@ -2136,8 +2126,8 @@ private:
   template <typename CellRange>
   void reset_sliver_cache(CellRange& cell_range) const
   {
-    reset_sliver_cache(boost::begin(cell_range),
-                       boost::end(cell_range));
+    reset_sliver_cache(std::begin(cell_range),
+                       std::end(cell_range));
   }
 
   template <typename CellForwardIterator>
@@ -2153,8 +2143,8 @@ private:
   template <typename CellRange>
   void reset_circumcenter_cache(CellRange& cell_range) const
   {
-    reset_circumcenter_cache(boost::begin(cell_range),
-                             boost::end(cell_range));
+    reset_circumcenter_cache(std::begin(cell_range),
+                             std::end(cell_range));
   }
 
   template <typename CellForwardIterator>
@@ -2703,7 +2693,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
 
 # ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     std::vector<Cell_handle> outdated_cells_vector;
     outdated_cells_vector.reserve(outdated_cells.size());
@@ -2827,7 +2817,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Note: ~58% of rebuild_restricted_delaunay time
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::parallel_for_each(first_cell, last_cell,
       Update_cell<C3T3, Update_c3t3>(c3t3_, updater));
@@ -2849,7 +2839,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::parallel_for_each(
       facets.begin(), facets.end(),
@@ -2961,7 +2951,7 @@ move_point(const Vertex_handle& old_vertex,
 
 # ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tr_.incident_cells_threadsafe(old_vertex, std::back_inserter(incident_cells_));
   }
@@ -3443,7 +3433,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
   Facet_vector facets;
 # ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tr_.finite_incident_facets_threadsafe(v, std::back_inserter(facets));
   }
@@ -3663,17 +3653,10 @@ incident_slivers(const Vertex_handle& v,
   std::vector<Cell_handle> incident_cells_;
   tr_.incident_cells(v, std::back_inserter(incident_cells_));
 
-#ifdef CGAL_CXX17
   std::remove_copy_if(incident_cells_.begin(),
                       incident_cells_.end(),
                       out,
                       std::not_fn(Is_sliver<Sc>(c3t3_, criterion, sliver_bound)));
-#else
-  std::remove_copy_if(incident_cells_.begin(),
-                      incident_cells_.end(),
-                      out,
-                      std::not1(Is_sliver<Sc>(c3t3_,criterion,sliver_bound)));
-#endif
 
   return out;
 }
@@ -3859,7 +3842,7 @@ get_conflict_zone_topo_change(const Vertex_handle& old_vertex,
 
 # ifdef CGAL_LINKED_WITH_TBB
 // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tr_.incident_cells_threadsafe(old_vertex, removal_conflict_cells);
   }

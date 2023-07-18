@@ -73,7 +73,7 @@ namespace CGAL
     static size_t run(GMap& amap, typename GMap::Dart_descriptor adart,
                       bool update_attributes)
     {
-      CGAL_static_assertion ( i<GMap::dimension );
+      static_assert ( i<GMap::dimension );
       CGAL_assertion( (amap.template is_removable<i>(adart)) );
 
       size_t res = 0;
@@ -292,7 +292,7 @@ namespace CGAL
     static size_t run(GMap& amap, typename GMap::Dart_descriptor adart,
                       bool update_attributes)
     {
-      CGAL_static_assertion ( 1<=i && i<=GMap::dimension );
+      static_assert ( 1<=i && i<=GMap::dimension );
       CGAL_assertion( (amap.template is_contractible<i>(adart)) );
 
       size_t res = 0;

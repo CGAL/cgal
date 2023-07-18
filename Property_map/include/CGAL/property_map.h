@@ -73,9 +73,7 @@ class OR_property_map {
   typedef typename PM1::reference reference;
   typedef boost::read_write_property_map_tag category;
 
-  OR_property_map() {} // required by boost::connected_components
-
-  OR_property_map(PM1 pm1, PM2 pm2)
+  OR_property_map(PM1 pm1 = PM1(), PM2 pm2 = PM2())
     : pm1(pm1),pm2(pm2)
   {}
 

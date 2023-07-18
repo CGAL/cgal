@@ -26,9 +26,9 @@ lower dimensional interface `x()`, `y()`, `z()`,
 
 Vectors are implemented by arrays of variables of type `RT`. All
 operations like creation, initialization, tests, vector arithmetic,
-input and output on a vector \f$ v\f$ take time \f$ O(v.dimension())\f$.
+input and output on a vector \f$ v\f$ take time \cgalBigO{v.dimension()}.
 coordinate access, `dimension()` and conversions take constant
-time. The space requirement of a vector is \f$ O(v.dimension())\f$.
+time. The space requirement of a vector is \cgalBigO{v.dimension()}.
 
 */
 template< typename Kernel >

@@ -25,6 +25,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Unfiltered_predicate_adaptor.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/optional/optional.hpp>

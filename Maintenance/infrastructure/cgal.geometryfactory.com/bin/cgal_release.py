@@ -72,6 +72,9 @@ def beta_release_from_master(beta_number):
     rel.cwd = "$HOME/CGAL/create_internal_release"
     return rel
 
+def beta_release(branch, beta_number):
+    """Convenience function to create a beta release from a branch"""
+    return BetaRelease(branch, beta_number)
 
 def release(branch):
     """Convenience function to create a release from a branch"""

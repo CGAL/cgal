@@ -1,6 +1,17 @@
 Release History
 ===============
 
+[Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
+-----------
+
+Release date: October 2023
+
+### General Changes
+
+- **Breaking change**: C++17 is now required
+- Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
+
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 

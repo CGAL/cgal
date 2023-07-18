@@ -1346,7 +1346,7 @@ class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...> >
  : private internal::Derivator<Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >, std::tuple<V...>, std::tuple<O...> >
  , public std::tuple<O...>
 {
-  CGAL_static_assertion_msg(sizeof...(V) == sizeof...(O),
+  static_assert(sizeof...(V) == sizeof...(O),
                 "The number of explicit template parameters has to match the number of arguments");
 
   static const int size = sizeof...(V);

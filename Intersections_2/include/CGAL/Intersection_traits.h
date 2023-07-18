@@ -181,8 +181,8 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 // inline
 // typename Intersection_traits< typename Kernel_traits<A>::Kernel, A, B>::result_type >::type
 // intersection(const A& a, const B& b) {
-//   CGAL_static_assertion_msg( (std::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
-//                               "intersection with objects of different dimensions not supported");
+//   static_assert(std::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
+//                               "intersection with objects of different dimensions not supported";
 //   return internal::intersection_impl(a, b, typename A::Ambient_dimension());
 // }
 
@@ -190,7 +190,7 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 // inline
 // auto // K::Boolean
 // do_intersect(const A& a, const B& b) {
-//   CGAL_static_assertion_msg((std::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
+//   static_assert(std::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value,
 //                         "do_intersect with objects of different dimensions not supported");
 //   return internal::do_intersect_impl(a, b, typename A::Ambient_dimension());
 // }

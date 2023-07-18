@@ -31,7 +31,7 @@ namespace CGAL {
    std::map<typename Triangulation::Face_handle,
             typename LCC::Dart_descriptor >* aface_to_dart=nullptr)
   {
-    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
+    static_assert( LCC::dimension>=2 && LCC::ambient_dimension==2 );
 
     // Case of empty triangulations.
     if (atr.number_of_vertices()==0) return LCC::null_descriptor;

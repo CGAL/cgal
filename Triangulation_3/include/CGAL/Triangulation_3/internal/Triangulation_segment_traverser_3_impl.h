@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
 template < class Tr, class Inc >
@@ -337,7 +339,9 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
   std::array<const Point*, 4> vert = {&(cur_cell->vertex(0)->point()), &(cur_cell->vertex(1)->point()),
                                       &(cur_cell->vertex(2)->point()), &(cur_cell->vertex(3)->point())};
 
-  int inside = 0, outside = 0, regular_case = 0, degenerate = 0;
+  CGAL_assertion_code(int inside = 0;)
+  CGAL_assertion_code(int outside = 0;)
+  int regular_case = 0, degenerate = 0;
 
   if(cur.lt == Tr::FACET && prev.cell != Cell_handle()) {
     // [source, target] entered the cell `cur` via a facet.
@@ -347,7 +351,8 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     Simplex cur_after_walk;
 
     auto case_target_is_inside_cur_cell = [&](int case_nb) {
-      inside = case_nb;
+      CGAL_USE(case_nb);
+      CGAL_assertion_code(inside = case_nb;)
       prev_after_walk = {cur_cell, Tr::CELL, -1, -1};
       cur_after_walk = {{}, Tr::CELL, -1, -1};
     };
@@ -355,7 +360,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       if(nnext == Cell_handle{}) {
         nnext = cur_cell->neighbor(facet_nb);
       }
-      outside = facet_nb;
+      CGAL_assertion_code(outside = facet_nb;)
       prev_after_walk = {cur_cell, Tr::FACET, facet_nb, -1};
       cur_after_walk = {nnext, Tr::FACET, nnext->index(cur_cell), -1};
     };

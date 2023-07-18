@@ -38,7 +38,7 @@ class Line_3 : public R_::Kernel_base::Line_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Line_3                             Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Line_3>::value));
+  static_assert(std::is_same<Self, typename R_::Line_3>::value);
 
 public:
 
