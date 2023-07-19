@@ -4,7 +4,7 @@ Release History
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
-Release date: June 2023
+Release date: July 2023
 
 ### General Changes
 
