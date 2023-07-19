@@ -18,12 +18,10 @@ namespace CGAL {
 
 /*! \ingroup PkgPolygonRepair2Ref
  *
- * The class `Multipolygon_with_holes_2` models the concept
- * `MultiPolygonWithHoles_2`.
- * It is parameterized with a type `Polygon` used to define the exposed
- * type `Polygon_with_holes_2`. This type represents each polygon.
- *
- * \tparam Polygon_ must have input and output operators.
+ * The class `Multipolygon_with_holes_2` models the concept `MultipolygonWithHoles_2`.
+ * It is parameterized with two types (`Kernel` and `Container`) that are used to instantiate
+ * the types `Polygon_2<Kernel,Container>` and `Polygon_with_holes_2<Kernel,Container>`.
+ * The latter is used to represents each polygon with holes. The former is converted to the latter.
  *
  * \cgalModels `MultipolygonWithHoles_2`
  */
@@ -33,11 +31,15 @@ class Multipolygon_with_holes_2 {
 public:
   /// \name Definition
 
+  /// @{
+
   /// polygon type
   typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
 
   /// polygon with holes type
   typedef CGAL::Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
+  
+  /// @}
   
   typedef std::deque<Polygon_with_holes_2> Polygons_container;
 
@@ -46,9 +48,10 @@ public:
 
   typedef unsigned int Size;
   
-
+  /*! %Default constructor. */
   Multipolygon_with_holes_2() {}
 
+  /*! Constructor from polygons. */
   template <typename PolygonsInputIterator>
   Multipolygon_with_holes_2(PolygonsInputIterator p_begin,
                             PolygonsInputIterator p_end) :
