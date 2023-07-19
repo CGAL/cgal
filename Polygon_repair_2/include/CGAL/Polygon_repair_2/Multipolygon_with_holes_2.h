@@ -1,4 +1,4 @@
-// Copyright (c) 2023 GeometryFactory. All rights reserved.
+// Copyright (c) 2023 GeometryFactory.
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -11,6 +11,8 @@
 
 #ifndef CGAL_MULTIPOLYGON_WITH_HOLES_2_H
 #define CGAL_MULTIPOLYGON_WITH_HOLES_2_H
+
+#include <CGAL/license/Polygon_repair_2.h>
 
 #include <CGAL/Polygon_with_holes_2.h>
 
