@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
   // mp.add_polygon(p);
 
   // Square with hole touching boundary (self-intersecting loop)
-  // Point ps[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1), 
+  // Point ps[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1),
   //               Point(0.25,0.25), Point(0.75,0.25), Point(0.75,0.75), Point(0,1)};
   // Polygon p(ps, ps+8);
   // std::cout << p << std::endl;

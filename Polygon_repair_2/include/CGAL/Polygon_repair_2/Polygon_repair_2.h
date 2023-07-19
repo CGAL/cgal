@@ -133,7 +133,7 @@ public:
             to_check.push_back(to_check_in_region.front()->neighbor(neighbour));
             to_check_added_by.push_back(label);
             to_check_in_region.front()->neighbor(neighbour)->processed() = true;
-          } 
+          }
         }
       } to_check_in_region.pop_front();
     }
@@ -144,7 +144,7 @@ public:
     for (auto const face: t.all_face_handles()) {
       face->label() = 0;
       face->processed() = false;
-    } 
+    }
 
     // Mark exterior as processed and put interior triangles adjacent to it in to_check
     std::list<typename Triangulation::Face_handle> to_check;
@@ -171,7 +171,7 @@ public:
 
   // Reconstruct ring boundary starting from an edge (face + opposite vertex) that is part of it
   void reconstruct_ring(std::list<typename Kernel::Point_2>& ring,
-                        typename Triangulation::Face_handle face_adjacent_to_boundary, 
+                        typename Triangulation::Face_handle face_adjacent_to_boundary,
                         int opposite_vertex) {
     typename Triangulation::Face_handle current_face = face_adjacent_to_boundary;
     int current_opposite_vertex = opposite_vertex;
@@ -215,7 +215,7 @@ public:
           } else {
             // std::cout << "Label: " << face->label() << " -> item " << -face->label()-2 << " -> in polygon " << hole_nesting[-face->label()-2] << std::endl;
             holes[hole_nesting[-face->label()-2]-1].emplace_back(ring.begin(), ring.end());
-          } 
+          }
 
           std::list<typename Triangulation::Face_handle> to_check;
           to_check.push_back(face);
@@ -224,10 +224,10 @@ public:
               if (to_check.front()->label() == to_check.front()->neighbor(neighbour)->label() &&
                   !to_check.front()->neighbor(neighbour)->processed()) {
                 to_check.push_back(to_check.front()->neighbor(neighbour));
-              } 
+              }
             } to_check.front()->processed() = true;
             to_check.pop_front();
-          } 
+          }
 
           break;
         }
@@ -258,7 +258,7 @@ public:
   }
 
   /// @}
-  
+
 
 protected:
   Triangulation t;

@@ -40,16 +40,16 @@ public:
 
   /// polygon with holes type
   typedef CGAL::Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
-  
+
   /// @}
-  
+
   typedef std::deque<Polygon_with_holes_2> Polygons_container;
 
   typedef typename Polygons_container::iterator Polygon_iterator;
   typedef typename Polygons_container::const_iterator Polygon_const_iterator;
 
   typedef unsigned int Size;
-  
+
   /*! %Default constructor. */
   Multipolygon_with_holes_2() {}
 
@@ -97,7 +97,7 @@ respectively. The modifier `set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is \ascii without comments.
 
-The number of polygons is exported followed by the polygons. For each polygon, 
+The number of polygons is exported followed by the polygons. For each polygon,
 the number of points of the outer boundary is exported followed by the
 points themselves in counterclockwise order. Then, the number of holes
 is exported, and for each hole, the number of points on its outer

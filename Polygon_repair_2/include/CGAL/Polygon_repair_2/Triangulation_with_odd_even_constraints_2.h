@@ -49,7 +49,7 @@ public:
       return fit->label() < 1;
     }
   };
-  
+
   // iterator over interior faces.
   class Interior_faces_iterator : public Filter_iterator<All_faces_iterator, Interior_tester> {
     typedef Filter_iterator<All_faces_iterator, Interior_tester> Base;
