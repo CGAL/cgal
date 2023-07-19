@@ -52,7 +52,7 @@ and `Parallel_if_available_tag`.
 template<typename Gt,
          typename Concurrency_tag = CGAL::Sequential_tag,
          typename Vb = Remeshing_vertex_base_3<Gt>,
-         typename Cb = Remeshing_cell_base_3<>
+         typename Cb = Remeshing_cell_base_3<Gt>
 >
 class Remeshing_triangulation_3
   : public CGAL::Triangulation_3<Gt, CGAL::Triangulation_data_structure_3<Vb,Cb> >
