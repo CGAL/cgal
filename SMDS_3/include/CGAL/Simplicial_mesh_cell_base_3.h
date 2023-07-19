@@ -164,16 +164,16 @@ public:
     if(is) {
       c.set_subdomain_index(index);
       for(int i = 0; i < 4; ++i)
-        {
-          Surface_patch_index i2;
-          if(IO::is_ascii(is))
-            is >> IO::iformat(i2);
-          else
-            {
-              read(is, i2);
-            }
-          c.set_surface_patch_index(i, i2);
-        }
+      {
+        Surface_patch_index i2;
+        if(IO::is_ascii(is))
+          is >> IO::iformat(i2);
+        else
+          {
+            read(is, i2);
+          }
+        c.set_surface_patch_index(i, i2);
+      }
     }
     return is;
   }
@@ -186,24 +186,25 @@ public:
       os << c.subdomain_index();
     else
       write(os, c.subdomain_index());
+
     for(int i = 0; i < 4; ++i)
-      {
-        if(IO::is_ascii(os))
-          os << ' ' << IO::oformat(c.surface_patch_index(i));
-        else
-          write(os, c.surface_patch_index(i));
-      }
+    {
+      if(IO::is_ascii(os))
+        os << ' ' << IO::oformat(c.surface_patch_index(i));
+      else
+        write(os, c.surface_patch_index(i));
+    }
+
     return os;
   }
-
-};  // end class Simplicial_mesh_cell_3
+};
 
 /*!
 \ingroup PkgSMDS3Classes
 
 The class `Simplicial_mesh_cell_base_3`
 is a model of the concept `SimplicialMeshCellBase_3`.
-It is designed to serve as cell base class for.3D simplicial mesh data structures.
+It is designed to serve as cell base class for 3D simplicial mesh data structures.
 It stores and gives access to data about the complex the cell belongs to, such as the
 subdomain it belongs to or surface it takes part to.
 

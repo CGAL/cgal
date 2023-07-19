@@ -45,9 +45,9 @@ triangulation data structure.
 Possible values are `Sequential_tag` (the default), `Parallel_tag`,
 and `Parallel_if_available_tag`.
 
-\tparam Vb is a model of `RemeshingVertexBase_3`. It has the default value ` Remeshing_vertex_base_3<Gt>`.
-\tparam Cb is a model of `RemeshingCellBase_3`. It has the default value ` Remeshing_cell_base_3<Gt>`.
+\tparam Vb must be a model of `RemeshingVertexBase_3`.
 
+\tparam Cb must be model of `RemeshingCellBase_3`.
 */
 template<typename Gt,
          typename Concurrency_tag = CGAL::Sequential_tag,

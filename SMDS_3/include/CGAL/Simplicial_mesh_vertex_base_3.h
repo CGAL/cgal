@@ -159,8 +159,8 @@ private:
   std::size_t time_stamp_;
 
 public:
-
-  friend std::istream& operator>>(std::istream &is, Simplicial_mesh_vertex_3& v)
+  friend std::istream& operator>>(std::istream& is,
+                                  Simplicial_mesh_vertex_3& v)
   {
     is >> static_cast<Cmvb3_base&>(v);
     int dimension;
@@ -185,7 +185,8 @@ public:
     return is;
   }
 
-  friend std::ostream& operator<<(std::ostream &os, const Simplicial_mesh_vertex_3& v)
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const Simplicial_mesh_vertex_3& v)
   {
     os << static_cast<const Cmvb3_base&>(v);
     if(IO::is_ascii(os)) {
@@ -204,8 +205,7 @@ public:
                                                 v.index());
     return os;
   }
-};  // end class Simplicial_mesh_vertex_3
-
+};
 
 /*!
 \ingroup PkgSMDS3Classes
