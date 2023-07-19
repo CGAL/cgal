@@ -185,7 +185,7 @@ namespace CGAL {
      */
     Combinatorial_map_base()
     {
-      CGAL_static_assertion_msg(Helper::nb_attribs<=dimension+1,
+      static_assert(Helper::nb_attribs<=dimension+1,
                   "Too many attributes in the tuple Attributes_enabled");
       this->init_storage();
 
@@ -803,7 +803,7 @@ namespace CGAL {
     void restricted_set_dart_attribute(Dart_descriptor dh,
                                        typename Attribute_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "set_dart_attribute<i> called but i-attributes are disabled.");
 
       if ( this->template attribute<i>(dh)==ah ) return;
@@ -826,7 +826,7 @@ namespace CGAL {
     void set_dart_attribute(Dart_descriptor dh,
                             typename Attribute_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "set_dart_attribute<i> called but i-attributes are disabled.");
 
       if ( this->template attribute<i>(dh)==ah ) return;
@@ -1154,7 +1154,7 @@ namespace CGAL {
     }
 
     /** Unmark all the darts of the map for a given mark.
-     * If all the darts are marked or unmarked, this operation takes O(1)
+     * If all the darts are marked or unmarked, this operation takes \cgalBigO{1}
      * operations, otherwise it traverses all the darts of the map.
      * @param amark the given mark.
      */
@@ -1524,8 +1524,8 @@ namespace CGAL {
     template < class Ite >
     std::ostream& display_orbits(std::ostream & aos) const
     {
-      CGAL_static_assertion( (std::is_same<typename Ite::Basic_iterator,
-                              Tag_true>::value) );
+      static_assert(std::is_same<typename Ite::Basic_iterator,
+                              Tag_true>::value);
       unsigned int nb = 0;
       size_type amark = get_new_mark();
       for ( typename Dart_range::const_iterator it1(darts().begin()),
@@ -1584,7 +1584,7 @@ namespace CGAL {
     template<unsigned int i, typename ...Args>
     typename Attribute_descriptor<i>::type create_attribute(const Args&... args)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
      typename Attribute_descriptor<i>::type res=
        std::get<Helper::template Dimension_index<i>::value>
@@ -1602,7 +1602,7 @@ namespace CGAL {
     template<unsigned int i>
     void erase_attribute(typename Attribute_descriptor<i>::type h)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "erase_attribute<i> but i-attributes are disabled");
       std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).erase(h);
@@ -1612,7 +1612,7 @@ namespace CGAL {
     template<unsigned int i>
     bool is_attribute_used(typename Attribute_const_descriptor< i >::type ah) const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                                 "is_attribute_used<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).is_used(ah);
@@ -1622,7 +1622,7 @@ namespace CGAL {
     template <unsigned int i>
     size_type number_of_attributes() const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size();
@@ -1636,8 +1636,8 @@ namespace CGAL {
     void set_attribute(Dart_descriptor dh,
                        typename Attribute_descriptor<i>::type ah)
     {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(i<=dimension);
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "set_attribute<i> but i-attributes are disabled");
       for ( typename Dart_of_cell_range<i>::iterator it(*this, dh);
             it.cont(); ++it)
@@ -1651,7 +1651,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_range<i>::type & attributes()
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
@@ -1660,7 +1660,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_const_range<i>::type & attributes() const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
@@ -1673,7 +1673,7 @@ namespace CGAL {
                          typename Attribute_type<i>::type&)>&
     onsplit_functor()
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");
@@ -1689,7 +1689,7 @@ namespace CGAL {
                                typename Attribute_type<i>::type&)>&
     onsplit_functor() const
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");
@@ -1705,7 +1705,7 @@ namespace CGAL {
                                typename Attribute_type<i>::type&)>&
     onmerge_functor()
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");
@@ -1720,7 +1720,7 @@ namespace CGAL {
                                typename Attribute_type<i>::type&)>&
     onmerge_functor() const
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");

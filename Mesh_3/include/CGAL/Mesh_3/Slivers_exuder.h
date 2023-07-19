@@ -39,7 +39,6 @@
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/optional.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 
 #include <algorithm>
 #include <iomanip> // std::setprecision
@@ -623,7 +622,7 @@ private:
   {
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
         ch, this->erase_counter(ch), criterion_value);
     // Sequential
@@ -920,7 +919,7 @@ pump_vertices(FT sliver_criterion_limit,
 
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_task_group();
 
@@ -964,9 +963,9 @@ pump_vertices(FT sliver_criterion_limit,
       bool vertex_pumped = false;
       for( int i = 0; i < 4; ++i )
       {
-        // pump_vertices_on_surfaces is a boolean template parameter.  The
-        // following condition is pruned at compiled time, if
-        // pump_vertices_on_surfaces==false.
+        // pump_vertices_on_surfaces is a Boolean template parameter.
+        // The following condition is pruned at compile time,
+        // if pump_vertices_on_surfaces is `false`.
         if( pump_vertices_on_surfaces || c3t3_.in_dimension(c->vertex(i)) > 2 )
         {
           if( pump_vertex<pump_vertices_on_surfaces>(c->vertex(i)) )
@@ -976,7 +975,9 @@ pump_vertices(FT sliver_criterion_limit,
             break;
           }
           else
+          {
             ++num_of_ignored_vertices_;
+          }
 
           ++num_of_treated_vertices_;
         }
@@ -987,14 +988,14 @@ pump_vertices(FT sliver_criterion_limit,
         this->cells_queue_pop_front();
 
       visitor.after_cell_pumped(this->cells_queue_size());
-  #ifdef CGAL_MESH_3_EXUDER_VERBOSE
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
         % this->cells_queue_size()
         % num_of_pumped_vertices_
         % num_of_ignored_vertices_
         % (num_of_treated_vertices_ / running_time_.time());
-  #endif // CGAL_MESH_3_EXUDER_VERBOSE
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
     }
   }
 
@@ -1054,12 +1055,12 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   {
     typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
-    const Weighted_point& pwp = tr_.point(pumped_vertex);
-    Weighted_point wp(cp(pwp), best_weight);
+    const Weighted_point& old_position = tr_.point(pumped_vertex);
+    Weighted_point new_point(cp(old_position), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
-    return update_mesh<pump_vertices_on_surfaces>(wp,
+    return update_mesh<pump_vertices_on_surfaces>(new_point,
                                                   pumped_vertex,
                                                   could_lock_zone);
   }

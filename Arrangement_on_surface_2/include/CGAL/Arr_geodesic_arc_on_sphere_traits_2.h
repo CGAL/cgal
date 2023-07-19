@@ -66,7 +66,7 @@ public:
   typedef Arr_contracted_side_tag               Top_side_category;
   typedef Arr_identified_side_tag               Right_side_category;
 
-  typedef boost::integral_constant<bool, atan_y==0>       Zero_atan_y;
+  typedef std::integral_constant<bool, atan_y==0>       Zero_atan_y;
 
   // Traits objects
   typedef Arr_extended_direction_3<Kernel>                Point_2;
@@ -358,7 +358,7 @@ public:
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
-                                        boost::true_type) const
+                                        std::true_type) const
   {
     const Direction_3& normal = xcv.normal();
     dp = (CGAL::sign(normal.dz()) == POSITIVE) ?
@@ -371,7 +371,7 @@ public:
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
-                                        boost::false_type) const
+                                        std::false_type) const
   {
     const Direction_3& normal = xcv.normal();
     FT z((atan_x * normal.dx() + atan_y * normal.dy()) /
@@ -383,7 +383,7 @@ public:
    * \param[in] cv the curve
    */
   bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   boost::true_type) const
+                                   std::true_type) const
   {
     const Direction_3& normal = xcv.normal();
     return ((x_sign(normal) == ZERO) &&
@@ -395,7 +395,7 @@ public:
    * \param[in] cv the curve
    */
   bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   boost::false_type) const
+                                   std::false_type) const
   {
     const Direction_3& normal = xcv.normal();
     const Direction_3& iden_normal = identification_normal();
@@ -441,7 +441,7 @@ public:
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(x, y, z);
-      init(p, boost::integral_constant<bool, atan_y==0>());
+      init(p, std::integral_constant<bool, atan_y==0>());
       return p;
     }
 
@@ -454,14 +454,14 @@ public:
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(other);
-      init(p, boost::integral_constant<bool, atan_y==0>());
+      init(p, std::integral_constant<bool, atan_y==0>());
       return p;
     }
 
     /*! Initialize a point on the sphere,
      * \param[in] p the point to initialize.
      */
-    void init(Point_2& p, boost::true_type) const
+    void init(Point_2& p, std::true_type) const
     {
       const Direction_3& dir = p;
       if (y_sign(dir) != ZERO) {
@@ -480,7 +480,7 @@ public:
     /*! Initialize a point on the sphere,
      * \param[in] p the point to initialize.
      */
-    void init(Point_2& p, boost::false_type) const
+    void init(Point_2& p, std::false_type) const
     {
       const Direction_3& dir = p;
       if ((x_sign(dir) == ZERO) && (y_sign(dir) == ZERO)) {

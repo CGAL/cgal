@@ -3,7 +3,6 @@
 #include <iterator>
 
 #include <boost/functional/value_factory.hpp>
-#include <boost/array.hpp>
 
 #include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
@@ -92,7 +91,7 @@ int main()
   Vector bbox_center((bbox.xmin() + bbox.xmax()) / 2,
                      (bbox.ymin() + bbox.ymax()) / 2,
                      (bbox.zmin() + bbox.zmax()) / 2);
-  boost::array<double, 3> extents;
+  std::array<double, 3> extents;
   extents[0] = bbox.xmax() - bbox.xmin();
   extents[1] = bbox.ymax() - bbox.ymin();
   extents[2] = bbox.zmax() - bbox.zmin();

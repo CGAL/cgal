@@ -1076,9 +1076,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     }
       //Join vertex
     case 0:
-      if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron())) < 4
+      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron()).size() < 4
            ||
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()))< 4)
+         CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()).size()< 4)
         {
           d->tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
                            "Select the edge with extremities you want to join.");
@@ -1177,9 +1177,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case 6:
 
         //check preconditions
-      if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron())) == 3
+      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron()).size() == 3
          &&
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3
+         CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()).size() == 3
         && !CGAL::is_border(ed, *polyhedron()))
       {
         SMesh* mesh = polyhedron();

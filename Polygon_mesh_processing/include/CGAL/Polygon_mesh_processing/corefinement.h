@@ -206,8 +206,8 @@ corefine_and_compute_boolean_operations(
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type  VPM1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type  VPM2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
-                                      typename boost::property_traits<VPM2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VPM1>::value_type,
+                             typename boost::property_traits<VPM2>::value_type>::value);
 
   VPM1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                get_property_map(boost::vertex_point, tm1));
@@ -694,8 +694,8 @@ corefine(      TriangleMesh& tm1,
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPM1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPM2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
-                                      typename boost::property_traits<VPM2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VPM1>::value_type,
+                             typename boost::property_traits<VPM2>::value_type>::value);
 
   VPM1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                get_property_map(boost::vertex_point, tm1));

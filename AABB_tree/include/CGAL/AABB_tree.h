@@ -27,7 +27,6 @@
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <boost/optional.hpp>
-#include <boost/lambda/lambda.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -143,7 +142,7 @@ namespace CGAL {
     /// An explicit call to `build()` must be made to ensure that the next call to
     /// a query function will not trigger the construction of the data structure.
     /// A call to `AABBTraits::set_shared_data(t...)` is made using the internally stored traits.
-    /// This procedure has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// This procedure has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.
     template<typename ... T>
     void build(T&& ...);
@@ -326,7 +325,7 @@ public:
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query) const
     {
-      return first_intersection(query, boost::lambda::constant(false));
+      return first_intersection(query, [](Primitive_id){ return false; });
     }
     /// \endcond
 
@@ -351,7 +350,7 @@ public:
     boost::optional<Primitive_id>
     first_intersected_primitive(const Ray& query) const
     {
-      return first_intersected_primitive(query, boost::lambda::constant(false));
+      return first_intersected_primitive(query, [](Primitive_id){ return false; });
     }
     /// \endcond
     ///@}

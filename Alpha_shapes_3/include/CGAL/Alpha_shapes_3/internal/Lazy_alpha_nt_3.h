@@ -139,8 +139,8 @@ class Lazy_alpha_nt_3{
   Approx_point to_approx(const Input_point& wp) const
   {
     // The traits class' Point_3 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_3<
-                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+    static_assert(Is_traits_point_convertible_3<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value);
 
     To_approx converter;
     return converter(wp);
@@ -149,8 +149,8 @@ class Lazy_alpha_nt_3{
   Exact_point to_exact(const Input_point& wp) const
   {
     // The traits class' Point_3 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_3<
-                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+    static_assert(Is_traits_point_convertible_3<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value);
 
     To_exact converter;
     return converter(wp);
@@ -417,7 +417,7 @@ struct Alpha_nt_selector_3
              GeomTraits,
              // If the base traits is already exact then we don't need to do anything,
              // and we can simply directly use the traits class
-             Boolean_tag<boost::is_floating_point<typename GeomTraits::FT>::value &&
+             Boolean_tag<std::is_floating_point<typename GeomTraits::FT>::value &&
                          ExactAlphaComparisonTag::value >,
              Weighted_tag>
 { };

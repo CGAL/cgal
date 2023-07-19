@@ -329,10 +329,10 @@ public:
     ipe::Curve*
     create_polyline(const iterator first, const iterator last,bool setclose=false) const
     {
-      if (boost::next(first)!=last){
+      if (std::next(first)!=last){
         ipe::Curve* SSP_ipe = new ipe::Curve();
         ipe::Vector Prev_pt=ipe::Vector(CGAL::to_double(first->x()),CGAL::to_double(first->y())) ;
-        for (iterator it = boost::next(first);it!=last;++it){
+        for (iterator it = std::next(first);it!=last;++it){
           ipe::Vector Cur_pt=ipe::Vector(CGAL::to_double(it->x()),CGAL::to_double(it->y()));
           SSP_ipe -> appendSegment(Prev_pt,Cur_pt);
           Prev_pt=Cur_pt;

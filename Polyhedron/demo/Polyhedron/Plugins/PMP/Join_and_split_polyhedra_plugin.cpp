@@ -217,7 +217,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       item->computeItemColorVectorAutomatically(true);
       item->invalidateOpenGLBuffers();
       item->setProperty("NbPatchIds", nb_patch_ids);
-      scene->itemChanged(item);
+      scene->itemChanged(item); // @todo emits
     }
     else
     {

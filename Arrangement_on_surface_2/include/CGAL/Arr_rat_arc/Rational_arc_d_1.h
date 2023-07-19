@@ -100,9 +100,9 @@ public:
 
   typedef Algebraic_point_2                                 Point_2;
 
-  CGAL_static_assertion((std::is_same<Integer, Coefficient>::value));
-  CGAL_static_assertion((std::is_same<Polynomial_1,
-                       typename FT_poly_rat_1::Numerator_type>::value));
+  static_assert(std::is_same<Integer, Coefficient>::value);
+  static_assert(std::is_same<Polynomial_1,
+                       typename FT_poly_rat_1::Numerator_type>::value);
 
 public:
   const Rational_function& get_rational_function(const Polynomial_1& numerator,

@@ -28,7 +28,7 @@
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
 #include <cfloat> // for the macro DBL_MAX
-#include <boost/type_traits/is_base_of.hpp>
+
 namespace CGAL {
 
 
@@ -101,19 +101,19 @@ public:
 
   template <typename Facet_criterion>
   void add_facet_criterion(Facet_criterion* criterion) {
-    CGAL_static_assertion((boost::is_base_of<
+    static_assert(std::is_base_of<
                            typename Facet_criteria::Abstract_criterion,
                            Facet_criterion
-                           >::value));
+                           >::value);
     facet_criteria_.add(criterion);
   }
 
   template <typename Cell_criterion>
   void add_cell_criterion(Cell_criterion* criterion) {
-    CGAL_static_assertion((boost::is_base_of<
+    static_assert(std::is_base_of<
                            typename Cell_criteria::Abstract_criterion,
                            Cell_criterion
-                           >::value));
+                           >::value);
     cell_criteria_.add(criterion);
   }
 

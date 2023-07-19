@@ -775,7 +775,7 @@ namespace CGAL {
        CGAL::Integral_domain_without_division_tag) {
         // polynomial_subresultants_with_cofactors requires
         // a model of IntegralDomain as coefficient type;
-        CGAL_static_assertion(sizeof(Polynomial_traits_d)==0);
+        static_assert(sizeof(Polynomial_traits_d)==0);
         return sres_out;
     }
 

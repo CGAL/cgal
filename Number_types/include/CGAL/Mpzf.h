@@ -148,7 +148,7 @@ template <class T, class = void> struct pool2 {
   static bool empty() { return data() == 0; }
   static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
   private:
-  CGAL_static_assertion(sizeof(T) >= sizeof(T*));
+  static_assert(sizeof(T) >= sizeof(T*));
   static T& data () {
     static CGAL_MPZF_TLS T data_ = 0;
     return data_;
@@ -162,7 +162,7 @@ template <class T, class = void> struct pool3 {
   static bool empty() { return data() == 0; }
   static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
   private:
-  CGAL_static_assertion(sizeof(T) >= sizeof(T*));
+  static_assert(sizeof(T) >= sizeof(T*));
   struct cleaner {
     T data_ = 0;
     ~cleaner(){
@@ -188,7 +188,7 @@ template <class T, class = void> struct no_pool {
 };
 
 // Only used with an argument known not to be 0.
-inline int ctz (boost::uint64_t x) {
+inline int ctz (std::uint64_t x) {
 #if defined(_MSC_VER)
   unsigned long ret;
   _BitScanForward64(&ret, x);
@@ -200,7 +200,7 @@ inline int ctz (boost::uint64_t x) {
   return __builtin_ctzll (x);
 #endif
 }
-inline int clz (boost::uint64_t x) {
+inline int clz (std::uint64_t x) {
 #if defined(_MSC_VER)
   unsigned long ret;
   _BitScanReverse64(&ret, x);
@@ -430,7 +430,7 @@ struct Mpzf {
   }
   Mpzf(double d){
     init();
-    using boost::uint64_t;
+    using std::uint64_t;
     union {
 #ifdef CGAL_LITTLE_ENDIAN
       struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
@@ -455,7 +455,7 @@ struct Mpzf {
     }
     int e1 = (int)dexp+13;
     // FIXME: make it more general! But not slower...
-    CGAL_static_assertion(GMP_NUMB_BITS == 64);
+    static_assert(GMP_NUMB_BITS == 64);
     int e2 = e1 % 64;
     exp = e1 / 64 - 17;
     // 52+1023+13==17*64 ?

@@ -522,7 +522,7 @@ struct Locate_with_AABB_tree_Tester // 2D case
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive;
     typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
-    CGAL_static_assertion((std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value));
+    static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
     Intrinsic_point_to_Point_3 to_p3;
 
@@ -633,7 +633,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
     typedef typename K::Point_3                            Point_3;
-    CGAL_static_assertion((std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value));
+    static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;
     Point_reference p3_a = get(vpm, v);

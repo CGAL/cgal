@@ -37,7 +37,6 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 #include <memory>
 
@@ -523,7 +522,7 @@ features into any model of the `MeshDomain_3` concept.
 The 1-dimensional features are described as polylines
 whose endpoints are the added corners.
 
-\tparam MeshDomain_3 is the type
+\tparam MeshDomain is the type
 of the domain which should be extended.
 It has to be a model of the `MeshDomain_3` concept.
 
@@ -536,16 +535,16 @@ It has to be a model of the `MeshDomain_3` concept.
 \sa `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
 
 */
-template < typename MeshDomain_3 >
+template < typename MeshDomain >
 class Mesh_domain_with_polyline_features_3
-  : public MeshDomain_3
+  : public MeshDomain
 {
-  typedef Mesh_domain_with_polyline_features_3<MeshDomain_3> Self;
+  typedef Mesh_domain_with_polyline_features_3<MeshDomain> Self;
 public:
 /// \name Types
 /// @{
-  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index;
-  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index;
+  typedef typename MeshDomain::Surface_patch_index   Surface_patch_index;
+  typedef typename MeshDomain::Subdomain_index       Subdomain_index;
   typedef int                                        Curve_index;
   typedef int                                        Corner_index;
 
@@ -553,14 +552,14 @@ public:
   typedef unspecified_type                           Index;
 #else
   typedef typename Mesh_3::internal::Index_generator_with_features<
-    typename MeshDomain_3::Subdomain_index,
+    typename MeshDomain::Subdomain_index,
     Surface_patch_index,
     Curve_index,
     Corner_index>::type                              Index;
 #endif
 
   typedef CGAL::Tag_true                             Has_features;
-  typedef typename MeshDomain_3::R::FT               FT;
+  typedef typename MeshDomain::R::FT                 FT;
 /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -569,9 +568,9 @@ public:
   typedef Curve_index Curve_segment_index;
 #endif
 
-  typedef typename MeshDomain_3::R         Gt;
-  typedef Gt                       R;
-  typedef typename MeshDomain_3::Point_3   Point_3;
+  typedef typename MeshDomain::R         Gt;
+  typedef Gt                             R;
+  typedef typename MeshDomain::Point_3   Point_3;
 #endif // DOXYGEN_RUNNING
 
 /// \name Creation
@@ -581,7 +580,7 @@ public:
 
   template <typename ... T>
   Mesh_domain_with_polyline_features_3(const T& ...o)
-    : MeshDomain_3(o...)
+    : MeshDomain(o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
@@ -883,11 +882,11 @@ public:
   }
   Curve_index maximal_curve_index() const {
     if(edges_incidences_.empty()) return Curve_index();
-    return boost::prior(edges_incidences_.end())->first;
+    return std::prev(edges_incidences_.end())->first;
   }
 
   void build_curves_aabb_tree() const {
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "Building curves AABB tree...";
     CGAL::Real_timer timer;
     timer.start();
@@ -913,7 +912,7 @@ public:
     }
     curves_aabb_tree_ptr_->build();
     curves_aabb_tree_is_built = true;
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     timer.stop();
     std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 #endif
@@ -1458,9 +1457,9 @@ insert_edge(InputIterator first, InputIterator end)
   // 'compute_corners_incidences()', that corner is incident only to a
   // loop, then it will be removed from the set of corners.
   register_corner(*first, curve_index);
-  if ( *first != *boost::prior(end) )
+  if ( *first != *std::prev(end) )
   {
-    register_corner(*boost::prior(end), curve_index);
+    register_corner(*std::prev(end), curve_index);
   }
 
   // Create a new polyline

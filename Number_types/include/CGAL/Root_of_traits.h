@@ -150,7 +150,7 @@ private:
     // We have the typedef as VC10 fails with
     // static_assert(FrT::Is_fraction::value)
     typedef typename FrT::Is_fraction ISF;
-    CGAL_static_assertion((ISF::value));
+    static_assert(ISF::value);
 
 
     typedef typename FrT::Numerator_type      RT;

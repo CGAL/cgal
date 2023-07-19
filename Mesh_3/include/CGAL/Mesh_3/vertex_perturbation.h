@@ -119,10 +119,13 @@ edge_sq_length(const typename Tr::Edge& e,
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
 
-  typename Gt::Construct_point_3 cp =
-    tr.geom_traits().construct_point_3_object();
+  // There is no need to use tr.min_squared_distance() here because we are computing
+  // distances between vertices within a common cell, which means that even
+  // if we are using a periodic triangulation, the distance is correctly computed.
   typename Gt::Compute_squared_distance_3 sq_distance =
     tr.geom_traits().compute_squared_distance_3_object();
+  typename Gt::Construct_point_3 cp =
+    tr.geom_traits().construct_point_3_object();
 
   const Weighted_point& wp = tr.point(e.first, e.second);
   const Weighted_point& wq = tr.point(e.first, e.third);
@@ -979,10 +982,13 @@ private:
     CGAL_assertion(cell->has_vertex(v));
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp =
-      tr.geom_traits().construct_point_3_object();
+    // There is no need to use tr.min_squared_distance() here because we are computing
+    // distances between vertices within a common cell, which means that even
+    // if we are using a periodic triangulation, the distance is correctly computed.
     typename Gt::Compute_squared_distance_3 sq_distance =
       tr.geom_traits().compute_squared_distance_3_object();
+    typename Gt::Construct_point_3 cp =
+      tr.geom_traits().construct_point_3_object();
 
     const int i = cell->index(v);
     const Weighted_point& wp0 = tr.point(cell, i);

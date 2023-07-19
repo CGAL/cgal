@@ -173,7 +173,7 @@ class Alpha_wrap_3
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Dt>, CGAL_BOOST_PAIRING_HEAP>;
 
 protected:
-  const Oracle& m_oracle;
+  const Oracle m_oracle;
   SC_Iso_cuboid_3 m_bbox;
 
   FT m_alpha, m_sq_alpha;
@@ -193,7 +193,7 @@ public:
   {
     // Due to the Steiner point computation being a dichotomy, the algorithm is inherently inexact
     // and passing exact kernels is explicitly disabled to ensure no misunderstanding.
-    CGAL_static_assertion((std::is_floating_point<FT>::value));
+    static_assert(std::is_floating_point<FT>::value);
   }
 
 public:
@@ -1343,6 +1343,7 @@ private:
     return true;
   }
 
+public:
   // Not the best complexity, but it's very cheap compared to the rest of the algorithm.
   void make_manifold()
   {

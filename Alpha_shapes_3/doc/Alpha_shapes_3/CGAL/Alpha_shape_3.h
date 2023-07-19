@@ -77,7 +77,7 @@ use binary search.
 `Alpha_shape_3::number_of_solid_components()` performs a graph traversal and takes time
 linear in the number of cells of the underlying triangulation.
 `Alpha_shape_3::find_optimal_alpha()` uses binary search and takes time
-\f$ O(n \log n)\f$, where \f$ n\f$ is the number of points.
+\cgalBigO{n \log n}, where \f$ n\f$ is the number of points.
 
 */
 template< typename Dt, typename ExactAlphaComparisonTag >
