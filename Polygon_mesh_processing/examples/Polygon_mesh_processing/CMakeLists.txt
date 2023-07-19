@@ -51,6 +51,8 @@ create_single_source_cgal_program("match_faces.cpp")
 create_single_source_cgal_program("cc_compatible_orientations.cpp")
 create_single_source_cgal_program("hausdorff_distance_remeshing_example.cpp")
 create_single_source_cgal_program("hausdorff_bounded_error_distance_example.cpp")
+create_single_source_cgal_program("acvd_example.cpp")
+
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
