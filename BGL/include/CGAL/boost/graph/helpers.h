@@ -945,6 +945,9 @@ void swap_edges(const typename boost::graph_traits<FaceGraph>::halfedge_descript
  * \link MutableHalfedgeGraph `remove_edge()`\endlink, and
  * \link MutableFaceGraph `remove_face()`\endlink, for each vertex, edge, and face.
  *
+ * Note that some graphs have a specialized version of this function to improve
+ * complexity.
+ *
  * @warning This function does not perform anything more than what is advertised above. It is
  * up to the user to e.g. clean garbage or remove internal property maps (if relevant, and desired).
  *
