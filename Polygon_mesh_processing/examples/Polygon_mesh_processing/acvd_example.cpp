@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
     argv[1] :
-    CGAL::data_file_path("meshes/sphere.off");
+    CGAL::data_file_path("meshes/eight.off");
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
@@ -29,10 +29,12 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  auto vcm = PMP::acvd_isotropic_simplification(smesh, 70);
+  PMP::acvd_isotropic_simplification(smesh, 70);
+  std::cout << "kak3" << std::endl;
+  return 0;
 
   // Output the simplified mesh, use write_OFF()
-  CGAL::IO::write_OFF("sphere_clustered_0.off", smesh, CGAL::parameters::stream_precision(17).vertex_color_map(vcm));
+  //CGAL::IO::write_OFF("sphere966_clustered_0.off", smesh, CGAL::parameters::stream_precision(17).vertex_color_map(vcm));
 
 }
 
