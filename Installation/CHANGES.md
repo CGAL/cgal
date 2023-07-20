@@ -4,7 +4,7 @@ Release History
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
-Release date: June 2023
+Release date: July 2023
 
 ### General Changes
 
@@ -174,6 +174,13 @@ Release date: June 2023
     [`MeshComplex_3InTriangulation_3`](https://doc.cgal.org/5.6/SMDS_3/classMeshComplex__3InTriangulation__3.html)
     to describe 3D simplicial meshes, and makes the data structure independent
     from the [tetrahedral mesh generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3) package.
+
+### [Tetrahedral Remeshing](https://doc.cgal.org/5.6/Manual/packages.html#PkgTetrahedralRemeshing)
+-   **Breaking change**: The template parameters of
+    [`CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`](https://doc.cgal.org/5.6/Tetrahedral_remeshing/group__PkgTetrahedralRemeshingClasses.html#ga7ef4f8c0c1ed715c34389ea4ee851a92)
+    and
+    [`CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`](https://doc.cgal.org/5.6/Tetrahedral_remeshing/classCGAL_1_1Tetrahedral__remeshing_1_1Remeshing__cell__base__3.html)
+    have been modified.
 
 ### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 
