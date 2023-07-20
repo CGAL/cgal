@@ -13,6 +13,7 @@
 #define CGAL_TRIANGULATION_WITH_ODD_EVEN_CONSTRAINTS_2_H
 
 #include <CGAL/license/Polygon_repair_2.h>
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 
