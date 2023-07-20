@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Polygon_repair_2.h>
 
+#include <CGAL/Triangulation_face_base_2.h>
+
 namespace CGAL {
 
 template <typename Kernel, typename FaceBase = Triangulation_face_base_2<Kernel>>
