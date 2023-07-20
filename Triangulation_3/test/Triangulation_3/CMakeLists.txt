@@ -22,15 +22,16 @@ create_single_source_cgal_program("test_regular_traits_3.cpp")
 create_single_source_cgal_program("test_RT_cell_base_with_weighted_circumcenter_3.cpp")
 create_single_source_cgal_program("test_robust_weighted_circumcenter.cpp")
 create_single_source_cgal_program("test_simplex_3.cpp")
-create_single_source_cgal_program("test_simplex_iterator_3.cpp" )
-create_single_source_cgal_program("test_segment_cell_traverser_3.cpp" )
 create_single_source_cgal_program("test_segment_simplex_traverser_3.cpp" )
 if(cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+  create_single_source_cgal_program("test_simplex_iterator_3.cpp" )
+  create_single_source_cgal_program("test_segment_cell_traverser_3.cpp" )
+  target_compile_features(test_simplex_iterator_3 PRIVATE cxx_std_17)
   target_compile_features(test_segment_simplex_traverser_3 PRIVATE cxx_std_17)
 else()
   message(
   STATUS
-    "NOTICE: test_segment_simplex_traverser_3.cpp requires C++17 and will not be compiled."
+    "NOTICE: test_simplex_iterator_3.cpp and test_segment_simplex_traverser_3.cpp require C++17 and will not be compiled."
   )
 endif()
 create_single_source_cgal_program("test_static_filters.cpp")
