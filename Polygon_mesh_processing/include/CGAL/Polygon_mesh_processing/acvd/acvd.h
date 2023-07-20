@@ -92,7 +92,7 @@ void  acvd_simplification(
   // initial random clusters
   // property map from vertex_descriptor to cluster index
   VertexClusterMap vertex_clusters_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
-  std::vector<ClusterData<GT>> clusters(nb_clusters);
+  std::vector<ClusterData<GT>> clusters(nb_clusters + 1);
   std::queue<Halfedge_descriptor> clusters_edges_active;
   std::queue<Halfedge_descriptor> clusters_edges_new;
 
