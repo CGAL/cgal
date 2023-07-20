@@ -19,6 +19,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Polygon_repair_2/Multipolygon_with_holes_2.h>
 
 #include <CGAL/IO/WKT/traits_point.h>
 #include <CGAL/IO/WKT/traits_point_3.h>
@@ -343,6 +344,22 @@ bool read_multi_polygon_WKT(std::istream& in,
   }
 
   return !in.fail();
+}
+
+
+template<typename Kernel, typename Container>
+bool read_multi_polygon_WKT(std::istream& in,
+                            Multipolygon_with_holes_2<Kernel,Container>& mp)
+{
+  return read_multi_polygon_WKT(in, mp.polygons());
+}
+
+
+template<typename Kernel, typename Container>
+std::ostream& write_multi_polygon_WKT(std::ostream& out,
+                                      Multipolygon_with_holes_2<Kernel,Container>& mp)
+{
+  return write_multi_polygon_WKT(out, mp.polygons());
 }
 
 //! \ingroup PkgStreamSupportIoFuncsWKT

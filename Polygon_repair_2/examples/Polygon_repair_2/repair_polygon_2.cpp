@@ -4,7 +4,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_repair_2/Polygon_repair_2.h>
 #include <CGAL/Polygon_repair_2/draw_multipolygon_with_holes_2.h>
-
 // #include <CGAL/IO/WKT.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
