@@ -53,16 +53,18 @@ the coefficient sequence does not contain leading zero coefficients
 (where leading means at the high-degree end), with the exception that
 the zero polynomial is represented by a single zero coefficient.
 
-\cgalModelsBare{`Polynomial_d`\n
-            `Assignable`\n
-            `CopyConstructible`\n
-            `DefaultConstructible`\n
-            `EqualityComparable`\n
-            `ImplicitInteroperable` with int\n
-            `ImplicitInteroperable` with Coeff\n
-            `Fraction` if Coeff is model of `Fraction`\n
-            `LessThanComparable` if Coeff is model of `LessThanComparable`\n
-            `Modularizable` if `Coeff` is model of `Modularizable`}
+\cgalModelsBareBegin
+\cgalModelsBare{`Polynomial_d`}
+\cgalModelsBare{`Assignable`}
+\cgalModelsBare{`CopyConstructible`}
+\cgalModelsBare{`DefaultConstructible`}
+\cgalModelsBare{`EqualityComparable`}
+\cgalModelsBare{`ImplicitInteroperable` with `int`}
+\cgalModelsBare{`ImplicitInteroperable` with `Coeff`}
+\cgalModelsBare{`Fraction` if `Coeff` is model of `Fraction`}
+\cgalModelsBare{`LessThanComparable` if `Coeff` is model of `LessThanComparable`}
+\cgalModelsBare{`Modularizable` if `Coeff` is model of `Modularizable`}
+\cgalModelsBareEnd
 */
 template< typename Coeff >
 class Polynomial {

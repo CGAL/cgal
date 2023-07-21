@@ -21,12 +21,19 @@ constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
 `CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
 provides exact predicates.
 
-\cgalModelsBare{The class is a model of several 2D triangulation traits class concepts\,
-  except that it does not provide the type and constructors
-  required to build the dual Voronoi diagram.\n
-            `PolygonTraits_2`\n`ConvexHullTraits_2`\n`TriangulationTraits_2`\n`DelaunayTriangulationTraits_2`\n
-            `ConstrainedTriangulationTraits_2`\n`ConvexHullTraits_2`\n`DelaunayMeshTraits_2`\n`AnalyticWeightTraits_2`\n
-            `Barycentric_coordinates::BarycentricTraits_2`}
+\cgalModelsBareBegin
+\cgalModelsBare{The class is a model of several 2D triangulation traits class concepts,
+  except that it does not provide the type and constructors required to build the dual Voronoi diagram.}
+\cgalModelsBare{`PolygonTraits_2`}
+\cgalModelsBare{`ConvexHullTraits_2`}
+\cgalModelsBare{`TriangulationTraits_2`}
+\cgalModelsBare{`DelaunayTriangulationTraits_2`}
+\cgalModelsBare{`ConstrainedTriangulationTraits_2`}
+\cgalModelsBare{`ConvexHullTraits_2`}
+\cgalModelsBare{`DelaunayMeshTraits_2`}
+\cgalModelsBare{`AnalyticWeightTraits_2`}
+\cgalModelsBare{`Barycentric_coordinates::BarycentricTraits_2`}
+\cgalModelsBareEnd
 
 \sa `CGAL::Projection_traits_3`
 */

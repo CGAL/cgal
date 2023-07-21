@@ -151,8 +151,9 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalModels{4}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd></dl>" \
                          "cgalModels{5}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
                          "cgalModels{6}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd><dt></dt><dd>@c \6</dd></dl>" \
-                         "cgalModelsBare{1}=<dl><dt>@cgalModelsHeader</dt><dd>\1</dd></dl>" \
-                         "cgalModelsBare{2}=<dl><dt>@cgalModelsHeader</dt><dd>\1</dd><dt></dt><dd>\2</dd></dl>" \
+                         "cgalModelsBareBegin=<dl><dt>@cgalModelsHeader</dt><dd></dd>" \
+                         "cgalModelsBareEnd=</dl>" \
+                         "cgalModelsBare{1}=<dt></dt><dd>\1</dd>" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
                          "cgalHasModelsHeader=Has models" \
                          "cgalHasModelsBegin=<dl><dt>@cgalHasModelsHeader</dt><dd></dd>" \

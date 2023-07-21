@@ -87,14 +87,16 @@ The fourth template argument, `FilterPredicates`, triggers an internal filter th
 
 In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as `FilterPredicates` have no effect.
 
-\cgalModelsBare{`Assignable`\n
-            `CopyConstructible`\n
-            `DefaultConstructible`\n
-            `EqualityComparable`\n
-            `ImplicitInteroperable` with `int`\n
-            `ImplicitInteroperable` with `NT`\n
-            `Fraction` if NT is a `Fraction`\n
-            `RootOf_2`}
+\cgalModelsBareBegin
+\cgalModelsBare{`Assignable`}
+\cgalModelsBare{`CopyConstructible`}
+\cgalModelsBare{`DefaultConstructible`}
+\cgalModelsBare{`EqualityComparable`}
+\cgalModelsBare{`ImplicitInteroperable` with `int`}
+\cgalModelsBare{`ImplicitInteroperable` with `NT`}
+\cgalModelsBare{`Fraction` if NT is a `Fraction`}
+\cgalModelsBare{`RootOf_2`}
+\cgalModelsBareEnd
 
 \sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`
