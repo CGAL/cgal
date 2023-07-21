@@ -1111,11 +1111,11 @@ void generate_subtriangles(std::size_t ti,
 * \ingroup PMP_corefinement_grp
 *
 * refines a soup of triangles so that no pair of triangles intersects in their interior.
-* Note that points in `input_points` can only be added (intersection points) a the end of the container, with the initial order preserved.
-* Note that if `input_points` contains two or more identical points and only the first copy (following the order in the `input_points`)
-* will be used in `id_triples`.
-* `id_triples` will be updated to contain both the input triangles and the new subdivides triangles. Degenerate triangles will be removed.
-* Also triangles in `id_triples` will be triangles without intersection first, followed by triangles coming from a subdivision induced
+* Note that points in `soup_points` can only be added (intersection points) a the end of the container, with the initial order preserved.
+* Note that if `soup_points` contains two or more identical points and only the first copy (following the order in the `soup_points`)
+* will be used in `soup_triangles`.
+* `soup_triangles` will be updated to contain both the input triangles and the new subdivides triangles. Degenerate triangles will be removed.
+* Also triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
 * by an intersection. The named parameter `visitor()` can be used to track
 *
 * @tparam PointRange a model of the concept `RandomAccessContainer`
@@ -1125,13 +1125,13 @@ void generate_subtriangles(std::size_t ti,
 * is constructible from an `std::initializer_list<std::size_t>` of size 3.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param input_points points of the soup of polygons
-* @param id_triples each element in the range describes a triangle using the indexed position of the points in `input_points`
+* @param soup_points points of the soup of polygons
+* @param soup_triangles each element in the range describes a triangle using the indexed position of the points in `soup_points`
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{point_map}
-*     \cgalParamDescription{a property map associating points to the elements of the range `input_points`}
+*     \cgalParamDescription{a property map associating points to the elements of the range `soup_points`}
 *     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
 *     \cgalParamDefault{`CGAL::Identity_property_map`}
 *   \cgalParamNEnd
@@ -1150,8 +1150,8 @@ void generate_subtriangles(std::size_t ti,
 *
 */
 template <class PointRange, class TriIdsRange, class NamedParameters = parameters::Default_named_parameters>
-void autorefine_triangle_soup(PointRange& input_points,
-                              TriIdsRange& id_triples,
+void autorefine_triangle_soup(PointRange& soup_points,
+                              TriIdsRange& soup_triangles,
                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
@@ -1181,12 +1181,12 @@ void autorefine_triangle_soup(PointRange& input_points,
 
   // collect intersecting pairs of triangles
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
-  triangle_soup_self_intersections<Concurrency_tag>(input_points, id_triples, std::back_inserter(si_pairs), np);
+  triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
 
   if (si_pairs.empty()) return;
 
   // mark degenerate faces so that we can ignore them
-  std::vector<bool> is_degen(id_triples.size(), false);
+  std::vector<bool> is_degen(soup_triangles.size(), false);
 
   for (const Pair_of_triangle_ids& p : si_pairs)
     if (p.first==p.second) // bbox inter reports (f,f) for degenerate faces
@@ -1194,7 +1194,7 @@ void autorefine_triangle_soup(PointRange& input_points,
 
   // assign an id per triangle involved in an intersection
   // + the faces involved in the intersection
-  std::vector<int> tri_inter_ids(id_triples.size(), -1);
+  std::vector<int> tri_inter_ids(soup_triangles.size(), -1);
   std::vector<Input_TID> intersected_faces;
   int tiid=-1;
   for (const Pair_of_triangle_ids& p : si_pairs)
@@ -1219,9 +1219,9 @@ void autorefine_triangle_soup(PointRange& input_points,
   for(Input_TID f : intersected_faces)
   {
     triangles[tri_inter_ids[f]]= CGAL::make_array(
-      to_exact( get(pm, input_points[id_triples[f][0]]) ),
-      to_exact( get(pm, input_points[id_triples[f][1]]) ),
-      to_exact( get(pm, input_points[id_triples[f][2]]) ) );
+      to_exact( get(pm, soup_points[soup_triangles[f][0]]) ),
+      to_exact( get(pm, soup_points[soup_triangles[f][1]]) ),
+      to_exact( get(pm, soup_points[soup_triangles[f][2]]) ) );
   }
 
   std::vector< std::vector<std::array<EK::Point_3,2> > > all_segments(triangles.size());
@@ -1460,31 +1460,31 @@ void autorefine_triangle_soup(PointRange& input_points,
 
   // TODO: parallel_for?
   // for input points, we on purpose keep duplicated points and isolated points
-  for (std::size_t pid = 0; pid<input_points.size(); ++pid)
+  for (std::size_t pid = 0; pid<soup_points.size(); ++pid)
   {
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
     auto insert_res =
 #endif
     point_id_map.insert(
-      std::make_pair(to_exact(get(pm,input_points[pid])), pid));
+      std::make_pair(to_exact(get(pm,soup_points[pid])), pid));
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
       exact_soup_points.push_back(insert_res.first->first);
 #endif
   }
 
-  TriIdsRange soup_triangles;
-  soup_triangles.reserve(id_triples.size()); // TODO: remove #deg tri?
+  TriIdsRange soup_triangles_out;
+  soup_triangles_out.reserve(soup_triangles.size()); // TODO: remove #deg tri?
 
   // raw copy of input triangles with no intersection
-  for (Input_TID f=0; f<id_triples.size(); ++f)
+  for (Input_TID f=0; f<soup_triangles.size(); ++f)
   {
     if (is_degen[f]) continue; //skip degenerate faces
 
     int tiid = tri_inter_ids[f];
     if (tiid == -1)
     {
-      soup_triangles.push_back(
-        {id_triples[f][0], id_triples[f][1], id_triples[f][2]}
+      soup_triangles_out.push_back(
+        {soup_triangles[f][0], soup_triangles[f][1], soup_triangles[f][2]}
       );
     }
   }
@@ -1494,10 +1494,10 @@ void autorefine_triangle_soup(PointRange& input_points,
   // Lambda to retrieve the id of intersection points
   auto get_point_id = [&](const typename EK::Point_3& pt)
   {
-    auto insert_res = point_id_map.insert(std::make_pair(pt, input_points.size()));
+    auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
     if (insert_res.second)
     {
-      input_points.push_back(to_input(pt));
+      soup_points.push_back(to_input(pt));
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
       exact_soup_points.push_back(pt);
 #endif
@@ -1509,7 +1509,7 @@ void autorefine_triangle_soup(PointRange& input_points,
   t.start();
 #endif
 
-  std::size_t offset = soup_triangles.size();
+  std::size_t offset = soup_triangles_out.size();
 #ifdef USE_DEBUG_PARALLEL_TIMERS
   std::string mode = "parallel";
 #endif
@@ -1529,8 +1529,8 @@ void autorefine_triangle_soup(PointRange& input_points,
       if (insert_res.second)
       {
         CGAL_SCOPED_LOCK(point_container_mutex);
-        insert_res.first->second=input_points.size();
-        input_points.push_back(to_input(pt));
+        insert_res.first->second=soup_points.size();
+        soup_points.push_back(to_input(pt));
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
         exact_soup_points.push_back(pt);
 #endif
@@ -1538,7 +1538,7 @@ void autorefine_triangle_soup(PointRange& input_points,
       return insert_res.first;
     };
 
-    soup_triangles.resize(offset + new_triangles.size());
+    soup_triangles_out.resize(offset + new_triangles.size());
     //use map iterator triple for triangles to create them concurrently and safely
     std::vector<std::array<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator, 3>> triangle_buffer(new_triangles.size());
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
@@ -1553,7 +1553,7 @@ void autorefine_triangle_soup(PointRange& input_points,
       [&](const tbb::blocked_range<size_t>& r) {
           for (size_t ti = r.begin(); ti != r.end(); ++ti)
           {
-            soup_triangles[offset + ti] =
+            soup_triangles_out[offset + ti] =
               { triangle_buffer[ti][0]->second,
                 triangle_buffer[ti][1]->second,
                 triangle_buffer[ti][2]->second };
@@ -1573,12 +1573,12 @@ void autorefine_triangle_soup(PointRange& input_points,
     };
 
     //use map iterator triple for triangles to create them concurrently and safely
-    soup_triangles.resize(offset + new_triangles.size());
+    soup_triangles_out.resize(offset + new_triangles.size());
     std::vector<std::array<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator, 3>> triangle_buffer(new_triangles.size());
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
       [&](const tbb::blocked_range<size_t>& r) {
         for (size_t ti = r.begin(); ti != r.end(); ++ti) {
-          if (offset + ti > soup_triangles.size()) {
+          if (offset + ti > soup_triangles_out.size()) {
               std::cout << "ti = " << ti << std::endl;
           }
           const std::array<EK::Point_3, 3>& t = new_triangles[ti];
@@ -1588,17 +1588,17 @@ void autorefine_triangle_soup(PointRange& input_points,
     );
 
     // the map is now filled we can safely set the point ids
-    std::size_t pid_offset=input_points.size();
-    input_points.resize(pid_offset+iterators.size());
+    std::size_t pid_offset=soup_points.size();
+    soup_points.resize(pid_offset+iterators.size());
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-    exact_soup_points.resize(input_points.size());
+    exact_soup_points.resize(soup_points.size());
 #endif
 
     tbb::parallel_for(tbb::blocked_range<size_t>(0, iterators.size()),
       [&](const tbb::blocked_range<size_t>& r) {
         for (size_t ti = r.begin(); ti != r.end(); ++ti)
         {
-          input_points[pid_offset+ti] = to_input(iterators[ti]->first);
+          soup_points[pid_offset+ti] = to_input(iterators[ti]->first);
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
           exact_soup_points[pid_offset+ti] = iterators[ti]->first;
 #endif
@@ -1611,7 +1611,7 @@ void autorefine_triangle_soup(PointRange& input_points,
       [&](const tbb::blocked_range<size_t>& r) {
           for (size_t ti = r.begin(); ti != r.end(); ++ti)
           {
-            soup_triangles[offset + ti] =
+            soup_triangles_out[offset + ti] =
               { triangle_buffer[ti][0]->second,
                 triangle_buffer[ti][1]->second,
                 triangle_buffer[ti][2]->second };
@@ -1626,9 +1626,9 @@ void autorefine_triangle_soup(PointRange& input_points,
 #ifdef USE_DEBUG_PARALLEL_TIMERS
     mode = "sequential";
 #endif
-    soup_triangles.reserve(offset + new_triangles.size());
+    soup_triangles_out.reserve(offset + new_triangles.size());
     for (const std::array<EK::Point_3,3>& t : new_triangles)
-      soup_triangles.push_back({ get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])});
+      soup_triangles_out.push_back({ get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])});
   }
 
 
@@ -1641,16 +1641,16 @@ void autorefine_triangle_soup(PointRange& input_points,
 
 #ifndef CGAL_NDEBUG
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
-  CGAL_assertion( !does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles) );
+  CGAL_assertion( !does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles_out) );
 #else
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
-  if (does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles))
+  if (does_triangle_soup_self_intersect<Concurrency_tag>(exact_soup_points, soup_triangles_out))
     throw std::runtime_error("ERROR: invalid output, there is most probably a bug");
 #endif
 #endif
   using std::swap;
-  swap(id_triples, soup_triangles);
+  swap(soup_triangles, soup_triangles_out);
 
   CGAL_PMP_AUTOREFINE_VERBOSE("done");
 }
