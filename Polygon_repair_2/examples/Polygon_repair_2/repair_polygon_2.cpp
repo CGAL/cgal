@@ -91,14 +91,13 @@ int main(int argc, char* argv[]) {
 
   // pr.reconstruct_multipolygon();
   // std::cout << pr.multipolygon() << std::endl;
-  // CGAL::draw(pr.multipolygon());
 
   // CGAL::IO::write_polygon_WKT(std::cout, p);
   // CGAL::IO::write_multi_polygon_WKT(std::cout, mp);
 
   Multipolygon rmp = CGAL::Polygon_repair_2::repair(p);
-
   CGAL::IO::write_multi_polygon_WKT(std::cout, rmp);
+  CGAL::draw(rmp);
 
   // std::cout << "Orientations good?" << std::endl;
   // for (auto const& polygon: rmp.polygons()) {

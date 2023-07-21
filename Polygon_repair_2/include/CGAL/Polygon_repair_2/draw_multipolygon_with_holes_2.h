@@ -104,9 +104,9 @@ public:
    */
   void add_elements() {
     clear();
-    CGAL::IO::Color c(75,160,255);
 
     for (auto const& p: m_mpwh.polygons()) {
+      CGAL::IO::Color c(rand()%255,rand()%255,rand()%255);
       face_begin(c);
 
       const Pnt* point_in_face;
