@@ -477,8 +477,10 @@ namespace cpp11{
 
 #if __cpp_lib_concepts >= 201806L
 #  define CGAL_CPP20_REQUIRE_CLAUSE(x) requires x
+#  define CGAL_TYPE_CONSTRAINT(x) x
 #else
 #  define CGAL_CPP20_REQUIRE_CLAUSE(x)
+#  define CGAL_TYPE_CONSTRAINT(x) typename
 #endif
 
 // The fallthrough attribute
