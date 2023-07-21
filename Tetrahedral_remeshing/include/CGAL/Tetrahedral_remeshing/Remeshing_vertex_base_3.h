@@ -20,15 +20,6 @@
 namespace CGAL {
 namespace Tetrahedral_remeshing {
 
-template<typename Gt,
-         typename Vb>
-class Remeshing_vertex_3
-  : public Vb
-{
-public:
-  using Vb::Vb; // constructors
-};
-
 /*!
 \ingroup PkgTetrahedralRemeshingClasses
 
@@ -51,14 +42,18 @@ template<typename Gt,
                          int /*Curve_index*/,
                          int /*Corner_index*/> >
 class Remeshing_vertex_base_3
+  : public Vb
 {
 public:
   template <typename TDS2>
   struct Rebind_TDS
   {
     using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
-    using Other = Remeshing_vertex_3<Gt, Vb2>;
+    using Other = Remeshing_vertex_base_3<Gt, Vb2>;
   };
+
+public:
+  using Vb::Vb; // constructors
 };
 
 } // namespace Tetrahedral_remeshing
