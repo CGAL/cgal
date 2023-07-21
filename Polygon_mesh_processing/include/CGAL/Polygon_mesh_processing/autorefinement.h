@@ -77,6 +77,24 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+namespace Autorefinement {
+
+/** \ingroup PMP_corefinement_grp
+ *  %Default visitor model of `PMPAutorefinementVisitor`.
+ *  All of its functions have an empty body. This class can be used as a
+ *  base class if only some of the functions of the concept require to be
+ *  overridden.
+ */
+struct Default_visitor
+{
+  inline void number_of_output_triangles(std::size_t /*nbt*/) {}
+  inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+  inline void new_subtriangle(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+};
+
+} // end of Autorefinement visitor
+
+
 #ifndef DOXYGEN_RUNNING
 namespace autorefine_impl {
 
@@ -1079,13 +1097,13 @@ void generate_subtriangles(std::size_t ti,
     for (typename CDT::Face_handle fh : cdt.finite_face_handles())
     {
       if (orientation_flipped)
-        new_triangles.push_back( CGAL::make_array(fh->vertex(0)->point(),
-                                                  fh->vertex(cdt.cw(0))->point(),
-                                                  fh->vertex(cdt.ccw(0))->point()) );
+        new_triangles.push_back( { CGAL::make_array(fh->vertex(0)->point(),
+                                                    fh->vertex(cdt.cw(0))->point(),
+                                                    fh->vertex(cdt.ccw(0))->point()), ti } );
       else
-        new_triangles.push_back( CGAL::make_array(fh->vertex(0)->point(),
-                                                  fh->vertex(cdt.ccw(0))->point(),
-                                                  fh->vertex(cdt.cw(0))->point()) );
+        new_triangles.push_back( { CGAL::make_array(fh->vertex(0)->point(),
+                                                    fh->vertex(cdt.ccw(0))->point(),
+                                                    fh->vertex(cdt.cw(0))->point()), ti } );
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
       ++nbt;
       buffer << fh->vertex(0)->point() << "\n";
@@ -1143,8 +1161,9 @@ void generate_subtriangles(std::size_t ti,
 *   \cgalParamNEnd
 *   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor used to track the creation of new faces}
-*     \cgalParamType{a class model of `PMPFooBar`}
-*     \cgalParamDefault{`Autorefinement::Default_visitor<Bar, Foo>`}
+*     \cgalParamType{a class model of `PMPAutorefinementVisitor`}
+*     \cgalParamDefault{`Autorefinement::Default_visitor`}
+*     \cgalParamExtra{The visitor will be copied.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -1166,6 +1185,15 @@ void autorefine_triangle_soup(PointRange& soup_points,
     NamedParameters,
     Sequential_tag
   > ::type Concurrency_tag;
+
+  // visitor
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Autorefinement::Default_visitor//default
+  > ::type Visitor;
+  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
+
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
@@ -1369,10 +1397,10 @@ void autorefine_triangle_soup(PointRange& soup_points,
   // now refine triangles
 #ifdef CGAL_LINKED_WITH_TBB
   std::conditional_t<parallel_execution,
-                     tbb::concurrent_vector<std::array<EK::Point_3, 3>>,
-                     std::vector<std::array<EK::Point_3,3>>> new_triangles;
+                     tbb::concurrent_vector<std::pair<std::array<EK::Point_3,3>, std::size_t>>,
+                     std::vector<std::pair<std::array<EK::Point_3,3>, std::size_t>>> new_triangles;
 #else
-  std::vector<std::array<EK::Point_3,3>> new_triangles;
+  std::vector<std::pair<std::array<EK::Point_3,3>, std::size_t>> new_triangles;
 #endif
 
 #ifdef USE_PROGRESS_DISPLAY
@@ -1382,7 +1410,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   auto refine_triangles = [&](std::size_t ti)
   {
     if (all_segments[ti].empty() && all_points[ti].empty())
-      new_triangles.push_back(triangles[ti]);
+      new_triangles.push_back({triangles[ti], ti});
     else
     {
 #ifdef USE_FIXED_PROJECTION_TRAITS
@@ -1475,7 +1503,10 @@ void autorefine_triangle_soup(PointRange& soup_points,
   TriIdsRange soup_triangles_out;
   soup_triangles_out.reserve(soup_triangles.size()); // TODO: remove #deg tri?
 
+  visitor.number_of_output_triangles(soup_triangles.size()+new_triangles.size());
+
   // raw copy of input triangles with no intersection
+  std::vector<std::size_t> tri_inter_ids_inverse(triangles.size());
   for (Input_TID f=0; f<soup_triangles.size(); ++f)
   {
     if (is_degen[f]) continue; //skip degenerate faces
@@ -1483,9 +1514,14 @@ void autorefine_triangle_soup(PointRange& soup_points,
     int tiid = tri_inter_ids[f];
     if (tiid == -1)
     {
+      visitor.verbatim_triangle_copy(soup_triangles.size(), f);
       soup_triangles_out.push_back(
         {soup_triangles[f][0], soup_triangles[f][1], soup_triangles[f][2]}
       );
+    }
+    else
+    {
+      tri_inter_ids_inverse[tiid]=f;
     }
   }
 
@@ -1544,7 +1580,8 @@ void autorefine_triangle_soup(PointRange& soup_points,
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
       [&](const tbb::blocked_range<size_t>& r) {
         for (size_t ti = r.begin(); ti != r.end(); ++ti) {
-          const std::array<EK::Point_3, 3>& t = new_triangles[ti];
+          const std::array<EK::Point_3, 3>& t = new_triangles[ti].first;
+          visitor.new_subtriangle(offset+ti, tri_inter_ids_inverse[new_triangles[ti].second]);
           triangle_buffer[ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
         }
       }
@@ -1581,7 +1618,8 @@ void autorefine_triangle_soup(PointRange& soup_points,
           if (offset + ti > soup_triangles_out.size()) {
               std::cout << "ti = " << ti << std::endl;
           }
-          const std::array<EK::Point_3, 3>& t = new_triangles[ti];
+          const std::array<EK::Point_3, 3>& t = new_triangles[ti].first;
+          visitor.new_subtriangle(offset+ti, tri_inter_ids_inverse[new_triangles[ti].second]);
           triangle_buffer[ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
         }
       }
@@ -1627,8 +1665,13 @@ void autorefine_triangle_soup(PointRange& soup_points,
     mode = "sequential";
 #endif
     soup_triangles_out.reserve(offset + new_triangles.size());
-    for (const std::array<EK::Point_3,3>& t : new_triangles)
-      soup_triangles_out.push_back({ get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])});
+    for (const std::pair<std::array<EK::Point_3,3>, std::size_t>& t_and_id : new_triangles)
+    {
+      visitor.new_subtriangle(soup_triangles_out.size(), tri_inter_ids_inverse[t_and_id.second]);
+      soup_triangles_out.push_back({ get_point_id(t_and_id.first[0]),
+                                     get_point_id(t_and_id.first[1]),
+                                     get_point_id(t_and_id.first[2]) });
+    }
   }
 
 
