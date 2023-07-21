@@ -109,6 +109,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::clip()`
 - `CGAL::Polygon_mesh_processing::split()`
+- `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`
+- `CGAL::Polygon_mesh_processing::autorefine()`
 
 \cgalCRPSection{Meshing Functions}
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink

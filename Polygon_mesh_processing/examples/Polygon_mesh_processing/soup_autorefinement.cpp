@@ -32,14 +32,11 @@ int main(int argc, char** argv)
 
   CGAL::Real_timer t;
   t.start();
-  std::vector<Point> output_points;
-  std::vector<std::array<std::size_t, 3>> output_triangles;
-  PMP::autorefine_soup_output(input_points, input_triangles,
-                              output_points, output_triangles,
-                              CGAL::parameters::concurrency_tag(CGAL::Parallel_if_available_tag()));
+  PMP::autorefine_triangle_soup(input_points, input_triangles,
+                                CGAL::parameters::concurrency_tag(CGAL::Parallel_if_available_tag()));
   t.stop();
-  std::cout << "#points = " << output_points.size() << " and #triangles = " << output_triangles.size() << " in " << t.time() << " sec." << std::endl;
-  CGAL::IO::write_polygon_soup("autorefined.off", output_points, output_triangles, CGAL::parameters::stream_precision(17));
+  std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
+  CGAL::IO::write_polygon_soup("autorefined.off", input_points, input_triangles, CGAL::parameters::stream_precision(17));
 
   return 0;
 }
