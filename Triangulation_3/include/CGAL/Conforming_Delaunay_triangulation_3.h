@@ -21,6 +21,8 @@
 #ifndef CGAL_CONFORMING_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_CONFORMING_DELAUNAY_TRIANGULATION_3_H
 
+#include <CGAL/Triangulation_3/internal/CDT_3_config.h>
+
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>

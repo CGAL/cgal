@@ -21,6 +21,8 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
 
+#include <CGAL/Triangulation_3/internal/CDT_3_config.h>
+
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Triangulation_vertex_base_3.h>
@@ -64,6 +66,13 @@
 #endif
 
 namespace CGAL {
+
+#if __cpp_lib_concepts >= 201806L
+template <typename Polygon, typename Kernel>
+concept Polygon_3 = std::ranges::common_range<Polygon>
+      && (std::is_convertible_v<std::ranges::range_value_t<Polygon>,
+                                typename Kernel::Point_3>);
+#endif // concepts
 
 using CDT_3_face_index = int;
 
@@ -304,7 +313,7 @@ protected:
             self.face_constraint_misses_subfaces.set(face_id);
             auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
 #if CGAL_DEBUG_CDT_3
-            std::cerr << "Add missing triangle (from visitor): \n";
+            std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
             self.write_2d_triangle(std::cerr, fh_2);
 #endif // CGAL_DEBUG_CDT_3
 
@@ -391,53 +400,64 @@ protected:
 
 public:
   Vertex_handle insert(const Point_3 &p, Locate_type lt, Cell_handle c,
-                       int li, int lj)
+                       int li, int lj, bool restore_Delaunay = true)
   {
     auto v = Conforming_Dt::insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
-    Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
+    if(restore_Delaunay) {
+      Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
+    }
     return v;
   }
 
-  Vertex_handle insert(const Point_3 &p, Cell_handle start = {}) {
+  Vertex_handle insert(const Point_3 &p, Cell_handle start = {}, bool restore_Delaunay = true) {
     Locate_type lt;
     int li, lj;
 
     Cell_handle c = tr.locate(p, lt, li, lj, start);
-    return insert(p, lt, c, li, lj);
+    return insert(p, lt, c, li, lj, restore_Delaunay);
   }
 
-  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
+  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb, bool restore_Delaunay = true)
   {
     const auto id = this->insert_constrained_edge_impl(va, vb, insert_in_conflict_visitor);
-    this->restore_Delaunay(insert_in_conflict_visitor);
+    if(restore_Delaunay) {
+      this->restore_Delaunay();
+    }
     return id;
+  }
+
+  void restore_Delaunay() {
+    Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
   }
 
   bool is_constrained(Facet f) const {
     return f.first->is_facet_constrained(f.second);
   }
 
-  template <typename Polygon>
-  CGAL_CPP20_REQUIRE_CLAUSE(
-      std::ranges::common_range<Polygon>
-      && (std::is_convertible_v<std::ranges::range_value_t<Polygon>, Point_3>))
-  boost::optional<Face_index> insert_constrained_polygon(Polygon&& polygon) {
+    template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
+  boost::optional<Face_index> register_new_constrained_polygon(Polygon&& polygon) {
+    return insert_constrained_polygon(std::forward<Polygon>(polygon), false);
+  }
+
+
+template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
+  boost::optional<Face_index> insert_constrained_polygon(Polygon&& polygon, bool restore_Delaunay = true) {
     std::vector<Vertex_handle> handles;
     handles.reserve(polygon.size());
     boost::optional<Cell_handle> hint;
     for(const auto& p : polygon) {
-      const auto v = this->insert(p, hint.value_or(Cell_handle{}));
+      const auto v = this->insert(p, hint.value_or(Cell_handle{}), restore_Delaunay);
       handles.push_back(v);
       hint = v->cell();
     }
-    return insert_constrained_face(std::move(handles));
+    return insert_constrained_face(std::move(handles), restore_Delaunay);
   }
 
   template <typename Vertex_handles>
   CGAL_CPP20_REQUIRE_CLAUSE(
       std::ranges::common_range<Vertex_handles>
       && (std::is_convertible_v<std::ranges::range_value_t<Vertex_handles>, Vertex_handle>))
-  boost::optional<Face_index> insert_constrained_face(Vertex_handles&& vertex_handles) {
+  boost::optional<Face_index> insert_constrained_face(Vertex_handles&& vertex_handles, bool restore_Delaunay = true) {
 #if CGAL_DEBUG_CDT_3 & 2
     std::cerr << "insert_constrained_face (" << std::size(vertex_handles) << " vertices):\n";
     for(auto v: vertex_handles) {
@@ -468,7 +488,7 @@ public:
         border.push_back(Face_edge{c_id, constraint_c_id_is_reversed});
         constraint_to_faces.emplace(c_id, polygon_contraint_id);
       } else {
-        const auto c_id = this->insert_constrained_edge(va, vb);
+        const auto c_id = this->insert_constrained_edge(va, vb, restore_Delaunay);
         CGAL_assertion(c_id != Constraint_id{});
         border.push_back(Face_edge{c_id});
         constraint_to_faces.emplace(c_id, polygon_contraint_id);
@@ -507,6 +527,42 @@ public:
     face_constraint_misses_subfaces.resize(face_cdt_2.size());
 
     return polygon_contraint_id;
+  }
+
+  auto sequence_of_Steiner_vertices(Vertex_handle va, Vertex_handle vb) const
+  {
+    std::vector<Vertex_handle> steiner_vertices;
+    const auto c_id = this->constraint_from_extremities(va, vb);
+    if(c_id != Constraint_id{}) {
+      auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+      auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+      CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);) if(vit != v_end)
+      {
+        const bool constraint_c_id_is_reversed = (*vit != va);
+        CGAL_assertion(*vit == (constraint_c_id_is_reversed ? vb : va));
+        if(++vit != v_end && vit != --v_end) {
+          CGAL_assertion(constraint_size == std::distance(vit, v_end) + 2);
+          CGAL_assertion(*v_end == (constraint_c_id_is_reversed ? va : vb));
+          if(constraint_c_id_is_reversed) {
+            using std::swap;
+            swap(vit, v_end);
+            --vit;
+            --v_end;
+          };
+          while(vit != v_end) {
+            steiner_vertices.push_back(*vit);
+            if(constraint_c_id_is_reversed) {
+              --vit;
+            } else {
+              ++vit;
+            };
+          }
+        }
+      }
+    } else {
+      CGAL_error();
+    }
+    return steiner_vertices;
   }
 
 private:
@@ -581,7 +637,7 @@ private:
               while(vit != v_end) {
                 auto vh_2d = cdt_2.insert(tr.point(*vit));
                 vh_2d->info().vertex_handle_3d = *vit;
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 4
                 std::cerr << "cdt_2.insert_constraint ("
                           << tr.point(previous_2d->info().vertex_handle_3d)
                           << " , "
@@ -604,7 +660,7 @@ private:
         if(circ != circ_end) {
           vh_2d->info().vertex_handle_3d = vb;
         }
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 4
         std::cerr << "cdt_2.insert_constraint ("
                   << tr.point(previous_2d->info().vertex_handle_3d)
                   << " , "
@@ -1497,7 +1553,7 @@ private:
                           std::set<Cell_handle> cells_of_cavity,
                           std::set<Facet>& facets_of_cavity_border,
                           Vertex_map& map_cavity_vertices_to_ambient_vertices,
-                          std::set<Vertex_handle> vertices_of_cavity) ///@TODO: not deterministic
+                          std::set<Vertex_handle>& vertices_of_cavity) ///@TODO: not deterministic
   {
     struct {
       Constrained_Delaunay_triangulation_3 cavity_triangulation{};
@@ -1581,7 +1637,7 @@ private:
   bool restore_face(CDT_3_face_index face_index) {
     CDT_2& non_const_cdt_2 = face_cdt_2[face_index];
     const CDT_2& cdt_2 = non_const_cdt_2;
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 && __has_include(<format>)
     std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
 #endif // CGAL_DEBUG_CDT_3
     for(const auto& edge : cdt_2.finite_edges()) {
@@ -1636,7 +1692,7 @@ private:
       }
       catch(Next_region& e) {
         std::cerr << "ERROR: " << e.what() << " in sub-region " << (region_count - 1)
-                  << " of facet #" << face_index << '\n';
+                  << " of face #F" << face_index << '\n';
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
         std::cerr << "  constrained edges are:\n";
         for(auto [c, index]: cdt_2.constrained_edges()) {
@@ -1719,12 +1775,13 @@ public:
         if(restore_face(i)) {
           face_constraint_misses_subfaces.reset(i);
         } else {
+          std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
           Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
           search_for_missing_subfaces(i);
         }
       }
       catch(PLC_error&) {
-        std::cerr << std::string("ERROR: PLC error with face #") << std::to_string(face_index) + "\n";
+        std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(face_index) + "\n";
       }
       i = face_constraint_misses_subfaces.find_first();
     }

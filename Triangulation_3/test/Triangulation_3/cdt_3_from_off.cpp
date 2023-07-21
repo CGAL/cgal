@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
         std::cerr << "Polygon is not coplanar\n";
       }
       try {
-        auto id = cdt.insert_constrained_polygon(polygon);
+        auto id = cdt.insert_constrained_polygon(polygon, true);
         assert(id == poly_id);
         ++poly_id;
       } catch(int error) {
@@ -159,6 +159,7 @@ int main(int argc, char* argv[])
       // std::ofstream dump("dump.binary.cgal");
       // CGAL::Mesh_3::save_binary_file(dump, cdt);
     }
+    cdt.restore_Delaunay();
     std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
     assert(cdt.is_conforming());
     if(exit_code == EXIT_SUCCESS) {
