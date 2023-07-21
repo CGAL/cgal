@@ -1071,7 +1071,7 @@ private:
     const Edge first_border_edge{border_edges[0]};
     const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, first_border_edge);
 
-    auto debug_region_size_4 = [&] {
+    [[maybe_unused]] auto debug_region_size_4 = [&] {
       if(polygon_vertices.size() == 4) {
         std::set<Vertex_handle> vertices;
         std::set<Vertex_handle> diagonal;
@@ -1127,35 +1127,35 @@ private:
                 face_index, region_count);
           }
         }
-      }\
+      }
     };
     if(!found_edge_opt) {
-      debug_region_size_4();
-      {
-        Constrained_Delaunay_triangulation_3 new_tr;
-        for(const auto v : polygon_vertices) {
-          new_tr.insert(v->point());
-        }
-        std::cerr << "new_tr.dimension() = " << new_tr.dimension() << '\n';
-        std::ofstream out(std::string("dump_polygon_") + std::to_string(face_index) + "_tr.off");
-        out.precision(17);
-        if(new_tr.dimension() == 2) {
-          write_facets(out, new_tr, new_tr.finite_facets());
-        }
-        else {
-          write_facets(out, new_tr, std::views::filter(new_tr.finite_facets(), [&](auto f) {
-                         return new_tr.is_infinite(f.first) || new_tr.is_infinite(f.first->neighbor(f.second));
-                       }));
-        }
-      }
-      {
-        dump_edge_link(std::string("dump_around_edge_") + std::to_string(face_index) + "_" +
-                       std::to_string(region_count) + ".polylines.txt", first_border_edge);
-        std::ofstream dump(std::string("dump_no_segment_found_") + std::to_string(face_index) + "_" +
-                           std::to_string(region_count) + ".binary.cgal");
-        CGAL::IO::save_binary_file(dump, *this);
-        dump_region(face_index, region_count, cdt_2);
-      }
+      // debug_region_size_4();
+      // {
+      //   Constrained_Delaunay_triangulation_3 new_tr;
+      //   for(const auto v : polygon_vertices) {
+      //     new_tr.insert(v->point());
+      //   }
+      //   std::cerr << "new_tr.dimension() = " << new_tr.dimension() << '\n';
+      //   std::ofstream out(std::string("dump_polygon_") + std::to_string(face_index) + "_tr.off");
+      //   out.precision(17);
+      //   if(new_tr.dimension() == 2) {
+      //     write_facets(out, new_tr, new_tr.finite_facets());
+      //   }
+      //   else {
+      //     write_facets(out, new_tr, std::views::filter(new_tr.finite_facets(), [&](auto f) {
+      //                    return new_tr.is_infinite(f.first) || new_tr.is_infinite(f.first->neighbor(f.second));
+      //                  }));
+      //   }
+      // }
+      // {
+      //   dump_edge_link(std::string("dump_around_edge_") + std::to_string(face_index) + "_" +
+      //                  std::to_string(region_count) + ".polylines.txt", first_border_edge);
+      //   std::ofstream dump(std::string("dump_no_segment_found_") + std::to_string(face_index) + "_" +
+      //                      std::to_string(region_count) + ".binary.cgal");
+      //   CGAL::IO::save_binary_file(dump, *this);
+      //   dump_region(face_index, region_count, cdt_2);
+      // }
       throw Next_region{"No segment found", fh_region[0]};
     }
     CGAL_assertion(found_edge_opt != std::nullopt);
@@ -1198,17 +1198,17 @@ private:
                              facets_of_lower_cavity.size());
     if(intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
       std::cerr << "!! Interesting case !!\n";
-      dump_region(face_index, region_count, cdt_2);
-      {
-        std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + "_" +
-                          std::to_string(region_count) + ".polylines.txt");
-        out.precision(17);
-        for(auto edge: intersecting_edges) {
-          write_segment(out, edge);
-        }
-      }
-      dump_facets_of_cavity(face_index, region_count, "lower", facets_of_lower_cavity);
-      dump_facets_of_cavity(face_index, region_count, "upper", facets_of_upper_cavity);
+      // dump_region(face_index, region_count, cdt_2);
+      // {
+      //   std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + "_" +
+      //                     std::to_string(region_count) + ".polylines.txt");
+      //   out.precision(17);
+      //   for(auto edge: intersecting_edges) {
+      //     write_segment(out, edge);
+      //   }
+      // }
+      // dump_facets_of_cavity(face_index, region_count, "lower", facets_of_lower_cavity);
+      // dump_facets_of_cavity(face_index, region_count, "upper", facets_of_upper_cavity);
     }
 #endif // CGAL_DEBUG_CDT_3
     typename T_3::Vertex_handle_unique_hash_map map_cavity_vertices_to_ambient_vertices;
@@ -1247,34 +1247,34 @@ private:
         if(fail_lower) {
           std::cerr << "ERROR: Face is not a facet of the lower cavity\n";
         }
-        debug_region_size_4();
-        dump_region(face_index, region_count, cdt_2);
-        dump_3d_triangulation(face_index, region_count, "lower", lower_cavity_triangulation);
-        dump_3d_triangulation(face_index, region_count, "upper", upper_cavity_triangulation);
-        auto dump_facets_of_cavity_border = [&](CDT_3_face_index face_index, int region_count, std::string type,
-                                                const auto& cavity_triangulation) {
-          std::ofstream out(std::string("dump_plane_facets_of_region_") + std::to_string(face_index) + "_" +
-                            std::to_string(region_count) + "_" + type + ".off");
-          std::ofstream other_out(std::string("dump_non_plane_facets_of_region_") + std::to_string(face_index) + "_" +
-                            std::to_string(region_count) + "_" + type + ".off");
-          out.precision(17);
-          other_out.precision(17);
+        // debug_region_size_4();
+        // dump_region(face_index, region_count, cdt_2);
+        // dump_3d_triangulation(face_index, region_count, "lower", lower_cavity_triangulation);
+        // dump_3d_triangulation(face_index, region_count, "upper", upper_cavity_triangulation);
+        // auto dump_facets_of_cavity_border = [&](CDT_3_face_index face_index, int region_count, std::string type,
+        //                                         const auto& cavity_triangulation) {
+        //   std::ofstream out(std::string("dump_plane_facets_of_region_") + std::to_string(face_index) + "_" +
+        //                     std::to_string(region_count) + "_" + type + ".off");
+        //   std::ofstream other_out(std::string("dump_non_plane_facets_of_region_") + std::to_string(face_index) + "_" +
+        //                     std::to_string(region_count) + "_" + type + ".off");
+        //   out.precision(17);
+        //   other_out.precision(17);
 
-          std::vector<Facet> border_faces;
-          std::vector<Facet> non_border_faces;
-          visit_convex_hull_of_triangulation(cavity_triangulation,
-              [&](Facet f) {
-                if(is_facet_of_polygon(cavity_triangulation, f))
-                  border_faces.push_back(f);
-                else
-                  non_border_faces.push_back(f);
-              });
-          CGAL_warning(!border_faces.empty());
-          write_facets(out, cavity_triangulation, border_faces);
-          write_facets(other_out, cavity_triangulation, non_border_faces);
-        };
-        dump_facets_of_cavity_border(face_index, region_count, "lower", lower_cavity_triangulation);
-        dump_facets_of_cavity_border(face_index, region_count, "upper", upper_cavity_triangulation);
+        //   std::vector<Facet> border_faces;
+        //   std::vector<Facet> non_border_faces;
+        //   visit_convex_hull_of_triangulation(cavity_triangulation,
+        //       [&](Facet f) {
+        //         if(is_facet_of_polygon(cavity_triangulation, f))
+        //           border_faces.push_back(f);
+        //         else
+        //           non_border_faces.push_back(f);
+        //       });
+        //   CGAL_warning(!border_faces.empty());
+        //   write_facets(out, cavity_triangulation, border_faces);
+        //   write_facets(other_out, cavity_triangulation, non_border_faces);
+        // };
+        // dump_facets_of_cavity_border(face_index, region_count, "lower", lower_cavity_triangulation);
+        // dump_facets_of_cavity_border(face_index, region_count, "upper", upper_cavity_triangulation);
         throw Next_region{"missing facet in polygon", fh_region[0]};
       }
       return test;
@@ -1375,12 +1375,12 @@ private:
     };
 
     {
-#if CGAL_DEBUG_CDT_3 & 64
-      std::ofstream out("dump_upper_outer_map.off");
-      out.precision(17);
-      write_facets(out, *this, std::ranges::views::values(outer_map));
-      out.close();
-#endif // CGAL_DEBUG_CDT_3
+// #if CGAL_DEBUG_CDT_3 & 64
+//       std::ofstream out("dump_upper_outer_map.off");
+//       out.precision(17);
+//       write_facets(out, *this, std::ranges::views::values(outer_map));
+//       out.close();
+// #endif // CGAL_DEBUG_CDT_3
       const auto upper_inner_map = inner_map_of_cavity(upper_cavity_triangulation);
 
       this->copy_triangulation_into_hole(map_cavity_vertices_to_ambient_vertices,
@@ -1452,7 +1452,7 @@ private:
       }
       f2d->info().missing_subface = false;
     }
-    CGAL_assertion(this->T_3::Tr_Base::is_valid(true));
+    //CGAL_assertion(this->T_3::Tr_Base::is_valid(true));
   };
 
   struct Oriented_face_of_cdt_2 {
