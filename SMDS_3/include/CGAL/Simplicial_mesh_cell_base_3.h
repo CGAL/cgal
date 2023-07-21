@@ -32,11 +32,46 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgSMDS3Classes
+
+The class `Simplicial_mesh_cell_base_3`
+is a model of the concept `SimplicialMeshCellBase_3`.
+It is designed to serve as cell base class for 3D simplicial mesh data structures.
+It stores and gives access to data about the complex the cell belongs to, such as the
+subdomain it belongs to or surface it takes part to.
+
+\tparam Gt is the geometric traits class.
+It must be a model of the concept `TriangulationTraits_3`
+
+\tparam SubdomainIndex Type of indices for subdomains of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must match the label
+of the exterior of the domain (which contains at least the unbounded component).
+It must match `MeshDomain_3::Subdomain_index` when used for mesh generation.
+
+\tparam SurfacePatchIndex Type of indices for surface patches (boundaries and interfaces)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must be the index value
+assigned to a non surface facet.
+It must match `MeshDomain_3::Surface_patch_index` when used for mesh generation.
+
+\tparam Cb is the cell base class from which `Simplicial_mesh_cell_base_3` derives.
+It must be a model of the concept `TriangulationCellBase_3`.
+
+\cgalModels `SimplicialMeshCellBase_3`
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+\sa \link Mesh_cell_base_3 `CGAL::Mesh_cell_base_3`\endlink
+\sa `MeshDomain_3`
+\sa `MeshDomainWithFeatures_3`
+*/
 template <typename Gt,
           typename SubdomainIndex,
           typename SurfacePatchIndex,
-          typename Cb>
-class Simplicial_mesh_cell_3
+          typename Cb = Triangulation_cell_base_3<Gt> >
+class Simplicial_mesh_cell_base_3
   : public Cb
 {
 public:
@@ -50,11 +85,22 @@ public:
   using Surface_patch_index = SurfacePatchIndex;
 
 public:
-  Simplicial_mesh_cell_3()
+  template <typename TDS2>
+  struct Rebind_TDS
+  {
+    using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+    using Other = Simplicial_mesh_cell_base_3<Gt,
+                                              SubdomainIndex,
+                                              SurfacePatchIndex,
+                                              Cb2>;
+  };
+
+public:
+  Simplicial_mesh_cell_base_3()
     : time_stamp_(std::size_t(-1))
   {}
 
-  Simplicial_mesh_cell_3(const Simplicial_mesh_cell_3& rhs)
+  Simplicial_mesh_cell_base_3(const Simplicial_mesh_cell_base_3& rhs)
     : Cb(static_cast<const Cb&>(rhs)),
       time_stamp_(rhs.time_stamp_),
       subdomain_index_(rhs.subdomain_index_)
@@ -63,15 +109,15 @@ public:
       surface_index_table_[i] = rhs.surface_index_table_[i];
   }
 
-  Simplicial_mesh_cell_3(Vertex_handle v0, Vertex_handle v1,
-                         Vertex_handle v2, Vertex_handle v3)
+  Simplicial_mesh_cell_base_3(Vertex_handle v0, Vertex_handle v1,
+                              Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3)
   { }
 
-  Simplicial_mesh_cell_3(Vertex_handle v0, Vertex_handle v1,
-                         Vertex_handle v2, Vertex_handle v3,
-                         Cell_handle n0, Cell_handle n1,
-                         Cell_handle n2, Cell_handle n3)
+  Simplicial_mesh_cell_base_3(Vertex_handle v0, Vertex_handle v1,
+                              Vertex_handle v2, Vertex_handle v3,
+                              Cell_handle n0, Cell_handle n1,
+                              Cell_handle n2, Cell_handle n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3)
   { }
 
@@ -153,7 +199,7 @@ private:
 public:
 
   friend std::istream& operator>>(std::istream& is,
-                                  Simplicial_mesh_cell_3& c)
+                                  Simplicial_mesh_cell_base_3& c)
   {
     Subdomain_index index;
     if(IO::is_ascii(is))
@@ -180,7 +226,7 @@ public:
 
   friend
   std::ostream& operator<<(std::ostream& os,
-                           const Simplicial_mesh_cell_3& c)
+                           const Simplicial_mesh_cell_base_3& c)
   {
     if(IO::is_ascii(os))
       os << c.subdomain_index();
@@ -197,59 +243,6 @@ public:
 
     return os;
   }
-};
-
-/*!
-\ingroup PkgSMDS3Classes
-
-The class `Simplicial_mesh_cell_base_3`
-is a model of the concept `SimplicialMeshCellBase_3`.
-It is designed to serve as cell base class for 3D simplicial mesh data structures.
-It stores and gives access to data about the complex the cell belongs to, such as the
-subdomain it belongs to or surface it takes part to.
-
-\tparam Gt is the geometric traits class.
-It must be a model of the concept `TriangulationTraits_3`
-
-\tparam SubdomainIndex Type of indices for subdomains of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
-and `EqualityComparable`. The default constructed value must match the label
-of the exterior of the domain (which contains at least the unbounded component).
-It must match `MeshDomain_3::Subdomain_index` when used for mesh generation.
-
-\tparam SurfacePatchIndex Type of indices for surface patches (boundaries and interfaces)
-of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
-and `EqualityComparable`. The default constructed value must be the index value
-assigned to a non surface facet.
-It must match `MeshDomain_3::Surface_patch_index` when used for mesh generation.
-
-\tparam Cb is the cell base class from which `Simplicial_mesh_cell_base_3` derives.
-It must be a model of the concept `TriangulationCellBase_3`.
-
-\cgalModels `SimplicialMeshCellBase_3`
-
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
-\sa \link Mesh_cell_base_3 `CGAL::Mesh_cell_base_3`\endlink
-\sa `MeshDomain_3`
-\sa `MeshDomainWithFeatures_3`
-*/
-template <typename Gt,
-          typename SubdomainIndex,
-          typename SurfacePatchIndex,
-          typename Cb = Triangulation_cell_base_3<Gt> >
-class Simplicial_mesh_cell_base_3
-{
-public:
-  template <typename TDS2>
-  struct Rebind_TDS
-  {
-    using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
-    using Other = Simplicial_mesh_cell_3<Gt,
-                                         SubdomainIndex,
-                                         SurfacePatchIndex,
-                                         Cb2>;
-  };
 };
 
 } // namespace CGAL

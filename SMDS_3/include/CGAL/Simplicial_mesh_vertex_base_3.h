@@ -35,13 +35,62 @@
 namespace CGAL {
 
 // Adds information to Vb about the localization of the vertex in regards to the 3D input complex.
+
+/*!
+\ingroup PkgSMDS3Classes
+
+The class `Simplicial_mesh_vertex_base_3` is a model of the concept
+`SimplicialMeshVertexBase_3`.
+It is designed to serve as vertex base class for 3D simplicial mesh data structures.
+It stores and gives access to data about the complex the vertex belongs to, such as the
+index of the subcomplex it belongs to.
+
+\tparam Gt is the geometric traits class.
+It must be a model of the concept `TriangulationTraits_3`
+
+\tparam SubdomainIndex Type of indices for subdomains of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must match the label
+of the exterior of the domain (which contains at least the unbounded component).
+It must match `MeshDomain_3::Subdomain_index` when used for mesh generation.
+
+\tparam SurfacePatchIndex Type of indices for surface patches (boundaries and interfaces)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must be the index value
+assigned to a non surface facet.
+It must match `MeshDomain_3::Surface_patch_index` when used for mesh generation.
+
+\tparam CurveIndex Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+`LessThanComparable`. The default constructed value must be the value for an edge which
+does not approximate a 1-dimensional feature of the geometric domain.
+It must match `MeshDomainWithFeatures_3::Curve_index` when used for mesh generation.
+
+\tparam CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+of the discretized geometric domain.
+It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+`LessThanComparable`.
+It must match `MeshDomainWithFeatures_3::Corner_index` when used for mesh generation.
+
+\tparam Vb is the vertex base class from which `Simplicial_mesh_vertex_base_3` derives.
+It must be a model of the concept `TriangulationVertexBase_3`.
+
+\cgalModels `SimplicialMeshVertexBase_3`
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3`
+\sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink
+\sa `MeshDomain_3`
+\sa `MeshDomainWithFeatures_3`
+*/
 template<typename Gt,
          typename SubdomainIndex,
          typename SurfacePatchIndex,
          typename CurveIndex,
          typename CornerIndex,
-         typename Vb>
-class Simplicial_mesh_vertex_3
+         typename Vb = CGAL::Triangulation_vertex_base_3<Gt> >
+class Simplicial_mesh_vertex_base_3
   : public Vb
 {
 private :
@@ -61,7 +110,20 @@ public:
   using FT = typename Gt::FT;
 
 public:
-  Simplicial_mesh_vertex_3()
+  template <typename TDS2>
+  struct Rebind_TDS
+  {
+    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+    using Other = Simplicial_mesh_vertex_base_3<Gt,
+                                                SubdomainIndex,
+                                                SurfacePatchIndex,
+                                                CurveIndex,
+                                                CornerIndex,
+                                                Vb2>;
+  };
+
+public:
+  Simplicial_mesh_vertex_base_3()
     : Vb()
     , number_of_incident_facets_(0)
     , number_of_components_(0)
@@ -160,7 +222,7 @@ private:
 
 public:
   friend std::istream& operator>>(std::istream& is,
-                                  Simplicial_mesh_vertex_3& v)
+                                  Simplicial_mesh_vertex_base_3& v)
   {
     is >> static_cast<Cmvb3_base&>(v);
     int dimension;
@@ -186,7 +248,7 @@ public:
   }
 
   friend std::ostream& operator<<(std::ostream& os,
-                                  const Simplicial_mesh_vertex_3& v)
+                                  const Simplicial_mesh_vertex_base_3& v)
   {
     os << static_cast<const Cmvb3_base&>(v);
     if(IO::is_ascii(os)) {
@@ -205,76 +267,6 @@ public:
                                                 v.index());
     return os;
   }
-};
-
-/*!
-\ingroup PkgSMDS3Classes
-
-The class `Simplicial_mesh_vertex_base_3` is a model of the concept
-`SimplicialMeshVertexBase_3`.
-It is designed to serve as vertex base class for 3D simplicial mesh data structures.
-It stores and gives access to data about the complex the vertex belongs to, such as the
-index of the subcomplex it belongs to.
-
-\tparam Gt is the geometric traits class.
-It must be a model of the concept `TriangulationTraits_3`
-
-\tparam SubdomainIndex Type of indices for subdomains of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
-and `EqualityComparable`. The default constructed value must match the label
-of the exterior of the domain (which contains at least the unbounded component).
-It must match `MeshDomain_3::Subdomain_index` when used for mesh generation.
-
-\tparam SurfacePatchIndex Type of indices for surface patches (boundaries and interfaces)
-of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
-and `EqualityComparable`. The default constructed value must be the index value
-assigned to a non surface facet.
-It must match `MeshDomain_3::Surface_patch_index` when used for mesh generation.
-
-\tparam CurveIndex Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
-of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
-`LessThanComparable`. The default constructed value must be the value for an edge which
-does not approximate a 1-dimensional feature of the geometric domain.
-It must match `MeshDomainWithFeatures_3::Curve_index` when used for mesh generation.
-
-\tparam CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
-of the discretized geometric domain.
-It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
-`LessThanComparable`.
-It must match `MeshDomainWithFeatures_3::Corner_index` when used for mesh generation.
-
-\tparam Vb is the vertex base class from which `Simplicial_mesh_vertex_base_3` derives.
-It must be a model of the concept `TriangulationVertexBase_3`.
-
-\cgalModels `SimplicialMeshVertexBase_3`
-
-\sa `CGAL::Mesh_complex_3_in_triangulation_3`
-\sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink
-\sa `MeshDomain_3`
-\sa `MeshDomainWithFeatures_3`
-*/
-template<typename Gt,
-         typename SubdomainIndex,
-         typename SurfacePatchIndex,
-         typename CurveIndex,
-         typename CornerIndex,
-         typename Vb = CGAL::Triangulation_vertex_base_3<Gt> >
-class Simplicial_mesh_vertex_base_3
-{
-public:
-  template <typename TDS2>
-  struct Rebind_TDS
-  {
-    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
-    using Other = Simplicial_mesh_vertex_3<Gt,
-                                           SubdomainIndex,
-                                           SurfacePatchIndex,
-                                           CurveIndex,
-                                           CornerIndex,
-                                           Vb2>;
-  };
 };
 
 } // namespace CGAL
