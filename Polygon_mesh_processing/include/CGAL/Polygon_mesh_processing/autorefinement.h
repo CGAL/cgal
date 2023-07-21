@@ -1148,6 +1148,11 @@ void generate_subtriangles(std::size_t ti,
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+*     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+*     \cgalParamDefault{`CGAL::Sequential_tag`}
+*   \cgalParamNEnd
 *   \cgalParamNBegin{point_map}
 *     \cgalParamDescription{a property map associating points to the elements of the range `soup_points`}
 *     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
@@ -1712,6 +1717,11 @@ void autorefine_triangle_soup(PointRange& soup_points,
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
@@ -1746,7 +1756,7 @@ autorefine(      TriangleMesh& tm,
 
   polygon_mesh_to_polygon_soup(tm, soup_points, soup_triangles, np);
 
-  autorefine_triangle_soup(soup_points, soup_triangles);
+  autorefine_triangle_soup(soup_points, soup_triangles, np);
 
   clear(tm); //TODO: keep properties
   repair_polygon_soup(soup_points, soup_triangles);
