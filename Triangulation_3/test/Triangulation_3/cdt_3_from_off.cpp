@@ -160,6 +160,30 @@ int main(int argc, char* argv[])
       // CGAL::Mesh_3::save_binary_file(dump, cdt);
     }
     cdt.restore_Delaunay();
+    for(auto e: edges(mesh)) {
+      auto he = halfedge(e, mesh);
+      auto p1 = get(pmap, target(he, mesh));
+      auto p2 = get(pmap, source(he, mesh));
+      auto n = cdt.number_of_vertices();
+      auto v1 = cdt.insert(p1);
+      auto v2 = cdt.insert(p2);
+      CGAL_assertion(n == cdt.number_of_vertices());  
+      auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
+      for(auto v: steiner_vertices) {
+        he = CGAL::Euler::split_edge(he, mesh);
+        put(pmap, target(he, mesh), v->point());
+      }
+    }
+    std::ofstream out_mesh("out-conforming.off");
+    out_mesh.precision(17);
+    out_mesh << mesh;
+    out_mesh.close();
+    {
+      std::ofstream all_edges("dump_all_segments.polylines.txt");
+      all_edges.precision(17);
+      cdt.write_all_segments_file(all_edges);
+    }
+
     std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
     assert(cdt.is_conforming());
     if(exit_code == EXIT_SUCCESS) {
