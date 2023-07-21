@@ -1702,6 +1702,9 @@ void autorefine_triangle_soup(PointRange& soup_points,
  * \ingroup PMP_corefinement_grp
  * refines a triangle mesh so that no triangles intersects in their interior.
  *
+ * Note that this function is only provided as a shortcut for calling `autorefine_triangle_soup()`
+ * with a mesh. For any advance usage the aforementioned function should be called directly.
+ *
  * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -1745,7 +1748,7 @@ autorefine(      TriangleMesh& tm,
 
   autorefine_triangle_soup(soup_points, soup_triangles);
 
-  clear(tm);
+  clear(tm); //TODO: keep properties
   repair_polygon_soup(soup_points, soup_triangles);
 
   duplicate_non_manifold_edges_in_polygon_soup(soup_points, soup_triangles);
