@@ -110,6 +110,9 @@ int main(int argc, char* argv[])
   };
 
   auto pmap = get(CGAL::vertex_point, mesh);
+  for(auto v: vertices(mesh)) {
+    cdt.insert(get(pmap, v));
+  }
   int poly_id = 0;
   CDT_3_try {
     for(auto face_descriptor : faces(mesh)) {
