@@ -8,7 +8,7 @@
   \cgalRefines{DefaultConstructible,PolygonTraits_2}
 
   \cgalHasModelsBegin
-  \cgalHasModelsBare{Any CGAL kernel, e.g., CGAL::Exact_predicates_exact_constructions_kernel.}
+  \cgalHasModelsBare{Any \cgal kernel, e.g., CGAL::Exact_predicates_exact_constructions_kernel.}
   \cgalHasModelsEnd
 
 */

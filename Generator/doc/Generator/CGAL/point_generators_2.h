@@ -677,7 +677,7 @@ endpoints are specified upon construction. The points are equally spaced.
 
 \cgalModels{PointGenerator}
 
-\sa `CGAL::points_on_segment_2<Point_2>
+\sa `CGAL::points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
