@@ -82,6 +82,47 @@ public:
   typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag> Constrained_Delaunay_triangulation;
   typedef Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation> Triangulation;
 
+  struct Polygon_compare {
+    bool operator()(const Polygon_2<Kernel, PolygonContainer>& pa, const Polygon_2<Kernel, PolygonContainer>& pb) const {
+      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator va = pa.vertices_begin();
+      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator vb = pb.vertices_begin();
+      while (va != pa.vertices_end() && vb != pb.vertices_end()) {
+        if (*va != *vb) return *va < *vb;
+        ++va;
+        ++vb;
+      } if (vb == pb.vertices_end()) return false;
+      return true;
+    }
+  };
+
+  struct Polygon_with_holes_compare {
+    bool operator()(const Polygon_with_holes_2<Kernel, PolygonContainer>& pa, const Polygon_with_holes_2<Kernel, PolygonContainer>& pb) const {
+      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator va = pa.outer_boundary().vertices_begin();
+      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator vb = pb.outer_boundary().vertices_begin();
+      while (va != pa.outer_boundary().vertices_end() && vb != pb.outer_boundary().vertices_end()) {
+        if (*va != *vb) return *va < *vb;
+        ++va;
+        ++vb;
+      } if (vb != pb.outer_boundary().vertices_end()) return true;
+      else if (va != pa.outer_boundary().vertices_end()) return false;
+      typename Polygon_with_holes_2<Kernel, PolygonContainer>::Hole_const_iterator ha = pa.holes_begin();
+      typename Polygon_with_holes_2<Kernel, PolygonContainer>::Hole_const_iterator hb = pb.holes_begin();
+      while (ha != pa.holes_end() && hb != pb.holes_end()) {
+        va = ha->vertices_begin();
+        vb = hb->vertices_begin();
+        while (va != ha->vertices_end() && vb != hb->vertices_end()) {
+          if (*va != *vb) return *va < *vb;
+          ++va;
+          ++vb;
+        } if (vb != hb->vertices_end()) return true;
+        else if (va != ha->vertices_end()) return false;
+        ++ha;
+        ++hb;
+      } if (hb == pb.holes_end()) return false;
+      return true;
+    }
+  };
+
   /// \name Creation
   Polygon_repair_2() : number_of_polygons(0), number_of_holes(0) {}
 
@@ -174,6 +215,8 @@ public:
   void reconstruct_ring(std::list<typename Kernel::Point_2>& ring,
                         typename Triangulation::Face_handle face_adjacent_to_boundary,
                         int opposite_vertex) {
+
+    // Create ring
     typename Triangulation::Face_handle current_face = face_adjacent_to_boundary;
     int current_opposite_vertex = opposite_vertex;
     do {
@@ -188,13 +231,22 @@ public:
       current_opposite_vertex = fc->cw(fc->index(pivot_vertex));
     } while (current_face != face_adjacent_to_boundary ||
              current_opposite_vertex != opposite_vertex);
+
+    // Start at lexicographically smallest vertex
+    typename std::list<typename Kernel::Point_2>::iterator smallest_vertex = ring.begin();
+    for (typename std::list<typename Kernel::Point_2>::iterator current_vertex = ring.begin(); 
+         current_vertex != ring.end(); ++current_vertex) {
+      if (*current_vertex < *smallest_vertex) smallest_vertex = current_vertex;
+    } if (ring.front() != *smallest_vertex) {
+      ring.splice(ring.begin(), ring, smallest_vertex, ring.end());
+    }
   }
 
   // Reconstruct multipolygon based on the triangles labelled as inside the polygon
   void reconstruct_multipolygon() {
     mp.clear();
     std::vector<Polygon_2<Kernel, PolygonContainer>> polygons;
-    std::vector<std::list<Polygon_2<Kernel, PolygonContainer>>> holes;
+    std::vector<std::set<Polygon_2<Kernel, PolygonContainer>, Polygon_compare>> holes; // holes are ordered
     for (int i = 0; i < number_of_polygons; ++i) {
       polygons.emplace_back();
       holes.emplace_back();
@@ -215,7 +267,9 @@ public:
                                              ring.begin(), ring.end());
           } else {
             // std::cout << "Label: " << face->label() << " -> item " << -face->label()-2 << " -> in polygon " << hole_nesting[-face->label()-2] << std::endl;
-            holes[hole_nesting[-face->label()-2]-1].emplace_back(ring.begin(), ring.end());
+            ring.push_back(ring.front());
+            ring.pop_front();
+            holes[hole_nesting[-face->label()-2]-1].insert(Polygon_2<Kernel, PolygonContainer>(ring.rbegin(), ring.rend()));
           }
 
           std::list<typename Triangulation::Face_handle> to_check;
@@ -235,8 +289,13 @@ public:
       }
     }
 
+    // Create polygons with holes and put in multipolygon
+    std::set<Polygon_with_holes_2<Kernel, PolygonContainer>, Polygon_with_holes_compare> ordered_polygons;
     for (int i = 0; i < polygons.size(); ++i) {
-      mp.add_polygon(Polygon_with_holes_2<Kernel, PolygonContainer>(polygons[i], holes[i].begin(), holes[i].end()));
+      ordered_polygons.insert(Polygon_with_holes_2<Kernel, PolygonContainer>(polygons[i], holes[i].begin(), holes[i].end()));
+    } for (auto const& polygon: ordered_polygons) {
+      std::cout << "Adding polygon " << polygon << std::endl;
+      mp.add_polygon(polygon);
     }
   }
 

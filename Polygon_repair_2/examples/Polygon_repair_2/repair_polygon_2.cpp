@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_repair_2/Polygon_repair_2.h>
 #include <CGAL/Polygon_repair_2/draw_multipolygon_with_holes_2.h>
-// #include <CGAL/IO/WKT.h>
+#include <CGAL/IO/WKT.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_2 Point;
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 
   // Square with hole
   // Point ps1[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
-  // Polygon_with_holes p(Polygon(ps1, ps1+4));
+  // Polygon_with_holes p(Polygon_2(ps1, ps1+4));
   // Point ps2[] = {Point(0.25,0.25), Point(0.75,0.25), Point(0.75,0.75), Point(0.25,0.75)};
   // Polygon_2 h(ps2, ps2+4);
   // p.add_hole(h);
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 
   // Square with hole touching boundary
   // Point ps1[] = {Point(0,0), Point(1,0), Point(1,1), Point(0,1)};
-  // Polygon_with_holes p(Polygon(ps1, ps1+4));
+  // Polygon_with_holes p(Polygon_2(ps1, ps1+4));
   // Point ps2[] = {Point(0.25,0.25), Point(0.75,0.25), Point(0.75,0.75), Point(0,1)};
   // Polygon_2 h(ps2, ps2+4);
   // p.add_hole(h);
@@ -93,8 +93,21 @@ int main(int argc, char* argv[]) {
   // std::cout << pr.multipolygon() << std::endl;
   // CGAL::draw(pr.multipolygon());
 
-  std::cout << CGAL::Polygon_repair_2::repair(p) << std::endl;
-  std::cout << CGAL::Polygon_repair_2::repair(mp) << std::endl;
+  // CGAL::IO::write_polygon_WKT(std::cout, p);
+  // CGAL::IO::write_multi_polygon_WKT(std::cout, mp);
+
+  Multipolygon rmp = CGAL::Polygon_repair_2::repair(p);
+
+  CGAL::IO::write_multi_polygon_WKT(std::cout, rmp);
+
+  // std::cout << "Orientations good?" << std::endl;
+  // for (auto const& polygon: rmp.polygons()) {
+  //   std::cout << (polygon.outer_boundary().orientation() == CGAL::COUNTERCLOCKWISE) << std::endl;
+  //   for (auto const &hole: polygon.holes()) {
+  //     std::cout << (hole.orientation() == CGAL::CLOCKWISE) << std::endl;
+  //   }
+  // }
+  
 
   return 0;
 }
