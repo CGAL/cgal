@@ -185,6 +185,7 @@ void acvd_simplification(
       }
       else if (c1 == c2)
       {
+        clusters_edges_new.push(hi);
         continue; // no modification
       }
       else
@@ -248,6 +249,8 @@ void acvd_simplification(
             // no change but need to reset cluster data
             clusters[c2].add_vertex(vpv2, get(vertex_weight_pmap, v2));
             clusters[c1].remove_vertex(vpv2, get(vertex_weight_pmap, v2));
+
+            clusters_edges_new.push(hi);
         }
 
         continue;
