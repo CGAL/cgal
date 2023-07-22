@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
     argv[1] :
-    CGAL::data_file_path("meshes/eight.off");
+    CGAL::data_file_path("meshes/S52k.stl");
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {

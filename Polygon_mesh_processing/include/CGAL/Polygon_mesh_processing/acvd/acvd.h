@@ -47,19 +47,19 @@ struct ClusterData {
 
   ClusterData() : site_sum(0, 0, 0), weight_sum(0), energy(0) {}
 
-  void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight = 1)
+  void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
-    this->site_sum += vertex_position * weight;
+    this->site_sum += vertex_position;
     this->weight_sum += weight;
   }
 
-  void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight = 1)
+  void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
-    this->site_sum -= vertex_position * weight;
+    this->site_sum -= vertex_position;
     this->weight_sum -= weight;
   }
 
-  typename GT::FT compute_energy(const typename GT::Vector_3 vertex_position, const typename GT::FT weight = 1)
+  typename GT::FT compute_energy()
   {
     this->energy = - (this->site_sum).squared_length() / this->weight_sum;
     return this->energy;
@@ -68,7 +68,7 @@ struct ClusterData {
 
 template <typename PolygonMesh, /*ClusteringMetric,*/
   typename NamedParameters = parameters::Default_named_parameters>
-void  acvd_simplification(
+void acvd_simplification(
     PolygonMesh& pmesh,
     const int& nb_clusters,
     const NamedParameters& np = parameters::default_values()
@@ -79,8 +79,10 @@ void  acvd_simplification(
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vertex_position_map;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor Face_descriptor;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
+  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -92,13 +94,24 @@ void  acvd_simplification(
   // initial random clusters
   // property map from vertex_descriptor to cluster index
   VertexClusterMap vertex_clusters_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
+  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
   std::vector<ClusterData<GT>> clusters(nb_clusters + 1);
   std::queue<Halfedge_descriptor> clusters_edges_active;
   std::queue<Halfedge_descriptor> clusters_edges_new;
 
   int nb_vertices = num_vertices(pmesh);
 
-  srand(time(NULL));
+  // compute vertex weights (dual area)
+  for (Face_descriptor fd : faces(pmesh))
+  {
+    typename GT::FT weight = CGAL::Polygon_mesh_processing::face_area(fd, pmesh) / 3;
+    for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
+    {
+      put(vertex_weight_pmap, vd, weight);
+    }
+  }
+
+  srand(3);
   for (int ci = 0; ci < nb_clusters; ci++)
   {
     // random index
@@ -115,7 +128,7 @@ void  acvd_simplification(
     put(vertex_clusters_pmap, vd, ci + 1); // TODO: should be ci but for now we start from 1 (can't set null value to -1)
     typename GT::Point_3 vp = get(vpm, vd);
     typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
-    clusters[ci].add_vertex(vpv);
+    clusters[ci].add_vertex(vpv, get(vertex_weight_pmap, vd));
 
     for (Halfedge_descriptor hd : halfedges_around_source(halfedge(vd, pmesh), pmesh))
       clusters_edges_active.push(hd);
@@ -143,8 +156,8 @@ void  acvd_simplification(
         put(vertex_clusters_pmap, v1, c2);
         typename GT::Point_3 vp1 = get(vpm, v1);
         typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
-        clusters[c2].add_vertex(vpv);
-        clusters[c1].remove_vertex(vpv);
+        clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1));
+        clusters[c1].remove_vertex(vpv, get(vertex_weight_pmap, v1));
 
 
         // add all halfedges around v1 except hi to the queue
@@ -160,8 +173,8 @@ void  acvd_simplification(
         put(vertex_clusters_pmap, v2, c1);
         typename GT::Point_3 vp2 = get(vpm, v2);
         typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
-        clusters[c1].add_vertex(vpv);
-        clusters[c2].remove_vertex(vpv);
+        clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2));
+        clusters[c2].remove_vertex(vpv, get(vertex_weight_pmap, v2));
 
 
         // add all halfedges around v2 except hi to the queue
@@ -171,7 +184,9 @@ void  acvd_simplification(
         nb_modifications++;
       }
       else if (c1 == c2)
+      {
         continue; // no modification
+      }
       else
       {
         // compare the energy of the 3 cases
@@ -180,22 +195,22 @@ void  acvd_simplification(
         typename GT::Point_3 vp2 = get(vpm, v2);
         typename GT::Vector_3 vpv2(vp2.x(), vp2.y(), vp2.z());
 
-        typename GT::FT e_no_change = clusters[c1].compute_energy(vpv1) + clusters[c2].compute_energy(vpv2);
+        typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
-        clusters[c1].remove_vertex(vpv1);
-        clusters[c2].add_vertex(vpv1);
+        clusters[c1].remove_vertex(vpv1, get(vertex_weight_pmap, v1));
+        clusters[c2].add_vertex(vpv1, get(vertex_weight_pmap, v1));
 
-        typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy(vpv1) + clusters[c2].compute_energy(vpv2);
+        typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
         // reset to no change
-        clusters[c1].add_vertex(vpv1);
-        clusters[c2].remove_vertex(vpv1);
+        clusters[c1].add_vertex(vpv1, get(vertex_weight_pmap, v1));
+        clusters[c2].remove_vertex(vpv1, get(vertex_weight_pmap, v1));
 
         // The effect of the following should always be reversed after the comparison
-        clusters[c2].remove_vertex(vpv2);
-        clusters[c1].add_vertex(vpv2);
+        clusters[c2].remove_vertex(vpv2, get(vertex_weight_pmap, v2));
+        clusters[c1].add_vertex(vpv2, get(vertex_weight_pmap, v2));
 
-        typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy(vpv1) + clusters[c2].compute_energy(vpv2);
+        typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
         if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2)
         {
@@ -216,11 +231,11 @@ void  acvd_simplification(
           put(vertex_clusters_pmap, v1, c2);
 
           // need to reset cluster data and then update
-          clusters[c2].add_vertex(vpv2);
-          clusters[c1].remove_vertex(vpv2);
+          clusters[c2].add_vertex(vpv2, get(vertex_weight_pmap, v2));
+          clusters[c1].remove_vertex(vpv2, get(vertex_weight_pmap, v2));
 
-          clusters[c1].remove_vertex(vpv1);
-          clusters[c2].add_vertex(vpv1);
+          clusters[c1].remove_vertex(vpv1, get(vertex_weight_pmap, v1));
+          clusters[c2].add_vertex(vpv1, get(vertex_weight_pmap, v1));
 
           // add all halfedges around v1 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
@@ -231,8 +246,8 @@ void  acvd_simplification(
         else
         {
             // no change but need to reset cluster data
-            clusters[c2].add_vertex(vpv2);
-            clusters[c1].remove_vertex(vpv2);
+            clusters[c2].add_vertex(vpv2, get(vertex_weight_pmap, v2));
+            clusters[c1].remove_vertex(vpv2, get(vertex_weight_pmap, v2));
         }
 
         continue;
@@ -252,7 +267,7 @@ void  acvd_simplification(
     put(vcm, vd, color);
   }
   std::cout << "kak1" << std::endl;
-  CGAL::IO::write_OFF("eight_clustered_0.off", pmesh, CGAL::parameters::vertex_color_map(vcm));
+  CGAL::IO::write_OFF("S52k_clustered_0.off", pmesh, CGAL::parameters::vertex_color_map(vcm));
   std::cout << "kak2" << std::endl;
 
 }
