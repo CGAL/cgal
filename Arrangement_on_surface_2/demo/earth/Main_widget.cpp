@@ -272,7 +272,6 @@ void Main_widget::init_country_borders(float error)
   // TO-DO: move this code to resizeGL (when viewport is initialized)
   // has to be defined after camera has been defined:
   // because we want to compute the error based on camera parameters!
-  //Geodesic_arcs ga;
   //const double error = 0.001; // calculate this from cam parameters!
   //auto lsa = Aos::get_approx_arcs(countries, error);
   //auto lsa = Aos::get_approx_arcs(error);
