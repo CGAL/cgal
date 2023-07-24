@@ -43,6 +43,14 @@ public:
   I& operator[](H h)
   { return Base::operator[]((void*)&*h); }
 
+  template <class H>
+  bool contains(H h) const
+  { return Base::contains((void*)&*h); }
+
+  template <class H>
+  void erase(H h)
+  { Base::erase((void*)&*h); }
+
 };
 
 } //namespace CGAL

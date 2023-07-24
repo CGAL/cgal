@@ -7,7 +7,7 @@ namespace CGAL {
 An instance of the class template `Unique_hash_map` is an
 injective mapping from the set of keys of type `Key` to the set of
 variables of type `Data`. New keys can be inserted at any time,
-however keys cannot be individually deleted.
+and can be deleted with the erase method.
 
 An object `hash` of the type `UniqueHashFunction` returns a
 unique integer index `hash(key)` of type `std::size_t` for all
@@ -113,13 +113,22 @@ the current hash function.
 Hash_function hash_function() const;
 
 /*!
-returns true if \f$ key\f$ is
-defined in `*this`. Note that there can be keys defined that have not
+returns true if `*this` contains \f$ key\f$.
+Note that there can be keys defined that have not
 been inserted explicitly. Their variables are initialized to
 `default_value`.
 */
+bool contains( const Key& key) const;
+
+/*!
+returns true if `*this` contains \f$ key\f$
+*/
 bool is_defined( const Key& key) const;
 
+/*!
+erases \f$ key\f$ and its value from the `map`
+*/
+void erase(const Key& key);
 
 /*!
 sets the table size.

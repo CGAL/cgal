@@ -128,8 +128,7 @@ public:
   typedef std::list<Object_handle>                     Object_list;
   typedef typename Object_list::iterator               Object_iterator;
   typedef typename Object_list::const_iterator         Object_const_iterator;
-  typedef boost::optional<Object_iterator>             Optional_object_iterator ;
-  typedef Generic_handle_map<Optional_object_iterator> Handle_to_iterator_map;
+  typedef Generic_handle_map<Object_iterator>          Handle_to_iterator_map;
 
   typedef Sphere_map*       Constructor_parameter;
   typedef const Sphere_map* Constructor_const_parameter;
@@ -226,7 +225,7 @@ public:
   construction means cloning an isomorphic structure and is thus an
   expensive operation.}*/
 
-  Sphere_map(bool = false) : boundary_item_(boost::none),
+  Sphere_map(bool = false) : boundary_item_(),
     svertices_(), sedges_(), sfaces_(), shalfloop_() {}
 
   ~Sphere_map() noexcept(!CGAL_ASSERTIONS_ENABLED)
@@ -236,7 +235,7 @@ public:
     );
   }
 
-  Sphere_map(const Self& D) : boundary_item_(boost::none),
+  Sphere_map(const Self& D) : boundary_item_(),
     svertices_(D.svertices_),
     sedges_(D.sedges_),
     sfaces_(D.sfaces_),
@@ -258,7 +257,7 @@ public:
 
   void clear()
   {
-    boundary_item_.clear(boost::none);
+    boundary_item_.clear();
     svertices_.destroy();
     sfaces_.destroy();
     while ( shalfedges_begin() != shalfedges_end() )
@@ -268,11 +267,11 @@ public:
 
   template <typename H>
   bool is_sm_boundary_object(H h) const
-  { return boundary_item_[h]!=boost::none; }
+  { return boundary_item_.contains(h); }
 
   template <typename H>
   Object_iterator& sm_boundary_item(H h)
-  { return *boundary_item_[h]; }
+  { return boundary_item_[h]; }
 
   template <typename H>
   void store_sm_boundary_item(H h, Object_iterator o)
@@ -280,8 +279,8 @@ public:
 
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=boost::none);
-    boundary_item_[h] = boost::none; }
+  { CGAL_assertion(is_sm_boundary_object(h));
+    boundary_item_.erase(h); }
 
   void reset_sm_iterator_hash(Object_iterator it)
   { SVertex_handle sv;

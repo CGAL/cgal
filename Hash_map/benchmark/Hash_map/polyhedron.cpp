@@ -56,7 +56,7 @@ template <typename Map>
 int fct(int ii, int jj, const Vertex_list& V, const Vertex_list& V2, const VPM& vpm, const std::string& s)
 {
   int x = 0;
-  Timer construct, query, lookups;
+  Timer construct, query, lookups, erase;
   construct.start();
   for(int j=0; j <jj; j++){
     Map sm;
@@ -88,10 +88,18 @@ int fct(int ii, int jj, const Vertex_list& V, const Vertex_list& V2, const VPM& 
     }
   }
   lookups.stop();
+
+  erase.start();
+  for(int j=0; j <jj; j++){
+    for(vertex_descriptor vh : V){
+      sm.erase(vh);
+    }
+  }
+  erase.stop();
   if(y != 0) { std::cout << y << " != 0" << std::endl;}
 
 
-  std::cerr << s << construct.time() << " sec.\t| " << query.time() << " sec.\t| " << lookups.time() << " sec." << std::endl;
+  std::cerr << s << construct.time() << " sec.\t| " << query.time() << " sec.\t| " << lookups.time() << " sec.\t| " << erase.time() << " sec." << std::endl;
 
   return x;
 }
@@ -133,7 +141,7 @@ void  fct(int ii, int jj)
 
 
   std::cerr << std::endl << ii << " items and queries (repeated " << jj << " times)" << std::endl;
-  std::cerr << "Name\t\t\t| Version\t| Construction\t| Queries\t| Lookups" << std::endl;
+  std::cerr << "Name\t\t\t| Version\t| Construction\t| Queries\t| Lookups\t| Erase" << std::endl;
 
   int temp;
   int res = fct<SM>(ii,jj, V1,V2, vpm1, "std::map\t\t|\t\t| " );
