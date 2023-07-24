@@ -96,29 +96,16 @@ public:
     }
   };
 
-  struct Polygon_with_holes_compare {
+  struct Polygon_with_holes_less {
+    Polygon_less pl;
     bool operator()(const Polygon_with_holes_2<Kernel, PolygonContainer>& pa, const Polygon_with_holes_2<Kernel, PolygonContainer>& pb) const {
-      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator va = pa.outer_boundary().vertices_begin();
-      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator vb = pb.outer_boundary().vertices_begin();
-      while (va != pa.outer_boundary().vertices_end() && vb != pb.outer_boundary().vertices_end()) {
-        if (*va != *vb) return *va < *vb;
-        ++va;
-        ++vb;
-      } if (vb != pb.outer_boundary().vertices_end()) return true;
-      else if (va != pa.outer_boundary().vertices_end()) return false;
+      if (pl(pa.outer_boundary(), pb.outer_boundary())) return true;
+      if (pl(pb.outer_boundary(), pa.outer_boundary())) return false;
       typename Polygon_with_holes_2<Kernel, PolygonContainer>::Hole_const_iterator ha = pa.holes_begin();
       typename Polygon_with_holes_2<Kernel, PolygonContainer>::Hole_const_iterator hb = pb.holes_begin();
       while (ha != pa.holes_end() && hb != pb.holes_end()) {
-        va = ha->vertices_begin();
-        vb = hb->vertices_begin();
-        while (va != ha->vertices_end() && vb != hb->vertices_end()) {
-          if (*va != *vb) return *va < *vb;
-          ++va;
-          ++vb;
-        } if (vb != hb->vertices_end()) return true;
-        else if (va != ha->vertices_end()) return false;
-        ++ha;
-        ++hb;
+        if (pl(*ha, *hb)) return true;
+        if (pl(*hb, *ha)) return false;
       } if (hb == pb.holes_end()) return false;
       return true;
     }
@@ -247,7 +234,7 @@ public:
   void reconstruct_multipolygon() {
     mp.clear();
     std::vector<Polygon_2<Kernel, PolygonContainer>> polygons;
-    std::vector<std::set<Polygon_2<Kernel, PolygonContainer>, Polygon_compare>> holes; // holes are ordered
+    std::vector<std::set<Polygon_2<Kernel, PolygonContainer>, Polygon_less>> holes; // holes are ordered
     for (int i = 0; i < number_of_polygons; ++i) {
       polygons.emplace_back();
       holes.emplace_back();
@@ -291,7 +278,7 @@ public:
     }
 
     // Create polygons with holes and put in multipolygon
-    std::set<Polygon_with_holes_2<Kernel, PolygonContainer>, Polygon_with_holes_compare> ordered_polygons;
+    std::set<Polygon_with_holes_2<Kernel, PolygonContainer>, Polygon_with_holes_less> ordered_polygons;
     for (int i = 0; i < polygons.size(); ++i) {
       ordered_polygons.insert(Polygon_with_holes_2<Kernel, PolygonContainer>(polygons[i], holes[i].begin(), holes[i].end()));
     } for (auto const& polygon: ordered_polygons) {
