@@ -41,6 +41,8 @@ using Point_3 = K::Point_3;
 using Mesh = CGAL::Surface_mesh<Point>;
 using face_descriptor =boost::graph_traits<Mesh>::face_descriptor;
 
+int go(Mesh, std::string);
+
 int main(int argc, char* argv[])
 {
   std::cerr.precision(17);
@@ -57,6 +59,60 @@ int main(int argc, char* argv[])
 
   const std::string output_filename = (argc > 2) ? argv[2] : "dump.off";
 
+
+  const double ratio = (argc > 3) ? std::stod(argv[3]) : 0.;
+  if(ratio == 0.) {
+    return go(std::move(mesh), output_filename);
+  }
+  const auto nb_buckets = static_cast<int>(std::round(1 / ratio));
+  std::cerr << "RATIO: " << ratio << '\n';
+  std::cerr << "NB BUCKETS: " << nb_buckets << '\n';
+
+  auto simplify = [&](Mesh& m) {
+    const auto nb_to_skip = static_cast<int>(std::round(m.number_of_faces() * ratio));
+    std::cerr << "nb_to_skip: " << nb_to_skip << '\n';
+    const auto bucket = CGAL::get_default_random().get_int(0, nb_buckets);
+    std::cerr << "bucket: " << bucket << '\n';
+    const auto start = (std::min)(bucket * nb_to_skip, static_cast<int>(m.number_of_faces()));
+    const auto end = (std::min)(start + nb_to_skip, static_cast<int>(m.number_of_faces()));
+    std::cerr << "SKIP from " << start << " to " << end << '\n';
+    for(auto i = end - 1; i >= start; --i) {
+      const auto f = m.faces().begin() + i;
+      m.remove_face(*f);
+    }
+    m.collect_garbage();
+    assert(m.is_valid(true));
+    std::cerr << "number of faces: " << m.number_of_faces() << '\n';
+};
+
+  const Mesh orig_mesh{mesh};
+  Mesh bad_mesh{mesh};
+  while(true) {
+    simplify(mesh);
+    try {
+      go(mesh, output_filename);
+    } catch(CGAL::Error_exception& e) {
+      if(e.message().contains(std::string("### error with cavity ###"))) {
+        std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
+        std::ofstream bad("bad.off");
+        bad.precision(17);
+        bad << mesh;
+        bad_mesh = mesh;
+        continue;
+      } else {
+        std::cerr << "ERROR MESH: " << e.what() << '\n';
+        std::ofstream error("error_mesh.off");
+        error.precision(17);
+        error << mesh;
+        std::cerr << "go on...\n";
+      }
+    }
+    std::cerr << "GOOD MESH :-( " << mesh.number_of_faces() << " faces\n";
+    mesh = bad_mesh;
+  }
+}
+
+int go(Mesh mesh, std::string output_filename) {
   CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt;
 
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
@@ -160,32 +216,33 @@ int main(int argc, char* argv[])
       // CGAL::Mesh_3::save_binary_file(dump, cdt);
     }
     cdt.restore_Delaunay();
-    for(auto e: edges(mesh)) {
-      auto he = halfedge(e, mesh);
-      auto p1 = get(pmap, target(he, mesh));
-      auto p2 = get(pmap, source(he, mesh));
-      auto n = cdt.number_of_vertices();
-      auto v1 = cdt.insert(p1);
-      auto v2 = cdt.insert(p2);
-      CGAL_assertion(n == cdt.number_of_vertices());  
-      auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
-      for(auto v: steiner_vertices) {
-        he = CGAL::Euler::split_edge(he, mesh);
-        put(pmap, target(he, mesh), v->point());
-      }
-    }
-    std::ofstream out_mesh("out-conforming.off");
-    out_mesh.precision(17);
-    out_mesh << mesh;
-    out_mesh.close();
-    {
-      std::ofstream all_edges("dump_all_segments.polylines.txt");
-      all_edges.precision(17);
-      cdt.write_all_segments_file(all_edges);
-    }
+    // for(auto e: edges(mesh)) {
+    //   auto he = halfedge(e, mesh);
+    //   auto p1 = get(pmap, target(he, mesh));
+    //   auto p2 = get(pmap, source(he, mesh));
+    //   auto n = cdt.number_of_vertices();
+    //   auto v1 = cdt.insert(p1);
+    //   auto v2 = cdt.insert(p2);
+    //   CGAL_assertion(n == cdt.number_of_vertices());
+    //   auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
+    //   for(auto v: steiner_vertices) {
+    //     he = CGAL::Euler::split_edge(he, mesh);
+    //     put(pmap, target(he, mesh), v->point());
+    //   }
+    // }
+    // std::ofstream out_mesh("out-conforming.off");
+    // out_mesh.precision(17);
+    // out_mesh << mesh;
+    // out_mesh.close();
+    // {
+    //   std::ofstream all_edges("dump_all_segments.polylines.txt");
+    //   all_edges.precision(17);
+    //   cdt.write_all_segments_file(all_edges);
+    // }
 
     std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
     assert(cdt.is_conforming());
+    assert(cdt.is_valid(true));
     if(exit_code == EXIT_SUCCESS) {
       try {
         cdt.restore_constrained_Delaunay();
