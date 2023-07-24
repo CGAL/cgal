@@ -10,6 +10,8 @@
 #include <qmath.h>
 #include <qvector3d.h>
 
+#include <nlohmann/json.hpp>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_surface_2.h>
@@ -714,4 +716,282 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
 
   auto approx_arcs = get_approx_curves(new_face_arcs, 0.001);
   return approx_arcs;
+}
+
+
+void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
+{
+  Geom_traits traits;
+  Ext_aos arr(&traits);
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+  using Face_handle = Ext_aos::Face_handle;
+  auto fh = arr.faces_begin();
+  fh->data().v = true;
+  std::cout << "num faces = " << arr.number_of_faces() << std::endl;
+
+  auto nodes = Kml::generate_ids(placemarks);
+
+
+  //-------------------------------------------------------------------------
+  // define a set of vertex-handles: use this to check if the face is 
+  // obtained from the polygon definition, or if it is an additional face
+  using Vertex_handle   = Ext_aos::Vertex_handle;
+  using Halfedge_handle = Ext_aos::Halfedge_handle;
+  using Face_handle     = Ext_aos::Face_handle;
+  std::map<Vertex_handle, int>  vertex_id_map;
+  std::map<std::set<int>, std::string>  all_polygon_node_ids_map;
+
+  // map to associate the created faces with the country names
+  // CAUTION: the newly created faces
+
+  num_counted_nodes = 0;
+  num_counted_arcs = 0;
+  num_counted_polygons = 0;
+  std::vector<Curve>  xcvs;
+  for (auto& pm : placemarks)
+  {
+    std::cout << pm.name << std::endl;
+    for (auto& polygon : pm.polygons)
+    {
+      num_counted_polygons++;
+
+      // colect all rings into a single list (FOR NOW!!!)
+      // TO-DO: PROCESS OUTER & INNER BOUNDARIES SEPARATELY!!!
+      //auto linear_rings = polygon.get_all_boundaries();
+      //Kml::LinearRings linear_rings;
+      //linear_rings.push_back(polygon.outer_boundary);
+      //for (const auto& inner_boundary : polygon.inner_boundaries)
+      //  linear_rings.push_back(inner_boundary);
+
+      // loop on outer and inner boundaries 
+      //for (auto* lring : linear_rings)
+      auto* lring = &polygon.outer_boundary;
+      {
+        int num_faces_before = arr.number_of_faces();
+        std::set<int> polygon_node_ids;
+
+        // convert the nodes to points on unit-sphere
+        std::vector<Approximate_Vector_3>  sphere_points;
+        //for (const auto& node : lring->nodes)
+        //std::cout << "   NUM POLYGON-NODES SIZE = " << lring->ids.size() << std::endl;
+        for (int i = 0; i < lring->ids.size(); ++i)
+        {
+          num_counted_nodes++;
+          const auto id = lring->ids[i];
+          const auto& node = lring->nodes[i];
+          const auto p = node.get_coords_3d();
+          Approximate_Vector_3  v(p.x, p.y, p.z);
+          sphere_points.push_back(v);
+          auto vh = CGAL::insert_point(arr, ctr_p(p.x, p.y, p.z));
+          polygon_node_ids.insert(id);
+          // assert node-id and vertex-handle consistency
+          //{
+          //  auto it = vertex_id_map.find(vh);
+          //  if (vertex_id_map.cend() != it)
+          //  {
+          //    if (id != it->second)
+          //      std::cout << "*** ERROR!!!\n";
+          //  }
+          //}
+          vertex_id_map[vh] = id;
+          vh->data().v = true;
+        }
+        //std::cout << "   POLYGON-NODES SET SIZE = " << polygon_node_ids.size() << std::endl;
+        if (lring->ids.size() != (1 + polygon_node_ids.size()))
+          std::cout << "*** ASSERTION ERROR!!!!\n";
+
+        all_polygon_node_ids_map.insert(std::make_pair(
+                                         std::move(polygon_node_ids), pm.name));
+
+        // add curves
+        int num_points = sphere_points.size();
+        for (int i = 0; i < num_points - 1; i++)
+        {
+          num_counted_arcs++;
+          const auto p1 = sphere_points[i];
+          const auto p2 = sphere_points[i + 1];
+          auto xcv = ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
+            ctr_p(p2.x(), p2.y(), p2.z()));
+          //xcvs.push_back(xcv);
+          CGAL::insert(arr, xcv);
+        }
+
+        int num_faces_after = arr.number_of_faces();
+        int num_new_faces = num_faces_after - num_faces_before;
+      }
+    }
+  }
+
+  // DEFINE JSON OBJECT
+  //using json = nlohmann::json;
+  using json = nlohmann::ordered_json;
+  json js;
+  auto& js_vertices = js["vertices"] = json::array();
+  
+  ////////////////////////////////////////////////////////////////////////////
+  // define a map from each vertex to its position in the arrangement
+  //auto get_num_denum  
+  using FT = typename Kernel::FT;
+  //using json = nlohmann::ordered_json;
+  FT ft(0);
+  auto ex = ft.exact();
+  CGAL::Rational_traits<decltype(ex)> rt;
+  typename CGAL::Algebraic_structure_traits<decltype(ex)>::Simplify simplify;
+
+  auto set_num_denum = [&](decltype(ex)& x, json& ratx)
+  {
+    std::stringstream ss_x_num;
+    CGAL::IO::set_ascii_mode(ss_x_num);
+    ss_x_num << rt.numerator(x);
+    std::string xnum;
+    ss_x_num >> xnum;
+    ratx["num"] = xnum;
+
+    std::stringstream ss_x_den;
+    CGAL::IO::set_ascii_mode(ss_x_den);
+    ss_x_den << rt.denominator(x);
+    std::string xden;
+    ss_x_den >> xden;
+    ratx["den"] = xden;
+  };
+
+  std::map<Vertex_handle, int>  vertex_pos_map;
+  for (auto vh = arr.vertices_begin(); vh != arr.vertices_end(); ++vh)
+  {
+    // add the vertex if not found in the map
+    auto it = vertex_pos_map.find(vh);
+    if (it == vertex_pos_map.end())
+    {
+      int new_vh_pos = vertex_pos_map.size();
+      vertex_pos_map[vh] = new_vh_pos;
+
+      // write the vertex-data to JSON object
+      auto& p = vh->point();
+      auto dx = p.dx().exact(); simplify(dx);
+      auto dy = p.dy().exact(); simplify(dy);
+      auto dz = p.dz().exact(); simplify(dz);
+
+      json jv;
+      jv["location"] = std::to_string(p.location());
+      set_num_denum(dx, jv["dx"]);
+      set_num_denum(dy, jv["dy"]);
+      set_num_denum(dz, jv["dz"]);
+      js_vertices.push_back(std::move(jv));
+    }
+  }
+
+  // define a map from each curve to its position in the arrangment
+  auto& js_edges = js["edges"] = json::array();
+  using Ext_curve = Ext_aos::X_monotone_curve_2;
+  std::map<Ext_curve*, int>  curve_pos_map;
+
+  for (auto eh = arr.edges_begin(); eh != arr.edges_end(); ++eh)
+  {
+    auto& xcv = eh->curve();
+    auto it = curve_pos_map.find(&xcv);
+    if (it == curve_pos_map.end())
+    {
+      int new_xcv_pos = curve_pos_map.size();
+      curve_pos_map[&xcv] = new_xcv_pos;
+      
+      json je;
+      auto svp = vertex_pos_map[eh->source()];
+      auto tvp = vertex_pos_map[eh->target()];
+      je["source"] = std::to_string(svp);
+      je["target"] = std::to_string(tvp);
+      je["location"] = "";
+      auto& je_normal = je["normal"];
+
+      // write the vertex-data to JSON object
+      auto& n = xcv.normal();
+      auto dx = n.dx().exact(); simplify(dx);
+      auto dy = n.dy().exact(); simplify(dy);
+      auto dz = n.dz().exact(); simplify(dz);
+      set_num_denum(dx, je_normal["dx"]);
+      set_num_denum(dy, je_normal["dy"]);
+      set_num_denum(dz, je_normal["dz"]);
+
+      je["is_vertical"] = std::to_string(xcv.is_vertical());
+      je["is_directed_right"] = std::to_string(xcv.is_directed_right());
+      je["is_full"] = std::to_string(xcv.is_full());
+      
+      js_edges.push_back(std::move(je));
+    }
+  }
+
+  std::ofstream ofile("C:/work/gsoc2023/deneme.txt");
+  ofile << js;
+  ofile.close();
+
+
+  // mark all faces as TRUE (= as existing faces)
+  int num_found = 0;
+  int num_not_found = 0;
+  for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+  {
+    // skip the spherical face
+    std::cout << "num outer_ccbs = " << fh->number_of_outer_ccbs() << std::endl;
+    if (fh->number_of_outer_ccbs() == 0)
+    {
+      continue;
+    }
+
+
+    // construct the set of all node-ids for the current face
+    std::set<int>  face_node_ids_set;
+    std::vector<int>  face_node_ids;
+    auto first = fh->outer_ccb();
+    auto curr = first;
+    do {
+      auto vh = curr->source();
+      // skip if the vertex is due to intersection with the identification curve
+      if ((vh->data().v == false) && (vh->degree() == 2))
+        continue;
+
+      auto id = vertex_id_map[vh];
+      face_node_ids_set.insert(id);
+
+      //face_arcs.push_back(ctr_cv(curr->source()->point(), curr->target()->point()));
+      auto& xcv = curr->curve();
+    } while (++curr != first);
+    //std::cout << "counted vertices = " << num_vertices << std::endl;
+    //std::cout << "vertices in the set = " << polygon_node_ids.size() << std::endl;
+
+    std::string name;
+    auto it = all_polygon_node_ids_map.find(face_node_ids_set);
+    if (it == all_polygon_node_ids_map.cend())
+    {
+      std::cout << "NOT FOUND!!!\n";
+      std::cout << "num nodes = " << face_node_ids_set.size() << std::endl;
+      num_not_found++;
+      name = "Caspian Sea";
+    }
+    else
+    {
+      num_found++;
+      name = it->second;
+    }
+
+    // loop on the edges once again, but this time to record the face curves!
+    std::cout << "CHECKING : " << name << std::endl;
+    curr = first = fh->outer_ccb();
+    do {
+      // get the current curve and its source vertex
+      auto vh = curr->source();
+      auto& xcv = curr->curve();
+
+      // skip if the vertex is due to intersection with the identification curve
+      if ((vh->data().v == false) && (vh->degree() == 2))
+        continue;
+
+      auto vp = vertex_pos_map[vh];
+      auto cp = curve_pos_map[&xcv];
+      
+    } while (++curr != first);
+  }
+  std::cout << "num not found = " << num_not_found << std::endl;
+  //std::cout << "all curves = " << all_curves.size() << std::endl;
+  //std::cout << "curve count = " << curve_count << std::endl;
 }

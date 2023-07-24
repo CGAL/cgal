@@ -46,6 +46,10 @@ public:
   // polygon whose boundaries are not defined in the data-set and its boundaries
   // are defined indirecly by its surrounding countries.
   static Approx_arcs find_new_faces(Kml::Placemarks& placemarks);
+
+  // save the arrangement created with EPEC
+  static void save_arr(Kml::Placemarks& placemarks, 
+                       const std::string& file_name);
 };
 
 

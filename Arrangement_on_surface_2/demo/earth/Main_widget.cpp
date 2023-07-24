@@ -160,7 +160,7 @@ void Main_widget::init_problematic_nodes()
 std::unique_ptr<Line_strips>   new_faces;
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::ordered_json;
 
 void Main_widget::initializeGL()
 {
@@ -189,7 +189,7 @@ void Main_widget::initializeGL()
   jv2["dz"]["num"] = "555"; jv2["dz"]["den"] = "6";
 
   ja.push_back(json_v1);
-  ja.push_back(jv2);
+  ja.push_back(std::move(jv2));
   ja.size();
   std::cout << js << std::endl;
 
@@ -205,15 +205,20 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
 
+  if(0)
   {
     auto created_faces = Aos::find_new_faces(m_countries);
     new_faces = std::make_unique<Line_strips>(created_faces);
+  }
+
+  {
+    Aos::save_arr(m_countries, "");
   }
   
   // initialize rendering of DUPLICATE VERTICES
@@ -559,7 +564,7 @@ void Main_widget::paintGL()
 
     // NEW FACES in RED
     sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
-    new_faces->draw();
+    //new_faces->draw();
 
 
     sp.unuse();
