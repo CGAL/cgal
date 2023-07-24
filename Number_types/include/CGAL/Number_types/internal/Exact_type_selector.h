@@ -156,25 +156,27 @@ constexpr ENT_backend_choice Default_exact_nt_backend = static_cast<ENT_backend_
 #endif
 
 template < typename >
-struct Exact_field_selector
-{
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational;
-};
+struct Exact_field_selector;
 
 template < typename >
-struct Exact_ring_selector
-{
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Integer;
+struct Exact_ring_selector;
+
+#define CGAL_EXACT_SELECTORS_SPECS(X) \
+template <> \
+struct Exact_ring_selector<X> \
+{ \
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Ring_for_float; \
+}; \
+\
+template <> \
+struct Exact_field_selector<X> \
+{ \
+  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Rational; \
 };
 
-template <>
-struct Exact_ring_selector<double>
-{
-  using Type = typename Exact_NT_backend<Default_exact_nt_backend>::Ring_for_float;
-};
-
-template <>
-struct Exact_ring_selector<float> : Exact_ring_selector<double> { };
+CGAL_EXACT_SELECTORS_SPECS(double)
+CGAL_EXACT_SELECTORS_SPECS(float)
+CGAL_EXACT_SELECTORS_SPECS(int)
 
 template <>
 struct Exact_field_selector<MP_Float>
@@ -186,6 +188,10 @@ struct Exact_ring_selector<MP_Float>
 
 template <>
 struct Exact_field_selector<Quotient<MP_Float> >
+{ typedef Quotient<MP_Float> Type; };
+
+template <>
+struct Exact_ring_selector<Quotient<MP_Float> >
 { typedef Quotient<MP_Float> Type; };
 
 // And we specialize for the following types :
@@ -249,6 +255,10 @@ struct Exact_ring_selector<leda_rational>
 template <>
 struct Exact_field_selector<leda_real>
 { typedef leda_real  Type; };
+
+template <>
+struct Exact_ring_selector<leda_real>
+{ typedef leda_real  Type; };
 #endif
 
 #ifdef CGAL_USE_CORE
@@ -277,6 +287,26 @@ struct Exact_field_selector<Exact_NT_backend<BOOST_BACKEND>::Rational>
 template <>
 struct Exact_ring_selector<Exact_NT_backend<BOOST_BACKEND>::Rational>
 { typedef Exact_NT_backend<BOOST_BACKEND>::Rational  Type; };
+
+
+#ifdef CGAL_USE_GMP
+template <>
+struct Exact_field_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Integer>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Rational  Type; };
+
+template <>
+struct Exact_ring_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Integer>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Integer  Type; };
+
+template <>
+struct Exact_field_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Rational>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Rational  Type; };
+
+template <>
+struct Exact_ring_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Rational>
+{ typedef Exact_NT_backend<BOOST_GMP_BACKEND>::Rational  Type; };
+#endif
+
 #endif
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -286,5 +316,7 @@ struct Exact_type_selector : Exact_field_selector< ET > {};
 #endif
 
 } } // namespace CGAL::internal
+
+#undef CGAL_EXACT_SELECTORS_SPECS
 
 #endif // CGAL_INTERNAL_EXACT_TYPE_SELECTOR_H
