@@ -159,9 +159,40 @@ void Main_widget::init_problematic_nodes()
 
 std::unique_ptr<Line_strips>   new_faces;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 void Main_widget::initializeGL()
 {
+  json js;
+  auto& ja = js["vertices"] = json::array();
+  json json_v1 = R"(
+    {
+        "location": "0",
+        "dx": {"num": "123","den": "1"},
+        "dy": {"num": "456","den": "5"},
+        "dz": {"num": "789","den": "9"}
+    }
+  )"_json;
+  json json_v2 = R"(
+    {
+        "location": "0",
+        "dx": {"num": "111","den": "2"},
+        "dy": {"num": "333","den": "4"},
+        "dz": {"num": "555","den": "6"}
+    }
+  )"_json;
+  json jv2;
+  jv2["location"] = "0";
+  jv2["dx"]["num"] = "111"; jv2["dx"]["den"] = "2";
+  jv2["dy"]["num"] = "333"; jv2["dy"]["den"] = "4";
+  jv2["dz"]["num"] = "555"; jv2["dz"]["den"] = "6";
+
+  ja.push_back(json_v1);
+  ja.push_back(jv2);
+  ja.size();
+  std::cout << js << std::endl;
+
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
   verify_antarctica_node_is_redundant();
 

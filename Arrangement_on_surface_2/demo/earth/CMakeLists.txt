@@ -36,6 +36,12 @@ if ( NOT Boost_FOUND )
 
 endif()
 
+################################################################################
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
+# find_package(nlohmann_json 3.2.0 REQUIRED)
+################################################################################
 
 set(SHAPELIB_INCLUDE_DIR "" CACHE PATH "DEFINE ME!!!")
 #target_include_directories(earth PRIVATE ${SHAPELIB_INCLUDE_DIR})
@@ -127,6 +133,7 @@ target_link_libraries(earth PRIVATE
     Qt6::Xml
     CGAL::CGAL
     shp
+    nlohmann_json::nlohmann_json
 )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders 
