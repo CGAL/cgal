@@ -36,19 +36,19 @@ public:
   /// @{
 
   /// polygon type
-  typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
+  using Polygon_2 = CGAL::Polygon_2<Kernel, Container>;
 
   /// polygon with holes type
-  typedef CGAL::Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
+  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container>;
 
   /// @}
 
-  typedef std::deque<Polygon_with_holes_2> Polygons_container;
+  using Polygons_container = std::deque<Polygon_with_holes_2>;
 
-  typedef typename Polygons_container::iterator Polygon_iterator;
-  typedef typename Polygons_container::const_iterator Polygon_const_iterator;
+  using Polygon_iterator = typename Polygons_container::iterator;
+  using Polygon_const_iterator = typename Polygons_container::const_iterator;
 
-  typedef unsigned int Size;
+  using Size = unsigned int;
 
   /*! %Default constructor. */
   Multipolygon_with_holes_2() {}

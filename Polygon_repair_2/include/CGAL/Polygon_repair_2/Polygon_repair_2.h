@@ -75,15 +75,15 @@ class Polygon_repair_2 {
   int number_of_polygons, number_of_holes;
   std::vector<int> hole_nesting;
 public:
-  typedef CGAL::Triangulation_vertex_base_2<Kernel> Vertex_base;
-  typedef CGAL::Constrained_triangulation_face_base_2<Kernel> Face_base;
-  typedef CGAL::Triangulation_face_base_with_repair_info_2<Kernel, Face_base> Face_base_with_repair_info;
-  typedef CGAL::Triangulation_data_structure_2<Vertex_base, Face_base_with_repair_info> Triangulation_data_structure;
-  typedef CGAL::Exact_predicates_tag Tag; // assumed for now
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag> Constrained_Delaunay_triangulation;
-  typedef Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation> Triangulation;
+  using Vertex_base = CGAL::Triangulation_vertex_base_2<Kernel>;
+  using Face_base = CGAL::Constrained_triangulation_face_base_2<Kernel>;
+  using Face_base_with_repair_info = CGAL::Triangulation_face_base_with_repair_info_2<Kernel, Face_base>;
+  using Triangulation_data_structure = CGAL::Triangulation_data_structure_2<Vertex_base, Face_base_with_repair_info>;
+  using Tag = CGAL::Exact_predicates_tag; // assumed for now
+  using Constrained_Delaunay_triangulation = CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag>;
+  using Triangulation = Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
 
-  struct Polygon_compare {
+  struct Polygon_less {
     bool operator()(const Polygon_2<Kernel, PolygonContainer>& pa, const Polygon_2<Kernel, PolygonContainer>& pb) const {
       typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator va = pa.vertices_begin();
       typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator vb = pb.vertices_begin();

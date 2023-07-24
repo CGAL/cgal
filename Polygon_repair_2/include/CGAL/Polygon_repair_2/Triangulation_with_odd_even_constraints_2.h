@@ -30,14 +30,14 @@ public:
   /// \name Definition
 
   /// @{
-  typedef Triangulation_ Base_triangulation;
-  typedef typename Triangulation_::Point Point;
-  typedef typename Triangulation_::Edge Edge;
-  typedef typename Triangulation_::Vertex_handle Vertex_handle;
-  typedef typename Triangulation_::Face_handle Face_handle;
-  typedef typename Triangulation_::List_edges List_edges;
-  typedef typename Triangulation_::List_faces List_faces;
-  typedef typename Triangulation_::All_faces_iterator All_faces_iterator;
+  using Base_triangulation = Triangulation_;
+  using Point = typename Triangulation_::Point;
+  using Edge = typename Triangulation_::Edge;
+  using Vertex_handle = typename Triangulation_::Vertex_handle;
+  using Face_handle = typename Triangulation_::Face_handle;
+  using List_edges = typename Triangulation_::List_edges;
+  using List_faces = typename Triangulation_::List_faces;
+  using All_faces_iterator = typename Triangulation_::All_faces_iterator;
   /// @}
 
   class Interior_tester {
@@ -53,8 +53,8 @@ public:
 
   // iterator over interior faces.
   class Interior_faces_iterator : public Filter_iterator<All_faces_iterator, Interior_tester> {
-    typedef Filter_iterator<All_faces_iterator, Interior_tester> Base;
-    typedef Interior_faces_iterator Self;
+    using Base = Filter_iterator<All_faces_iterator, Interior_tester>;
+    using Self = Interior_faces_iterator;
   public:
     Interior_faces_iterator() : Base() {}
     Interior_faces_iterator(const Base &b) : Base(b) {}

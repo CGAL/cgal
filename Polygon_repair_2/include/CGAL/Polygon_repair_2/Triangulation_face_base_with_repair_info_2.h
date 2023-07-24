@@ -23,13 +23,13 @@ class Triangulation_face_base_with_repair_info_2 : public FaceBase {
   int _label;
   bool _processed;
 public:
-  typedef typename FaceBase::Vertex_handle Vertex_handle;
-  typedef typename FaceBase::Face_handle Face_handle;
+  using Vertex_handle = typename FaceBase::Vertex_handle;
+  using Face_handle = typename FaceBase::Face_handle;
 
   template <typename TDS2>
   struct Rebind_TDS {
-    typedef typename FaceBase::template Rebind_TDS<TDS2>::Other FaceBase2;
-    typedef Triangulation_face_base_with_repair_info_2<Kernel, FaceBase2> Other;
+    using FaceBase2 = typename FaceBase::template Rebind_TDS<TDS2>::Other;
+    using Other = Triangulation_face_base_with_repair_info_2<Kernel, FaceBase2>;
   };
 
   Triangulation_face_base_with_repair_info_2() : FaceBase() {}
