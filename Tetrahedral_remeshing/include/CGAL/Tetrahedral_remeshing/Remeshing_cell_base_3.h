@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Simplicial_mesh_cell_base_3.h>
+#include <CGAL/Compact_simplicial_mesh_cell_base_3.h>
 
 #include <CGAL/assertions.h>
 
@@ -39,7 +39,7 @@ It must be a model of the `SimplicialMeshCellBase_3` concept.
 
 */
 template<typename Gt,
-         typename Cb = CGAL::Simplicial_mesh_cell_base_3<Gt,
+         typename Cb = CGAL::Compact_simplicial_mesh_cell_base_3<
                          int /*Subdomain_index*/,
                          int /*Surface_patch_index*/> >
 class Remeshing_cell_base_3
