@@ -288,7 +288,7 @@ private:
                 "move assignment is missing");
 
 protected:
-  struct PLC_error {};
+  struct PLC_error { int face_index; int region_index; };
   using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
   using Constraint_id = typename Constraint_hierarchy::Constraint_id;
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
@@ -925,26 +925,25 @@ private:
 
     // marker for already visited elements
     std::set<Vertex_handle> visited_vertices;
-    std::set<std::pair<Vertex_handle, Vertex_handle>> visited_edges;
+    std::map<std::pair<Vertex_handle, Vertex_handle>, bool> visited_edges;
     std::set<Cell_handle> visited_cells;
 
     auto make__new_element_functor = [](auto& visited_set) {
-      return [&visited_set](auto e) {
-        const auto [_, not_already_visited] = visited_set.insert(e);
+      return [&visited_set](auto... e) {
+        const auto [_, not_already_visited] = visited_set.emplace(e...);
         return not_already_visited;
       };
     };
 
     auto new_vertex = make__new_element_functor(visited_vertices);
     auto new_cell = make__new_element_functor(visited_cells);
-    auto new_pair_of_vertices = make__new_element_functor(visited_edges);
-    auto new_edge = [&new_pair_of_vertices](Vertex_handle v0, Vertex_handle v1) {
-      return new_pair_of_vertices(CGAL::make_sorted_pair(v0, v1));
+    auto new_edge = [&](Vertex_handle v0, Vertex_handle v1, bool does_insersect) {
+      return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_insersect);
     };
 
     intersecting_edges.push_back(first_intersecting_edge);
     const auto [v0, v1] = vertex_pair(first_intersecting_edge);
-    (void)new_edge(v0, v1);
+    (void)new_edge(v0, v1, true);
     for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
       const auto intersecting_edge = intersecting_edges[i];
       const auto [v_above, v_below] = vertex_pair(intersecting_edge);
@@ -979,20 +978,23 @@ private:
         if(polygon_vertices.contains(vc)) continue; // intersecting edges cannot touch the border
 
         auto test_edge = [&](Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1, int expected) {
-          if(!new_edge(v0, v1)) return true;
+          auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
+          if(!not_visited) return cached_value_it->second;
           int v0v1_intersects_region = does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
           if(v0v1_intersects_region != 0) {
             if(v0v1_intersects_region != expected) {
-              throw PLC_error{};
+              throw PLC_error{face_index, region_count};
             }
             // report the edge with first vertex above the region
             if(v0v1_intersects_region < 0) {
               std::swap(index_v0, index_v1);
             }
             intersecting_edges.emplace_back(cell, index_v0, index_v1);
+            cached_value_it->second = true;
             return true;
           }
           else {
+            cached_value_it->second = false;
             return false;
           }
         };
@@ -1007,12 +1009,9 @@ private:
             write_segment(out, Edge{cell, index_v_above, index_vc});
             write_segment(out, Edge{cell, index_v_below, index_vc});
           }
-          throw PLC_error{};
+          throw PLC_error{face_index, region_count};
         }
       } while(++facet_circ != facet_circ_end);
-#if CGAL_DEBUG_CDT_3
-      std::cerr << "intersecting_edges.size() = " << intersecting_edges.size() << '\n';
-#endif
     }
     for(auto intersecting_edge: intersecting_edges) {
       const auto [v_above, v_below] = vertex_pair(intersecting_edge);
@@ -1780,8 +1779,8 @@ public:
           search_for_missing_subfaces(i);
         }
       }
-      catch(PLC_error&) {
-        std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(face_index) + "\n";
+      catch(PLC_error& e) {
+        std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(e.face_index) + "\n";
       }
       i = face_constraint_misses_subfaces.find_first();
     }
