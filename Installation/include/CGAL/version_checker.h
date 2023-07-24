@@ -19,31 +19,31 @@
 // you want to use.
 
 //// Set the 3 following macros to the version of CGAL you want to use
-//#define CGAL_AUTHORIZED_VERSION_MAJOR 6
-//#define CGAL_AUTHORIZED_VERSION_MINOR 0
-//#define CGAL_AUTHORIZED_VERSION_PATCH 0
+//#define CGAL_COMPATIBLE_VERSION_MAJOR 6
+//#define CGAL_COMPATIBLE_VERSION_MINOR 0
+//#define CGAL_COMPATIBLE_VERSION_PATCH 0
 
 // Set the following macros to 1 to get a warning/an error
-// when using a bad version of CGAL
+// when using a possibly incompatible version of CGAL
 #define CGAL_VERSION_CHECKER_ERROR 0
 #define CGAL_VERSION_CHECKER_WARNING 0
 
-#define CGAL_AUTHORIZED_VERSION_STR CGAL_STR(CGAL_AUTHORIZED_VERSION_MAJOR) "." \
-                                    CGAL_STR(CGAL_AUTHORIZED_VERSION_MINOR) "." \
-                                    CGAL_STR(CGAL_AUTHORIZED_VERSION_PATCH)
+#define CGAL_COMPATIBLE_VERSION_STR CGAL_STR(CGAL_COMPATIBLE_VERSION_MAJOR) "." \
+                                    CGAL_STR(CGAL_COMPATIBLE_VERSION_MINOR) "." \
+                                    CGAL_STR(CGAL_COMPATIBLE_VERSION_PATCH)
 
 
 // Check that the version of CGAL used is the one expected
-#if  CGAL_AUTHORIZED_VERSION_MAJOR != CGAL_VERSION_MAJOR \
-  || CGAL_AUTHORIZED_VERSION_MINOR != CGAL_VERSION_MINOR \
-  || CGAL_AUTHORIZED_VERSION_PATCH != CGAL_VERSION_PATCH
+#if  CGAL_COMPATIBLE_VERSION_MAJOR != CGAL_VERSION_MAJOR \
+  || CGAL_COMPATIBLE_VERSION_MINOR != CGAL_VERSION_MINOR \
+  || CGAL_COMPATIBLE_VERSION_PATCH != CGAL_VERSION_PATCH
 
     #if CGAL_VERSION_CHECKER_WARNING || CGAL_VERSION_CHECKER_ERROR
-      #pragma message("These headers are meant to be used with CGAL " CGAL_AUTHORIZED_VERSION_STR " only."\
+      #pragma message("These headers are meant to be used with CGAL " CGAL_COMPATIBLE_VERSION_STR " only."\
                        " You are using CGAL version: " CGAL_STR(CGAL_VERSION) ".")
 
       #ifdef CGAL_VERSION_CHECKER_ERROR
-        #error "Wrong version of CGAL"
+        #error "Incompatible version of CGAL"
       #endif
 
     #endif
