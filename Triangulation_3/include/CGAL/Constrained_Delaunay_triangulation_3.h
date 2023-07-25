@@ -38,8 +38,10 @@
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Compact_container.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
@@ -1887,7 +1889,7 @@ public:
     write_segment(out, std::forward<Args>(args)...);
   }
 
-  static void write_facets(std::ostream& out, const auto& tr, auto&& facets_range) {
+  static auto export_facets_to_surface_mesh(const auto& tr, auto&& facets_range) {
     const auto size = std::distance(facets_range.begin(), facets_range.end());
     std::vector<typename Geom_traits::Point_3> points;
     points.reserve(size * 3);
@@ -1906,7 +1908,14 @@ public:
     }
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, facets);
     CGAL::Polygon_mesh_processing::orient_polygon_soup(points, facets);
-    CGAL::IO::write_OFF(out, points, facets);
+    Surface_mesh<Point_3> mesh;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, facets, mesh);
+    return mesh;
+  }
+
+  static void write_facets(std::ostream& out, const auto& tr, auto&& facets_range) {
+    const auto mesh = export_facets_to_surface_mesh(tr, std::forward<decltype(facets_range)>(facets_range));
+    CGAL::IO::write_OFF(out, mesh);
   }
 
   void dump_facets_of_cavity(CDT_3_face_index face_index, int region_count, std::string type, const auto& facets_range)
