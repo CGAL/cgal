@@ -92,7 +92,8 @@ int main(int argc, char* argv[])
     try {
       go(mesh, output_filename);
     } catch(CGAL::Error_exception& e) {
-      if(e.message().contains(std::string("### error with cavity ###"))) {
+      if(e.message().find(std::string("### error with cavity ###")) != std::string::npos)
+      {
         std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
         std::ofstream bad("bad.off");
         bad.precision(17);
@@ -206,7 +207,7 @@ int go(Mesh mesh, std::string output_filename) {
         std::cerr << "Polygon is not coplanar\n";
       }
       try {
-        auto id = cdt.insert_constrained_polygon(polygon, true);
+        [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, true);
         assert(id == poly_id);
         ++poly_id;
       } catch(int error) {
