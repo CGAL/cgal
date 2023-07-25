@@ -314,6 +314,7 @@ protected:
             const auto face_id = static_cast<std::size_t>(c->face_constraint_index(li));
             self.face_constraint_misses_subfaces.set(face_id);
             auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
+            self.set_facet_constrained({c, li}, -1, {});
 #if CGAL_DEBUG_CDT_3
             std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
             self.write_2d_triangle(std::cerr, fh_2);
