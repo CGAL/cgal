@@ -436,7 +436,32 @@ public:
     return f.first->is_facet_constrained(f.second);
   }
 
-    template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
+  void set_facet_constrained(Facet f, CDT_3_face_index polygon_contraint_id,
+                             CDT_2_face_handle fh)
+  {
+    const auto [c, facet_index] = f;
+    c->set_facet_constraint(facet_index, polygon_contraint_id, fh);
+    if(tr.dimension() > 2) {
+      const auto [n, n_index] = tr.mirror_facet({c, facet_index});
+      n->set_facet_constraint(n_index, polygon_contraint_id, fh);
+    }
+    // for(int i = 0; i < 3; ++i) {
+    //   const int index0 = tr.vertex_triple_index(facet_index, i);
+    //   const int index1 = tr.vertex_triple_index(facet_index, tr.cw(i));
+    //   const Edge edge{c, index0, index1};
+    //   auto facet_circ = this->incident_facets(edge);
+    //   const auto facet_circ_end = facet_circ;
+    //   auto counter = 0u;
+    //   do {
+    //     if(is_constrained(*facet_circ)) {
+    //       ++counter;
+    //     }
+    //   } while(++facet_circ != facet_circ_end);
+    //   CGAL_assertion(counter <= 2);
+    // }
+  }
+
+  template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
   boost::optional<Face_index> register_new_constrained_polygon(Polygon&& polygon) {
     return insert_constrained_polygon(std::forward<Polygon>(polygon), false);
   }
@@ -751,11 +776,7 @@ private:
       } else {
         fh->info().missing_subface = false;
         const int facet_index = 6 - i - j - k;
-        c->set_facet_constraint(facet_index, polygon_contraint_id, fh);
-        if(tr.dimension() > 2) {
-          const auto [n, n_index] = tr.mirror_facet({c, facet_index});
-          n->set_facet_constraint(n_index, polygon_contraint_id, fh);
-        }
+        set_facet_constrained({c, facet_index}, polygon_contraint_id, fh);
       }
     }
   }
@@ -1433,11 +1454,11 @@ private:
 
     auto restore_markers = [&](Facet outside_facet) {
       const auto [outside_cell, outside_face_index] = outside_facet;
-      const auto [cell, face_index] = this->mirror_facet(outside_facet);
+      const auto mirror_facet = this->mirror_facet(outside_facet);
       if(outside_cell->is_facet_constrained(outside_face_index)) {
         const auto poly_id = outside_cell->face_constraint_index(outside_face_index);
         const auto f2d = outside_cell->face_2(cdt_2, outside_face_index);
-        cell->set_facet_constraint(face_index, poly_id, f2d);
+        set_facet_constrained(mirror_facet, poly_id, f2d);
       }
     };
 
@@ -1445,12 +1466,7 @@ private:
     std::for_each(facets_of_upper_cavity.begin(), facets_of_upper_cavity.end(), restore_markers);
 
     for(const auto& [f, f2d] : new_constrained_facets) {
-      const auto [c, i] = f;
-      c->set_facet_constraint(i, face_index, f2d);
-      if(tr.dimension() > 2) {
-        const auto [c2, i2] = this->mirror_facet(f);
-        c2->set_facet_constraint(i2, face_index, f2d);
-      }
+      set_facet_constrained(f, face_index, f2d);
       f2d->info().missing_subface = false;
     }
     //CGAL_assertion(this->T_3::Tr_Base::is_valid(true));
@@ -1676,11 +1692,7 @@ private:
                      fh->vertex(2)->info().vertex_handle_3d, c, i, j, k))
       {
         const int facet_index = 6 - i - j - k;
-        c->set_facet_constraint(facet_index, face_index, fh);
-        if(tr.dimension() > 2) {
-          const auto [c2, i2] = this->mirror_facet({c, facet_index});
-          c2->set_facet_constraint(i2, face_index, fh);
-        }
+        set_facet_constrained({c, facet_index}, face_index, fh);
         fh->info().missing_subface = false;
         continue;
       }
