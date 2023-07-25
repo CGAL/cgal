@@ -102,7 +102,6 @@ public:
 protected:
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
-#if CGAL_DEBUG_CDT_3
   auto display_vert(Vertex_handle v) {
     std::stringstream os;
     os.precision(17);
@@ -115,7 +114,6 @@ protected:
        << " - " << display_vert(subconstraint.second) << " ]";
     return os.str();
   };
-#endif // CGAL_DEBUG_CDT_3
 
   class Insert_in_conflict_visitor
   {
