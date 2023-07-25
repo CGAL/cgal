@@ -378,7 +378,7 @@ protected:
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 2
       std::cerr << "  new vertex " << display_vert(v) << '\n';
 #endif // CGAL_DEBUG_CDT_3
       return true;
@@ -474,13 +474,13 @@ protected:
       return {midpoint_functor(pa, pb), va->cell(), va};
     }
 
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 0x10
     std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
               << display_vert(vb) << " )\n";
 #endif // CGAL_DEBUG_CDT_3
 
-#ifdef CGAL_DEBUG_CDT_3
-    [[maybe_unused]] auto debug_simplex = [&](auto simplex) {
+#if CGAL_DEBUG_CDT_3 & 0x10
+    auto debug_simplex = [&](auto simplex) {
       std::cerr << " - " << oformat(simplex, With_point_tag{}) << '\n';
     };
 #endif // CGAL_DEBUG_CDT_3
@@ -495,7 +495,7 @@ protected:
       encroaching_vertices.insert(v);
     };
     auto fill_encroaching_vertices = [&](const auto simplex) {
-#if CGAL_DEBUG_CDT_3 & 16
+#if CGAL_DEBUG_CDT_3 & 0x10
       debug_simplex(simplex);
 #endif // CGAL_DEBUG_CDT_3
       auto visit_cell = [&](Cell_handle cell) {
@@ -539,7 +539,7 @@ protected:
     std::for_each(tr.segment_traverser_simplices_begin(va, vb), tr.segment_traverser_simplices_end(),
                   fill_encroaching_vertices);
     auto vector_of_encroaching_vertices = encroaching_vertices.extract_sequence();
-#if CGAL_DEBUG_CDT_3 & 16
+#if CGAL_DEBUG_CDT_3 & 0x10
     std::cerr << "  -> vector_of_encroaching_vertices (before filter):\n";
     std::for_each(vector_of_encroaching_vertices.begin(),
                   vector_of_encroaching_vertices.end(),
@@ -555,7 +555,7 @@ protected:
                                                     this->tr.point(v),
                                                     pb) == ACUTE;
                              });
-#if CGAL_DEBUG_CDT_3 & 16
+#if CGAL_DEBUG_CDT_3 & 0x10
     std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
     std::for_each(vector_of_encroaching_vertices.begin(), end,
                   [this](Vertex_handle v){
@@ -572,7 +572,7 @@ protected:
                                        this->tr.point(v2), pb) == SMALLER;
         });
     CGAL_assertion(reference_vertex_it != end);
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 2
     std::cerr << "  -> reference point: " << display_vert(*reference_vertex_it)
               << '\n';
 #endif // CGAL_DEBUG_CDT_3
@@ -596,7 +596,7 @@ protected:
                                           ? midpoint_functor(pa, pb)
                                           : translate_functor(orig_pa, scaled_vector_functor(vector_orig_ab, lambda));
 
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 2
             std::cerr << "ref lambda = " << lambda << '\n';
             std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_DEBUG_CDT_3
@@ -624,7 +624,7 @@ protected:
                                   ? midpoint_functor(pa, pb)
                                   : translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
 
-#ifdef CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 2
     std::cerr << "lambda = " << lambda << '\n';
     std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_DEBUG_CDT_3

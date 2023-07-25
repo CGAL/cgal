@@ -1185,7 +1185,7 @@ private:
       return true;
     };
 
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 64
     std::cerr << std::format("Cavity has {} cells and {} edges, "
                              "{} vertices in upper cavity and {} in lower, "
                              "{} facets in upper cavity and {} in lower\n",
