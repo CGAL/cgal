@@ -38,6 +38,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_2<Kerne
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
   pr.add_to_triangulation(p);
   pr.label_triangulation();
+  pr.compute_hole_nesting();
   pr.reconstruct_multipolygon();
   return pr.multipolygon();
 }
@@ -49,6 +50,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_with_ho
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
   pr.add_to_triangulation(p);
   pr.label_triangulation();
+  pr.compute_hole_nesting();
   pr.reconstruct_multipolygon();
   return pr.multipolygon();
 }
@@ -60,6 +62,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Multipolygon_wi
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
   pr.add_to_triangulation(mp);
   pr.label_triangulation();
+  pr.compute_hole_nesting();
   pr.reconstruct_multipolygon();
   return pr.multipolygon();
 }
@@ -72,8 +75,6 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Multipolygon_wi
 template <class Kernel = CGAL::Exact_predicates_inexact_constructions_kernel,
           class PolygonContainer = std::vector<typename Kernel::Point_2>>
 class Polygon_repair_2 {
-  int number_of_polygons, number_of_holes;
-  std::vector<int> hole_nesting;
 public:
   using Vertex_base = CGAL::Triangulation_vertex_base_2<Kernel>;
   using Face_base = CGAL::Constrained_triangulation_face_base_2<Kernel>;
@@ -155,13 +156,13 @@ public:
     while (!to_check_in_region.empty()) {
       for (int neighbour = 0; neighbour < 3; ++neighbour) {
         if (!t.is_constrained(typename Triangulation::Edge(to_check_in_region.front(), neighbour))) {
-          if (to_check_in_region.front()->neighbor(neighbour)->label() == 0) {
+          if (to_check_in_region.front()->neighbor(neighbour)->label() == 0) { // unlabelled
             to_check_in_region.front()->neighbor(neighbour)->label() = label;
             to_check_in_region.push_back(to_check_in_region.front()->neighbor(neighbour));
             to_check_in_region.front()->neighbor(neighbour)->processed() = true;
           }
-        } else {
-          if (!to_check_in_region.front()->neighbor(neighbour)->processed()) {
+        } else { // constrained
+          if (!to_check_in_region.front()->neighbor(neighbour)->processed()) { // not added to to_check
             to_check.push_back(to_check_in_region.front()->neighbor(neighbour));
             to_check_added_by.push_back(label);
             to_check_in_region.front()->neighbor(neighbour)->processed() = true;
@@ -178,7 +179,8 @@ public:
       face->processed() = false;
     }
 
-    // Mark exterior as processed and put interior triangles adjacent to it in to_check
+    // Label exterior with label -1, marking it as processed and 
+    // putting interior triangles adjacent to it in to_check
     std::list<typename Triangulation::Face_handle> to_check;
     std::list<int> to_check_added_by;
     label_region(t.infinite_face(), -1, to_check, to_check_added_by);
@@ -191,7 +193,6 @@ public:
           label_region(to_check.front(), number_of_polygons+1, to_check, to_check_added_by);
           ++number_of_polygons;
         } else {
-          hole_nesting.push_back(to_check_added_by.front()); // record nesting of current hole
           label_region(to_check.front(), -(number_of_holes+2), to_check, to_check_added_by);
           ++number_of_holes;
         }
@@ -232,6 +233,24 @@ public:
     }
   }
 
+  void compute_hole_nesting() {
+    for (int i = 0; i < number_of_holes; ++i) {
+      nesting.emplace_back();
+    } for (auto const &face: t.finite_face_handles()) {
+      if (face->label() >= -1) continue; // skip non-hole triangles
+      for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
+        if (face->label() == face->neighbor(opposite_vertex)->label()) continue;
+        nesting[-face->label()-2].insert(face->neighbor(opposite_vertex)->label());
+      }
+    } int hole_label = -2;
+    for (auto const &hole: nesting) {
+      std::cout << "Hole " << hole_label-- << " contained in polygon(s): ";
+      for (auto const &polygon: hole) {
+        std::cout << polygon << " ";
+      } std::cout << std::endl;
+    }
+  }
+
   // Reconstruct multipolygon based on the triangles labelled as inside the polygon
   void reconstruct_multipolygon() {
     mp.clear();
@@ -246,6 +265,7 @@ public:
       face->processed() = false;
     } for (auto const &face: t.finite_face_handles()) {
       if (face->label() == -1) continue; // exterior triangle
+      if (face->label() < -1 && nesting[-face->label()-2].size() > 1) continue; // exterior triangle
       if (face->processed()) continue; // already reconstructed
       for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
         if (face->label() != face->neighbor(opposite_vertex)->label()) {
@@ -256,10 +276,11 @@ public:
             polygons[face->label()-1].insert(polygons[face->label()-1].vertices_end(),
                                              ring.begin(), ring.end());
           } else {
-            // std::cout << "Label: " << face->label() << " -> item " << -face->label()-2 << " -> in polygon " << hole_nesting[-face->label()-2] << std::endl;
+            int hole_nesting = *(nesting[-face->label()-2].begin());
+            // std::cout << "Hole: " << face->label() << " -> item " << -face->label()-2 << " -> in polygon " << hole_nesting << std::endl;
             ring.push_back(ring.front());
             ring.pop_front();
-            holes[hole_nesting[-face->label()-2]-1].insert(Polygon_2<Kernel, PolygonContainer>(ring.rbegin(), ring.rend()));
+            holes[hole_nesting-1].insert(Polygon_2<Kernel, PolygonContainer>(ring.rbegin(), ring.rend()));
           }
 
           std::list<typename Triangulation::Face_handle> to_check;
@@ -313,6 +334,8 @@ public:
 protected:
   Triangulation t;
   Multipolygon_with_holes_2<Kernel, PolygonContainer> mp;
+  int number_of_polygons, number_of_holes;
+  std::vector<std::unordered_set<int>> nesting; // note: holes are surrounded by exactly one polygon
 };
 
 } // namespace Polygon_repair_2
