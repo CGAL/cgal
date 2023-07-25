@@ -939,13 +939,56 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     js_vertices.push_back(std::move(js_vertex));
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  // HALF-EDGES
+  int num_half_edges = 0;
+  auto& js_halfedges = js["edges"] = json::array();
+  std::map<Halfedge_handle, int>  halfedge_pos_map;
+  auto write_half_edges = [&](Ext_aos::Ccb_halfedge_circulator first)
+  {
+    auto curr = first;
+    do {
+      num_half_edges++;
+      auto& he = *curr;
+      auto it = halfedge_pos_map.find(&he);
+      if (it == halfedge_pos_map.end())
+      {
+        auto new_he_pos = halfedge_pos_map.size();
+        halfedge_pos_map[&he] = new_he_pos;
+      }
+      auto svh =  he.source(); 
+      auto tvh =  he.target();
+      auto& xcv = he.curve();
+      auto svp = vertex_pos_map[svh];
+      auto tvp = vertex_pos_map[tvh];
+      auto xcvp = curve_pos_map[&xcv];
+      json js_he;
+      js_he["source"] = svp;
+      js_he["target"] = tvp;
+      js_he["curve"]  = xcvp;
+      js_halfedges.push_back(std::move(js_he));
+    } while (++curr != first);
+  };
+
+  for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+  {
+    auto it = fh->outer_ccb();
+    for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb)
+      write_half_edges(*ccb);  
+
+    for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb)
+      write_half_edges(*ccb);
+  }
+  std::cout << "*** num total half-edges = " << num_half_edges << std::endl;
+  std::cout << "*** halfedge-pos-map size = " << halfedge_pos_map.size() << std::endl;
+
   std::ofstream ofile("C:/work/gsoc2023/deneme.txt");
   ofile << js;
   ofile.close();
 
 
   // mark all faces as TRUE (= as existing faces)
-  int num_half_edges = 0;
+  num_half_edges = 0;
   int num_found = 0;
   int num_not_found = 0;
   for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
