@@ -842,6 +842,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 
   auto set_num_denum = [&](decltype(ex)& x, json& ratx)
   {
+    simplify(x);
     std::stringstream ss_x_num;
     CGAL::IO::set_ascii_mode(ss_x_num);
     ss_x_num << rt.numerator(x);
@@ -869,9 +870,9 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 
       // write the vertex-data to JSON object
       auto& p = vh->point();
-      auto dx = p.dx().exact(); simplify(dx);
-      auto dy = p.dy().exact(); simplify(dy);
-      auto dz = p.dz().exact(); simplify(dz);
+      auto dx = p.dx().exact();
+      auto dy = p.dy().exact();
+      auto dz = p.dz().exact();
 
       json jv;
       jv["location"] = std::to_string(p.location());
@@ -887,8 +888,10 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   using Ext_curve = Ext_aos::X_monotone_curve_2;
   std::map<Ext_curve*, int>  curve_pos_map;
 
+  int num_edges = 0;
   for (auto eh = arr.edges_begin(); eh != arr.edges_end(); ++eh)
   {
+    num_edges++;
     auto& xcv = eh->curve();
     auto it = curve_pos_map.find(&xcv);
     if (it == curve_pos_map.end())
@@ -906,9 +909,9 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 
       // write the vertex-data to JSON object
       auto& n = xcv.normal();
-      auto dx = n.dx().exact(); simplify(dx);
-      auto dy = n.dy().exact(); simplify(dy);
-      auto dz = n.dz().exact(); simplify(dz);
+      auto dx = n.dx().exact();
+      auto dy = n.dy().exact();
+      auto dz = n.dz().exact();
       set_num_denum(dx, je_normal["dx"]);
       set_num_denum(dy, je_normal["dy"]);
       set_num_denum(dz, je_normal["dz"]);
@@ -927,6 +930,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 
 
   // mark all faces as TRUE (= as existing faces)
+  int num_half_edges = 0;
   int num_found = 0;
   int num_not_found = 0;
   for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
@@ -945,6 +949,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     auto first = fh->outer_ccb();
     auto curr = first;
     do {
+      num_half_edges++;
       auto vh = curr->source();
       // skip if the vertex is due to intersection with the identification curve
       if ((vh->data().v == false) && (vh->degree() == 2))
@@ -994,4 +999,32 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   std::cout << "num not found = " << num_not_found << std::endl;
   //std::cout << "all curves = " << all_curves.size() << std::endl;
   //std::cout << "curve count = " << curve_count << std::endl;
+  std::cout << "num edges = " << num_edges << std::endl;
+  std::cout << "num half edges = " << num_half_edges << std::endl;
+
+
+  {
+    auto count_half_edges = [&](auto first)
+      {
+        int num_half_edges = 0;
+        auto curr = first;
+        do {
+          num_half_edges++;
+        } while (++curr != first);
+        return num_half_edges;
+      };
+   
+    int total_num_half_edges = 0;
+    for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+    {
+      auto it = fh->outer_ccb();
+
+      for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb)
+        total_num_half_edges += count_half_edges(*ccb);
+
+      for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb)
+        total_num_half_edges += count_half_edges(*ccb);
+    }
+    std::cout << "total num half-edges = " << total_num_half_edges << std::endl;
+  }
 }
