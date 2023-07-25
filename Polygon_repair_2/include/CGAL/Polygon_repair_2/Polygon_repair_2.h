@@ -179,7 +179,7 @@ public:
       face->processed() = false;
     }
 
-    // Label exterior with label -1, marking it as processed and 
+    // Label exterior with label -1, marking it as processed and
     // putting interior triangles adjacent to it in to_check
     std::list<typename Triangulation::Face_handle> to_check;
     std::list<int> to_check_added_by;
@@ -225,7 +225,7 @@ public:
 
     // Start at lexicographically smallest vertex
     typename std::list<typename Kernel::Point_2>::iterator smallest_vertex = ring.begin();
-    for (typename std::list<typename Kernel::Point_2>::iterator current_vertex = ring.begin(); 
+    for (typename std::list<typename Kernel::Point_2>::iterator current_vertex = ring.begin();
          current_vertex != ring.end(); ++current_vertex) {
       if (*current_vertex < *smallest_vertex) smallest_vertex = current_vertex;
     } if (ring.front() != *smallest_vertex) {
@@ -242,13 +242,15 @@ public:
         if (face->label() == face->neighbor(opposite_vertex)->label()) continue;
         nesting[-face->label()-2].insert(face->neighbor(opposite_vertex)->label());
       }
-    } int hole_label = -2;
-    for (auto const &hole: nesting) {
-      std::cout << "Hole " << hole_label-- << " contained in polygon(s): ";
-      for (auto const &polygon: hole) {
-        std::cout << polygon << " ";
-      } std::cout << std::endl;
-    }
+    } 
+
+    // int hole_label = -2;
+    // for (auto const &hole: nesting) {
+    //   std::cout << "Hole " << hole_label-- << " contained in polygon(s): ";
+    //   for (auto const &polygon: hole) {
+    //     std::cout << polygon << " ";
+    //   } std::cout << std::endl;
+    // }
   }
 
   // Reconstruct multipolygon based on the triangles labelled as inside the polygon
@@ -305,7 +307,7 @@ public:
     for (int i = 0; i < polygons.size(); ++i) {
       ordered_polygons.insert(Polygon_with_holes_2<Kernel, PolygonContainer>(polygons[i], holes[i].begin(), holes[i].end()));
     } for (auto const& polygon: ordered_polygons) {
-      std::cout << "Adding polygon " << polygon << std::endl;
+      // std::cout << "Adding polygon " << polygon << std::endl;
       mp.add_polygon(polygon);
     }
   }
