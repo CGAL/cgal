@@ -821,7 +821,9 @@ private:
     for(const auto& [va, vb]: border_edges_set) {
       Cell_handle c;
       int i, j;
-      CGAL_assume(this->tds().is_edge(va, vb, c, i, j));
+      CGAL_assertion_code(bool b =)
+      this->tds().is_edge(va, vb, c, i, j);
+      CGAL_assertion(b);
       border_edges.emplace_back(c, i, j);
     }
 #if CGAL_DEBUG_CDT_3
