@@ -828,9 +828,10 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   //using json = nlohmann::json;
   using json = nlohmann::ordered_json;
   json js;
-  auto& js_vertices = js["vertices"] = json::array();
+  auto& js_points = js["points"] = json::array();
   
   ////////////////////////////////////////////////////////////////////////////
+  // POINTS
   // define a map from each vertex to its position in the arrangement
   //auto get_num_denum  
   using FT = typename Kernel::FT;
@@ -879,12 +880,14 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       set_num_denum(dx, jv["dx"]);
       set_num_denum(dy, jv["dy"]);
       set_num_denum(dz, jv["dz"]);
-      js_vertices.push_back(std::move(jv));
+      js_points.push_back(std::move(jv));
     }
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  // CURVES
   // define a map from each curve to its position in the arrangment
-  auto& js_edges = js["edges"] = json::array();
+  auto& js_curves = js["curves"] = json::array();
   using Ext_curve = Ext_aos::X_monotone_curve_2;
   std::map<Ext_curve*, int>  curve_pos_map;
 
@@ -920,8 +923,20 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       je["is_directed_right"] = std::to_string(xcv.is_directed_right());
       je["is_full"] = std::to_string(xcv.is_full());
       
-      js_edges.push_back(std::move(je));
+      js_curves.push_back(std::move(je));
     }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // VERTICES
+  // there is a one-to-one corresponce between vertices and points
+  auto& js_vertices = js["vertices"] = json::array();
+  for (auto vh = arr.vertices_begin(); vh != arr.vertices_end(); ++vh)
+  {
+    json js_vertex;
+    auto vpos = vertex_pos_map[vh];
+    js_vertex["point"] = vpos;
+    js_vertices.push_back(std::move(js_vertex));
   }
 
   std::ofstream ofile("C:/work/gsoc2023/deneme.txt");
