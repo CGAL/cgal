@@ -84,9 +84,10 @@ public:
   using Triangulation = Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
 
   struct Polygon_less {
-    bool operator()(const Polygon_2<Kernel, PolygonContainer>& pa, const Polygon_2<Kernel, PolygonContainer>& pb) const {
-      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator va = pa.vertices_begin();
-      typename Polygon_2<Kernel, PolygonContainer>::Vertex_iterator vb = pb.vertices_begin();
+    using Polygon_2 = Polygon_2<Kernel, PolygonContainer>;
+    bool operator()(const Polygon_2& pa, const Polygon_2& pb) const {
+      typename Polygon_2::Vertex_iterator va = pa.vertices_begin();
+      typename Polygon_2::Vertex_iterator vb = pb.vertices_begin();
       while (va != pa.vertices_end() && vb != pb.vertices_end()) {
         if (*va != *vb) return *va < *vb;
         ++va;
@@ -97,12 +98,13 @@ public:
   };
 
   struct Polygon_with_holes_less {
+    using Polygon_with_holes_2 = Polygon_with_holes_2<Kernel, PolygonContainer>;
     Polygon_less pl;
-    bool operator()(const Polygon_with_holes_2<Kernel, PolygonContainer>& pa, const Polygon_with_holes_2<Kernel, PolygonContainer>& pb) const {
+    bool operator()(const Polygon_with_holes_2& pa, const Polygon_with_holes_2& pb) const {
       if (pl(pa.outer_boundary(), pb.outer_boundary())) return true;
       if (pl(pb.outer_boundary(), pa.outer_boundary())) return false;
-      typename Polygon_with_holes_2<Kernel, PolygonContainer>::Hole_const_iterator ha = pa.holes_begin();
-      typename Polygon_with_holes_2<Kernel, PolygonContainer>::Hole_const_iterator hb = pb.holes_begin();
+      typename Polygon_with_holes_2::Hole_const_iterator ha = pa.holes_begin();
+      typename Polygon_with_holes_2::Hole_const_iterator hb = pb.holes_begin();
       while (ha != pa.holes_end() && hb != pb.holes_end()) {
         if (pl(*ha, *hb)) return true;
         if (pl(*hb, *ha)) return false;
