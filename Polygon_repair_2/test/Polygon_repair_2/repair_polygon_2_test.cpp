@@ -25,14 +25,12 @@ int main(int argc, char* argv[]) {
 
     // Load test file and repair to create output
     std::istringstream iss(in);
-    std::size_t is_polygon = in.find("POLYGON");
-    std::size_t is_multipolygon = in.find("MULTIPOLYGON");
     Multipolygon_with_holes_2 rmp;
-    if (is_polygon == 0) {
+    if (in.find("POLYGON") == 0) {
       Polygon_with_holes_2 p;
       CGAL::IO::read_polygon_WKT(iss, p);
       rmp = CGAL::Polygon_repair_2::repair(p);
-    } else if (is_multipolygon == 0) {
+    } else if (in.find("MULTIPOLYGON") == 0) {
       Multipolygon_with_holes_2 mp;
       CGAL::IO::read_multi_polygon_WKT(iss, mp);
       rmp = CGAL::Polygon_repair_2::repair(mp);
