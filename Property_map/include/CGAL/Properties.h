@@ -29,6 +29,8 @@ public:
 
   virtual void copy(const Property_array_base<Index>& other) = 0;
 
+  virtual void move(Property_array_base<Index>&& other) = 0;
+
   virtual void append(const Property_array_base<Index>& other) = 0;
 
   virtual void reserve(std::size_t n) = 0;
@@ -87,6 +89,12 @@ public:
   virtual void copy(const Property_array_base<Index>& other_base) override {
     auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
     m_data = other.m_data;
+    CGAL_precondition(m_active_indices.size() == m_data.size());
+  }
+
+  virtual void move(Property_array_base<Index>&& other_base) override {
+    auto&& other = dynamic_cast<Property_array<Index, T>&&>(other_base);
+    m_data = std::move(other.m_data);
     CGAL_precondition(m_active_indices.size() == m_data.size());
   }
 
@@ -278,7 +286,7 @@ public:
         CGAL_precondition(typeid(*this_array) == typeid(*other_array));
 
         // Copy the data from the other array
-        this_array->copy(*other_array);
+        this_array->copy(std::move(*other_array));
 
       } else {
         // Adds the new property

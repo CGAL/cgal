@@ -1110,19 +1110,29 @@ public:
 
     Point_set& ps;
     Property_map<Property> map;
+    Index index;
 
   public:
 
-    Property_back_inserter(Point_set& ps, Properties::Property_array<Point_set::Index, Property>& prop) :
-      ps(ps), map(prop) {}
+    Property_back_inserter(
+      Point_set& ps,
+      Properties::Property_array<Point_set::Index, Property>& prop,
+      Index ind = Index{0}
+    ) : ps(ps), map(prop), index(ind) {}
     Property_back_inserter& operator++() { return *this; }
     Property_back_inserter& operator++(int) { return *this; }
     Property_back_inserter& operator*() { return *this; }
     Property_back_inserter& operator= (const value_type& p)
     {
-      auto new_index = *ps.insert();
-      put(map, new_index, p);
+      if(ps.size() <= index)
+        ps.insert();
+      put(map, index, p);
+      ++index;
       return *this;
+
+//      auto new_index = *ps.insert();
+//      put(map, new_index, p);
+//      return *this;
     }
 
   };
@@ -1140,14 +1150,21 @@ public:
 
     Point_set& ps;
     Property_map<Property> map;
+    mutable Index index;
 
-    Push_property_map(Point_set& ps, Properties::Property_array<Point_set::Index, Property>& prop) :
-      ps(ps), map(prop) {}
+    Push_property_map(
+      Point_set& ps,
+      Properties::Property_array<Point_set::Index, Property>& prop,
+      Index ind = Index{0}
+    ) : ps(ps), map(prop) {}
 
     friend void put(const Push_property_map& pm, Index& i, const value_type& t)
     {
-      i = *pm.ps.insert();
-      put(pm.map, i, t);
+      ++pm.index;
+      if(pm.ps.size() <= pm.index)
+        pm.ps.insert();
+      put(pm.map, pm.index, t);
+      i = pm.index;
     }
 
     friend reference get (const Push_property_map& pm, const Index& i)

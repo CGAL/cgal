@@ -8,6 +8,7 @@ project(Point_set_3_Tests)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("copy_construction_test.cpp")
+create_single_source_cgal_program("file_load_test.cpp")
 create_single_source_cgal_program("point_insertion_test.cpp")
 create_single_source_cgal_program("point_set_test.cpp")
 create_single_source_cgal_program("point_set_test_join.cpp")
