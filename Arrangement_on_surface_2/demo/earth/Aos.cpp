@@ -942,7 +942,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   ////////////////////////////////////////////////////////////////////////////
   // HALF-EDGES
   int num_half_edges = 0;
-  auto& js_halfedges = js["edges"] = json::array();
+  auto& js_halfedges = js["halfedges"] = json::array();
   std::map<Halfedge_handle, int>  halfedge_pos_map;
   auto write_half_edges = [&](Ext_aos::Ccb_halfedge_circulator first)
   {
@@ -982,15 +982,14 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   std::cout << "*** num total half-edges = " << num_half_edges << std::endl;
   std::cout << "*** halfedge-pos-map size = " << halfedge_pos_map.size() << std::endl;
 
-  std::ofstream ofile("C:/work/gsoc2023/deneme.txt");
-  ofile << js;
-  ofile.close();
 
-
-  // mark all faces as TRUE (= as existing faces)
+  ////////////////////////////////////////////////////////////////////////////
+  // FACES
+  // CONDITION DATA: Caspian Sea needs to be defined
   num_half_edges = 0;
   int num_found = 0;
   int num_not_found = 0;
+  std::map<Face_handle, std::string>  face_name_map;
   for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
   {
     // skip the spherical face
@@ -999,7 +998,6 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     {
       continue;
     }
-
 
     // construct the set of all node-ids for the current face
     std::set<int>  face_node_ids_set;
@@ -1036,53 +1034,64 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       num_found++;
       name = it->second;
     }
-
-    // loop on the edges once again, but this time to record the face curves!
-    std::cout << "CHECKING : " << name << std::endl;
-    curr = first = fh->outer_ccb();
-    do {
-      // get the current curve and its source vertex
-      auto vh = curr->source();
-      auto& xcv = curr->curve();
-
-      // skip if the vertex is due to intersection with the identification curve
-      if ((vh->data().v == false) && (vh->degree() == 2))
-        continue;
-
-      auto vp = vertex_pos_map[vh];
-      auto cp = curve_pos_map[&xcv];
-      
-    } while (++curr != first);
+    face_name_map[fh] = name;
   }
   std::cout << "num not found = " << num_not_found << std::endl;
-  //std::cout << "all curves = " << all_curves.size() << std::endl;
-  //std::cout << "curve count = " << curve_count << std::endl;
-  std::cout << "num edges = " << num_edges << std::endl;
-  std::cout << "num half edges = " << num_half_edges << std::endl;
 
 
-  {
-    auto count_half_edges = [&](auto first)
-      {
-        int num_half_edges = 0;
-        auto curr = first;
-        do {
-          num_half_edges++;
-        } while (++curr != first);
-        return num_half_edges;
-      };
-   
-    int total_num_half_edges = 0;
-    for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+  // RECORD FACES
+  json& js_faces = js["faces"] = json::array();
+  auto get_ccb_json = [&](Ext_aos::Ccb_halfedge_circulator first)
     {
-      auto it = fh->outer_ccb();
+      json js_halfedges;
+      auto& ccb_halfedge_indices = js_halfedges["halfedges"] = json::array();
+      auto curr = first;
+      do {
+        auto& he = *curr;
+        auto hep = halfedge_pos_map[&he];
+        ccb_halfedge_indices.push_back(hep);
+      } while (++curr != first);
 
-      for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb)
-        total_num_half_edges += count_half_edges(*ccb);
+      return js_halfedges;
+    };
+   
+  int total_num_half_edges = 0;
+  for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+  {
+    // skip the spherical face
+    if (fh->number_of_outer_ccbs() == 0)
+      continue;
 
-      for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb)
-        total_num_half_edges += count_half_edges(*ccb);
+    // json object for the current face
+    json js_face;
+    auto face_name = face_name_map[fh];
+    js_face["name"] = face_name;
+
+    // at this point we are sure that we have at least 1 outer-ccb
+    auto& js_outer_ccbs = js_face["outer_ccbs"] = json::array();
+    for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb)
+    {
+      auto js_ccb = get_ccb_json(*ccb);
+      js_outer_ccbs.push_back(std::move(js_ccb));
     }
-    std::cout << "total num half-edges = " << total_num_half_edges << std::endl;
+
+    // INNER CCBS
+    if(fh->number_of_inner_ccbs() > 0)
+    {
+      auto& js_inner_ccbs = js_face["inner_ccbs"] = json::array();
+      for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb)
+      {
+        auto js_ccb = get_ccb_json(*ccb);
+        js_inner_ccbs.push_back(std::move(js_ccb));
+      }
+    }
+
+    js_faces.push_back(std::move(js_face));
   }
+  std::cout << "total num half-edges = " << total_num_half_edges << std::endl;
+ 
+  std::ofstream ofile("C:/work/gsoc2023/deneme.txt");
+  ofile << js;
+  ofile.close();
+
 }
