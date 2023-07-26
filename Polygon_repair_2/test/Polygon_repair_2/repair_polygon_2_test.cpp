@@ -15,7 +15,7 @@ using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 using Polygon_repair_2 = CGAL::Polygon_repair_2::Polygon_repair_2<Kernel>;
 
 int main(int argc, char* argv[]) {
-  
+
   for (const auto& file: std::__fs::filesystem::directory_iterator("data/in")) {
     std::cout << "Testing " << file.path().filename() << "... ";
 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     } std::string ref;
     std::getline(ref_ifs, ref);
     ref += "\n";
-    
+
     // Compare output with reference file
     if (ref == out) {
       std::cout << "ok" << std::endl;

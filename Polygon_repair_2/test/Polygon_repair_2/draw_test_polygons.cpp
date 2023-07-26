@@ -19,7 +19,7 @@ using Polygon_repair_2 = CGAL::Polygon_repair_2::Polygon_repair_2<Kernel>;
 
 int main(int argc, char* argv[]) {
 
-  for (const auto& file: std::__fs::filesystem::directory_iterator("../../test/Polygon_repair_2/data/in")) {
+  for (const auto& file: std::__fs::filesystem::directory_iterator("data/in")) {
     std::cout << "Reading " << file.path().filename() << "..." << std::endl;
 
     // if (file.path().filename() != "hole-outside.wkt") continue;
