@@ -190,6 +190,39 @@ private:
   PointSet& m_point_set;
   PointMap m_point_map;
 
+  template <typename Node_index, typename Tree>
+  void reassign_points(Node_index n, Tree& tree,
+                       const Point_d& center, Node_data points,
+                       std::bitset<Dimension::value> coord = {},
+                       std::size_t dimension = 0) {
+
+    // Root case: reached the last dimension
+    if (dimension == Dimension::value) {
+      tree.data(tree.child(n, coord.to_ulong())) = points;
+      return;
+    }
+
+    // Split the point collection around the center point on this dimension
+    auto split_point = std::partition(
+      points.begin(), points.end(),
+      [&](const auto& p) -> bool {
+        // This should be done with cartesian iterator,
+        // but it seems complicated to do efficiently
+        return (get(m_point_map, p)[int(dimension)] < center[int(dimension)]);
+      }
+    );
+
+    // Further subdivide the first side of the split
+    std::bitset<Dimension::value> coord_left = coord;
+    coord_left[dimension] = false;
+    reassign_points(n, tree, center, {points.begin(), split_point}, coord_left, dimension + 1);
+
+    // Further subdivide the second side of the split
+    std::bitset<Dimension::value> coord_right = coord;
+    coord_right[dimension] = true;
+    reassign_points(n, tree, center, {split_point, points.end()}, coord_right, dimension + 1);
+  }
+
 };
 
 }

@@ -2,6 +2,7 @@
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Orthtree.h>
+#include <CGAL/Orthtree_traits_point_d.h>
 #include <CGAL/Random.h>
 
 // Type Declarations
@@ -10,8 +11,8 @@ typedef CGAL::Epick_d<Dimension> Kernel;
 typedef Kernel::Point_d Point_d;
 typedef std::vector<Point_d> Point_vector;
 
-typedef CGAL::Orthtree_traits_d<Kernel, Dimension> Traits;
-typedef CGAL::Orthtree<Traits, Point_vector> Orthtree;
+typedef CGAL::Orthtree_traits_point_d<Kernel, Dimension, Point_vector> Traits;
+typedef CGAL::Orthtree<Traits> Orthtree;
 
 int main()
 {
@@ -20,7 +21,7 @@ int main()
   Point_vector points_dd;
   for (std::size_t i = 0; i < 5; ++ i)
   {
-    std::array<double, Dimension::value> init;
+    std::array<double, Dimension::value> init{};
     for (double& v : init)
       v = r.get_double(-1., 1.);
     points_dd.emplace_back (init.begin(), init.end());

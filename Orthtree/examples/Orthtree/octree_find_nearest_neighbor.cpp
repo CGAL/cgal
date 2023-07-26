@@ -16,7 +16,7 @@ typedef Point_set::Point_map Point_map;
 
 typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
   // Point set will be used to hold our points
   Point_set points;
@@ -39,21 +39,19 @@ int main(int argc, char **argv) {
 
   // Find the nearest points to a few locations
   std::vector<Point> points_to_find = {
-          {0, 0, 0},
-          {1, 1, 1},
-          {-1, -1, -1},
-          {-0.46026, -0.25353, 0.32051},
-          {-0.460261, -0.253533, 0.320513}
+    {0,         0,         0},
+    {1,         1,         1},
+    {-1,        -1,        -1},
+    {-0.46026,  -0.25353,  0.32051},
+    {-0.460261, -0.253533, 0.320513}
   };
-  for (const Point& p : points_to_find)
-    octree.nearest_neighbors
-      (p, 1, // k=1 to find the single closest point
-       boost::make_function_output_iterator
-       ([&](const Point& nearest)
-        {
-          std::cout << "the nearest point to (" << p <<
-            ") is (" << nearest << ")" << std::endl;
-        }));
+  for (const Point& p: points_to_find)
+    octree.nearest_neighbors(
+      p, 1, // k=1 to find the single closest point
+      boost::make_function_output_iterator([&](const Point_set::Index& nearest) {
+        std::cout << "the nearest point to (" << p << ") is (" << points.point(nearest) << ")" << std::endl;
+      })
+    );
 
   return EXIT_SUCCESS;
 }

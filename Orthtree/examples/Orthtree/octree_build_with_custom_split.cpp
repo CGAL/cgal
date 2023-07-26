@@ -27,7 +27,6 @@ struct Split_by_ratio {
   bool operator()(Node_index i, const Tree &tree) const {
     std::size_t num_points = tree.data(i).size();
     std::size_t depth = tree.depth(i);
-    std::cout << num_points << " " << depth << std::endl;
     return num_points > (ratio * depth);
   }
 };
@@ -38,7 +37,7 @@ int main(int argc, char **argv) {
   Point_set points;
 
   // Load points from a file.
-  std::ifstream stream((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.off"));
+  std::ifstream stream((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn"));
   stream >> points;
   if (0 == points.number_of_points()) {
 

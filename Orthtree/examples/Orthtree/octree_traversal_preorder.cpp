@@ -13,7 +13,7 @@ typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Point_map Point_map;
 
 typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
-typedef CGAL::Orthtrees::Preorder_traversal Preorder_traversal;
+typedef CGAL::Orthtrees::Preorder_traversal<Octree> Preorder_traversal;
 
 int main(int argc, char **argv) {
 
@@ -31,15 +31,14 @@ int main(int argc, char **argv) {
   std::cout << "loaded " << points.number_of_points() << " points\n" << std::endl;
 
   // Create an octree from the points
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
 
   // Build the octree
   octree.refine();
 
   // Print out the octree using preorder traversal
-  for (Octree::Node node : octree.traverse<Preorder_traversal>()) {
-
-    std::cout << node << std::endl;
+  for (auto node : octree.traverse_indices<Preorder_traversal>()) {
+    std::cout << octree.to_string(node) << std::endl;
   }
 
   return EXIT_SUCCESS;

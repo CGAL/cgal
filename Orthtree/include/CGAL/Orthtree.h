@@ -401,7 +401,7 @@ public:
           continue;
 
         // If it's already been split, skip it
-        if (!is_leaf(neighbor))
+        if (!is_leaf(*neighbor))
           continue;
 
         // Check if the neighbor breaks our grading rule
@@ -487,7 +487,7 @@ public:
 
   template <typename Traversal, typename ...Args>
   Node_index_range traverse_indices(Args&& ...args) const {
-    return traverse_indices<Traversal>({*this, std::forward<Args>(args)...});
+    return traverse_indices(Traversal{*this, std::forward<Args>(args)...});
   }
 
   /*!
@@ -1215,6 +1215,12 @@ public:
     os << "2 "
        << box.xmax() << " " << box.ymax() << " " << box.zmin() << " "
        << box.xmax() << " " << box.ymax() << " " << box.zmax() << std::endl;
+  }
+
+  std::string to_string(Node_index node) {
+    std::stringstream stream;
+    internal::print_orthtree_node(stream, node, *this);
+    return stream.str();
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Self& orthtree) {

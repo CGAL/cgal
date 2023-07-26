@@ -3,6 +3,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Octree.h>
+#include <CGAL/Orthtree/IO.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -15,22 +16,29 @@ typedef Point_set::Point_map Point_map;
 typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
 typedef Octree::Node Node;
 
-struct First_branch_traversal
-{
-  Node first (Node root) const
-  {
-    return root;
+template <typename Tree>
+struct First_branch_traversal {
+
+  const Tree& m_orthtree;
+
+  explicit First_branch_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
+
+  typename Tree::Node_index first_index() const {
+    return m_orthtree.root();
   }
 
-  Node next (Node n) const
-  {
-    if (n.is_leaf())
-      return Node();
-    return n[0];
+  typename Tree::Maybe_node_index next_index(typename Tree::Node_index n) const {
+
+    // Stop when we reach the base of the tree
+    if (m_orthtree.is_leaf(n))
+      return {};
+
+    // Always descend the first child
+    return m_orthtree.child(n, 0);
   }
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
   // Point set will be used to hold our points
   Point_set points;
@@ -46,14 +54,15 @@ int main(int argc, char **argv) {
   std::cout << "loaded " << points.number_of_points() << " points\n" << std::endl;
 
   // Create an octree from the points
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
 
   // Build the octree
   octree.refine();
 
   // Print out the first branch using custom traversal
-  for (auto &node : octree.traverse<First_branch_traversal>())
-    std::cout << node << std::endl;
+  for (auto node: octree.traverse_indices<First_branch_traversal<Octree>>()) {
+    std::cout << octree.to_string(node) << std::endl;
+  }
 
   return EXIT_SUCCESS;
 }
