@@ -204,7 +204,7 @@ void generate_random_weights(const PolygonWithHoles& p,
     using Container = typename std::remove_reference<decltype(c)>::type;
     using Iterator = typename Container::const_iterator;
 
-    std::map<Iterator, std::size_t /*rnd weight*/> weight;
+    std::map<Iterator, FT> weight;
 
     // start somewhere not collinear
     Iterator start_it;
@@ -238,7 +238,7 @@ void generate_random_weights(const PolygonWithHoles& p,
       else
       {
         CGAL_assertion(weight.count(it) == 0);
-        weight[it] = rnd.get_double(min_weight, max_weight);
+        weight[it] = FT(rnd.get_double(min_weight, max_weight));
       }
 
       it = next(it, c);
@@ -247,7 +247,7 @@ void generate_random_weights(const PolygonWithHoles& p,
 
     std::vector<FT> weights;
     for(auto it=c.begin(); it<c.end(); ++it)
-      weights.push_back(FT(weight[it]));
+      weights.push_back(weight[it]);
 
     return weights;
   };
