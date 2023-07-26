@@ -691,13 +691,14 @@ Construct_initial_points::operator()(OutputIterator pts,
   typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
 
   const Bounding_box bbox = r_domain_.tree_.bbox();
-  const Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
-                        FT( (bbox.ymin() + bbox.ymax()) / 2),
-                        FT( (bbox.zmin() + bbox.zmax()) / 2) );
+  Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
+                  FT( (bbox.ymin() + bbox.ymax()) / 2),
+                  FT( (bbox.zmin() + bbox.zmax()) / 2) );
 
   CGAL::Random& rng = *(r_domain_.p_rng_ != 0 ?
                         r_domain_.p_rng_ :
                         new Random(0));
+
   Random_points_on_sphere_3<Point_3> random_point(1., rng);
 
   int i = n;
@@ -727,6 +728,15 @@ Construct_initial_points::operator()(OutputIterator pts,
         % (n - i)
         % n;
 # endif
+
+      // If the source of the ray is on the surface, every ray will return its source
+      // so change the source to a random point in the bounding box
+      if(std::get<0>(intersection) == ray_shot.source())
+      {
+        center = Point_3(rng.get_double(bbox.xmin(), bbox.xmax()),
+                         rng.get_double(bbox.ymin(), bbox.ymax()),
+                         rng.get_double(bbox.zmin(), bbox.zmax()));
+      }
     }
     ++random_point;
   }
