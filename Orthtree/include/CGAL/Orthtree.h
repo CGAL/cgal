@@ -214,8 +214,7 @@ public:
     \param enlarge_ratio ratio to which the bounding box should be enlarged.
     \param traits the traits object.
   */
-  Orthtree(Traits traits,
-           const FT enlarge_ratio = 1.2) :
+  explicit Orthtree(Traits traits, const FT enlarge_ratio = 1.2) :
     m_traits(traits),
     m_node_points(m_node_properties.add_property<Node_data>("points")),
     m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
@@ -324,13 +323,6 @@ public:
 
       // Check if this node needs to be processed
       if (split_predicate(current, *this)) {
-
-        // Check if we've reached a new max depth
-        if (depth(current) == depth()) {
-
-          // Update the side length map
-          m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
-        }
 
         // Split the node, redistributing its points to its children
         split(current);
@@ -837,6 +829,12 @@ public:
         m_node_coordinates[c][i] = (2 * m_node_coordinates[n][i]) + local_coordinates[i];
       m_node_depths[c] = m_node_depths[n] + 1;
       m_node_parents[c] = n;
+    }
+
+    // Check if we've reached a new max depth
+    if (depth(n) + 1 == m_side_per_depth.size()) {
+      // Update the side length map
+      m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
     }
 
     // Find the point around which the node is split
