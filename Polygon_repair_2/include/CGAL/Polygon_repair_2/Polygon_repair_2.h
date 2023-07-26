@@ -252,7 +252,7 @@ public:
     // }
   }
 
-  // Reconstruct multipolygon based on the triangles labelled as inside the polygon
+  // Reconstruct multipolygon based on the triangles labeled as inside the polygon
   void reconstruct_multipolygon() {
     mp.clear();
     std::vector<Polygon_2<Kernel, PolygonContainer>> polygons;

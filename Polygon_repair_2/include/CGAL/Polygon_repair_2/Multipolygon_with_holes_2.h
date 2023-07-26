@@ -23,7 +23,7 @@ namespace CGAL {
  * The class `Multipolygon_with_holes_2` models the concept `MultipolygonWithHoles_2`.
  * It is parameterized with two types (`Kernel` and `Container`) that are used to instantiate
  * the types `Polygon_2<Kernel,Container>` and `Polygon_with_holes_2<Kernel,Container>`.
- * The latter is used to represents each polygon with holes. The former is converted to the latter.
+ * The latter is used to represent each polygon with holes. The former is converted to the latter.
  *
  * \cgalModels `MultipolygonWithHoles_2`
  */
