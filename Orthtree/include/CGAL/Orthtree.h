@@ -155,7 +155,6 @@ public:
   typedef unspecified_type Node_range;
   typedef unspecified_type Node_index_range;
 #else
-  typedef boost::iterator_range<Traversal_iterator<Self>> Node_range;
   typedef boost::iterator_range<Index_traversal_iterator<Self>> Node_index_range;
 #endif
 
@@ -439,33 +438,18 @@ public:
   std::size_t depth() const { return m_side_per_depth.size() - 1; }
 
   /*!
-    \brief constructs a node range using a tree-traversal function.
+    \brief constructs a node index range using a tree-traversal function.
 
-    This method allows to iterate on the nodes of the tree with a
+    This method allows iteration over the nodes of the tree with a
     user-selected order (preorder, postorder, leaves-only, etc.).
 
-    todo: this should be removed, replaced with traverse_indices
-
     \tparam Traversal model of `OrthtreeTraversal` that provides functions
-    compatible with the type of the orthree
+    compatible with the type of the orthtree
 
     \param traversal the instance of `Traversal` used
 
-    \return a forward input iterator over the nodes of the tree
+    \return a forward input iterator over the node indices of the tree
    */
-  template <typename Traversal>
-  Node_range traverse(Traversal traversal) const {
-
-    auto first = traversal.first_index();
-
-    auto next = [=](const Self& tree, Node_index index) -> Maybe_node_index {
-      return traversal.next_index(index);
-    };
-
-    return boost::make_iterator_range(Traversal_iterator<Self>(*this, first, next),
-                                      Traversal_iterator<Self>());
-  }
-
   template <typename Traversal>
   Node_index_range traverse_indices(Traversal traversal) const {
 
@@ -479,12 +463,17 @@ public:
                                       Index_traversal_iterator<Self>());
   }
 
-  // todo: document this convenience function
-  template <typename Traversal, typename ...Args>
-  Node_range traverse(Args&& ...args) const {
-    return traverse<Traversal>({*this, std::forward<Args>(args)...});
-  }
 
+  /*!
+    \brief Convenience function for using a traversal without constructing it yourself
+
+    \tparam Traversal model of `OrthtreeTraversal` that provides functions
+    compatible with the type of the orthtree
+
+    \param args Arguments to to pass to the traversal's constructor, excluding the first (always an orthtree reference)
+
+    \return a forward input iterator over the node indices of the tree
+   */
   template <typename Traversal, typename ...Args>
   Node_index_range traverse_indices(Args&& ...args) const {
     return traverse_indices(Traversal{*this, std::forward<Args>(args)...});
@@ -1168,8 +1157,8 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   void dump_to_polylines(std::ostream& os) const {
-    for (const Node& n: traverse<Orthtrees::Preorder_traversal>())
-      if (n.is_leaf()) {
+    for (const auto n: traverse_indices<Orthtrees::Preorder_traversal>())
+      if (is_leaf(n)) {
         Bbox box = bbox(n);
         dump_box_to_polylines(box, os);
       }

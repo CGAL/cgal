@@ -39,14 +39,6 @@ public:
           m_bucket_size(bucket_size) {}
 
   /*!
-    \brief returns `true` if `n` should be split, `false` otherwise.
-   */
-  template<typename Node>
-  bool operator()(const Node &n) const {
-    return (n.size() > m_bucket_size);
-  }
-
-  /*!
     \brief returns `true` if `i` should be split, `false` otherwise.
    */
   template<typename Node_index, typename Tree>
@@ -72,14 +64,6 @@ public:
     \brief creates a maximum depth predicate.
    */
   Maximum_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
-
-  /*!
-    \brief returns `true` if `n` should be split, `false` otherwise.
-   */
-  template<typename Node>
-  bool operator()(const Node &n) const {
-    return n.depth() < m_max_depth;
-  }
 
   /*!
     \brief returns `true` if `i` should be split, `false` otherwise.
@@ -116,16 +100,6 @@ public:
    */
   Maximum_depth_and_maximum_number_of_inliers(std::size_t max_depth, std::size_t bucket_size) :
           m_max_depth(max_depth), m_bucket_size(bucket_size) {}
-
-  /*!
-    \brief returns `true` if `n` should be split, `false` otherwise.
-   */
-  template<typename Node>
-  bool operator()(const Node &n) const {
-    std::size_t num_points = n.size();
-    std::size_t depth = n.depth();
-    return (num_points > m_bucket_size && depth < m_max_depth);
-  }
 
   /*!
     \brief returns `true` if `i` should be split, `false` otherwise.

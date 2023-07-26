@@ -27,83 +27,12 @@ namespace CGAL {
 /*!
  * \ingroup PkgOrthtreeClasses
  *
- * \brief
+ * \brief Wraps a traversal definition to produce an iterator which traverses the tree when incremented.
  *
  * \todo
  *
- * \tparam Value
+ * \tparam Tree The orthtree type to iterate over
  */
-template <class Tree>
-class Traversal_iterator
-  : public boost::iterator_facade<Traversal_iterator<Tree>, const typename Tree::Node, boost::forward_traversal_tag> {
-public:
-
-  /// \name Types
-  /// @{
-
-  /*!
-   * \brief
-   *
-   * \todo
-   */
-  typedef std::function<boost::optional<std::size_t>(const Tree&, std::size_t)> Traversal_function;
-
-  typedef typename Tree::Node_index Node_index;
-
-  /// @}
-
-public:
-
-  /// \name Creation
-  /// @{
-
-  /*!
-   * \brief Default constructor, creates an end sentinel
-   *
-   * \todo
-   */
-  Traversal_iterator() : m_next() {}
-
-  /*!
-   * \brief
-   *
-   * \todo
-   *
-   * \param tree
-   * \param first
-   * \param next
-   */
-  Traversal_iterator(const Tree& tree, Node_index first, const Traversal_function& next) :
-    m_tree(&tree), m_index(first), m_next(next) {}
-
-  /// @}
-
-private:
-
-  friend class boost::iterator_core_access;
-
-  bool equal(Traversal_iterator<Tree> const& other) const {
-    return m_index == other.m_index;
-  }
-
-  void increment() {
-    // invoking increment on the sentinel is undefined behavior
-    m_index = m_next(*m_tree, m_index.get());
-  }
-
-  const typename Tree::Node& dereference() const {
-    return (*m_tree)[m_index.get()];
-  }
-
-private:
-
-  Traversal_function m_next;
-
-  boost::optional<std::size_t> m_index = {};
-  const Tree* m_tree = nullptr;
-
-};
-
 template <class Tree>
 class Index_traversal_iterator : public boost::iterator_facade<
   Index_traversal_iterator<Tree>,

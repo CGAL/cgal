@@ -43,25 +43,14 @@ template <typename Tree>
 struct Preorder_traversal {
 private:
 
-  using Node = typename Tree::Node;
-
   const Tree& m_orthtree;
 
 public:
 
   Preorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
-  const Node* first() const {
-    return &m_orthtree[m_orthtree.root()];
-  }
-
   typename Tree::Node_index first_index() const {
     return m_orthtree.root();
-  }
-
-  const Node* next(const Node* n) const {
-    if (n == nullptr || !next_index(m_orthtree.index(*n))) return nullptr;
-    return &m_orthtree[*next_index(m_orthtree.index(*n))];
   }
 
   std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
@@ -94,30 +83,14 @@ template <typename Tree>
 struct Postorder_traversal {
 private:
 
-  using Node = typename Tree::Node;
-
   const Tree& m_orthtree;
 
 public:
 
   Postorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
-  const Node* first() const {
-    return deepest_first_child(m_orthtree, m_orthtree.root());
-  }
-
   typename Tree::Node_index first_index() const {
-    return *m_orthtree.index(first());
-  }
-
-  const Node* next(const Node* n) const {
-
-    auto next = deepest_first_child(m_orthtree, next_sibling(m_orthtree, n));
-
-    if (!next)
-      next = n->parent();
-
-    return next;
+    return m_orthtree.deepest_first_child(m_orthtree.root());
   }
 
   std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
@@ -137,30 +110,14 @@ template <typename Tree>
 struct Leaves_traversal {
 private:
 
-  using Node = typename Tree::Node;
-
   const Tree& m_orthtree;
 
 public:
 
   Leaves_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
-  const Node* first() const {
-    return m_orthtree.deepest_first_child(&m_orthtree.root());
-  }
-
   typename Tree::Node_index first_index() const {
-    return m_orthtree.deepest_first_child(0);
-  }
-
-  const Node* next(const Node* n) const {
-
-    auto next = m_orthtree.deepest_first_child(m_orthtree.next_sibling(n));
-
-    if (!next)
-      next = m_orthtree.deepest_first_child(m_orthtree.next_sibling_up(n));
-
-    return next;
+    return m_orthtree.deepest_first_child(m_orthtree.root());
   }
 
   std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
@@ -188,8 +145,6 @@ template <typename Tree>
 struct Level_traversal {
 private:
 
-  using Node = typename Tree::Node;
-
   const Tree& m_orthtree;
   const std::size_t m_depth;
 
@@ -200,32 +155,9 @@ public:
   */
   Level_traversal(const Tree& orthtree, std::size_t depth) : m_orthtree(orthtree), m_depth(depth) {}
 
-  template <typename Node>
-  const Node* first() const {
-    return m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth);
-  }
-
   typename Tree::Node_index first_index() const {
     // assumes the tree has at least one child at m_depth
     return *m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth);
-  }
-
-  template <typename Node>
-  const Node* next(const Node* n) const {
-    const Node* next = m_orthtree.next_sibling(n);
-
-    if (!next) {
-      const Node* up = n;
-      do {
-        up = m_orthtree.next_sibling_up(up);
-        if (!up)
-          return nullptr;
-
-        next = m_orthtree.first_child_at_depth(up, m_depth);
-      } while (!next);
-    }
-
-    return next;
   }
 
   std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {

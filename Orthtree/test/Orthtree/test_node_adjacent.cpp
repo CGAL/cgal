@@ -53,11 +53,11 @@ int main(void) {
   auto left_top_back = octree.node(Traits::LEFT_TOP_BACK);
 
   assert(octree.node(Traits::RIGHT_TOP_BACK) ==
-         octree.adjacent_node(left_top_back, Traits::RIGHT).get());
+         *octree.adjacent_node(left_top_back, Traits::RIGHT));
   assert(octree.node(Traits::LEFT_BOTTOM_BACK) ==
-         octree.adjacent_node(left_top_back, Traits::DOWN).get());
+         *octree.adjacent_node(left_top_back, Traits::DOWN));
   assert(octree.node(Traits::LEFT_TOP_FRONT) ==
-         octree.adjacent_node(left_top_back, Traits::FRONT));
+         *octree.adjacent_node(left_top_back, Traits::FRONT));
   assert(!octree.adjacent_node(left_top_back, Traits::LEFT));
   assert(!octree.adjacent_node(left_top_back, Traits::UP));
   assert(!octree.adjacent_node(left_top_back, Traits::BACK));
