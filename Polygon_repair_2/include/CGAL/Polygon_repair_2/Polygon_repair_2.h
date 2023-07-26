@@ -234,15 +234,14 @@ public:
   }
 
   void compute_hole_nesting() {
-    for (int i = 0; i < number_of_holes; ++i) {
-      nesting.emplace_back();
-    } for (auto const &face: t.finite_face_handles()) {
+    nesting.resize(number_of_holes);
+    for (auto const &face: t.finite_face_handles()) {
       if (face->label() >= -1) continue; // skip non-hole triangles
       for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
         if (face->label() == face->neighbor(opposite_vertex)->label()) continue;
         nesting[-face->label()-2].insert(face->neighbor(opposite_vertex)->label());
       }
-    } 
+    }
 
     // int hole_label = -2;
     // for (auto const &hole: nesting) {
@@ -258,10 +257,8 @@ public:
     mp.clear();
     std::vector<Polygon_2<Kernel, PolygonContainer>> polygons;
     std::vector<std::set<Polygon_2<Kernel, PolygonContainer>, Polygon_less>> holes; // holes are ordered
-    for (int i = 0; i < number_of_polygons; ++i) {
-      polygons.emplace_back();
-      holes.emplace_back();
-    }
+    polygons.resize(number_of_polygons);
+    holes.resize(number_of_polygons);
 
     for (auto const face: t.all_face_handles()) {
       face->processed() = false;
