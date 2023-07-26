@@ -18,7 +18,7 @@ using Arrangement_2 = CGAL::Arrangement_2<Traits>;
  * \param value Value component range: [0, 1]
  * \return tuple<red, green, blue>, where each component is in the range [0, 255]
 */
-std::tuple<float, float, float>
+std::tuple<unsigned char, unsigned char, unsigned char>
 hsv_to_rgb(float hue, float sat, float value) {
   float red, green, blue;
   float fc = value * sat; // Chroma
@@ -69,7 +69,10 @@ hsv_to_rgb(float hue, float sat, float value) {
   red *= 255;
   green *= 255;
   blue *= 255;
-  return std::make_tuple(red, green, blue);
+  unsigned char redc = (unsigned char)red;
+  unsigned char greenc = (unsigned char)green;
+  unsigned char bluec = (unsigned char)blue;
+  return std::make_tuple(redc, greenc, bluec);
 }
 
 int main() {
@@ -104,7 +107,7 @@ int main() {
                     float r, g, b;
                     typedef unsigned char uchar;
                     std::tie(r, g, b) = hsv_to_rgb(h, s, v);
-                    return CGAL::IO::Color(uchar(r*255), uchar(g*255), uchar(b*255));
+                    return CGAL::IO::Color(r,g,b);
                   }, "hsv colors", true);
 
   return EXIT_SUCCESS;
