@@ -93,7 +93,8 @@ public:
         if (*va != *vb) return *va < *vb;
         ++va;
         ++vb;
-      } if (vb == pb.vertices_end()) return false;
+      } 
+      if (vb == pb.vertices_end()) return false;
       return true;
     }
   };
@@ -109,7 +110,8 @@ public:
       while (ha != pa.holes_end() && hb != pb.holes_end()) {
         if (pl(*ha, *hb)) return true;
         if (pl(*hb, *ha)) return false;
-      } if (hb == pb.holes_end()) return false;
+      } 
+      if (hb == pb.holes_end()) return false;
       return true;
     }
   };
@@ -228,7 +230,8 @@ public:
     for (typename std::list<typename Kernel::Point_2>::iterator current_vertex = ring.begin();
          current_vertex != ring.end(); ++current_vertex) {
       if (*current_vertex < *smallest_vertex) smallest_vertex = current_vertex;
-    } if (ring.front() != *smallest_vertex) {
+    } 
+    if (ring.front() != *smallest_vertex) {
       ring.splice(ring.begin(), ring, smallest_vertex, ring.end());
     }
   }
@@ -303,7 +306,8 @@ public:
     std::set<Polygon_with_holes_2<Kernel, PolygonContainer>, Polygon_with_holes_less> ordered_polygons;
     for (int i = 0; i < polygons.size(); ++i) {
       ordered_polygons.insert(Polygon_with_holes_2<Kernel, PolygonContainer>(polygons[i], holes[i].begin(), holes[i].end()));
-    } for (auto const& polygon: ordered_polygons) {
+    } 
+    for (auto const& polygon: ordered_polygons) {
       // std::cout << "Adding polygon " << polygon << std::endl;
       mp.add_polygon(polygon);
     }

@@ -97,7 +97,8 @@ public:
     Bbox_2 bbox;
     for (auto const& pwh: m_mpwh.polygons()) {
       bbox += pwh.outer_boundary().bbox();
-    } return bbox;
+    } 
+    return bbox;
   }
 
   /*! Compute the elements of a multipolygon with holes.
