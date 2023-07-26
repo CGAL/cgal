@@ -21,11 +21,14 @@ struct Split_by_ratio {
 
   std::size_t ratio;
 
-  Split_by_ratio(std::size_t ratio) : ratio(ratio) {}
+  explicit Split_by_ratio(std::size_t ratio) : ratio(ratio) {}
 
-  template<class Node>
-  bool operator()(const Node &n) const {
-    return n.size() > (ratio * n.depth());
+  template<typename Node_index, typename Tree>
+  bool operator()(Node_index i, const Tree &tree) const {
+    std::size_t num_points = tree.data(i).size();
+    std::size_t depth = tree.depth(i);
+    std::cout << num_points << " " << depth << std::endl;
+    return num_points > (ratio * depth);
   }
 };
 
@@ -35,7 +38,7 @@ int main(int argc, char **argv) {
   Point_set points;
 
   // Load points from a file.
-  std::ifstream stream((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn"));
+  std::ifstream stream((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.off"));
   stream >> points;
   if (0 == points.number_of_points()) {
 
@@ -45,7 +48,7 @@ int main(int argc, char **argv) {
   std::cout << "loaded " << points.number_of_points() << " points" << std::endl;
 
   // Create an octree from the points
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
 
   // Build the octree using our custom split predicate
   octree.refine(Split_by_ratio(2));

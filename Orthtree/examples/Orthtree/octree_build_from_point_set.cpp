@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   Point_set points;
 
   // Load points from a file.
-  std::ifstream stream((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn"));
+  std::ifstream stream((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.xyz"));
   stream >> points;
   if (0 == points.number_of_points()) {
 
@@ -30,13 +30,13 @@ int main(int argc, char **argv) {
   std::cout << "loaded " << points.number_of_points() << " points\n" << std::endl;
 
   // Create an octree from the points
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
 
   // Build the octree with a small bucket size, using a more verbose method
   octree.refine(CGAL::Orthtrees::Maximum_depth_and_maximum_number_of_inliers(5, 10));
 
   // Print out the tree
-  std::cout << octree;
+  std::cout << octree << std::endl;
 
   return EXIT_SUCCESS;
 }
