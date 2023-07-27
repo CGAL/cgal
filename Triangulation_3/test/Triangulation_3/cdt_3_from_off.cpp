@@ -1,6 +1,6 @@
 //#define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #define NO_TRY_CATCH 1
-#define CGAL_DEBUG_CDT_3 1
+// #define CGAL_DEBUG_CDT_3 1
 #define CGAL_TRIANGULATION_CHECK_EXPENSIVE 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -184,7 +184,9 @@ int go(Mesh mesh, std::string output_filename) {
       for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
         polygon.push_back(get(pmap, vertex_it));
       }
+#if CGAL_DEBUG_CDT_3
       std::cerr << "NEW POLYGON #" << poly_id << '\n';
+#endif // CGAL_DEBUG_CDT_3
       const auto coplanar = polygon.size() < 3 ||
           std::all_of(polygon.begin(), polygon.end(),
                       [p1 = polygon[0], p2 = polygon[1], p3 = polygon[2]](auto p) {
