@@ -245,7 +245,7 @@ public:
    * queries.
    *
    * @tparam InputPolyhedraPtrIterator must be a model of
-   * `ForwardIterator` and value type `Polyhedron*`
+   * `ForwardIterator` with value type `Polyhedron*`
    *
    * @param begin iterator for a sequence of pointers to polyhedra
    * @param end iterator for a sequence of pointers to polyhedra
