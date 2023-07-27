@@ -84,7 +84,7 @@ related to the template parameters of some models of the main concepts:
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Mesh_triangulation_3<MD,GT,ConcurrencyTag,VertexBase,CellBase>`
+- `CGAL::Mesh_triangulation_3<MD,GT,ConcurrencyTag,Vb,Cb>`
 - `CGAL::Mesh_vertex_base_3<GT,MD,Vb>`
 - `CGAL::Compact_mesh_cell_base_3<GT,MD,Tds>`
 - `CGAL::Mesh_cell_base_3<GT,MD,Cb>`
