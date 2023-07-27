@@ -164,7 +164,7 @@ public:
     Constructor from a polyhedral surface.
     No feature detection is done at this level. Note that a copy of `bounding_polyhedron` will be done.
     The polyhedron `bounding_polyhedron` has to be closed and free of intersections.
-    Its interior of `bounding_polyhedron` will be meshed.
+    The interior of `bounding_polyhedron` will be meshed.
   */
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& bounding_polyhedron
 #ifndef DOXYGEN_RUNNING
