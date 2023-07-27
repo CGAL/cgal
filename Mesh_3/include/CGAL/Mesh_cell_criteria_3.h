@@ -93,7 +93,7 @@ public:
    *     bound will be refined.
    *
    * See Section \ref introsecparam for further details.
-   * Note that if one parameter is set to 0, then its corresponding criteria is ignored.
+   * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
    */
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const FT& radius_bound,
