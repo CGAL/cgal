@@ -16,7 +16,7 @@ void dump_as_polylines(const Octree& ot)
 {
   // SL: I cheated for this part and looked at the implementation
     std::ofstream out("octree.polylines.txt");
-    for (Octree::Node_index node : ot.traverse_indices(CGAL::Orthtrees::Leaves_traversal<Octree>(ot)))
+    for (Octree::Node_index node : ot.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(ot)))
     {
       if (!ot.is_leaf(node))
         continue;

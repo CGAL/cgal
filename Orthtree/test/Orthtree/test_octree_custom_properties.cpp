@@ -35,7 +35,7 @@ int main(void) {
 
   // Expanding the tree; new nodes should be assigned the default value
   tree.refine(10, 1);
-  for (auto n : tree.traverse_indices<CGAL::Orthtrees::Preorder_traversal<Octree>>()) {
+  for (auto n : tree.traverse<CGAL::Orthtrees::Preorder_traversal<Octree>>()) {
     // Everything but the root will have the default value
     if (!tree.is_root(n)) assert(node_int_property[n] == 5);
   }

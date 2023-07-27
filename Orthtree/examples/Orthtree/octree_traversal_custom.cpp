@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
   octree.refine();
 
   // Print out the first branch using custom traversal
-  for (auto node: octree.traverse_indices<First_branch_traversal<Octree>>()) {
+  for (auto node: octree.traverse<First_branch_traversal<Octree>>()) {
     std::cout << octree.to_string(node) << std::endl;
   }
 

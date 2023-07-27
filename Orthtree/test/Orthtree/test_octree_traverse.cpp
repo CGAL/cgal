@@ -26,7 +26,7 @@ bool test_preorder_1_node() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse_indices<Preorder_traversal>();
+  auto nodes = octree.traverse<Preorder_traversal>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -47,7 +47,7 @@ bool test_preorder_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse_indices<Preorder_traversal>();
+  auto nodes = octree.traverse<Preorder_traversal>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -72,7 +72,7 @@ bool test_level_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse_indices<Level_traversal>(static_cast<std::size_t>(1));
+  auto nodes = octree.traverse<Level_traversal>(static_cast<std::size_t>(1));
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -98,7 +98,7 @@ bool test_preorder_25_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse_indices<Preorder_traversal>();
+  auto nodes = octree.traverse<Preorder_traversal>();
 
   // Check each item in the range
   auto iter = nodes.begin();

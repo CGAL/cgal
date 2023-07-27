@@ -369,7 +369,7 @@ public:
 
     // Collect all the leaf nodes
     std::queue<Node_index> leaf_nodes;
-    for (Node_index leaf: traverse_indices(Orthtrees::Leaves_traversal<Self>(*this))) {
+    for (Node_index leaf: traverse(Orthtrees::Leaves_traversal<Self>(*this))) {
       leaf_nodes.push(leaf);
     }
 
@@ -451,7 +451,7 @@ public:
     \return a forward input iterator over the node indices of the tree
    */
   template <typename Traversal>
-  Node_index_range traverse_indices(Traversal traversal) const {
+  Node_index_range traverse(Traversal traversal) const {
 
     Node_index first = traversal.first_index();
 
@@ -465,7 +465,7 @@ public:
 
 
   /*!
-    \brief Convenience function for using a traversal without constructing it yourself
+    \brief Convenience method for using a traversal without constructing it yourself
 
     \tparam Traversal model of `OrthtreeTraversal` that provides functions
     compatible with the type of the orthtree
@@ -475,8 +475,8 @@ public:
     \return a forward input iterator over the node indices of the tree
    */
   template <typename Traversal, typename ...Args>
-  Node_index_range traverse_indices(Args&& ...args) const {
-    return traverse_indices(Traversal{*this, std::forward<Args>(args)...});
+  Node_index_range traverse(Args&& ...args) const {
+    return traverse(Traversal{*this, std::forward<Args>(args)...});
   }
 
   /*!
@@ -1157,7 +1157,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   void dump_to_polylines(std::ostream& os) const {
-    for (const auto n: traverse_indices<Orthtrees::Preorder_traversal>())
+    for (const auto n: traverse<Orthtrees::Preorder_traversal>())
       if (is_leaf(n)) {
         Bbox box = bbox(n);
         dump_box_to_polylines(box, os);
@@ -1214,7 +1214,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Self& orthtree) {
     // Iterate over all nodes
-    for (auto n: orthtree.traverse_indices(Orthtrees::Preorder_traversal<Self>(orthtree))) {
+    for (auto n: orthtree.traverse(Orthtrees::Preorder_traversal<Self>(orthtree))) {
       // Show the depth
       for (int i = 0; i < orthtree.depth(n); ++i)
         os << ". ";
