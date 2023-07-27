@@ -848,6 +848,8 @@ private:
   {
     const auto vc = cell->vertex(index_vd);
     const auto vd = cell->vertex(index_vc);
+    if(vc->nb_of_incident_constraints < 0) return 0; // vertex marked of the border
+    if(vd->nb_of_incident_constraints < 0) return 0; // vertex marked of the border
     const auto pc = this->point(vc);
     const auto pd = this->point(vd);
     const typename Geom_traits::Segment_3 seg{pc, pd};
@@ -876,39 +878,41 @@ private:
   // Given a region and a border edge of it, returns an edge in the link of the
   // border edge that intersects the region.
   // The returned edge has its first vertex above the region.
+  template <typename Edges_container>
   std::optional<Edge> search_first_intersection(CDT_3_face_index /*face_index*/,
                                                 const CDT_2& cdt_2,
                                                 const auto& fh_region,
-                                                const Edge border_edge)
+                                                const Edges_container& border_edges)
   {
-    const auto [c, i, j] = border_edge;
-    const Vertex_handle va_3d = c->vertex(i);
-    const Vertex_handle vb_3d = c->vertex(j);
-    auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
-#if CGAL_DEBUG_CDT_3 > 32
-    std::ofstream dump_edges_around("dump_edges_around.polylines.txt");
-    dump_edges_around.precision(17);
-#endif // CGAL_DEBUG_CDT_3
-    CGAL_assertion(cell_circ != nullptr);
-    do {
-      if(this->is_infinite(cell_circ)) {
-        continue;
-      }
-      const auto index_va = cell_circ->index(va_3d);
-      const auto index_vb = cell_circ->index(vb_3d);
-      const auto index_vc = this->next_around_edge(index_va, index_vb);
-      const auto index_vd = this->next_around_edge(index_vb, index_va);
-#if CGAL_DEBUG_CDT_3 > 32
-      write_segment(dump_edges_around, cell_circ->vertex(index_vc), cell_circ->vertex(index_vd));
-#endif
-      int cd_intersects_region = does_edge_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
-      if(cd_intersects_region == 1) {
-        return { Edge{cell_circ, index_vc, index_vd} };
-      }
-      if(cd_intersects_region == -1) {
-        return { Edge{cell_circ, index_vd, index_vc} };
-      }
-    } while(++cell_circ != end);
+    for(const auto [c, i, j]: border_edges) {
+      const Vertex_handle va_3d = c->vertex(i);
+      const Vertex_handle vb_3d = c->vertex(j);
+
+      // std::ofstream dump_edges_around("dump_edges_around.polylines.txt");
+      // dump_edges_around.precision(17);
+
+      auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
+      CGAL_assertion(cell_circ != nullptr);
+      do {
+        if(this->is_infinite(cell_circ)) {
+          continue;
+        }
+        const auto index_va = cell_circ->index(va_3d);
+        const auto index_vb = cell_circ->index(vb_3d);
+        const auto index_vc = this->next_around_edge(index_va, index_vb);
+        const auto index_vd = this->next_around_edge(index_vb, index_va);
+
+        //write_segment(dump_edges_around, cell_circ->vertex(index_vc), cell_circ->vertex(index_vd));
+
+        int cd_intersects_region = does_edge_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
+        if(cd_intersects_region == 1) {
+          return { Edge{cell_circ, index_vc, index_vd} };
+        }
+        if(cd_intersects_region == -1) {
+          return { Edge{cell_circ, index_vd, index_vc} };
+        }
+      } while(++cell_circ != end);
+    }
     return {};
   }
 
@@ -1093,8 +1097,15 @@ private:
       std::cerr << std::format("  {}\n", IO::oformat(v, with_point));
     }
 #endif
-    const Edge first_border_edge{border_edges[0]};
-    const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, first_border_edge);
+    for(auto v: polygon_vertices) {
+      v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
+      CGAL_assertion(v->nb_of_incident_constraints < 0);
+    }
+    const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, border_edges);
+    for(auto v: polygon_vertices) {
+      v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
+      CGAL_assertion(v->nb_of_incident_constraints > 0);
+    }
 
     [[maybe_unused]] auto debug_region_size_4 = [&] {
       if(polygon_vertices.size() == 4) {
