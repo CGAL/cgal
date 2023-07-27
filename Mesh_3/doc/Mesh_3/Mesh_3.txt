@@ -494,7 +494,7 @@ protecting ball centers that are consecutive on a 1-feature. This parameter has 
 
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
-and enables the user to tune the parameters of the activated optimization processes.
+and enable the user to tune the parameters of the activated optimization processes.
 These parameters have internal types which are not described
 but the library provides global functions to generate
 appropriate values of these types:
