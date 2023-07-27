@@ -1809,6 +1809,9 @@ public:
       }
       catch(PLC_error& e) {
         std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(e.face_index) + "\n";
+        i = face_constraint_misses_subfaces.find_next(i);
+        if(i == npos) throw;
+        continue;
       }
       i = face_constraint_misses_subfaces.find_first();
     }
