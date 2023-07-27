@@ -99,6 +99,8 @@ public:
    * \brief Initializes the contained elements for the root node.
    *
    * Typically produces a `Node_data` which contains all the elements in the tree.
+   * e.g. For a tree where each node contains a set of points,
+   * root_node_contents() will produce the list of all points.
    *
    * @return The `Node_data` instance to be contained by the root node
    */
