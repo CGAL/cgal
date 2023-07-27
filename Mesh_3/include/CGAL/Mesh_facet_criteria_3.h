@@ -93,7 +93,7 @@ public:
  /*!
     returns an object to serve as criteria for facets.
 
-    \param angle_bound is the lower bound for the angle in degrees of the
+    \param angle_bound is the lower bound for the angles in degrees of the
     surface mesh facets.
     \param radius_bound is a uniform upper bound
     for the radius of the surface Delaunay balls.
