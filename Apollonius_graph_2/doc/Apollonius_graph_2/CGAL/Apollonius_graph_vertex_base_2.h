@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Apollonius_graph_vertex_base_2` provides a model for the
 `ApolloniusGraphVertexBase_2` concept which is the vertex base
 required by the `ApolloniusGraphDataStructure_2` concept. The
-class `Apollonius_graph_vertex_base_2` has two template arguments.
+class `Apollonius_graph_vertex_base_2` has three template arguments.
 
 \tparam Gt is the geometric traits of the Apollonius graph and must be a model of the
 concept `ApolloniusGraphTraits_2`.
