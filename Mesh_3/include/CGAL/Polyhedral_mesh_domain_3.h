@@ -111,7 +111,7 @@ struct IGT_generator<GT,CGAL::Tag_false>
 The class `Polyhedral_mesh_domain_3` implements
 a domain defined by a simplicial polyhedral surface.
 
-The input polyhedral surface must be free of intersection.
+The input polyhedral surface must be free of intersections.
 It must include (at least) one closed connected component
 that defines the boundary of the domain to be meshed.
 Inside this bounding component,
