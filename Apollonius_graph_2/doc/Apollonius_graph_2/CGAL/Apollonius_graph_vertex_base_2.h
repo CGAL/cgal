@@ -29,7 +29,7 @@ instantiated by `Triangulation_ds_vertex_base_2<>`.
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 \sa `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Gt>`
 */
-  template< typename Gt, typename StoreHidden, typename Vb >
+template< typename Gt, typename StoreHidden, typename Vb >
 class Apollonius_graph_vertex_base_2 : public Vb {
 public:
 
