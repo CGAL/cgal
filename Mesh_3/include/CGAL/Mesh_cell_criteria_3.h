@@ -32,7 +32,7 @@ namespace CGAL {
 
 The class `Mesh_cell_criteria_3` is a model of `MeshCellCriteria_3`. It provides,
 for the mesh tetrahedra,
-a uniform shape criteria
+a uniform shape criterion
 and a sizing field which may be a uniform or variable field.
 
 \tparam Tr must be identical to the nested type
