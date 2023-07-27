@@ -290,7 +290,15 @@ private:
                 "move assignment is missing");
 
 protected:
-  struct PLC_error { int face_index; int region_index; };
+  struct PLC_error : Error_exception {
+    int face_index;
+    int region_index;
+
+    PLC_error(std::string msg, std::string file, int line, int face_index, int region_index)
+        : Error_exception("CGAL CDT_3", msg, file, line), face_index(face_index), region_index(region_index)
+    {
+    }
+  };
   using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
   using Constraint_id = typename Constraint_hierarchy::Constraint_id;
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
@@ -1013,7 +1021,8 @@ private:
           int v0v1_intersects_region = does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
           if(v0v1_intersects_region != 0) {
             if(v0v1_intersects_region != expected) {
-              throw PLC_error{face_index, region_count};
+              throw PLC_error{"PLC error: v0v1_intersects_region != expected" ,
+                    __FILE__, __LINE__, face_index, region_count};
             }
             // report the edge with first vertex above the region
             if(v0v1_intersects_region < 0) {
@@ -1039,7 +1048,8 @@ private:
             write_segment(out, Edge{cell, index_v_above, index_vc});
             write_segment(out, Edge{cell, index_v_below, index_vc});
           }
-          throw PLC_error{face_index, region_count};
+          throw PLC_error{"PLC error: !test_edge(v_above..) && !test_edge(v_below..)" ,
+                __FILE__, __LINE__, face_index, region_count};
         }
       } while(++facet_circ != facet_circ_end);
     }

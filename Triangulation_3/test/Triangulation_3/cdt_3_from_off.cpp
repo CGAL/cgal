@@ -35,6 +35,7 @@ using Vb = CGAL::Base_with_time_stamp<CGAL::Constrained_Delaunay_triangulation_v
 using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
 using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
 using Delaunay = CGAL::Delaunay_triangulation_3<K, Tds>;
+using CDT = CGAL::Constrained_Delaunay_triangulation_3<Delaunay>;
 using Point = Delaunay::Point;
 using Point_3 = K::Point_3;
 
@@ -78,7 +79,7 @@ int main(int argc, char* argv[])
     std::cerr << "SKIP from " << start << " to " << end << '\n';
     for(auto i = end - 1; i >= start; --i) {
       const auto f = m.faces().begin() + i;
-      m.remove_face(*f);
+      CGAL::Euler::remove_face(halfedge(*f, m), m);
     }
     m.collect_garbage();
     assert(m.is_valid(true));
@@ -89,10 +90,15 @@ int main(int argc, char* argv[])
   Mesh bad_mesh{mesh};
   while(true) {
     simplify(mesh);
+        std::ofstream current("current.off");
+        current.precision(17);
+        current << mesh;
+        current.close();
+
     try {
       go(mesh, output_filename);
-    } catch(CGAL::Error_exception& e) {
-      if(e.message().find(std::string("### error with cavity ###")) != std::string::npos)
+    } catch(CGAL::Failure_exception& e) {
+      if(e.expression().find(std::string("orientation(p0, p1, p2, p3) == POSITIVE")) != std::string::npos)
       {
         std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
         std::ofstream bad("bad.off");
@@ -114,7 +120,7 @@ int main(int argc, char* argv[])
 }
 
 int go(Mesh mesh, std::string output_filename) {
-  CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt;
+  CDT cdt;
 
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
   double d_x = bbox.xmax() - bbox.xmin();
