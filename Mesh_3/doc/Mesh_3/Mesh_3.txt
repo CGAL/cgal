@@ -296,7 +296,7 @@ also inserts a small set of auxiliary vertices that belong to the triangulation
 but are isolated from the complex at the end of the meshing process.
 
 These so-called \em isolated vertices belong to the triangulation but not to any cell
-of the `C3T3`. They can be removed using the function `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`.
+of the `C3T3`. They can be removed using the function `remove_isolated_vertices()` of `CGAL::Mesh_complex_3_in_triangulation_3`.
 
 
 \section Mesh_3_section_interface Interface
