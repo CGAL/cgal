@@ -30,7 +30,7 @@ instantiated by `Triangulation_ds_vertex_base_2<>`.
 \sa `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Gt>`
 */
   template< typename Gt, typename StoreHidden, typename Vb >
-  class Apollonius_graph_vertex_base_2 : public Vb {
+class Apollonius_graph_vertex_base_2 : public Vb {
 public:
 
 /// \name Creation
