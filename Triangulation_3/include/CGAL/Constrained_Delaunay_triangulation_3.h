@@ -124,7 +124,7 @@ public:
                             Facet_handle facet_2d)
   {
     this->face_id[unsigned(i)] = face_id;
-    this->facet_2d[unsigned(i)] = static_cast<void*>(std::addressof(*facet_2d));
+    this->facet_2d[unsigned(i)] = static_cast<void*>(facet_2d == Facet_handle{} ?  nullptr : std::addressof(*facet_2d));
   }
 
   CDT_3_face_index face_constraint_index(int i) const {
