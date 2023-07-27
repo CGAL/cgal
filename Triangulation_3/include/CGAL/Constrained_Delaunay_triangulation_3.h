@@ -76,7 +76,7 @@ concept Polygon_3 = std::ranges::common_range<Polygon>
                                 typename Kernel::Point_3>);
 #endif // concepts
 
-using CDT_3_face_index = int;
+using CDT_3_face_index = int; // must be signed
 
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
 class Constrained_Delaunay_triangulation_vertex_base_3
