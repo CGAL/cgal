@@ -19,6 +19,8 @@
 #include <CGAL/Kernel_d/Point_d.h>
 #include <CGAL/Kernel_d/Sphere_d.h>
 
+#include <CGAL/Orthtree_traits_d_base.h>
+
 namespace CGAL {
 
 // todo: should this go in its own header & namespace?
@@ -79,7 +81,7 @@ template <
   typename PointSet,
   typename PointMap = Identity_property_map<typename GeomTraits::Point_d>
 >
-struct Orthtree_traits_point_d {
+struct Orthtree_traits_point_d : public Orthtree_traits_d_base<GeomTraits, DimensionTag> {
 public:
 
   /// \name Types
@@ -87,45 +89,8 @@ public:
 
   using Self = Orthtree_traits_point_d<GeomTraits, DimensionTag, PointSet, PointMap>;
 
-  using Dimension = DimensionTag;
-  using FT = typename GeomTraits::FT;
-  using Point_d = typename GeomTraits::Point_d;
-  using Sphere_d = typename GeomTraits::Sphere_d;
-  using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_d;
-  using Array = std::array<FT, Dimension::value>;
-
   using Node_data = boost::iterator_range<typename PointSet::iterator>;
   using Node_data_element = typename std::iterator_traits<typename PointSet::iterator>::value_type;
-
-#ifdef DOXYGEN_RUNNING
-  typedef unspecified_type Bbox_d; ///< Bounding box type.
-#else
-
-  class Bbox_d {
-    Point_d m_min, m_max;
-  public:
-
-    Bbox_d(const Point_d& pmin, const Point_d& pmax)
-      : m_min(pmin), m_max(pmax) {}
-
-    const Point_d& min BOOST_PREVENT_MACRO_SUBSTITUTION() { return m_min; }
-
-    const Point_d& max BOOST_PREVENT_MACRO_SUBSTITUTION() { return m_max; }
-  };
-
-#endif
-
-  /*!
-    Adjacency type.
-
-    \note This type is used to identify adjacency directions with
-    easily understandable keywords (left, right, up, etc.) and is thus
-    mainly useful for `Orthtree_traits_2` and `Orthtree_traits_3`. In
-    higher dimensions, such keywords do not exist and this type is
-    simply an integer. Conversions from this integer to bitsets still
-    works but do not provide any easier API for adjacency selection.
-  */
-  using Adjacency = int;
 
 #ifdef DOXYGEN_RUNNING
   /*!
@@ -135,8 +100,8 @@ public:
 #else
 
   struct Construct_point_d_from_array {
-    Point_d operator()(const Array& array) const {
-      return Point_d(array.begin(), array.end());
+    typename Self::Point_d operator()(const typename Self::Array& array) const {
+      return typename Self::Point_d(array.begin(), array.end());
     }
   };
 
@@ -150,8 +115,8 @@ public:
 #else
 
   struct Construct_bbox_d {
-    Bbox_d operator()(const Array& min, const Array& max) const {
-      return Bbox_d(Point_d(min.begin(), min.end()), Point_d(max.begin(), max.end()));
+    typename Self::Bbox_d operator()(const typename Self::Array& min, const typename Self::Array& max) const {
+      return typename Self::Bbox_d(typename Self::Point_d(min.begin(), min.end()), typename Self::Point_d(max.begin(), max.end()));
     }
   };
 
@@ -177,17 +142,17 @@ public:
   */
   Construct_bbox_d construct_bbox_d_object() const { return Construct_bbox_d(); }
 
-  std::pair<Array, Array> root_node_bbox() const {
+  std::pair<typename Self::Array, typename Self::Array> root_node_bbox() const {
 
-    Array bbox_min;
-    Array bbox_max;
+    typename Self::Array bbox_min;
+    typename Self::Array bbox_max;
     Orthtrees::internal::Cartesian_ranges<Self> cartesian_range;
 
     // init bbox with first values found
     {
       const auto& point = get(m_point_map, *(m_point_set.begin()));
       std::size_t i = 0;
-      for (const FT& x: cartesian_range(point)) {
+      for (const typename Self::FT& x: cartesian_range(point)) {
         bbox_min[i] = x;
         bbox_max[i] = x;
         ++i;
@@ -197,7 +162,7 @@ public:
     for (const auto& p: m_point_set) {
       const auto& point = get(m_point_map, p);
       std::size_t i = 0;
-      for (const FT& x: cartesian_range(point)) {
+      for (const typename Self::FT& x: cartesian_range(point)) {
         bbox_min[i] = (std::min)(x, bbox_min[i]);
         bbox_max[i] = (std::max)(x, bbox_max[i]);
         ++i;
@@ -210,12 +175,12 @@ public:
   Node_data root_node_contents() const { return {m_point_set.begin(), m_point_set.end()}; }
 
   template <typename Node_index, typename Tree>
-  void distribute_node_contents(Node_index n, Tree& tree, const Point_d& center) {
+  void distribute_node_contents(Node_index n, Tree& tree, const typename Self::Point_d& center) {
     CGAL_precondition(!tree.is_leaf(n));
     reassign_points(tree, m_point_map, n, center, tree.data(n));
   }
 
-  Point_d get_element(const Node_data_element& index) const {
+  typename Self::Point_d get_element(const Node_data_element& index) const {
     return get(m_point_map, index);
   }
 
