@@ -87,7 +87,7 @@ void do_main(const char *s) {
   struct rusage before, after;
   struct timeval utime, stime;
   getrusage(RUSAGE_SELF,&before);
-  insert(_pm,ac.begin(),ac.end(),boost::false_type());
+  insert(_pm,ac.begin(),ac.end(),std::false_type());
   getrusage(RUSAGE_SELF,&after);
   timersub(&(after.ru_utime),&(before.ru_utime),&utime);
   timersub(&(after.ru_stime),&(before.ru_stime),&stime);
@@ -177,7 +177,7 @@ void do_main(int k) {
   struct rusage before, after;
   struct timeval utime, stime;
   getrusage(RUSAGE_SELF,&before);
-  insert(_pm,ac.begin(),ac.end(),boost::false_type());
+  insert(_pm,ac.begin(),ac.end(),std::false_type());
   getrusage(RUSAGE_SELF,&after);
   timersub(&(after.ru_utime),&(before.ru_utime),&utime);
   timersub(&(after.ru_stime),&(before.ru_stime),&stime);

@@ -18,8 +18,6 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>

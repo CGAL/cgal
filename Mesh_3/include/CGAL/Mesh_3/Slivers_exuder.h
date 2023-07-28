@@ -39,7 +39,6 @@
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/optional.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 
 #include <algorithm>
 #include <iomanip> // std::setprecision
@@ -623,7 +622,7 @@ private:
   {
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
         ch, this->erase_counter(ch), criterion_value);
     // Sequential
@@ -920,7 +919,7 @@ pump_vertices(FT sliver_criterion_limit,
 
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_task_group();
 

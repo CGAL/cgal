@@ -182,7 +182,7 @@ namespace CGAL {
 
     /// After one or more calls to `AABB_tree_with_join::insert()` the internal data
     /// structure of the tree must be reconstructed. This procedure
-    /// has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.  This procedure is called implicitly
     /// at the first call to a query member function. You can call
     /// AABB_tree_with_join::build() explicitly to ensure that the next call to

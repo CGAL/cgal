@@ -352,7 +352,7 @@ namespace CGAL {
       //typedef const result_type&       qualified_result_type;
 
       template < typename T >
-      //typename boost::remove_reference<qualified_result_type>::type
+      //std::remove_reference_t<qualified_result_type>
         Circular_arc_point_2
       operator()(const T &a) const
       {
@@ -370,7 +370,7 @@ namespace CGAL {
       typedef Point_2                  result_type;
       //typedef const result_type&       qualified_result_type;
 
-      //typename boost::remove_reference<qualified_result_type>::type
+      //std::remove_reference_t<qualified_result_type>
       result_type
       operator() (const boost::variant< Arc1, Arc2 > & cv) const
       {
@@ -397,7 +397,7 @@ namespace CGAL {
       //typedef const result_type&       qualified_result_type;
 
       template < typename T >
-      //typename boost::remove_reference<qualified_result_type>::type
+      //std::remove_reference_t<qualified_result_type>
         Circular_arc_point_2
       operator()(const T &a) const
       {
@@ -420,7 +420,7 @@ namespace CGAL {
       typedef Point_2                  result_type;
       //typedef const result_type&       qualified_result_type;
 
-       //typename boost::remove_reference<qualified_result_type>::type
+       //std::remove_reference<qualified_result_type>
       result_type
        operator() (const boost::variant< Arc1, Arc2 > & cv) const
       {

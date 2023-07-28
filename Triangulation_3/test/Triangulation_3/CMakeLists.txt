@@ -25,10 +25,21 @@ create_single_source_cgal_program("test_simplex_3.cpp")
 create_single_source_cgal_program("test_simplex_iterator_3.cpp" )
 create_single_source_cgal_program("test_segment_cell_traverser_3.cpp" )
 create_single_source_cgal_program("test_segment_simplex_traverser_3.cpp" )
+if(cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+  target_compile_features(test_segment_simplex_traverser_3 PRIVATE cxx_std_17)
+else()
+  message(
+  STATUS
+    "NOTICE: test_segment_simplex_traverser_3.cpp requires C++17 and will not be compiled."
+  )
+endif()
 create_single_source_cgal_program("test_static_filters.cpp")
 create_single_source_cgal_program("test_triangulation_3.cpp")
 create_single_source_cgal_program("test_io_triangulation_3.cpp")
 create_single_source_cgal_program("test_triangulation_serialization_3.cpp")
+create_single_source_cgal_program("test_dt_deterministic_3.cpp")
+create_single_source_cgal_program("test_Triangulation_with_transform_iterator.cpp")
+create_single_source_cgal_program("test_Triangulation_with_zip_iterator.cpp")
 
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")

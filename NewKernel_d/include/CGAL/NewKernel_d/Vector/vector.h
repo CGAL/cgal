@@ -29,7 +29,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
         struct Rebind_dimension {
           typedef Vector_vector< NT, D2, D3 > Other;
         };
-        template<class> struct Property : boost::false_type {};
+        template<class> struct Property : std::false_type {};
 
         struct Construct_vector {
                 struct Dimension {

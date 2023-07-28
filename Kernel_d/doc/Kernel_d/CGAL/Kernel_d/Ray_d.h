@@ -12,9 +12,9 @@ it goes to infinity.
 Rays are implemented by a pair of points as an item type. All
 operations like creation, initialization, tests, direction
 calculation, input and output on a ray \f$ r\f$ take time
-\f$ O(r.dimension())\f$. `dimension()`, coordinate and point
+\cgalBigO{r.dimension()}. `dimension()`, coordinate and point
 access, and identity test take constant time. The space requirement is
-\f$ O(r.dimension())\f$.
+\cgalBigO{r.dimension()}.
 
 */
 template< typename Kernel >

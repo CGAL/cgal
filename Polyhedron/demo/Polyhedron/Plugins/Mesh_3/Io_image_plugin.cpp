@@ -856,18 +856,18 @@ private:
   template<typename T>
   void switchReaderConverter(std::pair<T, T> minmax)
   {
-    switchReaderConverter(minmax, typename boost::is_integral<T>::type());
+    switchReaderConverter(minmax, typename std::is_integral<T>::type());
   }
 
   template<typename T>
-  void switchReaderConverter(std::pair<T, T> minmax, boost::true_type)
+  void switchReaderConverter(std::pair<T, T> minmax, std::true_type)
   {
     // IntConverter
     IntConverter x = { minmax }; pxr_.setIC(x);
   }
 
   template<typename T>
-  void switchReaderConverter(std::pair<T, T> minmax, boost::false_type)
+  void switchReaderConverter(std::pair<T, T> minmax, std::false_type)
   {
     // IntConverter
     DoubleConverter x = { minmax }; pxr_.setFC(x);

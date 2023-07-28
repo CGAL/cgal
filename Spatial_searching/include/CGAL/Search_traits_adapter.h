@@ -225,13 +225,13 @@ public:
   // Select type of iterator + construct class depending on whether
   // point map is lvalue or not
   typedef typename boost::mpl::if_<
-              boost::is_reference<typename boost::property_traits<PointPropertyMap>::reference>,
+              std::is_reference<typename boost::property_traits<PointPropertyMap>::reference>,
               typename Base::Cartesian_const_iterator_d,
               No_lvalue_iterator>::type
     Cartesian_const_iterator_d;
 
   typedef typename boost::mpl::if_<
-              boost::is_reference<typename boost::property_traits<PointPropertyMap>::reference>,
+              std::is_reference<typename boost::property_traits<PointPropertyMap>::reference>,
               Construct_cartesian_const_iterator_d_lvalue,
               Construct_cartesian_const_iterator_d_no_lvalue>::type
     Construct_cartesian_const_iterator_d;
