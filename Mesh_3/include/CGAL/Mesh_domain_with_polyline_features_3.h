@@ -84,7 +84,7 @@ public:
     return points_.back();
   }
 
-  /// returns `true` if the polyline is not degenerated
+  /// returns `true` if the polyline is not degenerate
   bool is_valid() const
   {
     return points_.size() > 1;
