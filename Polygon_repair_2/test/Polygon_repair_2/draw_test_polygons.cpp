@@ -23,20 +23,20 @@ int main(int argc, char* argv[]) {
     if (file.path().filename().extension() != ".wkt") continue;
     std::cout << "Reading " << file.path().filename() << "..." << std::endl;
 
-    // if (file.path().filename() != "hole-outside.wkt") continue;
+    // if (file.path().filename() != "nesting.wkt") continue;
 
     std::string in;
     std::getline(std::ifstream(file.path()), in);
     std::istringstream iss(in);
-    std::size_t is_polygon = in.find("POLYGON");
-    std::size_t is_multipolygon = in.find("MULTIPOLYGON");
     Multipolygon_with_holes_2 rmp;
-    if (is_polygon == 0) {
+
+    if (in.find("POLYGON") == 0) {
       Polygon_with_holes_2 p;
-      CGAL::IO::read_polygon_WKT(iss, p);
-      CGAL::draw(p);
+      if (in != "POLYGON()") { // maybe should be checked in WKT reader
+        CGAL::IO::read_polygon_WKT(iss, p);
+      } CGAL::draw(p);
       rmp = CGAL::Polygon_repair_2::repair(p);
-    } else if (is_multipolygon == 0) {
+    } else if (in.find("MULTIPOLYGON") == 0) {
       Multipolygon_with_holes_2 mp;
       CGAL::IO::read_multi_polygon_WKT(iss, mp);
       CGAL::draw(mp);
