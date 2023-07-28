@@ -1090,8 +1090,8 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   }
   std::cout << "total num half-edges = " << total_num_half_edges << std::endl;
  
-  std::ofstream ofile("C:/work/gsoc2023/deneme.txt");
-  ofile << js;
+  // save the arrangment
+  std::ofstream ofile(file_name);
+  ofile << js.dump(2);
   ofile.close();
-
 }
