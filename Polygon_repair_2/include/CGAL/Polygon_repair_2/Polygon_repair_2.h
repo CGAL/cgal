@@ -39,7 +39,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_2<Kerne
   pr.add_to_triangulation(p);
   if (pr.triangulation().number_of_faces() > 0) {
     pr.label_triangulation();
-    pr.compute_hole_nesting();
+    pr.compute_nesting();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
@@ -52,7 +52,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_with_ho
   pr.add_to_triangulation(p);
   if (pr.triangulation().number_of_faces() > 0) {
     pr.label_triangulation();
-    pr.compute_hole_nesting();
+    pr.compute_nesting();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
@@ -65,7 +65,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Multipolygon_wi
   pr.add_to_triangulation(mp);
   if (pr.triangulation().number_of_faces() > 0) {
     pr.label_triangulation();
-    pr.compute_hole_nesting();
+    pr.compute_nesting();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
@@ -211,13 +211,14 @@ public:
   void reconstruct_ring(std::list<typename Kernel::Point_2>& ring,
                         typename Triangulation::Face_handle face_adjacent_to_boundary,
                         int opposite_vertex) {
+    // std::cout << "Reconstructing ring for face " << face_adjacent_to_boundary->label() << "..." << std::endl;
 
     // Create ring
     typename Triangulation::Face_handle current_face = face_adjacent_to_boundary;
     int current_opposite_vertex = opposite_vertex;
     do {
       typename Triangulation::Vertex_handle pivot_vertex = current_face->vertex(current_face->cw(current_opposite_vertex));
-      // std::cout << "Adding point " << pivot_vertex->point() << std::endl;
+      // std::cout << "\tAdding point " << pivot_vertex->point() << std::endl;
       ring.push_back(pivot_vertex->point());
       typename Triangulation::Face_circulator fc = t.incident_faces(pivot_vertex, current_face);
       do {
@@ -239,21 +240,42 @@ public:
     }
   }
 
-  void compute_hole_nesting() {
-    nesting.resize(number_of_holes);
-    for (auto const &face: t.finite_face_handles()) {
-      if (face->label() >= -1) continue; // skip non-hole triangles
+  void compute_nesting() {
+    for (auto const face: t.all_face_handles()) {
+      face->processed() = false;
+    } polygon_nesting.resize(number_of_polygons);
+    hole_nesting.resize(number_of_holes);
+    std::list<typename Triangulation::Face_handle> to_check;
+    to_check.push_back(t.infinite_face());
+    t.infinite_face()->processed() = true;
+    while (!to_check.empty()) {
+      typename Triangulation::Face_handle face = to_check.front();
+      to_check.pop_front();
       for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
-        if (face->label() == face->neighbor(opposite_vertex)->label()) continue;
-        nesting[-face->label()-2].insert(face->neighbor(opposite_vertex)->label());
+        if (face->neighbor(opposite_vertex)->processed()) continue;
+        if (face->label() == face->neighbor(opposite_vertex)->label()) {
+          to_check.push_front(face->neighbor(opposite_vertex));
+        } else {
+          if (face->neighbor(opposite_vertex)->label() < -1) {
+            hole_nesting[-face->neighbor(opposite_vertex)->label()-2].insert(face->label());
+          } else {
+            polygon_nesting[face->neighbor(opposite_vertex)->label()-1].insert(face->label());
+          } to_check.push_back(face->neighbor(opposite_vertex));
+        } face->neighbor(opposite_vertex)->processed() = true;
       }
     }
 
-    // int hole_label = -2;
-    // for (auto const &hole: nesting) {
-    //   std::cout << "Hole " << hole_label-- << " contained in polygon(s): ";
+    // int polygon_label = 1;
+    // for (auto const &polygon: polygon_nesting) {
+    //   std::cout << "Polygon " << polygon_label++ << " contained in hole(s):";
+    //   for (auto const& hole: polygon) {
+    //     std::cout <<  " " << hole;
+    //   } std::cout << std::endl;
+    // } int hole_label = -2;
+    // for (auto const &hole: hole_nesting) {
+    //   std::cout << "Hole " << hole_label-- << " contained in polygon(s):";
     //   for (auto const &polygon: hole) {
-    //     std::cout << polygon << " ";
+    //     std::cout << " " << polygon;
     //   } std::cout << std::endl;
     // }
   }
@@ -270,38 +292,40 @@ public:
       face->processed() = false;
     } for (auto const &face: t.finite_face_handles()) {
       if (face->label() == -1) continue; // exterior triangle
-      if (face->label() < -1 && nesting[-face->label()-2].size() > 1) continue; // exterior triangle
+      if (face->label() < -1 && hole_nesting[-face->label()-2].size() > 1) continue; // exterior triangle
       if (face->processed()) continue; // already reconstructed
       for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
-        if (face->label() != face->neighbor(opposite_vertex)->label()) {
+        if (face->label() == face->neighbor(opposite_vertex)->label()) continue; // not adjacent to boundary
+        if (face->label() > 0) {
+          if (polygon_nesting[face->label()-1].count(face->neighbor(opposite_vertex)->label()) != 1) continue; // not adjacent to outer boundary
+        } else if (hole_nesting[-face->label()-2].count(face->neighbor(opposite_vertex)->label()) != 1) continue; // not adjacent to correct polygon
 
-          std::list<typename Kernel::Point_2> ring;
-          reconstruct_ring(ring, face, opposite_vertex);
-          if (face->label() > 0) {
-            polygons[face->label()-1].insert(polygons[face->label()-1].vertices_end(),
-                                             ring.begin(), ring.end());
-          } else {
-            int hole_nesting = *(nesting[-face->label()-2].begin());
-            // std::cout << "Hole: " << face->label() << " -> item " << -face->label()-2 << " -> in polygon " << hole_nesting << std::endl;
-            ring.push_back(ring.front());
-            ring.pop_front();
-            holes[hole_nesting-1].insert(Polygon_2<Kernel, PolygonContainer>(ring.rbegin(), ring.rend()));
-          }
-
-          std::list<typename Triangulation::Face_handle> to_check;
-          to_check.push_back(face);
-          while (!to_check.empty()) {
-            for (int neighbour = 0; neighbour < 3; ++neighbour) {
-              if (to_check.front()->label() == to_check.front()->neighbor(neighbour)->label() &&
-                  !to_check.front()->neighbor(neighbour)->processed()) {
-                to_check.push_back(to_check.front()->neighbor(neighbour));
-              }
-            } to_check.front()->processed() = true;
-            to_check.pop_front();
-          }
-
-          break;
+        std::list<typename Kernel::Point_2> ring;
+        reconstruct_ring(ring, face, opposite_vertex);
+        if (face->label() > 0) {
+          polygons[face->label()-1].insert(polygons[face->label()-1].vertices_end(),
+                                           ring.begin(), ring.end());
+        } else {
+          int polygon = *(hole_nesting[-face->label()-2].begin());;
+          // std::cout << "Hole: " << face->label() << " -> item " << -face->label()-2 << " -> in polygon " << polygon << std::endl;
+          ring.push_back(ring.front());
+          ring.pop_front();
+          holes[polygon-1].insert(Polygon_2<Kernel, PolygonContainer>(ring.rbegin(), ring.rend()));
         }
+
+        std::list<typename Triangulation::Face_handle> to_check;
+        to_check.push_back(face);
+        while (!to_check.empty()) {
+          for (int neighbour = 0; neighbour < 3; ++neighbour) {
+            if (to_check.front()->label() == to_check.front()->neighbor(neighbour)->label() &&
+                !to_check.front()->neighbor(neighbour)->processed()) {
+              to_check.push_back(to_check.front()->neighbor(neighbour));
+            }
+          } to_check.front()->processed() = true;
+          to_check.pop_front();
+        }
+
+        break;
       }
     }
 
@@ -341,7 +365,7 @@ protected:
   Triangulation t;
   Multipolygon_with_holes_2<Kernel, PolygonContainer> mp;
   int number_of_polygons, number_of_holes;
-  std::vector<std::unordered_set<int>> nesting; // note: holes are surrounded by exactly one polygon
+  std::vector<std::unordered_set<int>> polygon_nesting, hole_nesting; // note: holes are surrounded by exactly one polygon
 };
 
 } // namespace Polygon_repair_2

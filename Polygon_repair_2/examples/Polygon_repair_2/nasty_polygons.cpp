@@ -16,10 +16,10 @@ using Polygon_repair_2 = CGAL::Polygon_repair_2::Polygon_repair_2<Kernel>;
 
 int main(int argc, char* argv[]) {
 
-  // std::ifstream ifs("/Users/ken/Downloads/2018418.wkt");
+  // std::ifstream ifs("/Users/ken/Downloads/180927.wkt");
   // std::ofstream ofs("/Users/ken/Downloads/1.geojson");
 
-  std::ifstream ifs("/Users/ken/Downloads/180927.wkt");
+  std::ifstream ifs("/Users/ken/Downloads/2018418.wkt");
   std::ofstream ofs("/Users/ken/Downloads/2.geojson");
 
   std::string in;
@@ -30,10 +30,7 @@ int main(int argc, char* argv[]) {
   Polygon_repair_2 pr;
   pr.add_to_triangulation(p);
   pr.label_triangulation();
-
-
-
-  pr.compute_hole_nesting();
+  pr.compute_nesting();
   pr.reconstruct_multipolygon();
   Multipolygon_with_holes_2 rmp = pr.multipolygon();
   std::ostringstream oss;
