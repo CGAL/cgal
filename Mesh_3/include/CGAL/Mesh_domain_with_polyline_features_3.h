@@ -694,7 +694,7 @@ public:
   /// @}
 
   /// \name Implementation of the concept MeshDomainWithFeatures_3
-  /// The following methods implement the requirement of the concept
+  /// The following methods implement the requirements of the concept
   /// `MeshDomainWithFeatures_3`.
   /// @{
 
