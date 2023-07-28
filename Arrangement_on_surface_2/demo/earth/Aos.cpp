@@ -11,6 +11,7 @@
 #include <qvector3d.h>
 
 #include <nlohmann/json.hpp>
+using json = nlohmann::ordered_json;
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -24,7 +25,14 @@
 #include "Tools.h"
 
 namespace {
+//#define USE_EPIC
+
+#ifdef USE_EPIC
+  using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+#else
   using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+#endif
+
   using Geom_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
   using Point = Geom_traits::Point_2;
   using Curve = Geom_traits::Curve_2;
@@ -328,7 +336,7 @@ void Aos::check(const Kml::Placemarks& placemarks)
                                           arr.number_of_vertices() << std::endl;
   // add arcs
   for(auto xcv : xcvs)
-    CGAL::insert_curve(arr, xcv);
+    CGAL::insert(arr, xcv);
 
   std::cout << "-------------------------------\n";
   std::cout << "num nodes = " << num_counted_nodes << std::endl;
@@ -367,7 +375,7 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
 
   // add arcs
   for (auto& xcv : xcvs)
-    CGAL::insert_curve(arr, xcv);
+    CGAL::insert(arr, xcv);
 
   // extract all vertices that are ADDED when inserting the arcs!
   int num_created_vertices = 0;
@@ -825,8 +833,6 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   }
 
   // DEFINE JSON OBJECT
-  //using json = nlohmann::json;
-  using json = nlohmann::ordered_json;
   json js;
   auto& js_points = js["points"] = json::array();
   
@@ -876,7 +882,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       auto dz = p.dz().exact();
 
       json jv;
-      jv["location"] = std::to_string(p.location());
+      jv["location"] = p.location();
       set_num_denum(dx, jv["dx"]);
       set_num_denum(dy, jv["dy"]);
       set_num_denum(dz, jv["dz"]);
@@ -905,9 +911,8 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       json je;
       auto svp = vertex_pos_map[eh->source()];
       auto tvp = vertex_pos_map[eh->target()];
-      je["source"] = std::to_string(svp);
-      je["target"] = std::to_string(tvp);
-      je["location"] = "";
+      je["source"] = svp;
+      je["target"] = tvp;
       auto& je_normal = je["normal"];
 
       // write the vertex-data to JSON object
@@ -1094,4 +1099,50 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   std::ofstream ofile(file_name);
   ofile << js.dump(2);
   ofile.close();
+}
+
+
+Aos::Approx_arcs Aos::load_arr(const std::string& file_name)
+{
+  auto js_txt = read_file(file_name);
+  auto js = json::parse(js_txt.begin(), js_txt.end());
+
+  Geom_traits traits;
+  Ext_aos arr(&traits);
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
+
+  ////////////////////////////////////////////////////////////////////////////
+  // POINTS
+  std::vector<Point>  points;
+  auto get_double_from_json = [&](json& js_val)
+    {
+      auto num = js_val["num"].get<std::string>();
+      auto den = js_val["den"].get<std::string>();
+      CGAL::Gmpq rat_x(num, den);
+      return CGAL::to_double(rat_x);
+    };
+  auto& js_points = js["points"];
+  for (auto it = js_points.begin(); it != js_points.end(); ++it)
+  {
+    auto& js_point = *it;
+    auto loc = js_point["location"].get<int>();
+    auto dx = get_double_from_json(js_point["dx"]);
+    auto dy = get_double_from_json(js_point["dy"]);
+    auto dz = get_double_from_json(js_point["dz"]);
+    auto p = ctr_p(dx, dy, dz);
+    p.set_location(static_cast<Point::Location_type>(loc));
+    points.push_back(p);
+  }
+  std::cout << "num points = " << points.size() << std::endl;
+
+  ////////////////////////////////////////////////////////////////////////////
+  // CURVES
+  std::vector<Curve>  curves;
+  auto& js_curves = js["curves"];
+  for (auto it = js_curves.begin(); it != js_curves.end(); ++it)
+  {
+    auto& js_curve = *it;
+    //js_curve[]
+  }
 }

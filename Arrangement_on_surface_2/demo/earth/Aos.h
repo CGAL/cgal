@@ -50,6 +50,9 @@ public:
   // save the arrangement created with EPEC
   static void save_arr(Kml::Placemarks& placemarks, 
                        const std::string& file_name);
+
+  // save the arrangement created with EPEC
+  static Approx_arcs load_arr(const std::string& file_name);
 };
 
 
