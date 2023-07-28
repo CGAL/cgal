@@ -22,7 +22,7 @@ Release date: July 2023
     instead of `void`, that is used inside the class `Region_growing` for detecting if the input
     conditions for the new region are satisfied. This change affects only user-defined types of regions.
 -   **Breaking change**: The constructors of all models used together with the region growing algorithm
-    now enable users to provide parameters through the [named parameters](https://doc.cgal.org/latest/BGL/group__bgl__namedparameters.html) mechanism.
+    now enable users to provide parameters through the [named parameters](https://doc.cgal.org/5.6/BGL/group__bgl__namedparameters.html) mechanism.
 -   All fitting classes in the region growing framework are now using better versions of the region
     conditions, more precise and faster, including the correct normal orientations.
 -   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
