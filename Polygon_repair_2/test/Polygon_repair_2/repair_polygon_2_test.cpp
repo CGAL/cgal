@@ -16,7 +16,7 @@ using Polygon_repair_2 = CGAL::Polygon_repair_2::Polygon_repair_2<Kernel>;
 
 int main(int argc, char* argv[]) {
 
-  for (const auto& file: std::__fs::filesystem::directory_iterator("data/in")) {
+  for (const auto& file: std::filesystem::directory_iterator("data/in")) {
     if (file.path().filename().extension() != ".wkt") continue;
     std::cout << "Testing " << file.path().filename() << "... ";
 
