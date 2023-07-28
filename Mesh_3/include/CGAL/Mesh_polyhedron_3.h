@@ -213,7 +213,7 @@ public:
 \ingroup PkgMesh3Domains
 
 The class `Mesh_polyhedron_3` provides a customized `Polyhedron_3` type. This type uses
-as `PolyhedronItems_3` a customized type which adds data to the Vertex, Face and
+as `PolyhedronItems_3` a customized type which adds data to the `Vertex`, `Face` and
 Halfedge classes. Those data are required to use the detection of sharp features.
 
 \tparam IGT stands for the geometric traits associated
