@@ -227,7 +227,7 @@ public:
     return result;
   }
 
-  /// returns signed geodesic distance between `p` and `q`.
+  /// returns the signed geodesic distance between `p` and `q`.
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q) const
   {
     // Locate p & q on polyline
