@@ -699,7 +699,7 @@ public:
   /// @{
 
   /// implements `MeshDomainWithFeatures_3::get_corners()`.
-  /// OutputIterator is std::pair<Corner_index, Point_3>
+  /// OutputIterator is `std::pair<Corner_index, Point_3>`
   template <typename OutputIterator>
   OutputIterator get_corners(OutputIterator out) const;
 
