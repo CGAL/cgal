@@ -125,9 +125,9 @@ public:
     as above, except that the radius and distance bound parameters are
     functionals instead of constants.
   */
-  template < typename Sizing_field, typename DistanceField >
+  template < typename SizingField, typename DistanceField >
   Mesh_facet_criteria_3(const FT& angle_bound,
-                        const Sizing_field & radius_bound,
+                        const SizingField & radius_bound,
                         const DistanceField& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.)
@@ -139,7 +139,7 @@ public:
       init_aspect(angle_bound);
 
     init_radius(radius_bound,
-                Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>());
+                Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>());
 
     init_distance(distance_bound,
                   Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>());

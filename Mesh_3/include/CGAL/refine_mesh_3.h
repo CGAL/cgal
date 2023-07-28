@@ -174,7 +174,7 @@ private:
  *           Individual optimization parameters are not described here as they are
  *           internal types (see instead the documentation page of each optimizer).
  *           For each optimization algorithm, there exist two global functions
- *           that enable to enable or disable the optimizer.
+ *           that enable/disable the optimizer.
  *
  * \cgalNamedParamsBegin
  *   \cgalParamSectionBegin{Topological options (manifoldness)}
