@@ -22,95 +22,62 @@ int main(int argc, char* argv[]) {
   // std::ifstream ifs("/Users/ken/Downloads/2018418.wkt");
   // std::ofstream ofs("/Users/ken/Downloads/1.geojson");
 
-  std::ifstream ifs("../../test/Polygon_repair_2/data/in/nesting.wkt");
+  std::ifstream ifs("../../test/Polygon_repair_2/data/in/nesting-spike.wkt");
   std::ofstream ofs("/Users/ken/Downloads/triangulation.geojson");
 
   std::string in;
   std::getline(ifs, in);
   std::istringstream iss(in);
-  Multipolygon_with_holes_2 mp;
-  CGAL::IO::read_multi_polygon_WKT(iss, mp);
   Polygon_repair_2 pr;
-  pr.add_to_triangulation(mp);
-  pr.label_triangulation();
+
+  if (in.find("POLYGON") == 0) {
+    Polygon_with_holes_2 p;
+    if (in != "POLYGON()") { // maybe should be checked in WKT reader
+      CGAL::IO::read_polygon_WKT(iss, p);
+    } pr.add_to_triangulation(p);
+  } else if (in.find("MULTIPOLYGON") == 0) {
+    Multipolygon_with_holes_2 mp;
+    CGAL::IO::read_multi_polygon_WKT(iss, mp);
+    pr.add_to_triangulation(mp);
+  } pr.label_triangulation();
 
   // ofs << std::fixed;
   // ofs << std::setprecision(15);
 
-  // ofs << "{" << std::endl;
-  // ofs << "\t\"type\": \"FeatureCollection\"," << std::endl;
-  // ofs << "\t\"features\": [" << std::endl;
+  ofs << "{" << std::endl;
+  ofs << "\t\"type\": \"FeatureCollection\"," << std::endl;
+  ofs << "\t\"features\": [" << std::endl;
 
-  // for (Polygon_repair_2::Triangulation::Finite_faces_iterator face = pr.triangulation().finite_faces_begin();
-  //      face != pr.triangulation().finite_faces_end(); ++face) {
-  //   ofs << "\t\t{" << std::endl;
-  //   ofs << "\t\t\t\"type\": \"Feature\"," << std::endl;
-  //   ofs << "\t\t\t\"properties\": {" << std::endl;
-  //   ofs << "\t\t\t\t\"label\": " << face->label() << std::endl;
-  //   ofs << "\t\t\t}," << std::endl;
-  //   ofs << "\t\t\t\"geometry\": {" << std::endl;
-  //   ofs << "\t\t\t\t\"type\": \"Polygon\"," << std::endl;
-  //   ofs << "\t\t\t\t\"coordinates\": [" << std::endl;
-  //   ofs << "\t\t\t\t\t[" << std::endl;
-  //   ofs << "\t\t\t\t\t\t[" << face->vertex(0)->point().x() << ", " << face->vertex(0)->point().y() << "]," << std::endl;
-  //   ofs << "\t\t\t\t\t\t[" << face->vertex(1)->point().x() << ", " << face->vertex(1)->point().y() << "]," << std::endl;
-  //   ofs << "\t\t\t\t\t\t[" << face->vertex(2)->point().x() << ", " << face->vertex(2)->point().y() << "]" << std::endl;
-  //   ofs << "\t\t\t\t\t]" << std::endl;
-  //   ofs << "\t\t\t\t]" << std::endl;
-  //   ofs << "\t\t\t}" << std::endl;
-  //   ofs << "\t\t}";
-  //   Polygon_repair_2::Triangulation::Finite_faces_iterator next_face = face;
-  //   ++next_face;
-  //   if (next_face != pr.triangulation().finite_faces_end()) ofs << ",";
-  //   ofs << std::endl;
-  // }
+  for (Polygon_repair_2::Triangulation::Finite_faces_iterator face = pr.triangulation().finite_faces_begin();
+       face != pr.triangulation().finite_faces_end(); ++face) {
+    ofs << "\t\t{" << std::endl;
+    ofs << "\t\t\t\"type\": \"Feature\"," << std::endl;
+    ofs << "\t\t\t\"properties\": {" << std::endl;
+    ofs << "\t\t\t\t\"label\": " << face->label() << std::endl;
+    ofs << "\t\t\t}," << std::endl;
+    ofs << "\t\t\t\"geometry\": {" << std::endl;
+    ofs << "\t\t\t\t\"type\": \"Polygon\"," << std::endl;
+    ofs << "\t\t\t\t\"coordinates\": [" << std::endl;
+    ofs << "\t\t\t\t\t[" << std::endl;
+    ofs << "\t\t\t\t\t\t[" << face->vertex(0)->point().x() << ", " << face->vertex(0)->point().y() << "]," << std::endl;
+    ofs << "\t\t\t\t\t\t[" << face->vertex(1)->point().x() << ", " << face->vertex(1)->point().y() << "]," << std::endl;
+    ofs << "\t\t\t\t\t\t[" << face->vertex(2)->point().x() << ", " << face->vertex(2)->point().y() << "]" << std::endl;
+    ofs << "\t\t\t\t\t]" << std::endl;
+    ofs << "\t\t\t\t]" << std::endl;
+    ofs << "\t\t\t}" << std::endl;
+    ofs << "\t\t}";
+    Polygon_repair_2::Triangulation::Finite_faces_iterator next_face = face;
+    ++next_face;
+    if (next_face != pr.triangulation().finite_faces_end()) ofs << ",";
+    ofs << std::endl;
+  }
 
-  // ofs << "\t]" << std::endl;
-  // ofs << "}" << std::endl;
+  ofs << "\t]" << std::endl;
+  ofs << "}" << std::endl;
 
-  pr.compute_nesting();
   pr.reconstruct_multipolygon();
   Multipolygon_with_holes_2 rmp = pr.multipolygon();
-  // std::ostringstream oss;
-  // CGAL::IO::write_multi_polygon_WKT(oss, rmp);
-  // std::string out = oss.str();
-
-  // ofs << std::fixed;
-  // ofs << std::setprecision(15);
-
-  
-  // ofs << "\t\"coordinates\": [" << std::endl;
-  // for (int i = 0; i < rmp.polygons().size(); ++i) {
-  //   ofs << "\t\t[" << std::endl;
-
-  //   ofs << "\t\t\t[" << std::endl;
-  //   for (int j = 0; j < rmp.polygons()[i].outer_boundary().size(); ++j) {
-  //     ofs << "\t\t\t\t[" << rmp.polygons()[i].outer_boundary()[j].x() <<
-  //     ", " << rmp.polygons()[i].outer_boundary()[j].y() << "]";
-  //     if (j < rmp.polygons()[i].outer_boundary().size()-1) ofs << ",";
-  //     ofs << std::endl;
-  //   } ofs << "\t\t\t]";
-  //   if (rmp.polygons()[i].number_of_holes() > 0) ofs << ",";
-  //   ofs << std::endl;
-
-  //   for (int j = 0; j < rmp.polygons()[i].holes().size(); ++j) {
-  //     ofs << "\t\t\t[" << std::endl;
-  //     for (int k = 0; k < rmp.polygons()[i].holes()[j].size(); ++k) {
-  //       ofs << "\t\t\t\t[" << rmp.polygons()[i].holes()[j][k].x() <<
-  //       ", " << rmp.polygons()[i].holes()[j][k].y() << "]";
-  //       if (k < rmp.polygons()[i].holes()[j].size()-1) ofs << ",";
-  //       ofs << std::endl;
-  //     }
-  //     ofs << "\t\t\t]";
-  //     if (j < rmp.polygons()[i].holes().size()-1) ofs << ",";
-  //     ofs << std::endl;
-  //   }
-
-  //   ofs << "\t\t]";
-  //   if (i < rmp.polygons().size()-1) ofs << ",";
-  //   ofs << std::endl;
-  // } ofs << "\t]" << std::endl;
-  
+  CGAL::IO::write_multi_polygon_WKT(std::cout, rmp);
 
   return 0;
 }

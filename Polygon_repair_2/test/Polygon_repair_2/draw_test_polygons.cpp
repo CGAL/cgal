@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     if (file.path().filename().extension() != ".wkt") continue;
     std::cout << "Reading " << file.path().filename() << "..." << std::endl;
 
-    // if (file.path().filename() != "nesting.wkt") continue;
+    if (file.path().filename() != "nesting-spike.wkt") continue;
 
     std::string in;
     std::getline(std::ifstream(file.path()), in);
