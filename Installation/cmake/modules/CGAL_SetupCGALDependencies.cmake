@@ -15,7 +15,7 @@
 # .. variable:: CGAL_DISABLE_GMP
 #
 #    If set, the `GMP` library will not be used. If
-#    :variable:`WITH_LEDA` is not used either, a efficient exact
+#    :variable:`WITH_LEDA` is not used either, an efficient exact
 #    number types are used by CGAL kernels for exact computation.
 #
 # .. variable:: WITH_LEDA

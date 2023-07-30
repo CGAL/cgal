@@ -21,7 +21,7 @@ Moreover, `CGAL::Algebraic_structure_traits< EuclideanRing >` is a model of
 
 \cgalHeading{Remarks}
 
-The most prominent example of a Euclidean ring are the integers.
+The most prominent example of an Euclidean ring are the integers.
 Whenever both \f$ x\f$ and \f$ y\f$ are positive, then it is conventional to choose
 the smallest positive remainder \f$ r\f$.
 

@@ -225,7 +225,7 @@ NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){
  *  subresultant version. This depends on the coefficient type:
  *  If \c NT is a \c UFDomain , the subresultant PRS is formed.
  *  If \c NT is a \c Field that is not decomposable (see
- *  \c CGAL::Fraction_traits ), then a Euclidean PRS is formed.
+ *  \c CGAL::Fraction_traits ), then an Euclidean PRS is formed.
  *  If \c NT is a \c Field that is decomposable, then the
  *  \c Numerator must be a \c UFDomain, and the subresultant
  *  PRS is formed for the decomposed polynomials.
