@@ -20,7 +20,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -32,7 +32,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -52,7 +52,7 @@ link_directories(earth PRIVATE ${SHAPELIB_LIB_DIR})
 
 
 # AOS
-file(GLOB source_files_aos   
+file(GLOB source_files_aos
   Aos.h                     Aos.cpp
  )
 source_group( "Aos"  FILES ${source_files_aos} )
@@ -67,7 +67,7 @@ source_group( "GIS"  FILES ${source_files_gis} )
 
 
 # GRAPHICS
-file(GLOB source_files_graphics   
+file(GLOB source_files_graphics
   Camera.h                  Camera.cpp
   Shader_program.h          Shader_program.cpp
  )
@@ -93,7 +93,7 @@ source_group( "GUI"  FILES ${source_files_gui} )
 
 
 #SOURCE FILES (NOT CATEGORIZED YET)
-file(GLOB source_files   
+file(GLOB source_files
   Common_defs.h
                       main.cpp
   Main_widget.h       Main_widget.cpp
@@ -132,11 +132,10 @@ target_link_libraries(earth PRIVATE
     Qt6::Widgets
     Qt6::Xml
     CGAL::CGAL
-    shp
     nlohmann_json::nlohmann_json
 )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 
