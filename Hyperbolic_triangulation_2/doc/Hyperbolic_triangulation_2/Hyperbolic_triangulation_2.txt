@@ -27,7 +27,7 @@ H_\infty\f$ of points at infinity.
 
 In this model, a hyperbolic line is either an arc of circle
 perpendicular to the unit circle or, if it passes through the origin,
-a diameter of the unit disk. A hyperbolic circle is an Euclidean
+a diameter of the unit disk. A hyperbolic circle is a Euclidean
 circle contained in the unit disk; however, its hyperbolic center and radius
 are not the same as its Euclidean center and radius.
 
@@ -53,9 +53,9 @@ precisely, the hyperbolic Delaunay triangulation of \f$\mathcal P\f$ only
 contains the simplices of the Euclidean Delaunay triangulation that
 are <i>hyperbolic</i>:
 <ul>
-        <li> An Euclidean Delaunay face is hyperbolic if its
+        <li> A Euclidean Delaunay face is hyperbolic if its
         circumscribing circle is contained in \f$\mathbb H^2\f$.
-        <li> An Euclidean Delaunay edge is hyperbolic if one of the
+        <li> A Euclidean Delaunay edge is hyperbolic if one of the
         empty disks (i.e., not containing any point of \f$\mathcal
         P\f$) passing through its endpoints is contained in \f$\mathbb
         H^2\f$.
@@ -138,13 +138,13 @@ The example below shows how user-defined info can be added to the hyperbolic fac
 We have measured the insertion execution time of our implementation
 with both traits classes `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`
 and `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` with their default template
-parameters against the insertion time in an Euclidean \cgal triangulation.
+parameters against the insertion time in a Euclidean \cgal triangulation.
 We generate 1 million random points, uniformly distributed in the unit disk with respect
 to the Euclidean metric. We insert the same set of points in three triangulations:
 <ul>
   <li> a hyperbolic Delaunay triangulation with `CGAL::Hyperbolic_Delaunay_triangulation_traits_2`    (%CORE traits) as traits class;
   <li> a hyperbolic Delaunay triangulation with `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` (CK traits)          as traits class;
-  <li> an Euclidean  Delaunay triangulation with `CGAL::Exact_predicates_inexact_constructions_kernel` (EPICK)              as traits class.
+  <li> a Euclidean  Delaunay triangulation with `CGAL::Exact_predicates_inexact_constructions_kernel` (EPICK)              as traits class.
 </ul>
 We create two instances of each type of triangulation. In one instance we insert the points one by one, which causes
 non-hyperbolic faces to be filtered out at each insertion. In the other instance we insert the points via iterator

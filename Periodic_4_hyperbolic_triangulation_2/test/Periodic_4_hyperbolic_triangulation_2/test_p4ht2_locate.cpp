@@ -57,7 +57,7 @@ int main(int, char**)
     std::cout << "   dummy point " << j << ": OK " << std::endl;
   }
 
-  std::cout << "---- locating the midpoint of an Euclidean segment ----" << std::endl;
+  std::cout << "---- locating the midpoint of a Euclidean segment ----" << std::endl;
   Point p1 = tr.get_dummy_point(0), p2 = tr.get_dummy_point(1);
   Point query = midpoint(p1, p2);
   fh = tr.hyperbolic_locate(query, lt, li);

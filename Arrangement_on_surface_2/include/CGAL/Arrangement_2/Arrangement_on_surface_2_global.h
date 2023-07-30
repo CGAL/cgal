@@ -737,7 +737,7 @@ insert_non_intersecting_curve
 
   if (vh1 != nullptr) {
     if (vh2 != nullptr) {
-      // Both endpoints are associated with an existing vertices.
+      // Both endpoints are associated with existing vertices.
       // In this case insert_at_vertices() already returns a halfedge
       // directed from left to right.
       new_he = arr.insert_at_vertices(c,

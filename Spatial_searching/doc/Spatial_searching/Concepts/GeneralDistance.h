@@ -5,7 +5,7 @@
 Requirements of a distance class defining a distance between a query item
 denoting a spatial object and a point.
 To optimize distance computations transformed distances are used,
-e.g., for an Euclidean distance the transformed distance is the squared
+e.g., for a Euclidean distance the transformed distance is the squared
 Euclidean distance.
 
 \cgalHasModel `CGAL::Manhattan_distance_iso_box_point<Traits>`

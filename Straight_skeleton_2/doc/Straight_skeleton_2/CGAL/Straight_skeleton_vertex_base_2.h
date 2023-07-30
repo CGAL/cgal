@@ -11,7 +11,7 @@ which is the vertex type required by the `StraightSkeleton_2` concept.
 \tparam Refs must be a model of `StraightSkeleton_2`
 \tparam Point a Point type
 \tparam FT must be a model of the `FieldWithSqrt`, which is the numeric type used to represent
-           the time of a vertex (an Euclidean distance).
+           the time of a vertex (a Euclidean distance).
 
 This class can be used as a base class allowing users of the straight skeleton data structure to decorate
 a vertex with additional data. The concrete vertex class must be given in the `HalfedgeDSItems`

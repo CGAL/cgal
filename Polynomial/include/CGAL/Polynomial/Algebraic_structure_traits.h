@@ -241,7 +241,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
   };
 };
 
-// Clone this for an EuclideanRing
+// Clone this for a EuclideanRing
 template< class POLY >
 class Polynomial_algebraic_structure_traits_base< POLY, Euclidean_ring_tag >
   : public Polynomial_algebraic_structure_traits_base< POLY,
