@@ -25,7 +25,7 @@ using json = nlohmann::ordered_json;
 #include "Tools.h"
 
 namespace {
-//#define USE_EPIC
+#define USE_EPIC
 
 #ifdef USE_EPIC
   using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -729,6 +729,7 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
 
 void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 {
+#ifndef USE_EPIC
   Geom_traits traits;
   Ext_aos arr(&traits);
   auto ctr_p = traits.construct_point_2_object();
@@ -924,9 +925,9 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       set_num_denum(dy, je_normal["dy"]);
       set_num_denum(dz, je_normal["dz"]);
 
-      je["is_vertical"] = std::to_string(xcv.is_vertical());
-      je["is_directed_right"] = std::to_string(xcv.is_directed_right());
-      je["is_full"] = std::to_string(xcv.is_full());
+      je["is_vertical"] = xcv.is_vertical();
+      je["is_directed_right"] = xcv.is_directed_right();
+      je["is_full"] = xcv.is_full();
       
       js_curves.push_back(std::move(je));
     }
@@ -1099,6 +1100,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   std::ofstream ofile(file_name);
   ofile << js.dump(2);
   ofile.close();
+#endif
 }
 
 
@@ -1140,9 +1142,102 @@ Aos::Approx_arcs Aos::load_arr(const std::string& file_name)
   // CURVES
   std::vector<Curve>  curves;
   auto& js_curves = js["curves"];
+  
   for (auto it = js_curves.begin(); it != js_curves.end(); ++it)
   {
     auto& js_curve = *it;
-    //js_curve[]
+    auto psi = js_curve["source"].get<int>();
+    auto pti = js_curve["target"].get<int>();
+    auto& js_normal = js_curve["normal"];
+    auto nx = get_double_from_json(js_normal["dx"]);
+    auto ny = get_double_from_json(js_normal["dy"]);
+    auto nz = get_double_from_json(js_normal["dz"]);
+    auto is_vertical = js_curve["is_vertical"].get<bool>();
+    auto is_directed_right = js_curve["is_directed_right"].get<bool>();
+    auto is_full = js_curve["is_full"].get<bool>();
+    
+    auto xcv = ctr_cv(points[psi], points[pti]);
+    //auto xcv = ctr_cv(points[psi], points[pti], Direction_3(nx, ny, nz));
+    //xcv.set_is_vertical(is_vertical);
+    //xcv.set_is_directed_right(is_directed_right);
+    //xcv.set_is_full(is_full);
+    curves.push_back(xcv);
   }
+  std::cout << "num curves = " << curves.size() << std::endl;
+
+  ////////////////////////////////////////////////////////////////////////////
+  // VERTICES
+  auto& js_vertices = js["vertices"];
+  using Vertex_handle = Ext_aos::Vertex_handle;
+  std::vector<Vertex_handle> vertices;
+  for (auto it = js_vertices.begin(); it != js_vertices.end(); ++it)
+  {
+    auto& js_vertex = *it;
+    auto pi = js_vertex["point"].get<int>();
+    auto vh = CGAL::insert_point(arr, points[pi]);
+    vertices.push_back(vh);
+  }
+  std::cout << "num vertices = " << vertices.size() << std::endl;
+
+  ////////////////////////////////////////////////////////////////////////////
+  // HALF-EDGES
+  struct Halfedge
+  {
+    int svi, tvi, ci;
+  };
+  std::vector<Halfedge>  halfedges;
+  auto& js_halfedges = js["halfedges"];
+  for (auto it = js_halfedges.begin(); it != js_halfedges.end(); ++it)
+  {
+    auto& js_halfedge = *it;
+    Halfedge he;
+    he.svi = js_halfedge["source"].get<int>();
+    he.tvi = js_halfedge["target"].get<int>();
+    he.ci = js_halfedge["curve"].get<int>();
+    halfedges.push_back(he);
+  }
+  std::cout << "halfedges = " << halfedges.size() << std::endl;
+
+  ////////////////////////////////////////////////////////////////////////////
+  // FACES
+  auto add_ccbs_to_arr = [&](auto& js_ccbs)
+    {
+      for (auto cit = js_ccbs.begin(); cit != js_ccbs.end(); ++cit)
+      {
+        auto& js_outer_ccb = *cit;
+        auto& js_halfedges = js_outer_ccb["halfedges"];
+        std::cout << "num halfedges = " << js_halfedges.size() << std::endl;
+        for (auto hit = js_halfedges.begin(); hit != js_halfedges.end(); ++hit)
+        {
+          auto& js_halfedge = *hit;
+          auto hei = js_halfedge.get<int>();
+          auto xcvi = halfedges[hei].ci;
+          auto& xcv = curves[xcvi];
+          CGAL::insert(arr, xcv);
+        }
+      }
+    };
+  auto& js_faces = js["faces"];
+  std::cout << "num faces = " << js_faces.size() << "\n";
+  for (auto it = js_faces.begin(); it != js_faces.end(); ++it)
+  {
+    auto& js_face = *it;
+    auto& js_name = js_face["name"];
+    auto& js_outer_ccbs = js_face["outer_ccbs"];
+    //auto& js_inner_ccbs = js_face["inner_ccbs"];
+    {
+      std::cout << std::boolalpha << "is name string = " << js_name.is_string() << std::endl;
+      std::cout << "name = " << js_name.get<std::string>() << std::endl;
+      auto& js_ccbs = js_outer_ccbs;
+      std::cout << std::boolalpha << "ccb is array = " << js_ccbs.is_array() << "\n";
+      std::cout << "num ccbs = " << js_ccbs.size() << std::endl;
+
+    }
+
+    add_ccbs_to_arr(js_outer_ccbs);
+    //add_ccbs_to_arr(js_inner_ccbs);
+  }
+  std::cout << "num arr-faces = " << arr.number_of_faces() << std::endl;
+
+  return Approx_arcs{};
 }

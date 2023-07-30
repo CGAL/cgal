@@ -186,8 +186,8 @@ void Main_widget::initializeGL()
   }
 
   {
-    Aos::save_arr(m_countries, "C:/work/gsoc2023/deneme.json");
-    //Aos::load_arr("C:/work/gsoc2023/deneme.json");
+    //Aos::save_arr(m_countries, "C:/work/gsoc2023/deneme.json");
+    Aos::load_arr("C:/work/gsoc2023/deneme.json");
   }
   
   // initialize rendering of DUPLICATE VERTICES
