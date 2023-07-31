@@ -18,13 +18,20 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/${GLOBUS_MODULES_REL_DIR})
 
 find_package(CGAL QUIET COMPONENTS Qt5 OPTIONAL_COMPONENTS Core)
 find_package(Qt5 QUIET COMPONENTS Gui Widgets)
-find_package(FileGDBAPI REQUIRED)
+# find_package(FileGDBAPI REQUIRED)
+
+################################################################################
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
+# find_package(nlohmann_json 3.2.0 REQUIRED)
+################################################################################
 
 if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_compile_definitions(QT_NO_KEYWORDS)
   include_directories( BEFORE ./ )
-  include_directories(${FileGDBAPI_INCLUDE_DIR})
+  # include_directories(${FileGDBAPI_INCLUDE_DIR})
 
   # Arrangement package includes
   add_definitions(-DQT_NO_KEYWORDS)
@@ -64,9 +71,10 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})
 
-  target_link_libraries(globus ${FileGDBAPI_LIBRARY})
+  # target_link_libraries(globus ${FileGDBAPI_LIBRARY})
   target_link_libraries(globus Qt5::Core Qt5::Gui Qt5::Widgets)
   target_link_libraries(globus CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries(globus nlohmann_json::nlohmann_json)
   if(CGAL_Core_FOUND)
     target_link_libraries(globus CGAL::CGAL_Core)
   endif()
@@ -76,7 +84,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(globus)
 
-  set_property(TARGET globus PROPERTY INSTALL_RPATH "${FileGDBAPI_LIBRARY_DIR}")
+  # set_property(TARGET globus PROPERTY INSTALL_RPATH "${FileGDBAPI_LIBRARY_DIR}")
   set_property(TARGET globus PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
 
   set_target_properties(globus PROPERTIES LINK_FLAGS "-Wl,--disable-new-dtags")

@@ -14,9 +14,37 @@
 
 #include <QApplication>
 
-#include <FileGDBAPI.h>
+// #include <FileGDBAPI.h>
+#include <nlohmann/json.hpp>
 
 #include "Globus_window.h"
+
+enum Error_id {
+  FILE_NOT_FOUND,
+  ILLEGAL_EXTENSION,
+  UNABLE_TO_OPEN,
+  FILE_IS_EMPTY,
+  INVALID_INITIAL_POLYGON,
+  UNSUPPORTED,
+  INVALID_OUTPUT_FILE,
+  ILLEGAL_SOLUTION_FILE
+};
+
+struct Illegal_input : public std::logic_error {
+  Illegal_input(Error_id /* err */, const std::string &msg,
+    const std::string &filename) :
+    std::logic_error(std::string(msg).append(" (").append(filename).
+      append(")!"))
+  {}
+
+  Illegal_input(Error_id /* err */, const std::string &msg) :
+    std::logic_error(std::string(msg).append("!"))
+  {}
+};
+
+struct Input_file_missing_error : public std::logic_error {
+  Input_file_missing_error(std::string &str) : std::logic_error(str) {}
+};
 
 //
 struct country {
@@ -28,8 +56,9 @@ struct country {
   std::string m_name;
 };
 
-namespace FGA = FileGDBAPI;
+// namespace FGA = FileGDBAPI;
 
+#if 0
 /*!
  */
 int load_countries(std::vector<country>& countries) {
@@ -112,20 +141,90 @@ int load_countries(std::vector<country>& countries) {
     return -1;
   }
 
-  return S_OK;
+  return 0;
+}
+#endif
+
+/*! Read a json file.
+ */
+bool read_json(const std::string& filename, nlohmann::json& data) {
+  using json = nlohmann::json;
+  std::ifstream infile(filename);
+  if (! infile.is_open()) {
+    throw Illegal_input(UNABLE_TO_OPEN, "Cannot open file", filename);
+    return false;
+  }
+  data = json::parse(infile);
+  infile.close();
+  if (data.empty()) {
+    throw Illegal_input(FILE_IS_EMPTY, "File is empty", filename);
+    return false;
+  }
+  return true;
+}
+
+bool read_arrangement(const std::string& filename) {
+  using json = nlohmann::json;
+  json data;
+  auto rc = read_json(filename, data);
+  if (! rc) return false;
+
+  // points
+  auto it = data.find("points");
+  if (it == data.end()) {
+    std::cerr << "The points item is missing " << " (" << filename << ")\n";
+    return false;
+  }
+  const auto& points = it.value();
+  std::cout << "# points: " << points.size() << std::endl;
+
+  // curves
+  it = data.find("curves");
+  if (it == data.end()) {
+    std::cerr << "The curves item is missing " << " (" << filename << ")\n";
+    return false;
+  }
+  const auto& curves = it.value();
+  std::cout << "# curves: " << curves.size() << std::endl;
+
+  // vertices
+  it = data.find("vertices");
+  if (it == data.end()) {
+    std::cerr << "The vertices item is missing " << " (" << filename << ")\n";
+    return false;
+  }
+  const auto& vertices = it.value();
+  std::cout << "# vertices: " << vertices.size() << std::endl;
+
+  // halfedges
+  it = data.find("halfedges");
+  if (it == data.end()) {
+    std::cerr << "The halfedges item is missing " << " (" << filename << ")\n";
+    return false;
+  }
+  const auto& halfedges = it.value();
+  std::cout << "# halfedges: " << halfedges.size() << std::endl;
+
+  // faces
+  it = data.find("faces");
+  if (it == data.end()) {
+    std::cerr << "The faces item is missing " << " (" << filename << ")\n";
+    return false;
+  }
+  const auto& faces = it.value();
+  std::cout << "# faces: " << faces.size() << std::endl;
+
+  return true;
 }
 
 //
 int main(int argc, char* argv[]) {
-  // Load the countries based on a search extent.
-  std::vector<country> countries;
-  size_t hr = load_countries(countries);
-  if (hr != S_OK) {
+  const char* filename = (argc > 1) ? argv[1] : "arr.json";
+
+  auto rc = read_arrangement(filename);
+  if (! rc) {
     std::cerr << "Failed to load database!\n";
     return -1;
-  }
-  for (const auto& country : countries) {
-    std::cout << country.m_name << std::endl;
   }
 
   QApplication app(argc, argv);
