@@ -50,13 +50,13 @@ struct ClusterData {
   void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
     this->site_sum += vertex_position;
-    this->weight_sum += weight;
+    this->weight_sum += 1;
   }
 
   void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
     this->site_sum -= vertex_position;
-    this->weight_sum -= weight;
+    this->weight_sum -= 1;
   }
 
   typename GT::FT compute_energy()
@@ -93,7 +93,7 @@ void acvd_simplification(
 
   // initial random clusters
   // property map from vertex_descriptor to cluster index
-  VertexClusterMap vertex_clusters_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
+  VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
   VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
   std::vector<ClusterData<GT>> clusters(nb_clusters + 1);
   std::queue<Halfedge_descriptor> clusters_edges_active;
@@ -101,40 +101,56 @@ void acvd_simplification(
 
   int nb_vertices = num_vertices(pmesh);
 
+  typename GT::FT max_area = 0;
+  typename GT::FT min_area = std::numeric_limits<typename GT::FT>::max();
+
   // compute vertex weights (dual area)
   for (Face_descriptor fd : faces(pmesh))
   {
     typename GT::FT weight = CGAL::Polygon_mesh_processing::face_area(fd, pmesh) / 3;
+
+    max_area = std::max(max_area, weight * 8.0);
+    min_area = std::min(min_area, weight * 3.0);
+
     for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
     {
-      put(vertex_weight_pmap, vd, weight);
+      typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
+      vertex_weight += weight;
+      put(vertex_weight_pmap, vd, vertex_weight);
     }
   }
 
   srand(3);
   for (int ci = 0; ci < nb_clusters; ci++)
   {
-    // random index
-    int vi = rand() % num_vertices(pmesh);
-    Vertex_descriptor vd = *(vertices(pmesh).begin() + vi);
-    /*int vi;
+    //// random index
+    //int vi = rand() % num_vertices(pmesh);
+    //Vertex_descriptor vd = *(vertices(pmesh).begin() + vi);
+    int vi;
     Vertex_descriptor vd;
     do {
-      vi = ci * nb_vertices / nb_clusters;
+      vi = rand() % num_vertices(pmesh);
       vd = *(vertices(pmesh).begin() + vi);
-    } while (get(vertex_clusters_pmap, vd));*/
+    } while (get(vertex_cluster_pmap, vd));
 
     // TODO: check for cluster conflict at the same vertex
-    put(vertex_clusters_pmap, vd, ci + 1); // TODO: should be ci but for now we start from 1 (can't set null value to -1)
+    put(vertex_cluster_pmap, vd, ci + 1); // TODO: should be ci but for now we start from 1 (can't set null value to -1)
     typename GT::Point_3 vp = get(vpm, vd);
     typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
     clusters[ci].add_vertex(vpv, get(vertex_weight_pmap, vd));
 
-    for (Halfedge_descriptor hd : halfedges_around_source(halfedge(vd, pmesh), pmesh))
+    for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
       clusters_edges_active.push(hd);
   }
 
   int nb_modifications;
+
+  int nb_mod1, nb_mod2, nb_mod3, nb_mod4, nb_mod5;
+  nb_mod1 = 0;
+  nb_mod2 = 0;
+  nb_mod3 = 0;
+  nb_mod4 = 0;
+  nb_mod5 = 0;
 
   do
   {
@@ -147,46 +163,42 @@ void acvd_simplification(
       Vertex_descriptor v1 = source(hi, pmesh);
       Vertex_descriptor v2 = target(hi, pmesh);
 
-      int c1 = get(vertex_clusters_pmap, v1);
-      int c2 = get(vertex_clusters_pmap, v2);
+      int c1 = get(vertex_cluster_pmap, v1);
+      int c2 = get(vertex_cluster_pmap, v2);
 
-      if (c1 == 0)
+      if (!(c1 > 0))
       {
         // expand cluster c2 (add v1 to c2)
-        put(vertex_clusters_pmap, v1, c2);
+        put(vertex_cluster_pmap, v1, c2);
         typename GT::Point_3 vp1 = get(vpm, v1);
         typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
         clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1));
-        clusters[c1].remove_vertex(vpv, get(vertex_weight_pmap, v1));
-
 
         // add all halfedges around v1 except hi to the queue
-        for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
-          if (hd != hi)
+        for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
+          //if (hd != hi && hd != opposite(hi, pmesh))
             clusters_edges_new.push(hd);
         nb_modifications++;
-
+        nb_mod1++;
       }
-      else if (c2 == 0)
+      else if (!(c2 > 0))
       {
         // expand cluster c1 (add v2 to c1)
-        put(vertex_clusters_pmap, v2, c1);
+        put(vertex_cluster_pmap, v2, c1);
         typename GT::Point_3 vp2 = get(vpm, v2);
         typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
         clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2));
-        clusters[c2].remove_vertex(vpv, get(vertex_weight_pmap, v2));
-
 
         // add all halfedges around v2 except hi to the queue
-        for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v2, pmesh), pmesh))
-          if (hd != hi)
+        for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
+          //if (hd != hi && hd != opposite(hi, pmesh))
             clusters_edges_new.push(hd);
         nb_modifications++;
+        nb_mod2++;
       }
       else if (c1 == c2)
       {
         clusters_edges_new.push(hi);
-        continue; // no modification
       }
       else
       {
@@ -195,82 +207,92 @@ void acvd_simplification(
         typename GT::Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
         typename GT::Point_3 vp2 = get(vpm, v2);
         typename GT::Vector_3 vpv2(vp2.x(), vp2.y(), vp2.z());
+        typename GT::FT v1_weight = get(vertex_weight_pmap, v1);
+        typename GT::FT v2_weight = get(vertex_weight_pmap, v2);
 
         typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
-        clusters[c1].remove_vertex(vpv1, get(vertex_weight_pmap, v1));
-        clusters[c2].add_vertex(vpv1, get(vertex_weight_pmap, v1));
+        clusters[c1].remove_vertex(vpv1, v1_weight);
+        clusters[c2].add_vertex(vpv1, v1_weight);
 
         typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
         // reset to no change
-        clusters[c1].add_vertex(vpv1, get(vertex_weight_pmap, v1));
-        clusters[c2].remove_vertex(vpv1, get(vertex_weight_pmap, v1));
+        clusters[c1].add_vertex(vpv1, v1_weight);
+        clusters[c2].remove_vertex(vpv1, v1_weight);
 
         // The effect of the following should always be reversed after the comparison
-        clusters[c2].remove_vertex(vpv2, get(vertex_weight_pmap, v2));
-        clusters[c1].add_vertex(vpv2, get(vertex_weight_pmap, v2));
+        clusters[c2].remove_vertex(vpv2, v2_weight);
+        clusters[c1].add_vertex(vpv2, v2_weight);
 
         typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
         if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2)
         {
           // move v2 to c1
-          put(vertex_clusters_pmap, v2, c1);
+          put(vertex_cluster_pmap, v2, c1);
 
           // cluster data is already updated
 
           // add all halfedges around v2 except hi to the queue
-          for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v2, pmesh), pmesh))
-            if (hd != hi)
+          for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
+            //if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
           nb_modifications++;
+          nb_mod3++;
         }
         else if (e_v1_to_c2 < e_no_change)
         {
           // move v1 to c2
-          put(vertex_clusters_pmap, v1, c2);
+          put(vertex_cluster_pmap, v1, c2);
 
           // need to reset cluster data and then update
-          clusters[c2].add_vertex(vpv2, get(vertex_weight_pmap, v2));
-          clusters[c1].remove_vertex(vpv2, get(vertex_weight_pmap, v2));
+          clusters[c2].add_vertex(vpv2, v2_weight);
+          clusters[c1].remove_vertex(vpv2, v2_weight);
 
-          clusters[c1].remove_vertex(vpv1, get(vertex_weight_pmap, v1));
-          clusters[c2].add_vertex(vpv1, get(vertex_weight_pmap, v1));
+          clusters[c1].remove_vertex(vpv1, v1_weight);
+          clusters[c2].add_vertex(vpv1, v1_weight);
 
           // add all halfedges around v1 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
-            if (hd != hi)
+            //if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
           nb_modifications++;
+          nb_mod4++;
         }
         else
         {
             // no change but need to reset cluster data
-            clusters[c2].add_vertex(vpv2, get(vertex_weight_pmap, v2));
-            clusters[c1].remove_vertex(vpv2, get(vertex_weight_pmap, v2));
+            clusters[c2].add_vertex(vpv2, v2_weight);
+            clusters[c1].remove_vertex(vpv2, v2_weight);
 
             clusters_edges_new.push(hi);
+            nb_mod5++;
         }
-
-        continue;
       }
     }
     clusters_edges_active.swap(clusters_edges_new);
   } while (nb_modifications > 0);
 
+  std::cout << nb_mod1 << std::endl;
+  std::cout << nb_mod2 << std::endl;
+  std::cout << nb_mod3 << std::endl;
+  std::cout << nb_mod4 << std::endl;
+  std::cout << nb_mod5 << std::endl;
 
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), pmesh);
 
   for (Vertex_descriptor vd : vertices(pmesh))
   {
-    int c = get(vertex_clusters_pmap, vd);
+    int c = get(vertex_cluster_pmap, vd);
+    //CGAL::IO::Color color((c - min_area) * 255 / (max_area - min_area), 0, 0);
     CGAL::IO::Color color(255 - (c * 255 / nb_clusters), (c * c % 7) * 255 / 7, (c * c * c % 31) * 255 / 31);
-    std::cout << vd.idx() << " " << c << " " << color << std::endl;
+    //std::cout << vd.idx() << " " << c << " " << color << std::endl;
     put(vcm, vd, color);
   }
   std::cout << "kak1" << std::endl;
-  CGAL::IO::write_OFF("S52k_clustered_0.off", pmesh, CGAL::parameters::vertex_color_map(vcm));
+  std::string name = std::to_string(nb_mod4) + ".off";
+  CGAL::IO::write_OFF(name, pmesh, CGAL::parameters::vertex_color_map(vcm));
   std::cout << "kak2" << std::endl;
 
 }

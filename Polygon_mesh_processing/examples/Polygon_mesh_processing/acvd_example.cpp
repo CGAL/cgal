@@ -20,8 +20,10 @@ int main(int argc, char* argv[])
 {
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
-    argv[1] :
-    CGAL::data_file_path("meshes/S52k.stl");
+    CGAL::data_file_path(argv[1]) :
+    CGAL::data_file_path("meshes/bear.off");
+
+  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 50;
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
@@ -29,7 +31,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  PMP::acvd_isotropic_simplification(smesh, 70);
+  PMP::acvd_isotropic_simplification(smesh, nb_clusters);
   std::cout << "kak3" << std::endl;
   return 0;
 
