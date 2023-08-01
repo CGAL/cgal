@@ -1095,9 +1095,9 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   int total_num_half_edges = 0;
   for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
   {
-    // skip the spherical face
-    if (fh->number_of_outer_ccbs() == 0)
-      continue;
+    //// skip the spherical face
+    //if (fh->number_of_outer_ccbs() == 0)
+    //  continue;
 
     // json object for the current face
     json js_face;
