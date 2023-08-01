@@ -249,6 +249,7 @@ private:
       Color_value_type is_in_region = 0;
       std::bitset<3> is_edge_also_in_3d_triangulation = 0;
       bool missing_subface = true;
+      Facet facet_3d = {};
     };
     using Vb1 = Triangulation_vertex_base_with_info_2<Vertex_info,
                                                       Projection_traits>;
@@ -322,6 +323,7 @@ protected:
             const auto face_id = static_cast<std::size_t>(c->face_constraint_index(li));
             self.face_constraint_misses_subfaces.set(face_id);
             auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
+            fh_2->info().facet_3d = {};
             self.set_facet_constrained({c, li}, -1, {});
 #if CGAL_DEBUG_CDT_3
             std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
@@ -454,20 +456,11 @@ public:
       const auto [n, n_index] = tr.mirror_facet({c, facet_index});
       n->set_facet_constraint(n_index, polygon_contraint_id, fh);
     }
-    // for(int i = 0; i < 3; ++i) {
-    //   const int index0 = tr.vertex_triple_index(facet_index, i);
-    //   const int index1 = tr.vertex_triple_index(facet_index, tr.cw(i));
-    //   const Edge edge{c, index0, index1};
-    //   auto facet_circ = this->incident_facets(edge);
-    //   const auto facet_circ_end = facet_circ;
-    //   auto counter = 0u;
-    //   do {
-    //     if(is_constrained(*facet_circ)) {
-    //       ++counter;
-    //     }
-    //   } while(++facet_circ != facet_circ_end);
-    //   CGAL_assertion(counter <= 2);
-    // }
+    if(fh == CDT_2_face_handle{}) return;
+
+    if(fh != CDT_2_face_handle{}) {
+      fh->info().facet_3d = f;
+    }
   }
 
   template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
