@@ -571,8 +571,8 @@ protected:
         vector_of_encroaching_vertices.begin(), end,
         [pa, pb, &compare_angle_functor, this](Vertex_handle v1,
                                                Vertex_handle v2) {
-          return compare_angle_functor(pa, this->tr.point(v1), pb, pa,
-                                       this->tr.point(v2), pb) == SMALLER;
+          return compare_angle_functor(pa, this->tr.point(v1), pb,
+                                       pa, this->tr.point(v2), pb) == SMALLER;
         });
     CGAL_assertion(reference_vertex_it != end);
 #if CGAL_DEBUG_CDT_3 & 2
@@ -581,6 +581,7 @@ protected:
 #endif // CGAL_DEBUG_CDT_3
     const auto reference_vertex = *reference_vertex_it;
     const auto& reference_point = tr.point(reference_vertex);
+    const auto vector_ab = vector_functor(pa, pb);
 
     if(reference_vertex->is_Steiner_vertex_on_edge()) {
       CGAL_assertion(reference_vertex->nb_of_incident_constraints == 1);
@@ -590,17 +591,21 @@ protected:
       const auto& orig_pa = tr.point(orig_va);
       const auto& orig_pb = tr.point(orig_vb);
       const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
+      const auto length_ab = CGAL::sqrt(sq_length_functor(vector_ab));
       auto return_orig_result_point =
           [&](auto lambda, Point orig_pa, Point orig_pb)
               -> Construct_Steiner_point_return_type
           {
             const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
-            const auto result_point = (lambda < 0.2 || lambda > 0.8)
+            const auto inter_point = translate_functor(orig_pa, scaled_vector_functor(vector_orig_ab, lambda));
+            const auto dist_a_result = CGAL::sqrt(sq_length_functor(vector_functor(orig_pa, inter_point)));
+            const auto ratio = dist_a_result / length_ab;
+            const auto result_point = (ratio < 0.2 || ratio > 0.8)
                                           ? midpoint_functor(pa, pb)
-                                          : translate_functor(orig_pa, scaled_vector_functor(vector_orig_ab, lambda));
+                                          : inter_point;
 
 #if CGAL_DEBUG_CDT_3 & 2
-            std::cerr << "ref lambda = " << lambda << '\n';
+            std::cerr << "ref ratio = " << ratio << '\n';
             std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_DEBUG_CDT_3
             return {result_point, reference_vertex->cell(), reference_vertex};
@@ -620,7 +625,6 @@ protected:
       }
     }
     // compute the projection of the reference point
-    const auto vector_ab = vector_functor(pa, pb);
     const auto vector_a_ref = vector_functor(pa, reference_point);
     const auto lambda = sc_product_functor(vector_a_ref, vector_ab) / sq_length_functor(vector_ab);
     const auto result_point = (lambda < 0.2 || lambda > 0.8)
