@@ -17,6 +17,13 @@
 // #include <FileGDBAPI.h>
 #include <nlohmann/json.hpp>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Arrangement_on_surface_2.h>
+#include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
+#include <CGAL/Arr_spherical_topology_traits_2.h>
+#include <CGAL/draw_arrangement_2.h>
+#include <CGAL/Arr_accessor.h>
+
 #include "Globus_window.h"
 
 enum Error_id {
@@ -163,7 +170,22 @@ bool read_json(const std::string& filename, nlohmann::json& data) {
   return true;
 }
 
-bool read_arrangement(const std::string& filename) {
+template <typename FT>
+FT to_ft(const nlohmann::json& js_ft) {
+  using Exact_type = typename FT::Exact_type;
+  const std::string& js_num = js_ft["num"];
+  const std::string& js_den = js_ft["den"];
+  std::string str = js_num + "/" + js_den;
+  Exact_type eft(str);
+  return FT(eft);
+}
+
+template <typename Arrangement_, typename Kernel_>
+bool read_arrangement(const std::string& filename, Arrangement_& arr,
+                      const Kernel_& kernel) {
+  using Arrangement = Arrangement_;
+  using Kernel = Kernel_;
+
   using json = nlohmann::json;
   json data;
   auto rc = read_json(filename, data);
@@ -175,8 +197,7 @@ bool read_arrangement(const std::string& filename) {
     std::cerr << "The points item is missing " << " (" << filename << ")\n";
     return false;
   }
-  const auto& points = it.value();
-  std::cout << "# points: " << points.size() << std::endl;
+  const auto& js_points = it.value();
 
   // curves
   it = data.find("curves");
@@ -184,8 +205,7 @@ bool read_arrangement(const std::string& filename) {
     std::cerr << "The curves item is missing " << " (" << filename << ")\n";
     return false;
   }
-  const auto& curves = it.value();
-  std::cout << "# curves: " << curves.size() << std::endl;
+  const auto& js_curves = it.value();
 
   // vertices
   it = data.find("vertices");
@@ -193,8 +213,7 @@ bool read_arrangement(const std::string& filename) {
     std::cerr << "The vertices item is missing " << " (" << filename << ")\n";
     return false;
   }
-  const auto& vertices = it.value();
-  std::cout << "# vertices: " << vertices.size() << std::endl;
+  const auto& js_vertices = it.value();
 
   // halfedges
   it = data.find("halfedges");
@@ -202,8 +221,7 @@ bool read_arrangement(const std::string& filename) {
     std::cerr << "The halfedges item is missing " << " (" << filename << ")\n";
     return false;
   }
-  const auto& halfedges = it.value();
-  std::cout << "# halfedges: " << halfedges.size() << std::endl;
+  const auto& js_halfedges = it.value();
 
   // faces
   it = data.find("faces");
@@ -211,8 +229,123 @@ bool read_arrangement(const std::string& filename) {
     std::cerr << "The faces item is missing " << " (" << filename << ")\n";
     return false;
   }
-  const auto& faces = it.value();
-  std::cout << "# faces: " << faces.size() << std::endl;
+  const auto& js_faces = it.value();
+
+  const std::size_t num_points = js_points.size();
+  const std::size_t num_curves = js_curves.size();
+  const std::size_t num_vertices = js_vertices.size();
+  const std::size_t num_halfedges = js_halfedges.size();
+  const std::size_t num_edges = num_halfedges / 2;
+  const std::size_t num_faces = js_faces.size();
+
+  if (num_halfedges != 2 * num_edges) {
+    std::cerr << "The no. of halfedges (" <<  num_halfedges << ") is odd\n";
+    return false;
+  }
+
+  if (num_vertices < num_points) {
+    std::cerr << "The no. of vertices (" << num_vertices
+              << ") is smaller than the no. of points (" << num_points << ")\n";
+    return false;
+  }
+
+  if (num_edges < num_curves) {
+    std::cerr << "The no. of edges (" << num_edges
+              << ") is smaller than the no. of curves (" << num_curves << ")\n";
+    return false;
+  }
+
+  std::cout << "# points: " << num_points<< std::endl;
+  std::cout << "# curves: " <<  num_curves<< std::endl;
+  std::cout << "# vertices: " << num_vertices << std::endl;
+  std::cout << "# halfedges: " << num_halfedges << std::endl;
+  std::cout << "# faces: " << num_faces << std::endl;
+
+  using Point = typename Arrangement::Point_2;
+  using X_monotone_curve = typename Arrangement::X_monotone_curve_2;
+  using FT = typename Kernel::FT;
+  using Exact_type = typename FT::Exact_type;
+
+  std::vector<Point> points;
+  points.reserve(num_points);
+  for (const auto& js_pnt : js_points) {
+    using Direction_3 = typename Kernel::Direction_3;
+    using Location = typename Point::Location_type;
+    auto location = static_cast<Location>(js_pnt["location"]);
+    auto dx = to_ft<FT>(js_pnt["dx"]);
+    auto dy = to_ft<FT>(js_pnt["dy"]);
+    auto dz = to_ft<FT>(js_pnt["dz"]);
+    Direction_3 dir(dx, dy, dz);
+    Point pnt(dir, location);
+    points.push_back(pnt);
+  }
+
+  std::vector<X_monotone_curve> xcurves;
+  xcurves.reserve(num_curves);
+  for (const auto& js_xcv : js_curves) {
+    using Direction_3 = typename Kernel::Direction_3;
+    std::size_t src_id = js_xcv["source"];
+    std::size_t trg_id = js_xcv["target"];
+    const auto& js_normal = js_xcv["normal"];
+    auto dx = to_ft<FT>(js_normal["dx"]);
+    auto dy = to_ft<FT>(js_normal["dy"]);
+    auto dz = to_ft<FT>(js_normal["dz"]);
+    Direction_3 normal(dx, dy, dz);
+    bool is_vert = js_xcv["is_vertical"];
+    bool is_directed_right = js_xcv["is_directed_right"];
+    bool is_full = js_xcv["is_full"];
+    const auto& src = points[src_id];
+    const auto& trg = points[trg_id];
+    X_monotone_curve xcv(src, trg, normal, is_vert, is_directed_right, is_full);
+    xcurves.push_back(xcv);
+  }
+
+  using Arr_accessor = CGAL::Arr_accessor<Arrangement>;
+  Arr_accessor arr_access(arr);
+
+  using DVertex = typename Arr_accessor::Dcel_vertex;
+  std::vector<DVertex*> vertices(num_vertices);
+  size_t k = 0;
+  for (const auto& js_vertex : js_vertices) {
+    std::size_t point_id = js_vertex["point"];
+    const auto& point = points[point_id];
+    CGAL::Arr_parameter_space ps_x, ps_y;
+    switch (point.location()) {
+     case Point::NO_BOUNDARY_LOC: ps_x = ps_y = CGAL::INTERIOR; break;
+     case Point::MIN_BOUNDARY_LOC:
+      ps_x = CGAL::INTERIOR;
+      ps_y = CGAL::ARR_BOTTOM_BOUNDARY;
+      break;
+     case Point::MID_BOUNDARY_LOC:
+      ps_x = CGAL::LEFT_BOUNDARY;
+      ps_y = CGAL::INTERIOR;
+      break;
+     case Point::MAX_BOUNDARY_LOC:
+      ps_x = CGAL::INTERIOR;
+      ps_y = CGAL::ARR_TOP_BOUNDARY;
+      break;
+    }
+    vertices[k++] = arr_access.new_vertex(&point, ps_x, ps_y);
+  }
+
+  // using DHalfedge = typename Arr_accessor::Dcel_halfedge;
+  // std::vector<DHalfedge*> halfedges;
+  // k = 0;
+  // for (const auto& js_halfedge : js_halfedges) {
+  //   std::size_t source_id = js_halfedge["source"];
+  //   std::size_t target_id = js_halfedge["target"];
+  //   std::size_t curve_id = js_halfedge["curve"];
+  //   // int direction = js_halfedge["direction"];
+  //   DVertex* src_v = vertices[source_id];
+  //   DVertex* trg_v = vertices[target_id];
+  //   const auto& curve = xcurves[curve_id];
+  //   DHalfedge* new_he = arr_access.new_edge(&curve);
+  //   trg_v->set_halfedge(new_he);
+  //   new_he->set_vertex(trg_v);
+  //   src_v->set_halfedge(new_he->opposite());
+  //   new_he->opposite()->set_vertex(src_v);
+  //   halfedges[k++] = new_he;
+  // }
 
   return true;
 }
@@ -221,11 +354,22 @@ bool read_arrangement(const std::string& filename) {
 int main(int argc, char* argv[]) {
   const char* filename = (argc > 1) ? argv[1] : "arr.json";
 
-  auto rc = read_arrangement(filename);
+  using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Geom_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+  using Point = Geom_traits::Point_2;
+  using X_monotone_curve = Geom_traits::X_monotone_curve_2;
+  using Topol_traits = CGAL::Arr_spherical_topology_traits_2<Geom_traits>;
+  using Arrangement = CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>;
+
+  Kernel kernel;
+  Geom_traits traits;
+  Arrangement arr(&traits);;
+  auto rc = read_arrangement(filename, arr, kernel);
   if (! rc) {
     std::cerr << "Failed to load database!\n";
     return -1;
   }
+  // std::cout << arr << std::endl;
 
   QApplication app(argc, argv);
   QCoreApplication::setOrganizationName("CGAL");
