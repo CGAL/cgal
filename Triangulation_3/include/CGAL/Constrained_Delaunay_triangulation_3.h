@@ -1791,6 +1791,78 @@ private:
   }
 
 public:
+  bool is_valid(bool verbose = false, int level = 0) const
+  {
+    if(!this->tds().is_valid(verbose, level)) {
+      if(verbose)
+        std::cerr << "invalid data structure" << std::endl;
+
+      CGAL_assertion(false);
+      return false;
+    }
+
+    if(this->infinite_vertex() == Vertex_handle()) {
+      if(verbose)
+        std::cerr << "no infinite vertex" << std::endl;
+
+      CGAL_assertion(false);
+      return false;
+    }
+
+    switch(this->dimension()) {
+    case 3: {
+      for(auto it = this->finite_cells_begin(), end = this->finite_cells_end(); it != end; ++it) {
+        this->is_valid_finite(it);
+        for(int i = 0; i < 4; i++) {
+          const auto n = it->neighbor(i);
+          const auto n_index = n->index(it);
+          if(!this->is_infinite(n->vertex(n_index)))
+          {
+            if(!it->is_facet_constrained(i) && this->side_of_sphere(it, n->vertex(n_index)->point()) == ON_BOUNDED_SIDE) {
+              if(verbose)
+                std::cerr << "non-empty sphere " << std::endl;
+
+              CGAL_assertion(false);
+              return false;
+            }
+          }
+        }
+      }
+      break;
+    }
+    case 2: {
+      for(auto it = this->finite_facets_begin(), end = this->finite_facets_end(); it != end; ++it) {
+        const auto c = it->first;
+        this->is_valid_finite(c);
+        for(int i = 0; i < 3; i++) {
+          const auto n = c->neighbor(i);
+          const auto n_index = n->index(c);
+          if(!this->is_infinite(n->vertex(n_index))) {
+            if(this->side_of_circle(c, 3, n->vertex(n_index)->point()) == ON_BOUNDED_SIDE) {
+              if(verbose)
+                std::cerr << "non-empty circle " << std::endl;
+
+              CGAL_assertion(false);
+              return false;
+            }
+          }
+        }
+      }
+      break;
+    }
+    case 1: {
+      for(auto it = this->finite_edges_begin(), end = this->finite_edges_end(); it != end; ++it) {
+        this->is_valid_finite((*it).first);
+      }
+      break;
+    }
+    }
+    if(verbose)
+      std::cerr << "valid constrained Delaunay triangulation" << std::endl;
+
+    return true;
+  }
+
   void recheck_constrained_Delaunay() {
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
       search_for_missing_subfaces(i);
