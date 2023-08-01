@@ -18,10 +18,7 @@
 #define CGAL_MESH_OPTIMIZATION_RETURN_CODE_H
 
 namespace CGAL {
-  /*!
-   * \brief bla bla
-   @todo  document correctly
-   */
+
 enum Mesh_optimization_return_code
 {
   MESH_OPTIMIZATION_UNKNOWN_ERROR=-1,
