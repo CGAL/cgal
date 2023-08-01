@@ -1,5 +1,6 @@
 #define CGAL_AW3_TIMER
 #define CGAL_AW3_DEBUG
+#define CGAL_AW3_DEBUG_MANIFOLDNESS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

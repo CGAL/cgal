@@ -1362,7 +1362,12 @@ private:
     for(Vertex_handle v : m_dt.finite_vertex_handles())
     {
       if(is_non_manifold(v))
+      {
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
+        std::cout << v->point() << " is non-manifold" << std::endl;
+#endif
         non_manifold_vertices.push(v);
+      }
     }
 
     // Some lambdas for the comparer
@@ -1412,22 +1417,18 @@ private:
                           squared_distance(m_dt.point(c, 2), m_dt.point(c, 3)) });
     };
 
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
     std::cout << non_manifold_vertices.size() << " initial NMV" << std::endl;
 #endif
 
     while(!non_manifold_vertices.empty())
     {
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
       std::cout << non_manifold_vertices.size() << " NMV in queue" << std::endl;
 #endif
 
       Vertex_handle v = non_manifold_vertices.top();
       non_manifold_vertices.pop();
-
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
-      std::cout << "·";
-#endif
 
       if(!is_non_manifold(v))
         continue;
@@ -1503,6 +1504,7 @@ private:
   void check_queue_sanity()
   {
     std::cout << "Check queue sanity..." << std::endl;
+
     std::vector<Gate> queue_gates;
     Gate previous_top_gate = m_queue.top();
     while(!m_queue.empty())

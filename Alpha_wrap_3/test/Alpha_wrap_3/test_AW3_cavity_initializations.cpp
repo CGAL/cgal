@@ -1,5 +1,6 @@
 #define CGAL_AW3_TIMER
 #define CGAL_AW3_DEBUG
+#define CGAL_AW3_DEBUG_MANIFOLDNESS
 // #define CGAL_AW3_DEBUG_INITIALIZATION
 
 #include <CGAL/Surface_mesh.h>
