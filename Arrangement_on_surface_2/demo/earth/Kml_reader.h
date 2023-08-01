@@ -82,6 +82,8 @@ public:
   };
   using Placemarks = std::vector<Placemark>;
 
+  static int get_number_of_polygons(Placemarks& placemarks);
+
 
   static Placemarks read(const std::string& file_name);
 

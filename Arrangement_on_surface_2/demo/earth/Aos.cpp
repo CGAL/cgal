@@ -25,7 +25,7 @@ using json = nlohmann::ordered_json;
 #include "Tools.h"
 
 namespace {
-#define USE_EPIC
+//#define USE_EPIC
 
 #ifdef USE_EPIC
   using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -833,6 +833,10 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     }
   }
 
+  std::cout << "*** arr.number_of_faces = " << arr.number_of_faces() << std::endl;
+  std::cout << "*** arr.number_of_halfedges = " << arr.number_of_halfedges() << std::endl;
+  std::cout << "*** arr.number_of_vertices = " << arr.number_of_vertices() << std::endl;
+
   // DEFINE JSON OBJECT
   json js;
   auto& js_points = js["points"] = json::array();
@@ -950,43 +954,70 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   int num_half_edges = 0;
   auto& js_halfedges = js["halfedges"] = json::array();
   std::map<Halfedge_handle, int>  halfedge_pos_map;
-  auto write_half_edges = [&](Ext_aos::Ccb_halfedge_circulator first)
+  //auto write_half_edges = [&](Ext_aos::Ccb_halfedge_circulator first)
+  //{
+  //  auto curr = first;
+  //  do {
+  //    num_half_edges++;
+  //    auto& he = *curr;
+  //    auto it = halfedge_pos_map.find(&he);
+  //    if (it == halfedge_pos_map.end())
+  //    {
+  //      auto new_he_pos = halfedge_pos_map.size();
+  //      halfedge_pos_map[&he] = new_he_pos;
+  //    }
+  //    auto svh =  he.source(); 
+  //    auto tvh =  he.target();
+  //    auto& xcv = he.curve();
+  //    auto svp = vertex_pos_map[svh];
+  //    auto tvp = vertex_pos_map[tvh];
+  //    auto xcvp = curve_pos_map[&xcv];
+  //    json js_he;
+  //    js_he["source"] = svp;
+  //    js_he["target"] = tvp;
+  //    js_he["curve"]  = xcvp;
+  //    js_halfedges.push_back(std::move(js_he));
+  //  } while (++curr != first);
+  //};
+  auto write_half_edge = [&](auto& he)
   {
-    auto curr = first;
-    do {
-      num_half_edges++;
-      auto& he = *curr;
-      auto it = halfedge_pos_map.find(&he);
-      if (it == halfedge_pos_map.end())
-      {
-        auto new_he_pos = halfedge_pos_map.size();
-        halfedge_pos_map[&he] = new_he_pos;
-      }
-      auto svh =  he.source(); 
-      auto tvh =  he.target();
-      auto& xcv = he.curve();
-      auto svp = vertex_pos_map[svh];
-      auto tvp = vertex_pos_map[tvh];
-      auto xcvp = curve_pos_map[&xcv];
-      json js_he;
-      js_he["source"] = svp;
-      js_he["target"] = tvp;
-      js_he["curve"]  = xcvp;
-      js_halfedges.push_back(std::move(js_he));
-    } while (++curr != first);
+    auto it = halfedge_pos_map.find(&he);
+    if (it == halfedge_pos_map.end())
+    {
+      auto new_he_pos = halfedge_pos_map.size();
+      halfedge_pos_map[&he] = new_he_pos;
+    }
+    auto svh = he.source();
+    auto tvh = he.target();
+    auto& xcv = he.curve();
+    auto svp = vertex_pos_map[svh];
+    auto tvp = vertex_pos_map[tvh];
+    auto xcvp = curve_pos_map[&xcv];
+    json js_he;
+    js_he["source"] = svp;
+    js_he["target"] = tvp;
+    js_he["curve"] = xcvp;
+    js_halfedges.push_back(std::move(js_he));
   };
 
-  for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+  for (auto it = arr.halfedges_begin(); it != arr.halfedges_end(); ++it)
   {
-    auto it = fh->outer_ccb();
-    for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb)
-      write_half_edges(*ccb);  
-
-    for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb)
-      write_half_edges(*ccb);
+    auto& he = *it;
+    write_half_edge(he);
+    num_half_edges++;
   }
-  std::cout << "*** num total half-edges = " << num_half_edges << std::endl;
-  std::cout << "*** halfedge-pos-map size = " << halfedge_pos_map.size() << std::endl;
+  //for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+  //{
+  //  auto it = fh->outer_ccb();
+  //  for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb)
+  //    write_half_edges(*ccb);  
+
+  //  for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb)
+  //    write_half_edges(*ccb);
+  //}
+  std::cout << "HALF-EDGE CHECKS:\n";
+  std::cout << "  *** num total half-edges = " << num_half_edges << std::endl;
+  std::cout << "  *** halfedge-pos-map size = " << halfedge_pos_map.size() << std::endl;
 
 
   ////////////////////////////////////////////////////////////////////////////
@@ -1225,6 +1256,7 @@ Aos::Approx_arcs Aos::load_arr(const std::string& file_name)
     auto& js_name = js_face["name"];
     auto& js_outer_ccbs = js_face["outer_ccbs"];
     //auto& js_inner_ccbs = js_face["inner_ccbs"];
+    if(0)
     {
       std::cout << std::boolalpha << "is name string = " << js_name.is_string() << std::endl;
       std::cout << "name = " << js_name.get<std::string>() << std::endl;

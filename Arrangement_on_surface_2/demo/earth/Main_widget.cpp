@@ -162,7 +162,7 @@ std::unique_ptr<Line_strips>   new_faces;
 void Main_widget::initializeGL()
 {
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
-  verify_antarctica_node_is_redundant();
+  //verify_antarctica_node_is_redundant();
 
   //init_problematic_nodes();
 
@@ -173,12 +173,13 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
-
+  qDebug() << "*** KML number of polygons = " << 
+                                      Kml::get_number_of_polygons(m_countries);
   if(0)
   {
     auto created_faces = Aos::find_new_faces(m_countries);
@@ -186,8 +187,8 @@ void Main_widget::initializeGL()
   }
 
   {
-    //Aos::save_arr(m_countries, "C:/work/gsoc2023/deneme.json");
-    Aos::load_arr("C:/work/gsoc2023/deneme.json");
+    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    //Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
   }
   
   // initialize rendering of DUPLICATE VERTICES
