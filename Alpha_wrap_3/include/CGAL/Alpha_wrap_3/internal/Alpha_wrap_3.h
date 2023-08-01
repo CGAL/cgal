@@ -1445,11 +1445,6 @@ private:
         if(has_artificial_vertex(r))
           return true;
 
-        const int l_bf_count = count_boundary_facets(l, v);
-        const int r_bf_count = count_boundary_facets(r, v);
-        if(l_bf_count != r_bf_count)
-          return l_bf_count > r_bf_count;
-
         return sq_longest_edge(l) < sq_longest_edge(r);
       };
 
