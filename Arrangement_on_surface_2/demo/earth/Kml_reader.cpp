@@ -44,6 +44,16 @@ std::ostream& operator << (std::ostream& os, const Kml::Node& n)
 }
 
 
+int Kml::get_number_of_polygons(Placemarks& placemarks)
+{
+  int total_number_of_polygons = 0;
+  for (auto& placemark : placemarks)
+  {
+    total_number_of_polygons += placemark.polygons.size();
+  }
+  return total_number_of_polygons;
+}
+
 Kml::Placemarks  Kml::read(const std::string& file_name)
 {
   LinearRing    lring;
