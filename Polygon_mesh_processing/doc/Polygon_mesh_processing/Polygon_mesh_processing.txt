@@ -544,8 +544,8 @@ This can allow a user to stop the algorithm if a timeout needs to be implemented
 
 The hole filling algorithm has a complexity which depends on the
 number of vertices.  While \cgalCite{liepa2003filling} has a running
-time of \f$ O(n^3)\f$ , \cgalCite{zou2013algorithm} in most cases has
-running time of \f$ O(n \log n)\f$. We benchmarked the function
+time of \cgalBigO{n^3} , \cgalCite{zou2013algorithm} in most cases has
+running time of \cgalBigO{n \log n}. We benchmarked the function
 `triangulate_refine_and_fair_hole()` for the two meshes below (as well as two
 more meshes with smaller holes). The machine used was a PC running
 Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz.
@@ -570,7 +570,7 @@ The following running times were observed:
 ***************************************
 \section PMPPredicates Predicates
 
-This packages provides several predicates to be evaluated with respect to a triangle mesh.
+This package provides several predicates to be evaluated with respect to a triangle mesh.
 
 \subsection PMPDoIntersect Intersections Detection
 Intersection tests between triangle meshes and/or polylines can be done using

@@ -58,6 +58,7 @@
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkBMPReader.h>
+#include <vtkNIFTIImageReader.h>
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
@@ -855,18 +856,18 @@ private:
   template<typename T>
   void switchReaderConverter(std::pair<T, T> minmax)
   {
-    switchReaderConverter(minmax, typename boost::is_integral<T>::type());
+    switchReaderConverter(minmax, typename std::is_integral<T>::type());
   }
 
   template<typename T>
-  void switchReaderConverter(std::pair<T, T> minmax, boost::true_type)
+  void switchReaderConverter(std::pair<T, T> minmax, std::true_type)
   {
     // IntConverter
     IntConverter x = { minmax }; pxr_.setIC(x);
   }
 
   template<typename T>
-  void switchReaderConverter(std::pair<T, T> minmax, boost::false_type)
+  void switchReaderConverter(std::pair<T, T> minmax, std::false_type)
   {
     // IntConverter
     DoubleConverter x = { minmax }; pxr_.setFC(x);
@@ -1086,9 +1087,10 @@ private Q_SLOTS:
 QString Io_image_plugin::nameFilters() const
 {
   return QString("Inrimage files (*.inr *.inr.gz) ;; "
-                 "Analyze files (*.hdr *.img *img.gz) ;; "
+                 "Analyze files (*.hdr *.img *.img.gz) ;; "
                  "Stanford Exploration Project files (*.H *.HH) ;; "
-                 "NRRD image files (*.nrrd)");
+                 "NRRD image files (*.nrrd) ;; "
+                 "NIFTI image files (*.nii *.nii.gz)");
 }
 
 bool Io_image_plugin::canLoad(QFileInfo) const
@@ -1138,6 +1140,25 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
 #else
     CGAL::Three::Three::warning("VTK is required to read NRRD files");
+    delete image;
+    return QList<Scene_item*>();
+#endif
+  }
+
+  // read a NIFTI file
+  if(fileinfo.suffix() == "nii"
+    || (   fileinfo.suffix() == "gz"
+        && fileinfo.fileName().endsWith(QString(".nii.gz"), Qt::CaseInsensitive)))
+  {
+#ifdef CGAL_USE_VTK
+    vtkNew<vtkNIFTIImageReader> reader;
+    reader->SetFileName(fileinfo.filePath().toUtf8());
+    reader->Update();
+    auto vtk_image = reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+#else
+    CGAL::Three::Three::warning("VTK is required to read NIfTI files");
     delete image;
     return QList<Scene_item*>();
 #endif

@@ -1223,10 +1223,10 @@ halfedge \f$e_{\mathrm{pred}}\f$ directed toward \f$v\f$, such that
 \f$c\f$ is located between the curves associated with
 \f$e_{\mathrm{pred}}\f$ and the next halfedge in the clockwise order
 in the circular list of halfedges around \f$v\f$; see
-\cgalFigureRef{aos_fig-insert}. This search may take \f$O(d)\f$ time,
+\cgalFigureRef{aos_fig-insert}. This search may take \cgalBigO{d} time,
 where \f$d\f$ is the degree of the vertex \f$v\f$. \cgalFootnote{We
 can store the handles to the halfedges incident to \f$v\f$ in an efficient
-search structure to obtain \f$O(\log d)\f$ access time. However, as
+search structure to obtain \cgalBigO{\log d} access time. However, as
 \f$d\f$ is usually very small, this may lead to a waste of storage
 space without a meaningful improvement in running time in practice.}
 However, if the halfedge \f$e_{\mathrm{pred}}\f$ is known in advance,
@@ -1488,9 +1488,9 @@ keep up-to-date as this arrangement changes.
 As mentioned above, the triangulation strategy is provided only for
 educational purposes, and thus we do not elaborate on this strategy.
 The data structure needed by the landmark and the trapezoidal map RIC
-strategies can be constructed in \f$O(N \log N)\f$ time, where \f$N\f$
+strategies can be constructed in \cgalBigO{N \log N} time, where \f$N\f$
 is the overall number of edges in the arrangement, but the constant
-hidden in the \f$O()\f$ notation for the trapezoidal map RIC strategy
+hidden in the \cgalBigO{&nbsp;} notation for the trapezoidal map RIC strategy
 is much larger. Thus, construction needed by the landmark algorithm is
 in practice significantly faster than the construction needed by the
 trapezoidal map RIC strategy. In addition, although both resulting
@@ -1647,7 +1647,7 @@ Section \ref arr_ssecpl. The output pairs are sorted in increasing
 \f$xy\f$-lexicographical order of the query point.
 
 The batched point-location operation is carried out by sweeping the
-arrangement. Thus, it takes \f$O((m+N)\log{(m+N)})\f$ time, where
+arrangement. Thus, it takes \cgalBigO{(m+N)\log{(m+N)}} time, where
 \f$N\f$ is the number of edges in the arrangement. Issuing separate
 queries exploiting a point-location strategy with logarithmic query
 time per query, such as the trapezoidal map RIC strategy (see Section
@@ -2037,11 +2037,11 @@ so it must be construct from scratch.
 
 In the first case, we sweep over the input curves, compute their
 intersection points, and construct the \dcel that represents their
-arrangement. This process is performed in \f$O\left((n + k)\log
-n\right)\f$ time, where \f$k\f$ is the total number of intersection
+arrangement. This process is performed in \cgalBigO{left((n + k)\log
+n\right} time, where \f$k\f$ is the total number of intersection
 points. The running time is asymptotically better than the time needed
 for incremental insertion if the arrangement is relatively sparse
-(when \f$k\f$ is \f$O(\frac{n^2}{\log n}\f$)), but it is recommended
+(when \f$k\f$ is \cgalBigO{\frac{n^2}{\log n}}), but it is recommended
 that this aggregate construction process be used even for dense
 arrangements, since the plane-sweep algorithm performs fewer geometric
 operations compared to the incremental insertion algorithms, and hence
@@ -4346,7 +4346,7 @@ a point with respect to an \f$x\f$-monotone polyline, we use binary
 search to locate the relevant segment that contains the point in its
 \f$x\f$-range. Then, we compute the position of the point with respect
 to this segment. Thus, operations on \f$x\f$-monotone polylines of
-size \f$m\f$ typically take \f$O(\log m)\f$ time.
+size \f$m\f$ typically take \cgalBigO{\log m} time.
 
 You are free to choose the underlying segment traits class. Your
 decision could be based, for example, on the number of expected
@@ -4819,21 +4819,19 @@ defined in the header file `arr_conics.h`.
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_2                           Rat_point;
-typedef Rat_kernel::Segment_2                         Rat_segment;
-typedef Rat_kernel::Circle_2                          Rat_circle;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-                                                      Traits;
-typedef Traits::Point_2                               Point;
-typedef Traits::Curve_2                               Conic_arc;
-typedef Traits::X_monotone_curve_2                    X_monotone_conic_arc;
-typedef CGAL::Arrangement_2<Traits>                   Arrangement;
+using Nt_traits = CGAL::CORE_algebraic_number_traits;
+using Rational = Nt_traits::Rational;
+using Rat_kernel = CGAL::Cartesian<Rational>;
+using Rat_point = Rat_kernel::Point_2;
+using Rat_segment = Rat_kernel::Segment_2;
+using Rat_circle = Rat_kernel::Circle_2;
+using Algebraic = Nt_traits::Algebraic;
+using Alg_kernel = CGAL::Cartesian<Algebraic>;
+using Traits = CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+using Point = Traits::Point_2;
+using Conic_arc = Traits::Curve_2;
+using X_monotone_conic_arc = Traits::X_monotone_curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 \endcode
 
 <!-- ------------------------------------------------------------------------- -->
@@ -6599,7 +6597,7 @@ member functions when operating on an arrangement-with-history object.
 \cgalExample{Arrangement_on_surface_2/edge_manipulation_curve_history.cpp}
 
 <!-- ========================================================================= -->
-\section aos_sec-io Input/Output Streams
+\section aos_sec-io Input/Output Streams and Visualization
 <!-- ========================================================================= -->
 
 In some cases, one would like to save an arrangement object
@@ -6743,6 +6741,24 @@ format. The package contains a template called,
 arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 \cgalAdvancedEnd
+
+<!-- ------------------------------------------------------------------------- -->
+\subsection arr_ssecarr_io_vis Drawing an Arrangement
+<!-- ------------------------------------------------------------------------- -->
+
+An arrangement data structure can be visualized by calling the \link PkgArrangementOnSurface2Draw CGAL::draw<arr>() \endlink function as shown in the following example. This function opens a new window showing the given arrangement. A call to this function is blocking; that is, the program continues execution only after the user closes the window.
+
+\cgalExample{Arrangement_on_surface_2/draw_arr.cpp}
+
+This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\cgalFigureBegin{aos_fig-draw_arr,draw_arr.png}
+A snapshot of the window created by the program
+\ref Arrangement_on_surface_2/draw_arr.cpp. The constructed arrangement consists
+of 14 vertices, 15 edges, and 3 faces. Notice that the colors are generated at random.
+\cgalFigureEnd
+
 
 <!-- ========================================================================= -->
 \section aos_sec-bgl Adapting to Boost Graphs

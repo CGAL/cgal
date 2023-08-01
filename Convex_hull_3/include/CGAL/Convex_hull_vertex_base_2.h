@@ -18,6 +18,7 @@
 #include <CGAL/license/Convex_hull_3.h>
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
+#include <CGAL/IO/io.h>
 
 #include <iostream>
 
@@ -77,7 +78,7 @@ template <typename GT, typename Vb>
 std::ostream&
 operator<<(std::ostream &os, const Convex_hull_vertex_base_2<GT, Vb>& v)
 {
-  return os << static_cast<const Vb&>(v) << v.point();
+  return os << static_cast<const Vb&>(v) << IO::serialize(v.point());
 }
 
 } //namespace CGAL

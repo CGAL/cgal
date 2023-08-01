@@ -42,7 +42,7 @@ typedef unspecified_type Exact_rational;
 
 #else // not DOXYGEN_RUNNING
 
-typedef internal::Exact_field_selector<double>::Type Exact_rational;
+using Exact_rational = internal::Exact_NT_backend<internal::Default_exact_nt_backend>::Rational;
 
 #endif
 

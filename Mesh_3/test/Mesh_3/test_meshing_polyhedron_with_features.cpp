@@ -26,7 +26,7 @@
 #include <sstream>
 
 static constexpr bool verbose =
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
   true;
 #else
   false;

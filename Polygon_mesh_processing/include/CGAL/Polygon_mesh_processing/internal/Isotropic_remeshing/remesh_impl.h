@@ -163,15 +163,15 @@ namespace internal {
     template <class Range>
     bool same_range(const Range& r1, const Range& r2)
     {
-      return boost::begin(r1)==boost::begin(r2) &&
-             boost::end(r1)==boost::end(r2);
+      return std::begin(r1)==std::begin(r2) &&
+             std::end(r1)==std::end(r2);
     }
 
     template <class Range1, class Range2>
     bool same_range(const Range1& r1, const Range2& r2)
     {
-      return std::distance(boost::begin(r1), boost::end(r1)) ==
-             std::distance(boost::begin(r2), boost::end(r2));
+      return std::distance(std::begin(r1), std::end(r1)) ==
+             std::distance(std::begin(r2), std::end(r2));
     }
 
   public:

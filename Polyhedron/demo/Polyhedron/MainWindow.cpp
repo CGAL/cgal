@@ -1440,7 +1440,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
 void MainWindow::selectionChanged()
 {
   scene->setSelectedItemIndex(getSelectedSceneItemIndex());
-  scene->setSelectedItemsList(getSelectedSceneItemIndices());
+  scene->setSelectedItemIndices(getSelectedSceneItemIndices());
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   Q_FOREACH(CGAL::QGLViewer* vi, CGAL::QGLViewer::QGLViewerPool())
   {
@@ -2193,7 +2193,7 @@ void MainWindow::on_actionEraseAll_triggered()
   QList<int> all_ids;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
     all_ids.push_back(i);
-  scene->setSelectedItemsList(all_ids);
+  scene->setSelectedItemIndices(all_ids);
   on_actionErase_triggered();
 }
 
@@ -3191,8 +3191,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                              tr("Enter the name of your scene file."));
     if(path.isEmpty())
       return;
-    if(!path.contains("Polyhedron_demo_"))
-      path.prepend("Polyhedron_demo_");
+    if(!path.contains("/tmp/Polyhedron_demo_"))
+      path.prepend("/tmp/Polyhedron_demo_");
     try{
       ssh_session session = nullptr;
       bool res = establish_ssh_session_from_agent(session,

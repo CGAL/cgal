@@ -48,7 +48,6 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/tuple.h>
-#include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
 #include <atomic>
 
@@ -348,6 +347,7 @@ public:
   std::string debug_info_element_impl(const Facet &facet) const
   {
     std::stringstream sstr;
+    sstr.precision(17);
     sstr << "Facet { " << std::endl
     << "  " << *facet.first->vertex((facet.second+1)%4) << std::endl
     << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
@@ -477,7 +477,7 @@ protected:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet facet, const Quality& quality)
   {
-#if CGAL_MESH_3_VERY_VERBOSE
+#ifdef CGAL_MESH_3_VERY_VERBOSE
     std::stringstream s;
     s << "insert_bad_facet(" << debug_info_element_impl(facet) << ", ...) by thread "
       << std::this_thread::get_id() << '\n';
@@ -642,7 +642,7 @@ template<class Tr,
 #ifdef CGAL_LINKED_WITH_TBB
          class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
          <
-          boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+          std::is_convertible<Concurrency_tag, Parallel_tag>::value,
           // Parallel
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
@@ -983,7 +983,7 @@ scan_triangulation_impl()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Ct, Parallel_tag>::value)
+  if (std::is_convertible<Ct, Parallel_tag>::value)
   {
 # if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (in parallel) - "
@@ -1051,7 +1051,8 @@ int
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 number_of_bad_elements_impl()
 {
-  typedef typename MD::Subdomain Subdomain;
+  typedef typename MD::Subdomain_index        Subdomain_index;
+  typedef boost::optional<Subdomain_index>    Subdomain;
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
   int count = 0, count_num_bad_surface_facets = 0;
@@ -1732,6 +1733,9 @@ Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_facet_encroached(const Facet& facet,
                     const Weighted_point& point) const
 {
+  typedef typename MD::Subdomain_index        Subdomain_index;
+  typedef boost::optional<Subdomain_index>    Subdomain;
+
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
     return false;
 
@@ -1741,9 +1745,40 @@ is_facet_encroached(const Facet& facet,
   const Bare_point& center = get_facet_surface_center(facet);
   const Weighted_point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
 
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+  std::cout << "---------------------------------------------------" << std::endl;
+  std::cout << "Facet " << r_tr_.point(cell, (facet_index+1)%4) << " "
+                        << r_tr_.point(cell, (facet_index+2)%4) << " "
+                        << r_tr_.point(cell, (facet_index+3)%4) << std::endl;
+  std::cout << "center: " << center << std::endl;
+  std::cout << "cell point: " << reference_point << std::endl;
+  std::cout << "refinement point: " << point << std::endl;
+  std::cout << "greater or equal? " << r_tr_.greater_or_equal_power_distance(center, reference_point, point) << std::endl;
+  std::cout << "greater or equal (other way)? " << r_tr_.greater_or_equal_power_distance(center, point, reference_point) << std::endl;
+  std::cout << "index of cell " << r_c3t3_.subdomain_index(cell) << std::endl;
+#endif
+
   // the facet is encroached if the new point is closer to the center than
   // any vertex of the facet
-  return r_tr_.greater_or_equal_power_distance(center, reference_point, point);
+  if(r_tr_.greater_or_equal_power_distance(center, reference_point, point))
+    return true;
+
+  // In an ideal (exact) world, when the predicate above returns true then the insertion
+  // of the refinement point will shorten the dual of the facet but that dual will
+  // still intersects the surface (domain), otherwise the power distance to the surface
+  // center would be shorter.
+  //
+  // In the real world, we can make an error both when we switch back to the inexact kernel
+  // and when we evaluate the domain (e.g. trigonometry-based implicit functions).
+  //
+  // An issue can then arise when we update the restricted Delaunay due to the insertion
+  // of another point, and we do not notice that a facet should in fact have been encroached
+  // by a previous insertion.
+  Bare_point cc;
+  r_tr_.dual_exact(facet, point, cc);
+
+  const Subdomain subdomain = r_oracle_.is_in_domain_object()(cc);
+  return (!subdomain || *subdomain != r_c3t3_.subdomain_index(cell));
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>

@@ -27,11 +27,9 @@
 
 #if defined(__has_include) && ( ! defined _MSC_VER || _MSC_VER > 1900)
 #  if CGAL_USE_GMP && ! __has_include(<gmp.h>)
-#    pragma CGAL_WARNING("<gmp.h> cannot be found. Less efficient number types will be used instead. Define CGAL_NO_GMP=1 if that is on purpose.")
 #    undef CGAL_USE_GMP
 #    undef CGAL_USE_MPFR
 #  elif CGAL_USE_MPFR && ! __has_include(<mpfr.h>)
-#    pragma CGAL_WARNING("<mpfr.h> cannot be found and the GMP support in CGAL requires it. Less efficient number types will be used instead. Define CGAL_NO_GMP=1 if that is on purpose.")
 #    undef CGAL_USE_GMP
 #    undef CGAL_USE_MPFR
 #  endif // CGAL_USE_MPFR and no <mpfr.h>

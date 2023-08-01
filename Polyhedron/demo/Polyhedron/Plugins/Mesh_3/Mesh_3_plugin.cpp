@@ -74,6 +74,7 @@ class Mesh_3_plugin :
              READ get_sharp_edges_angle_bound
              WRITE set_sharp_edges_angle_bound)
   Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing)
+  Q_PROPERTY(double edges_min_sizing READ get_edges_min_sizing WRITE set_edges_min_sizing)
   Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
   Q_PROPERTY(double approx READ get_approx WRITE set_approx)
   Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
@@ -159,6 +160,7 @@ public Q_SLOTS:
     sharp_edges_angle_bound = v;
   }
   void set_edges_sizing(const double v) { edges_sizing = v; };
+  void set_edges_min_sizing(const double v) { edges_min_sizing = v; };
   void set_facets_sizing(const double v) { facets_sizing = v; };
   void set_approx(const double v) { approx = v; };
   void set_tets_sizing(const double v) { tets_sizing = v; };
@@ -171,6 +173,7 @@ public Q_SLOTS:
   double get_angle() { return angle; };
   double get_sharp_edges_angle_bound() { return sharp_edges_angle_bound; }
   double get_edges_sizing() { return edges_sizing; };
+  double get_edges_min_sizing() { return edges_min_sizing; };
   double get_facets_sizing() { return facets_sizing; };
   double get_approx() { return approx; };
   double get_tets_sizing() { return tets_sizing; };
@@ -206,8 +209,11 @@ private:
   double approx;
   int approx_decimals;
   double edges_sizing;
+  double edges_min_sizing;
   double facets_sizing;
+  double facets_min_sizing;
   double tets_sizing;
+  double tets_min_sizing;
   double tets_shape;
   bool manifold_criterion;
   CGAL::Mesh_facet_topology facet_topology;
@@ -424,7 +430,10 @@ void Mesh_3_plugin::set_defaults() {
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   facets_sizing = get_approximate(diag * 0.05, 2, sizing_decimals);
   edges_sizing = facets_sizing;
+  edges_min_sizing = 0.1 * facets_sizing;
   tets_sizing = facets_sizing;
+  facets_min_sizing = 0.1 * facets_sizing;
+  tets_min_sizing = 0.1 * tets_sizing;
   angle = 25.;
   sharp_edges_angle_bound = 60.;
   approx = get_approximate(diag * 0.005, 2, approx_decimals);
@@ -495,6 +504,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.facetSizing,
           SLOT(setEnabled(bool)));
 
+  connect(ui.noFacetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.facetMinSizing,
+          SLOT(setEnabled(bool)));
+
   connect(
       ui.noAngle, SIGNAL(toggled(bool)), ui.facetAngle, SLOT(setEnabled(bool)));
 
@@ -503,11 +517,17 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.tetSizing,
           SLOT(setEnabled(bool)));
 
+  connect(ui.noTetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.tetMinSizing,
+          SLOT(setEnabled(bool)));
+
   connect(ui.noTetShape,
           SIGNAL(toggled(bool)),
           ui.tetShape,
           SLOT(setEnabled(bool)));
 
+  //edge sizing
   connect(ui.protect,
           SIGNAL(toggled(bool)),
           ui.noEdgeSizing,
@@ -528,6 +548,28 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.edgeSizing,
           SLOT(setEnabled(bool)));
 
+  //edge min sizing
+  connect(ui.protect,
+          SIGNAL(toggled(bool)),
+          ui.noEdgeMinSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.protect,
+          SIGNAL(toggled(bool)),
+          ui.noEdgeMinSizing,
+          SLOT(setChecked(bool)));
+
+  connect(ui.noEdgeMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.edgeMinSizingLabel,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noEdgeMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.edgeMinSizing,
+          SLOT(setEnabled(bool)));
+
+  //sharp edges
   connect(ui.protect,
           SIGNAL(toggled(bool)),
           ui.sharpEdgesAngle,
@@ -560,11 +602,14 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(facets_sizing);
+  ui.facetMinSizing->setValue(facets_min_sizing);
   ui.edgeSizing->setValue(edges_sizing);
+  ui.edgeMinSizing->setValue(edges_min_sizing);
 
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag);        // max
   ui.tetSizing->setValue(tets_sizing); // default value
+  ui.tetMinSizing->setValue(tets_min_sizing);
 
   ui.approx->setRange(diag * 10e-7, // min
                       diag);        // max
@@ -598,8 +643,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
            " automatically"));
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
+  ui.noEdgeMinSizing->setChecked(false);
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
+  ui.edgeMinSizingLabel->setEnabled(ui.noEdgeMinSizing->isChecked());
+  ui.edgeMinSizing->setEnabled(ui.noEdgeMinSizing->isChecked());
 
   using Item = std::pair<QString, Protection_flags>;
   const Item sharp_and_boundary{"Sharp and Boundary edges", FEATURES};
@@ -637,9 +685,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
           ui.weightsSigma_label, SLOT(setEnabled(bool)));
   ui.labeledImgGroup->setVisible(input_is_labeled_img);
-  ui.weightsSigma->setValue((std::max)(image_item->image()->vx(),
-                            (std::max)(image_item->image()->vy(),
-                                       image_item->image()->vz())));
+  if(image_item != nullptr && input_is_labeled_img)
+    ui.weightsSigma->setValue(image_item->default_sigma_weights());
 
 #ifndef CGAL_USE_ITK
   if (input_is_labeled_img)
@@ -671,10 +718,14 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   std::cerr << "sharp_edges_angle_bound: " << sharp_edges_angle_bound << '\n';
   edges_sizing =
       !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
+  edges_min_sizing =
+      !ui.noEdgeMinSizing->isChecked() ? 0. : ui.edgeMinSizing->value();
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
+  facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
   tets_shape = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
+  tets_min_sizing = !ui.noTetMinSizing->isChecked() ? 0 : ui.tetMinSizing->value();
 
   const auto pe_flags = ui.protectEdges->currentData().value<Protection_flags>();
   protect_borders = ui.protect->isChecked() && pe_flags.testFlag(BORDERS);
@@ -736,7 +787,28 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         return item->polyhedron();
       });
 
-    if(bounding_polyhedron != nullptr)
+    if(!incident_sub.empty())
+    {
+      thread = cgal_code_mesh_3(
+        polyhedrons,
+        incident_sub,
+        item_name,
+        angle,
+        facets_sizing,
+        facets_min_sizing,
+        approx,
+        tets_sizing,
+        tets_min_sizing,
+        edges_sizing,
+        edges_min_sizing,
+        tets_shape,
+        protect_features,
+        protect_borders,
+        sharp_edges_angle_bound,
+        manifold,
+        mesh_type == Mesh_type::SURFACE_ONLY);
+    }
+    else
     {
       thread = cgal_code_mesh_3(
         polyhedrons,
@@ -745,9 +817,12 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         item_name,
         angle,
         facets_sizing,
+        facets_min_sizing,
         approx,
         tets_sizing,
+        tets_min_sizing,
         edges_sizing,
+        edges_min_sizing,
         tets_shape,
         protect_features,
         protect_borders,
@@ -755,24 +830,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY);
     }
-    else if(!incident_sub.empty())
-    {
-      thread = cgal_code_mesh_3(
-        polyhedrons,
-        incident_sub,
-        item_name,
-        angle,
-        facets_sizing,
-        approx,
-        tets_sizing,
-        edges_sizing,
-        tets_shape,
-        protect_features,
-        protect_borders,
-        sharp_edges_angle_bound,
-        manifold,
-        mesh_type == Mesh_type::SURFACE_ONLY);
-     }
     break;
   }//end case POLYHEDRAL_MESH_ITEMS
   // Implicit functions
@@ -787,9 +844,12 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     thread = cgal_code_mesh_3(pFunction,
                               angle,
                               facets_sizing,
+                              facets_min_sizing,
                               approx,
                               tets_sizing,
+                              tets_min_sizing,
                               edges_sizing,
+                              edges_min_sizing,
                               tets_shape,
                               manifold,
                               mesh_type == Mesh_type::SURFACE_ONLY);
@@ -826,9 +886,12 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         (img_polylines_item == nullptr) ? plc : img_polylines_item->polylines,
         angle,
         facets_sizing,
+        facets_min_sizing,
         approx,
         tets_sizing,
+        tets_min_sizing,
         edges_sizing,
+        edges_min_sizing,
         tets_shape,
         protect_features,
         protect_borders,

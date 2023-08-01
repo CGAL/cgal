@@ -1148,7 +1148,7 @@ public:
     Intersection operator()(const Segment_3& s) const
     {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      CGAL_precondition(r_domain_.do_intersect_surface_object()(s));
+      CGAL_precondition(r_domain_.do_intersect_surface_object()(s) != boost::none);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       return this->operator()(s.source(),s.target());
     }

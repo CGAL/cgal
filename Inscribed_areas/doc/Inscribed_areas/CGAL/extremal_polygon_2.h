@@ -32,8 +32,8 @@ convex polygon (oriented clock- or counterclockwise).
 \cgalHeading{Implementation}
 
 The implementation uses monotone matrix search
-\cgalCite{akmsw-gamsa-87} and has a worst case running time of \f$ O(k
-\cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in
+\cgalCite{akmsw-gamsa-87} and has a worst case running time of \cgalBigO{k
+\cdot n + n \cdot \log n}, where \f$ n\f$ is the number of vertices in
 \f$ P\f$.
 
 */
@@ -89,8 +89,8 @@ where `K` is a model of `Kernel`.
 \cgalHeading{Implementation}
 
 The implementation uses monotone matrix search
-\cgalCite{akmsw-gamsa-87} and has a worst case running time of \f$ O(k
-\cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in
+\cgalCite{akmsw-gamsa-87} and has a worst case running time of \cgalBigO{k
+\cdot n + n \cdot \log n}, where \f$ n\f$ is the number of vertices in
 \f$ P\f$.
 
 \cgalHeading{Example}
@@ -158,8 +158,8 @@ defined that computes the squareroot of a number.
 \cgalHeading{Implementation}
 
 The implementation uses monotone matrix search
-\cgalCite{akmsw-gamsa-87} and has a worst case running time of \f$ O(k
-\cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in
+\cgalCite{akmsw-gamsa-87} and has a worst case running time of \cgalBigO{k
+\cdot n + n \cdot \log n}, where \f$ n\f$ is the number of vertices in
 \f$ P\f$.
 
 \cgalHeading{Example}

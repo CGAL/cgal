@@ -1,131 +1,166 @@
-Subject: CGAL 5.3.2, 5.4.1, and 5.5 Beta 1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.6 Beta 1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
-The CGAL Open Source Project is pleased to announce today three new
-releases:
+The CGAL Open Source Project is pleased to announce the release 5.6 Beta 1 of
+CGAL, the Computational Geometry Algorithms Library.
 
--   CGAL-5.3.2 is the second and last bug-fix release for CGAL-5.3,
--   CGAL-5.4.1 is the first bug-fix release for CGAL-5.4, and
--   CGAL-5.5-beta1 is the first beta release for CGAL-5.5.
-
-CGAL version 5.5 Beta 1 is a public testing release. It should provide a
+CGAL version 5.6 Beta 1 is a public testing release. It should provide a
 solid ground to report bugs that need to be tackled before the release
-of the final version of CGAL 5.5 in July 2022.
+of the final version of CGAL 5.6 in July 2023.
 
 Besides fixes and general enhancement to existing packages, the
-following has changed since CGAL 5.4:
+following has changed since CGAL 5.5:
 
-3D Alpha Wrapping (new package)
+General Changes
 
--   This component takes a 3D triangle mesh, soup, or point set as
-    input, and generates a valid (watertight, intersection-free, and
-    combinatorially 2-manifold) surface triangle mesh that contains the
-    input. The algorithm proceeds by shrink-wrapping and refining a 3D
-    Delaunay triangulation, starting from a loose bounding box of the
-    input. Two user-defined parameters, alpha and offset, offer control
-    over the maximum size of cavities where the shrink-wrapping process
-    can enter, and the tightness of the final surface mesh to the input,
-    respectively. Once combined, these parameters provide a means to
-    trade fidelity to the input for complexity of the output.
+-   Breaking change: Package-specific assertions, preconditions, and
+    postconditions (such as CGAL_triangulation_assertion) have been
+    removed. Corresponding CGAL-wide versions (such as CGAL_assertion)
+    should be used instead.
 
-    See also https://www.cgal.org/2022/05/18/alpha_wrap/.
+Shape Detection (major changes)
 
-3D Convex Hulls
+-   Breaking change: The region growing part of the package have been
+    reworked to fix design issues introduced with the handling of
+    FaceGraph models. In particular, the notion of Item has been
+    introduced to reference an element in the input range of elements.
+    Region maps now operates on Item and no longer on the value type of
+    the input range.
+-   Breaking change: The method update() in the concept RegionType now
+    returns a Boolean instead of void, that is used inside the class
+    Region_growing for detecting if the input conditions for the new
+    region are satisfied. This change affects only user-defined types of
+    regions.
+-   Breaking change: The constructors of all models used together with
+    the region growing algorithm now enable users to provide parameters
+    through the named parameters mechanism.
+-   All fitting classes in the region growing framework are now using
+    better versions of the region conditions, more precise and faster,
+    including the correct normal orientations.
+-   Added new models of the concept RegionType for getting linear
+    regions in a set of 2D and 3D segments and on 2D and 3D polylines.
+-   Added the class Polyline_graph for extracting a set of polylines
+    from a face graph, which splits this graph into a set of
+    user-defined regions.
+-   Added new shapes to the Region Growing algorithm on a point set:
+    circles in 2D, spheres in 3D, and cylinders in 3D.
 
--   Added an overload of the function CGAL::convex_hull_3(), which
-    writes the result in an indexed triangle set.
+2D Straight Skeleton and Polygon Offsetting (major changes)
 
-2D Polygons
+-   Added weighted straight skeletons: weighted straight skeletons are a
+    generalization of straight skeletons. Contour edges are assigned a
+    positive weight, which can be understood as assigning a speed to the
+    wavefront spawned from the contour edge.
+-   Added straight skeleton extrusion: this CGAL package now implements
+    the extrusion of weighted straight skeletons of polygons with holes.
+    The output is a closed, combinatorially 2-manifold surface triangle
+    mesh. See also the news entry.
 
--   Add vertex, edge, and hole ranges.
--   The concept GeneralPolygonWithHoles_2 now requires the nested type
-    Polygon_2 instead of General_polygon_2.
+Combinatorial Maps, Generalized Maps, and Linear Cell Complex
 
-2D Regularized Boolean Set-Operations
-
--   The concept GeneralPolygonSetTraits_2 now requires the nested type
-    Construct_polygon_with_holes_2 instead of
-    Construct_general_polygon_with_holes_2.
-
-Combinatorial Maps
-
--   Removed old code deprecated in CGAL 4.9 and 4.10 (global functions,
-    and information associated with darts).
+-   Added a version that uses indices instead of handles as dart and
+    attribute descriptors. As the indices are integers convertible from
+    and to std::size_t, they can be used as index into vectors which
+    store properties. To use the index version, Use_index must be
+    defined and be equal to CGAL::Tag_true in the item class.
 
 2D Arrangements
 
--   Fixed the intersect_2, compare_y_at_x_right, and compare_y_at_x_left
-    function objects of the traits class template
-    Arr_geodesic_arc_on_sphere_traits_2 that handles geodesic arcs on
-    sphere and applied a small syntactical fix to the tracing traits.
-
-Tetrahedral Mesh Generation
-
--   Added the function remove_isolated_vertices() as a post-processing
-    step for the tetrahedral mesh generation.
+-   Introduced an overload function template, namely draw(arr), that
+    renders arrangements based on the Basic_viewer_qt class template. As
+    of now, only 2D arrangements on the plane induced by (i)
+    segments, (ii) conics, and (iii) circular arcs or (linear) segments
+    are supported.
+-   Improved the traits class template that handles conics, namely
+    Arr_conic_traits_2. This includes the following: 1. Fixed a couple
+    of bugs and slightly optimized some functions. 2. Introduced
+    functionality that approximates conics with polylines. (This is used
+    to draw conic curves.) 3. Breaking change: Changed the interface to
+    generate conic curves. In the past, curves where generated directly
+    using the constructors of the conic and x-monotone conic constructs.
+    Now, they are constructed via function objects provided by the
+    traits. This eliminates the constructions of temporary kernels. The
+    old functionality is obsolete, but still supported for a limited
+    number of versions. It depends on a static member function of the
+    traits. In a future version this function will no longer be static,
+    implying that the old functionality will no longer be supported.
+-   Introduced functionality that approximates circular segments with
+    polylines. (This is used to draw conic curves.)
 
 Polygon Mesh Processing
 
+-   Added functions
+    CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()
+    and CGAL::Polygon_mesh_processing::detect_corners_of_regions(),
+    which enable partitioning a mesh into planar regions using the
+    region growing algorithm from the Shape Detection package.
+
+-   Added the functions
+    CGAL::Polygon_mesh_processing::remesh_planar_patches() and
+    CGAL::Polygon_mesh_processing::remesh_almost_planar_patches(), which
+    can be used to remesh patches of coplanar faces in a mesh.
+
 -   Added the function
-    CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup(),
-    which enables re-orienting the faces of a triangle soup based on the
-    orientation of the nearest face in a reference triangle soup.
+    CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing(), which
+    can be used to remesh a surface triangle mesh using the Delaunay
+    refinement algorithm from the 3D Mesh Generation package.
+
 -   Added the function
-    CGAL::Polygon_mesh_processing::compatible_orientations(), which
-    enables to retrieve the (in)compatibility of orientations of faces
-    from different connected components.
+    CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(),
+    which can be used to remove badly shaped triangles faces in a mesh.
+
+-   Added the functions
+    CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect()
+    and
+    CGAL::Polygon_mesh_processing::triangle_soup_self_intersections() to
+    identify and report self-intersections in a triangle soup, similarly
+    to existing functions on triangle meshes.
+
 -   Added the function
-    CGAL::Polygon_mesh_processing::tangential_relaxation(), which
-    applies an area-based tangential mesh smoothing to the vertices of a
-    surface triangle mesh.
--   Added the named parameter visitor to the function
-    triangulate_hole(), which enables to track progress with callbacks.
--   Added more functions in the visitor of the corefinement based
-    methods to track progress.
+    CGAL::Polygon_mesh_processing::triangulate_polygons(), which allows
+    users to triangulate polygon soups.
 
-Surface Mesh Simplification
+-   Added a named parameter to
+    CGAL::Polygon_mesh_processing::smooth_shape() to disable the
+    scaling, which otherwise aims to compensate volume loss during
+    smoothing.
 
--   Introduced four variations of the Garland-Heckbert simplification
-    algorithm based on the probabilistic approach of Trettner and
-    Kobbelt (Fast and Robust QEF Minimization using Probabilistic
-    Quadrics): GarlandHeckbert_plane_policies,
-    GarlandHeckbert_probabilistic_plane_policies,
-    GarlandHeckbert_triangle_policies, and
-    GarlandHeckbert_probabilistic_triangle_policies.
--   The class GarlandHeckbert_policies has been deprecated,
-    GarlandHeckbert_plane_policies replaces it.
-
-Point Set Processing
-
--   A new optional named parameter, min_points_per_cell has been added
-    to grid_simplify_point_set(). By adding a minimal number of points
-    in a cell such that a point is retained, one can also filter out low
-    density areas and outliers: in the case of densely sampled point
-    clouds, this yields better results than using grid simplification
-    and then outlier removal, while being very vast. The default value
-    is 1 to keep the previous behavior as default.
-
-dD Spatial Searching
-
--   Added the member function write_graphviz() to the class Kd_tree that
-    writes the tree in a stream in the Graphviz format.
-
-CGAL and the Boost Graph Library (BGL)
-
--   Added the function invert_selection() in the class
-    Face_filtered_graph, which toggles the selected status of a graph:
-    selected faces are deselected, and unselected faces are selected.
+-   Deprecated the overloads of functions
+    CGAL::Polygon_mesh_processing::triangulate_hole(),
+    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(), and
+    CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()
+    which have output iterators for vertices and faces as parameter.
+    They are replaced by overloads with two additional named parameters.
 
 
-See https://www.cgal.org/2022/06/06/cgal55-beta1/ for a
+3D Mesh Generation
+
+-   Added two new named parameters to the named constructor
+    CGAL::create_labeled_image_mesh_domain() for automatic detection and
+    protection of 1D-curves that lie at the intersection of three or
+    more subdomains extracted from labeled images.
+-   Added CGAL::Sizing_field_with_aabb_tree, a geometry-aware sizing
+    field for feature edges in polyhedral domains.
+-   Added new meshing criterion edge_min_size to avoid subdividing sharp
+    edges that are shorter than a prescribed size bound.
+-   Added new meshing criteria facet_min_size and cell_min_size to
+    prevent Delaunay refinement from creating simplices smaller than a
+    prescribed bound.
+-   Deprecated usage of boost parameters in favor of function named
+    parameters.
+
+
+See https://www.cgal.org/2023/06/13/cgal56-beta1/ for a
 complete list of changes.
 
 
-The development of CGAL will then now on the future CGAL-5.6 (planned
-for December 2022), with bug-fixes regularly backported to the branches
-for CGAL-5.4.x and CGAL-5.5.x.
+The development of CGAL will then now on the future CGAL-6.0 (planned
+for December 2023), with bug-fixes regularly backported to the branches
+for CGAL-5.5.x and CGAL-5.6.x.
 
+CGAL-6.0 will be the first release of CGAL requiring C++17 or later. It
+will also support Qt6.
 
 
 The CGAL project is a collaborative effort to develop a robust,

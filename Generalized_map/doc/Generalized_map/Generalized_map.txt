@@ -296,7 +296,7 @@ Several functions allow to create specific configurations of darts into a genera
 
 \subsection ssecadvmarksgmap Boolean Marks
 
-It is often necessary to mark darts, for example to retrieve in <I>O(1)</I> if a given dart was already processed during a specific algorithm, for example,  iteration over a given range. Users can also mark specific parts of a generalized map (for example mark all the darts belonging to objects having specific semantics). To answer these needs, a `GeneralizedMap` has a certain number of Boolean marks (fixed by the constant \link GenericMap::NB_MARKS `NB_MARKS`\endlink). When one wants to use a Boolean mark, the following methods are available (with `gm` an instance of a generalized map):
+It is often necessary to mark darts, for example to retrieve in \cgalBigO{1} if a given dart was already processed during a specific algorithm, for example,  iteration over a given range. Users can also mark specific parts of a generalized map (for example mark all the darts belonging to objects having specific semantics). To answer these needs, a `GeneralizedMap` has a certain number of Boolean marks (fixed by the constant \link GenericMap::NB_MARKS `NB_MARKS`\endlink). When one wants to use a Boolean mark, the following methods are available (with `gm` an instance of a generalized map):
 <ul>
 <li> get a new free mark: `size_type m = gm.`\link GenericMap::get_new_mark `get_new_mark()`\endlink (throws the exception Exception_no_more_available_mark if no mark is available);
 <li> set mark `m` for a given dart `d0`: `gm.`\link GenericMap::mark `mark(d0,m)`\endlink;
@@ -520,7 +520,7 @@ Step 2 defines the onsplit and onmerge dynamic functors. We can see here that wi
 
 The next operations will call these functors when 2-cells are split or merged. The \link GeneralizedMap::sew `sew<3>`\endlink operation calls 1 onmerge as two faces are identified; the \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink operation calls 3 onsplit as one face is split in 4.
 
-Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
+Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the functor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
 
 \cgalExample{Generalized_map/gmap_3_dynamic_onmerge.cpp}
 

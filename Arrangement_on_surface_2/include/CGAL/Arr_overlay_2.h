@@ -172,14 +172,14 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   typedef typename Agt2::Point_2                                A_point;
   typedef typename Bgt2::Point_2                                B_point;
   typedef typename Rgt2::Point_2                                Res_point;
-  CGAL_static_assertion((boost::is_convertible<A_point, Res_point>::value));
-  CGAL_static_assertion((boost::is_convertible<B_point, Res_point>::value));
+  static_assert(std::is_convertible<A_point, Res_point>::value);
+  static_assert(std::is_convertible<B_point, Res_point>::value);
 
   typedef typename Agt2::X_monotone_curve_2                     A_xcv;
   typedef typename Bgt2::X_monotone_curve_2                     B_xcv;
   typedef typename Rgt2::X_monotone_curve_2                     Res_xcv;
-  CGAL_static_assertion((boost::is_convertible<A_xcv, Res_xcv>::value));
-  CGAL_static_assertion((boost::is_convertible<B_xcv, Res_xcv>::value));
+  static_assert(std::is_convertible<A_xcv, Res_xcv>::value);
+  static_assert(std::is_convertible<B_xcv, Res_xcv>::value);
 
   typedef Arr_traits_basic_adaptor_2<Rgt2>              Gt_adaptor_2;
   typedef Arr_overlay_traits_2<Gt_adaptor_2, Arr_a, Arr_b>

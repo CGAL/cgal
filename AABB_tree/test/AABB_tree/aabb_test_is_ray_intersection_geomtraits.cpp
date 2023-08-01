@@ -26,16 +26,16 @@ int main()
 {
   using namespace CGAL::internal::AABB_tree;
 
-  CGAL_static_assertion_msg(
+  static_assert(
     (Is_ray_intersection_geomtraits<CGAL::Epeck>::value),
     "CGAL::Epeck should be a RayIntersectionGeomTraits");
-  CGAL_static_assertion_msg(
+  static_assert(
     (Is_ray_intersection_geomtraits< CGAL::Simple_cartesian<double> >::value),
     "CGAL::Epeck should be a RayIntersectionGeomTraits");
-  CGAL_static_assertion_msg(
+  static_assert(
     (!Is_ray_intersection_geomtraits<AABBGeomTraits>::value),
     "Pure AABBGeomTraits shouldn't be a RayIntersectionGeomTraits");
-  CGAL_static_assertion_msg(
+  static_assert(
     (!Is_ray_intersection_geomtraits<nope>::value),
     "The empty struct shouldn't be a RayIntersectionGeomTraits");
 

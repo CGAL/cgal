@@ -1555,8 +1555,8 @@ triangulate_hole_polyline(const PointRange1& points,
 #endif
   typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator, Visitor>    Fill;
 
-  std::vector<Point_3> P(boost::begin(points), boost::end(points));
-  std::vector<Point_3> Q(boost::begin(third_points), boost::end(third_points));
+  std::vector<Point_3> P(std::begin(points), std::end(points));
+  std::vector<Point_3> Q(std::begin(third_points), std::end(third_points));
 
   if(P.front() != P.back()){
     P.push_back(P.front());
@@ -1576,6 +1576,9 @@ triangulate_hole_polyline(const PointRange1& points,
      w == WeightCalculator::Weight::NOT_VALID()
      &&!skip_cubic_algorithm)
   {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
+    std::cerr << "Delaunay failed\n";
+#endif
     w = Fill().operator()(P, Q, tracer, WC, visitor);
   }
 #endif

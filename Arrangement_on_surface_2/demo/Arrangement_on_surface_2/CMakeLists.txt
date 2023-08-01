@@ -13,7 +13,7 @@ if(POLICY CMP0071)
 endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt5)
-find_package(Qt5 QUIET COMPONENTS Gui Widgets)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 
 if (CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
@@ -110,7 +110,7 @@ if (CGAL_Qt5_FOUND AND Qt5_FOUND)
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})
 
-  target_link_libraries(arrangement_2 PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets)
+  target_link_libraries(arrangement_2 PRIVATE Qt5::Widgets)
   target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
   if(CGAL_Core_FOUND)
     target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL_Core)

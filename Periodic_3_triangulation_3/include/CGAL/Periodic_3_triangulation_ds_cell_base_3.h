@@ -189,6 +189,11 @@ public:
 
   void set_offsets(int o0,int o1,int o2,int o3)
   {
+    CGAL_precondition(o0 >= 0 && o0 <= 7);
+    CGAL_precondition(o1 >= 0 && o1 <= 7);
+    CGAL_precondition(o2 >= 0 && o2 <= 7);
+    CGAL_precondition(o3 >= 0 && o3 <= 7);
+
     off = 0;
     // The following explicit cast are needed according to the Intel
     // Compiler version 12.

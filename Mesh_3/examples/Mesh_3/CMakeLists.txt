@@ -49,6 +49,9 @@ target_link_libraries(mesh_hybrid_mesh_domain PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("mesh_implicit_sphere.cpp")
 target_link_libraries(mesh_implicit_sphere PUBLIC CGAL::Eigen3_support)
 
+create_single_source_cgal_program("mesh_implicit_ellipsoid.cpp")
+target_link_libraries(mesh_implicit_ellipsoid PUBLIC CGAL::Eigen3_support)
+
 create_single_source_cgal_program("mesh_implicit_sphere_variable_size.cpp")
 target_link_libraries(mesh_implicit_sphere_variable_size PUBLIC CGAL::Eigen3_support)
 
@@ -168,7 +171,7 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PUBLIC CGAL::Eigen3_support)
 
-    find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+    find_package(ITK NAMES ITK InsightToolkit QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
       include(CGAL_ITK_support)
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")

@@ -897,6 +897,7 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
 } //namespace CGAL
 
 #include <CGAL/BOOST_MP_arithmetic_kernel.h>
+#include <CGAL/cpp_float.h>
 
 #endif // BOOST_VERSION
 #endif

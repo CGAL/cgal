@@ -335,7 +335,7 @@ public:
     }
 
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 

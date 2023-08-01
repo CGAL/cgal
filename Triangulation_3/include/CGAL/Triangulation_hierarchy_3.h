@@ -180,7 +180,7 @@ public:
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
           std::enable_if_t<
-            boost::is_convertible<
+            std::is_convertible<
                 typename std::iterator_traits<InputIterator>::value_type,
                 Point
             >::value
@@ -317,7 +317,7 @@ public:
   insert( InputIterator first,
           InputIterator last,
           std::enable_if_t<
-            boost::is_convertible<
+            std::is_convertible<
               typename std::iterator_traits<InputIterator>::value_type,
               std::pair<Point,typename internal::Info_check<Vertex>::type>
             >::value >* =nullptr
@@ -332,8 +332,8 @@ public:
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           std::enable_if_t<
             boost::mpl::and_<
-              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
+              std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
+              std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
             >::value
           >* =nullptr
   )

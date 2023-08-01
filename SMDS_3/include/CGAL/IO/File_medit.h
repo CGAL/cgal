@@ -22,11 +22,10 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
-
-#include <boost/unordered_map.hpp>
-
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/unordered_map.hpp>
 
 #include <iomanip>
 #include <iostream>
@@ -1090,9 +1089,26 @@ void write_MEDIT(std::ostream& os,
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
  *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
  *  respectively.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param in the input stream
  * @param t3 the triangulation
+ * @param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{allow_non_manifold}
+ *     \cgalParamDescription{allows the construction of a triangulation with non-manifold edges
+ *       and non manifold vertices. The triangulation is invalid if this situation is met,
+ *       so it should be used only in advanced cases, and the triangulation will be hardly usable.}
+ *     \cgalParamType{bool}
+ *     \cgalParamDefault{false}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * @returns `true` if the connectivity of the triangulation could be built consistently
  * from \p in,
@@ -1108,11 +1124,20 @@ void write_MEDIT(std::ostream& os,
  * positively oriented cells,
  * and cover the geometric convex hull of all points in `t3`.
  */
-template<typename T3>
-bool read_MEDIT(std::istream& in, T3& t3)
+template<typename T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_MEDIT(std::istream& in,
+                T3& t3,
+                const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  CGAL_assertion(!(!in));
-  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  // Default non_manifold value is true if the triangulation periodic, false otherwise
+  const bool non_manifold = choose_parameter(get_parameter(np, internal_np::allow_non_manifold),
+                                             std::is_same<typename T3::Periodic_tag, Tag_true>::value);
+  const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, false /*replace_domain_0*/, non_manifold);
   if(!b)
     t3.clear();
   return b;

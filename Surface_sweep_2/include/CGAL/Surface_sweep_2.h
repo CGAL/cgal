@@ -222,7 +222,7 @@ protected:
    * \param c2 The second curve.
    */
   void _create_intersection_point(const Point_2& xp,
-                                  unsigned int mult,
+                                  Multiplicity mult,
                                   Subcurve*& c1,
                                   Subcurve*& c2);
 };

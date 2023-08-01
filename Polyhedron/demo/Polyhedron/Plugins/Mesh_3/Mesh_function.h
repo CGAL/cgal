@@ -44,11 +44,14 @@ struct Mesh_parameters
 {
   double facet_angle;
   double facet_sizing;
+  double facet_min_sizing;
   double facet_approx;
 
   double tet_shape;
   double tet_sizing;
+  double tet_min_sizing;
   double edge_sizing;
+  double edge_min_sizing;
   bool protect_features;
   bool detect_connected_components;
   int manifold;
@@ -108,8 +111,8 @@ private:
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
 
-  Edge_criteria edge_criteria(double b, Mesh_fnt::Domain_tag);
-  Edge_criteria edge_criteria(double b, Mesh_fnt::Polyhedral_domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Polyhedral_domain_tag);
 
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
@@ -137,11 +140,14 @@ log() const
 {
   return QStringList()
   << QString("edge max size: %1").arg(edge_sizing)
+  << QString("edge min size: %1").arg(edge_min_sizing)
   << QString("facet min angle: %1").arg(facet_angle)
   << QString("facet max size: %1").arg(facet_sizing)
+  << QString("facet min size: %1").arg(facet_min_sizing)
   << QString("facet approx error: %1").arg(facet_approx)
   << QString("tet shape (radius-edge): %1").arg(tet_shape)
   << QString("tet max size: %1").arg(tet_sizing)
+  << QString("tet min size: %1").arg(tet_min_sizing)
   << QString("detect connected components: %1")
     .arg(detect_connected_components)
   << QString("use weights: %1").arg(weights_ptr != nullptr)
@@ -239,9 +245,9 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double b, Mesh_fnt::Domain_tag)
+edge_criteria(double b, double minb, Mesh_fnt::Domain_tag)
 {
-  return Edge_criteria(b);
+  return Edge_criteria(b, minb);
 }
 
 #include <CGAL/Sizing_field_with_aabb_tree.h>
@@ -250,7 +256,7 @@ edge_criteria(double b, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
+edge_criteria(double edge_size, double minb, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
@@ -276,9 +282,9 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
 
     std::cerr << "Note: Mesh_3 is using a sizing field based on AABB tree.\n";
-    return Edge_criteria(*sizing_field_ptr);
+    return Edge_criteria(*sizing_field_ptr, minb);
   } else {
-    return Edge_criteria(edge_size);
+    return Edge_criteria(edge_size, minb);
   }
 }
 
@@ -292,12 +298,17 @@ launch()
 #endif
 
   // Create mesh criteria
-  Mesh_criteria criteria(edge_criteria(p_.edge_sizing, Tag()),
+  Mesh_criteria criteria(edge_criteria(p_.edge_sizing,
+                                       p_.edge_min_sizing,
+                                       Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
-                                        p_.facet_approx),
+                                        p_.facet_approx,
+                                        CGAL::FACET_VERTICES_ON_SURFACE,
+                                        p_.facet_min_sizing),
                          Cell_criteria(p_.tet_shape,
-                                       p_.tet_sizing));
+                                       p_.tet_sizing,
+                                       p_.tet_min_sizing));
 
   tweak_criteria(criteria, Tag());
   initialize(criteria, Tag());
@@ -341,8 +352,9 @@ tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
   typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
        Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
 
-  if((int(c.facet_criteria_object().topology()) &
+  if(((int(c.facet_criteria_object().topology()) &
       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK) != 0)
+    && c.edge_criteria_object().min_length_bound() == 0)
   {
     c.add_facet_criterion(new New_topo_adj_crit(this->domain_));
   }

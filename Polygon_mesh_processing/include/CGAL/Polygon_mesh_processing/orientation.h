@@ -1626,6 +1626,10 @@ void merge_reversible_connected_components(PolygonMesh& pm,
  * identifies faces whose orientation must be reversed in order to enable stitching of connected components.
  * Each face is assigned a bit (`false` or `true`)
  * such that two faces have compatible orientations iff they are assigned the same bits.
+ * If `pm` features several connected components (ignoring edge orientations), the property map passed
+ * to the named parameter `face_partition_id_map` will indicate for each face to which connected component it belongs.
+ * Note that two faces in different connected components are not impacting each others' orientations,
+ * so comparing their associated bits in `face_bit_map` is irrelevant.
  *
  * @tparam PolygonMesh a model of `HalfedgeListGraph`, `FaceGraph`.
  * @tparam FaceBitMap a model of `WritablePropertyMap` with `face_descriptor` as key and `bool` as value_type

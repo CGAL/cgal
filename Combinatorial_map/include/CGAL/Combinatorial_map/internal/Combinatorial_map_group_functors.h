@@ -64,9 +64,9 @@ struct Group_nonvoid_attribute_functor_of_dart_run
                   typename CMap::Dart_descriptor dh1,
                   typename CMap::Dart_descriptor dh2)
   {
-    CGAL_static_assertion( 1<=i && i<=CMap::dimension );
-    CGAL_static_assertion( i!=j && (i!=1 || j!=0) );
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert( 1<=i && i<=CMap::dimension );
+    static_assert( i!=j && (i!=1 || j!=0) );
+    static_assert(CMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "Group_attribute_functor_of_dart_run<i> but "
                               "i-attributes are disabled");
@@ -90,8 +90,8 @@ struct Group_nonvoid_attribute_functor_of_dart_run<CMap, 0, j, T>
                   typename CMap::Dart_descriptor dh1,
                   typename CMap::Dart_descriptor dh2)
   {
-    CGAL_static_assertion(j!=0 && j!=1);
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(j!=0 && j!=1);
+    static_assert(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Group_attribute_functor_of_dart_run<0> but "
                               "0-attributes are disabled");
@@ -127,7 +127,7 @@ struct Group_nonvoid_attribute_functor_of_dart_run<CMap, 0, 0, T>
                   typename CMap::Dart_descriptor dh1,
                   typename CMap::Dart_descriptor dh2)
   {
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Group_attribute_functor_of_dart_run<0> but "
                               "0-attributes are disabled");
@@ -152,7 +152,7 @@ struct Group_nonvoid_attribute_functor_of_dart_run<CMap, 0, 1, T>
                   typename CMap::Dart_descriptor dh1,
                   typename CMap::Dart_descriptor dh2)
   {
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Group_attribute_functor_of_dart_run<0> but "
                               "0-attributes are disabled");
@@ -240,9 +240,9 @@ struct Group_nonvoid_attribute_functor_run
                   typename CMap::Dart_descriptor adart1,
                   typename CMap::Dart_descriptor adart2)
   {
-    CGAL_static_assertion( 1<=i && i<=CMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg
+    static_assert( 1<=i && i<=CMap::dimension );
+    static_assert( i!=j );
+    static_assert
         ( CMap::Helper::template Dimension_index<i>::value>=0,
           "Group_attribute_functor_run<i> but i-attributes are disabled" );
     typename CMap::template Attribute_descriptor<i>::type
@@ -279,10 +279,10 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, j, T>
                    typename CMap::Dart_descriptor dh1,
                    typename CMap::Dart_descriptor dh2 )
   {
-    CGAL_static_assertion_msg
+    static_assert
         ( CMap::Helper::template Dimension_index<0>::value>=0,
           "Group_attribute_functor_run<0> but 0-attributes are disabled" );
-    CGAL_static_assertion(j!=0 && j!=1);
+    static_assert(j!=0 && j!=1);
 
     typename CMap::template Attribute_descriptor<0>::type
         a1=CMap::null_descriptor, a2=CMap::null_descriptor;
@@ -340,7 +340,7 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, 0, T>
                    typename CMap::Dart_descriptor dh1,
                    typename CMap::Dart_descriptor dh2 )
   {
-    CGAL_static_assertion_msg
+    static_assert
         ( CMap::Helper::template Dimension_index<0>::value>=0,
           "Group_attribute_functor_run<0> but 0-attributes are disabled" );
     typename CMap::Dart_descriptor od=amap.other_extremity(dh2);
@@ -377,7 +377,7 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, 1, T>
                    typename CMap::Dart_descriptor dh1,
                    typename CMap::Dart_descriptor dh2 )
   {
-    CGAL_static_assertion_msg
+    static_assert
         ( CMap::Helper::template Dimension_index<0>::value>=0,
           "Group_attribute_functor_run<0> but 0-attributes are disabled" );
     typename CMap::Dart_descriptor od =amap.other_extremity(dh1);
@@ -474,9 +474,9 @@ struct Degroup_nonvoid_attribute_functor_run
                   typename CMap::Dart_descriptor adart1,
                   typename CMap::Dart_descriptor adart2)
   {
-    CGAL_static_assertion( i<=CMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg
+    static_assert( i<=CMap::dimension );
+    static_assert( i!=j );
+    static_assert
         ( CMap::Helper::template Dimension_index<i>::value>=0,
           "Degroup_attribute_functor_run<i> but i-attributes are disabled" );
 
@@ -549,7 +549,7 @@ void test_split_attribute_functor_one_dart
                         unsigned int, typename CMap::Hash_function> &
   found_attributes, typename CMap::size_type mark )
 {
-  CGAL_static_assertion_msg(CMap::Helper::template
+  static_assert(CMap::Helper::template
                             Dimension_index<i>::value>=0,
                             "Test_split_attribute_functor_one_dart<i> but "
                             "i-attributes are disabled");
@@ -615,9 +615,9 @@ struct Test_split_nonvoid_attribute_functor_run
                    &modified_darts,
                    typename CMap::size_type mark_modified_darts=CMap::INVALID_MARK)
   {
-    CGAL_static_assertion( 1<=i && i<=CMap::dimension );
+    static_assert( 1<=i && i<=CMap::dimension );
     CGAL_assertion( i!=j );
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(CMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "Test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");
@@ -658,9 +658,9 @@ struct Test_split_nonvoid_attribute_functor_run
                    &modified_darts2,
                    typename CMap::size_type mark_modified_darts=CMap::INVALID_MARK)
   {
-    CGAL_static_assertion( 1<=i && i<=CMap::dimension );
+    static_assert( 1<=i && i<=CMap::dimension );
     CGAL_assertion( i!=j );
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(CMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "Test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");
@@ -720,7 +720,7 @@ struct Test_split_nonvoid_attribute_functor_run<CMap, 0, j, T>
                    typename CMap::size_type mark_modified_darts=CMap::INVALID_MARK)
   {
     CGAL_assertion( j!=0 && j!=1 );
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Test_split_attribute_functor_run<0> but "
                               "0-attributes are disabled");
@@ -772,7 +772,7 @@ struct Test_split_nonvoid_attribute_functor_run<CMap, 0, j, T>
                    typename CMap::size_type mark_modified_darts=CMap::INVALID_MARK)
   {
     CGAL_assertion( j!=0 && j!=1 );
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Test_split_attribute_functor_run<0> but "
                               "0-attributes are disabled");
@@ -858,7 +858,7 @@ struct Test_split_nonvoid_attribute_functor_run<CMap, 0, 0, T>
                    &modified_darts2,
                    typename CMap::size_type mark_modified_darts=CMap::INVALID_MARK)
   {
-    CGAL_static_assertion_msg(CMap::Helper::template
+    static_assert(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Test_split_attribute_functor_run<0> but "
                               "0-attributes are disabled");

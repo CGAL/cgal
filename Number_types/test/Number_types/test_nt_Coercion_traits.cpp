@@ -144,9 +144,9 @@ void AT_coercion_test_for_cgal_types_rat(){
     typedef typename AT::Bigfloat_interval Bigfloat_interval;
 
     CGAL_USE_TYPE(Bigfloat_interval);
-    CGAL_static_assertion(!(::std::is_same<Integer, CGAL::Null_tag>::value));
-    CGAL_static_assertion(!(::std::is_same<Rational, CGAL::Null_tag>::value));
-    CGAL_static_assertion(!(::std::is_same<Bigfloat_interval, CGAL::Null_tag>::value));
+    static_assert(!(::std::is_same<Integer, CGAL::Null_tag>::value));
+    static_assert(!(::std::is_same<Rational, CGAL::Null_tag>::value));
+    static_assert(!(::std::is_same<Bigfloat_interval, CGAL::Null_tag>::value));
 
     CGAL::test_explicit_interoperable_from_to<int     ,Rational>();
     CGAL::test_explicit_interoperable_from_to<double  ,Rational>();
@@ -205,10 +205,10 @@ void AT_coercion_test_for_cgal_types_fws(){
     typedef typename AT::Field_with_sqrt Real;
 
     CGAL_USE_TYPE(Bigfloat_interval);
-    CGAL_static_assertion(!(::std::is_same<Integer, CGAL::Null_tag>::value));
-    CGAL_static_assertion(!(::std::is_same<Rational, CGAL::Null_tag>::value));
-    CGAL_static_assertion(!(::std::is_same<Bigfloat_interval, CGAL::Null_tag>::value));
-    CGAL_static_assertion(!(::std::is_same<Real, CGAL::Null_tag>::value));
+    static_assert(!(::std::is_same<Integer, CGAL::Null_tag>::value));
+    static_assert(!(::std::is_same<Rational, CGAL::Null_tag>::value));
+    static_assert(!(::std::is_same<Bigfloat_interval, CGAL::Null_tag>::value));
+    static_assert(!(::std::is_same<Real, CGAL::Null_tag>::value));
 
 
     typedef CGAL::Sqrt_extension<Integer  , Integer> Extn_1;

@@ -141,12 +141,15 @@ int main()
   Mc fc10(facet_angle = 10.1,
           facet_distance = 10.2,
           facet_size = 10.3,
+          facet_min_size = 0.2,
           facet_sizing_field = Fsf(10.4),
           sizing_field = 10.5);
 
   // Test construction from int
   Mc fc11(facet_size = 11);
+  Mc fc11b(facet_size = 11, facet_min_size = 1);
   Mc fc12(facet_sizing_field = 12);
+  Mc fc12b(facet_sizing_field = 12, facet_min_size = 2);
   Mc fc13(sizing_field = 13);
 
   // Test topological criterion creation
@@ -197,11 +200,14 @@ int main()
          sizing_field = Csf(9.2) );
   Mc cc10(cell_radius_edge_ratio = 10.1,
           cell_size = 10.2,
+          cell_min_size = 0.1,
           cell_sizing_field = Csf(10.3),
           sizing_field = 10.4);
 
   // Test construction from int
   Mc cc11(cell_size = 11);
+  Mc cc11b(cell_size = 11, cell_min_size = 1);
   Mc cc12(cell_sizing_field = 12);
+  Mc cc12b(cell_sizing_field = 12, cell_min_size = 2);
   Mc cc13(sizing_field = 13);
 }

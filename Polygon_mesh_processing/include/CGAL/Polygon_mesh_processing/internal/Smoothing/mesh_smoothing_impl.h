@@ -468,7 +468,7 @@ public:
 //    std::cout << "y : " << initial_y << " -> " << y << "\n";
 //    std::cout << "z : " << initial_z << " -> " << z << "\n";
 
-    return Vector(FT(x - initial_x), FT(y - initial_y), FT(z - initial_z))l;
+    return Vector(FT(x - initial_x), FT(y - initial_y), FT(z - initial_z));
 #else
     CGAL_USE(v);
     return CGAL::NULL_VECTOR;
