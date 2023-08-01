@@ -196,11 +196,32 @@ protected:
   }
 
   template <typename Visitor>
+  Vertex_handle insert_impl_do_not_split(const Point &p, Locate_type lt, Cell_handle c,
+                                         int li, int lj, Visitor& visitor)
+  {
+    switch (tr.dimension()) {
+    case 3: {
+      typename T_3::Conflict_tester_3 tester(p, this);
+      return tr.insert_in_conflict(p, lt, c, li, lj, tester,
+                                   visitor);
+    } // dim 3
+    case 2: {
+      typename T_3::Conflict_tester_2 tester(p, this);
+      return tr.insert_in_conflict(p, lt, c, li, lj, tester,
+                                   visitor);
+    } // dim 2
+    default:
+      // dimension <= 1
+      // Do not use the generic insert.
+      return tr.insert(p, c);
+    }
+  }
+
+  template <typename Visitor>
   Vertex_handle insert_impl(const Point &p, Locate_type lt, Cell_handle c,
                             int li, int lj, Visitor& visitor)
   {
     Vertex_handle v1, v2;
-    Vertex_handle new_vertex;
     bool split_constrained_edge = false;
     if(lt == T_3::EDGE) {
       v1 = c->vertex(li);
@@ -209,25 +230,7 @@ protected:
         split_constrained_edge = true;
       }
     }
-    switch (tr.dimension()) {
-    case 3: {
-      typename T_3::Conflict_tester_3 tester(p, this);
-      new_vertex = tr.insert_in_conflict(p, lt, c, li, lj, tester,
-                                         visitor);
-      break;
-    } // dim 3
-    case 2: {
-      typename T_3::Conflict_tester_2 tester(p, this);
-      new_vertex = tr.insert_in_conflict(p, lt, c, li, lj, tester,
-                                         visitor);
-      break;
-    } // dim 2
-    default:
-      // dimension <= 1
-      // Do not use the generic insert.
-      new_vertex = tr.insert(p, c);
-      break;
-    }
+    Vertex_handle new_vertex = insert_impl_do_not_split(p, lt, c, li, lj, visitor);
     if(split_constrained_edge) {
       constraint_hierarchy.split_constraint(v1, v2, new_vertex);
     }
@@ -352,7 +355,7 @@ protected:
     Locate_type lt;
     int li, lj;
     const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
-    const Vertex_handle v = this->insert_impl(steiner_pt, lt, c, li, lj, visitor);
+    const Vertex_handle v = this->insert_impl_do_not_split(steiner_pt, lt, c, li, lj, visitor);
     v->set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
     if(lt != T_3::VERTEX) {
       v->nb_of_incident_constraints = 1;
