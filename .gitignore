@@ -1219,3 +1219,6 @@ dump_*.txt
 dump_*.off
 all_segments.polylines.txt
 Data/data/meshes/*.1.vtk
+/*.off
+/*.xyz
+log.txt
