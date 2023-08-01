@@ -85,7 +85,7 @@ public:
   using Triangulation = Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
 
   struct Polygon_less {
-    using Polygon_2 = Polygon_2<Kernel, PolygonContainer>;
+    using Polygon_2 = CGAL::Polygon_2<Kernel, PolygonContainer>;
     bool operator()(const Polygon_2& pa, const Polygon_2& pb) const {
       typename Polygon_2::Vertex_iterator va = pa.vertices_begin();
       typename Polygon_2::Vertex_iterator vb = pb.vertices_begin();
@@ -100,7 +100,7 @@ public:
   };
 
   struct Polygon_with_holes_less {
-    using Polygon_with_holes_2 = Polygon_with_holes_2<Kernel, PolygonContainer>;
+    using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, PolygonContainer>;
     Polygon_less pl;
     bool operator()(const Polygon_with_holes_2& pa, const Polygon_with_holes_2& pb) const {
       if (pl(pa.outer_boundary(), pb.outer_boundary())) return true;
