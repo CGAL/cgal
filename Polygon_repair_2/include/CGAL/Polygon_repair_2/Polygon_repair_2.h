@@ -249,7 +249,7 @@ public:
 
     for (auto const face: t.all_face_handles()) {
       face->processed() = false;
-    } 
+    }
     for (auto const &face: t.finite_face_handles()) {
       if (face->label() < 1) continue; // exterior triangle
       if (face->processed()) continue; // already reconstructed
