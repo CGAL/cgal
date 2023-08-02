@@ -1251,14 +1251,14 @@ private:
     typename T_3::Vertex_handle_unique_hash_map map_cavity_vertices_to_ambient_vertices;
     typename T_3::Vertex_handle_unique_hash_map map_lower_cavity_vertices_to_ambient_vertices;
 
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 128
     std::cerr << "# upper cavity\n";
 #endif // CGAL_DEBUG_CDT_3
     const auto [upper_cavity_triangulation, nb_of_add_vertices_upper] =
         triangulate_cavity(face_index, cdt_2, intersecting_cells, facets_of_upper_cavity,
                            map_cavity_vertices_to_ambient_vertices,
                            vertices_of_upper_cavity);
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 128
     std::cerr << "# lower cavity\n";
 #endif // CGAL_DEBUG_CDT_3
     const auto [lower_cavity_triangulation, nb_of_add_vertices_lower] =
@@ -1338,7 +1338,7 @@ private:
     auto add_to_outer_map = [&outer_map](typename T_3::Vertex_triple vt, Facet f,
                                          [[maybe_unused]] std::string_view extra = {}) {
       outer_map[vt] = f;
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 128
       CGAL_assertion(vt.first != vt.second);
       CGAL_assertion(vt.first != vt.third);
       CGAL_assertion(vt.second != vt.third);
@@ -1393,7 +1393,7 @@ private:
                                        map_cavity_vertices_to_ambient_vertices[vt_aux.third],
                                        map_cavity_vertices_to_ambient_vertices[vt_aux.second]);
         this->make_canonical_oriented_triple(vt);
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 128
         CGAL_assertion(vt.first != vt.second);
         CGAL_assertion(vt.first != vt.third);
         CGAL_assertion(vt.second != vt.third);
@@ -1425,7 +1425,7 @@ private:
                                          upper_inner_map,
                                          Emptyset_iterator{});
     }
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 128
     std::cerr << "# glu the lower triangulation of the cavity\n";
 #endif // CGAL_DEBUG_CDT_3
 
@@ -1447,7 +1447,7 @@ private:
     fill_outer_map_of_cavity(lower_cavity_triangulation, facets_of_lower_cavity);
     {
       const auto lower_inner_map = inner_map_of_cavity(lower_cavity_triangulation);
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 128
       std::cerr << "outer_map:\n";
       for(auto [vt, _] : outer_map) {
         std::cerr << std::format("  {:.6}, {:.6}, {:.6})\n",
@@ -1598,7 +1598,7 @@ private:
       const auto cavity_v = cavity_triangulation.insert(this->point(v));
       vertex_map[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
-#if CGAL_DEBUG_CDT_3 & 64
+#if CGAL_DEBUG_CDT_3 & 128
       std::cerr << std::format("inserted {}cavity vertex {:.6} -> {:.6}\n",
                                extra,
                                IO::oformat(cavity_v, with_point),
