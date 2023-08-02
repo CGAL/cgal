@@ -562,7 +562,8 @@ template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
     if(c_id != Constraint_id{}) {
       auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
       auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
-      CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);) if(vit != v_end)
+      CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);)
+      if(vit != v_end)
       {
         const bool constraint_c_id_is_reversed = (*vit != va);
         CGAL_assertion(*vit == (constraint_c_id_is_reversed ? vb : va));
