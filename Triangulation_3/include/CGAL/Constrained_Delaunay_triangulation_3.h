@@ -611,7 +611,7 @@ template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
 private:
   void fill_cdt_2(CDT_2& cdt_2, CDT_3_face_index polygon_contraint_id)
   {
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 4
     std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
 #endif // CGAL_DEBUG_CDT_3
     const auto handles = [this, polygon_contraint_id]() {
@@ -644,7 +644,7 @@ private:
 
     CGAL::Circulator_from_container circ{&handles};
     const auto circ_end{circ};
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 4
     std::cerr << "  points\n";
     do {
       std::cerr << "     " << tr.point(*circ) << '\n';
@@ -1750,10 +1750,9 @@ private:
         }
 #endif // CGAL_DEBUG_CDT_3
         // return;
-        const auto circ = CGAL::centroid(cdt_2.triangle(e.fh_2d));
-        const auto other_fh = cdt_2.locate(circ, fh);
+        const auto circ = CGAL::circumcenter(cdt_2.triangle(e.fh_2d));
         if([&]() {
-          for(int index = 0; index < 3; ++index) {
+          for(auto [other_fh, index]: cdt_2.finite_edges()) {
             if(!other_fh->is_constrained(index)) continue;
             const auto va = other_fh->vertex(cdt_2.cw(index));
             const auto vb = other_fh->vertex(cdt_2.ccw(index));
@@ -1761,10 +1760,10 @@ private:
             const auto vb_3d = vb->info().vertex_handle_3d;
             const auto a = cdt_2.point(va);
             const auto b = cdt_2.point(vb);
-            if(CGAL::angle(a, circ, b) == CGAL::OBTUSE) {
+            if(CGAL::angle(a, circ, b) != CGAL::ACUTE) {
               const auto mid = CGAL::midpoint(a, b);
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-              std::cerr << std::format("Insert midpoint ({:.6}) of constrained edge ({:.6} , {:.6})\n",
+              std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
                                         IO::oformat(mid),
                                         IO::oformat(va_3d, with_point_and_info),
                                         IO::oformat(vb_3d, with_point_and_info));
@@ -1774,7 +1773,11 @@ private:
               const auto& context = *contexts.begin();
               const auto constraint_id = context.id();
               CGAL_assertion(constraint_id != Constraint_id{});
-              this->insert_Steiner_point_on_subconstraint(mid, va_3d->cell(), {va_3d, vb_3d}, constraint_id,
+              Locate_type mid_lt;
+              int mid_li, min_lj;
+              Cell_handle mid_c = tr.locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
+              CGAL_assertion(mid_lt != Locate_type::VERTEX);
+              this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d}, constraint_id,
                                                           insert_in_conflict_visitor);
               return false;
             }
@@ -1786,10 +1789,21 @@ private:
                                     IO::oformat(circ),
                                     IO::oformat(cdt_2.triangle(e.fh_2d)));
 #endif // CGAL_DEBUG_CDT_3
-          const auto v = this->insert(circ);
+          const auto v = this->insert(circ, Cell_handle{}, false); // TODO: find a hint
           v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
-          const auto v_2d = non_const_cdt_2.insert(circ, other_fh);
+          typename CDT_2::Locate_type lt;
+          int i;
+          auto fh = non_const_cdt_2.locate(circ, lt, i, e.fh_2d);
+          CGAL_assertion(!fh->info().is_outside_the_face);
+          CGAL_assertion(lt == CDT_2::FACE);
+          const auto v_2d = non_const_cdt_2.insert(circ, fh);
+          auto f_circ = non_const_cdt_2.incident_faces(v_2d);
           v_2d->info().vertex_handle_3d = v;
+          const auto end = f_circ;
+          do {
+            f_circ->info().is_outside_the_face = false;
+          } while(++f_circ != end);
+          search_for_missing_subfaces(face_index);
         }
         return false;
       }
@@ -1893,7 +1907,6 @@ public:
         } else {
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
           Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
-          search_for_missing_subfaces(i);
         }
       }
       catch(PLC_error& e) {
