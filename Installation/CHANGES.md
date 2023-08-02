@@ -17,7 +17,7 @@ Release date: October 2023
 -   **Breaking change**: Removed the concept `TriangleAccessor`, the template parameter `TriangleAccessor`, as well
     as the class `Triangle_accessor`. They were no longer used for several releases.
 
--   Removed the class templates `Gray_image_mesh_domain_3` and `Labeled_image_mesh_domain_3`
+-   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
 
