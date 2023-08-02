@@ -901,7 +901,6 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   auto& js_curves = js["curves"] = json::array();
   using Ext_curve = Ext_aos::X_monotone_curve_2;
   std::map<Ext_curve*, int>  curve_pos_map;
-
   int num_edges = 0;
   for (auto eh = arr.edges_begin(); eh != arr.edges_end(); ++eh)
   {
@@ -951,79 +950,71 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 
   ////////////////////////////////////////////////////////////////////////////
   // HALF-EDGES
-  int num_half_edges = 0;
-  auto& js_halfedges = js["halfedges"] = json::array();
-  std::map<Halfedge_handle, int>  halfedge_pos_map;
-  //auto write_half_edges = [&](Ext_aos::Ccb_halfedge_circulator first)
+  //int num_half_edges = 0;
+  //auto& js_halfedges = js["halfedges"] = json::array();
+  //std::map<Halfedge_handle, int>  halfedge_pos_map;
+  //auto write_half_edge = [&](auto& he)
   //{
-  //  auto curr = first;
-  //  do {
-  //    num_half_edges++;
-  //    auto& he = *curr;
-  //    auto it = halfedge_pos_map.find(&he);
-  //    if (it == halfedge_pos_map.end())
-  //    {
-  //      auto new_he_pos = halfedge_pos_map.size();
-  //      halfedge_pos_map[&he] = new_he_pos;
-  //    }
-  //    auto svh =  he.source(); 
-  //    auto tvh =  he.target();
-  //    auto& xcv = he.curve();
-  //    auto svp = vertex_pos_map[svh];
-  //    auto tvp = vertex_pos_map[tvh];
-  //    auto xcvp = curve_pos_map[&xcv];
-  //    json js_he;
-  //    js_he["source"] = svp;
-  //    js_he["target"] = tvp;
-  //    js_he["curve"]  = xcvp;
-  //    js_halfedges.push_back(std::move(js_he));
-  //  } while (++curr != first);
+  //  auto it = halfedge_pos_map.find(&he);
+  //  if (it == halfedge_pos_map.end())
+  //  {
+  //    auto new_he_pos = halfedge_pos_map.size();
+  //    halfedge_pos_map[&he] = new_he_pos;
+  //  }
+  //  auto svh = he.source();
+  //  auto tvh = he.target();
+  //  auto& xcv = he.curve();
+  //  auto svp = vertex_pos_map[svh];
+  //  auto tvp = vertex_pos_map[tvh];
+  //  auto xcvp = curve_pos_map[&xcv];
+  //  json js_he;
+  //  js_he["source"] = svp;
+  //  js_he["target"] = tvp;
+  //  js_he["curve"] = xcvp;
+  //  js_halfedges.push_back(std::move(js_he));
   //};
-  auto write_half_edge = [&](auto& he)
-  {
-    auto it = halfedge_pos_map.find(&he);
-    if (it == halfedge_pos_map.end())
-    {
-      auto new_he_pos = halfedge_pos_map.size();
-      halfedge_pos_map[&he] = new_he_pos;
-    }
-    auto svh = he.source();
-    auto tvh = he.target();
-    auto& xcv = he.curve();
-    auto svp = vertex_pos_map[svh];
-    auto tvp = vertex_pos_map[tvh];
-    auto xcvp = curve_pos_map[&xcv];
-    json js_he;
-    js_he["source"] = svp;
-    js_he["target"] = tvp;
-    js_he["curve"] = xcvp;
-    js_halfedges.push_back(std::move(js_he));
-  };
-
-  for (auto it = arr.halfedges_begin(); it != arr.halfedges_end(); ++it)
-  {
-    auto& he = *it;
-    write_half_edge(he);
-    num_half_edges++;
-  }
-  //for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh)
+  //for (auto it = arr.halfedges_begin(); it != arr.halfedges_end(); ++it)
   //{
-  //  auto it = fh->outer_ccb();
-  //  for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb)
-  //    write_half_edges(*ccb);  
-
-  //  for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb)
-  //    write_half_edges(*ccb);
+  //  auto& he = *it;
+  //  write_half_edge(he);
+  //  num_half_edges++;
   //}
-  std::cout << "HALF-EDGE CHECKS:\n";
-  std::cout << "  *** num total half-edges = " << num_half_edges << std::endl;
-  std::cout << "  *** halfedge-pos-map size = " << halfedge_pos_map.size() << std::endl;
+  //std::cout << "HALF-EDGE CHECKS:\n";
+  //std::cout << "  *** num total half-edges = " << num_half_edges << std::endl;
+  //std::cout << "  *** halfedge-pos-map size = " << halfedge_pos_map.size() << std::endl;
+
+  ////////////////////////////////////////////////////////////////////////////
+  // EDGES
+  num_edges = 0;
+  auto& js_edges = js["edges"] = json::array();
+  ////using Edge_ = decltype(*arr.edges_begin());
+  //std::map<void*, int>  edge_pos_map;
+  for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
+  {
+    auto& edge = *eit;
+    //auto it = edge_pos_map.find(&edge);
+    //if (it == edge_pos_map.end())
+    //{
+    //  auto new_edge_pos = edge_pos_map.size();
+    //  edge_pos_map[&edge] = new_edge_pos;
+    //}
+    auto& xcv = edge.curve();
+    auto xcvp = curve_pos_map[&xcv];
+    json js_edge;
+    js_edge["curve"] = xcvp;
+    js_edge["direction"] = edge.direction();
+    js_edges.push_back(std::move(js_edge));
+    num_edges++;
+  }
+  std::cout << "EDGE CHECKS:\n";
+  std::cout << "  *** num total edges = " << num_edges << std::endl;
 
 
   ////////////////////////////////////////////////////////////////////////////
   // FACES
   // CONDITION DATA: Caspian Sea needs to be defined
-  num_half_edges = 0;
+  //num_half_edges = 0;
+  num_edges = 0;
   int num_found = 0;
   int num_not_found = 0;
   std::map<Face_handle, std::string>  face_name_map;
@@ -1042,7 +1033,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     auto first = fh->outer_ccb();
     auto curr = first;
     do {
-      num_half_edges++;
+      //num_half_edges++;
       auto vh = curr->source();
       // skip if the vertex is due to intersection with the identification curve
       if ((vh->data().v == false) && (vh->degree() == 2))
@@ -1080,16 +1071,22 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   json& js_faces = js["faces"] = json::array();
   auto get_ccb_json = [&](Ext_aos::Ccb_halfedge_circulator first)
     {
-      json js_halfedges;
-      auto& ccb_halfedge_indices = js_halfedges["halfedges"] = json::array();
+      json js_edges;
+      auto& ccb_edge_indices = js_edges["edges"] = json::array();
       auto curr = first;
       do {
         auto& he = *curr;
-        auto hep = halfedge_pos_map[&he];
-        ccb_halfedge_indices.push_back(hep);
+        auto& xcv = he.curve();
+        auto it = curve_pos_map.find(&xcv);
+        if (it == curve_pos_map.end())
+        {
+            std::cout << "ASSERTION ERROR!!!" << std::endl;
+        }
+        auto edge_pos = it->second;
+        ccb_edge_indices.push_back(edge_pos);
       } while (++curr != first);
 
-      return js_halfedges;
+      return js_edges;
     };
    
   int total_num_half_edges = 0;
