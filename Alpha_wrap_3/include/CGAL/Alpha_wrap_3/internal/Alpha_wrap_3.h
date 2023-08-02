@@ -1380,25 +1380,27 @@ private:
       return false;
     };
 
-    auto is_on_boundary = [](Cell_handle c, int i) -> bool
-    {
-      return (c->info().is_outside != c->neighbor(i)->info().is_outside);
-    };
-
-    auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
-    {
-      const int v_index_in_c = c->index(v);
-      int boundary_facets = 0;
-      for(int i=0; i<3; ++i) // also take into account the opposite facet?
-      {
-        if(i == v_index_in_c)
-          continue;
-
-        boundary_facets += is_on_boundary(c, i);
-      }
-
-      return boundary_facets;
-    };
+    // This seemed like a good idea, but in the end it can have strong cascading issues,
+    // whereas some cells with much lower volume would have solved the non-manifoldness.
+//    auto is_on_boundary = [](Cell_handle c, int i) -> bool
+//    {
+//      return (c->info().is_outside != c->neighbor(i)->info().is_outside);
+//    };
+//
+//    auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
+//    {
+//      const int v_index_in_c = c->index(v);
+//      int boundary_facets = 0;
+//      for(int i=0; i<3; ++i) // also take into account the opposite facet?
+//      {
+//        if(i == v_index_in_c)
+//          continue;
+//
+//        boundary_facets += is_on_boundary(c, i);
+//      }
+//
+//      return boundary_facets;
+//    };
 
     // longest edge works better
 //    auto sq_circumradius = [&](Cell_handle c) -> FT
@@ -1407,6 +1409,9 @@ private:
 //      return geom_traits().compute_squared_distance_3_object()(m_dt.point(c, 0), cc);
 //    };
 
+    // the reasonning behind using longest edge rather than volume is that we want to avoid
+    // spikes (which would have a small volume), and can often happen since we do not spend
+    // any care on the quality of tetrahedra.
     auto sq_longest_edge = [&](Cell_handle c) -> FT
     {
       return (std::max)({ squared_distance(m_dt.point(c, 0), m_dt.point(c, 1)),
