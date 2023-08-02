@@ -444,9 +444,25 @@ public:
     return f.first->is_facet_constrained(f.second);
   }
 
+  bool same_triangle(Facet f, CDT_2_face_handle fh) const {
+    return true;
+    const auto [c, facet_index] = f;
+    std::array<Vertex_handle, 3> f_vertices{c->vertex(tr.vertex_triple_index(facet_index,0)),
+                                            c->vertex(tr.vertex_triple_index(facet_index,1)),
+                                            c->vertex(tr.vertex_triple_index(facet_index,2))};
+    std::sort(f_vertices.begin(), f_vertices.end());
+    std::array<Vertex_handle, 3> fh_vertices{fh->vertex(0)->info().vertex_handle_3d,
+                                             fh->vertex(1)->info().vertex_handle_3d,
+                                             fh->vertex(2)->info().vertex_handle_3d};
+    std::sort(fh_vertices.begin(), fh_vertices.end());
+    return (f_vertices == fh_vertices);
+  }
+
   void set_facet_constrained(Facet f, CDT_3_face_index polygon_contraint_id,
                              CDT_2_face_handle fh)
   {
+    CGAL_assertion(fh == CDT_2_face_handle{} || same_triangle(f, fh));
+
     const auto [c, facet_index] = f;
     c->set_facet_constraint(facet_index, polygon_contraint_id, fh);
     if(tr.dimension() > 2) {
