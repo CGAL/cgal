@@ -176,6 +176,38 @@ public:
 
   // Label triangles in triangulation
   void label_triangulation() {
+
+    // Simplify collinear edges (gets rid of order dependency)
+    for (auto vertex: t.all_vertex_handles()) {
+      typename Triangulation::Edge_circulator first_edge = t.incident_edges(vertex);
+      typename Triangulation::Edge_circulator current_edge = first_edge;
+      std::vector<typename Triangulation::Edge> incident_constrained_edges;
+      do {
+        if (t.is_constrained(*current_edge)) {
+          incident_constrained_edges.push_back(*current_edge);
+        } ++current_edge;
+      } while (current_edge != first_edge);
+      if (incident_constrained_edges.size() == 2) {
+        typename Kernel::Point_2 v1 = incident_constrained_edges.front().first->vertex(incident_constrained_edges.front().first->ccw(incident_constrained_edges.front().second))->point();
+        typename Kernel::Point_2 v2 = incident_constrained_edges.back().first->vertex(incident_constrained_edges.back().first->ccw(incident_constrained_edges.back().second))->point();
+        typename Kernel::Vector_2 tov1 = vertex->point()-v1;
+        typename Kernel::Vector_2 tov2 = vertex->point()-v2;
+        typename Kernel::FT angle = acos((tov1*tov2) / (sqrt(tov1.squared_length())*sqrt(tov2.squared_length())));
+        double epsilon = 0.00001;
+        double pi = 3.14159265358979323846;
+        if (angle < pi+epsilon && angle > pi-epsilon) {
+          // std::cout << "Collinear points" << std::endl;
+          // std::cout << "v1: " << v1 << std::endl;
+          // std::cout << "in: " << vertex->point() << std::endl;
+          // std::cout << "v2: " << v2 << std::endl;
+          t.remove_incident_constraints(vertex);
+          t.remove(vertex);
+          t.insert_constraint(v1, v2);
+        }
+      }
+    }
+
+    // Init labels
     for (auto const face: t.all_face_handles()) {
       face->label() = 0;
       face->processed() = false;
@@ -242,8 +274,8 @@ public:
   // Reconstruct multipolygon based on the triangles labeled as inside the polygon
   void reconstruct_multipolygon() {
     mp.clear();
-    std::vector<Polygon_2<Kernel, PolygonContainer>> polygons;
-    std::vector<std::set<Polygon_2<Kernel, PolygonContainer>, Polygon_less>> holes; // holes are ordered
+    std::vector<Polygon_2<Kernel, PolygonContainer>> polygons; // outer boundaries
+    std::vector<std::set<Polygon_2<Kernel, PolygonContainer>, Polygon_less>> holes; // holes are ordered (per polygon)
     polygons.resize(number_of_polygons);
     holes.resize(number_of_polygons);
 
@@ -256,8 +288,11 @@ public:
       for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
         if (face->label() == face->neighbor(opposite_vertex)->label()) continue; // not adjacent to boundary
 
+        // Reconstruct ring
         std::list<typename Kernel::Point_2> ring;
         reconstruct_ring(ring, face, opposite_vertex);
+
+        // Put ring in polygons
         Polygon_2<Kernel, PolygonContainer> polygon(ring.begin(), ring.end());
         // std::cout << "Reconstructed ring for polygon " << face->label() << " with ccw? " << (polygon.orientation() == CGAL::COUNTERCLOCKWISE) << std::endl;
         if (polygon.orientation() == CGAL::COUNTERCLOCKWISE) {

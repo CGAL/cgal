@@ -38,7 +38,7 @@ public:
     : FaceBase(v0, v1, v2) {}
 
   Triangulation_face_base_with_repair_info_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2,
-                                             Face_handle   n0, Face_handle   n1, Face_handle   n2 )
+                                             Face_handle   n0, Face_handle   n1, Face_handle   n2)
     : FaceBase(v0, v1, v2, n0, n1, n2) {}
 
   const bool& processed() const { return _processed; }

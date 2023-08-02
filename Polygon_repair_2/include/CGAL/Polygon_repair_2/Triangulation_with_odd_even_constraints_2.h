@@ -76,7 +76,8 @@ public:
     // Degenerate edge
     if (va == vb) return;
 
-    // [va, vb] is an existing edge OR it is composed of shorter edges
+    // [va, vb] is either an existing edge OR
+    // there's an existing shorter edge from va in the direction of vb
     Vertex_handle vc; // [va, vc] is the first edge along [va, vb]
     Face_handle incident_face; // incident to [va, vc]
     int opposite_vertex; // opposite to [va, vc]
