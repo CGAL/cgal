@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <QAbstractItemView>
 #include <QAction>
@@ -31,6 +32,7 @@
 #include <QInputDialog>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QSlider>
 #include <QObject>
 #include <QPalette>
 #include <QStyleFactory>
@@ -85,6 +87,9 @@ private:
   double gI = 1.;
   double bI = 0.;
 
+  double expand_radius = 0;
+  double maxEdgeLength = -1;
+
   Color_ramp color_ramp;
   std::vector<QColor> color_map;
   QPixmap legend;
@@ -97,6 +102,11 @@ private:
   {
     MIN_VALUE,
     MAX_VALUE
+  };
+  enum CurvatureType
+  {
+    MEAN_CURVATURE,
+    GAUSSIAN_CURVATURE,
   };
 
 public:
@@ -196,6 +206,8 @@ public:
             this, &Display_property_plugin::on_zoomToMinButton_pressed);
     connect(dock_widget->zoomToMaxButton, &QPushButton::pressed,
             this, &Display_property_plugin::on_zoomToMaxButton_pressed);
+    connect(dock_widget->expandingRadiusSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(setExpandingRadius(int)));
   }
 
 private Q_SLOTS:
@@ -250,6 +262,20 @@ private:
       dock_widget->minBox->setRange(-1000, 1000);
       dock_widget->minBox->setValue(0);
       dock_widget->maxBox->setRange(-1000, 1000);
+      dock_widget->maxBox->setValue(0);
+    }
+    else if (property_name == "Interpolated Corrected Mean Curvature")
+    {
+      dock_widget->minBox->setRange(-99999999, 99999999);
+      dock_widget->minBox->setValue(0);
+      dock_widget->maxBox->setRange(-99999999, 99999999);
+      dock_widget->maxBox->setValue(0);
+    }
+    else if (property_name == "Interpolated Corrected Gaussian Curvature")
+    {
+      dock_widget->minBox->setRange(-99999999, 99999999);
+      dock_widget->minBox->setValue(0);
+      dock_widget->maxBox->setRange(-99999999, 99999999);
       dock_widget->maxBox->setValue(0);
     }
     else
@@ -432,11 +458,15 @@ private:
       dock_widget->propertyBox->addItems({"Smallest Angle Per Face",
                                           "Largest Angle Per Face",
                                           "Scaled Jacobian",
-                                          "Face Area"});
+                                          "Face Area",
+                                          "Interpolated Corrected Mean Curvature",
+                                          "Interpolated Corrected Gaussian Curvature"});
       property_simplex_types = { Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
-                                 Property_simplex_type::FACE };
+                                 Property_simplex_type::FACE,
+                                 Property_simplex_type::VERTEX,
+                                 Property_simplex_type::VERTEX };
       detectSMScalarProperties(*(sm_item->face_graph()));
     }
     else if(ps_item)
@@ -526,6 +556,16 @@ private:
     else if(property_name == "Face Area")
     {
       displayArea(sm_item);
+    }
+    else if(property_name == "Interpolated Corrected Mean Curvature")
+    {
+      displayInterpolatedCurvatureMeasure(sm_item, MEAN_CURVATURE);
+      sm_item->setRenderingMode(Gouraud);
+    }
+    else if(property_name == "Interpolated Corrected Gaussian Curvature")
+    {
+      displayInterpolatedCurvatureMeasure(sm_item, GAUSSIAN_CURVATURE);
+      sm_item->setRenderingMode(Gouraud);
     }
     else
     {
@@ -629,6 +669,8 @@ private:
     removeDisplayPluginProperty(item, "f:display_plugin_largest_angle");
     removeDisplayPluginProperty(item, "f:display_plugin_scaled_jacobian");
     removeDisplayPluginProperty(item, "f:display_plugin_area");
+    removeDisplayPluginProperty(item, "v:interpolated_corrected_mean_curvature");
+    removeDisplayPluginProperty(item, "v:interpolated_corrected_Gaussian_curvature");
   }
 
   void displayExtremumAnglePerFace(Scene_surface_mesh_item* sm_item,
@@ -807,6 +849,119 @@ private:
     }
 
     displaySMProperty<face_descriptor>("f:display_plugin_area", *sm);
+  }
+
+   void setExpandingRadius(int val_int)
+  {
+    double sliderMin = dock_widget->expandingRadiusSlider->minimum();
+    double sliderMax = dock_widget->expandingRadiusSlider->maximum() - sliderMin;
+    double val =  val_int - sliderMin;
+    sliderMin = 0;
+
+    SMesh& smesh = *(qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())))->face_graph();
+
+    auto vpm = get(CGAL::vertex_point, smesh);
+
+    if (maxEdgeLength < 0)
+    {
+      auto edge_range = CGAL::edges(smesh);
+
+      if (edge_range.begin() == edge_range.end())
+      {
+        expand_radius = 0;
+        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+        return;
+      }
+
+      auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, smesh](auto l, auto r) {
+        auto res = EPICK().compare_squared_distance_3_object()(
+            get(vpm, source((l), smesh)),
+            get(vpm, target((l), smesh)),
+            get(vpm, source((r), smesh)),
+            get(vpm, target((r), smesh)));
+        return res == CGAL::SMALLER;
+      });
+
+      // if edge_reference is not derefrenceble
+      if (edge_reference == edge_range.end())
+      {
+        expand_radius = 0;
+        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+        return;
+      }
+
+      maxEdgeLength = sqrt(
+          (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
+          .squared_length()
+      );
+
+    }
+
+    double outMax = 5 * maxEdgeLength, base = 1.2;
+
+    expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
+    dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+
+  }
+
+  void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, CurvatureType mu_index)
+  {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    if (mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE) return;
+
+    std::string tied_string = (mu_index == MEAN_CURVATURE)?
+        "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_Gaussian_curvature";
+    SMesh& smesh = *item->face_graph();
+
+    const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
+    const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").second;
+
+    //compute once and store the value per vertex
+    bool non_init;
+    SMesh::Property_map<vertex_descriptor, double> mu_i_map;
+        std::tie(mu_i_map, non_init) =
+            smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
+    if (non_init)
+    {
+      if (vnm_exists) {
+        if (mu_index == MEAN_CURVATURE)
+          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
+        else
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
+      }
+      else {
+        if (mu_index == MEAN_CURVATURE)
+          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+        else
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+      }
+      double res_min = ARBITRARY_DBL_MAX,
+             res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Vertex_index min_index, max_index;
+      for (SMesh::Vertex_index v : vertices(smesh))
+      {
+        if (mu_i_map[v] > res_max)
+        {
+          res_max = mu_i_map[v];
+          max_index = v;
+        }
+        if (mu_i_map[v] < res_min)
+        {
+          res_min = mu_i_map[v];
+          min_index = v;
+        }
+      }
+//      if (mu_index == MEAN_CURVATURE){
+//        mean_curvature_max[item] = std::make_pair(res_max, max_index);
+//        mean_curvature_min[item] = std::make_pair(res_min, min_index);
+//      }
+//      else {
+//        gaussian_curvature_max[item] = std::make_pair(res_max, max_index);
+//        gaussian_curvature_min[item] = std::make_pair(res_min, min_index);
+//      }
+    }
+//    treat_sm_property<vertex_descriptor>(tied_string, item->face_graph());
   }
 
 private:

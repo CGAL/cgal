@@ -180,6 +180,32 @@
            </property>
           </widget>
          </item>
+         <item row="8" column="1">
+           <widget class="QSlider" name="expandingRadiusSlider">
+             <property name="minimum">
+               <float>0</float>
+             </property>
+             <property name="maximum">
+               <float>100</float>
+             </property>
+             <property name="tracking">
+               <bool>true</bool>
+             </property>
+             <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+               <enum>QSlider::TicksAbove</enum>
+             </property>
+           </widget>
+        </item>
+        <item row="9" column="1">
+          <widget class="QLabel" name="expandingRadiusLabel">
+            <property name="text">
+              <string>Expanding Radius: 0</string>
+            </property>
+           </widget>
+        </item>
         </layout>
        </widget>
       </item>
