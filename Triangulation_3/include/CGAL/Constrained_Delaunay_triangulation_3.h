@@ -353,7 +353,8 @@ protected:
       const auto point = self.point(v_Steiner);
       if(!self.cdt_2_are_initialized) return;
       for(const auto [_, poly_id] : CGAL::make_range(self.constraint_to_faces.equal_range(constraint))) {
-        auto& cdt_2 = self.face_cdt_2[poly_id];
+        auto& non_const_cdt_2 = self.face_cdt_2[poly_id];
+        const auto& cdt_2 = non_const_cdt_2;
 
         auto opt_edge = self.edge_of_cdt_2(cdt_2, va, vb);
         CGAL_assume(opt_edge != std::nullopt);
@@ -371,10 +372,10 @@ protected:
 
         fh_2d->set_constraint(edge_index, false);
         mirror_fh_2d->set_constraint(mirror_edge_index, false);
-        const auto v_Steiner_2d = cdt_2.insert(point, fh_2d);
+        const auto v_Steiner_2d = non_const_cdt_2.insert(point, fh_2d);
         v_Steiner_2d->info().vertex_handle_3d = v_Steiner;
-        cdt_2.insert_constraint(va_2d, v_Steiner_2d);
-        cdt_2.insert_constraint(vb_2d, v_Steiner_2d);
+        non_const_cdt_2.insert_constraint(va_2d, v_Steiner_2d);
+        non_const_cdt_2.insert_constraint(vb_2d, v_Steiner_2d);
 
         // update the edge {fh_2d, edge_index}
         const bool is_edge = cdt_2.is_edge(va_2d, v_Steiner_2d, fh_2d, edge_index);
