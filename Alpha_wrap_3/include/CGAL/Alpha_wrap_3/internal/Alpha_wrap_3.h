@@ -1409,7 +1409,7 @@ private:
 //      return geom_traits().compute_squared_distance_3_object()(m_dt.point(c, 0), cc);
 //    };
 
-    // the reasonning behind using longest edge rather than volume is that we want to avoid
+    // the reasoning behind using longest edge rather than volume is that we want to avoid
     // spikes (which would have a small volume), and can often happen since we do not spend
     // any care on the quality of tetrahedra.
     auto sq_longest_edge = [&](Cell_handle c) -> FT
