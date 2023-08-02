@@ -47,6 +47,8 @@
 #define ARBITRARY_DBL_MIN 1.0E-17
 #define ARBITRARY_DBL_MAX 1.0E+17
 
+namespace PMP = CGAL::Polygon_mesh_processing;
+
 using namespace CGAL::Three;
 
 Viewer_interface* (&getActiveViewer)() = Three::activeViewer;
@@ -206,6 +208,7 @@ public:
             this, &Display_property_plugin::on_zoomToMinButton_pressed);
     connect(dock_widget->zoomToMaxButton, &QPushButton::pressed,
             this, &Display_property_plugin::on_zoomToMaxButton_pressed);
+
     connect(dock_widget->expandingRadiusSlider, SIGNAL(valueChanged(int)),
             this, SLOT(setExpandingRadius(int)));
   }
@@ -669,8 +672,8 @@ private:
     removeDisplayPluginProperty(item, "f:display_plugin_largest_angle");
     removeDisplayPluginProperty(item, "f:display_plugin_scaled_jacobian");
     removeDisplayPluginProperty(item, "f:display_plugin_area");
-    removeDisplayPluginProperty(item, "v:interpolated_corrected_mean_curvature");
-    removeDisplayPluginProperty(item, "v:interpolated_corrected_Gaussian_curvature");
+    removeDisplayPluginProperty(item, "v:display_plugin_interpolated_corrected_mean_curvature");
+    removeDisplayPluginProperty(item, "v:display_plugin_interpolated_corrected_Gaussian_curvature");
   }
 
   void displayExtremumAnglePerFace(Scene_surface_mesh_item* sm_item,
@@ -759,7 +762,7 @@ private:
           halfedge_descriptor local_border_h = opposite(halfedge(local_f, local_smesh), local_smesh);
           CGAL_assertion(is_border(local_border_h, local_smesh));
 
-          CGAL::Polygon_mesh_processing::triangulate_faces(local_smesh);
+          PMP::triangulate_faces(local_smesh);
 
           double extremum_angle_in_face = ARBITRARY_DBL_MAX;
           halfedge_descriptor local_border_end_h = local_border_h;
@@ -812,7 +815,7 @@ private:
               const SMesh& mesh) const
   {
     if(CGAL::is_triangle(halfedge(f, mesh), mesh))
-      return CGAL::Polygon_mesh_processing::face_area(f, mesh);
+      return PMP::face_area(f, mesh);
 
     auto vpm = get(boost::vertex_point, mesh);
 
@@ -828,8 +831,8 @@ private:
     }
 
     CGAL::Euler::add_face(local_vertices, local_smesh);
-    CGAL::Polygon_mesh_processing::triangulate_faces(local_smesh);
-    return CGAL::Polygon_mesh_processing::area(local_smesh);
+    PMP::triangulate_faces(local_smesh);
+    return PMP::area(local_smesh);
   }
 
   void displayArea(Scene_surface_mesh_item* sm_item)
@@ -851,117 +854,105 @@ private:
     displaySMProperty<face_descriptor>("f:display_plugin_area", *sm);
   }
 
-   void setExpandingRadius(int val_int)
+  void setExpandingRadius(const int val_int)
   {
     double sliderMin = dock_widget->expandingRadiusSlider->minimum();
     double sliderMax = dock_widget->expandingRadiusSlider->maximum() - sliderMin;
-    double val =  val_int - sliderMin;
+    double val = val_int - sliderMin;
     sliderMin = 0;
 
-    SMesh& smesh = *(qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())))->face_graph();
+    Scene_item* item = scene->item(scene->mainSelectionIndex());
+    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+    if(sm_item == nullptr)
+      return;
+
+    SMesh& smesh = *(sm_item->face_graph());
 
     auto vpm = get(CGAL::vertex_point, smesh);
 
-    if (maxEdgeLength < 0)
+    // @todo use the upcoming PMP::longest_edge
+    if(maxEdgeLength < 0)
     {
       auto edge_range = CGAL::edges(smesh);
 
-      if (edge_range.begin() == edge_range.end())
+      if(num_edges(smesh) == 0)
       {
         expand_radius = 0;
         dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
         return;
       }
 
-      auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, smesh](auto l, auto r) {
-        auto res = EPICK().compare_squared_distance_3_object()(
-            get(vpm, source((l), smesh)),
-            get(vpm, target((l), smesh)),
-            get(vpm, source((r), smesh)),
-            get(vpm, target((r), smesh)));
-        return res == CGAL::SMALLER;
-      });
+      auto eit = std::max_element(edge_range.begin(), edge_range.end(),
+                                  [&, vpm, smesh](auto l, auto r)
+                                  {
+                                    auto res = EPICK().compare_squared_distance_3_object()(
+                                        get(vpm, source((l), smesh)),
+                                        get(vpm, target((l), smesh)),
+                                        get(vpm, source((r), smesh)),
+                                        get(vpm, target((r), smesh)));
+                                    return (res == CGAL::SMALLER);
+                                });
 
-      // if edge_reference is not derefrenceble
-      if (edge_reference == edge_range.end())
-      {
-        expand_radius = 0;
-        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
-        return;
-      }
+      CGAL_assertion(eit != edge_range.end());
 
-      maxEdgeLength = sqrt(
-          (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
-          .squared_length()
-      );
-
+      maxEdgeLength = PMP::edge_length(*eit, smesh);
     }
 
     double outMax = 5 * maxEdgeLength, base = 1.2;
 
     expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
     dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
-
   }
 
-  void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, CurvatureType mu_index)
+  void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item,
+                                           CurvatureType mu_index)
   {
-    namespace PMP = CGAL::Polygon_mesh_processing;
+    if(mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE)
+      return;
 
-    if (mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE) return;
+    std::string tied_string = (mu_index == MEAN_CURVATURE) ? "v:display_plugin_interpolated_corrected_mean_curvature"
+                                                           : "v:display_plugin_interpolated_corrected_Gaussian_curvature";
 
-    std::string tied_string = (mu_index == MEAN_CURVATURE)?
-        "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_Gaussian_curvature";
     SMesh& smesh = *item->face_graph();
 
     const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
     const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").second;
 
-    //compute once and store the value per vertex
+    // compute once and store the value per vertex
     bool non_init;
     SMesh::Property_map<vertex_descriptor, double> mu_i_map;
-        std::tie(mu_i_map, non_init) =
-            smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
-    if (non_init)
+    std::tie(mu_i_map, non_init) = smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
+    if(non_init)
     {
-      if (vnm_exists) {
-        if (mu_index == MEAN_CURVATURE)
-          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
-        else
-          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
-      }
-      else {
-        if (mu_index == MEAN_CURVATURE)
-          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
-        else
-          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
-      }
-      double res_min = ARBITRARY_DBL_MAX,
-             res_max = -ARBITRARY_DBL_MAX;
-      SMesh::Vertex_index min_index, max_index;
-      for (SMesh::Vertex_index v : vertices(smesh))
+      if(vnm_exists)
       {
-        if (mu_i_map[v] > res_max)
+        if(mu_index == MEAN_CURVATURE)
         {
-          res_max = mu_i_map[v];
-          max_index = v;
+          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map,
+                                                     CGAL::parameters::ball_radius(expand_radius)
+                                                                      .vertex_normal_map(vnm));
         }
-        if (mu_i_map[v] < res_min)
+        else
         {
-          res_min = mu_i_map[v];
-          min_index = v;
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map,
+                                                         CGAL::parameters::ball_radius(expand_radius)
+                                                                          .vertex_normal_map(vnm));
         }
       }
-//      if (mu_index == MEAN_CURVATURE){
-//        mean_curvature_max[item] = std::make_pair(res_max, max_index);
-//        mean_curvature_min[item] = std::make_pair(res_min, min_index);
-//      }
-//      else {
-//        gaussian_curvature_max[item] = std::make_pair(res_max, max_index);
-//        gaussian_curvature_min[item] = std::make_pair(res_min, min_index);
-//      }
+      else
+      {
+        if(mu_index == MEAN_CURVATURE)
+        {
+          PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+        }
+        else
+        {
+          PMP::interpolated_corrected_Gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+        }
+      }
     }
-//    treat_sm_property<vertex_descriptor>(tied_string, item->face_graph());
+
+    displaySMProperty<vertex_descriptor>(tied_string, smesh);
   }
 
 private:
@@ -1119,6 +1110,10 @@ private:
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_scaled_jacobian", extremum);
       else if(property_name == "Face Area")
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_area", extremum);
+      else if(property_name == "Interpolated Corrected Mean Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_interpolated_corrected_mean_curvature", extremum);
+      else if(property_name == "Interpolated Corrected Gaussian Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_interpolated_corrected_Gaussian_curvature", extremum);
       else if(property_simplex_types.at(property_index) == Property_simplex_type::VERTEX)
         zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, property_name, extremum);
       else if(property_simplex_types.at(property_index) == Property_simplex_type::FACE)
@@ -1401,7 +1396,7 @@ scaled_jacobian(const face_descriptor f,
   for(std::size_t i=0; i<edges.size(); ++i)
     corner_normals.push_back(CGAL::cross_product(edges[i], edges[(i+1)%(edges.size())]));
 
-  EPICK::Vector_3 unit_center_normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, mesh);
+  EPICK::Vector_3 unit_center_normal = PMP::compute_face_normal(f, mesh);
 
   for(std::size_t i=0; i<corner_areas.size(); ++i)
     corner_areas[i] =  unit_center_normal*corner_normals[i];
@@ -1453,7 +1448,9 @@ isSMPropertyScalar(const std::string& name,
   if(name == "f:display_plugin_smallest_angle" ||
      name == "f:display_plugin_largest_angle" ||
      name == "f:display_plugin_scaled_jacobian" ||
-     name == "f:display_plugin_area")
+     name == "f:display_plugin_area" ||
+     name == "v:display_plugin_interpolated_corrected_mean_curvature" ||
+     name == "v:display_plugin_interpolated_corrected_Gaussian_curvature")
     return false;
 
   // the dispatch function does the filtering we want: if it founds a property
