@@ -266,7 +266,7 @@ int go(Mesh mesh, std::string output_filename) {
   }
   finally();
   assert(cdt.is_conforming());
-  assert(cdt.Triangulation_3::is_valid(true));
+  assert(cdt.is_valid(true));
 
 
   return exit_code;
