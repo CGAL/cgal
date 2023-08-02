@@ -480,9 +480,6 @@ protected:
 #if CGAL_DEBUG_CDT_3 & 0x10
     std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
               << display_vert(vb) << " )\n";
-#endif // CGAL_DEBUG_CDT_3
-
-#if CGAL_DEBUG_CDT_3 & 0x10
     auto debug_simplex = [&](auto simplex) {
       std::cerr << " - " << oformat(simplex, With_point_tag{}) << '\n';
     };
