@@ -89,8 +89,8 @@ private:
   double gI = 1.;
   double bI = 0.;
 
-  double expand_radius = 0;
-  double maxEdgeLength = -1;
+  double expand_radius = 0.;
+  double maxEdgeLength = -1.;
 
   Color_ramp color_ramp;
   std::vector<QColor> color_map;
@@ -209,8 +209,8 @@ public:
     connect(dock_widget->zoomToMaxButton, &QPushButton::pressed,
             this, &Display_property_plugin::on_zoomToMaxButton_pressed);
 
-    connect(dock_widget->expandingRadiusSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(setExpandingRadius(int)));
+    connect(dock_widget->expandingRadiusSlider, &QSlider::valueChanged,
+            this, &Display_property_plugin::setExpandingRadius);
   }
 
 private Q_SLOTS:
@@ -512,6 +512,15 @@ private Q_SLOTS:
     {
       dock_widget->setEnabled(true);
       disableExtremeValues(); // only available after coloring
+
+      // Curvature property-specific slider
+      const std::string& property_name = dock_widget->propertyBox->currentText().toStdString();
+      const bool is_curvature_property = (property_name == "Interpolated Corrected Mean Curvature" ||
+                                          property_name == "Interpolated Corrected Gaussian Curvature");
+      dock_widget->expandingRadiusLabel->setVisible(is_curvature_property);
+      dock_widget->expandingRadiusSlider->setVisible(is_curvature_property);
+      dock_widget->expandingRadiusLabel->setEnabled(is_curvature_property);
+      dock_widget->expandingRadiusSlider->setEnabled(is_curvature_property);
     }
     else // no or broken property
     {
@@ -854,11 +863,12 @@ private:
     displaySMProperty<face_descriptor>("f:display_plugin_area", *sm);
   }
 
-  void setExpandingRadius(const int val_int)
+private Q_SLOTS:
+  void setExpandingRadius()
   {
     double sliderMin = dock_widget->expandingRadiusSlider->minimum();
     double sliderMax = dock_widget->expandingRadiusSlider->maximum() - sliderMin;
-    double val = val_int - sliderMin;
+    double val = dock_widget->expandingRadiusSlider->value() - sliderMin;
     sliderMin = 0;
 
     Scene_item* item = scene->item(scene->mainSelectionIndex());
@@ -878,7 +888,7 @@ private:
       if(num_edges(smesh) == 0)
       {
         expand_radius = 0;
-        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius: %1").arg(expand_radius));
         return;
       }
 
@@ -901,9 +911,10 @@ private:
     double outMax = 5 * maxEdgeLength, base = 1.2;
 
     expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
-    dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
+    dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius: %1").arg(expand_radius));
   }
 
+private:
   void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item,
                                            CurvatureType mu_index)
   {
