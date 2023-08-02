@@ -75,7 +75,7 @@ int main(int, char*[])
     std::array<double,6> subdivisionRatios          = { 0.10 , 2.0 , 2.0 , 10.0 , 10.0 , 10.00 };
     std::array<double, 6> boundarySubdivisionRatios = { 0.01 , 2.0 , 0.1 , 10.0 ,  1.0 ,  0.01 };
 
-    for (int i = 0; i < subdivisionRatios.size(); ++i)
+    for (std::size_t i = 0; i < subdivisionRatios.size(); ++i)
     {
         const auto subdivisionRatio = subdivisionRatios[i];
         const auto boundarySubdivisionRatio = boundarySubdivisionRatios[i];
