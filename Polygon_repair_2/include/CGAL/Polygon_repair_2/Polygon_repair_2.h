@@ -124,23 +124,75 @@ public:
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation(const Polygon_2<Kernel, PolygonContainer>& polygon) {
+    std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
+                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> edges_to_insert;
+
     for (auto const& edge: polygon.edges()) {
-      t.odd_even_insert_constraint(edge.source(), edge.target());
+      if (edge.source() == edge.target()) continue;
+      std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+      std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
+      auto inserted = edges_to_insert.insert(pair);
+      if (!inserted.second) edges_to_insert.erase(inserted.first);
+    } 
+
+    for (auto const& edge: edges_to_insert) {
+      t.odd_even_insert_constraint(edge.first, edge.second);
     }
   }
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
-    add_to_triangulation(polygon.outer_boundary());
+    std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
+                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> edges_to_insert;
+
+    for (auto const& edge: polygon.outer_boundary().edges()) {
+      if (edge.source() == edge.target()) continue;
+      std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+      std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
+      auto inserted = edges_to_insert.insert(pair);
+      if (!inserted.second) edges_to_insert.erase(inserted.first);
+    } 
     for (auto const& hole: polygon.holes()) {
-       add_to_triangulation(hole);
+      for (auto const& edge: hole.edges()) {
+        if (edge.source() == edge.target()) continue;
+        std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+        std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
+        auto inserted = edges_to_insert.insert(pair);
+        if (!inserted.second) edges_to_insert.erase(inserted.first);
+      }
+    }
+
+    for (auto const& edge: edges_to_insert) {
+      t.odd_even_insert_constraint(edge.first, edge.second);
     }
   }
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
+    std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
+                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> edges_to_insert;
+
     for (auto const& polygon: multipolygon.polygons()) {
-      add_to_triangulation(polygon);
+      for (auto const& edge: polygon.outer_boundary().edges()) {
+        if (edge.source() == edge.target()) continue;
+        std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+        std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
+        auto inserted = edges_to_insert.insert(pair);
+        if (!inserted.second) edges_to_insert.erase(inserted.first);
+      } 
+      for (auto const& hole: polygon.holes()) {
+        for (auto const& edge: hole.edges()) {
+          if (edge.source() == edge.target()) continue;
+          std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+          std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
+          auto inserted = edges_to_insert.insert(pair);
+          if (!inserted.second) edges_to_insert.erase(inserted.first);
+        }
+      }
+    }
+
+    for (auto const& edge: edges_to_insert) {
+      t.odd_even_insert_constraint(edge.first, edge.second);
     }
   }
 
@@ -190,12 +242,7 @@ public:
       if (incident_constrained_edges.size() == 2) {
         typename Kernel::Point_2 v1 = incident_constrained_edges.front().first->vertex(incident_constrained_edges.front().first->ccw(incident_constrained_edges.front().second))->point();
         typename Kernel::Point_2 v2 = incident_constrained_edges.back().first->vertex(incident_constrained_edges.back().first->ccw(incident_constrained_edges.back().second))->point();
-        typename Kernel::Vector_2 tov1 = vertex->point()-v1;
-        typename Kernel::Vector_2 tov2 = vertex->point()-v2;
-        typename Kernel::FT angle = acos((tov1*tov2) / (sqrt(tov1.squared_length())*sqrt(tov2.squared_length())));
-        double epsilon = 0.00001;
-        double pi = 3.14159265358979323846;
-        if (angle < pi+epsilon && angle > pi-epsilon) {
+        if (CGAL::collinear(v1, vertex->point(), v2)) {
           // std::cout << "Collinear points" << std::endl;
           // std::cout << "v1: " << v1 << std::endl;
           // std::cout << "in: " << vertex->point() << std::endl;
