@@ -119,6 +119,11 @@ function(CGAL_setup_CGAL_dependencies target)
     target_link_options(${target} INTERFACE -fsanitize=address)
   endif()
   # Now setup compilation flags
+  if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 4)
+    message(STATUS "Boost MP is turned off for all Windows 32 bits architectures!")
+    target_compile_options(${target} INTERFACE "-DCGAL_DO_NOT_USE_BOOST_MP")
+  endif()
+
   if(MSVC)
     target_compile_options(${target} INTERFACE
       "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
