@@ -129,9 +129,7 @@ int main(int argc, char** argv)
 
   std::cout << "BEFORE: " << tr.number_of_vertices() << " vertices, " << tr.number_of_cells() << " cells" << std::endl;
 
-  // Set up the domain information and grab the boundary faces
-  std::set<Facet> boundary_facets;
-
+  // Set up the c3t3 information
   for(auto v : tr.finite_vertex_handles())
     v->set_dimension(3);
 
@@ -149,24 +147,25 @@ int main(int argc, char** argv)
       if(c->neighbor(i)->is_outside() != c->is_outside())
       {
         c->set_surface_patch_index(i, 1);
-        boundary_facets.emplace(c, i);
         for(int j=1; j<4; ++j)
           c->vertex((i+j)%4)->set_dimension(2);
       }
     }
   }
 
-  // CGAL::draw(tr);
   std::ofstream out_before("before_remeshing.mesh");
   CGAL::IO::write_MEDIT(out_before, tr);
 
-  auto fcm = CGAL::make_boolean_property_map(boundary_facets);
-  CGAL::tetrahedral_isotropic_remeshing(tr, alpha,
-                                        CGAL::parameters::facet_is_constrained_map(fcm));
+  // edge length of equilateral triangle with circumradius alpha
+  // const double l = 2 * alpha * 0.8660254037844386; // sqrt(3)/2
+
+  // edge length of regular tetrahedron with circumradius alpha
+  const double l = 1.6329931618554521 * alpha; // sqrt(8/3)
+
+  CGAL::tetrahedral_isotropic_remeshing(tr, l, CGAL::parameters::remesh_boundaries(false));
 
   std::cout << "AFTER: " << tr.number_of_vertices() << " vertices, " << tr.number_of_cells() << " cells" << std::endl;
 
-  // CGAL::draw(tr);
   std::ofstream out_after("after_remeshing.mesh");
   CGAL::IO::write_MEDIT(out_after, tr);
 
