@@ -26,7 +26,7 @@ class Alpha_wrap_triangulation_cell_base_3
   : public Cb
 {
 private:
-  bool outside;
+  bool outside = false;
 
 public:
   typedef typename Cb::Vertex_handle                   Vertex_handle;

@@ -33,7 +33,7 @@ class Alpha_wrap_triangulation_vertex_base_3
   : public Vb
 {
 private:
-  Vertex_type vertex_type;
+  Vertex_type vertex_type = Vertex_type::DEFAULT;
 
 public:
   using Cell_handle = typename Vb::Cell_handle;
