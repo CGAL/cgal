@@ -153,13 +153,13 @@ public:
     for(auto fit=wrapper.triangulation().finite_facets_begin(), fend=wrapper.triangulation().finite_facets_end(); fit!=fend; ++fit)
     {
       Facet f = *fit;
-      if(!f.first->info().is_outside)
+      if(!f.first->is_outside())
         f = wrapper.triangulation().mirror_facet(f);
 
       const Cell_handle c = f.first;
       const int s = f.second;
       const Cell_handle nh = c->neighbor(s);
-      if(c->info().is_outside == nh->info().is_outside)
+      if(c->is_outside() == nh->is_outside())
         continue;
 
       std::array<std::size_t, 3> ids;

@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 
   for(auto c : tr.finite_cell_handles())
   {
-    if(c->info().is_outside)
+    if(c->is_outside())
       c->set_subdomain_index(0);
     else
       c->set_subdomain_index(1);
@@ -146,7 +146,7 @@ int main(int argc, char** argv)
     // of the common face on the surface boundary
     for(int i=0; i<4; ++i)
     {
-      if(c->neighbor(i)->info().is_outside != c->info().is_outside)
+      if(c->neighbor(i)->is_outside() != c->is_outside())
       {
         c->set_surface_patch_index(i, 1);
         boundary_facets.emplace(c, i);

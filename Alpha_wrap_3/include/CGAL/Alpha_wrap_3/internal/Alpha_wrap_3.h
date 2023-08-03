@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2022 Google LLC (USA).
+// Copyright (c) 2019-2023 Google LLC (USA).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -29,6 +29,8 @@
 
 #include <CGAL/license/Alpha_wrap_3.h>
 
+#include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_triangulation_cell_base_3.h>
+#include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_triangulation_vertex_base_3.h>
 #include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_AABB_geom_traits.h>
 #include <CGAL/Alpha_wrap_3/internal/gate_priority_queue.h>
 #include <CGAL/Alpha_wrap_3/internal/geometry_utils.h>
@@ -37,9 +39,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 #include <CGAL/Cartesian_converter.h>
@@ -76,58 +76,11 @@ namespace CGAL {
 namespace Alpha_wraps_3 {
 namespace internal {
 
-struct Cell_info
-{
-  bool is_outside = false;
-};
+namespace {
 
-enum Vertex_info
-{
-  DEFAULT = 0,
-  BBOX_VERTEX,
-  SEED_VERTEX
-};
+namespace AW3i = ::CGAL::Alpha_wraps_3::internal;
 
-template <typename GeomTraits>
-using Alpha_wrap_triangulation_vertex_base_3 =
-  CGAL::Triangulation_vertex_base_with_info_3<
-    Vertex_info,
-    GeomTraits,
-    CGAL::Triangulation_vertex_base_3<GeomTraits> >;
-
-template <typename GeomTraits>
-using Alpha_wrap_triangulation_cell_base_3 =
-  CGAL::Triangulation_cell_base_with_info_3<
-    Cell_info,
-    GeomTraits,
-    CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<
-      GeomTraits,
-      CGAL::Delaunay_triangulation_cell_base_3<GeomTraits> > >;
-
-template <typename Cb>
-class Cell_base_with_timestamp
-  : public Cb
-{
-  std::size_t time_stamp_;
-
-public:
-  template <typename... Args>
-  Cell_base_with_timestamp(const Args&... args) : Cb(args...), time_stamp_(-1) { }
-
-  Cell_base_with_timestamp(const Cell_base_with_timestamp& other) : Cb(other), time_stamp_(other.time_stamp_) { }
-
-  typedef CGAL::Tag_true Has_timestamp;
-
-  std::size_t time_stamp() const { return time_stamp_; }
-  void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
-
-  template <class TDS>
-  struct Rebind_TDS
-  {
-    typedef typename Cb::template Rebind_TDS<TDS>::Other Cb2;
-    typedef Cell_base_with_timestamp<Cb2> Other;
-  };
-};
+} // unnamed namespace
 
 struct Wrapping_default_visitor
 {
@@ -163,7 +116,7 @@ class Alpha_wrap_3
 
   // Triangulation
   using Base_GT = typename Oracle::Geom_traits;
-  using Default_Gt = Robust_circumcenter_filtered_traits_3<Base_GT>;
+  using Default_Gt = CGAL::Robust_circumcenter_filtered_traits_3<Base_GT>;
 
   using Default_Vb = Alpha_wrap_triangulation_vertex_base_3<Default_Gt>;
   using Default_Cb = Alpha_wrap_triangulation_cell_base_3<Default_Gt>;
@@ -447,7 +400,7 @@ private:
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
       std::cout << "\t" << bp << std::endl;
 #endif
-      bv->info() = BBOX_VERTEX;
+      bv->type() = AW3i::Vertex_type:: BBOX_VERTEX;
     }
   }
 
@@ -562,7 +515,7 @@ private:
       // which usually happens for large alpha values.
 
       Vertex_handle seed_v = m_tr.insert(seed_p);
-      seed_v->info() = SEED_VERTEX;
+      seed_v->type() = AW3i::Vertex_type:: SEED_VERTEX;
       seed_vs.push_back(seed_v);
 
       // Icosahedron vertices (see also BGL::make_icosahedron())
@@ -599,7 +552,7 @@ private:
           continue;
 
         Vertex_handle ico_v = m_tr.insert(seed_neighbor_p, seed_v /*hint*/);
-        ico_v->info() = SEED_VERTEX;
+        ico_v->type() = AW3i::Vertex_type:: SEED_VERTEX;
       }
     }
 
@@ -621,13 +574,13 @@ private:
       inc_cells.reserve(64);
       m_tr.incident_cells(seed_v, std::back_inserter(inc_cells));
       for(Cell_handle ch : inc_cells)
-        ch->info().is_outside = cavity_cell_outside_tag(ch);
+        ch->is_outside() = cavity_cell_outside_tag(ch);
     }
 
     // Might as well go through the full triangulation since only seeds should have been inserted
     for(Cell_handle ch : m_tr.all_cell_handles())
     {
-      if(!ch->info().is_outside)
+      if(!ch->is_outside())
         continue;
 
       // When the algorithm starts from a manually dug hole, infinite cells are tagged "inside"
@@ -656,13 +609,13 @@ private:
     {
       if(m_tr.is_infinite(ch))
       {
-        ch->info().is_outside = true;
+        ch->is_outside() = true;
         const int inf_index = ch->index(m_tr.infinite_vertex());
         push_facet(std::make_pair(ch, inf_index));
       }
       else
       {
-        ch->info().is_outside = false;
+        ch->is_outside() = false;
       }
     }
 
@@ -690,7 +643,7 @@ public:
     for(auto cit=m_tr.finite_cells_begin(), cend=m_tr.finite_cells_end(); cit!=cend; ++cit)
     {
       Cell_handle seed = cit;
-      if(seed->info().is_outside || seed->tds_data().processed())
+      if(seed->is_outside() || seed->tds_data().processed())
         continue;
 
       std::queue<Cell_handle> to_visit;
@@ -703,7 +656,7 @@ public:
       while(!to_visit.empty())
       {
         const Cell_handle cell = to_visit.front();
-        CGAL_assertion(!cell->info().is_outside && !m_tr.is_infinite(cell));
+        CGAL_assertion(!cell->is_outside() && !m_tr.is_infinite(cell));
 
         to_visit.pop();
 
@@ -715,13 +668,13 @@ public:
         for(int fid=0; fid<4; ++fid)
         {
           const Cell_handle neighbor = cell->neighbor(fid);
-          if(neighbor->info().is_outside)
+          if(neighbor->is_outside())
           {
             // There shouldn't be any artificial vertex on the inside/outside boundary
             // (past initialization)
-//            CGAL_assertion(cell->vertex((fid + 1)&3)->info() == DEFAULT);
-//            CGAL_assertion(cell->vertex((fid + 2)&3)->info() == DEFAULT);
-//            CGAL_assertion(cell->vertex((fid + 3)&3)->info() == DEFAULT);
+//            CGAL_assertion(cell->vertex((fid + 1)&3)->type() == AW3i::Vertex_type:: DEFAULT);
+//            CGAL_assertion(cell->vertex((fid + 2)&3)->type() == AW3i::Vertex_type:: DEFAULT);
+//            CGAL_assertion(cell->vertex((fid + 3)&3)->type() == AW3i::Vertex_type:: DEFAULT);
 
             points.push_back(m_tr.point(cell, Triangulation::vertex_triple_index(fid, 0)));
             points.push_back(m_tr.point(cell, Triangulation::vertex_triple_index(fid, 1)));
@@ -782,13 +735,13 @@ public:
     for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit)
     {
       Facet f = *fit;
-      if(!f.first->info().is_outside)
+      if(!f.first->is_outside())
         f = m_tr.mirror_facet(f);
 
       const Cell_handle c = f.first;
       const int s = f.second;
       const Cell_handle nh = c->neighbor(s);
-      if(c->info().is_outside == nh->info().is_outside)
+      if(c->is_outside() == nh->is_outside())
         continue;
 
       std::array<std::size_t, 3> ids;
@@ -961,7 +914,7 @@ private:
     if(m_tr.is_infinite(nh))
       return TRAVERSABLE;
 
-    if(nh->info().is_outside)
+    if(nh->is_outside())
     {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "Neighbor already outside" << std::endl;
@@ -973,7 +926,8 @@ private:
     for(int i=0; i<3; ++i)
     {
       const Vertex_handle vh = ch->vertex(Triangulation::vertex_triple_index(id, i));
-      if(vh->info() == BBOX_VERTEX || vh->info() == SEED_VERTEX)
+      if(vh->type() == AW3i::Vertex_type:: BBOX_VERTEX ||
+         vh->type() == AW3i::Vertex_type:: SEED_VERTEX)
       {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
         std::cout << "artificial facet due to artificial vertex #" << i << std::endl;
@@ -999,7 +953,7 @@ private:
 
   bool push_facet(const Facet& f)
   {
-    CGAL_precondition(f.first->info().is_outside);
+    CGAL_precondition(f.first->is_outside());
 
     // skip if f is already in queue
     if(m_queue.contains_with_bounds_check(Gate(f)))
@@ -1111,7 +1065,7 @@ private:
 
       if(m_tr.is_infinite(neighbor))
       {
-        neighbor->info().is_outside = true;
+        neighbor->is_outside() = true;
         continue;
       }
 
@@ -1159,7 +1113,7 @@ private:
 
         // Actual insertion of the Steiner point
         Vertex_handle vh = m_tr.insert(steiner_point, lt, conflict_cell, li, lj);
-        vh->info() = DEFAULT;
+        vh->type() = AW3i::Vertex_type:: DEFAULT;
 
         visitor.after_Steiner_point_insertion(*this, vh);
 
@@ -1169,7 +1123,7 @@ private:
         for(const Cell_handle& ch : new_cells)
         {
           // std::cout << "new cell has time stamp " << ch->time_stamp() << std::endl;
-          ch->info().is_outside = m_tr.is_infinite(ch);
+          ch->is_outside() = m_tr.is_infinite(ch);
         }
 
         // Push all new boundary facets to the queue.
@@ -1185,11 +1139,11 @@ private:
               continue;
 
             const Cell_handle nh = ch->neighbor(i);
-            if(nh->info().is_outside == ch->info().is_outside) // not on the boundary
+            if(nh->is_outside() == ch->is_outside()) // not on the boundary
               continue;
 
             const Facet boundary_f = std::make_pair(ch, i);
-            if(ch->info().is_outside)
+            if(ch->is_outside())
               push_facet(boundary_f);
             else
               push_facet(m_tr.mirror_facet(boundary_f));
@@ -1199,7 +1153,7 @@ private:
       else
       {
         // tag neighbor as OUTSIDE
-        neighbor->info().is_outside = true;
+        neighbor->is_outside() = true;
 
         // for each finite facet of neighbor, push it to the queue
         for(int i=0; i<4; ++i)
@@ -1214,9 +1168,9 @@ private:
 
     // Check that no useful facet has been ignored
     CGAL_postcondition_code(for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit) {)
-    CGAL_postcondition_code(  if(fit->first->info().is_outside == fit->first->neighbor(fit->second)->info().is_outside) continue;)
+    CGAL_postcondition_code(  if(fit->first->is_outside() == fit->first->neighbor(fit->second)->is_outside()) continue;)
     CGAL_postcondition_code(  Facet f = *fit;)
-    CGAL_postcondition_code(  if(!fit->first->info().is_outside) f = m_tr.mirror_facet(f);)
+    CGAL_postcondition_code(  if(!fit->first->is_outside()) f = m_tr.mirror_facet(f);)
     CGAL_postcondition(       facet_status(f) == IRRELEVANT);
     CGAL_postcondition_code(})
   }
@@ -1243,7 +1197,7 @@ private:
     for(Cell_handle ic : inc_cells)
     {
       ic->tds_data().clear();
-      if(ic->info().is_outside)
+      if(ic->is_outside())
         outside_start = ic;
       else if(inside_start == Cell_handle())
         inside_start = ic;
@@ -1278,7 +1232,7 @@ private:
         CGAL_assertion(neigh_c->has_vertex(v));
 
         if(neigh_c->tds_data().processed() ||
-           neigh_c->info().is_outside != curr_c->info().is_outside) // do not cross the boundary
+           neigh_c->is_outside() != curr_c->is_outside()) // do not cross the boundary
           continue;
 
         cells_to_visit.push(neigh_c);
@@ -1343,7 +1297,7 @@ private:
 
       for(Cell_handle c : inc_cells)
       {
-        if(!c->info().is_outside)
+        if(!c->is_outside())
         {
           do_remove = false;
           break;
@@ -1390,15 +1344,20 @@ public:
     auto has_artificial_vertex = [](Cell_handle c) -> bool
     {
       for(int i=0; i<4; ++i)
-        if(c->vertex(i)->info() == BBOX_VERTEX || c->vertex(i)->info() == SEED_VERTEX)
+      {
+        if(c->vertex(i)->type() == AW3i::Vertex_type:: BBOX_VERTEX ||
+           c->vertex(i)->type() == AW3i::Vertex_type:: SEED_VERTEX)
+        {
           return true;
+        }
+      }
 
       return false;
     };
 
     auto is_on_boundary = [](Cell_handle c, int i) -> bool
     {
-      return (c->info().is_outside != c->neighbor(i)->info().is_outside);
+      return (c->is_outside() != c->neighbor(i)->is_outside());
     };
 
     auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
@@ -1492,7 +1451,7 @@ public:
         CGAL_assertion(!m_tr.is_infinite(ic));
 
         // This is where new material is added
-        ic->info().is_outside = false;
+        ic->is_outside() = false;
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
         static int i = 0;
@@ -1577,7 +1536,7 @@ private:
       int s = fit->second;
 
       Cell_handle nc = c->neighbor(s);
-      if(only_boundary_faces && (c->info().is_outside == nc->info().is_outside))
+      if(only_boundary_faces && (c->is_outside() == nc->is_outside()))
         continue;
 
       std::array<std::size_t, 3> ids;
