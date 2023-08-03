@@ -129,11 +129,11 @@ public:
 
     for (auto const& edge: polygon.edges()) {
       if (edge.source() == edge.target()) continue;
-      std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+      std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
       std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
       auto inserted = edges_to_insert.insert(pair);
       if (!inserted.second) edges_to_insert.erase(inserted.first);
-    } 
+    }
 
     for (auto const& edge: edges_to_insert) {
       t.odd_even_insert_constraint(edge.first, edge.second);
@@ -147,15 +147,15 @@ public:
 
     for (auto const& edge: polygon.outer_boundary().edges()) {
       if (edge.source() == edge.target()) continue;
-      std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+      std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
       std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
       auto inserted = edges_to_insert.insert(pair);
       if (!inserted.second) edges_to_insert.erase(inserted.first);
-    } 
+    }
     for (auto const& hole: polygon.holes()) {
       for (auto const& edge: hole.edges()) {
         if (edge.source() == edge.target()) continue;
-        std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+        std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
         std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
         auto inserted = edges_to_insert.insert(pair);
         if (!inserted.second) edges_to_insert.erase(inserted.first);
@@ -175,15 +175,15 @@ public:
     for (auto const& polygon: multipolygon.polygons()) {
       for (auto const& edge: polygon.outer_boundary().edges()) {
         if (edge.source() == edge.target()) continue;
-        std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+        std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
         std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
         auto inserted = edges_to_insert.insert(pair);
         if (!inserted.second) edges_to_insert.erase(inserted.first);
-      } 
+      }
       for (auto const& hole: polygon.holes()) {
         for (auto const& edge: hole.edges()) {
           if (edge.source() == edge.target()) continue;
-          std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())? 
+          std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
           std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
           auto inserted = edges_to_insert.insert(pair);
           if (!inserted.second) edges_to_insert.erase(inserted.first);
