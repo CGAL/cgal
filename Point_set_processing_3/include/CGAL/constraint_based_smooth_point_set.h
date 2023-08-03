@@ -286,7 +286,7 @@ point_type_t feature_detection(
     dominant_eigenvalue_count = 0; //corner  
   }
 
-  std::cout << dominant_eigenvalue_count << std::endl;
+  // std::cout << dominant_eigenvalue_count << std::endl;
 
   return static_cast<point_type_t>(dominant_eigenvalue_count);
   // return static_cast<point_type_t>(2);
@@ -333,7 +333,11 @@ typename Kernel::Point_3 calculate_new_point(
 
       m_temp += vnn * vnn.transpose();
       v_temp += vnn * vnn.transpose() * vp;
-    } 
+    }
+
+    if(m_temp.isApprox(Eigen::Matrix3d::Zero())) {
+      std::cout << "ZZERO" << std::endl;
+    }
 
     t = m_temp.inverse() * v_temp;
   } else if (point_type == point_type_t::edge) {
@@ -363,9 +367,11 @@ typename Kernel::Point_3 calculate_new_point(
       m_temp_left += n_pi * n_pi.transpose() + dom_eigenvec * dom_eigenvec.transpose();
       v_temp_right += (n_pi * n_pi.transpose())*vnp + (dom_eigenvec * dom_eigenvec.transpose())*vp;
     }
-
+    if(m_temp_left.isApprox(Eigen::Matrix3d::Zero())) {
+      std::cout << "ZZERO" << std::endl;
+    }
     t = m_temp_left.inverse() * v_temp_right;
-    // std::cout << m_temp_left << std::endl << std::endl;
+    std::cout << m_temp_left << std::endl << std::endl;
     // std::cout << v_temp_right << std::endl << std::endl;
     // std::cout << t << std::endl << std::endl;
 
@@ -387,8 +393,15 @@ typename Kernel::Point_3 calculate_new_point(
       cum_w += curr_w;
     }
 
+    if(cum_w == 0) {
+      std::cout << "ZZERO" << std::endl;
+    }
+
     t = vp + (alpha/cum_w)*v_temp;
   }
+
+  std::cout << t << std::endl;
+  std::cout << point_type << std::endl;
 
   return Point(t[0], t[1], t[2]);
 }
@@ -410,7 +423,8 @@ template <typename ConcurrencyTag,
 void
 constraint_based_smooth_point_set(
   PointRange& points,
-  const NamedParameters& np = parameters::default_values())
+  const NamedParameters& np = parameters::default_values()
+)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -429,10 +443,10 @@ constraint_based_smooth_point_set(
 
   typedef typename Kernel::FT FT;
 
-  FT neighbor_radius = 1;
-  FT normal_threshold = 30.;
-  FT damping_factor = 3.;
-  FT eigenvalue_threshold = .01;
+  FT neighbor_radius = .5;
+  FT normal_threshold = 60.;
+  FT damping_factor = 1.5;
+  FT eigenvalue_threshold = .04;
   FT update_threshold = 2.;
 
   CGAL_precondition(points.begin() != points.end());
@@ -569,6 +583,23 @@ constraint_based_smooth_point_set(
   for (auto it = pwns_covms.begin() ; it < pwns_covms.end() ; ++it)
   {
     cov_eigens.push_back(internal::do_binary_optimization<Kernel>(*it, eigenvalue_threshold));
+  }
+
+  enum point_type_t {corner = 0, edge = 1, flat = 2};
+  for (size_t i=0; i<point_classifications.size(); ++i)
+  {
+    switch(point_classifications[i])
+    {
+      case internal::point_type_t::corner:
+        get<2>(points[i]) = CGAL::make_array(static_cast<unsigned char>(255), static_cast<unsigned char>(0), static_cast<unsigned char>(0));
+        break;
+      case internal::point_type_t::edge:
+        get<2>(points[i]) = CGAL::make_array(static_cast<unsigned char>(0), static_cast<unsigned char>(255), static_cast<unsigned char>(0));
+        break;
+      case internal::point_type_t::flat:
+        get<2>(points[i]) = CGAL::make_array(static_cast<unsigned char>(0), static_cast<unsigned char>(0), static_cast<unsigned char>(255));
+        break;
+    }
   }
 
   std::vector<Point_3> new_points(nb_points);
