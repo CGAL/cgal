@@ -1682,6 +1682,113 @@ private:
     return result;
   }
 
+  void insert_mid_point_in_constrained_edge(Vertex_handle va_3d, Vertex_handle vb_3d) {
+    const auto a = this->point(va_3d);
+    const auto b = this->point(vb_3d);
+    const auto mid = CGAL::midpoint(a, b);
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+    std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
+                             IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
+                             IO::oformat(vb_3d, with_point_and_info));
+#endif // CGAL_DEBUG_CDT_3
+    auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
+    CGAL_assertion(std::next(contexts.begin()) == contexts.end());
+    const auto& context = *contexts.begin();
+    const auto constraint_id = context.id();
+    CGAL_assertion(constraint_id != Constraint_id{});
+    // this->study_bug = true;
+    Locate_type mid_lt;
+    int mid_li, min_lj;
+    Cell_handle mid_c = tr.locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
+    CGAL_assertion(mid_lt != Locate_type::VERTEX);
+    this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d}, constraint_id, insert_in_conflict_visitor);
+    // this->study_bug = false;
+    // assert(is_valid(true));
+  }
+  std::optional<std::pair<Vertex_handle, Vertex_handle>>
+  return_encroached_constrained_edge([[maybe_unused]] CDT_3_face_index face_index,
+                                      const CDT_2& cdt_2,
+                                      Point_3 circ) const
+  {
+    for(auto [other_fh, index] : cdt_2.finite_edges()) {
+      if(!other_fh->is_constrained(index))
+        continue;
+      const auto va = other_fh->vertex(cdt_2.cw(index));
+      const auto vb = other_fh->vertex(cdt_2.ccw(index));
+      const auto a = cdt_2.point(va);
+      const auto b = cdt_2.point(vb);
+      std::cerr << std::format("Test circumcenter {} with edge ( {}   {} ), result is: {}", IO::oformat(circ),
+                               IO::oformat(a), IO::oformat(b), IO::oformat(CGAL::angle(a, circ, b)))
+                << '\n';
+      if(CGAL::angle(a, circ, b) != CGAL::ACUTE) {
+        const auto va_3d = va->info().vertex_handle_3d;
+        const auto vb_3d = vb->info().vertex_handle_3d;
+        return std::make_pair(va_3d, vb_3d);
+      }
+    }
+    return std::nullopt;
+  }
+
+  std::optional<std::pair<Vertex_handle, Vertex_handle>>
+  try_to_insert_circumcenter_in_face_or_return_encroached_edge([[maybe_unused]] CDT_3_face_index face_index,
+                                                               CDT_2& non_const_cdt_2,
+                                                               CDT_2_face_handle fh_2d)
+  {
+    const auto& cdt_2 = non_const_cdt_2;
+    auto circ = CGAL::circumcenter(cdt_2.triangle(fh_2d));
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+    std::cerr << std::format("Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n", IO::oformat(circ),
+                             IO::oformat(cdt_2.triangle(fh_2d)));
+#endif // CGAL_DEBUG_CDT_3
+    auto encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, circ);
+    if(encroached_edge_opt) {
+      return encroached_edge_opt;
+    }
+    typename CDT_2::Locate_type lt;
+    int i;
+    auto fh = cdt_2.locate(circ, lt, i, fh_2d);
+    if(fh->info().is_outside_the_face) {
+      // recompute `circ` in exact, and restart
+      using EK = CGAL::Simple_cartesian<Exact_rational>;
+      Cartesian_converter<Geom_traits, EK> to_exact;
+      Cartesian_converter<EK, Geom_traits> from_exact;
+      circ = from_exact(CGAL::circumcenter(to_exact(cdt_2.triangle(fh_2d))));
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+      std::cerr << "Triangle is:" << cdt_2.triangle(fh_2d) << '\n';
+      CGAL_assertion(cdt_2.is_face(fh_2d->vertex(0), fh_2d->vertex(1), fh_2d->vertex(2)));
+      std::cerr << std::format("NEW exact value: Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n", IO::oformat(circ),
+                               IO::oformat(cdt_2.triangle(fh_2d)));
+#endif // CGAL_DEBUG_CDT_3
+      encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, circ);
+      if(encroached_edge_opt) {
+        return encroached_edge_opt;
+      }
+      fh = cdt_2.locate(circ, lt, i, fh_2d);
+      if(fh->info().is_outside_the_face) {
+        std::ofstream out("dump_region.off");
+        out.precision(17);
+        write_region_to_OFF(out, cdt_2);
+      }
+      CGAL_assertion(!fh->info().is_outside_the_face);
+    }
+
+    // assert(is_valid(true));
+    // this->study_bug = true;
+    const auto v = this->insert(circ, Cell_handle{}, false); // TODO: find a hint
+    // this->study_bug = false;
+    // assert(is_valid(true));
+    v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
+    const auto v_2d = non_const_cdt_2.insert(circ, fh);
+    auto f_circ = cdt_2.incident_faces(v_2d);
+    v_2d->info().vertex_handle_3d = v;
+    const auto end = f_circ;
+    do {
+      f_circ->info().is_outside_the_face = false;
+    } while(++f_circ != end);
+    search_for_missing_subfaces(face_index);
+    return std::nullopt;
+  }
+
   bool restore_face(CDT_3_face_index face_index) {
     CDT_2& non_const_cdt_2 = face_cdt_2[face_index];
     const CDT_2& cdt_2 = non_const_cdt_2;
@@ -1749,61 +1856,11 @@ private:
                                     IO::oformat(vb_3d, with_point_and_info));
         }
 #endif // CGAL_DEBUG_CDT_3
-        // return;
-        const auto circ = CGAL::circumcenter(cdt_2.triangle(e.fh_2d));
-        if([&]() {
-          for(auto [other_fh, index]: cdt_2.finite_edges()) {
-            if(!other_fh->is_constrained(index)) continue;
-            const auto va = other_fh->vertex(cdt_2.cw(index));
-            const auto vb = other_fh->vertex(cdt_2.ccw(index));
-            const auto va_3d = va->info().vertex_handle_3d;
-            const auto vb_3d = vb->info().vertex_handle_3d;
-            const auto a = cdt_2.point(va);
-            const auto b = cdt_2.point(vb);
-            if(CGAL::angle(a, circ, b) != CGAL::ACUTE) {
-              const auto mid = CGAL::midpoint(a, b);
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-              std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
-                                        IO::oformat(mid),
-                                        IO::oformat(va_3d, with_point_and_info),
-                                        IO::oformat(vb_3d, with_point_and_info));
-#endif // CGAL_DEBUG_CDT_3
-              auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
-              CGAL_assertion(std::next(contexts.begin()) == contexts.end());
-              const auto& context = *contexts.begin();
-              const auto constraint_id = context.id();
-              CGAL_assertion(constraint_id != Constraint_id{});
-              Locate_type mid_lt;
-              int mid_li, min_lj;
-              Cell_handle mid_c = tr.locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
-              CGAL_assertion(mid_lt != Locate_type::VERTEX);
-              this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d}, constraint_id,
-                                                          insert_in_conflict_visitor);
-              return false;
-            }
-          }
-          return true;
-        }()) {
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-          std::cerr << std::format("Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n",
-                                    IO::oformat(circ),
-                                    IO::oformat(cdt_2.triangle(e.fh_2d)));
-#endif // CGAL_DEBUG_CDT_3
-          const auto v = this->insert(circ, Cell_handle{}, false); // TODO: find a hint
-          v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
-          typename CDT_2::Locate_type lt;
-          int i;
-          auto fh = non_const_cdt_2.locate(circ, lt, i, e.fh_2d);
-          CGAL_assertion(!fh->info().is_outside_the_face);
-          CGAL_assertion(lt == CDT_2::FACE);
-          const auto v_2d = non_const_cdt_2.insert(circ, fh);
-          auto f_circ = non_const_cdt_2.incident_faces(v_2d);
-          v_2d->info().vertex_handle_3d = v;
-          const auto end = f_circ;
-          do {
-            f_circ->info().is_outside_the_face = false;
-          } while(++f_circ != end);
-          search_for_missing_subfaces(face_index);
+        const auto encroach_edge_opt =
+            try_to_insert_circumcenter_in_face_or_return_encroached_edge(face_index, non_const_cdt_2, e.fh_2d);
+        if(encroach_edge_opt) {
+          const auto [va_3d, vb_3d] = *encroach_edge_opt;
+          insert_mid_point_in_constrained_edge(va_3d, vb_3d);
         }
         return false;
       }
