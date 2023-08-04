@@ -149,29 +149,6 @@ public:
       return get(m_vertex_sizing_map, v);
     }
 
-  template <typename FaceRange>
-  void calc_sizing_map(const FaceRange& face_range)
-  {
-    if (face_range.size() == faces(m_pmesh).size())
-    {
-      // calculate curvature from the whole mesh
-      calc_sizing_map(m_pmesh);
-    }
-    else
-    {
-      // expand face selection and calculate curvature from it
-      std::vector<face_descriptor> selection(face_range.begin(), face_range.end());
-      auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
-      for (face_descriptor f : faces(m_pmesh)) put(is_selected, f, false);
-      for (face_descriptor f : face_range)  put(is_selected, f, true);
-      CGAL::expand_face_selection(selection, m_pmesh, 1
-                                , is_selected, std::back_inserter(selection));
-      CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
-
-      calc_sizing_map(ffg);
-    }
-  }
-
   boost::optional<FT> is_too_long(const halfedge_descriptor h) const
   {
     const FT sqlen = sqlength(h);
