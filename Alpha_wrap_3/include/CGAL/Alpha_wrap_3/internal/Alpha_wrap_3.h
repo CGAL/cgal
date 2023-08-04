@@ -1082,10 +1082,12 @@ private:
         const Cell_handle conflict_cell = m_tr.locate(steiner_point, lt, li, lj, neighbor);
         CGAL_assertion(lt != Triangulation::VERTEX);
 
+        // Using small vectors like in Triangulation_3 does not bring any runtime improvement
         std::vector<Facet> boundary_facets;
         std::vector<Cell_handle> conflict_zone;
         boundary_facets.reserve(32);
         conflict_zone.reserve(32);
+
         m_tr.find_conflicts(steiner_point, conflict_cell,
                             std::back_inserter(boundary_facets),
                             std::back_inserter(conflict_zone));
@@ -1112,6 +1114,8 @@ private:
         visitor.before_Steiner_point_insertion(*this, steiner_point);
 
         // Actual insertion of the Steiner point
+        // We could use TDS functions to avoid recomputing the conflict zone, but in practice
+        // it does not bring any runtime improvements
         Vertex_handle vh = m_tr.insert(steiner_point, lt, conflict_cell, li, lj);
         vh->type() = AW3i::Vertex_type:: DEFAULT;
 
