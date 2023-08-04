@@ -95,6 +95,7 @@ public:
    */
   CGAL::Bbox_2 bounding_box() {
     Bbox_2 bbox;
+    if (m_mpwh.number_of_polygons() > 0) bbox = m_mpwh.polygons().front().outer_boundary().bbox();
     for (auto const& pwh: m_mpwh.polygons()) {
       bbox += pwh.outer_boundary().bbox();
     }
