@@ -826,7 +826,7 @@ public:
               std::get_if<X_monotone_subcurve_2>(&xection);
             if (subcv_p != nullptr) {
               ocv.push_back(*subcv_p);
-              oi = output_ocv (ocv, invert_ocv, oi);
+              output_ocv (ocv, invert_ocv, oi);
               continue;
             }
 
@@ -883,7 +883,7 @@ public:
             // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
             CGAL_assertion(ocv.size() > 0);
-            oi = output_ocv (ocv, invert_ocv, oi);
+            output_ocv (ocv, invert_ocv, oi);
           }
           else {
             // The left point of the current subcurve of one
@@ -929,7 +929,7 @@ public:
 
         // Output the remaining overlapping polycurve, if necessary.
       if (ocv.size() > 0) {
-        oi = output_ocv (ocv, invert_ocv, oi);
+        output_ocv (ocv, invert_ocv, oi);
       }
       else if (right_coincides) {
         typedef std::pair<Point_2,Multiplicity> return_point;
