@@ -468,7 +468,7 @@ public:
   typedef Hyperbolic_point_2                                    Hyperbolic_Voronoi_point_2;
   typedef typename Kernel::Circle_2                             Circle_2;
   typedef typename Kernel::Line_2                               Euclidean_line_2;
-  typedef std::variant<Circle_2,Euclidean_line_2>             Euclidean_circle_or_line_2;
+  typedef std::variant<Circle_2,Euclidean_line_2>               Euclidean_circle_or_line_2;
   typedef internal::HDT_2_Circular_arc_2<Self>                  Circular_arc_2;
   typedef typename Kernel::Segment_2                            Euclidean_segment_2; // only used internally here
   typedef std::variant<Circular_arc_2, Euclidean_segment_2>   Hyperbolic_segment_2;

@@ -85,7 +85,7 @@ public:
       return *this;
     }
 
-    const Circular_arc_2& arc = std::get<const Circular_arc_2&>(s);
+    const Circular_arc_2& arc = std::get<Circular_arc_2>(s);
 
     if(arc.squared_radius() > 100) {
       Euclidean_segment_2 seg(arc.source(), arc.target());

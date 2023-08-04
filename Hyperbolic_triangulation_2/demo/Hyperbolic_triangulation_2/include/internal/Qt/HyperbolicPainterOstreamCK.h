@@ -49,7 +49,7 @@ namespace Qt {
           return *this;
         }
 
-        const Circular_arc& arc = std::get<const Circular_arc&>(s);
+        const Circular_arc& arc = std::get<Circular_arc>(s);
 
         if(arc.squared_radius() > 10)
         {
