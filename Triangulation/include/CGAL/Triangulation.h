@@ -101,8 +101,8 @@ protected:
       template<class Iter>
       CGAL::Orientation operator()(Iter a, Iter b) const
       {
-          return ifo(fop->value(),a,b);
         if (*fop)
+          return ifo(fop->value(),a,b);
         *fop = cfo(a,b);
         CGAL_assertion(ifo(fop->value(),a,b) == CGAL::POSITIVE);
         return CGAL::POSITIVE;
