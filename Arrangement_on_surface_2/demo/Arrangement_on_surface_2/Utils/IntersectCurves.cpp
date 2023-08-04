@@ -22,15 +22,15 @@ Intersect_curves<Traits_>::Intersect_curves(const Traits* traits) :
 
 struct Object_putter
 {
-  std::vector<CGAL::Object>& v;
-  Object_putter(std::vector<CGAL::Object>& v)
-    : v(v)
+  std::reference_wrapper<std::vector<CGAL::Object>> v;
+  Object_putter(std::vector<CGAL::Object>& v_)
+    : v(std::ref(v_))
   {}
 
   template <class T>
   void operator()(const T& t)
   {
-    v.push_back(make_object(t));
+    v.get().push_back(make_object(t));
   }
 };
 
