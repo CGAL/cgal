@@ -4,6 +4,8 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Polygon_repair_2_Examples)
 
+set(CMAKE_CXX_STANDARD 17)
+
 find_package(CGAL REQUIRED)
 
 # create a target per cppfile
