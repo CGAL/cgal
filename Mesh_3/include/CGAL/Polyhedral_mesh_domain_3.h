@@ -704,7 +704,7 @@ Construct_initial_points::operator()(OutputIterator pts,
   // - Generate a grid of n' points with n' > n, to get good candidates
   // - Project them onto the surface
   // - Grid snap to avoid very close points (ideally that would depend on the sizing field)
-  // - Keep the n closest points
+  // - Keep the n farthest points
 
   const int n_prime = 10 * n;
   const int n_dir = std::ceil(std::cbrt(n_prime));
