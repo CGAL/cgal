@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <fstream>
 
@@ -15,10 +16,9 @@ int main(int argc, char* argv[])
 //  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/hand.off");
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/nefertiti.off");
 //  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
-  std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+  if (!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
