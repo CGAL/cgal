@@ -689,6 +689,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 {
   typedef typename std::pair<Point_3, Index> Point_with_index;
 
+
 # ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "construct initial points:" << std::endl;
 # endif
@@ -781,10 +782,10 @@ Construct_initial_points::operator()(OutputIterator pts,
     initial_points.emplace_back(*next_ip);
 
 #ifdef CGAL_MESH_3_VERBOSE
-      std::cerr << boost::format("\r             \r"
-                                 "%1%/%2% initial point(s) found...")
-        % initial_points.size()
-        % n;
+    std::cerr << boost::format("\r             \r"
+                                "%1%/%2% initial point(s) found...")
+      % initial_points.size()
+      % n;
 # endif
   }
 
