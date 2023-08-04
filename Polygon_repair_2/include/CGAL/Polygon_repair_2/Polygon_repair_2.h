@@ -136,7 +136,7 @@ public:
     }
 
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second);
+      t.odd_even_insert_constraint(edge.first, edge.second, search_start);
     }
   }
 
@@ -163,7 +163,7 @@ public:
     }
 
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second);
+      t.odd_even_insert_constraint(edge.first, edge.second, search_start);
     }
   }
 
@@ -192,7 +192,7 @@ public:
     }
 
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second);
+      t.odd_even_insert_constraint(edge.first, edge.second, search_start);
     }
   }
 
@@ -386,7 +386,7 @@ protected:
   Triangulation t;
   Multipolygon_with_holes_2<Kernel, PolygonContainer> mp;
   int number_of_polygons, number_of_holes;
-  // std::vector<std::unordered_set<int>> polygon_nesting, hole_nesting;
+  typename Triangulation::Face_handle search_start;
 };
 
 } // namespace Polygon_repair_2

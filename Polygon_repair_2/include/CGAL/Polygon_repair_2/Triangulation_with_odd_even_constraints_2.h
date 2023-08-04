@@ -111,8 +111,16 @@ public:
   // Add constraint from pa to pb using the odd-even rule
   void odd_even_insert_constraint(Point pa, Point pb) {
     Vertex_handle va = insert(pa);
-    Vertex_handle vb = insert(pb);
+    Vertex_handle vb = insert(pb, va->face()); // vb is likely close to va
     odd_even_insert_constraint(va, vb);
+  }
+  
+  // Add constraint from pa to pb using the odd-even rule (updating search start face)
+  void odd_even_insert_constraint(Point pa, Point pb, Face_handle &f) {
+    Vertex_handle va = insert(pa, f);
+    Vertex_handle vb = insert(pb, va->face()); // vb is likely close to va
+    odd_even_insert_constraint(va, vb);
+    f = vb->face();
   }
 
   // Starts at an arbitrary interior face
