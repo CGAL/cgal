@@ -215,13 +215,13 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   }
   const auto& js_vertices = it.value();
 
-  // halfedges
-  it = data.find("halfedges");
+  // edges
+  it = data.find("edges");
   if (it == data.end()) {
-    std::cerr << "The halfedges item is missing " << " (" << filename << ")\n";
+    std::cerr << "The edges item is missing " << " (" << filename << ")\n";
     return false;
   }
-  const auto& js_halfedges = it.value();
+  const auto& js_edges = it.value();
 
   // faces
   it = data.find("faces");
@@ -234,7 +234,7 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   const std::size_t num_points = js_points.size();
   const std::size_t num_curves = js_curves.size();
   const std::size_t num_vertices = js_vertices.size();
-  const std::size_t num_halfedges = js_halfedges.size();
+  const std::size_t num_halfedges = js_edges.size();
   const std::size_t num_edges = num_halfedges / 2;
   const std::size_t num_faces = js_faces.size();
 
@@ -303,6 +303,7 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   using Arr_accessor = CGAL::Arr_accessor<Arrangement>;
   Arr_accessor arr_access(arr);
 
+  // Vertices
   using DVertex = typename Arr_accessor::Dcel_vertex;
   std::vector<DVertex*> vertices(num_vertices);
   size_t k = 0;
@@ -328,24 +329,142 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
     vertices[k++] = arr_access.new_vertex(&point, ps_x, ps_y);
   }
 
-  // using DHalfedge = typename Arr_accessor::Dcel_halfedge;
-  // std::vector<DHalfedge*> halfedges;
-  // k = 0;
-  // for (const auto& js_halfedge : js_halfedges) {
-  //   std::size_t source_id = js_halfedge["source"];
-  //   std::size_t target_id = js_halfedge["target"];
-  //   std::size_t curve_id = js_halfedge["curve"];
-  //   // int direction = js_halfedge["direction"];
-  //   DVertex* src_v = vertices[source_id];
-  //   DVertex* trg_v = vertices[target_id];
-  //   const auto& curve = xcurves[curve_id];
-  //   DHalfedge* new_he = arr_access.new_edge(&curve);
-  //   trg_v->set_halfedge(new_he);
-  //   new_he->set_vertex(trg_v);
-  //   src_v->set_halfedge(new_he->opposite());
-  //   new_he->opposite()->set_vertex(src_v);
-  //   halfedges[k++] = new_he;
-  // }
+  // Halfedges
+  using DHalfedge = typename Arr_accessor::Dcel_halfedge;
+  std::vector<DHalfedge*> halfedges;
+  k = 0;
+  for (const auto& js_edge : js_edges) {
+    std::size_t source_id = js_edge["source"];
+    std::size_t target_id = js_edge["target"];
+    std::size_t curve_id = js_edge["curve"];
+    int direction = js_edge["direction"];
+    DVertex* src_v = vertices[source_id];
+    DVertex* trg_v = vertices[target_id];
+    const auto& curve = xcurves[curve_id];
+    DHalfedge* new_he = arr_access.new_edge(&curve);
+    trg_v->set_halfedge(new_he);
+    new_he->set_vertex(trg_v);
+    src_v->set_halfedge(new_he->opposite());
+    new_he->opposite()->set_vertex(src_v);
+    if (direction == 0) new_he->set_direction(CGAL::ARR_LEFT_TO_RIGHT);
+    else {
+      CGAL_assertion(direction == 1);
+      new_he->set_direction(CGAL::ARR_RIGHT_TO_LEFT);
+    }
+    halfedges[k++] = new_he;
+    halfedges[k++] = new_he->opposite();
+  }
+
+  // Faces
+  using DFace = typename Arr_accessor::Dcel_face;
+  using DOuter_ccb = typename Arr_accessor::Dcel_outer_ccb;
+  using DInner_ccb = typename Arr_accessor::Dcel_inner_ccb;
+  using DIso_vert = typename Arr_accessor::Dcel_isolated_vertex;
+  for (const auto& js_face : js_faces) {
+    DFace* new_f = arr_access.new_face();
+
+    //! \todo read from file
+    const bool is_unbounded = false;
+    new_f->set_unbounded(is_unbounded);
+    const bool is_valid = false;
+    new_f->set_fictitious(! is_valid);
+
+    // Read the outer CCBs of the face.
+    auto oit = js_face.find("outer_ccbs");
+    if (oit == js_face.end()) {
+      std::cerr << "The outer_ccbs item is missing " << " (" << filename
+                << ")\n";
+      return false;
+    }
+
+    const auto& js_outer_ccbs = *oit;
+    for (const auto& js_ccb : js_outer_ccbs) {
+      // Allocate a new outer CCB record and set its incident face.
+      auto* new_occb = arr_access.new_outer_ccb();
+      new_occb->set_face(new_f);
+
+      // Read the current outer CCB.
+      auto bit = js_ccb.find("halfedges");
+      if (bit == js_ccb.end()) {
+        std::cerr << "The halfedges item is missing " << " (" << filename
+                  << ")\n";
+        return false;
+      }
+
+      const auto& js_halfedges = *bit;
+      auto hit = js_halfedges.begin();
+      std::size_t first_idx = *hit;
+      DHalfedge* first_he = halfedges[first_idx];
+      first_he->set_outer_ccb(new_occb);
+      DHalfedge* prev_he = first_he;
+      for (++hit; hit != js_halfedges.end(); ++hit) {
+        std::size_t curr_idx = *hit;
+        auto curr_he = halfedges[curr_idx];
+        prev_he->set_next(curr_he);		// connect
+        curr_he->set_outer_ccb(new_occb);	// set the CCB
+        prev_he = curr_he;
+      }
+      prev_he->set_next(first_he);		// close the loop
+      new_f->add_outer_ccb(new_occb, first_he);
+    }
+
+    // Read the inner CCBs of the face.
+    auto iit = js_face.find("inner_ccbs");
+    if (iit == js_face.end()) {
+      std::cerr << "The inner_ccbs item is missing " << " (" << filename
+                << ")\n";
+      return false;
+    }
+
+    const auto& js_inner_ccbs = *iit;
+    for (const auto& js_ccb : js_inner_ccbs) {
+      // Allocate a new inner CCB record and set its incident face.
+      auto* new_iccb = arr_access.new_inner_ccb();
+      new_iccb->set_face(new_f);
+
+      // Read the current inner CCB.
+      auto bit = js_ccb.find("halfedges");
+      if (bit == js_ccb.end()) {
+        std::cerr << "The halfedges item is missing " << " (" << filename
+                  << ")\n";
+        return false;
+      }
+
+      const auto& js_halfedges = *bit;
+      auto hit = js_halfedges.begin();
+      std::size_t first_idx = *hit;
+      DHalfedge* first_he = halfedges[first_idx];
+      first_he->set_inner_ccb(new_iccb);
+      DHalfedge* prev_he = first_he;
+      for (++hit; hit != js_halfedges.end(); ++hit) {
+        std::size_t curr_idx = *hit;
+        auto curr_he = halfedges[curr_idx];
+        prev_he->set_next(curr_he);		// connect
+        curr_he->set_inner_ccb(new_iccb);	// set the CCB
+        prev_he = curr_he;
+      }
+      prev_he->set_next(first_he);		// close the loop
+      new_f->add_inner_ccb(new_iccb, first_he);
+    }
+
+    // // Read the isolated vertices inside the face.
+    // Size n_isolated_vertices =
+    //   formatter.read_size("number_of_isolated_vertices");
+    // if (n_isolated_vertices) {
+    //   formatter.read_isolated_vertices_begin();
+    //   Size k;
+    //   for (k = 0; k < n_isolated_vertices; k++) {
+    //     // Allocate a new isolated vertex record and set its incident face.
+    //     DIso_vert* new_iso_vert = arr_access.new_isolated_vertex();
+    //     new_iso_vert->set_face(new_f);
+    //     // Read the current isolated vertex.
+    //     std::size_t v_idx = formatter.read_vertex_index();
+    //     DVertex* iso_v = m_vertices[v_idx];
+    //     iso_v->set_isolated_vertex(new_iso_vert);
+    //     new_f->add_isolated_vertex(new_iso_vert, iso_v);
+    //   }
+    // }
+  }
 
   return true;
 }
@@ -369,7 +488,7 @@ int main(int argc, char* argv[]) {
     std::cerr << "Failed to load database!\n";
     return -1;
   }
-  // std::cout << arr << std::endl;
+  std::cout << arr << std::endl;
 
   QApplication app(argc, argv);
   QCoreApplication::setOrganizationName("CGAL");
