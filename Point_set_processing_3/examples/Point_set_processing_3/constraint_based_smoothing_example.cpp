@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/constraint_based_smooth_point_set.h>
+#include <CGAL/constraint_based_smooth_point_set2.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_points.h>
 #include <CGAL/property_map.h>
@@ -8,6 +8,7 @@
 
 #include <utility> // defines std::pair
 #include <fstream>
+#include <chrono>
 
 // Types
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -60,7 +61,9 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int iter_number = 2;
+  const int iter_number = 100;
+
+  auto start = std::chrono::high_resolution_clock::now();
 
   for(int i = 0; i < iter_number; ++i)
   {
@@ -73,10 +76,14 @@ int main(int argc, char*argv[])
     std::cout << i << std::endl;
   }
 
+  auto stop = std::chrono::high_resolution_clock::now();
+
   for(size_t i=0;i<points.size();++i){
     Color c = get<2>(points[i]);
-    std::cout << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << std::endl;
+    // std::cout << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << std::endl;
   }
+
+  std::cout << "Average iteration time (ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() / 100 << std::endl;
 
   //// Save point set.
   // if(!CGAL::IO::write_XYZ(output_filename, points,
