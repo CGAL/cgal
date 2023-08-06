@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Adaptive_sizing_field.h>
 
 #include <fstream>
 

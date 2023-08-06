@@ -79,6 +79,7 @@ private:
   template <typename FaceGraph>
   void calc_sizing_map(FaceGraph& face_graph)
   {
+    //todo ip: please check if this is good enough to store curvature
     typedef Principal_curvatures_and_directions<K> Principal_curvatures;
     typedef typename CGAL::dynamic_vertex_property_t<Principal_curvatures> Vertex_curvature_tag;
     typedef typename boost::property_map<FaceGraph,

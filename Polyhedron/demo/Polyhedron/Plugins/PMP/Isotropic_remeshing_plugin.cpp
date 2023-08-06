@@ -14,6 +14,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Adaptive_sizing_field.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
@@ -405,6 +406,7 @@ public Q_SLOTS:
         else //not edges_only
         {
             if(protect &&
+               edge_sizing_type == 0 && //todo ip: current solution for adaptive remeshing
                !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                  *selection_item->polyhedron(),
                  selection_item->constrained_edges_pmap(),
@@ -672,6 +674,7 @@ public Q_SLOTS:
           }
 
           if(protect &&
+             edge_sizing_type == 0 && //todo ip: current solution for adaptive remeshing
              !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                pmesh,
                ecm,
