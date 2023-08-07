@@ -243,15 +243,16 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
     return false;
   }
 
-  if (num_vertices < num_points) {
-    std::cerr << "The no. of vertices (" << num_vertices
-              << ") is smaller than the no. of points (" << num_points << ")\n";
+  if (num_points < num_vertices) {
+    std::cerr << "The no. of points (" << num_points
+              << ") is smaller than the no. of vertices (" << num_vertices
+              << ")\n";
     return false;
   }
 
-  if (num_edges < num_curves) {
-    std::cerr << "The no. of edges (" << num_edges
-              << ") is smaller than the no. of curves (" << num_curves << ")\n";
+  if (num_curves < num_edges) {
+    std::cerr << "The no. of curves (" << num_curves
+              << ") is smaller than the no. of edge (" << num_edges << ")\n";
     return false;
   }
 
