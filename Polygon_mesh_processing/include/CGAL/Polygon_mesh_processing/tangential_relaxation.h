@@ -363,12 +363,6 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
   typedef typename GT::Vector_3 Vector_3;
   typedef typename GT::Point_3 Point_3;
 
-  //todo ip: alt calc
-  typename GT::Construct_vector_3 vector = gt.construct_vector_3_object();
-  typename GT::Compute_scalar_product_3 scalar_product = gt.compute_scalar_product_3_object();
-  typename GT::Compute_squared_length_3 squared_length = gt.compute_squared_length_3_object();
-  typename GT::Construct_cross_product_vector_3 cross_product = gt.construct_cross_product_vector_3_object();
-
   auto check_normals = [&](vertex_descriptor v)
   {
     bool first_run = true;
@@ -450,28 +444,18 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
           interior_hedges.push_back(h);
       }
 
-      //todo ip: handle border edges with sizing field
       if (border_halfedges.empty())
       {
         const Vector_3& vn = vnormals.at(v);
         Vector_3 move = CGAL::NULL_VECTOR;
         double weight = 0;
-//        unsigned int star_size = 0;
         for(halfedge_descriptor h :interior_hedges)
         {
           // calculate weight
-          // need v0, v1 and v2
+          // need v, v1 and v2
           const vertex_descriptor v1 = target(next(h, tm), tm);
           const vertex_descriptor v2 = source(h, tm);
 
-          //todo ip- alt calc
-//          const Vector_3 vec0 = vector(get(vpm, v), get(vpm, v1));
-//          const Vector_3 vec1 = vector(get(vpm, v), get(vpm, v2));
-//          const double sqarea = squared_length(cross_product(vec0, vec1));
-//          const double face_weight = CGAL::approximate_sqrt(sqarea)
-//                                     / pow(1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)), 2);
-
-          //todo ip- paper implementation
           const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
           const double face_weight = tri_area
                                    / (1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)));
@@ -484,7 +468,7 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
 
         barycenters.emplace_back(v, vn, get(vpm, v) + move);
       }
-      else
+      else //todo ip: do border edges need to be handled with the sizing field?
       {
         if (!relax_constraints) continue;
         Vector_3 vn(NULL_VECTOR);
