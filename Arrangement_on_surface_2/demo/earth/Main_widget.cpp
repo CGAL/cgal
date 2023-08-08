@@ -173,8 +173,8 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
@@ -187,7 +187,8 @@ void Main_widget::initializeGL()
   }
 
   {
-    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa.json");
+    //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     //Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
   }
   

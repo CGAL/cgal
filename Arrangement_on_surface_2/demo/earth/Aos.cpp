@@ -935,6 +935,9 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       js_curves.push_back(std::move(je));
     }
   }
+  std::cout << "num edges = " << num_edges << std::endl;
+  std::cout << "curve map size = " << curve_pos_map.size() << std::endl;
+  std::cout << "js_curves size = " << js_curves.size() << std::endl;
 
   ////////////////////////////////////////////////////////////////////////////
   // VERTICES
@@ -983,12 +986,15 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   //std::cout << "  *** num total half-edges = " << num_half_edges << std::endl;
   //std::cout << "  *** halfedge-pos-map size = " << halfedge_pos_map.size() << std::endl;
 
+
   ////////////////////////////////////////////////////////////////////////////
   // EDGES
   num_edges = 0;
   auto& js_edges = js["edges"] = json::array();
   ////using Edge_ = decltype(*arr.edges_begin());
   //std::map<void*, int>  edge_pos_map;
+  std::map<void*, int>  halfedge_pos_map;
+  //Edge_const_iterator    eit;
   for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
   {
     auto& edge = *eit;
@@ -1005,9 +1011,16 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     js_edge["direction"] = edge.direction();
     js_edges.push_back(std::move(js_edge));
     num_edges++;
+
+    // add the halfedge indices to the map
+    int new_halfedge_index = halfedge_pos_map.size();
+    auto& twin = *edge.twin();
+    halfedge_pos_map[&edge] = new_halfedge_index;
+    halfedge_pos_map[&twin] = new_halfedge_index + 1;
   }
   std::cout << "EDGE CHECKS:\n";
-  std::cout << "  *** num total edges = " << num_edges << std::endl;
+  std::cout << "  *** num edges = " << num_edges << std::endl;
+  std::cout << " *** js_edges size = " << js_edges.size() << std::endl;
 
 
   ////////////////////////////////////////////////////////////////////////////
@@ -1076,12 +1089,18 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       auto curr = first;
       do {
         auto& he = *curr;
-        auto& xcv = he.curve();
-        auto it = curve_pos_map.find(&xcv);
-        if (it == curve_pos_map.end())
+        //auto& xcv = he.curve();
+        //auto it = curve_pos_map.find(&xcv);
+        //if (it == curve_pos_map.end())
+        //{
+        //    std::cout << "ASSERTION ERROR!!!" << std::endl;
+        //}
+        auto it = halfedge_pos_map.find(&he);
+        if (it == halfedge_pos_map.end())
         {
-            std::cout << "ASSERTION ERROR!!!" << std::endl;
+          std::cout << "ASSERTION ERROR!!!" << std::endl;
         }
+
         auto edge_pos = it->second;
         ccb_edge_indices.push_back(edge_pos);
       } while (++curr != first);
