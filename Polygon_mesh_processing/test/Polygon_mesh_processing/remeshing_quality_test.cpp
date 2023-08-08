@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Adaptive_sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/Adaptive_sizing_field.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <fstream>
@@ -38,6 +38,9 @@ int main(int argc, char* argv[])
       PMP::parameters::number_of_iterations(nb_iter).number_of_relaxation_steps(3)
       );
 
+  /*
+   * More information on quality metrics can be found here: https://ieeexplore.ieee.org/document/9167456
+   */
   std::cout << "Remeshing done, checking triangle quality...\n" << std::endl;
   double qmin = std::numeric_limits<double>::max();      // minimum triangle quality
   double qavg = 0.;           // average quality

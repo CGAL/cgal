@@ -18,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Uniform_sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>

@@ -14,7 +14,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Adaptive_sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/Adaptive_sizing_field.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
