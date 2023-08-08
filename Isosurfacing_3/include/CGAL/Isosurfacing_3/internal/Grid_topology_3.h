@@ -20,6 +20,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
+#include <tbb/blocked_range3d.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <array>
@@ -213,14 +214,22 @@ public:
     const std::size_t sk = size_k;
 
     // for now only parallelize outer loop
-    auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
-      for(std::size_t i = r.begin(); i != r.end(); ++i)
-        for(std::size_t j=0; j<sj - 1; ++j)
-          for(std::size_t k=0; k<sk - 1; ++k)
+    auto iterator = [&f, sj, sk](const tbb::blocked_range3d<std::size_t>& r) {
+      const std::size_t i_begin = r.pages().begin();
+      const std::size_t i_end = r.pages().end();
+      const std::size_t j_begin = r.rows().begin();
+      const std::size_t j_end = r.rows().end();
+      const std::size_t k_begin = r.cols().begin();
+      const std::size_t k_end = r.cols().end();
+
+      for(std::size_t i = i_begin; i != i_end; ++i)
+        for(std::size_t j = j_begin; j != j_end; ++j)
+          for(std::size_t k = k_begin; k != k_end; ++k)
             f({i, j, k});
     };
 
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i - 1), iterator);
+    tbb::blocked_range3d<std::size_t> range(0, size_i - 1, 0, size_j - 1, 0, size_k - 1);
+    tbb::parallel_for(range, iterator);
   }
 #endif // CGAL_LINKED_WITH_TBB
 

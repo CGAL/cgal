@@ -48,7 +48,7 @@
 #include <CGAL/assertions.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/concurrent_vector.h>
+#include <tbb/enumerable_thread_specific.h>
 #else
 #include <vector>
 #endif
@@ -187,7 +187,12 @@ void mc_construct_triangles(const int i_case,
     const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
     // insert new triangle in list
-    triangles.push_back({vertices[eg0], vertices[eg1], vertices[eg2]});
+    #ifdef CGAL_LINKED_WITH_TBB
+      auto& tris = triangles.local();
+    #else
+      auto& tris = triangles;
+    #endif
+    tris.push_back({vertices[eg0], vertices[eg1], vertices[eg2]});
   }
 }
 
@@ -198,17 +203,28 @@ void triangles_to_polygon_soup(const TriangleRange& triangles,
                                PointRange& points,
                                PolygonRange& polygons)
 {
-  for(auto& triangle : triangles)
-  {
-    const std::size_t id = points.size();
+  #ifdef CGAL_LINKED_WITH_TBB
+    for(const auto& triangle_list : triangles)
+    {
+  #else
+      const auto& triangle_list = triangles;
+  #endif
 
-    points.push_back(triangle[0]);
-    points.push_back(triangle[1]);
-    points.push_back(triangle[2]);
+      for(const auto& triangle : triangle_list)
+      {
+        const std::size_t id = points.size();
 
-    // simply use increasing indices
-    polygons.push_back({id + 2, id + 1, id + 0});
-  }
+        points.push_back(triangle[0]);
+        points.push_back(triangle[1]);
+        points.push_back(triangle[2]);
+
+        // simply use increasing indices
+        polygons.push_back({id + 2, id + 1, id + 0});
+      }
+
+  #ifdef CGAL_LINKED_WITH_TBB
+    }
+  #endif
 }
 
 // Marching Cubes implemented as a functor that runs on every cell of the grid
@@ -225,7 +241,7 @@ public:
   using Cell_descriptor = typename Domain::Cell_descriptor;
 
 #ifdef CGAL_LINKED_WITH_TBB
-  using Triangles = tbb::concurrent_vector<std::array<Point_3, 3> >;
+  using Triangles = tbb::enumerable_thread_specific<std::vector<std::array<Point_3, 3>>>;
 #else
   using Triangles = std::vector<std::array<Point_3, 3> >;
 #endif
@@ -245,7 +261,7 @@ public:
   { }
 
   // gets the created triangle list
-  const Triangles& triangles() const
+  Triangles& triangles()
   {
     return m_triangles;
   }
