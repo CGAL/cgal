@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section SectionPolygonRepair2_Introduction Introduction
 
-This package implements a polygon repair method based on a constrained triangulation \cgalCite{ledoux14prepair}. Starting from a possibly invalid input in the form of a polygon, polygon with holes or multipolygon with holes, the method performs a constrained triangulation of the input edges, applies a heuristic to label each triangle according to what it represents (exterior, polygon interior or hole), and reconstructs the polygon(s) represented by the triangulation. The method returns a valid output stored in a multipolygon with holes. Currently, the odd-even labeling heuristic is implemented in the package.
+This package implements a polygon repair method based on a constrained triangulation \cgalCite{14cg}. Starting from a possibly invalid input in the form of a polygon, polygon with holes or multipolygon with holes, the method performs a constrained triangulation of the input edges, applies a heuristic to label each triangle according to what it represents (exterior, polygon interior or hole), and reconstructs the polygon(s) represented by the triangulation. The method returns a valid output stored in a multipolygon with holes. Currently, the odd-even labeling heuristic is implemented in the package.
 
 \section SectionPolygonRepair2_Definitions Definitions
 
