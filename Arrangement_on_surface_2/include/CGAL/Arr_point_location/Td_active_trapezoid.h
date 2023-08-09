@@ -166,10 +166,10 @@ private:
    inline void init_neighbors(std::optional<std::reference_wrapper<Td_map_item>> lb, std::optional<std::reference_wrapper<Td_map_item>> lt,
                               std::optional<std::reference_wrapper<Td_map_item>> rb, std::optional<std::reference_wrapper<Td_map_item>> rt)
   {
-    set_lb((lb) ? *lb : Td_map_item(0));
-    set_lt((lt) ? *lt : Td_map_item(0));
-    set_rb((rb) ? *rb : Td_map_item(0));
-    set_rt((rt) ? *rt : Td_map_item(0));
+    set_lb((lb) ? lb->get() : Td_map_item(0));
+    set_lt((lt) ? lt->get() : Td_map_item(0));
+    set_rb((rb) ? rb->get() : Td_map_item(0));
+    set_rt((rt) ? rt->get() : Td_map_item(0));
   }
   /*! \copydoc init_neighbors
    *  \deprecated please use #init_neighbors */
@@ -273,8 +273,8 @@ private:
                   std::optional<std::reference_wrapper<Td_map_item>> rt = std::nullopt,
                   Dag_node* node = 0)
   {
-    PTR = new Data (l, r, b, t, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0),
-                   (rb) ? *rb : Td_map_item(0), (rt) ? *rt : Td_map_item(0), node);
+    PTR = new Data (l, r, b, t, (lb) ? lb->get() : Td_map_item(0), (lt) ? lt->get() : Td_map_item(0),
+                   (rb) ? rb->get() : Td_map_item(0), (rt) ? rt->get() : Td_map_item(0), node);
     //m_dag_node = node;
   }
 

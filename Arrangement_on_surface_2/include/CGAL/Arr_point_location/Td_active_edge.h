@@ -147,7 +147,7 @@ public:
   /*! Initialize the trapezoid's neighbors. */
   inline void init_neighbors(std::optional<std::reference_wrapper<Td_map_item>> next)
   {
-    set_next((next) ? *next : Td_map_item(0));
+    set_next((next) ? next->get() : Td_map_item(0));
   }
   /*! \copydoc init_neighbors
    *  \deprecated please use #init_neighbors */
@@ -202,7 +202,7 @@ public:
                   std::optional<std::reference_wrapper<Td_map_item>> next = std::nullopt)
   {
 
-    PTR = new Data(he, (next) ? *next : Td_map_item(0), node);
+    PTR = new Data(he, (next) ? next->get() : Td_map_item(0), node);
     //m_dag_node = node;
   }
 
