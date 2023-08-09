@@ -137,7 +137,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
       if (m_found_overlap) {
         // In this case m_cv overlaps the curve associated with m_intersect_he.
         // Compute the overlapping subcurve.
-        bool dummy;
+        Arr_parameter_space dummy;
         auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
         m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
 
@@ -153,7 +153,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
       // overlaps the curve associated with this edge.
       m_intersect_he = m_arr.non_const_handle(*hh);
 
-      bool dummy;
+      Arr_parameter_space dummy;
       auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
       m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
 
@@ -211,7 +211,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
       if (m_found_overlap) {
         // In this case m_cv overlaps the curve associated with m_intersect_he.
         // Compute the overlapping subcurve to the right of curr_v.
-        bool dummy;
+        Arr_parameter_space dummy;
         auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
         m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
 
@@ -506,6 +506,37 @@ _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
 }
 
 //-----------------------------------------------------------------------------
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_intersection_valid_impl(const Point_2& ip,
+                           Arr_parameter_space& /* intersection_location */,
+                           Arr_all_sides_oblivious_tag) const
+{ return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER); }
+
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_intersection_valid_impl(const Point_2& ip,
+                           Arr_parameter_space& intersection_location,
+                           Arr_not_all_sides_oblivious_tag) const {
+  auto equal = m_geom_traits->equal_2_object();
+  if (m_left_on_boundary) {
+    // The left-end lies on the left boundary. If the intersection point is not
+    // equal to the left-end, the intersection is valid, because it must lie to
+    // its right.
+    if (m_has_left_pt) return ! equal(ip, m_left_pt);
+    else return true;
+  }
+  if (m_has_right_pt && m_right_on_boundary && equal(ip, m_right_pt)) {
+    intersection_location = ARR_RIGHT_BOUNDARY;
+    return true;
+  }
+
+  // We have a simple intersection point;
+  // make sure it lies to the right of m_left_pt.
+  return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER);
+}
+
+//-----------------------------------------------------------------------------
 // Get the next intersection of cv with the given halfedge.
 //
 template <typename Arrangement, typename ZoneVisitor>
@@ -513,7 +544,7 @@ typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Optional_intersection
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _compute_next_intersection(Halfedge_handle he,
                            bool skip_first_point,
-                           bool& intersection_on_right_boundary)
+                           Arr_parameter_space& intersection_location)
 {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_compute_next_intersection(" << he->curve() << ", "
@@ -534,7 +565,7 @@ _compute_next_intersection(Halfedge_handle he,
   const X_monotone_curve_2* icv;
   bool valid_intersection;
 
-  intersection_on_right_boundary = false;
+  intersection_location = ARR_INTERIOR;
   if (iter != m_inter_map.end()) {
     // The intersections with the curve have already been computed.
     // Retrieve the intersections list from the map.
@@ -548,25 +579,9 @@ _compute_next_intersection(Halfedge_handle he,
       // Compare that current object with m_left_pt (if exists).
       ip = boost::get<Intersection_point>(&(inter_list.front()));
       if (ip != nullptr) {
-        // We have an intersection point
-        if (m_left_on_boundary) {
-          // The left-end lies on the left boundary. If the intersection point
-          // is not equal to the left-end, the intersection is valid, because
-          // it must lie to its right.
-          if (m_has_left_pt) valid_intersection = ! equal(ip->first, m_left_pt);
-          else valid_intersection = true;
-        }
-        else if (m_has_right_pt && m_right_on_boundary &&
-                 equal(ip->first, m_right_pt))
-        {
-          valid_intersection = true;
-          intersection_on_right_boundary = true;
-        }
-        else {
-          // We have a simple intersection point - make sure it lies to the
-          // right of m_left_pt.
-          valid_intersection = (compare_xy(ip->first, m_left_pt) == LARGER);
-        }
+        // We have an intersection point -
+        valid_intersection =
+          is_intersection_valid(ip->first, intersection_location);
       }
       else {
         // We have an overlapping subcurve.
@@ -609,27 +624,11 @@ _compute_next_intersection(Halfedge_handle he,
   while (! inter_list.empty()) {
     // Compare that current object with m_left_pt (if exists).
     ip = boost::get<Intersection_point>(&(inter_list.front()));
-
     if (ip != nullptr) {
       // We have an intersection point -
       // Check whether we need to skip the first intersection
-      if (is_first && skip_first_point) valid_intersection = false;
-      else if (m_left_on_boundary) {
-        // The left-end lies on the left boundary. If the intersection point
-        // is not equal to the left-end, the intersection is valid, because
-        // it must lie to its right.
-        if (m_has_left_pt) valid_intersection = ! equal(ip->first, m_left_pt);
-        else valid_intersection = true;
-      }
-      else if (m_right_on_boundary && m_has_right_pt &&
-               equal(ip->first, m_right_pt))
-      {
-        valid_intersection = true;
-        intersection_on_right_boundary = true;
-      }
-      else {
-        valid_intersection = (compare_xy(ip->first, m_left_pt) == LARGER);
-      }
+      valid_intersection = (is_first && skip_first_point) ? false :
+        is_intersection_valid(ip->first, intersection_location);
     }
     else if (m_left_on_boundary) {
       // The left end is on the boundary, so all overlapping curves are valid,
@@ -768,7 +767,7 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
-                       bool& leftmost_on_right_boundary)
+                       Arr_parameter_space& leftmost_location)
 {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_leftmost_intersection(" << he_curr->curve() << ", "
@@ -793,7 +792,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
   // entirely to the right of m_intersect_p, its intersection with m_cv (if any)
   // cannot lie to the left of this point. We therefore do not need to compute
   // this intersection.
-  if (m_found_intersect && ! leftmost_on_right_boundary &&
+  if (m_found_intersect && (leftmost_location != ARR_RIGHT_BOUNDARY) &&
       _is_to_left(m_intersect_p, he_curr))
     return;
 
@@ -821,13 +820,14 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
   // do not intersect.
   if (! left_equals_curr_endpoint &&
       ((! m_left_on_boundary && _is_to_right(m_left_pt, he_curr)) ||
-       ! is_in_x_range(m_cv, he_curr->curve())))
+       ! is_in_x_range(m_cv, he_curr->curve()))) {
     return;
+  }
 
   // Compute the next intersection of m_cv and the current halfedge.
-  bool intersection_on_right_boundary;
+  Arr_parameter_space intersection_location;
   auto iobj = _compute_next_intersection(he_curr, left_equals_curr_endpoint,
-                                         intersection_on_right_boundary);
+                                         intersection_location);
 
   if (iobj) {
     // We have found an intersection (either a simple point or an
@@ -839,8 +839,8 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
       // Found a simple intersection point. Check if it is the leftmost
       // intersection point so far.
       if (! m_found_intersect ||
-          (! intersection_on_right_boundary &&
-           (leftmost_on_right_boundary ||
+          ((intersection_location != ARR_RIGHT_BOUNDARY) &&
+           ((leftmost_location == ARR_RIGHT_BOUNDARY) ||
             compare_xy(ip, m_intersect_p) == SMALLER)))
       {
         // Store the leftmost intersection point and the halfedge handle.
@@ -848,7 +848,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
         m_ip_multiplicity = int_p->second;
         m_intersect_he = he_curr;
         m_found_overlap = false;
-        leftmost_on_right_boundary = intersection_on_right_boundary;
+        leftmost_location = intersection_location;
       }
     }
     else {
@@ -895,7 +895,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
   auto compare_xy = m_geom_traits->compare_xy_2_object();
   auto is_in_x_range = m_geom_traits->is_in_x_range_2_object();
 
-  bool leftmost_on_right_boundary = false;
+  Arr_parameter_space leftmost_location = ARR_INTERIOR;
 
   // Traverse the face outer-boundaries; iterate through all outer CCBs.
   for (auto occb_it = face->outer_ccbs_begin();
@@ -903,7 +903,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
   {
     Ccb_halfedge_circulator he_first = *occb_it;
     Ccb_halfedge_circulator he_curr = he_first;
-    do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
+    do _leftmost_intersection(he_curr, on_boundary, leftmost_location);
     while (++he_curr != he_first);
   }
 
@@ -913,7 +913,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
   {
     Ccb_halfedge_circulator he_first = *iccb_it;
     Ccb_halfedge_circulator he_curr = he_first;
-    do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
+    do _leftmost_intersection(he_curr, on_boundary, leftmost_location);
     while (++he_curr != he_first);
   }
 

@@ -336,7 +336,7 @@ private:
   Optional_intersection
   _compute_next_intersection(Halfedge_handle he,
                              bool skip_first_point,
-                             bool& intersect_on_right_boundary);
+                             Arr_parameter_space& intersection_location);
 
   /*! Remove the next intersection of m_cv with the given halfedge from the map.
    * \param he A handle to the halfedge.
@@ -394,12 +394,29 @@ private:
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                          Arr_not_all_sides_oblivious_tag) const;
 
+  /*! Check whether an intersection point is valid. A valid intersection point
+   * must be to the left of the left end of the curve involved.
+   */
+  bool is_intersection_valid(const Point_2& ip,
+                             Arr_parameter_space& intersection_location) const {
+    return is_intersection_valid_impl(ip, intersection_location,
+                                      Are_all_sides_oblivious_category());
+  }
+
+  bool is_intersection_valid_impl(const Point_2& ip,
+                                  Arr_parameter_space& intersection_location,
+                                  Arr_all_sides_oblivious_tag) const;
+
+  bool is_intersection_valid_impl(const Point_2& ip,
+                                  Arr_parameter_space& intersection_location,
+                                  Arr_not_all_sides_oblivious_tag) const;
+
   /*! Compute the (lexicographically) leftmost intersection of the query
    * curve with a given halfedge on the boundary of a face in the arrangement.
    */
   void
   _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
-                         bool& leftmost_on_right_boundary);
+                         Arr_parameter_space& leftmost_location);
 
   /*! Compute the (lexicographically) leftmost intersection of the query
    * curve with the boundary of a given face in the arrangement.
