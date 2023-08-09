@@ -53,8 +53,8 @@ int main()
     for (Scalar y = step; y < limit; y += step) {
       const Point point(x, y);
 
-      const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
-      const Output_type  mv_result = mean_value_coordinates(point, old_coordinates);
+      /* const Output_type tri_result =  */triangle_coordinates(point, tri_coordinates);
+      /* const Output_type  mv_result =  */mean_value_coordinates(point, old_coordinates);
       CGAL::Barycentric_coordinates::mean_value_coordinates_2(
         vertices, point, std::back_inserter(new_coordinates));
 

@@ -50,8 +50,8 @@ int main()
     for (Scalar y = step; y < limit; y += step) {
       const Point point(x, y);
 
-      const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
-      const Output_type  dh_result = discrete_harmonic_coordinates(point, old_coordinates);
+      /* const Output_type tri_result =  */triangle_coordinates(point, tri_coordinates);
+      /* const Output_type  dh_result =  */discrete_harmonic_coordinates(point, old_coordinates);
       CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2(
         vertices, point, std::back_inserter(new_coordinates));
 
