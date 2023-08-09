@@ -7,11 +7,33 @@ namespace CGAL {
 \cgalAutoToc
 \author Ken Arroyo Ohori
 
-This chapter describes the ...
+\section SectionPolygonRepair2_Introduction Introduction
+
+This package implements a polygon repair method based on a constrained triangulation \cgalCite{ledoux14prepair}. Starting from a possibly invalid input in the form of a polygon, polygon with holes or multipolygon with holes, the method performs a constrained triangulation of the input edges, applies a heuristic to label each triangle according to what it represents (exterior, polygon interior or hole), and reconstructs the polygon(s) represented by the triangulation. The method returns a valid output stored in a multipolygon with holes. Currently, the odd-even labeling heuristic is implemented in the package.
 
 \section SectionPolygonRepair2_Definitions Definitions
 
-Section on definitions here ...
+- A valid <B>polygon</B> (without holes) is a point set in \f$ \mathbb{R}^2\f$ that is bounded by a cycle of linear edges, which is known as its <B>outer boundary</B>. This outer boundary should be <B>simple</B>, meaning that the interiors of its edges are pairwise disjoint and all of its vertices have a degree of two. It is thus topologically equivalent to a disk and is represented internally as the sequence of points of the vertices of its outer boundary.
+
+- A valid <B>polygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$ that is bounded by one outer boundary and zero or more <B>inner boundaries</B>, where each inner boundary represents a hole in the polygon. Considered by itself, each boundary should be simple. The different boundaries of a polygon are allowed to intersect tangentially at their common vertices (with no common edges), forming vertices with degrees larger than two at the tangential points. The interior of a polygon with holes should form a connected point set. Note that a valid polygon can also be represented as a valid polygon with zero holes.
+
+- A valid <B>multipolygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$ that is represented by a set of zero or more valid polygons with holes. The interiors of the polygons with holes should be pairwise disjoint, but their are allowed to intersect tangentially at their common vertices. Note that a valid polygon with holes can also be represented as a valid multipolygon with holes.
+
+\subsection SubsectionPolygonRepair2_Output Output
+
+The conditions listed above are sufficient to define valid polygons, polygons with holes and multipolygons with holes for most applications. However, in order to ensure unique deterministic output, the valid multipolygons with holes returned by the package conform to more strict criteria:
+
+- Adjacent collinear edges touching at vertices of degree two are merged
+- The sequence of vertices representing a boundary starts from its lexicographically smallest vertex
+- Outer boundaries are oriented counterclockwise and inner boundaries are oriented clockwise
+- The inner boundaries of a polygon with holes are stored in lexicographic order
+- The polygons with holes of a multipolygon with holes are also stored in lexicographic order
+
+\section SectionPolygonRepair2_Algorithm Algorithm
+
+The method interprets the input 
+
+If the input is already valid, the method will return a valid output representing the same area
 
 \section SectionPolygonRepair2_Examples Examples
 
