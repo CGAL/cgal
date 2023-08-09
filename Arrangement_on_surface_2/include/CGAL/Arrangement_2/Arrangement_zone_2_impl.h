@@ -28,8 +28,7 @@ namespace CGAL {
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj)
-{
+init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "init_with_hint()" << std::endl;
 #endif
@@ -80,8 +79,7 @@ init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj)
 // notifications for the visitor.
 //
 template <typename Arrangement, typename ZoneVisitor>
-void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
-{
+void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "compute_zone()" << std::endl;
 #endif
@@ -253,8 +251,7 @@ template <typename Arrangement, typename ZoneVisitor>
 bool  Arrangement_zone_2<Arrangement, ZoneVisitor>::
 do_overlap_impl(const X_monotone_curve_2& cv1,
                 const X_monotone_curve_2& cv2,
-                const Point_2& p, Arr_not_all_sides_oblivious_tag) const
-{
+                const Point_2& p, Arr_not_all_sides_oblivious_tag) const {
   typename Traits_adaptor_2::Compare_y_at_x_right_2 cmp_right =
     m_geom_traits->compare_y_at_x_right_2_object();
 
@@ -307,8 +304,7 @@ do_overlap_impl(const X_monotone_curve_2& cv1,
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he)
-{
+_find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_find_prev_around_vertex(" << v->point() << ")" << std::endl;
 #endif
@@ -393,8 +389,7 @@ typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Halfedge_handle
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _direct_intersecting_edge_to_right(const X_monotone_curve_2& cv_ins,
                                    const Point_2& cv_left_pt,
-                                   Halfedge_handle query_he)
-{
+                                   Halfedge_handle query_he) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_direct_intersecting_edge_to_right() " << cv_left_pt
             << std::endl;
@@ -446,8 +441,7 @@ template <typename Arrangement, typename ZoneVisitor>
 typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Halfedge_handle
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
-                                  Halfedge_handle query_he)
-{
+                                  Halfedge_handle query_he) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_direct_intersecting_edge_to_left()" << std::endl;
 #endif
@@ -544,8 +538,7 @@ typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Optional_intersection
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _compute_next_intersection(Halfedge_handle he,
                            bool skip_first_point,
-                           Arr_parameter_space& intersection_location)
-{
+                           Arr_parameter_space& intersection_location) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_compute_next_intersection(" << he->curve() << ", "
             << skip_first_point << ")" << std::endl;
@@ -591,7 +584,8 @@ _compute_next_intersection(Halfedge_handle he,
         if (is_closed(*icv, ARR_MIN_END)) {
           // The curve has a valid left point - make sure it lies to the
           // right of m_left_pt.
-          valid_intersection = (compare_xy(ctr_min(*icv), m_left_pt) != SMALLER);
+          valid_intersection =
+            (compare_xy(ctr_min(*icv), m_left_pt) != SMALLER);
         }
         // In this case the overlap is not valid.
         else valid_intersection = false;
@@ -670,8 +664,7 @@ _compute_next_intersection(Halfedge_handle he,
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_remove_next_intersection(Halfedge_handle he)
-{
+_remove_next_intersection(Halfedge_handle he) {
   // Get a pointer to the curve associated with the halfedge.
   const X_monotone_curve_2* p_curve = &(he->curve());
 
@@ -691,8 +684,7 @@ _remove_next_intersection(Halfedge_handle he)
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                 Arr_not_all_sides_oblivious_tag) const
-{
+                 Arr_not_all_sides_oblivious_tag) const {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_is_to_left_impl(" << p << "," << he->curve() << ")"
             << std::endl;
@@ -723,13 +715,13 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
 }
 
 //-----------------------------------------------------------------------------
-// Determine whether a given point lies completely to the right of a given curve.
+// Determine whether a given point lies completely to the right of a given
+// curve.
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                  Arr_not_all_sides_oblivious_tag) const
-{
+                  Arr_not_all_sides_oblivious_tag) const {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_is_to_right_impl(" << p << "," << he->curve() << ")"
             << std::endl;
@@ -767,8 +759,7 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
-                       Arr_parameter_space& leftmost_location)
-{
+                       Arr_parameter_space& leftmost_location) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_leftmost_intersection(" << he_curr->curve() << ", "
             << on_boundary << ")" << std::endl;
@@ -880,8 +871,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
-{
+_leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_leftmost_intersection_with_face_boundary(" << on_boundary
             << ")" << std::endl;
@@ -899,8 +889,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 
   // Traverse the face outer-boundaries; iterate through all outer CCBs.
   for (auto occb_it = face->outer_ccbs_begin();
-       occb_it != face->outer_ccbs_end(); ++occb_it)
-  {
+       occb_it != face->outer_ccbs_end(); ++occb_it) {
     Ccb_halfedge_circulator he_first = *occb_it;
     Ccb_halfedge_circulator he_curr = he_first;
     do _leftmost_intersection(he_curr, on_boundary, leftmost_location);
@@ -909,8 +898,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 
   // Traverse the face inner-boundaries; iterate through all inner CCBs (holes).
   for (auto iccb_it = face->inner_ccbs_begin();
-       iccb_it != face->inner_ccbs_end(); ++iccb_it)
-  {
+       iccb_it != face->inner_ccbs_end(); ++iccb_it) {
     Ccb_halfedge_circulator he_first = *iccb_it;
     Ccb_halfedge_circulator he_curr = he_first;
     do _leftmost_intersection(he_curr, on_boundary, leftmost_location);
@@ -921,17 +909,15 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 
   // Traverse the isolated vertices inside the face (if there exist any), and
   // check whether an isolated vertex lies on the curve.
-  typedef typename Arrangement_2::Isolated_vertex_iterator
-    Isolated_vertex_iterator;
-  for (Isolated_vertex_iterator iv_it = face->isolated_vertices_begin();
-       iv_it != face->isolated_vertices_end(); ++iv_it)
-  {
+  for (auto iv_it = face->isolated_vertices_begin();
+       iv_it != face->isolated_vertices_end(); ++iv_it) {
     // If the isolated vertex is not in the x-range of our curve, disregard it.
     if (! is_in_x_range(m_cv, iv_it->point())) continue;
 
     // If we already have an intersection point, compare it to the current
     // isolated vertex, in order to filter unnecessary computations.
-    if (m_found_intersect && compare_xy(iv_it->point(), m_intersect_p) == LARGER)
+    if (m_found_intersect &&
+        (compare_xy(iv_it->point(), m_intersect_p) == LARGER))
       continue;
 
     // In case the isolated vertex lies on the curve, update the intersection
@@ -960,8 +946,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_zone_in_face(Face_handle face, bool on_boundary)
-{
+_zone_in_face(Face_handle face, bool on_boundary) {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_zone_in_face(" << on_boundary << ")" << std::endl;
 #endif
@@ -1190,8 +1175,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
 // curve currently associated with m_intersect_he.
 //
 template <typename Arrangement, typename ZoneVisitor>
-bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
-{
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap() {
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_zone_in_overlap()" << std::endl;
 #endif
