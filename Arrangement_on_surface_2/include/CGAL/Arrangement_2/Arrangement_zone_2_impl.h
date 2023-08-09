@@ -504,14 +504,46 @@ template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 is_intersection_valid_impl(const Point_2& ip,
                            Arr_parameter_space& /* intersection_location */,
-                           Arr_all_sides_oblivious_tag) const
+                           Arr_boundary_cond_tag) const
 { return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER); }
 
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 is_intersection_valid_impl(const Point_2& ip,
                            Arr_parameter_space& intersection_location,
-                           Arr_not_all_sides_oblivious_tag) const {
+                           Arr_has_identified_side_tag) const {
+  auto equal = m_geom_traits->equal_2_object();
+  auto is_on_y_ident = m_geom_traits->is_on_y_identification_2_object();
+  // Case 1: the curve lies on the y-identification
+  if (is_on_y_ident(m_cv)) {
+    if (equal(ip, m_left_pt)) return false;
+    // We set the location to be on the left as a convention
+    intersection_location = ARR_LEFT_BOUNDARY;
+    return true;
+  }
+
+  // Case 2: The left-end lies on the left boundary
+  // (It cannot lie on the right boundary)
+  // If the intersection point is not equal to the left-end, it must lie to
+  // its right; thus valid.
+  if (m_left_on_boundary) return ! equal(ip, m_left_pt);
+
+  // Case 3: The right-end lies on the right boundary
+  if (m_right_on_boundary && equal(ip, m_right_pt)) {
+    intersection_location = ARR_RIGHT_BOUNDARY;
+    return true;
+  }
+
+  // We have a simple intersection point;
+  // make sure it lies to the right of m_left_pt.
+  return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER);
+}
+
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_intersection_valid_impl(const Point_2& ip,
+                           Arr_parameter_space& intersection_location,
+                           Arr_has_open_side_tag) const {
   auto equal = m_geom_traits->equal_2_object();
   if (m_left_on_boundary) {
     // The left-end lies on the left boundary. If the intersection point is not
@@ -699,12 +731,12 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
   if (ps_x_min == ARR_LEFT_BOUNDARY) return false;
 
   auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
-  auto ps_y = ps_in_y(he->curve(), ARR_MIN_END);
-  if (ps_y != ARR_INTERIOR) {
+  auto ps_y_min = ps_in_y(he->curve(), ARR_MIN_END);
+  if (ps_y_min != ARR_INTERIOR) {
     // Check if p is to the left of the minimal curve-end:
     auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
     const auto res = cmp_x(p, he->curve(), ARR_MIN_END);
-    return ((res == SMALLER) || (res == EQUAL && ps_y == ARR_TOP_BOUNDARY));
+    return ((res == SMALLER) || (res == EQUAL && ps_y_min == ARR_TOP_BOUNDARY));
   }
 
   // In case the minimal curve-end does not have boundary conditions, simply
@@ -738,12 +770,12 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
   if (ps_x_max == ARR_LEFT_BOUNDARY) return true;
 
   auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
-  auto ps_y = ps_in_y(he->curve(), ARR_MAX_END);
-  if (ps_y != ARR_INTERIOR) {
+  auto ps_y_max = ps_in_y(he->curve(), ARR_MAX_END);
+  if (ps_y_max != ARR_INTERIOR) {
     // Check if p is to the right of the maximal curve-end:
     auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
     auto res = cmp_x(p, he->curve(), ARR_MAX_END);
-    return ((res == LARGER) || (res == EQUAL && ps_y == ARR_BOTTOM_BOUNDARY));
+    return ((res == LARGER) || (res == EQUAL && ps_y_max == ARR_BOTTOM_BOUNDARY));
   }
 
   // In case the maximal curve-end does not have boundary conditions, simply
@@ -783,7 +815,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
   // entirely to the right of m_intersect_p, its intersection with m_cv (if any)
   // cannot lie to the left of this point. We therefore do not need to compute
   // this intersection.
-  if (m_found_intersect && (leftmost_location != ARR_RIGHT_BOUNDARY) &&
+  if (m_found_intersect && (leftmost_location == ARR_INTERIOR) &&
       _is_to_left(m_intersect_p, he_curr))
     return;
 
