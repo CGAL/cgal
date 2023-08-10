@@ -1310,6 +1310,10 @@ Aos::Arr_handle  Aos::construct(Kml::Placemarks& placemarks)
 #include <CGAL/Polygon_2.h>
 //#include <CGAL/Projection_traits_3.h>
 
+#include <iostream>
+#include <unordered_map>
+#include <boost/property_map/property_map.hpp>
+
 std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
@@ -1356,9 +1360,20 @@ std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
   // RESULTING TRIANGLE POINTS (every 3 point => triangle)
   std::vector<QVector3D>  triangles;
 
+  std::cout << "triangulating individual faces\n";
+
   // loop on all approximated faces
   for (auto& face_points : all_faces)
   {
+    std::cout << "num face points = " << face_points.size() << std::endl;
+    // no need to triangulate if the number of points is 3
+    if (face_points.size() == 3)
+    {
+      triangles.insert(triangles.end(), face_points.begin(), face_points.end());
+      continue;
+    }
+
+
     // find the centroid of all face-points
     QVector3D centroid(0, 0, 0);
     for (const auto& fp : face_points)
@@ -1394,9 +1409,20 @@ std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
     CDT cdt;
     cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(), true);
 
+    std::unordered_map<Face_handle, bool> in_domain_map;
+    boost::associative_property_map< std::unordered_map<Face_handle, bool> >
+      in_domain(in_domain_map);
+
+    //Mark facets that are inside the domain bounded by the polygon
+    CGAL::mark_domain_in_triangulation(cdt, in_domain);
+
     // loop on all the triangles ("faces" in triangulation doc)
     for (Face_handle f : cdt.finite_face_handles())
     {
+      // if the current triangles is not inside the polygon -> skip it
+      if (false == get(in_domain, f))
+        continue;
+
       for(int i=0; i<3; ++i)
       {
         auto tp = f->vertex(i)->point();

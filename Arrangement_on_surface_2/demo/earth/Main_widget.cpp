@@ -177,8 +177,8 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
@@ -199,8 +199,12 @@ void Main_widget::initializeGL()
 
   // trianglulation
   {
+    qDebug() << "constructiong arr..";
     auto arrh = Aos::construct(m_countries);
+
+    qDebug() << "generating triangles..";
     auto triangle_points = Aos::get_triangles(arrh);
+    
     qDebug() << "num triangles = " << triangle_points.size() / 3;
     g_face_triangles = std::make_unique<Triangles>(triangle_points);
   }
@@ -477,22 +481,25 @@ void Main_widget::paintGL()
     auto& sp = m_sp_smooth;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
-    sp.set_uniform("u_color", m_sphere->get_color());
+    QVector4D sphere_color(167. / 255, 205. / 255, 242. / 255, 1);
+    sp.set_uniform("u_color", sphere_color);
+    //sp.set_uniform("u_color", m_sphere->get_color());
     
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     m_sphere->draw();
 
     // DRAW SOLID FACES
+    if(1)
     {
       glDisable(GL_DEPTH_TEST);
       QVector4D face_color(1, .5, 0, 1);
       sp.set_uniform("u_color", face_color);
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       g_face_triangles->draw();
 
-      sp.set_uniform("u_color", QVector4D(0,0,0,1));
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      g_face_triangles->draw();
+      //sp.set_uniform("u_color", QVector4D(0,0,0,1));
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      //g_face_triangles->draw();
     }
 
     sp.unuse();
@@ -504,6 +511,7 @@ void Main_widget::paintGL()
     sp.use();
     sp.set_uniform("u_mvp", mvp);
 
+    glEnable(GL_DEPTH_TEST);
     m_world_coord_axes->draw();
 
     sp.unuse();
