@@ -43,7 +43,7 @@ int main()
 
   int count = 0;
   for (int i = 0; i < 5; ++i) {
-    const Output_type result = triangle_coordinates(query_points[i], std::back_inserter(old_coordinates));
+    triangle_coordinates(query_points[i], std::back_inserter(old_coordinates));
     CGAL::Barycentric_coordinates::triangle_coordinates_2(
       first_vertex, second_vertex, third_vertex, query_points[i], std::back_inserter(new_coordinates));
 
