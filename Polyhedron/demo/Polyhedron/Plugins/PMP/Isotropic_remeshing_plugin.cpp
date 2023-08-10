@@ -294,9 +294,13 @@ public:
       PMP::triangulate_face(f_and_p.first, *f_and_p.second);
   }
 
-  void do_split_edges(Scene_polyhedron_selection_item* selection_item,
+  void do_split_edges(const int edge_sizing_type,
+                      Scene_polyhedron_selection_item* selection_item,
                       SMesh& pmesh,
-                      double target_length)
+                      const double target_length,
+                      const double error_tol,
+                      const double min_length,
+                      const double max_length)
   {
     std::vector<edge_descriptor> p_edges;
     for(edge_descriptor e : edges(pmesh))
@@ -314,12 +318,32 @@ public:
       }
     }
     if (!p_edges.empty())
-      CGAL::Polygon_mesh_processing::split_long_edges(
-            p_edges
-            , target_length
-            , *selection_item->polyhedron()
-            , CGAL::parameters::geom_traits(EPICK())
+    {
+      if (edge_sizing_type == 0)
+      {
+        CGAL::Polygon_mesh_processing::split_long_edges(
+              p_edges
+              , target_length
+              , *selection_item->polyhedron()
+              , CGAL::parameters::geom_traits(EPICK())
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+      }
+      else if (edge_sizing_type == 1)
+      {
+        std::pair<double, double> edge_min_max{min_length, max_length};
+        CGAL::Polygon_mesh_processing::Adaptive_sizing_field<FaceGraph> adaptive_sizing(
+              error_tol
+              , edge_min_max
+              , faces(*selection_item->polyhedron())
+              , *selection_item->polyhedron());
+        CGAL::Polygon_mesh_processing::split_long_edges(
+          p_edges
+          , adaptive_sizing
+          , *selection_item->polyhedron()
+          , CGAL::parameters::geom_traits(EPICK())
             .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+      }
+    }
     else
       std::cout << "No selected or boundary edges to be split" << std::endl;
   }
@@ -401,7 +425,7 @@ public Q_SLOTS:
       {
         if (edges_only)
         {
-          do_split_edges(selection_item, pmesh, target_length);
+          do_split_edges(edge_sizing_type, selection_item, pmesh, target_length, error_tol, min_length, max_length);
         }
         else //not edges_only
         {
@@ -438,7 +462,7 @@ public Q_SLOTS:
               }
               else
               {
-                do_split_edges(selection_item, pmesh, target_length);
+                do_split_edges(edge_sizing_type, selection_item, pmesh, target_length, error_tol, min_length, max_length);
               }
             }
 
@@ -637,6 +661,9 @@ public Q_SLOTS:
           if (!edges_to_split.empty())
           {
             if (fpmap_valid)
+            {
+              if (edge_sizing_type == 0)
+              {
               CGAL::Polygon_mesh_processing::split_long_edges(
                 edges_to_split
                 , target_length
@@ -644,13 +671,49 @@ public Q_SLOTS:
                 , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif)
                 . face_patch_map(fpmap));
+              }
+              else if (edge_sizing_type == 1)
+              {
+                std::pair<double, double> edge_min_max{min_length, max_length};
+                PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
+                                                                           , edge_min_max
+                                                                           , faces(pmesh)
+                                                                           , pmesh);
+                CGAL::Polygon_mesh_processing::split_long_edges(
+                  edges_to_split
+                  , target_length
+                  , pmesh
+                  , CGAL::parameters::geom_traits(EPICK())
+                  . edge_is_constrained_map(eif)
+                  . face_patch_map(fpmap));
+              }
+            }
             else
+            {
+              if (edge_sizing_type == 0)
+              {
               CGAL::Polygon_mesh_processing::split_long_edges(
                 edges_to_split
                 , target_length
                 , pmesh
                 , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif));
+              }
+              else if (edge_sizing_type = 1)
+              {
+                std::pair<double, double> edge_min_max{min_length, max_length};
+                PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
+                                                                             , edge_min_max
+                                                                             , faces(pmesh)
+                                                                             , pmesh);
+                CGAL::Polygon_mesh_processing::split_long_edges(
+                  edges_to_split
+                  , adaptive_sizing_field
+                  , pmesh
+                  , CGAL::parameters::geom_traits(EPICK())
+                  . edge_is_constrained_map(eif));
+              }
+            }
           }
           else
             std::cout << "No border to be split" << std::endl;
@@ -968,10 +1031,25 @@ private:
         for(halfedge_descriptor h : border)
           border_edges.push_back(edge(h, *poly_item->polyhedron()));
 
+        if (edge_sizing_type_ == 0)
+        {
         CGAL::Polygon_mesh_processing::split_long_edges(
             border_edges
           , target_length_
           , *poly_item->polyhedron());
+        }
+        else if (edge_sizing_type_ == 1)
+        {
+          std::pair<double, double> edge_min_max{min_length_, max_length_};
+          PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol_
+                                                                     , edge_min_max
+                                                                     , faces(*poly_item->polyhedron())
+                                                                     , *poly_item->polyhedron());
+          CGAL::Polygon_mesh_processing::split_long_edges(
+            border_edges
+          , target_length_
+          , *poly_item->polyhedron());
+        }
       }
       else
       {
@@ -1130,9 +1208,6 @@ public Q_SLOTS:
       ui.smooth1D_label->setEnabled(false);
       ui.smooth1D_checkbox->setEnabled(false);
       ui.smooth1D_checkbox->setChecked(false);
-
-      ui.edgeSizing_type_combo_box->setCurrentIndex(0);
-      ui.edgeSizing_type_combo_box->setEnabled(false);
     }
     else
     {
@@ -1146,8 +1221,6 @@ public Q_SLOTS:
 
       ui.smooth1D_label->setEnabled(true);
       ui.smooth1D_checkbox->setEnabled(true);
-
-      ui.edgeSizing_type_combo_box->setEnabled(true);
     }
   }
 

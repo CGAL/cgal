@@ -424,9 +424,10 @@ void isotropic_remeshing(const FaceRange& faces
 */
 template<typename PolygonMesh
        , typename EdgeRange
+       , typename SizingFunction
        , typename NamedParameters = parameters::Default_named_parameters>
 void split_long_edges(const EdgeRange& edges
-                    , const double& max_length
+                    , SizingFunction& sizing
                     , PolygonMesh& pmesh
                     , const NamedParameters& np = parameters::default_values())
 {
@@ -473,7 +474,28 @@ void split_long_edges(const EdgeRange& edges
              fimap,
              false/*need aabb_tree*/);
 
-  remesher.split_long_edges(edges, max_length);
+    // check if sizing field needs updating
+    if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM>>)
+    {
+      //todo ip: check if sizing field needs to be checked and updated here
+    }
+
+     remesher.split_long_edges(edges, sizing);
+}
+
+//todo ip: documentation
+// overload when using max_length
+template<typename PolygonMesh
+       , typename EdgeRange
+       , typename NamedParameters = parameters::Default_named_parameters>
+void split_long_edges(const EdgeRange& edges
+                    , const double max_length
+                    , PolygonMesh& pmesh
+                    , const NamedParameters& np = parameters::default_values())
+{
+  // construct the uniform field, 3/4 as m_sq_long is stored with 4/3 of length
+  Uniform_sizing_field sizing(3. / 4. * max_length, pmesh);
+  split_long_edges(edges, sizing, pmesh, np);
 }
 
 } //end namespace Polygon_mesh_processing

@@ -383,19 +383,17 @@ namespace internal {
       }
     }
 
-
     // split edges of edge_range that have their length > high
     // Note: only used to split a range of edges provided as input
-    template<typename EdgeRange>
+    template<typename EdgeRange, typename SizingFunction>
     void split_long_edges(const EdgeRange& edge_range,
-                          const double& high)
+                          SizingFunction& sizing)
     {
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Split long edges (" << high << ")...";
-      std::cout.flush();
+//      std::cout << "Split long edges (" << high << ")...";
+//      std::cout.flush();
 #endif
-      double sq_high = high*high;
 
       //collect long edges
       typedef std::pair<halfedge_descriptor, double> H_and_sql;
@@ -406,9 +404,9 @@ namespace internal {
         );
       for(edge_descriptor e : edge_range)
       {
-        double sqlen = sqlength(e);
-        if (sqlen > sq_high)
-          long_edges.emplace(halfedge(e, mesh_), sqlen);
+        boost::optional<double> sqlen = sizing.is_too_long(halfedge(e, mesh_));
+        if(sqlen != boost::none)
+          long_edges.emplace(halfedge(e, mesh_), sqlen.get());
       }
 
       //split long edges
@@ -439,15 +437,19 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
         std::cout << "   refinement point : " << refinement_point << std::endl;
 #endif
+        //update sizing field with the new point
+        if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM>>)
+          sizing.update_sizing_map(vnew);
 
         //check sub-edges
-        double sqlen_new = 0.25 * sqlen;
-        if (sqlen_new > sq_high)
-        {
-          //if it was more than twice the "long" threshold, insert them
-          long_edges.emplace(hnew, sqlen_new);
-          long_edges.emplace(next(hnew, mesh_), sqlen_new);
-        }
+        //if it was more than twice the "long" threshold, insert them
+        boost::optional<double> sqlen_new = sizing.is_too_long(hnew);
+        if(sqlen_new != boost::none)
+          long_edges.emplace(hnew, sqlen_new.get());
+
+        sqlen_new = sizing.is_too_long(next(hnew, mesh_));
+        if (sqlen_new != boost::none)
+          long_edges.emplace(next(hnew, mesh_), sqlen_new.get());
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
@@ -552,7 +554,7 @@ namespace internal {
         halfedge_added(hnew, status(he));
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
-        //todo ip-add: already updating sizing here because of is_too_long checks below
+        //update sizing field with the new point
         if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM>>)
           sizing.update_sizing_map(vnew);
 
