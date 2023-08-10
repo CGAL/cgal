@@ -2,7 +2,9 @@
 #version 330
 
 uniform vec4 u_color;
+uniform vec4 u_plane;
 
+in vec3 v_pos;
 in vec3 v_normal;
 
 out vec4 out_color;
@@ -10,6 +12,9 @@ out vec4 out_color;
 
 void main()
 {
+	if( dot(u_plane, vec4(v_pos, 1)) < 0 )
+		discard;
+
 	const vec3 lightDir = normalize(vec3(1,.5,.5));
 
 	//float c = clamp(dot(lightDir,triNormal), 0, 1);

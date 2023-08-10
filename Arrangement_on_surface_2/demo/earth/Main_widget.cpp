@@ -472,6 +472,19 @@ void Main_widget::paintGL()
   const auto projection = m_camera.get_projection_matrix();
   const auto mvp = projection * view * model;
 
+  // compute the cutting plane
+// remember that we are passing the local vertex positions of the sphere 
+// between the vertex and fragment shader stages, so we need to convert
+// the camera-pos in world coords to sphere's local coords!
+  auto c = model.inverted() * m_camera.get_pos();
+  const auto d = c.length();
+  const auto r = 1.0f;
+  const auto sin_alpha = r / d;
+  const auto n = (c / d); // plane unit normal vector
+  const auto cos_beta = sin_alpha;
+  const auto p = (r * cos_beta) * n;
+  QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p, n));
+
   // Clear color and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // SPHERE
@@ -481,8 +494,9 @@ void Main_widget::paintGL()
     auto& sp = m_sp_smooth;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
-    QVector4D sphere_color(167. / 255, 205. / 255, 242. / 255, 1);
+    auto sphere_color = QVector4D(167, 205, 242, 255) / 255;
     sp.set_uniform("u_color", sphere_color);
+    sp.set_uniform("u_plane", QVector4D(0,0,0,0));
     //sp.set_uniform("u_color", m_sphere->get_color());
     
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -494,6 +508,7 @@ void Main_widget::paintGL()
       glDisable(GL_DEPTH_TEST);
       QVector4D face_color(1, .5, 0, 1);
       sp.set_uniform("u_color", face_color);
+      sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       g_face_triangles->draw();
 
@@ -525,18 +540,6 @@ void Main_widget::paintGL()
     sp.use();
     sp.set_uniform("u_mvp", mvp);
 
-    // compute the cutting plane
-    // remember that we are passing the local vertex positions of the sphere 
-    // between the vertex and fragment shader stages, so we need to convert
-    // the camera-pos in world coords to sphere's local coords!
-    auto c =  model.inverted() * m_camera.get_pos();
-    const auto d = c.length();
-    const auto r = 1.0f;
-    const auto sin_alpha = r / d;
-    const auto n = (c / d); // plane unit normal vector
-    const auto cos_beta = sin_alpha;
-    const auto p = (r * cos_beta) * n;
-    QVector4D plane(n.x(), n.y(), n.z(), -QVector3D::dotProduct(p, n));
     const QVector4D arc_color(0, 0.5, 1, 1);
     glLineWidth(5);
     sp.set_uniform("u_plane", plane);
