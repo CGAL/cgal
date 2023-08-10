@@ -13,7 +13,7 @@ class Aos
 public:
   using Approx_arc = std::vector<QVector3D>;
   using Approx_arcs = std::vector<Approx_arc>;
-
+  using Arr_handle = void*;
 
   static Approx_arc get_approx_identification_curve(double error);
 
@@ -53,6 +53,9 @@ public:
 
   // save the arrangement created with EPEC
   static Approx_arcs load_arr(const std::string& file_name);
+
+  static Arr_handle construct(Kml::Placemarks& placemarks);
+  static std::vector<QVector3D> get_triangles(Arr_handle arrh);
 };
 
 

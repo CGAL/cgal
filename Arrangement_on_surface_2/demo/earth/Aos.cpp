@@ -1289,3 +1289,124 @@ Aos::Approx_arcs Aos::load_arr(const std::string& file_name)
 
   return Approx_arcs{};
 }
+
+
+Aos::Arr_handle  Aos::construct(Kml::Placemarks& placemarks)
+{
+  Geom_traits traits;
+  auto* arr = new Arrangement(&traits);
+
+  auto xcvs = get_arcs(placemarks, *arr);
+  for (auto& xcv : xcvs)
+    CGAL::insert(*arr, xcv);
+
+  return arr;
+}
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/draw_triangulation_2.h>
+#include <CGAL/mark_domain_in_triangulation.h>
+#include <CGAL/Polygon_2.h>
+//#include <CGAL/Projection_traits_3.h>
+
+std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
+{
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
+//  typedef CGAL::Projection_traits_3<K_epic>                         K;
+  typedef CGAL::Triangulation_vertex_base_2<K>                      Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<K>            Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, Fb>              TDS;
+  typedef CGAL::Exact_predicates_tag                                Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>  CDT;
+  typedef CDT::Face_handle                                          Face_handle;
+  typedef CDT::Point                                                Point;
+  typedef CGAL::Polygon_2<K>                                        Polygon_2;
+
+  auto& arr = *reinterpret_cast<Arrangement*>(arrh);
+
+  Geom_traits traits;
+  auto approx = traits.approximate_2_object();
+
+  
+  std::vector<std::vector<QVector3D>> all_faces;
+  // loop on all faces of the arrangement
+  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+  {
+    // skip any face with no OUTER-CCB
+    if (0 == fit->number_of_outer_ccbs())
+      continue;
+
+    // COMPUTE THE CENTROID OF ALL FACE-POINTS
+    std::vector<QVector3D> face_points;
+    
+    // loop on the egdes of the current outer-ccb
+    auto first = fit->outer_ccb();
+    auto curr = first;
+    do {
+      auto ap = approx(curr->source()->point());
+      QVector3D p(ap.dx(), ap.dy(), ap.dz());
+      p.normalize();
+      face_points.push_back(p);
+    } while (++curr != first);
+
+    all_faces.push_back(std::move(face_points));
+  }
+
+  // RESULTING TRIANGLE POINTS (every 3 point => triangle)
+  std::vector<QVector3D>  triangles;
+
+  // loop on all approximated faces
+  for (auto& face_points : all_faces)
+  {
+    // find the centroid of all face-points
+    QVector3D centroid(0, 0, 0);
+    for (const auto& fp : face_points)
+      centroid += fp;
+    centroid /= face_points.size();
+    centroid.normalize();
+    auto normal = centroid;
+    
+    K::Point_3  plane_origin(centroid.x(), centroid.y(), centroid.z());
+    K::Vector_3 plane_normal(normal.x(), normal.y(), normal.z());
+    K::Plane_3 plane(plane_origin, plane_normal);
+    
+    Polygon_2 polygon;
+
+    // project all points onto the plane
+    K::Point_3 origin(0, 0, 0);
+    for (const auto& fp : face_points)
+    {
+      // define a ray through the origin and the current point
+      K::Point_3 current_point(fp.x(), fp.y(), fp.z());
+      K::Ray_3 ray(origin, current_point);
+    
+      auto intersection = CGAL::intersection(plane, ray);
+      if (!intersection.has_value())
+        std::cout << "INTERSECTION ASSERTION ERROR!!!\n";
+      auto ip = boost::get<K::Point_3>(intersection.value());
+      auto ip2 = plane.to_2d(ip);
+      
+      // add this to the polygon constraint
+      polygon.push_back(ip2);
+    }
+
+    CDT cdt;
+    cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(), true);
+
+    // loop on all the triangles ("faces" in triangulation doc)
+    for (Face_handle f : cdt.finite_face_handles())
+    {
+      for(int i=0; i<3; ++i)
+      {
+        auto tp = f->vertex(i)->point();
+        auto tp3 = plane.to_3d(tp);
+        QVector3D p3(tp3.x(), tp3.y(), tp3.z());
+        p3.normalize();
+        triangles.push_back(p3);
+      }
+    }
+  }
+
+  return triangles;
+}

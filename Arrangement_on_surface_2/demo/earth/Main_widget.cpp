@@ -186,11 +186,21 @@ void Main_widget::initializeGL()
     new_faces = std::make_unique<Line_strips>(created_faces);
   }
 
+  // SAVING & LOADING ARR
   {
-    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa.json");
+    //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa.json");
     //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     //Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
   }
+
+  // trianglulation
+  {
+    auto arrh = Aos::construct(m_countries);
+    auto triangle_points = Aos::get_triangles(arrh);
+    qDebug() << "num triangles = " << triangle_points.size() / 3;
+  }
+
+
   
   // initialize rendering of DUPLICATE VERTICES
   if(1)
