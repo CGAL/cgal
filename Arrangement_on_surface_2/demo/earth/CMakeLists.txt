@@ -76,6 +76,7 @@ source_group( "Graphics"  FILES ${source_files_graphics} )
 file(GLOB source_files_graphics_geometry
   Line_strips.h             Line_strips.cpp
   Sphere.h                  Sphere.cpp
+  Triangles.h               Triangles.cpp
   Vertices.h                Vertices.cpp
   World_coordinate_axes.h   World_coordinate_axes.cpp
  )

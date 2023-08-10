@@ -159,6 +159,10 @@ void Main_widget::init_problematic_nodes()
 
 std::unique_ptr<Line_strips>   new_faces;
 
+#include "Triangles.h"
+std::unique_ptr<Triangles>  g_face_triangles;
+
+
 void Main_widget::initializeGL()
 {
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
@@ -198,6 +202,7 @@ void Main_widget::initializeGL()
     auto arrh = Aos::construct(m_countries);
     auto triangle_points = Aos::get_triangles(arrh);
     qDebug() << "num triangles = " << triangle_points.size() / 3;
+    g_face_triangles = std::make_unique<Triangles>(triangle_points);
   }
 
 
@@ -474,7 +479,21 @@ void Main_widget::paintGL()
     sp.set_uniform("u_mvp", mvp);
     sp.set_uniform("u_color", m_sphere->get_color());
     
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     m_sphere->draw();
+
+    // DRAW SOLID FACES
+    {
+      glDisable(GL_DEPTH_TEST);
+      QVector4D face_color(1, .5, 0, 1);
+      sp.set_uniform("u_color", face_color);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      g_face_triangles->draw();
+
+      sp.set_uniform("u_color", QVector4D(0,0,0,1));
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      g_face_triangles->draw();
+    }
 
     sp.unuse();
   }
