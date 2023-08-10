@@ -407,7 +407,7 @@ private:
 
   bool is_intersection_valid_impl(const Point_2& ip,
                                   Arr_parameter_space& intersection_location,
-                                  Arr_boundary_cond_tag) const;
+                                  Arr_all_sides_oblivious_tag) const;
 
   bool is_intersection_valid_impl(const Point_2& ip,
                                   Arr_parameter_space& intersection_location,
@@ -415,7 +415,7 @@ private:
 
   bool is_intersection_valid_impl(const Point_2& ip,
                                   Arr_parameter_space& intersection_location,
-                                  Arr_has_open_side_tag) const;
+                                  Arr_boundary_cond_tag) const;
 
   /*! Compute the (lexicographically) leftmost intersection of the query
    * curve with a given halfedge on the boundary of a face in the arrangement.

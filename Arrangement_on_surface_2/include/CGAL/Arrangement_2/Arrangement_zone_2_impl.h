@@ -499,14 +499,15 @@ _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
   }
 }
 
-//-----------------------------------------------------------------------------
+//! Implementation for no boundary conditions.
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 is_intersection_valid_impl(const Point_2& ip,
                            Arr_parameter_space& /* intersection_location */,
-                           Arr_boundary_cond_tag) const
+                           Arr_all_sides_oblivious_tag) const
 { return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER); }
 
+//! Implementation for left and right identified boundaries.
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 is_intersection_valid_impl(const Point_2& ip,
@@ -539,11 +540,15 @@ is_intersection_valid_impl(const Point_2& ip,
   return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER);
 }
 
+/*! Implementation for all the rest.
+ * It would be better to split into the various cases, which is the cartesian
+ * product of (contructed, closed, open) X (contructed, closed, open)
+ */
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 is_intersection_valid_impl(const Point_2& ip,
                            Arr_parameter_space& intersection_location,
-                           Arr_has_open_side_tag) const {
+                           Arr_boundary_cond_tag) const {
   auto equal = m_geom_traits->equal_2_object();
   if (m_left_on_boundary) {
     // The left-end lies on the left boundary. If the intersection point is not
