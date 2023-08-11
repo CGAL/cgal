@@ -234,14 +234,9 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   const std::size_t num_points = js_points.size();
   const std::size_t num_curves = js_curves.size();
   const std::size_t num_vertices = js_vertices.size();
-  const std::size_t num_halfedges = js_edges.size();
-  const std::size_t num_edges = num_halfedges / 2;
+  const std::size_t num_edges = js_edges.size();
   const std::size_t num_faces = js_faces.size();
-
-  if (num_halfedges != 2 * num_edges) {
-    std::cerr << "The no. of halfedges (" <<  num_halfedges << ") is odd\n";
-    return false;
-  }
+  const std::size_t num_halfedges = num_edges * 2;
 
   if (num_points < num_vertices) {
     std::cerr << "The no. of points (" << num_points
@@ -303,8 +298,10 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
 
   using Arr_accessor = CGAL::Arr_accessor<Arrangement>;
   Arr_accessor arr_access(arr);
+  arr_access.clear_all();
 
   // Vertices
+  std::cout << "Vertices\n";
   using DVertex = typename Arr_accessor::Dcel_vertex;
   std::vector<DVertex*> vertices(num_vertices);
   size_t k = 0;
@@ -331,8 +328,9 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   }
 
   // Halfedges
+  std::cout << "Halfedges\n";
   using DHalfedge = typename Arr_accessor::Dcel_halfedge;
-  std::vector<DHalfedge*> halfedges;
+  std::vector<DHalfedge*> halfedges(num_halfedges);
   k = 0;
   for (const auto& js_edge : js_edges) {
     std::size_t source_id = js_edge["source"];
@@ -347,27 +345,23 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
     new_he->set_vertex(trg_v);
     src_v->set_halfedge(new_he->opposite());
     new_he->opposite()->set_vertex(src_v);
-    if (direction == 0) new_he->set_direction(CGAL::ARR_LEFT_TO_RIGHT);
-    else {
-      CGAL_assertion(direction == 1);
-      new_he->set_direction(CGAL::ARR_RIGHT_TO_LEFT);
-    }
+    new_he->set_direction(static_cast<CGAL::Arr_halfedge_direction>(direction));
     halfedges[k++] = new_he;
     halfedges[k++] = new_he->opposite();
   }
 
   // Faces
+  std::cout << "Faces\n";
   using DFace = typename Arr_accessor::Dcel_face;
   using DOuter_ccb = typename Arr_accessor::Dcel_outer_ccb;
   using DInner_ccb = typename Arr_accessor::Dcel_inner_ccb;
   using DIso_vert = typename Arr_accessor::Dcel_isolated_vertex;
+  const bool is_unbounded(false);
+  const bool is_valid(true);
   for (const auto& js_face : js_faces) {
     DFace* new_f = arr_access.new_face();
 
-    //! \todo read from file
-    const bool is_unbounded = false;
     new_f->set_unbounded(is_unbounded);
-    const bool is_valid = false;
     new_f->set_fictitious(! is_valid);
 
     // Read the outer CCBs of the face.
@@ -380,6 +374,7 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
 
     const auto& js_outer_ccbs = *oit;
     for (const auto& js_ccb : js_outer_ccbs) {
+      std::cout << "Outer CCB\n";
       // Allocate a new outer CCB record and set its incident face.
       auto* new_occb = arr_access.new_outer_ccb();
       new_occb->set_face(new_f);
@@ -419,6 +414,7 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
 
     const auto& js_inner_ccbs = *iit;
     for (const auto& js_ccb : js_inner_ccbs) {
+      std::cout << "Inner CCB\n";
       // Allocate a new inner CCB record and set its incident face.
       auto* new_iccb = arr_access.new_inner_ccb();
       new_iccb->set_face(new_f);
@@ -490,6 +486,7 @@ int main(int argc, char* argv[]) {
     return -1;
   }
   std::cout << arr << std::endl;
+  CGAL::draw(arr);
 
   QApplication app(argc, argv);
   QCoreApplication::setOrganizationName("CGAL");
