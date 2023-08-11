@@ -9,43 +9,127 @@ namespace CGAL {
 
 \section SectionPolygonRepair2_Introduction Introduction
 
-This package implements a polygon repair method based on a constrained triangulation \cgalCite{14cg}. Starting from a possibly invalid input in the form of a polygon, polygon with holes or multipolygon with holes, the method performs a constrained triangulation of the input edges, applies a heuristic to label each triangle according to what it represents (exterior, polygon interior or hole), and reconstructs the polygon(s) represented by the triangulation. The method returns a valid output stored in a multipolygon with holes. Currently, the odd-even labeling heuristic is implemented in the package.
+This package implements a polygon repair method based on a constrained
+triangulation \cgalCite{14cg}. Starting from a possibly invalid input
+in the form of a polygon, polygon with holes or multipolygon with holes,
+the method performs a constrained triangulation of the input edges, labels
+each triangle according to what it represents (exterior, polygon interior
+or hole), and reconstructs the polygon(s) represented by the triangulation.
+The method returns a valid output stored in a multipolygon with holes.
+
+Different triangulation and labelling heuristics are possible, but
+currently only the odd-even heuristic is implemented in the package.
 
 \section SectionPolygonRepair2_Definitions Definitions
 
-- A valid <B>polygon</B> (without holes) is a point set in \f$ \mathbb{R}^2\f$ that is bounded by a cycle of linear edges, which is known as its <B>outer boundary</B>. This outer boundary should be <B>simple</B>, meaning that the interiors of its edges are pairwise disjoint and all of its vertices have a degree of two. It is thus topologically equivalent to a disk and is represented internally as the sequence of points of the vertices of its outer boundary.
+- A valid <B>polygon</B> (without holes) is a point set in \f$ \mathbb{R}^2\f$
+that is bounded by a cycle of linear edges, which is known as its
+<B>outer boundary</B>. This outer boundary should be <B>simple</B>,
+meaning that the interiors of its edges are pairwise disjoint and all of
+its vertices have a degree of two. It is thus topologically equivalent to a
+disk and is represented internally as the sequence of points at the common
+end points of the edges around its outer boundary.
 
-- A valid <B>polygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$ that is bounded by one outer boundary and zero or more <B>inner boundaries</B>, where each inner boundary represents a hole in the polygon. Considered by itself, each boundary should be simple. The different boundaries of a polygon are allowed to intersect tangentially at their common vertices (with no common edges), forming vertices with degrees larger than two at the tangential points. The interior of a polygon with holes should form a connected point set. Note that a valid polygon can also be represented as a valid polygon with zero holes.
+- A valid <B>polygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
+that is bounded by one outer boundary and zero or more <B>inner boundaries</B>,
+where each inner boundary represents a hole in the polygon. Considered by
+itself, each boundary should be simple. The different boundaries of a polygon
+are allowed to intersect tangentially at their common vertices (with no common
+edges), forming vertices with degrees larger than two at the tangential points.
+The interior of a polygon with holes should form a connected point set.
+Note that a valid polygon can also be represented as a valid polygon with
+holes (where the number of holes is zero).
 
-- A valid <B>multipolygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$ that is represented by a set of zero or more valid polygons with holes. The interiors of the polygons with holes should be pairwise disjoint, but their are allowed to intersect tangentially at their common vertices. Note that a valid polygon with holes can also be represented as a valid multipolygon with holes.
+- A valid <B>multipolygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
+that is represented by a set of zero or more valid polygons with holes.
+The interiors of the polygons with holes should be pairwise disjoint, but they
+are allowed to intersect tangentially at their common vertices. Note that
+a valid polygon with holes can also be represented as a valid multipolygon
+with holes.
 
-\subsection SubsectionPolygonRepair2_Output Output
+FIGURE
 
-The conditions listed above are sufficient to define valid polygons, polygons with holes and multipolygons with holes for most applications. However, in order to ensure unique deterministic output, the valid multipolygons with holes returned by the package conform to more strict criteria:
+\subsection SubsectionPolygonRepair2_Output Stricter conditions for output
+
+The conditions listed above are sufficient to define valid polygons, polygons
+with holes and multipolygons with holes for most applications. However, in
+order to ensure unique deterministic output from the repair algorithm,
+the valid multipolygons with holes returned by the package conform to more
+strict criteria:
 
 - Adjacent collinear edges touching at vertices of degree two are merged
-- The sequence of vertices representing a boundary starts from its lexicographically smallest vertex
-- Outer boundaries are oriented counterclockwise and inner boundaries are oriented clockwise
-- The inner boundaries of a polygon with holes are stored in lexicographic order
-- The polygons with holes of a multipolygon with holes are also stored in lexicographic order
+- The sequence of vertices representing a boundary starts from its
+lexicographically smallest vertex
+- Outer boundaries are oriented counterclockwise and inner boundaries are
+oriented clockwise
+- The inner boundaries of a polygon with holes are stored in lexicographic
+order
+- The polygons with holes of a multipolygon with holes are also stored in
+lexicographic order
 
 \section SectionPolygonRepair2_Algorithm Algorithm
 
-The method interprets the input 
+Broadly, the algorithm consists of three steps:
 
-If the input is already valid, the method will return a valid output representing the same area
+-# <B>Constrained triangulation</B>: the edges in the polygon, polygon with
+holes or multipolygon with holes are added as constraints in the triangulation.
+-# <B>Labeling of the faces</B>: sets of faces forming contiguous regions that
+are accessible from each other by following adjacency relationships without
+passing through a constrained edge are labeled with ids according to
+what they represent (exterior, polygon interior or hole). The faces iteratively
+adjacent to the infinite face without passing through a constrained edge are
+labeled as the exterior.
+-# <B>Reconstruction of the multipolygon</B>: each boundary of each polygon
+with holes is reconstructed by finding a polygon interior triangle that is
+adjacent to the exterior or a hole, then following the boundary in an
+orientation that is counterclockwise for outer boundaries and clockwise for
+inner boundaries. This orientation and the polygon interior id is used to
+determine what polygon with holes it belongs to and whether it is an outer or
+an inner boundary.
+
+FIGURE
+
+If the input is already valid, the method will return a valid output representing
+the same area. However, the output might be different in order to conform to the
+stricter conditions to generate deterministic output (see
+\ref SubsectionPolygonRepair2_Output).
+
+Also, it is worth noting that even the repair of a single polygon without holes
+but with self-intersections can result in a multipolygon with holes. This is why
+the repair function will always return a multipolygon with holes. The user can
+then check whether it consists of a single polygon with holes, and whether this
+polygon with holes has zero holes and treat it appropriately.
+
+\subsection SubsectionPolygonRepair2_OddEven Odd-even repair
+
+The odd-even repair heuristic results in areas that are alternatingly assigned
+as polygon interiors and exterior/holes each time that an input edge is passed.
+It doesn't distinguish between edges that are part of outer boundaries or inner
+boundaries.
+
+FIGURE
+
+In order to generate consistent output, the odd-even heuristic requires it to be
+applied to both edges and faces. For the edges, this heuristic means that only
+the line segments that are present an odd number of times in the input will be
+constrained edges in the triangulation. For the face labels, this heuristic means
+that after the exterior faces have been labeled, the other faces will be
+alternatingly labeled with polygon interior and hole ids every time that a
+constrained edge is passed.
+
+FIGURE
 
 \section SectionPolygonRepair2_Examples Examples
 
-\subsection SubsectionPolygonRepair2_FirstExample First Example
+\subsection SubsectionPolygonRepair2_Multipolygon Defining and traversing a multipolygon
 
-The following example shows ...
+\subsection SubsectionPolygonRepair2_WKTDraw Reading well-known text and drawing a multipolygon
 
-\cgalExample{Polygon_repair_2/repair_polygon_2.cpp}
+\subsection SubsectionPolygonRepair2_Repair Repairing
 
-\cgalFigureBegin{figPck,bench.png}
-Left: ...
-\cgalFigureEnd
+\subsection SubsectionPolygonRepair2_Repair Repairing (hidden API)?
+
+\section SectionPolygonRepair2_Performance Performance
 
 */
 } /* namespace CGAL */
