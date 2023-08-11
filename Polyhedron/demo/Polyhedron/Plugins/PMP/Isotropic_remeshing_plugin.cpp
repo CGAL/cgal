@@ -430,7 +430,6 @@ public Q_SLOTS:
         else //not edges_only
         {
             if(protect &&
-               edge_sizing_type == 0 && //todo ip: current solution for adaptive remeshing
                !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                  *selection_item->polyhedron(),
                  selection_item->constrained_edges_pmap(),
@@ -737,7 +736,6 @@ public Q_SLOTS:
           }
 
           if(protect &&
-             edge_sizing_type == 0 && //todo ip: current solution for adaptive remeshing
              !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                pmesh,
                ecm,
@@ -1313,7 +1311,7 @@ public:
     ui.nbIterations_spinbox->setValue(1);
 
     ui.edgeSizing_type_combo_box->setCurrentIndex(0);
-    on_edgeSizing_type_combo_box_changed(0); //todo ip otherwise it shows all remeshing variables
+    on_edgeSizing_type_combo_box_changed(0);
     ui.protect_checkbox->setChecked(false);
     ui.smooth1D_checkbox->setChecked(true);
 
