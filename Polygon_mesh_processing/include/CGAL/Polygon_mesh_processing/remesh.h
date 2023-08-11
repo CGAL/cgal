@@ -31,16 +31,6 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-/*! \todo document me or merge the doc with the original overload*/
-template<typename PolygonMesh
-       , typename FaceRange
-       , typename SizingFunction
-       , typename NamedParameters>
-void isotropic_remeshing(const FaceRange& faces
-                       , SizingFunction& sizing
-                       , PolygonMesh& pmesh
-                       , const NamedParameters& np);
-
 /*!
 * \ingroup PMP_meshing_grp
 *
@@ -54,12 +44,14 @@ void isotropic_remeshing(const FaceRange& faces
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
-          model of `Range`. Its iterator type is `ForwardIterator`.
+*         model of `Range`. Its iterator type is `ForwardIterator`.
+* @tparam SizingFunction model of `Sizing_field`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param target_edge_length the edge length that is targeted in the remeshed patch.
+* @param sizing uniform or adaptive sizing field that determines a target length for individual edges.
+*        If a number is passed, it uses uniform sizing with the number as a target edge length.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -204,23 +196,6 @@ void isotropic_remeshing(const FaceRange& faces
 */
 template<typename PolygonMesh
        , typename FaceRange
-       , typename NamedParameters = parameters::Default_named_parameters>
-void isotropic_remeshing(const FaceRange& faces
-                       , const double target_edge_length
-                       , PolygonMesh& pmesh
-                       , const NamedParameters& np = parameters::default_values())
-{
-  typedef Uniform_sizing_field<PolygonMesh> Default_sizing;
-  Default_sizing sizing(target_edge_length, pmesh);
-  isotropic_remeshing<PolygonMesh, FaceRange, Default_sizing, NamedParameters>(
-    faces,
-    sizing,
-    pmesh,
-    np);
-}
-
-template<typename PolygonMesh
-       , typename FaceRange
        , typename SizingFunction
        , typename NamedParameters>
 void isotropic_remeshing(const FaceRange& faces
@@ -360,6 +335,24 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 }
 
+// Convenience overload when using target_edge_length for sizing
+template<typename PolygonMesh
+  , typename FaceRange
+  , typename NamedParameters = parameters::Default_named_parameters>
+void isotropic_remeshing(const FaceRange& faces
+                         , const double target_edge_length
+                         , PolygonMesh& pmesh
+                         , const NamedParameters& np = parameters::default_values())
+{
+  typedef Uniform_sizing_field<PolygonMesh> Default_sizing;
+  Default_sizing sizing(target_edge_length, pmesh);
+  isotropic_remeshing<PolygonMesh, FaceRange, Default_sizing, NamedParameters>(
+    faces,
+    sizing,
+    pmesh,
+    np);
+}
+
 /*!
 * \ingroup PMP_meshing_grp
 * @brief splits the edges listed in `edges` into sub-edges
@@ -374,12 +367,13 @@ void isotropic_remeshing(const FaceRange& faces
 *         has an internal property map for `CGAL::vertex_point_t`.
 * @tparam EdgeRange range of `boost::graph_traits<PolygonMesh>::%edge_descriptor`,
 *   model of `Range`. Its iterator type is `InputIterator`.
+* @tparam SizingFunction model of `Sizing_field`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
-* @param max_length the edge length above which an edge from `edges` is split
-*        into to sub-edges
+* @param sizing the sizing function that is used to split edges from 'edges' list. If a number is passed,
+*        all edges longer than the number are split into sub-edges.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
 * \cgalNamedParamsBegin
@@ -483,8 +477,7 @@ void split_long_edges(const EdgeRange& edges
      remesher.split_long_edges(edges, sizing);
 }
 
-//todo ip: documentation
-// overload when using max_length
+// Convenience overload when using max_length for sizing
 template<typename PolygonMesh
        , typename EdgeRange
        , typename NamedParameters = parameters::Default_named_parameters>
