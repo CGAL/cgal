@@ -366,82 +366,74 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
 
     // Read the outer CCBs of the face.
     auto oit = js_face.find("outer_ccbs");
-    if (oit == js_face.end()) {
-      std::cerr << "The outer_ccbs item is missing " << " (" << filename
-                << ")\n";
-      return false;
-    }
+    if (oit != js_face.end()) {
+      const auto& js_outer_ccbs = *oit;
+      for (const auto& js_ccb : js_outer_ccbs) {
+        std::cout << "Outer CCB\n";
+        // Allocate a new outer CCB record and set its incident face.
+        auto* new_occb = arr_access.new_outer_ccb();
+        new_occb->set_face(new_f);
 
-    const auto& js_outer_ccbs = *oit;
-    for (const auto& js_ccb : js_outer_ccbs) {
-      std::cout << "Outer CCB\n";
-      // Allocate a new outer CCB record and set its incident face.
-      auto* new_occb = arr_access.new_outer_ccb();
-      new_occb->set_face(new_f);
+        // Read the current outer CCB.
+        auto bit = js_ccb.find("halfedges");
+        if (bit == js_ccb.end()) {
+          std::cerr << "The halfedges item is missing " << " (" << filename
+                    << ")\n";
+          return false;
+        }
 
-      // Read the current outer CCB.
-      auto bit = js_ccb.find("halfedges");
-      if (bit == js_ccb.end()) {
-        std::cerr << "The halfedges item is missing " << " (" << filename
-                  << ")\n";
-        return false;
+        const auto& js_halfedges = *bit;
+        auto hit = js_halfedges.begin();
+        std::size_t first_idx = *hit;
+        DHalfedge* first_he = halfedges[first_idx];
+        first_he->set_outer_ccb(new_occb);
+        DHalfedge* prev_he = first_he;
+        for (++hit; hit != js_halfedges.end(); ++hit) {
+          std::size_t curr_idx = *hit;
+          auto curr_he = halfedges[curr_idx];
+          prev_he->set_next(curr_he);		// connect
+          curr_he->set_outer_ccb(new_occb);	// set the CCB
+          prev_he = curr_he;
+        }
+        prev_he->set_next(first_he);		// close the loop
+        new_f->add_outer_ccb(new_occb, first_he);
       }
-
-      const auto& js_halfedges = *bit;
-      auto hit = js_halfedges.begin();
-      std::size_t first_idx = *hit;
-      DHalfedge* first_he = halfedges[first_idx];
-      first_he->set_outer_ccb(new_occb);
-      DHalfedge* prev_he = first_he;
-      for (++hit; hit != js_halfedges.end(); ++hit) {
-        std::size_t curr_idx = *hit;
-        auto curr_he = halfedges[curr_idx];
-        prev_he->set_next(curr_he);		// connect
-        curr_he->set_outer_ccb(new_occb);	// set the CCB
-        prev_he = curr_he;
-      }
-      prev_he->set_next(first_he);		// close the loop
-      new_f->add_outer_ccb(new_occb, first_he);
     }
 
     // Read the inner CCBs of the face.
     auto iit = js_face.find("inner_ccbs");
-    if (iit == js_face.end()) {
-      std::cerr << "The inner_ccbs item is missing " << " (" << filename
-                << ")\n";
-      return false;
-    }
+    if (iit != js_face.end()) {
+      const auto& js_inner_ccbs = *iit;
+      for (const auto& js_ccb : js_inner_ccbs) {
+        std::cout << "Inner CCB\n";
+        // Allocate a new inner CCB record and set its incident face.
+        auto* new_iccb = arr_access.new_inner_ccb();
+        new_iccb->set_face(new_f);
 
-    const auto& js_inner_ccbs = *iit;
-    for (const auto& js_ccb : js_inner_ccbs) {
-      std::cout << "Inner CCB\n";
-      // Allocate a new inner CCB record and set its incident face.
-      auto* new_iccb = arr_access.new_inner_ccb();
-      new_iccb->set_face(new_f);
+        // Read the current inner CCB.
+        auto bit = js_ccb.find("halfedges");
+        if (bit == js_ccb.end()) {
+          std::cerr << "The halfedges item is missing " << " (" << filename
+                    << ")\n";
+          return false;
+        }
 
-      // Read the current inner CCB.
-      auto bit = js_ccb.find("halfedges");
-      if (bit == js_ccb.end()) {
-        std::cerr << "The halfedges item is missing " << " (" << filename
-                  << ")\n";
-        return false;
+        const auto& js_halfedges = *bit;
+        auto hit = js_halfedges.begin();
+        std::size_t first_idx = *hit;
+        DHalfedge* first_he = halfedges[first_idx];
+        first_he->set_inner_ccb(new_iccb);
+        DHalfedge* prev_he = first_he;
+        for (++hit; hit != js_halfedges.end(); ++hit) {
+          std::size_t curr_idx = *hit;
+          auto curr_he = halfedges[curr_idx];
+          prev_he->set_next(curr_he);		// connect
+          curr_he->set_inner_ccb(new_iccb);	// set the CCB
+          prev_he = curr_he;
+        }
+        prev_he->set_next(first_he);		// close the loop
+        new_f->add_inner_ccb(new_iccb, first_he);
       }
-
-      const auto& js_halfedges = *bit;
-      auto hit = js_halfedges.begin();
-      std::size_t first_idx = *hit;
-      DHalfedge* first_he = halfedges[first_idx];
-      first_he->set_inner_ccb(new_iccb);
-      DHalfedge* prev_he = first_he;
-      for (++hit; hit != js_halfedges.end(); ++hit) {
-        std::size_t curr_idx = *hit;
-        auto curr_he = halfedges[curr_idx];
-        prev_he->set_next(curr_he);		// connect
-        curr_he->set_inner_ccb(new_iccb);	// set the CCB
-        prev_he = curr_he;
-      }
-      prev_he->set_next(first_he);		// close the loop
-      new_f->add_inner_ccb(new_iccb, first_he);
     }
 
     // // Read the isolated vertices inside the face.
