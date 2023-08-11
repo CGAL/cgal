@@ -1009,6 +1009,8 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     json js_edge;
     js_edge["curve"] = xcvp;
     js_edge["direction"] = edge.direction();
+    js_edge["source"] = vertex_pos_map[edge.source()];
+    js_edge["target"] = vertex_pos_map[edge.target()];
     js_edges.push_back(std::move(js_edge));
     num_edges++;
 
@@ -1085,7 +1087,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   auto get_ccb_json = [&](Ext_aos::Ccb_halfedge_circulator first)
     {
       json js_edges;
-      auto& ccb_edge_indices = js_edges["edges"] = json::array();
+      auto& ccb_edge_indices = js_edges["halfedges"] = json::array();
       auto curr = first;
       do {
         auto& he = *curr;

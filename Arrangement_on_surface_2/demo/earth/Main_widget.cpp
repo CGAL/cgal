@@ -177,8 +177,8 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries_africa_1.kml";
   m_countries = Kml::read(file_name);
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
@@ -191,8 +191,11 @@ void Main_widget::initializeGL()
   }
 
   // SAVING & LOADING ARR
+  if(1)
   {
-    //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa.json");
+    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa_1.json");
+    qDebug() << "done saving!";
+    exit(0);
     //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     //Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
   }
@@ -506,7 +509,7 @@ void Main_widget::paintGL()
     if(1)
     {
       glDisable(GL_DEPTH_TEST);
-      QVector4D face_color(1, .5, 0, 1);
+      auto face_color = QVector4D(241, 141, 0, 255) / 255;
       sp.set_uniform("u_color", face_color);
       sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
