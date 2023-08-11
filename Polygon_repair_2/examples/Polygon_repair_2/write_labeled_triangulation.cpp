@@ -34,12 +34,12 @@ int main(int argc, char* argv[]) {
     Polygon_with_holes_2 p;
     if (in != "POLYGON()") { // maybe should be checked in WKT reader
       CGAL::IO::read_polygon_WKT(iss, p);
-    } pr.add_to_triangulation(p);
+    } pr.add_to_triangulation_odd_even(p);
   } else if (in.find("MULTIPOLYGON") == 0) {
     Multipolygon_with_holes_2 mp;
     CGAL::IO::read_multi_polygon_WKT(iss, mp);
-    pr.add_to_triangulation(mp);
-  } pr.label_triangulation();
+    pr.add_to_triangulation_odd_even(mp);
+  } pr.label_triangulation_odd_even();
 
   // ofs << std::fixed;
   // ofs << std::setprecision(15);

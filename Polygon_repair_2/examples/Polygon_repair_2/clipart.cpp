@@ -31,14 +31,14 @@ int main(int argc, char* argv[]) {
   clock_t start_time;
 
   for (const auto& file: std::filesystem::directory_iterator(folder_in)) {
-    
+
     if (file.path().filename().extension() != ".obj") continue;
     std::cout << "Reading " << file.path().filename() << "...";
 //    if (std::filesystem::exists(folder_out + "/" + std::string(file.path().stem()) + ".svg")) {
 //      std::cout << " skipped: already processed" << std::endl;
 //      continue;
 //    }
-    
+
     start_time = clock();
     Polygon_repair_2 pr;
     std::vector<Point_2> vertices;
@@ -94,11 +94,11 @@ int main(int argc, char* argv[]) {
 
     if (pr.triangulation().number_of_faces() > 0) {
       start_time = clock();
-      pr.label_triangulation();
+      pr.label_triangulation_odd_even();
       std::cout << "Labelled in ";
       print_timer(start_time);
       std::cout << std::endl;
-      
+
       start_time = clock();
       pr.reconstruct_multipolygon();
       std::cout << "Reconstructed multipolygon in ";
@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
       ofs.close();
       std::cout << " ok" << std::endl;
     } ++current;
-    
+
     if (current >= how_many) break;
   }
 

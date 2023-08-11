@@ -35,12 +35,12 @@ int main(int argc, char* argv[]) {
       if (in != "POLYGON()") { // maybe should be checked in WKT reader
         CGAL::IO::read_polygon_WKT(iss, p);
       } CGAL::draw(p);
-      rmp = CGAL::Polygon_repair_2::repair(p);
+      rmp = CGAL::Polygon_repair_2::repair_odd_even(p);
     } else if (in.find("MULTIPOLYGON") == 0) {
       Multipolygon_with_holes_2 mp;
       CGAL::IO::read_multi_polygon_WKT(iss, mp);
       CGAL::draw(mp);
-      rmp = CGAL::Polygon_repair_2::repair(mp);
+      rmp = CGAL::Polygon_repair_2::repair_odd_even(mp);
     } std::ostringstream oss;
     CGAL::IO::write_multi_polygon_WKT(oss, rmp);
     std::string out = oss.str();

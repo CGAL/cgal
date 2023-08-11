@@ -34,11 +34,11 @@ class Polygon_repair_2;
 /// \ingroup PkgPolygonRepair2Functions
 /// Repair a polygon without holes
 template <class Kernel, class PolygonContainer>
-Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_2<Kernel, PolygonContainer>& p) {
+Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygon_2<Kernel, PolygonContainer>& p) {
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
-  pr.add_to_triangulation(p);
+  pr.add_to_triangulation_odd_even(p);
   if (pr.triangulation().number_of_faces() > 0) {
-    pr.label_triangulation();
+    pr.label_triangulation_odd_even();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
@@ -46,11 +46,11 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_2<Kerne
 /// \ingroup PkgPolygonRepair2Functions
 /// Repair a polygon with holes
 template <class Kernel, class PolygonContainer>
-Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_with_holes_2<Kernel, PolygonContainer>& p) {
+Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygon_with_holes_2<Kernel, PolygonContainer>& p) {
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
-  pr.add_to_triangulation(p);
+  pr.add_to_triangulation_odd_even(p);
   if (pr.triangulation().number_of_faces() > 0) {
-    pr.label_triangulation();
+    pr.label_triangulation_odd_even();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
@@ -58,11 +58,11 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Polygon_with_ho
 /// \ingroup PkgPolygonRepair2Functions
 /// Repair a multipolygon with holes
 template <class Kernel, class PolygonContainer>
-Multipolygon_with_holes_2<Kernel, PolygonContainer> repair(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& mp) {
+Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& mp) {
   CGAL::Polygon_repair_2::Polygon_repair_2<Kernel, PolygonContainer> pr;
-  pr.add_to_triangulation(mp);
+  pr.add_to_triangulation_odd_even(mp);
   if (pr.triangulation().number_of_faces() > 0) {
-    pr.label_triangulation();
+    pr.label_triangulation_odd_even();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
@@ -123,7 +123,7 @@ public:
   /// @{
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation(const Polygon_2<Kernel, PolygonContainer>& polygon) {
+  void add_to_triangulation_odd_even(const Polygon_2<Kernel, PolygonContainer>& polygon) {
     std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
                        boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
@@ -166,7 +166,7 @@ public:
   }
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
+  void add_to_triangulation_odd_even(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
     std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
                        boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
@@ -218,7 +218,7 @@ public:
   }
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
+  void add_to_triangulation_odd_even(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
     std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
                        boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
@@ -302,7 +302,7 @@ public:
   }
 
   // Label triangles in triangulation
-  void label_triangulation() {
+  void label_triangulation_odd_even() {
 
     // Simplify collinear edges (gets rid of order dependency)
     for (auto vertex: t.all_vertex_handles()) {
