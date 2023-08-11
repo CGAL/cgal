@@ -125,74 +125,149 @@ public:
   // Add edges of the polygon to the triangulation
   void add_to_triangulation(const Polygon_2<Kernel, PolygonContainer>& polygon) {
     std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
-                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> edges_to_insert;
+                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
+    // Get unique edges
     for (auto const& edge: polygon.edges()) {
       if (edge.source() == edge.target()) continue;
       std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
       std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
-      auto inserted = edges_to_insert.insert(pair);
-      if (!inserted.second) edges_to_insert.erase(inserted.first);
+      auto inserted = unique_edges.insert(pair);
+      if (!inserted.second) unique_edges.erase(inserted.first);
     }
 
+    // Insert vertices
+    std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle> vertices;
+    std::vector<std::pair<typename Triangulation::Vertex_handle, typename Triangulation::Vertex_handle>> edges_to_insert;
+    edges_to_insert.reserve(unique_edges.size());
+    for (auto const& edge: unique_edges) {
+      typename Triangulation::Vertex_handle first_vertex, second_vertex;
+      typename std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>::const_iterator found = vertices.find(edge.first);
+      if (found == vertices.end()) {
+        first_vertex = t.insert(edge.first, search_start);
+        vertices[edge.first] = first_vertex;
+      } else {
+        first_vertex = found->second;
+      } search_start = first_vertex->face();
+      found = vertices.find(edge.second);
+      if (found == vertices.end()) {
+        second_vertex = t.insert(edge.second, search_start);
+        vertices[edge.second] = second_vertex;
+      } else {
+        second_vertex = found->second;
+      } search_start = second_vertex->face();
+      edges_to_insert.emplace_back(first_vertex, second_vertex);
+    }
+
+    // Insert edges
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second, search_start);
+      t.odd_even_insert_constraint(edge.first, edge.second);
     }
   }
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
     std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
-                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> edges_to_insert;
+                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
+    // Get unique edges
     for (auto const& edge: polygon.outer_boundary().edges()) {
       if (edge.source() == edge.target()) continue;
       std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
       std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
-      auto inserted = edges_to_insert.insert(pair);
-      if (!inserted.second) edges_to_insert.erase(inserted.first);
+      auto inserted = unique_edges.insert(pair);
+      if (!inserted.second) unique_edges.erase(inserted.first);
     }
     for (auto const& hole: polygon.holes()) {
       for (auto const& edge: hole.edges()) {
         if (edge.source() == edge.target()) continue;
         std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
         std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
-        auto inserted = edges_to_insert.insert(pair);
-        if (!inserted.second) edges_to_insert.erase(inserted.first);
+        auto inserted = unique_edges.insert(pair);
+        if (!inserted.second) unique_edges.erase(inserted.first);
       }
     }
 
+    // Insert vertices
+    std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle> vertices;
+    std::vector<std::pair<typename Triangulation::Vertex_handle, typename Triangulation::Vertex_handle>> edges_to_insert;
+    edges_to_insert.reserve(unique_edges.size());
+    for (auto const& edge: unique_edges) {
+      typename Triangulation::Vertex_handle first_vertex, second_vertex;
+      typename std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>::const_iterator found = vertices.find(edge.first);
+      if (found == vertices.end()) {
+        first_vertex = t.insert(edge.first, search_start);
+        vertices[edge.first] = first_vertex;
+      } else {
+        first_vertex = found->second;
+      } search_start = first_vertex->face();
+      found = vertices.find(edge.second);
+      if (found == vertices.end()) {
+        second_vertex = t.insert(edge.second, search_start);
+        vertices[edge.second] = second_vertex;
+      } else {
+        second_vertex = found->second;
+      } search_start = second_vertex->face();
+      edges_to_insert.emplace_back(first_vertex, second_vertex);
+    }
+
+    // Insert edges
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second, search_start);
+      t.odd_even_insert_constraint(edge.first, edge.second);
     }
   }
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
     std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
-                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> edges_to_insert;
+                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
+    // Get unique edges
     for (auto const& polygon: multipolygon.polygons()) {
       for (auto const& edge: polygon.outer_boundary().edges()) {
         if (edge.source() == edge.target()) continue;
         std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
         std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
-        auto inserted = edges_to_insert.insert(pair);
-        if (!inserted.second) edges_to_insert.erase(inserted.first);
+        auto inserted = unique_edges.insert(pair);
+        if (!inserted.second) unique_edges.erase(inserted.first);
       }
       for (auto const& hole: polygon.holes()) {
         for (auto const& edge: hole.edges()) {
           if (edge.source() == edge.target()) continue;
           std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
           std::make_pair(edge.source(), edge.target()) : std::make_pair(edge.target(), edge.source());
-          auto inserted = edges_to_insert.insert(pair);
-          if (!inserted.second) edges_to_insert.erase(inserted.first);
+          auto inserted = unique_edges.insert(pair);
+          if (!inserted.second) unique_edges.erase(inserted.first);
         }
       }
     }
 
+    // Insert vertices
+    std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle> vertices;
+    std::vector<std::pair<typename Triangulation::Vertex_handle, typename Triangulation::Vertex_handle>> edges_to_insert;
+    edges_to_insert.reserve(unique_edges.size());
+    for (auto const& edge: unique_edges) {
+      typename Triangulation::Vertex_handle first_vertex, second_vertex;
+      typename std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>::const_iterator found = vertices.find(edge.first);
+      if (found == vertices.end()) {
+        first_vertex = t.insert(edge.first, search_start);
+        vertices[edge.first] = first_vertex;
+      } else {
+        first_vertex = found->second;
+      } search_start = first_vertex->face();
+      found = vertices.find(edge.second);
+      if (found == vertices.end()) {
+        second_vertex = t.insert(edge.second, search_start);
+        vertices[edge.second] = second_vertex;
+      } else {
+        second_vertex = found->second;
+      } search_start = second_vertex->face();
+      edges_to_insert.emplace_back(first_vertex, second_vertex);
+    }
+
+    // Insert edges
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second, search_start);
+      t.odd_even_insert_constraint(edge.first, edge.second);
     }
   }
 
