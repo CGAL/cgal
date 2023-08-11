@@ -64,7 +64,7 @@ typename Kernel::FT calculate_average_distance(
     total_dist += std::abs((vp - vnp).norm());
   }
 
-  std::cout << "tot dist: " << total_dist << ", size: " << neighbor_pts.size() << std::endl;
+  // std::cout << "tot dist: " << total_dist << ", size: " << neighbor_pts.size() << std::endl;
 
   return total_dist / neighbor_pts.size();
 }
@@ -100,6 +100,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
     FT angle_diff = CGAL::approximate_angle(n, nn);
     if (angle_diff <= normal_threshold)
     {
+      // std::cout << vnn << "\n\n";
       weight += 1;
 
       nvt += vnn * vnn.transpose();
@@ -113,6 +114,12 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
 
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(nvt);
   std::pair<Eigen::Vector3d, Eigen::Matrix3d> eigens(solver.eigenvalues(), solver.eigenvectors());
+
+  // // DEBUG
+  // std::cout << weight << "\n\n";
+  // std::cout << n << "\n\n";
+  // std::cout << nvt << "\n\n";
+  // std::cout << eigens.first << "\n\n";
 
   for (int i=0; i<3; ++i)
   {
@@ -187,6 +194,13 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_covm_eigenvalues
 
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(covm);
   std::pair<Eigen::Vector3d, Eigen::Matrix3d> eigens(solver.eigenvalues(), solver.eigenvectors());
+
+  // // DEBUG
+  // std::cout << weight << "\n\n";
+  // std::cout << n << "\n\n";
+  // std::cout << v_bar << "\n\n";
+  // std::cout << covm << "\n\n";
+  // std::cout << eigens.first << "\n\n";
 
   for (int i=0; i<3; ++i)
   {
@@ -347,7 +361,8 @@ typename Kernel::Point_3 calculate_new_point(
 
       cum_W += curr_W;
 
-      v_temp += curr_W * vnn.dot(vnp - vp) * vnp;
+      v_temp += curr_W * vnn.dot(vnp - vp) * vn;
+      // v_temp += curr_W * (vn*vnn.transpose()*(vnp-vp));
     }
 
     v_temp = (alpha / cum_W) * v_temp;
@@ -355,11 +370,12 @@ typename Kernel::Point_3 calculate_new_point(
     t = vp + v_temp;
   }
 
-  if ((vp - t).squaredNorm() > update_threshold * update_threshold)
+  if ((vp - t).squaredNorm() < update_threshold * update_threshold)
   {
     return Point(t[0], t[1], t[2]);
   }
 
+  // return Point(t[0], t[1], t[2]);
   return Point(vp[0], vp[1], vp[2]);
 }
 
@@ -401,11 +417,12 @@ constraint_based_smooth_point_set(
 
   typedef typename Kernel::FT FT;
 
-  FT neighbor_radius = .5;
+  FT neighbor_radius = 0.3; // 0.5
   FT normal_threshold = 45.;
   FT damping_factor = 3;
-  FT eigenvalue_threshold = .03;
-  FT update_threshold = .05;
+  FT eigenvalue_threshold_nvt = .3; // .03
+  FT eigenvalue_threshold_covm = .00995; // .03
+  FT update_threshold = .6; // 0.05
 
   CGAL_precondition(points.begin() != points.end());
 
@@ -506,7 +523,7 @@ constraint_based_smooth_point_set(
            point_map, normal_map,
            get<1>(t),
            normal_threshold,
-           eigenvalue_threshold);
+           eigenvalue_threshold_nvt);
       return true;
     });
 
@@ -562,7 +579,7 @@ constraint_based_smooth_point_set(
            point_map, normal_map,
            get<1>(t),
            normal_threshold,
-           eigenvalue_threshold);
+           eigenvalue_threshold_covm);
       return true;
     });
 

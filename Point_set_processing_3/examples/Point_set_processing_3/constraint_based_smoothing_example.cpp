@@ -61,12 +61,13 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int iter_number = 100;
+  const int iter_number = 200;
 
   auto start = std::chrono::high_resolution_clock::now();
 
   for(int i = 0; i < iter_number; ++i)
   {
+    auto curr_start = std::chrono::high_resolution_clock::now();
     /* double error = */
     CGAL::constraint_based_smooth_point_set <Concurrency_tag>(
       points,
@@ -74,6 +75,9 @@ int main(int argc, char*argv[])
                        .normal_map(CGAL::Nth_of_tuple_property_map<1, PNC>()));
 
     std::cout << i << std::endl;
+
+    auto curr_stop = std::chrono::high_resolution_clock::now();
+    std::cout << "Iteration time (ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(curr_stop - curr_start).count() << std::endl;
   }
 
   auto stop = std::chrono::high_resolution_clock::now();
@@ -83,7 +87,7 @@ int main(int argc, char*argv[])
     // std::cout << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << std::endl;
   }
 
-  std::cout << "Average iteration time (ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() / 100 << std::endl;
+  std::cout << "Average iteration time (ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() / iter_number << std::endl;
 
   //// Save point set.
   // if(!CGAL::IO::write_XYZ(output_filename, points,
