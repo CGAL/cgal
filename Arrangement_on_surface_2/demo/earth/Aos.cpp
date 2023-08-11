@@ -1121,6 +1121,8 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
     json js_face;
     auto face_name = face_name_map[fh];
     js_face["name"] = face_name;
+    js_face["is_unbounded"] = false;
+    js_face["is_valid"] = true;
 
     // at this point we are sure that we have at least 1 outer-ccb
     auto& js_outer_ccbs = js_face["outer_ccbs"] = json::array();

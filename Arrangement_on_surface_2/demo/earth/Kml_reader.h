@@ -77,6 +77,7 @@ public:
 
     // collects all nodes from all polygons
     Nodes get_all_nodes() const;
+    int get_all_nodes_count() const;
 
     Arcs get_all_arcs() const;
   };

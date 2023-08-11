@@ -408,6 +408,16 @@ Kml::Nodes Kml::Placemark::get_all_nodes() const
 
   return all_nodes;
 }
+int Kml::Placemark::get_all_nodes_count() const
+{
+  int num_nodes = 0;
+  for (const auto& polygon : polygons)
+  {
+    auto polygon_nodes = polygon.get_all_nodes();
+    num_nodes += polygon_nodes.size();
+  }
+  return num_nodes;
+}
 
 Kml::Arcs Kml::LinearRing::get_arcs() const
 {

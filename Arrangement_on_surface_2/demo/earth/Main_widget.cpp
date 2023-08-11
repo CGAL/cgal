@@ -178,8 +178,29 @@ void Main_widget::initializeGL()
 
   //const auto file_name = data_path + "world_countries.kml";
   //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_africa_1.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa_1.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
   m_countries = Kml::read(file_name);
+  
+  // find the country with the least number of nodes
+  if(0)
+  {
+    std::string smallest;
+    int min_num_nodes = std::numeric_limits<int>::max();
+    for (auto& p : m_countries)
+    {
+      int num_nodes = p.get_all_nodes_count();
+      if (min_num_nodes > num_nodes)
+      {
+        min_num_nodes = num_nodes;
+        smallest = p.name;
+      }
+      qDebug() << p.name << " = " << p.get_all_nodes_count();
+    }
+    qDebug() << "smallest = " << smallest;
+    exit(0);
+  }
+  
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
   qDebug() << "*** KML number of polygons = " << 
@@ -193,7 +214,8 @@ void Main_widget::initializeGL()
   // SAVING & LOADING ARR
   if(1)
   {
-    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa_1.json");
+    //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa_1.json");
+    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_equatorial_guinea.json");
     qDebug() << "done saving!";
     exit(0);
     //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
