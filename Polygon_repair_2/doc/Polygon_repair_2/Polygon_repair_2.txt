@@ -121,7 +121,12 @@ FIGURE
 
 \section SectionPolygonRepair2_Examples Examples
 
-\subsection SubsectionPolygonRepair2_Multipolygon Defining and traversing a multipolygon
+\subsection SubsectionPolygonRepair2_Multipolygon The multipolygon with holes class
+
+The following example shows the creation of a multipolygon with holes and the traversal
+of the polygons in it.
+
+\cgalExample{Polygon_repair_2/multipolygon.cpp}
 
 \subsection SubsectionPolygonRepair2_WKTDraw Reading well-known text and drawing a multipolygon
 
