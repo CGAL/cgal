@@ -13,6 +13,7 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::ordered_json;
 
+// Includes for Arrangements on Sphere (AOS)
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_surface_2.h>
@@ -20,9 +21,19 @@ using json = nlohmann::ordered_json;
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <CGAL/Vector_3.h>
-
 #include "arr_print.h"
 #include "Tools.h"
+
+// Includes for Constrained Delaunay Triangulation
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/draw_triangulation_2.h>
+#include <CGAL/mark_domain_in_triangulation.h>
+#include <CGAL/Polygon_2.h>
+//#include <CGAL/Projection_traits_3.h>
+#include <unordered_map>
+#include <boost/property_map/property_map.hpp>
+
 
 namespace {
   //#define USE_EPIC
@@ -1532,7 +1543,7 @@ Aos::Arr_handle Aos::load_arr(const std::string& file_name)
 
 Aos::Arr_handle  Aos::construct(Kml::Placemarks& placemarks)
 {
-  Geom_traits traits;
+  static Geom_traits traits;
   auto* arr = new Arrangement(&traits);
 
   auto xcvs = get_arcs(placemarks, *arr);
@@ -1542,29 +1553,19 @@ Aos::Arr_handle  Aos::construct(Kml::Placemarks& placemarks)
   return arr;
 }
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/draw_triangulation_2.h>
-#include <CGAL/mark_domain_in_triangulation.h>
-#include <CGAL/Polygon_2.h>
-//#include <CGAL/Projection_traits_3.h>
-
-#include <iostream>
-#include <unordered_map>
-#include <boost/property_map/property_map.hpp>
 
 std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
 {
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
-  //  typedef CGAL::Projection_traits_3<K_epic>                         K;
-  typedef CGAL::Triangulation_vertex_base_2<K>                      Vb;
-  typedef CGAL::Constrained_triangulation_face_base_2<K>            Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb, Fb>              TDS;
-  typedef CGAL::Exact_predicates_tag                                Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>  CDT;
-  typedef CDT::Face_handle                                          Face_handle;
-  typedef CDT::Point                                                Point;
-  typedef CGAL::Polygon_2<K>                                        Polygon_2;
+  using K     = CGAL::Exact_predicates_inexact_constructions_kernel;
+  //using K     = CGAL::Projection_traits_3<K_epic>;
+  using Vb    = CGAL::Triangulation_vertex_base_2<K>;
+  using Fb    = CGAL::Constrained_triangulation_face_base_2<K>;
+  using TDS   = CGAL::Triangulation_data_structure_2<Vb, Fb>;
+  using Itag  = CGAL::Exact_predicates_tag;
+  using CDT   = CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>;
+  using Face_handle = CDT::Face_handle;
+  using Point       = CDT::Point;
+  using Polygon_2   = CGAL::Polygon_2<K>;
 
   auto& arr = *reinterpret_cast<Arrangement*>(arrh);
 

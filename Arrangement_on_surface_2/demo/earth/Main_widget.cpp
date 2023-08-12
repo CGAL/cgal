@@ -178,8 +178,8 @@ void Main_widget::initializeGL()
 
   //const auto file_name = data_path + "world_countries.kml";
   //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa_1.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
   m_countries = Kml::read(file_name);
   
   // find the country with the least number of nodes
@@ -224,8 +224,8 @@ void Main_widget::initializeGL()
   // trianglulation
   {
     qDebug() << "constructiong arr..";
-    //auto arrh = Aos::construct(m_countries);
-    auto arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    auto arrh = Aos::construct(m_countries);
+    //auto arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     if (arrh == nullptr)
     {
       qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";
