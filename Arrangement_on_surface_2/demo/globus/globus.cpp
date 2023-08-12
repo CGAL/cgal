@@ -21,6 +21,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
+#include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/draw_arrangement_2.h>
 #include <CGAL/Arr_accessor.h>
 
@@ -301,7 +302,6 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   arr_access.clear_all();
 
   // Vertices
-  std::cout << "Vertices\n";
   using DVertex = typename Arr_accessor::Dcel_vertex;
   std::vector<DVertex*> vertices(num_vertices);
   size_t k = 0;
@@ -328,7 +328,6 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   }
 
   // Halfedges
-  std::cout << "Halfedges\n";
   using DHalfedge = typename Arr_accessor::Dcel_halfedge;
   std::vector<DHalfedge*> halfedges(num_halfedges);
   k = 0;
@@ -351,7 +350,6 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
   }
 
   // Faces
-  std::cout << "Faces\n";
   using DFace = typename Arr_accessor::Dcel_face;
   using DOuter_ccb = typename Arr_accessor::Dcel_outer_ccb;
   using DInner_ccb = typename Arr_accessor::Dcel_inner_ccb;
@@ -363,13 +361,12 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
 
     new_f->set_unbounded(is_unbounded);
     new_f->set_fictitious(! is_valid);
-
+    new_f->set_data(js_face["name"]);
     // Read the outer CCBs of the face.
     auto oit = js_face.find("outer_ccbs");
     if (oit != js_face.end()) {
       const auto& js_outer_ccbs = *oit;
       for (const auto& js_ccb : js_outer_ccbs) {
-        std::cout << "Outer CCB\n";
         // Allocate a new outer CCB record and set its incident face.
         auto* new_occb = arr_access.new_outer_ccb();
         new_occb->set_face(new_f);
@@ -405,7 +402,6 @@ bool read_arrangement(const std::string& filename, Arrangement_& arr,
     if (iit != js_face.end()) {
       const auto& js_inner_ccbs = *iit;
       for (const auto& js_ccb : js_inner_ccbs) {
-        std::cout << "Inner CCB\n";
         // Allocate a new inner CCB record and set its incident face.
         auto* new_iccb = arr_access.new_inner_ccb();
         new_iccb->set_face(new_f);
@@ -466,7 +462,8 @@ int main(int argc, char* argv[]) {
   using Geom_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
   using Point = Geom_traits::Point_2;
   using X_monotone_curve = Geom_traits::X_monotone_curve_2;
-  using Topol_traits = CGAL::Arr_spherical_topology_traits_2<Geom_traits>;
+  using Dcel = CGAL::Arr_face_extended_dcel<Geom_traits, std::string>;
+  using Topol_traits = CGAL::Arr_spherical_topology_traits_2<Geom_traits, Dcel>;
   using Arrangement = CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>;
 
   Kernel kernel;
