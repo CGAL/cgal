@@ -1,5 +1,11 @@
-// Copyright (C) 2016 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
 
 #ifndef MAIN_WIDGET_H
 #define MAIN_WIDGET_H
