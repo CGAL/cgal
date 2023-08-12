@@ -92,6 +92,7 @@ public:
                           get(vpmap, source(h, m_pmesh)));
   }
 
+  const PolygonMesh& get_mesh() const { return m_pmesh; }
 
 private:
   FT m_sq_short;

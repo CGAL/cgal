@@ -213,6 +213,8 @@ public:
     put(m_vertex_sizing_map, v, vertex_size);
   }
 
+  const PolygonMesh& get_mesh() const { return m_pmesh; }
+
   //todo ip: is_protected_constraint_too_long() from PR
 
 private:

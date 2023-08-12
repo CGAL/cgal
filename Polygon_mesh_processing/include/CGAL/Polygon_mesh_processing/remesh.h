@@ -206,6 +206,10 @@ void isotropic_remeshing(const FaceRange& faces
   if (std::begin(faces)==std::end(faces))
     return;
 
+  //todo ip: precondition or something else?
+  CGAL_precondition_msg(&(sizing.get_mesh()) == &pmesh, "Input mesh is not the same "
+                                                        "as the one used for the sizing field!");
+
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;

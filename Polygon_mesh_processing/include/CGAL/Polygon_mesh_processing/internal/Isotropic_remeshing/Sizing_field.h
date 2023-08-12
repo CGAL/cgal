@@ -45,6 +45,7 @@ public:
                                           const vertex_descriptor vb) const = 0;
   virtual boost::optional<FT> is_too_short(const halfedge_descriptor h) const = 0;
   virtual Point_3 split_placement(const halfedge_descriptor h) const = 0;
+  virtual const PolygonMesh& get_mesh() const = 0;
 
 };
 
