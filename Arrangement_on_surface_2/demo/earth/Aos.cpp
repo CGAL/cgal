@@ -1167,143 +1167,366 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 }
 
 
-Aos::Approx_arcs Aos::load_arr(const std::string& file_name)
+namespace
 {
-  auto js_txt = read_file(file_name);
-  auto js = json::parse(js_txt.begin(), js_txt.end());
-
-  Geom_traits traits;
-  Ext_aos arr(&traits);
-  auto ctr_p = traits.construct_point_2_object();
-  auto ctr_cv = traits.construct_curve_2_object();
-
-  ////////////////////////////////////////////////////////////////////////////
-  // POINTS
-  std::vector<Point>  points;
-  auto get_double_from_json = [&](json& js_val)
-  {
-    auto num = js_val["num"].get<std::string>();
-    auto den = js_val["den"].get<std::string>();
-    CGAL::Gmpq rat_x(num, den);
-    return CGAL::to_double(rat_x);
+  enum Error_id {
+    FILE_NOT_FOUND,
+    ILLEGAL_EXTENSION,
+    UNABLE_TO_OPEN,
+    FILE_IS_EMPTY,
+    INVALID_INITIAL_POLYGON,
+    UNSUPPORTED,
+    INVALID_OUTPUT_FILE,
+    ILLEGAL_SOLUTION_FILE
   };
-  auto& js_points = js["points"];
-  for (auto it = js_points.begin(); it != js_points.end(); ++it)
-  {
-    auto& js_point = *it;
-    auto loc = js_point["location"].get<int>();
-    auto dx = get_double_from_json(js_point["dx"]);
-    auto dy = get_double_from_json(js_point["dy"]);
-    auto dz = get_double_from_json(js_point["dz"]);
-    auto p = ctr_p(dx, dy, dz);
-    p.set_location(static_cast<Point::Location_type>(loc));
-    points.push_back(p);
-  }
-  std::cout << "num points = " << points.size() << std::endl;
 
-  ////////////////////////////////////////////////////////////////////////////
-  // CURVES
-  std::vector<Curve>  curves;
-  auto& js_curves = js["curves"];
+  struct Illegal_input : public std::logic_error {
+    Illegal_input(Error_id /* err */, const std::string& msg,
+      const std::string& filename) :
+      std::logic_error(std::string(msg).append(" (").append(filename).
+        append(")!"))
+    {}
 
-  for (auto it = js_curves.begin(); it != js_curves.end(); ++it)
-  {
-    auto& js_curve = *it;
-    auto psi = js_curve["source"].get<int>();
-    auto pti = js_curve["target"].get<int>();
-    auto& js_normal = js_curve["normal"];
-    auto nx = get_double_from_json(js_normal["dx"]);
-    auto ny = get_double_from_json(js_normal["dy"]);
-    auto nz = get_double_from_json(js_normal["dz"]);
-    auto is_vertical = js_curve["is_vertical"].get<bool>();
-    auto is_directed_right = js_curve["is_directed_right"].get<bool>();
-    auto is_full = js_curve["is_full"].get<bool>();
-
-    auto xcv = ctr_cv(points[psi], points[pti]);
-    //auto xcv = ctr_cv(points[psi], points[pti], Direction_3(nx, ny, nz));
-    //xcv.set_is_vertical(is_vertical);
-    //xcv.set_is_directed_right(is_directed_right);
-    //xcv.set_is_full(is_full);
-    curves.push_back(xcv);
-  }
-  std::cout << "num curves = " << curves.size() << std::endl;
-
-  ////////////////////////////////////////////////////////////////////////////
-  // VERTICES
-  auto& js_vertices = js["vertices"];
-  using Vertex_handle = Ext_aos::Vertex_handle;
-  std::vector<Vertex_handle> vertices;
-  for (auto it = js_vertices.begin(); it != js_vertices.end(); ++it)
-  {
-    auto& js_vertex = *it;
-    auto pi = js_vertex["point"].get<int>();
-    auto vh = CGAL::insert_point(arr, points[pi]);
-    vertices.push_back(vh);
-  }
-  std::cout << "num vertices = " << vertices.size() << std::endl;
-
-  ////////////////////////////////////////////////////////////////////////////
-  // HALF-EDGES
-  struct Halfedge
-  {
-    int svi, tvi, ci;
+    Illegal_input(Error_id /* err */, const std::string& msg) :
+      std::logic_error(std::string(msg).append("!"))
+    {}
   };
-  std::vector<Halfedge>  halfedges;
-  auto& js_halfedges = js["halfedges"];
-  for (auto it = js_halfedges.begin(); it != js_halfedges.end(); ++it)
-  {
-    auto& js_halfedge = *it;
-    Halfedge he;
-    he.svi = js_halfedge["source"].get<int>();
-    he.tvi = js_halfedge["target"].get<int>();
-    he.ci = js_halfedge["curve"].get<int>();
-    halfedges.push_back(he);
-  }
-  std::cout << "halfedges = " << halfedges.size() << std::endl;
 
-  ////////////////////////////////////////////////////////////////////////////
-  // FACES
-  auto add_ccbs_to_arr = [&](auto& js_ccbs)
-  {
-    for (auto cit = js_ccbs.begin(); cit != js_ccbs.end(); ++cit)
-    {
-      auto& js_outer_ccb = *cit;
-      auto& js_halfedges = js_outer_ccb["halfedges"];
-      std::cout << "num halfedges = " << js_halfedges.size() << std::endl;
-      for (auto hit = js_halfedges.begin(); hit != js_halfedges.end(); ++hit)
-      {
-        auto& js_halfedge = *hit;
-        auto hei = js_halfedge.get<int>();
-        auto xcvi = halfedges[hei].ci;
-        auto& xcv = curves[xcvi];
-        CGAL::insert(arr, xcv);
+  struct Input_file_missing_error : public std::logic_error {
+    Input_file_missing_error(std::string& str) : std::logic_error(str) {}
+  };
+
+  //
+  struct country {
+    //! Constructor
+    country(std::string& name) :
+      m_name(std::move(name))
+    {}
+
+    std::string m_name;
+  };
+
+  /*! Read a json file.
+ */
+  bool read_json(const std::string& filename, nlohmann::json& data) {
+    using json = nlohmann::json;
+    std::ifstream infile(filename);
+    if (!infile.is_open()) {
+      throw Illegal_input(UNABLE_TO_OPEN, "Cannot open file", filename);
+      return false;
+    }
+    data = json::parse(infile);
+    infile.close();
+    if (data.empty()) {
+      throw Illegal_input(FILE_IS_EMPTY, "File is empty", filename);
+      return false;
+    }
+    return true;
+  }
+
+  template <typename FT>
+  FT to_ft(const nlohmann::json& js_ft) {
+    using Exact_type = typename FT::Exact_type;
+    const std::string& js_num = js_ft["num"];
+    const std::string& js_den = js_ft["den"];
+    std::string str = js_num + "/" + js_den;
+    Exact_type eft(str);
+    return FT(eft);
+  }
+
+  template <typename Arrangement_, typename Kernel_>
+  bool read_arrangement(const std::string& filename, Arrangement_& arr,
+    const Kernel_& kernel) {
+    using Arrangement = Arrangement_;
+    using Kernel = Kernel_;
+
+    using json = nlohmann::json;
+    json data;
+    auto rc = read_json(filename, data);
+    if (!rc) return false;
+
+    // points
+    auto it = data.find("points");
+    if (it == data.end()) {
+      std::cerr << "The points item is missing " << " (" << filename << ")\n";
+      return false;
+    }
+    const auto& js_points = it.value();
+
+    // curves
+    it = data.find("curves");
+    if (it == data.end()) {
+      std::cerr << "The curves item is missing " << " (" << filename << ")\n";
+      return false;
+    }
+    const auto& js_curves = it.value();
+
+    // vertices
+    it = data.find("vertices");
+    if (it == data.end()) {
+      std::cerr << "The vertices item is missing " << " (" << filename << ")\n";
+      return false;
+    }
+    const auto& js_vertices = it.value();
+
+    // edges
+    it = data.find("edges");
+    if (it == data.end()) {
+      std::cerr << "The edges item is missing " << " (" << filename << ")\n";
+      return false;
+    }
+    const auto& js_edges = it.value();
+
+    // faces
+    it = data.find("faces");
+    if (it == data.end()) {
+      std::cerr << "The faces item is missing " << " (" << filename << ")\n";
+      return false;
+    }
+    const auto& js_faces = it.value();
+
+    const std::size_t num_points = js_points.size();
+    const std::size_t num_curves = js_curves.size();
+    const std::size_t num_vertices = js_vertices.size();
+    const std::size_t num_edges = js_edges.size();
+    const std::size_t num_faces = js_faces.size();
+    const std::size_t num_halfedges = num_edges * 2;
+
+    if (num_points < num_vertices) {
+      std::cerr << "The no. of points (" << num_points
+        << ") is smaller than the no. of vertices (" << num_vertices
+        << ")\n";
+      return false;
+    }
+
+    if (num_curves < num_edges) {
+      std::cerr << "The no. of curves (" << num_curves
+        << ") is smaller than the no. of edge (" << num_edges << ")\n";
+      return false;
+    }
+
+    std::cout << "# points: " << num_points << std::endl;
+    std::cout << "# curves: " << num_curves << std::endl;
+    std::cout << "# vertices: " << num_vertices << std::endl;
+    std::cout << "# halfedges: " << num_halfedges << std::endl;
+    std::cout << "# faces: " << num_faces << std::endl;
+
+    using Point = typename Arrangement::Point_2;
+    using X_monotone_curve = typename Arrangement::X_monotone_curve_2;
+    using FT = typename Kernel::FT;
+    using Exact_type = typename FT::Exact_type;
+
+    std::vector<Point> points;
+    points.reserve(num_points);
+    for (const auto& js_pnt : js_points) {
+      using Direction_3 = typename Kernel::Direction_3;
+      using Location = typename Point::Location_type;
+      auto location = static_cast<Location>(js_pnt["location"]);
+      auto dx = to_ft<FT>(js_pnt["dx"]);
+      auto dy = to_ft<FT>(js_pnt["dy"]);
+      auto dz = to_ft<FT>(js_pnt["dz"]);
+      Direction_3 dir(dx, dy, dz);
+      Point pnt(dir, location);
+      points.push_back(pnt);
+    }
+
+    std::vector<X_monotone_curve> xcurves;
+    xcurves.reserve(num_curves);
+    for (const auto& js_xcv : js_curves) {
+      using Direction_3 = typename Kernel::Direction_3;
+      std::size_t src_id = js_xcv["source"];
+      std::size_t trg_id = js_xcv["target"];
+      const auto& js_normal = js_xcv["normal"];
+      auto dx = to_ft<FT>(js_normal["dx"]);
+      auto dy = to_ft<FT>(js_normal["dy"]);
+      auto dz = to_ft<FT>(js_normal["dz"]);
+      Direction_3 normal(dx, dy, dz);
+      bool is_vert = js_xcv["is_vertical"];
+      bool is_directed_right = js_xcv["is_directed_right"];
+      bool is_full = js_xcv["is_full"];
+      const auto& src = points[src_id];
+      const auto& trg = points[trg_id];
+      X_monotone_curve xcv(src, trg, normal, is_vert, is_directed_right, is_full);
+      xcurves.push_back(xcv);
+    }
+
+    using Arr_accessor = CGAL::Arr_accessor<Arrangement>;
+    Arr_accessor arr_access(arr);
+    arr_access.clear_all();
+
+    // Vertices
+    std::cout << "Vertices\n";
+    using DVertex = typename Arr_accessor::Dcel_vertex;
+    std::vector<DVertex*> vertices(num_vertices);
+    size_t k = 0;
+    for (const auto& js_vertex : js_vertices) {
+      std::size_t point_id = js_vertex["point"];
+      const auto& point = points[point_id];
+      CGAL::Arr_parameter_space ps_x, ps_y;
+      switch (point.location()) {
+      case Point::NO_BOUNDARY_LOC: ps_x = ps_y = CGAL::INTERIOR; break;
+      case Point::MIN_BOUNDARY_LOC:
+        ps_x = CGAL::INTERIOR;
+        ps_y = CGAL::ARR_BOTTOM_BOUNDARY;
+        break;
+      case Point::MID_BOUNDARY_LOC:
+        ps_x = CGAL::LEFT_BOUNDARY;
+        ps_y = CGAL::INTERIOR;
+        break;
+      case Point::MAX_BOUNDARY_LOC:
+        ps_x = CGAL::INTERIOR;
+        ps_y = CGAL::ARR_TOP_BOUNDARY;
+        break;
       }
-    }
-  };
-  auto& js_faces = js["faces"];
-  std::cout << "num faces = " << js_faces.size() << "\n";
-  for (auto it = js_faces.begin(); it != js_faces.end(); ++it)
-  {
-    auto& js_face = *it;
-    auto& js_name = js_face["name"];
-    auto& js_outer_ccbs = js_face["outer_ccbs"];
-    //auto& js_inner_ccbs = js_face["inner_ccbs"];
-    if (0)
-    {
-      std::cout << std::boolalpha << "is name string = " << js_name.is_string() << std::endl;
-      std::cout << "name = " << js_name.get<std::string>() << std::endl;
-      auto& js_ccbs = js_outer_ccbs;
-      std::cout << std::boolalpha << "ccb is array = " << js_ccbs.is_array() << "\n";
-      std::cout << "num ccbs = " << js_ccbs.size() << std::endl;
-
+      vertices[k++] = arr_access.new_vertex(&point, ps_x, ps_y);
     }
 
-    add_ccbs_to_arr(js_outer_ccbs);
-    //add_ccbs_to_arr(js_inner_ccbs);
+    // Halfedges
+    std::cout << "Halfedges\n";
+    using DHalfedge = typename Arr_accessor::Dcel_halfedge;
+    std::vector<DHalfedge*> halfedges(num_halfedges);
+    k = 0;
+    for (const auto& js_edge : js_edges) {
+      std::size_t source_id = js_edge["source"];
+      std::size_t target_id = js_edge["target"];
+      std::size_t curve_id = js_edge["curve"];
+      int direction = js_edge["direction"];
+      DVertex* src_v = vertices[source_id];
+      DVertex* trg_v = vertices[target_id];
+      const auto& curve = xcurves[curve_id];
+      DHalfedge* new_he = arr_access.new_edge(&curve);
+      trg_v->set_halfedge(new_he);
+      new_he->set_vertex(trg_v);
+      src_v->set_halfedge(new_he->opposite());
+      new_he->opposite()->set_vertex(src_v);
+      new_he->set_direction(static_cast<CGAL::Arr_halfedge_direction>(direction));
+      halfedges[k++] = new_he;
+      halfedges[k++] = new_he->opposite();
+    }
+
+    // Faces
+    std::cout << "Faces\n";
+    using DFace = typename Arr_accessor::Dcel_face;
+    using DOuter_ccb = typename Arr_accessor::Dcel_outer_ccb;
+    using DInner_ccb = typename Arr_accessor::Dcel_inner_ccb;
+    using DIso_vert = typename Arr_accessor::Dcel_isolated_vertex;
+    const bool is_unbounded(false);
+    const bool is_valid(true);
+    for (const auto& js_face : js_faces) {
+      DFace* new_f = arr_access.new_face();
+
+      new_f->set_unbounded(is_unbounded);
+      new_f->set_fictitious(!is_valid);
+
+      // Read the outer CCBs of the face.
+      auto oit = js_face.find("outer_ccbs");
+      if (oit != js_face.end()) {
+        const auto& js_outer_ccbs = *oit;
+        for (const auto& js_ccb : js_outer_ccbs) {
+          std::cout << "Outer CCB\n";
+          // Allocate a new outer CCB record and set its incident face.
+          auto* new_occb = arr_access.new_outer_ccb();
+          new_occb->set_face(new_f);
+
+          // Read the current outer CCB.
+          auto bit = js_ccb.find("halfedges");
+          if (bit == js_ccb.end()) {
+            std::cerr << "The halfedges item is missing " << " (" << filename
+              << ")\n";
+            return false;
+          }
+
+          const auto& js_halfedges = *bit;
+          auto hit = js_halfedges.begin();
+          std::size_t first_idx = *hit;
+          DHalfedge* first_he = halfedges[first_idx];
+          first_he->set_outer_ccb(new_occb);
+          DHalfedge* prev_he = first_he;
+          for (++hit; hit != js_halfedges.end(); ++hit) {
+            std::size_t curr_idx = *hit;
+            auto curr_he = halfedges[curr_idx];
+            prev_he->set_next(curr_he);		// connect
+            curr_he->set_outer_ccb(new_occb);	// set the CCB
+            prev_he = curr_he;
+          }
+          prev_he->set_next(first_he);		// close the loop
+          new_f->add_outer_ccb(new_occb, first_he);
+        }
+      }
+
+      // Read the inner CCBs of the face.
+      auto iit = js_face.find("inner_ccbs");
+      if (iit != js_face.end()) {
+        const auto& js_inner_ccbs = *iit;
+        for (const auto& js_ccb : js_inner_ccbs) {
+          std::cout << "Inner CCB\n";
+          // Allocate a new inner CCB record and set its incident face.
+          auto* new_iccb = arr_access.new_inner_ccb();
+          new_iccb->set_face(new_f);
+
+          // Read the current inner CCB.
+          auto bit = js_ccb.find("halfedges");
+          if (bit == js_ccb.end()) {
+            std::cerr << "The halfedges item is missing " << " (" << filename
+              << ")\n";
+            return false;
+          }
+
+          const auto& js_halfedges = *bit;
+          auto hit = js_halfedges.begin();
+          std::size_t first_idx = *hit;
+          DHalfedge* first_he = halfedges[first_idx];
+          first_he->set_inner_ccb(new_iccb);
+          DHalfedge* prev_he = first_he;
+          for (++hit; hit != js_halfedges.end(); ++hit) {
+            std::size_t curr_idx = *hit;
+            auto curr_he = halfedges[curr_idx];
+            prev_he->set_next(curr_he);		// connect
+            curr_he->set_inner_ccb(new_iccb);	// set the CCB
+            prev_he = curr_he;
+          }
+          prev_he->set_next(first_he);		// close the loop
+          new_f->add_inner_ccb(new_iccb, first_he);
+        }
+      }
+
+      // // Read the isolated vertices inside the face.
+      // Size n_isolated_vertices =
+      //   formatter.read_size("number_of_isolated_vertices");
+      // if (n_isolated_vertices) {
+      //   formatter.read_isolated_vertices_begin();
+      //   Size k;
+      //   for (k = 0; k < n_isolated_vertices; k++) {
+      //     // Allocate a new isolated vertex record and set its incident face.
+      //     DIso_vert* new_iso_vert = arr_access.new_isolated_vertex();
+      //     new_iso_vert->set_face(new_f);
+      //     // Read the current isolated vertex.
+      //     std::size_t v_idx = formatter.read_vertex_index();
+      //     DVertex* iso_v = m_vertices[v_idx];
+      //     iso_v->set_isolated_vertex(new_iso_vert);
+      //     new_f->add_isolated_vertex(new_iso_vert, iso_v);
+      //   }
+      // }
+    }
+
+    return true;
   }
-  std::cout << "num arr-faces = " << arr.number_of_faces() << std::endl;
 
-  return Approx_arcs{};
+  Kernel kernel;
+  Geom_traits traits;
+}
+
+
+Aos::Arr_handle Aos::load_arr(const std::string& file_name)
+{
+  Arrangement arr(&traits);;
+  auto rc = read_arrangement(file_name, arr, kernel);
+  if (!rc) {
+    std::cerr << "Failed to load database!\n";
+    return nullptr;
+  }
+
+  return &arr;
 }
 
 

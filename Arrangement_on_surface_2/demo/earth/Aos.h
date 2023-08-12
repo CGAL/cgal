@@ -52,7 +52,7 @@ public:
                        const std::string& file_name);
 
   // save the arrangement created with EPEC
-  static Approx_arcs load_arr(const std::string& file_name);
+  static Arr_handle load_arr(const std::string& file_name);
 
   static Arr_handle construct(Kml::Placemarks& placemarks);
   static std::vector<QVector3D> get_triangles(Arr_handle arrh);

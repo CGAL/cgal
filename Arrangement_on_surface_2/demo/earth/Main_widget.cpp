@@ -211,21 +211,26 @@ void Main_widget::initializeGL()
     new_faces = std::make_unique<Line_strips>(created_faces);
   }
 
-  // SAVING & LOADING ARR
-  if(1)
+  // SAVING ARR
+  if(0)
   {
     //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa_1.json");
     Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_equatorial_guinea.json");
     qDebug() << "done saving!";
     exit(0);
     //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
-    //Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
   }
 
   // trianglulation
   {
     qDebug() << "constructiong arr..";
-    auto arrh = Aos::construct(m_countries);
+    //auto arrh = Aos::construct(m_countries);
+    auto arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    if (arrh == nullptr)
+    {
+      qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";
+      exit(1);
+    }
 
     qDebug() << "generating triangles..";
     auto triangle_points = Aos::get_triangles(arrh);
