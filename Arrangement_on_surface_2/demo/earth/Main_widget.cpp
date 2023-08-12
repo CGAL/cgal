@@ -221,11 +221,11 @@ void Main_widget::initializeGL()
     //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
   }
 
-  // trianglulation
+  // triangulation
   {
     qDebug() << "constructiong arr..";
-    auto arrh = Aos::construct(m_countries);
-    //auto arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    //auto arrh = Aos::construct(m_countries);
+    auto arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     if (arrh == nullptr)
     {
       qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";

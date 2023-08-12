@@ -54,6 +54,8 @@ namespace {
   using Segment = Geom_traits::X_monotone_curve_2;
   using Vertex_handle = Arrangement::Vertex_handle;
 
+  // use this traits everytime you construct an arrangment!
+  static Geom_traits s_traits;
 
   // Extended DCEL & Arrangement
   struct Flag
@@ -108,9 +110,9 @@ namespace {
   // NOTE: this is defined here to keep the definitions local to this cpp file
   Curves  get_arcs(const Kml::Placemark& placemark)
   {
-    Geom_traits traits;
-    auto ctr_p = traits.construct_point_2_object();
-    auto ctr_cv = traits.construct_curve_2_object();
+    //Geom_traits traits;
+    auto ctr_p = s_traits.construct_point_2_object();
+    auto ctr_cv = s_traits.construct_curve_2_object();
 
     std::vector<Curve>  xcvs;
     for (const auto& polygon : placemark.polygons)
@@ -159,9 +161,9 @@ namespace {
   template<typename Arr_type>
   Curves  get_arcs(const Kml::Placemarks& placemarks, Arr_type& arr)
   {
-    Geom_traits traits;
-    auto ctr_p = traits.construct_point_2_object();
-    auto ctr_cv = traits.construct_curve_2_object();
+    //Geom_traits traits;
+    auto ctr_p = s_traits.construct_point_2_object();
+    auto ctr_cv = s_traits.construct_curve_2_object();
 
     num_counted_nodes = 0;
     num_counted_arcs = 0;
@@ -218,8 +220,8 @@ namespace {
 
   Aos::Approx_arc  get_approx_curve(Curve xcv, double error)
   {
-    Geom_traits traits;
-    auto approx = traits.approximate_2_object();
+    //Geom_traits traits;
+    auto approx = s_traits.approximate_2_object();
     std::vector<QVector3D>  approx_curve;
     {
       std::vector<Approximate_point_2> v;
@@ -250,14 +252,14 @@ namespace {
 
 Aos::Approx_arc Aos::get_approx_identification_curve(double error)
 {
-  Geom_traits traits;
-  auto ctr_p = traits.construct_point_2_object();
-  auto ctr_cv = traits.construct_curve_2_object();
+  //Geom_traits traits;
+  auto ctr_p = s_traits.construct_point_2_object();
+  auto ctr_cv = s_traits.construct_curve_2_object();
 
   // identification curve (meridian pierced by NEGATIVE Y-AXIS)
   auto xcv = ctr_cv(ctr_p(0, 0, -1), ctr_p(0, 0, 1), Dir3(0, 1, 0));
 
-  auto approx = traits.approximate_2_object();
+  auto approx = s_traits.approximate_2_object();
   Approx_arc approx_arc;
   {
     std::vector<Approximate_point_2> v;
@@ -274,11 +276,11 @@ Aos::Approx_arc Aos::get_approx_identification_curve(double error)
 
 Aos::Approx_arcs Aos::get_approx_arcs(double error)
 {
-  Geom_traits traits;
-  Arrangement arr(&traits);
+  //Geom_traits traits;
+  Arrangement arr(&s_traits);
 
-  auto ctr_p = traits.construct_point_2_object();
-  auto ctr_cv = traits.construct_curve_2_object();
+  auto ctr_p = s_traits.construct_point_2_object();
+  auto ctr_cv = s_traits.construct_curve_2_object();
 
   std::vector<Curve>  xcvs;
   xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
@@ -287,7 +289,7 @@ Aos::Approx_arcs Aos::get_approx_arcs(double error)
   //xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0), Dir3(0, 0, -1)));
   //xcvs.push_back(ctr_cv(Dir3(0, 0, -1)));
 
-  auto approx = traits.approximate_2_object();
+  auto approx = s_traits.approximate_2_object();
 
   auto approx_arcs = get_approx_curves(xcvs, error);
   //std::vector<std::vector<QVector3D>>  arcs;
@@ -310,13 +312,13 @@ Aos::Approx_arcs Aos::get_approx_arcs(double error)
 }
 Aos::Approx_arcs Aos::get_approx_arcs(const Kml::Placemark& placemark, double error)
 {
-  Geom_traits traits;
-  auto ctr_p = traits.construct_point_2_object();
-  auto ctr_cv = traits.construct_curve_2_object();
+  //Geom_traits traits;
+  auto ctr_p = s_traits.construct_point_2_object();
+  auto ctr_cv = s_traits.construct_curve_2_object();
 
   auto xcvs = get_arcs(placemark);
 
-  auto approx = traits.approximate_2_object();
+  auto approx = s_traits.approximate_2_object();
   std::vector<std::vector<QVector3D>>  arcs;
   for (const auto& xcv : xcvs)
   {
@@ -338,8 +340,8 @@ Aos::Approx_arcs Aos::get_approx_arcs(const Kml::Placemark& placemark, double er
 
 void Aos::check(const Kml::Placemarks& placemarks)
 {
-  Geom_traits traits;
-  Arrangement arr(&traits);
+  //Geom_traits traits;
+  Arrangement arr(&s_traits);
 
   auto xcvs = get_arcs(placemarks, arr);
   std::cout << "-------------------------------\n";
@@ -365,8 +367,8 @@ void Aos::check(const Kml::Placemarks& placemarks)
 std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
 {
   // Construct the arrangement from 12 geodesic arcs.
-  Geom_traits traits;
-  Ext_aos arr(&traits);
+  //Geom_traits traits;
+  Ext_aos arr(&s_traits);
 
   std::cout << "-------------------------------\n";
   std::cout << "** num arr FACES (before adding arcs) = " <<
@@ -391,7 +393,7 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
   // extract all vertices that are ADDED when inserting the arcs!
   int num_created_vertices = 0;
   std::vector<QVector3D> created_vertices;
-  auto approx = traits.approximate_2_object();
+  auto approx = s_traits.approximate_2_object();
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
     auto& d = vit->data();
@@ -465,16 +467,16 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks)
 std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
 {
   // Construct the arrangement from 12 geodesic arcs.
-  Geom_traits traits;
-  Ext_aos arr(&traits);
+  //Geom_traits traits;
+  Ext_aos arr(&s_traits);
 
   // 
   auto nodes = Kml::generate_ids(placemarks);
   //auto nodes = Kml::generate_ids_approx(placemarks, 0.001);
 
   //Segment s()
-  auto ctr_p = traits.construct_point_2_object();
-  auto ctr_cv = traits.construct_curve_2_object();
+  auto ctr_p = s_traits.construct_point_2_object();
+  auto ctr_cv = s_traits.construct_curve_2_object();
 
   int num_counted_arcs = 0;
   int num_counted_polygons = 0;
@@ -527,7 +529,7 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
   // extract all vertices that are ADDED when inserting the arcs!
   int num_created_vertices = 0;
   std::vector<QVector3D> created_vertices;
-  auto approx = traits.approximate_2_object();
+  auto approx = s_traits.approximate_2_object();
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
     auto& d = vit->data();
@@ -587,10 +589,10 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
 
 Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
 {
-  Geom_traits traits;
-  Ext_aos arr(&traits);
-  auto ctr_p = traits.construct_point_2_object();
-  auto ctr_cv = traits.construct_curve_2_object();
+  //Geom_traits traits;
+  Ext_aos arr(&s_traits);
+  auto ctr_p = s_traits.construct_point_2_object();
+  auto ctr_cv = s_traits.construct_curve_2_object();
 
   using Face_handle = Ext_aos::Face_handle;
   auto fh = arr.faces_begin();
@@ -741,10 +743,10 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
 void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 {
 #ifndef USE_EPIC
-  Geom_traits traits;
-  Ext_aos arr(&traits);
-  auto ctr_p = traits.construct_point_2_object();
-  auto ctr_cv = traits.construct_curve_2_object();
+  //Geom_traits traits;
+  Ext_aos arr(&s_traits);
+  auto ctr_p = s_traits.construct_point_2_object();
+  auto ctr_cv = s_traits.construct_curve_2_object();
 
   using Face_handle = Ext_aos::Face_handle;
   auto fh = arr.faces_begin();
@@ -1524,13 +1526,13 @@ namespace
   }
 
   Kernel kernel;
-  Geom_traits traits;
+  //Geom_traits traits;
 }
 
 
 Aos::Arr_handle Aos::load_arr(const std::string& file_name)
 {
-  Arrangement arr(&traits);;
+  Arrangement arr(&s_traits);
   auto rc = read_arrangement(file_name, arr, kernel);
   if (!rc) {
     std::cerr << "Failed to load database!\n";
@@ -1543,8 +1545,7 @@ Aos::Arr_handle Aos::load_arr(const std::string& file_name)
 
 Aos::Arr_handle  Aos::construct(Kml::Placemarks& placemarks)
 {
-  static Geom_traits traits;
-  auto* arr = new Arrangement(&traits);
+  auto* arr = new Arrangement(&s_traits);
 
   auto xcvs = get_arcs(placemarks, *arr);
   for (auto& xcv : xcvs)
@@ -1569,8 +1570,8 @@ std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
 
   auto& arr = *reinterpret_cast<Arrangement*>(arrh);
 
-  Geom_traits traits;
-  auto approx = traits.approximate_2_object();
+  //Geom_traits traits;
+  auto approx = s_traits.approximate_2_object();
 
 
   std::vector<std::vector<QVector3D>> all_faces;
