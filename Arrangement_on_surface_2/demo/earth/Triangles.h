@@ -24,12 +24,15 @@ public:
   Triangles(std::vector<QVector3D>& vertices);
 
   int get_num_triangles() const;
+  void set_color(const QVector4D& rgba);
+  const QVector4D& get_color() const;
 
   void draw();
   
 private:
-  GLuint  m_vao, m_vbo;
-  int     m_num_vertices;
+  GLuint    m_vao, m_vbo;
+  int       m_num_vertices;
+  QVector4D m_color;
 };
 
 

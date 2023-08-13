@@ -77,6 +77,15 @@ Triangles::Triangles(std::vector<QVector3D>& vertices)
   glBindVertexArray(0);
 }
 
+void Triangles::set_color(const QVector4D& rgba)
+{
+  m_color = rgba;
+}
+const QVector4D& Triangles::get_color() const
+{
+  return m_color;
+}
+
 void Triangles::draw()
 {
   // DRAW TRIANGLES

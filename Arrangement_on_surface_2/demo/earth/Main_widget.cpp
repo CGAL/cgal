@@ -245,9 +245,11 @@ void Main_widget::initializeGL()
     //auto triangle_points = Aos::get_triangles(arrh);
     auto country_triangles_map = Aos::get_triangles_by_country(arrh);
     qDebug() << "num countries = " << country_triangles_map.size();
+    auto rndm = [] {return rand() / double(RAND_MAX); };
     for (auto& [country_name, triangle_points] : country_triangles_map)
     {
       auto country_triangles = std::make_unique<Triangles>(triangle_points);
+      country_triangles->set_color(QVector4D(rndm(), rndm(), rndm(), 1));
       g_country_triangles.push_back(std::move(country_triangles));
     }
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
@@ -558,7 +560,10 @@ void Main_widget::paintGL()
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       //g_all_triangles->draw();
       for (auto& country : g_country_triangles)
+      {
+        sp.set_uniform("u_color", country->get_color());
         country->draw();
+      }
 
       //sp.set_uniform("u_color", QVector4D(0,0,0,1));
       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
