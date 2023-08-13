@@ -68,7 +68,7 @@ public:
   static std::vector<QVector3D> get_triangles(Arr_handle arrh);
 
   using Country_triangles_map = std::map<std::string, std::vector<QVector3D>>;
-  Country_triangles_map get_triangles_by_country(Arr_handle arrh);
+  static Country_triangles_map get_triangles_by_country(Arr_handle arrh);
 };
 
 

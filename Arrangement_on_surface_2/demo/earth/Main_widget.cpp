@@ -168,7 +168,8 @@ void Main_widget::init_problematic_nodes()
 std::unique_ptr<Line_strips>   new_faces;
 
 #include "Triangles.h"
-std::unique_ptr<Triangles>  g_face_triangles;
+std::unique_ptr<Triangles>  g_all_triangles;
+std::vector<std::unique_ptr<Triangles>>  g_country_triangles;
 
 
 void Main_widget::initializeGL()
@@ -241,10 +242,17 @@ void Main_widget::initializeGL()
     }
 
     qDebug() << "generating triangles..";
-    auto triangle_points = Aos::get_triangles(arrh);
+    //auto triangle_points = Aos::get_triangles(arrh);
+    auto country_triangles_map = Aos::get_triangles_by_country(arrh);
+    qDebug() << "num countries = " << country_triangles_map.size();
+    for (auto& [country_name, triangle_points] : country_triangles_map)
+    {
+      auto country_triangles = std::make_unique<Triangles>(triangle_points);
+      g_country_triangles.push_back(std::move(country_triangles));
+    }
+    //qDebug() << "num triangles = " << triangle_points.size() / 3;
+    //g_all_triangles = std::make_unique<Triangles>(triangle_points);
     
-    qDebug() << "num triangles = " << triangle_points.size() / 3;
-    g_face_triangles = std::make_unique<Triangles>(triangle_points);
   }
 
 
@@ -548,11 +556,13 @@ void Main_widget::paintGL()
       sp.set_uniform("u_color", face_color);
       sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      g_face_triangles->draw();
+      //g_all_triangles->draw();
+      for (auto& country : g_country_triangles)
+        country->draw();
 
       //sp.set_uniform("u_color", QVector4D(0,0,0,1));
       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      //g_face_triangles->draw();
+      //g_all_triangles->draw();
     }
 
     sp.unuse();
