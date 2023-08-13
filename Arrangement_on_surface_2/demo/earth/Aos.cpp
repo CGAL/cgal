@@ -1711,9 +1711,13 @@ Aos::Country_triangles_map Aos::get_triangles_by_country(Arr_handle arrh)
   {
     auto& face = *fit;
     const auto& country_name = fit->data();
+    // skipping spherical-face
+    if (country_name.empty())
+      continue;
     country_faces_map[country_name].push_back(&face);
   }
 
+  std::cout << "triangulating individual faces\n";
   Country_triangles_map  result;
   for (auto& [country_name, faces] : country_faces_map)
   {
@@ -1743,8 +1747,6 @@ Aos::Country_triangles_map Aos::get_triangles_by_country(Arr_handle arrh)
 
     // RESULTING TRIANGLE POINTS (every 3 point => triangle)
     auto& triangles = result[country_name];
-    std::cout << "triangulating individual faces\n";
-
     // loop on all approximated faces
     for (auto& face_points : all_faces_of_current_country)
     {
@@ -1815,6 +1817,83 @@ Aos::Country_triangles_map Aos::get_triangles_by_country(Arr_handle arrh)
         }
       }
     }
+  }
+
+  return result;
+}
+
+
+Aos::Country_color_map  Aos::get_color_mapping(Arr_handle arrh)
+{
+  auto& arr = *reinterpret_cast<Countries_arr*>(arrh);
+
+  // group the faces by their country name,
+  std::vector<std::string>  all_countries;
+  using Face_ = Countries_arr::Face_handle::value_type;
+  std::map<std::string, std::vector<Face_*>>  country_faces_map;
+  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+  {
+    auto& face = *fit;
+    const auto& country_name = fit->data();
+    // skipping spherical-face
+    if (country_name.empty())
+      continue;
+    country_faces_map[country_name].push_back(&face);
+    all_countries.push_back(country_name);
+  }
+
+  // prepare a map of neighboring countries 
+  std::map<std::string, std::set<std::string>> country_neighbors_map;
+  for (auto& [country_name, faces] : country_faces_map)
+  {
+    // loop on all of the faces of the current country 
+    for (auto* face : faces)
+    {
+      auto first = face->outer_ccb();
+      auto curr = first;
+      do {
+        const auto& neighbor_country_name = curr->twin()->face()->data();
+        
+        // skip the spherical face
+        if (neighbor_country_name.empty())
+          continue;
+
+        country_neighbors_map[country_name].insert(neighbor_country_name);
+      } while (++curr != first);
+    }
+  }
+
+  // find a color index for each country by looking at its neighbors
+  Country_color_map  result;
+  for(const auto& country_name : all_countries)
+  {
+    // first: find a free color index
+    bool color_used[5] = { false, false, false, false, false };
+    auto& neighbor_set = country_neighbors_map[country_name];
+    for (auto& neighbor : neighbor_set)
+    {
+      auto it = result.find(neighbor);
+      // if there is a country in the map, then it must have been assigned one!
+      if (it != result.end())
+      {
+        auto used_color_index = it->second;
+        color_used[used_color_index] = true;
+      }
+    }
+
+    // find the first color index not used
+    bool found = false;
+    for (int i = 0; i < 5; i++)
+    {
+      if (color_used[i] == false)
+      {
+        found = true;
+        result[country_name] = i;
+      }
+    }
+    // assertion check!!!
+    if(!found)
+      std::cout << "*** ASSERTION ERROR: NO INDEX FOUND!!!\n";
   }
 
   return result;
