@@ -339,22 +339,20 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 }
 
-// Convenience overload when using target_edge_length for sizing
+// Overload when using target_edge_length for sizing
 template<typename PolygonMesh
-  , typename FaceRange
-  , typename NamedParameters = parameters::Default_named_parameters>
+       , typename FaceRange
+       , typename NamedParameters = parameters::Default_named_parameters>
 void isotropic_remeshing(const FaceRange& faces
-                         , const double target_edge_length
-                         , PolygonMesh& pmesh
-                         , const NamedParameters& np = parameters::default_values())
+                       , const double target_edge_length
+                       , PolygonMesh& pmesh
+                       , const NamedParameters& np = parameters::default_values())
 {
-  typedef Uniform_sizing_field<PolygonMesh> Default_sizing;
-  Default_sizing sizing(target_edge_length, pmesh);
-  isotropic_remeshing<PolygonMesh, FaceRange, Default_sizing, NamedParameters>(
-    faces,
-    sizing,
-    pmesh,
-    np);
+  Uniform_sizing_field<PolygonMesh> sizing(target_edge_length, pmesh);
+  if (target_edge_length > 0)
+    isotropic_remeshing(faces, sizing, pmesh, np);
+  else
+    isotropic_remeshing(faces, sizing, pmesh, np.do_split(false).do_collapse(false));
 }
 
 /*!
