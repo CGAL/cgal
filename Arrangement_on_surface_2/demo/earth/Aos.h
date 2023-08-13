@@ -10,6 +10,7 @@
 #ifndef AOS_H
 #define AOS_H
 
+#include <map>
 #include <vector>
 #include <qvector3d.h>
 
@@ -59,11 +60,15 @@ public:
   static void save_arr(Kml::Placemarks& placemarks, 
                        const std::string& file_name);
 
-  // save the arrangement created with EPEC
+  // loads the arrangement created by the save_arr function
+  // NOTE: This one loads the arrangement as "Country_arr" type
   static Arr_handle load_arr(const std::string& file_name);
 
   static Arr_handle construct(Kml::Placemarks& placemarks);
   static std::vector<QVector3D> get_triangles(Arr_handle arrh);
+
+  using Country_triangles_map = std::map<std::string, std::vector<QVector3D>>;
+  Country_triangles_map get_triangles_by_country(Arr_handle arrh);
 };
 
 

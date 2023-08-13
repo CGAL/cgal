@@ -73,10 +73,18 @@ namespace {
     Flag(bool init) : v{ init } {}
   };
 
+  // EXTENDED AOS for analysing the arrangement
   using Ext_dcel = CGAL::Arr_extended_dcel<Geom_traits, Flag, Flag, Flag>;
   using Ext_topol_traits = CGAL::Arr_spherical_topology_traits_2<Geom_traits,
-    Ext_dcel>;
+                                                                      Ext_dcel>;
   using Ext_aos = CGAL::Arrangement_on_surface_2<Geom_traits, Ext_topol_traits>;
+
+  // COUNTRIES AOS for grouping the faces by the country name
+  using Countries_dcel = CGAL::Arr_face_extended_dcel<Geom_traits, std::string>;
+  using Countries_topol_traits = 
+             CGAL::Arr_spherical_topology_traits_2<Geom_traits, Countries_dcel>;
+  using Countries_arr = 
+            CGAL::Arrangement_on_surface_2<Geom_traits, Countries_topol_traits>;
 
 
 
@@ -1376,7 +1384,6 @@ namespace
     arr_access.clear_all();
 
     // Vertices
-    std::cout << "Vertices\n";
     using DVertex = typename Arr_accessor::Dcel_vertex;
     std::vector<DVertex*> vertices(num_vertices);
     size_t k = 0;
@@ -1403,7 +1410,6 @@ namespace
     }
 
     // Halfedges
-    std::cout << "Halfedges\n";
     using DHalfedge = typename Arr_accessor::Dcel_halfedge;
     std::vector<DHalfedge*> halfedges(num_halfedges);
     k = 0;
@@ -1426,7 +1432,6 @@ namespace
     }
 
     // Faces
-    std::cout << "Faces\n";
     using DFace = typename Arr_accessor::Dcel_face;
     using DOuter_ccb = typename Arr_accessor::Dcel_outer_ccb;
     using DInner_ccb = typename Arr_accessor::Dcel_inner_ccb;
@@ -1438,13 +1443,12 @@ namespace
 
       new_f->set_unbounded(is_unbounded);
       new_f->set_fictitious(!is_valid);
-
+      new_f->set_data(js_face["name"]);
       // Read the outer CCBs of the face.
       auto oit = js_face.find("outer_ccbs");
       if (oit != js_face.end()) {
         const auto& js_outer_ccbs = *oit;
         for (const auto& js_ccb : js_outer_ccbs) {
-          std::cout << "Outer CCB\n";
           // Allocate a new outer CCB record and set its incident face.
           auto* new_occb = arr_access.new_outer_ccb();
           new_occb->set_face(new_f);
@@ -1480,7 +1484,6 @@ namespace
       if (iit != js_face.end()) {
         const auto& js_inner_ccbs = *iit;
         for (const auto& js_ccb : js_inner_ccbs) {
-          std::cout << "Inner CCB\n";
           // Allocate a new inner CCB record and set its incident face.
           auto* new_iccb = arr_access.new_inner_ccb();
           new_iccb->set_face(new_f);
@@ -1532,22 +1535,20 @@ namespace
 
     return true;
   }
-
-  Kernel kernel;
-  //Geom_traits traits;
 }
 
 
-Aos::Arr_handle Aos::load_arr(const std::string& file_name)
+Aos::Arr_handle  Aos::load_arr(const std::string& file_name)
 {
-  Arrangement arr(&s_traits);
-  auto rc = read_arrangement(file_name, arr, kernel);
+  auto* arr = new Countries_arr(&s_traits);
+  Kernel  kernel;
+  auto rc = read_arrangement(file_name, *arr, kernel);
   if (!rc) {
     std::cerr << "Failed to load database!\n";
     return nullptr;
   }
 
-  return &arr;
+  return arr;
 }
 
 
@@ -1684,4 +1685,137 @@ std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
   }
 
   return triangles;
+}
+
+
+Aos::Country_triangles_map Aos::get_triangles_by_country(Arr_handle arrh)
+{
+  using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+  //using K     = CGAL::Projection_traits_3<K_epic>;
+  using Vb = CGAL::Triangulation_vertex_base_2<K>;
+  using Fb = CGAL::Constrained_triangulation_face_base_2<K>;
+  using TDS = CGAL::Triangulation_data_structure_2<Vb, Fb>;
+  using Itag = CGAL::Exact_predicates_tag;
+  using CDT = CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>;
+  using Face_handle = CDT::Face_handle;
+  using Point = CDT::Point;
+  using Polygon_2 = CGAL::Polygon_2<K>;
+
+  auto& arr = *reinterpret_cast<Countries_arr*>(arrh);
+  auto approx = s_traits.approximate_2_object();
+
+  // group the faces by their country name
+  using Face_ = Countries_arr::Face_handle::value_type;
+  std::map<std::string, std::vector<Face_*>>  country_faces_map;
+  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+  {
+    auto& face = *fit;
+    const auto& country_name = fit->data();
+    country_faces_map[country_name].push_back(&face);
+  }
+
+  Country_triangles_map  result;
+  for (auto& [country_name, faces] : country_faces_map)
+  {
+    // CONVERT the face-points to QVector3D
+    using Face_points = std::vector<QVector3D>;
+    using Faces_ = std::vector<Face_points>;
+    Faces_  all_faces_of_current_country;
+    for (auto* face : faces)
+    {
+      // skip any face with no OUTER-CCB
+      if (0 == face->number_of_outer_ccbs())
+        continue;
+
+      std::vector<QVector3D> face_points;
+      // loop on the egdes of the current outer-ccb
+      auto first = face->outer_ccb();
+      auto curr = first;
+      do {
+        auto ap = approx(curr->source()->point());
+        QVector3D p(ap.dx(), ap.dy(), ap.dz());
+        p.normalize();
+        face_points.push_back(p);
+      } while (++curr != first);
+
+      all_faces_of_current_country.push_back(std::move(face_points));
+    }
+
+    // RESULTING TRIANGLE POINTS (every 3 point => triangle)
+    auto& triangles = result[country_name];
+    std::cout << "triangulating individual faces\n";
+
+    // loop on all approximated faces
+    for (auto& face_points : all_faces_of_current_country)
+    {
+      std::cout << "num face points = " << face_points.size() << std::endl;
+      // no need to triangulate if the number of points is 3
+      if (face_points.size() == 3)
+      {
+        triangles.insert(triangles.end(), face_points.begin(), face_points.end());
+          continue;
+      }
+
+      // find the centroid of all face-points
+      QVector3D centroid(0, 0, 0);
+      for (const auto& fp : face_points)
+        centroid += fp;
+      centroid /= face_points.size();
+      centroid.normalize();
+      auto normal = centroid;
+
+      K::Point_3  plane_origin(centroid.x(), centroid.y(), centroid.z());
+      K::Vector_3 plane_normal(normal.x(), normal.y(), normal.z());
+      K::Plane_3 plane(plane_origin, plane_normal);
+
+      Polygon_2 polygon;
+
+      // project all points onto the plane
+      K::Point_3 origin(0, 0, 0);
+      for (const auto& fp : face_points)
+      {
+        // define a ray through the origin and the current point
+        K::Point_3 current_point(fp.x(), fp.y(), fp.z());
+        K::Ray_3 ray(origin, current_point);
+
+        auto intersection = CGAL::intersection(plane, ray);
+        if (!intersection.has_value())
+          std::cout << "INTERSECTION ASSERTION ERROR!!!\n";
+        auto ip = boost::get<K::Point_3>(intersection.value());
+        auto ip2 = plane.to_2d(ip);
+
+        // add this to the polygon constraint
+        polygon.push_back(ip2);
+      }
+
+      CDT cdt;
+      cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(), true);
+
+      std::unordered_map<Face_handle, bool> in_domain_map;
+      boost::associative_property_map< std::unordered_map<Face_handle, bool> >
+        in_domain(in_domain_map);
+
+      //Mark facets that are inside the domain bounded by the polygon
+      CGAL::mark_domain_in_triangulation(cdt, in_domain);
+
+      // loop on all the triangles ("faces" in triangulation doc)
+      for (Face_handle f : cdt.finite_face_handles())
+      {
+        // if the current triangles is not inside the polygon -> skip it
+        if (false == get(in_domain, f))
+          continue;
+
+        for (int i = 0; i < 3; ++i)
+        {
+          auto tp = f->vertex(i)->point();
+          auto tp3 = plane.to_3d(tp);
+          QVector3D p3(tp3.x(), tp3.y(), tp3.z());
+          p3.normalize();
+          triangles.push_back(p3);
+        }
+      }
+    }
+  }
+
+  return result;
 }
