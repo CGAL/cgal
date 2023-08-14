@@ -167,10 +167,6 @@ void Main_widget::init_problematic_nodes()
 
 std::unique_ptr<Line_strips>   new_faces;
 
-#include "Triangles.h"
-std::unique_ptr<Triangles>  g_all_triangles;
-std::vector<std::unique_ptr<Triangles>>  g_country_triangles;
-
 
 void Main_widget::initializeGL()
 {
@@ -223,11 +219,14 @@ void Main_widget::initializeGL()
   // SAVING ARR
   if(0)
   {
-    //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_africa_1.json");
-    Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries_equatorial_guinea.json");
+    std::string dest_path = "C:/work/gsoc2023/";
+    //std::string file_name = "ne_110m_admin_0_countries.json";
+    //std::string file_name = "ne_110m_admin_0_countries_africa_1.json";
+    std::string file_name = "ne_110m_admin_0_countries_equatorial_guinea.json";
+    auto full_path = dest_path + file_name;
+    Aos::save_arr(m_countries, full_path);
     qDebug() << "done saving!";
     exit(0);
-    //Aos::save_arr(m_countries, "C:/work/gsoc2023/ne_110m_admin_0_countries.json");
   }
 
   // triangulation
@@ -247,27 +246,26 @@ void Main_widget::initializeGL()
     auto color_map = Aos::get_color_mapping(arrh);
     qDebug() << "color map size = " << color_map.size();
     qDebug() << "num countries = " << country_triangles_map.size();
-    //auto rndm = [] {return rand() / double(RAND_MAX); };
-    QVector4D colors[] = {
-      QVector4D(1,0,0,1),
-      QVector4D(0,1,0,1),
-      QVector4D(0,0,1,1),
-      QVector4D(1,1,0,1),
-      QVector4D(1,0,1,1)
-    };
+    auto rndm = [] {return rand() / double(RAND_MAX); };
+    //QVector4D colors[] = {
+    //  QVector4D(1,0,0,1),
+    //  QVector4D(0,1,0,1),
+    //  QVector4D(0,0,1,1),
+    //  QVector4D(1,1,0,1),
+    //  QVector4D(1,0,1,1)
+    //};
     for (auto& [country_name, triangle_points] : country_triangles_map)
     {
       auto country_triangles = std::make_unique<Triangles>(triangle_points);
-      //country_triangles->set_color(QVector4D(rndm(), rndm(), rndm(), 1));
-      country_triangles->set_color(colors[color_map[country_name]]);
-      g_country_triangles.push_back(std::move(country_triangles));
+      const float c = 0.5; // dimming factor
+      auto country_color = QVector4D(c * rndm(), c * rndm(), c * rndm(), 1);
+      country_triangles->set_color(country_color);
+      //country_triangles->set_color(colors[color_map[country_name]]);
+      m_country_triangles.push_back(std::move(country_triangles));
     }
-
     
-
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
-    //g_all_triangles = std::make_unique<Triangles>(triangle_points);
-    
+    //m_all_triangles = std::make_unique<Triangles>(triangle_points);
   }
 
 
@@ -571,8 +569,8 @@ void Main_widget::paintGL()
       sp.set_uniform("u_color", face_color);
       sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      //g_all_triangles->draw();
-      for (auto& country : g_country_triangles)
+      //m_all_triangles->draw();
+      for (auto& country : m_country_triangles)
       {
         sp.set_uniform("u_color", country->get_color());
         country->draw();
@@ -580,7 +578,7 @@ void Main_widget::paintGL()
 
       //sp.set_uniform("u_color", QVector4D(0,0,0,1));
       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      //g_all_triangles->draw();
+      //m_all_triangles->draw();
     }
 
     sp.unuse();

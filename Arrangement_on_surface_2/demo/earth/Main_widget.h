@@ -28,6 +28,7 @@
 #include "Line_strips.h"
 #include "Shader_program.h"
 #include "Sphere.h"
+#include "Triangles.h"
 #include "Vertices.h"
 #include "World_coordinate_axes.h"
 
@@ -84,12 +85,16 @@ private:
   std::vector<std::string>                    m_country_names;
   std::vector<std::unique_ptr<Line_strips>>   m_country_borders;
 
-  // now we draw boundary-arcs by country
+  // boundary-arcs by country
   int             m_selected_country_index, m_selected_arc_index;
   Kml::Nodes      m_selected_country_nodes;
   Kml::Arcs       m_selected_country_arcs;
   Kml::Placemark* m_selected_country;
- 
+
+  // TRIANGLES for rendering the countries in solid
+  std::unique_ptr<Triangles>  m_all_triangles;
+  std::vector<std::unique_ptr<Triangles>>  m_country_triangles;
+
 
   // Shaders
   Shader_program  m_sp_smooth;
