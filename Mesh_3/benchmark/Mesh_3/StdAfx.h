@@ -197,7 +197,7 @@
 #include <CGAL/Kernel/interface_macros.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Lazy.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Lazy_kernel.h>

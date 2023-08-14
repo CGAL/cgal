@@ -447,7 +447,7 @@ namespace CGAL {
   }
 
 
-  // a empty class used to have different types between Curve_2 and X_monotone_curve_2
+  // an empty class used to have different types between Curve_2 and X_monotone_curve_2
   // in Arr_circular_line_arc_traits_2.
   namespace internal_Argt_traits{
     struct Not_X_Monotone{};

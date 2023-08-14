@@ -344,7 +344,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
   // or vertex events (or edge events of course).
   //
   // Each vertex wavefront (reflex or not) results in one and only one event from a set of possible events.
-  // It can result in a edge event against the vertex wavefronts emerging from the adjacent vertices (in the current polygon, not
+  // It can result in an edge event against the vertex wavefronts emerging from the adjacent vertices (in the current polygon, not
   // in the input polygon); or it can result in a split event (or vertex event) against any other wavefront in the rest of
   // current polygon.
 

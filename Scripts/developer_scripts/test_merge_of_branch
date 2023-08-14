@@ -92,6 +92,33 @@ for i in `ls -d ^build*/examples/*/ ^build*/test/*/ ^build*/demo/^(icons|resourc
   fi
 done
 
+#check all tests/examples are tested
+echo '.. Checking if all .cpp files in examples/test are compiled...'
+CML_ERRORS=""
+for CML in `grep -L "GLOB cppfiles" */test/*/CMakeLists.txt */examples/*/CMakeLists.txt`; do
+  DIR=`dirname $CML`
+
+  if [ "Arrangement_on_surface_2/test/Arrangement_on_surface_2" = $DIR ]; then
+    continue
+  fi
+  if [ "Installation/test/Installation" = $DIR ]; then
+    continue
+  fi
+
+  for i in `ls ${DIR}/*.cpp`; do
+    f=`basename $i .cpp`
+    if ! grep -q $f ${CML}; then
+      CML_ERRORS=`echo "${CML_ERRORS}\n$i is not tested!"`
+    fi
+  done
+done
+
+
+if [ -n "${CML_ERRORS}" ]; then
+  echo -n "Some tests/examples are not tested:"
+  echo ${CML_ERRORS}
+  exit 1
+fi
 
 # check project in cmake scripts is correct
 echo '.. Checking if all CMakeLists.txt project names are correct...'

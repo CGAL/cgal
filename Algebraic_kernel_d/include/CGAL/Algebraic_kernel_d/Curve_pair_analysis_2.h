@@ -613,7 +613,7 @@ public:
     /*
      * \brief returns the indices of the <tt>i</tt>th event value
      *
-     * Returns a Event_indices <tt>(fg,ffy,ggy)</tt> such that
+     * Returns an `Event_indices` <tt>(fg,ffy,ggy)</tt> such that
      * the <tt>i</tt>th event root is the <tt>fg</tt>th root of the
      * resultant of \c f and \c g, the <tt>ffy</tt>th root of the
      * discriminant of \c f, and  the <tt>ggy</tt>th root of the

@@ -336,12 +336,14 @@ Let `p` be a Point.
 `CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
 if there are several components to mesh.
 
-The function type can be any model of the concept `Callable` compatible with the signature `Subdomain_index(const Point_3&)`: it can be a function, a function object, a lambda expression... that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
+The function type can be any model of the concept `Callable` compatible with the signature
+`Subdomain_index(const %Point_3&)`: it can be a function, a function object, a lambda expression...
+that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
 
 \cgalModels `MeshDomain_3`
 
-\sa `Implicit_multi_domain_to_labeling_function_wrapper`
-\sa `CGAL::make_mesh_3()`.
+\sa `CGAL::Implicit_multi_domain_to_labeling_function_wrapper`
+\sa `CGAL::make_mesh_3()`
 
 */
 template<class BGT,
@@ -350,9 +352,9 @@ template<class BGT,
                                                 Subdomain_index_> >
 class Labeled_mesh_domain_3
 #ifndef DOXYGEN_RUNNING
-: protected details::Labeled_mesh_domain_3_impl<BGT,
-                                                Subdomain_index_,
-                                                Surface_patch_index_>
+  : protected details::Labeled_mesh_domain_3_impl<BGT,
+                                                  Subdomain_index_,
+                                                  Surface_patch_index_>
 #endif
 {
 public:
@@ -381,7 +383,7 @@ public:
   /// The number type (a field type) of the geometric traits class
   typedef typename Geom_traits::FT           FT;
 ///@}
-#else
+#else // DOXYGEN_RUNNING
   typedef std::optional<Subdomain_index>  Subdomain;
 
   // Type of indexes for cells of the input complex
@@ -428,7 +430,7 @@ public:
   typedef typename BGT::FT FT;
   typedef BGT Geom_traits;
   using Impl_details::construct_pair_functor;
-#endif
+#endif // DOXYGEN_RUNNING
 
 /// \name Creation
 /// @{
@@ -451,16 +453,19 @@ public:
    *      \cgalParamDefault{FT(1e-3)}
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
+   *
    * \cgalHeading{Example}
    * From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
    * \snippet Mesh_3/mesh_implicit_domains_2.cpp Domain creation
-   *
    */
   template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Labeled_mesh_domain_3(const Function& function,
                         const Bounding_object& bounding_object,
-                        const CGAL_NP_CLASS& np = parameters::default_values(),
-                        typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr)
+                        const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                        , typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
+#endif // DOXYGEN_RUNNING
+                        )
   :Impl_details(function,
                 bounding_object,
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
@@ -496,7 +501,7 @@ public:
   template<typename Function, typename Bounding_object>
 #if !defined(BOOST_MSVC)
   CGAL_DEPRECATED
-#endif
+#endif // BOOST_MSVC
   Labeled_mesh_domain_3(const Function& function,
                         const Bounding_object& bounding_object,
                         double error_bound,
@@ -505,8 +510,8 @@ public:
                           bounding_object,
                           parameters::relative_error_bound(error_bound))
   {}
-#endif
-#endif
+#endif // CGAL_NO_DEPRECATED_CODE
+#endif // DOXYGEN_RUNNING
 
 /// \name Creation of domains from 3D images
 /// @{

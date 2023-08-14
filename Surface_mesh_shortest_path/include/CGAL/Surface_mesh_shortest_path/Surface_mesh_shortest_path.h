@@ -45,7 +45,7 @@ namespace CGAL {
 
 \brief Computes shortest surface paths from one or more source points on a surface mesh.
 
-\details Uses an optimized variation of Chen and Han's \f$ O(n^2) \f$ algorithm by Xin and Wang.
+\details Uses an optimized variation of Chen and Han's \cgalBigO{n^2} algorithm by Xin and Wang.
 Refer to those respective papers for the details of the implementation.
 
 \tparam Traits a model of `SurfaceMeshShortestPathTraits`.

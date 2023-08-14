@@ -231,7 +231,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
     xcvs_vec[i] = Ovl_x_monotone_curve_2(eit2->curve(), invalid_he1, he2);
   }
 
-  // Obtain a extended traits-class object and define the sweep-line visitor.
+  // Obtain an extended traits-class object and define the sweep-line visitor.
   const typename Arr_res::Traits_adaptor_2* traits_adaptor =
     arr.traits_adaptor();
 

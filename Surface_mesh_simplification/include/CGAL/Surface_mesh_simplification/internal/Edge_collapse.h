@@ -697,7 +697,7 @@ is_constrained(const vertex_descriptor v) const
 }
 
 // Some edges are NOT collapsible: doing so would break the topological consistency of the mesh.
-// This function returns true if a edge 'p->q' can be collapsed.
+// This function returns true if an edge 'p->q' can be collapsed.
 //
 // An edge p->q can be collapsed iff it satisfies the "link condition"
 // (as described in the "Mesh Optimization" article of Hoppe et al (1993))

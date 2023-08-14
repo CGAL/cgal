@@ -2455,9 +2455,8 @@ bounded_error_squared_Hausdorff_distance_naive_impl(const TriangleMesh1& tm1,
 /**
  * \ingroup PMP_distance_grp
  *
- * returns an estimate on the Hausdorff distance between `tm1` and `tm2` that
- * is at most `error_bound` away from the actual Hausdorff distance between
- * the two given meshes.
+ * returns an estimate on the Hausdorff distance from `tm1` to `tm2` that
+ * is at most `error_bound` away from the actual Hausdorff distance from `tm1` to `tm2`.
  *
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag` and `Parallel_tag`.

@@ -524,7 +524,7 @@ public:
 /*! \class
  * A class defining a textual (\ascii) input/output format for arrangements
  * that store auxiliary dat with all their DCEL records, as they are templated
- * by a extended DCEL class.
+ * by an extended DCEL class.
  */
 template <class Arrangement_>
 class Arr_extended_dcel_text_formatter :
