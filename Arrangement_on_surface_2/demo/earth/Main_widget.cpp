@@ -38,6 +38,74 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
   // forward the event to the camera manipulators
   m_camera_manip_rot->mousePressEvent(e);
   m_camera_manip_zoom->mousePressEvent(e);
+  
+  // handle country selection
+  if (e->button() == Qt::RightButton)
+  {
+    qDebug() << "RIGHT MOUSE BUTTON PRESSED!!";
+
+    auto p = e->pos();
+    QVector3D  sp0(p.x(), m_vp_height - p.y(), 0);
+    QVector3D  sp1(p.x(), m_vp_height - p.y(), 1);
+
+    auto proj = m_camera.get_projection_matrix();
+    auto view = m_camera.get_view_matrix();
+    auto model_view = view * m_model;
+    QRect viewport(0, 0, m_vp_width, m_vp_height);
+    auto wp0 = sp0.unproject(model_view, proj, viewport);
+    auto wp1 = sp1.unproject(model_view, proj, viewport);
+
+        // ASSERTION!!!
+        m_mouse_pos = wp0;
+
+    // define a ray from the camera pos to the world-point
+    //auto o = m_camera.get_pos();
+    //auto u = wp - o;
+    auto o = wp0;
+    auto u = wp1 - wp0;
+
+    std::cout << "camera pos = " << o << std::endl;
+
+    // solve the quadratic equation to check for intersection of ray with sphere
+    auto a = QVector3D::dotProduct(u, u);
+    auto b = 2 * QVector3D::dotProduct(u, o);
+    auto c = QVector3D::dotProduct(o, o) - 1;
+    auto d = b * b - 4 * a * c;
+    
+    float ti = -1;
+    if (abs(d) < std::numeric_limits<float>::epsilon())
+    {
+      ti = -b / (2 * a);
+      qDebug() << "*** NUM INTERSECTIONS= 1,  ti = " << ti;
+    }
+    else
+    {
+      if (d < 0)
+      {
+        qDebug() << "* NUM INTERSECTIONS = 0";
+
+        // no intersection
+        return;
+      }
+      else
+      {
+
+        auto sd = sqrt(d);
+        auto t1 = (-b - d) / (2 * a);
+        auto t2 = (-b + d) / (2 * a);
+        if (t1 > 0 && t2 > 0)
+          ti = std::min(t1, t2);
+        else if (t1 > 0)
+          ti = t1;
+        else
+          ti = t2;
+
+        qDebug() << "*** NUM INTERSECTIONS= 2,  ti = " << ti;
+      }
+    }
+
+    m_mouse_pos = o + ti * u;
+  }
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
@@ -164,9 +232,7 @@ void Main_widget::init_problematic_nodes()
 }
 
 
-
 std::unique_ptr<Line_strips>   new_faces;
-
 
 void Main_widget::initializeGL()
 {
@@ -174,6 +240,8 @@ void Main_widget::initializeGL()
   //verify_antarctica_node_is_redundant();
 
   //init_problematic_nodes();
+  m_mouse_pos = QVector3D(0, -1.1, 0);
+  m_mouse_vertex = std::make_unique<SingleVertex>(m_mouse_pos);
 
 
   std::string data_path = "C:/work/gsoc2023/data/";
@@ -314,6 +382,9 @@ void Main_widget::init_camera()
   m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
   //m_camera_manip_rot = std::make_unique<Camera_manip_rot_bpa>(m_camera);
   m_camera_manip_zoom = std::make_unique<Camera_manip_zoom>(m_camera);
+  
+  // this makes z-axes point upwards!
+  //m_model.rotate(-90, 1, 0, 0);
 
   // register the zoom-changed function
   Message_manager::add("zoom_changed", [&] 
@@ -525,17 +596,15 @@ void Main_widget::paintGL()
     m_update_approx_error = false;
   }
 
-  QMatrix4x4 model;
-  model.rotate(-90, 1,0,0); // this makes z-axes point upwards!
   const auto view = m_camera.get_view_matrix();
   const auto projection = m_camera.get_projection_matrix();
-  const auto mvp = projection * view * model;
+  const auto mvp = projection * view * m_model;
 
   // compute the cutting plane
 // remember that we are passing the local vertex positions of the sphere 
 // between the vertex and fragment shader stages, so we need to convert
 // the camera-pos in world coords to sphere's local coords!
-  auto c = model.inverted() * m_camera.get_pos();
+  auto c = m_model.inverted() * m_camera.get_pos();
   const auto d = c.length();
   const auto r = 1.0f;
   const auto sin_alpha = r / d;
@@ -641,6 +710,15 @@ void Main_widget::paintGL()
     sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
     //new_faces->draw();
 
+    {
+      glPointSize(5);
+      sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
+      //auto pos = m_mouse_vertex->get_pos();
+      //pos.setX(pos.x() + 0.01);
+      //m_mouse_vertex->set_pos(pos);
+      m_mouse_vertex->set_pos(m_mouse_pos);
+      draw_safe(m_mouse_vertex);
+    }
 
     sp.unuse();
   }

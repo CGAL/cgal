@@ -27,6 +27,7 @@
 #include "Kml_reader.h"
 #include "Line_strips.h"
 #include "Shader_program.h"
+#include "SingleVertex.h"
 #include "Sphere.h"
 #include "Triangles.h"
 #include "Vertices.h"
@@ -79,6 +80,9 @@ private:
   std::unique_ptr<Line_strips>      m_geodesic_arcs;
   std::unique_ptr<Vertices>         m_vertices, m_problematic_vertices;
   std::unique_ptr<Line_strips>      m_identification_curve;
+  
+  QVector3D                         m_mouse_pos;
+  std::unique_ptr<SingleVertex>     m_mouse_vertex;
 
   // COUNTRY DATA
   Kml::Placemarks                             m_countries;
@@ -105,6 +109,7 @@ private:
   Camera  m_camera;
   std::unique_ptr<Camera_manip>  m_camera_manip_rot;
   std::unique_ptr<Camera_manip>  m_camera_manip_zoom;
+  QMatrix4x4  m_model;
 
   // view-port 
   int m_vp_width = 0, m_vp_height = 0;

@@ -27,19 +27,19 @@ Vertices::Vertices(const std::vector<QVector3D>& vertices)
   auto vertex_buffer_size = sizeof(QVector3D) * vertex_data.size();
   auto vertex_buffer_data = reinterpret_cast<const void*>(vertex_data.data());
   glBufferData(GL_ARRAY_BUFFER,
-               vertex_buffer_size,
-               vertex_buffer_data,
-               GL_STATIC_DRAW);
+    vertex_buffer_size,
+    vertex_buffer_data,
+    GL_STATIC_DRAW);
 
   // Position Vertex-Attribute
   GLint position_attrib_index = 0;
   const void* position_offset = 0;
   GLsizei stride = 0;
   glVertexAttribPointer(position_attrib_index,
-                        3,
-                        GL_FLOAT, GL_FALSE,
-                        stride,
-                        position_offset);
+    3,
+    GL_FLOAT, GL_FALSE,
+    stride,
+    position_offset);
   glEnableVertexAttribArray(position_attrib_index);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
