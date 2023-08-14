@@ -16,9 +16,10 @@ The concept `MeshCriteria_3` encapsulates these concepts.
 
 \sa `MeshFacetCriteria_3`
 \sa `MeshCellCriteria_3`
+\sa `MeshCriteriaWithFeatures_3`
 \sa `CGAL::make_mesh_3()`
 \sa `CGAL::refine_mesh_3()`
-\sa `MeshCriteriaWithFeatures_3`
+
 
 */
 

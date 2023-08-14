@@ -15,6 +15,14 @@ Release date: October 2023
 
 - Added the function `insert_cell_1_between_two_cells_2()` to the `GenericMap` concept, which enables users to insert an edge between two different faces in order to create faces with holes.
 
+### [3D Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgMesh3)
+
+-   **Breaking change**: Removed the concept `TriangleAccessor`, the template parameter `TriangleAccessor`, as well
+    as the class `Triangle_accessor`. They were no longer used for several releases.
+
+-   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
+    which are deprecated since CGAL-4.13.
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
