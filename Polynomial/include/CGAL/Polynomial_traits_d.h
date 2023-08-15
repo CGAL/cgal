@@ -462,7 +462,7 @@ private:
 
 
   // We use our own Strict Weak Ordering predicate in order to avoid
-  // problems when calling sort for a Exponents_coeff_pair where the
+  // problems when calling sort for an `Exponents_coeff_pair` where the
   // coeff type has no comparison operators available.
 private:
   struct Compare_exponents_coeff_pair

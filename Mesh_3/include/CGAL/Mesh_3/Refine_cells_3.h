@@ -672,7 +672,7 @@ scan_triangulation_impl()
     typedef typename Tr::All_cells_iterator All_cells_iterator;
 
     // WITH PARALLEL_FOR
-    // Copy cells into an std::vector to allow the use of tbb::parallel_for
+    // Copy cells into an std::vector to enable the use of tbb::parallel_for
     // which requires random-access.
     // Note that we're using all_cells_begin() instead of finite_cells_begin()
     // because it's faster to do the is_infinite() test in parallel.

@@ -30,7 +30,7 @@ if it includes points which are strictly inside
 and strictly outside the domain (resp. the subdomain).
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}
+\cgalHasModels{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>}
 \cgalHasModels{CGAL::Labeled_mesh_domain_3<BGT>}
 \cgalHasModelsEnd
 

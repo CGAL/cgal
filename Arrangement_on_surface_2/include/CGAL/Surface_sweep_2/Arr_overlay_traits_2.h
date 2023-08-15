@@ -705,7 +705,7 @@ public:
     { return m_base_equal(xcv1.base(), xcv2.base()); }
   };
 
-  /*! Obtain a Equal_2 functor object. */
+  /*! Obtain an `Equal_2` functor object. */
   Equal_2 equal_2_object() const
   { return Equal_2(m_base_traits->equal_2_object()); }
 

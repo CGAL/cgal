@@ -14,7 +14,7 @@ and construction of intersections between segments and triangles.
 \cgalHasModelsEnd
 
 \sa `BisectionGeometricTraits_3`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 
 */
 class IntersectionGeometricTraits_3 {

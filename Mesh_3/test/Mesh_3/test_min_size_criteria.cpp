@@ -37,7 +37,7 @@ public:
       Concurrency_tag>::type;
     using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
-    using Gt             = typename Tr::Geom_traits;
+    using GT             = typename Tr::Geom_traits;
     using FT             = typename Tr::Geom_traits::FT;
     using Bare_point     = typename Tr::Bare_point;
 
@@ -79,8 +79,8 @@ public:
                                         CGAL::parameters::no_perturb());
 
     const Tr& tr = c3t3.triangulation();
-    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-    typename Gt::Compute_squared_radius_3 sq_radius = tr.geom_traits().compute_squared_radius_3_object();
+    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename GT::Compute_squared_radius_3 sq_radius = tr.geom_traits().compute_squared_radius_3_object();
 
     double max_sq_facet_radius = 0.;
     double max_sq_cell_radius = 0.;

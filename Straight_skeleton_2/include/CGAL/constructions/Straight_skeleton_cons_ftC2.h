@@ -328,7 +328,7 @@ construct_trisegment ( Segment_2_with_ID<K> const& e0,
 // If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
 // returns 0 (the actual distance is undefined in this case, but 0 is a useful return)
 //
-// NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
+// NOTE: The result is an explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
 //
 // PRECONDITION: None of e0, e1 and e2 are collinear (but two of them can be parallel)
@@ -596,7 +596,7 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
 // returns the OFFSET DISTANCE (n/d) at which a line perpendicular to the collinear edge passing through
 // the degenerate seed point intersects the offset line of the non collinear edge
 //
-// NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
+// NOTE: The result is an explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.

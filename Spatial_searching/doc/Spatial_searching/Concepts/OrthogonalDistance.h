@@ -4,7 +4,7 @@
 
 Requirements of an orthogonal distance class supporting incremental distance updates.
 To optimize distance computations transformed distances are used.
-E.g., for an Euclidean distance the transformed distance is the squared Euclidean distance.
+E.g., for a Euclidean distance the transformed distance is the squared Euclidean distance.
 
 \cgalRefines{GeneralDistance}
 

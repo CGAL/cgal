@@ -11,6 +11,17 @@ Release date: October 2023
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
 
+### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
+
+- Added the function `insert_cell_1_between_two_cells_2()` to the `GenericMap` concept, which enables users to insert an edge between two different faces in order to create faces with holes.
+
+### [3D Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgMesh3)
+
+-   **Breaking change**: Removed the concept `TriangleAccessor`, the template parameter `TriangleAccessor`, as well
+    as the class `Triangle_accessor`. They were no longer used for several releases.
+
+-   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
+    which are deprecated since CGAL-4.13.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
@@ -33,7 +44,7 @@ Release date: July 2023
     instead of `void`, that is used inside the class `Region_growing` for detecting if the input
     conditions for the new region are satisfied. This change affects only user-defined types of regions.
 -   **Breaking change**: The constructors of all models used together with the region growing algorithm
-    now enable users to provide parameters through the [named parameters](https://doc.cgal.org/latest/BGL/group__bgl__namedparameters.html) mechanism.
+    now enable users to provide parameters through the [named parameters](https://doc.cgal.org/5.6/BGL/group__bgl__namedparameters.html) mechanism.
 -   All fitting classes in the region growing framework are now using better versions of the region
     conditions, more precise and faster, including the correct normal orientations.
 -   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
