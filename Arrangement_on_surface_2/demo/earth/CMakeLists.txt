@@ -53,7 +53,8 @@ link_directories(earth PRIVATE ${SHAPELIB_LIB_DIR})
 
 # AOS
 file(GLOB source_files_aos
-  Aos.h                     Aos.cpp
+  Aos.h         Aos.cpp
+  Aos_defs.h
  )
 source_group( "Aos"  FILES ${source_files_aos} )
 
