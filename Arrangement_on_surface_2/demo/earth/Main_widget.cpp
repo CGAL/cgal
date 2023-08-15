@@ -16,6 +16,7 @@
 #include <QMouseEvent>
 
 #include "Aos.h"
+#include "Aos_triangulator.h"
 #include "Camera_manip_rot.h"
 #include "Camera_manip_rot_bpa.h"
 #include "Camera_manip_zoom.h"
@@ -329,9 +330,11 @@ void Main_widget::initializeGL()
 
     qDebug() << "generating triangles..";
     //auto triangle_points = Aos::get_triangles(arrh);
-    auto country_triangles_map = Aos::get_triangles_by_country(m_arrh);
-    auto color_map = Aos::get_color_mapping(m_arrh);
-    qDebug() << "color map size = " << color_map.size();
+    //auto triangle_points = Aos_triangulator::get_all(arrh);
+    //auto country_triangles_map = Aos::get_triangles_by_country(m_arrh);
+    auto country_triangles_map = Aos_triangulator::get_by_country(m_arrh);
+    //auto color_map = Aos::get_color_mapping(m_arrh);
+    //qDebug() << "color map size = " << color_map.size();
     qDebug() << "num countries = " << country_triangles_map.size();
     auto rndm = [] {return rand() / double(RAND_MAX); };
     //QVector4D colors[] = {

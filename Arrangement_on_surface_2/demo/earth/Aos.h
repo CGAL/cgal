@@ -67,10 +67,10 @@ public:
   static Arr_handle load_arr(const std::string& file_name);
 
   static Arr_handle construct(Kml::Placemarks& placemarks);
-  static std::vector<QVector3D> get_triangles(Arr_handle arrh);
+  //static std::vector<QVector3D> get_triangles(Arr_handle arrh);
 
-  using Country_triangles_map = std::map<std::string, std::vector<QVector3D>>;
-  static Country_triangles_map get_triangles_by_country(Arr_handle arrh);
+  //using Country_triangles_map = std::map<std::string, std::vector<QVector3D>>;
+  //static Country_triangles_map get_triangles_by_country(Arr_handle arrh);
 
   using Country_color_map = std::map<std::string, int>;
   static Country_color_map get_color_mapping(Arr_handle arrh);
