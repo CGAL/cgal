@@ -75,32 +75,28 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
     float ti = -1;
     if (abs(d) < std::numeric_limits<float>::epsilon())
     {
+      // single intersection
       ti = -b / (2 * a);
-      qDebug() << "*** NUM INTERSECTIONS= 1,  ti = " << ti;
     }
     else
     {
       if (d < 0)
       {
-        qDebug() << "* NUM INTERSECTIONS = 0";
-
         // no intersection
         return;
       }
       else
       {
-
+        // two intersections
         auto sd = sqrt(d);
-        auto t1 = (-b - d) / (2 * a);
-        auto t2 = (-b + d) / (2 * a);
+        auto t1 = (-b - sd) / (2 * a);
+        auto t2 = (-b + sd) / (2 * a);
         if (t1 > 0 && t2 > 0)
           ti = std::min(t1, t2);
         else if (t1 > 0)
           ti = t1;
         else
           ti = t2;
-
-        qDebug() << "*** NUM INTERSECTIONS= 2,  ti = " << ti;
       }
     }
 
@@ -384,7 +380,7 @@ void Main_widget::init_camera()
   m_camera_manip_zoom = std::make_unique<Camera_manip_zoom>(m_camera);
   
   // this makes z-axes point upwards!
-  //m_model.rotate(-90, 1, 0, 0);
+  m_model.rotate(-90, 1, 0, 0);
 
   // register the zoom-changed function
   Message_manager::add("zoom_changed", [&] 
