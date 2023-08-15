@@ -11,6 +11,7 @@
 #define AOS_H
 
 #include <map>
+#include <memory>
 #include <vector>
 #include <qvector3d.h>
 
@@ -22,7 +23,8 @@ class Aos
 public:
   using Approx_arc = std::vector<QVector3D>;
   using Approx_arcs = std::vector<Approx_arc>;
-  using Arr_handle = void*;
+  //using Arr_handle = void*;
+  using Arr_handle = std::shared_ptr<void>;
 
   static Approx_arc get_approx_identification_curve(double error);
 

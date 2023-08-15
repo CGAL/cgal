@@ -1537,10 +1537,23 @@ namespace
   }
 }
 
+namespace {
+ 
+  Aos::Arr_handle  get_handle(void* arr)
+  {
+    return Aos::Arr_handle(arr, [](void* ptr)
+      {
+        std::cout << "*** DELETING THE ARRANGEMENT WITH SHARED_PTR DELETER!!\n";
+        delete reinterpret_cast<Countries_arr*>(ptr);
+      });
+  }
+}
 
 Aos::Arr_handle  Aos::load_arr(const std::string& file_name)
 {
   auto* arr = new Countries_arr(&s_traits);
+  auto arrh = get_handle(arr);
+
   Kernel  kernel;
   auto rc = read_arrangement(file_name, *arr, kernel);
   if (!rc) {
@@ -1548,19 +1561,20 @@ Aos::Arr_handle  Aos::load_arr(const std::string& file_name)
     return nullptr;
   }
 
-  return arr;
+  return arrh;
 }
 
 
 Aos::Arr_handle  Aos::construct(Kml::Placemarks& placemarks)
 {
   auto* arr = new Arrangement(&s_traits);
+  auto arrh = get_handle(arr);
 
   auto xcvs = get_arcs(placemarks, *arr);
   for (auto& xcv : xcvs)
     CGAL::insert(*arr, xcv);
 
-  return arr;
+  return arrh;
 }
 
 
@@ -1577,7 +1591,7 @@ std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
   using Point       = CDT::Point;
   using Polygon_2   = CGAL::Polygon_2<K>;
 
-  auto& arr = *reinterpret_cast<Arrangement*>(arrh);
+  auto& arr = *reinterpret_cast<Arrangement*>(arrh.get());
 
   //Geom_traits traits;
   auto approx = s_traits.approximate_2_object();
@@ -1701,7 +1715,7 @@ Aos::Country_triangles_map Aos::get_triangles_by_country(Arr_handle arrh)
   using Point = CDT::Point;
   using Polygon_2 = CGAL::Polygon_2<K>;
 
-  auto& arr = *reinterpret_cast<Countries_arr*>(arrh);
+  auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
   auto approx = s_traits.approximate_2_object();
 
   // group the faces by their country name
@@ -1825,7 +1839,7 @@ Aos::Country_triangles_map Aos::get_triangles_by_country(Arr_handle arrh)
 
 Aos::Country_color_map  Aos::get_color_mapping(Arr_handle arrh)
 {
-  auto& arr = *reinterpret_cast<Countries_arr*>(arrh);
+  auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
 
   // group the faces by their country name,
   std::vector<std::string>  all_countries;
@@ -1907,7 +1921,7 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
   using Point_2 = Countries_arr::Point_2;
   using Naive_pl = CGAL::Arr_naive_point_location<Countries_arr>;
 
-  auto& arr = *reinterpret_cast<Countries_arr*>(arrh);
+  auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
   Point_2 query_point(Dir3(point.x(), point.y(), point.z()),
                       Point_2::Location_type::NO_BOUNDARY_LOC);
 
