@@ -72,6 +72,8 @@ public:
 
   using Country_color_map = std::map<std::string, int>;
   static Country_color_map get_color_mapping(Arr_handle arrh);
+
+  static std::string locate_country(Arr_handle arrh, const QVector3D& point);
 };
 
 

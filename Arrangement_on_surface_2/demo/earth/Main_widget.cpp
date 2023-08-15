@@ -33,6 +33,8 @@ Main_widget::~Main_widget()
   doneCurrent();
 }
 
+float dimming_factor = 0.4;
+
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulators
@@ -42,8 +44,6 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
   // handle country selection
   if (e->button() == Qt::RightButton)
   {
-    qDebug() << "RIGHT MOUSE BUTTON PRESSED!!";
-
     auto p = e->pos();
     QVector3D  sp0(p.x(), m_vp_height - p.y(), 0);
     QVector3D  sp1(p.x(), m_vp_height - p.y(), 1);
@@ -55,16 +55,14 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
     auto wp0 = sp0.unproject(model_view, proj, viewport);
     auto wp1 = sp1.unproject(model_view, proj, viewport);
 
-        // ASSERTION!!!
-        m_mouse_pos = wp0;
+    // ASSERTION!!!
+    m_mouse_pos = wp0;
 
     // define a ray from the camera pos to the world-point
     //auto o = m_camera.get_pos();
     //auto u = wp - o;
     auto o = wp0;
     auto u = wp1 - wp0;
-
-    std::cout << "camera pos = " << o << std::endl;
 
     // solve the quadratic equation to check for intersection of ray with sphere
     auto a = QVector3D::dotProduct(u, u);
@@ -101,6 +99,31 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
     }
 
     m_mouse_pos = o + ti * u;
+    static std::string prev_selected_country;
+    auto selected_country = Aos::locate_country(m_arrh, m_mouse_pos);
+
+    if(!prev_selected_country.empty())
+    {
+      // dim the previous country color
+      auto& prev_country = m_country_triangles[prev_selected_country];
+      auto color = prev_country->get_color();
+      color *= dimming_factor;
+      color.setW(1);
+      prev_country->set_color(color);
+    }
+
+    if (!selected_country.empty())
+    {
+      // highlight the current country color
+      auto& curr_country = m_country_triangles[selected_country];
+      auto color = curr_country->get_color();
+      color /= dimming_factor;
+      color.setW(1);
+      curr_country->set_color(color);
+      qDebug() << "SELECTED COUNTRY: " << selected_country;
+    }
+
+    prev_selected_country = selected_country;
   }
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
@@ -297,8 +320,8 @@ void Main_widget::initializeGL()
   {
     qDebug() << "constructiong arr..";
     //auto arrh = Aos::construct(m_countries);
-    auto arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
-    if (arrh == nullptr)
+    m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    if (m_arrh == nullptr)
     {
       qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";
       exit(1);
@@ -306,8 +329,8 @@ void Main_widget::initializeGL()
 
     qDebug() << "generating triangles..";
     //auto triangle_points = Aos::get_triangles(arrh);
-    auto country_triangles_map = Aos::get_triangles_by_country(arrh);
-    auto color_map = Aos::get_color_mapping(arrh);
+    auto country_triangles_map = Aos::get_triangles_by_country(m_arrh);
+    auto color_map = Aos::get_color_mapping(m_arrh);
     qDebug() << "color map size = " << color_map.size();
     qDebug() << "num countries = " << country_triangles_map.size();
     auto rndm = [] {return rand() / double(RAND_MAX); };
@@ -321,11 +344,14 @@ void Main_widget::initializeGL()
     for (auto& [country_name, triangle_points] : country_triangles_map)
     {
       auto country_triangles = std::make_unique<Triangles>(triangle_points);
-      const float c = 0.5; // dimming factor
-      auto country_color = QVector4D(c * rndm(), c * rndm(), c * rndm(), 1);
-      country_triangles->set_color(country_color);
+      auto color = QVector4D(rndm(), rndm(), rndm(), 1);
+      auto m = std::max(color.x(), std::max(color.y(), color.z()));
+      color /= m;
+      color *= dimming_factor;
+      color.setW(1);
+      country_triangles->set_color(color);
       //country_triangles->set_color(colors[color_map[country_name]]);
-      m_country_triangles.push_back(std::move(country_triangles));
+      m_country_triangles.emplace(country_name, std::move(country_triangles));
     }
     
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
@@ -635,7 +661,7 @@ void Main_widget::paintGL()
       sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       //m_all_triangles->draw();
-      for (auto& country : m_country_triangles)
+      for (auto& [country_name, country] : m_country_triangles)
       {
         sp.set_uniform("u_color", country->get_color());
         country->draw();

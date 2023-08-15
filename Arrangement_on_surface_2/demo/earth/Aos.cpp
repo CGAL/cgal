@@ -1898,3 +1898,41 @@ Aos::Country_color_map  Aos::get_color_mapping(Arr_handle arrh)
 
   return result;
 }
+
+#include <CGAL/Arr_naive_point_location.h>
+#include <CGAL/Arr_point_location_result.h>
+
+std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
+{
+  using Point_2 = Countries_arr::Point_2;
+  using Naive_pl = CGAL::Arr_naive_point_location<Countries_arr>;
+
+  auto& arr = *reinterpret_cast<Countries_arr*>(arrh);
+  Point_2 query_point(Dir3(point.x(), point.y(), point.z()),
+                      Point_2::Location_type::NO_BOUNDARY_LOC);
+
+  Naive_pl  npl(arr);
+  auto obj = npl.locate(query_point);
+
+  using Arrangement_2 = Countries_arr;
+  using Vertex_const_handle   = typename Arrangement_2::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement_2::Halfedge_const_handle;
+  using Face_const_handle     = typename Arrangement_2::Face_const_handle;
+  //const Vertex_const_handle* v;
+  //const Halfedge_const_handle* e;
+  //const Face_const_handle* f;
+  //std::cout << "The point (" << query_point << ") is located ";
+  if (auto f = boost::get<Face_const_handle>(&obj)) // located inside a face
+  {    
+    const auto country_name = f->ptr()->data();
+    return country_name;
+  }
+  //else if (auto e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
+  //  std::cout << "on an edge: " << (*e)->curve() << std::endl;
+  //else if (auto v = boost::get<Vertex_const_handle>(&obj)) // located on a vertex
+  //  std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
+  //  << " vertex: " << (*v)->point() << std::endl;
+  //else CGAL_error_msg("Invalid object.");
+
+  return "";
+}

@@ -21,6 +21,7 @@
 
 #include <qopenglwidget.h>
 
+#include "Aos.h"
 #include "Camera.h"
 #include "Camera_manip.h"
 #include "Common_defs.h"
@@ -74,6 +75,9 @@ protected:
   void init_problematic_nodes();
 
 private:
+  // ARRANGEMENT
+  Aos::Arr_handle   m_arrh;
+
   // Objects in the scene
   std::unique_ptr<Sphere>           m_sphere;
   std::unique_ptr<World_coord_axes> m_world_coord_axes;
@@ -97,7 +101,7 @@ private:
 
   // TRIANGLES for rendering the countries in solid
   std::unique_ptr<Triangles>  m_all_triangles;
-  std::vector<std::unique_ptr<Triangles>>  m_country_triangles;
+  std::map<std::string, std::unique_ptr<Triangles>>  m_country_triangles;
 
 
   // Shaders
