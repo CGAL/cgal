@@ -206,10 +206,6 @@ void isotropic_remeshing(const FaceRange& faces
   if (std::begin(faces)==std::end(faces))
     return;
 
-  //todo ip: precondition or something else?
-  CGAL_precondition_msg(&(sizing.get_mesh()) == &pmesh, "Input mesh is not the same "
-                                                        "as the one used for the sizing field!");
-
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
@@ -348,7 +344,7 @@ void isotropic_remeshing(const FaceRange& faces
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
-  Uniform_sizing_field<PolygonMesh> sizing(target_edge_length, pmesh);
+  Uniform_sizing_field sizing(target_edge_length, pmesh);
   if (target_edge_length > 0)
     isotropic_remeshing(faces, sizing, pmesh, np);
   else
@@ -471,7 +467,7 @@ void split_long_edges(const EdgeRange& edges
              false/*need aabb_tree*/);
 
     // check if sizing field needs updating
-    if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM>>)
+    if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VPMap>>)
     {
       //todo ip: check if sizing field needs to be checked and updated here
     }

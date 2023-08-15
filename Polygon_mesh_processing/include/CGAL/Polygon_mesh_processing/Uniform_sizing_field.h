@@ -23,11 +23,12 @@ namespace CGAL
 {
 namespace Polygon_mesh_processing
 {
-template <class PolygonMesh>
-class Uniform_sizing_field : public CGAL::Sizing_field<PolygonMesh>
+template <class PolygonMesh,
+          class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
+class Uniform_sizing_field : public CGAL::Sizing_field<PolygonMesh, VPMap>
 {
 private:
-  typedef CGAL::Sizing_field<PolygonMesh> Base;
+  typedef CGAL::Sizing_field<PolygonMesh, VPMap> Base;
 
 public:
   typedef typename Base::FT         FT;
@@ -35,30 +36,34 @@ public:
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
   typedef typename Base::vertex_descriptor   vertex_descriptor;
 
-  Uniform_sizing_field(const FT& size, const PolygonMesh& pmesh)
+  Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const VPMap& vpmap)
     : m_sq_short( CGAL::square(4./5. * size))
     , m_sq_long(  CGAL::square(4./3. * size))
-    , m_pmesh(pmesh)
+    , m_vpmap(vpmap)
+  {}
+
+  Uniform_sizing_field<PolygonMesh>(const FT& size, const PolygonMesh& pmesh)
+    : m_sq_short( CGAL::square(4./5. * size))
+    , m_sq_long(  CGAL::square(4./3. * size))
+    , m_vpmap(get(CGAL::vertex_point, pmesh))
   {}
 
 private:
   FT sqlength(const vertex_descriptor va,
               const vertex_descriptor vb) const
   {
-    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
-      vpmap = get(CGAL::vertex_point, m_pmesh);
-    return FT(CGAL::squared_distance(get(vpmap, va), get(vpmap, vb)));
+    return FT(CGAL::squared_distance(get(m_vpmap, va), get(m_vpmap, vb)));
   }
 
-  FT sqlength(const halfedge_descriptor& h) const
+  FT sqlength(const halfedge_descriptor& h, const PolygonMesh& pmesh) const
   {
-    return sqlength(target(h, m_pmesh), source(h, m_pmesh));
+    return sqlength(target(h, pmesh), source(h, pmesh));
   }
 
 public:
-  boost::optional<FT> is_too_long(const halfedge_descriptor h) const
+  boost::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    const FT sqlen = sqlength(h);
+    const FT sqlen = sqlength(h, pmesh);
     if(sqlen > m_sq_long)
       return sqlen;
     else
@@ -75,29 +80,25 @@ public:
       return boost::none;
   }
 
-  boost::optional<FT> is_too_short(const halfedge_descriptor h) const
+  boost::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    const FT sqlen = sqlength(h);
+    const FT sqlen = sqlength(h, pmesh);
     if (sqlen < m_sq_long)
       return sqlen;
     else
       return boost::none;
   }
 
-  virtual Point_3 split_placement(const halfedge_descriptor h) const
+  virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
-      vpmap = get(CGAL::vertex_point, m_pmesh);
-    return CGAL::midpoint(get(vpmap, target(h, m_pmesh)),
-                          get(vpmap, source(h, m_pmesh)));
+    return CGAL::midpoint(get(m_vpmap, target(h, pmesh)),
+                          get(m_vpmap, source(h, pmesh)));
   }
-
-  const PolygonMesh& get_mesh() const { return m_pmesh; }
 
 private:
   FT m_sq_short;
   FT m_sq_long;
-  const PolygonMesh& m_pmesh;
+  const VPMap m_vpmap;
 };
 
 }//end namespace Polygon_mesh_processing

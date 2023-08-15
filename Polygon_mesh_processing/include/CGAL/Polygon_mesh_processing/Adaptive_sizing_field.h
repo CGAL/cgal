@@ -38,10 +38,11 @@ public:
   typedef typename Base::face_descriptor     face_descriptor;
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
   typedef typename Base::vertex_descriptor   vertex_descriptor;
+  typedef typename Base::DefaultVPMap DefaultVPMap;
 
   typedef typename CGAL::dynamic_vertex_property_t<FT> Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh,
-                                       Vertex_property_tag>::type Vertex_sizing_map;
+                                       Vertex_property_tag>::type VertexSizingMap;
 
   template <typename FaceRange>
   Adaptive_sizing_field(const double tol
@@ -51,25 +52,24 @@ public:
     : tol(tol)
     , m_short(edge_len_min_max.first)
     , m_long(edge_len_min_max.second)
-    , m_pmesh(pmesh)
+    , m_vpmap(get(CGAL::vertex_point, pmesh))
+    , m_vertex_sizing_map(get(Vertex_property_tag(), pmesh))
   {
-    m_vertex_sizing_map = get(Vertex_property_tag(), m_pmesh);
-
-    if (face_range.size() == faces(m_pmesh).size())
+    if (face_range.size() == faces(pmesh).size())
     {
       // calculate curvature from the whole mesh
-      calc_sizing_map(m_pmesh);
+      calc_sizing_map(pmesh);
     }
     else
     {
       // expand face selection and calculate curvature from it
       std::vector<face_descriptor> selection(face_range.begin(), face_range.end());
-      auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), m_pmesh);
-      for (face_descriptor f : faces(m_pmesh)) put(is_selected, f, false);
+      auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), pmesh);
+      for (face_descriptor f : faces(pmesh)) put(is_selected, f, false);
       for (face_descriptor f : face_range)  put(is_selected, f, true);
-      CGAL::expand_face_selection(selection, m_pmesh, 1
+      CGAL::expand_face_selection(selection, pmesh, 1
                                 , is_selected, std::back_inserter(selection));
-      CGAL::Face_filtered_graph<PolygonMesh> ffg(m_pmesh, selection);
+      CGAL::Face_filtered_graph<PolygonMesh> ffg(pmesh, selection);
 
       calc_sizing_map(ffg);
     }
@@ -134,14 +134,12 @@ private:
   FT sqlength(const vertex_descriptor va,
               const vertex_descriptor vb) const
   {
-    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
-      vpmap = get(CGAL::vertex_point, m_pmesh);
-    return FT(CGAL::squared_distance(get(vpmap, va), get(vpmap, vb)));
+    return FT(CGAL::squared_distance(get(m_vpmap, va), get(m_vpmap, vb)));
   }
 
-  FT sqlength(const halfedge_descriptor& h) const
+  FT sqlength(const halfedge_descriptor& h, const PolygonMesh& pmesh) const
   {
-    return sqlength(target(h, m_pmesh), source(h, m_pmesh));
+    return sqlength(target(h, pmesh), source(h, pmesh));
   }
 
 public:
@@ -150,13 +148,13 @@ public:
       return get(m_vertex_sizing_map, v);
     }
 
-  boost::optional<FT> is_too_long(const halfedge_descriptor h) const
+  boost::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    const FT sqlen = sqlength(h);
-    FT sqtarg_len = CGAL::square(4./3. * CGAL::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
-                                                   get(m_vertex_sizing_map, target(h, m_pmesh))));
-    CGAL_assertion(get(m_vertex_sizing_map, source(h, m_pmesh)));
-    CGAL_assertion(get(m_vertex_sizing_map, target(h, m_pmesh)));
+    const FT sqlen = sqlength(h, pmesh);
+    FT sqtarg_len = CGAL::square(4./3. * CGAL::min(get(m_vertex_sizing_map, source(h, pmesh)),
+                                                   get(m_vertex_sizing_map, target(h, pmesh))));
+    CGAL_assertion(get(m_vertex_sizing_map, source(h, pmesh)));
+    CGAL_assertion(get(m_vertex_sizing_map, target(h, pmesh)));
     if(sqlen > sqtarg_len)
       return sqlen;
     else
@@ -177,52 +175,46 @@ public:
       return boost::none;
   }
 
-  boost::optional<FT> is_too_short(const halfedge_descriptor h) const
+  boost::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    const FT sqlen = sqlength(h);
-    FT sqtarg_len = CGAL::square(4./5. * CGAL::min(get(m_vertex_sizing_map, source(h, m_pmesh)),
-                                                   get(m_vertex_sizing_map, target(h, m_pmesh))));
-    CGAL_assertion(get(m_vertex_sizing_map, source(h, m_pmesh)));
-    CGAL_assertion(get(m_vertex_sizing_map, target(h, m_pmesh)));
+    const FT sqlen = sqlength(h, pmesh);
+    FT sqtarg_len = CGAL::square(4./5. * CGAL::min(get(m_vertex_sizing_map, source(h, pmesh)),
+                                                   get(m_vertex_sizing_map, target(h, pmesh))));
+    CGAL_assertion(get(m_vertex_sizing_map, source(h, pmesh)));
+    CGAL_assertion(get(m_vertex_sizing_map, target(h, pmesh)));
     if (sqlen < sqtarg_len)
       return sqlen;
     else
       return boost::none;
   }
 
-  virtual Point_3 split_placement(const halfedge_descriptor h) const
+  virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
-      vpmap = get(CGAL::vertex_point, m_pmesh);
-    return CGAL::midpoint(get(vpmap, target(h, m_pmesh)),
-                          get(vpmap, source(h, m_pmesh)));
+    return CGAL::midpoint(get(m_vpmap, target(h, pmesh)),
+                          get(m_vpmap, source(h, pmesh)));
   }
 
-  void update_sizing_map(const vertex_descriptor v)
+  void update_sizing_map(const vertex_descriptor v, const PolygonMesh& pmesh)
   {
     // calculating it as the average of two vertices on other ends
     // of halfedges as updating is done during an edge split
     FT vertex_size = 0;
-    CGAL_assertion(CGAL::halfedges_around_target(v, m_pmesh).size() == 2);
-    for (halfedge_descriptor ha: CGAL::halfedges_around_target(v, m_pmesh))
+    CGAL_assertion(CGAL::halfedges_around_target(v, pmesh).size() == 2);
+    for (halfedge_descriptor ha: CGAL::halfedges_around_target(v, pmesh))
     {
-      vertex_size += get(m_vertex_sizing_map, source(ha, m_pmesh));
+      vertex_size += get(m_vertex_sizing_map, source(ha, pmesh));
     }
-    vertex_size /= CGAL::halfedges_around_target(v, m_pmesh).size();
+    vertex_size /= CGAL::halfedges_around_target(v, pmesh).size();
 
     put(m_vertex_sizing_map, v, vertex_size);
   }
-
-  const PolygonMesh& get_mesh() const { return m_pmesh; }
-
-  //todo ip: is_protected_constraint_too_long() from PR
 
 private:
   const FT tol;
   const FT m_short;
   const FT m_long;
-  PolygonMesh& m_pmesh;
-  Vertex_sizing_map m_vertex_sizing_map;
+  const DefaultVPMap m_vpmap;
+  VertexSizingMap m_vertex_sizing_map;
 };
 
 }//end namespace Polygon_mesh_processing

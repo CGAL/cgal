@@ -698,7 +698,7 @@ public Q_SLOTS:
                 , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif));
               }
-              else if (edge_sizing_type = 1)
+              else if (edge_sizing_type == 1)
               {
                 std::pair<double, double> edge_min_max{min_length, max_length};
                 PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol

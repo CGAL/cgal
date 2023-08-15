@@ -23,13 +23,16 @@ namespace CGAL
 /*!
 * Sizing field virtual class
 */
-template <class PolygonMesh>
+template <class PolygonMesh,
+          class VPMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
 class Sizing_field
 {
 private:
   typedef PolygonMesh                     PM;
-  typedef typename boost::property_map<PM, boost::vertex_point_t>::const_type VPMap;
   typedef typename boost::property_traits<VPMap>::value_type Point;
+
+protected:
+  typedef typename boost::property_map<PM, boost::vertex_point_t>::const_type DefaultVPMap;
 
 public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
@@ -40,12 +43,13 @@ public:
   typedef typename K::FT                                        FT;
 
 public:
-  virtual boost::optional<FT> is_too_long(const halfedge_descriptor h) const = 0;
+  virtual boost::optional<FT> is_too_long(const halfedge_descriptor h,
+                                          const PolygonMesh& pmesh) const = 0;
   virtual boost::optional<FT> is_too_long(const vertex_descriptor va,
                                           const vertex_descriptor vb) const = 0;
-  virtual boost::optional<FT> is_too_short(const halfedge_descriptor h) const = 0;
-  virtual Point_3 split_placement(const halfedge_descriptor h) const = 0;
-  virtual const PolygonMesh& get_mesh() const = 0;
+  virtual boost::optional<FT> is_too_short(const halfedge_descriptor h,
+                                           const PolygonMesh& pmesh) const = 0;
+  virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const = 0;
 
 };
 
