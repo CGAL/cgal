@@ -42,6 +42,10 @@ using json = nlohmann::ordered_json;
 #include <unordered_map>
 #include <boost/property_map/property_map.hpp>
 
+// Include for point location queries
+#include <CGAL/Arr_naive_point_location.h>
+#include <CGAL/Arr_point_location_result.h>
+
 
 namespace {
   //#define USE_EPIC
@@ -1538,13 +1542,14 @@ namespace
 }
 
 namespace {
- 
-  Aos::Arr_handle  get_handle(void* arr)
+
+  template<typename T>
+  Aos::Arr_handle  get_handle(T* arr)
   {
     return Aos::Arr_handle(arr, [](void* ptr)
       {
         std::cout << "*** DELETING THE ARRANGEMENT WITH SHARED_PTR DELETER!!\n";
-        delete reinterpret_cast<Countries_arr*>(ptr);
+        delete reinterpret_cast<T*>(ptr);
       });
   }
 }
@@ -1629,7 +1634,7 @@ std::vector<QVector3D> Aos::get_triangles(Arr_handle arrh)
   // loop on all approximated faces
   for (auto& face_points : all_faces)
   {
-    std::cout << "num face points = " << face_points.size() << std::endl;
+    //std::cout << "num face points = " << face_points.size() << std::endl;
     // no need to triangulate if the number of points is 3
     if (face_points.size() == 3)
     {
@@ -1764,7 +1769,7 @@ Aos::Country_triangles_map Aos::get_triangles_by_country(Arr_handle arrh)
     // loop on all approximated faces
     for (auto& face_points : all_faces_of_current_country)
     {
-      std::cout << "num face points = " << face_points.size() << std::endl;
+      //std::cout << "num face points = " << face_points.size() << std::endl;
       // no need to triangulate if the number of points is 3
       if (face_points.size() == 3)
       {
@@ -1913,8 +1918,6 @@ Aos::Country_color_map  Aos::get_color_mapping(Arr_handle arrh)
   return result;
 }
 
-#include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Arr_point_location_result.h>
 
 std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
 {
