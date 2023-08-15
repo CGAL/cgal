@@ -1289,7 +1289,6 @@ public:
 
 
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
-    //todo ip - check and adjust these
     ui.errorTol_edit->setValue(0.001 * diago_length);
     ui.minEdgeLength_edit->setValue(0.001 * diago_length);
     ui.maxEdgeLength_edit->setValue(0.5 * diago_length);

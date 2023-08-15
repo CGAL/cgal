@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     if (PMP::is_degenerate_triangle_face(face, mesh))
     {
       std::cout << "Found degenerate triangle!" << std::endl;
-      continue; //todo ip should something be done about this?
+      continue;
     }
 
     // Calculate Q(t) triangle quality indicator
