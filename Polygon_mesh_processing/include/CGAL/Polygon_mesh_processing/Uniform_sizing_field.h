@@ -83,7 +83,7 @@ public:
   boost::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     const FT sqlen = sqlength(h, pmesh);
-    if (sqlen < m_sq_long)
+    if (sqlen < m_sq_short)
       return sqlen;
     else
       return boost::none;
