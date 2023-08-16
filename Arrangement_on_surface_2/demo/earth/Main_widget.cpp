@@ -226,10 +226,11 @@ void Main_widget::verify_antarctica_node_is_redundant()
   auto v3 = n3.get_coords_3f();
   auto n = QVector3D::crossProduct(v1, v3);
   n.normalize();
-  std::cout << "*** DOT PRODUCT = " << QVector3D::dotProduct(n, v2) << std::endl;
+  std::cout << "** DOT PRODUCT = " << QVector3D::dotProduct(n, v2) << std::endl;
 
   // 2) check if it is between its neighbors (check if r,s > 0)
-  auto det = [](float ax, float ay, float bx, float by) { return ax * by - ay * bx; };
+  auto det = [](float ax, float ay, float bx, float by) 
+                                                  { return ax * by - ay * bx; };
   auto D = det(v1.x(), v1.y(), v3.x(), v3.y());
   auto Dr = det(v2.x(), v2.y(), v3.x(), v3.y());
   auto Ds = det(v1.x(), v1.y(), v2.x(), v2.y());
@@ -251,8 +252,6 @@ void Main_widget::init_problematic_nodes()
   m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
 }
 
-
-std::unique_ptr<Line_strips>   new_faces;
 
 void Main_widget::initializeGL()
 {
@@ -301,7 +300,7 @@ void Main_widget::initializeGL()
   if(0)
   {
     auto created_faces = Aos::find_new_faces(m_countries);
-    new_faces = std::make_unique<Line_strips>(created_faces);
+    m_new_faces = std::make_unique<Line_strips>(created_faces);
   }
 
   // SAVING ARR
@@ -733,7 +732,7 @@ void Main_widget::paintGL()
 
     // NEW FACES in RED
     sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
-    //new_faces->draw();
+    //m_new_faces->draw();
 
     {
       glPointSize(5);

@@ -85,6 +85,10 @@ private:
   std::unique_ptr<Vertices>         m_vertices, m_problematic_vertices;
   std::unique_ptr<Line_strips>      m_identification_curve;
   
+  // New faces not in the KML-file but created during arr-construction.
+  // This is used to identify the Caspian Sea!
+  std::unique_ptr<Line_strips>   m_new_faces;
+
   QVector3D                         m_mouse_pos;
   std::unique_ptr<SingleVertex>     m_mouse_vertex;
 
