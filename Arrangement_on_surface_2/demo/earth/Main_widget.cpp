@@ -25,7 +25,14 @@
 #include "Shapefile.h"
 #include "Timer.h"
 #include "Tools.h"
+#include "Verification.h"
 
+
+namespace
+{
+  // used when dimming / highlighting selected countries
+  float s_dimming_factor = 0.4;
+}
 
 Main_widget::~Main_widget()
 {
@@ -33,8 +40,6 @@ Main_widget::~Main_widget()
   makeCurrent();
   doneCurrent();
 }
-
-float dimming_factor = 0.4;
 
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
@@ -108,7 +113,7 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
       // dim the previous country color
       auto& prev_country = m_country_triangles[prev_selected_country];
       auto color = prev_country->get_color();
-      color *= dimming_factor;
+      color *= s_dimming_factor;
       color.setW(1);
       prev_country->set_color(color);
     }
@@ -118,7 +123,7 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
       // highlight the current country color
       auto& curr_country = m_country_triangles[selected_country];
       auto color = curr_country->get_color();
-      color /= dimming_factor;
+      color /= s_dimming_factor;
       color.setW(1);
       curr_country->set_color(color);
       qDebug() << "SELECTED COUNTRY: " << selected_country;
@@ -213,31 +218,6 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
 }
 
 
-void Main_widget::verify_antarctica_node_is_redundant()
-{
-  Kml::Node n1(178.277211542064, -84.4725179992025),
-    n2(180.0, -84.71338),
-    n3(-179.942499356179, -84.7214433735525);
-
-  // 1) check if it is collinear with its neighboring nodes:
-  // all of the vectors in 3D must lie in the same plane
-  auto v1 = n1.get_coords_3f();
-  auto v2 = n2.get_coords_3f();
-  auto v3 = n3.get_coords_3f();
-  auto n = QVector3D::crossProduct(v1, v3);
-  n.normalize();
-  std::cout << "** DOT PRODUCT = " << QVector3D::dotProduct(n, v2) << std::endl;
-
-  // 2) check if it is between its neighbors (check if r,s > 0)
-  auto det = [](float ax, float ay, float bx, float by) 
-                                                  { return ax * by - ay * bx; };
-  auto D = det(v1.x(), v1.y(), v3.x(), v3.y());
-  auto Dr = det(v2.x(), v2.y(), v3.x(), v3.y());
-  auto Ds = det(v1.x(), v1.y(), v2.x(), v2.y());
-  auto r = Dr / D;
-  auto s = Ds / D;
-  std::cout << "r = " << r << "\ns=" << s << std::endl;
-}
 void Main_widget::init_problematic_nodes()
 {
   Kml::Nodes prob_nodes = {
@@ -256,10 +236,10 @@ void Main_widget::init_problematic_nodes()
 void Main_widget::initializeGL()
 {
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
-  //verify_antarctica_node_is_redundant();
+  //Verification::verify_antarctica_node_is_redundant();
 
   //init_problematic_nodes();
-  m_mouse_pos = QVector3D(0, -1.1, 0);
+  m_mouse_pos = QVector3D(0, -1, 0);
   m_mouse_vertex = std::make_unique<SingleVertex>(m_mouse_pos);
 
 
@@ -349,7 +329,7 @@ void Main_widget::initializeGL()
       auto color = QVector4D(rndm(), rndm(), rndm(), 1);
       auto m = std::max(color.x(), std::max(color.y(), color.z()));
       color /= m;
-      color *= dimming_factor;
+      color *= s_dimming_factor;
       color.setW(1);
       country_triangles->set_color(color);
       //country_triangles->set_color(colors[color_map[country_name]]);
@@ -498,89 +478,7 @@ float Main_widget::compute_backprojected_error(float pixel_error)
   //find_minimum_projected_error_on_sphere(err);
   return err;
 }
-void Main_widget::find_minimum_projected_error_on_sphere(float we)
-{
-  QRect vp(0, 0, m_vp_width, m_vp_height);
-  auto proj = m_camera.get_projection_matrix();
-  auto view = m_camera.get_view_matrix();
-  QMatrix4x4 model;
-  auto model_view = view * model;
 
-  float max_err = 0;
-  float max_theta = -1;
-  float max_phi = -1;
-
-  int num_divs = 200;
-  const float dtheta = M_PI_2 / num_divs;
-  const float dphi = M_PI_2 / num_divs;
-
-  const float r1 = 1.f;
-  const float r2 = r1 - we;
-  for (int i = 0; i <= num_divs; i++)
-  {
-    const float theta = dtheta * i;
-    const float cos_theta = std::cos(theta);
-    const float sin_theta = std::sin(theta);
-
-    for (int j = 0; j <= num_divs; j++)
-    {
-      QVector3D p1, p2;
-      const float phi = dphi * j;
-      const float cos_phi = std::cos(phi);
-      const float sin_phi = std::sin(phi);
-
-      // p1
-      const float r1xz = r1 * sin_phi;
-      p1.setY(r1 * cos_phi);
-      p1.setX(r1xz * cos_theta);
-      p1.setZ(r1xz * sin_theta);
-
-      // p2
-      const float r2xz = r2 * sin_phi;
-      p2.setY(r2 * cos_phi);
-      p2.setX(r2xz * cos_theta);
-      p2.setZ(r2xz * sin_theta);
-
-      auto wp1 = p1.project(model_view, proj, vp);
-      auto wp2 = p2.project(model_view, proj, vp);
-
-      const auto pe = wp1.distanceToPoint(wp2);
-      if (max_err < pe)
-      {
-        max_err = pe;
-        max_theta = theta;
-        max_phi = phi;
-      }
-    }
-  }
-
-  std::cout << "max err = " << max_err << std::endl;
-  std::cout << "max phi = " << max_phi * 180 / M_PI << std::endl;
-  std::cout << "max theta = " << max_theta * 180 / M_PI << std::endl;
-
-  auto wp1 = QVector3D(0, r1, 0).project(model_view, proj, vp);
-  auto wp2 = QVector3D(0, r2, 0).project(model_view, proj, vp);
-  auto pe = wp1.distanceToPoint(wp2);
-  std::cout << "polar err = " << pe << std::endl;
-
-  wp1 = QVector3D(r1, 0, 0).project(model_view, proj, vp);
-  wp2 = QVector3D(r2, 0, 0).project(model_view, proj, vp);
-  pe = wp1.distanceToPoint(wp2);
-  std::cout << "x-axis err = " << pe << std::endl;
-
-  wp1 = QVector3D(0, 0, 1).project(model_view, proj, vp);
-  wp2 = QVector3D(we, 0, 1).project(model_view, proj, vp);
-  pe = wp1.distanceToPoint(wp2);
-  std::cout << "nearest proj err = " << pe << std::endl;
-
-  wp1 = QVector3D(0, 0, -1).project(model_view, proj, vp);
-  wp2 = QVector3D(we, 0, -1).project(model_view, proj, vp);
-  pe = wp1.distanceToPoint(wp2);
-  std::cout << "farthest proj err = " << pe << std::endl;
-
-  // project the origin on the screen (to check if it projects to the mid-vp)
-  //std::cout << QVector3D(0, 0, 0).project(model_view, proj, vp) << std::endl;
-}
 
 void Main_widget::resizeGL(int w, int h)
 {

@@ -104,6 +104,7 @@ file(GLOB source_files
   Message_manager.h   Message_manager.cpp
   Timer.h
   Tools.h             Tools.cpp
+  Verification.h      Verification.cpp
  )
 source_group( "Source Files"  FILES ${source_files} )
 

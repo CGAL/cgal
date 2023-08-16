@@ -63,13 +63,13 @@ protected:
   void init_country_selection();
   
 
+  // This is called when the required approximation of the arcs is below the 
+  // currently required one defined by the zoom level and window size. If you
+  // zoom-in or increase the window-size this can be called. But once a minimum
+  // approximation error is needed, it will stay there until futher change.
+  // SEE the definition of "m_current_approx_error" member variable below!
   float compute_backprojected_error(float pixel_error);
-  // Use this to find the approximate of the true minimum projected error.
-  // we are ot using this complicated method, but provide it for completeness.
-  void find_minimum_projected_error_on_sphere(float we);
-
-  // verify that the node (180.0, -84.71338) in Antarctica is redundant
-  void verify_antarctica_node_is_redundant();
+ 
 
   // init problematic vertices: these are the vertices incident to deg-4 vertex
   void init_problematic_nodes();
@@ -89,6 +89,7 @@ private:
   // This is used to identify the Caspian Sea!
   std::unique_ptr<Line_strips>   m_new_faces;
 
+  // These are used to highlight the picked position by right-mouse click
   QVector3D                         m_mouse_pos;
   std::unique_ptr<SingleVertex>     m_mouse_vertex;
 
