@@ -246,6 +246,8 @@ namespace CommonKernelFunctors {
       const Vector_3 abad1 = xproduct(ab1, ad1);
       const FT sc_prod_1 = abac1 * abad1;
 
+      if (abac1==NULL_VECTOR || abad1==NULL_VECTOR) return SMALLER;
+
       CGAL_kernel_assertion_msg( abac1 != NULL_VECTOR,
                                  "ab1 and ac1 are collinear" );
       CGAL_kernel_assertion_msg( abad1 != NULL_VECTOR,
