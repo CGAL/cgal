@@ -41,12 +41,8 @@ Main_widget::~Main_widget()
   doneCurrent();
 }
 
-void Main_widget::mousePressEvent(QMouseEvent* e)
+void Main_widget::handle_country_picking(QMouseEvent* e)
 {
-  // forward the event to the camera manipulators
-  m_camera_manip_rot->mousePressEvent(e);
-  m_camera_manip_zoom->mousePressEvent(e);
-  
   // handle country selection
   if (e->button() == Qt::RightButton)
   {
@@ -75,7 +71,7 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
     auto b = 2 * QVector3D::dotProduct(u, o);
     auto c = QVector3D::dotProduct(o, o) - 1;
     auto d = b * b - 4 * a * c;
-    
+
     float ti = -1;
     if (abs(d) < std::numeric_limits<float>::epsilon())
     {
@@ -105,32 +101,39 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
     }
 
     m_mouse_pos = o + ti * u;
-    static std::string prev_selected_country;
-    auto selected_country = Aos::locate_country(m_arrh, m_mouse_pos);
+    static std::string prev_picked_country;
+    auto picked_country = Aos::locate_country(m_arrh, m_mouse_pos);
 
-    if(!prev_selected_country.empty())
+    if (!prev_picked_country.empty())
     {
       // dim the previous country color
-      auto& prev_country = m_country_triangles[prev_selected_country];
+      auto& prev_country = m_country_triangles[prev_picked_country];
       auto color = prev_country->get_color();
       color *= s_dimming_factor;
       color.setW(1);
       prev_country->set_color(color);
     }
 
-    if (!selected_country.empty())
+    if (!picked_country.empty())
     {
       // highlight the current country color
-      auto& curr_country = m_country_triangles[selected_country];
+      auto& curr_country = m_country_triangles[picked_country];
       auto color = curr_country->get_color();
       color /= s_dimming_factor;
       color.setW(1);
       curr_country->set_color(color);
-      qDebug() << "SELECTED COUNTRY: " << selected_country;
+      qDebug() << "SELECTED COUNTRY: " << picked_country;
     }
 
-    prev_selected_country = selected_country;
+    prev_picked_country = picked_country;
   }
+}
+void Main_widget::mousePressEvent(QMouseEvent* e)
+{
+  // forward the event to the camera manipulators
+  m_camera_manip_rot->mousePressEvent(e);
+  m_camera_manip_zoom->mousePressEvent(e);
+  handle_country_picking(e);
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {

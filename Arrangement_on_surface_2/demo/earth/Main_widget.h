@@ -62,6 +62,7 @@ protected:
   void init_country_borders(float error);
   void init_country_selection();
   
+  void handle_country_picking(QMouseEvent* e);
 
   // This is called when the required approximation of the arcs is below the 
   // currently required one defined by the zoom level and window size. If you
