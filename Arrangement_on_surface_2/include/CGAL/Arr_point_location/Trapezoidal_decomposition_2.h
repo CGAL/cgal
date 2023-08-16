@@ -272,7 +272,7 @@ public:
     Base_map_item_iterator() : traits(0), m_cur_item(Td_map_item(0)){ }
 
     Base_map_item_iterator(const Traits* traits_,
-                           std::optional<std::reference_wrapper<Td_map_item>> curr = std::nullopt)
+                           std::optional<Td_map_item> curr = std::nullopt)
       :traits(traits_), m_cur_item((curr) ? *curr : Td_map_item(0) ) { }
 
     Base_map_item_iterator(const Base_map_item_iterator &it)
