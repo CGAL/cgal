@@ -435,7 +435,7 @@ public Q_SLOTS:
                  selection_item->constrained_edges_pmap(),
                  get(CGAL::vertex_point, *selection_item->polyhedron()),
                  CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
-                 CGAL::Polygon_mesh_processing::Uniform_sizing_field<FaceGraph>( 4. / 3. * target_length, pmesh)))
+                 CGAL::Polygon_mesh_processing::Uniform_sizing_field( 4. / 3. * target_length, pmesh)))
             {
               QApplication::restoreOverrideCursor();
               //If facets are selected, splitting edges will add facets that won't be selected, and it will mess up the rest.
@@ -741,7 +741,7 @@ public Q_SLOTS:
                ecm,
                get(CGAL::vertex_point, pmesh),
                CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
-               CGAL::Polygon_mesh_processing::Uniform_sizing_field<FaceGraph>(4. / 3. * target_length, pmesh)))
+               CGAL::Polygon_mesh_processing::Uniform_sizing_field(4. / 3. * target_length, pmesh)))
           {
             QApplication::restoreOverrideCursor();
             QMessageBox::warning(mw, tr("Error"),

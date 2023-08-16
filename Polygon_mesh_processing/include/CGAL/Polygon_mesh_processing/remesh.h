@@ -344,7 +344,14 @@ void isotropic_remeshing(const FaceRange& faces
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
-  Uniform_sizing_field sizing(target_edge_length, pmesh);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+    get_property_map(vertex_point, pmesh));
+
+  Uniform_sizing_field<PolygonMesh, VPMap> sizing(target_edge_length, vpmap);
   if (target_edge_length > 0)
     isotropic_remeshing(faces, sizing, pmesh, np);
   else
