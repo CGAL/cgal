@@ -317,6 +317,7 @@ void tangential_relaxation(const VertexRange& vertices,
 #endif
 }
 
+//todo ip: doc here?
 template <typename VertexRange,
           class TriangleMesh,
           class SizingFunction,

@@ -25,6 +25,22 @@ namespace CGAL
 {
 namespace Polygon_mesh_processing
 {
+/*!
+* \ingroup PMP_meshing_grp
+* provides a set of instructions for isotropic remeshing to achieve variable
+* mesh edge lengths as a function of local discrete curvatures.
+*
+* Edges longer than the local target edge length are split in half, while
+* edges shorter than the local target edge length are collapsed.
+*
+* \cgalModels PMPSizingField
+*
+* \sa `isotropic_remeshing`
+* \sa `Uniform_sizing_field`
+*
+* @tparam PolygonMesh model of `MutableFaceGraph` that
+*         has an internal property map for `CGAL::vertex_point_t`.
+*/
 template <class PolygonMesh>
 class Adaptive_sizing_field : public CGAL::Sizing_field<PolygonMesh>
 {
@@ -44,6 +60,22 @@ public:
   typedef typename boost::property_map<PolygonMesh,
                                        Vertex_property_tag>::type VertexSizingMap;
 
+  /// \name Creation
+  /// @{
+  /*!
+  * Returns an object to serve as criteria for adaptive curvature-based edge lengths.
+  *
+  * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+  *         model of `Range`. Its iterator type is `ForwardIterator`.
+  *
+  * @param tol the error tolerance, the maximum deviation of an edge from the original
+  *        mesh. Lower tolerance values will result in shorter mesh edges.
+  * @param edge_len_min_max is the stopping criterion for minimum and maximum allowed
+  *        edge length.
+  * @param face_range the range of triangular faces defining one or several surface patches
+  *        to be remeshed.
+  * @param pmesh a polygon mesh with triangulated surface patches to be remeshed.
+  */
   template <typename FaceRange>
   Adaptive_sizing_field(const double tol
                       , const std::pair<FT, FT>& edge_len_min_max
@@ -74,6 +106,7 @@ public:
       calc_sizing_map(ffg);
     }
   }
+  ///@}
 
 private:
   template <typename FaceGraph>

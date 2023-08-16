@@ -23,6 +23,25 @@ namespace CGAL
 {
 namespace Polygon_mesh_processing
 {
+/*!
+* \ingroup PMP_meshing_grp
+* provides a set of instructions for isotropic remeshing to achieve uniform
+* mesh edge lengths.
+*
+* Edges longer than the 4/3 of the target edge length will be split in half, while
+* edges shorter than the 4/5 of the target edge length will be collapsed.
+*
+* \cgalModels PMPSizingField
+*
+* \sa `isotropic_remeshing`
+* \sa `Adaptive_sizing_field`
+*
+* @tparam PolygonMesh model of `MutableFaceGraph` that
+*         has an internal property map for `CGAL::vertex_point_t`.
+* @tparam VPMap a property map associating points to the vertices of `pmesh`.
+*         It is a a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*          as key type and `%Point_3` as value type. Default is `boost::get(CGAL::vertex_point, pmesh)`.
+*/
 template <class PolygonMesh,
           class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
 class Uniform_sizing_field : public CGAL::Sizing_field<PolygonMesh, VPMap>
@@ -36,17 +55,35 @@ public:
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
   typedef typename Base::vertex_descriptor   vertex_descriptor;
 
+  /// \name Creation
+  /// @{
+  /*!
+  * Returns an object to serve as criterion for uniform edge lengths.
+  *
+  * @param size is the target edge length for the isotropic remeshing. If set to 0,
+  *        the criterion for edge length is ignored and edges are neither split nor collapsed.
+  * @param pmesh a polygon mesh with triangulated surface patches to be remeshed.
+  */
+  Uniform_sizing_field<PolygonMesh>(const FT& size, const PolygonMesh& pmesh)
+    : m_sq_short( CGAL::square(4./5. * size))
+    , m_sq_long(  CGAL::square(4./3. * size))
+    , m_vpmap(get(CGAL::vertex_point, pmesh))
+  {}
+
+  /*!
+  * Returns an object to serve as criterion for uniform edge lengths.
+  * \param size is the target edge length for the isotropic remeshing. If set to 0,
+  *        the criterion for edge length is ignored and edges are neither split nor collapsed.
+  * \param vpmap is the input vertex point map that associates points to the vertices of
+  *        an input mesh.
+  */
   Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const VPMap& vpmap)
     : m_sq_short( CGAL::square(4./5. * size))
     , m_sq_long(  CGAL::square(4./3. * size))
     , m_vpmap(vpmap)
   {}
 
-  Uniform_sizing_field<PolygonMesh>(const FT& size, const PolygonMesh& pmesh)
-    : m_sq_short( CGAL::square(4./5. * size))
-    , m_sq_long(  CGAL::square(4./3. * size))
-    , m_vpmap(get(CGAL::vertex_point, pmesh))
-  {}
+  /// @}
 
 private:
   FT sqlength(const vertex_descriptor va,
