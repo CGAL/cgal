@@ -44,6 +44,9 @@ public:
   void set_uniform(GLint uniform_loc, const QMatrix4x4& m);
   void set_uniform(const GLchar* name, const QMatrix4x4& m);
 
+  void set_uniform(GLint uniform_loc, const QMatrix3x3& m);
+  void set_uniform(const GLchar* name, const QMatrix3x3& m);
+
   void set_uniform(GLint uniform_loc, const QVector4D& v);
   void set_uniform(const GLchar* name, const QVector4D& v);
 

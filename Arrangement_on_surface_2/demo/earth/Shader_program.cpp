@@ -159,6 +159,16 @@ void Shader_program::set_uniform(const GLchar* name, const QMatrix4x4& m)
   set_uniform(uniform_loc, m);
 }
 
+void Shader_program::set_uniform(GLint uniform_loc, const QMatrix3x3& m)
+{
+  glUniformMatrix3fv(uniform_loc, 1, GL_FALSE, m.data());
+}
+void Shader_program::set_uniform(const GLchar* name, const QMatrix3x3& m)
+{
+  const auto uniform_loc = get_uniform_location(name);
+  set_uniform(uniform_loc, m);
+}
+
 void Shader_program::set_uniform(GLint uniform_loc, const QVector4D& v)
 {
   glUniform4f(uniform_loc, v.x(), v.y(), v.z(), v.w());

@@ -520,7 +520,9 @@ void Main_widget::paintGL()
 
   const auto view = m_camera.get_view_matrix();
   const auto projection = m_camera.get_projection_matrix();
-  const auto mvp = projection * view * m_model;
+  const auto model_view = view * m_model;
+  const auto mvp = projection * model_view;
+  const auto normal_matrix = model_view.normalMatrix();
 
   // compute the cutting plane
 // remember that we are passing the local vertex positions of the sphere 
@@ -544,6 +546,7 @@ void Main_widget::paintGL()
     auto& sp = m_sp_smooth;
     sp.use();
     sp.set_uniform("u_mvp", mvp);
+    sp.set_uniform("u_normal_matrix", normal_matrix);
     auto sphere_color = QVector4D(167, 205, 242, 255) / 255;
     sp.set_uniform("u_color", sphere_color);
     sp.set_uniform("u_plane", QVector4D(0,0,0,0));

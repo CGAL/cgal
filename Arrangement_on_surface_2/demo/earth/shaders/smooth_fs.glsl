@@ -15,7 +15,7 @@ void main()
 	if( dot(u_plane, vec4(v_pos, 1)) < 0 )
 		discard;
 
-	const vec3 lightDir = normalize(vec3(1,.5,.5));
+	const vec3 lightDir = normalize(vec3(0,0,-1));
 
 	//float c = clamp(dot(lightDir,triNormal), 0, 1);
 	vec3 n = normalize(v_normal);
