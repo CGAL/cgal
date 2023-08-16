@@ -700,13 +700,13 @@ public:
         default:
           // ASCII
           os << "Point_2(";
-          os << oformat(this->ptr()->_m_xy);
+          os << ::CGAL::IO::oformat(this->ptr()->_m_xy);
           os << ",";
-          os << oformat(this->ptr()->_m_x);
+          os << ::CGAL::IO::oformat(this->ptr()->_m_x);
           os << ",";
-          os << oformat(this->ptr()->_m_curve);
+          os << ::CGAL::IO::oformat(this->ptr()->_m_curve);
           os << ",";
-          os << oformat(this->ptr()->_m_arcno);
+          os << ::CGAL::IO::oformat(this->ptr()->_m_arcno);
           os << ",";
           os << this->ptr()->_m_location;
 
