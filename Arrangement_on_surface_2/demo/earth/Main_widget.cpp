@@ -152,14 +152,6 @@ void Main_widget::timerEvent(QTimerEvent*)
   update();
 }
 
-//class GUI_event_handler
-//{
-//public:
-//  void keyPressEvent(QKeyEvent* event);
-//
-//protected:
-//  virtual void key_press_event(QKeyEvent* event);
-//};
 
 void Main_widget::keyPressEvent(QKeyEvent* event)
 {
