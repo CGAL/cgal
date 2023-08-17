@@ -43,66 +43,94 @@ Main_widget::~Main_widget()
 
 void Main_widget::handle_country_picking(QMouseEvent* e)
 {
-  // handle country selection
-  if (e->button() == Qt::RightButton)
-  {
-    auto p = e->pos();
-    QVector3D  sp0(p.x(), m_vp_height - p.y(), 0);
-    QVector3D  sp1(p.x(), m_vp_height - p.y(), 1);
+  //// handle country selection
+  //if (e->button() == Qt::RightButton)
+  //{
+  //  auto p = e->pos();
+  //  QVector3D  sp0(p.x(), m_vp_height - p.y(), 0);
+  //  QVector3D  sp1(p.x(), m_vp_height - p.y(), 1);
 
-    auto proj = m_camera.get_projection_matrix();
-    auto view = m_camera.get_view_matrix();
-    auto model_view = view * m_model;
-    QRect viewport(0, 0, m_vp_width, m_vp_height);
-    auto wp0 = sp0.unproject(model_view, proj, viewport);
-    auto wp1 = sp1.unproject(model_view, proj, viewport);
+  //  auto proj = m_camera.get_projection_matrix();
+  //  auto view = m_camera.get_view_matrix();
+  //  auto model_view = view * m_model;
+  //  QRect viewport(0, 0, m_vp_width, m_vp_height);
+  //  auto wp0 = sp0.unproject(model_view, proj, viewport);
+  //  auto wp1 = sp1.unproject(model_view, proj, viewport);
 
-    // ASSERTION!!!
-    m_mouse_pos = wp0;
+  //  // ASSERTION!!!
+  //  m_mouse_pos = wp0;
 
-    // define a ray from the camera pos to the world-point
-    //auto o = m_camera.get_pos();
-    //auto u = wp - o;
-    auto o = wp0;
-    auto u = wp1 - wp0;
+  //  // define a ray from the camera pos to the world-point
+  //  //auto o = m_camera.get_pos();
+  //  //auto u = wp - o;
+  //  auto o = wp0;
+  //  auto u = wp1 - wp0;
 
-    // solve the quadratic equation to check for intersection of ray with sphere
-    auto a = QVector3D::dotProduct(u, u);
-    auto b = 2 * QVector3D::dotProduct(u, o);
-    auto c = QVector3D::dotProduct(o, o) - 1;
-    auto d = b * b - 4 * a * c;
+  //  // solve the quadratic equation to check for intersection of ray with sphere
+  //  auto a = QVector3D::dotProduct(u, u);
+  //  auto b = 2 * QVector3D::dotProduct(u, o);
+  //  auto c = QVector3D::dotProduct(o, o) - 1;
+  //  auto d = b * b - 4 * a * c;
 
-    float ti = -1;
-    if (abs(d) < std::numeric_limits<float>::epsilon())
-    {
-      // single intersection
-      ti = -b / (2 * a);
-    }
-    else
-    {
-      if (d < 0)
-      {
-        // no intersection
-        return;
-      }
-      else
-      {
-        // two intersections
-        auto sd = sqrt(d);
-        auto t1 = (-b - sd) / (2 * a);
-        auto t2 = (-b + sd) / (2 * a);
-        if (t1 > 0 && t2 > 0)
-          ti = std::min(t1, t2);
-        else if (t1 > 0)
-          ti = t1;
-        else
-          ti = t2;
-      }
-    }
+  //  float ti = -1;
+  //  if (abs(d) < std::numeric_limits<float>::epsilon())
+  //  {
+  //    // single intersection
+  //    ti = -b / (2 * a);
+  //  }
+  //  else
+  //  {
+  //    if (d < 0)
+  //    {
+  //      // no intersection
+  //      return;
+  //    }
+  //    else
+  //    {
+  //      // two intersections
+  //      auto sd = sqrt(d);
+  //      auto t1 = (-b - sd) / (2 * a);
+  //      auto t2 = (-b + sd) / (2 * a);
+  //      if (t1 > 0 && t2 > 0)
+  //        ti = std::min(t1, t2);
+  //      else if (t1 > 0)
+  //        ti = t1;
+  //      else
+  //        ti = t2;
+  //    }
+  //  }
 
-    m_mouse_pos = o + ti * u;
-    static std::string prev_picked_country;
-    auto picked_country = Aos::locate_country(m_arrh, m_mouse_pos);
+  //  m_mouse_pos = o + ti * u;
+  //  static std::string prev_picked_country;
+  //  auto picked_country = Aos::locate_country(m_arrh, m_mouse_pos);
+
+  //  if (!prev_picked_country.empty())
+  //  {
+  //    // dim the previous country color
+  //    auto& prev_country = m_country_triangles[prev_picked_country];
+  //    auto color = prev_country->get_color();
+  //    color *= s_dimming_factor;
+  //    color.setW(1);
+  //    prev_country->set_color(color);
+  //  }
+
+  //  if (!picked_country.empty())
+  //  {
+  //    // highlight the current country color
+  //    auto& curr_country = m_country_triangles[picked_country];
+  //    auto color = curr_country->get_color();
+  //    color /= s_dimming_factor;
+  //    color.setW(1);
+  //    curr_country->set_color(color);
+  //    qDebug() << "SELECTED COUNTRY: " << picked_country;
+  //  }
+
+  //  prev_picked_country = picked_country;
+  //}
+}
+void Main_widget::hightlight_country(const std::string& country_name)
+{
+    static std::string  prev_picked_country;
 
     if (!prev_picked_country.empty())
     {
@@ -114,38 +142,40 @@ void Main_widget::handle_country_picking(QMouseEvent* e)
       prev_country->set_color(color);
     }
 
-    if (!picked_country.empty())
+    if (!country_name.empty())
     {
       // highlight the current country color
-      auto& curr_country = m_country_triangles[picked_country];
+      auto& curr_country = m_country_triangles[country_name];
       auto color = curr_country->get_color();
       color /= s_dimming_factor;
       color.setW(1);
       curr_country->set_color(color);
-      qDebug() << "SELECTED COUNTRY: " << picked_country;
+      qDebug() << "SELECTED COUNTRY: " << country_name;
     }
 
-    prev_picked_country = picked_country;
-  }
+    prev_picked_country = country_name;
 }
 void Main_widget::mousePressEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulators
   m_camera_manip_rot->mousePressEvent(e);
   m_camera_manip_zoom->mousePressEvent(e);
-  handle_country_picking(e);
+  m_pick_handler->mousePressEvent(e);
+  //handle_country_picking(e);
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseMoveEvent(e);
   m_camera_manip_zoom->mouseMoveEvent(e);
+  m_pick_handler->mouseMoveEvent(e);
 }
 void Main_widget::mouseReleaseEvent(QMouseEvent* e)
 {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseReleaseEvent(e);
   m_camera_manip_zoom->mouseReleaseEvent(e);
+  m_pick_handler->mouseReleaseEvent(e);
 }
 void Main_widget::timerEvent(QTimerEvent*)
 {
@@ -227,9 +257,12 @@ void Main_widget::init_problematic_nodes()
   m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
 }
 
+#include "GUI_country_pick_handler.h"
 
 void Main_widget::initializeGL()
 {
+  m_pick_handler = std::make_unique<GUI_country_pick_handler>(*this);
+
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
   //Verification::verify_antarctica_node_is_redundant();
 
@@ -334,7 +367,6 @@ void Main_widget::initializeGL()
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
     //m_all_triangles = std::make_unique<Triangles>(triangle_points);
   }
-
 
   
   // initialize rendering of DUPLICATE VERTICES
@@ -478,6 +510,7 @@ float Main_widget::compute_backprojected_error(float pixel_error)
 void Main_widget::resizeGL(int w, int h)
 {
   m_camera_manip_rot->resizeGL(w, h);
+  m_pick_handler->resizeGL(w, h);
   
   m_vp_width = w;
   m_vp_height = h;

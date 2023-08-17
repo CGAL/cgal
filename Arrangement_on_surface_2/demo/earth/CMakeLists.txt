@@ -88,11 +88,12 @@ source_group( "Graphics_Geometry"  FILES ${source_files_graphics_geometry} )
 
 # GUI
 file(GLOB source_files_gui
-  Camera_manip.h            Camera_manip.cpp
-  Camera_manip_rot.h        Camera_manip_rot.cpp
-  Camera_manip_rot_bpa.h    Camera_manip_rot_bpa.cpp
-  Camera_manip_zoom.h       Camera_manip_zoom.cpp
-  GUI_event_handler.h       GUI_event_handler.cpp 
+  Camera_manip.h              Camera_manip.cpp
+  Camera_manip_rot.h          Camera_manip_rot.cpp
+  Camera_manip_rot_bpa.h      Camera_manip_rot_bpa.cpp
+  Camera_manip_zoom.h         Camera_manip_zoom.cpp
+  GUI_country_pick_handler.h  GUI_country_pick_handler.cpp
+  GUI_event_handler.h         GUI_event_handler.cpp 
 )
 source_group( "GUI"  FILES ${source_files_gui} )
 

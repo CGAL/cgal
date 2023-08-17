@@ -25,6 +25,7 @@
 #include "Camera.h"
 #include "Camera_manip.h"
 #include "Common_defs.h"
+#include "GUI_event_handler.h"
 #include "Kml_reader.h"
 #include "Line_strips.h"
 #include "Shader_program.h"
@@ -42,6 +43,15 @@ class Main_widget : public QOpenGLWidget, protected OpenGLFunctionsBase
 public:
   using QOpenGLWidget::QOpenGLWidget;
   ~Main_widget();
+
+
+  auto& get_camera() { return m_camera; }
+  auto& get_model_matrix() { return m_model; }
+  auto& get_arr_handle() { return m_arrh; }
+
+  void set_mouse_pos(const QVector3D mouse_pos) { m_mouse_pos = mouse_pos; }
+
+  void hightlight_country(const std::string& country_name);
 
 protected:
   void mousePressEvent(QMouseEvent* e) override;
@@ -78,6 +88,9 @@ protected:
 private:
   // ARRANGEMENT
   Aos::Arr_handle   m_arrh;
+
+  // GUI: event handler for picking with right mouse button
+  std::unique_ptr<GUI_event_handler> m_pick_handler;
 
   // Objects in the scene
   std::unique_ptr<Sphere>           m_sphere;
@@ -117,7 +130,7 @@ private:
   
   // Camera & controls
   Camera  m_camera;
-  std::unique_ptr<Camera_manip>  m_camera_manip_rot;
+  std::unique_ptr<GUI_event_handler>  m_camera_manip_rot;
   std::unique_ptr<Camera_manip>  m_camera_manip_zoom;
   QMatrix4x4  m_model;
 
