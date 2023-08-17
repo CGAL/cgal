@@ -547,15 +547,15 @@ void Main_widget::paintGL()
     sp.set_uniform("u_plane", QVector4D(0,0,0,0));
     //sp.set_uniform("u_color", m_sphere->get_color());
     
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     m_sphere->draw();
 
     // DRAW SOLID FACES
     if(1)
     {
       glDisable(GL_DEPTH_TEST);
-      auto face_color = QVector4D(241, 141, 0, 255) / 255;
-      sp.set_uniform("u_color", face_color);
+      //auto face_color = QVector4D(241, 141, 0, 255) / 255;
+      //sp.set_uniform("u_color", face_color);
       sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       //m_all_triangles->draw();
@@ -602,34 +602,35 @@ void Main_widget::paintGL()
     m_identification_curve->draw(m_selected_arc_index);
 
     // draw all countries 
-    float a = 0.0;
-    sp.set_uniform("u_color", QVector4D(a, a, a, 1));
-    for(auto& country_border : m_country_borders)
-      country_border->draw();
+    //float a = 0.0;
+    //sp.set_uniform("u_color", QVector4D(a, a, a, 1));
+    //for(auto& country_border : m_country_borders)
+    //  country_border->draw();
 
-    // draw the SELECTED COUNTRY in BLUE
-    auto& selected_countru = m_country_borders[m_selected_country_index];
-    sp.set_uniform("u_color", QVector4D(0, .6, 1, 1));
-    selected_countru->draw();
+    //// draw the SELECTED COUNTRY in BLUE
+    //auto& selected_country = m_country_borders[m_selected_country_index];
+    //sp.set_uniform("u_color", QVector4D(0, .6, 1, 1));
+    //selected_country->draw();
 
-    // draw the CURRENT ARC of the selected country in YELLOW
-    sp.set_uniform("u_color", QVector4D(1, 1, 0, 1));
-    selected_countru->draw(m_selected_arc_index);
+    //// draw the CURRENT ARC of the selected country in YELLOW
+    //sp.set_uniform("u_color", QVector4D(1, 1, 0, 1));
+    //selected_country->draw(m_selected_arc_index);
 
-    const QVector4D vertex_color(1, 0, 0, 1);
-    sp.set_uniform("u_color", vertex_color);
-    glPointSize(3);
-    //m_vertices->draw();
+    //const QVector4D vertex_color(1, 0, 0, 1);
+    //sp.set_uniform("u_color", vertex_color);
+    //glPointSize(3);
+    ////m_vertices->draw();
 
-    sp.set_uniform("u_color", QVector4D(0,1,0,1));
-    glPointSize(2);
-    //m_problematic_vertices->draw();
-    draw_safe(m_problematic_vertices);
+    //sp.set_uniform("u_color", QVector4D(0,1,0,1));
+    //glPointSize(2);
+    ////m_problematic_vertices->draw();
+    //draw_safe(m_problematic_vertices);
 
-    // NEW FACES in RED
-    sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
-    //m_new_faces->draw();
+    //// NEW FACES in RED
+    //sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
+    ////m_new_faces->draw();
 
+    // MOUSE VERTEX
     {
       glPointSize(5);
       sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
