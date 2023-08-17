@@ -88,6 +88,7 @@ protected:
 private:
   // ARRANGEMENT
   Aos::Arr_handle   m_arrh;
+  std::unique_ptr<Line_strips>   m_gr_all_approx_arcs;
 
   // GUI: event handler for picking with right mouse button
   std::unique_ptr<GUI_event_handler> m_pick_handler;

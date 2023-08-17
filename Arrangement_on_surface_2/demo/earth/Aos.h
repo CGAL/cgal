@@ -76,6 +76,11 @@ public:
   static Country_color_map get_color_mapping(Arr_handle arrh);
 
   static std::string locate_country(Arr_handle arrh, const QVector3D& point);
+
+  // this will get the approximate arcs of face-edges from the arrangement
+  // NOTE: this is similar to "get_approx_arcs(KML::Placemarks&, float)" above!
+  static Approx_arcs get_approx_arcs_from_faces_edges(Arr_handle arrh, 
+                                                      float error);
 };
 
 

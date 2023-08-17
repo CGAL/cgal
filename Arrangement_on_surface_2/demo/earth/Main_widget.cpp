@@ -277,9 +277,9 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
   //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
   m_countries = Kml::read(file_name);
   
   // find the country with the least number of nodes
@@ -326,7 +326,7 @@ void Main_widget::initializeGL()
 
   // triangulation
   {
-    qDebug() << "constructiong arr..";
+    qDebug() << "loading arr..";
     //auto arrh = Aos::construct(m_countries);
     m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     if (m_arrh == nullptr)
@@ -456,6 +456,16 @@ void Main_widget::init_shader_programs()
 
 void Main_widget::init_country_borders(float error)
 {
+  // this part does the same as the code below but using arrangement!
+  // NOTE: the old code interferes with some logic (NEEDS REFACTORING!!!)
+  {
+    m_country_borders.clear();
+    qDebug() << "approximating the arcs of each edge of all faces..";
+    auto all_approx_arcs = Aos::get_approx_arcs_from_faces_edges(m_arrh, error);
+    m_gr_all_approx_arcs = std::make_unique<Line_strips>(all_approx_arcs);
+    return;
+  }
+
   // TO-DO: move this code to resizeGL (when viewport is initialized)
   // has to be defined after camera has been defined:
   // because we want to compute the error based on camera parameters!
@@ -637,8 +647,9 @@ void Main_widget::paintGL()
     // draw all countries 
     float a = 0.0;
     sp.set_uniform("u_color", QVector4D(a, a, a, 1));
-    for(auto& country_border : m_country_borders)
-      country_border->draw();
+    //for(auto& country_border : m_country_borders)
+    //  country_border->draw();
+    m_gr_all_approx_arcs->draw();
 
     //// draw the SELECTED COUNTRY in BLUE
     //auto& selected_country = m_country_borders[m_selected_country_index];

@@ -297,9 +297,6 @@ Aos::Approx_arc Aos::get_approx_identification_curve(double error)
 
 Aos::Approx_arcs Aos::get_approx_arcs(double error)
 {
-  //Geom_traits traits;
-  Arrangement arr(&s_traits);
-
   auto ctr_p = s_traits.construct_point_2_object();
   auto ctr_cv = s_traits.construct_curve_2_object();
 
@@ -310,36 +307,13 @@ Aos::Approx_arcs Aos::get_approx_arcs(double error)
   //xcvs.push_back(ctr_cv(ctr_p(1, 0, 0), ctr_p(0, 1, 0), Dir3(0, 0, -1)));
   //xcvs.push_back(ctr_cv(Dir3(0, 0, -1)));
 
-  auto approx = s_traits.approximate_2_object();
-
   auto approx_arcs = get_approx_curves(xcvs, error);
-  //std::vector<std::vector<QVector3D>>  arcs;
-  //for (const auto& xcv : xcvs)
-  //{
-  //  std::vector<Approximate_point_2> v;
-  //  auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
-  //
-  //  std::vector<QVector3D> arc_points;
-  //  for (const auto& p : v)
-  //  {
-  //    const QVector3D arc_point(p.dx(), p.dy(), p.dz());
-  //    arc_points.push_back(arc_point);
-  //  }
-  //  arcs.push_back(std::move(arc_points));
-  //}
-  //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
-
   return approx_arcs;
 }
 Aos::Approx_arcs Aos::get_approx_arcs(const Kml::Placemark& placemark, double error)
 {
-  //Geom_traits traits;
-  auto ctr_p = s_traits.construct_point_2_object();
-  auto ctr_cv = s_traits.construct_curve_2_object();
-
   auto xcvs = get_arcs(placemark);
   auto arcs = ::get_approx_curves(xcvs, error);
-
   return arcs;
 }
 
@@ -1936,4 +1910,20 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
   //else CGAL_error_msg("Invalid object.");
 
   return "";
+}
+
+Aos::Approx_arcs Aos::get_approx_arcs_from_faces_edges(Arr_handle arrh, 
+                                                       float error)
+{
+  auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
+  auto ctr_cv = s_traits.construct_curve_2_object();
+  Curves xcvs;
+  for (auto eit = arr.halfedges_begin(); eit != arr.halfedges_end(); ++eit)
+  {
+    auto& s = eit->curve();
+    xcvs.push_back( ctr_cv(s.source(), s.target()) );
+  }
+
+  auto arcs = ::get_approx_curves(xcvs, error);
+  return arcs;
 }
