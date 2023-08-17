@@ -64,7 +64,7 @@ public:
   *        the criterion for edge length is ignored and edges are neither split nor collapsed.
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed.
   */
-  Uniform_sizing_field<PolygonMesh>(const FT& size, const PolygonMesh& pmesh)
+  Uniform_sizing_field<PolygonMesh, VPMap>(const FT& size, const PolygonMesh& pmesh)
     : m_sq_short( CGAL::square(4./5. * size))
     , m_sq_long(  CGAL::square(4./3. * size))
     , m_vpmap(get(CGAL::vertex_point, pmesh))
