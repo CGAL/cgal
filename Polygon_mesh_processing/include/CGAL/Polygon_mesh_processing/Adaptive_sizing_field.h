@@ -41,8 +41,9 @@ namespace Polygon_mesh_processing
 * @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
 */
-template <class PolygonMesh>
-class Adaptive_sizing_field : public CGAL::Sizing_field<PolygonMesh>
+template <class PolygonMesh,
+          class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
+class Adaptive_sizing_field : public CGAL::Sizing_field<PolygonMesh, VPMap>
 {
 private:
   typedef CGAL::Sizing_field<PolygonMesh> Base;
