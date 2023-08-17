@@ -338,23 +338,7 @@ Aos::Approx_arcs Aos::get_approx_arcs(const Kml::Placemark& placemark, double er
   auto ctr_cv = s_traits.construct_curve_2_object();
 
   auto xcvs = get_arcs(placemark);
-
-  auto approx = s_traits.approximate_2_object();
-  std::vector<std::vector<QVector3D>>  arcs;
-  for (const auto& xcv : xcvs)
-  {
-    std::vector<Approximate_point_2> v;
-    auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
-
-    std::vector<QVector3D> arc_points;
-    for (const auto& p : v)
-    {
-      const QVector3D arc_point(p.dx(), p.dy(), p.dz());
-      arc_points.push_back(arc_point);
-    }
-    arcs.push_back(std::move(arc_points));
-  }
-  //std::cout << "offset count = " << m_arc_offsets.size() << std::endl;
+  auto arcs = ::get_approx_curves(xcvs, error);
 
   return arcs;
 }

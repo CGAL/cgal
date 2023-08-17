@@ -277,8 +277,8 @@ void Main_widget::initializeGL()
   //Shapefile::read(shape_file_name);
 
   //const auto file_name = data_path + "world_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
+  const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
+  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   //const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
   m_countries = Kml::read(file_name);
   
@@ -370,7 +370,7 @@ void Main_widget::initializeGL()
 
   
   // initialize rendering of DUPLICATE VERTICES
-  if(1)
+  if(0)
   {
     qDebug() << "identifying duplicate nodes";
     std::vector<QVector3D> vertices;
@@ -379,7 +379,7 @@ void Main_widget::initializeGL()
   
     m_vertices = std::make_unique<Vertices>(vertices);
   }
-  else
+  if(0)
   {
     // check the arrangement constructed from the GIS data-set
     auto created_vertices = Aos::ext_check(m_countries);
@@ -635,10 +635,10 @@ void Main_widget::paintGL()
     m_identification_curve->draw(m_selected_arc_index);
 
     // draw all countries 
-    //float a = 0.0;
-    //sp.set_uniform("u_color", QVector4D(a, a, a, 1));
-    //for(auto& country_border : m_country_borders)
-    //  country_border->draw();
+    float a = 0.0;
+    sp.set_uniform("u_color", QVector4D(a, a, a, 1));
+    for(auto& country_border : m_country_borders)
+      country_border->draw();
 
     //// draw the SELECTED COUNTRY in BLUE
     //auto& selected_country = m_country_borders[m_selected_country_index];
