@@ -2889,18 +2889,31 @@ public:
     OutputIterator operator()(const X_monotone_curve_2& xcv,
                               Approximate_number_type error,
                               OutputIterator oi, bool l2r = true) const {
-      auto s = xcv.source();
-      auto t = xcv.target();
-      auto n = xcv.normal();
+      const auto& s = xcv.source();
+      const auto& t = xcv.target();
+      const auto& n = xcv.normal();
+      const auto dx = CGAL::to_double(n.dx());
+      const auto dy = CGAL::to_double(n.dy());
+      const auto dz = CGAL::to_double(n.dz());
 
-      // get the approximate points;
-      auto as = (*this)(s);
-      auto at = (*this)(t);
+      Approximate_point_2 as, at;
+      Approximate_kernel_vector_3 vn;
+      if (xcv.is_directed_right() == l2r) {
+        // Get the approximate points
+        as = (*this)(s);
+        at = (*this)(t);
+        vn = Approximate_kernel_vector_3(dx, dy, dz);
+      }
+      else {
+        // Get the approximate points
+        as = (*this)(t);
+        at = (*this)(s);
+        vn = Approximate_kernel_vector_3(-dx, -dy, -dz);
+      }
 
       // convert the approximate points to vectors with approximate-kernel
       auto vs = approximate_vector_3(as);
       auto vt = approximate_vector_3(at);
-      auto vn = approximate_vector_3(n);
 
       // normalize the vectors
       auto normalize = [](auto& x) { x /= std::sqrt(x.squared_length()); };
