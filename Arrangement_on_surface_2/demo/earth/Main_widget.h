@@ -83,33 +83,31 @@ protected:
 private:
   // COUNTRY ARRANGEMENT SPECIFIC DATA
   Aos::Arr_handle   m_arrh;
-  std::unique_ptr<Line_strips>   m_gr_all_approx_arcs;
+  std::unique_ptr<Line_strips>   m_gr_all_country_borders;
 
   // used when dimming / highlighting selected countries
   const float m_dimming_factor = 0.4; 
 
   // GUI: event handler for picking with right mouse button
-  std::unique_ptr<GUI_event_handler> m_pick_handler;
-
-  // Objects in the scene
-  std::unique_ptr<Sphere>           m_gr_sphere;
-  std::unique_ptr<World_coord_axes> m_gr_world_coord_axes;
-  std::unique_ptr<Line_strips>      m_gr_geodesic_arcs;
-  //std::unique_ptr<Vertices>         m_vertices;
-  std::unique_ptr<Line_strips>      m_gr_identification_curve;
-  
+  std::unique_ptr<GUI_event_handler> m_pick_handler;  
 
   // These are used to highlight the picked position by right-mouse click
   QVector3D                         m_mouse_pos;
   std::unique_ptr<SingleVertex>     m_gr_mouse_vertex;
 
-  // COUNTRY DATA
-  std::vector<std::unique_ptr<Line_strips>>   m_gr_country_borders;
 
   // TRIANGLES for rendering the countries in solid
-  std::unique_ptr<Triangles>  m_all_triangles;
-  std::map<std::string, std::unique_ptr<Triangles>>  m_gr_country_triangles;
+  std::unique_ptr<Triangles>                        m_gr_all_triangles;
+  std::map<std::string, std::unique_ptr<Triangles>> m_gr_country_triangles;
 
+
+  // -------------------------------
+  // --> COMMON SETUP FOR ALL SCENES
+  
+  // Basic objects in the scene
+  std::unique_ptr<Sphere>           m_gr_sphere;
+  std::unique_ptr<World_coord_axes> m_gr_world_coord_axes;
+  std::unique_ptr<Line_strips>      m_gr_identification_curve;
 
   // Shaders
   Shader_program  m_sp_smooth;
@@ -134,6 +132,9 @@ private:
 
   // Timer for continuous screen-updates
   QBasicTimer m_timer;
+
+  // <-- COMMON SETUP FOR ALL SCENES
+  // -------------------------------
 };
 
 #endif

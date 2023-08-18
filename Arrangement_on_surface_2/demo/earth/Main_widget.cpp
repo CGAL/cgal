@@ -139,10 +139,8 @@ void Main_widget::initializeGL()
     }
     
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
-    //m_all_triangles = std::make_unique<Triangles>(triangle_points);
+    //m_gr_all_triangles = std::make_unique<Triangles>(triangle_points);
   }
-
- 
 
 
   initializeOpenGLFunctions();
@@ -214,10 +212,10 @@ void Main_widget::init_country_borders(float error)
 {
   // this part does the same as the code below but using arrangement!
   // NOTE: the old code interferes with some logic (NEEDS REFACTORING!!!)
-  m_gr_country_borders.clear();
+  m_gr_all_country_borders.reset(nullptr);
   qDebug() << "approximating the arcs of each edge of all faces..";
   auto all_approx_arcs = Aos::get_approx_arcs_from_faces_edges(m_arrh, error);
-  m_gr_all_approx_arcs = std::make_unique<Line_strips>(all_approx_arcs);
+  m_gr_all_country_borders = std::make_unique<Line_strips>(all_approx_arcs);
 }
 
 
@@ -333,7 +331,7 @@ void Main_widget::paintGL()
       //sp.set_uniform("u_color", face_color);
       sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      //m_all_triangles->draw();
+      //m_gr_all_triangles->draw();
       for (auto& [country_name, country] : m_gr_country_triangles)
       {
         sp.set_uniform("u_color", country->get_color());
@@ -342,7 +340,7 @@ void Main_widget::paintGL()
 
       //sp.set_uniform("u_color", QVector4D(0,0,0,1));
       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      //m_all_triangles->draw();
+      //m_gr_all_triangles->draw();
     }
 
     sp.unuse();
@@ -376,12 +374,10 @@ void Main_widget::paintGL()
     sp.set_uniform("u_color", QVector4D(0, 1, 1, 1));
     m_gr_identification_curve->draw();
 
-    // draw all countries 
+    // draw all countries' borders 
     float a = 0.0;
     sp.set_uniform("u_color", QVector4D(a, a, a, 1));
-    //for(auto& country_border : m_country_borders)
-    //  country_border->draw();
-    m_gr_all_approx_arcs->draw();
+    m_gr_all_country_borders->draw();
 
     // MOUSE VERTEX
     {
