@@ -11,6 +11,9 @@ Release date: October 2023
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
 
+### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
+-   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
+    when inserting an arc that lies on the identification curve.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
