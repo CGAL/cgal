@@ -15,10 +15,10 @@
 #include "Common_defs.h"
 
 
-class SingleVertex : protected OpenGLFunctionsBase
+class Single_vertex : protected OpenGLFunctionsBase
 {
 public:
-  SingleVertex(const QVector3D& pos);
+  Single_vertex(const QVector3D& pos);
 
   void set_visible(bool flag);
   void set_pos(const QVector3D& pos);
@@ -28,6 +28,7 @@ public:
 
 private:
   bool      m_visible;
+  bool      m_update = true; // flag to update the VBO (set_pos sets this)
   GLuint    m_vao, m_vbo;
   QVector3D m_pos;
 };

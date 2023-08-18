@@ -29,7 +29,7 @@
 #include "Kml_reader.h"
 #include "Line_strips.h"
 #include "Shader_program.h"
-#include "SingleVertex.h"
+#include "Single_vertex.h"
 #include "Sphere.h"
 #include "Triangles.h"
 #include "Vertices.h"
@@ -49,7 +49,7 @@ public:
   auto& get_model_matrix() { return m_model; }
   auto& get_arr_handle() { return m_arrh; }
 
-  void set_mouse_pos(const QVector3D mouse_pos) { m_mouse_pos = mouse_pos; }
+  void set_mouse_pos(const QVector3D mouse_pos);
 
   void hightlight_country(const std::string& country_name);
 
@@ -92,8 +92,7 @@ private:
   std::unique_ptr<GUI_event_handler> m_pick_handler;  
 
   // These are used to highlight the picked position by right-mouse click
-  QVector3D                         m_mouse_pos;
-  std::unique_ptr<SingleVertex>     m_gr_mouse_vertex;
+  std::unique_ptr<Single_vertex>  m_gr_mouse_vertex;
 
 
   // TRIANGLES for rendering the countries in solid

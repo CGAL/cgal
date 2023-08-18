@@ -37,6 +37,10 @@ Main_widget::~Main_widget()
   doneCurrent();
 }
 
+void Main_widget::set_mouse_pos(const QVector3D mouse_pos)
+{
+  m_gr_mouse_vertex->set_pos(mouse_pos);
+}
 void Main_widget::hightlight_country(const std::string& country_name)
 {
     static std::string  prev_picked_country;
@@ -102,8 +106,8 @@ void Main_widget::initializeGL()
 {
   m_pick_handler = std::make_unique<GUI_country_pick_handler>(*this);
 
-  m_mouse_pos = QVector3D(0, -1, 0);
-  m_gr_mouse_vertex = std::make_unique<SingleVertex>(m_mouse_pos);
+  QVector3D initial_mouse_pos(0, -1, 0);
+  m_gr_mouse_vertex = std::make_unique<Single_vertex>(initial_mouse_pos);
 
   // triangulation
   {
@@ -386,7 +390,7 @@ void Main_widget::paintGL()
       //auto pos = m_mouse_vertex->get_pos();
       //pos.setX(pos.x() + 0.01);
       //m_mouse_vertex->set_pos(pos);
-      m_gr_mouse_vertex->set_pos(m_mouse_pos);
+      //m_gr_mouse_vertex->set_pos(m_mouse_pos);
       draw_safe(m_gr_mouse_vertex);
     }
 
