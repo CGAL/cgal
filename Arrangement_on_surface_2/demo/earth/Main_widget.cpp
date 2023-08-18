@@ -20,6 +20,7 @@
 #include "Camera_manip_rot.h"
 #include "Camera_manip_rot_bpa.h"
 #include "Camera_manip_zoom.h"
+#include "GUI_country_pick_handler.h"
 #include "Kml_reader.h"
 #include "Message_manager.h"
 #include "Shapefile.h"
@@ -28,11 +29,6 @@
 #include "Verification.h"
 
 
-namespace
-{
-  // used when dimming / highlighting selected countries
-  float s_dimming_factor = 0.4;
-}
 
 Main_widget::~Main_widget()
 {
@@ -41,93 +37,6 @@ Main_widget::~Main_widget()
   doneCurrent();
 }
 
-void Main_widget::handle_country_picking(QMouseEvent* e)
-{
-  //// handle country selection
-  //if (e->button() == Qt::RightButton)
-  //{
-  //  auto p = e->pos();
-  //  QVector3D  sp0(p.x(), m_vp_height - p.y(), 0);
-  //  QVector3D  sp1(p.x(), m_vp_height - p.y(), 1);
-
-  //  auto proj = m_camera.get_projection_matrix();
-  //  auto view = m_camera.get_view_matrix();
-  //  auto model_view = view * m_model;
-  //  QRect viewport(0, 0, m_vp_width, m_vp_height);
-  //  auto wp0 = sp0.unproject(model_view, proj, viewport);
-  //  auto wp1 = sp1.unproject(model_view, proj, viewport);
-
-  //  // ASSERTION!!!
-  //  m_mouse_pos = wp0;
-
-  //  // define a ray from the camera pos to the world-point
-  //  //auto o = m_camera.get_pos();
-  //  //auto u = wp - o;
-  //  auto o = wp0;
-  //  auto u = wp1 - wp0;
-
-  //  // solve the quadratic equation to check for intersection of ray with sphere
-  //  auto a = QVector3D::dotProduct(u, u);
-  //  auto b = 2 * QVector3D::dotProduct(u, o);
-  //  auto c = QVector3D::dotProduct(o, o) - 1;
-  //  auto d = b * b - 4 * a * c;
-
-  //  float ti = -1;
-  //  if (abs(d) < std::numeric_limits<float>::epsilon())
-  //  {
-  //    // single intersection
-  //    ti = -b / (2 * a);
-  //  }
-  //  else
-  //  {
-  //    if (d < 0)
-  //    {
-  //      // no intersection
-  //      return;
-  //    }
-  //    else
-  //    {
-  //      // two intersections
-  //      auto sd = sqrt(d);
-  //      auto t1 = (-b - sd) / (2 * a);
-  //      auto t2 = (-b + sd) / (2 * a);
-  //      if (t1 > 0 && t2 > 0)
-  //        ti = std::min(t1, t2);
-  //      else if (t1 > 0)
-  //        ti = t1;
-  //      else
-  //        ti = t2;
-  //    }
-  //  }
-
-  //  m_mouse_pos = o + ti * u;
-  //  static std::string prev_picked_country;
-  //  auto picked_country = Aos::locate_country(m_arrh, m_mouse_pos);
-
-  //  if (!prev_picked_country.empty())
-  //  {
-  //    // dim the previous country color
-  //    auto& prev_country = m_country_triangles[prev_picked_country];
-  //    auto color = prev_country->get_color();
-  //    color *= s_dimming_factor;
-  //    color.setW(1);
-  //    prev_country->set_color(color);
-  //  }
-
-  //  if (!picked_country.empty())
-  //  {
-  //    // highlight the current country color
-  //    auto& curr_country = m_country_triangles[picked_country];
-  //    auto color = curr_country->get_color();
-  //    color /= s_dimming_factor;
-  //    color.setW(1);
-  //    curr_country->set_color(color);
-  //    qDebug() << "SELECTED COUNTRY: " << picked_country;
-  //  }
-
-  //  prev_picked_country = picked_country;
-  //}
-}
 void Main_widget::hightlight_country(const std::string& country_name)
 {
     static std::string  prev_picked_country;
@@ -135,9 +44,9 @@ void Main_widget::hightlight_country(const std::string& country_name)
     if (!prev_picked_country.empty())
     {
       // dim the previous country color
-      auto& prev_country = m_country_triangles[prev_picked_country];
+      auto& prev_country = m_gr_country_triangles[prev_picked_country];
       auto color = prev_country->get_color();
-      color *= s_dimming_factor;
+      color *= m_dimming_factor;
       color.setW(1);
       prev_country->set_color(color);
     }
@@ -145,9 +54,9 @@ void Main_widget::hightlight_country(const std::string& country_name)
     if (!country_name.empty())
     {
       // highlight the current country color
-      auto& curr_country = m_country_triangles[country_name];
+      auto& curr_country = m_gr_country_triangles[country_name];
       auto color = curr_country->get_color();
-      color /= s_dimming_factor;
+      color /= m_dimming_factor;
       color.setW(1);
       curr_country->set_color(color);
       qDebug() << "SELECTED COUNTRY: " << country_name;
@@ -161,7 +70,6 @@ void Main_widget::mousePressEvent(QMouseEvent* e)
   m_camera_manip_rot->mousePressEvent(e);
   m_camera_manip_zoom->mousePressEvent(e);
   m_pick_handler->mousePressEvent(e);
-  //handle_country_picking(e);
 }
 void Main_widget::mouseMoveEvent(QMouseEvent* e)
 {
@@ -185,144 +93,17 @@ void Main_widget::timerEvent(QTimerEvent*)
 
 void Main_widget::keyPressEvent(QKeyEvent* event)
 {
-  switch (event->key())
-  {
-  case Qt::Key_Q:
-  {
-    auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
-    if (++m_selected_arc_index == num_arcs)
-      m_selected_arc_index--;
-    qDebug() << "---------------------------------------";
-    qDebug() << "selected arc index = " << m_selected_arc_index;
-    
-    const auto& arc = m_selected_country_arcs[m_selected_arc_index];
-    std::cout << arc.from << "  TO  " << arc.to << std::endl;
-  }
-    break;
-  case Qt::Key_A:
-  {
-    auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
-    if (--m_selected_arc_index < 0)
-      m_selected_arc_index = 0;
-    std::cout << "selected arc = " << m_selected_arc_index << std::endl;
-  }
-    break;
-
-  case Qt::Key_Up:
-    m_selected_country_index++;
-    if (m_selected_country_index == m_country_names.size())
-      m_selected_country_index--;
-    std::cout << m_selected_country_index << ": " 
-              << m_country_names[m_selected_country_index] << std::endl;
-    
-    m_selected_arc_index = 0;
-    m_selected_country = &m_countries[m_selected_country_index];
-    m_selected_country_nodes = m_selected_country->get_all_nodes();
-    m_selected_country_arcs = m_selected_country->get_all_arcs();
-
-    {
-      auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
-      
-      qDebug() << "num KML arcs = " << m_selected_country_arcs.size();
-      qDebug() << "num arcs = " << num_arcs;
-    }
-    break;
-
-  case Qt::Key_Down:
-    m_selected_country_index--;
-    if (m_selected_country_index < 0)
-      m_selected_country_index = 0;
-    std::cout << m_selected_country_index << ": " 
-              << m_country_names[m_selected_country_index] << std::endl;
-    
-    m_selected_arc_index = 0;
-    m_selected_country = &m_countries[m_selected_country_index];
-    m_selected_country_nodes = m_selected_country->get_all_nodes();
-    break;
-  }
 }
 
 
-void Main_widget::init_problematic_nodes()
-{
-  Kml::Nodes prob_nodes = {
-    {23.8058134294668,8.66631887454253},
-    {24.1940677211877,8.7286964724039 },
-    {24.5673690121521,8.22918793378547},
-    {23.8869795808607,8.61972971293307}
-  };
-  std::vector<QVector3D> prob_vertices;
-  for (const auto& node : prob_nodes)
-    prob_vertices.push_back(node.get_coords_3f());
-  m_problematic_vertices = std::make_unique<Vertices>(prob_vertices);
-}
 
-#include "GUI_country_pick_handler.h"
 
 void Main_widget::initializeGL()
 {
   m_pick_handler = std::make_unique<GUI_country_pick_handler>(*this);
 
-  // verify that the node (180.0, -84.71338) in Antarctica is redundant
-  //Verification::verify_antarctica_node_is_redundant();
-
-  //init_problematic_nodes();
   m_mouse_pos = QVector3D(0, -1, 0);
-  m_mouse_vertex = std::make_unique<SingleVertex>(m_mouse_pos);
-
-
-  std::string data_path = "C:/work/gsoc2023/data/";
-  //std::string shape_file_path = data_path + "ne_110m_admin_0_countries/";
-  //auto shape_file_name = shape_file_path + "ne_110m_admin_0_countries.shp";
-  //Shapefile::read(shape_file_name);
-
-  //const auto file_name = data_path + "world_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries.kml";
-  //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
-  const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
-  m_countries = Kml::read(file_name);
-  
-  // find the country with the least number of nodes
-  if(0)
-  {
-    std::string smallest;
-    int min_num_nodes = std::numeric_limits<int>::max();
-    for (auto& p : m_countries)
-    {
-      int num_nodes = p.get_all_nodes_count();
-      if (min_num_nodes > num_nodes)
-      {
-        min_num_nodes = num_nodes;
-        smallest = p.name;
-      }
-      qDebug() << p.name << " = " << p.get_all_nodes_count();
-    }
-    qDebug() << "smallest = " << smallest;
-    exit(0);
-  }
-  
-  auto dup_nodes = Kml::get_duplicates(m_countries);
-  //auto all_nodes = Kml::generate_ids(m_countries);
-  qDebug() << "*** KML number of polygons = " << 
-                                      Kml::get_number_of_polygons(m_countries);
-  if(0)
-  {
-    auto created_faces = Aos::find_new_faces(m_countries);
-    m_new_faces = std::make_unique<Line_strips>(created_faces);
-  }
-
-  // SAVING ARR
-  if(0)
-  {
-    std::string dest_path = "C:/work/gsoc2023/";
-    //std::string file_name = "ne_110m_admin_0_countries.json";
-    //std::string file_name = "ne_110m_admin_0_countries_africa_1.json";
-    std::string file_name = "ne_110m_admin_0_countries_equatorial_guinea.json";
-    auto full_path = dest_path + file_name;
-    Aos::save_arr(m_countries, full_path);
-    qDebug() << "done saving!";
-    exit(0);
-  }
+  m_gr_mouse_vertex = std::make_unique<SingleVertex>(m_mouse_pos);
 
   // triangulation
   {
@@ -344,48 +125,24 @@ void Main_widget::initializeGL()
     //qDebug() << "color map size = " << color_map.size();
     qDebug() << "num countries = " << country_triangles_map.size();
     auto rndm = [] {return rand() / double(RAND_MAX); };
-    //QVector4D colors[] = {
-    //  QVector4D(1,0,0,1),
-    //  QVector4D(0,1,0,1),
-    //  QVector4D(0,0,1,1),
-    //  QVector4D(1,1,0,1),
-    //  QVector4D(1,0,1,1)
-    //};
     for (auto& [country_name, triangle_points] : country_triangles_map)
     {
       auto country_triangles = std::make_unique<Triangles>(triangle_points);
       auto color = QVector4D(rndm(), rndm(), rndm(), 1);
       auto m = std::max(color.x(), std::max(color.y(), color.z()));
       color /= m;
-      color *= s_dimming_factor;
+      color *= m_dimming_factor;
       color.setW(1);
       country_triangles->set_color(color);
       //country_triangles->set_color(colors[color_map[country_name]]);
-      m_country_triangles.emplace(country_name, std::move(country_triangles));
+      m_gr_country_triangles.emplace(country_name, std::move(country_triangles));
     }
     
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
     //m_all_triangles = std::make_unique<Triangles>(triangle_points);
   }
 
-  
-  // initialize rendering of DUPLICATE VERTICES
-  if(0)
-  {
-    qDebug() << "identifying duplicate nodes";
-    std::vector<QVector3D> vertices;
-    for (const auto& node : dup_nodes)
-      vertices.push_back(node.get_coords_3f());
-  
-    m_vertices = std::make_unique<Vertices>(vertices);
-  }
-  if(0)
-  {
-    // check the arrangement constructed from the GIS data-set
-    auto created_vertices = Aos::ext_check(m_countries);
-    //auto created_vertices = Aos::ext_check_id_based(m_countries);
-    m_vertices = std::make_unique<Vertices>(created_vertices);
-  }
+ 
 
 
   initializeOpenGLFunctions();
@@ -396,7 +153,6 @@ void Main_widget::initializeGL()
 
   m_current_approx_error = 0.001;
   init_country_borders(m_current_approx_error);
-  init_country_selection();
 
   glClearColor(0, 0, 0, 1);
   glEnable(GL_DEPTH_TEST);  // Enable depth buffer
@@ -434,17 +190,17 @@ void Main_widget::init_geometry()
   int num_slices, num_stacks;
   num_slices = num_stacks = 64;
   float r = 1;
-  m_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
+  m_gr_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
   const float c = 0.8;
-  m_sphere->set_color(c, c, c, 1);
+  m_gr_sphere->set_color(c, c, c, 1);
 
   // IDENTIFICATION CURVE
   const double error = 0.001;
   auto approx_ident_curve = Aos::get_approx_identification_curve(error);
-  m_identification_curve = std::make_unique<Line_strips>(approx_ident_curve);
+  m_gr_identification_curve = std::make_unique<Line_strips>(approx_ident_curve);
 
   const float axes_length = 2;
-  m_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
+  m_gr_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
 }
 void Main_widget::init_shader_programs()
 {
@@ -458,39 +214,12 @@ void Main_widget::init_country_borders(float error)
 {
   // this part does the same as the code below but using arrangement!
   // NOTE: the old code interferes with some logic (NEEDS REFACTORING!!!)
-  {
-    m_country_borders.clear();
-    qDebug() << "approximating the arcs of each edge of all faces..";
-    auto all_approx_arcs = Aos::get_approx_arcs_from_faces_edges(m_arrh, error);
-    m_gr_all_approx_arcs = std::make_unique<Line_strips>(all_approx_arcs);
-    return;
-  }
+  m_gr_country_borders.clear();
+  qDebug() << "approximating the arcs of each edge of all faces..";
+  auto all_approx_arcs = Aos::get_approx_arcs_from_faces_edges(m_arrh, error);
+  m_gr_all_approx_arcs = std::make_unique<Line_strips>(all_approx_arcs);
+}
 
-  // TO-DO: move this code to resizeGL (when viewport is initialized)
-  // has to be defined after camera has been defined:
-  // because we want to compute the error based on camera parameters!
-  //const double error = 0.001; // calculate this from cam parameters!
-  //auto lsa = Aos::get_approx_arcs(countries, error);
-  //auto lsa = Aos::get_approx_arcs(error);
-  //m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
-  m_country_borders.clear();
-  for (const auto& country : m_countries)
-  {
-    m_country_names.push_back(country.name);
-    auto approx_arcs = Aos::get_approx_arcs(country, error);
-    auto country_border = std::make_unique<Line_strips>(approx_arcs);
-    m_country_borders.push_back(std::move(country_border));
-  }
-}
-void Main_widget::init_country_selection()
-{
-  m_selected_country_index = 0;
-  //m_selected_country_index = 159; // ANTARCTICA
-  m_selected_country = &m_countries[m_selected_country_index];
-  m_selected_country_nodes = m_selected_country->get_all_nodes();
-  m_selected_country_arcs = m_selected_country->get_all_arcs();
-  m_selected_arc_index = 0;
-}
 
 float Main_widget::compute_backprojected_error(float pixel_error)
 {
@@ -563,9 +292,9 @@ void Main_widget::paintGL()
   const auto normal_matrix = model_view.normalMatrix();
 
   // compute the cutting plane
-// remember that we are passing the local vertex positions of the sphere 
-// between the vertex and fragment shader stages, so we need to convert
-// the camera-pos in world coords to sphere's local coords!
+  // remember that we are passing the local vertex positions of the sphere 
+  // between the vertex and fragment shader stages, so we need to convert
+  // the camera-pos in world coords to sphere's local coords!
   auto c = m_model.inverted() * m_camera.get_pos();
   const auto d = c.length();
   const auto r = 1.0f;
@@ -577,24 +306,27 @@ void Main_widget::paintGL()
 
   // Clear color and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  // SPHERE
+  // SMOTH RENDERING
   {
     glEnable(GL_DEPTH_TEST);
 
     auto& sp = m_sp_smooth;
     sp.use();
-    sp.set_uniform("u_mvp", mvp);
-    sp.set_uniform("u_normal_matrix", normal_matrix);
-    auto sphere_color = QVector4D(167, 205, 242, 255) / 255;
-    sp.set_uniform("u_color", sphere_color);
-    sp.set_uniform("u_plane", QVector4D(0,0,0,0));
-    //sp.set_uniform("u_color", m_sphere->get_color());
-    
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    m_sphere->draw();
+
+    // SPHERE
+    {
+      sp.set_uniform("u_mvp", mvp);
+      sp.set_uniform("u_normal_matrix", normal_matrix);
+      auto sphere_color = QVector4D(167, 205, 242, 255) / 255;
+      sp.set_uniform("u_color", sphere_color);
+      sp.set_uniform("u_plane", QVector4D(0, 0, 0, 0));
+      //sp.set_uniform("u_color", m_sphere->get_color());
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      m_gr_sphere->draw();
+    }
 
     // DRAW SOLID FACES
-    if(1)
     {
       glDisable(GL_DEPTH_TEST);
       //auto face_color = QVector4D(241, 141, 0, 255) / 255;
@@ -602,7 +334,7 @@ void Main_widget::paintGL()
       sp.set_uniform("u_plane", plane);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       //m_all_triangles->draw();
-      for (auto& [country_name, country] : m_country_triangles)
+      for (auto& [country_name, country] : m_gr_country_triangles)
       {
         sp.set_uniform("u_color", country->get_color());
         country->draw();
@@ -623,7 +355,7 @@ void Main_widget::paintGL()
     sp.set_uniform("u_mvp", mvp);
 
     glEnable(GL_DEPTH_TEST);
-    m_world_coord_axes->draw();
+    m_gr_world_coord_axes->draw();
 
     sp.unuse();
   }
@@ -642,7 +374,7 @@ void Main_widget::paintGL()
 
     // IDENTIFICATION CURVE
     sp.set_uniform("u_color", QVector4D(0, 1, 1, 1));
-    m_identification_curve->draw(m_selected_arc_index);
+    m_gr_identification_curve->draw();
 
     // draw all countries 
     float a = 0.0;
@@ -651,29 +383,6 @@ void Main_widget::paintGL()
     //  country_border->draw();
     m_gr_all_approx_arcs->draw();
 
-    //// draw the SELECTED COUNTRY in BLUE
-    //auto& selected_country = m_country_borders[m_selected_country_index];
-    //sp.set_uniform("u_color", QVector4D(0, .6, 1, 1));
-    //selected_country->draw();
-
-    //// draw the CURRENT ARC of the selected country in YELLOW
-    //sp.set_uniform("u_color", QVector4D(1, 1, 0, 1));
-    //selected_country->draw(m_selected_arc_index);
-
-    //const QVector4D vertex_color(1, 0, 0, 1);
-    //sp.set_uniform("u_color", vertex_color);
-    //glPointSize(3);
-    ////m_vertices->draw();
-
-    //sp.set_uniform("u_color", QVector4D(0,1,0,1));
-    //glPointSize(2);
-    ////m_problematic_vertices->draw();
-    //draw_safe(m_problematic_vertices);
-
-    //// NEW FACES in RED
-    //sp.set_uniform("u_color", QVector4D(1, 0, 0, 1));
-    ////m_new_faces->draw();
-
     // MOUSE VERTEX
     {
       glPointSize(5);
@@ -681,8 +390,8 @@ void Main_widget::paintGL()
       //auto pos = m_mouse_vertex->get_pos();
       //pos.setX(pos.x() + 0.01);
       //m_mouse_vertex->set_pos(pos);
-      m_mouse_vertex->set_pos(m_mouse_pos);
-      draw_safe(m_mouse_vertex);
+      m_gr_mouse_vertex->set_pos(m_mouse_pos);
+      draw_safe(m_gr_mouse_vertex);
     }
 
     sp.unuse();
