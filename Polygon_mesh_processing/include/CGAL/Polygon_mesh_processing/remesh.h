@@ -45,7 +45,7 @@ namespace Polygon_mesh_processing {
 *         models of `Hashable`.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
 *         model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam SizingFunction model of `Sizing_field`
+* @tparam SizingFunction model of `PMPSizingField`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
@@ -372,7 +372,7 @@ void isotropic_remeshing(const FaceRange& faces
 *         has an internal property map for `CGAL::vertex_point_t`.
 * @tparam EdgeRange range of `boost::graph_traits<PolygonMesh>::%edge_descriptor`,
 *   model of `Range`. Its iterator type is `InputIterator`.
-* @tparam SizingFunction model of `Sizing_field`
+* @tparam SizingFunction model of `Sizing_field_base`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh

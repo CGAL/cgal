@@ -27,7 +27,7 @@ namespace CGAL
 */
 template <class PolygonMesh,
           class VPMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
-class Sizing_field
+class Sizing_field_base
 {
 private:
   typedef PolygonMesh                     PM;

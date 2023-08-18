@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Sizing_field_base.h>
 
 #include <CGAL/number_utils.h>
 
@@ -44,10 +44,10 @@ namespace Polygon_mesh_processing
 */
 template <class PolygonMesh,
           class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
-class Uniform_sizing_field : public CGAL::Sizing_field<PolygonMesh, VPMap>
+class Uniform_sizing_field : public CGAL::Sizing_field_base<PolygonMesh, VPMap>
 {
 private:
-  typedef CGAL::Sizing_field<PolygonMesh, VPMap> Base;
+  typedef CGAL::Sizing_field_base<PolygonMesh, VPMap> Base;
 
 public:
   typedef typename Base::FT         FT;

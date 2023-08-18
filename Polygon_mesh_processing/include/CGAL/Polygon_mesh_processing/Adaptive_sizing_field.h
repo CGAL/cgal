@@ -15,15 +15,13 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Sizing_field_base.h>
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <CGAL/number_utils.h>
-
-
 
 namespace CGAL
 {
@@ -45,12 +43,11 @@ namespace Polygon_mesh_processing
 * @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
 */
-template <class PolygonMesh,
-          class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
-class Adaptive_sizing_field : public CGAL::Sizing_field<PolygonMesh, VPMap>
+template <class PolygonMesh>
+class Adaptive_sizing_field : public CGAL::Sizing_field_base<PolygonMesh>
 {
 private:
-  typedef CGAL::Sizing_field<PolygonMesh> Base;
+  typedef CGAL::Sizing_field_base<PolygonMesh> Base;
 
 public:
   typedef typename Base::K          K;
