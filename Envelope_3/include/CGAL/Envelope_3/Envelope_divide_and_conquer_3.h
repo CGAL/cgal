@@ -27,7 +27,6 @@
 #include <map>
 #include <time.h>
 
-#include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
@@ -307,9 +306,8 @@ protected:
   void deal_with_one_surface(Xy_monotone_surface_3& surf,
                              Minimization_diagram_2& result)
   {
-    typedef std::list<Object>                            Boundary_list;
     typedef std::pair<X_monotone_curve_2, Oriented_side> Boundary_xcurve;
-    typedef Boundary_list::iterator                      Boundary_iterator;
+    typedef std::list<std::variant<Boundary_xcurve,Point_2>> Boundary_list;
 
     Boundary_list     boundary;
     m_geom_traits->
@@ -325,17 +323,15 @@ protected:
       return;
     }
 
-    for (Boundary_iterator boundary_it = boundary.begin();
+    for (auto boundary_it = boundary.begin();
          boundary_it != boundary.end();
          ++boundary_it)
     {
-      const Object& obj = *boundary_it;
-      Boundary_xcurve boundary_cv;
-      if (assign(boundary_cv, obj))
+      if (const Boundary_xcurve* boundary_cv = std::get_if<Boundary_xcurve>(&(*boundary_it)))
       {
-        Oriented_side side = boundary_cv.second;
+        Oriented_side side = boundary_cv->second;
         Halfedge_handle he =
-          insert_non_intersecting_curve(result, boundary_cv.first);
+          insert_non_intersecting_curve(result, boundary_cv->first);
 
         if (side == ON_ORIENTED_BOUNDARY)
         {
@@ -408,10 +404,9 @@ protected:
       else
       {
         // the xy-surface is an isolated point
-        Point_2 p;
-        CGAL_assertion(assign(p, obj));
-        assign(p, obj);
-        insert_point(result, p);
+        const Point_2* p = std::get_if<Point_2>(&(*boundary_it));
+        CGAL_assertion(p!=nullptr);
+        insert_point(result, *p);
       }
     }
 

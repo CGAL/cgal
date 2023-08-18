@@ -265,7 +265,7 @@ struct Fake_mesh_domain {
   typedef std::pair<int,int> Surface_patch_index;
   typedef int Curve_index;
   typedef int Corner_index;
-  typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
+  typedef std::variant<Subdomain_index,Surface_patch_index> Index;
 };
 
 typedef Geom_traits Fake_gt;
@@ -417,12 +417,12 @@ struct Update_vertex
     case 2:
     {
       const typename V1::Index& index = v1.index();
-      const Sp_index sp_index = boost::get<Sp_index>(index);
+      const Sp_index sp_index = std::get<Sp_index>(index);
       v2.set_index((std::max)(sp_index.first, sp_index.second));
     }
       break;
     default:// -1, 0, 1, 3
-      v2.set_index(boost::get<int>(v1.index()));
+      v2.set_index(std::get<int>(v1.index()));
     }
     return true;
   }

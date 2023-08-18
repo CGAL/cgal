@@ -47,7 +47,7 @@
 #ifdef CGAL_MESH_3_VERBOSE
 #  include <boost/format.hpp>
 #endif
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
@@ -384,11 +384,11 @@ public:
   typedef typename Geom_traits::FT           FT;
 ///@}
 #else // DOXYGEN_RUNNING
-  typedef boost::optional<Subdomain_index>  Subdomain;
+  typedef std::optional<Subdomain_index>  Subdomain;
 
   // Type of indexes for cells of the input complex
   typedef Surface_patch_index_                  Surface_patch_index;
-  typedef boost::optional<Surface_patch_index>  Surface_patch;
+  typedef std::optional<Surface_patch_index>  Surface_patch;
 
   // Type of indexes to characterize the lowest dimensional face of the input
   // complex on which a vertex lie
@@ -1120,7 +1120,7 @@ public:
     {
       const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
-        if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
+        if(const Segment_3* s = std::get_if<Segment_3>(&*clipped))
           return this->operator()(*s);
 
       return Surface_patch();
@@ -1153,7 +1153,7 @@ public:
     Intersection operator()(const Segment_3& s) const
     {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      CGAL_precondition(r_domain_.do_intersect_surface_object()(s) != boost::none);
+      CGAL_precondition(r_domain_.do_intersect_surface_object()(s) != std::nullopt);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       return this->operator()(s.source(),s.target());
     }
@@ -1248,7 +1248,7 @@ public:
     {
       const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
-        if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
+        if(const Segment_3* s = std::get_if<Segment_3>(&*clipped))
           return this->operator()(*s);
 
       return Intersection();
@@ -1283,14 +1283,14 @@ public:
    * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
-  { return boost::get<Surface_patch_index>(index); }
+  { return Mesh_3::internal::get_index<Surface_patch_index>(index); }
 
   /*
    * Returns the index of the subdomain containing a vertex
    *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); }
+  { return Mesh_3::internal::get_index<Subdomain_index>(index); }
 
   // -----------------------------------
   // Backward Compatibility

@@ -497,7 +497,7 @@ public Q_SLOTS:
       return;
     }
 
-    boost::optional<std::size_t> minimum =
+    std::optional<std::size_t> minimum =
       selection_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
@@ -512,7 +512,7 @@ public Q_SLOTS:
       print_message("Error: there is no selected polyhedron selection item!");
       return;
     }
-    boost::optional<std::size_t> minimum = selection_item->get_minimum_isolated_component();
+    std::optional<std::size_t> minimum = selection_item->get_minimum_isolated_component();
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
     }

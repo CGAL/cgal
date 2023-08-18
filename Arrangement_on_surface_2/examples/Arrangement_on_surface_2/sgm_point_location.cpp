@@ -99,15 +99,15 @@ protected:
   for (auto it = results.begin(); it != results.end(); ++it) {
     std::cout << "The point (" << it->first << ") is located ";
     if (const Face_const_handle* f =
-        boost::get<Face_const_handle>(&(it->second)))       // inside a face
+        std::get_if<Face_const_handle>(&(it->second)))       // inside a face
       std::cout << "inside "
                 << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
                 << " face.\n";
     else if (const Halfedge_const_handle* e =
-             boost::get<Halfedge_const_handle>(&(it->second))) // on an edge
+             std::get_if<Halfedge_const_handle>(&(it->second))) // on an edge
       std::cout << "on an edge: " << (*e)->curve() << std::endl;
     else if (const Vertex_const_handle* v =
-             boost::get<Vertex_const_handle>(&(it->second)))  // on a vertex
+             std::get_if<Vertex_const_handle>(&(it->second)))  // on a vertex
       std::cout << "on "
                 << (((*v)->is_isolated()) ? "an isolated" : "a")
                 << " vertex: " << (*v)->point() << std::endl;

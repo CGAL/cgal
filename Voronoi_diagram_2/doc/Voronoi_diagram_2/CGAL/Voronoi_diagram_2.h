@@ -720,7 +720,7 @@ typedef unspecified_type Site_iterator;
 /*!
 The result type of the point location queries.
 */
-typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+typedef std::variant<Face_handle,Halfedge_handle,Vertex_handle>
 Locate_result;
 
 /// @}

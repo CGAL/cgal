@@ -38,7 +38,7 @@ A construction object type.
 
 Must provide
 
-`boost::optional<Point_2> operator()(const FT& t, const Segment_2& e0, const Segment_2& e1, const Trisegment_2_ptr& et) const`,
+`std::optional<Point_2> operator()(const FT& t, const Segment_2& e0, const Segment_2& e1, const Trisegment_2_ptr& et) const`,
 
 which constructs the point of intersection of the lines obtained by offsetting
 the oriented lines given by `e0` and `e0` a Euclidean distance `t`.

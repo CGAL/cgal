@@ -135,7 +135,7 @@ static inline bool hasValidChars(const std::string& expression, int dimension)
 }
 
 template <typename Polynomial_d>
-boost::optional<Polynomial_d>
+std::optional<Polynomial_d>
 AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
 {
   using Traits = CGAL::Polynomial_traits_d<Polynomial_d>;
