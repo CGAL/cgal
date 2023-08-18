@@ -16,10 +16,14 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/Sizing_field.h>
-
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
+#include <CGAL/boost/graph/selection.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+
 #include <CGAL/number_utils.h>
+
+
 
 namespace CGAL
 {
@@ -100,9 +104,9 @@ public:
       auto is_selected = get(CGAL::dynamic_face_property_t<bool>(), pmesh);
       for (face_descriptor f : faces(pmesh)) put(is_selected, f, false);
       for (face_descriptor f : face_range)  put(is_selected, f, true);
-      CGAL::expand_face_selection(selection, pmesh, 1
-                                , is_selected, std::back_inserter(selection));
-      CGAL::Face_filtered_graph<PolygonMesh> ffg(pmesh, selection);
+      expand_face_selection(selection, pmesh, 1,
+                            is_selected, std::back_inserter(selection));
+      Face_filtered_graph<PolygonMesh> ffg(pmesh, selection);
 
       calc_sizing_map(ffg);
     }
@@ -224,8 +228,8 @@ public:
 
   virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    return CGAL::midpoint(get(m_vpmap, target(h, pmesh)),
-                          get(m_vpmap, source(h, pmesh)));
+    return midpoint(get(m_vpmap, target(h, pmesh)),
+                    get(m_vpmap, source(h, pmesh)));
   }
 
   void update_sizing_map(const vertex_descriptor v, const PolygonMesh& pmesh)

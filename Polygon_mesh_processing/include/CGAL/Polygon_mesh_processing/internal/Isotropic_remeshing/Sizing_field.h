@@ -16,7 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/property_map.h>
+#include <CGAL/boost/graph/properties.h>
 
 #include <boost/optional.hpp>
 
