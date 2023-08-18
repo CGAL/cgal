@@ -317,7 +317,90 @@ void tangential_relaxation(const VertexRange& vertices,
 #endif
 }
 
-//todo ip: doc here?
+/*!
+* \ingroup PMP_meshing_grp
+* applies an iterative area-based tangential smoothing to the given range of vertices based on the
+* underlying sizing field.
+* Each vertex `v` is relocated to its weighted centroid, where weights depend on the area of the
+* adjacent triangle and its averaged vertex sizing values.
+* The relocation vector is projected back to the tangent plane to the surface at `v`, iteratively.
+* The connectivity remains unchanged.
+*
+* @tparam TriangleMesh model of `FaceGraph` and `VertexListGraph`.
+*         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
+*         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+* @tparam VertexRange range of `boost::graph_traits<TriangleMesh>::%vertex_descriptor`,
+*         model of `Range`. Its iterator type is `ForwardIterator`.
+* @tparam SizingFunction model of `PMPSizingField`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* @param vertices the range of vertices which will be relocated by relaxation
+* @param tm the triangle mesh to which `vertices` belong
+* @param sizing a map containing sizing field for individual vertices.
+*        Used to derive smoothing weights.
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `TriangleMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the `Point_3` type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex `Point_3` type.}
+*     \cgalParamExtra{Exact constructions kernels are not supported by this function.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{number_of_iterations}
+*     \cgalParamDescription{the number of smoothing iterations}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`1`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`.
+*                           The endpoints of a constrained edge cannot be moved by relaxation.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edges are constrained}
+*     \cgalParamExtra{Boundary edges are always considered as constrained edges.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tm`.
+*                           A constrained vertex cannot be modified during relaxation.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertices are constrained}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{relax_constraints}
+*     \cgalParamDescription{If `true`, the end vertices of the edges set as constrained
+*                           in `edge_is_constrained_map` and boundary edges move along the
+*                           constrained polylines they belong to.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`false`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{allow_move_functor}
+*     \cgalParamDescription{A function object used to determinate if a vertex move should be allowed or not}
+*     \cgalParamType{Unary functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)` returning `true`
+*                    if the vertex `v` can be moved from `src` to `tgt`; `Point_3` being the value type of the vertex point map }
+*     \cgalParamDefault{If not provided, all moves are allowed.}
+*   \cgalParamNEnd
+*
+* \cgalNamedParamsEnd
+*
+* \todo check if it should really be a triangle mesh or if a polygon mesh is fine
+*/
 template <typename VertexRange,
           class TriangleMesh,
           class SizingFunction,
