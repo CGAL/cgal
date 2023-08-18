@@ -44,10 +44,10 @@ namespace Polygon_mesh_processing
 *         has an internal property map for `CGAL::vertex_point_t`.
 */
 template <class PolygonMesh>
-class Adaptive_sizing_field : public CGAL::Sizing_field_base<PolygonMesh>
+class Adaptive_sizing_field : public Sizing_field_base<PolygonMesh>
 {
 private:
-  typedef CGAL::Sizing_field_base<PolygonMesh> Base;
+  typedef Sizing_field_base<PolygonMesh> Base;
 
 public:
   typedef typename Base::K          K;

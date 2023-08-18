@@ -22,6 +22,8 @@
 
 namespace CGAL
 {
+namespace Polygon_mesh_processing
+{
 /*!
 * Sizing field virtual class
 */
@@ -57,6 +59,7 @@ public:
 
 };
 
+}//end namespace Polygon_mesh_processing
 }//end namespace CGAL
 
 #endif //CGAL_PMP_REMESHING_SIZING_FIELD_H
