@@ -95,11 +95,11 @@ public:
     return (*this);
   }
 
-  /*! Set the location of the point.
+  /*! Set the location type of the point.
    */
   void set_location(Location_type location) { m_location = location; }
 
-  /*! Obtain the location of the point.
+  /*! Obtain the location type of the point.
    */
   Location_type location() const { return m_location; }
 
