@@ -581,7 +581,6 @@ _compute_next_intersection(Halfedge_handle he,
             << skip_first_point << ")" << std::endl;
 #endif
 
-  auto equal = m_geom_traits->equal_2_object();
   auto compare_xy = m_geom_traits->compare_xy_2_object();
   auto ctr_min = m_geom_traits->construct_min_vertex_2_object();
   auto is_closed = m_geom_traits->is_closed_2_object();
