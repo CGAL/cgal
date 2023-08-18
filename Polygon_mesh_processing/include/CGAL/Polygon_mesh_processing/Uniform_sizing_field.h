@@ -89,7 +89,7 @@ private:
   FT sqlength(const vertex_descriptor va,
               const vertex_descriptor vb) const
   {
-    return FT(CGAL::squared_distance(get(m_vpmap, va), get(m_vpmap, vb)));
+    return FT(squared_distance(get(m_vpmap, va), get(m_vpmap, vb)));
   }
 
   FT sqlength(const halfedge_descriptor& h, const PolygonMesh& pmesh) const
@@ -128,8 +128,8 @@ public:
 
   virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
-    return CGAL::midpoint(get(m_vpmap, target(h, pmesh)),
-                          get(m_vpmap, source(h, pmesh)));
+    return midpoint(get(m_vpmap, target(h, pmesh)),
+                    get(m_vpmap, source(h, pmesh)));
   }
 
 private:
