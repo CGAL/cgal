@@ -53,7 +53,7 @@
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -1542,7 +1542,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   Bare_point p = cp(c3t3_.triangulation().point(v)); // intentional copy
 
   // Remove v from the set of corners
-  boost::optional<Corner_index> corner_index = boost::make_optional(false, Corner_index());
+  std::optional<Corner_index> corner_index;
   if ( c3t3_.is_in_complex(v) )
   {
     corner_index = c3t3_.corner_index(v);

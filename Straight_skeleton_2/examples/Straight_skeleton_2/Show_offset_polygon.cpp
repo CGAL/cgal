@@ -4,7 +4,7 @@
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 #include "dump_to_eps.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cassert>
 #include <fstream>
@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 
-typedef boost::shared_ptr<Polygon_with_holes> Polygon_with_holes_ptr ;
+typedef std::shared_ptr<Polygon_with_holes> Polygon_with_holes_ptr ;
 
 typedef std::vector<Polygon_with_holes_ptr> Polygon_with_holes_ptr_vector ;
 

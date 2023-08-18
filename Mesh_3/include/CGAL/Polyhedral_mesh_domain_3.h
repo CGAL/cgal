@@ -36,13 +36,13 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/tuple.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/format.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/math/special_functions/round.hpp>
 
 #include <iostream>
@@ -166,7 +166,7 @@ public:
   //-------------------------------------------------------
   // Type of indexes for cells of the input complex
   typedef int Subdomain_index;
-  typedef boost::optional<Subdomain_index> Subdomain;
+  typedef std::optional<Subdomain_index> Subdomain;
 
   // Type of indexes for surface patch of the input complex
   typedef typename boost::property_map<Polyhedron,
@@ -174,7 +174,7 @@ public:
                                        >::type            Face_patch_id_pmap;
   typedef typename boost::property_traits<
     Face_patch_id_pmap>::value_type                       Surface_patch_index;
-  typedef boost::optional<Surface_patch_index>            Surface_patch;
+  typedef std::optional<Surface_patch_index>            Surface_patch;
 
   // Type of indexes to characterize the lowest dimensional face of the input
   // complex on which a vertex lie
@@ -441,7 +441,7 @@ public:
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
 
-      boost::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
+      std::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
       if ( primitive_id )
       {
         r_domain_.cache_primitive(q, *primitive_id);
@@ -483,7 +483,7 @@ public:
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
       typedef typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type
         Intersection_and_primitive_id;
-      typedef boost::optional<Intersection_and_primitive_id> AABB_intersection;
+      typedef std::optional<Intersection_and_primitive_id> AABB_intersection;
       typedef Point_3 Bare_point;
 
       AABB_intersection intersection;
@@ -500,7 +500,7 @@ public:
       {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         CGAL_precondition(r_domain_.do_intersect_surface_object()(q)
-                          != boost::none);
+                          != std::nullopt);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
         intersection = r_domain_.tree_.any_intersection(q);
@@ -512,7 +512,7 @@ public:
 
         // intersection may be either a point or a segment
         if ( const Bare_point* p_intersect_pt =
-             boost::get<Bare_point>( &(intersection->first) ) )
+             std::get_if<Bare_point>( &(intersection->first) ) )
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
@@ -520,7 +520,7 @@ public:
                               2);
         }
         else if ( const Segment_3* p_intersect_seg =
-                  boost::get<Segment_3>(&(intersection->first)))
+                  std::get_if<Segment_3>(&(intersection->first)))
         {
           CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
 
@@ -586,14 +586,14 @@ public:
    * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
-  { return boost::get<Surface_patch_index>(index); }
+  { return std::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
    *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); }
+  { return std::get<Subdomain_index>(index); }
 
   // -----------------------------------
   // Backward Compatibility
@@ -660,7 +660,7 @@ private:
   AABB_tree_* bounding_tree_;
 
   // cache queries and intersected primitive
-  typedef typename boost::make_variant_over<Allowed_query_types>::type Cached_query;
+  typedef std::variant<Segment_3, Ray_3, Line_3> Cached_query;
   struct Query_cache
   {
     Query_cache() : has_cache(false) {}

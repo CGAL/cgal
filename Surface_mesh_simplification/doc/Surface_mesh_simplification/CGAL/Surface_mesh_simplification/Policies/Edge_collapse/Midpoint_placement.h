@@ -36,7 +36,7 @@ public:
   the points of the source and target vertices
   (`profile.p0()` and `profile.p1()`)
   */
-  boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const;
+  std::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const;
 
 /// @}
 

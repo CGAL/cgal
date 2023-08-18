@@ -24,7 +24,9 @@ void _test_circle_bbox(CK ck)
   typedef typename CK::Circle_2                    Circle_2;
   typedef typename CK::Circular_arc_2              Circular_arc_2;
   typedef typename CK::Point_2                     Point_2;
+  typedef typename CK::Circular_arc_point_2        Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
+  typedef std::variant<Circular_arc_2, std::pair<Circular_arc_point_2, unsigned>> Intersection_result;
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -55,7 +57,7 @@ void _test_circle_bbox(CK ck)
     bool box_overlap = do_overlap(box1, box2);
     Intersect_2 theConstruct_intersect_2
       = ck.intersect_2_object();
-    std::vector< CGAL::Object >
+    std::vector< Intersection_result >
       vector_for_intersection_1;
     theConstruct_intersect_2(arc1,
                              arc2,
@@ -143,6 +145,7 @@ template <class CK>
     typedef typename CK::Intersect_2   Intersect_2;
     typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
     typedef typename CK::Line_arc_2              Line_arc_2;
+    typedef std::variant<std::pair<Circular_arc_point_2, unsigned>, Circular_arc_2> Intersection_result;
 
     Point_2 center_circ(0,0);
     Circle_2 circ(center_circ, 100);
@@ -151,7 +154,7 @@ template <class CK>
                              Point_2(0, -15));
     Intersect_2 theConstruct_intersect_2
       = ck.intersect_2_object();
-    std::vector< CGAL::Object >
+    std::vector< Intersection_result >
       vector_for_intersection_1;
     theConstruct_intersect_2(arc,
                              line_vertical,
@@ -159,18 +162,18 @@ template <class CK>
     Circular_arc_point_2 point_top;
     Circular_arc_point_2 point_down;
     std::pair< Circular_arc_point_2, unsigned int> aux;
-    assign(aux, vector_for_intersection_1[0]);
+    assign_variant(aux, vector_for_intersection_1[0]);
     point_down = aux.first;
-    assign(aux, vector_for_intersection_1[1]);
+    assign_variant(aux, vector_for_intersection_1[1]);
     point_top = aux.first;
     Make_x_monotone_2 theMake_x_monotone = ck.make_x_monotone_2_object();
-    std::vector< CGAL::Object > outputIterator1;
+    std::vector< Intersection_result > outputIterator1;
     theMake_x_monotone(arc,
                        std::back_inserter(outputIterator1));
     Circular_arc_2 arc_top;
     Circular_arc_2 arc_down;
-    assign(arc_top,outputIterator1[1]);
-    assign(arc_down, outputIterator1[0]);
+    assign_variant(arc_top,outputIterator1[1]);
+    assign_variant(arc_down, outputIterator1[0]);
     assert(!ck.has_on_2_object()(arc_top,
                                 line_vertical.source()));
     assert(ck.has_on_2_object()(arc_top,
@@ -195,7 +198,7 @@ template <class CK>
     typedef typename CK::Point_2                     Point_2;
     typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename CK::Intersect_2   Intersect_2;
-
+    typedef std::variant<Circular_arc_2, std::pair<Circular_arc_point_2, unsigned>> Intersection_result;
 
 
     int test_suite_cases[3][2][3] = {{{-7,-8,113},{9,9,162}},
@@ -213,20 +216,20 @@ template <class CK>
 
       Intersect_2 theConstruct_intersect_2
         = ck.intersect_2_object();
-      std::vector< CGAL::Object >
+      std::vector< Intersection_result >
         vector_for_intersection_1;
       theConstruct_intersect_2(arc,
                                arc2,
                              std::back_inserter(vector_for_intersection_1));
       std::pair< Circular_arc_point_2, unsigned int> aux;
-      assign(aux, vector_for_intersection_1[0]);
+      assign_variant(aux, vector_for_intersection_1[0]);
       CGAL::Bbox_2 box1 = aux.first.bbox();
       assert(typename CK::FT(box1.xmin()) <= aux.first.x());
       assert(typename CK::FT(box1.xmax()) >= aux.first.x());
       assert(typename CK::FT(box1.ymin()) <= aux.first.y());
       assert(typename CK::FT(box1.ymax()) >= aux.first.y());
       std::cout << "Ok" << std::endl;
-      assign(aux, vector_for_intersection_1[1]);
+      assign_variant(aux, vector_for_intersection_1[1]);
       CGAL::Bbox_2 box2 = aux.first.bbox();
       assert(typename CK::FT(box2.xmin()) <= aux.first.x());
       assert(typename CK::FT(box2.xmax()) >= aux.first.x());

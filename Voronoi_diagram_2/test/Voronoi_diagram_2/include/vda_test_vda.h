@@ -223,13 +223,13 @@ void test_vdqr_concept(const VDA& vda, const CGAL::Tag_true&)
   Point_2 p(0,0);
   Locate_result lr = vda.locate(p);
 
-  if ( Vertex_handle* vv = boost::get<Vertex_handle>(&lr) ) {
+  if ( Vertex_handle* vv = std::get_if<Vertex_handle>(&lr) ) {
     Vertex_handle v = *vv;
     kill_warning(v);
-  } else if ( Halfedge_handle* ee = boost::get<Halfedge_handle>(&lr) ) {
+  } else if ( Halfedge_handle* ee = std::get_if<Halfedge_handle>(&lr) ) {
     Halfedge_handle e = *ee;
     kill_warning(e);
-  } else if ( Face_handle* ff = boost::get<Face_handle>(&lr) ) {
+  } else if ( Face_handle* ff = std::get_if<Face_handle>(&lr) ) {
     Face_handle f = *ff;
     kill_warning(f);
   }

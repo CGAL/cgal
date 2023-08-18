@@ -1200,7 +1200,7 @@ Scene_surface_mesh_item::select(double orig_x,
     {
 
       const EPICK::Point_3* closest_point =
-          boost::get<EPICK::Point_3>(&(closest->first));
+          std::get_if<EPICK::Point_3>(&(closest->first));
       for(Intersections::iterator
           it = std::next(intersections.begin()),
           end = intersections.end();
@@ -1211,7 +1211,7 @@ Scene_surface_mesh_item::select(double orig_x,
         }
         else {
           const EPICK::Point_3* it_point =
-              boost::get<EPICK::Point_3>(&it->first);
+              std::get_if<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {
@@ -1909,7 +1909,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
     if(!intersections.empty()) {
       Intersections::iterator closest = intersections.begin();
       const EPICK::Point_3* closest_point =
-          boost::get<EPICK::Point_3>(&closest->first);
+          std::get_if<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
           it = std::next(intersections.begin()),
           end = intersections.end();
@@ -1920,7 +1920,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
         }
         else {
           const EPICK::Point_3* it_point =
-              boost::get<EPICK::Point_3>(&it->first);
+              std::get_if<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {

@@ -36,10 +36,10 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
+#include <optional>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for_each.h>
@@ -640,8 +640,8 @@ class C3T3_helpers
   typedef typename C3T3::Subdomain_index              Subdomain_index;
   typedef typename C3T3::Index                        Index;
 
-  typedef boost::optional<Surface_patch_index>        Surface_patch;
-  typedef boost::optional<Subdomain_index>            Subdomain;
+  typedef std::optional<Surface_patch_index>        Surface_patch;
+  typedef std::optional<Subdomain_index>            Subdomain;
 
   typedef std::vector<Cell_handle>                    Cell_vector;
   typedef std::set<Cell_handle>                       Cell_set;
@@ -680,7 +680,7 @@ public:
   // -----------------------------------
   // Public interface
   // -----------------------------------
-  typedef boost::optional<Vertex_handle>              Update_mesh;
+  typedef std::optional<Vertex_handle>              Update_mesh;
 
   using Base::try_lock_point;
   using Base::try_lock_vertex;
@@ -1674,7 +1674,7 @@ private:
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
-  std::pair<boost::optional<Plane_3>, Bare_point>
+  std::pair<std::optional<Plane_3>, Bare_point>
   get_least_square_surface_plane(const Vertex_handle& v,
                                  Surface_patch_index index = Surface_patch_index()) const;
 
@@ -1683,15 +1683,15 @@ private:
    * @param v The vertex from which p was moved
    * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
-   * @return a `boost::optional` with the projected point if the projection
-   * was possible, or `boost::none`.
+   * @return a `std::optional` with the projected point if the projection
+   * was possible, or `std::nullopt`.
    *
    * `p` is projected using the normal of least square fitting plane
    * on `v` incident surface points. If `index` is specified, only
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
    */
-  boost::optional<Bare_point>
+  std::optional<Bare_point>
   project_on_surface_if_possible(const Vertex_handle& v,
                                  const Bare_point& p,
                                  Surface_patch_index index = Surface_patch_index()) const;
@@ -2774,7 +2774,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        ++it )
   {
     const Weighted_point& initial_position = tr_.point(*it);
-    boost::optional<Bare_point> opt_new_pos = project_on_surface(*it, cp(initial_position));
+    std::optional<Bare_point> opt_new_pos = project_on_surface(*it, cp(initial_position));
 
     if ( opt_new_pos )
     {
@@ -2886,7 +2886,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   {
     Vertex_handle vh = it->first;
     const Weighted_point& initial_position = tr_.point(vh);
-    boost::optional<Bare_point> opt_new_pos = project_on_surface(vh, cp(initial_position), it->second);
+    std::optional<Bare_point> opt_new_pos = project_on_surface(vh, cp(initial_position), it->second);
 
     if ( opt_new_pos )
     {
@@ -3419,7 +3419,7 @@ project_on_surface_aux(const Bare_point& p,
 
 
 template <typename C3T3, typename MD>
-std::pair<boost::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>,
+std::pair<std::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>,
           typename C3T3_helpers<C3T3, MD>::Bare_point>
 C3T3_helpers<C3T3,MD>::
 get_least_square_surface_plane(const Vertex_handle& v,
@@ -3466,7 +3466,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return std::make_pair(boost::none, Bare_point(ORIGIN));
+    return std::make_pair(std::nullopt, Bare_point(ORIGIN));
 
   // Compute least square fitting plane
   Plane_3 plane;
@@ -3492,7 +3492,7 @@ project_on_surface(const Vertex_handle& v,
                    const Bare_point& p,
                    Surface_patch_index index) const
 {
-  boost::optional<Bare_point> opt_point =
+  std::optional<Bare_point> opt_point =
     project_on_surface_if_possible(v, p, index);
   if(opt_point) return *opt_point;
   else return p;
@@ -3500,7 +3500,7 @@ project_on_surface(const Vertex_handle& v,
 
 
 template <typename C3T3, typename MD>
-boost::optional<typename C3T3_helpers<C3T3,MD>::Bare_point>
+std::optional<typename C3T3_helpers<C3T3,MD>::Bare_point>
 C3T3_helpers<C3T3,MD>::
 project_on_surface_if_possible(const Vertex_handle& v,
                                const Bare_point& p,
@@ -3513,11 +3513,11 @@ project_on_surface_if_possible(const Vertex_handle& v,
   typename GT::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   // Get plane
-  std::pair<boost::optional<Plane_3>, Bare_point> pl_rp
+  std::pair<std::optional<Plane_3>, Bare_point> pl_rp
     = get_least_square_surface_plane(v, index);
 
-  boost::optional<Plane_3> opt_plane = pl_rp.first;
-  if(!opt_plane) return boost::none;
+  std::optional<Plane_3> opt_plane = pl_rp.first;
+  if(!opt_plane) return std::nullopt;
 
   // Project
   const Weighted_point& position = tr_.point(v);

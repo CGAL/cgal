@@ -49,7 +49,7 @@ public:
   /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
   /// is model of  `PolylineSimplificationVertexBase_2`.
  template<class CDT>
- boost::optional<typename CDT::Geom_traits::FT>
+ std::optional<typename CDT::Geom_traits::FT>
     operator()(  const Constrained_triangulation_plus_2<CDT>& pct
                  , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq) const
   {

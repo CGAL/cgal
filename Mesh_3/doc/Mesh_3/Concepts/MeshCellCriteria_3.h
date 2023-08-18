@@ -50,7 +50,7 @@ the cell is good with regard to the criteria.
 In addition, an object of this type must contain an object of type
 `Cell_quality` if it represents
 a bad cell. `Cell_quality` must be accessible by `operator*()`.
-Note that `boost::optional<Cell_quality>` is a natural model of this concept.
+Note that `std::optional<Cell_quality>` is a natural model of this concept.
 */
 typedef unspecified_type Is_cell_bad;
 

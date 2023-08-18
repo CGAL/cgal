@@ -22,8 +22,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/number_utils.h>
 
-#include <boost/optional.hpp>
-#include <boost/variant.hpp>
+#include <optional>
+#include <variant>
 
 namespace CGAL {
 namespace Intersections {
@@ -34,7 +34,7 @@ namespace internal {
 // But it must be a template function since the original kernel must be
 // taken into account.
 template <class K>
-typename boost::optional< boost::variant<typename K::Segment_3, typename K::Point_3 > >
+typename std::optional< std::variant<typename K::Segment_3, typename K::Point_3 > >
 intersection_bl(const Bbox_3& box,
                 double lpx, double lpy, double lpz,
                 double ldx, double ldy, double ldz,
@@ -45,7 +45,7 @@ intersection_bl(const Bbox_3& box,
   typedef typename K::Vector_3  Vector_3;
   typedef typename K::Segment_3 Segment_3;
 
-  typedef typename boost::optional<boost::variant< Segment_3, Point_3 > > result_type;
+  typedef typename std::optional<std::variant< Segment_3, Point_3 > > result_type;
 
   double seg_min = 0.0, seg_max = 1.0;
   // first on x value

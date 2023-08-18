@@ -31,7 +31,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <array>
 #include <iostream>
@@ -57,9 +57,9 @@ namespace Polygon_mesh_processing {
 ///
 /// A variant used in the function `get_descriptor_from_location()`.
 template <typename TriangleMesh>
-using descriptor_variant = boost::variant<typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
-                                          typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
-                                          typename boost::graph_traits<TriangleMesh>::face_descriptor>;
+using descriptor_variant = std::variant<typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
+                                        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
+                                        typename boost::graph_traits<TriangleMesh>::face_descriptor>;
 
 /// \ingroup PMP_locate_grp
 ///
@@ -147,13 +147,13 @@ incident_faces(const Face_location<TriangleMesh, FT>& loc,
 
   const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
   {
     const vertex_descriptor vd = *vd_ptr;
     for(face_descriptor fd : faces_around_target(halfedge(vd, tm), tm))
       *out++ = fd;
   }
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
   {
     const halfedge_descriptor hd = *hd_ptr;
     *out++ = face(hd, tm);
@@ -161,7 +161,7 @@ incident_faces(const Face_location<TriangleMesh, FT>& loc,
   }
   else
   {
-    const face_descriptor fd = boost::get<face_descriptor>(dv);
+    const face_descriptor fd = std::get<face_descriptor>(dv);
     *out++ = fd;
   }
 
@@ -653,7 +653,7 @@ is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
 
   const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
     return (vd == *vd_ptr);
 
   return false;
@@ -693,9 +693,9 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
 
   const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
     return (*vd_ptr == source(hd, tm) || *vd_ptr == target(hd, tm));
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
     return (*hd_ptr == hd);
 
   return false;
@@ -1153,14 +1153,14 @@ locate_in_adjacent_face(const Face_location<TriangleMesh, FT>& loc,
   Face_location<TriangleMesh, FT> loc_in_fd = std::make_pair(fd, CGAL::make_array(FT(0), FT(0), FT(0)));
   const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
   {
     int index_of_vd = vertex_index_in_face(*vd_ptr, fd, tm);
     loc_in_fd.second[index_of_vd] = FT(1);
     // Note that the barycentric coordinates were initialized to 0,
     // so the second and third coordinates are already set up properly.
   }
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
   {
     // Note that, here, we know that we are _not_ on a vertex
     const halfedge_descriptor hd = *hd_ptr;
@@ -1185,7 +1185,7 @@ locate_in_adjacent_face(const Face_location<TriangleMesh, FT>& loc,
   }
   else
   {
-    CGAL_assertion_code(const face_descriptor fd2 = boost::get<face_descriptor>(dv);)
+    CGAL_assertion_code(const face_descriptor fd2 = std::get<face_descriptor>(dv);)
     CGAL_assertion(fd2 != boost::graph_traits<TriangleMesh>::null_face());
     CGAL_assertion(fd2 != fd);
 
@@ -1222,7 +1222,7 @@ locate_in_common_face(Face_location<TriangleMesh, FT>& known_location,
 
   bool is_query_location_in_face = false;
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
   {
     const vertex_descriptor vd = *vd_ptr;
     halfedge_descriptor hd = halfedge(vd, tm);
@@ -1242,7 +1242,7 @@ locate_in_common_face(Face_location<TriangleMesh, FT>& known_location,
         break;
     }
   }
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
   {
     const halfedge_descriptor hd = *hd_ptr;
     if(!is_border(hd, tm))
@@ -1262,7 +1262,7 @@ locate_in_common_face(Face_location<TriangleMesh, FT>& known_location,
   }
   else
   {
-    const face_descriptor fd = boost::get<face_descriptor>(dv);
+    const face_descriptor fd = std::get<face_descriptor>(dv);
     CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
     query_location = locate_in_face(query, fd, tm, np);
@@ -1802,7 +1802,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                                 AABB_traits;
   typedef AABB_tree<AABB_traits>                                                             AABB_face_graph_tree;
   typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
-  typedef boost::optional<Intersection_type>                                                 Ray_intersection;
+  typedef std::optional<Intersection_type>                                                 Ray_intersection;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -1822,7 +1822,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   {
     if(intersections[i])
     {
-      Point_3* intersection_point = boost::get<Point_3>(&(intersections[i]->first));
+      Point_3* intersection_point = std::get_if<Point_3>(&(intersections[i]->first));
 
       if(intersection_point)
       {

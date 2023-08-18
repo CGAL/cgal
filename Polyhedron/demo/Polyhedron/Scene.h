@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <iostream>
 #include <cmath>
-#include <boost/variant.hpp>
+#include <variant>
 #include <CGAL/Three/Scene_group_item.h>
 class QEvent;
 class QMouseEvent;

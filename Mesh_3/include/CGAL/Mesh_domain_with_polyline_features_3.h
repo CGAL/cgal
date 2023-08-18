@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <memory>
 
 namespace CGAL {
@@ -767,22 +767,22 @@ public:
    * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
-  { return boost::get<Surface_patch_index>(index); }
+  { return Mesh_3::internal::get_index<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
    *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); }
+  { return Mesh_3::internal::get_index<Subdomain_index>(index); }
 
   /// returns a `Curve_index` from an `Index`
   Curve_index curve_index(const Index& index) const
-  { return boost::get<Curve_index>(index); }
+  { return Mesh_3::internal::get_index<Curve_index>(index); }
 
   /// returns a `Corner_index` from an `Index`
   Corner_index corner_index(const Index& index) const
-  { return boost::get<Corner_index>(index); }
+  { return Mesh_3::internal::get_index<Corner_index>(index); }
 
   /// @cond DEVELOPERS
 #ifndef CGAL_NO_DEPRECATED_CODE

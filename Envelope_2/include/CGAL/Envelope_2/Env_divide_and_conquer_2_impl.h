@@ -19,7 +19,7 @@
  * Definitions of the functions of the Envelope_divide_and_conquer_2 class.
  */
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -609,9 +609,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
   // This is the rightmost vertex in the current minimization diagram (out_d).
   // The intersection points/curves that interest us are the ones in
   // [v_leftmost, v].
-  // Without using make_optional we get a "maybe uninitialized" warning with gcc -Wall
-  boost::optional<Vertex_const_handle>  v_leftmost =
-    boost::make_optional(false, Vertex_const_handle());
+  std::optional<Vertex_const_handle>  v_leftmost;
 
   if (is_leftmost1 == true) {
     if (is_leftmost2 == false)
@@ -632,9 +630,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
 
   // Find the next intersection of the envelopes to the right of the current
   // rightmost point in the merged diagram.
-  // \todo Use the faster object_cast.
-  std::list<CGAL::Object>           objects;
-  CGAL::Object                      obj;
+  std::list<std::variant<Intersection_point, X_monotone_curve_2>> objects;
   const X_monotone_curve_2*         intersection_curve;
   const Intersection_point*         intersection_point;
 
@@ -643,10 +639,10 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
 
   while (! objects.empty()) {
     // Pop the xy-lexicographically smallest intersection object.
-    obj = objects.front();
+    auto obj = objects.front();
     objects.pop_front();
 
-    if ((intersection_point = CGAL::object_cast<Intersection_point>(&obj)) !=
+    if ((intersection_point = std::get_if<Intersection_point>(&obj)) !=
         nullptr)
     {
       // We have a simple intersection point.
@@ -727,7 +723,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
     else {
       // We have an x-monotone curve representing an overlap of the two
       // curves.
-      intersection_curve = CGAL::object_cast<X_monotone_curve_2>(&obj);
+      intersection_curve = std::get_if<X_monotone_curve_2>(&obj);
 
       if (intersection_curve == nullptr)
         CGAL_error_msg("unrecognized intersection object.");

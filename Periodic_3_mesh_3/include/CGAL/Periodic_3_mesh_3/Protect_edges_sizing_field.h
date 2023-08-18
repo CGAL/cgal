@@ -52,7 +52,7 @@
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -988,7 +988,7 @@ dump_dummy_points(const std::string filename) const
   for(; vit!=vend; ++vit)
   {
     Index index = c3t3_.index(vit);
-    const int* i = boost::get<int>(&index);
+    const int* i = std::get_if<int>(&index);
     if(i && *i == 0)
       dummy_out << cp(c3t3_.triangulation().point(vit)) << std::endl;
   }
@@ -1002,7 +1002,7 @@ try_to_remove_dummy_vertex(const Vertex_handle dummy_vertex) const
 {
   // 'dummy_vertex' must correspond to a dummy point
   CGAL_precondition_code(Index index = c3t3_.index(dummy_vertex);)
-  CGAL_precondition_code(if(const int* i = boost::get<int>(&index)) {)
+  CGAL_precondition_code(if(const int* i = std::get_if<int>(&index)) {)
   CGAL_precondition(*i == 0);
   CGAL_precondition_code(})
 
@@ -1347,7 +1347,7 @@ try_to_solve_close_dummy_point(Vertex_handle& protection_vertex,
 {
   // dummy_vertex must be a dummy point
   CGAL_precondition_code(Index index = c3t3_.index(dummy_vertex);)
-  CGAL_precondition_code(if(const int* i = boost::get<int>(&index)) {)
+  CGAL_precondition_code(if(const int* i = std::get_if<int>(&index)) {)
   CGAL_precondition(*i == 0);
   CGAL_precondition_code(})
 
@@ -1615,7 +1615,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     Vertex_handle v = ch->vertex(li);
 
     Index existing_vertex_index = c3t3_.index(v);
-    const int* i = boost::get<int>(&existing_vertex_index);
+    const int* i = std::get_if<int>(&existing_vertex_index);
 
     if(i && *i == 0)
     {
@@ -1684,7 +1684,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
             << "at distance: " << sq_d << std::endl;
 
   Index nearest_vh_index = c3t3_.index(nearest_vh);
-  int* i = boost::get<int>(&nearest_vh_index);
+  int* i = std::get_if<int>(&nearest_vh_index);
   if(i && *i == 0)
     std::cerr << "Nearest power vertex is a dummy point" << std::endl;
 #endif
@@ -1752,7 +1752,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
 #ifdef CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
       Index v_index = c3t3_.index(v);
-      const int* id = boost::get<int>(&v_index);
+      const int* id = std::get_if<int>(&v_index);
       bool is_v_dummy_vertex(id && *id == 0);
 #endif
 
@@ -1799,7 +1799,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
               << c3t3_.triangulation().point(nearest_vertex) << ")\n";
 
     Index nearest_vertex_index = c3t3_.index(nearest_vertex);
-    i = boost::get<int>(&nearest_vertex_index);
+    i = std::get_if<int>(&nearest_vertex_index);
     if(i && *i == 0)
       std::cerr << "reduced due to dummy" << std::endl;
 #endif
@@ -2494,7 +2494,7 @@ change_ball_size(Vertex_handle& v, const FT squared_size, const bool special_bal
   const Bare_point p = cp(c3t3_.triangulation().point(v)); // intentional copy
 
   // Remove v from the set of corners
-  boost::optional<Corner_index> corner_index = boost::make_optional(false, Corner_index());
+  std::optional<Corner_index> corner_index;
   if(c3t3_.is_in_complex(v))
   {
     corner_index = c3t3_.corner_index(v);
