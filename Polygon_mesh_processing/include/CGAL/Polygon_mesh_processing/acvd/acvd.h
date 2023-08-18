@@ -73,7 +73,7 @@ struct ClusterData {
     if (this->weight_sum > 0)
       return (this->site_sum) / this->weight_sum;
     else
-      return typename GT::Vector_3 (-1, -1, -1); // Change this
+      return typename GT::Vector_3 (-1, -1, -1); // TODO: Change this
   }
 };
 
@@ -106,22 +106,29 @@ void acvd_simplification(
   // property map from vertex_descriptor to cluster index
   VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
   VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
-  std::vector<ClusterData<GT>> clusters(nb_clusters + 1);
+  std::vector<ClusterData<GT>> clusters(nb_clusters);
   std::queue<Halfedge_descriptor> clusters_edges_active;
   std::queue<Halfedge_descriptor> clusters_edges_new;
 
   int nb_vertices = num_vertices(pmesh);
 
-  typename GT::FT max_area = 0;
-  typename GT::FT min_area = std::numeric_limits<typename GT::FT>::max();
+  // initialize vertex weights and clusters
+  for (Vertex_descriptor vd : vertices(pmesh))
+  {
+    put(vertex_weight_pmap, vd, 0);
+    put(vertex_cluster_pmap, vd, -1);
+  }
+
+  //typename GT::FT max_area = 0;
+  //typename GT::FT min_area = std::numeric_limits<typename GT::FT>::max();
 
   // compute vertex weights (dual area)
   for (Face_descriptor fd : faces(pmesh))
   {
     typename GT::FT weight = CGAL::Polygon_mesh_processing::face_area(fd, pmesh) / 3;
 
-    max_area = std::max(max_area, weight * 8.0);
-    min_area = std::min(min_area, weight * 3.0);
+    //max_area = std::max(max_area, weight * 8.0);
+    //min_area = std::min(min_area, weight * 3.0);
 
     for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
     {
@@ -131,7 +138,8 @@ void acvd_simplification(
     }
   }
 
-  srand(3);
+  // srand(3);
+  srand(time(NULL));
   for (int ci = 0; ci < nb_clusters; ci++)
   {
     //// random index
@@ -142,10 +150,9 @@ void acvd_simplification(
     do {
       vi = rand() % num_vertices(pmesh);
       vd = *(vertices(pmesh).begin() + vi);
-    } while (get(vertex_cluster_pmap, vd));
+    } while (get(vertex_cluster_pmap, vd) != -1);
 
-    // TODO: check for cluster conflict at the same vertex
-    put(vertex_cluster_pmap, vd, ci + 1); // TODO: should be ci but for now we start from 1 (can't set null value to -1)
+    put(vertex_cluster_pmap, vd, ci);
     typename GT::Point_3 vp = get(vpm, vd);
     typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
     clusters[ci].add_vertex(vpv, get(vertex_weight_pmap, vd));
@@ -155,16 +162,16 @@ void acvd_simplification(
   }
 
   // frequency of each cluster
-  std::vector<int> cluster_frequency (nb_clusters + 1, 0);
+  std::vector<int> cluster_frequency (nb_clusters, 0);
 
   for (Vertex_descriptor vd : vertices(pmesh))
   {
     int c = get(vertex_cluster_pmap, vd);
-    cluster_frequency[c]++;
+    if (c != -1)  cluster_frequency[c]++;
   }
 
   int nb_empty = 0;
-  for (int i = 0; i < nb_clusters + 1; i++)
+  for (int i = 0; i < nb_clusters; i++)
   {
     if (cluster_frequency[i] == 0)
     {
@@ -190,7 +197,7 @@ void acvd_simplification(
       int c1 = get(vertex_cluster_pmap, v1);
       int c2 = get(vertex_cluster_pmap, v2);
 
-      if (!(c1 > 0))
+      if (c1 == -1)
       {
         // expand cluster c2 (add v1 to c2)
         put(vertex_cluster_pmap, v1, c2);
@@ -204,7 +211,7 @@ void acvd_simplification(
             clusters_edges_new.push(hd);
         nb_modifications++;
       }
-      else if (!(c2 > 0))
+      else if (c2 == -1)
       {
         // expand cluster c1 (add v2 to c1)
         put(vertex_cluster_pmap, v2, c1);
@@ -254,7 +261,7 @@ void acvd_simplification(
         typename GT::FT c2_weight_threshold = clusters[c2].weight_sum;
 
 
-        if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 /*&& c2_weight_threshold > 0*/)
+        if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && c2_weight_threshold > 0)
         {
           // move v2 to c1
           put(vertex_cluster_pmap, v2, c1);
@@ -267,7 +274,7 @@ void acvd_simplification(
               clusters_edges_new.push(hd);
           nb_modifications++;
         }
-        else if (e_v1_to_c2 < e_no_change)
+        else if (e_v1_to_c2 < e_no_change && c1_weight_threshold > 0)
         {
           // move v1 to c2
           put(vertex_cluster_pmap, v1, c2);
@@ -301,7 +308,7 @@ void acvd_simplification(
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), pmesh);
 
   // frequency of each cluster
-  cluster_frequency = std::vector<int>(nb_clusters + 1, 0);
+  cluster_frequency = std::vector<int>(nb_clusters, 0);
 
   for (Vertex_descriptor vd : vertices(pmesh))
   {
@@ -314,7 +321,7 @@ void acvd_simplification(
   }
 
   nb_empty = 0;
-  for (int i = 0; i < nb_clusters + 1; i++)
+  for (int i = 0; i < nb_clusters; i++)
   {
     if (cluster_frequency[i] == 0)
     {
@@ -330,14 +337,14 @@ void acvd_simplification(
   std::cout << "kak2" << std::endl;
 
   /// Construct new Mesh 
-  std::vector<int> valid_cluster_map(nb_clusters + 1, -1);
+  std::vector<int> valid_cluster_map(nb_clusters, -1);
   std::vector<typename GT::Point_3> points;
   Point_set_3<typename GT::Point_3> point_set;
 
   std::vector<std::vector<int> > polygons;
   PolygonMesh simplified_mesh;
 
-  for (int i = 0; i < nb_clusters + 1; i++) //should i =1 ?
+  for (int i = 0; i < nb_clusters; i++) //should i =1 ?
   {
     if (clusters[i].weight_sum > 0)
     {
