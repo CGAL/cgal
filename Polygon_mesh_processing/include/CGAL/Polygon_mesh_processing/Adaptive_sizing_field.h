@@ -223,11 +223,13 @@ public:
       return boost::none;
   }
 
-  virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const
+  Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     return midpoint(get(m_vpmap, target(h, pmesh)),
                     get(m_vpmap, source(h, pmesh)));
   }
+
+  const DefaultVPMap& get_vpmap() const { return m_vpmap; }
 
   void update_sizing_map(const vertex_descriptor v, const PolygonMesh& pmesh)
   {

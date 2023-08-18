@@ -277,6 +277,9 @@ void isotropic_remeshing(const FaceRange& faces
   }
 #endif
 
+  CGAL_precondition_msg((sizing.get_vpmap()) == vpmap, "Input mesh/vertex point map is not the same as the "
+                                                       "one used for sizing field. Remeshing aborted.");
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();
   std::cout << "\rRemeshing parameters done ("<< t.time() <<" sec)" << std::endl;
