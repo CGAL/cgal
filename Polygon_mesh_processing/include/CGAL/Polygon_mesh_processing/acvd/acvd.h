@@ -52,14 +52,14 @@ struct ClusterData {
 
   void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
-    this->site_sum += vertex_position;
-    this->weight_sum += 1;
+    this->site_sum += vertex_position * weight;
+    this->weight_sum += weight;
   }
 
   void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
-    this->site_sum -= vertex_position;
-    this->weight_sum -= 1;
+    this->site_sum -= vertex_position * weight;
+    this->weight_sum -= weight;
   }
 
   typename GT::FT compute_energy()
@@ -94,6 +94,7 @@ void acvd_simplification(
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
+  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_halfedge_property_t<bool> >::type HalfedgeVisitedMap;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -125,7 +126,7 @@ void acvd_simplification(
   // compute vertex weights (dual area)
   for (Face_descriptor fd : faces(pmesh))
   {
-    typename GT::FT weight = CGAL::Polygon_mesh_processing::face_area(fd, pmesh) / 3;
+    typename GT::FT weight = abs(CGAL::Polygon_mesh_processing::face_area(fd, pmesh)) / 3;
 
     //max_area = std::max(max_area, weight * 8.0);
     //min_area = std::min(min_area, weight * 3.0);
@@ -139,7 +140,8 @@ void acvd_simplification(
   }
 
   // srand(3);
-  srand(time(NULL));
+  //srand(time(NULL));
+  double avg_rand = 0;
   for (int ci = 0; ci < nb_clusters; ci++)
   {
     //// random index
@@ -148,7 +150,8 @@ void acvd_simplification(
     int vi;
     Vertex_descriptor vd;
     do {
-      vi = rand() % num_vertices(pmesh);
+      vi = CGAL::get_default_random().get_int(0, num_vertices(pmesh));
+      avg_rand += vi;
       vd = *(vertices(pmesh).begin() + vi);
     } while (get(vertex_cluster_pmap, vd) != -1);
 
@@ -159,7 +162,13 @@ void acvd_simplification(
 
     for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
       clusters_edges_active.push(hd);
+
+    if (ci % (nb_clusters / 5) == 0)
+      std::cout << "rand ci" << ci << " " << vi << "\n";
   }
+  avg_rand = avg_rand / nb_clusters;
+
+  std::cout << "avg_rand: " << avg_rand << " nVertices: " << num_vertices(pmesh) << "\n";
 
   // frequency of each cluster
   std::vector<int> cluster_frequency (nb_clusters, 0);
@@ -355,6 +364,75 @@ void acvd_simplification(
       point_set.insert(center_p);
     }
   }
+
+   
+  // extract boundary cycles
+  // loop over boundary loops
+  // for each vertex in the boundary loop, we create a new vertex
+  //HalfedgeVisitedMap halfedge_visited_map = get(CGAL::dynamic_halfedge_property_t<bool>(), pmesh);
+  //for (Halfedge_descriptor hd : halfedges(pmesh))
+  //{
+  //  put(halfedge_visited_map, hd, false);
+  //}
+
+  //for (Halfedge_descriptor hd : halfedges(pmesh))
+  //{
+  //  if (get(halfedge_visited_map, hd) == true)
+  //    continue;
+  //  put(halfedge_visited_map, hd, true);
+  //  if (is_border(hd, pmesh))
+  //  {
+  //    Halfedge_descriptor hd1 = hd;
+
+  //    int cb_first = -1;
+
+  //    do
+  //    {
+  //      // 1- get the target and source vertices vt, vs
+  //      // 2- if the target and source vertices are in different clusters, create a new vertex vb between them vb = (vt + vs) / 2
+  //      // it is also added to the point_set
+  //      // 3- make a new face with the new vertex vb and the centers of the clusters of vt and vs
+  //      // 4- also make a new face with vb, the next vb, and the center of the cluster of vt
+
+  //      Vertex_descriptor vt = target(hd1, pmesh);
+  //      Vertex_descriptor vs = source(hd1, pmesh);
+
+  //      int ct = get(vertex_cluster_pmap, vt);
+  //      int cs = get(vertex_cluster_pmap, vs);
+
+  //      if (ct != cs)
+  //      {
+  //        typename GT::Point_3 vt_p = get(vpm, vt);
+  //        typename GT::Point_3 vs_p = get(vpm, vs);
+  //        typename GT::Vector_3 vt_v(vt_p.x(), vt_p.y(), vt_p.z());
+  //        typename GT::Vector_3 vs_v(vs_p.x(), vs_p.y(), vs_p.z());
+
+  //        typename GT::Vector_3 vb_v = (vt_v + vs_v) / 2;
+  //        typename GT::Point_3 vb_p(vb_v.x(), vb_v.y(), vb_v.z());
+
+  //        points.push_back(vb_p);
+  //        point_set.insert(vb_p);
+
+  //        int cb = points.size() - 1;
+
+  //        int ct_mapped = valid_cluster_map[ct], cs_mapped = valid_cluster_map[cs];
+
+  //        if (ct_mapped != -1 && cs_mapped != -1)
+  //        {
+  //          std::vector<int> polygon = {ct_mapped, cb, cs_mapped};
+  //          polygons.push_back(polygon);
+
+  //          // after the loop, the last cb+1 should be modified to the first cb
+  //          polygon = {ct, cb + 1, cb};
+  //          polygons.push_back(polygon);
+  //        }
+  //      }
+  //      hd1 = next(hd1, pmesh);
+  //    } while (hd1 != hd);
+  //  }
+  //}
+
+
 
   name = std::to_string(nb_clusters) + "_points.off";
   CGAL::IO::write_point_set(name, point_set);
