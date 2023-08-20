@@ -89,7 +89,7 @@ protected:
 };
 
 /*!
-This operator exports a multipolygon with holes to the output stream `os`.
+exports a multipolygon with holes to the output stream `os`.
 
 An \ascii and a binary format exist. The format can be selected with
 the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`,
