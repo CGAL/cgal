@@ -132,7 +132,7 @@ public:
                     get(m_vpmap, source(h, pmesh)));
   }
 
-  const VPMap& get_vpmap() const { return m_vpmap; }
+  VPMap get_vpmap() const { return m_vpmap; }
 
 private:
   FT m_sq_short;
