@@ -32,8 +32,7 @@ end points of the edges around its outer boundary.
 
 - A valid <B>polygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
 that is bounded by one outer boundary and zero or more <B>inner boundaries</B>,
-where each inner boundary represents a hole in the polygon. Considered by
-itself, each boundary should be simple. The different boundaries of a polygon
+where each inner boundary represents a hole in the polygon. Considered independently, each boundary should be simple. The different boundaries of a polygon
 are allowed to intersect tangentially at their common vertices (with no common
 edges), forming vertices with degrees larger than two at the tangential points.
 The interior of a polygon with holes should form a connected point set.
@@ -49,7 +48,7 @@ with holes.
 
 FIGURE
 
-\subsection SubsectionPolygonRepair2_Output Stricter conditions for output
+\subsection SubsectionPolygonRepair2_Output Stricter Conditions for Output
 
 The conditions listed above are sufficient to define valid polygons, polygons
 with holes and multipolygons with holes for most applications. However, in
