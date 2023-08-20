@@ -1886,6 +1886,20 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
   Point_2 query_point(Dir3(point.x(), point.y(), point.z()),
                       Point_2::Location_type::NO_BOUNDARY_LOC);
 
+
+  //{
+  //  // code to check point-on-vertex query
+  //  query_point = arr.edges_begin()->source()->point();
+
+  //  // code to check point-on-edge query: get the mid-point of the first edge
+  //  //auto e = *arr.edges_begin();
+  //  //auto s = e.source()->point().to_vector();
+  //  //auto t = e.target()->point().to_vector();
+  //  //auto m = (s + t) * 0.5;
+  //  //query_point = Countries_arr::Point_2(m.direction(), 
+  //  //                                 Point_2::Location_type::NO_BOUNDARY_LOC);
+  //}
+
   Naive_pl  npl(arr);
   auto obj = npl.locate(query_point);
 
@@ -1897,19 +1911,38 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
   //const Halfedge_const_handle* e;
   //const Face_const_handle* f;
   //std::cout << "The point (" << query_point << ") is located ";
+  std::string country_name = "";
   if (auto f = boost::get<Face_const_handle>(&obj)) // located inside a face
   {    
-    const auto country_name = f->ptr()->data();
-    return country_name;
+    //std::cout << "*** QUERY: FACE\n";
+    country_name = f->ptr()->data();
   }
-  //else if (auto e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
-  //  std::cout << "on an edge: " << (*e)->curve() << std::endl;
-  //else if (auto v = boost::get<Vertex_const_handle>(&obj)) // located on a vertex
-  //  std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
-  //  << " vertex: " << (*v)->point() << std::endl;
-  //else CGAL_error_msg("Invalid object.");
+  else if (auto e = boost::get<Halfedge_const_handle>(&obj)) 
+  {
+    // located on an edge: return one of the incident face arbitrarily
+    //std::cout << "*** QUERY: EDGE\n";
+    country_name = (*e)->face()->data();
+  }
+  else if (auto v = boost::get<Vertex_const_handle>(&obj)) 
+  {
+    // located on a vertex
+    if ((*v)->is_isolated())
+    {
+      //std::cout << "*** QUERY: ISOLATED VERTEX\n";
+      country_name = (*v)->face()->data();
+    }
+    else
+    {
+      //std::cout << "*** QUERY: VERTEX\n";
+      country_name = (*v)->incident_halfedges()->face()->data();
+    }
+  }
+  else 
+  {
+    CGAL_error_msg("Invalid object.");
+  }
 
-  return "";
+  return country_name;
 }
 
 Aos::Approx_arcs Aos::get_approx_arcs_from_faces_edges(Arr_handle arrh, 
