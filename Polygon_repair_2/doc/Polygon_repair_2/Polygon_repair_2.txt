@@ -48,7 +48,7 @@ with holes.
 
 FIGURE
 
-\subsection SubsectionPolygonRepair2_Output Stricter conditions for output
+\subsection SubsectionPolygonRepair2_Output Stricter Conditions for Output
 
 The conditions listed above are sufficient to define valid polygons, polygons
 with holes and multipolygons with holes for most applications. However, in
