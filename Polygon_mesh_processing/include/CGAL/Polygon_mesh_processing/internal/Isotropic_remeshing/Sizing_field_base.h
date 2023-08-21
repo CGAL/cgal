@@ -55,8 +55,6 @@ public:
                                            const PolygonMesh& pmesh) const = 0;
   virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const = 0;
 
-  virtual VPMap get_vpmap() const = 0;
-
 };
 
 }//end namespace Polygon_mesh_processing

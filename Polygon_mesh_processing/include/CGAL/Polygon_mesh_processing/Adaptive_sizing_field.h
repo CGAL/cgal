@@ -229,8 +229,6 @@ public:
                     get(m_vpmap, source(h, pmesh)));
   }
 
-  DefaultVPMap get_vpmap() const { return m_vpmap; }
-
   void update_sizing_map(const vertex_descriptor v, const PolygonMesh& pmesh)
   {
     // calculating it as the average of two vertices on other ends

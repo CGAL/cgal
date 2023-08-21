@@ -132,8 +132,6 @@ public:
                     get(m_vpmap, source(h, pmesh)));
   }
 
-  VPMap get_vpmap() const { return m_vpmap; }
-
 private:
   FT m_sq_short;
   FT m_sq_long;
