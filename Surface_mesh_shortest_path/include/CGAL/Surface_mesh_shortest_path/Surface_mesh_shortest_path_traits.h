@@ -22,8 +22,6 @@
 #include <ostream>
 #include <cstddef>
 
-#include <boost/array.hpp>
-
 namespace CGAL {
 
 /*!

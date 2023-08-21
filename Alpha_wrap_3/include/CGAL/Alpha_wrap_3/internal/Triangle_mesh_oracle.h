@@ -146,7 +146,7 @@ public:
 
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, tmesh));
-    CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM>::value_type, Point_3>::value));
+    static_assert(std::is_same<typename boost::property_traits<VPM>::value_type, Point_3>::value);
 
     Splitter_base::reserve(num_faces(tmesh));
 

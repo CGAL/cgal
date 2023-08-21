@@ -893,20 +893,19 @@ void Viewer::naive_compute_intersection_points(const std::vector<EPIC::Point_3>&
     for (std::vector<SK::Circle_3>::const_iterator it_f=circles.begin();it_f!=--circles.end();++it_f){
         std::vector<SK::Circle_3>::const_iterator it_s=it_f;
         ++it_s;
+        typedef std::pair<SK::Circular_arc_point_3,unsigned> Point_and_multiplicity;
         for (;it_s!=circles.end();++it_s){
-            std::vector <CGAL::Object> intersections;
+            std::vector<Point_and_multiplicity> intersections;
             //ensure_circles are different
             CGAL_precondition(*it_s!=*it_f);
-            CGAL::intersection(*it_f,*it_s,std::back_inserter(intersections));
+            CGAL::intersection(*it_f,*it_s,CGAL::dispatch_or_drop_output<Point_and_multiplicity>(std::back_inserter(intersections)));
             if (!intersections.empty()){
-                for (std::vector <CGAL::Object>::const_iterator it_pt=intersections.begin();it_pt!=intersections.end();++it_pt){
-                    const std::pair<SK::Circular_arc_point_3,unsigned>* pt=
-                            CGAL::object_cast< std::pair<SK::Circular_arc_point_3,unsigned> > (&(*it_pt));
-                    assert(pt!=nullptr);
-                    *out++=EPIC::Point_3( CGAL::to_double(pt->first.x()),
-                                          CGAL::to_double(pt->first.y()),
-                                          CGAL::to_double(pt->first.z())
-                                          );
+                for (const Point_and_multiplicity& pt : intersections)
+                {
+                  *out++=EPIC::Point_3( CGAL::to_double(pt.first.x()),
+                                        CGAL::to_double(pt.first.y()),
+                                        CGAL::to_double(pt.first.z())
+                                        );
                 }
             }
         }

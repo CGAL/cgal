@@ -23,7 +23,7 @@
 #include <algorithm>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 using namespace CGAL::Three;
 
@@ -189,11 +189,10 @@ public Q_SLOTS:
   void on_Sample_random_points_from_bbox() {
 
     // calculate bbox of selected polyhedron items
-    boost::optional<CGAL::Three::Scene_interface::Bbox> bbox
-      = boost::make_optional(false, CGAL::Three::Scene_interface::Bbox());
+    std::optional<CGAL::Three::Scene_interface::Bbox> bbox;
     // Workaround a bug in g++-4.8.3:
     //   https://stackoverflow.com/a/21755207/1728537
-    // Using boost::make_optional to copy-initialize 'bbox' hides the
+    // Using std::make_optional to copy-initialize 'bbox' hides the
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 

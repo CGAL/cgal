@@ -55,9 +55,9 @@ public:
   typedef typename Geom_traits::FT                                       FT;
   typedef typename Geom_traits::Vector_3                                 Vector;
 
-  typedef boost::optional<FT>                                            Optional_FT;
-  typedef boost::optional<Point>                                         Optional_point;
-  typedef boost::optional<Vector>                                        Optional_vector;
+  typedef std::optional<FT>                                            Optional_FT;
+  typedef std::optional<Point>                                         Optional_point;
+  typedef std::optional<Vector>                                        Optional_vector;
 
   typedef MatrixC33<Geom_traits>                                         Matrix;
 
@@ -152,7 +152,7 @@ private :
   static bool is_finite(const Matrix& m) { return is_finite(m.r0()) && is_finite(m.r1()) && is_finite(m.r2()); }
 
   template<class T>
-  static boost::optional<T> filter_infinity(const T& n) { return is_finite(n) ? boost::optional<T>(n) : boost::optional<T>(); }
+  static std::optional<T> filter_infinity(const T& n) { return is_finite(n) ? std::optional<T>(n) : std::optional<T>(); }
 
 
 private:
@@ -298,7 +298,7 @@ compute_placement()
   if(mConstraints_n == 3)
   {
     // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
-    boost::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
+    std::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if(lOptional_Ai)
     {
       const Matrix& lAi = *lOptional_Ai;

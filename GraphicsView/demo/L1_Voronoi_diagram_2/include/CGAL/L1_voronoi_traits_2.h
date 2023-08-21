@@ -270,7 +270,7 @@ public:
 
       // The sites have the same x/y coordinate.
       if (s_x == CGAL::ZERO || s_y == CGAL::ZERO) {
-        *o++ = CGAL::make_object(Intersection_curve(CGAL::bisector(s1, s2), 1));
+        *o++ = Intersection_curve(CGAL::bisector(s1, s2), 1);
         return o;
       }
 
@@ -300,7 +300,7 @@ public:
       }
 
       // We construct the diagonal line either way.
-      *o++ = CGAL::make_object(Intersection_curve(Segment_2(p1, p2), 1));
+      *o++ = Intersection_curve(Segment_2(p1, p2), 1);
 
       // Now construct vertical rays. Two or four rays. If it is only two rays,
       // then the multiplicity of all the curves is 1.
@@ -309,14 +309,14 @@ public:
 
       if (s_d != CGAL::POSITIVE) {
         // horizontal rectangle or square = vertical rays.
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*top, Direction_2(0, 1)), mult));
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*bottom, Direction_2(0, -1)), mult));
+        *o++ = Intersection_curve(Ray_2(*top, Direction_2(0, 1)), mult);
+        *o++ = Intersection_curve(Ray_2(*bottom, Direction_2(0, -1)), mult);
       }
 
       if (s_d != CGAL::NEGATIVE) {
         // vertical rectangle or square = horizontal rays.
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*right, Direction_2(1, 0)), mult));
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*left, Direction_2(-1, 0)), mult));
+        *o++ = Intersection_curve(Ray_2(*right, Direction_2(1, 0)), mult);
+        *o++ = Intersection_curve(Ray_2(*left, Direction_2(-1, 0)), mult);
       }
 
       return o;

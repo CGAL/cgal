@@ -37,16 +37,14 @@ public:
   typedef unspecified_type Region_index_map;
 
   /*!
-    checks if the item `to`, which is a neighbor of the item
-    `from`, can be added to the region represented by `region`.
+    checks if the item `i` can be added to the region represented by `region`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when
     trying to add a new item to a region. If this function returns `true`, the
-    item with the index `to`, is added to the region, otherwise ignored.
+    item with the index `i`, is added to the region, otherwise ignored.
   */
   bool is_part_of_region(
-    const Item from,
-    const Item to,
+    const Item i,
     const Region &region) {
   }
 

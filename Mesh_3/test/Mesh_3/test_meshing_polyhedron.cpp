@@ -31,14 +31,14 @@ struct Polyhedron_tester : public Tester<K>
 {
   void polyhedron() const
   {
-    typedef K Gt;
-    typedef CGAL::Polyhedron_3<Gt> Polyhedron;
-    typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
+    typedef K GT;
+    typedef CGAL::Polyhedron_3<GT> Polyhedron;
+    typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, GT> Mesh_domain;
 
-    CGAL_static_assertion((std::is_same<
+    static_assert(std::is_same<
                             typename Mesh_domain::Surface_patch_index,
                             std::pair<int, int>
-                           >::value));
+                           >::value);
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -90,7 +90,7 @@ struct Polyhedron_tester : public Tester<K>
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
                    110, 140, 190, 235, 300, 450);

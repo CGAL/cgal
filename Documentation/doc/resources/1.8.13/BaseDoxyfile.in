@@ -159,9 +159,9 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>" \
                          "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>" \
                          "cgalPkgLicense{1}=<B>License:</B> \1 <BR>" \
-                         "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
-                         "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
-                         "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
+                         "cgalPkgDemo{2}=<B>Windows demo:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common demo dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
+                         "cgalPkgDemo{4}=<B>Windows demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common demo dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
+                         "cgalPkgDemo{6}=<B>Windows demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common demo dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
                          "cgalPkgDescriptionEnd=" \
                          "cgalModifBegin=\htmlonly <div class=\"CGALModification\"> \endhtmlonly \xrefitem Modification \"Modifications\" \"MODIFICATIONS\" " \
                          "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly" \
@@ -188,7 +188,9 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>" \
                          "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}" \
                          "cgalParamSectionEnd=\cgalParamNEnd" \
-                         "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>"
+                         "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
+                         "cgalBigO{1}=\f$O(\1)\f$" \
+                         "cgalBigOLarge{1}=\f$O\left(\1\right)\f$"
 
 # Doxygen selects the parser to use depending on the extension of the files it
 # parses. With this tag you can assign which parser to use for a given
@@ -262,7 +264,7 @@ EXTRACT_ALL            = YES
 # the EXTRACT_ALL tag is set to NO.
 # The default value is: NO.
 
-EXTRACT_ALL_NO_DETAILED_IF_EMPTY                                        = YES
+${CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY}
 
 # If the EXTRACT_STATIC tag is set to YES, all static members of a file will be
 # included in the documentation.
@@ -461,18 +463,6 @@ HTML_HEADER            = ${CGAL_DOC_HEADER_PACKAGE}
 
 HTML_FOOTER            = ${CGAL_DOC_RESOURCE_DIR}/footer.html
 
-# The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
-# sheet that is used by each HTML page. It can be used to fine-tune the look of
-# the HTML output. If left blank doxygen will generate a default style sheet.
-# See also section "Doxygen usage" for information on how to generate the style
-# sheet that doxygen normally uses.
-# Note: It is recommended to use HTML_EXTRA_STYLESHEET instead of this tag, as
-# it is more robust and this tag (HTML_STYLESHEET) will in the future become
-# obsolete.
-# This tag requires that the tag GENERATE_HTML is set to YES.
-
-HTML_STYLESHEET        = ${CGAL_DOC_RESOURCE_DIR}/stylesheet.css
-
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting this
 # to YES can help to show when doxygen was last run and thus if the
@@ -670,7 +660,8 @@ PREDEFINED             = DOXYGEN_RUNNING \
                          "CGAL_NP_CLASS_1=NamedParameters1" \
                          "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
                          "CGAL_NP_CLASS_2=NamedParameters2" \
-                         CGAL_DEPRECATED
+                         CGAL_DEPRECATED \
+                         CGAL_DEPRECATED_MSG(name)=
 
 #---------------------------------------------------------------------------
 # Configuration options related to external references

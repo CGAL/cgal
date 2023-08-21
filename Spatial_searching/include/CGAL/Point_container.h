@@ -25,7 +25,7 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -45,8 +45,8 @@ public:
 private:
   Traits traits;
   // the iterator range of the Point_container
-  boost::optional<iterator> m_b ;
-  boost::optional<iterator> m_e ;
+  std::optional<iterator> m_b ;
+  std::optional<iterator> m_e ;
 
   int built_coord;    // a coordinate for which the pointer list is built
   Kd_tree_rectangle<FT,D> bbox;       // bounding box, i.e. rectangle of node

@@ -164,6 +164,9 @@ file(COPY ${GIT_REPO}/GraphicsView/demo/resources ${GIT_REPO}/GraphicsView/demo/
 #copy data
 file(COPY ${GIT_REPO}/Data/data DESTINATION "${release_dir}/")
 
+#copy LICENSES files
+file(COPY ${GIT_REPO}/LICENSES DESTINATION "${release_dir}/" PATTERN "GPL-2.0-only.txt" EXCLUDE)
+
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
 

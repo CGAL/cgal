@@ -34,7 +34,7 @@
   #endif
 #endif
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/random/lagged_fibonacci.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -115,14 +115,17 @@ typename Tr::Geom_traits::FT
 edge_sq_length(const typename Tr::Edge& e,
                const Tr& tr)
 {
-  typedef typename Tr::Geom_traits     Gt;
+  typedef typename Tr::Geom_traits     GT;
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
 
-  typename Gt::Construct_point_3 cp =
-    tr.geom_traits().construct_point_3_object();
-  typename Gt::Compute_squared_distance_3 sq_distance =
+  // There is no need to use tr.min_squared_distance() here because we are computing
+  // distances between vertices within a common cell, which means that even
+  // if we are using a periodic triangulation, the distance is correctly computed.
+  typename GT::Compute_squared_distance_3 sq_distance =
     tr.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_point_3 cp =
+    tr.geom_traits().construct_point_3_object();
 
   const Weighted_point& wp = tr.point(e.first, e.second);
   const Weighted_point& wq = tr.point(e.first, e.third);
@@ -390,9 +393,9 @@ protected:
   typedef typename Base::Cell_handle                  Cell_handle;
 
   typedef typename C3T3::Triangulation                Tr;
-  typedef typename Tr::Geom_traits                    Gt;
-  typedef typename Gt::FT                             FT;
-  typedef typename Gt::Vector_3                       Vector_3;
+  typedef typename Tr::Geom_traits                    GT;
+  typedef typename GT::FT                             FT;
+  typedef typename GT::Vector_3                       Vector_3;
 
   typedef typename Tr::Bare_point                     Bare_point;
   typedef typename Tr::Weighted_point                 Weighted_point;
@@ -447,15 +450,15 @@ protected:
 
     const Tr& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp =
+    typename GT::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
-    typename Gt::Construct_weighted_point_3 cwp =
+    typename GT::Construct_weighted_point_3 cwp =
       tr.geom_traits().construct_weighted_point_3_object();
-    typename Gt::Compute_squared_length_3 sq_length =
+    typename GT::Compute_squared_length_3 sq_length =
       tr.geom_traits().compute_squared_length_3_object();
-    typename Gt::Construct_translated_point_3 translate =
+    typename GT::Construct_translated_point_3 translate =
       tr.geom_traits().construct_translated_point_3_object();
-    typename Gt::Construct_vector_3 vector =
+    typename GT::Construct_vector_3 vector =
       tr.geom_traits().construct_vector_3_object();
 
     // create a helper
@@ -548,9 +551,9 @@ protected:
   typedef typename Base::Vertex_handle                Vertex_handle;
   typedef typename Base::Cell_handle                  Cell_handle;
 
-  typedef typename Tr::Geom_traits                    Gt;
-  typedef typename Gt::FT                             FT;
-  typedef typename Gt::Vector_3                       Vector_3;
+  typedef typename Tr::Geom_traits                    GT;
+  typedef typename GT::FT                             FT;
+  typedef typename GT::Vector_3                       Vector_3;
 
   typedef typename Tr::Bare_point                     Bare_point;
   typedef typename Tr::Weighted_point                 Weighted_point;
@@ -650,9 +653,9 @@ private:
   {
     const Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp =
+    typename GT::Construct_point_3 cp =
       c3t3.triangulation().geom_traits().construct_point_3_object();
-    typename Gt::Construct_translated_point_3 translate =
+    typename GT::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
 
     unsigned int index = cell->index(v);
@@ -724,9 +727,9 @@ protected:
   typedef typename Base::Cell_handle                  Cell_handle;
 
   typedef typename C3T3::Triangulation                Tr;
-  typedef typename Tr::Geom_traits                    Gt;
-  typedef typename Gt::FT                             FT;
-  typedef typename Gt::Vector_3                       Vector_3;
+  typedef typename Tr::Geom_traits                    GT;
+  typedef typename GT::FT                             FT;
+  typedef typename GT::Vector_3                       Vector_3;
 
   typedef typename Tr::Bare_point                     Bare_point;
   typedef typename Tr::Weighted_point                 Weighted_point;
@@ -827,7 +830,7 @@ private:
     CGAL_precondition(cell->has_vertex(v));
 
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
-    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
     const int i = cell->index(v);
 
@@ -875,9 +878,9 @@ protected:
   typedef typename Base::Cell_handle                  Cell_handle;
 
   typedef typename C3T3::Triangulation                Tr;
-  typedef typename Tr::Geom_traits                    Gt;
-  typedef typename Gt::FT                             FT;
-  typedef typename Gt::Vector_3                       Vector_3;
+  typedef typename Tr::Geom_traits                    GT;
+  typedef typename GT::FT                             FT;
+  typedef typename GT::Vector_3                       Vector_3;
 
   typedef typename Tr::Bare_point                     Bare_point;
   typedef typename Tr::Weighted_point                 Weighted_point;
@@ -979,10 +982,13 @@ private:
     CGAL_assertion(cell->has_vertex(v));
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp =
-      tr.geom_traits().construct_point_3_object();
-    typename Gt::Compute_squared_distance_3 sq_distance =
+    // There is no need to use tr.min_squared_distance() here because we are computing
+    // distances between vertices within a common cell, which means that even
+    // if we are using a periodic triangulation, the distance is correctly computed.
+    typename GT::Compute_squared_distance_3 sq_distance =
       tr.geom_traits().compute_squared_distance_3_object();
+    typename GT::Construct_point_3 cp =
+      tr.geom_traits().construct_point_3_object();
 
     const int i = cell->index(v);
     const Weighted_point& wp0 = tr.point(cell, i);
@@ -1041,9 +1047,9 @@ private:
   {
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp =
+    typename GT::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
-    typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle =
+    typename GT::Compute_approximate_dihedral_angle_3 approx_dihedral_angle =
       tr.geom_traits().compute_approximate_dihedral_angle_3_object();
 
     const Weighted_point& wp1 = tr.point(cell, k1);
@@ -1069,7 +1075,7 @@ private:
   {
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
     int k1 = (i+1)&3;
     int k2 = (i+2)&3;
@@ -1108,9 +1114,9 @@ protected:
   typedef typename Base::Cell_handle                  Cell_handle;
 
   typedef typename C3T3::Triangulation                Tr;
-  typedef typename Tr::Geom_traits                    Gt;
-  typedef typename Gt::FT                             FT;
-  typedef typename Gt::Vector_3                       Vector_3;
+  typedef typename Tr::Geom_traits                    GT;
+  typedef typename GT::FT                             FT;
+  typedef typename GT::Vector_3                       Vector_3;
 
   typedef typename Tr::Bare_point                     Bare_point;
 
@@ -1171,7 +1177,7 @@ protected:
   Vector_3 random_vector_fixed_size(const C3T3& c3t3,
                                     const FT& vector_sq_size) const
   {
-    typename Gt::Compute_squared_length_3 sq_length =
+    typename GT::Compute_squared_length_3 sq_length =
       c3t3.triangulation().geom_traits().compute_squared_length_3_object();
 
     Vector_3 rnd_vector(random_ft(),random_ft(),random_ft());
@@ -1236,9 +1242,9 @@ protected:
   typedef typename Base::Cell_handle                  Cell_handle;
 
   typedef typename C3T3::Triangulation                Tr;
-  typedef typename Tr::Geom_traits                    Gt;
-  typedef typename Gt::FT                             FT;
-  typedef typename Gt::Vector_3                       Vector_3;
+  typedef typename Tr::Geom_traits                    GT;
+  typedef typename GT::FT                             FT;
+  typedef typename GT::Vector_3                       Vector_3;
 
   typedef typename Tr::Bare_point                     Bare_point;
   typedef typename Tr::Weighted_point                 Weighted_point;
@@ -1313,13 +1319,13 @@ private:
   {
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
 
-    typename Gt::Construct_point_3 cp =
+    typename GT::Construct_point_3 cp =
       c3t3.triangulation().geom_traits().construct_point_3_object();
-    typename Gt::Construct_weighted_point_3 cwp =
+    typename GT::Construct_weighted_point_3 cwp =
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
-    typename Gt::Construct_translated_point_3 translate =
+    typename GT::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
-    typename Gt::Construct_vector_3 vector =
+    typename GT::Construct_vector_3 vector =
       c3t3.triangulation().geom_traits().construct_vector_3_object();
 
     modified_vertices.clear();
