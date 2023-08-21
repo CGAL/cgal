@@ -26,4 +26,6 @@ int main(int argc, char* argv[]) {
   for (auto const& p: mp.polygons()) {
     std::cout << p << std::endl;
   }
+
+  return 0;
 }
