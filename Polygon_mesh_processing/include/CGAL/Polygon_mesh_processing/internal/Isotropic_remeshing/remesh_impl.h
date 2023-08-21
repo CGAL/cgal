@@ -43,7 +43,6 @@
 #include <boost/range/join.hpp>
 #include <memory>
 #include <boost/container/flat_set.hpp>
-#include <boost/optional.hpp>
 #include <boost/property_map/function_property_map.hpp>
 
 #include <map>
@@ -54,6 +53,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <optional>
 
 //todo ip: temp
 #define CGAL_PMP_REMESHING_VERBOSE
@@ -404,9 +404,9 @@ namespace internal {
         );
       for(edge_descriptor e : edge_range)
       {
-        boost::optional<double> sqlen = sizing.is_too_long(halfedge(e, mesh_), mesh_);
-        if(sqlen != boost::none)
-          long_edges.emplace(halfedge(e, mesh_), sqlen.get());
+        std::optional<double> sqlen = sizing.is_too_long(halfedge(e, mesh_), mesh_);
+        if(sqlen != std::nullopt)
+          long_edges.emplace(halfedge(e, mesh_), sqlen.value());
       }
 
       //split long edges
@@ -443,13 +443,13 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        boost::optional<double> sqlen_new = sizing.is_too_long(hnew, mesh_);
-        if(sqlen_new != boost::none)
-          long_edges.emplace(hnew, sqlen_new.get());
+        std::optional<double> sqlen_new = sizing.is_too_long(hnew, mesh_);
+        if(sqlen_new != std::nullopt)
+          long_edges.emplace(hnew, sqlen_new.value());
 
         sqlen_new = sizing.is_too_long(next(hnew, mesh_), mesh_);
-        if (sqlen_new != boost::none)
-          long_edges.emplace(next(hnew, mesh_), sqlen_new.get());
+        if (sqlen_new != std::nullopt)
+          long_edges.emplace(next(hnew, mesh_), sqlen_new.value());
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
@@ -504,9 +504,9 @@ namespace internal {
       {
         if (!is_split_allowed(e))
           continue;
-        boost::optional<double> sqlen = sizing.is_too_long(halfedge(e, mesh_), mesh_);
-        if(sqlen != boost::none)
-          long_edges.emplace(halfedge(e, mesh_), sqlen.get());
+        std::optional<double> sqlen = sizing.is_too_long(halfedge(e, mesh_), mesh_);
+        if(sqlen != std::nullopt)
+          long_edges.emplace(halfedge(e, mesh_), sqlen.value());
       }
 
       //split long edges
@@ -560,13 +560,13 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        boost::optional<double> sqlen_new = sizing.is_too_long(hnew, mesh_);
-        if(sqlen_new != boost::none)
-          long_edges.emplace(hnew, sqlen_new.get());
+        std::optional<double> sqlen_new = sizing.is_too_long(hnew, mesh_);
+        if(sqlen_new != std::nullopt)
+          long_edges.emplace(hnew, sqlen_new.value());
 
         sqlen_new = sizing.is_too_long(next(hnew, mesh_), mesh_);
-        if (sqlen_new != boost::none)
-          long_edges.emplace(next(hnew, mesh_), sqlen_new.get());
+        if (sqlen_new != std::nullopt)
+          long_edges.emplace(next(hnew, mesh_), sqlen_new.value());
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
@@ -585,9 +585,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            boost::optional<double> sql = sizing.is_too_long(hnew2, mesh_);
-            if(sql != boost::none)
-              long_edges.emplace(hnew2, sql.get());
+            std::optional<double> sql = sizing.is_too_long(hnew2, mesh_);
+            if(sql != std::nullopt)
+              long_edges.emplace(hnew2, sql.value());
           }
         }
 
@@ -608,9 +608,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            boost::optional<double> sql = sizing.is_too_long(hnew2, mesh_);
-            if (sql != boost::none)
-              long_edges.emplace(hnew2, sql.get());
+            std::optional<double> sql = sizing.is_too_long(hnew2, mesh_);
+            if (sql != std::nullopt)
+              long_edges.emplace(hnew2, sql.value());
           }
         }
       }
@@ -653,10 +653,10 @@ namespace internal {
       Boost_bimap short_edges;
       for(edge_descriptor e : edges(mesh_))
       {
-        boost::optional<double> sqlen = sizing.is_too_short(halfedge(e, mesh_), mesh_);
-        if(sqlen != boost::none
+        std::optional<double> sqlen = sizing.is_too_short(halfedge(e, mesh_), mesh_);
+        if(sqlen != std::nullopt
           && is_collapse_allowed(e, collapse_constraints))
-          short_edges.insert(short_edge(halfedge(e, mesh_), sqlen.get()));
+          short_edges.insert(short_edge(halfedge(e, mesh_), sqlen.value()));
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
       std::cout << "done." << std::endl;
@@ -752,8 +752,8 @@ namespace internal {
         for(halfedge_descriptor ha : halfedges_around_target(va, mesh_))
         {
           vertex_descriptor va_i = source(ha, mesh_);
-          boost::optional<double> sqha = sizing.is_too_long(vb, va_i);
-          if (sqha != boost::none)
+          std::optional<double> sqha = sizing.is_too_long(vb, va_i);
+          if (sqha != std::nullopt)
           {
             collapse_ok = false;
             break;
@@ -818,10 +818,10 @@ namespace internal {
             //insert new/remaining short edges
             for (halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
             {
-              boost::optional<double> sqlen = sizing.is_too_short(ht, mesh_);
-              if (sqlen != boost::none
+              std::optional<double> sqlen = sizing.is_too_short(ht, mesh_);
+              if (sqlen != std::nullopt
                 && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
-                short_edges.insert(short_edge(ht, sqlen.get()));
+                short_edges.insert(short_edge(ht, sqlen.value()));
             }
           }
         }//end if(collapse_ok)
@@ -1768,9 +1768,9 @@ private:
             //insert new edges in 'short_edges'
             if (is_collapse_allowed(edge(hf, mesh_), collapse_constraints))
             {
-              boost::optional<double> sqlen = sizing.is_too_short(hf, mesh_);
-              if (sqlen != boost::none)
-                short_edges.insert(typename Bimap::value_type(hf, sqlen.get()));
+              std::optional<double> sqlen = sizing.is_too_short(hf, mesh_);
+              if (sqlen != std::nullopt)
+                short_edges.insert(typename Bimap::value_type(hf, sqlen.value()));
             }
 
             if(!is_border(hf, mesh_) &&
@@ -1986,7 +1986,7 @@ private:
     bool check_normals(const HalfedgeRange& hedges) const
     {
       std::size_t nb_patches = patch_id_to_index_map.size();
-      //std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
+      //std::vector<std::optional<Vector_3> > normal_per_patch(nb_patches,std::nullopt);
       std::vector<bool> initialized(nb_patches,false);
       std::vector<Vector_3> normal_per_patch(nb_patches);
 

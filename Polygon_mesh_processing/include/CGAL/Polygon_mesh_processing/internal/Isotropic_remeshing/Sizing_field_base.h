@@ -47,12 +47,12 @@ public:
   typedef typename K::FT                                        FT;
 
 public:
-  virtual boost::optional<FT> is_too_long(const halfedge_descriptor h,
-                                          const PolygonMesh& pmesh) const = 0;
-  virtual boost::optional<FT> is_too_long(const vertex_descriptor va,
-                                          const vertex_descriptor vb) const = 0;
-  virtual boost::optional<FT> is_too_short(const halfedge_descriptor h,
-                                           const PolygonMesh& pmesh) const = 0;
+  virtual std::optional<FT> is_too_long(const halfedge_descriptor h,
+                                        const PolygonMesh& pmesh) const = 0;
+  virtual std::optional<FT> is_too_long(const vertex_descriptor va,
+                                        const vertex_descriptor vb) const = 0;
+  virtual std::optional<FT> is_too_short(const halfedge_descriptor h,
+                                         const PolygonMesh& pmesh) const = 0;
   virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const = 0;
 
 };

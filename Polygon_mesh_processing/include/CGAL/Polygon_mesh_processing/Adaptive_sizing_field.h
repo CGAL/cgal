@@ -183,7 +183,7 @@ public:
       return get(m_vertex_sizing_map, v);
     }
 
-  boost::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
+  std::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     const FT sqlen = sqlength(h, pmesh);
     FT sqtarg_len = CGAL::square(4./3. * CGAL::min(get(m_vertex_sizing_map, source(h, pmesh)),
@@ -193,10 +193,10 @@ public:
     if(sqlen > sqtarg_len)
       return sqlen;
     else
-      return boost::none;
+      return std::nullopt;
   }
 
-  boost::optional<FT> is_too_long(const vertex_descriptor va,
+  std::optional<FT> is_too_long(const vertex_descriptor va,
                                   const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
@@ -207,10 +207,10 @@ public:
     if (sqlen > sqtarg_len)
       return sqlen;
     else
-      return boost::none;
+      return std::nullopt;
   }
 
-  boost::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
+  std::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     const FT sqlen = sqlength(h, pmesh);
     FT sqtarg_len = CGAL::square(4./5. * CGAL::min(get(m_vertex_sizing_map, source(h, pmesh)),
@@ -220,7 +220,7 @@ public:
     if (sqlen < sqtarg_len)
       return sqlen;
     else
-      return boost::none;
+      return std::nullopt;
   }
 
   Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const

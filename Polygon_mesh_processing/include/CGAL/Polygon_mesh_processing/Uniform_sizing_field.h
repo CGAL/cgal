@@ -99,32 +99,32 @@ private:
   }
 
 public:
-  boost::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
+  std::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     const FT sqlen = sqlength(h, pmesh);
     if(sqlen > m_sq_long)
       return sqlen;
     else
-      return boost::none;
+      return std::nullopt;
   }
 
-  boost::optional<FT> is_too_long(const vertex_descriptor va,
+  std::optional<FT> is_too_long(const vertex_descriptor va,
                                   const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
     if (sqlen > m_sq_long)
       return sqlen;
     else
-      return boost::none;
+      return std::nullopt;
   }
 
-  boost::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
+  std::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     const FT sqlen = sqlength(h, pmesh);
     if (sqlen < m_sq_short)
       return sqlen;
     else
-      return boost::none;
+      return std::nullopt;
   }
 
   Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const

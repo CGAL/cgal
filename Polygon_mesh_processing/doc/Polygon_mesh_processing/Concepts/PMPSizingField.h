@@ -34,18 +34,18 @@ typedef unspecified_type FT;
 /// called to check whether the halfedge `h` is longer than the target edge size
 /// and as such should be split. If the halfedge is longer, it returns the squared
 /// length of the edge.
-boost::optional<FT> is_too_long(const halfedge_descriptor h,
+std::optional<FT> is_too_long(const halfedge_descriptor h,
                                 const PolygonMesh& pmesh) const;
 
 /// called to check whether the halfedge with end vertices `va` and `vb` is longer
 /// than the target edge size and as such should be split. If the halfedge is longer,
 /// it returns the squared length of the edge.
-boost::optional<FT> is_too_long(const vertex_descriptor va,
+std::optional<FT> is_too_long(const vertex_descriptor va,
                                 const vertex_descriptor vb) const;
 
 /// called to check whether the halfedge `h` should be collapsed in case it is
 /// shorter than the target edge size.
-boost::optional<FT> is_too_short(const halfedge_descriptor h,
+std::optional<FT> is_too_short(const halfedge_descriptor h,
                                  const PolygonMesh& pmesh) const;
 
 /// called to define the location of the halfedge `h` split in case `is_too_long`
