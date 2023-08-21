@@ -6,7 +6,7 @@ project(Polygon_repair_2_Examples)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # create a target per cppfile
 file(
@@ -16,3 +16,7 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+
+if(CGAL_Qt5_FOUND)
+  target_link_libraries(draw_multipolygon PUBLIC CGAL::CGAL_Basic_viewer)
+endif()
