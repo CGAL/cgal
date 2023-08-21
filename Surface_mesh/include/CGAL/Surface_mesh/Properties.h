@@ -67,7 +67,7 @@ public:
     /// Return a deep copy of self.
     virtual Base_property_array* clone () const = 0;
 
-    /// Return a empty copy of self.
+    /// Return an empty copy of self.
     virtual Base_property_array* empty_clone () const = 0;
 
     /// Return the type_info of the property

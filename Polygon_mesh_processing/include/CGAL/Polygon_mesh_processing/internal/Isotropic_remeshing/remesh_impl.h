@@ -2010,7 +2010,7 @@ private:
             return false;
           }
         }
-        //normal_per_patch[index] = boost::make_optional(n);
+        //normal_per_patch[index] = std::make_optional(n);
         normal_per_patch[index] = n;
         initialized[index] = true;
       }

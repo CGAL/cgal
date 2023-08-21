@@ -265,9 +265,9 @@ public:
                to_exact( get(vpm, target(next(h3,tm),tm))));
     const auto inter_res = exact_intersection(p1, p2, p3);
 
-    CGAL_assertion(inter_res != boost::none);
+    CGAL_assertion(inter_res != std::nullopt);
     const Exact_kernel::Point_3* pt =
-      boost::get<Exact_kernel::Point_3>(&(*inter_res));
+      std::get_if<Exact_kernel::Point_3>(&(*inter_res));
     CGAL_assertion(pt!=nullptr);
     add_new_node(*pt);
   }
@@ -386,9 +386,9 @@ public:
                get(vpm, target(next(h3,tm),tm)));
     const auto inter_res = intersection(p1, p2, p3);
 
-    CGAL_assertion(inter_res != boost::none);
+    CGAL_assertion(inter_res != std::nullopt);
     const Point_3* pt =
-      boost::get<Point_3>(&(*inter_res));
+      std::get_if<Point_3>(&(*inter_res));
     CGAL_assertion(pt!=nullptr);
     add_new_node(*pt);
   }

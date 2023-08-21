@@ -10,6 +10,30 @@ Release date: October 2023
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
+- **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
+- **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
+- **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
+
+#### 2D Arrangements
+
+- **Breaking change**: The type of the result of point location queries changed to
+    `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
+    has been removed.
+
+#### Envelopes of Surfaces in 3D
+- ** Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
+
+### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
+
+- Added the function `insert_cell_1_between_two_cells_2()` to the `GenericMap` concept, which enables users to insert an edge between two different faces in order to create faces with holes.
+
+### [3D Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgMesh3)
+
+-   **Breaking change**: Removed the concept `TriangleAccessor`, the template parameter `TriangleAccessor`, as well
+    as the class `Triangle_accessor`. They were no longer used for several releases.
+
+-   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
+    which are deprecated since CGAL-4.13.
 
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)

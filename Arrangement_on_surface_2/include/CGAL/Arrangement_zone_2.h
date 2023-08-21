@@ -101,9 +101,9 @@ protected:
 
   // Types used for caching intersection points:
   typedef std::pair<Point_2, Multiplicity>              Intersection_point;
-  typedef boost::variant<Intersection_point, X_monotone_curve_2>
+  typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
-  typedef boost::optional<Intersection_result>          Optional_intersection;
+  typedef std::optional<Intersection_result>          Optional_intersection;
   typedef std::list<Intersection_result>                Intersect_list;
   typedef std::map<const X_monotone_curve_2*, Intersect_list>
                                                         Intersect_map;

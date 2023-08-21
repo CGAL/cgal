@@ -218,6 +218,7 @@ void tangential_relaxation(const VertexRange& vertices,
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
     auto gt_barycenter = gt.construct_barycenter_3_object();
+    auto gt_project = gt.construct_projected_point_3_object();
 
     // at each vertex, compute vertex normal
     std::unordered_map<vertex_descriptor, Vector_3> vnormals;
@@ -269,8 +270,19 @@ void tangential_relaxation(const VertexRange& vertices,
           //check squared cosine is < 0.25 (~120 degrees)
           if (0.25 < dot*dot / ( squared_distance(get(vpm,ph0), get(vpm, v)) *
                                  squared_distance(get(vpm,ph1), get(vpm, v))) )
-            barycenters.emplace_back(v, vn,
-              gt_barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5));
+          {
+            typename GT::Point_3 bary = gt_barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5);
+            // to avoid shrinking of borders, we project back onto the incident segments
+            typename GT::Segment_3 s1(get(vpm, ph0), get(vpm,v)),
+                                   s2(get(vpm, ph1), get(vpm,v));
+
+            typename GT::Point_3 p1 = gt_project(s1, bary), p2 = gt_project(s2, bary);
+
+            bary = squared_distance(p1, bary)<squared_distance(p2,bary)? p1:p2;
+            barycenters.emplace_back(v, vn, bary);
+          }
+
+
         }
       }
     }

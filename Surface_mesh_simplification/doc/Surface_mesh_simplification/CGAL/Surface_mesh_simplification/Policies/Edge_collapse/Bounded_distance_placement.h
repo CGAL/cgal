@@ -46,7 +46,7 @@ public:
 
   // Returns the placement computed by `base_placement`, provided the distance between the input
   // and this placement is smaller than `d`. Otherwise, nothing is returned.
-  boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const;
+  std::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const;
 
   // @}
 };

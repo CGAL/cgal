@@ -239,9 +239,6 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
 
-\cgalCRPSection{Macros}
-- \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
-
 \cgalCRPSection{Functions}
 
 - `CGAL::is_valid()`

@@ -19,7 +19,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #include <CGAL/Unique_hash_map.h>
 #include <vector>

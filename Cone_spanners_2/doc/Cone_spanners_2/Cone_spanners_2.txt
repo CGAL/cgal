@@ -304,7 +304,7 @@ and `Construct_yao_graph_2` construct full Theta and Yao graphs. They also provi
 to compute Half Theta and Yao graphs. As mentioned in Section \ref sec_CBS_mydefinitions,
 only the edges for the odd or even cones are added to the graph in an Half Theta and Yao
 graph. To do so, the constructor of the functors provides a parameter of type
-`Cones_selected` which is a enumeration that contains the following possible values:
+`Cones_selected` which is an enumeration that contains the following possible values:
 `ALL_CONES`, `EVEN_CONES` and `ODD_CONES`. Users should include the
 `CGAL/Cone_spanners_enum_2.h` header file to use these enum values. The following are the
 examples on the functor constructions for Half Theta and Yao Graphs.

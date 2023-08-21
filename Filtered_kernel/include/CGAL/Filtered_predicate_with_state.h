@@ -18,7 +18,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -31,7 +31,7 @@ class Filtered_predicate_with_state
   C2E c2e;
   C2A c2a;
   O1  o1;
-  mutable boost::optional<EP>  oep;
+  mutable std::optional<EP>  oep;
   AP  ap;
   typedef typename AP::result_type  Ares;
 

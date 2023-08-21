@@ -27,7 +27,7 @@
 #include <CGAL/Line_3.h>
 #include <CGAL/Plane_3.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -36,7 +36,7 @@ CGAL_INTERSECTION_FUNCTION(Line_3, Plane_3, 3)
 
 template <class K>
 inline
-boost::optional<typename K::Point_3>
+std::optional<typename K::Point_3>
 intersection_point_for_polyhedral_envelope(const Plane_3<K>& plane,
                                            const Line_3<K>& line)
 {
@@ -45,7 +45,7 @@ intersection_point_for_polyhedral_envelope(const Plane_3<K>& plane,
 
 template <class K>
 inline
-boost::optional<typename K::Point_3>
+std::optional<typename K::Point_3>
 intersection_point_for_polyhedral_envelope(const Line_3<K>& line,
                                            const Plane_3<K>& plane)
 {
