@@ -32,7 +32,7 @@ end points of the edges around its outer boundary.
 
 - A valid <B>polygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
 that is bounded by one outer boundary and zero or more <B>inner boundaries</B>,
-where each inner boundary represents a hole in the polygon. Considered 
+where each inner boundary represents a hole in the polygon. Considered
 independently, each boundary should be simple. The different boundaries of a polygon
 are allowed to intersect tangentially at their common vertices (with no common
 edges), forming vertices with degrees larger than two at the tangential points.
@@ -151,7 +151,9 @@ Result of the run of the draw_multipolygon program. A window shows the multipoly
 and allows to navigate through the scene.
 \cgalFigureEnd
 
-\subsection SubsectionPolygonRepair2_Repair Repairing
+\subsection SubsectionPolygonRepair2_Repair Repairing a (multi)polygon
+
+\cgalExample{Polygon_repair_2/repair_polygon_2.cpp}
 
 \subsection SubsectionPolygonRepair2_RepairHiddenApi Step by step repairing
 
