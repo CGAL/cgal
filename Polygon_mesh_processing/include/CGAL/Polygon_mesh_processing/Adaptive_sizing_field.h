@@ -48,6 +48,9 @@ class Adaptive_sizing_field : public Sizing_field_base<PolygonMesh>
 {
 private:
   typedef Sizing_field_base<PolygonMesh> Base;
+  typedef typename CGAL::dynamic_vertex_property_t<typename Base::FT> Vertex_property_tag;
+  typedef typename boost::property_map<PolygonMesh,
+                                       Vertex_property_tag>::type VertexSizingMap;
 
 public:
   typedef typename Base::K          K;
@@ -58,25 +61,22 @@ public:
   typedef typename Base::vertex_descriptor   vertex_descriptor;
   typedef typename Base::DefaultVPMap DefaultVPMap;
 
-  typedef typename CGAL::dynamic_vertex_property_t<FT> Vertex_property_tag;
-  typedef typename boost::property_map<PolygonMesh,
-                                       Vertex_property_tag>::type VertexSizingMap;
-
   /// \name Creation
   /// @{
   /*!
-  * Returns an object to serve as criteria for adaptive curvature-based edge lengths.
+  * returns an object to serve as criteria for adaptive curvature-based edge lengths.
   *
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
   *         model of `Range`. Its iterator type is `ForwardIterator`.
   *
-  * @param tol the error tolerance, the maximum deviation of an edge from the original
-  *        mesh. Lower tolerance values will result in shorter mesh edges.
+  * @param tol the error tolerance, used together with curvature to derive target edge length.
+   *       Lower tolerance values will result in shorter mesh edges.
   * @param edge_len_min_max is the stopping criterion for minimum and maximum allowed
   *        edge length.
   * @param face_range the range of triangular faces defining one or several surface patches
-  *        to be remeshed.
-  * @param pmesh a polygon mesh with triangulated surface patches to be remeshed.
+  *        to be remeshed. It should be the same as the range of faces used for `isotropic_remeshing()`.
+  * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. It should be the
+  *              same mesh as the one used in `isotropic_remeshing()`.
   */
   template <typename FaceRange>
   Adaptive_sizing_field(const double tol
