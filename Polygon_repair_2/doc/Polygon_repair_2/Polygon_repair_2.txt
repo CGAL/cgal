@@ -45,7 +45,7 @@ that is represented by a set of zero or more valid polygons with holes.
 The interiors of the polygons with holes should be pairwise disjoint, but they
 are allowed to intersect tangentially at their common vertices. Note that
 a valid polygon with holes can also be represented as a valid multipolygon
-with holes. For simplicity, we call multipolygons with holes as multipolygons.
+with holes.
 
 FIGURE
 
@@ -89,6 +89,9 @@ an inner boundary.
 
 FIGURE
 
+For the purposes of the repair operation, the input polygon, polygon with holes
+or multipolygon is merely used as a container of input line segments.
+
 If the input is already valid, the method will return a valid output representing
 the same area. However, the output might be different in order to conform to the
 stricter conditions to generate deterministic output (see
@@ -130,32 +133,39 @@ of the polygons in it.
 
 \subsection SubsectionPolygonRepair2_WKTDraw Draw a multipolygon
 
-A multipolygon can be visualized by calling the \link PkgPolygonRepair2Ref
+A multipolygon with holes can be visualized by calling the \link PkgPolygonRepair2Ref
 CGAL::draw<MPH>() \endlink function as shown in the following example.
 This function opens a new window showing the given polygon. A call to this function
 is blocking, that is the program continues as soon as the user closes the window.
 Versions for polygons and polygons with holes also exist, cf. \link PkgDrawPolygon2
 CGAL::draw<P>() \endlink and \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink.
 
-The multipolygon shown in this example is created using the well-known text (WKT) reader,
-which can read and write multipolygons.
+The multipolygon with holes shown in this example is created using the well-known text
+(WKT) reader, which can read and write multipolygons with holes.
 
 \cgalExample{Polygon_repair_2/draw_multipolygon.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER`
-is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5`
-and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt5`, and is only available if the macro
+`CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target
+`CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition
+`CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{draw_multipolygon, draw_multipolygon.png}
 Result of the run of the draw_multipolygon program. A window shows the multipolygon
-and allows to navigate through the scene.
+with holes and allows to navigate through the scene.
 \cgalFigureEnd
 
 \subsection SubsectionPolygonRepair2_Repair Repairing a (multi)polygon
 
+\cgalFigureBegin{bridge_edge, bridge_edge.png}
+(a) Before repair (b) After repair
+\cgalFigureEnd
+
 \cgalExample{Polygon_repair_2/repair_polygon_2.cpp}
 
 \subsection SubsectionPolygonRepair2_RepairHiddenApi Step by step repairing
+
+\cgalExample{Polygon_repair_2/write_labeled_triangulation.cpp}
 
 \section SectionPolygonRepair2_Performance Performance
 

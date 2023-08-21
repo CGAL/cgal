@@ -1,7 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <iomanip>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_repair_2/Polygon_repair_2.h>
@@ -16,68 +14,48 @@ using Polygon_repair_2 = CGAL::Polygon_repair_2::Polygon_repair_2<Kernel>;
 
 int main(int argc, char* argv[]) {
 
-  // std::ifstream ifs("/Users/ken/Downloads/180927.wkt");
-  // std::ofstream ofs("/Users/ken/Downloads/2.geojson");
+  std::ifstream ifs("data/nesting-spike.wkt");
 
-  // std::ifstream ifs("/Users/ken/Downloads/2018418.wkt");
-  // std::ofstream ofs("/Users/ken/Downloads/1.geojson");
+  Multipolygon_with_holes_2 mp;
+  CGAL::IO::read_multi_polygon_WKT(ifs, mp);
 
-  std::ifstream ifs("../../test/Polygon_repair_2/data/in/nesting-spike.wkt");
-  std::ofstream ofs("/Users/ken/Downloads/triangulation.geojson");
-
-  std::string in;
-  std::getline(ifs, in);
-  std::istringstream iss(in);
   Polygon_repair_2 pr;
+  pr.add_to_triangulation_odd_even(mp);
+  pr.label_triangulation_odd_even();
 
-  if (in.find("POLYGON") == 0) {
-    Polygon_with_holes_2 p;
-    if (in != "POLYGON()") { // maybe should be checked in WKT reader
-      CGAL::IO::read_polygon_WKT(iss, p);
-    } pr.add_to_triangulation_odd_even(p);
-  } else if (in.find("MULTIPOLYGON") == 0) {
-    Multipolygon_with_holes_2 mp;
-    CGAL::IO::read_multi_polygon_WKT(iss, mp);
-    pr.add_to_triangulation_odd_even(mp);
-  } pr.label_triangulation_odd_even();
-
-  // ofs << std::fixed;
-  // ofs << std::setprecision(15);
-
-  ofs << "{" << std::endl;
-  ofs << "\t\"type\": \"FeatureCollection\"," << std::endl;
-  ofs << "\t\"features\": [" << std::endl;
+  std::cout << "{" << std::endl;
+  std::cout << "\t\"type\": \"FeatureCollection\"," << std::endl;
+  std::cout << "\t\"features\": [" << std::endl;
 
   for (Polygon_repair_2::Triangulation::Finite_faces_iterator face = pr.triangulation().finite_faces_begin();
        face != pr.triangulation().finite_faces_end(); ++face) {
-    ofs << "\t\t{" << std::endl;
-    ofs << "\t\t\t\"type\": \"Feature\"," << std::endl;
-    ofs << "\t\t\t\"properties\": {" << std::endl;
-    ofs << "\t\t\t\t\"label\": " << face->label() << std::endl;
-    ofs << "\t\t\t}," << std::endl;
-    ofs << "\t\t\t\"geometry\": {" << std::endl;
-    ofs << "\t\t\t\t\"type\": \"Polygon\"," << std::endl;
-    ofs << "\t\t\t\t\"coordinates\": [" << std::endl;
-    ofs << "\t\t\t\t\t[" << std::endl;
-    ofs << "\t\t\t\t\t\t[" << face->vertex(0)->point().x() << ", " << face->vertex(0)->point().y() << "]," << std::endl;
-    ofs << "\t\t\t\t\t\t[" << face->vertex(1)->point().x() << ", " << face->vertex(1)->point().y() << "]," << std::endl;
-    ofs << "\t\t\t\t\t\t[" << face->vertex(2)->point().x() << ", " << face->vertex(2)->point().y() << "]" << std::endl;
-    ofs << "\t\t\t\t\t]" << std::endl;
-    ofs << "\t\t\t\t]" << std::endl;
-    ofs << "\t\t\t}" << std::endl;
-    ofs << "\t\t}";
+    std::cout << "\t\t{" << std::endl;
+    std::cout << "\t\t\t\"type\": \"Feature\"," << std::endl;
+    std::cout << "\t\t\t\"properties\": {" << std::endl;
+    std::cout << "\t\t\t\t\"label\": " << face->label() << std::endl;
+    std::cout << "\t\t\t}," << std::endl;
+    std::cout << "\t\t\t\"geometry\": {" << std::endl;
+    std::cout << "\t\t\t\t\"type\": \"Polygon\"," << std::endl;
+    std::cout << "\t\t\t\t\"coordinates\": [" << std::endl;
+    std::cout << "\t\t\t\t\t[" << std::endl;
+    std::cout << "\t\t\t\t\t\t[" << face->vertex(0)->point().x() << ", " << face->vertex(0)->point().y() << "]," << std::endl;
+    std::cout << "\t\t\t\t\t\t[" << face->vertex(1)->point().x() << ", " << face->vertex(1)->point().y() << "]," << std::endl;
+    std::cout << "\t\t\t\t\t\t[" << face->vertex(2)->point().x() << ", " << face->vertex(2)->point().y() << "]" << std::endl;
+    std::cout << "\t\t\t\t\t]" << std::endl;
+    std::cout << "\t\t\t\t]" << std::endl;
+    std::cout << "\t\t\t}" << std::endl;
+    std::cout << "\t\t}";
     Polygon_repair_2::Triangulation::Finite_faces_iterator next_face = face;
     ++next_face;
-    if (next_face != pr.triangulation().finite_faces_end()) ofs << ",";
-    ofs << std::endl;
+    if (next_face != pr.triangulation().finite_faces_end()) std::cout << ",";
+    std::cout << std::endl;
   }
 
-  ofs << "\t]" << std::endl;
-  ofs << "}" << std::endl;
+  std::cout << "\t]" << std::endl;
+  std::cout << "}" << std::endl;
 
   pr.reconstruct_multipolygon();
-  Multipolygon_with_holes_2 rmp = pr.multipolygon();
-  CGAL::IO::write_multi_polygon_WKT(std::cout, rmp);
+  Multipolygon_with_holes_2 repaired = pr.multipolygon();
 
   return 0;
 }

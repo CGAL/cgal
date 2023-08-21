@@ -1,3 +1,6 @@
 /*!
+\example Polygon_repair_2/multipolygon.cpp
+\example Polygon_repair_2/draw_multipolygon.cpp
 \example Polygon_repair_2/repair_polygon_2.cpp
+\example Polygon_repair_2/write_labeled_triangulation.cpp
 */
