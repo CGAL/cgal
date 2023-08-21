@@ -4,8 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Polygon_repair_2_Tests)
 
-set(CMAKE_CXX_STANDARD 17)
-
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # create a target per cppfile
