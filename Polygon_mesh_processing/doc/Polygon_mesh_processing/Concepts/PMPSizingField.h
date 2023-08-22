@@ -48,7 +48,7 @@ std::optional<FT> is_too_long(const vertex_descriptor va,
 std::optional<FT> is_too_short(const halfedge_descriptor h,
                                  const PolygonMesh& pmesh) const;
 
-/// called to define the location of the halfedge `h` split in case `is_too_long`
+/// called to define the location of the halfedge `h` split in case `is_too_long()`
 /// returns a value.
 Point_3 split_placement(const halfedge_descriptor h,
                         const PolygonMesh& pmesh) const;
