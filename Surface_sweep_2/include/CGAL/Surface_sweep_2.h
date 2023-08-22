@@ -102,7 +102,7 @@ public:
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
   typedef std::pair<Point_2, Multiplicity>              Intersection_point;
-  typedef boost::variant<Intersection_point, X_monotone_curve_2>
+  typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
   typedef std::vector<Intersection_result>              Intersection_vector;
   typedef Random_access_output_iterator<Intersection_vector>

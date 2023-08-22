@@ -107,12 +107,10 @@ protected:
   // Types used for caching intersection points:
   using Intersection_point = std::pair<Point_2, Multiplicity>;
   using Intersection_result =
-    boost::variant<Intersection_point, X_monotone_curve_2>;
-  using Optional_intersection = boost::optional<Intersection_result>;
+    std::variant<Intersection_point, X_monotone_curve_2>;
+  using Optional_intersection = std::optional<Intersection_result>;
   using Intersect_list = std::list<Intersection_result>;
-  using Intersect_map =
-    std::map<const X_monotone_curve_2*, Intersect_list>;
-  using Intersect_map_iterator = typename Intersect_map::iterator;
+  using Intersect_map = std::map<const X_monotone_curve_2*, Intersect_list>;
 
   using Curves_set = std::set<const X_monotone_curve_2*>;
   using Curves_set_iterator = typename Curves_set::iterator;

@@ -490,7 +490,7 @@ struct Test
     std::set<double> ds;
     auto test = [&ds](S s1, S s2)
     {
-      P i = boost::get<P>(*CGAL::intersection(s1,s2));
+      P i = std::get<P>(*CGAL::intersection(s1,s2));
       ds.insert(CGAL::to_double(i.x())); ds.insert(CGAL::to_double(i.y()));
       assert(ds.size()==2);
     };

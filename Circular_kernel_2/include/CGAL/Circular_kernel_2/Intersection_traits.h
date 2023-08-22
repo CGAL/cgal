@@ -19,7 +19,7 @@
 
 #include <CGAL/Intersection_traits.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace CGAL {
 
@@ -40,7 +40,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
 {
   typedef typename
-  boost::variant< typename CK::Circle_2,
+  std::variant< typename CK::Circle_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -52,7 +52,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Circular_arc_2>
 {
   typedef typename
-  boost::variant< typename CK::Circular_arc_2,
+  std::variant< typename CK::Circular_arc_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -64,7 +64,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
 {
   typedef typename
-  boost::variant< typename CK::Line_arc_2,
+  std::variant< typename CK::Line_arc_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -76,7 +76,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Circle_2>
 {
   typedef typename
-  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+  std::variant< typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >
@@ -92,7 +92,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Circular_arc_2>
 {
   typedef typename
-  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+  std::variant< typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >
@@ -108,7 +108,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_2>
 {
   typedef typename
-  boost::variant< typename CK::Line_arc_2,
+  std::variant< typename CK::Line_arc_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
@@ -125,7 +125,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circular_arc_2>
 {
   typedef typename
-  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+  std::variant< typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >
@@ -155,7 +155,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>
 {
   typedef typename
-  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+  std::variant< typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int >
                   CGAL_ADDITIONAL_VARIANT_FOR_ICL
                   >

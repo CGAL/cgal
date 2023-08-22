@@ -163,7 +163,7 @@ Bench bench;                        //If you want create table with all datasets
   typedef CircularKernel::Line_arc_2                                      Line_arc_2;
   typedef CGAL::Arr_circular_line_arc_traits_2<CircularKernel>  CircularK_Variant_Traits;
 
-  typedef boost::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
+  typedef std::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
   typedef std::vector<CircularKVarArc>                        CircularKVarArcContainer;
 
   bench.kernel("CKVar");
@@ -197,7 +197,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
 
   typedef BBCircularKernel::Circular_arc_2                                        Circular_arc_6;
   typedef BBCircularKernel::Line_arc_2                                            Line_arc_6;
-  typedef boost::variant<Circular_arc_6,Line_arc_6 >                  BBCircVarArc;
+  typedef std::variant<Circular_arc_6,Line_arc_6 >                  BBCircVarArc;
   typedef std::vector<BBCircVarArc>                                   BBCircVarContainer;
   typedef CGAL::Arr_circular_line_arc_traits_2<BBCircularKernel>  BBCircVariantTraits;
 

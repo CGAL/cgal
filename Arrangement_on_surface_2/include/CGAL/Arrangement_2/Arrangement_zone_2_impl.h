@@ -101,7 +101,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
   const Vertex_const_handle* vh;
   const Halfedge_const_handle* hh;
 
-  if ((vh = boost::get<Vertex_const_handle>(&m_obj)) != nullptr) {
+  if ((vh = std::get_if<Vertex_const_handle>(&m_obj)) != nullptr) {
     CGAL_assertion(m_has_left_pt);
 
     // The left endpoint coincides with an existing vertex:
@@ -123,7 +123,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
 #endif
 
   }
-  else if ((hh = boost::get<Halfedge_const_handle>(&m_obj)) != nullptr) {
+  else if ((hh = std::get_if<Halfedge_const_handle>(&m_obj)) != nullptr) {
     if (m_has_left_pt) {
       // Obtain the right halfedge from the halfedge-pair containing m_left_pt
       // in their interior.
@@ -137,7 +137,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
         // Compute the overlapping subcurve.
         Arr_parameter_space dummy;
         auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
-        m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
+        m_overlap_cv = std::get<X_monotone_curve_2>(*obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -153,7 +153,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
 
       Arr_parameter_space dummy;
       auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
-      m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
+      m_overlap_cv = std::get<X_monotone_curve_2>(*obj);
 
       // Remove the overlap from the map.
       _remove_next_intersection(m_intersect_he);
@@ -164,7 +164,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
   }
   else {
     // The left endpoint lies inside a face.
-    const Face_const_handle* fh = boost::get<Face_const_handle>(&m_obj);
+    const Face_const_handle* fh = std::get_if<Face_const_handle>(&m_obj);
 
     CGAL_assertion_msg(fh != nullptr,
                        "Invalid object returned by the point-location query.");
@@ -211,7 +211,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
         // Compute the overlapping subcurve to the right of curr_v.
         Arr_parameter_space dummy;
         auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
-        m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
+        m_overlap_cv = std::get<X_monotone_curve_2>(*obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -589,7 +589,7 @@ _compute_next_intersection(Halfedge_handle he,
   const X_monotone_curve_2* p_curve = &(he->curve());
 
   // Try to locate the intersections with this curve in the intersections map.
-  Intersect_map_iterator iter = m_inter_map.find(p_curve);
+  auto iter = m_inter_map.find(p_curve);
   const Intersection_point* ip;
   const X_monotone_curve_2* icv;
   bool valid_intersection;
@@ -606,7 +606,7 @@ _compute_next_intersection(Halfedge_handle he,
     // (if the left point exists).
     while (! inter_list.empty()) {
       // Compare that current object with m_left_pt (if exists).
-      ip = boost::get<Intersection_point>(&(inter_list.front()));
+      ip = std::get_if<Intersection_point>(&(inter_list.front()));
       if (ip != nullptr) {
         // We have an intersection point -
         valid_intersection =
@@ -614,7 +614,7 @@ _compute_next_intersection(Halfedge_handle he,
       }
       else {
         // We have an overlapping subcurve.
-        icv = boost::get<X_monotone_curve_2>(&(inter_list.front()));
+        icv = std::get_if<X_monotone_curve_2>(&(inter_list.front()));
         CGAL_assertion(icv != nullptr);
 
         if (is_closed(*icv, ARR_MIN_END)) {
@@ -653,7 +653,8 @@ _compute_next_intersection(Halfedge_handle he,
   // Discard all intersection lying to the left of m_left_pt (if exists).
   while (! inter_list.empty()) {
     // Compare that current object with m_left_pt (if exists).
-    ip = boost::get<Intersection_point>(&(inter_list.front()));
+    ip = std::get_if<Intersection_point>(&(inter_list.front()));
+
     if (ip != nullptr) {
       // We have an intersection point -
       // Check whether we need to skip the first intersection
@@ -667,7 +668,7 @@ _compute_next_intersection(Halfedge_handle he,
     }
     else {
       // We have an overlapping subcurve.
-      icv = boost::get<X_monotone_curve_2>(&(inter_list.front()));
+      icv = std::get_if<X_monotone_curve_2>(&(inter_list.front()));
       CGAL_assertion(icv != nullptr);
 
       if (is_closed(*icv, ARR_MIN_END)) {
@@ -705,7 +706,7 @@ _remove_next_intersection(Halfedge_handle he) {
   const X_monotone_curve_2* p_curve = &(he->curve());
 
   // Locate the intersections with this curve in the intersections map.
-  Intersect_map_iterator iter = m_inter_map.find(p_curve);
+  auto iter = m_inter_map.find(p_curve);
 
   CGAL_assertion(iter != m_inter_map.end());
   CGAL_assertion(! iter->second.empty());
@@ -859,7 +860,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
   if (iobj) {
     // We have found an intersection (either a simple point or an
     // overlapping x-monotone curve).
-    const Intersection_point* int_p = boost::get<Intersection_point>(&*iobj);
+    const Intersection_point* int_p = std::get_if<Intersection_point>(&*iobj);
     if (int_p != nullptr) {
       Point_2 ip = int_p->first;
 
@@ -881,7 +882,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
     else {
       // We have located an overlapping curve. Assign ip as its left
       // endpoint.
-      const X_monotone_curve_2* icv = boost::get<X_monotone_curve_2>(&*iobj);
+      const X_monotone_curve_2* icv = std::get_if<X_monotone_curve_2>(&*iobj);
       CGAL_assertion(icv != nullptr);
       Point_2 ip = min_vertex(*icv);
 
@@ -1116,7 +1117,7 @@ _zone_in_face(Face_handle face, bool on_boundary) {
       // Associate the intersection list of the original curve with the
       // right subcurve, while we can associate an empty list with the
       // left subcurve, as we are now done with it.
-      Intersect_map_iterator iter = m_inter_map.find(p_orig_curve);
+      auto iter = m_inter_map.find(p_orig_curve);
       Intersect_list empty_inter_list;
 
       m_inter_map[p_right_subcurve] = iter->second;

@@ -605,18 +605,25 @@ private:
     sm_item->setRenderingMode(GouraudPlusEdges);
     sm_item->redraw();
 
-    scene->addItem(heat_item);
-    scene->setSelectedItem(scene->item_id(sm_item));
+    auto heat_item_id = scene->addItem(heat_item);
+    scene->setSelectedItem(heat_item_id);
 
     // any change of sm_item destroys everything
-    connect(sm_item, &Scene_surface_mesh_item::itemChanged,
-            this, [this, sm_item, heat_item]()
-                  {
-                    sm_item->resetColors();
-                    removePluginProperties(sm_item);
-                    scene->erase(scene->item_id(heat_item));
-                    onItemIndicesSelected(scene->selectionIndices());
-                  });
+
+    // @todo do not emit itemChanged when the colors are reset
+    // @todo with qt6, single connection can be performed with `static_cast<Qt::ConnectionType>(Qt::SingleShotConnection)`
+    // see https://www.kdab.com/single-shot-connections/
+    auto connection = std::make_shared<QMetaObject::Connection>();
+    *connection = connect(sm_item, &Scene_surface_mesh_item::itemChanged,
+                          this, [this, sm_item, heat_item, connection]()
+                                {
+                                  QObject::disconnect(*connection);
+
+                                  sm_item->resetColors();
+                                  removePluginProperties(sm_item);
+                                  scene->erase(scene->item_id(heat_item));
+                                  onItemIndicesSelected(scene->selectionIndices());
+                                });
 
     connect(sm_item, &Scene_surface_mesh_item::aboutToBeDestroyed,
             this, [this, heat_item]()
@@ -765,7 +772,8 @@ private Q_SLOTS:
 
     Scene_polyhedron_selection_item* source_vertices = new Scene_polyhedron_selection_item(sm_item, mw);
     source_vertices->setName(tr("%1 (source vertices)").arg(sm_item->name()));
-    scene->addItem(source_vertices);
+    auto source_vertices_id = scene->addItem(source_vertices);
+    scene->setSelectedItem(source_vertices_id);
 
     link_mesh_and_selection(sm_item, source_vertices);
 

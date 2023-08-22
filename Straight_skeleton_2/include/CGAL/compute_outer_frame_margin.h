@@ -17,7 +17,7 @@
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 #include <CGAL/Kernel_traits.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <algorithm>
 #include <iterator>
@@ -25,7 +25,7 @@
 namespace CGAL {
 
 template<class ForwardPointIterator, class WeightIterator, class Traits>
-boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
+std::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
                                                                   , ForwardPointIterator aEnd
                                                                   , WeightIterator       aWBegin
                                                                   , WeightIterator       CGAL_assertion_code(aWEnd)
@@ -46,7 +46,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   typename Kernel::Compute_squared_distance_2 squared_distance  = kernel.compute_squared_distance_2_object();
   typename Kernel::Construct_segment_2        construct_segment = kernel.construct_segment_2_object();
 
-  typedef boost::optional<Point_2> OptionalPoint_2 ;
+  typedef std::optional<Point_2> OptionalPoint_2 ;
 
   CGAL_STSKEL_BUILDER_TRACE(2, "Computing outer frame margin..." );
 
@@ -101,16 +101,16 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
     // Add a %5 gap, and ceil to get simpler values
     CGAL_STSKEL_BUILDER_TRACE(4, "outer frame margin: " << approx );
-    return boost::optional<FT> ( approx ) ;
+    return std::optional<FT> ( approx ) ;
   }
 
-  return boost::none;
+  return std::nullopt;
 }
 
 
 // `Traits` first is to help overload resolution in the 3-argument version (see below)
 template<class Traits, class ForwardPointIterator>
-boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
+std::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
                                                                   , ForwardPointIterator aEnd
                                                                   , typename Traits::FT  aOffset
                                                                   , Traits const&        aTraits
@@ -122,7 +122,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 }
 
 template<class ForwardPointIterator, class WeightIterator, class FT>
-boost::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
+std::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
                                                ForwardPointIterator aEnd,
                                                WeightIterator aWBegin,
                                                WeightIterator aWEnd,
@@ -138,7 +138,7 @@ boost::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
 }
 
 template<class FT, class ForwardPointIterator>
-boost::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
+std::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
                                                ForwardPointIterator aEnd,
                                                const FT aOffset)
 {

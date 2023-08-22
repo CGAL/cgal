@@ -40,7 +40,7 @@ public:
 /*!
 A function object whose `operator()` computes the intersection of two segments.
 
-`boost::optional<boost::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
+`std::optional<std::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
 Returns the intersection of `s1` and `s2`.
 */
 typedef unspecified_type Intersect_2;

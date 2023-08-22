@@ -58,8 +58,8 @@ is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 \tparam Kernel a model of `EfficientRANSACTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
-- `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
-- `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
+- `std::optional< std::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
+- `std::optional< std::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 
 */
 template <typename Kernel>
@@ -808,7 +808,7 @@ private:
             continue;
           }
 
-        if (const Line* l = boost::get<Line>(&*result))
+        if (const Line* l = std::get_if<Line>(&*result))
           m_edges[i].support = *l;
         else
           {
@@ -1029,7 +1029,7 @@ private:
             auto result = CGAL::intersection (plane1, ortho);
             if (result)
               {
-                if (const Line* l = boost::get<Line>(&*result))
+                if (const Line* l = std::get_if<Line>(&*result))
                   {
                     if (!(pts1.empty()))
                       {
@@ -1066,7 +1066,7 @@ private:
             result = CGAL::intersection (plane2,ortho);
             if (result)
               {
-                if (const Line* l = boost::get<Line>(&*result))
+                if (const Line* l = std::get_if<Line>(&*result))
                   {
                     if (!(pts2.empty()))
                       {
@@ -1193,12 +1193,12 @@ private:
         const auto result = CGAL::intersection(plane1, plane2);
         if (result)
           {
-            if (const Line* l = boost::get<Line>(&*result))
+            if (const Line* l = std::get_if<Line>(&*result))
               {
                 const auto result2 = CGAL::intersection(*l, plane3);
                 if (result2)
                   {
-                    if (const Point* p = boost::get<Point>(&*result2))
+                    if (const Point* p = std::get_if<Point>(&*result2))
                       m_corners[i].support = *p;
                     else
                       {
