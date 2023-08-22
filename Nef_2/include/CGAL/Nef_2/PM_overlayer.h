@@ -626,8 +626,11 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   for(v = this->vertices_begin(); v != vend; v=vn) { CGAL_NEF_TRACEN("at vertex "<<PV(v));
     vn=v; ++vn;
     if ( is_isolated(v) ) {
-      if ( mark(v) == mark(face(v)) ) delete_vertex_only(v);
-      else set_isolated_vertex(face(v),v);
+      if (mark(v) == mark(face(v))) {
+        delete_vertex_only(v);
+      } else {
+        set_isolated_vertex(face(v), v);
+      }
     } else { // v not isolated
       Halfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
       Point p1 = point(source(e1)), p2 = point(v),
@@ -643,7 +646,14 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   for (f = this->faces_begin(); f != fend; f=fn) {
     fn=f; ++fn;
     Union_find_handle pit = Pitem[f];
-    if ( unify_faces.find(pit) != pit ) delete_face(f);
+    if (unify_faces.find(pit) != pit) {
+      Union_find_handle root = unify_faces.find(pit);
+      for(Isolated_vertex_iterator ivi = isolated_vertices_begin(f); ivi != isolated_vertices_end(f); ++ivi){
+        v->set_face(*root);
+        link_as_isolated_vertex(*root,v);
+      }
+      delete_face(f);
+    }
   }
 
 

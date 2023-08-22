@@ -434,9 +434,10 @@ check_integrity_and_topological_planarity(bool faces) const
   /* check the source links of out edges and count isolated vertices */
   for (vit = vertices_begin() ; vit != vend; ++vit) {
     if ( is_isolated(vit) ) {
-      if ( faces )
-        CGAL_assertion_msg( vit->face() != Face_const_handle(),
-                            VI(vit).c_str());
+        if (faces) {
+            CGAL_assertion_msg(vit->face() != Face_const_handle(),
+                VI(vit).c_str());
+        }
       ++iso_vert_num;
     } else {
       CGAL_assertion_msg( vit->halfedge() != Halfedge_const_handle(),
