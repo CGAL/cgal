@@ -89,6 +89,8 @@ an inner boundary.
 
 FIGURE
 
+STEPS IN DETAIL
+
 For the purposes of the repair operation, the input polygon, polygon with holes
 or multipolygon is merely used as a container of input line segments.
 
@@ -157,13 +159,28 @@ with holes and allows to navigate through the scene.
 
 \subsection SubsectionPolygonRepair2_Repair Repairing a (multi)polygon
 
+It's possible to repair a polygon, polygon with holes or multipolygon with holes
+using the odd-even rule by calling the `repair_odd_even` function as shown in the
+following example. This function returns a repaired multipolygon with holes.
+
 \cgalFigureBegin{bridge_edge, bridge_edge.png}
-(a) Before repair (b) After repair
+(a) Before repair: A polygon with a single loop that implicitly creates a hole
+using a bridge edge (b) After repair: the same area represented as a polygon with
+a hole.
 \cgalFigureEnd
 
 \cgalExample{Polygon_repair_2/repair_polygon_2.cpp}
 
 \subsection SubsectionPolygonRepair2_RepairHiddenApi Step by step repairing
+
+The following example shows to do the repair process step by step, including how
+to extract the labeled triangulation, which is written as a GeoJSON file consisting
+of the individual triangles with their labels.
+
+\cgalFigureBegin{triangulation, triangulation.png}
+(a) A multipolygon consisting of two polygons with one hole each, where one polygon
+is inside the hole of the other (b) The labeled triangulation of the multipolygon
+\cgalFigureEnd
 
 \cgalExample{Polygon_repair_2/write_labeled_triangulation.cpp}
 
