@@ -481,6 +481,8 @@ check_integrity_and_topological_planarity(bool faces) const
     first=false;
   }
 
+  CGAL_assertion(iso_vert_num == iv_num);
+
   std::size_t v_num = number_of_vertices() - iso_vert_num;
   std::size_t e_num = number_of_edges();
   std::size_t c_num = number_of_connected_components() - iso_vert_num;
