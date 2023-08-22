@@ -39,5 +39,7 @@ int main(int argc, char *argv[])
   Nef_polyhedron intersect = poly1.intersection(poly2);
   intersect.explorer().check_integrity_and_topological_planarity();
 
+  Nef_polyhedron comp = intersect.complement();  //leads to crash/exception since topological plane map of intersect is not correct!
+  comp.explorer().check_integrity_and_topological_planarity();
   return 0;
 }
