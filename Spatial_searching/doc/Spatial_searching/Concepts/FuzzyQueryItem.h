@@ -43,7 +43,7 @@ bool contains(Point_d p) const;
 /*!
 \note Optional: must be defined when used with a `Kd_tree` where `EnablePointsCache` is set to `Tag_true`.
 
-tests whether the query item contains the point whose Cartesian coordinates
+tests whether the query item contains the point whose %Cartesian coordinates
 are contained in the range [`begin`, `end`).
 */
 template <typename Coord_iterator>

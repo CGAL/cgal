@@ -79,9 +79,9 @@ Point_d(ForwardIterator first, ForwardIterator end);
     \pre `i` is non-negative and less than the dimension. */
 double operator[](int i)const;
 
-/*! returns an iterator pointing to the zeroth Cartesian coordinate. */
+/*! returns an iterator pointing to the zeroth %Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_begin()const;
-/*! returns an iterator pointing beyond the last Cartesian coordinate. */
+/*! returns an iterator pointing beyond the last %Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_end()const;
 };
 

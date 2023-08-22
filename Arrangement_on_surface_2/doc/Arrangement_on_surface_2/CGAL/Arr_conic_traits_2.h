@@ -274,7 +274,7 @@ public:
      */
     Point_2(const Algebraic& hx, const Algebraic& hy, const Algebraic& hz);
 
-    /*! constructs from Cartesian coordinates.
+    /*! constructs from %Cartesian coordinates.
      */
     Point_2(const Algebraic& x, const Algebraic& y);:
 
