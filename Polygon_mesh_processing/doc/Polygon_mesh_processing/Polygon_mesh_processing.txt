@@ -969,19 +969,37 @@ Similarly, we can use the following functions to compute curvatures on a specifi
 
 **To be updated**
 
-\cgalFigureRef{icc_diff_radius} shows how the mean curvature changes depending on
-the named parameter `ball_radius`, which can be set to a value > 0 to get a smoother
-distribution of values and "diffuses" the extreme values of curvatures across the mesh.
+First, \cgalFigureRef{icc_measures} first illustrates various curvature measure on a triangular mesh.
 
-\cgalFigureAnchor{icc_diff_radius}
+\cgalFigureAnchor{icc_measures}
 <center>
-<img src="icc_diff_radius.png" style="max-width:85%;"/>
+<img src="bimba-mean0.040000-0.000000.png" style="max-width:20%;"/>
+<img src="bimba-gaussian0.040000-0.000000.png" style="max-width:20%;"/>
+<img src="bimba-dmin0.040000-0.000000.png" style="max-width:20%;"/>
+<img src="bimba-dmax0.040000-0.000000.png" style="max-width:20%;"/>
 </center>
-\cgalFigureCaptionBegin{icc_diff_radius}
-The mean curvature on a mesh with different values for the ball radius
-parameter: (a) R = 0, (b) R = 0.025, (c) R = 0.05, (d) R = 0.16. Note that the max
-edge length is 0.031 and the size of the bounding box of the mesh is 1 x .7 x .8.
+\cgalFigureCaptionBegin{icc_measures}
+Mean curvature, Gaussian curvature, minimal principal curvature direction and minimal principal curvature direction on a mesh (ball radius set to 0.04).
 \cgalFigureCaptionEnd
+
+\cgalFigureAnchor{icc_various_ball_radii}
+<center>
+<img src="bimba-mean0.020000-0.000000.png" style="max-width:10%;"/>
+<img src="bimba-mean0.030000-0.000000.png" style="max-width:10%;"/>
+<img src="bimba-mean0.040000-0.000000.png" style="max-width:10%;"/>
+<img src="bimba-mean0.050000-0.000000.png" style="max-width:10%;"/><br>
+<img src="bimba-mean0.020000-0.002000.png" style="max-width:10%;"/>
+<img src="bimba-mean0.030000-0.002000.png" style="max-width:10%;"/>
+<img src="bimba-mean0.040000-0.002000.png" style="max-width:10%;"/>
+<img src="bimba-mean0.050000-0.002000.png" style="max-width:10%;"/>
+</center>
+\cgalFigureCaptionBegin{icc_various_ball_radii}
+When changing the integration ball radius, we obtain a scale space of curvature measure that can be used to tackle possible noise in the input as illustrated in the second row (mean curvature only with fixed colormap ranges and ball radii in {0.02,0.03,0.04,0.05}).
+\cgalFigureCaptionEnd
+
+
+
+
 
 \ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
 a curvature value to each vertex.
