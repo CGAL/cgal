@@ -22,6 +22,6 @@ int main(int argc, char* argv[]) {
   } else {
     CGAL::IO::write_polygon_WKT(std::cout, mp.polygons()[0]);
   }
-  
+
   return 0;
 }

@@ -19,6 +19,10 @@ The method returns a valid output stored in a multipolygon with holes.
 
 Different triangulation and labelling heuristics are possible, but
 currently only the odd-even heuristic is implemented in the package.
+This heuristic results in areas that are alternately assigned as polygon
+interiors and exterior/holes each time that an input edge is passed.
+It doesn't distinguish between edges that are part of outer boundaries
+from those of inner boundaries.
 
 \section SectionPolygonRepair2_Definitions Definitions
 
@@ -35,7 +39,7 @@ that is bounded by one outer boundary and zero or more <B>inner boundaries</B>,
 where each inner boundary represents a hole in the polygon. Considered
 independently, each boundary should be simple. The different boundaries of a polygon
 are allowed to intersect tangentially at their common vertices (with no common
-edges), forming vertices with degrees larger than two at the tangential points.
+edges), forming vertices with degrees of a multiple of two the tangential points.
 The interior of a polygon with holes should form a connected point set.
 Note that a valid polygon can also be represented as a valid polygon with
 holes (where the number of holes is zero).
@@ -45,9 +49,12 @@ that is represented by a set of zero or more valid polygons with holes.
 The interiors of the polygons with holes should be pairwise disjoint, but they
 are allowed to intersect tangentially at their common vertices. Note that
 a valid polygon with holes can also be represented as a valid multipolygon
-with holes.
+with holes (with only one polygon).
 
-FIGURE
+\cgalFigureBegin{multipolygons, multipolygons.png}
+Valid: (a) polygon, (b-c) polygons with holes, (d-e) multipolygons with holes.
+(c) and (e) show cases where boundaries intersect tangentially at a single vertex.
+\cgalFigureEnd
 
 \subsection SubsectionPolygonRepair2_Output Stricter Conditions for Output
 
@@ -60,7 +67,7 @@ strict criteria:
 - Adjacent collinear edges touching at vertices of degree two are merged
 - The sequence of vertices representing a boundary starts from its
 lexicographically smallest vertex
-- Outer boundaries are oriented counterclockwise and inner boundaries are
+- Outer boundaries are oriented counter-clockwise and inner boundaries are
 oriented clockwise
 - The inner boundaries of a polygon with holes are stored in lexicographic
 order
@@ -82,17 +89,55 @@ labeled as the exterior.
 -# <B>Reconstruction of the multipolygon</B>: each boundary of each polygon
 with holes is reconstructed by finding a polygon interior triangle that is
 adjacent to the exterior or a hole, then following the boundary in an
-orientation that is counterclockwise for outer boundaries and clockwise for
+orientation that is counter-clockwise for outer boundaries and clockwise for
 inner boundaries. This orientation and the polygon interior id is used to
 determine what polygon with holes it belongs to and whether it is an outer or
 an inner boundary.
 
 FIGURE
 
-STEPS IN DETAIL
+\subsection SubsectionPolygonRepair2_Triangulation Constrained triangulation
 
 For the purposes of the repair operation, the input polygon, polygon with holes
-or multipolygon is merely used as a container of input line segments.
+or multipolygon is merely used as a container of input line segments. These line
+segments are added to the constrained triangulation as constraints.
+
+With the odd-even heuristic, only the edges that are present an odd number of
+times in the input will be constrained edges in the triangulation.
+When these edges are only partially overlapping, only the parts that overlap
+an odd number of times will be constrained edges in the triangulation.
+
+This procedure is done in two steps: 1. preprocessing to eliminate identical
+edges that are present an even number of times, and 2. an odd-even constraint
+counting mechanism that erases existing constraints when new overlapping ones
+are added.
+
+\subsection SubsectionPolygonRepair2_Labeling Labeling
+
+First, all of the polygon exterior is labeled. For this, the faces that can be
+accessed by following the adjacency relationships from the infinite face without
+passing through a constrained edge are labeled as exterior faces.
+
+Then, with the odd-even heuristic, groups of faces that are adjacent to each other
+without passing through a constrained edge are labeled. The label applied alternates
+between polygon interior and hole every time that a constrained edge is passed.
+
+\subsection SubsectionPolygonRepair2_Reconstruction Reconstruction of the multipolygon
+
+The algorithm reconstructs the multipolygon boundary by boundary, repeating the
+process until all boundaries have been reconstructed.
+Starting from a triangulation face with a polygon interior label that is adjacent
+to a face with an exterior or hole label, the boundary of the polygon that contains
+the edge between the two triangles is reconstructed.
+The successive edges of the boundary is obtained by rotating counter-clockwise
+around their common vertex, resulting in counter-clockwise cycles for outer
+boundaries and clockwise cycles for inner boundaries.
+
+Finally, the boundaries are assembled into multipolygons using the unique labels
+to know which polygon inner/outer boundaries belong to, and using the orientation
+to distinguish between outer and inner boundaries.
+
+\subsection SubsectionPolygonRepair2_Output Notes on the Output
 
 If the input is already valid, the method will return a valid output representing
 the same area. However, the output might be different in order to conform to the
@@ -102,27 +147,8 @@ stricter conditions to generate deterministic output (see
 Also, it is worth noting that even the repair of a single polygon without holes
 but with self-intersections can result in a multipolygon with holes. This is why
 the repair function will always return a multipolygon with holes. The user can
-then check whether it consists of a single polygon with holes, and whether this
-polygon with holes has zero holes and treat it appropriately.
-
-\subsection SubsectionPolygonRepair2_OddEven Odd-even repair
-
-The odd-even repair heuristic results in areas that are alternatingly assigned
-as polygon interiors and exterior/holes each time that an input edge is passed.
-It doesn't distinguish between edges that are part of outer boundaries or inner
-boundaries.
-
-FIGURE
-
-In order to generate consistent output, the odd-even heuristic requires it to be
-applied to both edges and faces. For the edges, this heuristic means that only
-the line segments that are present an odd number of times in the input will be
-constrained edges in the triangulation. For the face labels, this heuristic means
-that after the exterior faces have been labeled, the other faces will be
-alternatingly labeled with polygon interior and hole ids every time that a
-constrained edge is passed.
-
-FIGURE
+then check whether it consists of a single polygon with holes, and if a polygon
+with holes has zero holes and extract these if needed.
 
 \section SectionPolygonRepair2_Examples Examples
 
