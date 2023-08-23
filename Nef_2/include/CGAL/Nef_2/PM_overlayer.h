@@ -649,8 +649,8 @@ avoid the simplification for edge pairs referenced by |e|.}*/
     if (unify_faces.find(pit) != pit) {
       Union_find_handle root = unify_faces.find(pit);
       for(Isolated_vertex_iterator ivi = isolated_vertices_begin(f); ivi != isolated_vertices_end(f); ++ivi){
-        v->set_face(*root);
-        link_as_isolated_vertex(*root,v);
+        ivi->set_face(*root);
+        link_as_isolated_vertex(*root,ivi);
       }
       delete_face(f);
     }
