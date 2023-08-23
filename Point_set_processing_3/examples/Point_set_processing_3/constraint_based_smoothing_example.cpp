@@ -61,7 +61,7 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int iter_number = 200;
+  const int iter_number = 1;
 
   auto start = std::chrono::high_resolution_clock::now();
 

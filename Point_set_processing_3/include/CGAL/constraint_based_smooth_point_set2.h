@@ -89,6 +89,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
   FT weight = 0;
   Eigen::Matrix3d nvt = Eigen::Matrix3d::Zero();
 
+  const Point& p = get(point_map, vt);
   const Vector& n = get(normal_map, vt);
 
   for (typename PointRange::iterator it : neighbor_pwns)
@@ -101,6 +102,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
     if (angle_diff <= normal_threshold)
     {
       // std::cout << vnn << "\n\n";
+      // std::cout << vnn * vnn.transpose() << "\n\n"; 
       weight += 1;
 
       nvt += vnn * vnn.transpose();
@@ -116,15 +118,24 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
   std::pair<Eigen::Vector3d, Eigen::Matrix3d> eigens(solver.eigenvalues(), solver.eigenvectors());
 
   // // DEBUG
+  // std::cout << "nvt stuff\n\n";
   // std::cout << weight << "\n\n";
+  // std::cout << p << "\n\n";
   // std::cout << n << "\n\n";
   // std::cout << nvt << "\n\n";
   // std::cout << eigens.first << "\n\n";
 
+  // map to range [0, 1]
+  FT min_eigenvalue = eigens.first.minCoeff();
+  FT max_eigenvalue = eigens.first.maxCoeff();
+  FT eigen_range = max_eigenvalue - min_eigenvalue;
+
   for (int i=0; i<3; ++i)
   {
-    eigens.first[i] = eigens.first[i] >= eigenvalue_threshold ? 1 : 0;
+    // std::cout << eigens.first[i] / max_eigenvalue << "\n";
+    eigens.first[i] = eigens.first[i] / max_eigenvalue >= eigenvalue_threshold ? 1 : 0;
   }
+  // std::cout << "\n\n";
 
   return eigens;
 }
@@ -184,6 +195,10 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_covm_eigenvalues
     {
       auto temp_vec = vnp  - v_bar;
       covm += temp_vec * temp_vec.transpose();
+
+      // std::cout << vnp << "\n\n";
+      // std::cout << temp_vec << "\n\n";
+      // std::cout << temp_vec * temp_vec.transpose() << "\n\n";
     }
   }
 
@@ -195,17 +210,25 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_covm_eigenvalues
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(covm);
   std::pair<Eigen::Vector3d, Eigen::Matrix3d> eigens(solver.eigenvalues(), solver.eigenvectors());
 
-  // // DEBUG
-  // std::cout << weight << "\n\n";
-  // std::cout << n << "\n\n";
-  // std::cout << v_bar << "\n\n";
-  // std::cout << covm << "\n\n";
-  // std::cout << eigens.first << "\n\n";
+  // DEBUG
+  std::cout << "cov matrix stuff\n\n";
+  std::cout << weight << "\n\n";
+  std::cout << p << "\n\n";
+  std::cout << v_bar << "\n\n";
+  std::cout << covm << "\n\n";
+  std::cout << eigens.first << "\n\n";
+
+  // map to range [0, 1]
+  FT min_eigenvalue = eigens.first.minCoeff();
+  FT max_eigenvalue = eigens.first.maxCoeff();
+  FT eigen_range = max_eigenvalue - min_eigenvalue;
 
   for (int i=0; i<3; ++i)
   {
-    eigens.first[i] = eigens.first[i] >= eigenvalue_threshold ? 1 : 0;
+    // std::cout << eigens.first[i] / max_eigenvalue << "\n";
+    eigens.first[i] = eigens.first[i] / max_eigenvalue >= eigenvalue_threshold ? 1 : 0;
   }
+  // std::cout << "\n";
 
   return eigens;
 }
@@ -240,7 +263,8 @@ typename Kernel::Vector_3 nvt_normal_denoising(
   return Vector{new_normal[0], new_normal[1], new_normal[2]};
 }
 
-enum point_type_t {corner = 0, edge = 1, flat = 2};
+enum point_type_t {corner = 3, edge = 1, flat = 2};  // covm
+// enum point_type_t {corner = 3, edge = 2, flat = 1};  // nvt
 
 template <typename Kernel>
 point_type_t feature_detection(
@@ -256,9 +280,9 @@ point_type_t feature_detection(
     }
   }
 
-  if (dominant_eigenvalue_count == 3)
+  if (dominant_eigenvalue_count == 0)
   {
-    dominant_eigenvalue_count = 0; //corner  
+    dominant_eigenvalue_count = 3; //corner  
   }
 
   return static_cast<point_type_t>(dominant_eigenvalue_count);
@@ -417,12 +441,12 @@ constraint_based_smooth_point_set(
 
   typedef typename Kernel::FT FT;
 
-  FT neighbor_radius = 0.3; // 0.5
-  FT normal_threshold = 45.;
+  FT neighbor_radius = 1.5;
+  FT normal_threshold = 180.;
   FT damping_factor = 3;
-  FT eigenvalue_threshold_nvt = .3; // .03
-  FT eigenvalue_threshold_covm = .00995; // .03
-  FT update_threshold = .6; // 0.05
+  FT eigenvalue_threshold_nvt = .25;
+  FT eigenvalue_threshold_covm = .5;
+  FT update_threshold = .6;
 
   CGAL_precondition(points.begin() != points.end());
 
@@ -636,18 +660,18 @@ constraint_based_smooth_point_set(
       return true;
     });
 
-  // update the new point
-  typedef boost::zip_iterator
-    <boost::tuple<iterator,
-                  typename std::vector<typename Kernel::Point_3>::iterator> > Zip_iterator_6;
-  CGAL::for_each<ConcurrencyTag>
-    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), new_points.begin())),
-                       boost::make_zip_iterator (boost::make_tuple (points.end(), new_points.end()))),
-     [&](const typename Zip_iterator_6::reference& t)
-     {
-       put (point_map, get<0>(t), get<1>(t));
-       return true;
-     });
+  // // update the new point
+  // typedef boost::zip_iterator
+  //   <boost::tuple<iterator,
+  //                 typename std::vector<typename Kernel::Point_3>::iterator> > Zip_iterator_6;
+  // CGAL::for_each<ConcurrencyTag>
+  //   (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), new_points.begin())),
+  //                      boost::make_zip_iterator (boost::make_tuple (points.end(), new_points.end()))),
+  //    [&](const typename Zip_iterator_6::reference& t)
+  //    {
+  //      put (point_map, get<0>(t), get<1>(t));
+  //      return true;
+  //    });
 
 }
 
