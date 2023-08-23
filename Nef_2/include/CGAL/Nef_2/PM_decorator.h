@@ -799,7 +799,7 @@ void PM_decorator<HDS>::clone(const HDS& H) const
   CGAL::Unique_hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
   CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
   CGAL::Unique_hash_map<Face_const_iterator,Face_handle>         Fnew;
- 
+
   /* First clone all objects and store correspondence in three maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
   for (vit = H.vertices_begin(); vit != vend; ++vit) {
