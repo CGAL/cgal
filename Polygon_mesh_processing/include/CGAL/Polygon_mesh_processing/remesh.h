@@ -51,7 +51,8 @@ namespace Polygon_mesh_processing {
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
 * @param sizing uniform or adaptive sizing field that determines a target length for individual edges.
-*        If a number is passed, it uses uniform sizing with the number as a target edge length.
+*        If a float is passed (i.e. sizing is convertible to a double), it will use a `Uniform_sizing_field()`
+*        with the float as a target edge length.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -197,7 +198,8 @@ namespace Polygon_mesh_processing {
 template<typename PolygonMesh
        , typename FaceRange
        , typename SizingFunction
-       , typename NamedParameters>
+       , typename NamedParameters = parameters::Default_named_parameters
+       , typename = typename std::enable_if_t<!std::is_convertible_v<SizingFunction, double>>>
 void isotropic_remeshing(const FaceRange& faces
                        , SizingFunction& sizing
                        , PolygonMesh& pmesh
@@ -338,9 +340,11 @@ void isotropic_remeshing(const FaceRange& faces
 // Overload when using target_edge_length for sizing
 template<typename PolygonMesh
        , typename FaceRange
-       , typename NamedParameters = parameters::Default_named_parameters>
+       , typename SizingValue
+       , typename NamedParameters = parameters::Default_named_parameters
+       , typename = typename std::enable_if_t<std::is_convertible_v<SizingValue, double>>>
 void isotropic_remeshing(const FaceRange& faces
-                       , const double target_edge_length
+                       , const SizingValue target_edge_length
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
@@ -377,8 +381,8 @@ void isotropic_remeshing(const FaceRange& faces
 *
 * @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
-* @param sizing the sizing function that is used to split edges from 'edges' list. If a number is passed,
-*        all edges longer than the number are split into sub-edges.
+* @param sizing the sizing function that is used to split edges from 'edges' list. If a float is passed (i.e. sizing
+*        is convertible to a double), it will use a `Uniform_sizing_field()` with the float as a target edge length.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
 * \cgalNamedParamsBegin
@@ -424,7 +428,8 @@ void isotropic_remeshing(const FaceRange& faces
 template<typename PolygonMesh
        , typename EdgeRange
        , typename SizingFunction
-       , typename NamedParameters = parameters::Default_named_parameters>
+       , typename NamedParameters = parameters::Default_named_parameters
+       , typename = typename std::enable_if_t<!std::is_convertible_v<SizingFunction, double>>>
 void split_long_edges(const EdgeRange& edges
                     , SizingFunction& sizing
                     , PolygonMesh& pmesh
@@ -473,21 +478,17 @@ void split_long_edges(const EdgeRange& edges
              fimap,
              false/*need aabb_tree*/);
 
-    // check if sizing field needs updating
-    if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VPMap>>)
-    {
-      //todo ip: check if sizing field needs to be checked and updated here
-    }
-
      remesher.split_long_edges(edges, sizing);
 }
 
 // Convenience overload when using max_length for sizing
 template<typename PolygonMesh
        , typename EdgeRange
-       , typename NamedParameters = parameters::Default_named_parameters>
+       , typename SizingValue
+       , typename NamedParameters = parameters::Default_named_parameters
+       , typename = typename std::enable_if_t<std::is_convertible_v<SizingValue, double>>>
 void split_long_edges(const EdgeRange& edges
-                    , const double max_length
+                    , const SizingValue max_length
                     , PolygonMesh& pmesh
                     , const NamedParameters& np = parameters::default_values())
 {

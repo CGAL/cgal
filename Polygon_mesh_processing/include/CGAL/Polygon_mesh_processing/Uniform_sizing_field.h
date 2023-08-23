@@ -80,7 +80,7 @@ public:
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. The default
   *        vertex point map of pmesh is used to construct the class.
   */
-  Uniform_sizing_field<PolygonMesh, VPMap>(const FT& size, const PolygonMesh& pmesh)
+  Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const PolygonMesh& pmesh)
     : Uniform_sizing_field(size, get(CGAL::vertex_point, pmesh))
   {}
 
