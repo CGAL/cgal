@@ -26,6 +26,7 @@
 #include <Eigen/Eigenvalues>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Point_set_3.h>
@@ -163,8 +164,8 @@ void acvd_simplification(
     for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
       clusters_edges_active.push(hd);
 
-    if (ci % (nb_clusters / 5) == 0)
-      std::cout << "rand ci" << ci << " " << vi << "\n";
+    /*if (ci % (nb_clusters / 5) == 0)
+      std::cout << "rand ci" << ci << " " << vi << "\n";*/
   }
   avg_rand = avg_rand / nb_clusters;
 
@@ -364,75 +365,67 @@ void acvd_simplification(
       point_set.insert(center_p);
     }
   }
-
    
   // extract boundary cycles
+  std::vector<Halfedge_descriptor> border_hedges;
+  extract_boundary_cycles(pmesh, std::back_inserter(border_hedges));
+
   // loop over boundary loops
-  // for each vertex in the boundary loop, we create a new vertex
-  //HalfedgeVisitedMap halfedge_visited_map = get(CGAL::dynamic_halfedge_property_t<bool>(), pmesh);
-  //for (Halfedge_descriptor hd : halfedges(pmesh))
-  //{
-  //  put(halfedge_visited_map, hd, false);
-  //}
+  for (Halfedge_descriptor hd : border_hedges)
+  {
+    Halfedge_descriptor hd1 = hd;
 
-  //for (Halfedge_descriptor hd : halfedges(pmesh))
-  //{
-  //  if (get(halfedge_visited_map, hd) == true)
-  //    continue;
-  //  put(halfedge_visited_map, hd, true);
-  //  if (is_border(hd, pmesh))
-  //  {
-  //    Halfedge_descriptor hd1 = hd;
+    int cb_first = -1;
 
-  //    int cb_first = -1;
+    do
+    {
+      // 1- get the target and source vertices vt, vs
+      // 2- if the target and source vertices are in different clusters, create a new vertex vb between them vb = (vt + vs) / 2
+      // it is also added to the point_set
+      // 3- make a new face with the new vertex vb and the centers of the clusters of vt and vs
+      // 4- also make a new face with vb, the next vb, and the center of the cluster of vt
 
-  //    do
-  //    {
-  //      // 1- get the target and source vertices vt, vs
-  //      // 2- if the target and source vertices are in different clusters, create a new vertex vb between them vb = (vt + vs) / 2
-  //      // it is also added to the point_set
-  //      // 3- make a new face with the new vertex vb and the centers of the clusters of vt and vs
-  //      // 4- also make a new face with vb, the next vb, and the center of the cluster of vt
+      Vertex_descriptor vt = target(hd1, pmesh);
+      Vertex_descriptor vs = source(hd1, pmesh);
 
-  //      Vertex_descriptor vt = target(hd1, pmesh);
-  //      Vertex_descriptor vs = source(hd1, pmesh);
+      int ct = get(vertex_cluster_pmap, vt);
+      int cs = get(vertex_cluster_pmap, vs);
 
-  //      int ct = get(vertex_cluster_pmap, vt);
-  //      int cs = get(vertex_cluster_pmap, vs);
+      if (ct != cs)
+      {
+        typename GT::Point_3 vt_p = get(vpm, vt);
+        typename GT::Point_3 vs_p = get(vpm, vs);
+        typename GT::Vector_3 vt_v(vt_p.x(), vt_p.y(), vt_p.z());
+        typename GT::Vector_3 vs_v(vs_p.x(), vs_p.y(), vs_p.z());
 
-  //      if (ct != cs)
-  //      {
-  //        typename GT::Point_3 vt_p = get(vpm, vt);
-  //        typename GT::Point_3 vs_p = get(vpm, vs);
-  //        typename GT::Vector_3 vt_v(vt_p.x(), vt_p.y(), vt_p.z());
-  //        typename GT::Vector_3 vs_v(vs_p.x(), vs_p.y(), vs_p.z());
+        typename GT::Vector_3 vb_v = (vt_v + vs_v) / 2;
+        typename GT::Point_3 vb_p(vb_v.x(), vb_v.y(), vb_v.z());
 
-  //        typename GT::Vector_3 vb_v = (vt_v + vs_v) / 2;
-  //        typename GT::Point_3 vb_p(vb_v.x(), vb_v.y(), vb_v.z());
+        points.push_back(vb_p);
+        point_set.insert(vb_p);
 
-  //        points.push_back(vb_p);
-  //        point_set.insert(vb_p);
+        int cb = points.size() - 1;
 
-  //        int cb = points.size() - 1;
+        if (cb_first == -1)
+          cb_first = cb;
 
-  //        int ct_mapped = valid_cluster_map[ct], cs_mapped = valid_cluster_map[cs];
+        int ct_mapped = valid_cluster_map[ct], cs_mapped = valid_cluster_map[cs];
 
-  //        if (ct_mapped != -1 && cs_mapped != -1)
-  //        {
-  //          std::vector<int> polygon = {ct_mapped, cb, cs_mapped};
-  //          polygons.push_back(polygon);
+        if (ct_mapped != -1 && cs_mapped != -1)
+        {
+          std::vector<int>
+          polygon = {ct_mapped, cb, cs_mapped};
+          polygons.push_back(polygon);
 
-  //          // after the loop, the last cb+1 should be modified to the first cb
-  //          polygon = {ct, cb + 1, cb};
-  //          polygons.push_back(polygon);
-  //        }
-  //      }
-  //      hd1 = next(hd1, pmesh);
-  //    } while (hd1 != hd);
-  //  }
-  //}
-
-
+          // after the loop, the last cb+1 should be modified to the first cb
+          polygon = {cb, ct_mapped, cb + 1};
+          polygons.push_back(polygon);
+        }
+      }
+      hd1 = next(hd1, pmesh);
+    } while (hd1 != hd);
+    polygons[polygons.size() - 1][2] = cb_first;
+  }
 
   name = std::to_string(nb_clusters) + "_points.off";
   CGAL::IO::write_point_set(name, point_set);
