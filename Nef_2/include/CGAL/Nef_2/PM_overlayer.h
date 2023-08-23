@@ -605,18 +605,18 @@ avoid the simplification for edge pairs referenced by |e|.}*/
     CGAL_For_all(hfc,hend) {
       set_face(hfc,f);
       if(target(hfc) == target(e_min)) {
-        Point p1 = point(source(hfc)),
-          p2 = point(target(hfc)),
-          p3 = point(target(next(hfc)));
+        const Point& p1 = point(source(hfc));
+        const Point&  p2 = point(target(hfc));
+        const Point&  p3 = point(target(next(hfc)));
         if (!K.left_turn(p1,p2,p3) )
           e_min = hfc;
       } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
         e_min = hfc;
       linked[hfc]=true;
     }
-    Point p1 = point(source(e_min)),
-          p2 = point(target(e_min)),
-          p3 = point(target(next(e_min)));
+    const Point& p1 = point(source(e_min));
+    const Point& p2 = point(target(e_min));
+    const Point& p3 = point(target(next(e_min)));
     if ( K.orientation(p1,p2,p3) > 0 ) set_halfedge(f,e_min); // outer
     else set_hole(f,e_min); // store as inner
   }
@@ -633,8 +633,8 @@ avoid the simplification for edge pairs referenced by |e|.}*/
       }
     } else { // v not isolated
       Halfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
-      Point p1 = point(source(e1)), p2 = point(v),
-            p3 = point(target(e2));
+      const Point& p1 = point(source(e1)), p2 = point(v);
+      const Point& p3 = point(target(e2));
       if ( has_outdeg_two(v) &&
            mark(v) == mark(e1) && mark(v) == mark(e2) &&
            (K.orientation(p1,p2,p3) == 0) )
@@ -838,9 +838,9 @@ void create_face_objects(const Below_info& D) const
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
       if(target(hfc) == target(e_min)) {
-        Point p1 = point(source(hfc)),
-          p2 = point(target(hfc)),
-          p3 = point(target(next(hfc)));
+        const Point& p1 = point(source(hfc));
+        const Point&p2 = point(target(hfc));
+        const Point&p3 = point(target(next(hfc)));
         if (!K.left_turn(p1,p2,p3) )
           e_min = hfc;
       } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
@@ -854,10 +854,10 @@ void create_face_objects(const Below_info& D) const
   Face_handle f_outer = this->new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
-      CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
-    Point p1 = point(source(e)),
-          p2 = point(target(e)),
-          p3 = point(target(next(e)));
+    CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
+    const Point& p1 = point(source(e));
+    const Point& p2 = point(target(e));
+    const Point& p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
       CGAL_NEF_TRACEN("  creating new face object");
       Face_handle f = this->new_face();
@@ -899,9 +899,9 @@ void create_face_objects_pl(const Below_info& D) const
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
       if(target(hfc) == target(e_min)) {
-        Point p1 = point(source(hfc)),
-          p2 = point(target(hfc)),
-          p3 = point(target(next(hfc)));
+        const Point& p1 = point(source(hfc));
+        const Point& p2 = point(target(hfc));
+        const Point& p3 = point(target(next(hfc)));
         if (!K.left_turn(p1,p2,p3) )
           e_min = hfc;
       } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
@@ -915,10 +915,10 @@ void create_face_objects_pl(const Below_info& D) const
   (void)/* Face_handle f_outer = */ this->new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
-      CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
-    Point p1 = point(source(e)),
-          p2 = point(target(e)),
-          p3 = point(target(next(e)));
+    CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
+    const Point& p1 = point(source(e));
+    const Point& p2 = point(target(e));
+    const Point& p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
       CGAL_NEF_TRACEN("  creating new face object");
       Face_handle f = this->new_face();
@@ -963,8 +963,8 @@ Segment segment(const Const_decorator& N,
 
 bool is_forward_edge(const Const_decorator& N,
                      Halfedge_const_iterator hit) const
-{ Point p1 = N.point(N.source(hit));
-  Point p2 = N.point(N.target(hit));
+{ const Point& p1 = N.point(N.source(hit));
+  const Point& p2 = N.point(N.target(hit));
   return (K.compare_xy(p1,p2) < 0); }
 
 void assert_type_precondition() const
