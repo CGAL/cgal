@@ -6,15 +6,15 @@ namespace CGAL {
 
 The class `Basic_viewer_qt` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphic_storage`. Elements can either be added directly in the viewer or through the storage. This class requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
 
-\tparam BufferType the type used for point coordinates: float by default.
+\tparam BufferType the type used for point coordinates: `float` by default.
 
 */
 template <typename BufferType=float>
 class Basic_viewer_qt : public CGAL::QGLViewer
 {
 public:
-  /// constructor given a pointer on a QWidget (can be a nullptr) and a Graphic_storage.
-  /// title will be the title of the window.
+  /// constructor given a pointer on a `QWidget` (can be a `nullptr`) and a `Graphic_storage`.
+  /// `title` will be the title of the window.
   Basic_viewer_qt(QWidget* parent,
                   Graphic_storage<BufferType>& buf,
                   const char* title="");
@@ -147,20 +147,20 @@ public:
   void add_segment(const KPoint &p1, const KPoint &p2,
                    const CGAL::IO::Color &acolor);
 
-  /// add the given ray in the viewer: an half line starting from p and having v as direction.
+  /// add the given ray in the viewer: an half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v);
 
-  /// add the given colored ray in the viewer: an half line starting from p and having v as direction.
+  /// add the given colored ray in the viewer: an half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v,
                const CGAL::IO::Color &acolor);
 
-  /// add the given line in the viewer, defined by p and v as direction.
+  /// add the given line in the viewer, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v);
 
-  /// add the given colored line in the viewer, defined by p and v as direction.
+  /// add the given colored line in the viewer, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v,
                 const CGAL::IO::Color &acolor);
@@ -175,13 +175,16 @@ public:
   bool is_a_face_started() const;
 
   /// add the given point in the current face.
+ /// @pre `is_a_face_started()`
   template <typename KPoint> bool add_point_in_face(const KPoint &kp);
 
   /// add the given point in the current face, having the vertex normal.
+ /// @pre `is_a_face_started()`
   template <typename KPoint, typename KVector>
   bool add_point_in_face(const KPoint &kp, const KVector &p_normal);
 
   /// end the current face.
+ /// @pre `is_a_face_started()`
   void face_end();
 
   /// add the given text at the given position in the viewer.
@@ -220,9 +223,9 @@ public:
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `QApplication_and_basic_viewer` regroups a `Basic_viewer_qt` and Qt `QApplication`. The QApplication is created in the constructor, but ran by the run method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer_qt` to define their own behavior. This class requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
+The class `QApplication_and_basic_viewer` regroups a `Basic_viewer_qt` and Qt `QApplication`. The `QApplication` is created in the constructor, but ran by the run method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer_qt` to define their own behavior. This class requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
 
-\tparam BufferType the type used for point coordinates: float by default.
+\tparam BufferType the type used for point coordinates: `float` by default.
 
 */
 template <typename BufferType=float>
@@ -236,7 +239,7 @@ public:
   /// run the QApplication, i.e. open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
   void run();
 
-  /// @return a reference to the Basic_viewer_qt associated with this.
+  /// @return a reference to the `Basic_viewer_qt` associated with this.
   Basic_viewer_qt<BufferType>& basic_viewer();
 };
 
