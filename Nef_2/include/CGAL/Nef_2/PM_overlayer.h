@@ -336,6 +336,8 @@ public:
   using Base::set_isolated_vertex;
   using Base::has_outdeg_two;
   using Base::merge_halfedge_pairs_at_target;
+  using Base::isolated_vertices_begin;
+  using Base::isolated_vertices_end;
 
   // C++ is really friendly:
   #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }
