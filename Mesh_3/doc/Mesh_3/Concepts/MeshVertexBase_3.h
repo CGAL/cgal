@@ -22,7 +22,7 @@ each cell (see below).
 
 \cgalRefines{SimplicialMeshVertexBase_3,RegularTriangulationVertexBase_3,SurfaceMeshVertexBase_3}
 
-\cgalHasModel `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>`
+\cgalHasModel `CGAL::Mesh_vertex_base_3<GT,MD,Vb>`
 
 \sa `CGAL::make_mesh_3()`
 \sa `CGAL::refine_mesh_3()`

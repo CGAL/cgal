@@ -36,10 +36,10 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
+#include <optional>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for_each.h>
@@ -375,10 +375,10 @@ template <typename Tr, typename Concurrency_tag>
 class C3T3_helpers_base
 {
 protected:
-  typedef typename Tr::Geom_traits          Gt;
+  typedef typename Tr::Geom_traits          GT;
   typedef typename Tr::Bare_point           Bare_point;
   typedef typename Tr::Weighted_point       Weighted_point;
-  typedef typename Gt::FT                   FT;
+  typedef typename GT::FT                   FT;
   typedef typename Tr::Vertex_handle        Vertex_handle;
   typedef typename Tr::Cell_handle          Cell_handle;
   typedef typename Tr::Facet                Facet;
@@ -447,7 +447,7 @@ template <typename Tr>
 class C3T3_helpers_base<Tr, Parallel_tag>
 {
 protected:
-  typedef typename Tr::Geom_traits          Gt;
+  typedef typename Tr::Geom_traits          GT;
   typedef typename Tr::Bare_point           Bare_point;
   typedef typename Tr::Weighted_point       Weighted_point;
   typedef typename Tr::Vertex_handle        Vertex_handle;
@@ -622,14 +622,14 @@ class C3T3_helpers
   typedef typename Base::Lock_data_structure          Lock_data_structure;
   typedef typename C3T3::Triangulation                Tr;
   typedef Tr                                          Triangulation;
-  typedef typename Tr::Geom_traits                    Gt;
+  typedef typename Tr::Geom_traits                    GT;
 
-  typedef typename Gt::FT                             FT;
+  typedef typename GT::FT                             FT;
   typedef typename Tr::Bare_point                     Bare_point;
   typedef typename Tr::Weighted_point                 Weighted_point;
-  typedef typename Gt::Vector_3                       Vector_3;
-  typedef typename Gt::Plane_3                        Plane_3;
-  typedef typename Gt::Tetrahedron_3                  Tetrahedron;
+  typedef typename GT::Vector_3                       Vector_3;
+  typedef typename GT::Plane_3                        Plane_3;
+  typedef typename GT::Tetrahedron_3                  Tetrahedron;
 
   typedef typename Tr::Vertex_handle                  Vertex_handle;
   typedef typename Tr::Facet                          Facet;
@@ -640,8 +640,8 @@ class C3T3_helpers
   typedef typename C3T3::Subdomain_index              Subdomain_index;
   typedef typename C3T3::Index                        Index;
 
-  typedef boost::optional<Surface_patch_index>        Surface_patch;
-  typedef boost::optional<Subdomain_index>            Subdomain;
+  typedef std::optional<Surface_patch_index>        Surface_patch;
+  typedef std::optional<Subdomain_index>            Subdomain;
 
   typedef std::vector<Cell_handle>                    Cell_vector;
   typedef std::set<Cell_handle>                       Cell_set;
@@ -680,7 +680,7 @@ public:
   // -----------------------------------
   // Public interface
   // -----------------------------------
-  typedef boost::optional<Vertex_handle>              Update_mesh;
+  typedef std::optional<Vertex_handle>              Update_mesh;
 
   using Base::try_lock_point;
   using Base::try_lock_vertex;
@@ -1115,17 +1115,17 @@ private:
                              const bool update_c3t3,
                              const bool update_surface_center) const
     {
-      typedef typename C3T3::Triangulation::Geom_traits Gt;
-      typedef typename Gt::Segment_3 Segment_3;
-      typedef typename Gt::Ray_3 Ray_3;
-      typedef typename Gt::Line_3 Line_3;
+      typedef typename C3T3::Triangulation::Geom_traits GT;
+      typedef typename GT::Segment_3 Segment_3;
+      typedef typename GT::Ray_3 Ray_3;
+      typedef typename GT::Line_3 Line_3;
 
       // Nothing to do for infinite facets
       if ( c3t3_.triangulation().is_infinite(facet) )
         return Surface_patch();
 
       // Functors
-      typename Gt::Is_degenerate_3 is_degenerate =
+      typename GT::Is_degenerate_3 is_degenerate =
         c3t3_.triangulation().geom_traits().is_degenerate_3_object();
 
       // Get dual of facet
@@ -1674,7 +1674,7 @@ private:
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
-  std::pair<boost::optional<Plane_3>, Bare_point>
+  std::pair<std::optional<Plane_3>, Bare_point>
   get_least_square_surface_plane(const Vertex_handle& v,
                                  Surface_patch_index index = Surface_patch_index()) const;
 
@@ -1683,15 +1683,15 @@ private:
    * @param v The vertex from which p was moved
    * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
-   * @return a `boost::optional` with the projected point if the projection
-   * was possible, or `boost::none`.
+   * @return a `std::optional` with the projected point if the projection
+   * was possible, or `std::nullopt`.
    *
    * `p` is projected using the normal of least square fitting plane
    * on `v` incident surface points. If `index` is specified, only
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
    */
-  boost::optional<Bare_point>
+  std::optional<Bare_point>
   project_on_surface_if_possible(const Vertex_handle& v,
                                  const Bare_point& p,
                                  Surface_patch_index index = Surface_patch_index()) const;
@@ -2466,7 +2466,7 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
              << "                            " << new_position << ")" << std::endl;
 #endif
 
-  typename Gt::Construct_opposite_vector_3 cov = tr_.geom_traits().construct_opposite_vector_3_object();
+  typename GT::Construct_opposite_vector_3 cov = tr_.geom_traits().construct_opposite_vector_3_object();
 
   //backup metadata
   std::set<Cell_data_backup> cells_backup;
@@ -2674,7 +2674,7 @@ C3T3_helpers<C3T3,MD>::
 rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
@@ -2774,7 +2774,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        ++it )
   {
     const Weighted_point& initial_position = tr_.point(*it);
-    boost::optional<Bare_point> opt_new_pos = project_on_surface(*it, cp(initial_position));
+    std::optional<Bare_point> opt_new_pos = project_on_surface(*it, cp(initial_position));
 
     if ( opt_new_pos )
     {
@@ -2804,9 +2804,9 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
                             ForwardIterator last_cell,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
-  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
+  typename GT::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   Update_c3t3 updater(domain_,c3t3_);
 
@@ -2886,7 +2886,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   {
     Vertex_handle vh = it->first;
     const Weighted_point& initial_position = tr_.point(vh);
-    boost::optional<Bare_point> opt_new_pos = project_on_surface(vh, cp(initial_position), it->second);
+    std::optional<Bare_point> opt_new_pos = project_on_surface(vh, cp(initial_position), it->second);
 
     if ( opt_new_pos )
     {
@@ -2942,9 +2942,9 @@ move_point(const Vertex_handle& old_vertex,
              << "                             " << move << ")\n";
 #endif
 
-  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
@@ -2993,9 +2993,9 @@ move_point(const Vertex_handle& old_vertex,
             << "                         " << move << ")\n";
 #endif
 
-  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
@@ -3057,9 +3057,9 @@ move_point(const Vertex_handle& old_vertex,
   }
   //======= /Get incident cells ==========
 
-  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
   const Weighted_point& position = tr_.point(old_vertex);
   const Weighted_point& new_position = cwp(translate(cp(position), move));
@@ -3366,14 +3366,14 @@ project_on_surface_aux(const Bare_point& p,
                        const Bare_point& ref_point,
                        const Vector_3& projection_vector) const
 {
-  typedef typename Gt::Segment_3 Segment_3;
+  typedef typename GT::Segment_3 Segment_3;
 
   // Build a segment directed as projection_direction,
-  typename Gt::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
-  typename Gt::Construct_scaled_vector_3 scale = tr_.geom_traits().construct_scaled_vector_3_object();
-  typename Gt::Is_degenerate_3 is_degenerate = tr_.geom_traits().is_degenerate_3_object();
-  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename GT::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
+  typename GT::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
+  typename GT::Construct_scaled_vector_3 scale = tr_.geom_traits().construct_scaled_vector_3_object();
+  typename GT::Is_degenerate_3 is_degenerate = tr_.geom_traits().is_degenerate_3_object();
+  typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
 
   typename MD::Construct_intersection construct_intersection =
     domain_.construct_intersection_object();
@@ -3419,7 +3419,7 @@ project_on_surface_aux(const Bare_point& p,
 
 
 template <typename C3T3, typename MD>
-std::pair<boost::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>,
+std::pair<std::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>,
           typename C3T3_helpers<C3T3, MD>::Bare_point>
 C3T3_helpers<C3T3,MD>::
 get_least_square_surface_plane(const Vertex_handle& v,
@@ -3427,7 +3427,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 {
   typedef typename C3T3::Triangulation::Triangle Triangle;
 
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   // Get incident facets
   Facet_vector facets;
@@ -3466,7 +3466,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return std::make_pair(boost::none, Bare_point(ORIGIN));
+    return std::make_pair(std::nullopt, Bare_point(ORIGIN));
 
   // Compute least square fitting plane
   Plane_3 plane;
@@ -3492,7 +3492,7 @@ project_on_surface(const Vertex_handle& v,
                    const Bare_point& p,
                    Surface_patch_index index) const
 {
-  boost::optional<Bare_point> opt_point =
+  std::optional<Bare_point> opt_point =
     project_on_surface_if_possible(v, p, index);
   if(opt_point) return *opt_point;
   else return p;
@@ -3500,7 +3500,7 @@ project_on_surface(const Vertex_handle& v,
 
 
 template <typename C3T3, typename MD>
-boost::optional<typename C3T3_helpers<C3T3,MD>::Bare_point>
+std::optional<typename C3T3_helpers<C3T3,MD>::Bare_point>
 C3T3_helpers<C3T3,MD>::
 project_on_surface_if_possible(const Vertex_handle& v,
                                const Bare_point& p,
@@ -3509,15 +3509,15 @@ project_on_surface_if_possible(const Vertex_handle& v,
   // @todo should call below if it's available...
   // return domain_.project_on_surface(p);
 
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   // Get plane
-  std::pair<boost::optional<Plane_3>, Bare_point> pl_rp
+  std::pair<std::optional<Plane_3>, Bare_point> pl_rp
     = get_least_square_surface_plane(v, index);
 
-  boost::optional<Plane_3> opt_plane = pl_rp.first;
-  if(!opt_plane) return boost::none;
+  std::optional<Plane_3> opt_plane = pl_rp.first;
+  if(!opt_plane) return std::nullopt;
 
   // Project
   const Weighted_point& position = tr_.point(v);

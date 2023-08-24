@@ -41,9 +41,9 @@ namespace Intern{
  *
  *  Extensions provide suitable specializations of \c CGAL::Fraction_traits.
  *  They are decomposable iff their coefficient type is.
- *  The denominator \e d of a Extension \e ext is a low common multiple
+ *  The denominator \e d of an extension \e ext is a low common multiple
  *  (see \c CGAL::Fraction_traits::Common_factor for details) of the
- *  denominators of its coefficients.  The numerator is the Extenion
+ *  denominators of its coefficients.  The numerator is the extenion
  *  \e d*ext with a fraction-free coefficient type.
  *
  *  This works for nested Sqrt_extensions, too.

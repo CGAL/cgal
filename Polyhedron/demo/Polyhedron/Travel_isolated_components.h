@@ -1,7 +1,7 @@
 #ifndef TRAVEL_ISOLATED_COMPONENTS_H
 #define TRAVEL_ISOLATED_COMPONENTS_H
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 #include "One_ring_iterators.h"
 #include <CGAL/Default.h>

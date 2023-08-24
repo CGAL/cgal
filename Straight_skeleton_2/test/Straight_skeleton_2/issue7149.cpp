@@ -83,7 +83,7 @@ void test(const PointRange& points,
                   K());
   assert(ss_ptr);
 
-  std::vector<boost::shared_ptr<Polygon_2> > offset_polygons_ptrs =
+  std::vector<std::shared_ptr<Polygon_2> > offset_polygons_ptrs =
     CGAL::create_offset_polygons_2<Polygon_2>(FT(offset), CGAL::CGAL_SS_i::dereference(ss_ptr), K());
 
   std::cout << offset_polygons_ptrs.size() << " polygon(s)" << std::endl;

@@ -1192,7 +1192,7 @@ void MainWindow::open(QString filename)
 
 bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename);
-  boost::optional<bool> item_opt;
+  std::optional<bool> item_opt;
 #if 0 // AF
   try {
     item_opt = wrap_a_call_to_cpp
@@ -1822,7 +1822,7 @@ bool MainWindow::loadScript(QString filename)
 {
 #if 0
   QFileInfo fileinfo(filename);
-  boost::optional<bool> opt = wrap_a_call_to_cpp
+  std::optional<bool> opt = wrap_a_call_to_cpp
       ([this, fileinfo] {
     return loadScript(fileinfo);
   }, this, __FILE__, __LINE__, CGAL::Three::PARENT_CONTEXT);

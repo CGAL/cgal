@@ -18,13 +18,14 @@
 #include <CGAL/license/Envelope_3.h>
 
 
-#include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Sphere_3.h>
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/int.h>
+
+#include <memory>
 
 namespace CGAL {
 
@@ -109,28 +110,28 @@ public:
       Rat_point_2 proj_center = parent.project(s.center());
       Rat_circle_2 circ(proj_center, s.squared_radius());
       Curve_2 curve = gt_2->construct_curve_2_object()(circ);
-      Object objs[2];
-      CGAL_assertion_code(Object *p = )
+      typedef std::variant<X_monotone_curve_2, Point_2> Variant;
+      Variant objs[2];
+
+      CGAL_assertion_code(Variant* p = )
       parent.make_x_monotone_2_object()(curve, objs);
       CGAL_assertion(p == objs + 2);
 
-      X_monotone_curve_2 cv1, cv2;
+      const X_monotone_curve_2* cv1 = std::get_if<X_monotone_curve_2>(&(objs[0]));
+      const X_monotone_curve_2* cv2 = std::get_if<X_monotone_curve_2>(&(objs[1]));
 
-      CGAL_assertion(assign(cv1, objs[0]));
-      CGAL_assertion(assign(cv2, objs[1]));
+      CGAL_assertion(cv1!=nullptr);
+      CGAL_assertion(cv2!=nullptr);
 
-      assign(cv1, objs[0]);
-      assign(cv2, objs[1]);
-
-      if (cv1.is_lower()) {
-        CGAL_assertion(cv2.is_upper());
-        *o++ = make_object(std::make_pair(cv1, ON_POSITIVE_SIDE));
-        *o++ = make_object(std::make_pair(cv2, ON_NEGATIVE_SIDE));
+      if (cv1->is_lower()) {
+        CGAL_assertion(cv2->is_upper());
+        *o++ = std::make_pair(*cv1, ON_POSITIVE_SIDE);
+        *o++ = std::make_pair(*cv2, ON_NEGATIVE_SIDE);
       }
       else {
-        CGAL_assertion(cv2.is_lower());
-        *o++ = make_object(std::make_pair(cv1, ON_NEGATIVE_SIDE));
-        *o++ = make_object(std::make_pair(cv2, ON_POSITIVE_SIDE));
+        CGAL_assertion(cv2->is_lower());
+        *o++ = std::make_pair(*cv1, ON_NEGATIVE_SIDE);
+        *o++ = std::make_pair(*cv2, ON_POSITIVE_SIDE);
       }
 
       return o;
@@ -237,7 +238,7 @@ public:
           if (n_ys == 1) {
             // intersection is a point
             Point_2 inter_point(xs , ys[0]);
-            *o++ = make_object(inter_point);
+            *o++ = inter_point;
             return o;
           }
 
@@ -254,7 +255,7 @@ public:
           Curve_2 res = ctr_cv(0, 0, 0, 2*a_diff, 0, -m, COLLINEAR, end1, end2);
 
           parent.add_curve_to_output(res, o);
-          //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
+          //*o++ = Intersection_curve(res, TRANSVERSAL);
         }
         else {
           // here we have c1 == c2, b1 != b2.
@@ -308,7 +309,7 @@ public:
           if (n_xs == 1) {
             // intersection is a point
             Point_2 inter_point(xs[0], (-2*a_diff*xs[0] + m)/(2*b_diff) );
-            *o++ = make_object(inter_point);
+            *o++ = inter_point;
             return o;
           }
 
@@ -328,7 +329,7 @@ public:
           Curve_2 res =
             ctr_cv(0,0,0, 2*a_diff, 2*b_diff, -m, COLLINEAR, end1, end2);
           parent.add_curve_to_output(res, o);
-          //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
+          //*o++ = Intersection_curve(res, TRANSVERSAL);
         }
       }
       // now the potential intersection is (a part of) a circle,
@@ -439,7 +440,7 @@ public:
           // should check if the point is in the non-negative side of the
           // line
           if (CGAL_NTS sign(la*px + lb*py +lc) != NEGATIVE)
-            *o++ = make_object(Point_2(px, py));
+            *o++ = Point_2(px, py);
           return o;
         }
 
@@ -460,7 +461,7 @@ public:
           if (sign_lc != NEGATIVE) {
             Curve_2 res = ctr_cv(R, S, T, U, V, W);
             parent.add_curve_to_output(res, o);
-            //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
+            //*o++ = Intersection_curve(res, TRANSVERSAL);
           }
           return o;
         }
@@ -609,13 +610,13 @@ public:
           if (lval_sign == POSITIVE) {
             // the full ellipse is in the positive side
             parent.add_curve_to_output(inter_cv, o);
-            //*o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
+            //*o++ = Intersection_curve(inter_cv, TRANSVERSAL);
             return o;
           }
           else if (lval_sign == NEGATIVE) {
             // the full ellipse is in the negative side, except maybe the point
             // source in the case n_inter_points = 1 (which lies on the line)
-            if (n_inter_points == 1) *o++ = make_object(Point_2(source));
+            if (n_inter_points == 1) *o++ = Point_2(source);
             return o;
           }
 
@@ -630,8 +631,8 @@ public:
           CGAL_assertion(lval_sign != ZERO);
 
           if (lval_sign == POSITIVE) parent.add_curve_to_output(inter_cv, o);
-            //*o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
-          else *o++ = make_object(Point_2(source));
+            //*o++ = Intersection_curve(inter_cv, TRANSVERSAL);
+          else *o++ = Point_2(source);
 
           return o;
         }
@@ -651,7 +652,7 @@ public:
         Curve_2 res = ctr_cv(R, S, T, U, V, W, orient, source, target);
         CGAL_assertion(res.is_valid());
         parent.add_curve_to_output(res, o);
-        //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
+        //*o++ = Intersection_curve(res, TRANSVERSAL);
       }
 
       return o;
@@ -1118,16 +1119,16 @@ public:
 
   template <typename OutputIterator>
   OutputIterator add_curve_to_output(const Curve_2& c, OutputIterator oi) const {
-    Object objs[2];
-    Object* p_obj = this->make_x_monotone_2_object()(c, objs);
-    for(Object* o = objs; o != p_obj; ++o) {
-      X_monotone_curve_2 cv;
-      if(assign(cv, *o)) *oi++ = make_object(Intersection_curve(cv, 1));
+    std::variant<X_monotone_curve_2, Point_2> objs[2];
+
+    std::variant<X_monotone_curve_2, Point_2>* p_obj = this->make_x_monotone_2_object()(c, objs);
+    for(std::variant<X_monotone_curve_2, Point_2>* o = objs; o != p_obj; ++o) {
+      if(const X_monotone_curve_2* cv = std::get_if<X_monotone_curve_2>(o))
+        *oi++ = Intersection_curve(*cv, 1);
       else {
-        Point_2 pt;
-        CGAL_assertion(assign(pt, *o));
-        assign(pt, *o);
-        *oi++ = make_object(pt);
+        const Point_2* pt = std::get_if<Point_2>(o);
+        CGAL_assertion(pt!=nullptr);
+        *oi++ = *pt;
       }
     }
     return oi;

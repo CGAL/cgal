@@ -645,7 +645,9 @@ PREDEFINED             = DOXYGEN_RUNNING \
                          "CGAL_NP_CLASS_1=NamedParameters1" \
                          "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
                          "CGAL_NP_CLASS_2=NamedParameters2" \
-                         CGAL_DEPRECATED
+                         CGAL_DEPRECATED  \
+                         CGAL_DEPRECATED_MSG(name)=
+
 
 #---------------------------------------------------------------------------
 # Configuration options related to external references

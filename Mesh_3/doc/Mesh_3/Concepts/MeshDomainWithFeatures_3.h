@@ -17,7 +17,7 @@ between two ordered points on the same curve.
 
 \cgalRefines{MeshDomain_3}
 
-\cgalHasModel `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
+\cgalHasModel `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 \cgalHasModel `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 
 \sa `MeshDomain_3`
@@ -47,7 +47,7 @@ Point type.
 typedef unspecified_type Point_3;
 
 /*!
-Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
+Type of indices for curves (i.e., \f$ 1\f$-dimensional features)
 of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable. The default constructed value must be the value of an edge which
@@ -56,7 +56,7 @@ does not approximate a 1-dimensional feature of the input domain.
 typedef unspecified_type Curve_index;
 
 /*!
-Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+Type of indices for corners (i.e., \f$ 0\f$--dimensional features)
 of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable.
