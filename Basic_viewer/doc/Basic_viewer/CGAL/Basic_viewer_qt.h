@@ -13,207 +13,207 @@ template <typename BufferType=float>
 class Basic_viewer_qt : public CGAL::QGLViewer
 {
 public:
-  /// constructor given a pointer on a `QWidget` (can be a `nullptr`) and a `Graphic_storage`.
+  /// Constructor given a pointer on a `QWidget` (can be a `nullptr`) and a `Graphic_storage`.
   /// `title` will be the title of the window.
   Basic_viewer_qt(QWidget* parent,
                   Graphic_storage<BufferType>& buf,
                   const char* title="");
 
-  /// enable or disable the drawing of vertices.
+  /// enables or disables the drawing of vertices.
   void set_draw_vertices(bool b);
 
-  /// enable or disable the drawing of edges.
+  /// enables or disables the drawing of edges.
   void set_draw_edges(bool b);
 
-  /// enable or disable the drawing of rays.
+  /// enables or disables the drawing of rays.
   void set_draw_rays(bool b);
 
-  /// enable or disable the drawing of lines.
+  /// enables or disables the drawing of lines.
   void set_draw_lines(bool b);
 
-  /// enable or disable the drawing of faces.
+  /// enables or disables the drawing of faces.
   void set_draw_faces(bool b);
 
-  /// enable or disable the use of only one color (if `b` is `true`) or the use of multiple colors (if `b` is `false`).
+  /// enables or disables the use of only one color (if `b` is `true`) or the use of multiple colors (if `b` is `false`).
   void set_use_mono_color(bool b);
 
-  /// enable or disable the drawing of texts.
+  /// enables or disables the drawing of texts.
   void set_draw_text(bool b);
 
-  /// set the color used for vertices in mono_color mode.
+  /// sets the color used for vertices in mono_color mode.
   void set_vertices_mono_color(const CGAL::IO::Color& c);
 
-  /// set the color used for edges in mono_color mode.
+  /// sets the color used for edges in mono_color mode.
   void set_edges_mono_color(const CGAL::IO::Color& c);
 
-  /// set the color used for rays in mono_color mode.
+  /// sets the color used for rays in mono_color mode.
   void set_rays_mono_color(const CGAL::IO::Color& c);
 
-  /// set the color used for lines in mono_color mode.
+  /// sets the color used for lines in mono_color mode.
   void set_lines_mono_color(const CGAL::IO::Color& c);
 
-  /// set the color used for faces in mono_color mode.
+  /// sets the color used for faces in mono_color mode.
   void set_faces_mono_color(const CGAL::IO::Color& c);
 
-  /// negate the drawing of vertices (becomes `true` if it was `false` and reciprocally).
+  /// negates the drawing of vertices (becomes `true` if it was `false` and reciprocally).
   void negate_draw_vertices();
 
-  /// negate the drawing of edges (becomes `true` if it was `false` and reciprocally).
+  /// negates the drawing of edges (becomes `true` if it was `false` and reciprocally).
   void negate_draw_edges();
 
-  /// negate the drawing of rays (becomes `true` if it was `false` and reciprocally).
+  /// negates the drawing of rays (becomes `true` if it was `false` and reciprocally).
   void negate_draw_rays();
 
-  /// negate the drawing of lines (becomes `true` if it was `false` and reciprocally).
+  /// negates the drawing of lines (becomes `true` if it was `false` and reciprocally).
   void negate_draw_lines();
 
-  /// negate the drawing of faces (becomes `true` if it was `false` and reciprocally).
+  /// negates the drawing of faces (becomes `true` if it was `false` and reciprocally).
   void negate_draw_faces();
 
-  /// negate the use of mono color mode (becomes `true` if it was `false` and reciprocally).
+  /// negates the use of mono color mode (becomes `true` if it was `false` and reciprocally).
   void negate_use_mono_color();
 
-  /// negate the drawing of text (becomes `true` if it was `false` and reciprocally).
+  /// negates the drawing of text (becomes `true` if it was `false` and reciprocally).
   void negate_draw_text();
 
-  /// return `true` if vertices are drawn.
+  /// returns `true` if vertices are drawn.
   bool get_draw_vertices() const;
 
-  /// return `true` if edges are drawn.
+  /// returns `true` if edges are drawn.
   bool get_draw_edges() const;
 
-  /// return `true` if rays are drawn.
+  /// returns `true` if rays are drawn.
   bool get_draw_rays() const;
 
-  /// return `true` if lines are drawn.
+  /// returns `true` if lines are drawn.
   bool get_draw_lines() const;
 
-  /// return `true` if faces are drawn.
+  /// returns `true` if faces are drawn.
   bool get_draw_faces() const;
 
-  /// return `true` if mono color mode is used.
+  /// returns `true` if mono color mode is used.
   bool get_use_mono_color() const;
 
-  /// return `true` if normal are reversed.
+  /// returns `true` if normal are reversed.
   bool get_inverse_normal() const;
 
-  /// return `true` if text are drawn.
+  /// returns `true` if text are drawn.
   bool get_draw_text() const;
 
-  /// return the mono color used for vertices.
+  /// returns the mono color used for vertices.
   const CGAL::IO::Color& get_vertices_mono_color() const;
 
-  /// return the mono color used for edges.
+  /// returns the mono color used for edges.
   const CGAL::IO::Color& get_edges_mono_color() const;
 
-  /// return the mono color used for rays.
+  /// returns the mono color used for rays.
   const CGAL::IO::Color& get_rays_mono_color() const;
 
-  /// return the mono color used for lines.
+  /// returns the mono color used for lines.
   const CGAL::IO::Color& get_lines_mono_color() const;
 
-  /// return the mono color used for faces.
+  /// returns the mono color used for faces.
   const CGAL::IO::Color& get_faces_mono_color() const;
 
-  /// clear the basic viewer, i.e. remove all its elements.
+  /// clears the basic viewer, i.e. remove all its elements.
   void clear();
 
-  /// return `true` if the viewer is empty.
+  /// returns `true` if the viewer is empty.
   bool is_empty() const;
 
-  /// return the bounding box of all the elements in the viewer.
+  /// returns the bounding box of all the elements in the viewer.
   const CGAL::Bbox_3& bounding_box() const;
 
-  /// return `true` if the clipping plane is enabled.
+  /// returns `true` if the clipping plane is enabled.
   bool is_clipping_plane_enabled() const;
 
-  /// return the clipping plane when it is enabled.
+  /// returns the clipping plane when it is enabled.
   Local_kernel::Plane_3 clipping_plane() const;
 
-  /// add the given point in the viewer.
+  /// adds the given point in the viewer.
   template <typename KPoint>
   void add_point(const KPoint &p);
 
-  /// add the given colored point in the viewer.
+  /// adds the given colored point in the viewer.
   template <typename KPoint>
   void add_point(const KPoint &p, const CGAL::IO::Color &acolor);
 
-  /// add the given segment in the viewer.
+  /// adds the given segment in the viewer.
   template <typename KPoint>
   void add_segment(const KPoint &p1, const KPoint &p2);
 
-  /// add the given colored segment in the viewer.
+  /// adds the given colored segment in the viewer.
   template <typename KPoint>
   void add_segment(const KPoint &p1, const KPoint &p2,
                    const CGAL::IO::Color &acolor);
 
-  /// add the given ray in the viewer: an half line starting from `p` and having `v` as direction.
+  /// adds the given ray in the viewer: an half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v);
 
-  /// add the given colored ray in the viewer: an half line starting from `p` and having `v` as direction.
+  /// adds the given colored ray in the viewer: an half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v,
                const CGAL::IO::Color &acolor);
 
-  /// add the given line in the viewer, defined by `p` and `v` as direction.
+  /// adds the given line in the viewer, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v);
 
-  /// add the given colored line in the viewer, defined by `p` and `v` as direction.
+  /// adds the given colored line in the viewer, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v,
                 const CGAL::IO::Color &acolor);
 
-  /// start a new face.
+  /// starts a new face.
   void face_begin();
 
-  /// start a new colored face.
+  /// starts a new colored face.
   void face_begin(const CGAL::IO::Color &acolor);
 
-  /// return `true` iff a face is started.
+  /// returns `true` iff a face is started.
   bool is_a_face_started() const;
 
-  /// add the given point in the current face.
- /// @pre `is_a_face_started()`
+  /// adds the given point in the current face.
+  /// @pre `is_a_face_started()`
   template <typename KPoint> bool add_point_in_face(const KPoint &kp);
 
-  /// add the given point in the current face, having the vertex normal.
- /// @pre `is_a_face_started()`
+  /// adds the given point in the current face, having the vertex normal.
+  /// @pre `is_a_face_started()`
   template <typename KPoint, typename KVector>
   bool add_point_in_face(const KPoint &kp, const KVector &p_normal);
 
-  /// end the current face.
- /// @pre `is_a_face_started()`
+  /// ends the current face.
+  /// @pre `is_a_face_started()`
   void face_end();
 
-  /// add the given text at the given position in the viewer.
+  /// adds the given text at the given position in the viewer.
   template <typename KPoint>
   void add_text(const KPoint &kp, const char *txt);
 
-  /// add the given text at the given position in the viewer.
+  /// adds the given text at the given position in the viewer.
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt);
 
-  /// return the graphic storage of the viewer.
+  /// returns the graphic storage of the viewer.
   Graphic_storage<BufferType>& get_graphic_storage();
 
-  /// return the graphic storage of the viewer, const version.
+  /// returns the graphic storage of the viewer, const version.
   const Graphic_storage<BufferType>& get_graphic_storage() const;
 
-  /// negate all normal of vertices and faces.
+  /// negates all normal of vertices and faces.
   void negate_all_normals();
 
-  // \return true if the data structure in in 2D, i.e. lies on a plane.
+  /// returns true if the data structure in in 2D, i.e. lies on a plane.
   bool is_two_dimensional() const;
 
-  /// draw the viewer without recomputing all internal buffers.
+  /// draws the viewer without recomputing all internal buffers.
   virtual void draw();
 
-  /// redraw the viewer, i.e. recompute all internal buffers and update the window.
+  /// redraws the viewer, i.e. recompute all internal buffers and update the window.
   virtual void redraw();
 
-  /// function called when a key is pressed. Users can define their own function in order
+  /// Function called when a key is pressed. Users can define their own function in order
   /// to add specific behavior.
   std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<BufferType> *)> on_key_pressed;
 };
@@ -232,11 +232,11 @@ template <typename BufferType=float>
 class QApplication_and_basic_viewer
 {
 public:
-  /// constructs given a Graphic_storage and possibly a title.
+  /// Constructor given a `Graphic_storage` and possibly a title.
   QApplication_and_basic_viewer(CGAL::Graphic_storage<BufferType>& buffer,
                                 const char* title="CGAL Basic Viewer");
 
-  /// runs the QApplication, i.e. open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
+  /// runs the `QApplication`, i.e. open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
   void run();
 
   /// returns a reference to the `Basic_viewer_qt` associated with this.
