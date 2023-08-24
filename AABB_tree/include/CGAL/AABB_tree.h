@@ -230,18 +230,18 @@ private:
                                        const ComputeNewBbox& compute_new_bbox)
   {
     Bounding_box new_box = compute_new_bbox(first, beyond);
-    node.set_bbox(new_box);
+    node->set_bbox(new_box);
     switch(range)
     {
     case 2:
       break;
     case 3:
-      accomodate_update_of_primitives_impl(node.right_child(), first+1, beyond, 2, compute_new_bbox);
+      accomodate_update_of_primitives_impl(node->right_child(), first+1, beyond, 2, compute_new_bbox);
       break;
     default:
       const std::size_t new_range = range/2;
-      accomodate_update_of_primitives_impl(node.left_child(), first, first + new_range, new_range, compute_new_bbox);
-      accomodate_update_of_primitives_impl(node.right_child(), first + new_range, beyond, range - new_range, compute_new_bbox);
+      accomodate_update_of_primitives_impl(node->left_child(), first, first + new_range, new_range, compute_new_bbox);
+      accomodate_update_of_primitives_impl(node->right_child(), first + new_range, beyond, range - new_range, compute_new_bbox);
     }
   }
 
