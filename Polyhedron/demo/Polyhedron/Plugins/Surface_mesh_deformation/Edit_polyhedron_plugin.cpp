@@ -116,7 +116,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   actionDeformation->setObjectName("actionDeformation");
   actionDeformation->setShortcutContext(Qt::ApplicationShortcut);
   autoConnectActions();
-  e_shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), mw);
+  e_shortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), mw);
   connect(e_shortcut, &QShortcut::activated, this, &Polyhedron_demo_edit_polyhedron_plugin::dispatchAction);
   connect(e_shortcut, &QShortcut::activatedAmbiguously, this, &Polyhedron_demo_edit_polyhedron_plugin::dispatchAction);
 
