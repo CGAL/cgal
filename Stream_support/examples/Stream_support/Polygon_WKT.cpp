@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/IO/WKT.h>
-#include <CGAL/Polygon_repair_2/Multipolygon_with_holes_2.h>
+#include <CGAL/Polygon_repair/Multipolygon_with_holes_2.h>
 
 #include <iostream>
 #include <fstream>

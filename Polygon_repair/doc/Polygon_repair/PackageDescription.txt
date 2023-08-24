@@ -1,0 +1,57 @@
+// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgPolygonRepairRef 2D Polygon Repair Reference
+
+/// \defgroup PkgPolygonRepairConcepts Concepts
+/// \ingroup PkgPolygonRepairRef
+
+/// \defgroup PkgPolygonRepairFunctions Functions
+/// \ingroup PkgPolygonRepairRef
+
+/*!
+  \code
+  #include <CGAL/draw_multipolygon_with_holes_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawMultipolygonWithHoles2 Draw a 2D Multipolygon with holes
+/// \ingroup PkgPolygonRepairRef
+
+/*!
+\addtogroup PkgPolygonRepairRef
+\todo check generated documentation
+
+\cgalPkgDescriptionBegin{2D Polygon Repair,PkgPolygonRepair}
+\cgalPkgPicture{Polygon_repair-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Ken Arroyo Ohori}
+\cgalPkgDesc{The package provides a 2D multipolygon class and algorithms to repair 2D (multi)polygons. }
+\cgalPkgManuals{Chapter_2D_Polygon_repair,PkgPolygonRepairRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.0}
+\cgalPkgDependsOn{\ref PkgPolygon2, \ref PkgTriangulation2}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{DEMO 1,demo1.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `MultipolygonWithHoles_2`
+
+\cgalCRPSection{Classes}
+- `CGAL::Multipolygon_with_holes_2<Polygon>`
+- `CGAL::Polygon_repair`
+
+\cgalCRPSection{Functions}
+- `CGAL::Polygon_repair::repair()`
+
+\cgalCRPSection{Draw a Multipolygon_with_holes_2}
+- \link  PkgDrawMultipolygonWithHoles2 CGAL::draw<MPH>() \endlink
+
+*/

@@ -1,1 +1,0 @@
-Package Polygon_repair_2 provides functions to repair polygons.

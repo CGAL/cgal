@@ -1,0 +1,216 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_2D_Polygon_repair
+
+\cgalAutoToc
+\author Ken Arroyo Ohori
+
+\section SectionPolygonRepair_Introduction Introduction
+
+This package implements a polygon repair method based on a constrained
+triangulation \cgalCite{14cg}. Starting from a possibly invalid input
+in the form of a polygon, polygon with holes or multipolygon with holes,
+the method performs a constrained triangulation of the input edges, labels
+each triangle according to what it represents (exterior, polygon interior
+or hole), and reconstructs the polygon(s) represented by the triangulation.
+The method returns a valid output stored in a multipolygon with holes.
+
+Different triangulation and labelling heuristics are possible, but
+currently only the odd-even heuristic is implemented in the package.
+This heuristic results in areas that are alternately assigned as polygon
+interiors and exterior/holes each time that an input edge is passed.
+It doesn't distinguish between edges that are part of outer boundaries
+from those of inner boundaries.
+
+\section SectionPolygonRepair_Definitions Definitions
+
+- A valid <B>polygon</B> (without holes) is a point set in \f$ \mathbb{R}^2\f$
+that is bounded by a cycle of linear edges, which is known as its
+<B>outer boundary</B>. This outer boundary should be <B>simple</B>,
+meaning that the interiors of its edges are pairwise disjoint and all of
+its vertices have a degree of two. It is thus topologically equivalent to a
+disk and is represented internally as the sequence of points at the common
+end points of the edges around its outer boundary.
+
+- A valid <B>polygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
+that is bounded by one outer boundary and zero or more <B>inner boundaries</B>,
+where each inner boundary represents a hole in the polygon. Considered
+independently, each boundary should be simple. The different boundaries of a polygon
+are allowed to intersect tangentially at their common vertices (with no common
+edges), forming vertices with degrees of a multiple of two the tangential points.
+The interior of a polygon with holes should form a connected point set.
+Note that a valid polygon can also be represented as a valid polygon with
+holes (where the number of holes is zero).
+
+- A valid <B>multipolygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
+that is represented by a set of zero or more valid polygons with holes.
+The interiors of the polygons with holes should be pairwise disjoint, but they
+are allowed to intersect tangentially at their common vertices. Note that
+a valid polygon with holes can also be represented as a valid multipolygon
+with holes (with only one polygon).
+
+\cgalFigureBegin{multipolygons, multipolygons.png}
+Valid: (a) polygon, (b-c) polygons with holes, (d-e) multipolygons with holes.
+(c) and (e) show cases where boundaries intersect tangentially at a single vertex.
+\cgalFigureEnd
+
+\subsection SubsectionPolygonRepair_Output Stricter Conditions for Output
+
+The conditions listed above are sufficient to define valid polygons, polygons
+with holes and multipolygons with holes for most applications. However, in
+order to ensure unique deterministic output from the repair algorithm,
+the valid multipolygons with holes returned by the package conform to more
+strict criteria:
+
+- Adjacent collinear edges touching at vertices of degree two are merged
+- The sequence of vertices representing a boundary starts from its
+lexicographically smallest vertex
+- Outer boundaries are oriented counter-clockwise and inner boundaries are
+oriented clockwise
+- The inner boundaries of a polygon with holes are stored in lexicographic
+order
+- The polygons with holes of a multipolygon with holes are also stored in
+lexicographic order
+
+\section SectionPolygonRepair_Algorithm Algorithm
+
+Broadly, the algorithm consists of three steps:
+
+-# <B>Constrained triangulation</B>: the edges in the polygon, polygon with
+holes or multipolygon with holes are added as constraints in the triangulation.
+-# <B>Labeling of the faces</B>: sets of faces forming contiguous regions that
+are accessible from each other by following adjacency relationships without
+passing through a constrained edge are labeled with ids according to
+what they represent (exterior, polygon interior or hole). The faces iteratively
+adjacent to the infinite face without passing through a constrained edge are
+labeled as the exterior.
+-# <B>Reconstruction of the multipolygon</B>: each boundary of each polygon
+with holes is reconstructed by finding a polygon interior triangle that is
+adjacent to the exterior or a hole, then following the boundary in an
+orientation that is counter-clockwise for outer boundaries and clockwise for
+inner boundaries. This orientation and the polygon interior id is used to
+determine what polygon with holes it belongs to and whether it is an outer or
+an inner boundary.
+
+FIGURE
+
+\subsection SubsectionPolygonRepair_Triangulation Constrained triangulation
+
+For the purposes of the repair operation, the input polygon, polygon with holes
+or multipolygon is merely used as a container of input line segments. These line
+segments are added to the constrained triangulation as constraints.
+
+With the odd-even heuristic, only the edges that are present an odd number of
+times in the input will be constrained edges in the triangulation.
+When these edges are only partially overlapping, only the parts that overlap
+an odd number of times will be constrained edges in the triangulation.
+
+This procedure is done in two steps: 1. preprocessing to eliminate identical
+edges that are present an even number of times, and 2. an odd-even constraint
+counting mechanism that erases existing constraints when new overlapping ones
+are added.
+
+\subsection SubsectionPolygonRepair_Labeling Labeling
+
+First, all of the polygon exterior is labeled. For this, the faces that can be
+accessed by following the adjacency relationships from the infinite face without
+passing through a constrained edge are labeled as exterior faces.
+
+Then, with the odd-even heuristic, groups of faces that are adjacent to each other
+without passing through a constrained edge are labeled. The label applied alternates
+between polygon interior and hole every time that a constrained edge is passed.
+
+\subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the multipolygon
+
+The algorithm reconstructs the multipolygon boundary by boundary, repeating the
+process until all boundaries have been reconstructed.
+Starting from a triangulation face with a polygon interior label that is adjacent
+to a face with an exterior or hole label, the boundary of the polygon that contains
+the edge between the two triangles is reconstructed.
+The successive edges of the boundary is obtained by rotating counter-clockwise
+around their common vertex, resulting in counter-clockwise cycles for outer
+boundaries and clockwise cycles for inner boundaries.
+
+Finally, the boundaries are assembled into multipolygons using the unique labels
+to know which polygon inner/outer boundaries belong to, and using the orientation
+to distinguish between outer and inner boundaries.
+
+\subsection SubsectionPolygonRepair_Notes Notes on the Output
+
+If the input is already valid, the method will return a valid output representing
+the same area. However, the output might be different in order to conform to the
+stricter conditions to generate deterministic output (see
+\ref SubsectionPolygonRepair_Output).
+
+Also, it is worth noting that even the repair of a single polygon without holes
+but with self-intersections can result in a multipolygon with holes. This is why
+the repair function will always return a multipolygon with holes. The user can
+then check whether it consists of a single polygon with holes, and if a polygon
+with holes has zero holes and extract these if needed.
+
+\section SectionPolygonRepair_Examples Examples
+
+\subsection SubsectionPolygonRepair_Multipolygon The multipolygon with holes class
+
+The following example shows the creation of a multipolygon with holes and the traversal
+of the polygons in it.
+
+\cgalExample{Polygon_repair/multipolygon.cpp}
+
+\subsection SubsectionPolygonRepair_WKTDraw Draw a multipolygon
+
+A multipolygon with holes can be visualized by calling the \link PkgPolygonRepairRef
+CGAL::draw<MPH>() \endlink function as shown in the following example.
+This function opens a new window showing the given polygon. A call to this function
+is blocking, that is the program continues as soon as the user closes the window.
+Versions for polygons and polygons with holes also exist, cf. \link PkgDrawPolygon2
+CGAL::draw<P>() \endlink and \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink.
+
+The multipolygon with holes shown in this example is created using the well-known text
+(WKT) reader, which can read and write multipolygons with holes.
+
+\cgalExample{Polygon_repair/draw_multipolygon.cpp}
+
+This function requires `CGAL_Qt5`, and is only available if the macro
+`CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target
+`CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition
+`CGAL_USE_BASIC_VIEWER`.
+
+\cgalFigureBegin{draw_multipolygon, draw_multipolygon.png}
+Result of the run of the draw_multipolygon program. A window shows the multipolygon
+with holes and allows to navigate through the scene.
+\cgalFigureEnd
+
+\subsection SubsectionPolygonRepair_Repair Repairing a (multi)polygon
+
+It's possible to repair a polygon, polygon with holes or multipolygon with holes
+using the odd-even rule by calling the `repair_odd_even` function as shown in the
+following example. This function returns a repaired multipolygon with holes.
+
+\cgalFigureBegin{bridge_edge, bridge_edge.png}
+(a) Before repair: A polygon with a single loop that implicitly creates a hole
+using a bridge edge (b) After repair: the same area represented as a polygon with
+a hole.
+\cgalFigureEnd
+
+\cgalExample{Polygon_repair/repair_polygon_2.cpp}
+
+\subsection SubsectionPolygonRepair_RepairHiddenApi Step by step repairing
+
+The following example shows to do the repair process step by step, including how
+to extract the labeled triangulation, which is written as a GeoJSON file consisting
+of the individual triangles with their labels.
+
+\cgalFigureBegin{triangulation, triangulation.png}
+(a) A multipolygon consisting of two polygons with one hole each, where one polygon
+is inside the hole of the other (b) The labeled triangulation of the multipolygon
+\cgalFigureEnd
+
+\cgalExample{Polygon_repair/write_labeled_triangulation.cpp}
+
+\section SectionPolygonRepair_Performance Performance
+
+*/
+} /* namespace CGAL */
