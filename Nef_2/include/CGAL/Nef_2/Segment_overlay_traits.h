@@ -167,7 +167,7 @@ public:
   Point_2 target(const ISegment& is) const
   { return K.target(is->first()); }
 
-  ITERATOR original(xonst ISegment& s) const
+  ITERATOR original(const ISegment& s) const
   { return s->second(); }
 
   int orientation(ST_item sit, const Point_2& p) const
