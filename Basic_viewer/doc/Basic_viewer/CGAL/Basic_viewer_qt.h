@@ -76,58 +76,58 @@ public:
   /// negate the drawing of text (becomes `true` if it was `false` and reciprocally).
   void negate_draw_text();
 
-  /// @return `true` if vertices are drawn.
+  /// return `true` if vertices are drawn.
   bool get_draw_vertices() const;
 
-  /// @return `true` if edges are drawn.
+  /// return `true` if edges are drawn.
   bool get_draw_edges() const;
 
-  /// @return `true` if rays are drawn.
+  /// return `true` if rays are drawn.
   bool get_draw_rays() const;
 
-  /// @return `true` if lines are drawn.
+  /// return `true` if lines are drawn.
   bool get_draw_lines() const;
 
-  /// @return `true` if faces are drawn.
+  /// return `true` if faces are drawn.
   bool get_draw_faces() const;
 
-  /// @return `true` if mono color mode is used.
+  /// return `true` if mono color mode is used.
   bool get_use_mono_color() const;
 
-  /// @return `true` if normal are reversed.
+  /// return `true` if normal are reversed.
   bool get_inverse_normal() const;
 
-  /// @return `true` if text are drawn.
+  /// return `true` if text are drawn.
   bool get_draw_text() const;
 
-  /// @return the mono color used for vertices.
+  /// return the mono color used for vertices.
   const CGAL::IO::Color& get_vertices_mono_color() const;
 
-  /// @return the mono color used for edges.
+  /// return the mono color used for edges.
   const CGAL::IO::Color& get_edges_mono_color() const;
 
-  /// @return the mono color used for rays.
+  /// return the mono color used for rays.
   const CGAL::IO::Color& get_rays_mono_color() const;
 
-  /// @return the mono color used for lines.
+  /// return the mono color used for lines.
   const CGAL::IO::Color& get_lines_mono_color() const;
 
-  /// @return the mono color used for faces.
+  /// return the mono color used for faces.
   const CGAL::IO::Color& get_faces_mono_color() const;
 
   /// clear the basic viewer, i.e. remove all its elements.
   void clear();
 
-  /// @return `true` if the viewer is empty.
+  /// return `true` if the viewer is empty.
   bool is_empty() const;
 
-  /// @return the bounding box of all the elements in the viewer.
+  /// return the bounding box of all the elements in the viewer.
   const CGAL::Bbox_3& bounding_box() const;
 
-  /// @return `true` if the clipping plane is enabled.
+  /// return `true` if the clipping plane is enabled.
   bool is_clipping_plane_enabled() const;
 
-  /// @return the clipping plane when it is enabled.
+  /// return the clipping plane when it is enabled.
   Local_kernel::Plane_3 clipping_plane() const;
 
   /// add the given point in the viewer.
@@ -171,7 +171,7 @@ public:
   /// start a new colored face.
   void face_begin(const CGAL::IO::Color &acolor);
 
-  /// @return `true` iff a face is started.
+  /// return `true` iff a face is started.
   bool is_a_face_started() const;
 
   /// add the given point in the current face.
@@ -195,10 +195,10 @@ public:
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt);
 
-  /// @return the graphic storage of the viewer.
+  /// return the graphic storage of the viewer.
   Graphic_storage<BufferType>& get_graphic_storage();
 
-  /// @return the graphic storage of the viewer, const version.
+  /// return the graphic storage of the viewer, const version.
   const Graphic_storage<BufferType>& get_graphic_storage() const;
 
   /// negate all normal of vertices and faces.
@@ -232,14 +232,14 @@ template <typename BufferType=float>
 class QApplication_and_basic_viewer
 {
 public:
-  /// Constructor given a Graphic_storage and possibly a title.
+  /// constructs given a Graphic_storage and possibly a title.
   QApplication_and_basic_viewer(CGAL::Graphic_storage<BufferType>& buffer,
                                 const char* title="CGAL Basic Viewer");
 
-  /// run the QApplication, i.e. open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
+  /// runs the QApplication, i.e. open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
   void run();
 
-  /// @return a reference to the `Basic_viewer_qt` associated with this.
+  /// returns a reference to the `Basic_viewer_qt` associated with this.
   Basic_viewer_qt<BufferType>& basic_viewer();
 };
 
