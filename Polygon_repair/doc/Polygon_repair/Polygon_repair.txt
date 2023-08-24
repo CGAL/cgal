@@ -10,7 +10,7 @@ namespace CGAL {
 \section SectionPolygonRepair_Introduction Introduction
 
 This package implements a polygon repair method based on a constrained
-triangulation \cgalCite{14cg}. Starting from a possibly invalid input
+triangulation \cgalCite{ledoux2014triangulation}. Starting from a possibly invalid input
 in the form of a polygon, polygon with holes or multipolygon with holes,
 the method performs a constrained triangulation of the input edges, labels
 each triangle according to what it represents (exterior, polygon interior
