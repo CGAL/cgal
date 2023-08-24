@@ -47,7 +47,7 @@ namespace ArrTraits {}
 /// \ingroup PkgArrangementOnSurface2Ref
 
 /*!
-  `#include <CGAL/draw_arrangement_2.h>`
+\cgalInclude{CGAL/draw_arrangement_2.h}
 */
 /// \defgroup PkgArrangementOnSurface2Draw Drawing
 /// \ingroup PkgArrangementOnSurface2Ref

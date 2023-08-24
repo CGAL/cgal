@@ -12,13 +12,13 @@
 /// \ingroup PkgLinearCellComplexRef
 
 /*! High-level operations.
-   `#include <CGAL/Linear_cell_complex_operations.h>`
+\cgalInclude{CGAL/Linear_cell_complex_operations.h}
 */
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplexRef
 
 /*!
-   `#include <CGAL/draw_linear_cell_complex.h>`
+\cgalInclude{CGAL/draw_linear_cell_complex.h}
 */
 /// \defgroup PkgDrawLinearCellComplex Draw a Linear Cell Complex
 /// \ingroup PkgLinearCellComplexRef

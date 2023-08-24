@@ -13,7 +13,7 @@
 /// \ingroup PkgTriangulation3Ref
 
 /*!
-   `#include <CGAL/draw_triangulation_3.h>`
+\cgalInclude{CGAL/draw_triangulation_3.h}
 */
 /// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
 /// \ingroup PkgTriangulation3Ref

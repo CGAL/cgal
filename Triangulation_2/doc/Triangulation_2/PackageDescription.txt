@@ -14,7 +14,7 @@
 /// \ingroup PkgTriangulation2Ref
 
 /*!
-   `#include <CGAL/draw_triangulation_2.h>`
+\cgalInclude{CGAL/draw_triangulation_2.h}
 */
 /// \defgroup PkgDrawTriangulation2 Draw a Triangulation 2
 /// \ingroup PkgTriangulation2Ref

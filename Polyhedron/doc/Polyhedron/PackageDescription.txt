@@ -6,7 +6,7 @@
 /// \ingroup PkgPolyhedronRef
 
 /*!
-   `#include <CGAL/draw_polyhedron.h>`
+\cgalInclude{CGAL/draw_polyhedron.h}
 */
 /// \defgroup PkgDrawPolyhedron Draw a Polyhedron 3
 /// \ingroup PkgPolyhedronRef

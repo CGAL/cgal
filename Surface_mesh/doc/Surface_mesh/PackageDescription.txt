@@ -1,7 +1,7 @@
 /// \defgroup PkgSurface_mesh Surface Mesh Reference
 
 /*!
-   `#include <CGAL/draw_surface_mesh.h>`
+\cgalInclude{CGAL/draw_surface_mesh.h}
 */
 /// \defgroup PkgDrawSurfaceMesh Draw a Surface Mesh
 /// \ingroup PkgSurface_mesh
