@@ -329,13 +329,13 @@ void Scene_plane_item::setPlaneOrientation()
     if(!ok)
       return;
 
-    match = rx.match(eq); // AF: exact?
-    // does_match = rx.exactMatch(eq);
-    if(! match.hasMatch())
+    match = rx.match(eq);
+    does_match = match.hasMatch() && match.capturedLength(0) == eq.size();
+    if(!does_match)
     {
       QMessageBox::warning(CGAL::Three::Three::mainWindow(),"Error","The input must be of the form a*x+b*y+c*z+d=0");
     }
-  }while(! match.hasMatch());
+  }while(!does_match);
   double a(match.captured(1).toDouble()), b(match.captured(2).toDouble()), c(match.captured(3).toDouble()), d(match.captured(4).toDouble());
 
   Kernel_epic::Point_3 sure_point(0,0,0);
