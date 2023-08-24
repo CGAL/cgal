@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgBasicViewerClasses
 
-The class `Cell_parameters` is used to tune the way that the cells of a given data-structure of \cgal are considered.
+The class `Cell_parameters` is used to tune the way that the cells of a given data structure of \cgal are considered.
 The different `std::function` can be modified to change for example the behavior of the drawing.
 
 \tparam DS a data structure of \cgal.
@@ -73,7 +73,7 @@ public:
 /*!
 \ingroup PkgBasicViewerClasses
 
-The class `Cell_parameters_with_volume` is used to tune the way that the cells of a given data-structure of \cgal are considered, for a data-structure that contains volumes.
+The class `Cell_parameters_with_volume` is used to tune the way that the cells of a given data structure of \cgal are considered, for a data structure that contains volumes.
 The different `std::function` can be modified to change for example the behavior of the drawing.
 
 \tparam DS a data structure of \cgal.
