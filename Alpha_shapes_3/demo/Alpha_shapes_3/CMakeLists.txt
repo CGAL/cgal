@@ -9,24 +9,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGL OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
-
-  # include(${QT_USE_FILE})
-  include_directories(BEFORE ./)
 
   # ui file, created with Qt Designer
   qt6_wrap_ui(uis MainWindow.ui)
@@ -34,13 +24,12 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   # qrc files (resources files, that contain icons, at least)
   qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Alpha_shape_3.qrc)
 
-  add_executable(
-    Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis}
-                  ${CGAL_Qt6_RESOURCE_FILES} ${CGAL_Qt6_MOC_FILES})
+  add_executable(Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis})
+
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Alpha_shape_3)
 
   target_link_libraries(Alpha_shape_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
-  Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets)
+                                              Qt6::Widgets Qt6::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Alpha_shape_3)
