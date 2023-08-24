@@ -18,9 +18,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-#include <CGAL/Polygon_repair/Multipolygon_with_holes_2.h>
 #include <CGAL/Polygon_repair/Triangulation_face_base_with_repair_info_2.h>
 #include <CGAL/Polygon_repair/Triangulation_with_odd_even_constraints_2.h>
 

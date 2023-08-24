@@ -1,4 +1,4 @@
-/*! \ingroup PkgPolygonRepairConcepts
+/*! \ingroup PkgPolygon2Concepts
  * \cgalConcept
  *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}

@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Polygon_repair_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED)
 
 # create a target per cppfile
 file(
@@ -14,7 +14,3 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
-
-if(CGAL_Qt5_FOUND)
-  target_link_libraries(draw_multipolygon PUBLIC CGAL::CGAL_Basic_viewer)
-endif()

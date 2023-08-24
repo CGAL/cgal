@@ -2,7 +2,7 @@
 #include <sstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_repair/draw_multipolygon_with_holes_2.h>
+#include <CGAL/draw_multipolygon_with_holes_2.h>
 #include <CGAL/IO/WKT.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;

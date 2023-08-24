@@ -82,7 +82,8 @@ vertices. It additionally provides a member function `Polygon_2::vertices()` tha
 
 \subsection subsecPolygonDraw Draw a Polygon
 
-A polygon can be visualized by calling the \link  PkgDrawPolygon2 CGAL::draw<P>() \endlink function as shown in the following example. This function opens a new window showing the given polygon. A call to this function is blocking, that is the program continues as soon as the user closes the window (a version exists for polygon with holes, cf. \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink).
+A polygon can be visualized by calling the \link  PkgDrawPolygon2 CGAL::draw<P>() \endlink function as shown in the following example. This function opens a new window showing the given polygon. A call to this function is blocking, that is the program continues as soon as the user closes the window. Versions for polygons with holes and multipolygons with holes also exist, cf. \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink and \link PkgDrawMultipolygonWithHoles2
+CGAL::draw<MPH>() \endlink.
 
 \cgalExample{Polygon/draw_polygon.cpp}
 

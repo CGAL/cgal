@@ -9,14 +9,6 @@
 /// \ingroup PkgPolygonRepairRef
 
 /*!
-  \code
-  #include <CGAL/draw_multipolygon_with_holes_2.h>
-  \endcode
-*/
-/// \defgroup PkgDrawMultipolygonWithHoles2 Draw a 2D Multipolygon with holes
-/// \ingroup PkgPolygonRepairRef
-
-/*!
 \addtogroup PkgPolygonRepairRef
 \todo check generated documentation
 
@@ -25,7 +17,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Ken Arroyo Ohori}
-\cgalPkgDesc{The package provides a 2D multipolygon class and algorithms to repair 2D (multi)polygons. }
+\cgalPkgDesc{The package provides algorithms to repair 2D (multi)polygons. }
 \cgalPkgManuals{Chapter_2D_Polygon_repair,PkgPolygonRepairRef}
 \cgalPkgSummaryEnd
 
@@ -41,17 +33,10 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
-- `MultipolygonWithHoles_2`
-
 \cgalCRPSection{Classes}
-- `CGAL::Multipolygon_with_holes_2<Polygon>`
 - `CGAL::Polygon_repair`
 
 \cgalCRPSection{Functions}
 - `CGAL::Polygon_repair::repair()`
-
-\cgalCRPSection{Draw a Multipolygon_with_holes_2}
-- \link  PkgDrawMultipolygonWithHoles2 CGAL::draw<MPH>() \endlink
 
 */

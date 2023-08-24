@@ -19,7 +19,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
-#include <CGAL/Polygon_repair/Multipolygon_with_holes_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <CGAL/IO/WKT/traits_point.h>
 #include <CGAL/IO/WKT/traits_point_3.h>

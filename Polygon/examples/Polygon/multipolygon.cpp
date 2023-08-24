@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_repair/Multipolygon_with_holes_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_2 = Kernel::Point_2;

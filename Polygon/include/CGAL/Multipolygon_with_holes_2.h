@@ -1,18 +1,21 @@
-// Copyright (c) 2023 GeometryFactory.
-// All rights reserved.
+// Copyright (c) 2005
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ken Arroyo Ohori
+//
+// Author(s): Ken Arroyo Ohori <k.ohori@tudelft.nl>
 
 #ifndef CGAL_MULTIPOLYGON_WITH_HOLES_2_H
 #define CGAL_MULTIPOLYGON_WITH_HOLES_2_H
-
-#include <CGAL/license/Polygon_repair.h>
 
 #include <CGAL/Polygon_with_holes_2.h>
 
