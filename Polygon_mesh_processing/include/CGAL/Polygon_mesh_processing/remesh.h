@@ -51,8 +51,8 @@ namespace Polygon_mesh_processing {
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
 * @param sizing uniform or adaptive sizing field that determines a target length for individual edges.
-*        If a float is passed (i.e. sizing is convertible to a double), it will use a `Uniform_sizing_field()`
-*        with the float as a target edge length.
+*        If a number convertible to a double is passed, it will use a `Uniform_sizing_field()`
+*        with the number as a target edge length.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -381,8 +381,8 @@ void isotropic_remeshing(const FaceRange& faces
 *
 * @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
-* @param sizing the sizing function that is used to split edges from 'edges' list. If a float is passed (i.e. sizing
-*        is convertible to a double), it will use a `Uniform_sizing_field()` with the float as a target edge length.
+* @param sizing the sizing function that is used to split edges from 'edges' list. If a number convertible to
+*        a double is passed, it will use a `Uniform_sizing_field()` with the number as a target edge length.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
 * \cgalNamedParamsBegin

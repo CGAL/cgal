@@ -44,7 +44,10 @@ namespace Polygon_mesh_processing
 */
 template <class PolygonMesh,
           class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
-class Uniform_sizing_field : public Sizing_field_base<PolygonMesh, VPMap>
+class Uniform_sizing_field
+#ifndef DOXYGEN_RUNNING
+  : public Sizing_field_base<PolygonMesh, VPMap>
+#endif
 {
 private:
   typedef Sizing_field_base<PolygonMesh, VPMap> Base;
