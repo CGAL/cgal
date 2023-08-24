@@ -616,9 +616,9 @@ endPointSet(const QMatrix4x4& transform_matrix)
 
   for(Point_set::Index idx : *new_ps)
   {
-    QVector3D vec = transform_matrix * QVector3D(new_ps->point(idx).x() - c.x,
-                                                 new_ps->point(idx).y() - c.y,
-                                                 new_ps->point(idx).z() - c.z);
+    QVector3D vec = transform_matrix.map(QVector3D(new_ps->point(idx).x() - c.x,
+                                                   new_ps->point(idx).y() - c.y,
+                                                   new_ps->point(idx).z() - c.z));
     new_ps->point(idx) = Kernel::Point_3(vec.x(), vec.y(), vec.z());
   }
 
@@ -643,9 +643,9 @@ endPolygonSoup(const QMatrix4x4& transform_matrix)
 
   for(Point_3& p : new_points)
   {
-    QVector3D vec = transform_matrix * QVector3D(p.x() - c.x,
-                                                 p.y() - c.y,
-                                                 p.z() - c.z);
+    QVector3D vec = transform_matrix.map(QVector3D(p.x() - c.x,
+                                                   p.y() - c.y,
+                                                   p.z() - c.z));
     p = Kernel::Point_3(vec.x(), vec.y(), vec.z());
   }
 
@@ -670,9 +670,9 @@ endPolygonMesh(const QMatrix4x4& transform_matrix)
   const CGAL::qglviewer::Vec& c = aff_transformed_item->center();
   auto transformation = [&c, &transform_matrix](const Kernel::Point_3& p) -> Kernel::Point_3
   {
-    QVector3D vec = transform_matrix * QVector3D(p.x() - c.x,
-                                                 p.y() - c.y,
-                                                 p.z() - c.z);
+    QVector3D vec = transform_matrix.map(QVector3D(p.x() - c.x,
+                                                   p.y() - c.y,
+                                                   p.z() - c.z));
     return { vec.x(), vec.y(), vec.z() };
   };
 

@@ -447,7 +447,7 @@ private Q_SLOTS:
       transform_matrix.data()[i] = (float)matrix[i];
     rotate_matrix = transform_matrix;
     rotate_matrix.setColumn(3, QVector4D(0,0,0,1));
-    QVector3D dir = rotate_matrix * QVector3D(0,1,0);
+    QVector3D dir = rotate_matrix.map(QVector3D(0,1,0));
     dir.normalize();
     dir = length * dir;
 
