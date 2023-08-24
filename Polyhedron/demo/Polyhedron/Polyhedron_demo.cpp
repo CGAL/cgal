@@ -129,10 +129,10 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   }
 #endif
 
-  // mainWindow.loadScript(":/cgal/Polyhedron_3/javascript/lib.js");
+  mainWindow.loadScript(":/cgal/Polyhedron_3/javascript/lib.js");
   QFileInfo autostart_js("autostart.js");
   if(!parser.isSet(no_autostart) && autostart_js.exists()) {
-    // mainWindow.loadScript(autostart_js);
+    mainWindow.loadScript(autostart_js);
   }
   Q_FOREACH(QString filename, parser.positionalArguments()) {
     mainWindow.open(filename);

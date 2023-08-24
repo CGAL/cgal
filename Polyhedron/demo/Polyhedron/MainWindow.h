@@ -256,6 +256,9 @@ public Q_SLOTS:
 
   void message(QString, QString, QString = QString("normal"));
 
+  //! Function `print` used by Javascript scripts.
+  void print(QString message);
+
     //!Returns true if the target plugin is present. If not, returns false.
   bool hasPlugin(const QString&) const;
 
