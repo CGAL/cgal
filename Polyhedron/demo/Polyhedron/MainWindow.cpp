@@ -820,12 +820,12 @@ void MainWindow::addAction(QAction* action)
 
   action->setVisible(true);
   action->setEnabled(true);
-  Q_FOREACH(QWidget* widget, action->associatedWidgets())
+  for(auto object: action->associatedObjects())
   {
     //     qDebug() << QString("%1 (%2)\n")
     //       .arg(widget->objectName())
     //       .arg(widget->metaObject()->className());
-    QMenu* menu = qobject_cast<QMenu*>(widget);
+    QMenu* menu = qobject_cast<QMenu*>(object);
     if(menu)
     {
       addAction(menu->menuAction());
@@ -1030,7 +1030,7 @@ void MainWindow::reloadItem() {
 
        // Can use foreach:
     int mate_id = 0;
-    Q_FOREACH(const QVariant &v, iterable)
+    for(const QVariant &v: iterable)
     {
       Scene_item* mate = v.value<Scene_item*>();
       Scene_item* new_item = new_items[mate_id];
@@ -2770,7 +2770,7 @@ void MainWindow::exportStatistics()
   }
 
   QString str;
-  Q_FOREACH(Scene_item* sit, items)
+  for(Scene_item* sit: items)
   {
     CGAL::Three::Scene_item::Header_data data = sit->header();
     if(data.titles.size()>0)

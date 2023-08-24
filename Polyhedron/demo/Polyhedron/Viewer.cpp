@@ -304,7 +304,7 @@ void Viewer::doBindings()
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
-  setShortcut(CGAL::qglviewer::EXIT_VIEWER, 0);
+  setShortcut(CGAL::qglviewer::EXIT_VIEWER, QKeyCombination{});
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
@@ -624,7 +624,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
      event->modifiers().testFlag(Qt::ShiftModifier))
   {
     select(event->pos());
-    requestContextMenu(event->globalPos());
+    requestContextMenu(event->globalPosition().toPoint());
     event->accept();
   }
   else if(!event->modifiers()
