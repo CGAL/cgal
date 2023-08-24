@@ -21,7 +21,7 @@
 
 #include <CGAL/config.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/optional/optional_io.hpp>
 
 #include <CGAL/Handle_with_policy.h>
@@ -106,22 +106,22 @@ public:
     //! curve point finite coordinates. They are valid only if boundary in y
     //! is not set (CGAL::NO_BOUNDARY), otherwise only x-coordinate is
     //! accessible, i.e., point is in interior
-    boost::optional< Coordinate_2 > _m_xy;
+    std::optional< Coordinate_2 > _m_xy;
 
     //! x-coordinate of a curve point
-    boost::optional< Coordinate_1 > _m_x;
+    std::optional< Coordinate_1 > _m_x;
 
     //! curve of point at boundary
-    boost::optional< Curve_analysis_2 > _m_curve;
+    std::optional< Curve_analysis_2 > _m_curve;
 
     //! arc of point at boundary
-    boost::optional< int > _m_arcno;
+    std::optional< int > _m_arcno;
 
     //! location of a point in parameter space
     mutable CGAL::Arr_parameter_space _m_location;
 
     //! store a double approximation of point
-    mutable boost::optional< std::pair< double, double > > _m_doubles;
+    mutable std::optional< std::pair< double, double > > _m_doubles;
 };
 
 /*!\brief
@@ -700,14 +700,13 @@ public:
         default:
           // ASCII
           os << "Point_2(";
-
-          os << this->ptr()->_m_xy;
+          os << ::CGAL::IO::oformat(this->ptr()->_m_xy);
           os << ",";
-          os << this->ptr()->_m_x;
+          os << ::CGAL::IO::oformat(this->ptr()->_m_x);
           os << ",";
-          os << this->ptr()->_m_curve;
+          os << ::CGAL::IO::oformat(this->ptr()->_m_curve);
           os << ",";
-          os << this->ptr()->_m_arcno;
+          os << ::CGAL::IO::oformat(this->ptr()->_m_arcno);
           os << ",";
           os << this->ptr()->_m_location;
 
@@ -737,13 +736,13 @@ public:
     swallow(is, '(');
 
     // read values
-    is >> rep._m_xy;
+    is >> iformat(rep._m_xy);
     swallow(is, ',');
-    is >> rep._m_x;
+    is >> iformat(rep._m_x);
     swallow(is, ',');
-    is >> rep._m_curve;
+    is >> iformat(rep._m_curve);
     swallow(is, ',');
-    is >> rep._m_arcno;
+    is >> iformat(rep._m_arcno);
     swallow(is, ',');
     is >> rep._m_location;
 

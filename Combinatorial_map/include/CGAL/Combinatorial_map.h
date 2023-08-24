@@ -1639,11 +1639,14 @@ namespace CGAL {
       static_assert(i<=dimension);
       static_assert(Helper::template Dimension_index<i>::value>=0,
                   "set_attribute<i> but i-attributes are disabled");
-      for ( typename Dart_of_cell_range<i>::iterator it(*this, dh);
-            it.cont(); ++it)
+      for (typename Dart_of_cell_range<i>::iterator it(*this, dh);
+           it.cont(); ++it)
       {
         this->template set_dart_attribute<i>(it, ah);
       }
+      if(ah!=null_descriptor)
+      // To ensure that the dart of this attribute is dh
+      { this->template set_dart_of_attribute<i>(ah, dh); }
     }
 
     /// @return a Attributes_range<i> (range through all the
@@ -4410,7 +4413,8 @@ namespace CGAL {
     bool is_insertable_cell_1_in_cell_2(Dart_const_descriptor adart1,
                                         Dart_const_descriptor adart2) const
     {
-      if ( adart1==adart2 ) return false;
+      if (adart1==adart2 || adart1==null_descriptor) return false;
+      if (adart2==null_descriptor) return true;
       for ( CMap_dart_const_iterator_of_orbit<Self,1> it(*this,adart1);
             it.cont(); ++it )
       {
@@ -4427,15 +4431,81 @@ namespace CGAL {
      *         same vertex than adart1.
      */
     Dart_descriptor insert_cell_1_in_cell_2(Dart_descriptor adart1,
-                                        Dart_descriptor adart2,
-                                        bool update_attributes=true)
+                                            Dart_descriptor adart2,
+                                            bool update_attributes=true)
     {
+      CGAL_assertion(is_insertable_cell_1_in_cell_2(adart1, adart2));
       if ( adart2==null_descriptor )
         return insert_dangling_cell_1_in_cell_2(adart1, null_descriptor,
                                                 update_attributes);
+      return generic_insert_cell_1(adart1, adart2, false, update_attributes);
+    }
 
-      CGAL_assertion(is_insertable_cell_1_in_cell_2(adart1, adart2));
+    /** Test if an edge can be inserted between two different 2-cells
+     *   between two given darts.
+     * @param adart1 a first dart.
+     * @param adart2 a second dart.
+     * @return true iff an edge can be inserted between adart1 and adart2.
+     */
+    bool is_insertable_cell_1_between_two_cells_2(Dart_const_descriptor adart1,
+                                                  Dart_const_descriptor adart2) const
+    {
+      if (adart1==adart2 || adart1==null_descriptor || adart2==null_descriptor)
+      { return false; }
+      for ( CMap_dart_const_iterator_of_orbit<Self,1> it(*this,adart1);
+            it.cont(); ++it )
+      {
+        if ( it==adart2 )  return false;
+      }
+      return true;
+    }
 
+    /** Insert an edge between two different 2-cells, between two given darts.
+     * @param adart1 a first dart of the first facet (!=null_descriptor && !=null_dart_descriptor).
+     * @param adart2 a second dart of the second facet (!=null_descriptor && !=null_dart_descriptor).
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return a dart of the new edge, and not incident to the
+     *         same vertex than adart1.
+     */
+    Dart_descriptor insert_cell_1_between_two_cells_2(Dart_descriptor adart1,
+                                                      Dart_descriptor adart2,
+                                                      bool update_attributes=true)
+    {
+      CGAL_assertion(is_insertable_cell_1_between_two_cells_2(adart1, adart2));
+      return generic_insert_cell_1(adart1, adart2, true, update_attributes);
+    }
+
+    /** Insert an edge between two given darts. If the two darts belong to the same facet, call
+     *  insert_cell_1_in_cell_2, otherwise call insert_cell_1_between_two_cells_2.
+     * @param adart1 a first dart (!=null_descriptor && !=null_dart_descriptor).
+     * @param adart2 a second dart.
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return a dart of the new edge, and not incident to the
+     *         same vertex than adart1.
+     */
+    Dart_descriptor insert_cell_1(Dart_descriptor adart1,
+                                  Dart_descriptor adart2,
+                                  bool update_attributes=true)
+    {
+      if(is_insertable_cell_1_in_cell_2(adart1, adart2))
+      { return insert_cell_1_in_cell_2(adart1, adart2, update_attributes); }
+      return insert_cell_1_between_two_cells_2(adart1, adart2, update_attributes);
+    }
+
+    /** Generic method to insert a 1-cell, either in a 2-cell (cf. insert_cell_1_in_cell_2)
+     *  or between two different 2-cells (cf. insert_cell_1_between_two_cells_2).
+     *  Indeed the code is the same, except for the group/degroup attribute.
+     *  merge is true if adart1 and adart2 belongs to two different facets; in this case
+     *        the two facets should be merged (they are now linked by the new edge);
+     *  merge is false it adart1 and adart2 belongs to the same facet; in this case
+     *        the facet is split in two.
+     *  Internal method not supposed to be called by users.
+     */
+    Dart_descriptor generic_insert_cell_1(Dart_descriptor adart1,
+                                          Dart_descriptor adart2,
+                                          bool merge,
+                                          bool update_attributes)
+    {
       size_type m1=get_new_mark();
       CMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, m1);
 
@@ -4492,7 +4562,7 @@ namespace CGAL {
         }
         this->template basic_link_beta_for_involution<2>(d2, d1);
 
-        for ( unsigned int dim=3; dim<=dimension; ++dim)
+        for (unsigned int dim=3; dim<=dimension; ++dim)
         {
           if ( !is_free(it1, dim) &&
                is_marked(beta(it1, dim), treated) )
@@ -4509,7 +4579,19 @@ namespace CGAL {
 
       if (are_attributes_automatically_managed() && update_attributes)
       {
-        internal::Degroup_attribute_functor_run<Self, 2>::run(*this, d1, d2);
+        if(merge)
+        { // Here we group all enabled attributes starting from 2 to dimension
+          Helper::template Foreach_enabled_attributes
+            <internal::Group_attribute_functor<Self>, 2>::run(*this, adart1, adart2);
+          // And we need to group also beta_i(adart1) and beta_i(adart2) for all
+          // enabled attributes starting from 3 dimension. Indeed when two i-cells
+          // are grouped for adart1 and adart2, this group also all beta_j two by two
+          // except for beta_i.
+          Helper::template Foreach_enabled_attributes
+            <internal::Group_neighboor_attribute<Self>, 3>::run(*this, adart1, adart2);
+        }
+        else // Here we degroup 2-attributes
+        { internal::Degroup_attribute_functor_run<Self, 2>::run(*this, adart1, adart2); }
       }
 
       negate_mark(m1);

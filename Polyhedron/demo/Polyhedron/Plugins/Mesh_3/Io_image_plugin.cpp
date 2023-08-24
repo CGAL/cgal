@@ -68,7 +68,7 @@
 #include <CGAL/Three/Three.h>
 
 #include <boost/type_traits.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/filesystem.hpp>
 
 #include <cassert>
@@ -120,13 +120,13 @@ Q_SIGNALS:
   void x(QString);
 
 public:
-  void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
-  void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
+  void setIC(const IntConverter& x) { ic = x; fc = std::optional<DoubleConverter>(); }
+  void setFC(const DoubleConverter& x) { fc = x; ic = std::optional<IntConverter>(); }
   void setViewer(Viewer_interface* viewer) { this->viewer = viewer; }
 
 private:
-  boost::optional<IntConverter> ic;
-  boost::optional<DoubleConverter> fc;
+  std::optional<IntConverter> ic;
+  std::optional<DoubleConverter> fc;
   Viewer_interface* viewer;
   void getPixel(const QPoint& e)
   {
