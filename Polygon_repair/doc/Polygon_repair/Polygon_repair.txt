@@ -9,15 +9,14 @@ namespace CGAL {
 
 \section SectionPolygonRepair_Introduction Introduction
 
-This package implements a polygon repair method based on a constrained
-triangulation \cgalCite{ledoux2014triangulation}. Starting from a possibly invalid input
-in the form of a polygon, polygon with holes or multipolygon with holes,
-the method performs a constrained triangulation of the input edges, labels
-each triangle according to what it represents (exterior, polygon interior
-or hole), and reconstructs the polygon(s) represented by the triangulation.
-The method returns a valid output stored in a multipolygon with holes.
+This package implements a polygon repair method. Starting from possibly
+invalid input in the form of a polygon, polygon with holes or multipolygon
+with holes, the method computes an arrangement of the input edges, labels
+each face according to what it represents (exterior, polygon interior
+or hole), and reconstructs the polygon(s) represented by the arrangement.
+The method returns valid output stored in a multipolygon with holes.
 
-Different triangulation and labelling heuristics are possible, but
+Different arrangement and labelling heuristics are possible, but
 currently only the odd-even heuristic is implemented in the package.
 This heuristic results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
@@ -56,6 +55,8 @@ Valid: (a) polygon, (b-c) polygons with holes, (d-e) multipolygons with holes.
 (c) and (e) show cases where boundaries intersect tangentially at a single vertex.
 \cgalFigureEnd
 
+FIGURE with invalid
+
 \subsection SubsectionPolygonRepair_Output Stricter Conditions for Output
 
 The conditions listed above are sufficient to define valid polygons, polygons
@@ -78,64 +79,50 @@ lexicographic order
 
 Broadly, the algorithm consists of three steps:
 
--# <B>Constrained triangulation</B>: the edges in the polygon, polygon with
-holes or multipolygon with holes are added as constraints in the triangulation.
--# <B>Labeling of the faces</B>: sets of faces forming contiguous regions that
-are accessible from each other by following adjacency relationships without
-passing through a constrained edge are labeled with ids according to
-what they represent (exterior, polygon interior or hole). The faces iteratively
-adjacent to the infinite face without passing through a constrained edge are
-labeled as the exterior.
--# <B>Reconstruction of the multipolygon</B>: each boundary of each polygon
-with holes is reconstructed by finding a polygon interior triangle that is
-adjacent to the exterior or a hole, then following the boundary in an
-orientation that is counter-clockwise for outer boundaries and clockwise for
-inner boundaries. This orientation and the polygon interior id is used to
-determine what polygon with holes it belongs to and whether it is an outer or
-an inner boundary.
+-# <em>Arrangement</em>: the edges in the polygon, polygon with
+holes or multipolygon with holes are added as edges in the arrangement.
+-# <em>Labeling of the faces</em>: the resulting faces are labeled with ids
+according to what they represent (exterior, polygon interior or hole).
+-# <em>Reconstruction of the multipolygon</em>: each boundary is reconstructed,
+then these are assembled into individual polygons with holes and put into a
+single multipolygon with holes.
 
 FIGURE
 
-\subsection SubsectionPolygonRepair_Triangulation Constrained triangulation
+\subsection SubsectionPolygonRepair_Arrangement Arrangement
 
 For the purposes of the repair operation, the input polygon, polygon with holes
 or multipolygon is merely used as a container of input line segments. These line
-segments are added to the constrained triangulation as constraints.
+segments are added to the arrangement as edges. Internally, this is done using
+a constrained triangulation where they added as constraints.
 
 With the odd-even heuristic, only the edges that are present an odd number of
-times in the input will be constrained edges in the triangulation.
+times in the input will be edges in the final arrangement.
 When these edges are only partially overlapping, only the parts that overlap
-an odd number of times will be constrained edges in the triangulation.
+an odd number of times will be edges in the final arrangement.
 
 This procedure is done in two steps: 1. preprocessing to eliminate identical
-edges that are present an even number of times, and 2. an odd-even constraint
-counting mechanism that erases existing constraints when new overlapping ones
-are added.
+edges that are present an even number of times, and 2. adding edges incrementally
+while applying an odd-even counting mechanism, which erases existing (parts of)
+edges when new overlapping ones are added.
 
 \subsection SubsectionPolygonRepair_Labeling Labeling
 
-First, all of the polygon exterior is labeled. For this, the faces that can be
-accessed by following the adjacency relationships from the infinite face without
-passing through a constrained edge are labeled as exterior faces.
+First, the polygon exterior is labeled. For this, all of the faces that can be
+accessed from the exterior without passing through an edge are labeled as exterior
+faces.
 
-Then, with the odd-even heuristic, groups of faces that are adjacent to each other
-without passing through a constrained edge are labeled. The label applied alternates
-between polygon interior and hole every time that a constrained edge is passed.
+Then, all other faces are labeled. For the odd-even heuristic, the label applied
+alternates between polygon interior and hole every time that an edge is passed.
 
 \subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the multipolygon
 
-The algorithm reconstructs the multipolygon boundary by boundary, repeating the
-process until all boundaries have been reconstructed.
-Starting from a triangulation face with a polygon interior label that is adjacent
-to a face with an exterior or hole label, the boundary of the polygon that contains
-the edge between the two triangles is reconstructed.
-The successive edges of the boundary is obtained by rotating counter-clockwise
-around their common vertex, resulting in counter-clockwise cycles for outer
-boundaries and clockwise cycles for inner boundaries.
-
-Finally, the boundaries are assembled into multipolygons using the unique labels
-to know which polygon inner/outer boundaries belong to, and using the orientation
-to distinguish between outer and inner boundaries.
+The algorithm reconstructs the multipolygon boundary by boundary, obtaining
+counter-clockwise cycles for outer boundaries and clockwise cycles for inner
+boundaries. Once all boundaries have been reconstructed, the boundaries are assembled
+into multipolygons using the face labels to know which polygon with holes inner/outer
+boundaries belong to, and using the orientation to distinguish between the outer and
+inner boundaries of each polygon with holes.
 
 \subsection SubsectionPolygonRepair_Notes Notes on the Output
 
@@ -152,37 +139,6 @@ with holes has zero holes and extract these if needed.
 
 \section SectionPolygonRepair_Examples Examples
 
-\subsection SubsectionPolygonRepair_Multipolygon The multipolygon with holes class
-
-The following example shows the creation of a multipolygon with holes and the traversal
-of the polygons in it.
-
-\cgalExample{Polygon_repair/multipolygon.cpp}
-
-\subsection SubsectionPolygonRepair_WKTDraw Draw a multipolygon
-
-A multipolygon with holes can be visualized by calling the \link PkgPolygonRepairRef
-CGAL::draw<MPH>() \endlink function as shown in the following example.
-This function opens a new window showing the given polygon. A call to this function
-is blocking, that is the program continues as soon as the user closes the window.
-Versions for polygons and polygons with holes also exist, cf. \link PkgDrawPolygon2
-CGAL::draw<P>() \endlink and \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink.
-
-The multipolygon with holes shown in this example is created using the well-known text
-(WKT) reader, which can read and write multipolygons with holes.
-
-\cgalExample{Polygon_repair/draw_multipolygon.cpp}
-
-This function requires `CGAL_Qt5`, and is only available if the macro
-`CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target
-`CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition
-`CGAL_USE_BASIC_VIEWER`.
-
-\cgalFigureBegin{draw_multipolygon, draw_multipolygon.png}
-Result of the run of the draw_multipolygon program. A window shows the multipolygon
-with holes and allows to navigate through the scene.
-\cgalFigureEnd
-
 \subsection SubsectionPolygonRepair_Repair Repairing a (multi)polygon
 
 It's possible to repair a polygon, polygon with holes or multipolygon with holes
@@ -197,20 +153,19 @@ a hole.
 
 \cgalExample{Polygon_repair/repair_polygon_2.cpp}
 
-\subsection SubsectionPolygonRepair_RepairHiddenApi Step by step repairing
-
-The following example shows to do the repair process step by step, including how
-to extract the labeled triangulation, which is written as a GeoJSON file consisting
-of the individual triangles with their labels.
-
-\cgalFigureBegin{triangulation, triangulation.png}
-(a) A multipolygon consisting of two polygons with one hole each, where one polygon
-is inside the hole of the other (b) The labeled triangulation of the multipolygon
-\cgalFigureEnd
-
-\cgalExample{Polygon_repair/write_labeled_triangulation.cpp}
-
 \section SectionPolygonRepair_Performance Performance
+
+\section SectionPolygonRepair_History History
+
+The polygon repair method as originally developed is described by Ledoux et al.
+\cgalCite{ledoux2014triangulation} and implemented in the <em>prepair</em> software.
+This package is a reimplementation of the method with a new approach to label
+and reconstruct the multipolygons. It also incorporates improvements later
+added to prepair, such as the application of the odd-even counting heuristic
+to edges.
+
+Ken Arroyo Ohori made a prototype version of this package for the Google Summer of
+Code 2023 under the mentorship of Sébastien Loriot and Andreas Fabri.
 
 */
 } /* namespace CGAL */
