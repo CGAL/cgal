@@ -124,7 +124,9 @@ include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
 
 if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
   # Do not use -isystem for CGAL include paths
-  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+  if(CMAKE_VERSION VERSION_LESS 3.25)
+    set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+  endif()
 endif()
 
 foreach(comp ${CGAL_FIND_COMPONENTS})
@@ -179,6 +181,12 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
   set(WITH_${cgal_lib} TRUE)
   if(${cgal_lib}_FOUND AND NOT TARGET ${cgal_lib})
     add_library(${cgal_lib} INTERFACE IMPORTED GLOBAL)
+    if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
+      # Do not use -isystem for CGAL include paths
+      if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.25)
+        set_target_properties(${cgal_lib} PROPERTIES SYSTEM FALSE)
+      endif()
+    endif()
     if(NOT TARGET CGAL::${cgal_lib})
       add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
     endif()
