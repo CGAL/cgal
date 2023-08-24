@@ -623,7 +623,7 @@ protected:
       CGAL::QGLViewer* viewer = getViewerUnderCursor();
 
       is_ready_to_highlight = !cut_highlighting;
-      hl_pos = viewer->mapFromGlobal(mouse_event->globalPos());
+      hl_pos = viewer->mapFromGlobal(mouse_event->globalPosition()).toPoint();
       QTimer::singleShot(0, this, SLOT(highlight()));
     }//end MouseMove
     return false;

@@ -131,7 +131,7 @@ private Q_SLOTS:
             this, &DoTreesIntersectplugin::update_trees);
     col_det = new CGAL::Rigid_triangle_mesh_collision_detection<SMesh>();
     col_det->reserve(items.size());
-    Q_FOREACH(Scene_movable_sm_item* item, items)
+    for(Scene_movable_sm_item* item: items)
     {
       col_det->add_mesh(*item->getFaceGraph());
     }

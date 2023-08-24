@@ -59,8 +59,8 @@ public:
     positions_lines.resize(0);
     for(auto e : edges(*sm_ptr))
     {
-      const Point& a = get(vpm, target(halfedge(e, *sm_ptr), *sm_ptr));
-      const Point& b = get(vpm, target(opposite(halfedge(e, *sm_ptr), *sm_ptr), *sm_ptr));
+      const Point a = get(vpm, target(halfedge(e, *sm_ptr), *sm_ptr));
+      const Point b = get(vpm, target(opposite(halfedge(e, *sm_ptr), *sm_ptr), *sm_ptr));
 
       positions_lines.push_back(a.x() - center_.x);
       positions_lines.push_back(a.y() - center_.y);

@@ -345,7 +345,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
 
         for(fg_halfedge_descriptor he : halfedges_around_face(halfedge(f,*polyhedron()), *polyhedron()))
         {
-          const Point& p = get(vpm,target(he,*poly));
+          const Point p = get(vpm,target(he,*poly));
           p_facets.push_back(p.x()+offset.x);
           p_facets.push_back(p.y()+offset.y);
           p_facets.push_back(p.z()+offset.z);
@@ -357,9 +357,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         Vector nf = get(nf_pmap, f);
         {
           //1st half-quad
-          const Point& p0 = get(vpm,target(halfedge(f,*poly),*poly));
-          const Point& p1 = get(vpm,target(next(halfedge(f,*poly),*poly),*poly));
-          const Point& p2 = get(vpm,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
+          const Point p0 = get(vpm,target(halfedge(f,*poly),*poly));
+          const Point p1 = get(vpm,target(next(halfedge(f,*poly),*poly),*poly));
+          const Point p2 = get(vpm,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
 
           push_back_xyz(p0+v_offset, p_facets);
           push_back_xyz(p1+v_offset, p_facets);
@@ -371,9 +371,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         }
         {
           //2nd half-quad
-          const Point& p0 = get(vpm, target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
-          const Point& p1 = get(vpm, target(prev(halfedge(f,*poly),*poly),*poly));
-          const Point& p2 = get(vpm, target(halfedge(f,*poly),*poly));
+          const Point p0 = get(vpm, target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
+          const Point p1 = get(vpm, target(prev(halfedge(f,*poly),*poly),*poly));
+          const Point p2 = get(vpm, target(halfedge(f,*poly),*poly));
 
           push_back_xyz(p0+v_offset, p_facets);
           push_back_xyz(p1+v_offset, p_facets);
@@ -394,8 +394,8 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
     {
 
         for(Selection_set_edge::const_iterator it = p_sel_edges.begin(); it != p_sel_edges.end(); ++it) {
-          const Point& a = get(vpm, target(halfedge(*it,*poly),*poly));
-          const Point& b = get(vpm, target(opposite((halfedge(*it,*poly)),*poly),*poly));
+          const Point a = get(vpm, target(halfedge(*it,*poly),*poly));
+          const Point b = get(vpm, target(opposite((halfedge(*it,*poly)),*poly),*poly));
             p_lines.push_back(a.x()+offset.x);
             p_lines.push_back(a.y()+offset.y);
             p_lines.push_back(a.z()+offset.z);
@@ -668,7 +668,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_vertex temp_select = selected_vertices;
     select_all();
-    Q_FOREACH(fg_vertex_descriptor vh, temp_select)
+    for(fg_vertex_descriptor vh: temp_select)
     {
       selected_vertices.erase(vh);
     }
@@ -678,7 +678,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_edge temp_select = selected_edges;
     select_all();
-    Q_FOREACH(fg_edge_descriptor ed , temp_select)
+    for(fg_edge_descriptor ed: temp_select)
       selected_edges.erase(ed);
     break;
   }
@@ -686,7 +686,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_facet temp_select = selected_facets;
     select_all();
-    Q_FOREACH(fg_face_descriptor fh, temp_select)
+    for(fg_face_descriptor fh: temp_select)
       selected_facets.erase(fh);
     break;
   }

@@ -938,7 +938,7 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
   CGAL::qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
   constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
-  Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
+  for(Scene_edit_box_item::vertex*  selected_vertex: selected_vertices )
   {
     int id = selected_vertex->id;
     CGAL_assume(id<8);

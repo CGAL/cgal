@@ -123,7 +123,7 @@ public:
         Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
-        Q_FOREACH(SM_Tree *tree, sm_trees)
+        for(SM_Tree *tree: sm_trees)
         {
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
