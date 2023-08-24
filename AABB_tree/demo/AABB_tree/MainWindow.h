@@ -1,8 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QOpenGLWidget>
-#include <QJSEngine>
 #include <CGAL/Qt/DemosMainWindow.h>
 
 class QDragEnterEvent;
@@ -13,38 +11,6 @@ namespace Ui {
   class MainWindow;
 }
 
-#if 0
-
-struct Foo : public QObject
-{
-
-  Q_OBJECT
-public:
-  QJSEngine* myEngine;
-
-  Foo()
-    : myEngine(new QJSEngine(this))
-  {
-      QJSValue baz = myEngine->newQObject(this);
-      myEngine->.globalObject().setProperty("baz", baz);
-  }
-
-  void bar()
-  {
-      std::cout << "bar()" << std::endl;
-      myEngine->evaluate("baz.hello()");
-  }
-
-public slots:
-  void hello() const // if not a slot it must be
-  {
-    std::cout << "called hello()" << std::endl;
-  }
-
-};
-#endif
-
-
 class MainWindow :
   public CGAL::Qt::DemosMainWindow
 {
@@ -54,8 +20,6 @@ public:
   ~MainWindow();
 
   public slots:
-
-    void hello() const;
     void updateViewerBBox();
     void open(QString filename);
     void setAddKeyFrameKeyboardModifiers(Qt::KeyboardModifiers);
@@ -113,7 +77,6 @@ public:
       void on_actionView_cutting_plane_triggered();
 
 private:
-  QJSEngine* myEngine;
   Scene* m_pScene;
   Viewer* m_pViewer;
   Ui::MainWindow* ui;

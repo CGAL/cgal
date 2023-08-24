@@ -8,52 +8,28 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
-# Include this package's headers first
-include_directories(BEFORE ./ ./include)
 
 # Find CGAL and CGAL Qt6
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets Widgets OpenGL Qml)
+find_package(Qt6 QUIET COMPONENTS Gui)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   qt6_wrap_ui(UI_FILES MainWindow.ui)
 
-  include(AddFileDependencies)
-
   qt6_generate_moc("MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp")
-  add_file_dependencies(MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h")
-
   qt6_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
-  add_file_dependencies(Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h")
-
   qt6_generate_moc("Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp")
-  add_file_dependencies(Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h")
 
   qt6_add_resources(CGAL_Qt6_RESOURCE_FILES AABB_demo.qrc)
 
-  add_file_dependencies(
-    AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp")
-
   add_executable(
     AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt6_RESOURCE_FILES}
-    #${CGAL_Qt6_MOC_FILES}
   )
   # Link with Qt libraries
-  target_link_libraries(AABB_demo PRIVATE Qt6::OpenGLWidgets Qt6::Widgets Qt6::OpenGL Qt6::Qml
+  target_link_libraries(AABB_demo PRIVATE Qt6::Gui
                                           CGAL::CGAL CGAL::CGAL_Qt6)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS AABB_demo)
