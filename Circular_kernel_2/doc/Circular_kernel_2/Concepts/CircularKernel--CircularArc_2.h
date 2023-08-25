@@ -5,9 +5,7 @@
 
 Concept for arcs of circles.
 
-\cgalRefines CopyConstructible
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModel `CGAL::Circular_arc_2<CircularKernel>`
 

@@ -16,8 +16,7 @@ in case of a multi-domain.
 Moreover, this concept adds four markers per cell to mark the facets
 of the triangulation that are surface facets.
 
-\cgalRefines `TriangulationCellBase_3 `
-\cgalRefines `CopyConstructible`
+\cgalRefines{TriangulationCellBase_3,CopyConstructible}
 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3`
 \cgalHasModel `CGAL::Mesh_cell_base_3`

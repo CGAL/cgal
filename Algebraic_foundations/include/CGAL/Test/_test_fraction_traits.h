@@ -37,11 +37,11 @@ void test_fraction_traits(){
     typedef typename FT::Compose   Compose;
 
     CGAL_USE_TYPE(Is_fraction);
-    CGAL_static_assertion( (::std::is_same<Type,T>::value));
-    CGAL_static_assertion( (::std::is_same<Is_fraction,Tag_true>::value));
-    CGAL_static_assertion(!(::std::is_same<Common_factor,Null_functor>::value));
-    CGAL_static_assertion(!(::std::is_same<Decompose,Null_functor>::value));
-    CGAL_static_assertion(!(::std::is_same<Compose,Null_functor>::value));
+    static_assert(::std::is_same<Type,T>::value);
+    static_assert(::std::is_same<Is_fraction,Tag_true>::value);
+    static_assert(!::std::is_same<Common_factor,Null_functor>::value);
+    static_assert(!::std::is_same<Decompose,Null_functor>::value);
+    static_assert(!::std::is_same<Compose,Null_functor>::value);
 
 
     // Decompose

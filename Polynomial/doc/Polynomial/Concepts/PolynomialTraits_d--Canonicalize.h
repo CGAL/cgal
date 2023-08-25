@@ -20,9 +20,7 @@ For all other cases the notion of uniqueness is up to the concrete model.
 
 Note that the computed polynomial has the same zero set as the given one.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

@@ -4,7 +4,7 @@
 
 The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map.
 
-\cgalRefines `GenericMap`
+\cgalRefines{GenericMap}
 
 \cgalHasModel \link CGAL::Combinatorial_map `CGAL::Combinatorial_map<d,Items,Alloc>`\endlink
 

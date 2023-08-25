@@ -19,7 +19,7 @@ include_directories(BEFORE ./ ./include)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # Find Qt5 itself
-find_package(Qt5 5.4 QUIET COMPONENTS OpenGL)
+find_package(Qt5 5.4 QUIET COMPONENTS Widgets)
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -68,8 +68,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_executable(Otr2_demo ${SRCS} ${CGAL_Qt5_MOC_FILES} ${UI_FILES}
                            ${CGAL_Qt5_RESOURCE_FILES})
 
-  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui
-                                          Qt5::OpenGL)
+  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 
   # Link with pthread if necessary
   if(CIMG_INCLUDE_DIR)

@@ -3,8 +3,7 @@
 \ingroup PkgPeriodic3Triangulation3Concepts
 \cgalConcept
 
-\cgalRefines `RegularTriangulationCellBase_3`
-\cgalRefines `Periodic_3TriangulationDSCellBase_3`
+\cgalRefines{RegularTriangulationCellBase_3,Periodic_3TriangulationDSCellBase_3}
 
 \cgalHasModel `CGAL::Regular_triangulation_cell_base_3<Periodic_3RegularTriangulationTraits_3,
                                                        Periodic_3_triangulation_ds_cell_base_3< > >`

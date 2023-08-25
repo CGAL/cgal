@@ -7,7 +7,7 @@ The concept `SurfaceMeshShortestPathTraits` describes the types,
 predicates, and constructions required by the traits class parameter of
 `CGAL::Surface_mesh_shortest_path`.
 
-\cgalRefines `CopyConstructible` and `Assignable`
+\cgalRefines{CopyConstructible,Assignable}
 \cgalHasModel `CGAL::Surface_mesh_shortest_path_traits<K,P>`
 
 */
@@ -152,7 +152,7 @@ public:
   /*!
   Function object type.
   Must provide
-  `boost::optional< boost::variant< T... > > operator()(A obj1, B obj2)`
+  `std::optional< std::variant< T... > > operator()(A obj1, B obj2)`
   to compute the intersection between `obj1` and `obj2`, where `A` and `B` can be any type amongst
   `Line_2`, `Ray_2`, `Segment_2`.
   */

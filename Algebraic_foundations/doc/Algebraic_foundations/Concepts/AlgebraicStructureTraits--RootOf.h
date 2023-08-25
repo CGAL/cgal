@@ -8,7 +8,7 @@ namespace AlgebraicStructureTraits_{
 `AdaptableFunctor` computes a real root of a square-free univariate
 polynomial.
 
-\cgalRefines `AdaptableFunctor`
+\cgalRefines{AdaptableFunctor}
 
 \sa `FieldWithRootOf`
 \sa `AlgebraicStructureTraits`

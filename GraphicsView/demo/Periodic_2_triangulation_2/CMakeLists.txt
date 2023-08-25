@@ -12,7 +12,7 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -49,7 +49,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                      Periodic_2_Delaunay_triangulation_2)
 
   target_link_libraries(Periodic_2_Delaunay_triangulation_2
-                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Periodic_2_Delaunay_triangulation_2)

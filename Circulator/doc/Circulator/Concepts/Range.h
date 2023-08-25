@@ -29,8 +29,7 @@ Finally, let us note that ranges, in general (especially in template context)
 need to be passed and returned by (const) reference for efficiency. This is a
 difference with iterators which are typically passed by value.
 
-\cgalRefines `ConstRange`
-\cgalRefines Boost's Range concept
+\cgalRefinesBare{ConstRange,Boost's %Range concept}
 
 \cgalHasModel STL containers
 

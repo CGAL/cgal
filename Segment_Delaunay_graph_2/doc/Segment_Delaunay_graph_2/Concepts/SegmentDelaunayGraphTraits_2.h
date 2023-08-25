@@ -4,7 +4,7 @@
 
 \cgalConcept
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines{TriangulationTraits_2}
 
 The concept `SegmentDelaunayGraphTraits_2` provides the traits
 requirements for the `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>` and

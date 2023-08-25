@@ -272,6 +272,21 @@ before_handle_event(Event* event)
     if (m_prev_minus_inf_x_event != nullptr)
       m_prev_minus_inf_x_event->set_halfedge_handle(m_lh->next());
     m_prev_minus_inf_x_event = event;
+
+    // If the event lies also on the top boundary, associate all curve indices
+    // of subcurves that "see" m_th from below with the top fictitious halfedge
+    // (m_th->next()).
+    if (ps_y == ARR_TOP_BOUNDARY) {
+      if (m_he_ind_map_p != nullptr) {
+        Indices_list& list_ref = (*m_he_ind_map_p)[m_th];
+        list_ref.clear();
+        list_ref.splice(list_ref.end(), m_subcurves_at_ubf);
+      }
+      else {
+        m_subcurves_at_ubf.clear();
+      }
+      CGAL_assertion(m_subcurves_at_ubf.empty());
+    }
     return;
 
    case ARR_RIGHT_BOUNDARY:

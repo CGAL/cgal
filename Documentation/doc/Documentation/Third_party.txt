@@ -6,16 +6,16 @@
 \section seccompilers Supported Compilers
 
 In order to build a program using \cgal, you need a \cpp compiler
-supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
+supporting C++17 or later.
 \cgal \cgalReleaseNumber is supported (continuously tested) for the following compilers/operating systems:
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 13.0.1 |
+| Linux            | \gnu `g++` 11.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 15.0.7 |
 | \ms Windows      | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | \ms Visual `C++` 14.0, 15.9, 16.10, 17.0 (\visualstudio 2015, 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
-| MacOS X          | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | \ms Visual `C++` 15.9, 16.10, 17.0 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
+| MacOS X          | \gnu `g++` 11.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
 |                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 13.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->

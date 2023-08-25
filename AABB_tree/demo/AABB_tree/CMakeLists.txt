@@ -24,7 +24,7 @@ include_directories(BEFORE ./ ./include)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Gui Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
@@ -53,7 +53,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     #${CGAL_Qt5_MOC_FILES}
   )
   # Link with Qt libraries
-  target_link_libraries(AABB_demo PRIVATE Qt5::OpenGL Qt5::Gui
+  target_link_libraries(AABB_demo PRIVATE Qt5::Widgets Qt5::OpenGL
                                           CGAL::CGAL CGAL::CGAL_Qt5)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS AABB_demo)

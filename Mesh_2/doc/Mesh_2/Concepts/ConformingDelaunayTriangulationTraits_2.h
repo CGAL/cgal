@@ -15,7 +15,7 @@ the concept `::FieldWithSqrt`. This field type and the
 constructors are used by the conforming algorithm to compute Steiner
 points on constrained edges.
 
-\cgalRefines `DelaunayTriangulationTraits_2`
+\cgalRefines{DelaunayTriangulationTraits_2}
 
 \cgalHasModel Any model of `Kernel` concept. In particular, all \cgal kernels
 \cgalHasModel `Projection_traits_xy_3<K>`

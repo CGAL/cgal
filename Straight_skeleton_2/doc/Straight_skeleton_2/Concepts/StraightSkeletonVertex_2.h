@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `HalfedgeDSVertex`
+\cgalRefines{HalfedgeDSVertex}
 
 The concept `StraightSkeletonVertex_2` describes the requirements for the vertex type of the
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSVertex` concept
@@ -26,7 +26,7 @@ The type of the 2D point being the geometric embedding of the vertex
 typedef unspecified_type Point_2;
 
 /*!
-A model of the `FieldWithSqrt` concept representing the time of a vertex (an Euclidean distance)
+A model of the `FieldWithSqrt` concept representing the time of a vertex (a Euclidean distance)
 */
 typedef unspecified_type FT;
 

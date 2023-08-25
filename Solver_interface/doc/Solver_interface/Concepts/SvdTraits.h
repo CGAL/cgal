@@ -86,8 +86,7 @@ public:
 \cgalConcept
 Concept of matrix type used by the concept `SvdTraits`.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{DefaultConstructible,Assignable}
 
 \cgalHasModel `CGAL::Eigen_matrix<T>`
 */

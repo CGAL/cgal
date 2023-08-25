@@ -490,7 +490,7 @@ struct Test
     std::set<double> ds;
     auto test = [&ds](S s1, S s2)
     {
-      P i = boost::get<P>(*CGAL::intersection(s1,s2));
+      P i = std::get<P>(*CGAL::intersection(s1,s2));
       ds.insert(CGAL::to_double(i.x())); ds.insert(CGAL::to_double(i.y()));
       assert(ds.size()==2);
     };
@@ -924,9 +924,9 @@ int main()
 {
   CGAL::Set_ieee_double_precision pfr;
 
-  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type > >().run();
   Test< CGAL::Cartesian<double>   >().run();
-  Test< CGAL::Homogeneous<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Homogeneous<CGAL::internal::Exact_field_selector<double>::Type > >().run();
   Test< CGAL::Exact_predicates_inexact_constructions_kernel >().run();
   Test< CGAL::Exact_predicates_exact_constructions_kernel >().run();
 }

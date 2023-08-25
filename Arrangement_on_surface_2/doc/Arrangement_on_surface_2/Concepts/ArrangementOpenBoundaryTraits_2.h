@@ -37,7 +37,7 @@
  * rectangle. When the parameter space is bounded, it is the exact geometric
  * embedding of the implicit bounding rectangle.
  *
- * \cgalRefines `ArrangementBasicTraits_2`
+ * \cgalRefines{ArrangementBasicTraits_2}
  *
  * \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
  * \cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`

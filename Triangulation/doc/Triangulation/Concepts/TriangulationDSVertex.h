@@ -34,7 +34,7 @@ that the `CGAL::Triangulation_data_structure`
 actually uses as a base class for the class
 of `CGAL::Triangulation_data_structure::Vertex`.
 
-\cgalRefines `TriangulationDataStructure::Vertex`
+\cgalRefines{TriangulationDataStructure::Vertex}
 
 \cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
 \cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`

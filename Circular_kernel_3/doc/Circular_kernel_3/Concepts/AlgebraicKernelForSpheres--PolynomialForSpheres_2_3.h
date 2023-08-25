@@ -9,9 +9,7 @@ of spheres, whose center's coordinates, as well as the square of the radius,
 are of a type that is a model of the concept
 `FieldNumberType`.
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModel CGAL::Polynomial_for_spheres_2_3
 

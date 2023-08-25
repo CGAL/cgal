@@ -46,7 +46,7 @@ is then approximated by a subdomain (resp. a surface patch) of the embedded comp
 while the curves and corners represent the \f$ 1\f$ and \f$ 0\f$-dimensional features
 of the input complex.
 
-\cgalRefines `MeshComplex_3InTriangulation_3`
+\cgalRefines{MeshComplex_3InTriangulation_3}
 
 \cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 

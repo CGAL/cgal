@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `HalfedgeDSHalfedge`
+\cgalRefines{HalfedgeDSHalfedge}
 
 The concept `StraightSkeletonHalfedge_2` describes the requirements for the halfedge type of the
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSHalfedge` concept.
@@ -42,6 +42,26 @@ StraightSkeletonHalfedge_2( int id );
 
 /// \name Access Functions
 /// @{
+
+/*!
+returns the ID of the halfedge
+*/
+int id() const;
+
+/*!
+resets the ID of the halfedge to `aID`
+*/
+void reset_id ( int aID );
+
+/*!
+returns the weight of the halfedge
+*/
+FT weight() const;
+
+/*!
+sets the weight of the halfedge to `aWeight`
+*/
+void set_weight( FT aWeight );
 
 /*!
 

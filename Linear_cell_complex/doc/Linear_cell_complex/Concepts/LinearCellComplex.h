@@ -5,7 +5,7 @@
 
 The concept `LinearCellComplex` represents a linear cell complex in dimension `d`, in an ambient space of dimension `d2`. This is a model of the concept of `GenericMap` adding a requirement to ensure that each vertex of the map is associated with a model of `CellAttributeWithPoint`.
 
-\cgalRefines `GenericMap`
+\cgalRefines{GenericMap}
 
 \cgalHasModel \link CGAL::Linear_cell_complex_for_combinatorial_map `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`\endlink
 \cgalHasModel \link CGAL::Linear_cell_complex_for_generalized_map `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`\endlink

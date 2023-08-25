@@ -5,7 +5,7 @@
 \ingroup PkgPeriodic4HyperbolicTriangulation2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationFaceBase_2`
+\cgalRefines{TriangulationFaceBase_2}
 
 A refinement of the concept `TriangulationFaceBase_2` that adds an interface for hyperbolic translations.
 

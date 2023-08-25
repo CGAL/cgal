@@ -37,7 +37,7 @@
 
 // boost --------------
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/make_shared.hpp>
 //---------------------
 
@@ -104,36 +104,36 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Shape_range;
-  ///< `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
+  ///< `Iterator_range` with a bidirectional constant iterator type with value type `std::shared_ptr<Shape>`.
   typedef unspecified_type Plane_range;
-  ///< `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Plane_shape>`.
+  ///< `Iterator_range` with a bidirectional constant iterator type with value type `std::shared_ptr<Plane_shape>`.
 #else
 
   struct Shape_range : public Iterator_range<
-          typename std::vector<boost::shared_ptr<Shape> >::const_iterator> {
+          typename std::vector<std::shared_ptr<Shape> >::const_iterator> {
     typedef Iterator_range<
-            typename std::vector<boost::shared_ptr<Shape> >::const_iterator> Base;
+            typename std::vector<std::shared_ptr<Shape> >::const_iterator> Base;
 
-    Shape_range(boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
+    Shape_range(std::shared_ptr<std::vector<std::shared_ptr<Shape> > >
                 extracted_shapes) : Base(make_range(extracted_shapes->begin(),
                                                     extracted_shapes->end())), m_extracted_shapes(extracted_shapes) {}
 
   private:
-    boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
+    std::shared_ptr<std::vector<std::shared_ptr<Shape> > >
             m_extracted_shapes; // keeps a reference to the shape vector
   };
 
   struct Plane_range : public Iterator_range<
-          typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> {
+          typename std::vector<std::shared_ptr<Plane_shape> >::const_iterator> {
     typedef Iterator_range<
-            typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> Base;
+            typename std::vector<std::shared_ptr<Plane_shape> >::const_iterator> Base;
 
-    Plane_range(boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
+    Plane_range(std::shared_ptr<std::vector<std::shared_ptr<Plane_shape> > >
                 extracted_shapes) : Base(make_range(extracted_shapes->begin(),
                                                     extracted_shapes->end())), m_extracted_shapes(extracted_shapes) {}
 
   private:
-    boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
+    std::shared_ptr<std::vector<std::shared_ptr<Plane_shape> > >
             m_extracted_shapes; // keeps a reference to the shape vector
   };
 
@@ -291,7 +291,7 @@ public:
     clear();
 
     m_extracted_shapes =
-            boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+            std::make_shared<std::vector<std::shared_ptr<Shape> > >();
 
     m_num_available_points = m_num_total_points = std::distance(
             m_input_iterator_first, m_input_iterator_beyond);
@@ -435,7 +435,7 @@ public:
     std::vector<int>().swap(m_shape_index);
 
     m_extracted_shapes =
-            boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+            std::make_shared<std::vector<std::shared_ptr<Shape> > >();
 
     m_num_available_points = m_num_total_points;
 
@@ -488,7 +488,7 @@ public:
 
     // Reset data structures possibly used by former search
     m_extracted_shapes =
-            boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+            std::make_shared<std::vector<std::shared_ptr<Shape> > >();
     m_num_available_points = m_num_total_points;
 
     for (std::size_t i = 0; i < m_num_subsets; i++) {
@@ -755,7 +755,7 @@ public:
 
         //1. add best candidate to final result.
         m_extracted_shapes->push_back(
-                boost::shared_ptr<Shape>(best_candidate));
+                std::shared_ptr<Shape>(best_candidate));
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
           clear(num_invalid, candidates);
@@ -874,7 +874,7 @@ public:
   /// @{
   /*!
     Returns an `Iterator_range` with a bidirectional iterator with value type
-    `boost::shared_ptr<Shape>` over the detected shapes in the order of detection.
+    `std::shared_ptr<Shape>` over the detected shapes in the order of detection.
     Depending on the chosen probability
     for the detection, the shapes are ordered with decreasing size.
   */
@@ -884,21 +884,21 @@ public:
 
   /*!
     Returns an `Iterator_range` with a bidirectional iterator with
-    value type `boost::shared_ptr<Plane_shape>` over only the
+    value type `std::shared_ptr<Plane_shape>` over only the
     detected planes in the order of detection.  Depending on the
     chosen probability for the detection, the planes are ordered
     with decreasing size.
   */
   Plane_range planes() const {
-    boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > > planes
-            = boost::make_shared<std::vector<boost::shared_ptr<Plane_shape> > >();
+    std::shared_ptr<std::vector<std::shared_ptr<Plane_shape> > > planes
+            = std::make_shared<std::vector<std::shared_ptr<Plane_shape> > >();
 
     for (std::size_t i = 0; i < m_extracted_shapes->size(); ++i) {
-      boost::shared_ptr<Plane_shape> pshape
-              = boost::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
+      std::shared_ptr<Plane_shape> pshape
+              = std::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
 
       // Ignore all shapes other than plane
-      if (pshape != boost::shared_ptr<Plane_shape>())
+      if (pshape != std::shared_ptr<Plane_shape>())
         planes->push_back(pshape);
     }
     return Plane_range(planes);
@@ -1218,7 +1218,7 @@ private:
   //give the index of the subset of point i
   std::vector<int> m_index_subsets;
 
-  boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > > m_extracted_shapes;
+  std::shared_ptr<std::vector<std::shared_ptr<Shape> > > m_extracted_shapes;
 
   std::vector<Shape *(*)()> m_shape_factories;
 

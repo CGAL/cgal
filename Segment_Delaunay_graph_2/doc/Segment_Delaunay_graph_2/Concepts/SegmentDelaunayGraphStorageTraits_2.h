@@ -13,9 +13,7 @@ only store handles to the points in the container.
 
 See section \ref Segment_Delaunay_graph_2StronglyIntersecting for more information.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalHasModel `CGAL::Segment_Delaunay_graph_storage_traits_2<K>`
 

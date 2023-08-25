@@ -17,7 +17,7 @@ traits class is
 also required to provide additional types
 to compute the squared distance between a point and a line
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines{TriangulationTraits_2}
 
 \cgalHasModel All \cgal Kernels
 \cgalHasModel `CGAL::Projection_traits_3<K>`
@@ -40,7 +40,7 @@ public:
 /*!
 A function object whose `operator()` computes the intersection of two segments.
 
-`boost::optional<boost::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
+`std::optional<std::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
 Returns the intersection of `s1` and `s2`.
 */
 typedef unspecified_type Intersect_2;
@@ -83,7 +83,7 @@ typedef unspecified_type Compute_squared_distance_2;
 A function object whose
 `operator()` computes the bounding box of a point.
 
-CGAL::Bbox_2 operator()(Point_2 p);` Returns the bounding box of `p`.
+`CGAL::Bbox_2 operator()(Point_2 p);` Returns the bounding box of `p`.
 The result type is `CGAL::Bbox_2` (even for projection traits classes).
 */
 typedef unspecified_type Compute_bounding_box_2;

@@ -90,7 +90,7 @@ namespace CGAL
           void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
                                                            PlaneIterator pend,
                                                            Polyhedron &P,
-                                                           boost::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> origin,
+                                                           std::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> origin,
                                                            const Traits & ch_traits) {
           typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
           typedef typename K::Point_3 Point;
@@ -101,8 +101,8 @@ namespace CGAL
             // find a point inside the intersection
             origin = halfspace_intersection_interior_point_3(pbegin, pend);
 
-            CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_with_constructions_3: problem when determining a point inside the intersection");
-            if (origin==boost::none)
+            CGAL_assertion_msg(origin!=std::nullopt, "halfspace_intersection_with_constructions_3: problem when determining a point inside the intersection");
+            if (origin==std::nullopt)
               return;
           }
 
@@ -134,7 +134,7 @@ namespace CGAL
           void halfspace_intersection_with_constructions_3 (PlaneIterator pbegin,
                                                             PlaneIterator pend,
                                                             Polyhedron &P,
-                                                            boost::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> const& origin = boost::none) {
+                                                            std::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> const& origin = std::nullopt) {
           typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
           typedef typename K::Point_3 Point_3;
           typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3>::type Traits;

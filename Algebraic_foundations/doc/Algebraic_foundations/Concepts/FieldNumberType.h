@@ -7,8 +7,7 @@ The concept `FieldNumberType` combines the requirements of the concepts
 A model of `FieldNumberType` can be used as a template parameter
 for Cartesian kernels.
 
-\cgalRefines `Field`
-\cgalRefines `RealEmbeddable`
+\cgalRefines{Field,RealEmbeddable}
 
 \cgalHasModel float
 \cgalHasModel double

@@ -60,7 +60,7 @@ bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 `SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied
 by a sparse matrix.
 
-\cgalRefines DefaultConstructible
+\cgalRefines{DefaultConstructible}
 
 \cgalHasModel `CGAL::Eigen_vector<T>`
 
@@ -127,8 +127,7 @@ NT& operator[](Index row);
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class.
 
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible
+\cgalRefines{Assignable,DefaultConstructible}
 
 \cgalHasModel `CGAL::Eigen_sparse_matrix<T>`
 \cgalHasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`

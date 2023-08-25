@@ -29,8 +29,7 @@
 #include <boost/none.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/remove_cv.hpp>
+#include <CGAL/Lazy_exact_nt.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -63,8 +62,8 @@ public:
 
 template<typename T>
 struct Has_result_type
-  : boost::integral_constant< bool,
-                              Has_result_type_helper< typename boost::remove_cv<T>::type>::value>
+  : std::integral_constant< bool,
+                              Has_result_type_helper< std::remove_cv_t<T>>::value>
 {};
 
 template <typename T>
@@ -178,7 +177,7 @@ private:
   // The case distinction goes as follows:
   // result_type == FT                              => NT
   // result_type == Object                          => Object
-  // result_type == boost::optional                 => OPTIONAL_    Only for Intersect_point_3_for_polyhedral_envelope which returns a handle for a singleton
+  // result_type == std::optional                 => OPTIONAL_    Only for Intersect_point_3_for_polyhedral_envelope which returns a handle for a singleton
   // result_type == Bbox_2 || result_type == Bbox_3 => BBOX
   // default                                        => NONE
   // no result_type                                 => NONE
@@ -188,13 +187,13 @@ private:
   // specializations inside a non-namespace scope.
   // The default implementation does some default handling,
   // the special cases are filtered by partial specializations.
-  template <typename Construction, typename Dummy = boost::none_t>
+  template <typename Construction, typename Dummy = std::nullopt_t>
   struct Lazy_wrapper_traits :
     boost::mpl::eval_if< internal::Has_result_type<Construction>,
-                         boost::mpl::eval_if< std::is_same< typename boost::remove_cv<
-                                                            typename boost::remove_reference<
+                         boost::mpl::eval_if< std::is_same< std::remove_cv_t<
+                                                            std::remove_reference_t<
                                                               typename internal::Lazy_result_type<Construction>::type
-                                                                  >::type >::type,
+                                                                  > >,
                                                             typename Approximate_kernel::FT>,
                                               boost::mpl::int_<NT>,
                                               boost::mpl::eval_if< std::is_same< typename internal::Lazy_result_type<Construction>::type,

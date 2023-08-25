@@ -1,4 +1,4 @@
-CGAL c3t3 Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+boost::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))
+CGAL c3t3 Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+std::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))
 3
 6
 10 11 12 0 0 7

@@ -4,7 +4,7 @@
 
 The concept `GeneralizedMap` defines a <I>d</I>-dimensional generalized map.
 
-\cgalRefines `GenericMap`
+\cgalRefines{GenericMap}
 
 \cgalHasModel \link CGAL::Generalized_map `CGAL::Generalized_map<d,Items,Alloc>`\endlink
 

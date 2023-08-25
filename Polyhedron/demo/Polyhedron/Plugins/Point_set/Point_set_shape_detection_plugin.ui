@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>495</width>
-    <height>552</height>
+    <width>501</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -236,6 +236,9 @@
         </item>
         <item>
          <widget class="DoubleEdit" name="m_probability_field">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -454,6 +457,22 @@
     <hint type="destinationlabel">
      <x>103</x>
      <y>214</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_probability_field</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>

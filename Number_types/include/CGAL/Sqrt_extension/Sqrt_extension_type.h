@@ -32,7 +32,7 @@
 #include <boost/operators.hpp>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Sqrt_extension_fwd.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <CGAL/NT_converter.h>
 
 #include <type_traits>
@@ -92,7 +92,7 @@ template <>
 class Interval_optional_caching< ::CGAL::Tag_true >
 {
 protected:
-  typedef boost::optional< std::pair<double,double> > Cached_interval;
+  typedef std::optional< std::pair<double,double> > Cached_interval;
   mutable Cached_interval interval_;
   void invalidate_interval() {interval_=Cached_interval();}
   bool is_cached() const {return (interval_?true:false);}
@@ -662,10 +662,6 @@ CGAL::Comparison_result
   // NT
   friend bool operator == (const Sqrt_extension& p, const NT& num)
     { return (p-num).is_zero();}
-  friend bool operator <  (const Sqrt_extension& p, const NT& num)
-    { return ( p.compare(num) == CGAL::SMALLER ); }
-  friend bool operator >  (const Sqrt_extension& p, const NT& num)
-    { return ( p.compare(num) == CGAL::LARGER ); }
 
   //CGAL_int(NT)
   friend bool operator == (const Sqrt_extension& p, CGAL_int(NT) num)
@@ -676,6 +672,19 @@ CGAL::Comparison_result
     { return ( p.compare(num) == CGAL::LARGER ); }
 };
 
+// The two operators are moved out of the class scope (where they were friends)
+// in order to work around a VC2017 compilation problem
+template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
+bool operator <  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+{
+    return (p.compare(num) == CGAL::SMALLER);
+}
+
+template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
+bool operator >  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+{
+    return (p.compare(num) == CGAL::LARGER);
+}
 /*!
  * Compute the square of a one-root number.
  */

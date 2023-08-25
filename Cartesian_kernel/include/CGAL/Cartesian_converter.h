@@ -30,6 +30,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <vector>
 #include <boost/mpl/lambda.hpp>
@@ -55,7 +56,7 @@ struct Default_converter {
 
 // Out will be a variant, source kernel and target kernel
 template<typename Converter, typename Output>
-struct Converting_visitor : boost::static_visitor<> {
+struct Converting_visitor{
   Converting_visitor(const Converter& conv, Output& out) : conv(&conv), out(&out) {}
   const Converter* conv;
   Output* out;
@@ -108,6 +109,12 @@ public:
         return n;
     }
 
+    Return_base_tag
+    operator()(Return_base_tag o) const
+    {
+        return o;
+    }
+
     const Bbox_2&
     operator()(const Bbox_2& b) const
     {
@@ -138,13 +145,13 @@ public:
     // from the sequence, transform with the type mapper and throw the
     // new list into a variant
     // visit to get the type, and copy construct inside the return type
-    template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+    template<typename ... U>
     typename
-    Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
+    Type_mapper< std::optional< std::variant< U ... > >,
                  K1, K2 >::type
-    operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+    operator()(const std::optional< std::variant< U ... > >& o) const {
       typedef typename
-        Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
+        Type_mapper< std::optional< std::variant< U ... > >,
                      K1, K2 >::type result_type;
       result_type res;
       if(!o) {
@@ -154,22 +161,22 @@ public:
 
       internal::Converting_visitor<Self, result_type>
         conv_visitor = internal::Converting_visitor<Self, result_type>(*this, res);
-      boost::apply_visitor(conv_visitor, *o);
+      std::visit(conv_visitor, *o);
       return res;
     }
 
-    template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+    template<typename ... U>
     typename
-    Type_mapper< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >,
+    Type_mapper< std::variant< U ... >,
                  K1, K2 >::type
-    operator()(const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > & o) const {
+    operator()(const std::variant< U ... > & o) const {
       typedef typename
-        Type_mapper< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >,
+        Type_mapper< std::variant< U ... >,
                      K1, K2 >::type result_type;
       result_type res;
       internal::Converting_visitor<Self, result_type>
         conv_visitor = internal::Converting_visitor<Self, result_type>(*this, res);
-      boost::apply_visitor(conv_visitor, o);
+      std::visit(conv_visitor, o);
       return res;
     }
 

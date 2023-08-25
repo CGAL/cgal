@@ -3,7 +3,7 @@
 \ingroup PkgTDS2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDataStructure_2::Face`
+\cgalRefines{TriangulationDataStructure_2::Face}
 
 The concept `TriangulationDSFaceBase_2` describes the requirements for
 the face base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`.

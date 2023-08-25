@@ -16,7 +16,7 @@ additionally store an offset for each vertex. Only the last three
 bits of each integer are required to be stored. The remaining part
 does not contain any information.
 
-\cgalRefines `TriangulationDSCellBase_3`
+\cgalRefines{TriangulationDSCellBase_3}
 
 \cgalHasModel `CGAL::Periodic_3_triangulation_ds_cell_base_3`
 

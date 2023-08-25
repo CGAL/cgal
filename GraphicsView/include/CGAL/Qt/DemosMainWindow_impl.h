@@ -38,7 +38,9 @@
 #include <QUrl>
 #include <QDesktopWidget>
 #include <QRegExp>
-#include <QSvgGenerator>
+#if QT_SVG_LIB
+#  include <QSvgGenerator>
+#endif
 #include <QtCore>
 #include <QtOpenGL>
 
@@ -159,6 +161,7 @@ DemosMainWindow::setupOptionsMenu(QMenu* menuOptions)
   actionUse_Antialiasing->setChecked(true);
 }
 
+#if QT_SVG_LIB
 CGAL_INLINE_FUNCTION
 void
 DemosMainWindow::setupExportSVG(QAction* action, QGraphicsView* view)
@@ -189,6 +192,7 @@ void DemosMainWindow::exportSVG()
   this->view->render(&painter);
   painter.end();
 }
+#endif // QT_SVG_LIB
 
 CGAL_INLINE_FUNCTION
 void

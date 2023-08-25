@@ -7,7 +7,7 @@ required by the algorithm class `CGAL::Straight_skeleton_builder_2` in its third
 
 \cgalHasModel `CGAL::Dummy_straight_skeleton_builder_2_visitor`
 
-\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
+\sa `CGAL::Straight_skeleton_builder_2`
 */
 class StraightSkeletonBuilder_2_Visitor {
 public:

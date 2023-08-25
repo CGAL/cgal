@@ -27,11 +27,8 @@ special construction for extensions of degree 2:
 
 - `CGAL::make_sqrt()`
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `FromIntConstructible`
-\cgalRefines `ImplicitInteroperable` with `RT`
-\cgalRefines `ImplicitInteroperable` with `FT`
+\cgalRefines{DefaultConstructible,CopyConstructible,FromIntConstructible,
+  ImplicitInteroperable with `RT`,ImplicitInteroperable with `FT`}
 
 \cgalHasModel `double` (not exact)
 \cgalHasModel `CGAL::Sqrt_extension`

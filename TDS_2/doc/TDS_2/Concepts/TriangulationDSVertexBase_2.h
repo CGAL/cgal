@@ -3,7 +3,7 @@
 \ingroup PkgTDS2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDataStructure_2::Vertex`
+\cgalRefines{TriangulationDataStructure_2::Vertex}
 
 The concept `TriangulationDSVertexBase_2` describes the requirements for the
 vertex base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`.

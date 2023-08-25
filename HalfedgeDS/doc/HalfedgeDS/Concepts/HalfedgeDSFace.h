@@ -21,8 +21,7 @@ halfedge data structure they must be derived from a base class `Base`
 where the modifying member functions are still public. (The protection
 can be bypassed by the user, but not by accident.)
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{CopyConstructible,DefaultConstructible}
 
 \cgalHasModel `CGAL::HalfedgeDS_face_base<Refs>`
 \cgalHasModel `CGAL::HalfedgeDS_face_min_base<Refs>`

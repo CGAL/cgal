@@ -88,6 +88,8 @@ public:
   result_type
   operator()(const Args&... args) const
   {
+
+#ifndef CGAL_EPICK_NO_INTERVALS
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
@@ -103,6 +105,7 @@ public:
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+#endif // CGAL_EPICK_NO_INTERVALS
     return ep(c2e(args)...);
   }
 };
@@ -154,6 +157,7 @@ public:
   result_type
   operator()(const Args&... args) const
   {
+#ifndef CGAL_EPICK_NO_INTERVALS
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
@@ -169,7 +173,7 @@ public:
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-
+#endif // CGAL_EPICK_NO_INTERVALS
     return call(args...);
   }
 };

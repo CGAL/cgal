@@ -5,7 +5,7 @@
 /// used in \link PMP_corefinement_grp corefinement-related functions \endlink to track
 /// the creation of new faces and new edges.
 ///
-/// \cgalRefines `CopyConstructible`
+/// \cgalRefines{CopyConstructible}
 /// \cgalHasModel `CGAL::Polygon_mesh_processing::Corefinement::Default_visitor`.
 
 class PMPCorefinementVisitor{

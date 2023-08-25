@@ -5,7 +5,7 @@
  * traits concept `ArrangementBasicTraits_2`. A model of this concept is able
  * to construct a curve from two points.
  *
- * \cgalRefines `ArrangementTraits_2`
+ * \cgalRefines{ArrangementTraits_2}
  *
  * \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
  * \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2`

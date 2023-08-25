@@ -63,10 +63,10 @@ void box_intersection_segment_tree_d(
   const NT sup = Box_intersection_d::box_limits<NT>::sup();
 
 #ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                 "Parallel_tag is enabled but TBB is unavailable.");
 #else // CGAL_LINKED_WITH_TBB
-  if(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+  if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
   {
     // Here is an illustration for n=2.
     //

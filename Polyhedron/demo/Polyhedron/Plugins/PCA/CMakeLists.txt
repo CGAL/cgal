@@ -8,9 +8,12 @@ qt5_wrap_ui(transformUI_FILES Transformation_widget.ui MeshOnGrid_dialog.ui)
 
 polyhedron_demo_plugin(affine_transform_plugin Affine_transform_plugin
                        ${transformUI_FILES} KEYWORDS PointSetProcessing)
-target_link_libraries(
-  affine_transform_plugin PUBLIC scene_surface_mesh_item scene_transform_item
-                                 scene_points_with_normal_item)
+target_link_libraries(affine_transform_plugin PUBLIC scene_surface_mesh_item
+                                                     scene_points_with_normal_item
+                                                     scene_aff_transformed_item
+                                                     scene_aff_transformed_point_set_item
+                                                     scene_aff_transformed_polygon_soup_item
+                                                     scene_aff_transformed_surface_mesh_item)
 
 polyhedron_demo_plugin(edit_box_plugin Edit_box_plugin)
 target_link_libraries(edit_box_plugin PUBLIC scene_edit_box_item
@@ -25,9 +28,10 @@ polyhedron_demo_plugin(create_bbox_mesh_plugin Create_bbox_mesh_plugin)
 target_link_libraries(create_bbox_mesh_plugin PUBLIC scene_surface_mesh_item)
 
 polyhedron_demo_plugin(create_obb_mesh_plugin Create_obb_mesh_plugin)
-target_link_libraries(
-  create_obb_mesh_plugin PUBLIC scene_surface_mesh_item scene_selection_item
-                                scene_points_with_normal_item)
+target_link_libraries(create_obb_mesh_plugin PUBLIC scene_surface_mesh_item
+                                                    scene_polygon_soup_item
+                                                    scene_selection_item
+                                                    scene_points_with_normal_item)
 
 qt5_wrap_ui(volumesUI_FILES Basic_generator_widget.ui)
 polyhedron_demo_plugin(
@@ -40,6 +44,6 @@ target_link_libraries(
 
      if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
        set_tests_properties(
-         compilation_of__create_obb_mesh_plugin
+         "compilation of  create_obb_mesh_plugin"
          PROPERTIES RESOURCE_LOCK Selection_test_resources)
      endif()

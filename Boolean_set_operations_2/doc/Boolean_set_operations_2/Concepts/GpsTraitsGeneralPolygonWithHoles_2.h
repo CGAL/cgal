@@ -5,9 +5,7 @@
 
 A model of this concept represents a general polygon with holes.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalGeneralizes `GeneralPolygonWithHoles_2`
 

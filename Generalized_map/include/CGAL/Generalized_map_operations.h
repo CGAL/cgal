@@ -73,7 +73,7 @@ namespace CGAL
     static size_t run(GMap& amap, typename GMap::Dart_descriptor adart,
                       bool update_attributes)
     {
-      CGAL_static_assertion ( i<GMap::dimension );
+      static_assert ( i<GMap::dimension );
       CGAL_assertion( (amap.template is_removable<i>(adart)) );
 
       size_t res = 0;
@@ -91,8 +91,9 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !amap.template is_free<i+1>(it) && dg1==amap.null_descriptor )
-        { dg1=it; dg2=amap.template alpha<i+1>(it); }
+        if (dg1==amap.null_descriptor && !amap.template is_free<i+1>(it) &&
+            !amap.template is_free<i>(amap.template alpha<i+1>(it)))
+        { dg1=it; dg2=amap.template alpha<i+1, i>(it); }
         amap.mark(it, mark);
         ++res;
       }
@@ -102,7 +103,7 @@ namespace CGAL
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::GMap_group_attribute_functor_run<GMap, i+1>::
-              run(amap, dg1, dg2);
+            run(amap, dg1, dg2, true); // true because dg1 will be deleted
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -136,6 +137,9 @@ namespace CGAL
               modified_darts.push_back(d2);
               amap.mark(d2, mark_modified_darts);
             }
+
+            internal::Set_dart_of_attribute_if_marked<GMap, i+1>::
+                run(amap, d1, mark);
           }
         }
       }
@@ -292,7 +296,7 @@ namespace CGAL
     static size_t run(GMap& amap, typename GMap::Dart_descriptor adart,
                       bool update_attributes)
     {
-      CGAL_static_assertion ( 1<=i && i<=GMap::dimension );
+      static_assert ( 1<=i && i<=GMap::dimension );
       CGAL_assertion( (amap.template is_contractible<i>(adart)) );
 
       size_t res = 0;
@@ -320,7 +324,7 @@ namespace CGAL
          // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
            CGAL::internal::GMap_group_attribute_functor_run<GMap,i-1>::
-               run(amap, dg1, dg2);
+               run(amap, dg1, dg2, true); // true because dg1 will be deleted
       }
 
       // During the operation, we store in modified_darts the darts modified
