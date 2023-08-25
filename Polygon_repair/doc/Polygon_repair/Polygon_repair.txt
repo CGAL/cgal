@@ -50,7 +50,7 @@ are allowed to intersect tangentially at their common vertices. Note that
 a valid polygon with holes can also be represented as a valid multipolygon
 with holes (with only one polygon).
 
-\cgalFigureBegin{multipolygons, multipolygons.png}
+\cgalFigureBegin{multipolygons, multipolygons.svg}
 Valid: (a) polygon, (b-c) polygons with holes, (d-e) multipolygons with holes.
 (c) and (e) show cases where boundaries intersect tangentially at a single vertex.
 \cgalFigureEnd
