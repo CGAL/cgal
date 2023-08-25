@@ -87,7 +87,7 @@ according to what they represent (exterior, polygon interior or hole).
 then these are assembled into individual polygons with holes and put into a
 single multipolygon with holes.
 
-FIGURE
+TABLE IN/OUT
 
 \subsection SubsectionPolygonRepair_Arrangement Arrangement
 
@@ -144,12 +144,6 @@ with holes has zero holes and extract these if needed.
 It's possible to repair a polygon, polygon with holes or multipolygon with holes
 using the odd-even rule by calling the `repair_odd_even` function as shown in the
 following example. This function returns a repaired multipolygon with holes.
-
-\cgalFigureBegin{bridge_edge, bridge_edge.png}
-(a) Before repair: A polygon with a single loop that implicitly creates a hole
-using a bridge edge (b) After repair: the same area represented as a polygon with
-a hole.
-\cgalFigureEnd
 
 \cgalExample{Polygon_repair/repair_polygon_2.cpp}
 
