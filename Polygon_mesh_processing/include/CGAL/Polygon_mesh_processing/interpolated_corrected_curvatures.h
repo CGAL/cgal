@@ -1037,6 +1037,8 @@ private:
 * By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
 * can choose which quantites to compute.
 *
+* \note This function depends on the \eigen 3.1 (or later) library.
+*
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
@@ -1127,6 +1129,8 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 *
 * computes the interpolated corrected mean curvature across the mesh `pmesh`.
 *
+* \note This function depends on the \eigen 3.1 (or later) library.
+*
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
 * `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `GT::FT` as value type.
@@ -1198,6 +1202,8 @@ void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
 *
 * computes the interpolated corrected Gaussian curvature across the mesh `pmesh`.
 *
+* \note This function depends on the \eigen 3.1 (or later) library.
+*
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
 * `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `GT::FT` as value type.
@@ -1267,6 +1273,8 @@ void interpolated_corrected_Gaussian_curvature(const PolygonMesh& pmesh,
 * \ingroup PMP_corrected_curvatures_grp
 *
 * computes the interpolated corrected principal curvatures and directions across the mesh `pmesh`.
+*
+* \note This function depends on the \eigen 3.1 (or later) library.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
@@ -1340,6 +1348,8 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 * computes the interpolated corrected curvatures at a vertex `v`.
 * By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
 * can choose which quantites to compute.
+*
+* \note This function depends on the \eigen 3.1 (or later) library.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
@@ -1426,6 +1436,8 @@ void interpolated_corrected_curvatures_one_vertex(const PolygonMesh& pmesh,
 * \ingroup PMP_corrected_curvatures_grp
 * computes the interpolated corrected mean curvature at vertex `v` of mesh `pmesh`.
 *
+* \note This function depends on the \eigen 3.1 (or later) library.
+*
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
@@ -1503,6 +1515,8 @@ interpolated_corrected_mean_curvature_one_vertex(const PolygonMesh& pmesh,
 * \ingroup PMP_corrected_curvatures_grp
 * computes the interpolated corrected Gaussian curvature at vertex `v` of mesh `pmesh`.
 *
+* \note This function depends on the \eigen 3.1 (or later) library.
+*
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
@@ -1579,6 +1593,8 @@ interpolated_corrected_Gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
 /**
 * \ingroup PMP_corrected_curvatures_grp
 * computes the interpolated corrected principal curvatures and directions at vertex `v` of mesh `pmesh`.
+*
+* \note This function depends on the \eigen 3.1 (or later) library.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
