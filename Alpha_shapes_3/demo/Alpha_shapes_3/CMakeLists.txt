@@ -7,9 +7,6 @@ project(Alpha_shapes_3_Demo)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 find_package(Qt6 QUIET COMPONENTS Widgets OpenGL)
@@ -18,13 +15,13 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
 
-  # ui file, created with Qt Designer
-  qt6_wrap_ui(uis MainWindow.ui)
+  # Instruct CMake to run moc/ui/rcc automatically when needed.
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Alpha_shape_3.qrc)
-
-  add_executable(Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis})
+  qt_add_executable(Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp
+                    MainWindow.ui Alpha_shape_3.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Alpha_shape_3)
 

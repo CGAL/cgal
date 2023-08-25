@@ -19,12 +19,12 @@ public:
   MainWindow(QWidget* parent = nullptr);
   ~MainWindow();
 
-  public slots:
+  public Q_SLOTS:
     void updateViewerBBox();
     void open(QString filename);
     void setAddKeyFrameKeyboardModifiers(Qt::KeyboardModifiers);
 
-    protected slots:
+    protected Q_SLOTS:
 
       // settings
       void quit();

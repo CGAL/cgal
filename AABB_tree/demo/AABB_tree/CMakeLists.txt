@@ -6,9 +6,6 @@ project(AABB_tree_Demo)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-
 # Find CGAL and CGAL Qt6
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
@@ -17,12 +14,16 @@ find_package(Qt6 QUIET COMPONENTS Gui OpenGL)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-  qt6_wrap_ui(UI_FILES MainWindow.ui)
+  add_definitions(-DQT_NO_KEYWORDS)
 
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES AABB_demo.qrc)
+  # Instruct CMake to run moc/ui/rcc automatically when needed.
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-  add_executable(
-    AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt6_RESOURCE_FILES}
+  qt_add_executable(
+    AABB_demo AABB_demo.cpp Scene.cpp benchmarks.cpp Viewer.cpp MainWindow.cpp
+    MainWindow.ui AABB_demo.qrc
   )
   # Link with Qt libraries
   target_link_libraries(AABB_demo PRIVATE Qt6::Gui Qt6::OpenGL
