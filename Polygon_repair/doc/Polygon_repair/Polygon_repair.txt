@@ -50,12 +50,14 @@ are allowed to intersect tangentially at their common vertices. Note that
 a valid polygon with holes can also be represented as a valid multipolygon
 with holes (with only one polygon).
 
-\cgalFigureBegin{multipolygons, multipolygons.svg}
-Valid: (a) polygon, (b-c) polygons with holes, (d-e) multipolygons with holes.
+\cgalFigureBegin{valid, valid.svg}
+Valid: (a) polygon, (b-c) polygons with holes, and (d-e) multipolygons with holes.
 (c) and (e) show cases where boundaries intersect tangentially at a single vertex.
 \cgalFigureEnd
 
-FIGURE with invalid
+\cgalFigureBegin{invalid, invalid.svg}
+Invalid: (a) self-intersecting polygon self-intersection, (b) self-touching polygon, (c-d) polygons with badly nested holes, (e) polygon with hole touching at edge, (f) polygon with hole that separates interior into two parts, (g) multipolygon with overlapping polygons, and (h) multipolygon with polygons that touch at an edge.
+\cgalFigureEnd
 
 \subsection SubsectionPolygonRepair_Output Stricter Conditions for Output
 
