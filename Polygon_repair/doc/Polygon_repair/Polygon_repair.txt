@@ -89,7 +89,9 @@ according to what they represent (exterior, polygon interior or hole).
 then these are assembled into individual polygons with holes and put into a
 single multipolygon with holes.
 
-TABLE IN/OUT
+\cgalFigureBegin{inout, inout.svg}
+Examples of polygons with holes (a-d) and multipolygons with holes (e-h) before (left) and after (right) being repaired.
+\cgalFigureEnd
 
 \subsection SubsectionPolygonRepair_Arrangement Arrangement
 
