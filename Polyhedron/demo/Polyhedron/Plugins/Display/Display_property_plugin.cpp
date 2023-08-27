@@ -22,11 +22,13 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <QAbstractItemView>
 #include <QAction>
 #include <QApplication>
 #include <QColor>
+#include <QSlider>
 #include <QColorDialog>
 #include <QInputDialog>
 #include <QMainWindow>
@@ -46,6 +48,8 @@
 #define ARBITRARY_DBL_MAX 1.0E+17
 
 using namespace CGAL::Three;
+
+
 
 Viewer_interface* (&getActiveViewer)() = Three::activeViewer;
 
@@ -97,6 +101,11 @@ private:
   {
     MIN_VALUE,
     MAX_VALUE
+  };
+
+  enum CurvatureType {
+    MEAN_CURVATURE,
+    GAUSSIAN_CURVATURE
   };
 
 public:
@@ -236,6 +245,14 @@ private:
       dock_widget->minBox->setRange(0, 360);
       dock_widget->minBox->setValue(0);
       dock_widget->maxBox->setRange(0, 360);
+      dock_widget->maxBox->setValue(0);
+    }
+    else if (property_name == "Interpolated Corrected Gaussian Curvature" || 
+             property_name == "Interpolated Corrected Mean Curvature")
+    {
+      dock_widget->minBox->setRange(-1000, 1000);
+      dock_widget->minBox->setValue(0);
+      dock_widget->maxBox->setRange(-1000, 1000);
       dock_widget->maxBox->setValue(0);
     }
     else if(property_name == "Scaled Jacobian")
@@ -432,11 +449,15 @@ private:
       dock_widget->propertyBox->addItems({"Smallest Angle Per Face",
                                           "Largest Angle Per Face",
                                           "Scaled Jacobian",
-                                          "Face Area"});
+                                          "Face Area",
+                                          "Interpolated Corrected Mean Curvature",
+                                          "Interpolated Corrected Gaussian Curvature"});
       property_simplex_types = { Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
-                                 Property_simplex_type::FACE };
+                                 Property_simplex_type::FACE,
+                                 Property_simplex_type::VERTEX,
+                                 Property_simplex_type::VERTEX };
       detectSMScalarProperties(*(sm_item->face_graph()));
     }
     else if(ps_item)
@@ -506,9 +527,14 @@ private:
   {
     CGAL_assertion(static_cast<std::size_t>(dock_widget->propertyBox->count()) == property_simplex_types.size());
 
+    const int property_index = dock_widget->propertyBox->currentIndex();
+
     // leave it flat if it was, otherwise set to flat+edges
-    if(sm_item->renderingMode() != Flat && sm_item->renderingMode() != FlatPlusEdges)
+    if(sm_item->renderingMode() != Flat && sm_item->renderingMode() != FlatPlusEdges && property_simplex_types.at(property_index) == Property_simplex_type::FACE)
       sm_item->setRenderingMode(FlatPlusEdges);
+
+    if(sm_item->renderingMode() != Gouraud && sm_item->renderingMode() != GouraudPlusEdges && property_simplex_types.at(property_index) == Property_simplex_type::VERTEX)
+      sm_item->setRenderingMode(GouraudPlusEdges);
 
     const std::string& property_name = dock_widget->propertyBox->currentText().toStdString();
     if(property_name == "Smallest Angle Per Face")
@@ -526,6 +552,14 @@ private:
     else if(property_name == "Face Area")
     {
       displayArea(sm_item);
+    }
+    else if(property_name == "Interpolated Corrected Mean Curvature")
+    {
+      displayCurvature(sm_item, MEAN_CURVATURE);
+    }
+    else if(property_name == "Interpolated Corrected Gaussian Curvature")
+    {
+      displayCurvature(sm_item, GAUSSIAN_CURVATURE);
     }
     else
     {
@@ -629,6 +663,8 @@ private:
     removeDisplayPluginProperty(item, "f:display_plugin_largest_angle");
     removeDisplayPluginProperty(item, "f:display_plugin_scaled_jacobian");
     removeDisplayPluginProperty(item, "f:display_plugin_area");
+    removeDisplayPluginProperty(item, "f:display_plugin_mean_curvature");
+    removeDisplayPluginProperty(item, "f:display_plugin_gaussian_curvature");
   }
 
   void displayExtremumAnglePerFace(Scene_surface_mesh_item* sm_item,
@@ -809,6 +845,32 @@ private:
     displaySMProperty<face_descriptor>("f:display_plugin_area", *sm);
   }
 
+  void displayCurvature(Scene_surface_mesh_item* sm_item,
+                        const CurvatureType curvature_type)
+  {
+    SMesh* sm = sm_item->face_graph();
+    if(sm == nullptr)
+      return;
+
+    bool not_initialized;
+    std::string tied_string = (curvature_type == MEAN_CURVATURE) ?
+      "v:display_plugin_mean_curvature" : "v:display_plugin_gaussian_curvature";
+
+    SMesh::Property_map<vertex_descriptor, double> vcurvature;
+    std::tie(vcurvature, not_initialized) = sm->add_property_map<vertex_descriptor, double>(tied_string, 0);
+
+    if (curvature_type == MEAN_CURVATURE)
+    {
+      CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature(*sm, vcurvature);
+    }
+    else if (curvature_type == GAUSSIAN_CURVATURE)
+    {
+      CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature(*sm, vcurvature);
+    }
+
+    displaySMProperty<vertex_descriptor>(tied_string, *sm);
+  }
+
 private:
   template<typename Functor>
   bool call_on_PS_property(const std::string& name,
@@ -964,6 +1026,10 @@ private:
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_scaled_jacobian", extremum);
       else if(property_name == "Face Area")
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_area", extremum);
+      else if(property_name == "Interpolated Corrected Mean Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_mean_curvature", extremum);
+      else if(property_name == "Interpolated Corrected Gaussian Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_gaussian_curvature", extremum);
       else if(property_simplex_types.at(property_index) == Property_simplex_type::VERTEX)
         zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, property_name, extremum);
       else if(property_simplex_types.at(property_index) == Property_simplex_type::FACE)
@@ -1298,7 +1364,10 @@ isSMPropertyScalar(const std::string& name,
   if(name == "f:display_plugin_smallest_angle" ||
      name == "f:display_plugin_largest_angle" ||
      name == "f:display_plugin_scaled_jacobian" ||
-     name == "f:display_plugin_area")
+     name == "f:display_plugin_area" ||
+     name == "f:display_plugin_mean_curvature" ||
+     name == "f:display_plugin_gaussian_curvature")
+
     return false;
 
   // the dispatch function does the filtering we want: if it founds a property
