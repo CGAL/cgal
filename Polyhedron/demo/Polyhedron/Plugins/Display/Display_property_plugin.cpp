@@ -247,7 +247,7 @@ private:
       dock_widget->maxBox->setRange(0, 360);
       dock_widget->maxBox->setValue(0);
     }
-    else if (property_name == "Interpolated Corrected Gaussian Curvature" || 
+    else if (property_name == "Interpolated Corrected Gaussian Curvature" ||
              property_name == "Interpolated Corrected Mean Curvature")
     {
       dock_widget->minBox->setRange(-1000, 1000);
