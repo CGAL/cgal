@@ -419,11 +419,13 @@ detect_corners_of_regions(
     for (vertex_descriptor v : line_vertices)
       if (vertex_count[v]==1)
       {
-#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
-        debug_corners << mesh.point(v) << "\n";
-#endif
         if (get(corner_id_map, v) == std::size_t(-1))
+        {
+#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
+          debug_corners << mesh.point(v) << "\n";
+#endif
           put(corner_id_map, v, cid++);
+        }
       }
   }
 
@@ -435,9 +437,19 @@ detect_corners_of_regions(
 #endif
     put(ecm, e, true);
     if (get(corner_id_map, source(e, mesh))==std::size_t(-1))
+    {
+#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
+      debug_corners << mesh.point(source(e, mesh)) << "\n";
+#endif
       put(corner_id_map, source(e, mesh), cid++);
+    }
     if (get(corner_id_map, target(e, mesh))==std::size_t(-1))
+    {
+#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
+      debug_corners << mesh.point(target(e, mesh)) << "\n";
+#endif
       put(corner_id_map, target(e, mesh), cid++);
+    }
   }
 
   return cid;
