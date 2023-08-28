@@ -946,7 +946,9 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary) {
 
   // Traverse the isolated vertices inside the face (if there exist any), and
   // check whether an isolated vertex lies on the curve.
-  for (auto iv_it = face->isolated_vertices_begin();
+  // MSVC17 requires an explicit (non-const) type for the iterator.
+  typename Arrangement_2::Isolated_vertex_iterator iv_it;
+  for (iv_it = face->isolated_vertices_begin();
        iv_it != face->isolated_vertices_end(); ++iv_it) {
     // If the isolated vertex is not in the x-range of our curve, disregard it.
     if (! is_in_x_range(m_cv, iv_it->point())) continue;
