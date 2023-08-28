@@ -373,15 +373,18 @@ detect_corners_of_regions(
 
   Line_region line_region(np.segment_map(pgraph.segment_map()));
 
-  Line_sorting line_sorting(
-    segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
-  line_sorting.sort();
-
-  RG_lines rg_lines(
-    segment_range, pgraph, line_region);
-
   std::vector< std::pair<typename Line_region::Primitive, std::vector<edge_descriptor> > > subregions; // TODO dump into pmap lines
-  rg_lines.detect(std::back_inserter(subregions));
+  if (!segment_range.empty())
+  {
+    Line_sorting line_sorting(
+      segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
+    line_sorting.sort();
+
+    RG_lines rg_lines(
+      segment_range, pgraph, line_region);
+
+    rg_lines.detect(std::back_inserter(subregions));
+  }
 
 #ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
   std::ofstream debug_corners("corners.xyz");
