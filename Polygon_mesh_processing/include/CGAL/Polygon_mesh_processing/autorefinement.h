@@ -292,8 +292,8 @@ void old_intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& 
 
   CGAL_kernel_assertion_code(int pt_added = 0;)
 
-  const typename Kernel::Point_3* prev = &(*boost::prior(inter_pts.end()));
-  Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : boost::prior(inter_pts.end());
+  const typename Kernel::Point_3* prev = &(*std::prev(inter_pts.end()));
+  Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : std::prev(inter_pts.end());
   for(Iterator it=inter_pts.begin(); it!=stop; ++it)
   {
     const typename Kernel::Point_3& curr = *it;

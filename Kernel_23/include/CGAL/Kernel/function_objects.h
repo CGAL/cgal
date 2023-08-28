@@ -2211,8 +2211,8 @@ namespace CommonKernelFunctors {
       Plane plane3 = construct_plane(p3, q3, r3);
 
       const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2221,8 +2221,8 @@ namespace CommonKernelFunctors {
     operator()(const Plane& plane1, const Plane& plane2, const Plane& plane3) const
     {
       const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2245,8 +2245,8 @@ namespace CommonKernelFunctors {
       Segment s2 = construct_segment(p2, q2);
 
       const auto res = typename K::Intersect_3()(s1, s2);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2255,8 +2255,8 @@ namespace CommonKernelFunctors {
     operator()(const Segment& s1, const Segment& s2) const
     {
       const auto res = typename K::Intersect_3()(s1, s2);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
