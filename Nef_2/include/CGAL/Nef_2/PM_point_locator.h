@@ -165,7 +165,6 @@ public:
   { CGAL_NEF_TRACEN("out_wedge "<<PV(v));
     CGAL_assertion(!is_isolated(v));
     collinear=false;
-    const Point& p = point(v);
     Halfedge_const_handle e_res = first_out_edge(v);
     Direction d_res = direction(e_res);
     Halfedge_around_vertex_const_circulator el(e_res),ee(el);
