@@ -21,6 +21,7 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Segment_set.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -51,6 +52,48 @@ namespace internal
   {
     fill_plane_or_vector_map<GT>(normals, region_map, typename boost::property_traits<RegionMap>::value_type());
   }
+
+template<typename PolygonMesh, typename ECM>
+class One_ring_neighbor_query_with_constraints
+{
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using Face_graph = PolygonMesh;
+public:
+
+  using Item = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using Region = std::vector<Item>;
+
+  One_ring_neighbor_query_with_constraints(const PolygonMesh& pmesh, ECM ecm)
+    : m_face_graph(pmesh)
+    , m_ecm(ecm)
+  {}
+
+  void operator()(
+    const Item query,
+    std::vector<Item>& neighbors) const {
+
+    neighbors.clear();
+    const auto query_hedge = halfedge(query, m_face_graph);
+
+    for (halfedge_descriptor h : halfedges_around_face(query_hedge, m_face_graph))
+    {
+      if (get(m_ecm, edge(h, m_face_graph))) continue;
+      face_descriptor f=face(opposite(h,m_face_graph), m_face_graph);
+      if (f != boost::graph_traits<PolygonMesh>::null_face())
+      {
+        neighbors.push_back(f);
+      }
+    }
+  }
+
+  /// @}
+
+private:
+  const Face_graph& m_face_graph;
+  ECM m_ecm;
+};
+
 }
 
 /*!
@@ -140,13 +183,21 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::edge_is_constrained_t,
+      NamedParameters,
+      Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
+    > ::type ECM;
+  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                             Static_boolean_property_map<edge_descriptor, false>());
 
-  using Neighbor_query = RG_PM::One_ring_neighbor_query<PolygonMesh>;
+  using Neighbor_query = internal::One_ring_neighbor_query_with_constraints<PolygonMesh, ECM>;
   using Region_type = RG_PM::Least_squares_plane_fit_region<Traits, PolygonMesh, VPM>;
   using Sorting = RG_PM::Least_squares_plane_fit_sorting<Traits, PolygonMesh, Neighbor_query, VPM>;
   using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type, RegionMap>;
 
-  Neighbor_query neighbor_query(mesh);
+  Neighbor_query neighbor_query(mesh, ecm);
   Region_type region_type(mesh, np);
   Sorting sorting(mesh, neighbor_query, np);
   sorting.sort();
