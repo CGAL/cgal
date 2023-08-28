@@ -397,6 +397,12 @@ detect_corners_of_regions(
       put(ecm, e, true);
   }
 
+  //init to -1 by default
+  for(vertex_descriptor v : vertices(mesh))
+  {
+    put(corner_id_map, v, std::size_t(-1));
+  }
+
   // filter trivial edges: incident to a plane with only one face
   // such an edge cannot be removed and its vertices are corners
   std::vector<int> nb_faces_per_patch(nb_regions,0);
