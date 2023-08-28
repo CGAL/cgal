@@ -167,7 +167,7 @@ class Lazy_alpha_nt_2
 
   //members
   //the members can be updated when calling method exact()
-  mutable boost::optional<NT_exact> exact_;
+  mutable std::optional<NT_exact> exact_;
   mutable NT_approx approx_;
 
   //private functions
@@ -235,7 +235,7 @@ public:
 
   const NT_exact& exact() const
   {
-    if (exact_ == boost::none) {
+    if (exact_ == std::nullopt) {
       update_exact();
       approx_=to_interval(*exact_);
     }
@@ -448,7 +448,7 @@ struct Alpha_nt_selector_2
              GeomTraits,
              // If the base traits is already exact then we don't need to do anything,
              // and we can simply directly use the traits class
-             Boolean_tag<boost::is_floating_point<typename GeomTraits::FT>::value &&
+             Boolean_tag<std::is_floating_point<typename GeomTraits::FT>::value &&
                          ExactAlphaComparisonTag::value >,
              Weighted_tag>
 { };

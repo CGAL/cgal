@@ -11,7 +11,6 @@
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<boost/shared_ptr.hpp>
 #include <CGAL/CGAL_Ipelet_base.h>
 #include<CGAL/create_offset_polygons_2.h>
 #include <boost/format.hpp>
@@ -38,10 +37,10 @@ const std::string Hmsg[] = {
 class SkeletonIpelet
   : public CGAL::Ipelet_base<Kernel,7>{
 
-  typedef boost::shared_ptr<Polygon_2>        PolygonPtr ;
+  typedef std::shared_ptr<Polygon_2>        PolygonPtr ;
   typedef std::vector<PolygonPtr>             PolygonPtrVector ;
   typedef CGAL::Straight_skeleton_2<Kernel>   Skeleton ;
-  typedef boost::shared_ptr<Skeleton>         SkeletonPtr ;
+  typedef std::shared_ptr<Skeleton>         SkeletonPtr ;
 
   void draw_straight_skeleton(const Skeleton& skeleton,double);
 

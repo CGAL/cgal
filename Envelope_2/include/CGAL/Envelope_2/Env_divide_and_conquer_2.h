@@ -18,7 +18,7 @@
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <vector>
 
@@ -116,9 +116,7 @@ public:
   {
     // Subdivide the curves into x-monotone subcurves.
     CurvesIterator                     it;
-    std::list<CGAL::Object>            objects;
-    std::list<CGAL::Object>::iterator  obj_it;
-    X_monotone_curve_2                 xcv;
+    std::list<std::variant<Point_2, X_monotone_curve_2>> objects;
     std::list<X_monotone_curve_2>      x_curves;
 
     for (it = begin; it != end; it++)
@@ -127,10 +125,10 @@ public:
       objects.clear();
       traits->make_x_monotone_2_object()(*it, std::back_inserter(objects));
 
-      for (obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
+      for (auto obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
       {
-        if(CGAL::assign (xcv, *obj_it))
-          x_curves.push_back (xcv);
+        if(const X_monotone_curve_2* xcv_ptr = std::get_if<X_monotone_curve_2>(&(*obj_it)))
+          x_curves.push_back (*xcv_ptr);
       }
     }
 

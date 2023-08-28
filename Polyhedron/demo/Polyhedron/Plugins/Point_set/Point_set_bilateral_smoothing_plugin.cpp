@@ -29,7 +29,7 @@ struct Bilateral_smoothing_functor
   Point_set* points;
   unsigned int neighborhood_size;
   unsigned int sharpness_angle;
-  boost::shared_ptr<double> result;
+  std::shared_ptr<double> result;
 
   Bilateral_smoothing_functor  (Point_set* points,
                                 unsigned int neighborhood_size,
