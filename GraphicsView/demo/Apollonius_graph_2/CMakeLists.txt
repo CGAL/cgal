@@ -15,25 +15,18 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
-  #--------------------------------
-  # UI files (Qt Designer files)
-  qt6_wrap_ui(DT_UI_FILES Apollonius_graph_2.ui)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Apollonius_graph_2.qrc)
-
-  # use the Qt MOC preprocessor on classes that derives from QObject
-
-  # The executable itself.
-  add_executable(
-    Apollonius_graph_2 Apollonius_graph_2.cpp ${DT_UI_FILES}
-                       ${CGAL_Qt6_RESOURCE_FILES} ${CGAL_Qt6_MOC_FILES})
+  qt_add_executable(
+    Apollonius_graph_2 Apollonius_graph_2.cpp Apollonius_graph_2.ui
+                       Apollonius_graph_2.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Apollonius_graph_2)
 
