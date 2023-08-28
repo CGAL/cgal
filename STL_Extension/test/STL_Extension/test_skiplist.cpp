@@ -50,8 +50,8 @@ BOOST_FIXTURE_TEST_CASE( test_insert, Fixture )
 
   // clear and try again
   l.clear();
-  BOOST_CHECK_EQUAL(l.all_size(), 0);
-  BOOST_CHECK_EQUAL(l.skip_size(), 0);
+  BOOST_CHECK_EQUAL(l.all_size(), std::size_t(0));
+  BOOST_CHECK_EQUAL(l.skip_size(), std::size_t(0));
   l.insert(l.all_begin(), all.begin(), all.end());
   skips += 8, 9;
   BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(),
@@ -60,7 +60,6 @@ BOOST_FIXTURE_TEST_CASE( test_insert, Fixture )
                                 skips.begin(), skips.end());
 
   // the same goes for inserting at an arbitrary position
-  skip::all_iterator pos = std::next(l.all_begin(), 3);
   l.insert(std::next(l.all_begin(), 3)
            , 20);
   all.insert(std::next(all.begin(), 3)
@@ -124,7 +123,7 @@ BOOST_FIXTURE_TEST_CASE( skip_all_case, Fixture )
   l.skip(l.all_begin(), l.all_end());
   skips.clear();
   BOOST_CHECK_EQUAL(l.all_size(), all.size());
-  BOOST_CHECK_EQUAL(l.skip_size(), 0);
+  BOOST_CHECK_EQUAL(l.skip_size(), std::size_t(0));
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
 }

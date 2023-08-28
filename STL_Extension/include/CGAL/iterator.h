@@ -27,8 +27,8 @@
 #include <CGAL/tuple.h>
 #include <CGAL/use.h>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <boost/config.hpp>
 
 #include <vector>
@@ -1262,7 +1262,7 @@ filter_output_iterator(I e, const P& p)
 namespace internal {
 
 template<typename OutputIterator>
-struct Output_visitor : boost::static_visitor<OutputIterator&> {
+struct Output_visitor {
   Output_visitor(OutputIterator* it) : out(it) {}
   OutputIterator* out;
 
@@ -1380,17 +1380,17 @@ public:
     return *this;
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
     internal::Output_visitor<Self> visitor(this);
-    t.apply_visitor(visitor);
+    std::visit(visitor, t);
     return *this;
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
     internal::Output_visitor<Self> visitor(this);
-    if(t)  boost::apply_visitor(visitor, *t);
+    if(t)  std::visit(visitor, *t);
     return *this;
   }
 
@@ -1457,6 +1457,19 @@ public:
   template <class T>
   Self& operator=(const T&) { return *this; }
 
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    std::visit(visitor, t);
+    return *this;
+  }
+
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t)  std::visit(visitor, *t);
+    return *this;
+  }
 };
 
 

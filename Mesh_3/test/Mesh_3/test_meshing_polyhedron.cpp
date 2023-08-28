@@ -31,9 +31,9 @@ struct Polyhedron_tester : public Tester<K>
 {
   void polyhedron() const
   {
-    typedef K Gt;
-    typedef CGAL::Polyhedron_3<Gt> Polyhedron;
-    typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
+    typedef K GT;
+    typedef CGAL::Polyhedron_3<GT> Polyhedron;
+    typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, GT> Mesh_domain;
 
     static_assert(std::is_same<
                             typename Mesh_domain::Surface_patch_index,

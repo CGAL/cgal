@@ -608,24 +608,22 @@ Vertex_handle nearest_neighbor(const Point_2& p, Vertex_handle vnear) const;
 /*!
 Returns the
 dual corresponding to the face handle `f`. The returned object can
-be assignable to one of the following: `Site_2`, `Gt::Line_2`.
+be assigned to one of the following: `Site_2`, `Gt::Line_2`.
 */
 Gt::Object_2 dual(Face_handle f) const;
 
 /*!
 Returns the
 dual of the face to which `it` points to. The returned object can
-be assignable to one of the following: `Site_2`, `Gt::Line_2`.
+be assigned to one of the following: `Site_2`, `Gt::Line_2`.
 */
 Gt::Object_2 dual(All_faces_iterator it) const;
 
 /*!
 Returns
-the dual of the face to which `it` points to. The returned
-object can be assignable to one of the following: `Site_2`,
-`Gt::Line_2`.
+the dual of the face to which `it` points to.
 */
-Gt::Object_2 dual(Finite_faces_iterator it) const;
+Site dual(Finite_faces_iterator it) const;
 
 /// @}
 

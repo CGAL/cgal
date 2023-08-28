@@ -22,7 +22,7 @@
 
 #include <memory>
 #include <boost/type_traits.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <iostream>
 
@@ -158,7 +158,7 @@ class Lazy_alpha_nt_3{
 
 //members
   //the members can be updated when calling method exact()
-  mutable boost::optional<NT_exact> exact_;
+  mutable std::optional<NT_exact> exact_;
   mutable NT_approx approx_;
 
 //private functions
@@ -229,7 +229,7 @@ public:
   }
 
   const NT_exact& exact() const {
-    if (exact_ == boost::none){
+    if (exact_ == std::nullopt){
       update_exact();
       approx_=to_interval(*exact_);
     }

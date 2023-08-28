@@ -32,6 +32,8 @@
 #include <string>
 #include <locale>
 #include <iostream>
+#include <optional>
+#include <variant>
 
 namespace CGAL {
 
@@ -186,6 +188,34 @@ public:
   std::ostream& operator()( std::ostream& os) const { return (os << t); }
 };
 
+template <class T, class F>
+class Output_rep<std::optional<T>, F>
+{
+  const std::optional<T>& t;
+
+public:
+  Output_rep( const std::optional<T>& tt) : t(tt) {}
+  std::ostream& operator()( std::ostream& os) const
+  {
+    if (t==std::nullopt) return (os << "--");
+    return (os << t.value());
+  }
+};
+
+template <class ... T, class F>
+class Output_rep<std::variant<T...>, F>
+{
+   const std::variant<T...>& t;
+
+public:
+  Output_rep( const std::variant<T...>& tt) : t(tt) {}
+  std::ostream& operator()( std::ostream& os) const
+  {
+    std::visit([&os](auto&& v) { os << v; }, t);
+    return os;
+  }
+};
+
 /*!
   \relates Output_rep
   \brief stream output of the \c Output_rep calls its \c operator().
@@ -239,6 +269,19 @@ public:
 
   //! perform the input, calls \c operator\>\> by default.
   std::istream& operator()( std::istream& is) const { return (is >> t); }
+};
+
+template <class T>
+class Input_rep<std::optional<T>>
+{
+  std::optional<T>& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( std::optional<T>& tt) : t(tt) {}
+
+  //! perform the input, calls \c operator\>\> by default.
+  std::istream& operator()( std::istream& is) const { return (is >> t.value()); }
 };
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \

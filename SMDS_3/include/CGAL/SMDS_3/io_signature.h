@@ -33,7 +33,7 @@
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 #endif
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/tuple/tuple.hpp>
 #include <utility>
 
@@ -149,10 +149,10 @@ struct Get_io_signature<double>
 };
 
 template <typename T, typename U>
-struct Get_io_signature<boost::variant<T,U> >
+struct Get_io_signature<std::variant<T,U> >
 {
     std::string operator()() {
-      return std::string("boost::variant<") +
+      return std::string("std::variant<") +
         Get_io_signature<T>()() + "," +
         Get_io_signature<U>()() + ">";
   }
@@ -179,10 +179,10 @@ struct Get_io_signature<boost::tuple<T,U> >
 };
 
 template <typename T, typename U, typename V>
-struct Get_io_signature<boost::variant<T,U,V> >
+struct Get_io_signature<std::variant<T,U,V> >
 {
     std::string operator()() {
-      return std::string("boost::variant<") +
+      return std::string("std::variant<") +
         Get_io_signature<T>()() + "," +
         Get_io_signature<U>()() + "," +
         Get_io_signature<V>()() + ">";
@@ -191,10 +191,10 @@ struct Get_io_signature<boost::variant<T,U,V> >
 
 template <typename T, typename U,
           typename V, typename W>
-struct Get_io_signature<boost::variant<T,U,V,W> >
+struct Get_io_signature<std::variant<T,U,V,W> >
 {
     std::string operator()() {
-      return std::string("boost::variant<") +
+      return std::string("std::variant<") +
         Get_io_signature<T>()() + "," +
         Get_io_signature<U>()() + "," +
         Get_io_signature<V>()() + "," +

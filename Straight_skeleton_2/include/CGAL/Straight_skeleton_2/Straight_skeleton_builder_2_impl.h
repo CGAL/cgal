@@ -34,7 +34,7 @@
 namespace CGAL {
 
 template<class Gt, class Ss, class V>
-Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime, Traits const& aTraits, Visitor const& aVisitor )
+Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( std::optional<FT> aMaxTime, Traits const& aTraits, Visitor const& aVisitor )
   :
   mTraits(aTraits)
  ,mVisitor(aVisitor)
@@ -344,7 +344,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
   // or vertex events (or edge events of course).
   //
   // Each vertex wavefront (reflex or not) results in one and only one event from a set of possible events.
-  // It can result in a edge event against the vertex wavefronts emerging from the adjacent vertices (in the current polygon, not
+  // It can result in an edge event against the vertex wavefronts emerging from the adjacent vertices (in the current polygon, not
   // in the input polygon); or it can result in a split event (or vertex event) against any other wavefront in the rest of
   // current polygon.
 
@@ -1194,7 +1194,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Halfedge_handle lOppBorder = lEvent.triedge().e2() ;
 
     Vertex_handle lNewNode_L, lNewNode_R ;
-    boost::tie(lNewNode_L,lNewNode_R) = ConstructSplitEventNodes(lEvent,lOppR);
+    std::tie(lNewNode_L,lNewNode_R) = ConstructSplitEventNodes(lEvent,lOppR);
 
     // Triedge lTriedge = aEvent->triedge();
 
@@ -1419,7 +1419,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandlePseudoSplitEvent( EventPtr aEve
     CGAL_STSKEL_BUILDER_TRACE( 4, "LReed = " << v2str(*lRSeed) );
 
     Vertex_handle lNewNode_L, lNewNode_R ;
-    boost::tie(lNewNode_L,lNewNode_R) = ConstructPseudoSplitEventNodes(lEvent);
+    std::tie(lNewNode_L,lNewNode_R) = ConstructPseudoSplitEventNodes(lEvent);
 
     Halfedge_handle lNBisector_LO = SSkelEdgesPushBack( Halfedge(mEdgeID  ),Halfedge(mEdgeID+1) );
     Halfedge_handle lNBisector_RO = SSkelEdgesPushBack( Halfedge(mEdgeID+2),Halfedge(mEdgeID+3) );
@@ -1622,7 +1622,7 @@ template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::MergeSplitNodes ( Vertex_handle_pair aSplitNodes )
 {
   Vertex_handle lLNode, lRNode ;
-  boost::tie(lLNode,lRNode)=aSplitNodes;
+  std::tie(lLNode,lRNode)=aSplitNodes;
 
   Halfedge_handle lIBisectorL1 = lLNode->primary_bisector()->opposite();
   Halfedge_handle lIBisectorR1 = lRNode->primary_bisector()->opposite();

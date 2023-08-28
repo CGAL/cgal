@@ -822,41 +822,34 @@ public:
       CGAL::Cartesian_converter<Kernel,SK> conv;
       Exact_circle_2 exact_circle=conv(approx_circle);
 
+      typedef std::pair<Circular_arc_point_2,unsigned> Cp2_mult;
       SK::Intersect_2 inter=SK().intersect_2_object();
-      std::vector< std::pair<Circular_arc_point_2,unsigned> > points;
+      std::vector< Cp2_mult > points;
       points.reserve(8);
 
-      std::vector<CGAL::Object> ints;
+      std::vector< Cp2_mult > ints;
       ints.reserve(2);
-      std::pair<Circular_arc_point_2,unsigned> tmp_pt;
 
       int indices[8]={-1,-1,-1,-1,-1,-1,-1,-1};
 
       for (unsigned i=0;i!=4;++i){
         ints.clear();
         SK::Segment_2 S(conv(bbox[i]),conv(bbox[(i+1)%4]));
-        inter(exact_circle,SK::Line_arc_2(S),std::back_inserter(ints));
+        inter(exact_circle,SK::Line_arc_2(S),dispatch_or_drop_output<Cp2_mult>(std::back_inserter(ints)));
         unsigned index=0;
-        bool ok=true;
         switch (ints.size()){
           case 1:
-            ok=CGAL::assign(tmp_pt,ints[0]);
-            CGAL_assertion(ok); CGAL_USE(ok);
-            points.push_back(tmp_pt);
+            points.push_back(ints[0]);
             index=points.size()-1;
             indices[i]=index;
             indices[(i+1)%4+4]=index;
             break;
           case 2:
             int right_ind=i<2?0:1;
-            ok=CGAL::assign(tmp_pt,ints[right_ind]);
-            CGAL_assertion(ok); CGAL_USE(ok);
-            points.push_back(tmp_pt);
+            points.push_back(ints[right_ind]);
             index=points.size()-1;
             indices[i]=index;
-            ok=CGAL::assign(tmp_pt,ints[(right_ind+1)%2]);
-            CGAL_assertion(ok); CGAL_USE(ok);
-            points.push_back(tmp_pt);
+            points.push_back(ints[(right_ind+1)%2]);
             index=points.size()-1;
             indices[(i+1)%4+4]=index;
             break;

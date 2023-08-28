@@ -47,7 +47,7 @@ Provides the operator:
 `return_type operator()(const Query& q, const Primitive::Datum& d)`,
 
 which computes the intersection between `q` and `d`. The type of the returned object
-must be a `boost::optional` of a `boost::variant` of the possible intersection types.
+must be a `std::optional` of a `std::variant` of the possible intersection types.
 */
 typedef unspecified_type Intersect_3;
 

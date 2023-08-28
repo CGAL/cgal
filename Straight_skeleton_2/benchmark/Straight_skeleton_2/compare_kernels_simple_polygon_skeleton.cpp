@@ -10,7 +10,7 @@
 #include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/gmp.h>
 #include <CGAL/Timer.h>
 
@@ -97,7 +97,7 @@ void build_skeleton(const char* fname)
   time.start();
   SsBuilder ssb;
   ssb.enter_contour(pgn.vertices_begin(), pgn.vertices_end());
-  boost::shared_ptr<Ss> straight_ske = ssb.construct_skeleton();
+  std::shared_ptr<Ss> straight_ske = ssb.construct_skeleton();
   time.stop();
 
   std::cout << "Time spent to build skeleton " << time.time() << "\n";

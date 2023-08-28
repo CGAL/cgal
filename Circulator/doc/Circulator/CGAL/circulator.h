@@ -246,7 +246,7 @@ Circulator_from_iterator();
 /*!
 a circulator `c` initialized to refer to the element
 `*cur` in a range `[begin, end)`.
-The circulator `c` refers to a empty sequence
+The circulator `c` refers to an empty sequence
 if `begin==end`.
 
 */
@@ -255,7 +255,7 @@ const I& end, const I& cur = begin);
 
 /*!
 a copy of circulator `d` referring to the element `*cur`.
-The circulator `c` refers to a empty sequence
+The circulator `c` refers to an empty sequence
 if `d` does so.
 
 */

@@ -276,7 +276,7 @@ homogeneous coordinates of bit size at most \f$ 3b+O(1)\f$.
 The supporting lines of the segments (they are needed in some of
 the predicates) have coefficients which are always of bit size
 \f$ 2b+O(1)\f$. As a result, the bit size of the expressions involved in
-our predicates will always be \f$ O(b)\f$, independently of the
+our predicates will always be \cgalBigO{b}, independently of the
 size of the input.
 The `SegmentDelaunayGraphSite_2` concept encapsulates the ideas
 presented above. A site is represented in this concept by up to four
@@ -348,7 +348,7 @@ intersecting sites represented in homogeneous coordinates of bit size
 \f$ b\f$, the maximum bit size of the algebraic expressions involved in the
 predicates is \f$ 40 b+O(1)\f$. Given our site representation given above we
 can guarantee that even in the case of strongly intersecting sites,
-the algebraic degree of the predicates remains \f$ O(b)\f$, independently
+the algebraic degree of the predicates remains \cgalBigO{b}, independently
 of the size of the input. What we want to focus in the remainder of
 this section are the different kinds of filtering techniques that we
 have employed in our implementation.

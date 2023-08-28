@@ -22,9 +22,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Kernel_traits.h>
 
-#include <boost/optional/optional.hpp>
-#include <boost/shared_ptr.hpp>
-
+#include <optional>
+#include <memory>
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -34,7 +33,7 @@ namespace CGAL {
 template <typename PointIterator, typename HoleIterator,
           typename WeightIterator, typename HoleWeightsIterator,
           typename K>
-boost::shared_ptr<Straight_skeleton_2<K> >
+std::shared_ptr<Straight_skeleton_2<K> >
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
                                              HoleIterator holes_begin,
@@ -80,7 +79,7 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
 template <typename PointIterator, typename HoleIterator,
           typename WeightIterator, typename HoleWeightsIterator,
           typename Weights>
-boost::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
@@ -101,7 +100,7 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
 template <typename PointIterator,
           typename WeightIterator,
           typename K>
-boost::shared_ptr<Straight_skeleton_2<K> >
+std::shared_ptr<Straight_skeleton_2<K> >
 inline
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
@@ -129,7 +128,7 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
 
 template <typename PointIterator,
           typename WeightIterator>
-boost::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
@@ -146,7 +145,7 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
 template <typename Polygon,
           typename Weights,
           typename K>
-boost::shared_ptr<Straight_skeleton_2<K> >
+std::shared_ptr<Straight_skeleton_2<K> >
 inline
 create_interior_weighted_straight_skeleton_2(const Polygon& out_contour,
                                              const Weights& weights,
@@ -162,7 +161,7 @@ create_interior_weighted_straight_skeleton_2(const Polygon& out_contour,
 
 template <typename Polygon,
           typename Weights>
-boost::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_interior_weighted_straight_skeleton_2(const Polygon& out_contour,
                                              const Weights& weights)
@@ -181,7 +180,7 @@ template <typename FT,
           typename PointIterator,
           typename WeightIterator,
           typename K>
-boost::shared_ptr<Straight_skeleton_2<K> >
+std::shared_ptr<Straight_skeleton_2<K> >
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              PointIterator vertices_begin,
                                              PointIterator vertices_end,
@@ -196,7 +195,7 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
   using IK = typename Kernel_traits<Point_2>::Kernel;
   using IFT = typename IK::FT;
 
-  boost::shared_ptr<Straight_skeleton_2<K> > skeleton;
+  std::shared_ptr<Straight_skeleton_2<K> > skeleton;
 
   // That's because we might not have FT == IK::FT (e.g. `double` and `Core`)
   // Note that we can also have IK != K (e.g. `Simple_cartesian<Core>` and `EPICK`)
@@ -204,7 +203,7 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
 
   // @todo This likely should be done in the kernel K rather than the input kernel(i.e. the same
   // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
-  boost::optional<IFT> margin = compute_outer_frame_margin(vertices_begin,
+  std::optional<IFT> margin = compute_outer_frame_margin(vertices_begin,
                                                            vertices_end,
                                                            weights_begin,
                                                            weights_end,
@@ -262,7 +261,7 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
 template <typename FT,
           typename PointIterator,
           typename WeightIterator>
-boost::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              PointIterator vertices_begin,
@@ -282,7 +281,7 @@ template <typename FT,
           typename Polygon,
           typename Weights,
           typename K>
-boost::shared_ptr<Straight_skeleton_2<K> >
+std::shared_ptr<Straight_skeleton_2<K> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              const Polygon& aPoly,
@@ -300,7 +299,7 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
 template <typename FT,
           typename Weights,
           typename Polygon>
-boost::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr<Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              Weights& weights,

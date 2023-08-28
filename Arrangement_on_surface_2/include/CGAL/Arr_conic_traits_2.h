@@ -30,7 +30,6 @@
 #include <memory>
 #include <map>
 
-#include <boost/variant.hpp>
 #include <boost/math/constants/constants.hpp>
 
 #include <CGAL/Cartesian.h>
@@ -863,8 +862,6 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
-      typedef boost::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_result;
 
       auto ctr_xcv = m_traits.construct_x_monotone_curve_2_object();
 
@@ -878,7 +875,7 @@ public:
       auto n_vtan_ps = m_traits.vertical_tangency_points(cv, vtan_ps);
       if (n_vtan_ps == 0) {
         // In case the given curve is already x-monotone:
-        *oi++ = Make_x_monotone_result(ctr_xcv(cv, conic_id));
+        *oi++ = ctr_xcv(cv, conic_id);
         return oi;
       }
 
@@ -890,19 +887,15 @@ public:
         // In case the curve is a full conic, split it into two x-monotone
         // arcs, one going from ps[0] to ps[1], and the other from ps[1] to
         // ps[0].
-        *oi++ = Make_x_monotone_result(ctr_xcv(cv, vtan_ps[0], vtan_ps[1],
-                                               conic_id));
-        *oi++ = Make_x_monotone_result(ctr_xcv(cv, vtan_ps[1], vtan_ps[0],
-                                               conic_id));
+        *oi++ = ctr_xcv(cv, vtan_ps[0], vtan_ps[1], conic_id);
+        *oi++ = ctr_xcv(cv, vtan_ps[1], vtan_ps[0], conic_id);
       }
       else {
         if (n_vtan_ps == 1) {
           // Split the arc into two x-monotone sub-curves: one going from the
           // arc source to ps[0], and the other from ps[0] to the target.
-          *oi++ = Make_x_monotone_result(ctr_xcv(cv, cv.source(), vtan_ps[0],
-                                                 conic_id));
-          *oi++ = Make_x_monotone_result(ctr_xcv(cv, vtan_ps[0], cv.target(),
-                                                 conic_id));
+          *oi++ = ctr_xcv(cv, cv.source(), vtan_ps[0], conic_id);
+          *oi++ = ctr_xcv(cv, vtan_ps[0], cv.target(), conic_id);
         }
         else {
           CGAL_assertion(n_vtan_ps == 2);
@@ -932,16 +925,16 @@ public:
           }
 
           // Split the arc into three x-monotone sub-curves.
-          *oi++ = Make_x_monotone_result(ctr_xcv(cv, cv.source(),
-                                                 vtan_ps[ind_first],
-                                                 conic_id));
+          *oi++ = ctr_xcv(cv, cv.source(),
+                          vtan_ps[ind_first],
+                          conic_id);
 
-          *oi++ = Make_x_monotone_result(ctr_xcv(cv, vtan_ps[ind_first],
-                                                 vtan_ps[ind_second],
-                                                 conic_id));
+          *oi++ = ctr_xcv(cv, vtan_ps[ind_first],
+                          vtan_ps[ind_second],
+                          conic_id);
 
-          *oi++ = Make_x_monotone_result(ctr_xcv(cv, vtan_ps[ind_second],
-                                                 cv.target(), conic_id));
+          *oi++ = ctr_xcv(cv, vtan_ps[ind_second],
+                          cv.target(), conic_id);
         }
       }
 
@@ -1315,17 +1308,15 @@ public:
     OutputIterator intersect(const X_monotone_curve_2& xcv1,
                              const X_monotone_curve_2& xcv2,
                              Intersection_map& inter_map,
-                             OutputIterator oi) const {
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-        Intersection_result;
-
+                             OutputIterator oi) const
+    {
       if (m_traits.has_same_supporting_conic(xcv1, xcv2)) {
         // Check for overlaps between the two arcs.
         X_monotone_curve_2 overlap;
 
         if (compute_overlap(xcv1, xcv2, overlap)) {
           // There can be just a single overlap between two x-monotone arcs:
-          *oi++ = Intersection_result(overlap);
+          *oi++ = overlap;
           return oi;
         }
 
@@ -1338,22 +1329,22 @@ public:
         auto eq = alg_kernel->equal_2_object();
         if (eq(xcv1.left(), xcv2.left())) {
           Intersection_point ip(xcv1.left(), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
 
         if (eq(xcv1.right(), xcv2.right())) {
           Intersection_point ip(xcv1.right(), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
 
         if (eq(xcv1.left(), xcv2.right())) {
           Intersection_point ip(xcv1.left(), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
 
         if (eq(xcv1.right(), xcv2.left())) {
           Intersection_point ip(xcv1.right(), 0);
-          *oi++ = Intersection_result(ip);
+          *oi++ = ip;
         }
 
         return oi;
@@ -1396,7 +1387,7 @@ public:
         if (m_traits.is_between_endpoints(xcv1, (*iter).first) &&
             m_traits.is_between_endpoints(xcv2, (*iter).first))
         {
-          *oi++ = Intersection_result(*iter);
+          *oi++ = *iter;
         }
       }
 
