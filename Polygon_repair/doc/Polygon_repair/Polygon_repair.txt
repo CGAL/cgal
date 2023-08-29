@@ -153,10 +153,24 @@ following example. This function returns a repaired multipolygon with holes.
 
 \section SectionPolygonRepair_Performance Performance
 
+The method can repair large invalid polygons of millions of vertices in a few
+seconds as long as the number of intersections between line segments is limited.
+This is a realistic assumption with many invalid data sets, which only have
+relatively minor issues involving a small number of their vertices/edges.
+However, it is worth noting that there can be a potentially quadratic number of
+intersection between edges in the worst case, leading to much worse performance
+since all of these intersections need to be calculated in the overlay.
+
+| Polygon                 | Vertices | Holes  | Time      |
+| :----:                  | :----:   | :----: |           |
+| ![ ](Corine180927.jpg)  | 101973   | 298    | 0.652 sec |
+| ![ ](Corine2018418.jpg) | 43925    | 125    | 0.190 sec |
+
 \section SectionPolygonRepair_History History
 
 The polygon repair method as originally developed is described by Ledoux et al.
-\cgalCite{ledoux2014triangulation} and implemented in the <em>prepair</em> software.
+\cgalCite{ledoux2014triangulation} and implemented in the
+<a href="https://github.com/tudelft3d/prepair/">prepair</a> software.
 This package is a reimplementation of the method with a new approach to label
 and reconstruct the multipolygons. It also incorporates improvements later
 added to prepair, such as the application of the odd-even counting heuristic
