@@ -16,7 +16,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
 
   qt_add_executable(
-    Segment_voronoi_linf_2 Segment_voronoi_linf_2.cpp 
+    Segment_voronoi_linf_2 Segment_voronoi_linf_2.cpp
     Segment_voronoi_2.ui Segment_voronoi_2.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Segment_voronoi_linf_2)
