@@ -113,7 +113,7 @@ void Main_widget::initializeGL()
   {
     qDebug() << "loading arr..";
     //auto arrh = Aos::construct(m_countries);
-    m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    m_arrh = Aos::load_arr("../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json");
     if (m_arrh == nullptr)
     {
       qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";
@@ -141,7 +141,7 @@ void Main_widget::initializeGL()
       //country_triangles->set_color(colors[color_map[country_name]]);
       m_gr_country_triangles.emplace(country_name, std::move(country_triangles));
     }
-    
+
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
     //m_gr_all_triangles = std::make_unique<Triangles>(triangle_points);
   }
@@ -171,14 +171,14 @@ void Main_widget::init_camera()
   m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
   //m_camera_manip_rot = std::make_unique<Camera_manip_rot_bpa>(m_camera);
   m_camera_manip_zoom = std::make_unique<Camera_manip_zoom>(m_camera);
-  
+
   // this makes z-axes point upwards!
   m_model.rotate(-90, 1, 0, 0);
 
   // register the zoom-changed function
-  Message_manager::add("zoom_changed", [&] 
-    { 
-      qDebug() << "ZOOM CHANGED!!!"; 
+  Message_manager::add("zoom_changed", [&]
+    {
+      qDebug() << "ZOOM CHANGED!!!";
       //const auto error = compute_backprojected_error(0.5);
       //qDebug() << "new error = " << error;
       m_update_approx_error = true;
@@ -252,7 +252,7 @@ void Main_widget::resizeGL(int w, int h)
 {
   m_camera_manip_rot->resizeGL(w, h);
   m_pick_handler->resizeGL(w, h);
-  
+
   m_vp_width = w;
   m_vp_height = h;
 
@@ -294,7 +294,7 @@ void Main_widget::paintGL()
   const auto normal_matrix = model_view.normalMatrix();
 
   // compute the cutting plane
-  // remember that we are passing the local vertex positions of the sphere 
+  // remember that we are passing the local vertex positions of the sphere
   // between the vertex and fragment shader stages, so we need to convert
   // the camera-pos in world coords to sphere's local coords!
   auto c = m_model.inverted() * m_camera.get_pos();
@@ -378,7 +378,7 @@ void Main_widget::paintGL()
     sp.set_uniform("u_color", QVector4D(0, 1, 1, 1));
     m_gr_identification_curve->draw();
 
-    // draw all countries' borders 
+    // draw all countries' borders
     float a = 0.0;
     sp.set_uniform("u_color", QVector4D(a, a, a, 1));
     m_gr_all_country_borders->draw();
