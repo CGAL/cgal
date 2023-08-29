@@ -113,7 +113,8 @@ void Main_widget::initializeGL()
   {
     qDebug() << "loading arr..";
     //auto arrh = Aos::construct(m_countries);
-    m_arrh = Aos::load_arr("../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json");
+    //m_arrh = Aos::load_arr("../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json");
+    m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     if (m_arrh == nullptr)
     {
       qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";
@@ -297,7 +298,7 @@ void Main_widget::paintGL()
   // remember that we are passing the local vertex positions of the sphere
   // between the vertex and fragment shader stages, so we need to convert
   // the camera-pos in world coords to sphere's local coords!
-  auto c = m_model.inverted() * m_camera.get_pos();
+  auto c = m_model.inverted().map(m_camera.get_pos());
   const auto d = c.length();
   const auto r = 1.0f;
   const auto sin_alpha = r / d;
