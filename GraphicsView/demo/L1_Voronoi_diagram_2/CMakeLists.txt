@@ -4,18 +4,9 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(L1_Voronoi_diagram_2_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
@@ -23,17 +14,13 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-  # UI files (Qt Designer files)
-  qt6_wrap_ui(DT_UI_FILES L1_voronoi_diagram_2.ui)
 
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./L1_voronoi_diagram_2.qrc)
-
-  # The executable itself.
-  add_executable(
-    L1_voronoi_diagram_2 L1_voronoi_diagram_2.cpp ${DT_UI_FILES}
-                         ${CGAL_Qt6_RESOURCE_FILES} ${CGAL_Qt6_MOC_FILES})
+  qt_add_executable(
+    L1_voronoi_diagram_2 L1_voronoi_diagram_2.cpp
+                         L1_voronoi_diagram_2.ui L1_voronoi_diagram_2.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS L1_voronoi_diagram_2)
 

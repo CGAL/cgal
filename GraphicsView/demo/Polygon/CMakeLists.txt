@@ -4,15 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Polygon_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 Core)
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
@@ -28,23 +19,15 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
   if(CGAL_Core_FOUND)
     add_definitions(-DCGAL_USE_CORE)
   endif()
 
-  # UI files (Qt Designer files)
-  qt6_wrap_ui(DT_UI_FILES Polygon_2.ui)
-
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Polygon_2.qrc)
-
-  #  add_library( CGAL SHARED IMPORTED )
-  #  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
-
-  # The executable itself.
-  add_executable(Polygon_2 Polygon_2.cpp ${DT_UI_FILES} ${DT_RESOURCE_FILES}
-                           ${CGAL_Qt6_RESOURCE_FILES} ${CGAL_Qt6_MOC_FILES})
+  qt_add_executable(Polygon_2 Polygon_2.cpp
+                    Polygon_2.ui Polygon_2.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polygon_2)
 
