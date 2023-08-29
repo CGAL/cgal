@@ -80,7 +80,7 @@ public:
   using Face_base = CGAL::Constrained_triangulation_face_base_2<Kernel>;
   using Face_base_with_repair_info = CGAL::Triangulation_face_base_with_repair_info_2<Kernel, Face_base>;
   using Triangulation_data_structure = CGAL::Triangulation_data_structure_2<Vertex_base, Face_base_with_repair_info>;
-  using Tag = CGAL::Exact_predicates_tag; // assumed for now
+  using Tag = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value, CGAL::Exact_predicates_tag, CGAL::Exact_intersections_tag>::type;
   using Constrained_Delaunay_triangulation = CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag>;
   using Triangulation = Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
 
