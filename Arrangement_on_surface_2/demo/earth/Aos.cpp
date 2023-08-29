@@ -1521,7 +1521,6 @@ Aos::Arr_handle  Aos::load_arr(const std::string& file_name)
   Kernel  kernel;
   auto rc = read_arrangement(file_name, *arr, kernel);
   if (!rc) {
-    std::cerr << "Failed to load database!\n";
     return nullptr;
   }
 

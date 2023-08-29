@@ -30,6 +30,11 @@
 
 
 
+Main_widget::Main_widget(const QString& file_name) : 
+  m_file_name(file_name)
+{
+}
+
 Main_widget::~Main_widget()
 {
   // Make sure the context is current when deleting the texture and the buffers.
@@ -114,10 +119,11 @@ void Main_widget::initializeGL()
     qDebug() << "loading arr..";
     //auto arrh = Aos::construct(m_countries);
     //m_arrh = Aos::load_arr("../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json");
-    m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    //m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    m_arrh = Aos::load_arr(m_file_name.toStdString());
     if (m_arrh == nullptr)
     {
-      qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";
+      qDebug() << "FAILED TO LOAD THE ARRANGEMENT !!!";
       exit(1);
     }
 

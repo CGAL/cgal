@@ -20,6 +20,14 @@ int main(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 
+  auto args = QCoreApplication::arguments();
+  if (2 != args.size())
+  {
+    qDebug() << "Usage: earth <arragement-file.json>";
+    exit(1);
+  }
+
+
   QSurfaceFormat format;
   format.setVersion(3, 3);
   format.setProfile(QSurfaceFormat::CoreProfile);
@@ -32,7 +40,9 @@ int main(int argc, char* argv[])
   app.setApplicationName("Earth");
   app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
-  Main_widget widget;
+  auto& file_name = args.at(1);
+  //qDebug() << "file name = " << file_name;
+  Main_widget widget(file_name);
   widget.show();
 #else
   QLabel note("OpenGL Support required");

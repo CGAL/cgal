@@ -42,6 +42,8 @@ class Main_widget : public QOpenGLWidget, protected OpenGLFunctionsBase
 
 public:
   using QOpenGLWidget::QOpenGLWidget;
+  
+  Main_widget(const QString& file_name);
   ~Main_widget();
 
 
@@ -82,6 +84,7 @@ protected:
 
 private:
   // COUNTRY ARRANGEMENT SPECIFIC DATA
+  QString           m_file_name;
   Aos::Arr_handle   m_arrh;
   std::unique_ptr<Line_strips>   m_gr_all_country_borders;
 
