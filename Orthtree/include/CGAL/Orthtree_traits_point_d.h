@@ -88,6 +88,7 @@ public:
   /// @{
 
   using Self = Orthtree_traits_point_d<GeomTraits, DimensionTag, PointSet, PointMap>;
+  using Tree = Orthtree<Self>;
 
   using Node_data = boost::iterator_range<typename PointSet::iterator>;
   using Node_data_element = typename std::iterator_traits<typename PointSet::iterator>::value_type;
@@ -116,7 +117,8 @@ public:
 
   struct Construct_bbox_d {
     typename Self::Bbox_d operator()(const typename Self::Array& min, const typename Self::Array& max) const {
-      return typename Self::Bbox_d(typename Self::Point_d(min.begin(), min.end()), typename Self::Point_d(max.begin(), max.end()));
+      return typename Self::Bbox_d(typename Self::Point_d(min.begin(), min.end()),
+                                   typename Self::Point_d(max.begin(), max.end()));
     }
   };
 
@@ -142,46 +144,55 @@ public:
   */
   Construct_bbox_d construct_bbox_d_object() const { return Construct_bbox_d(); }
 
-  std::pair<typename Self::Array, typename Self::Array> root_node_bbox() const {
+  auto root_node_bbox_object() const {
+    return [&]() -> std::pair<typename Self::Array, typename Self::Array> {
 
-    typename Self::Array bbox_min;
-    typename Self::Array bbox_max;
-    Orthtrees::internal::Cartesian_ranges<Self> cartesian_range;
+      typename Self::Array bbox_min;
+      typename Self::Array bbox_max;
+      Orthtrees::internal::Cartesian_ranges<Self> cartesian_range;
 
-    // init bbox with first values found
-    {
-      const auto& point = get(m_point_map, *(m_point_set.begin()));
-      std::size_t i = 0;
-      for (const typename Self::FT& x: cartesian_range(point)) {
-        bbox_min[i] = x;
-        bbox_max[i] = x;
-        ++i;
+      // init bbox with first values found
+      {
+        const typename Self::Point_d& point = get(m_point_map, *(m_point_set.begin()));
+        std::size_t i = 0;
+        for (const typename Self::FT& x: cartesian_range(point)) {
+          bbox_min[i] = x;
+          bbox_max[i] = x;
+          ++i;
+        }
       }
-    }
-    // Expand bbox to contain all points
-    for (const auto& p: m_point_set) {
-      const auto& point = get(m_point_map, p);
-      std::size_t i = 0;
-      for (const typename Self::FT& x: cartesian_range(point)) {
-        bbox_min[i] = (std::min)(x, bbox_min[i]);
-        bbox_max[i] = (std::max)(x, bbox_max[i]);
-        ++i;
+      // Expand bbox to contain all points
+      for (const auto& p: m_point_set) {
+        const typename Self::Point_d& point = get(m_point_map, p);
+        std::size_t i = 0;
+        for (const typename Self::FT& x: cartesian_range(point)) {
+          bbox_min[i] = (std::min)(x, bbox_min[i]);
+          bbox_max[i] = (std::max)(x, bbox_max[i]);
+          ++i;
+        }
       }
-    }
 
-    return {bbox_min, bbox_max};
+      return {bbox_min, bbox_max};
+    };
   }
 
-  Node_data root_node_contents() const { return {m_point_set.begin(), m_point_set.end()}; }
-
-  template <typename Node_index, typename Tree>
-  void distribute_node_contents(Node_index n, Tree& tree, const typename Self::Point_d& center) {
-    CGAL_precondition(!tree.is_leaf(n));
-    reassign_points(tree, m_point_map, n, center, tree.data(n));
+  auto root_node_contents_object() const {
+    return [&]() -> typename Self::Node_data {
+      return {m_point_set.begin(), m_point_set.end()};
+    };
   }
 
-  typename Self::Point_d get_element(const Node_data_element& index) const {
-    return get(m_point_map, index);
+  auto distribute_node_contents_object() const {
+    return [&](typename Tree::Node_index n, Tree& tree, const typename Self::Point_d& center) {
+      CGAL_precondition(!tree.is_leaf(n));
+      reassign_points(tree, m_point_map, n, center, tree.data(n));
+    };
+  }
+
+  auto get_element_object() const {
+    return [&](const Node_data_element& index) -> typename Self::Point_d {
+      return get(m_point_map, index);
+    };
   }
 
   /// @}

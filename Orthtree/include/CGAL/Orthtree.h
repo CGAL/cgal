@@ -225,7 +225,7 @@ public:
 
 
     // init bbox with first values found
-    auto [bbox_min, bbox_max] = m_traits.root_node_bbox();
+    auto [bbox_min, bbox_max] = m_traits.root_node_bbox_object()();
 
     // Dilate the bounding box
     Array bbox_centroid;
@@ -246,7 +246,7 @@ public:
     // save orthtree attributes
     m_bbox_min = construct_point_d_from_array(bbox_min);
     m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
-    data(root()) = m_traits.root_node_contents();
+    data(root()) = m_traits.root_node_contents_object()();
   }
 
   /// @}
@@ -830,7 +830,7 @@ public:
     Point center = barycenter(n);
 
     // Add the node's points to its children
-    m_traits.distribute_node_contents(n, *this, center);
+    m_traits.distribute_node_contents_object()(n, *this, center);
   }
 
   /*!
@@ -1031,7 +1031,7 @@ private: // functions :
 
         // Pair that point with its distance from the search point
         Node_element_with_distance current_point_with_distance =
-          {p, squared_distance(m_traits.get_element(p), search_bounds.center())};
+          {p, squared_distance(m_traits.get_element_object()(p), search_bounds.center())};
 
         // Check if the new point is within the bounds
         if (current_point_with_distance.distance < search_bounds.squared_radius()) {
