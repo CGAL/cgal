@@ -431,11 +431,11 @@ public:
       mp.add_polygon(polygon);
     }
   }
-  
+
   // Validation
   bool is_valid(const Polygon_2<Kernel, PolygonContainer>& polygon) {
     Validation_triangulation vt;
-    
+
     // Intersections between edges
     for (auto const& edge: polygon.edges()) {
       if (edge.source() == edge.target()) {
@@ -448,7 +448,7 @@ public:
         return false;
       }
     }
-    
+
     // Connected interior with no holes
     for (auto const face: t.all_face_handles()) {
       face->label() = 0;
@@ -478,13 +478,13 @@ public:
       std::cout << "Invalid: hole(s)" << std::endl;
       return false;
     }
-    
+
     return true;
   }
-  
+
   bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
     Validation_triangulation vt;
-    
+
     // Intersections between edges of outer boundary
     for (auto const& edge: polygon.outer_boundary().edges()) {
       if (edge.source() == edge.target()) {
@@ -497,7 +497,7 @@ public:
         return false;
       }
     }
-    
+
     // Connected interior ignoring holes
     for (auto const face: t.all_face_handles()) {
       face->label() = 0;
@@ -527,7 +527,7 @@ public:
       std::cout << "Invalid: hole(s) formed by outer boundary" << std::endl;
       return false;
     }
-    
+
     // Hole nesting
     for (auto const& hole: polygon.holes()) {
       for (auto const& vertex: hole.vertices()) {
@@ -578,13 +578,13 @@ public:
       std::cout << "Invalid: hole(s) with disconnected interior" << std::endl;
       return false;
     }
-    
+
     return true;
   }
-  
+
   bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
     Validation_triangulation vt;
-    
+
     // Intersections between edges of outer boundary
     for (auto const& polygon: multipolygon.polygons()) {
       for (auto const& edge: polygon.outer_boundary().edges()) {
@@ -599,7 +599,7 @@ public:
         }
       }
     }
-    
+
     // Connected interior ignoring holes
     for (auto const face: t.all_face_handles()) {
       face->label() = 0;
@@ -626,7 +626,7 @@ public:
       std::cout << "Invalid: hole(s) formed by outer boundary" << std::endl;
       return false;
     }
-    
+
     // Hole nesting
     for (auto const& polygon: multipolygon.polygons()) {
       for (auto const& hole: polygon.holes()) {
@@ -679,7 +679,7 @@ public:
       std::cout << "Invalid: hole(s) with disconnected interior" << std::endl;
       return false;
     }
-    
+
     return true;
   }
 
