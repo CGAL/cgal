@@ -87,8 +87,6 @@ public:
     }
   }
 
-  /// @}
-
 private:
   const Face_graph& m_face_graph;
   ECM m_ecm;
