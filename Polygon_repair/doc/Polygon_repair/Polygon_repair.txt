@@ -56,7 +56,10 @@ Valid: (a) polygon, (b-c) polygons with holes, and (d-e) multipolygons with hole
 \cgalFigureEnd
 
 \cgalFigureBegin{invalid, invalid.svg}
-Invalid: (a) self-intersecting polygon self-intersection, (b) self-touching polygon, (c-d) polygons with badly nested holes, (e) polygon with hole touching at edge, (f) polygon with hole that separates interior into two parts, (g) multipolygon with overlapping polygons, and (h) multipolygon with polygons that touch at an edge.
+Invalid: (a) self-intersecting polygon self-intersection, (b) self-touching polygon,
+(c-d) polygons with badly nested holes, (e) polygon with hole touching at edge,
+(f) polygon with hole that separates interior into two parts, (g) multipolygon
+with overlapping polygons, and (h) multipolygon with polygons that touch at an edge.
 \cgalFigureEnd
 
 \subsection SubsectionPolygonRepair_Output Stricter Conditions for Output
@@ -90,7 +93,8 @@ then these are assembled into individual polygons with holes and put into a
 single multipolygon with holes.
 
 \cgalFigureBegin{inout, inout.svg}
-Examples of polygons with holes (a-d) and multipolygons with holes (e-h) before (left) and after (right) being repaired.
+Examples of polygons with holes (a-d) and multipolygons with holes
+(e-h) before (left) and after (right) being repaired.
 \cgalFigureEnd
 
 \subsection SubsectionPolygonRepair_Arrangement Arrangement
