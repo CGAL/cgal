@@ -2446,7 +2446,6 @@ void CGAL::QGLViewer::setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers mod
 
   ClickBindingPrivate cbp(modifiers, button, false, ::Qt::NoButton, key);
   clickBinding_.remove(cbp);
-
 }
 
 

@@ -208,19 +208,22 @@ void
 DemosMainWindow::setUseOpenGL(bool checked)
 {
   if(checked) {
-    // AF QOpenGLWidget* new_viewport = new QOpenGLWidget;
+    QOpenGLWidget* new_viewport = new QOpenGLWidget(this);
+    new_viewport->setUpdateBehavior(QOpenGLWidget::NoPartialUpdate);
 
     // Setup the format to allow antialiasing with OpenGL:
     // one need to activate the SampleBuffers, if the graphic driver allows
     // this.
-    // AF QGLFormat glformat = new_viewport->format();
-    // AF glformat.setOption(QGL::SampleBuffers);
-    // AF new_viewport->setFormat(glformat);
+    auto glformat = new_viewport->format();
+    glformat.setSamples(4);
+    new_viewport->setFormat(glformat);
 
-    // AF view->setViewport(new_viewport);
+    view->setViewport(new_viewport);
+    view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   }
   else {
-    view->setViewport(new QWidget);
+    view->setViewport(new QWidget(this));
+    view->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
   }
   statusBar()->showMessage(tr("OpenGL %1activated").arg(checked?"":"de-"),
                            1000);
