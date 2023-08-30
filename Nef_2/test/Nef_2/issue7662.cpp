@@ -81,7 +81,7 @@ void print(const Nef_polyhedron& poly, bool exact = false)
 
 
 
-int main(int argc, char *argv[])
+int main()
 {
   Point p1[] = {
     Point(0,0),
