@@ -28,7 +28,7 @@ int main()
 
   const auto result = intersection(seg, lin);
   if (result) {
-    boost::apply_visitor(Intersection_visitor(), *result);
+    std::visit(Intersection_visitor(), *result);
   } else {
     // no intersection
   }

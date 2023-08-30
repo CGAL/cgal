@@ -26,7 +26,7 @@
 
 #include <fstream>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/config.h>
 #include <CGAL/Cartesian.h>
@@ -144,7 +144,7 @@ public:
   typedef Arr_contracted_side_tag               Top_side_category;
   typedef Arr_identified_side_tag               Right_side_category;
 
-  typedef boost::integral_constant<bool, atan_y==0>       Zero_atan_y;
+  typedef std::integral_constant<bool, atan_y==0>       Zero_atan_y;
 
   // Traits objects
   typedef Arr_extended_direction_3<Kernel>                Point_2;
@@ -436,7 +436,7 @@ public:
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
-                                        boost::true_type) const
+                                        std::true_type) const
   {
     const Direction_3& normal = xcv.normal();
     dp = (CGAL::sign(normal.dz()) == POSITIVE) ?
@@ -449,7 +449,7 @@ public:
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
-                                        boost::false_type) const
+                                        std::false_type) const
   {
     const Direction_3& normal = xcv.normal();
     FT z((atan_x * normal.dx() + atan_y * normal.dy()) /
@@ -461,7 +461,7 @@ public:
    * \param[in] cv the curve
    */
   bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   boost::true_type) const
+                                   std::true_type) const
   {
     const Direction_3& normal = xcv.normal();
     return ((x_sign(normal) == ZERO) &&
@@ -473,7 +473,7 @@ public:
    * \param[in] cv the curve
    */
   bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   boost::false_type) const
+                                   std::false_type) const
   {
     const Direction_3& normal = xcv.normal();
     const Direction_3& iden_normal = identification_normal();
@@ -519,7 +519,7 @@ public:
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(x, y, z);
-      init(p, boost::integral_constant<bool, atan_y==0>());
+      init(p, std::integral_constant<bool, atan_y==0>());
       return p;
     }
 
@@ -532,14 +532,14 @@ public:
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(other);
-      init(p, boost::integral_constant<bool, atan_y==0>());
+      init(p, std::integral_constant<bool, atan_y==0>());
       return p;
     }
 
     /*! Initialize a point on the sphere,
      * \param[in] p the point to initialize.
      */
-    void init(Point_2& p, boost::true_type) const
+    void init(Point_2& p, std::true_type) const
     {
       const Direction_3& dir = p;
       if (y_sign(dir) != ZERO) {
@@ -558,7 +558,7 @@ public:
     /*! Initialize a point on the sphere,
      * \param[in] p the point to initialize.
      */
-    void init(Point_2& p, boost::false_type) const
+    void init(Point_2& p, std::false_type) const
     {
       const Direction_3& dir = p;
       if ((x_sign(dir) == ZERO) && (y_sign(dir) == ZERO)) {
@@ -2141,7 +2141,7 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& c, OutputIterator oi) const {
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       // std::cout << "full: " << c.is_full() << std::endl;
       // std::cout << "vert: " << c.is_vertical() << std::endl;
@@ -2399,8 +2399,7 @@ public:
                                         OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
+
       const Kernel& kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel.equal_2_object();
 
@@ -2415,14 +2414,14 @@ public:
       if (equal(l1, r1)) {
         bool is_full = equal(l2, r2);
         X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true, is_full);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
 
       if (equal(l2, r2)) {
         CGAL_assertion(! equal(l1, r1));        // already handled above
         X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
 
@@ -2436,19 +2435,19 @@ public:
         // 5. l1 = r2 < r1 < l2 = l1 | One overlap (handled above)
         if (in_between(r1, r2, l2)) {
           // Case 1.
-          *oi++ = Intersection_result(Intersection_point(l1_3, 1));
+          *oi++ = Intersection_point(l1_3, 1);
           return oi;
         }
         if (equal(r1, l2)) {
           // Case 2.
-          *oi++ = Intersection_result(Intersection_point(l1_3, 1));
-          *oi++ = Intersection_result(Intersection_point(l2_3, 1));
+          *oi++ = Intersection_point(l1_3, 1);
+          *oi++ = Intersection_point(l2_3, 1);
           return oi;
         }
         CGAL_assertion(in_between(r1, l2, r2));
         // Case 3.
         X_monotone_curve_2 xc(l2_3, r1_3, normal, vertical, true);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
 
@@ -2461,12 +2460,12 @@ public:
         // 5. l1 < l1 = r1 = l2 < r2 | One overlap (handled above)
         if (in_between(r2, r1, l1)) {
           // Case 1.
-          *oi++ = Intersection_result(Intersection_point(l2_3, 1));
+          *oi++ = Intersection_point(l2_3, 1);
           return oi;
         }
         // Case 3.
         X_monotone_curve_2 xc(l1_3, r2_3, normal, vertical, true);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
 
@@ -2478,13 +2477,13 @@ public:
         if (in_between(r1, l2, r2) || equal(r1, r2)) {
           // Cases 1 & 2
           X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
-          *oi++ = Intersection_result(xc);
+          *oi++ = xc;
           return oi;
         }
         // Case 3
         CGAL_assertion(in_between(r2, l2, r1));
         X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
 
@@ -2496,13 +2495,13 @@ public:
         if (in_between(l1, r2, l2)) {
           // Cases 1
           X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true);
-          *oi++ = Intersection_result(xc);
+          *oi++ = xc;
           return oi;
         }
         // Case 3
         CGAL_assertion(in_between(l1, l2, l2));
         X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
 
@@ -2520,12 +2519,12 @@ public:
         if (in_between(l2, r2, l1)) {
           // Case 2
           X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
-          *oi++ = Intersection_result(xc);
+          *oi++ = xc;
           return oi;
         }
         // Case 3
         X_monotone_curve_2 xc(l2_3, r1_3, normal, vertical, true);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
 
@@ -2535,12 +2534,12 @@ public:
       // Case 4
       if (in_between(l1, r1, l2)) {
         X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true);
-        *oi++ = Intersection_result(xc);
+        *oi++ = xc;
         return oi;
       }
       // Case 5
       X_monotone_curve_2 xc(l1_3, r2_3, normal, vertical, true);
-      *oi++ = Intersection_result(xc);
+      *oi++ = xc;
       return oi;
     }
 
@@ -2638,8 +2637,6 @@ public:
       typedef typename Kernel::Equal_3                  Equal_3;
 
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       const Kernel& kernel = m_traits;
 
@@ -2662,9 +2659,9 @@ public:
               (res && (xc1.is_directed_right() != xc2.is_directed_right())))
           {
             if (xc1.left().is_min_boundary() && xc2.left().is_min_boundary())
-              *oi++ = Intersection_result(Intersection_point(xc1.left(), 1));
+              *oi++ = Intersection_point(xc1.left(), 1);
             if (xc1.right().is_max_boundary() && xc2.right().is_max_boundary())
-              *oi++ = Intersection_result(Intersection_point(xc1.right(), 1));
+              *oi++ = Intersection_point(xc1.right(), 1);
             return oi;
           }
 
@@ -2672,11 +2669,11 @@ public:
            * the other arc is completely overlapping.
            */
           if (xc1.left().is_min_boundary() && xc1.right().is_max_boundary()) {
-            *oi++ = Intersection_result(xc2);
+            *oi++ = xc2;
             return oi;
           }
           if (xc2.left().is_min_boundary() && xc2.right().is_max_boundary()) {
-            *oi++ = Intersection_result(xc1);
+            *oi++ = xc1;
             return oi;
           }
           /*! Find an endpoint that does not coincide with a pole, and project
@@ -2724,12 +2721,12 @@ public:
       // Observe that xc1 and xc2 may share two endpoints.
       Point_2 ed = m_traits.construct_point_2_object()(v.direction());
       if (is_in_between(ed, xc1) && is_in_between(ed, xc2))
-        *oi++ = Intersection_result(Intersection_point(ed, 1));
+        *oi++ = Intersection_point(ed, 1);
 
       Vector_3 vo(kernel.construct_opposite_vector_3_object()(v));
       Point_2 edo = m_traits.construct_point_2_object()(vo.direction());
       if (is_in_between(edo, xc1) && is_in_between(edo, xc2))
-        *oi++ = Intersection_result(Intersection_point(edo, 1));
+        *oi++ = Intersection_point(edo, 1);
 
       return oi;
     }

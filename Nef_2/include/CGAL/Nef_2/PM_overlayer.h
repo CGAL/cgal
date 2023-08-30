@@ -23,7 +23,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 13
@@ -92,7 +92,7 @@ struct PMO_from_segs {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     geninfo<Halfedge_handle>::access(G.info(v)) = e;
     #else
-    *boost::any_cast<Halfedge_handle>(&G.info(v)) = e;
+    *std::any_cast<Halfedge_handle>(&G.info(v)) = e;
     #endif
   }
 
@@ -102,7 +102,7 @@ struct PMO_from_segs {
     return geninfo<Halfedge_handle>::access(G.info(v));
     #else
     return
-      boost::any_cast<Halfedge_handle>(G.info(v));
+      std::any_cast<Halfedge_handle>(G.info(v));
     #endif
   }
 
@@ -112,7 +112,7 @@ struct PMO_from_segs {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<Halfedge_handle>::clear(G.info(v));
     #else
-      G.info(v)=boost::any();
+      G.info(v)=std::any();
     #endif
   }
 
@@ -674,7 +674,7 @@ void discard_info(Vertex_handle v) const
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   geninfo<vertex_info>::clear(info(v));
   #else
-  info(v)=boost::any();
+  info(v)=std::any();
   #endif
 }
 
@@ -684,7 +684,7 @@ vertex_info& ginfo(Vertex_handle v) const
   return geninfo<vertex_info>::access(info(v));
   #else
   return
-    *boost::any_cast<vertex_info>(&info(v));
+    *std::any_cast<vertex_info>(&info(v));
   #endif
 }
 
@@ -729,8 +729,8 @@ void discard_info(Halfedge_handle e)  const
   geninfo<halfedge_info>::clear(info(e));
   geninfo<halfedge_info>::clear(info(twin(e)));
   #else
-  info(e)=boost::any();
-  info(twin(e))=boost::any();
+  info(e)=std::any();
+  info(twin(e))=std::any();
   #endif
 }
 
@@ -740,7 +740,7 @@ halfedge_info& ginfo(Halfedge_handle e)  const
   return geninfo<halfedge_info>::access(info(e));
   #else
   return
-    *boost::any_cast<halfedge_info>(&info(e));
+    *std::any_cast<halfedge_info>(&info(e));
   #endif
 }
 
@@ -782,7 +782,7 @@ void discard_info(Face_handle f)  const
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   geninfo<face_info>::clear(info(f));
   #else
-  info(f)=boost::any();
+  info(f)=std::any();
   #endif
 }
 
@@ -792,7 +792,7 @@ face_info& ginfo(Face_handle f)  const
   return geninfo<face_info>::access(info(f));
   #else
   return
-    *boost::any_cast<face_info>(&info(f));
+    *std::any_cast<face_info>(&info(f));
   #endif
 }
 
@@ -959,7 +959,7 @@ bool is_forward_edge(const Const_decorator& N,
 
 void assert_type_precondition() const
 { typename PM_decorator_::Point p1; Point p2;
-  CGAL_static_assertion((std::is_same<typename PM_decorator_::Point, Point>::value)); }
+  static_assert(std::is_same<typename PM_decorator_::Point, Point>::value); }
 
 
 

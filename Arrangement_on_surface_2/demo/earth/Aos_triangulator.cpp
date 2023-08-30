@@ -154,7 +154,7 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh)
       auto intersection = CGAL::intersection(plane, ray);
       if (!intersection.has_value())
         std::cout << "INTERSECTION ASSERTION ERROR!!!\n";
-      auto ip = boost::get<K::Point_3>(intersection.value());
+      auto ip = std::get<K::Point_3>(intersection.value());
       auto ip2 = plane.to_2d(ip);
 
       // add this to the polygon constraint
@@ -288,7 +288,7 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
         auto intersection = CGAL::intersection(plane, ray);
         if (!intersection.has_value())
           std::cout << "INTERSECTION ASSERTION ERROR!!!\n";
-        auto ip = boost::get<K::Point_3>(intersection.value());
+        auto ip = std::get<K::Point_3>(intersection.value());
         auto ip2 = plane.to_2d(ip);
 
         // add this to the polygon constraint

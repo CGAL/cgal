@@ -86,9 +86,9 @@ namespace {
 
   // COUNTRIES AOS for grouping the faces by the country name
   //using Countries_dcel = CGAL::Arr_face_extended_dcel<Geom_traits, std::string>;
-  //using Countries_topol_traits = 
+  //using Countries_topol_traits =
   //           CGAL::Arr_spherical_topology_traits_2<Geom_traits, Countries_dcel>;
-  //using Countries_arr = 
+  //using Countries_arr =
   //          CGAL::Arrangement_on_surface_2<Geom_traits, Countries_topol_traits>;
 
 
@@ -203,7 +203,7 @@ namespace {
         for (const auto& inner_boundary : polygon.inner_boundaries)
           linear_rings.push_back(inner_boundary);
 
-        // loop on outer and inner boundaries 
+        // loop on outer and inner boundaries
         for (const auto& lring : linear_rings)
         {
           // convert the nodes to points on unit-sphere
@@ -449,7 +449,7 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
   //Geom_traits traits;
   Ext_aos arr(&s_traits);
 
-  // 
+  //
   auto nodes = Kml::generate_ids(placemarks);
   //auto nodes = Kml::generate_ids_approx(placemarks, 0.001);
 
@@ -459,7 +459,7 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks)
 
   int num_counted_arcs = 0;
   int num_counted_polygons = 0;
-  // 
+  //
   std::vector<Point> points;
   std::vector<Ext_aos::Vertex_handle> vertices;
   for (const auto& node : nodes)
@@ -582,7 +582,7 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
 
 
   //-------------------------------------------------------------------------
-  // define a set of vertex-handles: use this to check if the face is 
+  // define a set of vertex-handles: use this to check if the face is
   // obtained from the polygon definition, or if it is an additional face
   using Vertex_handle = Ext_aos::Vertex_handle;
   std::map<Vertex_handle, int>  vertex_id_map;
@@ -608,7 +608,7 @@ Aos::Approx_arcs  Aos::find_new_faces(Kml::Placemarks& placemarks)
       //for (const auto& inner_boundary : polygon.inner_boundaries)
       //  linear_rings.push_back(inner_boundary);
 
-      // loop on outer and inner boundaries 
+      // loop on outer and inner boundaries
       //for (auto* lring : linear_rings)
       auto* lring = &polygon.outer_boundary;
       {
@@ -736,7 +736,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
 
 
   //-------------------------------------------------------------------------
-  // define a set of vertex-handles: use this to check if the face is 
+  // define a set of vertex-handles: use this to check if the face is
   // obtained from the polygon definition, or if it is an additional face
   using Vertex_handle = Ext_aos::Vertex_handle;
   using Halfedge_handle = Ext_aos::Halfedge_handle;
@@ -766,7 +766,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
       //for (const auto& inner_boundary : polygon.inner_boundaries)
       //  linear_rings.push_back(inner_boundary);
 
-      // loop on outer and inner boundaries 
+      // loop on outer and inner boundaries
       //for (auto* lring : linear_rings)
       auto* lring = &polygon.outer_boundary;
       {
@@ -836,7 +836,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name)
   ////////////////////////////////////////////////////////////////////////////
   // POINTS
   // define a map from each vertex to its position in the arrangement
-  //auto get_num_denum  
+  //auto get_num_denum
   using FT = typename Kernel::FT;
   //using json = nlohmann::ordered_json;
   FT ft(0);
@@ -1818,18 +1818,18 @@ Aos::Country_color_map  Aos::get_color_mapping(Arr_handle arrh)
     all_countries.push_back(country_name);
   }
 
-  // prepare a map of neighboring countries 
+  // prepare a map of neighboring countries
   std::map<std::string, std::set<std::string>> country_neighbors_map;
   for (auto& [country_name, faces] : country_faces_map)
   {
-    // loop on all of the faces of the current country 
+    // loop on all of the faces of the current country
     for (auto* face : faces)
     {
       auto first = face->outer_ccb();
       auto curr = first;
       do {
         const auto& neighbor_country_name = curr->twin()->face()->data();
-        
+
         // skip the spherical face
         if (neighbor_country_name.empty())
           continue;
@@ -1895,7 +1895,7 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
   //  //auto s = e.source()->point().to_vector();
   //  //auto t = e.target()->point().to_vector();
   //  //auto m = (s + t) * 0.5;
-  //  //query_point = Countries_arr::Point_2(m.direction(), 
+  //  //query_point = Countries_arr::Point_2(m.direction(),
   //  //                                 Point_2::Location_type::NO_BOUNDARY_LOC);
   //}
 
@@ -1911,18 +1911,18 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
   //const Face_const_handle* f;
   //std::cout << "The point (" << query_point << ") is located ";
   std::string country_name = "";
-  if (auto f = boost::get<Face_const_handle>(&obj)) // located inside a face
-  {    
+  if (auto f = std::get_if<Face_const_handle>(&obj)) // located inside a face
+  {
     //std::cout << "*** QUERY: FACE\n";
     country_name = f->ptr()->data();
   }
-  else if (auto e = boost::get<Halfedge_const_handle>(&obj)) 
+  else if (auto e = std::get_if<Halfedge_const_handle>(&obj))
   {
     // located on an edge: return one of the incident face arbitrarily
     //std::cout << "*** QUERY: EDGE\n";
     country_name = (*e)->face()->data();
   }
-  else if (auto v = boost::get<Vertex_const_handle>(&obj)) 
+  else if (auto v = std::get_if<Vertex_const_handle>(&obj))
   {
     // located on a vertex
     if ((*v)->is_isolated())
@@ -1936,7 +1936,7 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
       country_name = (*v)->incident_halfedges()->face()->data();
     }
   }
-  else 
+  else
   {
     CGAL_error_msg("Invalid object.");
   }
@@ -1944,7 +1944,7 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point)
   return country_name;
 }
 
-Aos::Approx_arcs Aos::get_approx_arcs_from_faces_edges(Arr_handle arrh, 
+Aos::Approx_arcs Aos::get_approx_arcs_from_faces_edges(Arr_handle arrh,
                                                        float error)
 {
   auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());

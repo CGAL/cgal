@@ -930,6 +930,9 @@ if(CGAL_BRANCH_BUILD)
     find_package(Eigen3 REQUIRED)
     find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
     find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+    if(VTK_FOUND)
+      get_target_property(VTK_INCLUDE_DIRS VTK::IOImage INTERFACE_INCLUDE_DIRECTORIES)
+    endif()
     find_package(IPE)
     find_package(RS3)
     find_package(LEDA)
@@ -943,7 +946,7 @@ ${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Gui_DEFINITIONS} \
 ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
 ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
 ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
-${CGAL_DEFINITIONS}")
+${CGAL_DEFINITIONS} -std=c++17")
     message("COMPILATION OPTIONS ARE :  ${compile_options}")
 
     if(NOT RS_FOUND AND NOT RS3_FOUND)
@@ -1197,6 +1200,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
       endif()
     endforeach() # loop on packages
     #Now check that a cpp file including all documented headers compiles
+    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp "#include <CGAL/Periodic_3_mesh_3/config.h>\n")
     foreach(header ${list_of_headers_to_test})
       file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
     endforeach() #loop on headers to include in test file

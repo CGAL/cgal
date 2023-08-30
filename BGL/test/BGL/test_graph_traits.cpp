@@ -34,7 +34,7 @@ void test_halfedge_around_vertex_iterator(const Graph& g)
       assert(target(*havit, g) == *vit);
 
       // check if we are really moving clockwise
-      halfedge_around_target_iterator step = boost::next(havit);
+      halfedge_around_target_iterator step = std::next(havit);
       if(step != havend) {
         halfedge_descriptor stepd = *step;
         assert(stepd == opposite(next(*havit, g), g));

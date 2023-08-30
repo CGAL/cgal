@@ -40,7 +40,7 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-typedef internal::Exact_ring_selector<int>::Type Exact_integer;
+using Exact_integer = internal::Exact_NT_backend<internal::Default_exact_nt_backend>::Integer;
 
 #endif // not DOXYGEN_RUNNING
 

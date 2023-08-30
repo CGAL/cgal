@@ -25,7 +25,7 @@ This is equivalent to `arrange_offset_polygons_2(create_interior_weighted_skelet
 \sa `Polygon_offset_builder_2`
 */
 template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
-std::vector< boost::shared_ptr< OfKPolygon > >
+std::vector< std::shared_ptr< OfKPolygon > >
 create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(FT offset,
                                                                    const InKPolygon& poly_with_holes,
                                                                    OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
@@ -63,7 +63,7 @@ having reversed the orientation of all other polygons.
 \sa `Polygon_offset_builder_2`
 */
 template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
-std::vector<boost::shared_ptr<OfKPolygon> >
+std::vector<std::shared_ptr<OfKPolygon> >
 create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2(FT offset,
                                                                    const InKPolygon& poly_with_holes,
                                                                    OfK ofk = Exact_predicates_inexact_constructions_kernel(),

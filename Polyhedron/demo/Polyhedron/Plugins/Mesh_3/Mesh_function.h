@@ -34,7 +34,7 @@
 #include <CGAL/make_mesh_3.h> // for C3t3_initializer
 #include <CGAL/use.h>
 
-#include <boost/any.hpp>
+#include <any>
 
 namespace CGAL {
   class Image_3;
@@ -117,7 +117,7 @@ private:
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
 private:
-  boost::any object_to_destroy;
+  std::any object_to_destroy;
   C3t3& c3t3_;
   Domain* const domain_;
   Mesh_parameters const p_;
@@ -273,10 +273,10 @@ edge_criteria(double edge_size, double minb, Mesh_fnt::Polyhedral_domain_tag)
     Mesh_sizing_field* sizing_field_ptr =
       new Mesh_sizing_field(edge_size, *domain_, domain_->aabb_tree());
     // The sizing field object, as well as the `patch_ids_vector` are
-    // allocated on the heap, and the following `boost::any` object,
+    // allocated on the heap, and the following `std::any` object,
     // containing two shared pointers, is used to make the allocated
     // objects be destroyed at the destruction of the thread object, using
-    // type erasure (`boost::any`).
+    // type erasure (`std::any`).
     object_to_destroy =
       std::make_pair(QSharedPointer<Mesh_sizing_field>(sizing_field_ptr),
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));

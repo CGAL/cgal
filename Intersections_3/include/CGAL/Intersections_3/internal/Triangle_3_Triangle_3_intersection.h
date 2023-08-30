@@ -21,8 +21,6 @@
 
 #include <CGAL/kernel_assertions.h>
 
-#include <boost/next_prior.hpp>
-
 #include <list>
 #include <map>
 #include <vector>
@@ -53,8 +51,8 @@ void intersection_coplanar_triangles_cutoff(const typename Kernel::Point_3& p,
 
   CGAL_kernel_assertion_code(int pt_added = 0;)
 
-  const typename Kernel::Point_3* prev = &(*boost::prior(inter_pts.end()));
-  Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : boost::prior(inter_pts.end());
+  const typename Kernel::Point_3* prev = &(*std::prev(inter_pts.end()));
+  Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : std::prev(inter_pts.end());
   for(Iterator it=inter_pts.begin(); it!=stop; ++it)
   {
     const typename Kernel::Point_3& curr = *it;
@@ -120,10 +118,10 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(*inter_pts.begin());
     case 2:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
-            k.construct_segment_3_object()(*inter_pts.begin(), *boost::next(inter_pts.begin())) );
+            k.construct_segment_3_object()(*inter_pts.begin(), *std::next(inter_pts.begin())) );
     case 3:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
-            k.construct_triangle_3_object()(*inter_pts.begin(), *boost::next(inter_pts.begin()), *boost::prior(inter_pts.end())) );
+            k.construct_triangle_3_object()(*inter_pts.begin(), *std::next(inter_pts.begin()), *std::prev(inter_pts.end())) );
     default:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(
             std::vector<typename K::Point_3>(inter_pts.begin(),inter_pts.end()));
@@ -209,7 +207,7 @@ intersection(const typename K::Triangle_3& t1,
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
     }
 
-    return boost::apply_visitor(Triangle_Line_visitor<K>(), *inter1, *inter2);
+    return std::visit(Triangle_Line_visitor<K>(), *inter1, *inter2);
   }
 
   return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();

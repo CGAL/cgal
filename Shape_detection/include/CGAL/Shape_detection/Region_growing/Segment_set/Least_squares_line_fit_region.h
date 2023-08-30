@@ -223,13 +223,12 @@ namespace Segment_set {
       \param query
       `Item` of the query segment
 
-      The first and third parameters are not used in this implementation.
+      The last parameter is not used in this implementation.
 
       \return Boolean `true` or `false`
 
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region&) const {
 

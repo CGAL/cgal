@@ -356,7 +356,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
                         std::enable_if_t<
-                          boost::is_convertible<
+                          std::is_convertible<
                           typename std::iterator_traits<InputIterator>::value_type,
                           Weighted_point>::value >* = nullptr)
 #else
@@ -595,7 +595,7 @@ public:
   std::ptrdiff_t insert(InputIterator first,
                         InputIterator last,
                         std::enable_if_t<
-                        boost::is_convertible<
+                        std::is_convertible<
                         typename std::iterator_traits<InputIterator>::value_type,
                         std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
                         >::value
@@ -614,8 +614,8 @@ public:
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
          std::enable_if_t<
            boost::mpl::and_<
-           typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
-           typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+           typename std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
+           typename std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
          >::value >* =nullptr)
   {
     return insert_with_info<
@@ -1003,9 +1003,10 @@ public:
 
   void dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const;
   void dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const;
-  void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
   void dual_ray(Cell_handle c, int i, Ray& ray) const;
   void dual_ray(const Facet& facet, Ray& ray) const;
+  void dual_exact(const Facet& facet, const Weighted_point& p, Bare_point&q) const;
+  void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
   void dual_ray_exact(const Facet& facet, Ray& ray) const;
 
   template < class Stream>
@@ -1825,14 +1826,42 @@ dual_ray(const Facet& facet, Ray& ray) const
   return dual_ray(facet.first, facet.second, ray);
 }
 
-// Exact versions of dual_segment() and dual_ray() for Mesh_3.
+// Exact versions of dual(), dual_segment(), and dual_ray() for Mesh_3.
 // These functions are really dirty: they assume that the point type is nice enough
 // such that EPECK can manipulate it (e.g. convert it to EPECK::Point_3) AND
 // that the result of these manipulations will make sense.
 template < class Gt, class Tds, class Lds >
 void
 Regular_triangulation_3<Gt,Tds,Lds>::
-dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
+dual_exact(const Facet& f, const Weighted_point& s, Bare_point& cc) const
+{
+  typedef typename Kernel_traits<Bare_point>::Kernel           K;
+  typedef Exact_predicates_exact_constructions_kernel          EK;
+  typedef Cartesian_converter<K, EK>                           To_exact;
+  typedef Cartesian_converter<EK,K>                            Back_from_exact;
+
+  typedef EK                                                   Exact_Rt;
+
+  To_exact to_exact;
+  Back_from_exact back_from_exact;
+  Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+
+  const Cell_handle c = f.first;
+  const int i = f.second;
+
+  const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex((i+1)%4)->point());
+  const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex((i+2)%4)->point());
+  const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex((i+3)%4)->point());
+  const typename Exact_Rt::Weighted_point_3& cs = to_exact(s);
+
+  cc = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs));
+}
+
+template < class Gt, class Tds, class Lds >
+void
+Regular_triangulation_3<Gt,Tds,Lds>::
+dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point& q) const
 {
   typedef typename Kernel_traits<Bare_point>::Kernel           K;
   typedef Exact_predicates_exact_constructions_kernel          EK;
@@ -2584,8 +2613,17 @@ remove(Vertex_handle v, bool *could_lock_zone)
     if(!vertex_validity_check(v, tds()))
       return true; // vertex is already gone from the TDS, nothing to do
 
-    Vertex_handle hint = v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0);
-
+#ifndef CGAL_LINKED_WITH_TBB
+    using Vertex_handle_and_point = Vertex_handle;
+#endif // not CGAL_LINKED_WITH_TBB
+    Vertex_handle_and_point hint_and_point{v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0)};
+#ifdef CGAL_LINKED_WITH_TBB
+    const Vertex_handle& hint = hint_and_point.vh;
+    const Weighted_point& hint_point_mem = hint_and_point.wpt;
+#else // not CGAL_LINKED_WITH_TBB
+    const Vertex_handle& hint = hint_and_point;
+    const Weighted_point& hint_point_mem = hint_and_point->point();
+#endif // not CGAL_LINKED_WITH_TBB
     Self tmp;
     Vertex_remover<Self> remover(tmp);
     removed = Tr_Base::remove(v, remover, could_lock_zone);
@@ -2612,13 +2650,12 @@ remove(Vertex_handle v, bool *could_lock_zone)
           // the hint.
           if(!vertex_validity_check(hint, tds()))
           {
-            hint = finite_vertices_begin();
+            hint_and_point = finite_vertices_begin();
             continue;
           }
 
           // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
           // does not get its position changed to P2 != P1.
-          const Weighted_point hint_point_mem = hint->point();
 
           if(this->try_lock_point(hint_point_mem) && this->try_lock_point(wp))
           {
@@ -2628,7 +2665,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
             if(!vertex_validity_check(hint, tds()) ||
                hint->point() != hint_point_mem)
             {
-              hint = finite_vertices_begin();
+              hint_and_point = finite_vertices_begin();
               this->unlock_all_elements();
               continue;
             }
@@ -2639,7 +2676,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
             {
               success = true;
               if(hv != Vertex_handle())
-                hint = hv;
+                hint_and_point = hv;
             }
           }
 

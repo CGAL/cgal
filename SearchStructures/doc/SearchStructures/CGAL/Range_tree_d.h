@@ -9,11 +9,11 @@ points that lie inside a given \f$ d\f$-dimensional interval.
 
 \cgalHeading{Implementation}
 
-The construction of a \f$ d\f$-dimensional range tree takes \f$ {O}(n\log n^{d-1})\f$
+The construction of a \f$ d\f$-dimensional range tree takes \cgalBigO{n\log n^{d-1}}
 time. The points in
-the query window are reported in time \f$ {O}(k+{\log}^d n )\f$, where \f$ k\f$
+the query window are reported in time \cgalBigO{k+{\log}^d n }, where \f$ k\f$
 is the number of reported points.
-The tree uses \f$ {O}(n\log n^{d-1})\f$ storage.
+The tree uses \cgalBigO{n\log n^{d-1}} storage.
 
 */
 template< typename Data, typename Window, typename Traits >

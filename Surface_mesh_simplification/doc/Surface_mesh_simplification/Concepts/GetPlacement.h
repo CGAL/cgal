@@ -7,7 +7,7 @@ function object</I> which gets the <I>collapse placement</I> of an edge,
 that is, the new position of the vertex that remains after a
 halfedge-collapse operation.
 
-The placement returned is a `boost::optional` value (i.e., it can
+The placement returned is a `std::optional` value (i.e., it can
 be absent). An absent result indicates that the edge should not be collapsed.
 This could be the result of a computational limitation (such as an overflow),
 or can be intentionally returned to prevent the edge from being collapsed.
@@ -36,7 +36,7 @@ public:
   Computes and returns the placement, that is, the position of the vertex
   which replaces the collapsing edge (represented by its profile).
   */
-  boost::optional<Edge_profile::Point>operator()(const Edge_profile& profile) const;
+  std::optional<Edge_profile::Point>operator()(const Edge_profile& profile) const;
 
   /// @}
 

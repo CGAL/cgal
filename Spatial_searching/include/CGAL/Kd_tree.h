@@ -31,7 +31,7 @@
 #include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
 #include <boost/container/deque.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -335,7 +335,7 @@ public:
     }
 
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
@@ -594,7 +594,7 @@ public:
 
 
   template <class FuzzyQueryItem>
-  boost::optional<Point_d>
+  std::optional<Point_d>
   search_any_point(const FuzzyQueryItem& q) const
   {
     if(! pts.empty()){
@@ -605,7 +605,7 @@ public:
       Kd_tree_rectangle<FT,D> b(*bbox);
       return tree_root->search_any_point(q,b,begin(),cache_begin(),dim_);
     }
-    return boost::none;
+    return std::nullopt;
   }
 
 

@@ -7254,6 +7254,20 @@ public:
                              const Kernel::Weighted_point_3& q,
                              const Kernel::Weighted_point_3& r,
                              const Kernel::Weighted_point_3& s);
+
+  /*!
+  constructs the point which is the center of the smallest orthogonal sphere to the input weighted points.
+  */
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q,
+                             const Kernel::Weighted_point_3& r);
+
+  /*!
+  constructs the point which is the center of the smallest orthogonal sphere to the input weighted points.
+  */
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q);
+
   /// @}
 }; /* end Kernel::ConstructWeightedCircumcenter_3 */
 

@@ -4,11 +4,10 @@
 #include  <CGAL/Three/Scene_item_rendering_helper.h>
 #include "SMesh_type.h"
 
-#include <boost/array.hpp>
-
 #include <iostream>
 
 struct Scene_polygon_soup_item_priv;
+
 struct Polygon_soup
 {
     typedef EPICK::Point_3 Point_3;
@@ -18,7 +17,7 @@ struct Polygon_soup
     //vector containing a pair of indices of points in Points and a set of indices of Polygons
     //containing the edge.
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
-    typedef boost::array<std::size_t, 2> Edge;
+    typedef std::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
     typedef std::vector<CGAL::IO::Color> Colors;
     typedef std::set<Edge> Edges;

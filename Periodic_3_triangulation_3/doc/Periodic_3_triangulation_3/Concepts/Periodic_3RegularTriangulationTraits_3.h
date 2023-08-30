@@ -81,10 +81,33 @@ typedef unspecified_type Power_side_of_oriented_power_sphere_3;
 /*!
 A predicate object that must provide the function operators:
 
-`Orientation operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, FT w)`,
+` operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s,
+             Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`,
+
+which compares the squared distance between `(p, o_p)` and `(q, o_q)` and the squared distance
+between `(r, o_r)` and `(s, o_s)`, and returns `SMALLER`, `EQUAL`, or `LARGER`.
+
+\pre `p`, `q`, `r`, and `s` lie inside the domain.
+
+*/
+typedef unspecified_type Compare_squared_distance_3;
+
+/// @}
+
+/// \name
+/// @{
+
+/*!
+A predicate object that must provide the function operators:
+
+`Comparison_result operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, FT w)`,
+
+and
+
+`Comparison_result operator()(Weighted_point_3 p, FT w)`,
 
 which compares the weight of the smallest sphere orthogonal to the input weighted
-points with the input weight `w` and returns a `SMALLER`, `EQUAL`, or `LARGER`.
+points with the input weight `w` and returns `SMALLER`, `EQUAL`, or `LARGER`.
 
 \pre `p`, `q`, `r`, and `s` lie inside the domain.
 

@@ -167,7 +167,7 @@ namespace CGAL {
                       (planes.begin(),
                        planes.end(),
                        P,
-                       boost::make_optional(Point(CGAL::ORIGIN)));
+                       std::make_optional(Point(CGAL::ORIGIN)));
 
                     // apply f to the triangles on the boundary of P
                     for(typename boost::graph_traits<Polyhedron>::face_descriptor fd : faces(P))

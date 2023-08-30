@@ -25,23 +25,22 @@
 #include <CGAL/tags.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Unfiltered_predicate_adaptor.h>
+#include <CGAL/Lazy_exact_nt.h>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/optional/optional.hpp>
-#include <boost/none.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
 #include <algorithm>
 #include <iterator>
 #include <limits>
 #include <stdexcept>
+#include <optional>
 
 namespace CGAL {
 
 namespace CGAL_SS_i {
 
 template<class T>
-T const& validate ( boost::optional<T> const& o )
+T const& validate ( std::optional<T> const& o )
 {
   if ( !o )
     throw std::overflow_error("Arithmetic overflow");
@@ -56,17 +55,16 @@ NT const& validate( NT const& n )
   return n ;
 }
 
-// boost::make_optional is provided in Boost >= 1.34, but not before, so we define our own versions here.
 template<class T>
-boost::optional<T> cgal_make_optional( T const& v )
+std::optional<T> cgal_make_optional( T const& v )
 {
-  return boost::optional<T>(v) ;
+  return std::optional<T>(v) ;
 }
 
 template<class T>
-boost::optional<T> cgal_make_optional( bool cond, T const& v )
+std::optional<T> cgal_make_optional( bool cond, T const& v )
 {
-  return cond ? boost::optional<T>(v) : boost::optional<T>() ;
+  return cond ? std::optional<T>(v) : std::optional<T>() ;
 }
 
 template<class K>
@@ -114,10 +112,10 @@ private:
            has_smaller_relative_precision(point.y(), precision);
   }
 
-  bool has_enough_precision(const boost::tuple<typename FK::FT, typename FK::Point_2>& time_and_point, double precision) const
+  bool has_enough_precision(const std::tuple<typename FK::FT, typename FK::Point_2>& time_and_point, double precision) const
   {
-    return has_smaller_relative_precision(boost::get<0>(time_and_point), precision) &&
-           has_enough_precision(boost::get<1>(time_and_point), precision);
+    return has_smaller_relative_precision(std::get<0>(time_and_point), precision) &&
+           has_enough_precision(std::get<1>(time_and_point), precision);
   }
 
   bool has_enough_precision(const CGAL::Trisegment_2<FK, CGAL_SS_i::Segment_2_with_ID<FK> >& trisegment, double precision) const
@@ -208,7 +206,7 @@ template <class Info>
 struct FPU_checker;
 
 template <class K>
-struct FPU_checker<boost::optional< Line_2<K> > >
+struct FPU_checker<std::optional< Line_2<K> > >
 {
   static bool is_valid()
   {
@@ -218,7 +216,7 @@ struct FPU_checker<boost::optional< Line_2<K> > >
 };
 
 template <class FT>
-struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
+struct FPU_checker<std::optional< CGAL_SS_i::Rational< FT > > >
 {
   static bool is_valid()
   {
@@ -228,7 +226,7 @@ struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
 };
 
 template <class K>
-struct FPU_checker<boost::optional< Point_2<K> > >
+struct FPU_checker<std::optional< Point_2<K> > >
 {
   static bool is_valid()
   {
@@ -276,20 +274,20 @@ struct SS_converter : Converter
   typedef Trisegment_2<Source_kernel, Source_segment_2_with_ID> Source_trisegment_2 ;
   typedef Trisegment_2<Target_kernel, Target_segment_2_with_ID> Target_trisegment_2 ;
 
-  typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
-  typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
+  typedef std::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
+  typedef std::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
 
-  typedef boost::optional<Source_FT> Source_opt_FT ;
-  typedef boost::optional<Target_FT> Target_opt_FT ;
+  typedef std::optional<Source_FT> Source_opt_FT ;
+  typedef std::optional<Target_FT> Target_opt_FT ;
 
-  typedef boost::optional<Source_point_2> Source_opt_point_2 ;
-  typedef boost::optional<Target_point_2> Target_opt_point_2 ;
+  typedef std::optional<Source_point_2> Source_opt_point_2 ;
+  typedef std::optional<Target_point_2> Target_opt_point_2 ;
 
-  typedef boost::optional<Source_time_and_point_2> Source_opt_time_and_point_2 ;
-  typedef boost::optional<Target_time_and_point_2> Target_opt_time_and_point_2 ;
+  typedef std::optional<Source_time_and_point_2> Source_opt_time_and_point_2 ;
+  typedef std::optional<Target_time_and_point_2> Target_opt_time_and_point_2 ;
 
-  typedef boost::optional<Source_segment_2> Source_opt_segment_2 ;
-  typedef boost::optional<Target_segment_2> Target_opt_segment_2 ;
+  typedef std::optional<Source_segment_2> Source_opt_segment_2 ;
+  typedef std::optional<Target_segment_2> Target_opt_segment_2 ;
 
   typedef typename Source_trisegment_2::Self_ptr Source_trisegment_2_ptr ;
   typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr ;
@@ -323,7 +321,7 @@ struct SS_converter : Converter
   {
     Source_FT      t ;
     Source_point_2 p ;
-    boost::tie(t,p) = v ;
+    std::tie(t,p) = v ;
     return Target_time_and_point_2(cvt_n(t),cvt_p(p));
   }
 
