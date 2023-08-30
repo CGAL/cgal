@@ -83,6 +83,7 @@ public:
   using Tag = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value, CGAL::Exact_predicates_tag, CGAL::Exact_intersections_tag>::type;
   using Constrained_Delaunay_triangulation = CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag>;
   using Triangulation = Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
+  using Validation_triangulation = CGAL::Constrained_triangulation_2<Kernel, Triangulation_data_structure>;
 
   struct Polygon_less {
     using Polygon_2 = CGAL::Polygon_2<Kernel, PolygonContainer>;
@@ -428,6 +429,110 @@ public:
       // std::cout << "Adding polygon " << polygon << std::endl;
       mp.add_polygon(polygon);
     }
+  }
+  
+  // Validation
+  bool is_valid(const Polygon_2<Kernel, PolygonContainer>& polygon) {
+    Validation_triangulation vt;
+    
+    // Intersections between edges
+    for (auto const& edge: polygon.edges()) {
+      if (edge.source() == edge.target()) {
+        std::cout << "Invalid: duplicate vertices" << std::endl;
+        return false;
+      } try {
+        vt.insert_constraint(edge.source(), edge.target());
+      } catch (typename Validation_triangulation::Intersection_of_constraints_exception ice) {
+        std::cout << "Invalid: intersecting edges" << std::endl;
+        return false;
+      }
+    }
+    
+    // Connected interior with no holes
+    for (auto const face: t.all_face_handles()) {
+      face->label() = 0;
+      face->processed() = false;
+    } std::list<typename Triangulation::Face_handle> to_check;
+    std::list<int> to_check_added_by;
+    label_region(t.infinite_face(), -1, to_check, to_check_added_by); // exterior
+    int regions = 0, holes = 0;
+    while (!to_check.empty()) {
+      if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+        if (to_check_added_by.front() < 0) {
+          label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+          ++regions;
+        } else {
+          label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+          ++holes;
+        }
+      } to_check.pop_front();
+      to_check_added_by.pop_front();
+    } if (regions > 1) {
+      std::cout << "Invalid: disconnected interior" << std::endl;
+      return false;
+    } if (holes > 0) {
+      std::cout << "Invalid: hole(s)" << std::endl;
+      return false;
+    }
+    
+    return true;
+  }
+  
+  bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
+    Validation_triangulation vt;
+    
+    // Intersections between edges of outer boundary
+    for (auto const& edge: polygon.outer_boundary().edges()) {
+      if (edge.source() == edge.target()) {
+        std::cout << "Invalid: duplicate vertices" << std::endl;
+        return false;
+      } try {
+        vt.insert_constraint(edge.source(), edge.target());
+      } catch (typename Validation_triangulation::Intersection_of_constraints_exception ice) {
+        std::cout << "Invalid: intersecting edges" << std::endl;
+        return false;
+      }
+    }
+    
+    // Connected interior with no holes
+    for (auto const face: t.all_face_handles()) {
+      face->label() = 0;
+      face->processed() = false;
+    } std::list<typename Triangulation::Face_handle> to_check;
+    std::list<int> to_check_added_by;
+    label_region(t.infinite_face(), -1, to_check, to_check_added_by); // exterior
+    int regions = 0, holes = 0;
+    while (!to_check.empty()) {
+      if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+        if (to_check_added_by.front() < 0) {
+          label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+          ++regions;
+        } else {
+          label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+          ++holes;
+        }
+      } to_check.pop_front();
+      to_check_added_by.pop_front();
+    } if (regions > 1) {
+      std::cout << "Invalid: disconnected interior" << std::endl;
+      return false;
+    } if (holes > 0) {
+      std::cout << "Invalid: hole(s)" << std::endl;
+      return false;
+    }
+    
+    // Hole nesting
+    for (auto const& hole: polygon.holes()) {
+      for (auto const& vertex: hole.vertices()) {
+        
+      }
+    }
+    
+    return true;
+  }
+  
+  bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
+    return true;
   }
 
   // Erases the triangulation.
