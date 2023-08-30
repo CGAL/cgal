@@ -17,7 +17,7 @@
 
 #include <typeindex>
 
-#include <CGAL/Properties.h>
+#include <CGAL/Property_container.h>
 
 #include <CGAL/Point_set_3/IO.h>
 

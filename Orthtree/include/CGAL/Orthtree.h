@@ -20,7 +20,7 @@
 #include <CGAL/Orthtree/Traversal_iterator.h>
 #include <CGAL/Orthtree/IO.h>
 
-#include <CGAL/Properties.h>
+#include <CGAL/Property_container.h>
 #include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>

@@ -1,5 +1,5 @@
 
-#include <CGAL/Properties.h>
+#include <CGAL/Property_container.h>
 
 using namespace CGAL::Properties;
 
