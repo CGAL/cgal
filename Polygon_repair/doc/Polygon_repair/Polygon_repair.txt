@@ -174,7 +174,7 @@ The polygon repair method as originally developed is described by Ledoux et al.
 This package is a reimplementation of the method with a new approach to label
 and reconstruct the multipolygons. It also incorporates improvements later
 added to prepair, such as the application of the odd-even counting heuristic
-to edges.
+to edges, which enables correct counting even on partially overlapping edges.
 
 Ken Arroyo Ohori made a prototype version of this package for the Google Summer of
 Code 2023 under the mentorship of Sébastien Loriot and Andreas Fabri.
