@@ -58,7 +58,7 @@ void Camera::rotate_from_init_config(float theta, float phi)
   r1.rotate(theta, ey);
 
   // rx = rotated x axis
-  auto rx = r1 * QVector3D(1,0,0);
+  auto rx = r1.map(QVector3D(1,0,0));
   QMatrix4x4 r2;
   r2.rotate(phi, rx);
 
@@ -66,18 +66,18 @@ void Camera::rotate_from_init_config(float theta, float phi)
   auto r = r2 * r1;
 
   const auto dist_cam_to_origin = m_pos.length();
-  m_pos = r * QVector3D(0, 0, dist_cam_to_origin);
-  m_ux = r * QVector3D(1, 0, 0); // should be the same as rx (sanity check?)
-  m_uy = r * QVector3D(0, 1, 0);
-  m_uz = r * QVector3D(0, 0, 1);
+  m_pos = r.map(QVector3D(0, 0, dist_cam_to_origin));
+  m_ux = r.map(QVector3D(1, 0, 0)); // should be the same as rx (sanity check?)
+  m_uy = r.map(QVector3D(0, 1, 0));
+  m_uz = r.map(QVector3D(0, 0, 1));
 }
 
 void Camera::rotate(QMatrix4x4 rot)
 {
-  m_pos = rot * m_pos;
-  m_ux = rot * m_ux;
-  m_uy = rot * m_uy;
-  m_uz = rot * m_uz;
+  m_pos = rot.map(m_pos);
+  m_ux = rot.map(m_ux);
+  m_uy = rot.map(m_uy);
+  m_uz = rot.map(m_uz);
 }
 
 void Camera::save_config()
@@ -90,10 +90,10 @@ void Camera::save_config()
 
 void Camera::rotate_from_saved_config(QMatrix4x4 rot)
 {
-  m_pos = rot * m_saved_pos;
-  m_ux =  rot * m_saved_ux;
-  m_uy =  rot * m_saved_uy;
-  m_uz =  rot * m_saved_uz;
+  m_pos = rot.map(m_saved_pos);
+  m_ux =  rot.map(m_saved_ux);
+  m_uy =  rot.map(m_saved_uy);
+  m_uz =  rot.map(m_saved_uz);
 }
 
 void Camera::move_forward(float distance)
