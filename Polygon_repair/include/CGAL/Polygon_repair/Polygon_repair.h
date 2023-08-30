@@ -124,8 +124,6 @@ public:
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation_odd_even(const Polygon_2<Kernel, PolygonContainer>& polygon) {
-    std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
-                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
     // Get unique edges
     for (auto const& edge: polygon.edges()) {
@@ -167,8 +165,6 @@ public:
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation_odd_even(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
-    std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
-                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
     // Get unique edges
     for (auto const& edge: polygon.outer_boundary().edges()) {
@@ -219,8 +215,6 @@ public:
 
   // Add edges of the polygon to the triangulation
   void add_to_triangulation_odd_even(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
-    std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
-                       boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
 
     // Get unique edges
     for (auto const& polygon: multipolygon.polygons()) {
@@ -439,6 +433,11 @@ public:
   // Erases the triangulation.
   void clear() {
     t.clear();
+    unique_edges.clear();
+    mp.clear();
+    number_of_polygons = 0;
+    number_of_holes = 0;
+    search_start = Triangulation::Face_handle();
   }
 
   /// @}
@@ -459,6 +458,8 @@ public:
 
 protected:
   Triangulation t;
+  std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
+                     boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
   Multipolygon_with_holes_2<Kernel, PolygonContainer> mp;
   int number_of_polygons, number_of_holes;
   typename Triangulation::Face_handle search_start;
