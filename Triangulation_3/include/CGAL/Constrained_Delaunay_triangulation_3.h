@@ -1741,7 +1741,7 @@ private:
   std::optional<std::pair<Vertex_handle, Vertex_handle>>
   return_encroached_constrained_edge([[maybe_unused]] CDT_3_face_index face_index,
                                       const CDT_2& cdt_2,
-                                      Point_3 circ) const
+                                      Point_3 steiner_pt) const
   {
     for(auto [other_fh, index] : cdt_2.finite_edges()) {
       if(!other_fh->is_constrained(index))
@@ -1750,10 +1750,10 @@ private:
       const auto vb = other_fh->vertex(cdt_2.ccw(index));
       const auto a = cdt_2.point(va);
       const auto b = cdt_2.point(vb);
-      std::cerr << std::format("Test circumcenter {} with edge ( {}   {} ), result is: {}", IO::oformat(circ),
-                               IO::oformat(a), IO::oformat(b), IO::oformat(CGAL::angle(a, circ, b)))
+      std::cerr << std::format("Test circumcenter {} with edge ( {}   {} ), result is: {}", IO::oformat(steiner_pt),
+                               IO::oformat(a), IO::oformat(b), IO::oformat(CGAL::angle(a, steiner_pt, b)))
                 << '\n';
-      if(CGAL::angle(a, circ, b) != CGAL::ACUTE) {
+      if(CGAL::angle(a, steiner_pt, b) != CGAL::ACUTE) {
         const auto va_3d = va->info().vertex_handle_3d;
         const auto vb_3d = vb->info().vertex_handle_3d;
         return std::make_pair(va_3d, vb_3d);
@@ -1768,52 +1768,85 @@ private:
                                                                CDT_2_face_handle fh_2d)
   {
     const auto& cdt_2 = non_const_cdt_2;
-    auto circ = CGAL::circumcenter(cdt_2.triangle(fh_2d));
+    auto steiner_pt = CGAL::centroid(cdt_2.triangle(fh_2d));
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-    std::cerr << std::format("Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n", IO::oformat(circ),
+    std::cerr << std::format("Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
                              IO::oformat(cdt_2.triangle(fh_2d)));
 #endif // CGAL_DEBUG_CDT_3
-    auto encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, circ);
+    auto encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, steiner_pt);
     if(encroached_edge_opt) {
       return encroached_edge_opt;
     }
-    typename CDT_2::Locate_type lt;
-    int i;
-    auto fh = cdt_2.locate(circ, lt, i, fh_2d);
-    if(fh->info().is_outside_the_face) {
-      // recompute `circ` in exact, and restart
-      using EK = CGAL::Simple_cartesian<Exact_rational>;
-      Cartesian_converter<Geom_traits, EK> to_exact;
-      Cartesian_converter<EK, Geom_traits> from_exact;
-      circ = from_exact(CGAL::circumcenter(to_exact(cdt_2.triangle(fh_2d))));
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-      std::cerr << "Triangle is:" << cdt_2.triangle(fh_2d) << '\n';
-      CGAL_assertion(cdt_2.is_face(fh_2d->vertex(0), fh_2d->vertex(1), fh_2d->vertex(2)));
-      std::cerr << std::format("NEW exact value: Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n", IO::oformat(circ),
-                               IO::oformat(cdt_2.triangle(fh_2d)));
-#endif // CGAL_DEBUG_CDT_3
-      encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, circ);
-      if(encroached_edge_opt) {
-        return encroached_edge_opt;
+
+    const auto ch = this->locate(steiner_pt);
+    boost::container::small_vector<Cell_handle,32> cells;
+    boost::container::small_vector<Facet,32> facets;
+    auto cleanup = [&cells, &facets] {
+      for(Cell_handle ch : cells) {
+        ch->tds_data().clear();
       }
-      fh = cdt_2.locate(circ, lt, i, fh_2d);
-      if(fh->info().is_outside_the_face) {
-        std::ofstream out("dump_region.off");
-        out.precision(17);
-        write_region_to_OFF(out, cdt_2);
+
+      for(Facet& f : facets) {
+        f.first->neighbor(f.second)->tds_data().clear();
       }
-      CGAL_assertion(!fh->info().is_outside_the_face);
+    };
+    switch(tr.dimension()) {
+    case 3: {
+      typename T_3::Conflict_tester_3 tester(steiner_pt, this);
+      this->find_conflicts(ch,
+                           tester,
+                           make_triple(
+                             std::back_inserter(facets),
+                             std::back_inserter(cells),
+                             Emptyset_iterator()));
+      break;
+    } // dim 3
+    case 2: {
+      typename T_3::Conflict_tester_2 tester(steiner_pt, this);
+      this->find_conflicts(ch,
+                           tester,
+                           make_triple(
+                             std::back_inserter(facets),
+                             std::back_inserter(cells),
+                             Emptyset_iterator()));
+    } // dim 2
+    default: CGAL_error();
     }
+    std::set<std::pair<Vertex_handle, Vertex_handle>> visited_edges;
+    for(auto c : cells) {
+      for(int i = 0; i < 4; ++i) {
+        for(int j = i + 1; j < 4; ++j) {
+          auto pair = make_sorted_pair(c->vertex(i),
+                                       c->vertex(j));
+          auto [_, is_a_new_edge] = visited_edges.insert(pair);
+          if(!is_a_new_edge)
+            continue;
+          auto [va, vb] = pair;
+          Constraint_id c_id = this->constraint_around(va, vb);
+          if(c_id != Constraint_id{}) {
+            if(CGAL::angle(this->point(va), steiner_pt, this->point(vb)) != CGAL::ACUTE) {
+              cleanup();
+              return std::make_pair(va, vb);
+            }
+          }
+        }
+      }
+    }
+    cleanup();
 
     // assert(is_valid(true));
     // this->study_bug = true;
-    const auto v = this->insert(circ, Cell_handle{}, false); // TODO: find a hint
+    const auto v = this->insert(steiner_pt, Cell_handle{}, false); // TODO: find a hint
     // this->study_bug = false;
-    // assert(is_valid(true));
+    assert(is_valid(true));
     v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
-    const auto v_2d = non_const_cdt_2.insert(circ, fh);
-    auto f_circ = cdt_2.incident_faces(v_2d);
+    typename CDT_2::Locate_type lt;
+    int i;
+    auto fh = cdt_2.locate(steiner_pt, lt, i, fh_2d);
+    CGAL_assertion(!fh->info().is_outside_the_face);
+    const auto v_2d = non_const_cdt_2.insert(steiner_pt, fh_2d);
     v_2d->info().vertex_handle_3d = v;
+    auto f_circ = cdt_2.incident_faces(v_2d);
     const auto end = f_circ;
     do {
       f_circ->info().is_outside_the_face = false;
