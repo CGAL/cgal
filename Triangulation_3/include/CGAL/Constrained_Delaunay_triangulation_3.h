@@ -1750,9 +1750,9 @@ private:
       const auto vb = other_fh->vertex(cdt_2.ccw(index));
       const auto a = cdt_2.point(va);
       const auto b = cdt_2.point(vb);
-      std::cerr << std::format("Test circumcenter {} with edge ( {}   {} ), result is: {}", IO::oformat(steiner_pt),
-                               IO::oformat(a), IO::oformat(b), IO::oformat(CGAL::angle(a, steiner_pt, b)))
-                << '\n';
+      // std::cerr << std::format("Test candidate Steiner point {} with edge ( {}   {} ), result is: {}", IO::oformat(steiner_pt),
+      //                          IO::oformat(a), IO::oformat(b), IO::oformat(CGAL::angle(a, steiner_pt, b)))
+      //           << '\n';
       if(CGAL::angle(a, steiner_pt, b) != CGAL::ACUTE) {
         const auto va_3d = va->info().vertex_handle_3d;
         const auto vb_3d = vb->info().vertex_handle_3d;
