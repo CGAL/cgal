@@ -373,6 +373,99 @@ public:
 /// @}
 };
 
+// ======================================================================
+/*!
+\ingroup PkgSurfaceSubdivisionMethod3Ref
+
+TODO: need to find the correct name for this scheme, if it exists. And also complete the documentation.
+
+The geometry mask of Upsample subdivision. This does not change the geometry of the mesh.
+In other words, the original vertices are not moved, and the new vertices are
+the average of the incident vertices. This is useful for increasing the resolution
+of a mesh without changing its geometry.
+
+A stencil determines a source neighborhood
+whose points contribute to the position of a refined point.
+The geometry mask of a stencil specifies
+the computation on the nodes of the stencil.
+`Upsample_mask_3` implements the geometry masks of
+Upsample subdivision on a triangulated model of `MutableFaceGraph`,
+such as `Polyhedron_3` and `Surface_mesh`.
+
+\tparam PolygonMesh must be a model of the concept `MutableFaceGraph`. Additionally all faces must be triangles.
+\tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
+
+\cgalModels `PTQMask_3`
+
+\sa `CGAL::Subdivision_method_3`
+
+*/
+template <class PolygonMesh,
+          class VertexPointMap = typename boost::property_map<PolygonMesh,
+                                                              vertex_point_t>::type >
+class Upsample_mask_3 : public PQQ_stencil_3<PolygonMesh, VertexPointMap> {
+  typedef PQQ_stencil_3<PolygonMesh, VertexPointMap>   Base;
+public:
+  typedef PolygonMesh                                Mesh;
+
+#ifndef DOXYGEN_RUNNING
+  typedef typename Base::vertex_descriptor           vertex_descriptor;
+  typedef typename Base::halfedge_descriptor         halfedge_descriptor;
+
+  typedef typename Base::Kernel                      Kernel;
+
+  typedef typename Base::FT                          FT;
+  typedef typename Base::Point                       Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
+#endif
+
+  typedef Halfedge_around_target_circulator<Mesh> Halfedge_around_vertex_circulator;
+
+public:
+/// \name Creation
+/// @{
+
+  /// Constructor.
+  /// The default vertex point property map, `get(vertex_point, pmesh)`, is used.
+  Upsample_mask_3(Mesh* pmesh)
+    : Base(pmesh, get(vertex_point, pmesh))
+  { }
+
+  /// Constructor with a custom vertex point property map.
+  Upsample_mask_3(Mesh* pmesh, VertexPointMap vpmap)
+    : Base(pmesh, vpmap)
+  { }
+
+/// @}
+
+/// \name Stencil functions
+/// @{
+
+  /// computes the Upsample edge-point `pt` of the edge `edge`, simply the midpoint of the edge.
+  void edge_node(halfedge_descriptor edge, Point& pt) {
+    Point_ref p1 = get(this->vpmap,target(edge, *(this->pmesh)));
+    Point_ref p2 = get(this->vpmap,target(opposite(edge, *(this->pmesh)), *(this->pmesh)));
+
+    pt = Point(0.5 * (p1[0]+p2[0]),
+               0.5 * (p1[1]+p2[1]),
+               0.5 * (p1[2]+p2[2]) );
+  }
+
+  /// returns Upsample vertex-point `pt` of the vertex `vertex`, simply the original vertex.
+  void vertex_node(vertex_descriptor vertex, Point& pt) {
+    pt = get(this->vpmap,vertex);
+  }
+
+  /// computes the Upsample edge-point `ept` and the Upsample vertex-point `vpt` of the border edge `edge`.
+  void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
+    edge_node(edge, ept);
+
+    Halfedge_around_vertex_circulator vcir(edge, *(this->pmesh));
+    vpt  = get(this->vpmap,target(*vcir, *(this->pmesh)));
+  }
+
+/// @}
+};
 
 //==========================================================================
 /// The stencil of the Dual-Quadrilateral-Quadrisection
