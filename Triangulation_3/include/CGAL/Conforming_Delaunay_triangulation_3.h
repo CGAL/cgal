@@ -381,9 +381,9 @@ protected:
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
-#if CGAL_DEBUG_CDT_3 & 2
+#if CGAL_CDT_3_DEBUG_CONFORMING
       std::cerr << "  new vertex " << display_vert(v) << '\n';
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_DEBUG_CONFORMING
       return true;
     }
 
@@ -572,10 +572,10 @@ protected:
                                        pa, this->tr.point(v2), pb) == SMALLER;
         });
     CGAL_assertion(reference_vertex_it != end);
-#if CGAL_DEBUG_CDT_3 & 2
+#if CGAL_CDT_3_DEBUG_CONFORMING
     std::cerr << "  -> reference point: " << display_vert(*reference_vertex_it)
               << '\n';
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_DEBUG_CONFORMING
     const auto reference_vertex = *reference_vertex_it;
     const auto& reference_point = tr.point(reference_vertex);
     const auto vector_ab = vector_functor(pa, pb);
@@ -601,10 +601,10 @@ protected:
                                           ? midpoint_functor(pa, pb)
                                           : inter_point;
 
-#if CGAL_DEBUG_CDT_3 & 2
+#if CGAL_CDT_3_DEBUG_CONFORMING
             std::cerr << "ref ratio = " << ratio << '\n';
             std::cerr << "  -> Steiner point: " << result_point << '\n';
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_DEBUG_CONFORMING
             return {result_point, reference_vertex->cell(), reference_vertex};
           };
 
@@ -628,10 +628,10 @@ protected:
                                   ? midpoint_functor(pa, pb)
                                   : translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
 
-#if CGAL_DEBUG_CDT_3 & 2
+#if CGAL_CDT_3_DEBUG_CONFORMING
     std::cerr << "lambda = " << lambda << '\n';
     std::cerr << "  -> Steiner point: " << result_point << '\n';
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_DEBUG_CONFORMING
     return {result_point, reference_vertex->cell(), reference_vertex};
   }
 

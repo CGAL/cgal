@@ -321,10 +321,10 @@ protected:
             auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
             fh_2->info().facet_3d = {};
             self.set_facet_constrained({c, li}, -1, {});
-#if CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
             std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
             self.write_2d_triangle(std::cerr, fh_2);
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
 
             fh_2->info().missing_subface = true;
           }
@@ -726,7 +726,7 @@ private:
         boost::breadth_first_search(dual, cdt_2.infinite_vertex()->face(),
                                     boost::color_map(Color_map()));
       } // end of Boost BFS
-#if CGAL_DEBUG_CDT_3
+#if CGAL_DEBUG_CDT_3 & 4
       int counter = 0;
       for(const auto fh: cdt_2.finite_face_handles()) {
         if(!fh->info().is_outside_the_face) ++counter;
@@ -785,10 +785,10 @@ private:
       if(!tr.is_facet(v0, v1, v2, c, i, j, k)) {
         fh->info().missing_subface = true;
         face_constraint_misses_subfaces.set(static_cast<std::size_t>(polygon_contraint_id));
-#if CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
         std::cerr << std::format("Missing triangle in polygon #{}:\n", polygon_contraint_id);
         write_triangle(std::cerr, v0, v1, v2);
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
       } else {
         fh->info().missing_subface = false;
         const int facet_index = 6 - i - j - k;
@@ -842,10 +842,10 @@ private:
       CGAL_assume(b);
       border_edges.emplace_back(c, i, j);
     }
-#if CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_DEBUG_REGIONS
     std::cerr << "region size is: " << fh_region.size() << "\n";
     std::cerr << "region border size is: " << border_edges.size() << "\n";
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_DEBUG_REGIONS
     return border_edges;
   }
 
@@ -992,12 +992,12 @@ private:
     for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
       const auto intersecting_edge = intersecting_edges[i];
       const auto [v_above, v_below] = vertex_pair(intersecting_edge);
-#if CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_DEBUG_REGION
       std::cerr << std::format("restore_subface_region face index: {}, region #{}, Edge #{:6}: ({} , {})\n",
                                 face_index, region_count, i,
                                 IO::oformat(v_above, with_point),
                                 IO::oformat(v_below, with_point));
-#endif
+#endif // CGAL_CDT_3_DEBUG_REGION
       CGAL_assertion(false == polygon_vertices.contains(v_above));
       CGAL_assertion(false == polygon_vertices.contains(v_below));
       if(new_vertex(v_above)) {
@@ -1110,12 +1110,12 @@ private:
       }
       return vertices;
     }();
-#if CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_DEBUG_REGION
     std::cerr << "polygon_vertices.size() = " << polygon_vertices.size() << "\n";
     for(auto v : polygon_vertices) {
       std::cerr << std::format("  {}\n", IO::oformat(v, with_point));
     }
-#endif
+#endif // CGAL_CDT_3_DEBUG_REGION
     for(auto v: polygon_vertices) {
       v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
       CGAL_assertion(v->nb_of_incident_constraints < 0);
@@ -1770,7 +1770,7 @@ private:
     const auto& cdt_2 = non_const_cdt_2;
     auto steiner_pt = CGAL::centroid(cdt_2.triangle(fh_2d));
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-    std::cerr << std::format("Inserting Steiner (circumcenter) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
+    std::cerr << std::format("Inserting Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
                              IO::oformat(cdt_2.triangle(fh_2d)));
 #endif // CGAL_DEBUG_CDT_3
     auto encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, steiner_pt);
