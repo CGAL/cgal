@@ -221,7 +221,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
       // Test vertices in labelled triangulation
       for (auto const& vertex: polygon.outer_boundary().vertices()) {
         typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-        if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() != -1) {
+        if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() > 0) {
           std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
           return false;
         }
@@ -229,7 +229,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
       for (auto const& hole: polygon.holes()) {
         for (auto const& vertex: hole.vertices()) {
           typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-          if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() != -1) {
+          if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() > 0) {
             std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
             return false;
           }
