@@ -117,15 +117,15 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
     face->processed() = false;
   } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle> to_check;
   std::list<int> to_check_added_by;
-  label_region(vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+  CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
   int regions = 0, holes = 0;
   while (!to_check.empty()) {
     if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
       if (to_check_added_by.front() < 0) {
-        label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
         ++regions;
       } else {
-        label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
         ++holes;
       }
     } to_check.pop_front();
@@ -159,16 +159,16 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
     face->processed() = false;
   } to_check.clear();
   to_check_added_by.clear();
-  label_region(vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+  CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
   regions = 0;
   holes = 0;
   while (!to_check.empty()) {
     if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
       if (to_check_added_by.front() < 0) {
-        label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
         ++regions;
       } else {
-        label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
         ++holes;
       }
     } to_check.pop_front();
@@ -195,7 +195,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
   for (auto const& polygon: multipolygon.polygons()) {
 
 
-    if (vt.number_of_triangles() > 0) {
+    if (vt.number_of_faces() > 0) {
 
       // Relabel
       for (auto const face: vt.all_face_handles()) {
@@ -203,15 +203,15 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
         face->processed() = false;
       } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle> to_check;
       std::list<int> to_check_added_by;
-      label_region(vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+      CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
       int regions = 0, holes = 0;
       while (!to_check.empty()) {
         if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
           if (to_check_added_by.front() < 0) {
-            label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+            CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
             ++regions;
           } else {
-            label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+            CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
             ++holes;
           }
         } to_check.pop_front();
@@ -464,9 +464,10 @@ public:
 
   // Label a region of adjacent triangles without passing through constraints
   // adjacent triangles that involve passing through constraints are added to to_check
-  void label_region(typename Triangulation::Face_handle face, int label,
-                    std::list<typename Triangulation::Face_handle>& to_check,
-                    std::list<int>& to_check_added_by) {
+  template <class T>
+  static void label_region(T tt, typename T::Face_handle face, int label,
+                           std::list<typename T::Face_handle>& to_check,
+                           std::list<int>& to_check_added_by) {
     // std::cout << "Labelling region with " << label << std::endl;
     std::list<typename Triangulation::Face_handle> to_check_in_region;
     face->label() = label;
@@ -475,7 +476,7 @@ public:
 
     while (!to_check_in_region.empty()) {
       for (int neighbour = 0; neighbour < 3; ++neighbour) {
-        if (!t.is_constrained(typename Triangulation::Edge(to_check_in_region.front(), neighbour))) {
+        if (!tt.is_constrained(typename Triangulation::Edge(to_check_in_region.front(), neighbour))) {
           if (to_check_in_region.front()->neighbor(neighbour)->label() == 0) { // unlabelled
             to_check_in_region.front()->neighbor(neighbour)->label() = label;
             to_check_in_region.push_back(to_check_in_region.front()->neighbor(neighbour));
@@ -530,17 +531,17 @@ public:
     // putting interior triangles adjacent to it in to_check
     std::list<typename Triangulation::Face_handle> to_check;
     std::list<int> to_check_added_by;
-    label_region(t.infinite_face(), -1, to_check, to_check_added_by);
+    label_region(t, t.infinite_face(), -1, to_check, to_check_added_by);
 
     // Label region of front element to_check list
     while (!to_check.empty()) {
 
       if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
         if (to_check_added_by.front() < 0) {
-          label_region(to_check.front(), number_of_polygons+1, to_check, to_check_added_by);
+          label_region(t, to_check.front(), number_of_polygons+1, to_check, to_check_added_by);
           ++number_of_polygons;
         } else {
-          label_region(to_check.front(), -(number_of_holes+2), to_check, to_check_added_by);
+          label_region(t, to_check.front(), -(number_of_holes+2), to_check, to_check_added_by);
           ++number_of_holes;
         }
       } to_check.pop_front();
