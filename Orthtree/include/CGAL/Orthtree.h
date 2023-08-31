@@ -138,18 +138,12 @@ public:
   typedef std::array<std::uint32_t, Dimension::value> Global_coordinates;
 
   /*!
-   * \brief The Sub-tree / Orthant type.
-   * todo: this should be removed
-   */
-  class Node;
-
-  /*!
    * \brief A predicate that determines whether a node must be split when refining a tree.
    */
   typedef std::function<bool(Node_index, const Self&)> Split_predicate;
 
   /*!
-   * \brief A model of `ConstRange` whose value type is `Node`.
+   * \brief A model of `ConstRange` whose value type is `Node_index`.
    */
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Node_range;
