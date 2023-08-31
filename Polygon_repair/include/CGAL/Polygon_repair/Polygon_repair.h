@@ -67,6 +67,201 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Multip
   } return pr.multipolygon();
 }
 
+template <class Kernel, class PolygonContainer>
+bool is_valid(const Polygon_2<Kernel, PolygonContainer>& polygon) {
+  for (auto const& edge: polygon.edges()) {
+    if (edge.source() == edge.target()) {
+      std::cout << "Invalid: duplicate vertices" << std::endl;
+      return false;
+    }
+  } if (!polygon.is_simple()) {
+    std::cout << "Invalid: not simple" << std::endl;
+    return false;
+  } return true;
+}
+
+template <class Kernel, class PolygonContainer>
+bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
+
+  // Validate outer boundary
+  for (auto const& edge: polygon.outer_boundary().edges()) {
+    if (edge.source() == edge.target()) {
+      std::cout << "Invalid: duplicate vertices in outer boundary" << std::endl;
+      return false;
+    }
+  } if (!polygon.outer_boundary().is_simple()) {
+    std::cout << "Invalid: outer boundary not simple" << std::endl;
+    return false;
+  }
+
+  // Validate holes
+  for (auto const& hole: polygon.holes()) {
+    for (auto const& edge: hole.edges()) {
+      if (edge.source() == edge.target()) {
+        std::cout << "Invalid: duplicate vertices in hole" << std::endl;
+        return false;
+      }
+    } if (!hole.is_simple()) {
+      std::cout << "Invalid: hole not simple" << std::endl;
+      return false;
+    }
+  }
+
+  // Create triangulation of outer boundary
+  typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation vt;
+  for (auto const& edge: polygon.outer_boundary().edges()) {
+    vt.insert_constraint(edge.source(), edge.target());
+  }
+  for (auto const face: vt.all_face_handles()) {
+    face->label() = 0;
+    face->processed() = false;
+  } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle> to_check;
+  std::list<int> to_check_added_by;
+  label_region(vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+  int regions = 0, holes = 0;
+  while (!to_check.empty()) {
+    if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+      if (to_check_added_by.front() < 0) {
+        label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+        ++regions;
+      } else {
+        label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+        ++holes;
+      }
+    } to_check.pop_front();
+    to_check_added_by.pop_front();
+  } CGAL_assertion(regions == 1 && holes == 0);
+
+  // Hole nesting
+  for (auto const& hole: polygon.holes()) {
+    for (auto const& vertex: hole.vertices()) {
+      typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type lt;
+      int li;
+      typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
+      if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() != 1) {
+        std::cout << "Invalid: hole (partly) outside outer boundary" << std::endl;
+        return false;
+      }
+    }
+    for (auto const& edge: hole.edges()) {
+      try {
+        vt.insert_constraint(edge.source(), edge.target());
+      } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+        std::cout << "Invalid: hole (partly) outside outer boundary" << std::endl;
+        return false;
+      }
+    }
+  }
+
+  // Connected interior
+  for (auto const face: vt.all_face_handles()) {
+    face->label() = 0;
+    face->processed() = false;
+  } to_check.clear();
+  to_check_added_by.clear();
+  label_region(vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+  regions = 0;
+  holes = 0;
+  while (!to_check.empty()) {
+    if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+      if (to_check_added_by.front() < 0) {
+        label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+        ++regions;
+      } else {
+        label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+        ++holes;
+      }
+    } to_check.pop_front();
+    to_check_added_by.pop_front();
+  } if (regions != 1) {
+    std::cout << "Invalid: disconnected interior" << std::endl;
+    return false;
+  } CGAL_assertion(holes == polygon.number_of_holes());
+
+  return true;
+}
+
+template <class Kernel, class PolygonContainer>
+bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
+
+  // Validate polygons
+  for (auto const& polygon: multipolygon.polygons()) {
+    if (!is_valid(polygon)) return false;
+  }
+
+  typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation vt;
+  typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type lt;
+  int li;
+  for (auto const& polygon: multipolygon.polygons()) {
+
+
+    if (vt.number_of_triangles() > 0) {
+
+      // Relabel
+      for (auto const face: vt.all_face_handles()) {
+        face->label() = 0;
+        face->processed() = false;
+      } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle> to_check;
+      std::list<int> to_check_added_by;
+      label_region(vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+      int regions = 0, holes = 0;
+      while (!to_check.empty()) {
+        if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+          if (to_check_added_by.front() < 0) {
+            label_region(to_check.front(), regions+1, to_check, to_check_added_by);
+            ++regions;
+          } else {
+            label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
+            ++holes;
+          }
+        } to_check.pop_front();
+        to_check_added_by.pop_front();
+      }
+
+      // Test vertices in labelled triangulation
+      for (auto const& vertex: polygon.outer_boundary().vertices()) {
+        typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
+        if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() != -1) {
+          std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
+          return false;
+        }
+      }
+      for (auto const& hole: polygon.holes()) {
+        for (auto const& vertex: hole.vertices()) {
+          typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
+          if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() != -1) {
+            std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
+            return false;
+          }
+        }
+      }
+
+    }
+
+    // Insert constraints while checking for intersections
+    for (auto const& edge: polygon.outer_boundary().edges()) {
+      try {
+        vt.insert_constraint(edge.source(), edge.target());
+      } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+        std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
+        return false;
+      }
+    }
+    for (auto const& hole: polygon.holes()) {
+      for (auto const& edge: hole.edges()) {
+        try {
+          vt.insert_constraint(edge.source(), edge.target());
+        } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+          std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
 /*! \ingroup PkgPolygonRepairRef
  *
  * The class `Polygon_repair` builds on a constrained
@@ -430,199 +625,6 @@ public:
       // std::cout << "Adding polygon " << polygon << std::endl;
       mp.add_polygon(polygon);
     }
-  }
-
-  // Validation
-  bool is_valid(const Polygon_2<Kernel, PolygonContainer>& polygon) {
-    for (auto const& edge: polygon.edges()) {
-      if (edge.source() == edge.target()) {
-        std::cout << "Invalid: duplicate vertices" << std::endl;
-        return false;
-      }
-    } if (!polygon.is_simple()) {
-      std::cout << "Invalid: not simple" << std::endl;
-      return false;
-    } return true;
-  }
-
-  bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
-
-    // Validate outer boundary
-    for (auto const& edge: polygon.outer_boundary().edges()) {
-      if (edge.source() == edge.target()) {
-        std::cout << "Invalid: duplicate vertices in outer boundary" << std::endl;
-        return false;
-      }
-    } if (!polygon.outer_boundary().is_simple()) {
-      std::cout << "Invalid: outer boundary not simple" << std::endl;
-      return false;
-    }
-
-    // Validate holes
-    for (auto const& hole: polygon.holes()) {
-      for (auto const& edge: hole.edges()) {
-        if (edge.source() == edge.target()) {
-          std::cout << "Invalid: duplicate vertices in hole" << std::endl;
-          return false;
-        }
-      } if (!hole.is_simple()) {
-        std::cout << "Invalid: hole not simple" << std::endl;
-        return false;
-      }
-    }
-
-    // Create triangulation of outer boundary
-    Validation_triangulation vt;
-    for (auto const& edge: polygon.outer_boundary().edges()) {
-      vt.insert_constraint(edge.source(), edge.target());
-    }
-    for (auto const face: t.all_face_handles()) {
-      face->label() = 0;
-      face->processed() = false;
-    } std::list<typename Triangulation::Face_handle> to_check;
-    std::list<int> to_check_added_by;
-    label_region(t.infinite_face(), -1, to_check, to_check_added_by); // exterior
-    int regions = 0, holes = 0;
-    while (!to_check.empty()) {
-      if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
-        if (to_check_added_by.front() < 0) {
-          label_region(to_check.front(), regions+1, to_check, to_check_added_by);
-          ++regions;
-        } else {
-          label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
-          ++holes;
-        }
-      } to_check.pop_front();
-      to_check_added_by.pop_front();
-    } CGAL_assertion(regions == 1 && holes == 0);
-
-    // Hole nesting
-    for (auto const& hole: polygon.holes()) {
-      for (auto const& vertex: hole.vertices()) {
-        typename Validation_triangulation::Locate_type lt;
-        int li;
-        typename Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-        if (lt == Validation_triangulation::Locate_type::FACE && f->label() != 1) {
-          std::cout << "Invalid: hole (partly) outside outer boundary" << std::endl;
-          return false;
-        }
-      }
-      for (auto const& edge: hole.edges()) {
-        try {
-          vt.insert_constraint(edge.source(), edge.target());
-        } catch (typename Validation_triangulation::Intersection_of_constraints_exception ice) {
-          std::cout << "Invalid: hole (partly) outside outer boundary" << std::endl;
-          return false;
-        }
-      }
-    }
-
-    // Connected interior
-    for (auto const face: t.all_face_handles()) {
-      face->label() = 0;
-      face->processed() = false;
-    } to_check.clear();
-    to_check_added_by.clear();
-    label_region(t.infinite_face(), -1, to_check, to_check_added_by); // exterior
-    regions = 0;
-    holes = 0;
-    while (!to_check.empty()) {
-      if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
-        if (to_check_added_by.front() < 0) {
-          label_region(to_check.front(), regions+1, to_check, to_check_added_by);
-          ++regions;
-        } else {
-          label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
-          ++holes;
-        }
-      } to_check.pop_front();
-      to_check_added_by.pop_front();
-    } if (regions != 1) {
-      std::cout << "Invalid: disconnected interior" << std::endl;
-      return false;
-    } CGAL_assertion(holes == polygon.number_of_holes());
-
-    return true;
-  }
-
-  bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
-
-    // Validate polygons
-    for (auto const& polygon: multipolygon.polygons()) {
-      if (!is_valid(polygon)) return false;
-    }
-
-    Validation_triangulation vt;
-    typename Validation_triangulation::Locate_type lt;
-    int li;
-    for (auto const& polygon: multipolygon.polygons()) {
-
-
-      if (vt.number_of_triangles() > 0) {
-
-        // Relabel
-        for (auto const face: t.all_face_handles()) {
-          face->label() = 0;
-          face->processed() = false;
-        } std::list<typename Triangulation::Face_handle> to_check;
-        std::list<int> to_check_added_by;
-        label_region(t.infinite_face(), -1, to_check, to_check_added_by); // exterior
-        int regions = 0, holes = 0;
-        while (!to_check.empty()) {
-          if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
-            if (to_check_added_by.front() < 0) {
-              label_region(to_check.front(), regions+1, to_check, to_check_added_by);
-              ++regions;
-            } else {
-              label_region(to_check.front(), -(holes+2), to_check, to_check_added_by);
-              ++holes;
-            }
-          } to_check.pop_front();
-          to_check_added_by.pop_front();
-        }
-
-        // Test vertices in labelled triangulation
-        for (auto const& vertex: polygon.outer_boundary().vertices()) {
-          typename Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-          if (lt == Validation_triangulation::Locate_type::FACE && f->label() != -1) {
-            std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
-            return false;
-          }
-        }
-        for (auto const& hole: polygon.holes()) {
-          for (auto const& vertex: hole.vertices()) {
-            typename Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-            if (lt == Validation_triangulation::Locate_type::FACE && f->label() != -1) {
-              std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
-              return false;
-            }
-          }
-        }
-
-      }
-
-      // Insert constraints while checking for intersections
-      for (auto const& edge: polygon.outer_boundary().edges()) {
-        try {
-          vt.insert_constraint(edge.source(), edge.target());
-        } catch (typename Validation_triangulation::Intersection_of_constraints_exception ice) {
-          std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
-          return false;
-        }
-      }
-      for (auto const& hole: polygon.holes()) {
-        for (auto const& edge: hole.edges()) {
-          try {
-            vt.insert_constraint(edge.source(), edge.target());
-          } catch (typename Validation_triangulation::Intersection_of_constraints_exception ice) {
-            std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
-            return false;
-          }
-        }
-      }
-    }
-
-    return true;
   }
 
   // Erases the triangulation.
