@@ -64,6 +64,10 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     if(TARGET Polyhedron_3)
       add_dependencies( ${plugin_name} Polyhedron_3 )
     endif()
+    if(NOT TARGET CGALlab_all_plugins)
+      add_custom_target(CGALlab_all_plugins)
+    endif()
+    add_dependencies(CGALlab_all_plugins ${plugin_name})
     #metadata management
     #create "${plugin_implementation_base_name}.json" in BINARY_DIR
     STRING(TOLOWER "${plugin_implementation_base_name}.json" base_name)
