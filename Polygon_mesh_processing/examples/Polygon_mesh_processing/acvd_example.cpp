@@ -21,9 +21,9 @@ int main(int argc, char* argv[])
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
     CGAL::data_file_path(argv[1]) :
-    CGAL::data_file_path("meshes/bear.off");
+    CGAL::data_file_path("meshes/better_dragon.obj");
 
-  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 50;
+  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 98;
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   }
 
   PMP::acvd_isotropic_simplification(smesh, nb_clusters);
-  std::cout << "kak3" << std::endl;
+  // std::cout << "kak3" << std::endl;
   return 0;
 
   // Output the simplified mesh, use write_OFF()

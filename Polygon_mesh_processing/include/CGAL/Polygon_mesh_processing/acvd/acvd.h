@@ -27,6 +27,7 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/subdivision_method_3.h>
 
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Point_set_3.h>
@@ -36,6 +37,8 @@
 #include <queue>
 #include <unordered_set>
 #include <iostream>
+
+#define CGAL_CLUSTERS_TO_VERTICES_THRESHOLD 0.1
 
 namespace CGAL {
 
@@ -104,6 +107,28 @@ void acvd_simplification(
   Vertex_position_map vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
     get_property_map(CGAL::vertex_point, pmesh));
 
+  // TODO: handle cases where the mesh is not a triangle mesh
+  CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
+
+  int nb_vertices = num_vertices(pmesh);
+
+  // To provide the functionality remeshing (not just simplification), we might need to
+  // subdivide the mesh before clustering
+  // in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+  double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+  int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
+
+  std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
+
+  if (subdivide_steps > 0)
+  {
+    Subdivision_method_3::Upsample_subdivision(
+      pmesh,
+      CGAL::parameters::number_of_iterations(subdivide_steps).vertex_point_map(vpm)
+    );
+    vpm = get_property_map(CGAL::vertex_point, pmesh);
+  }
+
   // initial random clusters
   // property map from vertex_descriptor to cluster index
   VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
@@ -112,8 +137,6 @@ void acvd_simplification(
   std::queue<Halfedge_descriptor> clusters_edges_active;
   std::queue<Halfedge_descriptor> clusters_edges_new;
 
-  int nb_vertices = num_vertices(pmesh);
-
   // initialize vertex weights and clusters
   for (Vertex_descriptor vd : vertices(pmesh))
   {
@@ -121,16 +144,10 @@ void acvd_simplification(
     put(vertex_cluster_pmap, vd, -1);
   }
 
-  //typename GT::FT max_area = 0;
-  //typename GT::FT min_area = std::numeric_limits<typename GT::FT>::max();
-
   // compute vertex weights (dual area)
   for (Face_descriptor fd : faces(pmesh))
   {
     typename GT::FT weight = abs(CGAL::Polygon_mesh_processing::face_area(fd, pmesh)) / 3;
-
-    //max_area = std::max(max_area, weight * 8.0);
-    //min_area = std::min(min_area, weight * 3.0);
 
     for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
     {
@@ -140,19 +157,12 @@ void acvd_simplification(
     }
   }
 
-  // srand(3);
-  //srand(time(NULL));
-  double avg_rand = 0;
   for (int ci = 0; ci < nb_clusters; ci++)
   {
-    //// random index
-    //int vi = rand() % num_vertices(pmesh);
-    //Vertex_descriptor vd = *(vertices(pmesh).begin() + vi);
     int vi;
     Vertex_descriptor vd;
     do {
       vi = CGAL::get_default_random().get_int(0, num_vertices(pmesh));
-      avg_rand += vi;
       vd = *(vertices(pmesh).begin() + vi);
     } while (get(vertex_cluster_pmap, vd) != -1);
 
@@ -164,12 +174,7 @@ void acvd_simplification(
     for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
       clusters_edges_active.push(hd);
 
-    /*if (ci % (nb_clusters / 5) == 0)
-      std::cout << "rand ci" << ci << " " << vi << "\n";*/
   }
-  avg_rand = avg_rand / nb_clusters;
-
-  std::cout << "avg_rand: " << avg_rand << " nVertices: " << num_vertices(pmesh) << "\n";
 
   // frequency of each cluster
   std::vector<int> cluster_frequency (nb_clusters, 0);
@@ -192,10 +197,12 @@ void acvd_simplification(
   std::cout << "nb_empty before: " << nb_empty << std::endl;
 
   int nb_modifications = 0;
+  int nb_disconnected = 0;
 
   do
   {
     nb_modifications = 0;
+    nb_disconnected = 0;
 
     while (clusters_edges_active.empty() == false) {
       Halfedge_descriptor hi = clusters_edges_active.front();
@@ -312,8 +319,100 @@ void acvd_simplification(
         }
       }
     }
+    // clean clusters here
+    // the goal is to delete clusters with multiple connected components
+    // for each cluster, do a BFS from a vertex in the cluster
+    // we need to keep the largest connected component for each cluster
+    // and set the other connected components to -1 (empty cluster), would also need to update clusters_edges_new
+
+    std::vector<bool> visited(num_vertices(pmesh), false);
+    // std::vector<bool> visited_clusters(nb_clusters, false);
+    // [cluster][component_index][vertex_index]
+    std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters, std::vector<std::vector<Vertex_descriptor>>());
+
+    std::queue<Vertex_descriptor> q;
+
+    // loop over vertices
+    for (Vertex_descriptor vd : vertices(pmesh))
+    {
+      if (visited[vd]) continue;
+      int c = get(vertex_cluster_pmap, vd);
+      if (c != -1)
+      {
+        // first component of this cluster
+        if (cluster_components[c].size() == 0)
+          cluster_components[c].push_back(std::vector<Vertex_descriptor>());
+
+        int component_i = cluster_components[c].size() - 1;
+
+        // visited_clusters[c] = true;
+        q.push(vd);
+        visited[vd] = true;
+        while (q.empty() == false)
+        {
+          Vertex_descriptor v = q.front();
+          q.pop();
+          cluster_components[c][component_i].push_back(v);
+
+          for (Halfedge_descriptor hd : halfedges_around_source(v, pmesh))
+          {
+            Vertex_descriptor v2 = target(hd, pmesh);
+            int c2 = get(vertex_cluster_pmap, v2);
+            if (c2 == c && visited[v2] == false)
+            {
+              q.push(v2);
+              visited[v2] = true;
+            }
+          }
+        }
+      }
+    }
+
+    // loop over clusters
+    for (int c = 0; c < nb_clusters; c++)
+    {
+      if (cluster_components[c].size() <= 1) continue; // only one component, no need to do anything
+      int max_component_size = 0;
+      int max_component_index = -1;
+      for (int component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      {
+        if (cluster_components[c][component_i].size() > max_component_size)
+        {
+          max_component_size = cluster_components[c][component_i].size();
+          max_component_index = component_i;
+        }
+      }
+      // set cluster to -1 for all components except the largest one
+      for (int component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      {
+        if (component_i != max_component_index)
+        {
+          nb_disconnected++;
+          for (Vertex_descriptor vd : cluster_components[c][component_i])
+          {
+            put(vertex_cluster_pmap, vd, -1);
+            // remove vd from cluster c
+            typename GT::Point_3 vp = get(vpm, vd);
+            typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
+            clusters[c].remove_vertex(vpv, get(vertex_weight_pmap, vd));
+            // add all halfedges around v except hi to the queue
+            for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
+            {
+              // add hd to the queue if its target is not in the same cluster
+              Vertex_descriptor v2 = target(hd, pmesh);
+              int c2 = get(vertex_cluster_pmap, v2);
+              if (c2 != c)
+                clusters_edges_new.push(hd);
+            }
+          }
+        }
+      }
+    }
+
+    std::cout << "nb_disconnected: " << nb_disconnected << "\n";
+
     clusters_edges_active.swap(clusters_edges_new);
-  } while (nb_modifications > 0);
+  } while (nb_modifications > 0 || nb_disconnected > 0);
 
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), pmesh);
 
@@ -324,7 +423,6 @@ void acvd_simplification(
   {
     int c = get(vertex_cluster_pmap, vd);
     cluster_frequency[c]++;
-    //CGAL::IO::Color color((c - min_area) * 255 / (max_area - min_area), 0, 0);
     CGAL::IO::Color color(255 - (c * 255 / nb_clusters), (c * c % 7) * 255 / 7, (c * c * c % 31) * 255 / 31);
     //std::cout << vd.idx() << " " << c << " " << color << std::endl;
     put(vcm, vd, color);
