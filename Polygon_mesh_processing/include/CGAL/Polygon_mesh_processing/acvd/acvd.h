@@ -133,6 +133,7 @@ void acvd_simplification(
         CGAL::parameters::number_of_iterations(subdivide_steps).vertex_point_map(vpm)
       );
       vpm = get_property_map(CGAL::vertex_point, pmesh);
+      nb_vertices = num_vertices(pmesh);
     }
   }
 
