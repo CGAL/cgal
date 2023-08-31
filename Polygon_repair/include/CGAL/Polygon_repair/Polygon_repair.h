@@ -69,7 +69,10 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Multip
 
 template <class Kernel, class PolygonContainer>
 bool is_valid(const Polygon_2<Kernel, PolygonContainer>& polygon) {
-  for (auto const& edge: polygon.edges()) {
+  if (polygon.vertices().size() < 3) {
+    std::cout << "Invalid: less than 3 vertices" << std::endl;
+    return false;
+  } for (auto const& edge: polygon.edges()) {
     if (edge.source() == edge.target()) {
       std::cout << "Invalid: duplicate vertices" << std::endl;
       return false;
@@ -110,9 +113,16 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
   // Create triangulation of outer boundary
   typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation vt;
   for (auto const& edge: polygon.outer_boundary().edges()) {
-    vt.insert_constraint(edge.source(), edge.target());
-  }
-  for (auto const face: vt.all_face_handles()) {
+    try {
+      vt.insert_constraint(edge.source(), edge.target());
+    } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+      std::cout << "Invalid: intersection in outer boundary" << std::endl;
+      return false;
+    }
+  } if (vt.number_of_faces() == 0) {
+    std::cout << "Invalid: no outer boundary" << std::endl;
+    return false;
+  } for (auto const face: vt.all_face_handles()) {
     face->label() = 0;
     face->processed() = false;
   } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle> to_check;
