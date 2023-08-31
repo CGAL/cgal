@@ -1097,8 +1097,10 @@ private:
   static constexpr With_point_and_info_tag with_point_and_info{};
 
   void restore_subface_region(CDT_3_face_index face_index, int region_count,
-                              const CDT_2& cdt_2, const auto& fh_region)
+                              CDT_2& non_const_cdt_2, auto& non_const_fh_region)
   {
+    const auto& cdt_2 = non_const_cdt_2;
+    const auto& fh_region = non_const_fh_region;
     const auto border_edges = brute_force_border_3_of_region(fh_region);
     const auto polygon_vertices = [&]() {
       std::set<Vertex_handle> vertices;
@@ -1124,7 +1126,7 @@ private:
       CGAL_assertion(v->nb_of_incident_constraints > 0);
     }
 
-    [[maybe_unused]] auto debug_region_size_4 = [&] {
+    [[maybe_unused]] auto try_flip_region_size_4 = [&] {
       if(polygon_vertices.size() == 4) {
         std::set<Vertex_handle> vertices;
         std::set<Vertex_handle> diagonal;
@@ -1142,6 +1144,34 @@ private:
                             std::inserter(other_diagonal, other_diagonal.begin()));
         CGAL_assertion(diagonal.size() == 2);
         CGAL_assertion(other_diagonal.size() == 2);
+
+        const auto diagonal_index = fh_region[0]->index(fh_region[1]);
+        CGAL_assertion(diagonal_index >= 0 && diagonal_index < 3);
+        const auto v0 = fh_region[0]->vertex(diagonal_index)->info().vertex_handle_3d;
+        const auto v1 = fh_region[0]->vertex(cdt_2.ccw(diagonal_index))->info().vertex_handle_3d;
+        const auto v2 = fh_region[0]->vertex(cdt_2.cw(diagonal_index))->info().vertex_handle_3d;
+        const auto v3 = fh_region[1]->vertex(fh_region[1]->index(fh_region[0]))->info().vertex_handle_3d;
+        if(tr.is_facet(v0, v1, v3) && tr.is_facet(v0, v3, v2)) {
+          std::cerr << "NOTE: the other diagonal is in the 3D triangulation: flip the edge\n";
+          non_const_cdt_2.flip(non_const_fh_region[0], diagonal_index);
+          for(auto fh : fh_region) {
+            for(int i = 0; i < 3; ++i) {
+              const auto mirror_edge = cdt_2.mirror_edge({fh, i});
+              fh->set_constraint(i, mirror_edge.first->is_constrained(mirror_edge.second));
+            }
+            int i, j, k;
+            Cell_handle c;
+            [[maybe_unused]] bool fh_is_3d_facet = tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
+                                                               fh->vertex(1)->info().vertex_handle_3d,
+                                                               fh->vertex(2)->info().vertex_handle_3d,
+                                                               c, i, j, k);
+            CGAL_assertion(fh_is_3d_facet);
+            set_facet_constrained({c, 6-i-j-k}, face_index, fh);
+            fh->info().missing_subface = false;
+          }
+          return true;
+        }
+
         std::cerr << std::format
             ("NOTE: diagonal: {:.6} {:.6}  {} in tr\n",
             IO::oformat(*diagonal.begin(), with_point),
@@ -1181,9 +1211,12 @@ private:
           }
         }
       }
+      return false;
     };
     if(!found_edge_opt) {
-      // debug_region_size_4();
+      if(try_flip_region_size_4()) {
+        return;
+      }
       // {
       //   Constrained_Delaunay_triangulation_3 new_tr;
       //   for(const auto v : polygon_vertices) {
@@ -1203,7 +1236,7 @@ private:
       // }
       // {
       //   dump_edge_link(std::string("dump_around_edge_") + std::to_string(face_index) + "_" +
-      //                  std::to_string(region_count) + ".polylines.txt", first_border_edge);
+      //                  std::to_string(region_count) + ".polylines.txt", border_edges[0]);
       //   std::ofstream dump(std::string("dump_no_segment_found_") + std::to_string(face_index) + "_" +
       //                      std::to_string(region_count) + ".binary.cgal");
       //   CGAL::IO::save_binary_file(dump, *this);
@@ -1836,10 +1869,10 @@ private:
       }
       if(processed_faces.contains(fh))
         continue;
-      const auto fh_region = region(cdt_2, fh);
+      auto fh_region = region(cdt_2, fh);
       processed_faces.insert(fh_region.begin(), fh_region.end());
       try {
-        restore_subface_region(face_index, region_count++, cdt_2, fh_region);
+        restore_subface_region(face_index, region_count++, non_const_cdt_2, fh_region);
       }
       catch(Next_region& e) {
         std::cerr << "ERROR: " << e.what() << " in sub-region " << (region_count - 1)
