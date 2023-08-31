@@ -115,19 +115,28 @@ void acvd_simplification(
   // To provide the functionality remeshing (not just simplification), we might need to
   // subdivide the mesh before clustering
   // in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-  double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
-  int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
 
-  std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
-
-  if (subdivide_steps > 0)
+  // do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+  // That is, because the subdivision steps heuristic is not 100% guaranteed to produce
+  // the desired number of vertices.
+  while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
   {
-    Subdivision_method_3::Upsample_subdivision(
-      pmesh,
-      CGAL::parameters::number_of_iterations(subdivide_steps).vertex_point_map(vpm)
-    );
-    vpm = get_property_map(CGAL::vertex_point, pmesh);
+    double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+    int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
+
+    std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
+
+    if (subdivide_steps > 0)
+    {
+      Subdivision_method_3::Upsample_subdivision(
+        pmesh,
+        CGAL::parameters::number_of_iterations(subdivide_steps).vertex_point_map(vpm)
+      );
+      vpm = get_property_map(CGAL::vertex_point, pmesh);
+    }
   }
+
+
 
   // initial random clusters
   // property map from vertex_descriptor to cluster index
