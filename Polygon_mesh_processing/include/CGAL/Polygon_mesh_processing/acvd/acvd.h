@@ -112,6 +112,8 @@ void acvd_simplification(
 
   int nb_vertices = num_vertices(pmesh);
 
+  // TODO: copy mesh before subdivision (copy constructor or copy face graph if with properties)
+
   // To provide the functionality remeshing (not just simplification), we might need to
   // subdivide the mesh before clustering
   // in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
@@ -424,6 +426,8 @@ void acvd_simplification(
     clusters_edges_active.swap(clusters_edges_new);
   } while (nb_modifications > 0 || nb_disconnected > 0);
 
+  // TODO: Move out the disconnected clustering check (& cleaning)
+
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), pmesh);
 
   // frequency of each cluster
@@ -563,6 +567,7 @@ void acvd_simplification(
   }
 
   std::cout << "are polygons a valid mesh ? : " << is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
+  orient_polygon_soup(points, polygons);
   polygon_soup_to_polygon_mesh(points, polygons, simplified_mesh);
 
   name = std::to_string(nb_clusters) + "_simped.off";
