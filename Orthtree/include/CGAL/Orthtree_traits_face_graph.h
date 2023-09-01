@@ -13,6 +13,8 @@
 #ifndef CGAL_ORTHREE_TRAITS_FACE_GRAPH_H
 #define CGAL_ORTHREE_TRAITS_FACE_GRAPH_H
 
+#include <CGAL/license/Orthtree.h>
+
 #include <CGAL/Dimension.h>
 #include <CGAL/Bbox_3.h>
 
