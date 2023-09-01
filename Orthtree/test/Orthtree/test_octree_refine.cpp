@@ -12,7 +12,6 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-typedef Octree::Node Node;
 
 class Split_nth_child_of_root {
   std::size_t m_n;

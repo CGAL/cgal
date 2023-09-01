@@ -14,7 +14,6 @@ typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Point_map Point_map;
 
 typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
-typedef Octree::Node Node;
 
 template <typename Tree>
 struct First_branch_traversal {

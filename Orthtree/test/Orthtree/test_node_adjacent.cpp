@@ -11,7 +11,6 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
   Octree;
-typedef Octree::Node Node;
 typedef Octree::Traits Traits;
 
 int main(void) {
