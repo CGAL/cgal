@@ -1,5 +1,16 @@
-#ifndef PROPERTIES_H
-#define PROPERTIES_H
+// Copyright (c) 2023 INRIA
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Jackson Campolattaro
+
+#ifndef CGAL_PROPERTY_CONTAINTER_H
+#define CGAL_PROPERTY_CONTAINTER_H
 
 #include <CGAL/assertions.h>
 
@@ -589,4 +600,4 @@ public:
 
 }
 
-#endif //ORTHTREE_TESTS_PROPERTIES_H
+#endif //CGAL_PROPERTY_CONTAINTER_H
