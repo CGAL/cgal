@@ -113,7 +113,7 @@ It must provide the following operator:
 <CENTER>`result_type operator()(Delaunay_graph dg, Point_2 p)`</CENTER>
 
 where the result type `result_type` is
-`boost::variant<Delaunay_vertex_handle,Delaunay_edge,Delaunay_face_handle>`.
+`std::variant<Delaunay_vertex_handle,Delaunay_edge,Delaunay_face_handle>`.
 
 This type is required only if
 `Has_nearest_site_2` is equal to `CGAL::Tag_true`.

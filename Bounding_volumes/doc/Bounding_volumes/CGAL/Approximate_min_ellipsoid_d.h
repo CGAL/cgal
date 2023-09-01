@@ -119,7 +119,7 @@ We implement Khachyian's algorithm for rounding
 polytopes \cgalCite{cgal:k-rprnm-96}. Internally, we use
 `double`-arithmetic and (initially a single)
 Cholesky-decomposition. The algorithm's running time is
-\f$ {\cal O}(nd^2(\epsilon^{-1}+\ln d + \ln\ln(n)))\f$, where \f$ n=|P|\f$ and
+\cgalBigO{nd^2(\epsilon^{-1}+\ln d + \ln\ln(n))}, where \f$ n=|P|\f$ and
 \f$ 1+\epsilon\f$ is the desired approximation ratio.
 
 \cgalHeading{Example}

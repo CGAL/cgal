@@ -165,7 +165,7 @@ public:
 \ingroup PkgConvexHull3Functions
 
 computes a point belonging to the intersection of the halfspaces defined by the planes contained in the range `[begin, end)`.
-If the intersection is empty, `boost::none` is returned.
+If the intersection is empty, `std::nullopt` is returned.
 
 \attention Halfspaces are considered as lower halfspaces that is to say if the plane's equation
 is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the corresponding halfspace is defined by \f$ a\, x +b\, y +c\, z + d \le 0 \f$ .
@@ -173,21 +173,21 @@ is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the corresponding halfspace is defin
 \tparam PlaneIterator must be an input iterator with the value type being a `Plane_3` object from \cgal Kernel
 */
 template <class PlaneIterator>
-boost::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3>
+std::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3>
 halfspace_intersection_interior_point_3(PlaneIterator begin, PlaneIterator end)
 {
   // Types
   typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
 
   // choose exact integral type
-  typedef typename internal::Exact_field_selector<void*>::Type ET;
+  typedef typename internal::Exact_field_selector<typename K::FT>::Type ET;
 
   // find a point inside the intersection
   internal::Interior_polyhedron_3<K, ET> interior;
   if (!interior.find(begin, end))
-    return boost::none;
+    return std::nullopt;
 
-  return boost::make_optional(interior.inside_point());
+  return std::make_optional(interior.inside_point());
 }
 
 } // namespace CGAL

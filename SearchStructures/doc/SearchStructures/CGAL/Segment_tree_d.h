@@ -8,10 +8,10 @@ namespace CGAL {
 
 \cgalHeading{Implementation}
 
-A \f$ d\f$-dimensional segment tree is constructed in \f$ {O}(n\log n^d)\f$ time.
-An inverse range query is performed in time \f$ {O}(k+{\log}^d n )\f$, where \f$ k\f$
+A \f$ d\f$-dimensional segment tree is constructed in \cgalBigO{n\log n^d} time.
+An inverse range query is performed in time \cgalBigO{k+{\log}^d n }, where \f$ k\f$
 is the number of reported intervals.
-The tree uses \f$ {O}(n\log n^d)\f$ storage.
+The tree uses \cgalBigO{n\log n^d} storage.
 
 */
 template< typename Data, typename Window, typename Traits >

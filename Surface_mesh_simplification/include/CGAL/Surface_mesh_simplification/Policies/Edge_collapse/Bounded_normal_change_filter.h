@@ -15,7 +15,7 @@
 #include<CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/property_map.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -31,8 +31,8 @@ public:
 
 
   template <typename Profile>
-  boost::optional<typename Profile::Point>
-  operator()(const Profile& profile, boost::optional<typename Profile::Point> op) const
+  std::optional<typename Profile::Point>
+  operator()(const Profile& profile, std::optional<typename Profile::Point> op) const
   {
     typedef typename Profile::VertexPointMap                              Vertex_point_map;
 
@@ -78,7 +78,7 @@ public:
            Vector n2 = gt.construct_cross_product_vector_3_object()(eq2p, eq2r);
 
            if(!is_positive(gt.compute_scalar_product_3_object()(n1, n2)))
-             return boost::optional<typename Profile::Point>();
+             return std::optional<typename Profile::Point>();
 
            ++it;
          }

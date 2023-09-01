@@ -34,7 +34,6 @@
 #include <CGAL/property_map.h>
 
 #include <boost/cstdint.hpp>
-#include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 #include <algorithm>
@@ -60,7 +59,7 @@ namespace CGAL {
     class SM_Index
     {
     public:
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -362,7 +361,7 @@ public:
   typedef P Point;
 
   /// The type used to represent an index.
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
 
   ///@}
 
@@ -1013,7 +1012,7 @@ public:
   /// adds a new triangle connecting vertices `v0`, `v1`, `v2`.
   /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
   Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2) {
-    boost::array<Vertex_index, 3>
+    std::array<Vertex_index, 3>
       v = {{v0, v1, v2}};
     return add_face(v);
   }
@@ -1021,7 +1020,7 @@ public:
   /// adds a new quad connecting vertices `v0`, `v1`, `v2`, `v3`.
   /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
   Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3) {
-    boost::array<Vertex_index, 4>
+    std::array<Vertex_index, 4>
       v = {{v0, v1, v2, v3}};
     return add_face(v);
   }

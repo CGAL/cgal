@@ -1,6 +1,9 @@
 <!doctype html>
 <html style='height: 100%'>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="shortcut icon" href="cgal.ico">
+	<link rel="stylesheet" type="text/css" href="testresult.css">
 	<meta charset="utf-8">
 	<title>Diff of Testsuites</title>
 	<script type="text/javascript" src="difflib.js"></script>
@@ -11,30 +14,30 @@
 </head>
 <body style='background-color: #C0C0D0; min-height: 100%;'>
 
-<p><input type='text' id='baseInput'/>
+<div><input type='text' id='baseInput'/>
 <select id='baselist'></select>
 
 <input type='text' id='newInput'/>
 <select id='newlist'></select>
 
-<button type="button" id='button'>Compare</button><br>
+<button type="button" id='button'>Compare</button></div>
 <p>
 Note that the diff should be done from left to right, as red or yellow squares in the left testsuite that become green in the right testsuite will be ignored.
 </p>
  I = Master<br>
  Ic = integration
 </p>
-<p>
-<table id=namesTable border="1" cellspacing="2" cellpadding="5"></table>
-<table id=diffPlatforms border="1" cellspacing="2" cellpadding="5"></table>
-<table id=testTable border="1" cellspacing="2" cellpadding="5"></table>
+<div>
+<table class="summary" id=namesTable border="1" cellspacing="2" cellpadding="5"></table>
+<table class="summary" id=diffPlatforms border="1" cellspacing="2" cellpadding="5"></table>
+<table class="result" id=testTable border="1" cellspacing="2" cellpadding="5"></table>
 <table id=namesTableBis border="1" cellspacing="2" cellpadding="5"></table>
-</p>
+</div>
 
 <script type="text/javascript">
   //get list of existing testsuites
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://cgal.geometryfactory.com/~mgimeno/testsuite_comparison/list_of_testsuites.txt', false);
+  xhr.open('GET', 'https://cgal.geometryfactory.com/~cgaltest/testsuite_comparison/list_of_testsuites.txt', false);
   xhr.send(null);
   if (xhr.status !== 200) {
     alert("Couldn't find the list of testsuites.");
@@ -42,8 +45,22 @@ Note that the diff should be done from left to right, as red or yellow squares i
   }
   var tmp=xhr.responseText;
   var testsuites=tmp.split("\n");
-  testsuites.sort();
-  testsuites.reverse();
+
+  sf=function(a, b){
+    var aa=a.split("-");
+    var ab=b.split("-");
+    // compare release number first (decreasing)
+    if (aa[1]<ab[1]) return 1
+    if (aa[1]>ab[1]) return -1
+    // compare internal version then (decreasing)
+    if (parseInt(aa[3])<parseInt(ab[3])) return 1
+    if (parseInt(aa[3])>parseInt(ab[3])) return -1
+    return -1;
+  };
+  testsuites.sort(sf);
+
+//  testsuites.sort();
+//  testsuites.reverse();
   var sorted_testsuites = testsuites;
   var base = document.getElementById('baselist');
   var newlist = document.getElementById('newlist');
@@ -88,18 +105,8 @@ Note that the diff should be done from left to right, as red or yellow squares i
       base.appendChild(opt1);
       newlist.appendChild(opt2);
   }
-  var button = document.getElementById('button');
-  button.onclick=function(){
-    var baselist = document.getElementById("baselist");
-    var newlist = document.getElementById("newlist")
-    if(baselist.length==0 || newlist.length==0){
-    alert("You need two valid testsuites to diff.");
-      throw new Error("You need two valid testsuites to diff.");
-    }
-    var baseId = baselist.selectedIndex;
-    var newId = newlist.selectedIndex;
-    var baseTest = base.options[base.selectedIndex].value;
-    var newTest = newlist.options[newlist.selectedIndex].value;
+
+  go = function(baseTest, newTest) {
     document.body.style.cursor = 'wait';
     if(baseTest === newTest){
       alert("You chose the same testsuite twice, so no diff is expected !");
@@ -134,6 +141,41 @@ Note that the diff should be done from left to right, as red or yellow squares i
     }, false);
     w.postMessage(message);
   };
+  var button = document.getElementById('button');
+  button.onclick=function(){
+    var baselist = document.getElementById("baselist");
+    var newlist = document.getElementById("newlist")
+    if(baselist.length==0 || newlist.length==0){
+    alert("You need two valid testsuites to diff.");
+      throw new Error("You need two valid testsuites to diff.");
+    }
+    var baseId = baselist.selectedIndex;
+    var newId = newlist.selectedIndex;
+    var baseTest = base.options[base.selectedIndex].value;
+    var newTest = newlist.options[newlist.selectedIndex].value;
+    const url = new URL(window.location);
+    url.searchParams.set("baseTest", baseTest);
+    url.searchParams.set("newTest", newTest);
+    history.pushState({}, "", url);
+
+    go(baseTest, newTest);
+  };
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const baseTest= urlParams.get('baseTest');
+  const newTest = urlParams.get('newTest');
+  if(baseTest) {
+    baseinput.value = baseTest;
+    baseinput.oninput();
+  }
+  if(newTest) {
+    newinput.value = newTest;
+    newinput.oninput();
+  }
+  if(baseTest && newTest) {
+    go(baseTest, newTest);
+  }
+
 </script>
 </body>
 </html>

@@ -23,7 +23,7 @@
 #include <CGAL/AABB_tree/internal/AABB_search_tree.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -182,7 +182,7 @@ namespace CGAL {
 
     /// After one or more calls to `AABB_tree_with_join::insert()` the internal data
     /// structure of the tree must be reconstructed. This procedure
-    /// has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.  This procedure is called implicitly
     /// at the first call to a query member function. You can call
     /// AABB_tree_with_join::build() explicitly to ensure that the next call to
@@ -252,7 +252,7 @@ public:
     /// `do_intersect` predicates are defined
     /// in the traits class `AABBTraits`.
     template <typename Query>
-    boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
+    std::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
 
     ///@}
 
@@ -276,7 +276,7 @@ public:
     /// for which `do_intersect` predicates
     /// and intersections are defined in the traits class AABBTraits.
     template <typename Query>
-    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
+    std::optional< typename Intersection_and_primitive_id<Query>::Type >
     any_intersection(const Query& query) const;
 
     ///@}
@@ -764,7 +764,7 @@ public:
 
   template <typename Tr>
   template <typename Query>
-  boost::optional< typename AABB_tree_with_join<Tr>::template Intersection_and_primitive_id<Query>::Type >
+  std::optional< typename AABB_tree_with_join<Tr>::template Intersection_and_primitive_id<Query>::Type >
     AABB_tree_with_join<Tr>::any_intersection(const Query& query) const
   {
     using namespace CGAL::internal::AABB_tree_with_join;
@@ -776,7 +776,7 @@ public:
 
   template <typename Tr>
   template <typename Query>
-  boost::optional<typename AABB_tree_with_join<Tr>::Primitive_id>
+  std::optional<typename AABB_tree_with_join<Tr>::Primitive_id>
     AABB_tree_with_join<Tr>::any_intersected_primitive(const Query& query) const
   {
     using namespace CGAL::internal::AABB_tree_with_join;

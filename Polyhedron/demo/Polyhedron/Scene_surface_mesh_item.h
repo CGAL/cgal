@@ -21,7 +21,6 @@
 #ifndef Q_MOC_RUN
 #include <vector>
 #include <boost/scoped_ptr.hpp>
-#include <boost/array.hpp>
 #endif
 
 #include <QColor>

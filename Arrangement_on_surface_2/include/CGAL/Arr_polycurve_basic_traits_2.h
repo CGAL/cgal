@@ -2419,7 +2419,7 @@ protected:
   /*! Obtain the index of the subcurve in the polycurve that contains the
    * point q in its x-range. The function performs a binary search, so if the
    * point q is in the x-range of the polycurve with n subcurves, the subcurve
-   * containing it can be located in O(log n) operations.
+   * containing it can be located in \cgalBigO{log n} operations.
    * \param cv The polycurve curve.
    * \param q The point.
    * \return An index i such that q is in the x-range of cv[i].

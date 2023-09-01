@@ -38,7 +38,6 @@
 #endif
 #endif
 
-#include <boost/array.hpp>
 #include <boost/tuple/tuple.hpp>
 
 #include <unordered_map>

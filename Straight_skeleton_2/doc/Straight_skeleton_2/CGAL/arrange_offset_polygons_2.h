@@ -8,7 +8,7 @@ by `create_offset_polygons_2()` into 2D polygons with holes by determining geome
 relationships using a simple algorithm based on the particular characteristics of offset polygons.
 
 The function determines parent-hole relationships among the polygons given by `[begin,end]` creating
-`boost::shared_ptr< GeneralPolygonWithHoles_2 >` objects added to the output sequence given `out`.
+`std::shared_ptr< GeneralPolygonWithHoles_2 >` objects added to the output sequence given `out`.
 A `CLOCKWISE` oriented polygon `H` is a hole of a `COUNTERCLOCKWISE` polygon `P`, iff at least one vertex of `H` is `ON_BOUNDED_SIDE` of `P`.
 
 This function should not be used to arrange arbitrary polygons into polygons with holes unless they meet the requirements specified below.
@@ -20,9 +20,9 @@ bounded or unbounded side of `Q` (but not both).
 
 \tparam K must be a model of `Kernel`.
 \tparam InputPolygonPtrIterator must be a model of `InputIterator` whose `value_type` is a smart pointer
-(such as `boost::shared_ptr`) whose `element_type` is a model of `SequenceContainer` with value type `K::Point_2`.
+(such as `std::shared_ptr`) whose `element_type` is a model of `SequenceContainer` with value type `K::Point_2`.
 \tparam OutputPolygonWithHolesPtrIterator must be a model of `OutputIterator` whose `value_type` is a smart pointer
-(such as `boost::shared_ptr`) whose `element_type` is a model of `GeneralPolygonWithHoles_2`.
+(such as `std::shared_ptr`) whose `element_type` is a model of `GeneralPolygonWithHoles_2`.
 
 \return `true` if no error was encountered, and `false` otherwise.
 

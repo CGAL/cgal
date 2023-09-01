@@ -584,9 +584,6 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
-      typedef boost::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_result;
-
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
       unsigned int index = 0;
@@ -594,10 +591,10 @@ public:
 
       if (cv.orientation() == COLLINEAR) {
         // The curve is a line segment.
-        *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv.supporting_line(),
-                                                          cv.source(),
-                                                          cv.target(),
-                                                          index));
+        *oi++ = X_monotone_curve_2(cv.supporting_line(),
+                                   cv.source(),
+                                   cv.target(),
+                                   index);
         return oi;
       }
 
@@ -608,8 +605,8 @@ public:
 
       if (sign_rad == ZERO) {
         // Create an isolated point.
-        *oi++ = Make_x_monotone_result(Point_2(circ.center().x(),
-                                               circ.center().y()));
+        *oi++ = Point_2(circ.center().x(),
+                        circ.center().y());
         return oi;
       }
 
@@ -622,59 +619,59 @@ public:
         CGAL_assertion (n_vpts == 2);
 
         // Subdivide the circle into two arcs (an upper and a lower half).
-        *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                          vpts[0], vpts[1],
-                                                          cv.orientation(),
-                                                          index));
+        *oi++ = X_monotone_curve_2(circ,
+                                   vpts[0], vpts[1],
+                                   cv.orientation(),
+                                   index);
 
-        *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                          vpts[1], vpts[0],
-                                                          cv.orientation(),
-                                                          index));
+        *oi++ = X_monotone_curve_2(circ,
+                                   vpts[1], vpts[0],
+                                   cv.orientation(),
+                                   index);
       }
       else {
         // Act according to the number of vertical tangency points.
         if (n_vpts == 2) {
           // Subdivide the circular arc into three x-monotone arcs.
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                            cv.source(), vpts[0],
-                                                            cv.orientation(),
-                                                            index));
+          *oi++ = X_monotone_curve_2(circ,
+                                     cv.source(), vpts[0],
+                                     cv.orientation(),
+                                     index);
 
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                            vpts[0], vpts[1],
-                                                            cv.orientation(),
-                                                            index));
+          *oi++ = X_monotone_curve_2(circ,
+                                     vpts[0], vpts[1],
+                                     cv.orientation(),
+                                     index);
 
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                            vpts[1],
-                                                            cv.target(),
-                                                            cv.orientation(),
-                                                            index));
+          *oi++ = X_monotone_curve_2(circ,
+                                     vpts[1],
+                                     cv.target(),
+                                     cv.orientation(),
+                                     index);
         }
         else if (n_vpts == 1) {
           // Subdivide the circular arc into two x-monotone arcs.
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                            cv.source(),
-                                                            vpts[0],
-                                                            cv.orientation(),
-                                                            index));
+          *oi++ = X_monotone_curve_2(circ,
+                                     cv.source(),
+                                     vpts[0],
+                                     cv.orientation(),
+                                     index);
 
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                            vpts[0],
-                                                            cv.target(),
-                                                            cv.orientation(),
-                                                            index));
+          *oi++ = X_monotone_curve_2(circ,
+                                     vpts[0],
+                                     cv.target(),
+                                     cv.orientation(),
+                                     index);
         }
         else {
           CGAL_assertion(n_vpts == 0);
 
           // The arc is already x-monotone:
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
-                                                            cv.source(),
-                                                            cv.target(),
-                                                            cv.orientation(),
-                                                            index));
+          *oi++ = X_monotone_curve_2(circ,
+                                     cv.source(),
+                                     cv.target(),
+                                     cv.orientation(),
+                                     index);
         }
       }
 

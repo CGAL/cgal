@@ -102,7 +102,7 @@ intersection(const SphericalType1 &obj1, const SphericalType2 &obj2,
 /*!
 Copies in the output iterator the intersection elements between the
 three objects. `intersections` iterates on
-elements of type `boost::variant< Circle_3, Plane_3, Sphere_3, std::pair< Circular_arc_point_3, unsigned > >`, in lexicographic order
+elements of type `std::variant< Circle_3, Plane_3, Sphere_3, std::pair< Circular_arc_point_3, unsigned > >`, in lexicographic order
 when this ordering is defined on the computed objects
 
 where `Type1`, `Type2` and `Type3`

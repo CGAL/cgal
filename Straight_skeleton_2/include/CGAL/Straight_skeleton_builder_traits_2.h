@@ -23,8 +23,7 @@
 #include <CGAL/Filtered_construction.h>
 #include <CGAL/Uncertain.h>
 
-#include <boost/optional/optional.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <optional>
 
 #include <iostream>
 #include <vector>
@@ -80,7 +79,7 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
     : mCaches(aCaches)
   {}
 
-  Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, boost::optional<FT> aMaxTime ) const
+  Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, std::optional<FT> aMaxTime ) const
   {
     Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment, aMaxTime, mCaches);
 
@@ -241,9 +240,9 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   typedef typename Base::Segment_2_with_ID        Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
-  typedef boost::tuple<FT,Point_2> rtype ;
+  typedef std::tuple<FT,Point_2> rtype ;
 
-  typedef boost::optional<rtype> result_type ;
+  typedef std::optional<rtype> result_type ;
 
   Construct_ss_event_time_and_point_2(Caches<K>& aCaches)
     : mCaches(aCaches)
@@ -256,13 +255,13 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    boost::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment, mCaches);
+    std::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment, mCaches);
 
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
 
-      boost::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment, mCaches);
+      std::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment, mCaches);
       if ( oi )
       {
         i = *oi ;
@@ -272,7 +271,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
     CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",aTrisegment);
 
-    return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
+    return cgal_make_optional(lOK,std::make_tuple(t,i)) ;
   }
 
 private:
@@ -406,7 +405,7 @@ public:
     if(mCaches.mCoeff_cache.Get(aOtherID))
       mCaches.mCoeff_cache.Set(aID, CGAL_SS_i::cgal_make_optional(*(mCaches.mCoeff_cache.Get(aOtherID))));
     else
-      mCaches.mCoeff_cache.Set(aID, boost::none);
+      mCaches.mCoeff_cache.Set(aID, std::nullopt);
   }
 
   // functions and tag for filtering split events
@@ -420,7 +419,7 @@ public:
       return false;
 
     typename Base::Trisegment_2_ptr tri = lEvent->trisegment() ;
-    boost::optional<CGAL_SS_i::Rational<typename K::FT> > lOptTime =
+    std::optional<CGAL_SS_i::Rational<typename K::FT> > lOptTime =
         CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, mCaches);
 
     if ( lOptTime && lOptTime->to_nt() > *mFilteringBound )
@@ -450,7 +449,7 @@ public:
 
     CGAL_STSKEL_TRAITS_TRACE("Computing filtering bound of V" << aNode->id() << " [" << typeid(FT).name() << "]" );
 
-    mFilteringBound = boost::none;
+    mFilteringBound = std::nullopt;
 
     // No gain observed on norway while doing it for more than contour nodes
     if(!aNode->is_contour())
@@ -468,8 +467,8 @@ public:
                                          lHR->vertex()->point(),
                                          lHR->id());
 
-    boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lHL->weight(), mCaches);
-    boost::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lHR->weight(), mCaches);
+    std::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lHL->weight(), mCaches);
+    std::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lHR->weight(), mCaches);
 
     Vector_2 lVL(  lL->b(), - lL->a()) ;
     Vector_2 lVR(- lR->b(),   lR->a()) ;
@@ -497,7 +496,7 @@ public:
 
       // See the other function for the equations
       CGAL_SS_i::Segment_2_with_ID<K> lSh (s_h, (*h)->id());
-      boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mCaches);
+      std::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mCaches);
 
       FT lLambda = - ( lh->a()*laP.x() + lh->b()*laP.y() + lh->c() ) /
                        ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) ;
@@ -523,7 +522,7 @@ public:
 public:
   mutable std::size_t mTrisegment_ID = 0 ;
   mutable CGAL_SS_i::Caches<K> mCaches ;
-  mutable boost::optional< typename K::FT > mFilteringBound ;
+  mutable std::optional< typename K::FT > mFilteringBound ;
 } ;
 
 template<class K>
@@ -723,7 +722,7 @@ public:
 
     try
     {
-      boost::optional<CGAL_SS_i::Rational<typename FK::FT> > lOptTime =
+      std::optional<CGAL_SS_i::Rational<typename FK::FT> > lOptTime =
           CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, mApproximate_traits.mCaches);
 
       if ( lOptTime && lOptTime->to_nt() > *mApproximate_traits.mFilteringBound )
@@ -759,7 +758,7 @@ public:
 
     CGAL_STSKEL_TRAITS_TRACE("Computing approximate filtering bound of V" << aNode->id() << " [" << typeid(Target_FT).name() << "]" );
 
-    mApproximate_traits.mFilteringBound = boost::none;
+    mApproximate_traits.mFilteringBound = std::nullopt;
 
     // No gain observed on norway while doing it for more than contour nodes
     if(!aNode->is_contour())
@@ -781,8 +780,8 @@ public:
                                   lToFiltered(lHR->vertex()->point()),
                                   lHR->id());
 
-    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lToFiltered(lHL->weight()), mApproximate_traits.mCaches);
-    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
+    std::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lToFiltered(lHL->weight()), mApproximate_traits.mCaches);
+    std::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
 
     Target_Point_2 laP = lToFiltered(aNode->point());
 
@@ -834,7 +833,7 @@ public:
         //   lambda = - T / (d0 + d1) * n2
 
         Target_Segment_with_ID_2 lSh (s_h, (*h)->id());
-        boost::optional<Target_Line_2> lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mApproximate_traits.mCaches);
+        std::optional<Target_Line_2> lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mApproximate_traits.mCaches);
 
         Target_FT lLambda = - ( lh->a()*laP.x() + lh->b()*laP.y() + lh->c() ) /
                                 ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) ;
@@ -860,7 +859,7 @@ public:
         std::cout << "lAP+v " << laP + lVLR << std::endl;
         std::cout << "Inter pt: " << *ip << std::endl;
 
-        boost::optional<Target_Line_2> lh1 = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
+        std::optional<Target_Line_2> lh1 = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
 
         std::cout << "lh0 check" << square(lh0->a()) + square(lh0->b()) << std::endl;
         std::cout << "lh1 check" << square(lh1->a()) + square(lh1->b()) << std::endl;
@@ -870,7 +869,7 @@ public:
         std::cout << "l1 time at aNode + lVLR: " << lh1->a()*(laP + lVLR).x() + lh1->b()*(laP + lVLR).y() + lh1->c() << std::endl;
 
         auto ipp = FK().intersect_2_object()(s_h, bisect_ray);
-        Target_Point_2* ip = boost::get<Target_Point_2>(&*ipp);
+        Target_Point_2* ip = std::get<Target_Point_2>(&*ipp);
         std::cout << "l0 time at inter pt: " << lh0->a()*ip->x() + lh0->b()*ip->y() + lh0->c() << std::endl;
         std::cout << "l1 time at inter pt: " << lh1->a()*ip->x() + lh1->b()*ip->y() + lh1->c() << std::endl;
         std::cout << "lh-> " << lh->a() << " " << lh->b() << " " << square(lh->a()) + square(lh->b()) << std::endl;
