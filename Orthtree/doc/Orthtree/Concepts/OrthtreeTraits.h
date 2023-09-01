@@ -5,6 +5,7 @@
   The concept `OrthtreeTraits` defines the requirements for the
   template parameter of the `CGAL::Orthtree` class.
 
+  todo: update list of models
   \cgalHasModel `CGAL::Orthtree_traits_2<GeomTraits>`
   \cgalHasModel `CGAL::Orthtree_traits_3<GeomTraits>`
   \cgalHasModel `CGAL::Orthtree_traits_d<GeomTraits,Dimension>`
@@ -31,31 +32,9 @@ public:
 
 
   /*!
-   * \brief List-like or iterable type contained by each node
-   *
-   * Should provide begin() and end() iterators which span all the items contained by a node.
-   * Must also be default-constructible, because node data is allocated ahead of time.
-   * Many split predicates also expect a `Node_data::size()` method.
-   * For example, this could be a `boost::range` of point indices, or an `std::vector` containing primitives.
-   *
-   * todo: For an empty tree, this should contain something like `std::array<Point_d, 0>`.
-   * This way, nearest_neighbors still compiles, and simply returns nothing because all nodes are empty.
-   * Eventually, nearest_neighbors will be removed and/or moved, and then this won't have to behave like a list.
-   * Once that's done, `boost::none_t` will work for an empty tree.
+   * \brief The data type contained by each node.
    */
   typedef unspecified_type Node_data;
-
-  /*!
-   * \brief An element of the `Node_data` list-like type.
-   *
-   * Must be constructible from the type produced by dereferencing a `Node_data` iterator.
-   * Typically the same as that type, but can also be an `std::reference_wrapper<>` if the type is not copyable.
-   *
-   * todo: This is only used as part of the return type for `nearest_neighbors()`.
-   * Because `nearest_neighbors()` may be ill defined for empty node types,
-   * this can be omitted in the final version of Orthtree_traits.
-   */
-  typedef unspecified_type Node_data_element;
 
   typedef unspecified_type Adjacency; ///< Specify the adjacency directions
 

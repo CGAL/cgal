@@ -154,7 +154,7 @@ public:
     };
   }
 
-  auto get_element_object() const {
+  auto get_geometric_object_for_element_object() const {
     return [&](const Node_data_element& index) -> typename Self::Point_d {
       return get(m_point_map, index);
     };

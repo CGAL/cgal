@@ -83,12 +83,10 @@ public:
   typedef typename Traits::Adjacency Adjacency; ///< Adjacency type.
 
   typedef typename Traits::Node_data Node_data;
-  typedef typename Traits::Node_data_element Node_data_element;
+  // todo: Node_data_element will only exist for certain Traits types, so I don't know if it can be re-exported
 
   /// \cond SKIP_IN_MANUAL
   typedef typename Traits::Array Array; ///< Array type.
-  typedef typename Traits::Construct_point_d_from_array Construct_point_d_from_array;
-  typedef typename Traits::Construct_bbox_d Construct_bbox_d;
   /// \endcond
   /// @}
 
@@ -234,7 +232,7 @@ public:
       bbox_max[i] = bbox_centroid[i] + max_length;
     }
 
-    Construct_point_d_from_array construct_point_d_from_array
+    auto construct_point_d_from_array
       = m_traits.construct_point_d_from_array_object();
 
     // save orthtree attributes
@@ -419,6 +417,13 @@ public:
   /// @{
 
   /*!
+   * \brief Provides direct read-only access to the tree Traits.
+   *
+   * @return a const reference to the Traits instantiation.
+   */
+  const Traits& traits() const { return m_traits; }
+
+  /*!
     \brief provides read-only access to the root node, and by
     extension the rest of the tree.
 
@@ -495,7 +500,7 @@ public:
     }
 
     // Create the bbox
-    Construct_bbox_d construct_bbox
+    auto construct_bbox
       = m_traits.construct_bbox_d_object();
     return construct_bbox(min_corner, max_corner);
   }
@@ -570,41 +575,6 @@ public:
 
     // Return the result
     return node_for_point;
-  }
-
-  /*!
-    \brief finds the `k` nearest neighbors of `query`.
-
-    Nearest neighbors are outputted in order of increasing distance to
-    `query`.
-
-    \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
-    \param query query point.
-    \param k number of neighbors.
-    \param output output iterator.
-   */
-  template <typename OutputIterator>
-  OutputIterator nearest_neighbors(const Point& query,
-                                   std::size_t k,
-                                   OutputIterator output) const {
-    Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
-    return nearest_k_neighbors_in_radius(query_sphere, k, output);
-  }
-
-  /*!
-    \brief finds the points in `sphere`.
-
-    Nearest neighbors are outputted in order of increasing distance to
-    the center of `sphere`.
-
-    \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
-    \param query query sphere.
-    \param output output iterator.
-   */
-  template <typename OutputIterator>
-  OutputIterator nearest_neighbors(const Sphere& query, OutputIterator output) const {
-    Sphere query_sphere = query;
-    return nearest_k_neighbors_in_radius(query_sphere, (std::numeric_limits<std::size_t>::max)(), output);
   }
 
   /*!
@@ -852,7 +822,7 @@ public:
     }
 
     // Convert that location into a point
-    Construct_point_d_from_array construct_point_d_from_array
+    auto construct_point_d_from_array
       = m_traits.construct_point_d_from_array_object();
     return construct_point_d_from_array(bary);
   }
@@ -996,100 +966,6 @@ private: // functions :
     return CGAL::do_intersect(node_cube, sphere);
   }
 
-  // TODO: There has to be a better way than using structs like these!
-  struct Node_element_with_distance {
-    Node_data_element point;
-    FT distance;
-  };
-
-  struct Node_index_with_distance {
-    Node_index index;
-    FT distance;
-
-    Node_index_with_distance(const Node_index& index, const FT& distance) :
-      index(index), distance(distance) {}
-
-  };
-
-  void nearest_k_neighbors_recursive(Sphere& search_bounds, Node_index node,
-                                     std::vector<Node_element_with_distance>& results, FT epsilon = 0) const {
-
-    // Check whether the node has children
-    if (is_leaf(node)) {
-
-      // Base case: the node has no children
-
-      // Loop through each of the points contained by the node
-      // Note: there might be none, and that should be fine!
-      for (auto p: data(node)) {
-
-        // Pair that point with its distance from the search point
-        Node_element_with_distance current_point_with_distance =
-          {p, squared_distance(m_traits.get_element_object()(p), search_bounds.center())};
-
-        // Check if the new point is within the bounds
-        if (current_point_with_distance.distance < search_bounds.squared_radius()) {
-
-          // Check if the results list is full
-          if (results.size() == results.capacity()) {
-
-            // Delete a point if we need to make room
-            results.pop_back();
-          }
-
-          // Add the new point
-          results.push_back(current_point_with_distance);
-
-          // Sort the list
-          std::sort(results.begin(), results.end(), [=](auto& left, auto& right) {
-            return left.distance < right.distance;
-          });
-
-          // Check if the results list is full
-          if (results.size() == results.capacity()) {
-
-            // Set the search radius
-            search_bounds = Sphere(search_bounds.center(), results.back().distance + epsilon);
-          }
-        }
-      }
-    } else {
-
-      // Recursive case: the node has children
-
-      // Create a list to map children to their distances
-      std::vector<Node_index_with_distance> children_with_distances;
-      children_with_distances.reserve(Degree::value);
-
-      // Fill the list with child nodes
-      for (int i = 0; i < Degree::value; ++i) {
-        auto child_node = child(node, i);
-
-        // Add a child to the list, with its distance
-        children_with_distances.emplace_back(
-          child_node,
-          CGAL::squared_distance(search_bounds.center(), barycenter(child_node))
-        );
-      }
-
-      // Sort the children by their distance from the search point
-      std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto& left, auto& right) {
-        return left.distance < right.distance;
-      });
-
-      // Loop over the children
-      for (auto child_with_distance: children_with_distances) {
-
-        // Check whether the bounding box of the child intersects with the search bounds
-        if (do_intersect(child_with_distance.index, search_bounds)) {
-
-          // Recursively invoke this function
-          nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results);
-        }
-      }
-    }
-  }
-
   template <typename Query, typename Node_output_iterator>
   Node_output_iterator intersected_nodes_recursive(const Query& query, Node_index node,
                                                    Node_output_iterator output) const {
@@ -1109,41 +985,6 @@ private: // functions :
         intersected_nodes_recursive(query, child(node, i), output);
       }
     }
-    return output;
-  }
-
-  /*!
-    \brief finds the `k` points within a specific radius that are
-    nearest to the center of `query_sphere`.
-
-    This function guarantees that there are no closer points than the ones returned,
-    but it does not guarantee that it will return at least `k` points.
-    For a query where the search radius encloses `k` or fewer points, all enclosed points will be returned.
-    If the search radius is too small, no points may be returned.
-    This function is useful when the user already knows how sparse the points are,
-    or if they do not care about points that are too far away.
-    Setting a small radius may have performance benefits.
-
-    \tparam OutputIterator must be a model of `OutputIterator` that accepts points
-    \param query_sphere the region to search within
-    \param k the number of points to find
-    \param output the output iterator to add the found points to (in order of increasing distance)
-   */
-  template <typename OutputIterator>
-  OutputIterator nearest_k_neighbors_in_radius(Sphere& query_sphere, std::size_t k, OutputIterator output) const {
-
-    // Create an empty list of points
-    std::vector<Node_element_with_distance> points_list;
-    if (k != (std::numeric_limits<std::size_t>::max)())
-      points_list.reserve(k);
-
-    // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbors_recursive(query_sphere, root(), points_list);
-
-    // Add all the points found to the output
-    for (auto& item: points_list)
-      *output++ = item.point;
-
     return output;
   }
 

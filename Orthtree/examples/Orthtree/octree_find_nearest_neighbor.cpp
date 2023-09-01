@@ -3,6 +3,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Octree.h>
+#include <CGAL/Orthtree/Nearest_neighbors.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -46,7 +47,8 @@ int main(int argc, char** argv) {
     {-0.460261, -0.253533, 0.320513}
   };
   for (const Point& p: points_to_find)
-    octree.nearest_neighbors(
+    CGAL::Orthtrees::nearest_neighbors(
+      octree,
       p, 1, // k=1 to find the single closest point
       boost::make_function_output_iterator([&](const Point_set::Index& nearest) {
         std::cout << "the nearest point to (" << p << ") is (" << points.point(nearest) << ")" << std::endl;
