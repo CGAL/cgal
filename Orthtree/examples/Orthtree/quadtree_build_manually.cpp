@@ -10,7 +10,8 @@ using Kernel = CGAL::Simple_cartesian<double>;
 
 namespace CGAL {
 
-struct empty_type{};
+struct empty_type {
+};
 
 template <typename K>
 struct Orthtree_traits_empty_2 : public Orthtree_traits_2_base<K> {
@@ -23,29 +24,30 @@ struct Orthtree_traits_empty_2 : public Orthtree_traits_2_base<K> {
 
   Orthtree_traits_empty_2(typename Self::Bbox_d bbox) : m_bbox(bbox) {};
 
-  decltype(auto) construct_point_d_from_array_object() const {
+  auto construct_point_d_from_array_object() const {
     return [](const typename Self::Array& array) -> typename Self::Point_d { return {array[0], array[1]}; };
   }
   using Construct_point_d_from_array = std::invoke_result_t<decltype(&Self::construct_point_d_from_array_object), Self>;
 
-  decltype(auto) construct_bbox_d_object() const {
+  auto construct_bbox_d_object() const {
     return [](const typename Self::Array& min, const typename Self::Array& max) -> typename Self::Bbox_d {
       return {min[0], min[1], max[0], max[1]};
     };
   }
   using Construct_bbox_d = std::invoke_result_t<decltype(&Self::construct_bbox_d_object), Self>;
 
-  std::pair<typename Self::Array, typename Self::Array> root_node_bbox() const {
-    return {{m_bbox.xmax(), m_bbox.ymax()},
-            {m_bbox.xmax(), m_bbox.ymax()}};
+  auto root_node_bbox_object() const {
+    return [&]() -> std::pair<typename Self::Array, typename Self::Array> {
+      return {{m_bbox.xmax(), m_bbox.ymax()},
+              {m_bbox.xmax(), m_bbox.ymax()}};
+    };
   }
 
-  Node_data root_node_contents() const { return {}; }
+  auto root_node_contents_object() const { return [&]() -> Node_data { return {}; }; }
 
-  template<typename Node_index> // todo: this shouldn't be necessary, but I think there's a dependency loop somehow
-  void distribute_node_contents(Node_index n, Tree& tree, const typename Self::Point_d& center) {}
-
-  empty_type get_element(const Node_data_element& index) const { return {}; }
+  auto distribute_node_contents_object() {
+    return [&](typename Tree::Node_index n, Tree& tree, const typename Self::Point_d& center) -> void {};
+  }
 
 private:
 
