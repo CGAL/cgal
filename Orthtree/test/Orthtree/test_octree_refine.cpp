@@ -75,13 +75,13 @@ void test_4_points() {
   Octree octree({points, points.point_map()});
   octree.refine(10, 1);
 
-  // The octree should have been split once on the first level, and twice on the second
   Octree other({points, points.point_map()});
   other.split(other.root());
   other.split(other.node(3));
+  other.split(other.node(3, 4));
   other.split(other.node(7));
   assert(Octree::is_topology_equal(other, octree));
-  assert(2 == octree.depth());
+  assert(3 == octree.depth());
 
   // Applying another splitting criterion shouldn't reset the tree.
   octree.refine(Split_nth_child_of_root(2));

@@ -55,7 +55,7 @@ struct Orthtree_traits_face_graph
   Construct_point_d_from_array construct_point_d_from_array_object() const { return Construct_point_d_from_array(); }
 
   auto root_node_bbox_object() const {
-    return [&]() -> std::pair<Array, Array> {
+    return [&]() -> Bbox_d {
 
       Array min = {0.0, 0}, max = {0.0, 0};
       if (faces(m_pm).begin() != faces(m_pm).end()) {
@@ -71,7 +71,8 @@ struct Orthtree_traits_face_graph
         }
       }
 
-      return {min, max};
+      return {construct_point_d_from_array_object()(min),
+              construct_point_d_from_array_object()(max)};
     };
   }
 

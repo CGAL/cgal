@@ -124,7 +124,7 @@ public:
   Construct_point_d_from_array construct_point_d_from_array_object() const { return Construct_point_d_from_array(); }
 
   auto root_node_bbox_object() const {
-    return [&]() -> std::pair<typename Self::Array, typename Self::Array> {
+    return [&]() -> typename Self::Bbox_d {
 
       typename Self::Array bbox_min;
       typename Self::Array bbox_max;
@@ -151,7 +151,8 @@ public:
         }
       }
 
-      return {bbox_min, bbox_max};
+      return {construct_point_d_from_array_object()(bbox_min),
+              construct_point_d_from_array_object()(bbox_max)};
     };
   }
 

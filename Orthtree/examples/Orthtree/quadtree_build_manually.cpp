@@ -20,7 +20,6 @@ struct Orthtree_traits_empty_2 : public Orthtree_traits_2_base<K> {
   using Tree = Orthtree<Self>;
 
   using Node_data = std::array<empty_type, 0>;
-  using Node_data_element = empty_type;
 
   Orthtree_traits_empty_2(typename Self::Bbox_d bbox) : m_bbox(bbox) {};
 
@@ -29,18 +28,8 @@ struct Orthtree_traits_empty_2 : public Orthtree_traits_2_base<K> {
   }
   using Construct_point_d_from_array = std::invoke_result_t<decltype(&Self::construct_point_d_from_array_object), Self>;
 
-  auto construct_bbox_d_object() const {
-    return [](const typename Self::Array& min, const typename Self::Array& max) -> typename Self::Bbox_d {
-      return {min[0], min[1], max[0], max[1]};
-    };
-  }
-  using Construct_bbox_d = std::invoke_result_t<decltype(&Self::construct_bbox_d_object), Self>;
-
   auto root_node_bbox_object() const {
-    return [&]() -> std::pair<typename Self::Array, typename Self::Array> {
-      return {{m_bbox.xmax(), m_bbox.ymax()},
-              {m_bbox.xmax(), m_bbox.ymax()}};
-    };
+    return [&]() -> typename Self::Bbox_d { return m_bbox; };
   }
 
   auto root_node_contents_object() const { return [&]() -> Node_data { return {}; }; }

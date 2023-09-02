@@ -205,7 +205,7 @@ public:
     \param enlarge_ratio ratio to which the bounding box should be enlarged.
     \param traits the traits object.
   */
-  explicit Orthtree(Traits traits, const FT enlarge_ratio = 1.2) :
+  explicit Orthtree(Traits traits) :
     m_traits(traits),
     m_node_points(m_node_properties.add_property<Node_data>("points")),
     m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
@@ -215,29 +215,12 @@ public:
 
     m_node_properties.emplace();
 
-
     // init bbox with first values found
-    auto [bbox_min, bbox_max] = m_traits.root_node_bbox_object()();
-
-    // Dilate the bounding box
-    Array bbox_centroid;
-    FT max_length = FT(0);
-    for (std::size_t i = 0; i < Dimension::value; ++i) {
-      bbox_centroid[i] = (bbox_min[i] + bbox_max[i]) / FT(2);
-      max_length = (std::max)(max_length, bbox_max[i] - bbox_min[i]);
-    }
-    max_length *= enlarge_ratio / FT(2);
-    for (std::size_t i = 0; i < Dimension::value; ++i) {
-      bbox_min[i] = bbox_centroid[i] - max_length;
-      bbox_max[i] = bbox_centroid[i] + max_length;
-    }
-
-    auto construct_point_d_from_array
-      = m_traits.construct_point_d_from_array_object();
+    auto bbox = m_traits.root_node_bbox_object()();
 
     // save orthtree attributes
-    m_bbox_min = construct_point_d_from_array(bbox_min);
-    m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
+    m_bbox_min = bbox.min();
+    m_side_per_depth.push_back(bbox.max()[0] - bbox.min()[0]);
     data(root()) = m_traits.root_node_contents_object()();
   }
 

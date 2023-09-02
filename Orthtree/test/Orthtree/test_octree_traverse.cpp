@@ -96,6 +96,7 @@ bool test_preorder_25_nodes() {
   // Create the octree
   Octree octree({points, points.point_map()});
   octree.refine(10, 1);
+  std::cout << octree << std::endl;
 
   // Create the range
   auto nodes = octree.traverse<Preorder_traversal>();
@@ -105,28 +106,28 @@ bool test_preorder_25_nodes() {
   assert(*iter == octree.root());
   iter++;
   assert(*iter == octree.node(0));
+  for (int i = 0; i < 8; ++i) {
+    iter++;
+    assert(*iter == octree.node(0, i));
+  }
   iter++;
   assert(*iter == octree.node(1));
   iter++;
   assert((*iter == octree.node(2)));
   iter++;
   assert(*iter == octree.node(3));
-  for (int i = 0; i < 8; ++i) {
-    iter++;
-    assert(*iter == octree.node(3, i));
-  }
   iter++;
   assert((*iter == octree.node(4)));
+  for (int i = 0; i < 8; ++i) {
+    iter++;
+    assert(*iter == octree.node(4, i));
+  }
   iter++;
   assert((*iter == octree.node(5)));
   iter++;
   assert((*iter == octree.node(6)));
   iter++;
   assert((*iter == octree.node(7)));
-  for (int i = 0; i < 8; ++i) {
-    iter++;
-    assert(*iter == octree.node(7, i));
-  }
 
   return true;
 }

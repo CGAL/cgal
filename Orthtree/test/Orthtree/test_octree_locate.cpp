@@ -62,14 +62,14 @@ void test_8_points() {
   assert(octree.node(7) == octree.locate({1, 1, 1}));
 
   // Points adjacent to the existing points should also end up in the same place
-  assert(octree.node(0) == octree.locate({-1.1, -1.1, -1.1}));
-  assert(octree.node(1) == octree.locate({1.1, -1.1, -1.1}));
-  assert(octree.node(2) == octree.locate({-1.1, 1.1, -1.1}));
-  assert(octree.node(3) == octree.locate({1.1, 1.1, -1.1}));
-  assert(octree.node(4) == octree.locate({-1.1, -1.1, 1.1}));
-  assert(octree.node(5) == octree.locate({1.1, -1.1, 1.1}));
-  assert(octree.node(6) == octree.locate({-1.1, 1.1, 1.1}));
-  assert(octree.node(7) == octree.locate({1.1, 1.1, 1.1}));
+  assert(octree.node(0) == octree.locate({-0.99, -0.99, -0.99}));
+  assert(octree.node(1) == octree.locate({0.99, -0.99, -0.99}));
+  assert(octree.node(2) == octree.locate({-0.99, 0.99, -0.99}));
+  assert(octree.node(3) == octree.locate({0.99, 0.99, -0.99}));
+  assert(octree.node(4) == octree.locate({-0.99, -0.99, 0.99}));
+  assert(octree.node(5) == octree.locate({0.99, -0.99, 0.99}));
+  assert(octree.node(6) == octree.locate({-0.99, 0.99, 0.99}));
+  assert(octree.node(7) == octree.locate({0.99, 0.99, 0.99}));
 
 }
 
@@ -96,21 +96,21 @@ void test_10_points() {
   assert(octree.node(0) == octree.locate({-1, -1, -1}));
   assert(octree.node(1) == octree.locate({1, -1, -1}));
   assert(octree.node(2) == octree.locate({-1, 1, -1}));
-  assert(octree.node(3, 3, 3) == octree.locate({1, 1, -1}));
+  assert(octree.node(3, 3, 3, 3, 3) == octree.locate({1, 1, -1}));
   assert(octree.node(4, 4, 4) == octree.locate({-1, -1, 1}));
   assert(octree.node(5) == octree.locate({1, -1, 1}));
   assert(octree.node(6) == octree.locate({-1, 1, 1}));
   assert(octree.node(7) == octree.locate({1, 1, 1}));
 
   // Points adjacent to the existing points might end up in different places
-  assert(octree.node(0) == octree.locate({-1.1, -1.1, -1.1}));
-  assert(octree.node(1) == octree.locate({1.1, -1.1, -1.1}));
-  assert(octree.node(2) == octree.locate({-1.1, 1.1, -1.1}));
-  assert(octree.node(3, 3, 3) == octree.locate({1.1, 1.1, -1.1}));
-  assert(octree.node(4, 4, 4) == octree.locate({-1.1, -1.1, 1.1}));
-  assert(octree.node(5) == octree.locate({1.1, -1.1, 1.1}));
-  assert(octree.node(6) == octree.locate({-1.1, 1.1, 1.1}));
-  assert(octree.node(7) == octree.locate({1.1, 1.1, 1.1}));
+  assert(octree.node(0) == octree.locate({-0.99, -0.99, -0.99}));
+  assert(octree.node(1) == octree.locate({0.99, -0.99, -0.99}));
+  assert(octree.node(2) == octree.locate({-0.99, 0.99, -0.99}));
+  assert(octree.node(3, 3, 3, 3, 3) == octree.locate({0.99, 0.99, -0.99}));
+  assert(octree.node(4, 4, 4) == octree.locate({-0.99, -0.99, 0.99}));
+  assert(octree.node(5) == octree.locate({0.99, -0.99, 0.99}));
+  assert(octree.node(6) == octree.locate({-0.99, 0.99, 0.99}));
+  assert(octree.node(7) == octree.locate({0.99, 0.99, 0.99}));
 
 }
 
