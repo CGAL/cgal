@@ -45,13 +45,6 @@ struct Orthtree_traits_face_graph
 
   using Geom_traits = typename Kernel_traits<Point_d>::type;
 
-  struct Construct_bbox_d {
-    Bbox_d operator()(const Array& min,
-                      const Array& max) const {
-      return Bbox_d(min[0], min[1], min[2], max[0], max[1], max[2]);
-    }
-  };
-
   // SL: why?
   struct Construct_point_d_from_array {
     Point_d operator()(const Array& array) const {
@@ -60,8 +53,6 @@ struct Orthtree_traits_face_graph
   };
 
   Construct_point_d_from_array construct_point_d_from_array_object() const { return Construct_point_d_from_array(); }
-
-  Construct_bbox_d construct_bbox_d_object() const { return Construct_bbox_d(); }
 
   auto root_node_bbox_object() const {
     return [&]() -> std::pair<Array, Array> {

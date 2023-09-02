@@ -18,10 +18,9 @@ public:
   /// @{
 
   typedef unspecified_type Dimension; ///< Dimension type (see `CGAL::Dimension_tag`).
-  typedef unspecified_type Bbox_d; ///< Bounding box type.
   typedef unspecified_type FT; ///< The number type of the %Cartesian coordinates of types `Point_d`
   typedef unspecified_type Point_d; ///< Point type.
-  typedef unspecified_type Sphere_d; ///< The sphere type for neighbor queries.
+  typedef unspecified_type Bbox_d; ///< Bounding box type. Must be constructible from a pair of Point_d types.
 
   /*!
     A random access iterator type to enumerate the
@@ -43,11 +42,6 @@ public:
   */
   typedef unspecified_type Construct_point_d_from_array;
 
-  /*!
-    Functor with an operator to construct a `Bbox_d` from two `Array` objects (coordinates of minimum and maximum points).
-  */
-  typedef unspecified_type Construct_bbox_d;
-
   /// @}
 
   /// \name Operations
@@ -57,11 +51,6 @@ public:
     Function used to construct an object of type `Construct_point_d_from_array`.
   */
   Construct_point_d_from_array construct_point_d_from_array_object() const;
-
-  /*!
-    Function used to construct an object of type `Construct_bbox_d`.
-  */
-  Construct_bbox_d construct_bbox_d_object() const;
 
   /*!
    * \brief Produces a bounding box which encloses the contents of the tree

@@ -500,9 +500,8 @@ public:
     }
 
     // Create the bbox
-    auto construct_bbox
-      = m_traits.construct_bbox_d_object();
-    return construct_bbox(min_corner, max_corner);
+    return {m_traits.construct_point_d_from_array_object()(min_corner),
+            m_traits.construct_point_d_from_array_object()(max_corner)};
   }
 
   /// @}

@@ -25,6 +25,11 @@ public:
   /// @{
 
   /*!
+   * Sphere type used for the shrinking-sphere approach for neighbor queries
+   */
+  typedef unspecified_type Sphere_d;
+
+  /*!
    * \brief An element of the `Node_data` list-like type.
    *
    * Must be constructible from the type produced by dereferencing a `Node_data` iterator.

@@ -72,22 +72,6 @@ public:
 
 #endif
 
-#ifdef DOXYGEN_RUNNING
-  /*!
-    Functor with an operator to construct a `Bbox_d` from two `Array` objects (coordinates of minimum and maximum points).
-  */
-  typedef unspecified_type Construct_bbox_d;
-#else
-
-  struct Construct_bbox_d {
-    typename Self::Bbox_d operator()(const typename Self::Array& min,
-                                     const typename Self::Array& max) const {
-      return typename Self::Bbox_d(min[0], min[1], min[2], max[0], max[1], max[2]);
-    }
-  };
-
-#endif
-
   /// @}
 
   Orthtree_traits_point_3(
@@ -102,11 +86,6 @@ public:
     Function used to construct an object of type `Construct_point_d_from_array`.
   */
   Construct_point_d_from_array construct_point_d_from_array_object() const { return Construct_point_d_from_array(); }
-
-  /*!
-    Function used to construct an object of type `Construct_bbox_d`.
-  */
-  Construct_bbox_d construct_bbox_d_object() const { return Construct_bbox_d(); }
 
   auto root_node_bbox_object() const {
     return [&]() -> std::pair<typename Self::Array, typename Self::Array> {
