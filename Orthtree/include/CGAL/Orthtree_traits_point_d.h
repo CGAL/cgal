@@ -102,7 +102,7 @@ public:
 
   struct Construct_point_d_from_array {
     typename Self::Point_d operator()(const typename Self::Array& array) const {
-      return typename Self::Point_d(array.begin(), array.end());
+      return typename Self::Point_d(array.size(), array.begin(), array.end());
     }
   };
 

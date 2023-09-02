@@ -169,7 +169,8 @@ private: // data members :
 
   Point m_bbox_min;                  /* input bounding box min value */
 
-  std::vector<FT> m_side_per_depth;      /* side length per node's depth */
+  using Bbox_dimensions = decltype(std::declval<Bbox>().max() - std::declval<Bbox>().min());
+  std::vector<Bbox_dimensions> m_side_per_depth;      /* side length per node's depth */
 
   Cartesian_ranges cartesian_range; /* a helper to easily iterator on coordinates of points */
 
@@ -220,7 +221,7 @@ public:
 
     // save orthtree attributes
     m_bbox_min = bbox.min();
-    m_side_per_depth.push_back(bbox.max()[0] - bbox.min()[0]);
+    m_side_per_depth.push_back(bbox.max() - bbox.min());
     data(root()) = m_traits.root_node_contents_object()();
   }
 
@@ -471,20 +472,19 @@ public:
   Bbox bbox(Node_index n) const {
 
     // Determine the side length of this node
-    FT size = m_side_per_depth[depth(n)];
+    Bbox_dimensions size = m_side_per_depth[depth(n)];
 
     // Determine the location this node should be split
     Array min_corner;
     Array max_corner;
     for (int i = 0; i < Dimension::value; i++) {
 
-      min_corner[i] = m_bbox_min[i] + (global_coordinates(n)[i] * size);
-      max_corner[i] = min_corner[i] + size;
+      min_corner[i] = m_bbox_min[i] + (global_coordinates(n)[i] * size[i]);
     }
 
     // Create the bbox
     return {m_traits.construct_point_d_from_array_object()(min_corner),
-            m_traits.construct_point_d_from_array_object()(max_corner)};
+            m_traits.construct_point_d_from_array_object()(min_corner) + size};
   }
 
   /// @}
@@ -494,6 +494,7 @@ public:
 
   template <typename T>
   std::pair<std::reference_wrapper<Node_property_container::Array < T>>, bool>
+
   get_or_add_node_property(const std::string& name, const T default_value = T()) {
     return m_node_properties.get_or_add_property(name, default_value);
   }
@@ -509,7 +510,8 @@ public:
   }
 
   template <typename T>
-  std::optional<std::reference_wrapper<Node_property_container::Array<T>>>
+  std::optional<std::reference_wrapper<Node_property_container::Array < T>>>
+
   get_node_property_if_exists(const std::string& name) {
     return m_node_properties.get_property_if_exists<T>(name);
   }
@@ -793,13 +795,13 @@ public:
   Point barycenter(Node_index n) const {
 
     // Determine the side length of this node
-    FT size = m_side_per_depth[depth(n)];
+    Bbox_dimensions size = m_side_per_depth[depth(n)];
 
     // Determine the location this node should be split
     Array bary;
     std::size_t i = 0;
     for (const FT& f: cartesian_range(m_bbox_min)) {
-      bary[i] = FT(global_coordinates(n)[i]) * size + size / FT(2) + f;
+      bary[i] = FT(global_coordinates(n)[i]) * size[i] + size[i] / FT(2) + f;
       ++i;
     }
 
