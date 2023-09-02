@@ -17,4 +17,5 @@ endforeach()
 
 if(CGAL_Qt5_FOUND)
   target_link_libraries(draw_test_polygons PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(exact_test PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
