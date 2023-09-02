@@ -276,8 +276,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
  * The class `Polygon_repair` builds on a constrained
  * triangulation to remove the parts of constraints that overlap an even number of times
  */
-template <class Kernel = CGAL::Exact_predicates_inexact_constructions_kernel,
-          class PolygonContainer = std::vector<typename Kernel::Point_2>>
+template <class Kernel, class PolygonContainer = std::vector<typename Kernel::Point_2>>
 class Polygon_repair {
 public:
   using Vertex_base = CGAL::Triangulation_vertex_base_2<Kernel>;
