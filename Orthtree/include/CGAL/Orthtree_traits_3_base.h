@@ -41,10 +41,11 @@ public:
   /// \name Types
   /// @{
 
+  using GeomTraits = K;
   using Dimension = Dimension_tag<3>;
-  using Bbox_d = Bbox_3;
   using FT = typename K::FT;
   using Point_d = typename K::Point_3;
+  using Bbox_d = typename K::Iso_cuboid_3;
   using Sphere_d = typename K::Sphere_3;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_3;
   using Array = std::array<FT, Dimension::value>; // todo: This should have a more descriptive name

@@ -42,9 +42,9 @@ public:
   /// @{
 
   using Dimension = Dimension_tag<2>;
-  using Bbox_d = Bbox_2;
   using FT = typename K::FT;
   using Point_d = typename K::Point_2;
+  using Bbox_d = typename K::Iso_rectangle_2;
   using Sphere_d = typename K::Circle_2;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_2;
   using Array = std::array<FT, Dimension::value>; // todo: This should have a more descriptive name

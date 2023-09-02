@@ -23,8 +23,10 @@ void test_1_node() {
   Octree octree({points, points.point_map()});
   octree.refine(10, 1);
 
+  Octree::Bbox expected_bbox{-1, -1, -1, -1, -1, -1};
+
   // Compare the top (only) node
-  assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1, -1, -1, -1, -1, -1));
+  assert(octree.bbox(octree.root()) == Octree::Bbox(-1, -1, -1, -1, -1, -1));
 }
 
 void test_9_nodes() {
@@ -39,17 +41,17 @@ void test_9_nodes() {
   octree.refine(10, 1);
 
   // Compare the top node
-  assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1.1, -1.1, -1.1, 1.1, 1.1, 1.1));
+  assert(octree.bbox(octree.root()) == Octree::Bbox(-1.1, -1.1, -1.1, 1.1, 1.1, 1.1));
 
   // Compare the child nodes
-  assert(octree.bbox(octree.node(0)) == CGAL::Bbox_3(-1.1, -1.1, -1.1, 0, 0, 0));
-  assert(octree.bbox(octree.node(1)) == CGAL::Bbox_3(0, -1.1, -1.1, 1.1, 0, 0));
-  assert(octree.bbox(octree.node(2)) == CGAL::Bbox_3(-1.1, 0, -1.1, 0, 1.1, 0));
-  assert(octree.bbox(octree.node(3)) == CGAL::Bbox_3(0, 0, -1.1, 1.1, 1.1, 0));
-  assert(octree.bbox(octree.node(4)) == CGAL::Bbox_3(-1.1, -1.1, 0, 0, 0, 1.1));
-  assert(octree.bbox(octree.node(5)) == CGAL::Bbox_3(0, -1.1, 0, 1.1, 0, 1.1));
-  assert(octree.bbox(octree.node(6)) == CGAL::Bbox_3(-1.1, 0, 0, 0, 1.1, 1.1));
-  assert(octree.bbox(octree.node(7)) == CGAL::Bbox_3(0, 0, 0, 1.1, 1.1, 1.1));
+  assert(octree.bbox(octree.node(0)) == Octree::Bbox(-1.1, -1.1, -1.1, 0, 0, 0));
+  assert(octree.bbox(octree.node(1)) == Octree::Bbox(0, -1.1, -1.1, 1.1, 0, 0));
+  assert(octree.bbox(octree.node(2)) == Octree::Bbox(-1.1, 0, -1.1, 0, 1.1, 0));
+  assert(octree.bbox(octree.node(3)) == Octree::Bbox(0, 0, -1.1, 1.1, 1.1, 0));
+  assert(octree.bbox(octree.node(4)) == Octree::Bbox(-1.1, -1.1, 0, 0, 0, 1.1));
+  assert(octree.bbox(octree.node(5)) == Octree::Bbox(0, -1.1, 0, 1.1, 0, 1.1));
+  assert(octree.bbox(octree.node(6)) == Octree::Bbox(-1.1, 0, 0, 0, 1.1, 1.1));
+  assert(octree.bbox(octree.node(7)) == Octree::Bbox(0, 0, 0, 1.1, 1.1, 1.1));
 }
 
 void test_25_nodes() {
@@ -66,53 +68,53 @@ void test_25_nodes() {
   octree.refine(10, 1);
 
   // Compare the top node
-  assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 1.5, 1.5, 1.5));
+  assert(octree.bbox(octree.root()) == Octree::Bbox(-1.5, -1.5, -1.5, 1.5, 1.5, 1.5));
 
   // Compare the child nodes
-  assert(octree.bbox(octree.node(0)) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 0, 0, 0));
-  assert(octree.bbox(octree.node(1)) == CGAL::Bbox_3(0, -1.5, -1.5, 1.5, 0, 0));
-  assert(octree.bbox(octree.node(2)) == CGAL::Bbox_3(-1.5, 0, -1.5, 0, 1.5, 0));
-  assert(octree.bbox(octree.node(3)) == CGAL::Bbox_3(0, 0, -1.5, 1.5, 1.5, 0));
-  assert(octree.bbox(octree.node(4)) == CGAL::Bbox_3(-1.5, -1.5, 0, 0, 0, 1.5));
-  assert(octree.bbox(octree.node(5)) == CGAL::Bbox_3(0, -1.5, 0, 1.5, 0, 1.5));
-  assert(octree.bbox(octree.node(6)) == CGAL::Bbox_3(-1.5, 0, 0, 0, 1.5, 1.5));
-  assert(octree.bbox(octree.node(7)) == CGAL::Bbox_3(0, 0, 0, 1.5, 1.5, 1.5));
+  assert(octree.bbox(octree.node(0)) == Octree::Bbox(-1.5, -1.5, -1.5, 0, 0, 0));
+  assert(octree.bbox(octree.node(1)) == Octree::Bbox(0, -1.5, -1.5, 1.5, 0, 0));
+  assert(octree.bbox(octree.node(2)) == Octree::Bbox(-1.5, 0, -1.5, 0, 1.5, 0));
+  assert(octree.bbox(octree.node(3)) == Octree::Bbox(0, 0, -1.5, 1.5, 1.5, 0));
+  assert(octree.bbox(octree.node(4)) == Octree::Bbox(-1.5, -1.5, 0, 0, 0, 1.5));
+  assert(octree.bbox(octree.node(5)) == Octree::Bbox(0, -1.5, 0, 1.5, 0, 1.5));
+  assert(octree.bbox(octree.node(6)) == Octree::Bbox(-1.5, 0, 0, 0, 1.5, 1.5));
+  assert(octree.bbox(octree.node(7)) == Octree::Bbox(0, 0, 0, 1.5, 1.5, 1.5));
 
   // Compare children of the first child
   assert(octree.bbox(octree.node(0, 0)) ==
-         CGAL::Bbox_3(-1.5, -1.5, -1.5, -0.75, -0.75, -0.75));
+         Octree::Bbox(-1.5, -1.5, -1.5, -0.75, -0.75, -0.75));
   assert(octree.bbox(octree.node(0, 1)) ==
-         CGAL::Bbox_3(-0.75, -1.5, -1.5, 0, -0.75, -0.75));
+         Octree::Bbox(-0.75, -1.5, -1.5, 0, -0.75, -0.75));
   assert(octree.bbox(octree.node(0, 2)) ==
-         CGAL::Bbox_3(-1.5, -0.75, -1.5, -0.75, 0, -0.75));
+         Octree::Bbox(-1.5, -0.75, -1.5, -0.75, 0, -0.75));
   assert(octree.bbox(octree.node(0, 3)) ==
-         CGAL::Bbox_3(-0.75, -0.75, -1.5, 0, 0, -0.75));
+         Octree::Bbox(-0.75, -0.75, -1.5, 0, 0, -0.75));
   assert(octree.bbox(octree.node(0, 4)) ==
-         CGAL::Bbox_3(-1.5, -1.5, -0.75, -0.75, -0.75, 0));
+         Octree::Bbox(-1.5, -1.5, -0.75, -0.75, -0.75, 0));
   assert(octree.bbox(octree.node(0, 5)) ==
-         CGAL::Bbox_3(-0.75, -1.5, -0.75, 0, -0.75, 0));
+         Octree::Bbox(-0.75, -1.5, -0.75, 0, -0.75, 0));
   assert(octree.bbox(octree.node(0, 6)) ==
-         CGAL::Bbox_3(-1.5, -0.75, -0.75, -0.75, 0, 0));
+         Octree::Bbox(-1.5, -0.75, -0.75, -0.75, 0, 0));
   assert(octree.bbox(octree.node(0, 7)) ==
-         CGAL::Bbox_3(-0.75, -0.75, -0.75, 0, 0, 0));
+         Octree::Bbox(-0.75, -0.75, -0.75, 0, 0, 0));
 
   // Compare children of the last child
   assert(octree.bbox(octree.node(7, 0)) ==
-         CGAL::Bbox_3(0, 0, 0, 0.75, 0.75, 0.75));
+         Octree::Bbox(0, 0, 0, 0.75, 0.75, 0.75));
   assert(octree.bbox(octree.node(7, 1)) ==
-         CGAL::Bbox_3(0.75, 0, 0, 1.5, 0.75, 0.75));
+         Octree::Bbox(0.75, 0, 0, 1.5, 0.75, 0.75));
   assert(octree.bbox(octree.node(7, 2)) ==
-         CGAL::Bbox_3(0, 0.75, 0, 0.75, 1.5, 0.75));
+         Octree::Bbox(0, 0.75, 0, 0.75, 1.5, 0.75));
   assert(octree.bbox(octree.node(7, 3)) ==
-         CGAL::Bbox_3(0.75, 0.75, 0, 1.5, 1.5, 0.75));
+         Octree::Bbox(0.75, 0.75, 0, 1.5, 1.5, 0.75));
   assert(octree.bbox(octree.node(7, 4)) ==
-         CGAL::Bbox_3(0, 0, 0.75, 0.75, 0.75, 1.5));
+         Octree::Bbox(0, 0, 0.75, 0.75, 0.75, 1.5));
   assert(octree.bbox(octree.node(7, 5)) ==
-         CGAL::Bbox_3(0.75, 0, 0.75, 1.5, 0.75, 1.5));
+         Octree::Bbox(0.75, 0, 0.75, 1.5, 0.75, 1.5));
   assert(octree.bbox(octree.node(7, 6)) ==
-         CGAL::Bbox_3(0, 0.75, 0.75, 0.75, 1.5, 1.5));
+         Octree::Bbox(0, 0.75, 0.75, 0.75, 1.5, 1.5));
   assert(octree.bbox(octree.node(7, 7)) ==
-         CGAL::Bbox_3(0.75, 0.75, 0.75, 1.5, 1.5, 1.5));
+         Octree::Bbox(0.75, 0.75, 0.75, 1.5, 1.5, 1.5));
 }
 
 int main(void) {

@@ -42,27 +42,10 @@ public:
   using Dimension = DimensionTag;
   using FT = typename K::FT;
   using Point_d = typename K::Point_d;
+  using Bbox_d = typename K::Iso_box_d;
   using Sphere_d = typename K::Sphere_d;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_d;
   using Array = std::array<FT, Dimension::value>;
-
-#ifdef DOXYGEN_RUNNING
-  typedef unspecified_type Bbox_d; ///< Bounding box type.
-#else
-
-  class Bbox_d {
-    Point_d m_min, m_max;
-  public:
-
-    Bbox_d(const Point_d& pmin, const Point_d& pmax)
-      : m_min(pmin), m_max(pmax) {}
-
-    const Point_d& min BOOST_PREVENT_MACRO_SUBSTITUTION() { return m_min; }
-
-    const Point_d& max BOOST_PREVENT_MACRO_SUBSTITUTION() { return m_max; }
-  };
-
-#endif
 
   /*!
     Adjacency type.

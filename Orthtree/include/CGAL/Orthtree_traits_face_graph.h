@@ -132,7 +132,7 @@ struct Orthtree_traits_face_graph
       //TODO: we should get better version to get guarantees
       // TODO: as long as the bbox is cubic you can use depth and initial size to conclude.
       for (int i = 0; i < 3; ++i)
-        if ((bb.max(i) - bb.min(i)) < 2 * m_min_extent)
+        if ((bb.max()[i] - bb.min()[i]) < 2 * m_min_extent)
           return false;
       return true;
     }

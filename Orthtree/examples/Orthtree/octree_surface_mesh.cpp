@@ -20,7 +20,7 @@ void dump_as_polylines(const Octree& ot)
     {
       if (!ot.is_leaf(node))
         continue;
-      CGAL::Bbox_3 bb = ot.bbox(node);
+      auto bb = ot.bbox(node);
       out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmin()
           << "  " << bb.xmax() << " " << bb.ymin() << " " << bb.zmin() << "\n";
       out << "2 " << bb.xmin() << " " << bb.ymin() << " " << bb.zmin()
