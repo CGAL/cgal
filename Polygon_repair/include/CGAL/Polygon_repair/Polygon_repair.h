@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Polygon_repair.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
@@ -285,9 +284,19 @@ public:
   using Face_base = CGAL::Constrained_triangulation_face_base_2<Kernel>;
   using Face_base_with_repair_info = CGAL::Triangulation_face_base_with_repair_info_2<Kernel, Face_base>;
   using Triangulation_data_structure = CGAL::Triangulation_data_structure_2<Vertex_base, Face_base_with_repair_info>;
-  using Tag = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value, CGAL::Exact_predicates_tag, CGAL::Exact_intersections_tag>::type;
+  using Tag = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value,
+                                        CGAL::Exact_predicates_tag,
+                                        CGAL::Exact_intersections_tag>::type;
   using Constrained_Delaunay_triangulation = CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag>;
   using Triangulation = Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
+  using Edge_map = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value,
+                                             std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
+                                                                boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>>,
+                                             std::set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>>::type;
+  using Vertex_map = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value,
+                                               std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>,
+                                               std::map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>>::type;
+
   using Validation_tag = CGAL::No_constraint_intersection_tag;
   using Validation_triangulation = CGAL::Constrained_triangulation_2<Kernel, Triangulation_data_structure, Validation_tag>;
 
@@ -342,12 +351,12 @@ public:
     }
 
     // Insert vertices
-    std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle> vertices;
+    Vertex_map vertices;
     std::vector<std::pair<typename Triangulation::Vertex_handle, typename Triangulation::Vertex_handle>> edges_to_insert;
     edges_to_insert.reserve(unique_edges.size());
     for (auto const& edge: unique_edges) {
       typename Triangulation::Vertex_handle first_vertex, second_vertex;
-      typename std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>::const_iterator found = vertices.find(edge.first);
+      typename Vertex_map::const_iterator found = vertices.find(edge.first);
       if (found == vertices.end()) {
         first_vertex = t.insert(edge.first, search_start);
         vertices[edge.first] = first_vertex;
@@ -392,12 +401,12 @@ public:
     }
 
     // Insert vertices
-    std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle> vertices;
+    Vertex_map vertices;
     std::vector<std::pair<typename Triangulation::Vertex_handle, typename Triangulation::Vertex_handle>> edges_to_insert;
     edges_to_insert.reserve(unique_edges.size());
     for (auto const& edge: unique_edges) {
       typename Triangulation::Vertex_handle first_vertex, second_vertex;
-      typename std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>::const_iterator found = vertices.find(edge.first);
+      typename Vertex_map::const_iterator found = vertices.find(edge.first);
       if (found == vertices.end()) {
         first_vertex = t.insert(edge.first, search_start);
         vertices[edge.first] = first_vertex;
@@ -444,12 +453,12 @@ public:
     }
 
     // Insert vertices
-    std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle> vertices;
+    Vertex_map vertices;
     std::vector<std::pair<typename Triangulation::Vertex_handle, typename Triangulation::Vertex_handle>> edges_to_insert;
     edges_to_insert.reserve(unique_edges.size());
     for (auto const& edge: unique_edges) {
       typename Triangulation::Vertex_handle first_vertex, second_vertex;
-      typename std::unordered_map<typename Kernel::Point_2, typename Triangulation::Vertex_handle>::const_iterator found = vertices.find(edge.first);
+      typename Vertex_map::const_iterator found = vertices.find(edge.first);
       if (found == vertices.end()) {
         first_vertex = t.insert(edge.first, search_start);
         vertices[edge.first] = first_vertex;
@@ -666,8 +675,7 @@ public:
 
 protected:
   Triangulation t;
-  std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
-                     boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> unique_edges;
+  Edge_map unique_edges;
   Multipolygon_with_holes_2<Kernel, PolygonContainer> mp;
   int number_of_polygons, number_of_holes;
   typename Triangulation::Face_handle search_start;
