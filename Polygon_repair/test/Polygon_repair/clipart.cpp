@@ -22,24 +22,20 @@ void print_timer(clock_t start_time) {
 
 int main(int argc, char* argv[]) {
 
-//  std::string folder_in = "/Volumes/Toshiba/out_fix";
-//  std::string folder_out = "/Volumes/Toshiba/repaired";
-  std::string folder_in = "/Users/ken/Downloads/test";
-  std::string folder_out = "/Users/ken/Downloads/test";
+  std::string folder_in = "/Volumes/T7 Shield/out_fix";
+  std::string folder_out = "/Volumes/T7 Shield/repaired";
   double desired_width = 500.0;
-  int current = 0, how_many = 100000;
   clock_t start_time;
 
   for (const auto& file: std::filesystem::directory_iterator(folder_in)) {
 
     if (file.path().filename().extension() != ".obj") continue;
     std::cout << "Reading " << file.path().filename() << "...";
-//    if (std::filesystem::exists(folder_out + "/" + std::string(file.path().stem()) + ".svg")) {
-//      std::cout << " skipped: already processed" << std::endl;
-//      continue;
-//    }
+    if (std::filesystem::exists(folder_out + "/" + std::string(file.path().stem()) + ".svg")) {
+      std::cout << " skipped: already processed" << std::endl;
+      continue;
+    }
 
-    start_time = clock();
     Polygon_repair pr;
     std::vector<Point_2> vertices;
     std::vector<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>> edges;
@@ -61,11 +57,7 @@ int main(int argc, char* argv[]) {
         edges.push_back(std::make_pair(vertices[a-1], vertices[b-1]));
       }
     } ifs.close();
-    std::cout << "Read and parsed file in ";
-    print_timer(start_time);
-    std::cout << std::endl;
 
-    start_time = clock();
     std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
                        boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>> edges_to_insert;
 
@@ -75,46 +67,26 @@ int main(int argc, char* argv[]) {
       std::make_pair(edge.first, edge.second) : std::make_pair(edge.second, edge.first);
       auto inserted = edges_to_insert.insert(pair);
       if (!inserted.second) edges_to_insert.erase(inserted.first);
-    } std::cout << "Generated unique edges in ";
-    print_timer(start_time);
-    std::cout << std::endl;
+    }
 
-    start_time = clock();
     Polygon_repair::Triangulation::Face_handle search_start;
     for (auto const& edge: edges_to_insert) {
       Polygon_repair::Triangulation::Vertex_handle va = pr.triangulation().insert(edge.first, search_start);
       Polygon_repair::Triangulation::Vertex_handle vb = pr.triangulation().insert(edge.second, va->face()); // vb is likely close to va
       pr.triangulation().odd_even_insert_constraint(va, vb);
       search_start = vb->face();
-    } std::cout << "Inserted constraints in ";
-    print_timer(start_time);
-    std::cout << std::endl;
-
-    // std::cout << pr.triangulation().number_of_faces() << " faces in the triangulation" << std::endl;
+    }
 
     if (pr.triangulation().number_of_faces() > 0) {
-      start_time = clock();
       pr.label_triangulation_odd_even();
-      std::cout << "Labelled in ";
-      print_timer(start_time);
-      std::cout << std::endl;
-
-      start_time = clock();
       pr.reconstruct_multipolygon();
-      std::cout << "Reconstructed multipolygon in ";
-      print_timer(start_time);
-      std::cout << std::endl;
     } Multipolygon_with_holes_2 mp = pr.multipolygon();
-
-    // std::cout << mp << std::endl;
-    // std::cout << mp.number_of_polygons() << " polygons" << std::endl;
 
     if (mp.number_of_polygons() > 0) {
       CGAL::Bbox_2 bbox = mp.polygons().front().bbox();
       for (auto const& polygon: mp.polygons()) {
         bbox += polygon.outer_boundary().bbox();
-      } // std::cout << bbox.xmin() << " " << bbox.xmax() << " " << bbox.ymin() << " " << bbox.ymax() << std::endl;
-      Kernel::Vector_2 translate(-bbox.xmin(), -bbox.ymin());
+      } Kernel::Vector_2 translate(-bbox.xmin(), -bbox.ymin());
       double scale = desired_width/(bbox.xmax()-bbox.xmin());
 
 
@@ -127,9 +99,6 @@ int main(int argc, char* argv[]) {
         for (auto const& vertex: polygon.outer_boundary()) {
           ofs << scale*(vertex.x()+translate.x()) << "," << scale*(vertex.y()+translate.y()) << " ";
         } ofs << "\" fill=\"black\"/>" << std::endl;
-      }
-
-      for (auto const& polygon: mp.polygons()) {
         for (auto const& hole: polygon.holes()) {
           // std::cout << hole << std::endl;
           ofs << "\t<polygon points=\"";
@@ -141,10 +110,12 @@ int main(int argc, char* argv[]) {
 
       ofs << "</svg>";
       ofs.close();
-      std::cout << " ok" << std::endl;
-    } ++current;
 
-    if (current >= how_many) break;
+      if (CGAL::Polygon_repair::is_valid(mp)) {
+        std::cout << " ok" << std::endl;
+      }
+    }
+
   }
 
   return 0;
