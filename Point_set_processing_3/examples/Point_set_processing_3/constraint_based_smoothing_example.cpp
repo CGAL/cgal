@@ -7,6 +7,7 @@
 #include <CGAL/tags.h>
 
 #include <utility> // defines std::pair
+#include <string>
 #include <fstream>
 #include <chrono>
 
@@ -48,7 +49,7 @@ struct Output_rep< ::Color, F > {
 int main(int argc, char*argv[])
 {
   const std::string input_filename = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/fin90_with_PCA_normals.xyz");
-  const char* output_filename = (argc>2) ? argv[2] : "data/fin90_with_PCA_normals_constraint_based_smoothed.xyz";
+  const char* output_filename = (argc>2) ? argv[2] : "data/fin90_with_PCA_normals_constraint_based_smoothed.ply";
 
   // Reads a point set file in points[] * with normals *.
   std::vector<PNC> points;
@@ -61,7 +62,7 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int iter_number = 1;
+  const int iter_number = 150;
 
   auto start = std::chrono::high_resolution_clock::now();
 
@@ -78,6 +79,22 @@ int main(int argc, char*argv[])
 
     auto curr_stop = std::chrono::high_resolution_clock::now();
     std::cout << "Iteration time (ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(curr_stop - curr_start).count() << std::endl;
+
+    std::cout << "iterations/iteration_" + std::to_string(i) + ".ply" << std::endl;
+    std::ofstream f("data/iterations/iteration_" + std::to_string(i) + ".ply", std::ios::binary);
+    CGAL::IO::set_binary_mode(f); // The PLY file will be written in the binary format
+    if(!CGAL::IO::write_PLY_with_properties(f, points,
+                                        CGAL::make_ply_point_writer (Point_map()),
+                                        CGAL::make_ply_normal_writer(Normal_map()),
+                                        std::make_tuple(Color_map(),
+                                                        CGAL::IO::PLY_property<unsigned char>("red"),
+                                                        CGAL::IO::PLY_property<unsigned char>("green"),
+                                                        CGAL::IO::PLY_property<unsigned char>("blue"))))
+    {
+      std::cout << "AHHHHHHHHHHHHHHHHHH" << std::endl;
+      return EXIT_FAILURE;
+    }
+
   }
 
   auto stop = std::chrono::high_resolution_clock::now();
