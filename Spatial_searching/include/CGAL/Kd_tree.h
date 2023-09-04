@@ -684,7 +684,7 @@ public:
   size_type
   size() const
   {
-    return pts.size();
+    return tree.root()->num_items();
   }
 
   // Print statistics of the tree.
