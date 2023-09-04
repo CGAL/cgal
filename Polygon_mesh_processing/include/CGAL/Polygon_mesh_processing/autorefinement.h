@@ -1128,8 +1128,9 @@ void generate_subtriangles(std::size_t ti,
 /**
 * \ingroup PMP_corefinement_grp
 *
-* refines a soup of triangles so that no pair of triangles intersects in their interior.
-* Note that points in `soup_points` can only be added (intersection points) a the end of the container, with the initial order preserved.
+* refines a soup of triangles so that no pair of triangles intersects.
+* Output triangles may share a common edge or a common vertex (but with the same indexed position in `points`).
+* Note that points in `soup_points` can only be added (intersection points) at the end of the container, with the initial order preserved.
 * Note that if `soup_points` contains two or more identical points and only the first copy (following the order in the `soup_points`)
 * will be used in `soup_triangles`.
 * `soup_triangles` will be updated to contain both the input triangles and the new subdivides triangles. Degenerate triangles will be removed.
