@@ -1480,12 +1480,13 @@ void autorefine_triangle_soup(PointRange& soup_points,
   // TODO: reuse the fact that maps per triangle are already sorted
 
 #ifdef CGAL_LINKED_WITH_TBB
-  std::conditional_t<parallel_execution,
-                     tbb::concurrent_map<EK::Point_3, std::size_t>,
-                     std::map<EK::Point_3, std::size_t>> point_id_map;
+  typedef std::conditional_t<parallel_execution,
+                             tbb::concurrent_map<EK::Point_3, std::size_t>,
+                             std::map<EK::Point_3, std::size_t>> Point_id_map;
 #else
-  std::map<EK::Point_3, std::size_t> point_id_map;
+  typedef std::map<EK::Point_3, std::size_t> Point_id_map;
 #endif
+  Point_id_map point_id_map;
 
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
   std::vector<EK::Point_3> exact_soup_points;
@@ -1605,7 +1606,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 #else
     //option 2 (without mutex)
     /// Lambda concurrent_get_point_id()
-    tbb::concurrent_vector<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator> iterators;
+    tbb::concurrent_vector<typename Point_id_map::iterator> iterators;
     auto concurrent_get_point_id = [&](const typename EK::Point_3 pt)
     {
       auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
@@ -1616,7 +1617,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
     //use map iterator triple for triangles to create them concurrently and safely
     soup_triangles_out.resize(offset + new_triangles.size());
-    std::vector<std::array<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator, 3>> triangle_buffer(new_triangles.size());
+    std::vector<std::array<typename Point_id_map::iterator, 3>> triangle_buffer(new_triangles.size());
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
       [&](const tbb::blocked_range<size_t>& r) {
         for (size_t ti = r.begin(); ti != r.end(); ++ti) {
