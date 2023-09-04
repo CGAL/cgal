@@ -1953,10 +1953,11 @@ public:
       return false;
     }
 
+    bool result = true;
     switch(this->dimension()) {
     case 3: {
       for(auto it = this->finite_cells_begin(), end = this->finite_cells_end(); it != end; ++it) {
-        this->is_valid_finite(it, verbose, level);
+        result = result && this->is_valid_finite(it, verbose, level);
         for(int i = 0; i < 4; i++) {
           const auto n = it->neighbor(i);
           const auto n_index = n->index(it);
@@ -1972,8 +1973,7 @@ public:
                           << IO::oformat(it->vertex(3), with_point) << "\ncontains:\n  "
                           << IO::oformat(n->vertex(n_index), with_point_and_info) << '\n';
               }
-              CGAL_assertion(false);
-              return false;
+              result = false;
             }
           }
         }
@@ -1983,7 +1983,7 @@ public:
     case 2: {
       for(auto it = this->finite_facets_begin(), end = this->finite_facets_end(); it != end; ++it) {
         const auto c = it->first;
-        this->is_valid_finite(c, verbose, level);
+        result = result && this->is_valid_finite(c, verbose, level);
         for(int i = 0; i < 3; i++) {
           const auto n = c->neighbor(i);
           const auto n_index = n->index(c);
@@ -1992,8 +1992,7 @@ public:
               if(verbose)
                 std::cerr << "non-empty circle " << std::endl;
 
-              CGAL_assertion(false);
-              return false;
+              result = false;
             }
           }
         }
@@ -2002,15 +2001,15 @@ public:
     }
     case 1: {
       for(auto it = this->finite_edges_begin(), end = this->finite_edges_end(); it != end; ++it) {
-        this->is_valid_finite((*it).first, verbose, level);
+        result = result && this->is_valid_finite((*it).first, verbose, level);
       }
       break;
     }
     }
-    if(verbose)
+    if(result && verbose)
       std::cerr << "valid constrained Delaunay triangulation" << std::endl;
 
-    return true;
+    return result;
   }
 
   void recheck_constrained_Delaunay() {
