@@ -247,9 +247,9 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double b, double minb, double d, Mesh_fnt::Domain_tag)
+edge_criteria(double edge_size, double minb, double edge_dist, Mesh_fnt::Domain_tag)
 {
-  return Edge_criteria(b, minb, d);
+  return Edge_criteria(edge_size, minb, edge_dist);
 }
 
 #include <CGAL/Sizing_field_with_aabb_tree.h>
@@ -258,7 +258,7 @@ edge_criteria(double b, double minb, double d, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double edge_size, double minb, double d, Mesh_fnt::Polyhedral_domain_tag)
+edge_criteria(double edge_size, double minb, double edge_dist, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
@@ -284,9 +284,9 @@ edge_criteria(double edge_size, double minb, double d, Mesh_fnt::Polyhedral_doma
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
 
     std::cerr << "Note: Mesh_3 is using a sizing field based on AABB tree.\n";
-    return Edge_criteria(*sizing_field_ptr, minb, d);
+    return Edge_criteria(*sizing_field_ptr, minb, edge_dist);
   } else {
-    return Edge_criteria(edge_size, minb, d);
+    return Edge_criteria(edge_size, minb, edge_dist);
   }
 }
 
