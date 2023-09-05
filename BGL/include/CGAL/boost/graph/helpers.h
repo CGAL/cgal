@@ -60,7 +60,7 @@ bool is_border(typename boost::graph_traits<FaceGraph>::edge_descriptor ed, cons
     returns a halfedge which is on a border and whose target vertex is `vd`, if such a halfedge exists.
   */
 template <typename FaceGraph>
-boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>
+std::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>
 is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
           const FaceGraph& g)
 {
@@ -72,7 +72,7 @@ is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
     }
   }
   // empty
-  return boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>();
+  return std::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>();
 }
 
 namespace BGL {

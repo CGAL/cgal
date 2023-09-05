@@ -5,7 +5,7 @@
 The concept `MeshDomainField_3` describes a scalar field which could be queried
 at any point of the space.
 
-\cgalHasModel `CGAL::Mesh_constant_domain_field_3<Gt,%Index>`
+\cgalHasModel `CGAL::Mesh_constant_domain_field_3<GT,%Index>`
 
 \sa `MeshDomain_3`
 \sa `MeshDomainWithFeatures_3`

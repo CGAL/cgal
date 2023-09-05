@@ -1264,22 +1264,22 @@ private:
         Control_points  aux_vec;
 
         auto res1 = f_intersect(skew1a, skew2a);
-        const Point_2* p1 = boost::get<Point_2>(&*res1);
+        const Point_2* p1 = std::get_if<Point_2>(&*res1);
         if (! p1) CGAL_error();
         aux_vec.push_back(*p1);
 
         auto res2 = f_intersect(skew1a, skew2b);
-        const Point_2* p2 = boost::get<Point_2>(&*res2);
+        const Point_2* p2 = std::get_if<Point_2>(&*res2);
         if (! p2) CGAL_error();
         aux_vec.push_back(*p2);
 
         auto res3 = f_intersect(skew1b, skew2a);
-        const Point_2* p3 = boost::get<Point_2>(&*res3);
+        const Point_2* p3 = std::get_if<Point_2>(&*res3);
         if (! p3) CGAL_error();
         aux_vec.push_back(*p3);
 
         auto res4 = f_intersect (skew1b, skew2b);
-        const Point_2* p4 = boost::get<Point_2>(&*res4);
+        const Point_2* p4 = std::get_if<Point_2>(&*res4);
         if (! p4) CGAL_error();
         aux_vec.push_back(*p4);
 

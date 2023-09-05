@@ -672,7 +672,7 @@ scan_triangulation_impl()
     typedef typename Tr::All_cells_iterator All_cells_iterator;
 
     // WITH PARALLEL_FOR
-    // Copy cells into an std::vector to allow the use of tbb::parallel_for
+    // Copy cells into an std::vector to enable the use of tbb::parallel_for
     // which requires random-access.
     // Note that we're using all_cells_begin() instead of finite_cells_begin()
     // because it's faster to do the is_infinite() test in parallel.
@@ -750,7 +750,7 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 number_of_bad_elements_impl()
 {
   typedef typename MD::Subdomain_index        Subdomain_index;
-  typedef boost::optional<Subdomain_index>    Subdomain;
+  typedef std::optional<Subdomain_index>    Subdomain;
   typedef typename Tr::Finite_cells_iterator  Finite_cell_iterator;
 
   int count = 0;
@@ -927,7 +927,7 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 treat_new_cell(const Cell_handle& cell)
 {
-  typedef boost::optional<typename MD::Subdomain_index> Subdomain;
+  typedef std::optional<typename MD::Subdomain_index> Subdomain;
 
   // treat cell
   const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));

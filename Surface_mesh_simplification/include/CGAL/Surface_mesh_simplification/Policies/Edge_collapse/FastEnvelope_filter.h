@@ -22,7 +22,7 @@
 #include <fastenvelope/FastEnvelope.h>
 #include <fastenvelope/Types.hpp>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <vector>
 #include <type_traits>
@@ -97,8 +97,8 @@ public:
 
 
   template <typename Profile>
-  boost::optional<typename Profile::Point>
-  operator()(const Profile& profile, boost::optional<typename Profile::Point> op) const
+  std::optional<typename Profile::Point>
+  operator()(const Profile& profile, std::optional<typename Profile::Point> op) const
   {
     typedef typename Profile::Point Point;
     typedef typename Profile::vertex_descriptor_vector Link;
@@ -116,7 +116,7 @@ public:
 
       if(m_fast_envelope->is_outside(vecp)){
         // the new placement is outside envelope
-        return boost::none;
+        return std::nullopt;
       }
 
       const Link link = profile.link();
@@ -134,7 +134,7 @@ public:
 
         if(m_fast_envelope->is_outside(triangle)){
           // the triangle intersects the envelope
-          return boost::none;
+          return std::nullopt;
         }
         vecv = vecw;
 

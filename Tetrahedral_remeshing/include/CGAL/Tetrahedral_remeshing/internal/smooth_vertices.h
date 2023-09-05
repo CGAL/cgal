@@ -21,7 +21,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/FMLS.h>
 
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
 
@@ -92,7 +92,7 @@ private:
   }
 
   template<typename CellSelector>
-  boost::optional<Facet>
+  std::optional<Facet>
   find_adjacent_facet_on_surface(const Facet& f,
                                  const Edge& edge,
                                  const C3t3& c3t3,
@@ -212,7 +212,7 @@ private:
         for (const std::array<int, 2>& ei : edges)
         {
           Edge edge(ch, ei[0], ei[1]);
-          if (boost::optional<Facet> neighbor
+          if (std::optional<Facet> neighbor
               = find_adjacent_facet_on_surface(f, edge, c3t3, cell_selector))
           {
             const Facet neigh = *neighbor; //already a canonical_facet
@@ -308,7 +308,7 @@ private:
 #endif
   }
 
-  boost::optional<Vector_3> project(const Surface_patch_index& si,
+  std::optional<Vector_3> project(const Surface_patch_index& si,
                                     const Vector_3& gi)
   {
     CGAL_assertion(subdomain_FMLS_indices.find(si) != subdomain_FMLS_indices.end());
@@ -538,7 +538,7 @@ public:
               = project_on_tangent_plane(smoothed_position, current_pos, vertices_normals[v][si]);
 
             //Check if the mls surface exists to avoid degenerated cases
-            if (boost::optional<Vector_3> mls_projection = project(si, normal_projection)) {
+            if (std::optional<Vector_3> mls_projection = project(si, normal_projection)) {
               final_position = final_position + *mls_projection;
             }
             else {
@@ -575,7 +575,7 @@ public:
           {
             //Check if the mls surface exists to avoid degenerated cases
 
-            if (boost::optional<Vector_3> mls_projection = project(si, current_pos)) {
+            if (std::optional<Vector_3> mls_projection = project(si, current_pos)) {
               final_position = final_position + *mls_projection;
             }
             else {
@@ -661,7 +661,7 @@ public:
                                        current_pos,
                                        vertices_normals[v][si]);
 
-          if (boost::optional<Vector_3> mls_projection = project(si, normal_projection))
+          if (std::optional<Vector_3> mls_projection = project(si, normal_projection))
             final_position = final_position + *mls_projection;
           else
             final_position = smoothed_position;
@@ -683,7 +683,7 @@ public:
 
           const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
 
-          if (boost::optional<Vector_3> mls_projection = project(si, current_pos))
+          if (std::optional<Vector_3> mls_projection = project(si, current_pos))
           {
             const typename Tr::Point new_pos(CGAL::ORIGIN + *mls_projection);
             if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){

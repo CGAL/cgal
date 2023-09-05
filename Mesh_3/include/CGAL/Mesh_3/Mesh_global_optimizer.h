@@ -66,9 +66,9 @@ template <typename Tr, typename Concurrency_tag>
 class Mesh_global_optimizer_base
 {
 protected:
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
-  typedef typename Gt::Vector_3                             Vector_3;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
+  typedef typename GT::Vector_3                             Vector_3;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
   // The sizing field info is stored inside the move vector because it is computed
@@ -125,9 +125,9 @@ class Mesh_global_optimizer_base<Tr, Parallel_tag>
 {
 
 protected:
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
-  typedef typename Gt::Vector_3                             Vector_3;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
+  typedef typename GT::Vector_3                             Vector_3;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
   typedef tbb::concurrent_vector<std::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
                                                             Moves_vector;
@@ -238,7 +238,7 @@ class Mesh_global_optimizer
   using Base::increment_frozen_points;
 
   typedef typename C3T3::Triangulation  Tr;
-  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Tr::Geom_traits      GT;
 
   typedef typename Tr::Bare_point       Bare_point;
   typedef typename Tr::Weighted_point   Weighted_point;
@@ -247,8 +247,8 @@ class Mesh_global_optimizer
   typedef typename Tr::Edge             Edge;
   typedef typename Tr::Vertex           Vertex;
 
-  typedef typename Gt::FT               FT;
-  typedef typename Gt::Vector_3         Vector_3;
+  typedef typename GT::FT               FT;
+  typedef typename GT::Vector_3         Vector_3;
 
   typedef typename std::vector<Cell_handle>                      Cell_vector;
   typedef typename std::vector<Vertex_handle>                    Vertex_vector;
@@ -378,7 +378,7 @@ private:
     Moves_vector_        & m_moves;
     bool                   m_do_freeze;
     Vertex_conc_vector   & m_vertices_not_moving_any_more;
-    const Gt             & m_gt;
+    const GT             & m_gt;
 
   public:
     // Constructor
@@ -387,7 +387,7 @@ private:
                  Moves_vector_ &moves,
                  bool do_freeze,
                  Vertex_conc_vector &vertices_not_moving_any_more,
-                 const Gt &gt)
+                 const GT &gt)
     : m_mgo(mgo),
       m_sizing_field(sizing_field),
       m_moves(moves),
@@ -409,8 +409,8 @@ private:
     // operator()
     void operator()(const Vertex_handle& oldv) const
     {
-      typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
-      typename Gt::Construct_translated_point_3 translate = m_gt.construct_translated_point_3_object();
+      typename GT::Construct_point_3 cp = m_gt.construct_point_3_object();
+      typename GT::Construct_translated_point_3 translate = m_gt.construct_translated_point_3_object();
 
       Vector_3 move = m_mgo.compute_move(oldv);
       if ( CGAL::NULL_VECTOR != move )
@@ -449,13 +449,13 @@ private:
   class Compute_sizing_field_value
   {
     MGO                  & m_mgo;
-    const Gt             & m_gt;
+    const GT             & m_gt;
     Local_list_          & m_local_lists;
 
   public:
     // Constructor
     Compute_sizing_field_value(MGO &mgo,
-                               const Gt &gt,
+                               const GT &gt,
                                Local_list_ &local_lists)
     : m_mgo(mgo),
       m_gt(gt),
@@ -472,7 +472,7 @@ private:
     // operator()
     void operator()(Vertex& v) const
     {
-      typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
+      typename GT::Construct_point_3 cp = m_gt.construct_point_3_object();
 
       Vertex_handle vh
         = Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
@@ -825,8 +825,8 @@ compute_moves(Moving_vertices_set& moving_vertices)
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-    typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+    typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
 
     // Get move for each moving vertex
     typename Moving_vertices_set::iterator vit = moving_vertices.begin();
@@ -877,10 +877,10 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_move(const Vertex_handle& v)
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
-  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
+  typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename GT::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
 
   Cell_vector incident_cells;
   incident_cells.reserve(64);
@@ -1059,7 +1059,7 @@ fill_sizing_field()
   else
 #endif //CGAL_LINKED_WITH_TBB
   {
-    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
     // Fill map with local size
     for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
@@ -1193,8 +1193,8 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
 
   const Bare_point circumcenter = tr_.dual(cell);
   const Weighted_point& position = tr_.point(cell, cell->index(v));
