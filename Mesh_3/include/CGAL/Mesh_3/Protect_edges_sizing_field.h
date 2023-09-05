@@ -106,7 +106,9 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
   out << c3t3;
 }
 
-template <typename C3T3, typename MeshDomain, typename SizingFunction, typename DistanceFunction = SizingFunction>
+struct NoDistanceFunction;
+
+template <typename C3T3, typename MeshDomain, typename SizingFunction, typename DistanceFunction = NoDistanceFunction>
 class Protect_edges_sizing_field
   : public CGAL::SMDS_3::internal::Debug_messages_tools
 {
