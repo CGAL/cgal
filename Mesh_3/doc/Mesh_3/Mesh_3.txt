@@ -1034,9 +1034,9 @@ current polyline feature does not belong to.
 
 \subsubsection Mesh_WithEdgeDistanceCriterion Approximation Criterion for Feature Edges
 
-The following example shows how to generate a mesh with an edge_distance criterion.
-This enables the subdivision of edges that are too far away from the sharp feature.
-The output mesh have smaller edges along the curved sharp features.
+The following example shows how to generate a mesh with an approximation error criterion.
+This enables the subdivision of edges that are too far away from the corresponding input sharp features.
+It results in an output mesh with smaller edges along the input polyline features.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_distancing.cpp}
 
