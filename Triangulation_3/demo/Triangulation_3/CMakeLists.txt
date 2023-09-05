@@ -4,14 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Triangulation_3_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -20,7 +12,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets OpenGL)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL)
 
 if(Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -48,24 +40,19 @@ endif()
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   include_directories(BEFORE ./)
-
-  # ui files, created with Qt Designer
-  qt6_wrap_ui(uis MainWindow.ui)
-
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./T3_demo.qrc)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
   # cpp files
-  add_executable(
+  qt_add_executable(
     T3_demo
     T3_demo.cpp
     MainWindow.cpp
     Viewer.cpp
     PreferenceDlg.cpp
     Scene.cpp
-    ${uis}
-    ${CGAL_Qt6_RESOURCE_FILES}
-    ${CGAL_Qt6_MOC_FILES})
+    MainWindow.ui
+    T3_demo.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS T3_demo)
 
