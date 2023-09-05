@@ -130,7 +130,7 @@ public:
   * this lower bound can be handy on some domains, but using it may
   * break all the surface topology guarantees of the meshing algorithm.
   * It is not guaranteed to be exactly respected in the output mesh.
-  * \param distance_bound is an upper bound for the distance of the
+  * \param distance_bound is an upper bound for the distance from the
   * edge to the 1D feature.
   *
   * Note that if one parameter is set to 0, then its corresponding criterion is ignored.

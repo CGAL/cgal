@@ -274,7 +274,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *   \cgalParamNBegin{edge_distance}
  *     \cgalParamDescription{a scalar field (resp. a constant) describing a space varying
  *                           (resp. a uniform) upper bound for the distance between the
- *                           edge and it's corresponding 1D feature.}
+ *                           edge and its corresponding 1D feature.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_angle}
  *     \cgalParamDescription{a lower bound for the angles (in degrees) of the

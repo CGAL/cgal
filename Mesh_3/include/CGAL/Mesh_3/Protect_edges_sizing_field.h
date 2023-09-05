@@ -258,7 +258,7 @@ private:
                                   const Vertex_handle& vb) const;
 
   /// Returns `true` if the edge `(va,vb)` is a not good enough approimation
-  /// of it's feature.
+  /// of its feature.
   bool approx_is_too_large(const Vertex_handle& va,
                            const Vertex_handle& vb) const;
 
@@ -461,7 +461,7 @@ private:
     return s;
   }
 
-  /// Query the sizing field for edge distance and return its value squared at the point `p`
+  /// Query the sizing field for edge distance and return its value at the point `p`
   FT query_distance(const Bare_point& p, int dim, const Index& index) const
   {
     const FT d = edge_distance_(p, dim, index);
