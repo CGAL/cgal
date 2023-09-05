@@ -795,7 +795,7 @@ Construct_initial_points::operator()(OutputIterator pts,
   for(const Point_with_index& ip : initial_points)
     std::cerr << "\t" << ip.first << std::endl;
 
-  if(initial_points.size() != n)
+  if(initial_points.size() != static_cast<std::size_t>(n))
     std::cerr << "Warning: failed to construct " << n << " initial points" << std::endl;
 #endif
 
