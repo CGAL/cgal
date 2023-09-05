@@ -44,7 +44,7 @@ functions that return instances of these types:
 
 This function implements Andrew's variant of the Graham
 scan algorithm \cgalCite{a-aeach-79} and follows the presentation of Mehlhorn
-\cgalCite{m-mdscg-84}. This algorithm requires \f$ O(n \log n)\f$ time
+\cgalCite{m-mdscg-84}. This algorithm requires \cgalBigO{n \log n} time
 in the worst case for \f$ n\f$ input points.
 
 
@@ -101,7 +101,7 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-This algorithm requires \f$ O(n)\f$ time in the worst case for
+This algorithm requires \cgalBigO{n} time in the worst case for
 \f$ n\f$ input points.
 
 \cgalHeading{Example}

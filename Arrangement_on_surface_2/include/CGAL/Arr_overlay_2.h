@@ -24,7 +24,7 @@
  */
 
 #include <vector>
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits.hpp>
@@ -231,7 +231,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
     xcvs_vec[i] = Ovl_x_monotone_curve_2(eit2->curve(), invalid_he1, he2);
   }
 
-  // Obtain a extended traits-class object and define the sweep-line visitor.
+  // Obtain an extended traits-class object and define the sweep-line visitor.
   const typename Arr_res::Traits_adaptor_2* traits_adaptor =
     arr.traits_adaptor();
 
@@ -284,8 +284,8 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
     if (vit1->is_isolated()) {
       typename Arr_a::Vertex_const_handle v1 = vit1;
       pts_vec[i++] =
-        Ovl_point_2(vit1->point(), boost::make_optional(Cell_handle_red(v1)),
-                    boost::optional<Cell_handle_blue>());
+        Ovl_point_2(vit1->point(), std::make_optional(Cell_handle_red(v1)),
+                    std::optional<Cell_handle_blue>());
     }
   }
 
@@ -294,8 +294,8 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
     if (vit2->is_isolated()) {
       typename Arr_b::Vertex_const_handle v2 = vit2;
       pts_vec[i++] =
-        Ovl_point_2(vit2->point(), boost::optional<Cell_handle_red>(),
-                    boost::make_optional(Cell_handle_blue(v2)));
+        Ovl_point_2(vit2->point(), std::optional<Cell_handle_red>(),
+                    std::make_optional(Cell_handle_blue(v2)));
     }
   }
 

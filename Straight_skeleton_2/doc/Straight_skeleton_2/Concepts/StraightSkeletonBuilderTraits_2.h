@@ -64,11 +64,11 @@ A predicate object type.
 
 Must provide
 
-`bool operator()( const Trisegment_2_ptr& tri_segment, boost::optional<FT> max_time ) const`,
+`bool operator()( const Trisegment_2_ptr& tri_segment, std::optional<FT> max_time ) const`,
 
 which determines if, given the three <I>oriented</I> lines defined by the three input edges,
-there exists an Euclidean distance `t >= 0` and `t <= max_time` for which the corresponding three
-<I>offset lines at `t`</I> (parallel lines at an Euclidean distance of `t`) intersect in a single point.
+there exists a Euclidean distance `t >= 0` and `t <= max_time` for which the corresponding three
+<I>offset lines at `t`</I> (parallel lines at a Euclidean distance of `t`) intersect in a single point.
 
 \pre Each edge in the triple must properly define an oriented line, that is, its points cannot be coincident.
 */
@@ -109,7 +109,7 @@ A construction object type.
 
 Must provide
 
-`boost::optional< boost::tuple<FT, Point_2> > operator()( const Trisegment_2_ptr& e)`,
+`std::optional< std::tuple<FT, Point_2> > operator()( const Trisegment_2_ptr& e)`,
 
 which returns the Euclidean distance `t >= 0` and the intersection point at which the corresponding
 three <I>offset lines at `t`</I> intersect if they do.

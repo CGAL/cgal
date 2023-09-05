@@ -10,12 +10,36 @@ Release date: October 2023
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
+- **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
+- **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
+- **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
+
+#### 2D Arrangements
+
+- **Breaking change**: The type of the result of point location queries changed to
+    `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
+    has been removed.
+
+#### Envelopes of Surfaces in 3D
+- ** Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
+
+### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
+
+- Added the function `insert_cell_1_between_two_cells_2()` to the `GenericMap` concept, which enables users to insert an edge between two different faces in order to create faces with holes.
+
+### [3D Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgMesh3)
+
+-   **Breaking change**: Removed the concept `TriangleAccessor`, the template parameter `TriangleAccessor`, as well
+    as the class `Triangle_accessor`. They were no longer used for several releases.
+
+-   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
+    which are deprecated since CGAL-4.13.
 
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
-Release date: June 2023
+Release date: July 2023
 
 ### General Changes
 
@@ -33,7 +57,7 @@ Release date: June 2023
     instead of `void`, that is used inside the class `Region_growing` for detecting if the input
     conditions for the new region are satisfied. This change affects only user-defined types of regions.
 -   **Breaking change**: The constructors of all models used together with the region growing algorithm
-    now enable users to provide parameters through the [named parameters](https://doc.cgal.org/latest/BGL/group__bgl__namedparameters.html) mechanism.
+    now enable users to provide parameters through the [named parameters](https://doc.cgal.org/5.6/BGL/group__bgl__namedparameters.html) mechanism.
 -   All fitting classes in the region growing framework are now using better versions of the region
     conditions, more precise and faster, including the correct normal orientations.
 -   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
@@ -185,6 +209,13 @@ Release date: June 2023
     [`MeshComplex_3InTriangulation_3`](https://doc.cgal.org/5.6/SMDS_3/classMeshComplex__3InTriangulation__3.html)
     to describe 3D simplicial meshes, and makes the data structure independent
     from the [tetrahedral mesh generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3) package.
+
+### [Tetrahedral Remeshing](https://doc.cgal.org/5.6/Manual/packages.html#PkgTetrahedralRemeshing)
+-   **Breaking change**: The template parameters of
+    [`CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`](https://doc.cgal.org/5.6/Tetrahedral_remeshing/group__PkgTetrahedralRemeshingClasses.html#ga7ef4f8c0c1ed715c34389ea4ee851a92)
+    and
+    [`CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`](https://doc.cgal.org/5.6/Tetrahedral_remeshing/classCGAL_1_1Tetrahedral__remeshing_1_1Remeshing__cell__base__3.html)
+    have been modified.
 
 ### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 

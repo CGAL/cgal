@@ -52,7 +52,7 @@ namespace CGAL {
 * protecting ball will intersect a surface patch to which the
 * corresponding vertex does not belong.
 *
-* @tparam GeomTraits is the geometric traits class. It must match the type `Triangulation::Geom_traits`,
+* @tparam GT is the geometric traits class. It must match the type `Triangulation::Geom_traits`,
 * where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used
 * in the meshing process.
 * @tparam MeshDomain is the type of the domain. It must be a model of `MeshDomainWithFeatures_3`,
@@ -61,7 +61,7 @@ namespace CGAL {
 
 * @cgalModels `MeshDomainField_3`
 */
-template <typename GeomTraits,
+template <typename GT,
           typename MeshDomain
 #ifndef DOXYGEN_RUNNING
         , typename Input_facets_AABB_tree_ = CGAL::Default
@@ -71,8 +71,8 @@ template <typename GeomTraits,
           >
 struct Sizing_field_with_aabb_tree
 {
-  using FT      = typename GeomTraits::FT;
-  using Point_3 = typename GeomTraits::Point_3;
+  using FT      = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
   using Index   = typename MeshDomain::Index;
 
 private:
@@ -89,7 +89,7 @@ private:
   typedef std::vector<Patches_ids> Corners_incident_patches;
   typedef std::vector<Patches_ids> Curves_incident_patches;
 
-  typedef GeomTraits Kernel_;
+  typedef GT Kernel_;
   typedef CGAL::Delaunay_triangulation_3<Kernel_> Dt;
 
   using Input_facets_AABB_tree = typename CGAL::Default::Get<
@@ -284,11 +284,11 @@ public:
     }
   }
 
-  boost::optional<Point_and_primitive_id>
+  std::optional<Point_and_primitive_id>
   closest_point_on_surfaces(const Point_3& p,
                             const Patches_ids& patch_ids_to_ignore) const
   {
-    boost::optional<Point_and_primitive_id> result{};
+    std::optional<Point_and_primitive_id> result{};
     if(d_ptr->aabb_tree.empty()) return result;
     for(std::size_t i = 0; i < d_ptr->kd_trees_ptrs.size(); ++i) {
       const auto patch_id = static_cast<Patch_index>(i + d_ptr->min_patch_id);
@@ -391,7 +391,7 @@ public:
 
         const auto closest_point_and_primitive = closest_point_on_surfaces(p, ids);
 
-        if(closest_point_and_primitive != boost::none) {
+        if(closest_point_and_primitive != std::nullopt) {
           result =
             (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                        CGAL_NTS
@@ -445,7 +445,7 @@ public:
       if(!d_ptr->aabb_tree.empty()) {
         //Compute distance to surface patches
         const auto closest_point_and_primitive = closest_point_on_surfaces(p, ids);
-        if(closest_point_and_primitive == boost::none) {
+        if(closest_point_and_primitive == std::nullopt) {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           std::cerr << result << " (projection not found) ids:";
           for(Patch_index i : ids) {
@@ -532,8 +532,8 @@ public:
       d_ptr->domain.curves_aabb_tree().traversal(p, curves_projection_traits);
 
       //Compute distance to the curve on which p lies
-      typedef typename GeomTraits::Segment_3                        Segment_3;
-      typedef typename GeomTraits::Plane_3                          Plane_3;
+      typedef typename GT::Segment_3                        Segment_3;
+      typedef typename GT::Plane_3                          Plane_3;
 
       const typename Input_curves_AABB_tree_::Point_and_primitive_id& ppid
         = d_ptr->domain.curves_aabb_tree().closest_point_and_primitive(p);
@@ -567,7 +567,7 @@ public:
         const auto int_res = CGAL::intersection(prim.datum(), curr_ortho_plane);
         if (int_res)
         {
-          if (const Point_3* pp = boost::get<Point_3>(&*int_res))
+          if (const Point_3* pp = std::get_if<Point_3>(&*int_res))
           {
             FT new_sqd = CGAL::squared_distance(p, *pp);
             FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));

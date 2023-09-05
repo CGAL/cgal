@@ -53,7 +53,7 @@
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -118,8 +118,8 @@ public:
   typedef typename Tr::Weighted_point         Weighted_point;
   typedef typename Weighted_point::Weight     Weight;
 
-  typedef typename Tr::Geom_traits            Gt;
-  typedef typename Gt::FT                     FT;
+  typedef typename Tr::Geom_traits            GT;
+  typedef typename GT::FT                     FT;
 
   typedef typename C3T3::Cell_handle          Cell_handle;
   typedef typename C3T3::Vertex_handle        Vertex_handle;
@@ -394,7 +394,7 @@ private:
   /// Returns the radius of the ball of vertex `v`.
   FT get_radius(const Vertex_handle& v) const
   {
-    typename Gt::Compute_weight_3 cw =
+    typename GT::Compute_weight_3 cw =
       c3t3_.triangulation().geom_traits().compute_weight_3_object();
 
     const Weighted_point& v_wp = c3t3_.triangulation().point(v);
@@ -584,7 +584,7 @@ insert_corners()
     Index p_index = domain_.index_from_corner_index(cit->first);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      std::cerr << "** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
+      std::cerr << "\n** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
 #endif
 
     // Get weight (the ball radius is given by the 'query_size' function)
@@ -639,6 +639,13 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 {
   using CGAL::Mesh_3::internal::weight_modifier;
 
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+  std::cerr << "insert_point( (" << p
+            << "), w=" << w
+            << ", dim=" << dim
+            << ", index=" << CGAL::IO::oformat(index) << ")\n";
+#endif
+
   // Convert the dimension if it was set to a negative value (marker for special balls).
   if(dim < 0)
     dim = -1 - dim;
@@ -649,7 +656,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   // Insert point
   CGAL_assertion_code(size_type nb_vertices_before = c3t3_.triangulation().number_of_vertices());
 
-  typename Gt::Construct_weighted_point_3 cwp =
+  typename GT::Construct_weighted_point_3 cwp =
     c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
 
   const Weighted_point wp = cwp(p,w*weight_modifier);
@@ -715,16 +722,17 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
             << "), w=" << w
             << ", dim=" << dim
             << ", index=" << CGAL::IO::oformat(index) << ")\n";
+  std::cerr << "triangulation dimension is " << c3t3_.triangulation().dimension() << std::endl;
 #endif
   const Tr& tr = c3t3_.triangulation();
 
-  typename Gt::Compute_squared_distance_3 sq_distance =
+  typename GT::Compute_squared_distance_3 sq_distance =
     tr.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+  typename GT::Compare_weighted_squared_radius_3 cwsr =
     tr.geom_traits().compare_weighted_squared_radius_3_object();
-  typename Gt::Construct_point_3 cp =
+  typename GT::Construct_point_3 cp =
     tr.geom_traits().construct_point_3_object();
-  typename Gt::Construct_weighted_point_3 cwp =
+  typename GT::Construct_weighted_point_3 cwp =
     tr.geom_traits().construct_weighted_point_3_object();
 
   bool add_handle_to_unchecked = false; // add or not the new vertex to the set 'unchecked_vertices'
@@ -749,8 +757,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #endif
 
     // if sq_d < nearest_vh's weight
-    while ( cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER &&
-            ! is_special(nearest_vh) )
+    while ( ! is_special(nearest_vh) &&
+            cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
       CGAL_assertion( minimal_size_ > 0 || sq_d > 0 );
 
@@ -839,7 +847,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "smart_insert_point: weight " << w
                 << " reduced to " << min_sq_d
-                << "\n (near existing point: " << nearest_point << " )\n";
+                << " (near existing point: " << nearest_point << " )\n";
 #endif
       w = min_sq_d;
       add_handle_to_unchecked = true;
@@ -860,38 +868,35 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   else // tr.dimension() <= 2
   {
     // change size of existing balls which include p
-    bool restart = true;
-    while ( restart )
+    for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
+          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
-      restart = false;
-      for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
-           end = tr.finite_vertices_end() ; it != end ; ++it )
+      const Weighted_point& it_wp = tr.point(it);
+      FT sq_d = tr.min_squared_distance(p, cp(it_wp));
+      if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
-        const Weighted_point& it_wp = tr.point(it);
-        FT sq_d = tr.min_squared_distance(p, cp(it_wp));
-        if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
+        bool special_ball = false;
+        if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
         {
-          bool special_ball = false;
-          if(minimal_weight_ != Weight() && sq_d > minimal_weight_) {
-            sq_d = minimal_weight_;
-            w = minimal_weight_;
-            special_ball = true;
-            insert_a_special_ball = true;
-          }
-          if( ! is_special(it) ) {
-            *out++ = it;
-            change_ball_size(it, sq_d, special_ball);
-            restart = true;
-          }
-          break;
+          sq_d = minimal_weight_;
+          w = minimal_weight_;
+          special_ball = true;
+          insert_a_special_ball = true;
+        }
+
+        if( ! is_special(it) ) {
+          *out++ = it;
+          change_ball_size(it, sq_d, special_ball);
         }
       }
     }
 
+    // Change w in order to be sure that no existing point will be included in (p,w)
     FT min_sq_d = w;
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     typename Tr::Point nearest_point;
-    // Change w in order to be sure that no existing point will be included
-    // in (p,w)
+#endif
+
     for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
@@ -899,7 +904,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       FT sq_d = tr.min_squared_distance(p, cp(it_wp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
         nearest_point = c3t3_.triangulation().point(it);
+#endif
       }
     }
 
@@ -908,7 +915,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "smart_insert_point: weight " << w
                 << " reduced to " << min_sq_d
-                << "\n (near existing point: " << nearest_point << " )\n";
+                << " (near existing point: " << nearest_point << " )\n";
 #endif
       w = min_sq_d;
       add_handle_to_unchecked = true;
@@ -927,6 +934,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   }
 
   if( w < minimal_weight_) {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+    std::cerr << "smart_insert_point: weight " << w
+              << " was smaller than minimal weight (" << minimal_weight_ << ")\n";
+#endif
+
     w = minimal_weight_;
     insert_a_special_ball = true;
   }
@@ -962,7 +974,7 @@ insert_balls_on_edges()
     if ( ! is_treated(curve_index) )
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      std::cerr << "** treat curve #" << curve_index << std::endl;
+      std::cerr << "\n** treat curve #" << curve_index << std::endl;
 #endif
       const Bare_point& p = std::get<1>(*fit).first;
       const Bare_point& q = std::get<2>(*fit).first;
@@ -978,7 +990,7 @@ insert_balls_on_edges()
       }
       else
       {
-        typename Gt::Construct_weighted_point_3 cwp =
+        typename GT::Construct_weighted_point_3 cwp =
           c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
 
         // Even if the curve is a cycle, it can intersect other curves at
@@ -1032,7 +1044,7 @@ typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 get_vertex_corner_from_point(const Bare_point& p, const Index&) const
 {
-  typename Gt::Construct_weighted_point_3 cwp =
+  typename GT::Construct_weighted_point_3 cwp =
     c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
 
   // Get vertex_handle associated to corner (dim=0) point
@@ -1476,13 +1488,13 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
-  typename Gt::Construct_sphere_3 sphere =
+  typename GT::Construct_sphere_3 sphere =
     c3t3_.triangulation().geom_traits().construct_sphere_3_object();
-  typename Gt::Do_intersect_3 do_intersect =
+  typename GT::Do_intersect_3 do_intersect =
     c3t3_.triangulation().geom_traits().do_intersect_3_object();
-  typename Gt::Construct_point_3 cp =
+  typename GT::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
-  typename Gt::Compute_weight_3 cw =
+  typename GT::Compute_weight_3 cw =
     c3t3_.triangulation().geom_traits().compute_weight_3_object();
 
   const Weighted_point& wa = c3t3_.triangulation().point(va);
@@ -1522,7 +1534,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   }
 
   // Store point data
-  typename Gt::Construct_point_3 cp =
+  typename GT::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
   Index index = c3t3_.index(v);
@@ -1530,7 +1542,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   Bare_point p = cp(c3t3_.triangulation().point(v)); // intentional copy
 
   // Remove v from the set of corners
-  boost::optional<Corner_index> corner_index = boost::make_optional(false, Corner_index());
+  std::optional<Corner_index> corner_index;
   if ( c3t3_.is_in_complex(v) )
   {
     corner_index = c3t3_.corner_index(v);
@@ -1541,7 +1553,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   // Change v size
   c3t3_.triangulation().remove(v);
 
-  CGAL_assertion_code(typename Gt::Construct_weighted_point_3 cwp =
+  CGAL_assertion_code(typename GT::Construct_weighted_point_3 cwp =
                         c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();)
   CGAL_assertion_code(const Weighted_point wp = cwp(p,w);)
   CGAL_assertion_code(Tr& tr = c3t3_.triangulation());
@@ -1730,9 +1742,9 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   using CGAL::Mesh_3::internal::min_intersection_factor;
   CGAL_precondition(c3t3_.curve_index(v1,v2) == curve_index);
 
-  typename Gt::Construct_point_3 cp =
+  typename GT::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
-  typename Gt::Compute_weight_3 cw =
+  typename GT::Compute_weight_3 cw =
     c3t3_.triangulation().geom_traits().compute_weight_3_object();
 
   // Get sizes

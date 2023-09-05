@@ -41,13 +41,8 @@ function(process_package pkg)
       if ("${fext}" STREQUAL ".h" OR "${fext}" STREQUAL ".hpp")
         file(READ "${pkg_dir}/${f}" file_content)
         string(REPLACE "$URL$" "$URL: ${GITHUB_PREFIX}/${pkg}/${f} $" file_content "${file_content}")
-        if(EXISTS ${GIT_REPO}/.git)
-          execute_process(
-            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 "--format=format:%h %aI %an" -- "${pkg}/${f}"
-            RESULT_VARIABLE RESULT_VAR
-            OUTPUT_VARIABLE OUT_VAR
-            )
-          string(REPLACE "$Id$" "$Id: ${fname} ${OUT_VAR}" file_content "${file_content}")
+        if(GIT_HASH)
+          string(REPLACE "$Id$" "$Id: ${f} ${GIT_HASH} $" file_content "${file_content}")
         else()
           string(REPLACE "$Id$" "This file is from the release ${CGAL_VERSION} of CGAL" file_content "${file_content}")
         endif()
@@ -72,6 +67,15 @@ endfunction()
 
 if (NOT GIT_REPO)
   set(GIT_REPO ${CMAKE_BINARY_DIR})
+endif()
+
+if(EXISTS ${GIT_REPO}/.git)
+  execute_process(
+    COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 "--format=format:%h"
+    RESULT_VARIABLE RESULT_VAR
+    OUTPUT_VARIABLE GIT_HASH
+    )
+  string(REPLACE "$Id$" "$Id: ${fname} ${OUT_VAR}$" file_content "${file_content}")
 endif()
 
 if (NOT EXISTS ${GIT_REPO}/Installation/include/CGAL/version.h)
@@ -163,6 +167,9 @@ file(COPY ${GIT_REPO}/GraphicsView/demo/resources ${GIT_REPO}/GraphicsView/demo/
 
 #copy data
 file(COPY ${GIT_REPO}/Data/data DESTINATION "${release_dir}/")
+
+#copy LICENSES files
+file(COPY ${GIT_REPO}/LICENSES DESTINATION "${release_dir}/" PATTERN "GPL-2.0-only.txt" EXCLUDE)
 
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")

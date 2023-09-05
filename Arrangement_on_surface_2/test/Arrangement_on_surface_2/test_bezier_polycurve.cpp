@@ -34,7 +34,7 @@ typedef CGAL::Arr_polyline_traits_2<Bezier_traits_2>    Bezier_polycurve_traits;
 typedef Bezier_polycurve_traits::Curve_2                Polycurve_bezier;
 typedef Bezier_polycurve_traits::X_monotone_curve_2     X_polycurve_bezier;
 
-typedef boost::variant<Bezier_point, Bezier_x_monotone_curve>
+typedef std::variant<Bezier_point, Bezier_x_monotone_curve>
                                                         Make_x_monotone_result;
 
 int main (int argc, char *argv[])
@@ -60,7 +60,7 @@ int main (int argc, char *argv[])
   //creating x-mono bezier
   bezier_traits.make_x_monotone_2_object()(curve_1, std::back_inserter(objs));
   //std::cout << "number of x_curves: " << obj_vector.size() << std::endl;
-  const auto* x_curve_1 = boost::get<Bezier_x_monotone_curve>(&(obj_vector[0]));
+  const auto* x_curve_1 = std::get_if<Bezier_x_monotone_curve>(&(obj_vector[0]));
   assert(x_curve_1);
 
   //std::cout << x_curve << std::endl;
@@ -74,7 +74,7 @@ int main (int argc, char *argv[])
   //creating x-monotne
   obj_vector.clear();
   bezier_traits.make_x_monotone_2_object()( curve_2, std::back_inserter(objs));
-  const auto* x_curve_2 = boost::get<Bezier_x_monotone_curve>(&(obj_vector[0]));
+  const auto* x_curve_2 = std::get_if<Bezier_x_monotone_curve>(&(obj_vector[0]));
 
   //push curves into polyline vectors
   curves_vector.push_back(curve_1);

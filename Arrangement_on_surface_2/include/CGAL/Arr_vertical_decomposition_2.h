@@ -109,7 +109,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     }
   }
 
-  // Obtain a extended traits-class object.
+  // Obtain an extended traits-class object.
   const Gt2* geom_traits = arr.geometry_traits();
 
   /* We would like to avoid copy construction of the geometry traits class.

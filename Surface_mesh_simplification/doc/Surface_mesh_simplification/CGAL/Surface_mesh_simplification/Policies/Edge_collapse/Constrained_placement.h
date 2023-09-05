@@ -32,7 +32,7 @@ public:
                         const Get_placement_& get_placement = Get_placement_());
   /// @}
 
-  boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const
+  std::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const
 
 };
 

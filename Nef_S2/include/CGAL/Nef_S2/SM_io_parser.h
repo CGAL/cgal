@@ -34,7 +34,7 @@ namespace CGAL {
 /*{\Manpage {SM_io_parser}{Decorator_}{IO of embedded maps}{IO}}*/
 
 /*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
-decorator to provide input and output of a embedded map.  |\Mtype| is
+decorator to provide input and output of an embedded map.  |\Mtype| is
 generic with respect to the |Decorator_| parameter.  |Decorator_| has
 to be a decorator model of our |SM_decorator| concept.}*/
 

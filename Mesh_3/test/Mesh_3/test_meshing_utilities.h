@@ -333,13 +333,13 @@ struct Tester
           else {
             std::cerr << "\nc1 circumcenter: " << tr.dual(c1);
             std::cerr << "\nc1 is in domain: "
-                      << domain.is_in_domain_object()(tr.dual(c1));
+                      << CGAL::IO::oformat(domain.is_in_domain_object()(tr.dual(c1)));
           }
           if(tr.is_infinite(c2)) std::cerr << "\nc2 is infinite";
           else {
             std::cerr << "\nc2 circumcenter: "<< tr.dual(c2);
             std::cerr << "\nc2 is in domain: "
-                      << domain.is_in_domain_object()(tr.dual(c2));
+                      <<  CGAL::IO::oformat(domain.is_in_domain_object()(tr.dual(c2)));
           }
           std::cerr << std::endl;
           assert(false);
