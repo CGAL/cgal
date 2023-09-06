@@ -17,13 +17,6 @@
 
 namespace CGAL {
 
-/*! \ingroup PkgPolygonRepairRef
- *
- * The class `Triangulation_with_odd_even_constraints_2` builds on a constrained
- * triangulation to remove the parts of constraints that overlap an even number of times
- *
- * \tparam Triangulation_ must have support for constraints
- */
 template <class Triangulation_>
 class Triangulation_with_odd_even_constraints_2 : public Triangulation_ {
 public:

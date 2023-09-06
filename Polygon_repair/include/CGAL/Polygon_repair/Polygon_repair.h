@@ -271,11 +271,6 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
   return true;
 }
 
-/*! \ingroup PkgPolygonRepairRef
- *
- * The class `Polygon_repair` builds on a constrained
- * triangulation to remove the parts of constraints that overlap an even number of times
- */
 template <class Kernel, class PolygonContainer = std::vector<typename Kernel::Point_2>>
 class Polygon_repair {
 public:
