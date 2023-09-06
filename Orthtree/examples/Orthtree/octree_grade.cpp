@@ -14,6 +14,8 @@ int main() {
   // Here, our point set is a vector
   Point_vector points;
 
+  using IPoint = CGAL::Simple_cartesian<int>::Point_3;
+
   // Add a few points to the vector, most of which are in one region
   points.emplace_back(1, 1, 1);
   points.emplace_back(2, 1, -11);

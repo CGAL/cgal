@@ -58,6 +58,7 @@ int main() {
   quadtree.split(quadtree.node(3));
   quadtree.split(quadtree.node(3, 0));
 
+  std::cout << quadtree.bbox(quadtree.root()) << std::endl;
   std::cout << quadtree << std::endl;
   return EXIT_SUCCESS;
 }

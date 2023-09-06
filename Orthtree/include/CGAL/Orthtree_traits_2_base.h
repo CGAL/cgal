@@ -88,6 +88,17 @@ public:
 
   /// @}
 
+  /// \name Operations
+  /// @{
+
+  auto construct_point_d_object() const {
+    return [](const FT& x, const FT& y) -> Point_d {
+      return {x, y};
+    };
+  }
+
+  /// @}
+
 };
 
 }

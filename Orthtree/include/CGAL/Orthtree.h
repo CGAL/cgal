@@ -169,7 +169,7 @@ private: // data members :
 
   Point m_bbox_min;                  /* input bounding box min value */
 
-  using Bbox_dimensions = decltype(std::declval<Bbox>().max() - std::declval<Bbox>().min());
+  using Bbox_dimensions = std::array<FT, Dimension::value>;
   std::vector<Bbox_dimensions> m_side_per_depth;      /* side length per node's depth */
 
   Cartesian_ranges cartesian_range; /* a helper to easily iterator on coordinates of points */
@@ -219,9 +219,14 @@ public:
     // init bbox with first values found
     auto bbox = m_traits.root_node_bbox_object()();
 
+    // Determine dimensions of the root bbox
+    Bbox_dimensions size;
+    for (int i = 0; i < Dimension::value; ++i)
+      size[i] = bbox.max()[i] - bbox.min()[i];
+
     // save orthtree attributes
     m_bbox_min = bbox.min();
-    m_side_per_depth.push_back(bbox.max() - bbox.min());
+    m_side_per_depth.push_back(size);
     data(root()) = m_traits.root_node_contents_object()();
   }
 
@@ -471,20 +476,15 @@ public:
    */
   Bbox bbox(Node_index n) const {
 
-    // Determine the side length of this node
+    using Cartesian_coordinate = std::array<FT, Dimension::value>;
+    Cartesian_coordinate min_corner, max_corner;
     Bbox_dimensions size = m_side_per_depth[depth(n)];
-
-    // Determine the location this node should be split
-    Array min_corner;
-    Array max_corner;
     for (int i = 0; i < Dimension::value; i++) {
-
       min_corner[i] = m_bbox_min[i] + (global_coordinates(n)[i] * size[i]);
+      max_corner[i] = min_corner[i] + size[i];
     }
-
-    // Create the bbox
-    return {m_traits.construct_point_d_from_array_object()(min_corner),
-            m_traits.construct_point_d_from_array_object()(min_corner) + size};
+    return {std::apply(m_traits.construct_point_d_object(), min_corner),
+            std::apply(m_traits.construct_point_d_object(), max_corner)};
   }
 
   /// @}
@@ -770,8 +770,12 @@ public:
 
     // Check if we've reached a new max depth
     if (depth(n) + 1 == m_side_per_depth.size()) {
-      // Update the side length map
-      m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
+      // Update the side length map with the dimensions of the children
+      Bbox_dimensions size = m_side_per_depth.back();
+      Bbox_dimensions child_size;
+      for (int i = 0; i < Dimension::value; ++i)
+        child_size[i] = size[i] / FT(2);
+      m_side_per_depth.push_back(child_size);
     }
 
     // Find the point around which the node is split
