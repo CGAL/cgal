@@ -123,7 +123,7 @@ faces.
 Then, all other faces are labeled. For the odd-even heuristic, the label applied
 alternates between polygon interior and hole every time that an edge is passed.
 
-\subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the multipolygon
+\subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the Multipolygon
 
 The algorithm reconstructs the multipolygon boundary by boundary, obtaining
 counter-clockwise cycles for outer boundaries and clockwise cycles for inner
@@ -147,7 +147,7 @@ with holes has zero holes and extract these if needed.
 
 \section SectionPolygonRepair_Examples Examples
 
-\subsection SubsectionPolygonRepair_Repair Repairing a (multi)polygon
+\subsection SubsectionPolygonRepair_Repair Repairing a (Multi)polygon
 
 It's possible to repair a polygon, polygon with holes or multipolygon with holes
 using the odd-even rule by calling the `repair_odd_even` function as shown in the
