@@ -31,7 +31,7 @@ template <class Kernel, class PolygonContainer>
 class Polygon_repair;
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a polygon without holes
+/// Repair a polygon without holes using the odd-even heuristic
 template <class Kernel, class PolygonContainer>
 Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygon_2<Kernel, PolygonContainer>& p) {
   CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer> pr;
@@ -43,7 +43,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygo
 }
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a polygon with holes
+/// Repair a polygon with holes using the odd-even heuristic
 template <class Kernel, class PolygonContainer>
 Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygon_with_holes_2<Kernel, PolygonContainer>& p) {
   CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer> pr;
@@ -55,7 +55,7 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygo
 }
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a multipolygon with holes
+/// Repair a multipolygon with holes using the odd-even heuristic
 template <class Kernel, class PolygonContainer>
 Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& mp) {
   CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer> pr;

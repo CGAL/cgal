@@ -36,6 +36,6 @@
 - `CGAL::Polygon_repair`
 
 \cgalCRPSection{Functions}
-- `CGAL::Polygon_repair::repair()`
+- `CGAL::Polygon_repair::repair_odd_even()`
 
 */
