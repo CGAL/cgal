@@ -940,7 +940,7 @@ not provide storage for the normals.
 \section PMPICC Computing Curvatures
 
 This package provides methods to compute curvatures on polygonal meshes based on Interpolated
-Corrected Curvatures on Polyhedral Surfaces \cgalCite{lachaud2020}. This includes mean curvature,
+Corrected Curvatures on Polyhedral Surfaces \cgalCite{cgal:lrtc-iccmps-20}. This includes mean curvature,
 Gaussian curvature, principal curvatures and directions. These can be computed on triangle meshes,
 quad meshes, and meshes with n-gon faces (for n-gons, the centroid must be inside the n-gon face).
 The algorithms used prove to work well in general. Also, on meshes with noise on vertex positions,
@@ -955,10 +955,10 @@ in each direction is called the principal curvature: \f$ k_1 \f$ and \f$ k_2 \f$
 curvatures). Curvature is usually expressed as scalar quantities like the mean curvature \f$ H \f$ and
 the Gaussian curvature \f$ K \f$ which are defined in terms of the principal curvatures.
 
-The algorithms are based on the two papers \cgalCite{lachaud2022} and \cgalCite{lachaud2020}. They
-introduce a new way to compute curvatures on polygonal meshes. The main idea in \cgalCite{lachaud2022} is
+The algorithms are based on the two papers \cgalCite{cgal:lrt-ccm-22} and \cgalCite{cgal:lrtc-iccmps-20}. They
+introduce a new way to compute curvatures on polygonal meshes. The main idea in \cgalCite{cgal:lrt-ccm-22} is
 based on decoupling the normal information from the position information, which is useful for dealing with
-digital surfaces, or meshes with noise on vertex positions. \cgalCite{lachaud2020} introduces some
+digital surfaces, or meshes with noise on vertex positions. \cgalCite{cgal:lrtc-iccmps-20} introduces some
 extensions to this framework. As it uses linear interpolation on the corrected normal vector field
 to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
 curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
@@ -1285,7 +1285,7 @@ is covered by a set of prisms, where each prism is an offset for an input triang
 That is, the implementation in \cgal does not use indirect predicates.
 
 The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
-supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{lachaud2020}.
+supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
 <a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
 used as a reference during the project.
 
