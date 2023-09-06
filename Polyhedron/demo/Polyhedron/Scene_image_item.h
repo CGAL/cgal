@@ -49,6 +49,8 @@ public:
   void set_image_weights(const Image& img, const float sigma);
   float sigma_weights() const;
 
+  void setColor(QColor c);
+
   void invalidateOpenGLBuffers();
   void initializeBuffers(Viewer_interface *) const;
   void computeElements() const;
