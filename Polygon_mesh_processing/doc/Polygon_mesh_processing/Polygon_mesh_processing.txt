@@ -116,10 +116,19 @@ to the original surface to keep a good approximation of the input.
 
 A triangulated region of a polygon mesh can be remeshed using the function
 `CGAL::Polygon_mesh_processing::isotropic_remeshing()`, as illustrated
-by \cgalFigureRef{iso_remeshing}. The algorithm has only two parameters :
-the target edge length for the remeshed surface patch, and
-the number of iterations of the abovementioned sequence of operations. The bigger
-this number, the smoother and closer to target edge length the mesh will be.
+by \cgalFigureRef{iso_remeshing}. The algorithm has two parameters:
+the sizing field object for the remeshed surface patch, and
+the number of iterations of the abovementioned sequence of operations.
+
+The sizing field establishes the target edge length for the remeshed surface. The sizing field can be uniform or
+adaptive. With the uniform sizing field, initiated by the `CGAL::Polygon_mesh_processing::Uniform_sizing_field()` constructor,
+all triangle edges are targeted to have equal lengths. On the other hand, with the adaptive sizing field, initiated by
+the `CGAL::Polygon_mesh_processing::Adaptive_sizing_field()`, triangle edge lengths depend on the local curvature --
+shorter edges appear in regions with a higher curvature and vice versa. The outline of the adaptive sizing
+field algorithm is available in \cgalCite{dunyach2013curvRemesh}. The distinction between uniform and adaptive
+sizing fields is depicted in figure \cgalFigureRef{uniform_and_adaptive}.
+
+As the number of iterations increases, the mesh tends to be smoother and closer to the target edge length.
 
 An additional option has been added to \e protect (\e i.\e e. not modify) some given polylines.
 In some cases, those polylines are too long, and reaching the desired target edge length while protecting them is not
@@ -132,6 +141,12 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (b) Surface uniformly and entirely remeshed.
 (c) Selection of a range of faces to be remeshed.
 (d) Surface mesh with the selection uniformly remeshed.
+\cgalFigureEnd
+
+\cgalFigureBegin{uniform_and_adaptive, uniform_and_adaptive.png}
+Sizing fields in isotropic remeshing.
+(a) Uniform sizing field.
+(b) Curvature-based adaptive sizing field.
 \cgalFigureEnd
 
 \paragraph Delaunay-Based Surface Remeshing
