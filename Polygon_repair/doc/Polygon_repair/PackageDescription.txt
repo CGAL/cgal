@@ -24,9 +24,8 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.0}
 \cgalPkgDependsOn{\ref PkgPolygon2, \ref PkgTriangulation2}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgBib{cgal:a-pr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
