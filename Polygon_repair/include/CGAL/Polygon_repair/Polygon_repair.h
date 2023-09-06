@@ -283,6 +283,7 @@ public:
                                         CGAL::Exact_intersections_tag>::type;
   using Constrained_Delaunay_triangulation = CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag>;
   using Triangulation = Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
+  // TODO: Edge_map and Vertex_map use std::set and set::map with exact kernels since Point_2 can't be hashed otherwise
   using Edge_map = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value,
                                              std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
                                                                 boost::hash<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>>>,
