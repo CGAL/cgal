@@ -523,8 +523,8 @@ public:
       return r_domain_.bounding_aabb_tree_ptr()->
         first_intersected_primitive(ray);
     }
-
-#if USE_ALL_INTERSECTIONS
+#define CGAL_USE_ALL_INTERSECTIONS 0
+#if CGAL_USE_ALL_INTERSECTIONS
     boost::optional<AABB_primitive_id> shoot_a_ray_2(const Ray_3 ray) const {
       const Point_3& p = ray.source();
       typedef typename AABB_tree::
@@ -551,7 +551,7 @@ public:
         return it->second;
       }
     }
-#endif // USE_ALL_INTERSECTIONS
+#endif // CGAL_USE_ALL_INTERSECTIONS
 
     Subdomain operator()(const Point_3& p) const {
       if(r_domain_.bounding_aabb_tree_ptr() == 0) return Subdomain();
@@ -573,8 +573,7 @@ public:
 
         const Ray_3 ray_shot = ray(p, vector(CGAL::ORIGIN,*random_point));
 
-#define USE_ALL_INTERSECTIONS 0
-#if USE_ALL_INTERSECTIONS
+#if CGAL_USE_ALL_INTERSECTIONS
         boost::optional<AABB_primitive_id> opt = shoot_a_ray_2(ray_shot);
 #else // first_intersected_primitive
         boost::optional<AABB_primitive_id> opt = shoot_a_ray_1(ray_shot);
