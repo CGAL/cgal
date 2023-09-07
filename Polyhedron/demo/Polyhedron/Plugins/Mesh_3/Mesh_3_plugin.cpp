@@ -75,7 +75,7 @@ class Mesh_3_plugin :
              WRITE set_sharp_edges_angle_bound)
   Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing)
   Q_PROPERTY(double edges_min_sizing READ get_edges_min_sizing WRITE set_edges_min_sizing)
-  Q_PROPERTY(double edges_distancing READ get_edges_distancing WRITE set_edges_distancing)
+  Q_PROPERTY(double edges_approx READ get_edges_approx WRITE set_edges_approx)
   Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
   Q_PROPERTY(double approx READ get_approx WRITE set_approx)
   Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
@@ -162,7 +162,7 @@ public Q_SLOTS:
   }
   void set_edges_sizing(const double v) { edges_sizing = v; };
   void set_edges_min_sizing(const double v) { edges_min_sizing = v; };
-  void set_edges_distancing(const double v) { edges_distancing = v; };
+  void set_edges_approx(const double v) { edges_approx = v; };
   void set_facets_sizing(const double v) { facets_sizing = v; };
   void set_approx(const double v) { approx = v; };
   void set_tets_sizing(const double v) { tets_sizing = v; };
@@ -176,7 +176,7 @@ public Q_SLOTS:
   double get_sharp_edges_angle_bound() { return sharp_edges_angle_bound; }
   double get_edges_sizing() { return edges_sizing; };
   double get_edges_min_sizing() { return edges_min_sizing; };
-  double get_edges_distancing() { return edges_distancing; };
+  double get_edges_approx() { return edges_approx; };
   double get_facets_sizing() { return facets_sizing; };
   double get_approx() { return approx; };
   double get_tets_sizing() { return tets_sizing; };
@@ -213,7 +213,7 @@ private:
   int approx_decimals;
   double edges_sizing;
   double edges_min_sizing;
-  double edges_distancing;
+  double edges_approx;
   double facets_sizing;
   double facets_min_sizing;
   double tets_sizing;
@@ -440,7 +440,7 @@ void Mesh_3_plugin::set_defaults() {
   angle = 25.;
   sharp_edges_angle_bound = 60.;
   approx = get_approximate(diag * 0.005, 2, approx_decimals);
-  edges_distancing = get_approximate(diag * 0.005, 2, approx_decimals);
+  edges_approx = get_approximate(diag * 0.005, 2, approx_decimals);
 }
 
 void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
@@ -485,7 +485,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.facetAngle->setRange(0.0, 30.0);
   ui.facetAngle->setValue(25.0);
   ui.edgeSizing->setMinimum(0.0);
-  ui.edgeDistancing->setMinimum(0.0);
+  ui.edgeApprox->setMinimum(0.0);
   ui.sharpEdgesAngle->setMaximum(180);
   ui.iso_value_spinBox->setRange(-65536.0, 65536.0);
   ui.tetShape->setMinimum(1.0);
@@ -574,25 +574,25 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.edgeMinSizing,
           SLOT(setEnabled(bool)));
 
-  //edge distancing
+  //edge approx
   connect(ui.protect,
           SIGNAL(toggled(bool)),
-          ui.noEdgeDistancing,
+          ui.noEdgeApprox,
           SLOT(setEnabled(bool)));
 
   connect(ui.protect,
           SIGNAL(toggled(bool)),
-          ui.noEdgeDistancing,
+          ui.noEdgeApprox,
           SLOT(setChecked(bool)));
 
-  connect(ui.noEdgeDistancing,
+  connect(ui.noEdgeApprox,
           SIGNAL(toggled(bool)),
-          ui.edgeDistancingLabel,
+          ui.edgeApproxLabel,
           SLOT(setEnabled(bool)));
 
-  connect(ui.noEdgeDistancing,
+  connect(ui.noEdgeApprox,
           SIGNAL(toggled(bool)),
-          ui.edgeDistancing,
+          ui.edgeApprox,
           SLOT(setEnabled(bool)));
 
 
@@ -632,7 +632,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.facetMinSizing->setValue(facets_min_sizing);
   ui.edgeSizing->setValue(edges_sizing);
   ui.edgeMinSizing->setValue(edges_min_sizing);
-  ui.edgeDistancing->setValue(edges_distancing);
+  ui.edgeApprox->setValue(edges_approx);
 
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag);        // max
@@ -672,12 +672,12 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.noEdgeMinSizing->setChecked(false);
-  ui.noEdgeDistancing->setChecked(ui.protect->isChecked());
+  ui.noEdgeApprox->setChecked(ui.protect->isChecked());
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeMinSizingLabel->setEnabled(ui.noEdgeMinSizing->isChecked());
   ui.edgeMinSizing->setEnabled(ui.noEdgeMinSizing->isChecked());
-  ui.edgeDistancing->setEnabled(ui.noEdgeDistancing->isChecked());
+  ui.edgeApprox->setEnabled(ui.noEdgeApprox->isChecked());
 
   using Item = std::pair<QString, Protection_flags>;
   const Item sharp_and_boundary{"Sharp and Boundary edges", FEATURES};
@@ -750,8 +750,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   edges_min_sizing =
       !ui.noEdgeMinSizing->isChecked() ? 0. : ui.edgeMinSizing->value();
-  edges_distancing =
-      !ui.noEdgeDistancing->isChecked() ? DBL_MAX : ui.edgeDistancing->value();
+  edges_approx =
+      !ui.noEdgeApprox->isChecked() ? DBL_MAX : ui.edgeApprox->value();
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
@@ -833,7 +833,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_min_sizing,
         edges_sizing,
         edges_min_sizing,
-        edges_distancing,
+        edges_approx,
         tets_shape,
         protect_features,
         protect_borders,
@@ -856,7 +856,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_min_sizing,
         edges_sizing,
         edges_min_sizing,
-        edges_distancing,
+        edges_approx,
         tets_shape,
         protect_features,
         protect_borders,
@@ -884,7 +884,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                               tets_min_sizing,
                               edges_sizing,
                               edges_min_sizing,
-                              edges_distancing,
+                              edges_approx,
                               tets_shape,
                               manifold,
                               mesh_type == Mesh_type::SURFACE_ONLY);
@@ -927,7 +927,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_min_sizing,
         edges_sizing,
         edges_min_sizing,
-        edges_distancing,
+        edges_approx,
         tets_shape,
         protect_features,
         protect_borders,
