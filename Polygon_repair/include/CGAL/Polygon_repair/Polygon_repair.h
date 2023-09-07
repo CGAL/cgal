@@ -479,7 +479,7 @@ public:
   // Label a region of adjacent triangles without passing through constraints
   // adjacent triangles that involve passing through constraints are added to to_check
   template <class T>
-  static void label_region(T tt, typename T::Face_handle face, int label,
+  static void label_region(T& tt, typename T::Face_handle face, int label,
                            std::list<typename T::Face_handle>& to_check,
                            std::list<int>& to_check_added_by) {
     // std::cout << "Labelling region with " << label << std::endl;
