@@ -524,7 +524,7 @@ whose endpoints are the added corners.
 
 \tparam MD is the type of the domain which is extended. It has to be a model of the `MeshDomain_3` concept.
 
-\cgalModels `MeshDomainWithFeatures_3`
+\cgalModels{MeshDomainWithFeatures_3}
 
 \sa `MeshPolyline_3`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`

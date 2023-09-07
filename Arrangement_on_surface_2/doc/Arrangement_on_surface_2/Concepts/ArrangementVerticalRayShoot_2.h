@@ -18,10 +18,12 @@ emanating from the query point goes to infinity without hitting any
 arrangement feature on its way. In this case the unbounded face is
 returned.
 
-\cgalHasModel `CGAL::Arr_naive_point_location<Arrangement>`
-\cgalHasModel `CGAL::Arr_walk_along_line_point_location<Arrangement>`
-\cgalHasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>`
-\cgalHasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_naive_point_location<Arrangement>}
+\cgalHasModels{CGAL::Arr_walk_along_line_point_location<Arrangement>}
+\cgalHasModels{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}
+\cgalHasModels{CGAL::Arr_landmarks_point_location<Arrangement,Generator>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Arr_naive_point_location<Arrangement>`
 \sa `CGAL::Arr_walk_along_line_point_location<Arrangement>`

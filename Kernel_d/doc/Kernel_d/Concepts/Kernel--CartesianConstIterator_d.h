@@ -8,7 +8,7 @@ in `d` dimensions.
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalModels `BidirectionalIterator`
+\cgalModels{BidirectionalIterator}
 
 \sa `Kernel_d::ConstructCartesianConstIterator_d`
 

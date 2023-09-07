@@ -80,8 +80,7 @@ assigned to a non surface facet.
  It must match the `Surface_patch_index` of the model
   of the `MeshDomain_3` concept when used for mesh generation.
 
-\cgalModels `RemeshingCellBase_3`
-\cgalModels `SimplicialMeshCellBase_3`
+\cgalModels{RemeshingCellBase_3,SimplicialMeshCellBase_3}
 
 */
 template<typename Subdomain_index = int,

@@ -363,7 +363,7 @@ assigned to a non surface facet.
  It must match the `Surface_patch_index` of the model
   of the `MeshDomain_3` concept when used for mesh generation.
 
-\cgalModels `SimplicialMeshCellBase_3`
+\cgalModels{SimplicialMeshCellBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 \sa \link Mesh_cell_base_3 `CGAL::Mesh_cell_base_3`\endlink

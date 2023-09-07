@@ -117,7 +117,7 @@ of the concept `MeshDomain_3`.
 of the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3` and defaults to
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3<GT>`.
 
-\cgalModels `MeshCellBase_3`
+\cgalModels{MeshCellBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 \sa `CGAL::Compact_mesh_cell_base_3<GT, MD, Tds>`

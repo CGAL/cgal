@@ -9,12 +9,13 @@ A concept that describes the set of requirements of the template parameter
 `GeomTraits` used to parameterize all classes and functions with 2D barycentric
 coordinates from the namespace `CGAL::Barycentric_coordinates`.
 
-\cgalHasModel
-- All models of `Kernel`
-- `CGAL::Projection_traits_3<K>`
-- `CGAL::Projection_traits_xy_3<K>`
-- `CGAL::Projection_traits_yz_3<K>`
-- `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of `Kernel`}
+\cgalHasModels{CGAL::Projection_traits_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xy_3<K>}
+\cgalHasModels{CGAL::Projection_traits_yz_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xz_3<K>}
+\cgalHasModelsEnd
 */
 class BarycentricTraits_2 {
 

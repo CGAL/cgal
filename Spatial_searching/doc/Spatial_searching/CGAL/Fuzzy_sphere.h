@@ -20,7 +20,7 @@ inner approximation.
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`.
 
-\cgalModels `FuzzyQueryItem`
+\cgalModels{FuzzyQueryItem}
 */
 template< typename Traits >
 class Fuzzy_sphere {

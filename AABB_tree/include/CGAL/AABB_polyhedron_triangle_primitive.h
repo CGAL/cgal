@@ -35,7 +35,7 @@ namespace CGAL {
     /// the polyhedron from which the AABB tree is built should not be
     /// deleted while the AABB tree is in use.
     ///
-    /// \cgalModels `AABBPrimitive`
+    /// \cgalModels{AABBPrimitive}
     /// \tparam GeomTraits must provides a \c %Point_3
     /// type, used as \c Point, and a \c %Triangle_3 type, used as \c
     /// Datum and constructible from three arguments of type \c

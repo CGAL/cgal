@@ -9,7 +9,7 @@ which computes the collapse cost as the squared length of the edge.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `GetCost`
+\cgalModels{GetCost}
 
 */
 template <typename TriangleMesh>

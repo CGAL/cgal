@@ -27,7 +27,7 @@ namespace Polyline_simplification_2
 
 /// This class is a cost function which calculates the cost as a scaled variant of the square of the distance between the original and simplified polylines.
 ///
-/// \cgalModels  `PolylineSimplificationCostFunction`
+/// \cgalModels{ PolylineSimplificationCostFunction}
 class Scaled_squared_distance_cost
 {
 

@@ -5,7 +5,9 @@
  *
  * Traits class concept defining the requirements of the class `CGAL::Mean_curvature_flow_skeletonization`.
  *
- * \cgalHasModel Any \cgal `Kernel` with `double` as `%Kernel::%FT`
+ * \cgalHasModelsBegin
+ * \cgalHasModelsBare{Any \cgal `Kernel` with `double` as `%Kernel::%FT`}
+ * \cgalHasModelsEnd
  *
  *
  */

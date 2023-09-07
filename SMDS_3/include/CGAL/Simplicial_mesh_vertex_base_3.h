@@ -36,7 +36,7 @@ namespace CGAL {
 //Class Simplicial_mesh_vertex_3
 //Adds information to Vb about the localization of the vertex in regards
 //to the 3D input complex.
-//\cgalModels `SimplicialMeshVertexBase_3`
+//\cgalModels{SimplicialMeshVertexBase_3}
 template<class GT,
          typename Subdomain_index,
          typename Surface_patch_index,
@@ -249,7 +249,7 @@ It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` 
 of the concept `TriangulationVertexBase_3` and defaults to
 `Triangulation_vertex_base_3<Gt>`.
 
-\cgalModels `SimplicialMeshVertexBase_3`
+\cgalModels{SimplicialMeshVertexBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3`
 \sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink

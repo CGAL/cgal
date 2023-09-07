@@ -39,7 +39,7 @@ is trivial and just copies the data object:
 </TD></TR>
 </TABLE>
 
-\cgalModels `EnvelopeTraits_3`
+\cgalModels{EnvelopeTraits_3}
 
 */
 template< typename Traits, typename XyData, typename SData, typename Cnv >

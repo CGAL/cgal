@@ -68,9 +68,7 @@ namespace CGAL {
    * \tparam VIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%vertex_descriptor` as key and `graph_traits<Graph>::%vertices_size_type` as value
    * \tparam HIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%halfedge_descriptor` as key and `graph_traits<Graph>::%halfedges_size_type` as value
    *
-   * \cgalModels `FaceListGraph`
-   * \cgalModels `HalfedgeListGraph`
-   * \cgalModels \bgllink{VertexListGraph}
+   * \cgalModels{FaceListGraph,HalfedgeListGraph,\bgllink{VertexListGraph}}
    */
 template<typename Graph,
          typename FIMap = Default,

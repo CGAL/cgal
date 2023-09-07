@@ -7,8 +7,10 @@ The concept `LinearCellComplex` represents a linear cell complex in dimension `d
 
 \cgalRefines{GenericMap}
 
-\cgalHasModel \link CGAL::Linear_cell_complex_for_combinatorial_map `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`\endlink
-\cgalHasModel \link CGAL::Linear_cell_complex_for_generalized_map `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`\endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{\link CGAL::Linear_cell_complex_for_combinatorial_map `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`\endlink}
+\cgalHasModelsBare{\link CGAL::Linear_cell_complex_for_generalized_map `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`\endlink}
+\cgalHasModelsEnd
 
 \sa `LinearCellComplexItems`
 \sa `LinearCellComplexTraits`

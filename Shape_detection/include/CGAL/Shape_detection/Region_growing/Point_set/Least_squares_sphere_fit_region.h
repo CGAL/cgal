@@ -50,7 +50,7 @@ namespace Point_set {
     a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Vector_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,
