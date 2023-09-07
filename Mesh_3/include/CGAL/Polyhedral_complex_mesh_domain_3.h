@@ -612,7 +612,11 @@ public:
             return pair.second == 0 ?
               Subdomain() :
               Subdomain(Subdomain_index(pair.second));
-          default: /* COPLANAR */ continue; // loop
+          default: /* COPLANAR */
+            if (!triangle.has_on(p))
+              continue; // loop
+            else
+              return Subdomain(Subdomain_index((std::max)(pair.first,pair.second))); // make a canonical choice
           } // end switch on the orientation
         } // opt
       } // end while(true)
