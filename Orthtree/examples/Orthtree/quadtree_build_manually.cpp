@@ -23,11 +23,6 @@ struct Orthtree_traits_empty_2 : public Orthtree_traits_2_base<K> {
 
   Orthtree_traits_empty_2(typename Self::Bbox_d bbox) : m_bbox(bbox) {};
 
-  auto construct_point_d_from_array_object() const {
-    return [](const typename Self::Array& array) -> typename Self::Point_d { return {array[0], array[1]}; };
-  }
-  using Construct_point_d_from_array = std::invoke_result_t<decltype(&Self::construct_point_d_from_array_object), Self>;
-
   auto root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d { return m_bbox; };
   }

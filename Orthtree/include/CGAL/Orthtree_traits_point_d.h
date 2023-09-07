@@ -93,21 +93,6 @@ public:
   using Node_data = boost::iterator_range<typename PointSet::iterator>;
   using Node_data_element = typename std::iterator_traits<typename PointSet::iterator>::value_type;
 
-#ifdef DOXYGEN_RUNNING
-  /*!
-    Functor with an operator to construct a `Point_d` from an `Array` object.
-  */
-  typedef unspecified_type Construct_point_d_from_array;
-#else
-
-  struct Construct_point_d_from_array {
-    typename Self::Point_d operator()(const typename Self::Array& array) const {
-      return typename Self::Point_d(array.size(), array.begin(), array.end());
-    }
-  };
-
-#endif
-
   /// @}
 
   Orthtree_traits_point_d(
@@ -118,16 +103,10 @@ public:
   /// \name Operations
   /// @{
 
-  /*!
-    Function used to construct an object of type `Construct_point_d_from_array`.
-  */
-  Construct_point_d_from_array construct_point_d_from_array_object() const { return Construct_point_d_from_array(); }
-
   auto root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d {
 
-      typename Self::Array bbox_min;
-      typename Self::Array bbox_max;
+      std::array<typename Self::FT, Self::Dimension::value> bbox_min, bbox_max;
       Orthtrees::internal::Cartesian_ranges<Self> cartesian_range;
 
       // init bbox with first values found
@@ -151,8 +130,8 @@ public:
         }
       }
 
-      return {construct_point_d_from_array_object()(bbox_min),
-              construct_point_d_from_array_object()(bbox_max)};
+      return {std::apply(Self::construct_point_d_object(), bbox_min),
+              std::apply(Self::construct_point_d_object(), bbox_max)};
     };
   }
 

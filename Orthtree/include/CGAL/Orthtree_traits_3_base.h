@@ -48,7 +48,6 @@ public:
   using Bbox_d = typename K::Iso_cuboid_3;
   using Sphere_d = typename K::Sphere_3;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_3;
-  using Array = std::array<FT, Dimension::value>; // todo: This should have a more descriptive name
 
   /*!
    * \brief Two directions along each axis in Cartesian space, relative to a node.

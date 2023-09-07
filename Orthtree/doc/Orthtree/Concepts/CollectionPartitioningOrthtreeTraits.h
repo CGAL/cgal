@@ -49,6 +49,9 @@ public:
   /// \name Operations
   /// @{
 
+  /*!
+    Function used to construct an object of type `Get_geometric_object_for_element`.
+  */
   Get_geometric_object_for_element get_geometric_object_for_element_object() const;
 
   /// @}

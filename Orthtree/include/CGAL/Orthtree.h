@@ -85,9 +85,6 @@ public:
   typedef typename Traits::Node_data Node_data;
   // todo: Node_data_element will only exist for certain Traits types, so I don't know if it can be re-exported
 
-  /// \cond SKIP_IN_MANUAL
-  typedef typename Traits::Array Array; ///< Array type.
-  /// \endcond
   /// @}
 
   /// \name Public Types
@@ -802,7 +799,7 @@ public:
     Bbox_dimensions size = m_side_per_depth[depth(n)];
 
     // Determine the location this node should be split
-    Array bary;
+    Bbox_dimensions bary;
     std::size_t i = 0;
     for (const FT& f: cartesian_range(m_bbox_min)) {
       bary[i] = FT(global_coordinates(n)[i]) * size[i] + size[i] / FT(2) + f;
@@ -810,9 +807,7 @@ public:
     }
 
     // Convert that location into a point
-    auto construct_point_d_from_array
-      = m_traits.construct_point_d_from_array_object();
-    return construct_point_d_from_array(bary);
+    return std::apply(m_traits.construct_point_d_object(), bary);
   }
 
   static bool is_topology_equal(Node_index lhsNode, const Self& lhsTree, Node_index rhsNode, const Self& rhsTree) {

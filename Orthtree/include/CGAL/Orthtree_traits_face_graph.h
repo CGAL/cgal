@@ -36,8 +36,6 @@ struct Orthtree_traits_face_graph
   using Dimension = typename Self::Dimension;
   using Bbox_d = typename Self::Bbox_d;
   using FT = typename Self::FT;
-  using Sphere_d = typename Self::Sphere_d; // SL: why?
-  using Array = typename Self::Array; // SL: why?
   using Cartesian_const_iterator_d = typename Self::Cartesian_const_iterator_d;
 
   // SL: these could be considered as built-in data and if the typedefs are not present, the tree have none
@@ -45,19 +43,10 @@ struct Orthtree_traits_face_graph
 
   using Geom_traits = typename Kernel_traits<Point_d>::type;
 
-  // SL: why?
-  struct Construct_point_d_from_array {
-    Point_d operator()(const Array& array) const {
-      return Point_d(array[0], array[1], array[2]);
-    }
-  };
-
-  Construct_point_d_from_array construct_point_d_from_array_object() const { return Construct_point_d_from_array(); }
-
   auto root_node_bbox_object() const {
     return [&]() -> Bbox_d {
 
-      Array min = {0.0, 0}, max = {0.0, 0};
+      std::array<FT, Dimension::value> min = {0.0, 0}, max = {0.0, 0};
       if (faces(m_pm).begin() != faces(m_pm).end()) {
         const Point_d& p = get(m_vpm, *vertices(m_pm).begin());
         min = {p.x(), p.y(), p.z()};
@@ -71,8 +60,8 @@ struct Orthtree_traits_face_graph
         }
       }
 
-      return {construct_point_d_from_array_object()(min),
-              construct_point_d_from_array_object()(max)};
+      return {std::apply(Self::construct_point_d_object(), min),
+              std::apply(Self::construct_point_d_object(), max)};
     };
   }
 

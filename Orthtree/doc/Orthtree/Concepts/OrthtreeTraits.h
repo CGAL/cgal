@@ -27,7 +27,6 @@ public:
     %Cartesian coordinates of a point.
   */
   typedef unspecified_type Cartesian_const_iterator_d;
-  typedef std::array<FT, Dimension::value> Array; ///< Array used for easy point constructions.
 
 
   /*!
@@ -38,9 +37,9 @@ public:
   typedef unspecified_type Adjacency; ///< Specify the adjacency directions
 
   /*!
-    Functor with an operator to construct a `Point_d` from an `Array` object.
+    Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc. FT arguments.
   */
-  typedef unspecified_type Construct_point_d_from_array;
+  typedef unspecified_type Construct_point_d;
 
   /// @}
 
@@ -48,9 +47,9 @@ public:
   /// @{
 
   /*!
-    Function used to construct an object of type `Construct_point_d_from_array`.
+    Function used to construct an object of type `Construct_point_d`.
   */
-  Construct_point_d_from_array construct_point_d_from_array_object() const;
+  Construct_point_d construct_point_d() const;
 
   /*!
    * \brief Produces a bounding box which encloses the contents of the tree
@@ -61,7 +60,7 @@ public:
    *
    * @return std::pair<min, max>, where min and max represent cartesian corners which define a bounding box
    */
-  std::pair<Array, Array> root_node_bbox() const;
+  Bbox_d root_node_bbox() const;
 
   /*!
    * \brief Initializes the contained elements for the root node.

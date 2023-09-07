@@ -45,7 +45,6 @@ public:
   using Bbox_d = typename K::Iso_box_d;
   using Sphere_d = typename K::Sphere_d;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_d;
-  using Array = std::array<FT, Dimension::value>;
 
   /*!
     Adjacency type.
