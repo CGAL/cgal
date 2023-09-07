@@ -12,7 +12,7 @@ typedef CGAL::Epick_d<Dimension> Kernel;
 typedef Kernel::Point_d Point_d;
 typedef std::vector<Point_d> Point_vector;
 
-typedef CGAL::Orthtree_traits_point_d<Kernel, Dimension, Point_vector> Traits;
+typedef CGAL::Orthtree_traits_point<Kernel, Point_vector> Traits;
 typedef CGAL::Orthtree<Traits> Orthtree;
 
 int main()

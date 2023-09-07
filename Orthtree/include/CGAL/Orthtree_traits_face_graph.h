@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Orthtree.h>
 
-#include <CGAL/Orthtree_traits_3_base.h>
+#include <CGAL/Orthtree_traits_base_for_dimension.h>
 
 #include <CGAL/Dimension.h>
 #include <CGAL/Bbox_3.h>
@@ -23,8 +23,15 @@
 namespace CGAL {
 
 template <class PolygonMesh, class VPM>
-struct Orthtree_traits_face_graph
-  : public Orthtree_traits_3_base<typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type> {
+struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
+  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type,
+  Dimension_tag<3>
+  // todo: it should be possible to determine the ambient dimension automatically, but this isn't working
+//  Ambient_dimension<
+//    typename boost::property_traits<VPM>::value_type,
+//    typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type
+//  >
+> {
 
   Orthtree_traits_face_graph(const PolygonMesh& pm, VPM vpm)
     : m_pm(pm), m_vpm(vpm) {}
@@ -110,8 +117,9 @@ struct Orthtree_traits_face_graph
       if (tree.data(ni).empty()) return false;
 
       Bbox_d bb = tree.bbox(ni);
-      //TODO: we should get better version to get guarantees
+      // TODO: we should get better version to get guarantees
       // TODO: as long as the bbox is cubic you can use depth and initial size to conclude.
+      // todo (jackson): bbox is _not_ guaranteed to be cubic now, this may break in some very niche cases
       for (int i = 0; i < 3; ++i)
         if ((bb.max()[i] - bb.min()[i]) < 2 * m_min_extent)
           return false;

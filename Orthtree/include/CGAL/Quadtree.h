@@ -41,7 +41,7 @@ template <typename GeomTraits, typename PointRange,
 #ifdef DOXYGEN_RUNNING
 class Quadtree;
 #else
-using Quadtree = Orthtree<Orthtree_traits_point_2<GeomTraits, PointRange, PointMap>>;
+using Quadtree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<2>>>;
 #endif
 
 } // namespace CGAL

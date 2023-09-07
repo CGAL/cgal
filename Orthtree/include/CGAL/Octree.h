@@ -43,7 +43,7 @@ template <
 #ifdef DOXYGEN_RUNNING
   class Octree;
 #else
-using Octree = Orthtree<Orthtree_traits_point_3<GeomTraits, PointRange, PointMap>>;
+using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>;
 #endif
 
 } // namespace CGAL

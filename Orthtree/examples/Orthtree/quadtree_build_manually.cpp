@@ -4,7 +4,7 @@
 #include <CGAL/Dimension.h>
 
 #include <CGAL/Orthtree.h>
-#include <CGAL/Orthtree_traits_2_base.h>
+#include <CGAL/Orthtree_traits_base_for_dimension.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 
@@ -13,15 +13,15 @@ namespace CGAL {
 struct empty_type {
 };
 
-template <typename K>
-struct Orthtree_traits_empty_2 : public Orthtree_traits_2_base<K> {
+template <typename K, typename DimensionTag>
+struct Orthtree_traits_empty : public Orthtree_traits_base_for_dimension<K, DimensionTag> {
 
-  using Self = Orthtree_traits_empty_2<K>;
+  using Self = Orthtree_traits_empty<K, DimensionTag>;
   using Tree = Orthtree<Self>;
 
   using Node_data = std::array<empty_type, 0>;
 
-  Orthtree_traits_empty_2(typename Self::Bbox_d bbox) : m_bbox(bbox) {};
+  Orthtree_traits_empty(typename Self::Bbox_d bbox) : m_bbox(bbox) {};
 
   auto root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d { return m_bbox; };
@@ -40,7 +40,7 @@ private:
 };
 }
 
-using EmptyQuadtree = CGAL::Orthtree<CGAL::Orthtree_traits_empty_2<Kernel>>;
+using EmptyQuadtree = CGAL::Orthtree<CGAL::Orthtree_traits_empty<Kernel, CGAL::Dimension_tag<2>>>;
 
 int main() {
 

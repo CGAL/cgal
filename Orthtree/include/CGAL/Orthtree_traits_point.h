@@ -19,9 +19,7 @@
 #include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 
-#include <CGAL/Orthtree_traits_2_base.h>
-#include <CGAL/Orthtree_traits_3_base.h>
-#include <CGAL/Orthtree_traits_d_base.h>
+#include <CGAL/Orthtree_traits_base_for_dimension.h>
 
 namespace CGAL {
 
@@ -78,16 +76,19 @@ void reassign_points(
 template <
   typename GeomTraits,
   typename PointSet,
-  typename PointMap,
-  typename OrthtreeTraitsDimensionBase
+  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointSet::iterator>::value_type>,
+  typename DimensionTag = Ambient_dimension<
+    typename std::iterator_traits<typename PointSet::iterator>::value_type,
+    GeomTraits
+  >
 >
-struct Orthtree_traits_point : public OrthtreeTraitsDimensionBase {
+struct Orthtree_traits_point : public Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag> {
 public:
 
   /// \name Types
   /// @{
 
-  using Self = Orthtree_traits_point<GeomTraits, PointSet, PointMap, OrthtreeTraitsDimensionBase>;
+  using Self = Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>;
   using Tree = Orthtree<Self>;
 
   using Node_data = boost::iterator_range<typename PointSet::iterator>;
@@ -162,31 +163,6 @@ private:
   PointMap m_point_map;
 
 };
-
-template <
-  typename GeomTraits,
-  typename PointSet,
-  typename PointMap = Identity_property_map<typename GeomTraits::Point_2>
->
-using Orthtree_traits_point_2 =
-  Orthtree_traits_point<GeomTraits, PointSet, PointMap, Orthtree_traits_2_base<GeomTraits>>;
-
-template <
-  typename GeomTraits,
-  typename PointSet,
-  typename PointMap = Identity_property_map<typename GeomTraits::Point_3>
->
-using Orthtree_traits_point_3 =
-  Orthtree_traits_point<GeomTraits, PointSet, PointMap, Orthtree_traits_3_base<GeomTraits>>;
-
-template <
-  typename GeomTraits,
-  typename DimensionTag,
-  typename PointSet,
-  typename PointMap = Identity_property_map<typename GeomTraits::Point_d>
->
-using Orthtree_traits_point_d =
-  Orthtree_traits_point<GeomTraits, PointSet, PointMap, Orthtree_traits_d_base<GeomTraits, DimensionTag>>;
 
 }
 
