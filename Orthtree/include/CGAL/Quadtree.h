@@ -15,7 +15,7 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Orthtree.h>
-#include <CGAL/Orthtree_traits_point_2.h>
+#include <CGAL/Orthtree_traits_point.h>
 
 namespace CGAL {
 

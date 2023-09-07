@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_2_H
-#define ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_2_H
+#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H
+#define ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -19,15 +19,50 @@
 #include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 
-#include <CGAL/Orthtree_traits_point_d.h>
 #include <CGAL/Orthtree_traits_2_base.h>
+#include <CGAL/Orthtree_traits_3_base.h>
+#include <CGAL/Orthtree_traits_d_base.h>
 
 namespace CGAL {
+
+template <typename Tree, typename PointMap>
+void reassign_points(
+  Tree& tree, PointMap& point_map,
+  typename Tree::Node_index n, const typename Tree::Point& center, typename Tree::Node_data points,
+  std::bitset<Tree::Dimension::value> coord = {}, std::size_t dimension = 0
+) {
+
+  // Root case: reached the last dimension
+  if (dimension == Tree::Dimension::value) {
+    tree.data(tree.child(n, coord.to_ulong())) = points;
+    return;
+  }
+
+  // Split the point collection around the center point on this dimension
+  auto split_point = std::partition(
+    points.begin(), points.end(),
+    [&](const auto& p) -> bool {
+      // This should be done with cartesian iterator,
+      // but it seems complicated to do efficiently
+      return (get(point_map, p)[int(dimension)] < center[int(dimension)]);
+    }
+  );
+
+  // Further subdivide the first side of the split
+  std::bitset<Tree::Dimension::value> coord_left = coord;
+  coord_left[dimension] = false;
+  reassign_points(tree, point_map, n, center, {points.begin(), split_point}, coord_left, dimension + 1);
+
+  // Further subdivide the second side of the split
+  std::bitset<Tree::Dimension::value> coord_right = coord;
+  coord_right[dimension] = true;
+  reassign_points(tree, point_map, n, center, {split_point, points.end()}, coord_right, dimension + 1);
+}
 
 /*!
   \ingroup PkgOrthtreeTraits
 
-  The class `Orthtree_traits_point_2` can be used as a template parameter of
+  The class `Orthtree_traits_point` can be used as a template parameter of
   the `Orthtree` class.
 
   \tparam GeomTraits model of `Kernel`.
@@ -37,29 +72,30 @@ namespace CGAL {
   \cgalModels `OrthtreeTraits`
   \sa `CGAL::Octree`
   \sa `CGAL::Orthtree_traits_2`
+  \sa `CGAL::Orthtree_traits_3`
   \sa `CGAL::Orthtree_traits_d`
 */
 template <
   typename GeomTraits,
   typename PointSet,
-  typename PointMap = Identity_property_map<typename GeomTraits::Point_2>
+  typename PointMap,
+  typename OrthtreeTraitsDimensionBase
 >
-struct Orthtree_traits_point_2 : public Orthtree_traits_2_base<GeomTraits> {
+struct Orthtree_traits_point : public OrthtreeTraitsDimensionBase {
 public:
 
   /// \name Types
   /// @{
 
-  using Self = Orthtree_traits_point_2<GeomTraits, PointSet, PointMap>;
+  using Self = Orthtree_traits_point<GeomTraits, PointSet, PointMap, OrthtreeTraitsDimensionBase>;
   using Tree = Orthtree<Self>;
 
-  // todo: looking for better names
   using Node_data = boost::iterator_range<typename PointSet::iterator>;
   using Node_data_element = typename std::iterator_traits<typename PointSet::iterator>::value_type;
 
   /// @}
 
-  Orthtree_traits_point_2(
+  Orthtree_traits_point(
     PointSet& point_set,
     PointMap point_map = PointMap()
   ) : m_point_set(point_set), m_point_map(point_map) {}
@@ -127,7 +163,32 @@ private:
 
 };
 
+template <
+  typename GeomTraits,
+  typename PointSet,
+  typename PointMap = Identity_property_map<typename GeomTraits::Point_2>
+>
+using Orthtree_traits_point_2 =
+  Orthtree_traits_point<GeomTraits, PointSet, PointMap, Orthtree_traits_2_base<GeomTraits>>;
+
+template <
+  typename GeomTraits,
+  typename PointSet,
+  typename PointMap = Identity_property_map<typename GeomTraits::Point_3>
+>
+using Orthtree_traits_point_3 =
+  Orthtree_traits_point<GeomTraits, PointSet, PointMap, Orthtree_traits_3_base<GeomTraits>>;
+
+template <
+  typename GeomTraits,
+  typename DimensionTag,
+  typename PointSet,
+  typename PointMap = Identity_property_map<typename GeomTraits::Point_d>
+>
+using Orthtree_traits_point_d =
+  Orthtree_traits_point<GeomTraits, PointSet, PointMap, Orthtree_traits_d_base<GeomTraits, DimensionTag>>;
+
 }
 
 
-#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_2_H
+#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H

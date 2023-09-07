@@ -19,8 +19,6 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 
-#include <CGAL/Orthtree_traits_point_d.h>
-
 namespace CGAL {
 
 /*!

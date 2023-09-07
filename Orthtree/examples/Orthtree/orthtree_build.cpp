@@ -3,7 +3,7 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Orthtree.h>
-#include <CGAL/Orthtree_traits_point_d.h>
+#include <CGAL/Orthtree_traits_point.h>
 #include <CGAL/Random.h>
 
 // Type Declarations
