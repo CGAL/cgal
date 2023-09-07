@@ -139,7 +139,7 @@ public:
   * It can be a functional or a constant.
   *
   * \note If one parameter is set to 0, then its corresponding criterion is ignored.
-  * 
+  *
   * @tparam SizingField a model of `MeshDomainField_3`
   */
   template < typename Sizing_field, typename Sizing_field2 = FT >
