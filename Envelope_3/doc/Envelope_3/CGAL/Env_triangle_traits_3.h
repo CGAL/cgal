@@ -31,7 +31,7 @@ instance and are also convertible to a `Kernel::Triangle_3` object.
 Both types, `Xy_monotone_surface_3` and `Surface_3`, refer to the
 same class, as <I>every</I> triangle is (weakly) \f$ xy\f$-monotone).
 
-\cgalModels `EnvelopeTraits_3`
+\cgalModels{EnvelopeTraits_3}
 
 */
 template< typename Kernel >

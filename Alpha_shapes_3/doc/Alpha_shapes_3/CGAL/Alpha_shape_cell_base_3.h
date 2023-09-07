@@ -19,7 +19,7 @@ provided in the documentation of `Alpha_shape_3` for more details. The default v
 must be \link Tag_true `Tag_true`\endlink if the underlying triangulation of the alpha shape to be used is a regular triangulation
 and \link Tag_false `Tag_false`\endlink otherwise. The default is \link Tag_false `Tag_false`\endlink.
 
-\cgalModels `AlphaShapeCell_3`
+\cgalModels{AlphaShapeCell_3}
 
 \sa `Delaunay_triangulation_cell_base_3`
 \sa `Regular_triangulation_cell_base_3`

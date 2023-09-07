@@ -21,7 +21,7 @@ namespace CGAL {
  * `Arr_default_dcel<Traits>`.
  * </UL>
  *
- * \cgalModels `ArrangementBasicTopologyTraits`
+ * \cgalModels{ArrangementBasicTopologyTraits}
  *
  * \sa `Arr_default_dcel<Traits>`
  * \sa `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel,x,y>`

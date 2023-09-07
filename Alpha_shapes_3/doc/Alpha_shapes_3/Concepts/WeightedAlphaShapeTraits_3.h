@@ -10,7 +10,9 @@ of the underlying regular triangulation of a weighted alpha shape.
 \cgalRefines{RegularTriangulationTraits_3 if the underlying triangulation of the alpha shape is a regular triangulation,
   Periodic_3RegularTriangulationTraits_3 if the underlying triangulation of the alpha shape is a periodic regular triangulation}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */

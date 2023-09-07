@@ -80,9 +80,7 @@ namespace CGAL {
  * to have the same direction as a precondition. Moreover, `Arr_conic_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementLandmarkTraits_2`
- * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
+ * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementDirectionalXMonotoneTraits_2}
  *
  * \cgalHeading{Types}
  */
@@ -274,7 +272,7 @@ public:
      */
     Point_2(const Algebraic& hx, const Algebraic& hy, const Algebraic& hz);
 
-    /*! constructs from Cartesian coordinates.
+    /*! constructs from %Cartesian coordinates.
      */
     Point_2(const Algebraic& x, const Algebraic& y);:
 

@@ -7,9 +7,7 @@
 /// \ingroup PkgSurfaceMeshTopologyRef
 
 /*!
-  \code
-   #include <CGAL/draw_face_graph_with_paths.h>
-  \endcode
+\cgalInclude{CGAL/draw_face_graph_with_paths.h}
 */
 /// \defgroup PkgDrawFaceGraphWithPaths Draw a Mesh with Paths
 /// \ingroup PkgSurfaceMeshTopologyRef

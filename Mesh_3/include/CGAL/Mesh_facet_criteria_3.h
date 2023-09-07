@@ -41,7 +41,7 @@ namespace CGAL {
   `Triangulation` of the instance used as model of
   `MeshComplex_3InTriangulation_3`.
 
-  \cgalModels `MeshFacetCriteria_3`
+  \cgalModels{MeshFacetCriteria_3}
 
   \sa `MeshCriteria_3`
   \sa `MeshFacetCriteria_3`

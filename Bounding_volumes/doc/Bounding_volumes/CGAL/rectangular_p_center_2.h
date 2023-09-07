@@ -10,7 +10,7 @@ using the function `rectangular_p_center_2()`.
 
 \tparam K must be a model for `Kernel`.
 
-\cgalModels `RectangularPCenterTraits_2`
+\cgalModels{RectangularPCenterTraits_2}
 
 \sa `CGAL::rectangular_p_center_2()`
 

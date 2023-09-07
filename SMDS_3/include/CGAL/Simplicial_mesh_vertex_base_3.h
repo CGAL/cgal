@@ -77,7 +77,7 @@ It must match `MeshDomainWithFeatures_3::Corner_index` when used for mesh genera
 \tparam Vb is the vertex base class from which `Simplicial_mesh_vertex_base_3` derives.
 It must be a model of the concept `TriangulationVertexBase_3`.
 
-\cgalModels `SimplicialMeshVertexBase_3`
+\cgalModels{SimplicialMeshVertexBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3`
 \sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink

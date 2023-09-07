@@ -20,7 +20,7 @@ the position is returned.
 
 The distance check is performed using an AABB tree and this class thus depends on the package \ref PkgAABBTree.
 
-\cgalModels `GetPlacement`
+\cgalModels{GetPlacement}
 
 */
 template<class BasePlacement, class GeomTraits>

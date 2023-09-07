@@ -134,6 +134,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
     {
       const halfedge_descriptor prev_h = prev(h, tm);
       const halfedge_descriptor next_h = next(h, tm);
+      const halfedge_descriptor prev_oh = prev(opposite(h, tm), tm);
 
       // check that the border has at least 4 edges not to create degenerate volumes
       if(border_size(h, tm) >= 4)
@@ -156,7 +157,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
         bool do_collapse = true;
         for(halfedge_descriptor he : halfedges_around_target(h, tm))
         {
-          if(he != h &&
+          if(he != prev_oh && // ignore the triangle incident to h that will disappear
              !is_border(he, tm) &&
              collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
           {

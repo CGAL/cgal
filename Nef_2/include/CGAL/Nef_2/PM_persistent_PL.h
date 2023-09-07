@@ -72,8 +72,8 @@ struct PM_persistent_PL_traits
 
   EdgeCategory ClassifyEdge(const Graph& G, const Edge& e, const Node& u)
   {
-    Point p_u = G.point(u);
-    Point p_v = G.point(opposite(G,e,u));
+    const Point& p_u = G.point(u);
+    const Point& p_v = G.point(opposite(G,e,u));
 
     int cmpX = pK->compare_x(p_u, p_v);
     if ( cmpX < 0 ) return StartingNonVertical;
@@ -111,7 +111,8 @@ struct PM_persistent_PL_traits
   Curve makeCurve(const Graph& G, const Node& n) const
   { return makeCurve(G.point(n)); }
   Curve makeCurve(const Graph& G, const Edge& e) const
-  { Point ps = G.point(G.source(e)), pt = G.point(G.target(e));
+  { const Point& ps = G.point(G.source(e));
+    const Point& pt = G.point(G.target(e));
     Curve res(G.point(G.source(e)),G.point(G.target(e)));
     if ( pK->compare_xy(ps,pt) < 0 ) res = pK->construct_segment(ps,pt);
     else                             res = pK->construct_segment(pt,ps);
@@ -135,10 +136,10 @@ struct PM_persistent_PL_traits
 
    int operator()(const Curve& s1, const Curve& s2) const
    {
-     Point a = pK->source(s1);
-     Point b = pK->target(s1);
-     Point c = pK->source(s2);
-     Point d = pK->target(s2);
+     const Point& a = pK->source(s1);
+     const Point& b = pK->target(s1);
+     const Point& c = pK->source(s2);
+     const Point& d = pK->target(s2);
      if ( a==b )
        if ( c==d ) return pK->compare_y(a,c);
        else        return  cmppntseg(a, s2);

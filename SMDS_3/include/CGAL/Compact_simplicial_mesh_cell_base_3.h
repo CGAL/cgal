@@ -356,7 +356,7 @@ and `EqualityComparable`. The default constructed value must be the index value
 assigned to a non surface facet.
 It must match `MeshDomain_3::Surface_patch_index` when used for mesh generation.
 
-\cgalModels `SimplicialMeshCellBase_3`
+\cgalModels{SimplicialMeshCellBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 \sa \link Mesh_cell_base_3 `CGAL::Mesh_cell_base_3`\endlink
