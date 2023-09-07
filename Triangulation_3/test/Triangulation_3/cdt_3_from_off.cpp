@@ -40,7 +40,8 @@ using Point = Delaunay::Point;
 using Point_3 = K::Point_3;
 
 using Mesh = CGAL::Surface_mesh<Point>;
-using face_descriptor =boost::graph_traits<Mesh>::face_descriptor;
+using edge_descriptor = boost::graph_traits<Mesh>::edge_descriptor;
+using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
 int go(Mesh, std::string);
 
@@ -121,6 +122,53 @@ int main(int argc, char* argv[])
 
 int go(Mesh mesh, std::string output_filename) {
   CDT cdt;
+  auto pmap = get(CGAL::vertex_point, mesh);
+
+  auto [patch_id_map, ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", 0);
+  assert(ok);
+  for(auto f: faces(mesh)) {
+    put(patch_id_map, f, -1);
+  }
+  auto [edge_mark_pmap, ok2] = mesh.add_property_map<edge_descriptor, bool>("e:mark", false);
+  assert(ok2);
+  for(auto e: edges(mesh)) {
+    put(edge_mark_pmap, e, false);
+  }
+  int patch_id = 0;
+  for(auto f: faces(mesh)) {
+    if(get(patch_id_map, f) >= 0) continue;
+    std::stack<face_descriptor> f_stack;
+    f_stack.push(f);
+    while(!f_stack.empty()) {
+      auto f = f_stack.top();
+      f_stack.pop();
+      if(get(patch_id_map, f) >= 0) continue;
+      put(patch_id_map, f, patch_id);
+      for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
+        auto opp = opposite(h, mesh);
+        if(is_border_edge(opp, mesh)) {
+          put(edge_mark_pmap, edge(h, mesh), true);
+          continue;
+        }
+        auto n = face(opp, mesh);
+        if(get(patch_id_map, n) >= 0) continue;
+        auto a = get(pmap, source(h, mesh));
+        auto b = get(pmap, target(h, mesh));
+        auto c = get(pmap, target(next(h, mesh), mesh));
+        auto d = get(pmap, target(next(opp, mesh), mesh));
+        if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
+          put(edge_mark_pmap, edge(h, mesh), true);
+          continue;
+        }
+        f_stack.push(n);
+      }
+    }
+    ++patch_id;
+  }
+  {
+    std::ofstream out("dump_patches.ply");
+    CGAL::IO::write_PLY(out, mesh);
+  }
 
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
   double d_x = bbox.xmax() - bbox.xmin();
@@ -172,7 +220,6 @@ int go(Mesh mesh, std::string output_filename) {
     }
   };
 
-  auto pmap = get(CGAL::vertex_point, mesh);
   for(auto v: vertices(mesh)) {
     cdt.insert(get(pmap, v));
   }

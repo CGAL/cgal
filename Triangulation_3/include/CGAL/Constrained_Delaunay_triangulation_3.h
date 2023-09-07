@@ -241,7 +241,7 @@ private:
 
     using Color_value_type = std::int8_t;
     struct Face_info {
-      Color_value_type is_outside_the_face = 0;
+      Color_value_type is_outside_the_face = -1;
       Color_value_type is_in_region = 0;
       std::bitset<3> is_edge_also_in_3d_triangulation = 0;
       bool missing_subface = true;
@@ -518,8 +518,9 @@ template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
     }
     CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>> circ{&vertex_handles};
     const auto circ_end{circ};
-    auto& border = this->face_border.emplace_back();
-    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(this->face_border.size() - 1);
+    auto& borders = this->face_borders.emplace_back();
+    auto& border = borders.emplace_back();
+    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(this->face_borders.size() - 1);
     do {
       const auto va = *circ;
       ++circ;
@@ -614,118 +615,139 @@ private:
 #if CGAL_DEBUG_CDT_3 & 4
     std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
 #endif // CGAL_DEBUG_CDT_3
-    const auto handles = [this, polygon_contraint_id]() {
-      std::vector<Vertex_handle> handles;
-      for(const auto& face_edge : this->face_border[polygon_contraint_id]) {
-        const auto c_id = face_edge.constraint_id;
-        const bool reversed = face_edge.is_reverse;
-        const auto v_begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
-        const auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
-        CGAL_assertion(std::distance(v_begin, v_end) >= 2);
-        auto va = *v_begin;
-        auto vb_it = v_end;
-        --vb_it;
-        auto vb = *vb_it;
-        if(reversed) {
-          using std::swap;
-          swap(va, vb);
+    const auto vec_of_handles = [this, polygon_contraint_id]() {
+      std::vector<std::vector<Vertex_handle>> vec_of_handles;
+      for(const auto& border : this->face_borders[polygon_contraint_id]) {
+        auto& handles = vec_of_handles.emplace_back();
+        for(const auto& face_edge : border) {
+          const auto c_id = face_edge.constraint_id;
+          const bool reversed = face_edge.is_reverse;
+          const auto v_begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+          const auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+          CGAL_assertion(std::distance(v_begin, v_end) >= 2);
+          auto va = *v_begin;
+          auto vb_it = v_end;
+          --vb_it;
+          auto vb = *vb_it;
+          if(reversed) {
+            using std::swap;
+            swap(va, vb);
+          }
+          if(handles.empty()) {
+            handles.push_back(va);
+          } else {
+            CGAL_assertion(handles.back() == va);
+          }
+          handles.push_back(vb);
         }
-        if(handles.empty()) {
-          handles.push_back(va);
-        } else {
-          CGAL_assertion(handles.back() == va);
-        }
-        handles.push_back(vb);
+        CGAL_assertion(handles.front() == handles.back());
       }
-      CGAL_assertion(handles.front() == handles.back());
-      handles.pop_back();
-      return handles;
+      return vec_of_handles;
     }();
 
-    CGAL::Circulator_from_container circ{&handles};
-    const auto circ_end{circ};
 #if CGAL_DEBUG_CDT_3 & 4
     std::cerr << "  points\n";
-    do {
-      std::cerr << "     " << tr.point(*circ) << '\n';
-    } while(++circ != circ_end);
+    for(const auto& handles : vec_of_handles) {
+      for(auto it = handles.begin(), end = std::prev(handles.end()); it != end; ++it) {
+        std::cerr << "     " << tr.point(*it) << '\n';
+      }
+    }
 #endif
 
-    { // create and fill the 2D triangulation
-      const auto first_2d  = cdt_2.insert(tr.point(*circ));
-      first_2d->info().vertex_handle_3d = *circ;
-      auto previous_2d = first_2d;
-      do {
-        const auto va = *circ;
-        CGAL_assertion(previous_2d->info().vertex_handle_3d == va);
-        ++circ;
-        const auto vb = *circ;
-        const auto c_id = this->constraint_from_extremities(va, vb);
-        if(c_id != Constraint_id{}) {
-          auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
-          auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
-          CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);)
-          if(vit != v_end) {
-            const bool constraint_c_id_is_reversed = (*vit != va);
-            CGAL_assertion(*vit == (constraint_c_id_is_reversed ? vb : va));
-            if(++vit != v_end && vit != --v_end) {
-              CGAL_assertion(constraint_size == std::distance(vit, v_end) + 2);
-              CGAL_assertion(*v_end == (constraint_c_id_is_reversed ? va : vb));
-              if(constraint_c_id_is_reversed) {
-                using std::swap;
-                swap(vit, v_end);
-                --vit;
-                --v_end;
-              };
-              while(vit != v_end) {
-                auto vh_2d = cdt_2.insert(tr.point(*vit));
-                vh_2d->info().vertex_handle_3d = *vit;
-#if CGAL_DEBUG_CDT_3 & 4
-                std::cerr << "cdt_2.insert_constraint ("
-                          << tr.point(previous_2d->info().vertex_handle_3d)
-                          << " , "
-                          << tr.point(vh_2d->info().vertex_handle_3d)
-                          << ")\n";
-#endif // CGAL_DEBUG_CDT_3
-                cdt_2.insert_constraint(previous_2d, vh_2d);
-                previous_2d = vh_2d;
+    // create and fill the 2D triangulation
+    {
+      for(const auto& handles : vec_of_handles)
+      {
+        const auto first_2d  = cdt_2.insert(tr.point(handles.front()));
+        first_2d->info().vertex_handle_3d = handles.front();
+        auto previous_2d = first_2d;
+        for(auto it = handles.begin(), end = std::prev(handles.end());
+            it != end; /* incremented in the loop */)
+        {
+          const auto va = *it;
+          CGAL_assertion(previous_2d->info().vertex_handle_3d == va);
+          ++it;
+          const auto vb = *it;
+          const auto c_id = this->constraint_from_extremities(va, vb);
+          if(c_id != Constraint_id{}) {
+            auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+            auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+            CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);)
+            if(vit != v_end) {
+              const bool constraint_c_id_is_reversed = (*vit != va);
+              CGAL_assertion(*vit == (constraint_c_id_is_reversed ? vb : va));
+              if(++vit != v_end && vit != --v_end) {
+                CGAL_assertion(constraint_size == std::distance(vit, v_end) + 2);
+                CGAL_assertion(*v_end == (constraint_c_id_is_reversed ? va : vb));
                 if(constraint_c_id_is_reversed) {
+                  using std::swap;
+                  swap(vit, v_end);
                   --vit;
-                } else {
-                  ++vit;
+                  --v_end;
                 };
+                while(vit != v_end) {
+                  auto vh_2d = cdt_2.insert(tr.point(*vit));
+                  vh_2d->info().vertex_handle_3d = *vit;
+  #if CGAL_DEBUG_CDT_3 & 4
+                  std::cerr << "cdt_2.insert_constraint ("
+                            << tr.point(previous_2d->info().vertex_handle_3d)
+                            << " , "
+                            << tr.point(vh_2d->info().vertex_handle_3d)
+                            << ")\n";
+  #endif // CGAL_DEBUG_CDT_3
+                  cdt_2.insert_constraint(previous_2d, vh_2d);
+                  previous_2d = vh_2d;
+                  if(constraint_c_id_is_reversed) {
+                    --vit;
+                  } else {
+                    ++vit;
+                  };
+                }
+              }
+            }
+          }
+
+          auto vh_2d = it == end ? first_2d : cdt_2.insert(tr.point(vb));
+          if(it != end) {
+            vh_2d->info().vertex_handle_3d = vb;
+          }
+  #if CGAL_DEBUG_CDT_3 & 4
+          std::cerr << "cdt_2.insert_constraint ("
+                    << tr.point(previous_2d->info().vertex_handle_3d)
+                    << " , "
+                    << tr.point(vh_2d->info().vertex_handle_3d)
+                    << ")\n";
+  #endif // CGAL_DEBUG_CDT_3
+          cdt_2.insert_constraint(previous_2d, vh_2d);
+          previous_2d = vh_2d;
+        }
+      }
+      { // mark all the faces outside/inside, starting from one infinite face
+        for(auto fh: cdt_2.all_face_handles())
+        {
+          fh->info().is_outside_the_face = -1;
+        }
+        struct Face_handle_and_outside {
+          CDT_2_face_handle fh;
+          bool outside;
+        };
+        std::stack<Face_handle_and_outside> stack;
+        stack.push({cdt_2.infinite_face(), true});
+        while(!stack.empty()) {
+          const auto [fh, outside] = stack.top();
+          stack.pop();
+          if(fh->info().is_outside_the_face == -1) {
+            fh->info().is_outside_the_face = outside;
+            for(int i = 0; i < 3; ++i) {
+              const auto neighbor = fh->neighbor(i);
+              const auto new_outside = fh->is_constrained(i) ? !outside : outside;
+              if(neighbor->info().is_outside_the_face == -1) {
+                stack.push({neighbor, new_outside});
               }
             }
           }
         }
-
-        auto vh_2d = circ == circ_end ? first_2d : cdt_2.insert(tr.point(vb));
-        if(circ != circ_end) {
-          vh_2d->info().vertex_handle_3d = vb;
-        }
-#if CGAL_DEBUG_CDT_3 & 4
-        std::cerr << "cdt_2.insert_constraint ("
-                  << tr.point(previous_2d->info().vertex_handle_3d)
-                  << " , "
-                  << tr.point(vh_2d->info().vertex_handle_3d)
-                  << ")\n";
-#endif // CGAL_DEBUG_CDT_3
-        cdt_2.insert_constraint(previous_2d, vh_2d);
-        previous_2d = vh_2d;
-      } while (circ != circ_end);
-      const auto cdt_2_dual_graph = dual(cdt_2.tds());
-      { // Now, use BGL BFS algorithm to mark the faces reachable from
-        // an infinite face as `is_outside_the_face`.
-        // I use the fact that `white_color()` evaluates to 0, and
-        // `black_color()` to 4 (and thus to a true Boolean).
-        const boost::filtered_graph dual(cdt_2_dual_graph,
-                                         [](typename CDT_2::Edge edge) {
-                                           return false == edge.first->is_constrained(edge.second);
-                                         });
-        using Color_map = typename CDT_2_types::Color_map_is_outside_the_face;
-        boost::breadth_first_search(dual, cdt_2.infinite_vertex()->face(),
-                                    boost::color_map(Color_map()));
-      } // end of Boost BFS
+      } // end of marking inside/outside
 #if CGAL_DEBUG_CDT_3 & 4
       int counter = 0;
       for(const auto fh: cdt_2.finite_face_handles()) {
@@ -2208,7 +2230,7 @@ protected:
     Constraint_id constraint_id;
     bool is_reverse = false;
   };
-  std::vector<std::vector<Face_edge>> face_border;
+  std::vector<std::vector<std::vector<Face_edge>>> face_borders;
   std::multimap<Constraint_id, CDT_3_face_index> constraint_to_faces;
   boost::dynamic_bitset<> face_constraint_misses_subfaces;
 };
