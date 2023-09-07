@@ -1036,7 +1036,7 @@ current polyline feature does not belong to.
 
 The following example shows how to generate a mesh with an approximation error criterion.
 This enables the subdivision of edges that are too far away from the corresponding input sharp features.
-It results in an output mesh with smaller edges along the input polyline features.
+It may result in an output mesh with shorter edges along the input polyline features.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_distancing.cpp}
 
