@@ -81,13 +81,13 @@ bool read_PLY(std::istream& is,
       bool has_colors = false;
       std::string rtag = "r", gtag = "g", btag = "b";
 
-      if((element.has_property<boost::uint8_t>("red") || element.has_property<boost::uint8_t>("r")) &&
-         (element.has_property<boost::uint8_t>("green") || element.has_property<boost::uint8_t>("g")) &&
-         (element.has_property<boost::uint8_t>("blue") || element.has_property<boost::uint8_t>("b")))
+      if((element.has_property<std::uint8_t>("red") || element.has_property<std::uint8_t>("r")) &&
+         (element.has_property<std::uint8_t>("green") || element.has_property<std::uint8_t>("g")) &&
+         (element.has_property<std::uint8_t>("blue") || element.has_property<std::uint8_t>("b")))
       {
         has_colors = true;
 
-        if(element.has_property<boost::uint8_t>("red"))
+        if(element.has_property<std::uint8_t>("red"))
         {
           rtag = "red";
           gtag = "green";
@@ -106,17 +106,17 @@ bool read_PLY(std::istream& is,
             return false;
         }
 
-        std::tuple<Point_3, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_vertex;
+        std::tuple<Point_3, std::uint8_t, std::uint8_t, std::uint8_t> new_vertex;
         if(has_colors)
         {
           internal::process_properties(element, new_vertex,
                                        make_ply_point_reader(CGAL::make_nth_of_tuple_property_map<0>(new_vertex)),
                                        std::make_pair(CGAL::make_nth_of_tuple_property_map<1>(new_vertex),
-                                                      PLY_property<boost::uint8_t>(rtag.c_str())),
+                                                      PLY_property<std::uint8_t>(rtag.c_str())),
                                        std::make_pair(CGAL::make_nth_of_tuple_property_map<2>(new_vertex),
-                                                      PLY_property<boost::uint8_t>(gtag.c_str())),
+                                                      PLY_property<std::uint8_t>(gtag.c_str())),
                                        std::make_pair(CGAL::make_nth_of_tuple_property_map<3>(new_vertex),
-                                                      PLY_property<boost::uint8_t>(btag.c_str())));
+                                                      PLY_property<std::uint8_t>(btag.c_str())));
 
           *vc_out++ = Color_rgb(get<1>(new_vertex), get<2>(new_vertex), get<3>(new_vertex));
         }
@@ -131,21 +131,21 @@ bool read_PLY(std::istream& is,
     }
     else if(element.name() == "face" || element.name() == "faces")
     {
-      if(element.has_property<std::vector<boost::int32_t> >("vertex_indices"))
+      if(element.has_property<std::vector<std::int32_t> >("vertex_indices"))
       {
-        internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fc_out, "vertex_indices");
+        internal::read_PLY_faces<std::int32_t>(is, element, polygons, fc_out, "vertex_indices");
       }
-      else if(element.has_property<std::vector<boost::uint32_t> >("vertex_indices"))
+      else if(element.has_property<std::vector<std::uint32_t> >("vertex_indices"))
       {
-        internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fc_out, "vertex_indices");
+        internal::read_PLY_faces<std::uint32_t>(is, element, polygons, fc_out, "vertex_indices");
       }
-      else if(element.has_property<std::vector<boost::int32_t> >("vertex_index"))
+      else if(element.has_property<std::vector<std::int32_t> >("vertex_index"))
       {
-        internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fc_out, "vertex_index");
+        internal::read_PLY_faces<std::int32_t>(is, element, polygons, fc_out, "vertex_index");
       }
-      else if(element.has_property<std::vector<boost::uint32_t> >("vertex_index"))
+      else if(element.has_property<std::vector<std::uint32_t> >("vertex_index"))
       {
-        internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fc_out, "vertex_index");
+        internal::read_PLY_faces<std::uint32_t>(is, element, polygons, fc_out, "vertex_index");
       }
       else
       {

@@ -26,6 +26,6 @@ Halfspaces are considered as lower halfspaces, that is if the plane equation is 
 template <class PlaneIterator, class PolygonMesh>
 void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                PolygonMesh &pm,
-                               boost::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = boost::none);
+                               std::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = std::nullopt);
 
 } /* namespace CGAL */

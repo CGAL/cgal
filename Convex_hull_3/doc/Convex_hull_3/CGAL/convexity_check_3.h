@@ -16,7 +16,7 @@ vertices of the convex hull).
 \cgalHeading{Implementation}
 
 This function implements the tests described in \cgalCite{mnssssu-cgpvg-96} to
-determine convexity and requires \f$ O(e + f)\f$ time for a polyhedron with
+determine convexity and requires \cgalBigO{e + f} time for a polyhedron with
 \f$ e\f$ edges and \f$ f\f$ faces.
 
 

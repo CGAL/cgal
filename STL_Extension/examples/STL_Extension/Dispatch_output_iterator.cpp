@@ -1,7 +1,7 @@
 #include <vector>
 #include <CGAL/iterator.h>
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 
 int main()
 {
@@ -21,7 +21,7 @@ int main()
     std::back_inserter(b),
     std::back_inserter(c));
 
-  typedef boost::variant<int, double, char> var;
+  typedef std::variant<int, double, char> var;
   var va = 23; var vb = 4.2; var vc = 'x';
 
   // goes to a

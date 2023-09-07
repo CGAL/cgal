@@ -287,6 +287,7 @@ namespace CommonKernelFunctors {
 
       const Vector_3 abac1 = xproduct(ab1, ac1);
       const Vector_3 abad1 = xproduct(ab1, ad1);
+      if (abac1==NULL_VECTOR || abad1==NULL_VECTOR) return SMALLER;
       const FT sc_prod_1 = abac1 * abad1;
 
       CGAL_kernel_assertion_msg( abac1 != NULL_VECTOR,
@@ -1764,8 +1765,8 @@ namespace CommonKernelFunctors {
       Line l2 = construct_line(l21, l22);
 
       const auto res = typename K::Intersect_3()(l1,l2);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2172,8 +2173,8 @@ namespace CommonKernelFunctors {
       Line line = construct_line( l1, l2 );
 
       const auto res = typename K::Intersect_3()(plane,line);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2185,8 +2186,8 @@ namespace CommonKernelFunctors {
       Line line = construct_line( l1, l2 );
 
       const auto res = typename K::Intersect_3()(plane,line);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -3417,7 +3418,7 @@ namespace CommonKernelFunctors {
       const Plane_3& plane = circ.supporting_plane();
       const auto optional = K().intersect_3_object()(plane, Segment_3(a, b));
       CGAL_kernel_assertion_msg(bool(optional) == true, "the segment does not intersect the supporting plane");
-      const Point_3* p = boost::get<Point_3>(&*optional);
+      const Point_3* p = std::get_if<Point_3>(&*optional);
       CGAL_kernel_assertion_msg(p != 0, "the segment intersection with the plane is not a point");
       return squared_distance(circ.center(), *p) < circ.squared_radius();
     }
@@ -3622,7 +3623,7 @@ namespace CommonKernelFunctors {
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    boost::optional<boost::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
+    std::optional<std::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
@@ -3639,7 +3640,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3     Point_3;
     typedef typename K::Line_3      Line_3;
     typedef typename K::Plane_3     Plane_3;
-    typedef typename boost::optional<Point_3> result_type;
+    typedef typename std::optional<Point_3> result_type;
 
     result_type
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const

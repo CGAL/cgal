@@ -226,7 +226,7 @@ namespace CGAL {
     template<int i>
     typename Attribute_descriptor<i>::type attribute()
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_descriptors);
@@ -234,7 +234,7 @@ namespace CGAL {
     template<int i>
     typename Attribute_const_descriptor<i>::type attribute() const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_descriptors);

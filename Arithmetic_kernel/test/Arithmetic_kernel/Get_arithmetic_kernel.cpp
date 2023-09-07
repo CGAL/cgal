@@ -18,17 +18,17 @@ int main() {
   {
     typedef CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel AK_;
     CGAL_USE_TYPE(AK_);
-    CGAL_static_assertion((std::is_same<AK,AK_>::value));
+    static_assert(std::is_same<AK,AK_>::value);
   }
   {
     typedef CGAL::Get_arithmetic_kernel<Rational>::Arithmetic_kernel AK_;
     CGAL_USE_TYPE(AK_);
-    CGAL_static_assertion((std::is_same<AK,AK_>::value));
+    static_assert(std::is_same<AK,AK_>::value);
   }
   {
     typedef CGAL::Get_arithmetic_kernel<BFI>::Arithmetic_kernel AK_;
     CGAL_USE_TYPE(AK_);
-    CGAL_static_assertion((std::is_same<AK,AK_>::value));
+    static_assert(std::is_same<AK,AK_>::value);
   }
   return 0;
 }

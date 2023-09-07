@@ -85,6 +85,7 @@ namespace internal {
 } // end namespace internal
 } // end namespace Mesh_3
 
+
 /*!
 \ingroup PkgMesh3MeshClasses
 
@@ -96,16 +97,16 @@ provides a bound for the size criterion.
 \sa `MeshCriteria_3`
 \sa `CGAL::Mesh_criteria_3<Tr>`
 \sa `MeshDomainField_3`
-
 */
 template < typename Tr >
 class Mesh_edge_criteria_3
 {
 private:
   typedef Mesh_edge_criteria_3 Self;
-  typedef typename Tr::Geom_traits Gt;
+  typedef typename Tr::Geom_traits GT;
 
 public:
+
   /// \name Types
   /// @{
   /*!
@@ -122,7 +123,8 @@ public:
   /// @{
 
   /*!
-  * Returns an object to serve as criteria for edges.
+  * returns an object to serve as criteria for edges.
+  *
   * \param length_bound is an upper bound
   * for the length of the edges which are used to discretize the curves.
   * It can be a functional or a constant.
@@ -136,7 +138,9 @@ public:
   * edge to the 1D feature.
   * It can be a functional or a constant.
   *
-  * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
+  * \note If one parameter is set to 0, then its corresponding criterion is ignored.
+  * 
+  * @tparam SizingField a model of `MeshDomainField_3`
   */
   template < typename Sizing_field, typename Sizing_field2 = FT >
   Mesh_edge_criteria_3(const Sizing_field& length_bound,

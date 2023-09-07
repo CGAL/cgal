@@ -31,7 +31,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/tss.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 /*
  *  AUXILIARY CLASSES AND FUNCTIONS

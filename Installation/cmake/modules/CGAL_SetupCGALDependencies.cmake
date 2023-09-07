@@ -15,7 +15,7 @@
 # .. variable:: CGAL_DISABLE_GMP
 #
 #    If set, the `GMP` library will not be used. If
-#    :variable:`WITH_LEDA` is not used either, a efficient exact
+#    :variable:`WITH_LEDA` is not used either, an efficient exact
 #    number types are used by CGAL kernels for exact computation.
 #
 # .. variable:: WITH_LEDA
@@ -120,9 +120,8 @@ function(CGAL_setup_CGAL_dependencies target)
 endfunction()
 
 function(CGAL_setup_CGAL_flags target)
-  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
-  # C++14.
-  target_compile_features(${target} INTERFACE cxx_decltype_auto)
+  # CGAL now requires C++17
+  target_compile_features(${target} INTERFACE cxx_std_17)
 
   if(MSVC)
     target_compile_options(${target} INTERFACE
@@ -132,11 +131,6 @@ function(CGAL_setup_CGAL_flags target)
       $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
       $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
       )
-    if(MSVC_TOOLSET_VERSION VERSION_LESS_EQUAL 140) # for MSVC 2015
-      target_compile_options(${target} INTERFACE
-        $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
-        )
-    endif()
   elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
       message(STATUS "Apple Clang version ${CMAKE_CXX_COMPILER_VERSION} compiler detected")

@@ -431,7 +431,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
                         std::enable_if_t<
-                          boost::is_base_of<Point, typename std::iterator_traits<InputIterator>::value_type>::value
+                          std::is_base_of<Point, typename std::iterator_traits<InputIterator>::value_type>::value
                         >* = nullptr)
 #else
   template < class InputIterator >
@@ -880,7 +880,7 @@ public:
 
   Face_handle locate(const Point& query, Locate_type& lt, int &li, Face_handle hint = Face_handle()) const
   {
-    // Perform an Euclidean location first and get close to the hyperbolic face containing the query point
+    // Perform a Euclidean location first and get close to the hyperbolic face containing the query point
     typename Base::Locate_type blt;
     Face_handle fh = Base::locate(query, blt, li, hint);
 
@@ -901,7 +901,7 @@ public:
 
     CGAL_assertion(!is_infinite(fh));
 
-    // This case corresponds to when the point is located on an Euclidean edge.
+    // This case corresponds to when the point is located on a Euclidean edge.
     if(lt == EDGE)
     {
       // Here because the call to `side_of_hyperbolic_triangle` might change `li`
