@@ -192,7 +192,7 @@ private:
   void init_p_size(const FT& length_bound, Tag_false)
   {
     p_size_ = new Mesh_3::internal::Sizing_field_container<
-        Mesh_constant_domain_field_3<Gt,Index> ,
+        Mesh_constant_domain_field_3<GT,Index> ,
         FT,
         Point_3,
         Index>(length_bound);
@@ -211,7 +211,7 @@ private:
   void init_distance_bound(const FT& distance_bound, Tag_false)
   {
     distance_bound_ = new Mesh_3::internal::Sizing_field_container<
-        Mesh_constant_domain_field_3<Gt,Index> ,
+        Mesh_constant_domain_field_3<GT,Index> ,
         FT,
         Point_3,
         Index>(distance_bound);
