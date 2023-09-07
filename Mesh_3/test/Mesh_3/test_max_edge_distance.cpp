@@ -82,19 +82,23 @@ struct Edge_distance_test_helper
     FT min_edge_size_without_distance = std::get<0>(stats_without);
     FT avg_edge_size_without_distance = std::get<1>(stats_without);
     FT sum_approx_error_without_distance = std::get<2>(stats_without);
+    std::size_t nb_vertices_without_distance  = c3t3_without.triangulation().number_of_vertices();
+    std::size_t nb_triangles_without_distance = c3t3_without.number_of_facets_in_complex();
 
     std::tuple<FT, FT, FT> stats_with= this->compute_stats(c3t3_with, domain_with);
     FT min_edge_size_with_distance = std::get<0>(stats_with);
     FT avg_edge_size_with_distance = std::get<1>(stats_with);
     FT sum_approx_error_with_distance = std::get<2>(stats_with);
+    std::size_t nb_vertices_with_distance  = c3t3_with.triangulation().number_of_vertices();
+    std::size_t nb_triangles_with_distance = c3t3_with.number_of_facets_in_complex();
 
-    assert(nb_vertices  > c3t3.triangulation().number_of_vertices());
-    assert(nb_triangles > c3t3.number_of_facets_in_complex());
+    assert(nb_vertices_with_distance  > nb_vertices_without_distance);
+    assert(nb_triangles_with_distance > nb_triangles_without_distance);
 
     assert(min_edge_size_with_distance < min_edge_size_without_distance);
     assert(avg_edge_size_with_distance < avg_edge_size_without_distance);
 
-    assert(sum_approx_error_with_distance > sum_approx_error_without_distance);
+    assert(sum_approx_error_with_distance < sum_approx_error_without_distance);
   }
 };
 
@@ -152,11 +156,7 @@ public:
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
-    std::size_t nb_vertices  = c3t3.triangulation().number_of_vertices();
-    std::size_t nb_triangles = c3t3.number_of_facets_in_complex();
-
     this->verify_c3t3(c3t3, domain, Polyhedral_tag(), expected_nb_vertices * 0.95, expected_nb_vertices * 1.05, expected_nb_triangles * 0.95, expected_nb_triangles * 1.05);
-
 
     Mesh_criteria criteria_without(edge_size = 0.074,
         facet_distance = 0.0074,
@@ -219,9 +219,6 @@ public:
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
-
-    std::size_t nb_vertices  = c3t3.triangulation().number_of_vertices();
-    std::size_t nb_triangles = c3t3.number_of_facets_in_complex();
 
     this->verify_c3t3(c3t3, domain, Polyhedral_tag(), expected_nb_vertices * 0.95, expected_nb_vertices * 1.05, expected_nb_triangles * 0.95, expected_nb_triangles * 1.05);
 
