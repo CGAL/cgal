@@ -16,8 +16,90 @@
 
 #define CGAL_MESH_3_VERBOSE true
 
+struct Edge_distance_test_helper
+{
+  typedef K_e_i K;
+  typedef K_e_i::FT FT;
+
+  template <typename C3t3, typename Mesh_Domain>
+  std::tuple<FT, FT, FT> compute_stats(const C3t3 & c3t3, const Mesh_Domain & domain) {
+    C3t3::Edges_in_complex_iterator edge_begin = c3t3.edges_in_complex_begin();
+    FT min_edge_size = CGAL::sqrt(
+      CGAL::squared_distance(edge_begin->first->vertex( edge_begin->second )->point(), edge_begin->first->vertex( edge_begin->third )->point())
+      );
+    FT avg_edge_size = 0;
+    FT sum_approx_error = 0;
+    int nbEdges = 0;
+    for (C3t3::Edges_in_complex_iterator eit = edge_begin ; eit != c3t3.edges_in_complex_end(); ++eit ) {
+      const C3t3::Vertex_handle& va = eit->first->vertex(eit->second);
+      const C3t3::Vertex_handle& vb = eit->first->vertex(eit->third);
+
+      // Get edge distance
+
+      FT dist = CGAL::sqrt(
+        CGAL::squared_distance(va->point(), vb->point())
+      );
+      if (dist < min_edge_size) {
+        min_edge_size = dist;
+      }
+      avg_edge_size += dist;
+      nbEdges++;
+
+      // Get edge approximation error
+
+      C3t3::Curve_index curve_index = domain.curve_index((va->in_dimension() < vb->in_dimension()) ? vb->index() : va->index());
+
+      K::Point_3 pa = va->point().point();
+      K::Point_3 pb = vb->point().point();
+      K::Point_3 segment_middle = CGAL::midpoint(pa, pb);
+      // Obtain the geodesic middle point
+      FT signed_geodesic_distance = domain.signed_geodesic_distance(pa, pb, curve_index);
+      K::Point_3 geodesic_middle;
+      if (signed_geodesic_distance >= 0)
+      {
+        geodesic_middle = domain.construct_point_on_curve(pa, curve_index, signed_geodesic_distance / 2);
+      }
+      else
+      {
+        geodesic_middle = domain.construct_point_on_curve(pb, curve_index, -signed_geodesic_distance / 2);
+      }
+      // Compare distance to the parameter's distance
+      sum_approx_error += CGAL::squared_distance(segment_middle, geodesic_middle);
+    }
+    avg_edge_size /= nbEdges;
+
+    return std::make_tuple(min_edge_size, avg_edge_size, sum_approx_error);
+  }
+
+  /**
+  * @brief verify that there are more vertices than without criteria
+  * and that the edges are smaller (minimum size and average size)
+  * and that the approximation of polylines features is better
+  */
+  template <typename C3t3, typename Mesh_Domain>
+  void test_c3t3_without_and_with(const C3t3 & c3t3_without, const Mesh_Domain & domain_without, const C3t3 & c3t3_with, const Mesh_Domain & domain_with) {
+    std::tuple<FT, FT, FT> stats_without = this->compute_stats(c3t3_without, domain_without);
+    FT min_edge_size_without_distance = std::get<0>(stats_without);
+    FT avg_edge_size_without_distance = std::get<1>(stats_without);
+    FT sum_approx_error_without_distance = std::get<2>(stats_without);
+
+    std::tuple<FT, FT, FT> stats_with= this->compute_stats(c3t3_with, domain_with);
+    FT min_edge_size_with_distance = std::get<0>(stats_with);
+    FT avg_edge_size_with_distance = std::get<1>(stats_with);
+    FT sum_approx_error_with_distance = std::get<2>(stats_with);
+
+    assert(nb_vertices  > c3t3.triangulation().number_of_vertices());
+    assert(nb_triangles > c3t3.number_of_facets_in_complex());
+
+    assert(min_edge_size_with_distance < min_edge_size_without_distance);
+    assert(avg_edge_size_with_distance < avg_edge_size_without_distance);
+
+    assert(sum_approx_error_with_distance > sum_approx_error_without_distance);
+  }
+};
+
 template <typename Concurrency_tag = CGAL::Sequential_tag>
-struct Distance_polyhedral_tester : public Tester<K_e_i>
+struct Distance_polyhedral_tester : public Tester<K_e_i>, public Edge_distance_test_helper
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -75,27 +157,6 @@ public:
 
     this->verify_c3t3(c3t3, domain, Polyhedral_tag(), expected_nb_vertices * 0.95, expected_nb_vertices * 1.05, expected_nb_triangles * 0.95, expected_nb_triangles * 1.05);
 
-    // verify that there are more vertices than without criteria
-    // and that the edges are smaller (minimum size and average size)
-
-    C3t3::Edges_in_complex_iterator edge_begin = c3t3.edges_in_complex_begin();
-    K::FT min_edge_size_with_distance = CGAL::sqrt(
-        CGAL::squared_distance(edge_begin->first->vertex( edge_begin->second )->point(), edge_begin->first->vertex( edge_begin->third )->point())
-        );
-    K::FT avg_edge_size_with_distance = min_edge_size_with_distance;
-    edge_begin++;
-    int nbEdges = 1;
-    for (C3t3::Edges_in_complex_iterator eit = edge_begin ; eit != c3t3.edges_in_complex_end(); ++eit ) {
-      K::FT dist = CGAL::sqrt(
-          CGAL::squared_distance(eit->first->vertex( eit->second )->point(), eit->first->vertex( eit->third )->point())
-          );
-      if (dist < min_edge_size_with_distance) {
-          min_edge_size_with_distance = dist;
-      }
-      avg_edge_size_with_distance += dist;
-      nbEdges++;
-    }
-    avg_edge_size_with_distance /= nbEdges;
 
     Mesh_criteria criteria_without(edge_size = 0.074,
         facet_distance = 0.0074,
@@ -105,38 +166,14 @@ public:
         cell_size = 0.074);
 
     // Mesh generation
-    c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria_without, no_perturb(), no_exude());
+    C3t3 c3t3_without = CGAL::make_mesh_3<C3t3>(domain, criteria_without, no_perturb(), no_exude());
 
-    // Get edge min and average length
-    C3t3::Edges_in_complex_iterator edge_begin_ = c3t3.edges_in_complex_begin();
-    K::FT min_edge_size_without_distance = CGAL::sqrt(
-        CGAL::squared_distance(edge_begin_->first->vertex( edge_begin_->second )->point(), edge_begin_->first->vertex( edge_begin_->third )->point())
-        );
-    K::FT avg_edge_size_without_distance = min_edge_size_without_distance;
-    edge_begin_++;
-    nbEdges = 1;
-    for (C3t3::Edges_in_complex_iterator eit = edge_begin_ ; eit != c3t3.edges_in_complex_end(); ++eit ) {
-      K::FT dist = CGAL::sqrt(
-          CGAL::squared_distance(eit->first->vertex( eit->second )->point(), eit->first->vertex( eit->third )->point())
-          );
-      if (dist < min_edge_size_without_distance) {
-          min_edge_size_without_distance = dist;
-      }
-      avg_edge_size_without_distance += dist;
-      nbEdges++;
-    }
-    avg_edge_size_without_distance /= nbEdges;
-
-    assert(nb_vertices  > c3t3.triangulation().number_of_vertices());
-    assert(nb_triangles > c3t3.number_of_facets_in_complex());
-
-    assert(min_edge_size_with_distance < min_edge_size_without_distance);
-    assert(avg_edge_size_with_distance < avg_edge_size_without_distance);
+    this->test_c3t3_without_and_with(c3t3_without, domain, c3t3, domain);
   }
 };
 
 template <typename Concurrency_tag = CGAL::Sequential_tag>
-struct Distance_label_image_tester : public Tester<K_e_i>
+struct Distance_label_image_tester : public Tester<K_e_i>, public Edge_distance_test_helper
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -197,9 +234,9 @@ public:
         cell_size = 5.);
 
     // Mesh generation
-    c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria_without, no_perturb(), no_exude());
-    assert(nb_vertices  > c3t3.triangulation().number_of_vertices());
-    assert(nb_triangles > c3t3.number_of_facets_in_complex());
+    C3t3 c3t3_without = CGAL::make_mesh_3<C3t3>(domain, criteria_without, no_perturb(), no_exude());
+
+    this->test_c3t3_without_and_with(c3t3_without, domain, c3t3, domain);
   }
 };
 
