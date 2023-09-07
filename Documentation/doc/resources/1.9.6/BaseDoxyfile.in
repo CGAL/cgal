@@ -199,7 +199,8 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalParamSectionEnd=\cgalParamNEnd" \
                          "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
                          "cgalBigO{1}=\f$O(\1)\f$" \
-                         "cgalBigOLarge{1}=\f$O\left(\1\right)\f$"
+                         "cgalBigOLarge{1}=\f$O\left(\1\right)\f$" \
+                         "cgalInclude{1}=`#include<\1>`"
 
 # Doxygen selects the parser to use depending on the extension of the files it
 # parses. With this tag you can assign which parser to use for a given
