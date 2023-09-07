@@ -106,12 +106,22 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
   out << c3t3;
 }
 
-struct NoDistanceFunction;
+template <typename FT>
+struct NoDistanceFunction {
+  template <typename Bare_point, typename Index>
+  FT operator()(const Bare_point& p, int dim, const Index& index) const {
+      return FT(DBL_MAX);
+  }
+};
 
-template <typename C3T3, typename MeshDomain, typename SizingFunction, typename DistanceFunction = NoDistanceFunction>
+template<typename C3T3,
+         typename MeshDomain,
+         typename SizingFunction,
+         typename DistanceFunction = CGAL::Default>
 class Protect_edges_sizing_field
   : public CGAL::SMDS_3::internal::Debug_messages_tools
 {
+
   typedef Protect_edges_sizing_field          Self;
 
 public:
@@ -132,6 +142,10 @@ public:
   typedef typename MeshDomain::Corner_index         Corner_index;
   typedef typename MeshDomain::Index                Index;
 
+  using Distance_Function = typename CGAL::Default::Get<
+    DistanceFunction,
+    NoDistanceFunction<FT> >::type;
+
 private:
   typedef typename CGAL::Kernel_traits<MeshDomain>::Kernel   Kernel;
   typedef Delaunay_triangulation_3<Kernel>                   Dt;
@@ -142,7 +156,7 @@ public:
                              const MeshDomain& domain,
                              SizingFunction size=SizingFunction(),
                              const FT minimal_size = FT(),
-                             DistanceFunction edge_distance = DistanceFunction(),
+                             Distance_Function edge_distance = Distance_Function(),
                              std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
@@ -492,7 +506,7 @@ private:
   SizingFunction size_;
   FT minimal_size_;
   Weight minimal_weight_;
-  DistanceFunction edge_distance_;
+  Distance_Function edge_distance_;
   std::set<Curve_index> treated_edges_;
   Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
@@ -510,7 +524,7 @@ template <typename C3T3, typename MD, typename Sf, typename Df>
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
                            Sf size, const FT minimal_size,
-                           Df edge_distance,
+                           Distance_Function edge_distance,
                            std::size_t maximal_number_of_vertices,
                            Mesh_error_code* error_code
 #ifndef CGAL_NO_ATOMIC
@@ -1378,6 +1392,7 @@ refine_balls()
   Triangulation& tr = c3t3_.triangulation();
 
   // Loop
+  bool check_edge_distance = !std::is_same_v<Distance_Function, NoDistanceFunction<FT>>;
   bool restart = true;
   using CGAL::Mesh_3::internal::refine_balls_max_nb_of_loops;
   this->refine_balls_iteration_nb = 0;
@@ -1410,7 +1425,7 @@ refine_balls()
 
       // If those vertices are not adjacent
       if( non_adjacent_but_intersect(va, vb)
-        || approx_is_too_large(va, vb))
+          || (check_edge_distance && approx_is_too_large(va, vb)))
       {
         using CGAL::Mesh_3::internal::distance_divisor;
 

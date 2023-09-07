@@ -145,7 +145,7 @@ public:
   template < typename Sizing_field, typename Sizing_field2 = FT >
   Mesh_edge_criteria_3(const Sizing_field& length_bound,
                        const FT& min_length_bound = 0,
-                       const Sizing_field2& distance_bound = 0)
+                       const Sizing_field2& distance_bound = FT(DBL_MAX))
       : min_length_bound_(min_length_bound)
   {
     init_p_size(length_bound,
