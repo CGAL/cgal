@@ -8,7 +8,7 @@ geometry\cgalFootnote{It is called extended geometry for simplicity,
 though it is not a real geometry in the classical sense}. Let `K` be
 an instance of the data type `ExtendedKernelTraits_2`. The central
 notion of extended geometry are extended points. An extended point
-represents either a standard affine point of the Cartesian plane or a
+represents either a standard affine point of the %Cartesian plane or a
 non-standard point representing the equivalence class of rays where
 two rays are equivalent if one is contained in the other.
 
@@ -353,4 +353,3 @@ const char* output_identifier() ;
 /// @}
 
 }; /* end ExtendedKernelTraits_2 */
-

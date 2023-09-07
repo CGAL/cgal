@@ -28,7 +28,7 @@ typedef unspecified_type FT;
 /*!
  * Function object type that provides
  * `Point_3 operator()(FT x, FT y, FT z) const`
- * returning the point with `x`, `y` and `z` as Cartesian coordinates.
+ * returning the point with `x`, `y` and `z` as %Cartesian coordinates.
  */
 typedef unspecified_type Construct_point_3;
 
@@ -186,4 +186,3 @@ compute_z_3_object();
 /// @}
 
 }; /* end DelaunayTriangulationTraits_2 */
-

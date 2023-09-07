@@ -168,7 +168,7 @@ public:
 
 
   /*! The `Point_2` number-type nested within the traits class represents
-   * a Cartesian point whose coordinates are algebraic numbers of type
+   * a %Cartesian point whose coordinates are algebraic numbers of type
    * `CoordNT`.
    */
   class Point_2 {

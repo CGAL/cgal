@@ -76,7 +76,7 @@ less than \f$ r\f$.
 bool contains(const Point_d& p) const;
 
 /*!
-Test whether the fuzzy sphere contains the point whose Cartesian coordinates
+Test whether the fuzzy sphere contains the point whose %Cartesian coordinates
 are contained in the range [`begin`, `end`).
 */
 template <typename Coord_iterator>

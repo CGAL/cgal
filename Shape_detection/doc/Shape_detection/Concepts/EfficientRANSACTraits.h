@@ -39,7 +39,7 @@ public:
   /// The 2D vector type, only required if you want to detect tori
   typedef unspecified_type Vector_2;
 
-  /// The number type of the Cartesian coordinates of types Point_3
+  /// The number type of the %Cartesian coordinates of types Point_3
   typedef unspecified_type FT;
 
   /// A model of the concept `Range` with random access iterators, providing input points and normals
@@ -63,9 +63,9 @@ public:
   /*!
    * Function object type that provides
    * `Point_3 operator()(Origin p)`
-   * returning the point with 0, 0, 0 as Cartesian coordinates
+   * returning the point with 0, 0, 0 as %Cartesian coordinates
    * and `Point_3 operator()(FT x, FT y, FT z)`
-   * returning the point with `x`, `y` and `z` as Cartesian coordinates.
+   * returning the point with `x`, `y` and `z` as %Cartesian coordinates.
    */
   typedef unspecified_type Construct_point_3;
 
@@ -106,7 +106,7 @@ public:
   /*!
    * Function object type that provides
    * `Point_2 operator()(FT x, FT y)`
-   * returning the 2D point with `x` and `y` as Cartesian coordinates.
+   * returning the 2D point with `x` and `y` as %Cartesian coordinates.
    * Only required if you want to detect tori.
    */
   typedef unspecified_type Construct_point_2;

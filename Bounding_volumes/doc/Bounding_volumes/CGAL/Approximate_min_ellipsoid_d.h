@@ -8,7 +8,7 @@ An object of class `Approximate_min_ellipsoid_d` is an approximation to the
 ellipsoid of smallest volume enclosing a finite multiset of points
 in \f$ d\f$-dimensional Euclidean space \f$ \E^d\f$, \f$ d\ge 2\f$.
 
-An <I>ellipsoid</I> in \f$ \E^d\f$ is a Cartesian pointset of the form \f$ \{
+An <I>ellipsoid</I> in \f$ \E^d\f$ is a %Cartesian pointset of the form \f$ \{
 x\in\E^d \mid x^T E x + x^T e + \eta\leq 0 \}\f$, where \f$ E\f$ is some
 positive definite matrix from the set \f$ \mathbb{R}^{d\times d}\f$, \f$ e\f$ is some
 real \f$ d\f$-vector, and \f$ \eta\in\mathbb{R}\f$. A pointset \f$ P\subseteq \E^d\f$ is
@@ -94,7 +94,7 @@ is actually achieved; the performance of the algorithm in this respect
 highly depends on the input pointset. Values of at least \f$ 0.01\f$ for
 \f$ \epsilon\f$ are usually handled without problems.
 
-Internally, the algorithm represents the input points' Cartesian
+Internally, the algorithm represents the input points' %Cartesian
 coordinates as `double`'s. For this conversion to work, the input
 point coordinates must be convertible to `double`. Also, in order
 to compute the achieved epsilon \f$ \epsilon'\f$ mentioned above, the algorithm
@@ -171,7 +171,7 @@ typedef unspecified_type Cartesian_const_iterator;
 /*!
 A model of STL concept
 `RandomAccessIterator` with value type `double` that is used
-to iterate over the Cartesian center coordinates of the computed
+to iterate over the %Cartesian center coordinates of the computed
 ellipsoid, see `center_cartesian_begin()`.
 */
 typedef unspecified_type Center_coordinate_iterator;
@@ -313,7 +313,7 @@ int dimension() const;
 
 /*!
 
-returns an iterator pointing to the first of the \f$ d\f$ Cartesian
+returns an iterator pointing to the first of the \f$ d\f$ %Cartesian
 coordinates of the computed ellipsoid's center.
 
 The returned point is a floating-point approximation to the
