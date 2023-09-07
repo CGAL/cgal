@@ -24,7 +24,7 @@
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 
 #include <CGAL/Real_timer.h>
@@ -50,16 +50,16 @@ typedef std::vector<double>           Doubles ;
 
 typedef CGAL::Segment_2<IK>           ISegment;
 typedef std::vector<IPoint>           IPolygon;
-typedef boost::shared_ptr<IPolygon>   IPolygonPtr;
+typedef std::shared_ptr<IPolygon>   IPolygonPtr;
 typedef std::vector<IPolygonPtr>      IRegion ;
-typedef boost::shared_ptr<IRegion>    IRegionPtr ;
+typedef std::shared_ptr<IRegion>    IRegionPtr ;
 typedef std::vector<IRegionPtr>       IRegions ;
 
 typedef CGAL::Segment_2<OK>           OSegment;
 typedef std::vector<OPoint>           OPolygon;
-typedef boost::shared_ptr<OPolygon>   OPolygonPtr;
+typedef std::shared_ptr<OPolygon>   OPolygonPtr;
 typedef std::vector<OPolygonPtr>      ORegion ;
-typedef boost::shared_ptr<ORegion>    ORegionPtr ;
+typedef std::shared_ptr<ORegion>    ORegionPtr ;
 typedef std::vector<ORegionPtr>       ORegions ;
 
 typedef CGAL::Straight_skeleton_2<IK>                             ISls;
@@ -157,8 +157,8 @@ public:
 
 typedef CGAL::HalfedgeDS_const_decorator<ISls> Sls_const_decorator ;
 
-typedef boost::shared_ptr<ISls> ISlsPtr ;
-typedef boost::shared_ptr<OSls> OSlsPtr ;
+typedef std::shared_ptr<ISls> ISlsPtr ;
+typedef std::shared_ptr<OSls> OSlsPtr ;
 
 typedef CGAL::Straight_skeleton_items_converter_2<ISls,OSls> SlsItemsConverter ;
 

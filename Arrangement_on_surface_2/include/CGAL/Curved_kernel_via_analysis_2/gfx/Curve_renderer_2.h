@@ -423,8 +423,8 @@ template < class Coord_2, template < class, class > class Container,
         class Allocator >
 void draw(const Arc_2& arc,
           Container< std::vector< Coord_2 >, Allocator >& points,
-          boost::optional< Coord_2 > *end_pt1 = nullptr,
-          boost::optional< Coord_2 > *end_pt2 = nullptr) {
+          std::optional< Coord_2 > *end_pt1 = nullptr,
+          std::optional< Coord_2 > *end_pt2 = nullptr) {
 
 #ifdef CGAL_CKVA_CR_TIMING
     refine_timer.start();

@@ -100,9 +100,9 @@ public:
 
   typedef Algebraic_point_2                                 Point_2;
 
-  CGAL_static_assertion((std::is_same<Integer, Coefficient>::value));
-  CGAL_static_assertion((std::is_same<Polynomial_1,
-                       typename FT_poly_rat_1::Numerator_type>::value));
+  static_assert(std::is_same<Integer, Coefficient>::value);
+  static_assert(std::is_same<Polynomial_1,
+                       typename FT_poly_rat_1::Numerator_type>::value);
 
 public:
   const Rational_function& get_rational_function(const Polynomial_1& numerator,
@@ -2038,8 +2038,6 @@ public:
   OutputIterator intersect(const Self& arc, OutputIterator oi,
                            const Cache& cache) const
   {
-    typedef boost::variant<Intersection_point, Self>    Intersection_result;
-
     CGAL_precondition(this->is_valid());
     CGAL_precondition(this->is_continuous());
     CGAL_precondition(arc.is_valid());
@@ -2047,7 +2045,7 @@ public:
 
     if (this->equals(arc)) {
       Self overlap_arc(*this);
-      *oi++ = Intersection_result(overlap_arc);
+      *oi++ = overlap_arc;
       return oi;
     }
 
@@ -2170,7 +2168,7 @@ public:
               (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
           {
             Intersection_point ip(p_left, 0);
-            *oi++ = Intersection_result(ip);
+            *oi++ = ip;
           }
 
           return oi;
@@ -2189,7 +2187,7 @@ public:
                            this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS |
                            this->IS_VALID);
 
-      *oi++ = Intersection_result(overlap_arc);
+      *oi++ = overlap_arc;
       return oi;
     }
 
@@ -2221,7 +2219,7 @@ public:
         Algebraic_point_2 p(this->_f, *x_iter);
         // Output the intersection point:
         Intersection_point ip(p, *m_iter);
-        *oi++ = Intersection_result(ip);
+        *oi++ = ip;
       }
     }
 

@@ -119,7 +119,7 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
   typedef typename Traits::Matrix                                    Matrix;
   typedef typename Traits::Vector                                    Vector;
 
-  CGAL_static_assertion((std::is_same<typename boost::range_value<PointRange>::type, Point>::value));
+  static_assert(std::is_same<typename boost::range_value<PointRange>::type, Point>::value);
 
   std::vector<Point> rotated_points;
   rotated_points.reserve(points.size());

@@ -18,7 +18,7 @@ char * Option_parser::s_strategy_opts[] = {
 };
 
 template <class MyId>
-void Option_parser::my_validate(boost::any & v,
+void Option_parser::my_validate(std::any & v,
                                 const std::vector<std::string> & values)
 {
   typedef std::vector<MyId>     Vector_id;
@@ -28,11 +28,11 @@ void Option_parser::my_validate(boost::any & v,
       if (v.empty()) {
         Vector_id vec;
         vec.push_back(MyId(i));
-        v = boost::any(vec);
+        v = std::any(vec);
       } else {
-        Vector_id vec = boost::any_cast<Vector_id>(v);
+        Vector_id vec = std::any_cast<Vector_id>(v);
         vec.push_back(MyId(i));
-        v = boost::any(vec);
+        v = std::any(vec);
       }
       return;
     }
@@ -41,14 +41,14 @@ void Option_parser::my_validate(boost::any & v,
 }
 
 /* Overload the 'validate' function for the user-defined class */
-void validate(boost::any & v, const std::vector<std::string> & values,
+void validate(std::any & v, const std::vector<std::string> & values,
               Option_parser::Vector_type_id * target_type, int)
 {
   Option_parser::my_validate<Option_parser::Type_id>(v, values);
 }
 
 /* Overload the 'validate' function for the user-defined class */
-void validate(boost::any & v, const std::vector<std::string> & values,
+void validate(std::any & v, const std::vector<std::string> & values,
               Option_parser::Vector_strategy_id * target_type, int)
 {
   Option_parser::my_validate<Option_parser::Strategy_id>(v, values);

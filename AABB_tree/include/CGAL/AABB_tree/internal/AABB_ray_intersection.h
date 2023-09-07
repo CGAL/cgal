@@ -19,8 +19,7 @@
 
 #include <functional>
 #include <type_traits>
-#include <boost/optional.hpp>
-#include <boost/variant/apply_visitor.hpp>
+#include <optional>
 #  if defined(BOOST_MSVC)
 #    pragma warning(push)
 #    pragma warning(disable: 4996)
@@ -43,7 +42,7 @@ class AABB_ray_intersection {
 public:
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 
-  boost::optional< Ray_intersection_and_primitive_id >
+  std::optional< Ray_intersection_and_primitive_id >
   ray_intersection(const Ray& query, SkipFunctor skip) const {
     // We hit the root, now continue on the children. Keep track of
     // nb_primitives through a variable in each Node on the stack. In
@@ -63,7 +62,7 @@ public:
 
     Heap_type pq;
     // pq.reserve(tree_.size() / 2);
-    boost::optional< Ray_intersection_and_primitive_id >
+    std::optional< Ray_intersection_and_primitive_id >
       intersection, /* the temporary for calculating the result */
       p; /* the current best intersection */
 
@@ -84,7 +83,7 @@ public:
         if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -96,7 +95,7 @@ public:
         if(!skip(current.node->right_data().id()) /* && do_intersect_obj(query, current.node->right_data()) */) {
           intersection = intersection_obj(query, current.node->right_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -111,7 +110,7 @@ public:
         if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -121,7 +120,7 @@ public:
 
         // right child
         const Node* child = &(current.node->right_child());
-        boost::optional< FT > dist = intersection_distance_obj(query, child->bbox());
+        std::optional< FT > dist = intersection_distance_obj(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, 2));
 
@@ -130,7 +129,7 @@ public:
       default: // Children both inner nodes
       {
         const Node* child = &(current.node->left_child());
-        boost::optional<FT> dist = intersection_distance_obj(query, child->bbox());
+        std::optional<FT> dist = intersection_distance_obj(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, current.nb_primitives/2));
 
@@ -198,10 +197,10 @@ private:
 
 template<typename AABBTraits>
 template<typename Ray, typename SkipFunctor>
-boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
+std::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
 AABB_tree<AABBTraits>::first_intersection(const Ray& query,
                                           const SkipFunctor& skip) const {
-  CGAL_static_assertion_msg((std::is_same<Ray, typename AABBTraits::Ray_3>::value),
+  static_assert(std::is_same<Ray, typename AABBTraits::Ray_3>::value,
                             "Ray and Ray_3 must be the same type");
 
   switch(size()) // copy-paste from AABB_tree::traversal
@@ -219,22 +218,22 @@ AABB_tree<AABBTraits>::first_intersection(const Ray& query,
       break;
     }
   }
-  return boost::none;
+  return std::nullopt;
 }
 
 template<typename AABBTraits>
 template<typename Ray, typename SkipFunctor>
-boost::optional<typename AABB_tree<AABBTraits>::Primitive_id>
+std::optional<typename AABB_tree<AABBTraits>::Primitive_id>
 AABB_tree<AABBTraits>::first_intersected_primitive(const Ray& query,
                             const SkipFunctor& skip) const
 {
-  boost::optional<
+  std::optional<
     typename AABB_tree<AABBTraits>::
       template Intersection_and_primitive_id<Ray>::Type > res =
         first_intersection(query, skip);
   if ( (bool) res )
-    return boost::make_optional( res->second );
-  return boost::none;
+    return std::make_optional( res->second );
+  return std::nullopt;
 }
 
 }

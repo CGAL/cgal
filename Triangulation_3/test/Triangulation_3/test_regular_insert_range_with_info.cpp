@@ -38,7 +38,7 @@ struct Tester
   {
     typedef std::vector<std::pair<Weighted_point, unsigned> >              Container;
     typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     typename boost::add_const<Container>::type,
+                                     std::add_const_t<Container>,
                                      Container>::type                      Cast_type;
 
     Container points;
@@ -91,7 +91,7 @@ struct Tester
   {
     typedef std::vector<Weighted_point>                                   Container;
     typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     typename boost::add_const<Container>::type,
+                                     std::add_const_t<Container>,
                                      Container >::type                    Cast_type;
 
     Container points;
@@ -157,7 +157,7 @@ struct Tester
   {
     typedef std::vector< Weighted_point >                                   Container;
     typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     typename boost::add_const<Container>::type,
+                                     std::add_const_t<Container>,
                                      Container >::type                      Cast_type;
 
     Container points;

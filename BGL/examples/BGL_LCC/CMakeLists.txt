@@ -9,7 +9,7 @@ find_package(CGAL REQUIRED)
 
 # create a target per cppfile
 file(
-  GLOB_RECURSE cppfiles
+  GLOB cppfiles
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   *.cpp)
 foreach(cppfile ${cppfiles})

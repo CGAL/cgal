@@ -222,7 +222,7 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  halfedge_descriptor in_h_kept = *boost::begin(sorted_hedges);
+  halfedge_descriptor in_h_kept = *std::begin(sorted_hedges);
   halfedge_descriptor out_h_kept = next(in_h_kept, pm);
   vertex_descriptor v_kept = target(in_h_kept, pm);
 

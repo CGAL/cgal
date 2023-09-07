@@ -21,7 +21,7 @@
 
 #include <CGAL/Polyhedral_envelope.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <vector>
 #include <type_traits>
@@ -34,8 +34,8 @@ namespace internal {
   struct Dummy_filter2 {
   template <typename Profile>
   inline
-  const boost::optional<typename Profile::Point>
-  operator()(const Profile&, const boost::optional<typename Profile::Point>& op) const
+  const std::optional<typename Profile::Point>
+  operator()(const Profile&, const std::optional<typename Profile::Point>& op) const
   {
     return op;
   }
@@ -58,7 +58,7 @@ private:
   template <typename Profile>
   void initialize_envelope(const Profile& profile) const
   {
-    CGAL_static_assertion((std::is_same<GeomTraits, typename Profile::Geom_traits>::value));
+    static_assert(std::is_same<GeomTraits, typename Profile::Geom_traits>::value);
 
     typedef typename Profile::Triangle_mesh                                   Triangle_mesh;
     typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
@@ -109,8 +109,8 @@ public:
 
 
   template <typename Profile>
-  boost::optional<typename Profile::Point>
-  operator()(const Profile& profile, boost::optional<typename Profile::Point> op) const
+  std::optional<typename Profile::Point>
+  operator()(const Profile& profile, std::optional<typename Profile::Point> op) const
   {
     typedef typename Profile::Point Point;
     typedef typename Profile::vertex_descriptor_vector Link;
@@ -127,7 +127,7 @@ public:
 
       if(! (*m_envelope)(p)){
         // the new placement is outside envelope
-        return boost::none;
+        return std::nullopt;
       }
 
       const Link link = profile.link();
@@ -141,7 +141,7 @@ public:
 
         if(! (*m_envelope)(p, pv, pw)){
           // the triangle intersects the envelope
-          return boost::none;
+          return std::nullopt;
         }
         pv = pw;
 

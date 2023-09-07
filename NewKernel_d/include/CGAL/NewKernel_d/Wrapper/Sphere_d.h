@@ -32,7 +32,7 @@ class Sphere_d : public Get_type<typename R_::Kernel_base, Sphere_tag>::type
   typedef typename Get_functor<Kbase, Squared_radius_tag>::type                        SRBase;
 
   typedef Sphere_d                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename Get_type<R_, Sphere_tag>::type>::value));
+  static_assert(std::is_same<Self, typename Get_type<R_, Sphere_tag>::type>::value);
 
 public:
 

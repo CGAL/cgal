@@ -33,7 +33,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <boost/graph/subgraph.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -581,9 +581,9 @@ public:
         return num_teleported;
 
       // find the best merge pair
-      boost::optional< std::pair<std::size_t, std::size_t> > best_proxies =
+      std::optional< std::pair<std::size_t, std::size_t> > best_proxies =
         find_best_merge(!no_threshold_test);
-      if (best_proxies==boost::none)
+      if (best_proxies==std::nullopt)
         return num_teleported;
       if (px_worst == best_proxies->first || px_worst == best_proxies->second)
         return num_teleported;
@@ -662,7 +662,7 @@ public:
    * it is returned only if the error change after the merge is lower than the half of the maximum proxy error.
    * @return if the best merge pair is found the optional returned contains the proxy indices, and is empty otherwise.
    */
-  boost::optional< std::pair<std::size_t, std::size_t> >
+  std::optional< std::pair<std::size_t, std::size_t> >
   find_best_merge(const bool use_threshold_test) {
     typedef std::pair<std::size_t, std::size_t> Proxy_pair;
     typedef std::set<Proxy_pair> Pair_set;
@@ -705,7 +705,7 @@ public:
     }
 
     if (merged_set.empty())
-      return boost::none;
+      return std::nullopt;
 
     // test if merge worth it
     if (use_threshold_test) {
@@ -715,7 +715,7 @@ public:
           max_error = m_proxies[i].err;
       }
       if (min_error_change > max_error / FT(2.0))
-        return boost::none;
+        return std::nullopt;
     }
 
     return std::make_pair(px0, px1);
@@ -1959,7 +1959,7 @@ private:
   /*!
    * @brief checks if a vertex is attached with an anchor.
    * @tparam VertexAnchorIndexMap `ReadablePropertyMap`
-   * with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
+   * with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
    * @param vtx a vertex descriptor
    * @param vanchor_map vertex anchor index map
    */

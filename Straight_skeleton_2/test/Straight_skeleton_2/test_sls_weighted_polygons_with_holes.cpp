@@ -18,8 +18,6 @@
 #include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
 #include <CGAL/extrude_skeleton.h>
 
-#include <boost/shared_ptr.hpp>
-
 #include <iostream>
 
 namespace SS = CGAL::CGAL_SS_i;
@@ -34,7 +32,7 @@ using Polygon_2 = CGAL::Polygon_2<K>;
 using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
 
 using Straight_skeleton_2 = CGAL::Straight_skeleton_2<K>;
-using Straight_skeleton_2_ptr = boost::shared_ptr<Straight_skeleton_2>;
+using Straight_skeleton_2_ptr = std::shared_ptr<Straight_skeleton_2>;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
 
