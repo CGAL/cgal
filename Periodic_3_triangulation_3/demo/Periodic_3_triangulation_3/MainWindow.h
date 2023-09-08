@@ -103,15 +103,15 @@ public:
   }
 
   ~MainWindow() {
-    delete(ui);
-    delete(s);
     process->close();
     delete(process);
+    delete(s);
+    delete(ui);
   }
 
 public Q_SLOTS:
   void help() {
-    QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath)
+    QString app = QLibraryInfo::path(QLibraryInfo::BinariesPath)
       + QDir::separator();
 #if !defined(Q_OS_MAC)
     app += QString("assistant");
