@@ -50,9 +50,9 @@ public:
    *
    * \todo
    */
-  typedef std::function<std::optional<std::size_t>(const Tree&, std::size_t)> Traversal_function;
+  using Traversal_function = std::function<std::optional<std::size_t>(const Tree&, std::size_t)>;
 
-  typedef typename Tree::Node_index Node_index;
+  using Node_index = typename Tree::Node_index;
 
   /// @}
 

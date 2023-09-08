@@ -70,19 +70,19 @@ public:
 
   /// \name Template Types
   /// @{
-  typedef Traits_ Traits; ///< Geometry traits
+  using Traits = Traits_; ///< Geometry traits
   /// @}
 
   /// \name Traits Types
   /// @{
-  typedef typename Traits::Dimension Dimension; ///< Dimension of the tree
-  typedef typename Traits::FT FT; ///< Number type.
-  typedef typename Traits::Point_d Point; ///< Point type.
-  typedef typename Traits::Bbox_d Bbox; ///< Bounding box type.
-  typedef typename Traits::Sphere_d Sphere; ///< Sphere type.
-  typedef typename Traits::Adjacency Adjacency; ///< Adjacency type.
+  using Dimension = typename Traits::Dimension; ///< Dimension of the tree
+  using FT = typename Traits::FT; ///< Number type.
+  using Point = typename Traits::Point_d; ///< Point type.
+  using Bbox = typename Traits::Bbox_d; ///< Bounding box type.
+  using Sphere = typename Traits::Sphere_d; ///< Sphere type.
+  using Adjacency = typename Traits::Adjacency; ///< Adjacency type.
 
-  typedef typename Traits::Node_data Node_data;
+  using Node_data = typename Traits::Node_data;
   // todo: Node_data_element will only exist for certain Traits types, so I don't know if it can be re-exported
 
   /// @}
@@ -93,25 +93,25 @@ public:
   /*!
    * \brief Self typedef for convenience.
    */
-  typedef Orthtree<Traits> Self;
+  using Self = Orthtree<Traits>;
 
   /*!
    * \brief Degree of the tree (number of children of non-leaf nodes).
    */
-  typedef Dimension_tag<(2 << (Dimension::value - 1))> Degree;
+  using Degree = Dimension_tag<(2 << (Dimension::value - 1))>;
 
   /*!
    * \brief Index of a given node in the tree; the root always has index 0.
    */
-  typedef std::size_t Node_index;
+  using Node_index = std::size_t;
 
   /*!
    * \brief Optional index of a node in the tree.
    */
-  typedef std::optional<Node_index> Maybe_node_index;
+  using Maybe_node_index = std::optional<Node_index>;
 
   // todo: maybe this could be private?
-  typedef Properties::Property_container<Node_index> Node_property_container;
+  using Node_property_container = Properties::Property_container<Node_index>;
 
   /*!
     \brief Set of bits representing this node's relationship to its parent.
@@ -121,7 +121,7 @@ public:
     `z` is greater, and so on for higher dimensions if needed.
     Used to represent a node's relationship to the center of its parent.
    */
-  typedef std::bitset<Dimension::value> Local_coordinates;
+  using Local_coordinates = std::bitset<Dimension::value>;
 
   /*!
     \brief Coordinates representing this node's relationship
@@ -130,25 +130,25 @@ public:
     Each value `(x, y, z, ...)` of global coordinates is calculated by doubling
     the parent's global coordinates and adding the local coordinates.
    */
-  typedef std::array<std::uint32_t, Dimension::value> Global_coordinates;
+  using Global_coordinates = std::array<std::uint32_t, Dimension::value>;
 
   /*!
    * \brief A predicate that determines whether a node must be split when refining a tree.
    */
-  typedef std::function<bool(Node_index, const Self&)> Split_predicate;
+  using Split_predicate = std::function<bool(Node_index, const Self&)>;
 
   /*!
    * \brief A model of `ConstRange` whose value type is `Node_index`.
    */
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type Node_range;
-  typedef unspecified_type Node_index_range;
+  using Node_range = unspecified_type;
+  using Node_index_range = unspecified_type;
 #else
-  typedef boost::iterator_range<Index_traversal_iterator<Self>> Node_index_range;
+  using Node_index_range = boost::iterator_range<Index_traversal_iterator<Self>>;
 #endif
 
   /// \cond SKIP_IN_MANUAL
-  typedef Orthtrees::internal::Cartesian_ranges<Traits> Cartesian_ranges;
+  using Cartesian_ranges = Orthtrees::internal::Cartesian_ranges<Traits>;
   /// \endcond
 
   /// @}

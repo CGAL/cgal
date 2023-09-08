@@ -4,11 +4,10 @@
 #include <CGAL/Octree.h>
 
 // Type Declarations
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef std::vector<Point> Point_vector; // todo: this was changed to std::list at some point; why?
-
-typedef CGAL::Octree<Kernel, Point_vector> Octree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using Point_vector = std::vector<Point>; // todo: this was changed to std::list at some point; why?
+using Octree = CGAL::Octree<Kernel, Point_vector>;
 
 int main() {
 

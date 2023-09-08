@@ -16,16 +16,14 @@
 
 using namespace std::chrono;
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::FT FT;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
-  Octree;
-
-typedef CGAL::Search_traits_3<Kernel> Kd_tree_traits;
-typedef CGAL::Orthogonal_k_neighbor_search<Kd_tree_traits> Kd_tree_search;
-typedef Kd_tree_search::Tree Kd_tree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using FT = Kernel::FT;
+using Point_set = CGAL::Point_set_3<Point>;
+using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
+using Kd_tree_traits = CGAL::Search_traits_3<Kernel>;
+using Kd_tree_search = CGAL::Orthogonal_k_neighbor_search<Kd_tree_traits>;
+using Kd_tree = Kd_tree_search::Tree;
 
 
 void naive_vs_octree(std::size_t dataset_size) {

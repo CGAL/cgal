@@ -7,13 +7,12 @@
 #include <CGAL/Random.h>
 
 // Type Declarations
-typedef CGAL::Dimension_tag<4> Dimension;
-typedef CGAL::Epick_d<Dimension> Kernel;
-typedef Kernel::Point_d Point_d;
-typedef std::vector<Point_d> Point_vector;
-
-typedef CGAL::Orthtree_traits_point<Kernel, Point_vector> Traits;
-typedef CGAL::Orthtree<Traits> Orthtree;
+using Dimension = CGAL::Dimension_tag<4>;
+using Kernel = CGAL::Epick_d<Dimension>;
+using Point_d = Kernel::Point_d;
+using Point_vector = std::vector<Point_d>;
+using Traits = CGAL::Orthtree_traits_point<Kernel, Point_vector>;
+using Orthtree = CGAL::Orthtree<Traits>;
 
 int main()
 {

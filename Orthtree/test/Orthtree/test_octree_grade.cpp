@@ -10,12 +10,12 @@
 #include <cassert>
 #include <CGAL/point_generators_3.h>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::FT FT;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-typedef CGAL::Orthtrees::Leaves_traversal<Octree> Leaves_traversal;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using FT = Kernel::FT;
+using Point_set = CGAL::Point_set_3<Point>;
+using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
+using Leaves_traversal = CGAL::Orthtrees::Leaves_traversal<Octree>;
 
 std::size_t count_jumps(Octree& octree) {
 

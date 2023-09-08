@@ -8,12 +8,11 @@
 #include <CGAL/Point_set_3/IO.h>
 
 // Type Declarations
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef Point_set::Point_map Point_map;
-
-typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using Point_set = CGAL::Point_set_3<Point>;
+using Point_map = Point_set::Point_map;
+using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
 
 template <typename Tree>
 struct First_branch_traversal {
