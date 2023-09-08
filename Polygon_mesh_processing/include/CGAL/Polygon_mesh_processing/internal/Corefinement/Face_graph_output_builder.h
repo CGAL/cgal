@@ -52,10 +52,195 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+
+template <class Kernel, class TriangleMesh>
+struct Visitor_for_non_manifold_output
+  : public Default_visitor<TriangleMesh>
+{
+  struct Handle_non_manifold_output{}; // flag for extra function in Face_graph_output_builder
+
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef std::unordered_map<vertex_descriptor, std::size_t> Vertex_id_map;
+  typedef boost::container::flat_map<const TriangleMesh*, Vertex_id_map> Vertex_id_maps;
+  std::shared_ptr<Vertex_id_maps> vertex_id_maps;
+
+/*
+  boost::shared_ptr< std::vector< Inter_info<halfedge_descriptor> > > hedge_inter_infos_ptr;
+
+  Visitor_for_non_manifold_output()
+    : hedge_inter_infos_ptr( new std::vector< Inter_info<halfedge_descriptor> >() )
+  {}
+*/
+
+  Visitor_for_non_manifold_output()
+    : vertex_id_maps( new Vertex_id_maps() )
+  {
+    vertex_id_maps->reserve(2);
+  }
+
+  void new_vertex_added(std::size_t node_id,
+                        vertex_descriptor vh,
+                        TriangleMesh& tm)
+  {
+    //TODO: what about existing vertices!!!!!!!!!!!!
+    (*vertex_id_maps)[&tm].emplace(vh, node_id);
+  }
+
+  template <class FaceIndexMap>
+  void export_flags(FaceIndexMap fim, const std::vector<std::size_t>& tm_patch_ids,
+                    const boost::dynamic_bitset<>&  is_patch_inside_other_tm,
+                    const boost::dynamic_bitset<>& coplanar_patches,
+                    const boost::dynamic_bitset<>& coplanar_patches_of_tm_for_union_and_intersection,
+                    const boost::dynamic_bitset<>& patch_status_not_set,
+                    TriangleMesh& tm)
+  {
+    typename TriangleMesh::template Property_map<typename TriangleMesh::Face_index, bool>
+      is_patch_inside_other_tm_map =
+        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm", false).first,
+      coplanar_patches_of_tm_map =
+        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm", false).first,
+      coplanar_patches_of_tm_for_union_and_intersection_map =
+        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection", false).first,
+      patch_status_not_set_map =
+        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set", false).first;
+
+    for(typename TriangleMesh::Face_index f : faces(tm))
+    {
+      const std::size_t patch_id = tm_patch_ids[ fim[f] ];
+      patch_status_not_set_map[f] = patch_status_not_set.test(patch_id);
+      is_patch_inside_other_tm_map[f] = is_patch_inside_other_tm.test(patch_id);
+      coplanar_patches_of_tm_map[f] = coplanar_patches.test(patch_id);
+      coplanar_patches_of_tm_for_union_and_intersection_map[f] = coplanar_patches_of_tm_for_union_and_intersection.test(patch_id);
+    }
+  }
+
+  static void remove_added_property_maps(TriangleMesh& tm)
+  {
+    auto is_patch_inside_other_tm_map =
+        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm"),
+      coplanar_patches_of_tm_map =
+        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm"),
+      coplanar_patches_of_tm_for_union_and_intersection_map =
+        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection"),
+      patch_status_not_set_map =
+        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set");
+  }
+
+  template <class Point_3>
+  void extract_intersection(TriangleMesh& tm1, TriangleMesh& tm2,
+                            std::vector<Point_3>& points,
+                            std::vector< std::array<std::size_t, 3> >& triangles)
+  {
+    std::cout << "size " << vertex_id_maps->size() << "\n";
+    std::cout << "k1 " << vertex_id_maps->begin()->first << "\n";
+    std::cout << "k2 " << std::next(vertex_id_maps->begin())->first << "\n";
+    std::cout << "tm1 " << &tm1 << "\n";
+    std::cout << "tm2 " << &tm2 << "\n";
+
+    auto is_patch_inside_tm2 =
+        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm").first,
+      coplanar_patches_of_tm1 =
+        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm").first,
+      coplanar_patches_of_tm1_for_union_and_intersection =
+        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection").first,
+      tm1_patch_status_not_set =
+        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set").first;
+    ///
+    auto is_patch_inside_tm1 =
+        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm").first,
+      coplanar_patches_of_tm2 =
+        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm").first,
+      coplanar_patches_of_tm2_for_union_and_intersection =
+        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection").first,
+      tm2_patch_status_not_set =
+        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set").first;
+
+    ///
+    // TODO : handle if mesh is not in the map
+    std::size_t vertex_offset = vertex_id_maps->begin()->second.size();
+    points.resize(vertex_offset);
+
+    Vertex_id_map& vid1 = vertex_id_maps->find(&tm1)->second;
+    auto get_vertex_id1 = [&vid1, &vertex_offset, &tm1, &points](vertex_descriptor v)
+    {
+      auto it_and_b = vid1.emplace(v, vertex_offset);
+      if (!it_and_b.second)
+      {
+        points[it_and_b.first->second]=tm1.point(v);
+      }
+      else
+      {
+        points.push_back(tm1.point(v));
+        ++vertex_offset;
+      }
+      return it_and_b.first->second;
+    };
+    Vertex_id_map& vid2 = vertex_id_maps->find(&tm2)->second;
+    auto get_vertex_id2 = [&vid2, &vertex_offset, &tm2, &points](vertex_descriptor v)
+    {
+      auto it_and_b = vid2.emplace(v, vertex_offset);
+      if (!it_and_b.second)
+      {
+        points[it_and_b.first->second]=tm2.point(v);
+      }
+      else
+      {
+        points.push_back(tm2.point(v));
+        ++vertex_offset;
+      }
+      return it_and_b.first->second;
+    };
+
+    // import faces from tm1
+    for (face_descriptor f : faces(tm1))
+    {
+      if (is_patch_inside_tm2[f] || coplanar_patches_of_tm1_for_union_and_intersection[f])
+      {
+        halfedge_descriptor h=halfedge(f, tm1);
+        triangles.push_back( make_array(get_vertex_id1(source(h, tm1)),
+                                        get_vertex_id1(target(h, tm1)),
+                                        get_vertex_id1(target(next(h, tm1), tm1))) );
+      }
+    }
+
+    // import faces from tm2
+    for (face_descriptor f : faces(tm2))
+    {
+      if (is_patch_inside_tm1[f])
+      {
+        halfedge_descriptor h=halfedge(f, tm2);
+        triangles.push_back( make_array(get_vertex_id2(source(h, tm2)),
+                                        get_vertex_id2(target(h, tm2)),
+                                        get_vertex_id2(target(next(h, tm2), tm2))) );
+      }
+    }
+  }
+/*
+  void register_halfedge_pair(halfedge_descriptor h1, halfedge_descriptor h2,
+                              bool q1_is_between_p1p2, bool q2_is_between_p1p2,
+                              bool p1_is_between_q1q2, bool p2_is_between_q1q2,
+                              bool p1_is_coplanar=false, bool p2_is_coplanar=false,
+                              bool q1_is_coplanar=false, bool q2_is_coplanar=false)
+  {
+    hedge_inter_infos_ptr->push_back( Inter_info<halfedge_descriptor>
+      (h1, h2, q1_is_between_p1p2, q2_is_between_p1p2,
+       p1_is_between_q1q2, p2_is_between_q1q2,
+       p1_is_coplanar, p2_is_coplanar,
+       q1_is_coplanar, q2_is_coplanar) );
+  }
+*/
+};
+
 // extra functions for handling non-documented functions for user visitors
 // with no extra functions
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_extra_functions,
                                   Has_extra_functions,
+                                  false)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_handle_non_manifold_output,
+                                  Handle_non_manifold_output,
                                   false)
 
 template <class UserVisitor, class TriangleMesh, class FaceIndexMap>
@@ -141,6 +326,9 @@ class Face_graph_output_builder
   typedef typename Default::Get<
     UserVisitor_, Default_visitor<TriangleMesh> >::type  UserVisitor;
   typedef typename Has_extra_functions<UserVisitor>::type VUNDF; //shortcut
+  typedef typename Has_handle_non_manifold_output<UserVisitor>::type HSV; //shortcut
+
+  static constexpr bool has_soup_visitor = HSV::value;
 
 // graph_traits typedefs
   typedef TriangleMesh                                              TM;
@@ -563,6 +751,9 @@ public:
 
 
     user_visitor.filter_coplanar_edges();
+
+    std::vector<typename An_edge_per_polyline_map::iterator> polylines_to_unconstrained;
+
 
     for (;epp_it!=epp_it_end;)
     {
@@ -1314,6 +1505,7 @@ public:
               std::cout << "  Non-manifold edge case 4\n";
 #endif
                 impossible_operation.set(TM1_MINUS_TM2); // tm1-tm2 is non-manifold
+                if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
               }
               else{
                 register_halfedge_pair(user_visitor, VUNDF(), h1, h2, true, true, true, true);
@@ -1330,6 +1522,7 @@ public:
               std::cout << "  Non-manifold edge case 5\n";
 #endif
                   impossible_operation.set(INTERSECTION); // tm1 n tm2 is non-manifold
+                  if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
                 }
               }
             }
@@ -1400,6 +1593,7 @@ public:
               std::cout << "  Non-manifold edge case 8\n";
 #endif
                 impossible_operation.set(UNION); // tm1 U tm2 is non-manifold
+                if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
               }
               else{
                 register_halfedge_pair(user_visitor, VUNDF(), h1, h2, false, false, true, true);
@@ -1414,6 +1608,7 @@ public:
               std::cout << "  Non-manifold edge case 9\n";
 #endif
                 impossible_operation.set(TM2_MINUS_TM1); // tm2 - tm1 is non-manifold
+                if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
               }
             }
           }
@@ -1452,6 +1647,70 @@ public:
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     #warning stop using next_marked_halfedge_around_target_vertex and create lists of halfedges instead?
 #endif
+
+    // TODO: merge patches
+    // TODO: only one operation could be allowed
+    //~ CGAL_assertion(requested_output[0]+requested_output[1]+requested_output[2]+requested_output[3]==1);
+    std::cout << "polylines_to_unconstrained.size() " << polylines_to_unconstrained.size() << "\n";
+
+
+    //std::vector<std::pair<std::size_t, std::size_t> > ccs_to_merge_1;
+    //std::vector<std::pair<std::size_t, std::size_t> > ccs_to_merge_2;
+
+    for (typename An_edge_per_polyline_map::iterator it : polylines_to_unconstrained)
+    {
+      const std::pair<bool, std::size_t>& polyline_info=it->second.second;
+
+      std::cout << "it->second.first.size() " << it->second.first.size() << " \n";
+      assert(it->second.first.count(&tm2));
+      assert(it->second.first.count(&tm1));
+
+      halfedge_descriptor h1 = it->second.first.find(&tm1)->second;
+      halfedge_descriptor h2 = it->second.first.find(&tm2)->second;
+
+      //ccs_to_merge_1.push_back({get(fids1,face(h1, tm1)), get(fids1,face(opposite(h1, tm1), tm1))});
+      //ccs_to_merge_2.push_back({get(fids2,face(h2, tm2)), get(fids2,face(opposite(h2, tm2), tm2))});
+
+      if( polyline_info.first ){
+        h1=opposite(h1,tm1);
+        h2=opposite(h2,tm2);
+      }
+
+      std::size_t i=0;
+      std::vector<edge_descriptor> edges1, edges2;
+      edges1.reserve(polyline_info.second+1);
+      edges2.reserve(polyline_info.second+1);
+
+      std::cout << "polyline_info.second " << polyline_info.second << "\n";
+
+      while(true)
+      {
+        edges1.push_back(edge(h1, tm1));
+        edges2.push_back(edge(h2, tm2));
+
+        if (++i == polyline_info.second+1) break;
+
+        h1 = next_marked_halfedge_around_target_vertex(h1, tm1, intersection_edges1);
+        h2 = next_marked_halfedge_around_target_vertex(h2, tm2, intersection_edges2);
+      }
+
+      for (i=0; i<edges1.size(); ++i)
+      {
+        put(marks_on_input_edges.ecm1, edges1[i], false);
+        intersection_edges1.erase(edges1[i]);
+
+        put(marks_on_input_edges.ecm2, edges2[i], false);
+        intersection_edges2.erase(edges2[i]);
+      }
+
+      an_edge_per_polyline.erase(it);
+    }
+
+
+    //TODO: update patch ids
+
+
+    std::cout << "done erasing\n";
 
     if ( patch_status_not_set_tm1.any() )
     {
@@ -1604,6 +1863,28 @@ public:
 
     CGAL_assertion(patch_status_not_set_tm1.none());
     CGAL_assertion(patch_status_not_set_tm2.none());
+
+
+    if (!polylines_to_unconstrained.empty()  && has_soup_visitor)
+    {
+      export_flags( user_visitor, HSV(),
+                    fids1, tm1_patch_ids,
+                    is_patch_inside_tm2,
+                    coplanar_patches_of_tm1,
+                    coplanar_patches_of_tm1_for_union_and_intersection,
+                    patch_status_not_set_tm1,
+                    tm1);
+      export_flags( user_visitor, HSV(),
+                    fids2, tm2_patch_ids,
+                    is_patch_inside_tm1,
+                    coplanar_patches_of_tm2,
+                    coplanar_patches_of_tm2_for_union_and_intersection,
+                    patch_status_not_set_tm2,
+                    tm2);
+      return; // TODO: continue if you want to get the mesh operations
+    }
+
+
 
     //to maintain a halfedge on each polyline + pair<bool,int>
     //with first = "is the key (pair<Node_id,Node_id>) was reversed?"
