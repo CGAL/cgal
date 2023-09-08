@@ -23,11 +23,11 @@ struct Orthtree_traits_empty : public Orthtree_traits_base_for_dimension<K, Dime
 
   Orthtree_traits_empty(typename Self::Bbox_d bbox) : m_bbox(bbox) {};
 
-  auto root_node_bbox_object() const {
+  auto construct_root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d { return m_bbox; };
   }
 
-  auto root_node_contents_object() const { return [&]() -> Node_data { return {}; }; }
+  auto construct_root_node_contents_object() const { return [&]() -> Node_data { return {}; }; }
 
   auto distribute_node_contents_object() {
     return [&](typename Tree::Node_index n, Tree& tree, const typename Self::Point_d& center) -> void {};

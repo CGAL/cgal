@@ -5,10 +5,8 @@
   The concept `OrthtreeTraits` defines the requirements for the
   template parameter of the `CGAL::Orthtree` class.
 
-  todo: update list of models
-  \cgalHasModel `CGAL::Orthtree_traits_2<GeomTraits>`
-  \cgalHasModel `CGAL::Orthtree_traits_3<GeomTraits>`
-  \cgalHasModel `CGAL::Orthtree_traits_d<GeomTraits,Dimension>`
+  \cgalHasModel `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>`
+  \cgalHasModel `CGAL::Orthtree_traits_face_graph<PolygonMesh, VPM>`
 */
 class OrthtreeTraits
 {
@@ -25,6 +23,8 @@ public:
   /*!
     A random access iterator type to enumerate the
     %Cartesian coordinates of a point.
+
+    todo: This isn't used, should it be?
   */
   typedef unspecified_type Cartesian_const_iterator_d;
 
@@ -34,11 +34,54 @@ public:
    */
   typedef unspecified_type Node_data;
 
+  /*!
+   * \brief Number-type which can take on values indicating adjacency directions.
+   *
+   * Must be able to take on values ranging from 0 to the number of faces of the (hyper)cube type, equivalent to 2 * D.
+   */
   typedef unspecified_type Adjacency; ///< Specify the adjacency directions
 
   /*!
-    Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc. FT arguments.
-  */
+   * \brief Functor with an operator to create the bounding box of the root node.
+   *
+   * The bounding box must enclose all elements contained by the tree.
+   * It may be tight-fitting. The orthtree constructor produces a bounding cube surrounding this region.
+   * For traits which assign no data to each node, this can be defined to return a fixed region.
+   */
+  typedef unspecified_type Construct_root_node_bbox;
+
+  /*!
+   * \brief Functor which initializes the contained elements for the root node.
+   *
+   * Each node of a tree has an associated `Node_data` value.
+   * For most nodes, this is set by `Distribute_node_contents`, but that is not possible for the root node.
+   * Instead, this functor initializes the `Node_data` of the root node.
+   * It should take no arguments, and return an instance of `Node_data`.
+   *
+   * Typically, the `Node_data` of the root node contains all the elements in the tree.
+   * For a tree in which each node contains an `std::span` this function would return the span containing all items.
+   *
+   */
+  typedef unspecified_type Construct_root_node_contents;
+
+  /*!
+   * \brief Functor which distributes a node's contents to its children.
+   *
+   * The functor takes a node index, a tree reference, and a Point_d which is the center of the node.
+   * It can use tree.children(node_index) to access the children of the node, and tree.data(node_index)
+   * to access the contents of the node and each of its children.
+   * It should distribute the contents of the node to each of its children.
+   * For a tree in which each node contains a span, this may mean rearranging the contents of the original node
+   * and producing spans containing a subset of its contents for each of its children.
+   */
+  typedef unspecified_type Distribute_node_contents;
+
+  /*!
+   * \brief Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc. FT arguments.
+   *
+   * For trees which use a different kernel for the Bbox type,
+   * the return type of this functor must match the kernel used by the Bbox and not that of the contents.
+   */
   typedef unspecified_type Construct_point_d;
 
   /// @}
@@ -47,52 +90,24 @@ public:
   /// @{
 
   /*!
-    Function used to construct an object of type `Construct_point_d`.
-  */
-  Construct_point_d construct_point_d() const;
+   * Function used to construct an object of type `Construct_root_node_bbox`.
+   */
+  Construct_root_node_bbox construct_root_node_bbox_object() const;
 
   /*!
-   * \brief Produces a bounding box which encloses the contents of the tree
-   *
-   * The bounding box must enclose all elements contained by the tree.
-   * It may be tight-fitting, the orthtree constructor produces a bounding cube surrounding this region.
-   * For traits which assign no data to each node, this can be defined to return a fixed region.
-   *
-   * @return std::pair<min, max>, where min and max represent cartesian corners which define a bounding box
+   * Function used to construct an object of type `Construct_root_node_contents`.
    */
-  Bbox_d root_node_bbox() const;
+  Construct_root_node_contents construct_root_node_contents_object() const;
 
   /*!
-   * \brief Initializes the contained elements for the root node.
-   *
-   * Typically produces a `Node_data` which contains all the elements in the tree.
-   * e.g. For a tree where each node contains a set of points,
-   * root_node_contents() will produce the list of all points.
-   *
-   * @return The `Node_data` instance to be contained by the root node
+   * Function used to construct an object of type `Distribute_node_contents`.
    */
-  Node_data root_node_contents() const;
+  Distribute_node_contents distribute_node_contents_object() const;
 
   /*!
-   * \brief Distributes the `Node_data` contents of a node to its immediate children.
-   *
-   * Invoked after a node is split.
-   * Adds the contents of the node n to each of its children.
-   * May rearrange or modify n's `Node_data`, but generally expected not to reset n.
-   * After distributing n's contents, n should still have an list of elements it encloses.
-   * Each of n's children should have an accurate list of the subset of elements within n they enclose.
-   *
-   * For an empty tree, this can be a null-op.
-   *
-   * @tparam Node_index The index type used by an orthtree implementation
-   * @tparam Tree An Orthree implementation
-   *
-   * @param n The index of the node who's contents must be distributed.
-   * @param tree The Orthtree which n belongs to
-   * @param center The coordinate center of the node n, which its contents should be split around.
+   * Function used to construct an object of type `Construct_point_d`.
    */
-  template <typename Node_index, typename Tree>
-  void distribute_node_contents(Node_index n, Tree& tree, const Point_d& center);
+  Construct_point_d construct_point_d_object() const;
 
   /// @}
 };

@@ -214,7 +214,7 @@ public:
     m_node_properties.emplace();
 
     // init bbox with first values found
-    auto bbox = m_traits.root_node_bbox_object()();
+    auto bbox = m_traits.construct_root_node_bbox_object()();
 
     // Determine dimensions of the root bbox
     Bbox_dimensions size;
@@ -224,7 +224,7 @@ public:
     // save orthtree attributes
     m_bbox_min = bbox.min();
     m_side_per_depth.push_back(size);
-    data(root()) = m_traits.root_node_contents_object()();
+    data(root()) = m_traits.construct_root_node_contents_object()();
   }
 
   /// @}

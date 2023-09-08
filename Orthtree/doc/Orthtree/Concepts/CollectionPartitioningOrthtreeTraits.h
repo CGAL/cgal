@@ -12,10 +12,7 @@
 
   \cgalRefines{OrthtreeTraits}
 
-  todo: update list of models
-  \cgalHasModel `CGAL::Orthtree_traits_2<GeomTraits>`
-  \cgalHasModel `CGAL::Orthtree_traits_3<GeomTraits>`
-  \cgalHasModel `CGAL::Orthtree_traits_d<GeomTraits,Dimension>`
+  \cgalHasModel `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>`
 */
 class CollectionPartitioningOrthtreeTraits {
 public:
@@ -50,8 +47,8 @@ public:
   /// @{
 
   /*!
-    Function used to construct an object of type `Get_geometric_object_for_element`.
-  */
+   * Function used to construct an object of type `Get_geometric_object_for_element`.
+   */
   Get_geometric_object_for_element get_geometric_object_for_element_object() const;
 
   /// @}

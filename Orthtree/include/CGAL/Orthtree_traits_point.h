@@ -104,7 +104,7 @@ public:
   /// \name Operations
   /// @{
 
-  auto root_node_bbox_object() const {
+  auto construct_root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d {
 
       std::array<typename Self::FT, Self::Dimension::value> bbox_min, bbox_max;
@@ -136,7 +136,7 @@ public:
     };
   }
 
-  auto root_node_contents_object() const {
+  auto construct_root_node_contents_object() const {
     return [&]() -> typename Self::Node_data {
       return {m_point_set.begin(), m_point_set.end()};
     };

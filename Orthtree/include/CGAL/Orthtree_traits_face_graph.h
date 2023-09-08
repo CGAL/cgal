@@ -50,7 +50,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
 
   using Geom_traits = typename Kernel_traits<Point_d>::type;
 
-  auto root_node_bbox_object() const {
+  auto construct_root_node_bbox_object() const {
     return [&]() -> Bbox_d {
 
       std::array<FT, Dimension::value> min = {0.0, 0}, max = {0.0, 0};
@@ -72,8 +72,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
     };
   }
 
-  // SL: not clear to me what it should do from the doc
-  auto root_node_contents_object() {
+  auto construct_root_node_contents_object() {
     return [&]() -> Node_data {
       return {faces(m_pm).begin(), faces(m_pm).end()};
     };
@@ -99,7 +98,6 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
     };
   }
 
-  //SL: I find convenient to put it here
   class Split_predicate_node_min_extent {
 
     FT m_min_extent;
