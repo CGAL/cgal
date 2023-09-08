@@ -24,6 +24,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
 
+#include <utility>
+
 namespace CGAL {
 
 template <class R_>
@@ -92,6 +94,11 @@ public:
   end() const
   {
     return target();
+  }
+
+  template <std::size_t i>
+  decltype(auto) get() const {
+      return Rep::template get<i>();
   }
 
   decltype(auto)
@@ -196,5 +203,13 @@ operator>>(std::istream &is, Segment_3<R> &s)
 }
 
 } //namespace CGAL
+
+template < class R_ >
+struct std::tuple_size<CGAL::Segment_3<R_> > : std::integral_constant<std::size_t, 2> {};
+
+template < class R_, size_t i >
+struct std::tuple_element<i, CGAL::Segment_3<R_> > {
+  using type = typename R_::Point_3;
+};
 
 #endif // CGAL_SEGMENT_3_H
