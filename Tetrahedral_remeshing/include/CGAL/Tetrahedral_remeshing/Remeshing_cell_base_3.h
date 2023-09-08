@@ -35,7 +35,7 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 \tparam Cb is a cell base class from which `Remeshing_cell_base_3` derives.
 It must be a model of the `SimplicialMeshCellBase_3` concept.
 
-\cgalModels `RemeshingCellBase_3`
+\cgalModels{RemeshingCellBase_3}
 
 */
 template<typename Gt,
