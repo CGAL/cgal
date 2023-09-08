@@ -23,6 +23,7 @@
 #include <CGAL/Mesh_constant_domain_field_3.h>
 #include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
 #include <type_traits>
+#include <cfloat>
 
 namespace CGAL {
 namespace Mesh_3 {

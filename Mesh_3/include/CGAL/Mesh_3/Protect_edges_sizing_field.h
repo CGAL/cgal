@@ -273,7 +273,7 @@ private:
   bool non_adjacent_but_intersect(const Vertex_handle& va,
                                   const Vertex_handle& vb) const;
 
-  /// Returns `true` if the edge `(va,vb)` is a not good enough approimation
+  /// Returns `true` if the edge `(va,vb)` is a not good enough approximation
   /// of its feature.
   bool approx_is_too_large(const Vertex_handle& va,
                            const Vertex_handle& vb) const;
