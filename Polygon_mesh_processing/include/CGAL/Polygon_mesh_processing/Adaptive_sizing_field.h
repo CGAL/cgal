@@ -85,10 +85,9 @@ public:
 
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{ball_radius}
-  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-  *                           by summing measures of faces inside a ball of this radius centered at the
-  *                           vertex expanded from. The summed face measures are weighted by their
-  *                           inclusion ratio inside this ball.}
+  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures.
+  *                           It can potentially smooth the curvature and consequently the sizing field in the
+   *                          case of noisy input.}
   *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures.
   *                           It can effectively smooth the curvature field and consequently the sizing field.}
   *     \cgalParamType{`Base::FT`}

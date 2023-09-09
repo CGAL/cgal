@@ -300,7 +300,8 @@ public:
                       const double target_length,
                       const double error_tol,
                       const double min_length,
-                      const double max_length)
+                      const double max_length,
+                      const double curv_ball_r)
   {
     std::vector<edge_descriptor> p_edges;
     for(edge_descriptor e : edges(pmesh))
@@ -335,7 +336,8 @@ public:
               error_tol
               , edge_min_max
               , faces(*selection_item->polyhedron())
-              , *selection_item->polyhedron());
+              , *selection_item->polyhedron()
+              , CGAL::parameters::ball_radius(curv_ball_r));
         CGAL::Polygon_mesh_processing::split_long_edges(
           p_edges
           , adaptive_sizing
@@ -394,6 +396,8 @@ public Q_SLOTS:
       unsigned int nb_smooth = ui.nbSmoothing_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
       bool smooth_features = ui.smooth1D_checkbox->isChecked();
+      bool curv_smooth = ui.curvSmooth_checkbox->isChecked();
+      double curv_ball_r = ui.curvSmoothBallR_edit->value();
 
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -425,7 +429,8 @@ public Q_SLOTS:
       {
         if (edges_only)
         {
-          do_split_edges(edge_sizing_type, selection_item, pmesh, target_length, error_tol, min_length, max_length);
+          do_split_edges(edge_sizing_type, selection_item, pmesh,
+                         target_length, error_tol, min_length, max_length, curv_ball_r);
         }
         else //not edges_only
         {
@@ -461,7 +466,8 @@ public Q_SLOTS:
               }
               else
               {
-                do_split_edges(edge_sizing_type, selection_item, pmesh, target_length, error_tol, min_length, max_length);
+                do_split_edges(edge_sizing_type, selection_item, pmesh,
+                               target_length, error_tol, min_length, max_length, curv_ball_r);
               }
             }
 
@@ -517,7 +523,8 @@ public Q_SLOTS:
                 PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
                                                                , edge_min_max
                                                                , faces(*selection_item->polyhedron())
-                                                               , *selection_item->polyhedron());
+                                                               , *selection_item->polyhedron()
+                                                               , CGAL::parameters::ball_radius(curv_ball_r));
                 if (fpmap_valid)
                   CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
                      , adaptive_sizing_field
@@ -600,7 +607,8 @@ public Q_SLOTS:
                 PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
                                                                , edge_min_max
                                                                , faces(*selection_item->polyhedron())
-                                                               , *selection_item->polyhedron());
+                                                               , *selection_item->polyhedron()
+                                                               , CGAL::parameters::ball_radius(curv_ball_r));
                 if (fpmap_valid)
                   CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
                      , adaptive_sizing_field
@@ -675,9 +683,10 @@ public Q_SLOTS:
               {
                 std::pair<double, double> edge_min_max{min_length, max_length};
                 PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
-                                                                           , edge_min_max
-                                                                           , faces(pmesh)
-                                                                           , pmesh);
+                                                                , edge_min_max
+                                                                , faces(pmesh)
+                                                                , pmesh
+                                                                , CGAL::parameters::ball_radius(curv_ball_r));
                 CGAL::Polygon_mesh_processing::split_long_edges(
                   edges_to_split
                   , target_length
@@ -704,7 +713,8 @@ public Q_SLOTS:
                 PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
                                                                              , edge_min_max
                                                                              , faces(pmesh)
-                                                                             , pmesh);
+                                                                             , pmesh
+                                                                             , CGAL::parameters::ball_radius(curv_ball_r));
                 CGAL::Polygon_mesh_processing::split_long_edges(
                   edges_to_split
                   , adaptive_sizing_field
@@ -799,7 +809,8 @@ public Q_SLOTS:
             PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
                     , edge_min_max
                     , faces(*poly_item->polyhedron())
-                    , *poly_item->polyhedron());
+                    , *poly_item->polyhedron()
+                    , CGAL::parameters::ball_radius(curv_ball_r));
             if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
                  faces(*poly_item->polyhedron())
@@ -862,6 +873,8 @@ public Q_SLOTS:
     unsigned int nb_iter = 1;
     bool protect = false;
     bool smooth_features = true;
+    bool curv_smooth = false;
+    double curv_ball_r = -1;
 
     std::vector<Scene_facegraph_item*> selection;
     for(int index : scene->selectionIndices())
@@ -902,6 +915,8 @@ public Q_SLOTS:
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
         smooth_features = ui.smooth1D_checkbox->isChecked();
+        curv_smooth = ui.curvSmooth_checkbox->isChecked();
+        curv_ball_r = ui.curvSmoothBallR_edit->value();
         }
       }
     }
@@ -1011,6 +1026,8 @@ private:
     unsigned int nb_iter_;
     bool protect_;
     bool smooth_features_;
+    bool curv_smooth_;
+    double curv_ball_r_;
 
   protected:
     void remesh(Scene_facegraph_item* poly_item,
@@ -1042,7 +1059,8 @@ private:
           PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol_
                                                                      , edge_min_max
                                                                      , faces(*poly_item->polyhedron())
-                                                                     , *poly_item->polyhedron());
+                                                                     , *poly_item->polyhedron()
+                                                                     , CGAL::parameters::ball_radius(curv_ball_r_));
           CGAL::Polygon_mesh_processing::split_long_edges(
             border_edges
           , target_length_
@@ -1072,7 +1090,8 @@ private:
           PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol_
                                                          , edge_min_max
                                                          , faces(*poly_item->polyhedron())
-                                                         , *poly_item->polyhedron());
+                                                         , *poly_item->polyhedron()
+                                                         , CGAL::parameters::ball_radius(curv_ball_r_));
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
               faces(*poly_item->polyhedron())
             , target_length_
@@ -1234,6 +1253,10 @@ public Q_SLOTS:
       ui.minEdgeLength_edit->hide();
       ui.maxEdgeLength_label->hide();
       ui.maxEdgeLength_edit->hide();
+      ui.curvSmooth_checkbox->hide();
+      ui.curvSmooth_label->hide();
+      ui.curvSmoothBallR_edit->hide();
+      ui.curvSmoothBallR_label->hide();
     }
     else if (index == 1)
     {
@@ -1245,6 +1268,25 @@ public Q_SLOTS:
       ui.minEdgeLength_edit->show();
       ui.maxEdgeLength_label->show();
       ui.maxEdgeLength_edit->show();
+      ui.curvSmooth_checkbox->show();
+      ui.curvSmooth_label->show();
+      ui.curvSmoothBallR_edit->show();
+      ui.curvSmoothBallR_label->show();
+    }
+  }
+
+  void update_after_curvSmooth_click()
+  {
+    if (ui.curvSmooth_checkbox->isChecked())
+    {
+      ui.curvSmoothBallR_label->setEnabled(true);
+      ui.curvSmoothBallR_edit->setEnabled(true);
+    }
+    else
+    {
+      ui.curvSmoothBallR_label->setEnabled(false);
+      ui.curvSmoothBallR_edit->setValue(-1);
+      ui.curvSmoothBallR_edit->setEnabled(false);
     }
   }
 
@@ -1268,6 +1310,7 @@ public:
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_splitEdgesOnly_click()));
     connect(ui.edgeSizing_type_combo_box, SIGNAL(currentIndexChanged(int)),
       this, SLOT(on_edgeSizing_type_combo_box_changed(int)));
+    connect(ui.curvSmooth_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_curvSmooth_click()));
 
     //Set default parameters
     Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
@@ -1313,6 +1356,10 @@ public:
     on_edgeSizing_type_combo_box_changed(0);
     ui.protect_checkbox->setChecked(false);
     ui.smooth1D_checkbox->setChecked(true);
+    ui.curvSmooth_checkbox->setChecked(false);
+    ui.curvSmoothBallR_label->setEnabled(false);
+    ui.curvSmoothBallR_edit->setEnabled(false);
+    ui.curvSmoothBallR_edit->setValue(-1);
 
     if (nullptr != selection_item)
     {
